@@ -17,10 +17,10 @@ constants:
    ACCEPT_DELAY = 15000
    ADVERT_DELAY_MIN = 60000
    ADVERT_DELAY_MAX = 120000
-   COMMENCE_DELAY_MIN = 8000
-   COMMENCE_DELAY_MAX = 15000
-   FIGHT_DELAY_ONE_ON_ONE = 240000
-   FIGHT_DELAY_LAST_MAN_STANDING = 480000
+   COMMENCE_DELAY_MIN = 6000
+   COMMENCE_DELAY_MAX = 12000
+   FIGHT_DELAY_ONE_ON_ONE = 480000
+   FIGHT_DELAY_LAST_MAN_STANDING = 720000
 
    LAST_MINUTE = 60000
 
@@ -2070,10 +2070,9 @@ messages:
          propagate;
       }
 
-      % Spells with targets = all the rest of them     
+      % Spells with targets = all the rest of them
       if (NOT Send(self,@isCombatant,#who=what)
          OR NOT Send(self,@isCombatant,#who=victim))
-         AND IsClass(victim,&Player)
       {
          if IsClass(what,&Player)
          {
@@ -2111,7 +2110,7 @@ messages:
       % Only combatants may cast spells on each other.
 
       % If the caster is not a combatant, don't let him cast.
-      if (not Send(self,@isCombatant,#who=who) AND IsClass(who,&Player))      
+      if (not Send(self,@isCombatant,#who=who) AND IsClass(who,&Player))
       {
          Send(self,@SayToOne,#target=who,
               #message_rsc=TosWatcher_only_combatants_cast);
@@ -2122,7 +2121,7 @@ messages:
       % If the caster's target is not a combatant, don't let him cast.
       for i in lItems
       {
-         if NOT Send(self,@isCombatant,#who=i) AND IsClass(i,&Player)
+         if NOT Send(self,@isCombatant,#who=i)
          {
             Send(self,@SayToOne,#target=who,
                  #message_rsc=TosWatcher_only_target_combatants);
@@ -2143,7 +2142,7 @@ messages:
          return FALSE;
       }
 
-      % Certain spells are banned outright      
+      % Certain spells are banned outright
       if Send(oSpell,@SpellBannedInArena)
       {
          Send(self,@SayToOne,#target=who,#message_rsc=toswatcher_spell_banned,

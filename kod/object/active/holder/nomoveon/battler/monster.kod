@@ -3164,10 +3164,10 @@ messages:
                         #monstername=vrName,#drawfx=viDead_drawfx);       
       }
 
-      return oBody;                 
+      return oBody;
    }
 
-   Killed(what = $)
+   Killed(what=$)
    "The mob was just killed."
    {
       local oBody;
@@ -3190,7 +3190,7 @@ messages:
          if oBody <> $
          {            
             Send(poOwner,@NewHold,#what=oBody,#new_row=piRow,#new_col=piCol,
-                 #new_angle=Send(self,@GetAngle));          
+                 #new_angle=Send(self,@GetAngle));
          }
 
          if vrSound_death <> $
@@ -3199,22 +3199,25 @@ messages:
                  #flags=SOUND_RANDOM_PITCH);
          }
 
-         % notify the quest engine, to check if a quest is affected -AJM
-         Send(Send(SYS,@GetQuestEngine),@MonsterKilled,#dead_monster=self,
-              #killing_player=what,#corpse=oBody );
-         
-         Send(self,@CreateTreasure,#who=what,#corpse=oBody);
-         
-      % Delete here so we don't accidentally "kill" then delete system
+         if NOT Send(poOwner,@IsArena)
+         {
+            % Notify the quest engine, to check if a quest is affected -AJM
+            Send(Send(SYS,@GetQuestEngine),@MonsterKilled,#dead_monster=self,
+                  #killing_player=what,#corpse=oBody);
+
+            Send(self,@CreateTreasure,#who=what,#corpse=oBody);
+         }
+
+         % Delete here so we don't accidentally "kill" then delete system
          %  template monsters.
          Send(self,@Delete);
       }
-      
+
       return;
    }
 
    %%% SERVICE MESSAGES
- 
+
    Repair()
    "This is just a stub"
    {

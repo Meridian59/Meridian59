@@ -1051,6 +1051,9 @@ messages:
                if i = who
                   OR NOT IsClass(i,&Battler)
                   OR (IsClass(i,&DM) AND Send(i,@PlayerIsImmortal))
+                  OR (IsClass(i,&Monster)
+                     AND (Send(i,@GetBehavior) & AI_NPC))
+                  OR Send(oRoom,@IsArena)
                {
                   continue;
                }
@@ -1096,6 +1099,12 @@ messages:
       {
          for oObject in lTargets
          {
+            % If we're in the arena, we can cast it.
+            if Send(Send(oObject,@GetOwner),@IsArena)
+            {
+               return TRUE;
+            }
+
             % Ignore: Non-players, ourself, and Players that aren't outlaws or
             %  murderers.
             if (NOT IsClass(oObject,&Player))
@@ -1557,6 +1566,7 @@ messages:
             % Check to see if this person was helping an unlawful person.
             if NOT Send(self,@IsHarmful)
                AND NOT IsClass(self,&DMSpell)
+               AND NOT (Send(Send(who,@GetOwner),@IsArena))
             {
                for oTarget in lTargets
                {

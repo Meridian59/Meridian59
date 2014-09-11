@@ -279,13 +279,12 @@ messages:
 
          if (iRow < NORTH_BOUNDARY OR iCol < WEST_BOUNDARY)
             OR (iRow > SOUTH_BOUNDARY OR iCol > EAST_BOUNDARY)
-         {                                                                         
-            if (not bNonPlayerOkay)
-               AND ( ((iRow > 8 AND iRow < 17) AND (iCol > 18 AND iCol < 26))
+         {
+            if ( ((iRow > 8 AND iRow < 17) AND (iCol > 18 AND iCol < 26))
                      OR ((iRow = 4 OR iRow = 5) AND (iCol = 4 OR iCol = 5))
                      OR ((iRow = 5 OR iRow = 6) AND (iCol = 5 OR iCol = 6))
                      OR ((iRow = 20 OR iRow = 21) AND (iCol = 4 OR iCol = 5))
-                     OR ((iRow = 19 OR iRow = 20) AND (iCol = 5 OR iCol = 6)) )         
+                     OR ((iRow = 19 OR iRow = 20) AND (iCol = 5 OR iCol = 6)) )
             {
                return TRUE;
             }

@@ -937,7 +937,11 @@ messages:
          }
       }
 
-      Send(self,@Teleport,#what=who,#outofplay=TRUE);
+      % Don't teleport monsters out
+      if IsClass(who,&Player)
+      {
+         Send(self,@Teleport,#what=who,#outofplay=TRUE);
+      }
 
       if who = poChampion
       {
@@ -1087,7 +1091,7 @@ messages:
                      if IsClass(j,&Monster)
                         AND NOT (Send(j,@GetBehavior) & AI_NPC)
                      {
-                        Send(j,@Delete);
+                        Post(j,@Delete);
                      }
                   }
                }
@@ -1852,6 +1856,13 @@ messages:
          count = count + 1;
       }
 
+      if IsClass(who,&Monster)
+         AND NOT IsClass(who,&TosTown)
+         AND Send(poOwner,@InPlay,#what=who,#bNonPlayerOkay=TRUE)
+      {
+         return TRUE;
+      }
+
       return FALSE;
    }
 
@@ -1949,7 +1960,7 @@ messages:
             if IsClass(j,&Monster)
                AND (NOT (Send(j,@GetBehavior) & AI_NPC))
             {
-               Send(j,@Delete);
+               Post(j,@Delete);
             }
 
             % Yuckily, this is the easiest way to deal with this.
@@ -1991,15 +2002,18 @@ messages:
    {
       if Send(self,@IsCombatant,#who=what)
       {
-         if ptFight <> $
+         if NOT IsClass(what,&Monster)
          {
-            Send(self,@Say,#message_rsc=TosWatcher_pitifully_fled,
-                 #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
-         }
-         else
-         {
-            Send(self,@Say,#message_rsc=TosWatcher_wont_fight,
-                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));               
+            if ptFight <> $
+            {
+               Send(self,@Say,#message_rsc=TosWatcher_pitifully_fled,
+                  #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+            }
+            else
+            {
+               Send(self,@Say,#message_rsc=TosWatcher_wont_fight,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+            }
          }
 
          Send(self,@CombatantReneges,#who=what);

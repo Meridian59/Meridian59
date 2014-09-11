@@ -398,8 +398,7 @@ messages:
          % try to avoid lots of messages being sent out at once.
          if ptSomethingChanged <> $
          {
-            ptSomethingChanged = CreateTimer(self,@SomethingChangedTimer,
-                                             500 + Random(0, 10) * 1000 / 4);
+            ptSomethingChanged = CreateTimer(self,@SomethingChangedTimer,750);
          }
       }
 

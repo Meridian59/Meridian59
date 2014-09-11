@@ -1259,14 +1259,15 @@ messages:
          }
 
          % if the afflicted person is not a combatant, attack fails.
-         if IsClass(victim,&Player)
+         if IsClass(victim,&Battler)
             AND NOT Send(oWatcher,@IsCombatant,#who=victim)
          {
             return FALSE;
          }
 
          % if the caster is not a combatant, attack fails.
-         if NOT Send(oWatcher,@IsCombatant,#who=what)
+         if IsClass(what,&Player)
+            AND NOT Send(oWatcher,@IsCombatant,#who=what)
          {
             return FALSE;
          }

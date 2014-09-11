@@ -36,7 +36,7 @@ resources:
       "in constant agony, relieved only briefly by the wash of ecstasy he "
       "feels when he oversees the death of another."
 
-   Goad_ad_need_champion1 = "Come my prettys, be not afriad . . . "
+   Goad_ad_need_champion1 = "Come my prettys, be not afraid . . . "
    Goad_ad_need_champion2 = \
       "I can taste your desire  . . . give in to it, there is so "
       "much power to be gained."
@@ -985,7 +985,7 @@ messages:
          %%Only one style available: Duel.
          %Send(self,@Say,#message_rsc=Goad_must_choose_style);
          %return;
-         Post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what);
+         Send(self,@ChooseCombat,#style=STYLE_ONE_ON_ONE,#actor=what);
       }
       if NOT Send(self,@AcceptingChampions)
       {
@@ -1442,7 +1442,7 @@ messages:
       %%% Can't cast spells unless a fight is in session.
       if ptFight = $
       {
-         if IsClass(who,&player)
+         if IsClass(who,&Player)
          {
             Send(self,@SayToOne,#target=who,#message_rsc=Goad_no_fighting_yet);
          }

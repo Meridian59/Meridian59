@@ -2119,15 +2119,18 @@ messages:
          return FALSE;
       }
    
-      % If the caster's target is not a combatant, don't let him cast.
-      for i in lItems
+      %% If the caster's single target is not a combatant, don't let him cast.
+      if Length(lItems) = 1
       {
-         if NOT Send(self,@isCombatant,#who=i)
+         for i in lItems
          {
-            Send(self,@SayToOne,#target=who,
-                 #message_rsc=TosWatcher_only_target_combatants);
+            if NOT Send(self,@isCombatant,#who=i)
+            {
+               Send(self,@SayToOne,#target=who,
+                     #message_rsc=TosWatcher_only_target_combatants);
 
-            return FALSE;
+               return FALSE;
+            }
          }
       }
 

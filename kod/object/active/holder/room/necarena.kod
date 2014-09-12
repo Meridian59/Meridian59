@@ -495,10 +495,29 @@ messages:
 
    EndFight(lCombatants=$)
    {
+      local i, j, k;
+
       if plGoToShrine <> $
       {
          ptGoToShrineTimer = CreateTimer(self,@GoToShrineTimer,SHRINE_DELAY);
       }
+
+      % Remove radius enchantments
+      for i in Send(self,@GetHolderActive)
+      {
+         j = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(j,&Player)
+            OR (IsClass(j,&Monster) AND NOT ((Send(j,@GetBehavior) & AI_NPC)))
+         {
+            for k in Send(j,@GetRadiusEnchantments)
+            {
+               Send(Nth(k,1),@CancelRadiusEnchantment,#source=Nth(k,3));
+            }
+         }
+      }
+
+      % Remove room enchantments
+      Send(self,@RemoveAllEnchantments);
 
       if ptCheckLavaTimer <> $
       {

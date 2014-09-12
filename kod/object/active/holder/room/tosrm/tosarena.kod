@@ -558,7 +558,26 @@ messages:
 
    EndFight(lCombatants = $)
    {
+      local i, j, k;
+
       Send(self,@LowerMaze);
+
+      % Remove radius enchantments
+      for i in Send(self,@GetHolderActive)
+      {
+         j = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(j,&Player)
+            OR (IsClass(j,&Monster) AND NOT ((Send(j,@GetBehavior) & AI_NPC)))
+         {
+            for k in Send(j,@GetRadiusEnchantments)
+            {
+               Send(Nth(k,1),@CancelRadiusEnchantment,#source=Nth(k,3));
+            }
+         }
+      }
+
+      % Remove room enchantments
+      Send(self,@RemoveAllEnchantments);
 
       %% cages in corners.
       Send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,#height=124,#speed=32);

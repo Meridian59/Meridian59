@@ -458,28 +458,31 @@ messages:
          oRoom = Send(target,@GetOwner);
       }
 
-      if Send(oRoom,@IsArena)
+      if oRoom <> $
       {
-         oWatcher = Send(oRoom,@GetWatcher);
-
-         % If a fight isn't in session, attack fails.
-         if NOT Send(oWatcher,@FightInSession)
+         if Send(oRoom,@IsArena)
          {
-            return FALSE;
-         }
+            oWatcher = Send(oRoom,@GetWatcher);
 
-         % If the target is not a combatant, attack fails.
-         if IsClass(target,&Battler)
-            AND NOT Send(oWatcher,@IsCombatant,#who=target)
-         {
-            return FALSE;
-         }
+            % If a fight isn't in session, attack fails.
+            if NOT Send(oWatcher,@FightInSession)
+            {
+               return FALSE;
+            }
 
-         % If the source is not a combatant, attack fails.
-         if Send(source,@GetOwner) = oRoom
-         AND NOT Send(oWatcher,@IsCombatant,#who=source)
-         {
-            return FALSE;
+            % If the target is not a combatant, attack fails.
+            if IsClass(target,&Battler)
+               AND NOT Send(oWatcher,@IsCombatant,#who=target)
+            {
+               return FALSE;
+            }
+
+            % If the source is not a combatant, attack fails.
+            if Send(source,@GetOwner) = oRoom
+            AND NOT Send(oWatcher,@IsCombatant,#who=source)
+            {
+               return FALSE;
+            }
          }
       }
 

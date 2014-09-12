@@ -1232,12 +1232,16 @@ messages:
       % Okay, ask our brain how to move
       Send(poBrain,@GetMoveBehavior,#behavior=piBehavior,#mob=self);
 
-      % See if we want to change state now
-      Send(poBrain,@PostMoveTimer,#mob=self);
+      % See if we want to change state now, but check for brain here first.
+      % Sometimes we've died by now.
+      if poBrain <> $
+      {
+         Send(poBrain,@PostMoveTimer,#mob=self);
+      }
 
       return;
    }
-  
+
    WaitTimer( timer = $ )
    {
       Send(self,@ClearBehavior,#timer=timer);
@@ -1388,7 +1392,7 @@ messages:
    }
 
    %%%  Auxiliary Routines
-   
+
    DoRandomWalk()
    {
       local iNew_row, iNew_col;
@@ -1429,13 +1433,18 @@ messages:
       if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col);
-         if Send(poOwner,@ReqSomethingMoved,#what=self,
-                 #new_row=iNew_row,#new_col=iNew_col,
-                 #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)))
+
+         % Check for owner, perhaps we died already
+         if poOwner <> $
          {
-            Send(poOwner,@SomethingMoved,#what=self,
-                 #new_row=iNew_row,#new_col=iNew_col,
-                 #speed=(0x80|viSpeed),#non_monsters_only=TRUE);
+            if Send(poOwner,@ReqSomethingMoved,#what=self,
+                     #new_row=iNew_row,#new_col=iNew_col,
+                     #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)))
+            {
+               Send(poOwner,@SomethingMoved,#what=self,
+                     #new_row=iNew_row,#new_col=iNew_col,
+                     #speed=(0x80|viSpeed),#non_monsters_only=TRUE);
+            }
          }
       }
 

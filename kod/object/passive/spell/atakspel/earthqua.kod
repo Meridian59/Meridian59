@@ -212,7 +212,7 @@ messages:
 
       if IsClass(who,&Room)
       {
-         return 100;
+         return 30;
       }
       
       % Do full damage within viMax_damage_distance, zero damage outside
@@ -223,6 +223,12 @@ messages:
       if who <> $
       {
          iDistance_squared = Send(who,@SquaredDistanceTo,#what=target);
+
+         % SquaredDistanceTo returns $ for target not in same room
+         if iDistance_squared = $
+         {
+            return 0;
+         }
       }
       else
       {

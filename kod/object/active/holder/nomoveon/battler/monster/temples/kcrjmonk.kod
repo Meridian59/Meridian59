@@ -70,6 +70,7 @@ properties:
 
    ptGoIllusioned = $
    ptWorthyTimer = $
+   piSpeechDelay = 8000
 
 messages:
 
@@ -215,7 +216,9 @@ messages:
             Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_worthy,
                   #type=SAY_RESOURCE);
          }
-         ptWorthyTimer = CreateTimer(self,@EndWorthyTimer,1000);
+
+         % This is to stop the monk being so spammy.
+         ptWorthyTimer = CreateTimer(self,@EndWorthyTimer,piSpeechDelay);
       }
 
       if NOT bWorthy

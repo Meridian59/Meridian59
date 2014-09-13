@@ -1733,8 +1733,11 @@ messages:
 
       if iClient_cmd = UC_REQ_GUILD_LIST
       {
-         Send(self,@UserGuildSendList);
-         
+         if poGuild <> $
+         {
+            Send(self,@UserGuildSendList);
+         }
+
          return;
       }
 

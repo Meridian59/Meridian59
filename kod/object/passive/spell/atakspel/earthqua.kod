@@ -83,6 +83,7 @@ properties:
    piDamageMin = 17
    piDamageMax = 25
 
+   piCasterDmgPct = 100
    piManaFocusBonus = 0
 
 messages:

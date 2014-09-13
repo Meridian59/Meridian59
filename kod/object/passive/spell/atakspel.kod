@@ -57,6 +57,8 @@ properties:
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
    piManaFocusBonus = 5
 
+   piCasterDmgPct = 100
+
    pbAbsolute = FALSE
 
 messages:
@@ -268,7 +270,7 @@ messages:
 
             if iDamage = $
             {
-               Send(who,@KilledSomething,#what=i,#use_weapon=self);
+               Post(who,@KilledSomething,#what=i,#use_weapon=self);
             }
          }
 
@@ -318,11 +320,14 @@ messages:
 
    HurtCaster(who=$,iDamage=$)
    {
+      % Adjust damage based on how much it should hurt the caster.
+      iDamage = (iDamage * piCasterDmgPct) / 100;
+
       if IsClass(who,&Player)
       {
          % Apply the spell damage to the caster. Kill them if necessary.
          if Send(who,@AssessDamage,#what=who,#damage=iDamage,#atype=0,
-                 #aspell=viAttack_spell,#report=TRUE) = $
+                  #aspell=viAttack_spell,#report=TRUE) = $
          {
             Post(who,@MsgSendUser,#message_rsc=vrKilled_Self);
             Post(who,@KilledSomething,#what=who,#use_weapon=self);

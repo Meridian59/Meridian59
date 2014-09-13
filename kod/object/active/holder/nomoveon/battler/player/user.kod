@@ -212,6 +212,7 @@ resources:
       "%s%s can't carry all the items you have offered."
    user_cant_carry_offer = \
       "You can't carry all the items that %s%s has offered you."
+   user_not_item = "You cannot pick that up."
 
    user_not_have_number = "You don't have that amount of %s to drop."
    user_cant_deal_number = "You can't do anything with %i items."
@@ -1053,15 +1054,22 @@ messages:
          
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_GET
       {
          oWhat = Nth(client_msg,2);
-         Send(self,@UserGet,#what=oWhat);
-         
+         if IsClass(oWhat,&Item)
+         {
+            Send(self,@UserGet,#what=oWhat);
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_not_item);
+         }
+
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_DROP
       {
          oWhat = Nth(client_msg,2);

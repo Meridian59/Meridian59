@@ -4807,9 +4807,16 @@ messages:
 
   CommandMinionAttack(oMaster=$,oTarget=$)
    {
-      local oRoom,oActive;
+      local oActive;
 
-      oRoom = Send(oMaster,@GetOwner);
+      % We only want minions to attack Battlers, not items or anything
+      % else that can damage us.
+      if oTarget = $
+         OR NOT IsClass(oTarget,&Battler)
+      {
+         return;
+      }
+
       if Send(self,@AllowPlayerAttack,#victim=oTarget)
       {
          for oActive in Send(self,@GetControlledMinions)

@@ -1579,18 +1579,32 @@ messages:
 
             iLengthDispose = Length(lDisposeItems);
 
-            % If we have more than 5 items on the ground, dispose 20%
-            if iLengthDispose > 5
+            % If we have more than 11 items on the ground, dispose 25%
+            if iLengthDispose > 11
             {
-               delete_index = 4*iLengthDispose/5;
+               delete_index = iLengthDispose/4;
+
+               % In rare cases we can end up with items piling up far too
+               % fast, so we should do a one-off dispose of a larger number
+               % to prevent the screen from crashing
+               if iLengthDispose > 75
+               {
+                  delete_index = iLengthDispose/2;
+               }
+
                count = 0;
 
                for j in lDisposeItems
                {
                   count = count + 1;
-                  if count > delete_index
+                  if count <= delete_index
                   {
                      Send(j,@DestroyDisposable);
+                  }
+                  else
+                  {
+                     % Deleted all the appropriate items
+                     break;
                   }
                }
             }

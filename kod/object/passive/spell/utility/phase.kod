@@ -183,6 +183,8 @@ messages:
          Send(who,@BreakTrance,#event=EVENT_STEER);
          Send(SYS,@DeletePlayerReflections,#who=who);
          Send(who,@FreezeAllEnchantments);
+         
+         % Post this because FreezeAllEnchantments checks for phase applied
          Post(who,@StartEnchantment,#what=self);
          Post(who,@StartPhaseTimer);
          Post(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
@@ -286,7 +288,9 @@ messages:
       {
          Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
       }
-      Send(who,@ReactivateAllEnchantments);
+      
+      % Post this because ReactivateAllEnchantments checks for phase applied
+      Post(who,@ReactivateAllEnchantments);
 
       return;
    }

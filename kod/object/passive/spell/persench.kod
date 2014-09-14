@@ -278,7 +278,15 @@ messages:
       {
          if Nth(i,2) = self
          {
-            iDuration = GetTimeRemaining(Nth(i,1));
+            if IsTimer(Nth(i,1))
+            {
+               iDuration = GetTimeRemaining(Nth(i,1));
+            }
+            else
+            {
+               % Should be an integer ($ handled in player.kod)
+               iDuration = Nth(i,1);
+            }
          }
       }
 

@@ -2073,6 +2073,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CREATETIMER : strcpy(c_name, "CreateTimer"); break;
 		case DELETETIMER : strcpy(c_name, "DeleteTimer"); break;
 		case GETTIMEREMAINING : strcpy(c_name, "GetTimeRemaining"); break;
+		case ISTIMER : strcpy(c_name, "IsTimer"); break;
 		case CREATEROOMDATA : strcpy(c_name, "CreateRoomData"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
 		case CANMOVEINROOM : strcpy(c_name, "CanMoveInRoom"); break;

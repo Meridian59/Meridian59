@@ -11931,7 +11931,7 @@ messages:
    {
       % This function now handles renewal of ptFactionTimer and should only be accessed
       % from FactionServiceTimer() after the $ check.
- 
+
       local iHistory;
       
       if piFaction = FACTION_NEUTRAL
@@ -11942,17 +11942,19 @@ messages:
       Send(Self,@UpdateFactionService,#adjust=FALSE);
       if piFactionServiceUpdate > FACTION_RESIGN_TIME
       {
-         Send(self,@ResignFaction);
-         
+         % Add bNoTimer = TRUE so we don't try to delete a non-existent timer.
+         Send(self,@ResignFaction,#bNoTimer=TRUE);
+
          return;
       }
 
       if piFactionServiceUpdate > FACTION_WARN_TIME
       {
          Send(self,@MsgSendUser,#message_rsc=player_faction_time);
-         %This should be unnecessary (since loyalty quests reschedule themselves at completion),
-         %     but is included nonetheless to ensure that if you've been warned, there's a quest waiting for you.
-         
+         % This should be unnecessary (since loyalty quests reschedule
+         % themselves at completion), but is included nonetheless to 
+         % ensure that if you've been warned, there's a quest waiting for you.
+
          if piFaction = FACTION_PRINCESS
          {
             Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,#index=QST_ID_PRINCESS_SERVICE,#override=TRUE);
@@ -11961,8 +11963,7 @@ messages:
             {
                Send(self,@ClearOneQuestHistory,#index=QST_ID_PRINCESS_SERVICE);
             }
-         }
-         
+
          if piFaction = FACTION_DUKE
          {
             Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,#index=QST_ID_DUKE_SERVICE,#override=TRUE);
@@ -11972,7 +11973,7 @@ messages:
                Send(self,@ClearOneQuestHistory,#index=QST_ID_DUKE_SERVICE);
             }
          }
-         
+
          if piFaction = FACTION_REBEL
          {
             Send(Send(SYS,@GetQuestEngine),@ScheduleQuest,#index=QST_ID_REBEL_SERVICE,#override=TRUE);
@@ -11982,22 +11983,22 @@ messages:
                Send(self,@ClearOneQuestHistory,#index=QST_ID_REBEL_SERVICE);
             }
          }
-      } 
+      }
 
       if renew AND Send(SYS,@GetParliament) <> $
          AND (NOT Send(Send(SYS,@GetParliament),@IsShutdown))
       {
          ptFactionTimer = CreateTimer(self,@FactionServiceRenew,FACTION_UPDATE_TIME);
       }
-      
+
       return;
    }
-   
+
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {
       local bIntrigue,wasint,i,oParl;
-      
+
       bIntrigue=0;
 
       oParl=Send(SYS,@GetParliament); 
@@ -12005,7 +12006,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
 
       if wasint AND Send(oParl,@IsShutdown)
@@ -12035,14 +12036,14 @@ messages:
       {
          return FALSE;
       }
-         
+
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          AND (Send(self,@PlayerIsHPIntrigue)
               OR Send(self,@PlayerIsAdept))
       {
          bIntrigue = PFLAG_INTRIGUING;
       }
- 
+
       if wasint <> bIntrigue
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_INTRIGUING,#value=bIntrigue);
@@ -12056,14 +12057,14 @@ messages:
                   "set:",piFactionEffect);
             piFactionEffect=0;
          }
-         
+
          piFaction = FACTION_NEUTRAL;
          Send(oParl,@UpdateEffects,#who=self);
          Send(oParl,@MovetoFaction,#who=self,#faction=FACTION_NEUTRAL);
          Send(self,@ReceiveNestedMail,#from=intrigue_ambassador,
               #dest_list=[self],#nest_list=[4,player_intrigue_mail]);
       }
-      
+
       if wasint AND NOT bIntrigue
       {
          Send(self,@MsgSendUser,#message_rsc=player_lost_intriguing);
@@ -12074,7 +12075,7 @@ messages:
             if IsClass(i,&Token)
             {
                Send(i,@NewUnused);
-               
+
                break;
             }
          }
@@ -12087,11 +12088,12 @@ messages:
    "Returns true if the joining was a success"
    {
       local factliege,oQuestEngine;
+
       if NOT Send(Self,@PlayerIsIntriguing)
       {
          return FALSE;
       }
-      
+
       if new_faction <= FACTION_NEUTRAL OR new_faction > FACTION_MAX
       {
          return FALSE;
@@ -12114,7 +12116,7 @@ messages:
          Send(oQuestEngine,@ScheduleQuest,#index = QST_ID_PRINCESS_SERVICE, #override=TRUE);
          Post(self,@DrawDefense);
       }
-      
+
       if piFaction = FACTION_DUKE
       {
          Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_DUKE_SERVICE,
@@ -12122,7 +12124,7 @@ messages:
                                      #index=QST_ID_DUKE_SERVICE),QT_MAX_NUM_ACTIVE)) );
          Send(oQuestEngine,@ScheduleQuest,#index = QST_ID_DUKE_SERVICE, #override=TRUE);
       }
-      
+
       if piFaction = FACTION_REBEL
       {
          Send(oQuestEngine,@SetQuestMaxActive,#index = QST_ID_REBEL_SERVICE,
@@ -12131,40 +12133,40 @@ messages:
          Send(oQuestEngine,@ScheduleQuest,#index = QST_ID_REBEL_SERVICE, #override=TRUE);
          Post(self,@DrawOffense);
       }
-      
+
       piFactionTimeUpdated = GetTime();
       piFactionServiceUpdate = 0;
       if piFaction <> FACTION_NEUTRAL
       {
          factliege = Send(Send(SYS,@GetParliament),@GetLiege,#faction=piFaction);
       }
-                          
+
       ptFactionTimer = $;
       Send(Self,@FactionServiceTimer);
       Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
       Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       Send(self,@MsgSendUser,#message_rsc=player_join_faction,
            #parm1=Send(factliege,@GetDef),#parm2=Send(factliege,@GetName));
-           
+
       return TRUE;
    }
 
    ResignLoyaltyFailed()
    {
       % Don't boot the player unless they've been factioned longer
-      % than 5400 seconds (90 minutes)	  
+      % than 5400 seconds (90 minutes)
 
       if piFactionServiceUpdate < 5400
-      {  
+      {
          return;
       }
 
       Send(self,@ResignFaction);
-      
+
       return;
    }
 
-   ResignFaction()
+   ResignFaction(bNoTimer=FALSE)
    {
       local numMembers, oQuestEngine, oQuest, oFlagPole;
 
@@ -12187,8 +12189,8 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=player_unfactioned);
       }
-      
-      %decrease the max number of loyalty quests by one
+
+      % Decrease the max number of loyalty quests by one
       if piFaction = FACTION_PRINCESS
       {
          oQuest = Send(oQuestEngine,@GetQuestTemplate,
@@ -12202,11 +12204,11 @@ messages:
          }
          else
          {
-            Debug("ResignFaction miscounted number of faction members!");
+            Debug("ResignFaction miscounted number of Princess faction members!");
          }
          Post(self,@DrawDefense);
       }
-      
+
       if piFaction = FACTION_DUKE
       {
          oQuest = Send(oQuestEngine,@GetQuestTemplate,
@@ -12220,10 +12222,10 @@ messages:
          }
          else
          {
-            Debug("ResignFaction miscounted number of faction members!");
+            Debug("ResignFaction miscounted number of Duke faction members!");
          }
       }
-      
+
       if piFaction = FACTION_REBEL
       {
          oQuest = Send(oQuestEngine,@GetQuestTemplate,
@@ -12236,19 +12238,20 @@ messages:
          }
          else
          {
-            Debug("ResignFaction miscounted number of faction members!");
+            Debug("ResignFaction miscounted number of Rebel faction members!");
          }
          Post(self,@DrawOffense);
       }
-      
+
       Send(self,@ResetFaction,#faction=FACTION_NEUTRAL);
 
-      if ptFactionTimer<>$
+      if NOT bNoTimer
+         AND ptFactionTimer <> $
       {
          DeleteTimer(ptFactionTimer);
-         ptFactionTimer=$;
       }
-      
+
+      ptFactionTimer=$;
       piFactionTimeUpdated = 0;
       piFactionServiceUpdate = 0;
       
@@ -12258,14 +12261,14 @@ messages:
          {
             Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
          }
-         else 
+         else
          {
             Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=(-1));
          }
          
          Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
       }
-      
+
       return;
    }
 

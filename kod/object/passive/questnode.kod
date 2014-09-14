@@ -1487,25 +1487,16 @@ messages:
 
          for oQuester in recipients
          {
-            if Send(SYS,@IsPKAllowed)
-            {
-               Send(oQuester,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
-            }
-            else
-            {
-               % In Sacred Haven, just give them a random negative stat boon
-               %  instead.
-               iPrizeBoon = Nth([QN_PRIZE_BOON_INTELLECT,
-                                 QN_PRIZE_BOON_AIM,
-                                 QN_PRIZE_BOON_STAMINA,
-                                 QN_PRIZE_BOON_AGILITY,
-                                 QN_PRIZE_BOON_MYSTICISM,
-                                 QN_PRIZE_BOON_STRENGTH ],random(1,6));
-               iAmount = 1;
-               iDays = 2;
-               Send(self,@AwardPrizeOrPenalty,#recipients=recipients,
-                     #prize=[QN_PRIZETYPE_BOON,iPrizeBoon,iAmount,iDays]);
-            }
+            iPrizeBoon = Nth([QN_PRIZE_BOON_INTELLECT,
+                              QN_PRIZE_BOON_AIM,
+                              QN_PRIZE_BOON_STAMINA,
+                              QN_PRIZE_BOON_AGILITY,
+                              QN_PRIZE_BOON_MYSTICISM,
+                              QN_PRIZE_BOON_STRENGTH ],random(1,6));
+            iAmount = -3;
+            iDays = 2;
+            Send(self,@AwardPrizeOrPenalty,#recipients=recipients,
+                  #prize=[QN_PRIZETYPE_BOON,iPrizeBoon,iAmount,iDays]);
          }
 
          return;

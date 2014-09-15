@@ -1100,7 +1100,8 @@ messages:
          for oObject in lTargets
          {
             % If we're in the arena, we can cast it.
-            if Send(Send(oObject,@GetOwner),@IsArena)
+            if IsClass(oObject,&Battler)
+               AND Send(Send(oObject,@GetOwner),@IsArena)
             {
                return TRUE;
             }

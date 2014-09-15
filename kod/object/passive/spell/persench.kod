@@ -284,10 +284,15 @@ messages:
             }
             else
             {
-               % Should be an integer ($ handled in player.kod)
+               % Should be an integer
                iDuration = Nth(i,1);
             }
          }
+      }
+
+      if iDuration = $
+      {
+         return;
       }
 
       iDuration = iDuration / 1000;

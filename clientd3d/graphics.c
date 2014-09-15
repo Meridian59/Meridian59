@@ -17,6 +17,7 @@
 #define USERAREA_HEIGHT 64
 
 extern AREA	gD3DView;
+extern Bool				gD3DRedrawAll;
 
 /* Set to True when the room should be redrawn at the first opportunity */
 static Bool need_redraw = False;
@@ -359,6 +360,9 @@ void RedrawForce(void)
    }
    lastEndFrame = endFrame;
    timeEndPeriod(1);
+
+   // Try to redraw new graphics
+   gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 
    if (config.showFPS)
    {

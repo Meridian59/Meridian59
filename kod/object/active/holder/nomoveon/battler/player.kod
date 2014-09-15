@@ -3130,27 +3130,31 @@ messages:
          {
             if IsClass(Nth(i,2),&Boon)=FALSE
             {
-               iTime = GetTimeRemaining(First(i));
-               DeleteTimer(First(i));
 
-               % If it's a negative enchantment, add a bit to the time in
-               %  order to prevent people from just "flashing" on and off
-               %  to wait out an enchantment and be relatively unhittable.
-               if Send(Nth(i,2),@IsHarmful)
+               % Convert timer to integer if we have a timer, otherwise log for debugging.
+               if IsTimer(First(i))
                {
-                  % Time is measured in milliseconds, 3000 = 3 seconds.
-                  iTime = iTime + 3000;
-               }
+                  iTime = GetTimeRemaining(First(i));
+                  DeleteTimer(First(i));
 
-               if iTime = $
-               {
-                  % Give them a 20 second timer, and log this for debugging purposes
-                  Debug("Player ",Send(self,@GetTrueName), "ended up with a $ timer for ",
-                     Send(Nth(i,2),@GetTrueName));
-                  if NOT Send(Nth(i,2),@IsHarmful)
+                  % If it's a negative enchantment, add a bit to the time in
+                  % order to prevent people from just "flashing" on and off
+                  % to wait out an enchantment and be relatively unhittable.
+                  if Send(Nth(i,2),@IsHarmful)
                   {
-                     iTime = 20000;
+                     % Time is measured in milliseconds, 3000 = 3 seconds.
+                     iTime = iTime + 3000;
                   }
+               }
+               else
+               {
+                  % We probably have an integer when we shouldn't have this here,
+                  % and we should log it for debugging. $ values handed when
+                  % the player logs in.
+                  iTime = First(i);
+                  Debug(self, " player ",Send(self,@GetTrueName),
+                     " called FreezeAllEnchantments with invalid timer for ",
+                     Send(Nth(i,2),@GetName), " timer value ",iTime);
                }
 
                SetNth(i,1,iTime);
@@ -3195,8 +3199,8 @@ messages:
             if iTime = $ OR iTime < 1
             {
                % Give them a short timer, and log this for debugging purposes
-               Debug("Trying to make a negative timer!",Send(Nth(i,2),@GetTrueName),
-                  " on player ",Send(self,@GetTrueName));
+               Debug("Trying to make an invalid timer ",iTime," for ",
+                  Send(Nth(i,2),@GetTrueName)," on player ",self,Send(self,@GetTrueName));
                if Send(Nth(i,2),@IsHarmful)
                {
                   iTime = 5000;

@@ -90,13 +90,6 @@ messages:
 
       oRoom = Send(who,@GetOwner);
 
-      if NOT Send(oRoom,@AllowGuildAttack,#what=who)
-      {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
-
-         return FALSE;
-      }
-
       if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25
       {
          Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_rsc);

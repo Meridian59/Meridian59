@@ -74,7 +74,7 @@ properties:
 
 messages:
 
-   Constructor(iTrunkColor=$, iLeavesColor=$)
+   Constructor(iTrunkColor=$,iLeavesColor=$)
    {
       local iTrunk, iLeaves, lTrunk, lLeaves;
 
@@ -107,15 +107,16 @@ messages:
                         [ATCK_WEAP_BLUDGEON, 50 ],
                         [ATCK_WEAP_SLASH, -10 ],
                         [-ATCK_SPELL_FIRE, -10 ] ];
+
       propagate;
    }
 
-   MonsterAttack(what = $)
+   MonsterAttack(what=$)
    {
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -125,7 +126,7 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
       }
-      
+
       AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,2);
 
       return;
@@ -153,23 +154,23 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
       }
-      
+
       if piAnimation = ANIM_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE, 4,200, 2,2, 2,4, 2,1);
-         
+
          return;
       }
 
       % if no body animation
       AddPacket(1,ANIMATE_NONE,2,1);
-      
+
       return;
    }
 
    SendOverlays()
    {
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
       AddPacket(1,1);
 
       AddPacket(4,vrLeaves, 1,HS_HEAD);
@@ -206,10 +207,11 @@ messages:
    MonsterCastSpell()
    {
       local oSpell, iBase;
-      
+
       iBase = Send(self,@AdjustedChanceBase,#base=piSpell_chance);
 
       if Random(1,iBase) = 1
+         AND Send(self,@SquaredDistanceTo,#what=poTarget) <> $
          AND Send(self,@SquaredDistanceTo,#what=poTarget) < SPELL_RANGE_SQUARED
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
@@ -222,7 +224,7 @@ messages:
 
          return TRUE;
       }
-      
+
       return FALSE;
    }
 

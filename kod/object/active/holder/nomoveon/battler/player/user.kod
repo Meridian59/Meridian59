@@ -747,7 +747,7 @@ messages:
 
    UserLogoff()
    {
-      local theTime, iPenaltyTime, i;
+      local theTime, iPenaltyTime, i, j;
       
       piTimeLoggedIn = Send(self,@GetTimeLoggedIn);
       Send(self,@BreakTrance);

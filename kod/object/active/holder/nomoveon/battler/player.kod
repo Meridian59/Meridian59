@@ -3188,9 +3188,12 @@ messages:
 
             iTime = First(i);
 
-            if iTime = $ OR iTime < 1
+            if iTime = $
+               OR IsTimer(iTime)
+               OR iTime < 1
             {
-               % Give them a short timer, and log this for debugging purposes
+               % Give them a short timer, and log this for debugging purposes.
+               % We include timers since we're not supposed to have one here.
                Debug("Trying to make an invalid timer ",iTime," for ",
                   Send(Nth(i,2),@GetTrueName)," on player ",self,Send(self,@GetTrueName));
                if Send(Nth(i,2),@IsHarmful)

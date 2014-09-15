@@ -3170,14 +3170,6 @@ messages:
    {
       local i, tTimer, iTime, state;
 
-      if Send(self,@IsPhasedOut)
-      {
-         % Rare case where a user can log off while phased, eg. system restart
-         % Phase will reactivate the enchantments
-
-         return;
-      }
-
       for i in plEnchantments
       {
          % Phase reactivates enchantments while it is still in plEnchantments

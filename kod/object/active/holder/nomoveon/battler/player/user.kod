@@ -806,10 +806,15 @@ messages:
       poOwner = $;
 
       % Check for phase out
-      if Send(self,@IsPhasedOut)
+      for j in plEnchantments
       {
-         Send(self,@FreezePhaseTimer);
-         Send(self,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_PHASE),#report=FALSE);
+         if IsClass(Nth(j,2),&Phase)
+         {
+            Send(self,@FreezePhaseTimer);
+            Send(self,@RemoveEnchantment,#what=Nth(j,2),#report=FALSE);
+
+            break;
+         }
       }
 
       % Have to put here so room enchantments are removed first.

@@ -322,7 +322,8 @@ messages:
       else
       {
          % Update the player's weight carried bar.
-         if IsClass(poOwner,&Player)
+         if poOwner <> $
+            AND IsClass(poOwner,&Player)
          {
             Send(poOwner,@DrawCapacity);
          }

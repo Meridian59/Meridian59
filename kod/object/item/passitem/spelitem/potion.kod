@@ -189,9 +189,7 @@ messages:
    {
       if viObject_flags = (GETTABLE_YES | APPLY_YES)
       {
-         Debug("Old potion flags are ",viObject_flags);
          viObject_flags = viObject_flags & ~APPLY_YES;
-         Debug("New potion flags are ",viObject_flags);
       }
 
       return;

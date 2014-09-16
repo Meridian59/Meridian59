@@ -20,11 +20,15 @@ resources:
    Scroll_label_name_rsc = "generic scroll"
    Scroll_icon_rsc = scr06.bgf
    Scroll_desc_rsc = \
-      "This scroll is covered with indecipherable mystical writing in a spidery hand."
+      "This scroll is covered with indecipherable mystical "
+      "writing in a spidery hand."
 
-   Scroll_Broken = "The scroll burns and chars in your hands, crumbling to ashes."
+   Scroll_Broken = \
+      "The scroll burns and chars in your hands, crumbling to ashes."
    Scroll_fails = "You finish reading the scroll, but nothing happens."
-   Scroll_Sense_Failure = "You sense that something is amiss and abort the casting in time to keep the scroll from misfiring."
+   Scroll_Sense_Failure = \
+      "You sense that something is amiss and abort the casting in time "
+      "to keep the scroll from misfiring."
 
 classvars:
 
@@ -62,21 +66,20 @@ properties:
 
 messages:
 
-   DoFailure(what = $)
-   {    
+   DoFailure(what=$)
+   {
       local iInt, iRand;
-         
-      iInt = send(poOwner,@GetIntellect);
+
+      iInt = Send(poOwner,@GetIntellect);
       iRand = Random(1,70);
       if iRand <= iInt
-      {        
-         piHits = 1;
+      {
+         piHits = piHits + 1;
          Send(poOwner,@MsgSendUser,#message_rsc=Scroll_Sense_Failure,
-              #parm1=send(self,@GetCapDef),#parm2=send(self,@GetName));
-            
+               #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
       }
       else
-      {	         
+      {
          Send(what,@MsgSendUser,#message_rsc=Scroll_fails);
       }
 
@@ -90,7 +93,7 @@ messages:
       {
          AppendTempString("\n\nThis parchment encodes ");
          AppendTempString(piHits);
-         
+
          if piHits > 1
          {
             AppendTempString(" mystic incantations");
@@ -99,7 +102,7 @@ messages:
          {
             AppendTempString(" mystic incantation");
          }
-         
+
          AppendTempString(". The runic script averages ");
          AppendTempString(piSpellPower);
          AppendTempString(" power.");
@@ -107,7 +110,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

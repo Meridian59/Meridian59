@@ -93,11 +93,11 @@ messages:
       propagate;
    }
 
-   ReqNewApply(what = $,apply_on = $)
+   ReqNewApply(what=$,apply_on=$)
    {
       if NOT Send(apply_on,@ReqEatSomething,#filling=viFilling)
       {
-	      return FALSE;
+         return FALSE;
       }
 
       if what <> apply_on
@@ -107,21 +107,21 @@ messages:
 
       propagate;
    }
-   
-   NewApplied(what = $,apply_on = $)
+
+   NewApplied(what=$,apply_on=$)
    {
       local oSpell;
 
-      if isClass(apply_on,&User) 
+      if isClass(apply_on,&User)
       {
-         send(apply_on,@WaveSendUser,#wave_rsc=Potion_gulp_sound);
+         Send(apply_on,@WaveSendUser,#wave_rsc=Potion_gulp_sound);
       }
 
       if pbBad
       {
          Send(apply_on,@MsgSendUser,#message_rsc=Potion_bad_drink);
          % do some damage!
-         if send(apply_on,@AssessDamage,#report=FALSE,#what=what,
+         if Send(apply_on,@AssessDamage,#report=FALSE,#what=what,
                  #damage=(viGoBadDamage*Random(8,12)/10),
                  #aspell=ATCK_SPELL_ACID) = $
          {
@@ -137,7 +137,7 @@ messages:
                  #duration=(POISON_DURATION*Random(8,12)/10));
          }
 
-         send(self,@Delete);
+         Send(self,@Delete);
 
          return;
       }
@@ -152,7 +152,7 @@ messages:
       return TRUE;
    }
 
-   DoFailure(what = $)
+   DoFailure(what=$)
    {
       % Overriding because the superclass gives a "broken" message.  Oops.
       return;
@@ -165,7 +165,7 @@ messages:
       {
          AppendTempString("\n\nThis potion contains ");
          AppendTempString(piHits);
-         
+
          if piHits > 1
          {
             AppendTempString(" draughts");
@@ -174,7 +174,7 @@ messages:
          {
             AppendTempString(" draught");
          }
-         
+
          AppendTempString(". The liquid within averages ");
          AppendTempString(piSpellPower);
          AppendTempString(" power.");
@@ -183,6 +183,17 @@ messages:
       propagate;
    }
 
+   SetPotionFlags()
+   "This can be used to fix potions that have their "
+   "viObject_flags set to APPLY_YES."
+   {
+      if viObject_flags = (GETTABLE_YES | APPLY_YES)
+      {
+         viObject_flags = viObject_flags & ~APPLY_YES;
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

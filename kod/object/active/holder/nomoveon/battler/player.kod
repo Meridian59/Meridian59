@@ -3170,14 +3170,6 @@ messages:
    {
       local i, tTimer, iTime, state;
 
-      if Send(self,@IsPhasedOut)
-      {
-         % Rare case where a user can log off while phased, eg. system restart
-         % Phase will reactivate the enchantments
-
-         return;
-      }
-
       for i in plEnchantments
       {
          % Phase reactivates enchantments while it is still in plEnchantments
@@ -3196,9 +3188,12 @@ messages:
 
             iTime = First(i);
 
-            if iTime = $ OR iTime < 1
+            if iTime = $
+               OR IsTimer(iTime)
+               OR iTime < 1
             {
-               % Give them a short timer, and log this for debugging purposes
+               % Give them a short timer, and log this for debugging purposes.
+               % We include timers since we're not supposed to have one here.
                Debug("Trying to make an invalid timer ",iTime," for ",
                   Send(Nth(i,2),@GetTrueName)," on player ",self,Send(self,@GetTrueName));
                if Send(Nth(i,2),@IsHarmful)

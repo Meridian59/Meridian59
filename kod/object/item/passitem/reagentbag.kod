@@ -19,7 +19,8 @@ resources:
    reagentbag_name_rsc = "reagent bag"
    reagentbag_icon_rsc = baghold.bgf
 
-   reagentbag_desc_rsc = "This lumpy bag is magical in nature, and able to hold large amounts of objects that themselves have inherent power."
+   reagentbag_desc_rsc = "This lumpy bag is magical in nature, and able to "
+   "hold large amounts of objects that themselves have inherent power."
 
    stash_in_bag = "You stash %d %s in your reagent bag."
    get_from_bag = "You get %d %s from your reagent bag."
@@ -42,7 +43,7 @@ properties:
 
 messages:
 
-   Constructor(owner = $)
+   Constructor(owner=$)
    {
       if owner <> $
          AND IsClass(owner,&Player)
@@ -71,12 +72,12 @@ messages:
       return plReagents;
    }
 
-   HolderExtractObject(data = $)
+   HolderExtractObject(data=$)
    {
       return data;
    }
 
-   IsHolding(what = $)
+   IsHolding(what=$)
    {
       local i,each_obj;
 
@@ -96,7 +97,7 @@ messages:
       local i, iSum;
 
       iSum = 0;
-      
+
       for i in plReagents
       {
          iSum = iSum + Send(i,@GetBulk);
@@ -126,12 +127,14 @@ messages:
          return FALSE;
       }
 
-      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=get_from_bag,#parm1=Send(what,@GetNumber),#parm2=Send(what,@GetName));
+      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=get_from_bag,
+            #parm1=Send(what,@GetNumber),
+            #parm2=Send(what,@GetName));
 
       return TRUE;
    }
 
-   ReqNewHold(what = $, who = $)
+   ReqNewHold(what=$,who=$)
    {
       if who <> Send(self,@GetOwner)
       {
@@ -149,11 +152,13 @@ messages:
       return;
    }
 
-   NewHold(what = $)
+   NewHold(what=$)
    {
       local i;
 
-      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=stash_in_bag,#parm1=Send(what,@GetNumber),#parm2=Send(what,@GetName));
+      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=stash_in_bag,
+            #parm1=Send(what,@GetNumber),
+            #parm2=Send(what,@GetName));
 
       if IsClass(what,&NumberItem)
       {
@@ -163,9 +168,10 @@ messages:
             {
                if GetClass(what) = GetClass(i)
                {
-                  % should only be one of these, so can quit loop if found
+                  % Should only be one of these, so can quit loop if found
                   Send(i,@AddNumber,#number=Send(what,@GetNumber));
                   Send(what,@Delete);
+
                   return;
                }
             }
@@ -174,10 +180,17 @@ messages:
 
       Send(what,@NewOwner,#what=self);
       plReagents = Cons(what,plReagents);
-      
+
+      % If our owner is a player, update the weight carried stat.
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         Post(poOwner,@DrawCapacity);
+      }
+
       return;
    }
-   
+
    ReqNewOwner(what=$)
    {
       if what <> $
@@ -190,15 +203,15 @@ messages:
       propagate;
    }
 
-   ReqLeaveHold(what = $)
+   ReqLeaveHold(what=$)
    {
       return TRUE;
    }
 
-   LeaveHold(what = $)
+   LeaveHold(what=$)
    {
       local i;
-      
+
       for i in plReagents
       {
          if i = what
@@ -209,7 +222,7 @@ messages:
 
       return;
    }
-   
+
    ChangeBulkAndWeight()
    {
       return;
@@ -250,7 +263,7 @@ messages:
       return FALSE;
    }
    
-   CanBeStoredInVault()   
+   CanBeStoredInVault()
    {
       return FALSE;
    }

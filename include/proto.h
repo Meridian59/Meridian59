@@ -398,6 +398,7 @@ enum {
 #define PF_DM            0x0000C000    // Set if object is a DM player
 #define PF_CREATOR       0x00010000    // Set if object is a creator player
 #define PF_SUPER         0x00014000    // Set if object is a "super DM"
+#define PF_MODERATOR     0x00018000    // Set if object is a "moderator"
 #define PF_EVENTCHAR     0x0001C000    // Set if object is an event character
 
 #define OF_ENEMY         0x02000000    // Enemy player

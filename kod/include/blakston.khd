@@ -113,6 +113,7 @@
    PLAYER_DM         = 0xC000
    PLAYER_CREATOR    = 0x10000
    PLAYER_SUPER      = 0x14000
+   PLAYER_MODERATOR  = 0x18000
    PLAYER_EVENT      = 0x1C000
 
    % What is the target, according to the viewer?  Used for special flagging.

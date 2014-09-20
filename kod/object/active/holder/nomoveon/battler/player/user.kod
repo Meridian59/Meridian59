@@ -8111,7 +8111,14 @@ messages:
                }
                else
                {
-                  iFlags = iFlags | PLAYER_DM;
+                  if Send(self,@IsModerator)
+                  {
+                     iFlags = iFlags | PLAYER_MODERATOR;
+                  }
+                  else
+                  {
+                     iFlags = iFlags | PLAYER_DM;
+                  }
                }
             }
             else

@@ -180,8 +180,8 @@ config_table_type config_table[] =
 
 { RIGHTS_GROUP,           F, "[Rights]",      CONFIG_GROUP, "" },
 { RIGHTS_GOROOM,          T, "GoRoom",        CONFIG_INT,   "2" },
-{ RIGHTS_GOROOMBYNUM,     T, "GoRoomByNum",   CONFIG_INT,   "1" },
-{ RIGHTS_GOPLAYER,        T, "GoPlayer",      CONFIG_INT,   "2" },
+{ RIGHTS_GOROOMBYNUM,     T, "GoRoomByNum",   CONFIG_INT,   "2" },
+{ RIGHTS_GOPLAYER,        T, "GoPlayer",      CONFIG_INT,   "1" },
 { RIGHTS_GETPLAYER,       T, "GetPlayer",     CONFIG_INT,   "1" },
 
 { CONSTANTS_GROUP,        F, "[Constants]",   CONFIG_GROUP, "" },

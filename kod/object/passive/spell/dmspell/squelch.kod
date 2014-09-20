@@ -21,8 +21,8 @@ resources:
       "Takes away (or gives back) the ability for a player to "
       "communicate via says, tells and sends, broadcasts and posts."
 
-   Squelch_msg_DM_on = "You remove %s%s's ability to %s."
-   Squelch_msg_DM_off = "You return %s%s's ability to %s."
+   Squelch_msg_DM_on = "You remove %s%q's ability to %s."
+   Squelch_msg_DM_off = "You return %s%q's ability to %s."
 
    % Types for squelch messages.
    Squelch_broadcasts_message = "broadcast"
@@ -88,7 +88,7 @@ messages:
    SomethingSaidDuringTrance(who=$,string=$)
    {
       local i, iFlag, oTarget, bSquelched, rMessageDM, rMessageTarget,
-            rSquelchType, bFound;
+            rSquelchType, bFound, sName;
 
       % First, get the type.
       if StringContain(string,Squelch_broadcast)
@@ -184,9 +184,15 @@ messages:
                   #parm1=rSquelchType);
          }
 
+         % We convert the target's name to a string,
+         % since if they're offline we won't have
+         % access to their resource ID.
+         sName = CreateString();
+         SetString(sName,Send(oTarget,@GetName));
+
          Send(who,@MsgSendUser,#message_rsc=rMessageDM,
                #parm1=Send(oTarget,@GetDef),
-               #parm2=Send(oTarget,@GetTrueName),
+               #parm2=sName,
                #parm3=rSquelchType);
       }
       else

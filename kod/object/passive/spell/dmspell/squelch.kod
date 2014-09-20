@@ -17,12 +17,40 @@ resources:
 
    Squelch_name_rsc = "squelch"
    Squelch_icon_rsc = isilence.bgf
-   Squelch_desc_rsc = "Takes away (or gives back) the ability for a player to broadcast."
+   Squelch_desc_rsc = \
+      "Takes away (or gives back) the ability for a player to "
+      "communicate via says, tells and sends, broadcasts and posts."
 
-   Squelch_msg_DM_on = "You squelch %s%s."
-   Squelch_msg_DM_off = "You unsquelch %s%s."
-   Squelch_msg_target_on = "Your ability to broadcast has been taken away."
-   Squelch_msg_target_off = "Your ability to broadcast has been restored."
+   Squelch_msg_DM_on = "You remove %s%s's ability to %s."
+   Squelch_msg_DM_off = "You return %s%s's ability to %s."
+
+   % Types for squelch messages.
+   Squelch_broadcasts_message = "broadcast"
+   Squelch_tells_message = "send tells"
+   Squelch_globes_message = "post on the Newsglobes"
+   Squelch_says_message = "speak aloud"
+   Squelch_all_message = "communicate"
+
+   Squelch_msg_target_on = \
+      "Your ability to %s has been taken away."
+   Squelch_msg_target_off = \
+      "Your ability to %s has been restored."
+   Squelch_help_rsc = \
+      "You have 20 seconds to name a type of squelch to apply and a player to "
+      "apply it to. Players don't have to be logged on. Available types are "
+      "'`rbroadcasts`n', '`rtells`n', '`rsays`n' and '`rglobes`n'. If no type "
+      "is given, all forms of communication will be blocked for that player. "
+      "For example, if you say `rglobes test`n, the player 'test' will lose "
+      "the ability to post. If the player has any communication blocked, "
+      "saying just the name will remove all current blocks on that player."
+   Squelch_bad_target = "Invalid name."
+   Squelch_no_self = "You can't use this on yourself!"
+
+   % Squelch types.
+   Squelch_broadcast = "broadcasts"
+   Squelch_tells = "tells"
+   Squelch_globes = "globes"
+   Squelch_says = "says"
 
 classvars:
 
@@ -38,39 +66,132 @@ messages:
 
    GetNumSpellTargets()
    {
-      return 1;
+      return 0;
    }
 
-   CastSpell(who = $, lTargets = $)
+   GetTranceTime(iSpellpower=0,who=$)
    {
-      local oTarget, bSquelched, rMessageDM, rMessageTarget;
+      return 20000;
+   }
 
-      oTarget = first(lTargets);
-
-      if isClass(oTarget,&Player)
+   DoPreTranceEffects(who=$)
+   {
+      if who <> $
+         AND IsClass(who,&DM)
       {
-         bSquelched = send(oTarget,@SquelchPlayer);
+         Send(who,@MsgSendUser,#message_rsc=Squelch_help_rsc);
+      }
+
+      return;
+   }
+
+   SomethingSaidDuringTrance(who=$,string=$)
+   {
+      local i, iFlag, oTarget, bSquelched, rMessageDM, rMessageTarget,
+            rSquelchType, bFound;
+
+      % First, get the type.
+      if StringContain(string,Squelch_broadcast)
+      {
+         iFlag = PFLAG2_SQUELCHED_BCAST;
+         StringSubstitute(string,Squelch_broadcast," ");
+         rSquelchType = Squelch_broadcasts_message;
+      }
+      else
+      {
+         if StringContain(string,Squelch_tells)
+         {
+            iFlag = PFLAG2_SQUELCHED_TELLS;
+            StringSubstitute(string,Squelch_tells," ");
+            rSquelchType = Squelch_tells_message;
+         }
+         else
+         {
+            if StringContain(string,Squelch_globes)
+            {
+               iFlag = PFLAG2_SQUELCHED_POSTS;
+               StringSubstitute(string,Squelch_globes," ");
+               rSquelchType = Squelch_globes_message;
+            }
+            else
+            {
+               if StringContain(string,Squelch_says)
+               {
+                  iFlag = PFLAG2_SQUELCHED_SAYS;
+                  StringSubstitute(string,Squelch_says," ");
+                  rSquelchType = Squelch_says_message;
+               }
+               else
+               {
+                  % Squelch everything.
+                  iFlag = PFLAG2_SQUELCHED_ALL;
+                  rSquelchType = Squelch_all_message;
+               }
+            }
+         }
+      }
+
+      bFound = FALSE;
+      for i in Send(SYS,@GetUsers)
+      {
+         if StringEqual(string,Send(i,@GetTrueName))
+         {
+            oTarget = i;
+            bFound = TRUE;
+
+            break;
+         }
+      }
+
+      if oTarget <> $
+         AND bFound
+      {
+         if oTarget = who
+         {
+            Send(who,@MsgSendUser,#message_rsc=Squelch_no_self);
+
+            return FALSE;
+         }
+
+         bSquelched = Send(oTarget,@SquelchPlayer,#type=iFlag);
+
+         % Log this squelch in the God Log.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(who,@GetTrueName));
 
          if bSquelched
          {
             rMessageTarget = Squelch_msg_target_on;
             rMessageDM = Squelch_msg_DM_on;
+            AppendTempString(" removed ");
          }
          else
          {
             rMessageTarget = Squelch_msg_target_off;
             rMessageDM = Squelch_msg_DM_off;
+            AppendTempString(" returned ");
          }
-         
-         send(oTarget,@MsgSendUser,#message_rsc=rMessageTarget);
-         send(who,@MsgSendUser,#message_rsc=rMessageDM,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetTrueName));
+
+         AppendTempString(Send(oTarget,@GetTrueName));
+         AppendTempString("'s ability to ");
+         AppendTempString(rSquelchType);
+         GodLog();
+
+         if Send(oTarget,@IsLoggedOn)
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=rMessageTarget,
+                  #parm1=rSquelchType);
+         }
+
+         Send(who,@MsgSendUser,#message_rsc=rMessageDM,
+               #parm1=Send(oTarget,@GetDef),
+               #parm2=Send(oTarget,@GetTrueName),
+               #parm3=rSquelchType);
       }
       else
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
-              #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetIndef),
-              #parm3=Send(oTarget,@GetName));
+         Send(who,@MsgSendUser,#message_rsc=Squelch_bad_target);
 
          return FALSE;
       }
@@ -78,6 +199,15 @@ messages:
       propagate;
    }
 
+   CastSpell()
+   {
+      propagate;
+   }
+
+   TranceBlocksSay()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

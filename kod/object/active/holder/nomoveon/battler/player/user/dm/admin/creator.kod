@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-creator is admin
+Creator is Admin
 
 constants:
 
@@ -46,193 +46,218 @@ resources:
 
 classvars:
 
-
 properties:
 
 messages:
-   
-   UserSay(string = $,type = $)
+
+   SquelchPlayer(value=$)
+   "Don't squelch creators!"
+   {
+      return FALSE;
+   }
+
+   UserSay(string=$,type=$)
    {
       if type <> SAY_DM
       {
-	 propagate;
+         propagate;
       }
 
       if StringEqual(string,"armor")
       {
-	 vrIcon = creator_icon_armor;
-	 pbMorph = True;
-	 piMove_start = 2;
-	 piMove_end = 3;
-	 piMove_delay = 200;
-	 piAttack_start = 4;
-	 piAttack_end = 5;
-	 piAttack_delay = 200;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_armor);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_armor;
+         pbMorph = True;
+         piMove_start = 2;
+         piMove_end = 3;
+         piMove_delay = 200;
+         piAttack_start = 4;
+         piAttack_end = 5;
+         piAttack_delay = 200;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_armor);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
 
       if StringEqual(string,"spider")
       {
-	 vrIcon = creator_icon_spider;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 3;
-	 piMove_delay = 150;
-	 piAttack_start = 1;
-	 piAttack_end = 3;
-	 piAttack_delay = 200;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_spider);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_spider;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 3;
+         piMove_delay = 150;
+         piAttack_start = 1;
+         piAttack_end = 3;
+         piAttack_delay = 200;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_spider);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"troll")
       {
-	 vrIcon = creator_icon_troll;
-	 pbMorph = True;
-	 piMove_start = 2;
-	 piMove_end = 3;
-	 piMove_delay = 200;
-	 piAttack_start = 4;
-	 piAttack_end = 7;
-	 piAttack_delay = 200;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_troll);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_troll;
+         pbMorph = True;
+         piMove_start = 2;
+         piMove_end = 3;
+         piMove_delay = 200;
+         piAttack_start = 4;
+         piAttack_end = 7;
+         piAttack_delay = 200;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_troll);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"ant")
       {
-	 vrIcon = creator_icon_ant;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 3;
-	 piMove_delay = 150;
-	 piAttack_start = 1;
-	 piAttack_end = 6;
-	 piAttack_delay = 150;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_ant);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_ant;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 3;
+         piMove_delay = 150;
+         piAttack_start = 1;
+         piAttack_end = 6;
+         piAttack_delay = 150;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_ant);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"red ant")
       {
-	 vrIcon = creator_icon_red_ant;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 3;
-	 piMove_delay = 150;
-	 piAttack_start = 1;
-	 piAttack_end = 6;
-	 piAttack_delay = 150;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_red_ant);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_red_ant;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 3;
+         piMove_delay = 150;
+         piAttack_start = 1;
+         piAttack_end = 6;
+         piAttack_delay = 150;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_red_ant);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"priestess")
       {
-	 vrIcon = admin_icon_priestess;
-	 pbMorph = True;
-	 piMove_start = 2;
-	 piMove_end = 3;
-	 piMove_delay = 200;
-	 piAttack_start = 4;
-	 piAttack_end = 4;
-	 piAttack_delay = 800;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_priestess);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = admin_icon_priestess;
+         pbMorph = True;
+         piMove_start = 2;
+         piMove_end = 3;
+         piMove_delay = 200;
+         piAttack_start = 4;
+         piAttack_end = 4;
+         piAttack_delay = 800;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_priestess);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"ghost")
       {
-	 vrIcon = creator_icon_ghost;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 2;
-	 piMove_delay = 200;
-	 piAttack_start = 1;
-	 piAttack_end = 2;
-	 piAttack_delay = 200;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_ghost);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_ghost;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 2;
+         piMove_delay = 200;
+         piAttack_start = 1;
+         piAttack_end = 2;
+         piAttack_delay = 200;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_ghost);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"cow")
       {
-	 vrIcon = creator_icon_cow;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 2;
-	 piMove_delay = 200;
-	 piAttack_start = 1;
-	 piAttack_end = 2;
-	 piAttack_delay = 200;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_cow);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_cow;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 2;
+         piMove_delay = 200;
+         piAttack_start = 1;
+         piAttack_end = 2;
+         piAttack_delay = 200;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_cow);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"shrub")
       {
-	 vrIcon = creator_icon_shrub;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 1;
-	 piMove_delay = 500;
-	 piAttack_start = 1;
-	 piAttack_end = 1;
-	 piAttack_delay = 500;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_shrub);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_shrub;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 1;
+         piMove_delay = 500;
+         piAttack_start = 1;
+         piAttack_end = 1;
+         piAttack_delay = 500;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_shrub);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"stool")
       {
-	 vrIcon = creator_icon_stool;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 1;
-	 piMove_delay = 500;
-	 piAttack_start = 1;
-	 piAttack_end = 1;
-	 piAttack_delay = 500;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_stool);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_stool;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 1;
+         piMove_delay = 500;
+         piAttack_start = 1;
+         piAttack_end = 1;
+         piAttack_delay = 500;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_stool);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
+
       if StringEqual(string,"tree")
       {
-	 vrIcon = creator_icon_tree;
-	 pbMorph = True;
-	 piMove_start = 1;
-	 piMove_end = 1;
-	 piMove_delay = 500000;
-	 piAttack_start = 1;
-	 piAttack_end = 1;
-	 piAttack_delay = 500000;
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 Send(self,@MsgSendUser,#message_rsc=creator_tree);
-	 Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
-	 return;
+         vrIcon = creator_icon_tree;
+         pbMorph = True;
+         piMove_start = 1;
+         piMove_end = 1;
+         piMove_delay = 500000;
+         piAttack_start = 1;
+         piAttack_end = 1;
+         piAttack_delay = 500000;
+         Send(poOwner,@SomethingChanged,#what=self);
+         Send(self,@MsgSendUser,#message_rsc=creator_tree);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+         return;
       }
 
       if StringEqual(string,"shadow")
       {
-	 Send(self,@MsgSendUser,#message_rsc=admin_black);
-	 Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
-	 Send(poOwner,@SomethingChanged,#what=self);
-	 return;
-      }
+         Send(self,@MsgSendUser,#message_rsc=admin_black);
+         Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
+         Send(poOwner,@SomethingChanged,#what=self);
 
+         return;
+      }
 
       propagate;
    }

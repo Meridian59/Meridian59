@@ -126,7 +126,7 @@ resources:
 
    player_cant_broadcast = \
       "You can't broadcast a message--you don't have enough mana."
-   player_squelched = "You are prevented from broadcasting messages for now."
+   player_squelched = "You are prevented from communicating for now."
    player_cant_send = \
       "You can't send this message--you don't have enough mana."
    player_silent_room = "Your telepathic abilities will not work here."
@@ -3472,22 +3472,40 @@ messages:
       return;
    }
 
-   SquelchPlayer(value=$)
-   "Sets if a player can broadcast or not.  Toggles condition by default."
+   %
+   % Squelch functions.
+   %
+
+   SquelchPlayer(value=$,type=PFLAG2_SQUELCHED_ALL)
+   "Sets if a player can communicate or not.  Toggles condition by default."
    {
       local bSquelched;
 
       bSquelched = value;
-      
+
       if bSquelched = $
       {
          % Toggle the current state.
-         bSquelched = NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_SQUELCHED);
+         bSquelched = NOT Send(self,@CheckPlayerFlag,#flag=type,#flagset=2);
       }
 
-      Send(self,@SetPlayerFlag,#flag=PFLAG_SQUELCHED,#value=bSquelched);
+      Send(self,@SetPlayerFlag,#flag=type,#value=bSquelched,#flagset=2);
 
       return bSquelched;
+   }
+
+   TrySay()
+   "Called when user wants to say something. Return TRUE/FALSE.  "
+   "If this returns FALSE, it will also block broadcasts and guild sends."
+   {
+      if piFlags2 & PFLAG2_SQUELCHED_SAYS
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_squelched);
+
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    TryBroadcast()
@@ -3495,8 +3513,8 @@ messages:
    "and use some mana too."
    {
       local iCost;
-      
-      if piFlags & PFLAG_SQUELCHED
+
+      if piFlags2 & PFLAG2_SQUELCHED_BCAST
       {
          Send(self,@MsgSendUser,#message_rsc=player_squelched);
 
@@ -3504,6 +3522,7 @@ messages:
       }
 
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
+         AND NOT IsClass(self,&DM)
       {
          iCost = Bound(piMax_mana/4+1,6,$);
          if piMana < iCost
@@ -3512,20 +3531,34 @@ messages:
 
             return FALSE;
          }
-
          Send(self,@LoseMana,#amount=iCost);
       }
-      
+
       return TRUE;
    }
 
-   TrySayGroup(users = $)
+   TrySayGroup(users=$)
    "Called when the user wants to say a string to a list of people.  Return True/False, "
    "and use some mana too."
    {
-      Send(self,@LoseMana,#amount=1);
+      if piFlags2 & PFLAG2_SQUELCHED_TELLS
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_squelched);
+
+         return FALSE;
+      }
+      
+      if NOT IsClass(self,&DM)
+      {
+         Send(self,@LoseMana,#amount=1);
+      }
+
       return TRUE;
    }
+
+   %
+   % End squelch functions.
+   %
 
    CheckPosition(what=$,type=$,space=0)
    {
@@ -12951,10 +12984,6 @@ messages:
       return piMonsterChasers;
    }
 
-   %
-   % Investigative tools.
-   %
-
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,parm4 = $,
                                             parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
@@ -12962,7 +12991,8 @@ messages:
 
       if type = SAY_NORMAL AND IsClass(what,&Player)
       {
-		 % si: removed (and what <> self) to allow communication between shrunken head and owner.
+         % si: removed (and what <> self) to allow communication
+         % between shrunken head and owner.
          oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {
@@ -12970,89 +13000,7 @@ messages:
          }
       }
 
-      if NOT Send(SYS,@IsSuspect,#who=self)
-      {
-         propagate;
-      }
-
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop = $
-      {
-         propagate;
-      }
-      
-      if not Send(oSnoop,@IsLoggedOn)
-      {
-         propagate;
-      }
-
-      if (type = SAY_GROUP) or (type = SAY_GROUP_ONE)
-      {
-         Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,
-              #format=player_eavesdrop_str,#string=string);
-      }
-
       propagate;
-   }
-
-   UserSayGroup(users = $,string = $,no_tell=False)
-   "<no_tell> = True means always Send the 'Sends' message, not 'tells'"
-   {
-      local oSnoop, user;
-
-      if not Send(SYS,@IsSuspect,#who=self)
-      {
-         return;
-      }
-
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop = $
-      {
-         return;
-      }
-      
-      if not Send(oSnoop,@IsLoggedOn)
-      {
-         return;
-      }
-
-      for user in users
-      {
-         Send(oSnoop,@SomeoneOverheard,#from=self,#to=user,
-              #format=player_eavesdrop_str,#string=string);
-      }
-
-      return;
-   }
-
-   UserSayGuild(users = $,string = $,no_tell=False)
-   "<no_tell> = True means always Send the 'Sends' message, not 'tells'"
-   {
-      local oSnoop, user;
-
-      if not Send(SYS,@IsSuspect,#who=self)
-      {
-         return;
-      }
-
-      oSnoop = Send(SYS,@GetInvestigator);
-      if oSnoop = $
-      {
-         return;
-      }
-      
-      if not Send(oSnoop,@IsLoggedOn)
-      {
-         return;
-      }
-
-      for user in users
-      {
-         Send(oSnoop,@SomeoneOverheard,#from=self,#to=user,
-              #format=player_eavesdrop_str,#string=string);
-      }
-
-      return;
    }
 
    SomeoneOverheard(from=$,to=$,type=$,string=$)

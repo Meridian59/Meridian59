@@ -2129,7 +2129,7 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x463D7E
+   PFLAG_MASK              = 0x423D7E
 
    PFLAG_INVISIBLE         = 0x000001
    PFLAG_MURDERER          = 0x000002
@@ -2150,8 +2150,7 @@
    PFLAG_NO_MAGIC          = 0x008000
    PFLAG_NO_MOVE           = 0x010000
    PFLAG_LOG               = 0x020000
-   % Can the player broadcast messages?
-   PFLAG_SQUELCHED         = 0x040000
+
    PFLAG_ANONYMOUS         = 0x080000
    PFLAG_FORGOTTEN         = 0x100000
    PFLAG_MORPHED           = 0x200000
@@ -2160,7 +2159,8 @@
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG2_MASK             = 0x000080
+   PFLAG2_MASK             = 0x001E80
+
    PFLAG2_HASTED           = 0x000001
    PFLAG2_DANCING          = 0x000002
    PFLAG2_DETECT_GOOD      = 0x000004
@@ -2171,6 +2171,13 @@
    % DM set only.  No chance of revenants.
    PFLAG2_NOHAUNT          = 0x000080
    PFLAG2_KOCATAN_DEATH    = 0x000100
+   % Flags for squelching players.
+   PFLAG2_SQUELCHED_TELLS  = 0x000200
+   PFLAG2_SQUELCHED_BCAST  = 0x000400
+   PFLAG2_SQUELCHED_SAYS   = 0x000800
+   PFLAG2_SQUELCHED_POSTS  = 0x001000
+   % Sum of the other squelched flags.
+   PFLAG2_SQUELCHED_ALL    = 0x001E00
 
    % Set of flags just for DM's
    % DM is completely invisible

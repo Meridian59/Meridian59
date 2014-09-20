@@ -84,7 +84,7 @@ messages:
       if pbCapableAdmin
       {
          Send(self,@MsgSendUser,#message_rsc=admin_login,
-              #parm1=Send(self,@GetTrueName));
+               #parm1=Send(self,@GetTrueName));
          Send(self,@UserLoadModule,#module=admin_admin_module);
       }
 
@@ -133,12 +133,6 @@ messages:
       propagate;
    }
 
-   SquelchPlayer(value=$)
-   "Don't squelch admins!"
-   {
-      return FALSE;
-   }
-
    UserSay(string=$,type=$)
    {
       local oWeapon, i, lObjects, oObject, rRoom, iRow, iCol, iFineRow, iFineCol;
@@ -168,7 +162,8 @@ messages:
                if NOT pbStealth
                {
                   Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
-                       #string=admin_made_itematt,#parm1=Send(self,@GetName),
+                       #string=admin_made_itematt,
+                       #parm1=Send(self,@GetName),
                        #parm2=Send(oWeapon,@GetDef),
                        #parm3=Send(oWeapon,@GetName));
                }
@@ -182,7 +177,7 @@ messages:
       }
 
       if (StringContain(string,admin_relic_command)
-          OR StringContain(string,"relic"))
+         OR StringContain(string,"relic"))
       {
          if (StringContain(string,"1") OR StringContain(string,"heirloom"))
          {
@@ -281,7 +276,7 @@ messages:
       }
 
       if StringEqual(string,admin_mortal_command)
-         or StringEqual(string,"mortal")
+         OR StringEqual(string,"mortal")
       {
          pbImmortal = FALSE;
 
@@ -322,8 +317,9 @@ messages:
 
       if StringEqual(string,"get roo")
       {
-         Send(self,@MsgSendUser,#message_rsc=admin_currently_in,#parm1=send(poOwner,@GetName),
-            #parm2=send(poOwner,@GetRoomResource));
+         Send(self,@MsgSendUser,#message_rsc=admin_currently_in,
+               #parm1=send(poOwner,@GetName),
+               #parm2=send(poOwner,@GetRoomResource));
 
          return;
       }
@@ -333,62 +329,68 @@ messages:
       if StringEqual(string,admin_create_dynamic_light_command)
          OR StringEqual(string,"place dynamic light")
       {
-         oObject = create(&DynamicLight,#bVisible=TRUE);
+         oObject = Create(&DynamicLight,#bVisible=TRUE);
 
          Send(poOwner,@NewHold,#what=oObject,
-              #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol));
-         
+               #new_row=Send(self,@GetRow),
+               #new_col=Send(self,@GetCol),
+               #fine_row=Send(self,@GetFineRow),
+               #fine_col=Send(self,@GetFineCol));
+
          return;
       }
 
       if StringContain(string,"place lamp")
       {
-         oObject = create(&Lamp);
+         oObject = Create(&Lamp);
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+         Send(poOwner,@NewHold,#what=oObject,
+               #new_row=Send(self,@GetRow),
+               #new_col=Send(self,@GetCol));
 
          return;
       }
 
       if StringContain(string,"place brazier")
       {
-         oObject = create(&Brazier);
+         oObject = Create(&Brazier);
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+         Send(poOwner,@NewHold,#what=oObject,
+               #new_row=Send(self,@GetRow),
+               #new_col=Send(self,@GetCol));
 
          return;
       }
 
       if StringContain(string,"place candelabra")
       {
-         oObject = create(&Candelabra);
+         oObject = Create(&Candelabra);
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+         Send(poOwner,@NewHold,#what=oObject,
+               #new_row=Send(self,@GetRow),
+               #new_col=Send(self,@GetCol));
 
          return;
       }
 
       if StringContain(string,"place candle")
       {
-         oObject = create(&Candle);
+         oObject = Create(&Candle);
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+         Send(poOwner,@NewHold,#what=oObject,
+               #new_row=Send(self,@GetRow),
+               #new_col=Send(self,@GetCol));
 
          return;
       }
 
       if StringContain(string,"place firepit")
       {
-         oObject = create(&Firepit);
+         oObject = Create(&Firepit);
 
-         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-              #new_col=Send(self,@GetCol));
+         Send(poOwner,@NewHold,#what=oObject,
+               #new_row=Send(self,@GetRow),
+               #new_col=Send(self,@GetCol));
 
          return;
       }

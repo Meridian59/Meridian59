@@ -18,6 +18,8 @@ resources:
 
    dmrescue_name_rsc = "deliverance"
    dmrescue_icon_rsc = light.bgf
+   dmrescue_only_oog = \
+       "You may only deliver players from Out of Grace."
 
 classvars:
 
@@ -37,13 +39,27 @@ messages:
 
    CastSpell(who=$,lTargets=$)
    {
-      local i, j, oRoom, sHonor;
+      local i, j, oRoom, oHell, sHonor;
+
+      % Unless the player is a 'SeniorGuide' or above, all they can
+      % do with this spell is send players home from OoG.
+      oHell = Send(SYS,@FindRoomByNum,#num=RID_OUTOFGRACE);
+
+      if NOT Send(who,@IsActor)
+      {
+         if NOT (Send(who,@GetOwner) = oHell)
+         {
+            Send(who,@MsgSendUser,#message_rsc=dmrescue_only_oog);
+
+            return;
+         }
+      }
 
       for j in lTargets
       {
          i = j;
 
-         if isClass(i,&LogoffGhost)
+         if IsClass(i,&LogoffGhost)
          {
             i = Send(i,@GetGhostedPlayer);
             Send(i,@AdminGoToSafety);
@@ -62,7 +78,7 @@ messages:
             continue;
          }
 
-         if isClass(i,&Player)
+         if IsClass(i,&Player)
          {
             Send(i,@AdminGoToSafety);
 
@@ -86,5 +102,4 @@ messages:
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

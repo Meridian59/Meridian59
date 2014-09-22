@@ -351,16 +351,24 @@ messages:
    "Modified 5/21 by Damion.  If immortal flagged, the player's weight and "
    "encumbrance limits are ignored."
    {
-      if pbImmortal
-      {
-         return Send(what,@ReqNewOwner,#what=self);
-      }
-
-      if NOT pbAdvancement AND FindListElem([&Token],GetClass(what))
+      if NOT pbAdvancement
+         AND IsClass(what,&Token)
       {
          Send(self,@DontInterfere);
 
+         % Log this attempt.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(self,@GetTrueName));
+         AppendTempString(" tried to pick up a token");
+         GodLog();
+
          return FALSE;
+      }
+
+      if pbImmortal
+      {
+         return Send(what,@ReqNewOwner,#what=self);
       }
 
       propagate;
@@ -480,6 +488,26 @@ messages:
       return (piDMFlags & DMFLAG_HIDDEN);
    }
 
+   PlayerCanLearn()
+   {
+      % Stop lower level DMs from buying skills/spells. Note that this will
+      % log a separate attempt for each spell or skill the NPC sells.
+      if NOT pbAdvancement
+      {
+         % Log this attempt.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(self,@GetTrueName));
+         AppendTempString(" tried to learn a spell or skill");
+         GodLog();
+         Send(self,@DontInterfere);
+
+         return PLAYER_LEARN_ERROR;
+      }
+
+      propagate;
+   }
+
    CheckAdvancementPoints()
    {
       if NOT pbAdvancement
@@ -516,7 +544,15 @@ messages:
       if NOT pbAdvancement AND what <> $ AND isClass(what,&Monster)
       {
          Send(self,@DontInterfere);
-         
+
+         % Log this attempt.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(self,@GetTrueName));
+         AppendTempString(" tried to offer to ");
+         AppendTempString(Send(what,@GetTrueName));
+         GodLog();
+
          return;
       }
 
@@ -576,6 +612,16 @@ messages:
       if NOT pbAdvancement
       {
          Send(self,@DontInterfere);
+         if what <> $
+         {
+            % Log this attempt.
+            ClearTempString();
+            AppendTempString("DM ");
+            AppendTempString(Send(self,@GetTrueName));
+            AppendTempString(" tried to attack ");
+            AppendTempString(Send(what,@GetTrueName));
+            GodLog();
+         }
 
          return FALSE;
       }

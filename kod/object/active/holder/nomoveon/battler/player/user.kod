@@ -1773,25 +1773,33 @@ messages:
 
       if iClient_cmd = UC_CLAIM_SHIELD
       {
+         % Check if they have a guild.
+         if poGuild = $
+         {
+            return;
+         }
+
          % Find the guild from the color info.
          oGuild = Send(SYS,@FindGuildByShield,
-                       #color1=Nth(client_msg,2),
-                       #color2=Nth(client_msg,3),
-                       #shape=Nth(client_msg,4));
-                       
-         if oGuild = $ and Nth(client_msg,5) <> FALSE
+                        #color1=Nth(client_msg,2),
+                        #color2=Nth(client_msg,3),
+                        #shape=Nth(client_msg,4));
+
+         if oGuild = $
+            AND Nth(client_msg,5) <> FALSE
+            AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
          {
             Send(poGuild,@SetGuildColors,
-                 #color1=Nth(client_msg,2),
-                 #color2=Nth(client_msg,3),
-                 #shape=Nth(client_msg,4));
+                  #color1=Nth(client_msg,2),
+                  #color2=Nth(client_msg,3),
+                  #shape=Nth(client_msg,4));
          }
-         
+
          Send(self,@UserGuildSendShieldInfo,#oguild=oGuild,
-              #color1=Nth(client_msg,2),
-              #color2=Nth(client_msg,3),
-              #shape=Nth(client_msg,4));
-              
+               #color1=Nth(client_msg,2),
+               #color2=Nth(client_msg,3),
+               #shape=Nth(client_msg,4));
+
          return;
       }
 
@@ -2058,28 +2066,38 @@ messages:
    {
       local lSamples,i;
 
-      if pbLogged_on
+      % Only do this if the user is guilded.
+      if poGuild <> $
       {
-         AddPacket(1,BP_USERCOMMAND,1,UC_GUILD_SHIELDS);
-
-         lSamples = Send(SYS,@GetGuildShieldSamples);
-         AddPacket(2,length(lSamples));
-         for i in lSamples
+         if pbLogged_on
          {
-            AddPacket(4,i);
-         }
+            AddPacket(1,BP_USERCOMMAND,1,UC_GUILD_SHIELDS);
 
-         SendPacket(poSession);
+            lSamples = Send(SYS,@GetGuildShieldSamples);
+            AddPacket(2,length(lSamples));
+            for i in lSamples
+            {
+               AddPacket(4,i);
+            }
+
+            SendPacket(poSession);
+         }
       }
 
       return;
    }
 
-   UserGuildSendShieldInfo(oguild = $, color1 = $, color2 = $, shape = $)
+   UserGuildSendShieldInfo(oguild=$,color1=$,color2=$,shape=$)
    {
       local owner;
 
       owner = oguild;
+
+      % If the user isn't guilded, don't show them this info.
+      if poGuild = $
+      {
+         return;
+      }
 
       if (oGuild = $) or (not IsClass(oGuild,&Guild))
       {
@@ -2105,11 +2123,11 @@ messages:
          else
          {
             % Unclaimed guild Sends 0 for guild id but MY guild's name to
-            %  fulfil protocol
+            % fulfil protocol
             AddPacket(4,0);
             AddPacket(6,Send(oGuild,@GetName));
          }
-         
+
          AddPacket(1,color1,1,color2,1,shape);
 
          SendPacket(poSession);
@@ -4420,6 +4438,16 @@ messages:
 
       if pbLogged_on
       {
+         if what <> $
+            AND NOT IsObject(what)
+         {
+            % Log a debug message for this
+            Debug("User ",self," tried to look at non-object ",
+                  what);
+
+            return;
+         }
+
          if IsClass(what,&ReagentBag)
             AND Send(what,@GetReagentBagContents) <> $
          {

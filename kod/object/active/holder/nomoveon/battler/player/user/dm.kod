@@ -131,19 +131,32 @@ resources:
    dm_nuttie = "%s casts off the unbalanced influence of the gods."
    dm_baddie = "%s calls upon the shadows for dark energies."
 
-   dm_guide_help = "You have very limited powers. \n"
-            "DM APPEAL ON/OFF turns on and off appeals.\n"
-            "DM GOOD, DM NEUTRAL, DM EVIL to shift your Karma appropriately.\n"
-            "DM TOTEM to get the totem.\n"
-            "DM RELIC <number/name> to get a special totem.\n"
-            "DM RUMBLE to make the room shake.\n"
-   dm_help = "DM APPEAL ON/OFF, DM STEALTH ON/OFF, "
-             "DM CLEAR ABILITIES, DM CLEAR INVENTORY, DM PK ENABLE, DM PK DISABLE, DM PK LOCK, DM PK UNLOCK, "             
-             "DM GET SPELLS, DM GET SKILLS, DM GET MONEY, DM BOOST STATS, DM GOOD, DM NEUTRAL, DM EVIL, "
-             "DM TOTEM, DM RELIC <number/name>, DM MONSTER <monster name>, DM ITEM <item name>, "
-             "DM GET <reagents/ food/ armor/ gems/ rings/ weapons/ necklaces/ potions/ sundries>"
+   dm_moderator_help = \
+      "You have very limited powers. \n"
+      "DM APPEAL ON/OFF turns on and off appeals.\n"
+      "DM GOOD, DM NEUTRAL, DM EVIL to shift your Karma appropriately.\n"
+      "DM TOTEM to get the totem.\n"
+      "Cast Squelch for information on how to Squelch players.\n"
+
+   dm_guide_help = \
+      "You have limited powers. \n"
+      "DM APPEAL ON/OFF turns on and off appeals.\n"
+      "DM GOOD, DM NEUTRAL, DM EVIL to shift your Karma appropriately.\n"
+      "DM TOTEM to get the totem.\n"
+      "DM CLEAR INVENTORY will delete all your items.\n"
+      "DM MONSTER <monster name> can be used to create monsters.\n"
+      "Use `rgo #`n to teleport to a room number or room RID.\n"
+      "Cast Squelch for information on how to Squelch players.\n"
+
+   dm_help = \
+      "DM APPEAL ON/OFF, DM STEALTH ON/OFF, "
+      "DM CLEAR ABILITIES, DM CLEAR INVENTORY, DM PK ENABLE, DM PK DISABLE, DM PK LOCK, DM PK UNLOCK, "
+      "DM GET SPELLS, DM GET SKILLS, DM GET MONEY, DM BOOST STATS, DM GOOD, DM NEUTRAL, DM EVIL, "
+      "DM TOTEM, DM RELIC <number/name>, DM MONSTER <monster name>, DM ITEM <item name>, "
+      "DM GET <reagents/ food/ armor/ gems/ rings/ weapons/ necklaces/ potions/ sundries>"
    dm_dontinterfere = "~B~gYou should not try to interfere with the game."
 
+   dm_moderator = "An official Moderator of the land."
    dm_guide = "An official Guide of the land."
    dm_sr_guide = "An official Senior Guide of the land."
    dm_bard = "An official Bard of the land."
@@ -248,11 +261,11 @@ messages:
 
       propagate;
    }
-   
+
    ResetPlayerFlagList()
    {
       local i;
-      
+
       Send(self,@ResetPlayerDrawfx,#Sendsomethingchanged=FALSE);
       piFlags = (piFlags & PFLAG_MASK);
       piFlags2 = (piFlags2 & PFLAG2_MASK);
@@ -274,7 +287,7 @@ messages:
       }
 
       if poOwner <> $
-      {      
+      {
          for i in Send(poOwner,@GetEnchantmentList)
          {
             Send(nth(i,2),@SetSpellPlayerFlag,#who=self,#state=nth(i,3));
@@ -293,14 +306,14 @@ messages:
 
       if piDMFlags & DMFLAG_ANONYMOUS
       {
-         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);            
+         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
       }
-      
+
       if poOwner <> $
       {
          Send(poOwner,@SomethingChanged,#what=self);
       }
-      
+
       return;
    }
 
@@ -334,26 +347,34 @@ messages:
       propagate;
    }
 
-   ReqNewHold(what = $)
+   ReqNewHold(what=$)
    "Modified 5/21 by Damion.  If immortal flagged, the player's weight and "
    "encumbrance limits are ignored."
    {
+      if NOT pbAdvancement
+         AND IsClass(what,&Token)
+      {
+         Send(self,@DontInterfere);
+
+         % Log this attempt.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(self,@GetTrueName));
+         AppendTempString(" tried to pick up a token");
+         GodLog();
+
+         return FALSE;
+      }
+
       if pbImmortal
       {
          return Send(what,@ReqNewOwner,#what=self);
       }
 
-      if NOT pbAdvancement AND FindListElem([&Token],GetClass(what))
-      {
-         Send(self,@DontInterfere);
-
-         return FALSE;
-      }
-
       propagate;
    }
 
-   AssessDamage(what = $,damage = $,stroke_obj=$)
+   AssessDamage(what=$,damage=$,stroke_obj=$)
    {
       if pbImmortal
       {
@@ -368,17 +389,17 @@ messages:
       propagate;
    }
 
-   Killed(what = $)
+   Killed(what=$)
    {
       if pbImmortal
       {
          return;
       }
-      
+
       propagate;
    }
 
-   SetLabelMail(bValue = TRUE)
+   SetLabelMail(bValue=TRUE)
    {
       if bValue
       {
@@ -395,7 +416,7 @@ messages:
    }
 
    % Overridden from User, so that we can flag the "from" field with a server tag.
-   ReceiveMail(from = $,dest_list = $,perm_string = $)
+   ReceiveMail(from=$,dest_list=$,perm_string=$)
    "<from> is a resource."
    {
       local sFromString;
@@ -404,7 +425,7 @@ messages:
       {
          propagate;
       }
-   
+
       ClearTempString();
 
       AppendTempString(from);
@@ -418,22 +439,10 @@ messages:
       SetString(sFromString,GetTempString());
 
       plNew_mail = Cons([sFromString,GetTime(),dest_list,[perm_string]],plNew_mail);
-      
+
       Send(self,@MsgSendUser,#message_rsc=user_new_mail,#parm1=from);
 
       return;
-   }
-
-   TryBroadcast()
-   "Allow DMs to broadcast whenever they want for no cost."
-   {
-      return TRUE;
-   }
-   
-   TrySayGroup(users = $)
-   "Allow DMs to Send whenever they want for no cost."
-   {
-      return TRUE;
    }
 
    GetRankRsc()
@@ -462,12 +471,12 @@ messages:
       {
          return FALSE;
       }
-      
+
       if piDMFlags & DMFLAG_INVISIBLE
       {
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -479,6 +488,25 @@ messages:
       return (piDMFlags & DMFLAG_HIDDEN);
    }
 
+   PlayerCanLearn()
+   {
+      % Stop lower level DMs from buying skills/spells. Note that this will
+      % log a separate attempt for each spell or skill the NPC sells.
+      if NOT pbAdvancement
+      {
+         % Log this attempt.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(self,@GetTrueName));
+         AppendTempString(" tried to learn a spell or skill");
+         GodLog();
+         Send(self,@DontInterfere);
+
+         return PLAYER_LEARN_ERROR;
+      }
+
+      propagate;
+   }
 
    CheckAdvancementPoints()
    {
@@ -486,7 +514,7 @@ messages:
       {
          return TRUE;
       }
-      
+
       propagate;
    }
 
@@ -496,7 +524,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -511,12 +539,20 @@ messages:
       return;
    }
 
-   UserOffer(what = $)
+   UserOffer(what=$)
    {
       if NOT pbAdvancement AND what <> $ AND isClass(what,&Monster)
       {
          Send(self,@DontInterfere);
-         
+
+         % Log this attempt.
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(self,@GetTrueName));
+         AppendTempString(" tried to offer to ");
+         AppendTempString(Send(what,@GetTrueName));
+         GodLog();
+
          return;
       }
 
@@ -576,6 +612,16 @@ messages:
       if NOT pbAdvancement
       {
          Send(self,@DontInterfere);
+         if what <> $
+         {
+            % Log this attempt.
+            ClearTempString();
+            AppendTempString("DM ");
+            AppendTempString(Send(self,@GetTrueName));
+            AppendTempString(" tried to attack ");
+            AppendTempString(Send(what,@GetTrueName));
+            GodLog();
+         }
 
          return FALSE;
       }
@@ -583,7 +629,7 @@ messages:
       propagate;
    }
 
-   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
+   AllowPlayerAttack(victim=$,stroke_obj=$,use_weapon=$,report=TRUE)
    {
       % Don't allow normal DMs to attack.  Ignore restriction for green names.
       if NOT pbAdvancement
@@ -603,11 +649,21 @@ messages:
       {
          return TRUE;
       }
-      
+
       propagate;
    }
 
-   UserSay(string = $,type = $)
+   IsModerator()
+   {
+      if prRank = dm_moderator
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   UserSay(string=$,type=$)
    {
       local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject, iGiven;
 
@@ -615,33 +671,45 @@ messages:
       {
          propagate;
       }
+
       % These checks seem to do double-duty, but this is so other countries can 
-      %  localize the words yet English speaking admins can still use the system.
+      % localize the words yet English speaking admins can still use the system.
 
       % Log the DM command in god.txt, and print it to the debug log.
       GodLog(string);
 
       if StringEqual(string,dm_help_command)
       {
-         if pbSay_commands
+         if prRank = dm_moderator
          {
-            Send(self,@MsgSendUser,#message_rsc=dm_help);
-            
+            Send(self,@MsgSendUser,#message_rsc=dm_moderator_help);
+         
             return;
          }
-         else
+         
+         if prRank = dm_guide
          {
             Send(self,@MsgSendUser,#message_rsc=dm_guide_help);
-            
+
             return;
          }
+
+         % If they're a higher rank, give them the whole help guide.
+         Send(self,@MsgSendUser,#message_rsc=dm_help);
+
+         return;
       }
-      
+
+      %
+      % Appeal commands; all DMs can use.
+      %
+
       if StringEqual(string,dm_appeal_off_command)
          OR StringEqual(string,"appeal off")
       {
          pbAppeal = pbAppeal & ~1;
          Send(self,@MsgSendUser,#message_rsc=dm_appeal_off);
+
          return;
       }
 
@@ -650,6 +718,7 @@ messages:
       {
          pbAppeal = pbAppeal | 1;
          Send(self,@MsgSendUser,#message_rsc=dm_appeal_on);
+
          return;
       }
 
@@ -658,38 +727,57 @@ messages:
       {
          pbAppeal = pbAppeal & ~2;
          Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_off);
+
          return;
       }
-      
+
       if StringEqual(string,dm_guest_appeal_on_command)
          OR StringEqual(string,"guest appeal on")
       {
          pbAppeal = pbAppeal | 2;
          Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_on);
+
          return;
       }
+
+      %
+      % Stealth command, hides the message when a DM creates a monster, item
+      % or changes their karma. All DMs can use.
+      %
 
       if StringEqual(string,dm_stealth_on_command)
          OR StringEqual(string,"stealth on")
       {
          pbStealth = TRUE;
          Send(self,@MsgSendUser,#message_rsc=dm_stealth_on);
+
          return;
       }
+
       if StringEqual(string,dm_stealth_off_command)
          OR StringEqual(string,"stealth off")
       {
          pbStealth = FALSE;
          Send(self,@MsgSendUser,#message_rsc=dm_stealth_off);
+
          return;
       }
+
+      %
+      % Summon totem; all DMs can use.
+      %
 
       if StringContain(string,dm_gettotem)
          OR StringEqual(string,"totem")
       {
          Send(self,@NewHold,#what=Send(SYS,@GetTotem));
+
          return;
       }
+
+      %
+      % DM disguise commands; only Admins can use for now.
+      %
 
       if pbActor
       {
@@ -750,118 +838,127 @@ messages:
             Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
             piDMFlags = piDMFlags | DMFLAG_INVISIBLE;
             Send(self,@ResetPlayerFlagList); 
- 
+
             return;
          }
          
          if StringContain(string,dm_disguise_command)
             OR StringContain(string,"disguise")
          {
-           StringSubstitute(string,dm_disguise_command," ");
-           StringSubstitute(string,"disguise"," ");
-         
-           % Checks art archive, if no matches goes to NPCs.
-           temp = Send(Send(SYS,@GetArtArchive),@FindArchiveByString,#string=string);
+            StringSubstitute(string,dm_disguise_command," ");
+            StringSubstitute(string,"disguise"," ");
 
-           % Nothing in art archive?  Check for NPCs.
-           if temp = $
-           {
+            % Checks art archive, if no matches goes to NPCs.
+            temp = Send(Send(SYS,@GetArtArchive),
+                        @FindArchiveByString,#string=string);
 
-              % Checks NPC list, if no matches, goes to monsters.
-              oObject = Send(SYS,@FindNPCByString,#string=string);
-              if oObject <> $
-              {
-                 temp = Send(oObject,@GetIcon);
-              }
-                                           
-              if oObject = $
-              {
-                 % Checks Monster list, if no matches, return.
-                 oObject = Send(SYS,@FindMonsterByString,#string=string);
-                 if oObject <> $               
-                 {
-                    temp = Send(oObject,@GetIcon);
-                 }    
-        
-                 if oObject = $
-                 {
-                    return;
-                 }            
-              } 
-           }
+            % Nothing in art archive?  Check for NPCs.
+            if temp = $
+            {
 
-           vrIcon = temp;
-           pbMorph = TRUE;
-           piMove_start = 1;
-           piMove_end = 1;
-           piMove_delay = 500;
-           piAttack_start = 1;
-           piAttack_end = 1;
-           piAttack_delay = 500;
-           Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
-           piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
-           piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
-           Send(self,@ResetPlayerFlagList);
+               % Checks NPC list, if no matches, goes to monsters.
+               oObject = Send(SYS,@FindNPCByString,#string=string);
+               if oObject <> $
+               {
+                  temp = Send(oObject,@GetIcon);
+               }
 
-           return;
-        }
+               if oObject = $
+               {
+                  % Checks Monster list, if no matches, return.
+                  oObject = Send(SYS,@FindMonsterByString,#string=string);
+                  if oObject <> $
+                  {
+                     temp = Send(oObject,@GetIcon);
+                  }
 
-        if StringEqual(string,dm_plain_command) OR StringEqual(string,dm_human_command)
-           OR StringEqual(string,"plain") OR StringEqual(string,"human")
-        {
-           Send(self,@ResetPlayerIcon,#alldone=FALSE);
-           pbMorph = FALSE;
+                  if oObject = $
+                  {
+                     return;
+                  }
+               }
+            }
 
-           % For characters we want to have a non-standard icon
-           if prStandardIcon <> $
-           {
-              vrIcon = prStandardIcon;
-              pbMorph = TRUE;
-           }
+            vrIcon = temp;
+            pbMorph = TRUE;
+            piMove_start = 1;
+            piMove_end = 1;
+            piMove_delay = 500;
+            piAttack_start = 1;
+            piAttack_end = 1;
+            piAttack_delay = 500;
+            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+            piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
+            piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
+            Send(self,@ResetPlayerFlagList);
 
-           Send(self,@MsgSendUser,#message_rsc=dm_plain);
-           Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
-           Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
-           Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+            return;
+         }
 
-           piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
-           piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
+         if StringEqual(string,dm_plain_command)
+            OR StringEqual(string,dm_human_command)
+            OR StringEqual(string,"plain")
+            OR StringEqual(string,"human")
+         {
+            Send(self,@ResetPlayerIcon,#alldone=FALSE);
+            pbMorph = FALSE;
 
-           Send(self,@ResetPlayerFlagList); 
+            % For characters we want to have a non-standard icon
+            if prStandardIcon <> $
+            {
+               vrIcon = prStandardIcon;
+               pbMorph = TRUE;
+            }
 
-           lObjects = Send(poOwner,@GetHolderActive);
+            Send(self,@MsgSendUser,#message_rsc=dm_plain);
+            Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
+            Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
+            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
 
-           for i in lObjects
-           {
-              oObject = Send(poOwner,@HolderExtractObject,#data=i);
+            piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
+            piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
 
-              if IsClass(oObject,&User)
-              {
-                 Send(oObject,@ToCliRoomContents);
-              }
-           }
+            Send(self,@ResetPlayerFlagList); 
 
-           return;
-        }
-         
-         if (StringEqual(string,dm_rumble_command) OR StringEqual(string,"rumble"))
+            lObjects = Send(poOwner,@GetHolderActive);
+
+            for i in lObjects
+            {
+               oObject = Send(poOwner,@HolderExtractObject,#data=i);
+
+               if IsClass(oObject,&User)
+               {
+                  Send(oObject,@ToCliRoomContents);
+               }
+            }
+
+            return;
+         }
+
+         if (StringEqual(string,dm_rumble_command)
+            OR StringEqual(string,"rumble"))
          {
             Send(poOwner,@Rumble);
 
             return;
          }
-      
-         if (StringContain(string,dm_event_sign_command)
-             OR StringContain(string,"event sign"))
-         {
-            oObject = create(&EventSign);
 
-            Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
-                 #new_col=Send(self,@GetCol));
+         if (StringContain(string,dm_event_sign_command)
+            OR StringContain(string,"event sign"))
+         {
+            oObject = Create(&EventSign);
+
+            Send(poOwner,@NewHold,#what=oObject,
+                  #new_row=Send(self,@GetRow),
+                  #new_col=Send(self,@GetCol));
 
             return;
          }
       }
+
+      %
+      % Karma change commands; all DMs can use.
+      %
 
       if StringEqual(string,dm_good_command)
          OR StringEqual(string,"good")
@@ -908,13 +1005,17 @@ messages:
          return;
       }
 
+      %
+      % These make the DM/Admin into past designers; only Admins can use.
+      %
+
       if StringEqual(string,"Zandramas, in your always infinite wisdom, please make me Q.")
       {
          if pbImmortalSave > 1
          {
             Send(self,@MakeQ);
          }
-         
+
          return;
       }
 
@@ -925,8 +1026,13 @@ messages:
          return;
       }
 
+      %
       % These commands only work for people with say commands.  But, the contain the word
-      %  "monster", so they gotta come before the monster generating ones.
+      % "monster", so they gotta come before the monster generating ones.
+      %
+      % Guides and above can use these.
+      %
+
       if pbSay_commands
       {
          if StringEqual(string,dm_call_monster_command)
@@ -938,7 +1044,7 @@ messages:
                if i
                {
                   Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
-                       #string=dm_call,#parm1=vrName);
+                        #string=dm_call,#parm1=vrName);
                }
             }
 
@@ -947,7 +1053,8 @@ messages:
 
          if StringEqual(string,"testMonsterGenPoints")
          {
-            if poOwner = $ OR NOT isClass(poOwner,&MonsterRoom)
+            if poOwner = $
+               OR NOT IsClass(poOwner,&MonsterRoom)
             {
                Send(self,@MsgSendUser,#message_rsc=activateallgenpoints_err);
 
@@ -960,17 +1067,27 @@ messages:
          }
       }
 
+      %
+      % Check monster budget; all DMs can use this.
+      %
+
       if StringContain(string,dm_monster_budget_command)
          OR StringContain(string,"monster budget")
       {
          Send(self,@ReportMonsterBudget);
-         
+
          return;
       }
 
+      %
+      % Monster making commands. Guides and above can use.
+      % If they aren't authorised to use say commands, their
+      % monster budget is checked first, otherwise they can make it.
+      %
+
       if (StringContain(string,dm_makemonster) OR StringContain(string,"monster"))
          AND NOT (StringContain(string,dm_monster_authorize_command)
-                  OR StringContain(string,"monster authorize")) 
+            OR StringContain(string,"monster authorize"))
       {
          bFound = FALSE;
          lTemplate = Send(SYS,@GetMonsterTemplates);
@@ -980,14 +1097,14 @@ messages:
             {
                bFound = TRUE;
                bAllowed = FALSE;
-               
+
                if pbSay_commands
                {
                   bAllowed = TRUE;
                }
                else
                {
-                  % check if they're budgeted for a monster of this type
+                  % Check if they're budgeted for a monster of this type
                   if pbActor and FindListElem(plMonsterBudgetTypes,GetClass(i))
                   {
                      if piMonsterBudgetTotalLevels >= Send(i,@GetLevel)
@@ -1004,52 +1121,62 @@ messages:
                      else
                      {
                         Send(self,@MsgSendUser,#message_rsc=dm_budget_none_remain,
-                             #parm1=Send(i,@GetName));
+                              #parm1=Send(i,@GetName));
                      }
                   }
                   else
                   {
                      Send(self,@MsgSendUser,#message_rsc=dm_budget_not_authorized,
-                          #parm1=Send(i,@GetName));
+                           #parm1=Send(i,@GetName));
                   }
                }
-               
+
                if bAllowed
                {
                   % Create one of these monsters.
                   oObject = Create(GetClass(i));
 
                   % Set it so that created monsters aren't disposed of if there are
-                  %  no players in the room.
+                  % no players in the room.
                   % Also makes the monster not affect Karma when killed.
                   Send(oObject,@SetDontDispose);
-                  
+
                   Send(poOwner,@NewHold,#what=oObject,#new_row=piRow,#new_col=piCol);
-                  
+
                   if NOT pbStealth
                   {
                      Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
-                          #string=dm_void,#parm1=vrName,#parm2=Send(i,@GetIndef),
-                          #parm3=Send(i,@GetName));
+                           #string=dm_void,#parm1=vrName,
+                           #parm2=Send(i,@GetIndef),
+                           #parm3=Send(i,@GetName));
                   }
-                  
+
                   return;
                }
             }
          }
-         
+
          if NOT bFound
          {
             Send(self,@MsgSendUser,#message_rsc=dm_no_monster);
-            
+
             return;
          }
       }
+
+      %
+      % Anything past here requires the DM can use 'say commands'.
+      %
 
       if NOT pbSay_commands
       {
          propagate;
       }
+
+      %
+      % Some code for checking/authorizing monster budgets.
+      % Admins only for now, due to pbMonsterMaker check.
+      %
 
       if pbMonsterMaker
          AND (StringContain(string,dm_monster_authorize_command)
@@ -1063,7 +1190,7 @@ messages:
 
          % This means: Did we just want to find and report the bard's holdings?
          bFound = FALSE;
-         
+
          for i in Send(SYS,@GetMonsterTemplates)
          {
             if StringContain(temp,Send(i,@GetName))
@@ -1073,14 +1200,15 @@ messages:
                oBard = Send(SYS,@FindUserByString,#string=temp);
                if oBard <> $ AND IsClass(oBard,&DM)
                {
-                  Send(oBard,@AddMonsterBudget,#cMonster=GetClass(i),#giver=self);
+                  Send(oBard,@AddMonsterBudget,
+                        #cMonster=GetClass(i),#giver=self);
 
                   return;
                }
             }
          }
-         
-         % if we got here, no valid monster name given
+
+         % If we got here, no valid monster name given
          if StringContain(temp,dm_none)
          {
             StringSubstitute(temp,dm_none,"");
@@ -1094,15 +1222,15 @@ messages:
          else
          {
             % We just found the bard to list their budget
-            bFound = TRUE;   
+            bFound = TRUE;
             oBard = Send(SYS,@FindUserByString,#string=temp);
          }
          
-         % whether we wiped it or not, report the budget status
+         % Whether we wiped it or not, report the budget status
          if oBard <> $ AND isClass(oBard,&DM)
          {
             Send(oBard,@ReportMonsterBudget,#who=self);
-            
+
             % Don't spam the poor bard if we want to check their budget.
             if NOT bFound 
             {
@@ -1117,6 +1245,10 @@ messages:
          return;
       }
 
+      %
+      % Clear abilities; all Guides and above can use.
+      %
+
       if StringEqual(string,dm_clear_abilities_command)
          OR StringEqual(string,"clear abilities")
       {
@@ -1124,17 +1256,21 @@ messages:
          {
             Send(self,@RemoveSpell,#isDM=TRUE,#num=Send(self,@DecodeSpellNum,#compound=i));
          }
-         
+
          for i in Send(self,@GetSkillList)
          {
             Send(self,@RemoveSkill,#num=Send(self,@DecodeSkillNum,#compound=i));
          }
-         
+
          Send(self,@InvalidateData);
          Send(self,@RefigureSchoolsLists);
 
          return;
       }
+
+      %
+      % Clear inventory; all Guides and above can use.
+      %
 
       if StringEqual(string,dm_clear_inventory_command)
          OR StringEqual(string,"clear inventory")
@@ -1158,311 +1294,363 @@ messages:
          return;
       }
 
-      if StringEqual(string,dm_get_spells_command)
-         OR StringEqual(string,"get spells")
+      %
+      % All the following are Admins only for now, using pbActor boolean.
+      %
+
+      if pbActor
       {
-         for i in Send(SYS,@GetSpells)
+         %
+         % Get spells and skills.
+         %
+
+         if StringEqual(string,dm_get_spells_command)
+            OR StringEqual(string,"get spells")
          {
-            % Don't give any spells that aren't player spells (diseases, etc).
-            if IsClass(i,&Spell) 
+            for i in Send(SYS,@GetSpells)
             {
-               iNum=Send(i,@GetSpellNum);
-               Send(self,@AddSpell,#num=iNum,#iability=99,#bDM=TRUE,#dontSend=TRUE);
+               % Don't give any spells that aren't player spells (diseases, etc).
+               if IsClass(i,&Spell)
+               {
+                  iNum=Send(i,@GetSpellNum);
+                  Send(self,@AddSpell,#num=iNum,#iability=99,#bDM=TRUE,#dontSend=TRUE);
+               }
             }
-         }
 
-         Send(self,@ToCliSpellSchools);
-         Send(self,@ToCliSpells);
-         Send(self,@RefigureSchoolsLists);
-
-         return;
-      }
-
-      if StringEqual(string,dm_get_skills_command)
-         OR StringEqual(string,"get skills")
-      {
-         for i in Send(SYS,@GetSkills)
-         {
-            % Don't give any spells that aren't player spells (diseases, etc).
-            if IsClass(i,&Skill)
-            {
-               iNum=Send(i,@GetSkillNum);
-               Send(self,@AddSkill,#num=iNum,#iability=99);
-            }
-         }
-         return;
-      }
-
-      if StringEqual(string,dm_get_money_command)
-         OR StringEqual(string,"get money")
-      {
-         Send(self,@NewHold,#what=Create(&Money,#number=500000));
-
-         return;
-      }
-
-      if StringEqual(string,dm_boost_stats_command)
-         OR StringEqual(string,"boost stats")
-      {
-         % Boost all stats to max
-         piMight = 50;
-         piIntellect = 50;
-         piStamina = 50;
-         piAgility = 50;
-         piMysticism = 50;
-         piAim = 50;
-
-         piMightMod = 20;
-         piIntellectMod = 20;
-         piStaminaMod = 20;
-         piAgilityMod = 20;
-         piMysticismMod = 20;
-         piAimMod = 20;
-
-         piVigor = 200;
-
-         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
-         Send(self,@NewMaxMana,#amount=200-piMax_mana);
-         
-         if Send(self,@CheckLog)
-         {
-            DEBUG("LOG:  ",vrName," is a DM character who boosted stats",piBase_max_health,piMax_health);
-         }
-
-         Send(self,@GainHealth,#amount=piMax_health-piHealth);
-         Send(self,@GainMana,#amount=piMax_mana-piMana);
-         Send(self,@EvaluatePKStatus);
-         Send(self,@PlayerIsIntriguing);
-         Send(self,@NewVigor);
-
-         return;
-      }
-
-      if StringEqual(string,dm_PK_enable_command)
-         OR StringEqual(string,"PK enable")
-      { 
-         Send(self,@PkillEnable);
-
-         return;
-      }
-      
-      if StringEqual(string,dm_PK_disable_command)
-         OR StringEqual(string,"PK disable")
-      {
-         Send(self,@PkillDisable);
-
-         return;
-      }
-      
-      if StringEqual(string,dm_PK_lock_command)
-         OR StringEqual(string,"PK lock")
-      {
-         Send(self,@PkillLock);
-         Send(self,@MsgSendUser,#message_rsc=dm_pk_lock);
-         Post(self,@ReportCurrentPKStatus);
-
-         return;
-      }
-      
-      if StringEqual(string,dm_PK_unlock_command)
-         OR StringEqual(string,"PK unlock")
-      {
-         Send(self,@PkillUnlock);
-         Send(self,@MsgSendUser,#message_rsc=dm_pk_unlock);
-         Send(self,@EvaluatePKstatus);
-         Post(self,@ReportCurrentPKstatus);
-
-         return;
-      }
-
-      if StringEqual(string,dm_morning_command)
-         OR StringEqual(string,"morning")
-      {
-         Send(SYS,@SetHour,#num=6);
-
-         return;
-      }
-
-      if StringEqual(string,dm_afternoon_command)
-         OR StringEqual(string,"afternoon")
-      {
-         Send(SYS,@SetHour,#num=13);
-
-         return;
-      }
-
-      if StringEqual(string,dm_evening_command)
-         OR StringEqual(string,"evening")
-      {
-         Send(SYS,@SetHour,#num=18);
-
-         return;
-      }
-
-      if StringEqual(string,dm_night_command)
-         OR StringEqual(string,"night")
-      {
-         Send(SYS,@SetHour,#num=23);
-         
-         return;
-      }
-
-      if StringEqual(string,dm_restore_time_command)
-         OR StringEqual(string,"restore time")
-      {
-         Send(SYS,@RecalcLightAndWeather);
-
-         return;
-      }
-
-      if StringEqual(string,"testItemGenPoints")
-      {
-         if poOwner = $ OR NOT isClass(poOwner,&ObjectRoom)
-         {
-            Send(self,@MsgSendUser,#message_rsc=testitemgenpoints_err);
+            Send(self,@ToCliSpellSchools);
+            Send(self,@ToCliSpells);
+            Send(self,@RefigureSchoolsLists);
 
             return;
          }
 
-         Send(poOwner,@TestGenPoints);
-
-         return;
-      }
-      
-      if StringEqual(string,"testExitPoints")
-      {
-         if poOwner = $ OR NOT isClass(poOwner,&Room)
+         if StringEqual(string,dm_get_skills_command)
+            OR StringEqual(string,"get skills")
          {
-            Send(self,@MsgSendUser,#message_rsc=exitpoints_err);
+            for i in Send(SYS,@GetSkills)
+            {
+               % Don't give any spells that aren't player spells (diseases, etc).
+               if IsClass(i,&Skill)
+               {
+                  iNum=Send(i,@GetSkillNum);
+                  Send(self,@AddSkill,#num=iNum,#iability=99);
+               }
+            }
 
             return;
          }
 
-         Send(poOwner,@ShowExits);
+         %
+         % Get money.
+         %
 
-         return;
-      }
-      
-      if StringEqual(string,"call tester")
-      {
-         Send(poOwner,@NewHold,#what=Create(&GraphicTester),
-              #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringEqual(string,dm_npc_chat_command)
-         OR StringEqual(string,"npc chat")
-      {
-         temp = Send(poOwner,@GetHolderActive);
-
-         for i in temp
+         if StringEqual(string,dm_get_money_command)
+            OR StringEqual(string,"get money")
          {
-            if isClass(first(i),&Monster)
-            {
-               Send(first(i),@RandomTimer,#test=TRUE);
-            }
+            Send(self,@NewHold,#what=Create(&Money,#number=500000));
+
+            return;
          }
 
-         return;
-      }
+         %
+         % Boost stats to 70, boost HP and mana.
+         %
 
-      if StringContain(string,dm_createjunk)
-         OR StringContain(string,"item junk")
-      {
-         Send(self,@NewHold,#what=Create(&Junk));
-
-         return;
-      }
-
-      if StringEqual(string,dm_createsignet)
-         OR StringEqual(string,"item signet ring")
-      {
-         if Send(SYS,@GetLibrary) <> $
+         if StringEqual(string,dm_boost_stats_command)
+            OR StringEqual(string,"boost stats")
          {
-            temp = Send(Send(SYS,@GetLibrary),@CreateSignetRing,#who=$);
+            % Boost all stats to max
+            piMight = 50;
+            piIntellect = 50;
+            piStamina = 50;
+            piAgility = 50;
+            piMysticism = 50;
+            piAim = 50;
 
-            if temp <> $
+            piMightMod = 20;
+            piIntellectMod = 20;
+            piStaminaMod = 20;
+            piAgilityMod = 20;
+            piMysticismMod = 20;
+            piAimMod = 20;
+
+            piVigor = 200;
+
+            Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+            Send(self,@NewMaxMana,#amount=200-piMax_mana);
+
+            if Send(self,@CheckLog)
             {
-               Send(self,@NewHold,#what=temp);
-               Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetWork);
+               Debug("LOG:  ",vrName," is a DM character who boosted stats",
+                     piBase_max_health,piMax_health);
+            }
+
+            Send(self,@GainHealth,#amount=piMax_health-piHealth);
+            Send(self,@GainMana,#amount=piMax_mana-piMana);
+            Send(self,@EvaluatePKStatus);
+            Send(self,@PlayerIsIntriguing);
+            Send(self,@NewVigor);
+
+            return;
+         }
+
+         %
+         % PK enable and disable commands. Toggles whether the DM has an angel.
+         %
+
+         if StringEqual(string,dm_PK_enable_command)
+            OR StringEqual(string,"PK enable")
+         {
+            Send(self,@PkillEnable);
+
+            return;
+         }
+
+         if StringEqual(string,dm_PK_disable_command)
+            OR StringEqual(string,"PK disable")
+         {
+            Send(self,@PkillDisable);
+
+            return;
+         }
+
+         %
+         % PK lock commands. If PK lock is enabled, the DM's PK status cannot
+         % be changed without unlocking it first.
+         %
+
+         if StringEqual(string,dm_PK_lock_command)
+            OR StringEqual(string,"PK lock")
+         {
+            Send(self,@PkillLock);
+            Send(self,@MsgSendUser,#message_rsc=dm_pk_lock);
+            Post(self,@ReportCurrentPKStatus);
+
+            return;
+         }
+
+         if StringEqual(string,dm_PK_unlock_command)
+            OR StringEqual(string,"PK unlock")
+         {
+            Send(self,@PkillUnlock);
+            Send(self,@MsgSendUser,#message_rsc=dm_pk_unlock);
+            Send(self,@EvaluatePKstatus);
+            Post(self,@ReportCurrentPKstatus);
+
+            return;
+         }
+
+         %
+         % Time setting code.
+         %
+
+         if StringEqual(string,dm_morning_command)
+            OR StringEqual(string,"morning")
+         {
+            Send(SYS,@SetHour,#num=6);
+
+            return;
+         }
+
+         if StringEqual(string,dm_afternoon_command)
+            OR StringEqual(string,"afternoon")
+         {
+            Send(SYS,@SetHour,#num=13);
+
+            return;
+         }
+
+         if StringEqual(string,dm_evening_command)
+            OR StringEqual(string,"evening")
+         {
+            Send(SYS,@SetHour,#num=18);
+
+            return;
+         }
+
+         if StringEqual(string,dm_night_command)
+            OR StringEqual(string,"night")
+         {
+            Send(SYS,@SetHour,#num=23);
+
+            return;
+         }
+
+         if StringEqual(string,dm_restore_time_command)
+            OR StringEqual(string,"restore time")
+         {
+            Send(SYS,@RecalcLightAndWeather);
+
+            return;
+         }
+
+         %
+         % Code for testing different room features.
+         %
+
+         if StringEqual(string,"testItemGenPoints")
+         {
+            if poOwner = $ OR NOT isClass(poOwner,&ObjectRoom)
+            {
+               Send(self,@MsgSendUser,#message_rsc=testitemgenpoints_err);
+
+               return;
+            }
+
+            Send(poOwner,@TestGenPoints);
+
+            return;
+         }
+
+         if StringEqual(string,"testExitPoints")
+         {
+            if poOwner = $ OR NOT isClass(poOwner,&Room)
+            {
+               Send(self,@MsgSendUser,#message_rsc=exitpoints_err);
+
+               return;
+            }
+
+            Send(poOwner,@ShowExits);
+
+            return;
+         }
+
+         if StringEqual(string,"call tester")
+         {
+            Send(poOwner,@NewHold,#what=Create(&GraphicTester),
+                 #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
+
+            return;
+         }
+
+         %
+         % Triggers NPC chat.
+         %
+
+         if StringEqual(string,dm_npc_chat_command)
+            OR StringEqual(string,"npc chat")
+         {
+            temp = Send(poOwner,@GetHolderActive);
+
+            for i in temp
+            {
+               if IsClass(First(i),&Monster)
+               {
+                  Send(First(i),@RandomTimer,#test=TRUE);
+               }
+            }
+
+            return;
+         }
+
+         %
+         % Item creation code.
+         %
+
+         if StringContain(string,dm_createjunk)
+            OR StringContain(string,"item junk")
+         {
+            Send(self,@NewHold,#what=Create(&Junk));
+
+            return;
+         }
+
+         if StringEqual(string,dm_createsignet)
+            OR StringEqual(string,"item signet ring")
+         {
+            if Send(SYS,@GetLibrary) <> $
+            {
+               temp = Send(Send(SYS,@GetLibrary),@CreateSignetRing,#who=$);
+
+               if temp <> $
+               {
+                  Send(self,@NewHold,#what=temp);
+                  Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetWork);
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
+               }
             }
             else
             {
                Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
             }
-         }
-         else
-         {
-            Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
+
+            return;
          }
 
-         return;
-      }
+         %
+         % This allows an item to be given to everyone in the room.
+         %
 
-      if StringContain(string,dm_roomgive_command)
-         OR StringContain(string,"roomgive")
-      {
-         iGiven = 0;
-         lTemplate = Send(SYS,@GetItemTemplates);
-
-         for i in lTemplate
+         if StringContain(string,dm_roomgive_command)
+            OR StringContain(string,"roomgive")
          {
-            if StringContain(string,Send(i,@GetName))
-               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+            iGiven = 0;
+            lTemplate = Send(SYS,@GetItemTemplates);
+
+            for i in lTemplate
             {
-               iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
-                           #number=Send(SYS,@GetNumberFromString,#string=string));
-               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=iGiven);
-               return;
-            }
-         }
-
-         if NOT iGiven
-         {
-            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
-         }
-         
-         return;
-      }
-
-      if StringContain(string,dm_makeitem)
-         OR StringContain(string,"item")
-      {
-         bFound = FALSE;
-         lTemplate = Send(SYS,@GetItemTemplates);
-         
-         for i in lTemplate
-         {
-            if StringContain(string,Send(i,@GetName))
-               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
-            {
-               Send(self,@NewHold,#what=create(GetClass(i)));
-               if NOT pbStealth
+               if StringContain(string,Send(i,@GetName))
+                  AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
                {
-                  Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
-                       #string=dm_void,#parm1=vrName,#parm2=Send(i,@GetIndef),
-                       #parm3=Send(i,@GetName));
+                  iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
+                              #number=Send(SYS,@GetNumberFromString,#string=string));
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=iGiven);
+
+                  return;
                }
-               
-               bFound = TRUE;
             }
+
+            if NOT iGiven
+            {
+               Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+            }
+
+            return;
          }
-         
-         if NOT bFound
+
+         if StringContain(string,dm_makeitem)
+            OR StringContain(string,"item")
          {
-            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+            bFound = FALSE;
+            lTemplate = Send(SYS,@GetItemTemplates);
+
+            for i in lTemplate
+            {
+               if StringContain(string,Send(i,@GetName))
+                  AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+               {
+                  Send(self,@NewHold,#what=create(GetClass(i)));
+                  if NOT pbStealth
+                  {
+                     Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                           #string=dm_void,#parm1=vrName,
+                           #parm2=Send(i,@GetIndef),
+                           #parm3=Send(i,@GetName));
+                  }
+
+                  bFound = TRUE;
+               }
+            }
+
+            if NOT bFound
+            {
+               Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+            }
+
+            return;
          }
-         
-         return;
-      }
 
-      if StringContain(string,dm_getall)
-         OR StringContain(string,"get")
-      {
-         Send(self,@GetAllOfItem,#string=string);
+         if StringContain(string,dm_getall)
+            OR StringContain(string,"get")
+         {
+            Send(self,@GetAllOfItem,#string=string);
 
-         return;
+            return;
+         }
       }
 
       propagate;
@@ -1473,16 +1661,16 @@ messages:
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          Send(self,@MsgSendUser,#message_rsc=DM_PK_ENABLE);
-         
+
          return;
       }
-      
+
       Send(self,@MsgSendUser,#message_rsc=DM_PK_DISABLE);
-      
+
       return;
    }
 
-   AddExertion(amount = 0, SetToThreshold = FALSE)
+   AddExertion(amount=0,SetToThreshold=FALSE)
    {
       if pbImmortal
       {
@@ -1493,7 +1681,7 @@ messages:
       propagate;
    }
 
-   SpellCast(who = $, oSpell = $, lItems = $)
+   SpellCast(who=$,oSpell=$,lItems=$)
    "Notification sent when a spell is cast in the room."
    {
       local rOn, rTarget;
@@ -1538,7 +1726,7 @@ messages:
    MakeQ()
    {
       local i, lTemplate;
-      
+
       SetResource(vrName,dm_q);
       prToupee = player_toupee_q_rsc;
 
@@ -1594,7 +1782,7 @@ messages:
       Send(self,@UserUseItem,#what=i);
 
       return;
-   }   
+   }
 
    IsAppealOn()
    {
@@ -1617,7 +1805,7 @@ messages:
       {
          return 2;
       }
-      
+
       return viDM;
    }
 
@@ -1634,13 +1822,13 @@ messages:
          piBody_translations = piBody_translations & ~DM_TRANSLATION_BODY_MASK;
          piBody_translations = piBody_translations | 
                                (Send(self,@GetDefaultShirtTranslation)
-                                * DM_TRANSLATION_BODY_MUL);      
+                                * DM_TRANSLATION_BODY_MUL);
 
          if poOwner <> $ AND alldone
-         {      
+         {
             Send(poOwner,@SomethingChanged,#what=self);
          }
-      
+
          return;
       }
 
@@ -1664,7 +1852,7 @@ messages:
 
       if piAnimation = PANM_WEAPON_ATTACK
          OR piAnimation = PANM_FIST_ATTACK
-      {    
+      {
          AddPacket(1,ANIMATE_ONCE, 4,piAttack_delay, 2,piAttack_start,
                    2,piAttack_end, 2,1);
       }
@@ -1676,7 +1864,7 @@ messages:
          {
             AddPacket(1,ANIMATE_ONCE, 4,piAttack_delay, 2,piAttack_start,
                       2,piAttack_end, 2,1);
-         }    
+         }
          else
          {
             AddPacket(1,ANIMATE_NONE, 2,1);
@@ -1795,7 +1983,7 @@ messages:
 
          return;
       }
-      
+
       if StringEqual(string,"get rods")
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ROD);
@@ -1885,7 +2073,7 @@ messages:
       {
          return;
       }
-      
+
       pbImmortal = 2;
       pbImmortalSave = 2;
       pbSay_commands = TRUE;
@@ -1904,21 +2092,21 @@ messages:
       Send(who,@SetSkinTranslation,#translation=PT_BLUE_TO_SKIN4);
 
       oItem = create(&PantsD);
-      Send(oItem,@SetPaletteTranslation,#translation=PT_GRAY_TO_BGREEN);  
+      Send(oItem,@SetPaletteTranslation,#translation=PT_GRAY_TO_BGREEN);
       Send(self,@NewHold,#what=oItem);
       Send(self,@UserUseItem,#what=oItem);
 
       oItem = create(&ScaleArmor);
-      Send(oItem,@SetPaletteTranslation,#translation=PT_GRAY_TO_PURPLE);  
+      Send(oItem,@SetPaletteTranslation,#translation=PT_GRAY_TO_PURPLE);
       Send(self,@NewHold,#what=oItem);
       Send(self,@UserUseItem,#what=oItem);
 
-      Send(who,@InvalidateData);      
+      Send(who,@InvalidateData);
 
       return;
    }
 
-   GetOneOfEach(type = ITEMTYPE_MISC)
+   GetOneOfEach(type=ITEMTYPE_MISC)
    {
       local lTemplate, i, iNumber;
       
@@ -1989,7 +2177,7 @@ messages:
 
          Send(self,@SetSkinTranslation,#translation=PT_BLUE_TO_SKIN4);
 
-         Send(self,@RecalibratePlayer);         
+         Send(self,@RecalibratePlayer);
 
          oItem = Send(self,@FindHolding,#class=&PantsA);
 
@@ -2013,9 +2201,9 @@ messages:
                  #translation=Send(SYS,@EncodeTwoColorXlat,
                  #color1=XLAT_TO_SKIN4));
          }
-         
+
          Send(self,@NewHold,#what=oItem);
-         Send(self,@UserUseItem,#what=oItem);         
+         Send(self,@UserUseItem,#what=oItem);
 
          oItem = Send(self,@FindHolding,#class=&LeatherArmor);
 
@@ -2023,7 +2211,7 @@ messages:
          {
             oItem = create(&LeatherArmor);
          }
-         
+
          Send(self,@NewHold,#what=oItem);
          Send(self,@UserUseItem,#what=oItem);
 
@@ -2038,7 +2226,7 @@ messages:
          Send(self,@UserUseItem,#what=oItem);
 
 
-         Send(self,@InvalidateData);     
+         Send(self,@InvalidateData);
       }
 
       if iType = 2
@@ -2068,12 +2256,11 @@ messages:
          {
             oItem = create(&PantsC);
             Send(oItem,@SetPaletteTranslation,
-                 #translation=PT_GRAY_TO_BLACK);
+                  #translation=PT_GRAY_TO_BLACK);
          }
 
          Send(self,@NewHold,#what=oItem);
          Send(self,@UserUseItem,#what=oItem);
-         
 
          oItem = Send(self,@FindHolding,#class=&RoyalShirt);
 
@@ -2081,13 +2268,12 @@ messages:
          {
             oItem = create(&RoyalShirt);
             Send(oItem,@SetPaletteTranslation,
-                 #translation=Send(SYS,@EncodeTwoColorXlat,
-                 #color1=XLAT_TO_GRAY,#color2=XLAT_TO_GRAY));
+                  #translation=Send(SYS,@EncodeTwoColorXlat,
+                  #color1=XLAT_TO_GRAY,#color2=XLAT_TO_GRAY));
          }
 
          Send(self,@NewHold,#what=oItem);
-         Send(self,@UserUseItem,#what=oItem);         
-         
+         Send(self,@UserUseItem,#what=oItem);
 
          oItem = Send(self,@FindHolding,#class=&Gauntlet);
 
@@ -2109,7 +2295,6 @@ messages:
 
          Send(self,@NewHold,#what=oItem);
          Send(self,@UserUseItem,#what=oItem);
-         
 
          oItem = Send(self,@FindHolding,#class=&LeatherArmor);
 
@@ -2119,16 +2304,42 @@ messages:
          }
 
          Send(self,@NewHold,#what=oItem);
-         Send(self,@UserUseItem,#what=oItem);         
-         
+         Send(self,@UserUseItem,#what=oItem);
 
-         Send(self,@InvalidateData);     
+         Send(self,@InvalidateData);
       }
-     
+
       return;
    }
-   
-   %%% Functional DM Types
+
+   %%% Functional DM Types.
+
+   %
+   % Moderators can basically just Squelch players and see appeals.
+   % They have trivial DM commands such as karma change and totem summoning.
+   %
+   BecomeModerator()
+   {
+      Send(self,@RemoveAllSpells);
+      Send(self,@RemoveAllSkills);
+      
+      prRank = dm_moderator;
+      pbActor = FALSE;
+      pbImmortal = TRUE;
+      pbSay_commands = FALSE;
+      pbAdvancement = FALSE;
+      Send(self,@PKillEnable);
+      Send(self,@PKillLock);
+
+      Send(self,@AddSpell,#num=SID_SQUELCH,#iability=99);
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   %
+   % Guides have 'say commands', so they can create monsters and use the 'go'
+   % command to teleport themselves to rooms (but not to players).
+   %
 
    BecomeGuide()
    {
@@ -2139,48 +2350,42 @@ messages:
 
       pbActor = FALSE;
       pbImmortal = TRUE;
-      pbSay_commands = FALSE;
+      pbSay_commands = TRUE;
       pbAdvancement = FALSE;
       Send(self,@PKillEnable);
       Send(self,@PKillLock);
 
+      Send(self,@AddSpell,#num=SID_ARMAGEDDON,#iability=99);
+      Send(self,@AddSpell,#num=SID_BONK,#iability=99);
       Send(self,@AddSpell,#num=SID_DAMN,#iability=99);
       Send(self,@AddSpell,#num=SID_DELIVERANCE,#iability=99);
+      Send(self,@AddSpell,#num=SID_EVALUATE,#iability=99);
       Send(self,@AddSpell,#num=SID_FORESIGHT,#iability=99);
-      Send(self,@AddSpell,#num=SID_ILLUSIONARY_FORM,#iability=20);
-      Send(self,@AddSpell,#num=SID_INVISIBILITY,#iability=20);
+      Send(self,@AddSpell,#num=SID_ILLUSIONARY_FORM,#iability=99);
+      Send(self,@AddSpell,#num=SID_INSIGHT,#iability=99);
+      Send(self,@AddSpell,#num=SID_INVISIBILITY,#iability=99);
       Send(self,@AddSpell,#num=SID_NIGHTVISION,#iability=99);
       Send(self,@AddSpell,#num=SID_PAGE,#iability=99);
       Send(self,@AddSpell,#num=SID_SHADOW_FORM,#iability=99);
-
-      return Send(SYS,@GetSuccessRsc);
-   }
-
-   BecomeRoverGuide()
-   {
-      Send(self,@BecomeGuide);
-
-      Send(self,@AddSpell,#num=SID_ARMAGEDDON,#iability=15);
-      Send(self,@AddSpell,#num=SID_DMHOLD,#iability=15);
+      Send(self,@AddSpell,#num=SID_SQUELCH,#iability=99);
+      Send(self,@AddSpell,#num=SID_SCRY,#iability=99);
 
       return Send(SYS,@GetSuccessRsc);
    }
 
    BecomeSeniorGuide()
    {
-      Send(self,@BecomeRoverGuide);
+      Send(self,@BecomeGuide);
 
       prRank = dm_sr_guide;
 
       pbActor = TRUE;
 
-      Send(self,@AddSpell,#num=SID_BONK,#iability=15);
+      Send(self,@AddSpell,#num=SID_DMHOLD,#iability=99);
       Send(self,@AddSpell,#num=SID_ENGRAVE,#iability=50);
       Send(self,@AddSpell,#num=SID_MORPH,#iability=99);
       Send(self,@AddSpell,#num=SID_PARDON,#iability=99);
       Send(self,@AddSpell,#num=SID_SPELLBANE,#iability=100);
-      % Ability level determines level of detail for Scry.
-      Send(self,@AddSpell,#num=SID_SCRY,#iability=51);
 
       return Send(SYS,@GetSuccessRsc);
    }
@@ -2193,8 +2398,7 @@ messages:
 
       pbSay_commands = TRUE;
 
-      Send(self,@AddSpell,#num=SID_INSIGHT,#iability=99);
-      Send(self,@AddSpell,#num=SID_SCRY,#iability=99);
+
       Send(self,@AddSpell,#num=SID_ANONYMITY,#iability=99);
       Send(self,@AddSpell,#num=SID_VILLIFY,#iability=99);
 
@@ -2246,12 +2450,12 @@ messages:
       Send(self,@AddSpell,#num=SID_JIG,#iability=99);
       Send(self,@AddSpell,#num=SID_PURIFY,#iability=99);
       % Ability level determines level of detail for Scry.
-      Send(self,@AddSpell,#num=SID_SCRY,#iability=15);         
+      Send(self,@AddSpell,#num=SID_SCRY,#iability=15);
 
       return Send(SYS,@GetSuccessRsc);
    }
 
-   ReportMonsterBudget(who = $)
+   ReportMonsterBudget(who=$)
    {
       local i,j;
 
@@ -2259,7 +2463,7 @@ messages:
       {
          who = self;
       }
-      
+
       if NOT Send(who,@IsLoggedOn)
       {
          return;
@@ -2274,7 +2478,7 @@ messages:
          else
          {
             Send(who,@MsgSendUser,#message_rsc=dm_budget_no_limits,
-                 #parm1=Send(self,@GetTrueName));
+                  #parm1=Send(self,@GetTrueName));
          }
 
          return;
@@ -2298,7 +2502,7 @@ messages:
 
          return;
       }
-      
+
       ClearTempString();
       for i in plMonsterBudgetTypes
       {
@@ -2337,12 +2541,13 @@ messages:
       if who = self
       {
          Send(who,@MsgSendUser,#message_rsc=dm_budget_authorized_self,
-              #parm1=GetTempString(),#type1=0);
+               #parm1=GetTempString(),#type1=0);
       }
       else
       {
          Send(who,@MsgSendUser,#message_rsc=dm_budget_authorized,
-              #parm1=Send(self,@GetTrueName),#parm2=GetTempString(),#type2=0);
+               #parm1=Send(self,@GetTrueName),
+               #parm2=GetTempString(),#type2=0);
       }
 
       return;
@@ -2397,7 +2602,6 @@ messages:
    {
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

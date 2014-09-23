@@ -4100,21 +4100,21 @@ messages:
       return;
    }
 
-   UserSay(type = $,string = $)
-   {      
+   UserSay(type=$,string=$)
+   {
       local i, oSpell, lEnchantData, bTranceBlocksSay;
-        
+
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
       %  non-DMs, as well as Guild Tells and Broadcasts
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
-      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  
+      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
-      
+
       if type = SAY_NORMAL
       {
          If StringContain(String,"autocombine on")
@@ -4148,7 +4148,7 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
             return;
          }
-         
+
          If StringContain(String,"reagentbag on")
             AND NOT Send(self,@GetReagentBagAuto)
          {
@@ -4192,8 +4192,14 @@ messages:
             return;
          }
 
+         % If the user has tells squelched, block guild sends too.
+         if NOT Send(self,@TrySayGroup)
+         {
+            return;
+         }
+
          Send(self,@UserSayGuild,#string=string);
-         
+
          return;
       }
 
@@ -4211,7 +4217,7 @@ messages:
             for i in plEnchantments
             {
                if IsClass(nth(i,2),&Trance)
-               {                
+               {
                   lEnchantData = nth(i,3);
                   oSpell = first(lEnchantData);
                   Post(oSpell,@SomethingSaidDuringTrance,
@@ -4222,19 +4228,23 @@ messages:
                      bTranceBlocksSay = TRUE;
                   }
                }
-               
+
                if bTranceBlocksSay
                {
                   return;
                }
             }
          }
-         
-         Send(poOwner,@SomeoneSaidRoom,#what=self,#type=type,#string=string);
-         
+
+         % If the user has says squelched, don't let them speak.
+         if Send(self,@TrySay)
+         {
+            Send(poOwner,@SomeoneSaidRoom,#what=self,#type=type,#string=string);
+         }
+
          return;
       }
-      
+
       if type = SAY_MESSAGE
       {
          if Send(self,@IsActor)
@@ -4245,15 +4255,19 @@ messages:
 
          return;
       }
-      
+
       if type = SAY_YELL
       {
          % Send to adjacent rooms
-         Send(poOwner,@SomeoneSaidRoom,#what=self,#type=type,#string=string);
-         
+         % If the user has says squelched, don't let them speak.
+         if Send(self,@TrySay)
+         {
+            Send(poOwner,@SomeoneSaidRoom,#what=self,#type=type,#string=string);
+         }
+
          return;
       }
-      
+
       if type = SAY_EVERYONE
       {
          if stringContain(string,"~r~B~g~r")
@@ -4273,21 +4287,21 @@ messages:
                         "than 50 bad chars in their bio.");
                }
             }
-            
+
             return;
          }
-         
-         % Send to everyone
+
+         % Send to everyone, if not squelched.
          if Send(self,@TryBroadcast)
          {
             Send(SYS,@SystemBroadcast,#what=self,#type=type,#string=string);
          }
-         
+
          return;
       }
 
       Debug("Got unknown user say type",type);
-      
+
       return;
    }
 
@@ -4298,10 +4312,10 @@ messages:
       if poGuild = $
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_say_guild);
-         
+
          return;
       }
-      
+
       lUsers = $;
       for i in Send(poGuild,@GetMemberList)
       {
@@ -4315,13 +4329,13 @@ messages:
       if Length(lUsers) = 0
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_guild_logged_on);
-         
+
          return;
       }
-      
+
       Send(self,@UserSayGroup,#users=lUsers,#string=string,#no_tell=TRUE);
 
-      propagate;
+      return;
    }
 
    UserSayGroup(users = $,string = $,no_tell=FALSE)
@@ -4379,7 +4393,7 @@ messages:
          }
       }
       
-      propagate;
+      return;
    }
 
    UserLook(what = $)
@@ -6106,7 +6120,7 @@ messages:
       local oNews;
 
       % Can't post if squelched
-      if piFlags & PFLAG_SQUELCHED
+      if piFlags2 & PFLAG2_SQUELCHED_POSTS
       {
          Send(self, @MsgSendUser, #message_rsc=user_news_squelched);
          return;
@@ -8097,7 +8111,14 @@ messages:
                }
                else
                {
-                  iFlags = iFlags | PLAYER_DM;
+                  if Send(self,@IsModerator)
+                  {
+                     iFlags = iFlags | PLAYER_MODERATOR;
+                  }
+                  else
+                  {
+                     iFlags = iFlags | PLAYER_DM;
+                  }
                }
             }
             else

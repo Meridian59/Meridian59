@@ -69,6 +69,7 @@ static char color_section[] = "Colors";  /* Section for colors in INI file */
 #define NAME_COLOR_CREATOR_FG  PALETTEINDEX(251) // yellow
 #define NAME_COLOR_SUPER_FG    PALETTEINDEX(250) // green
 #define NAME_COLOR_DM_FG       PALETTEINDEX(254) // cyan
+#define NAME_COLOR_MOD_FG      PALETTERGB(0, 120, 255)
 #define NAME_COLOR_BLACK_FG    PALETTERGB(0, 0, 0)
 #define NAME_COLOR_DAENKS_FG   PALETTERGB(179,0,179)
 
@@ -451,6 +452,8 @@ COLORREF GetPlayerNameColor(int flags,char*name)
 			return NAME_COLOR_DAENKS_FG;
 		case PF_SUPER:
 			return NAME_COLOR_SUPER_FG;
+		case PF_MODERATOR:
+			return NAME_COLOR_MOD_FG;
 		case PF_EVENTCHAR:
 			return NAME_COLOR_EVENT_FG;
             
@@ -480,6 +483,8 @@ COLORREF GetPlayerWhoNameColor(int flags,char*name)
             return NAME_COLOR_KILLER_FG;
         case PF_OUTLAW:
             return NAME_COLOR_OUTLAW_FG;
+        case PF_MODERATOR:
+            return NAME_COLOR_MOD_FG;
 
         default:
             return NAME_COLOR_NORMAL_FG;

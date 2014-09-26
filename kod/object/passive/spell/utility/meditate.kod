@@ -21,16 +21,29 @@ resources:
    Meditate_name_rsc = "meditate"
    Meditate_icon_rsc = imanafoc.bgf
    Meditate_desc_rsc = \
-      "Allows you to channel your experience in meditation in order to open your mind and improve your abilities.  "
-      "To do so, speak the name of the ability you wish to improve while in trance.  This will use up accumulated training points."
+      "Allows you to channel your experience in meditation in order to "
+      "open your mind and improve your abilities.  To do so, speak the "
+      "name of the ability you wish to improve while in trance.  This "
+      "will use up accumulated training points."
 
-   Meditate_begin_trance = "You begin your meditation and let your mind wander.  Which ability will you focus your meditation on?"
-   Meditate_cast_success = "You begin to meditate on the art of %s and come to a deeper understanding of its intricacies.  "
-                           "You have improved your ability by ~B%i~B points."
-   Meditate_cast_failure = "You can't seem to properly focus your mind.  Confused and disappointed, you wake from your trance."
-   Meditate_not_enough_points = "You begin to meditate on the art of %s, but seem to lack the inspiration to advance in your studies."
-   Meditate_maxed_skill = "You begin to meditate on the art of %s, but cannot possibly progress any further in its mastery."
-   Meditate_cast_finished = "You wake from your trance and feel your mental energies refreshed!"
+   Meditate_begin_trance = \
+      "You begin your meditation and let your mind wander.  Which ability "
+      "will you focus your meditation on?"
+   Meditate_cast_success = \
+      "You begin to meditate on the art of %s and come to a deeper "
+      "understanding of its intricacies.  You have improved your ability "
+      "by ~B%i~B points."
+   Meditate_cast_failure = \
+      "You can't seem to properly focus your mind.  Confused and "
+      "disappointed, you wake from your trance."
+   Meditate_not_enough_points = \
+      "You begin to meditate on the art of %s, but seem to lack the "
+      "inspiration to advance in your studies."
+   Meditate_maxed_skill = \
+      "You begin to meditate on the art of %s, but cannot possibly "
+      "progress any further in its mastery."
+   Meditate_cast_finished = \
+      "You wake from your trance and feel your mental energies refreshed!"
 
 classvars:
 
@@ -56,13 +69,13 @@ messages:
 
       return;
    }
-   
+
    SuccessChance(who=$)
    "Starter spell will always work."
    {
       return TRUE;
    }
-   
+
    ImproveAbility()
    "We only improve if we have exchanged training points."
    {
@@ -71,7 +84,8 @@ messages:
 
    GetTranceTime(iSpellpower=0,who=$)
    {
-      % Since this spell uses the trance, don't scale it down depending on iSpellpower
+      % Since this spell uses the trance, don't scale it down
+      % depending on iSpellpower
       return viCast_time;
    }
 
@@ -79,38 +93,42 @@ messages:
    {
       local oTrance;
 
-      %%Get rid of the regular casting trance, we need a special one put on below.
-      send(who,@BreakTrance,#event=EVENT_STEER);  
+      % Get rid of the regular casting trance, we need a special
+      % one put on below.
+      Send(who,@BreakTrance,#event=EVENT_STEER);
 
-      oTrance = send(SYS,@FindSpellByNum,#num=SID_TRANCE);
-      
-      send(who,@MsgSendUser,#message_rsc=Meditate_begin_trance);
+      oTrance = Send(SYS,@FindSpellByNum,#num=SID_TRANCE);
 
-      send(oTrance,@BeginCastingTrance,#what=self,#who=who,#lTargets=$,#time=TRANCE_TIME);
+      Send(who,@MsgSendUser,#message_rsc=Meditate_begin_trance);
+
+      Send(oTrance,@BeginCastingTrance,#what=self,#who=who,
+            #lTargets=$,#time=TRANCE_TIME);
 
       propagate;
    }
 
-   SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
+   SomethingSaidDuringTrance(who=$,string=$,lTargets=$)
    {
-      local i, bFound, oSpell, sSpell, oSkill, sSkill, iPercent, iRatio, iGain, iNum, iPoints;
+      local i, bFound, oSpell, sSpell, oSkill, sSkill, iPercent,
+            iRatio, iGain, iNum, iPoints;
 
-      send(who,@BreakTrance,#event=EVENT_STEER);  %% don't print fizzle message
+      Send(who,@BreakTrance,#event=EVENT_STEER);  %% Don't print fizzle message
 
       if StringEqual(string,Meditate_name_rsc)
-      { 
-         send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+      {
+         Send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+
          return;
       }
 
       bFound = FALSE;
-      
-      iPoints = send(who,@GetTrainingPoints);
 
-      for i in send(who,@GetSpellList)
+      iPoints = Send(who,@GetTrainingPoints);
+
+      for i in Send(who,@GetSpellList)
       {
          iNum = Send(who,@DecodeSpellNum,#compound=i);
-         oSpell = Send(sys,@FindSpellByNum,#num=iNum);
+         oSpell = Send(SYS,@FindSpellByNum,#num=iNum);
          sSpell = Send(oSpell,@GetName);
 
          if StringEqual(string,sSpell)
@@ -118,22 +136,27 @@ messages:
             bFound = TRUE;
             iPercent = Send(oSpell,@GetAbility,#who=who);
             iRatio = Send(oSpell,@GetMeditateRatio);
-            
+
             if iPercent = 99
             {
-               send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,#parm1=sSpell); 
+               Send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,
+                     #parm1=sSpell);
+
                return;
             }
 
             if iRatio = 0
             { 
-               send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+               Send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+
                return;
             }
 
             if iPoints < iRatio
             {
-               send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,#parm1=sSpell); 
+               Send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,
+                     #parm1=sSpell);
+
                return;
             }
             else
@@ -144,12 +167,15 @@ messages:
                   iGain = 99 - iPercent;
                }
 
-               send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSpell,#parm2=iGain);
-               Send(who,@ChangeSpellAbility,#spell_num=iNum,#amount=iGain,#report=FALSE);
-               send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
-               if iGain*iRatio > random(0,99)
+               Send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,
+                     #parm1=sSpell,#parm2=iGain);
+               Send(who,@ChangeSpellAbility,#spell_num=iNum,
+                     #amount=iGain,#report=FALSE);
+               Send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
+               if iGain*iRatio > Random(0,99)
                {
-                  Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);
+                  Send(who,@ChangeSpellAbility,#spell_num=vispell_Num,
+                        #amount=1,#report=TRUE);
                }
             }
 
@@ -157,10 +183,10 @@ messages:
          }
       }
 
-      for i in send(who,@GetSkillList)
+      for i in Send(who,@GetSkillList)
       {
          iNum = Send(who,@DecodeSkillNum,#compound=i);
-         oSkill = Send(sys,@FindSkillByNum,#num=iNum);
+         oSkill = Send(SYS,@FindSkillByNum,#num=iNum);
          sSkill = Send(oSkill,@GetName);
 
          if StringEqual(string,sSkill)
@@ -168,16 +194,20 @@ messages:
             bFound = TRUE;
             iPercent = Send(oSkill,@GetAbility,#who=who);
             iRatio = Send(oSkill,@GetMeditateRatio);
-            
+
             if iPercent = 99
             {
-               send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,#parm1=sSkill); 
-               return;
+               Send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,
+                     #parm1=sSkill);
+
+                     return;
             }
-            
+
             if iPoints < iRatio
             {
-               send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,#parm1=sSkill); 
+               Send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,
+                     #parm1=sSkill);
+
                return;
             }
             else
@@ -188,12 +218,15 @@ messages:
                   iGain = 99 - iPercent;
                }
 
-               send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSkill,#parm2=iGain);
-               Send(who,@ChangeSkillAbility,#Skill_num=iNum,#amount=iGain,#report=FALSE);
-               send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
-               if iGain*iRatio > random(0,99)
+               Send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,
+                     #parm1=sSkill,#parm2=iGain);
+               Send(who,@ChangeSkillAbility,#Skill_num=iNum,
+                     #amount=iGain,#report=FALSE);
+               Send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
+               if iGain*iRatio > Random(0,99)
                {
-                  Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);
+                  Send(who,@ChangeSpellAbility,#spell_num=vispell_Num,
+                        #amount=1,#report=TRUE);
                }
             }
 
@@ -202,12 +235,12 @@ messages:
       }
 
       if NOT bFound
-      { 
-         send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+      {
+         Send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
       }
 
       return;
-   } 
+   }
 
    DoubleCheckAfterTrance(who=$,lTargets=$)
    {
@@ -216,9 +249,10 @@ messages:
       iMana = Send(who,@GetMaxMana);
       iPercent = Send(self,@GetAbility,#who=who);
       
-      send(who,@GainMana,#amount=iMana*iPercent/100,#bCapped=TRUE);
-      send(who,@MsgSendUser,#message_rsc=Meditate_cast_finished);   
-             
+      Send(who,@GainMana,#amount=iMana*iPercent/100,
+            #bCapped=TRUE,#bRespectMax=TRUE);
+      Send(who,@MsgSendUser,#message_rsc=Meditate_cast_finished);
+
       return;
    }
 

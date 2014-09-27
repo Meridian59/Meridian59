@@ -79,15 +79,6 @@ enum
    // it reads any KODBASE.TXT.
 };
 
-//Possible statistics that can be passed from blakod
-enum
-{
-  STAT_BLANK,
-  STAT_TOTALMONEY,
-  STAT_MONEYCREATED,
-  STAT_ASSESS_DAM
-};
-
 #define MAX_PROC_TIME 5000
 #define TIMER_DELAY_WARN 2000
 
@@ -126,11 +117,6 @@ enum
 
 #define PACKAGE_FILE "packages.txt"
 #define SPROCKET_FILE "sprocket.dll"
-
-#include <my_global.h>
-#undef min
-#undef max
-#include <mysql.h>
 
 #ifdef BLAK_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN

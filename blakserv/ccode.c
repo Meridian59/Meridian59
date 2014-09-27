@@ -2389,32 +2389,30 @@ int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-//RecordStat() Kod function
 int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
-	if (ConfigBool(MYSQL_ENABLED) == False)
+	/*if (ConfigBool(MYSQL_ENABLED) == False)
 		return -1;
 
 	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7;
 	int success = 0;
 
-
-	//The first paramenter to RecordStat() should alwasy be a STAT_TYPE
+	// The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
 	if (stat_type.v.tag != TAG_INT)
 	{
 		dprintf("STAT_TYPE expected in C_RecordStat() as first parameter");
 		return NIL;
-	}
+	}*/
 
 	/*
 	STAT_TYPE enum located in blakserv.h, Also defined in blakston.khd to match between C code and Kod code.
 	this switch statement should evaluate what kind of statistic is being passed, parse the remaining parameters
 	and send them to the function in database.c that actually writes the data to the MySQL Database
 	*/
-	switch (stat_type.v.data)
+	/*switch (stat_type.v.data)
 	{
 		case STAT_TOTALMONEY:
 			if (num_normal_parms != 2)
@@ -2506,6 +2504,6 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 			dprintf("ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);
 			success = 1;
 			break;
-	}
+	}*/
 	return NIL;
 }

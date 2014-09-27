@@ -89,8 +89,9 @@ messages:
 
       if oMaster <> $
       {
-         if NOT Send(who,@CheckStatusAndSafety,#victim=oMaster,
-                     #report=TRUE,#minion=TRUE)
+         if NOT Send(Send(who,@GetOwner),@IsArena)
+            AND NOT Send(who,@CheckStatusAndSafety,#victim=oMaster,
+                        #report=TRUE,#minion=TRUE)
          {
             return FALSE;
          }

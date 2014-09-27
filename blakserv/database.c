@@ -130,7 +130,6 @@ char* db			= 0;
 		`player_damaged_atype` = atype,			\n\
 		`player_damaged_applied` = applied,		\n\
 		`player_damaged_original` = original,	\n\
-		`player_damaged_applied` = applied,		\n\
 		`player_damaged_weapon` = weapon,		\n\
 		`player_damaged_time` = now();			\n\
 	END"

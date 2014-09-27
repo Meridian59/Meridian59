@@ -2405,7 +2405,7 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 	}
 
 	/*
-	STAT_TYPE enum located in blakserv.h, Also defined in blakston.khd to match between C code and Kod code.
+	STAT_TYPE enum located in database.h, Also defined in blakston.khd to match between C code and Kod code.
 	this switch statement should evaluate what kind of statistic is being passed, parse the remaining parameters
 	and send them to the function in database.c that actually writes the data to the MySQL Database
 	*/
@@ -2478,22 +2478,23 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				break;
 			}
 			else
-			{				
+			{	
 				r_who_damaged = GetResourceByID(stat1.v.data);
 				r_who_attacker = GetResourceByID(stat2.v.data);
 				r_weapon = GetResourceByID(stat7.v.data);
 				
-				if (!r_who_damaged || !r_who_attacker || !r_weapon)
+				if (!r_who_damaged || !r_who_attacker || !r_weapon ||
+					!r_who_damaged->resource_val || !r_who_attacker->resource_val || !r_weapon->resource_val)
 				{
 					bprintf("NULL string in C_RecordStat() for STAT_ASSESS_DAM");				
 				}
 				else
-				{
+				{					
 					MySQLRecordPlayerAssessDamage(
-						r_who_damaged->resource_name, 
-						r_who_attacker->resource_name, 
+						r_who_damaged->resource_val, 
+						r_who_attacker->resource_val, 
 						stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, 
-						r_weapon->resource_name);
+						r_weapon->resource_val);
 				}
 			}
 			break;

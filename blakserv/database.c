@@ -12,7 +12,6 @@
 */
 
 #include "database.h"
-#include <stdio.h>
 
 #define SLEEPTIME				10
 #define SLEEPTIMENOCON			1000

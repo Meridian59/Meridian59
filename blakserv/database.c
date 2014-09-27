@@ -12,12 +12,14 @@
 */
 
 #include "database.h"
+#include <stdio.h>
 
 #define SLEEPTIME				10
 #define SLEEPTIMENOCON			1000
 #define MAX_RECORD_QUEUE		1000
 #define RECORD_ENQUEUE_TIMEOUT	60
 #define RECORD_DEQUEUE_TIMEOUT	60
+#define MAX_ITEMS_UNTIL_LOOP	10
 
 sql_queue queue		= {0, 0, 0, 0};
 HANDLE hMySQLWorker	= 0;
@@ -319,8 +321,9 @@ BOOL MySQLRecordPlayerAssessDamage(char* who, char* attacker, int aspell, int at
 #pragma region Internal
 void __cdecl _MySQLWorker(void* parameters)
 {
-	my_bool reconnect = 1;
-	
+	my_bool reconnect		= 1;
+	int		processedcount	= 0;
+
 	/******************************************
 	/*            Initialization
 	/******************************************/
@@ -340,9 +343,6 @@ void __cdecl _MySQLWorker(void* parameters)
 	// enable auto-reconnect
 	mysql_options(mysql, MYSQL_OPT_RECONNECT, &reconnect);
 
-	// connect (may fail, but will reconnect on ping because of auto-reconnect)
-	mysql_real_connect(mysql, host, user, password, db, 0, NULL, 0);
-
 	// set state to initialized
 	state = 1;
 
@@ -351,24 +351,54 @@ void __cdecl _MySQLWorker(void* parameters)
 	/******************************************/
 	while(state > 0)
 	{	
-		// verify connection is up
-		// otherwise sleep and skip this loop
-		if (mysql_ping(mysql) != 0)
-		{
-			Sleep(SLEEPTIMENOCON);
-			continue;			
-		}
-		
-		// schema not yet verified
+		/****** No initial connection yet *****/
 		if (state == 1)
-			_MySQLVerifySchema();
+		{
+			// try connect
+			if (mysql == mysql_real_connect(mysql, host, user, password, db, 0, NULL, 0))
+				state = 2;
 
-		// process all pending queue items
-		if (state > 1)
-			while(_MySQLDequeue(TRUE));
+			// not successful, sleep
+			else			
+				Sleep(SLEEPTIMENOCON);			
+		}
 
-		// sleep
-		Sleep(SLEEPTIME);
+		/****** At least was connected once *****/
+		else if (state > 1)
+		{
+			// verify connection is still up
+			// this will auto-reconnect
+			if (mysql_ping(mysql) == 0)
+			{
+				// schema not yet verified/created
+				if (state == 2)
+					_MySQLVerifySchema();
+
+				// fully running
+				else if (state > 2)
+				{
+					// reset counter for processed items
+					processedcount = 0;
+
+					// process up to limit pending items
+					while(_MySQLDequeue(TRUE))
+					{
+						processedcount++;
+
+						// reached limit, do more next loop
+						// to get updated state etc.
+						if (processedcount >= MAX_ITEMS_UNTIL_LOOP)
+							break;						
+					}
+					
+					// defaultsleep if none processed
+					if (processedcount == 0)
+						Sleep(SLEEPTIME);					
+				}
+			}
+			else
+				Sleep(SLEEPTIMENOCON);	
+		}
 	}
 
 	/******************************************
@@ -420,7 +450,7 @@ void _MySQLVerifySchema()
 	mysql_query(mysql, SQLQUERY_CREATEPROC_PLAYERASSESSDAMAGE);
 
 	// set state to schema verified
-	state = 2;
+	state = 3;
 };
 
 BOOL _MySQLEnqueue(sql_queue_node* Node)
@@ -469,8 +499,9 @@ BOOL _MySQLEnqueue(sql_queue_node* Node)
 
 BOOL _MySQLDequeue(BOOL processNode)
 {
-	BOOL dequeued = FALSE;
-
+	BOOL			dequeued	= FALSE;
+	sql_queue_node*	node		= 0;
+			
 	// try to lock for multithreaded access
 	if (WaitForSingleObject(queue.mutex, RECORD_ENQUEUE_TIMEOUT) == WAIT_OBJECT_0)
 	{
@@ -478,25 +509,29 @@ BOOL _MySQLDequeue(BOOL processNode)
 		if (queue.first)
 		{
 			// get first element to process
-			sql_queue_node* node = queue.first;
+			node = queue.first;
 			
 			// update queue, set first item to the next one
 			queue.first = node->next;
 			queue.count--;
 
-			// process node
-			_MySQLWriteNode(node, processNode);
-
-			// free memory of processed record and node
-			free(node->data);
-			free(node);
-			
 			// save that we dequeued a node
 			dequeued = TRUE;			
 		}
 		
 		// release lock
 		ReleaseMutex(queue.mutex);		
+	}
+	
+	// if we dequeued one, process it
+	if (node)
+	{
+		// process node
+		_MySQLWriteNode(node, processNode);
+
+		// free memory of processed record and node
+		free(node->data);
+		free(node);			
 	}
 
 	return dequeued;

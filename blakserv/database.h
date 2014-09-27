@@ -80,10 +80,10 @@ struct sql_record_playerassessdamage
 
 enum sql_recordtype
 {
-  STAT_TOTALMONEY	= 1,
-  STAT_MONEYCREATED = 2,
-  STAT_PLAYERLOGIN	= 3,
-  STAT_ASSESS_DAM	= 4
+	STAT_TOTALMONEY		= 1,
+	STAT_MONEYCREATED	= 2,
+	STAT_PLAYERLOGIN	= 3,
+	STAT_ASSESS_DAM		= 4
 };
 #pragma endregion
 

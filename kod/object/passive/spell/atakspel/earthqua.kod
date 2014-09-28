@@ -64,7 +64,7 @@ classvars:
    viChance_to_increase = 10
    viMeditate_ratio = 75
 
-   viAttack_spell = ATCK_SPELL_ALL | ATCK_SPELL_QUAKE
+   viAttack_spell = ATCK_SPELL_ALL + ATCK_SPELL_QUAKE
    viOutlaw = TRUE
    viHarmful = TRUE
    viNoNewbieOffense = TRUE

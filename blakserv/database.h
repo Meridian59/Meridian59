@@ -9,13 +9,26 @@
 * database.h
 *
 
- RULES:
+ BASIC USAGE:
  --------------------------
-  * You must not call methods marked with '_' prefix from outside
-  * Call methods MySQLRecordXY to record data to DB
-  * Do not create MySQLRecordXY methods using anything else than simple datatypes and char*
-  * Make sure you _strdup any outside string parameter you get before enqueue
-  * Do not include blakserv.h or other M59 related headers/stuff
+  * You must not call any method marked with '_' prefix from outside database.c
+  * You should call methods MySQLRecordXY to record data to DB
+  * Do not start adding includes to blakserv.h or other M59 related headers/stuff
+
+ STEPS TO ADD A RECORD:
+ --------------------------
+  1) Design a SQL table layout and add the SQL query text to section SQL
+  2) Design a stored procedure and add the SQL query text to section SQL
+  3) Add the queries from (1) and (2) to _MySQLVerifySchema()
+  4) --- TEST IF THEY GET CREATED ---
+  5) Add a sql_record_xy enum and typedef below (matching your table design)
+     Note: Don't use anything except simple datatypes (int, float, ..) and char* as parameters.
+  6) Add a new sql_recordtype below (same entry must go to kod\include\blakston.khd)
+  7) Create a MySQLRecordXY method to enqueue this kind of record (see examples)
+	 Note: You must _strdup any char* parameters
+  8) Create a _MySQLWriteXY method to write this kind of record (see examples)
+	 Note: You must free all _strdups here
+  9) Add the _MySQLWriterXY case to the 'switch' in _MySQLWriteNode()
 
 */
 

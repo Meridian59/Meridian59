@@ -30,24 +30,24 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("-------------------------------------------\n");
 
 		if (!MySQLRecordTotalMoney(1000))
-			printf("T1:%i\t - TotalMoney\n", i);
+			printf("T1:1\t - TotalMoney\n");
 		else 
-			printf("T1:%i\t + TotalMoney\n", i);
+			printf("T1:1\t + TotalMoney\n");
 
 		if (!MySQLRecordMoneyCreated(100))
-			printf("T1:%i\t - MoneyCreated\n", i);
+			printf("T1:1\t - MoneyCreated\n");
 		else
-			printf("T1:%i\t + MoneyCreated\n", i);
+			printf("T1:1\t + MoneyCreated\n");
 
 		if (!MySQLRecordPlayerLogin("test1acc", "test1char", "127.0.0.1"))
-			printf("T1:%i\t - PlayerLogin\n", i);
+			printf("T1:1\t - PlayerLogin\n");
 		else
-			printf("T1:%i\t + PlayerLogin\n", i);
+			printf("T1:1\t + PlayerLogin\n");
 
 		if (!MySQLRecordPlayerAssessDamage("test1who", "test1attacker", 1, 2, 3, 4, "test1weapon"))
-			printf("T1:%i\t - PlayerAssessDamage\n", i);
+			printf("T1:1\t - PlayerAssessDamage\n");
 		else
-			printf("T1:%i\t + PlayerAssessDamage\n", i);
+			printf("T1:1\t + PlayerAssessDamage\n");
 		
 		Sleep(SLEEPWRITESHORT);
 		

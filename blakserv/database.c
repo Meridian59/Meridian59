@@ -20,15 +20,16 @@
 #define RECORD_ENQUEUE_TIMEOUT	60
 #define RECORD_DEQUEUE_TIMEOUT	60
 #define MAX_ITEMS_UNTIL_LOOP	10
+#define SLEEPINIT				100
 
-sql_queue queue		= {0, 0, 0, 0};
-HANDLE hMySQLWorker	= 0;
-int state			= 0;
-MYSQL* mysql		= 0;
-char* host			= 0;
-char* user			= 0;
-char* password		= 0;
-char* db			= 0;
+sql_queue queue			= {0, 0, 0, 0};
+HANDLE hMySQLWorker		= 0;
+sql_worker_state state	= STOPPED;
+MYSQL* mysql			= 0;
+char* host				= 0;
+char* user				= 0;
+char* password			= 0;
+char* db				= 0;
 
 #pragma region SQL
 #define SQLQUERY_CREATETABLE_MONEYTOTAL										"\
@@ -150,9 +151,12 @@ char* db			= 0;
 void MySQLInit(char* Host, char* User, char* Password, char* DB)
 {	
 	// don't init if already running or a parameter is nullptr
-	if (state > 0 || !Host || !User || !Password || !DB)
+	if (state != STOPPED || !Host || !User || !Password || !DB)
 		return;
 	
+	// set state to starting
+	state = STARTING;
+
 	// save connection info
 	host		= _strdup(Host);
 	user		= _strdup(User);
@@ -161,12 +165,16 @@ void MySQLInit(char* Host, char* User, char* Password, char* DB)
 
 	// spawn workthread
 	hMySQLWorker = (HANDLE) _beginthread(_MySQLWorker, 0, 0);
+
+	// sleep a bit to let workthread get initialized
+	// e.g. no one calls MySQLRecordXY right after Init
+	Sleep(SLEEPINIT);
 };
 
 void MySQLEnd()
 {
-	// set state to uninitialized
-	state = 0;
+	// set state to stopping
+	state = STOPPING;
 };
 
 BOOL MySQLRecordTotalMoney(int total_money)
@@ -343,20 +351,26 @@ void __cdecl _MySQLWorker(void* parameters)
 	// enable auto-reconnect
 	mysql_options(mysql, MYSQL_OPT_RECONNECT, &reconnect);
 
-	// set state to initialized
-	state = 1;
+	// check if MySQLEnd was somehow already called and switched state to STOPPING
+	// we still expect STARTING here and if so go to INITIALIZED
+	if (state == STARTING)
+		state = INITIALIZED;
 
 	/******************************************
 	/*              Work loop
 	/******************************************/
-	while(state > 0)
+	while(state != STOPPING)
 	{	
+		/**** Something went wrong with mysql ****/
+		if (!mysql)		
+			state = STOPPING;
+				
 		/****** No initial connection yet *****/
-		if (state == 1)
+		else if (state == INITIALIZED)
 		{
 			// try connect
 			if (mysql == mysql_real_connect(mysql, host, user, password, db, 0, NULL, 0))
-				state = 2;
+				state = CONNECTED;
 
 			// not successful, sleep
 			else			
@@ -364,18 +378,18 @@ void __cdecl _MySQLWorker(void* parameters)
 		}
 
 		/****** At least was connected once *****/
-		else if (state > 1)
+		else if (state >= CONNECTED)
 		{
 			// verify connection is still up
 			// this will auto-reconnect
 			if (mysql_ping(mysql) == 0)
 			{
 				// schema not yet verified/created
-				if (state == 2)
+				if (state == CONNECTED)
 					_MySQLVerifySchema();
 
 				// fully running
-				else if (state > 2)
+				else if (state >= SCHEMAVERIFIED)
 				{
 					// reset counter for processed items
 					processedcount = 0;
@@ -422,6 +436,9 @@ void __cdecl _MySQLWorker(void* parameters)
 	if (queue.mutex)
 		CloseHandle(queue.mutex);
 
+	// mark stopped
+	state = STOPPED;
+
 	// finalize thread
 	_endthread();
 };
@@ -450,7 +467,7 @@ void _MySQLVerifySchema()
 	mysql_query(mysql, SQLQUERY_CREATEPROC_PLAYERASSESSDAMAGE);
 
 	// set state to schema verified
-	state = 3;
+	state = SCHEMAVERIFIED;
 };
 
 BOOL _MySQLEnqueue(sql_queue_node* Node)

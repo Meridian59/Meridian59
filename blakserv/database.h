@@ -47,6 +47,7 @@ typedef struct sql_record_moneycreated sql_record_moneycreated;
 typedef struct sql_record_playerlogin sql_record_playerlogin;
 typedef struct sql_record_playerassessdamage sql_record_playerassessdamage;
 typedef enum sql_recordtype sql_recordtype;
+typedef enum sql_worker_state sql_worker_state;
 
 struct sql_queue_node
 {
@@ -97,6 +98,16 @@ enum sql_recordtype
 	STAT_MONEYCREATED	= 2,
 	STAT_PLAYERLOGIN	= 3,
 	STAT_ASSESS_DAM		= 4
+};
+
+enum sql_worker_state
+{
+	STOPPED			= 0,
+	STOPPING		= 1,
+	STARTING		= 2,
+	INITIALIZED		= 3,
+	CONNECTED		= 4,
+	SCHEMAVERIFIED	= 5
 };
 #pragma endregion
 

@@ -129,5 +129,10 @@ messages:
       propagate;
    }
 
+   IsArmorColored()
+   {
+      return pbColored;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

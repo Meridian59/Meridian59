@@ -570,7 +570,9 @@ void GameStartUser(session_node *s,user_node *u)
    resource_node *r;
    name_val.int_val = SendTopLevelBlakodMessage(s->game->object_id,USER_NAME_MSG,0,NULL);
    r = GetResourceByID(name_val.v.data);
-   MySQLRecordPlayerLogin(s->account->name,r->resource_val,s->conn.name);
+
+   if (r && r->resource_val)
+     MySQLRecordPlayerLogin(s->account->name,r->resource_val,s->conn.name);
 
    SetSessionTimer(s,ConfigInt(CREDIT_DRAIN_TIME));
 }

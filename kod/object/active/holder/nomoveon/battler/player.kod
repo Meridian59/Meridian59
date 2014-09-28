@@ -2105,7 +2105,7 @@ messages:
 
       if ptTempSafe <> $
       {
-         Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=TRUE);
+         Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=TRUE);
          Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
       }
 
@@ -2616,7 +2616,7 @@ messages:
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_LOCK,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_INTRIGUING,#value=FALSE);
-      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=FALSE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
 
       Send(SYS,@SystemRemoveFromChampionLists,#oldchamp=self);
 
@@ -4044,8 +4044,8 @@ messages:
 
       % Check for temporary safety flag.
       if IsClass(victim,&Player)
-         AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)
-            OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE))
+         AND (Send(self,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+            OR Send(victim,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
       {
          if report
          {
@@ -9185,11 +9185,12 @@ messages:
                bLostHealth = TRUE;
             }
 
-            % Under 100HP and killed by a player? No PvP for 2 hours.
+            % Under 100HP and killed by a player? Receive a temporary angel.
             if bLostHealth=TRUE
                AND piBase_max_health<=99
                AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
                AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TEMP_SAFETY)
                AND Send(self,@FindUsing,#class=&SoldierShield) = $
                AND ptTempSafe = $
             {
@@ -12157,12 +12158,18 @@ messages:
 
    StartTempSafe()
    {
+      local iTime;
+
+      % This returns minutes, so convert to milliseconds.
+      iTime = Send(Send(SYS,@GetSettings),@GetTempSafeTime);
+      iTime = iTime * 60 * 1000;
+
       if ptTempSafe <> $
       {
          DeleteTimer(ptTempSafe);
       }
-      ptTempSafe = CreateTimer(self,@EndTempSafe,(3600*1000));
-      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=TRUE);
+      ptTempSafe = CreateTimer(self,@EndTempSafe,iTime);
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=TRUE);
       Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
 
       return;
@@ -12170,7 +12177,7 @@ messages:
 
    EndTempSafe()
    {
-      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=FALSE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
       Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
       ptTempSafe = $;
 

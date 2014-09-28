@@ -424,10 +424,17 @@ void __cdecl _MySQLWorker(void* parameters)
 		mysql_close(mysql);
 
 	// free local connection strings
-	free(host);
-	free(user);
-	free(password);
-	free(db);
+	if (host)
+		free(host);
+	
+	if (user)
+		free(user);
+	
+	if (password)
+		free(password);
+	
+	if (db)
+		free(db);
 
 	// clear queue
 	while(_MySQLDequeue(FALSE));

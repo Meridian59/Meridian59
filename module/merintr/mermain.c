@@ -28,7 +28,10 @@ static int num_default_buttons = (sizeof(default_buttons) / sizeof(AddButton));
 PInfo pinfo;
 
 // True when we've told server to change safety flag; prevents multiple requests
-static Bool safety_flipped;  
+static Bool safety_flipped;
+
+// True when we've told server to change temp safe flag; prevents multiple requests
+static Bool temp_safe_flipped;
 
 /****************************************************************************/
 /*
@@ -66,6 +69,7 @@ void InterfaceInit(void)
 
    pinfo.resting = False;
    safety_flipped = False;
+   temp_safe_flipped = False;
 
    if (pinfo.resting)
       RequestRest();
@@ -75,6 +79,10 @@ void InterfaceInit(void)
       SendSafety(0);
    else
       SendSafety(1);
+   if (cinfo->config->tempsafe)
+      SendTempSafe(1);
+   else
+      SendTempSafe(0);
 }
 /****************************************************************************/
 /*
@@ -171,10 +179,14 @@ void InterfaceResetData(void)
       SendSafety(0);
    else
       SendSafety(1);
+   if (cinfo->config->tempsafe)
+      SendTempSafe(1);
+   else
+      SendTempSafe(0);
 
    RequestSpells();
    RequestSkills();
-   RequestStatGroups();   
+   RequestStatGroups();
    InventoryResetData();
    EnchantmentsResetData();
    GuildResetData();
@@ -410,6 +422,7 @@ void InterfaceUserChanged(void)
 {
    room_contents_node *r;
    Bool new_safety;
+   Bool new_temp_safe;
 
    UserAreaRedraw();
    AliasInit();
@@ -450,6 +463,41 @@ void InterfaceUserChanged(void)
       }
 
    }
+
+   new_temp_safe = ((r->obj.flags & OF_TEMPSAFE) != 0);
+   
+   if (new_temp_safe)
+   {
+      if (cinfo->config->tempsafe)
+      {
+         // Flag on, setting on, don't change.
+         pinfo.tempsafe = cinfo->config->tempsafe = True;
+         temp_safe_flipped = False;
+      }
+      else
+      {
+         // Flag on, setting off, turn flag off.
+         if (!temp_safe_flipped)
+            SendTempSafe(0);
+         temp_safe_flipped = True;
+      }
+   }
+   else
+   {
+      if (!cinfo->config->tempsafe)
+      {
+         // Flag off, setting off, don't change.
+         pinfo.tempsafe = cinfo->config->tempsafe = False;
+         temp_safe_flipped = False;
+      }
+      else
+      {
+         // Flag off, setting on, turn flag on.
+         if (!temp_safe_flipped)
+            SendTempSafe(1);
+         temp_safe_flipped = True;
+      }
+   }
 }
 /****************************************************************************/
 void InterfaceConfigChanged(void)
@@ -461,6 +509,15 @@ void InterfaceConfigChanged(void)
       if (pinfo.aggressive)
          SendSafety(0);
       else SendSafety(1);
+   }
+   
+   // See if user changed temp safe flag
+   if (pinfo.tempsafe != cinfo->config->tempsafe)
+   {
+      pinfo.tempsafe = cinfo->config->tempsafe;
+      if (pinfo.tempsafe)
+         SendTempSafe(1);
+      else SendTempSafe(0);
    }
 }
 

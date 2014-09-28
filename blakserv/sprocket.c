@@ -96,6 +96,7 @@ client_def_table_type usercommand_def_table[] =
 	{ UC_STAND,                 { {0, DONE_PARM} } },
 	{ UC_SUICIDE,               { {0, DONE_PARM} } },
 	{ UC_SAFETY,                { {1, TAG_INT}, {0, DONE_PARM} } },
+	{ UC_TEMPSAFE,              { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_REQ_GUILDINFO,         { {0, DONE_PARM} } },
 	{ UC_INVITE,                { {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ UC_RENOUNCE,              { {0, DONE_PARM} } },

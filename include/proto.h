@@ -228,7 +228,7 @@ enum {
    UC_STAND = 6,
    UC_SAFETY = 7,
    UC_SUICIDE = 8,
-
+   UC_TEMPSAFE = 9,
    UC_REQ_GUILDINFO = 10,
    UC_GUILDINFO = 11,
    UC_INVITE = 12,
@@ -363,6 +363,10 @@ enum {
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
+#define OF_TEMPSAFE      0x00001000    // Set if player has temp safety on death on (self only)
+                                       // Overlaps with OF_APPLYABLE and OF_MINION_SELF but
+                                       // since these aren't used for players, there shouldn't
+                                       // be an issue.
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
 
 #define OF_BOUNCING      0x00010000    // If both flags on then object is bouncing

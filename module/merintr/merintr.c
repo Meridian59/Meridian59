@@ -90,6 +90,7 @@ client_message user_msg_table[] = {
 { UC_STAND,                { PARAM_END }, },
 { UC_SUICIDE,              { PARAM_END }, },
 { UC_SAFETY,               { PARAM_BYTE, PARAM_END }, },
+{ UC_TEMPSAFE,             { PARAM_BYTE, PARAM_END }, },
 { UC_REQ_GUILDINFO,        { PARAM_END }, },
 { UC_INVITE,               { PARAM_ID, PARAM_END }, },
 { UC_EXILE,                { PARAM_ID, PARAM_END }, },
@@ -347,6 +348,8 @@ static TypedCommand commands[] = {
 { "tguild",      CommandTellGuild, },
 { "safetyon",    CommandSafetyOn, },
 { "safetyoff",   CommandSafetyOff, },
+{ "tempsafeon",  CommandSafetyOn, },
+{ "tempsafeoff", CommandSafetyOff, },
 { NULL,          NULL},    // Must end table this way
 };
 

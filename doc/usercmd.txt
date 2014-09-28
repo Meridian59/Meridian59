@@ -26,6 +26,11 @@ Toggle user safety flag (disallows player attacking)
 <state> =
 1 byte		1 = safety on, 0 = safety off
 ----------------------------------------------------------
+Toggle user safety flag (disallows player attacking)
+<UC_TEMPSAFE> <state>
+<state> =
+1 byte		1 = tempsafe on, 0 = tempsafe off
+----------------------------------------------------------
 Get guild information
 <UC_REQ_GUILDINFO>
 ----------------------------------------------------------

@@ -563,6 +563,22 @@ void CommandSafetyOff(char *args)
 }
 /************************************************************************/
 /*
+ * SendTempSafeOn: "tempSafeOn" command
+ */
+void CommandTempSafeOn(char *args)
+{
+   SendTempSafe(1);
+}
+/************************************************************************/
+/*
+ * SendTempSafeOff: "tempSafeoff" command
+ */
+void CommandTempSafeOff(char *args)
+{
+   SendTempSafe(0);
+}
+/************************************************************************/
+/*
  * CommandGuild: "guild" command
  */
 void CommandGuild(char *args)

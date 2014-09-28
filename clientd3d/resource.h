@@ -400,6 +400,7 @@
 #define IDC_MUSIC_VOLUME                1206
 #define IDC_SOUND_VOLUME2               1207
 #define IDC_WEATHER                     1208
+#define IDC_TEMPSAFE                    1209
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015

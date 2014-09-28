@@ -17,6 +17,7 @@ typedef struct {
    Bool   resting;        // True when player is resting (idle)
    int    vigor;          // Current value of player's vigor stat
    Bool   aggressive;     // True when people allowed to kill others (safety off)
+   Bool   tempsafe;       // True when player gets a temporary angel on death
 } PInfo;
 
 typedef struct {

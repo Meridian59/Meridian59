@@ -60,6 +60,7 @@
    OF_ACTIVATABLE    = 0x00000800
    OF_APPLYABLE      = 0x00001000
    OF_SAFETY         = 0x00002000
+   OF_TEMPSAFE       = 0x00004000
 
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000
@@ -2194,7 +2195,8 @@
    PFLAG_NO_MAGIC          = 0x008000
    PFLAG_NO_MOVE           = 0x010000
    PFLAG_LOG               = 0x020000
-   PFLAG_TEMPSAFE          = 0x040000
+   % Setting for the player's temp safety
+   PFLAG_TEMP_SAFETY       = 0x040000
    PFLAG_ANONYMOUS         = 0x080000
    PFLAG_FORGOTTEN         = 0x100000
    PFLAG_MORPHED           = 0x200000
@@ -2203,7 +2205,7 @@
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG2_MASK             = 0x001E80
+   PFLAG2_MASK             = 0x003E80
 
    PFLAG2_HASTED           = 0x000001
    PFLAG2_DANCING          = 0x000002
@@ -2222,6 +2224,7 @@
    PFLAG2_SQUELCHED_POSTS  = 0x001000
    % Sum of the other squelched flags.
    PFLAG2_SQUELCHED_ALL    = 0x001E00
+   PFLAG2_TEMPSAFE         = 0x002000
 
    % Set of flags just for DM's
    % DM is completely invisible

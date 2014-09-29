@@ -98,6 +98,7 @@ messages:
       
       oNewItem = Create(cSacrificeClass,#iSpellpower=iSacrificeSpellPower);
       Send(oNewItem,@SetHits,#number=iNewHits);
+      Send(oNewItem,@RevealHiddenAttributes);
       Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE); 
 
       If IsClass(what,&User)

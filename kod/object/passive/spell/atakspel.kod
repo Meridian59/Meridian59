@@ -270,7 +270,7 @@ messages:
 
             if iDamage = $
             {
-               Post(who,@KilledSomething,#what=i,#use_weapon=self);
+               Send(who,@KilledSomething,#what=i,#use_weapon=self);
             }
          }
 

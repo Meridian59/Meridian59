@@ -98,7 +98,10 @@ messages:
       
       oNewItem = Create(cSacrificeClass,#iSpellpower=iSacrificeSpellPower);
       Send(oNewItem,@SetHits,#number=iNewHits);
-      Send(oNewItem,@RevealHiddenAttributes);
+      if Send(sacrificed_item,@IsRevealed)
+      {
+         Send(oNewItem,@RevealHiddenAttributes);
+      }
       Send(oNewItem,@SetKarmaCheck,#value=Send(sacrificed_item,@GetKarmaCheck));
       Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE); 
 

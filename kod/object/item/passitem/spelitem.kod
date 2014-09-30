@@ -516,6 +516,17 @@ messages:
 
       return;
    }
+   
+   GetKarmaCheck()
+   {
+      return pbCheckKarma;
+   }
+   
+   SetKarmaCheck(value=FALSE)
+   {
+      pbCheckKarma = value;
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

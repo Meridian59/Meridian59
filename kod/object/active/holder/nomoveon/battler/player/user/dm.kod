@@ -1791,7 +1791,7 @@ messages:
 
    GreenNamed()
    {
-      if pbImmortal = 2
+      if pbImmortalSave = 2
       {
          return TRUE;
       }

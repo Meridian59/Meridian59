@@ -60,23 +60,16 @@
    LOOK_NO           = 0x00000040
    ITEM_MAGIC_YES    = 0x00000080
    ITEM_MAGIC_NO     = 0
-   INVISIBLE_YES     = 0x00000100
-   INVISIBLE_NO      = 0
+   SAFETY_YES        = 0x00000100
+   SAFETY_NO         = 0
    OFFER_YES         = 0x00000200
    OFFER_NO          = 0
    BUY_YES           = 0x00000400
    BUY_NO            = 0
    ACTIVATE_YES      = 0x00000800
    ACTIVATE_NO       = 0
-
-   % Borrows same value as activate. Must always be false for players.
-   % Used only by reflections so GuideDialogue can tell difference.
-   FALSEPLAYER_YES   = 0x00000800
-
-   APPLY_YES         = 0x1000
+   APPLY_YES         = 0x00001000
    APPLY_NO          = 0
-   SAFETY_YES        = 0x2000
-   SAFETY_NO         = 0
 
    % Visual effects
    FLICKERING_YES    = 0x00020000
@@ -98,10 +91,10 @@
    DRAWFX_DITHERTRANS    = 0x800000
    DRAWFX_DOUBLETRANS    = 0x900000
    DRAWFX_SECONDTRANS    = 0xA00000
-   DRAWFX_MASK          = 0x1F00000
+   DRAWFX_MASK           = 0xF00000
 
    % Object flags
-   OF_HANGING = 0x10000
+   OF_HANGING = 0x01000000
    OF_FLICKERING = 0x20000
    OF_FLASHING = 0x40000
    OF_PHASING = 0x80000
@@ -117,11 +110,12 @@
    PLAYER_EVENT      = 0x1C000
 
    % What is the target, according to the viewer?  Used for special flagging.
-   MINION_SELF          = 0x00001000
-   MINION_OTHER         = 0x00002000
    PLAYER_IS_ENEMY      = 0x02000000
    PLAYER_IS_FRIEND     = 0x04000000
-   PLAYER_IS_GUILDMATE  = 0x08000000
+   PLAYER_IS_GUILDMATE  = 0x06000000
+   MINION_SELF          = 0x08000000
+   MINION_OTHER         = 0x0A000000
+   MINIMAP_MASK         = 0x0E000000
 
    %%% Projectile and Light flags
 

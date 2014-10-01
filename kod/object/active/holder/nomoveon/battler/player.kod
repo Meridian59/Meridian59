@@ -3992,6 +3992,12 @@ messages:
             }
          }
 
+         if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+         {
+            Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,#parm1=Send(victim,@GetName));
+            return FALSE;
+         }
+
          % No attacking pets on Sacred Haven
          if NOT Send(SYS,@IsPKAllowed)
             AND Send(victim,@GetMaster) <> $ 

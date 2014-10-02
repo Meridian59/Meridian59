@@ -363,6 +363,8 @@ enum {
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
+#define OF_HANGING       0x00002000    //     FALSE for most objects.
+                                       //     TRUE for creators or ceiling-pinned objects.
 
 // Player name colors
 #define PF_KILLER        0x00004000    // Set if object is a killer (must also have OF_PLAYER)
@@ -394,16 +396,13 @@ enum {
 #define OF_EFFECT_MASK   0x00F00000    // Mask to get object drawing effect bits
 #define NUM_DRAW_EFFECTS 16            // # of possible object drawing effects
 
-#define OF_HANGING       0x01000000    //     FALSE for most objects.
-                                       //     TRUE for creators or ceiling-pinned objects.
-
 // Minimap dot colors
-#define OF_ENEMY         0x02000000    // Enemy player
+#define OF_ENEMY         0x01000000    // Enemy player
+#define OF_GUILDMATE     0x02000000    // Guildmate player
+#define OF_MINION_SELF   0x03000000    // Set if a monster is our minion
 #define OF_FRIEND        0x04000000    // Friendly player
-#define OF_GUILDMATE     0x06000000    // Guildmate player
-#define OF_MINION_SELF   0x08000000    // Set if a monster is our minion
-#define OF_MINION_OTHER  0x0A000000    // Set if monster is other's minion
-#define OF_MINIMAP_MASK  0x0E000000    // Mask to get minimap drawing effects
+#define OF_MINION_OTHER  0x06000000    // Set if monster is other's minion
+#define OF_MINIMAP_MASK  0x0F000000    // Mask to get minimap drawing effects
 
 #define GetMinimapFlags(flags)  ((flags) & OF_MINIMAP_MASK)
 #define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)

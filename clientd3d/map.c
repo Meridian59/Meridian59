@@ -396,44 +396,39 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
       // Draw rings around players
       if (r->obj.flags & OF_PLAYER)
       {
-          float ring_radius = 2.0f * radius;
+         // Same building group?
+         SelectObject(hdc, hPlayerBrush);
+         if (GetMinimapFlags(r->obj.flags) & OF_FRIEND)
+         {
+            float ring_radius = 3.0f * radius;
+            SelectObject(hdc, hFriendPen);
+            Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         }
 
-          // Guildmate?
-          SelectObject(hdc, hPlayerBrush);
-          if (GetMinimapFlags(r->obj.flags) == OF_GUILDMATE)
-          {
-              ring_radius = 3.0f * radius;
-          }
+         float ring_radius = 2.0f * radius;
 
-          // Friend?
-          if (GetMinimapFlags(r->obj.flags) == OF_FRIEND)
-          {
-              SelectObject(hdc, hFriendPen);
-              Ellipse(hdc, (int) (new_x - ring_radius),
-                      (int) (new_y - ring_radius), 
-                      (int) (new_x + ring_radius),
-                      (int) (new_y + ring_radius));
-          }
+         // Enemy?
+         if (GetMinimapFlags(r->obj.flags) & OF_ENEMY)
+         {
+            SelectObject(hdc, hEnemyPen);
+            Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         }
 
-          // Enemy?
-          if (GetMinimapFlags(r->obj.flags) == OF_ENEMY)
-          {
-              SelectObject(hdc, hEnemyPen);
-              Ellipse(hdc, (int) (new_x - ring_radius),
-                      (int) (new_y - ring_radius), 
-                      (int) (new_x + ring_radius),
-                      (int) (new_y + ring_radius));
-          }
-
-          if (GetMinimapFlags(r->obj.flags) == OF_GUILDMATE)
-          {
-              ring_radius = 2.0f * radius;
-              SelectObject(hdc, hGuildmatePen);
-              Ellipse(hdc, (int) (new_x - ring_radius),
-                      (int) (new_y - ring_radius), 
-                      (int) (new_x + ring_radius),
-                      (int) (new_y + ring_radius));
-          }          
+         // Guildmate?
+         if (GetMinimapFlags(r->obj.flags) & OF_GUILDMATE)
+         {
+             SelectObject(hdc, hGuildmatePen);
+             Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         }
       }
       /* Draw players in a different color. If a monster is a minion
       / then color it appropriately, otherwise it gets the standard

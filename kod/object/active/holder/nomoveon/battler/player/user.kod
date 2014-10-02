@@ -8152,7 +8152,6 @@ messages:
 
       iFlags = iFlags | (piDrawfx & DRAWFX_MASK)
                | (piDrawfx & (FLASHING_YES | FLICKERING_YES | PHASING_YES));
-      iFlags = (iFlags & (~FALSEPLAYER_YES));
 
       oIllusion = Send(self,@GetIllusionForm);
 

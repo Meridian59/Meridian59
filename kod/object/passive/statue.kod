@@ -623,17 +623,17 @@ messages:
       
       if piColor = COLOR_GREEN
       {
-         iFlags = iFlags | PLAYER_SUPER | FALSEPLAYER_YES | USER_YES ;
+         iFlags = iFlags | PLAYER_SUPER | USER_YES ;
       }
 
       if piColor = COLOR_BLUE
       {
-         iFlags = iFlags | PLAYER_DM | FALSEPLAYER_YES | USER_YES ;
+         iFlags = iFlags | PLAYER_DM | USER_YES ;
       }
 
       if piColor = COLOR_YELLOW
       {
-         iFlags = iFlags | PLAYER_CREATOR | FALSEPLAYER_YES | USER_YES;
+         iFlags = iFlags | PLAYER_CREATOR | USER_YES;
       }
 
       return iFlags;

@@ -62,7 +62,7 @@ messages:
 
    UserGotoDeadRoom()
    {
-      Send(self,@TeleportTo,#RID=RID_GUEST1);
+      Send(self,@TeleportTo,#RID=RID_GUEST1,#bAdminPort=FALSE);
 
       return;
    }

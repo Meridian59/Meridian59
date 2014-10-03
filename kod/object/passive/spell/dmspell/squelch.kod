@@ -157,8 +157,6 @@ messages:
 
          % Log this squelch in the God Log.
          ClearTempString();
-         AppendTempString("DM ");
-         AppendTempString(Send(who,@GetTrueName));
 
          if bSquelched
          {
@@ -173,10 +171,8 @@ messages:
             AppendTempString(" returned ");
          }
 
-         AppendTempString(Send(oTarget,@GetTrueName));
-         AppendTempString("'s ability to ");
-         AppendTempString(rSquelchType);
-         GodLog();
+         GodLog("DM ",Send(who,@GetTrueName),GetTempString(),
+               Send(oTarget,@GetTrueName),"'s ability to ",rSquelchType,".");
 
          if Send(oTarget,@IsLoggedOn)
          {

@@ -1415,18 +1415,14 @@ messages:
       if IsClass(who,&DM)
       {
          ClearTempString();
-         AppendTempString("DM ");
-         AppendTempString(Send(who,@GetTrueName));
-         AppendTempString(" cast the spell ");
-         AppendTempString(Send(self,@GetName));
-         
          if lTargets <> $
          {
             AppendTempString(" on target ");
             AppendTempString(Send(First(lTargets),@GetTrueName));
          }
 
-         GodLog();
+         GodLog("DM ",Send(who,@GetTrueName)," cast the spell ",
+               Send(self,@GetName),GetTempString());
       }
 
       if NOT bItemCast

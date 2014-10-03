@@ -357,11 +357,7 @@ messages:
          Send(self,@DontInterfere);
 
          % Log this attempt.
-         ClearTempString();
-         AppendTempString("DM ");
-         AppendTempString(Send(self,@GetTrueName));
-         AppendTempString(" tried to pick up a token");
-         GodLog();
+         GodLog("DM ",Send(self,@GetTrueName)," tried to pick up a token.");
 
          return FALSE;
       }
@@ -495,11 +491,8 @@ messages:
       if NOT pbAdvancement
       {
          % Log this attempt.
-         ClearTempString();
-         AppendTempString("DM ");
-         AppendTempString(Send(self,@GetTrueName));
-         AppendTempString(" tried to learn a spell or skill");
-         GodLog();
+         GodLog("DM ",Send(self,@GetTrueName),
+               " tried to learn a spell or skill.");
          Send(self,@DontInterfere);
 
          return PLAYER_LEARN_ERROR;
@@ -546,12 +539,8 @@ messages:
          Send(self,@DontInterfere);
 
          % Log this attempt.
-         ClearTempString();
-         AppendTempString("DM ");
-         AppendTempString(Send(self,@GetTrueName));
-         AppendTempString(" tried to offer to ");
-         AppendTempString(Send(what,@GetTrueName));
-         GodLog();
+         GodLog("DM ",Send(self,@GetTrueName)," tried to offer to ",
+               Send(what,@GetTrueName));
 
          return;
       }
@@ -615,12 +604,8 @@ messages:
          if what <> $
          {
             % Log this attempt.
-            ClearTempString();
-            AppendTempString("DM ");
-            AppendTempString(Send(self,@GetTrueName));
-            AppendTempString(" tried to attack ");
-            AppendTempString(Send(what,@GetTrueName));
-            GodLog();
+            GodLog("DM ",Send(self,@GetTrueName)," tried to attack ",
+                  Send(what,@GetTrueName));
          }
 
          return FALSE;
@@ -676,7 +661,7 @@ messages:
       % localize the words yet English speaking admins can still use the system.
 
       % Log the DM command in god.txt, and print it to the debug log.
-      GodLog(string);
+      GodLog("DM ",Send(self,@GetTrueName)," used the DM command dm ",string);
 
       if StringEqual(string,dm_help_command)
       {

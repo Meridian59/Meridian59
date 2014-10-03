@@ -142,7 +142,7 @@ messages:
               OR StringContain(string,"create itematt"))
       {
          % Log the DM command in god.txt, and print it to the debug log.
-         GodLog(string);
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
 
          %% Only works on weapons for now.
          oWeapon = Send(self,@LookupPlayerWeapon);
@@ -179,6 +179,9 @@ messages:
       if (StringContain(string,admin_relic_command)
          OR StringContain(string,"relic"))
       {
+         % Log to god log.
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
+
          if (StringContain(string,"1") OR StringContain(string,"heirloom"))
          {
             Send(self,@NewHold,#what=Send(SYS,@GetTotem,#num=1));
@@ -218,6 +221,9 @@ messages:
       if StringEqual(string,admin_anonymous_command)
          OR StringEqual(string,"anonymous")
       {
+         % Log to god log.
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
+
          if NOT (piFlags & PFLAG_ANONYMOUS)
          {
             Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
@@ -250,6 +256,9 @@ messages:
       if StringEqual(string,admin_shadow_command)
          OR StringEqual(string,"shadow")
       {
+         % Log to god log.
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
+
          Send(self,@MsgSendUser,#message_rsc=admin_black);
          Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
          piDMFlags = piDMFlags | DMFLAG_SHADOW;
@@ -398,6 +407,9 @@ messages:
       if StringEqual(string,admin_logoffghost_on_command)
          OR StringEqual(string,"logoffghost on")
       {
+         % Log to god log.
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
+
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_on);
          Send(SYS,@SetLogoffPenaltyEnable,#enable=TRUE);
 
@@ -407,6 +419,9 @@ messages:
       if StringEqual(string,admin_logoffghost_off_command)
          OR StringEqual(string,"logoffghost off")
       {
+         % Log to god log.
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
+
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_off);
          Send(SYS,@SetLogoffPenaltyEnable,#enable=FALSE);
 
@@ -416,6 +431,9 @@ messages:
       if StringEqual(string,admin_logoffghost_temp_off_command)
          OR StringEqual(string,"logoffghost temp off")
       {
+         % Log to god log.
+         GodLog("Admin ",Send(self,@GetTrueName)," used the DM command dm ",string);
+
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_temp_off);
          Send(SYS,@TempDisableLogoffPenalties);
 

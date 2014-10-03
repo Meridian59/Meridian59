@@ -2250,7 +2250,7 @@ messages:
       
          if iRoom >= RID_NEWB_BASE and iRoom <= RID_NEWB_MAX
          {
-            Send(self,@TeleportTo,#RID=RID_NEWB1);
+            Send(self,@TeleportTo,#RID=RID_NEWB1,#bAdminPort=FALSE);
          }
          else
          {
@@ -7801,10 +7801,10 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=user_goto_jail);
          return Send(SYS,@GetSuccessRsc);
       }
-      
+
       return;
    }
-   
+
    AdminGoToLastSafeRoom()
    "Admin supported\n"
    "Sends the user to the last safe room they visited, whether they're logged in or not!\n"
@@ -7815,12 +7815,12 @@ messages:
       {
          oLastSafeRoom = Send(SYS,@FindRoomByNum,#num=piLastSafeRoom);
          iLastSafeRegion = Send(oLastSafeRoom,@GetRegion);
-         
+
          if pbLogged_on
          {
             oCurrentRoom = Send(self,@GetOwner);
             iCurrentRegion = Send(oCurrentRoom,@GetRegion);
-            
+
             if iCurrentRegion = iLastSafeRegion
             {
                Send(oLastSafeRoom,@Teleport,#what=self);
@@ -7855,7 +7855,7 @@ messages:
             else
             {
                oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
-               
+
                piSave_room = Send(oTargetRoom,@GetRoomNum);
                piSave_row = Send(oTargetRoom,@GetTeleportRow);
                piSave_col = Send(oTargetRoom,@GetTeleportCol);
@@ -7864,6 +7864,7 @@ messages:
             }
          }
       }
+
       return;
    }
 
@@ -7879,7 +7880,7 @@ messages:
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=abs(piHomeroom));
       }
-      
+
       if oRoom = $ OR piHomeroom = $ OR NOT Send(oRoom,@IsHometown)
       {
          Send(self,@SetRandomHomeroom);
@@ -7922,13 +7923,13 @@ messages:
                AND (Send(oGhost,@GetGhostedPlayer) = self)
             {
                Send(oRoom,@NewHold,#what=oGhost,
-                    #new_row=Send(oRoom,@GetTeleportRow),
-                    #new_col=Send(oRoom,@GetTeleportCol),
-                    #fine_row=0,#fine_col=0,
-                    #new_angle=Send(oRoom,@GetTeleportAngle));
+                     #new_row=Send(oRoom,@GetTeleportRow),
+                     #new_col=Send(oRoom,@GetTeleportCol),
+                     #fine_row=0,#fine_col=0,
+                     #new_angle=Send(oRoom,@GetTeleportAngle));
             }
          }
-         
+
          piSave_Room = RID_OOG;
          piSave_row = Send(oRoom,@GetTeleportRow);
          piSave_col = Send(oRoom,@GetTeleportCol);
@@ -7940,10 +7941,9 @@ messages:
             piSave_angle = ANGLE_SOUTH;
          }
       }
-      
+
       return TRUE;
    }
-   
 
    TeleportToInitialLocation()
    "Assertion:  you are NOT logged on"
@@ -7955,15 +7955,15 @@ messages:
       if oRoom = $
       {
          Debug("There is no initial room!");
-         
+
          return;
       }
 
       % we're NOT logged on
 
       piSave_room = Send(oRoom,@GetRoomNum);
-      piSave_row = Send(oRoom,@getteleportrow);
-      piSave_col = Send(oRoom,@getteleportcol);
+      piSave_row = Send(oRoom,@GetTeleportRow);
+      piSave_col = Send(oRoom,@GetTeleportCol);
       piSave_fine_row = 0;
       piSave_fine_col = 0;
       piSave_angle = Send(oRoom,@GetTeleportAngle);
@@ -7971,7 +7971,7 @@ messages:
       {
          piSave_angle = ANGLE_SOUTH;
       }
-      
+
       return;
    }
 
@@ -7980,14 +7980,14 @@ messages:
       return RID_NEWB1;
    }
 
-   TeleportTo(RID = RID_TOS,foyer=TRUE)
+   TeleportTo(RID = RID_TOS,foyer=TRUE,bAdminPort=TRUE)
    "Admin supported."
    "This will teleport the target person to the target room, by RID."
    {
       local oRoom;
-      
+
       oRoom = Send(SYS,@FindRoombyNum,#num=RID);
-      if oRoom = $     
+      if oRoom = $
       {
          % If FindRoomByNum returns nothing - bad RID
          return FALSE;
@@ -7998,9 +7998,16 @@ messages:
          % If they're not logged in, don't teleport 'em
          return FALSE;
       }
-      
+
       Send(oRoom,@Teleport,#what=self,#foyer=foyer);
-      
+
+      if bAdminPort
+      {
+         % Log the teleport.
+         GodLog("Admin ",Send(self,@GetTrueName)," teleported to ",
+               Send(oRoom,@GetName));
+      }
+
       return TRUE;
    }
 
@@ -8079,9 +8086,20 @@ messages:
          }
 
          Send(self,@MsgSendUser,#message_rsc=user_goto_object,
-              #parm1=logged_off,#parm2=Send(what,@GetName));
+               #parm1=logged_off,#parm2=Send(what,@GetName));
       }
-      
+
+      if IsClass(self,&DM)
+      {
+         GodLog("Admin ",Send(self,@GetTrueName)," teleported to object ",
+               Send(what,@GetTrueName)," in room ",Send(oNew_room,@GetName));
+      }
+      else
+      {
+         GodLog(Send(self,@GetTrueName)," was teleported to object ",
+            Send(what,@GetTrueName)," in room ",Send(oNew_room,@GetName));
+      }
+
       return ret_val;
    }
 

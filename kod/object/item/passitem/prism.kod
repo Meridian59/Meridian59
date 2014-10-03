@@ -512,7 +512,12 @@ messages:
 
       return;
    }
-   
+
+   DestroyDisposable()
+   {
+      % Don't destroy prisms.
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

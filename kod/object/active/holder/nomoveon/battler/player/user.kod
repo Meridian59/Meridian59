@@ -5034,7 +5034,8 @@ messages:
       local i, bFound, iSpell, iSpellNum, iSpellPower, lFinalTargets;
 
       % Command minions to aid in combat
-      if IsClass(oSpell,&AttackSpell)
+      if lTargets <> $
+         AND IsClass(oSpell,&AttackSpell)
       {
          if length(Send(self,@GetControlledMinions)) > 0
          {

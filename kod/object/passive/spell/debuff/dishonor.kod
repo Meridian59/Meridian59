@@ -100,6 +100,7 @@ messages:
       if IsClass(oTarget,&Player)
       {
          iKarma = Send(oTarget,@GetKarma);
+         iVigorRestThresholdChange = 0;
 
          % Shal'ille only takes vigor from evil people.
          if iKarma < 0

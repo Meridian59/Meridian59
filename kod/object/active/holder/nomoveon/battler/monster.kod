@@ -996,17 +996,30 @@ messages:
       % Our master may have left.  If he did, and he is close by,
       % teleport after him.
       if poMaster <> $ AND what = poMaster
-         AND iRow <> 0 AND iCol <> 0
-         AND Send(poMaster,@GetOwner) <> $
-      {         
-         if (Send(self,@GetRow) - iRow) <= 3
-            AND (Send(self,@GetCol) - iCol) <= 3
-            OR IsClass(self,&Reflection)
+      {
+         if iRow <> 0 AND iCol <> 0
+            AND Send(poMaster,@GetOwner) <> $
          {
-            Post(self,@GotoMaster);
+            if (Send(self,@GetRow) - iRow) <= 3
+               AND (Send(self,@GetCol) - iCol) <= 3
+               OR IsClass(self,&Reflection)
+            {
+               Post(self,@GotoMaster);
+            }
+         }
+
+         % Seduced minions and dragonfly queens are loyal,
+         % but anything else is set free if the master logs off
+         if NOT IsClass(self,&DragonFlyQueen)
+            AND NOT Send(self,@IsEnchanted,#byClass=&Seduce)
+         {
+            if IsClass(poMaster,&Player)
+               AND NOT Send(poMaster,@IsLoggedOn)
+            {
+               Post(self,@SetMaster,#oMaster=$);
+            }
          }
       }
-
       if poBrain <> $
       {
          Send(poBrain,@SomethingLeft,#mob=self,#state=piState,#what=what);
@@ -1517,7 +1530,16 @@ messages:
          return FALSE;
       }
 
-      % Face the target.      
+      % If we're a minion and our master can't attack the target,
+      % we can't attack either.
+      if Send(self,@GetMaster) <> $
+         AND IsClass(poMaster,&Player)
+         AND NOT Send(poMaster,@AllowPlayerAttack,#victim=what,#report=FALSE,#actual=TRUE)
+      {
+         return FALSE;
+      }
+
+      % Face the target.
       Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),
            #new_col=Send(what,@GetCol));
 
@@ -5692,7 +5714,7 @@ messages:
 
             % After the honeymoon is over, go after the master!
             poTarget = poMaster;
-            if IsClass(poTarget,&user)
+            if IsClass(poTarget,&User)
             {
                Send(poTarget,@AddToMonsterChasers,#level=Send(self,@GetLevel));
             }

@@ -193,7 +193,9 @@ resources:
       "Hmm... that looks a bit cleaner.  Here, take this as payment, %s%s."
 
    monster_default_attack = "attack"
-   
+   minion_trouble = \
+      "You sense your minion has gotten you into some trouble..."
+
    autolooted_all = "You loot the corpse clean, and find %d shillings."
    autolooted_all_no_money = "You loot the corpse clean."
    autolooted_some = "You loot some of the items from your fallen kill, and find %d shillings."
@@ -267,6 +269,7 @@ classvars:
    vrNothing_for_sale = Lm_nothing_for_sale
    vrMrcnt_too_costly = Lm_mrcnt_too_costly
    vrMonster_healing = Lm_monster_healing
+   vrMinion_trouble = minion_trouble
 
    % Obsolete, but still included here for safety's sake.
    vrSound_hit = $
@@ -1173,7 +1176,7 @@ messages:
       % If target left, we should already know
       if oVictim = $
       {
-         Debug("Unreachable. Null victim.");
+         %Debug("Unreachable. Null victim.");
          Send(self,@EnterStateWait);
 
          return;
@@ -1493,7 +1496,7 @@ messages:
 
             return TRUE;
          }
-      }               
+      }
 
       return FALSE;
    }
@@ -1503,12 +1506,14 @@ messages:
    TryAttack(what=$,stroke_obj=$)
    "Ok, we got someone to attack, lets try and hit them."
    {
+      local bWasBad, lMinions;
+
       %% okay, NPCs and NOFIGHT mobs can't attack
       if (piBehavior & AI_NOFIGHT) OR (piBehavior & AI_NPC)
       {
          return FALSE;
       }
-      
+
       If IsClass(what,&User)
          AND Send(what,@IsPhasedOut)
       {
@@ -1519,10 +1524,10 @@ messages:
       if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=what,
                   #stroke_obj=stroke_obj)
       {
-         % Check if room has special combat affects.
+         % Check if room has special combat effects.
          return FALSE;
       }
-      
+
       % Jig prevents combat between players and monsters.
       if IsClass(what,&Player)
          AND Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
@@ -1530,13 +1535,42 @@ messages:
          return FALSE;
       }
 
-      % If we're a minion and our master can't attack the target,
-      % we can't attack either.
+      % Minions are attacking for a master. Handle ETs, Reflections,
+      % Seduced and Animated monsters here. If the master can't attack,
+      % we can't either. If they can, we treat it as if they personally
+      % attacked the target.
+
       if Send(self,@GetMaster) <> $
          AND IsClass(poMaster,&Player)
-         AND NOT Send(poMaster,@AllowPlayerAttack,#victim=what,#report=FALSE,#actual=TRUE)
       {
-         return FALSE;
+         % Check the attack here. If it fails, AllowPlayerAttack handles
+         % the message sent to the player.
+         if NOT Send(poMaster,@AllowPlayerAttack,#victim=what,#report=FALSE)
+         {
+            return FALSE;
+         }
+
+         % Don't attack other minions of the caster, or (if we're a reflection)
+         % the caster himself. Other minions can attack the caster, to prevent
+         % Seducing something just to kill it.
+         lMinions = Send(poMaster,@GetControlledMinions);
+         if FindListElem(lMinions,what)
+            OR (IsClass(self,&Reflection)
+               AND what = poMaster)
+         {
+            return FALSE;
+         }
+
+         % Is the caster bad to start with? This is for flavor text.
+         bWasBad = (Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+                    OR Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
+         % If they weren't bad and become bad, let them know.
+         if NOT bWasBad
+            AND (Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               OR Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         {
+            Send(poMaster,@MsgSendUser,#message_rsc=vrMinion_trouble);
+         }
       }
 
       % Face the target.
@@ -1874,17 +1908,17 @@ messages:
       local iRange;
 
       if who = poTarget
-      {  
+      {
          iRange = Send(self,@GetAttackRange);
          if Send(self,@SquaredDistanceTo,#what=who) > (iRange*iRange)
          {
             return;
-         }         
-         
-         piState = (piState & VSTATE_VALIDITY_MASK);                  
-         piState = (piState | VSTATE_VALID_ATTACK); 
+         }
+
+         piState = (piState & VSTATE_VALIDITY_MASK);
+         piState = (piState | VSTATE_VALID_ATTACK);
       }
-      
+
       return;
    }
 
@@ -1894,6 +1928,18 @@ messages:
 
       if poOwner <> Send(what,@GetOwner)
       {
+         return FALSE;
+      }
+
+      % Check range first, for speed
+      iRange = Send(self,@GetAttackRange);
+      if Send(self,@SquaredDistanceTo,#what=what) > (iRange*iRange)
+      {
+         if what = poTarget
+         {
+            piState = (piState | VSTATE_INVALID_ATTACK);
+         }
+
          return FALSE;
       }
 
@@ -1911,17 +1957,6 @@ messages:
             return FALSE;
          }
       }
-      % Check range first, for speed
-      iRange = Send(self,@GetAttackRange);
-      if Send(self,@SquaredDistanceTo,#what=what) > (iRange*iRange)
-      {
-         if what = poTarget
-         {
-            piState = (piState | VSTATE_INVALID_ATTACK);
-         }
-
-         return FALSE;
-      } 
 
       % Some monsters (revenants) don't care about walls.
       if (piBehavior & AI_FIGHT_THROUGH_WALLS)
@@ -3168,18 +3203,46 @@ messages:
          return;
       }
 
+      % If we have a master, they are responsible for our kills.
+      if poMaster <> $
+         AND IsClass(poMaster,&Player)
+      {
+         if IsClass(what,&Player)
+         {
+            % If we killed an innocent, tell the master they're in trouble.
+            if (NOT Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+               AND NOT (Send(what,@CheckPlayerFlag,#Flag=PFLAG_OUTLAW)
+                  OR Send(what,@CheckPlayerFlag,#Flag=PFLAG_MURDERER))
+            {
+               Send(poMaster,@MsgSendUser,#message_rsc=vrMinion_trouble);
+            }
+
+            % Evil twins are dispelled by any player they kill.
+            if IsClass(self,&EvilTwin)
+            {
+               Post(self,@Delete);
+            }
+         }
+
+         % Our master handles the kill from here, since they
+         % made us do it.
+         return Send(poMaster,@KilledSomething,#what=what,
+                     #use_weapon=use_weapon);
+      }
+
+      % If we don't have a master, proceed as normal.
       Send(Send(what,@GetOwner),@SomethingKilled,#what=self,#victim=what);
 
       if what = self
       {
          Post(what,@Killed,#what=self);
-      }      
+      }
       else
       {
          Send(what,@Killed,#what=self);
       }
-      
-      return;      
+
+      return;
    }
 
    CreateDeadBody(killer=$)
@@ -3215,19 +3278,29 @@ messages:
       }
 
       if poOwner <> $
-      {  
+      {
+         % If a monster was the killer, and it has a master, set 'what'
+         % to the master. This *should* be handled by the killer in
+         % KilledSomething, but to be safe (and because quests are
+         % checked here) we should check again for a master.
+         if IsClass(what,&Monster)
+            AND Send(what,@GetMaster) <> $
+         {
+            what = Send(what,@GetMaster);
+         }
+
          oBody = Send(self,@CreateDeadBody,#killer=what);
-      
+
          if oBody <> $
-         {            
+         {
             Send(poOwner,@NewHold,#what=oBody,#new_row=piRow,#new_col=piCol,
-                 #new_angle=Send(self,@GetAngle));
+                  #new_angle=Send(self,@GetAngle));
          }
 
          if vrSound_death <> $
          {
             Send(poOwner,@SomethingWaveRoom,#what=oBody,#wave_rsc=vrSound_death,
-                 #flags=SOUND_RANDOM_PITCH);
+                  #flags=SOUND_RANDOM_PITCH);
          }
 
          if NOT Send(poOwner,@IsArena)
@@ -5146,7 +5219,17 @@ messages:
       iRandomCashAmount = Random(viCashMin,viCashMax);
       if iRandomCashAmount > 0
       {
+         % Don't send a corpse unless the player killed the mob. Minion kills
+         % already handed to the player in KilledSomething and double-checked
+         % in Killed. Corpse is used for the loot timer, which GenerateTreasure
+         % handles for monster kills but Constructor in Item does not.
+         if NOT IsClass(who,&Player)
+         {
+            corpse = $;
+         }
+
          oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount);
+
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          lTreasureItems = cons(oMoney,lTreasureItems);
       }
@@ -5703,7 +5786,7 @@ messages:
       if oMaster = $
       {
          if poMaster <> $
-         {  
+         {
             if poTarget <> $
                AND Send(poTarget,@GetOwner) = poOwner
                AND IsClass(poTarget,&Player)
@@ -5711,27 +5794,56 @@ messages:
                Send(poTarget,@SubtractFromMonsterChasers,
                     #level=Send(self,@GetLevel));
             }
-
-            % After the honeymoon is over, go after the master!
-            poTarget = poMaster;
-            if IsClass(poTarget,&User)
-            {
-               Send(poTarget,@AddToMonsterChasers,#level=Send(self,@GetLevel));
-            }
+            Send(poMaster,@RemoveControlledMinion,#what=self);
             if poOwner <> $
             {
                Post(poOwner,@SomethingChanged,#what=self);
             }
-            Send(poMaster,@RemoveControlledMinion,#what=self);
-            poMaster = $;
-            Send(self,@SetSummoned,#value=FALSE);
+
+            % After the honeymoon is over, go after the master! Exception here
+            % are Reflections who've been captured back by the original caster.
+            % Evil twins attack the player last master (if not caster) and if
+            % the last master was the caster, they go back after the original.
+            if IsClass(self,&EvilTwin)
+            {
+               poMaster = Send(self,@GetCaster);
+               if poTarget = poMaster
+               {
+                  poTarget = Send(self,@GetIllusionForm);
+               }
+            }
+            else
+            {
+               % Reflections return to owner's control, attacking
+               % the player who stole them.
+               if IsClass(self,&Reflection)
+               {
+                  if poMaster = Send(self,@GetOriginal)
+                  {
+                     return;
+                  }
+                  poTarget = poMaster;
+                  poMaster = Send(self,@GetOriginal);
+                  % Add ourselves back to master's control list.
+                  Send(poMaster,@NewControlledMinion,#minion=self);
+               }
+               else
+               {
+                  poTarget = poMaster;
+                  poMaster = $;
+                  if IsClass(poTarget,&User)
+                  {
+                     Send(poTarget,@AddToMonsterChasers,
+                           #level=Send(self,@GetLevel));
+                  }
+               }
+            }
             Send(self,@EnterStateChase);
          }
       }
       else
       {
          poMaster = oMaster;
-         Send(self,@SetSummoned,#value=TRUE);
          Send(self,@EnterStateWait);
          if poOwner <> $
          {

@@ -99,13 +99,15 @@ messages:
          if oMaster = who
          {
             Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
-                  #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+                  #parm1=Send(oTarget,@GetCapDef),
+                  #parm2=Send(oTarget,@GetName));
 
             return FALSE;
          }
       }
 
-      if Send(who,@CheckPlayerMinionCount) >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+      if Send(who,@CheckPlayerMinionCount) 
+            >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
       {
          Send(who,@MsgSendUser,#message_rsc=seduce_too_many);
 
@@ -123,7 +125,7 @@ messages:
 
       % Spell effects
       Send(self,@DoSpell,#what=who,#oTarget=oTarget,#iSpellPower=iSpellPower,
-           #iDuration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+            #iDuration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 
       propagate;
    }
@@ -173,7 +175,8 @@ messages:
             Send(oTarget,@RemoveEnchantment,#what=self);
          }
 
-         Post(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=what);
+         Post(oTarget,@StartEnchantment,#what=self,
+               #time=iDuration,#state=what);
          Post(oTarget,@SetMaster,#oMaster=what);
          Send(what,@NewControlledMinion,#minion=oTarget);
          Post(oTarget,@ResetBehaviorFlags);
@@ -213,19 +216,12 @@ messages:
 
    EndEnchantment(who=$,report=TRUE,state=$)
    {
-      %% This has to be done AFTER the enchantment is gone from the 
+      %% This has to be done AFTER the enchantment is gone from the
       %% monster's ench list - post it
 
       % Mobs don't like being charmed, so it now wants to kill the caster.
       if Send(who,@GetOwner) <> $
       {
-         if IsClass(who,&Reflection)
-            AND state = Send(who,@GetOriginal)
-         {
-            % We seduced our own reflection back, so it shouldn't attack us
-            return;
-         }
-
          Post(who,@SetMaster,#oMaster=$);
       }
 

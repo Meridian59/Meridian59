@@ -3146,7 +3146,9 @@ messages:
          {
             % Log it
             Debug("ALERT!",Send(self,@GetTrueName),self,
-               "tried to move through closed cave entrance.");
+               "tried to move through closed cave entrance, from ",
+               iRow,iCol,iFineRow,iFineCol," to ",new_row,new_col,
+               fine_row,fine_col,".");
 
             % Reset position
             Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -4891,49 +4893,6 @@ messages:
       return;
    }
 
-   % Can the user have controllable units
-   CanUserHaveMinions(who = $)
-   {
-      return TRUE;
-   }
-
-  CommandMinionAttack(oMaster=$,oTarget=$)
-   {
-      local oActive;
-
-      % We only want minions to attack Battlers, not items or anything
-      % else that can damage us.
-      if oTarget = $
-         OR NOT IsClass(oTarget,&Battler)
-      {
-         return;
-      }
-
-      if Send(self,@AllowPlayerAttack,#victim=oTarget)
-      {
-         for oActive in Send(self,@GetControlledMinions)
-         {
-            if IsClass(oActive,&Monster)
-            {
-               if Send(oActive,@GetMaster) = self
-               {
-                  if Send(oActive,@GetTarget) <> oTarget
-                  {
-                     Send(oActive,@SetBehaviorFlag,
-                           #flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
-                     Send(oActive,@TargetSwitch,#what=oTarget,
-                           #iHatred=100);
-                     Send(oActive,@EnterStateChase,#target=oTarget,
-                           #actnow=TRUE);
-                  }
-               }
-            }
-         }
-      }
-
-      return;
-   }
-
    UserAttack(type=STROKE_NORMAL,what=$)
    {
       local i, use_weapon, stroke_id, stroke_obj, is_spell;
@@ -5037,10 +4996,7 @@ messages:
       if lTargets <> $
          AND IsClass(oSpell,&AttackSpell)
       {
-         if length(Send(self,@GetControlledMinions)) > 0
-         {
-            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=First(lTargets));
-         }
+         Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=First(lTargets));
       }
 
       % User took an action!  Wake any AIs in the room to the user's presence!

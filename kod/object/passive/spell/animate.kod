@@ -201,7 +201,6 @@ messages:
 
       % Set initial minion behavior
       Send(oRisen,@ResetBehaviorFlags);
-      Send(oRisen,@SetSummoned,#value=TRUE);
       Send(self,@ModifyMonsterBehavior,#mob=oRisen);
 
       % Post this due to it needing to be done after the minion is placed.

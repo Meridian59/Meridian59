@@ -4033,37 +4033,19 @@ messages:
                return FALSE;
             }
 
-            % Check status and safety against the owner of the reflection.
-            if IsClass(victim,&Reflection)
-               OR IsClass(victim,&EvilTwin)
+            % Check status and safety against the owner of the minion.
+            if NOT IsClass(oRoom,&GuildHall)
+               AND NOT Send(self,@CheckStatusAndSafety,
+                           #victim=Send(victim,@GetMaster),
+                           #report=report,#minion=TRUE)
             {
-               if NOT IsClass(oRoom,&GuildHall)
-               {
-                  if NOT Send(self,@CheckStatusAndSafety,
-                              #victim=Send(victim,@GetCaster),
-                  #report=report,#minion=TRUE)
-                  {
-                     return FALSE;
-                  }
-               }
-            }
-            else
-            {
-               if NOT IsClass(oRoom,&GuildHall)
-               {
-                  if NOT Send(self,@CheckStatusAndSafety,
-                              #victim=Send(victim,@GetMaster),
-                  #report=report,#minion=TRUE)
-                  {
-                     return FALSE;
-                  }
-               }
+               return FALSE;
             }
          }
 
          % No attacking pets on Sacred Haven
          if NOT Send(SYS,@IsPKAllowed)
-            AND Send(victim,@GetMaster) <> $ 
+            AND Send(victim,@GetMaster) <> $
          {
             if report
             {
@@ -4413,7 +4395,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local i, iRange, lWindsState, lSandstormState, oMinion;
+      local i, iRange, lWindsState, lSandstormState;
 
       % Can't target self.
       if what = self
@@ -4442,16 +4424,7 @@ messages:
       }
 
       % If we have minions, see if they can attack too
-      if length(plControlledMinions) > 0
-      {
-         for oMinion in plControlledMinions
-         {
-            if what <> oMinion
-            {
-               Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
-            }
-         }
-      }
+      Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
 
       % Can pay costs?  Only check for skills, spells have already been cast.
       if IsClass(stroke_obj,&Skill)
@@ -5097,19 +5070,13 @@ messages:
             scalefactor=1000,report=TRUE,report_resistance=TRUE,absolute=FALSE)
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
-      iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
+            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
 
       origdamage = damage;
       color_rsc = player_hit_color_none;
 
       % Attacks against a minion master will cause minions to defend the master
-      if length(plControlledMinions) > 0
-      {
-         for oMinion in plControlledMinions
-         {
-            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
-         }
-      }
+      Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
 
       if what <> $ AND IsClass(what,&monster)
       {
@@ -5449,11 +5416,11 @@ messages:
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
 
-         % Stop reflections ruining our karma, they are kind of bloodthirsty
+         % Stop minions ruining our karma, they are kind of bloodthirsty
          % and tend to kill indiscriminately (especially mobs)
          bReflection = FALSE;
          if use_weapon <> $
-            AND IsClass(use_weapon,&Reflection)
+            AND IsClass(use_weapon,&Monster)
          {
             bReflection = TRUE;
          }
@@ -13767,7 +13734,59 @@ messages:
       return;
    }
 
-    NewControlledMinion(minion=$)
+   % Can the user have controllable units
+   CanUserHaveMinions(who = $)
+   {
+      return TRUE;
+   }
+
+  CommandMinionAttack(oMaster=$,oTarget=$)
+   {
+      local oActive;
+
+      % If we have minions, we only want them to attack Battlers,
+      % not items or anything else that can damage us.
+      if plControlledMinions = $
+         OR oTarget = $
+         OR NOT IsClass(oTarget,&Battler)
+      {
+         return;
+      }
+
+      % Lets not have the minions kill each other. Check if the target is
+      % a minion under our control.
+      if IsClass(oTarget,&Monster)
+         AND Send(oTarget,@GetMaster) = self
+      {
+         return;
+      }
+
+      if Send(self,@AllowPlayerAttack,#victim=oTarget)
+      {
+         for oActive in plControlledMinions
+         {
+            if IsClass(oActive,&Monster)
+            {
+               if Send(oActive,@GetMaster) = self
+               {
+                  if Send(oActive,@GetTarget) <> oTarget
+                  {
+                     Send(oActive,@SetBehaviorFlag,
+                           #flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+                     Send(oActive,@TargetSwitch,#what=oTarget,
+                           #iHatred=100);
+                     Send(oActive,@EnterStateChase,#target=oTarget,
+                           #actnow=TRUE);
+                  }
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   NewControlledMinion(minion=$)
    {
       if ptMinionControlCheck = $
       {
@@ -13783,7 +13802,12 @@ messages:
    {
       if plControlledMinions <> $
       {
-         plControlledMinions = DelListElem(plControlledMinions,what);
+         % Use FindListElem; there are rare cases where we have
+         % a valid minion that doesn't go on our control list.
+         if FindListElem(plControlledMinions,what)
+         {
+            plControlledMinions = DelListElem(plControlledMinions,what);
+         }
       }
 
       return;

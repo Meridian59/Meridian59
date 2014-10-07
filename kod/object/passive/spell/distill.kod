@@ -31,6 +31,7 @@ resources:
    Distill_bad_spell = "You cannot make a potion with those powers."
    Distill_do = \
       "Through careful preparation of the ingredients you create %s%s."
+   Distill_inv_full_rsc = "Over encumbered, your %s%s sloshes around as you drop it to the floor."
    Distill_Dont_have_target = "You have no knowledge of %s."
    Distill_no_ingredient = "You do not have all the ingredients you need."
    Distill_Fail_Target = \
@@ -303,9 +304,21 @@ messages:
       oPotion = Create(cPotionClass,#labelled=TRUE,#iSpellPower=iPotionPower,
                        #gobadtime=igobadtime,#maker=caster,#ability=iSkill);
 
-      Send(caster,@NewHold,#what=oPotion);
-      Send(caster,@MsgSendUser,#message_rsc=Distill_do,
-           #parm1=Send(oPotion,@GetIndef),#parm2=Send(oPotion,@GetName));
+	  if Send(caster,@ReqNewHold,#what=oPotion)
+	  {
+	     Send(caster,@NewHold,#what=oPotion);
+		 Send(caster,@MsgSendUser,#message_rsc=Distill_do,
+			#param1=Send(oPotion,@GetCapIndef),#param2=Send(oPotion,@GetName));
+	  }
+	  else
+	  {
+		 Send(Send(caster,@GetOwner),@NewHold,#what=oPotion,
+				#new_row=Send(caster,@GetRow),#new_col=Send(caster,@GetCol),
+				#fine_row=(Send(caster,@GetFineRow)+2),
+				#fine_col=(Send(caster,@GetFineCol)+2));
+		 Send(caster,@MsgSendUser,#message_rsc=Distill_inv_full_rsc,
+				#param1=Send(oPotion,@GetCapIndef),#param2=Send(oPotion,@GetName));
+	  }
 
       return;
    }

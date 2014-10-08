@@ -207,6 +207,12 @@ messages:
       local oRoom, oPrism;
 
       oPrism = Send(Self,@FindPrism,#who=who);
+      if oPrism = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=multicast_no_prism);
+
+         return;
+      }
 
       Send(who,@StartEnchantment,#what=self,#state=[oPrism],#time=viDrainTime,
            #iSpellPower=iSpellPower,#lastcall=FALSE);

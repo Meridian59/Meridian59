@@ -527,8 +527,8 @@ messages:
       return FALSE;
    }
 
-   CanCastHere(who = $, where = $, lTargets = $, iSpellPower = 0,
-               bItemCast = FALSE, report = TRUE)
+   CanCastHere(who=$,where=$,lTargets=$,iSpellPower=0,bItemCast=FALSE,
+               report=TRUE)
    {
       local oSpell, lState, lRadiusState, oTarget;
 
@@ -548,11 +548,14 @@ messages:
          if IsClass(who,&Player)
             AND Send(who,@IsAffectedByRadiusEnchantment,#byClass=&Spellbane)
          {
-            lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Spellbane);
+            lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,
+                                 #byClass=&Spellbane);
             if report
             {
-               Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,#parm1=Send(Nth(lRadiusState,3),@GetName));
+               Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,
+                     #parm1=Send(Nth(lRadiusState,3),@GetName));
             }
+
             return FALSE;
          }
 
@@ -561,11 +564,14 @@ messages:
          {
             if IsClass(who,&Player)
             {
-               Send(who,@MsgSendUser,#message_rsc=spell_silenced_rsc);
-            
+               if report
+               {
+                  Send(who,@MsgSendUser,#message_rsc=spell_silenced_rsc);
+               }
+
                return FALSE;
             }
-         
+
             if IsClass(who,&Monster) AND Send(who,@CanBeSilenced)
             {
                return FALSE;
@@ -573,7 +579,8 @@ messages:
          }
       }
 
-      % Prevent casting on people fighting in guild combat zones by unguilded mules.
+      % Prevent casting on people fighting in guild combat zones
+      % by unguilded mules.
       if Send(where,@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
       {
          if lTargets = $
@@ -582,13 +589,13 @@ messages:
          }
          else
          {
-            oTarget = first(lTargets);
+            oTarget = First(lTargets);
          }
 
-         % Stop players from interfereing
-         % If the room does not allow the attack, then the spell fails if the caster
-         % cannot "help" the target (IE, the target attacked "recently").
-         % Only count non-harmful spells here.  Attacks are caught in other places.
+         % Stop players from interfering. If the room does not allow the
+         % attack, then the spell fails if the caster cannot "help" the
+         % target (IE, the target attacked "recently"). Only count non-harmful
+         % spells here.  Attacks are caught in other places.
          if NOT Send(self,@IsHarmful)
             AND oTarget <> $
             AND IsClass(oTarget,&Player)
@@ -596,8 +603,12 @@ messages:
             AND NOT (Send(where,@AllowGuildAttack,#what=who,#victim=oTarget)
                      OR Send(oTarget,@CanHelpPlayer))
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_cant_help,
-                 #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+            if report
+            {
+               Send(who,@MsgSendUser,#message_rsc=spell_cant_help,
+                     #parm1=Send(oTarget,@GetDef),
+                     #parm2=Send(oTarget,@GetName));
+            }
 
             return FALSE;
          }
@@ -606,7 +617,7 @@ messages:
       return TRUE;
    }
 
-   CanPayManaVigor(who = $, lTargets = $, iSpellPower = 0)
+   CanPayManaVigor(who=$,lTargets=$,iSpellPower=0)
    {
       local iCrystalizeManaAbility, oCrystalizeMana;
 
@@ -620,29 +631,32 @@ messages:
          AND vbCheck_Exertion
       {
          Send(who,@MsgSendUser,#message_rsc=spell_too_tired,#parm1=vrName);
-         
+
          return FALSE;
       }
 
       % Make sure caster has enough magic
       if Send(who,@GetMana)
-         < Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
+            < Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
       {
-         iCrystalizeManaAbility = Send(who,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+         iCrystalizeManaAbility = Send(who,@GetSpellAbility,
+                                       #spell_num=SID_CRYSTALIZE_MANA);
          if iCrystalizeManaAbility > 0
             AND NOT Send(who,@IsCrystalizeManaSurging)
             AND NOT IsClass(self,&CrystalizeMana)
          {
             oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
             Send(oCrystalizeMana,@DoManaSurge,#who=who,#triggered=TRUE);
-            if Send(who,@GetMana) > Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
+            if Send(who,@GetMana)
+                  > Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
             {
                return TRUE;
             }
          }
-         
+
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-         Send(who,@MsgSendUser,#message_rsc=spell_insufficient_magic,#parm1=vrName);
+         Send(who,@MsgSendUser,#message_rsc=spell_insufficient_magic,
+               #parm1=vrName);
 
          return FALSE;
       }
@@ -650,11 +664,11 @@ messages:
       return TRUE;
    }
 
-   CanPayReagents(who = $, lTargets = $, iSpellPower = 0)
+   CanPayReagents(who=$,lTargets=$,iSpellPower=0)
    {
       local lReagent, cReagentClass, iNumNeeded, bFound, lItems, lLists,
             oUserObject, iNum, oOwner, oSpell, oRing, oRoom;
-      
+
       oRoom = Send(who,@GetOwner);
       if Send(who,@PlayerIsImmortal)
          OR Send(oRoom,@NoReagents)
@@ -665,12 +679,14 @@ messages:
       % Check reagents
       for lReagent in plReagents
       {
-         cReagentClass = first(lReagent);
-         iNumNeeded = Nth(lReagent, 2);
+         cReagentClass = First(lReagent);
+         iNumNeeded = Nth(lReagent,2);
 
          bFound = FALSE;
 
-         lLists = [Send(who, @GetHolderActive), Send(who,@GetHolderPassive), Send(who,@GetReagentBagContents)];
+         lLists = [Send(who,@GetHolderActive),Send(who,@GetHolderPassive),
+                     Send(who,@GetReagentBagContents)];
+
          for lItems in lLists
          {
             % Count # of reagent that user has; complain if not enough
@@ -694,7 +710,7 @@ messages:
                   {
                      iNumNeeded = iNumNeeded - 1;
                   }
-               
+
                   if iNumNeeded = 0
                   {
                      bFound = TRUE;
@@ -731,22 +747,29 @@ messages:
       return TRUE;
    }
 
-   CanPayCosts(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE,
-               bMade = FALSE)
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)
    {
-      local iLists, oUserObject, iNum, i, oOwner, oVictim, oRoom, iRand,
-            oSpell;
+      local i, oRoom, iRand, oSpell, oTarget;
+
+      oTarget = $;
 
       if lTargets <> $
          AND Length(lTargets) = 1
-         AND IsClass(First(lTargets),&Player)
-         AND Send(First(lTargets),@IsPhasedOut)
       {
-         Send(who,@MsgSendUser,#message_rsc=cannot_cast_on_phased_out,
-                               #parm1=Send(First(lTargets),@GetName),#parm2=Send(First(lTargets),@GetHimHer));
-         return FALSE;
+         % Extract first target for handling single target code.
+         oTarget = First(lTargets);
+
+         if IsClass(oTarget,&Player)
+            AND Send(oTarget,@IsPhasedOut)
+         {
+            Send(who,@MsgSendUser,#message_rsc=cannot_cast_on_phased_out,
+                  #parm1=Send(oTarget,@GetName),
+                  #parm2=Send(oTarget,@GetHimHer));
+
+            return FALSE;
+         }
       }
-      
+
       if NOT IsClass(who,&Player)
       {
          return TRUE;
@@ -755,34 +778,36 @@ messages:
       if NOT pbEnabled
       {
          Send(who,@MsgSendUser,#message_rsc=spell_disabled);
-         
+
          return FALSE;
       }
 
       if NOT Send(self,@IsAccessible)
          AND NOT IsClass(who,&DM)
       {
-         debug("Non-DM",who,Send(who,@GetTrueName),"had a non-accessible spell",Send(self,@GetName));
-         
-         return FALSE;  
-      }
+         Debug("Non-DM",who,Send(who,@GetTrueName),
+               "had a non-accessible spell",Send(self,@GetName));
 
-      if Send(who, @GetLevel) < piMinHitPoints
-      {
-         Send(who, @MsgSendUser, #message_rsc = vrToo_few_hp);
          return FALSE;
       }
-      
-      if not bItemCast
+
+      if Send(who,@GetLevel) < piMinHitPoints
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrToo_few_hp);
+
+         return FALSE;
+      }
+
+      if NOT bItemCast
       {
          % In a time and position to use the spell?
          if Send(who,@IsResting)
          {
             Send(who,@MsgSendUser,#message_rsc=spell_no_rest);
-            
+
             return FALSE;
          }
-      
+
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_FORGET);
          if Send(oSpell,@HasForgetEnchantment,#who=who,#what=self)
          {
@@ -791,13 +816,13 @@ messages:
              spell_forgot2,
              spell_forgot3,
              spell_forgot4],
-            random(1,4));
+            Random(1,4));
             Send(who,@MsgSendUser,#message_rsc=iRand);
 
             return FALSE;
          }
       }
-      
+
       if NOT Send(who,@IsOkayAttackTime,#seconds=viPostCast_Time)
       {
          return FALSE;
@@ -805,21 +830,13 @@ messages:
 
       oRoom = Send(who,@GetOwner);
 
-      oVictim = $;
-      % Only have a victim if we're not aiming at a group.
-      if lTargets <> $
-         AND length(lTargets) = 1
-      {
-         oVictim = First(lTargets);
-      }
-
       % Do they have a token?  Avoid token PKing or mule abuse.
-      if (oVictim = $ OR oVictim <> who)
+      if (oTarget = $ OR oTarget <> who)
          AND Send(who,@PossessesA,#class=&Token)
          AND NOT Send(who,@PlayerIsImmortal)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_hands_too_full);
-         
+
          return FALSE;
       }
 
@@ -842,25 +859,18 @@ messages:
          {
             return FALSE;
          }
- 
+
          if NOT Send(self,@CanPayReagents,#who=who,#lTargets=lTargets,
                      #iSpellPower=iSpellPower)
          {
             return FALSE;
          }
-      }
 
-      % Moved from CanPayManaVigor, because it doesn't relate to paying vigor 
-      %  or mana!  Spells cast from items should follow Karma restrictions
-
-      % If the spell is being cast by a made item then there are no Karma
-      %  restrictions.
-      if NOT (bMade OR Send(self,@KarmaCheck,#who=who))
-      {
-         if NOT bItemCast
+         % Check karma. Spell items handle Karma checks before calling CanPayCosts.
+         if NOT (Send(self,@KarmaCheck,#who=who))
          {
             if viSchool = SS_SHALILLE
-            {  
+            {
                Send(who,@MsgSendUser,#message_rsc=spell_not_good_enough,
                     #parm1=vrName);
             }
@@ -869,11 +879,11 @@ messages:
                Send(who,@MsgSendUser,#message_rsc=spell_not_evil_enough,
                     #parm1=vrName);
             }
-         }
 
-         return FALSE;
+            return FALSE;
+         }
       }
-      
+
       % Out of range?
       for i in lTargets
       {
@@ -889,16 +899,16 @@ messages:
          AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE) 
       {
-         if oVictim = $ 
+         if oTarget = $ 
          {
             if viNoNewbieOffense
             {
                for i in Send(oRoom,@GetHolderActive)
                {
-                  if IsClass(first(i),&Player) AND first(i) <> who
+                  if IsClass(First(i),&Player) AND First(i) <> who
                   {
                      Send(who,@MsgSendUser,#message_rsc=spell_guardian);
-                  
+
                      return FALSE;
                   }
                }
@@ -906,28 +916,28 @@ messages:
          }
          else
          {
-            if oVictim <> who AND IsClass(oVictim,&Player)
+            if oTarget <> who AND IsClass(oTarget,&Player)
             {
                if viNoNewbieOffense
                {
                   Send(who,@MsgSendUser,#message_rsc=spell_guardian);
-               
+
                   return FALSE;
                }
 
-               if NOT Send(oVictim,@CanHelpPlayer)
-                  AND oVictim <> who
+               if NOT Send(oTarget,@CanHelpPlayer)
+                  AND oTarget <> who
                {
                   Send(who,@MsgSendUser,#message_rsc=spell_cant_help,
-                       #parm1=Send(oVictim,@GetDef),
-                       #parm2=Send(oVictim,@GetName));
-         
+                       #parm1=Send(oTarget,@GetDef),
+                       #parm2=Send(oTarget,@GetName));
+
                   return FALSE;
                }
             }
          }
       }
-      
+
       % Something in the room blocking this spell?
       if NOT Send(self,@CanCastHere,#who=who,#where=oRoom,#lTargets=lTargets,
                   #iSpellPower=iSpellPower,#bItemCast=bItemCast)
@@ -960,16 +970,16 @@ messages:
                   #iSpellpower=iSpellpower)
       {
          % A bit kludgish here.  We call PayCosts here to simulate casting the
-         %  spell with no effect.  There should be a special function for this,
-         %  but we're cutting corners to save money!
+         % spell with no effect.  There should be a special function for this,
+         % but we're cutting corners to save money!
          if not bItemCast
          {
             Send(self,@PayCosts,#who=who,#iSpellpower=iSpellpower,
-                 #lTargets=lTargets);
+                  #lTargets=lTargets);
             Send(who,@MsgSendUser,#message_rsc=spell_resisted,
-                 #parm1=Send(i,@GetCapDef),#parm2=Send(i,@GetName));
+                  #parm1=Send(i,@GetCapDef),#parm2=Send(i,@GetName));
          }
-         
+
          return FALSE;
       }
 

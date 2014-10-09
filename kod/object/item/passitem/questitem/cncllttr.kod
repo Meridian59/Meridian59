@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Letter is PassiveItem
+CouncilLetter is QuestItem
 
 constants:
 
@@ -16,16 +16,17 @@ constants:
 
 resources:
 
-   letter_name_rsc = "letter"
-   letter_icon_rsc = scr04.bgf
-   letter_desc_rsc = \
-      "This letter from the Princess is embossed with a gilt crest, and smells faintly of her perfume."
+   CouncilLetter_name_rsc = "letter"
+   CouncilLetter_icon_rsc = scr04.bgf
+   CouncilLetter_desc_rsc = \
+      "This official-looking piece of correspondence is embossed with a gilt crest.  You "
+      "wonder what is written on it, but dare not break the seal to peek."
 
 classvars:
 
-   vrName = letter_name_rsc
-   vrIcon = letter_icon_rsc
-   vrDesc = letter_desc_rsc
+   vrName = CouncilLetter_name_rsc
+   vrIcon = CouncilLetter_icon_rsc
+   vrDesc = CouncilLetter_desc_rsc
 
    viValue_average = 40
    viWeight = 3

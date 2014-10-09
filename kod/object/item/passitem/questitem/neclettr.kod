@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AvarShamanFeather is PassiveItem
+NecromancerLetter is QuestItem
 
 constants:
 
@@ -16,25 +16,26 @@ constants:
 
 resources:
 
-   AvarShamanFeather_name_rsc = "feather of an avar shaman"
-   AvarShamanFeather_icon_rsc = avfeathr.bgf
-   AvarShamanFeather_desc_rsc = \
-      "This is an undamaged tail feather from an avar shaman.  The strong barbs "
-	"of the feather would make excellent guides for an arrow shaft."
+   NecromancerLetter_name_rsc = "sinister parchment"
+   NecromancerLetter_icon_rsc = necscrol.bgf
+   NecromancerLetter_desc_rsc = \
+      "This scroll is covered with sininster-looking spidery script in some unidentifiable "
+      "language, if it's language at all."
 
 classvars:
 
-   vrName = AvarShamanFeather_name_rsc
-   vrIcon = AvarShamanFeather_icon_rsc
-   vrDesc = AvarShamanFeather_desc_rsc
+   vrName = NecromancerLetter_name_rsc
+   vrIcon = NecromancerLetter_icon_rsc
+   vrDesc = NecromancerLetter_desc_rsc
 
-   viValue_average = 50
-   viWeight = 2
-   viBulk = 5
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
 
 properties:
 
 messages:
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

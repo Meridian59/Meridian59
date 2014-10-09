@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MysteryPotion is PassiveItem
+AvarShamanFeather is QuestItem
 
 constants:
 
@@ -16,21 +16,21 @@ constants:
 
 resources:
 
-   MysteryPotion_name_rsc = "mysterious potion"
-   MysteryPotion_icon_rsc = potion01.bgf
-   MysteryPotion_desc_rsc = \
-      "This is an odd potion of a type you have not seen before.  It certainly doesn't look like "
-      "something you would want to drink willingly."
+   AvarShamanFeather_name_rsc = "feather of an avar shaman"
+   AvarShamanFeather_icon_rsc = avfeathr.bgf
+   AvarShamanFeather_desc_rsc = \
+      "This is an undamaged tail feather from an avar shaman.  The strong barbs "
+	"of the feather would make excellent guides for an arrow shaft."
 
 classvars:
 
-   vrName = MysteryPotion_name_rsc
-   vrIcon = MysteryPotion_icon_rsc
-   vrDesc = MysteryPotion_desc_rsc
+   vrName = AvarShamanFeather_name_rsc
+   vrIcon = AvarShamanFeather_icon_rsc
+   vrDesc = AvarShamanFeather_desc_rsc
 
-   viBulk = 20
-   viWeight = 17
-   viValue_average = 10
+   viValue_average = 50
+   viWeight = 2
+   viBulk = 5
 
 properties:
 

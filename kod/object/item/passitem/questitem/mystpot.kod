@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NecromancerLetter is PassiveItem
+MysteryPotion is QuestItem
 
 constants:
 
@@ -16,26 +16,25 @@ constants:
 
 resources:
 
-   NecromancerLetter_name_rsc = "sinister parchment"
-   NecromancerLetter_icon_rsc = necscrol.bgf
-   NecromancerLetter_desc_rsc = \
-      "This scroll is covered with sininster-looking spidery script in some unidentifiable "
-      "language, if it's language at all."
+   MysteryPotion_name_rsc = "mysterious potion"
+   MysteryPotion_icon_rsc = potion01.bgf
+   MysteryPotion_desc_rsc = \
+      "This is an odd potion of a type you have not seen before.  It certainly doesn't look like "
+      "something you would want to drink willingly."
 
 classvars:
 
-   vrName = NecromancerLetter_name_rsc
-   vrIcon = NecromancerLetter_icon_rsc
-   vrDesc = NecromancerLetter_desc_rsc
+   vrName = MysteryPotion_name_rsc
+   vrIcon = MysteryPotion_icon_rsc
+   vrDesc = MysteryPotion_desc_rsc
 
-   viValue_average = 40
-   viWeight = 3
-   viBulk = 10
+   viBulk = 20
+   viWeight = 17
+   viValue_average = 10
 
 properties:
 
 messages:
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

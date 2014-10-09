@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ChickenSoup is PassiveItem
+Letter is QuestItem
 
 constants:
 
@@ -16,20 +16,20 @@ constants:
 
 resources:
 
-   ChickenSoup_name_rsc = "The Widow Qesino's famous chicken soup"
-   ChickenSoup_icon_rsc = soupbowl.bgf
-   ChickenSoup_desc_rsc = \
-      "This is a bowl of the Widow Qesino's award-winning chicken soup.  Mmmmm, smells mighty fine."
+   letter_name_rsc = "letter"
+   letter_icon_rsc = scr04.bgf
+   letter_desc_rsc = \
+      "This letter from the Princess is embossed with a gilt crest, and smells faintly of her perfume."
 
 classvars:
 
-   vrName = ChickenSoup_name_rsc
-   vrIcon = ChickenSoup_icon_rsc
-   vrDesc = ChickenSoup_desc_rsc
+   vrName = letter_name_rsc
+   vrIcon = letter_icon_rsc
+   vrDesc = letter_desc_rsc
 
-   viValue_average = 20
-   viWeight = 15
-   viBulk = 20
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
 
 properties:
 

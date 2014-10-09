@@ -269,15 +269,15 @@ static FormatCode code_table[] = {
 { 'k', CODE_COLOR, PALETTERGB(  0,   0,   0) }, // Black
 { 'w', CODE_COLOR, PALETTERGB(255, 255, 255) }, // White
 { 'y', CODE_COLOR, PALETTERGB(230, 230,  25) }, // Yellow
-{ 'p', CODE_COLOR, PALETTERGB(178,  40, 213) }, // Pink
-{ 'o', CODE_COLOR, PALETTERGB(245, 120,  10) }, // Orange
-{ 'a', CODE_COLOR, PALETTERGB( 25, 124,  93) }, // Aquamarine
-{ 'c', CODE_COLOR, PALETTERGB( 46, 234, 241) }, // Cyan
+{ 'p', CODE_COLOR, PALETTERGB(255, 105, 210) }, // Pink
+{ 'o', CODE_COLOR, PALETTERGB(255, 150,   0) }, // Orange
+{ 'a', CODE_COLOR, PALETTERGB(127, 255, 212) }, // Aquamarine
+{ 'c', CODE_COLOR, PALETTERGB( 46, 234, 250) }, // Cyan
 { 'q', CODE_COLOR, PALETTERGB(143,  38, 170) }, // Purple
 { 't', CODE_COLOR, PALETTERGB( 11,  59, 112) }, // Teal
-{ 's', CODE_COLOR, PALETTERGB( 85,  87,  83) }, // Dark grey
+{ 's', CODE_COLOR, PALETTERGB( 60,  60,  60) }, // Dark grey
 { 'v', CODE_COLOR, PALETTERGB(128,   0, 128) }, // Violet
-{ 'm', CODE_COLOR, PALETTERGB(255,   0, 255) }, // Magenta
+{ 'm', CODE_COLOR, PALETTERGB(205,   0, 205) }, // Magenta
 { 'B', CODE_STYLE, STYLE_BOLD },
 { 'I', CODE_STYLE, STYLE_ITALIC },
 { 'U', CODE_STYLE, STYLE_UNDERLINE },

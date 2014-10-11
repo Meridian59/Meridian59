@@ -110,9 +110,9 @@ messages:
       piPos1 = piPos1 + 1;
       iSectorID = piPos1 + 7;
 
-      send(self,@SetSector,#sector=iSectorID,#animation=ANIMATE_FLOOR_LIFT,
+      Send(self,@SetSector,#sector=iSectorID,#animation=ANIMATE_FLOOR_LIFT,
            #height=132,#speed=16);
-      send(self,@OpenSecretDoorSound);
+      Send(self,@OpenSecretDoorSound);
 
       if piPos1 < 7
       {
@@ -136,9 +136,9 @@ messages:
 
       piPos1 = piPos1 + 1;
       
-      send(self,@SetSector,#sector=piPos1,#animation=ANIMATE_FLOOR_LIFT,
+      Send(self,@SetSector,#sector=piPos1,#animation=ANIMATE_FLOOR_LIFT,
            #height=256,#speed=16);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@CloseSecretDoorSound);
 
       if piPos1 < 14
       {
@@ -159,12 +159,12 @@ messages:
       
       if (piPos1 > 6)
       {
-         send(self,@CloseStorageDoor); 
+         Send(self,@CloseStorageDoor); 
 
          return;
       }
 
-      send(self,@OpenSecretDoor);
+      Send(self,@OpenSecretDoor);
 
       return;
    }
@@ -172,19 +172,19 @@ messages:
    OpenEntranceDoor()
    {
       if ptEntrance = $
-      {                  
+      {
          if piPos2 > 2
          {
             return;
          }
       
-         send(self,@TimeStampDoor);
+         Send(self,@TimeStampDoor);
          piPos2 = piPos2 + 1;
       
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall4_sound);
-         send(self,@SetSector,#sector=piPos2,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=piPos2,#animation=ANIMATE_CEILING_LIFT,
               #height=196,#speed=16);
-         send(self,@OpenEntranceDoorSound);
+         Send(self,@OpenEntranceDoorSound);
 
          if piPos2 < 3
          {
@@ -218,9 +218,9 @@ messages:
       iSectorID = piPos2 - 3;
 
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall4_sound);
-      send(self,@SetSector,#sector=iSectorID,#animation=ANIMATE_CEILING_LIFT,
-           #height=128,#speed=16);
-      send(self,@CloseEntranceDoorSound);
+      Send(self,@SetSector,#sector=iSectorID,#animation=ANIMATE_CEILING_LIFT,
+            #height=128,#speed=80);
+      Send(self,@CloseEntranceDoorSound);
       
       if piPos2 < 6
       {
@@ -241,29 +241,29 @@ messages:
 
       if (piPos2 > 2)
       {
-         send(self,@CloseEntranceDoorTimer); 
+         Send(self,@CloseEntranceDoorTimer);
 
          return;
-      }      
+      }
 
-      send(self,@OpenEntranceDoor);
+      Send(self,@OpenEntranceDoor);
 
       return;
    }
-   
+
    ResetTimer()
    {
       ptReset = $;
 
-      send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
            #height=128,#speed=16);
-      send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
            #height=128,#speed=16);
-      send(self,@SetSector,#sector=MASTERDOOR,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=MASTERDOOR,#animation=ANIMATE_CEILING_LIFT,
            #height=128,#speed=16);
-      send(self,@SetSector,#sector=ASSISTDOOR,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=ASSISTDOOR,#animation=ANIMATE_CEILING_LIFT,
            #height=128,#speed=16);
-      
+
       return;
    }
 
@@ -294,13 +294,13 @@ messages:
       }
 
       propagate;
-   }                                    
-   
+   }
+
    SomethingTryGo(what = $,row = $,col = $)
    {
       if (row = 29) AND (col < 24)
       {
-         send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
               #height=204,#speed=16);
          ptReset = CreateTimer(self,@ResetTimer,RESET_TIME_LONG);
 
@@ -309,7 +309,7 @@ messages:
 
       if (row = 29) AND (col > 25)
       {
-         send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
               #height=204,#speed=16);
          ptReset = CreateTimer(self,@ResetTimer,RESET_TIME_LONG);
 
@@ -318,7 +318,7 @@ messages:
 
       if ((row > 35) OR (row < 39)) AND (col = 33)
       {
-         send(self,@SetSector,#sector=MASTERDOOR,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=MASTERDOOR,#animation=ANIMATE_CEILING_LIFT,
               #height=204,#speed=16);
          ptReset = CreateTimer(self,@ResetTimer,RESET_TIME_LONG);
 
@@ -327,7 +327,7 @@ messages:
 
       if (row = 33) AND ((col = 36) OR (col = 35))
       {
-         send(self,@SetSector,#sector=ASSISTDOOR,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=ASSISTDOOR,#animation=ANIMATE_CEILING_LIFT,
               #height=204,#speed=16);
          ptReset = CreateTimer(self,@ResetTimer,RESET_TIME_LONG);
 
@@ -336,12 +336,9 @@ messages:
 
       if row = 43 AND (col < 26 AND col > 23)
       {
-         if send(self,@ReqLegalEntry,#who=what)
-         {
-            send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
 
-            return TRUE;
-         }
+         return TRUE;
       }
 
       propagate;
@@ -432,31 +429,18 @@ messages:
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=35,#new_col=35,
            #fine_row=32,#fine_col=32);
 
+
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=43,#new_col=15,#fine_row=32,#fine_col=40,#new_angle=ANGLE_NORTH);
+            #new_row=43,#new_col=15,#fine_row=32,#fine_col=40,
+            #new_angle=ANGLE_NORTH);
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=43,#new_col=12,#fine_row=16,#fine_col=48,#new_angle=ANGLE_NORTH_EAST);
+            #new_row=43,#new_col=12,#fine_row=16,#fine_col=48,
+            #new_angle=ANGLE_NORTH_EAST);
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=43,#new_col=18,#fine_row=16,#fine_col=16,#new_angle=ANGLE_NORTH_WEST);
+            #new_row=43,#new_col=18,#fine_row=16,#fine_col=16,
+            #new_angle=ANGLE_NORTH_WEST);
 
       propagate;
-   }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [43,23,1], [43,24,1], [43,25,1], [43,26,1], [43,27,2], [43,22,2],
-                     [42,23,2], [42,24,2], [42,25,2], [42,26,2], [42,27,2], [42,22,2]
-                   ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@NewHold,#what=oPlate,#new_row=nth(i,1),#new_col=nth(i,2));
-      }
-
-      return;
    }
 
    CreateStandardExits()
@@ -469,7 +453,7 @@ messages:
    }
 
    DefensesDown()
-   {      
+   {
       ptLighting = CreateTimer(self,@LightFlicker,1000);
 
       return;
@@ -477,16 +461,16 @@ messages:
 
    LightFlicker()
    {
-      % Is the hall being raided?   
-      if piStatus = 1     
+      % Is the hall being raided?
+      if piStatus = 1
       {
          if piBaseLight = FLICKER_LOW
          {
-            send(self,@SetBaseLight,#amount=FLICKER_HIGH);
+            Send(self,@SetBaseLight,#amount=FLICKER_HIGH);
          }
          else
          {
-            send(self,@SetBaseLight,#amount=FLICKER_LOW);
+            Send(self,@SetBaseLight,#amount=FLICKER_LOW);
          }
 
          ptLighting = CreateTimer(self,@LightFlicker,2000);
@@ -494,7 +478,7 @@ messages:
       else
       {
          ptLighting = $;
-         send(self,@DefensesUp);
+         Send(self,@DefensesUp);
       }
 
       return;
@@ -508,32 +492,31 @@ messages:
          ptLighting = $;
       }
 
-      send(self,@SetBaseLight,#amount=FLICKER_NONE);
+      Send(self,@SetBaseLight,#amount=FLICKER_NONE);
 
       return;
    }
 
    ClaimGuildHall()
    {
-      send(self,@DefensesUp);
+      Send(self,@DefensesUp);
 
       propagate;
    }
 
    ResetGuildHall()
    {
-      send(self,@DefensesUp);
+      Send(self,@DefensesUp);
 
       propagate;
    }
 
    ConquerTimer()
    {
-      send(self,@DefensesUp);
+      Send(self,@DefensesUp);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

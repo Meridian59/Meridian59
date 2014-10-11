@@ -358,13 +358,12 @@ enum {
 #define OF_CONTAINER     0x00000020    // Set if player can put objects inside this one
 #define OF_NOEXAMINE     0x00000040    // Set if player CAN'T examine object
 #define OF_ITEM_MAGIC    0x00000080    // Set for magic item to color in lists
-#define OF_SAFETY        0x00000100    // Set if player has safety on (self only)
+#define OF_HANGING       0x00000100    // Set for ceiling-pinned objects.
 #define OF_OFFERABLE     0x00000200    // Set if object can be offered to
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
-#define OF_HANGING       0x00002000    //     FALSE for most objects.
-                                       //     TRUE for creators or ceiling-pinned objects.
+#define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
 
 // Player name colors
 #define PF_KILLER        0x00004000    // Set if object is a killer (must also have OF_PLAYER)

@@ -60,8 +60,7 @@
    LOOK_NO           = 0x00000040
    ITEM_MAGIC_YES    = 0x00000080
    ITEM_MAGIC_NO     = 0
-   SAFETY_YES        = 0x00000100
-   SAFETY_NO         = 0
+   HANGING_YES       = 0x00000100
    OFFER_YES         = 0x00000200
    OFFER_NO          = 0
    BUY_YES           = 0x00000400
@@ -70,7 +69,8 @@
    ACTIVATE_NO       = 0
    APPLY_YES         = 0x00001000
    APPLY_NO          = 0
-   OF_HANGING        = 0x00002000
+   SAFETY_YES        = 0x00002000
+   SAFETY_NO         = 0
 
    % Visual effects
    FLICKERING_YES    = 0x00020000

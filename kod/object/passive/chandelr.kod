@@ -18,7 +18,9 @@ resources:
 
    chandelier_name_rsc = "Chandelier"
    chandelier_icon_rsc = chandelr.bgf
-   chandelier_desc_rsc = "This decorative chandelier does not look as though it could hold the weight of a swinging swashbuckler."
+   chandelier_desc_rsc = \
+      "This decorative chandelier does not look as though it could hold "
+      "the weight of a swinging swashbuckler."
 
 classvars:
 
@@ -28,12 +30,11 @@ classvars:
 
 properties:
 
-
 messages:
 
    GetObjectFlags()
    {
-      return LOOK_NO | OF_HANGING;
+      return LOOK_NO | HANGING_YES;
    }
 
    ReqNewOwner(what = $)

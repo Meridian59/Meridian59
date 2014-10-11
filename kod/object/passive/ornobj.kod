@@ -736,7 +736,7 @@ messages:
       local f;
 
       f = LOOK_NO;
-      if pbHanging { f = f | OF_HANGING; }
+      if pbHanging { f = f | HANGING_YES; }
       if pbFlicker { f = f | FLICKERING_YES; }
       if pbNoMoveOn { f = f | MOVEON_NO; }
       
@@ -1278,7 +1278,7 @@ messages:
       local oDuplicate;
 
       oDuplicate = create(&OrnamentalObject,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
-      if send(self,@GetObjectFlags) & OF_HANGING
+      if send(self,@GetObjectFlags) & HANGING_YES
       {
          send(oDuplicate,@SetHanging,#value=TRUE);
       }

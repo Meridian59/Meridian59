@@ -302,24 +302,23 @@ messages:
       iGoBadTime = iGoBadTime * 24 * 60 * 60 * 60 * 1000;
 
       oPotion = Create(cPotionClass,#labelled=TRUE,#iSpellPower=iPotionPower,
-                       #gobadtime=igobadtime,#maker=caster,#ability=iSkill);
+                  #gobadtime=igobadtime,#maker=caster,#ability=iSkill);
 
-	  if Send(caster,@ReqNewHold,#what=oPotion)
-	  {
-	     Send(caster,@NewHold,#what=oPotion);
-		 Send(caster,@MsgSendUser,#message_rsc=Distill_do,
-			#param1=Send(oPotion,@GetCapIndef),#param2=Send(oPotion,@GetName));
-	  }
-	  else
-	  {
-		 Send(Send(caster,@GetOwner),@NewHold,#what=oPotion,
-				#new_row=Send(caster,@GetRow),#new_col=Send(caster,@GetCol),
-				#fine_row=(Send(caster,@GetFineRow)+2),
-				#fine_col=(Send(caster,@GetFineCol)+2));
-		 Send(caster,@MsgSendUser,#message_rsc=Distill_inv_full_rsc,
-				#param1=Send(oPotion,@GetCapIndef),#param2=Send(oPotion,@GetName));
-	  }
-
+      if Send(caster,@ReqNewHold,#what=oPotion)
+      {
+         Send(caster,@NewHold,#what=oPotion);
+         Send(caster,@MsgSendUser,#message_rsc=Distill_do,
+               #parm1=Send(oPotion,@GetCapIndef),#parm2=Send(oPotion,@GetName));
+      }
+      else
+      {
+         Send(Send(caster,@GetOwner),@NewHold,#what=oPotion,
+               #new_row=Send(caster,@GetRow),#new_col=Send(caster,@GetCol),
+               #fine_row=(Send(caster,@GetFineRow)+2),
+               #fine_col=(Send(caster,@GetFineCol)+2));
+         Send(caster,@MsgSendUser,#message_rsc=Distill_inv_full_rsc,
+               #parm1=Send(oPotion,@GetCapIndef),#parm2=Send(oPotion,@GetName));
+      }
       return;
    }
 

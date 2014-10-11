@@ -31,7 +31,7 @@ resources:
    Distill_bad_spell = "You cannot make a potion with those powers."
    Distill_do = \
       "Through careful preparation of the ingredients you create %s%s."
-   Distill_inv_full_rsc = "Over encumbered, you drop the %s%s at your feet."
+   Distill_inv_full_rsc = "Over encumbered, you drop %s%s at your feet."
    Distill_Dont_have_target = "You have no knowledge of %s."
    Distill_no_ingredient = "You do not have all the ingredients you need."
    Distill_Fail_Target = \

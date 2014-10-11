@@ -399,9 +399,9 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
          SelectObject(hdc, hPlayerBrush);
          float ring_radius = 1.6f * radius;
 
-         if (GetMinimapFlags(r->obj.flags) & OF_FRIEND)
+         if (r->obj.flags & OF_FRIEND)
          {
-            if ((GetMinimapFlags(r->obj.flags) & OF_ENEMY) || (GetMinimapFlags(r->obj.flags) & OF_GUILDMATE))
+            if ((r->obj.flags & OF_ENEMY) || (r->obj.flags & OF_GUILDMATE))
                ring_radius = 2.4f * radius;
 
             SelectObject(hdc, hFriendPen);
@@ -413,7 +413,7 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
          }
 
          // Enemy?
-         if (GetMinimapFlags(r->obj.flags) & OF_ENEMY)
+         if (r->obj.flags & OF_ENEMY)
          {
             SelectObject(hdc, hEnemyPen);
             Ellipse(hdc, (int) (new_x - ring_radius),
@@ -423,7 +423,7 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
          }
 
          // Guildmate?
-         if (GetMinimapFlags(r->obj.flags) & OF_GUILDMATE)
+         if (r->obj.flags & OF_GUILDMATE)
          {
              SelectObject(hdc, hGuildmatePen);
              Ellipse(hdc, (int) (new_x - ring_radius),
@@ -441,12 +441,12 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
           SelectObject(hdc, hPlayerPen);
           SelectObject(hdc, hPlayerBrush);
       }
-      else if (GetMinimapFlags(r->obj.flags) == OF_MINION_SELF)
+      else if ((r->obj.flags & OF_MINION_SELF) == OF_MINION_SELF)
       {
           SelectObject(hdc, hMinionPen);
           SelectObject(hdc, hMinionBrush);
       }
-      else if (GetMinimapFlags(r->obj.flags) == OF_MINION_OTHER)
+      else if ((r->obj.flags & OF_MINION_OTHER) == OF_MINION_OTHER)
       {
           SelectObject(hdc, hMinionOtherPen);
           SelectObject(hdc, hMinionOtherBrush);

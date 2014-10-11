@@ -106,10 +106,11 @@
 
    % What is the target, according to the viewer?  Used for special flagging.
    PLAYER_IS_ENEMY      = 0x01000000
-   PLAYER_IS_GUILDMATE  = 0x02000000
-   MINION_SELF          = 0x03000000
-   PLAYER_IS_FRIEND     = 0x04000000
-   MINION_OTHER         = 0x06000000
+   PLAYER_IS_FRIEND     = 0x02000000
+   PLAYER_IS_GUILDMATE  = 0x04000000
+   MINION_YES           = 0x08000000
+   MINION_OTHER         = 0x09000000
+   MINION_SELF          = 0x0A000000
    MINIMAP_MASK         = 0x0F000000
 
    %%% Projectile and Light flags

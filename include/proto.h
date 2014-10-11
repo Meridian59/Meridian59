@@ -397,10 +397,11 @@ enum {
 
 // Minimap dot colors
 #define OF_ENEMY         0x01000000    // Enemy player
-#define OF_GUILDMATE     0x02000000    // Guildmate player
-#define OF_MINION_SELF   0x03000000    // Set if a monster is our minion
-#define OF_FRIEND        0x04000000    // Friendly player
-#define OF_MINION_OTHER  0x06000000    // Set if monster is other's minion
+#define OF_FRIEND        0x02000000    // Friendly player
+#define OF_GUILDMATE     0x04000000    // Guildmate player
+#define OF_MINION        0x08000000    // Monster is a minion owned by a player
+#define OF_MINION_OTHER  0x09000000    // Set if monster is other's minion
+#define OF_MINION_SELF   0x0A000000    // Set if a monster is our minion
 #define OF_MINIMAP_MASK  0x0F000000    // Mask to get minimap drawing effects
 
 #define GetMinimapFlags(flags)  ((flags) & OF_MINIMAP_MASK)

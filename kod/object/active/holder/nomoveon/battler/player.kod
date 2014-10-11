@@ -1427,7 +1427,8 @@ messages:
          piVigor_rest_threshold = 10;
       }
 
-      piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,100);
+      piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,80 +
+               ((Send(self,@GetSkillAbility,#skill_num=SKID_SECOND_WIND)+1)/5));
 
       Send(self,@DrawVigor);
 

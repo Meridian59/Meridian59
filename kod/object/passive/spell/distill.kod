@@ -308,7 +308,7 @@ messages:
       {
          Send(caster,@NewHold,#what=oPotion);
          Send(caster,@MsgSendUser,#message_rsc=Distill_do,
-               #parm1=Send(oPotion,@GetCapIndef),#parm2=Send(oPotion,@GetName));
+               #parm1=Send(oPotion,@GetIndef),#parm2=Send(oPotion,@GetName));
       }
       else
       {
@@ -317,7 +317,7 @@ messages:
                #fine_row=(Send(caster,@GetFineRow)+2),
                #fine_col=(Send(caster,@GetFineCol)+2));
          Send(caster,@MsgSendUser,#message_rsc=Distill_inv_full_rsc,
-               #parm1=Send(oPotion,@GetCapIndef),#parm2=Send(oPotion,@GetName));
+               #parm1=Send(oPotion,@GetIndef),#parm2=Send(oPotion,@GetName));
       }
       return;
    }

@@ -98,7 +98,28 @@ messages:
       
       oNewItem = Create(cSacrificeClass,#iSpellpower=iSacrificeSpellPower);
       Send(oNewItem,@SetHits,#number=iNewHits);
-      Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE); 
+      if Send(sacrificed_item,@IsRevealed)
+      {
+         Send(oNewItem,@RevealHiddenAttributes);
+      }
+      Send(oNewItem,@SetKarmaCheck,#value=Send(sacrificed_item,@GetKarmaCheck));
+
+      If Send(sacrificed_item,@GetOwner) = what
+      {
+         Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE);
+      }
+      else
+      {
+         If Send(sacrificed_item,@GetOwner) <> $
+            AND IsClass(Send(sacrificed_item,@GetOwner),&Room)
+         {
+            Send(Send(sacrificed_item,@GetOwner),@NewHold,#what=oNewItem,#new_row=Send(sacrificed_item,@GetRow),#new_col=Send(sacrificed_item,@GetCol));
+         }
+         else
+         {
+            Send(oNewItem,@Delete);
+         }
+      }
 
       If IsClass(what,&User)
       {

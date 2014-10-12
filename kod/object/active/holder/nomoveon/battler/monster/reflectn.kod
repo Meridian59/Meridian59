@@ -313,15 +313,10 @@ messages:
 
       if poOriginal = $
       {
-         post(self,@Delete);
+         Post(self,@Delete);
       }
 
       iFlags = Send(poOriginal,@GetObjectFlags);
-      if IsClass(poOriginal,&Player)
-         AND (iFlags & USER_YES)
-      {
-         iFlags = (iFlags | FALSEPLAYER_YES);
-      }
 
       return iFlags;
    }

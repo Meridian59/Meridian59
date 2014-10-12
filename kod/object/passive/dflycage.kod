@@ -51,7 +51,7 @@ messages:
 
    GetObjectFlags()
    {
-      return OF_HANGING;
+      return HANGING_YES;
    }
 
    SendAnimation()

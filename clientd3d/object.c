@@ -196,7 +196,7 @@ void RoomObjectSetHeight(room_contents_node *r)
    int floor,ceiling;
 
    GetPointHeights(r->motion.x,r->motion.y,&floor,&ceiling);
-   if ((r->obj.flags & OF_HANGING) && !(r->obj.flags & OF_PLAYER))
+   if (r->obj.flags & OF_HANGING)
    {
       if (r->obj.boundingHeight == 0)
       {

@@ -500,7 +500,7 @@ messages:
       iFlags = piDrawFX;
       
       if piColor = COLOR_BLUE
-      { iFlags = iFlags | PLAYER_DM | FALSEPLAYER_YES | USER_YES ; }
+      { iFlags = iFlags | PLAYER_DM | USER_YES ; }
 
       return iFlags;
    }

@@ -2326,8 +2326,8 @@ messages:
          AND (iFlags & DRAWFX_MASK) = DRAWFX_INVISIBLE
       {
          iFlags = (iFlags & (~DRAWFX_MASK));
-         iFlags = (iFlags & (~OF_FLICKERING));
-         iFlags = (iFlags | OF_FLASHING);
+         iFlags = (iFlags & (~FLICKERING_YES));
+         iFlags = (iFlags | FLASHING_YES);
       }
 
       if IsClass(what,&Battler)
@@ -2341,8 +2341,8 @@ messages:
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND abs(iEnemyKarma) > iSelfKarma))
          {
-            iFlags = (iFlags & (~OF_FLICKERING));
-            iFlags = (iFlags | OF_FLASHING);
+            iFlags = (iFlags & (~FLICKERING_YES));
+            iFlags = (iFlags | FLASHING_YES);
          }
 
          if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_GOOD,#flagset=2)
@@ -2351,8 +2351,8 @@ messages:
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND iEnemyKarma > abs(iSelfKarma)))
          {
-            iFlags = (iFlags & (~OF_FLICKERING));
-            iFlags = (iFlags | OF_FLASHING);
+            iFlags = (iFlags & (~FLICKERING_YES));
+            iFlags = (iFlags | FLASHING_YES);
          }
 
          if IsClass(what,&Player)
@@ -8170,7 +8170,6 @@ messages:
 
       iFlags = iFlags | (piDrawfx & DRAWFX_MASK)
                | (piDrawfx & (FLASHING_YES | FLICKERING_YES | PHASING_YES));
-      iFlags = (iFlags & (~FALSEPLAYER_YES));
 
       oIllusion = Send(self,@GetIllusionForm);
 

@@ -20,7 +20,7 @@
 #include "client.h"
 
 #define MAP_WALL_THICKNESS 1
-#define MAP_PLAYER_THICKNESS 2
+#define MAP_PLAYER_THICKNESS 4
 #define MAP_OBJECT_THICKNESS 2
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
@@ -128,7 +128,7 @@ void MapInitialize(void)
    logBrush.lbStyle = BS_HOLLOW;
 
    hWallPen = CreatePen(PS_SOLID, MAP_WALL_THICKNESS, MAP_WALL_COLOR);
-   hPlayerPen = CreatePen(PS_SOLID, MAP_PLAYER_THICKNESS, MAP_PLAYER_COLOR);
+   hPlayerPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_PLAYER_COLOR);
    hObjectPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_OBJECT_COLOR);
    hFriendPen = CreatePen(PS_SOLID, MAP_PLAYER_THICKNESS, MAP_FRIEND_COLOR);
    hEnemyPen = CreatePen(PS_SOLID, MAP_PLAYER_THICKNESS, MAP_ENEMY_COLOR);
@@ -396,59 +396,57 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
       // Draw rings around players
       if (r->obj.flags & OF_PLAYER)
       {
-          float ring_radius = 2.0f * radius;
+         SelectObject(hdc, hPlayerBrush);
+         float ring_radius = 1.6f * radius;
 
-          // Guildmate?
-          SelectObject(hdc, hPlayerBrush);
-          if (r->obj.flags & OF_GUILDMATE)
-          {
-              ring_radius = 3.0f * radius;
-          }
+         if (r->obj.flags & OF_FRIEND)
+         {
+            if ((r->obj.flags & OF_ENEMY) || (r->obj.flags & OF_GUILDMATE))
+               ring_radius = 2.4f * radius;
 
-          // Friend?
-          if (r->obj.flags & OF_FRIEND)
-          {
-              SelectObject(hdc, hFriendPen);
-              Ellipse(hdc, (int) (new_x - ring_radius),
-                      (int) (new_y - ring_radius), 
-                      (int) (new_x + ring_radius),
-                      (int) (new_y + ring_radius));
-          }
+            SelectObject(hdc, hFriendPen);
+            Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+            ring_radius = 1.6f * radius;
+         }
 
-          // Enemy?
-          if (r->obj.flags & OF_ENEMY)
-          {
-              SelectObject(hdc, hEnemyPen);
-              Ellipse(hdc, (int) (new_x - ring_radius),
-                      (int) (new_y - ring_radius), 
-                      (int) (new_x + ring_radius),
-                      (int) (new_y + ring_radius));
-          }
+         // Enemy?
+         if (r->obj.flags & OF_ENEMY)
+         {
+            SelectObject(hdc, hEnemyPen);
+            Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         }
 
-          if (r->obj.flags & OF_GUILDMATE)
-          {
-              ring_radius = 2.0f * radius;
-              SelectObject(hdc, hGuildmatePen);
-              Ellipse(hdc, (int) (new_x - ring_radius),
-                      (int) (new_y - ring_radius), 
-                      (int) (new_x + ring_radius),
-                      (int) (new_y + ring_radius));
-          }          
+         // Guildmate?
+         if (r->obj.flags & OF_GUILDMATE)
+         {
+             SelectObject(hdc, hGuildmatePen);
+             Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         }
       }
-      /* Draw players in a different color. If a monster is a minion
-      / then color it appropriately, otherwise it gets the standard
-      / red dot. */
+
+      /* Draw middle of player dot in a different color. If
+      / a monster is a minion then color it appropriately,
+      / otherwise it gets the standard red dot. */
       if (r->obj.flags & OF_PLAYER)
       {
           SelectObject(hdc, hPlayerPen);
           SelectObject(hdc, hPlayerBrush);
       }
-      else if (r->obj.flags & OF_MINION_SELF)
+      else if ((r->obj.flags & OF_MINION_SELF) == OF_MINION_SELF)
       {
           SelectObject(hdc, hMinionPen);
           SelectObject(hdc, hMinionBrush);
       }
-      else if (r->obj.flags & OF_MINION_OTHER)
+      else if ((r->obj.flags & OF_MINION_OTHER) == OF_MINION_OTHER)
       {
           SelectObject(hdc, hMinionOtherPen);
           SelectObject(hdc, hMinionOtherBrush);

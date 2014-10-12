@@ -104,17 +104,17 @@ messages:
    GetObjectFlags()
    {
       if (piRoofState <> STATE_ONROOF)
-      {  
+      {
          return MOVEON_NO | piDrawFX | BATTLER_YES;
-      }      
+      }
 
-      return piDrawFX | OF_HANGING | BATTLER_YES;
+      return piDrawFX | HANGING_YES | BATTLER_YES;
    }
 
    TryAttack()
    {
       if poOwner = $
-      {	
+      {
          debug("Unreachable. Null Owner");
          Send(self,@EnterStateLimbo);
 
@@ -122,10 +122,10 @@ messages:
       }
 
       if poTarget=$
-      {	
-         Send(self,@EnterStateWait); 
+      {
+         Send(self,@EnterStateWait);
 
-         return; 
+         return;
       }
 
       if piRoofState <> STATE_READY
@@ -133,8 +133,8 @@ messages:
          return FALSE;
       }
 
-      if NOT Send(self,@CanReach,#what=poTarget) 
-      {         
+      if NOT Send(self,@CanReach,#what=poTarget)
+      {
          Send(self,@EnterStateChase);
 
          return;

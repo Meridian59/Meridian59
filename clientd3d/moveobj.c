@@ -43,7 +43,7 @@ void MoveObject2(ID object_id, int x, int y, BYTE speed, BOOL turnToFace)
 		return;
 	}
 	
-	hanging = ((r->obj.flags & OF_HANGING) && !(r->obj.flags & OF_PLAYER));
+	hanging = (r->obj.flags & OF_HANGING);
 	z = GetFloorBase(x,y);
 	if (turnToFace)
 	{

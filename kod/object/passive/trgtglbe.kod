@@ -15,9 +15,12 @@ constants:
    include blakston.khd
 
 resources:
-TargetGlobe_name = "Globe"
-TargetGlobe_icon = necglobe.bgf
-TargetGlobe_desc = "Looking up at this dark globe, you get the funny feeling that you are being watched."
+
+   TargetGlobe_name = "Globe"
+   TargetGlobe_icon = necglobe.bgf
+   TargetGlobe_desc = \
+      "Looking up at this dark globe, you get the funny feeling "
+      "that you are being watched."
 
 classvars:
 
@@ -31,7 +34,7 @@ messages:
 
    GetObjectFlags()
    {
-      return OF_HANGING; 
+      return HANGING_YES;
    }
 
 end

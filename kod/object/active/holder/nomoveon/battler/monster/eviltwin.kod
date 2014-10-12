@@ -284,7 +284,6 @@ messages:
       local iFlags;
 
       iFlags = Send(poOriginal,@GetObjectFlags);
-      if (iFlags & USER_YES) {  iFlags = (iFlags | FALSEPLAYER_YES);  }
 
       return iFlags;
    }

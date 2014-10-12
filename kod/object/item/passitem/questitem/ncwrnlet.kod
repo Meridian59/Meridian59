@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NecromancerWarningLetter is PassiveItem
+NecromancerWarningLetter is QuestItem
 
 constants:
 

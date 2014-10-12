@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MysteryWand is QuestItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MysteryWand_name_rsc = "mysterious wand"
+   MysteryWand_icon_rsc = joltstaf.bgf
+   MysteryWand_desc_rsc = \
+      "This is an odd looking wand of a type you have never seen before.  It doesn't look very "
+      "reliable to you."
+
+classvars:
+
+   vrName = MysteryWand_name_rsc
+   vrIcon = MysteryWand_icon_rsc
+   vrDesc = MysteryWand_desc_rsc
+
+   viValue_average = 20
+   viWeight = 15
+   viBulk = 20
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -194,7 +194,7 @@ messages:
                % This takes the spellpower of Mana Focus (iManaFocus), and uses
                %  that to scale our "bonus" damage.
                % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
-               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM) + 1;
+               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM);
             }
          }
       }

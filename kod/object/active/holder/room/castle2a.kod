@@ -84,7 +84,7 @@ messages:
       {
          if Send(oLockedRoom,@CheckLock) = 1
          { 
-            Send(what,@TeleportTo,#rid=RID_FORGOTTEN_TOO);
+            Send(what,@TeleportTo,#rid=RID_FORGOTTEN_TOO,#bAdminPort=FALSE);
 
             return TRUE;
          }

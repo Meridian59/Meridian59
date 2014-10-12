@@ -131,32 +131,148 @@ int C_ClearPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
-int C_GodLog(int object_id,
-			 local_var_type *local_vars,
-			 int num_normal_parms,
-			 parm_node normal_parm_array[],
-			 int num_name_parms,
-			 parm_node name_parm_array[])
+int C_GodLog(int object_id,local_var_type *local_vars,
+			int num_normal_parms,parm_node normal_parm_array[],
+			int num_name_parms,parm_node name_parm_array[])
 {
-	char buf[2000];
-	int len_buf;
-	kod_statistics *kstat;
+	int i;
+	val_type each_val;
 	class_node *c;
+	char buf[2000];
+	kod_statistics *kstat;
+	
+	/* need the current interpreting class in case there are debug strings,
+	which are stored in the class. */
+
 	kstat = GetKodStats();
+	
 	c = GetClassByID(kstat->interpreting_class);
-
-	sprintf(buf,"Object %i (CLASS %s) Reports: "
-		,object_id,c->fname);
-
-	string_node *snod;
-
-	snod = GetTempString();
-	len_buf = strlen(buf);
-	memcpy(buf + len_buf,snod->data,snod->len_data);
-	*(buf + len_buf + snod->len_data) = 0;
-
-	gprintf(buf);
-	return NIL;
+	if (c == NULL)
+	{
+		bprintf("C_GodLog can't find class %i, can't print out debug strs\n",
+			kstat->interpreting_class);
+		return NIL;
+	}
+	
+	sprintf(buf,"[%s] ",BlakodDebugInfo());
+	
+	for (i=0;i<num_normal_parms;i++)
+	{
+		each_val = RetrieveValue(object_id,local_vars,normal_parm_array[i].type,
+			normal_parm_array[i].value);
+		
+		switch (each_val.v.tag)
+		{
+		case TAG_DEBUGSTR :
+			sprintf(buf+strlen(buf),"%s",GetClassDebugStr(c,each_val.v.data));
+			break;
+			
+		case TAG_RESOURCE :
+			{
+				resource_node *r;
+				r = GetResourceByID(each_val.v.data);
+				if (r == NULL)
+				{
+					sprintf(buf+strlen(buf),"<unknown RESOURCE %i>",each_val.v.data);
+				}
+				else
+				{
+					sprintf(buf+strlen(buf),"%s",r->resource_val);
+				}
+			}
+			break;
+			
+		case TAG_INT :
+			sprintf(buf+strlen(buf),"%d",(int)each_val.v.data);
+			break;
+			
+		case TAG_CLASS :
+			{
+				class_node *c;
+				c = GetClassByID(each_val.v.data);
+				if (c == NULL)
+				{
+					sprintf(buf+strlen(buf),"<unknown CLASS %i>",each_val.v.data);
+				}
+				else
+				{
+					strcat(buf,"&");
+					strcat(buf,c->class_name);
+				}
+			}
+			break;
+			
+		case TAG_STRING :
+			{
+				int lenBuffer, lenString;
+				string_node *snod = GetStringByID(each_val.v.data);
+				
+				if (snod == NULL)
+				{
+					bprintf("C_GodLog can't find string %i\n",each_val.v.data);
+					return NIL;
+				}
+				lenString = snod->len_data;
+				lenBuffer = strlen(buf);
+				memcpy(buf + lenBuffer,snod->data,snod->len_data);
+				*(buf + lenBuffer + snod->len_data) = 0;
+			}
+			break;
+			
+		case TAG_TEMP_STRING :
+			{
+				int len_buf;
+				string_node *snod;
+				
+				snod = GetTempString();
+				len_buf = strlen(buf);
+				memcpy(buf + len_buf,snod->data,snod->len_data);
+				*(buf + len_buf + snod->len_data) = 0;
+			}
+			break;
+			
+		case TAG_OBJECT :
+			{
+				object_node *o;
+				class_node *c;
+				user_node *u;
+				
+				/* for objects, print object number */
+				
+				o = GetObjectByID(each_val.v.data);
+				if (o == NULL)
+				{
+					sprintf(buf+strlen(buf),"<OBJECT %i invalid>",each_val.v.data);
+					break;
+				}
+				c = GetClassByID(o->class_id);
+				if (c == NULL)
+				{
+					sprintf(buf+strlen(buf),"<OBJECT %i unknown class>",each_val.v.data);
+					break;
+				}
+				
+				if (c->class_id == USER_CLASS || c->class_id == DM_CLASS ||
+					c->class_id == GUEST_CLASS || c->class_id == ADMIN_CLASS)
+				{
+					u = GetUserByObjectID(o->object_id);
+					if (u == NULL)
+					{
+						sprintf(buf+strlen(buf),"<OBJECT %i broken user>",each_val.v.data);
+						break;
+					}
+					sprintf(buf+strlen(buf),"OBJECT %i",each_val.v.data);
+					break;
+				}
+			}
+			//FALLTHRU
+		default :
+			sprintf(buf+strlen(buf),"%s %s",GetTagName(each_val),GetDataName(each_val));
+			break;
+      }
+   }
+   gprintf("%s\n",buf);
+   return NIL;
 }
 
 int C_Debug(int object_id,local_var_type *local_vars,

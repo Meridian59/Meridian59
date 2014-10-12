@@ -349,7 +349,7 @@ messages:
            #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
            #fine_row=16,#fine_col=16, #new_angle=Send(poOwner,@GetAngle));
 
-      Send(poOwner,@TeleportTo,#rid=RID_UNDERWORLD);
+      Send(poOwner,@TeleportTo,#rid=RID_UNDERWORLD,#bAdminPort=FALSE);
 
       % Make this a penalty-free "death".
       Send(poOwner,@SetDeathCost,#DeathCost=0);

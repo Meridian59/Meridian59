@@ -32,7 +32,9 @@ resources:
 
    EvilTwin_delete =  "%s%s disappears into a puff of smoke."
 
-   EvilTwin_trouble = "You sense that a evil twin you summoned has gotten you into some trouble..."
+   EvilTwin_trouble = \
+      "You sense that a evil twin you summoned has gotten you "
+      "into some trouble..."
 
 classvars:
 
@@ -56,6 +58,7 @@ classvars:
    vrSound_miss = EvilTwin_sound_miss
    vrSound_aware = EvilTwin_sound_aware
    vrSound_death = EvilTwin_sound_death
+   vrMinion_trouble = EvilTwin_trouble
 
    viDefault_behavior = AI_FIGHT_SINGLEMINDED | AI_FIGHT_MONSTERS | AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE
 
@@ -84,6 +87,7 @@ messages:
       if oMaster <> $
       {
          poCaster = oMaster;
+         poMaster = oMaster;
       }
 
       if oTarget <> $
@@ -137,20 +141,6 @@ messages:
       poArrow = $;
 
       propagate;
-   }
-
-   KilledSomething(what=$,use_weapon=$)
-   {
-      if IsClass(poCaster,&Player)
-         AND (NOT Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         AND IsClass(what,&Player)
-      {
-         Send(poCaster,@MsgSendUser,#message_rsc=EvilTwin_trouble);
-      }
-
-      Post(self,@Delete);
-
-      return Send(poCaster,@KilledSomething,#what=what,#use_weapon=use_weapon);
    }
 
    SomethingKilled(what=$,victim=$)
@@ -262,8 +252,11 @@ messages:
       Send(Send(poOriginal,@GetOwner),@NewHold,#what=self,
            #new_row = Send(poOriginal,@GetRow),#new_col = Send(poOriginal,@GetCol),
            #new_angle = Send(poOriginal,@GetAngle));
-      Post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
-      Post(self,@EnterStateChase);
+      if poOriginal <> poMaster
+      {
+         Post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
+         Post(self,@EnterStateChase);
+      }
 
       return;
 
@@ -390,7 +383,7 @@ messages:
       piAnimation = PANM_NONE;
 
       return;
-    }
+   }
 
    SetOriginal(who=$)
    {
@@ -410,34 +403,6 @@ messages:
    GetIcon()
    {
       return Send(poOriginal,@GetIcon);
-   }
-
-   TryAttack(what=$,stroke_obj=$)
-   {
-      local bWasBad;
-
-      if IsClass(poCaster,&Player)
-         AND NOT Send(poOwner,@IsArena)
-      {
-         %Is the caster bad to start with?
-         bWasBad = (Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                    OR Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
-
-         if NOT Send(poCaster,@AllowPlayerAttack,#victim=what,#report=FALSE)
-         {
-            return FALSE;
-         }
-
-         % If they weren't bad and become bad, let them know.
-         if NOT bWasBad
-            AND (Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                 OR Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         {
-            Send(poCaster,@MsgSendUser,#message_rsc=EvilTwin_trouble);
-         }
-      }
-
-      propagate;
    }
 
    MonsterAttack(what=$)

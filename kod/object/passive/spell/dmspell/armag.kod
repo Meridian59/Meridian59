@@ -18,10 +18,14 @@ resources:
    armageddon_name_rsc = "armageddon"
    armageddon_icon_rsc = ifrclite.bgf
 
-   armageddon_monster_death_msg = "~bYou hear a muffled scream as %s%s is vaporized instantly."
+   armageddon_monster_death_msg = \
+      "~bYou hear a muffled scream as %s%s is vaporized instantly."
 
-   armageddon_casted_msg = "~BWith a flourish and a warlike cry, %s%s throws %s hands to the heavens..."
-   armageddon_unworthy = "You have been deemed unworthy to cast so powerful a spell, and it has been stripped from you."
+   armageddon_casted_msg = \
+      "With a flourish and a warlike cry, %s%s throws %s hands to the heavens!"
+   armageddon_unworthy = \
+      "You have been deemed unworthy to cast so powerful a spell, "
+      "and it has been stripped from you."
 
    armageddon_desc_rsc = \
       "Kills all monsters in a room with a flourish."
@@ -39,17 +43,16 @@ properties:
 
 messages:
 
-
    SuccessChance(who=$)
    "If they are not a creator, then they do not get this spell off."
    {
-      if send(who,@PlayerIsImmortal,#gn=TRUE) <> 2 AND NOT isclass(who,&Creator)
+      if Send(who,@PlayerIsImmortal,#gn=TRUE) <> 2 AND NOT isclass(who,&Creator)
       {
-		   Send(who,@MsgSendUser,#message_rsc=armageddon_unworthy);
-		   send(who,@RemoveSpell,#num=viSpell_num);
-		   send(who,@ToCliStats,#group=3);
+         Send(who,@MsgSendUser,#message_rsc=armageddon_unworthy);
+         Send(who,@RemoveSpell,#num=viSpell_num);
+         Send(who,@ToCliStats,#group=3);
 
-		   return FALSE;
+         return FALSE;
       }
 
       return TRUE;
@@ -62,34 +65,41 @@ messages:
       return;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who=$,lTargets=$)
    {
       local  i, j, oRoom, lActive, each_obji, each_objj;
 
       oRoom = Send(who,@GetOwner);
       lActive = Send(oRoom,@GetHolderActive);
 
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=armageddon_casted_msg,#what=self,
-           #parm1=send(who,@GetIndef),#parm2=send(who,@GetName));
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=armageddon_casted_msg,
+            #what=who,
+            #parm1=Send(who,@GetInDef),
+            #parm2=Send(who,@GetName),
+            #parm3=Send(who,@GetHisHer));
 
       for i in lActive
       {
          each_obji = Send(oRoom,@HolderExtractObject,#data=i);
 
-         if (IsClass(each_obji,&Monster)) AND send(each_obji,@CanMonsterFight,#oStroke=self,#who=who)
+         if (IsClass(each_obji,&Monster)) 
+            AND Send(each_obji,@CanMonsterFight,#oStroke=self,#who=who)
          {
-            Send(oRoom,@SomethingShot,#who=who,#target=each_obji,#projectile=self,
-                 #flags=PROJ_FLAG_LIGHT_SOURCE);
+            Send(oRoom,@SomethingShot,#who=who,#target=each_obji,
+                  #projectile=self,
+                  #flags=PROJ_FLAG_LIGHT_SOURCE);
 
-            if send(each_obji,@DMCanArmageddon)
+            if Send(each_obji,@DMCanArmageddon)
             {
-               Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=armageddon_monster_death_msg,#what=self,
-                    #parm1=Send(each_obji,@GetIndef),
-                    #parm2=Send(each_obji,@GetName),#parm3=send(each_obji,@GetHisHer));
+               Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,
+                     #string=armageddon_monster_death_msg,#what=self,
+                     #parm1=Send(each_obji,@GetIndef),
+                     #parm2=Send(each_obji,@GetName),
+                     #parm3=Send(each_obji,@GetHisHer));
                Send(each_obji,@Delete);
             }
          }
-      }            
+      }
 
       propagate;
    }
@@ -113,7 +123,8 @@ messages:
 
    SendProjectileAnimation()
    {
-      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 2);   % 40ms between animations
+      % 40ms between animations
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 2);
 
       return;
    }
@@ -132,10 +143,57 @@ messages:
 
    GetProjectileLightColor()
    {
-      % Color is random!
-      return LIGHT_YELLOW;
-   }
+      local iColor, iNumber;
+      
+      iNumber=Random(1,7);
 
+      if iNumber = 1
+      {
+         iColor = LIGHT_WHITE;
+      }
+      else
+      {
+         if iNumber = 2
+         {
+            iColor = LIGHT_RED;
+         }
+         else
+         {
+            if iNumber = 3
+            {
+               iColor = LIGHT_ORANGE;
+            }
+            else
+            {
+               if iNumber = 4
+               {
+                  iColor = LIGHT_YELLOW;
+               }
+               else
+               {
+                  if iNumber = 5
+                  {
+                     iColor = LIGHT_GREEN;
+                  }
+                  else
+                  {
+                     if iNumber = 6
+                     {
+                        iColor = LIGHT_BLUE;
+                     }
+                     else
+                     {
+                        iColor = LIGHT_PURPLE;
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      % Color is actually random!
+      return iColor;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

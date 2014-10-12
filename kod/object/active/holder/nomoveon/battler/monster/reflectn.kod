@@ -62,6 +62,7 @@ classvars:
    vrSound_miss = reflection_sound_miss
    vrSound_aware = reflection_sound_aware
    vrSound_death = reflection_sound_death
+   vrMinion_trouble = reflection_trouble
 
    viDefault_behavior = AI_FIGHT_MONSTERS | AI_FIGHT_NEWBIESAFE \
                         | AI_FIGHT_AGGRESSIVE
@@ -97,22 +98,6 @@ messages:
       poArrow = Create(&Arrow);
 
       propagate;
-   }
-
-   KilledSomething(what=$,use_weapon=$)
-   {
-      if IsClass(poOriginal,&Player)
-         AND (NOT Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         AND IsClass(what,&Player)
-         AND NOT (Send(what,@CheckPlayerFlag,#Flag=PFLAG_OUTLAW)
-                  OR Send(what,@CheckPlayerFlag,#Flag=PFLAG_MURDERER))
-         AND what <> poOriginal
-      {
-         Send(poOriginal,@MsgSendUser,#message_rsc=Reflection_trouble);
-      }
-
-      return Send(poOriginal,@KilledSomething,#what=what,
-                  #use_weapon=use_weapon);
    }
 
    GetApparentName()
@@ -431,38 +416,6 @@ messages:
    GetIcon()
    {
       return Send(poOriginal,@GetIcon);
-   }
-
-   TryAttack(what=$, stroke_obj=$)
-   {
-      local bWasBad;
-
-      if what = poMaster
-      {
-         return FALSE;
-      }
-
-      if IsClass(poOriginal,&Player)
-      {
-         %Is the caster bad to start with?
-         bWasBad = (Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                    OR Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
-
-         if NOT Send(poOriginal,@AllowPlayerAttack,#victim=what)
-         {
-            return FALSE;
-         }
-
-         % If they weren't bad and become bad, let them know.
-         if NOT bWasBad
-            AND (Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                 OR Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         {
-            Send(poOriginal,@MsgSendUser,#message_rsc=Reflection_trouble);
-         }
-      }
-
-      propagate;
    }
 
    MonsterAttack(what=$)

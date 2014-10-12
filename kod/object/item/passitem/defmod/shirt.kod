@@ -21,11 +21,12 @@ resources:
    shirt_condition_med = " has a few unsightly rips."
    shirt_condition_poor = " is in tatters, and barely holding together."
    shirt_condition_broken = " is covered in filth and ripped beyond use."
-   
+
    shirt_name_rsc = "shirt"
- 
+
    shirt_desc_rsc = \
-   "This shirt covers the bare essentials, but offers little or no protection to the wearer."
+      "This shirt covers the bare essentials, but offers little or no "
+      "protection to the wearer."
 
    shirt_wrong_gender = "A shirt designed for a %s wouldn't fit you at all."
    shirt_woman = "woman"
@@ -82,27 +83,27 @@ properties:
 
 messages:
 
-   Constructor(translation = $,model = $, color = $)
-   {      
+   Constructor(translation=$,model=$,color=$)
+   {
       if color <> $
       {
-         translation = send(SYS,@EncodeTwoColorXLAT,
+         translation = Send(SYS,@EncodeTwoColorXLAT,
                             #color1=color,#color2=XLAT_TO_SKIN1);
       }
-      
+
       if model <> $
       {
-         translation = send(model,@GetPaletteTranslation);    
+         translation = Send(model,@GetPaletteTranslation);
       }
-      
+
       if translation = $
       {
-         translation = send(SYS,@EncodeTwoColorXLAT,
+         translation = Send(SYS,@EncodeTwoColorXLAT,
                             #color1=XLAT_TO_BLUE,#color2=XLAT_TO_SKIN1);
       }
 
       Send(self,@SetPaletteTranslation,#translation=translation);
-      
+
       propagate;
    }
 
@@ -110,7 +111,7 @@ messages:
    {
       local translation;
 
-      translation = send(SYS,@EncodeTwoColorXLAT,
+      translation = Send(SYS,@EncodeTwoColorXLAT,
                          #color1=random(XLAT_TO_ORANGE, XLAT_HIGH_VALUE),#color2=XLAT_TO_SKIN1);
       Send(self,@SetPaletteTranslation,#translation=translation);
 
@@ -118,13 +119,13 @@ messages:
       {
          if isClass(poOwner,&Room)
          {
-            send(send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
+            Send(Send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
          }
 
          if isClass(poOwner,&User)
          {
-            send(poOwner,@SomethingChanged,#what=self);
-            send(self,@DoPlayerArt);
+            Send(poOwner,@SomethingChanged,#what=self);
+            Send(self,@DoPlayerArt);
          }
       }
 
@@ -133,7 +134,7 @@ messages:
 
    ReqUse()
    {
-      return (NOT send(send(SYS,@GetWarEvent),@IsActive));
+      return (NOT Send(Send(SYS,@GetWarEvent),@IsActive));
    }
 
    HasSkinTones()
@@ -144,12 +145,12 @@ messages:
    SetIcon()
    {
       %% Player can wear a shirt under armor.  Armor has precedence though.
-      if send(poOwner,@GetArmor) = $     
+      if Send(poOwner,@GetArmor) = $
       {
-         Send(poOwner,@SetPlayerIcon,#what=self,#new_icon=send(self,@GetShirtIcon,#who=poOwner),
+         Send(poOwner,@SetPlayerIcon,#what=self,#new_icon=Send(self,@GetShirtIcon,#who=poOwner),
               #alldone=FALSE, #translation=Send(self,@GetPaletteTranslation));
       }
-      
+
       return;
    }
 
@@ -160,14 +161,14 @@ messages:
 
    NewUsed()
    {
-      post(self,@RedoArmor,#who=poOwner);
+      Post(self,@RedoArmor,#who=poOwner);
 
       propagate;
    }
 
    NewUnused()
    {
-      post(self,@RedoArmor,#who=poOwner);
+      Post(self,@RedoArmor,#who=poOwner);
 
       propagate;
    }
@@ -175,27 +176,45 @@ messages:
    RedoArmor(who=$)
    {
       local oArmor;
-      
-      oArmor = send(who,@GetArmor);
+
+      oArmor = Send(who,@GetArmor);
       if oArmor <> $
       {
-         send(oArmor,@DoPlayerArt);
+         Send(oArmor,@DoPlayerArt);
       }
 
-      return; 
+      return;
    }
 
    OverrideArmsForGauntlets()
    {
       return TRUE;
    }
-   
-   DefendingHit(who = $,what = $)
+
+   DefendingHit(who=$,what=$)
    {
       return;
    }
 
+   % If the player's armor is colored, override SetPaletteTranslation and
+   % keep whatever the shirt is currently set to.
+   SetPaletteTranslation()
+   {
+      local oArmor;
+
+      if poOwner <> $
+      {
+         oArmor = Send(poOwner,@GetArmor);
+
+         if oArmor <> $
+            AND Send(oArmor,@IsArmorColored)
+         {
+            return;
+         }
+      }
+
+      propagate;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

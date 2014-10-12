@@ -17,11 +17,15 @@ constants:
 resources:
 
    armor_condition_exc = " is without blemish or flaw."
-   armor_condition_exc_mended = " is in great condition, but has been repaired before."
+   armor_condition_exc_mended = \
+      " is in great condition, but has been repaired before."
    armor_condition_good = " has a dent or two."
    armor_condition_med = " is nicked and scarred from battle."
-   armor_condition_poor = " has been rent and torn by fierce attacks and may not last much longer."
-   armor_condition_broken = " is useless.  It has been torn into several pieces from the wear and strain of battle."
+   armor_condition_poor = \
+      " has been rent and torn by fierce attacks and may not last much longer."
+   armor_condition_broken = \
+      " is useless.  It has been torn into several pieces from the wear "
+      "and strain of battle."
 
 classvars:
 
@@ -29,17 +33,17 @@ classvars:
    viUse_amount = 1
    viSpell_modifier = -25
    vrPoss_article = object_article_cap_this_rsc
-      
+
    viGround_group = 2
    viInventory_group = 1
    viBroken_group = 3
-   
+
    vbShow_condition = TRUE
-   vrCondition_exc = armor_condition_exc 
-   vrCondition_exc_mended = armor_condition_exc_mended 
-   vrCondition_good = armor_condition_good 
-   vrCondition_med = armor_condition_med 
-   vrCondition_poor = armor_condition_poor 
+   vrCondition_exc = armor_condition_exc
+   vrCondition_exc_mended = armor_condition_exc_mended
+   vrCondition_good = armor_condition_good
+   vrCondition_med = armor_condition_med
+   vrCondition_poor = armor_condition_poor
    vrCondition_broken = armor_condition_broken
 
    % Armor goes over layer 0 items such as shirts
@@ -47,13 +51,16 @@ classvars:
 
 properties:
 
+   % If set to true, armor can be colored.
+   pbColored = FALSE
+
 messages:
-   
+
    ReqRepair()
    {
       return TRUE;
    }
-   
+
    SendInventoryAnimation()
    {
       if piHits > 0 OR viBroken_group = $
@@ -105,6 +112,27 @@ messages:
       return;
    }
 
+   % This is a way to implement colored armor easily without having to
+   % rewrite how the server/client handle XLAT and palette translations.
+   % Currently these are stored as bytes, so the XLAT red to x and XLAT
+   % grey to y needed for a correct armor translation can't be added.
+   % If the armor has pbColored set to TRUE, SetPaletteTranslation in
+   % item.kod won't be called to translate the armor's hotspot areas
+   % to the player's shirt color (will always be red).
+   SetPaletteTranslation(translation = $)
+   {
+      if pbColored
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   IsArmorColored()
+   {
+      return pbColored;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

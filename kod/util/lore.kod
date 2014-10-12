@@ -359,12 +359,12 @@ messages:
       }
 
       % Okay, they aren't on the list.  Assume the lowest value in the list is
-      %  the last one.  If we're greater than that, replace it. 
+      %  the last one.  If we're greater than or equal to that, replace it. 
 
       % Get the last element of the list
       lNode = Nth(llist,length(lList));
 
-      if score > Nth(lNode,2)
+      if score >= Nth(lNode,2)
       {
          SetNth(lNode,1,who);
          SetNth(lNode,2,score);

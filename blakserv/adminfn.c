@@ -2000,7 +2000,6 @@ void AdminShowEachSysTimer(systimer_node *st)
 	case SYST_INTERFACE_UPDATE : s = "Update interface"; break;
 	case SYST_RESET_TRANSMITTED : s = "Reset TX count"; break;
 	case SYST_RESET_POOL : s = "Reset buffer pool"; break;
-	case SYST_MYSQL_CONNECT : s = "Check MySQL conn"; break;
 	default : s = "Unknown"; break;
 	}
 	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period));

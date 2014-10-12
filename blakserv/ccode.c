@@ -2505,28 +2505,23 @@ int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-//RecordStat() Kod function
 int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
-{
-	if (ConfigBool(MYSQL_ENABLED) == False)
-		return -1;
-
+{	
 	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7;
-	int success = 0;
+	resource_node *r_who_damaged, *r_who_attacker, *r_weapon;
 
-
-	//The first paramenter to RecordStat() should alwasy be a STAT_TYPE
+	// The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
 	if (stat_type.v.tag != TAG_INT)
 	{
-		dprintf("STAT_TYPE expected in C_RecordStat() as first parameter");
+		bprintf("STAT_TYPE expected in C_RecordStat() as first parameter");
 		return NIL;
 	}
 
 	/*
-	STAT_TYPE enum located in blakserv.h, Also defined in blakston.khd to match between C code and Kod code.
+	STAT_TYPE enum located in database.h, Also defined in blakston.khd to match between C code and Kod code.
 	this switch statement should evaluate what kind of statistic is being passed, parse the remaining parameters
 	and send them to the function in database.c that actually writes the data to the MySQL Database
 	*/
@@ -2535,57 +2530,50 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 		case STAT_TOTALMONEY:
 			if (num_normal_parms != 2)
 			{
-				dprintf("Wrong Number of Paramenters in C_RecordStat() STAT_TOTALMONEY");
+				bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_TOTALMONEY");
 				break;
 			}
+			
 			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			
 			if (stat1.v.tag != TAG_INT)
 			{
-				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
+				bprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
 				break;
 			}
 			else
 			{
-				TotalMoneyRecord * record = (TotalMoneyRecord*)malloc(sizeof(TotalMoneyRecord));
-				record->total_money = stat1.v.data;
-
-				record_node * recordnode = (record_node*)malloc(sizeof(record_node));
-				recordnode->type=stat_type.v.data;
-				recordnode->data=record;
-				EnqueueRecord(recordnode);
+				MySQLRecordTotalMoney(stat1.v.data);
 			}
 			break;
 
 		case STAT_MONEYCREATED:
 			if (num_normal_parms != 2)
 			{
-				dprintf("Wrong Number of Paramenters in C_RecordStat() STAT_MONEYCREATED");
+				bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_MONEYCREATED");
 				break;
 			}
+
 			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			
 			if (stat1.v.tag != TAG_INT)
 			{
-				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
+				bprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
 				break;
 			}
 			else
 			{
-				MoneyCreatedRecord * record = (MoneyCreatedRecord*)malloc(sizeof(MoneyCreatedRecord));
-				record->money_created = stat1.v.data;
-
-				record_node * recordnode = (record_node*)malloc(sizeof(record_node));
-				recordnode->type=stat_type.v.data;
-				recordnode->data=record;
-				EnqueueRecord(recordnode);
+				MySQLRecordMoneyCreated(stat1.v.data);				
 			}
 			break;
 
 		case STAT_ASSESS_DAM:
-			if (num_normal_parms == !8) 
+			if (num_normal_parms != 8) 
 			{
-				dprintf("Wrong Number of Paramenters in C_RecordStat() STAT_ASSESS_DAM");
+				bprintf("Wrong Number of Paramenters in C_RecordStat() STAT_ASSESS_DAM");
 				break;
 			}
+
 			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
 			stat2 = RetrieveValue(object_id,local_vars,normal_parm_array[2].type, normal_parm_array[2].value);
 			stat3 = RetrieveValue(object_id,local_vars,normal_parm_array[3].type, normal_parm_array[3].value);
@@ -2593,6 +2581,7 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 			stat5 = RetrieveValue(object_id,local_vars,normal_parm_array[5].type, normal_parm_array[5].value);
 			stat6 = RetrieveValue(object_id,local_vars,normal_parm_array[6].type, normal_parm_array[6].value);
 			stat7 = RetrieveValue(object_id,local_vars,normal_parm_array[7].type, normal_parm_array[7].value);
+			
 			if (stat1.v.tag != TAG_RESOURCE || 
 				stat2.v.tag != TAG_RESOURCE ||
 				stat3.v.tag != TAG_INT ||
@@ -2601,27 +2590,35 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				stat6.v.tag != TAG_INT ||
 				stat7.v.tag != TAG_RESOURCE)
 			{
-				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_ASSESS_DAM");
+				bprintf("Wrong Type of Parameter in C_RecordStat() STAT_ASSESS_DAM");
 				break;
 			}
 			else
-			{
-				PlayerAssessDamageRecord * record = (PlayerAssessDamageRecord*)malloc(sizeof(PlayerAssessDamageRecord));
-				record->res_who_damaged = stat1.v.data; record->res_who_attacker = stat2.v.data; record->aspell = stat3.v.data; record->atype = stat4.v.data;
-				record->damage_applied = stat5.v.data; record->damage_original = stat6.v.data; record->res_weapon = stat7.v.data;
+			{	
+				r_who_damaged = GetResourceByID(stat1.v.data);
+				r_who_attacker = GetResourceByID(stat2.v.data);
+				r_weapon = GetResourceByID(stat7.v.data);
 				
-				record_node * recordnode = (record_node*)malloc(sizeof(record_node));
-				recordnode->type=stat_type.v.data;
-				recordnode->data=record;
-				EnqueueRecord(recordnode);
+				if (!r_who_damaged || !r_who_attacker || !r_weapon ||
+					!r_who_damaged->resource_val || !r_who_attacker->resource_val || !r_weapon->resource_val)
+				{
+					bprintf("NULL string in C_RecordStat() for STAT_ASSESS_DAM");				
+				}
+				else
+				{					
+					MySQLRecordPlayerAssessDamage(
+						r_who_damaged->resource_val, 
+						r_who_attacker->resource_val, 
+						stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, 
+						r_weapon->resource_val);
+				}
 			}
 			break;
 
-		case STAT_BLANK:
 		default:
-			dprintf("ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);
-			success = 1;
+			bprintf("ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);
 			break;
 	}
+
 	return NIL;
 }

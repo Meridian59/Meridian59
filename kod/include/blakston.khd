@@ -2994,8 +2994,8 @@
    MAX_GUILD_RANK_LEN = 20
    MAX_URL_LEN = 200
    
-   %Statistics Constants, matches enum in blakserv.h
-   STAT_BLANK = 0
+   %Statistics Constants, must match enum sql_recordtype in database.h
    STAT_TOTALMONEY = 1
    STAT_MONEYCREATED = 2
-   STAT_ASSESS_DAM = 3
+   STAT_PLAYERLOGIN = 3
+   STAT_ASSESS_DAM = 4

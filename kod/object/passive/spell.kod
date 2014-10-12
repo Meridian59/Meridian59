@@ -1070,7 +1070,8 @@ messages:
 
                if NOT Send(oRoom,@ReqSomethingAttack,#what=who,#victim=i,
                            #stroke_obj=self)
-                  OR NOT Send(who,@AllowPlayerAttack,#victim=i)
+                  OR NOT Send(who,@AllowPlayerAttack,#victim=i,
+                              #stroke_obj=self)
                {
                   return FALSE;
                }
@@ -1191,7 +1192,8 @@ messages:
             OR oWhoRoom <> Send(i,@GetOwner)
             OR (Send(oWhoRoom,@IsArena)
                 AND NOT Send(oWhoRoom,@IsValidTarget,#who=who))
-            OR NOT Send(who,@AllowPlayerAttack,#victim=i,#report=report)
+            OR NOT Send(who,@AllowPlayerAttack,#victim=i,#stroke_obj=self,
+                        #report=report)
          {
             lFinalTargets = DelListElem(lFinalTargets,i);
          }

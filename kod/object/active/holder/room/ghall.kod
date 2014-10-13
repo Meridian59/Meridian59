@@ -25,7 +25,7 @@ constants:
    % real value, 10 minutes
    CONQUER_DELAY = 600000
    % one hour
-   CONQUER_RENT_DELAY = 3600000   
+   CONQUER_RENT_DELAY = 3600000
 
    PURCHASE_MODIFIER = 5000
    RENT_MODIFIER = 50
@@ -113,7 +113,7 @@ classvars:
    viLever_fine_col = 32
 
    % Quality is the overall guildhall quality, ranges from 1 to 10
-   viQuality = 6       
+   viQuality = 6
 
    viPermanent_flags = ROOM_SANCTUARY % | ROOM_SAFELOGOFF
    viTerrain_type = TERRAIN_GUILDHALL
@@ -124,7 +124,7 @@ classvars:
    viInner_teleport_col = $
 
    % Player can only enter the guild hall if he enters in this amount of time.
-   viSeconds_til_close = 20     
+   viSeconds_til_close = 20
 
    vrEntrancedoor_open_sound = guildhall_entrancedoor_open_sound
    vrEntrancedoor_close_sound = guildhall_entrancedoor_close_sound
@@ -132,6 +132,8 @@ classvars:
    vrSecretdoor_close_sound = guildhall_entrancedoor_close_sound
 
 properties:
+
+   ptEntrance = $
 
    prMusic = guildhall_music
 
@@ -154,27 +156,14 @@ properties:
    pbBetrayed = FALSE
 
    % If this is true, a single player took over the guild hall (he probably
-   %  had help)
-   pbMercenary_Conquered = FALSE  
+   % had help)
+   pbMercenary_Conquered = FALSE
 
    ptWarning = $
    ptConquer = $
 
    plGuild_doors = $
    prNewsball = $
-
-   % plHotplate1 contains a list of people who may be entering the hall
-   %  legally.  We do not put anyone on this list if they are on plHotPlate2
-   plHotPlate1 = $
-
-   % plHotPlate2 is full of illegal entry attempts.  They do not get put on
-   %  this list if they hit 1 already.  This is stored to be sure that
-   %  people don't run across 2 to tag 1, and run off again.
-   plHotPlate2 = $
-
-   % This is a list of people with full hall access: they can flip the switch
-   %  or get stuff out of the chest.
-   plLegal_Entry = $
 
    piLastDoorOpen = 0
 
@@ -203,35 +192,29 @@ messages:
       propagate;
    }
 
-   LeaveHold(what=$)
+   % This works for standard rectangle guildhall foyers. Other configurations
+   % need to override this.
+   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
    {
-      local i;
-
-      for i in plHotPlate1
+      % Hardcoded movement check, prevent hacking into hall.
+      % Basic requirement door must not be open
+      if ptEntrance = $
       {
-         if i = what  
+         if old_row >= viFoyer_north AND old_row <= viFoyer_south
+            AND old_col <= viFoyer_east AND old_col >= viFoyer_west
          {
-            plHotPlate1 = DelListElem(plHotPlate1,i);
+            % We're in the foyer. Check if we're trying to move into the hall.
+            if new_row < viFoyer_north OR new_row > viFoyer_south
+               OR new_col < viFoyer_west OR new_col > viFoyer_east
+            {
+               % Bad player! Fail the attempt.
+               return FALSE;
+            }
          }
       }
 
-      for i in plHotPlate2
-      {
-         if i = what  
-         {
-            plHotPlate2 = DelListElem(plHotPlate2,i);
-         }
-      }
-
-      for i in plLegal_entry
-      {
-         if i = what  
-         {
-            plLegal_entry = DelListElem(plLegal_entry,i);
-         }
-      }
-
-      propagate;
+      return TRUE;
    }
 
    CreateStandardObjects()
@@ -239,7 +222,6 @@ messages:
    {
       local oNews;
 
-      Send(self,@CreateHotPlates);
       Send(self,@CreateShieldLever);
 
       oNews = Send(SYS,@FindNewsByNum,#num=piRoom_num);
@@ -251,7 +233,7 @@ messages:
       }
 
       Send(self,@NewHold,#what=oNews,#new_row=viNews_row,#new_col=viNews_col,
-           #fine_row=viNews_finerow,#fine_col=viNews_finecol);
+            #fine_row=viNews_finerow,#fine_col=viNews_finecol);
 
       propagate;
    }
@@ -260,16 +242,16 @@ messages:
    {
       if piStatus = STATUS_OKAY
       {
-         poShield_lever = create(&GuildLever,#status=2);
+         poShield_lever = Create(&GuildLever,#status=2);
       }
       else
       {
-         poShield_lever = create(&guildLever);
+         poShield_lever = Create(&guildLever);
       }
 
       Send(self,@NewHold,#what=poShield_lever,
-           #new_row=viLever_row,#new_col=viLever_col,
-           #fine_row=viLever_fine_row,#fine_col=viLever_fine_col);
+            #new_row=viLever_row,#new_col=viLever_col,
+            #fine_row=viLever_fine_row,#fine_col=viLever_fine_col);
 
       return;
    }
@@ -281,7 +263,7 @@ messages:
       {
          % Post a message to be sure that it does this after
          % the guy's stats are correctly set.
-         post(self,@ValidEntry,#what=what);
+         Post(self,@ValidEntry,#what=what);
 
          if piStatus = STATUS_RAIDED
          {
@@ -316,7 +298,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       return TRUE;
    }
 
@@ -328,7 +310,7 @@ messages:
       {
          Debug("Getting to ClaimGuildHall with no rep declared!");
 
-         return FALSE;      
+         return FALSE;
       }
 
       if poGuild_Owner <> $
@@ -368,7 +350,7 @@ messages:
 
       if ptConquer <> $
       {
-         DeleteTimer(ptConquer);                
+         DeleteTimer(ptConquer);
          ptConquer = $;
       }
 
@@ -395,12 +377,12 @@ messages:
       {
          if IsClass(First(i),&Player)
          {
-            if Send(First(i),@GetGuild) = $ 
+            if Send(First(i),@GetGuild) = $
                OR Send(First(i),@GetGuild) <> oGuild
             {
                Send(First(i),@MsgSendUser,#message_rsc=guildhall_new_occupants,
-                    #parm1=vrName);
-               post(self,@Teleport,#what=First(i),#foyer=TRUE);
+                     #parm1=vrName);
+               Post(self,@Teleport,#what=First(i),#foyer=TRUE);
             }
          }
       }
@@ -482,7 +464,7 @@ messages:
       }
 
       % return -1 if this player cannot rent this guild hall.
-      return -1;   
+      return -1;
    }
 
    GetRentValue()
@@ -510,7 +492,7 @@ messages:
       return;
    }
 
-   AreDefensesDown() 
+   AreDefensesDown()
    % Return whether the guild defenses are down, i.e. someone is trying to conquer
    % the hall.
    {
@@ -561,22 +543,15 @@ messages:
       }
 
       AppendTempString("~B~g]");
-      i = Send(SYS,@GetInvestigator);
-
-      if i <> $ and Send(i,@IsLoggedOn)
-      {
-         Send(i,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-              #parm1=getTempString(),#type1=0);
-      }
 
       Send(SYS,@MailSrGuardian,#from=self,#subject=Send(who,@GetTrueName),
-           #body=getTempString());
+            #body=getTempString());
       ClearTempString();
 
       % Raiding or saving the guildhall.
       % REVIEW: break this up into separate handlers.
 
-      if piStatus = STATUS_OKAY      
+      if piStatus = STATUS_OKAY
       {
          % Someone is raiding the guildhall!
 
@@ -599,7 +574,7 @@ messages:
 
          if ptConquer <> $
          {
-            DeleteTimer(ptConquer);                
+            DeleteTimer(ptConquer);
             ptConquer = $;
          }
 
@@ -614,13 +589,13 @@ messages:
                if First(i) = who
                {
                   Send(First(i),@MsgSendUser,
-                       #message_rsc=guildhall_shield_lower_raider);                    
+                        #message_rsc=guildhall_shield_lower_raider);
                }
                else
                {
                   Send(First(i),@MsgSendUser,
-                       #message_rsc=guildhall_shield_lower,
-                       #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
+                        #message_rsc=guildhall_shield_lower,
+                        #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
                }
             }
          }
@@ -641,11 +616,11 @@ messages:
             for i in members
             {
                Send(First(i),@MsgSendUser,#message_rsc=conq_rsc,
-                    #parm1=vrName,
-                    #parm2=Send(poGuild_owner,@GetDef),
-                    #parm3=Send(poGuild_owner,@GetName),
-                    #parm4=Send(poConquerer,@GetDef),
-                    #parm5=Send(poConquerer,@GetName));
+                     #parm1=vrName,
+                     #parm2=Send(poGuild_owner,@GetDef),
+                     #parm3=Send(poGuild_owner,@GetName),
+                     #parm4=Send(poConquerer,@GetDef),
+                     #parm5=Send(poConquerer,@GetName));
             }
 
             allies = Send(poGuild_owner,@GetAllyList);
@@ -655,11 +630,11 @@ messages:
                for i in members
                {
                   Send(First(i),@MsgSendUser,#message_rsc=conq_rsc,
-                       #parm1=vrName,
-                       #parm2=Send(poGuild_owner,@GetDef),
-                       #parm3=Send(poGuild_owner,@GetName),
-                       #parm4=Send(poConquerer,@GetDef),
-                       #parm5=Send(poConquerer,@GetName));
+                        #parm1=vrName,
+                        #parm2=Send(poGuild_owner,@GetDef),
+                        #parm3=Send(poGuild_owner,@GetName),
+                        #parm4=Send(poConquerer,@GetDef),
+                        #parm5=Send(poConquerer,@GetName));
                }
             }
          }
@@ -682,7 +657,7 @@ messages:
             if IsClass(First(i),&Player)
             {
                Send(First(i),@MsgSendUser,#message_rsc=guildhall_shield_raise,
-                    #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
+                     #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
             }
          }
 
@@ -712,7 +687,7 @@ messages:
 
       return;
    }
-   
+
    CanRaidGuildhall(who=$)
    "Returns TRUE if who can raid the guild hall, FALSE otherwise."
    {
@@ -747,59 +722,59 @@ messages:
             else
             {
                Send(poConquerer,@SetLastGuildhallRaid);
-               members = Send(poConquerer,@getmemberlist);
+               members = Send(poConquerer,@GetMemberList);
                for i in members
                {
                   Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquerer,
-                       #parm1=vrName,
-                       #parm2=Send(poGuild_owner,@GetDef),
-                       #parm3=Send(poGuild_owner,@GetName),
-                       #parm4=Send(poConquerer,@GetDef),
-                       #parm5=Send(poConquerer,@GetName));
+                        #parm1=vrName,
+                        #parm2=Send(poGuild_owner,@GetDef),
+                        #parm3=Send(poGuild_owner,@GetName),
+                        #parm4=Send(poConquerer,@GetDef),
+                        #parm5=Send(poConquerer,@GetName));
                }
             }
          }
          else
          {
             Send(poConquerer,@MsgSendUser,#message_rsc=guildhall_conquerer,
-                 #parm1=vrName,
-                 #parm2=Send(poGuild_owner,@GetDef),
-                 #parm3=Send(poGuild_owner,@GetName),
-                 #parm4=Send(poConquerer,@GetDef),
-                 #parm5=Send(poConquerer,@GetName));
+                  #parm1=vrName,
+                  #parm2=Send(poGuild_owner,@GetDef),
+                  #parm3=Send(poGuild_owner,@GetName),
+                  #parm4=Send(poConquerer,@GetDef),
+                  #parm5=Send(poConquerer,@GetName));
          }
          for i in plActive
          {
             if IsClass(First(i),&Player)
             {
                oGuild = Send(First(i),@GetGuild);
-               if (oGuild = $ and First(i) <> poCOnquerer)
+               if (oGuild = $ AND First(i) <> poCOnquerer)
                   OR (oGuild <> poConquerer AND oGuild <> poGuild_Owner
-                      AND NOT Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
+                     AND NOT Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
                {
                   Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquered,
-                       #parm1=vrName,#parm2=Send(poGuild_owner,@GetDef),
-                       #parm3=Send(poGuild_owner,@GetName));
+                        #parm1=vrName,#parm2=Send(poGuild_owner,@GetDef),
+                        #parm3=Send(poGuild_owner,@GetName));
                   Send(self,@OpenSecretDoor);
                }
             }
          }
          for i in plPassive
          {
-            if IsClass(First(i),&news)
+            if IsClass(First(i),&News)
             {
-               Send(First(i),@deleteallmessages);
+               Send(First(i),@DeleteAllMessages);
             }
          }
 
          Send(poGuild_owner,@GuildHallConquered,#name=vrName,
-              #betrayed=pbBetrayed);
+               #betrayed=pbBetrayed);
          poGuild_owner = $;
          ptConquer = CreateTimer(self,@ConquerTimer,piConquer_rent_delay);
       }
       else
       {
-         % The guild hall was conquered, but was unclaimed by the conquerers.
+         % The guild hall was conquered, but was unclaimed by the conquerors.
          % The guild hall is now available for anyone to rent again.
 
          if piStatus = STATUS_CONQUERED
@@ -829,7 +804,7 @@ messages:
       {
          Send(poShield_lever,@ChangeGraphic,#new_state=SHIELD_ON);
       }
-   
+
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall_sound_up);
 
       return;
@@ -842,11 +817,11 @@ messages:
       {
          Send(poShield_lever,@ChangeGraphic,#new_state=SHIELD_OFF);
       }
-   
+
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall_sound_down);
 
       return;
-   } 
+   }
 
    WarnGuildMembers()
    {
@@ -890,6 +865,49 @@ messages:
       return FALSE;
    }
 
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   "No one may attack through the door if it's closed."
+   {
+      if (what = $) or (victim = $)
+      {
+         propagate;
+      }
+
+      if Send(self,@InFoyer,#who=what) <> Send(self,@InFoyer,#who=victim)
+      {
+         if ptEntrance = $
+         % If the door was closed recently - note that this treats the door
+         % as closed the instant it starts closing - oh well.
+         {
+            if IsClass(what,&Player)
+            {
+               Send(what,@SendAttackOutOfRangeMessage,#what=victim,
+                     #use_weapon=use_weapon,#stroke_obj=stroke_obj);
+            }
+
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   ReqUseGuildChest(who=$)
+   {
+      if Send(self,@InFoyer,#who=who)
+      {
+         Debug("ALERT!  ",Send(who,@GetTrueName),who,
+               "tried to use Guild Hall chest in GH ",
+               Send(self,@GetName)," player coordinates ",
+               Send(who,@GetRow),Send(who,@GetCol),
+               Send(who,@GetFineRow),Send(who,@GetFineCol));
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    "If someone is in the foyer while you are in the guild hall proper, do "
@@ -902,16 +920,16 @@ messages:
          propagate;
       }
 
-      if IsClass(what,&admin) AND stringEqual(string,"shatterlock")
+      if IsClass(what,&Admin) AND stringEqual(string,"shatterlock")
       {
-          Send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
 
-          propagate;
+         propagate;
       }
 
       if type = SAY_YELL OR NOT IsClass(what,&Player)
       {
-          propagate;
+         propagate;
       }
 
       for i in plActive
@@ -924,8 +942,8 @@ messages:
                = Send(self,@InFoyer,#who=each_obj)
             {
                Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
-                    #parm1=parm1, #parm2=parm2,#parm3=parm3,#parm4=parm4,
-                    #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+                     #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+                     #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
             }
             else
             {
@@ -960,7 +978,7 @@ messages:
       {
          if row = First(i) AND col = Nth(i,2)
          {
-            % check to see if the doors should open
+            % Check to see if the doors should open
             if piStatus = STATUS_OKAY
                AND NOT Send(self,@CanEnter,#who=what)
             {
@@ -1041,9 +1059,6 @@ messages:
       poOld_guild = $;
       poShield_lever = $;
       plGuild_doors = $;
-      plHotPlate1 = $;
-      plHotPlate2 = $;
-      plLegal_Entry = $;
 
       if ptWarning <> $
       {
@@ -1067,6 +1082,7 @@ messages:
       if what = $
       {
          Debug(self,"got to defunct guild with no argument!");
+
          return;
       }
 
@@ -1074,7 +1090,7 @@ messages:
       {
          Send(self,@ResetGuildHall);
 
-         return;          
+         return;
       }
 
       if piStatus = STATUS_OKAY
@@ -1094,11 +1110,11 @@ messages:
          if what = poOld_guild
          {
             % This should never happen
-            poOld_Guild = poGuild_owner;   
+            poOld_Guild = poGuild_owner;
          }
 
          return;
-      }     
+      }
 
       if piStatus = STATUS_CONQUERED
       {
@@ -1113,7 +1129,7 @@ messages:
          {
             Debug("DefunctGuild: poGuildOwner points to defuncted guild, but "
                   "hall is conquered!");
-            poGuild_owner = $;               
+            poGuild_owner = $;
          }
 
          if what = poOld_Guild
@@ -1165,11 +1181,11 @@ messages:
             }
 
             % Conquer it prematurely.
-            Send(self,@ConquerTimer);   
+            Send(self,@ConquerTimer);
          }
 
          if what = poOld_guild
-         {              
+         {
             poOld_guild = poGuild_owner;
          }
       }
@@ -1196,7 +1212,7 @@ messages:
       if viInner_teleport_row <> $ AND viInner_Teleport_col <> $
       {
          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
-              #new_row=viInner_teleport_row,#new_col=viInner_teleport_col);
+               #new_row=viInner_teleport_row,#new_col=viInner_teleport_col);
 
          return TRUE;
       }
@@ -1221,163 +1237,10 @@ messages:
       return;
    }
 
-   SomethingHitHotPlate(what=$, hpid=$)
-   {
-      local i, bFound;
-
-      if what= $ OR hpid = $
-      {
-         Debug("Invalid data passed to SomethingHitHotPlate!");
-
-         return;
-      }
-
-      if IsClass(what,&DM) AND Send(Send(SYS, @GetSettings), @ReportHotPlates)
-      {
-         Send(what,@MsgSendUser,#message_rsc=guildhall_hotplate,#parm1=hpid);
-      }
-
-      for i in plLegal_Entry
-      {
-         if i = what
-         {
-            return;
-         }
-      }
-
-      % Player hit hotplate1.  If they are not on hotplate2 list, 
-      %  add them to our list.
-      if hpid = 1
-      {
-         for i in plHotPlate2
-         {
-            if i = what
-            {
-               return;
-            }
-         }         
-
-         for i in plHotPlate1
-         {
-            if i = what
-            {
-               return;
-            }
-         }         
-
-         if Send(self,@EnteredInTimeWindow)
-         {
-            plHotPlate1 = Cons(what,plHotPlate1);
-         }
-         else
-         {
-            Debug("ALERT! Player",Send(what,@GetTrueName),"entered guild hall",
-                  Send(self,@GetName),"after door closed already!");
-         }
-
-         if IsClass(what,&DM) AND Send(Send(SYS, @GetSettings), @ReportHotPlates)
-         {
-            Send(what,@MsgSendUser,#message_rsc=guildhall_hotplate_firstpass);
-         }
-
-         return;
-      }
-
-      if hpid = 2
-      {
-         for i in plHotPlate2
-         {
-            if i = what
-            {
-               return;
-            }
-         }         
-
-         for i in plHotPlate1
-         {
-            if i = what
-            { 
-               % Theoretically, a legal entry.
-               plLegal_entry = Cons(i,plLegal_entry);
-               if IsClass(what,&DM) AND Send(Send(SYS, @GetSettings), @ReportHotPlates)
-               {
-                  Send(what,@MsgSendUser,
-                       #message_rsc=guildhall_entered_legally);
-               }
-
-               return; 
-            }
-         }
-
-         % Theoretically, an illegal entry.
-         for i in plHotPlate2
-         {
-            if i = what
-            {
-               return;
-            }   
-         }
-
-         plHotPlate2 = Cons(what,plHotPlate2);         
-
-         return;
-      }
-
-      return;
-   }  
-
-   ReqLegalEntry(who=$)
-   {
-      local i;
-
-      if poGuild_Owner = $
-      {
-         return TRUE;
-      }
-
-      if poGuild_owner = Send(who,@GetGuild)
-      {
-         % These players can always log into their own guild
-         return TRUE;
-      }
-
-      for i in plLegal_entry
-      {
-         if i = who
-         {
-            return TRUE;
-         }
-      }
-
-      % Okay, we're pretty sure this is a bastard PKK wuss.
-      Debug("Player",Send(who,@GetTrueName),"broke into guild hall",
-            Send(self,@GetName),"illegally!");
-
-      return FALSE;
-   }
-
-   CreateHotPlates()
-   {
-      return;
-   }   
- 
-   ReqTakeFromGuildChest(what=$,taker=$)
-   {
-      if Send(self,@ReqLegalEntry,#who=taker)
-      {
-         return TRUE;
-      }
-
-      Debug("Player",Send(taker,@GetTrueName),"stealing items from chest in",
-            Send(self,@GetName),"illegally.");
-
-      return FALSE;
-   }
-
    CanHavePlayerPortal()
    {
       % Don't allow portals into guild halls
-      return false;
+      return FALSE;
    }
 
 end

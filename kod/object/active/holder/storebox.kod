@@ -131,6 +131,18 @@ messages:
 
       oTakerOwner = Send(taker,@GetOwner);
 
+      if IsClass(oTakerOwner,&GuildHall)
+         AND Send(oTakerOwner,@InFoyer,#who=taker)
+      {
+         Debug("ALERT!  ",Send(taker,@GetTrueName),taker,
+               "tried to take item from Guild Hall chest in GH ",
+               Send(oTakerOwner,@GetName)," player coordinates ",
+               Send(taker,@GetRow),Send(taker,@GetCol),
+               Send(taker,@GetFineRow),Send(taker,@GetFineCol));
+
+         return FALSE;
+      }
+
       if IsClass(taker,&User)
          AND NOT IsClass(taker,&Admin)
          AND IsClass(oTakerOwner,&Room) AND IsClass(poOwner,&Room)
@@ -153,6 +165,18 @@ messages:
 
       % The player's owner.
       oWhoOwner = Send(who,@GetOwner);
+
+      if IsClass(oWhoOwner,&GuildHall)
+         AND Send(oWhoOwner,@InFoyer,#who=who)
+      {
+         Debug("ALERT!  ",Send(who,@GetTrueName),who,
+               "tried to put item in Guild Hall chest in GH ",
+               Send(oWhoOwner,@GetName)," player coordinates ",
+               Send(who,@GetRow),Send(who,@GetCol),
+               Send(who,@GetFineRow),Send(who,@GetFineCol));
+
+         return FALSE;
+      }
 
       if IsClass(who,&User)
          AND NOT IsClass(who,&Admin)

@@ -248,9 +248,12 @@ messages:
 
       iMana = Send(who,@GetMaxMana);
       iPercent = Send(self,@GetAbility,#who=who);
-      
-      Send(who,@GainMana,#amount=iMana*iPercent/100,
-            #bCapped=TRUE,#bRespectMax=TRUE);
+
+      if NOT Send(who,@IsCrystalizeManaSurging)
+      {
+         Send(who,@GainMana,#amount=iMana*iPercent/100,
+               #bCapped=TRUE);
+      }
       Send(who,@MsgSendUser,#message_rsc=Meditate_cast_finished);
 
       return;

@@ -79,7 +79,7 @@ messages:
    Constructed()
    {
       % Each sound is [wave_file, row, col, cutoff radius, maximum volume]
-      % We have a special loopng sound here because we don't want the forest
+      % We have a special looping sound here because we don't want the forest
       %  sound to play in the foyer.
       plLooping_sounds = [ [ guildh11_forest_sound, 25, 16, 20, 100 ] ];
 
@@ -92,7 +92,7 @@ messages:
 
       plExits = Cons([ 2, 17, RID_F3, 30, 23, ROTATE_NONE ],plExits);
       plExits = Cons([ 2, 18, RID_F3, 30, 23, ROTATE_NONE ],plExits);
-      
+
       propagate;
    }
 
@@ -112,17 +112,13 @@ messages:
       propagate;
    }
 
-
    SomethingTryGo(what=$, row=$, col=$)
    {
       if row = 8 AND col = 16
       {
-         if send(self,@ReqLegalEntry,#who = what)
-         {
-            send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
 
-            return TRUE;
-         }
+         return TRUE;
       }
 
       propagate;
@@ -132,14 +128,14 @@ messages:
    {
       if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
-         send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height=48,#speed=50);
-         send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
-              #height=48,#speed=50);
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height=48,#speed=50);
+         Send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
+               #height=48,#speed=50);
          ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
-         send(self,@OpenEntranceDoorSound);
-      }    
+         Send(self,@OpenEntranceDoorSound);
+      }
 
       return;
    }
@@ -147,11 +143,11 @@ messages:
    CloseEntranceDoor()
    {
        ptEntrance = $;
-       send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
-            #height=128,#speed=50);
-       send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
-            #height=118,#speed=50);
-       send(self,@CloseEntranceDoorSound);
+       Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=128,#speed=120);
+       Send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
+            #height=118,#speed=120);
+       Send(self,@CloseEntranceDoorSound);
        
        return;
    }
@@ -160,21 +156,21 @@ messages:
    {
       if ptSecret = $
       {
-         send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height=4,#speed=50);
+         Send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height=4,#speed=80);
          ptSecret = CreateTimer(self,@CloseSecretDoor,DOOR_DELAY);
-         send(self,@OpenSecretDoorSound);
+         Send(self,@OpenSecretDoorSound);
       }
 
-      return; 
+      return;
    }
 
    CloseSecretDoor()
    {
       ptSecret = $;
-      send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
-           #height=45,#speed=50);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=45,#speed=80);
+      Send(self,@CloseSecretDoorSound);
 
       return;
    }
@@ -182,42 +178,26 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=29,#new_col=29,
-           #fine_col=32,#fine_row=16,#new_angle=ANGLE_NORTH);
+            #fine_col=32,#fine_row=16,#new_angle=ANGLE_NORTH);
       Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=29,#new_col=30,
-           #fine_col=0,#fine_row=0,#new_angle=ANGLE_SOUTH_WEST);
+            #fine_col=0,#fine_row=0,#new_angle=ANGLE_SOUTH_WEST);
 
       Send(self,@NewHold,#what=Create(&Table),#new_row=25,#new_col=8,
-           #fine_col=16,#fine_row=0);
+            #fine_col=16,#fine_row=0);
       Send(self,@NewHold,#what=Create(&Table),#new_row=23,#new_col=10,
-           #fine_col=0,#fine_row=48);
+            #fine_col=0,#fine_row=48);
       Send(self,@NewHold,#what=Create(&Table),#new_row=23,#new_col=6,
-           #fine_col=32,#fine_row=48);
+            #fine_col=32,#fine_row=48);
       Send(self,@NewHold,#what=Create(&Table),#new_row=4,#new_col=19,
-           #fine_col=40,#fine_row=16);
+            #fine_col=40,#fine_row=16);
 
       Send(self,@NewHold,#what=Create(&Firepit),#new_row=11,#new_col=7,
-           #fine_col=16,#fine_row=48);
+            #fine_col=16,#fine_row=48);
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=8),
-           #new_row=7,#new_col=19,#fine_col=56,#fine_row=24);
-      
+            #new_row=7,#new_col=19,#fine_col=56,#fine_row=24);
+
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [8,16,1], [8,15,2], [9,15,2], [9,16,2], [8,17,2], [9,17,2] ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col=nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

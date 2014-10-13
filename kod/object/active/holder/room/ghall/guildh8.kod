@@ -82,8 +82,8 @@ properties:
    piBaseLight = LIGHT_NICE
 
    piEntrance_door_state = CLOSED
-   ptEntrance_door
- 
+   ptEntrance
+
    piSecret_door_state = CLOSED
    ptSecret_door
 
@@ -99,10 +99,10 @@ messages:
 
    Delete()
    {
-      if ptEntrance_door <> $
+      if ptEntrance <> $
       {
-         DeleteTimer(ptEntrance_door);
-         ptEntrance_door = $;
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
       }
 
       if ptSecret_door <> $
@@ -117,19 +117,19 @@ messages:
    ResetDoors()
    {
       Send(self,@AnimateWall,#wall=DOOR1_1,#animation=ANIMATE_NONE,#first_group=1,
-           #passable=FALSE);
+            #passable=FALSE);
       Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=2,
-           #passable=TRUE);
+            #passable=TRUE);
       Send(self,@AnimateWall,#wall=DOOR1_3,#animation=ANIMATE_NONE,#first_group=2,
-           #passable=TRUE);
+            #passable=TRUE);
       piEntrance_door_state = CLOSED;
 
       Send(self,@AnimateWall,#wall=DOOR2_1,#animation=ANIMATE_NONE,#first_group=1,
-           #passable=FALSE);
+            #passable=FALSE);
       Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=2,
-           #passable=TRUE);
+            #passable=TRUE);
       Send(self,@AnimateWall,#wall=DOOR2_3,#animation=ANIMATE_NONE,#first_group=2,
-           #passable=TRUE);
+            #passable=TRUE);
       piSecret_door_state = CLOSED;
 
       return;
@@ -137,12 +137,12 @@ messages:
 
    OpenEntranceDoor()
    {
-      if ptEntrance_door = $
+      if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
+         Send(self,@TimeStampDoor);
          piEntrance_door_state = CLOSED;
-         ptEntrance_door = CreateTimer(self,@EntranceDoorOpenTimer,ENTRANCE_DOOR_TIME/2);
-         send(self,@OpenEntranceDoorSound);
+         ptEntrance = CreateTimer(self,@EntranceDoorOpenTimer,ENTRANCE_DOOR_TIME/2);
+         Send(self,@OpenEntranceDoorSound);
       }
 
       return;
@@ -150,15 +150,15 @@ messages:
 
    EntranceDoorOpenTimer()
    {
-      ptEntrance_door = $;
+      ptEntrance = $;
       if piEntrance_door_state = CLOSED
       {
          Send(self,@AnimateWall,#wall=DOOR1_1,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piEntrance_door_state = HALF_OPEN;
-         ptEntrance_door = CreateTimer(self,@EntranceDoorOpenTimer,ENTRANCE_DOOR_TIME);
+         ptEntrance = CreateTimer(self,@EntranceDoorOpenTimer,ENTRANCE_DOOR_TIME);
 
          return;
       }
@@ -166,11 +166,11 @@ messages:
       if piEntrance_door_state = HALF_OPEN
       {
          Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR1_3,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piEntrance_door_state = OPEN;
-         ptEntrance_door = CreateTimer(self,@EntranceDoorCloseTimer,DOOR_TIME);
+         ptEntrance = CreateTimer(self,@EntranceDoorCloseTimer,DOOR_TIME);
 
          return;
       }
@@ -180,16 +180,16 @@ messages:
 
    EntranceDoorCloseTimer()
    {
-      ptEntrance_door = $;
+      ptEntrance = $;
       if piEntrance_door_state = OPEN
       {
-         send(self,@CloseEntranceDoorSound);
+         Send(self,@CloseEntranceDoorSound);
          Send(self,@AnimateWall,#wall=DOOR1_3,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piEntrance_door_state = HALF_OPEN;
-         ptEntrance_door = CreateTimer(self,@EntranceDoorCloseTimer,ENTRANCE_DOOR_TIME);
+         ptEntrance = CreateTimer(self,@EntranceDoorCloseTimer,ENTRANCE_DOOR_TIME);
 
          return;
       }
@@ -197,9 +197,9 @@ messages:
       if piEntrance_door_state = HALF_OPEN
       {
          Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR1_1,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piEntrance_door_state = CLOSED;
 
          return;
@@ -214,7 +214,7 @@ messages:
       {
          piSecret_door_state = CLOSED;
          ptSecret_door = CreateTimer(self,@SecretDoorOpenTimer,SECRET_DOOR_TIME/2);
-         send(self,@OpenSecretDoorSound);
+         Send(self,@OpenSecretDoorSound);
       }
 
       return;
@@ -226,9 +226,9 @@ messages:
       if piSecret_door_state = CLOSED
       {
          Send(self,@AnimateWall,#wall=DOOR2_1,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piSecret_door_state = HALF_OPEN;
          ptSecret_door = CreateTimer(self,@SecretDoorOpenTimer,SECRET_DOOR_TIME);
 
@@ -238,9 +238,9 @@ messages:
       if piSecret_door_state = HALF_OPEN
       {
          Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR2_3,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piSecret_door_state = OPEN;
          ptSecret_door = CreateTimer(self,@SecretDoorCloseTimer,DOOR_TIME);
 
@@ -255,11 +255,11 @@ messages:
       ptSecret_door = $;
       if piSecret_door_state = OPEN
       {
-         send(self,@CloseSecretDoorSound);
+         Send(self,@CloseSecretDoorSound);
          Send(self,@AnimateWall,#wall=DOOR2_3,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piSecret_door_state = HALF_OPEN;
          ptSecret_door = CreateTimer(self,@SecretDoorCloseTimer,SECRET_DOOR_TIME);
 
@@ -269,9 +269,9 @@ messages:
       if piSecret_door_state = HALF_OPEN
       {
          Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=2,
-              #passable=TRUE);
+               #passable=TRUE);
          Send(self,@AnimateWall,#wall=DOOR2_1,#animation=ANIMATE_NONE,#first_group=1,
-              #passable=FALSE);
+               #passable=FALSE);
          piSecret_door_state = Closed;
 
          return;
@@ -295,12 +295,9 @@ messages:
    {
       if row = 21 AND (col = 8 OR col = 9)
       {
-         if send(self,@ReqLegalEntry,#who=what)
-         {
-           send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
 
-           return TRUE;
-         }
+         return TRUE;
       }
 
       propagate;
@@ -309,37 +306,21 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&Table),#new_row=8,#new_col=21,
-           #fine_row=32,#fine_col=0);
+            #fine_row=32,#fine_col=0);
       Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=10);
 
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=8,#new_col=18);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=17,#new_col=18);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=21,#new_col=11);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=13,#new_col=18,#fine_row=0,#fine_col=0);
+            #new_row=13,#new_col=18,#fine_row=0,#fine_col=0);
 
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=13,#new_col=27,#fine_row=48,#fine_col=16,#new_angle=ANGLE_SOUTH);
+            #new_row=13,#new_col=27,#fine_row=48,#fine_col=16,
+            #new_angle=ANGLE_SOUTH);
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-      lHotPlates = [ [21,8,1], [21,9,1], [21,7,2], [21,10,2],
-                     [20,8,2], [20,9,2], [20,7,2], [20,10,2]
-                   ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -86,19 +86,44 @@ messages:
       propagate;
    }
 
-   InFoyer(who=$)
+   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
+            who = $)
+   {
+      % Hardcoded movement check, prevent hacking into hall.
+      % Basic requirement door must not be open
+      if ptEastDoor = $
+         AND ptWestDoor = $
+         AND ptSouthDoor = $
+      {
+         if Send(self,@InFoyer,#who=who)
+         {
+            % We're in the foyer. Check if we're trying to move into the hall.
+            if NOT Send(self,@InFoyer,#iRow=new_row,#iCol=new_col)
+            {
+               % Bad player! Fail the attempt.
+               return FALSE;
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
+   InFoyer(who=$,iRow=$,iCol=$)
    "Due to the multiple foyers in this guild hall, we return which foyer 'who' "
    "is currently in.  Returns FALSE if not in foyer, a positive integer otherwise."
    {
-      local iRow, iCol;
-
-      if Send(who,@GetOwner) <> self
+      if who <> $
       {
-         return FALSE;
-      }
+         if Send(who,@GetOwner) <> self
+         {
+            return FALSE;
+         }
 
-      iRow = Send(who,@GetRow);
-      iCol = Send(who,@GetCol);
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
 
       if (iRow > 15) AND (iRow < 22) AND (iCol < 9)
       {
@@ -128,7 +153,7 @@ messages:
       }
 
       % Superclass teleports people to the One True Foyer(tm) if they enter
-      %  (or log on) inside when they're not normally allowed to enter.
+      % (or log on) inside when they're not normally allowed to enter.
       propagate;
    }
 
@@ -162,30 +187,27 @@ messages:
          count = count + 1;
       }
 
-      if Send(self,@ReqLegalEntry,#who=what)
+      if row = 18 AND col = 9
       {
-         if row = 18 AND col = 9
-         {
-            Send(self,@OpenEntranceDoor,#doorNum=0);
+         Send(self,@OpenEntranceDoor,#doorNum=0);
 
-            return TRUE;
-         }
-
-         if row = 7 AND col = 11
-         {
-            Send(self,@OpenEntranceDoor,#doorNum=1);
-
-            return TRUE;
-         }
-
-         if row = 6 AND col = 23
-         {
-            Send(self,@OpenEntranceDoor,#doorNum=2);
-
-            return TRUE;
-         }
+         return TRUE;
       }
-     
+
+      if row = 7 AND col = 11
+      {
+         Send(self,@OpenEntranceDoor,#doorNum=1);
+
+         return TRUE;
+      }
+
+      if row = 6 AND col = 23
+      {
+         Send(self,@OpenEntranceDoor,#doorNum=2);
+
+         return TRUE;
+      }
+
       propagate;
    }
 
@@ -206,7 +228,7 @@ messages:
       {
          Send(self,@TimeStampDoor);
          Send(self,@SetSector,#sector=SWDOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=132,#speed=16);
+               #height=132,#speed=80);
          ptSouthDoor = CreateTimer(self,@CloseSouthDoor,RESET_TIME);
       }
 
@@ -214,7 +236,7 @@ messages:
       {
          Send(self,@TimeStampDoor);
          Send(self,@SetSector,#sector=NWDOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=228,#speed=16);
+               #height=228,#speed=80);
          ptWestDoor = CreateTimer(self,@CloseWestDoor,RESET_TIME);
       }
 
@@ -222,7 +244,7 @@ messages:
       {
          Send(self,@TimeStampDoor);
          Send(self,@SetSector,#sector=NEDOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=252,#speed=16);
+               #height=252,#speed=80);
          ptEastDoor = CreateTimer(self,@CloseEastDoor,RESET_TIME);
       }
 
@@ -235,7 +257,7 @@ messages:
    {
       ptSouthDOor = $;
       Send(self,@SetSector,#sector=SWDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=32,#speed=16);
+            #height=32,#speed=150);
       Send(self,@CloseEntranceDoorSound);
 
       return;
@@ -245,7 +267,7 @@ messages:
    {
       ptWestDoor = $;
       Send(self,@SetSector,#sector=NWDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=136,#speed=16);
+            #height=136,#speed=150);
       Send(self,@CloseEntranceDoorSound);
 
       return;
@@ -255,7 +277,7 @@ messages:
    {
       ptEastDoor = $;
       Send(self,@SetSector,#sector=NEDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=152,#speed=16);
+            #height=152,#speed=150);
       Send(self,@CloseEntranceDoorSound);
 
       return;
@@ -347,9 +369,11 @@ messages:
             #new_row=16,#new_col=33,#fine_row=0,#fine_col=0);
 
       Send(self,@NewHold,#what=Create(&WoodenBox),
-            #new_row=13,#new_col=37,#fine_row=48,#fine_col=0,#new_angle=ANGLE_SOUTH);
+            #new_row=13,#new_col=37,#fine_row=48,#fine_col=0,
+            #new_angle=ANGLE_SOUTH);
       Send(self,@NewHold,#what=Create(&WoodenBox),
-            #new_row=14,#new_col=37,#fine_row=48,#fine_col=48,#new_angle=ANGLE_WEST);
+            #new_row=14,#new_col=37,#fine_row=48,#fine_col=48,
+            #new_angle=ANGLE_WEST);
 
       propagate;
    }
@@ -381,21 +405,6 @@ messages:
       }
 
       propagate;
-   }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [7,11,1], [6,23,1], [18,9,1], [8,12,2], [7,22,2], [18,10,2] ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=Nth(i,3));
-         Send(self,@NewHold,#what=oPlate,#new_row=Nth(i,1),#new_col=Nth(i,2));
-      }
-
-      return;
    }
 
 end

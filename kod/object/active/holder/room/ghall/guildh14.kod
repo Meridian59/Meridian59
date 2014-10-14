@@ -187,6 +187,17 @@ properties:
 
 messages:
 
+   Constructor()
+   {
+      plGuild_doors = [ [3,28],[2,25],[3,25] ];
+
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 400, 450, 2800, 2900 ];
+
+      propagate;
+   }
+
    GetRentValue()
    "This is an HOURLY rate."
    {
@@ -248,13 +259,6 @@ messages:
       }
 
       return;
-   }
-
-   Constructor()
-   {
-      plGuild_doors = [ [3,28],[2,25],[3,25] ];
-      
-      propagate;
    }
 
    CreateStandardExits()
@@ -468,12 +472,13 @@ messages:
 
    CloseEntranceDoor()
    {
-       ptEntrance = $;
        Send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=MAIN_DOOR_CLOSED,#speed=120);
+            #height=MAIN_DOOR_CLOSED,#speed=50);
        Send(self,@CloseEntranceDoorSound);
 
-       return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    OpenSecretDoor()

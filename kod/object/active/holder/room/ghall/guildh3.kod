@@ -75,6 +75,10 @@ messages:
    {
       plGuild_doors = [ [ 5,7] ];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 506, 593, 787, 812 ];
+
       propagate;
    }
 
@@ -137,10 +141,12 @@ messages:
    {
       ptEntrance = $;
       Send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_CEILING_LIFT,
-            #height=DOOR_CLOSED,#speed=100);
+            #height=DOOR_CLOSED,#speed=50);
       Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    OpenSecretDoor()

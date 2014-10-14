@@ -81,6 +81,10 @@ messages:
    {
       plGuild_doors = [ [2,7], [3,7], [4,7] ];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 175, 475, 775, 825 ];
+
       % Each sound is [wave_file, row, col, cutoff radius, maximum volume]
       plLooping_sounds = [ [ guildh13_ocean_sound, 13, 7, 10, 10 ],
                            [ guildh13_ocean_sound, 11, 2, 10, 10 ],
@@ -301,12 +305,13 @@ messages:
 
    CloseEntranceDoor()
    {
-      ptEntrance = $;
       Send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=MAIN_DOOR_CLOSED,#speed=180);
+            #height=MAIN_DOOR_CLOSED,#speed=100);
       Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    OpenSecretDoor()

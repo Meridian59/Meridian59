@@ -135,6 +135,11 @@ properties:
 
    ptEntrance = $
 
+   % This is a list of the coordinates for the area containing
+   % the guild hall entrance door. Used for removing players
+   % from it when it closes.
+   plEntrance = $
+
    prMusic = guildhall_music
 
    piConquer_delay = CONQUER_DELAY
@@ -290,6 +295,11 @@ messages:
       piLastDoorOpen = GetTime();
 
       return;
+   }
+
+   GetDoorTimeStamp()
+   {
+      return piLastDoorOpen;
    }
 
    EnteredInTimeWindow()
@@ -999,16 +1009,52 @@ messages:
       propagate;
    }
 
+   CloseEntranceDoor()
+   {
+      % Players get 1.5 seconds of time while the door is
+      % closing to move through it.
+      ptEntrance = CreateTimer(self,@ClearDoor,2000);
+
+      return;
+   }
+
+   ClearDoor(lDoor=$)
+   "This is a function to make the necessary calls to clear players "
+   "from the entrance door when it closes."
+   {
+      local i, lFound;
+
+      if lDoor <> $
+      {
+         lFound = Send(self,@FindUsersInArea,#lArea=lDoor);
+      }
+      else
+      {
+         lFound = Send(self,@FindUsersInArea,#lArea=plEntrance);
+      }
+
+      if lFound <> $
+      {
+         for i in lFound
+         {
+            Send(self,@Teleport,#what=i,#foyer=TRUE);
+         }
+      }
+      ptEntrance = $;
+
+      return;
+   }
+
    OpenEntranceDoorSound()
    {
-      Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_open_sound); 
+      Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_open_sound);
 
       return;
    }
 
    CloseEntranceDoorSound()
    {
-      Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_close_sound); 
+      Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_close_sound);
 
       return;
    }

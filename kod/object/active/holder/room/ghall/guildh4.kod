@@ -95,6 +95,10 @@ messages:
    {
       plGuild_doors = [[44,23], [44,24], [44,25], [44,26]];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 4375, 4425, 2350, 2650 ];
+
       propagate;
    }
 
@@ -159,7 +163,7 @@ messages:
       
       if (piPos1 > 6)
       {
-         Send(self,@CloseStorageDoor); 
+         Send(self,@CloseStorageDoor);
 
          return;
       }
@@ -195,11 +199,11 @@ messages:
          {
             ptEntrance = CreateTimer(self,@ResetEntranceTimer,RESET_TIME);
          }
-      }  
+      }
 
       return;
    }
-   
+
    CloseEntranceDoor()
    {
       return;
@@ -219,7 +223,7 @@ messages:
 
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall4_sound);
       Send(self,@SetSector,#sector=iSectorID,#animation=ANIMATE_CEILING_LIFT,
-            #height=128,#speed=80);
+            #height=128,#speed=50);
       Send(self,@CloseEntranceDoorSound);
       
       if piPos2 < 6
@@ -230,6 +234,8 @@ messages:
       if piPos2 = 6
       {
          piPos2 = 0;
+         % Use this to clear players from door.
+         ptEntrance = CreateTimer(self,@ClearDoor,1500);
       }
 
       return;
@@ -428,7 +434,6 @@ messages:
            #fine_row=24,#fine_col=8);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=35,#new_col=35,
            #fine_row=32,#fine_col=32);
-
 
       Send(self,@NewHold,#what=Create(&Chest),
             #new_row=43,#new_col=15,#fine_row=32,#fine_col=40,

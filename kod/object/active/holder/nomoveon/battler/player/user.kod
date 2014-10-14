@@ -3159,7 +3159,8 @@ messages:
             Debug("ALERT!",Send(self,@GetTrueName),self,
                   "tried to move through closed cave entrance, from ",
                   iRow,iCol,iFineRow,iFineCol," to ",new_row,new_col,
-                  fine_row,fine_col,".");
+                  fine_row,fine_col,". Last time cave closed was ",
+                  GetTime() - Send(poOwner,@GetLastClosedTime),".");
 
             % Reset position
             Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -3181,10 +3182,11 @@ messages:
                   #new_fine_row=fine_row,#new_fine_col=fine_col,#who=self)
          {
             % Log it
-            Debug("ALERT!",Send(self,@GetTrueName),self,
-                  "tried to move through closed Guild Hall door, ",
-                  Send(poOwner,@GetName)," from ",iRow,iCol,iFineRow,
-                  iFineCol," to ",new_row,new_col,fine_row,fine_col,".");
+            Debug("ALERT!",Send(self,@GetTrueName),self," tried to move "
+                  "through closed Guild Hall door, ",Send(poOwner,@GetName),
+                  " from ",iRow,iCol,iFineRow,iFineCol," to ",new_row,new_col,
+                  fine_row,fine_col,". Last door opening was ",
+                  GetTime() - Send(poOwner,@GetDoorTimeStamp)," seconds ago.");
 
             % Reset position
             Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,

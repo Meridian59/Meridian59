@@ -47,6 +47,7 @@ properties:
    piGen_Object_Time = 1200000
 
    ptIllusionResetTimer = $
+   piLastIllusionReplaceTime = $
 
 messages:
 
@@ -77,6 +78,8 @@ messages:
    {
       plMonsters = [ [&Orc, 50], [&Spider, 50] ];
 
+      piLastIllusionReplaceTime = GetTime();
+
       plGenerators = [ [51, 14], [50, 34], [18, 50], [27, 47], [23, 39],
                        [19, 30], [25, 26], [25, 33], [32, 35], [31, 31],
                        [35, 58], [15, 43], [16, 56] ];
@@ -86,45 +89,69 @@ messages:
 
    DispelIllusions(what=$)
    {
-      send(self,@ChangeTexture,#id=2,#new_texture=01605, #flags=CTF_FLOOR); %1605 is
-      send(self,@ChangeTexture,#id=3,#new_texture=01605, #flags=CTF_FLOOR); %cave stone 5
-      send(self,@ChangeTexture,#id=4,#new_texture=01605, #flags=CTF_FLOOR);
-      send(self,@ChangeTexture,#id=5,#new_texture=01605, #flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=2,#new_texture=01605,
+            #flags=CTF_FLOOR); %1605 is
+      Send(self,@ChangeTexture,#id=3,#new_texture=01605,
+            #flags=CTF_FLOOR); %cave stone 5
+      Send(self,@ChangeTexture,#id=4,#new_texture=01605,
+            #flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=5,#new_texture=01605,
+            #flags=CTF_FLOOR);
 
-      send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
-      send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
-      send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
-      send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
-      send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
-   
-      ptIllusionResetTimer = createtimer(self,@ReplaceIllusions,30000);  % 3o seconds
+      Send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,
+            #height=24,#speed=0);
+      Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,
+            #height=24,#speed=0);
+      Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,
+            #height=24,#speed=0);
+      Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,
+            #height=24,#speed=0);
+      Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,
+            #height=24,#speed=0);
 
-      return;   
+      ptIllusionResetTimer = CreateTimer(self,@ReplaceIllusions,30000);
+
+      return;
    }
 
    ReplaceIllusions()
    {
       ptIllusionResetTimer = $;
+      piLastIllusionReplaceTime = GetTime();
 
-      send(self,@ChangeTexture,#id=2,#new_texture=01722,#flags=CTF_FLOOR); %marble peach2
-      send(self,@ChangeTexture,#id=3,#new_texture=01701,#flags=CTF_FLOOR); %marble white1
-      send(self,@ChangeTexture,#id=4,#new_texture=01701,#flags=CTF_FLOOR);
-      send(self,@ChangeTexture,#id=5,#new_texture=01701,#flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=2,#new_texture=01722,
+            #flags=CTF_FLOOR); %marble peach2
+      Send(self,@ChangeTexture,#id=3,#new_texture=01701,
+            #flags=CTF_FLOOR); %marble white1
+      Send(self,@ChangeTexture,#id=4,#new_texture=01701,
+            #flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=5,#new_texture=01701,
+            #flags=CTF_FLOOR);
 
-      send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=128,#speed=0);
-      send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=56,#speed=0);
-      send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=48,#speed=0);
-      send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=40,#speed=0);
-      send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=32,#speed=0);
+      Send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,
+            #height=128,#speed=0);
+      Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,
+            #height=56,#speed=0);
+      Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,
+            #height=48,#speed=0);
+      Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,
+            #height=40,#speed=0);
+      Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,
+            #height=32,#speed=0);
 
-      return;   
+      return;
+   }
+
+   GetLastClosedTime()
+   {
+      return piLastIllusionReplaceTime;
    }
 
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_ORCCAVES),
-           #new_row=23,#new_col=53,#new_angle=ANGLE_WEST);
-           
+            #new_row=23,#new_col=53,#new_angle=ANGLE_WEST);
+
       propagate;
    }
 
@@ -150,71 +177,71 @@ messages:
       return TRUE;
    }
 
-   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1, 
-			new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
-   {    
+   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
+   {
       % This is a hardcoded movement check, which
-	  % verifies the movement against 3 lines to
-	  % make sure no one passes through them
-	  % while the cave entrance is not dispelled
-	  %
-	  % line1 (vertical)   (x=10 / xfine=62) 
-	  % line2 (vertical)   (x=14 / xfine=21)
-	  % line3 (horizontal) (y=17 / yfine=18)
-	  %
-	  %         | line2 (vertic.)
-	  %         |
-	  %    _____| line3 (horizont.)
-	  %   |
-	  %   |
-	  % < Entrance <
-	  %   |
-	  %   | line1 (vertic)
-	  
+      % verifies the movement against 3 lines to
+      % make sure no one passes through them
+      % while the cave entrance is not dispelled
+      %
+      % line1 (vertical)   (x=10 / xfine=62) 
+      % line2 (vertical)   (x=14 / xfine=21)
+      % line3 (horizontal) (y=17 / yfine=18)
+      %
+      %         | line2 (vertic.)
+      %         |
+      %    _____| line3 (horizont.)
+      %   |
+      %   |
+      % < Entrance <
+      %   |
+      %   | line1 (vertic)
+
       local isOldEastOfLine1, isOldEastOfLine2, isOldSouthOfLine3;
-	  	  
+
       % Basic requirement Entrance must not be dispelled
       if ptIllusionResetTimer = $
-      {	     
-        % if we are south of line3
-        if (old_row > 17 OR (old_row = 17 AND old_fine_row > 18))
-        {
-          % if we are east of line1
-          if (old_col > 10 OR (old_col = 10 AND old_fine_col > 62))
-          {
-            % don't allow crossing line1 from east to west
-            if (new_col < 10 OR (new_col = 10 AND new_fine_col <= 62))				
+      {
+         % if we are south of line3
+         if (old_row > 17 OR (old_row = 17 AND old_fine_row > 18))
+         {
+            % if we are east of line1
+            if (old_col > 10 OR (old_col = 10 AND old_fine_col > 62))
             {
-              return FALSE;
-            }
+               % don't allow crossing line1 from east to west
+               if (new_col < 10 OR (new_col = 10 AND new_fine_col <= 62))
+               {
+                  return FALSE;
+               }
 
-            % if we are west of line2
-            if (old_col < 14 OR (old_col = 14 AND old_fine_col <= 21))
+               % if we are west of line2
+               if (old_col < 14 OR (old_col = 14 AND old_fine_col <= 21))
+               {
+                  % don't allow crossing line3 from south to north
+                  if (new_row < 17 OR (new_row = 17 AND new_fine_row <= 18))
+                  {
+                     return FALSE;
+                  }
+               }
+            }
+         }
+
+         % if we are north of line3 (or on line3)
+         else
+         {
+            % don't allow crossing line2 from east to west
+            if (old_col > 14 OR (old_col = 14 AND old_fine_col > 21))
+               AND (new_col < 14 OR (new_col = 14 AND new_fine_col <= 21))
             {
-              % don't allow crossing line3 from south to north
-              if (new_row < 17 OR (new_row = 17 AND new_fine_row <= 18))
-              {
-                return FALSE;
-              }
+               return FALSE;
             }
-          }
-        }
-
-        % if we are north of line3 (or on line3)
-        else
-        {
-          % don't allow crossing line2 from east to west
-          if (old_col > 14 OR (old_col = 14 AND old_fine_col > 21)) AND 
-             (new_col < 14 OR (new_col = 14 AND new_fine_col <= 21))
-          {
-            return FALSE;
-          }
-        }	  
+         }
       }
 
       return TRUE;
    }
-   
+
    Delete()
    {
       if ptIllusionResetTimer <> $
@@ -222,10 +249,9 @@ messages:
          DeleteTimer(ptIllusionResetTimer);
          ptIllusionResetTimer=$;
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

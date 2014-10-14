@@ -2524,13 +2524,67 @@ messages:
       propagate;
    }
 
-   SetSector(sector = $,animation = $,height = $,speed = $)
+   FindUsersInArea(lArea=$)
+   "This is used for removing players from a sector or location. Guildhalls "
+   "use this to remove players from doors when the doors close, but the code "
+   "is in room.kod so theoretically any room can use it to remove a Battler "
+   "from any given area. This function checks each Battler in the area and "
+   "returns the list so the rooms can decide what to do with them."
+   {
+      local i, each_obj, iRow, iCol, iFineRow, iFineCol,
+            iRowDec, iColDec, lFound;
+
+      lFound = $;
+
+      if plActive = $
+         OR lArea = $
+      {
+         return;
+      }
+
+      % Cycle through each battler in plActive and send them
+      % to RemoveUserFromArea if they are inside the given area.
+      for i in plActive
+      {
+         each_obj = First(i);
+
+         % Check if it's a battler.
+         if NOT IsClass(each_obj,&Battler)
+         {
+            continue;
+         }
+
+         iRow = Send(each_obj,@GetRow);
+         iCol = Send(each_obj,@GetCol);
+         iFineCol = Send(each_obj,@GetFineCol);
+         iFineRow = Send(each_obj,@GetFineRow);
+         
+         % Convert player x and finex to xxyy format, with yy out of 100.
+         iRowDec = (iRow * 100) + (iFineRow * 156 / 100);
+         iColDec = (iCol * 100) + (iFineCol * 156 / 100);
+
+         % Area list is of the format minrow, maxrow, mincol, maxcol, also
+         % using xxyy format. Check player coordinates against these.
+         if iRowDec >= Nth(lArea,1)
+            AND iRowDec <= Nth(lArea,2)
+            AND iColDec >= Nth(lArea,3)
+            AND iColDec <= Nth(lArea,4)
+         {
+            % Add them to the list.
+            lFound = Cons(each_obj,lFound);
+         }
+      }
+
+      return lFound;
+   }
+
+   SetSector(sector=$,animation=$,height=$,speed=$)
    "Call this to change the height of a sector (affects clients only, not "
    "move grid)."
    {
       local i,each_obj;
 
-      % tell everyone in the room at the moment about the change
+      % Tell everyone in the room at the moment about the change
 
       for i in plActive
       {
@@ -2539,7 +2593,7 @@ messages:
               #height=height,#speed=speed);
       }
 
-      % and store so that new people in room will get the change
+      % And store so that new people in room will get the change
 
       for i in plSector_changes
       {
@@ -2551,7 +2605,7 @@ messages:
          }
       }
 
-      % not already in list, so add
+      % Not already in list, so add
       plSector_changes = Cons([ sector, animation, height ],plSector_changes);
 
       return;

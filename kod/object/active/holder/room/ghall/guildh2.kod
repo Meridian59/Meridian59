@@ -84,6 +84,10 @@ messages:
    {
       plGuild_doors = [ [18,30] ];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1800, 1900, 2978, 2996 ];
+
       propagate;
    }
 
@@ -239,13 +243,14 @@ messages:
 
    CloseEntranceDoor()
    {
-      ptEntrance = $;
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
       Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=24,#speed=100);
+            #height=24,#speed=50);
       Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    CloseCloset()

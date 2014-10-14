@@ -86,6 +86,10 @@ messages:
    {
       plGuild_doors = [[17,11]];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1703, 1723, 1100, 1175 ];
+
       propagate;
    }
 
@@ -153,37 +157,28 @@ messages:
          iFineRow = Send(who,@GetFineRow);
       }
 
-      if iRow > 16 OR iCol > 18
+      if iRow > 17 % South part
+         OR (iRow = 17 AND iFineRow > 16) % South part
+         OR iCol < 3 % West part
+         OR (iCol = 3 AND iFineCol < 32) % West part
+         OR iCol > 19 % East part
+         OR (iCol = 19 AND iFineCol > 16) % East part
       {
-         if iRow = 17 AND iFineRow < 28
-         {
-            return FALSE;
-         }
-
          return TRUE;
       }
 
-      if iCol < 4
-      {
-         if iCol = 3 AND iFineCol > 24
-         {
-            return FALSE;
-         }
-
-         return TRUE;
-      }
-
+      % North part
       if iRow = 3 or iRow = 4
       {
          if iCol < 8 or iCol > 14
          {
             return TRUE;
          }
-         if iCol = 8 and Send(who,@GetFineCol) < 48
+         if iCol = 8 and iFineCol < 48
          {
             return TRUE;
          }
-         if iCol = 14 and Send(who,@GetFineCol) > 16
+         if iCol = 14 and iFineRow > 16
          {
             return TRUE;
          }
@@ -304,12 +299,13 @@ messages:
 
    CloseEntranceDoor()
    {
-      ptEntrance = $;
       Send(self,@SetSector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=0,#speed=125);
+            #height=0,#speed=50);
       Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    CloseNorthDoor()

@@ -75,6 +75,10 @@ properties:
    ptWestDoor = $
    ptSouthDoor = $
 
+   plSouthDoor = $
+   plEastDoor = $
+   plWestDoor = $
+
 messages:
 
    Constructor()
@@ -82,6 +86,12 @@ messages:
    "a guild member or an allied guild member."
    {
       plGuild_doors = [ [18,8], [6,11], [5,23] ];
+
+      % These are boxes containing the guild doors, used
+      % for removing players from them when they close.
+      plSouthDoor = [ 1800, 1900, 887, 912 ];
+      plEastDoor = [ 587, 612, 2300, 2400 ];
+      plWestDoor = [ 687, 712, 1100, 1200 ];
 
       propagate;
    }
@@ -255,30 +265,54 @@ messages:
 
    CloseSouthDoor()
    {
-      ptSouthDOor = $;
       Send(self,@SetSector,#sector=SWDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=32,#speed=150);
+            #height=32,#speed=50);
       Send(self,@CloseEntranceDoorSound);
+      ptSouthDoor = CreateTimer(self,@ClearSouthDoor,1500);
 
       return;
    }
 
    CloseWestDoor()
    {
-      ptWestDoor = $;
       Send(self,@SetSector,#sector=NWDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=136,#speed=150);
+            #height=136,#speed=50);
       Send(self,@CloseEntranceDoorSound);
+      ptWestDoor = CreateTimer(self,@ClearWestDoor,1500);
 
       return;
    }
 
    CloseEastDoor()
    {
-      ptEastDoor = $;
       Send(self,@SetSector,#sector=NEDOOR,#animation=ANIMATE_CEILING_LIFT,
-            #height=152,#speed=150);
+            #height=152,#speed=50);
       Send(self,@CloseEntranceDoorSound);
+      ptEastDoor = CreateTimer(self,@ClearEastDoor,1500);
+
+      return;
+   }
+
+   ClearSouthDoor()
+   {
+      Send(self,@ClearDoor,#lDoor=plSouthDoor);
+      ptSouthDoor = $;
+
+      return;
+   }
+
+   ClearWestDoor()
+   {
+      Send(self,@ClearDoor,#lDoor=plWestDoor);
+      ptWestDoor = $;
+
+      return;
+   }
+
+   ClearEastDoor()
+   {
+      Send(self,@ClearDoor,#lDoor=plEastDoor);
+      ptEastDoor = $;
 
       return;
    }

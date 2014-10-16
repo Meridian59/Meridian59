@@ -1554,7 +1554,8 @@ messages:
          % the caster himself. Other minions can attack the caster, to prevent
          % Seducing something just to kill it.
          lMinions = Send(poMaster,@GetControlledMinions);
-         if FindListElem(lMinions,what)
+         if (lMinions <> $
+               AND FindListElem(lMinions,what))
             OR (IsClass(self,&Reflection)
                AND what = poMaster)
          {

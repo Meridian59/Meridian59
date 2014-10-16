@@ -2559,9 +2559,11 @@ messages:
          iFineCol = Send(each_obj,@GetFineCol);
          iFineRow = Send(each_obj,@GetFineRow);
          
-         % Convert player x and finex to xxyy format, with yy out of 100.
-         iRowDec = (iRow * 100) + (iFineRow * 156 / 100);
-         iColDec = (iCol * 100) + (iFineCol * 156 / 100);
+         % Convert player's coordinates to xxyy format, where xx is
+         % the row or col, and yy is the finerow or finecol converted
+         % from yy/64 to yy/100.
+         iRowDec = (iRow * 100) + (iFineRow * 15625 / 10000);
+         iColDec = (iCol * 100) + (iFineCol * 15625 / 10000);
 
          % Area list is of the format minrow, maxrow, mincol, maxcol, also
          % using xxyy format. Check player coordinates against these.

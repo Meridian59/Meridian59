@@ -2524,6 +2524,47 @@ messages:
       propagate;
    }
 
+   IsUserInArea(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$,lArea=$)
+   "This returns TRUE if the user is in the given area. Can pass either the "
+   "user themselves, or their coordinates to check against the given list."
+   {
+      local iRowDec, iColDec;
+
+      if lArea = $
+      {
+         Debug("IsUserInArea called with no area list by room ",
+               Send(self,@GetName));
+
+         return;
+      }
+
+      if who <> $
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+         iFineCol = Send(who,@GetFineCol);
+         iFineRow = Send(who,@GetFineRow);
+      }
+
+      % Convert player's coordinates to xxyy format, where xx is
+      % the row or col, and yy is the finerow or finecol converted
+      % from yy/64 to yy/100.
+      iRowDec = (iRow * 100) + (iFineRow * 15625 / 10000);
+      iColDec = (iCol * 100) + (iFineCol * 15625 / 10000);
+
+      % Area list is of the format minrow, maxrow, mincol, maxcol, also
+      % using xxyy format. Check player coordinates against these.
+      if iRowDec >= Nth(lArea,1)
+         AND iRowDec <= Nth(lArea,2)
+         AND iColDec >= Nth(lArea,3)
+         AND iColDec <= Nth(lArea,4)
+         {
+            return TRUE;
+         }
+
+      return FALSE;
+   }
+
    FindUsersInArea(lArea=$)
    "This is used for removing players from a sector or location. Guildhalls "
    "use this to remove players from doors when the doors close, but the code "
@@ -2558,7 +2599,7 @@ messages:
          iCol = Send(each_obj,@GetCol);
          iFineCol = Send(each_obj,@GetFineCol);
          iFineRow = Send(each_obj,@GetFineRow);
-         
+
          % Convert player's coordinates to xxyy format, where xx is
          % the row or col, and yy is the finerow or finecol converted
          % from yy/64 to yy/100.

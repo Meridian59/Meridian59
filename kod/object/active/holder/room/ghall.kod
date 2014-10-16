@@ -200,20 +200,29 @@ messages:
    % This works for standard rectangle guildhall foyers. Other configurations
    % need to override this.
    IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
-            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
+            who=$)
    {
       % Hardcoded movement check, prevent hacking into hall.
       % Basic requirement door must not be open
       if ptEntrance = $
       {
-         if old_row >= viFoyer_north AND old_row <= viFoyer_south
-            AND old_col <= viFoyer_east AND old_col >= viFoyer_west
+         if Send(self,@InFoyer,#iRow=old_row,#iCol=old_col,
+                  #iFineRow=old_fine_row,#iFineCol=old_fine_col)
          {
             % We're in the foyer. Check if we're trying to move into the hall.
-            if new_row < viFoyer_north OR new_row > viFoyer_south
-               OR new_col < viFoyer_west OR new_col > viFoyer_east
+            if NOT Send(self,@InFoyer,#iRow=new_row,#iCol=new_col,
+                        #iFineRow=new_fine_Row,#iFineCol=new_fine_col)
             {
                % Bad player! Fail the attempt.
+               Debug("ALERT!",Send(who,@GetTrueName),who,
+                     "tried to move through closed Guild Hall door ",
+                     Send(self,@GetName)," from ",old_row,old_col,old_fine_row,
+                     old_fine_col," to ",new_row,new_col,new_fine_row,
+                     new_fine_col,". Last door opening was ",
+                     GetTime() - Send(self,@GetDoorTimeStamp),
+                     " seconds ago.");
+
                return FALSE;
             }
          }
@@ -851,20 +860,20 @@ messages:
       return;
    }
 
-   InFoyer(who=$)
-   "This returns TRUE if the player is in the foyer area, and FALSE if the "
-   "player is in the guild hall proper.  Note that the declared silence area "
-   "must now be perfectly rectangular."
+   InFoyer(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$)
    {
-      local iRow, iCol;
-
-      if Send(who,@GetOwner) <> self
+      if who <> $
       {
-         return FALSE;
-      }
+         if Send(who,@GetOwner) <> self
+         {
+            return FALSE;
+         }
 
-      iRow = Send(who,@GetRow);
-      iCol = Send(who,@GetCol);
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+         iFineCol = Send(who,@GetFineCol);
+         iFineRow = Send(who,@GetFineRow);
+      }
 
       if iRow >= viFoyer_north AND iRow <= viFoyer_South
          AND iCol <= viFoyer_east AND iCol >= viFoyer_west
@@ -1011,7 +1020,7 @@ messages:
 
    CloseEntranceDoor()
    {
-      % Players get 1.5 seconds of time while the door is
+      % Players get 2 seconds of time while the door is
       % closing to move through it.
       ptEntrance = CreateTimer(self,@ClearDoor,2000);
 

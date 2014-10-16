@@ -97,10 +97,13 @@ messages:
    {
       plGuild_doors = [[12,30],[13,30],[14,30]];
       plLooping_sounds = [[ Guildhall15_loop, 0, 0, 200, 100 ]];
+      
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 0, 3200, 3038, 3275 ];
 
       propagate;
    }
-
 
    CreateStandardExits()
    {
@@ -137,66 +140,10 @@ messages:
       propagate;
    }
 
-   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
-            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
-            who = $)
-   {
-      % Hardcoded movement check, prevent hacking into hall.
-      % Basic requirement door must not be open. Not technically
-      % a guildhall but treating it like one just in case that
-      % functionality is ever returned.
-      if ptEntrance = $
-      {
-         % This hall is unique in having a massive door, which players can
-         % get stuck on if it goes up. If there are players on the door
-         % when it goes up, teleport them to the foyer or inside the hall.
-         if old_row <= 15 AND old_row >= 11
-            AND old_col >= 30 AND old_col <= 32
-         {
-            % We're probably in the door. Move players in the appropriate
-            % direction.
-            if (old_col = 31 AND old_fine_col > 40)
-               OR old_col >= 32
-            {
-               % Hall.
-               Send(SYS,@UtilGoNearSquare,#what=who,#where=self,
-                     #new_row=13,#new_col=33,#fine_row=28,#fine_col=29);
-            }
-            else
-            {
-               if old_col = 30 AND old_fine_col < 10
-               {
-                  % Foyer, but outside the door.
-                  return TRUE;
-               }
-               else
-               {
-                  % Inside door, foyer side or close enough to not risk it.
-                  Send(SYS,@UtilGoNearSquare,#what=who,#where=self,
-                        #new_row=13,#new_col=30,#fine_row=19,#fine_col=7);
-               }
-            }
-
-            return TRUE;
-         }
-
-         if Send(self,@InFoyer,#who=who)
-         {
-            % We're in the foyer. Check if we're trying to move into the hall.
-            if NOT Send(self,@InFoyer,#iRow=new_row,#iCol=new_col,
-                        #iFineCol=new_fine_col,#iFineRow=new_fine_row)
-            {
-               % Bad player! Fail the attempt.
-               return FALSE;
-            }
-         }
-      }
-
-      return TRUE;
-   }
-
    InFoyer(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$)
    {
+      local iRowDec, iColDec;
+
       if who <> $
       {
          if Send(who,@GetOwner) <> self
@@ -210,17 +157,21 @@ messages:
          iFineRow = Send(who,@GetFineRow);
       }
 
+      iRowDec = (iRow * 100) + (iFineRow * 15625 / 10000);
+      iColDec = (iCol * 100) + (iFineCol * 15625 / 10000);
+
       if iRow >= viFoyer_north
          AND iRow <= viFoyer_South
          AND iCol >= viFoyer_west
       {
-         if iCol <= viFoyer_east
+         if iColDec < 2988
          {
             return TRUE;
          }
 
-         if iCol = 32
-            AND iFineCol < 29
+         if iColDec < 3038
+            AND iRowDec < 1388
+            AND iRowDec > 1286
          {
             return TRUE;
          }
@@ -266,13 +217,14 @@ messages:
 
    CloseEntranceDoor()
    {
-      ptEntrance = $;
       Send(self,@SetSector,#sector=ENTRANCE_SECTOR,
             #animation=ANIMATE_FLOOR_LIFT,
             #height=ENTRANCE_H_UP,#speed=120);
       Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
 

@@ -119,29 +119,6 @@ messages:
       propagate;
    }
 
-   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
-            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
-            who = $)
-   {
-      % Hardcoded movement check, prevent hacking into hall.
-      % Basic requirement door must not be open
-      if ptEntrance = $
-      {
-         if Send(self,@InFoyer,#who=who)
-         {
-            % We're in the foyer. Check if we're trying to move into the hall.
-            if NOT Send(self,@InFoyer,#iRow=new_row,#iCol=new_col,
-                        #iFineCol=new_fine_col,#iFineRow=new_fine_row)
-            {
-               % Bad player! Fail the attempt.
-               return FALSE;
-            }
-         }
-      }
-
-      return TRUE;
-   }
-
    InFoyer(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$)
    {
       if who <> $

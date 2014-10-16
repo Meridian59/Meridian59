@@ -106,12 +106,19 @@ messages:
          AND ptWestDoor = $
          AND ptSouthDoor = $
       {
-         if Send(self,@InFoyer,#who=who)
+         if Send(self,@InFoyer,#iRow=old_row,#iCol=old_col)
          {
             % We're in the foyer. Check if we're trying to move into the hall.
             if NOT Send(self,@InFoyer,#iRow=new_row,#iCol=new_col)
             {
                % Bad player! Fail the attempt.
+               Debug("ALERT!",Send(who,@GetTrueName),who,
+                     "tried to move through closed Guild Hall door ",
+                     Send(self,@GetName)," from ",old_row,old_col,old_fine_row,
+                     old_fine_col," to ",new_row,new_col,new_fine_row,
+                     new_fine_col,". Last door opening was ",
+                     GetTime() - Send(self,@GetDoorTimeStamp),
+                     " seconds ago.");
                return FALSE;
             }
          }
@@ -121,8 +128,9 @@ messages:
    }
 
    InFoyer(who=$,iRow=$,iCol=$)
-   "Due to the multiple foyers in this guild hall, we return which foyer 'who' "
-   "is currently in.  Returns FALSE if not in foyer, a positive integer otherwise."
+   "Due to the multiple foyers in this guild hall, we return which "
+   "foyer 'who' is currently in.  Returns FALSE if not in foyer, a positive "
+   "integer otherwise."
    {
       if who <> $
       {

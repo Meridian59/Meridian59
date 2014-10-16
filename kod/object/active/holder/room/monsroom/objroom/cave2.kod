@@ -63,7 +63,6 @@ messages:
       propagate;
    }
 
-
    CreateObjectGeneration()
    {
       plObject_gen = $;
@@ -72,13 +71,13 @@ messages:
       plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 3, 25, 53 ],plObject_gen);
 
       propagate;
-    }
+   }
 
    Constructed()
    {
-      plMonsters = [ [&Orc, 50], [&Spider, 50] ];
-
       piLastIllusionReplaceTime = GetTime();
+
+      plMonsters = [ [&Orc, 50], [&Spider, 50] ];
 
       plGenerators = [ [51, 14], [50, 34], [18, 50], [27, 47], [23, 39],
                        [19, 30], [25, 26], [25, 33], [32, 35], [31, 31],
@@ -178,7 +177,8 @@ messages:
    }
 
    IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
-            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
+            who=$)
    {
       % This is a hardcoded movement check, which
       % verifies the movement against 3 lines to
@@ -212,6 +212,12 @@ messages:
                % don't allow crossing line1 from east to west
                if (new_col < 10 OR (new_col = 10 AND new_fine_col <= 62))
                {
+                  Send(self,@LogCheatingAttempt,#who=who,#old_row=old_row,
+                        #old_col=old_col,#old_fine_row=old_fine_row,
+                        #old_fine_col=old_fine_col,#new_row=new_row,
+                        #new_col=new_col,#new_fine_row=new_fine_row,
+                        #new_fine_col=new_fine_col);
+
                   return FALSE;
                }
 
@@ -221,6 +227,12 @@ messages:
                   % don't allow crossing line3 from south to north
                   if (new_row < 17 OR (new_row = 17 AND new_fine_row <= 18))
                   {
+                     Send(self,@LogCheatingAttempt,#who=who,#old_row=old_row,
+                           #old_col=old_col,#old_fine_row=old_fine_row,
+                           #old_fine_col=old_fine_col,#new_row=new_row,
+                           #new_col=new_col,#new_fine_row=new_fine_row,
+                           #new_fine_col=new_fine_col);
+
                      return FALSE;
                   }
                }
@@ -234,12 +246,30 @@ messages:
             if (old_col > 14 OR (old_col = 14 AND old_fine_col > 21))
                AND (new_col < 14 OR (new_col = 14 AND new_fine_col <= 21))
             {
+               Send(self,@LogCheatingAttempt,#who=who,#old_row=old_row,
+                     #old_col=old_col,#old_fine_row=old_fine_row,
+                     #old_fine_col=old_fine_col,#new_row=new_row,
+                     #new_col=new_col,#new_fine_row=new_fine_row,
+                     #new_fine_col=new_fine_col);
+
                return FALSE;
             }
          }
       }
 
       return TRUE;
+   }
+
+   LogCheatingAttempt(old_row=1,old_col=1,old_fine_row=1,old_fine_col=1,
+                     new_row=1,new_col=1,new_fine_row=1,new_fine_col=1,who=$)
+   {
+      Debug("ALERT!  ",Send(who,@GetTrueName),who,
+            "tried to move through closed cave entrance, from ",
+            old_row,old_col,old_fine_row,old_fine_col," to ",new_row,new_col,
+            new_fine_row,new_fine_col,". Last time cave closed was ",
+            GetTime() - Send(self,@GetLastClosedTime)," seconds ago.");
+
+      return;
    }
 
    Delete()

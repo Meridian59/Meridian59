@@ -59,16 +59,24 @@ properties:
    ptYeti_gen = $
    ptManaDoor_Timer = $
    ptYetiDoor_Timer = $
+   
+   % Coordinates for the node column, for checking movement
+   plNode_area = $
+   
+   % Last node opening time.
+   piNodeColumnLastRaised = $
 
 messages:
 
    Constructed()
    {
       plMonsters = [ [&SnowRat, 55],  [&Troll, 45] ];
-
+      piNodeColumnLastRaised = 0;
       plGenerators = [ [23, 5], [8, 6], [13, 20], [6, 25], [20, 20],
-                      [8, 38], [23, 40], [20, 43], [41, 44], [46, 37], 
+                      [8, 38], [23, 40], [20, 43], [41, 44], [46, 37],
                       [45, 29], [35, 26], [31, 25], [25,9], [23,7], [25,6] ];
+
+      plNode_area = [ 2425, 2675, 2225, 2475 ];
 
       Send(self,@YetiGenTimer);
 
@@ -78,7 +86,9 @@ messages:
    CreateStandardExits()
    {
       plEdge_exits = $;
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_B6, 3, 18, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_B6, 3, 18, ROTATE_NONE],
+                           plEdge_exits);
+
       propagate;
    }
 
@@ -124,17 +134,17 @@ messages:
          AND bFound=FALSE
          AND pbGenerateMonsters
       {
-         Send(self,@NewHold,#what=Create(&yeti),#new_row=random(20,27),#new_col=random(14,16),
-              #new_angle=ANGLE_SOUTH_EAST);
-         send(self,@SetSector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=380,#speed=0);
+         Send(self,@NewHold,#what=Create(&yeti),#new_row=random(20,27),
+               #new_col=random(14,16),
+               #new_angle=ANGLE_SOUTH_EAST);
+         Send(self,@SetSector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=380,#speed=0);
       }
-      
-      ptYeti_gen = CreateTimer(self,@YetiGenTimer,1*RESPAWN_TIMER);     
- 
+
+      ptYeti_gen = CreateTimer(self,@YetiGenTimer,1*RESPAWN_TIMER);
+
       return;
    }
-
 
    CreateStandardObjects()
    {
@@ -148,29 +158,65 @@ messages:
    {
       if (row = 24) and ((col = 10) or (col = 11))
       {
-         Send(self,@setsector,#sector=YETI_DOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height = 448,#speed=16);
-         ptYetiDoor_Timer = CreateTimer(self,@CloseYetiDoorTimer,YETI_DOOR_TIME);
-         
+         Send(self,@SetSector,#sector=YETI_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=448,#speed=16);
+         ptYetiDoor_Timer = CreateTimer(self,@CloseYetiDoorTimer,
+                                             YETI_DOOR_TIME);
+
          return TRUE;
       }
-      
+
       propagate;
+   }
+
+   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
+            who=$)
+   {
+      % Hardcoded movement check, prevent hacking to get the mana node.
+      % Only checked if node column is closed.
+      if ptManaDoor_Timer = $
+      {
+         % We're using a standard rectangle here, so use the generic
+         % room.kod function for finding user in a rectangular area.
+         if NOT Send(self,@IsUserInArea,#lArea=plNode_area,#iRow=old_row,
+                  #iCol=old_col,#iFineRow=old_fine_row,#iFineCol=old_fine_col)
+         {
+            % User isn't in the node column. Check if they're trying to
+            % go into it while closed.
+            if Send(self,@IsUserInArea,#lArea=plNode_area,#iRow=new_row,
+                  #iCol=new_col,#iFineRow=new_fine_row,#iFineCol=new_fine_col)
+            {
+               % Bad player! Fail the attempt.
+               Debug("ALERT!",Send(who,@GetTrueName),who,
+                     "tried to move through closed node column in room ",
+                     Send(self,@GetName)," from ",old_row,old_col,old_fine_row,
+                     old_fine_col," to ",new_row,new_col,new_fine_row,
+                     new_fine_col,". Last opening was ",
+                     GetTime() - piNodeColumnLastRaised,
+                     " seconds ago.");
+
+               return FALSE;
+            }
+         }
+      }
+
+      return TRUE;
    }
 
    CloseYetiDoorTimer()
    {
-      send(self,@SetSector,#sector=YETI_DOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=380,#speed=24);
+      Send(self,@SetSector,#sector=YETI_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=380,#speed=24);
       ptYetiDoor_Timer = $;
-      
+
       return;
    }
 
    SomethingKilled(what=$,victim=$)
    {
       local oNodeAtt;
-   
+
       if (IsClass(victim,&yeti))
       {
          % Don't open the door if the Yeti was killed by a node attack.
@@ -182,9 +228,12 @@ messages:
 
          if (oNodeAtt <> Send(victim,@GetOwner))
          {
-            send(self,@setsector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                 #height=510,#speed=64);
-            ptManaDoor_Timer = CreateTimer(self,@LowerManaDoorTimer,MANA_DOOR_TIME);
+            Send(self,@SetSector,#sector=MANA_DOOR,
+                  #animation=ANIMATE_CEILING_LIFT,
+                  #height=510,#speed=64);
+            piNodeColumnLastRaised = GetTime();
+            ptManaDoor_Timer = CreateTimer(self,@LowerManaDoorTimer,
+                                             MANA_DOOR_TIME);
          }
       }
 
@@ -193,26 +242,43 @@ messages:
 
    LowerManaDoorTimer()
    {
-      ptManaDoor_Timer = $;
-      send(self,@setsector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
+      ptManaDoor_Timer = CreateTimer(self,@RemoveUsersFromNode,120000);
+      Send(self,@SetSector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
            #height=380,#speed=1);
-           
+
+      return;
+   }
+
+   RemoveUsersFromNode()
+   "Handles calls to remove users from the node area after the pillar closes."
+   {
+      local i, lFound;
+
+      lFound = Send(self,@FindUsersInArea,#lArea=plNode_area);
+      if lFound <> $
+      {
+         for i in lFound
+         {
+            Send(self,@Teleport,#what=i);
+         }
+      }
+      ptManaDoor_Timer = $;
+
       return;
    }
 
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
-   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
-   "This supercedes the ROOM_HARD_LEARN flag."
+   "This takes a spell/skill that who is trying to advance and modifies "
+   "the improve_chance. This supercedes the ROOM_HARD_LEARN flag."
    {
       % Hinder learning room enchants because of the Yeti's discordance
       if IsClass(oSpellSkill,&RoomEnchantment)
       {
          return (chance / 10);
       }
-      
+
       propagate;
    }
 
-  
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

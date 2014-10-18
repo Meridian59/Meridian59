@@ -1288,12 +1288,6 @@ messages:
                       #obj2=first(lTargets))
          AND NOT(IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
       {
-         if Send(Send(SYS,@GetSettings),@DisplaySpellData)
-         {
-            Send(who,@MsgSendUser,#message_rsc=los_bad_display,
-                  #parm1=Send(self,@GetName));
-         }
-         
          Send(who,@MsgSendUser,#message_rsc=no_line_of_sight);
          
          oTarget = first(lTargets);

@@ -3154,6 +3154,7 @@ messages:
          OR iRoomNum = RID_ICE_CAVE1
          OR (iRoomNum >= RID_GUILDH_MIN
             AND iRoomNum <= RID_GUILDH_MAX)
+         OR iRoomNum = RID_I9
       {
          if NOT Send(poOwner,@IsMoveOK,
                   #old_row=iRow,#old_col=iCol,#old_fine_row=iFineRow,

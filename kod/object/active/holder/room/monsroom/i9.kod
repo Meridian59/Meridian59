@@ -12,10 +12,10 @@ OutdoorsI9 is MonsterRoom
 
 constants:
 
-   SECTOR_DOOR = 1  
+   SECTOR_DOOR = 1
 
    % 10 seconds
-   DOORWAY_DELAY = 10000   
+   DOORWAY_DELAY = 10000
 
    include blakston.khd
 
@@ -40,7 +40,7 @@ classvars:
 
    vrName = room_name_i9
 
-   viTeleport_row = 42  
+   viTeleport_row = 42
    viTeleport_col = 14
 
    viTerrain_type = TERRAIN_MOUNTAIN | TERRAIN_MYSTICAL
@@ -57,7 +57,7 @@ properties:
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    ptDoorway = $
-   
+
    piGen_time = 70000
    piGen_percent = 85
 
@@ -92,11 +92,62 @@ messages:
    {
       plEdge_exits = $;
 
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_CASTLE1C, 21, 3, ANGLE_EAST], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_I8, 60, 23, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H9, 21, 43, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_CASTLE1C, 21, 3, ANGLE_EAST],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_I8, 60, 23, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H9, 21, 43, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
+   }
+
+   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
+            who=$)
+   {
+      local iRowDec, iColDec, iNewRowDec, iNewColDec, iLineOne, iLineOneNew;
+
+      % Convert player's coordinates to xxyy format, where xx is
+      % the row or col, and yy is the finerow or finecol converted
+      % from yy/64 to yy/100.
+      iRowDec = (old_row * 100) + (old_fine_row * 15625 / 10000);
+      iColDec = (old_col * 100) + (old_fine_col * 15625 / 10000);
+      iNewRowDec = (new_row * 100) + (new_fine_row * 15625 / 10000);
+      iNewColDec = (new_col * 100) + (new_fine_col * 15625 / 10000);
+
+      % This is a line going to CV from near UK entrance.
+      % Points on line are 900, 2500; 800, 2800.
+      if (iColDec >= 1400 AND iColDec <= 4000)
+      {
+         if iColDec > 1400 AND iNewColDec <= 1400
+            AND iRowDec > 900 AND iRowDec < 3800
+         {
+            Debug("ALERT!  ",Send(who,@GetTrueName),who,
+                  "tried to move through wall in ",Send(self,@GetName),
+                  " from ",old_row,old_col,old_fine_row,old_fine_col," to ",
+                  new_row,new_col,new_fine_row,new_fine_col);
+
+            return FALSE;
+         }
+
+         iLineOne = ((-3333 * iColDec + 17333333) / 10000);
+         iLineOneNew = ((-3333 * iNewColDec + 17333333) / 10000);
+         debug(irowdec,ilineone, inewrowdec);
+         if iRowDec >= iLineOne
+            AND (iNewRowDec < iLineOne
+               OR iNewRowDec < iLineOneNew)
+         {
+            Debug("ALERT!  ",Send(who,@GetTrueName),who,
+                  "tried to move through wall in ",Send(self,@GetName),
+                  " from ",old_row,old_col,old_fine_row,old_fine_col," to ",
+                  new_row,new_col,new_fine_row,new_fine_col);
+
+            return FALSE;
+         }
+      }
+
+      return TRUE;
    }
 
    SomeoneSaid(what=$,string=$)
@@ -108,7 +159,7 @@ messages:
          lPassive = Send(what,@GetHolderPassive);
          for i in lPassive
          {
-            each_obj = Send(what,@HolderExtractObject,#data=i);                
+            each_obj = Send(what,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&Scepter)
             {
                for i in plActive
@@ -134,7 +185,7 @@ messages:
    {
       ptDoorway = $;
       Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
-           #height=440,#speed=16);
+            #height=440,#speed=16);
 
       return;
    }
@@ -147,14 +198,14 @@ messages:
       if oNode <> $
       {
          % delete 'our' node
-         Send(oNode,@Delete);  
+         Send(oNode,@Delete);
       }
 
       poNode = $;
       
       if ptDoorway <> $
       {
-         deletetimer(ptDoorway);
+         DeleteTimer(ptDoorway);
          ptDoorway = $;
       }
 
@@ -163,9 +214,9 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local ihour,iLight_effect, i, bFound;
+      local iHour,iLight_effect, i, bFound;
 
-      ihour = Send(SYS,@GetHour);
+      iHour = Send(SYS,@GetHour);
 
       if iHour = 0
       {
@@ -177,12 +228,12 @@ messages:
       }
 
       Send(self,@SetSectorLight,#sector=2,#light_effect=iLight_effect);
-      
-      if ihour = 0 AND poNode = $
+
+      if iHour = 0 AND poNode = $
       {
-         poNode = Send(SYS,@findnodebynum,#num=NODE_I9);
+         poNode = Send(SYS,@FindNodeByNum,#num=NODE_I9);
          Send(poNode,@NodeAppear,#where=self,#row=27,#col=61,
-              #fine_row=48,#fine_col=40);   
+               #fine_row=48,#fine_col=40);
 
          for i in plActive
          {
@@ -192,17 +243,17 @@ messages:
             }
          }
 
-         Send(self,@Newhold,#what=Create(&StoneTroll),#new_row=28,#new_col=63,
-              #fine_row=40,#fine_col=32,#new_angle=ANGLE_NORTH_WEST);
-         Send(self,@Newhold,#what=Create(&StoneTroll),#new_row=28,#new_col=59,
-              #fine_row=40,#fine_col=48,#new_angle=ANGLE_NORTH_EAST);
-         Send(self,@Newhold,#what=Create(&StoneTroll),#new_row=25,#new_col=61,
-              #fine_row=48,#fine_col=48,#new_angle=ANGLE_SOUTH);         
-                                           
+         Send(self,@NewHold,#what=Create(&StoneTroll),#new_row=28,#new_col=63,
+               #fine_row=40,#fine_col=32,#new_angle=ANGLE_NORTH_WEST);
+         Send(self,@NewHold,#what=Create(&StoneTroll),#new_row=28,#new_col=59,
+               #fine_row=40,#fine_col=48,#new_angle=ANGLE_NORTH_EAST);
+         Send(self,@NewHold,#what=Create(&StoneTroll),#new_row=25,#new_col=61,
+               #fine_row=48,#fine_col=48,#new_angle=ANGLE_SOUTH);
+
          propagate;
       }
 
-      if ihour = 1
+      if iHour = 1
       {
          if poNode <> $
          {
@@ -221,9 +272,9 @@ messages:
    }
 
    % Added because our players are too smart for their own good.
-   %  player casts Martyr's Battleground (or Truce on Sacred Haven)
-   %  while the tokens are on the ground, and a portal to the Martyr's
-   %  Battleground area (and node) appears.
+   % player casts Martyr's Battleground (or Truce on Sacred Haven)
+   % while the tokens are on the ground, and a portal to the Martyr's
+   % Battleground area (and node) appears.
 
    SpellCast(who = $, oSpell = $, lItems = $)
    {
@@ -236,9 +287,9 @@ messages:
 
       if oSpell <> $
          AND (Send(oSpell,@GetSpellNum) = SID_MARTYRS_BATTLEGROUND
-              OR ((NOT Send(SYS,@IsPKAllowed))
-                  AND Send(oSpell,@GetSpellNum) = SID_TRUCE))
-      {      
+            OR ((NOT Send(SYS,@IsPKAllowed))
+            AND Send(oSpell,@GetSpellNum) = SID_TRUCE))
+      {
          bOne = FALSE;
          bTwo = FALSE;
          bThree = FALSE;
@@ -252,25 +303,21 @@ messages:
             {
                bOne = TRUE;
             }
-
             if IsClass(First(i),&TwoToken)
                AND Send(self,@IsInStoneHenge,#what=First(i))
             {
                bTwo = TRUE;
             }
-            
             if IsClass(First(i),&ThreeToken)
                AND Send(self,@IsInStoneHenge,#what=First(i))
             {
                bThree = TRUE;
             }
-            
             if IsClass(First(i),&FourToken)
                AND Send(self,@IsInStoneHenge,#what=First(i))
             {
                bFour = TRUE;
             }
-            
             if IsClass(First(i),&FiveToken)
                AND Send(self,@IsInStoneHenge,#what=First(i))
             {
@@ -288,10 +335,10 @@ messages:
          }
 
          % Okay, all the tokens should be here and in stonehenge.
-         %  Open the portals
-         Send(self,@OpenPortalToTemple);   
+         % Open the portals.
+         Send(self,@OpenPortalToTemple);
       }
-      
+
       propagate;
    }
 
@@ -299,16 +346,16 @@ messages:
    {
       local iRow, iCol;
 
-      if what= $  
+      if what = $
       {
-         debug("what = $!  That ain't right!");
+         Debug("what = $!  That ain't right!");
 
          return FALSE;
       }
 
       iRow = Send(what,@GetRow);
       iCol = Send(what,@GetCol);
-      
+
       if ((iRow >= 25 ) AND (iRow <= 29)
          AND (iCol >= 59) AND (iCol <= 63))
       {
@@ -324,8 +371,8 @@ messages:
 
       for i in plActive
       {
-         if IsClass(First(i),&Portal) 
-         { 
+         if IsClass(First(i),&Portal)
+         {
             % Refresh the portal counter, then return
             piPortal_counter = 10;
 
@@ -338,13 +385,13 @@ messages:
          if First(i) <> $ AND IsClass(First(i),&token)
          {
             Send(First(i),@RandomTeleport);
-         }         
+         }
       }
 
       oPortal = Create(&Portal,#dest_room_num=RID_CANYON2,
                        #dest_row=27,#dest_col=61,#icon=i9_portal_icon_rsc);
-      Send(self,@Newhold,#what=oPortal,#new_row=25,#new_col=61,
-           #fine_row=48,#fine_col=48,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=oPortal,#new_row=25,#new_col=61,
+            #fine_row=48,#fine_col=48,#new_angle=ANGLE_NORTH);
 
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_CANYON2);
       Send(oRoom,@ActivatePortal);
@@ -360,16 +407,15 @@ messages:
       for i in plActive
       {
          if IsClass(First(i),&Portal)
-         {  
+         {
             Send(First(i),@Delete);
             oRoom = Send(SYS,@FindRoomByNum,#num=RID_CANYON2);
             Send(oRoom,@DeactivatePortal);
          }
-      }      
+      }
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

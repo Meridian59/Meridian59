@@ -777,6 +777,9 @@ resources:
    phased_player_description = \
       "This is the ghosted body of %q, whose consciousness has travelled to "
       "another plane of existence."
+      
+   bad_line_of_sight = \
+      "Your hindered line of sight makes a successful hit more difficult."
 
 classvars:
 
@@ -4773,6 +4776,7 @@ messages:
          AND NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          AND NOT (IsClass(self,&DM) AND Send(self,@PlayerIsImmortal))
       {
+         Send(self,@MsgSendUser,#message_rsc=bad_line_of_sight);
          iOffense = iOffense / 2;
       }
 

@@ -4138,8 +4138,7 @@ messages:
          return TRUE;
       }
 
-      % Truce itself returns TRUE, not counting as an attack. RadiusTotems
-      % send their inherent spell as a spell_obj for AllowPlayerAttack.
+      % Truce itself returns TRUE, not counting as an attack. 
       % Truce will only block actual attacks between two players who 
       % are both Truced.
       if spell_obj <> $

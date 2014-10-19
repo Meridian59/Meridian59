@@ -464,6 +464,10 @@ messages:
       {
          iManaLost = amount - abs(piMana);
       }
+      else
+      {
+         iManaLost = amount;
+      }
 
       Send(self,@NewMana);
 

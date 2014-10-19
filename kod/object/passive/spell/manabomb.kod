@@ -26,16 +26,16 @@ resources:
 
    manabomb_cast = "%s%s's mana violently detonates!"
    manabomb_hit_some = \
-      "You feel mana being ripped from your body, burning "
-      "itself out in a magical chain reaction."
+      "You feel your spirit being ripped from your body, burning "
+      "~b~B%i~B~n mana in a magical chain reaction."
    manabomb_hit_all = \
       "All of your mana burns away in a magical chain reaction!"
    manabomb_took_some = \
-      "%s cries out as your mana bomb burns %s spirit, removing "
+      "%s%s cries out as your mana bomb burns %s spirit, removing "
       "~b~B%i~B~n mana!"
    manabomb_took_all = \
-      "%s cries out as your mana bomb sears their spirit, "
-      "leaving them bereft of mana!"
+      "%s%s cries out as your mana bomb sears %s spirit, "
+      "leaving %s bereft of mana!"
 
    manabomb_sound = kmbomb.wav
 
@@ -137,19 +137,21 @@ messages:
             }
 
             Send(who,@MsgSendUser,#message_rsc=manabomb_took_all,
-                  #parm1=Send(i,@GetName));
+                  #parm1=Send(i,@GetCapDef),#parm2=Send(i,@GetName),
+                  #parm3=Send(i,@GetHisHer),#parm4=Send(i,@GetHimHer));
          }
          else
          {
             if IsClass(i,&Player)
             {
-               Send(i,@MsgSendUser,#message_rsc=manabomb_hit_some);
+               Send(i,@MsgSendUser,#message_rsc=manabomb_hit_some,
+                     #parm1=iManaLost);
                Send(i,@BadSpellFlashEffect);
             }
 
             Send(who,@MsgSendUser,#message_rsc=manabomb_took_some,
-                  #parm1=Send(i,@GetName),#parm2=Send(i,@GetHisHer),
-                  #parm3=iManaLost);
+                  #parm1=Send(i,@GetCapDef),#parm2=Send(i,@GetName),
+                  #parm3=Send(i,@GetHisHer),#parm4=iManaLost);
          }
       }
 

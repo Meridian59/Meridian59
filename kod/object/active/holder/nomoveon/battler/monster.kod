@@ -4138,7 +4138,7 @@ messages:
    }
 
    MonsterCastSpell()
-   "Default message handler does nothing."
+   "Handle monster spellcasting here."
    {
       local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost;
 
@@ -4153,7 +4153,9 @@ messages:
       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 
       % Get the adjusted chance to cast, based on whether we're demented
-      % or if AmA is up.
+      % or if AmA is up. We also check target here so we don't waste
+      % mana casting when we can't get our target. Instead, we use that time
+      % walking to the target.
       iRandom = Send(self,@AdjustedChanceBase,#base=piSpellChance);
       if Random(1,iRandom) = 1
          AND iDistance > Send(self,@GetAttackRange)

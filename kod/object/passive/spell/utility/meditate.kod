@@ -58,6 +58,7 @@ classvars:
    viSpellExertion = 0
 
    viFlash = FLASH_GOOD
+   viMeditate_ratio = 200
 
 properties:
 
@@ -114,13 +115,6 @@ messages:
 
       Send(who,@BreakTrance,#event=EVENT_STEER);  %% Don't print fizzle message
 
-      if StringEqual(string,Meditate_name_rsc)
-      {
-         Send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
-
-         return;
-      }
-
       bFound = FALSE;
 
       iPoints = Send(who,@GetTrainingPoints);
@@ -173,6 +167,7 @@ messages:
                      #amount=iGain,#report=FALSE);
                Send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
                if iGain*iRatio > Random(0,99)
+               AND NOT StringEqual(string,Meditate_name_rsc)
                {
                   Send(who,@ChangeSpellAbility,#spell_num=vispell_Num,
                         #amount=1,#report=TRUE);

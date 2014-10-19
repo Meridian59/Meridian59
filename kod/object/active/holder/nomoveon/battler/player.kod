@@ -912,7 +912,6 @@ properties:
 
    % Timers 
    ptHealth = $
-   ptMana = $
    ptAdvancement = $
    ptRest = $
 
@@ -2871,11 +2870,6 @@ messages:
       return Send(self,@GetBaseMaxHealth);
    }
 
-   GetMaxMana()
-   {
-      return piMax_mana;
-   }
-
    GetKillTarget()
    {
       return poKill_target;
@@ -2912,22 +2906,6 @@ messages:
       else
       {
          Send(self,@NewHealth);
-      }
-
-      return;
-   }
-
-   ManaTimer()
-   {
-      ptMana = $;
-
-      if piMana < piMax_mana
-      {
-         Send(self,@GainMana,#amount=1);
-      }
-      else
-      {
-         Send(self,@LoseMana,#amount=1);
       }
 
       return;
@@ -6793,73 +6771,6 @@ messages:
       return piNodelist;
    }
 
-   LoseMana(amount = 0)
-   {
-      local iManaLost;
-
-      piMana = piMana - amount;
-      if piMana < 0
-      {
-         iManaLost = amount - abs(piMana);
-      }
-
-      Send(self,@NewMana);
-
-      return iManaLost;
-   }
-
-   GainMana(amount=0, bCapped=FALSE, bRespectMax=FALSE)
-   {
-      local iManaGained;
-
-      iManaGained = amount;
-
-      if NOT Send(self,@IsPhasedOut)
-      {
-         if bRespectMax
-            AND piMana + amount > piMax_mana
-         {
-            return 0;
-         }
-
-         piMana = piMana + amount;
-
-         if bCapped AND piMana > piMax_Mana
-         {
-            iManaGained = amount - (piMana - piMax_Mana);
-            piMana = piMax_Mana;
-         }
-      }
-
-      Send(self,@NewMana);
-
-      return iManaGained;
-   }
-
-   NewMana()
-   {
-      if piMana < 0
-      {
-         piMana = 0;
-      }
-
-      % Set a limit for maximum here in player? -BJG
-
-      if piMana <> piMax_mana AND ptMana = $
-      {
-         ptMana = CreateTimer(self,@ManaTimer,Send(self,@CalculateManaTime));
-      }
-
-      if piMana = piMax_mana AND ptMana <> $
-      {
-         DeleteTimer(ptMana);
-         ptMana = $;
-      }
-
-      Send(self,@DrawMana);
-
-      return;
-   }
 
    GetSpellList()
    {
@@ -6972,11 +6883,6 @@ messages:
    GetHealth()
    {
       return piHealth;
-   }
-
-   GetMana()
-   {
-      return piMana;
    }
 
    GetMight()

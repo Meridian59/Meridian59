@@ -29,9 +29,6 @@ constants:
    FRAME_CAST_START = 7
    FRAME_CAST_END = 10
 
-   % Chance (1 in this number) to cast a spell
-   SPELL_CHANCE = 1
-
    % What's the maximum number of walls allowed?
    MAX_WALLS = 2
 
@@ -87,7 +84,11 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piMana = 20
+   piMax_Mana = 20
+
+   % 1 in x chance to cast a spell.
+   piSpellChance = 1
+   piSpellPower = 99
 
    % is this Xeochicatl part of a node attack?
    pbNodeAttack = FALSE
@@ -122,17 +123,15 @@ messages:
       {
          if Random(1,100) < DRAIN_CHANCE
          {
-            % No mana draining if they're mana bombed.
-            if NOT (piEnch_flags & ENCH_MANA_BOMB)
-            {
-               iAmount = Send(what,@GetMaxMana);
-               iAmount = ((iAmount * piDrainAmount)/100) + 1;
-               iAmount = Bound(iAmount,0,Send(what,@GetMana));
+            iAmount = Send(what,@GetMaxMana);
+            iAmount = ((iAmount * piDrainAmount)/100) + 1;
+            iAmount = Bound(iAmount,0,Send(what,@GetMana));
 
-               Send(what,@LoseMana,#amount=iAmount);
-               piMana = piMana + iAmount;
-               Send(what,@MsgSendUser,#message_rsc=Xeochicatl_drain_rsc,#parm1=vrName);
-            }
+            Send(what,@LoseMana,#amount=iAmount);
+            piMana = piMana + iAmount;
+            Send(what,@MsgSendUser,#message_rsc=Xeochicatl_drain_rsc,
+                  #parm1=vrName);
+            Send(self,@GainMana,#amount=iAmount);
          }
          else
          {
@@ -178,7 +177,7 @@ messages:
          return;
       }
 
-      % if no body animation
+      % If no body animation
       AddPacket(1,ANIMATE_NONE, 2,FRAME_FLY);
 
       return;
@@ -198,7 +197,7 @@ messages:
          return TRUE;
       }
 
-      % charm checks up higher.
+      % Charm checks up higher.
       propagate;
    }
 
@@ -227,68 +226,14 @@ messages:
       propagate;
    }
 
-   MonsterCastSpell()
+   MonsterCastAnimation(oSpell=$)
+   "If a monster has a special cast animation, call this."
    {
-      local iRandom, iSpell, iBase, oSpell, iManaCost, lInfo, lTargets;
-
-      % See if we actually cast a spell, 100% base lowered if we're demented,
-      %  mana bombed, etc.
-      iRandom = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
-      if Random(1,iRandom) <> 1
-      {
-         return FALSE;
-      }
-
-      % Let each individual Xeo choose their spell.
-      %   Returns information list in the form of: [ SID, mana cost ]
-      lInfo = Send(self,@ChooseSpell);
-
-      % Maybe no spell was returned
-      if lInfo = $
-      {
-         return FALSE;
-      }
-
-      iSpell = First(lInfo);
-      iManaCost = Nth(lInfo,2);
-
-      if piMana < iManaCost
-      {
-         return FALSE;
-      }
-
-      piMana = piMana - iManaCost;
-
       piAnimation = ANIM_CAST;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
 
-      oSpell = Send(SYS,@FindSpellByNum,#num=iSpell);
-
-      if (Send(oSpell,@GetNumSpellTargets) > 0
-          AND NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget))
-         OR NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
-      {
-         return FALSE;
-      }
-
-      lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=[poTarget]);
-
-      if Send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,
-              #iSpellPower=SPELLPOWER_MAXIMUM)
-         AND Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,
-                  #litems=lTargets)
-      {
-         Send(oSpell,@CastSpell,#who=self,#ltargets=lTargets,
-              #iSpellPower=SPELLPOWER_MAXIMUM);
-      }
-
-      return TRUE;
-   }
-
-   ChooseSpell()
-   {
-      return $;
+      return;
    }
 
    CanCastWallSpell()
@@ -304,15 +249,6 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }
-
-   StartManaBomb()
-   "Called when affected by Mana Bomb spell."
-   {
-      % Halve the mana
-      piMana = piMana / 2;
-
-      return;
    }
 
    CanBeSilenced()

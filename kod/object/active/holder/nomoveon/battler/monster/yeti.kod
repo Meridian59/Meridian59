@@ -13,7 +13,7 @@ Yeti is Monster
 constants:
 
    include blakston.khd
-   SPELL_CHANCE = 2
+
    ATTACK_SPELL_CHANCE = 10
 
 resources:
@@ -53,7 +53,8 @@ classvars:
    viLevel = 170
    viDifficulty = 9
    viKarma = 0
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_SWITCHALOT
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_SWITCHALOT
    viCashmin = 200
    viCashmax = 800
    vrSound_hit = yeti_sound_hit
@@ -64,6 +65,10 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
+
+   % 1 in x chance to cast a spell.
+   piSpellChance = 2
+   piMax_mana = 40
 
 messages:
 
@@ -141,7 +146,7 @@ messages:
    MonsterCastSpell()
    {
       local oSpell;
-      if Random(1,SPELL_CHANCE) = 1
+      if Random(1,piSpellChance) = 1
          AND Send(poOwner,@IsEnchanted,#what=$)
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=yeti_cast_sound);

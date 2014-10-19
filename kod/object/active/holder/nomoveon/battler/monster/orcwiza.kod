@@ -13,10 +13,6 @@ OrcWizard is Monster
 constants:
 
    include blakston.khd
-   
-   SPELL_CHANCE = 10
-   SPELL_RANGE_SQUARED = 666
-   MANA_REGEN_TIME = 1000
 
    ANIM_CASTARMS = 2
    ANIM_CASTSTAFF = 3
@@ -70,7 +66,8 @@ classvars:
    viLevel = 80
    viDifficulty = 7
    viKarma = -60
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = -800
    viCashmax = 800
    viWimpy = 3
@@ -83,32 +80,10 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piMana = 10
-   ptMana = $
+
+   piSpellPower = 75
 
 messages:
-
-   ManaTimer()
-   {
-      piMana = piMana + 1;
-      if piMana >=10
-      {
-    ptMana = $;
-    return;
-      }
-      ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
-      return;
-   }
-
-   Delete()
-   {
-      if ptMana <> $
-      {
-    deletetimer(ptMana);
-    ptMana = $;
-      }
-      propagate;
-   }
 
    Constructed()
    {
@@ -116,6 +91,11 @@ messages:
                         [ATCK_WEAP_PIERCE, 40 ],
                         [ATCK_WEAP_SLASH, 40 ],
                         [-ATCK_SPELL_HOLY, -25 ] ];
+
+      plSpellBook = [ [SID_SLITHERBOLT,5,40], [SID_KILLING_FIELDS,10,50],
+                      [SID_PURGE,4,85], [SID_MANA_BOMB,6,90],
+                      [SID_FORGET,4,100] ];
+
       propagate;
    }
 
@@ -131,7 +111,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -156,112 +136,48 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_STAND);
+         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_ATTACK_START,2,
+                   FRAME_ATTACK_END,2,FRAME_STAND);
 
          return;
-      } 
+      }
 
       if piAnimation = ANIM_CASTARMS
       {
-         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_CASTARMS_START,2,FRAME_CASTARMS_END,2,FRAME_STAND);
+         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_CASTARMS_START,2,
+                   FRAME_CASTARMS_END,2,FRAME_STAND);
 
          return;
-      } 
+      }
 
       if piAnimation = ANIM_CASTSTAFF
       {
-         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_CASTSTAFF_START,2,FRAME_CASTSTAFF_END,2,FRAME_STAND);
+         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_CASTSTAFF_START,2,
+                   FRAME_CASTSTAFF_END,2,FRAME_STAND);
 
          return;
-      } 
+      }
 
       propagate;
    }
 
-    MonsterCastSpell()
-    {
-      local iSpell, iBase, oSpell, iManaCost, iRandom, lTargets;
-
-      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
-      if random(1,iBase) <> 1
+   MonsterCastAnimation(iSpellNum=$)
+   "If a monster has a special cast animation, call this."
+   {
+      if iSpellNum = SID_KILLING_FIELDS
+         OR iSpellNum = SID_MANA_BOMB
       {
-         return FALSE;
-      }
-
-      iRandom = random(1,100);
-      
-      if iRandom < 40
-      {
-         iSpell = SID_SLITHERBOLT;
-         iManaCost = 5;
-         piAnimation = ANIM_CASTSTAFF;
+         piAnimation = ANIM_CASTARMS;
       }
       else
       {
-         if iRandom < 50
-         {
-            iSpell = SID_KILLING_FIELDS;
-            iManaCost = 10;
-            piAnimation = ANIM_CASTARMS;
-         }
-         else
-         {
-            if iRandom < 85
-            {
-               iSpell = SID_PURGE;
-               iManaCost = 4;
-               piAnimation = ANIM_CASTSTAFF;
-            }
-            else
-            {
-               if iRandom < 90
-               {
-                  iSpell = SID_MANA_BOMB;
-                  iManaCost = 6;
-                  piAnimation = ANIM_CASTARMS;
-               }
-               else
-               {
-                  iSpell = SID_FORGET;
-                  iManaCost = 4;
-                  piAnimation = ANIM_CASTSTAFF;
-               }
-            }
-         }
-      }
-              
-      if piMana < iManaCost
-      {
-         return FALSE;
-      }
-
-      piMana = piMana - iManaCost;
-
-      if piMana < 10
-      {
-         ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+         piAnimation = ANIM_CASTSTAFF;
       }
 
       Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;             
-    
-      oSpell = send(SYS,@FindSpellByNum,#num=iSpell);
+      piAnimation = ANIM_NONE;
 
-      if send(oSpell,@GetNumSpellTargets) > 0
-         AND NOT send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-      {
-         return FALSE;
-      }
-
-      lTargets = send(oSpell,@GetTargets,#who=self,#lTargets=[poTarget]);
-
-      if send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,#iSpellPower=75)
-         AND send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#litems=lTargets)
-      {
-         send(oSpell,@CastSpell,#who=self,#ltargets=lTargets,#iSpellPower=75);
-      }
-
-      return TRUE;
+      return;
    }
 
    IsWizard()
@@ -276,10 +192,10 @@ messages:
          return FALSE;
       }
 
-      if isClass(target,&Orc)          
-         OR isClass(target,&CaveOrc)
-         OR isClass(target,&OrcPitBoss)
-         OR isClass(target,&OrcWizard)
+      if IsClass(target,&Orc)
+         OR IsClass(target,&CaveOrc)
+         OR IsClass(target,&OrcPitBoss)
+         OR IsClass(target,&OrcWizard)
       {
          return TRUE;
       }
@@ -289,14 +205,13 @@ messages:
 
    IsFrightenedOf(target=$)
    {
-      if target <> $ AND isClass(target,&ShadowBeast)
+      if target <> $ AND IsClass(target,&ShadowBeast)
       {
          return TRUE;
       }
 
       return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

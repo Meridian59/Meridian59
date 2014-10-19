@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   ANIM_CAST = 2     %% cast spell animation.             
+   ANIM_CAST = 2     %% Cast spell animation.
 
 resources:
 
@@ -22,12 +22,13 @@ resources:
    XeoAir_koc_name_rsc = "ve'xeo'chicatl"
    XeoAir_icon_rsc = Xeo.bgf
    XeoAir_desc_rsc = \
-      "Before you is a ve'xeochicatl, a fearsome monster given life by the chaotic "
-      "magic of the Meridian.  The ve'xeochicatl is the embodiment of destruction, "
-      "a violent monster that seems uncontrollable.  These monsters feed off of "
-      "the magic of the lands which makes them very powerful.  Rumors abound "
-      "about the origin of these monsters, but you have little time to contemplate "
-      "these rumors in the presence of such destructive power!"
+      "Before you is a ve'xeochicatl, a fearsome monster given life by the "
+      "chaotic magic of the Meridian.  The ve'xeochicatl is the embodiment of "
+      "destruction, a violent monster that seems uncontrollable.  These "
+      "monsters feed off of the magic of the lands which makes them very "
+      "powerful.  Rumors abound about the origin of these monsters, but you "
+      "have little time to contemplate these rumors in the presence of "
+      "such destructive power!"
 
    XeoAir_sound_aware = xeo4awr.wav
 
@@ -35,7 +36,7 @@ resources:
 
    vrName = XeoAir_name_rsc
    vrKocName = XeoAir_koc_name_rsc
-   
+
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 150
    viDifficulty = 7
@@ -45,7 +46,7 @@ resources:
 properties:
 
    piAnimation = ANIM_NONE
-   piMana = 30
+   piMax_Mana = 30
 
    % What do we drop on death?
    pcTreasureItem = &SkyHeartStone
@@ -59,44 +60,14 @@ messages:
                         [-ATCK_SPELL_SHOCK, 110 ],
                         [-ATCK_SPELL_QUAKE, 100 ]
                       ];
-                        
-      piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKY);
+
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKY);
+
+      plSpellBook = [ [SID_LIGHTNING,3,50], [SID_WINDS,5,60],
+                      [SID_LIGHTNINGWALL,10,70], [SID_FLASH,1,100] ];
 
       propagate;
    }
-
-   ChooseSpell()
-   {
-      local iRandom;
-
-      iRandom = random(1,100);
-
-      if iRandom < 60
-      {
-         return [SID_LIGHTNING, 3];
-      }
-      else
-      {
-         if iRandom < 70
-         {
-            return [SID_WINDS, 5];
-         }
-         else
-         {
-            if (iRandom < 80) and (Send(self,@CanCastWallSpell))
-            {
-               return [SID_LIGHTNINGWALL, 10];
-            }
-            else
-            {
-               return [SID_FLASH, 1];
-            }
-         }
-      }
-
-      return $;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

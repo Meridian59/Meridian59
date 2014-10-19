@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   ANIM_CAST = 2     %% cast spell animation.             
+   ANIM_CAST = 2     %% Cast spell animation.
 
 resources:
 
@@ -22,12 +22,13 @@ resources:
    XeoFire_koc_name_rsc = "ro'xeo'chicatl"
    XeoFire_icon_rsc = Xeo.bgf
    XeoFire_desc_rsc = \
-      "Before you is a ro'xeochicatl, a fearsome monster given life by the chaotic "
-      "magic of the Meridian.  The ro'xeochicatl is the embodiment of destruction, "
-      "a violent monster that seems uncontrollable.  These monsters feed off of "
-      "the magic of the lands which makes them very powerful.  Rumors abound "
-      "about the origin of these monsters, but you have little time to contemplate "
-      "these rumors in the presence of such destructive power!"
+      "Before you is a ro'xeochicatl, a fearsome monster given life by the "
+      "chaotic magic of the Meridian.  The ro'xeochicatl is the embodiment of "
+      "destruction, a violent monster that seems uncontrollable.  These "
+      "monsters feed off of the magic of the lands which makes them very "
+      "powerful.  Rumors abound about the origin of these monsters, but you "
+      "have little time to contemplate these rumors in the presence of "
+      "such destructive power!"
 
    XeoFire_sound_aware = xeo3awr.wav
 
@@ -35,7 +36,7 @@ resources:
 
    vrName = XeoFire_name_rsc
    vrKocName = XeoFire_koc_name_rsc
-   
+
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 170
    viDifficulty = 7
@@ -45,7 +46,6 @@ resources:
 properties:
 
    piAnimation = ANIM_NONE
-   piMana = 20
 
    % What do we drop on death?
    pcTreasureItem = &RedHeartStone
@@ -59,37 +59,14 @@ messages:
                         [ATCK_WEAP_MAGIC, -10 ],
                         [-ATCK_SPELL_QUAKE, 100 ]
                       ];
-         
-      piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_RED);
+
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_RED);
+
+      plSpellBook = [ [SID_FIREBALL,2,60], [SID_FIREWALL,10,70],
+                      [SID_DEMENT,3,100] ];
 
       propagate;
    }
-
-   ChooseSpell()
-   {
-      local iRandom;
-
-      iRandom = random(1,100);
-     
-      if iRandom < 60
-      {
-         return [SID_FIREBALL, 2];
-      }
-      else
-      {
-         if (iRandom < 70) and (Send(self,@CanCastWallSpell))
-         {
-            return [SID_FIREWALL, 10];
-         }
-         else
-         {
-            return [ SID_DEMENT, 3];
-         }
-      }
-
-      return $;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

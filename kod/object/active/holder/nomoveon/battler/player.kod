@@ -9385,7 +9385,6 @@ messages:
       return;
    }
 
-
    SetWindowOverlay(what = $)
    "Sends a message to the client about a window overlay, and adds <what> "
    "to plWindow_overlays."
@@ -9936,11 +9935,13 @@ messages:
                Send(oSoldierShield,@SlingOnBack,#report=FALSE);
                bSoldierShieldSlung = TRUE;
 
-               % Now restore the first-person view of other shield if we're using one
+               % Now restore the first-person view of other shield
+               % if we're using one
                for n in plUsing
                {
                   if (IsClass(n,&Shield)
-                     AND NOT IsClass(n,&SoldierShield))
+                     AND NOT IsClass(n,&SoldierShield)
+                     AND NOT IsClass(n,&Torch))
                   {
                      Send(self,@SetWindowOverlay,#what=n);
                   }

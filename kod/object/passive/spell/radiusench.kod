@@ -537,7 +537,7 @@ messages:
          AND IsClass(target,&Battler)
          AND IsClass(source,&Battler)
          AND ((IsClass(source,&User)
-              AND Send(source,@AllowPlayerAttack,#victim=target,#report=FALSE))
+              AND Send(source,@AllowPlayerAttack,#victim=target,#report=FALSE,#spell_obj=self))
            OR (IsClass(source,&Monster)
                AND IsClass(target,&User)))
       {

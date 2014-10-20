@@ -12,725 +12,1089 @@ QuestX is PassiveObject
 
 constants:
 
-	include blakston.khd
-	include protocol.khd
-	
+   include blakston.khd
+   include protocol.khd
+
 resources:
 
 classvars:
 
 properties:
 
-   piQuestTemplateIndex    = 0				% index of the applicable quest template in QuestEngine::plQuestTemplates
-   plQuesters              = $				% list of questers participating
-   piQuestNodeCounter      = 0				% which node of the quest we're currently on in quest template's plQuestNodes
-   poQuestNode             = $				% the current questnode object
-%  plQuestNodes            = $				% local list of quest node indices, to allow random order of traversal (not yet implemented)
+   % Index of the applicable quest template in QuestEngine::plQuestTemplates
+   piQuestTemplateIndex    = 0
 
-   plPlayerRestrict2       = $            % we keep a copy here so that other quests can modify the defaults read from the template
+   % List of questers participating
+   plQuesters              = $
+
+   % Which node of the quest we're currently on in quest template's plQuestNodes
+   piQuestNodeCounter      = 0
+
+   % The current questnode object
+   poQuestNode             = $
+
+   % local list of quest node indices, to allow random order
+   % of traversal (NOT yet implemented)
+   %  plQuestNodes            = $
+
+   % We keep a copy here so that other quests can modify the defaults
+   % read from the template
+   plPlayerRestrict2       = $
 
 messages:
 
-Constructor()
-{
-	propagate;
-}
-
-%% Init()
-%	Returns template_index if successful, 0 if unsuccessful
-%%
-Init( template_index = 0, report = FALSE )
-{
-	local iFirstNodeTemplateIndex, bSuccess;
-
-	if( Send( send( SYS, @GetQuestEngine ), @IsValidQuestTemplate, #index = template_index ) <> 1 )
-	{
-		return 0;
-	}
-
-	piQuestTemplateIndex = template_index;
-
-   plPlayerRestrict2 = send(SYS,@listcopy,#source=send( send( SYS, @GetQuestEngine ), @GetQuestPlayerRestrictions2,
-                        #index = piQuestTemplateIndex ));
-
-	% create and initialize first node
-	piQuestNodeCounter = 1;
-	iFirstNodeTemplateIndex = Send( send( SYS, @GetQuestEngine ), @GetNextQuestNode, #quest_template = piQuestTemplateIndex ); 
-	poQuestNode = Create( &QuestNode );
-	bSuccess = send( poQuestNode, @Init, #index = iFirstNodeTemplateIndex, #owning_quest = self, #waiting_for_players = TRUE );
-
-	if( bSuccess = 0 )
-	{
-		DEBUG( "Trouble creating questnode of type ",iFirstNodeTemplateIndex,"!" );
-	}
-	else
-	{
-	   if report {
-		   debug( "Quest created.  Begin at room #", send( send( send( poQuestNode, @GetDestNPC ), @GetOwner ), @GetRoomNum ) );
-		   debug( "First node is",iFirstNodeTemplateIndex );
-		}
-	}
-
-	return template_index;
-}
-
-%% CheckPlayerCriteria()
-%	Return TRUE if player eligible, otherwise FALSE
-%%
-CheckPlayerCriteria( quester_wannabe = $ )
-{
-   local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester, iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail,\
-      iRecentTime, iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon;
-
-   oQuestEngine = send( SYS, @GetQuestEngine );
-   iPlayerRestrict = send(oQuestEngine, @GetQuestPlayerRestrictions, #index = piQuestTemplateIndex );
-   oCurrentNPC = send( poQuestNode, @GetDestNPC );
-
-   bDebug = send( oQuestEngine,@GetDebugStatus);
-
-   if bDebug { debug("checking restrictions on a quest of type ",piQuestTemplateIndex," for ",send(quester_wannabe,@GetName)); }
-
-   % never assign a quest to the same person twice!
-   if bDebug > 1 { debug("checking that ",send(quester_wannabe,@GetName)," isn't already on a quest of type ",piQuestTemplateIndex); }
-   for oQuest in nth(send(oQuestEngine,@GetQuestTemplate,#index=piQuestTemplateIndex),QT_ACTIVE_QUESTS) {
-      for oQuester in send(oQuest,@GetQuesters) {
-         %if bDebug { debug("Found a quest assigned to ",send(oQuester,@getName)); }
-         if quester_wannabe = oQuester {
-            if bDebug { debug("failed duplicate quest check."); }
-            return FALSE;
-         }
-      }
-   }
-   
-   if( iPlayerRestrict & Q_PLAYER_KARMA_MASK )		% are there karma restrictions?
+   Constructor()
    {
-      if bDebug > 1 { debug("Checking karma restrictions."); }
-      iRestrict = (iPlayerRestrict & Q_PLAYER_KARMA_MASK);
-      if send( oCurrentNPC, @KarmaSame, #who = quester_wannabe )
+      propagate;
+   }
+
+   Init(template_index=0,report=FALSE)
+   "Returns template_index if successful, 0 if unsuccessful."
+   {
+      local iFirstNodeTemplateIndex, bSuccess;
+
+      if (Send(Send(SYS,@GetQuestEngine),@IsValidQuestTemplate,
+               #index=template_index) <> 1)
       {
-         if( iRestrict = Q_PLAYER_KARMA_DIFFERENT )
-         {
-            if bDebug { debug("failed Q_PLAYER_KARMA_DIFFERENT."); }
-            return FALSE;
-         }
+         return 0;
+      }
+
+      piQuestTemplateIndex = template_index;
+
+      plPlayerRestrict2 = Send(SYS,@ListCopy,
+                              #source=Send(Send(SYS,@GetQuestEngine),
+                              @GetQuestPlayerRestrictions2,
+                              #index=piQuestTemplateIndex));
+
+      % Create and initialize first node
+      piQuestNodeCounter = 1;
+      iFirstNodeTemplateIndex = Send(Send(SYS,@GetQuestEngine),
+                     @GetNextQuestNode,#quest_template=piQuestTemplateIndex);
+      poQuestNode = Create(&QuestNode);
+      bSuccess = Send(poQuestNode,@Init,#index=iFirstNodeTemplateIndex,
+                     #owning_quest=self,#waiting_for_players=TRUE);
+
+      if (bSuccess = 0)
+      {
+         Debug("Trouble creating questnode of type ",
+               iFirstNodeTemplateIndex,"!");
       }
       else
       {
-         if( iRestrict = Q_PLAYER_KARMA_SAME )
+         if report
          {
-            if bDebug { debug("failed Q_PLAYER_KARMA_SAME."); }
-            return FALSE;
+            Debug("Quest created. Begin at room #",Send(Send(Send(poQuestNode,
+                  @GetDestNPC),@GetOwner),@GetRoomNum));
+            Debug( "First node is",iFirstNodeTemplateIndex );
          }
       }
-      iKarma = send( quester_wannabe, @GetKarma );
-      if( ( iRestrict = Q_PLAYER_KARMA_GOOD ) AND ( iKarma < 10 ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_KARMA_GOOD."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_KARMA_EVIL ) AND ( iKarma > -10 ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_KARMA_EVIL."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_KARMA_NEUTRAL ) AND ( abs( iKarma ) > 10 ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_KARMA_NEUTRAL."); }
-         return FALSE;
-      }
+
+      return template_index;
    }
 
-   if( iPlayerRestrict & Q_PLAYER_FACTION_MASK )   % are there faction restrictions?
+   CheckPlayerCriteria(quester_wannabe=$)
+   "Return TRUE if player eligible, otherwise FALSE."
    {
-      if bDebug > 1 { debug("checking faction restrictions"); }
-      iRestrict = (iPlayerRestrict & Q_PLAYER_FACTION_MASK);
+      local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester,
+            iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail, iRecentTime,
+            iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon;
 
-      iFaction = send( quester_wannabe, @GetFaction );
-      if( ( iRestrict = Q_PLAYER_FACTION_DUKE ) AND ( iFaction <> FACTION_DUKE ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_DUKE."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_FACTION_NEUTRAL ) AND ( iFaction <> FACTION_NEUTRAL ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_NEUTRAL."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_FACTION_PRINCESS ) AND ( iFaction <> FACTION_PRINCESS ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_PRINCESS."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_FACTION_REBEL ) AND ( iFaction <> FACTION_REBEL ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_REBEL."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_FACTION_SAME ) AND ( iFaction <> send( oCurrentNPC, @GetFaction ) ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_SAME."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_FACTION_DIFFERENT ) AND ( iFaction = send( oCurrentNPC, @GetFaction ) ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_DIFFERENT."); }
-         return FALSE;
-      }
-      iPower = Send( send( SYS, @GetParliament ), @GetPower, #faction = iFaction );
-      if( ( iRestrict = Q_PLAYER_FACTION_IN ) AND ( iPower < FACTION_IN_POWER ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_IN."); }
-         return FALSE;
-      }
-      if( ( iRestrict = Q_PLAYER_FACTION_OUT ) AND ( iPower > FACTION_OUT_POWER ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_FACTION_OUT."); }
-         return FALSE;
-      }
-   }
+      oQuestEngine = Send( SYS, @GetQuestEngine );
+      iPlayerRestrict = Send(oQuestEngine,@GetQuestPlayerRestrictions,
+                              #index=piQuestTemplateIndex);
+      oCurrentNPC = Send(poQuestNode,@GetDestNPC);
 
-   if( iPlayerRestrict & Q_PLAYER_KILL_MASK )	   % are there PK restrictions?
-   {
-      if bDebug > 1 { debug("checking pk restrictions"); }
-      iRestrict = (iPlayerRestrict & Q_PLAYER_KILL_MASK);
-      if (iRestrict & Q_PLAYER_NEWBIE) and
-               (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE) = PFLAG_PKILL_ENABLE)
+      bDebug = Send(oQuestEngine,@GetDebugStatus);
+
+      if bDebug
       {
-         if bDebug { debug("failed Q_PLAYER_NEWBIE."); }
-         return FALSE;
+         Debug("Checking restrictions on a quest of type ",piQuestTemplateIndex,
+               " for ",Send(quester_wannabe,@GetName));
       }
-      if (iRestrict & Q_PLAYER_NOTNEWBIE) and 
-               (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE) <> PFLAG_PKILL_ENABLE)
+
+      % Never assign a quest to the same person twice!
+      if bDebug > 1
       {
-         if bDebug { debug("failed Q_PLAYER_NOTNEWBIE."); }
-         return FALSE;
+         Debug("Checking that ",Send(quester_wannabe,@GetName),
+               " isn't already on a quest of type ",piQuestTemplateIndex);
       }
-      if (iRestrict & Q_PLAYER_MURDERER) and 
-               (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_MURDERER) <> PFLAG_MURDERER)
+
+      for oQuest in Nth(Send(oQuestEngine,@GetQuestTemplate,
+                              #index=piQuestTemplateIndex),QT_ACTIVE_QUESTS)
       {
-         if bDebug { debug("failed Q_PLAYER_MURDERER."); }
-         return FALSE;
-      }
-      %if ((iRestrict = Q_PLAYER_NOTMURDERER) or (iRestrict = Q_PLAYER_LAWFUL)) and 
-      if (iRestrict & Q_PLAYER_NOTMURDERER) and 
-               (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_MURDERER) = PFLAG_MURDERER)
-      {
-         if bDebug { debug("failed Q_PLAYER_NOTMURDERER/Q_PLAYER_LAWFUL."); }
-         return FALSE;
-      }
-      if (iRestrict & Q_PLAYER_OUTLAW) and 
-               (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_OUTLAW) <> PFLAG_OUTLAW)
-      {
-         if bDebug { debug("failed Q_PLAYER_OUTLAW."); }
-         return FALSE;
-      }
-      %if ((iRestrict = Q_PLAYER_NOTOUTLAW) or (iRestrict = Q_PLAYER_LAWFUL)) and 
-      if (iRestrict & Q_PLAYER_NOTOUTLAW)
-      {
-         if send(SYS,@IsPKAllowed)
+         for oQuester in Send(oQuest,@GetQuesters)
          {
-            if (send(quester_wannabe,@checkplayerflag,#flag=PFLAG_OUTLAW) = PFLAG_OUTLAW)
+            %if bDebug
+            %{
+            %   Debug("Found a quest assigned to ",Send(oQuester,@getName));
+            %}
+            if quester_wannabe = oQuester
             {
-               if bDebug { debug("failed Q_PLAYER_NOTOUTLAW/Q_PLAYER_LAWFUL."); }
+               if bDebug
+               {
+                  Debug("failed duplicate quest check.");
+               }
+
+               return FALSE;
+            }
+         }
+      }
+
+      % Are there karma restrictions?
+      if (iPlayerRestrict & Q_PLAYER_KARMA_MASK)
+      {
+         if bDebug > 1
+         {
+            Debug("Checking karma restrictions.");
+         }
+
+         iRestrict = (iPlayerRestrict & Q_PLAYER_KARMA_MASK);
+         if Send(oCurrentNPC,@KarmaSame,#who=quester_wannabe)
+         {
+            if (iRestrict = Q_PLAYER_KARMA_DIFFERENT)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_PLAYER_KARMA_DIFFERENT.");
+               }
+
                return FALSE;
             }
          }
          else
          {
-            % substitute for outlaw status in happyland
-            if send(quester_wannabe,@IsEnchanted,#byClass=&Boon)
+            if (iRestrict = Q_PLAYER_KARMA_SAME)
             {
-               bHasNegativeBoon = FALSE;
-               for i in send(quester_wannabe,@GetEnchantmentList)
+               if bDebug
                {
-                  if isClass(nth(i,2),&Boon)
+                  Debug("failed Q_PLAYER_KARMA_SAME.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         iKarma = Send(quester_wannabe,@GetKarma);
+         if ((iRestrict = Q_PLAYER_KARMA_GOOD)
+            AND (iKarma < 10))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_KARMA_GOOD.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_KARMA_EVIL)
+            AND (iKarma > -10))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_KARMA_EVIL.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_KARMA_NEUTRAL)
+            AND (Abs(iKarma) > 10))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_KARMA_NEUTRAL.");
+            }
+
+            return FALSE;
+         }
+      }
+
+      % Are there faction restrictions?
+      if (iPlayerRestrict & Q_PLAYER_FACTION_MASK)
+      {
+         if bDebug > 1
+         {
+            Debug("checking faction restrictions");
+         }
+
+         iRestrict = (iPlayerRestrict & Q_PLAYER_FACTION_MASK);
+         iFaction = Send(quester_wannabe,@GetFaction);
+
+         if ((iRestrict = Q_PLAYER_FACTION_DUKE)
+            AND (iFaction <> FACTION_DUKE))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_DUKE.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_NEUTRAL)
+            AND (iFaction <> FACTION_NEUTRAL))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_NEUTRAL.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_PRINCESS)
+            AND (iFaction <> FACTION_PRINCESS))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_PRINCESS.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_REBEL)
+            AND (iFaction <> FACTION_REBEL))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_REBEL.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_SAME)
+            AND (iFaction <> Send(oCurrentNPC,@GetFaction)))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_SAME.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_DIFFERENT)
+            AND (iFaction = Send(oCurrentNPC,@GetFaction)))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_DIFFERENT.");
+            }
+
+            return FALSE;
+         }
+
+         iPower = Send(Send(SYS,@GetParliament),@GetPower,#faction=iFaction);
+         if ((iRestrict = Q_PLAYER_FACTION_IN)
+            AND (iPower < FACTION_IN_POWER))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_IN.");
+            }
+
+            return FALSE;
+         }
+
+         if ((iRestrict = Q_PLAYER_FACTION_OUT)
+            AND (iPower > FACTION_OUT_POWER))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_FACTION_OUT.");
+            }
+
+            return FALSE;
+         }
+      }
+
+      % Are there PK restrictions?
+      if (iPlayerRestrict & Q_PLAYER_KILL_MASK)
+      {
+         if bDebug > 1
+         {
+            Debug("checking pk restrictions");
+         }
+
+         iRestrict = (iPlayerRestrict & Q_PLAYER_KILL_MASK);
+         if (iRestrict & Q_PLAYER_NEWBIE)
+         AND (Send(quester_wannabe,@CheckPlayerFlag,
+                  #flag=PFLAG_PKILL_ENABLE) = PFLAG_PKILL_ENABLE)
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NEWBIE.");
+            }
+
+            return FALSE;
+         }
+
+         if (iRestrict & Q_PLAYER_NOTNEWBIE)
+            AND (Send(quester_wannabe,@CheckPlayerFlag,
+                     #flag=PFLAG_PKILL_ENABLE) <> PFLAG_PKILL_ENABLE)
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NOTNEWBIE.");
+            }
+
+            return FALSE;
+         }
+
+         if (iRestrict & Q_PLAYER_MURDERER)
+            AND (Send(quester_wannabe,@CheckPlayerFlag,
+                     #flag=PFLAG_MURDERER) <> PFLAG_MURDERER)
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_MURDERER.");
+            }
+
+            return FALSE;
+         }
+
+         if (iRestrict & Q_PLAYER_NOTMURDERER)
+            AND (Send(quester_wannabe,@CheckPlayerFlag,
+                     #flag=PFLAG_MURDERER) = PFLAG_MURDERER)
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NOTMURDERER/Q_PLAYER_LAWFUL.");
+            }
+
+            return FALSE;
+         }
+
+         if (iRestrict & Q_PLAYER_OUTLAW)
+            AND (Send(quester_wannabe,@CheckPlayerFlag,
+                     #flag=PFLAG_OUTLAW) <> PFLAG_OUTLAW)
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_OUTLAW.");
+            }
+
+            return FALSE;
+         }
+
+         if (iRestrict & Q_PLAYER_NOTOUTLAW)
+         {
+            if Send(SYS,@IsPKAllowed)
+            {
+               if (Send(quester_wannabe,@CheckPlayerFlag,
+                        #flag=PFLAG_OUTLAW) = PFLAG_OUTLAW)
+               {
+                  if bDebug
                   {
-                     if nth(i,3) < 0
+                     Debug("failed Q_PLAYER_NOTOUTLAW/Q_PLAYER_LAWFUL.");
+                  }
+
+                  return FALSE;
+               }
+            }
+            else
+            {
+               % Substitute for outlaw status in happyland
+               if Send(quester_wannabe,@IsEnchanted,#byClass=&Boon)
+               {
+                  bHasNegativeBoon = FALSE;
+                  for i in Send(quester_wannabe,@GetEnchantmentList)
+                  {
+                     if IsClass(Nth(i,2),&Boon)
                      {
-                        bHasNegativeBoon = TRUE;
-                        break;
+                        if Nth(i,3) < 0
+                        {
+                           bHasNegativeBoon = TRUE;
+                           break;
+                        }
                      }
                   }
-               }
-               if bHasNegativeBoon
-               {
-                  if bDebug { debug("failed Q_PLAYER_NOTOUTLAW/Q_PLAYER_LAWFUL through happyland means (negative boon)."); }
-                  return FALSE;
+                  if bHasNegativeBoon
+                  {
+                     if bDebug
+                     {
+                        Debug("failed Q_PLAYER_NOTOUTLAW/Q_PLAYER_LAWFUL ",
+                              "through happyland means (negative boon).");
+                     }
+
+                     return FALSE;
+                  }
                }
             }
          }
       }
-   }
 
-   if( iPlayerRestrict & Q_PLAYER_QUEST_MASK )   % are there quest history restrictions?
-   {
-      if bDebug > 1 { debug("checking quest history restrictions."); }
-      iRecentTime = send(oQuestEngine,@GetQuestHistoryRecentTime);
-      iTime = send( quester_wannabe, @GetTimeLoggedIn );
-      iRestrict = (iPlayerRestrict & Q_PLAYER_QUEST_MASK);
-      lHistory = send( quester_wannabe, @GetQuestHistory, #index = piQuestTemplateIndex );
-
-      iSucceed = 0;
-      iFail = 0;
-      iHistory = 0;
-      if iTime < 0 { iTime = 0; }
-
-      if(lHistory <> $)
+      % Are there quest history restrictions?
+      if (iPlayerRestrict & Q_PLAYER_QUEST_MASK)
       {
-         iHistory = first(lHistory) & (~QUEST_HISTORY_MASK);
-         iSucceed = Nth(lHistory,2);
-         iFail = Nth(lHistory,3);
-      }
-
-      if( iSucceed = 0 )
-      {
-         iSucceed = - iRecentTime; % to handle case where TimeLoggedIn < iRecentTime.
-      }
-
-      if( iFail = 0 )
-      {
-         iFail = - iRecentTime; % to handle case where TimeLoggedIn < iRecentTime.
-      }
-      if bDebug > 1 { debug("time since failed", iTime-iFail); }
-      if bDebug > 1 { debug("time since succeeded", iTime-iSucceed); }
-
-      if( ( (iRestrict & Q_PLAYER_NOTSUCCEEDED_RECENTLY) = Q_PLAYER_NOTSUCCEEDED_RECENTLY ) AND
-               ( ( iTime - iSucceed ) < iRecentTime ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_NOTSUCCEEDED_RECENTLY."); }
-         return FALSE;
-      }
-      if( ( (iRestrict & Q_PLAYER_NOTFAILED_RECENTLY) = Q_PLAYER_NOTFAILED_RECENTLY ) AND
-               ( ( iTime - iFail ) < iRecentTime ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_NOTSUCCEEDED_RECENTLY."); }
-         return FALSE;
-      }
-
-%      if( ( iRestrict = Q_PLAYER_NOTTRIED_RECENTLY ) AND
-%	  ( ( ( iTime - iFail ) < iRecentTime ) OR ( ( iTime - iSucceed ) < iRecentTime ) ) )
-%      {
-%         return FALSE;
-%      }
-      if( ( (iRestrict & Q_PLAYER_NOTSUCCEEDED) = Q_PLAYER_NOTSUCCEEDED ) AND
-            ( ( iHistory & QUEST_HISTORY_SUCCESS ) <> 0 ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_NOTSUCCEEDED."); }
-         return FALSE;
-      }
-      if( ( (iRestrict & Q_PLAYER_NOTFAILED) = Q_PLAYER_NOTFAILED ) AND
-            ( ( iHistory & QUEST_HISTORY_FAILURE ) <> 0 ) )
-      {
-         if bDebug { debug("failed Q_PLAYER_NOTFAILED."); }
-         return FALSE;
-      }
-%      if( ( iRestrict = Q_PLAYER_NOTTRIED ) AND ( iHistory <> 0 ) )
-%      {
-%	 return FALSE;
-%      }
-   }
-
-   if( ( iPlayerRestrict & Q_PLAYER_INTRIGUING ) AND ( NOT send( quester_wannabe, @PlayerIsIntriguing ) ) )
-   {
-      if bDebug { debug("failed Q_PLAYER_INTRIGUING."); }
-      return FALSE;
-   }
-   
-   if  ( iPlayerRestrict & Q_PLAYER_GUILDMASTER ) AND
-         ( send(quester_wannabe, @GetGuild) = $ or
-         (send(send(quester_wannabe, @GetGuild),@getguildmaster) <> quester_wannabe) or
-         (not send(send(quester_wannabe, @GetGuild),@HasGuildColors)) )
-   {
-      if bDebug { debug("failed Q_PLAYER_GUILDMASTER."); }
-      return FALSE;
-   }
-
-   if bDebug > 1 { debug("checking plPlayerRestrict2 restrictions."); }
-   for iR2 in plPlayerRestrict2 {
-      if first(iR2) = Q_R2_QN_ASSIGNABLE {
-         if nth(iR2, 2) = FALSE {
-            return FALSE;
-         }
-      }
-      if first(iR2) = Q_R2_IS_GUILD_MEMBER_OF {
-         if (send(quester_wannabe,@GetGuild) <> nth(iR2, 2)) or
-               (nth(iR2, 2) = $)    % note that this means if quester's guild = $, we return false.
+         if bDebug > 1
          {
-            if bDebug { debug("failed Q_R2_IS_GUILD_MEMBER_OF."); }
-            return FALSE;
+            Debug("checking quest history restrictions.");
          }
-      }
-      if first(iR2) = Q_R2_IS_PLAYER {
-         if quester_wannabe <> nth(iR2, 2) {
-            if bDebug { debug("failed Q_R2_IS_PLAYER."); }
-            return FALSE;
-         }
-      }
-      if first(iR2) = Q_R2_HAS_SKILL {
-         if not send(quester_wannabe,@HasSkill,#num=nth(iR2, 2)) or
-               (send(quester_wannabe,@GetSkillAbility,#Skill_num=nth(iR2, 2)) < nth(iR2, 3))
+
+         iRecentTime = Send(oQuestEngine,@GetQuestHistoryRecentTime);
+         iTime = Send(quester_wannabe,@GetTimeLoggedIn);
+         iRestrict = (iPlayerRestrict & Q_PLAYER_QUEST_MASK);
+         lHistory = Send(quester_wannabe,@GetQuestHistory,
+                        #index=piQuestTemplateIndex);
+
+         iSucceed = 0;
+         iFail = 0;
+         iHistory = 0;
+         if iTime < 0
          {
-            if bDebug { debug("failed Q_R2_HAS_SKILL."); }
-            return FALSE;
+            iTime = 0;
          }
-      }
-      if first(iR2) = Q_R2_HAS_SPELL {
-         if not send(quester_wannabe,@HasSpell,#num=nth(iR2, 2)) or
-               (send(quester_wannabe,@GetSpellAbility,#Spell_num=nth(iR2, 2)) < nth(iR2, 3))
+
+         if (lHistory <> $)
          {
-            if bDebug { debug("failed Q_R2_HAS_SPELL."); }
-            return FALSE;
+            iHistory = First(lHistory) & (~QUEST_HISTORY_MASK);
+            iSucceed = Nth(lHistory,2);
+            iFail = Nth(lHistory,3);
          }
-      }
-      if first(iR2) = Q_R2_HAS_SPELL_SCHOOL {
-         if send(quester_wannabe,@GetNumSpellsInSchool,#school=nth(iR2, 2)) < nth(iR2, 3) {
-            if bDebug { debug("failed Q_R2_HAS_SPELL_SCHOOL."); }
-            return FALSE;
-         }
-      }
-      if first(iR2) = Q_R2_HAS_ITEM {
-         if not send(quester_wannabe,@PossessesA,#class=nth(iR2, 2))
-               and (send(quester_wannabe,@FindHoldingActive,#class=nth(iR2, 2)) = $)
+
+         if (iSucceed = 0)
          {
-            if bDebug { debug("failed Q_R2_HAS_ITEM."); }
-            return FALSE;
+            % To handle case where TimeLoggedIn < iRecentTime.
+            iSucceed = -iRecentTime;
          }
-      }
-      if first(iR2) = Q_R2_DOES_NOT_HAVE_ITEM {
-         if send(quester_wannabe,@PossessesA,#class=nth(iR2, 2))
-               OR (send(quester_wannabe,@FindHoldingActive,#class=nth(iR2, 2)) <> $)
+
+         if (iFail = 0)
          {
-            if bDebug { debug("failed Q_R2_DOES_NOT_HAVE_ITEM."); }
+            % To handle case where TimeLoggedIn < iRecentTime.
+            iFail = - iRecentTime;
+         }
+
+         if bDebug > 1
+         {
+            Debug("time since failed", iTime-iFail);
+            Debug("time since succeeded", iTime-iSucceed);
+         }
+
+
+         if (((iRestrict & Q_PLAYER_NOTSUCCEEDED_RECENTLY)
+               = Q_PLAYER_NOTSUCCEEDED_RECENTLY)
+            AND ((iTime - iSucceed) < iRecentTime))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NOTSUCCEEDED_RECENTLY.");
+            }
+
             return FALSE;
          }
-      }
-      if first(iR2) = Q_R2_USING_ITEM {
-         if not send(quester_wannabe,@IsUsingA,#class=nth(iR2, 2)) {
-            if bDebug { debug("failed Q_R2_USING_ITEM."); }
+
+         if (((iRestrict & Q_PLAYER_NOTFAILED_RECENTLY)
+               = Q_PLAYER_NOTFAILED_RECENTLY)
+         AND ((iTime - iFail) < iRecentTime))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NOTSUCCEEDED_RECENTLY.");
+            }
+
             return FALSE;
          }
-      }
-      if first(iR2) = Q_R2_HAS_HEALTH_LEVEL {
-         if send(quester_wannabe,@GetMaxHealth) < nth(iR2, 2) {
-            if bDebug { debug("failed Q_R2_HAS_HEALTH_LEVEL."); }
+
+         %if ((iRestrict = Q_PLAYER_NOTTRIED_RECENTLY)
+         %   AND (((iTime - iFail) < iRecentTime)
+         %      OR ((iTime - iSucceed) < iRecentTime)))
+         %{
+         %   return FALSE;
+         %}
+
+         if (((iRestrict & Q_PLAYER_NOTSUCCEEDED) = Q_PLAYER_NOTSUCCEEDED)
+            AND ((iHistory & QUEST_HISTORY_SUCCESS) <> 0))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NOTSUCCEEDED.");
+            }
+
             return FALSE;
          }
-      }
-      if first(iR2) = Q_R2_NUM_AMULETS {
-         if send(send(SYS,@GetNecromancerBalance),@GetNumAmulets) < nth(iR2, 2) {
-            if bDebug { debug("failed Q_R2_NUM_AMULETS."); }
+
+         if (((iRestrict & Q_PLAYER_NOTFAILED) = Q_PLAYER_NOTFAILED )
+            AND ((iHistory & QUEST_HISTORY_FAILURE) <> 0))
+         {
+            if bDebug
+            {
+               Debug("failed Q_PLAYER_NOTFAILED.");
+            }
+
             return FALSE;
          }
-         if send(quester_wannabe,@GetGuild) <> $ {
-            if bDebug { debug("failed Q_R2_NUM_AMULETS. - guilded"); }
-            return FALSE;
-         }
-         %oLich = send(send(SYS,@FindRoomByNum,#num=RID_GUILDH15),@FindHoldingActive,#class=&DeadLich);
-         %if oLich = $ or send(oLich,@GetNumAmulets) < nth(iR2, 2) {
-         %   if bDebug { debug("failed Q_R2_NUM_AMULETS."); }
+
+         %if ((iRestrict = Q_PLAYER_NOTTRIED) AND (iHistory <> 0))
+         %{
          %   return FALSE;
          %}
       }
+
+      % Can player join a faction?
+      if ((iPlayerRestrict & Q_PLAYER_INTRIGUING)
+         AND (NOT Send(quester_wannabe,@PlayerIsIntriguing)))
+      {
+         if bDebug
+         {
+            Debug("failed Q_PLAYER_INTRIGUING.");
+         }
+
+         return FALSE;
+      }
+
+      % Is player a guildmaster?
+      if (iPlayerRestrict & Q_PLAYER_GUILDMASTER)
+         AND (Send(quester_wannabe,@GetGuild) = $
+            OR (Send(Send(quester_wannabe,@GetGuild),@GetGuildMaster)
+                     <> quester_wannabe)
+            OR (NOT Send(Send(quester_wannabe,@GetGuild),@HasGuildColors)))
+      {
+         if bDebug
+         {
+            Debug("failed Q_PLAYER_GUILDMASTER.");
+         }
+
+         return FALSE;
+      }
+
+      if bDebug > 1
+      {
+         Debug("Checking plPlayerRestrict2 restrictions.");
+      }
+
+      for iR2 in plPlayerRestrict2
+      {
+         if First(iR2) = Q_R2_QN_ASSIGNABLE
+         {
+            if Nth(iR2, 2) = FALSE
+            {
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_IS_GUILD_MEMBER_OF
+         {
+            if (Send(quester_wannabe,@GetGuild) <> Nth(iR2, 2))
+               OR (Nth(iR2, 2) = $) % If quester's guild = $, we return false.
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_IS_GUILD_MEMBER_OF.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_IS_PLAYER
+         {
+            if quester_wannabe <> Nth(iR2, 2)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_IS_PLAYER.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_HAS_SKILL
+         {
+            if NOT Send(quester_wannabe,@HasSkill,#num=Nth(iR2, 2))
+               OR (Send(quester_wannabe,@GetSkillAbility,
+                        #Skill_num=Nth(iR2, 2)) < Nth(iR2, 3))
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_HAS_SKILL.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_HAS_SPELL
+         {
+            if NOT Send(quester_wannabe,@HasSpell,#num=Nth(iR2, 2))
+               OR (Send(quester_wannabe,@GetSpellAbility,
+                        #Spell_num=Nth(iR2, 2)) < Nth(iR2, 3))
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_HAS_SPELL.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_HAS_SPELL_SCHOOL
+         {
+            if Send(quester_wannabe,@GetNumSpellsInSchool,
+                     #school=Nth(iR2, 2)) < Nth(iR2, 3)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_HAS_SPELL_SCHOOL.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_HAS_ITEM
+         {
+            if NOT Send(quester_wannabe,@PossessesA,#class=Nth(iR2, 2))
+               AND (Send(quester_wannabe,@FindHoldingActive,
+                        #class=Nth(iR2, 2)) = $)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_HAS_ITEM.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_DOES_NOT_HAVE_ITEM
+         {
+            if Send(quester_wannabe,@PossessesA,#class=Nth(iR2, 2))
+               OR (Send(quester_wannabe,@FindHoldingActive,
+                        #class=Nth(iR2, 2)) <> $)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_DOES_NOT_HAVE_ITEM.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_USING_ITEM
+         {
+            if NOT Send(quester_wannabe,@IsUsingA,#class=Nth(iR2, 2))
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_USING_ITEM.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_HAS_HEALTH_LEVEL
+         {
+            if Send(quester_wannabe,@GetBaseMaxHealth) < Nth(iR2, 2)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_HAS_HEALTH_LEVEL.");
+               }
+
+               return FALSE;
+            }
+         }
+
+         if First(iR2) = Q_R2_NUM_AMULETS
+         {
+            if Send(Send(SYS,@GetNecromancerBalance),
+                     @GetNumAmulets) < Nth(iR2, 2)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_NUM_AMULETS.");
+               }
+
+               return FALSE;
+            }
+
+            if Send(quester_wannabe,@GetGuild) <> $
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_NUM_AMULETS. - guilded");
+               }
+
+               return FALSE;
+            }
+
+            %oLich = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
+            %              @FindHoldingActive,#class=&DeadLich);
+            %if oLich = $ or Send(oLich,@GetNumAmulets) < Nth(iR2, 2) {
+            %   if bDebug { Debug("failed Q_R2_NUM_AMULETS."); }
+            %   return FALSE;
+            %}
+         }
+      }
+
+      if bDebug
+      {
+         Debug("passed restrictions!");
+      }
+
+      return TRUE;
    }
 
-   if bDebug { debug("passed restrictions!"); }
-   return TRUE;
-}
+   ModifyPlayerRestrict2(restrict_type=$, inst_num=1, parm1=$, parm2=$)
+   "restrict_type chooses which restriction type to modify."
+   "inst_num chooses which instance of the restrict_type to modify if "
+   " there are more than one. Message returns TRUE if something changed, "
+   "FALSE otherwise. $ and invalid parameters are ignored."
+   {
+      local i;
 
-%%%%%%%%%%
-% modifies a player restriction
-%     restrict_type chooses which restriction type to modify
-%     inst_num chooses which instance of the restrict_type to modify, when there are more than one
-%
-%     returns TRUE if something changed,
-%             FALSE if not
-%
-%     $, invalid, or extraneous parameters are simply ignored
-%%
-ModifyPlayerRestrict2(restrict_type=$, inst_num=1, parm1=$, parm2=$)
-{
-   local i;
+      % Don't mess with a quest in progress!
+      if Send(poQuestNode,@GetStatus) <> QN_STATUS_WAITING_FOR_PLAYERS
+      {
+         return FALSE;
+      }
+      
+      if plPlayerRestrict2 = $
+      {
+         Debug("no player restrictions to modify!");
 
-   % don't mess with a quest in progress!
-   if send(poQuestNode,@GetStatus) <> QN_STATUS_WAITING_FOR_PLAYERS {
+         return FALSE;
+      }
+
+      i = 0;
+      while i < length(plPlayerRestrict2)
+      {
+         i = i + 1;
+         if First(Nth(plPlayerRestrict2,i)) = restrict_type
+         {
+            inst_num = inst_num - 1;
+            if inst_num = 0
+            {
+               if restrict_type = Q_R2_QN_ASSIGNABLE
+               {
+                  if (parm1 <> TRUE)
+                  {
+                     return FALSE;
+                  }
+               }
+               if restrict_type = Q_R2_IS_GUILD_MEMBER_OF
+               {
+                  if (parm1 = $) OR (NOT IsClass(parm1, &Guild))
+                  {
+                     return FALSE;
+                  }
+               }
+               if restrict_type = Q_R2_IS_PLAYER
+               {
+                  if (parm1 = $) OR (NOT IsClass(parm1, &Player))
+                  {
+                     return FALSE;
+                  }
+               }
+               if restrict_type = Q_R2_HAS_SKILL
+               {
+                  if (parm1 = $ and parm2 = $)
+                     OR (parm1 <> $ AND NOT IsClass(parm1, &Skill))
+                     OR (parm2 <> $ AND (parm2 < 1 or parm2 > 100))
+                  {
+                     return FALSE;
+                  }
+               }
+               if restrict_type = Q_R2_HAS_SPELL
+               {
+                  if (parm1 = $ and parm2 = $)
+                     OR (parm1 <> $ AND NOT IsClass(parm1, &Spell))
+                     OR (parm2 <> $ AND (parm2 < 1 or parm2 > 100))
+                  {
+                     return FALSE;
+                  }
+               }
+               if restrict_type = Q_R2_HAS_SPELL_SCHOOL
+               {
+                  if (parm1 = $ and parm2 = $)
+                  OR (parm1 <> $ AND (parm1 < 1 or parm1 > 7)) % Incl. dmspells
+                  OR (parm2 <> $ AND (parm2 < 1))
+                  {
+                     return FALSE;
+                  }
+               }
+
+               if Length(Nth(plPlayerRestrict2,i)) > 1
+               {
+                  if parm1 <> $
+                  {
+                     SetNth(Nth(plPlayerRestrict2,i),2,parm1);
+                  }
+                  if length(Nth(plPlayerRestrict2,i)) > 2
+                  {
+                     if parm2 <> $
+                     {
+                        SetNth(Nth(plPlayerRestrict2,i),3,parm2);
+                     }
+                  }
+               }
+
+               return TRUE;
+            }
+         }
+      }
+
       return FALSE;
    }
-   if plPlayerRestrict2 = $ {
-      debug("no player restrictions to modify!");
-      return FALSE;
-   }
 
-   i = 0;
-   while i < length(plPlayerRestrict2) {
-      i = i + 1;
-      if first(nth(plPlayerRestrict2,i)) = restrict_type {
-         inst_num = inst_num - 1;
-         if inst_num = 0 {
-            if restrict_type = Q_R2_QN_ASSIGNABLE {
-               if (parm1 <> TRUE) {
-                  return FALSE;
-               }
-            }
-            if restrict_type = Q_R2_IS_GUILD_MEMBER_OF {
-               if (parm1 = $) or (not isClass(parm1, &Guild)) {
-                  return FALSE;
-               }
-            }
-            if restrict_type = Q_R2_IS_PLAYER {
-               if (parm1 = $) or (not isClass(parm1, &Player)) {
-                  return FALSE;
-               }
-            }
-            if restrict_type = Q_R2_HAS_SKILL {
-               if (parm1 = $ and parm2 = $) or
-                     (parm1 <> $ and not isClass(parm1, &Skill)) or
-                     (parm2 <> $ and (parm2 < 1 or parm2 > 100))
-               {
-                  return FALSE;
-               }
-            }
-            if restrict_type = Q_R2_HAS_SPELL {
-               if (parm1 = $ and parm2 = $) or
-                     (parm1 <> $ and not isClass(parm1, &Spell)) or
-                     (parm2 <> $ and (parm2 < 1 or parm2 > 100))
-               {
-                  return FALSE;
-               }
-            }
-            if restrict_type = Q_R2_HAS_SPELL_SCHOOL {
-               if (parm1 = $ and parm2 = $) or
-                     (parm1 <> $ and (parm1 < 1 or parm1 > 7)) or    %within the range of valid spell schools - for now dmspell is a valid school - useful?
-                     (parm2 <> $ and (parm2 < 1))
-               {
-                  return FALSE;
-               }
-            }
-            if length(nth(plPlayerRestrict2,i)) > 1 {
-               if parm1 <> $ { setNth(nth(plPlayerRestrict2,i),2,parm1); }
-               if length(nth(plPlayerRestrict2,i)) > 2 {
-                  if parm2 <> $ { setNth(nth(plPlayerRestrict2,i),3,parm2); }
-               }
-            }
+   IsWaitingForActivation()
+   {
+      local i;
+
+      for i in plPlayerRestrict2
+      {
+         if (First(i) = Q_R2_QN_ASSIGNABLE)
+            AND (Nth(i,2) = FALSE)
+         {
             return TRUE;
          }
       }
+
+      return FALSE;
    }
-   return FALSE;
-}
 
-IsWaitingForActivation()
-{
-   local i;
-   for i in plPlayerRestrict2 {
-      if (first(i) = Q_R2_QN_ASSIGNABLE) and (nth(i,2) = FALSE) {
-         return TRUE;
-      }
-   }
-   return FALSE;
-}
-
-%% SetQuesters()
-%
-%%
-SetQuesters( questers = $ )
-{
-	plQuesters = questers;
-	return;
-}
-
-%% GetQuesters()
-%
-%%
-GetQuesters()
-{
-	return plQuesters;
-}
-
-QuestHasMoreNodes()
-{
-	if (Length(Nth(send(send(SYS, @GetQuestEngine),@GetQuestTemplate,#index = piQuestTemplateIndex),QT_QUEST_NODES))
-	         < (piQuestNodeCounter + 1) )
-	{
-		return FALSE;
-	}
-   return TRUE;
-}
-
-%% AssignNextNode()
-%
-%%
-AssignNextNode( current_NPC = $ )
-{
-	local oSNPC, oDNPC, iNextQuestNodeTemplate, bDebug;
-
-   bDebug = send(send( SYS, @GetQuestEngine ), @GetDebugStatus);
-
-	% bump quest node counter
-	piQuestNodeCounter = piQuestNodeCounter + 1;
-
-	% check if more nodes remain
-	iNextQuestNodeTemplate = send( send( SYS, @GetQuestEngine ), @GetNextQuestNode, #quest_template = piQuestTemplateIndex, #counter = piQuestNodeCounter );
-
-	% remove previous node from NPC's quest node list
-	send( current_NPC, @RemoveQuestNodeFromActiveList, #node = poQuestNode );
-
-	% if we're all done, clean up and quit
-	if( iNextQuestNodeTemplate = $ )
-	{
-		if bDebug { debug( "No more nodes in quest." ); }
-
-		send( poQuestNode, @Delete );
-		
-		% remove quest from list of active quests of this type
-		send( send( SYS, @GetQuestEngine ), @RemoveQuestFromActiveList, #quest_template = piQuestTemplateIndex, #done_quest = self );
-
-		Post( self, @Delete );
-		return;
-	}			
-
-	% initialize the next node
-	send( poQuestNode, @Init, #index = iNextQuestNodeTemplate, #owning_quest = self, #waiting_for_players = FALSE );
-
-	% tell next questnode to assign itself to players
-	send( poQuestNode, @Assign );
-	return;
-}
-
-%% SetQuestNode()
-%	Sets this quest's questnode object
-%%
-SetQuestNode( node_object = $ )
-{
-	poQuestNode = node_object;
-	return;
-}
-
-% returns FALSE if time expired (and cancels quest), TRUE if time left
-CheckDeadline( time = 0 )
-{
-   local iStatus, iTimeLeft, bDebug;
-   bDebug = send(send( SYS, @GetQuestEngine ), @GetDebugStatus);
-   if( time = 0 )
+   SetQuesters(questers = $)
    {
-      debug( "Quest: timelimit = 0?" );
+      plQuesters = questers;
       return;
    }
 
-   iTimeLeft = send( poQuestNode, @GetDeadline ) - time;
-
-   if( iTimeLeft < 1 ) 
+   GetQuesters()
    {
-      iStatus = send( poQuestNode, @GetStatus );
-      if( ( iStatus = QN_STATUS_IN_PROGRESS ) OR ( iStatus = QN_STATUS_AWAITING_MONSTER_DEATH ) )
+      return plQuesters;
+   }
+
+   QuestHasMoreNodes()
+   {
+      if (Length(Nth(Send(Send(SYS,@GetQuestEngine),@GetQuestTemplate,
+               #index=piQuestTemplateIndex),QT_QUEST_NODES))
+               < (piQuestNodeCounter + 1))
       {
-         if bDebug { debug( "No questtime left." ); }
-         send( poQuestNode, @DeadlineExpired );
-         send( self, @DeadlineExpired );
-         % should be true already, due to DeadlineExpired, but let's make sure
-         poQuestNode = $;
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   AssignNextNode(current_NPC = $)
+   {
+      local oSNPC, oDNPC, iNextQuestNodeTemplate, bDebug;
+
+      bDebug = Send(Send(SYS,@GetQuestEngine),@GetDebugStatus);
+
+      % Bump quest node counter.
+      piQuestNodeCounter = piQuestNodeCounter + 1;
+
+      % Check if more nodes remain.
+      iNextQuestNodeTemplate =
+            Send(Send(SYS,@GetQuestEngine),@GetNextQuestNode,
+                  #quest_template=piQuestTemplateIndex,
+                  #counter=piQuestNodeCounter);
+
+      % Remove previous node from NPC's quest node list.
+      Send(current_NPC,@RemoveQuestNodeFromActiveList,#node=poQuestNode);
+
+      % If we're all done, clean up and quit.
+      if (iNextQuestNodeTemplate = $)
+      {
+         if bDebug
+         {
+            Debug("No more nodes in quest.");
+         }
+
+         Send(poQuestNode,@Delete);
+
+         % Remove quest from list of active quests of this type.
+         Send(Send(SYS,@GetQuestEngine),@RemoveQuestFromActiveList,
+               #quest_template=piQuestTemplateIndex,#done_quest=self);
+
+         Post(self,@Delete);
+
          return;
       }
+
+      % Initialize the next node.
+      Send(poQuestNode,@Init,#index=iNextQuestNodeTemplate,
+            #owning_quest=self,#waiting_for_players=FALSE);
+
+      % Tell next questnode to assign itself to players.
+      Send(poQuestNode,@Assign);
+
       return;
    }
-   if bDebug { debug( "Still have questtime left:", iTimeLeft ); }
-   return;
-}
- 
-DeadlineExpired()
-{
-   local oQE, oNPC, bDebug;
-   
-   oQE = send(SYS, @GetQuestEngine);
-   bDebug = send(oQE,@GetDebugStatus);
-	if bDebug { debug( "Quest expiring." ); }
-	
-   if poQuestNode <> $
-   {
-	   % remove node from NPC's quest node list
-	   oNPC = send( poQuestNode, @GetDestNPC ); 
-	   if( oNPC <> $ )
-	   {
-		   send( oNPC, @RemoveQuestNodeFromActiveList, #node = poQuestNode );
-	   }
 
-	   % remove node from awaiting monster death list
-	   send( oQE, @RemoveQNFromAwaitingMonsterDeathList, #QN = poQuestNode );
-
-	   % clean up and quit
-   	send( poQuestNode, @Delete );
-	
-	   % remove quest from list of active quests of this type
-	   send( oQE, @RemoveQuestFromActiveList, #quest_template = piQuestTemplateIndex, #done_quest = self );
-   }
-   else
+   SetQuestNode(node_object=$)
+   "Sets this quest's questnode object."
    {
-%      DEBUG("Quest::DeadlineExpired: possible double-expiry going on...");
+      poQuestNode = node_object;
+      return;
    }
 
-	Send( self, @Delete );
-	return;
-}
-
-GetActiveQuestNode()
-{
-   return poQuestNode;
-}
-
-GetQuestTemplateIndex()
-{
-   return piQuestTemplateIndex;
-}
-
-Cancel()
-{
-	send( self, @DeadlineExpired );
-   poQuestNode = $;
-
-	return;
-}
-
-CancelQuester(quester=$)
-{
-   if (plQuesters <> $)
+   CheckDeadline( time = 0 )
+   "Returns FALSE if time expired (and cancels quest), TRUE if time left."
    {
-      if (FindListElem(plQuesters,quester))
+      local iStatus, iTimeLeft, bDebug;
+
+      bDebug = Send(Send(SYS,@GetQuestEngine),@GetDebugStatus);
+
+      if (time = 0)
       {
-         if length(plQuesters) = 1
+         Debug("Quest: timelimit = 0?");
+
+         return;
+      }
+
+      iTimeLeft = Send(poQuestNode,@GetDeadline) - time;
+
+      if (iTimeLeft < 1)
+      {
+         iStatus = Send(poQuestNode,@GetStatus);
+         if ((iStatus = QN_STATUS_IN_PROGRESS)
+            OR (iStatus = QN_STATUS_AWAITING_MONSTER_DEATH))
          {
-            send(self,@Cancel);
+            if bDebug
+            {
+               Debug("No questtime left.");
+            }
+
+            Send(poQuestNode,@DeadlineExpired);
+            Send(self,@DeadlineExpired);
+            % Should be true already, due to DeadlineExpired, but make sure.
+            poQuestNode = $;
+
             return;
          }
-         plQuesters = DelListElem(plQuesters,quester);
+
+         return;
       }
+
+      if bDebug
+      {
+         Debug("Still have questtime left:", iTimeLeft);
+      }
+
+      return;
    }
-   return;
-}
 
-Delete()
-{	
-   poQuestNode             = $;
-   plPlayerRestrict2       = $;
-   plQuesters              = $;
-   
-   propagate;
-}
+   DeadlineExpired()
+   {
+      local oQE, oNPC, bDebug;
 
-CensusRespond(index = 0)
-{
-   if index = piQuestTemplateIndex {
-      %note that this only counts initialized nodes, since until Init() is called, piQuestTemplateIndex=0
-      if poQuestNode = $ {
-         send(send(SYS,@GetQuestEngine),@CensusCountDeleted);
-         if plPlayerRestrict2 <> $ or plQuesters <> $ {
-            DEBUG("Quest of type ",piQuestTemplateIndex," apparently deleted but still has questers or a restrictions list");
+      oQE = Send(SYS, @GetQuestEngine);
+      bDebug = Send(oQE,@GetDebugStatus);
+
+      if bDebug
+      {
+         Debug("Quest expiring.");
+      }
+
+      if poQuestNode <> $
+      {
+         % Remove node from NPC's quest node list.
+         oNPC = Send(poQuestNode,@GetDestNPC);
+         if (oNPC <> $)
+         {
+            Send(oNPC,@RemoveQuestNodeFromActiveList,#node=poQuestNode);
+         }
+
+         % Remove node from awaiting monster death list.
+         Send(oQE,@RemoveQNFromAwaitingMonsterDeathList,#QN=poQuestNode);
+
+         % Clean up and quit.
+         Send(poQuestNode,@Delete);
+
+         % Remove quest from list of active quests of this type.
+         Send(oQE,@RemoveQuestFromActiveList,
+               #quest_template=piQuestTemplateIndex,#done_quest=self);
+      }
+      else
+      {
+         % Debug("Quest::DeadlineExpired: possible double-expiry going on...");
+      }
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   GetActiveQuestNode()
+   {
+      return poQuestNode;
+   }
+
+   GetQuestTemplateIndex()
+   {
+      return piQuestTemplateIndex;
+   }
+
+   Cancel()
+   {
+      Send(self,@DeadlineExpired);
+      poQuestNode = $;
+
+      return;
+   }
+
+   CancelQuester(quester=$)
+   {
+      if (plQuesters <> $)
+      {
+         if (FindListElem(plQuesters,quester))
+         {
+            if Length(plQuesters) = 1
+            {
+               Send(self,@Cancel);
+
+               return;
+            }
+
+            plQuesters = DelListElem(plQuesters,quester);
          }
       }
-      else {
-         send(send(SYS,@GetQuestEngine),@CensusCountActive,#what=self);
-      }
+
+      return;
    }
-   return;
-}
+
+   Delete()
+   {
+      poQuestNode = $;
+      plPlayerRestrict2 = $;
+      plQuesters = $;
+
+      propagate;
+   }
+
+   CensusRespond(index=0)
+   {
+      if index = piQuestTemplateIndex
+      {
+         % Note that this only counts initialized nodes, since until
+         % Init() is called, piQuestTemplateIndex=0
+         if poQuestNode = $
+         {
+            Send(Send(SYS,@GetQuestEngine),@CensusCountDeleted);
+            if plPlayerRestrict2 <> $
+               OR plQuesters <> $
+            {
+               Debug("Quest of type ",piQuestTemplateIndex," apparently ",
+                     "deleted but still has questers or a restrictions list");
+            }
+         }
+         else
+         {
+            Send(Send(SYS,@GetQuestEngine),@CensusCountActive,#what=self);
+         }
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

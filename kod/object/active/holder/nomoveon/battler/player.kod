@@ -9384,7 +9384,6 @@ messages:
       return;
    }
 
-
    SetWindowOverlay(what = $)
    "Sends a message to the client about a window overlay, and adds <what> "
    "to plWindow_overlays."
@@ -9935,11 +9934,13 @@ messages:
                Send(oSoldierShield,@SlingOnBack,#report=FALSE);
                bSoldierShieldSlung = TRUE;
 
-               % Now restore the first-person view of other shield if we're using one
+               % Now restore the first-person view of other shield
+               % if we're using one
                for n in plUsing
                {
                   if (IsClass(n,&Shield)
-                     AND NOT IsClass(n,&SoldierShield))
+                     AND NOT IsClass(n,&SoldierShield)
+                     AND NOT IsClass(n,&Torch))
                   {
                      Send(self,@SetWindowOverlay,#what=n);
                   }
@@ -13960,7 +13961,17 @@ messages:
       {
          ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
       }
-      
+
+      % Add phase time to piTimeAttackedPlayer if it is currently
+      % preventing the player from casting escape spells.
+      if Send(self,@GetLastPlayerAttackTime)
+            + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+            > GetTime()
+      {
+         piTimeAttackedPlayer = piTimeAttackedPlayer
+                                 + (Send(self,@GetRemainingPhaseTime) / 1000);
+      }
+
       return;
    }
    
@@ -13971,7 +13982,7 @@ messages:
 
       return;
    }
-   
+
    PhaseVisualEffect()
    {
       if ptPhaseVisualEffectTimer <> $
@@ -14005,6 +14016,16 @@ messages:
             DeleteTimer(ptPhaseVisualEffectTimer);
             ptPhaseVisualEffectTimer = $;
          }
+      }
+
+      % If we added phase time to piTimeAttackedPlayer before,
+      % remove what is remaining (restore to original time).
+      if Send(self,@GetLastPlayerAttackTime)
+            + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+            > GetTime()
+      {
+         piTimeAttackedPlayer = piTimeAttackedPlayer
+                                 - (Send(self,@GetRemainingPhaseTime) / 1000);
       }
 
       return;
@@ -14070,6 +14091,17 @@ messages:
    "Used by logoff ghosts to sync up penalty times."
    {
       piRemainingPhaseTime = amount;
+
+      % Logoff ghosts call this when the player returns, so we remove
+      % the phase time remaining from piTimeAttackedPlayer here if we
+      % added it when the user logged off.
+      if Send(self,@GetLastPlayerAttackTime)
+            + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+            > GetTime()
+      {
+         piTimeAttackedPlayer = piTimeAttackedPlayer
+                                 - (Send(self,@GetRemainingPhaseTime) / 1000);
+      }
 
       return;
    }

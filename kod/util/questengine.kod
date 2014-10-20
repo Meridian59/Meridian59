@@ -1449,7 +1449,7 @@ properties:
 
    piQuestTimerDelay = 5 * 60 * 1000    %   used to check if deadlines met and schedule new quests
    piQuestDeadlineTimerDelay = 60 * 1000     %  goes off once a minute
-   piQuestHistoryRecentTime = 4 * 3600       %  4 hrs - defines what 'recently' means in history restrictions
+   piQuestHistoryRecentTime = 3600       %  1 hr - defines what 'recently' means in history restrictions
 
    piDebug = FALSE
    piActive = TRUE                           % set to FALSE to suspend scheduling of new quests
@@ -1462,7 +1462,7 @@ properties:
 
    piDefaultNumPlayers = 1
    piDefaultQuestType = Q_TYPE_COMPETITIVE      % not used for single-player quests
-   piDefaultPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY   % not tried this quest for 24 hrs. of logged in time
+   piDefaultPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY   % not tried this quest for 1 hr. of logged in time
    plDefaultQuestNodes = $   
    piDefaultMaxNumberActive = 1            % allow only 1 active at a time
    piDefaultRescheduleChance = 50            % 50/50 chance of scheduling a new quest each time timer fires
@@ -2910,7 +2910,7 @@ messages:
          Send( self, @SetQuestNodeAssignHint, #index = 32, #new_hint = bonepriestessquest_assign_2  );
          Send( self, @SetQuestNodeSuccessHint, #index = 32, #new_hint = bonepriestessquest_success_2  );
          Send( self, @SetQuestNodeFailureHint, #index = 32, #new_hint = bonepriestessquest_failure_2 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 32, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 32, #new_limit = 10800 );
       }
       else
       {
@@ -2937,7 +2937,7 @@ messages:
          Send( self, @SetQuestNodeAssignHint, #index = 34, #new_hint = madscientistquest_assign_2  );
          Send( self, @SetQuestNodeSuccessHint, #index = 34, #new_hint = madscientistquest_success_2  );
          Send( self, @SetQuestNodeFailureHint, #index = 34, #new_hint = madscientistquest_failure_2 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 34, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 34, #new_limit = 10800 );
       }
       else
       {
@@ -2967,7 +2967,7 @@ messages:
          Send( self, @SetQuestNodeAssignHint, #index = 36, #new_hint = tradingpost_assign_2  );
          Send( self, @SetQuestNodeSuccessHint, #index = 36, #new_hint = tradingpost_success_2  );
          Send( self, @SetQuestNodeFailureHint, #index = 36, #new_hint = tradingpost_failure_2 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 36, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 36, #new_limit = 10800 );
       }
       else
       {
@@ -2984,7 +2984,7 @@ messages:
          Send( self, @SetQuestNodeAssignHint, #index = 37, #new_hint = tradingpost_assign_2  );
          Send( self, @SetQuestNodeSuccessHint, #index = 37, #new_hint = tradingpost_success_2  );
          Send( self, @SetQuestNodeFailureHint, #index = 37, #new_hint = tradingpost_failure_2 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 37, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 37, #new_limit = 10800 );
       }
       else
       {
@@ -3011,7 +3011,7 @@ messages:
          Send( self, @SetQuestNodeAssignHint, #index = 39, #new_hint = bowmaker_assign_2  );
          Send( self, @SetQuestNodeSuccessHint, #index = 39, #new_hint = bowmaker_success_2  );
          Send( self, @SetQuestNodeFailureHint, #index = 39, #new_hint = bowmaker_failure_2 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 39, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 39, #new_limit = 10800 );
       }
       else
       {
@@ -3025,7 +3025,7 @@ messages:
          Send( self, @SetQuestNodeNPCModifier, #index = 40, #new_mod = QN_NPCMOD_PREVIOUS );
          Send( self, @SetQuestNodeSuccessHint, #index = 40, #new_hint = bowmaker_success_3  );
          %Send( self, @SetQuestNodeFailureHint, #index = 40, #new_hint = bowmaker_failure_3 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 40, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 40, #new_limit = 10800 );
       }
       else
       {
@@ -3041,7 +3041,7 @@ messages:
          Send( self, @SetQuestNodeAssignHint, #index = 41, #new_hint = bowmaker_assign_4  );
          Send( self, @SetQuestNodeSuccessHint, #index = 41, #new_hint = bowmaker_success_3  );
          Send( self, @SetQuestNodeFailureHint, #index = 41, #new_hint = bowmaker_failure_4 );
-         Send( self, @SetQuestNodeTimeLimit, #index = 41, #new_limit = 1 * 60 * 60 );
+         Send( self, @SetQuestNodeTimeLimit, #index = 41, #new_limit = 10800 );
       }
       else
       {

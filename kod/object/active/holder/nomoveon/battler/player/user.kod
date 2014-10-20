@@ -767,7 +767,18 @@ messages:
                   AND Send(poOwner,@CanEnter,#who=self)
                   AND NOT Send(poOwner,@InFoyer,#who=self))
       {
-         Create(&LogoffGhost,#GhostedPlayer=self,#iPenaltyTime=Send(self,@GetRemainingPhaseTime));
+         Create(&LogoffGhost,#GhostedPlayer=self,
+               #iPenaltyTime=Send(self,@GetRemainingPhaseTime));
+         
+         % Add phase time remaining to piTimeAttackedPlayer if it is currently
+         % preventing the player from casting escape spells.
+         if Send(self,@GetLastPlayerAttackTime)
+               + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+               > GetTime()
+         {
+            piTimeAttackedPlayer = piTimeAttackedPlayer
+                                   + (Send(self,@GetRemainingPhaseTime) / 1000);
+         }
       }
       else
       {

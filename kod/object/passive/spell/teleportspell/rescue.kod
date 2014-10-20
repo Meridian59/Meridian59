@@ -24,11 +24,13 @@ resources:
       "Requires emerald to cast."
 
    Rescue_Start = "You start your rescue preparations."
-   Rescue_Success = "You feel a holy force rescue you from your current situation."
+   Rescue_Success = \
+      "You feel a holy force rescue you from your current situation."
    Rescue_Already_Cast = "You are already being rescued."
    Rescue_Token_Cancel = "You cannot rescue while holding a token."
    
-   Rescue_depart_to_destination = "%s vanishes in a burst of protective light!"
+   Rescue_depart_to_destination = \
+      "%s vanishes in a burst of protective light!"
    
    rescue_sound = srescue.wav
 
@@ -66,27 +68,28 @@ messages:
       return 0;
    }
 
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who = $,lTargets = $)
    {
       % Can't cast just after attacking someone
-      if Send(who, @GetLastPlayerAttackTime) + 
-         Send(Send(SYS, @GetSettings), @TeleportAttackDelaySec) >
-         GetTime()
+      if Send(who,@GetLastPlayerAttackTime)
+         + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+         > GetTime()
       {
-         Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
+         Send(who,@MsgSendUser,#message_rsc=spell_too_soon_since_attacking);
+
          return FALSE;
       }
-      
+
       if Send(who,@FindHolding,#class=&Token)
       {
-        send(who,@MsgSendUser,#message_rsc=Rescue_Token_Cancel);
-        
-        return FALSE;
+         Send(who,@MsgSendUser,#message_rsc=Rescue_Token_Cancel);
+
+         return FALSE;
       }
 
-      if NOT send(who,@CanRescue)
+      if NOT Send(who,@CanRescue)
       {
-         send(who,@MsgSendUser,#message_rsc=Rescue_Already_Cast);
+         Send(who,@MsgSendUser,#message_rsc=Rescue_Already_Cast);
 
          return FALSE;
       }
@@ -108,8 +111,8 @@ messages:
          iDelay = iDelay + random(5000, 10000);
       }
 
-      send(who,@StartRescueTimer,#time=iDelay);
-      send(who,@MsgSendUser,#message_rsc=Rescue_Start);
+      Send(who,@StartRescueTimer,#time=iDelay);
+      Send(who,@MsgSendUser,#message_rsc=Rescue_Start);
 
       propagate;
    }
@@ -118,60 +121,62 @@ messages:
    {
       local i, each_obj, oCurrentRoom, oTargetRoom, oGuild;
 
-      send(who,@MsgSendUser,#message_rsc=Rescue_Success);
+      Send(who,@MsgSendUser,#message_rsc=Rescue_Success);
 
-      oCurrentRoom = send(who,@GetOwner);
+      oCurrentRoom = Send(who,@GetOwner);
 
       if oCurrentRoom <> $
       {
          % Are they guilded with a guild hall?
-         oGuild = send(who,@GetGuild);
+         oGuild = Send(who,@GetGuild);
          if oGuild <> $
          {
-            oTargetRoom = send(oGuild,@GetGuildHall);
+            oTargetRoom = Send(oGuild,@GetGuildHall);
 
             % If we have a guild hall, and not already in the guild hall,
             %  and we're in the same region as the hall, go there.
             if oTargetRoom <> $
                AND oTargetRoom <> oCurrentRoom
-               AND send(oTargetRoom,@GetRegion) = send(oCurrentRoom,@GetRegion)
+               AND Send(oTargetRoom,@GetRegion) = Send(oCurrentRoom,@GetRegion)
             {
-               post(oTargetRoom,@Teleport,#what=who);
+               Post(oTargetRoom,@Teleport,#what=who);
 
                return;
             }
          }
 
-         % Teleport to Ko'catan Inn if we're in Kocatan, or at the Pool of Vigor.
-         if send(oCurrentRoom,@GetRegion) = RID_KOCATAN
-            OR send(oCurrentRoom,@GetRoomNum) = RID_ORC_CAVE5_EXT
+         % Teleport to Ko'catan Inn if we're in Kocatan, or at Vigor Pool.
+         if Send(oCurrentRoom,@GetRegion) = RID_KOCATAN
+            OR Send(oCurrentRoom,@GetRoomNum) = RID_ORC_CAVE5_EXT
          {
-            oTargetRoom = send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
-            post(oTargetRoom,@Teleport,#what=who);
-         
+            oTargetRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
+            Post(oTargetRoom,@Teleport,#what=who);
+
             return;
          }
 
          % If we're in the orc caves, teleport to the Pool of Vigor.
          % Except: actually being in the Pool of Vigor is handled above.
-         if send(oCurrentRoom,@GetRegion) = RID_ORC_CAVE1
+         if Send(oCurrentRoom,@GetRegion) = RID_ORC_CAVE1
          {
-            oTargetRoom = send(SYS,@FindRoomByNum,#num=RID_ORC_CAVE5_EXT);
-            post(oTargetRoom,@Teleport,#what=who);
-         
+            oTargetRoom = Send(SYS,@FindRoomByNum,#num=RID_ORC_CAVE5_EXT);
+            Post(oTargetRoom,@Teleport,#what=who);
+
             return;
          }
       }
 
       % Default: Go to our home room.
-      post(who,@AdminGoToSafety);
-            
+      Post(who,@AdminGoToSafety);
+
       for i in Send(Send(who,@GetOwner),@GetHolderActive)
       {
          each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
          {
-            Send(each_obj,@MsgSendUser,#message_rsc=Rescue_depart_to_destination,#parm1=Send(who,@GetName));
+            Send(each_obj,@MsgSendUser,
+                  #message_rsc=Rescue_depart_to_destination,
+                  #parm1=Send(who,@GetName));
          }
       }
 
@@ -182,7 +187,6 @@ messages:
    {
       return &RescuePotion;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

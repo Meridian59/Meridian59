@@ -131,8 +131,6 @@ resources:
       "before you can fully utter them."
    spell_display_spellpower = \
       "Spellpower for ~k~B%s~n is ~k~B%i~n."
-   los_bad_display = \
-      "You don't have line of sight with ~k~B%s~n."
    no_line_of_sight = \
       "Your hindered line of sight makes casting more difficult."
 

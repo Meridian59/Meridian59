@@ -65,6 +65,7 @@
 #define IDC_CHAR_GRAPH5                 1025
 #define IDC_MOUTH2                      1026
 #define IDC_CHAR_GRAPH6                 1026
+#define IDC_RIIJA                       1027
 #define IDC_POINTSLEFT                  1028
 #define IDC_SPELLIST1                   1029
 #define IDC_SPELLIST2                   1030

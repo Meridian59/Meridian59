@@ -87,7 +87,7 @@ properties:
    piMax_Mana = 20
 
    % 1 in x chance to cast a spell.
-   piSpellChance = 1
+   piSpellChance = 3
    piSpellPower = 99
 
    % is this Xeochicatl part of a node attack?

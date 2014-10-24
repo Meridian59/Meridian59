@@ -5456,14 +5456,17 @@ messages:
          }
       }
 
-      if IsClass(what,&Monster)
-         AND (use_weapon = $
-              OR NOT IsClass(use_weapon,&ActiveWallElement))
+      if pbLogged_on
       {
-         Send(self,@JoinBuilderGroup);
-      }
+         if IsClass(what,&Monster)
+            AND (use_weapon = $
+               OR NOT IsClass(use_weapon,&ActiveWallElement))
+         {
+            Send(self,@JoinBuilderGroup);
+         }
 
-      Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+         Send(poOwner,@SomethingKilled,#what=self,#victim=what);
+      }
 
       % Let our shield know we killed something.
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);

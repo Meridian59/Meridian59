@@ -2095,12 +2095,27 @@
    SID_VIGOR_BOON =      198
    % No sids above 400 to keep spell IDs unique from skill IDs!
 
+   %%% Stats
+   STAT_ID_MIGHT     = 1
+   STAT_ID_INTELLECT = 2
+   STAT_ID_STAMINA   = 3
+   STAT_ID_AGILITY   = 4
+   STAT_ID_MYSTICISM  = 5
+   STAT_ID_AIM       = 6
+   
    %%% Spells and Skills
 
    % Used for when the spell has an infinite duration
    SPELL_INDEFINITE_DURATION = 0
 
+   % Skill Schools
+   NUM_SKILL_SCHOOLS=1
+   NUM_SKILL_SCHOOL_LEVELS = 6
+   
    % Spell Schools
+   NUM_SCHOOLS = 7
+   NUM_SPELL_LEVELS = 6
+   
    % School is set to this if this spell is not castable on a pk-free server.
    SS_INACCESSIBLE = -1
 

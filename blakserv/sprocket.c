@@ -75,6 +75,13 @@ client_def_table_type client_def_table[] =
 	{ BP_REQ_ACTIVATE,         { {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ BP_SEND_ENCHANTMENTS,    { {1, TAG_INT}, {0, DONE_PARM} } },
 	
+	// TODO: should this be a user command?
+	// TODO: try to do this as a list of ints not individual ints
+	{ BP_CHANGED_STATS,               { {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT},
+                                       {1, TAG_INT}, {1, TAG_INT},{1, TAG_INT}, {1, TAG_INT},
+                                       {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT},
+                                       {1, TAG_INT}, {0, DONE_PARM} } },
+	
 };
 int num_client_msgs = sizeof(client_def_table)/sizeof(client_def_table_type);
 

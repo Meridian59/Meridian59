@@ -181,6 +181,48 @@ messages:
       return Send(who,@GetAgility);
    }
    
+   GetPrimaryStat()
+   {
+      if (viSkill_Num = SKID_DEFAULT)
+         OR (viSkill_Num = SKID_BRAWLING)
+         OR (viSkill_Num = SKID_PROFICIENCY_MACE)
+         OR (viSkill_Num = SKID_PROFICIENCY_HAMMER)
+      {
+         return STAT_ID_MIGHT;
+      }
+   
+      if (viSkill_Num = SKID_SECOND_WIND)
+      {
+         return STAT_ID_STAMINA;
+      }
+
+      if (viSkill_Num = SKID_DODGE)
+         OR (viSkill_Num = SKID_PARRY)
+         OR (viSkill_Num = SKID_ASSESS)
+         OR (viSkill_Num = SKID_BLOCK)
+         OR (viSkill_Num = SKID_DISARM)
+         OR (viSkill_Num = SKID_SLASH)
+         OR (viSkill_Num = SKID_THRUST)
+         OR (viSkill_Num = SKID_PUNCH)
+         OR (viSkill_Num = SKID_KICK)
+         OR (viSkill_Num = SKID_PROFICIENCY_SCIMITAR)
+         OR (viSkill_Num = SKID_PROFICIENCY_AXE)
+      {
+         return STAT_ID_AGILITY;
+      }
+
+      if (viSkill_Num = SKID_FIRE)
+         OR (viSkill_Num = SKID_PROFICIENCY_SWORD)
+         OR (viSkill_Num = SKID_PROFICIENCY_BOW)
+         OR (viSkill_Num = SKID_PROFICIENCY_SHORT_SWORD)
+         OR (viSkill_Num = SKID_PROFICIENCY_SHORTSWORD)
+      {
+         return STAT_ID_AIM;
+      }
+      
+      return;
+   }
+   
    GetSkillNum()
    {
       return viSkill_Num;

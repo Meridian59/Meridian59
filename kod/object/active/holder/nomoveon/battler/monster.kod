@@ -1003,9 +1003,10 @@ messages:
          if iRow <> 0 AND iCol <> 0
             AND Send(poMaster,@GetOwner) <> $
          {
-            if (Send(self,@GetRow) - iRow) <= 3
-               AND (Send(self,@GetCol) - iCol) <= 3
-               OR IsClass(self,&Reflection)
+            if ((Send(self,@GetRow) - iRow) <= 3
+               AND (Send(self,@GetCol) - iCol) <= 3)
+               OR IsClass(self,&Reflection) % Flecs follow.
+               OR Send(self,@IsUndead) % So do undead (Animate).
             {
                Post(self,@GotoMaster);
             }
@@ -1804,14 +1805,20 @@ messages:
    "This does the fallout of a hit, gives appropriate message, etc.  "
    "Called on self when hit opponent."
    {
+      if poOwner = $
+      {
+         % No owner to send this to, so propagate.
+         propagate;
+      }
+
       if vrSound_miss <> $
       {
          Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_miss,
-              #flags=SOUND_RANDOM_PITCH);
+               #flags=SOUND_RANDOM_PITCH);
          if (IsClass(what,&Player))
          {
             Send(poOwner,@SomethingWaveRoom,#what=what,
-                 #wave_rsc=Send(what,@GetOuchSound),#flags=SOUND_RANDOM_PITCH);
+                  #wave_rsc=Send(what,@GetOuchSound),#flags=SOUND_RANDOM_PITCH);
          }
       }
 
@@ -1822,10 +1829,16 @@ messages:
    "This does the fallout of a miss, gives appropriate message, etc.  "
    "Called on target when missing."
    {
+      if poOwner = $
+      {
+         % No owner to send this to, so propagate.
+         propagate;
+      }
+
       if vrSound_miss <> $
       {
          Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=vrSound_miss,
-              #flags=SOUND_RANDOM_PITCH);
+               #flags=SOUND_RANDOM_PITCH);
       }
 
       propagate;

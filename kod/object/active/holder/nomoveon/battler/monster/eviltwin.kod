@@ -276,6 +276,13 @@ messages:
    {
       local iFlags;
 
+      if poOriginal = $
+      {
+         Post(self,@Delete);
+
+         return 0;
+      }
+
       iFlags = Send(poOriginal,@GetObjectFlags);
 
       return iFlags;

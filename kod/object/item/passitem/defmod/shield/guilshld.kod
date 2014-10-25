@@ -151,6 +151,17 @@ messages:
       propagate;
    }
 
+   HasInsignia()
+   {
+      if piInsigniaType >= INSIG_RIIJA
+         AND piInsigniaType <= INSIG_REBEL
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    IsShieldColored()
    {
       local XLAT;
@@ -246,7 +257,8 @@ messages:
       shape = random(SHIELDSHAPE_SLASH, SHIELDSHAPE_CHECKER);
       insignia = random(INSIG_RIIJA, INSIG_NONE);
 
-      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,
+            #shape=shape,#override=TRUE);
       Send(self,@ChangeGuildInsignia,#insignia=insignia);
 
       return;
@@ -315,17 +327,18 @@ messages:
 
       if poOwner <> $
       {
-         post(poOwner,@SomethingChanged,#what=self);
+         Post(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
    }
 
-   ChangeGuildShieldColor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT,override=FALSE)
+   ChangeGuildShieldColor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,
+                           shape=SHIELDSHAPE_DEFAULT,override=FALSE)
    {
       local XLAT;
-      
-      %% override means do it no matter what.  good for testing
+
+      % Override means do it no matter what.  Good for testing.
 
       if NOT override AND Send(self,@IsShieldColored)
       {

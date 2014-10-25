@@ -128,7 +128,7 @@ messages:
                       ];
 
       plSpellBook = [ [SID_HOLD,5,40], [SID_MANA_BOMB,6,70],
-                      [SID_SAND_STORM,4,85], [SID_BRITTLE,10,90],
+                      [SID_SAND_STORM,4,85], [SID_SHATTER,10,90],
                       [SID_EARTHQUAKE,10,100] ];
 
       propagate;

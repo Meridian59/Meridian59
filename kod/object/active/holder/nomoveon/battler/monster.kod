@@ -1417,17 +1417,17 @@ messages:
    {
       if Send(self,@IsEnchanted,#byClass=&Vertigo)
       {
-         base = base + 1;
+         base = base + 2;
       }
 
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Winds)
       {
-         base = base + 1;
+         base = base + 3;
       }
 
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Sandstorm)
       {
-         base = base + 1;
+         base = base + 3;
       }
 
       return base;

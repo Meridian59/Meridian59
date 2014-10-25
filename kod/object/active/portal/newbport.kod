@@ -21,15 +21,17 @@ constants:
 resources:
 
    newbportal_desc_rsc = \
-      "Entering this portal strips you of your training gear and brings you into the "
-      "mainland of Meridian 59, never to return."
+      "Entering this portal strips you of your training gear and brings "
+      "you into the mainland of Meridian 59, never to return."
 
    newbportal_dead = "This archway stands cold and inanimate."
-   newbportal_enter = "You enter the portal and begin your adventure in Meridian 59!"
+   newbportal_enter = \
+      "You enter the portal and begin your adventure in Meridian 59!"
    newbportal_warning = \
-      "~BWarning~B: If you enter this portal, you will not be able to return to Raza.  "
-      "Only enter this portal if you are confident in your skills.  For more information "
-      "read (right-click) on the sign to the right of this portal."
+      "~BWarning~B: If you enter this portal, you will not be able to return "
+      "to Raza.  Only enter this portal if you are confident in your skills.  "
+      "For more information read (right-click) on the sign to the right "
+      "of this portal."
 
 classvars:
 
@@ -42,7 +44,7 @@ properties:
    vrDesc = Newbportal_desc_rsc
 
    plWarnedList = $
-   
+
 messages:
 
    Constructed()
@@ -58,16 +60,17 @@ messages:
    {
       % Warn true newbies of the perils of going through the portal.
       % Check to see if we warn them or let them through.
-      if (NOT send(what,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
+      if (NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
          AND (plWarnedList = $ OR FindListElem(plWarnedList,what) = 0)
       {
          % This player hasn't tried to enter yet, or isn't a true newbie.
-         %  Give them the warning and bump them, then record that we warned them.
+         % Give them the warning and bump them, then record that we warned them.
          Send(what,@MsgSendUser,#message_rsc=newbportal_warning);
-         send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
-              #new_row=send(self,@GetRow)+ROW_ADJUST,#new_col=send(self,@GetCol)+COL_ADJUST,
-              #new_angle=ANGLE_NORTH);
-         plWarnedList = cons(what,plWarnedList);
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
+               #new_row=Send(self,@GetRow)+ROW_ADJUST,
+               #new_col=Send(self,@GetCol)+COL_ADJUST,
+               #new_angle=ANGLE_NORTH);
+         plWarnedList = Cons(what,plWarnedList);
       }
       else
       {
@@ -75,9 +78,12 @@ messages:
          % Don't keep the record around.
          if plWarnedList <> $
          {
-            plWarnedList = DelListElem(plWarnedList,what);
+            if FindListElem(plWarnedList,what)
+            {
+               plWarnedList = DelListElem(plWarnedList,what);
+            }
          }
-         
+
          Send(what,@SetRandomHomeroom);
 
          % Allow an admin to set the portal to go somewhere else if needed.
@@ -90,7 +96,7 @@ messages:
             Send(what,@AdminGotoSafety);
          }
 
-         Send(what,@AddExertion,#amount=(send(what,@GetVigor) - 80) * 10000);
+         Send(what,@AddExertion,#amount=(Send(what,@GetVigor) - 80) * 10000);
 
          % teleporting them out of region will clean inventory, etc.
          Post(what,@AddRealWorldObjects);
@@ -99,7 +105,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

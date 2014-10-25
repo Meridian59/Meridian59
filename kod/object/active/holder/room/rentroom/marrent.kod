@@ -13,7 +13,7 @@ MarionRentableRoom is RentableRoom
 constants:
 
    include blakston.khd
-   
+
 resources:
 
    MarionRentableRoom_name = "A comfortable room"
@@ -57,8 +57,9 @@ messages:
                       [ [12,9], [12,10], [16,16], [48,16], ANGLE_SOUTH ],
                       [ [12,11], [11,11], [48,16], [48,48], ANGLE_EAST ]
                     ];
-                    
-      % Format for plPictureCoords: coord nearest picture followed by next nearest coords
+
+      % Format for plPictureCoords: coordinates nearest picture, followed by
+      % the next nearest coordinates.
       % Each top-level list (one per line) is one picture position
       plPictureCoords = [ [ [8,11], [8,10], [8,12] ],
                           [ [9,9], [8,9], [9,10] ],
@@ -75,30 +76,32 @@ messages:
       if row = 8 AND col = 12
       {
          Send(what,@MsgSendUser,#message_rsc=RentableRoom_teleport);
-         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
+               #duration=750);
          Send(Send(SYS,@FindRoomByNum,#num=RID_MAR_INN),@NewHold,#what=what,
-              #new_row=6,#new_col=9,#new_angle=ANGLE_WEST);
-         
+               #new_row=6,#new_col=9,#new_angle=ANGLE_WEST);
+
          return TRUE;
       }
-      
+
       propagate;
    }
    
    CreateStandardObjects()
    {
-      Send(self,@NewHold,#what=Create(&Bell),#new_row=8,#new_col=10,#fine_row=23);
+      Send(self,@NewHold,#what=Create(&Bell),
+            #new_row=8,#new_col=10,#fine_row=23);
 
       propagate;
    }
 
    Enter(who=$)
    {
-      Send(self,@NewHold,#what=who,#new_row=8,#new_col=11,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=who,#new_row=8,#new_col=11,
+            #new_angle=ANGLE_WEST);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

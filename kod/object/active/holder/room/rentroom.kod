@@ -46,10 +46,10 @@ constants:
    PICTURE_C = 3           % portrait
 
    % in milliseconds
-   DECORATOR_DELAY = 3000  
+   DECORATOR_DELAY = 3000
 
    % How many items we can get from a heartstone
-   ITEMS_FROM_HEARTSTONES = 10    
+   ITEMS_FROM_HEARTSTONES = 10
 
    % How much to lighten/darken the room by.
    LIGHT_STEP = 40
@@ -65,7 +65,8 @@ resources:
 
    RentableRoom_carpet_options = \
       "We have two shades of carpet, a light grey and a darker grey, or "
-      "if you prefer wood floors I can put in one with a light or a dark finish."
+      "if you prefer wood floors I can put in one with a light or a "
+      "dark finish."
    RentableRoom_bedspread_options = \
       "We have basic red and blue bedspreads, as well as a nice "
       "black floral pattern and my personal favorite, white linen."
@@ -84,9 +85,9 @@ resources:
 
    RentableRoom_expiry_warning = \
       "Subject: Room check-out reminder notice\n"
-      "This is a courtesy notice to remind you that your room rental will expire "
-      "in %q days.  Please be sure to clear your room of any personal effects "
-      "before then.  I hope you are enjoying your stay."
+      "This is a courtesy notice to remind you that your room rental will "
+      "expire in %q days.  Please be sure to clear your room of any personal "
+      "effects before then.  I hope you are enjoying your stay."
    RentableRoom_expiry = \
       "Subject: Room check-out\n"
       "Your room rental has expired, and the room has been cleared of any "
@@ -109,7 +110,7 @@ resources:
    RentableRoom_heartstone_all = \
       "I am also impressed that you have all the heartstones.  I can make "
       "some rare objects that require them all."
-   
+
    RentableRoom_comma = ", "
    RentableRoom_and = "and "
 
@@ -122,7 +123,7 @@ resources:
    RentableRoom_command_floral = "floral"
    RentableRoom_command_white = "white"
    RentableRoom_command_linen = "linen"
-   
+
    RentableRoom_command_light_gray = "light gray"
    RentableRoom_command_light_grey = "light grey"
    RentableRoom_command_dark_gray = "dark gray"
@@ -131,7 +132,7 @@ resources:
    RentableRoom_command_light_hardwood = "light hardwood"
    RentableRoom_command_dark_wood = "dark wood"
    RentableRoom_command_dark_hardwood = "dark hardwood"
-   
+
    RentableRoom_command_cream = "cream"
    RentableRoom_command_vine = "vine"
    RentableRoom_command_brown = "brown"
@@ -139,12 +140,12 @@ resources:
    RentableRoom_command_traditional = "traditional"
    RentableRoom_command_barloq = "Barloq"
    RentableRoom_command_medallion = "medallion"
-   
+
    RentableRoom_command_flower = "flower"
    RentableRoom_command_paisley = "paisley"
    RentableRoom_command_brick = "brick"
    RentableRoom_command_wood = "wood"
-   
+
    RentableRoom_command_still_life = "still life"
    RentableRoom_command_still_life_dashed = "still-life"
    RentableRoom_command_stilllife = "stilllife"
@@ -184,7 +185,9 @@ classvars:
 
 properties:
 
-   viPermanent_flags = ROOM_NO_COMBAT | ROOM_HOMETOWN | ROOM_SANCTUARY | ROOM_SAFELOGOFF | ROOM_HARD_LEARN
+   viPermanent_flags = \
+      ROOM_NO_COMBAT | ROOM_HOMETOWN | ROOM_SANCTUARY \
+         | ROOM_SAFELOGOFF | ROOM_HARD_LEARN
 
    prRoom = RentableRoom_roo
    piRoom_num = $
@@ -279,12 +282,12 @@ messages:
       Send(self,@SetPicture,#num=random(1,3));
       Send(self,@SetPictureLocation,#num=random(1,viPictureLocationMax));
       Send(self,@NewHold,#what=create(&Mint),
-           #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
-           #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
-           #fine_row=nth(nth(nth(plBedCoords,piBedSector),3),1),
-           #fine_col=nth(nth(nth(plBedCoords,piBedSector),3),2),
-           #new_angle= nth(nth(plBedCoords,piBedSector),5) );
-      
+            #new_row=Nth(Nth(Nth(plBedCoords,piBedSector),1),1),
+            #new_col=Nth(Nth(Nth(plBedCoords,piBedSector),1),2),
+            #fine_row=Nth(Nth(Nth(plBedCoords,piBedSector),3),1),
+            #fine_col=Nth(Nth(Nth(plBedCoords,piBedSector),3),2),
+            #new_angle= Nth(Nth(plBedCoords,piBedSector),5) );
+
       return;
    }
 
@@ -299,6 +302,7 @@ messages:
       {
          poRenter = who;
       }
+
       return;
    }
 
@@ -306,7 +310,7 @@ messages:
    {
       return viLocation;
    }
-   
+
    GetLocationName()
    {
       return Send(Send(SYS,@FindRoomByNum,#num=viLocation),@GetName);
@@ -335,40 +339,40 @@ messages:
       {
          i = i + 1;
          Send(self,@SetSector,#sector=i,#animation=ANIMATE_FLOOR_LIFT,
-              #height=BED_DOWN,#speed=0);
+               #height=BED_DOWN,#speed=0);
          Send(self,@ChangeTexture,#id=i,#new_texture=piCarpet,#flags=CTF_FLOOR);
       }
 
       Send(self,@SetSector,#sector=piBedSector,#animation=ANIMATE_FLOOR_LIFT,
-           #height=BED_UP,#speed=0);
+            #height=BED_UP,#speed=0);
       Send(self,@ChangeTexture,#id=piBedSector,#new_texture=piBedSpread,
-           #flags=CTF_FLOOR);
+            #flags=CTF_FLOOR);
       Send(self,@ChangeTexture,#id=piBedSector,#new_texture=(piBedSpread+1),
-           #flags=CTF_BELOWWALL);
+            #flags=CTF_BELOWWALL);
 
       for i in Send(self,@GetHolderPassive)
       {
-         if isClass(first(i),&Pillow)
+         if IsClass(First(i),&Pillow)
          {
-            Send(first(i),@Delete);
+            Send(First(i),@Delete);
          }
       }
 
       if plBedCoords <> $
       {
          Send(self,@NewHold,#what=create(&Pillow),
-              #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
-              #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
-              #fine_row=nth(nth(nth(plBedCoords,piBedSector),3),1),
-              #fine_col=nth(nth(nth(plBedCoords,piBedSector),3),2),
-              #new_angle= nth(nth(plBedCoords,piBedSector),5) );
+               #new_row=Nth(Nth(Nth(plBedCoords,piBedSector),1),1),
+               #new_col=Nth(Nth(Nth(plBedCoords,piBedSector),1),2),
+               #fine_row=Nth(Nth(Nth(plBedCoords,piBedSector),3),1),
+               #fine_col=Nth(Nth(Nth(plBedCoords,piBedSector),3),2),
+               #new_angle= Nth(Nth(plBedCoords,piBedSector),5) );
 
          Send(self,@NewHold,#what=create(&Pillow),
-              #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
-              #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
-              #fine_row=nth(nth(nth(plBedCoords,piBedSector),4),1),
-              #fine_col=nth(nth(nth(plBedCoords,piBedSector),4),2),
-              #new_angle= nth(nth(plBedCoords,piBedSector),5) );
+               #new_row=Nth(Nth(Nth(plBedCoords,piBedSector),1),1),
+               #new_col=Nth(Nth(Nth(plBedCoords,piBedSector),1),2),
+               #fine_row=Nth(Nth(Nth(plBedCoords,piBedSector),4),1),
+               #fine_col=Nth(Nth(Nth(plBedCoords,piBedSector),4),2),
+               #new_angle= Nth(Nth(plBedCoords,piBedSector),5) );
       }
 
       return;
@@ -383,9 +387,9 @@ messages:
 
       piBedSpread = num;
       Send(self,@ChangeTexture,#id=piBedSector,#new_texture=piBedSpread,
-           #flags=CTF_FLOOR);
+            #flags=CTF_FLOOR);
       Send(self,@ChangeTexture,#id=piBedSector,#new_texture=(piBedSpread+1),
-           #flags=CTF_BELOWWALL);
+            #flags=CTF_BELOWWALL);
 
       return TRUE;
    }
@@ -410,10 +414,12 @@ messages:
             continue;
          }
 
-         Send(self,@ChangeTexture,#id=i,#new_texture=piCarpet,#flags=CTF_FLOOR);
+         Send(self,@ChangeTexture,#id=i,#new_texture=piCarpet,
+               #flags=CTF_FLOOR);
       }
 
-      Send(self,@ChangeTexture,#id=CARPET_SECTOR,#new_texture=piCarpet,#flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=CARPET_SECTOR,#new_texture=piCarpet,
+            #flags=CTF_FLOOR);
 
       return TRUE;
    }
@@ -438,11 +444,12 @@ messages:
             continue;
          }
 
-         Send(self,@ChangeTexture,#id=i,#new_texture=piWallpaper,#flags=CTF_NORMALWALL);
+         Send(self,@ChangeTexture,#id=i,#new_texture=piWallpaper,
+               #flags=CTF_NORMALWALL);
       }
 
       Send(self,@ChangeTexture,#id=(WALLPAPER_ID+piPictureLocation),
-           #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
+            #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
 
       return TRUE;
    }
@@ -456,7 +463,7 @@ messages:
 
       piPicture = num;
       Send(self,@ChangeTexture,#id=(WALLPAPER_ID+piPictureLocation),
-           #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
+            #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
 
       return TRUE;
    }
@@ -479,11 +486,12 @@ messages:
       {
          i = i + 1;
          if i = (WALLPAPER_ID + piPictureLocation) { continue; }
-         Send(self,@ChangeTexture,#id = i,#new_texture=piWallpaper,#flags=CTF_NORMALWALL);
+         Send(self,@ChangeTexture,#id=i,#new_texture=piWallpaper,
+               #flags=CTF_NORMALWALL);
       }
 
       Send(self,@ChangeTexture,#id = (WALLPAPER_ID+piPictureLocation),
-           #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
+            #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
 
       return TRUE;
    }
@@ -511,7 +519,7 @@ messages:
          {
             for i in Send(self,@GetHolderPassive)
             {
-               if Send(self,@GetBedSectorNear,#who=first(i))=iBedSector
+               if Send(self,@GetBedSectorNear,#who=First(i))=iBedSector
                {
                   if oDecorator <> $
                   {
@@ -535,7 +543,11 @@ messages:
    {
       local iBlue, iRed, iBlack, iWhite;
 
-      if string = $ { return FALSE; }
+      if string = $
+      {
+         return FALSE;
+      }
+
       iBlue = StringContain(string,RentableRoom_command_blue);
       iRed = StringContain(string,RentableRoom_command_red);
       iBlack = (StringContain(string,RentableRoom_command_black)
@@ -744,7 +756,7 @@ messages:
       return $;
    }
 
-   TrySetPictureLocation(who=$, string=$)
+   TrySetPictureLocation(who=$,string=$)
    {
       local iPictureLocation;
 
@@ -775,7 +787,7 @@ messages:
       while iLoop < length(plObjects)
       {
          iLoop = iLoop + 1;
-         for oObj in nth(plObjects,iLoop)
+         for oObj in Nth(plObjects,iLoop)
          {
             if Send(oObj,@GetName) = Send(oItem,@GetName)
             {
@@ -810,7 +822,7 @@ messages:
       local i, j, oPreviousObject, sObjectList;
 
       % Note: we get away with a simple algorithm here
-      %       because we know there are at least 4 objects at all times.
+      % because we know there are at least 4 objects at all times.
 
       ClearTempString();
       oPreviousObject = $;
@@ -821,7 +833,7 @@ messages:
          i = i + 1;
          if Send(self,@CanAccessObject,#category=i,#who=who)
          {
-            for j in nth(plObjects,i)
+            for j in Nth(plObjects,i)
             {
                if oPreviousObject <> $
                {
@@ -880,10 +892,10 @@ messages:
 
          for i in Send(self,@GetHolderPassive)
          {
-            if (Send(first(i),@GetRow)=Send(who,@GetRow))
-               AND (Send(first(i),@GetCol)=Send(who,@GetCol))
-               AND (Send(first(i),@GetFineRow)=iSnapFineRow)
-               AND (Send(first(i),@GetFineCol)=iSnapFineCol)
+            if (Send(First(i),@GetRow)=Send(who,@GetRow))
+               AND (Send(First(i),@GetCol)=Send(who,@GetCol))
+               AND (Send(First(i),@GetFineRow)=iSnapFineRow)
+               AND (Send(First(i),@GetFineCol)=iSnapFineCol)
             {
                if oDecorator <> $
                {
@@ -944,7 +956,7 @@ messages:
       iClosestDistance = iClosestDistance * 2;
 
       % This is set if there could be confusion between two objects.
-      bConfused = FALSE;          
+      bConfused = FALSE;
 
       % Determine which list to use.
       if Send(template,@GetObjectType) = ACTIVE
@@ -958,44 +970,45 @@ messages:
       
       for i in lInventory
       {
-         if isClass(first(i),GetClass(template))
-            AND StringEqual(Send(first(i),@GetName),Send(template,@GetName))
+         if IsClass(First(i),GetClass(template))
+            AND StringEqual(Send(First(i),@GetName),Send(template,@GetName))
          {
             % First, figure the difference between the rows.  Depending on
-            %  the sign of the difference depends on what amount of the
-            %  fine row we need to count.  IE, if the difference is negative,
-            %  that means that the player has a greater row value than the
-            %  object, so count the fineness between them (from object's
-            %  fineness to max fineness, then from 0 to the player's fineness)
-            %  Space between them is the number of full squares between
-            %  them.  Same logic for columns.
-            iRowDiff = Send(first(i),@GetRow) - Send(who,@GetRow);
-            iColDiff = Send(first(i),@GetCol) - Send(who,@GetCol);
+            % the sign of the difference depends on what amount of the
+            % fine row we need to count.  IE, if the difference is negative,
+            % that means that the player has a greater row value than the
+            % object, so count the fineness between them (from object's
+            % fineness to max fineness, then from 0 to the player's fineness)
+            % Space between them is the number of full squares between
+            % them.  Same logic for columns.
+            iRowDiff = Send(First(i),@GetRow) - Send(who,@GetRow);
+            iColDiff = Send(First(i),@GetCol) - Send(who,@GetCol);
 
             % Don't bother if it's greater than two full rows/columns away.
-            if abs(iRowDiff) > 2 OR abs(iColDiff) > 2
+            if Abs(iRowDiff) > 2 OR Abs(iColDiff) > 2
             {
                continue;
             }
 
             if iRowDiff < 0
             {
-               iFirst = FINENESS - Send(first(i),@GetFineRow);
+               iFirst = FINENESS - Send(First(i),@GetFineRow);
                iSecond = Send(who,@GetFineRow);
-               iTemp = iFirst + iSecond + ((abs(iRowDiff) - 1) * FINENESS);
+               iTemp = iFirst + iSecond + ((Abs(iRowDiff) - 1) * FINENESS);
             }
             else
             {
                if iRowDiff > 0
                {
                   iFirst = FINENESS - Send(who,@GetFineRow);
-                  iSecond = Send(first(i),@GetFineRow);
-                  iTemp = iFirst + iSecond + ((abs(iRowDiff) - 1) * FINENESS);
+                  iSecond = Send(First(i),@GetFineRow);
+                  iTemp = iFirst + iSecond + ((Abs(iRowDiff) - 1) * FINENESS);
                }
                else
                {
                   % This means iRowDiff = 0
-                  iTemp = abs((Send(first(i),@GetFineRow) - Send(who,@GetFineRow)));
+                  iTemp = Abs((Send(First(i),@GetFineRow)
+                                 - Send(who,@GetFineRow)));
                }
             }
 
@@ -1003,22 +1016,23 @@ messages:
 
             if iColDiff < 0
             {
-               iFirst = FINENESS - Send(first(i),@GetFineCol);
+               iFirst = FINENESS - Send(First(i),@GetFineCol);
                iSecond = Send(who,@GetFineCol);
-               iTemp = iFirst + iSecond + ((abs(iColDiff) - 1) * FINENESS);
+               iTemp = iFirst + iSecond + ((Abs(iColDiff) - 1) * FINENESS);
             }
             else
             {
                if iColDiff > 0
                {
                   iFirst = FINENESS - Send(who,@GetFineCol);
-                  iSecond = Send(first(i),@GetFineCol);
-                  iTemp = iFirst + iSecond + ((abs(iColDiff) - 1) * FINENESS);
+                  iSecond = Send(First(i),@GetFineCol);
+                  iTemp = iFirst + iSecond + ((Abs(iColDiff) - 1) * FINENESS);
                }
                else
                {
                   % This means iColDiff = 0
-                  iTemp = abs((Send(first(i),@GetFineCol) - Send(who,@GetFineCol)));
+                  iTemp = Abs((Send(First(i),@GetFineCol)
+                              - Send(who,@GetFineCol)));
                }
             }
 
@@ -1026,12 +1040,13 @@ messages:
 
             if iCurrentDistance < iClosestDistance
             {
-               % We're cool if we're closer than about a quarter of a "box" away,
-               % otherwise there may be some confusion.
-               if (iClosestDistance - iCurrentDistance) > ((FINENESS/4) * (FINENESS/4))
+               % We're cool if we're closer than about a quarter of a
+               % "box" away, otherwise there may be some confusion.
+               if (iClosestDistance - iCurrentDistance)
+                     > ((FINENESS/4) * (FINENESS/4))
                {
                   iClosestDistance = iCurrentDistance;
-                  oClosest = first(i);
+                  oClosest = First(i);
                }
                else
                {
@@ -1061,7 +1076,8 @@ messages:
 
       if ptDecoratorArrives = $
       {
-         ptDecoratorArrives = createTimer(self,@DecoratorArrives,DECORATOR_DELAY);
+         ptDecoratorArrives = CreateTimer(self,@DecoratorArrives,
+                                          DECORATOR_DELAY);
       }
 
       return;
@@ -1071,7 +1087,7 @@ messages:
    {
       ptDecoratorArrives = $;
       Send(self,@NewHold,#what=Create(&Decorator),
-           #new_row=viDecorator_Row,#new_col=viDecorator_col);
+            #new_row=viDecorator_Row,#new_col=viDecorator_col);
 
       return;
    }
@@ -1095,10 +1111,10 @@ messages:
       while i < length(plBedCoords)
       {
          i = i + 1;
-         if (iRow = nth(nth(nth(plBedCoords,i),1),1)
-             AND iCol = nth(nth(nth(plBedCoords,i),1),2))
-            OR (iRow = nth(nth(nth(plBedCoords,i),2),1)
-                AND iCol = nth(nth(nth(plBedCoords,i),2),2))
+         if (iRow = Nth(Nth(Nth(plBedCoords,i),1),1)
+               AND iCol = Nth(Nth(Nth(plBedCoords,i),1),2))
+            OR (iRow = Nth(Nth(Nth(plBedCoords,i),2),1)
+               AND iCol = Nth(Nth(Nth(plBedCoords,i),2),2))
          {
             return i;
          }
@@ -1128,11 +1144,11 @@ messages:
          i = i + 1;
 
          j = 0;
-         while j < length(nth(plPictureCoords,i))
+         while j < length(Nth(plPictureCoords,i))
          {
             j = j + 1;
-            if iRow = nth(nth(nth(plPictureCoords,i),j),1)
-               AND iCol = nth(nth(nth(plPictureCoords,i),j),2)
+            if iRow = Nth(Nth(Nth(plPictureCoords,i),j),1)
+               AND iCol = Nth(Nth(Nth(plPictureCoords,i),j),2)
             {
                return i;
             }
@@ -1165,7 +1181,7 @@ messages:
    ChangeRoomLight(iChange = 0)
    {
       local iAmount;
-      
+
       if iChange > 0
       {
          % Increase light by a step.
@@ -1182,7 +1198,7 @@ messages:
 
       % Bind between 44 and 244 for consistent, reasonable levels of light.
       % Note: the spells Light and Darkness alter these threshold.
-      % Saying 'lighter' or 'darker' resets it though.  
+      % Saying 'lighter' or 'darker' resets it though.
       iAmount = bound((piBaseLight + iAmount),44,244);
       Send(self,@SetBaseLight,#amount=iAmount);
 
@@ -1191,7 +1207,8 @@ messages:
 
    CanAccessObject(category=1,who=$)
    {
-      % No attacks mean no heartstones.  Everything except for 6th category is fine.
+      % No attacks mean no heartstones.
+      % Everything except for 6th category is fine.
       if NOT Send(Send(SYS,@GetNodeAttack),@GetAttacks)
       {
          if category <> 6
@@ -1203,70 +1220,70 @@ messages:
             return FALSE;
          }
       }
-   
-      % Has the user given use those neat-o Heartstones?  If so, what can we make?
-      % Note: 6th category stuff is primo!  You gotta have a all heartstones at
-      %       full to get it.
+
+      % Has the user given use those neat-o Heartstones?  If so, what
+      % can we make? Note: 6th category stuff is primo!  You gotta have
+      % all heartstones at full to get it.
       if (category = 1)
          OR ((category = 2) AND piBrownHeartStone)
          OR ((category = 3) AND piRedHeartStone)
          OR ((category = 4) AND piBlueHeartStone)
          OR ((category = 5) AND piSkyHeartStone)
          OR ((category = 6)
-             AND (piRedHeartStone >= ITEMS_FROM_HEARTSTONES)
-             AND (piBlueHeartStone >= ITEMS_FROM_HEARTSTONES)
-             AND (piSkyHeartStone >= ITEMS_FROM_HEARTSTONES)
-             AND (piBrownHeartStone >= ITEMS_FROM_HEARTSTONES))
+            AND (piRedHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piBlueHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piSkyHeartStone >= ITEMS_FROM_HEARTSTONES)
+            AND (piBrownHeartStone >= ITEMS_FROM_HEARTSTONES))
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
    AddHeartStone(oStone=$, oDecorator=$)
    {
       local bGotAll;
-      
+
       bGotAll = (piRedHeartStone AND piBlueHeartStone
                  AND piSkyHeartStone AND piBrownHeartStone);
-      
+
       % Increment appropriate type of heartstone.
       if IsClass(oStone,&RedHeartStone)
       {
          piRedHeartStone = piRedHeartStone + ITEMS_FROM_HEARTSTONES;
          Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
-              #string=RentableRoom_heartstone_red);
+               #string=RentableRoom_heartstone_red);
       }
-      
+
       if IsClass(oStone,&BlueHeartStone)
       {
          piBlueHeartStone = piBlueHeartStone + ITEMS_FROM_HEARTSTONES;
          Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
-              #string=RentableRoom_heartstone_blue);
+               #string=RentableRoom_heartstone_blue);
       }
-      
+
       if IsClass(oStone,&BrownHeartStone)
       {
          piBrownHeartStone = piBrownHeartStone + ITEMS_FROM_HEARTSTONES;
          Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
-              #string=RentableRoom_heartstone_brown);
+               #string=RentableRoom_heartstone_brown);
       }
-      
+
       if IsClass(oStone,&SkyHeartStone)
       {
          piSkyHeartStone = piSkyHeartStone + ITEMS_FROM_HEARTSTONES;
          Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
-              #string=RentableRoom_heartstone_sky);
+               #string=RentableRoom_heartstone_sky);
       }
 
       if (NOT bGotAll)
          AND (piRedHeartStone AND piBlueHeartStone
-              AND piSkyHeartStone AND piBrownHeartStone)
+            AND piSkyHeartStone AND piBrownHeartStone)
       {
          Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
-              #string=RentableRoom_heartstone_all);
-      }      
+               #string=RentableRoom_heartstone_all);
+      }
 
       return;
    }
@@ -1288,22 +1305,22 @@ messages:
       {
          piBrownHeartStone = piBrownHeartStone - 1;
       }
-      
+
       if iCategory = 3
       {
          piRedHeartStone = piRedHeartStone - 1;
       }
-      
+
       if iCategory = 4
       {
          piBlueHeartStone = piBlueHeartStone - 1;
       }
-      
+
       if iCategory = 5
       {
          piSkyHeartStone = piSkyHeartStone - 1;
       }
-      
+
       if iCategory = 6
       {
          piBrownHeartStone = piBrownHeartStone - ITEMS_FROM_HEARTSTONES;
@@ -1324,7 +1341,7 @@ messages:
    {
       if piCredit < amount
       {
-         DEBUG("DeductCredit:: amount is too big");
+         Debug("DeductCredit:: amount is too big");
          piCredit = 0;
       }
 
@@ -1352,12 +1369,14 @@ messages:
       if piDaysLeft <= 0
       {
          Post(self,@RoomExpired);
+
          return;
       }
 
-      % Send warning every 12 Meridian days (2 real days), and when we have 4 hours left
+      % Send warning every 12 Meridian days (2 real days),
+      % and when we have 4 hours left.
       if (piDaysLeft <= 2)
-         OR ((piDaysLeft mod 12) = 0)
+         OR ((piDaysLeft MOD 12) = 0)
       {
          Send(self,@SendExpiryWarningMail);
       }
@@ -1370,7 +1389,7 @@ messages:
    "Returns total days left."
    {
       piDaysLeft = piDaysLeft + iTimeAdded;
-      
+
       return piDaysLeft;
    }
 
@@ -1413,11 +1432,11 @@ messages:
    NewHold(what=$)
    {
       % Get rid of tokens.
-      if what <> $ AND isClass(what,&Token)
+      if what <> $ AND IsClass(what,&Token)
       {
          Post(what,@RandomTeleport);
       }
-      
+
       propagate;
    }
 
@@ -1443,7 +1462,7 @@ messages:
    CanHavePlayerPortal(who = $)
    {
       % Don't allow portals in private rooms
-      return false;
+      return FALSE;
    }
 
 end

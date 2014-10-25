@@ -1875,6 +1875,15 @@ messages:
 
       if IsClass(what,&User)
       {
+         % NPCs might need to do or say something.
+         for i in plActive
+         {
+            if IsClass(First(i),&Monster)
+            {
+               Send(First(i),@UserEntered,#who=what);
+            }
+         }
+
          if NOT pbUser_in_room
          {
             Send(self,@FirstUserEntered,#what=what,#new_row=Nth(new_pos,2),

@@ -11,12 +11,12 @@
 RentableRoomMaintenance is UtilityFunctions
 
 constants:
-   
+
    include blakston.khd
 
    % This is the max number of days that a player can rent a room at a time.
    % Equal to about 20 offline days.
-   DAYS_MAX = 240
+   DAYS_MAX = 1440
 
 resources:
 
@@ -34,11 +34,12 @@ properties:
 
    plRoomsRented = $
 
-messages: 
+messages:
 
    Constructor()
    {
       Send(self,@Recreate);
+
       return;
    }
 
@@ -50,88 +51,93 @@ messages:
    HoldRoomsDuringRecreate()
    {
       local i, oRoom;
-      
+
       plHoldingDuringRecreate = $;
-      
+
       for i in plRoomsRented
       {
-         oRoom = send(SYS,@FindRoomByNum,#num=i);
+         oRoom = Send(SYS,@FindRoomByNum,#num=i);
          plHoldingDuringRecreate = cons(oRoom,plHoldingDuringRecreate);
-         send(SYS,@DeleteRoom,#what=oRoom);
+         Send(SYS,@DeleteRoom,#what=oRoom);
       }
-     
+
       return;
    }
 
    ReattachRentableRooms()
    {
       local i;
-      
+
       for i in plHoldingDuringRecreate
       {
-         send(SYS,@ReattachRoom,#oRoom=i);
+         Send(SYS,@ReattachRoom,#oRoom=i);
       }
-      
+
       plHoldingDuringRecreate = $;
-      
+
       return;
    }
 
    RentRoom(who=$,iLocation=$,iCost=5000)
    {
       local iRID, oRoom, oMoney;
-      
-      % check if the player already has a room.  If so, complain and bail.
-      oRoom = send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
-      if oRoom <> $ 
+
+      % Check if the player already has a room.  If so, complain and bail.
+      oRoom = Send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
+      if oRoom <> $
       {
          return RoomMaintenance_room_already;
       }
 
-      % check for the fee.  If too poor, complain and bail.
-      oMoney = send(who,@GetMoneyObject);
-         
-      if oMoney = $ OR send(oMoney,@GetNumber) < iCost
+      % Check for the fee.  If too poor, complain and bail.
+      oMoney = Send(who,@GetMoneyObject);
+
+      if oMoney = $ OR Send(oMoney,@GetNumber) < iCost
       {
          return RoomMaintenance_no_rental_fee;
       }
 
-      % deduct the fee
-      send(oMoney,@SubtractNumber,#number=iCost);
+      % Deduct the fee
+      Send(oMoney,@SubtractNumber,#number=iCost);
 
-      % set up the room
-      iRID = send(self,@GetNextAvailableRID,#iLocation=iLocation);
-      Send(SYS,@CreateOneRoomIfNew,#num=iRID,#class=send(self,@GetRoomClassByLocation,#iLocation=iLocation));
-      send(send(SYS,@FindRoomByNum,#num=iRID),@SetRenter,#who=who);
-      plRoomsRented = cons(iRID,plRoomsRented);
+      % Set up the room
+      iRID = Send(self,@GetNextAvailableRID,#iLocation=iLocation);
+      Send(SYS,@CreateOneRoomIfNew,#num=iRID,
+            #class=Send(self,@GetRoomClassByLocation,#iLocation=iLocation));
+      Send(Send(SYS,@FindRoomByNum,#num=iRID),@SetRenter,#who=who);
+      plRoomsRented = Cons(iRID,plRoomsRented);
 
-      % create the key and give it to the player
-      send(who,@NewHold,#what=Create(&RoomKey,#iRID=iRID));
+      % Add it to the room enter count statistics.
+      Send(Send(SYS,@GetStatistics),@AddToRoomCount,#iNum=iRID);
 
-      % Return $ so that the innkeeper gives a friendly message in the local flavor.
+      % Create the key and give it to the player
+      Send(who,@NewHold,#what=Create(&RoomKey,#iRID=iRID));
+
+      % Return $ so that the innkeeper gives a friendly
+      % message in the local flavor.
       return $;
-   }   
+   }
 
    CopyKey(who=$,iLocation=$,iCost=500)
    {
       local lPassive, oObject, oKey, bHasRoomKey, bFound, oMoney;
-      
-      % check if the player has a gold key.
+
+      % Check if the player has a gold key.
       bHasRoomKey = FALSE;
       bFound = FALSE;
-      lPassive = send(who,@GetHolderPassive);
+      lPassive = Send(who,@GetHolderPassive);
 
       for oObject in lPassive
       {
-         oKey = send(who,@HolderExtractObject,#data=oObject);
-         
+         oKey = Send(who,@HolderExtractObject,#data=oObject);
+
          % Is it from the proper inn?
          if IsClass(oKey,&RoomKey)
          {
             bHasRoomKey = TRUE;
 
-            if IsClass(send(SYS,@FindRoomByNum,#num=Send(oKey,@GetRID)),
-                        send(self,@GetRoomClassByLocation,#iLocation=iLocation))
+            if IsClass(Send(SYS,@FindRoomByNum,#num=Send(oKey,@GetRID)),
+                        Send(self,@GetRoomClassByLocation,#iLocation=iLocation))
             {
                bFound = TRUE;
 
@@ -139,11 +145,11 @@ messages:
             }
          }
       }
-            
-      if not bFound
+
+      if NOT bFound
       {
-         % If not found, check if player has silver key.  
-         oKey = send(who,@FindHolding,#class=&RoomKeyCopy);
+         % If not found, check if player has silver key.
+         oKey = Send(who,@FindHolding,#class=&RoomKeyCopy);
          if oKey <> $ AND NOT bHasRoomKey
          {
             % If so, complain and bail.
@@ -155,20 +161,20 @@ messages:
             return RoomMaintenance_no_key;
          }
       }
-            
-      % check for the fee.  If too poor, complain and bail.
-      oMoney = send(who,@GetMoneyObject);
-            
-      if oMoney = $ OR send(oMoney,@GetNumber) < iCost
+
+      % Check for the fee.  If too poor, complain and bail.
+      oMoney = Send(who,@GetMoneyObject);
+
+      if oMoney = $ OR Send(oMoney,@GetNumber) < iCost
       {
          return RoomMaintenance_copy_no_money;
       }
-            
-      % deduct the fee
-      send(oMoney,@SubtractNumber,#number=iCost);
 
-      % copy the key and give it to the player.
-      send(who,@NewHold,#what=send(oKey,@Copy));
+      % Deduct the fee.
+      Send(oMoney,@SubtractNumber,#number=iCost);
+
+      % Copy the key and give it to the player.
+      Send(who,@NewHold,#what=Send(oKey,@Copy));
 
       return RoomMaintenance_key_copied;
    }
@@ -177,10 +183,10 @@ messages:
    {
       local oMoney, iDays, oRoom, iDaysLeft;
 
-      oRoom = send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
+      oRoom = Send(self,@FindRoomByPlayer,#who=who,#iLocation=iLocation);
 
       % No room?  Return out and do nothing.
-      if oRoom = $ 
+      if oRoom = $
       {
          return $;
       }
@@ -188,9 +194,9 @@ messages:
       iDays = iAmount / iCost;
 
       % Make sure we don't go over max.
-      if send(oRoom,@GetDaysLeft) + iDays > DAYS_MAX
+      if Send(oRoom,@GetDaysLeft) + iDays > DAYS_MAX
       {
-         iDays = DAYS_MAX - send(oRoom,@GetDaysLeft);
+         iDays = DAYS_MAX - Send(oRoom,@GetDaysLeft);
          % Returning 0 gives up the special error message.
          if iDays <= 0
          {
@@ -211,28 +217,28 @@ messages:
 
       if oMoney = $ OR Send(oMoney,@GetNumber) < iAmount
       {
-         % Something wierd went on here.  Don't give a message, just bail.
+         % Something weird went on here.  Don't give a message, just bail.
          return $;
       }
 
       Send(oMoney,@SubtractNumber,#number=iAmount);
 
       % RenewRental returns the new days left.
-      return send(oRoom,@RenewRental,#iTimeAdded=iDays);
-   }      
+      return Send(oRoom,@RenewRental,#iTimeAdded=iDays);
+   }
 
    FindRoomByPlayer(who=$,iLocation=$)
    {
       local iRID, oRoom, bRented, cRoomClass;
 
-      cRoomClass = send(self,@GetRoomClassByLocation,#iLocation=iLocation);
+      cRoomClass = Send(self,@GetRoomClassByLocation,#iLocation=iLocation);
       oRoom = $;
       bRented = FALSE;
 
       for iRID in plRoomsRented
       {
-         oRoom = send(SYS,@FindRoomByNum,#num=iRID);
-         if send(oRoom,@GetRenter) = who
+         oRoom = Send(SYS,@FindRoomByNum,#num=iRID);
+         if Send(oRoom,@GetRenter) = who
             AND IsClass(oRoom,cRoomClass)
          {
             return oRoom;
@@ -252,7 +258,7 @@ messages:
       {
          return iRID;
       }
-      
+
       while TRUE  % Keep going until we find something!
       {
          if NOT FindListElem(plRoomsRented,iRID)
@@ -262,7 +268,7 @@ messages:
          
          iRID = iRID + 1;
       }
-      
+
       return 0;
    }
 
@@ -270,7 +276,7 @@ messages:
    {
       local lRoomsRented, iRID;
 
-      iRID = send(what,@GetRoomNum);
+      iRID = Send(what,@GetRoomNum);
 
       if FindListElem(plRoomsRented,iRID)
       {
@@ -278,7 +284,7 @@ messages:
       }
       else
       {
-         DEBUG("RoomDeleted:: Tried to remove an unlisted room.");
+         Debug("RoomDeleted:: Tried to remove an unlisted room.");
       }
 
       return;
@@ -290,7 +296,7 @@ messages:
 
       for i in plRoomsRented
       {
-         send(send(SYS,@FindRoomByNum,#num=i),@DecrementDaysLeft);
+         Send(Send(SYS,@FindRoomByNum,#num=i),@DecrementDaysLeft);
       }
 
       return;

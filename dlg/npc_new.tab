@@ -109,6 +109,7 @@ BarloqueBartender			~kMeidei says, "The Priestess Xiana can learn thee more of t
 BarloqueBartender			~kMeidei says, "Forsooth, the servants of Qor brings forth those horrid rats from the deep sewers to plague our lands."
 BarloqueBartender			~kBowing his head, Meidei silently mouths a prayer to Shal'ille.
 BarloqueBartender			~kMeidei glares at you with fire in his eyes and says, "Pray tell, dost thou follow the ways of Shal'ille?"
+BarloqueBartender		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 BarloqueBlacksmith		armor	~kFehr'loi Qan says, "I never use no armor, since I found out I can just think about a shield and it appears. Perhaps I could try to teach you."
 BarloqueBlacksmith		Barloque	~kFehr'loi Qan says, "Barloque is my new home. Uh, it may be too good fer the likes of me."
 BarloqueBlacksmith		buy	~kFehr'loi Qan says, "What you got? I'll look at weapons and armor. Maybe other interestin' stuff if you got any."
@@ -203,6 +204,7 @@ BarloqueInnKeeper			~kPritchett says, "Even if thee do not haveth a room here at
 BarloqueInnKeeper			~kPritchett says, "Truth be toldeth, I misseth my days as a sailor."
 BarloqueInnKeeper			~kPritchett says, "Ah, do thoueth smell that sea air? How I misseth my days on the sea."
 BarloqueInnKeeper			~kPritchett says, "Thee know, it 'tis not so hard to picketh up the eloquent way those in Barloque speaketh. Why I think in my short time thither, I have masteredeth it."
+BarloqueInnKeeper		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 BarloqueMerchant		axwaddle	~kHerbutte says, "An axwaddle is a lazy person, you uncouth drumble."
 BarloqueMerchant		barloque	~kHerbutte says, "Barloque is the only city worthy of attention. The others are but barnyards for the common cattle."
 BarloqueMerchant		buy	~kHerbutte says, "I offer fair values for thy gems and jewels. Mind you, I have quite an eye for flaws."
@@ -404,6 +406,7 @@ BasicInnKeeper		Christopher	~kRycksher says,"That Ellis brother is a brave soul 
 BasicInnKeeper		Gilroy	~kRycksher says,"He's got two qualities I love, drunken AND surly.  Runs a nice gathering place, too, I hear."
 BasicInnKeeper		Zach	~kRycksher says,"That guy keeps this place available for you to visit.  Make sure to thank him if you get a chance."
 BasicInnKeeper		Near Death Studios	~kRycksher says,"Truth be told, I like Near Death Studios a bit more than my previous owners.  Hail NDS!"
+BasicInnKeeper		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 CornothGrocer	MOOD_BAD	aebu sikal 	~kSolomon says, "Why do you ask me questions about these words? I don't trust you with understanding anything, siidhika, and especially not the words of an ancient and venerable tongue such as whagzii. But do not despair, for no good can come of it! It is not your fault that you were born a buffalo among men. Ha, ha ha ha ha!!"
 CornothGrocer	MOOD_NOT_BAD	aebu sikal gah tamaal	~kSolomon says, "This is a whagzii phrase that we say to only the stupidest people which means 'go and put your head into the oatmeal pot'. Yes, only the stupidest people!! Ha, ha ha ha ha!!"
 CornothGrocer	MOOD_NOT_BAD	bagab	~kSolomon says, "Bagab? Ha, ha ha ha ha, why a bagab is a person who hasn't the sense to wear shoes! Ha, ha ha ha ha!!"
@@ -644,6 +647,7 @@ CorNothInnKeeper	MOOD_NEUTRAL		~kD'Franco belches loudly and says, "Excuse me."
 CorNothInnKeeper	MOOD_NEUTRAL		~kD'Franco says, "An innkeeper couldn't ask for a better town to set up shop in than Cor Noth. Between the university here, and all the travelers passing through, this place is always busy. Cor Noth is the crossroads of Meridian, no doubt about it."
 CorNothInnKeeper	MOOD_NOT_BAD		~kD'Franco says, "It's nice to be alive, here and now."
 CorNothInnKeeper	MOOD_NOT_BAD		~kD'Franco says, "Nice to have you here."
+CorNothInnKeeper		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 CorNothSergeant	MOOD_NOT_BAD	avar	~kRook says, "They are very dangerous, from the tales I have heard. I understand that the Avar can field armies, as we can! I do not think that you will ever see such a force in these parts, though."
 CorNothSergeant	MOOD_BAD	barloque	~kRook says, "Thou art unfit to bespeak the name at all, knave. Go on, be about your business."
 CorNothSergeant	MOOD_GOOD	barloque	~kRook says, "I wish I'd never left, curse the day that I first set foot in this dry place, but the choice was not mine to make, don't you see. In time we must all obey our masters. And as importantly, those that advise our masters."
@@ -1275,6 +1279,7 @@ JasperBartender	MOOD_NEUTRAL		~kPietro says, "We like things the way they are in
 JasperBartender	MOOD_NEUTRAL		~kPietro says, "You don't want to freggin' start no trouble here."
 JasperBartender	MOOD_NEUTRAL		~kPietro says, "~IHic~I."
 JasperBartender	MOOD_NEUTRAL		~kPietro says, "What do you need?"
+JasperBartender		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 JasperBlacksmith	MOOD_NOT_BAD	afiera	~kQuintor says, "Get out of my shop."
 JasperBlacksmith	MOOD_NOT_BAD	afiera d'xor	~kQuintor says, "You'd best talk to Afiera D'xor if that's who you want to talk about."
 JasperBlacksmith	MOOD_NOT_BAD	axe	~kQuintor says, "It's a great thing to have if you're gathering firewood, but to carry as a weapon? The graveyards in these hills are crowded with axe-carrying fools from the flatlands that went up against the orc scimitar."
@@ -1522,6 +1527,7 @@ JasperInnKeeper	MOOD_NEUTRAL		~kThe Widow Qesino says, "You look as though you'v
 JasperInnKeeper	MOOD_NEUTRAL		~kThe Widow Qesino says, "Are you warming up? Let me stoke the fire a bit."
 JasperInnKeeper	MOOD_NEUTRAL		~kThe Widow Qesino says, "You'll catch a chill in these mountains at night."
 JasperInnKeeper	MOOD_NEUTRAL		~kThe Widow Qesino says, "Can I get you anything?"
+JasperInnKeeper		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 JasperMerchant	MOOD_BAD	afiera d'xor	~kZhieu B'hob says, "He has a place here in town, and spends most of his time working there now, although as you probably already know he spent his life in solitude in these mountains, out with the beasts, and the gods, do you know what I mean? He is alone, and that's what he's chosen. To dedicate his life to art, and to Jala... er, I mean Faren, you know, and all the other gods too, because you can't really take just one and holds those beliefs sacred above all others, you need to study how all of their ways are necessary. He taught me that, Afiera D'xor did."
 JasperMerchant	MOOD_GOOD	afiera d'xor	~kZhieu B'hob says, "He is absolutely the oldest and wisest man in Jasper, and he is our treasure. Like the crown of Jasper, I suppose, or the secret. Like when you want to keep a secret so badly, I mean so  badly as though it were the most important thin"
 JasperMerchant	MOOD_NEUTRAL	afiera d'xor	~kZhieu B'hob says, "He is an old and venerable part of our community."
@@ -1747,6 +1753,7 @@ KocatanBartender	MOOD_NOT_GOOD		~kOxal says, "If not for the bad luck of losing 
 KocatanBartender	MOOD_NOT_GOOD		~kOxal carefully wipes a glass with a colorfully printed towel.
 KocatanBartender	MOOD_NOT_GOOD		~kOxal says, "It has taken us years to eradicate the napyijoa from Ko'catan, but I understand that even the sewers have no trace of the vermin. That is how efficient is our A'ach tezcha."
 KocatanBartender			~kOxal says, "Try a cup of our pekonch. It is what we call 'atz'pekonch', or in your language 'mythical wine.' It is the highest standard of pekonch, produced specifically for the Lal a'ach."
+KocatanBartender		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 KocatanBlackSmith		buy	~kIxla says, "What do you have there?"
 KocatanBlackSmith	MOOD_BAD	goodbye	~kIxla says, "Kazot you and all of your kinkauilkinich chot frying pan armor, you call yourself a warrior? You call yourself a warrior? Get your sorry zosin mainland trash back through the zosin orc warrens where you zosin belong."
 KocatanBlackSmith	MOOD_GOOD	goodbye	~kIxla says, "Come back any time."
@@ -1924,6 +1931,7 @@ KocatanInnKeeper			~kMoxal says, "This is a wonderful place to stay the night. D
 KocatanInnKeeper			~kYou hear shouting and laughter coming from the tavern beneath here.
 KocatanInnKeeper			~kA loud crash from downstairs startles you. Presumably used to such sounds, Moxal pays no attention to it.
 KocatanInnKeeper			~kMoxal says, "If you are out in the jungle, you might want to ask Wulfgang about his inventory."
+KocatanInnKeeper		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 KocatanLanguageMaster		ants	~kQuetzal says, "Yokinich would be a giant insect, a giant ant. Add the word red, and you have kawilkinich, for the mutant red ant."
 KocatanLanguageMaster		avar	~kQuetzal says, "The bird people are smart enough to form a semi-coherent language, but that hardly makes them civilized."
 KocatanLanguageMaster		buy	~kQuetzal says, "I have a few things here I could sell you."
@@ -2294,6 +2302,7 @@ MarionBartender	MOOD_NEUTRAL		~kTova winks at Morrigan good-naturedly.
 MarionBartender	MOOD_NEUTRAL		~kTova says, "I hear the Princess said that civilization in Barloque will last ten thousand years. She forgot to tell us when it's going to begin. Ha, ha, ha, ha!"
 MarionBartender	MOOD_NEUTRAL		~kTova says, "So this farmer walks into the tavern here, and asks me what time it is. I tell him it's four-fifteen. He narrows his eyes looking at me and says 'I must be going crazy, Tova. All day long I've been getting different answers!' Ha, ha, ha, ha!"
 MarionBartender	MOOD_NOT_BAD		~kTova says, "Nodes? I don't node nothing about nodes. How about you, Morrigan? Do you node about nodes? Ha, ha, ha, ha!!"
+MarionBartender		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 MarionBlacksmith	MOOD_NOT_BAD	barloque	~kColhorr says, "Broke? What's broke? Let's have a look, maybe I can fix it."
 MarionBlacksmith	MOOD_NOT_BAD	broke	~kColhorr says, "Ah, well... it's a fair city, grand actually. Aye it's a grand city, certainly grand, grand grand grand capital of Meridian."
 MarionBlacksmith	MOOD_BAD	bye	~kColhorr mumbles something to himself.
@@ -3022,6 +3031,7 @@ TosInnKeeper			~kPaddock says, "I'm a little uneasy about setting up shop so clo
 TosInnKeeper			~kPaddock says, "My philosophy is ~Ithe better the customers, the less I need to chew their ear off~I."
 TosInnKeeper			~kPaddock leans behind the bar, cleaning out empty mugs.
 TosInnKeeper			~kPaddock taps another keg of brew open.
+TosInnKeeper		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 TosWatcher		cylill	~kThe Watcher says, "General Cylill is a member of the Council and he is my father. He resides on the River Ille."
 TosWatcher		duke	~kThe Watcher says, "Hail the Memory of Kalior! Hail Duke Akardius!"
 TosWatcher		hello	~kThe Watcher says, "Hail %NAME!"
@@ -3030,7 +3040,6 @@ TosWatcher		kraanan	~kThe Watcher says, "Hail our lord and god, Kraanan of the F
 TosWatcher		princess	~kThe Watcher says, "Hail Princess Kateriina!"
 TosWatcher		qerti'nya	~kThe Watcher says, "You speak of the Priestess Qerti'nya, my mother. She has taught me discipline and courage. You would be wise to visit her out at the Temple of Kraanan beyond the Cragged Mountains."
 TosWatcher		tos	~kThe Watcher says, "Hail Tos, the oldest city in all of Meridian!"
-Towns		stunted dwarf	~kThe room goes silent as %NAME mentions stunted dwarf.
 TwoCouncilor		barloque	~kBei Naq says, "Barloque is the richest city in the world, and that is why I respect it."
 TwoCouncilor		bye	~kBei Naq says, "Be off with you, then."
 TwoCouncilor		cor noth	~kBei Naq says, "Cor Noth has its value. It lies roughly between the Princess and the Duke. The inn is merely acceptable as a place to stay for the night."

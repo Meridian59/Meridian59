@@ -583,6 +583,9 @@ send o 0 speechlibquote who class BarloqueBartender quote q ~kBowing his head, M
 send o 0 speechlibtrigger who class BarloqueBartender
 send o 0 speechlibquote who class BarloqueBartender quote q ~kMeidei glares at you with fire in his eyes and says, "Pray tell, dost thou follow the ways of Shal'ille?"
 
+send o 0 speechlibtrigger who class BarloqueBartender trigger q stunted dwarf
+send o 0 speechlibquote who class BarloqueBartender quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
+
 send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q armor
 send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "I never use no armor, since I found out I can just think about a shield and it appears. Perhaps I could try to teach you."
 
@@ -864,6 +867,9 @@ send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kPritchett says, "A
 
 send o 0 speechlibtrigger who class BarloqueInnKeeper
 send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kPritchett says, "Thee know, it 'tis not so hard to picketh up the eloquent way those in Barloque speaketh. Why I think in my short time thither, I have masteredeth it."
+
+send o 0 speechlibtrigger who class BarloqueInnKeeper trigger q stunted dwarf
+send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
 
 send o 0 speechlibtrigger who class BarloqueMerchant trigger q axwaddle
 send o 0 speechlibquote who class BarloqueMerchant quote q ~kHerbutte says, "An axwaddle is a lazy person, you uncouth drumble."
@@ -1467,6 +1473,9 @@ send o 0 speechlibquote who class BasicInnKeeper quote q ~kRycksher says,"That g
 
 send o 0 speechlibtrigger who class BasicInnKeeper trigger q Near Death Studios
 send o 0 speechlibquote who class BasicInnKeeper quote q ~kRycksher says,"Truth be told, I like Near Death Studios a bit more than my previous owners.  Hail NDS!"
+
+send o 0 speechlibtrigger who class BasicInnKeeper trigger q stunted dwarf
+send o 0 speechlibquote who class BasicInnKeeper quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
 
 send o 0 speechlibtrigger who class CornothGrocer mood int MOOD_BAD trigger q aebu sikal 
 send o 0 speechlibquote who class CornothGrocer quote q ~kSolomon says, "Why do you ask me questions about these words? I don't trust you with understanding anything, siidhika, and especially not the words of an ancient and venerable tongue such as whagzii. But do not despair, for no good can come of it! It is not your fault that you were born a buffalo among men. Ha, ha ha ha ha!!"
@@ -2187,6 +2196,9 @@ send o 0 speechlibquote who class CorNothInnKeeper quote q ~kD'Franco says, "It'
 
 send o 0 speechlibtrigger who class CorNothInnKeeper mood int MOOD_NOT_BAD
 send o 0 speechlibquote who class CorNothInnKeeper quote q ~kD'Franco says, "Nice to have you here."
+
+send o 0 speechlibtrigger who class CorNothInnKeeper trigger q stunted dwarf
+send o 0 speechlibquote who class CorNothInnKeeper quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
 
 send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NOT_BAD trigger q avar
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "They are very dangerous, from the tales I have heard. I understand that the Avar can field armies, as we can! I do not think that you will ever see such a force in these parts, though."
@@ -4081,6 +4093,9 @@ send o 0 speechlibquote who class JasperBartender quote q ~kPietro says, "~IHic~
 send o 0 speechlibtrigger who class JasperBartender mood int MOOD_NEUTRAL
 send o 0 speechlibquote who class JasperBartender quote q ~kPietro says, "What do you need?"
 
+send o 0 speechlibtrigger who class JasperBartender trigger q stunted dwarf
+send o 0 speechlibquote who class JasperBartender quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
+
 send o 0 speechlibtrigger who class JasperBlacksmith mood int MOOD_NOT_BAD trigger q afiera
 send o 0 speechlibquote who class JasperBlacksmith quote q ~kQuintor says, "Get out of my shop."
 
@@ -4822,6 +4837,9 @@ send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino say
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_NEUTRAL
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "Can I get you anything?"
 
+send o 0 speechlibtrigger who class JasperInnKeeper trigger q stunted dwarf
+send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
+
 send o 0 speechlibtrigger who class JasperMerchant mood int MOOD_BAD trigger q afiera d'xor
 send o 0 speechlibquote who class JasperMerchant quote q ~kZhieu B'hob says, "He has a place here in town, and spends most of his time working there now, although as you probably already know he spent his life in solitude in these mountains, out with the beasts, and the gods, do you know what I mean? He is alone, and that's what he's chosen. To dedicate his life to art, and to Jala... er, I mean Faren, you know, and all the other gods too, because you can't really take just one and holds those beliefs sacred above all others, you need to study how all of their ways are necessary. He taught me that, Afiera D'xor did."
 
@@ -5497,6 +5515,9 @@ send o 0 speechlibquote who class KocatanBartender quote q ~kOxal says, "It has 
 send o 0 speechlibtrigger who class KocatanBartender
 send o 0 speechlibquote who class KocatanBartender quote q ~kOxal says, "Try a cup of our pekonch. It is what we call 'atz'pekonch', or in your language 'mythical wine.' It is the highest standard of pekonch, produced specifically for the Lal a'ach."
 
+send o 0 speechlibtrigger who class KocatanBartender trigger q stunted dwarf
+send o 0 speechlibquote who class KocatanBartender quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
+
 send o 0 speechlibtrigger who class KocatanBlackSmith trigger q buy
 send o 0 speechlibquote who class KocatanBlackSmith quote q ~kIxla says, "What do you have there?"
 
@@ -6027,6 +6048,9 @@ send o 0 speechlibquote who class KocatanInnKeeper quote q ~kA loud crash from d
 
 send o 0 speechlibtrigger who class KocatanInnKeeper
 send o 0 speechlibquote who class KocatanInnKeeper quote q ~kMoxal says, "If you are out in the jungle, you might want to ask Wulfgang about his inventory."
+
+send o 0 speechlibtrigger who class KocatanInnKeeper trigger q stunted dwarf
+send o 0 speechlibquote who class KocatanInnKeeper quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
 
 send o 0 speechlibtrigger who class KocatanLanguageMaster trigger q ants
 send o 0 speechlibquote who class KocatanLanguageMaster quote q ~kQuetzal says, "Yokinich would be a giant insect, a giant ant. Add the word red, and you have kawilkinich, for the mutant red ant."
@@ -7137,6 +7161,9 @@ send o 0 speechlibquote who class MarionBartender quote q ~kTova says, "So this 
 
 send o 0 speechlibtrigger who class MarionBartender mood int MOOD_NOT_BAD
 send o 0 speechlibquote who class MarionBartender quote q ~kTova says, "Nodes? I don't node nothing about nodes. How about you, Morrigan? Do you node about nodes? Ha, ha, ha, ha!!"
+
+send o 0 speechlibtrigger who class MarionBartender trigger q stunted dwarf
+send o 0 speechlibquote who class MarionBartender quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
 
 send o 0 speechlibtrigger who class MarionBlacksmith mood int MOOD_NOT_BAD trigger q barloque
 send o 0 speechlibquote who class MarionBlacksmith quote q ~kColhorr says, "Broke? What's broke? Let's have a look, maybe I can fix it."
@@ -9322,6 +9349,9 @@ send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock leans behind th
 send o 0 speechlibtrigger who class TosInnKeeper
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock taps another keg of brew open.
 
+send o 0 speechlibtrigger who class TosInnKeeper trigger q stunted dwarf
+send o 0 speechlibquote who class TosInnKeeper quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
+
 send o 0 speechlibtrigger who class TosWatcher trigger q cylill
 send o 0 speechlibquote who class TosWatcher quote q ~kThe Watcher says, "General Cylill is a member of the Council and he is my father. He resides on the River Ille."
 
@@ -9345,9 +9375,6 @@ send o 0 speechlibquote who class TosWatcher quote q ~kThe Watcher says, "You sp
 
 send o 0 speechlibtrigger who class TosWatcher trigger q tos
 send o 0 speechlibquote who class TosWatcher quote q ~kThe Watcher says, "Hail Tos, the oldest city in all of Meridian!"
-
-send o 0 speechlibtrigger who class Towns trigger q stunted dwarf
-send o 0 speechlibquote who class Towns quote q ~kThe room goes silent as %NAME mentions stunted dwarf.
 
 send o 0 speechlibtrigger who class TwoCouncilor trigger q barloque
 send o 0 speechlibquote who class TwoCouncilor quote q ~kBei Naq says, "Barloque is the richest city in the world, and that is why I respect it."

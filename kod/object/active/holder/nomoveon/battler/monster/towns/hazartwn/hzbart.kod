@@ -22,13 +22,23 @@ resources:
 
    Hazar_Bartender_name_rsc = "Eric d'Jorn"
    Hazar_Bartender_icon_rsc = tsinnk.bgf
-   Hazar_Bartender_desc_rsc = "Despite his professional demeanor and fashionable barkeeping attire, Eric's spirits truly soar when it comes to his true passion: cooking.  He is especially renowned for his delicious soup and always on the lookout for fresh ingredients."
+   Hazar_Bartender_desc_rsc = \
+      "Despite his professional demeanor and fashionable barkeeping attire, "
+      "Eric's spirits truly soar when it comes to his true passion: cooking.  "
+      "He is especially renowned for his delicious soup and always on the "
+      "lookout for fresh ingredients."
 
-   HzBar_entry_welcome = "Care for a nice stiff drink?  The house special will knock you on your arse!"
-  
+   HzBar_entry_welcome = \
+      "Care for a nice stiff drink?  The house special will knock you "
+      "on your arse!"
 
-   HazarBart_enough = "Mmmh! Tasty hand-picked mushrooms - fanTAStic!  Here, let me reward you..."
-   HazarBart_not_enough = "I need some edible mushrooms, but they're useless to me unless you can get me enough to make a nice soup - say, at LEAST ten.  If you get more, come back and I'll reward you!"
+   HazarBart_enough = \
+      "Mmmh! Tasty hand-picked mushrooms - fanTAStic!  Here, "
+      "let me reward you..."
+   HazarBart_not_enough = \
+      "I need some edible mushrooms, but they're useless to me unless you "
+      "can get me enough to make a nice soup - say, at LEAST ten.  If you "
+      "get more, come back and I'll reward you!"
 
 classvars:
 
@@ -36,11 +46,12 @@ classvars:
    vrIcon = Hazar_Bartender_icon_rsc
    vrDesc = Hazar_Bartender_desc_rsc
    viMerchant_markup = MERCHANT_NORMAL
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_NOQUEST
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_NOQUEST
    viOccupation = MOB_ROLE_BARTENDER
 
 properties:
-
 
 messages:
 
@@ -53,49 +64,52 @@ messages:
                    Create(&Soup,#number=1)
                    ],
                   $,$];
+
       return;
    }
 
    Constructed()
    {
       plWantedItems = [ &Snack ];
+
       propagate;
    }
 
-   UserEntered()
+   UserEntered(who=$)
    {
-      Send(poOwner,@SomeoneSaid,#what=self,#string=HzBar_entry_welcome,
-             #type = SAY_RESOURCE);
-             
+      Post(who,@SomeoneSaid,#what=self,#string=HzBar_entry_welcome,
+            #type=SAY_RESOURCE);
+
       propagate;
    }
-   
+
    GotWantedItem(obj=$,who=$)
    {
-		local oShield;
+      local oShield;
 
-		if not isClass(obj,&Snack)
-		{
-		   propagate;
-		}
+      if NOT IsClass(obj,&Snack)
+      {
+         propagate;
+      }
 
-		%% Item must have been an edible mushroom.  See if there are
-		%% enough, and take it away.
-		if send(obj,@GetNumber) > 9
-		{
-			send(self,@SayToOne,#target=who,#message_rsc=hazarbart_enough);
-			Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
-			oShield=Create(&KnightShield);
-			send(who,@newhold,#what=oShield);
-			send(obj,@delete);
-			return;			
-		}
+      % Item must have been an edible mushroom.  See if there are
+      % enough, and take it away.
+      if Send(obj,@GetNumber) > 9
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=hazarbart_enough);
+         Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
+         oShield=Create(&KnightShield);
+         Send(who,@NewHold,#what=oShield);
+         Send(obj,@delete);
 
-		%% There aren't enough.  Tell him to get more.
-		send(self,@SayToOne,#target=who,#message_rsc=hazarbart_not_enough);
-		return;
+         return;
+      }
+
+      % There aren't enough.  Tell him to get more.
+      Send(self,@SayToOne,#target=who,#message_rsc=hazarbart_not_enough);
+
+      return;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

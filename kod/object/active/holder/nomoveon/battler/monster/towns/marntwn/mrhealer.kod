@@ -18,11 +18,15 @@ resources:
 
    MarionHealer_name_rsc = "Lady Aftyn"
    MarionHealer_icon_rsc = mrhealer.bgf
-   MarionHealer_desc_rsc = "In the presence of Lady Aftyn there is no mistaking that she is of royalty, "
-      "and not from these parts.  She exudes a sense of peaceful determination; of confidence, serenity, and "
-      "purpose."
+   MarionHealer_desc_rsc = \
+      "In the presence of Lady Aftyn there is no mistaking that she is of "
+      "royalty, and not from these parts.  She exudes a sense of peaceful "
+      "determination; of confidence, serenity, and purpose."
 
-   Mrhealer_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s.  I don't have any rooms for rent right now, but you are welcome to rest here."
+   Mrhealer_entry_welcome = \
+      "Pardon me for saying so, but you look like you could use a "
+      "rest, %s%s.  I don't have any rooms for rent right now, but you are "
+      "welcome to rest here."
 
 classvars:
 
@@ -30,7 +34,9 @@ classvars:
    vrIcon = MarionHealer_icon_rsc
    vrDesc = MarionHealer_desc_rsc
    viMerchant_Markup = MERCHANT_DISCOUNT
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_SELLER | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN \
+      | MOB_SELLER | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_HEALER
    viGender = GENDER_FEMALE
 
@@ -45,22 +51,20 @@ messages:
                      Create(&CurePoisonPotion,#labelled=TRUE),
                      Create(&CureDiseasePotion,#labelled=TRUE),
                      Create(&Flask)],
-		               $,
-		            [  SID_DISTILL ] ];
+                     $,
+                  [  SID_DISTILL ] ];
 
       return;
    }
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#string=MrHealer_entry_welcome,
-          #type = SAY_RESOURCE,
-          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
-	 
+      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            #string=MrHealer_entry_welcome,
+            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
       propagate;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

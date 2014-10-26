@@ -19,22 +19,28 @@ resources:
    farenpriestess_name_rsc = "Priestess Tenuv'vyal"
    farenpriestess_icon_rsc = farnprst.bgf
    farenpriestess_desc_rsc = \
-      "Hair unkempt and anger barely checked.  Some say she is on the brink of madness, others "
-      "say she is a terrible menace waiting to be released like a raging storm.  She despises "
-      "civilization and feels humans must return to the ways of the wilds."
+      "Hair unkempt and anger barely checked.  Some say she is on the brink "
+      "of madness, others say she is a terrible menace waiting to be released "
+      "like a raging storm.  She despises civilization and feels humans must "
+      "return to the ways of the wilds."
 
-   Faren_forget_potion_sale = "~B~gYou chose to abandon Lord Faren? So be it, %s%s is yours if you wish to buy one.  Beware though, the powers of the amnesiac are permanent.~n~k"
+   Faren_forget_potion_sale = \
+      "~B~gYou chose to abandon Lord Faren? So be it, %s%s is yours if you "
+      "wish to buy one.  Beware though, the powers of the amnesiac are "
+      "permanent.~n~k"
    faren_teach = "From Faren's fire, you can learn "
 
 classvars:
-   
+
    vrTeach_message = faren_teach
    vrName = farenpriestess_name_rsc
    vrIcon = farenpriestess_icon_rsc
    vrDesc = farenpriestess_desc_rsc
-  
+
    viQuestID = QST_ID_FAREN_DISCIPLE
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER | MOB_NOMOVE | MOB_PERM_QUESTER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_TEACHER | MOB_COND_SELLER | MOB_NOMOVE | MOB_PERM_QUESTER
    viOccupation = MOB_ROLE_PRIESTESS
 
 messages:
@@ -42,10 +48,12 @@ messages:
    InitCondSale()
    {
       local oObj;
+
       oObj=Create(&ForgetPotionFaren);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,2500,Faren_forget_potion_sale]);
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,2500,Faren_forget_potion_sale]);
+
       return;
    }
 
@@ -59,9 +67,9 @@ messages:
          SID_EARTHQUAKE, SID_SHATTER, SID_SAND_STORM, SID_SUMMON_FOG,
          SID_MYSTIC_TOUCH ],
        $ ];
+
       return;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

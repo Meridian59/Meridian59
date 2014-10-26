@@ -19,22 +19,30 @@ resources:
 
    twoCouncilor_name_rsc = "Bei Naq"
    twoCouncilor_icon_rsc = twocon.bgf
-   twoCouncilor_desc_rsc = "A small vulture like man stuffed in extravagant robes of gold and jewels, "
-      "he lives in constant fear of others wanting his treasures.  Through his studies, he located numerous "
-      "jewel mines and remains the richest in the land, although his purse is seldom opened."
+   twoCouncilor_desc_rsc = \
+      "A small vulture like man stuffed in extravagant robes of gold and "
+      "jewels, he lives in constant fear of others wanting his treasures.  "
+      "Through his studies, he located numerous jewel mines and remains the "
+      "richest in the land, although his purse is seldom opened."
 
-   twocon_true_ideal_rsc = "Your fortune is sizable. I am always doubly impressed by those who carry such capital."
-   twocon_half_ideal_rsc = "For future reference, I do prefer to do business with those who carry more wealth about them."
+   twocon_true_ideal_rsc = \
+      "Your fortune is sizeable. I am always doubly impressed by those who "
+      "carry such capital."
+   twocon_half_ideal_rsc = \
+      "For future reference, I do prefer to do business with those who "
+      "carry more wealth about them."
 
 classvars:
 
    vrName = twoCouncilor_name_rsc
    vrDesc = twoCouncilor_desc_rsc
    vrIcon = twoCouncilor_icon_rsc
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN \
+         | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_COUNCILMEMBER
    viInitialState = 101  %leaning to the duke
-   viGender = GENDER_MALE   
+   viGender = GENDER_MALE
 
    viHomeroom = RID_G6
    viMyRow = 48
@@ -47,89 +55,111 @@ properties:
 
 messages:
 
-   UserEntered( who = $ )
+   UserEntered(who = $)
    {
-      local iFlags;
-      iFlags = send( who, @GetObjectFlags );
-      if iFlags & PLAYER_PK
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-	 send( self, @SetMood, #new_mood = piMood - 4 );
+         Send(self,@SetMood,#new_mood=piMood-4);
       }
-      if iFlags & PLAYER_OUTLAW
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-	 send( self, @SetMood, #new_mood = piMood - 2 );
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-  
+
       propagate;
    }
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_ACCEPT_ITEM )
+      if why = MOODMOD_ACCEPT_ITEM
       {
-	 if( IsClass( what, &money ) OR IsClass( what, &Diamond ) )
-	 {
-   	    send( self, @SetMood, #new_mood = piMood + 3 );
-	    return;
-	 }
-	 if( IsClass( what, &SpiderEgg ) )
-	 {
-   	    send( self, @SetMood, #new_mood = piMood + 5 );
-	    return;
-	 }
+         if IsClass(what,&Money)
+            OR IsClass(what,&Diamond)
+         {
+            Send(self,@SetMood,#new_mood=piMood+3);
+
+            return;
+         }
+
+         if IsClass(what,&SpiderEgg)
+         {
+            Send(self,@SetMood,#new_mood=piMood+5);
+
+            return;
+         }
       }
-      if( why = MOODMOD_FACTION_CHANGE )
+
+      if why = MOODMOD_FACTION_CHANGE
       {
-	 if( what = FACTION_DUKE )
-	 {
-	    send( self, @SetMood, #new_mood = piMood + 1 );
-	    return;
-	 }
-	 if( what = FACTION_PRINCESS )
-	 {
-	    send( self, @SetMood, #new_mood = piMood - 1 );
-	    return;
-	 }
+         if what = FACTION_DUKE
+         {
+            Send(self,@SetMood,#new_mood=piMood+1);
+
+            return;
+         }
+
+         if what = FACTION_PRINCESS
+         {
+            Send(self,@SetMood,#new_mood=piMood-1);
+
+            return;
+         }
       }
-      if( why = MOODMOD_DAWN )
+
+      if why = MOODMOD_DAWN
       {
-	 send( self, @SetMood, #new_mood = piMood + 3 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood+3);
+
+         return;
       }
-      if( why = MOODMOD_DUSK )
+
+      if why = MOODMOD_DUSK
       {
-	 send( self, @SetMood, #new_mood = piMood - 3 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood-3);
+
+         return;
       }
+
       return;
    }
 
    Constructor()
    {
      plWantedItems = [&TwoToken];
+
      propagate;
    }
 
    CheckSpecialDeliverer(who=$)
    {
-     local imoney;
-     piStateBump = 1; 
-     imoney = Send(who,@GetMoneyObject);
-     if imoney<>$ and (Send(imoney,@GetValue) >= NUM_COINS_FOR_SPECIAL)
-     {  piStateBump = 2; return TwoCon_true_ideal_rsc; }
-     else { return TwoCon_half_ideal_rsc; }
-     return;
+      local iMoney;
+
+      piStateBump = 1;
+      iMoney = Send(who,@GetMoneyObject);
+      if iMoney <> $
+         AND (Send(iMoney,@GetValue) >= NUM_COINS_FOR_SPECIAL)
+      {
+         piStateBump = 2;
+
+         return TwoCon_true_ideal_rsc;
+      }
+      else
+      {
+         return TwoCon_half_ideal_rsc;
+      }
+
+      return;
    }
-   
+
    SetForSale()
    {
       plFor_sale = [$,$,
-        [ SID_CONVEYANCE],
-       $ ];
-       
+                   [SID_CONVEYANCE],
+                   $ ];
+
       return;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

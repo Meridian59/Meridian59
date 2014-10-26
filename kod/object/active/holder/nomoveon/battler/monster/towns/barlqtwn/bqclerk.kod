@@ -16,8 +16,8 @@ constants:
    include protocol.khd
 
    % Number of pardons allowed in one term
-   %  (unlike "pardon" spell, a justicar pardon takes you down one notch,
-   %   from murderer to outlaw, or from outlaw to lawful)
+   % (unlike "pardon" spell, a justicar pardon takes you down one notch,
+   % from murderer to outlaw, or from outlaw to lawful)
    PARDON_LIMIT = 8
 
    BOOTH_WEST = 6
@@ -84,14 +84,22 @@ resources:
    barloque_clerk_was = "was"
    barloque_clerk_were = "were"
    
-   indulgence_not_enough_money = "You think the law will forgive you for partial measures? Pay the full amount or get out of my sight."
-   indulgence_success = "Thank you for paying your debt to society. You will no longer be considered a murderer in the eyes of the law."
+   indulgence_not_enough_money = \
+      "You think the law will forgive you for partial measures? Pay the "
+      "full amount or get out of my sight."
+   indulgence_success = \
+      "Thank you for paying your debt to society. You will no longer be "
+      "considered a murderer in the eyes of the law."
    indulgence_not_a_murderer = "Only murderers may buy indulgences."
    barloque_clerk_indulgence_1 = "Let it be known that "
-   barloque_clerk_indulgence_2 = " has been granted an indulgence and pardoned.  So it has been spoken, so it shall be done.\n\n-- Caramo"
+   barloque_clerk_indulgence_2 = \
+      " has been granted an indulgence and pardoned.  So it has been "
+      "spoken, so it shall be done.\n\n-- Caramo"
    barloque_clerk_indulgence_3 = " granted indulgence"
    
-   no_more_ballots = "According to the Royal Paperwork Reduction Act, ballots are no longer used in this office."
+   no_more_ballots = \
+      "According to the Royal Paperwork Reduction Act, ballots are no "
+      "longer used in this office."
 
 classvars:
 
@@ -99,7 +107,9 @@ classvars:
    vrIcon = barloque_clerk_icon_rsc
    vrDesc = barloque_clerk_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_SELLER | MOB_NOMOVE | MOB_LAWFUL | MOB_FULL_TALK | MOB_RECEIVE
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_SELLER | MOB_NOMOVE \
+      | MOB_LAWFUL | MOB_FULL_TALK | MOB_RECEIVE
    viGender = GENDER_FEMALE
 
 properties:
@@ -109,79 +119,88 @@ properties:
    piJusticar_State = STATE_NO_ELECTIONS
 
    piCommand = COMMAND_NONE
-   
+
 messages:
 
    Constructor()
    {
       plWantedItems = [ &BallotItem, &Money ];
       Send(SYS,@SetCaramo,#oCaramo=self);
-      
+
       piJusticar_State = STATE_NO_ELECTIONS;
 
       propagate;
    }
 
-
-   GotWantedItem(obj = $, who = $)
+   GotWantedItem(obj=$,who=$)
    {
-      if isClass(obj, &BallotItem)
+      if IsClass(obj, &BallotItem)
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=no_more_ballots,#type=SAY_RESOURCE);
+         Post(poOwner,@SomeoneSaid,#what=self,#string=no_more_ballots,
+               #type=SAY_RESOURCE);
+
          return;
       }
 
-      if send(self,@CheckForIndulgence,#who=who,#obj=obj)
+      if Send(self,@CheckForIndulgence,#who=who,#obj=obj)
       {
          return;
       }
-      
+
       propagate;
    }
 
-   CheckForIndulgence(who=$, obj = 0)
+   CheckForIndulgence(who=$,obj=0)
    {
       local oMoney, oBank, amount;
 
-      if not isClass(obj,&Money)
+      if NOT IsClass(obj,&Money)
       {
-         return false;
+         return FALSE;
       }
-      
-      amount = send(obj,@GetNumber);
+
+      amount = Send(obj,@GetNumber);
       if amount <= 0
       {
-         return false;
+         return FALSE;
       }
 
       % Check for hacked offers
       oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $ 
+      if oMoney = $
       {
-	     return false;
+         return FALSE;
       }
-      if send(oMoney,@GetValue) < amount
+
+      if Send(oMoney,@GetValue) < amount
       {
-	     return false;
+         return FALSE;
       }
-      
+
       if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_not_a_murderer,#type=SAY_RESOURCE);
-         return true;
+         Post(poOwner,@SomeoneSaid,#what=self,
+               #string=indulgence_not_a_murderer,#type=SAY_RESOURCE);
+
+         return TRUE;
       }
 
       if amount < Send(Send(SYS,@GetSettings),@GetPardonIndulgenceCost)
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_not_enough_money,
-	                  #type=SAY_RESOURCE);
-       
-	     return true;      
+         Post(poOwner,@SomeoneSaid,#what=self,
+               #string=indulgence_not_enough_money,
+               #type=SAY_RESOURCE);
+
+         return TRUE;
       }
-      send(oMoney,@SubtractNumber,#number=Send(Send(SYS,@GetSettings),@GetPardonIndulgenceCost));
-      send(self,@PerformIndulgencePardonMurderer,#who=who);
-      post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_success,#type=SAY_RESOURCE);
-      return true;
+
+      Send(oMoney,@SubtractNumber,#number=Send(Send(SYS,@GetSettings),
+            @GetPardonIndulgenceCost));
+      Send(self,@PerformIndulgencePardonMurderer,#who=who);
+      Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_success,
+            #type=SAY_RESOURCE);
+
+      return TRUE;
    }
 
    PerformIndulgencePardonMurderer(who=$)
@@ -209,8 +228,8 @@ messages:
       AppendTempString(Send(who,@GetTrueName));
       AppendTempString(barloque_clerk_indulgence_3);
       sString2 = CreateString();
-      setString(sString2,GetTempString());
-      
+      SetString(sString2,GetTempString());
+
       oBook = Send(poOwner,@GetBook);
       Send(oBook,@PostNews,#what=self,#title=sString2,#body=sString);
 
@@ -219,7 +238,7 @@ messages:
 
    %%% Handling citizen commands.
 
-   SomeoneSaid(what = $,type = $,string = $)
+   SomeoneSaid(what=$,type=$,string=$)
    {
       local iRow, iCol, oTarget;
 
@@ -229,12 +248,13 @@ messages:
       }
 
       % Public Commands
-      if isClass(what,&User)
+      if IsClass(what,&User)
       {
-         oTarget = Send(SYS,@FindUserByString,#string=string);      
+         oTarget = Send(SYS,@FindUserByString,#string=string);
          if oTarget <> $
          {
             Send(self,@CitizenRequestsPlayerRecord,#citizen=what,#who=oTarget);
+
             return;
          }
       }
@@ -251,11 +271,11 @@ messages:
       {
          return;
       }
-      
+
      iJust = Send(who,@GetJustifiedKills);
      iUnjust = Send(who,@GetUnjustifiedKills);
      iTotal = iJust + iUnjust;
-                           
+
      Send(self,@SayToOne,#target=citizen,
           #message_rsc=barloque_clerk_summary_murderer1,
           #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE,
@@ -281,24 +301,23 @@ messages:
       {
          return sing;
       }
-      
+
       return plur;
    }
 
    ResetBrain()
    {
       poBrain = Send(SYS,@FindBrainByNum,#num=viBrain_type);
-      
+
       return;
    }
 
    Delete()
    {
       Send(SYS,@DeleteCaramo);
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

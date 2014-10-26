@@ -22,29 +22,32 @@ resources:
    Hazar_innkeep_name_rsc = "Marcus"
    Hazar_innkeep_icon_rsc = jsmerch.bgf
    Hazar_innkeep_desc_rsc = \
-   "A veteran of the Orc Wars, Marcus now seems content to settle into his new life running a small and quiet country inn."
+      "A veteran of the Orc Wars, Marcus now seems content to settle into "
+      "his new life running a small and quiet country inn."
 
-   HazarInnkeeper_nothing_for_sale = "I don't have anything to sell myself, but ask around - some of the other "
-         "folks around here do."
+   HazarInnkeeper_nothing_for_sale = \
+      "I don't have anything to sell myself, but ask around - some of the "
+      "other folks around here do."
 
+   HazarInnkeeper_welcome = \
+      "Hello, %s, and welcome to Meridian 59!  Read the sign to "
+      "start the tutorial."
 
-   HazarInnkeeper_welcome = "Hello, %s, and welcome to Meridian 59!  Read the sign to start the tutorial."
-   
 classvars:
    vrName = Hazar_innkeep_name_rsc
    vrIcon = Hazar_innkeep_icon_rsc
    vrDesc = Hazar_innkeep_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOMOVE | MOB_NOQUEST | MOB_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE \
+      | MOB_NOMOVE | MOB_NOQUEST | MOB_SELLER
    viOccupation = MOB_ROLE_INNKEEPER
 
    vrNothing_for_sale = HazarInnkeeper_nothing_for_sale
 
 properties:
 
-
 messages:
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

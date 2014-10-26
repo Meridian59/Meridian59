@@ -19,22 +19,25 @@ resources:
    HazarApothecary_name_rsc = "Ravi"
    HazarApothecary_icon_rsc = kcshopk.bgf
    HazarApothecary_desc_rsc = \
-   "A strange man of unknown origin, Ravi is always willing to buy reagents and gems for his inventory-poor shop."
+      "A strange man of unknown origin, Ravi is always willing to buy "
+      "reagents and gems for his inventory-poor shop."
 
-   HzAp_entry_welcome = "Have you anything to sell me?  I'm willing to buy almost anything."
-
+   HzAp_entry_welcome = \
+      "Have you anything to sell me?  I'm willing to buy almost anything."
 
 classvars:
 
    vrName = HazarApothecary_name_rsc
    vrIcon = HazarApothecary_icon_rsc
    vrDesc = HazarApothecary_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_NOMOVE | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_NOQUEST
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_NOMOVE | MOB_RANDOM \
+      | MOB_LISTEN | MOB_BUYER | MOB_NOQUEST
    viOccupation = MOB_ROLE_APOTHECARY
    viMerchant_markup = MERCHANT_BARGAIN
 
 properties:
-   
+
 messages:
 
    SetForSale()
@@ -47,26 +50,28 @@ messages:
                      Create(&Robe,#color=XLAT_TO_SKIN1)],
                      $,
                      $];
+
       return;
    }
 
    ObjectDesired(what=$)
    {
-      if Send(Self,@IsObjectReagent,#what=what) or send(self,@IsObjectGem,#what=what)
-         { return True;}
-      return False;
+      if Send(Self,@IsObjectReagent,#what=what)
+         OR Send(self,@IsObjectGem,#what=what)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      Send(poOwner,@SomeoneSaid,#what=self,#string=HzAp_entry_welcome,
-              #type = SAY_RESOURCE);
+      Post(who,@SomeoneSaid,#what=self,#string=HzAp_entry_welcome,
+            #type=SAY_RESOURCE);
+
       propagate;
    }
-   
-
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

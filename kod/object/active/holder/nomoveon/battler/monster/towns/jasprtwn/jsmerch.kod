@@ -19,33 +19,36 @@ resources:
    jaspermerchant_name_rsc = "Zhieu B'hob"
    jaspermerchant_icon_rsc = jsmerch.bgf
    jaspermerchant_desc_rsc = \
-      "Zhieu B'hob works very hard to make his business thrive in this depressed "
-      "community.  He is eager, and busy with the appearances."
+      "Zhieu B'hob works very hard to make his business thrive in this "
+      "depressed community.  He is eager, and busy with the appearances."
 
    JsMer_entry_welcome = "Might I interest you in some fine merchandise?"
 
-   JsMer_ruby_sale = "Yes, I do have %s%s.  They are the pride of my small store."
+   JsMer_ruby_sale = \
+      "Yes, I do have %s%s.  They are the pride of my small store."
 
 classvars:
 
    vrName = jaspermerchant_name_rsc
    vrIcon = jaspermerchant_icon_rsc
    vrDesc = jaspermerchant_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_BUYER | MOB_NOMOVE | MOB_RANDOM | MOB_LISTEN | MOB_COND_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_BUYER | MOB_NOMOVE \
+      | MOB_RANDOM | MOB_LISTEN | MOB_COND_SELLER
    viOccupation = MOB_ROLE_MERCHANT
    viMerchant_markup = MERCHANT_RIPOFF
 
 properties:
-   
+
 messages:
 
    AffectMood(what=$,why=$)
    {
       if why = MOODMOD_ACCEPT_ITEM
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      
+
       return;
    }
 
@@ -53,18 +56,18 @@ messages:
    {
       plFor_sale = [
          [  Create(&PantsC,#translation=PT_GRAY_TO_RED),
-		      Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
-		      Create(&PantsC,#translation=PT_GRAY_TO_LGREEN),
-		      Create(&PantsC,#translation=PT_GRAY_TO_LBGREEN),
-		      Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
-		      Create(&PantsC,#translation=PT_GRAY_TO_LBLUE),
-		      Create(&PantsC,#translation=PT_GRAY_TO_LPURPLE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_LBGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
+            Create(&PantsC,#translation=PT_GRAY_TO_LBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LPURPLE),
 
             Create(&Shirt,#color=XLAT_TO_RED),
-		      Create(&Shirt,#color=XLAT_TO_ORANGE),
-		      Create(&Shirt,#color=XLAT_TO_GREEN),
-		      Create(&Shirt,#color=XLAT_TO_SKY),
-		      Create(&Shirt,#color=XLAT_TO_PURPLE),
+            Create(&Shirt,#color=XLAT_TO_ORANGE),
+            Create(&Shirt,#color=XLAT_TO_GREEN),
+            Create(&Shirt,#color=XLAT_TO_SKY),
+            Create(&Shirt,#color=XLAT_TO_PURPLE),
 
             Create(&Torch),
             Create(&Waterskin),
@@ -82,14 +85,14 @@ messages:
       return;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what=$)
    {
       if Send(what,@CanBeGiventoNPC)
-         AND send(self,@IsObjectReagent,#what=what)
+         AND Send(self,@IsObjectReagent,#what=what)
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
@@ -100,35 +103,30 @@ messages:
       oObj = Create(&Ruby,#number=4);
 
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,250,JsMer_ruby_sale]);
-           
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,250,JsMer_ruby_sale]);
+
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
-      
-      iFlags = send(who,@GetObjectFlags);
-      
-      if iFlags & PLAYER_OUTLAW
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      
-      if send(who, @GetHomeRoom) = RID_JAS_INN
+
+      if Send(who,@GetHomeRoom) = RID_JAS_INN
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      
-      Send(poOwner,@SomeoneSaid,#what=self,#string=JsMer_entry_welcome,
-           #type=SAY_RESOURCE);
-              
+
+      Post(who,@SomeoneSaid,#what=self,#string=JsMer_entry_welcome,
+            #type=SAY_RESOURCE);
+
       propagate;
    }
-   
-end
 
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

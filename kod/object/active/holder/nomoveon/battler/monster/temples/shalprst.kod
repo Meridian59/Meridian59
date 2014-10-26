@@ -19,22 +19,36 @@ resources:
    shalpriestess_name_rsc = "Priestess Xiana"
    shalpriestess_icon_rsc = shalprst.bgf
    shalpriestess_desc_rsc = \
-      "Clean and prim, this priestess of peaceful serenity speaks only kind words.  She even "
-      "wishes peace on those of Qor and prays for their redemption."
-   shal_forget_potion_sale = "~bShould you buy and quaff %s%s, Shal'ille will bless you by exorcising all traces of Qor from your thoughts.~n~k" 
+      "Clean and prim, this priestess of peaceful serenity speaks only "
+      "kind words.  She even wishes peace on those of Qor and prays for "
+      "their redemption."
+   shal_forget_potion_sale = \
+      "~bShould you buy and quaff %s%s, Shal'ille will bless you by "
+      "exorcising all traces of Qor from your thoughts.~n~k"
 
-   priestess_token_delivered_rsc = "~bAhhh. I will see that this gets returned to its rightful councilor. %s~n~k"
-   priestess_faction_delivered_rsc = "~bYe seem like a fair person, why do you align yourself with these political factions?  We'll take care of that.~n~k"
-   priestess_neutral_delivered_rsc = "~bOne as pure as you is seldom seen in these days of political intrigue.  It is so refreshing.~n~k"
+   priestess_token_delivered_rsc = \
+      "~bAhhh. I will see that this gets returned to its "
+      "rightful councillor. %s~n~k"
+   priestess_faction_delivered_rsc = \
+      "~bYe seem like a fair person, why do you align yourself with "
+      "these political factions?  We'll take care of that.~n~k"
+   priestess_neutral_delivered_rsc = \
+      "~bOne as pure as you is seldom seen in these days of political "
+      "intrigue.  It is so refreshing.~n~k"
 
-   shalpriestess_already_have_spell = "~bLook within yourself, %s, and you will find that light "
-                                       "already shining inside your mind.~n~k"
-   shalpriestess_not_ready = "~bThe intricacies of the spiritual hammer can only be grasped by one who is "
-                              "versed in the ways of the God of Battle.  Seek ye further, child, "
-                              "and return when your mind has followed His path a ways longer.~n~k"
-   shalillepriestess_teach_song = "Oh, are you one of the followers of Jala?  I do know of a beautiful ancient hymn "
-                                  "that is said to be able to hinder the spells that come from the darkness.  I am "
-                                  "willing to teach it to those that are able to learn it."
+   shalpriestess_already_have_spell = \
+      "~bLook within yourself, %s, and you will find that light "
+      "already shining inside your mind.~n~k"
+   shalpriestess_not_ready = \
+      "~bThe intricacies of the spiritual hammer can only be grasped by one "
+      "who is versed in the ways of the God of Battle.  Seek ye further, "
+      "child, and return when your mind has followed His path a ways "
+      "longer.~n~k"
+   shalillepriestess_teach_song = \
+      "Oh, are you one of the followers of Jala?  I do know of a beautiful "
+      "ancient hymn that is said to be able to hinder the spells that come "
+      "from the darkness.  I am willing to teach it to those that are "
+      "able to learn it."
    shalillepriestess_teach = "The benevolence of Shal'ille offers "
 
 classvars:
@@ -45,45 +59,48 @@ classvars:
    vrDesc = shalpriestess_desc_rsc
    viQuestID = QST_ID_SHALILLE_DISCIPLE
    viKarma = 90
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER | MOB_PERM_QUESTER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_TEACHER | MOB_COND_SELLER | MOB_PERM_QUESTER
    viOccupation = MOB_ROLE_PRIESTESS
 
 messages:
 
-   AffectMood(why = $, what = $)
+   AffectMood(why=$,what=$)
    {
-      if why = MOODMOD_DAWN 
+      if why = MOODMOD_DAWN
       {
-         send( self, @SetMood, #new_mood = piMood + 3 );
-         
+         Send(self,@SetMood,#new_mood=piMood+3);
+
          return;
       }
-      
-      if why = MOODMOD_DUSK 
+
+      if why = MOODMOD_DUSK
       {
-         send( self, @SetMood, #new_mood = piMood - 3 );
-         
+         Send(self,@SetMood,#new_mood=piMood-3);
+
          return;
       }
-      
+
       return;
    }
 
    Constructor()
    {
-	   plWantedItems=[&Token];
+      plWantedItems=[&Token];
+
       propagate;
    }
 
    InitCondSale()
    {
       local oObj;
-   
+
       oObj=Create(&ForgetPotionQor);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,2500,Shal_forget_potion_sale]);
-           
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,2500,Shal_forget_potion_sale]);
+
       return;
    }
 
@@ -94,115 +111,121 @@ messages:
       plFor_sale = [$,$,
         [ SID_MINOR_HEAL, SID_HOLY_WEAPON, SID_DETECT_EVIL,
           SID_HOLY_TOUCH, SID_REMOVE_CURSE, SID_CURE_POISON,
-          SID_CURE_DISEASE, SID_RESCUE,
-          SID_MARK_OF_DISHONOR, SID_PURIFY,
-          SID_FORCES_OF_LIGHT, SID_MAJOR_HEAL, SID_UMBRELLA, SID_SPIRITUAL_HAMMER,
-          SID_PORTAL_OF_LIFE, SID_HOLY_SYMBOL, SID_FINAL_RITES, SID_BREATH_OF_LIFE,
+          SID_CURE_DISEASE, SID_RESCUE, SID_SPIRITUAL_HAMMER,
+          SID_MARK_OF_DISHONOR, SID_PURIFY, SID_BREATH_OF_LIFE,
+          SID_FORCES_OF_LIGHT, SID_MAJOR_HEAL, SID_UMBRELLA,
+          SID_PORTAL_OF_LIFE, SID_HOLY_SYMBOL, SID_FINAL_RITES,
           SID_SEANCE, SID_RESIST_ACID, SID_DAZZLE,
           SID_SACRED_RESONANCE ],
         $ ];
-        
+
       return;
    }
 
    CanDoTeach(who=$,sid=0)
    {
       if sid = SID_SPIRITUAL_HAMMER
-         AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
+         AND NOT Send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
 
       if sid = SID_SACRED_RESONANCE
       {
-         send(self,@SayToOne,#target=who,#message_rsc=shalillepriestess_teach_song);
-      }         
-      
+         Send(self,@SayToOne,#target=who,
+               #message_rsc=shalillepriestess_teach_song);
+      }
+
       propagate;
    }
-   
-   CanAddSpell(who=$,num=0,report = FALSE)
+
+   CanAddSpell(who=$,num=0,report=FALSE)
    {
       local i, oSpell, bFound;
-			
+
       if who = $ OR num = 0
-      { 
-         DEBUG("Called CanAddSpell with bad parameters!");
+      {
+         Debug("Called CanAddSpell with bad parameters!");
+
          return FALSE;
       }
 
-      if send(who,@HasSpell,#num=num) 
-      {	 
+      if Send(who,@HasSpell,#num=num)
+      {
          if report
-         { 
-            post(self,@SayToOne,#target=who,#message_rsc=shalpriestess_already_have_spell,
-	              #parm1=send(who,@GetName));
+         {
+            Post(self,@SayToOne,#target=who,
+               #message_rsc=shalpriestess_already_have_spell,
+               #parm1=Send(who,@GetName));
          }
-         
+
          return FALSE;
       }
 
       if num = SID_SPIRITUAL_HAMMER
-      {   	    
+      {
          bFound = FALSE;
-         for i in send(who,@GetSpellList) 
-         {	       
-  	         oSpell = send(SYS,@FindSpellByNum,#num=send(who,@decodespellnum,#compound=i)); 
-  	         if send(oSpell,@GetSchool) = SS_KRAANAN
-  	            AND send(oSpell,@GetLevel) > 2 
-  	         {
-  	            %% player has a high enough level spell in the required school, can learn the spell.
-  	            bFound = TRUE ;
-  	            break;
-            }  
-         }
-         
-	      %% player doesn't have a high enough level spell in the required school, denied
+         for i in Send(who,@GetSpellList)
+         {
+            oSpell = Send(SYS,@FindSpellByNum,
+                           #num=Send(who,@DecodeSpellNum,#compound=i));
+            if Send(oSpell,@GetSchool) = SS_KRAANAN
+               AND Send(oSpell,@GetLevel) > 2
+            {
+               % Player has a high enough level spell in the required
+               % school, can learn the spell.
+               bFound = TRUE;
 
-         if NOT bFound
-         {	       	  
-            if report
-            { 		 
-	            post(self,@saytoone,#target=who,#message_rsc=shalpriestess_not_ready); 
+               break;
             }
-            
-  	         return FALSE;	       
+         }
+
+         % Player doesn't have a high enough level spell in the
+         % required school, denied.
+         if NOT bFound
+         {
+            if report
+            {
+               Post(self,@SayToOne,#target=who,#message_rsc=shalpriestess_not_ready);
+            }
+
+            return FALSE;
          }
       }
-      
+
       propagate;
    }
 
    CheckWhyWanted(obj=$,who=$)
    {
-	   local temp_rsc, oGame;
+      local temp_rsc, oGame;
 
       if NOT isClass(obj,&Token)
       {
          propagate;
       }
-	  
+
       oGame = Send(SYS,@GetTokenGame);
-      
-      if oGame <> $ 
+
+      if oGame <> $
          AND Send(oGame,@IsTokenReal,#obj=obj)
       {
-	      if Send(who,@GetFaction)<>FACTION_NEUTRAL
-	      {
-	         temp_rsc=priestess_faction_delivered_rsc;
-	      }
-         else 
-	      {
-	         temp_rsc=priestess_neutral_delivered_rsc;
-	      }
-	      
+         if Send(who,@GetFaction)<>FACTION_NEUTRAL
+         {
+            temp_rsc=priestess_faction_delivered_rsc;
+         }
+         else
+         {
+            temp_rsc=priestess_neutral_delivered_rsc;
+         }
+
          Send(oGame,@IncreaseScandalChance);
          Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-		        #string=priestess_token_delivered_rsc,#parm1=temp_rsc);
-		        
+               #string=priestess_token_delivered_rsc,#parm1=temp_rsc);
+
          return TRUE;
       }
-      
+
       propagate;
    }
 
@@ -213,30 +236,25 @@ messages:
 
    UserEntered(who = $)
    {
-      local iFlags;
-      
-      if send(who,@GetHomeRoom) = RID_MAR_INN
+      if Send(who,@GetHomeRoom) = RID_MAR_INN
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      
-      iFlags = send(who, @GetObjectFlags);
-      
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
-         
+         Send(self,@SetMood,#new_mood=piMood-2);
+
          propagate;
       }
-      
-      if iFlags & PLAYER_OUTLAW
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send(self,@SetMood,#new_mood=piMood - 1 );
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
-      
+
       propagate;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

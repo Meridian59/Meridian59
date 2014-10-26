@@ -18,15 +18,20 @@ resources:
 
    MarionBlacksmith_name_rsc = "Colhorr"
    MarionBlacksmith_icon_rsc = mrsmith.bgf
-   MarionBlacksmith_desc_rsc = "A country blacksmith with years of pounding the anvil ringing in his ears, "
-      "Colhorr is an established landmark in Marion.  Most of his work consists of fabricating and repairing "
-      "farming implements and hardware for the agrarian locals."
+   MarionBlacksmith_desc_rsc = \
+      "A country blacksmith with years of pounding the anvil ringing in "
+      "his ears, Colhorr is an established landmark in Marion.  Most of his "
+      "work consists of fabricating and repairing farming implements and "
+      "hardware for the agrarian locals."
 
    MrBS_entry_welcome = "Huh? Who is that?"
 
-   MarionBlacksmith_unwanted_keep = "~k%s%s tells you, \"Hmmm, okay I guess.~n~k\""
-   MarionBlacksmith_unwanted_pay = "~k%s%s tells you, \"Well it certainly looks valuable!~n~k\""
-   MarionBlacksmith_unwanted_give = "~k%s%s tells you, \"Don't waste my time with that.~n~k\""
+   MarionBlacksmith_unwanted_keep = \
+      "~k%s%s tells you, \"Hmmm, okay I guess.~n~k\""
+   MarionBlacksmith_unwanted_pay = \
+      "~k%s%s tells you, \"Well it certainly looks valuable!~n~k\""
+   MarionBlacksmith_unwanted_give = \
+      "~k%s%s tells you, \"Don't waste my time with that.~n~k\""
 
 classvars:
 
@@ -34,14 +39,16 @@ classvars:
    vrIcon = MarionBlacksmith_icon_rsc
    vrDesc = MarionBlacksmith_desc_rsc
    viMerchant_markup = MERCHANT_NORMAL
-   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_TEACHER | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_SELLER
+   viAttributes = \
+      MOB_NOMOVE | MOB_NOFIGHT | MOB_TEACHER \
+         | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_SELLER
    viOccupation = MOB_ROLE_BLACKSMITH
 
    vrUnwanted_keep = MarionBlacksmith_unwanted_keep
    vrUnwanted_pay = MarionBlacksmith_unwanted_pay
    vrUnwanted_give = MarionBlacksmith_unwanted_give
 
-properties:   
+properties:
 
 messages:
 
@@ -49,31 +56,37 @@ messages:
    {
       if (why = MOODMOD_ACCEPT_ITEM)
       {
-         if( isClass(what,&waterskin) )
+         if IsClass(what,&Waterskin)
          {
-            send( self, @SetMood, #new_mood = piMood + 2 );
+            Send(self,@SetMood,#new_mood=piMood+2);
          }
-         
-         if( isClass(what,&food) and send(what,@IsAlcohol) )
+
+         if IsClass(what,&Food)
+            AND Send(what,@IsAlcohol)
          {
-            send( self, @SetMood, #new_mood = piMood - 5 );
+            Send(self,@SetMood,#new_mood=piMood-5);
          }
-         
+
          return;
       }
-      
-      if (why = MOODMOD_SELL_ITEM)
-      {	  
-         send( self, @SetMood, #new_mood = piMood + 1 );
+
+      if why = MOODMOD_SELL_ITEM
+      {
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
-      
+
       return;
    }
 
    SetForSale()
    {
-      plFor_sale=[ [Create(&Mace),Create(&Shortsword),Create(&MetalShield),Create(&LeatherArmor),Create(&Axe)],
-                    $,[SID_MEND] ];
+      plFor_sale = [[Create(&Mace),
+                     Create(&Shortsword),
+                     Create(&MetalShield),
+                     Create(&LeatherArmor),
+                     Create(&Axe)],
+                     $,[SID_MEND] ];
+
       return;
    }
 
@@ -86,19 +99,17 @@ messages:
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
    UserEntered(who = $)
    {
-      Post(poOwner,@SomeoneSaid,#what=self,#string=MrBs_entry_welcome,
+      Post(who,@SomeoneSaid,#what=self,#string=MrBs_entry_welcome,
            #type = SAY_RESOURCE);
-              
+
       return;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

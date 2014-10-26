@@ -20,21 +20,33 @@ resources:
    RebelLiege_icon_rsc = wngenera.bgf
    RebelLiege_desc_rsc = \
      "Time and anger have weathered Jonas D'Accor into a hard man.  He stands "
-     "steadfastly in place, contemplating the future of the lands.  The actions of "
-     "the other lieges have forced him to make an attempt for the crown.  He believes "
-     "that the other lieges are not strong enough to rule, even if they have a rightful "
-     "claim to the throne.  He organizes his rebels and hopes to gain support in his "
-     "quest to take the crown and bring peace and order back to the lands."
+     "steadfastly in place, contemplating the future of the lands.  The "
+     "actions of the other lieges have forced him to make an attempt for the "
+     "crown.  He believes that the other lieges are not strong enough to "
+     "rule, even if they have a rightful claim to the throne.  He organizes "
+     "his rebels and hopes to gain support in his quest to take the crown "
+     "and bring peace and order back to the lands."
    
-   RebelLiege_token_delivered_rsc = "Returning this token will show the counselors my power is not to be ignored. %s"
-   RebelLiege_rebel_delivered_rsc = "You are very loyal to my cause.  I thank you."
-   RebelLiege_neutral_delivered_rsc = "Do you also oppose the tyranny of the current pretenders to the Throne?  Join me."
-   RebelLiege_other_delivered_rsc = "Does the yoke of your current liege restrict you so much that you bring me such gifts?  Join us in our quest for a strong crown."
-   RebelLiege_toopowered_rsc = "Currently I cannot bring another into my ranks for fear they will swell beyond my control."
+   RebelLiege_token_delivered_rsc = \
+      "Returning this token will show the counselors my power is not to be "
+      "ignored. %s"
+   RebelLiege_rebel_delivered_rsc = \
+      "You are very loyal to my cause.  I thank you."
+   RebelLiege_neutral_delivered_rsc = \
+      "Do you also oppose the tyranny of the current pretenders to the "
+      "Throne?  Join me."
+   RebelLiege_other_delivered_rsc = \
+      "Does the yoke of your current liege restrict you so much that you "
+      "bring me such gifts?  Join us in our quest for a strong crown."
+   RebelLiege_toopowered_rsc = \
+      "Currently I cannot bring another into my ranks for fear they will "
+      "swell beyond my control."
 
-   RebelLiege_already_have_spell = "I believe you already have knowledge of the %s spell."
-   RebelLiege_no_murderer = "I am a servant of the Law, and as such my conscience "
-         "will not allow me to help you.  Please be on your way."
+   RebelLiege_already_have_spell = \
+      "I believe you already have knowledge of the %s spell."
+   RebelLiege_no_murderer = \
+      "I am a servant of the Law, and as such my conscience "
+      "will not allow me to help you.  Please be on your way."
 
 classvars:
 
@@ -42,7 +54,9 @@ classvars:
    viGender = GENDER_MALE
    viFaction = FACTION_REBEL
    viKarma = 0
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_NOMOVE | MOB_PERM_QUESTER | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_NOMOVE | MOB_PERM_QUESTER | MOB_TEACHER
    viOccupation = MOB_ROLE_ROYALTY
 
    viHomeroom = RID_JAS_BAR
@@ -60,29 +74,33 @@ properties:
 
 messages:
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_FACTION_CHANGE )
+      if why = MOODMOD_FACTION_CHANGE
       {
-         if( what = FACTION_DUKE )
+         if what = FACTION_DUKE
          {
-            send( self, @SetMood, #new_mood = piMood - 25 );
+            Send(self,@SetMood,#new_mood=piMood-25);
          }
-         if( what = FACTION_PRINCESS )
+
+         if what = FACTION_PRINCESS
          {
-            send( self, @SetMood, #new_mood = piMood - 25 );
+            Send(self,@SetMood,#new_mood=piMood-25);
          }
-         if( what = FACTION_REBEL )
+
+         if what = FACTION_REBEL
          {
-            send( self, @SetMood, #new_mood = piMood + 25 );
+            Send(self,@SetMood,#new_mood=piMood+25);
          }
       }
+
       return;
    }
 
    Constructor()
    {
       plWantedItems=[&Token];
+
       propagate;
    }
 
@@ -93,27 +111,35 @@ messages:
       if isClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
          Send(Send(SYS,@GetTokenGame),@IsTokenReal,#obj=obj)
       {
-%         if send(who,@checkplayerflag,#flag=PFLAG_MURDERER)
-%         {
-%            Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE, #string=RebelLiege_no_murderer);
-%            return FALSE;
-%         }
-
          if Send(who,@GetFaction)=FACTION_REBEL
-           {temp_rsc=RebelLiege_rebel_delivered_rsc;}
+         {
+            temp_rsc=RebelLiege_rebel_delivered_rsc;
+         }
+
          if Send(who,@GetFaction)=FACTION_NEUTRAL
-           {temp_rsc=RebelLiege_neutral_delivered_rsc;}
-         if (Send(who,@GetFaction)=FACTION_DUKE) or (Send(who,@GetFaction)=FACTION_PRINCESS)
-           {temp_rsc=RebelLiege_other_delivered_rsc;}
+         {
+            temp_rsc=RebelLiege_neutral_delivered_rsc;
+         }
+
+         if (Send(who,@GetFaction)=FACTION_DUKE)
+            OR (Send(who,@GetFaction)=FACTION_PRINCESS)
+         {
+            temp_rsc=RebelLiege_other_delivered_rsc;
+         }
+
          if (Send(Send(SYS,@GetParliament),@GetPower,
-               #faction=FACTION_REBEL)>FACTION_STRONGLY_IN) AND
-           (Send(who,@GetFaction)<>FACTION_REBEL)
-           { temp_rsc=RebelLiege_toopowered_rsc;} 
+                  #faction=FACTION_REBEL) > FACTION_STRONGLY_IN)
+            AND Send(who,@GetFaction) <> FACTION_REBEL
+         {
+            temp_rsc=RebelLiege_toopowered_rsc;
+         }
 
          Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                 #string=RebelLiege_token_delivered_rsc,#parm1=temp_rsc);
+                  #string=RebelLiege_token_delivered_rsc,#parm1=temp_rsc);
+
          return TRUE;
       }
+
       propagate;
    }
 
@@ -130,28 +156,42 @@ messages:
 
    CanDoTeach(who=$,sid=0)
    {
-      if not send(self,@SpecialTeachChecks,#report = TRUE,#who=who,#num=sid) { return FALSE; }
-      propagate;
-   }
-   
-   CanAddSpell(who=$,num=0, report = FALSE)
-   {
-      if not send(self,@SpecialTeachChecks,#who=who,#num=num,#report=report) { return FALSE; }
+      if NOT Send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
+      {
+         return FALSE;
+      }
+
       propagate;
    }
 
-   SpecialTeachChecks(who=$,num=0, report = FALSE)
+   CanAddSpell(who=$,num=0,report=FALSE)
+   {
+      if NOT Send(self,@SpecialTeachChecks,#who=who,#num=num,#report=report)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SpecialTeachChecks(who=$,num=0,report=FALSE)
    {
       if who = $ or num = 0
-      { DEBUG("Called SpecialTeachChecks with bad parameters!"); return FALSE; }
-   
-      if send(who,@HasSpell,#num=num) 
+      {
+         Debug("Called SpecialTeachChecks with bad parameters!");
+
+         return FALSE;
+      }
+
+      if Send(who,@HasSpell,#num=num)
       {
          if report
-         { 
-            post(self,@saytoone,#target=who,#message_rsc=RebelLiege_already_have_spell,
-            #parm1=send(send(SYS,@FindSpellByNum,#num=num),@GetName)); 
+         {
+            Post(self,@SayToOne,#target=who,
+                  #message_rsc=RebelLiege_already_have_spell,
+                  #parm1=Send(Send(SYS,@FindSpellByNum,#num=num),@GetName));
          }
+
          return FALSE;
       }
 

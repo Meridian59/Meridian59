@@ -25,7 +25,9 @@ classvars:
    vrName = BarloqueBanker_name_rsc
    vrDesc = BarloqueBanker_desc_rsc
    vrIcon = BarloqueBanker_icon_rsc
-   viAttributes = MOB_NOFIGHT+MOB_BANKER+MOB_NOMOVE+MOB_LISTEN+MOB_RANDOM+MOB_RECEIVE
+   viAttributes = \
+      MOB_NOFIGHT | MOB_BANKER | MOB_NOMOVE \
+      | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE
    viOccupation = MOB_ROLE_BANKER
    viBank = BANK_BASIC
 
@@ -36,10 +38,9 @@ messages:
    Constructor()
    {
       plWantedItems=[&Money];
+
       return;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

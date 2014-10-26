@@ -19,24 +19,31 @@ resources:
    qorpriestess_name_rsc = "Priestess Zuxana"
    qorpriestess_icon_rsc = qorprst.bgf
    qorpriestess_desc_rsc = \
-      "The perfect servant of Qor the Vile.  Shadows deepen where this malevolent woman "
-      "stands.  She has a devious sensuality that she will exploit to turn men and women to "
-      "succumb to the dark will of Qor.  If she can not seduce others to Qor, she would rather see "
-      "them dead."
+      "The perfect servant of Qor the Vile.  Shadows deepen where this "
+      "malevolent woman stands.  She has a devious sensuality that she will "
+      "exploit to turn men and women to succumb to the dark will of Qor.  "
+      "If she can not seduce others to Qor, she would rather see them dead."
 
-   Qor_forget_potion_sale = "~I~rYou can indeed buy %s%s.  Qor will be glad to strip you of the inhibitions of Shal'ille's teachings.~n~k"
+   Qor_forget_potion_sale = \
+      "~I~rYou can indeed buy %s%s.  Qor will be glad to strip you of the "
+      "inhibitions of Shal'ille's teachings.~n~k"
 
-   qorpriestess_already_have_spell = "~bDo not toy with me, %s, you have already participated in the bargain stuck "
-                                     "by that accursed trickster Riija.~n~k"
-   qorpriestess_not_ready = "~bQor take that trickster god!  Riija has stolen part of the Vile one's secret of "
-                            "swap and demands a price for it.  Go prostrate yourself before that forsaken island "
-                            "god and become adept at the ways of the trickster.  Only then I can properly teach "
-                            "you the complete secrets of swap.~n~k"
-   qorpriestess_teach_song = "Are you one of those caterwauling bards?  I can teach the hymn that hinders the "
-                             "magics of our enemy, even if your tin ear will undoubtedly be unable to comprehend "
-                             "its full beauty."
-   qorpriestess_not_powerful = "~bCome back when you have rid yourself of that pathetic guardian angel and are ready to "
-                               "kill others for the glory of the Dark Mistress.~n~k"
+   qorpriestess_already_have_spell = \
+      "~bDo not toy with me, %s, you have already participated in "
+      "the bargain stuck by that accursed trickster Riija.~n~k"
+   qorpriestess_not_ready = \
+      "~bQor take that trickster god!  Riija has stolen part of the Vile "
+      "one's secret of Swap and demands a price for it.  Go prostrate "
+      "yourself before that forsaken island god and become adept at the ways "
+      "of the trickster.  Only then I can properly teach you the complete "
+      "secrets of Swap.~n~k"
+   qorpriestess_teach_song = \
+      "Are you one of those caterwauling bards?  I can teach the hymn that "
+      "hinders the magics of our enemy, even if your tin ear will "
+      "undoubtedly be unable to comprehend its full beauty."
+   qorpriestess_not_powerful = \
+      "~bCome back when you have rid yourself of that pathetic guardian angel "
+      "and are ready to kill others for the glory of the Dark Mistress.~n~k"
 
    qorpriestess_teach = "Through the darkness of Qor, you can learn "
 
@@ -48,59 +55,58 @@ classvars:
 
    viQuestID=QST_ID_QOR_DISCIPLE
    viKarma = -90
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER | MOB_PERM_QUESTER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE \
+      | MOB_TEACHER | MOB_COND_SELLER | MOB_PERM_QUESTER
    viOccupation = MOB_ROLE_PRIESTESS
 
 messages:
 
-   AffectMood(why = $,what = $)
+   AffectMood(why=$,what=$)
    {
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood + 4);
-         
+         Send(self,@SetMood,#new_mood=piMood + 4);
+
          return;
       }
-      
+
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood - 4 );
-         
+         Send(self,@SetMood,#new_mood=piMood-4);
+
          return;
       }
-      
+
       return;
    }
 
    UserEntered(who = $)
    {
-      local iFlags;
-      
-      iFlags = send(who,@GetObjectFlags);
-      
-      if iFlags & PLAYER_PK
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
+
          propagate;
       }
-      
-      if iFlags & PLAYER_OUTLAW
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood + 1);
       }
-      
+
       propagate;
    }
 
    InitCondSale()
    {
       local oObj;
-      
+
       oObj=Create(&ForgetPotionShalille);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,2500,Qor_forget_potion_sale]);
-           
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,2500,Qor_forget_potion_sale]);
+
       return;
    }
 
@@ -113,90 +119,94 @@ messages:
           SID_SWAP, SID_DEFILE, SID_INVISIBILITY, SID_CLOAK, SID_POISON_FOG,
           SID_PROFANE_RESONANCE, SID_DEATH_RIFT],
        $ ];
-       
+
       return;
    }
-   
+
    CanDoTeach(who=$,sid=0)
    {
       if sid = SID_SWAP
-         AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
+         AND NOT Send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
 
       if sid = SID_PROFANE_RESONANCE
       {
-         send(self,@SayToOne,#target=who,#message_rsc=qorpriestess_teach_song);
-      }         
-      
+         Send(self,@SayToOne,#target=who,#message_rsc=qorpriestess_teach_song);
+      }
+
       propagate;
    }
-   
-   CanAddSpell(who=$,num=0, report = FALSE)
+
+   CanAddSpell(who=$,num=0,report=FALSE)
    {
       local i, oSpell, bFound;
-			
+
       if who = $ OR num = 0
-      { 
-         DEBUG("Called CanAddSpell with bad parameters!");
+      {
+         Debug("Called CanAddSpell with bad parameters!");
+
          return FALSE;
       }
 
       if num = SID_SWAP
-      {   	    
-         if send(who,@HasSpell,#num=num) 
-         {	 
+      {
+         if Send(who,@HasSpell,#num=num)
+         {
             if report
-            { 
-               post(self,@SayToOne,#target=who,#message_rsc=qorpriestess_already_have_spell,
-	                 #parm1=send(who,@GetName));
+            {
+               Post(self,@SayToOne,#target=who,
+                     #message_rsc=qorpriestess_already_have_spell,
+                     #parm1=Send(who,@GetName));
             }
 
             return FALSE;
          }
 
          bFound = FALSE;
-         for i in send(who,@GetSpellList) 
-         {	       
-  	         oSpell = send(SYS,@FindSpellByNum,#num=send(who,@DecodeSpellNum,#compound=i)); 
-  	         if send(oSpell,@GetSchool) = SS_RIIJA
-  	            AND send(oSpell,@GetLevel) > 3 
-  	         {
-  	            %% player has a high enough level spell in the required school, can learn the spell.
-  	            bFound = TRUE;
-  	            
-  	            break;
-            }  
-         }
-         
-	      %% Player doesn't have a high enough level spell in the required school, denied
-         if NOT bFound
-         {	       	  
-            if report
-            { 		 
-	            post(self,@SayToOne,#target=who,#message_rsc=qorpriestess_not_ready); 
+         for i in Send(who,@GetSpellList)
+         {
+            oSpell = Send(SYS,@FindSpellByNum,
+                           #num=Send(who,@DecodeSpellNum,#compound=i));
+            if Send(oSpell,@GetSchool) = SS_RIIJA
+               AND Send(oSpell,@GetLevel) > 3
+            {
+               % Player has a high enough level spell in the required
+               % school, can learn the spell.
+               bFound = TRUE;
+
+               break;
             }
-            
-  	         return FALSE;	       
+         }
+
+         % Player doesn't have a high enough level spell in the
+         % required school, denied.
+         if NOT bFound
+         {
+            if report
+            {
+               Post(self,@SayToOne,#target=who,
+                     #message_rsc=qorpriestess_not_ready);
+            }
+
+            return FALSE;
          }
       }
 
       if num = SID_SUMMON_POISON_FOG
-         AND NOT send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          if report
          {
-            send(who,@MsgSendUser,#message_rsc=qorpriestess_not_powerful);
+            Send(who,@MsgSendUser,#message_rsc=qorpriestess_not_powerful);
          }
-         
+
          return FALSE;
       }
 
       propagate;
    }
 
-
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -11,9 +11,9 @@
 Assassin is BarloqueTown
 
 %  The assassin is little more than an empty vessel, who responds to the 
-%   'say' commands of players.  This way, recreates don't have to be handled
-%   special in any way, shape or form.  All of the real work of the assassin's
-%   game is done by the AssassinGame object, found in the \util directory.
+%  'say' commands of players.  This way, recreates don't have to be handled
+%  special in any way, shape or form.  All of the real work of the assassin's
+%  game is done by the AssassinGame object, found in the \util directory.
 
 constants:
 
@@ -105,7 +105,7 @@ properties:
    poAssassin_game = $
 
    % If true, players can make themselves killable here.
-   pbBeta = FALSE                  
+   pbBeta = FALSE
 
 messages:
 
@@ -115,33 +115,33 @@ messages:
       {
          Send(SYS,@RecreateAssassinGame);
       }
-      
+
       poAssassin_game = Send(SYS,@GetAssassinGame);
-      
+
       propagate;
    }
 
-   SomeoneSaid(what=$, string=$, type=$)
+   SomeoneSaid(what=$,string=$,type=$)
    {
       local oGame;
 
       % If not a player, ignore it all.
-      if NOT isClass(what,&User)
+      if NOT IsClass(what,&User)
       {
          propagate;
       }
 
       % Beta test check:  during a beta test, a player can say 'goodbye angel'
-      %  to get rid of his guardian angel.
-      if StringEqual(string, assassin_goodbye_angel) AND pbBeta 
-         AND NOT Send(what,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE)
-	   {
+      % to get rid of his guardian angel.
+      if StringEqual(string, assassin_goodbye_angel) AND pbBeta
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
          Send(what,@PkillEnable);
-		}
+      }
 
       % If a player says 'help', then give him a generic bit of advice
       % on how to interface with Roq.
-      if StringEqual(string, assassin_help_word)
+      if StringEqual(string,assassin_help_word)
       {
          Send(self,@SayToOne,#target=what,#message_rsc=assassin_help);
       }
@@ -155,129 +155,129 @@ messages:
          if NOT Send(poAssassin_game,@IsLegalCombatant,#who=what)
          {
             Post(self,@SayToOne,#target=what,#message_rsc=assassin_not_ready);
-            
+
             return;
          }
-         
+
          if Send(poAssassin_game,@IsCombatant,#who=what)
          {
             Post(self,@SayToOne,#target=what,
-                 #message_rsc=assassin_already_combatant);
-            
+                  #message_rsc=assassin_already_combatant);
+
             return;
          }
-         
+
          if Send(poAssassin_game,@InSession)
          {
             if Send(poAssassin_game,@IsAdvertised,#who=what)
             {
                Post(self,@SayToOne,#target=what,
-                    #message_rsc=assassin_in_session,
-                    #parm1=assassin_is_advertised);
+                     #message_rsc=assassin_in_session,
+                     #parm1=assassin_is_advertised);
             }
             else
             {
                Post(self,@SayToOne,#target=what,
-                    #message_rsc=assassin_in_session,
-                    #parm1=assassin_is_not_advertised);
+                     #message_rsc=assassin_in_session,
+                     #parm1=assassin_is_not_advertised);
             }
-            
+
             return;
          }
          
          if NOT Send(poAssassin_game,@InAcceptMode)
          {
             Post(self,@SayToOne,#target=what,#message_rsc=Assassin_not_yet);
-            
+
             return;
          }
-         
+
          if Send(poAssassin_game,@NewCombatant,#who=what)
          {
             Post(self,@SayToOne,#target=what,
-                 #message_rsc=Assassin_new_combatant);
-            
+                  #message_rsc=Assassin_new_combatant);
+
             return;
          }
          else
          {
-            DEBUG("Somehow, a player failed to become a new combatant!");
+            Debug("Somehow, a player failed to become a new combatant!");
          }
       }
 
       % Here, the player is trying to say 'Quit' to quit the proceedings.
-      %  be sure that he's actually a combatant before you kick him out.
+      % be sure that he's actually a combatant before you kick him out.
 
       if StringEqual(string,assassin_quit)
       {
          if NOT Send(poAssassin_game,@IsCombatant,#who=what)
          {
             Post(self,@SayToOne,#target=what,
-                 #message_rsc=Assassin_not_combatant);
-            
+                  #message_rsc=Assassin_not_combatant);
+
             return;
          }
-         
+
          if Send(poAssassin_game,@QuitCombatant,#who=what)
          {
             Post(self,@SayToOne,#target=what,
-                 #message_rsc=Assassin_quit_combatant);
-            
+                  #message_rsc=Assassin_quit_combatant);
+
             return;
          }
          else
          {
-            DEBUG("Somehow, a player failed to quit being a combatant!");
+            Debug("Somehow, a player failed to quit being a combatant!");
          }
       }
 
       % Does the player want to know when a match starts?  If so, add him
-      %  to this list.  This way, people who are non-combatants can get info
-      %  for the next bout, if they came in late.
-      if StringEqual(string, assassin_advertise)
+      % to this list.  This way, people who are non-combatants can get info
+      % for the next bout, if they came in late.
+      if StringEqual(string,assassin_advertise)
       {
          if NOT Send(poAssassin_game,@IsAdvertised,#who=what)
          {
             if Send(poAssassin_game,@AdvertiseTo,#who=what)
             {
                Post(self,@SayToOne,#target=what,#message_rsc=Assassin_advert);
-               
+
                return;
             }
             else
             {
-               DEBUG("Somehow, a player failed in becoming advertised to!");
+               Debug("Somehow, a player failed in becoming advertised to!");
             }
          }
          else
          {
             Post(self,@SayToOne,#target=what,
-                 #message_rsc=Assassin_already_advert);
-            
+                  #message_rsc=Assassin_already_advert);
+
             return;
          }
       }
 
-      if StringEqual(string, assassin_no_advertise)
+      if StringEqual(string,assassin_no_advertise)
       {
          if Send(poAssassin_game,@IsAdvertised,#who=what)
          {
             if Send(poAssassin_game,@StopAdvertising,#who=what)
             {
                Post(self,@SayToOne,#target=what,
-                    #message_rsc=Assassin_stop_advert);
-               
+                     #message_rsc=Assassin_stop_advert);
+
                return;
             }
             else
             {
-               DEBUG("Somehow, a player failed in stopping ads!");
+               Debug("Somehow, a player failed in stopping ads!");
             }
          }
          else
          {
             Post(self,@SayToOne,#target=what,#message_rsc=Assassin_not_advert);
-            
+
             return;
          }
       }
@@ -293,13 +293,13 @@ messages:
             if Send(oGame,@inSession)
             {
                Send(oGame,@ResetGame,#report=TRUE);
-               
+
                return;
             }
             else
             {
                Post(self,@SayToOne,#target=what,#message_rsc=assassin_no_game);
-               
+
                return;
             }
          }
@@ -309,12 +309,12 @@ messages:
             if Send(oGame,@inSession)
             {
                Post(self,@SayToOne,#target=what,
-                    #message_rsc=assassin_already_game);
-               
+                     #message_rsc=assassin_already_game);
+
                return;
             }
 
-            if Send(oGame,@isViableGame)
+            if Send(oGame,@IsViableGame)
             {
                Send(oGame,@StartGame);
 
@@ -366,7 +366,6 @@ messages:
                     
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

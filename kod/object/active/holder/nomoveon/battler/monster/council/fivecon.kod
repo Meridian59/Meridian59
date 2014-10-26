@@ -19,7 +19,7 @@ resources:
 
    fiveCouncilor_name_rsc = "Esseldi"
    fiveCouncilor_icon_rsc = fivecon.bgf
-   fiveCouncilor_desc_rsc = "A great traveler and explorer, he now hunts "
+   fiveCouncilor_desc_rsc = "A great traveller and explorer, he now hunts "
       "for the appearances of the mystical mana nodes.  Esseldi attempts to "
       "wear the stately dress of the court, yet always manages to tatter them "
       "up on his impromptu explorations.  He enjoys talking about all of his "
@@ -44,7 +44,7 @@ classvars:
                   | MOB_RECEIVE | MOB_TEACHER | MOB_SELLER
    viOccupation = MOB_ROLE_COUNCILMEMBER
    viInitialState = 1
-   viGender = GENDER_MALE   
+   viGender = GENDER_MALE
 
    viHomeroom = RID_B6
    viMyRow = 6
@@ -74,12 +74,12 @@ messages:
       {
          Send(self,@SetMood,#new_mood=piMood + 2);
       }
-      
+
       if Send(who,@GetAction) = UA_SAD
       {
          Send(self,@SetMood,#new_mood=piMood - 1);
       }
-      
+
       propagate;
    }
 
@@ -90,24 +90,25 @@ messages:
          if IsClass(what,&WaterSkin)
          {
             Send(self,@SetMood,#new_mood=piMood + 1);
+
             return;
          }
       }
-      
+
       if why = MOODMOD_DAWN
       {
          Send(self,@SetMood,#new_mood=piMood - 1);
-         
+
          return;
       }
-      
-      if why = MOODMOD_DUSK 
+
+      if why = MOODMOD_DUSK
       {
          Send(self,@SetMood,#new_mood=piMood + 1);
-         
+
          return;
       }
-      
+
       return;
    }
 
@@ -117,14 +118,14 @@ messages:
       if Send(who,@GetMaxMana) >= NUM_MANA_FOR_SPECIAL
       {
          piStateBump = 2;
-         
+
          return FiveCon_true_ideal_rsc;
       }
       else
       {
          return FiveCon_half_ideal_rsc;
       }
-      
+
       return;
    }
 
@@ -135,11 +136,9 @@ messages:
                      [ SID_PURGE, SID_CRYSTALIZE_MANA ],
                      $
                    ];
-      
+
       return;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

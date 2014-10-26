@@ -22,35 +22,44 @@ resources:
 
    BarloqueBlacksmith_name_rsc = "Fehr'loi Qan"
    BarloqueBlacksmith_icon_rsc = bqsmith.bgf
-   BarloqueBlacksmith_desc_rsc = "Though well known throughout the land for his superb skill as a "
-      "master weapon smith, Fehr'loi Qan himself could not be considered the sharpest sword on the "
-      "rack.  The large man's slow speech seems out of place in the highbrow city of Barloque.  You "
-      "get the impression that he is uncomfortable with strangers, but his great size and clear "
+   BarloqueBlacksmith_desc_rsc = \
+      "Though well known throughout the land for his superb skill as a master "
+      "weapon smith, Fehr'loi Qan himself could not be considered the "
+      "sharpest sword on the rack.  The large man's slow speech seems out of "
+      "place in the highbrow city of Barloque.  You get the impression that "
+      "he is uncomfortable with strangers, but his great size and clear "
       "devotion to Kraanan makes him afraid of no one."
 
    BQsmith_entry_welcome = "Hello %s%s, and welcome."
-   BQSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Son of a ...!  Well, I suppose I got no choice but to sell you one."
+   BQSm_mace_sale = \
+      "All these beautiful weapons, and you want %s%s.  Son of a ...!  "
+      "Well, I suppose I got no choice but to sell you one."
 
 classvars:
 
    vrName = BarloqueBlacksmith_name_rsc
    vrIcon = BarloqueBlacksmith_icon_rsc
    vrDesc = BarloqueBlacksmith_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_TEACHER | MOB_COND_SELLER | MOB_LAWFUL
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN \
+      | MOB_BUYER | MOB_TEACHER | MOB_COND_SELLER | MOB_LAWFUL
    viOccupation = MOB_ROLE_BLACKSMITH
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-
 properties:
-   
+
 messages:
 
    ObjectDesired(what=$)
    {
-      if Send(what,@CanBeGiventoNPC) and 
-         (Send(Self,@IsObjectWearable,#what=what) OR
-         Send(Self,@IsObjectMisc,#what=what) OR
-         Send(Self,@IsObjectWeapon,#what=what)) {return True;}
+      if Send(what,@CanBeGiventoNPC)
+         AND (Send(Self,@IsObjectWearable,#what=what)
+         OR Send(Self,@IsObjectMisc,#what=what)
+         OR Send(Self,@IsObjectWeapon,#what=what))
+      {
+         return True;
+      }
+
       return False;
    }
 
@@ -68,24 +77,23 @@ messages:
    InitCondSale()
    {
       local oObj;
+
       oObj=Create(&Mace);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,100,BQSm_mace_sale]);
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,100,BQSm_mace_sale]);
+
       return;
    }
 
-
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      Post(poOwner,@SomeoneSaid,#what = self, #string=BQSmith_entry_welcome,
-         #type = SAY_RESOURCE, 
-         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      Post(who,@SomeoneSaid,#what=self,#string=BQSmith_entry_welcome,
+            #type=SAY_RESOURCE,
+            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
       return;
    }
-
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

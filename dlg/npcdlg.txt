@@ -296,7 +296,7 @@ send o 0 speechlibtrigger who class BarloqueApothecary trigger q jasper
 send o 0 speechlibquote who class BarloqueApothecary quote q ~kJoguer says, "Thou will never find a more skilled artisan of stone than the man in Jasper who owns the hands of Afiera D'xor."
 
 send o 0 speechlibtrigger who class BarloqueApothecary trigger q jonas
-send o 0 speechlibquote who class BarloqueApothecary quote q ~kJoguer says, "Well I don’t pay much attention to all of them politics, but I don’t see anything wrong with what Jonas has done."
+send o 0 speechlibquote who class BarloqueApothecary quote q ~kJoguer says, "Well I don't pay much attention to all of them politics, but I don't see anything wrong with what Jonas has done."
 
 send o 0 speechlibtrigger who class BarloqueApothecary trigger q marion
 send o 0 speechlibquote who class BarloqueApothecary quote q ~kJoguer says, "The most fertile of soil can be found near yonder Marion."
@@ -620,10 +620,10 @@ send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q help
 send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "Uh... I can make armor... or... uh... a weapon. I'll also buy old stuff if it ain't broke or if it's unusual even if everyone else thinks it ain't worth nothin'. M' mum says I gots an eye for quality."
 
 send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q Jasper
-send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr’loi Qan says, "Quintor’s the smith in Jasper.  He was my friend a long time ago, but then his wife left him and he hasn’t been, uh, the same since.  I hear he found himself a friend though, I think the name was Queasy, or something."
+send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "Quintor's the smith in Jasper.  He was my friend a long time ago, but then his wife left him and he hasn't been, uh, the same since.  I hear he found himself a friend though, I think the name was Queasy, or something."
 
 send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q jonas
-send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr’loi Qan says, "Well I don’t know much about politics and the like, but I do know that Jonas could never make a fairer ruler than Princess Kateriina."
+send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "Well I don't know much about politics and the like, but I do know that Jonas could never make a fairer ruler than Princess Kateriina."
 
 send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q Marion
 send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "Colhorr's up in Marion. We go drinking once a month and talk about, well, makin' weapons and stuff."
@@ -788,7 +788,7 @@ send o 0 speechlibtrigger who class BarloqueInnKeeper trigger q princess
 send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kPritchett says, "Hail Kateriina! I pray she has the strength to combat this new threat."
 
 send o 0 speechlibtrigger who class BarloqueInnKeeper trigger q rebels
-send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kPrichett whispers, "Well, don’t telleth anyone I said this, but this whole thing with the rebels tisn’t really that bad.  What thy mean is people need shaking upeth every so often."
+send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kPrichett whispers, "Well, don't telleth anyone I said this, but this whole thing with the rebels tisn't really that bad.  What thy mean is people need shaking upeth every so often."
 
 send o 0 speechlibtrigger who class BarloqueInnKeeper trigger q sailed
 send o 0 speechlibquote who class BarloqueInnKeeper quote q ~kPritchett says, "Ah, that's a story if thee hath the time."
@@ -923,7 +923,7 @@ send o 0 speechlibtrigger who class BarloqueMerchant trigger q jewel
 send o 0 speechlibquote who class BarloqueMerchant quote q ~kHerbutte says, "I am the only fair dealer. Seek not Skivlat for a lowly axwaddle is he."
 
 send o 0 speechlibtrigger who class BarloqueMerchant trigger q jonas
-send o 0 speechlibquote who class BarloqueMerchant quote q ~kHerbutte says, "I just don’t see what he hopes to gain by this, it’s not like they will ever let him have a title of his own, besides traitor."
+send o 0 speechlibquote who class BarloqueMerchant quote q ~kHerbutte says, "I just don't see what he hopes to gain by this, it's not like they will ever let him have a title of his own, besides traitor."
 
 send o 0 speechlibtrigger who class BarloqueMerchant trigger q marion
 send o 0 speechlibquote who class BarloqueMerchant quote q ~kHerbutte says, "Thou jests. Marion is not a town of any stature."
@@ -1622,7 +1622,7 @@ send o 0 speechlibtrigger who class CornothGrocer mood int MOOD_BAD trigger q ja
 send o 0 speechlibquote who class CornothGrocer quote q ~kSolomon says, "I hear that Jasper is the center of the unrest that threatens to send the land into chaos."
 
 send o 0 speechlibtrigger who class CornothGrocer mood int MOOD_GOOD trigger q jasper
-send o 0 speechlibquote who class CornothGrocer quote q ~kSolomon says, "Did you know that Jasper was once a separate kingdom, and stayed in rebellion long after the King in Meridian declared that they must surrender? That will tell you something about Jasper. A very terrible war followed. The fortress of the old Jasper Warlords, Wryn’s Keep, stands to this day as testament. The people of Jasper, I believe, still want their independence to this time! There are many secrets in Jasper, even today. Especially today."
+send o 0 speechlibquote who class CornothGrocer quote q ~kSolomon says, "Did you know that Jasper was once a separate kingdom, and stayed in rebellion long after the King in Meridian declared that they must surrender? That will tell you something about Jasper. A very terrible war followed. The fortress of the old Jasper Warlords, Wryn's Keep, stands to this day as testament. The people of Jasper, I believe, still want their independence to this time! There are many secrets in Jasper, even today. Especially today."
 
 send o 0 speechlibtrigger who class CornothGrocer mood int MOOD_NEUTRAL trigger q jasper
 send o 0 speechlibquote who class CornothGrocer quote q ~kSolomon says, "Although the mines in Jasper have run dry and the miners moved away, there are still a considerable number of gems that come out of the western Cragged Mountains, and Jasper in particular. Of course with the rebellion centered there, many more means to acquire wealth now are available now."
@@ -2276,7 +2276,7 @@ send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NEUTRAL trigge
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "A rebellious place, and a tough people, natural irregulars. Fine soldiers."
 
 send o 0 speechlibtrigger who class CorNothSergeant trigger q jonas
-send o 0 speechlibquote who class CorNothSergeant quote q ~kRook snorts contemptuously, "Humph, what next?  King Jonas?  HAH!  That blubbering buffoon couldn’t lead an army of brain dead trolls, let alone his own faction."
+send o 0 speechlibquote who class CorNothSergeant quote q ~kRook snorts contemptuously, "Humph, what next?  King Jonas?  HAH!  That blubbering buffoon couldn't lead an army of brain dead trolls, let alone his own faction."
 
 send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_GOOD trigger q jonas d'accor
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "He has been a little more tight-lipped. I've also heard he has been wandering a bit more frequently.... Wonder what he's up to."
@@ -2324,7 +2324,7 @@ send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NEUTRAL trigge
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "How now! What news of this fair lady do you bring?"
 
 send o 0 speechlibtrigger who class CorNothSergeant trigger q rebels
-send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "Do I think they are a threat?  Don’t make me laugh, I mean their headquarters is located in a bar."
+send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "Do I think they are a threat?  Don't make me laugh, I mean their headquarters is located in a bar."
 
 send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NOT_BAD trigger q regifan du bukise
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "In truth this Regifan is not a threat to man or beast, he is a rodent with ideas. I have but little use for academics, intellectuals, and the like, for I have heard enough of their theories on why this land suffers."
@@ -3299,7 +3299,7 @@ send o 0 speechlibtrigger who class FourCouncilor trigger q hello
 send o 0 speechlibquote who class FourCouncilor quote q ~kDrechx says, "Greetings, my friend. How's your health today?"
 
 send o 0 speechlibtrigger who class FourCouncilor trigger q jasper
-send o 0 speechlibquote who class FourCouncilor quote q ~kDrechx says, "Since the intrusion of Jonas and the rebellion into their lives I must say that the citizen’s health is much improved.  Although I could not reccomend it as a usual treatment."
+send o 0 speechlibquote who class FourCouncilor quote q ~kDrechx says, "Since the intrusion of Jonas and the rebellion into their lives I must say that the citizen's health is much improved.  Although I could not reccomend it as a usual treatment."
 
 send o 0 speechlibtrigger who class FourCouncilor trigger q marion
 send o 0 speechlibquote who class FourCouncilor quote q ~kDrechx says, "Marion is a town in perfect health. It balances the simple needs of the body with the temperament of peaceful living. It is small, but I guarantee that town will outlive the others."
@@ -3635,7 +3635,7 @@ send o 0 speechlibtrigger who class JasperBanker mood int MOOD_NOT_BAD trigger q
 send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Ah, yes, the great battle of Denthan Crossing. It is a turning point in our history; that is the history of the Jasper people, for it marks the end of our independence when the Wryn's army was defeated there by the forces of Zarcos II. But true to the spirit of the Jasper people, it also marked the end of Zarcos II. My people saw to that. He never left that field."
 
 send o 0 speechlibtrigger who class JasperBanker mood int MOOD_BAD trigger q duke
-send o 0 speechlibquote who class JasperBanker quote q ~kYevitan snarls, "What?  I don’t owe anything to that little Riija puppy.  I’ve paid my debt to his Uncle, and I have the records to prove it too."
+send o 0 speechlibquote who class JasperBanker quote q ~kYevitan snarls, "What?  I don't owe anything to that little Riija puppy.  I've paid my debt to his Uncle, and I have the records to prove it too."
 
 send o 0 speechlibtrigger who class JasperBanker mood int MOOD_GOOD trigger q duke
 send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "You want to talk about that no good, self aggrandizing, pompous fool? That man is no more concerned for this land and its citizens than you or I concern ourselves with the fate of another baby spider, one way or the other. Well, he'll never be a King, that's certain. And if the issue is ever in doubt I'll see to it myself, by the gods I will. If that day comes, I'll take care of him myself... "
@@ -3662,7 +3662,7 @@ send o 0 speechlibtrigger who class JasperBanker mood int MOOD_NOT_BAD trigger q
 send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Haven't seen the man in years. Oh, must be ten years now at least. He was always a bit, you know, affected."
 
 send o 0 speechlibtrigger who class JasperBanker trigger q jonas
-send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Ah, as fine a man as I’ve ever had the pleasure of meeting.  Strong willed, sound of mind, and with such a glorious vision.  He has my full support."
+send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Ah, as fine a man as I've ever had the pleasure of meeting.  Strong willed, sound of mind, and with such a glorious vision.  He has my full support."
 
 send o 0 speechlibtrigger who class JasperBanker mood int MOOD_NOT_BAD trigger q justicar
 send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Now that's a new system since my time at Court. But what a laugh. A toothless position of no authority, open to the highest bidder. That's our justice? Oh, okay then... "
@@ -3695,7 +3695,7 @@ send o 0 speechlibtrigger who class JasperBanker mood int MOOD_NOT_BAD trigger q
 send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Master Cair'bre is a most upstanding gentleman, and a personal friend of mine for some years. I would trust my every possession to his care without any hesitation, regardless of its' value."
 
 send o 0 speechlibtrigger who class JasperBanker mood int MOOD_BAD trigger q princess
-send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "A nice girl, but a girl is all she is.  She’ll never had the spine nor the wit to make a competent ruler."
+send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "A nice girl, but a girl is all she is.  She'll never had the spine nor the wit to make a competent ruler."
 
 send o 0 speechlibtrigger who class JasperBanker mood int MOOD_GOOD trigger q princess
 send o 0 speechlibquote who class JasperBanker quote q ~kYevitan says, "Although she has many endearing qualities, I can tell you with confidence that the quality of leadership is not among them. Certainly royalty has its place in this kingdom, but I insist that we are ready for more dynamic leadership. I suggest this in your utmost confidence, but when the time comes for an army to march down from these hills to instill a new King or Queen to the throne, where will you be, my friend?"
@@ -3908,7 +3908,7 @@ send o 0 speechlibtrigger who class JasperBartender mood int MOOD_NEUTRAL trigge
 send o 0 speechlibquote who class JasperBartender quote q ~kPietro says, "What do you want?"
 
 send o 0 speechlibtrigger who class JasperBartender trigger q honored
-send o 0 speechlibquote who class JasperBartender quote q ~kPietro spits, landing close to Jonas’ boot and turns away."
+send o 0 speechlibquote who class JasperBartender quote q ~kPietro spits, landing close to Jonas' boot and turns away."
 
 send o 0 speechlibtrigger who class JasperBartender trigger q Izzio
 send o 0 speechlibquote who class JasperBartender quote q ~kPietro says, "I ave only seen that man once or twice. He is wandering around.... Know what I mean? He tries to sell that garbage of his."
@@ -4013,7 +4013,7 @@ send o 0 speechlibtrigger who class JasperBartender mood int MOOD_BAD
 send o 0 speechlibquote who class JasperBartender quote q ~kPietro yells, "OUT! Everyone freggin' OUT!"
 
 send o 0 speechlibtrigger who class JasperBartender mood int MOOD_BAD
-send o 0 speechlibquote who class JasperBartender quote q ~kPietro grumbles, "Stinkin rebelz, ~IHic~I, freggin' good for nothin loutz, ~IHic~I, come inz an take o’er myz bar.  Thez don’t even askz me if’n I’m willin."
+send o 0 speechlibquote who class JasperBartender quote q ~kPietro grumbles, "Stinkin rebelz, ~IHic~I, freggin' good for nothin loutz, ~IHic~I, come inz an take o'er myz bar.  Thez don't even askz me if'n I'm willin."
 
 send o 0 speechlibtrigger who class JasperBartender mood int MOOD_BAD
 send o 0 speechlibquote who class JasperBartender quote q ~kPietro shouts, "The bar iz closed. Get out."
@@ -4712,7 +4712,7 @@ send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_GOOD trigger q
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "I shed no tears for Kalior."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_NEUTRAL trigger q duke
-send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino snorts, "I’m sure we’re just an after-thought to him, if he thinks of us at all."
+send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino snorts, "I'm sure we're just an after-thought to him, if he thinks of us at all."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_GOOD trigger q hello
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino smiles at you warmly.
@@ -4736,7 +4736,7 @@ send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_NEUTRAL trigge
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "The talk is really picking up here. I wonder if there will be action behind those words."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_GOOD trigger q jonas
-send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "He’s a good man at heart, almost fits in with us mountain folk."
+send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "He's a good man at heart, almost fits in with us mountain folk."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_NEUTRAL trigger q jonas
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "I'm not really sure if he is our salvation or latest downfall, it's a tossup really."
@@ -4766,7 +4766,7 @@ send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_NEUTRAL trigge
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "He runs the tavern. He should still be open, you'll find it just up the street."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_BAD trigger q princess
-send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "Can’t much see her highness hiking up her skirts and strolling through the mountains to Jasper."
+send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "Can't much see her highness hiking up her skirts and strolling through the mountains to Jasper."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_GOOD trigger q princess
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "Bless her heart, she is left to look after the throne when the land is in such a ~Imess~I, from what I understand. Goes to show you that happiness does not come with great wealth and power."
@@ -4781,7 +4781,7 @@ send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_NEUTRAL trigge
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "Yes, Quintor is the blacksmith in Jasper. His shop is just across the way, if you need any metalwork."
 
 send o 0 speechlibtrigger who class JasperInnKeeper trigger q rebels
-send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "It’s about time Jasper had a regular militia, specially with all them city folk wandering about as of late."
+send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "It's about time Jasper had a regular militia, specially with all them city folk wandering about as of late."
 
 send o 0 speechlibtrigger who class JasperInnKeeper mood int MOOD_GOOD trigger q tos
 send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "Yevitan at the Royal Bank here in Jasper used to work closely with another bank, which is in Tos. You can do business with either one. My late husband didn't trust Yevitan, and would make the trip to Tos just to conduct business. He... well, when he left here for Tos the last time, he went missing. Never showed up in Tos, and no one has seen him here."
@@ -8189,7 +8189,7 @@ send o 0 speechlibtrigger who class QorPriestess trigger q jala
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IHow my Mistress of Night misses little Jala and her squeaky songs. She almost regrets soiling her dagger on the girls bare back.~I~k"
 
 send o 0 speechlibtrigger who class QorPriestess trigger q jasper
-send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IA pity that Jasper dies after having slit open its veins and draining all of the earth’s blood from within.  Suicide I would say.  Although some would say that this new 'rebellion' of theirs is the stopgate to their life blood's loss.~I~k"
+send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IA pity that Jasper dies after having slit open its veins and draining all of the earth's blood from within.  Suicide I would say.  Although some would say that this new 'rebellion' of theirs is the stopgate to their life blood's loss.~I~k"
 
 send o 0 speechlibtrigger who class QorPriestess trigger q kalior
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IKalior has met Qor, and Qor is pleased with his new servant.~I~k"
@@ -8837,10 +8837,10 @@ send o 0 speechlibtrigger who class TosApothecary trigger q help
 send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "You need help? Always about what you need, is it. I buy and sell ingredients for spell casting."
 
 send o 0 speechlibtrigger who class TosApothecary trigger q jasper
-send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Jasper.  That’s a thriving town all right.  Going up against the known ways, just asking for trouble.  It's suicide they're asking for, if you ask me."
+send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Jasper.  That's a thriving town all right.  Going up against the known ways, just asking for trouble.  It's suicide they're asking for, if you ask me."
 
 send o 0 speechlibtrigger who class TosApothecary trigger q jonas
-send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Doomed, we’re all doomed, doomed I tell you!!"
+send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Doomed, we're all doomed, doomed I tell you!!"
 
 send o 0 speechlibtrigger who class TosApothecary trigger q lake
 send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "There's a temple or something down on an underground lake in the dark caves. I wouldn't bother going if I were you. First off, you need a key. And if you do get in, the chill is just miserable."
@@ -8861,7 +8861,7 @@ send o 0 speechlibtrigger who class TosApothecary trigger q princess
 send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Despite her faults, I'm probably the only one in all of Tos who supports the Princess. "
 
 send o 0 speechlibtrigger who class TosApothecary trigger q rebels
-send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar cries, "What are you waiting for?  It’s rude to keep death waiting.  Do I have a fever, I think I do, this is it, the end, goodbye cruel world.  Aren’t you going to buy anything?"
+send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar cries, "What are you waiting for?  It's rude to keep death waiting.  Do I have a fever, I think I do, this is it, the end, goodbye cruel world.  Aren't you going to buy anything?"
 
 send o 0 speechlibtrigger who class TosApothecary trigger q sell
 send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "What do think I would sell? This is a magic reagent shop."
@@ -9200,7 +9200,7 @@ send o 0 speechlibtrigger who class TosInnKeeper trigger q Izzio
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Go look up by Barloque. He knows better than to show his face in or around Tos."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q JASPER
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "I was just in Jasper the other day to pick up some general supplies from Zhieu B’hob. I must say that I am quite impressed with the town's turnaround. Jonas and his rebels might just be doing Jasper some good."
+send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "I was just in Jasper the other day to pick up some general supplies from Zhieu B'hob. I must say that I am quite impressed with the town's turnaround. Jonas and his rebels might just be doing Jasper some good."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q JUSTICAR
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Up in Barloque, the common folk can elect their own Justicar to hold trial. The Justicar can pass sentence or pardon law breakers."
@@ -9251,7 +9251,7 @@ send o 0 speechlibtrigger who class TosInnKeeper trigger q QAN
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Fehr'loi Qan was our local blacksmith. I think being so close to the graveyard spooked him out of town."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q REBELS
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "You know this is exactly how the Duke’s family came into power, although they will never admit it."
+send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "You know this is exactly how the Duke's family came into power, although they will never admit it."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q RYCKSHER
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Is my little brother in trouble again? Ever since I got him the job working in the Duke's Banquet Room, he's been nothing but trouble."
@@ -9329,7 +9329,7 @@ send o 0 speechlibtrigger who class TosInnKeeper
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Before I forget, if you need reagents like mushrooms and herbs for your spells, see Frisconar. Let him know I referred you to him."
 
 send o 0 speechlibtrigger who class TosInnKeeper
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "I’m surprised that the Councilors haven’t had much to say about Jonas and his new faction."
+send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "I'm surprised that the Councilors haven't had much to say about Jonas and his new faction."
 
 send o 0 speechlibtrigger who class TosInnKeeper
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Our Arena in East Tos is a great place to take a brew and watch a fight. I'm amazed at how good those guys get just practicing in there."

@@ -572,10 +572,10 @@ messages:
                % teleport to player, to look like we're following
                % but only if we're a reflection or undead. Other cases
                % handled in monster.kod.
-               if IsClass(self,&Reflection) % Flecs follow.
-                  OR Send(self,@IsUndead) % So do undead (Animate).
+               if IsClass(mob,&Reflection) % Flecs follow.
+                  OR Send(mob,@IsUndead) % So do undead (Animate).
                {
-                  Post(self,@GotoMaster);
+                  Post(mob,@GotoMaster);
                }
             }
 

@@ -25,15 +25,15 @@ classvars:
 properties:
 
    ptTeleport = $
-   
+
    % list of lists
    % each list element is a list of format [RID, ROW, COLUMN]
    % ex. [ [ RID_TOS, 20, 20], [RID_KACATAN, 30, 30], ... ]
    % or [RID, ROW, COLUMN, FINEROW, FINECOL]
    % ex. [ [ RID_TOS, 20, 20], [RID_KACATAN, 30, 30, 16, 48], ... ]
-   
+
    plDestinations = $
-   
+
    piTeleport_Counter = 0
 
    piCurrent_Dest = 0
@@ -44,8 +44,9 @@ messages:
 
    Constructor()
    {
-      send(self, @CreateDestinationList);
+      Send(self, @CreateDestinationList);
       ptTeleport = CreateTimer(self,@TeleportTimerTrigger,TELEPORT_INITIAL );
+
       propagate;
    }
 
@@ -53,82 +54,101 @@ messages:
    {
       local lActive, i;
 
-      ptTeleport = CreateTimer(self,@TeleportTimerTrigger,random(TELEPORT_MIN, TELEPORT_MAX) );
+      ptTeleport = CreateTimer(self,@TeleportTimerTrigger,
+                           Random(TELEPORT_MIN, TELEPORT_MAX) );
 
-      if not pbWandering { return; }
-
-      if (piTeleport_Counter > 4) {
-         %debug("Counter = ", piTeleport_Counter, ", teleporting regardless...");
-         send(self, @NextDest);
+      if NOT pbWandering
+      {
          return;
       }
 
-      lActive = send(poOwner, @GetHolderActive);
+      if (piTeleport_Counter > 4)
+      {
+         %Debug("Counter = ",piTeleport_Counter,", teleporting regardless...");
+         Send(self, @NextDest);
 
-      for i in lActive {
-         if isClass(first (i), &User) {
+         return;
+      }
+
+      lActive = Send(poOwner, @GetHolderActive);
+
+      for i in lActive
+      {
+         if IsClass(First(i),&User)
+         {
             piTeleport_Counter = piTeleport_Counter + 1;
-            %debug("Teleport failed, counter = ", piTeleport_Counter);
+            %Debug("Teleport failed, counter = ", piTeleport_Counter);
+
             return;
          }
       }
 
-      send(self, @NextDest);
+      Send(self,@NextDest);
       return;
    }
 
    NextDest()
    {
       local iNext_Dest, oRoom;
-      %debug("Finding new destination...");
+
+      %Debug("Finding new destination...");
       piTeleport_Counter = 0;
       iNext_Dest = piCurrent_Dest;
 
-      if length(plDestinations) > 1 {
-         while (iNext_Dest = piCurrent_Dest) {
-            iNext_Dest = random (1, length(plDestinations));
+      if length(plDestinations) > 1
+      {
+         while (iNext_Dest = piCurrent_Dest)
+         {
+            iNext_Dest = Random(1,Length(plDestinations));
          }
       }
-      else { 
-         %debug("Only one destination to choose from, bailing...");
+      else
+      {
+         %Debug("Only one destination to choose from, bailing...");
+
          return;
       }
 
       piCurrent_Dest = iNext_Dest;
 
-      oRoom = send( SYS, @FindRoomByNum, #num = first( nth( plDestinations, piCurrent_Dest ) ) );
-      if oRoom <> $ 
+      oRoom = Send(SYS,@FindRoomByNum,
+                     #num=First(Nth(plDestinations,piCurrent_Dest)));
+      if oRoom <> $
       {
-	 if Length(nth(plDestinations, piCurrent_Dest)) = 3  % No Fines
-	 {
-	    send(oRoom, @NewHold, #what=self,
-	       #new_Row=nth(nth(plDestinations, piCurrent_Dest), 2),
-	       #new_Col=nth(nth(plDestinations, piCurrent_Dest), 3) );
-	 }
-	 else   % Has fine coordinates
-	 {
-	    send(oRoom, @NewHold, #what=self,
-	       #new_Row=nth(nth(plDestinations, piCurrent_Dest), 2),
-	       #new_Col=nth(nth(plDestinations, piCurrent_Dest), 3),
-	       #fine_row=nth(nth(plDestinations, piCurrent_Dest), 4),
-	       #fine_col=nth(nth(plDestinations, piCurrent_Dest), 5) );
-	 }
+         if Length(Nth(plDestinations, piCurrent_Dest)) = 3
+         {
+            % No fine coordinates.
+            Send(oRoom,@NewHold,#what=self,
+                  #new_Row=nth(nth(plDestinations,piCurrent_Dest),2),
+                  #new_Col=nth(nth(plDestinations,piCurrent_Dest),3));
+         }
+         else   % Has fine coordinates.
+         {
+            Send(oRoom,@NewHold,#what=self,
+                  #new_Row=nth(nth(plDestinations,piCurrent_Dest),2),
+                  #new_Col=nth(nth(plDestinations,piCurrent_Dest),3),
+                  #fine_row=nth(nth(plDestinations,piCurrent_Dest),4),
+                  #fine_col=nth(nth(plDestinations,piCurrent_Dest),5));
+         }
 
-	 Send( oRoom, @WandererEntered, #mob = self );
+         Send(oRoom,@WandererEntered,#mob=self);
       }
+
       return;
    }
 
    CreateDestinationList()
    {
-      debug("Wanderer NPC created without destination list, deleted.");
-      post(self, @Delete);
+      Debug("Wanderer NPC created without destination list, deleted.");
+      Post(self, @Delete);
+
       return;
    }
 
    SetWandering(value=TRUE)
    {
       pbWandering = value;
+
       return;
    }
 
@@ -137,7 +157,7 @@ messages:
       plDestinations = $;
       if ptTeleport <> $
       {
-         deletetimer(ptTeleport);
+         DeleteTimer(ptTeleport);
          ptTeleport = $;
       }
 

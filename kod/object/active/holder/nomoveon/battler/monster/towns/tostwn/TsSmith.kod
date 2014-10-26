@@ -22,51 +22,62 @@ resources:
 
    TosBlacksmith_name_rsc = "Fehr'loi Qan"
    TosBlacksmith_icon_rsc = bsmith.bgf
-   TosBlacksmith_desc_rsc = "One of the finest blacksmiths in the land, Fehr'loi Qan is known far and wide for his superlative work."
+   TosBlacksmith_desc_rsc = \
+      "One of the finest blacksmiths in the land, Fehr'loi Qan is known far "
+      "and wide for his superlative work."
 
    entry_welcome = "Hello %s%s, and welcome."
-   TsSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Sheesh!  Well, I suppose I've no choice but to sell you one."
+   TsSm_mace_sale = \
+      "All these beautiful weapons, and you want %s%s.  Sheesh!  Well, I "
+      "suppose I've no choice but to sell you one."
 
 classvars:
 
    vrName = TosBlacksmith_name_rsc
    vrIcon = TosBlacksmith_icon_rsc
    vrDesc = TosBlacksmith_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_TEACHER | MOB_COND_SELLER | MOB_LAWFUL
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN \
+      | MOB_BUYER | MOB_TEACHER | MOB_COND_SELLER | MOB_LAWFUL
    viOccupation = MOB_ROLE_BLACKSMITH
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-
 properties:
-   
+
 messages:
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_ACCEPT_ITEM )
+      if why = MOODMOD_ACCEPT_ITEM
       {
-	 if( IsClass( what, &wand ) )
-	 {
-   	    send( self, @SetMood, #new_mood = piMood + 5 );
-	 }
+         if IsClass(what,&Wand)
+         {
+            Send(self,@SetMood,#new_mood=piMood+5 );
+         }
       }
+
       return;
    }
 
    Constructor()
    {
-      debug("Someome tried to make a defunct class!");
-      post(self,@Delete);
+      Debug("Someome tried to make a defunct class!");
+      Post(self,@Delete);
+
       return;
    }
 
    ObjectDesired(what=$)
    {
-      if Send(what,@CanBeGiventoNPC) AND
-         (Send(Self,@IsObjectWearable,#what=what) OR
-         Send(Self,@IsObjectMisc,#what=what) OR
-         Send(Self,@IsObjectWeapon,#what=what)) {return True;}
-      return False;
+      if Send(what,@CanBeGiventoNPC)
+         AND (Send(Self,@IsObjectWearable,#what=what)
+            OR Send(Self,@IsObjectMisc,#what=what)
+            OR Send(Self,@IsObjectWeapon,#what=what))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    SetForSale()
@@ -77,30 +88,30 @@ messages:
                      Create(&MetalShield)],
                      $,
                      [SID_MAGICSHIELD], $ ];
+
       return;
    }
 
    InitCondSale()
    {
       local oObj;
+
       oObj=Create(&Mace);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,100,TsSm_mace_sale]);
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,100,TsSm_mace_sale]);
+
       return;
    }
 
-
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      Post(poOwner,@SomeoneSaid,#what = self, #string=entry_welcome,
-         #type = SAY_RESOURCE, 
-         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      Post(who,@SomeoneSaid,#what=self,#string=entry_welcome,
+            #type=SAY_RESOURCE,
+            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
       return;
    }
-
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

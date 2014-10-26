@@ -60,7 +60,7 @@ properties:
 
 messages:
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
@@ -71,7 +71,7 @@ messages:
 
       if Send(who,@GetHomeRoom) = RID_MAR_INN
       {
-         Send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
 
       propagate;

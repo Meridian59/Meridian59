@@ -19,16 +19,20 @@ resources:
    KocatanCaptainGood_name_rsc = "Cital ko'Manca"
    KocatanCaptainGood_icon_rsc = kcguardG.bgf
 
-   KocatanCaptainGood_desc_rsc = "As the one of the highest ranking officers in the Ko'catan "
-      "Army, Cital ko'Manca is serious and crisp in his duties. In peacetime these duties "
-      "include supervising the main gatehouse during daylight against actions by enemies "
-      "unknown. Cital ko'Manca is extraordinarily young to have achieved such a high rank, "
-      "but he is well respected for his fairness and his adherence to military law."
+   KocatanCaptainGood_desc_rsc = \
+      "As the one of the highest ranking officers in the Ko'catan Army, Cital "
+      "ko'Manca is serious and crisp in his duties. In peacetime these duties "
+      "include supervising the main gatehouse during daylight against actions "
+      "by enemies unknown. Cital ko'Manca is extraordinarily young to have "
+      "achieved such a high rank, but he is well respected for his fairness "
+      "and his adherence to military law."
 
-   goodguard_thanks = "A less understanding officer might see this offer as a bribe, "
-      "which is very serious in Ko'catan. Bribing a gate officer is a capital offense. "
-	  "But I know that all you really wanted to do is make is a generous donation to the "
-	  "Kici'ca widows and orphans. I'll see that this goes there, and you'll be on your way."
+   goodguard_thanks = \
+      "A less understanding officer might see this offer as a bribe, which is "
+      "very serious in Ko'catan.  Bribing a gate officer is a capital "
+      "offense.  But I know that all you really wanted to do is make is a "
+      "generous donation to the Kici'ca widows and orphans.  I'll see that "
+      "this goes there, and you'll be on your way."
 
 classvars:
 
@@ -38,48 +42,62 @@ classvars:
 
    viMerchant_markup = MERCHANT_RIPOFF
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOMOVE | MOB_FULL_TALK
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN \
+      | MOB_RECEIVE | MOB_NOMOVE | MOB_FULL_TALK
    viOccupation = MOB_ROLE_SERGEANT
 
 messages:
 
    Constructor()
    {
-       plWantedItems = [&Money];
-       propagate;
-   }
-
-   GotWantedItem(obj = $, who = $)
-   {
-      if send(self,@checkForBribe,#obj=obj,#who=who)
-      {  return;  }
+      plWantedItems = [&Money];
 
       propagate;
-      
    }
 
-   CheckForBribe(who=$, obj = 0)
+   GotWantedItem(obj=$,who=$)
+   {
+      if Send(self,@CheckForBribe,#obj=obj,#who=who)
+      {
+         return;
+      }
+
+      propagate;
+
+   }
+
+   CheckForBribe(who=$,obj=0)
    {
       local oMoney, oBank, amount;
 
-      if not isClass(obj,&Money)  { return false; }
-      amount = send(obj,@GetNumber);
+      if NOT IsClass(obj,&Money)
+      {
+         return FALSE;
+      }
 
-      if amount <= 0 { return false; }
+      amount = Send(obj,@GetNumber);
+      if amount <= 0
+      {
+         return FALSE;
+      }
 
       oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $ 
+      if oMoney = $
       {
-    	 return false;
+         return FALSE;
       }
-      if send(oMoney,@GetValue) < amount
+
+      if Send(oMoney,@GetValue) < amount
       {
-    	 return false;
+        return FALSE;
       }
-      Send(oMoney,@SubtractNumber,#number=amount);      
-      post(self,@SayToOne,#target=who,#message_rsc=goodguard_thanks);
-      return true;
+
+      Send(oMoney,@SubtractNumber,#number=amount);
+      Post(self,@SayToOne,#target=who,#message_rsc=goodguard_thanks);
+
+      return TRUE;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

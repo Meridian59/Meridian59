@@ -18,16 +18,20 @@ resources:
 
    KocatanBowMaker_name_rsc = "Hanla zax'Ta"
    KocatanBowMaker_icon_rsc = kcbowmak.bgf
-   KocatanBowMaker_desc_rsc = "This becoming, young woman appears as cold and curt to new faces.  "
-      "Despite that, it is obvious to all that her true passion lies in the crafting of fine bows."
+   KocatanBowMaker_desc_rsc = \
+      "This becoming, young woman appears as cold and curt to new faces.  "
+      "Despite that, it is obvious to all that her true passion lies in the "
+      "crafting of fine bows."
 
    KocatanBowMaker_KriipaClaw_sale = \
-         "I have claws from several Kriipa I've killed in the jungle.  The Kriipa is a truly"
-         "fearsome beast, as I'm sure you know, and a hunter who wishes to obtain their claws must pay for them"
-         "in blood spilt in battle.  You will understand, then, that my price for them is high."
-   KocatanBowMaker_unwanted_give = "~k%s%s tells you, \"I have enough of those type of supplies to hold us through the summer.~n~k\""
+      "I have claws from several Kriipa I've killed in the jungle.  The "
+      "Kriipa is a truly fearsome beast, as I'm sure you know, and a hunter "
+      "who wishes to obtain their claws must pay for them in blood spilt in "
+      "battle.  You will understand, then, that my price for them is high."
+   KocatanBowMaker_unwanted_give = \
+      "~k%s%s tells you, \"I have enough of those type of supplies to hold "
+      "us through the summer.~n~k\""
 
-   
 classvars:
 
    vrName = KocatanBowMaker_name_rsc
@@ -35,30 +39,31 @@ classvars:
    vrDesc = KocatanBowMaker_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM \
+      | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
    viOccupation = MOB_ROLE_BLACKSMITH
 
    viGender = GENDER_FEMALE
 
    vrUnwanted_give = KocatanBowMaker_unwanted_give
 
-
 properties:
-   
+
 messages:
 
-   AffectMood(why = $, what = $)
+   AffectMood(why=$,what=$)
    {
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
 
          return;
       }
 
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
 
          return;
       }
@@ -67,7 +72,7 @@ messages:
       {
          if IsClass(what,&LongBow)
          {
-            send(self,@SetMood,#new_mood=piMood - 2);
+            Send(self,@SetMood,#new_mood=piMood-2);
          }
 
          return;
@@ -76,16 +81,16 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       if Send(who,@GetGender) = GENDER_MALE
       {
-         send(self,@SetMood,#new_mood=piMood - 1);
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
 
       if Send(who,@GetGender) = GENDER_FEMALE
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
 
       return;
@@ -98,6 +103,7 @@ messages:
                      ],
                      $,$,$
                    ];
+
       return;
    }
 
@@ -107,14 +113,12 @@ messages:
 
       oObj=Create(&KriipaClaw,#number=4);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,250,KocatanBowMaker_KriipaClaw_sale]);
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,250,
+            KocatanBowMaker_KriipaClaw_sale]);
 
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

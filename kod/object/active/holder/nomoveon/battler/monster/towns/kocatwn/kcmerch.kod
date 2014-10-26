@@ -19,21 +19,32 @@ resources:
    kocatanTradeMaster_name_rsc = "Wulfgang zax'Ak"
    kocatanTradeMaster_icon_rsc = kcmerch.bgf
    kocatanTradeMaster_desc_rsc =  \
-      "A remarkable man fallen upon a tough life, Wulfgang was born on the mainland "
-      "and raised in the persecuted secret society of the last Riija School.  Besides that "
-      "he somehow escaped to this island and established his trading post, little else is "
-      "known about Wulfgang's past."
-   
-   Wolfgang_lute = "A lute.... a lute... I think I have one of those somewhere...."
-   Wolfgang_potion_jala = "Yes, I do have one of those.  Naturally, I have no use for it..."
-   Wolfgang_entrootberry_sale = "You ask for %s%s?  Take them, it's just a bitter reminder of what I have left behind."
-   Wolfgang_fairywing_sale = "You want %s%s?  You can have them, I have no use for that anymore."
-   Wolfgang_mushroom_sale = "Ah, yes.  You wish to buy %s%s?  I remember collecting these around my hometown as a kid."
+      "A remarkable man fallen upon a tough life, Wulfgang was born on the "
+      "mainland and raised in the persecuted secret society of the last "
+      "Riija School.  Besides that he somehow escaped to this island and "
+      "established his trading post, little else is known about "
+      "Wulfgang's past."
 
-   Wolfgang_Nerudite_bought = "Wonderful!  This will fetch a fine price from the Peet-*  ahem.  From my customers."
-   Wolfgang_Nerudite_cant_accept_money = "I would love to take that fine chunk of ore off your hands, but I'm afraid "
-      "You are carrying too much to accept your payment."
-   
+   Wolfgang_lute = \
+      "A lute.... a lute... I think I have one of those somewhere...."
+   Wolfgang_potion_jala = \
+      "Yes, I do have one of those.  Naturally, I have no use for it..."
+   Wolfgang_entrootberry_sale = \
+      "You ask for %s%s?  Take them, it's just a bitter reminder of what "
+      "I have left behind."
+   Wolfgang_fairywing_sale = \
+      "You want %s%s?  You can have them, I have no use for that anymore."
+   Wolfgang_mushroom_sale = \
+      "Ah, yes.  You wish to buy %s%s?  I remember collecting these around "
+      "my hometown as a kid."
+
+   Wolfgang_Nerudite_bought = \
+      "Wonderful!  This will fetch a fine price from the Peet-*  ahem.  "
+      "From my customers."
+   Wolfgang_Nerudite_cant_accept_money = \
+      "I would love to take that fine chunk of ore off your hands, but "
+      "I'm afraid You are carrying too much to accept your payment."
+
 classvars:
 
    vrName = kocatanTradeMaster_name_rsc
@@ -42,11 +53,13 @@ classvars:
 
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_BUYER | MOB_COND_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | \
+      MOB_NOMOVE | MOB_RECEIVE | MOB_BUYER | MOB_COND_SELLER
    viOccupation = MOB_ROLE_MERCHANT
 
 properties:
-   
+
 messages:
 
    ObjectDesired(what=$)
@@ -58,21 +71,21 @@ messages:
    {
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
 
          return;
       }
 
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
 
          return;
       }
 
       if why = MOODMOD_SELL_ITEM
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
 
          return;
       }
@@ -81,11 +94,11 @@ messages:
       {
          if IsClass(what,&NeruditeOreChunk)
          {
-            send(self,@SetMood,#new_mood=piMood+4);
+            Send(self,@SetMood,#new_mood=piMood+4);
          }
          else
          {
-            send(self,@SetMood,#new_mood=piMood+2);
+            Send(self,@SetMood,#new_mood=piMood+2);
          }
 
          return;
@@ -94,42 +107,32 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
+      if Send(who, @GetHomeRoom) = RID_MAR_INN
+      {
+         Send(self,@SetMood,#new_mood=piMood+2);
+      }
 
-      if send(who, @GetHomeRoom) = RID_MAR_INN
+      if Send(who, @GetFaction) = FACTION_NEUTRAL
       {
-         send(self,@SetMood,#new_mood=piMood+2);
-      }
-      
-      if send(who, @GetFaction) = FACTION_NEUTRAL
-      {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
       else
       {
-         send(self,@SetMood,#new_mood=piMood-3);
+         Send(self,@SetMood,#new_mood=piMood-3);
       }
-      
-      iFlags = send(who,@GetObjectFlags);
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         send(self,@SetMood,#new_mood=piMood+2);
-      }
-      
-      if iFlags & PLAYER_OUTLAW
-      {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
       else
       {
-         if NOT (iFlags & PLAYER_PK)
-         {
-            send(self,@SetMood,#new_mood=piMood-2);
-         }
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      
+
       propagate;
    }
 
@@ -150,53 +153,54 @@ messages:
                      $ ];
       return;
    }
-   
+
    InitCondSale()
    {
       local oObj, oObj2, oObj3, oObj4, oObj5;
-      
+
       oObj=Create(&Lute);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,10000,Wolfgang_lute]);
-           
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,10000,Wolfgang_lute]);
+
       oObj2 = Create(&ForgetPotionJala);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj2,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj2,20000,Wolfgang_potion_jala]);
+            #triggers=[Send(oObj2,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj2,20000,Wolfgang_potion_jala]);
 
-      oObj3 = Create(&EntrootBerry, #number=2);
+      oObj3 = Create(&EntrootBerry,#number=2);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj3,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj3,400,Wolfgang_entrootberry_sale]);
+            #triggers=[Send(oObj3,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj3,400,Wolfgang_entrootberry_sale]);
 
-      oObj4 = Create(&FairyWing, #number=2);
+      oObj4 = Create(&FairyWing,#number=2);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj4,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj4,300,Wolfgang_fairywing_sale]);
+            #triggers=[Send(oObj4,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj4,300,Wolfgang_fairywing_sale]);
 
-      oObj5 = Create(&Mushroom, #number=2);
+      oObj5 = Create(&Mushroom,#number=2);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj5,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj5,300,Wolfgang_mushroom_sale]);
+            #triggers=[Send(oObj5,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj5,300,Wolfgang_mushroom_sale]);
 
       return;
 
    }
-   
+
    CheckWhyWanted(obj=$,who=$)
    {
       local oMoney;
 
-      if isClass(obj,&NeruditeOreChunk)
+      if IsClass(obj,&NeruditeOreChunk)
       {
          oMoney = Create(&Money,#number=(Send(obj,@GetValue)+1300));
-         if send(who,@ReqNewHold,#what=oMoney)
+         if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
-			Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,
+                  #amount=Send(oMoney,@GetNumber));
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                #string=Wolfgang_Nerudite_bought);
+                  #string=Wolfgang_Nerudite_bought);
 
             return TRUE;
          }
@@ -214,7 +218,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

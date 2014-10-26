@@ -17,19 +17,27 @@ resources:
 
    KocatanBonePriestess_name_rsc = "The Bone Priestess"
    KocatanBonePriestess_icon_rsc = kcbonepr.bgf
-   KocatanBonePriestess_desc_rsc = "This female Avar has been exiled from her society for "
-      "her illegal magic practices. At least that's the common belief, although it is "
-      "difficult to determine if any reason can be applied to this strange creature."
+   KocatanBonePriestess_desc_rsc = \
+      "This female Avar has been exiled from her society for her illegal "
+      "magic practices.  At least that's the common belief, although it is "
+      "difficult to determine if any reason can be applied to this "
+      "strange creature."
 
    %KocatanBonePriestess_entry_welcome = ""
    KocatanBonePriestess_iteach = "ik QUAWK ak "
    KocatanBonePriestess_atthatlevel = " nyuk KAW-KAW uk uk!"
-   KocatanBonePriestess_unwanted_keep = "~k%s%s tells you, \"ik CHEEE-UP nak ik nyuk AK-AK!!~n~k\""
-   KocatanBonePriestess_unwanted_pay = "~k%s%s tells you, \"chp ka-ak chp NAK-NAK ik AK!~n~k\""
-   KocatanBonePriestess_unwanted_give = "~k%s%s tells you, \"WAK-WAK! AAK WAK-NAK-NAK!! CHEEE-UP NYUK!!~n~k\""
-   KocatanBonePriestess_unwanted_token = "~k%s%s tells you, \"ik wak?  wak-wak chp aak ak nyuk!~n~k\""
-   KocatanBonePriestess_nothing_for_sale = "TIC-TIC-TIC WAK NYUK-NYUK AAAK AAAK!!"
-   KocatanBonePriestess_mrcnt_too_costly = "AAAK TIC-TIC NYUK IK NYUK-TAK!!"
+   KocatanBonePriestess_unwanted_keep = \
+      "~k%s%s tells you, \"ik CHEEE-UP nak ik nyuk AK-AK!!~n~k\""
+   KocatanBonePriestess_unwanted_pay = \
+      "~k%s%s tells you, \"chp ka-ak chp NAK-NAK ik AK!~n~k\""
+   KocatanBonePriestess_unwanted_give = \
+      "~k%s%s tells you, \"WAK-WAK! AAK WAK-NAK-NAK!! CHEEE-UP NYUK!!~n~k\""
+   KocatanBonePriestess_unwanted_token = \
+      "~k%s%s tells you, \"ik wak?  wak-wak chp aak ak nyuk!~n~k\""
+   KocatanBonePriestess_nothing_for_sale = \
+      "TIC-TIC-TIC WAK NYUK-NYUK AAAK AAAK!!"
+   KocatanBonePriestess_mrcnt_too_costly = \
+      "AAAK TIC-TIC NYUK IK NYUK-TAK!!"
 
    KocatanBonePriestess_squawk_1 = "ak ak ak"
    KocatanBonePriestess_squawk_2 = "wak-wak"
@@ -81,7 +89,6 @@ resources:
    bonepr_spellsquawk3 = "Ticataca nak nak!"
    bonepr_spellsquawk4 = "Ack!  Ack!  Zjiria no ki ki!"
 
-
 classvars:
 
    vrName = KocatanBonePriestess_name_rsc
@@ -89,7 +96,9 @@ classvars:
    vrDesc = KocatanBonePriestess_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_PRIESTESS
 
    viGender = GENDER_FEMALE
@@ -144,6 +153,7 @@ messages:
       plFor_sale = [ $,$,
                      [SID_DETECT_INVIS,SID_HOLY_RESOLVE,SID_UNHOLY_RESOLVE,
                       SID_SHALBANE, SID_QORBANE ]];
+
       return;
    }
 
@@ -152,76 +162,98 @@ messages:
       %% Add random response to five spells
       local i, lFinal, lDialogue, oAbility, sid, oName, lTriggers;
 
-      if not (viAttributes & MOB_TEACHER) { return; }
+      if NOT (viAttributes & MOB_TEACHER)
+      {
+         return;
+      }
 
-      if plFor_sale = $ or length(plFor_sale) < 3
-      {  return;  }
+      if plFor_sale = $ OR Length(plFor_sale) < 3
+      {
+         return;
+      }
 
-      %debug("Adding learn advice for ",send(self,@getname));
+      % Debug("Adding learn advice for ",Send(self,@GetName));
       lDialogue = $;
       lTriggers = $;
-   
-      for sid in nth(plFor_sale,3)
-      {
-	 %% spells next
-	 oAbility = send(SYS,@FindSpellByNum,#num=sid);
-	 if oAbility <> $ and send(oAbility,@GiveAdvice)
-	 {  oName = send(oAbility,@GetName);  }
 
-	 lTriggers = cons(oName,lTriggers);
-      }	 	 
-      
-      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk1]],lDialogue);
-      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk2]],lDialogue);
-      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk3]],lDialogue);
-      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk4]],lDialogue);
-      
+      for sid in Nth(plFor_sale,3)
+      {
+         %% spells next
+         oAbility = Send(SYS,@FindSpellByNum,#num=sid);
+         if oAbility <> $ and Send(oAbility,@GiveAdvice)
+         {
+            oName = Send(oAbility,@GetName);
+         }
+
+         lTriggers = cons(oName,lTriggers);
+      }
+
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY,bonepr_spellsquawk1]],lDialogue);
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY,bonepr_spellsquawk2]],lDialogue);
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY,bonepr_spellsquawk3]],lDialogue);
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY,bonepr_spellsquawk4]],lDialogue);
+
       lFinal = [ GetClass(self), lDialogue ];
 
-      send(send(SYS,@GetLibrary),@AppendSpeechLibrary,#lDialogue=lFinal);
+      Send(Send(SYS,@GetLibrary),@AppendSpeechLibrary,#lDialogue=lFinal);
+
       return;
    }
 
    GetRandomSquawking(squawkLength = 1)
    {
       local returnString;
-      clearTempString();
-      while squawkLength > 0 {
+
+      ClearTempString();
+
+      while squawkLength > 0
+      {
          squawkLength = (squawkLength - 1);
-         send(self,@AppendRandomSquawkToTempString);
-         if squawkLength > 0 { AppendTempString(" "); }
+         Send(self,@AppendRandomSquawkToTempString);
+         if squawkLength > 0
+         {
+            AppendTempString(" ");
+         }
       }
+
       AppendTempString("!");
-      returnString = createString();
-      setString(returnString,GetTempString());
+      returnString = CreateString();
+      SetString(returnString,GetTempString());
+
       return returnString;
    }
-   
+
    AppendRandomSquawkToTempString()
    {
       local i;
-      i = random(1,length(plSquawks));
+
+      i = Random(1,length(plSquawks));
       AppendTempString(nth(plSquawks,i));
+
       return;
    }
 
-   SomeoneSaid(what = $,type = $,string = $)
+   SomeoneSaid(what=$,type=$,string=$)
    {
       local i;
-      if (isClass(what,&User)) and (type = SAY_NORMAL) {
-         for i in plSquawks {
-            if (stringContain(string, i)) {
-               send( self,@Say,#message_rsc=monster_percent_q,
-                     #parm1=send(self,@GetRandomSquawking,#squawkLength=random(2,5)) );
+
+      if (IsClass(what,&User)) AND (type = SAY_NORMAL)
+      {
+         for i in plSquawks
+         {
+            if (StringContain(string, i))
+            {
+               Send(self,@Say,#message_rsc=monster_percent_q,
+                     #parm1=Send(self,@GetRandomSquawking,
+                     #squawkLength=random(2,5)));
+
                break;
             }
          }
       }
+
       propagate;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

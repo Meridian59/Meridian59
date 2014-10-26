@@ -27,13 +27,16 @@ resources:
    kocatan_no_helm = "You may only take two helmets with you out there."
    kocatan_no_gauntlets = "Only two sets of gauntlets permitted."
    kocatan_no_shields = \
-      "You may only take two shields plus a soldier shield with you into the outland."
+      "You may only take two shields plus a soldier shield with "
+      "you into the outland."
 
 messages:
 
    CanPass(what=$)
    {
-      local i, iArmor, bNerudite, iWeapon, iGauntlet, iHelmet, iShield, bAlcohol;
+      local i, iArmor, bNerudite, iWeapon, iGauntlet,
+            iHelmet, iShield, bAlcohol;
+
       iWeapon = 0;
       iArmor = 0;
       iShield = 0;
@@ -41,8 +44,8 @@ messages:
       iGauntlet = 0;
       bAlcohol = FALSE;
       bNerudite = FALSE;
-      
-      for i in send(what,@GetHolderPassive)
+
+      for i in Send(what,@GetHolderPassive)
       {
          % Don't include the assassin's weapon as a real weapon.
          if IsClass(i,&Weapon) AND NOT IsClass(i,&BlackDagger)
@@ -55,23 +58,29 @@ messages:
             iGauntlet = iGauntlet + 1;
          }
 
-         if IsClass(i,&Shield) AND NOT IsClass(i,&Torch) AND NOT IsClass(i,&SoldierShield)
+         if IsClass(i,&Shield)
+            AND NOT IsClass(i,&Torch)
+            AND NOT IsClass(i,&SoldierShield)
          {
             iShield = iShield + 1;
          }
 
-         if IsClass(i,&Armor) AND NOT (IsClass(i,&Robe) OR IsClass(i,&LightRobe))
+         if IsClass(i,&Armor)
+            AND NOT (IsClass(i,&Robe)
+               OR IsClass(i,&LightRobe))
          {
             iArmor = iArmor + 1;
          }
 
-         if IsClass(i,&Helmet) AND NOT (IsClass(i,&Circlet) OR IsClass(i,&IvyCirclet)
-		       OR IsClass(i,&FaceMask))
+         if IsClass(i,&Helmet)
+            AND NOT (IsClass(i,&Circlet)
+               OR IsClass(i,&IvyCirclet)
+               OR IsClass(i,&FaceMask))
          {
             iHelmet = iHelmet + 1;
          }
 
-         if IsClass(i,&Food) AND send(i,@IsAlcohol)
+         if IsClass(i,&Food) AND Send(i,@IsAlcohol)
          {
             bAlcohol = TRUE;
          }
@@ -81,69 +90,69 @@ messages:
             bNerudite = TRUE;
          }
       }
-      
+
       if (iWeapon < 5) AND (iArmor < 3)
          AND (iShield < 3) AND (iHelmet < 3) AND (iGauntlet < 3)
          AND (NOT bAlcohol) AND (NOT bNerudite)
-      {      
-         send(self,@say,#message_rsc = kocatan_may_pass);
-         
+      {
+         Send(self,@say,#message_rsc = kocatan_may_pass);
+
          return TRUE;
       }
-      
+
       % Okay, at this point, we know they are illegal.  If we are the evil
       % guy, we may allow them in anyway.
-      if send(self,@AllowContrabandToPass,#what=what)
+      if Send(self,@AllowContrabandToPass,#what=what)
       {
          return TRUE;
       }
-      
+
       if bAlcohol
-      {      
-         send(self,@Say,#message_rsc=kocatan_no_alcohol);
+      {
+         Send(self,@Say,#message_rsc=kocatan_no_alcohol);
          
          return FALSE;
       }
       
       if bNerudite
       {
-         send(self,@Say,#message_rsc=kocatan_no_nerudite);
-         
+         Send(self,@Say,#message_rsc=kocatan_no_nerudite);
+
          return FALSE;
       }
-      
+
       if iWeapon > 4
       {
-         send(self,@Say,#message_rsc=kocatan_no_weapons);
-         
+         Send(self,@Say,#message_rsc=kocatan_no_weapons);
+
          return FALSE;
       }
-      
+
       if iArmor > 2
       {
-         send(self,@Say,#message_rsc=kocatan_no_armor);
-         
+         Send(self,@Say,#message_rsc=kocatan_no_armor);
+
          return FALSE;
       }
-      
+
       if iHelmet > 2
       {
-         send(self,@Say,#message_rsc=kocatan_no_helm);
-         
+         Send(self,@Say,#message_rsc=kocatan_no_helm);
+
          return FALSE;
       }
-      
+
       if iGauntlet > 2
       {
-         send(self,@Say,#message_rsc=kocatan_no_gauntlets);
-         
+         Send(self,@Say,#message_rsc=kocatan_no_gauntlets);
+
          return FALSE;
       }
-      
+
       if iShield > 2
       {
-         send(self,@Say,#message_rsc=kocatan_no_shields);
-         
+         Send(self,@Say,#message_rsc=kocatan_no_shields);
+
          return FALSE;
       }
 
@@ -154,7 +163,6 @@ messages:
    {
       return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

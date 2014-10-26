@@ -41,7 +41,7 @@ classvars:
    viMerchant_markup = MERCHANT_NORMAL
    viAttributes = \
       MOB_NOMOVE | MOB_NOFIGHT | MOB_TEACHER \
-         | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_SELLER
+      | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_SELLER
    viOccupation = MOB_ROLE_BLACKSMITH
 
    vrUnwanted_keep = MarionBlacksmith_unwanted_keep
@@ -90,12 +90,12 @@ messages:
       return;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what=$)
    {
       % Allow him to buy the weapons and shields from the nearby crypt.
       if Send(what,@CanBeGiventoNPC)
          AND (Send(Self,@IsObjectWeapon,#what=what)
-              OR IsClass(what,&Shield))
+            OR IsClass(what,&Shield))
       {
          return TRUE;
       }
@@ -103,10 +103,10 @@ messages:
       return FALSE;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       Post(who,@SomeoneSaid,#what=self,#string=MrBs_entry_welcome,
-           #type = SAY_RESOURCE);
+            #type=SAY_RESOURCE);
 
       return;
    }

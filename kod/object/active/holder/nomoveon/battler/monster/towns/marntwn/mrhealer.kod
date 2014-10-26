@@ -57,7 +57,7 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
             #string=MrHealer_entry_welcome,

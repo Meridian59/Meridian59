@@ -72,7 +72,7 @@ properties:
 
 messages:
 
-   CalculateDamage(what = $,hit_roll = $)
+   CalculateDamage(what=$,hit_roll=$)
    {
       return Random(1,4);
    }

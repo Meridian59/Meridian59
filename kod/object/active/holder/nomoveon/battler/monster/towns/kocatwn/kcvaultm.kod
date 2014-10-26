@@ -19,12 +19,13 @@ resources:
    Kocatanvaultman_name_rsc = "Itzal cha'Nosak"
    kocatanvaultman_icon_rsc = kcvault.bgf
    kocatanvaultman_desc_rsc =  \
-      "Itzal's often rude attitude and awkward bodily noises make him far less popular "
-      "than his fraternal twin, Huital.  With a labored sigh and a piggish grunt, he "
-      "begrudgingly accommodates the needs of those who wish to store items in the "
-      "vault."
+      "Itzal's often rude attitude and awkward bodily noises make him far less"
+      "popular than his fraternal twin, Huital.  With a labored sigh and a "
+      "piggish grunt, he begrudgingly accommodates the needs of those who "
+      "wish to store items in the vault."
 
-   kocatanvaultman_entry_welcome = "Oh, I've had it up to HERE with your patronizing attitude."
+   kocatanvaultman_entry_welcome = \
+      "Oh, I've had it up to HERE with your patronizing attitude."
 
 classvars:
 
@@ -33,7 +34,9 @@ classvars:
    vrDesc = Kocatanvaultman_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_VAULTMAN
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_VAULTMAN
    viOccupation = MOB_ROLE_VAULTMAN
 
    viVault = VID_KOCATAN
@@ -42,56 +45,64 @@ properties:
    
 messages:
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_DAWN )
+      if why = MOODMOD_DAWN
       {
-	 send( self, @SetMood, #new_mood = piMood + 3 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood+3);
+
+         return;
       }
-      if( why = MOODMOD_DUSK )
+
+      if why = MOODMOD_DUSK
       {
-	 send( self, @SetMood, #new_mood = piMood - 6 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood-6);
+
+         return;
       }
-      if( why = MOODMOD_VAULT_WITHDRAWAL )
+
+      if why = MOODMOD_VAULT_WITHDRAWAL
       {
-	 send( self, @SetMood, #new_mood = piMood - 2 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood-2);
+
+         return;
       }
-      if( why = MOODMOD_VAULT_DEPOSIT )
+
+      if why = MOODMOD_VAULT_DEPOSIT
       {
-	 send( self, @SetMood, #new_mood = piMood + 2 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood+2 );
+
+         return;
       }
+
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
-      if random(1,10)
+      if Random(1,10) = 1
       {
-	 Post(poOwner,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
-             #type = SAY_RESOURCE);
+         Post(who,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
+               #type = SAY_RESOURCE);
       }
-      iFlags = send( who, @GetObjectFlags );
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-	 send( self, @SetMood, #new_mood = piMood - 1 );
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
+
       propagate;
    }
-   
+
    GetVaultNum()
    {
       return viVault;
    }
-   
+
    GetVaultDepositFee(what=$)
    "Default cost is 1 gp per stone."
    {
-      return 2*send(what,@getbulk);
+      return 2*Send(what,@GetBulk);
    }
 
    GetVaultRetrievalFee(what=$)
@@ -99,7 +110,6 @@ messages:
    {
       return 1;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

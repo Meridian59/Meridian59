@@ -4036,11 +4036,17 @@ messages:
 
             % Check status and safety against the owner of the minion.
             if NOT IsClass(oRoom,&GuildHall)
-               AND NOT Send(self,@CheckStatusAndSafety,
-                           #victim=Send(victim,@GetMaster),
-                           #report=report,#minion=TRUE)
             {
-               return FALSE;
+               if NOT Send(oRoom,@ReqSomethingAttack,#what=self,
+                           #victim=Send(victim,@GetMaster),
+                           #use_weapon=use_weapon,#stroke_obj=stroke_obj,
+                           #report=report,#actual=actual)
+                  OR NOT Send(self,@CheckStatusAndSafety,
+                              #victim=Send(victim,@GetMaster),
+                              #report=report,#minion=TRUE)
+               {
+                  return FALSE;
+               }
             }
          }
 
@@ -4048,8 +4054,10 @@ messages:
          {
             if report
             {
-               Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,#parm1=Send(victim,@GetName));
+               Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,
+                     #parm1=Send(victim,@GetName));
             }
+
             return FALSE;
          }
 

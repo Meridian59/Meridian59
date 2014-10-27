@@ -292,7 +292,7 @@ messages:
    {
       local iWeapon;
 
-      iWeapon = Send(poOriginal,@LookupPlayerWeapon);
+      iWeapon = Send(poOriginal,@GetWeapon);
       if iWeapon <> $
       {
          return Send(iWeapon,@GetRange);
@@ -324,6 +324,26 @@ messages:
       }
 
       return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
+   }
+
+   GetDamageType(what=$,use_weapon=$)
+   {
+      if poOriginal = $
+      {
+         return viAttack_type;
+      }
+
+      return Send(poOriginal,@GetDamageType,#what=what,#use_weapon=use_weapon);
+   }
+
+   GetSpellType(what=$,use_weapon=$)
+   {
+      if poOriginal = $
+      {
+         return viAttack_spell;
+      }
+
+      return Send(poOriginal,@GetSpellType,#what=what,#use_weapon=use_weapon);
    }
 
    GetKarma(detect=FALSE)
@@ -442,7 +462,7 @@ messages:
    {
       local Weapon, ammotype, i;
       
-      Weapon = Send(poOriginal,@LookupPlayerWeapon);
+      Weapon = Send(poOriginal,@GetWeapon);
       ammotype = poArrow;
       Send(self,@GetOriginalInfo);
 
@@ -460,11 +480,19 @@ messages:
                }
             }
 
-            Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = AmmoType);
+            Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+                  #projectile=AmmoType);
          }
          else
          {
-            piAnimation = PANM_WEAPON_ATTACK;
+            if IsClass(Weapon,&TouchAttackSpell)
+            {
+               piAnimation = PANM_CAST;
+            }
+            else
+            {
+               piAnimation = PANM_WEAPON_ATTACK;
+            }
          }
       }
       else

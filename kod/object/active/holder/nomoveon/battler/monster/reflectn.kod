@@ -319,7 +319,7 @@ messages:
 
       if IsClass(poOriginal,&Player)
       {
-         iWeapon = Send(poOriginal,@LookupPlayerWeapon);
+         iWeapon = Send(poOriginal,@GetWeapon);
 
          if iWeapon <> $
          {
@@ -355,6 +355,26 @@ messages:
       }
 
       return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
+   }
+
+   GetDamageType(what=$,use_weapon=$)
+   {
+      if poOriginal = $
+      {
+         return viAttack_type;
+      }
+
+      return Send(poOriginal,@GetDamageType,#what=what,#use_weapon=use_weapon);
+   }
+
+   GetSpellType(what=$,use_weapon=$)
+   {
+      if poOriginal = $
+      {
+         return viAttack_spell;
+      }
+
+      return Send(poOriginal,@GetSpellType,#what=what,#use_weapon=use_weapon);
    }
 
    SomethingChanged(what=$)
@@ -454,7 +474,7 @@ messages:
 
       if IsClass(poOriginal,&Player)
       {
-         Weapon = Send(poOriginal,@LookupPlayerWeapon);
+         Weapon = Send(poOriginal,@GetWeapon);
          ammotype = poArrow;
 
          if Weapon <> $
@@ -476,7 +496,14 @@ messages:
             }
             else
             {
-               piAnimation = PANM_WEAPON_ATTACK;
+               if IsClass(Weapon,&TouchAttackSpell)
+               {
+                  piAnimation = PANM_CAST;
+               }
+               else
+               {
+                  piAnimation = PANM_WEAPON_ATTACK;
+               }
             }
          }
          else

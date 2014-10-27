@@ -3189,7 +3189,10 @@ messages:
             iHasteLevel = Send(self,@GetEnchantedState,
                                #what=Send(SYS,@FindSpellByNum,#num=SID_HASTE));
 
-            iExertion = (iExertion * (100 - iHasteLevel)) / 100;
+            if iHasteLevel <> $
+            {
+               iExertion = (iExertion * (100 - iHasteLevel)) / 100;
+            }
          }
 
          Send(self,@AddExertion,#amount=iExertion);

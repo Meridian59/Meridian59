@@ -122,6 +122,9 @@ constants:
    % What's the maximum stat we can have after modification?
    MAXIMUM_STAT = 70
 
+   % how long to wait before sending another pvp notify sound (seconds)
+   PVP_NOTIFY_DECAY = 5 * 60
+   
 resources:
 
    player_cant_broadcast = \
@@ -778,6 +781,9 @@ resources:
       "This is the ghosted body of %q, whose consciousness has travelled to "
       "another plane of existence."
 
+      
+   pvp_notify_wav = gong.wav
+
 classvars:
 
    viHand_space = 2
@@ -1029,6 +1035,9 @@ properties:
    %  to disallow casting by angeled "mules".
    piTimeAttackedPlayer = 0 
 
+   % piTimeAttackedByPlayer records the last time we were attacked by a player.
+   piTimeAttackedByPlayer = 0
+   
    % piDeathcost is used to tell the underworld what percent of normal
    %  penalties to apply when the players leaves.  FALSE means no penalties.
    piDeathCost = 100
@@ -4501,6 +4510,15 @@ messages:
          return FALSE;
       }
 
+      % If this attack initiates pvp, notify victim (combatants maybe?) 
+      % initially, but then not again until PVP_NOTIFY_DECAY has passed
+      
+      if IsClass(what,&User) 
+         AND Send(what, @GetLastPvpWarned) < GetTime() - PVP_NOTIFY_DECAY
+      {
+         Send(what,@DoPvpNotify);
+      }
+      
       % Special stroke stuff 
       if NOT Send(stroke_obj,@CheckSpecial,#who=self,#victim=what)
       {
@@ -14136,6 +14154,32 @@ messages:
    SetReagentBagAuto(value=TRUE)
    {
       pbReagentBagAuto = value;
+
+      return;
+   }
+   
+   GetLastPvpWarned()
+   {
+      return piTimeAttackedByPlayer;
+   }
+   
+   DoPvpNotify()
+   {
+      local oRoom;
+
+      % Don't gong if we are already in pvp
+      if piTimeAttackedPlayer < GetTime() - PVP_NOTIFY_DECAY
+      {
+         oRoom = Send(self, @GetOwner);
+         
+         if oRoom <> $
+         {
+            Send(oRoom, @SomethingWaveRoom, #what=self,
+               #wave_rsc=pvp_notify_wav);
+               
+            piTimeAttackedByPlayer = GetTime();
+         }
+      }
 
       return;
    }

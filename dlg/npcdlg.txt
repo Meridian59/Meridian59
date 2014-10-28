@@ -250,6 +250,48 @@ send o 0 speechlibquote who class Izzio quote q ~kIzzio almost stops smiling, "W
 send o 0 speechlibtrigger who class Izzio trigger q Venya'Cyr
 send o 0 speechlibquote who class Izzio quote q ~kIzzio says, "You might want to ask Miriana."
 
+send o 0 speechlibtrigger who class MarionBartender trigger q defiled the land with your ways
+send o 0 speechlibquote who class MarionBartender quote q ~kTova sighs, "Here we go again."
+
+send o 0 speechlibtrigger who class JasperBartender mood int MOOD_BAD trigger q defiled the land with your ways
+send o 0 speechlibquote who class JasperBartender quote q ~kPietro says, "Oh, for the love of Shal'ille, go someplace else, %NAME! I'm sick of you fanatics."
+
+send o 0 speechlibtrigger who class JasperBartender trigger q defiled the land with your ways
+send o 0 speechlibquote who class JasperBartender quote q ~kPietro yells, "Would somebody get that tree-hugger out of here."
+
+send o 0 speechlibtrigger who class BarloqueBartender trigger q defiled the land with your ways
+send o 0 speechlibquote who class BarloqueBartender quote q ~kMeidei says, "I'll consider that, now buy a drink or leave!"
+
+send o 0 speechlibtrigger who class QorPriestess trigger q granting forgiveness for your deeds
+send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IYes, I suppose it is time for Qor to seek redemption.  You are the key to her salvation.  Join our fold and together we can begin the path towards malumnea.~I~k"
+
+send o 0 speechlibtrigger who class QorPriestess trigger q malumnea
+send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IMalumnea is the perfect state of unity where Qor accepts the other gods with open arms, such that they may become a part of her. Then she will bring the universe together in dark harmony.~I~k"
+
+send o 0 speechlibtrigger who class DukeLiege trigger q granting forgiveness for your deeds
+send o 0 speechlibquote who class DukeLiege quote q ~kDuke Akardius laughs and says, "~B~bSurely you cannot be serious?  I do not need forgiveness.  Crawl back to your temple, your deed is done.~B~k"
+
+send o 0 speechlibtrigger who class FarenPriestess trigger q granting forgiveness for your deeds
+send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gHow dare you presume to forgive of Lord Faren. Leave!~B~k"
+
+send o 0 speechlibtrigger who class KraananPriestess trigger q granting forgiveness for your deeds
+send o 0 speechlibquote who class KraananPriestess quote q ~kPriestess Qerti'nya says, "~B~bLittle Xiana seeks to train another student. Very well, you have delivered your message. You may now return to her.~B~k"
+
+send o 0 speechlibtrigger who class ShalillePriestess trigger q darkness all shall be bound
+send o 0 speechlibquote who class ShalillePriestess quote q ~kPriestess Xiana says, "~bReconsider your actions, Shal'ille will grant you forgiveness when you are ready to receive it.~k"
+
+send o 0 speechlibtrigger who class MarionHealer trigger q darkness all shall be bound
+send o 0 speechlibquote who class MarionHealer quote q ~kLady Aftyn says, "Shal'ille's compassion will brush aside the darkness."
+
+send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q darkness all shall be bound
+send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "I'm gettin' mad now.  You better leave before I give you a good punch."
+
+send o 0 speechlibtrigger who class TosApothecary trigger q darkness all shall be bound
+send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Did you just put a curse on me?  Please, get out!"
+
+send o 0 speechlibtrigger who class JasperInnKeeper trigger q darkness all shall be bound
+send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "You are evil, you must leave at once."
+
 send o 0 speechlibtrigger who class BarloqueApothecary trigger q barloque
 send o 0 speechlibquote who class BarloqueApothecary quote q ~kJoguer says, "Such a fine city is our fair capital Barloque. The other cities can offer not the wonders of hither shop keepers."
 
@@ -2299,7 +2341,7 @@ send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "The Roya
 send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NEUTRAL trigger q marion
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "A fine town. Ever loyal, ever valiant, ever strong."
 
-send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NOT_BAD trigger q medei
+send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NOT_BAD trigger q meidei
 send o 0 speechlibquote who class CorNothSergeant quote q ~kRook says, "An utter fool."
 
 send o 0 speechlibtrigger who class CorNothSergeant mood int MOOD_NOT_BAD trigger q morrigan
@@ -2983,9 +3025,6 @@ send o 0 speechlibquote who class DukeLiege quote q ~kDuke Akardius says, "I do 
 send o 0 speechlibtrigger who class DukeLiege trigger q unfactioned
 send o 0 speechlibquote who class DukeLiege quote q ~kDuke Akardius says, "Remember, there are many young warriors in the land who have yet to come of age to join us, watch out for them and have care.  We do not wish to alienate those who might become our allies."
 
-send o 0 speechlibtrigger who class DukeLiege trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class DukeLiege quote q ~kDuke Akardius laughs and says, "~B~bSurely you cannot be serious?  I do not need forgiveness.  Crawl back to your temple, your deed is done.~B~k"
-
 send o 0 speechlibtrigger who class DukeLiege mood int MOOD_BAD
 send o 0 speechlibquote who class DukeLiege quote q ~kDuke Akardius says, "Although I can see how the council could be so taken with the Princess, surely they shall come to realize her innocence in matters of politics and power."
 
@@ -3055,9 +3094,6 @@ send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal 
 send o 0 speechlibtrigger who class FarenPriestess trigger q days
 send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gOnce every six years, all in the land must acknowledge the raw power of Faren. During this time, you are to eat nothing except that which you can forage, you are to cast no spells save those of Faren, and above all you are to stay clear of any town. The Gadfly shall ensure this.~B~k"
 
-send o 0 speechlibtrigger who class FarenPriestess trigger q disciple
-send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gThe time for a disciple is not upon us.~B~k"
-
 send o 0 speechlibtrigger who class FarenPriestess trigger q duke
 send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gFah! Do not talk to me of mortal politics!~B~k"
 
@@ -3066,9 +3102,6 @@ send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal 
 
 send o 0 speechlibtrigger who class FarenPriestess trigger q gadfly
 send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gI hear by consider you a member of the Gadfly of Faren. Display this name on you for all to see. Lord Faren expects you to subvert the ways of civilization to return mankind back to the ways of nature.~B~k"
-
-send o 0 speechlibtrigger who class FarenPriestess trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gHow dare you presume to forgive of Lord Faren. Leave!~B~k"
 
 send o 0 speechlibtrigger who class FarenPriestess trigger q hello
 send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gDo not mock me with your useless pleasantries.~B~k"
@@ -6760,9 +6793,6 @@ send o 0 speechlibquote who class KraananPriestess quote q ~kPriestess Qerti'nya
 send o 0 speechlibtrigger who class KraananPriestess trigger q days
 send o 0 speechlibquote who class KraananPriestess quote q ~kPriestess Qerti'nya says, "~B~bKraanan's God Days occur once each six years. It is a time for warriors to prove their worth both in combat and in the bar. No person may refuse an arena challenge. To test our resolve, lord Kraanan has before brought great beasts to this temple so that we may vanquish them.~B~k"
 
-send o 0 speechlibtrigger who class KraananPriestess trigger q disciple
-send o 0 speechlibquote who class KraananPriestess quote q ~kPriestess Qerti'nya says, "~B~bAll of those positions are filled at present.~B~k"
-
 send o 0 speechlibtrigger who class KraananPriestess trigger q duke
 send o 0 speechlibquote who class KraananPriestess quote q ~kPriestess Qerti'nya says, "~B~bAkardius follows Riija? Bah! Kalior was the true Duke. He followed the mighty Kraanan!~B~k"
 
@@ -7570,7 +7600,7 @@ send o 0 speechlibquote who class MarionHealer quote q ~kLady Aftyn says, "What'
 send o 0 speechlibtrigger who class MarionHealer trigger q marion
 send o 0 speechlibquote who class MarionHealer quote q ~kLady Aftyn says, "Marion is my new home, and the has proved the ideal setting for our work for The Blessed Sanctuary of Gentle Rains. The people are kind, for poverty breeds compassion amongst them."
 
-send o 0 speechlibtrigger who class MarionHealer trigger q medei
+send o 0 speechlibtrigger who class MarionHealer trigger q meidei
 send o 0 speechlibquote who class MarionHealer quote q ~kLady Aftyn says, "'Tis a false visage of Shal'ille that that man praises, one that he has invented himself. I have had occasion to speak with him thus, but he will not see light of his error nor mend his profane ways. Say you a prayer for him if he is on your mind, for he is lost."
 
 send o 0 speechlibtrigger who class MarionHealer trigger q princess
@@ -8167,14 +8197,8 @@ send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, 
 send o 0 speechlibtrigger who class QorPriestess trigger q days
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IEvery six years, the servants conjoin here to perform the rituals of long ago. When the stars are aligned and the blood is sacrificed, the necromancers will raise the dead from their deep graves.~I~k"
 
-send o 0 speechlibtrigger who class QorPriestess trigger q disciple
-send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~II see promise in you, young %LADLASSIE, I am not ready to take you on as a disciple yet.~I~k"
-
 send o 0 speechlibtrigger who class QorPriestess trigger q faren
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~ILord Faren seeks to avenge himself on my Mistress. He is unaware of how his blind anger only helps serve the cause of Qor.~I~k"
-
-send o 0 speechlibtrigger who class QorPriestess trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IYes, I suppose it is time for Qor to seek redemption. You are the key to her salvation. Join our fold and together we can begin the path towards malumnea.~I~k"
 
 send o 0 speechlibtrigger who class QorPriestess trigger q hello
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IWelcome to the dark temple, %NAME.~I~k"
@@ -8199,9 +8223,6 @@ send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, 
 
 send o 0 speechlibtrigger who class QorPriestess trigger q learn
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~II can bring you into the sweet darkness of Qor, the goddess of black magic.~I~k"
-
-send o 0 speechlibtrigger who class QorPriestess trigger q malumnea
-send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IMalumnea is the perfect state of unity where Qor accepts the other gods with open arms, such that they may become a part of her. Then she will bring the universe together in dark harmony.~I~k"
 
 send o 0 speechlibtrigger who class QorPriestess trigger q marion
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IHiss! Marion is the last remaining patch of innocence.~I~k"
@@ -8592,9 +8613,6 @@ send o 0 speechlibquote who class ShalillePriestess quote q ~kPriestess Xiana sa
 
 send o 0 speechlibtrigger who class ShalillePriestess trigger q days
 send o 0 speechlibquote who class ShalillePriestess quote q ~kPriestess Xiana says, "~bEvery six years, we are blessed with a holiday to our Lady, Shal'ille. It is a time of peace and a time of giving. Nearly everyone has something they can give to those who have less than they or are new to the land.~k"
-
-send o 0 speechlibtrigger who class ShalillePriestess trigger q disciple
-send o 0 speechlibquote who class ShalillePriestess quote q ~kPriestess Xiana says, "~bI am afraid Shal'ille requires no disciples at present.~k"
 
 send o 0 speechlibtrigger who class ShalillePriestess trigger q duke
 send o 0 speechlibquote who class ShalillePriestess quote q ~kPriestess Xiana says, "~bI have heard that he has died. How sad.~k"
@@ -9255,18 +9273,6 @@ send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "You know
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q RYCKSHER
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Is my little brother in trouble again? Ever since I got him the job working in the Duke's Banquet Room, he's been nothing but trouble."
-
-send o 0 speechlibtrigger who class TosInnKeeper mood int MOOD_BAD trigger q sacriligious path. Embrace nature
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock yells, "Get the hell out of here, you nature freak!"
-
-send o 0 speechlibtrigger who class TosInnKeeper mood int MOOD_BAD trigger q sacriligious path. Embrace nature
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock yells, "Would somebody get that tree-hugger out of here."
-
-send o 0 speechlibtrigger who class TosInnKeeper mood int MOOD_GOOD trigger q sacriligious path. Embrace nature
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock sighs, "Here we go again."
-
-send o 0 speechlibtrigger who class TosInnKeeper mood int MOOD_NEUTRAL trigger q sacriligious path. Embrace nature
-send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Oh, for the love of Shal'ille, go someplace else, %NAME! I'm sick of you fanatics."
 
 send o 0 speechlibtrigger who class TosInnKeeper trigger q TOS
 send o 0 speechlibquote who class TosInnKeeper quote q ~kPaddock says, "Tos is the place to be. It has it all, the Arena of Kraanan, the old city crypt, Blackstone Keep, the best bank in the land, and a great blacksmith. Actually, scratch that, we lost the blacksmith to Barloque."

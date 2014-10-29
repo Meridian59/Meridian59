@@ -23,25 +23,25 @@ constants:
 resources:
 
    chaos_night_rsc = \
-      "### ~B~rTHE REIGN OF BLOOD FRENZY~n:  The fabric of reality shakes as "
+      "~B~U~k[###]~n ~B~rTHE REIGN OF BLOOD FRENZY~n:  The fabric of reality shakes as "
       "an evil presence attempts to penetrate the Meridian.  The servants of "
       "Qor sing out in cacophonic glee as anarchy sweeps across the land. "
       "With no Guardian Angels present, anything goes as long as the sky "
       "boils red.\n"
       "[Your character has been saved and will be restored after the Frenzy.]"
    chaos_night_admin_rsc = \
-       "### ~B~bADMINISTRATOR~n: To end the 'Reign of Blood Frenzy,' "
+       "~B~U~k[###]~n ~B~bADMINISTRATOR~n: To end the 'Reign of Blood Frenzy,' "
        "you should make a copy of the LASTSAVE.TXT file (on the server "
        "machine) now. When the Frenzy is to end, shut down the server and "
        "restore the LASTSAVE.TXT."
    end_chaos_night_rsc = \
-       "### ~B~gTHE REIGN OF BLOOD FRENZY~n: The game was not restored "
+       "~B~U~k[###]~n ~B~gTHE REIGN OF BLOOD FRENZY~n: The game was not restored "
        "properly!  The 'Reign of Blood Frenzy' ~Imust~n be ended by restoring "
        "LASTSAVE.TXT at the server.  Otherwise, character status may be "
        "corrupted due to the Frenzy."
 
    chaos_gift = \
-       "### Qor grants you %s%s to smite your enemies!"
+       "~B~U~k[###]~n ~B~vQor grants you %s%s to smite your enemies!"
 
    chaos_wav = chaosup.wav
 

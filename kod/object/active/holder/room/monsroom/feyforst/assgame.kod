@@ -55,7 +55,7 @@ resources:
       "\n\n"
       "-- Roq, the Dark Blade"
 
-   assgame_winner = "### %s has won the challenge of the black blades."
+   assgame_winner = "~B~U~k[###]~n ~B~v%s has won the challenge of the black blades."
    assgame_prize = \
       "~BFor your assassin's game victory you have been awarded %s%s."
    assgame_go = "~IYour dagger gains an unearthly glow about it."

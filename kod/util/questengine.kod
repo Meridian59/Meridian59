@@ -2606,6 +2606,7 @@ messages:
       {
          lNPCs = $;
          lNPCs = Cons(First(Send( Send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &QorPriestess )),lNPCs);
+         lNPCs = Cons(First(Send( Send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &KraananPriestess )),lNPCs);
          lNPCs = Cons(First(Send( Send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &FarenPriestess )),lNPCs);
          lNPCs = Cons(First(Send( Send( SYS, @GetLibrary ), @GetOccupationList, #cNPC_class = &DukeLiege )),lNPCs);
          Send( self, @SetQuestNodeNPCList, #index = 13, #new_NPC_list = lNPCs );

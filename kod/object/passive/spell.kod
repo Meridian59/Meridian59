@@ -131,8 +131,8 @@ resources:
       "before you can fully utter them."
    spell_display_spellpower = \
       "Spellpower for ~k~B%s~n is ~k~B%i~n."
-   los_bad_display = \
-      "You don't have line of sight with ~k~B%s~n."
+   no_line_of_sight = \
+      "Your hindered line of sight makes casting more difficult."
 
    Spell_meditate_ratio_one_rsc = "\n\nIt will cost you "
    Spell_meditate_ratio_two_rsc = " training points to improve in this spell."
@@ -1286,11 +1286,8 @@ messages:
                       #obj2=first(lTargets))
          AND NOT(IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
       {
-         if Send(Send(SYS,@GetSettings),@DisplaySpellData)
-         {
-            Send(who,@MsgSendUser,#message_rsc=los_bad_display,
-                  #parm1=Send(self,@GetName));
-         }
+         Send(who,@MsgSendUser,#message_rsc=no_line_of_sight);
+         
          oTarget = first(lTargets);
          
          iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);

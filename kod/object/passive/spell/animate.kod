@@ -27,11 +27,14 @@ resources:
    Animate_bad_target = "You can't cast animate on %s%s!"
    Animate_human_cast_rsc ="%s's corpse pulls itself up off the ground."
    Animate_human_failed_rsc ="%s's corpse remains inanimate on the ground."
-   Animate_mob_failed_rsc = "The %s's remains still lay lifeless and inanimate."
-   Animate_mob_cast_rsc = "The %s's remains come alive and rise up from the ground."
+   Animate_mob_failed_rsc = \
+      "The %s's remains still lay lifeless and inanimate."
+   Animate_mob_cast_rsc = \
+      "The %s's remains come alive and rise up from the ground."
    Animate_failed_rsc = "The remains are unable to be animated."
    Animate_too_many_rsc = "You are unable to control another minion."
-   Animate_failed_full_rsc = "There are too many monsters here to raise another."
+   Animate_failed_full_rsc = \
+      "There are too many monsters here to raise another."
 
    Animate_sound = qanimate.wav
 
@@ -47,14 +50,13 @@ classvars:
    viMana = 20
 
    viSpellExertion = 10
-   viCast_time = 20000
-   viChance_To_Increase = 75
-   viMeditate_ratio = 30
+   viCast_time = 10000
+   viChance_To_Increase = 20
+   viMeditate_ratio = 40
 
    vrSucceed_wav = Animate_sound
 
 properties:
-
 
 messages:
 
@@ -81,7 +83,8 @@ messages:
       if NOT IsClass(oTarget,&DeadBody)
       {
          Send(who,@MsgSendUser,#message_rsc=Animate_bad_target,
-               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+               #parm1=Send(oTarget,@GetDef),
+               #parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }
@@ -99,8 +102,9 @@ messages:
 
          return FALSE;
       }
-      
-      if Send(who,@CheckPlayerMinionCount) >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+
+      if Send(who,@CheckPlayerMinionCount)
+            >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
       {
          Send(who,@MsgSendUser,#message_rsc=Animate_too_many_rsc);
 
@@ -130,7 +134,7 @@ messages:
    CastSpell(who=$,lTargets=$,iSpellPower=1)
    {
       local oRisen, oRoom, iRow, iCol, iFine_Row, iFine_Col,
-            oTarget, iLevel, iNum, iDurationSecs;
+            oTarget, iLevel, iNum;
 
       oRoom = Send(who,@GetOwner);
       oTarget = First(lTargets);
@@ -193,9 +197,6 @@ messages:
          }
       }
 
-      iDurationSecs = ( ((iSpellPower/2) + Random(25,50))
-                           * MAX_RISEN_CONTROL_SECS/100 );
-
       % Add this creature to your minion list
       Send(who,@NewControlledMinion,#minion=oRisen);
 
@@ -204,7 +205,7 @@ messages:
       Send(self,@ModifyMonsterBehavior,#mob=oRisen);
 
       % Post this due to it needing to be done after the minion is placed.
-      Post(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+      Post(oRisen,@SetMaster,#oMaster=who);
 
       % Place the minion
       Send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,

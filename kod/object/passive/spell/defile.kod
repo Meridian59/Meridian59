@@ -22,12 +22,13 @@ resources:
       "summoned to defile a corpse, "
       "transforming flesh and blood into magical energy for "
       "the caster.  "
-      "Requires fairy wings and the slain."
+      "Requires a fairy wing and the slain."
 
    defile_cast_rsc = "Your nausea betokens the imminence of Qor."
 
    defile_corpse_gone = \
-      "Your defile spell fails because the corpse has already returned to the earth."
+      "Your defile spell fails because the corpse has already "
+      "returned to the earth."
 
    defile_max = \
       "If you were to invite more eldritch energy inside of you, there is no "
@@ -50,7 +51,7 @@ classvars:
    viMana_bonus = 10
 
    viCast_time = 10000
-   viChance_to_Increase = 100
+   viChance_to_Increase = 25
    viMeditate_ratio = 30
 
    vrSucceed_wav = defile_sound
@@ -78,7 +79,7 @@ messages:
    CanPayCosts(who=$,lTargets=$)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a corpse
       if Length(lTargets) <> 1
       {
@@ -97,7 +98,7 @@ messages:
 
       if NOT Send(target,@WasGoodPlayer)
       {
-         Send(who,@MsgSendUser,#message_rsc=defile_not_good);           
+         Send(who,@MsgSendUser,#message_rsc=defile_not_good);
 
          return FALSE;
       }
@@ -124,26 +125,27 @@ messages:
       {
          if abs(Send(who,@GetKarma)) < (iSpellpower + 1)
          {
-            iKarmaAct = bound(iKarmaAct,abs(Send(who,@GetKarma)),iSpellpower+1);
+            iKarmaAct = Bound(iKarmaAct,Abs(Send(who,@GetKarma)),iSpellpower+1);
          }
          else
          {
-            iKarmaAct = abs(send(who,@GetKarma));
+            iKarmaAct = Abs(Send(who,@GetKarma));
          }
 
-         Send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
-                            #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
+         Send(who,@AddKarma,#amount=Send(who,@CalculateKarmaChangeFromAct,
+               #karma_act=-iKarmaAct,
+               #karma_doer=Send(who,@GetKarma),#swing_factor=4));
       }
 
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
       Send(who,@GainMana,#amount=(viMana_bonus+(iSpellPower/3)));
-      
+
       % Don't let them defile to over-max
       if Send(who,@GetMana) > Send(who,@GetMaxMana)
       {
          Send(who,@LoseMana,#amount=(Send(who,@GetMana)-Send(who,@GetMaxMana)));
       }
-      
+
       Send(oTarget,@Delete);
 
       propagate;

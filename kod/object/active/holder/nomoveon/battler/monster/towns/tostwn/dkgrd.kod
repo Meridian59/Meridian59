@@ -22,9 +22,9 @@ resources:
    duke_guard_icon_rsc = dukegard.bgf
    duke_guard_desc_rsc = \
       "Although dressed very regally in his best officer's uniform, "
-	  "this guard of the keep probably wouldn't be a serious challenge "
-	  "should war break out.  He's nowhere near as big and burly as "
-	  "the members of the Duke's Honor Guard."
+     "this guard of the keep probably wouldn't be a serious challenge "
+     "should war break out.  He's nowhere near as big and burly as "
+     "the members of the Duke's Honor Guard."
 
 
 classvars:
@@ -32,17 +32,15 @@ classvars:
    vrIcon = duke_guard_icon_rsc
    vrDesc = duke_guard_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_NOQUEST
+   viAttributes = \
+      MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_NOQUEST
    viOccupation = MOB_ROLE_GUARD
-
-
 
 properties:
 
    piAnimation = ANIM_NONE
-   
-messages:
 
+messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -51,8 +51,8 @@ messages:
       % Format for plBedCoords: pillow coord, "nearest" coord, pillow1 finecoord,
       %                         pillow2 finecoord, pillow angle
       % Each top-level list (one per line) is one bed position.
-      plBedCoords = [ [ [16,3], [15,3], [48,16], [48,48], ANGLE_EAST ],    
-                      [ [14,3], [14,4], [16,16], [48,16], ANGLE_SOUTH ],    
+      plBedCoords = [ [ [16,3], [15,3], [48,16], [48,48], ANGLE_EAST ],
+                      [ [14,3], [14,4], [16,16], [48,16], ANGLE_SOUTH ],
                       [ [13,3], [13,4], [16,16], [48,16], ANGLE_SOUTH ],
                       [ [13,5], [14,5], [16,16], [16,48], ANGLE_WEST ],
                       [ [13,7], [13,6], [16,48], [48,48], ANGLE_NORTH ],
@@ -60,10 +60,11 @@ messages:
                       [ [16,7], [15,7], [48,16], [48,48], ANGLE_EAST ]
                     ];
 
-      % Format for plPictureCoords: coord nearest picture followed by next nearest coords
+      % Format for plPictureCoords: coordinates nearest picture, followed by
+      % the next nearest coordinates.
       % Each top-level list (one per line) is one picture position
-      plPictureCoords = [ [ [16,4], [16,3], [15,4], [16,5] ], 
-                          [ [14,3], [15,3] ],                  
+      plPictureCoords = [ [ [16,4], [16,3], [15,4], [16,5] ],
+                          [ [14,3], [15,3] ],
                           [ [13,4], [13,5] ],
                           [ [14,7], [13,7], [14,6], [15,7] ]
                         ];
@@ -76,30 +77,32 @@ messages:
       if row = 16 AND col = 5
       {
          Send(what,@MsgSendUser,#message_rsc=RentableRoom_teleport);
-         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
+               #duration=750);
          Send(Send(SYS,@FindRoomByNum,#num=viLocation),@NewHold,#what=what,
-              #new_row=5,#new_col=12,#new_angle=ANGLE_SOUTH);
-         
+               #new_row=5,#new_col=12,#new_angle=ANGLE_SOUTH);
+
          return TRUE;
       }
-      
+
       propagate;
    }
-   
+
    CreateStandardObjects()
    {
-      Send(self,@NewHold,#what=Create(&Bell),#new_row=16,#new_col=6,#fine_row=41);
+      Send(self,@NewHold,#what=Create(&Bell),
+            #new_row=16,#new_col=6,#fine_row=41);
 
       propagate;
    }
 
    Enter(who=$)
    {
-      Send(self,@NewHold,#what=who,#new_row=15,#new_col=5,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=who,#new_row=15,#new_col=5,
+            #new_angle=ANGLE_NORTH);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

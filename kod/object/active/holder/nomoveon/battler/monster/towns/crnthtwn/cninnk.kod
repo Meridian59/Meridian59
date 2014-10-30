@@ -18,27 +18,33 @@ resources:
 
    CornothInnkeep_name_rsc = "D'Franco"
    CornothInnkeep_icon_rsc = cninnk.bgf
-   CornothInnkeep_desc_rsc = "The Cibilo Creek Inn is a common gathering place for students and scholars from "
-                        "the nearby university, and often the site of debate on every manner of issue.  "
-                        "D'Franco is encouraging and tolerant of any good discussion, though his views tend "
-                        "to be somewhat conservative."
+   CornothInnkeep_desc_rsc = \
+      "The Cibilo Creek Inn is a common gathering place for students and "
+      "scholars from the nearby university, and often the site of debate on "
+      "every manner of issue.  D'Franco is encouraging and tolerant of any "
+      "good discussion, though his views tend to be somewhat conservative."
 
    CnInn_entry_welcome = "Good day, %s%s."
-   CnInn_wedding_ring_sale = "~B<wink>~n Found yourself someone special, eh? I'd be honored to offer you %s%s."
-   CnInn_not_ready = "I don't think your voice is ready for me to teach you my grandfather's working song.  "
-                     "Go talk to Parrin and see what he thinks."
+   CnInn_wedding_ring_sale = \
+      "~B<wink>~n Found yourself someone special, eh? I'd be "
+      "honored to offer you %s%s."
+   CnInn_not_ready = \
+      "I don't think your voice is ready for me to teach you my "
+      "grandfather's working song.  Go talk to Parrin and see what he thinks."
 
 classvars:
 
    vrName = CornothInnkeep_name_rsc
    vrIcon = CornothInnkeep_icon_rsc
    vrDesc = CornothInnkeep_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE \
+      | MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER
    viOccupation = MOB_ROLE_INNKEEPER
    viMerchant_markup = MERCHANT_DISCOUNT
 
 properties:
-   
+
 messages:
 
    SetForSale()
@@ -48,13 +54,14 @@ messages:
                      $,
                      [SID_INVIGORATE],
                      $ ];
+
       return;
    }
 
    CanDoTeach(who=$,sid=0)
    {
       if sid = SID_INVIGORATE
-         AND NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
+         AND NOT Send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
@@ -62,38 +69,40 @@ messages:
       propagate;
    }
 
-   CanAddSpell(who=$, num=0, report=FALSE)
+   CanAddSpell(who=$,num=0,report=FALSE)
    {
       local bFound, oSpell, i;
    
-      % Only add the spell if we're already Jala mage
+      % Only add the spell if we're already Jala mage.
       if num = SID_INVIGORATE
       {
          bFound = FALSE;
-         for i in send(who,@GetSpellList) 
-         {	       
-  	         oSpell = send(SYS,@FindSpellByNum,#num=send(who,@DecodeSpellNum,#compound=i)); 
-  	         if send(oSpell,@GetSchool) = SS_JALA
-  	         {
-  	            %% player has a spell in the required school, can learn the spell.
-  	            bFound = TRUE;
-  	            
-  	            break;
-            }  
-         }
-         
-	      %% Player doesn't know a spell in the required school, denied
-         if NOT bFound
-         {	       	  
-            if report
-            { 		 
-               post(self,@SayToOne,#target=who,#message_rsc=CnInn_not_ready);
+         for i in Send(who,@GetSpellList)
+         {
+              oSpell = Send(SYS,@FindSpellByNum,
+                           #num=Send(who,@DecodeSpellNum,#compound=i));
+              if Send(oSpell,@GetSchool) = SS_JALA
+              {
+                 % Player has a spell in the required school,
+                 % can learn the spell.
+                 bFound = TRUE;
+
+                 break;
             }
-            
+         }
+
+         % Player doesn't know a spell in the required school, denied.
+         if NOT bFound
+         {
+            if report
+            {
+               Post(self,@SayToOne,#target=who,#message_rsc=CnInn_not_ready);
+            }
+
             return FALSE;
          }
       }
-      
+
       propagate;
    }
 
@@ -102,47 +111,45 @@ messages:
       local oObj;
       oObj=Create(&RingWedding);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,2000,CnInn_wedding_ring_sale]);
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,2000,CnInn_wedding_ring_sale]);
+
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      Post(poOwner,@SomeoneSaid,#what = self, #string=CnInn_entry_welcome,
-           #type = SAY_RESOURCE, 
-           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
-           
-      if send(who,@GetHomeRoom) = RID_JAS_INN
+      Post(who,@SomeoneSaid,#what=self,#string=CnInn_entry_welcome,
+            #type=SAY_RESOURCE,
+            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
+      if Send(who,@GetHomeRoom) = RID_JAS_INN
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
-      }
-      
-      if send(who,@GetHomeRoom) = RID_COR_INN
-      {
-         send(self,@SetMood,#new_mood=piMood + 2);
-      }
-      
-      if send(who,@GetFaction) = FACTION_DUKE
-      {
-         send(self,@SetMood,#new_mood=piMood + 2);
-      }
-      
-      if send(who,@GetFaction) = FACTION_PRINCESS
-      {
-         send(self,@SetMood,#new_mood=piMood - 3);
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
 
-      if send(who,@GetFaction) = FACTION_REBEL
+      if Send(who,@GetHomeRoom) = RID_COR_INN
       {
-         send(self,@SetMood,#new_mood=piMood - 10);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      
+
+      if Send(who,@GetFaction) = FACTION_DUKE
+      {
+         Send(self,@SetMood,#new_mood=piMood+2);
+      }
+
+      if Send(who,@GetFaction) = FACTION_PRINCESS
+      {
+         Send(self,@SetMood,#new_mood=piMood-3);
+      }
+
+      if Send(who,@GetFaction) = FACTION_REBEL
+      {
+         Send(self,@SetMood,#new_mood=piMood-10);
+      }
+
       return;
    }
-
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

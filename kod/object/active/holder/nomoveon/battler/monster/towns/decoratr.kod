@@ -25,25 +25,26 @@ constants:
    TOPIC_PLACE_OBJECT = 7
    TOPIC_REMOVE_OBJECT = 8
 
-   TOPIC_TIMEOUT = 40000         % in milliseconds: 40 sec
+   TOPIC_TIMEOUT = 40000      % in milliseconds: 40 sec
 
-   PRICE_TIER_1 = 100            % in shillings
+   PRICE_TIER_1 = 100         % in shillings
    PRICE_TIER_2 = 300
    PRICE_TIER_3 = 500
 
-   BOX_PREMIUM = 4500            % How much more expensive than tier 3 is the box?
+   BOX_PREMIUM = 4500         % How much more expensive than tier 3 is the box?
 
-   IMPATIENT_TIME = 120000       % in milliseconds: 2 min
+   IMPATIENT_TIME = 120000    % in milliseconds: 2 min
 
-   DELETE_WAIT = 750             % Time before the consultant leaves.
+   DELETE_WAIT = 750          % Time before the consultant leaves.
 
 resources:
 
    Decorator_name_rsc = "interior design consultant"
    Decorator_icon_rsc = faerie-g.bgf
-   Decorator_desc_rsc = "A refugee from the bitter war over the Vale of Sorrows, "
-      "this Fey Elhai has abandoned the complicated societal strictures of the "
-      "Fey to dwell amongst humans and employ its connection to the sublime in "
+   Decorator_desc_rsc = \
+      "A refugee from the bitter war over the Vale of Sorrows, this Fey "
+      "Elhai has abandoned the complicated societal strictures of the Fey "
+      "to dwell amongst humans and employ its connection to the sublime in "
       "a more creative fashion."
 
    Decorator_welcome = "Greetings.  Is there anything I can ~Ihelp~I you with?"
@@ -51,60 +52,71 @@ resources:
    Decorator_confused = "I'm sorry, can you state your request more simply?"
    Decorator_room_changed = "An excellent choice!"
    Decorator_topic_timeout = \
-      "I see you have not reached a decision yet.  Can I help you with something else?"
+      "I see you have not reached a decision yet.  Can I help "
+      "you with something else?"
 
-   Decorator_bed_instructions = "Please stand where you'd like the bed, and say 'here'."
+   Decorator_bed_instructions = \
+      "Please stand where you'd like the bed, and say 'here'."
    Decorator_painting_instructions = \
-      "Please stand near where you'd like the painting and say 'here'.  I can only "
-      "hang it in four different spots, but I'll do my best to fit your needs."
-   Decorator_object_placement = "Please stand where you'd like the object and say 'here'."
-   Decorator_object_removal = "Please stand nearer the object you'd like removed."
+      "Please stand near where you'd like the painting and say 'here'.  "
+      "I can only hang it in four different spots, but I'll do my best "
+      "to fit your needs."
+   Decorator_object_placement = \
+      "Please stand where you'd like the object and say 'here'."
+   Decorator_object_removal = \
+      "Please stand nearer the object you'd like removed."
 
    Decorator_bed_blocked = \
-      "I'm sorry, if you would like the bed there we'll need to clear some room first."
+      "I'm sorry, if you would like the bed there we'll need to clear "
+      "some room first."
    Decorator_no_object_stacking = \
       "I'm sorry, there is no room to place anything there.  If you're set on "
       "that spot, let's clear some room first."
 
    Decorator_help = \
-      "I am here to assist you in decorating your room to your taste.  I can ~Ichange~I "
-      "the carpet or wallpaper for you, help you ~Imove~I the bed, ~Ichange~I the "
-      "bedspread, or even ~Iplace~I a painting in the location of your choice.  Also, "
-      "we have a number of objects you can place around the room or remove later.  I "
-      "can ~Ilist objects~I for all the available objects if you're interested.  "
-      "Finally, I can ~Ilighten~I or ~Idarken~I the room to meet your needs.  Of "
-      "course, most customizations to your room expends magical resources, so we'll "
-      "have to bill you at the time the change is made.  I can provide further details "
+      "I am here to assist you in decorating your room to your taste.  I can "
+      "~Ichange~I the carpet or wallpaper for you, help you ~Imove~I the bed, "
+      "~Ichange~I the bedspread, or even ~Iplace~I a painting in the location "
+      "of your choice.  Also, we have a number of objects you can place "
+      "around the room or remove later.  I can ~Ilist objects~I for all the "
+      "available objects if you're interested.  Finally, I can ~Ilighten~I or "
+      "~Idarken~I the room to meet your needs.  Of course, most "
+      "customizations to your room expends magical resources, so we'll have to "
+      "bill you at the time the change is made.  I can provide further details "
       "about our ~Ipricing~I system if you like."
 
    Decorator_pricing = \
-      "The pricing structure has four levels of cost.  Changing the light level is "
-      "a simple change and therefore costs nothing.  Moving the bed, changing the "
-      "bedspread, moving the painting, or changing the painting are the least "
-      "expensive options.  Changing the wallpaper or carpeting is more expensive due "
-      "to the effort required.  Finally, placing objects in the room is the most "
-      "expensive option, as the demand for decorations is very high and we only "
-      "have a limited number of objects.  However, if you decide to remove objects "
-      "from the room, you earn credits for shillings spent, which can be applied "
-      "to future room modifications.  Feel free to ask me for your credit balance "
-      "at any time."
+      "The pricing structure has four levels of cost.  Changing the light "
+      "level is a simple change and therefore costs nothing.  Moving the bed, "
+      "changing the bedspread, moving the painting, or changing the painting "
+      "are the least expensive options.  Changing the wallpaper or carpeting "
+      "is more expensive due to the effort required.  Finally, placing "
+      "objects in the room is the most expensive option, as the demand for "
+      "decorations is very high and we only have a limited number of objects.  "
+      "However, if you decide to remove objects from the room, you earn "
+      "credits for shillings spent, which can be applied to future room "
+      "modifications.  Feel free to ask me for your credit balance at any time."
 
    Decorator_cant_pay = \
-      "I'm afraid you don't have enough resources to pay for that room modification."
+      "I'm afraid you don't have enough resources to pay for "
+      "that room modification."
    Decorator_credit_balance = "Your credit balance is currently %q shillings."
    Decorator_option_unavailable = \
-      "I'm sorry, That's not possible right now.  Would you like a different option?"
+      "I'm sorry, That's not possible right now.  Would you like a "
+      "different option?"
    Decorator_graceful_exit = \
       "Ah, I understand.  If you need anything else, please ring the bell."
 
-   Decorator_list_objects = "You may choose from the following decorative objects: %q."
+   Decorator_list_objects = \
+      "You may choose from the following decorative objects: %q."
 
    Decorator_takes_heartstones = \
       "You know, heartstones can be made into some interesting items."
 
    Decorator_impatient_1 = "Is there anything I can ~Ihelp~I you with?"
    Decorator_impatient_2 = \
-      "Is there anything I can ~Ihelp~I you with?  If not, I must return to other duties."
+      "Is there anything I can ~Ihelp~I you with?  If not, I "
+      "must return to other duties."
    Decorator_impatient_3 = \
       "I'm afraid I must attend to the needs of other guests at this time.  "
       "Please ring the bell again if you have need of further assistance."
@@ -142,7 +154,9 @@ classvars:
    vrIcon = Decorator_icon_rsc
    vrDesc = Decorator_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_RECEIVE | MOB_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN \
+      | MOB_RECEIVE | MOB_SELLER
    viOccupation = MOB_ROLE_SCHOLAR
    viDefinite = ARTICLE_THE
 
@@ -162,21 +176,21 @@ messages:
    Constructor()
    {
        plWantedItems = [&HeartStone];
-       
+
        propagate;
-   }   
+   }
 
    SendLookAnimation()
    {
       AddPacket(1,ANIMATE_CYCLE, 4,100, 2,3, 2,4);
-      
+
       return;
    }
 
    SendAnimation()
    {
-      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,2);   
-      
+      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,2);
+
       return;
    }
 
@@ -197,25 +211,26 @@ messages:
    %        The first sets the 'topic' or state of the dialog
    %        The second defines the action.
    %  The routine is designed to allow
-   %        A topic - prompt - answer structure
-   %           (e.g. player: "please change the wallpaper"
-   %                 npc: "would you like red, yellow, or chartreuse wallpaper?"
-   %                 player: "chartreuse would be fabulous, thanks."
-   %                 npc: "an excellent choice!")
-   %        A single command which establishes all the info at once.
-   %           (e.g. player: "please change the wallpaper to chartreuse, if you would."
-   %                 npc: "an excellent choice!")
+   %     A topic - prompt - answer structure
+   %        (e.g. player: "please change the wallpaper"
+   %           npc: "would you like red, yellow, or chartreuse wallpaper?"
+   %           player: "chartreuse would be fabulous, thanks."
+   %           npc: "an excellent choice!")
+   %    A single command which establishes all the info at once.
+   %    (e.g. player: "please change the wallpaper to chartreuse, if you would."
+   %          npc: "an excellent choice!")
    %
-   SomeoneSaid(what = $,type = $,string = $)
+   SomeoneSaid(what=$,type=$,string=$)
    {
-      local bChange, bMove, bPlace, bFloor, bRemove, bBed, bWall, bPainting, oObject, bClarify, bSuccess, iPrice;
-      
-      if poOwner = $ OR NOT isClass(poOwner,&RentableRoom)
+      local bChange, bMove, bPlace, bFloor, bRemove, bBed, bWall,
+            bPainting, oObject, bClarify, bSuccess, iPrice;
+
+      if poOwner = $ OR NOT IsClass(poOwner,&RentableRoom)
       {
          propagate;
       }
-      
-      if (NOT isClass(what,&User)) OR what <> Send(poOwner,@GetRenter)
+
+      if (NOT IsClass(what,&User)) OR what <> Send(poOwner,@GetRenter)
       {
          propagate;
       }
@@ -224,15 +239,17 @@ messages:
 
       if StringContain(string, Decorator_command_help)
       {
-         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=Decorator_help);
+         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
+               #what=self,#string=Decorator_help);
 
          return;
       }
-      
+
       if (StringContain(string, Decorator_command_pricing)
-          OR StringContain(string, Decorator_command_price))
+         OR StringContain(string, Decorator_command_price))
       {
-         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=Decorator_pricing);
+         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+               #string=Decorator_pricing);
 
          return;
       }
@@ -246,17 +263,20 @@ messages:
       }
       
       if (StringContain(string, Decorator_command_list)
-          AND (StringContain(string, Decorator_command_object) OR StringContain(string,Decorator_command_item)))
+         AND (StringContain(string, Decorator_command_object)
+            OR StringContain(string,Decorator_command_item)))
       {
          Post(self,@DecoratorSayObjects,#what=what);
 
          return;
       }
 
-      if ((StringContain(string, Decorator_command_decorator) OR StringContain(string,Decorator_command_consultant))
+      if ((StringContain(string, Decorator_command_decorator)
+            OR StringContain(string,Decorator_command_consultant))
          AND StringContain(string,Decorator_command_leave))
       {
-         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=Decorator_graceful_exit);
+         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+               #string=Decorator_graceful_exit);
          Post(self,@WaitDelete);
 
          return;
@@ -266,17 +286,17 @@ messages:
 
       if StringContain(string, Decorator_command_lighten)
       {
-         % Positive change to light level
+         % Positive change to light level.
          Post(poOwner,@ChangeRoomLight,#iChange=1);
-         
+
          return;
       }
 
       if StringContain(string, Decorator_command_darken)
       {
-         % Negative change to light level
+         % Negative change to light level.
          Post(poOwner,@ChangeRoomLight,#iChange=-1);
-         
+
          return;
       }
 
@@ -285,15 +305,15 @@ messages:
       bChange = StringContain(string, Decorator_command_change);
       bRemove = StringContain(string, Decorator_command_remove);
       bMove = ((StringContain(string, Decorator_command_move) AND NOT bRemove)
-                OR StringContain(string, Decorator_command_location));
+                  OR StringContain(string, Decorator_command_location));
       bPlace = (StringContain(string, Decorator_command_place)
-                OR StringContain(string, Decorator_command_put));
+                  OR StringContain(string, Decorator_command_put));
       bClarify = FALSE;
-      
+
       if (bChange + bMove + bPlace + bRemove) > 1
       {
-         % Ambiguous command, so ignore both keywords but proceed to give reminder
-         %  messages, if any.
+         % Ambiguous command, so ignore both keywords but proceed to
+         % give reminder messages, if any.
          bChange = FALSE;
          bMove = FALSE;
          bPlace = FALSE;
@@ -301,19 +321,20 @@ messages:
          poCurrentObject = $;
          bClarify = TRUE;
       }
-      
+
       bFloor = (StringContain(string, Decorator_command_floor)
-                OR StringContain(string,Decorator_command_carpet));
+                  OR StringContain(string,Decorator_command_carpet));
       bBed = StringContain(string, Decorator_command_bed);
       bWall = StringContain(string, Decorator_command_wall);
       bPainting = (StringContain(string, Decorator_command_painting)
-                   OR StringContain(string, Decorator_command_picture));
-      oObject = Send(poOwner,@ParseObject,#string=string,#who=what,#oDecorator=self);
+                     OR StringContain(string, Decorator_command_picture));
+      oObject = Send(poOwner,@ParseObject,#string=string,
+                     #who=what,#oDecorator=self);
 
       if (bFloor + bBed + bWall + bPainting + (oObject <> $)) > 1
       {
-         % Ambiguous command, so ignore multiple keywords but proceed to give reminder
-         %  messages, if any.
+         % Ambiguous command, so ignore multiple keywords but proceed to
+         % give reminder messages, if any.
          bFloor = FALSE;
          bBed = FALSE;
          bWall = FALSE;
@@ -322,48 +343,49 @@ messages:
          poCurrentObject = $;
          bClarify = TRUE;
       }
-      
+
       if bClarify
       {
-         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=Decorator_confused);
+         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+               #string=Decorator_confused);
       }
-      
+
       if bChange AND bFloor
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_FLOOR);
       }
-      
+
       if bMove AND bBed
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_BED_LOCATION);
       }
-      
+
       if bChange AND bBed
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_BEDSPREAD);
       }
-      
+
       if bChange AND bWall
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_WALLPAPER);
       }
-      
+
       if (not bMove) AND bPainting
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_PAINTING);
       }
-      
+
       if bMove AND bPainting
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_PAINTING_LOCATION);
       }
-      
+
       if bPlace AND (oObject <> $)
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_PLACE_OBJECT);
          poCurrentObject = oObject;
       }
-      
+
       if bRemove AND (oObject <> $)
       {
          Send(self,@SetDialogTopic,#topic=TOPIC_REMOVE_OBJECT);
@@ -375,8 +397,8 @@ messages:
       % TRUE means we could change it.
       % FALSE means that is not available
       % $ means we need more information
-      % -> Exception is BedSector. 
-      
+      % -> Exception is BedSector.
+
       if piDialogTopic = TOPIC_FLOOR
       {
          iPrice = PRICE_TIER_2;
@@ -386,7 +408,7 @@ messages:
             if bSuccess = $
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Send(poOwner,@GetCarpetOptions));
+                     #string=Send(poOwner,@GetCarpetOptions));
             }
             else
             {
@@ -395,55 +417,55 @@ messages:
                   Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                   Send(self,@BillRenter,#who=what,#price=iPrice);
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_room_changed);
+                        #string=Decorator_room_changed);
                }
                else
                {
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_option_unavailable);
+                        #string=Decorator_option_unavailable);
                }
             }
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_cant_pay);
+                  #string=Decorator_cant_pay);
             Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          }
          
          return;
       }
-      
+
       if piDialogTopic = TOPIC_BED_LOCATION
       {
          iPrice = PRICE_TIER_1;
          if Send(self,@RenterCanPay,#who=what,#price=iPrice)
          {
             bSuccess = Send(poOwner,@TrySetBedSector,#who=what,#string=string,
-                            #oDecorator=self);
-            if bSuccess 
+                              #oDecorator=self);
+            if bSuccess
             {
                Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                Send(self,@BillRenter,#who=what,#price=iPrice);
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Decorator_room_changed);
+                     #string=Decorator_room_changed);
             }
             else
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Decorator_bed_instructions);
+                     #string=Decorator_bed_instructions);
             }
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_cant_pay);
+                  #string=Decorator_cant_pay);
             Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          }
-         
+
          return;
       }
-      
+
       if piDialogTopic = TOPIC_BEDSPREAD
       {
          iPrice = PRICE_TIER_1;
@@ -453,7 +475,7 @@ messages:
             if bSuccess = $
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Send(poOwner,@GetBedSpreadOptions));
+                     #string=Send(poOwner,@GetBedSpreadOptions));
             }
             else
             {
@@ -462,25 +484,25 @@ messages:
                   Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                   Send(self,@BillRenter,#who=what,#price=iPrice);
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_room_changed);
+                        #string=Decorator_room_changed);
                }
                else
                {
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_option_unavailable);
+                        #string=Decorator_option_unavailable);
                }
             }
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_cant_pay);
+                  #string=Decorator_cant_pay);
             Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          }
-         
+
          return;
       }
-      
+
       if piDialogTopic = TOPIC_WALLPAPER
       {
          iPrice = PRICE_TIER_2;
@@ -490,7 +512,7 @@ messages:
             if bSuccess = $
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Send(poOwner,@GetWallpaperOptions));
+                     #string=Send(poOwner,@GetWallpaperOptions));
             }
             else
             {
@@ -499,12 +521,12 @@ messages:
                   Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                   Send(self,@BillRenter,#who=what,#price=iPrice);
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_room_changed);
+                        #string=Decorator_room_changed);
                }
                else
                {
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_option_unavailable);
+                        #string=Decorator_option_unavailable);
                }
             }
          }
@@ -516,13 +538,14 @@ messages:
          }
          return;
       }
-      
+
       if piDialogTopic = TOPIC_PAINTING
       {
          iPrice = PRICE_TIER_1;
          if Send(self,@RenterCanPay,#who=what,#price=iPrice)
          {
-            bSuccess = Send(poOwner,@TrySetPicture,#string=string,#bRemove=bRemove);
+            bSuccess = Send(poOwner,@TrySetPicture,#string=string,
+                              #bRemove=bRemove);
             if bSuccess = $
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
@@ -535,22 +558,22 @@ messages:
                   Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                   Send(self,@BillRenter,#who=what,#price=iPrice);
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_room_changed);
+                        #string=Decorator_room_changed);
                }
                else
                {
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_option_unavailable);
+                        #string=Decorator_option_unavailable);
                }
             }
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_cant_pay);
+                  #string=Decorator_cant_pay);
             Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          }
-         
+
          return;
       }
 
@@ -559,11 +582,12 @@ messages:
          iPrice = PRICE_TIER_1;
          if Send(self,@RenterCanPay,#who=what,#price=iPrice)
          {
-            bSuccess = Send(poOwner,@TrySetPictureLocation,#who=what,#string=string);
+            bSuccess = Send(poOwner,@TrySetPictureLocation,
+                              #who=what,#string=string);
             if bSuccess = $
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Decorator_painting_instructions);
+                     #string=Decorator_painting_instructions);
             }
             else
             {
@@ -572,25 +596,25 @@ messages:
                   Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                   Send(self,@BillRenter,#who=what,#price=iPrice);
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_room_changed);
+                        #string=Decorator_room_changed);
                }
                else
                {
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_option_unavailable);
+                        #string=Decorator_option_unavailable);
                }
             }
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_cant_pay);
+                  #string=Decorator_cant_pay);
             Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          }
-         
+
          return;
       }
-      
+
       if piDialogTopic = TOPIC_PLACE_OBJECT
       {
          iPrice = PRICE_TIER_3;
@@ -598,15 +622,15 @@ messages:
          {
             iPrice = iPrice + BOX_PREMIUM;
          }
-         
+
          if Send(self,@RenterCanPay,#who=what,#price=iPrice)
          {
             bSuccess = Send(poOwner,@TryPlaceObject,#who=what,#string=string,
-                            #template=poCurrentObject,#oDecorator=self);
+                              #template=poCurrentObject,#oDecorator=self);
             if bSuccess = $
             {
                Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                    #string=Decorator_object_placement);
+                     #string=Decorator_object_placement);
             }
             else
             {
@@ -617,12 +641,12 @@ messages:
                   Send(self,@BillRenter,#who=what,#price=iPrice);
                   poCurrentObject = $;
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_room_changed);
+                        #string=Decorator_room_changed);
                }
                else
                {
                   Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                       #string=Decorator_option_unavailable);
+                        #string=Decorator_option_unavailable);
                   Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
                }
             }
@@ -630,83 +654,86 @@ messages:
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_cant_pay);
+                  #string=Decorator_cant_pay);
             Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          }
-         
+
          return;
       }
 
       if piDialogTopic = TOPIC_REMOVE_OBJECT
       {
          iPrice = PRICE_TIER_3;
-         
+
          if IsClass(poCurrentObject,&Box)
          {
             iPrice = iPrice + BOX_PREMIUM;
          }
-         
-         bSuccess = Send(poOwner,@TryRemoveObject,#who=what,#template=poCurrentObject);
-         
+
+         bSuccess = Send(poOwner,@TryRemoveObject,#who=what,
+                           #template=poCurrentObject);
+
          if bSuccess
          {
             Send(self,@CreditRenter,#price=iPrice);
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_room_changed);
+                  #string=Decorator_room_changed);
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_object_removal);
+                  #string=Decorator_object_removal);
          }
-         
+
          Send(self,@SetDialogTopic,#topic=TOPIC_NONE);
          poCurrentObject = $;
-         
+
          return;
       }
-      
+
       propagate;
    }
 
-   % These next two messages are to prevent confusion in the temp string between what the designer says
-   % and what the player says.  There was problem fighting for control of the temp string.
+   % These next two messages are to prevent confusion in the temp string
+   % between what the designer says and what the player says.  There was
+   % problem fighting for control of the temp string.
    DecoratorSayCredit()
    {
       Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-           #string=Decorator_credit_balance,#parm1=Send(SYS,@IntToString,
-           #num=Send(poOwner,@GetCreditBalance)),#type1=STRING_RESOURCE);
-           
+            #string=Decorator_credit_balance,#parm1=Send(SYS,@IntToString,
+            #num=Send(poOwner,@GetCreditBalance)),#type1=STRING_RESOURCE);
+
       return;
    }
 
    DecoratorSayObjects(what=$)
    {
       Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-           #string=Decorator_list_objects,
-           #parm1=Send(poOwner,@GetObjectList,#who=what,#oDecorator=self),
-           #type1=STRING_RESOURCE);
-           
+            #string=Decorator_list_objects,
+            #parm1=Send(poOwner,@GetObjectList,#who=what,#oDecorator=self),
+            #type1=STRING_RESOURCE);
+
       return;
-   }   
+   }
 
    SetDialogTopic(topic=TOPIC_NONE)
    {
       piDialogTopic = topic;
-      
+
       if ptDialogTopicTimeout <> $
       {
          DeleteTimer(ptDialogTopicTimeout);
          ptDialogTopicTimeout = $;
       }
-      
+
       if topic <> TOPIC_NONE
       {
-         ptDialogTopicTimeout = CreateTimer(self,@DialogTopicTimeout,TOPIC_TIMEOUT);
+         ptDialogTopicTimeout = CreateTimer(self,@DialogTopicTimeout,
+                                             TOPIC_TIMEOUT);
       }
-      
+
       Send(self,@ResetImpatience);
-      
+
       return;
    }
 
@@ -715,9 +742,9 @@ messages:
       ptDialogTopicTimeout = $;
       piDialogTopic = TOPIC_NONE;
       poCurrentObject = $;
-      
+
       Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-           #string=Decorator_topic_timeout);
+            #string=Decorator_topic_timeout);
       
       return;
    }
@@ -727,9 +754,9 @@ messages:
       if who <> $
       {
          Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=Decorator_bed_blocked);
+               #string=Decorator_bed_blocked);
       }
-      
+
       return;
    }
 
@@ -738,21 +765,21 @@ messages:
       if who <> $
       {
          Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=Decorator_no_object_stacking);
+               #string=Decorator_no_object_stacking);
       }
-      
+
       return;
    }
 
    RenterCanPay(who=$,price=PRICE_TIER_3)
    {
       local iCredit, oMoney, iMoneyValue;
-      
+
       if who = $
       {
          return FALSE;
       }
-      
+
       iCredit = Send(poOwner,@GetCreditBalance);
       oMoney = Send(who,@GetMoneyObject);
       if oMoney <> $
@@ -763,12 +790,12 @@ messages:
       {
          iMoneyValue = 0;
       }
-      
+
       if price <= (iCredit + iMoneyValue)
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
@@ -783,17 +810,17 @@ messages:
          if iCredit >= price
          {
             Send(poOwner,@DeductCredit,#amount=price);
-            
+
             return;
          }
-         
+
          Send(poOwner,@DeductCredit,#amount=iCredit);
          price = price - iCredit;
       }
 
       if who = $
       {
-         DEBUG("BillRenter:: Billing no one!");
+         Debug("BillRenter:: Billing no one!");
 
          return;
       }
@@ -806,16 +833,17 @@ messages:
       }
       else
       {
-         DEBUG("BillRenter:: can't bill - not enough money - must not have called RenterCanPay");
+         Debug("BillRenter:: can't bill - not enough money ",
+               "- must not have called RenterCanPay");
       }
-      
+
       return;
    }
 
    CreditRenter(price=PRICE_TIER_3)
    {
       Send(poOwner,@AddCredit,#amount=(price*8/10));
-      
+
       return;
    }
 
@@ -825,9 +853,10 @@ messages:
       
       if what <> $ AND IsClass(what,&RentableRoom)
       {
-         Post(what,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=Decorator_welcome);
+         Post(what,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+               #string=Decorator_welcome);
       }
-      
+
       propagate;
    }
 
@@ -838,10 +867,10 @@ messages:
          DeleteTimer(ptImpatient);
          ptImpatient = $;
       }
-      
+
       ptImpatient = CreateTimer(self,@Impatient,IMPATIENT_TIME);
       piImpatient = 0;
-      
+
       return;
    }
 
@@ -852,41 +881,41 @@ messages:
       {
          piImpatient = 0;
       }
-      
-      if (random(1,100) < 10) AND Send(Send(SYS,@GetNodeAttack),@GetAttacks)
+
+      if (Random(1,100) < 10) AND Send(Send(SYS,@GetNodeAttack),@GetAttacks)
       {
          % A chance to express an interest in heartstones.
          Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-              #string=Decorator_takes_heartstones);
+               #string=Decorator_takes_heartstones);
       }
       else
       {
          piImpatient = (piImpatient + 1);
-         
+
          if piImpatient = 1
          {
             Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
                  #string=Decorator_impatient_1);
          }
-         
+
          if piImpatient = 2
          {
             Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_impatient_2);
+                  #string=Decorator_impatient_2);
          }
-         
+
          if piImpatient >= 3
          {
             Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-                 #string=Decorator_impatient_3);
+                  #string=Decorator_impatient_3);
             Post(self,@WaitDelete);
-            
+
             return;
          }
       }
-      
+
       ptImpatient = CreateTimer(self,@Impatient,IMPATIENT_TIME);
-      
+
       return;
    }
 
@@ -894,16 +923,16 @@ messages:
    {
       return TRUE;
    }
-   
-   GotWantedItem(who=$, obj = 0)
+
+   GotWantedItem(who=$,obj=0)
    {
       local oPlayerObj, i, bGotAll;
 
-      if not isClass(obj,&HeartStone)
+      if NOT IsClass(obj,&HeartStone)
       {
          return FALSE;
       }
-      
+
       oPlayerObj = $;
       for i in Send(who,@GetHolderPassive)
       {
@@ -914,25 +943,26 @@ messages:
             break;
          }
       }
-      
-      if oPlayerObj = $ 
+
+      if oPlayerObj = $
       {
-         debug("player offered unowned heartstone.");
-         
+         Debug("player offered unowned heartstone.");
+
          return FALSE;
       }
 
       If NOT Send(Send(SYS,@GetNodeAttack),@GetAttacks)
       {
-         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=Decorator_takes_heartstones);
-         
+         Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+               #string=Decorator_takes_heartstones);
+
          return;
       }
 
       Send(poOwner,@AddHeartStone,#oStone=obj,#oDecorator=self);
 
       Send(obj,@Delete);
-      
+
       return TRUE;
    }
 
@@ -944,7 +974,7 @@ messages:
    WaitDelete()
    {
       ptImpatient = CreateTimer(self,@WaitDeleteTimer,DELETE_WAIT);
-      
+
       return;
    }
 
@@ -952,7 +982,7 @@ messages:
    {
       ptImpatient = $;
       Post(self,@Delete);
-      
+
       return;
    }
 
@@ -963,17 +993,15 @@ messages:
          DeleteTimer(ptDialogTopicTimeout);
          ptDialogTopicTimeout = $;
       }
-      
+
       if ptImpatient <> $
       {
          DeleteTimer(ptImpatient);
          ptImpatient = $;
       }
-      
+
       propagate;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

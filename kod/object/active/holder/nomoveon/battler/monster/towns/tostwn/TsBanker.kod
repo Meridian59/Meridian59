@@ -18,18 +18,30 @@ resources:
 
    TosBanker_name_rsc = "Skivlat"
    TosBanker_icon_rsc = tsbanker.bgf
-   TosBanker_desc_rsc = "Skivlat spends all of his time in the company of money and it shows.  His "
-      "hand lovingly caresses the gold as a large doting smile forms on his face.  Every so often "
-      "he will jingle the bag just to hear the melodious clinking of shillings."
+   TosBanker_desc_rsc = \
+      "Skivlat spends all of his time in the company of money and it "
+      "shows.  His hand lovingly caresses the gold as a large doting smile "
+      "forms on his face.  Every so often he will jingle the bag just to "
+      "hear the melodious clinking of shillings."
 
-   TBank_gems_not_quality = "These stones are bad quality.  Let me dispose of these worthless %s for you."
-   TBank_cant_give_gems = "Were these %s to be of quality, you would be unable to carry their worth in shillings."
-   TBank_gems_traded = "A nicer set of %s I've never seen. Glad to do business with ~IGuh~I you."
-   TBank_not_gem_group ="Pardon me, but I'm a gem wholesaler. If you want to market only a few similar gems, try that ~Icollector~I in Barloque."
+   TBank_gems_not_quality = \
+      "These stones are bad quality.  Let me dispose of these "
+      "worthless %s for you."
+   TBank_cant_give_gems = \
+      "Were these %s to be of quality, you would be unable to "
+      "carry their worth in shillings."
+   TBank_gems_traded = \
+      "A nicer set of %s I've never seen. Glad to do "
+      "business with ~IGuh~I you."
+   TBank_not_gem_group = \
+      "Pardon me, but I'm a gem wholesaler. If you want to market only a "
+      "few similar gems, try that ~Icollector~I in Barloque."
 
-   TBank_not_enough_gems = "Hmmm.  You don't seem to possess what you're trying to pawn to me."
-   TBank_unwanted_give = "~k%s%s tells you, \"~IGuh~I I don't have any place to put that.  Now if it were shillings...~n~k\""
-
+   TBank_not_enough_gems = \
+      "Hmmm.  You don't seem to possess what you're trying to pawn to me."
+   TBank_unwanted_give = \
+      "~k%s%s tells you, \"~IGuh~I I don't have any place to put "
+      "that.  Now if it were shillings...~n~k\""
 
 classvars:
 
@@ -37,8 +49,10 @@ classvars:
    vrDesc = TosBanker_desc_rsc
    vrIcon = TosBanker_icon_rsc
 
-   % no quests allowed because his "receive offers" is still flaky
-   viAttributes = MOB_NOFIGHT | MOB_BANKER | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_SELLER | MOB_LAWFUL | MOB_NOQUEST
+   % No quests allowed because his "receive offers" is still flaky.
+   viAttributes = \
+      MOB_NOFIGHT | MOB_BANKER | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM \
+      | MOB_RECEIVE | MOB_SELLER | MOB_LAWFUL | MOB_NOQUEST
    viOccupation = MOB_ROLE_BANKER
 
    viBank = BID_TOS
@@ -50,36 +64,41 @@ properties:
 
 messages:
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_BANK_DEPOSIT )
+      if why = MOODMOD_BANK_DEPOSIT
       {
-	 send( self, @SetMood, #new_mood = piMood + 2 );
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      if( why = MOODMOD_BANK_WITHDRAWAL )
+
+      if why = MOODMOD_BANK_WITHDRAWAL
       {
-	 send( self, @SetMood, #new_mood = piMood - 2 );
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
+
       return;
    }
 
-   UserEntered( who = $ )
+   UserEntered(who=$)
    {
-      if Send(who,@GetAction)=UA_HAPPY
+      if Send(who,@GetAction) = UA_HAPPY
       {
-	 send( self, @SetMood, #new_mood = piMood + 1 );
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
-      if Send(who,@GetAction)=UA_WRY
+
+      if Send(who,@GetAction) = UA_WRY
       {
-	 send( self, @SetMood, #new_mood = piMood - 1 );
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
+
       propagate;
    }
 
    Constructor()
    {
-     plWantedItems = [&Money,&Ruby,&Emerald,&Diamond,&Sapphire];
-     propagate;
+      plWantedItems = [&Money,&Ruby,&Emerald,&Diamond,&Sapphire];
+
+      propagate;
    }
 
    SetForSale()
@@ -100,83 +119,92 @@ messages:
    CheckWhyWanted(obj=$,who=$)
    {
       local oMoney, bfound, i, iValue;
-      if isClass(obj,&Ruby) OR isClass(obj,&Diamond) OR
-         isClass(obj,&Sapphire) OR isClass(obj,&Emerald)
+      if IsClass(obj,&Ruby) OR IsClass(obj,&Diamond)
+         OR IsClass(obj,&Sapphire) OR IsClass(obj,&Emerald)
       {
-         %Every so often, we want to declare the gem to be fake and delete.
-         %Else we want to give them the money for it and delete the gem
-         %If they cant hold the money, we return the gems(return false)
-         if Send(obj,@GetNumber)<4 
+         % Every so often, we want to declare the gem to be fake and delete.
+         % Else we want to give them the money for it and delete the gem
+         % If they can't hold the money, we return the gems (return false)
+         if Send(obj,@GetNumber) < 4
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                 #string=TBank_not_gem_group);
-            return False;
+                  #string=TBank_not_gem_group);
+
+            return FALSE;
          }
+
          if Random(0,19) = 0
          {
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                 #string=TBank_gems_not_quality,#parm1=Send(obj,@GetName));
-            return True;
+                  #string=TBank_gems_not_quality,#parm1=Send(obj,@GetName));
+
+            return TRUE;
          }
-	 
-         %% be sure they actually have this many gems.
+    
+         % Be sure they actually have this many gems.
          bFound = FALSE;
-         for i in send(who,@GetHolderPassive)
+         for i in Send(who,@GetHolderPassive)
          {
-            if getClass(i) = getClass(obj)
+            if GetClass(i) = GetClass(obj)
             {
-                if send(i,@GetNumber) >= send(obj,@GetNumber)
-                {
-                    bFound = TRUE;
-                    break;
-                }
-                else
-                {
-                    break;
-                }
+               if Send(i,@GetNumber) >= Send(obj,@GetNumber)
+               {
+                  bFound = TRUE;
+
+                  break;
+               }
+               else
+               {
+                  break;
+               }
             }
          }
-         if not bFound
+         if NOT bFound
          {
-             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-             #string=TBank_not_enough_gems);
-             return False;
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+               #string=TBank_not_enough_gems);
+
+            return FALSE;
          }
 
          iValue = Send(obj,@GetValue);
-         % Skivlat needs to include markup to prevent scams where he buys more than he sells.
+         % Skivlat needs to include markup to prevent scams
+         % where he buys more than he sells.
          iValue = iValue * (100 - 10*viMerchant_markup) / 100;
          oMoney=Create(&Money,#number=iValue);
-         if send(who,@ReqNewHold,#what=oMoney)
+         if Send(who,@ReqNewHold,#what=oMoney)
          {
-             Send(who,@NewHold,#what=oMoney);
-			 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=iValue);
-             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            Send(who,@NewHold,#what=oMoney);
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=iValue);
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=TBank_gems_traded,#parm1=Send(obj,@GetName));
-             return True;
+
+            return TRUE;
          }
          else
          {
-             Send(oMoney,@Delete);
-             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            Send(oMoney,@Delete);
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=TBank_cant_give_gems,#parm1=Send(obj,@GetName));
-             return False;
+
+            return FALSE;
          }
-         return True;
+
+         return TRUE;
       }
+
       propagate;
    }
 
    TryAddToQuestEngine()
-   "There was a problem with Skivlat getting quests involving gems.  Previously, he "
-   "would no longer accept gems if someone had recently brought him a gem.  By removing "
-   "him from the quest engine, we prevent this error.  Hopefully, we will find a better "
-   "way to do this in the future.  CDS"
+   "There was a problem with Skivlat getting quests involving gems.  "
+   "Previously, he would no longer accept gems if someone had recently "
+   "brought him a gem.  By removing him from the quest engine, we prevent "
+   "this error.  Hopefully, we will find a better way to do "
+   "this in the future.  CDS"
    {
-	  return FALSE;
+     return FALSE;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

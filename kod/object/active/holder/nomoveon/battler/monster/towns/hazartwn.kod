@@ -16,12 +16,12 @@ include blakston.khd
 
 messages:
 
-TryAddToQuestEngine()
-"This returns FALSE for the people of newbieville, so they never have quests "
-"that are connected with the rest of the world."
-{
-	return FALSE;
-}
+   TryAddToQuestEngine()
+   "This returns FALSE for the people of newbieville, so they never "
+   "have quests that are connected with the rest of the world."
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

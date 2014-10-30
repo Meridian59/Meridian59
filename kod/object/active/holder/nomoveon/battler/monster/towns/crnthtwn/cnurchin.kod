@@ -21,7 +21,8 @@ resources:
    cornoth_urchin_name_rsc = "urchin"
    cornoth_urchin_icon_rsc = urchin.bgf
    cornoth_urchin_desc_rsc = \
-   "This is a young, dirty urchin, living on the street, yet causing no trouble."
+      "This is a young, dirty urchin, living on the street, yet "
+      "causing no trouble."
 
    cornoth_urchin_dead_icon_rsc = urchinX.bgf
    cornoth_urchin_dead_name_rsc = "dead urchin"
@@ -67,12 +68,11 @@ classvars:
 
 properties:
 
-
    piAnimation = ANIM_NONE
 
 messages:
 
-   CalculateDamage(what = $,hit_roll = $)
+   CalculateDamage(what=$,hit_roll=$)
    {
       return Random(1,4);
    }
@@ -81,13 +81,13 @@ messages:
    {
       propagate;
    }
-	 
+
    DoLegSpasm()
    {
       piAnimation = ANIM_LEG_SPASM;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 

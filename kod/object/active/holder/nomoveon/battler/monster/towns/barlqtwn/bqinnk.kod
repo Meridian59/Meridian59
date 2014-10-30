@@ -19,26 +19,38 @@ resources:
 
    Barloque_Innkeep_name_rsc = "Pritchett"
    Barloque_Innkeep_icon_rsc = bqinnk.bgf
-   Barloque_Innkeep_desc_rsc = "Of everyone in Barloque, the former sailor turned innkeeper Pritchett is "
-      "the least haughty.  Perhaps it is because he was not originally from the Royal City and moved to "
-      "North Barloque to buy a title."
+   Barloque_Innkeep_desc_rsc = \
+      "Of everyone in Barloque, the former sailor turned innkeeper Pritchett "
+      "is the least haughty.  Perhaps it is because he was not originally from"
+      "the Royal City and moved to North Barloque to buy a title."
    BqInn_entry_welcome = "I am gladeth to see you, mate."
 
-   BqInn_mace_sale = "Aye, ye might needeth one of them if ye plan on leavingeth our cultured city. I got some ye can buyeth."
-   BqInn_unwanted_give = "~k%s%s tells you, \"Whyfore dost you offer me that?~n~k\""
+   BqInn_mace_sale = \
+      "Aye, ye might needeth one of them if ye plan on leavingeth our "
+      "cultured city. I got some ye can buyeth."
+   BqInn_unwanted_give = \
+      "~k%s%s tells you, \"Whyfore dost you offer me that?~n~k\""
 
-   BarloqueInnkeeper_room_rented = "Here is the key to thine room.  I trust you will findest "
+   BarloqueInnkeeper_room_rented = \
+      "Here is the key to thine room.  I trust you will findest "
       "our rooms to be most well-appointed.  Enjoyest thy stay!"
 
    BarloqueInnkeeper_cost1 = "The rooms here are the finest.  I needeth "
-   BarloqueInnkeeper_cost2 = " shillings when thou ~Irent~neth a ~Iroom~n for for 85 days.  After that, I requireth "
+   BarloqueInnkeeper_cost2 = \
+      " shillings when thou ~Irent~neth a ~Iroom~n for for 85 days.  After "
+      "that, I requireth "
    BarloqueInnkeeper_cost3 = " per day up front.  Key copies costeth "
-   BarloqueInnkeeper_cost4 = " shillings if thou wishest to share thine room with a special someone."
+   BarloqueInnkeeper_cost4 = \
+      " shillings if thou wishest to share thine room with a special someone."
 
-   BarloqueInnkeeper_days_left = "I thanketh thee.  Thou hast %q days left at my luxurious inn."
-   BarloqueInnkeeper_too_long = "It pleaseth me that ye liketh thine room, but thou hast paid enough in rent already!  I canst not accept more from you right now."
+   BarloqueInnkeeper_days_left = \
+      "I thanketh thee.  Thou hast %q days left at my luxurious inn."
+   BarloqueInnkeeper_too_long = \
+      "It pleaseth me that ye liketh thine room, but thou hast paid enough "
+      "in rent already!  I canst not accept more from you right now."
 
-   BarloqueInnkeeper_destroy_key_copy = "~kPritchett tells you, \"I will discardeth the key for thou.\""
+   BarloqueInnkeeper_destroy_key_copy = \
+      "~kPritchett tells you, \"I will discardeth the key for thou.\""
    
    BqInn_room_command = "room"
    BqInn_rent_command = "rent"
@@ -51,13 +63,15 @@ classvars:
    vrIcon = Barloque_Innkeep_icon_rsc
    vrDesc = Barloque_Innkeep_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER | MOB_LAWFUL
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE \
+         | MOB_RECEIVE | MOB_COND_SELLER | MOB_LAWFUL
    viOccupation = MOB_ROLE_INNKEEPER
 
    vrUnwanted_give = BqInn_unwanted_give
 
 properties:
-   
+
    piInitialRoomCost = 5000
    piPerDayCost = 75
    piKeyCopyCosts = 500
@@ -66,65 +80,74 @@ messages:
 
    UserEntered(who = $)
    {
-      if send(who,@GetHomeRoom) = RID_BAR_INN
+      if Send(who,@GetHomeRoom) = RID_BAR_INN
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood + 2);
       }
-      
+
       if Send(who,@GetAction) = UA_HAPPY
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood + 1);
       }
-      
+
       if Send(who,@GetFaction) = FACTION_DUKE
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
-         % don't welcome these guys
+         Send(self,@SetMood,#new_mood=piMood - 2);
+         % Don't welcome these guys
+
          propagate;
       }
-      
-      Send(poOwner,@SomeoneSaid,#what=self,#string=BqInn_entry_welcome,#type=SAY_RESOURCE);
-      
+
+      Post(who,@SomeoneSaid,#what=self,#string=BqInn_entry_welcome,
+            #type=SAY_RESOURCE);
+
       propagate;
    }
 
-   AffectMood(why = $, what = $)
+   AffectMood(why=$,what=$)
    {
       if why = MOODMOD_ACCEPT_ITEM
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood+1);
+
          return;
       }
-      
-      if why = MOODMOD_FACTION_CHANGE 
+
+      if why = MOODMOD_FACTION_CHANGE
       {
-         if what = FACTION_DUKE 
+         if what = FACTION_DUKE
          {
-            send(self,@SetMood,#new_mood=piMood - 2);
+            Send(self,@SetMood,#new_mood=piMood-2);
+
             return;
          }
+
          if what = FACTION_PRINCESS
          {
-            send(self,@SetMood,#new_mood=piMood + 2);
+            Send(self,@SetMood,#new_mood=piMood+2);
+
             return;
          }
       }
       
-      if why = MOODMOD_DAWN 
+      if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood+1);
+
          return;
       }
-      
-      if why = MOODMOD_DUSK 
+
+      if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood - 1);
+         Send(self,@SetMood,#new_mood=piMood-1);
+
          return;
       }
-      
-      if why = MOODMOD_SELL_ITEM 
+
+      if why = MOODMOD_SELL_ITEM
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
+
          return;
       }
 
@@ -140,33 +163,37 @@ messages:
                      Create(&TurkeyLeg)
                    ],
                    $,$,$];
-      return;
+
+                   return;
    }
 
    InitCondSale()
    {
       local oObj;
-      
+
       oObj=Create(&Mace);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,100,BqInn_mace_sale]);
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,100,BqInn_mace_sale]);
 
       return;
    }
 
-   SomeoneSaid(what = $,type = $,string = $)
+   SomeoneSaid(what=$,type=$,string=$)
    {
       local oRoomMaint, rSayRsc;
-      
-      if isClass(what,&User)
+
+      if IsClass(what,&User)
       {
-         oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
-      
-         if (StringContain(string,BqInn_rent_command) AND StringContain(string,BqInn_room_command))
-            OR (StringContain(string,"rent") AND StringContain(string,"room"))
+         oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);
+
+         if (StringContain(string,BqInn_rent_command)
+               AND StringContain(string,BqInn_room_command))
+            OR (StringContain(string,"rent")
+               AND StringContain(string,"room"))
          {
-            rSayRsc = send(oRoomMaint,@RentRoom,#who=what,#iLocation=RID_BAR_INN,#iCost=piInitialRoomCost);
+            rSayRsc = Send(oRoomMaint,@RentRoom,#who=what,
+                           #iLocation=RID_BAR_INN,#iCost=piInitialRoomCost);
 
             % rSayRsc is $ on success.  Use the innkeeper's saying.
             if rSayRsc = $
@@ -174,24 +201,29 @@ messages:
                rSayRsc = BarloqueInnkeeper_room_rented;
             }
 
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
-
-            return;
-         }          
-
-         if StringContain(string,BqInn_copy_key_command)
-            OR StringContain(string,"copy key")
-         {
-            rSayRsc = send(oRoomMaint,@CopyKey,#who=what,#iLocation=RID_BAR_INN,#iCost=piKeyCopyCosts);
-
-            % tell the player.
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
+                  #what=self,#string=rSayRsc);
 
             return;
          }
 
-         if (StringContain(string,BqInn_room_command) AND StringContain(string,BqInn_cost_command))
-            OR (StringContain(string,"room") AND StringContain(string,"cost"))
+         if StringContain(string,BqInn_copy_key_command)
+            OR StringContain(string,"copy key")
+         {
+            rSayRsc = Send(oRoomMaint,@CopyKey,#who=what,
+                           #iLocation=RID_BAR_INN,#iCost=piKeyCopyCosts);
+
+            % Tell the player.
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,
+                  #what=self,#string=rSayRsc);
+
+            return;
+         }
+
+         if (StringContain(string,BqInn_room_command)
+               AND StringContain(string,BqInn_cost_command))
+            OR (StringContain(string,"room")
+               AND StringContain(string,"cost"))
          {
             ClearTempString();
             AppendTempString(BarloqueInnkeeper_cost1);
@@ -202,27 +234,30 @@ messages:
             AppendTempString(piKeyCopyCosts);
             AppendTempString(BarloqueInnkeeper_cost4);
             
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=send(SYS,@GetPercentQRsc),
-                 #parm1=GetTempString(),#type1=0);
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+                  #string=Send(SYS,@GetPercentQRsc),
+                  #parm1=GetTempString(),#type1=0);
 
             return;
-         }          
+         }
       }
-      
+
       propagate;
    }
 
-   ReqOffer(what = $,item_list = $)
+   ReqOffer(what=$,item_list=$)
    {
       local i, iMoney, oRoomMaint, iNewDays;
-   
+
       % Check for if in the same room.
-      if send(what,@GetOwner) <> poOwner
+      if Send(what,@GetOwner) <> poOwner
       {
-         debug("ALERT! ",send(what,@GetTrueName),what," offered items to NPC ",send(self,@GetTrueName)," from distant RID ",send(send(what,@GetOwner),@GetRoomNum));
-         
+         Debug("ALERT! ",Send(what,@GetTrueName),what," offered items to NPC ",
+               Send(self,@GetTrueName)," from distant RID ",
+               Send(Send(what,@GetOwner),@GetRoomNum));
+
          return FALSE;
-      }     
+      }
 
       for i in item_list
       {
@@ -231,8 +266,9 @@ messages:
             if GetClass(i) = &RoomKeyCopy
             {
                % Say something and delete the key.
-               send(what,@MsgSendUser,#message_rsc=BarloqueInnkeeper_destroy_key_copy);
-               send(i,@Delete);
+               Send(what,@MsgSendUser,
+                     #message_rsc=BarloqueInnkeeper_destroy_key_copy);
+               Send(i,@Delete);
 
                return FALSE;
             }
@@ -247,21 +283,25 @@ messages:
          iMoney = iMoney + Send(i,@GetValue);
       }
 
-      oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
+      oRoomMaint = Send(SYS,@GetRentableRoomMaintenance);
 
-      iNewDays = send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,#iCost=piPerDayCost,#iLocation=RID_BAR_INN);
+      iNewDays = Send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,
+                        #iCost=piPerDayCost,#iLocation=RID_BAR_INN);
 
       if iNewDays <> $
       {
-         % iNewDays = 0 means that we've trying to pay for more days than allowed.
+         % iNewDays = 0 means that we've trying to pay for than max days.
          if iNewDays = 0
          {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=BarloqueInnkeeper_too_long);
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+                  #string=BarloqueInnkeeper_too_long);
          }
          else
          {
-            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=BarloqueInnkeeper_days_left,
-                 #parm1=send(SYS,@IntToString,#num=iNewDays),#type1=STRING_RESOURCE);
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+                  #string=BarloqueInnkeeper_days_left,
+                  #parm1=Send(SYS,@IntToString,#num=iNewDays),
+                  #type1=STRING_RESOURCE);
          }
 
          return FALSE;
@@ -270,7 +310,5 @@ messages:
       propagate;
    }
 
-
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

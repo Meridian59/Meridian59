@@ -19,13 +19,17 @@ resources:
    Kocatanbanker_name_rsc = "Huital ko'Nosak"
    kocatanbanker_icon_rsc = kcbanker.bgf
    kocatanbanker_desc_rsc =  \
-      "Well respected as the master of all monetary affairs on the island, Huital pays "
-      "close attention to the economy and how it relates to every business.  Before "
-      "engaging in any new transaction of coins, he quickly washes his hands in the "
-      "pedestal of clear water. "
+      "Well respected as the master of all monetary affairs on the island, "
+      "Huital pays close attention to the economy and how it relates to "
+      "every business.  Before engaging in any new transaction of coins, "
+      "he quickly washes his hands in the pedestal of clear water. "
 
-   kocatanbanker_entry_welcome = "Greetings.  We hope to serve you well, your valuables will be safe with us."
-   kocatanbanker_unwanted_give = "~k%s%s tells you, \"You mistake me for my brother.  He will store your items.~n~k\""
+   kocatanbanker_entry_welcome = \
+      "Greetings.  We hope to serve you well, your valuables will be "
+      "safe with us."
+   kocatanbanker_unwanted_give = \
+      "~k%s%s tells you, \"You mistake me for my brother.  He will "
+      "store your items.~n~k\""
 
 classvars:
 
@@ -34,7 +38,9 @@ classvars:
    vrDesc = Kocatanbanker_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_BANKER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_BANKER
    viOccupation = MOB_ROLE_BANKER
 
    viBank = BID_KOCATAN
@@ -42,58 +48,68 @@ classvars:
    vrUnwanted_give = kocatanbanker_unwanted_give
 
 properties:
-   
+
 messages:
 
    Constructor()
    {
-     plWantedItems = [&Money];
-     propagate;
+      plWantedItems = [&Money];
+
+      propagate;
    }
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_DAWN )
+      if why = MOODMOD_DAWN
       {
-         send( self, @SetMood, #new_mood = piMood + 5 );
+         Send(self,@SetMood,#new_mood=piMood+5);
+
          return;
       }
-      if( why = MOODMOD_DUSK )
+
+      if why = MOODMOD_DUSK
       {
-         send( self, @SetMood, #new_mood = piMood - 5 );
+         Send(self,@SetMood,#new_mood=piMood-5);
+
          return;
       }
-      if( why = MOODMOD_BANK_WITHDRAWAL )
+
+      if why = MOODMOD_BANK_WITHDRAWAL
       {
-         send( self, @SetMood, #new_mood = piMood - 2 );
+         Send(self,@SetMood,#new_mood=piMood-2);
+
          return;
       }
-      if( why = MOODMOD_BANK_DEPOSIT )
+
+      if why = MOODMOD_BANK_DEPOSIT
       {
-         send( self, @SetMood, #new_mood = piMood + 2 );
+         Send(self,@SetMood,#new_mood=piMood+2);
+
          return;
       }
+
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
-      
-      iFlags = send(who, @GetObjectFlags);
-      if iFlags & PLAYER_PK
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         send( self, @SetMood, #new_mood = piMood - 1 );
-         % don't welcome these guys
+         Send(self,@SetMood,#new_mood=piMood-1);
+
+         % Don't welcome these guys.
          propagate;
       }
-      if iFlags & PLAYER_OUTLAW
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send( self, @SetMood, #new_mood = piMood - 1 );
-         % don't welcome these guys
+         Send(self,@SetMood,#new_mood=piMood-1);
+
+         % Don't welcome these guys.
          propagate;
       }
-      Send(poOwner,@SomeoneSaid,#what=self,#string=Kocatanbanker_entry_welcome,
+
+      Post(who,@SomeoneSaid,#what=self,#string=Kocatanbanker_entry_welcome,
              #type = SAY_RESOURCE);
 
       propagate;
@@ -103,6 +119,6 @@ messages:
    {
       return viBank;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

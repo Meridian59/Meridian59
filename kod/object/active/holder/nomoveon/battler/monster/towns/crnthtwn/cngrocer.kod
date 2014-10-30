@@ -18,17 +18,24 @@ resources:
 
    Cornoth_grocer_name_rsc = "Solomon"
    Cornoth_grocer_icon_rsc = cngrocer.bgf
-   Cornoth_grocer_desc_rsc = "This shop reflects the fine and exotic tastes of its proprietor.  "
-      "Solomon has collected goods and art from unimaginable corners of the known world, and is "
-      "rumored to have relics and artifacts from even beyond that."
+   Cornoth_grocer_desc_rsc = \
+      "This shop reflects the fine and exotic tastes of its proprietor.  "
+      "Solomon has collected goods and art from unimaginable corners of the "
+      "known world, and is rumored to have relics and artefacts from "
+      "even beyond that."
 
    CnGro_entry_welcome = "Oh welcome, welcome, welcome!"
 
-   CnGro_unwanted_keep = "~k%s%s tells you, \"What a generous friend I have!  "
-         "You bless me with your kindness!~n~k\""
-   CnGro_unwanted_pay = "~k%s%s tells you, \"I will pay what it is worth, and not a shilling more.~n~k\""
-   CnGro_unwanted_give = "~k%s%s tells you, \"Surely you are making a small joke at my expense!  "
-         "You must know that Solomon deals only in quality, and that is garbage!~n~k\""
+   CnGro_unwanted_keep = \
+      "~k%s%s tells you, \"What a generous friend I have!  "
+      "You bless me with your kindness!~n~k\""
+   CnGro_unwanted_pay = \
+      "~k%s%s tells you, \"I will pay what it is worth, and not a "
+      "shilling more.~n~k\""
+   CnGro_unwanted_give = \
+      "~k%s%s tells you, \"Surely you are making a small joke at my expense!  "
+      "You must know that Solomon deals only in quality, and that is "
+      "garbage!~n~k\""
 
 classvars:
 
@@ -37,86 +44,96 @@ classvars:
    vrDesc = Cornoth_grocer_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM \
+      | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
    viOccupation = MOB_ROLE_GROCER
 
 properties:
-   
+
 messages:
 
    AffectMood(what=$,why=$)
    {
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
+
          return;
       }
-      
+
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood - 5);
+         Send(self,@SetMood,#new_mood=piMood-5);
+
          return;
       }
-      
+
       if why = MOODMOD_ACCEPT_ITEM
       {
-         if IsClass(what, &OrcPitBossHead)
+         if IsClass(what,&OrcPitBossHead)
          {
-            send(self,@SetMood,#new_mood=piMood + 10);
+            Send(self,@SetMood,#new_mood=piMood+10);
+
             return;
          }
-         if IsClass(what, &NeruditeOreChunk)
+
+         if IsClass(what,&NeruditeOreChunk)
          {
-            send(self,@SetMood,#new_mood=piMood + 5);
+            Send(self,@SetMood,#new_mood=piMood+5);
+
             return;
          }
-         if IsClass(what, &InkyCap)
+
+         if IsClass(what,&InkyCap)
          {
-            send(self,@SetMood,#new_mood=piMood + 5);
+            Send(self,@SetMood,#new_mood=piMood+5);
+
             return;
          }
       }
-      
+
       if(why = MOODMOD_SELL_ITEM)
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
-      
-      return;
-   }
- 
-   SetForSale()
-   {
-      plFor_sale = [ [
-			Create(&Torch,#number=4),
-			Create(&FairyWing,#number=4),
-			Create(&Elderberry,#number=4),
-			Create(&BlueMushroom,#number=4),
-			Create(&RedMushroom,#number=4),
-			Create(&Waterskin,#number=4),
-			Create(&Bread,#number=4),
-			Create(&Apple,#number=4) ],
-                      $, $ ];
+
       return;
    }
 
-   UserEntered(who = $)
+   SetForSale()
    {
-      Send(poOwner,@SomeoneSaid,#what=self,#string=CnGro_entry_welcome,
-             #type = SAY_RESOURCE);
-             
+      plFor_sale = [ [
+         Create(&Torch,#number=4),
+         Create(&FairyWing,#number=4),
+         Create(&Elderberry,#number=4),
+         Create(&BlueMushroom,#number=4),
+         Create(&RedMushroom,#number=4),
+         Create(&Waterskin,#number=4),
+         Create(&Bread,#number=4),
+         Create(&Apple,#number=4) ],
+                      $, $ ];
+
+      return;
+   }
+
+   UserEntered(who=$)
+   {
+      Post(who,@SomeoneSaid,#what=self,#string=CnGro_entry_welcome,
+            #type=SAY_RESOURCE);
+
       if Send(who,@GetAction) = UA_SAD
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      
+
       if Send(who,@GetAction) = UA_WRY
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      
+
       propagate;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

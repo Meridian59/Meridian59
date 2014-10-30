@@ -147,7 +147,8 @@ resources:
       "`rFight is a draw.  This is a bug.  Please report it and specify "
       "combat type and all actions which led to this message."
    Goad_wont_fight = \
-      "`kApparently %s%s is too cowardly to fight.  Cowards should die . . . slowly."
+      "`kApparently %s%s is too cowardly to fight.  Cowards should "
+      "die . . . slowly."
 
    Goad_battle_midi_rsc = pk_sb16.mp3
 
@@ -162,7 +163,8 @@ classvars:
 
    vrUnwanted_give = Goad_unwanted_give
 
-   viAttributes = MOB_NOMOVE | MOB_FULL_TALK | MOB_LISTEN | MOB_NOFIGHT | MOB_NOQUEST
+   viAttributes = \
+      MOB_NOMOVE | MOB_FULL_TALK | MOB_LISTEN | MOB_NOFIGHT | MOB_NOQUEST
    viOccupation = MOB_ROLE_WATCHER
 
 properties:
@@ -245,7 +247,7 @@ messages:
 
       if plCombatants = $
       {
-         rand = random(1,4);
+         rand = Random(1,4);
          if rand = 1
          {
             Send(self,@Say,#message_rsc=Goad_ad_need_champion1);
@@ -268,11 +270,12 @@ messages:
          if not Send(self,@ValidateFight)
          {
             Send(self,@Say,#message_rsc=Goad_ad_need_challenger,
-                  #parm1=Send(First(plCombatants),@GetDef),#parm2=Send(First(plCombatants),@GetName));
+                  #parm1=Send(First(plCombatants),@GetDef),
+                  #parm2=Send(First(plCombatants),@GetName));
          }
          else
          {
-            rand = random(1,3);
+            rand = Random(1,3);
             if rand = 1
             {
                Send(self,@Say,#message_rsc=Goad_ad_good_fight1);
@@ -287,7 +290,8 @@ messages:
             }
          }
       }
-      ptAdvert=CreateTimer(self,@AdvertTimer,Random(ADVERT_DELAY_MIN,ADVERT_DELAY_MAX));
+      ptAdvert=CreateTimer(self,@AdvertTimer,
+                  Random(ADVERT_DELAY_MIN,ADVERT_DELAY_MAX));
 
       return;
    }
@@ -328,7 +332,8 @@ messages:
    {
       local oGuild, i;
 
-      if (piCombat_Style = STYLE_ONE_ON_ONE OR piCombat_Style = STYLE_LAST_MAN_STANDING)
+      if (piCombat_Style = STYLE_ONE_ON_ONE
+         OR piCombat_Style = STYLE_LAST_MAN_STANDING)
       AND (Send(poOwner,@ShrineInUse) = FALSE)
       {
          if Length(plCombatants) > 1
@@ -570,7 +575,8 @@ messages:
          else
          {
             % If we got here while logged on it's probably a bug.
-            Debug("Player ",Send(who,@GetTrueName)," reneged from Goad's arena while still fighting!");
+            Debug("Player ",Send(who,@GetTrueName),
+                  " reneged from Goad's arena while still fighting!");
          }
 
          return;
@@ -955,7 +961,8 @@ messages:
          %%Rumble style cut due to insufficient test.
          %if StringEqual(string,"rumble")
          %{
-            %Post(self,@ChooseCombat,#style=STYLE_LAST_MAN_STANDING,#actor=what);
+            %Post(self,@ChooseCombat,#style=STYLE_LAST_MAN_STANDING,
+            %      #actor=what);
             %return FALSE;
          %}
       }
@@ -993,11 +1000,13 @@ messages:
          {
             if poChampion = what
             {
-               Send(self,@SayToOne,#target=what,#message_rsc=Goad_Already_champion);
+               Send(self,@SayToOne,#target=what,
+                     #message_rsc=Goad_Already_champion);
             }
             else
             {
-               Send(self,@SayToOne,#target=what,#message_rsc=Goad_already_have_champion,
+               Send(self,@SayToOne,#target=what,
+                     #message_rsc=Goad_already_have_champion,
                      #parm1=Send(poChampion,@GetDef),
                      #parm2=Send(poChampion,@GetName),
                      #parm3=Send(poChampion,@GetHimHer));
@@ -1047,7 +1056,8 @@ messages:
 
       if NOT Send(self,@AcceptingChallengers)
       {
-         Send(self,@SayToOne,#target=what,#message_rsc=Goad_dont_need_challenger);
+         Send(self,@SayToOne,#target=what,
+               #message_rsc=Goad_dont_need_challenger);
 
          return;
       }
@@ -1060,12 +1070,14 @@ messages:
    {
       if piCombat_style <> STYLE_ONE_ON_ONE
       {
-         return FALSE;    %% You can only accept fights in traditional 2 man fights.
+         % You can only accept fights in traditional 2 man fights.
+         return FALSE;
       }
 
       if what <> poChampion
       {
-         return FALSE;   %% Only the champion can accept a fight from a challenger.
+         % Only the champion can accept a fight from a challenger.
+         return FALSE;
       }
 
       if Send(self,@FightInSession)
@@ -1200,7 +1212,7 @@ messages:
       if IsClass(what,&Player)
       {
          if goinplay
-            OR Send(self,@IsCombatant,#who=what)   %% Teleport to the playing field
+            OR Send(self,@IsCombatant,#who=what)
          {
             bInList = FALSE;
             for i in plUserStats
@@ -1218,17 +1230,18 @@ messages:
                   Send(what,@GetMana),
                   Send(what,@GetVigor)],plUserStats);
             }
-            
+
             if Send(what,@GetHealth) < Send(what,@GetMaxHealth)
             {
                Send(what,@GainHealthnormal,#amount=200);
             }
             if Send(what,@GetMana) < Send(what,@GetMaxMana)
             {
-               Send(what,@GainMana,#amount=Send(what,@GetMaxMana)-Send(what,@GetMana));
+               Send(what,@GainMana,#amount=Send(what,@GetMaxMana)
+                                                - Send(what,@GetMana));
             }
-            Send(what,@AddExertion,#SetToThreshold = TRUE);
 
+            Send(what,@AddExertion,#SetToThreshold = TRUE);
          }
          else
          {
@@ -1236,16 +1249,17 @@ messages:
             {
                if First(i) = what
                {
-                  Send(what,@LoseHealth,#amount=Send(what,@GetHealth)-Nth(i,2)); 
-                  Send(what,@GainMana,#amount=Nth(i,3)-Send(what,@GetMana)); 
-                  Send(what,@AddExertion,#amount=-10000*(Nth(i,2)-Send(what,@GetVigor)));
+                  Send(what,@LoseHealth,#amount=Send(what,@GetHealth)-Nth(i,2));
+                  Send(what,@GainMana,#amount=Nth(i,3)-Send(what,@GetMana));
+                  Send(what,@AddExertion,
+                        #amount=-10000*(Nth(i,2)-Send(what,@GetVigor)));
                   plUserStats = DelListElem(plUserStats,i);
 
                }
             }
          }
          Send(poOwner,@Teleport,#what=what,
-            #goinplay=goinplay,#outofplay=outofplay);
+               #goinplay=goinplay,#outofplay=outofplay);
       }
 
       return;
@@ -1277,7 +1291,8 @@ messages:
             }
             %% Yuckily, this is the easiest way to deal with this.
             if IsClass(j,&WallOfFire) OR IsClass(j,&WallOfLightning)
-            OR IsClass(j,&PassiveWallOfFire) OR IsClass(j,&PassiveWallOfLightning)
+            OR IsClass(j,&PassiveWallOfFire)
+            OR IsClass(j,&PassiveWallOfLightning)
             OR IsClass(j,&Web) OR IsClass(j,&PoisonFogCloud)
             {
                Send(j,@Delete);
@@ -1336,15 +1351,16 @@ messages:
 
    ReqSomethingAttack(what=$,victim=$)
    {
-      %% Targetless spells: heat, earthquake, umbrella and mana bomb
-      %% return true as long as a fight is on. **Test this, they don't normally work.**
+      % Targetless spells: heat, earthquake, umbrella and mana bomb
+      % return true as long as a fight is on.
       if victim = $
       {
          if NOT Send(self,@IsCombatant,#who=what)
          {
             if IsClass(what,&Player)
             {
-               Send(self,@SayToOne,#target=what,#message_rsc=Goad_only_combatants);
+               Send(self,@SayToOne,#target=what,
+                     #message_rsc=Goad_only_combatants);
             }
 
             return FALSE;
@@ -1354,7 +1370,8 @@ messages:
          {
             if IsClass(what,&Player)
             {
-               Send(self,@SayToOne,#target=what,#message_rsc=Goad_no_fighting_yet);
+               Send(self,@SayToOne,#target=what,
+                     #message_rsc=Goad_no_fighting_yet);
             }
 
             return FALSE;
@@ -1432,7 +1449,8 @@ messages:
             if NOT Send(self,@IsCombatant,#who=i)
                AND IsClass(i,&Player)
             {
-               Send(self,@SayToOne,#target=who,#message_rsc=Goad_only_target_combatants);
+               Send(self,@SayToOne,#target=who,
+                     #message_rsc=Goad_only_target_combatants);
 
                return FALSE;
             }
@@ -1504,7 +1522,7 @@ messages:
             ptReconnectTime = $;
          }
       }
-      
+
       if IsClass(what,&Admin)
          AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)

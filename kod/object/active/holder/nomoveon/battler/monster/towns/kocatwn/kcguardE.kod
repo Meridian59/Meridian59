@@ -20,19 +20,24 @@ resources:
    KocatanCaptainEvil_name_rsc = "Xacal ko'Ixca"
    KocatanCaptainEvil_icon_rsc = kcguardE.bgf
 
-   KocatanCaptainEvil_desc_rsc = "As the one of the highest ranking officers in the "
-      "Ko'catan Army, Xacal ko'Ixca is a veteran of many campaigns. His peacetime "
-      "duties include supervising the main gatehouse during the night hours against "
-      "actions by enemies unknown, and since this is a time of relative peace part of "
-      "Xacal ko'Ixca's duties consist of defining just who those enemies are. He is "
-      "widely respected for his toughness and ability to get results."
+   KocatanCaptainEvil_desc_rsc = \
+      "As the one of the highest ranking officers in the Ko'catan Army, Xacal "
+      "ko'Ixca is a veteran of many campaigns.  His peacetime duties include "
+      "supervising the main gatehouse during the night hours against actions "
+      "by enemies unknown, and since this is a time of relative peace part of "
+      "Xacal ko'Ixca's duties consist of defining just who those enemies "
+      "are.  He is widely respected for his toughness and ability to get "
+      "results."
 
    evilguard_Pass = "You're on your own."
-   evilguard_winknudge = "You know, funny how this money fell out of your purse into my hands."
+   evilguard_winknudge = \
+      "You know, funny how this money fell out of your purse into my hands."
    evilguard_winknudge_action = "~kXacal winks and gives you a nudge."
-   
-   evilguard_no_money = "When you approach the gate you need to be ready to deal. You're broke, and you're wasting my time."
-   evilguard_not_enough_money = "Not enough."
+
+   evilguard_no_money = \
+      "When you approach the gate you need to be ready to deal.  "
+      "You're broke, and you're wasting my time."
+   EvilGuard_not_enough = "Not enough."
 
 classvars:
 
@@ -42,90 +47,113 @@ classvars:
 
    viMerchant_markup = MERCHANT_RIPOFF
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN  | MOB_RECEIVE | MOB_NOMOVE | MOB_FULL_TALK
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN \
+     | MOB_RECEIVE | MOB_NOMOVE | MOB_FULL_TALK
    viOccupation = MOB_ROLE_SERGEANT
 
 properties:
 
    plBribes = $
-   
+
 messages:
 
    Constructor()
    {
-       plWantedItems = [&Money];
-       propagate;
+      plWantedItems = [&Money];
+
+      propagate;
    }
 
    NewOwner()
    {
       plBribes = $;
+
       propagate;
    }
 
    AllowContrabandToPass(What=$)
    {
       local i;
+
       for i in plBribes
       {
-	 if i = what
-	 {
-	    send(self,@SayToOne,#target=what,#message_rsc=evilguard_Pass);
-	    plBribes = dellistelem(plBribes,i);
-	    return TRUE;
-	 }
+         if i = what
+         {
+            Send(self,@SayToOne,#target=what,#message_rsc=evilguard_Pass);
+            plBribes = DelListElem(plBribes,i);
+
+            return TRUE;
+         }
       }
+
       return FALSE;
    }
 
    Delete()
    {
       plBribes = $;
+
       propagate;
    }
 
-   GotWantedItem(obj = $, who = $)
+   GotWantedItem(obj=$,who=$)
    {
-      if send(self,@checkForBribe,#obj=obj,#who=who)
-      {  return;  }
+      if Send(self,@CheckForBribe,#obj=obj,#who=who)
+      {
+         return;
+      }
 
       propagate;
-      
+
    }
 
-   CheckForBribe(who=$, obj = 0)
+   CheckForBribe(who=$,obj=0)
    {
       local oMoney, oBank, amount;
 
-      if not isClass(obj,&Money)  { return false; }
-      amount = send(obj,@GetNumber);
+      if NOT IsClass(obj,&Money)
+      {
+         return FALSE;
+      }
 
-      if amount <= 0 { return false; }
+      amount = Send(obj,@GetNumber);
+      if amount <= 0
+      {
+         return FALSE;
+      }
 
       oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $ 
+      if oMoney = $
       {
          Post(poOwner,@SomeoneSaid,#what=self,#string=Evilguard_no_money,
-	   #type=SAY_RESOURCE);
-	 return false;
+               #type=SAY_RESOURCE);
+
+         return FALSE;
       }
-      if send(oMoney,@GetValue) < amount
+
+      if Send(oMoney,@GetValue) < amount
       {
          Post(poOwner,@SomeoneSaid,#what=self,#string=EvilGuard_no_money,
-	   #type=SAY_RESOURCE,#parm1=Send(oMoney,@GetValue));
-	 return false;
+               #type=SAY_RESOURCE,#parm1=Send(oMoney,@GetValue));
+
+         return FALSE;
       }
+
       if amount < BRIBE_AMOUNT
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#string=EvilGuard_not_enough_money,
-	   #type=SAY_RESOURCE,#parm1=Send(oMoney,@GetValue));
-	 return true;      
-      }            
-      Send(oMoney,@SubtractNumber,#number=amount);      
+         Post(poOwner,@SomeoneSaid,#what=self,#string=EvilGuard_not_enough,
+               #type=SAY_RESOURCE,#parm1=Send(oMoney,@GetValue));
+
+         return TRUE;
+      }
+
+      Send(oMoney,@SubtractNumber,#number=amount);
       plBribes = cons(who,plBribes);
-      post(self,@SayToOne,#target=who,#message_rsc=evilguard_winknudge);
-      post(who,@msgsenduser,#message_rsc=evilguard_winknudge_action);
-      return true;
+      Post(self,@SayToOne,#target=who,#message_rsc=evilguard_winknudge);
+      Post(who,@MsgSendUser,#message_rsc=evilguard_winknudge_action);
+
+      return TRUE;
    }
 
 end

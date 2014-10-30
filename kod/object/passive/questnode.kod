@@ -1062,9 +1062,17 @@ messages:
                {
                   if IsClass(i,&GuildShield)
                   {
-                     oGuildShield = i;
+                     if oGuildShield <> $
+                        AND Send(oGuildShield,@HasInsignia)
+                        AND NOT Send(i,@HasInsignia)
+                     {
+                        % We had a shield which had an insignia, but we
+                        % found one that didn't. Switch to that one instead.
+                        oGuildShield = i;
 
-                     break;
+                        break;
+                     }
+                     oGuildShield = i;
                   }
                }
             }

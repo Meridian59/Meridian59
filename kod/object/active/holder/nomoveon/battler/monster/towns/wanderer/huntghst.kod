@@ -19,11 +19,14 @@ resources:
    HunterGhost_name_rsc = "Tendrath"
    HunterGhost_icon_rsc = nnm01.bgf
    HunterGhost_desc_rsc =  \
-     "This druidic mage's demeanor is so calm and peaceful that you can't help but wonder "
-     "why his ghostly shade still walks this plane."
+     "This druidic mage's demeanor is so calm and peaceful that you can't "
+     "help but wonder why his ghostly shade still walks this plane."
 
-   huntghost_hunt_only = "I may only teach that to a wielder of a hunter's sword."
-   huntghost_not_powerful = "~kTendrath says, \"You are far too inexperienced to wield such powerful magics.\""
+   huntghost_hunt_only = \
+      "I may only teach that to a wielder of a hunter's sword."
+   huntghost_not_powerful = \
+      "~kTendrath says, \"You are far too inexperienced to wield "
+      "such powerful magics.\""
 
    huntghost_said_resource_str = "%s%s says, \"%s~n\""
 
@@ -33,33 +36,38 @@ classvars:
    vrIcon = HunterGhost_icon_rsc
    vrDesc = HunterGhost_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER | MOB_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE \
+      | MOB_RECEIVE | MOB_TEACHER | MOB_SELLER
    viOccupation = MOB_ROLE_WIZARD
 
 properties:
 
    viQuestID = 0
    piDrawfx = DRAWFX_TRANSLUCENT_50
-   
+
 messages:
 
    CreateDestinationList()
    {
-      plDestinations = [ [RID_G8, 38, 38] , [RID_I9, 25, 56], [RID_CASTLE1B, 8, 3],
+      plDestinations = [ [RID_G8, 38, 38] , [RID_I9, 25, 56],
+                         [RID_CASTLE1B, 8, 3],
                          [RID_K5, 45, 23] ];
+
       return;
    }
 
    SetForSale()
    {
-      plFor_Sale = [$,$,[SID_SUMMON_WEB, SID_LIGHTNINGWALL, SID_DEFLECT, SID_HUNT]];
+      plFor_Sale = [$,$,[SID_SUMMON_WEB, SID_LIGHTNINGWALL,
+                         SID_DEFLECT, SID_HUNT]];
 
       return;
    }
-   
+
    CanDoTeach(who=$,sid=0)
    {
-      if NOT send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
+      if NOT Send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
@@ -70,7 +78,7 @@ messages:
    CanAddSpell(who=$,num=0,report=FALSE)
    "We require that a quest be done before one of the spells can be learned"
    {
-      if NOT send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
+      if NOT Send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
       {
          return FALSE;
       }
@@ -82,11 +90,11 @@ messages:
    "We require that a quest be done before one of the spells can be learned"
    {
       if ((num = SID_SUMMON_WEB) OR (num = SID_LIGHTNINGWALL))
-         AND NOT send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          if report
          {
-            send(who,@MsgSendUser,#message_rsc=huntghost_not_powerful);
+            Send(who,@MsgSendUser,#message_rsc=huntghost_not_powerful);
          }
 
          return FALSE;
@@ -94,7 +102,6 @@ messages:
 
       return TRUE;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

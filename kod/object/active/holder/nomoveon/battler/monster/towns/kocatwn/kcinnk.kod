@@ -23,11 +23,18 @@ resources:
      "for a new high risk investment.  He greets you with a confident smile "
      "and a clandestine gleam in his eye."
 
-   kocataninnkeeper_entry_welcome = "Welcome, good patron.  I hope you find your stay to be a pleasant one."
-   kocinn_winknudge = "Thanks!  I'll be sure to let you know how it all turns out!"
-   kocataninnkeeper_unwanted_keep = "~k%s%s tells you, \"Thank you.  You won't regret letting me borrow that.~n~k\""
+   kinnkeeper_entry_welcome = \
+      "Welcome, good patron.  I hope you find your stay to be a pleasant one."
+   kocinn_winknudge = \
+      "Thanks!  I'll be sure to let you know how it all turns out!"
+   kocataninnkeeper_unwanted_keep = \
+      "~k%s%s tells you, \"Thank you.  You won't regret letting me "
+      "borrow that.~n~k\""
 
-   KocatanInkeeper_purplemushroom_sale = "Ah!  You would like %s%s.  Yes, I imported these wonderous beauties directly from the mainland.  Guaranteed to make you stronger if you eat 3000 of them, I've heard!"
+   KocatanInkeeper_purplemushroom_sale = \
+      "Ah!  You would like %s%s.  Yes, I imported these wondrous beauties "
+      "directly from the mainland.  Guaranteed to make you stronger if "
+      "you eat 3000 of them, I've heard!"
 
 classvars:
 
@@ -37,60 +44,68 @@ classvars:
 
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER
    viOccupation = MOB_ROLE_INNKEEPER
 
    vrUnwanted_keep = kocataninnkeeper_unwanted_keep
 
-properties:   
+properties:
 
 messages:
 
-   AffectMood(why = $, what = $)
+   AffectMood(why=$,what=$)
    {
       if why = MOODMOD_SELL_ITEM
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
+
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood + 3);
+         Send(self,@SetMood,#new_mood=piMood+3);
+
          return;
       }
+
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood - 3);
+         Send(self,@SetMood,#new_mood=piMood-3);
+
          return;
       }
+
       return;
    }
 
    Constructor()
    {
-       plWantedItems = [&Money];
-       propagate;
+      plWantedItems = [&Money];
+       
+      propagate;
    }
 
-   GotWantedItem(obj = $, who = $)
+   GotWantedItem(obj=$,who=$)
    {
-      if send(self,@CheckForScheme,#obj=obj,#who=who)
+      if Send(self,@CheckForScheme,#obj=obj,#who=who)
       {
          return;
       }
-      
-      propagate;     
+
+      propagate;
    }
 
-   CheckForScheme(who=$, obj = 0)
+   CheckForScheme(who=$,obj=0)
    {
       local oMoney, oBank, amount;
 
-      if not isClass(obj,&Money)
+      if NOT isClass(obj,&Money)
       {
          return FALSE;
       }
-      
-      amount = send(obj,@GetNumber);
+
+      amount = Send(obj,@GetNumber);
 
       if amount <= 0
       {
@@ -99,68 +114,71 @@ messages:
 
       oMoney = Send(who,@GetMoneyObject);
       
-      if oMoney = $ 
+      if oMoney = $
       {
          return FALSE;
       }
-      
-      if send(oMoney,@GetValue) < amount
+
+      if Send(oMoney,@GetValue) < amount
       {
          return FALSE;
       }
-      
-      Send(oMoney,@SubtractNumber,#number=amount);            
-      post(self,@SayToOne,#target=who,#message_rsc=kocinn_winknudge);
+
+      Send(oMoney,@SubtractNumber,#number=amount);
+      Post(self,@SayToOne,#target=who,#message_rsc=kocinn_winknudge);
 
       return TRUE;
    }
 
    SetForSale()
    {
-      plFor_sale = [ [         
+      plFor_sale = [ [
                        Create(&SetScroll,#labelled=TRUE),
-                       Create(&LoadoutScroll,#labelled=TRUE),              
+                       Create(&LoadoutScroll,#labelled=TRUE),
                        Create(&Meatpie,#number=4),
                        Create(&Bread,#number=4),
                        Create(&Cheese,#number=6)
-	               ],
+                  ],
                       $, $, $ ];
+
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       if Send(who,@GetAction) = UA_HAPPY
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
+
       if Send(who,@GetAction) = UA_SAD
       {
-         send(self,@SetMood,#new_mood=piMood + 1);
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
+
       if Send(who,@GetAction) = UA_WRY
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      
-      Send(poOwner,@SomeoneSaid,#what=self,#string=Kocataninnkeeper_entry_welcome,
-             #type = SAY_RESOURCE);
-             
+
+      Post(who,@SomeoneSaid,#what=self,#string=kinnkeeper_entry_welcome,
+            #type=SAY_RESOURCE);
+
       propagate;
    }
 
    InitCondSale()
    {
       local oObj;
-      
+
       oObj = Create(&PurpleMushroom,#number=2);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,1250,KocatanInkeeper_purplemushroom_sale]);
-           
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,1250,
+            KocatanInkeeper_purplemushroom_sale]);
+
       return;
    }
-   
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

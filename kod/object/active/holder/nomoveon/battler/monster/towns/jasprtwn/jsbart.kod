@@ -19,15 +19,19 @@ resources:
    Jasper_Bartender_name_rsc = "Pietro"
    Jasper_Bartender_icon_rsc = jsbart.bgf
    Jasper_Bartender_desc_rsc = \
-      "A peevish and sullen man tends this bar.  This is Pietro, the impetuous sot." 
+      "A peevish and sullen man tends this bar.  This is Pietro, "
+      "the impetuous sot." 
 
    JsBar_entry_welcome = "Close the door, would you!"
 
-   JasperBartender_unwanted_keep = "~k%s%s tosses the item into the garbage and sneers, \"Get lost.~n~k\""
-   JasperBartender_unwanted_pay = "~k%s%s tells you, \"I'll give you a couple schillings for that, "
-         "my mother's birthday is coming up.~n~k\""
-   JasperBartender_unwanted_give = "~k%s%s tells you, \"What do I look like, a freggin' junk buyer?  "
-         "There's no soliciting here so get out of my bar with your flim-flam, stranger.~n~k\""
+   JasperBartender_unwanted_keep = \
+      "~k%s%s tosses the item into the garbage and sneers, \"Get lost.~n~k\""
+   JasperBartender_unwanted_pay = \
+      "~k%s%s tells you, \"I'll give you a couple schillings for that, "
+      "my mother's birthday is coming up.~n~k\""
+   JasperBartender_unwanted_give = \
+      "~k%s%s tells you, \"What do I look like, a freggin' junk buyer?  "
+      "There's no soliciting here so get out of my bar with your flim-flam, stranger.~n~k\""
 
 classvars:
 
@@ -35,7 +39,9 @@ classvars:
    vrIcon = Jasper_Bartender_icon_rsc
    vrDesc = Jasper_Bartender_desc_rsc
    viMerchant_markup = MERCHANT_NORMAL
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM \
+      | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
    viOccupation = MOB_ROLE_BARTENDER
 
    vrUnwanted_keep = JasperBartender_unwanted_keep
@@ -52,41 +58,41 @@ messages:
       {
          if IsClass(what,&Minstrel)
          {
-            send(self,@SetMood,#new_mood=piMood - 50);
+            Send(self,@SetMood,#new_mood=piMood-50);
          }
-         
+
          return;
       }
-      
+
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood + 7);
-         
+         Send(self,@SetMood,#new_mood=piMood+7);
+
          return;
       }
-      
+
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood - 7);
-         
+         Send(self,@SetMood,#new_mood=piMood-7);
+
          return;
       }
-      
+
       if why = MOODMOD_SELL_ITEM
       {
-         if isClass(what,&Food)
+         if IsClass(what,&Food)
          {
-            if send(what,@IsAlcohol)
+            if Send(what,@IsAlcohol)
             {
-               send(self,@SetMood,#new_mood=piMood + 1);
+               Send(self,@SetMood,#new_mood=piMood+1);
             }
             else
             {
-               send(self,@SetMood,#new_mood=piMood + 2);
+               Send(self,@SetMood,#new_mood=piMood+2);
             }
          }
       }
-      
+
       return;
    }
 
@@ -101,15 +107,14 @@ messages:
       return;
    }
 
-   UserEntered()
+   UserEntered(who=$)
    {
-      Send(poOwner,@SomeoneSaid,#what=self,#string=JsBar_entry_welcome,
-             #type = SAY_RESOURCE);
-      send( self, @SetMood, #new_mood = piMood - 2 );
-      
+      Post(who,@SomeoneSaid,#what=self,#string=JsBar_entry_welcome,
+            #type=SAY_RESOURCE);
+      Send(self,@SetMood,#new_mood=piMood-2);
+
       propagate;
    }
-   
-end
 
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

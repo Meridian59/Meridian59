@@ -37,16 +37,16 @@ constants:
 resources:
  
    ladypheonix_name_rsc = "LadyPhoenix"
-   ladypheonix_desc_rsc = "A strange feeling comes over you as you "
-                          "perceive that there is a force deep inside this statue.  "
-                          "A soft, singing voice fills your senses. Her "
-                          "eyes seem to follow you, taking careful notice of your "
-                          "actions.   A feeling of well being and protection washes "
-                          "over you, and you know that you can trust in her guidance."
+   ladypheonix_desc_rsc = \
+      "A strange feeling comes over you as you perceive that there is a "
+      "force deep inside this statue.  A soft, singing voice fills your "
+      "senses. Her eyes seem to follow you, taking careful notice of your "
+      "actions.   A feeling of well being and protection washes over you, "
+      "and you know that you can trust in her guidance."
 
    ladypheonix_Directions_rsc = "`kLadyPhoenix whispers,\"Now take %q"
-   ladypheonix_not_in_range = "`kLadyPhoenix whispers something, but you are too far "
-                              "away to hear it."
+   ladypheonix_not_in_range = \
+      "`kLadyPhoenix whispers something, but you are too far away to hear it."
 
    ladypheonix_whispers = "~kLadyPhoenix whispers,\"The "
    ladypheonix_row_6 = "northernmost cloud "
@@ -56,7 +56,8 @@ resources:
    ladypheonix_row_10 = "third cloud from the south "
    ladypheonix_row_11 = "second cloud from the south "
    ladypheonix_row_12 = "southernmost cloud "
-   ladyphoenix_no_further = "will not harm you, but go no further without my guidance.\""
+   ladyphoenix_no_further = \
+      "will not harm you, but go no further without my guidance.\""
    ladypheonix_step = "step "
    ladypheonix_steps = "steps "
    ladypheonix_south = "south "
@@ -64,7 +65,8 @@ resources:
    ladypheonix_step_forward = "then take a step forward.\""
    ladypheonix_protect_command = "protect"
    ladypheonix_wlll_protect = "~kLadyPhoenix whispers,\"I will protect you.\""
-   ladypheonix_already_protecting = "~kLadyPhoenix whispers,\"I am already protecting another.\""
+   ladypheonix_already_protecting = \
+      "~kLadyPhoenix whispers,\"I am already protecting another.\""
 
    ladyphoenix_leatherarmor_female_icon_rsc = bth.bgf
    ladyphoenix_barearm_rightarm_gauntlet_female =brj.bgf
@@ -100,7 +102,7 @@ properties:
    prWeapon = $
    prShield = $
    prBowTop = $
-   
+
    piIcon_frame = 1
    piLegs_frame = 1
    piLeft_frame = 1
@@ -124,7 +126,7 @@ messages:
 
    ReqNewOwner(what=$)
    {
-      return isClass(what,&room);
+      return IsClass(what,&room);
    }
 
    StartRow(row=$)
@@ -143,15 +145,15 @@ messages:
       if RunnerRow = SafeRow
       % Just stepping forward so no need to pass parameters to build directions.
       {
-         send(self,@BuildDirections);
-         send(self,@GiveDirections);
+         Send(self,@BuildDirections);
+         Send(self,@GiveDirections);
 
          return;
-      }     
+      }
 
-      iSteps = send(self,@GetSteps,#from=RunnerRow,#to=SafeRow);
+      iSteps = Send(self,@GetSteps,#from=RunnerRow,#to=SafeRow);
 
-      if ABS(iSteps) > iSteps
+      if Abs(iSteps) > iSteps
       {
          iDirection = SOUTH;
       }
@@ -160,14 +162,15 @@ messages:
          iDirection = NORTH;
       }
 
-      send(self,@BuildDirections,#steps=ABS(iSteps),#Direction=iDirection);
-      send(self,@GiveDirections);
+      Send(self,@BuildDirections,#steps=Abs(iSteps),#Direction=iDirection);
+      Send(self,@GiveDirections);
 
       return;
    }
 
    GetSteps(from=$,to=$)
-   "Calculate the number of steps for the runner.  If it's neg. we're going SOUTH, pos = NORTH"
+   "Calculate the number of steps for the runner.  If it's neg. "
+   "we're going SOUTH, pos = NORTH"
    {
       local iSteps;
 
@@ -179,7 +182,7 @@ messages:
    BuildInitDirections()
    "Builds the direction for the first step into the maze."
    {
-      cleartempstring();
+      ClearTempString();
       AppendTempString(ladypheonix_whispers);
 
       if piStartRow = 6
@@ -210,12 +213,12 @@ messages:
       if piStartRow = 11
       {
          AppendTempString(ladypheonix_row_11);
-      } 
+      }
 
       if piStartRow = 12
       {
          AppendTempString(ladypheonix_row_12);
-      } 
+      }
 
       AppendTempString(ladyphoenix_no_further);
 
@@ -225,9 +228,9 @@ messages:
    BuildDirections(Steps=0,Direction=0)
    "Gives number of steps to travel."
    {
-      Cleartempstring();
+      ClearTempString();
 
-      send(SYS,@AppendCardinalToTempString,#number=steps);
+      Send(SYS,@AppendCardinalToTempString,#number=steps);
       AppendTempString(" ");
 
       if Steps = 1
@@ -258,57 +261,63 @@ messages:
    {
       local i,lActive,oObject,oRoom;
 
-      if poOwner = $  { return FALSE; }
+      if poOwner = $
+      {
+         return FALSE;
+      }
 
-      oRoom = send(self,@GetOwner);
+      oRoom = Send(self,@GetOwner);
 
-      lActive = send(oRoom,@GetplActive);
+      lActive = Send(oRoom,@GetplActive);
 
       for i in lActive
-      {  
+      {
 
-         oObject = send(oRoom,@HolderExtractObject,#data=i);
-         if isClass(oObject,&user)
+         oObject = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(oObject,&user)
          {
-            if (abs((send(oObject,@getrow)-send(self,@getrow))) > 2
-               or abs((send(oObject,@getcol)-send(self,@getcol))) > 2)
+            if (Abs((Send(oObject,@GetRow) - Send(self,@GetRow))) > 2
+               OR Abs((Send(oObject,@GetCol) - Send(self,@GetCol))) > 2)
             {
-               Send(oObject,@MsgSendUser,#message_rsc=ladypheonix_not_in_range);   
+               Send(oObject,@MsgSendUser,#message_rsc=ladypheonix_not_in_range);
             }
             else
             {
-               send(oObject,@MsgSendUser,#message_rsc=vrDirections,#parm1=getTempString(),#type1=0);
+               Send(oObject,@MsgSendUser,#message_rsc=vrDirections,
+                     #parm1=getTempString(),#type1=0);
             }
          }
       }
-            
+
       return;
    }
 
-   SomeoneSaidLadyP(what = $,type = $,string = $)
+   SomeoneSaidLadyP(what=$,type=$,string=$)
    {
-      if StringContain(string,ladypheonix_protect_command) AND StringContain(string,"LadyPhoenix")
+      if StringContain(string,ladypheonix_protect_command)
+            AND StringContain(string,"LadyPhoenix")
       {
-         if send(poOwner,@ReqSetRunner,#who=what)
+         if Send(poOwner,@ReqSetRunner,#who=what)
          {
             clearTempString();
-		      AppendTempString(ladypheonix_wlll_protect);
-            send(what,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
-            send(self,@BuildInitDirections);
-            send(what,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
+            AppendTempString(ladypheonix_wlll_protect);
+            Send(what,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+                  #parm1=getTempString(),#type1=0);
+            Send(self,@BuildInitDirections);
+            Send(what,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+                  #parm1=getTempString(),#type1=0);
          }
          else
          {
             clearTempString();
-		      AppendTempString(ladypheonix_already_protecting);
-            send(what,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
+            AppendTempString(ladypheonix_already_protecting);
+            Send(what,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+                  #parm1=getTempString(),#type1=0);
          }
       }
 
       return;
    }
-
-   
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %%Stuff from statue for drawing %%
@@ -318,70 +327,75 @@ messages:
    ResetFrames(pose = $)
    {
       if Pose = POSE_PUNCH
-      {	 
-	      piIcon_frame = 4;
-	      piLeft_frame = 6;
-	      piRight_frame = 14;
-	      piLegs_frame = 6; 
-	      piOverlays = 8;
-	      if prShield <> $
-	      {
-	         piShield_frame = 2;
-	         piOverlays = piOverlays + 1;
-	      }
+      {
+         piIcon_frame = 4;
+         piLeft_frame = 6;
+         piRight_frame = 14;
+         piLegs_frame = 6; 
+         piOverlays = 8;
+         if prShield <> $
+         {
+            piShield_frame = 2;
+            piOverlays = piOverlays + 1;
+         }
       }
 
       if piPose = POSE_CAST
       {
-	      piIcon_frame = 1;
-	      piLeft_frame = 8;
-	      piRight_frame = 11;
-	      piLegs_frame = 1; 
-	      piOverlays = 8;	 
+         piIcon_frame = 1;
+         piLeft_frame = 8;
+         piRight_frame = 11;
+         piLegs_frame = 1;
+         piOverlays = 8;
       }
 
       if piPose = POSE_NONE
       {
-	      piIcon_frame = 1;
-	      piLeft_frame = 1;
-	      piRight_frame = 1;
-	      piLegs_frame = 1; 
-	      piOverlays = 8;	 
-	      if prShield <> $
-	      {
-	         piShield_frame = 2;
-	         piLeft_frame = 7;
-	         piOverlays = piOverlays + 1;
-	      }
- 	      if prWeapon <> $
-	      {
-	    
-	         piWeapon_frame = 4;
-	         if prBowTop <> $
-	         {  
-	            piWeapon_frame = 2;
-	            piLeft_frame = 7;
-	         }
-	         else
-	         {  piRight_frame = 17;  }
-	      piOverlays = piOverlays + 1;
-	      }
+         piIcon_frame = 1;
+         piLeft_frame = 1;
+         piRight_frame = 1;
+         piLegs_frame = 1;
+         piOverlays = 8;
+
+         if prShield <> $
+         {
+            piShield_frame = 2;
+            piLeft_frame = 7;
+            piOverlays = piOverlays + 1;
+         }
+
+         if prWeapon <> $
+         {
+            piWeapon_frame = 4;
+
+            if prBowTop <> $
+            {
+               piWeapon_frame = 2;
+               piLeft_frame = 7;
+            }
+            else
+            {
+               piRight_frame = 17;
+            }
+
+            piOverlays = piOverlays + 1;
+         }
       }
 
       if piPose = POSE_WEAPON_ATTACK
       {
+         piIcon_frame = 3;
+         piLeft_frame = 5;
+         piRight_frame = 5;
+         piLegs_frame = 6;
+         piOverlays = 9;
+         if prShield <> $
+         {
+            piShield_frame = 2;
+            piOverlays = piOverlays + 1;
+         }
 
-	      piIcon_frame = 3;
-	      piLeft_frame = 5;
-	      piRight_frame = 5;
-	      piLegs_frame = 6; 
-	      piOverlays = 9;	 
-	      if prShield <> $
-	      {
-	         piShield_frame = 2;
-	         piOverlays = piOverlays + 1;
-	      }
-	      piWeapon_frame = 2;
+         piWeapon_frame = 2;
       }
 
       if piPose = POSE_BOW_ATTACK
@@ -389,8 +403,8 @@ messages:
          piIcon_frame = 5;
          piLeft_frame = 9;
          piRight_frame = 16;
-         piLegs_frame = 7; 
-         piOverlays = 10;	 
+         piLegs_frame = 7;
+         piOverlays = 10;
          piWeapon_frame = 1;
       }
 
@@ -401,7 +415,7 @@ messages:
    {
       if (piIcon_translation) <> 0
       {
-	      AddPacket(1,ANIMATE_TRANSLATION,1,piIcon_translation);
+         AddPacket(1,ANIMATE_TRANSLATION,1,piIcon_translation);
       }
 
       AddPacket(1,ANIMATE_NONE,2,piIcon_frame);
@@ -411,52 +425,66 @@ messages:
 
    SendOverlays()
    {
-      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat, iArms_xlat;
+      local i,iOverlays,hotspot,iLeft_group,iRight_group,
+            iSkin_xlat, iArms_xlat;
 
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
 
       % Player has 8 standard overlays: right arm, left arm, legs, head, eyes, 
       % mouth, nose, hair
-      
+
       %% number of overlays
       AddPacket(1, piOverlays);
 
-      %% left hand      
+      % Left hand.
       AddPacket(4,prLeft_arm,1,HS_LEFT_HAND);
       if piArms_translation <> 0
-      {  AddPacket(1,ANIMATE_TRANSLATION,1,piArms_translation);  }      
-      AddPacket(1,ANIMATE_NONE,2,piLeft_frame);  
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piArms_translation);
+      }
+      AddPacket(1,ANIMATE_NONE,2,piLeft_frame);
 
-      %% right hand
+      % Right hand.
       AddPacket(4,prRight_arm,1,HS_RIGHT_HAND);
       if piArms_translation <> 0
-      {  AddPacket(1,ANIMATE_TRANSLATION,1,piArms_translation);  }      
-      AddPacket(1,ANIMATE_NONE,2,piRight_frame);  
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piArms_translation);
+      }
+      AddPacket(1,ANIMATE_NONE,2,piRight_frame);
 
-      %% legs
+      % Legs.
       AddPacket(4,prLegs,1,HS_LEGS);
       if piLegs_translation <> 0
-      {  AddPacket(1,ANIMATE_TRANSLATION,1,piLegs_translation);  }      
-      AddPacket(1,ANIMATE_NONE,2,piLegs_frame);  
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piLegs_translation);
+      }
+      AddPacket(1,ANIMATE_NONE,2,piLegs_frame);
 
-      %% face
+      % Face.
       iSkin_xlat = piSkin_translation;
-      AddPacket(4,prHead,1,HS_HEAD,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,1);
-      AddPacket(4,prMouth,1,HS_MOUTH,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,piExpression);
-      AddPacket(4,prEyes,1,HS_EYES,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,piExpression);
-      AddPacket(4,prNose,1,HS_NOSE,1,ANIMATE_TRANSLATION,1,iSkin_xlat,1,ANIMATE_NONE,2,1);
-      AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,1,piHair_translation);
-      AddPacket(1,ANIMATE_NONE,2,1); 
+      AddPacket(4,prHead,1,HS_HEAD,1,ANIMATE_TRANSLATION,1,iSkin_xlat,
+            1,ANIMATE_NONE,2,1);
+      AddPacket(4,prMouth,1,HS_MOUTH,1,ANIMATE_TRANSLATION,1,iSkin_xlat,
+            1,ANIMATE_NONE,2,piExpression);
+      AddPacket(4,prEyes,1,HS_EYES,1,ANIMATE_TRANSLATION,1,iSkin_xlat,
+            1,ANIMATE_NONE,2,piExpression);
+      AddPacket(4,prNose,1,HS_NOSE,1,ANIMATE_TRANSLATION,1,iSkin_xlat,
+            1,ANIMATE_NONE,2,1);
+      AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,1,
+            piHair_translation);
+      AddPacket(1,ANIMATE_NONE,2,1);
 
       if prShield <> $ and piPose <> POSE_CAST
       {
          AddPacket(4,prShield,1,HS_LEFT_WEAPON);
          if piShield_translation <> 0
-         {  AddPacket(1,ANIMATE_TRANSLATION,1,piShield_translation); }      
-         AddPacket(1,ANIMATE_NONE,2,piShield_frame);  
+         {
+            AddPacket(1,ANIMATE_TRANSLATION,1,piShield_translation);
+         }
+         AddPacket(1,ANIMATE_NONE,2,piShield_frame);
       }
 
-      if prWeapon <> $ and (piPose <> POSE_CAST and piPose <> POSE_PUNCH)
+      if prWeapon <> $ AND (piPose <> POSE_CAST AND piPose <> POSE_PUNCH)
       {
          if piPose=POSE_BOW_ATTACK
          {
@@ -464,30 +492,33 @@ messages:
             if piWeapon_translation <> 0
             {
                AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
-            }      
-            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);  
+            }
+            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);
             AddPacket(4,prBowTop,1,HS_TOP_BOW);
             if piWeapon_translation <> 0
             {
                AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
-            }      
-            AddPacket(1,ANIMATE_NONE,2,PiWeapon_frame);              
-            
+            }
+            AddPacket(1,ANIMATE_NONE,2,PiWeapon_frame);
          }
          else
          {
             AddPacket(4,prWeapon);
             if prBowTop <> $
-            {  AddPacket(1,HS_BOTTOM_BOW);  }
+            {
+               AddPacket(1,HS_BOTTOM_BOW);
+            }
             else
-            {  AddPacket(1,HS_RIGHT_WEAPON);  }
+            {
+               AddPacket(1,HS_RIGHT_WEAPON);
+            }
 
             if piWeapon_translation <> 0
             {
                AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
             }
-      
-            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);  
+
+            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);
          }
       }
 
@@ -497,14 +528,16 @@ messages:
    GetObjectFlags()
    {
       local iFlags;
+
       iFlags = piDrawFX;
-      
+
       if piColor = COLOR_BLUE
-      { iFlags = iFlags | PLAYER_DM | USER_YES ; }
+      {
+         iFlags = iFlags | PLAYER_DM | USER_YES ;
+      }
 
       return iFlags;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

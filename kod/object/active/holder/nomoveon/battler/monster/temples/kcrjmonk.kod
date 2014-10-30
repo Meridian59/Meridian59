@@ -9,6 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RiijaMonk is Temples
+
 constants:
 
    include blakston.khd
@@ -29,7 +30,8 @@ resources:
       "the priestess of Riija welcomes you to her inner sanctum of unreality."
 
    riijamonk_teach = "Through ~I~rRiija's madness, ~byou can learn "
-   riijamonk_notworthy = "~II see ~gno evidence that ~byou~g are ready to ~rlearn."
+   riijamonk_notworthy = \
+      "~II see ~gno evidence that ~byou~g are ready to ~rlearn."
    riijamonk_worthy = "~IAre you ~rprepared for ~I~B~fenlightenment?"
    riijamonk_nobait = \
       "~lPerhaps if ~I`myou were ~Imore adept at ~cattracting "
@@ -38,8 +40,8 @@ resources:
    riijamonk_dispel = "~B~rNever do that again!"
    riijamonk_respel = "Yrxlfle'man ~I~gGrn'Solagh ~rYippie ~bYup-Yup..."
    riijamonk_unwanted_give = \
-      "~k%s%s tells you, \"~BFool,~I I do not need anything from ~n~r~Byou~n~k\""
-
+      "~k%s%s tells you, \"~BFool,~I I do not need anything "
+      "from ~n~r~Byou~n~k\""
 
 classvars:
 
@@ -77,6 +79,7 @@ messages:
    Constructed()
    {
       piDrawfx = BOUNCE_YES;
+
       propagate;
    }
 
@@ -120,7 +123,7 @@ messages:
 
       return vrName2;
    }
-   
+
    ShowDesc()
    {
       if pbIllusioned
@@ -137,7 +140,7 @@ messages:
 
    DispelIllusions()
    {
-      if not pbIllusioned
+      if NOT pbIllusioned
       {
          return;
       }
@@ -193,6 +196,7 @@ messages:
    CanAddSpell(who=$,num=$,report=TRUE)
    {
       local bWorthy, i, iAbility;
+
       bWorthy = FALSE;
 
       for i in Send(who,@GetPlayerUsing)
@@ -208,12 +212,12 @@ messages:
       {
          if not bWorthy
          {
-            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_notworthy,
+            Post(who,@SomeoneSaid,#what=self,#string=riijamonk_notworthy,
                   #type=SAY_RESOURCE);
          }
          else
          {
-            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_worthy,
+            Post(who,@SomeoneSaid,#what=self,#string=riijamonk_worthy,
                   #type=SAY_RESOURCE);
          }
 
@@ -231,7 +235,7 @@ messages:
          iAbility = Send(who,@GetSpellAbility,#spell_num=SID_BAIT);
          if iAbility < 89
          {
-            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_nobait,
+            Post(who,@SomeoneSaid,#what=self,#string=riijamonk_nobait,
                   #type=SAY_RESOURCE);
 
             return FALSE;

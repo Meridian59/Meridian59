@@ -19,12 +19,12 @@ resources:
    Minstrel_name_rsc = "Parrin Aragone"
    Minstrel_icon_rsc = wnminstr.bgf
    Minstrel_desc_rsc =  \
-     "Parrin is widely known across the land, but rarely spoken of favorably. "
-     "Although extremely gifted with the lyre, this traveling minstrel's lyrics "
-     "and puns habitually bring groans of disgust from those who are forced to "
-     "listen. Rumor has it that Paddock has threatened to kill Parrin should he "
-     "ever set foot in Familiars again. For a generous tip, he may sing of your "
-     "exploits. For a bigger tip, he may even leave. "
+     "Parrin is widely known across the land, but rarely spoken of favorably.  "
+     "Although extremely gifted with the lyre, this travelling minstrel's "
+     "lyrics and puns habitually bring groans of disgust from those who are "
+     "forced to listen.  Rumor has it that Paddock has threatened to kill "
+     "Parrin should he ever set foot in Familiars again.  For a generous tip, "
+     "he may sing of your exploits.  For a bigger tip, he may even leave. "
 
 classvars:
 
@@ -32,79 +32,84 @@ classvars:
    vrIcon = Minstrel_icon_rsc
    vrDesc = Minstrel_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER | MOB_SELLER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE \
+      | MOB_RECEIVE | MOB_TEACHER | MOB_SELLER
    viOccupation = MOB_ROLE_BARD
 
 properties:
    viQuestID = QST_ID_TRUTH_SPELL
-   
+
 messages:
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       if NOT (Send(who,@GetFaction) = FACTION_NEUTRAL)
       {
-         send(self,@SetMood,#new_mood=piMood-4);
+         Send(self,@SetMood,#new_mood=piMood-4);
       }
-      
+
       propagate;
    }
 
    AffectMood(what=$,why=$)
    {
-      if why = MOODMOD_DAWN 
+      if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood+1);
-         
+         Send(self,@SetMood,#new_mood=piMood+1);
+
          return;
       }
-      
-      if why = MOODMOD_DUSK 
+
+      if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood+3);
-         
+         Send(self,@SetMood,#new_mood=piMood+3);
+
          return;
       }
-      
+
       if why = MOODMOD_ACCEPT_ITEM
       {
          if IsClass(what,&Money)
          {
-            send(self,@SetMood,#new_mood=piMood+3);
+            Send(self,@SetMood,#new_mood=piMood+3);
          }
       }
-      
+
       return;
    }
 
    CreateDestinationList()
    {
-      plDestinations = [ [RID_DUKE3, 13, 21] , [RID_CORNOTH, 16, 39, 48,16], 
-                         [RID_JAS_TAVERN, 11, 9],[RID_BAR_BAR, 20, 7], [RID_CASTLE2C, 31, 23]];
+      plDestinations = [ [RID_DUKE3, 13, 21] , [RID_CORNOTH, 16, 39, 48,16],
+                         [RID_JAS_TAVERN, 11, 9],[RID_BAR_BAR, 20, 7],
+                         [RID_CASTLE2C, 31, 23]];
+
       return;
    }
 
    SetForSale()
    {
-      plFor_Sale = [$,$,[SID_TRUTH, SID_MIRTH, SID_MELANCHOLY, SID_SPELLBANE, SID_WARPTIME,
-                         SID_JIG, SID_MANA_CONVERGENCE, SID_REJUVENATE, SID_DISHARMONY] ];
+      plFor_Sale = [$,$,[SID_TRUTH, SID_MIRTH, SID_MELANCHOLY, SID_SPELLBANE,
+                         SID_WARPTIME, SID_JIG, SID_MANA_CONVERGENCE,
+                         SID_REJUVENATE, SID_DISHARMONY] ];
+
       return;
    }
-   
+
    CanAddSpell(who=$,num=0)
    "We require that a quest be done before one of the spells can be learned"
    {
       if (num = SID_TRUTH
-          OR num = SID_MIRTH
-          OR num = SID_MELANCHOLY)
-         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+            OR num = SID_MIRTH
+            OR num = SID_MELANCHOLY)
+         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
       {
          return FALSE;
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

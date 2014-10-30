@@ -17,12 +17,13 @@ resources:
 
    KocatanMadScientist_name_rsc = "Bahal zax'Ot"
    KocatanMadScientist_icon_rsc = kcmadsci.bgf
-   KocatanMadScientist_desc_rsc = "Leering at you as if you were a potential subject "
-      "for some twisted experiment, Bahal smiles and chortles to himself.  The moody "
-      "little man seems unnaturally obsessed with the horrific and the bizarre."
+   KocatanMadScientist_desc_rsc = \
+      "Leering at you as if you were a potential subject for some twisted "
+      "experiment, Bahal smiles and chortles to himself.  The moody little "
+      "man seems unnaturally obsessed with the horrific and the bizarre."
 
-   %KocatanMadScientist_entry_welcome = ""
-   
+   %KMadSci_entry_welcome = ""
+
 classvars:
 
    vrName = KocatanMadScientist_name_rsc
@@ -30,57 +31,64 @@ classvars:
    vrDesc = KocatanMadScientist_desc_rsc
    viMerchant_markup = MERCHANT_EXPENSIVE
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
    viOccupation = MOB_ROLE_WIZARD
 
 properties:
-   
+
 messages:
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_DAWN )
+      if why = MOODMOD_DAWN
       {
-	 send( self, @SetMood, #new_mood = piMood - 5 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood-5);
+
+         return;
       }
-      if( why = MOODMOD_DUSK )
+
+      if why = MOODMOD_DUSK
       {
-	 send( self, @SetMood, #new_mood = piMood + 5 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood+5);
+
+         return;
       }
+
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
-      if Send(who,@GetAction)=UA_HAPPY
+      if Send(who,@GetAction) = UA_HAPPY
       {
-	 send( self, @SetMood, #new_mood = piMood - 1 );
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
-      if Send(who,@GetAction)=UA_WRY
+
+      if Send(who,@GetAction) = UA_WRY
       {
-	 send( self, @SetMood, #new_mood = piMood + 1 );
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
-      iFlags = send( who, @GetObjectFlags );
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-	 send( self, @SetMood, #new_mood = piMood + 1 );
-	 propagate;
+         Send(self,@SetMood,#new_mood=piMood+1);
+
+         propagate;
       }
-      if not (iFlags & PLAYER_OUTLAW)
+      else
       {
-	 send( self, @SetMood, #new_mood = piMood - 1 );
+         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         {
+            Send(self,@SetMood,#new_mood=piMood-1);
+         }
       }
-%      Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanTailor_entry_welcome,
-%         #type = SAY_RESOURCE);
+
+      %Post(who,@SomeoneSaid,#what=self,#string=KMadSci_entry_welcome,
+      %      #type=SAY_RESOURCE);
+
       propagate;
    }
 
-
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

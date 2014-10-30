@@ -19,25 +19,34 @@ resources:
 
    fourCouncilor_name_rsc = "Drechx"
    fourCouncilor_icon_rsc = fourcon.bgf
-   fourCouncilor_desc_rsc = "A wise physician, he is rumored to have perfected his body's healing capacity.  "
-      "His body is old and weathered yet perfectly fit.  He truly believes the voice of the people should "
-      "dictate who leads them and allows his alliance to sway between the different lieges."
+   fourCouncilor_desc_rsc = \
+      "A wise physician, he is rumored to have perfected his body's healing "
+      "capacity.  His body is old and weathered yet perfectly fit.  He truly "
+      "believes the voice of the people should dictate who leads them and "
+      "allows his alliance to sway between the different lieges."
 
-   fourcon_true_ideal_rsc = "You possess quite a healthy physique, and such training impresses me."
-   fourcon_half_ideal_rsc = "Like most people I meet, you are a sickly sort, who pays too little attention to your health."
-   fourcon_unwanted_give = "~k%s%s tells you, \"I have no need for worldly possession.~n~k\""
+   fourcon_true_ideal_rsc = \
+      "You possess quite a healthy physique, and such training impresses me."
+   fourcon_half_ideal_rsc = \
+      "Like most people I meet, you are a sickly sort, who pays too little "
+      "attention to your health."
+   fourcon_unwanted_give = \
+      "~k%s%s tells you, \"I have no need for worldly possession.~n~k\""
 
-   fourCouncilor_not_ready = "Ah, you are not hearty enough to learn how to catch your second wind!"
+   fourCouncilor_not_ready = \
+      "Ah, you are not hearty enough to learn how to catch your second wind!"
 
 classvars:
 
    vrName = fourCouncilor_name_rsc
    vrDesc = fourCouncilor_desc_rsc
    vrIcon = fourCouncilor_icon_rsc
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN \
+         | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_COUNCILMEMBER
    viInitialState = 001
-   viGender = GENDER_MALE   
+   viGender = GENDER_MALE
 
    viHomeroom = RID_CASTLE1C
    viMyRow = 7
@@ -45,7 +54,6 @@ classvars:
    viMyANGLE = ANGLE_NORTH_EAST
 
    vrUnwanted_give = fourcon_unwanted_give
-
 
 properties:
 
@@ -55,28 +63,38 @@ messages:
 
    Constructor()
    {
-     plWantedItems = [&FourToken];
-     propagate;
+      plWantedItems = [&FourToken];
+
+      propagate;
    }
 
    SetForSale()
    {
       plFor_Sale = [$,[ SKID_SECOND_WIND ],$,$];
+
       return;
    }
 
    CheckSpecialDeliverer(who=$)
    {
-     piStateBump = 1; 
-     if Send(who,@GetMaxHealth) >= NUM_HP_FOR_SPECIAL
-       { piStateBump = 2;  return FourCon_true_ideal_rsc; }
-     else { return FourCon_half_ideal_rsc; }
-     return;
+      piStateBump = 1;
+      if Send(who,@GetMaxHealth) >= NUM_HP_FOR_SPECIAL
+      {
+         piStateBump = 2;
+
+         return FourCon_true_ideal_rsc;
+      }
+      else
+      {
+         return FourCon_half_ideal_rsc;
+      }
+
+      return;
    }
 
    CanDoTeach(who=$,sid=0)
    {
-      if not send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
+      if NOT send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
@@ -84,30 +102,35 @@ messages:
       propagate;
    }
    
-   CanAddSkill(who=$, num=0, report=FALSE)
+   CanAddSkill(who=$,num=0,report=FALSE)
    {
-      if not send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
+      if NOT send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
       {
          return FALSE;
       }
-      
+
       propagate;
    }
-   
+
    SpecialTeachChecks(who=$, num=0, report=FALSE)
-   {			
-      if who = $ or num = 0
-      { DEBUG("Called canaddspell with bad parameters!"); return FALSE; }
-   
-      if (num = SKID_SECOND_WIND) and (Send(who,@GetMaxHealth) < NUM_HP_FOR_SPECIAL)
+   {
+      if who = $ OR num = 0
       {
-         post(self,@saytoone,#target=who,#message_rsc=fourCouncilor_not_ready);
+         Debug("Called CanAddSpell with bad parameters!");
+
          return FALSE;
       }
- 
+
+      if num = SKID_SECOND_WIND
+         AND (Send(who,@GetMaxHealth) < NUM_HP_FOR_SPECIAL)
+      {
+         Post(self,@SayToOne,#target=who,#message_rsc=fourCouncilor_not_ready);
+
+         return FALSE;
+      }
+
       return TRUE;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

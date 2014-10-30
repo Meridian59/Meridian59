@@ -24,10 +24,10 @@ resources:
    Heretic_icon_rsc = wnhereti.bgf
    Heretic_possessed_icon_rsc = wnheret2.bgf
    Heretic_desc_rsc =  \
-      "Outcast by the religious community due to her blasphemous views of the gods, "
-      "Miriana dances by herself far from the rigid walls of civilization.  Some call her a "
-      "heretic, others a child, but all seem to find something dangerous about the distant "
-      "girl."
+      "Outcast by the religious community due to her blasphemous views of "
+      "the gods, Miriana dances by herself far from the rigid walls of "
+      "civilization.  Some call her a heretic, others a child, but all seem "
+      "to find something dangerous about the distant girl."
 
    heretic_inexperienced = "I will not teach these arts to one so weak."
    Heretic_already_have_spell = "Silly!  You already know the %s spell."
@@ -37,7 +37,9 @@ classvars:
    vrName = Heretic_name_rsc
    vrDesc = Heretic_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_PRIESTESS
    viGender = GENDER_FEMALE
 
@@ -48,25 +50,25 @@ properties:
 
 messages:
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
       local iAction;
 
-      iAction = send(who,@GetAction);
-      
+      iAction = Send(who,@GetAction);
+
       if iAction = UA_SAD
       {
-         send(self,@SetMood,#new_mood=piMood+1);
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
 
       if iAction = UA_HAPPY
       {
-         send(self,@SetMood,#new_mood=piMood-1);
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
 
       if iAction = UA_WRY
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
 
       propagate;
@@ -120,7 +122,7 @@ messages:
 
    CanDoTeach(who=$,sid=0)
    {
-      if NOT send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
+      if NOT Send(self,@SpecialTeachChecks,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
@@ -128,9 +130,9 @@ messages:
       propagate;
    }
    
-   CanAddSpell(who=$,num=0, report = FALSE)
+   CanAddSpell(who=$,num=0,report=FALSE)
    {
-      if NOT send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
+      if NOT Send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
       {
          return FALSE;
       }
@@ -138,29 +140,35 @@ messages:
       propagate;
    }
    
-   SpecialTeachChecks(who=$,num=0, report = FALSE)
-   {         
+   SpecialTeachChecks(who=$,num=0,report=FALSE)
+   {
       if who = $ or num = 0
-      { DEBUG("Called canaddspell with bad parameters!"); return FALSE; }
-   
-      if send(who,@HasSpell,#num=num) 
+      {
+         Debug("Called CanAddSpell with bad parameters!");
+
+         return FALSE;
+      }
+
+      if Send(who,@HasSpell,#num=num)
       {
          if report
-         { 
-            post(self,@SayToOne,#target=who,#message_rsc=Heretic_already_have_spell,
-                 #parm1=send(send(SYS,@FindSpellByNum,#num=num),@GetName)); 
+         {
+            Post(self,@SayToOne,#target=who,
+                  #message_rsc=Heretic_already_have_spell,
+                  #parm1=Send(Send(SYS,@FindSpellByNum,#num=num),@GetName));
          }
 
          return FALSE;
       }
 
-      %% only players who are killable may learn 
-      if (not send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         AND (num = SID_BRAMBLEWALL OR num = SID_FIREWALL OR num = SID_RING_OF_FLAMES))
-      { 
+      % Only players who are killable may learn.
+      if (NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND (num = SID_BRAMBLEWALL OR num = SID_FIREWALL
+               OR num = SID_RING_OF_FLAMES))
+      {
          if report
-         { 
-            post(self,@SayToOne,#target=who,#message_rsc=heretic_inexperienced);
+         {
+            Post(self,@SayToOne,#target=who,#message_rsc=heretic_inexperienced);
          }
 
          return FALSE;
@@ -168,7 +176,6 @@ messages:
 
       return TRUE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

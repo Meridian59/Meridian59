@@ -21,12 +21,12 @@ resources:
    MarionElder_desc_rsc = \
       "An ancient member of the Marion community, Ran er'Hoth has taken on a "
       "somewhat legendary status throughout Meridian, and is sought out for "
-      "his opinions and knowledge by pilgrims and travelers.  Whether he is "
+      "his opinions and knowledge by pilgrims and travellers.  Whether he is "
       "considered a wise man or the village idiot locally really depends on "
       "who you talk to."
 
    MrEl_entry_welcome = \
-      "Another traveler through Marion. Perhaps %s%s will come tell me of "
+      "Another traveller through Marion. Perhaps %s%s will come tell me of "
       "their adventures."
 
    Ran_orctooth = \
@@ -41,7 +41,9 @@ classvars:
    vrName = MarionElder_name_rsc
    vrIcon = MarionElder_icon_rsc
    vrDesc = MarionElder_desc_rsc
-   viAttributes = MOB_RANDOM | MOB_LISTEN | MOB_NOFIGHT | MOB_NOMOVE | MOB_TEACHER | MOB_RECEIVE | MOB_COND_SELLER
+   viAttributes = \
+      MOB_RANDOM | MOB_LISTEN | MOB_NOFIGHT | MOB_NOMOVE \
+      | MOB_TEACHER | MOB_RECEIVE | MOB_COND_SELLER
    viOccupation = MOB_ROLE_ELDER
 
 properties:
@@ -52,19 +54,19 @@ messages:
    {
       if why = MOODMOD_ACCEPT_ITEM
       {
-         if isClass(what,&Money)
+         if IsClass(what,&Money)
          {
-            send(self,@SetMood,#new_mood=piMood+1);
+            Send(self,@SetMood,#new_mood=piMood+1);
          }
-         
-         if isClass(what,&Food)
+
+         if IsClass(what,&Food)
          {
-            send(self,@SetMood,#new_mood=piMood+1);
+            Send(self,@SetMood,#new_mood=piMood+1);
          }
-         
+
          return;
       }
-      
+
       return;
    }
 
@@ -81,21 +83,20 @@ messages:
 
       oObj = Create(&OrcTooth,#number=4);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
-           #triggers=[Send(oObj,@GetName)],
-           #action=[LIBACT_CONDITIONAL,oObj,350,ran_orctooth]);
-           
+            #triggers=[Send(oObj,@GetName)],
+            #action=[LIBACT_CONDITIONAL,oObj,350,ran_orctooth]);
+
       return;
    }
-   
+
    UserEntered(who=$)
    {
-      Post(poOwner,@someoneSaid,#what=self,#string=MrEl_entry_welcome,
-          #type=SAY_RESOURCE,#parm1=send(who,@GetDef),
-          #parm2=Send(who,@GetName));
-          
+      Post(who,@SomeoneSaid,#what=self,#string=MrEl_entry_welcome,
+            #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),
+            #parm2=Send(who,@GetName));
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

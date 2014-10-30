@@ -19,8 +19,9 @@ resources:
    JasperBlacksmith_name_rsc = "Quintor"
    JasperBlacksmith_icon_rsc = jssmith.bgf
    JasperBlacksmith_desc_rsc = \
-      "Quintor is widely recognized as the finest weaponsmith in the land.  He is also "
-      "recognized as a quiet, brooding man who keeps to himself.  Take that as you will."
+      "Quintor is widely recognized as the finest weaponsmith in the land.  "
+      "He is also recognized as a quiet, brooding man who keeps to himself.  "
+      "Take that as you will."
 
    JsBla_entry_welcome = "Hello %s%s, and welcome."
 
@@ -31,7 +32,9 @@ classvars:
    vrName = JasperBlacksmith_name_rsc
    vrIcon = JasperBlacksmith_icon_rsc
    vrDesc = JasperBlacksmith_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_BUYER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_TEACHER | MOB_PERM_QUESTER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_BUYER | MOB_RANDOM \
+      | MOB_NOMOVE | MOB_LISTEN | MOB_TEACHER | MOB_PERM_QUESTER
    viOccupation = MOB_ROLE_BLACKSMITH
    viMerchant_markup = MERCHANT_BARGAIN
    viQuestID = QST_ID_SCIMITAR_PROF
@@ -50,21 +53,21 @@ messages:
    {
       if why = MOODMOD_DAWN
       {
-         send(self,@SetMood,#new_mood=piMood-2);
+         Send(self,@SetMood,#new_mood=piMood-2);
 
          return;
       }
 
       if why = MOODMOD_DUSK
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
 
          return;
       }
 
       if why = MOODMOD_SELL_ITEM
       {
-         send(self,@SetMood,#new_mood=piMood+3);
+         Send(self,@SetMood,#new_mood=piMood+3);
       }
 
       return;
@@ -73,7 +76,7 @@ messages:
    InitPermQuest()
    {
       Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
-           #reward=[QST_REWARD_ID,viQuestID]);
+            #reward=[QST_REWARD_ID,viQuestID]);
 
       return;
    }
@@ -82,7 +85,7 @@ messages:
    "We require that a quest be done before one of the spells can be learned"
    {
       if (num = SKID_PROFICIENCY_SCIMITAR)
-         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
       {
          return FALSE;
       }
@@ -90,64 +93,61 @@ messages:
       propagate;
    }
 
-   ObjectDesired(what = $)
+   ObjectDesired(what=$)
    {
       if Send(what,@CanBeGiventoNPC)
          AND (Send(Self,@IsObjectWeapon,#what=what)
-              OR Send(Self,@IsObjectWearable,#what=what))
+            OR Send(Self,@IsObjectWearable,#what=what))
       {
          if IsClass(what,&NeruditeSword)
             OR IsClass(what,&NeruditeArmor)
             OR IsClass(what,&NeruditeBow)
          {
-            send(poOwner,@SomeoneSaid,#what=self,#string=JsBla_island_items,#type=SAY_RESOURCE);
+            Send(poOwner,@SomeoneSaid,#what=self,
+                  #string=JsBla_island_items,#type=SAY_RESOURCE);
+
             return FALSE;
          }
 
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
    SetForSale()
    {
       plFor_sale = [
-         [	Create(&Mace),
-			   Create(&ShortSword),
-			   Create(&GoldShield),
-			   Create(&ScaleArmor),
-			   Create(&Hammer),
-			   Create(&LeatherArmor)
-		   ],
+         [   Create(&Mace),
+            Create(&ShortSword),
+            Create(&GoldShield),
+            Create(&ScaleArmor),
+            Create(&Hammer),
+            Create(&LeatherArmor)
+         ],
          [SKID_PROFICIENCY_SCIMITAR], $ ];
 
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
-
-      iFlags = send(who,@GetObjectFlags);
-
-      if iFlags & PLAYER_OUTLAW
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      if send(who,@GetHomeRoom) = RID_JAS_INN
+      if Send(who,@GetHomeRoom) = RID_JAS_INN
       {
-         send(self,@SetMood,#new_mood=piMood+1);
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
-      
-      Post(poOwner,@SomeoneSaid,#what=self,#string=JsBla_entry_welcome,
-           #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
+      Post(who,@SomeoneSaid,#what=self,#string=JsBla_entry_welcome,
+           #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),
+           #parm2=Send(who,@GetName));
 
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

@@ -19,15 +19,21 @@ resources:
 
    threeCouncilor_name_rsc = "Cylill"
    threeCouncilor_icon_rsc = threecon.bgf
-   threeCouncilor_desc_rsc = "A combat veteran of the wars with Ukgoth, he has mastered every skill of combat.  "
-      "Dressed in light armor and military formal regalia, he lounges at his hut as a general during "
-      "disgusting peacetime.  Cylill has had a long past serving with the Duke's forces in protecting "
+   threeCouncilor_desc_rsc = \
+      "A combat veteran of the wars with Ukgoth, he has mastered every skill "
+      "of combat.  Dressed in light armor and military formal regalia, he "
+      "lounges at his hut as a general during disgusting peacetime.  Cylill "
+      "has had a long past serving with the Duke's forces in protecting "
       "the world from Trolls and has many war stories to tell.."
 
-   threecon_true_ideal_rsc = "It is impressive to meet another who knows so much about combat skills."
-   threecon_half_ideal_rsc = "Given your paltry knowledge of skills, I am certainly not overly impressed."
+   threecon_true_ideal_rsc = \
+      "It is impressive to meet another who knows so much about combat skills."
+   threecon_half_ideal_rsc = \
+      "Given your paltry knowledge of skills, I am certainly not "
+      "overly impressed."
 
-   threecon_unwanted_give = "~k%s%s tells you, \"I don't need it, chap.~n~k\""
+   threecon_unwanted_give = \
+      "~k%s%s tells you, \"I don't need it, chap.~n~k\""
 
 
 classvars:
@@ -35,10 +41,12 @@ classvars:
    vrName = threeCouncilor_name_rsc
    vrDesc = threeCouncilor_desc_rsc
    vrIcon = threeCouncilor_icon_rsc
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN \
+         | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_COUNCILMEMBER
-   viInitialState = 001  
-   viGender = GENDER_MALE   
+   viInitialState = 001
+   viGender = GENDER_MALE
 
    viHomeroom = RID_F3
    viMyRow = 27
@@ -54,42 +62,55 @@ properties:
 
 messages:
 
-   AffectMood( why = $, what = $ )
+   AffectMood(why=$,what=$)
    {
-      if( why = MOODMOD_DAWN )
+      if why = MOODMOD_DAWN
       {
-	 send( self, @SetMood, #new_mood = piMood + 3 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood+3);
+
+         return;
       }
-      if( why = MOODMOD_DUSK )
+
+      if why = MOODMOD_DUSK
       {
-	 send( self, @SetMood, #new_mood = piMood - 3 );
-	 return;
+         Send(self,@SetMood,#new_mood=piMood-3);
+
+         return;
       }
       return;
    }
 
    Constructor()
    {
-     plWantedItems = [&ThreeToken];
-     propagate;
+      plWantedItems = [&ThreeToken];
+
+      propagate;
    }
 
    SetForSale()
    {
       plFor_Sale = [$,[ SKID_DISARM ],$,$];
+
       return;
    }
 
    CheckSpecialDeliverer(who=$)
    {
-     piStateBump = 1; 
-     if Length(Send(who,@GetSkillList)) >= NUM_SKILLS_FOR_SPECIAL
-       { piStateBump = 2;  return threeCon_true_ideal_rsc; }
-     else { return threeCon_half_ideal_rsc; }
-     return;
+      piStateBump = 1;
+
+      if Length(Send(who,@GetSkillList)) >= NUM_SKILLS_FOR_SPECIAL
+      {
+         piStateBump = 2;
+
+         return threeCon_true_ideal_rsc;
+      }
+      else
+      {
+         return threeCon_half_ideal_rsc;
+      }
+
+      return;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

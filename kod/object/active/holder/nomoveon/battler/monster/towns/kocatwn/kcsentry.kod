@@ -19,7 +19,8 @@ resources:
    Kocatansentry_name_rsc = "sentry"
    kocatansentry_icon_rsc = kcsentry.bgf
    kocatansentry_desc_rsc =  \
-     "Trained to defend the walls of Ko'catan this soldier is ready to prove his mettle."
+     "Trained to defend the walls of Ko'catan this soldier is ready "
+     "to prove his mettle."
 
 classvars:
 
@@ -27,16 +28,18 @@ classvars:
    vrIcon = Kocatansentry_icon_rsc
    vrDesc = Kocatansentry_desc_rsc
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_NOQUEST
+   viAttributes = \
+      MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | \
+      MOB_NOMOVE | MOB_RECEIVE | MOB_NOQUEST
    viOccupation = MOB_ROLE_GUARD
 
    viDefinite = ARTICLE_THE
    viIndefinite = ARTICLE_A
 
 properties:
-   
+
 messages:
-   
+
    TryAddToQuestEngine()
    {
       return FALSE;

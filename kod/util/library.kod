@@ -151,7 +151,6 @@ resources:
   LM_shal_prst_faction_resign = "You can resign from a faction by bringing me a Council Token as proof of your desire, or just wait for your liege to grow dissatisfied with your devotion and strike you from their rosters."
 
   LM_onecon_banker_buy = "I know secrets, yes, but I'll only share them with a master of the arts."
- 
 
 %triggers
    LT_hi = "hi"
@@ -788,12 +787,13 @@ properties:
    piLastRandomKey = 0
    pcLastRandomClass = $
    plScratchString = $
-   
+
 messages:
 
    Constructor()
    {
       Send(self,@Recreate,#initial=True);
+
       return;
    }
 
@@ -807,7 +807,7 @@ messages:
    "some continuity kept for the players who are just a bit slow."
    {
       local lQuesters,LPermQs,lSellers,i,j,repeat;
-      
+
       lSellers = $;
       lQuesters = $;
       lPermQs = $;
@@ -825,24 +825,31 @@ messages:
                repeat = TRUE;
             }
          }
-         
+
          if NOT repeat AND Send(i,@MobIsCondSeller)
          {
             lSellers = Cons(i,lSellers);
          }
       }
 
-      %Reset the quester list to be just the raw ones.
-      For i in plOnQuestList { plQuesterList=Cons(i,plQuesterList); }
+      % Reset the quester list to be just the raw ones.
+      for i in plOnQuestList
+      {
+         plQuesterList=Cons(i,plQuesterList);
+      }
+
       plOnQuestList = $;
       plMobLib = $;
       plQuests = $;  %(DISABLED -- AJM)
       piNextQuestID= QST_START_NUM;
 
       %Get our perma questers...
-      For i in plQuesterList
+      for i in plQuesterList
       {
-        if Send(i,@MobIsPermQuester) {lPermQs=Cons(i,lPermQs);}
+         if Send(i,@MobIsPermQuester)
+         {
+            lPermQs=Cons(i,lPermQs);
+         }
       }
 
       for i in plQuestOfferObjects
@@ -852,7 +859,7 @@ messages:
       }
       plQuestOfferObjects = $;
 
-      %Reset all the lists of things in case something changed...
+      % Reset all the lists of things in case something changed...
       Send(self,@CreateRandomLibrary);
       Send(self,@CreateSpeechLibrary);
       Send(self,@CreateFortuneLibrary);
@@ -868,9 +875,9 @@ messages:
    }
 
    Recreate(initial=False)
-   "Basically this does everything to recreate the library except clear"
-   "the plQuestUser list that keeps track of which players have done"
-   "which permaquests. If the permaquest id's change, this will be messed"
+   "Basically this does everything to recreate the library except clear "
+   "the plQuestUser list that keeps track of which players have done "
+   "which permaquests. If the permaquest id's change, this will be messed "
    "up then..."
    {
       local i;
@@ -888,18 +895,18 @@ messages:
          plOnQuestList = $;
          plOldQuestPhrases = $;
          plOldQuestClasses = $;
-         
+
          for i in plQuestOfferObjects
          {
             plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
             Send(i,@Delete);
          }
-         
+
          plQuestOfferObjects = $;
          piNextQuestID = QST_START_NUM;
          ptQuestGenTimer=$;
       }
-      
+
       plScratchString = [ CreateString() ];      % -AJM used for NPC dialogue
       SetString( First( plScratchString ), append_string );
 
@@ -914,13 +921,13 @@ messages:
    }
 
    Delete()
-   "Dereferences the three main library lists (yeah garbage collection)"
-   "Since the moblib should be used mainly for random quests, this will"
-   "cause some mucky problems, unless we clear the quests as well."
-   "basically, you shouldnt be deleting this object"
+   "Dereferences the three main library lists (yeah garbage collection) "
+   "Since the moblib should be used mainly for random quests, this will "
+   "cause some mucky problems, unless we clear the quests as well. "
+   "Basically, you shouldn't be deleting this object."
    {
       local i;
-      
+
       plOccupations = $;
       plNPCs = $;
       plRandomLib = $;
@@ -942,10 +949,11 @@ messages:
          plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
          Send(i,@Delete);
       }
+
       plQuestOfferObjects = $;
       DeleteTimer(ptQuestGenTimer);
       ptQuestGenTimer=$;
-      
+
       return;
    }
 
@@ -955,9 +963,9 @@ messages:
    {
       if plNPCs = $ OR FindListElem(plNPCs,who) = 0
       {
-         plNPCs = cons(who,plNPCs);
+         plNPCs = Cons(who,plNPCs);
       }
-      
+
       return;
    }
 
@@ -967,7 +975,7 @@ messages:
       {
          plNPCs = DelListElem(plNPCs,who);
       }
-      
+
       return;
    }
 
@@ -986,67 +994,14 @@ messages:
    AddToOccupationList( who = $ )
    {
       local iOccupation, lOccBranch, oNPC;
-      
-      if who = $ 
-      {
-         return;
-      }
-      
-      iOccupation = send(who,@GetOccupation);
-      
-      if iOccupation = 0 
-      {
-         return;
-      }
-      
-      if plOccupations = $ 
-      {
-         plOccupations = [ [ iOccupation, [ who ] ] ];
-         return;
-      }
-      
-      for lOccBranch in plOccupations
-      {
-         if first(lOccBranch) = iOccupation
-         {
-            % make sure npc isn't already in list (shouldn't be)
-            for oNPC in Nth(lOccBranch,2)
-            {
-               if oNPC = who 
-               {
-                  return;
-               }
-            }
 
-            % add him
-            SetNth(lOccBranch,2,cons(who,Nth(lOccBranch,2)));
-            
-            return;
-         }
-      }
-      
-      % new occupation
-      plOccupations = cons( [ iOccupation, [ who ] ], plOccupations );
-      return;
-   }
-   
-   %% DeleteFromOccupationList()
-   %   OccupationList is a list of 2-element lists
-   %   first elem is NPC occupation, eg MOB_ROLE_BANKER
-   %   next elem is list of NPCs with that job
-   %   This method called by monster Delete
-   %%
-   DeleteFromOccupationList( who = $ )
-   {
-      local iOccupation, lOccBranch, oNPC;
-      
       if who = $
       {
          return;
       }
-      
-      iOccupation = send(who,@GetOccupation);
-      
+
+      iOccupation = Send(who,@GetOccupation);
+
       if iOccupation = 0
       {
          return;
@@ -1054,80 +1009,127 @@ messages:
       
       if plOccupations = $
       {
+         plOccupations = [[iOccupation,[who]]];
+
          return;
       }
-      
+
       for lOccBranch in plOccupations
       {
-         if first(lOccBranch) = iOccupation
+         if First(lOccBranch) = iOccupation
+         {
+            % Make sure npc isn't already in list (shouldn't be).
+            for oNPC in Nth(lOccBranch,2)
+            {
+               if oNPC = who
+               {
+                  return;
+               }
+            }
+
+            % Add NPC to list.
+            SetNth(lOccBranch,2,Cons(who,Nth(lOccBranch,2)));
+
+            return;
+         }
+      }
+
+      % New occupation.
+      plOccupations = Cons([iOccupation,[who]],plOccupations);
+
+      return;
+   }
+
+   DeleteFromOccupationList(who=$)
+   "OccupationList is a list of 2-element lists: first elem is NPC "
+   "occupation, eg MOB_ROLE_BANKER; next elem is list of NPCs with that job. "
+   "This method called by monster Delete."
+   {
+      local iOccupation, lOccBranch, oNPC;
+
+      if who = $
+      {
+         return;
+      }
+
+      iOccupation = Send(who,@GetOccupation);
+
+      if iOccupation = 0
+         OR plOccupations = $
+      {
+         return;
+      }
+
+      for lOccBranch in plOccupations
+      {
+         if First(lOccBranch) = iOccupation
          {
             for oNPC in Nth(lOccBranch,2)
             {
                if oNPC = who
                {
-                  % remove him
+                  % Remove NPC from list.
                   SetNth(lOccBranch,2,DelListElem(Nth(lOccBranch,2),who));
                   if Length(Nth(lOccBranch,2)) < 1
                   {
-                     % no more with this occupation
+                     % No more NPCs with this occupation.
                      plOccupations = DelListElem(plOccupations,lOccBranch);
                   }
-                  
+
                   return;
                }
             }
-            
-            % not in his occupation branch
+
+            % Not in his occupation branch.
             return;
          }
       }
-      
-      % occupation not in list
+
+      % Occupation not in list.
       return;
    }
 
-   %% GetOccupationList()
-   %   OccupationList is a list of 2-element lists
-   %   first elem is NPC occupation, eg MOB_ROLE_BANKER
-   %   next elem is list of NPCs with that job
-   %   This method returns a list of NPCs whose job matches
-   %    If cNPC_class filter is defined, return only NPCs who match
-   %    If iJob is 0, searches all jobs
-   %   onIsland filters by continent (true means island-only, false means mainland-only, $ means either)
-   %%
    GetOccupationList( iJob = 0, cNPC_class = $, onIsland = $ )
+   "OccupationList is a list of 2-element lists: first elem is NPC "
+   "occupation, eg MOB_ROLE_BANKER; next elem is list of NPCs with that job. "
+   "This method returns a list of NPCs whose job matches:\n "
+   "If cNPC_class filter is defined, return only NPCs who match,\n"
+   "If iJob is 0, searches all jobs.\n onIsland filters by continent, "
+   "(TRUE means island-only, FALSE means mainland-only, $ means either.)"
    {
       local lOccBranch, j, lMatches;
 
       lMatches = $;
-      
-      % no iJob or cNPC_class specified
-      if iJob = 0 
+
+      % No iJob or cNPC_class specified.
+      if iJob = 0
       {
-         if cNPC_class = $ 
+         if cNPC_class = $
          {
             return $;
          }
       }
 
-      % single job type specified, with filter
+      % Single job type specified, with filter.
       for lOccBranch in plOccupations
       {
-         if ( iJob = 0 ) or ( iJob = first(lOccBranch) )
+         if iJob = 0 OR iJob = First(lOccBranch)
          {
-            for j in Nth( lOccBranch, 2 )
+            for j in Nth(lOccBranch,2)
             {
-               if ( cNPC_class = $ ) or ( IsClass(j, cNPC_class) )
+               if cNPC_class = $ OR IsClass(j,cNPC_class)
                {
-                  if ( onIsland = $ ) or
-                           ( onIsland = (isclass(j,&KocatanTown) or isClass(j,&RiijaMonk)) )
+                  if onIsland = $
+                     OR (onIsland = (IsClass(j,&KocatanTown)
+                        OR IsClass(j,&RiijaMonk)))
                   {
-                     lMatches = cons( j, lMatches );
+                     lMatches = Cons(j,lMatches);
                   }
                }
             }
          }
       }
+
       return lMatches;
    }
 
@@ -1139,7 +1141,7 @@ messages:
    "type and its parameters. The percentage is from 0 to 100, and for the "
    "action to be triggered, the incoming percentage must be greater or "
    "equal to the library percentage (so 0 is never, 100 is always, etc)"
-   { 
+   {
      plRandomLib = $;
 
 %     plRandomLib = Cons(
@@ -1596,18 +1598,18 @@ messages:
       {
          if NOT FindListElem(lDontInclude,GetClass(oMonster))
          {
-            lTempList = cons(GetClass(oMonster),[]);
-            lTempList = cons(LIBACT_MONSTER_ADVICE,lTempList);
-            lAddList = cons(lTempList,[]);
-            lAddList = cons(0,lAddList);
-            lTempList = cons(send(oMonster,@GetName),[]);
-            lAddList = cons(lTempList,lAddList);
-            lMonsters = cons(lAddList,lMonsters);
+            lTempList = Cons(GetClass(oMonster),[]);
+            lTempList = Cons(LIBACT_MONSTER_ADVICE,lTempList);
+            lAddList = Cons(lTempList,[]);
+            lAddList = Cons(0,lAddList);
+            lTempList = Cons(Send(oMonster,@GetName),[]);
+            lAddList = Cons(lTempList,lAddList);
+            lMonsters = Cons(lAddList,lMonsters);
          }
       }
 
-      lAddList = cons(lMonsters,[]);
-      lAddList = cons(&cornothsergeant,lAddList);
+      lAddList = Cons(lMonsters,[]);
+      lAddList = Cons(&cornothsergeant,lAddList);
 
       plSpeechLib = Cons(
          lAddList,
@@ -1812,36 +1814,31 @@ messages:
       [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
      ]],plSpeechLib);
 
+      return;
+   }
 
-     return; }
-
-      AppendSpeechLibrary(lDialogue=$)
+   AppendSpeechLibrary(lDialogue=$)
+   {
+      % Assume all is right with the world, and tack it in.
+      if lDialogue <> $
       {
-    %% assume all is right with the world, and tack it in
-    if lDialogue <> $
-    {
-       pLSpeechLib = Cons(lDialogue,plSpeechLib);
-    }
-    return;
-     }
+         pLSpeechLib = Cons(lDialogue,plSpeechLib);
+      }
+
+      return;
+   }
 
    CreateFortuneLibrary()
    {
       plFortunes = $;
       plCommonFortunes = $;
 
-
-      %% Add the most commonly recurring ones here.
+     %% Add the most commonly recurring ones here.
      %% All the fortunes which are added here will appear
      %% quite a bit more often than any other fortune added below.
-     %%
-     plCommonFortunes = [
-      FC_1, FC_2, FC_3, FC_4, FC_5
-     ];
-
+     plCommonFortunes = [FC_1, FC_2, FC_3, FC_4, FC_5];
 
       %% Add the rest of the fortunes here.
-     %%
       plFortunes = $;
       plFortunes = Cons(FC_10, plFortunes);
       plFortunes = Cons(FC_11, plFortunes);
@@ -2008,13 +2005,17 @@ messages:
    PickFortune()
    {
       local a, b;
-     a = Length(plCommonFortunes);
-     b = Length(plFortunes);
-      if (Random(1, b + a + a + a + a + a) < b)   % 5x more likely to get common one
-     {
-         return Nth(plFortunes, Random(1, b));
-     }
-      return Nth(plCommonFortunes, Random(1, a));
+
+      a = Length(plCommonFortunes);
+      b = Length(plFortunes);
+
+      % 5x more likely to get common one
+      if (Random(1, b + a + a + a + a + a) < b)
+      {
+         return Nth(plFortunes,Random(1,b));
+      }
+
+      return Nth(plCommonFortunes,Random(1,a));
    }
 
    AddToMobLib(mob = $, percent = 0, triggers = $, action = $, id = 0)
@@ -2029,10 +2030,12 @@ messages:
          if First(i) = mob
          {
             SetNth(i,2,Cons([percent,triggers,action,id],Nth(i,2)));
+
             return;
          }
       }
       plMobLib=Cons([mob,[[percent,triggers,action,id]]],plMobLib);
+
       return;
    }
 
@@ -2042,7 +2045,7 @@ messages:
    "If all are deleted, then the reference to the mob is deleted as well."
    {
       local i,j,k,lTmp,iCount;
- 
+
       iCount=0;
       for i in plMobLib
       {
@@ -2070,43 +2073,52 @@ messages:
             SetNth(plMobLib,iCount,[mob,lTmp]);
             iCount = iCount - 1;
             }
+
             return;
          }
       }
+
       return;
    }
 
-   PersonalityClash(mob = $, libvec = 0)
+   PersonalityClash(mob=$,libvec=0)
    "Determine if the mob has a conflicting personality to a library entry"
    {
-      if mob = $ OR libvec=0 {return False;}
+      if mob = $ OR libvec=0 {return FALSE;}
 
-      if ((libvec & LIBRES_FEMALE_ONLY) <> 0) AND
-         (Send(mob,@GetGender) = GENDER_MALE)
+      if ((libvec & LIBRES_FEMALE_ONLY) <> 0)
+         AND (Send(mob,@GetGender) = GENDER_MALE)
       {
-         return True;
+         return TRUE;
       }
-      if ((libvec & LIBRES_MALE_ONLY) <> 0) AND
-         (Send(mob,@GetGender) = GENDER_FEMALE)
+
+      if ((libvec & LIBRES_MALE_ONLY) <> 0)
+         AND (Send(mob,@GetGender) = GENDER_FEMALE)
       {
-         return True;
+         return TRUE;
       }
-      if ((libvec & LIBRES_NOT_ROOK) <> 0) AND
-         (IsClass(mob,&CorNothSergeant))
+
+      if ((libvec & LIBRES_NOT_ROOK) <> 0)
+         AND (IsClass(mob,&CorNothSergeant))
       {
-    return True;
+         return TRUE;
       }
-      if ((libvec & LIBRES_NOT_NEWBIE) <> 0) AND (IsClass(mob,&HazarTown))
-    {  return True;  }
+
+      if ((libvec & LIBRES_NOT_NEWBIE) <> 0)
+         AND (IsClass(mob,&HazarTown))
+      {
+         return TRUE;
+      }
 
       if( ( libvec & LIBRES_MOOD_MASK ) <> 0 )
       {
-    if( (( libvec & LIBRES_MOOD_MASK ) & send( mob, @GetMoodFlags )) = 0 )
-    {
-       return TRUE;
-    }
+         if( ((libvec & LIBRES_MOOD_MASK) & Send(mob,@GetMoodFlags)) = 0)
+         {
+            return TRUE;
+         }
       }
-      return False;
+
+      return FALSE;
    }
 
    SearchMobLib(mob = $, string = $, percent = 100, count=0, action_list=$)
@@ -2134,9 +2146,9 @@ messages:
                      % We have a speech trigger, check for keyword matches
                      if (StringContain(string,k))
                      {
-                        if first(Nth(j,3)) = LIBACT_QST_OBJI_LIST
+                        if First(Nth(j,3)) = LIBACT_QST_OBJI_LIST
                         {
-                           return nth(j,3);
+                           return Nth(j,3);
                         }
                         if ktriggered <> $ {
                            bKtContainK = StringContain(ktriggered,k);
@@ -2200,33 +2212,33 @@ messages:
    DebugSpeechLib(mob = $)
    {
       local i,j,lAct;
+
       for i in plSpeechLib
       {
          if IsClass(mob,First(i))
-    {
-       for j in Nth(i,2)
+         {
+            for j in Nth(i,2)
             {
-          lAct = nth(j,3);
-          if( first(lAct) = LIBACT_QUOTE )
-          {
-        Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
-             #string = quote_substring,
-             #parm1=Nth(lAct,2) );
-          }
-          if( first(lAct) = LIBACT_MOOD )
-          {
-%        Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
-%             #string = quote_substring,
-%             #parm1=Nth(lAct,2) );
-%        debug("mood trigger",mob);
-          }
-
-       }
-    }
+               lAct = Nth(j,3);
+               if( First(lAct) = LIBACT_QUOTE )
+               {
+                  Post(Send(mob,@GetOwner),@SomeoneSaid,
+                        #what=mob,#type=SAY_MESSAGE,
+                        #string = quote_substring,#parm1=Nth(lAct,2) );
+               }
+               if( First(lAct) = LIBACT_MOOD )
+               {
+                  %Post(Send(mob,@GetOwner),@SomeoneSaid,
+                        %#what=mob,#type=SAY_MESSAGE,
+                        %#string = quote_substring,#parm1=Nth(lAct,2) );
+                  %Debug("mood trigger",mob);
+               }
+            }
+         }
       }
+
       return;
-   } 
-   
+   }
 
    SearchSpeechLib(mob = $, string = $)
    "Given the mob and the string, return an action. Any of the superclasses"
@@ -2242,35 +2254,35 @@ messages:
       lActionList = $;
       ktriggered = $;      % saves the current speech trigger corresponding to lActionList
       iCount = 0;
-%      debug( "SL: looking for class",GetClass(mob) );
+%      Debug( "SL: looking for class",GetClass(mob) );
       for i in plSpeechLib
       {
          if IsClass(mob,First(i)) 
          {
-%           debug( "SL: found class",First(i) );
+%           Debug( "SL: found class",First(i) );
             if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0 AND (First(i) <> GetClass(mob)) 
                { continue; }
             for j in Nth(i,2)
             {
                if not Send(self,@PersonalityClash,#mob=mob,#libvec=Nth(j,2))
                {
-%                 debug("SL:checking",string); 
+%                 Debug("SL:checking",string); 
                   for k in Nth(j,1)
                   {
                      % We have a suitable action for the class, check triggers
                      if (StringContain(string,k))
                      {
-%                       debug("SL: passed stringcontain",k);
+%                       Debug("SL: passed stringcontain",k);
                         % Spam filter:
                         % Check action key against list of keys triggered since last randomtimer firing
                         % Only check items with keys (4th in list)
                         % Don't repeat it if it's on the list
                         if( Length(j) > 3 )
                         {
-                           if send( mob, @OnSpamList, #mob_class = First(i), #key_num = Nth(j,4) )
+                           if Send( mob, @OnSpamList, #mob_class = First(i), #key_num = Nth(j,4) )
                               { continue; }
                         }
-%                       debug("SL: passed spamlist",k);
+%                       Debug("SL: passed spamlist",k);
 
          if( First(Nth(j,3)) = LIBACT_MOOD )
          {
@@ -2337,8 +2349,8 @@ messages:
     {
        for j in Nth(i,2)
             {
-          lAct = nth(j,3);
-          if( first(lAct) = LIBACT_QUOTE )
+          lAct = Nth(j,3);
+          if( First(lAct) = LIBACT_QUOTE )
           {
         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
              #string = quote_substring,
@@ -2408,7 +2420,7 @@ messages:
            {
          if( append )
          {
-%            debug( "appending string" );
+%            Debug( "appending string" );
 
             setString(First(plScratchString), quote);
 
@@ -2425,7 +2437,7 @@ messages:
          }
          else
          {
-%            debug( "replacing string" ); 
+%            Debug( "replacing string" ); 
             SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), quote );
          }
            }
@@ -2446,12 +2458,12 @@ messages:
        }
 
        % key not found - create new key
-%       debug( "creating new string" );
+%       Debug( "creating new string" );
 
        iHighKey = iHighkey + 1;
        lNewSpeechBranch = [ percent, mood, [ LIBACT_QUOTE, CreateString() ], iHighKey ];
        SetString( Nth( Nth( lNewSpeechBranch, 3 ), 2 ), quote );
-       SetNth( lClassBranch, 2, cons( lNewSpeechBranch, Nth( lClassBranch, 2 ) ) );
+       SetNth( lClassBranch, 2, Cons( lNewSpeechBranch, Nth( lClassBranch, 2 ) ) );
 
        pcLastRandomClass = npc_class;
        piLastRandomKey = iHighKey;
@@ -2462,44 +2474,46 @@ messages:
       % class not found, create new branch
       if( TRUE ) % want a way to validate a class name here
       {
-%    debug( "RandomLib: creating new class ",npc_class );
+%    Debug( "RandomLib: creating new class ",npc_class );
     iHighKey = 1;
     lNewSpeechBranch = [ percent, mood, [ LIBACT_QUOTE, CreateString() ], iHighKey ];
     SetString( Nth( Nth( lNewSpeechBranch, 3 ), 2 ), quote );
     lClassBranch = [ npc_class, [ lNewSpeechBranch ] ];
-    plRandomLib = cons( lClassBranch, plRandomLib );
+    plRandomLib = Cons( lClassBranch, plRandomLib );
 
     pcLastRandomClass = npc_class;
     piLastRandomKey = iHighKey;
     return iHighKey;
       }
 
-      debug( "RandomLib: Invalid class, ignored." );
+      Debug( "RandomLib: Invalid class, ignored." );
       pcLastRandomClass = $;
       piLastRandomKey = 0;
       return FALSE;
    }
 
-   AppendLastRandomLibQuote( quote = $ )
+   AppendLastRandomLibQuote(quote = $)
    {
       % appends quote to last quote added (to bypass length restriction on admin textfile read)
 
       if( quote = $ )
       {
-    return 0;
+         return 0;
       }
       if( piLastRandomKey = 0 )
       {
-    return 0;
+         return 0;
       }
       if( pcLastRandomClass = $ )
       {
-    return 0;
+         return 0;
       }
-      return send( self, @SetRandomLibQuote, #keynum = -1, #quote = quote, #append = TRUE );
+
+      return Send( self, @SetRandomLibQuote, #keynum = -1, #quote = quote, #append = TRUE );
    }
 
-   SetSpeechLibTrigger( npc_class = $, keynum = 0, triggernum = 0, trigger = $, mood = $, mood_change = $ )
+   SetSpeechLibTrigger(npc_class=$,keynum=0,triggernum=0,trigger=$,
+                        mood=$,mood_change=$)
    {
       % if key and triggernum both found, replaces trigger
       % if key is found, but not triggernum, creates new trigger
@@ -2510,125 +2524,134 @@ messages:
       % mood only set on initial create
       % if mood_change is sent, creates a mood_change trigger isntead of a quote trigger
 
-      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch, iNumTriggers, lNewAction;
+      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch,
+            iNumTriggers, lNewAction;
+
       if( keynum = -1 )
       {
-    keynum = piLastSpeechKey;
-    npc_class = pcLastSpeechClass;
+         keynum = piLastSpeechKey;
+         npc_class = pcLastSpeechClass;
       }
       if( npc_class = $ )
       {
-    pcLastSpeechClass = $;
-    piLastSpeechKey = 0;
+         pcLastSpeechClass = $;
+         piLastSpeechKey = 0;
 
-    return 0;
+         return 0;
       }
       if( trigger = $ )
       {
-    pcLastSpeechClass = $;
-    piLastSpeechKey = 0;
-    return 0;
+         pcLastSpeechClass = $;
+         piLastSpeechKey = 0;
+
+         return 0;
       }
       if( mood = $ )
       {
-    mood = 0;
+         mood = 0;
       }
       if( mood < 1 )
       {
-    mood = 0;
+         mood = 0;
       }
 
       iHighKey = 0;
       for lClassBranch in plSpeechLib
       {
-    if( npc_class = First( lClassBranch ) )
-    {
-       for lSpeechBranch in Nth( lClassBranch, 2 )
-       {
-          if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
-          {
-        % look through keys for a match
-        iCurrKey = Nth( lSpeechBranch, 4 );
-        if( iCurrKey = keynum )
-        {
-           % found key - now look for triggernum
-%           debug( "found key" );
-           iNumTriggers = Length( First( lSpeechBranch) );
-           if( triggernum > iNumTriggers )
-           {
-         % add new trigger
-%         debug( "adding trigger" );
-         SetNth( lSpeechBranch, 1, cons( CreateString(), First( lSpeechBranch ) ) );
-         SetString( First( First( lSpeechBranch ) ), trigger );
-           }
-           else
-           {
-         % replace trigger, counting from end of list
-%         debug( "replacing trigger" );
-         SetString( Nth( First( lSpeechBranch ), iNumTriggers - triggernum + 1), trigger );
-           }
-           piLastSpeechKey = keynum;
-           pcLastSpeechClass = npc_class;
-           return keynum;
-        }
-        if( iCurrKey > iHighKey )
-        {
-           iHighKey = iCurrKey;
-        }
-          }
-       }
+         if( npc_class = First( lClassBranch ) )
+         {
+            for lSpeechBranch in Nth( lClassBranch, 2 )
+            {
+               if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
+               {
+                  % look through keys for a match
+                  iCurrKey = Nth( lSpeechBranch, 4 );
+                  if( iCurrKey = keynum )
+                  {
+                     % found key - now look for triggernum
+                     %Debug( "found key" );
+                     iNumTriggers = Length( First( lSpeechBranch) );
+                     if( triggernum > iNumTriggers )
+                     {
+                        % add new trigger
+                        %Debug( "adding trigger" );
+                        SetNth( lSpeechBranch, 1, Cons( CreateString(),
+                              First( lSpeechBranch ) ) );
+                        SetString( First( First( lSpeechBranch ) ), trigger );
+                     }
+                     else
+                     {
+                        % replace trigger, counting from end of list
+                        %Debug( "replacing trigger" );
+                        SetString( Nth( First( lSpeechBranch ),
+                              iNumTriggers - triggernum + 1), trigger );
+                     }
+                     piLastSpeechKey = keynum;
+                     pcLastSpeechClass = npc_class;
 
-       % key not found - create new key
+                     return keynum;
+                  }
+                  if( iCurrKey > iHighKey )
+                  {
+                     iHighKey = iCurrKey;
+                  }
+               }
+            }
 
-       iHighKey = iHighkey + 1;
-       if( mood_change = $ )
-       {
-          lNewAction = [ LIBACT_QUOTE, CreateString() ];
-          SetString( Nth( lNewAction, 2 ), quote_uninitialized );
-%          debug( "creating new string" );
-       }
-       else
-       {
-          lNewAction = [ LIBACT_MOOD, mood_change ];
-%             debug( "creating mood trigger" );
-       }
-       lNewSpeechBranch = [ [ CreateString() ], mood, lNewAction, iHighKey ];
-       SetString( First( First( lNewSpeechBranch) ), trigger );
-       SetNth( lClassBranch, 2, cons( lNewSpeechBranch, Nth( lClassBranch, 2 ) ) );
-       piLastSpeechKey = iHighKey;
-       pcLastSpeechClass = npc_class;
-       return iHighKey;
-    }
+            % key not found - create new key
+
+            iHighKey = iHighkey + 1;
+            if( mood_change = $ )
+            {
+               lNewAction = [ LIBACT_QUOTE, CreateString() ];
+               SetString( Nth( lNewAction, 2 ), quote_uninitialized );
+               %Debug( "creating new string" );
+            }
+            else
+            {
+               lNewAction = [ LIBACT_MOOD, mood_change ];
+               %Debug( "creating mood trigger" );
+            }
+            lNewSpeechBranch = [ [ CreateString() ], mood, lNewAction, iHighKey ];
+            SetString( First( First( lNewSpeechBranch) ), trigger );
+            SetNth( lClassBranch, 2, Cons( lNewSpeechBranch, Nth( lClassBranch, 2 ) ) );
+            piLastSpeechKey = iHighKey;
+            pcLastSpeechClass = npc_class;
+
+            return iHighKey;
+         }
       }
 
       % class not found, create new branch
       if( TRUE ) % want a way to validate a class name here
       {
-    iHighKey = 1;
-    if( mood_change = $ )
-    {
-       lNewAction = [ LIBACT_QUOTE, CreateString() ];
-       SetString( Nth( lNewAction, 2 ), quote_uninitialized );
-%       debug( "creating new string in new class ", npc_class );
-    }
-    else
-    {
-       lNewAction = [ LIBACT_MOOD, mood_change ];
-%       debug( "creating mood trigger in new class ", npc_class );
-    }
-    lNewSpeechBranch = [ [ CreateString() ], mood, lNewAction, iHighKey ];
-    SetString( First( First( lNewSpeechBranch) ), trigger );
-    lClassBranch = [ npc_class, [ lNewSpeechBranch ] ];
-    plSpeechLib = cons( lClassBranch, plSpeechLib );
+         iHighKey = 1;
+         if( mood_change = $ )
+         {
+            lNewAction = [ LIBACT_QUOTE, CreateString() ];
+            SetString( Nth( lNewAction, 2 ), quote_uninitialized );
+            %Debug( "creating new string in new class ", npc_class );
+         }
+         else
+         {
+            lNewAction = [ LIBACT_MOOD, mood_change ];
+            %Debug( "creating mood trigger in new class ", npc_class );
+         }
+         lNewSpeechBranch = [ [ CreateString() ], mood, lNewAction, iHighKey ];
+         SetString( First( First( lNewSpeechBranch) ), trigger );
+         lClassBranch = [ npc_class, [ lNewSpeechBranch ] ];
+         plSpeechLib = Cons( lClassBranch, plSpeechLib );
 
-    piLastSpeechKey = iHighKey;
-    pcLastSpeechClass = npc_class;
-    return iHighKey;
+         piLastSpeechKey = iHighKey;
+         pcLastSpeechClass = npc_class;
+
+         return iHighKey;
       }
 
-      debug( "SpeechLib: Invalid class, ignored." );
+      Debug( "SpeechLib: Invalid class, ignored." );
       piLastSpeechKey = iHighKey;
       pcLastSpeechClass = npc_class;
+
       return FALSE;
    }
 
@@ -2641,94 +2664,97 @@ messages:
    % adding new class not allowed, returns 0 if class not found;
 
       local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch;
+
       if( keynum = -1 )
       {
-    keynum = piLastSpeechKey;
-    npc_class = pcLastSpeechClass;
+         keynum = piLastSpeechKey;
+         npc_class = pcLastSpeechClass;
       }
+
       if( npc_class = $ )
       {
-    pcLastSpeechClass = $;
-    piLastSpeechKey = 0;
-    return 0;
+         pcLastSpeechClass = $;
+         piLastSpeechKey = 0;
+
+         return 0;
       }
+
       iHighKey = 0;
       for lClassBranch in plSpeechLib
       {
-    if( npc_class = First( lClassBranch ) )
-    {
-       for lSpeechBranch in Nth( lClassBranch, 2 )
-       {
-          if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
-          {
-        % quote action
-        iCurrKey = Nth( lSpeechBranch, 4 );
-        if( iCurrKey = keynum )
-        {
-           if( append )
-           {
-%         debug( "appending string" );
+         if( npc_class = First( lClassBranch ) )
+         {
+            for lSpeechBranch in Nth( lClassBranch, 2 )
+            {
+               if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
+               {
+                  % quote action
+                  iCurrKey = Nth( lSpeechBranch, 4 );
+                  if( iCurrKey = keynum )
+                  {
+                     if( append )
+                     {
+                        %Debug( "appending string" );
+                        setString(First(plScratchString), quote);
 
-         setString(First(plScratchString), quote);
-
-         clearTempString();
-         appendTempString(Nth(Nth(lSpeechbranch, 3), 2));
-         appendTempString(First(plScratchString));
-         setString(Nth(Nth(lSpeechbranch, 3), 2), getTempString());
+                        clearTempString();
+                        appendTempString(Nth(Nth(lSpeechbranch, 3), 2));
+                        appendTempString(First(plScratchString));
+                        setString(Nth(Nth(lSpeechbranch, 3), 2),
+                              getTempString());
 
 %         SetString( First( plScratchString ), append_string );
 %         StringSubstitute( First( plScratchString ), append_substring1, Nth( Nth( lSpeechbranch, 3 ), 2 ) );
 %         StringSubstitute( First( plScratchString ), append_substring2, quote );
 %         SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), First( plScratchString ) );
-           }
-           else
-           {
-%         debug( "replacing string" ); 
-         SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), quote );
-           }
-           pcLastSpeechClass = npc_class;
-           piLastSpeechKey = keynum;
-           return keynum;
-        }
-        if( iCurrKey > iHighKey )
-        {
-           iHighKey = iCurrKey;
-        }
-          }
-       }
+                     }
+                     else
+                     {
+                        %Debug( "replacing string" ); 
+                        SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), quote );
+                     }
+                     pcLastSpeechClass = npc_class;
+                     piLastSpeechKey = keynum;
 
-       % key not found
-       debug( "key not found" );
-       pcLastSpeechClass = $;
-       piLastSpeechKey = 0;
-       return -1;
-    }
+                     return keynum;
+                  }
+                  if( iCurrKey > iHighKey )
+                  {
+                     iHighKey = iCurrKey;
+                  }
+               }
+            }
+
+            % key not found
+            Debug( "key not found" );
+            pcLastSpeechClass = $;
+            piLastSpeechKey = 0;
+
+            return -1;
+         }
       }
       pcLastSpeechClass = $;
       piLastSpeechKey = 0;
+
       return 0;
    }
 
-   AppendLastSpeechLibQuote( quote = $ )
+   AppendLastSpeechLibQuote(quote=$)
    {
-      % appends quote to last quote added (to bypass length restriction on admin textfile read)
+      % Appends quote to last quote added, to bypass
+      % length restriction on admin textfile read.
 
-      if( quote = $ )
+      if quote = $
+         OR piLastSpeechKey = 0
+         OR pcLastSpeechClass = $
       {
-    return 0;
+         return 0;
       }
-      if( piLastSpeechKey = 0 )
-      {
-    return 0;
-      }
-      if( pcLastSpeechClass = $ )
-      {
-    return 0;
-      }
-      return send( self, @SetSpeechLibQuote, #keynum = -1, #quote = quote, #append = TRUE );
+
+      return Send(self,@SetSpeechLibQuote,#keynum=-1,#quote=quote,#append=TRUE);
    }
 
-   SearchRandomLib(mob = $, percent = 100)
+   SearchRandomLib(mob=$,percent=100)
    "Given the mob and percentage, return an action"
    {
       local i,j,iCount,lAction,lActionList;
@@ -2739,8 +2765,11 @@ messages:
          if IsClass(mob,First(i))
          {
             if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0 AND
-               (First(i) <> GetClass(mob)) 
-            { continue; }
+               (First(i) <> GetClass(mob))
+            {
+               continue;
+            }
+
             for j in Nth(i,2)
             {
                if (First(j)>=percent) AND (not Send(self,@PersonalityClash,
@@ -2766,63 +2795,63 @@ messages:
    SpeechPlugIn( unplugged = $, who = $ )
    {
       local iHour;
-      SetString( first(plScratchString), unplugged );
+      SetString( First(plScratchString), unplugged );
 
       if( unplugged = $ )
       {
     return;
       }
 
-      iHour = send( SYS, @GetHour );
-      while StringContain( first(plScratchString), substring_daynight )
+      iHour = Send( SYS, @GetHour );
+      while StringContain( First(plScratchString), substring_daynight )
       {
     if( ( iHour < 6 ) OR ( iHour > 17 ) )
     {
-       if StringSubstitute( first(plScratchString), substring_daynight, plugin_night ) <> 1 {break;}
+       if StringSubstitute( First(plScratchString), substring_daynight, plugin_night ) <> 1 {break;}
     }
     else
     {
-       if StringSubstitute( first(plScratchString), substring_daynight, plugin_day ) <> 1 {break;}
+       if StringSubstitute( First(plScratchString), substring_daynight, plugin_day ) <> 1 {break;}
     }
       }
       if( IsClass( who, &user ) )
       {
-    while StringContain( first(plScratchString), substring_name )
+    while StringContain( First(plScratchString), substring_name )
     {
-       if StringSubstitute( first(plScratchString), substring_name, send( who, @GetName ) ) <> 1 {break;}
+       if StringSubstitute( First(plScratchString), substring_name, Send( who, @GetName ) ) <> 1 {break;}
     }
-    if( send( who, @GetGender ) = GENDER_MALE )
+    if( Send( who, @GetGender ) = GENDER_MALE )
     {
-       while StringContain( first(plScratchString), substring_sirmadam )
+       while StringContain( First(plScratchString), substring_sirmadam )
        {
-          if StringSubstitute( first(plScratchString), substring_sirmadam, plugin_sir ) <> 1 {break;}
+          if StringSubstitute( First(plScratchString), substring_sirmadam, plugin_sir ) <> 1 {break;}
        }
-       while StringContain( first(plScratchString), substring_lordlady )
+       while StringContain( First(plScratchString), substring_lordlady )
        {
-          if StringSubstitute( first(plScratchString), substring_lordlady, object_lord ) <> 1 {break;}
+          if StringSubstitute( First(plScratchString), substring_lordlady, object_lord ) <> 1 {break;}
        }
-       while StringContain( first(plScratchString), substring_ladlassie )
+       while StringContain( First(plScratchString), substring_ladlassie )
        {
-          if StringSubstitute( first(plScratchString), substring_ladlassie, plugin_lad ) <> 1 {break;}
+          if StringSubstitute( First(plScratchString), substring_ladlassie, plugin_lad ) <> 1 {break;}
        }
     }
     else
     {
-       while StringContain( first(plScratchString), substring_sirmadam )
+       while StringContain( First(plScratchString), substring_sirmadam )
        {
-          if StringSubstitute( first(plScratchString), substring_sirmadam, plugin_madam ) <> 1 {break;}
+          if StringSubstitute( First(plScratchString), substring_sirmadam, plugin_madam ) <> 1 {break;}
        }
-       while StringContain( first(plScratchString), substring_lordlady )
+       while StringContain( First(plScratchString), substring_lordlady )
        {
-          if StringSubstitute( first(plScratchString), substring_lordlady, object_lady ) <> 1 {break;}
+          if StringSubstitute( First(plScratchString), substring_lordlady, object_lady ) <> 1 {break;}
        }
-       while StringContain( first(plScratchString), substring_ladlassie )
+       while StringContain( First(plScratchString), substring_ladlassie )
        {
-          if StringSubstitute( first(plScratchString), substring_ladlassie, plugin_lassie ) <> 1 {break;}
+          if StringSubstitute( First(plScratchString), substring_ladlassie, plugin_lassie ) <> 1 {break;}
        }
     }
       }
-      return first(plScratchString);
+      return First(plScratchString);
    }
 
    ParseAction(action = $,mob = $, obj = $, target = $)
@@ -2846,10 +2875,10 @@ messages:
       if iFlag = LIBACT_MOOD
       % We have been induced to change mood   -AJM
       {
-%    debug( "Mood change of",Nth(action,2) );
-%    debug( "  for ",send( mob, @GetName ) );
+%    Debug( "Mood change of",Nth(action,2) );
+%    Debug( "  for ",Send( mob, @GetName ) );
 
-         Post( mob, @SetMood, #new_mood = send( mob, @GetMood ) + Nth( action, 2 ) );
+         Post( mob, @SetMood, #new_mood = Send( mob, @GetMood ) + Nth( action, 2 ) );
          return;
       }
 
@@ -3026,7 +3055,7 @@ messages:
       if iFlag = LIBACT_QST_SAY_OBJD
       % We have been sent to get a message.. So lets flag the player
       {
-         if isClass(mob,&Factions) 
+         if IsClass(mob,&Factions) 
          {
             if (not Send(target,@PlayerIsIntriguing))
             {
@@ -3154,7 +3183,7 @@ messages:
    {
       local iRnd,oObj,iMval,iPval;
 
-      if not isClass(person,&User) {return;}
+      if not IsClass(person,&User) {return;}
       oObj=Create(Nth(action,2));
       iRnd=Random(1,10);
       iMval=Send(oObj,@Getlevel);
@@ -3496,17 +3525,17 @@ messages:
    "Check to see if the user has completed a quest of the given id"
    {
       local i,j;
-      if questID = 0  OR who = $ OR (not IsClass(who,&User)) { return False;}
+      if questID = 0  OR who = $ OR (not IsClass(who,&User)) { return FALSE;}
       for i in plQuestUsers
       {
          if First(i) = who
          {
-            for j in Nth(i,2) { if j = questID { return True; } }
-            for j in Nth(i,3) { if j = questID { return True; } }
-            return False;
+            for j in Nth(i,2) { if j = questID { return TRUE; } }
+            for j in Nth(i,3) { if j = questID { return TRUE; } }
+            return FALSE;
          }
       }
-      return False;
+      return FALSE;
    }
 
 % HANDLE QUEST OPERATIONS
@@ -3523,7 +3552,7 @@ messages:
     iId=Send(self,@GetQuestID,#who=quester);
     oQuester=quester;
     lReward=reward;
-    if send(oQuester,@MobIsBuyer) or isClass(oQuester,&Factions)
+    if Send(oQuester,@MobIsBuyer) or IsClass(oQuester,&Factions)
         {iType=QST_PERM_PHRASE;}
     else {iType = Random(QST_PERM_OBJECT,QST_PERM_PHRASE);}
        
@@ -3538,7 +3567,7 @@ messages:
        % If we are recycling a faction quest, lets burn a new id and
        % strip the old ones away... We also need to make sure that this
        % quest gets cleaned up properly.
-       if isclass(oQuester,&Factions)
+       if IsClass(oQuester,&Factions)
        {
          Send(self,@StripTempQuests,#id=iId);
          Send(self,@StripTempQuests,#id=-iId);
@@ -3563,7 +3592,7 @@ messages:
     Send(self,@MoveQuesterOn,#who=oQuester);
     lReward = Send(self,@SelectQuestReward);
     iId = Send(self,@GetNextQuestID);
-    if send(oQuester,@MobIsBuyer) {iType=QST_TEMP_PHRASE;}
+    if Send(oQuester,@MobIsBuyer) {iType=QST_TEMP_PHRASE;}
     else {iType = Random(QST_TEMP_OBJECT,QST_TEMP_PHRASE);}
       }
 
@@ -3590,7 +3619,7 @@ messages:
       if goal=$ { lGoal = Send(self,@GetQuestGoal,#id=id); bOld=False; }
       else {lGoal = goal; bOld=True;}
     
-      for i in lGoal { if not StringContain(string,i) {return False;} }
+      for i in lGoal { if not StringContain(string,i) {return FALSE;} }
 
       %The player said all the keywords, make sure they werent guessing all
       
@@ -3604,7 +3633,7 @@ messages:
             {
                if i = j {bTest=True;break;} 
             }
-            if not bTest { return False; }
+            if not bTest { return FALSE; }
          } 
       }
     %is the mob a one-time permquester?
@@ -3617,7 +3646,7 @@ messages:
          {
             Post(Send(oQuester,@GetOwner),@SomeoneSaid,
               #what=oQuester,#type=SAY_RESOURCE,#string = QM_already_done);
-            return False;
+            return FALSE;
          }
       }
 
@@ -3625,14 +3654,14 @@ messages:
       {
          Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
              #type=SAY_RESOURCE,#string=QM_old_phrase);
-         return False;
+         return FALSE;
       }
 
       if not Send(self,@HasDoneQuestID,#who=who,#questID=id)
       {
          Post(Send(who,@GetOwner),@SomeoneSaid,#what=mob,
              #type=SAY_RESOURCE,#string=QM_never_sent);
-         return False;
+         return FALSE;
       }
 
       if not Send(self,@HasDoneQuestID,#who=who,#questID=-id)
@@ -3641,12 +3670,12 @@ messages:
          Post(Send(who,@GetOwner),@SomeoneSaid,#what=mob,
              #type=SAY_RESOURCE,#string=QM_missed_middle,
              #parm1=Send(hinter,@GetDef),#parm2=Send(hinter,@GetName));
-         return False;
+         return FALSE;
       }
 
       Send(self,@DeleteCompletedQuest,#who=who,#id=id);
       Send(self,@DeleteCompletedQuest,#who=who,#id=-id);
-      return True;
+      return TRUE;
    }
 
    FinishedQuest(who=$,id=0) 
@@ -3694,13 +3723,13 @@ messages:
     oTmp = Send(who,@GetMoneyObject);
     if oTmp = $
     {
-       oTmp = Create(&Money,#number=bound(SERVICE_GOLD_REWARD-iServ,1,$));
+       oTmp = Create(&Money,#number=Bound(SERVICE_GOLD_REWARD-iServ,1,$));
        Send(who,@NewHold,#what=oTmp);
 	   Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTmp,@GetNumber));
     }
     else
     {
-       send(oTmp,@AddNumber,#number=bound(SERVICE_GOLD_REWARD-iServ,1,$));
+       Send(oTmp,@AddNumber,#number=Bound(SERVICE_GOLD_REWARD-iServ,1,$));
     }
 
    for i in Send(Send(SYS,@GetParliament),@GetFactionList)
@@ -3747,7 +3776,7 @@ messages:
     {
        Post(Send(oQuester,@GetOwner),@SomeoneSaid,
          #what=oQuester,#type=SAY_RESOURCE,#string = QM_already_done);
-       return False;
+       return FALSE;
     }
     Send(self,@RecordCompletedQuest,#who=who,
         #questID=Nth(lReward,2), #type=iType);
@@ -3787,7 +3816,7 @@ messages:
     }
     else
     {
-       send(oTmp,@AddNumber,#number=Nth(lReward,2));
+       Send(oTmp,@AddNumber,#number=Nth(lReward,2));
     }
     Post(Send(oQuester,@GetOwner),@SomeoneSaid,
        #what=oQuester,#type=SAY_RESOURCE,#string = QM_money_congrats);
@@ -3826,7 +3855,7 @@ messages:
     Send(Self,@DeleteQuest,#id=id);
       }
 
-      return True;
+      return TRUE;
    }
 
    DeleteQuest(id = 0,clean=False)
@@ -3934,7 +3963,7 @@ messages:
 %  (DISABLED -- AJM )
    DispenseTriggers(type=0,id=0,goal=$,quester=$,hinter=$)
    {
-%      if isclass(quester,&factions)
+%      if IsClass(quester,&factions)
 %      {
 %         Send(self,@AddToMobLib,#mob=quester, #triggers=[LT_errand,LT_favor],
 %            #action=[LIBACT_QST_SAY_OBJD,QM_mob_int_phrase,hinter],#id = id);
@@ -3970,75 +3999,93 @@ messages:
    SelectQuestGoal(type=$)
    {
       local bAlready,iCount,i,j,cGoal,Goal,tmp,tmp2,tmp3;
-      Goal=$;
-      iCount=0;
-      bAlready=False;
+
+      Goal = $;
+      iCount = 0;
+      bAlready = False;
       if type = QST_PERM_OBJECT OR type = QST_TEMP_OBJECT
       {
-    for i in plQuestOfferClasses
-    {
-       if Random(0,iCount) = 0 { cGoal = i;} 
-       iCount = iCount + 1;
-    }
+         for i in plQuestOfferClasses
+         {
+            if Random(0,iCount) = 0
+            {
+               cGoal = i;
+            }
 
-         % if cgoal is already on the quest list, then lets do a reroll.
+            iCount = iCount + 1;
+         }
+
+         % If cgoal is already on the quest list, then lets do a reroll.
          for i in plQuestOfferObjects
          {
             if IsClass(i,cgoal)
             {
                bAlready=True;
-               iCount=0;
+               iCount = 0;
             }
          }
 
          if bAlready=True
          {
-      for i in plQuestOfferClasses
-      {
-         if Random(0,iCount) = 0 { cGoal = i;} 
-         iCount = iCount + 1;
-      }
+            for i in plQuestOfferClasses
+            {
+               if Random(0,iCount) = 0
+               {
+                  cGoal = i;
+               }
+               iCount = iCount + 1;
+            }
          }
 
-    Goal = Create(cGoal);
-    plQuestOfferObjects = Cons(Goal,plQuestOfferObjects);
+         Goal = Create(cGoal);
+         plQuestOfferObjects = Cons(Goal,plQuestOfferObjects);
       }
       else
       {
-    iCount=0;
-    for i in plQuestDictionary
-    {
-       if Random(0,iCount) = 0 { tmp = i;}
-       iCount = iCount + 1;
-    }
-    Goal = Cons(tmp,Goal);
+         iCount=0;
+         for i in plQuestDictionary
+         {
+            if Random(0,iCount) = 0
+            {
+               tmp = i;
+            }
+            iCount = iCount + 1;
+         }
 
-    iCount=0;
-    for i in plQuestDictionary
-    {
-       if tmp <> i
-       {
-          if Random(0,iCount) = 0 { tmp2 = i;}
-          iCount = iCount + 1;
-       }
-    }
-    Goal = Cons(tmp2,Goal);
+         Goal = Cons(tmp,Goal);
+         iCount = 0;
 
-    iCount=0;
-    for i in plQuestDictionary
-    {
-       if tmp <> i AND tmp2 <> i
-       {
-          if Random(0,iCount) = 0 { tmp3 = i;}
-          iCount = iCount + 1;
-       }
-    }
-    Goal = Cons(tmp3,Goal);
+         for i in plQuestDictionary
+         {
+            if tmp <> i
+            {
+               if Random(0,iCount) = 0
+               {
+                  tmp2 = i;
+               }
+               iCount = iCount + 1;
+            }
+         }
+
+         Goal = Cons(tmp2,Goal);
+         iCount = 0;
+
+         for i in plQuestDictionary
+         {
+            if tmp <> i AND tmp2 <> i
+            {
+               if Random(0,iCount) = 0
+               {
+                  tmp3 = i;
+               }
+               iCount = iCount + 1;
+            }
+         }
+         Goal = Cons(tmp3,Goal);
       }
 
       return Goal;
    }
-
 
    SelectQuestReward()
    {
@@ -4046,7 +4093,7 @@ messages:
 
       if Random(1,2) = 1
       {
-         lReward=[QST_REWARD_MONEY,Random(QST_LOW_MONEY,QST_HIGH_MONEY)];
+         lReward = [QST_REWARD_MONEY,Random(QST_LOW_MONEY,QST_HIGH_MONEY)];
       }
       else
       {
@@ -4057,134 +4104,191 @@ messages:
             iCount= iCount+1;
             lTemp = Cons(Nth(plQuestRewards,Random(1,Length(plQuestRewards))),
                          lTemp);
-            if Random(0,QST_MAX_ITEMS) <= iCount {break;}
+            if Random(0,QST_MAX_ITEMS) <= iCount
+            {
+               break;
+            }
          }
          lReward=[QST_REWARD_ITEMLIST,lTemp];
       }
+
       return lReward;
    }
 
    SelectQuester()
    {
       local iCount,i,oMob;
+
       oMob=$;
       iCount=0;
+
       for i in plQuesterList
       {
-         if Random(0,iCount) = 0 { oMob = i;} 
+         if Random(0,iCount) = 0
+         {
+            oMob = i;
+         }
          iCount = iCount + 1;
       }
+
       return oMob;
    }
 
    SelectHinter()
    {
       local iCount,i,oMob;
+
       oMob=$;
       iCount=0;
+
       for i in plHinterList
       {
-         if Random(0,iCount) = 0 { oMob = i;} 
+         if Random(0,iCount) = 0
+         {
+            oMob = i;
+         }
          iCount = iCount + 1;
       }
+
       return oMob;
    }
 
 % ACCESS THE EXISTING QUEST DATABASE
 %
-% Quest = [ id, quester, hinter, type, goal, [ reward ], 
+% Quest = [ id, quester, hinter, type, goal, [ reward ],
 
 
-   GetQuestID(who = $)
+   GetQuestID(who=$)
    {
       local i;
-      for i in plQuests
-      {
-         if who = Nth(i,2) { return Nth(i,1); }
-      }
-      return 0;
-   } 
 
-   GetQuester(id = $)
-   {
-      local i;
       for i in plQuests
       {
-         if First(i) = id { return Nth(i,2); }
+         if who = Nth(i,2)
+         {
+            return Nth(i,1);
+         }
       }
-      return $;
-   }
 
-   GetHinter(id = $)
-   {
-      local i;
-      for i in plQuests
-      {
-         if First(i) = id { return Nth(i,3); }
-      }
-      return $;
-   }
-
-   GetQuestType(id = $)
-   {
-      local i;
-      for i in plQuests
-      {
-         if First(i) = id { return Nth(i,4); }
-      }
       return 0;
    }
 
-   GetQuestGoal(id = $)
+   GetQuester(id=$)
    {
       local i;
+
       for i in plQuests
       {
-         if First(i) = id { return Nth(i,5); }
+         if First(i) = id
+         {
+            return Nth(i,2);
+         }
       }
+
       return $;
    }
 
-   GetQuestReward(id = $)
+   GetHinter(id=$)
    {
       local i;
+
       for i in plQuests
       {
-         if First(i) = id { return Nth(i,6); }
+         if First(i) = id
+         {
+            return Nth(i,3);
+         }
       }
+
+      return $;
+   }
+
+   GetQuestType(id=$)
+   {
+      local i;
+
+      for i in plQuests
+      {
+         if First(i) = id
+         {
+            return Nth(i,4);
+         }
+      }
+
+      return 0;
+   }
+
+   GetQuestGoal(id=$)
+   {
+      local i;
+
+      for i in plQuests
+      {
+         if First(i) = id
+         {
+            return Nth(i,5);
+         }
+      }
+
+      return $;
+   }
+
+   GetQuestReward(id=$)
+   {
+      local i;
+
+      for i in plQuests
+      {
+         if First(i) = id
+         {
+            return Nth(i,6);
+         }
+      }
+
       return $;
    }
 
    GetNextQuestID()
    {
       piNextQuestID= piNextQuestID + 1;
+
       return piNextQuestID;
-   }   
+   }
 
    GetOldPhrases(mob=$)
    {
       local i;
+
       for i in plOldQuestPhrases
       {
-         if First(i) = mob { return Nth(i,2); }
+         if First(i) = mob
+         {
+            return Nth(i,2);
+         }
       }
+
       return $;
    }
 
    GetOldClasses(mob=$)
    {
       local i;
+
       for i in plOldQuestClasses
       {
-         if First(i) = mob { return Nth(i,2); }
+         if First(i) = mob
+         {
+            return Nth(i,2);
+         }
       }
+
       return $;
    }
 
    KeepOldQuestClass(mob=$,class=$)
    {
       local i,lElem;
- 
+
       for i in plOldQuestClasses
       {
          if First(i) = mob
@@ -4192,21 +4296,24 @@ messages:
             SetNth(i,2,Cons(class,Nth(i,2)));
             if Length(Nth(i,2)) > 4
             {
-               lElem=Nth(i,2);
-               lElem=DelListElem(lElem,Nth(lElem,5));
+               lElem = Nth(i,2);
+               lElem = DelListElem(lElem,Nth(lElem,5));
                SetNth(i,2,lElem);
             }
+
             return;
          }
       }
-      plOldQuestClasses=Cons([mob,[class]],plOldQuestClasses);
+
+      plOldQuestClasses = Cons([mob,[class]],plOldQuestClasses);
+
       return;
    }
 
    KeepOldQuestPhrase(mob=$,phrase=$)
    {
       local i,lElem;
- 
+
       for i in plOldQuestPhrases
       {
          if First(i) = mob
@@ -4214,14 +4321,17 @@ messages:
             SetNth(i,2,Cons(phrase,Nth(i,2)));
             if Length(Nth(i,2)) > 4
             {
-               lElem=Nth(i,2);
-               lElem=DelListElem(lElem,Nth(lElem,5));
+               lElem = Nth(i,2);
+               lElem = DelListElem(lElem,Nth(lElem,5));
                SetNth(i,2,lElem);
             }
+
             return;
          }
       }
-      plOldQuestPhrases=Cons([mob,[phrase]],plOldQuestPhrases);
+
+      plOldQuestPhrases = Cons([mob,[phrase]],plOldQuestPhrases);
+
       return;
    }
 
@@ -4233,122 +4343,168 @@ messages:
 
    IsNewbieSignetEligible(who=$)
    {
-     local i;
-     if who=$ {return False;}
+      local i;
 
-     for i in plSignetNewbies
-     {
-       if i=who { return False;}
-     } 
-     return True;
+      if who = $
+      {
+         return FALSE;
+      }
+
+      for i in plSignetNewbies
+      {
+         if i = who
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
    }
 
    CreateSignetRing(who=$)
+   "This routine needs to put the who onto the newbie list, and find a "
+   "suitable mob to be the owner, and then call the create routine."
    {
-      %This routine needs to put the who onto the newbie list, and find a
-      %suitible mob to be the owner, and then call the create routine.
       local mob,i,iCnt;
 
-     
-      if piSignetLock=True { return $;}
-
-      if who<>$
+      if piSignetLock = TRUE
       {
-        plSignetNewbies=Cons(who,plSignetNewbies);
-        while Length(plSignetNewbies)>Send(self,@GetMaxSignetNewbies)
-        {
-          plSignetNewbies=DelListElem(plSignetNewbies,
-                                  Nth(plSignetNewbies,Length(plSignetNewbies)));
-        }
+         return $;
       }
 
-      if plHinterlist=$ {return $;}
+      if who <> $
+      {
+         plSignetNewbies = Cons(who,plSignetNewbies);
+         while Length(plSignetNewbies)>Send(self,@GetMaxSignetNewbies)
+         {
+            plSignetNewbies = DelListElem(plSignetNewbies,
+                                  Nth(plSignetNewbies,Length(plSignetNewbies)));
+         }
+      }
+
+      if plHinterlist = $
+      {
+         return $;
+      }
 
       iCnt = 0;
-     mob = $;
-      For i in plHinterList
+      mob = $;
+
+      for i in plHinterList
       {
-        if ((Send(i,@GetAttributes) & MOB_RECEIVE) <> 0) and
-               ((Send(i,@GetAttributes) & MOB_NOQUEST) = 0) and
-               (isClass(i,&BarloqueTown) or
-                isClass(i,&CorNothTown) or
-                isClass(i,&JasperTown) or
-                isClass(i,&MarionTown) or
-                isClass(i,&TosTown) or 
-                isClass(i,&Wanderer))
-        {
-          if Random(0,iCnt)=0 { mob=i; }
-          iCnt=iCnt+1;
-        }
+         if ((Send(i,@GetAttributes) & MOB_RECEIVE) <> 0)
+            AND ((Send(i,@GetAttributes) & MOB_NOQUEST) = 0)
+            AND (IsClass(i,&BarloqueTown)
+               OR IsClass(i,&CorNothTown)
+               OR IsClass(i,&JasperTown)
+               OR IsClass(i,&MarionTown)
+               OR IsClass(i,&TosTown)
+               OR IsClass(i,&Wanderer))
+         {
+            if Random(0,iCnt)=0
+            {
+               mob=i;
+            }
+            iCnt=iCnt+1;
+         }
       }
-      if mob = $ {return $;}
+
+      if mob = $
+      {
+         return $;
+      }
+
       return Create(&SignetRing,#mob=mob);
    }
 
    RegisterSignet(newring=$)
+   "This routine adds the signet ring to the front of the rings list. If the "
+   "number of rings on the list exceeds the max number, then a ring is "
+   "deleted from the end of the list."
    {
       local oldring, oRingOwner;
-      %This routine adds the signet ring to the front of the rings list.
-      %If the number of rings on the list exceeds the max number, then a
-      %ring is deleted from the end of the list.
 
-      if newring=$ {return;}
+      if newring=$
+      {
+         return;
+      }
+
       plSignetRings=Cons(newring,plSignetRings);
+
       while Length(plSignetRings)>Send(self,@GetMaxSignets)
       {
-        oldring=Nth(plSignetRings,Length(plSignetRings));
-        plSignetRings=DelListElem(plSignetRings,oldring);
-      
-      oRingOwner=send(oldRing,@getowner);
-      if oRingOwner <> $
-        { send(oRingOwner,@msgsenduser,#message_rsc=lib_signet_lost); }
-        
-      Send(oldring,@delete);
+         oldring = Nth(plSignetRings,Length(plSignetRings));
+         plSignetRings = DelListElem(plSignetRings,oldring);
+         oRingOwner=Send(oldRing,@GetOwner);
+         if oRingOwner <> $
+         {
+            Send(oRingOwner,@MsgSendUser,#message_rsc=lib_signet_lost);
+         }
+         Send(oldring,@delete);
       }
+
       return;
    }
 
    SignetDelivered(who=$)
    {
-     if who=$ {return;}
-     plSignetNewbies=Cons(who,plSignetNewbies);
-     while Length(plSignetNewbies)>Send(self,@GetMaxSignetNewbies)
-     {
-       plSignetNewbies=DelListElem(plSignetNewbies,
+      if who=$
+      {
+         return;
+      }
+
+      plSignetNewbies = Cons(who,plSignetNewbies);
+
+      while Length(plSignetNewbies) > Send(self,@GetMaxSignetNewbies)
+      {
+         plSignetNewbies = DelListElem(plSignetNewbies,
                                Nth(plSignetNewbies,Length(plSignetNewbies)));
-     }
-     return;
+      }
+
+      return;
    }
 
    UnregisterSignet(newring=$)
    {
-     local i;
+      local i;
 
-     if newring=$ {return;}
-    for i in plSignetRings            %% safety measure, only delete the ring if it's in the list
-    {
-       if i = newring
-      {  plSignetRings=DelListElem(plSignetRings,newring); }
-    }
-     return;
+      if newring=$
+      {
+         return;
+      }
+
+      % Safety measure, only delete the ring if it's in the list.
+      for i in plSignetRings
+      {
+         if i = newring
+         {
+            plSignetRings=DelListElem(plSignetRings,newring);
+         }
+      }
+
+      return;
    }
 
    SetSignetLock(value=False)
    {
-     piSignetLock=value;
-     return;
+      piSignetLock=value;
+
+      return;
    }
 
    ClearSignets()
    {
-     local i;
-     for i in plSignetRings
-     {
-       Send(i,@Delete);
-     }
-     plSignetRings=$;
-     plSignetNewbies=$;
-     return;
+      local i;
+
+      for i in plSignetRings
+      {
+         Send(i,@Delete);
+      }
+
+      plSignetRings=$;
+      plSignetNewbies=$;
+
+      return;
    }
 
    GetMaxSignetNewbies()
@@ -4365,12 +4521,11 @@ messages:
    {
      return piSignetChance;
    }
-  
+
    GetSignetRings()
    {
       return plSignetRings;
    }
-
 
   % Signet Info:
   % Variables: MaxSignets = number of signets in game at once
@@ -4424,7 +4579,7 @@ messages:
    {
       local iNodeList, index, oNode, count;
 
-      if mob = $ or person = $ or NOT IsClass(person, &User)
+      if mob = $ OR person = $ OR NOT IsClass(person, &User)
       {
          return;
       }
@@ -4433,8 +4588,9 @@ messages:
 
       if iNodeList = 0
       {
-         Send(Send(mob, @GetOwner), @SomeoneSaid, #what=mob, #type=SAY_RESOURCE, 
-              #string = LM_no_mana_nodes);
+         Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+               #string = LM_no_mana_nodes);
+
          return;
       }
 
@@ -4460,12 +4616,11 @@ messages:
          index = 2 * index;
       }
       
-      Send(Send(mob, @GetOwner), @SomeoneSaid, #what=mob, #type=SAY_RESOURCE,
-           #string = LM_mana_nodes,
-           #parm1 = GetTempString());
-      return;      
+      Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+            #string = LM_mana_nodes,#parm1 = GetTempString());
+
+      return;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

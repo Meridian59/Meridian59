@@ -3051,8 +3051,8 @@ Izzio			~kIzzio says, "I hear some talk of beautiful cities, I don't see how the
 Izzio			~kIzzio whistles happily, although slightly out of tune.
 Izzio			~kIzzio perfectly imitates the call of the forest birds.
 Izzio			~kIzzio closes his eyes and sighs contentedly, "This is living."
-Izzio	MOOD_BAD		~kIzzio eyes you suspiciously and grumbles sleepily, "No darned person in their right mind awakens this early."
-Izzio	MOOD_GOOD		~kIzzio spreads his arms wide and takes a deep breath, "Ah, I love the night so peaceful and quiet.  Gives me such a pleasure to enjoy nature as it was meant."
+Izzio	LIBRES_MOOD_BAD		~kIzzio eyes you suspiciously and grumbles sleepily, "No darned person in their right mind awakens this early."
+Izzio	LIBRES_MOOD_GOOD		~kIzzio spreads his arms wide and takes a deep breath, "Ah, I love the night so peaceful and quiet.  Gives me such a pleasure to enjoy nature as it was meant."
 Izzio		Kateriina/Akardius	~kIzzio says, "Ah, I do believe I smell love in the air."
 Izzio		Faction Troops	~kIzzio says, "That isn't for me, I like my limbs where they are."
 Izzio		Faction	~kIzzio says, "Politics really don't peak my interest."

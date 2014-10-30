@@ -66,7 +66,7 @@ properties:
 
    piBaseLight = LIGHT_NICE
 
-   ptDoor = $
+   ptEntrance = $
    ptBridge = $
 
 messages:
@@ -74,6 +74,10 @@ messages:
    Constructor()
    {
       plGuild_doors = [ [ 5,7] ];
+
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 506, 593, 787, 812 ];
 
       propagate;
    }
@@ -83,13 +87,13 @@ messages:
       if ptBridge <> $
       {
          DeleteTimer(ptBridge);
-         ptbridge=$;
+         ptBridge=$;
       }
 
-      if ptDoor <> $
+      if ptEntrance <> $
       {
-         DeleteTimer(ptDoor);
-         ptDoor = $;
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
       }
 
       propagate;
@@ -106,16 +110,13 @@ messages:
       propagate;
    }
 
-   SomethingTryGo(what=$, row=$,  col = $)
+   SomethingTryGo(what=$,row=$,col=$)
    {
       if row = 5 and col = 8
       {
-         if send(self,@ReqLegalEntry,#who = what)
-         {
-            send(self,@openEntrancedoor);
+         Send(self,@OpenEntranceDoor);
 
-            return TRUE;
-         }
+         return TRUE;
       }
 
       propagate;
@@ -123,37 +124,39 @@ messages:
 
    OpenEntranceDoor()
    {
-      if ptDoor = $
+      if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
-         send(self,@setsector,#sector=ENTRANCE,#animation=ANIMATE_CEILING_LIFT,
-              #height=DOOR_OPEN,#speed=16);
-         ptDoor = createtimer(self,@CloseEntranceDoor,LIFT_DELAY);
-      }    
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_CEILING_LIFT,
+               #height=DOOR_OPEN,#speed=50);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,LIFT_DELAY);
+      }
 
-      send(self,@OpenEntranceDoorSound);
+      Send(self,@OpenEntranceDoorSound);
 
       return;
    }
 
    CloseEntranceDoor()
    {
-      ptDoor = $;
-      send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_CEILING_LIFT,
-           #height=DOOR_CLOSED,#speed=16);
-      send(self,@CloseEntranceDoorSound);
+      ptEntrance = $;
+      Send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_CEILING_LIFT,
+            #height=DOOR_CLOSED,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    OpenSecretDoor()
    {
       if ptBridge = $
       {
-         send(self,@SetSector,#sector=BRIDGE,#animation=ANIMATE_FLOOR_LIFT,
-              #height=BRIDGE_LOW,#speed=16);
-         ptBridge=createtimer(self,@CloseSecretDoor,LIFT_DELAY);
-         send(self,@OpenSecretDoorSound);
+         Send(self,@SetSector,#sector=BRIDGE,#animation=ANIMATE_FLOOR_LIFT,
+               #height=BRIDGE_LOW,#speed=16);
+         ptBridge=CreateTimer(self,@CloseSecretDoor,LIFT_DELAY);
+         Send(self,@OpenSecretDoorSound);
       }
 
       return;
@@ -162,9 +165,9 @@ messages:
    CloseSecretDoor()
    {
       ptBridge = $;
-      send(self,@SetSector,#sector=BRIDGE,#animation=ANIMATE_FLOOR_LIFT,
-           #height=BRIDGE_HIGH,#speed=16);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@SetSector,#sector=BRIDGE,#animation=ANIMATE_FLOOR_LIFT,
+            #height=BRIDGE_HIGH,#speed=16);
+      Send(self,@CloseSecretDoorSound);
 
       return;
    }
@@ -172,60 +175,46 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=13,#new_col=14,#fine_row=0,#fine_col=0);
+            #new_row=13,#new_col=14,#fine_row=0,#fine_col=0);
       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=14,#new_col=14,#fine_row=32,#fine_col=0);
+            #new_row=14,#new_col=14,#fine_row=32,#fine_col=0);
 
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=7,#new_col=4,#fine_row=32,#fine_col=24);
+            #new_row=7,#new_col=4,#fine_row=32,#fine_col=24);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=3,#new_col=4,#fine_row=32,#fine_col=24);
+            #new_row=3,#new_col=4,#fine_row=32,#fine_col=24);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=4,#new_col=7,#fine_row=16,#fine_col=56);
+            #new_row=4,#new_col=7,#fine_row=16,#fine_col=56);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=6,#new_col=7,#fine_row=48,#fine_col=56);
+            #new_row=6,#new_col=7,#fine_row=48,#fine_col=56);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=3,#new_col=12,#fine_row=32,#fine_col=32);
+            #new_row=3,#new_col=12,#fine_row=32,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=9,#new_col=9,#fine_row=32,#fine_col=32);
+            #new_row=9,#new_col=9,#fine_row=32,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=9,#new_col=12,#fine_row=32,#fine_col=0);
+            #new_row=9,#new_col=12,#fine_row=32,#fine_col=0);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=15,#new_col=19,#fine_row=32,#fine_col=0);
+            #new_row=15,#new_col=19,#fine_row=32,#fine_col=0);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=22,#new_col=8,#fine_row=0,#fine_col=32);
+            #new_row=22,#new_col=8,#fine_row=0,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=23,#new_col=18,#fine_row=0,#fine_col=32);
+            #new_row=23,#new_col=18,#fine_row=0,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=17,#new_col=6,#fine_row=40,#fine_col=8);
+            #new_row=17,#new_col=6,#fine_row=40,#fine_col=8);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=14,#new_col=6,#fine_row=24,#fine_col=8);
+            #new_row=14,#new_col=6,#fine_row=24,#fine_col=8);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=29,#new_col=17,#fine_row=32,#fine_col=0);
+            #new_row=29,#new_col=17,#fine_row=32,#fine_col=0);
 
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=29,#new_col=9,#fine_row=32,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+            #new_row=29,#new_col=9,#fine_row=32,#fine_col=0,
+            #new_angle=ANGLE_NORTH_EAST);
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=26,#new_col=9,#fine_row=32,#fine_col=0,#new_angle=ANGLE_SOUTH_EAST);
+            #new_row=26,#new_col=9,#fine_row=32,#fine_col=0,
+            #new_angle=ANGLE_SOUTH_EAST);
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [5,8,1], [4,8,2], [4,9,2], [5,9,2], [6,8,2], [6,9,2] ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

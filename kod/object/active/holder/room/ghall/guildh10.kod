@@ -31,7 +31,7 @@ constants:
 
 resources:
 
-   room_name_guildhall10 ="Jaarba's Abode"
+   room_name_guildhall10 = "Jaarba's Abode"
    room_guildhall10 = guildh10.roo
 
    guildhall10_sound = down2.wav
@@ -75,7 +75,7 @@ properties:
    ptNorthDoor = $
    ptEastDoor = $
    ptWestDoor = $
-   ptEntranceDoor = $
+   ptEntrance = $
    ptSecretDoor = $
    ptNewsDoor = $
    ptBarDoor = $
@@ -85,6 +85,10 @@ messages:
    Constructor()
    {
       plGuild_doors = [[17,11]];
+
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1703, 1723, 1100, 1175 ];
 
       propagate;
    }
@@ -115,33 +119,43 @@ messages:
       propagate;
    }
 
-   InFoyer(who=$)
+   InFoyer(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$)
    {
-      local iRow, iCol;
-
-      if Send(who,@GetOwner) <> self
+      if who <> $
       {
-         return FALSE;
+         if Send(who,@GetOwner) <> self
+         {
+            return FALSE;
+         }
+
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+         iFineCol = Send(who,@GetFineCol);
+         iFineRow = Send(who,@GetFineRow);
       }
 
-      iRow = Send(who,@GetRow);
-      iCol = Send(who,@GetCol);
-
-      if iRow > 16 or iCol < 4 or iCol > 18
+      if iRow > 17 % South part
+         OR (iRow = 17 AND iFineRow > 16) % South part
+         OR iCol < 3 % West part
+         OR (iCol = 3 AND iFineCol < 32) % West part
+         OR iCol > 19 % East part
+         OR (iCol = 19 AND iFineCol > 16) % East part
       {
          return TRUE;
       }
+
+      % North part
       if iRow = 3 or iRow = 4
       {
          if iCol < 8 or iCol > 14
          {
             return TRUE;
          }
-         if iCol = 8 and Send(who,@GetFineCol) < 48
+         if iCol = 8 and iFineCol < 48
          {
             return TRUE;
          }
-         if iCol = 14 and Send(who,@GetFineCol) > 16
+         if iCol = 14 and iFineRow > 16
          {
             return TRUE;
          }
@@ -156,11 +170,11 @@ messages:
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall10_sound);
          Send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=80,#speed=50);
+               #height=80,#speed=80);
          Send(self,@SetSector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
-               #height=80,#speed=50);
+               #height=80,#speed=80);
          Send(self,@OpenSecretDoorSound);
-         ptSecretDoor = CreateTimer(self,@closesecretdoor,SECRET_DELAY);
+         ptSecretDoor = CreateTimer(self,@CloseSecretDoor,SECRET_DELAY);
       }
 
       return;
@@ -185,7 +199,7 @@ messages:
          AND ptNorthDoor = $
       {
          Send(self,@SetSector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=72,#speed=50);
+               #height=72,#speed=80);
          ptNorthDoor = CreateTimer(self,@CloseNorthDoor,DOOR_DELAY);
 
          return TRUE;
@@ -196,7 +210,7 @@ messages:
          AND ptEastDoor = $
       {
          Send(self,@SetSector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=72,#speed=50);
+               #height=72,#speed=80);
          ptEastDoor = CreateTimer(self,@CloseEastDoor,DOOR_DELAY);
 
          return TRUE;
@@ -207,7 +221,7 @@ messages:
          AND ptWestDoor = $
       {
          Send(self,@SetSector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=72,#speed=50);
+               #height=72,#speed=80);
          ptWestDoor = CreateTimer(self,@CloseWestDoor,DOOR_DELAY);
 
         return TRUE;
@@ -216,12 +230,9 @@ messages:
       if row = 16
          AND col = 11
       {
-         if Send(self,@ReqLegalEntry,#who=what)
-         {
-            Send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
 
-            return TRUE;
-         }
+         return TRUE;
       }
 
       if (row = 12 OR row = 13)
@@ -229,7 +240,7 @@ messages:
          AND ptBarDoor = $
       {
          Send(self,@SetSector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height = 72,#speed=50);
+               #height = 72,#speed=80);
          ptBarDoor = CreateTimer(self,@CloseBarDoor,DOOR_DELAY);
 
          return TRUE;
@@ -240,7 +251,7 @@ messages:
          AND ptNewsDoor = $
       {
          Send(self,@SetSector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height = 72,#speed=50);
+               #height = 72,#speed=80);
          ptNewsDoor = CreateTimer(self,@CloseNewsDoor,DOOR_DELAY);
 
          return TRUE;
@@ -251,13 +262,13 @@ messages:
 
    OpenEntranceDoor()
    {
-      if ptEntranceDoor = $
+      if ptEntrance = $
       {
          Send(self,@TimeStampDoor);
          Send(self,@SetSector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=72,#speed=50);
+               #height=72,#speed=80);
          Send(self,@OpenEntranceDoorSound);
-         ptEntranceDoor = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
       }
 
       return;
@@ -265,12 +276,13 @@ messages:
 
    CloseEntranceDoor()
    {
-      ptEntranceDoor = $;
       Send(self,@SetSector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
             #height=0,#speed=50);
       Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    CloseNorthDoor()
@@ -389,10 +401,10 @@ messages:
          DeleteTimer(ptWestDoor);
          ptWestDoor = $;
       }
-      if ptEntranceDoor <> $
+      if ptEntrance <> $
       {
-         DeleteTimer(ptEntranceDoor);
-         ptEntranceDoor = $;
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
       }
       if ptSecretDoor <> $
       {
@@ -411,22 +423,6 @@ messages:
         }
 
       propagate;
-   }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [[ 16, 11, 1 ],[16,10,2],[15,10,2],[ 15, 11, 2 ],[15,12,2],[16,12,2]];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=Nth(i,3));
-         Send(self,@NewHold,#what=oPlate,#new_row = Nth(i,1),
-               #new_col = Nth(i,2));
-      }
-
-      return;
    }
 
 end

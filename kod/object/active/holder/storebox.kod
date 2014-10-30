@@ -67,7 +67,7 @@ messages:
        
          return;
       }
- 
+
       AddPacket(1,ANIMATE_NONE,2,2);
 
       return;
@@ -77,12 +77,12 @@ messages:
    {
       if poOwner<> $
       {
-         send(poOwner,@LeaveHold,#what=self);
+         Send(poOwner,@LeaveHold,#what=self);
          poOwner = $;
       }
-      
+
       ptClean = CreateTimer(self,@CleanTimer,CLEAN_DELAY);
-      
+
       return;
    }
 
@@ -91,10 +91,10 @@ messages:
       ptClean = $;
       if poOwner = $
       {
-         DEBUG("Self-cleaning excess chests.");
-         send(self,@Delete);
+         Debug("Self-cleaning excess chests.");
+         Send(self,@Delete);
       }
-      
+
       return;
    }
 
@@ -104,11 +104,11 @@ messages:
       {
          if ptClean <> $
          {
-            deletetimer(ptClean);
+            DeleteTimer(ptClean);
             ptClean = $;
          }
       }
-      
+
       propagate;
    }
 
@@ -116,35 +116,37 @@ messages:
    {
       if ptClean <> $
       {
-         deletetimer(ptClean);
+         DeleteTimer(ptClean);
          ptClean = $;
       }
       
-      send(SYS,@RemoveChestFromList,#oChest=self);
-      
+      Send(SYS,@RemoveChestFromList,#oChest=self);
+
       propagate;
    }
-
 
    ReqTaker(what=$,taker=$)
    {
       local oTakerOwner;
 
-      oTakerOwner = send(taker,@GetOwner);
-      
+      oTakerOwner = Send(taker,@GetOwner);
+
       if IsClass(taker,&User)
          AND NOT IsClass(taker,&Admin)
          AND IsClass(oTakerOwner,&Room) AND IsClass(poOwner,&Room)
          AND oTakerOwner <> poOwner
       {
-         debug("ALERT!  ",send(taker,@GetTrueName),taker," in RID ",send(oTakerOwner,@GetRoomNum)," taking from distant chest in RID ",send(poOwner,@GetRoomNum));
-         
+         Debug("ALERT!  ",Send(taker,@GetTrueName),taker," in RID ",
+               Send(oTakerOwner,@GetRoomNum),
+               " taking from distant chest in RID ",
+               Send(poOwner,@GetRoomNum));
+
          return FALSE;
       }
-   
-      if isClass(poOwner,&GuildHall)
+
+      if IsClass(oTakerOwner,&GuildHall)
       {
-         return send(poOwner,@ReqTakeFromGuildChest,#what=what,#taker=taker);
+         return Send(oTakerOwner,@ReqUseGuildChest,#who=taker);
       }
 
       propagate;
@@ -155,15 +157,19 @@ messages:
       local oWhoOwner;
 
       % The player's owner.
-      oWhoOwner = send(who,@GetOwner);
+      oWhoOwner = Send(who,@GetOwner);
 
       if IsClass(who,&User)
          AND NOT IsClass(who,&Admin)
-         AND IsClass(oWhoOwner,&Room) AND IsClass(poOwner,&Room) 
+         AND IsClass(oWhoOwner,&Room)
+         AND IsClass(poOwner,&Room)
          AND oWhoOwner <> poOwner
       {
-         debug("ALERT!  ",send(who,@GetTrueName),who," in RID ",send(oWhoOwner,@GetRoomNum)," putting into distant chest in RID ",send(poOwner,@GetRoomNum));
-         
+         Debug("ALERT!  ",Send(who,@GetTrueName),who," in RID ",
+               Send(oWhoOwner,@GetRoomNum),
+               " putting into distant chest in RID ",
+               Send(poOwner,@GetRoomNum));
+
          return FALSE;
       }
 
@@ -172,13 +178,18 @@ messages:
          return FALSE;
       }
 
+      if IsClass(oWhoOwner,&GuildHall)
+      {
+         return Send(oWhoOwner,@ReqUseGuildChest,#who=who);
+      }
+
       propagate;
    }
 
    LockChest(bLocked=$)
    {
       pbLocked = bLocked;
- 
+
       if pbLocked
       {
          viObject_Flags = viObject_Flags & ~CONTAINER_YES;
@@ -193,7 +204,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

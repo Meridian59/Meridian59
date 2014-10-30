@@ -51,7 +51,7 @@ classvars:
 
    viLever_row = 21
    viLever_col = 17
-   viLever_fine_row = 56 
+   viLever_fine_row = 56
    viLever_fine_col = 56
 
    viInner_teleport_row = 8
@@ -71,7 +71,7 @@ properties:
    piPosition = 0
 
    ptSecretDoor = $
-   ptEntranceDoor = $
+   ptEntrance = $
    ptCloset = $
    ptOfficeDoor = $
    ptEastDoor = $
@@ -83,6 +83,11 @@ messages:
    Constructor()
    {
       plGuild_doors = [ [18,30] ];
+
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1800, 1900, 2978, 2996 ];
+
       propagate;
    }
 
@@ -102,10 +107,10 @@ messages:
       if ptSecretDoor = $
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@setsector,#sector=BOOKS,#animation=ANIMATE_CEILING_LIFT,
-              #height=184,#speed=16);
+         Send(self,@SetSector,#sector=BOOKS,#animation=ANIMATE_CEILING_LIFT,
+               #height=184,#speed=16);
          ptSecretDoor = CreateTimer(self,@CloseSecretDoor,DOOR_DELAY);
-         send(self,@OpenSecretDoorSound);
+         Send(self,@OpenSecretDoorSound);
       }
 
       return;
@@ -114,48 +119,49 @@ messages:
 
    CreateStandardObjects()
    {
-
       Send(self,@NewHold,#what=Create(&Skull),
-           #new_row=9,#new_col=24,#fine_row=16,#fine_col=0);
+            #new_row=9,#new_col=24,#fine_row=16,#fine_col=0);
 
       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=20,#new_col=25,#fine_row=48,#fine_col=48,#new_angle=ANGLE_SOUTH);
+            #new_row=20,#new_col=25,#fine_row=48,#fine_col=48,
+            #new_angle=ANGLE_SOUTH);
       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=20,#new_col=28,#fine_row=48,#fine_col=16,#new_angle=ANGLE_SOUTH);
+            #new_row=20,#new_col=28,#fine_row=48,#fine_col=16,
+            #new_angle=ANGLE_SOUTH);
 
       Send(self,@NewHold,#what=Create(&Firepit),
-         #new_row=18,#new_col=18,#fine_col=32,#fine_row=32);
+          #new_row=18,#new_col=18,#fine_col=32,#fine_row=32);
 
 
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=8,#new_col=21,#fine_row=16,#fine_col=32);
+            #new_row=8,#new_col=21,#fine_row=16,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=8,#new_col=25,#fine_row=16,#fine_col=32);
+            #new_row=8,#new_col=25,#fine_row=16,#fine_col=32);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=9,#new_col=26,#fine_row=48,#fine_col=48);
+            #new_row=9,#new_col=26,#fine_row=48,#fine_col=48);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=9,#new_col=29,#fine_row=48,#fine_col=16);
+            #new_row=9,#new_col=29,#fine_row=48,#fine_col=16);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=12,#new_col=19,#fine_row=32,#fine_col=16);
+            #new_row=12,#new_col=19,#fine_row=32,#fine_col=16);
       Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=12,#new_col=23,#fine_row=32,#fine_col=16);
+            #new_row=12,#new_col=23,#fine_row=32,#fine_col=16);
 
       Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=8,#new_col=19,
-           #fine_row=16,#fine_col=48,#new_angle=ANGLE_SOUTH);
+            #fine_row=16,#fine_col=48,#new_angle=ANGLE_SOUTH);
 
       propagate;
    }
 
    OpenEntranceDoor()
    {
-      if ptEntranceDoor = $
+      if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
+         Send(self,@TimeStampDoor);
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=88,#speed=100);
-         ptEntranceDoor = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
-         send(self,@OpenEntranceDoorSound);
+         Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=88,#speed=100);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         Send(self,@OpenEntranceDoorSound);
 
          return TRUE;
       }
@@ -168,25 +174,24 @@ messages:
       if (row = 16 OR row = 17) AND (col = 31 OR col = 32) AND ptCloset = $
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@SetSector,#sector=CLOSET,#animation=ANIMATE_CEILING_LIFT,
-              #height=96,#speed=100);
+         Send(self,@SetSector,#sector=CLOSET,#animation=ANIMATE_CEILING_LIFT,
+               #height=96,#speed=100);
          ptCloset = CreateTimer(self,@CloseCloset,DOOR_DELAY);
 
          return TRUE;
       }
 
       if row = 18 AND col = 29
-         AND ptEntranceDoor = $
-         AND send(self,@ReqLegalEntry,#who = what)
+         AND ptEntrance = $
       {
-         send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
       }
 
       if (row = 11 OR row = 12) AND col = 28 AND ptEastDoor = $
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=168,#speed=100);
+         Send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=168,#speed=100);
          ptEastDoor = CreateTimer(self,@CloseEastDoor,DOOR_DELAY);
 
          return TRUE;
@@ -195,8 +200,8 @@ messages:
       if (row = 11 OR row = 12) AND col = 25 AND ptOfficeDoor = $
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@SetSector,#sector=OFFICEDOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=176,#speed=100);
+         Send(self,@SetSector,#sector=OFFICEDOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=176,#speed=100);
          ptOfficeDoor = CreateTimer(self,@CloseOfficeDoor,DOOR_DELAY);
 
          return TRUE;
@@ -205,8 +210,8 @@ messages:
       if (row = 14 OR row = 15) AND (col = 19 OR col = 20) AND ptSouthDoor = $
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@SetSector,#sector=SOUTHDOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=96,#speed=100);
+         Send(self,@SetSector,#sector=SOUTHDOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=96,#speed=100);
          ptSouthDoor = CreateTimer(self,@CloseSouthDoor,DOOR_DELAY);
 
          return TRUE;
@@ -215,12 +220,12 @@ messages:
       if (row = 12 OR row = 13) AND (col > 16 AND col < 20) AND ptWestDoor = $
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-         send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=184,#speed=100);
+         Send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=184,#speed=100);
          ptWestDoor = CreateTimer(self,@CloseWestDoor,DOOR_DELAY);
 
          return TRUE;
-      }         
+      }
 
       propagate;
    }
@@ -228,31 +233,32 @@ messages:
    CloseSecretDoor()
    {
       ptSecretDoor = $;
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=BOOKS,#animation=ANIMATE_CEILING_LIFT,
-           #height=104,#speed=16);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=BOOKS,#animation=ANIMATE_CEILING_LIFT,
+            #height=104,#speed=16);
+      Send(self,@CloseSecretDoorSound);
 
       return;
    }
 
    CloseEntranceDoor()
    {
-      ptEntranceDoor = $;
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=24,#speed=100);
-      send(self,@CloseEntranceDoorSound);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=24,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    CloseCloset()
    {
       ptCloset = $;
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=CLOSET,#animation=ANIMATE_CEILING_LIFT,
-           #height=24,#speed=100);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=CLOSET,#animation=ANIMATE_CEILING_LIFT,
+            #height=24,#speed=100);
 
       return;
    }
@@ -260,9 +266,9 @@ messages:
    CloseEastDoor()
    {
       ptEastDoor = $;
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=96,#speed=100);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=EASTDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=96,#speed=100);
 
       return;
    }
@@ -270,9 +276,9 @@ messages:
    CloseOfficeDoor()
    {
       ptOfficeDoor = $;
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@setsector,#sector=OFFICEDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=96,#speed=100);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=OFFICEDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=96,#speed=100);
 
       return;
    }
@@ -280,9 +286,9 @@ messages:
    CloseSouthDoor()
    {
       ptSouthDoor = $;
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=SOUTHDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=24,#speed=100);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=SOUTHDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=24,#speed=100);
 
       return;
    }
@@ -291,17 +297,17 @@ messages:
    {
       ptWestDoor = $;
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=24,#speed=100);
+      Send(self,@SetSector,#sector=WESTDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=24,#speed=100);
 
       return;
    }
 
    OpenRaidDoor()
    {
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=RAIDDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=184,#speed=30);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=RAIDDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=184,#speed=30);
 
       return;
    }
@@ -309,43 +315,43 @@ messages:
    CloseRaidDoor()
    {
       Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-      send(self,@SetSector,#sector=RAIDDOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=104,#speed=30);
+      Send(self,@SetSector,#sector=RAIDDOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=104,#speed=30);
 
      return;
    }
 
    DefensesDown()
    {
-      send(self,@OpenRaidDoor);
+      Send(self,@OpenRaidDoor);
 
       propagate;
    }
 
    DefensesUp()
    {
-      send(self,@CloseRaidDoor);
+      Send(self,@CloseRaidDoor);
 
       propagate;
    }
 
    ClaimGuildHall()
    {
-      send(self,@CloseRaidDoor);
+      Send(self,@CloseRaidDoor);
 
       propagate;
    }
 
    ResetGuildHall()
    {
-      send(self,@CloseRaidDoor);
+      Send(self,@CloseRaidDoor);
 
       propagate;
    }
 
    ConquerTimer()
    {
-      send(self,@CloseRaidDoor);
+      Send(self,@CloseRaidDoor);
 
       propagate;
    }
@@ -358,10 +364,10 @@ messages:
          ptSecretDoor = $;
       }
 
-      if ptEntranceDoor <> $
+      if ptEntrance <> $
       {
-         DeleteTimer(ptEntranceDoor);
-         ptEntranceDoor = $;
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
       }
 
       if ptCloset <> $
@@ -396,22 +402,6 @@ messages:
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [18,29,1], [18,28,2], [17,29,2], [17,28,2], [19,29,2], [19,28,2] ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@newhold,#what=oPlate,#new_row=nth(i,1),#new_col=nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

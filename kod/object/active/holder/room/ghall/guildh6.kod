@@ -69,13 +69,18 @@ messages:
    Constructor()
    {
       plGuild_doors = [ [11,12] ];
+
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1100, 1187, 1287, 1312 ];
+
       propagate;
    }
 
    CreateStandardExits()
    {
       plExits = $;
-								
+
       plExits = Cons([ 12, 10, RID_CORNOTH, 36, 57, ROTATE_135 ],plExits);
 
       propagate;
@@ -98,17 +103,13 @@ messages:
       propagate;
    }
 
-
    SomethingTryGo(what=$, row=$, col = $)
    {
       if row = 11 AND col = 13
       {
-       	if send(self,@ReqLegalEntry,#who=what)
-	      {
-            send(self,@openEntrancedoor);
+         Send(self,@OpenEntranceDoor);
 
-            return TRUE;
-	      }
+         return TRUE;
       }
 
       propagate;
@@ -118,11 +119,11 @@ messages:
    {
       if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
-         send(self,@SetSector,#sector=GH6ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
-              #height=128,#speed=16);
-         send(self,@OpenEntranceDoorSound);
-         ptEntrance = createtimer(self,@closeentrancedoor,LIFT_DELAY);
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=GH6ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
+               #height=128,#speed=80);
+         Send(self,@OpenEntranceDoorSound);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,LIFT_DELAY);
       }
 
       return;
@@ -130,22 +131,23 @@ messages:
 
    CloseEntranceDoor()
    {
-      ptEntrance = $;
-      send(self,@SetSector,#sector=GH6ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
-           #height=208,#speed=16);
-      send(self,@CloseEntranceDoorSound);
+      Send(self,@SetSector,#sector=GH6ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    OpenSecretDoor()
    {
       if ptSecret = $
       {
-         send(self,@SetSector,#sector=GH6SECRET,#animation=ANIMATE_CEILING_LIFT,
-              #height=204,#speed=16);
-         send(self,@OpenSecretDoorSound);
-         ptSecret = createtimer(self,@CloseSecretDoor,LIFT_DELAY);
+         Send(self,@SetSector,#sector=GH6SECRET,#animation=ANIMATE_CEILING_LIFT,
+              #height=204,#speed=30);
+         Send(self,@OpenSecretDoorSound);
+         ptSecret = CreateTimer(self,@CloseSecretDoor,LIFT_DELAY);
       }
 
       return; 
@@ -154,9 +156,9 @@ messages:
    CloseSecretDoor()
    {
       ptSecret = $;
-      send(self,@SetSector,#sector=GH6SECRET,#animation=ANIMATE_CEILING_LIFT,
-           #height=160,#speed=16);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@SetSector,#sector=GH6SECRET,#animation=ANIMATE_CEILING_LIFT,
+           #height=160,#speed=30);
+      Send(self,@CloseSecretDoorSound);
 
       return;
    }
@@ -164,7 +166,8 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&WoodenBox),
-           #new_row=6,#new_col=2,#fine_row=20,#fine_col=56,#new_angle=ANGLE_EAST);
+            #new_row=6,#new_col=2,#fine_row=20,#fine_col=56,
+            #new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=4,#new_col=5);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=12,#new_col=5);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=12,#new_col=11);
@@ -172,21 +175,6 @@ messages:
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-      lHotPlates = [[ 11, 13, 1 ],[10,13,2],[10,14,2],[ 11, 14, 2 ],[12,13,2],[12,14,2]];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

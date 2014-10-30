@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GuildHall15 is GuildHall 
+GuildHall15 is GuildHall
 
 constants:
 
@@ -35,14 +35,16 @@ resources:
    room_name_guildh15 = "Inner Sanctum of Queen Venya'cyr"
    room_guildh15 = guildh15.roo
 
-   Guildh15_lever_desc = "This lever is clearly of archaic design, yet it seems to be in pristine condition.  "
-      "You can't help but wonder what it controls."
+   Guildh15_lever_desc = \
+      "This lever is clearly of archaic design, yet it seems to be in "
+      "pristine condition.  You can't help but wonder what it controls."
    Guildh15_lever_icon = neclever.bgf
 
    Guildhall15_loop = necloop3.wav
    Guildhall15_music = nec03.mp3
 
-   guildh15_guildwarning = "Your amulet vibrates vigorously for a moment.  Something is amiss."
+   guildh15_guildwarning = \
+      "Your amulet vibrates vigorously for a moment.  Something is amiss."
 
 classvars:
 
@@ -95,9 +97,13 @@ messages:
    {
       plGuild_doors = [[12,30],[13,30],[14,30]];
       plLooping_sounds = [[ Guildhall15_loop, 0, 0, 200, 100 ]];
+      
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 0, 3200, 3038, 3275 ];
+
       propagate;
    }
-
 
    CreateStandardExits()
    {
@@ -118,82 +124,132 @@ messages:
    Delete()
    {
       if ptSecret <> $ {
-         deletetimer(ptSecret);
+         DeleteTimer(ptSecret);
          ptSecret=$;
       }
       if ptEntrance <> $ {
-         deletetimer(ptEntrance);
+         DeleteTimer(ptEntrance);
          ptEntrance = $;
       }
       plLevers = $;
       if ptReactivateLevers <> $ {
-         deletetimer(ptReactivateLevers);
+         DeleteTimer(ptReactivateLevers);
          ptReactivateLevers = $;
       }
 
       propagate;
    }
 
-
-   SomethingTryGo(what=$, row=$,  col = $)
+   InFoyer(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$)
    {
-      if ((row = 12) or (row = 13) or (row = 14) ) and ((col = 31) or (col = 32) or (col = 33))         
+      local iRowDec, iColDec;
+
+      if who <> $
       {
-         if send(self,@ReqLegalEntry,#who = what)
+         if Send(who,@GetOwner) <> self
          {
-            send(self,@openEntrancedoor);
+            return FALSE;
+         }
+
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+         iFineCol = Send(who,@GetFineCol);
+         iFineRow = Send(who,@GetFineRow);
+      }
+
+      iRowDec = (iRow * 100) + (iFineRow * 15625 / 10000);
+      iColDec = (iCol * 100) + (iFineCol * 15625 / 10000);
+
+      if iRow >= viFoyer_north
+         AND iRow <= viFoyer_South
+         AND iCol >= viFoyer_west
+      {
+         if iColDec < 2988
+         {
+            return TRUE;
+         }
+
+         if iColDec < 3038
+            AND iRowDec < 1388
+            AND iRowDec > 1286
+         {
             return TRUE;
          }
       }
-      if (poGuild_Owner=$) and (row=19) and ((col=13) or (col=14) or (col=15))
+
+      return FALSE;
+   }
+
+   SomethingTryGo(what=$, row=$,  col = $)
+   {
+      if ((row = 12) OR (row = 13) OR (row = 14) )
+         AND ((col = 31) OR (col = 32) OR (col = 33))
       {
-         send(self,@OpenSecretDoor);
+         Send(self,@OpenEntranceDoor);
+
+         return TRUE;
       }
+
+      if (poGuild_Owner=$)
+         AND (row=19)
+         AND ((col=13) OR (col=14) OR (col=15))
+      {
+         Send(self,@OpenSecretDoor);
+      }
+
       propagate;
    }
 
-
    OpenEntranceDoor()
    {
-       if ptEntrance = $
-         {
-           send(self,@TimeStampDoor);
-	    send(self,@setsector,#sector=ENTRANCE_SECTOR,#animation=ANIMATE_FLOOR_LIFT,
-               #height = ENTRANCE_H_DN,#speed=16);
-            ptEntrance=createtimer(self,@closeentrancedoor,LIFT_DELAY);
-            send(self,@OpenEntranceDoorSound);
-          }    
-       return;
+      if ptEntrance = $
+      {
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=ENTRANCE_SECTOR,
+               #animation=ANIMATE_FLOOR_LIFT,
+               #height=ENTRANCE_H_DN,#speed=50);
+         ptEntrance=CreateTimer(self,@CloseEntranceDoor,LIFT_DELAY);
+         Send(self,@OpenEntranceDoorSound);
+      }
+
+      return;
    }
 
    CloseEntranceDoor()
    {
-       ptEntrance = $;
-       send(self,@setsector,#sector=ENTRANCE_SECTOR,#animation=ANIMATE_FLOOR_LIFT,
-               #height = ENTRANCE_H_UP,#speed=16);
-       send(self,@CloseEntranceDoorSound);
-       return;
+      Send(self,@SetSector,#sector=ENTRANCE_SECTOR,
+            #animation=ANIMATE_FLOOR_LIFT,
+            #height=ENTRANCE_H_UP,#speed=120);
+      Send(self,@CloseEntranceDoorSound);
+
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
 
    OpenSecretDoor()
    {
-     if ptSecret = $
-        {
-        send(self,@setsector,#sector=SECRET_SECTOR,#animation=ANIMATE_CEILING_LIFT,
-           #height = SECRET_H_UP,#speed=16);
-        ptSecret = createtimer(self,@CloseSecretDoor,LIFT_DELAY);
-        send(self,@OpenSecretDoorSound);
-        }
-   return; 
+      if ptSecret = $
+      {
+         Send(self,@SetSector,#sector=SECRET_SECTOR,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=SECRET_H_UP,#speed=16);
+         ptSecret = CreateTimer(self,@CloseSecretDoor,LIFT_DELAY);
+         Send(self,@OpenSecretDoorSound);
+      }
+
+      return;
    }
 
    CloseSecretDoor()
    {
       ptSecret = $;
-      send(self,@setsector,#sector=SECRET_SECTOR,#animation=ANIMATE_CEILING_LIFT,
-         #height = SECRET_H_DN,#speed=16);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@SetSector,#sector=SECRET_SECTOR,
+            #animation=ANIMATE_CEILING_LIFT,
+            #height=SECRET_H_DN,#speed=16);
+      Send(self,@CloseSecretDoorSound);
+
       return;
    }
 
@@ -201,82 +257,134 @@ messages:
    {
       local oLever;
 
-   	send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),#new_row=4,#new_col=14,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
-	   send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL10),#new_row=4,#new_col=15,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
-   	send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),#new_row=4,#new_col=13,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
-	   send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),#new_row=6,#new_col=42,#fine_row=8,#fine_col=8,#new_angle=ANGLE_SOUTH);
-   	send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),#new_row=20,#new_col=42,#fine_row=48,#fine_col=48,#new_angle=ANGLE_NORTH);
-	   send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),#new_row=3,#new_col=10,#fine_row=16,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
+      % Create ornamental items.
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),
+            #new_row=4,#new_col=14,
+            #fine_row=0,#fine_col=0,
+            #angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL10),
+            #new_row=4,#new_col=15,
+            #fine_row=0,#fine_col=0,
+            #angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),
+            #new_row=4,#new_col=13,
+            #fine_row=0,#fine_col=0,
+            #angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),
+            #new_row=6,#new_col=42,
+            #fine_row=8,#fine_col=8,
+            #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),
+            #new_row=20,#new_col=42,
+            #fine_row=48,#fine_col=48,
+            #new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),
+            #new_row=3,#new_col=10,
+            #fine_row=16,#fine_col=24,
+            #new_angle=ANGLE_SOUTH_EAST);
 
+      % Create either lich body or lich herself.
       if poGuild_owner = $
       {
          Send(self,@NewHold,#what=Create(&DeadLich),
-               #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+               #new_row=13,#new_col=49,
+               #fine_row=16,#fine_col=00,
+               #new_angle=ANGLE_WEST);
       }
       else
       {
          Send(self,@NewHold,#what=Create(&Lich,#oNecromancerGuild=poGuild_owner),
-               #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+               #new_row=13,#new_col=49,
+               #fine_row=16,#fine_col=00,
+               #new_angle=ANGLE_WEST);
       }
 
+      % Create the chest.
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=23,#new_col=14,#new_angle=ANGLE_NORTH);
+            #new_row=23,#new_col=14,#new_angle=ANGLE_NORTH);
 
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+      % Create the levers.
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=22,#new_col=11,#fine_row=48,#fine_col=55,#new_angle=ANGLE_EAST);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=22,#new_col=11,
+            #fine_row=48,#fine_col=55,
+            #new_angle=ANGLE_EAST);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=23,#new_col=11,#fine_row=32,#fine_col=55,#new_angle=ANGLE_EAST);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=23,#new_col=11,
+            #fine_row=32,#fine_col=55,
+            #new_angle=ANGLE_EAST);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=24,#new_col=11,#fine_row=16,#fine_col=55,#new_angle=ANGLE_EAST);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=24,#new_col=11,
+            #fine_row=16,#fine_col=55,
+            #new_angle=ANGLE_EAST);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=25,#new_col=13,#fine_row=55,#fine_col=16,#new_angle=ANGLE_NORTH);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=25,#new_col=13,
+            #fine_row=55,#fine_col=16,
+            #new_angle=ANGLE_NORTH);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=25,#new_col=14,#fine_row=55,#fine_col=00,#new_angle=ANGLE_NORTH);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=25,#new_col=14,
+            #fine_row=55,#fine_col=00,
+            #new_angle=ANGLE_NORTH);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=25,#new_col=14,#fine_row=55,#fine_col=48,#new_angle=ANGLE_NORTH);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=25,#new_col=14,
+            #fine_row=55,#fine_col=48,
+            #new_angle=ANGLE_NORTH);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=25,#new_col=15,#fine_row=55,#fine_col=32,#new_angle=ANGLE_NORTH);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=25,#new_col=15,
+            #fine_row=55,#fine_col=32,
+            #new_angle=ANGLE_NORTH);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=24,#new_col=16,#fine_row=16,#fine_col=55,#new_angle=ANGLE_WEST);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=24,#new_col=16,
+            #fine_row=16,#fine_col=55,
+            #new_angle=ANGLE_WEST);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=23,#new_col=16,#fine_row=32,#fine_col=55,#new_angle=ANGLE_WEST);           
-      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
-      plLevers = cons(oLever,plLevers);
+            #new_row=23,#new_col=16,
+            #fine_row=32,#fine_col=55,
+            #new_angle=ANGLE_WEST);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,
+                     #icon=Guildh15_lever_icon,#range=2);
+      plLevers = Cons(oLever,plLevers);
       Send(self,@NewHold,#what=oLever,
-           #new_row=22,#new_col=16,#fine_row=48,#fine_col=55,#new_angle=ANGLE_WEST);           
+            #new_row=22,#new_col=16,
+            #fine_row=48,#fine_col=55,
+            #new_angle=ANGLE_WEST);
 
       propagate;
-   }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-      lHotPlates = [[ 12, 30, 1 ],[ 13, 30, 1 ],[ 14, 30, 1 ],[ 12, 31, 2 ],[ 13, 31, 2 ],[ 14, 31, 2 ]];
-
-      for i in lHotPlates
-      {
-	  oPlate = Create(&Hotplate,#hpid=nth(i,3));
-	  send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-      return;
    }
 
    CreateShieldLever()
@@ -291,17 +399,25 @@ messages:
    SomethingChanged(what=$)
    {
       local oLever, i;
-      if isClass(what,&Lever) {
-         for oLever in plLevers {
-            if what = oLever {
-               send(send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@LeverPulled,#num=FindListElem(plLevers,oLever));
-               for i in plLevers {
-                  send(i,@SetStuck,#newStuck=TRUE);
+
+      if IsClass(what,&Lever)
+      {
+         for oLever in plLevers
+         {
+            if what = oLever
+            {
+               Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@LeverPulled,
+                     #num=FindListElem(plLevers,oLever));
+               for i in plLevers
+               {
+                  Send(i,@SetStuck,#newStuck=TRUE);
                }
-               ptReactivateLevers = CreateTimer(self,@ReactivateLevers,LEVER_REACTIVATE_DELAY);
+               ptReactivateLevers =
+                     CreateTimer(self,@ReactivateLevers,LEVER_REACTIVATE_DELAY);
             }
          }
       }
+
       propagate;
    }
 
@@ -310,82 +426,66 @@ messages:
       local i;
       ptReactivateLevers = $;
 
-      for i in plLevers {
-         send(i,@SetStuck,#newStuck=FALSE);
+      for i in plLevers
+      {
+         Send(i,@SetStuck,#newStuck=FALSE);
       }
-      
+
       return;
    }
 
    GetTreasureRow()
    {
-      return random(TREASURE_ROW_MIN,TREASURE_ROW_MAX);
+      return Random(TREASURE_ROW_MIN,TREASURE_ROW_MAX);
    }
    GetTreasureCol()
    {
-      return random(TREASURE_COL_MIN,TREASURE_COL_MAX);
+      return Random(TREASURE_COL_MIN,TREASURE_COL_MAX);
    }
 
-  GetPurchaseValue(who=$)
-  "This returns the value that the GuildCreator will sell the guild to."
-  "When the guild has been conquered, he will only sell the guild hall to "
-  "someone in the Conquering guild."
-  "return -1 if this player cannot rent this guild hall."
-  {
-     return -1;   %% A player can never normally rent this guild hall.
-  }
+   GetPurchaseValue(who=$)
+   "This returns the value that the GuildCreator will sell the guild to."
+   "When the guild has been conquered, he will only sell the guild hall to "
+   "someone in the Conquering guild."
+   "return -1 if this player cannot rent this guild hall."
+   {
+      return -1;   %% A player can never normally rent this guild hall.
+   }
 
    NewHold(what=$)
    {
       local oNecroGuild,lMembers,oNecro,iChance;
-      if isclass(what,&User) and not isclass(what,&dm)
+
+      if IsClass(what,&User)
+         AND NOT IsClass(what,&DM)
       {
-         oNecroGuild = send(send(SYS,@FindRoomByNum,#num=RID_GUILDH15),@GetGuildOwner);
+         oNecroGuild = Send(Send(SYS,@FindRoomByNum,
+                           #num=RID_GUILDH15),@GetGuildOwner);
          if oNecroGuild <> $
          {
-            if not send(what,@IsUsingA,#Class=&NecromancerAmulet)
+            if NOT Send(what,@IsUsingA,#Class=&NecromancerAmulet)
             {
                iChance = 2;
-               if (send(what,@FindHoldingActive,#class=&HunterSword)<>$)
+               if (Send(what,@FindHoldingActive,#class=&HunterSword)<>$)
                {
                   iChance = iChance/2;
                }
-               if random(1,iChance)=1
+               if Random(1,iChance)=1
                {
-                  lMembers = send(oNecroGuild,@GetMemberList);
-                  oNecro = First(nth(lMembers,random(1,length(lMembers))));
-                  if send(oNecro,@isLoggedOn)
+                  lMembers = Send(oNecroGuild,@GetMemberList);
+                  oNecro = First(Nth(lMembers,Random(1,length(lMembers))));
+                  if Send(oNecro,@isLoggedOn)
                   {
-                     Send(oNecro,@MsgSendUser,#message_rsc=guildh15_guildwarning);
+                     Send(oNecro,@MsgSendUser,
+                           #message_rsc=guildh15_guildwarning);
                   }
                }
             }
          }
       }
+
       propagate;
    }
-
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
-   "No one may attack through the door if it's closed."
-   {
-      if (what = $) or (victim = $)
-      {
-         propagate;
-      }
-      if send(self,@InFoyer,#who=what) <> send(self,@InFoyer,#who=victim)
-      {
-         if ptEntrance = $      % if the door was closed recently - note that this treats the door as closed the instant it starts closing - oh well.
-         {
-            if isClass(what,&player)
-            {
-               send(what,@SendAttackOutOfRangeMessage,#what=victim,#use_weapon=use_weapon,#stroke_obj=stroke_obj);
-            }
-            return FALSE;
-         }
-      }
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

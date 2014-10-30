@@ -73,13 +73,17 @@ properties:
    ptSouthDoor = $
    ptEastDoor = $
    ptWestDoor = $
-   ptMainDoor = $
+   ptEntrance = $
 
 messages:
 
    Constructor()
    {
       plGuild_doors = [[25,14],[25,15],[25,21],[25,22]];
+
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 2506, 2531, 1400, 2250 ];
 
       propagate;
    }
@@ -192,7 +196,7 @@ messages:
    }
 
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
-               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
       local i, each_obj;
 
@@ -203,15 +207,15 @@ messages:
 
       if StringEqual(string,guildhall5_privacy_command)
          AND NOT pbPrivate
-         AND (poGuild_owner = $ OR send(poGuild_owner,@GetGuildMaster) = what)
-         AND send(self,@InGMOffice,#who=what)
+         AND (poGuild_owner = $ OR Send(poGuild_owner,@GetGuildMaster) = what)
+         AND Send(self,@InGMOffice,#who=what)
       {
-         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
-         send(self,@SetSector,#sector=3,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         Send(self,@SetSector,#sector=3,#animation=ANIMATE_CEILING_LIFT,
               #height=78,#speed=16);
-         send(self,@SetSector,#sector=4,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=4,#animation=ANIMATE_CEILING_LIFT,
               #height=70,#speed=16);
-         send(self,@SetSector,#sector=5,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_CEILING_LIFT,
               #height=86,#speed=16);
       
          pbPrivate = TRUE;
@@ -219,15 +223,15 @@ messages:
 
       if StringEqual(string,guildhall5_no_privacy_command)
          AND pbPrivate
-         AND (poGuild_owner = $ or send(poGuild_owner,@getguildmaster) = what)
-         AND send(self,@InGMOffice,#who=what)
+         AND (poGuild_owner = $ or Send(poGuild_owner,@GetGuildMaster) = what)
+         AND Send(self,@InGMOffice,#who=what)
       {
-         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
-         send(self,@SetSector,#sector=3,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         Send(self,@SetSector,#sector=3,#animation=ANIMATE_CEILING_LIFT,
               #height=150,#speed=16);
-         send(self,@SetSector,#sector=4,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=4,#animation=ANIMATE_CEILING_LIFT,
               #height=150,#speed=16);
-         send(self,@SetSector,#sector=5,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_CEILING_LIFT,
               #height=150,#speed=16);
       
          pbPrivate = FALSE;
@@ -235,11 +239,12 @@ messages:
 
       for i in plActive
       {
-         each_obj = send(self,@HolderExtractObject,#data=i);
-         if send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
          {
-            if send(self,@InFoyer,#who=what) = send(self,@InFoyer,#who=each_obj)
-               AND (NOT pbPrivate OR send(self,@InGMOffice,#who=what) = send(self,@InGMOffice,#who=each_obj))
+            if Send(self,@InFoyer,#who=what) = Send(self,@InFoyer,#who=each_obj)
+               AND (NOT pbPrivate OR Send(self,@InGMOffice,#who=what)
+                        = Send(self,@InGMOffice,#who=each_obj))
             {
                Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
                     #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
@@ -247,27 +252,28 @@ messages:
             }
             else
             {
-               send(each_obj,@MsgSendUser,#message_rsc=guildhall_muffled);
+               Send(each_obj,@MsgSendUser,#message_rsc=guildhall_muffled);
             }
          }
       }
 
-      if poGuild_Owner <> $ AND StringEqual(string,send(poGuild_owner,@GetPassword))
-         AND send(self,@InGMOffice,#who=what) AND pbSecretDoorOpen = FALSE
+      if poGuild_Owner <> $
+         AND StringEqual(string,Send(poGuild_owner,@GetPassword))
+         AND Send(self,@InGMOffice,#who=what) AND pbSecretDoorOpen = FALSE
          AND type <> SAY_EMOTE
       {
-         send(self,@OpenSecretDoor);
+         Send(self,@OpenSecretDoor);
       }
 
       return;
    }
 
-   inGMoffice(who=$)
+   InGMoffice(who=$)
    {
       local row, col;
 
-      row = send(who,@getrow);
-      col = send(who,@getcol);
+      row = Send(who,@GetRow);
+      col = Send(who,@GetCol);
 
       if row > 5 AND row < 11 AND col > 13 AND col < 23
       {
@@ -282,22 +288,22 @@ messages:
    {
       if pbChestAvailable = FALSE
       {
-         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
-         send(self,@SetSector,#sector=1,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         Send(self,@SetSector,#sector=1,#animation=ANIMATE_CEILING_LIFT,
               #height=125,#speed=16);
-         send(self,@SetSector,#sector=2,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=2,#animation=ANIMATE_CEILING_LIFT,
               #height=157,#speed=16);
-         send(self,@OpenSecretDoorSound);
+         Send(self,@OpenSecretDoorSound);
          pbChestAvailable = TRUE;
       }
       else
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
-         send(self,@setsector,#sector=1,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=1,#animation=ANIMATE_CEILING_LIFT,
               #height=93,#speed=16);
-         send(self,@setsector,#sector=2,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=2,#animation=ANIMATE_CEILING_LIFT,
               #height=125,#speed=16);
-         send(self,@CloseSecretDoorSound);
+         Send(self,@CloseSecretDoorSound);
          pbChestAvailable = FALSE;
       }
 
@@ -306,43 +312,48 @@ messages:
 
    SomethingTryGo(row=$, col=$, what=$)
    {
-      if (row = 11 OR row = 12) AND (col = 17 OR col = 18) AND ptSouthDoor = $
+      if (row = 11 OR row = 12)
+         AND (col = 17 OR col = 18)
+         AND ptSouthDoor = $
       {
-         send(self,@SetSector,#sector=6,#animation=ANIMATE_CEILING_LIFT,
-              #height=168,#speed=32);
-         ptSouthDoor = createtimer(self,@CloseSouthDoor,DOOR_DELAY);
+         Send(self,@SetSector,#sector=6,#animation=ANIMATE_CEILING_LIFT,
+              #height=168,#speed=50);
+         ptSouthDoor = CreateTimer(self,@CloseSouthDoor,DOOR_DELAY);
 
          return TRUE;
       }
 
-      if (row = 8 OR row = 9) AND (col = 23 OR col = 24) AND ptEastDoor = $
+      if (row = 8 OR row = 9)
+         AND (col = 23 OR col = 24)
+         AND ptEastDoor = $
       {
-         send(self,@SetSector,#sector=7,#animation=ANIMATE_CEILING_LIFT,
-              #height=134,#speed=32);
-         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_up);
-         ptEastDoor = createtimer(self,@CloseEastDoor,DOOR_DELAY);
+         Send(self,@SetSector,#sector=7,#animation=ANIMATE_CEILING_LIFT,
+              #height=134,#speed=50);
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_up);
+         ptEastDoor = CreateTimer(self,@CloseEastDoor,DOOR_DELAY);
 
          return TRUE;
       }
 
-      if (row = 8 OR row = 9) AND (col = 12 OR col = 13) AND ptWestDoor = $
+      if (row = 8 OR row = 9)
+         AND (col = 12 OR col = 13)
+         AND ptWestDoor = $
       {
-         send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,
-              #height=134,#speed=32);
-         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_up);
-         ptWestDoor = createtimer(self,@CloseWestDoor,DOOR_DELAY);
+         Send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,
+              #height=134,#speed=50);
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_up);
+         ptWestDoor = CreateTimer(self,@CloseWestDoor,DOOR_DELAY);
 
          return TRUE;
       }
 
-      if row = 24 AND (col = 14 OR col = 15 OR col = 21 OR col = 22) AND ptMainDoor = $
+      if row = 24
+         AND (col = 14 OR col = 15 OR col = 21 OR col = 22)
+         AND ptEntrance = $
       {
-         if send(self,@ReqLegalEntry,#who=what)
-         {
-            send(self,@OpenEntranceDoor);
+         Send(self,@OpenEntranceDoor);
 
-            return TRUE;
-         }
+         return TRUE;
       }
 
       propagate;
@@ -350,16 +361,16 @@ messages:
 
    OpenEntranceDoor()
    {
-      if ptMainDoor = $
+      if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
-         send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,
-              #height=70,#speed=16);
-         send(self,@SetSector,#sector=10,#animation=ANIMATE_CEILING_LIFT,
-              #height=70,#speed=16);
-         send(self,@OpenEntranceDoorSound);
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,
+              #height=70,#speed=50);
+         Send(self,@SetSector,#sector=10,#animation=ANIMATE_CEILING_LIFT,
+              #height=70,#speed=50);
+         Send(self,@OpenEntranceDoorSound);
 
-         ptMainDoor = createtimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
       }
 
       return;
@@ -367,20 +378,21 @@ messages:
 
    CloseEntranceDoor()
    {
-      send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,
-           #height=0,#speed=32);
-      send(self,@SetSector,#sector=10,#animation=ANIMATE_CEILING_LIFT,
-           #height=0,#speed=32);
-      send(self,@CloseEntranceDoorSound);
-      ptMainDoor = $;
+      Send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      Send(self,@SetSector,#sector=10,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    CloseSouthDoor()
    {
-      send(self,@SetSector,#sector=6,#animation=ANIMATE_CEILING_LIFT,
-           #height=70,#speed=32);
+      Send(self,@SetSector,#sector=6,#animation=ANIMATE_CEILING_LIFT,
+            #height=70,#speed=80);
       ptSouthDoor = $;
 
       return;
@@ -388,9 +400,9 @@ messages:
 
    CloseEastDoor()
    {
-      send(self,@SetSector,#sector=7,#animation=ANIMATE_CEILING_LIFT,
-           #height=54,#speed=32);
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_down);
+      Send(self,@SetSector,#sector=7,#animation=ANIMATE_CEILING_LIFT,
+            #height=54,#speed=80);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_down);
       ptEastDoor = $;
 
       return;
@@ -398,9 +410,9 @@ messages:
 
    CloseWestDoor()
    {
-      send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,
-          #height=54,#speed=32);
-      send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_down);
+      Send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,
+            #height=54,#speed=80);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_down);
       ptWestDoor = $;
 
       return;
@@ -427,33 +439,14 @@ messages:
          ptWestDoor = $;
       }
 
-      if ptMainDoor <> $
+      if ptEntrance <> $
       {
-         DeleteTimer(ptMainDoor);
-         ptMainDoor = $;
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
       }
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [24,13,1], [24,14,1], [24,15,1], [24,20,1], [24,21,1], [24,22,1],
-                     [23,13,2], [23,14,2], [23,15,2], [23,20,2], [23,21,2], [23,22,2],
-                     [23,12,2], [23,16,2], [24,16,2], [24,19,2], [23,19,2], [23,23,2]
-                   ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@NewHold,#what=oPlate,#new_row=nth(i,1),#new_col=nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

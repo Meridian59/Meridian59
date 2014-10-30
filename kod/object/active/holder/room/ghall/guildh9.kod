@@ -71,9 +71,12 @@ messages:
    {
       plGuild_doors = [ [11,19] ];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1175, 1225, 1900, 2000 ];
+
       propagate;
    }
-
 
    CreateStandardExits()
    {
@@ -107,60 +110,58 @@ messages:
    {
       if row = 12 AND col = 19
       {
-         if send(self,@ReqLegalEntry,#who = what)
-         {
-            send(self,@openEntrancedoor);
-            return TRUE;
-         }
+         Send(self,@OpenEntrancedoor);
+
+         return TRUE;
       }
 
       propagate;
    }
 
-
    OpenEntranceDoor()
    {
       if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
-         send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height=128,#speed=100);
-         send(self,@OpenEntranceDoorSound);
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height=128,#speed=100);
+         Send(self,@OpenEntranceDoorSound);
          ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
-      }    
+      }
 
       return;
    }
 
    CloseEntranceDoor()
    {
-      ptEntrance = $;
-      send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
-           #height=224,#speed=100);
-      send(self,@CloseEntranceDoorSound);
+      Send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=224,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-      return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
 
    OpenSecretDoor()
    {
       if ptSecret = $
       {
-         send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height=128,#speed=100);
-         send(self,@OpenSecretDoorSound);
-         ptSecret = createtimer(self,@CloseSecretDoor,DOOR_DELAY);
+         Send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height=128,#speed=100);
+         Send(self,@OpenSecretDoorSound);
+         ptSecret = CreateTimer(self,@CloseSecretDoor,DOOR_DELAY);
       }
 
-      return; 
+      return;
    }
 
    CloseSecretDoor()
    {
       ptSecret = $;
-      send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
-           #height=224,#speed=100);
-      send(self,@CloseSecretDoorSound);
+      Send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=224,#speed=100);
+      Send(self,@CloseSecretDoorSound);
 
       return;
    }
@@ -168,26 +169,10 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&WoodenBox),
-           #new_row=6,#new_col=5,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
+            #new_row=6,#new_col=5,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-
-      lHotPlates = [ [12,19,1], [12,18,2], [12,20,2], [13,18,2], [13,19,2], [13,20,2] ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

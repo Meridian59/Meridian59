@@ -32,11 +32,16 @@ resources:
    room_name_guildh12 = "West Tower Guild Hall in Ko'catan"
    room_guildh12 = guildh12.roo
 
-   guildh12_sealed1 = "This door is sealed by the order of the captain of the guard."
-   guildh12_sealed2 = "The door to the inner city wall is locked to non-military personnel."
-   guildh12_sealed3 = "The door to the upper barracks is locked."
-   guildh12_sealed4 = "Access to the upper wall is denied to non-military personnel."
-   guildh12_sealed5 = "All access to the upper levels of the west tower is blocked by an iron "
+   guildh12_sealed1 = \
+      "This door is sealed by the order of the captain of the guard."
+   guildh12_sealed2 = \
+      "The door to the inner city wall is locked to non-military personnel."
+   guildh12_sealed3 = \
+      "The door to the upper barracks is locked."
+   guildh12_sealed4 = \
+      "Access to the upper wall is denied to non-military personnel."
+   guildh12_sealed5 = \
+      "All access to the upper levels of the west tower is blocked by an iron "
       "gate.  It would not be wise to violate a lease with the Ko'catan army."
 
    guildh12_gong = gong.wav
@@ -72,7 +77,7 @@ classvars:
    viQuality = 8
    viTerrain_type = TERRAIN_GUILDHALL | TERRAIN_CASTLE
    viSeconds_til_close = 7
-   
+
    vrEntrancedoor_open_sound = guildh12_lift_up_sound
    vrEntrancedoor_close_sound = guildh12_lift_up_sound
    %vrSecretdoor_open_sound = 
@@ -94,7 +99,7 @@ messages:
    Constructor()
    {
       plGuild_doors = [[ 37,2],[37,3]];
-      
+
       propagate;
    }
 
@@ -140,28 +145,125 @@ messages:
          DeleteTimer(ptSecret);
          ptSecret = $;
       }
-      
+
       if ptEntrance <> $
       {
          DeleteTimer(ptEntrance);
          ptEntrance = $;
       }
-      
+
       propagate;
+   }
+
+   IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1,
+            new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
+            who = $)
+   {
+      % Hardcoded movement check, prevent hacking into hall.
+      % Basic requirement door must not be open
+      if ptEntrance = $
+      {
+         if Send(self,@InFoyer,#iRow=old_row,#iCol=old_col,
+                  #iFineRow=old_fine_row,#iFineCol=old_fine_col)
+            AND NOT Send(self,@IsPastEntranceLift,#iRow=old_row,#iCol=old_col,
+                        #iFineRow=old_fine_row,#iFineCol=old_fine_col)
+         {
+            % We're in the foyer. Check if we're trying to move to
+            % the hall entrance door.
+            if Send(self,@IsPastEntranceLift,#iRow=new_row,#iCol=new_col,
+                     #iFineRow=new_fine_row,#iFineCol=new_fine_col)
+               OR NOT Send(self,@InFoyer,#iRow=new_row,#iCol=new_col,
+                        #iFineRow=new_fine_Row,#iFineCol=new_fine_col)
+            {
+               % Bad player! Fail the attempt.
+               Debug("ALERT!",Send(who,@GetTrueName),who,
+                     "tried to move past deactivated Guild Hall elevator ",
+                     Send(self,@GetName)," from ",old_row,old_col,old_fine_row,
+                     old_fine_col," to ",new_row,new_col,new_fine_row,
+                     new_fine_col,". Last elevator activation was ",
+                     GetTime() - Send(self,@GetDoorTimeStamp)," seconds ago.");
+
+                     return FALSE;
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
+   IsPastEntranceLift(iRow=$,iCol=$,iFineRow=$,iFineCol=$)
+   "This returns TRUE if the player is in the foyer area, but past "
+   "the entrance lift and FALSE otherwise."
+   {
+      local iRowDec, iColDec;
+
+      % Convert numbers to xxyy where yy is fineX converted
+      % to a ratio out of 100
+      iRowDec = (iRow * 100) + (iFineRow * 156 / 100);
+      iColDec = (iCol * 100) + (iFineCol * 156 / 100);
+
+      if iRowDec <= 4215 % South wall near door
+         AND iRowDec > 3693 % Edge of elevator
+         AND iColDec <= 1049 % Wall containing entrance door
+      {
+         % We're in a rectangle that includes part of the old foyer.
+         % Need to remove that part.
+
+         if iRowDec <= 3978 % Ledge near door
+            AND iColDec >= 600 % Point where stairs start near door
+         {
+            % This is a rectangle also bound by the door and the elevator
+            return FALSE;
+         }
+
+         % The remaining part can't be easily divided into rectangles,
+         % so use the slopes to determine the appropriate Col for each Row
+         % 1st: Starting from row 3700 and col 412, ending 3802 and 439
+         if (iColDec >= 412)
+            AND (iRowDec >= 3675 AND iRowDec <= 3802)
+         {
+            if (iColDec * 1000) > ((265 * iRowDec) - 568500)
+            {
+               return FALSE;
+            }
+         }
+         % 2nd: Starting from row 3802 and col 439, ending 3862 474
+         if (iColDec >= 439)
+            AND (iRowDec >= 3802 AND iRowDec <= 3862)
+         {
+            if (iColDec * 1000) > ((583 * iRowDec) - 1777000)
+            {
+               return FALSE;
+            }
+         }
+         % 3rd: Starting from row 3856 and col 467, ending 3996 603
+         if (iColDec >= 467)
+            AND (iRowDec >= 3856 AND iRowDec <= 3996)
+         {
+            if (iColDec * 1000) > ((970 * iRowDec) - 3273000)
+            {
+               return FALSE;
+            }
+         }
+
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    SomethingTryGo(what=$, row=$,  col = $)
    {
       if row = 32 AND (col = 2 OR col = 3)
       {
-   	   if send(self,@CanEnter,#who = what)
+         if Send(self,@CanEnter,#who = what)
          {
-           send(self,@OpenEntranceDoor);
-           
+           Send(self,@OpenEntranceDoor);
+
            return TRUE;
          }
       }
-      
+
       propagate;
    }
 
@@ -169,59 +271,69 @@ messages:
    {
       if ptEntrance = $
       {
-         send(self,@TimeStampDoor);
-         send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height=MAIN_DOOR_OPEN,#speed=50);
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height=MAIN_DOOR_OPEN,#speed=50);
          ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
-         send(self,@OpenEntranceDoorSound);
-      }    
+         Send(self,@OpenEntranceDoorSound);
+      }
 
       return;
    }
 
    CloseEntranceDoor()
    {
-       ptEntrance = $;
-       send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+       ptEntrance = CreateTimer(self,@LiftLowering,1500);
+       Send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_FLOOR_LIFT,
             #height=MAIN_DOOR_CLOSED,#speed=50);
-       send(self,@CloseEntranceDoorSound);
-       
+       Send(self,@CloseEntranceDoorSound);
+
        return;
    }
 
+   LiftLowering()
+   "This is just so players have that last second to jump "
+   "off the elevator without triggering wallhack detection."
+   {
+      ptEntrance = $;
+
+      return;
+   }
 
    OpenSecretDoor()
    {
       if ptSecret = $
       {
-         send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height=SECRET_DOOR_OPEN,#speed=50);
+         Send(self,@SetSector,#sector=SECRET_DOOR,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=SECRET_DOOR_OPEN,#speed=50);
          ptSecret = CreateTimer(self,@CloseSecretDoor,DOOR_DELAY);
-         send(self,@OpenSecretDoorSound);
+         Send(self,@OpenSecretDoorSound);
       }
-      
-      return; 
+
+      return;
    }
 
    CloseSecretDoor()
    {
       ptSecret = $;
-      send(self,@setsector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
-           #height=SECRET_DOOR_CLOSED,#speed=50);
-      send(self,@CloseSecretDoorSound);
-      
+      Send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=SECRET_DOOR_CLOSED,#speed=50);
+      Send(self,@CloseSecretDoorSound);
+
       return;
    }
-
 
    CreateStandardObjects()
    {
       local lObjCoords1;
-   
+
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=39,#new_col=47,#fine_col=56,#fine_row=40,#new_angle=ANGLE_WEST);
+            #new_row=39,#new_col=47,#fine_col=56,#fine_row=40,
+            #new_angle=ANGLE_WEST);
       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=41,#new_col=47,#fine_col=8,#fine_row=32,#new_angle=ANGLE_WEST);
+            #new_row=41,#new_col=47,#fine_col=8,#fine_row=32,
+            #new_angle=ANGLE_WEST);
 
       lObjCoords1 = [ [41,13,48,24,OO_GREY_JUG], [41,50,48,00,OO_APPLE],
                       [32,48,24,24,OO_POT], [06,53,24,40,OO_JUG],
@@ -234,27 +346,29 @@ messages:
                       [41,49,32,56,OO_bluejug],[30,49,24,32,OO_bluejug],
                       [33,49,08,32,OO_tallurn],[08,46,16,24,OO_tallurn]
                     ];
-               
+
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
 
-      Send(self,@NewHold,#what=Create(&KocatanLamp),#new_row=32,#new_col=46,#fine_col=24,#fine_row=24);
+      Send(self,@NewHold,#what=Create(&KocatanLamp),
+            #new_row=32,#new_col=46,#fine_col=24,#fine_row=24);
 
       propagate;
    }
 
    DefensesDown()
    {
-      Send(self,@SomethingWaveRoom,#what=poShield_Lever,#wave_rsc=guildh12_gong);
-      
+      Send(self,@SomethingWaveRoom,#what=poShield_Lever,
+            #wave_rsc=guildh12_gong);
+
       propagate;
    }
 
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
-               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
       local i, each_obj;
 
-      if NOT isClass(what,&Player)
+      if NOT IsClass(what,&Player)
          OR type = SAY_YELL
       {
          propagate;
@@ -262,11 +376,12 @@ messages:
 
       for i in plActive
       {
-         each_obj = send(self,@HolderExtractObject,#data=i);
-         
-         if send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+
+         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
          {
-            if (send(self,@InZone,#who=what)) = (send(self,@InZone,#who=each_obj))       
+            if (Send(self,@InZone,#who=what))
+                  = (Send(self,@InZone,#who=each_obj))
             {
                Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
                     #parm1=parm1, #parm2=parm2,#parm3=parm3,#parm4=parm4,
@@ -274,18 +389,18 @@ messages:
             }
             else
             {
-               send(each_obj,@msgsenduser,#message_rsc=guildhall_muffled);
+               Send(each_obj,@MsgSendUser,#message_rsc=guildhall_muffled);
             }
          }
       }
-      
+
       if poGuild_Owner <> $
-         AND StringEqual(string,send(poGuild_owner,@getpassword))
-         AND send(self,@InZone,#who=what) = LEVEL_TWO
+         AND StringEqual(string,Send(poGuild_owner,@GetPassword))
+         AND Send(self,@InZone,#who=what) = LEVEL_TWO
          AND ptSecret = $
          AND type <> SAY_EMOTE
       {
-         send(self,@OpenSecretDoor);
+         Send(self,@OpenSecretDoor);
       }
 
       return;
@@ -297,18 +412,18 @@ messages:
 
       if who = $
       {
-         DEBUG("InZone passed bad info!");
+         Debug("InZone passed bad info!");
 
          return FALSE;
       }
 
-      if send(self,@InFoyer,#who=who)
+      if Send(self,@InFoyer,#who=who)
       {
          return LEVEL_FOYER;
       }
 
-      iRow = send(who,@GetRow);
-      iCol = send(who,@GetCol);
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
     
       if (iRow > 29 and iRow < 42) and (iCol > 41 and iCol < 54)
       {
@@ -322,21 +437,6 @@ messages:
    {
       return RID_KOCATAN;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-      lHotPlates = [ [37,2,1], [37,3,1], [39,4,2], [40,4,2] ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-      
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

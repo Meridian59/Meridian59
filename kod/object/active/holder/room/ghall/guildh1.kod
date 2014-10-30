@@ -14,11 +14,11 @@ constants:
 
    OUT1 = 1
    OUT2 = 2
-   
+
    ENTRANCE = 3
-   
+
    LIFT_DELAY = 10000
-       
+
    include blakston.khd
 
 resources:
@@ -71,6 +71,10 @@ messages:
    {
       plGuild_doors = [ [18,11] ];
 
+      % This is a box containing the guild door, used
+      % for removing players from it when it closes.
+      plEntrance = [ 1812, 1900, 1087, 1112 ];
+
       propagate;
    }
 
@@ -105,17 +109,13 @@ messages:
    {
       if row = 18 AND col = 10
       {
-         if Send(self,@ReqLegalEntry,#who = what)
-         {
-            Send(self,@OpenEntrancedoor);
+         Send(self,@OpenEntrancedoor);
 
-            return TRUE;
-         }
+         return TRUE;
       }
 
       propagate;
    }
-
 
    OpenEntranceDoor()
    {
@@ -123,24 +123,24 @@ messages:
       {
          Send(self,@TimeStampDoor);
          Send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
-              #height=128,#speed=16);
+              #height=128,#speed=50);
          ptEntrance = CreateTimer(self,@CloseEntranceDoor,LIFT_DELAY);
          Send(self,@OpenEntranceDoorSound);
-      }    
+      }
 
       return;
    }
 
    CloseEntranceDoor()
    {
-       ptEntrance = $;
-       Send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
-            #height=200,#speed=16);
-       Send(self,@CloseEntranceDoorSound);
+      Send(self,@SetSector,#sector=ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
+            #height=200,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-       return;
+      % We now propagate this to handle removing players from the door,
+      % and so the door can still be entered while it is closing.
+      propagate;
    }
-
 
    OpenSecretDoor()
    {
@@ -154,7 +154,7 @@ messages:
          Send(self,@OpenSecretDoorSound);
       }
 
-      return; 
+      return;
    }
 
    CloseSecretDoor()
@@ -171,7 +171,6 @@ messages:
 
    CreateStandardObjects()
    {
-
       Send(self,@NewHold,#what=Create(&Table),
            #new_row=17,#new_col=13);
       Send(self,@NewHold,#what=Create(&Table),
@@ -191,23 +190,6 @@ messages:
 
       propagate;
    }
-
-   CreateHotPlates()
-   {
-      local lHotPlates, i, oPlate;
-      lHotPlates = [ [18,10,1], [17,9,2], [17,10,2], [18,9,2], [19,9,2],
-                     [19,10,2]
-                   ];
-
-      for i in lHotPlates
-      {
-         oPlate = Create(&Hotplate,#hpid=nth(i,3));
-         Send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

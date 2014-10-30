@@ -79,6 +79,8 @@ messages:
       plNode_area = [ 2425, 2675, 2225, 2475 ];
 
       Send(self,@YetiGenTimer);
+      Send(self,@SetSector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=380,#speed=0);
 
       propagate;
    }
@@ -137,8 +139,6 @@ messages:
          Send(self,@NewHold,#what=Create(&yeti),#new_row=random(20,27),
                #new_col=random(14,16),
                #new_angle=ANGLE_SOUTH_EAST);
-         Send(self,@SetSector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
-               #height=380,#speed=0);
       }
 
       ptYeti_gen = CreateTimer(self,@YetiGenTimer,1*RESPAWN_TIMER);

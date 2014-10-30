@@ -2790,8 +2790,9 @@ messages:
          return;
       }
 
-      % Quest engine hook
-      % If there are active quest nodes, notify them   -AJM
+      % Quest engine hook: if there are active quest nodes, notify them   -AJM
+      % Keep going however so we can get any necessary response from
+      % the speech library.
       if( plActiveQuestNodes <> $ )
       {
          for oQuestNode in plActiveQuestNodes
@@ -2799,10 +2800,10 @@ messages:
             if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
                     #message=string)
             {
-               return;
+               break;
             }
          }
-      } 
+      }
 
       %% Old quest stuff (and old old quest stuff)
       iQuestID = Send(oLibrary,@GetQuestID,#who=self);

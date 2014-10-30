@@ -133,7 +133,7 @@ messages:
 
          iLineOne = ((-3333 * iColDec + 17333333) / 10000);
          iLineOneNew = ((-3333 * iNewColDec + 17333333) / 10000);
-         debug(irowdec,ilineone, inewrowdec);
+
          if iRowDec >= iLineOne
             AND (iNewRowDec < iLineOne
                OR iNewRowDec < iLineOneNew)

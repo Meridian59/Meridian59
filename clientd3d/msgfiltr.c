@@ -230,8 +230,10 @@ void MessageSaid(ID sender_id, ID sender_name, BYTE say_type, char *message)
       SendSayBlocked(sender_id);
     return;
   }
-  
-  DisplayServerMessage(message, GetColor(COLOR_MAINEDITFGD), 0);
+   if (say_type == SAY_RESOURCE)
+      DisplayServerMessage(message, GetColor(COLOR_BGD), 0);
+   else
+      DisplayServerMessage(message, GetColor(COLOR_MAINEDITFGD), 0);
 }
 /*****************************************************************************/
 /*

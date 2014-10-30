@@ -221,15 +221,15 @@ resources:
       "You cannot Send a message to your guild, as you do not belong to a "
       "guild."
    user_no_guild_logged_on = "No one else from your guild is logged on."
-   user_someone_logon = "### Please welcome %s."
-   user_someone_logoff = "### Au revoir to %s."
+   user_someone_logon = "~B~U~k[###]~n ~B~vPlease welcome %s."
+   user_someone_logoff = "~B~U~k[###]~n ~B~vAu revoir to %s."
    user_guildmate_logon = "~IHail your guildmate %s!"
    user_guildmate_logoff = "~IYour guildmate %s has just departed."
 
    user_safety_on = \
-      "### Your safety is now ~I~gON~n:  You can no longer strike innocents."
+      "~B~U~k[###]~n ~B~vYour safety is now ~I~gON~n~B:  You can no longer strike innocents."
    user_safety_off = \
-      "### Your safety is now ~B~rOFF~n:  Be careful, you are now able to "
+      "~B~U~k[###]~n ~B~vYour safety is now ~B~rOFF~n~B:  Be careful, you are now able to "
       "hurt those around you."   
 
    user_cant_go = "You are unable to go anywhere."
@@ -309,7 +309,7 @@ resources:
    user_cant_balance = "You can't check any balance here!"
 
    user_appeal = "%s appeals, \"%q~n\""
-   user_first_time_appeal = "### %s has just logged on for the first time."
+   user_first_time_appeal = "~B~U~k[###]~n ~B~v%s has just logged on for the first time."
    user_did_appeal = "You appeal, \"%q~n\""
 
    user_kill_zone = \

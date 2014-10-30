@@ -43,22 +43,22 @@ constants:
 
 resources:
 
-   system_user_killed = "### %q was just killed by %s%q."
-   system_user_killed_by_pker = "### %q has been murdered in cold blood."
+   system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
+   system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."
    system_user_killed_pker = \
-      "### The notorious murderer, %q, has been killed by %s%q."
+      "~B~U~k[###]~n ~B~vThe notorious murderer, %q, has been killed by %s%q."
    system_user_killed_outlaw = \
-      "### The feared outlaw, %q, has just met justice at %s%q's hands."
-   system_killed_self = "### %q was just slain by %s own folly."
+      "~B~U~k[###]~n ~B~vThe feared outlaw, %q, has just met justice at %s%q's hands."
+   system_killed_self = "~B~U~k[###]~n ~B~v%q was just slain by %s own folly."
    system_user_killed_room = \
-      "### %s have laid claim to yet another poor soul, %q."
+      "~B~U~k[###]~n ~B~v%s have laid claim to yet another poor soul, %q."
    system_user_killed_bridge_faith = \
-      "### %q just hurled %sself from the cliffs of Riija to find a watery "
+      "~B~U~k[###]~n ~B~v%q just hurled %sself from the cliffs of Riija to find a watery "
       "grave."
-   system_user_killed_token = "### %q lost a token to %s%q."
-   system_user_killed_shield = "### %q was bested by faction rival %s%q."
+   system_user_killed_token = "~B~U~k[###]~n ~B~v%q lost a token to %s%q."
+   system_user_killed_shield = "~B~U~k[###]~n ~B~v%q was bested by faction rival %s%q."
    system_user_killed_guild = \
-      "### %q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
+      "~B~U~k[###]~n ~B~v%q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
       
    guildwar_kill_title1 = " has slaughtered "
    guildwar_kill_body1 = "Let it be known that "
@@ -211,7 +211,7 @@ resources:
    system_new_hour = "It is now %i:00 Meridian time."
 
    system_gift = \
-       "### Out of the kindness of their hearts, the gods have elected to "
+       "~B~U~k[###]~n ~B~vOut of the kindness of their hearts, the gods have elected to "
        "give you %s%s!"
 
    system_mail_template_rsc = "Subject: %q\n%q\n"
@@ -272,6 +272,8 @@ resources:
    nerudite_damage_name = "nerudite"
    silver_damage_name = "silver"
    unknown_damage_name = "unknown"
+   
+   system_message_sound = system.wav
    
 classvars:
 
@@ -986,6 +988,7 @@ messages:
       {
          Send(i,@SysMsgSendUser,#message_rsc=system_admin_message,
               #parm1=string);
+         Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
       }
 
       return;
@@ -1789,6 +1792,7 @@ messages:
          Send(i,@MsgSendUser,#message_rsc=rMessage,#parm1=Send(what,@GetTrueName),#type1=STRING_RESOURCE,
               #parm2=param2,#parm3=param3,#parm4=param4,#parm5=param5,#parm6=param6,
               #parm7=param7,#type3=STRING_RESOURCE,#type5=type5,#type7=type7);
+         Send(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
       }
 
       return;

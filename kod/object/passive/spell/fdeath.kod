@@ -22,7 +22,7 @@ resources:
       "Makes you appear to be deceased, that hopefully someone won't really make you as such.  "
       "Requires solagh and rainbow ferns to cast."
 
-   feigndeath_user_killed = "### %s was just killed by %s%s."
+   feigndeath_user_killed = "~B~U~k[###]~n ~B~v%s was just killed by %s%s."
    feigndeath_angrymocker = "an angry guy named Mocker"
    feigndeath_fallingpiano = "a falling piano"
    feigndeath_firebunny = "a fire breathing bunny"

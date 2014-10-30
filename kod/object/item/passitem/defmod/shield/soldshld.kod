@@ -588,6 +588,7 @@ messages:
    {
       piUsed = DEFENDING;
       if vrShield_window_overlay <> $
+         AND piOverlayHotspot <> HS_SHIELD_BACK
       {
          Send(poOwner,@ChangeWindowOverlay,#what=self);
       }

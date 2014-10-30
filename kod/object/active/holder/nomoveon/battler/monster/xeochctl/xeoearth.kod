@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   ANIM_CAST = 2     %% cast spell animation.             
+   ANIM_CAST = 2     %% Cast spell animation.
 
 resources:
 
@@ -22,12 +22,13 @@ resources:
    XeoEarth_koc_name_rsc = "te'xeo'chicatl"
    XeoEarth_icon_rsc = Xeo.bgf
    XeoEarth_desc_rsc = \
-      "Before you is a te'xeochicatl, a fearsome monster given life by the chaotic "
-      "magic of the Meridian.  The te'xeochicatl is the embodiment of destruction, "
-      "a violent monster that seems uncontrollable.  These monsters feed off of "
-      "the magic of the lands which makes them very powerful.  Rumors abound "
-      "about the origin of these monsters, but you have little time to contemplate "
-      "these rumors in the presence of such destructive power!"
+      "Before you is a te'xeochicatl, a fearsome monster given life by the "
+      "chaotic magic of the Meridian.  The te'xeochicatl is the embodiment of "
+      "destruction, a violent monster that seems uncontrollable.  These "
+      "monsters feed off of the magic of the lands which makes them very "
+      "powerful.  Rumors abound about the origin of these monsters, but you "
+      "have little time to contemplate these rumors in the presence of "
+      "such destructive power!"
 
    XeoEarth_sound_aware = xeo2awr.wav
 
@@ -35,7 +36,7 @@ resources:
 
    vrName = XeoEarth_name_rsc
    vrKocName = XeoEarth_koc_name_rsc
-   
+
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 200
    viDifficulty = 9
@@ -45,9 +46,9 @@ resources:
 properties:
 
    piAnimation = ANIM_NONE
-   piMana = 30
+   piMax_Mana = 30
 
-   % What do we drop on death?   
+   % What do we drop on death?
    pcTreasureItem = &BrownHeartStone
 
 messages:
@@ -59,44 +60,14 @@ messages:
                         [-ATCK_SPELL_SHOCK, -10 ],
                         [-ATCK_SPELL_QUAKE, 110 ]
                       ];
-                        
-      piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4);
-   
+
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4);
+
+      plSpellBook = [ [SID_EARTHQUAKE,5,10], [SID_SAND_STORM,10,40],
+                      [SID_BLIND,2,80], [SID_BRITTLE,10,100] ];
+
       propagate;
    }
-
-   ChooseSpell()
-   {
-      local iRandom;
-
-      iRandom = random(1,100);
-     
-      if iRandom < 10
-      {
-         return [SID_EARTHQUAKE, 5];
-      }
-      else
-      {
-         if iRandom < 40
-         {
-            return [SID_SAND_STORM, 10];
-         }
-         else
-         {
-            if iRandom < 80
-            {
-               return [SID_BLIND, 2];
-            }
-            else
-            {
-               return [SID_BRITTLE, 10];
-            }
-         }
-      }
-
-      return $;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

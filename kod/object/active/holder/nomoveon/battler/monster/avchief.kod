@@ -14,9 +14,6 @@ constants:
 
    include blakston.khd
 
-   SPELL_CHANCE = 6
-   SPELL_RANGE_SQUARED = 666
-
    % Fire bow animation.  Normal attack animation with claws is anim_attack.
    ANIM_FIRE = 2
 
@@ -37,14 +34,14 @@ resources:
    avarchief_name_rsc = "peet-seeeep avar chieftain"    %% default
    avarchief_desc_rsc = \
       "Known for their noble grace, the Peet-Seeeep tribe "
-      "efficiently controls the southeastern shores of the island.  This "
+      "efficiently controls the south-eastern shores of the island.  This "
       "clan leader is feared for its keen accuracy with a bow and deadly "
       "slasher."
 
    avarchief_nomagic_name = "kyip-kyip-kreeet avar chieftain"
    avarchief_nomagic_desc = \
       "Known for their brutal instincts, the Kyip-Kyip-Kreeet tribe "
-      "relentlessly lords over the northwestern shores of the island.  This "
+      "relentlessly lords over the north-western shores of the island.  This "
       "clan leader is feared for its keen accuracy with a bow and deadly "
       "slasher."
 
@@ -64,8 +61,10 @@ resources:
 
    avarchief_arrow = arrow.bgf
 
-   avarchief_fire_misses = "The avar chieftain cocks and fires, narrowly missing you."
-   avarchief_fire_hits = "The chieftain's well-aimed arrow strikes you with pinpoint accuracy!"
+   avarchief_fire_misses = \
+      "The avar chieftain cocks and fires, narrowly missing you."
+   avarchief_fire_hits = \
+      "The chieftain's well-aimed arrow strikes you with pinpoint accuracy!"
 
 classvars:
 
@@ -79,7 +78,9 @@ classvars:
    viTreasure_type = TID_AVAR_CHIEF
    viAttack_type = ATCK_WEAP_PIERCE
    viSpeed = SPEED_FAST
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_WIZARD_KILLER | AI_FIGHT_MONSTERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE\
+      | AI_FIGHT_WIZARD_KILLER | AI_FIGHT_MONSTERS
    viLevel = 135
    viDifficulty = 9
    viKarma = 80
@@ -97,8 +98,9 @@ properties:
    vrDesc = avarchief_desc_rsc
 
    pbFire = FALSE
-   
    piAnimation = ANIM_NONE
+
+   piSpellChance = 6
 
 messages:
 
@@ -106,11 +108,11 @@ messages:
    {
       if clan <> $
       {
-         send(self,@SetClan,#clan=clan);
+         Send(self,@SetClan,#clan=clan);
       }
       else
       {
-         post(self,@ChooseClan); 
+         Post(self,@ChooseClan);
       }
 
       propagate;
@@ -132,7 +134,7 @@ messages:
    SetClan(clan = AVARCLAN_PROMAGIC)
    {
       piColor_translation = clan;
-      
+
       if clan = AVARCLAN_ANTIMAGIC
       {
          vrName = avarchief_nomagic_name;
@@ -154,9 +156,9 @@ messages:
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-      
+
       return;
    }
 
@@ -164,21 +166,21 @@ messages:
    {
       return piColor_translation;
    }
-   
+
    ChooseClan()
    {
       if poOwner = $ OR NOT IsClass(poOwner,&KCForest)
-      {         
-         if random (1,5) > 1
+      {
+         if Random (1,5) > 1
          {
-            send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
+            Send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
          }
 
          return;
       }
 
       % Ask our owner what clan we should be in.
-      send(self,@SetClan,#clan=send(poOwner,@GetClan));
+      Send(self,@SetClan,#clan=Send(poOwner,@GetClan));
 
       return;
    }
@@ -208,7 +210,7 @@ messages:
       
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -239,34 +241,43 @@ messages:
 
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_STAND);
+         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_ATTACK_START,2,
+                   FRAME_ATTACK_END,2,FRAME_STAND);
+
          return;
       }
 
       if piAnimation = ANIM_FIRE
       {
-         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_FIRE_START,2,FRAME_FIRE_END,2,FRAME_STAND);
+         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_FIRE_START,2,
+                   FRAME_FIRE_END,2,FRAME_STAND);
+
          return;
       }
 
-      % if no body animation
+      % If no body animation
       AddPacket(1,ANIMATE_NONE,2,3);
-      
+
       return;
    }
 
+   % This is technically a ranged attack, and we use RangedAttackChance
+   % to see if we can do it. Use the same range as that for spells. We
+   % also use piSpellChance for the base chance to do our ranged attack.
    MonsterCastSpell()
    {
       local iBase;
 
-      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+      iBase = Send(self,@RangedAttackChance,#base=piSpellChance);
 
       if Random(1,iBase) = 1
-         AND Send(self,@SquaredDistanceTo,#what=poTarget) < SPELL_RANGE_SQUARED
+         AND Send(self,@SquaredDistanceTo,#what=poTarget) < piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-         AND send(poowner,@reqsomethingattack,#what=self,#victim=poTarget,#use_weapon=self)
+         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
+                  #use_weapon=self)
       {
-         send(self,@DoMissileAttack);
+         Send(self,@DoMissileAttack);
+
          return TRUE;
       }
 
@@ -276,7 +287,7 @@ messages:
    DoMissileAttack()
    {
       pbFire = TRUE;
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
 
       return;
@@ -312,10 +323,10 @@ messages:
 
    IsAlly(target = $)
    {
-      if (IsClass(target,&Avar)          
-          OR IsClass(target,&AvarShaman)
-          OR IsClass(target,&AvarChieftain))
-         AND send(target,@GetClan) = send(self,@GetClan)
+      if (IsClass(target,&Avar)
+            OR IsClass(target,&AvarShaman)
+            OR IsClass(target,&AvarChieftain))
+         AND Send(target,@GetClan) = Send(self,@GetClan)
       {
          return TRUE;
       }
@@ -332,8 +343,8 @@ messages:
          OR IsClass(what,&AvarChieftain)
          OR IsClass(what,&Avar)
       {
-         if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
-            AND send(what,@GetClan) <> send(self,@GetClan)
+         if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_KC3
+            AND Send(what,@GetClan) <> Send(self,@GetClan)
          {
             return 25;
          }
@@ -344,14 +355,14 @@ messages:
 
    GetTreasureType()
    {
-      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
+      if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_KC3
       {
          return TID_NONE;
       }
 
       return viTreasure_type;
    }
-   
+
    CreateTreasure(who=$,corpse=$)
    {
       local oTreasure, iNumber;
@@ -365,9 +376,11 @@ messages:
       oTreasure = Create(&NeruditeArrow,#corpse=corpse);
       iNumber = Random(25,45);
       Send(oTreasure,@AddNumber,#number=iNumber);
-      
-      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,
+               #new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
+                  #new_row=piRow,#new_col=piCol)
       {
          Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
       }
@@ -375,7 +388,7 @@ messages:
       {
          Send(oTreasure,@Delete);
       }
-   
+
       propagate;
    }
 
@@ -387,14 +400,13 @@ messages:
       if vrDead_icon <> $
       {
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
-                        #BodyTranslation=send(self,@GetClan),
+                        #BodyTranslation=Send(self,@GetClan),
                         #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);         
+                        #monstername=vrName,#drawfx=viDead_drawfx);
       }
 
-      return oBody;  
+      return oBody;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

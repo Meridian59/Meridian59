@@ -1497,7 +1497,6 @@
    % Flags indicating enchantments
    ENCH_PALSY       = 0x01
    ENCH_DEMENTIA    = 0x20
-   ENCH_MANA_BOMB   = 0x40
 
    % Resistance constants
    MAX_RESISTANCE =  100

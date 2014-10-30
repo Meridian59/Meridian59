@@ -14,7 +14,6 @@ constants:
 
    include blakston.khd
 
-   SPELL_RANGE_SQUARED = 666
    PALSY_CHANCE = 10
 
 resources:
@@ -67,7 +66,10 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piSpell_chance = 10
+   % 1 in x chance to cast a spell.
+   piSpellChance = 10
+   piSpellPower = 90
+   piMax_mana = 20
 
 messages:
 
@@ -102,6 +104,9 @@ messages:
                         [ATCK_WEAP_BLUDGEON, 50 ],
                         [ATCK_WEAP_SLASH, -10 ],
                         [-ATCK_SPELL_FIRE, -10 ] ];
+
+      plSpellBook = [ [SID_LIGHTNING, 5, 100] ];
+
       propagate;
    }
 
@@ -110,7 +115,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -190,35 +195,12 @@ messages:
    {
       % Living trees get more dangerous if you burn 'em.
 
-      if (aSpell & ATCK_SPELL_FIRE) AND piSpell_chance > 2
+      if (aSpell & ATCK_SPELL_FIRE) AND piSpellChance > 2
       {
-         piSpell_chance = piSpell_chance - 1;
+         piSpellChance = piSpellChance - 1;
       }
 
       propagate;
-   }
-
-   MonsterCastSpell()
-   {
-      local oSpell, iBase;
-
-      iBase = Send(self,@AdjustedChanceBase,#base=piSpell_chance);
-
-      if Random(1,iBase) = 1
-         AND Send(self,@SquaredDistanceTo,#what=poTarget) < SPELL_RANGE_SQUARED
-         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
-      {
-         piAnimation = ANIM_ATTACK;
-         Send(poOwner,@SomethingChanged,#what=self);
-         piAnimation = ANIM_NONE;
-         oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING);
-         Send(oSpell,@CastSpell,#who=self,#lTargets=List(poTarget));
-
-         return TRUE;
-      }
-
-      return FALSE;
    }
 
    HitSideEffect(what = $)

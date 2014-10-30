@@ -28,11 +28,7 @@ constants:
 
    % Base percent chance to resist spells.
    MAGIC_RESIST = 50
-   % Range, squared, of spell attacks.
-   SPELL_RANGE_SQUARED = 100
-   % Chance (1 in this many) to cast an offensive spell per attack.
-   SPELL_CHANCE = 3
-   
+
 resources:
 
    DarkAngel_koc_name_rsc = "ozangelis"
@@ -85,6 +81,12 @@ properties:
    piAnimation = ANIM_NONE
    piDrawfx = BOUNCE_YES
 
+   % 1 in x chance to cast a spell.
+   piSpellChance = 3
+   piSpellPower = 99
+   piMax_mana = 40
+   piSpellRange = 100
+
 messages:
 
    Constructed()
@@ -95,6 +97,10 @@ messages:
                         [ ATCK_WEAP_NERUDITE, 75 ],
                         [ ATCK_WEAP_MAGIC, -5 ]
                       ];
+      plSpellBook =  [ [SID_BLIND,8,20],[SID_EVIL_TWIN,12,30], [SID_HOLD,8,40],
+                       [SID_REFLECTION,5,60], [SID_DISCORDANCE,5,70],
+                       [SID_ENFEEBLE,8,80], [SID_FORGET,5,100] ];
+
       propagate;
    }
 
@@ -111,11 +117,11 @@ messages:
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_DARKNESS);
       if NOT Send(poOwner,@IsEnchanted,#what=oSpell)
          AND Send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=$,
-                  #iSpellPower=SPELLPOWER_MAXIMUM)
+                  #iSpellPower=piSpellPower)
          AND Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#litems=$)
       {
          Send(oSpell,@CastSpell,#who=self,#lTargets=$,
-              #iSpellPower=SPELLPOWER_MAXIMUM);
+              #iSpellPower=piSpellPower);
       }
 
       Send(self,@MonsterCastSpell);
@@ -124,91 +130,13 @@ messages:
       return;
    }
 
-   MonsterCastSpell()
+   MonsterCastAnimation(iSpellNum=$)
    {
-      local iDistance, oSpell, iRandom, lTargets;
+      % We use the fireball for cast animation.
+      Send(self,@DoFireball);
 
-      iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
-
-      iRandom = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
-      if Random(1,iRandom) = 1
-         AND iDistance > Send(self,@GetAttackRange)
-         AND iDistance <= SPELL_RANGE_SQUARED
-         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
-                  #use_weapon=self)
-      {
-         iRandom = random(1,100);
-         if iRandom < 20
-         {
-            oSpell = SID_BLIND;
-            lTargets = [poTarget];
-         }
-         else
-         {
-            if iRandom < 30
-            {
-               % Summoning an Evil Twin
-               oSpell = SID_EVIL_TWIN;
-               lTargets = [poTarget];
-            }
-            else
-            {
-               if iRandom < 40
-               {
-                  oSpell = SID_HOLD;
-                  lTargets = [poTarget];
-               }
-               else
-               {
-                  if iRandom < 60
-                  {
-                     % Summoning a Reflection
-                     oSpell = SID_REFLECTION;
-                     lTargets = $;
-                  }
-                  else
-                  {
-                     if iRandom < 70
-                     {
-                        oSpell = SID_DISCORDANCE;
-                        lTargets = $;
-                     }
-                     else
-                     {
-                        if iRandom < 80
-                        {
-                           oSpell = SID_ENFEEBLE;
-                           lTargets = [poTarget];
-                        }
-                        else
-                        {
-                           oSpell = SID_FORGET;
-                           lTargets = [poTarget];
-                        }
-                     }
-                  }
-               }
-            }
-         }
-
-         oSpell = Send(SYS,@FindSpellByNum,#num=oSpell);
-         lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
-
-         if Send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=lTargets,
-                 #iSpellPower=SPELLPOWER_MAXIMUM)
-            AND Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,
-                     #litems=lTargets)
-         {
-            Send(oSpell,@CastSpell,#who=self,#ltargets=lTargets,
-                 #iSpellPower=SPELLPOWER_MAXIMUM);
-         }
-
-         return TRUE;
-      }
-      
-      return FALSE;
-    }
+      return;
+   }
 
    DoFireball()
    {

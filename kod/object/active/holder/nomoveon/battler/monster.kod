@@ -28,6 +28,9 @@ constants:
    AUTOLOOT_GOT_PARTIAL_STACK = 3
    AUTOLOOT_CANNOT_GET = 4
 
+   % Number of ms to lose one boosted health or mana point.
+   BOOST_DECAY_TIME = 30000 
+
 resources:
 
    monster_percent_q = "%q"
@@ -352,13 +355,27 @@ properties:
 
    piSweepCounter = 0
 
+   % Passive reagent return spell list.
    plSpellList = $
+
+   % List of spells this monster can cast. Has the format:
+   % [ Spell num, mana cost, number req. from Random(1,100) to cast ]
+   plSpellBook = $
+
+   % 1 in x chance to cast a spell. Default 10% chance.
+   piSpellChance = 10
+
+   % Monster's spellpower. Default 50 sp.
+   piSpellPower = 50
+
+   % Monster's spell range, squared. Default 666.
+   piSpellRange = 666
 
    piOffense = $
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
-   
+
    piArmor = 0
 
 messages:
@@ -370,6 +387,7 @@ messages:
 
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
       piHit_points = piMax_hit_points;
+      piMana = piMax_mana;
 
       if Send(self,@MobIsSeller)
       {
@@ -604,6 +622,14 @@ messages:
              }
          }
       }
+
+      if ptMana <> $
+      {
+         DeleteTimer(ptMana);
+         ptMana = $;
+      }
+
+      plSpellBook = $;
 
       Send(self,@RemoveAllEnchantments);
       poMaster = $;
@@ -1365,20 +1391,6 @@ messages:
       return;
    }
 
-   StartManaBomb()
-   {
-      piEnch_flags = (piEnch_flags | ENCH_MANA_BOMB);
-
-      return;
-   }
-
-   EndManaBomb()
-   {
-      piEnch_flags = (piEnch_flags & ~ENCH_MANA_BOMB);
-
-      return;
-   }
-
    AdjustedChanceBase(base = 0)
    "Adjusts the probability of a monster spell cast based on enchantments"
    {
@@ -1397,11 +1409,25 @@ messages:
          % Halve the chance by doubling the base
          base = base * 2;
       }
-      
-      % Mana bomb makes casting damn near impossible, big increase to base.
-      if (piEnch_flags & ENCH_MANA_BOMB)
+
+      return base;
+   }
+
+   RangedAttackChance(base=0)
+   {
+      if Send(self,@IsEnchanted,#byClass=&Vertigo)
       {
-         base = base + 1000 ;
+         base = base + 2;
+      }
+
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Winds)
+      {
+         base = base + 3;
+      }
+
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Sandstorm)
+      {
+         base = base + 3;
       }
 
       return base;
@@ -4082,6 +4108,25 @@ messages:
       return;
    }
 
+   CalculateManaTime()
+   "Calculate # of milliseconds until monster will gain a mana point."
+   {
+      local iTime, oSpell;
+
+      % Old system had monsters regenerating 1 mana point per second.
+      % Do the same here for now.
+      if piMana > piMax_mana
+      {
+         iTime = BOOST_DECAY_TIME;
+      }
+      else
+      {
+         iTime =  1000;
+      }
+
+      return iTime;
+   }
+
    MonsterCanCastSpell()
    "Returns FALSE if a monster can't currently cast a spell for some reason."
    {
@@ -4092,11 +4137,95 @@ messages:
 
       return TRUE;
    }
-   
+
    MonsterCastSpell()
-   "Default message handler does nothing."
+   "Handle monster spellcasting here."
    {
+      local i, iDistance, oSpell, iRandom, lTargets, iSpellNum, iManaCost;
+
+      % If monster knows no spells, or has no target, return.
+      if plSpellBook = $
+         OR poTarget = $
+      {
+         return FALSE;
+      }
+
+      % Get distance to target.
+      iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
+
+      % Get the adjusted chance to cast, based on whether we're demented
+      % or if AmA is up. We also check target here so we don't waste
+      % mana casting when we can't get our target. Instead, we use that time
+      % walking to the target.
+      iRandom = Send(self,@AdjustedChanceBase,#base=piSpellChance);
+      if Random(1,iRandom) = 1
+         AND iDistance > Send(self,@GetAttackRange)
+         AND iDistance <= piSpellRange
+         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
+                  #use_weapon=self)
+      {
+         % We go through the monster's spellbook and pick the spell
+         % that corresponds to the random number picked. This is used
+         % to give a % chance for each spell to be picked.
+         iRandom = Random(1,100);
+         for i in plSpellBook
+         {
+            if iRandom <= Nth(i,3)
+            {
+               iSpellNum = Nth(i,1);
+               iManaCost = Nth(i,2);
+
+               break;
+            }
+         }
+
+         % If no spell returned or cannot pay mana costs, spell fails.
+         if iSpellNum = $
+            OR piMana < iManaCost
+         {
+            return FALSE;
+         }
+
+         % Take mana from monster.
+         piMana = piMana - iManaCost;
+         Send(self,@NewMana);
+
+         % Get the spell object.
+         oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+         
+         % Find the valid targets, defaulting to poTarget.
+         lTargets = [poTarget];
+         lTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
+
+         % See if we can cast the spell here.
+         if Send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,
+                  #iSpellPower=piSpellPower)
+            AND Send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,
+                     #lItems=lTargets)
+         {
+            % Do any special cast animations; send spell for specific ones.
+            Send(self,@MonsterCastAnimation,#iSpellNum=iSpellNum);
+
+            % Cast the spell.
+            Send(oSpell,@CastSpell,#who=self,#lTargets=lTargets,
+                  #iSpellPower=piSpellPower);
+         }
+
+         return TRUE;
+      }
+
       return FALSE;
+   }
+
+   MonsterCastAnimation(iSpellNum=$)
+   "If a monster has a special cast animation, call this."
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
    }
 
    HitPointThreshold()

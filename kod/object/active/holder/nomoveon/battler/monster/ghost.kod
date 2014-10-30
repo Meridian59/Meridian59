@@ -14,8 +14,6 @@ constants:
 
    include blakston.khd
 
-   SPELL_CHANCE = 4
-
 resources:
 
    ghost_koc_name_rsc = "far'nohl kotezleoc"
@@ -67,7 +65,9 @@ classvars:
    vrSound_death = ghost_sound_death
 
    viDead_drawfx = DRAWFX_TRANSLUCENT_75
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_WIZARD_KILLER | AI_MOVE_FLEE_FRIGHTENERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS \
+      | AI_FIGHT_WIZARD_KILLER | AI_MOVE_FLEE_FRIGHTENERS
 
 properties:
 
@@ -78,10 +78,15 @@ properties:
    piMaxDamage = 16
    vrDesc = ghost_desc_rsc
 
+   % 1 in x chance to cast a spell.
+   piSpellChance = 4
+   piSpellPower = 99
+   piMax_mana = 20
+
 messages:
 
    Constructed()
-   {      
+   {
       plResistances = [ [-ATCK_SPELL_FIRE, 90],
                         [-ATCK_SPELL_COLD, 90],
                         [-ATCK_SPELL_UNHOLY, 90],
@@ -90,6 +95,8 @@ messages:
                         [ATCK_WEAP_MAGIC, -50],
                         [-ATCK_SPELL_HOLY, -50]
                       ];
+
+      plSpellBook = [ [ SID_FIREBALL, 3, 100 ] ];
 
       propagate;
    }
@@ -105,7 +112,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -134,7 +141,7 @@ messages:
    {
       AddPacket(1,1);
       AddPacket(4,ghost_eyes_rsc, 1,HS_EYES, 1,ANIMATE_NONE, 2,1);
-      
+
       return;
    }
 
@@ -150,33 +157,9 @@ messages:
       propagate;
    }
 
-   MonsterCastSpell()
-   {
-      local oSpell,iBase;
-
-      oSpell = send(SYS,@FindSpellByNum,#num=SID_FIREBALL);
-      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
-
-      if Random(1,iBase) = 1
-         AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
-         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=60)
-         AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
-         AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-      {
-         piAnimation = ANIM_ATTACK;
-         send(poOwner,@SomethingChanged,#what=self);
-         piAnimation = ANIM_NONE;
-         send(oSpell,@CastSpell,#who=self,#lTargets=[poTarget]);
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-   
    GetName()
    {
-      % there's only one Far'nohl, and he's in the castle.
+      % There's only one Far'nohl, and he's in the castle.
       if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_THRONE2
       {
          return ghost_name_rsc;
@@ -219,7 +202,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

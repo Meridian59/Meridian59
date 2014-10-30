@@ -14,11 +14,7 @@ constants:
 
    include blakston.khd
 
-   SPELL_CHANCE = 12
-   SPELL_RANGE_SQUARED = 666
-   MANA_REGEN_TIME = 1000
-
-   ANIM_CAST = 2     %% cast spell animation.     
+   ANIM_CAST = 2     %% Cast spell animation.
 
    FRAME_STAND = 1
    FRAME_WALK_START = 2
@@ -39,22 +35,22 @@ resources:
    avarshaman_desc_rsc = \
       "This is a shaman of the Peet-Seeeep clan.  "
       "Legend says that the Shaman Avar blind themselves in order to force "
-      "their third, 'magical' eye to sprout forth.  Only a fool would willingly "
-      "offend one of these fearsome warlocks."      
+      "their third, 'magical' eye to sprout forth.  Only a fool would "
+      "willingly offend one of these fearsome warlocks."
 
    avarshaman_bone_name = "bone faction shaman"
    avarshaman_bone_desc = \
       "This is the powerful shaman of the mystic Bone faction.  "
       "Legend says that the Shaman Avar blind themselves in order to force "
-      "their third, 'magical' eye to sprout forth.  Only a fool would willingly "
-      "offend one of these fearsome warlocks."  
+      "their third, 'magical' eye to sprout forth.  Only a fool would "
+      "willingly offend one of these fearsome warlocks."
 
    avarshaman_nomagic_name = "kyip-kyip-kreeet avar shaman"
    avarshaman_nomagic_desc = \
       "This is a thrall shaman to the Kyip-Kyip-Kreet clan.  "
       "Legend says that the Shaman Avar blind themselves in order to force "
-      "their third, 'magical' eye to sprout forth.  Only a fool would willingly "
-      "offend one of these fearsome warlocks."  
+      "their third, 'magical' eye to sprout forth.  Only a fool would "
+      "willingly offend one of these fearsome warlocks."
 
    avarshaman_dead_icon_rsc = avshamX.bgf
    avarshaman_dead_name_rsc = "dead avar shaman"
@@ -80,7 +76,8 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viAttack_spell = ATCK_SPELL_QUAKE
    viSpeed = SPEED_SLOW
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
    viLevel = 100
    viDifficulty = 8
    viKarma = 80
@@ -97,9 +94,11 @@ properties:
    vrDesc = avarshaman_desc_rsc
 
    piAnimation = ANIM_NONE
-   piMana = 10
-   ptMana = $
    piColor_Translation = PT_PURPLETORED
+   
+   % 1 in x chance to cast a spell.
+   piSpellChance = 12
+   piSpellPower = 75
 
 messages:
 
@@ -107,11 +106,11 @@ messages:
    {
       if clan <> $
       {
-         send(self,@SetClan,#clan=clan);
+         Send(self,@SetClan,#clan=clan);
       }
       else
       {
-         post(self,@ChooseClan); 
+         Post(self,@ChooseClan);
       }
 
       propagate;
@@ -127,6 +126,10 @@ messages:
                         [ATCK_WEAP_NONMAGIC, 40 ],
                         [ATCK_WEAP_MAGIC, -10 ]
                       ];
+
+      plSpellBook = [ [SID_HOLD,5,40], [SID_MANA_BOMB,6,70],
+                      [SID_SAND_STORM,4,85], [SID_EVIL_TWIN,10,90],
+                      [SID_EARTHQUAKE,10,100] ];
 
       propagate;
    }
@@ -156,9 +159,9 @@ messages:
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-      
+
       return;
    }
 
@@ -170,17 +173,17 @@ messages:
    ChooseClan()
    {
       if poOwner = $ OR NOT IsClass(poOwner,&KCForest)
-      {         
-         if random (1,5) > 1
+      {
+         if Random (1,5) > 1
          {
-            send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
+            Send(self,@SetClan,#clan=Random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
          }
 
          return;
       }
 
       % Ask our owner what clan we should be in.
-      send(self,@SetClan,#clan=send(poOwner,@GetClan));
+      Send(self,@SetClan,#clan=Send(poOwner,@GetClan));
 
       return;
    }
@@ -195,42 +198,15 @@ messages:
       propagate;
    }
 
-   ManaTimer()
-   {
-      piMana = piMana + 1;
-
-      if piMana >=10
-      {
-         ptMana = $;
-
-         return;
-      }
-
-      ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
-
-      return;
-   }
-
-   Delete()
-   {
-      if ptMana <> $
-      {
-         deletetimer(ptMana);
-         ptMana = $;
-      }
-
-      propagate;
-   }
-
    MonsterAttack(what = $)
    {
-      piAnimation = ANIM_ATTACK;      
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self,
-           #flags=PROJ_FLAG_LIGHT_SOURCE);
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self,
+            #flags=PROJ_FLAG_LIGHT_SOURCE);
       Send(what,@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -262,6 +238,7 @@ messages:
       {
          AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_ATTACK_START,2,
                    FRAME_ATTACK_END,2,FRAME_STAND);
+
          return;
       }
 
@@ -269,95 +246,24 @@ messages:
       {
          AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_CAST_START,2,
                    FRAME_CAST_END,2,FRAME_STAND);
+
          return;
       }
 
-      % if no body animation
+      % If no body animation
       AddPacket(1,ANIMATE_NONE,2,3);
-      
+
       return;
    }
 
-   MonsterCastSpell()
+   MonsterCastAnimation(oSpell=$)
+   "If a monster has a special cast animation, call this."
    {
-      local iSpell, iBase, oSpell, iManaCost, iRandom, lTargets;
-
-      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
-      if random(1,iBase) <> 1
-      {
-         return FALSE;
-      }
-
-      iRandom = random(1,100);
-      
-      if  iRandom < 40
-      {
-         iSpell = SID_HOLD;
-         iManaCost = 5;
-      }
-      else
-      {
-         if iRandom < 70
-         {
-            iSpell = SID_MANA_BOMB;
-            iManaCost = 6;
-         }
-         else
-         {
-            if iRandom < 85
-            {
-               iSpell = SID_SAND_STORM;
-               iManaCost = 4;
-            }
-            else
-            {
-               if iRandom < 90      
-               {
-                  iSpell = SID_SHATTER;
-                  iManaCost = 10;
-               }
-               else
-               {   
-                  iSpell = SID_EARTHQUAKE;
-                  iManaCost = 10;
-               }
-            }
-         }
-      }
-
-      if piMana < iManaCost
-      {
-         return FALSE;
-      }
-
-      piMana = piMana - iManaCost;
-
-      if piMana < 10
-      {
-         ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
-      }
-
       piAnimation = ANIM_CAST;
       Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;                            
-         
-      oSpell = send(SYS,@FindSpellByNum,#num=iSpell);
+      piAnimation = ANIM_NONE;
 
-      if send(oSpell,@GetNumSpellTargets) > 0
-         AND NOT send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-      {
-         return FALSE;
-      }
-
-      lTargets = send(oSpell,@GetTargets,#who=self,#lTargets=[poTarget]);
-
-      if send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,#iSpellPower=75)
-         AND send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#litems=lTargets)
-      {
-         send(oSpell,@CastSpell,#who=self,#ltargets=lTargets,#iSpellPower=75);
-      }
-
-      return TRUE;
+      return;
    }
 
    GetProjectileIcon()
@@ -369,10 +275,10 @@ messages:
    {
       return 8;
    }
-   
+
    SendProjectileAnimation()
    {
-      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 8);   % 40ms between animations
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 8);  % 40ms between animations
 
       return;
    }
@@ -399,7 +305,7 @@ messages:
    {
       % for EFFECT_INVERT, 4 bytes of time to be inverted - 1/10 of a second
       AddPacket(4,200);
-      
+
       return;
    }
 
@@ -407,18 +313,18 @@ messages:
    {
       return TRUE;
    }
-  
+
    GetOptimalRange()
    {
-      return random(6,12);
+      return Random(6,12);
    }
 
    IsAlly(target = $)
    {
-      if (IsClass(target,&Avar)          
-          OR IsClass(target,&AvarShaman)
-          OR IsClass(target,&AvarChieftain))
-         AND send(target,@GetClan) = send(self,@GetClan)
+      if (IsClass(target,&Avar)
+            OR IsClass(target,&AvarShaman)
+            OR IsClass(target,&AvarChieftain))
+         AND Send(target,@GetClan) = Send(self,@GetClan)
       {
          return TRUE;
       }
@@ -430,13 +336,13 @@ messages:
    SpecialHatredBehavior(what=$)
    {
       % Avars attack other avars of other clans, but only in the
-      %  temple of riija ruins (rid_KC3).
+      % temple of riija ruins (rid_KC3).
       if IsClass(what,&AvarShaman)
          OR IsClass(what,&AvarChieftain)
          OR IsClass(what,&Avar)
       {
-         if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
-            AND send(what,@GetClan) <> send(self,@GetClan)
+         if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_KC3
+            AND Send(what,@GetClan) <> Send(self,@GetClan)
          {
             return 25;
          }
@@ -447,7 +353,7 @@ messages:
 
    GetTreasureType()
    {
-      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
+      if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_KC3
       {
          return TID_NONE;
       }
@@ -463,14 +369,13 @@ messages:
       if vrDead_icon <> $
       {
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
-                        #BodyTranslation=send(self,@GetClan),
+                        #BodyTranslation=Send(self,@GetClan),
                         #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);         
+                        #monstername=vrName,#drawfx=viDead_drawfx);
       }
 
-      return oBody;  
+      return oBody;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -158,6 +158,13 @@ properties:
    % Each element is [ timer, object of spell, [optional state] ].
    plEnchantments = $
 
+   % Default mana values.
+   piMana = 20
+   piMax_Mana = 20
+
+   % Mana regen timer.
+   ptMana = $
+
 messages:
 
    % The first lump of code here deals with resistances and immunities/etc.
@@ -418,6 +425,110 @@ messages:
       }
 
       return iCastPower;
+   }
+
+   %%% Mana related stuff common to players and mobs.
+
+   GetMaxMana()
+   {
+      return piMax_mana;
+   }
+
+   GetMana()
+   {
+      return piMana;
+   }
+
+   ManaTimer()
+   {
+      ptMana = $;
+
+      if piMana < piMax_mana
+      {
+         Send(self,@GainMana,#amount=1);
+      }
+      else
+      {
+         Send(self,@LoseMana,#amount=1);
+      }
+
+      return;
+   }
+
+   LoseMana(amount = 0)
+   {
+      local iManaLost;
+
+      piMana = piMana - amount;
+      if piMana < 0
+      {
+         iManaLost = amount - abs(piMana);
+      }
+      else
+      {
+         iManaLost = amount;
+      }
+
+      Send(self,@NewMana);
+
+      return iManaLost;
+   }
+
+   GainMana(amount=0, bCapped=FALSE, bRespectMax=FALSE)
+   {
+      local iManaGained;
+
+      iManaGained = amount;
+
+      if IsClass(self,&Player)
+         AND Send(self,@IsPhasedOut)
+      {
+         return 0;
+      }
+
+      if bRespectMax
+         AND piMana + amount > piMax_mana
+      {
+         return 0;
+      }
+
+      piMana = piMana + amount;
+
+      if bCapped AND piMana > piMax_Mana
+      {
+         iManaGained = amount - (piMana - piMax_Mana);
+         piMana = piMax_Mana;
+      }
+
+      Send(self,@NewMana);
+
+      return iManaGained;
+   }
+
+   NewMana()
+   {
+      if piMana < 0
+      {
+         piMana = 0;
+      }
+
+      if piMana <> piMax_mana AND ptMana = $
+      {
+         ptMana = CreateTimer(self,@ManaTimer,Send(self,@CalculateManaTime));
+      }
+
+      if piMana = piMax_mana AND ptMana <> $
+      {
+         DeleteTimer(ptMana);
+         ptMana = $;
+      }
+
+      if IsClass(self,&Player)
+      {
+         Send(self,@DrawMana);
+      }
+
+      return;
    }
 
    %%% Combat functionality.

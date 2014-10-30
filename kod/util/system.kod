@@ -1303,11 +1303,17 @@ messages:
       local i;
       Send(self,@NewYearClean);
       piYear = piYear + 1;
-	  
-	  for i in plUsers
+
+      % Determine if anyone needs to lose their newbie tag.
+      for i in plUsers
+      {
+         % Exclude 'users' who haven't created a character yet.
+         if Send(i,@GetLastLoginTime) <> 0
          {
+            % This checks age vs. game year and takes appropriate action.
             Send(i,@GetAge);
          }
+      }
 
       return;
    }

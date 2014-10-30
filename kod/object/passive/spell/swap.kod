@@ -20,13 +20,14 @@ resources:
    swap_icon_rsc = iswap.bgf
    swap_desc_rsc = \
       "The darker gods grant you the power to randomly exchange one "
-      "item from your inventory with one from the target's.  "
-      "Requires dark angel feathers, yrxl sap, and purple mushrooms to cast."
+      "item from your inventory with one from the target's.  Requires a dark "
+      "angel feather, one vial of yrxl sap, and a purple mushroom to cast."
 
    swap_cast_rsc ="Your %s %s yanked away to be replaced by %s%s."
 
    swap_failed_caster = "You point at %s%s, but nothing seems to happen."
    swap_failed_victim = "%s%s points at you, but nothing seems to happen."
+   swap_no_target = "Your target is out of range."
 
    swap_be_sing_pres = "is"
    swap_be_plur_pres = "are"
@@ -57,7 +58,7 @@ classvars:
    viCast_time = 3000
 
    % in seconds, since it works off GetTime()
-   viPostCast_time = 5        
+   viPostCast_time = 5
 
    vbCastable_in_HappyLand = FALSE
 
@@ -67,7 +68,7 @@ messages:
 
    ResetReagents()
    {
-      % separate message so can change, then set from admin mode
+      % Separate message so can change, then set from admin mode
 
       plReagents = $;
       plReagents = Cons([&DarkAngelFeather,1],plReagents);
@@ -98,10 +99,11 @@ messages:
       {
          if not bItemCast
          {
-            Send(who, @MsgSendUser,#message_rsc=spell_bad_target, 
-                 #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+                 #parm1=vrName,#parm2=Send(target,@GetDef),
+                 #parm3=Send(target,@GetName));
          }
-         
+
          return FALSE;
       }
 
@@ -109,9 +111,10 @@ messages:
       {
          if NOT bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target, #parm1=vrName);
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,
+                  #parm1=vrName);
          }
-         
+
          return FALSE;
       }
 
@@ -120,41 +123,49 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower=0)
    {
-      local oItem_victim, oItem_caster, oVictim, oCaster, rVerb, iRepeat, oNew_item, oTempHolder;
+      local oItem_victim, oItem_caster, oVictim, oCaster,
+            rVerb, iRepeat, oNew_item, oTempHolder;
 
-      oCaster = who ;
+      oCaster = who;
+      if lTargets = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=swap_no_target);
+
+         return FALSE;
+      }
+
       oVictim = First(lTargets);
       oItem_caster = Send(oCaster,@GetRandomItem);
-      if oItem_caster = $  
-      { 
-          send(oCaster,@MsgSendUser,#message_rsc=swap_failed_caster,
-               #parm1=send(oVictim,@GetDef),#parm2=send(oVictim,@getname));
-          send(oVictim,@MsgSendUser,#message_rsc=swap_failed_victim,
-               #parm1=send(oCaster,@GetCapDef),#parm2=send(oCaster,@getname));
-               
-          propagate;
+      if oItem_caster = $
+      {
+         Send(oCaster,@MsgSendUser,#message_rsc=swap_failed_caster,
+               #parm1=Send(oVictim,@GetDef),#parm2=Send(oVictim,@GetName));
+         Send(oVictim,@MsgSendUser,#message_rsc=swap_failed_victim,
+               #parm1=Send(oCaster,@GetCapDef),#parm2=Send(oCaster,@GetName));
+
+         propagate;
       }
-      
+
       oItem_victim = Send(oVictim,@GetRandomItem);
       if oItem_victim = $
-      { 
-          send(oCaster,@MsgSendUser,#message_rsc=swap_failed_caster,
-               #parm1=send(oVictim,@GetDef),#parm2=send(oVictim,@getname));
-          send(oVictim,@MsgSendUser,#message_rsc=swap_failed_victim,
-               #parm1=send(oCaster,@GetCapDef),#parm2=send(oCaster,@getname));
-               
-          propagate;
+      {
+         Send(oCaster,@MsgSendUser,#message_rsc=swap_failed_caster,
+               #parm1=Send(oVictim,@GetDef),#parm2=Send(oVictim,@GetName));
+         Send(oVictim,@MsgSendUser,#message_rsc=swap_failed_victim,
+               #parm1=Send(oCaster,@GetCapDef),#parm2=Send(oCaster,@GetName));
+
+         propagate;
       }
-      
+
       iRepeat = iSpellpower / 25;
       while iRepeat > 0
-      { 
+      {
          oNew_item = Send(oVictim,@GetRandomItem);
-         if send(oNew_item,@GetValue) > send(oItem_victim,@GetValue)
+         if Send(oNew_item,@GetValue) > Send(oItem_victim,@GetValue)
          {
             oItem_victim = oNew_item;
          }
-         
+
          iRepeat = iRepeat - 1;
       }
 
@@ -162,16 +173,18 @@ messages:
          OR NOT Send(oCaster,@ReqLeaveHold,#what=oItem_caster)
          OR NOT Send(oItem_caster,@CanSwap)
          OR NOT Send(oItem_victim,@CanSwap)
-         OR NOT send(oVictim,@CanHoldWeightAndBulk,#weight=send(oItem_caster,@GetWeight),
-                     #bulk=send(oItem_caster,@GetBulk))
-         OR NOT send(oCaster,@CanHoldWeightAndBulk,#weight=send(oItem_victim,@GetWeight),
-                     #bulk=send(oItem_victim,@GetBulk))
+         OR NOT Send(oVictim,@CanHoldWeightAndBulk,
+                     #weight=Send(oItem_caster,@GetWeight),
+                     #bulk=Send(oItem_caster,@GetBulk))
+         OR NOT Send(oCaster,@CanHoldWeightAndBulk,
+                     #weight=Send(oItem_victim,@GetWeight),
+                     #bulk=Send(oItem_victim,@GetBulk))
       {
          % Swap couldn't find an object to swap, or got a failed canswap.
-         send(oCaster,@MsgSendUser,#message_rsc=swap_failed_caster,
-              #parm1=send(oVictim,@GetDef),#parm2=send(oVictim,@GetName));
-         send(oVictim,@MsgSendUser,#message_rsc=swap_failed_victim,
-              #parm1=send(oCaster,@GetCapDef),#parm2=send(oCaster,@GetName));
+         Send(oCaster,@MsgSendUser,#message_rsc=swap_failed_caster,
+               #parm1=Send(oVictim,@GetDef),#parm2=Send(oVictim,@GetName));
+         Send(oVictim,@MsgSendUser,#message_rsc=swap_failed_victim,
+               #parm1=Send(oCaster,@GetCapDef),#parm2=Send(oCaster,@GetName));
 
          % Return here instead of propagating, no chance to succeed.
          return;
@@ -183,12 +196,12 @@ messages:
       {
          rVerb = swap_be_plur_pres ;
       }
-      
+
       Send(oVictim,@MsgSendUser,#message_rsc=swap_cast_rsc,
-           #parm1=Send(oItem_victim,@GetName),#parm2=rVerb,
-           #parm3=Send(oItem_caster,@GetIndef),
-           #parm4=Send(oItem_caster,@GetName));
-           
+            #parm1=Send(oItem_victim,@GetName),#parm2=rVerb,
+            #parm3=Send(oItem_caster,@GetIndef),
+            #parm4=Send(oItem_caster,@GetName));
+
       rVerb = swap_be_sing_pres ;
       if IsClass(oItem_caster,&NumberItem)
          AND Send(oItem_caster,@GetNumber) > 1
@@ -196,17 +209,17 @@ messages:
          rVerb = swap_be_plur_pres ;
       }
       
-      send(oCaster,@MsgSendUser,#message_rsc=swap_cast_rsc,
-           #parm1=Send(oItem_caster,@GetName),#parm2=rVerb,
-           #parm3=Send(oItem_victim,@GetIndef),
-           #parm4=Send(oItem_victim,@GetName));
-           
-      oTempHolder = create(&Holder);
-      send(oTempHolder,@NewHold,#what=oItem_victim);
+      Send(oCaster,@MsgSendUser,#message_rsc=swap_cast_rsc,
+            #parm1=Send(oItem_caster,@GetName),#parm2=rVerb,
+            #parm3=Send(oItem_victim,@GetIndef),
+            #parm4=Send(oItem_victim,@GetName));
 
-      send(oVictim,@NewHold,#what=oItem_caster);
-      send(oCaster,@NewHold,#what=oItem_victim);
-      
+      oTempHolder = create(&Holder);
+      Send(oTempHolder,@NewHold,#what=oItem_victim);
+
+      Send(oVictim,@NewHold,#what=oItem_caster);
+      Send(oCaster,@NewHold,#what=oItem_victim);
+
       propagate;
    }
 
@@ -214,7 +227,6 @@ messages:
    {
       return TRUE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

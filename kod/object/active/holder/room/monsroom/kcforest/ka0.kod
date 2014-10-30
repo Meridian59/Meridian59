@@ -144,17 +144,18 @@ messages:
                           &OrcPitBossHead,
                           &FineLute
                         ];
-                     
+
       Post(self,@InitPuzzle);
       poShrine = Create(&Shrine,#shrine_num=SHRINE_ISLAND);
-      
+
       propagate;
    }
 
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KA1, 13, 24, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KA1, 13, 24, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
@@ -213,7 +214,7 @@ messages:
       }
       else
       {
-         cItemNeeded = Nth(plVentItems2,random(1,length(plVentItems2)));         
+         cItemNeeded = Nth(plVentItems2,random(1,length(plVentItems2)));
       }
 
       return cItemNeeded;
@@ -234,7 +235,7 @@ messages:
       if IsClass(what,&Item)
       {
          % Have to post this to handle numberitems.
-         Post(self,@CheckItemPos,#what=what);  
+         Post(self,@CheckItemPos,#what=what);
       }
 
       propagate;
@@ -247,13 +248,20 @@ messages:
       iRow = Send(what,@GetRow);
       iCol = Send(what,@GetCol);
 
+      % This can happen sometimes because it is posted. If we don't have
+      % a valid position for the item, return here.
+      if iRow = $ OR iCol = $
+      {
+         return;
+      }
+
       if piItemNumber > piSteps
       {
          % Shrine in Place
          Send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=2);
       }
       else
-      {      
+      {
 
          if ((iRow > 3) AND (iRow < 6))
             AND ((iCol > 1) AND (iCol < 4))
@@ -263,14 +271,14 @@ messages:
                Send(self,@Gotitem);
                Send(what,@Delete);
                Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-                    #string=Drop_correct_item_rsc,#parm1=send(what,@GetName));
+                     #string=Drop_correct_item_rsc,#parm1=send(what,@GetName));
             }
             else
             {
                Send(what,@Delete);
                Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-                    #string=Drop_incorrect_item_rsc,
-                    #parm1=send(what,@GetName));
+                     #string=Drop_incorrect_item_rsc,
+                     #parm1=send(what,@GetName));
             }
          }
       }
@@ -332,7 +340,7 @@ messages:
       }
 
       if piItemNumber = piSteps
-      {   
+      {
          poItemNeeded = Create(Send(self,@GetHardItemNeededClass));
       }
       else
@@ -349,7 +357,7 @@ messages:
    {
       poGhostItem = Create(&GhostItem,#obj=poItemNeeded);
       Send(self,@NewHold,#what=poGhostitem,#new_row=4,#new_col=2,
-           #fine_row=60,#fine_col=63);
+            #fine_row=60,#fine_col=63);
 
       return;
    }
@@ -368,7 +376,7 @@ messages:
            #new_col=2,#fine_row=60,#fine_col=63);
 
       if ptInitPuzzleTimer = $
-      {         
+      {
          ptInitPuzzleTimer = CreateTimer(self,@InitPuzzleTimer,
                                          PUZZLE_RESTART_TIME);
       }
@@ -433,7 +441,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

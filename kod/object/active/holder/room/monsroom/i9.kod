@@ -123,6 +123,12 @@ messages:
          if iColDec > 1400 AND iNewColDec <= 1400
             AND iRowDec > 900 AND iRowDec < 3800
          {
+            % Allow players who are jumping the gap.
+            if iNewRowDec >= 3800
+            {
+               return TRUE;
+            }
+
             Debug("ALERT!  ",Send(who,@GetTrueName),who,
                   "tried to move through wall in ",Send(self,@GetName),
                   " from ",old_row,old_col,old_fine_row,old_fine_col," to ",

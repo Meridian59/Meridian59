@@ -138,6 +138,7 @@ resources:
    player_use_full_hands = "Your hands are too full to use that."
    player_not_using = "You are not using that."
    player_not_holding = "You are not even holding %s%s."
+   player_regbag_empty = "The reagent bag is empty."
    
    player_hit_color_red = "~r"
    player_hit_color_blue = "~b"
@@ -3677,6 +3678,20 @@ messages:
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
 
          return FALSE;
+      }
+
+      if IsClass(what,&ReagentBag)
+      {
+         if Send(what,@GetReagentBagContents) = $
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_regbag_empty);
+
+            return FALSE;
+         }
+
+         Send(self,@UserObjectContents,#what=what);
+
+         return TRUE;
       }
 
       iUse_type = Send(what,@GetItemUseType);

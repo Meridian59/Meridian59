@@ -53,7 +53,7 @@ classvars:
    viTeleport_col = 27
 
    viFoyer_north = 44
-   viFoyer_south = 51
+   viFoyer_south = 52
    viFoyer_east = 29
    viFoyer_west = 21
 

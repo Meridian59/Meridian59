@@ -540,6 +540,11 @@ messages:
 
    TryLook(what=$)
    {
+      if what = $
+      {
+         return;
+      }
+
       if IsClass(poOriginal,&Player)
       {
          if Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)

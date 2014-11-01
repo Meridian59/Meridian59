@@ -224,8 +224,8 @@ classvars:
    viCancel_offer_time = 30000
    % Default to teleport if there's no move anim, also used for movement timer
    %  (range is 1 to 20)
-   viSpeed = 0                  
-                                
+   viSpeed = 0
+
    viTreasure_type = TID_NONE
 
    % Random delay from delay to 1.50*delay
@@ -249,7 +249,7 @@ classvars:
    viBrain_type   = BRAIN_ORIGINAL
    viDefault_behavior = 0
 
-   viWimpy = 0          
+   viWimpy = 0
 
    vrCondition_good = Lm_condition_good
    vrCondition_fair = Lm_condition_fair
@@ -323,7 +323,7 @@ properties:
    % Player who has turned us.
    poHolySymbolCaster = $
    % Timer to expire turning.
-   ptUnturn = $            
+   ptUnturn = $
    piHatred = 0
    % Emulates agility and aim for monsters based on difficulty.
    piAgility = 25
@@ -380,7 +380,7 @@ properties:
 
 messages:
 
-   Constructor()
+   Constructor(color=0)
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
       local iStatPoints, iMin, iMax;
@@ -406,9 +406,9 @@ messages:
 
       if viOccupation <> 0
       {
-         Send(Send(SYS,@GetLibrary),@AddToOccupationList,#who=self);    
+         Send(Send(SYS,@GetLibrary),@AddToOccupationList,#who=self);
       }
-      
+
       Send(self,@TryAddToQuestEngine);
 
       poBrain = Send(SYS,@FindBrainByNum,#num=viBrain_type);
@@ -424,7 +424,7 @@ messages:
       piMood = 0;
 
       iStatPoints = (viDifficulty + 1) * 10;
-      
+
       if iStatPoints - 1 > 50
       {
          iMax = 50;
@@ -433,7 +433,7 @@ messages:
       {
          iMax = iStatpoints - 1;
       }
-      
+
       if iStatPoints - 50 < 1
       {
          iMin = 1;
@@ -443,7 +443,12 @@ messages:
          iMin = iStatpoints - 50;
       }
 
-      piAgility = random(iMin,iMax);
+      if color <> 0
+      {
+         piColor_translation = color;
+      }
+
+      piAgility = Random(iMin,iMax);
       piAim = iStatPoints - piAgility;
 
       propagate;

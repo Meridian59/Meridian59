@@ -1907,6 +1907,13 @@ messages:
       return;
    }
 
+   SomethingHitHotPlate(what=$,hpid=$)
+   "Rooms will override this if they need to take action based "
+   "on a hotplate being activated."
+   {
+      return;
+   }
+
    SendEnchantmentIcons(what = $)
    "Users send this after GC to redisplay the enchantments in the room"
    {

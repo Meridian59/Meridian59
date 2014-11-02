@@ -18,12 +18,12 @@ resources:
 
    BrownHeartStone_name_rsc = "brown heartstone"
    BrownHeartStone_desc_rsc = \
-	"This is called a 'heartstone'.  It is a huge brown gem taken from the body of a "
-	"fallen Te'Xeochicatl.  It feels much like a normal stone.  The uses for "
-	"this gem are not widely known."
-	
+      "This is called a 'heartstone'.  It is a huge brown gem taken from "
+      "the body of a fallen Te'Xeochicatl.  It feels much like a normal "
+      "stone.  The uses for this gem are not widely known."
+
 classvars:
-   
+
    vrName = BrownHeartStone_name_rsc
    vrDesc = BrownHeartStone_desc_rsc
 
@@ -44,4 +44,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

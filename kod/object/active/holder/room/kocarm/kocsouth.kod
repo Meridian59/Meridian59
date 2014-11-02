@@ -20,19 +20,22 @@ resources:
    room_kocatansouth = settle2.roo
    kocatansouth_music = song08.mp3
 
-   kocatansouth_northdoors = "This door to the inner wall is firmly bolted shut."
-   kocatansouth_private = "You are not permitted inside the private residence."
+   kocatansouth_northdoors = \
+      "This door to the inner wall is firmly bolted shut."
+   kocatansouth_private = \
+      "You are not permitted inside the private residence."
    kocatansouth_whooping = \
-      "You hear loud whooping noises eminating from inside, and decide it's best "
-      "not to enter."
+      "You hear loud whooping noises emanating from inside, and decide it's "
+      "best not to enter."
 
    kocatansouth_drown = \
-      "You decide that drowning is probably not in your personal best interests."
+      "You decide that drowning is probably not in your personal "
+      "best interests."
 
    kocatansouth_guild_locked = \
-      "As you touch the door, you hear the bolt mechanism slide home, locking itself.  "
-      "Apparently, this door is magically safeguarded against guild non-members such as "
-      "yourself."
+      "As you touch the door, you hear the bolt mechanism slide home, "
+      "locking itself.  Apparently, this door is magically safeguarded "
+      "against guild non-members such as yourself."
    kocatansouth_guild_sound_locked = doorlck.wav
 
 classvars:
@@ -82,7 +85,7 @@ messages:
       plExits = Cons([ 6, 14, ROOM_LOCKED_DOOR, kocatansouth_whooping],plExits);
       plExits = Cons([ 6, 15, ROOM_LOCKED_DOOR, kocatansouth_whooping],plExits);
 
-      % locked doors to north town
+      % Locked doors to north town.
       plExits = Cons([ 2, 13, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
       plExits = Cons([ 2, 14, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
       plExits = Cons([ 3, 13, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
@@ -92,57 +95,58 @@ messages:
       plExits = Cons([ 2, 39, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
       plExits = Cons([ 3, 39, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
 
-      %% to north town -- teleport in to (4,14)
+      % To north town -- teleport in to (4,14)
       %plExits = Cons([ 2, 13, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
       %plExits = Cons([ 2, 14, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
       %plExits = Cons([ 3, 13, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
       %plExits = Cons([ 3, 14, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
 
-      %% to north town -- teleport in to (4,26)
+      % To north town -- teleport in to (4,26)
       plExits = Cons([ 3, 25, RID_KOC_NORTH, 50, 30, ROTATE_NONE ],plExits);
       plExits = Cons([ 3, 26, RID_KOC_NORTH, 50, 30, ROTATE_NONE ],plExits);
       plExits = Cons([ 3, 27, RID_KOC_NORTH, 50, 30, ROTATE_NONE ],plExits);
 
-      %% to north town -- teleport in to (4,38)
+      % To north town -- teleport in to (4,38)
       %plExits = Cons([ 2, 38, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
       %plExits = Cons([ 3, 38, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
       %plExits = Cons([ 2, 39, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
       %plExits = Cons([ 3, 39, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
 
-      %% to kocatan smithy -- teleport in to (31,20)
+      % To kocatan smithy -- teleport in to (31,20)
       plExits = Cons([ 30, 18, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
       plExits = Cons([ 30, 19, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 18, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 19, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
 
-      %% to kocatan tailor -- teleport in at (30,35)
+      % To kocatan tailor -- teleport in at (30,35)
       plExits = Cons([ 30, 36, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
       plExits = Cons([ 30, 37, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 36, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 37, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
 
-      %% to guild hall 13 (merchant hall) - teleport in (43,37) -- main entrance
+      % To guild hall 13 (merchant hall) - teleport in (43,37) -- main entrance
       plExits = Cons([ 42, 38, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
       plExits = Cons([ 43, 38, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
       plExits = Cons([ 42, 39, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
       plExits = Cons([ 43, 39, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
 
-      %% to guild hall 13 (merchant hall) - teleport in (47,43) -- from secure porch
-      % note that these doors can only be passed through by guild members
-      %     (code below in SomethingTryGo will preempt these doors for non-members)
+      % To guild hall 13 (merchant hall) - teleport in (47,43) -- from secure
+      % porch. Note that these doors can only be passed through by guild members
+      % (code below in SomethingTryGo will preempt these doors for non-members)
       plExits = Cons([ 46, 43, RID_GUILDH13, 12, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 46, 44, RID_GUILDH13, 12, 7, ROTATE_NONE ],plExits);
 
       propagate;
    }
 
-   SomethingTryGo(what=$, row=$, col=$)
+   SomethingTryGo(what=$,row=$,col=$)
    "Porch doors only passable to guild members"
    {
       if (row = 46) AND (col = 43 OR col = 44)
-         AND NOT send(send(SYS,@FindRoomByNum,#num=RID_GUILDH13),@CanEnter,#who=what)
+         AND NOT Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH13),
+                     @CanEnter,#who=what)
       {
-         send(what,@MsgSendUser,#message_rsc=kocatansouth_guild_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocatansouth_guild_locked);
          Send(what,@WaveSendUser,#wave_rsc=kocatansouth_guild_sound_locked);
 
          return TRUE;
@@ -155,14 +159,13 @@ messages:
    {
       if (dir = LEAVE_SOUTH) and (IsClass(what,&Player))
       {
-         send(what,@MsgSendUser,#message_rsc=kocatansouth_drown);
+         Send(what,@MsgSendUser,#message_rsc=kocatansouth_drown);
 
          return;
-      }              
+      }
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

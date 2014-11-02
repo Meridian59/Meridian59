@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKD4 ="The Clearing of the Trading Post"
+   room_name_OutdoorsKD4 = "The Clearing of the Trading Post"
    room_OutdoorsKD4 = KD4.roo
    OutdoorsKD4_music = boneprst.mp3
 
@@ -55,7 +55,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [[ &Avar, 80], [&AvarShaman, 10], [&AvarChieftain,10]];      
+      plMonsters = [[ &Avar, 80], [&AvarShaman, 10], [&AvarChieftain,10]];
       plGenerators = [ [16,21], [14,36], [13,58], [50,45], [43,17] ];
 
       propagate;
@@ -63,7 +63,8 @@ messages:
 
    CreateJungleItemCoords()
    {      
-      plItem_coords = [ [&RainbowFern,20,4], [&RainbowFern,54,44], [&RainbowFern,10,62] ];
+      plItem_coords = [ [&RainbowFern,20,4], [&RainbowFern,54,44],
+                        [&RainbowFern,10,62] ];
 
       % Do not propagate
       return;
@@ -72,7 +73,7 @@ messages:
    CreateStandardExits()
    {
       plExits = $;
-      
+
       plExits = Cons([ 24, 38, ROOM_LOCKED_DOOR, OutdoorsKD4_outbuilding_locked ],plExits);
       plExits = Cons([ 25, 38, ROOM_LOCKED_DOOR, OutdoorsKD4_outbuilding_locked ],plExits);
       plExits = Cons([ 39, 41, ROOM_LOCKED_DOOR, OutdoorsKD4_smokehouse_locked ],plExits);
@@ -80,18 +81,18 @@ messages:
       plExits = Cons([ 32, 33, ROOM_LOCKED_DOOR, OutdoorsKD4_guardshack_locked ],plExits);
       plExits = Cons([ 33, 33, ROOM_LOCKED_DOOR, OutdoorsKD4_guardshack_locked ],plExits);
 
-      %  teleport to tpost2:
+      % Teleport to tpost2:
       plExits = Cons([ 33, 42, RID_JUNGLE_TRADING_POST_CELLAR, 06, 03, ROTATE_NONE ],plExits);
       plExits = Cons([ 34, 42, RID_JUNGLE_TRADING_POST_CELLAR, 06, 03, ROTATE_NONE ],plExits);
-      %  teleport to tpost1 (front door):
+      % Teleport to tpost1 (front door):
       plExits = Cons([ 30, 39, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 39, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
       plExits = Cons([ 30, 40, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 40, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
-      %  teleport to tpost1 (lower right door):
+      % Teleport to tpost1 (lower right door):
       plExits = Cons([ 37, 49, RID_JUNGLE_TRADING_POST, 12, 13, ROTATE_NONE ],plExits);
       plExits = Cons([ 38, 49, RID_JUNGLE_TRADING_POST, 12, 13, ROTATE_NONE ],plExits);
-      %  teleport to tpost1 (upper right door):
+      % Teleport to tpost1 (upper right door):
       plExits = Cons([ 28, 49, RID_JUNGLE_TRADING_POST, 03, 13, ROTATE_NONE ],plExits);
       plExits = Cons([ 27, 49, RID_JUNGLE_TRADING_POST, 03, 13, ROTATE_NONE ],plExits);
 
@@ -101,7 +102,6 @@ messages:
 
       propagate;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

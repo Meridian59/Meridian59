@@ -54,7 +54,8 @@ properties:
 
    piMonster_count_max = 5
 
-   % A list of people that came in from the other side.  Only allow them to go back.
+   % A list of people that came in from the other side.
+   % Only allow them to go back.
    plFromOtherSewer = $
 
 messages:
@@ -107,21 +108,25 @@ messages:
       if IsClass(what,&Player)
          AND plFromOtherSewer <> $
       {
-         plFromOtherSewer = DelListElem(plFromOtherSewer,what);
+         if FindListElem(plFromOtherSewer,what)
+         {
+            plFromOtherSewer = DelListElem(plFromOtherSewer,what);
+         }
       }
 
       propagate;
    }
 
-   SomethingTryGo(what = $, row = $, col = $)
+   SomethingTryGo(what = $,row = $,col = $)
    {
       if row = 42 AND col = 8
          AND (plFromOtherSewer = $
-              OR FindListElem(plFromOtherSewer,what) = 0)
+            OR FindListElem(plFromOtherSewer,what) = 0)
          AND NOT IsClass(what,&DM)
       {
-         send(what,@MsgSendUser,#message_rsc=kocsewer1_no_cheat);
-         debug("ALERT! ",send(self,@GetTrueName),self," tried to illegally enter the door in RID_KOC_SEWER1!");
+         Send(what,@MsgSendUser,#message_rsc=kocsewer1_no_cheat);
+         Debug("ALERT! ",Send(self,@GetTrueName),what,
+               " tried to illegally enter the door in RID_KOC_SEWER1!");
 
          % Stop here.
          return TRUE;
@@ -129,7 +134,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

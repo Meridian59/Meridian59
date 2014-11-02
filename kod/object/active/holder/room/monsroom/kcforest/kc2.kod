@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKC2 ="Turf of the Warrior Avars"
+   room_name_OutdoorsKC2 = "Turf of the Warrior Avars"
    room_OutdoorsKC2 = KC2.roo
    OutdoorsKC2_music = avarwar.mp3
 
@@ -63,7 +63,8 @@ messages:
 
    CreateJungleItemCoords()
    {      
-      plItem_coords = [ [&RainbowFern,25,20], [&RainbowFern,37,20], [&RainbowFern,10,48] ];
+      plItem_coords = [ [&RainbowFern,25,20], [&RainbowFern,37,20],
+                        [&RainbowFern,10,48] ];
 
       % Do not propagate
       return;
@@ -102,7 +103,7 @@ messages:
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
            #new_row=33,#new_col=15,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
-           #new_row=36,#new_col=18,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);      
+           #new_row=36,#new_col=18,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
 
       propagate;
    }
@@ -110,13 +111,15 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KB2, 37, 56, ROTATE_NONE, ROW_IS_LESS_THAN, 35], plEdge_exits);      
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KB3, 8, 49, ROTATE_NONE, ROW_IS_GREATER_THAN, 35], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC3, 1, 36, ROTATE_NONE, NO_OTHER_CONDITIONS], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KB2, 37, 56, ROTATE_NONE,
+                           ROW_IS_LESS_THAN, 35], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KB3, 8, 49, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN, 35], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC3, 1, 36, ROTATE_NONE,
+                           NO_OTHER_CONDITIONS], plEdge_exits);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

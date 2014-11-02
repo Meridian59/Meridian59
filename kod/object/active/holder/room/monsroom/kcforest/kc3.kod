@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKC3 ="Ruins of the Riija Temple"
+   room_name_OutdoorsKC3 = "Ruins of the Riija Temple"
    room_OutdoorsKC3 = KC3.roo
    OutdoorsKC3_music = orcbeg.mp3
 
@@ -62,12 +62,18 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC2, 49, 18, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KB3, 25, 49, ROTATE_NONE, ROW_IS_LESS_THAN, 35], plEdge_exits);      
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KB4, 11, 49, ROTATE_NONE, ROW_IS_GREATER_THAN, 35], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC4, 1, 39, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KD2, 30, 1, ROTATE_NONE, ROW_IS_LESS_THAN, 20], plEdge_exits);      
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KD3, 33, 1, ROTATE_NONE, ROW_IS_GREATER_THAN, 20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC2, 49, 18, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KB3, 25, 49, ROTATE_NONE,
+                           ROW_IS_LESS_THAN, 35], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KB4, 11, 49, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN, 35], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC4, 1, 39, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KD2, 30, 1, ROTATE_NONE,
+                           ROW_IS_LESS_THAN, 20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KD3, 33, 1, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN, 20], plEdge_exits);
 
       propagate;
    }
@@ -114,16 +120,17 @@ messages:
            #new_row=12,#new_col=25,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
 
       propagate;
-   }  
-  
-   GetClan()
-   {
-      if random(1,2) = 1
-      {  return AVARCLAN_PROMAGIC;  }
-      
-      return AVARCLAN_ANTIMAGIC;
    }
 
+   GetClan()
+   {
+      if Random(1,2) = 1
+      {
+         return AVARCLAN_PROMAGIC;
+      }
+
+      return AVARCLAN_ANTIMAGIC;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

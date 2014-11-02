@@ -67,7 +67,7 @@ messages:
    {
       plEdge_Exits = $;
       plExits = $;
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA2, 1, 33, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA2, 1, 33, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_EAST, RID_KB1, 16, 2, ROTATE_NONE], plEdge_exits);
 
       propagate;
@@ -79,16 +79,16 @@ messages:
 
       if row = 13 AND col = 23
       {
-         oRoom = send(SYS,@FindRoomByNum,#num=RID_KA0);
-         send(oRoom,@Newhold,#what=what,#new_row=5,#new_col=14,#new_angle=ANGLE_WEST);     
-         send(what,@MsgSendUser,#message_rsc=KA1_GO_KA0);
+         oRoom = Send(SYS,@FindRoomByNum,#num=RID_KA0);
+         Send(oRoom,@NewHold,#what=what,#new_row=5,#new_col=14,
+               #new_angle=ANGLE_WEST);     
+         Send(what,@MsgSendUser,#message_rsc=KA1_GO_KA0);
 
          return TRUE;
       }
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

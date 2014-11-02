@@ -59,7 +59,7 @@ messages:
    {
       plExits = $;
 
-      %% to town -- teleport in to (6,9)
+      % To town -- teleport in to (6,9)
       plExits = Cons([ 5, 10, RID_KOC_SOUTH, 31, 20, ROTATE_NONE ],plExits);
       plExits = Cons([ 6, 10, RID_KOC_SOUTH, 31, 20, ROTATE_NONE ],plExits);
 
@@ -76,23 +76,24 @@ messages:
    {
       local lObjCoords1;
 
-      lObjCoords1 = [ [09,09,48,32,OO_JUG], [03,03,24,56,OO_JUG], [04,05,56,32,OO_anvil],
+      lObjCoords1 = [ [09,09,48,32,OO_JUG], [03,03,24,56,OO_JUG],
+                      [04,05,56,32,OO_anvil],
                       [06,03,56,32,OO_bluejug], [12,07,16,24,OO_barrel2]
                     ];
 
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
-   
-      send(self,@NewHold,#what=Create(&KocatanBlacksmith),
+
+      Send(self,@NewHold,#what=Create(&KocatanBlacksmith),
             #new_row=4,#new_col=4,#fine_row=56,#fine_col=48,
             #new_angle=ANGLE_EAST);
 
       % Lighting
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_ORANGE,#iIntensity=50),
-           #new_row=6,#new_col=6,#fine_row=0,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&DynamicLight,
+            #iColor=LIGHT_ORANGE,#iIntensity=50),
+            #new_row=6,#new_col=6,#fine_row=0,#fine_col=0);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

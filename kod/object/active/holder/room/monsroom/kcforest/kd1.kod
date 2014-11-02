@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKD1 ="Lair of the Bone Priestess"
+   room_name_OutdoorsKD1 = "Lair of the Bone Priestess"
    room_OutdoorsKD1 = KD1.roo
    OutdoorsKD1_music = boneprst.mp3
 
@@ -27,8 +27,8 @@ classvars:
    viTeleport_row = 32
    viTeleport_col = 50
    viTerrain_type = TERRAIN_JUNGLE | TERRAIN_BEACH | TERRAIN_MOUNTAIN
-   
-   viAvar_clan = AVARCLAN_BONE_FACTION 
+
+   viAvar_clan = AVARCLAN_BONE_FACTION
 
 properties:
 
@@ -61,9 +61,10 @@ messages:
 
    CreateJungleItemCoords()
    {      
-      plItem_coords = [ [&RainbowFern,30,54], [&rainbowfern,43,31], [&rainbowfern,12,47],
-			               [&FireSand,12,21], [&FireSand,10,46]
-			             ];
+      plItem_coords = [ [&RainbowFern,30,54], [&RainbowFern,43,31],
+                        [&RainbowFern,12,47],
+                        [&FireSand,12,21], [&FireSand,10,46]
+                      ];
 
       % Do not propagate
       return;
@@ -72,7 +73,8 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_WeST, RID_KC1, 27, 71, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WeST, RID_KC1, 27, 71, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
@@ -95,7 +97,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

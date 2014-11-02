@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKB2 ="Headquarters for the Avar Warriors"
+   room_name_OutdoorsKB2 = "Headquarters for the Avar Warriors"
    room_OutdoorsKB2 = KB2.roo
    OutdoorsKB2_music = avarwar.mp3
 
@@ -53,15 +53,17 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Avar, 60], [&AvarShaman, 18], [&AvarChieftain, 7],[&Kriipa,15] ];
+      plMonsters = [ [&Avar, 60], [&AvarShaman, 18],
+                     [&AvarChieftain, 7],[&Kriipa,15] ];
       plGenerators = [ [43,22], [39,25], [49,40], [59,24], [20,25], [38,48] ];
 
       propagate;
    }
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,49,28], [&RainbowFern,42,18], [&RainbowFern,36,26] ];
+   {
+      plItem_coords = [ [&RainbowFern,49,28], [&RainbowFern,42,18],
+                        [&RainbowFern,36,26] ];
 
       % Do not propagate
       return;
@@ -94,11 +96,10 @@ messages:
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_KB1, 49, 24, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_EAST, RID_KC2, 20, 1, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB3, 1, 21, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB3, 1, 21, ROTATE_NONE], plEdge_exits);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

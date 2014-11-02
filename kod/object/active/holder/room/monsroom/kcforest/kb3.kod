@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKB3 ="Camp of the Warrior Avars"
+   room_name_OutdoorsKB3 = "Camp of the Warrior Avars"
    room_OutdoorsKB3 = KB3.roo
    OutdoorsKB3_music = avarwar.mp3
 
@@ -52,8 +52,10 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Avar, 50], [&AvarShaman, 18], [&AvarChieftain, 5],[&Kriipa,27] ];
-      plGenerators = [ [14,8], [15,23], [17,44], [29,47], [36,24], 
+      plMonsters = [ [&Avar, 50], [&AvarShaman, 18],
+                     [&AvarChieftain, 5],[&Kriipa,27] ];
+
+      plGenerators = [ [14,8], [15,23], [17,44], [29,47], [36,24],
                        [36,16], [27,24]
                      ];
 
@@ -61,8 +63,9 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,15,6], [&RainbowFern,39,15], [&RainbowFern,34,34] ];
+   {
+      plItem_coords = [ [&RainbowFern,15,6], [&RainbowFern,39,15],
+                        [&RainbowFern,34,34] ];
 
       % Do not propagate
       return;
@@ -103,14 +106,17 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_KB2, 74, 20, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KC2, 44, 1, ROTATE_NONE, ROW_IS_LESS_THAN, 20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KC3, 20, 1, ROTATE_NONE, ROW_IS_GREATER_THAN,20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB4, 1, 24, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KB2, 74, 20, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KC2, 44, 1, ROTATE_NONE,
+                           ROW_IS_LESS_THAN, 20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KC3, 20, 1, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB4, 1, 24, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

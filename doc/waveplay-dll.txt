@@ -1,0 +1,607 @@
+The WavMix DLL is a utility that allows multiple wav files to be played
+simultaneously. It is designed to be as simple to use as possible but still
+have the power to do what is required by games.  The DLL supports 8 channels
+of simultaneous wave play, the ability to queue up waves along the same
+channel and wave completion notification.
+
+The wavemix DLL currently supports 11.025 Khz, 22.05 Khz and 44.1 Khz 8-bit Mono and Stereo.
+Wave conversion from the file format is done automatically to the output sampling rate
+when the file is opened.  The default sampling rate is set in wavemix.ini.  See wavemix.ini for
+details.  16 bit files are converted to 8-bit when the wave is loaded.
+
+There are now two versions of wavemix:
+WavMix16.DLL (16 bit ix86 code) and WavMix32.DLL (32 bit ix86 code).  
+In order to prevent conflicts with previous versions of the DLL the 
+current DLL must be installed in the Windows System Dirctory.  It uses the
+initialization file wavemix.ini.  This file must exist in the windows
+directory. WavMixXX.DLL will not initialize if this is not the case. When
+installing WavMix your setup program should check the version stamp on the DLL
+to prevent overwriting WavMix with an older version.
+
+You can tweak wavemix.ini to get the best performance with your sound driver.
+Look at wavemix.ini for examples of how to do this. 
+
+Enjoy!
+
+Angel M. Diaz, Jr.
+SDE Microsoft Corp.
+
+-------------------------------------------------------------------------------
+
+The API consists of the following functions:
+
+HANDLE WINAPI WaveMixInit(void);
+HANDLE WINAPI WaveMixConfigureInit(LPMIXCONFIG lpConfig);
+UINT WINAPI WaveMixActivate(HANDLE hMixSession, BOOL fActivate);
+LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPSTR szWaveFilename, HINSTANCE hInst, DWORD dwFlags);
+UINT WINAPI WaveMixOpenChannel(HANDLE hMixSession, int iChannel, DWORD dwFlags);
+UINT WINAPI WaveMixPlay(LPMIXPLAYPARAMS lpMixPlayParams);
+UINT WINAPI WaveMixFlushChannel(HANDLE hMixSession, int iChannel, DWORD dwFlags);
+UINT WINAPI WaveMixCloseChannel(HANDLE hMixSession, int iChannel, DWORD dwFlags);
+UINT WINAPI WaveMixFreeWave(LPMIXWAVE lpMixWave);
+UINT WINAPI WaveMixCloseSession(HANDLE hMixSession);
+void WINAPI WaveMixPump(void);
+WORD WINAPI WaveMixGetInfo(LPWAVEMIXINFO lpWaveMixInfo);
+
+In order to play a file a program must: 
+1. Initialize the DLL with WaveMixInit() or WaveMixConfigureInit()
+2. Open a wave file with WaveMixOpenFile()
+3. Open a channel with WaveMixOpenChannel()
+4. Call WaveMixActivate(TRUE) to tell wavemix.dll to actually get the wave output device (see note 1 below)
+5. Play the file using WaveMixPlay()
+
+A given channel can be silenced by calling WaveMixFlushChannel() at any time.
+
+When the program is done with playing sounds it should
+
+1. Close the open channels using WaveMixCloseChannel()
+2. Free the memmory for the waves using WaveMixFreeWave()
+3. End the session with WaveMixCloseSession()
+
+Note 1:
+An appliction should call WaveMixActivate(FALSE) when it loses the focus so that
+the waveform device can be freed for other applications.  When focus is regained
+the application can call WaveMixActivate(TRUE);
+
+Note 2:
+An application that does not release the processor can cause the sound to "skip"
+To avoid this it can call WaveMixPump() frequently.
+
+Note 3:
+Setting ShowDevices=1 in wavemix.ini enables error message box support in wavemix.dll.
+This is especially useful if WaveMixOpenWave fails.
+
+-------------------------------------------------------------------------------
+
+WORD WINAPI WaveMixGetInfo(LPWAVEMIXINFO lpWaveMixInfo);
+
+parameters
+
+lpMixWaveMixInfo
+
+	a pointer to a WAVEMIXINFO structure that will get filled in by the WaveMix DLL:
+
+	typedef struct
+	{
+		WORD wSize;
+		BYTE bVersionMajor;
+		BYTE bVersionMinor;
+		char szDate[12]; /* Mmm dd yyyy */
+		DWORD dwFormats; /* see waveOutGetDevCaps (wavemix requires synchronous device) */
+	}
+	WAVEMIXINFO, *PWAVEMIXINFO, FAR * LPWAVEMIXINFO;
+
+	wSize: should be set to sizeof(WAVEMIXINFO) before calling WaveMixGetInfo.
+
+	bVersionMajor: the major version of the DLL.
+
+	bVersionMinor: the minor version of the DLL.
+
+	szDate: The compilation date of the DLL, Null terminated string in form Mmm dd yyyy
+			where Mmm is one of the following:  "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug",
+			"Sep","Oct","Nov","Dec".
+
+	dwFormats: Specifies which standard formats are supported. The supported formats are specified
+			   with a logical OR of the flags listed in WAVEOUTCAPS documentation:
+
+			   for version 1.0: the following wave formats are supported:
+
+					WAVE_FORMAT_1M08  /* 11.025 kHz, Mono,   8-bit  */
+					WAVE_FORMAT_1S08  /* 11.025 kHz, Stereo, 8-bit  */
+					WAVE_FORMAT_1M16  /* 11.025 kHz, Mono,   16-bit */
+					WAVE_FORMAT_1S16  /* 11.025 kHz, Stereo, 16-bit */
+					WAVE_FORMAT_2M08  /* 22.05  kHz, Mono,   8-bit  */
+					WAVE_FORMAT_2S08  /* 22.05  kHz, Stereo, 8-bit  */
+					WAVE_FORMAT_2M16  /* 22.05  kHz, Mono,   16-bit */
+					WAVE_FORMAT_2S16  /* 22.05  kHz, Stereo, 16-bit */
+					WAVE_FORMAT_4M08  /* 44.1   kHz, Mono,   8-bit  */
+					WAVE_FORMAT_4S08  /* 44.1   kHz, Stereo, 8-bit  */
+					WAVE_FORMAT_4M16  /* 44.1   kHz, Mono,   16-bit */
+					WAVE_FORMAT_4S16  /* 44.1   kHz, Stereo, 16-bit */
+
+				this is done by converting the wave format of the input wave to the current
+				output format when the wave is opened.
+
+return value
+
+zero will be returned if the size fields match and the structure will be filled in.
+
+if the size fields do not match the DLL will return the size that it expected.  None of the fields
+in the structure will be filled in.
+
+-------------------------------------------------------------------------------
+
+HANDLE WINAPI WaveMixInit(void);
+
+This function should be called before any of the other functions.  It will return
+a handle that should be used for subsequent API calls.  This function will conifgure
+the DLL using default parameters and parameters specified in wavemix.ini
+
+Note: WaveMixConfigureInit is a replacement for this function it provides application
+
+Parameters
+
+none
+
+Return Value
+
+NULL will be returned if an error occurs
+
+-------------------------------------------------------------------------------
+
+HANDLE WINAPI WaveMixConfigureInit(LPMIXCONFIG lpConfig);
+
+Applications that require more control over the DLL should call this function instead
+of WaveMixInit().  It allows the application to specify if the DLL should support
+stereo output and allows the application to specify the sampling rate.  It is likely
+that more parameters will be specified in the future.
+
+Note: This function is a replacement to WaveMixInit(), only one of them should be called.
+ 
+Parameters
+
+lpConfig
+
+	a pointer to a MIXCONFIG structure:
+
+	#define WMIX_CONFIG_CHANNELS 0x1
+	#define WMIX_CONFIG_SAMPLINGRATE 0x2
+	typedef struct
+	{
+		WORD wSize;
+		DWORD dwFlags;
+		WORD wChannels;  /* 1 = MONO, 2 = STEREO */
+		WORD wSamplingRate; /* 11,22,44  (11=11025, 22=22050, 44=44100 Hz) */
+	}
+	MIXCONFIG, *PMIXCONFIG, FAR * LPMIXCONFIG;
+
+	wSize: should be set to sizeof(MIXCONFIG)
+
+	dwFlags: this parameter is the bitwise OR of the parameters the application
+			 wishes to specify.
+
+	wChannels: The number of output channels to use 1 = MONO, 2 = STEREO
+			 you must bitwise or dwFlags with WMIX_CONFIG_CHANNELS when you
+			 set this parameter
+
+	wSamplingRate: the output sampling rate you want to play at.  This parameter
+			can be set to 11, 22, or 44.  You must also bitwise OR dwFlags with
+			WMIX_CONFIG_SAMPLINGRATE.
+
+			Note: It is a good idea not to set this parameter.  That will permit
+			wavemix to use the value that has been specified in wavemix.ini
+
+Return Value
+
+NULL will be returned if an error occurs
+
+-------------------------------------------------------------------------------
+
+UINT WINAPI WaveMixActivate(HANDLE hMixSession, BOOL fActivate);
+
+This function should be called when an application loses the focus or otherwise
+becomes inactive.  This will permit other applications to aquire the wave output
+device. Calling this function keeps all the channels open.
+
+Note:
+
+1. The wavemix DLL will keep sounds that were queued while the application was
+active in the queue.  When wavemix play is subsequently reactivated the sounds will
+continue from where they were.  (there will be a small amount of data loss equivalent
+to the amount of data that was buffered in the wave driver).  
+
+2. Calls to WaveMixPlay that are made while the application is not active will not be queued.
+
+3. The Application can call WaveMixFlush if it does not wish the data to be pending while
+it is inactive.
+
+Parameters
+
+HANDLE hMixSession
+
+handle that was returned by WaveMixInit()
+
+BOOL fActivate
+
+	TRUE:  The application is being activated and wishes to regain the wave output
+		   device
+	FALSE: The application is not active and wishes to be a good Windows Citizen and
+	       allow other applications to use the wave output device.  This call will
+		   cause all the channels to be flushed.
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_ALLOCATED
+
+Specified resource is already allocated to a process. try again later.
+
+MMSYSERR_NOMEM
+
+Unable to allocate or lock memory.
+
+MMSYSERR_INVALHANDLE
+
+The hMixSession passed in was invalid
+
+MMSYSERR_ERROR
+
+an internal error
+
+-------------------------------------------------------------------------------
+
+LPMIXWAVE WINAPI WaveMixOpenWave(HANDLE hMixSession, LPSTR szWaveFilename,
+								 HINSTANCE hInst, DWORD dwFlags);
+
+Parameters
+
+HANDLE hMixSession
+
+handle that was returned by WaveMixInit()
+
+LPSTR  szWaveFileName
+
+szWaveFileName can be the name of a wave file to open, or the name of a WAVE resource
+to open, or an integer ID of a WAVE resource to open.  See the dwFlags parameter for
+details
+
+HINSTANCE hInst
+
+Identifies the instance of the module whose executable file contains the resource.
+See the dwFlags parameter for details.
+
+DWORD dwFlags
+
+	WMIX_FILE: if this bit is set then szWaveFileName specifies a far pointer to a
+			   string containing the filename of the file to open.  hInst is ignored.
+
+			   The MS-DOS filename should not be longer than 128 bytes, including the
+			   terminating NULL.
+
+			   Currently the DLL will only permit 11Khz 8-bit mono files to be opened.
+
+			   This flag should not be set with WMIX_RESOURCE	
+
+	WMIX_RESOURCE:  if this bit is set then szWaveFileName specifies a WAVE resource
+			   to be opened in hInst.
+
+			   If the high-order word of the szWaveFileName is zero, the low-order word
+			   specifies the integer identifier of the name or type of the given resource.
+			   Otherwise, the parameter is a long pointers to a null-terminated string. If
+			   the first character of the string is a pound sign (#), the remaining
+			   characters represent a decimal number that specifies the integer identifier
+			   of the resource's name or type. For example, the string #258 represents the
+			   integer ID 258. 
+
+			   To embed a wave file in a resource use the following format in your .rc file:
+			   
+			   GameSound WAVE gamesnd.wav
+
+			   Note: to reduce the amount of memory required for the resources used by an
+			   application, the application should refer to the resources by integer
+			   identifier instead of by name.
+
+	WMIX_MEMORY: if this bit is set then szWaveFileName is expected to be a far pointer to
+			   a MMIOINFO struct (see multimedia mmioOpen and MMIOINFO documentation). The
+			   parameters should be filled in similar to:
+
+					mmioInfo.pchBuffer=lp;				 // pointer to the memory file
+					mmioInfo.cchBuffer=GlobalSize(hMem); // size of buffer
+					mmioInfo.fccIOProc=FOURCC_MEM;		 // files I/O procedure
+
+			   all other fields should be 0.  WaveMixOpenWave will pass this pointer to
+			   mmioOpen in the following manner:
+
+			   hmmio = mmioOpen(NULL, (MMIOINFO FAR* )szWaveFilename, MMIO_READ)))
+
+			   it will then read the data from hmmio, and convert it for internal use.  The 
+			   original memory will not be modified.
+
+Return Value
+
+NULL will be returned if the dll was unable to open the file or resource.
+
+-------------------------------------------------------------------------------
+
+UINT WINAPI WaveMixOpenChannel(HANDLE hMixSession, int iChannel, DWORD dwFlags);
+
+Parameters
+
+HANDLE hMixSession
+
+handle that was returned by WaveMixInit()
+
+int iChannel
+
+Specifies a number which indicates which channel should be opened.  Currently 
+the DLL supports channels 0 though 7.
+
+It is not necessary to open or close them in any particular order.
+
+DWORD dwFlags
+	WMIX_OPENSINGLE: iChannel specifies the single channel to be opened.
+	WMIX_ALL:	all the available channels will be opened. iChannel is ignored.
+	WMIX_OPENCOUNT: iChannel specifies the number of channels to open.  
+			   eg. if iChannel==4 then channels 0 through 3 will be opend.
+
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_INVALHANDLE
+
+if an invalid channel (ie > 7) was specified
+
+MMSYSERR_BADDEVICEID
+
+Specified device ID is out of range.
+
+MMSYSERR_ALLOCATED
+
+Specified resource is already allocated.
+Or the channel has already been opened.
+
+MMSYSERR_NOMEM
+
+Unable to allocate or lock memory.
+
+WAVERR_BADFORMAT
+
+Attempted to open with an unsupported wave format.
+
+WAVERR_SYNC
+
+Attempted to open a synchronous driver without specifying the WAVE_ALLOWSYNC flag.
+
+MMSYSERR_ERROR
+
+an internal error
+
+-------------------------------------------------------------------------------
+
+UINT WINAPI WaveMixPlay(LPMIXPLAYPARAMS lpMixPlayParams);
+
+parameters
+
+lpMixPlayParams
+
+	a pointer to a MIXPLAYPARAMS structure:
+
+	typedef struct
+	{
+		WORD wSize;
+		HANDLE hMixSession;
+		int iChannel;
+		LPMIXWAVE lpMixWave;
+		HWND hWndNotify;
+		DWORD dwFlags;
+		WORD wLoops;  /* 0xFFFF means loop forever */
+	}
+	MIXPLAYPARAMS, * PMIXPLAYPARAM, FAR * LPMIXPLAYPARAMS;
+
+	wSize: should be set to sizeof(MIXPLAYPARAMS)
+
+	hMixSession: the handle that was returned by WaveMixInit()
+
+	iChannel: the channel on which the wave should be played.
+
+	lpMixWave: a wave which was opened using WaveMixOpenWave()
+
+	hWndNotify: a window handle to receive the MM_WOM_DONE message
+		when the wave completes.  If this value is set to NULL then
+		the message will not be posted.
+
+	dwFlags: WMIX_QUEUEWAVE: the wave will be placed on the specified channel
+							 and played after all waves which are currently
+							 waiting to play on that channel.
+	         WMIX_CLEARQUEUE:this wave will preempt all waves currently playing
+			 				 on the specified channel.  Notification messages
+							 will not be sent for any waves that get dumped.
+							 This message should not be combined with WMIX_QUEUEWAVE
+			 WMIX_HIGHPRIORITY: Play this way immediately.  This flag will interrupt
+							 the data buffered in the wave driver and remix the sound.
+							 If this flag is not set you could experience up to a half
+							 second delay before sound is played.
+
+							 Note: if WMIX_QUEUEWAVE is set with this flag then a sound
+							 playing on the channel will not be prempted, but it will
+							 begin immediately after the previous sound finishes.  If no
+							 sound is currently playing on this channel then a remix will
+							 occur.
+							 
+	         WMIX_USELRUCHANNEL: the wave should be played on any available channel
+							 or played on the channel that was least recently used.
+							 This flag should be combined with WMIX_QUEUEWAVE or
+							 WMIX_CLEARQUEUE.
+
+			WMIX_WAIT:		 setting this flag cause waveMixPlay to put the play information on
+							 a "waiting list" to play.  when waveMixPlay is called without this
+							 flag set it will process the calls in the order they were received.
+							 This is useful if you want to play multiple sounds simultaneously.
+
+							 Note 1: This flag is not a 'pause'.  Waves that are playing will continue
+							 to play regardless of how many files are on the wait list.
+
+							 Note 2: Since the waves that are submitted with this flag set are not
+							 checked until waveMixPlay is called without the flag set you should
+							 be careful about using other API calls before playing the sounds.
+							 eg. WaveMixFlushChannel and WaveMixCloseChannel do not process the
+							 wait list.
+
+	wLoops: The number of times the wave should be repeated.  If dwLoops is set to 
+			0xFFFF the wave will loop until the channel it is on is flushed, preempted,
+			or closed.
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_INVALHANDLE
+
+The specified channel has not been opened or invalid lpMixWave was passed in
+
+MMSYSERR_NOMEM
+
+The dll has run out of internal memory to queue up waves.  Wait until some 
+sounds complete and then try again.
+
+MMSYSERR_ALLOCATED
+
+The wave out device has not been allocated by this session.  This can be done with
+WaveMixActivate()
+
+-------------------------------------------------------------------------------
+
+UINT WINAPI WaveMixFlushChannel(HANDLE hMixSession, int iChannel, DWORD dwFlags);
+
+This function will empty the queue of any waves waiting to play on this channel.
+This function can be called to stop a wave that is playing on the channel without
+affecting any of the other channels.
+
+Parameters
+
+HANDLE hMixSession
+
+The handle that was returned by WaveMixInit()
+
+int iChannel
+
+an integer which specifies a previously opened channel
+
+DWORD dwFlags
+													 
+	WMIX_ALL: causes all the channels to be flushed. iChannel is ignored.
+	WMIX_NOREMIX: prevents WaveMixFlushChannel from causing the data to be
+				  immediately remixed.  This is useful if you want to flush
+				  more than one channel, or if you will be calling WaveMixPlay
+				  with a HIPRIORITY wave following WaveMixFlushChannel
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_INVALHANDLE
+
+The specified channel was not open
+
+MMSYSERR_INVALPARAM
+
+One of the parameters passed to the function is not valid
+
+-------------------------------------------------------------------------------
+
+UINT WINAPI WaveMixCloseChannel(HANDLE hMixSession, int iChannel, DWORD dwFlags);
+
+This function will flush and close the specified channel.
+
+Parameters
+
+HANDLE hMixSession
+
+The handle that was returned by WaveMixInit()
+
+int iChannel
+
+an integer which specifies a previously opened channel
+
+DWORD dwFlags
+													 
+	WMIX_ALL: causes all the channels to be flushed. iChannel is ignored.
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_INVALHANDLE
+
+The specified channel was not open
+
+-------------------------------------------------------------------------------
+
+UINT WINAPI WaveMixFreeWave(HANDLE hMixSession, LPMIXWAVE lpMixWave);
+
+Parameters
+
+HANDLE hMixSession
+
+The handle that was returned by WaveMixInit()
+
+lpMixWave
+
+A pointer that was created by WaveMixOpenWave()
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_INVALHANDLE
+
+The given pointer was not valid
+
+-------------------------------------------------------------------------------
+UINT WINAPI WaveMixCloseSession(HANDLE hMixSession);
+
+This function pairs up with WaveMixInit().  It should be called before the 
+application terminates.
+
+Parameters
+
+HANDLE hMixSession
+
+The handle that was returned by WaveMixInit()
+
+Return Value
+
+Returns zero if the function was successful. Otherwise, it returns an error
+number. Possible error returns are:
+
+MMSYSERR_INVALHANDLE
+
+The given handle was not a valid session
+
+-------------------------------------------------------------------------------
+
+void WINAPI WaveMixPump(void);
+
+Calling this function causes the WaveMix DLL to mix the next slice of wave data
+and submit it to the wave drivers.  This function can be called if the application
+does a lot of processing and fails to allow messages to reach the WaveMix DLL in 
+time to avoid drying up the wave queue.
+
+Parameters
+
+none
+
+Return Value
+
+none
+
+-------------------------------------------------------------------------------

@@ -58,6 +58,9 @@ classvars:
    viOccupation = MOB_ROLE_MERCHANT
    viMerchant_markup = MERCHANT_DISCOUNT
 
+   % We sell what other people have given us
+   vbSellFromInventory = TRUE
+
 properties:
 
    ptNew_Junk = $
@@ -365,182 +368,10 @@ messages:
       return TRUE;
    }
 
-   Buy(what=$,item_list=$,number_list=$)
-   "Handle things having to do with mobs who have stuff to sell. "
-   "This is used for both teachers and sellers."
+   ItemBoughtHook(buyer = $)
    {
-      local i,j,bFound,oBuy,oMoney,iPrice,lForSale,
-            lNumbers,iDefaultAmount,iAmount,iCount; % New vars for player specified amounts in buying
-
-      lForSale = First(plFor_Sale);
-      iCount = 0;
-      if NOT Send(self,@IsCustomerOkay,#who=what)
-      {
-         return;
-      }
-
-      % The next line added to handle player specified amounts.
-      lNumbers = number_list;
-
-      % The objects the user selected as wanting to purchase from our Sale list.
-      for i in item_list
-      {
-         % Find the dude's money.  Do this each time in case
-         % we exactly use it up.
-
-         % Get the amount of money for standard amount.
-         oMoney = Send(what,@GetMoneyObject);
-
-         % Get the price for that amount
-         iPrice = Send(self,@GetPrice,#what=i,#who=what);
-
-         % This code has been added to handle player specified amounts in buying.
-         % If the item is an item (not a skill).
-         if IsClass(i,&Item)
-         {
-            % If the player can specify an amount.
-            if IsClass(i,&NumberItem)
-            {
-               % First get the item default amount and how many the player wants.
-               iDefaultAmount = Send(i,@GetNumber);
-               iAmount = First(lNumbers);
-
-               % Make sure requested number of items is
-               % within MIN_BUY_AMOUNT - MAX_BUY_AMOUNT.
-
-               if (iAmount = $)
-               {
-                  iAmount = 1;
-               }
-
-               if iAmount < MIN_BUY_AMOUNT
-               {
-                  iAmount = MIN_BUY_AMOUNT;
-               }
-               if iAmount > iDefaultAmount
-               {
-                  iAmount = iDefaultAmount;
-               }
-         
-               % Now figure price (remember price can be "Gold for #items".
-               iPrice = iPrice * iAmount;
-
-               % Make sure we have a price of at least one gold coin.
-               iPrice = Bound(iPrice,1,$);
-
-               % Lastly, update lNumbers to point to the next number in the list.
-               lNumbers = Rest(lNumbers);
-            }
-         }
-         % This is the end of the added code to handle
-         % player specified amounts in buying.
-
-         if oMoney = $
-            OR Send(oMoney,@GetValue) < iPrice
-         {
-            Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_too_costly,
-               #type=SAY_RESOURCE,
-               #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
-               
-            continue;
-         }
-
-         % make sure the item is really for sale from this mob
-         bFound = FALSE;
-         for j in Send(self,@GetForSale,#who=what)
-         {
-            if i = j
-            {
-               bFound = TRUE;
-            }
-         }
-
-         if NOT bFound
-         {
-            Post(poOwner,@SomeoneSaid,#what=self,
-                  #string=Lm_mrcnt_not_selling,#type=SAY_RESOURCE);
-
-            continue;
-         }
-
-         if IsClass(i,&Item)
-         {
-            if IsClass(i,&NumberItem)
-            {
-               oBuy = Create(GetClass(i),#number=iAmount); % #number=Send(i,@GetNumber));
-            }
-            else
-            {
-               oBuy = i;
-            }
-
-            if Send(what,@ReqNewHold,#what=oBuy)
-               AND Send(oBuy,@ReqNewOwner,#what=what)
-            {
-               if IsClass(i,&NumberItem)
-               {
-                  if Send(i,@GetNumber) = iAmount
-                  {
-                     lForSale = DelListElem(lForSale,i);
-                  }
-
-                  Send(i,@SubtractNumber,#Number=iAmount);
-               }
-               else
-               {
-                  if IsClass(i,&SpellItem)
-                  {
-                     Send(i,@StartGoBadTimer);
-                  }
-
-                  lForSale = DelListElem(lForSale,i);
-               }
-
-               Send(what,@NewHold,#what=oBuy);
-               Send(oMoney,@SubtractNumber,#number=iPrice);
-               Send(self,@RemoveFromConditionalList,
-                     #obj=Send(self,@GetObjectOnConditionalList,
-                     #class=GetClass(i)));
-               if Send(oBuy,@HasAttribute,#ItemAtt=IA_SELL_INFO)
-               {
-                  Post(poOwner,@SomeoneSaid,#what=self,
-                        #string=Nth(Send(oBuy,@GetAttributeData,
-                        #ItemAtt=IA_SELL_INFO),2),
-                        #type=SAY_RESOURCE);
-               }
-               iCount = iCount + 1;
-            }
-            else
-            {
-               Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_cant_give,
-                     #type=SAY_RESOURCE,
-                     #parm1=Send(oBuy,@GetDef),#parm2=Send(oBuy,@GetName));
-            }
-         }
-         else
-         % Its a skill or spell which we know to be legal to "sell"
-         % so go ahead and add it....
-         {
-            if IsClass(i,&Skill)
-            {
-               Send(what,@AddSkill,#num=Send(i,@GetSkillNum));
-               Send(oMoney,@SubtractNumber,#number=iPrice);
-            }
-            else
-            {
-               Send(what,@AddSpell,#num=Send(i,@GetSpellNum));
-               Send(oMoney,@SubtractNumber,#number=iPrice);
-            }
-         }
-      }
-     % If you were able to afford and carry the items, Izzio will thank you.
-     if iCount > 0
-     {
-     
       Post(poOwner,@SomeoneSaid,#what=self,
             #string=Izzio_sold_rsc,#type=SAY_RESOURCE);
-     }
-      SetNth(plFor_Sale,1,lForSale);
 
       return;
    }

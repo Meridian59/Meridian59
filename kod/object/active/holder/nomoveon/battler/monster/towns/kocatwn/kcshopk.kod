@@ -258,17 +258,17 @@ messages:
 
       lForSale = First(plFor_Sale);
 
-      % set the stuff where the user can get to it
+      % Set the stuff where the user can get to it
       oHolder = Send(SYS,@GetSystemHolder2);
       for i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
       }
 
-      % take stuff the user put there
+      % Take stuff the user put there.
       oHolder = Send(SYS,@GetSystemHolder1);
-      for lTake_items in [Send(oHolder,@GetHolderActive),
-                              Send(oHolder,@GetHolderPassive)]
+      for lTake_items in [ Send(oHolder,@GetHolderActive),
+                           Send(oHolder,@GetHolderPassive) ]
       {
          for i in lTake_items
          {
@@ -278,17 +278,19 @@ messages:
                bHadSomeNum = FALSE;
                for j in lForSale
                {
-                  if getclass(j) = getclass(i)
+                  if GetClass(j) = GetClass(i)
                   {
                      bHadSomeNum = TRUE;
                      Send(j,@AddNumber,#number=Send(i,@GetNumber));
+                     % We don't need 'i' any more, delete it.
+                     Send(i,@Delete);
 
                      break;
                   }
                }
-               if not bHadSomeNum
+               if NOT bHadSomeNum
                {
-                  lForSale = cons(i,lForSale);
+                  lForSale = Cons(i,lForSale);
                }
             }
             else
@@ -299,7 +301,7 @@ messages:
                   Send(i,@StopGoBadTimer);
                }
                
-               lForSale = cons(i,lForSale);
+               lForSale = Cons(i,lForSale);
             }
          }
       }

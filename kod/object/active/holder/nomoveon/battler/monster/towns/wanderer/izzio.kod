@@ -334,6 +334,8 @@ messages:
                   {
                      bHadSomeNum = TRUE;
                      Send(j,@AddNumber,#number=Send(i,@GetNumber));
+                     % We don't need 'i' any more, delete it.
+                     Send(i,@Delete);
 
                      break;
                   }
@@ -345,6 +347,7 @@ messages:
             }
             else
             {
+               % If this is a spell item, then stop the go bad timer.
                if IsClass(i,&SpellItem)
                {
                   Send(i,@StopGoBadTimer);

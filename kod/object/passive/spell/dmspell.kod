@@ -37,7 +37,7 @@ messages:
 
       return;
    }
-      
+
    ResetReagents()
    "Reagents for DM commands = nil"
    {
@@ -50,8 +50,9 @@ messages:
    "Checks to be sure that only DMs use this command."
    {
       if NOT IsClass(who,&DM)
+         AND NOT IsClass(self,&Bonk)
       {
-         debug("Non-admin has a DM spell!");
+         Debug("Non-admin has a DM spell!");
 
          return FALSE;
       }
@@ -69,7 +70,7 @@ messages:
    {
       return TRUE;
    }
-    
+
    CanForget()
    {
       return FALSE;
@@ -81,7 +82,6 @@ messages:
       % Can't remove DM spells normally.
       return TRUE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -35,7 +35,7 @@ classvars:
    viMana = 0
 
 properties:
- 
+
 messages:
 
    GetNumSpellTargets()
@@ -56,53 +56,67 @@ messages:
       return;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
-      local  i, oRoom, lActive, each_obj;
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      % Can't bonk someone if they already have an effect, i.e. a debuff.
+      if Send(oTarget,@IsEnchanted,#byClass=&Debuff)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who=$,lTargets=$)
+   {
+      local i, oRoom, lActive, each_obj, oTarget;
 
       oRoom = Send(who,@GetOwner);
       lActive = Send(oRoom,@GetHolderActive);
+      oTarget = First(lTargets);
 
       % Show lightning flying through the air
 
-      Send(oRoom,@SomethingShot,#who=who,#target=First(lTargets), 
-           #projectile=self,#flags=PROJ_FLAG_LIGHT_SOURCE);
+      Send(oRoom,@SomethingShot,#who=who,#target=oTarget,
+            #projectile=self,#flags=PROJ_FLAG_LIGHT_SOURCE);
 
       Send(who,@MsgSendUser,#message_rsc=caster_bonk_msg,
-           #parm1=Send(First(lTargets),@GetDef),
-           #parm2=Send(First(lTargets),@GetName));
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
+      Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
+      Send(oTarget,@MsgSendUser,#message_rsc=bonked_bonk_msg,
+            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
-      Send(First(lTargets),@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
-      Send(First(lTargets),@MsgSendUser,#message_rsc=bonked_bonk_msg,
-           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
-
-      If isClass(first(lTargets),&Cow)
+      If isClass(oTarget,&Cow)
       {
-         send(first(lTargets),@Bonked);
+         Send(oTarget,@Bonked);
       }
       
       for i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-         if (IsClass(each_obj,&Player) and (each_obj <> who) and (each_obj <> First(lTargets)))
+         if (IsClass(each_obj,&Player)
+            AND (each_obj <> who)
+            AND (each_obj <> oTarget))
          {
-            if (IsClass(First(lTargets),&Battler))
+            if (IsClass(oTarget,&Battler))
             {
-               send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg1,
-                 #parm1=Send(who,@GetDef),
-                 #parm2=Send(who,@GetName,#cap=TRUE),
-                 #parm3=Send(First(lTargets),@getdef),
-                 #parm4=Send(First(lTargets),@GetName));
-
+               Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg1,
+                     #parm1=Send(who,@GetDef),
+                     #parm2=Send(who,@GetName,#cap=TRUE),
+                     #parm3=Send(oTarget,@GetDef),
+                     #parm4=Send(oTarget,@GetName));
             }
             else
             {
-               send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg2,
-                #parm1=Send(who,@GetDef),
-                #parm2=Send(who,@GetName),
-                #parm3=Send(First(lTargets),@getdef),
-                #parm4=Send(First(lTargets),@GetName));
+               Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg2,
+                     #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+                     #parm3=Send(oTarget,@GetDef),
+                     #parm4=Send(oTarget,@GetName));
             }
          }
       }
@@ -114,7 +128,7 @@ messages:
    {
       % for EFFECT_INVERT, 4 bytes of time to be inverted
       AddPacket(4,10000);
-      
+
       return;
    }
 
@@ -157,10 +171,9 @@ messages:
    GetProjectileLightColor()
    {
       % Color is random!
-      return send(SYS,@GetRGB,#iRed=random(33,100),#iGreen=random(33,100),
+      return Send(SYS,@GetRGB,#iRed=random(33,100),#iGreen=random(33,100),
                   #iBlue=random(33,100));
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

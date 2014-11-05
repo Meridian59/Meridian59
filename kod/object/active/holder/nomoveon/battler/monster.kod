@@ -917,6 +917,15 @@ messages:
          propagate;
       }
 
+      % Mobs can change owner, i.e. wanderers. This lets them react properly
+      % to leaving a room with users and arriving in a room without them.
+      if poOwner <> $
+         AND Send(poOwner,@IsUserInRoom)
+         AND NOT Send(what,@IsUserInRoom)
+      {
+         Post(self,@LastUserLeft);
+      }
+
       if Send(what,@IsUserInRoom)
       {
          Send(self,@StartBasicTimers);

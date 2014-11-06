@@ -155,7 +155,8 @@ messages:
          return TRUE;
       }
 
-      return Send(poCaster,@AllowPlayerAttack,#victim=victim,#report=FALSE,#spell_obj=poSpell);
+      return Send(poCaster,@AllowPlayerAttack,#victim=victim,#report=FALSE,
+                  #stroke_obj=poSpell);
    }
    
    CheckPlayerFlag(flag=$)

@@ -3921,7 +3921,7 @@ messages:
    }
 
    AllowPlayerAttack(victim=$,stroke_obj=$,use_weapon=$,report=TRUE,
-                     actual=TRUE,spell_obj=$)
+                     actual=TRUE)
    "Will not let a person attack someone who isn't pkill_enabled."
    "Will not let a person who isn't pkill_enabled attack another person."
    {
@@ -4154,8 +4154,8 @@ messages:
       % Truce itself returns TRUE, not counting as an attack. 
       % Truce will only block actual attacks between two players who 
       % are both Truced.
-      if spell_obj <> $
-         AND IsClass(spell_obj,&Truce)
+      if stroke_obj <> $
+         AND IsClass(stroke_obj,&Truce)
       {
          return TRUE;
       }
@@ -4165,21 +4165,23 @@ messages:
          {
             if (IsClass(victim,&Monster)
                OR (IsClass(victim,&User)
-                   AND Send(victim,@IsAffectedByRadiusEnchantment,#byClass=&Truce)))
+                  AND Send(victim,@IsAffectedByRadiusEnchantment,
+                           #byClass=&Truce)))
                AND actual
             {
-               if spell_obj = $
-                  AND report
+               if report
                {
                   Send(self,@MsgSendUser,#message_rsc=player_truced);
                }
+
                return FALSE;
             }
          }
       }
 
       % Finally, check status and safety.
-      if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report,#actual=actual)
+      if NOT Send(self,@CheckStatusAndSafety,#victim=victim,
+                  #report=report,#actual=actual)
       {
          return FALSE;
       }
@@ -6035,25 +6037,37 @@ messages:
 
    SendAttackOutOfRangeMessage(what = $, use_weapon = $, stroke_obj = $)
    {
+      if use_weapon = $
+         AND stroke_obj = $
+      {
+         return;
+      }
+
       if use_weapon <> $
       {
          Send(self,@MsgSendUser,#message_rsc=player_attack_out_of_range,
-              #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
-              #parm3=Send(use_weapon,@GetIndef),#parm4=Send(use_weapon,@GetName));
+               #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+               #parm3=Send(use_weapon,@GetIndef),
+               #parm4=Send(use_weapon,@GetName));
       }
       else
       {
          if IsClass(stroke_obj,&spell)
          {
+            if IsClass(stroke_obj,&RadiusEnchantment)
+            {
+               return;
+            }
+
             Send(self,@MsgSendUser,#message_rsc=player_attack_out_of_SPELL_range,
-                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
-                 #parm3=Send(stroke_obj,@GetName));
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(stroke_obj,@GetName));
          }
          else
          {
             Send(self,@MsgSendUser,#message_rsc=player_attack_out_of_PUNCH_range,
-                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
-                 #parm3=Send(stroke_obj,@GetName));
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(stroke_obj,@GetName));
          }
       }
 

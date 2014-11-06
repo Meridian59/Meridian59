@@ -7,8 +7,8 @@
 % Meridian is a registered trademark.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ForgetPotionSkills is ForgetPotion
-forgetpotionskills is forgetpotion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForgetPotionSkills is ForgetPotion
 
 constants:
 
@@ -18,7 +18,9 @@ constants:
 
 resources:
 
-   forgetpotionskills_desc_rsc = "Drinking this potion causes one to forget all skills that he or she possesses.\n\nMay have very serious side effects."
+   forgetpotionskills_desc_rsc = \
+      "Drinking this potion causes one to forget all skills that he or she "
+      "possesses.\n\nMay have very serious side effects."
 
    forgetpotionskills_forget_skill = "The art of '%s' slips from your mind!"
    forgetpotionskills_vulnerable = "You suddenly feel more vulnerable!"
@@ -37,53 +39,58 @@ messages:
       local i, skills, oSkill, iSkillnum, ihp_loss, howmuch;
 
       ptQuaff = $;
-      Skills = send(poApply_target,@getskilllist);
+      Skills = Send(poApply_target,@GetSkillList);
       piCount = 0;
       iHP_loss = 0;
 
       for i in Skills
       {
-         iSkillNum = send(poApply_target,@DecodeSkillNum,#compound=i);
+         iSkillNum = Send(poApply_target,@DecodeSkillNum,#compound=i);
          if iSkillNum = SKID_SLASH OR iSkillnum = SKID_DODGE
          {
-            iHP_loss = iHp_loss + send(poApply_target,@DecodeSkillAbility,#compound=i);
+            iHP_loss = iHp_loss + Send(poApply_target,@DecodeSkillAbility,
+                                       #compound=i);
          }
 
-         oSkill = send(SYS,@FindSkillByNum,#num=iSkillNum);
+         oSkill = Send(SYS,@FindSkillByNum,#num=iSkillNum);
 
-         % delete all skills!
-         send(poApply_target,@RemoveSkill,#num=iSkillNum);
-         send(poApply_target,@MsgSendUser,#message_rsc=forgetpotionskills_forget_skill,
-              #parm1=send(oSkill,@GetName));
+         % Delete all skills!
+         Send(poApply_target,@RemoveSkill,#num=iSkillNum);
+         Send(poApply_target,@MsgSendUser,
+               #message_rsc=forgetpotionskills_forget_skill,
+               #parm1=Send(oSkill,@GetName));
          piCount = piCount + 1;
       }
-      
+
       if piCount = 0
       {
-         Send(poApply_target,@MsgSendUser,#message_rsc=forgetpotion_nothing_happens);
+         Send(poApply_target,@MsgSendUser,
+               #message_rsc=forgetpotion_nothing_happens);
       }
       else
       {
-         send(poApply_target,@MsgSendUser,#message_rsc=forgetpotionskills_vulnerable);
+         Send(poApply_target,@MsgSendUser,
+               #message_rsc=forgetpotionskills_vulnerable);
 
-         howmuch = -random((iHP_loss/40),iHP_loss/20);
-         howmuch = bound(howmuch,$,-1);
-         send(poApply_target,@GainBaseMaxHealth,#amount=howmuch);
-         
-         if send(poApply_target,@CheckLog)
+         howmuch = -Random((iHP_loss/40),iHP_loss/20);
+         howmuch = Bound(howmuch,$,-1);
+         Send(poApply_target,@GainBaseMaxHealth,#amount=howmuch);
+
+         if Send(poApply_target,@CheckLog)
          {
-            DEBUG("LOG:  ",send(poApply_Target,@getname)," drank a forgetpotion.  Lost ",howmuch);
+            Debug("LOG:  ",Send(poApply_Target,@GetTrueName),
+                  " drank a forgetpotion.  Lost ",howmuch);
          }
-         
-         send(self,@DoSideEffects);
-         send(poApply_target,@tocliStats,#group=2);
+
+         Send(self,@DoSideEffects);
+         Send(poApply_target,@ToCliStats,#group=2);
       }
 
-      %% check if player should regain guardian angel from HP loss.
+      % Check if player should regain guardian angel from HP loss.
       Send(poApply_target,@EvaluatePKstatus);
-      
+
       Send(self,@Delete);
-      
+
       return;
    }
 

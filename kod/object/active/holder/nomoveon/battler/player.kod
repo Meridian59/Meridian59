@@ -8041,14 +8041,24 @@ messages:
    "Admin supported\n"
    "Removes a Skill by Skill ID from the user's castable list of Skills"
    {
-      local oSkill,i;
+      local oSkill, i, iVigorChange;
 
-      oSkill = Send(SYS, @FindSkillbyNum, #num=num);
+      oSkill = Send(SYS,@FindSkillbyNum,#num=num);
       if oSkill = $
       {
          Debug("Trying to delete a skill the system doesn't recognize.");
 
          return FALSE;
+      }
+
+      % If we remove Second Wind, we need to adjust the player's
+      % resting vigor threshold.
+      if num = SKID_SECOND_WIND
+      {
+         iVigorChange = (Send(self,@GetSkillAbility,
+                              #Skill_num=SKID_SECOND_WIND) + 1) / 5;
+         Post(self,@SetVigorRestThreshold,
+               #amount=piVigor_rest_threshold - iVigorChange);
       }
 
       for i in plSkills

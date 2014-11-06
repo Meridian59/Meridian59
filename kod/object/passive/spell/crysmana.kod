@@ -34,7 +34,7 @@ resources:
    CrystalizeMana_no_room = \
       "You stop singing once you realize you won't be able to hold the mana "
       "crystal."
-   
+
    CrystalizeMana_already_surging = \
       "Your spirit is too weak to summon another surge of energy at this time."
    CrystalizeMana_cast = \
@@ -45,7 +45,7 @@ resources:
       "yourself able to hear a vast and distant song..."
    CrystalizeMana_surge = \
       "Incredible energies roar through you!"
-      
+
    Surge_sound = wscndwnd.wav
 
 classvars:
@@ -61,7 +61,7 @@ classvars:
    viMana = 20
 
    viSpellExertion = 30
-   
+
    % This spell is very slow and difficult to work, so it should improve well.
    viChance_To_Increase = 60
    viMeditate_ratio = 100
@@ -144,10 +144,11 @@ messages:
       iManaSurge = iMaxMana + 40;
 
       % Cap the actual mana given to keep actual mana totals reasonable
-      iManaSurge = Bound(iManaSurge,$,MAX_SURGE_MANA-Send(who,@GetMana)); 
-     
+      iManaSurge = Bound(iManaSurge,$,MAX_SURGE_MANA-Send(who,@GetMana));
+
       Send(who,@GainMana,#amount=iManaSurge);
-      Send(who,@StartCrystalizeManaSurge,#surge_time=Send(self,@GetWaitTime,#who=who));
+      Send(who,@StartCrystalizeManaSurge,
+            #surge_time=Send(self,@GetWaitTime,#who=who));
 
       if triggered
       {
@@ -160,7 +161,7 @@ messages:
 
       Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_surge);
       Send(who,@ShowAddEnchantment,#what=self,#type=ENCHANTMENT_PLAYER);
-      
+
       return;
    }
 
@@ -181,9 +182,10 @@ messages:
       }
 
       iIntellect = Send(self,@GetRequisiteStat,#who=who);
-      
+
       % 6.6 minutes to 3.3 minutes based on spell ability
-      iWaitTime = 396 - (Send(who,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA) * 2);
+      iWaitTime = 396 - (Send(who,@GetSpellAbility,
+                              #spell_num=SID_CRYSTALIZE_MANA) * 2);
 
       return iWaitTime * 1000;
    }
@@ -192,11 +194,6 @@ messages:
    "Crystalize Mana cannot fizzle."
    {
       return TRUE;
-   }
-
-   CanForget()
-   {
-      return FALSE;
    }
 
 end

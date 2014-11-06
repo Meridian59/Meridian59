@@ -95,7 +95,8 @@ classvars:
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
 
-   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_BUYER | MOB_TEACHER
+   viAttributes = \
+      MOB_NOMOVE | MOB_NOFIGHT | MOB_BUYER | MOB_TEACHER | MOB_LISTEN
    viOccupation = MOB_ROLE_ASSASSIN
 
    viMerchant_markup = MERCHANT_EXPENSIVE

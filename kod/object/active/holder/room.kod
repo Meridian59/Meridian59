@@ -192,6 +192,8 @@ properties:
    piRoom_num
    piRows
    piCols
+   piRowsHighRes
+   piColsHighRes
 
    piSecurity
 
@@ -1089,6 +1091,8 @@ messages:
       piRows = First(lRoom_data);
       piCols = Nth(lRoom_data,2);
       piSecurity = Nth(lRoom_data,3);
+      piRowsHighRes = Nth(lRoom_data,4);
+      piColsHighRes = Nth(lRoom_data,5);
 
       return;
    }

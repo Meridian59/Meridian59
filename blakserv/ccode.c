@@ -1600,7 +1600,7 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
-	val_type room_val,ret_val,rows,cols,security;
+	val_type room_val,ret_val,rows,cols,security,rowshighres,colshighres;
 	roomdata_node *room;
 	
 	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -1625,8 +1625,18 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 	cols.v.data = room->file_info.cols;
 	security.v.tag = TAG_INT;
 	security.v.data = room->file_info.security;
-	
+	rowshighres.v.tag = TAG_INT;
+	rowshighres.v.data = room->file_info.rowshighres;
+	colshighres.v.tag = TAG_INT;
+	colshighres.v.data = room->file_info.colshighres;
+
 	ret_val.int_val = NIL;
+	
+	ret_val.v.data = Cons(colshighres,ret_val);
+	ret_val.v.tag = TAG_LIST;
+	
+	ret_val.v.data = Cons(rowshighres,ret_val);
+	ret_val.v.tag = TAG_LIST;
 	
 	ret_val.v.data = Cons(security,ret_val);
 	ret_val.v.tag = TAG_LIST;

@@ -29,6 +29,8 @@ enum
 void InitRoomData(void);
 void ResetRoomData(void);
 Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
+Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_finerow,int from_finecol,
+						  int to_row,int to_col,int to_finerow,int to_finecol);
 Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
 int LoadRoomData(int resource_id);
 roomdata_node * GetRoomDataByID(int id);

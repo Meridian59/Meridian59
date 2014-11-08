@@ -147,15 +147,15 @@ messages:
       % North part
       if iRow = 3 or iRow = 4
       {
-         if iCol < 8 or iCol > 14
+         if iCol < 8 OR iCol > 14
          {
             return TRUE;
          }
-         if iCol = 8 and iFineCol < 48
+         if iCol = 8 AND iFineCol < 48
          {
             return TRUE;
          }
-         if iCol = 14 and iFineRow > 16
+         if iCol = 14 AND iFineCol > 16
          {
             return TRUE;
          }

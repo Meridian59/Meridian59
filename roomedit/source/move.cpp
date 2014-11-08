@@ -290,6 +290,111 @@ BYTE ComputeSquareFlags(BSPTree tree, int row, int col, int /*rows*/, int /*cols
 	return byte;
 }
 
+/************************************************************************/
+/*
+ * ComputeHighResSquareFlags: The new high resolution square has
+ *   4 bytes per square. The layout is like:
+ *   Bit 0:		Set to 1 if the gridsquare belongs to a sector (0=outside map)
+ *   Bit 1-9:	Each bit represents a direction (N, NE, E, SE, ...)
+ *   Bit 10-32:	The height of the floor
+ *   
+ *   Bits 0-9 are the old bits from move and flag grid combined.
+ *   Bits 10-32 are new.
+ */
+int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols, int min_distance)
+{
+	int x, y, flags;
+	int source_x, source_y;
+	int dest_x, dest_y;
+	int maxx, maxy;
+	BSPleaf *leaf;
+
+	flags = 0;
+
+	/********************/
+
+	// Check for a real foor in the center of the square
+	x = col * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+	y = row * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+
+	leaf = BSPFindLeafByPoint(tree, x, y);
+	if (leaf != NULL && leaf->floor_type != 0)
+	{
+		// set bit 0: walkable square
+		flags |= SF_PLAYABLE;
+
+		// set bits 9-31: height
+		flags |= (leaf->floor_height << 9);
+	}
+
+	/********************/
+
+	// Try moving from center of one source square to center of adjacent square
+	source_x = col * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+	source_y = row * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+
+	maxx = cols * FINENESSHIGHRESGRID;
+	maxy = rows * FINENESSHIGHRESGRID;
+
+	// North
+	dest_x = source_x;
+	dest_y = max(0, source_y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_N << 1);
+
+	// Northeast
+	dest_x = min(maxx, source_x + FINENESSHIGHRESGRID);
+	dest_y = max(0, source_y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_NE << 1);
+
+	// East
+	dest_x = min(maxx, source_x + FINENESSHIGHRESGRID);
+	dest_y = source_y;
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_E << 1);
+
+	// Southeast
+	dest_x = min(maxx, source_x + FINENESSHIGHRESGRID);
+	dest_y = min(maxy, source_y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_SE << 1);
+
+	// South
+	dest_x = source_x;
+	dest_y = min(maxy, source_y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_S << 1);
+
+	// Southwest
+	dest_x = max(0, source_x - FINENESSHIGHRESGRID);
+	dest_y = min(maxy, source_y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_SW << 1);
+
+	// West
+	dest_x = max(0, source_x - FINENESSHIGHRESGRID);
+	dest_y = source_y;
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_W << 1);
+
+	// Northwest
+	dest_x = max(0, source_x - FINENESSHIGHRESGRID);
+	dest_y = max(0, source_y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
+							min_distance))
+		flags |= (MOVE_NW << 1);
+
+	return flags;
+}
+
 /*****************************************************************************/
 /*
  * BSPFindLeafByPoint:  Return leaf node of tree containing given point, or

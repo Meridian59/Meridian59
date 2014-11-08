@@ -10,8 +10,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ItemEnchantment is Spell
 
-% Spells that take items as targets fall under this category, unless they require
-% the infrastructure from another class such as RadiusEnchantment or MultiCastSpell.
+% Spells that take items as targets fall under this category, unless they
+% require the infrastructure from another class such as RadiusEnchantment
+% or MultiCastSpell.
 
 constants:
 
@@ -35,8 +36,8 @@ messages:
 
    IsTargetInRange(who=$,target=$)
    {
-      return who = Send(target,@GetOwner) 
-         OR Send(who,@getOwner) = Send(target,@GetOwner);  
+      return who = Send(target,@GetOwner)
+         OR Send(who,@GetOwner) = Send(target,@GetOwner);
    }
 
    GetDuration(iSpellPower=0)
@@ -46,7 +47,7 @@ messages:
       % 1 - 37 hours.
       iDuration = Random(1,4) + (iSpellPower/3);
       iDuration = iDuration * 1000 * 60 * 60;
-      
+
       return iDuration;
    }
 

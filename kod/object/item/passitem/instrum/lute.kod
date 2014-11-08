@@ -21,8 +21,9 @@ resources:
    lute_name_rsc = "lute"
    lute_icon_rsc = music.bgf
    lute_overlay_rsc = luteov.bgf
-   lute_desc_rsc = "The simple lute is the instrument of choice among the meridian bards.  "
-		  "Its rosewood construction offers a rich tone in the hands of an expert."
+   lute_desc_rsc = \
+      "The simple lute is the instrument of choice among the meridian bards.  "
+     "Its rosewood construction offers a rich tone in the hands of an expert."
    lute_used_wav_rsc = lute_equip.wav
 
 classvars:
@@ -41,7 +42,7 @@ classvars:
 properties:
 
 messages:
-   
+
    ReqUseSomething(what = $)
    {
       if (IsClass(what,&Shield)
@@ -66,20 +67,41 @@ messages:
 
    NewUsed()
    {
-      local oRoom;
+      local oItemAtt, oRoom;
 
       % Play a sound
       oRoom = Send(poOwner, @GetOwner);
       if oRoom <> $
       {
          Send(oRoom, @SomethingWaveRoom, #what = poOwner,
-              #wave_rsc = lute_used_wav_rsc);
+               #wave_rsc = lute_used_wav_rsc);
+      }
+
+      % This alerts Item attributes when item is used.
+      % Currently special checks for "glowing" weapon attribute.
+      if Send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      {
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         Send(oItemAtt,@ItemUsed,#oItem=self,#oPlayer=poOwner);
       }
 
       propagate;
    }
 
+   NewUnused()
+   {
+      local oItemAtt;
+
+      % This alerts Item attributes when item is unusedused.
+      % Currently special checks for "glowing" weapon attribute.
+      if Send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      {
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         Send(oItemAtt,@ItemUnused,#oItem=self,#oPlayer=poOwner);
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

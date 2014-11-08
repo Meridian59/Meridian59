@@ -16,7 +16,6 @@ constants:
 
 resources:
 
-
 classvars:
 
    viUse_type = ITEM_USE_HAND
@@ -24,11 +23,11 @@ classvars:
 
    viInstrument_strength = 25
    vrInstrument_overlay = $
-   
+
 properties:
 
 messages:
-   
+
    GetInstrumentLevel()
    {
       return viInstrument_strength;
@@ -60,7 +59,7 @@ messages:
    {
       return vrInstrument_overlay;
    }
-   
+
    GetOverlayHotspot()
    {
       return HS_LEFT_WEAPON;
@@ -72,13 +71,11 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
-      
-      AddPacket(1,ANIMATE_NONE,2,1); 
-      
+
+      AddPacket(1,ANIMATE_NONE,2,1);
+
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

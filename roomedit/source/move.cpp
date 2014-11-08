@@ -324,7 +324,11 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 		flags |= SF_PLAYABLE;
 
 		// set bits 9-31: height
-		flags |= (leaf->floor_height << 9);
+		// note: height in sectors is not stored in the same scale
+		// as the lines/walls. Instead it uses the EditorScale,
+		// which is the same as the fine serverscale.
+		// here we turn height into the same scale as highresgrid
+		flags |= ((leaf->floor_height * BLAK_FACTOR / FINENESSHIGHRESGRID) << 9);
 	}
 
 	/********************/

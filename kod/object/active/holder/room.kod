@@ -2110,7 +2110,7 @@ messages:
    }
 
    ReqSomethingMoved(what = $, new_row = $, new_col = $, entering_room = FALSE,
-                     dir = $, server_validate = TRUE)
+                     dir = $, server_validate = TRUE, new_finerow = FINENESS/2, new_finecol = FINENESS/2)
    "Ask if possible for <what> to move to <new_row>,<new_col>. "
    "<server_validate> is set to false for user moves, which have already been "
    "checked by client (HAHA!)."

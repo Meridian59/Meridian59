@@ -2115,7 +2115,7 @@ messages:
    "<server_validate> is set to false for user moves, which have already been "
    "checked by client (HAHA!)."
    {
-      local i, each_obj, iRow, iCol, iLOS;
+      local i, each_obj, iRow, iCol, iFineRow, iFineCol, iLOS;
 
       if new_row > piRows OR new_row < 1 OR new_col > piCols OR new_col < 1
       {
@@ -2123,11 +2123,18 @@ messages:
          % go between rooms in RoomObjOffGrid
          return TRUE;
       }
-
+      
+	  % defaults for own fine values (=in middle of big square)
+      iFineRow = FINENESS/2;
+	  iFineCol = FINENESS/2;
+	  
       if Send(what,@GetOwner) = self AND Send(self,@IsHolding,#what=what)
       {
+         % get position of object to move
          iRow = Send(what,@GetRow);
          iCol = Send(what,@GetCol);
+		 iFineRow = Send(what,@GetFineRow);
+         iFineCol = Send(what,@GetFineCol);
       }
       else
       {

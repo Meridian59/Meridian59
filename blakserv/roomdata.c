@@ -253,6 +253,16 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
       return False;
    }
   
+   // fallback to CanMoveInRoom in case this
+   // ROO file has no high resolution grid
+   if (r->file_info.highres_grid == NULL)
+   {
+	if (debug)
+	 dprintf("-- no highres grid, fallback to CanMoveInRoom\n");
+
+	return CanMoveInRoom(r, from_row, from_col, to_row, to_col);
+   }
+
    // build a combined value in fine precision first
    // a row has 64 fine rows, a col has 64 fine cols
    // so a square has 4096 fine squares. 

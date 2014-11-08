@@ -233,6 +233,152 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    return (allow != 0);
 }
 
+Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_finerow,int from_finecol,
+						  int to_row,int to_col,int to_finerow, int to_finecol)
+{
+   int dir_row,dir_col;
+   int from_row_comb,from_col_comb,to_row_comb,to_col_comb;
+   Bool allow,debug;
+   Bool bad_to;
+
+   // Must support to_row/to_col which is outside the bounds of the grid.
+   // Therefore, must not actually access the grid in those cases.
+
+   debug = ConfigBool(DEBUG_CANMOVEINROOM);
+   
+   if (!r)
+   {
+      if (debug)
+	 dprintf("-- invalid room, false\n");
+      return False;
+   }
+  
+   // build a combined value in fine precision first
+   // a row has 64 fine rows, a col has 64 fine cols
+   // so a square has 4096 fine squares. 
+   // << 6 (LSHIFT 6) is a faster variant of (*64)
+   from_row_comb = (from_row << 6) + from_finerow;
+   from_col_comb = (from_col << 6) + from_finecol;
+   to_row_comb = (to_row << 6) + to_finerow;
+   to_col_comb = (to_col << 6) + to_finecol;
+
+   // scale to the highprecision scale
+   // a row has 4 highprecision rows, a col has 4 highprecision cols.
+   // so highres grid precision is NOT as good as fine precision!
+   // >> 4 (RSHIFT 4) is faster variant of (/16)
+   from_row_comb = from_row_comb >> 4;
+   from_col_comb = from_col_comb >> 4;
+   to_row_comb = to_row_comb >> 4;
+   to_col_comb = to_col_comb >> 4;
+
+
+   /* if not headed into room, don't access grid variables */
+
+   bad_to = False;
+   if (to_row_comb < 0 || to_row_comb >= r->file_info.rowshighres)
+   {
+      if (debug)
+	 dprintf("-- not going into room row, false\n");
+      bad_to = True;
+   }
+   if (to_col_comb < 0 || to_col_comb >= r->file_info.colshighres)
+   {
+      if (debug)
+	 dprintf("-- not going into room col, false\n");
+      bad_to = True;
+   }
+
+   /* if it's inside a wall or an unwalkable floor, it's no good */
+   
+   if (debug)
+      dprintf("room %i, from row %i, col %i to row %i, col %i\n",
+	      r,from_row,from_col,to_row,to_col);
+   if (!bad_to &&
+       (r->file_info.highres_grid[to_row_comb][to_col_comb] & ROOM_FLAG_WALKABLE) == 0)
+   {
+      if (debug)
+	 dprintf("-- flag grid said no floor, false\n");
+      return False;
+   }
+   
+   /* if not currently in room, must be fine */
+   if (from_row_comb < 0 || from_row_comb >= r->file_info.rowshighres)
+   {
+      if (debug)
+	 dprintf("-- not in current room row, true\n");
+      return True;
+   }
+   if (from_col_comb < 0 || from_col_comb >= r->file_info.colshighres)
+   {
+      if (debug)
+	 dprintf("-- not in current room col, true\n");
+      return True;
+   }
+
+   /*
+   dprintf("r%i c%i has data %02X",from_row,from_col,(r->file_info.grid[from_row][from_col]));
+   */
+
+   if (abs(to_row_comb-from_row_comb) > 1 || abs(to_col_comb-from_col_comb) > 1)
+   {
+      if (debug)
+	 dprintf("-- allowing teleport\n");
+
+      return True; /* teleport */
+   }
+
+   dir_row = signum(to_row_comb-from_row_comb);
+   dir_col = signum(to_col_comb-from_col_comb);
+
+   if (dir_row == 0 && dir_col == 0)
+   {
+      if (debug)
+	 dprintf("-- not moving, true\n");
+
+      return True; /* no move */
+   }
+
+   /* one of these cases WILL be true */
+
+   // note about the new flags:
+   // the movement bits are stored at bits 1-9
+   // so the value is rightshifted by one to move them back in place
+   switch (dir_row)
+   {
+   case -1 :
+      switch (dir_col)
+      {
+      case -1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_NORTH_WEST; break;
+      case 0 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_NORTH; break;
+      case 1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_NORTH_EAST; break;
+      default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+      }
+      break;
+   case 0 :
+      switch (dir_col)
+      {
+      case -1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_WEST; break;
+      case 1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_EAST; break;
+      default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+      }
+      break;
+   case 1 :
+      switch (dir_col)
+      {
+      case -1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_SOUTH_WEST; break;
+      case 0 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_SOUTH; break;
+      case 1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & MASK_SOUTH_EAST; break;
+      default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+      }
+      break;
+   default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+   }
+   /* allow is a bit, not necessarily 1 or 0, so need to make sure to make 1 or 0 here */
+   if (debug)
+      dprintf("-- using highres grid, %s\n",allow ? "true" : "false");
+   return (allow != 0);
+}
+
 Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
 {
    int dir_row,dir_col;

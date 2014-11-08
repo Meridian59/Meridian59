@@ -329,7 +329,7 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
    dprintf("r%i c%i has data %02X",from_row,from_col,(r->file_info.grid[from_row][from_col]));
    */
 
-   if (abs(to_row_comb-from_row_comb) > 1 || abs(to_col_comb-from_col_comb) > 1)
+   if (abs(to_row-from_row) > 1 || abs(to_col-from_col) > 1)
    {
       if (debug)
 	 dprintf("-- allowing teleport\n");

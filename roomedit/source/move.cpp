@@ -307,21 +307,110 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	int source_x, source_y;
 	int dest_x, dest_y;
 	int maxx, maxy;
+	int allowed_dirs = 0;
 	BSPleaf *leaf;
-
+	
 	flags = 0;
-
-	/********************/
-
-	// Check for a real foor in the center of the square
+	
+	// 
 	x = col * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
 	y = row * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+
+	/******** DIRECTION FLAGS ************/
+
+	maxx = cols * FINENESSHIGHRESGRID;
+	maxy = rows * FINENESSHIGHRESGRID;
+
+	// North
+	dest_x = x;
+	dest_y = max(0, y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_N << 1);
+		allowed_dirs++;
+	}
+
+	// Northeast
+	dest_x = min(maxx, x + FINENESSHIGHRESGRID);
+	dest_y = max(0, y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_NE << 1);
+		allowed_dirs++;
+	}
+
+	// East
+	dest_x = min(maxx, x + FINENESSHIGHRESGRID);
+	dest_y = y;
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_E << 1);
+		allowed_dirs++;
+	}
+
+	// Southeast
+	dest_x = min(maxx, x + FINENESSHIGHRESGRID);
+	dest_y = min(maxy, y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_SE << 1);
+		allowed_dirs++;
+	}
+
+	// South
+	dest_x = x;
+	dest_y = min(maxy, y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_S << 1);
+		allowed_dirs++;
+	}
+
+	// Southwest
+	dest_x = max(0, x - FINENESSHIGHRESGRID);
+	dest_y = min(maxy, y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_SW << 1);
+		allowed_dirs++;
+	}
+
+	// West
+	dest_x = max(0, x - FINENESSHIGHRESGRID);
+	dest_y = y;
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_W << 1);
+		allowed_dirs++;
+	}
+
+	// Northwest
+	dest_x = max(0, x - FINENESSHIGHRESGRID);
+	dest_y = max(0, y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= (MOVE_NW << 1);
+		allowed_dirs++;
+	}
+
+	/******** MOVABLE / HEIGHT ************/
 
 	leaf = BSPFindLeafByPoint(tree, x, y);
 	if (leaf != NULL && leaf->floor_type != 0)
 	{
 		// set bit 0: walkable square
-		flags |= SF_PLAYABLE;
+		// we ignore the return in case there is no direction you can
+		// get away from that square anymore
+		if (allowed_dirs > 0)
+	 	  flags |= SF_PLAYABLE;
 
 		// set bits 9-31: height
 		// note: height in sectors is not stored in the same scale
@@ -330,71 +419,6 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 		// here we turn height into the same scale as highresgrid
 		flags |= ((leaf->floor_height * BLAK_FACTOR / FINENESSHIGHRESGRID) << 9);
 	}
-
-	/********************/
-
-	// Try moving from center of one source square to center of adjacent square
-	source_x = col * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
-	source_y = row * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
-
-	maxx = cols * FINENESSHIGHRESGRID;
-	maxy = rows * FINENESSHIGHRESGRID;
-
-	// North
-	dest_x = source_x;
-	dest_y = max(0, source_y - FINENESSHIGHRESGRID);
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_N << 1);
-
-	// Northeast
-	dest_x = min(maxx, source_x + FINENESSHIGHRESGRID);
-	dest_y = max(0, source_y - FINENESSHIGHRESGRID);
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_NE << 1);
-
-	// East
-	dest_x = min(maxx, source_x + FINENESSHIGHRESGRID);
-	dest_y = source_y;
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_E << 1);
-
-	// Southeast
-	dest_x = min(maxx, source_x + FINENESSHIGHRESGRID);
-	dest_y = min(maxy, source_y + FINENESSHIGHRESGRID);
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_SE << 1);
-
-	// South
-	dest_x = source_x;
-	dest_y = min(maxy, source_y + FINENESSHIGHRESGRID);
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_S << 1);
-
-	// Southwest
-	dest_x = max(0, source_x - FINENESSHIGHRESGRID);
-	dest_y = min(maxy, source_y + FINENESSHIGHRESGRID);
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_SW << 1);
-
-	// West
-	dest_x = max(0, source_x - FINENESSHIGHRESGRID);
-	dest_y = source_y;
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_W << 1);
-
-	// Northwest
-	dest_x = max(0, source_x - FINENESSHIGHRESGRID);
-	dest_y = max(0, source_y - FINENESSHIGHRESGRID);
-	if (!MoveTooCloseToWall(tree, source_x, source_y, dest_x, dest_y,
-							min_distance))
-		flags |= (MOVE_NW << 1);
 
 	return flags;
 }

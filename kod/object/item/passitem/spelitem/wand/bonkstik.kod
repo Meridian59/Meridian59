@@ -1,0 +1,109 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BonkStick is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BonkStick_name_rsc = "bonkstick"
+   BonkStick_icon_rsc = hammer.bgf
+   BonkStick_desc_rsc = \
+      "This wand just drips of ludicrosity."
+
+   bonkstick_bad_target = "You cannot use the bonkstick on %s%s."
+   bonkstick_not_self = \
+      "You wouldn't feel right hitting yourself on the head "
+      "with the bonkstick!"
+
+classvars:
+
+   vrLabelName = BonkStick_name_rsc
+   vrIcon = BonkStick_icon_rsc
+
+   viSpellEffect = SID_BONK
+   viColor = $
+   viBonkStickColor = PT_BLEND25BLUE
+
+   viGround_group = 1
+
+   viValue_average = 150
+
+   viHits_init_min = 100
+   viHits_init_max = 100
+
+properties:
+
+   vrDesc = BonkStick_desc_rsc
+   pbCanSplit = FALSE
+   piSpellPower = 99
+
+messages:
+
+   Constructor()
+   {
+      if viBonkStickColor <> $
+      {
+         piItem_flags = viBonkStickColor;
+      }
+
+      if vrLabelName <> $
+      {
+         vrName = vrLabelName;
+      }
+
+      propagate;
+   }
+
+   ReqNewApply(what=$,apply_on=$)
+   {
+      if apply_on = $
+      {
+         return FALSE;
+      }
+
+      % Using it on yourself is a cheap way to eliminate blindness.
+      if apply_on = poOwner
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=bonkstick_not_self);
+
+         return FALSE;
+      }
+
+      if NOT IsClass(apply_on,&Battler)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=bonkstick_bad_target,
+               #parm1=Send(apply_on,@GetDef),#parm2=Send(apply_on,@GetName));
+
+         return FALSE;
+      }
+
+      if Send(apply_on,@GetOwner) <> Send(poOwner,@GetOwner)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=wand_target_gone,
+               #parm1=Send(apply_on,@GetDef),#parm2=Send(apply_on,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CombineSpellItems()
+   {
+      % Don't combine bonksticks.
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

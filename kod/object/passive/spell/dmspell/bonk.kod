@@ -25,6 +25,17 @@ resources:
    bonked_bonk_msg = "~r~B>OUCH<~n~b  You are bonked on the head by %s%s."
    bonk_desc_rsc = "This bonks a person of your choice.  "
 
+   caster_bonkstick_msg = \
+      "~bYou viciously slam your bonkstick on %s%s's noggin."
+   bonked_bonkstick_msg = \
+      "~r~B>OUCH<~n~b  %s%s ruthlessly beats on your head with %s bonkstick!!"
+   allinroom_bstick_msg1 = \
+      "~b%s%s's eyes cross momentarily as %s%s pounds %s on the "
+      "noggin with %s bonkstick."
+   allinroom_bstick_msg2 = \
+      "~bYou wince as %s%s viciously bonks %s%s with %s bonkstick, "
+      "which collapses."
+
 classvars:
    vrName = bonk_name_rsc
    vrIcon = bonk_icon_rsc
@@ -71,7 +82,7 @@ messages:
       propagate;
    }
 
-   CastSpell(who=$,lTargets=$)
+   CastSpell(who=$,lTargets=$,bItemCast=FALSE)
    {
       local i, oRoom, lActive, each_obj, oTarget;
 
@@ -84,12 +95,24 @@ messages:
       Send(oRoom,@SomethingShot,#who=who,#target=oTarget,
             #projectile=self,#flags=PROJ_FLAG_LIGHT_SOURCE);
 
-      Send(who,@MsgSendUser,#message_rsc=caster_bonk_msg,
-            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+      if bItemCast
+      {
+         Send(who,@MsgSendUser,#message_rsc=caster_bonkstick_msg,
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
+         Send(oTarget,@MsgSendUser,#message_rsc=bonked_bonkstick_msg,
+               #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+               #parm3=Send(who,@GetHisHer));
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=caster_bonk_msg,
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+         Send(oTarget,@MsgSendUser,#message_rsc=bonked_bonk_msg,
+               #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      }
 
       Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
-      Send(oTarget,@MsgSendUser,#message_rsc=bonked_bonk_msg,
-            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
       If isClass(oTarget,&Cow)
       {
@@ -105,18 +128,42 @@ messages:
          {
             if (IsClass(oTarget,&Battler))
             {
-               Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg1,
-                     #parm1=Send(who,@GetDef),
-                     #parm2=Send(who,@GetName,#cap=TRUE),
-                     #parm3=Send(oTarget,@GetDef),
-                     #parm4=Send(oTarget,@GetName));
+               if bItemCast
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bstick_msg1,
+                        #parm1=Send(oTarget,@GetDef,#cap=TRUE),
+                        #parm2=Send(oTarget,@GetName),
+                        #parm3=Send(who,@GetDef),
+                        #parm4=Send(who,@GetName),
+                        #parm5=Send(oTarget,@GetHimHer),
+                        #parm6=Send(who,@GetHisHer));
+               }
+               else
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg1,
+                        #parm1=Send(who,@GetDef),
+                        #parm2=Send(who,@GetName,#cap=TRUE),
+                        #parm3=Send(oTarget,@GetDef),
+                        #parm4=Send(oTarget,@GetName));
+               }
             }
             else
             {
-               Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg2,
-                     #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
-                     #parm3=Send(oTarget,@GetDef),
-                     #parm4=Send(oTarget,@GetName));
+               if bItemCast
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bstick_msg2,
+                        #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+                        #parm3=Send(oTarget,@GetDef),
+                        #parm4=Send(oTarget,@GetName),
+                        #parm5=Send(who,@GetHisHer));
+               }
+               else
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=allinroom_bonk_msg2,
+                        #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+                        #parm3=Send(oTarget,@GetDef),
+                        #parm4=Send(oTarget,@GetName));
+               }
             }
          }
       }

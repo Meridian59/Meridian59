@@ -303,14 +303,14 @@ BYTE ComputeSquareFlags(BSPTree tree, int row, int col, int /*rows*/, int /*cols
  */
 int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols, int min_distance)
 {
-	int x, y, flags;
+	int x, y;
 	int source_x, source_y;
 	int dest_x, dest_y;
 	int maxx, maxy;
 	int allowed_dirs = 0;
 	BSPleaf *leaf;
 	
-	flags = 0;
+	unsigned int flags = 0;
 	
 	// 
 	x = col * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
@@ -327,7 +327,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_N << 1);
+		flags |= ((unsigned int)MOVE_N << 1);
 		allowed_dirs++;
 	}
 
@@ -337,7 +337,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_NE << 1);
+		flags |= ((unsigned int)MOVE_NE << 1);
 		allowed_dirs++;
 	}
 
@@ -347,7 +347,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_E << 1);
+		flags |= ((unsigned int)MOVE_E << 1);
 		allowed_dirs++;
 	}
 
@@ -357,7 +357,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_SE << 1);
+		flags |= ((unsigned int)MOVE_SE << 1);
 		allowed_dirs++;
 	}
 
@@ -367,7 +367,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_S << 1);
+		flags |= ((unsigned int)MOVE_S << 1);
 		allowed_dirs++;
 	}
 
@@ -377,7 +377,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_SW << 1);
+		flags |= ((unsigned int)MOVE_SW << 1);
 		allowed_dirs++;
 	}
 
@@ -387,7 +387,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_W << 1);
+		flags |= ((unsigned int)MOVE_W << 1);
 		allowed_dirs++;
 	}
 
@@ -397,7 +397,7 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
 							min_distance))
 	{
-		flags |= (MOVE_NW << 1);
+		flags |= ((unsigned int)MOVE_NW << 1);
 		allowed_dirs++;
 	}
 
@@ -407,10 +407,27 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 	if (leaf != NULL && leaf->floor_type != 0)
 	{
 		// set bit 0: walkable square
-		// we ignore the return in case there is no direction you can
-		// get away from that square anymore
+		// only mark it as walkable
+		// if there is at least 1 direction
+		// you can get away from that square
 		if (allowed_dirs > 0)
 	 	  flags |= SF_PLAYABLE;
+
+		// if there is no allowed direction
+		// we don't set walkable, but
+		// allow any direction
+		// in case we still end up there
+		else
+		{
+			flags |= ((unsigned int)MOVE_N << 1);
+			flags |= ((unsigned int)MOVE_NE << 1);
+			flags |= ((unsigned int)MOVE_E << 1);
+			flags |= ((unsigned int)MOVE_SE << 1);
+			flags |= ((unsigned int)MOVE_S << 1);
+			flags |= ((unsigned int)MOVE_SW << 1);
+			flags |= ((unsigned int)MOVE_W << 1);
+			flags |= ((unsigned int)MOVE_NW << 1);
+		}
 
 		// set bits 9-31: height
 		// note: height in sectors is not stored in the same scale
@@ -418,6 +435,18 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
 		// which is the same as the fine serverscale.
 		// here we turn height into the same scale as highresgrid
 		flags |= ((leaf->floor_height * BLAK_FACTOR / FINENESSHIGHRESGRID) << 9);
+	}
+	else
+	{
+		// allow any outgoing direction from squares which should not be reached
+		flags |= ((unsigned int)MOVE_N << 1);
+		flags |= ((unsigned int)MOVE_NE << 1);
+		flags |= ((unsigned int)MOVE_E << 1);
+		flags |= ((unsigned int)MOVE_SE << 1);
+		flags |= ((unsigned int)MOVE_S << 1);
+		flags |= ((unsigned int)MOVE_SW << 1);
+		flags |= ((unsigned int)MOVE_W << 1);
+		flags |= ((unsigned int)MOVE_NW << 1);
 	}
 
 	return flags;

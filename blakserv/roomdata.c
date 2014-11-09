@@ -300,7 +300,7 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 			abs(to_fullrow - from_fullrow) >= 1)
 		{
 			if (debug)			
-				dprintf("room %i, from (%i/%i) to (%i/%i) (HANDOVER, CanMoveInRoom)\n",
+				dprintf("room %i, from (%i/%i) to (%i/%i) (HANDOVER, NO HIGHRES)\n",
 					r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
 			
 			return CanMoveInRoom(r, from_fullrow, from_fullcol, to_fullrow, to_fullcol);
@@ -332,13 +332,24 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 
 		return False;	   
 	}
+	
+	// if someone called this with full square increments instead of
+	// increments of 16 fineunits, hand it over to the lowres grid
+	if (abs(drow) >= 4 || abs(dcol) >= 4)
+	{
+		if (debug)			
+			dprintf("room %i, from (%i/%i) to (%i/%i) (HANDOVER, TOO BIG)\n",
+				r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+			
+		return CanMoveInRoom(r, from_fullrow, from_fullcol, to_fullrow, to_fullcol);
+	}
 
-	// allow if the source and destination are not adjacent squares
-	// these cases would (a) rather be part of a path finding solution
+	// else if the size is still too big, allow (= teleport of the object)
+	// these cases would also (a) rather be part of a path finding solution
 	// and (b) would even if linear done between source and destination
 	// include major calculations (e.g. determine exit angle to determine direction)
-	// if you use the highres grid, you must make your moves in 16fine increments (=1 highres increment).
-	if (abs(drow) > 1 || abs(dcol) > 1)
+	// if you use highres grid, you must make your moves in 16fine increments (=1 highres increment).
+	else if (abs(drow) > 1 || abs(dcol) > 1)
 	{
 		if (debug)
 			dprintf("room %i, from (%i/%i) to (%i/%i) (ALLOW, TELEPORT)\n",

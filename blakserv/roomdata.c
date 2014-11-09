@@ -243,7 +243,7 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 	Bool debug;
 
 	// enable debug output or not
-	debug = ConfigBool(DEBUG_CANMOVEINROOM);
+	debug = ConfigBool(DEBUG_CANMOVEINROOMHIGHRES);
 
 	// handle null room
 	// don't allow move

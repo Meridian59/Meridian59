@@ -238,9 +238,9 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 {
 	int dir_row,dir_col,drow,dcol;
 	int from_row_comb,from_col_comb,to_row_comb,to_col_comb;
+	int from_fullrow,from_fullcol,to_fullrow,to_fullcol;
 	unsigned int allow = 0;
 	Bool debug;
-	Bool is_big_square_move;
 
 	// enable debug output or not
 	debug = ConfigBool(DEBUG_CANMOVEINROOM);
@@ -255,17 +255,7 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 		return False;
 	}
 
-	// Handle non existing highres_grid
-	// don't allow move
-	// WARNING: Fallback issues
-	if (r->file_info.highres_grid == NULL)
-	{
-		//if (debug)
-		//	dprintf("-- no highres grid, fallback to CanMoveInRoom\n");
-
-		return False;
-		//return CanMoveInRoom(r, from_row, from_col, to_row, to_col);
-	}
+	/*************** CALCULATIONS *************************/
 
 	// build a combined value in fine precision first
 	// a row has 64 fine rows, a col has 64 fine cols
@@ -289,6 +279,43 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 	// get deltas
 	drow = to_row_comb - from_row_comb;
 	dcol = to_col_comb - from_col_comb;
+	
+	// here we build values which may add any
+	// full row or coll within the fine values
+	// to the major value (e.g. turns 1col, 64finecol into 2col)
+	// >> 6 (RSHIFT 6) is faster variant of (/64)
+	from_fullrow = from_row + (from_finerow >> 6);
+	from_fullcol = from_col + (from_finecol >> 6);
+	to_fullrow = to_row + (to_finerow >> 6);
+	to_fullcol = to_col + (to_finecol >> 6);
+
+	/*******************************************************/
+
+	// Handle non existing highres_grid
+	if (r->file_info.highres_grid == NULL)
+	{				
+		// in case the move was across a big grid square
+		// hand it over to CanMoveInRoom (lowres-grid)
+		if (abs(to_fullcol - from_fullcol) >= 1 ||
+			abs(to_fullrow - from_fullrow) >= 1)
+		{
+			if (debug)			
+				dprintf("room %i, from (%i/%i) to (%i/%i) (HANDOVER, CanMoveInRoom)\n",
+					r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+			
+			return CanMoveInRoom(r, from_fullrow, from_fullcol, to_fullrow, to_fullcol);
+		}
+
+		// else allow small moves within big grid squares
+		else
+		{
+			if (debug)			
+				dprintf("room %i, from (%i/%i) to (%i/%i) (ALLOW, NO HIGHRES/SMALL)\n",
+					r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+
+			return True;
+		}
+	}
 
 	// don't allow if destination is oudside the grid bounds
 	// or if dest square is marked not walkable (=not part of a BSP sector).

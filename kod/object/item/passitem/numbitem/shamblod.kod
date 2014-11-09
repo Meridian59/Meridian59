@@ -19,9 +19,9 @@ resources:
    ShamanBlood_name_rsc = "shaman blood"
    ShamanBlood_icon_rsc = avblood.bgf
    ShamanBlood_desc_rsc = \
-   "Spellcasters of the birdlike avars do not learn their "
-   "abilities. Quite the opposite, the magic courses through "
-   "their veins - which means that it is magic that can be borrowed." 
+      "Spellcasters of the birdlike avars do not learn their "
+      "abilities. Quite the opposite, the magic courses through "
+      "their veins - which means that it is magic that can be borrowed." 
 
    ShamanBlood_name_plural_rsc = "shaman blood"
    ShamanBlood_vial_name_plural_rsc = "vials of shaman blood"
@@ -45,7 +45,7 @@ properties:
    pbGathered = TRUE
 
 messages:
-   
+
    Constructor(Gathered=TRUE)
    {
       pbGathered = Gathered;
@@ -55,11 +55,12 @@ messages:
 
    NewOwner(what = $)
    {
-      if poOwner <> $ AND IsClass(what,&Battler)
+      if poOwner <> $
+         AND (what = $ OR IsClass(what,&Battler))
       {
          pbGathered = TRUE;
       }
-      
+
       propagate;
    }
 
@@ -75,14 +76,14 @@ messages:
          {
             AddPacket(1,ANIMATE_NONE,2,2);
          }
-         
+
          return;
       }
       else
       {
          AddPacket(1,ANIMATE_NONE,2,3);
       }
-      
+
       return;
    }
 
@@ -98,21 +99,21 @@ messages:
          {
             AddPacket(1,ANIMATE_NONE,2,2);
          }
-         
+
          return;
       }
       else
       {
          AddPacket(1,ANIMATE_NONE,2,3);
       }
-      
+
       return;
    }
 
    SendInventoryAnimation()
    {
       AddPacket(1,ANIMATE_NONE,2,1);
-      
+
       return;
    }
 
@@ -140,10 +141,9 @@ messages:
             return vrName_plural;
          }
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -2110,7 +2110,7 @@ messages:
    }
 
    ReqSomethingMoved(what = $, new_row = $, new_col = $, entering_room = FALSE,
-                     dir = $, server_validate = TRUE, new_finerow = FINENESS/2, new_finecol = FINENESS/2)
+                     dir = $, server_validate = TRUE, new_finerow = $, new_finecol = $)
    "Ask if possible for <what> to move to <new_row>,<new_col>. "
    "<server_validate> is set to false for user moves, which have already been "
    "checked by client (HAHA!)."
@@ -2123,18 +2123,37 @@ messages:
          % go between rooms in RoomObjOffGrid
          return TRUE;
       }
-      
-	  % defaults for own fine values (=in middle of big square)
-      iFineRow = FINENESS/2;
-	  iFineCol = FINENESS/2;
-	  
+        
+      % if the caller didn't provide his fine values
+	  % we pick the center of the square for him, however his source position
+	  % then also has to be the center of his current square and not his fine values
+	  iFineRow = 0;
+	  iFineCol = 0;
+      if new_finerow = $ OR new_finecol = $
+      {
+        new_finerow = FINENESS_HALF;
+		new_finecol = FINENESS_HALF;
+		iFineRow = FINENESS_HALF;
+	    iFineCol = FINENESS_HALF;
+      }
+
       if Send(what,@GetOwner) = self AND Send(self,@IsHolding,#what=what)
       {
          % get position of object to move
          iRow = Send(what,@GetRow);
          iCol = Send(what,@GetCol);
-		 iFineRow = Send(what,@GetFineRow);
-         iFineCol = Send(what,@GetFineCol);
+		 
+		 % as stated above, only use fine values if
+		 % defaults were not used
+		 if iFineRow = 0
+		 {
+		   iFineRow = Send(what,@GetFineRow);
+		 } 
+		 
+		 if iFineCol = 0
+		 {
+           iFineCol = Send(what,@GetFineCol);
+		 }
       }
       else
       {
@@ -2176,24 +2195,16 @@ messages:
 
       if server_validate
       {
-         iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
+	     if NOT CanMoveInRoomHighRes(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,new_col,new_finerow,new_finecol)
+         {
+           return FALSE;
+         }
+			
+         % iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
 
-         if iLOS = LOS_NEW_BOTH
-            OR (iLOS = LOS_NEW_MONSTER AND IsClass(what,&Monster))
-            OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))
-         {
-            if NOT CanMoveInRoomFine(prmRoom,iRow,iCol,new_row,new_col)
-            {
-               return FALSE;
-            }
-         }
-         else
-         {
-            if NOT CanMoveInRoom(prmRoom,iRow,iCol,new_row,new_col)
-            {
-               return FALSE;
-            }
-         }
+         % if iLOS = LOS_NEW_BOTH
+         %    OR (iLOS = LOS_NEW_MONSTER AND IsClass(what,&Monster))
+         %    OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))                 
       }
 
       propagate;

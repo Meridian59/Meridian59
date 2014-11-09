@@ -138,8 +138,8 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 	   room->highres_grid = (unsigned int **)AllocateMemory(MALLOC_ID_ROOM,room->rowshighres * sizeof(int *));
 	   for (i=0; i < room->rowshighres; i++)
 	   {
-		   room->highres_grid[i] = (unsigned int *)AllocateMemory(MALLOC_ID_ROOM,room->colshighres);
-		   if (read(infile, room->highres_grid[i], room->colshighres) != room->colshighres)
+		   room->highres_grid[i] = (unsigned int *)AllocateMemory(MALLOC_ID_ROOM,room->colshighres * sizeof(int));
+		   if (read(infile, room->highres_grid[i], room->colshighres * sizeof(int)) != room->colshighres * sizeof(int))
 		   {
 			   for (j=0; j <= i; j++)
 				   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres);

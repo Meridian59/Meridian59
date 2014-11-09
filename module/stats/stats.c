@@ -100,7 +100,7 @@ Bool HandleStatChangeRequest(char *ptr, long len)
    int myStats[] = {might, intellect, stamina, agility, mysticism, aim};
    int myLevels[] = {shalille_level, qor_level, kraanan_level, faren_level, riija_level, jala_level, weaponcraft_level};
 
-   MakeChar(myStats, myLevels);
+   MakeStats(myStats, myLevels);
 
    return true;
 }

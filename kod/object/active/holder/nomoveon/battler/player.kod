@@ -13097,13 +13097,12 @@ messages:
    StripSkillsOfSchoolByLevel(school = 0, level = 0)
    {
       local i, oSkill, iSchool, iLevel;
-      debug("MARK");
       for i in plSkills
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
          iSchool = Send(oSkill,@GetSchool);
          iLevel = Send(oSkill,@GetLevel);
-         debug(ischool,school,iLevel,level);
+         
          if (iSchool = school) AND (iLevel = level)
          {
             Send(self,@RemoveSkill,#num=Send(self,@DecodeSkillNum,#compound=i));

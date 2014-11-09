@@ -1492,7 +1492,6 @@ messages:
       Debug(Send(self,@GetTrueName),
             self,"sent unknown command from client",liClient_cmd);
             
->>>>>>> Initial upload of statsreset branch
       return;
    }
 
@@ -9155,12 +9154,13 @@ messages:
    "Processes a stat change request from the client"
    {
       local i,lSpellLevels,lSkillLevels,lSpellLevels_new,lSkillLevels_new,
-      totalLevels,iPrimaryStat,
+      totalLevels,totalSchools,iPrimaryStat,
       oSpell,iSpellAbility,iSpellNum,
       oSkill,iSkillAbility,iSkillNum;
 
       i = 1;
       totallevels = 0;
+      totalSchools = 0;
       lSpellLevels = Send(self, @GetSpellSchoolLevels);
       lSpellLevels_new = [shallile_lvl,qor_lvl,kraanan_lvl,
                            faren_lvl,riija_lvl,jala_lvl];
@@ -9176,10 +9176,17 @@ messages:
       debug(("points check: PASS"));
 
       % Check school levels for funny business
+      
+      % Count schools above level 1
+      
       % Spell Levels - skipping DM school (7)
       while (i < NUM_SCHOOLS)
       {
          totalLevels = totalLevels + Nth(lSpellLevels_new,i);
+         if (Nth(lSpellLevels_new,i) > 1)
+         {
+            totalSchools = totalSchools + 1;
+         }
          if (Nth(lSpellLevels_new,i) > Nth(lSpellLevels,i))
          {
             debug("School Not Increased Check: FAIL!");
@@ -9192,7 +9199,11 @@ messages:
       i=1;
       while (i <= NUM_SKILL_SCHOOLS)
       {
-         totalLevels = totalLevels + Nth(lSkillLevels,i);
+         totalLevels = totalLevels + Nth(lSkillLevels_new,i);
+         if (Nth(lSkillLevels,i) > 1)
+         {
+            totalSchools = totalSchools + 1;
+         }
          if (Nth(lSkillLevels_new,i) > Nth(lSkillLevels,1))
          {
             debug("School Not Increased Check: FAIL!");
@@ -9202,14 +9213,11 @@ messages:
       }
       
       % See if the player has enough int to support their levels
-      if ((totalLevels > 10) AND (totalLevels <=13) 
-               AND (((totalLevels - 10) * 5) > intellect))
-         OR ((totalLevels >= 14) AND (totalLevels <=19) 
-               AND (((totalLevels - 11) * 5) > intellect))
-         OR ((totalLevels >= 20) AND (totalLevels <=22) 
-               AND (((totalLevels - 12) * 5) > intellect))
+      if ((totalLevels - totalSchools > 8)
+               AND (((totalLevels - totalSchools - 8) * 5) > intellect))
       {
          debug("Int Check: FAIL!");
+         debug(totalLevels,intellect);
          return FALSE;
       }
       

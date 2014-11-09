@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 /*
- * charmake.c:  Manage main character creation tabbed dialog.
+ * statsmake.c:  Manage stat reset dialog.
  */
 
 #include "client.h"
@@ -27,16 +27,16 @@ TabPage tab_pages[] = {
 
 #define NUM_TAB_PAGES (sizeof(tab_pages) / sizeof(TabPage))
 
-HWND hMakeCharDialog = NULL;
+HWND hMakeStatsDialog = NULL;
 
 static HWND hTab;      // Handle of tab control
 
-static int  CALLBACK MakeCharSheetInit(HWND hDlg, UINT uMsg, LPARAM lParam);
+static int  CALLBACK MakeStatsSheetInit(HWND hDlg, UINT uMsg, LPARAM lParam);
 /********************************************************************/
 /*
- * MakeChar:  Bring up character creation dialog.
+ * MakeStats:  Bring up stat change dialog.
  */
-void MakeChar(int *stats_in, int *levels_in)
+void MakeStats(int *stats_in, int *levels_in)
 {
    int i;
    PROPSHEETHEADER psh;
@@ -53,7 +53,7 @@ void MakeChar(int *stats_in, int *levels_in)
    psh.nPages = 0;
    psh.nStartPage = 0;
    psh.ppsp = (LPCPROPSHEETPAGE) &psp;
-   psh.pfnCallback = MakeCharSheetInit;
+   psh.pfnCallback = MakeStatsSheetInit;
 
    // Prepare property sheets
    for (i=0; i < NUM_TAB_PAGES; i++)
@@ -90,24 +90,26 @@ Bool VerifySettings(void)
    int schools[NUM_CHAR_SCHOOLS] = {0,0,0,0,0,0,0};
 
    // Point of no return, make sure the user really means it.
-   if (!AreYouSure(hInst,hMakeCharDialog,NO_BUTTON,IDS_CONFIRM1))
+   if (!AreYouSure(hInst,hMakeStatsDialog,NO_BUTTON,IDS_CONFIRM1))
       return false;
-   if (!AreYouSure(hInst,hMakeCharDialog,NO_BUTTON,IDS_CONFIRM2))
+   if (!AreYouSure(hInst,hMakeStatsDialog,NO_BUTTON,IDS_CONFIRM2))
       return false;
    
    // Fill in stat values
    CharStatsGetChoices(stats);
    CharSchoolsGetChoices(schools);
+   debug(("CharStatsGetChoices() returned {%i,%i,%i,%i,%i,%i}\n", stats[0], stats[1], stats[2], stats[3], stats[4], stats[5] ));
+   debug(("CharSchoolsGetChoices() returned {%i,%i,%i,%i,%i,%i,%i}\n",schools[0], schools[1], schools[2], schools[3], schools[4], schools[5], schools[6] ));
    SendNewCharInfo(stats[0], stats[1], stats[2], stats[3], stats[4], stats[5],
                    schools[0], schools[1], schools[2], schools[3], schools[4],
                    schools[5], schools[6] );
 
-   EnableWindow(GetDlgItem(hMakeCharDialog, IDOK), FALSE);
+   EnableWindow(GetDlgItem(hMakeStatsDialog, IDOK), FALSE);
    return True;
 }
 
 /********************************************************************/
-int CALLBACK MakeCharSheetInit(HWND hDlg, UINT uMsg, LPARAM lParam)
+int CALLBACK MakeStatsSheetInit(HWND hDlg, UINT uMsg, LPARAM lParam)
 {
    int style;
   
@@ -118,7 +120,7 @@ int CALLBACK MakeCharSheetInit(HWND hDlg, UINT uMsg, LPARAM lParam)
    style = GetWindowLong(hDlg, GWL_EXSTYLE);
    SetWindowLong(hDlg, GWL_EXSTYLE, style & (~WS_EX_CONTEXTHELP));
 
-   hMakeCharDialog = hDlg;
+   hMakeStatsDialog = hDlg;
 
    hTab = PropSheet_GetTabControl(hDlg);
 
@@ -128,16 +130,16 @@ int CALLBACK MakeCharSheetInit(HWND hDlg, UINT uMsg, LPARAM lParam)
 
 void CharInfoValid(void)
 {
-   if (hMakeCharDialog != NULL)
-      EndDialog(hMakeCharDialog, IDOK);
+   if (hMakeStatsDialog != NULL)
+      EndDialog(hMakeStatsDialog, IDOK);
 }
 /********************************************************************/
 void CharInfoInvalid(void)
 {
-   if (hMakeCharDialog != NULL)
+   if (hMakeStatsDialog != NULL)
    {
-      ClientError(hInst, hMakeCharDialog, IDS_CHARNAMEUSED);
-      EnableWindow(GetDlgItem(hMakeCharDialog, IDOK), TRUE);
+      ClientError(hInst, hMakeStatsDialog, IDS_CHARNAMEUSED);
+      EnableWindow(GetDlgItem(hMakeStatsDialog, IDOK), TRUE);
    }
 }
 

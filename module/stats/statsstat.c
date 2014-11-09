@@ -101,28 +101,28 @@ int StatsIntellectNeeded()
 {
    int i;
    int levels_count = 0;
+   int schools_count = 0;
    int intellect = stats[1].val;
     
    for (i = 0; i < NUM_CHAR_SCHOOLS; ++i)
    {
-      levels_count += schools[i].val;
+      if (schools[i].val > 1)
+      {
+         schools_count += 1;
+      }
+      if (schools[i].val > 1)
+      {
+         levels_count += schools[i].val;
+      }
    }
    
-   if (levels_count < 10)
+   if (levels_count <= 8)
    {
-      return 10;
+      return 1;
    }
-   else if (levels_count >= 11 && levels_count <= 13)
+   else if (levels_count >= 9)
    {
-         return ((levels_count - 10) * 5);
-   }
-   else if (levels_count >= 14 && levels_count <= 19)
-   {
-         return ((levels_count - 11) * 5);
-   }
-   else if (levels_count >= 20 && levels_count <= 22)
-   {
-         return ((levels_count - 12) * 5);
+         return ((levels_count - schools_count - 8) * 5);
    }
    else
    {

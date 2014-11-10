@@ -2067,64 +2067,94 @@ messages:
    "Try to take a single step in direction 'dir' where"
    "e=0, ne=1, n=2, nw=3, w=4, sw=5, s=6, se=7"
    {
-      local iNew_row, iNew_col, iLong_step;
-
+      local iNew_row, iNew_col, iNew_finerow, iNew_finecol, iLong_step;
+	  iNew_row = piRow;
+	  iNew_col = piCol;
+	  
       if dir = 0  
       {
-         iNew_row = piRow + 1;
-         iNew_col = piCol;
-         iLong_step = FALSE;
+         iNew_finerow = piFine_row + 16;
+		 iNew_finecol = piFine_col;
+		 iLong_step = FALSE;
       }
 
       if dir = 1
       {
-         iNew_row = piRow + 1;
-         iNew_col = piCol + 1;
+         iNew_finerow = piFine_row + 16;
+         iNew_finecol = piFine_col + 16;
          iLong_step = TRUE;
       }
 
       if dir = 2
       {
-         iNew_row = piRow;
-         iNew_col = piCol + 1;
+         iNew_finerow = piFine_row;
+         iNew_finecol = piFine_col + 16;
          iLong_step = FALSE;
       }
 
       if dir = 3
       {
-         iNew_row = piRow - 1;
-         iNew_col = piCol + 1;
+         iNew_finerow = piFine_row - 16;
+         iNew_finecol = piFine_col + 16;
          iLong_step = TRUE;
       }
 
       if dir = 4
       {
-         iNew_row = piRow - 1;
-         iNew_col = piCol;
+         iNew_finerow = piFine_row - 16;
+         iNew_finecol = piFine_col;
          iLong_step = FALSE;
       }
 
       if dir = 5
       {
-         iNew_row = piRow - 1;
-         iNew_col = piCol - 1;
+         iNew_finerow = piFine_row - 16;
+         iNew_finecol = piFine_col - 16;
          iLong_step = TRUE;
       }
 
       if dir = 6
       {
-         iNew_row = piRow;
-         iNew_col = piCol - 1;
+         iNew_finerow = piFine_row;
+         iNew_finecol = piFine_col - 16;
          iLong_step = FALSE;
       }
 
       if dir = 7
       {
-         iNew_row = piRow + 1;
-         iNew_col = piCol - 1;
+         iNew_finerow = piFine_row + 16;
+         iNew_finecol = piFine_col - 16;
          iLong_step = TRUE;
       }
 
+	  % moved down at least a full row 
+	  if iNew_finerow >= FINENESS
+	  {
+		iNew_row = piRow + (iNew_finerow / FINENESS);
+		iNew_finerow = iNew_finerow MOD FINENESS;
+	  }
+	  
+	  % moved up at least a full row
+	  if iNew_finerow < 0
+	  {
+	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
+		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+	  }
+	  
+	  % moved right at least a full col 
+	  if iNew_finecol >= FINENESS
+	  {
+		iNew_col = piCol + (iNew_finecol / FINENESS);
+		iNew_finecol = iNew_finecol MOD FINENESS;
+	  }
+	  
+	  % moved left at least a full row
+	  if iNew_finecol < 0
+	  {
+	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
+		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+	  }
+	
       if iLong_step
       {
          piState = piState | ESTATE_LONG_STEP;
@@ -2141,12 +2171,13 @@ messages:
 
          if Send(poOwner,@ReqSomethingMoved,#what=self,
                  #new_row=iNew_row,#new_col=iNew_col,
-                 #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)))
-         {
+                 #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)),
+				 #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+         {		
             Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
                  #new_row=iNew_row,#new_col=iNew_col,
-                 #fine_row=FINENESS/2+Random(-15,15),
-                 #fine_col=FINENESS/2+Random(-15,15),
+                 #fine_row=iNew_finerow,
+                 #fine_col=iNew_finecol,
                  #non_monsters_only=TRUE);
 
             % Turn to face target
@@ -4720,11 +4751,11 @@ messages:
       if poMaster <> $ and Send(poMaster,@GetOwner) = poOwner
       {
          return Send(self,@Fuzzy,#num=MOB_FOLLOW_TIMER_WAIT)
-                + 100*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
+                + 25*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
       }
 
       return Send(self,@Fuzzy,#num=MOB_MOVE_TIMER_WAIT)
-             + 300*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
+             + 75*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
    }
 
    GetChaseTime()
@@ -4739,7 +4770,7 @@ messages:
          iTime = 1414 * iTime / 1000;
       }
 
-      return iTime + 2000 - 40*(viDifficulty+2*viSpeed);
+      return iTime + 500 - 10*(viDifficulty+2*viSpeed);
    }
 
    CutWantedItem(class = $)

@@ -540,12 +540,17 @@ messages:
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-
-         if NOT Send(each_obj,@ReqSomethingMoved,#what=what,#new_row=new_row,
-                     #new_col=new_col)
-         {
-            return FALSE;
-         }
+		 
+		 if each_obj = what
+		 {
+		   continue;
+		 }
+         
+		 %if NOT Send(each_obj,@ReqSomethingMoved,#what=what,#new_row=new_row,
+         %            #new_col=new_col)
+         %{
+		 %  return FALSE;
+         %}
       }
       
       return TRUE;

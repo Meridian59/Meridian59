@@ -1,0 +1,123 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EscapedConvict is User
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   convict_pick_pocket = \
+      "As you strike %s%s, you snatch %s%s from their pocket."
+
+   pick_pocket_rsc ="Your %s %s snatched away by the Escaped Convict!"
+
+   pick_be_sing_pres = "is"
+   pick_be_plur_pres = "are"
+
+classvars:
+
+   % Amount of shillings to distribute to EACH ATTACKER.
+   viMoneyAmount = 20000
+
+properties:
+
+   % Enable Convict Pick Pocket ability.
+   pbPickPocket = FALSE
+
+   % Queue of most recent attackers.
+   plAttackers = $
+   % Number of attackers to keep in queue.
+   piAttackers = 15
+
+   pbDebug = FALSE
+
+messages:
+
+   % Handles damage done to player
+   AssessDamage(what=$,damage=$,atype=0,aspell=0,stroke_obj=$,bonus=0,
+               scalefactor=1000,report=TRUE,report_resistance=TRUE,
+               absolute=FALSE)
+   {
+      local atcker;
+
+      if what <> $
+         AND IsClass(what,&Player)
+      {
+         % List already contains this player - move to top.
+         if plAttackers <> $
+            AND (FindListElem(plAttackers,what) > 0)
+         {
+            % Don't do this if they're already at the top
+            Debug(First(plAttackers),what);
+            if NOT (First(plAttackers) = what)
+            {
+               plAttackers = DelListElem(plAttackers,what);
+               plAttackers = Cons(what,plAttackers);
+            }
+         }
+         else
+         {
+            % Debug("Player not in list");
+            % Player not already in list, check size and delete if needed.
+            if (Length(plAttackers) < piAttackers)
+            {
+               % Debug("length < attackers");
+               plAttackers = Cons(what,plAttackers);
+            }
+            else
+            {
+               plAttackers =
+                     DelListElem(plAttackers,Nth(plAttackers,piAttackers));
+               plAttackers = Cons(what,plAttackers);
+            }
+         }
+      }
+
+      if pbDebug
+      {
+         for atcker in plAttackers
+         {
+            Debug("plAttackers: ",atcker);
+         }
+      }
+
+      propagate;
+   }
+
+   Killed(what = $)
+   {
+      local oAttacker;
+
+      % Autogive loot to all players in plAttackers that are present
+      for oAttacker in plAttackers
+      {
+         if Send(self,@GetOwner) = Send(oAttacker,@GetOwner)
+         {
+            Send(oAttacker,@NewHold,#what=Create(&Money,#number=viMoneyAmount));
+            Send(oAttacker,@NewHold,#what=create(&BonkStick));
+         }
+      }
+
+      % Delete all elements in plAttackers.
+      for oAttacker in plAttackers
+      {
+         plAttackers = DelListElem(plAttackers,oAttacker);
+      }
+
+      plAttackers = $;
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

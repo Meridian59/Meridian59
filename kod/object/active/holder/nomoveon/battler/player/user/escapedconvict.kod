@@ -58,7 +58,6 @@ messages:
             AND (FindListElem(plAttackers,what) > 0)
          {
             % Don't do this if they're already at the top
-            Debug(First(plAttackers),what);
             if NOT (First(plAttackers) = what)
             {
                plAttackers = DelListElem(plAttackers,what);
@@ -71,7 +70,6 @@ messages:
             % Player not already in list, check size and delete if needed.
             if (Length(plAttackers) < piAttackers)
             {
-               % Debug("length < attackers");
                plAttackers = Cons(what,plAttackers);
             }
             else

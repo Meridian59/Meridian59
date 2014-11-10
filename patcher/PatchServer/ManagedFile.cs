@@ -68,7 +68,7 @@ namespace PatchListGenerator
 
         public void FillLength()
         {
-            FileInfo file = new FileInfo(Filepath);
+            var file = new FileInfo(Filepath);
             Length = file.Length;
         }
     }

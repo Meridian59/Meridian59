@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace PatchListGenerator
 {
-    class ClientScanner
+    public class ClientScanner
     {
         private List<string> ScanFolder { get; set; }
         private List<string> ScanExtensions { get; set; }
@@ -15,32 +15,23 @@ namespace PatchListGenerator
         
         public ClientScanner()
         {
-            ScanFolder = new List<string>();
-            ScanFolder.Add("C:\\Meridian59-master\\run\\localclient\\");
-            ScanFolder.Add("C:\\Meridian59-master\\run\\localclient\\resource");
+            ScanFolder = new List<string>
+            {
+                "C:\\Meridian59-master\\run\\localclient\\",
+                "C:\\Meridian59-master\\run\\localclient\\resource"
+            };
             AddExensions();
         }
 
         public ClientScanner(string basepath)
         {
-            ScanFolder = new List<string>();
-            ScanFolder.Add(basepath);
-            ScanFolder.Add(basepath + "\\resource");
+            ScanFolder = new List<string> {basepath, basepath + "\\resource"};
             AddExensions();
         }
 
         private void AddExensions()
         {
-            ScanExtensions = new List<string>();
-            ScanExtensions.Add(".roo");
-            ScanExtensions.Add(".dll");
-            ScanExtensions.Add(".rsb");
-            ScanExtensions.Add(".exe");
-            ScanExtensions.Add(".bgf");
-            ScanExtensions.Add(".wav");
-            ScanExtensions.Add(".mp3");
-            ScanExtensions.Add(".ttf");
-            ScanExtensions.Add(".bsf");
+            ScanExtensions = new List<string> {".roo", ".dll", ".rsb", ".exe", ".bgf", ".wav", ".mp3", ".ttf", ".bsf"};
         }
 
         public void ScanSource()
@@ -60,8 +51,7 @@ namespace PatchListGenerator
                     string ext = fileName.Substring(fileName.Length - 4).ToLower();
                     if (ScanExtensions.Contains(ext))
                     {
-                        ManagedFile file;
-                        file = new ManagedFile(fileName);
+                        var file = new ManagedFile(fileName);
                         file.ParseFilePath();
                         file.ComputeHash();
                         file.FillLength();

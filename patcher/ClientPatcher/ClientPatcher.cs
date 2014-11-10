@@ -14,46 +14,46 @@ namespace ClientPatcher
     public delegate void ScanFileEventHandler(object sender, ScanEventArgs e);
     public class ScanEventArgs : EventArgs
     {
-        private string filename;
+        private readonly string _filename;
         public string Filename
         {
             get
             {
-                return filename;
+                return _filename;
             }
         }
 
         public ScanEventArgs(string filename)
         {
-            this.filename = filename;
+            _filename = filename;
         }
     }
     //Event when we Start a Download, used to notify UI.
     public delegate void StartDownloadEventHandler(object sender, StartDownloadEventArgs e);
     public class StartDownloadEventArgs : EventArgs
     {
-        private long filesize;
+        private readonly long _filesize;
         public long Filesize
         {
             get
             {
-                return filesize;
+                return _filesize;
             }
         }
 
-        private string filename;
+        private readonly string _filename;
         public string Filename
         {
             get
             {
-                return filename;
+                return _filename;
             }
         }
 
         public StartDownloadEventArgs(string filename, long filesize)
         {
-            this.filename = filename;
-            this.filesize = filesize;
+            _filename = filename;
+            _filesize = filesize;
         }
     }
     //Event when we Make progress in a Download, used to notify UI.
@@ -74,8 +74,6 @@ namespace ClientPatcher
         bool _continueAsync;
 
         public PatcherSettings CurrentProfile { get; set; }
-
-        private long _patchTotalSize;
 
         #region Events
         //Event when we Scan a File, used to notify UI.
@@ -121,7 +119,7 @@ namespace ClientPatcher
         }
         public int DownloadJson()
         {
-            WebClient wc = new WebClient();
+            var wc = new WebClient();
             try
             {
                 _patchInfoJason = wc.DownloadString(CurrentProfile.PatchInfoUrl);
@@ -169,7 +167,7 @@ ServerNumber=103
 UserName=username
 Download=10016
 ";
-                using (StreamWriter sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
+                using (var sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
                 {
                     sw.Write(defaultIni);
                 }
@@ -191,7 +189,6 @@ Download=10016
 
         public void ScanClient()
         {
-            string fullpath;
             if (IsNewClient())
             {
                 CreateNewClient();
@@ -199,18 +196,29 @@ Download=10016
 
             foreach (ManagedFile patchFile in PatchFiles)
             {
-                fullpath = CurrentProfile.ClientFolder + patchFile.Basepath + patchFile.Filename;
+                string fullpath = CurrentProfile.ClientFolder + patchFile.Basepath + patchFile.Filename;
                 FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
-                ManagedFile localFile = new ManagedFile(fullpath);
+                var localFile = new ManagedFile(fullpath);
                 localFile.ComputeHash();
                 if (patchFile.MyHash != localFile.MyHash)
                 {
                     LocalFiles.Add(localFile);
                     localFile.Length = patchFile.Length;
-                    _patchTotalSize += patchFile.Length;
                 }
             }
         }
+
+        public void GenerateCache()
+        {
+            string fullpath = CurrentProfile.ClientFolder;
+            var scanner = new ClientScanner(fullpath);
+            scanner.ScanSource();
+            using (var sw = new StreamWriter(fullpath + "\\cache.txt"))
+            {
+                sw.Write(scanner.ToJson());
+            }
+        }
+
         public void DownloadFiles()
         {
             foreach (ManagedFile file in LocalFiles)
@@ -244,7 +252,7 @@ Download=10016
         }
         public void DownloadFileAsync(string url, string path)
         {
-            using (WebClient client = new WebClient())
+            using (var client = new WebClient())
             {
                 try
                 {

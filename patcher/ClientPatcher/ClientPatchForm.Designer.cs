@@ -57,6 +57,7 @@
             this.btnOptions = new System.Windows.Forms.Button();
             this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
             this.bgDownloadWorker = new System.ComponentModel.BackgroundWorker();
+            this.button1 = new System.Windows.Forms.Button();
             this.gbOptions.SuspendLayout();
             this.groupProfileSettings.SuspendLayout();
             this.SuspendLayout();
@@ -324,11 +325,22 @@
             this.bgDownloadWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgDownloadWorker_DoWork);
             this.bgDownloadWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgDownloadWorker_RunWorkerCompleted);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(-18, 188);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 14;
+            this.button1.Text = "Generate Cache";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnGenerateCache_Click);
+            // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(834, 417);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnOptions);
             this.Controls.Add(this.pbFileProgress);
             this.Controls.Add(this.gbOptions);
@@ -382,6 +394,7 @@
         private System.Windows.Forms.Button btnOptions;
         private System.ComponentModel.BackgroundWorker bgScanWorker;
         private System.ComponentModel.BackgroundWorker bgDownloadWorker;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -10,9 +10,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 JalaNecklace is Instrument
 
-% This "instrument" is special. It takes up the neck slot instead of the hands slot.
-% It also allows the user to maintain concentration in combat (attacking and
-% getting damaged).  The code for this is in spell/jala.kod.
+% This "instrument" is special. It takes up the neck slot instead of the hands
+% slot. It also allows the user to maintain concentration in combat (attacking
+% and getting damaged).  The code for this is in spell/jala.kod.
 
 constants:
 
@@ -23,10 +23,13 @@ resources:
    JalaNecklace_name_rsc = "necklace of Jala"
    JalaNecklace_icon_rsc = jalaneck.bgf
    JalaNecklace_desc_rsc = \
-      "This necklace looks like it would fit tightly around your neck.  The golden musical note hints "
-      "that this necklace may be of some value to those that call themselves Bards."
+      "This necklace looks like it would fit tightly around your neck.  The "
+      "golden musical note hints that this necklace may be of some value to "
+      "those that call themselves Bards."
 
-   JalaNecklace_used_rsc = "The necklace of Jala vibrates against your throat, giving your voice a magical potence."
+   JalaNecklace_used_rsc = \
+      "The necklace of Jala vibrates against your throat, giving your "
+      "voice a magical potence."
    JalaNecklace_unused_rsc = "Your voice loses its potence."
 
 classvars:
@@ -48,7 +51,6 @@ classvars:
    viWeight = 75
    viBulk = 150
 
-   
 properties:
 
 messages:
@@ -61,10 +63,10 @@ messages:
          {
             propagate;
          }
-         
+
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -72,7 +74,7 @@ messages:
    {
       if what <> $
       {
-         send(what,@MsgSendUser,#message_rsc=JalaNecklace_used_rsc);
+         Send(what,@MsgSendUser,#message_rsc=JalaNecklace_used_rsc);
       }
 
       propagate;
@@ -82,13 +84,11 @@ messages:
    {
       if what <> $
       {
-         send(what,@MsgSendUser,#message_rsc=JalaNecklace_unused_rsc);
+         Send(what,@MsgSendUser,#message_rsc=JalaNecklace_unused_rsc);
       }
 
       propagate;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

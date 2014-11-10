@@ -106,7 +106,8 @@ messages:
             new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1,
             who=$)
    {
-      local iRowDec, iColDec, iNewRowDec, iNewColDec, iLineOne, iLineOneNew;
+      local iRowDec, iColDec, iNewRowDec, iNewColDec, iLineRow, iLineCol,
+            iLineRowNew, iLineColNew;
 
       % Convert player's coordinates to xxyy format, where xx is
       % the row or col, and yy is the finerow or finecol converted
@@ -130,22 +131,25 @@ messages:
             }
 
             Debug("ALERT!  ",Send(who,@GetTrueName),who,
-                  "tried to move through wall in ",Send(self,@GetName),
+                  "tried to move through straight wall in ",Send(self,@GetName),
                   " from ",old_row,old_col,old_fine_row,old_fine_col," to ",
                   new_row,new_col,new_fine_row,new_fine_col);
 
             return FALSE;
          }
 
-         iLineOne = ((-3333 * iColDec + 17333333) / 10000);
-         iLineOneNew = ((-3333 * iNewColDec + 17333333) / 10000);
+         iLineRow = ((-10000 * iColDec + 52000000) / 3 / 10000);
+         iLineCol = ((52000000 + (-30000 * iRowDec)) / 10000);
+         iLineColNew = ((52000000 + (-30000 * iNewRowDec)) / 10000);
+         iLineRowNew = ((-10000 * iNewColDec + 52000000) / 3 / 10000);
 
-         if iRowDec >= iLineOne
-            AND (iNewRowDec < iLineOne
-               OR iNewRowDec < iLineOneNew)
+         if (iColDec >= iLineCol
+               AND iNewColDec < iLineColNew)
+            AND (iRowDec >= iLineRow
+               AND iNewRowDec < iLineRowNew)
          {
             Debug("ALERT!  ",Send(who,@GetTrueName),who,
-                  "tried to move through wall in ",Send(self,@GetName),
+                  "tried to move through angled wall in ",Send(self,@GetName),
                   " from ",old_row,old_col,old_fine_row,old_fine_col," to ",
                   new_row,new_col,new_fine_row,new_fine_col);
 

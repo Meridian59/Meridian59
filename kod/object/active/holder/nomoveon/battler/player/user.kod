@@ -6265,7 +6265,9 @@ messages:
 
       if what = $
       {
-         Debug(self,"got newhold of $");
+         Debug(Send(self,@GetTrueName),self," got newhold of $. bFromReagentBag = ",
+               bFromReagentBag," and check_combine = ",check_combine,". Owner is ",
+               Send(self,@GetOwner));
 
          return;
       }

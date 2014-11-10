@@ -130,10 +130,11 @@ messages:
 
       if (poOwner <> $)
          AND (IsClass(poOriginal,&Monster)
-              OR Send(poOriginal,@IsLoggedOn))
+            OR Send(poOriginal,@IsLoggedOn))
       {
          Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=EvilTwin_delete,
-              #parm1=Send(self,@GetDef,#cap=TRUE),#parm2=Send(self,@GetName,#cap=FALSE));
+               #what=self,#parm1=Send(self,@GetDef,#cap=TRUE),
+               #parm2=Send(self,@GetName,#cap=FALSE));
       }
 
       poOriginal = $;
@@ -150,8 +151,8 @@ messages:
       {
          Post(self,@Delete);
       }
-      
-      return ;
+
+      return;
    }
 
    GetApparentName()

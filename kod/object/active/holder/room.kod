@@ -2195,10 +2195,16 @@ messages:
 
       if server_validate
       {
+		 % ELSE is for testing
+		 
 	     if NOT CanMoveInRoomHighRes(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,new_col,new_finerow,new_finecol)
          {
            return FALSE;
          }
+		 else
+		 {
+		   return TRUE;
+		 }
 			
          % iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
 

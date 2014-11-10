@@ -11,30 +11,31 @@ namespace ClientPatcher
 {
     class SettingsManager
     {
-        private string SettingsPath; //Path to JSON file settings.txt
-        private string SettingsFile;
+        private readonly string _settingsPath; //Path to JSON file settings.txt
+        private readonly string _settingsFile;
 
         public List<PatcherSettings> Servers { get; set; } //Loaded from settings.txt, or generated on first run and then saved.
 
         public SettingsManager()
         {
-            SettingsPath = "%PROGRAMFILES%\\Open Meridian";
-            SettingsFile = "\\settings.txt";
-            SettingsPath = Environment.ExpandEnvironmentVariables(SettingsPath);
+            _settingsPath = "%PROGRAMFILES%\\Open Meridian";
+            _settingsFile = "\\settings.txt";
+            _settingsPath = Environment.ExpandEnvironmentVariables(_settingsPath);
         }
 
         public void GetNewSettings()
         {
             try
             {
-                WebClient myClient = new WebClient();
-                List<PatcherSettings> webSettingsList =
+                var myClient = new WebClient();
+                var webSettingsList =
                     JsonConvert.DeserializeObject<List<PatcherSettings>>(
                         myClient.DownloadString("http://ww1.openmeridian.org/settings.txt")); //Download the settings from the web, store them in a list.
 
                 foreach (PatcherSettings currentSettings in Servers) //Loop through loaded settings from settings.txt
                 {
-                    PatcherSettings temp = webSettingsList.First(i => i.Guid == currentSettings.Guid); //Find the server loaded settings that match the local profile by Guid
+                    PatcherSettings settings = currentSettings;
+                    PatcherSettings temp = webSettingsList.First(i => i.Guid == settings.Guid); //Find the server loaded settings that match the local profile by Guid
                     if (temp != null) //If null, we have profiles to add from the remote server
                     {
                         if (currentSettings.PatchBaseUrl != temp.PatchBaseUrl ||
@@ -58,18 +59,12 @@ namespace ClientPatcher
 
         public void LoadSettings()
         {
-            if (File.Exists(SettingsPath + SettingsFile))
+            if (File.Exists(_settingsPath + _settingsFile))
             {
-                StreamReader file = File.OpenText(SettingsPath+SettingsFile); //Open the file
+                StreamReader file = File.OpenText(_settingsPath+_settingsFile); //Open the file
 
                 Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd()); //convert
                 file.Close(); //close
-
-                foreach (PatcherSettings patcherSettings in Servers)
-                {//TODO was for the move to EC2, should probably be removed
-                    patcherSettings.PatchBaseUrl = patcherSettings.PatchBaseUrl.Replace("build", "ww1");
-                    patcherSettings.PatchInfoUrl = patcherSettings.PatchInfoUrl.Replace("build", "ww1");
-                }
 
                 //TODO GetNewSettings() goes here once the infrastructure to support it is in place
             }
@@ -88,7 +83,7 @@ namespace ClientPatcher
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter(SettingsPath + SettingsFile)) //open file
+                using (var sw = new StreamWriter(_settingsPath + _settingsFile)) //open file
                 {
                     sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented)); //write shit
                 }
@@ -104,12 +99,14 @@ namespace ClientPatcher
         //used when adding from form
         public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault)
         {
-            PatcherSettings ps = new PatcherSettings();
-            ps.ClientFolder = clientfolder;
-            ps.PatchBaseUrl = patchbaseurl;
-            ps.PatchInfoUrl = patchinfourl;
-            ps.ServerName = servername;
-            ps.Default = isdefault;
+            var ps = new PatcherSettings
+            {
+                ClientFolder = clientfolder,
+                PatchBaseUrl = patchbaseurl,
+                PatchInfoUrl = patchinfourl,
+                ServerName = servername,
+                Default = isdefault
+            };
 
             Servers.Add(ps);
             SaveSettings();
@@ -136,12 +133,12 @@ namespace ClientPatcher
         {
             try
             {
-                DirectorySecurity dSecurity = new DirectorySecurity();
+                var dSecurity = new DirectorySecurity();
                 dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.Modify | FileSystemRights.Synchronize,
                                                                           InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
                                                                           PropagationFlags.None, AccessControlType.Allow));
                 dSecurity.SetAccessRuleProtection(false, true);
-                Directory.CreateDirectory(SettingsPath, dSecurity);
+                Directory.CreateDirectory(_settingsPath, dSecurity);
             }
             catch (Exception e)
             {

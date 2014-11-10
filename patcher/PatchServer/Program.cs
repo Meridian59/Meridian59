@@ -53,15 +53,13 @@ namespace PatchListGenerator
             Console.WriteLine(String.Format("Scan Folder: {0}",_clientPath));
             Console.WriteLine(String.Format("Output File: {0}",_jsonOutputPath));
 
-            ClientScanner clientscanner;
-
             Console.WriteLine("Scanning...");
             //Creates list of latest file hashes
-            clientscanner = new ClientScanner(_clientPath);
+            var clientscanner = new ClientScanner(_clientPath);
             clientscanner.ScanSource();
             Console.WriteLine(String.Format("Scanned {0} Files", clientscanner.Files.Count));
 
-            using (StreamWriter sw = new StreamWriter(_jsonOutputPath))
+            using (var sw = new StreamWriter(_jsonOutputPath))
             {
                 sw.Write(clientscanner.ToJson());
             }

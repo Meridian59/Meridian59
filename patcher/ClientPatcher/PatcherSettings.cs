@@ -47,7 +47,7 @@ namespace ClientPatcher
                     Default = false;
                     break;
                 
-                case 103:
+                //case 103:
                 default:
                     ServerName = "103";
                     PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";

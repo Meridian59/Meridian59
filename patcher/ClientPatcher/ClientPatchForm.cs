@@ -45,9 +45,14 @@ namespace ClientPatcher
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
-            ProcessStartInfo meridian = new ProcessStartInfo();
-            meridian.FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe";
-            meridian.WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\";
+            var meridian = new ProcessStartInfo
+            {
+                FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe",
+                WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\"
+                //TODO: add ability to enter username and password during patching
+                //meridian.Arguments = "/U:username /P:password /H:host";
+            };
+           
             Process.Start(meridian);
             Application.Exit();
         }
@@ -115,7 +120,7 @@ namespace ClientPatcher
         }
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            var fbd = new FolderBrowserDialog();
             fbd.ShowDialog(this);
             txtClientFolder.Text = fbd.SelectedPath;
         }
@@ -208,7 +213,7 @@ namespace ClientPatcher
         #region bgScanWorker
         private void bgScanWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            ClientPatcher myPatcher = (ClientPatcher)e.Argument;
+            var myPatcher = (ClientPatcher)e.Argument;
             myPatcher.ScanClient();
         }
         private void bgScanWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -219,7 +224,7 @@ namespace ClientPatcher
         #region bgDownloadWorker
         private void bgDownloadWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            ClientPatcher myPatcher = (ClientPatcher)e.Argument;
+            var myPatcher = (ClientPatcher)e.Argument;
             //myPatcher.DownloadFiles();
             myPatcher.DownloadFilesAsync();
         }
@@ -272,6 +277,11 @@ namespace ClientPatcher
             }
         }
         #endregion
+
+        private void btnGenerateCache_Click(object sender, EventArgs e)
+        {
+            _patcher.GenerateCache();
+        }
 
         
 

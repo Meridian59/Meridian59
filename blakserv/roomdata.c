@@ -420,8 +420,9 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 	default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
 	}
 
-	dprintf("room %i, from (%i/%i) to (%i/%i), DIR:(%i,%i) (ALLOW)\n",
-		r,from_row_comb,from_col_comb,to_row_comb,to_col_comb,dir_row,dir_col);
+	if (debug)
+		dprintf("room %i, from (%i/%i) to (%i/%i), DIR:(%i,%i) ALLOW:%i\n",
+			r,from_row_comb,from_col_comb,to_row_comb,to_col_comb,dir_row,dir_col,allow);
 
 	// allow is a bit, not necessarily 1 or 0, so need to make sure to make 1 or 0 here  
 	return (allow != 0);

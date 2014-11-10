@@ -4770,7 +4770,7 @@ messages:
          iTime = 1414 * iTime / 1000;
       }
 
-      return iTime + 400 - 9*(viDifficulty+2*viSpeed);
+      return iTime + 410 - 9*(viDifficulty+2*viSpeed);
    }
 
    CutWantedItem(class = $)

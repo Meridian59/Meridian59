@@ -2220,8 +2220,9 @@ messages:
          return FALSE;
       }
 
-      r = Send(obj1,@GetRow);
-      c = Send(obj1,@GetCol);
+      % get obj1 coordinates in highres squares
+      r = ((Send(obj1,@GetRow) * 64) + Send(obj1,@GetFineRow)) / 16;
+      c = ((Send(obj1,@GetCol) * 64) + Send(obj1,@GetFineCol)) / 16;
 
       if r = $ OR c = $
       {
@@ -2232,8 +2233,11 @@ messages:
 
       r2 = r;
       c2 = c;
-      iRow = Send(obj2,@GetRow);
-      iCol = Send(obj2,@GetCol);
+
+      % get obj2 coordinates in highres squares
+      iRow = ((Send(obj2,@GetRow) * 64) + Send(obj2,@GetFineRow)) / 16;
+      iCol = ((Send(obj2,@GetCol) * 64) + Send(obj2,@GetFineCol)) / 16;
+      
       if iRow = $ OR iCol = $
       {
          Debug("Can't get row or column for",obj2,Send(obj2,@GetTrueName),"in",Send(self,@GetName));
@@ -2259,7 +2263,10 @@ messages:
          iCSign = -1;
       }
 
-      while r <> iRow OR c <> iCol
+      % we don't care about the last step to eliminate safe-spots
+      % this might allow a creature to hit through a wall if
+      % its target is on an adjacent highres square (unlikely?)
+      while abs(r-iRow) > 1 OR abs(c-iCol) > 1
       {
          % Generate new location to test
          if abs(r-iRow) > abs(c-iCol)
@@ -2275,24 +2282,13 @@ messages:
          %  location is blocked as well.  This assumption is violated
          %  by, for example, fences and altitude changes in the floor.
 
-         iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
-
-         % Making the assumption that obj1 is the "doer" in this case.
-         if iLOS = LOS_NEW_BOTH
-            OR (iLOS = LOS_NEW_MONSTER AND IsClass(obj1,&Monster))
-            OR (iLOS = LOS_NEW_PLAYER AND IsClass(obj1,&Player))
+         % these calculations turn the highres values back into row/finerow
+         % remember: 4 highres rows give a row, and a highres row has 16 finerows 
+         if NOT CanMoveInRoomHighRes(prmRoom,
+                    (r / 4), (c / 4), ((r MOD 4) * 16), ((c MOD 4) * 16),
+                    (r2 / 4) , (c2 / 4), ((r2 MOD 4) * 16), ((c2 MOD 4) * 16))
          {
-            if NOT CanMoveInRoomFine(prmRoom,r,c,r2,c2)
-            {
-               return FALSE;
-            }
-         }
-         else
-         {
-            if NOT CanMoveInRoom(prmRoom,r,c,r2,c2)
-            {
-               return FALSE;
-            }
+           return FALSE;
          }
 
          r = r2;

@@ -4219,16 +4219,26 @@ messages:
          return FALSE;
       }
 
+      % Get the adjusted chance to cast, based on whether we're demented
+      % or if AmA is up. Multiply this by 6 because we've decreased the
+      % time between chase behavior checks by a factor of 4-7x.
+      iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*6));
+
+      % Do the random check now, so we don't go any further
+      % if we don't have to.
+      if Random(1,iRandom) <> 1
+      {
+         return FALSE;
+      }
+
       % Get distance to target.
       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 
-      % Get the adjusted chance to cast, based on whether we're demented
-      % or if AmA is up. We also check target here so we don't waste
-      % mana casting when we can't get our target. Instead, we use that time
+      % Check LoS to target here so we don't waste mana casting
+      % when we can't get our target. Instead, we use that time
       % walking to the target.
-      iRandom = Send(self,@AdjustedChanceBase,#base=piSpellChance);
-      if Random(1,iRandom) = 1
-         AND iDistance > Send(self,@GetAttackRange)
+
+      if iDistance > Send(self,@GetAttackRange)
          AND iDistance <= piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,

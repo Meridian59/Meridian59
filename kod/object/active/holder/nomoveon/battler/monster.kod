@@ -1241,7 +1241,7 @@ messages:
       }
 
       % Perhaps we heal this chase moment.
-      if piHit_points < piMax_hit_points AND Random(0,9) < 2
+      if piHit_points < piMax_hit_points AND Random(0,18) < 2
       {
          Send(self,@HealHitPoint);
       }
@@ -1292,7 +1292,7 @@ messages:
       }
 
       % Perhaps we heal this movement tick.
-      if piHit_points < piMax_hit_points AND Random(1,4) = 1
+      if piHit_points < piMax_hit_points AND Random(1,8) = 1
       {
          Send(self,@HealHitPoint);
       }

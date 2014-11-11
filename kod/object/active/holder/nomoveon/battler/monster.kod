@@ -4762,15 +4762,36 @@ messages:
    {
       local iTime;
 
-      iTime = Send(self,@Fuzzy,#num=MOB_CHASE_TIMER_WAIT);
+      % Unit of viSpeed is: #gridsquares per 10 seconds (per 10000 ms)
+      % viSpeed is pre-defined by monster
+      % Move-increment is predefined/fixed at 16fine unit per step
+      % --> The elapse-interval is fixed!
+  
+      % EXAMPLE: SPEED_VERY_SLOW: 4 squares per 10000 ms
+      % 1024 super-fine squares = 1 square
+      % 256 super-fine squares = 1 highres square = 16 finesquare = stepwidth
+      % -------------------------------------------------------
+      % 4 * 1024 	= 4096 super-fine squares per 10000 ms
+      % 4096 / 256  = 16 (Monster has to make 16 steps per 10000ms)
+      % 10000 / 16  = 625 (steps must be made in 625ms intervals)
+      % T = 10000 / ((viSpeed * 1024) / 256)  
 
-      % diagonal move
+      iTime = 10000 / (viSpeed * 4);
+
+      % diagonal move: scale-up the time according to the increased distance
       if piState & ESTATE_LONG_STEP
       {
-         iTime = 1414 * iTime / 1000;
+         % sqrt(2) = 1.41421356  
+         iTime = (14142 * iTime) / 10000;
       }
 
-      return iTime + 410 - 9*(viDifficulty+2*viSpeed);
+      % finally we reduce the timer a bit (right now it's exact at ms)
+      % why? the client should get a new position before the last destination
+      % is reached. This prevents cases of stuttering if our message was a bit late in transmission.
+      %	the client has a dynamic playout which will compensate this.
+      iTime = iTime - 5;
+  
+      return iTime;
    }
 
    CutWantedItem(class = $)

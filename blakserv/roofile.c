@@ -142,7 +142,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 		   if (read(infile, room->highres_grid[i], room->colshighres * sizeof(int)) != room->colshighres * sizeof(int))
 		   {
 			   for (j=0; j <= i; j++)
-				   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres);
+				   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
 			   FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
 			   
 			   close(infile);
@@ -188,7 +188,7 @@ void BSPRoomFreeServer(room_type *room)
    if (room->highres_grid != NULL)
    {
 	   for (i=0; i < room->rowshighres; i++)
-		   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres);
+		   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
 	   FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
    }
 

@@ -2078,6 +2078,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CANMOVEINROOM : strcpy(c_name, "CanMoveInRoom"); break;
 		case CANMOVEINROOMFINE : strcpy(c_name, "CanMoveInRoomFine"); break;
 		case CANMOVEINROOMHIGHRES : strcpy(c_name, "CanMoveInRoomHighRes"); break;
+		case GETHEIGHT : strcpy(c_name, "GetHeight"); break;
 		case MINIGAMENUMBERTOSTRING : strcpy(c_name, "MinigameNumberToString"); break;
 		case MINIGAMESTRINGTONUMBER : strcpy(c_name, "MinigameStringToNumber"); break;
 		case CONS : strcpy(c_name, "Cons"); break;

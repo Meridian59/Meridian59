@@ -565,3 +565,25 @@ Bool LoadRoomFile(char *fname,room_type *file_info)
    return BSPRooFileLoadServer(s,file_info);
 }
 
+int GetHeight(roomdata_node *r,int row,int col,int finerow,int finecol)
+{
+	int highresrow,highrescol;
+	
+	// no room or no heightmap
+	if (!r || r->file_info.highres_grid == NULL)
+		return 0;
+
+	// build a combined value in fine precision first
+	// then scale it to highres precision
+	// formulas see in CanMoveInRoomHighRes
+	highresrow = ((row << 6) + finerow) >> 4;
+	highrescol = ((col << 6) + finecol) >> 4;
+	
+	// outside
+	if (highresrow >= r->file_info.rowshighres ||
+		highrescol >= r->file_info.colshighres)
+		return 0;
+
+	// return height from upper 23 bit
+	return (r->file_info.highres_grid[highresrow][highrescol] >> 9);
+}

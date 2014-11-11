@@ -1838,6 +1838,77 @@ int C_CanMoveInRoomHighRes(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_GetHeight(int object_id,local_var_type *local_vars,
+					int num_normal_parms,parm_node normal_parm_array[],
+					int num_name_parms,parm_node name_parm_array[])
+{
+	val_type ret_val,room_val;
+	val_type row,col,finerow,finecol;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+	
+	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
+		normal_parm_array[4].value);
+		
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_GetHeight can't use non room %i,%i\n",
+			room_val.v.tag,room_val.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (row.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight row can't use non int %i,%i\n",
+			row.v.tag,row.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (col.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight col can't use non int %i,%i\n",
+			col.v.tag,col.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finerow.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight finerow can't use non int %i,%i\n",
+			finerow.v.tag,finerow.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finecol.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight finecol can't use non int %i,%i\n",
+			finecol.v.tag,finecol.v.data);
+		return ret_val.int_val;
+	}
+	
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_GetHeight can't find room %i\n",room_val.v.data);
+		return ret_val.int_val;
+	}
+	
+	/* remember that kod uses 1-based arrays, and of course we don't */
+	ret_val.v.data = GetHeight(r,
+		row.v.data-1,col.v.data-1,finerow.v.data,finecol.v.data);
+	
+	return ret_val.int_val;
+}
+
 int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 						   int num_normal_parms,parm_node normal_parm_array[],
 						   int num_name_parms,parm_node name_parm_array[])

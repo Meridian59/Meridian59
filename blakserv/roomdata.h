@@ -34,5 +34,6 @@ Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_fi
 Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col);
 int LoadRoomData(int resource_id);
 roomdata_node * GetRoomDataByID(int id);
+int GetHeight(roomdata_node *r,int row,int col,int finerow,int finecol);
 
 #endif

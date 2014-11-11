@@ -24,8 +24,8 @@ resources:
       "good soul.  "
       "Requires herbs to cast."
 
-   heal_cast_rsc = "%s%s's spell heals some minor injuries, restoring (~B%i~B) hitpoints.
-   heal_cast_self = "Shal'ille's holy magic heals some minor injuries, restoring (~B%i~B) hitpoints.
+   heal_cast_rsc = "%s%s's spell heals some minor injuries, restoring (~B%i~B) hitpoints."
+   heal_cast_self = "Shal'ille's holy magic heals some minor injuries, restoring (~B%i~B) hitpoints."
    heal_cast_on_other = "You heal %s%s for (~B%i~B) hitpoints."
    heal_unnecessary_rsc = "%s%s is perfectly healthy."
 

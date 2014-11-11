@@ -63,11 +63,13 @@ classvars:
    vrLeaves = EvilEnt_leaves_sparse_rsc
    vrDead_leaves = EvilEnt_dead_leaves_sparse_rsc
 
+   % 1 in x chance to cast a spell.
+   viSpellChance = 8
+
 properties:
 
    piAnimation = ANIM_NONE
-   % 1 in x chance to cast a spell.
-   piSpellChance = 10
+
    piSpellPower = 90
    piMax_mana = 20
 

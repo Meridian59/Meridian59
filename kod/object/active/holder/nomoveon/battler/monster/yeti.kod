@@ -62,12 +62,13 @@ classvars:
    vrSound_aware = yeti_sound_aware
    vrSound_death = yeti_sound_death
 
+   % 1 in x chance to cast a spell.
+   viSpellChance = 3
+
 properties:
 
    piAnimation = ANIM_NONE
 
-   % 1 in x chance to cast a spell.
-   piSpellChance = 2
    piMax_mana = 40
 
 messages:

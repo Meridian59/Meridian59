@@ -69,6 +69,9 @@ classvars:
       AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS \
       | AI_FIGHT_WIZARD_KILLER | AI_MOVE_FLEE_FRIGHTENERS
 
+   % 1 in x chance to cast a spell.
+   viSpellChance = 4
+
 properties:
 
    piAnimation = ANIM_NONE
@@ -78,8 +81,6 @@ properties:
    piMaxDamage = 16
    vrDesc = ghost_desc_rsc
 
-   % 1 in x chance to cast a spell.
-   piSpellChance = 4
    piSpellPower = 99
    piMax_mana = 20
 

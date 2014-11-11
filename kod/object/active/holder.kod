@@ -533,7 +533,7 @@ messages:
       return TRUE;
    }
 
-   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $))
+   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $)
    {
       local i,each_obj;
 

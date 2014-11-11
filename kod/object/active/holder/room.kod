@@ -2213,6 +2213,25 @@ messages:
    LineOfSight(obj1 = $, obj2 = $)
    "Returns TRUE if there is a line of sight between obj1 and obj2"
    {
+     local r;
+     
+	 % first check if obj1 can walk on a direct path to obj2
+     % this is assumed to be LoS
+     r = Send(self,@LineOfSightInternal,#obj1=obj1,#obj2=obj2);
+
+     % if not, we also check the other way around
+     % because if obj2 somehow DOES have LoS with obj1,
+     % obj1 also must have LoS with obj2.    
+	 if r = FALSE
+     {
+	   r = Send(self,@LineOfSightInternal,#obj1=obj2,#obj2=obj1);
+     }
+ 
+	 return r;
+   }
+   
+   LineOfSightInternal(obj1 = $, obj2 = $)
+   {
       local r, c, r2, c2, iRow, iCol, iRSign, iCSign, iLOS;
 
       if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)

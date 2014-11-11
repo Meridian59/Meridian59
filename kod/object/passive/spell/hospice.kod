@@ -24,8 +24,8 @@ resources:
       "another good soul.  "
       "Requires herbs to cast."
 
-   hospice_cast_rsc = "%s%s's spell rejuvenates you, restoring (~B%i~B) hitpoints.
-   hospice_cast_self = "Shal'ille's holy magic rejuvenates you, restoring (~B%i~B) hitpoints.
+   hospice_cast_rsc = "%s%s's spell rejuvenates you, restoring (~B%i~B) hitpoints."
+   hospice_cast_self = "Shal'ille's holy magic rejuvenates you, restoring (~B%i~B) hitpoints."
    hospice_cast_on_other = "You heal %s%s for (~B%i~B) hitpoints."
    hospice_unnecessary_rsc = "%s%s is perfectly healthy."
 

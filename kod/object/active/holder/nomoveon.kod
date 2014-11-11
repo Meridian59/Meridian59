@@ -67,7 +67,7 @@ messages:
       return piFine_col;
    }
 
-   ReqSomethingMoved(what = $,new_row = $,new_col = $, new_finerow = $, new_finecol = $)
+   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $)
    {
       local iRowHighResSrc,iColHighResSrc,iRowHighResDest,iColHighResDest;
 

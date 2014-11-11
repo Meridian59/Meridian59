@@ -2215,19 +2215,23 @@ messages:
    {
      local r;
      
-	 % first check if obj1 can walk on a direct path to obj2
-     % this is assumed to be LoS
+     % First check if obj1 can walk on a direct path to obj2.
+     % If we can't move there, we assume vision through this
+     % location is blocked as well.  This assumption is violated
+     % by, for example, fences and altitude changes in the floor.
+
      r = Send(self,@LineOfSightInternal,#obj1=obj1,#obj2=obj2);
 
-     % if not, we also check the other way around
+     % we also possibly check the other way around,
      % because if obj2 somehow DOES have LoS with obj1,
-     % obj1 also must have LoS with obj2.    
-	 if r = FALSE
+     % obj1 also must have LoS with obj2.
+     % This makes sure LoS is handled equally (fair) for both.
+     if r = FALSE
      {
-	   r = Send(self,@LineOfSightInternal,#obj1=obj2,#obj2=obj1);
+       r = Send(self,@LineOfSightInternal,#obj1=obj2,#obj2=obj1);
      }
- 
-	 return r;
+
+     return r;
    }
    
    LineOfSightInternal(obj1 = $, obj2 = $)
@@ -2296,10 +2300,6 @@ messages:
          {
             c2 = c2 + iCSign;
          }
-
-         % If we can't move there, we assume vision through this
-         %  location is blocked as well.  This assumption is violated
-         %  by, for example, fences and altitude changes in the floor.
 
          % these calculations turn the highres values back into row/finerow
          % remember: 4 highres rows give a row, and a highres row has 16 finerows 

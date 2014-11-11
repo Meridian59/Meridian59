@@ -92,8 +92,8 @@ messages:
          iColHighResSrc = ((piCol * 64) + piFine_col) / 16;  
       }
 
-      % deny if highres square is occupied
-      if iRowHighResDest = iRowHighResSrc AND iColHighResDest = iColHighResSrc AND IsClass(what,&Battler)
+      % prevent them from stepping too close on each other
+      if abs(iRowHighResDest - iRowHighResSrc) < 2 AND abs(iColHighResDest - iColHighResSrc) < 2 AND IsClass(what,&Battler)
       {
          return FALSE;
       }

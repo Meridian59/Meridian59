@@ -1443,17 +1443,17 @@ messages:
    {
       if Send(self,@IsEnchanted,#byClass=&Vertigo)
       {
-         base = base + 2;
+         base = base + 18;
       }
 
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Winds)
       {
-         base = base + 3;
+         base = base + 24;
       }
 
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Sandstorm)
       {
-         base = base + 3;
+         base = base + 30;
       }
 
       return base;

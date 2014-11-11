@@ -269,7 +269,7 @@ messages:
    {
       local iBase;
 
-      iBase = Send(self,@RangedAttackChance,#base=piSpellChance);
+      iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
 
       if Random(1,iBase) = 1
          AND Send(self,@SquaredDistanceTo,#what=poTarget) < piSpellRange

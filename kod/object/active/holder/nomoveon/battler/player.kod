@@ -4499,7 +4499,7 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell,
+      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
             iLimit;
 
       color_rsc = player_hit_color_none;
@@ -4511,6 +4511,14 @@ messages:
 
       if NOT absolute
       {
+         % Armor of Gort has a special effect that must go first
+         oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
+         if Send(self,@IsEnchanted,#what=oGort)
+         {
+                 damage = Send(oGort,@PriorityModifyDefenseDamage,#who=self,#what=what,#damage=damage,
+                 #atype=atype,#aspell=aspell);
+         }
+ 
          for i in plDefense_modifiers
          {
             damage = Send(i,@ModifyDefenseDamage,#who=self,#what=what,#damage=damage,

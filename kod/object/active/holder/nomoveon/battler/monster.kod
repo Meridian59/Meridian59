@@ -2168,6 +2168,7 @@ messages:
                                    #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
+              #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
               #face_target=face_target,#face_away=face_away);
 
          if Send(poOwner,@ReqSomethingMoved,#what=self,
@@ -2450,37 +2451,36 @@ messages:
       return TRUE;
    }
     
-   MonsterOrient(new_row = $,new_col = $, face_target = FALSE, face_away=FALSE)
+   MonsterOrient(new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol=FINENESS_HALF,face_target = FALSE, face_away=FALSE)
    "Called by monster moving code before and after a real move"
    {
-      local iRow, iCol, iFR, iFC, iAngle;
-      
-      iRow = new_row;
-      iCol = new_col;
-      iFR = FINENESS_HALF;
-      iFC = FINENESS_HALF; 
+      local drow, dcol, iAngle;
+ 
+      % aiming towards a target or away from it
+      if poTarget <> $ AND (face_target OR face_away)
+      {
+         % build face towards (in fine-units)
+		 drow = (Send(poTarget,@GetRow) * FINENESS) + Send(poTarget,@GetFineRow);
+	     dcol = (Send(poTarget,@GetCol) * FINENESS) + Send(poTarget,@GetFineCol);
+	     drow = drow - ((piRow * FINENESS) + piFine_row);
+	     dcol = dcol - ((piCol * FINENESS) + piFine_col);
 
-      if face_target and poTarget <> $
-      { 
-         iRow = Send(poTarget,@GetRow);
-         iCol = Send(poTarget,@GetCol);
-         iFR = Send(poTarget,@GetFineRow);
-         iFC = Send(poTarget,@GetFineCol);
+         % rotate 180°, if we face away
+         if face_away
+         { 
+            drow = -drow;
+			dcol = -dcol;
+         }
+      }
+      else
+      {
+	     drow = (new_row * FINENESS) + new_finerow;
+	     dcol = (new_col * FINENESS) + new_finecol;
       }
 
-      if face_away and poTarget <> $
-      { 
-         iRow = piRow-(Send(poTarget,@GetRow)-piRow);
-         iCol = piCol-(Send(poTarget,@GetCol)-piCol);
-         iFR = FINENESS-Send(poTarget,@GetFineRow);
-         iFC = FINENESS-Send(poTarget,@GetFineCol);
-      }
-    
       if poOwner <> $
       {
-         iAngle = Send(SYS,@UtilGetAngleTowards,
-                       #row=(FINENESS*iRow+iFR)-(FINENESS*piRow+piFine_row),
-                       #col=(FINENESS*iCol+iFC)-(FINENESS*piCol+piFine_col));
+         iAngle = Send(SYS,@UtilGetAngleTowards,#row=drow,#col=dcol);
          Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
       }
 

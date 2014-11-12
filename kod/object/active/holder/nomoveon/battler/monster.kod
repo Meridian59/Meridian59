@@ -2413,21 +2413,27 @@ messages:
       return TRUE;
    }
 
-   ReqMonsterMove(new_row = $,new_col = $)
+   ReqMonsterMove(new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol = FINENESS_HALF)
    "Called by monster moving code to check if we really want to go"
    "to <new_row>,<new_col>."
    {
+      local r,c;
+  
       if NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS)
       {
          return TRUE;
       }
 
+      % get coordinates in highres squares
+      r = ((new_row * 64) + new_finerow) / 16;
+      c = ((new_col * 64) + new_finecol) / 16;
+
       % Monsters that can attack/move through walls shouldn't wander off the
       %  map.
-      if new_row > Send(poOwner,@GetRoomRows)
-         OR new_row < 1
-         OR new_col > Send(poOwner,@GetRoomCols)
-         OR new_col < 1
+      if r > Send(poOwner,@GetRoomRowsHighRes)
+         OR r < 1
+         OR c > Send(poOwner,@GetRoomColsHighRes)
+         OR c < 1
       {
          return FALSE;
       }

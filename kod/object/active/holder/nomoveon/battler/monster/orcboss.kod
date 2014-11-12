@@ -179,17 +179,6 @@ messages:
       propagate;
    }
 
-   ReqMonsterMove(new_row = $,new_col = $)
-   "Called by monster moving code to check if we really want to go"
-   "to <new_row>,<new_col>."
-   {
-      
-      if (new_row > send(poOwner,@GetRoomRows)) or (new_row < 1) or
-            (new_col > send(poOwner,@GetRoomCols)) or (new_col < 1)
-      { return FALSE; }
-      return True;
-   }
-
    CreateDeadBody(killer=$)
    {
       local oBody;

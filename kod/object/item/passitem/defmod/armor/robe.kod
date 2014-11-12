@@ -124,24 +124,6 @@ messages:
       return (NOT send(send(SYS,@GetWarEvent),@IsActive));
    }
 
-   ReqUseSomething(what = $)
-   {
-      if send(what,@GetItemUseType) & ITEM_USE_LEGS
-         AND NOT IsClass(what,&Robe)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-
-      propagate;
-   }
-
    HasSkinTones()
    {
       return TRUE;

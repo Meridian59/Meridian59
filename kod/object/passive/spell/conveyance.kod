@@ -19,9 +19,10 @@ resources:
    Conveyance_icon_rsc = iboonint.bgf
    Conveyance_desc_rsc = \
      "Sends a stack of items to your closest personal vault.  "
-	 "Requires nothing but a will to clear clutter."
+	 "Requires only the fee for depositing items."
  
    Conveyance_cant = "You cannot cast conveyance on %s%s."
+   Conveyance_not_enough_cash = "You don't have enough shillings to convey %s%s."
    Conveyance_not_enough_space = "Your vault does not have enough space!"
    Conveyance_not_holding = "You cannot cast conveyance on an item you are not holding!"
 
@@ -60,7 +61,7 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local oTarget, oRoom, oVault;
+      local oTarget, oRoom, oVault, iFee, oMoney, iCash;
       
       oTarget = First(lTargets);
    
@@ -86,18 +87,56 @@ messages:
          OR Send(oRoom,@GetRegion) <> RID_KOCATAN
       {
          oVault = Send(SYS,@FindVaultByNum,#num=VID_BARLOQUE);
+         iFee = Send(oTarget,@GetBulk);
       }
       else
       {
          oVault = Send(SYS,@FindVaultByNum,#num=VID_KOCATAN);
+         iFee = Send(oTarget,@GetBulk) * 2;
       }
       
+      if iFee = $
+         OR iFee = 0
+         OR NOT Send(who,@ReqLeaveHold,#what=oTarget)
+      {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
+            #parm1=Send(oTarget,@GetDef),
+            #parm2=Send(oTarget,@GetName));
+         return;
+      }
+      
+      oMoney = Send(who,@GetMoneyObject);
+      if oMoney = $
+      {
+         % No cash.
+         iCash = 0;
+      }
+      else
+      {
+         iCash = Send(oMoney,@GetValue);
+      }
+
+      if iCash < iFee
+         AND iFee <> 0
+      {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_not_enough_cash,
+            #parm1=Send(oTarget,@GetDef),
+            #parm2=Send(oTarget,@GetName));
+
+         return;
+      }
+
       if Send(oVault,@CanDepositItems,#lItems=lTargets,#who=who)
       {
          Send(oVault,@DepositItems,#lItems=lTargets,#who=who);
          Send(who,@MsgSendUser,#message_rsc=Conveyance_cast,
                   #parm1=Send(First(lTargets),@GetDef),
                   #parm2=Send(First(lTargets),@GetName));
+                  
+         if iFee <> 0
+         {
+            Send(oMoney,@SubtractNumber,#number=iFee);
+         }
       }
       else
       {

@@ -2209,20 +2209,21 @@ messages:
          return FALSE; 
       }
 
-      % calculate square delta in high-precision grid
+      % calculate square delta in highres-grid
       drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
       dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
       drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
       dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
 
-      return Send(self,@MoveInDirection,#row_diff=drow,
-                  #col_diff=dcol,
+      return Send(self,@MoveInDirection,#row_diff=drow,#col_diff=dcol,
                   #face_target=face_target,#face_away=face_away,
                   #to_master=to_master);
    }
 
    MoveAway(oTarget = $, face_target=FALSE, face_away=FALSE)
    {
+      local drow,dcol;
+  
       if oTarget = $
       {
          Debug("Bad info passed to MoveAway!");
@@ -2234,8 +2235,13 @@ messages:
             return FALSE;
       }
 
-      return Send(self,@MoveInDirection,#row_diff=-(Send(oTarget,@GetRow)-piRow),
-                  #col_diff=-(Send(oTarget,@GetCol)-piCol),
+	  % calculate square delta in highres-grid
+      drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
+      dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
+      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
+      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+	  
+      return Send(self,@MoveInDirection,#row_diff=-drow,#col_diff=-dcol,
                   #face_target=face_target,#face_away=face_away);
    }
 
@@ -2455,27 +2461,29 @@ messages:
    "Called by monster moving code before and after a real move"
    {
       local drow, dcol, iAngle;
- 
+
       % aiming towards a target or away from it
-      if poTarget <> $ AND (face_target OR face_away)
-      {
+      if (NOT (poTarget = $)) AND (face_target OR face_away)
+      { 
          % build face towards (in fine-units)
-		 drow = (Send(poTarget,@GetRow) * FINENESS) + Send(poTarget,@GetFineRow);
-	     dcol = (Send(poTarget,@GetCol) * FINENESS) + Send(poTarget,@GetFineCol);
-	     drow = drow - ((piRow * FINENESS) + piFine_row);
-	     dcol = dcol - ((piCol * FINENESS) + piFine_col);
+         drow = (Send(poTarget,@GetRow) * FINENESS) + Send(poTarget,@GetFineRow);
+         dcol = (Send(poTarget,@GetCol) * FINENESS) + Send(poTarget,@GetFineCol);
+         drow = drow - ((piRow * FINENESS) + piFine_row);
+         dcol = dcol - ((piCol * FINENESS) + piFine_col);
 
          % rotate 180°, if we face away
          if face_away
          { 
             drow = -drow;
-			dcol = -dcol;
+            dcol = -dcol;
          }
       }
       else
       {
-	     drow = (new_row * FINENESS) + new_finerow;
-	     dcol = (new_col * FINENESS) + new_finecol;
+         drow = (new_row * FINENESS) + new_finerow;
+         dcol = (new_col * FINENESS) + new_finecol;
+         drow = drow - ((piRow * FINENESS) + piFine_row);
+         dcol = dcol - ((piCol * FINENESS) + piFine_col);
       }
 
       if poOwner <> $

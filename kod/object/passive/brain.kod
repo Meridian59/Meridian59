@@ -513,6 +513,9 @@ messages:
 
    GetMoveBehavior(behavior=0, mob = $)
    "This is called before the monster has a target.  Logic as follows: "
+   "NOTE: With the new movement timer, this is called often enough to allow a"
+   "      seamless move by calling MoveTowards/MoveToMaster in here."
+   "      This means it runs more often and e.g. RandomWalks must be limited"
    "1. Do nothing if immobile."
    "2. If blind, wander aimlessly."
    "3. If frightened, run for your life."
@@ -538,7 +541,11 @@ messages:
       % over everything else.
       if (behavior & AI_MOVE_RANDOM)
       {
-         Send(mob,@DoRandomWalk);
+         % don't walk random so often
+         if Random(1,100) < 5
+         {		 
+           Send(mob,@DoRandomWalk);
+         }
 
          return;
       }
@@ -584,7 +591,11 @@ messages:
       }
 
       % If in doubt, wander aimlessly.
-      Send(mob,@DoRandomWalk);
+      % don't walk random so often
+      if Random(1,100) < 5
+      {
+	    Send(mob,@DoRandomWalk);
+      }
 
       return;
    }
@@ -617,8 +628,6 @@ messages:
       % over everything else. Panic and move several times.
       if (behavior & AI_MOVE_RANDOM)
       {
-         Send(mob,@DoRandomWalk);
-         Send(mob,@DoRandomWalk);
          Send(mob,@DoRandomWalk);
 
          return;
@@ -723,12 +732,14 @@ messages:
       % over everything else. Panic and move several times.
       if (behavior & AI_MOVE_RANDOM)
       {
-         Send(mob,@DoRandomWalk);
-         Send(mob,@DoRandomWalk); 
-
-         return;
+         % don't walk random so often
+         if Random(1,100) < 5
+         {
+            Send(mob,@DoRandomWalk);
+            return;
+         }
       }
-
+	  
       if (behavior & AI_MOVE_FLEE_FRIGHTENERS)
       {
          oFrightener = Send(mob,@GetClosestFrightener);

@@ -323,20 +323,6 @@ messages:
       return;
    }
 
-   ReqMonsterMove(new_row = $,new_col = $)
-   "Called by monster moving code to check if we really want to go"
-   "to <new_row>,<new_col>."
-   "The Kriipa never changes rooms."
-   {
-      if (new_row > send(poOwner,@GetRoomRows)) OR (new_row < 1) 
-         OR (new_col > send(poOwner,@GetRoomCols)) OR (new_col < 1)
-      {
-         return FALSE;
-      }
-
-      return TRUE;
-   }
-
    Delete()
    {
       if ptDrop <> $

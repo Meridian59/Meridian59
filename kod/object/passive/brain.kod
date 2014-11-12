@@ -541,8 +541,8 @@ messages:
       % over everything else.
       if (behavior & AI_MOVE_RANDOM)
       {
-         % don't walk random so often
-         if Random(1,100) < 5
+         % skip 3/4 of the possible steps
+         if Random(1,100) < 25
          {		 
            Send(mob,@DoRandomWalk);
          }
@@ -591,10 +591,10 @@ messages:
       }
 
       % If in doubt, wander aimlessly.
-      % don't walk random so often
-      if Random(1,100) < 5
-      {
-	    Send(mob,@DoRandomWalk);
+      % skip 3/4 of the possible steps
+      if Random(1,100) < 25
+	  {
+         Send(mob,@DoRandomWalk);
       }
 
       return;
@@ -732,8 +732,8 @@ messages:
       % over everything else. Panic and move several times.
       if (behavior & AI_MOVE_RANDOM)
       {
-         % don't walk random so often
-         if Random(1,100) < 5
+         % skip 3/4 of the possible steps
+         if Random(1,100) < 25
          {
             Send(mob,@DoRandomWalk);
             return;

@@ -1458,7 +1458,7 @@ messages:
 
    DoRandomWalk()
    {
-      local iNew_row, iNew_col;
+      local iNew_row, iNew_col, iNew_finerow, iNew_finecol;
 
       % The bigger/tougher I am, the less likely I'm interested in milling
       %  around.
@@ -1466,46 +1466,82 @@ messages:
       {
          return;
       }
-
+      
+      % start with old coordinates
       iNew_row = piRow;
       iNew_col = piCol;
+      iNew_finerow = piFine_row;
+      iNew_finecol = piFine_col;
 
+      % make a random highres-step in one of 4 directions
       if Random(0,1) = 0
       {
          if (Random(0,1) = 0)
          {
-            iNew_row = iNew_row + 1;
+            iNew_finerow = iNew_finerow + 16;
          }
          else
          {
-            iNew_row = iNew_row - 1;
+            iNew_finerow = iNew_finerow - 16;
          }
       }
       else
       {
          if (Random(0,1) = 0)
          {
-            iNew_col = iNew_col + 1;
+            iNew_finecol = iNew_finecol + 16;
          }
          else
          {
-            iNew_col = iNew_col - 1;
+            iNew_finecol = iNew_finecol - 16;
          }
       }
 
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col)
+	  % moved down at least a full row 
+	  if iNew_finerow >= FINENESS
+	  {
+		iNew_row = piRow + (iNew_finerow / FINENESS);
+		iNew_finerow = iNew_finerow MOD FINENESS;
+	  }
+	  
+	  % moved up at least a full row
+	  if iNew_finerow < 0
+	  {
+	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
+		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+	  }
+	  
+	  % moved right at least a full col 
+	  if iNew_finecol >= FINENESS
+	  {
+		iNew_col = piCol + (iNew_finecol / FINENESS);
+		iNew_finecol = iNew_finecol MOD FINENESS;
+	  }
+	  
+	  % moved left at least a full row
+	  if iNew_finecol < 0
+	  {
+	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
+		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+	  }
+	  
+      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+	          #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
-         Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col);
+         Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
+              #new_finerow=iNew_finerow,#new_finecol=iNew_finecol);
 
          % Check for owner, perhaps we died already
          if poOwner <> $
          {
             if Send(poOwner,@ReqSomethingMoved,#what=self,
                      #new_row=iNew_row,#new_col=iNew_col,
+                     #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
                      #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)))
             {
                Send(poOwner,@SomethingMoved,#what=self,
                      #new_row=iNew_row,#new_col=iNew_col,
+                     #fine_row=iNew_finerow,#fine_col=iNew_finecol,
                      #speed=(0x80|viSpeed),#non_monsters_only=TRUE);
             }
          }

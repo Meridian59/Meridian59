@@ -2195,6 +2195,8 @@ messages:
    MoveTowards(oTarget = $, face_target=FALSE, face_away=FALSE,
                to_master=FALSE)
    {
+      local drow, dcol;
+
       if oTarget = $ 
       { 
          Debug("Bad info passed to MoveTowards!");
@@ -2206,8 +2208,14 @@ messages:
          return FALSE; 
       }
 
-      return Send(self,@MoveInDirection,#row_diff=Send(oTarget,@GetRow)-piRow,
-                  #col_diff=Send(oTarget,@GetCol)-piCol,
+      % calculate square delta in high-precision grid
+      drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
+      dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
+      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
+      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+
+      return Send(self,@MoveInDirection,#row_diff=drow,
+                  #col_diff=dcol,
                   #face_target=face_target,#face_away=face_away,
                   #to_master=to_master);
    }

@@ -26,7 +26,7 @@ resources:
       "life for the caster.  Reagents unknown."
 
    VampiricDrain_death = "You drain the last bit of %s%s's life force."
-   VampiricDrain_health_gain = "You siphon your victim's life force, gaining (~B%i~B) health."
+   VampiricDrain_health_gain = "You siphon your victim's life force, gaining ~g~B%i~B~n health."
 
    VampiricDrain_sound = qvtouch.wav
 
@@ -96,7 +96,7 @@ messages:
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }
 
-      Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iHeal);
+      Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iToHeal);
       Send(who,@GainHealth,#amount=iToHeal);
 
       propagate;

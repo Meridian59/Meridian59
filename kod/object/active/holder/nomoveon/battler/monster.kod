@@ -2164,7 +2164,8 @@ messages:
          piState = piState & ESTATE_LSTEP_MASK;
       }
 
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col)
+      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+                                   #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
               #face_target=face_target,#face_away=face_away);

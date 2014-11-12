@@ -1127,6 +1127,16 @@ messages:
       return piCols;
    }
 
+   GetRoomRowsHighRes()
+   {
+      return piRowsHighRes;
+   }
+
+   GetRoomColsHighRes()
+   {
+      return piColsHighRes;
+   }
+   
    GetRoomBackground()
    {
       return prBackground;

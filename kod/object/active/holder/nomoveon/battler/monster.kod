@@ -898,7 +898,7 @@ messages:
       }
       else
       {
-         ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetChaseTime));
+         ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetMoveTime));
       }
 
       return;
@@ -1516,36 +1516,30 @@ messages:
 
    MoveToMaster()
    {
-      local iRange;
+      local drow, dcol;
 
       if poMaster = $
       {
          Debug("MovetoMaster Called with nil master!",Send(self,@GetName));
-
-         return FALSE;
+         return;
       }
 
-      if Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE)
+      % calculate distance in highres-grid squares (steps we can still make)
+      drow = ((Send(poMaster,@GetRow) * FINENESS) + Send(poMaster,@GetFineRow)) / 16;
+      dcol = ((Send(poMaster,@GetCol) * FINENESS) + Send(poMaster,@GetFineCol)) / 16;
+      drow = abs(drow - (((piRow * FINENESS) + piFine_row) / 16));
+      dcol = abs(dcol - (((piCol * FINENESS) + piFine_col) / 16));
+
+      % We try to make a step closer, if we're not yet close enough.
+      % The move-timer is configured to make this movement seamless.
+      % If we're close, we step around the master based on a probability.
+      % To do so we just need to try to step closer, he will block us.
+      if drow >= 3 OR dcol >= 3 OR Random(1,100) < 10
       {
-         return TRUE;
-      }
-      
-      if Random(1,100) < 40
-      {
-         iRange = Send(self,@GetAttackRange);
-
-         % 5*5 = range of five here.
-         if Send(self,@SquaredDistanceTo,#what=poMaster) <= 25 
-         {   
-            Send(poOwner,@SomethingMoved,#what=self,
-                 #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
-                 #speed=(0x80 | viSpeed),#non_monsters_only=TRUE);
-
-            return TRUE;
-         }
+        Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
       }
 
-      return FALSE;
+      return;
    }
 
    %%% Combat messages
@@ -4773,18 +4767,6 @@ messages:
 
    GetMoveTime()
    {
-      if poMaster <> $ and Send(poMaster,@GetOwner) = poOwner
-      {
-         return Send(self,@Fuzzy,#num=MOB_FOLLOW_TIMER_WAIT)
-                + 25*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
-      }
-
-      return Send(self,@Fuzzy,#num=MOB_MOVE_TIMER_WAIT)
-             + 75*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
-   }
-
-   GetChaseTime()
-   {
       local iTime;
 
       % Unit of viSpeed is: #gridsquares per 10 seconds (per 10000 ms)
@@ -4801,21 +4783,36 @@ messages:
       % 10000 / 16  = 625 (steps must be made in 625ms intervals)
       % T = 10000 / ((viSpeed * 1024) / 256)  
 
-      iTime = 10000 / (viSpeed * 4);
-
-      % diagonal move: scale-up the time according to the increased distance
-      if piState & ESTATE_LONG_STEP
+      % avoid division by zero, if objects teleport
+      % objects with viSpeed = 0 don't need seamless movements in the client
+      % so we just assume it is enough to teleport them once a second
+      if viSpeed > 0
       {
-         % sqrt(2) = 1.41421356  
-         iTime = (14142 * iTime) / 10000;
+         % see formula above  
+         iTime = 10000 / (viSpeed * 4);
+		 
+		 % diagonal move: scale-up the time according to the increased distance
+         if piState & ESTATE_LONG_STEP
+         {
+            % sqrt(2) = 1.41421356  
+            iTime = (14142 * iTime) / 10000;
+         }
+
+         % finally we reduce the timer a bit (right now it's exact at ms)
+         % why? the client should get a new position before the last destination
+         % is reached. This prevents cases of stuttering if our message was a bit late in transmission.
+         % the client has a dynamic playout which will compensate this.
+         iTime = iTime - 5;
+		 
+		 % make sure timer interval does not get negative
+         % and also not like "run all the time"
+         iTime = bound(iTime, 10, 10000);
+      }
+      else
+      {
+         iTime = 1000;
       }
 
-      % finally we reduce the timer a bit (right now it's exact at ms)
-      % why? the client should get a new position before the last destination
-      % is reached. This prevents cases of stuttering if our message was a bit late in transmission.
-      %	the client has a dynamic playout which will compensate this.
-      iTime = iTime - 5;
-  
       return iTime;
    }
 

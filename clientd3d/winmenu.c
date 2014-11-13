@@ -205,6 +205,9 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
    case ID_COLOR_LISTSEL:
       UserSelectColors(COLOR_LISTSELFGD, COLOR_LISTSELBGD);
       break;
+   case ID_COLOR_MAGIC:
+      UserSelectColor(COLOR_ITEM_MAGIC_FG);
+      break;
    case ID_COLOR_HIGHLIGHT:
       UserSelectColor(COLOR_HIGHLITE);
       break;

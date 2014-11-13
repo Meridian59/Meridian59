@@ -551,7 +551,7 @@ messages:
    "(see ReqWeaponAttack above).  This is just to catch anything that "
    "slips thru the cracks.  See ranged.kod for what this does."
    {
-      debug("A non-ranged weapon called @ReqUseAmmo!");
+      Debug("A non-ranged weapon called @ReqUseAmmo!");
       
       return TRUE;
    }
@@ -879,7 +879,7 @@ messages:
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
+            Debug("Illegal ItemAtt in list!");
 
             continue;
          }
@@ -891,6 +891,46 @@ messages:
       }
 
       return TRUE; 
+   }
+
+   ValidateWeaponAttributes(num = 1)
+   "Deletes any items with more major weapon attributes than num. Default 1."
+   {
+      local iNum;
+
+      iNum = 0;
+
+      if plItem_attributes = $
+      {
+         return;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_BLINDER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_PARALYZER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_VAMPER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_PURGER)
+      {
+         iNum = iNum + 1;
+      }
+      if iNum > num
+      {
+         Post(self,@Delete);
+         Debug("Multiple attribute weapon deleted.");
+      }
+
+      return;
    }
 
    CanEnchant(oSpell = $)
@@ -918,7 +958,7 @@ messages:
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
+            Debug("Illegal ItemAtt in list!");
 
             continue;
          }

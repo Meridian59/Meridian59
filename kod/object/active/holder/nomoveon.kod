@@ -67,33 +67,26 @@ messages:
       return piFine_col;
    }
 
-   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $)
+   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol = FINENESS_HALF)
    {
-      local iRowHighResSrc,iColHighResSrc,iRowHighResDest,iColHighResDest;
+      local iRowHighResWe,iColHighResWe,iRowHighResDest,iColHighResDest,iRowHighResWhat,iColHighResWhat;
 
-      if new_finerow = $ OR new_finecol = $
-      {
-         % scale dest to fine, then to highres, using middle of big square
-         iRowHighResDest = ((new_row * 64) + FINENESS_HALF) / 16;
-         iColHighResDest = ((new_col * 64) + FINENESS_HALF) / 16;
-
-         % scale src to fine, then to highres, using middle of big square
-         iRowHighResSrc = ((piRow * 64) + FINENESS_HALF) / 16;
-         iColHighResSrc = ((piCol * 64) + FINENESS_HALF) / 16;
-      }
-      else
-      {
-         % scale dest to fine, then to highres
-         iRowHighResDest = ((new_row * 64) + new_finerow) / 16;
-         iColHighResDest = ((new_col * 64) + new_finecol) / 16;
-
-         % scale src to fine, then to highres
-         iRowHighResSrc = ((piRow * 64) + piFine_row) / 16;
-         iColHighResSrc = ((piCol * 64) + piFine_col) / 16;  
-      }
+      % get highres square of the object which tries to move
+      iRowHighResWhat = ((Send(what,@GetRow) * FINENESS) + Send(what,@GetFineRow)) / 16;
+	  iColHighResWhat = ((Send(what,@GetCol) * FINENESS) + Send(what,@GetFineCol)) / 16;
+  
+      % get highres square of ourself
+      iRowHighResWe = ((piRow * FINENESS) + piFine_row) / 16;
+      iColHighResWe = ((piCol * FINENESS) + piFine_col) / 16;
+      
+	  % get highres square of requested destination
+      iRowHighResDest = ((new_row * FINENESS) + new_finerow) / 16;
+      iColHighResDest = ((new_col * FINENESS) + new_finecol) / 16;
 
       % prevent them from stepping too close on each other
-      if abs(iRowHighResDest - iRowHighResSrc) < 2 AND abs(iColHighResDest - iColHighResSrc) < 2 AND IsClass(what,&Battler)
+      % but allow in case we're same highres square
+      if (NOT (iRowHighResWhat = iRowHighResWe AND iColHighResWhat = iColHighResWe)) AND 
+         abs(iRowHighResDest - iRowHighResWe) < 2 AND abs(iColHighResDest - iColHighResWe) < 2 AND IsClass(what,&Battler)
       {
          return FALSE;
       }

@@ -1570,10 +1570,10 @@ messages:
       % The move-timer is configured to make this movement seamless.
       % If we're close, we step around the master based on a probability.
       % To do so we just need to try to step closer, he will block us.
-      if drow >= 3 OR dcol >= 3 OR Random(1,100) < 10
-      {
+      %if drow >= 3 OR dcol >= 3 OR Random(1,100) < 10
+      %{
         Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
-      }
+      %}
 
       return;
    }

@@ -117,7 +117,7 @@ messages:
 
       % prevent them from stepping too close on each other
       % these are in highres-squares, the typical stepwidth
-      if abs(iRowDest - iRowWe) < 4 AND abs(iColDest - iColWe) < 4 AND IsClass(what,&Battler)
+      if abs(iRowDest - iRowWe) < 3 AND abs(iColDest - iColWe) < 3 AND IsClass(what,&Battler)
       {
          return FALSE;
       }

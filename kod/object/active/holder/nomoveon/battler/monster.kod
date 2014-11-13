@@ -1570,7 +1570,7 @@ messages:
 
       % Try step closer to the master, if we're not yet close enough.
       % The move-timer is configured to make this movement seamless.
-      if drow > 4 OR dcol > 4
+      if drow > 3 OR dcol > 3
       {
         Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
       }

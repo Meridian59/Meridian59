@@ -326,6 +326,8 @@ properties:
    piBehavior = 0
    % Who is our master, if we have one.
    poMaster = $
+   % Flag used for minion moves around master
+   piKeepWalkingSteps = 0
    % Player who has turned us.
    poHolySymbolCaster = $
    % Timer to expire turning.
@@ -1566,14 +1568,32 @@ messages:
       drow = abs(drow - (((piRow * FINENESS) + piFine_row) / 16));
       dcol = abs(dcol - (((piCol * FINENESS) + piFine_col) / 16));
 
-      % We try to make a step closer, if we're not yet close enough.
+      % Try step closer to the master, if we're not yet close enough.
       % The move-timer is configured to make this movement seamless.
-      % If we're close, we step around the master based on a probability.
-      % To do so we just need to try to step closer, he will block us.
-      %if drow >= 3 OR dcol >= 3 OR Random(1,100) < 10
-      %{
+      if drow > 4 OR dcol > 4
+      {
         Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
-      %}
+      }
+      else
+      {
+         % If we're close, we start a move around the master based on a probability.
+         % To do so we just need to try to step closer, he will block us.
+         % We will do 8 seamless steps, before we again decide
+         % to stop or to go on.
+         if piKeepWalkingSteps < 8
+         {
+            Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
+            piKeepWalkingSteps = piKeepWalkingSteps + 1;
+         }
+         else
+         {
+            % roll a dice to see if we want to start a new movement
+            if Random(1,100) < 5
+            {
+               piKeepWalkingSteps = 0;
+            }
+         }
+      }
 
       return;
    }

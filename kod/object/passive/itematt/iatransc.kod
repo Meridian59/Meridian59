@@ -59,5 +59,10 @@ messages:
       return FALSE; 
    }
  
+    IsMagicalEffect()
+   {
+      return TRUE;
+   }
+
 end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

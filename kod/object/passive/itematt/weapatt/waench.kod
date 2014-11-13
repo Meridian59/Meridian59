@@ -148,7 +148,12 @@ messages:
    InitiallyIdentified()
    {
       return TRUE;
-   }   
+   }
+   
+      IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

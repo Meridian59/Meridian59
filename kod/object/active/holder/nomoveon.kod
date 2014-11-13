@@ -70,16 +70,28 @@ messages:
    ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol = FINENESS_HALF)
    {
       local iRowHighResWe,iColHighResWe,iRowHighResDest,iColHighResDest,iRowHighResWhat,iColHighResWhat;
+	  
+      % try get row/col of what first, might be null
+      iRowHighResWhat = Send(what,@GetRow);
+      iColHighResWhat = Send(what,@GetCol);
+      
+      % sanity check
+	  if new_row = $ OR new_col = $ OR 
+         piRow = $ OR piCol = $ OR
+         iRowHighResWhat = $ OR iColHighResWhat = $
+      {
+         propagate;
+      }
 
       % get highres square of the object which tries to move
-      iRowHighResWhat = ((Send(what,@GetRow) * FINENESS) + Send(what,@GetFineRow)) / 16;
-	  iColHighResWhat = ((Send(what,@GetCol) * FINENESS) + Send(what,@GetFineCol)) / 16;
-  
+      iRowHighResWhat = ((iRowHighResWhat * FINENESS) + Send(what,@GetFineRow)) / 16;
+      iColHighResWhat = ((iColHighResWhat * FINENESS) + Send(what,@GetFineCol)) / 16;
+      
       % get highres square of ourself
       iRowHighResWe = ((piRow * FINENESS) + piFine_row) / 16;
       iColHighResWe = ((piCol * FINENESS) + piFine_col) / 16;
       
-	  % get highres square of requested destination
+      % get highres square of requested destination
       iRowHighResDest = ((new_row * FINENESS) + new_finerow) / 16;
       iColHighResDest = ((new_col * FINENESS) + new_finecol) / 16;
 

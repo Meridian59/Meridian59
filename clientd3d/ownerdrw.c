@@ -345,18 +345,31 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD)));
+   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD), NULL));
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD));
+      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD, NULL));
 
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
-
    SetBkMode(lpdis->hDC, TRANSPARENT);
-   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD)));
+   
+   /* Send object flags for objects with icons in lists for coloring magic weapons.
+      Character select screen causes a client crash because the character name is
+      obj; this statement causes NULL to be sent in that case */
+   if (style & (OD_DRAWOBJ | OD_DRAWICON))
+   {
+   	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), obj->flags));
+   }
+   else
+   {
+   	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), NULL));
+   }
+   
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD));
+   	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD, obj->flags));
+   	
+   	
    if (lpdis->itemState & ODS_DISABLED)
-	crColorText = GetSysColor(COLOR_GRAYTEXT);
+   	crColorText = GetSysColor(COLOR_GRAYTEXT);
 
    if (style & OD_DRAWOBJ)
    {

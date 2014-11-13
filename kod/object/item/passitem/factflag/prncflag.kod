@@ -18,26 +18,29 @@ resources:
 
    PrincessFlag_icon_rsc = flagpinv.bgf
    PrincessFlag_name_rsc = "flag of the Princess"
-   PrincessFlag_desc_rsc = "This flag bears the royal colors of the Princess, sovereign of Barloque."
+   PrincessFlag_desc_rsc = \
+      "This flag bears the royal colors of the Princess, "
+      "sovereign of Barloque."
 
 classvars:
-   
+
    vrName = PrincessFlag_name_rsc
    vrDesc = PrincessFlag_desc_rsc
    vrIcon = PrincessFlag_icon_rsc
 
    viFaction = FACTION_PRINCESS
 
-properties:  
+properties:
 
-messages:   
+messages:
 
    TeleportHome()
    {
-      send(send(SYS,@FindRoomByNum,#num=RID_CASTLE2C),@Newhold,#what=self,#new_row=30,#new_col=23,#fine_row=48,#fine_col=16);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_CASTLE2C),@NewHold,
+            #what=self,#new_row=30,#new_col=23,#fine_row=48,#fine_col=16);
+
       return;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

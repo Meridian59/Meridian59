@@ -72,6 +72,11 @@ messages:
 
       return damage;
    }
+   
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

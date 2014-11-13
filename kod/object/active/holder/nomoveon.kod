@@ -67,7 +67,7 @@ messages:
       return piFine_col;
    }
 
-   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol = FINENESS_HALF)
+   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $)
    {
       local iRowHighResWe,iColHighResWe,iRowHighResDest,iColHighResDest,iRowHighResWhat,iColHighResWhat;
 	  
@@ -76,11 +76,21 @@ messages:
       iColHighResWhat = Send(what,@GetCol);
       
       % sanity check
-	  if new_row = $ OR new_col = $ OR 
+      if new_row = $ OR new_col = $ OR 
          piRow = $ OR piCol = $ OR
          iRowHighResWhat = $ OR iColHighResWhat = $
       {
          propagate;
+      }
+
+      % apply defaults on fine new values
+      if new_finerow = $
+      {
+         new_finerow = FINENESS_HALF;
+	  }
+      if new_finecol = $
+      {
+         new_finecol = FINENESS_HALF;
       }
 
       % get highres square of the object which tries to move

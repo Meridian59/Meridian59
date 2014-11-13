@@ -196,6 +196,8 @@ resources:
       "Hey!  You almost hit %s%s!  Good thing your safety was on!"
    player_safety_caught_minion = \
       "Hey!  You almost hit %s%s's minion! Good thing your safety was on!"
+   player_own_minion = \
+      "You cannot attack your own minion!"
 
    player_safe_server = \
       "You are not allowed to attack other players in this world."
@@ -3930,8 +3932,8 @@ messages:
       % Default location to check is where we are.
       oRoom = poOwner;
 
-      % If the victim is in a room, then check that location instead.  This allows
-      %  distance attacks (like wall spells) to work properly.
+      % If the victim is in a room, then check that location instead.  This
+      % allows distance attacks (like wall spells) to work properly.
       if victim <> $
          AND Send(victim,@GetOwner) <> poOwner
       {
@@ -3946,7 +3948,7 @@ messages:
 
       % Make sure room allows the attack. Check if room has
       % special combat affects.
-      if actual = TRUE
+      if actual
          AND NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
                      #use_weapon=use_weapon,#stroke_obj=stroke_obj,
                      #report=report,#actual=actual)
@@ -3956,8 +3958,8 @@ messages:
 
       % Don't halo non-attackables in guild_pk_only zones (typically an
       % unguilded outlaw). Necessary because it just looks confusing
-      if actual = FALSE
-         AND Send(oRoom,@AllowGuildAttack,#what=self,#victim=victim) = FALSE
+      if NOT actual
+         AND NOT Send(oRoom,@AllowGuildAttack,#what=self,#victim=victim)
       {
          return FALSE;
       }
@@ -4034,7 +4036,21 @@ messages:
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
-               Send(self,@MsgSendUser,#message_rsc=player_cant_hit_newbie_minion);
+               if report
+               {
+                  Send(self,@MsgSendUser,
+                        #message_rsc=player_cant_hit_newbie_minion);
+               }
+
+               return FALSE;
+            }
+
+            if Send(victim,@GetMaster) = self
+            {
+               if report
+               {
+                  Send(self,@MsgSendUser,#message_rsc=player_own_minion);
+               }
 
                return FALSE;
             }
@@ -4130,7 +4146,7 @@ messages:
                if report
                {
                   if Send(SYS,@IsPKAllowed)
-                  {   
+                  {
                      Send(self,@MsgSendUser,#message_rsc=player_guardian_angel,
                            #parm1=Send(victim,@GetDef),
                            #parm2=Send(victim,@GetName));
@@ -4188,7 +4204,7 @@ messages:
 
       % Stop any rescue attempts if the user makes an attack.
       if ptRescue <> $
-         AND actual = TRUE
+         AND actual
       {
          Send(self,@MsgSendUser,#message_rsc=player_cancel_rescue);
          DeleteTimer(ptRescue);

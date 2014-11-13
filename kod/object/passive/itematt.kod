@@ -324,14 +324,21 @@ messages:
    }
 
    RemoveFromItem(oItem=$)
-   "This must be called.  In fact, this is what all attribute "
+   "This must be called. In fact, this is what all attribute "
    "removing things should call."
    {
       local iValue, lData;
 
       lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
+      
       send(self,@RemoveEffects,#oItem=oItem,#lData=lData);              
       send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
+      
+      %% Remove magic item flag for item attributes that add an effect
+      if Send(self,@IsMagicalEffect)
+      {
+         Post(oItem,@RemoveMagicFlag);
+      }
       
       return;
    }   
@@ -581,6 +588,11 @@ messages:
       Addpacket(4,send(oItem,@GetName));
       
       return;
+   }
+
+   IsMagicalEffect()
+   {
+      return FALSE;
    }
    
 

@@ -16,14 +16,6 @@ constants:
 
 resources:
 
-   convict_pick_pocket = \
-      "As you strike %s%s, you snatch %s%s from their pocket."
-
-   pick_pocket_rsc ="Your %s %s snatched away by the Escaped Convict!"
-
-   pick_be_sing_pres = "is"
-   pick_be_plur_pres = "are"
-
 classvars:
 
    % Amount of shillings to distribute to EACH ATTACKER.
@@ -38,6 +30,11 @@ properties:
    plAttackers = $
    % Number of attackers to keep in queue.
    piAttackers = 15
+   
+   % List of treasure items
+   plTreasure = $
+   
+   % List of list of numbered treasure items and value
 
    pbDebug = FALSE
 
@@ -94,16 +91,71 @@ messages:
 
    Killed(what = $)
    {
-      local oAttacker;
+      local oAttacker,lTreasure,oTreasure,lInventoryContents;
 
+      lInventoryContents = [plActive,plPassive];
+      
       % Autogive loot to all players in plAttackers that are present
       for oAttacker in plAttackers
       {
          if Send(self,@GetOwner) = Send(oAttacker,@GetOwner)
          {
-            Send(oAttacker,@NewHold,#what=Create(&Money,#number=viMoneyAmount));
-            Send(oAttacker,@NewHold,#what=create(&BonkStick));
+            for lTreasure in lInventoryContents
+            {
+               if pbDebug
+               {
+                  Debug("treasure list",lTreasure);
+               }
+               %Send(oAttacker,@NewHold,#what=lTreasure);
+               for oTreasure in lTreasure
+               {
+                  if pbDebug
+                  {
+                     Debug("treasure object",Send(oTreasure,@GetName));
+                  }
+                  if Send(oTreasure,@DropOnDeath)
+                  {
+                     % Numbered item, include value in creation
+                     if isclass(oTreasure,&NumberItem)
+                     {
+                        Send(oAttacker,@NewHold,
+                           #what=create(GetClass(oTreasure),
+                           #number=Send(oTreasure,@GetNumber)));
+                     }
+                     else
+                     {
+                        Send(oAttacker,@NewHold,
+                           #what=create(GetClass(oTreasure)));
+                     }
+                  }
+               }
+            }
          }
+      }
+      
+      for lTreasure in lInventoryContents
+      {
+         for oTreasure in lTreasure
+         {
+            if Send(oTreasure,@DropOnDeath)
+            {
+               Send(oTreasure,@Delete);
+            }
+         }
+      }
+      for oTreasure in plActive
+      {
+         if Send(oTreasure,@DropOnDeath)
+            {
+               Send(oTreasure,@Delete);
+            }
+      }
+      for oTreasure in plPassive
+      {
+         if Send(oTreasure,@DropOnDeath)
+            {
+               Send(oTreasure,@Delete);
+            }
       }
 
       % Delete all elements in plAttackers.

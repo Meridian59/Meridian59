@@ -8343,7 +8343,8 @@ messages:
          if monster_level > piBase_Max_health
          {
             if killing_blow
-               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+               AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+                  OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
             {
                % Player took damage and landed killing blow
                gain = 2;
@@ -8395,7 +8396,8 @@ messages:
             %  no roll chance.
             if (monster_level + 5) > piBase_Max_health
                AND IsClass(what,&monster) AND killing_blow 
-               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+               AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+                  OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
             {
                gain = 1;
             }
@@ -8426,7 +8428,8 @@ messages:
                AND NOT group_member_kill
                AND killing_blow
                AND (monster_level + 5) > piBase_Max_health
-               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+               AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+                  OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
             {
                gain = gain + 1;
             }

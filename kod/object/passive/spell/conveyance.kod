@@ -37,7 +37,7 @@ classvars:
    viCast_time = 0
 
    viSpell_num = SID_CONVEYANCE
-   viSpell_level = 1
+   viSpell_level = 4
    viSchool = SS_KRAANAN
    viMana = 5
    viSpellExertion = 2
@@ -146,11 +146,5 @@ messages:
       propagate;
    }
 
-   SuccessChance(who=$)
-   "Starter spell will always work."
-   {
-      return TRUE;
-   }
- 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

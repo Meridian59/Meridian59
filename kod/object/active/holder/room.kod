@@ -2246,71 +2246,160 @@ messages:
    
    LineOfSightInternal(obj1 = $, obj2 = $)
    {
-      local r, c, r2, c2, iRow, iCol, iRSign, iCSign, iLOS;
+      local r, c, r2, c2, dr, dc, iRow, iCol, iAtan;
 
+      % no LOS if not in same room
       if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)
       {
          return FALSE;
       }
 
-      % get obj1 coordinates in highres squares
-      r = ((Send(obj1,@GetRow) * 64) + Send(obj1,@GetFineRow)) / 16;
-      c = ((Send(obj1,@GetCol) * 64) + Send(obj1,@GetFineCol)) / 16;
-
+      % try get obj1 big coordinates (source)
+      r = Send(obj1,@GetRow);
+      c = Send(obj1,@GetCol);
+ 
+      % no coordinates (big row/col can be $)
       if r = $ OR c = $
       {
          Debug("Can't get row or column for",obj1,Send(obj1,@GetTrueName),"in",Send(self,@GetName));
 
          return FALSE;
       }
+      else
+      {
+         % get fine values and scale to highres
+         r = ((r * FINENESS) + Send(obj1,@GetFineRow)) / 16;
+         c = ((c * FINENESS) + Send(obj1,@GetFineCol)) / 16;
+      }
 
-      r2 = r;
-      c2 = c;
+      % try get obj2 coordinates (destination)
+      iRow = Send(obj2,@GetRow);
+      iCol = Send(obj2,@GetCol);
 
-      % get obj2 coordinates in highres squares
-      iRow = ((Send(obj2,@GetRow) * 64) + Send(obj2,@GetFineRow)) / 16;
-      iCol = ((Send(obj2,@GetCol) * 64) + Send(obj2,@GetFineCol)) / 16;
-      
+      % no coordinates (big row/col can be $)
       if iRow = $ OR iCol = $
       {
          Debug("Can't get row or column for",obj2,Send(obj2,@GetTrueName),"in",Send(self,@GetName));
 
          return FALSE;
       }
-
-      if iRow - r >= 0
-      {
-         iRSign = 1;
-      }
       else
       {
-         iRSign = -1;
+         % get fine values and scale to highres
+         iRow = ((iRow * FINENESS) + Send(obj2,@GetFineRow)) / 16;
+         iCol = ((iCol * FINENESS) + Send(obj2,@GetFineCol)) / 16;    
       }
 
-      if iCol - c >= 0
-      {
-         iCSign = 1;
-      }
-      else
-      {
-         iCSign = -1;
-      }
+      % get deltas in highres
+      dr = iRow - r;
+      dc = iCol - c;
+
+      % prepare first loop
+      r2 = r;
+      c2 = c;
 
       % we don't care about the last step to eliminate safe-spots
       % this might allow a creature to hit through a wall if
       % its target is on an adjacent highres square (unlikely?)
-      while abs(r-iRow) > 1 OR abs(c-iCol) > 1
+      while abs(dr) > 1 OR abs(dc) > 1
       {
-         % Generate new location to test
-         if abs(r-iRow) > abs(c-iCol)
+         % Figure out which direction we need to move
+         % our 2D ray next (=step N,NE,E,SE,S,...)
+         % We pick the best approximation of the 8 possible 
+
+         % Only north or south are special cases.
+         if dc = 0
          {
-            r2 = r2 + iRSign;
+            if dr < 0 %N
+            {
+               r2 = r2 - 1;
+            }
+            else %S
+            {
+               r2 = r2 + 1;
+            }
          }
          else
          {
-            c2 = c2 + iCSign;
+            iAtan = 1000 * dr / dc;
          }
 
+         % right half-plane
+         if dc > 0 
+         {
+            if iAtan >= 2414 %S
+            {
+               r2 = r2 + 1;
+            }
+            else
+            {
+               if iAtan >= 414 %SE
+               {
+                  r2 = r2 + 1;
+                  c2 = c2 + 1;
+               }
+               else
+               {
+                  if iAtan >= -414 %E
+                  {
+                     c2 = c2 + 1;
+                  }
+                  else
+                  {
+                     if iAtan >= -2414 %NE
+                     {
+                        r2 = r2 - 1;
+                        c2 = c2 + 1;
+                     }
+                     else %N
+                     {
+                        r2 = r2 - 1;
+                     }
+                  }
+               }
+            }
+         }
+
+         % left half-plane
+         if dc < 0 
+         {
+            if iAtan >= 2414 %N
+            {
+               r2 = r2 - 1;
+            }
+            else
+            {
+               if iAtan >= 414 %NW
+               {
+			      r2 = r2 - 1;
+                  c2 = c2 - 1;                  
+               }
+               else
+               {
+                  if iAtan >= -414 %W
+                  {
+                     c2 = c2 - 1;
+                  }
+                  else
+                  {
+                     if iAtan >= -2414 %SW
+                     {
+			            r2 = r2 + 1;
+                        c2 = c2 - 1;                        
+                     }
+                     else %S
+                     {
+                        r2 = r2 + 1;
+                     }
+                  }
+               }
+            }
+         }
+
+         % DEBUG - Puts item on LOS line
+         % Send(SYS,@PutInRoom,#what=Create(&PlateArmor),#rid=piRoom_num,
+         %    #row=(r/4),#col=(c/4),#fine_row=((r MOD 4)*16),#fine_col=((c MOD 4)*16));
+		 
          % these calculations turn the highres values back into row/finerow
          % remember: 4 highres rows give a row, and a highres row has 16 finerows 
          if NOT CanMoveInRoomHighRes(prmRoom,
@@ -2320,8 +2409,13 @@ messages:
            return FALSE;
          }
 
+		 % set new position as old
          r = r2;
          c = c2;
+
+         % get deltas in highres
+         dr = iRow - r;
+         dc = iCol - c;
       }
 
       return TRUE;

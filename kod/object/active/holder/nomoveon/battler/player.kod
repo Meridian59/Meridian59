@@ -5146,9 +5146,9 @@ messages:
          
          for i in plDefense_modifiers
          {
-            damage = Send(i,@ModifyDefenseDamage,#who=self,
-                           #what=what,#damage=damage,
-                           #atype=atype,#aspell=aspell);
+            damage = Send(i,@ModifyDefenseDamage,#who=self,#what=what,
+                           #damage=damage,#atype=atype,#aspell=aspell,
+                           #report_resistance=report_resistance);
             Send(i,@DefendingHit,#who=self,#what=what);
          }
       

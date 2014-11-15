@@ -98,9 +98,13 @@ properties:
    % If true, user has to pass spell's karma check.  Otherwise, can always cast.
    pbCheckKarma = TRUE
 
+   % If true, item can be split.
+   pbCanSplit = TRUE
+
 messages:
 
-   Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,maker=$,Ability=$)
+   Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,
+               maker=$,Ability=$)
    {
       local oItemAtt;
 
@@ -151,7 +155,8 @@ messages:
 
       if viColor <> $
       {
-         piItem_flags = Send(SYS,@EncodeTwoColorXLAT,#color1=viColor,#color2=piLabelColor);
+         piItem_flags = Send(SYS,@EncodeTwoColorXLAT,
+                              #color1=viColor,#color2=piLabelColor);
       }
 
       if iSpellpower <> $
@@ -516,7 +521,9 @@ messages:
          piSpellPower = Random(piMinSpellPower,piMaxSpellPower);
       }
 
-      piSpellPower = ((piSpellPower * piHits) + (iSacrificeSpellPower * iSacrificeHits)) / (piHits + iSacrificeHits);
+      piSpellPower = ((piSpellPower * piHits)
+                        + (iSacrificeSpellPower * iSacrificeHits))
+                        / (piHits + iSacrificeHits);
       piHits = piHits + iSacrificeHits;
 
       if IsClass(poOwner,&User)
@@ -525,19 +532,26 @@ messages:
                #parm1=Send(sacrificed_item,@GetName),
                #parm2=piHits,#parm3=piSpellPower);
       }
+
       Send(sacrificed_item,@Delete);
 
       return;
    }
-   
+
+   CanSplit()
+   {
+      return pbCanSplit;
+   }
+
    GetKarmaCheck()
    {
       return pbCheckKarma;
    }
-   
+
    SetKarmaCheck(value=FALSE)
    {
       pbCheckKarma = value;
+
       return;
    }
 

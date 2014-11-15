@@ -22,8 +22,11 @@ resources:
       "This is a spell item splitter."
    
    splitter_cant_use_on = "You can't acquire any charges from %s%s."
-   default_split_spell_item_rsc = "You combine half of the %s into your splitter, creating an item that has %d charges that average %d spellpower."
+   default_split_spell_item_rsc = \
+      "You combine half of the %s into your splitter, creating an item "
+      "that has %d charges that average %d spellpower."
    cant_split = "There's not enough to split!"
+   item_no_split = "You cannot split this item!"
 
 classvars:
 
@@ -48,22 +51,22 @@ properties:
 
 messages:
 
-   ReqNewApply(what = $,apply_on = $)
+   ReqNewApply(what=$,apply_on=$)
    {
       if IsClass(apply_on,vcSplitClass)
       {
          return TRUE;
       }
 
-      Send(what,@MsgSendUser,#message_rsc=splitter_cant_use_on, 
-           #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
+      Send(what,@MsgSendUser,#message_rsc=splitter_cant_use_on,
+            #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
 
       return FALSE;
    }
 
-   NewApplied(what = $,apply_on = $)
+   NewApplied(what=$,apply_on=$)
    {
-      If IsClass(apply_on,vcSplitClass)
+      if IsClass(apply_on,vcSplitClass)
       {
          Send(self,@SplitSpellItem,#what=what,#sacrificed_item=apply_on);
       }
@@ -71,49 +74,62 @@ messages:
       return;
    }
 
-   SplitSpellItem(what=$, sacrificed_item=$)
+   SplitSpellItem(what=$,sacrificed_item=$)
    {
-      local cSacrificeClass, iSacrificeHits, iSacrificeSpellPower, oNewItem, iNewHits;
+      local cSacrificeClass, iSacrificeHits, iSacrificeSpellPower,
+            oNewItem, iNewHits;
 
       if sacrificed_item = $
          OR what = $
       {
          return;
       }
-      
+
+      if NOT Send(sacrificed_item,@CanSplit)
+      {
+         Send(what,@MsgSendUser,#message_rsc=item_no_split);
+
+         return;
+      }
+
       iSacrificeHits = Send(sacrificed_item,@GetHits);
       if iSacrificeHits = $
          OR iSacrificeHits < 2
       {
          Send(what,@MsgSendUser,#message_rsc=cant_split);
+
          return;
       }
-      
+
       iNewHits = (iSacrificeHits / 2);
       Send(sacrificed_item,@SetHits,#number=(iSacrificeHits-iNewHits));
 
       iSacrificeSpellPower = Send(sacrificed_item,@GetSpellPower);
-      
+
       cSacrificeClass = GetClass(sacrificed_item);
-      
+
       oNewItem = Create(cSacrificeClass,#iSpellpower=iSacrificeSpellPower);
       Send(oNewItem,@SetHits,#number=iNewHits);
+
       if Send(sacrificed_item,@IsRevealed)
       {
          Send(oNewItem,@RevealHiddenAttributes);
       }
+
       Send(oNewItem,@SetKarmaCheck,#value=Send(sacrificed_item,@GetKarmaCheck));
 
-      If Send(sacrificed_item,@GetOwner) = what
+      if Send(sacrificed_item,@GetOwner) = what
       {
          Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE);
       }
       else
       {
-         If Send(sacrificed_item,@GetOwner) <> $
+         if Send(sacrificed_item,@GetOwner) <> $
             AND IsClass(Send(sacrificed_item,@GetOwner),&Room)
          {
-            Send(Send(sacrificed_item,@GetOwner),@NewHold,#what=oNewItem,#new_row=Send(sacrificed_item,@GetRow),#new_col=Send(sacrificed_item,@GetCol));
+            Send(Send(sacrificed_item,@GetOwner),@NewHold,#what=oNewItem,
+                  #new_row=Send(sacrificed_item,@GetRow),
+                  #new_col=Send(sacrificed_item,@GetCol));
          }
          else
          {
@@ -123,14 +139,15 @@ messages:
 
       If IsClass(what,&User)
       {
-         Send(what,@MsgSendUser,#message_rsc=vsSplitMessage,#parm1=Send(sacrificed_item,@GetName),#parm2=iNewHits,#parm3=iSacrificeSpellPower);
+         Send(what,@MsgSendUser,#message_rsc=vsSplitMessage,
+               #parm1=Send(sacrificed_item,@GetName),
+               #parm2=iNewHits,#parm3=iSacrificeSpellPower);
       }
-      
+
       Send(self,@Delete);
-      
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

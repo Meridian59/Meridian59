@@ -19,9 +19,12 @@ resources:
    WandSplitter_name_rsc = "uncharged wand"
    WandSplitter_icon_rsc = wand6.bgf
    WandSplitter_desc_rsc = \
-      "This wand glimmers with capacity, waiting to acquire charge from other wands."
-      
-   wand_split_spell_item_rsc = "You partially drain the %s, transferring charge. The uncharged wand gains %d charges of %d spellpower."
+      "This wand glimmers with capacity, waiting to acquire charge "
+      "from other wands."
+
+   wand_split_spell_item_rsc = \
+      "You partially drain the %s, transferring charge. The uncharged "
+      "wand gains %d charges of %d spellpower."
 
 classvars:
 
@@ -40,7 +43,7 @@ classvars:
 
    viGround_group = 2
    viInventory_group = 1
-   
+
    vcSplitClass = &Wand
 
 properties:

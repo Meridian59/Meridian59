@@ -5115,7 +5115,7 @@ messages:
       plItemTemplates = cons(create(&HospiceWand),plItemTemplates);
       plItemTemplates = cons(create(&DementWand),plItemTemplates);
       plItemTemplates = cons(create(&ForgetWand),plItemTemplates);
-
+      plItemTemplates = cons(create(&BonkStick),plItemTemplates);
       plItemTemplates = cons(create(&CloakPotion),plItemTemplates);
       plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
       plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);

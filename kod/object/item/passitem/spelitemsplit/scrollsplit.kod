@@ -20,15 +20,17 @@ resources:
    ScrollSplitter_icon_rsc = scr01.bgf
    ScrollSplitter_desc_rsc = \
       "This blank scroll appears somehow hungry for magical runes."
-      
-   scroll_split_spell_item_rsc = "Words flow from the %s, transferring runes. Your blank scroll gains %d recitations of %d spellpower."
+
+   scroll_split_spell_item_rsc = \
+      "Words flow from the %s, transferring runes. Your blank scroll "
+      "gains %d recitations of %d spellpower."
 
 classvars:
 
    vrName = ScrollSplitter_name_rsc
    vrIcon = ScrollSplitter_icon_rsc
    vrDesc = ScrollSplitter_desc_rsc
-   
+
    vsSplitMessage = scroll_split_spell_item_rsc
 
    viBulk = 5
@@ -40,7 +42,7 @@ classvars:
 
    viGround_group = 2
    viInventory_group = 1
-   
+
    vcSplitClass = &Scroll
 
 properties:

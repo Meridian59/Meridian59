@@ -20,16 +20,19 @@ resources:
    PotionSplitter_icon_rsc = potion01.bgf
    PotionSplitter_desc_rsc = \
       "This flask, formed from clear glass and topped by a cork, contains "
-      "nothing but magically prepared water. It seems possible to store excess potion liquid within."
-   
-   potion_split_spell_item_rsc = "You pour half of the %s into your empty bottle, creating a new potion that has %d draughts that average %d spellpower."
+      "nothing but magically prepared water. It seems possible to store "
+      "excess potion liquid within."
+
+   potion_split_spell_item_rsc = \
+      "You pour half of the %s into your empty bottle, creating a new "
+      "potion that has %d draughts that average %d spellpower."
 
 classvars:
 
    vrName = PotionSplitter_name_rsc
    vrIcon = PotionSplitter_icon_rsc
    vrDesc = PotionSplitter_desc_rsc
-   
+
    vsSplitMessage = potion_split_spell_item_rsc
 
    viBulk = 25
@@ -38,7 +41,7 @@ classvars:
 
    viUse_type = ITEM_SINGLE_USE
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
-   
+
    vcSplitClass = &Potion
 
 properties:

@@ -449,13 +449,14 @@
 #define ID_OPTIONS_FONT_MAP_TEXT        3510
 #define ID_HELP_REQUEST_CS              3511
 #define IDM_DRAW_MAP                    3512
+#define ID_COLOR_MAGIC                  3513
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        187
-#define _APS_NEXT_COMMAND_VALUE         3513
+#define _APS_NEXT_COMMAND_VALUE         3514
 #define _APS_NEXT_CONTROL_VALUE         1206
 #define _APS_NEXT_SYMED_VALUE           105
 #endif

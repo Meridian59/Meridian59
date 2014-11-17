@@ -58,9 +58,8 @@
    CONTAINER_YES     = 0x00000020
    LOOK_YES          = 0
    LOOK_NO           = 0x00000040
-
-   % unused       = 0x00000080
-
+   ITEM_MAGIC_YES    = 0x00000080
+   ITEM_MAGIC_NO     = 0
    INVISIBLE_YES     = 0x00000100
    INVISIBLE_NO      = 0
    OFFER_YES         = 0x00000200

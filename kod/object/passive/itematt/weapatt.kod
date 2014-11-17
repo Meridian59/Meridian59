@@ -124,7 +124,7 @@ messages:
       iNumber = 0;
       while (iRoll_number > 0)
       {
-         iRand = random(1,100);
+         iRand = random(1,99);
          if iRand > iNumber { iNumber = iRand; }
          iRoll_number = iRoll_number - 1;
       }

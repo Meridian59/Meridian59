@@ -55,8 +55,6 @@ classvars:
 
    vrModule = $
 
-   viObject_flags = ACTIVATE_YES | GETTABLE_YES
-
    viMaxPlayers = 2     % Maximum number of people who can play the game at once
 
    viUse_type = ITEM_SINGLE_USE    % So "use" command will work with it
@@ -68,6 +66,8 @@ properties:
    plPlayers = $        % List of object IDs of people playing game
    plObservers = $      % People who should be informed of game events (doesn't include players)
    psState = $          % Current state of game, stored as a string  
+
+   viObject_flags = ACTIVATE_YES | GETTABLE_YES
 
 messages:
    

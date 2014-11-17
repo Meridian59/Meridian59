@@ -129,6 +129,10 @@ messages:
       return hitroll;
    }
 
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

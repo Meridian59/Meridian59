@@ -303,6 +303,10 @@ messages:
       return iRoom_num;
    }
 
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

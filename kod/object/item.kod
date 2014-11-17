@@ -75,8 +75,6 @@ classvars:
    % How much this item will help or hinder spell usage.
    viSpell_modifier = 0
 
-   viObject_flags = GETTABLE_YES
-
    vrIcon_male       = $
    vrIcon_female     = $
    vrLeftArm_male    = $
@@ -100,6 +98,7 @@ classvars:
 
 properties:
 
+   viObject_flags = GETTABLE_YES
    piHits_init = 0
    piHits = 0
       
@@ -1695,5 +1694,55 @@ messages:
       return FALSE;
    }
 
+   AddMagicFlag()
+   {
+      if viObject_flags <> (GETTABLE_YES | ITEM_MAGIC_YES)
+      {
+         viObject_flags = viObject_flags | ITEM_MAGIC_YES;
+      }
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   RemoveMagicFlag()
+   {
+      local i, iNum, oItemAtt;
+      
+      for i in plItem_attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         
+         if Send(oItemAtt,@IsMagicalEffect)
+         {
+            viObject_flags = viObject_flags | ITEM_MAGIC_YES;
+            
+            if poOwner <> $
+               AND IsClass(poOwner,&Player)
+            {
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+
+            return;
+         }
+      }
+
+      viObject_flags = viObject_flags & ~ITEM_MAGIC_YES;
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

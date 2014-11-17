@@ -57,6 +57,7 @@ classvars:
 
    viFilling = 10
 
+   viObject_flags = GETTABLE_YES
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
 

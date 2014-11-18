@@ -35,6 +35,8 @@ constants:
    NEWS_POSTING_DELAY = 30 * 60
    % How many times can we Post during the delay?
    NEWS_POSTING_LIMIT = 2
+   % how long can news messages be
+   NEWS_POSTING_MAX_LENGTH = 4096
 
    % How long since last login before someone is considered "inactive"?
    %  This is measured in seconds.  Currently 60 days.
@@ -322,6 +324,8 @@ resources:
       "You must wait a while before you can post to a news globe again."
    user_news_squelched = \
       "Your news posting privileges have been revoked."
+   user_news_toobig = \
+      "WHOA BUDDY!  Take a breath, that message was WAY too big!"
 
    user_guild_rsc = "guild"
    user_guildofficer_rsc = "guildofficer"
@@ -6123,6 +6127,13 @@ messages:
       if piFlags2 & PFLAG2_SQUELCHED_POSTS
       {
          Send(self, @MsgSendUser, #message_rsc=user_news_squelched);
+         return;
+      }
+      
+      % there has to be SOME kind of length limit
+      if StringLength(body) > NEWS_POSTING_MAX_LENGTH
+      {
+         Send(self, @MsgSendUser, #message_rsc=user_news_toobig);
          return;
       }
 

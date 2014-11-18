@@ -36,7 +36,7 @@ resources:
 
    spell_triggers_outlawing = \
       "You have been labeled an outlaw for casting an antisocial spell!"
-   spell_outlaw = "Casting this spell can cause you to be labeled an outlaw."
+   spell_outlaw = " Casting this spell can cause you to be labeled an outlaw."
    spell_nothing = " "
 
    spell_no_rest = "You can't cast spells while resting!"

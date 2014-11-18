@@ -85,7 +85,8 @@ properties:
 
    % Can't cast a teleport spell until this long after attacking someone.  Prevents
    % hit-and-run.  If 0, there's no restriction on when the spell can be cast.
-   piTeleportAttackDelaySec = 2 * 60
+   % Time in seconds.
+   piTeleportAttackDelaySec = 240
 
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15

@@ -18,22 +18,22 @@ resources:
    GlowWeapon_name_rsc = "glow"
    GlowWeapon_icon_rsc = iglow.bgf
    GlowWeapon_desc_rsc = \
-      "Enchants a weapon to glow like a torch.  "
+      "Enchants a weapon or an instrument to glow like a torch.  "
       "Requires an elderberry and a mushroom to cast."
 
    GlowWeapon_sound = kglow.wav
 
    GlowWeapon_spell_intro = \
-      "Kraanan Lv. 1: Enchants a weapon to glow like a torch."
+      "Kraanan Lv. 1: Enchants a weapon or an instrument to glow like a torch."
 
    GlowWeapon_label_rsc = "illuminator."
 
    GlowWeapon_cast_rsc = "%s%s now glows like a torch."
    GlowWeapon_no_can = "You cannot enchant %s%s to glow."
-   GlowWeapon_no_weapon = "%s%s has no wielded weapon."
+   GlowWeapon_no_weapon = "%s%s has no wielded item."
    GlowWeapon_broken = "You cannot enchant %s%s. It's broken."
    GlowWeapon_already_stronger = \
-      "The weapon already has a stronger glow enchantment upon it."
+      "The item already has a stronger glow enchantment upon it."
    GlowWeapon_cap_your = "Your "
 
 classvars:
@@ -50,7 +50,7 @@ classvars:
    vrSpell_intro = GlowWeapon_spell_intro
 
    viSpell_level = 1
-   viMana = 15
+   viMana = 10
    viSpellExertion = 10
 
    viChance_To_Increase = 20

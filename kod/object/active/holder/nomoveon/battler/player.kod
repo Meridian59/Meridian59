@@ -4822,20 +4822,24 @@ messages:
       return Bound(iOffense,1,2000);
    }
 
-   % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
+   "This returns the battler's ability to avoid being hit. "
+   "Ranges from 1 to 2000."
    {
-      local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
+      local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility,
+            iDefense, iHealth, oMonster;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
-         iDefense = Send(oMonster,@GetDefense,#what=what,#stroke_obj=stroke_obj);
+         iDefense = Send(oMonster,@GetDefense,#what=what,
+                        #stroke_obj=stroke_obj);
       }
       else
       {
-         % A player's defense is based on his dodge, parry, block skills, agility, and max hps.
+         % A player's defense is based on his dodge, parry,
+         % block skills, agility, and max hps.
          iParry = 0;
          iDodge = 0;
          iBlock = 0;
@@ -4849,8 +4853,12 @@ messages:
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
+
+         % Bind health between 20-150 for defense calculation.
+         iHealth = Bound(piBase_Max_Health,20,150);
+
          iDefense = iParry + iBlock + (iDodge*2) + (iAgility*8)
-                     + (200 * piBase_Max_Health)/(100 + Send(self,@GetStamina));
+                     + (200 * iHealth)/(100 + Send(self,@GetStamina));
       }
 
       for i in plDefense_modifiers

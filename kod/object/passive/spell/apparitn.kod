@@ -32,6 +32,8 @@ resources:
    summonapparition_failed_rsc = \
       "There is already too much summoning magic focused here to summon an "
       "apparition."
+   summonapp_toomany_rsc = \
+      "There are too many monsters present here to risk summoning another."
    summonapparition_failed_inanimate = \
       "%s%s has no mind to be tinkered with by your illusion magic."
    apparition_fizzle = "Your apparition spell fizzles!"
@@ -92,7 +94,7 @@ messages:
 
       if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25
       {
-         Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_rsc);
+         Send(who,@MsgSendUser,#message_rsc=summonapp_toomany_rsc);
 
          return FALSE;
       }
@@ -102,7 +104,7 @@ messages:
       if NOT IsClass(oTarget,&Battler)
       {
          Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_inanimate,
-              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }
@@ -137,7 +139,7 @@ messages:
             OR Random(1,100) > iSpellPower
          {
             oApparition = Send(self,@CreateRandomMonster,
-                               #spellpower=iSpellpower);
+                                 #spellpower=iSpellpower);
          }
          else
          {
@@ -158,16 +160,16 @@ messages:
       iFine_Col = Send(oTarget,@GetFineCol);
 
       Send(oRoom,@NewHold,#what=oApparition,#new_row=iRow,#new_col=iCol,
-           #fine_row=iFine_Row,#fine_col=iFine_Col);
+            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
       Send(oApparition,@TargetSwitch,#what=oTarget,#iHatred=1000);
       Send(oApparition,@EnterStateAttack);
 
       Send(who,@MsgSendUser,#message_rsc=summonapparition_cast_rsc,
-           #parm1=Send(oApparition,@GetIndef),
-           #parm2=Send(oApparition,@GetName),
-           #parm3=Send(oTarget,@GetIndef),
-           #parm4=Send(oTarget,@GetName));
+            #parm1=Send(oApparition,@GetIndef),
+            #parm2=Send(oApparition,@GetName),
+            #parm3=Send(oTarget,@GetIndef),
+            #parm4=Send(oTarget,@GetName));
 
       i = Send(oApparition,@ReturnMaxHitPoints);
       i = i / APPARITION_FRACTION;

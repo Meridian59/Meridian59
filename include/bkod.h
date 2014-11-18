@@ -183,6 +183,8 @@ enum
    RANDOM = 201,
    
    RECORDSTAT = 210,
+   
+   GETSESSIONIP = 220,
 };
 
 enum

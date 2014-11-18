@@ -8780,6 +8780,40 @@ messages:
       pbAutoCombine = value;
       return;
    }
+   
+   GetIP()
+   "Returns the user's ip in a list which contains the 4 octets"
+   "use this message for comparisons and the string message sparingly"
+   {
+      return GetSessionIP(poSession);
+   }
+   
+   GetIPString()
+   "returns ip as a string.  Use this sparingly and only if"
+   "you need the human readable string, use the list returned by"
+   "GetIP() for comparisons"
+   {
+      local sReturn, lIP;
+      
+      lIP = GetSessionIP(poSession);
+      
+      sReturn = CreateString();
+      
+      ClearTempString();
+      
+      AppendTempString(Nth(lIP,1));
+      AppendTempString(".");
+      AppendTempString(Nth(lIP,2));
+      AppendTempString(".");
+      AppendTempString(Nth(lIP,3));
+      AppendTempString(".");
+      AppendTempString(Nth(lIP,4));
+      
+      SetString(sReturn,GetTempString());
+      
+      return sReturn;
+   
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

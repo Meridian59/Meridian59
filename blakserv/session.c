@@ -166,6 +166,14 @@ session_node * GetSessionByID(int session_id)
 		return NULL;
 }
 
+int GetIPBySessionId(int session_id)
+{
+   if ((num_sessions > 0) && (session_id <= num_sessions))
+      return sessions[session_id].conn.addr.s_addr;
+      
+   return 0;
+}
+
 session_node * GetSessionByAccount(account_node *a)
 {
 	int i;

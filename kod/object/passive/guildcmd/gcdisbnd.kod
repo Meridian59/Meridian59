@@ -23,7 +23,8 @@ resources:
    guilddisband_disband_master = "~BYou disband %s%q."
    guilddisband_disband_users = "~BYour guild has been disbanded by %s%s."
 
-   guilddisband_necro_nak = "~BThe Order of the Necromancers is bound by a blood oath.  "
+   guilddisband_necro_nak = \
+      "~BThe Order of the Necromancers is bound by a blood oath.  "
       "It cannot simply be disbanded."
 
 classvars:
@@ -48,7 +49,7 @@ messages:
       return 1;
    }
 
-   DoCommand(who=$, otarget = $)
+   DoCommand(who=$,oTarget=$)
    "Deletes the guild."
    {
       local oGuild,i,oUser;
@@ -56,8 +57,10 @@ messages:
       oGuild = Send(who,@GetGuild);
 
       % Can't disband the necromancer guild
-      if isClass(oGuild,&NecromancerGuild) {
+      if isClass(oGuild,&NecromancerGuild)
+      {
          Send(who,@MsgSendUser,#message_rsc=guilddisband_necro_nak);
+
          return FALSE;
       }
 
@@ -76,11 +79,11 @@ messages:
             #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
          }
       }
-      
-      Send(oGuild,@delete);
+
+      Send(oGuild,@Delete,#timerdelete=TRUE);
 
       return;
    }
-  
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -48,7 +48,7 @@ classvars:
 
    % Does the element affect the caster?
    vbCanAffectCaster = FALSE
-   
+
 properties:
 
    vbSummoned = FALSE
@@ -69,13 +69,14 @@ properties:
 
 messages:
 
-   
    Constructor(caster=$,duration=$)
    {
       poCaster = caster;
 
-      ptExpire = CreateTimer(self,@Expire,send(self,@GetDuration,#duration=duration));
-      ptPeriodic = CreateTimer(self,@PeriodicEffect,send(self,@GetPeriodicDuration));
+      ptExpire = CreateTimer(self,@Expire,
+                        Send(self,@GetDuration,#duration=duration));
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,
+                        Send(self,@GetPeriodicDuration));
 
       if IsClass(caster,&User)
       {
@@ -88,7 +89,7 @@ messages:
    GetPeriodicDuration()
    {
       % 90 - 110% of base interval
-      return (EFFECT_INTERVAL * random(90,110))/100;
+      return (EFFECT_INTERVAL * Random(90,110))/100;
    }
 
    GetDuration(duration = 0)
@@ -97,14 +98,14 @@ messages:
       return duration;
    }
 
-   SomethingMoved(what = $, new_row = $, new_col = $)
+   SomethingMoved(what = $,new_row = $,new_col = $)
    {
       local iRow, iCol;
 
       % Determine victim's row and column
       if new_row = $
       {
-         iRow = send(what,@GetRow);
+         iRow = Send(what,@GetRow);
       }
       else
       {
@@ -113,7 +114,7 @@ messages:
 
       if new_col = $
       {
-         iCol = send(what,@GetCol);
+         iCol = Send(what,@GetCol);
       }
       else
       {
@@ -124,35 +125,25 @@ messages:
       if IsClass(what,&Battler)
          AND NOT (IsClass(what,&Player)
                   AND Send(what,@IsPhasedOut))
-         AND send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol)
+         AND Send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol)
       {
-         send(self,@CheckForEffect,#what=what,#new_row=iRow,#new_col=iCol,#bMovement=TRUE);
+         Send(self,@CheckForEffect,#what=what,#new_row=iRow,#new_col=iCol,
+               #bMovement=TRUE);
       }
-      
+
       return;
    }
 
-   CheckForEffect(what = $, new_row = $, new_col = $)
+   CheckForEffect(what = $,new_row = $,new_col = $)
    "Check for range to see if we apply the effect."
    {
       local oRoom;
-      
+
       oRoom = Send(self,@GetOwner);
 
       % Might not affect caster.
       if (NOT IsClass(what,&Battler))
          OR ((NOT vbCanAffectCaster) AND what = poCaster)
-      {
-         return FALSE;
-      }
-
-      % Is room truced, or otherwise a NO_COMBAT area?
-      if (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-         AND IsClass(what,&Player))
-         OR (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
-         AND IsClass(what,&Monster))
-         OR (IsClass(what,&Player)
-             AND Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
       {
          return FALSE;
       }
@@ -164,48 +155,34 @@ messages:
          return FALSE;
       }
 
-      % Player target specific checks
+      % Don't affect users that haven't moved yet.
       if IsClass(what,&Player)
       {
-         % Don't affect users that haven't moved yet.
          if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY)
          {
             return FALSE;
          }
-
-         % If this is harmful, and both caster and victim are players,
-         %  then disallow damage if caster's safety is on or if cannot do attack
-         if vbIsHarmful
-            AND IsClass(poCaster,&Player)
-            AND NOT Send(poCaster,@AllowPlayerAttack,#victim=what,
-                         #report=FALSE)
-         {
-            % We've been "affected" for this cycle.  This prevents super-spam.
-            plAffected = cons(what,plAffected);
-            
-            If NOT Send(what,@IsPhasedOut)
-            {
-               Send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
-            }
-
-            return FALSE;
-         }
       }
 
-      if IsClass(what,&Reflection)
-         OR IsClass(what,&EvilTwin)
+      % If this is harmful, and both caster and victim are players, then
+      % disallow damage if caster's safety is on or if cannot do attack.
+      % AllowPlayerAttack also performs all the other required checks,
+      % so they are no longer needed in this class.
+      if vbIsHarmful
+         AND IsClass(poCaster,&Player)
+         AND NOT Send(poCaster,@AllowPlayerAttack,#victim=what,
+                        #report=FALSE)
       {
-         if NOT Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         % We've been "affected" for this cycle.  This prevents super-spam.
+         plAffected = Cons(what,plAffected);
+
+         if IsClass(what,&Player)
+            AND NOT Send(what,@IsPhasedOut)
          {
-            return FALSE;
+            Send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
          }
-   
-         % Check status and safety against the owner of the reflection.
-         if NOT Send(oRoom,@ReqSomethingAttack,#what=poCaster,#victim=Send(what,@GetCaster))
-            OR NOT Send(poCaster,@CheckStatusAndSafety,#victim=Send(what,@GetCaster))
-         {
-            return FALSE;
-         }
+
+         return FALSE;
       }
 
       Send(self,@DoEffect,#what=what,#new_row=new_row,#new_col=new_col);
@@ -214,7 +191,8 @@ messages:
    }
 
    PeriodicEffect()
-   "Periodic check. Clears the affected list, does the effect if the wall is periodic."
+   "Periodic check. Clears the affected list, does the effect "
+   "if the wall is periodic."
    {
       local i, oObject;
 
@@ -223,20 +201,23 @@ messages:
 
       if vbPeriodic
       {
-         for i in send(poOwner,@GetHolderActive)
+         for i in Send(poOwner,@GetHolderActive)
          {
-            oObject = send(poOwner,@HolderExtractobject,#data=i);
+            oObject = Send(poOwner,@HolderExtractobject,#data=i);
             if IsClass(oObject,&Battler)
                AND NOT (IsClass(oObject,&Player)
-                        AND Send(oObject,@IsPhasedOut))
-               AND send(self,@InRange,#what=oObject,#iRow=send(oObject,@GetRow),#iCol=send(oObject,@GetCol))
+                  AND Send(oObject,@IsPhasedOut))
+               AND Send(self,@InRange,#what=oObject,
+                        #iRow=Send(oObject,@GetRow),
+                        #iCol=Send(oObject,@GetCol))
             {
-               send(self,@CheckForEffect,#what=oObject);
+               Send(self,@CheckForEffect,#what=oObject);
             }
          }
       }
 
-      ptPeriodic = CreateTimer(self,@PeriodicEffect,send(self,@GetPeriodicDuration));
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,
+                        Send(self,@GetPeriodicDuration));
 
       return;
    }
@@ -245,28 +226,30 @@ messages:
    "Apply the wall's effect to 'what'."
    {
       % Keep track that we've affected this object.
-      plAffected = cons(what,plAffected);
-      
+      plAffected = Cons(what,plAffected);
+
       return;
    }
 
-   InRange(what = $, iRow = $, iCol = $, bMovement = FALSE)
+   InRange(what = $,iRow = $,iCol = $,bMovement = FALSE)
    "Checks if we can see the target and if so if they are in range."
    {
       local iRow_diff, iCol_diff, iDistanceSquared, iLongRange;
 
-      iRow_diff = send(self,@GetRow) - iRow;
-      iCol_diff = send(self,@GetCol) - iCol;
+      iRow_diff = Send(self,@GetRow) - iRow;
+      iCol_diff = Send(self,@GetCol) - iCol;
 
       iDistanceSquared = iRow_diff * iRow_diff + iCol_diff * iCol_diff;
 
-      % This first check is to see if they're within a one square range if this check
-      %  was caused by movement.  If so, we reset the user's move counter, since we
-      %  make them spam move messages which can throw off speedhack detection.
+      % This first check is to see if they're within a one square range if
+      % this check was caused by movement.  If so, we reset the user's move
+      % counter, since we make them spam move messages which can throw
+      % off speedhack detection.
       if bMovement
       {
-         % Make sure we're checking at least 1 square away from current position.
-         iLongRange = bound(piRange,1,$);
+         % Make sure we're checking at least 1 square away
+         % from current position.
+         iLongRange = Bound(piRange,1,$);
       }
       else
       {
@@ -274,15 +257,15 @@ messages:
       }
 
       if iDistanceSquared <= (iLongRange * iLongRange)
-      {        
+      {
          if (iLongRange = piRange
-             OR iDistanceSquared <= (piRange * piRange))
-            AND send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+               OR iDistanceSquared <= (piRange * piRange))
+            AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          {
             return TRUE;
          }
       }
-      
+
       return FALSE;
    }
 
@@ -331,9 +314,9 @@ messages:
    LocationCheck(where = $)
    {
       if (IsClass(where,&GuildHall)
-          AND send(where,@InFoyer,#who=poCaster))
-         OR (send(where,@IsArena)
-             AND NOT send(where,@InPlay,#what=self,#bNonPlayerOkay=TRUE))
+            AND Send(where,@InFoyer,#who=poCaster))
+         OR (Send(where,@IsArena)
+            AND NOT Send(where,@InPlay,#what=self,#bNonPlayerOkay=TRUE))
       {
          if IsClass(poCaster,&Player)
          {

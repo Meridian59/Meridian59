@@ -11,7 +11,7 @@
 Brambles is Monster
 
 % This has code borrowed from ActiveWallElement.  Since brambles are considered
-%  monsters (you can attack them), they must be located here.
+% monsters (you can attack them), they must be located here.
 
 constants:
 
@@ -42,7 +42,8 @@ resources:
 
    brambles_dead_name_rsc = "the ruins of some bramble"
 
-   brambles_monster_healing = "The patch of brambles rustles as it grows back a little."
+   brambles_monster_healing = \
+      "The patch of brambles rustles as it grows back a little."
    bramble_dissipates = "A patch of the bramble chokes and dies."
 
 classvars:
@@ -105,7 +106,8 @@ messages:
          ptExpire = CreateTimer(self,@Expire,iDuration);
       }
 
-      ptPeriodic = CreateTimer(self,@PeriodicEffect,Send(self,@GetPeriodicDuration));
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,
+                           Send(self,@GetPeriodicDuration));
 
       piBrambleHits = HitPoints;
       piMaxDamage = MaxDamage;
@@ -142,7 +144,8 @@ messages:
    {
       local i;
 
-      ptPeriodic = CreateTimer(self,@PeriodicEffect,Send(self,@GetPeriodicDuration));
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,
+                           Send(self,@GetPeriodicDuration));
       plAffected = $;
 
       return;
@@ -173,9 +176,11 @@ messages:
 
       if IsClass(what,&Battler)
          AND what <> self
-         AND Send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol,#bMovement=TRUE)
+         AND Send(self,@InRange,#what=what,#iRow=iRow,
+                  #iCol=iCol,#bMovement=TRUE)
       {
-         Send(self,@CheckForEffect,#what=what,#new_row=new_row,#new_col=new_col);
+         Send(self,@CheckForEffect,#what=what,
+               #new_row=new_row,#new_col=new_col);
       }
 
       return;
@@ -194,12 +199,16 @@ messages:
       % If this is harmful, and both caster and victim are players,
       %  then disallow damage if caster's safety is on or if cannot do attack
       if IsClass(poCaster,&Player)
-         AND IsClass(what,&Player)
          AND NOT Send(poCaster,@AllowPlayerAttack,#victim=what,#report=FALSE)
       {
-         % We've been "affected" for this cycle.  This also prevents super-spam.
-         plAffected = cons(what,plAffected);
-         Send(what,@MsgSendUser,#message_rsc=Brambles_damage0);
+         % We've been "affected" for this cycle. This also prevents super-spam.
+         plAffected = Cons(what,plAffected);
+
+         if IsClass(what,&Player)
+            AND NOT Send(what,@IsPhasedOut)
+         {
+            Send(what,@MsgSendUser,#message_rsc=Brambles_damage0);
+         }
 
          return FALSE;
       }
@@ -229,8 +238,8 @@ messages:
          }
          else
          {
-            % Either there was no damage, or the caster is not a player.
-            % No caster means the wall was generated.  Either case, do max damage.
+            % Either there was no damage, or the caster is not a player.  No
+            % caster means the wall was generated.  Either case, do max damage.
             iDamage = Send(what,@AssessDamage,#what=self,#damage=piMaxDamage,
                            #atype=ATCK_WEAP_SLASH,#report=FALSE,
                            #report_resistance=FALSE);
@@ -309,13 +318,14 @@ messages:
       iDistanceSquared = iRow_diff * iRow_diff + iCol_diff * iCol_diff;
 
       % This first check is to see if they're within a one square range if
-      %  this check was caused by movement.  If so, we reset the user's move
-      %  counter, since we make them spam move messages which can throw off
-      %  speedhack detection.
+      % this check was caused by movement.  If so, we reset the user's move
+      % counter, since we make them spam move messages which can throw off
+      % speedhack detection.
       if bMovement
       {
-         % Make sure we're checking at least 1 square away from current position.
-         iLongRange = bound(piRange,1,$);
+         % Make sure we're checking at least 1 square away
+         % from current position.
+         iLongRange = Bound(piRange,1,$);
       }
       else
       {
@@ -325,7 +335,7 @@ messages:
       if iDistanceSquared <= (iLongRange * iLongRange)
       {
          if (iLongRange = piRange
-             OR iDistanceSquared <= (piRange * piRange))
+               OR iDistanceSquared <= (piRange * piRange))
             AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          {
             return TRUE;
@@ -406,7 +416,8 @@ messages:
    {
       if (poCaster = self)
       {
-         Send(poOwner,@BrambleKilled,#row=Send(self,@GetRow),#col=Send(self,@GetCol));
+         Send(poOwner,@BrambleKilled,#row=Send(self,@GetRow),
+               #col=Send(self,@GetCol));
       }
 
       poCaster = $;
@@ -463,7 +474,7 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
 
    AssessDamage()
    {
@@ -484,10 +495,9 @@ messages:
    }
 
    CanPlayerAdvanceOnMe()
-   {  
+   {
       return FALSE;
-   }    
-
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

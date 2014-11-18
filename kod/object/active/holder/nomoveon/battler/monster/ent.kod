@@ -56,7 +56,10 @@ classvars:
    viKarma = 40
    viCashmin = 100
    viCashmax = 500
-   
+
+   % 1 in x chance to cast a spell.
+   viSpellChance = 9
+
    vrSound_hit = ent_sound_hit
    vrSound_miss = ent_sound_miss
    vrSound_aware = ent_sound_aware
@@ -68,8 +71,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   % 1 in x chance to cast a spell.
-   piSpellChance = 10
+
    piSpellPower = 50
    piMax_mana = 12
 

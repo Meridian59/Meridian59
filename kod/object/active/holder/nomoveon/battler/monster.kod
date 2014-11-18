@@ -249,6 +249,9 @@ classvars:
    viBrain_type   = BRAIN_ORIGINAL
    viDefault_behavior = 0
 
+   % 1 in x chance to cast a spell. Default 10% chance.
+   viSpellChance = 10
+
    viWimpy = 0
 
    % If true, items that are sold actually come out of the monster's
@@ -368,7 +371,8 @@ properties:
    % [ Spell num, mana cost, number req. from Random(1,100) to cast ]
    plSpellBook = $
 
-   % 1 in x chance to cast a spell. Default 10% chance.
+   % 1 in x chance to cast a spell. Default 10% chance. Set
+   % from classvar in Constructor.
    piSpellChance = 10
 
    % Monster's spellpower. Default 50 sp.
@@ -394,6 +398,7 @@ messages:
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
       piHit_points = piMax_hit_points;
       piMana = piMax_mana;
+      piSpellChance = viSpellChance;
 
       if Send(self,@MobIsSeller)
       {
@@ -1236,7 +1241,7 @@ messages:
       }
 
       % Perhaps we heal this chase moment.
-      if piHit_points < piMax_hit_points AND Random(0,9) < 2
+      if piHit_points < piMax_hit_points AND Random(0,18) < 2
       {
          Send(self,@HealHitPoint);
       }
@@ -1287,7 +1292,7 @@ messages:
       }
 
       % Perhaps we heal this movement tick.
-      if piHit_points < piMax_hit_points AND Random(1,4) = 1
+      if piHit_points < piMax_hit_points AND Random(1,8) = 1
       {
          Send(self,@HealHitPoint);
       }
@@ -1438,17 +1443,17 @@ messages:
    {
       if Send(self,@IsEnchanted,#byClass=&Vertigo)
       {
-         base = base + 2;
+         base = base + 18;
       }
 
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Winds)
       {
-         base = base + 3;
+         base = base + 24;
       }
 
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Sandstorm)
       {
-         base = base + 3;
+         base = base + 30;
       }
 
       return base;
@@ -4219,16 +4224,26 @@ messages:
          return FALSE;
       }
 
+      % Get the adjusted chance to cast, based on whether we're demented
+      % or if AmA is up. Multiply this by 6 because we've decreased the
+      % time between chase behavior checks by a factor of 4-7x.
+      iRandom = Send(self,@AdjustedChanceBase,#base=(piSpellChance*6));
+
+      % Do the random check now, so we don't go any further
+      % if we don't have to.
+      if Random(1,iRandom) <> 1
+      {
+         return FALSE;
+      }
+
       % Get distance to target.
       iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
 
-      % Get the adjusted chance to cast, based on whether we're demented
-      % or if AmA is up. We also check target here so we don't waste
-      % mana casting when we can't get our target. Instead, we use that time
+      % Check LoS to target here so we don't waste mana casting
+      % when we can't get our target. Instead, we use that time
       % walking to the target.
-      iRandom = Send(self,@AdjustedChanceBase,#base=piSpellChance);
-      if Random(1,iRandom) = 1
-         AND iDistance > Send(self,@GetAttackRange)
+
+      if iDistance > Send(self,@GetAttackRange)
          AND iDistance <= piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,

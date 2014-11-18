@@ -77,17 +77,18 @@ classvars:
    vrSound_miss = Xeochicatl_sound_attack
    vrSound_aware = Xeochicatl_sound_aware
    vrSound_death = Xeochicatl_sound_death
-   
+
    viCashMin = 0
    viCashMax = 0
+
+   % 1 in x chance to cast a spell.
+   viSpellChance = 4
 
 properties:
 
    piAnimation = ANIM_NONE
    piMax_Mana = 20
 
-   % 1 in x chance to cast a spell.
-   piSpellChance = 3
    piSpellPower = 99
 
    % is this Xeochicatl part of a node attack?

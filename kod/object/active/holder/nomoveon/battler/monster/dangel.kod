@@ -76,13 +76,14 @@ classvars:
    vrSound_aware = DarkAngel_sound_aware
    vrSound_death = DarkAngel_sound_death
 
+   % 1 in x chance to cast a spell.
+   viSpellChance = 3
+
 properties:
 
    piAnimation = ANIM_NONE
    piDrawfx = BOUNCE_YES
 
-   % 1 in x chance to cast a spell.
-   piSpellChance = 3
    piSpellPower = 99
    piMax_mana = 40
    piSpellRange = 100

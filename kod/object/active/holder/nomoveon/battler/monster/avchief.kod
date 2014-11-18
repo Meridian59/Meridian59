@@ -92,6 +92,9 @@ classvars:
    vrSound_aware = avarchief_sound_aware
    vrSound_death = avarchief_sound_death
 
+   % Chance to do his 'spell' which is really a ranged attack
+   viSpellChance = 6
+
 properties:
 
    vrName = avarchief_name_rsc
@@ -99,8 +102,6 @@ properties:
 
    pbFire = FALSE
    piAnimation = ANIM_NONE
-
-   piSpellChance = 6
 
 messages:
 
@@ -268,7 +269,7 @@ messages:
    {
       local iBase;
 
-      iBase = Send(self,@RangedAttackChance,#base=piSpellChance);
+      iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
 
       if Random(1,iBase) = 1
          AND Send(self,@SquaredDistanceTo,#what=poTarget) < piSpellRange

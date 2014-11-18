@@ -22,10 +22,12 @@ resources:
    FactionFlag_name_rsc = "flag"
    FactionFlag_desc_rsc = "This is the flag of neutrality."
    FactionFlag_drops = "%s%s slips from your grasp and falls to the ground!"
-   FactionFlag_not_soldier = "The flag can only be used by an officially recognized soldier of this faction!"
+   FactionFlag_not_soldier = \
+      "The flag can only be used by an officially recognized "
+      "soldier of this faction!"
 
 classvars:
-   
+
    vrName = FactionFlag_name_rsc
    vrDesc = FactionFlag_desc_rsc
    vrIcon = FactionFlag_icon_rsc
@@ -40,16 +42,16 @@ classvars:
 
    viFaction = FACTION_NEUTRAL
 
-properties:  
+properties:
 
    ptTeleportIdle = $
    pbCounted = FALSE
 
-messages:   
+messages:
 
    Constructor()
    {
-      send(send(SYS,@GetTerritoryGame),@IncrementFlagItemCount,#flag=self);
+      Send(Send(SYS,@GetTerritoryGame),@IncrementFlagItemCount,#flag=self);
       pbCounted = TRUE;
 
       propagate;
@@ -66,10 +68,10 @@ messages:
 
       if IsClass(what,&Player)
       {
-         oSoldierShield = send(what,@FindUsing,#class=&SoldierShield);
+         oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield);
 
          if oSoldierShield = $
-            OR send(oSoldierShield,@GetFaction) <> viFaction
+            OR Send(oSoldierShield,@GetFaction) <> viFaction
          {
             return FALSE;
          }
@@ -87,22 +89,28 @@ messages:
          DeleteTimer(ptTeleportIdle);
          ptTeleportIdle = $;
       }
-      
+
       if what = $
       {
          propagate;
       }
-      
-      if not isClass(what,&User)
+
+      if NOT IsClass(what,&User)
       {
          ptTeleportIdle = CreateTimer(self,@TeleportIdle,IDLE_TIME);
       }
 
-      oRoom = send(SYS,@UtilGetRoomRecurse,#what=what);
-      oFlagpole = send(oRoom,@FindHoldingActive,#class=&Flagpole);
+      oRoom = Send(SYS,@UtilGetRoomRecurse,#what=what);
+
+      % Check for a valid room, perhaps we were sold to an NPC.
+      if oRoom <> $
+      {
+         oFlagpole = Send(oRoom,@FindHoldingActive,#class=&Flagpole);
+      }
+
       if oFlagpole <> $
       {
-         post(oFlagpole,@CheckClaimerFlag);
+         Post(oFlagpole,@CheckClaimerFlag);
       }
 
       propagate;
@@ -111,14 +119,14 @@ messages:
    TeleportIdle()
    {
       ptTeleportIdle = $;
-      send(self,@TeleportHome);
+      Send(self,@TeleportHome);
 
       return;
    }
 
    TeleportHome()
    {
-      % override this for each flag
+      % Override this for each flag.
       return;
    }
 
@@ -132,7 +140,7 @@ messages:
    {
       return FALSE;
    }
-   
+
    DestroyDisposable()
    {
       return FALSE;
@@ -141,25 +149,25 @@ messages:
    DropSelf(what=$)
    {
       local oRoom, iRow, iCol;
-   
-      oRoom = send(what,@GetOwner);
-      iRow = send(what,@GetRow);
-      iCol = send(what,@GetCol);
 
-      send(oRoom,@Newhold,#what=self,#new_col=iCol,#New_row=iRow);
+      oRoom = Send(what,@GetOwner);
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      Send(oRoom,@NewHold,#what=self,#new_col=iCol,#New_row=iRow);
 
       return;
    }
 
    UserLogoff()
    {
-      if isclass(poOwner,&Admin)
+      if IsClass(poOwner,&Admin)
       {
          propagate;
       }
-      
-      send(poOwner,@MsgSendUser,#message_rsc=FactionFlag_drops,
-           #parm1=send(self,@GetCapDef),#parm2=vrName);
+
+      Send(poOwner,@MsgSendUser,#message_rsc=FactionFlag_drops,
+            #parm1=Send(self,@GetCapDef),#parm2=vrName);
 
       Send(self,@DropSelf,#what=poOwner);
 
@@ -176,7 +184,7 @@ messages:
 
       if pbCounted
       {
-         send(send(SYS,@GetTerritoryGame),@DecrementFlagItemCount,#flag=self);
+         Send(Send(SYS,@GetTerritoryGame),@DecrementFlagItemCount,#flag=self);
          pbCounted = FALSE;
       }
 
@@ -187,7 +195,7 @@ messages:
    {
       if pbCounted
       {
-         send(send(SYS,@GetTerritoryGame),@IncrementFlagItemCount,#flag=self);
+         Send(Send(SYS,@GetTerritoryGame),@IncrementFlagItemCount,#flag=self);
       }
 
       return;
@@ -198,7 +206,5 @@ messages:
       return FALSE;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

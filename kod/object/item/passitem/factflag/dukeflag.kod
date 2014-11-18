@@ -18,26 +18,28 @@ resources:
 
    DukeFlag_icon_rsc = flagdinv.bgf
    DukeFlag_name_rsc = "flag of the Duke"
-   DukeFlag_desc_rsc = "This flag bears the royal colors of the Duke, protector of Tos."
+   DukeFlag_desc_rsc = \
+      "This flag bears the royal colors of the Duke, protector of Tos."
 
 classvars:
-   
+
    vrName = DukeFlag_name_rsc
    vrDesc = DukeFlag_desc_rsc
    vrIcon = DukeFlag_icon_rsc
 
    viFaction = FACTION_DUKE
 
-properties:  
+properties:
 
-messages:   
+messages:
 
    TeleportHome()
    {
-      send(send(SYS,@FindRoomByNum,#num=RID_DUKE3),@Newhold,#what=self,#new_row=12,#new_col=20,#fine_row=0,#fine_col=32);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE3),@NewHold,
+            #what=self,#new_row=12,#new_col=20,#fine_row=0,#fine_col=32);
+
       return;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

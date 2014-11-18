@@ -18,27 +18,29 @@ resources:
 
    RebelFlag_icon_rsc = flagjinv.bgf
    RebelFlag_name_rsc = "rebel flag"
-   RebelFlag_desc_rsc = "This flag bears the colors of the rebel forces of Jasper."
+   RebelFlag_desc_rsc = \
+      "This flag bears the colors of the rebel forces of Jasper."
 
 classvars:
-   
+
    vrName = RebelFlag_name_rsc
    vrDesc = RebelFlag_desc_rsc
    vrIcon = RebelFlag_icon_rsc
 
    viFaction = FACTION_REBEL
 
-properties:  
+properties:
 
-messages:   
+messages:
 
    TeleportHome()
    {
-      % right in front of the arsenal
-      send(send(SYS,@FindRoomByNum,#num=RID_JAS_BAR),@Newhold,#what=self,#new_row=6,#new_col=5);
+      % Right in front of the arsenal.
+      Send(Send(SYS,@FindRoomByNum,#num=RID_JAS_BAR),
+            @NewHold,#what=self,#new_row=6,#new_col=5);
+
       return;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

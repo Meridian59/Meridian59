@@ -22,7 +22,7 @@ resources:
       "You worm your way into the mind of a weak-willed creature, "
       "in the hope that it will follow you and fight for you "
       "if you are attacked.  "
-      "Requires two web moss and three kriipa claws."
+      "Requires one web moss and two kriipa claws."
 
    seduce_caster = "%s%s has been seduced."
    seduce_target_on = "You make your move on %s%s."
@@ -52,11 +52,11 @@ classvars:
    viSpell_num = SID_SEDUCE
    viSchool = SS_RIIJA
    viSpell_level = 6
-   viMana = 22
+   viMana = 18
    viChance_To_Increase = 15
    viMeditate_ratio = 100
 
-   viSpellExertion = 20
+   viSpellExertion = 14
 
    vrSucceed_wav = seduce_sound
 
@@ -71,8 +71,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&WebMoss,2],plReagents);
-      plReagents = Cons([&KriipaClaw,3],plReagents);
+      plReagents = Cons([&WebMoss,1],plReagents);
+      plReagents = Cons([&KriipaClaw,2],plReagents);
 
       return;
    }

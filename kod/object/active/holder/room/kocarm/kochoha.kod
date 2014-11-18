@@ -54,13 +54,14 @@ messages:
       %% to Main hall
       plExits = Cons([ 3, 3, RID_KOC_HALL_OF_HEROES, 3, 2, ROTATE_NONE ],plExits);
       plExits = Cons([ 2, 3, RID_KOC_HALL_OF_HEROES, 3, 2, ROTATE_NONE ],plExits);
-      
+
       propagate;
    }
 
    CreateStandardObjects()
    {
-      Send(self,@NewHold,#what=Create(&KocatanWeaponsMaster),#new_row=5,#new_col=5,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&KocatanWeaponsMaster),
+            #new_row=5,#new_col=5,#fine_row=32,#fine_col=32);
 
       propagate;
    }

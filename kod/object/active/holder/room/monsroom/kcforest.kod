@@ -19,7 +19,7 @@ constants:
 classvars:
 
    viAvar_clan = AVARCLAN_PROMAGIC   %% which avar clan controls this part of the jungle.
-   
+
 properties:
 
    plItem_coords = $
@@ -29,14 +29,14 @@ messages:
 
    Constructor()
    {
-      send(self,@CreateJungleItemCoords);
+      Send(self,@CreateJungleItemCoords);
 
       propagate;
    }
 
    CreateJungleItemCoords()
    {
-      %% overwrite this.   Do not propagate
+      % Overwrite this.  Do not propagate.
       plItem_coords = $;
 
       return;
@@ -50,14 +50,14 @@ messages:
       {
          propagate;
       }
-      
+
       piItem_gen_counter = piItem_gen_counter - 1;
       if piItem_gen_counter <= 0
       {
          bFound = FALSE;
          % Create an item
-         lChoose = nth(plItem_coords,random(1,length(plItem_coords)));
-         
+         lChoose = Nth(plItem_coords,Random(1,Length(plItem_coords)));
+
          % Don't generate any of this item type if any exist already.
          for i in plPassive
          {
@@ -72,11 +72,12 @@ messages:
          if NOT bFound
          {
             oItem = Create(first(lChoose));
-            send(self,@newhold,#what=oItem,#new_row=nth(lChoose,2),#new_col=nth(lChoose,3));
+            Send(self,@NewHold,#what=oItem,#new_row=Nth(lChoose,2),
+                  #new_col=Nth(lChoose,3));
          }
 
-         piItem_gen_counter = random(MIN_HOUR_COUNTER,MAX_HOUR_COUNTER);
-      }      
+         piItem_gen_counter = Random(MIN_HOUR_COUNTER,MAX_HOUR_COUNTER);
+      }
 
       propagate;
    }
@@ -85,7 +86,6 @@ messages:
    {
       return viAvar_clan;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

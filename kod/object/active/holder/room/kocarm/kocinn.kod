@@ -27,7 +27,8 @@ resources:
    kocinn_katalinwaz_locked = "Room katalinwaz is locked."
 
    kocnews_god_name = "Designers' News"
-   kocnews_god_desc = "Check here for information from the game administrators."
+   kocnews_god_desc = \
+      "Check here for information from the game administrators."
 
    kocinn_music = song12.mp3
 
@@ -57,10 +58,10 @@ messages:
    {
       plExits = $;
 
-      %% to kocatan
+      % To Kocatan.
       plExits = Cons([ 2, 5, RID_KOCATAN, 28, 7, ROTATE_NONE ],plExits);
-      
-      %% to kocatan tavern
+
+      % To Kocatan tavern.
       plExits = Cons([ 12, 8, RID_KOC_TAVERN, 16, 17, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 5, 2, ROOM_LOCKED_DOOR, kocinn_waz_locked],plExits);
@@ -70,7 +71,7 @@ messages:
 
       plExits = Cons([ 10, 3, ROOM_LOCKED_DOOR, kocinn_wazwaz_locked],plExits);
       plExits = Cons([ 10, 4, ROOM_LOCKED_DOOR, kocinn_wazwaz_locked],plExits);
-      
+
       plExits = Cons([ 10, 6, ROOM_LOCKED_DOOR, kocinn_zik_locked],plExits);
       %% 10,7 finecol is less than 32 has to be hardcoded
 
@@ -86,32 +87,36 @@ messages:
       propagate;
    }
 
-   SomethingTryGo(what=$, row=0, col=0, fine_row=0, fine_col=0)
+   SomethingTryGo(what=$,row=0,col=0,fine_row=0,fine_col=0)
    {
-      if (row=10) and (col=7) and (fine_col < 32)
+      if (row=10) AND (col=7) AND (fine_col < 32)
       {
-         send(what,@msgsenduser,#message_rsc=kocinn_zik_locked);	 
+         Send(what,@MsgSendUser,#message_rsc=kocinn_zik_locked);
+
          return TRUE;
       }
-      
-      if (row=11) and (col=8) and (fine_row < 32)
+
+      if (row=11) AND (col=8) AND (fine_row < 32)
       {
-         send(what,@msgsenduser,#message_rsc=kocinn_katalinwaz_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocinn_katalinwaz_locked);
+
          return TRUE;
       }
-      
-      if (row=7) and (col=5) and (fine_col > 32)
+
+      if (row=7) AND (col=5) AND (fine_col > 32)
       {
-         send(what,@msgsenduser,#message_rsc=kocinn_zikzik_locked);          
+         Send(what,@MsgSendUser,#message_rsc=kocinn_zikzik_locked);
+
          return TRUE;
       }
-      
-      if (row=9) and (col=6) and (fine_row < 32)
+
+      if (row=9) AND (col=6) AND (fine_row < 32)
       {
-         send(what,@msgsenduser,#message_rsc=kocinn_katalin_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocinn_katalin_locked);
+
          return TRUE;
       }
-      
+
       propagate;
    }
 
@@ -120,16 +125,18 @@ messages:
       local lObjCoords1, oNews;
 
       oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
-	                  #name=kocnews_god_name,#desc=kocnews_god_desc);
-      Send(self,@NewHold,#what=oNews,#new_row=4,#new_col=6,#fine_row=8,#fine_col=56);
+                     #name=kocnews_god_name,#desc=kocnews_god_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=4,#new_col=6,
+            #fine_row=8,#fine_col=56);
 
-      lObjCoords1 = [ [02,09,08,16,OO_JUG],[12,04,48,08,OO_JUG],[11,09,40,16,OO_GREY_JUG] ];
+      lObjCoords1 = [ [02,09,08,16,OO_JUG],[12,04,48,08,OO_JUG],
+                      [11,09,40,16,OO_GREY_JUG] ];
 
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
-      
-      send(self,@NewHold,#what=Create(&KocatanInnkeeper),
-           #new_row=5,#new_col=6,#fine_row=48,#fine_col=56,
-           #new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&KocatanInnkeeper),
+            #new_row=5,#new_col=6,#fine_row=48,#fine_col=56,
+            #new_angle=ANGLE_EAST);
 
       propagate;
    }

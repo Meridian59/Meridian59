@@ -10,7 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 KocatanSewer2 is MonsterRoom
 
-% Todo?:  Add in items that appear in the water.  
+% Todo?:  Add in items that appear in the water.
 %         Good coordinates: [78. 33], [37, 24], [7, 37], [19, 3]
 
 constants:
@@ -25,7 +25,7 @@ resources:
    kocsew2_music = cave.mp3
 
    kocsew2_locked_1 = \
-      "Alternately wading and swimming in digusting filth, you rattle "
+      "Alternately wading and swimming in disgusting filth, you rattle "
       "the locked gate without any effect."
 
 classvars:
@@ -81,10 +81,9 @@ messages:
       plExits = Cons([ 43, 48, RID_KOC_TAILOR, 4, 2, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 4, 13, RID_KOC_SEWER1, 42, 7, ROTATE_NONE ],plExits);
-  
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

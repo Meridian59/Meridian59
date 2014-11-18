@@ -46,7 +46,7 @@ messages:
    {
       plExits = $;
 
-      %% to town -- teleport in to (15,12)
+      %% To town -- teleport in to (15,12).
       plExits = Cons([ 16, 12, RID_KOCATAN, 32, 48, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 6, 25, ROOM_LOCKED_DOOR],plExits);
@@ -56,7 +56,7 @@ messages:
 
       plExits = Cons([ 2, 13, RID_KOC_SEWER1, 40, 20, ROTATE_NONE ],plExits);
       plExits = Cons([ 3, 13, RID_KOC_SEWER1, 40, 20, ROTATE_NONE ],plExits);
-  
+
       propagate;
    }
 
@@ -90,19 +90,20 @@ messages:
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords2);
 
-      send(self,@NewHold,#what=Create(&kocatanShopkeeper),
-           #new_row=6,#new_col=21,#fine_row=16,#fine_col=48,
-           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&kocatanShopkeeper),
+            #new_row=6,#new_col=21,#fine_row=16,#fine_col=48,
+            #new_angle=ANGLE_EAST);
 
       % Lighting
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
-           #new_row=11,#new_col=5,#fine_row=10,#fine_col=45); 
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
-           #new_row=8,#new_col=24,#fine_row=24,#fine_col=32); 
+      Send(self,@NewHold,#what=Create(&DynamicLight,
+            #iColor=LIGHT_FIRE,#iIntensity=30),
+            #new_row=11,#new_col=5,#fine_row=10,#fine_col=45);
+      Send(self,@NewHold,#what=Create(&DynamicLight,
+            #iColor=LIGHT_FIRE,#iIntensity=25),
+            #new_row=8,#new_col=24,#fine_row=24,#fine_col=32);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

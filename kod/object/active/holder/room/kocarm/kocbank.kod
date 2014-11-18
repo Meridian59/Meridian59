@@ -82,33 +82,36 @@ messages:
                       [21,11,16,40,OO_BLUE_BOTTLE],[18,10,48,48,OO_POT],
                       [24,10,40,32,OO_bigurn]
                     ];
+
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
 
       Send(self,@NewHold,#what=Create(&KocatanVaultman),
-           #new_row=21,#new_col=10,#fine_row=0,#fine_col=56);
+            #new_row=21,#new_col=10,#fine_row=0,#fine_col=56);
       Send(self,@NewHold,#what=Create(&KocatanBanker),
-           #new_row=19,#new_col=10,#fine_row=24,#fine_col=40);
+            #new_row=19,#new_col=10,#fine_row=24,#fine_col=40);
 
       Send(self,@NewHold,#what=Create(&KocatanSentry),
-           #new_row=8,#new_col=11,#fine_row=56,#fine_col=08);
+            #new_row=8,#new_col=11,#fine_row=56,#fine_col=08);
 
       % Lighting
       oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
       Send(self,@NewHold,#what=oLight,#new_row=9,#new_col=4,
-           #fine_row=40,#fine_col=8);
+            #fine_row=40,#fine_col=8);
+
       oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
       Send(self,@NewHold,#what=oLight,#new_row=9,#new_col=13,
-           #fine_row=40,#fine_col=32);
+            #fine_row=40,#fine_col=32);
+
       oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
       Send(self,@NewHold,#what=oLight,#new_row=13,#new_col=7,
-           #fine_row=24,#fine_col=48);
+            #fine_row=24,#fine_col=48);
+
       oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
       Send(self,@NewHold,#what=oLight,#new_row=13,#new_col=9,
-           #fine_row=24,#fine_col=48);
+            #fine_row=24,#fine_col=48);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -18,7 +18,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKC5 ="Outside the Mad Scientist's Hut"
+   room_name_OutdoorsKC5 = "Outside the Mad Scientist's Hut"
    room_OutdoorsKC5 = KC5.roo
    OutdoorsKC5_music = madsci.mp3
 
@@ -68,7 +68,7 @@ messages:
 
    CreateJungleItemCoords()
    {      
-      plItem_coords = [	[&FireSand,24,45],
+      plItem_coords = [ [&FireSand,24,45],
                         [&FireSand,17,36]
                       ];
 
@@ -79,25 +79,30 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC4, 75, 26, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KB5, 6, 49, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC4, 75, 26, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KB5, 6, 49, ROTATE_NONE],
+                           plEdge_exits);
 
       plExits = $;
 
-      plExits = Cons([ 31, 23, RID_MAD_SCIENTIST_HUT, 4, 3, ROTATE_NONE],plExits);
-      plExits = Cons([ 32, 23, RID_MAD_SCIENTIST_HUT, 4, 3, ROTATE_NONE ],plExits);
-      plExits = Cons([ 35, 30, RID_MAD_SCIENTIST_HUT, 6, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 23, RID_MAD_SCIENTIST_HUT, 4, 3, ROTATE_NONE],
+                     plExits);
+      plExits = Cons([ 32, 23, RID_MAD_SCIENTIST_HUT, 4, 3, ROTATE_NONE ],
+                     plExits);
+      plExits = Cons([ 35, 30, RID_MAD_SCIENTIST_HUT, 6, 7, ROTATE_NONE ],
+                     plExits);
 
       propagate;
    }
-   
-   NewHold(what = $, new_row = $, new_col = $)
+
+   NewHold(what = $,new_row = $,new_col = $)
    {
       local oMadScientist;
 
       if what <> $
          AND new_row <> $ AND new_col <> $
-         AND isClass(what,&DragonFlyQueen)
+         AND IsClass(what,&DragonFlyQueen)
       {
          if Send(self,@InPen,#iRow=new_row,#iCol=new_col)
             AND Send(what,@GetMaster) = $
@@ -107,21 +112,21 @@ messages:
 
             Send(what,@SetMaster,#oMaster=oMadScientist);
          }
-         
+
          Post(self,@CapQueens);
       }
-      
+
       propagate;
    }
 
    AddNewQueenToPen(oQueen = $)
    "Called by quest nodes to add queens to the pen."
    {
-      return Send(self,@NewHold,#what=oQueen,#new_row=random(32,38),
-                  #new_col=random(32,35));
+      return Send(self,@NewHold,#what=oQueen,#new_row=Random(32,38),
+                  #new_col=Random(32,35));
    }
 
-   InPen(iRow = $, iCol = $)
+   InPen(iRow = $,iCol = $)
    {
       if iRow = $ OR iCol = $
       {
@@ -132,7 +137,7 @@ messages:
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
@@ -140,9 +145,10 @@ messages:
    {
       local iNumDel, i, oObject;
 
-      iNumDel = Send(self,@CountHoldingHowMany,#class=&DragonFlyQueen) - MAX_QUEENS;
+      iNumDel = Send(self,@CountHoldingHowMany,#class=&DragonFlyQueen)
+                     - MAX_QUEENS;
 
-      % delete ones inside the pen first
+      % Delete ones inside the pen first.
       for i in plActive
       {
          if iNumDel <= 0
@@ -152,34 +158,34 @@ messages:
 
          oObject = Send(self,@HolderExtractObject,#data=i);
          
-         if isClass(oObject,&DragonFlyQueen)
-            AND Send(self,@InPen,#iRow=Send(oObject,@GetRow),#iCol=Send(oObject,@GetCol))
+         if IsClass(oObject,&DragonFlyQueen)
+            AND Send(self,@InPen,#iRow=Send(oObject,@GetRow),
+                     #iCol=Send(oObject,@GetCol))
          {
             iNumDel = iNumDel - 1;
             Send(oObject,@Delete);
          }
       }
 
-      % then delete ones outside the pen
+      % Then delete ones outside the pen.
       for i in plActive
       {
          if iNumDel <= 0
          {
             break;
          }
-         
+
          oObject = Send(self,@HolderExtractObject,#data=i);
 
-         if isClass(oObject,&DragonFlyQueen)
+         if IsClass(oObject,&DragonFlyQueen)
          {
             iNumDel = iNumDel - 1;
             Send(oObject,@Delete);
          }
       }
-      
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

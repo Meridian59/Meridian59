@@ -26,6 +26,7 @@ resources:
    koctail_locked_3 = "A dank stench wafts from beneath this locked iron door."
 
    koctail_key_disappears = "The heavy iron key disappears!"
+
 classvars:
 
    vrName = room_name_koctail
@@ -52,17 +53,16 @@ messages:
    {
       plExits = $;
 
-      %% to town -- teleport in to (18,4)
+      % To town -- teleport in to (18,4).
       plExits = Cons([ 17, 3, RID_KOC_SOUTH, 30, 35, ROTATE_NONE ],plExits);
       plExits = Cons([ 18, 3, RID_KOC_SOUTH, 30, 35, ROTATE_NONE ],plExits);
 
-      % this is the key door
-      % leave this here.  It will give the locked message if they 
-      % don't have a key.
+      % This is the key door - leave this here.  It will give the locked
+      % message if they don't have a key.
       plExits = Cons([ 15, 9, ROOM_LOCKED_DOOR, koctail_locked_2],plExits);
-      % don't need key going the other way
+      % Don't need key going the other way.
       plExits = Cons([ 14, 9, RID_KOC_TAILOR, 16, 9, ROTATE_NONE ],plExits);
- 
+
       plExits = Cons([ 18, 10, ROOM_LOCKED_DOOR, koctail_locked_1],plExits);
       plExits = Cons([ 9, 1, ROOM_LOCKED_DOOR, koctail_locked_2],plExits);
       plExits = Cons([ 9, 2, ROOM_LOCKED_DOOR, koctail_locked_2],plExits);
@@ -71,7 +71,7 @@ messages:
 
       plExits = Cons([ 3, 1, RID_KOC_SEWER2, 43, 47, ROTATE_NONE ],plExits);
       plExits = Cons([ 3, 2, RID_KOC_SEWER2, 43, 47, ROTATE_NONE ],plExits);
-  
+
       propagate;
    }
 
@@ -79,9 +79,11 @@ messages:
    {
       local lObjCoords1, lObjCoords2;
       lObjCoords1 = [
-               [16,03,24,24,OO_DRESS1],[17,03,08,24,OO_DRESS3],[16,07,16,32,OO_DRESS3],
-               [16,05,08,48,OO_JUG],[19,04,08,48,OO_CLOTH_BOLT1],[19,03,48,08,OO_CLOTH_BOLT2],
-               [19,07,48,48,OO_CLOTH_BOLT3],[19,10,32,32,OO_CLOTH_BOLT4],[18,08,40,40,OO_CLOTH_BOLT5],
+               [16,03,24,24,OO_DRESS1],[17,03,08,24,OO_DRESS3],
+               [16,07,16,32,OO_DRESS3],[16,05,08,48,OO_JUG],
+               [19,04,08,48,OO_CLOTH_BOLT1],[19,03,48,08,OO_CLOTH_BOLT2],
+               [19,07,48,48,OO_CLOTH_BOLT3],[19,10,32,32,OO_CLOTH_BOLT4],
+               [18,08,40,40,OO_CLOTH_BOLT5],
                [18,10,56,32,OO_CLOTH_BOLT6],[11,10,48,08,OO_GREY_JUG],
                [10,10,56,08,OO_POT],[10,10,32,08,OO_GOLD_BOTTLE]
                ];
@@ -92,9 +94,9 @@ messages:
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords2);
 
-      send(self,@NewHold,#what=Create(&KocatanTailor),
-	 #new_row=18,#new_col=7,#fine_row=40,#fine_col=0,
-	 #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&KocatanTailor),
+            #new_row=18,#new_col=7,#fine_row=40,#fine_col=0,
+            #new_angle=ANGLE_EAST);
 
       propagate;
    }
@@ -102,25 +104,28 @@ messages:
    SomethingTryGo(what=$,row=$,col=$)
    {
       local i, lPassive, each_obj;
-      
-      if isClass(what,&user)
+
+      if IsClass(what,&user)
       {
          if (row=15) and (col=9)
-	 {
-	    lPassive=send(what,@getholderpassive);
-	    for i in lPassive
-	    {
-	       each_obj = send(what,@holderextractobject,#data=i);
-	       if isClass(each_obj, &SanctuaryKey)
-	       {
-		  send(each_obj,@delete);
-		  send(what,@msgsenduser,#message_rsc=koctail_key_disappears);		  
-		  send(SYS,@UtilGoToSquare,#what=what,#where=self,#what=what,#new_row=13,#new_col=9);
-		  return TRUE;
-	       }
-	    }
-	 }
+         {
+            lPassive=Send(what,@GetHolderPassive);
+            for i in lPassive
+            {
+               each_obj = Send(what,@HolderExtractObject,#data=i);
+               if IsClass(each_obj,&SanctuaryKey)
+               {
+                  Send(each_obj,@Delete);
+                  Send(what,@MsgSendUser,#message_rsc=koctail_key_disappears);
+                  Send(SYS,@UtilGoToSquare,#what=what,#where=self,
+                        #what=what,#new_row=13,#new_col=9);
+
+                  return TRUE;
+               }
+            }
+         }
       }
+
       propagate;
    }
 

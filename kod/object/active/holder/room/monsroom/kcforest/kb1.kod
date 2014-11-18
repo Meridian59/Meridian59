@@ -16,7 +16,7 @@ constants:
 
 resources:
    room_OutdoorsKB1 = KB1.roo
-   room_name_OutdoorsKB1 ="The Cliffs"
+   room_name_OutdoorsKB1 = "The Cliffs"
    OutdoorsKB1_music = drgnfly.mp3
 
 classvars:
@@ -59,8 +59,9 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,22,47], [&RainbowFern,19,10], [&RainbowFern,41,21],
+   {
+      plItem_coords = [ [&RainbowFern,22,47], [&RainbowFern,19,10],
+                        [&RainbowFern,41,21],
                         [&FireSand,6,17], [&FireSand,6,39]
                       ];
 
@@ -71,10 +72,14 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KA1, 50, 62, ROTATE_NONE, ROW_IS_LESS_THAN,20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KA2, 15, 58, ROTATE_NONE, ROW_IS_GREATER_THAN,20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KC1, 28, 1, ROTATE_NONE], plEdge_exits);      
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB2, 1, 25, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KA1, 50, 62, ROTATE_NONE,
+                           ROW_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KA2, 15, 58, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KC1, 28, 1, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB2, 1, 25, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
@@ -88,7 +93,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKB5 ="Into the Jungle"
+   room_name_OutdoorsKB5 = "Into the Jungle"
    room_OutdoorsKB5 = KB5.roo
    OutdoorsKB5_music = orcbeg.mp3
 
@@ -51,8 +51,9 @@ messages:
 
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,45,6], [&RainbowFern,37,44], [&RainbowFern,11,14] ];
+   {
+      plItem_coords = [ [&RainbowFern,45,6], [&RainbowFern,37,44],
+                        [&RainbowFern,11,14] ];
 
       % Do not propagate
       return;
@@ -69,7 +70,7 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KA5, 26, 63, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KA5, 26, 63, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_EAST, RID_KC5, 14, 1, ROTATE_NONE], plEdge_exits);
 
       propagate;
@@ -104,7 +105,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

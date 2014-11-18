@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKE2 ="Headquarters of the Noble Avars"
+   room_name_OutdoorsKE2 = "Headquarters of the Noble Avars"
    room_OutdoorsKE2 = KE2.roo
    OutdoorsKE2_music = avarwar.mp3
 
@@ -60,8 +60,9 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,44,35], [&rainbowfern,23,57], [&rainbowfern,52,13]];
+   {
+      plItem_coords = [ [&RainbowFern,44,35], [&RainbowFern,23,57],
+                        [&RainbowFern,52,13]];
 
       % Do not propagate
       return;
@@ -70,12 +71,13 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_KE1, 68, 47, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KD2, 20, 69, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KE1, 68, 47, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KD2, 20, 69, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

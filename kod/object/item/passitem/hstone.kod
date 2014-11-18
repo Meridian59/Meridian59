@@ -22,11 +22,11 @@ resources:
    HeartStone_icon_rsc = xeogem.bgf
    HeartStone_name_rsc = "heartstone"
    HeartStone_desc_rsc = \
-	   "This is called a 'heartstone'.  It is a huge gem taken from the body of a "
-	   "fallen Xeochicotl."
-	
+      "This is called a 'heartstone'.  It is a huge gem taken from the "
+      "body of a fallen Xeochicatl."
+
 classvars:
-   
+
    vrName = HeartStone_name_rsc
    vrDesc = HeartStone_desc_rsc
    vrIcon = HeartStone_icon_rsc
@@ -45,19 +45,20 @@ messages:
 
    Constructor()
    {
-      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=viColor);
-      
+      piItem_flags = Send(SYS,@EncodeTwoColorXLAT,#color1=viColor);
+
       propagate;
    }
 
    NewOwner(what = $)
    {
       if (IsClass(what,&Room))
-         AND (not send(what,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
+         AND (NOT Send(what,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
       {
          if Send(Send(SYS,@GetNodeAttack),@GetRespawn)
          {
-            ptRespawn = CreateTimer(self,@RespawnXeoTimer,random(RESPAWN_MIN,RESPAWN_MAX));
+            ptRespawn = CreateTimer(self,@RespawnXeoTimer,
+                                 Random(RESPAWN_MIN,RESPAWN_MAX));
          }
       }
       else
@@ -66,10 +67,10 @@ messages:
          {
             DeleteTimer(ptRespawn);
          }
-         
+
          ptRespawn = $;
       }
-      
+
       propagate;
    }
 
@@ -77,7 +78,7 @@ messages:
    {
       ptRespawn = $;
       Send(self,@RespawnXeo);
-      
+
       return;
    }
 
@@ -88,37 +89,39 @@ messages:
       if ptRespawn <> $
       {
          DeleteTimer(ptRespawn);
-         
+
          ptRespawn = $;
       }
 
       oXeochicatl = Send(self,@CreateXeo);
       iRow = Send(self,@GetRow);
       iCol = Send(self,@GetCol);
-      
+
       if NOT IsClass(poOwner,&Room)
       {
          Debug("HStone::RespawnXeo called while not in a room!");
-         
+
          return;
       }
 
       if Send(poOwner,@ReqNewHold,#what=oXeochicatl,#new_row=iRow,#new_col=iCol)
       {
          Send(poOwner,@NewHold,#what=oXeochicatl,#new_row=iRow,#new_col=iCol);
-         post(self,@Delete);
+         Post(self,@Delete);
       }
       else
       {
-         ptRespawn = CreateTimer(self,@RespawnXeoTimer,random(RESPAWN_MIN,RESPAWN_MAX));
+         ptRespawn = CreateTimer(self,@RespawnXeoTimer,
+                              Random(RESPAWN_MIN,RESPAWN_MAX));
       }
-      
+
       return;
    }
 
    IsInAttack()
    {
-      return (Send(poOwner,@FindHolding,#class=&ManaNode) = Send(Send(SYS,@GetNodeAttack),@GetAttackedNode));
+      return (Send(poOwner,@FindHolding,#class=&ManaNode)
+                  = Send(Send(SYS,@GetNodeAttack),@GetAttackedNode));
    }
 
    Delete()
@@ -127,18 +130,21 @@ messages:
       {
          DeleteTimer(ptRespawn);
       }
-      
+
       ptRespawn = $;
-      
+
       propagate;
    }
-   
-   CanBeStoredInVault()   
+
+   CanBeStoredInVault()
    {
       return FALSE;
    }
 
+   DestroyDisposable()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
 resources:
-   room_name_MadScientistHut ="Hut of the Mad Scientist"
+   room_name_MadScientistHut = "Hut of the Mad Scientist"
    room_MadScientistHut = KC5a.roo
    MadScientistHut_music = madsci.mp3
 
@@ -44,7 +44,7 @@ messages:
 
    Constructed()
    {
-      %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      % Each sound is [wave_file, row, col, cutoff radius, maximum volume]
       plLooping_sounds = [[ fire_sound_madscientist, 3, 7, 10, 100 ]];
 
       propagate;
@@ -59,18 +59,18 @@ messages:
       plExits = Cons([ 7, 7, RID_KC5, 35, 31, ROTATE_NONE ],plExits);
       plExits = Cons([ 7, 8, RID_KC5, 35, 31, ROTATE_NONE ],plExits);
       plExits = Cons([ 6, 8, RID_KC5, 35, 31, ROTATE_NONE ],plExits);
-      
+
       propagate;
    }
 
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&KocatanMadScientist),
-           #new_row=4,#new_col=7,#fine_row=32,#fine_col=32);
+            #new_row=4,#new_col=7,#fine_row=32,#fine_col=32);
 
       % Lighting
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
-           #new_row=3,#new_col=7,#fine_row=24,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,
+            #iIntensity=30),#new_row=3,#new_col=7,#fine_row=24,#fine_col=48);
 
       propagate;
    }
@@ -83,21 +83,20 @@ messages:
 
       for i in plActive
       {
-         oObj = send(self,@HolderExtractObject,#Data=i);
-         if isClass(oObj,&DragonFlyQueen)
+         oObj = Send(self,@HolderExtractObject,#Data=i);
+         if IsClass(oObj,&DragonFlyQueen)
          {
             iFlys = iFlys + 1;
          }
 
          if iFlys > 4
          {
-            send(oObj,@Delete);
+            Send(oObj,@Delete);
          }
       }
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

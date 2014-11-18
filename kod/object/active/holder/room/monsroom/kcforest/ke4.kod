@@ -21,7 +21,7 @@ constants:
    % This is the absolute value needed before we give the node.
    NODE_VALUE_NEEDED = 2000
 
-   % The appropriate values for slaughting Avars.
+   % The appropriate values for slaughtering Avars.
    AVAR_VALUE = -150
    AVAR_CHIEFTAIN_VALUE = -200
    AVAR_SHAMAN_VALUE = -250
@@ -115,7 +115,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Avar, 40], [&AvarChieftain, 35], [&Avarshaman,25] ];  
+      plMonsters = [ [&Avar, 40], [&AvarChieftain, 35], [&Avarshaman,25] ];
       plGenerators = [ [13,54], [20,39], [34,39], [44,37], [53,46],
                        [53,56], [46,66], [33,71], [22,67] ];
 
@@ -138,7 +138,7 @@ messages:
          DeleteTimer(ptNodeDisappear);
 
          ptNodeDisappear = $;
-      }      			     
+      }
 
       propagate;
    }
@@ -146,18 +146,19 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KD4, 33, 65, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST,RID_KD4,33,65,ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
-   
+
    StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
-   {      
+   {
       if dir = LEAVE_NORTH
          OR dir = LEAVE_SOUTH
          OR dir = LEAVE_EAST
       {
-         if isClass(what,&user)
+         if IsClass(what,&user)
          {
             if piCount > 20
             {
@@ -171,7 +172,7 @@ messages:
             }
          }
       }
-      
+
       propagate;
    }
 
@@ -190,7 +191,7 @@ messages:
       {
          Post(self,@OfferingCheck,#what=what);
       }
-      
+
       propagate;
    }
 
@@ -251,17 +252,17 @@ messages:
       {
          return;
       }
-      
+
       piNodeValue = piNodeValue + amount;
 
       % Did we swing it far enough to be valuable?
       if piNodeValue >= NODE_VALUE_NEEDED
       {
          Post(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-              #string=KE4_good_final);
+               #string=KE4_good_final);
          Send(poNode,@NodeAppear,#karma=AVARNODE_GOOD,#where=self,
-              #row=NODE_ROW,#col=NODE_COL,#fine_row=NODE_FINE_ROW,
-              #fine_col=NODE_FINE_COL);
+               #row=NODE_ROW,#col=NODE_COL,#fine_row=NODE_FINE_ROW,
+               #fine_col=NODE_FINE_COL);
          ptNodeDisappear = CreateTimer(self,@NodeDisappear,NODE_APPEAR_TIME);
          piNodeValue = NODE_ALREADY_APPEARED;
 
@@ -272,10 +273,10 @@ messages:
          if piNodeValue <= -NODE_VALUE_NEEDED
          {
             Post(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-                 #string=KE4_evil_final);
+                  #string=KE4_evil_final);
             Send(poNode,@NodeAppear,#karma=AVARNODE_EVIL,#where=self,
-                 #row=NODE_ROW,#col=NODE_COL,#fine_row=NODE_FINE_ROW,
-                 #fine_col=NODE_FINE_COL);
+                  #row=NODE_ROW,#col=NODE_COL,#fine_row=NODE_FINE_ROW,
+                  #fine_col=NODE_FINE_COL);
             ptNodeDisappear = CreateTimer(self,@NodeDisappear,
                                           NODE_APPEAR_TIME);
             piNodeValue = NODE_ALREADY_APPEARED;
@@ -293,14 +294,14 @@ messages:
       else
       {
          % Only post the evil message if they're onto something.
-         %  Disrupting good or killed enough to be blatantly evil.
+         % Disrupting good or killed enough to be blatantly evil.
          if amount < 0
             AND (piNodeValue > 0
-                 OR piNodeValue < -(NODE_VALUE_NEEDED/4))
+               OR piNodeValue < -(NODE_VALUE_NEEDED/4))
          {
             Send(self,@Rumble);
             Post(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-                 #string=KE4_evil);
+                  #string=KE4_evil);
          }
       }
 
@@ -314,7 +315,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

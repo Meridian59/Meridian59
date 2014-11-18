@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKC4 ="Origin of the Kriipa"
+   room_name_OutdoorsKC4 = "Origin of the Kriipa"
    room_OutdoorsKC4 = KC4.roo
    OutdoorsKC4_music = orcbeg.mp3
 
@@ -58,8 +58,9 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,50,4], [&RainbowFern,24,6], [&RainbowFern,35,38] ];
+   {
+      plItem_coords = [ [&RainbowFern,50,4], [&RainbowFern,24,6],
+                        [&RainbowFern,35,38] ];
 
       % Do not propagate
       return;
@@ -68,8 +69,10 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC3, 69, 38, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC5, 1, 23, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC3, 69, 38, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC5, 1, 23, ROTATE_NONE],
+                           plEdge_exits);
 
       propagate;
    }
@@ -107,19 +110,20 @@ messages:
 
       propagate;
    }
-  
+
    GetClan()
    {
-      if random(1,2) = 1
+      if Random(1,2) = 1
       {
          return AVARCLAN_PROMAGIC;
       }
-      
+
       return AVARCLAN_ANTIMAGIC;
    }
 
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
-   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   "This takes a spell/skill that who is trying to advance and "
+   "modifies the improve_chance."
    {
       % Penalize skills because there's an obvious chokepoint here.
       if oSpellSkill <> $
@@ -127,10 +131,9 @@ messages:
       {
          return (chance / 10);
       }
-      
+
       return chance;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

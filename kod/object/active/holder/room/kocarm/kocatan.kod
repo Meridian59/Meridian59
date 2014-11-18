@@ -20,7 +20,8 @@ resources:
    room_kocatan = settle1.roo
    kocatan_music = song08.mp3
 
-   kocatan_military = "No non-military personnel are allowed in the guard barracks."
+   kocatan_military = \
+      "No non-military personnel are allowed in the guard barracks."
    kocatan_locked = "This door is firmly bolted shut."
 
 classvars:
@@ -31,8 +32,8 @@ classvars:
    viTeleport_row = 40
    viTeleport_col = 30
 
-   % This room technically isn't a beach area, but it should get the sounds from the ocean
-   %  directly to the south.
+   % This room technically isn't a beach area, but it should get the
+   %sounds from the ocean directly to the south.
    viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_LAKE | TERRAIN_BEACH
 
 properties:
@@ -52,7 +53,7 @@ messages:
    {
       plExits = $;
 
-      %% locked doors first, since they will be the least active
+      % Locked doors first, since they will be the least active.
       plExits = Cons([ 1, 17, ROOM_LOCKED_DOOR, kocatan_military ],plExits);
       plExits = Cons([ 1, 18, ROOM_LOCKED_DOOR, kocatan_military ],plExits);
       plExits = Cons([ 1, 21, ROOM_LOCKED_DOOR, kocatan_military ],plExits);
@@ -68,13 +69,13 @@ messages:
       plExits = Cons([ 1, 41, ROOM_LOCKED_DOOR, kocatan_military ],plExits);
       plExits = Cons([ 1, 42, ROOM_LOCKED_DOOR, kocatan_military ],plExits);
 
-      %% eastern guard tower -- teleport in at (4,45)
+      % Eastern guard tower -- teleport in at (4,45).
       plExits = Cons([ 3, 46, RID_KOC_GUARDTOWER_EAST, 36, 5, ROTATE_NONE ],plExits);
       plExits = Cons([ 3, 47, RID_KOC_GUARDTOWER_EAST, 36, 5, ROTATE_NONE ],plExits);
       plExits = Cons([ 4, 46, RID_KOC_GUARDTOWER_EAST, 36, 5, ROTATE_NONE ],plExits);
       plExits = Cons([ 4, 47, RID_KOC_GUARDTOWER_EAST, 36, 5, ROTATE_NONE ],plExits);
 
-      %% apothecary
+      % Apothecary.
       plExits = Cons([ 14, 12, RID_KOC_APOTH, 3, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 15, 12, RID_KOC_APOTH, 3, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 14, 13, RID_KOC_APOTH, 3, 7, ROTATE_NONE ],plExits);
@@ -83,25 +84,25 @@ messages:
       plExits = Cons([ 20, 7, RID_KOC_APOTH, 7, 3, ROTATE_NONE ],plExits);
       plExits = Cons([ 20, 8, RID_KOC_APOTH, 7, 3, ROTATE_NONE ],plExits);
 
-      %% hall of heroes -- teleport in at (23,30)
+      % Hall of Heroes -- teleport in at (23,30).
       plExits = Cons([ 21, 29, RID_KOC_HALL_OF_HEROES, 13, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 22, 29, RID_KOC_HALL_OF_HEROES, 13, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 21, 30, RID_KOC_HALL_OF_HEROES, 13, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 22, 30, RID_KOC_HALL_OF_HEROES, 13, 7, ROTATE_NONE ],plExits);
 
-      %% bank -- teleport in at (24,44)
+      % Bank -- teleport in at (24,44).
       plExits = Cons([ 23, 45, RID_KOC_BANK, 20, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 24, 45, RID_KOC_BANK, 20, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 23, 46, RID_KOC_BANK, 20, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 24, 46, RID_KOC_BANK, 20, 7, ROTATE_NONE ],plExits);
 
-      %% guild hall 12 (merchant hall) -- teleport in at (4,14)
+      % Guild hall 12 (merchant hall) -- teleport in at (4,14).
       plExits = Cons([ 3, 12, RID_GUILDH12, 44, 23, ROTATE_NONE ],plExits);
       plExits = Cons([ 3, 13, RID_GUILDH12, 44, 23, ROTATE_NONE ],plExits);
       plExits = Cons([ 4, 12, RID_GUILDH12, 44, 23, ROTATE_NONE ],plExits);
       plExits = Cons([ 4, 13, RID_GUILDH12, 44, 23, ROTATE_NONE ],plExits);
-      
-      %% orc caves -- teleport in at (41,52)
+
+      % Orc Caves -- teleport in at (41,52).
       plExits = Cons([ 40, 53, RID_ORC_CAVE6, 6, 59, ROTATE_NONE ],plExits);
       plExits = Cons([ 40, 54, RID_ORC_CAVE6, 6, 59, ROTATE_NONE ],plExits);
       plExits = Cons([ 41, 53, RID_ORC_CAVE6, 6, 59, ROTATE_NONE ],plExits);
@@ -109,30 +110,30 @@ messages:
       plExits = Cons([ 42, 53, RID_ORC_CAVE6, 6, 59, ROTATE_NONE ],plExits);
       plExits = Cons([ 42, 54, RID_ORC_CAVE6, 6, 59, ROTATE_NONE ],plExits);
 
-      %% store - teleport in at (32,48)
+      % Store - teleport in at (32,48).
       plExits = Cons([ 30, 47, RID_KOC_STORE, 15, 12, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 47, RID_KOC_STORE, 15, 12, ROTATE_NONE ],plExits);
       plExits = Cons([ 30, 48, RID_KOC_STORE, 15, 12, ROTATE_NONE ],plExits);
       plExits = Cons([ 31, 48, RID_KOC_STORE, 15, 12, ROTATE_NONE ],plExits);
-      
-      %% inn
+
+      % Inn.
       plExits = Cons([ 29, 6, RID_KOC_INN, 3, 5, ROTATE_NONE ],plExits);
       plExits = Cons([ 29, 7, RID_KOC_INN, 3, 5, ROTATE_NONE ],plExits);
-      plExits = Cons([ 29, 8, RID_KOC_INN, 3, 5, ROTATE_NONE ],plExits);      
+      plExits = Cons([ 29, 8, RID_KOC_INN, 3, 5, ROTATE_NONE ],plExits);
    
-      %% tavern
+      % Tavern.
       plExits = Cons([ 36, 12, RID_KOC_TAVERN, 12, 29, ROTATE_NONE ],plExits);
       plExits = Cons([ 37, 12, RID_KOC_TAVERN, 12, 29, ROTATE_NONE ],plExits);
       plExits = Cons([ 37, 13, RID_KOC_TAVERN, 12, 29, ROTATE_NONE ],plExits);
       plExits = Cons([ 36, 13, RID_KOC_TAVERN, 12, 29, ROTATE_NONE ],plExits);
 
-      %% northern guard tower -- teleport in at (4,45)
+      % Northern guard tower -- teleport in at (4,45).
       %plExits = Cons([ 3, 46, RID_KOC_GUARDTOWER_NORTH, 20, 20, ROTATE_NONE ],plExits);
       %plExits = Cons([ 3, 47, RID_KOC_GUARDTOWER_NORTH, 20, 20, ROTATE_NONE ],plExits);
       %plExits = Cons([ 4, 46, RID_KOC_GUARDTOWER_NORTH, 20, 20, ROTATE_NONE ],plExits);
       %plExits = Cons([ 4, 47, RID_KOC_GUARDTOWER_NORTH, 20, 20, ROTATE_NONE ],plExits);
 
-      %% southern half of city - land them at (50,30)
+      % Southern half of city - land them at (50,30).
       plExits = Cons([ 51, 29, RID_KOC_SOUTH, 4, 26, ROTATE_NONE ],plExits);
       plExits = Cons([ 51, 30, RID_KOC_SOUTH, 4, 26, ROTATE_NONE ],plExits);
       plExits = Cons([ 52, 29, RID_KOC_SOUTH, 4, 26, ROTATE_NONE ],plExits);
@@ -140,7 +141,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

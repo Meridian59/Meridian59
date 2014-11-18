@@ -24,7 +24,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKA0 ="A dark, humid cavern"
+   room_name_OutdoorsKA0 = "A dark, humid cavern"
    room_OutdoorsKA0 = KA0.roo
    OutdoorsKA0_music = drgnfly.mp3
 
@@ -68,11 +68,11 @@ properties:
    poShrine = $
 
    % Time the user has to get each item in one hour units.  Admin adjustable.
-   piResetHours = 24  
+   piResetHours = 24
 
    % Number of items users must bring.  the last is the hard item.
    %  piSteps + 1 is the shrine.
-   piSteps = 5 
+   piSteps = 5
 
    ptInitPuzzleTimer = $
    ptSetNextItemTimer = $
@@ -163,23 +163,23 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=12),
-           #new_row=7,#new_col=6,#fine_row=16,#fine_col=32,
-           #new_angle=ANGLE_EAST);
+            #new_row=7,#new_col=6,#fine_row=16,#fine_col=32,
+            #new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
-           #new_row=2,#new_col=11,#fine_row=0,#fine_col=48,
-           #new_angle=ANGLE_EAST);
+            #new_row=2,#new_col=11,#fine_row=0,#fine_col=48,
+            #new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=12),
-           #new_row=3,#new_col=14,#fine_row=16,#fine_col=16,
-           #new_angle=ANGLE_EAST);
+            #new_row=3,#new_col=14,#fine_row=16,#fine_col=16,
+            #new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
-           #new_row=8,#new_col=10,#fine_row=32,#fine_col=0,
-           #new_angle=ANGLE_EAST);
+            #new_row=8,#new_col=10,#fine_row=32,#fine_col=0,
+            #new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
-           #new_row=8,#new_col=13,#fine_row=16,#fine_col=48,
-           #new_angle=ANGLE_EAST);
+            #new_row=8,#new_col=13,#fine_row=16,#fine_col=48,
+            #new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
-           #new_row=2,#new_col=7,#fine_row=48,#fine_col=0,
-           #new_angle=ANGLE_EAST);
+            #new_row=2,#new_col=7,#fine_row=48,#fine_col=0,
+            #new_angle=ANGLE_EAST);
 
       propagate;
    }
@@ -206,15 +206,15 @@ messages:
    {
       local cItemNeeded, iItem, iRand;
 
-      iRand = random(1,2);
+      iRand = Random(1,2);
 
       if iRand = 1
       {
-         cItemNeeded = Nth(plVentItems1,random(1,length(plVentItems1)));
+         cItemNeeded = Nth(plVentItems1,Random(1,length(plVentItems1)));
       }
       else
       {
-         cItemNeeded = Nth(plVentItems2,random(1,length(plVentItems2)));
+         cItemNeeded = Nth(plVentItems2,Random(1,length(plVentItems2)));
       }
 
       return cItemNeeded;
@@ -225,7 +225,7 @@ messages:
       % List of really pain in the ass items.
       local cItemNeeded;
 
-      cItemNeeded = Nth(plHardVentItems,random(1,length(plHardVentItems)));
+      cItemNeeded = Nth(plHardVentItems,Random(1,length(plHardVentItems)));
 
       return cItemNeeded;
    }
@@ -262,23 +262,22 @@ messages:
       }
       else
       {
-
          if ((iRow > 3) AND (iRow < 6))
             AND ((iCol > 1) AND (iCol < 4))
          {
             if IsClass(what,GetClass(poItemNeeded))
             {
-               Send(self,@Gotitem);
+               Send(self,@GotItem);
                Send(what,@Delete);
                Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-                     #string=Drop_correct_item_rsc,#parm1=send(what,@GetName));
+                     #string=Drop_correct_item_rsc,#parm1=Send(what,@GetName));
             }
             else
             {
                Send(what,@Delete);
                Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
                      #string=Drop_incorrect_item_rsc,
-                     #parm1=send(what,@GetName));
+                     #parm1=Send(what,@GetName));
             }
          }
       }
@@ -288,15 +287,14 @@ messages:
 
    GotItem()
    {
-
       piItemNumber = piItemNumber + 1;
       if poGhostItem <> $
       {
-         post(poGhostitem,@Delete);
+         Post(poGhostitem,@Delete);
       }
 
       if ptInitPuzzleTimer = $
-      {         
+      {
          ptInitPuzzleTimer = CreateTimer(self,@InitPuzzleTimer,
                                          (piResetHours*HOUR*1000));
       }
@@ -324,7 +322,7 @@ messages:
    SetNextItemTimer()
    {
       Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-           #string=new_item_appears_rsc);
+            #string=new_item_appears_rsc);
       ptSetNextItemTimer = $;
       Send(self,@SetNextItem);
 
@@ -373,7 +371,7 @@ messages:
    PlaceShrine()
    {
       Send(self,@NewHold,#what=poShrine,#new_row=4,
-           #new_col=2,#fine_row=60,#fine_col=63);
+            #new_col=2,#fine_row=60,#fine_col=63);
 
       if ptInitPuzzleTimer = $
       {
@@ -388,7 +386,7 @@ messages:
       }
 
       Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
-           #string=Shrine_appears);
+            #string=Shrine_appears);
 
       return;
    }

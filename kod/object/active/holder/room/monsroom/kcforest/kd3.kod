@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKD3 ="Deep in the Jungle"
+   room_name_OutdoorsKD3 = "Deep in the Jungle"
    room_OutdoorsKD3 = KD3.roo
    OutdoorsKD3_music = boneprst.mp3
 
@@ -123,6 +123,5 @@ messages:
       propagate;
    }
 
-
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

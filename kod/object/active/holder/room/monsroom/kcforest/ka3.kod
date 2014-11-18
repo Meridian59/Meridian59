@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKA3 ="A notch in the jungle"
+   room_name_OutdoorsKA3 = "A notch in the jungle"
    room_OutdoorsKA3 = KA3.roo
    OutdoorsKA3_music = avarwar.mp3
 
@@ -60,7 +60,7 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
+   {
       plItem_coords = [ [&FireSand,24,8], [&FireSand,21,11] ];
 
       % Do not propagate
@@ -69,16 +69,16 @@ messages:
 
    CreateStandardExits()
    {
-      % teleport to Bowmaker:
+      % Teleport to Bowmaker:
       plExits = Cons([ 28, 12, RID_JUNGLE_BOWMAKER_HUT, 6, 5, ROTATE_NONE ],plExits);
       plExits = Cons([ 27, 12, RID_JUNGLE_BOWMAKER_HUT, 6, 5, ROTATE_NONE ],plExits);
-      
+
       plEdge_Exits = $;
-      % teleport in to 6,39
+      % Teleport in to 6,39
       plEdge_Exits = Cons([LEAVE_NORTH, RID_KA2, 56, 30, ROTATE_NONE], plEdge_exits);
 
-      % teleport in to 71,48
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA4, 1, 26, ROTATE_NONE], plEdge_exits);      
+      % Teleport in to 71,48
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA4, 1, 26, ROTATE_NONE], plEdge_exits);
 
       propagate;
    }
@@ -86,11 +86,11 @@ messages:
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&SmokeColumn),
-           #new_row=23,#new_col=15,#fine_row=56,#fine_col=32,#new_angle=ANGLE_EAST);
+            #new_row=23,#new_col=15,#fine_row=56,#fine_col=32,
+            #new_angle=ANGLE_EAST);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -14,9 +14,8 @@ constants:
 
    include blakston.khd
 
-
 resources:
-  
+
    room_name_kocapoth = "Two Lizards Magic Shop"
    room_kocapoth = kocapoth.roo
    kocapoth_music = song12.mp3
@@ -78,20 +77,21 @@ messages:
                     ];
 
       Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
-      
-      send(self,@NewHold,#what=Create(&KocatanApothecary),
+
+      Send(self,@NewHold,#what=Create(&KocatanApothecary),
             #new_row=4,#new_col=2,#fine_row=32,#fine_col=24,
             #new_angle=ANGLE_EAST);
 
       % Lighting
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
-           #new_row=2,#new_col=5,#fine_row=16,#fine_col=32);
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
-           #new_row=4,#new_col=8,#fine_row=48,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&DynamicLight,
+            #iColor=LIGHT_FIRE,#iIntensity=25),
+            #new_row=2,#new_col=5,#fine_row=16,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&DynamicLight,
+            #iColor=LIGHT_FIRE,#iIntensity=25),
+            #new_row=4,#new_col=8,#fine_row=48,#fine_col=8);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

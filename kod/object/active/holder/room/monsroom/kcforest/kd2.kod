@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKD2 ="Territory of the Noble Avars"
+   room_name_OutdoorsKD2 = "Territory of the Noble Avars"
    room_OutdoorsKD2 = KD2.roo
    OutdoorsKD2_music = boneprst.mp3
 
@@ -94,15 +94,18 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KE1, 65, 1, ROTATE_NONE, ROW_IS_LESS_THAN,17 ], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KE2, 33, 1, ROTATE_NONE, ROW_IS_GREATER_THAN,17 ], plEdge_exits);
-            
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KC3, 9, 69, ROTATE_NONE ], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KD3 , 1, 37, ROTATE_NONE ], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KE1, 65, 1, ROTATE_NONE,
+                           ROW_IS_LESS_THAN,17 ], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KE2, 33, 1, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN,17 ], plEdge_exits);
+
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KC3, 9, 69, ROTATE_NONE ],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KD3 , 1, 37, ROTATE_NONE ],
+                           plEdge_exits);
 
       propagate;
    }
- 
- 
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -18,12 +18,12 @@ resources:
 
    RedHeartStone_name_rsc = "red heartstone"
    RedHeartStone_desc_rsc = \
-	"This is called a 'heartstone'.  It is a huge red gem taken from the body of a "
-	"fallen Ro'Xeochicatl.  It glows softly and is warm to the touch.  The uses for "
-	"this gem are not widely known."
-	
+      "This is called a 'heartstone'.  It is a huge red gem taken from the "
+      "body of a fallen Ro'Xeochicatl.  It glows softly and is warm to the "
+      "touch.  The uses for this gem are not widely known."
+
 classvars:
-   
+
    vrName = RedHeartStone_name_rsc
    vrDesc = RedHeartStone_desc_rsc
 
@@ -44,4 +44,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

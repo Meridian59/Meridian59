@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKB4 ="Path to the Ruins"
+   room_name_OutdoorsKB4 = "Path to the Ruins"
    room_OutdoorsKB4 = KB4.roo
    OutdoorsKB4_music = orcbeg.mp3
 
@@ -60,8 +60,9 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
-      plItem_coords = [ [&RainbowFern,42,39], [&RainbowFern,16,4], [&RainbowFern,7,13] ];
+   {
+      plItem_coords = [ [&RainbowFern,42,39], [&RainbowFern,16,4],
+                        [&RainbowFern,7,13] ];
 
       % Do not propagate
       return;
@@ -114,19 +115,20 @@ messages:
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_KB3, 49, 27, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_EAST, RID_KC3, 55,1 , ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_KA5, 4, 63, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KA5, 4, 63, ROTATE_NONE], plEdge_exits);
 
       propagate;
    }
 
    GetClan()
    {
-      if random(1,2) = 1
-      {  return AVARCLAN_PROMAGIC;  }
-      
+      if Random(1,2) = 1
+      {
+         return AVARCLAN_PROMAGIC;
+      }
+
       return AVARCLAN_ANTIMAGIC;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

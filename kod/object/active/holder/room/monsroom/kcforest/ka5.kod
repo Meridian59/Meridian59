@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_name_OutdoorsKA5 ="Outside the Guard Tower"
+   room_name_OutdoorsKA5 = "Outside the Guard Tower"
    room_OutdoorsKA5 = KA5.roo
    OutdoorsKA5_music = avarwar.mp3
 
@@ -60,7 +60,7 @@ messages:
    }
 
    CreateJungleItemCoords()
-   {      
+   {
       %% do not propagate
       plItem_coords = [ [&RainbowFern,13,51], [&RainbowFern,12,5], [&RainbowFern,25,42],
                         [&FireSand,46,31], [&FireSand,49,28]
@@ -73,9 +73,12 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([LEAVE_NORTH, RID_KA4, 49, 15, ROTATE_NONE], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KB4, 39, 1, ROTATE_NONE, ROW_IS_LESS_THAN,20], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_KB5, 16, 1, ROTATE_NONE, ROW_IS_GREATER_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KA4, 49, 15, ROTATE_NONE],
+                           plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KB4, 39, 1, ROTATE_NONE,
+                           ROW_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KB5, 16, 1, ROTATE_NONE,
+                           ROW_IS_GREATER_THAN,20], plEdge_exits);
 
       plExits = Cons([ 45, 23, RID_KOC_GUARDTOWER_EAST, 3, 40, ROTATE_NONE ],plExits);
       plExits = Cons([ 45, 24, RID_KOC_GUARDTOWER_EAST, 3, 40, ROTATE_NONE ],plExits);
@@ -87,14 +90,14 @@ messages:
 
    GetClan()
    {
-      if random(1,2) = 1
+      if Random(1,2) = 1
       {
          return AVARCLAN_PROMAGIC;
       }
-      
+
       return AVARCLAN_ANTIMAGIC;
    }
-   
+
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
@@ -114,7 +117,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

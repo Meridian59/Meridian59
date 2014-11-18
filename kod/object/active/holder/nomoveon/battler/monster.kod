@@ -329,6 +329,8 @@ properties:
    piBehavior = 0
    % Who is our master, if we have one.
    poMaster = $
+   % Flag used for minion moves around master
+   piKeepWalkingSteps = 0
    % Player who has turned us.
    poHolySymbolCaster = $
    % Timer to expire turning.
@@ -903,7 +905,7 @@ messages:
       }
       else
       {
-         ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetChaseTime));
+         ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetMoveTime));
       }
 
       return;
@@ -1463,7 +1465,7 @@ messages:
 
    DoRandomWalk()
    {
-      local iNew_row, iNew_col;
+      local iNew_row, iNew_col, iNew_finerow, iNew_finecol;
 
       % The bigger/tougher I am, the less likely I'm interested in milling
       %  around.
@@ -1471,46 +1473,82 @@ messages:
       {
          return;
       }
-
+      
+      % start with old coordinates
       iNew_row = piRow;
       iNew_col = piCol;
+      iNew_finerow = piFine_row;
+      iNew_finecol = piFine_col;
 
+      % make a random highres-step in one of 4 directions
       if Random(0,1) = 0
       {
          if (Random(0,1) = 0)
          {
-            iNew_row = iNew_row + 1;
+            iNew_finerow = iNew_finerow + 16;
          }
          else
          {
-            iNew_row = iNew_row - 1;
+            iNew_finerow = iNew_finerow - 16;
          }
       }
       else
       {
          if (Random(0,1) = 0)
          {
-            iNew_col = iNew_col + 1;
+            iNew_finecol = iNew_finecol + 16;
          }
          else
          {
-            iNew_col = iNew_col - 1;
+            iNew_finecol = iNew_finecol - 16;
          }
       }
 
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col)
+	  % moved down at least a full row 
+	  if iNew_finerow >= FINENESS
+	  {
+		iNew_row = piRow + (iNew_finerow / FINENESS);
+		iNew_finerow = iNew_finerow MOD FINENESS;
+	  }
+	  
+	  % moved up at least a full row
+	  if iNew_finerow < 0
+	  {
+	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
+		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+	  }
+	  
+	  % moved right at least a full col 
+	  if iNew_finecol >= FINENESS
+	  {
+		iNew_col = piCol + (iNew_finecol / FINENESS);
+		iNew_finecol = iNew_finecol MOD FINENESS;
+	  }
+	  
+	  % moved left at least a full row
+	  if iNew_finecol < 0
+	  {
+	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
+		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+	  }
+	  
+      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+	          #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
-         Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col);
+         Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
+              #new_finerow=iNew_finerow,#new_finecol=iNew_finecol);
 
          % Check for owner, perhaps we died already
          if poOwner <> $
          {
             if Send(poOwner,@ReqSomethingMoved,#what=self,
                      #new_row=iNew_row,#new_col=iNew_col,
+                     #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
                      #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)))
             {
                Send(poOwner,@SomethingMoved,#what=self,
                      #new_row=iNew_row,#new_col=iNew_col,
+                     #fine_row=iNew_finerow,#fine_col=iNew_finecol,
                      #speed=(0x80|viSpeed),#non_monsters_only=TRUE);
             }
          }
@@ -1521,36 +1559,48 @@ messages:
 
    MoveToMaster()
    {
-      local iRange;
+      local drow, dcol;
 
       if poMaster = $
       {
          Debug("MovetoMaster Called with nil master!",Send(self,@GetName));
-
-         return FALSE;
+         return;
       }
 
-      if Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE)
+      % calculate distance in highres-grid squares (steps we can still make)
+      drow = ((Send(poMaster,@GetRow) * FINENESS) + Send(poMaster,@GetFineRow)) / 16;
+      dcol = ((Send(poMaster,@GetCol) * FINENESS) + Send(poMaster,@GetFineCol)) / 16;
+      drow = abs(drow - (((piRow * FINENESS) + piFine_row) / 16));
+      dcol = abs(dcol - (((piCol * FINENESS) + piFine_col) / 16));
+
+      % Try step closer to the master, if we're not yet close enough.
+      % The move-timer is configured to make this movement seamless.
+      if drow > 3 OR dcol > 3
       {
-         return TRUE;
+        Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
       }
-      
-      if Random(1,100) < 40
+      else
       {
-         iRange = Send(self,@GetAttackRange);
-
-         % 5*5 = range of five here.
-         if Send(self,@SquaredDistanceTo,#what=poMaster) <= 25 
-         {   
-            Send(poOwner,@SomethingMoved,#what=self,
-                 #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
-                 #speed=(0x80 | viSpeed),#non_monsters_only=TRUE);
-
-            return TRUE;
+         % If we're close, we start a move around the master based on a probability.
+         % To do so we just need to try to step closer, he will block us.
+         % We will do 8 seamless steps, before we again decide
+         % to stop or to go on.
+         if piKeepWalkingSteps < 8
+         {
+            Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
+            piKeepWalkingSteps = piKeepWalkingSteps + 1;
+         }
+         else
+         {
+            % roll a dice to see if we want to start a new movement
+            if Random(1,100) < 5
+            {
+               piKeepWalkingSteps = 0;
+            }
          }
       }
 
-      return FALSE;
+      return;
    }
 
    %%% Combat messages
@@ -1627,9 +1677,10 @@ messages:
       }
 
       % Face the target.
-      Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),
-           #new_col=Send(what,@GetCol));
-
+      Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),#new_col=Send(what,@GetCol),
+           #new_finerow=Send(what,@GetFineRow),#new_finecol=Send(what,@GetFineCol),
+           #face_target=TRUE);
+				 
       % Do any special attack routines we might have.
       Send(self,@MonsterAttack,#what=what);
 
@@ -2072,64 +2123,94 @@ messages:
    "Try to take a single step in direction 'dir' where"
    "e=0, ne=1, n=2, nw=3, w=4, sw=5, s=6, se=7"
    {
-      local iNew_row, iNew_col, iLong_step;
-
+      local iNew_row, iNew_col, iNew_finerow, iNew_finecol, iLong_step;
+	  iNew_row = piRow;
+	  iNew_col = piCol;
+	  
       if dir = 0  
       {
-         iNew_row = piRow + 1;
-         iNew_col = piCol;
-         iLong_step = FALSE;
+         iNew_finerow = piFine_row + 16;
+		 iNew_finecol = piFine_col;
+		 iLong_step = FALSE;
       }
 
       if dir = 1
       {
-         iNew_row = piRow + 1;
-         iNew_col = piCol + 1;
+         iNew_finerow = piFine_row + 16;
+         iNew_finecol = piFine_col + 16;
          iLong_step = TRUE;
       }
 
       if dir = 2
       {
-         iNew_row = piRow;
-         iNew_col = piCol + 1;
+         iNew_finerow = piFine_row;
+         iNew_finecol = piFine_col + 16;
          iLong_step = FALSE;
       }
 
       if dir = 3
       {
-         iNew_row = piRow - 1;
-         iNew_col = piCol + 1;
+         iNew_finerow = piFine_row - 16;
+         iNew_finecol = piFine_col + 16;
          iLong_step = TRUE;
       }
 
       if dir = 4
       {
-         iNew_row = piRow - 1;
-         iNew_col = piCol;
+         iNew_finerow = piFine_row - 16;
+         iNew_finecol = piFine_col;
          iLong_step = FALSE;
       }
 
       if dir = 5
       {
-         iNew_row = piRow - 1;
-         iNew_col = piCol - 1;
+         iNew_finerow = piFine_row - 16;
+         iNew_finecol = piFine_col - 16;
          iLong_step = TRUE;
       }
 
       if dir = 6
       {
-         iNew_row = piRow;
-         iNew_col = piCol - 1;
+         iNew_finerow = piFine_row;
+         iNew_finecol = piFine_col - 16;
          iLong_step = FALSE;
       }
 
       if dir = 7
       {
-         iNew_row = piRow + 1;
-         iNew_col = piCol - 1;
+         iNew_finerow = piFine_row + 16;
+         iNew_finecol = piFine_col - 16;
          iLong_step = TRUE;
       }
 
+	  % moved down at least a full row 
+	  if iNew_finerow >= FINENESS
+	  {
+		iNew_row = piRow + (iNew_finerow / FINENESS);
+		iNew_finerow = iNew_finerow MOD FINENESS;
+	  }
+	  
+	  % moved up at least a full row
+	  if iNew_finerow < 0
+	  {
+	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
+		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+	  }
+	  
+	  % moved right at least a full col 
+	  if iNew_finecol >= FINENESS
+	  {
+		iNew_col = piCol + (iNew_finecol / FINENESS);
+		iNew_finecol = iNew_finecol MOD FINENESS;
+	  }
+	  
+	  % moved left at least a full row
+	  if iNew_finecol < 0
+	  {
+	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
+		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+	  }
+	
       if iLong_step
       {
          piState = piState | ESTATE_LONG_STEP;
@@ -2139,23 +2220,27 @@ messages:
          piState = piState & ESTATE_LSTEP_MASK;
       }
 
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col)
+      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+                                   #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
+              #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
               #face_target=face_target,#face_away=face_away);
 
          if Send(poOwner,@ReqSomethingMoved,#what=self,
                  #new_row=iNew_row,#new_col=iNew_col,
-                 #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)))
-         {
+                 #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)),
+				 #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+         {		
             Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
                  #new_row=iNew_row,#new_col=iNew_col,
-                 #fine_row=FINENESS/2+Random(-15,15),
-                 #fine_col=FINENESS/2+Random(-15,15),
+                 #fine_row=iNew_finerow,
+                 #fine_col=iNew_finecol,
                  #non_monsters_only=TRUE);
 
             % Turn to face target
             Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
+                 #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
                  #face_target=face_target,#face_away=face_away);
 
             return TRUE;
@@ -2168,6 +2253,8 @@ messages:
    MoveTowards(oTarget = $, face_target=FALSE, face_away=FALSE,
                to_master=FALSE)
    {
+      local drow, dcol;
+
       if oTarget = $ 
       { 
          Debug("Bad info passed to MoveTowards!");
@@ -2179,14 +2266,21 @@ messages:
          return FALSE; 
       }
 
-      return Send(self,@MoveInDirection,#row_diff=Send(oTarget,@GetRow)-piRow,
-                  #col_diff=Send(oTarget,@GetCol)-piCol,
+      % calculate square delta in highres-grid
+      drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
+      dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
+      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
+      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+
+      return Send(self,@MoveInDirection,#row_diff=drow,#col_diff=dcol,
                   #face_target=face_target,#face_away=face_away,
                   #to_master=to_master);
    }
 
    MoveAway(oTarget = $, face_target=FALSE, face_away=FALSE)
    {
+      local drow,dcol;
+  
       if oTarget = $
       {
          Debug("Bad info passed to MoveAway!");
@@ -2198,8 +2292,13 @@ messages:
             return FALSE;
       }
 
-      return Send(self,@MoveInDirection,#row_diff=-(Send(oTarget,@GetRow)-piRow),
-                  #col_diff=-(Send(oTarget,@GetCol)-piCol),
+	  % calculate square delta in highres-grid
+      drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
+      dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
+      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
+      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+	  
+      return Send(self,@MoveInDirection,#row_diff=-drow,#col_diff=-dcol,
                   #face_target=face_target,#face_away=face_away);
    }
 
@@ -2387,21 +2486,27 @@ messages:
       return TRUE;
    }
 
-   ReqMonsterMove(new_row = $,new_col = $)
+   ReqMonsterMove(new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol = FINENESS_HALF)
    "Called by monster moving code to check if we really want to go"
    "to <new_row>,<new_col>."
    {
+      local r,c;
+  
       if NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS)
       {
          return TRUE;
       }
 
+      % get coordinates in highres squares
+      r = ((new_row * 64) + new_finerow) / 16;
+      c = ((new_col * 64) + new_finecol) / 16;
+
       % Monsters that can attack/move through walls shouldn't wander off the
       %  map.
-      if new_row > Send(poOwner,@GetRoomRows)
-         OR new_row < 1
-         OR new_col > Send(poOwner,@GetRoomCols)
-         OR new_col < 1
+      if r > Send(poOwner,@GetRoomRowsHighRes)
+         OR r < 1
+         OR c > Send(poOwner,@GetRoomColsHighRes)
+         OR c < 1
       {
          return FALSE;
       }
@@ -2409,37 +2514,38 @@ messages:
       return TRUE;
    }
     
-   MonsterOrient(new_row = $,new_col = $, face_target = FALSE, face_away=FALSE)
+   MonsterOrient(new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol=FINENESS_HALF,face_target = FALSE, face_away=FALSE)
    "Called by monster moving code before and after a real move"
    {
-      local iRow, iCol, iFR, iFC, iAngle;
-      
-      iRow = new_row;
-      iCol = new_col;
-      iFR = FINENESS_HALF;
-      iFC = FINENESS_HALF; 
+      local drow, dcol, iAngle;
 
-      if face_target and poTarget <> $
+      % aiming towards a target or away from it
+      if (NOT (poTarget = $)) AND (face_target OR face_away)
       { 
-         iRow = Send(poTarget,@GetRow);
-         iCol = Send(poTarget,@GetCol);
-         iFR = Send(poTarget,@GetFineRow);
-         iFC = Send(poTarget,@GetFineCol);
+         % build face towards (in fine-units)
+         drow = (Send(poTarget,@GetRow) * FINENESS) + Send(poTarget,@GetFineRow);
+         dcol = (Send(poTarget,@GetCol) * FINENESS) + Send(poTarget,@GetFineCol);
+         drow = drow - ((piRow * FINENESS) + piFine_row);
+         dcol = dcol - ((piCol * FINENESS) + piFine_col);
+
+         % rotate 180°, if we face away
+         if face_away
+         { 
+            drow = -drow;
+            dcol = -dcol;
+         }
+      }
+      else
+      {
+         drow = (new_row * FINENESS) + new_finerow;
+         dcol = (new_col * FINENESS) + new_finecol;
+         drow = drow - ((piRow * FINENESS) + piFine_row);
+         dcol = dcol - ((piCol * FINENESS) + piFine_col);
       }
 
-      if face_away and poTarget <> $
-      { 
-         iRow = piRow-(Send(poTarget,@GetRow)-piRow);
-         iCol = piCol-(Send(poTarget,@GetCol)-piCol);
-         iFR = FINENESS-Send(poTarget,@GetFineRow);
-         iFC = FINENESS-Send(poTarget,@GetFineCol);
-      }
-    
       if poOwner <> $
       {
-         iAngle = Send(SYS,@UtilGetAngleTowards,
-                       #row=(FINENESS*iRow+iFR)-(FINENESS*piRow+piFine_row),
-                       #col=(FINENESS*iCol+iFC)-(FINENESS*piCol+piFine_col));
+         iAngle = Send(SYS,@UtilGetAngleTowards,#row=drow,#col=dcol);
          Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
       }
 
@@ -4732,29 +4838,53 @@ messages:
 
    GetMoveTime()
    {
-      if poMaster <> $ and Send(poMaster,@GetOwner) = poOwner
-      {
-         return Send(self,@Fuzzy,#num=MOB_FOLLOW_TIMER_WAIT)
-                + 100*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
-      }
-
-      return Send(self,@Fuzzy,#num=MOB_MOVE_TIMER_WAIT)
-             + 300*(26-Bound(Send(Self,@Fuzzy,#num=viSpeed),0,25));
-   }
-
-   GetChaseTime()
-   {
       local iTime;
 
-      iTime = Send(self,@Fuzzy,#num=MOB_CHASE_TIMER_WAIT);
+      % Unit of viSpeed is: #gridsquares per 10 seconds (per 10000 ms)
+      % viSpeed is pre-defined by monster
+      % Move-increment is predefined/fixed at 16fine unit per step
+      % --> The elapse-interval is fixed!
+  
+      % EXAMPLE: SPEED_VERY_SLOW: 4 squares per 10000 ms
+      % 1024 super-fine squares = 1 square
+      % 256 super-fine squares = 1 highres square = 16 finesquare = stepwidth
+      % -------------------------------------------------------
+      % 4 * 1024 	= 4096 super-fine squares per 10000 ms
+      % 4096 / 256  = 16 (Monster has to make 16 steps per 10000ms)
+      % 10000 / 16  = 625 (steps must be made in 625ms intervals)
+      % T = 10000 / ((viSpeed * 1024) / 256)  
 
-      % diagonal move
-      if piState & ESTATE_LONG_STEP
+      % avoid division by zero, if objects teleport
+      % objects with viSpeed = 0 don't need seamless movements in the client
+      % so we just assume it is enough to teleport them once a second
+      if viSpeed > 0
       {
-         iTime = 1414 * iTime / 1000;
+         % see formula above  
+         iTime = 10000 / (viSpeed * 4);
+		 
+		 % diagonal move: scale-up the time according to the increased distance
+         if piState & ESTATE_LONG_STEP
+         {
+            % sqrt(2) = 1.41421356  
+            iTime = (14142 * iTime) / 10000;
+         }
+
+         % finally we reduce the timer a bit (right now it's exact at ms)
+         % why? the client should get a new position before the last destination
+         % is reached. This prevents cases of stuttering if our message was a bit late in transmission.
+         % the client has a dynamic playout which will compensate this.
+         iTime = iTime - 5;
+		 
+		 % make sure timer interval does not get negative
+         % and also not like "run all the time"
+         iTime = bound(iTime, 10, 10000);
+      }
+      else
+      {
+         iTime = 1000;
       }
 
-      return iTime + 2000 - 40*(viDifficulty+2*viSpeed);
+      return iTime;
    }
 
    CutWantedItem(class = $)

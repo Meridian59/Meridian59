@@ -17,6 +17,9 @@ typedef struct
 {
    short rows;             /* Size of room in grid squares */
    short cols;
+   short rowshighres;      /* Size of room in highres grid squares */
+   short colshighres;
+
    int  width, height;    /* Size of room in FINENESS units */
 
    unsigned char **grid;           /* Array that tells whether its legal to move between adjacent squares 
@@ -24,6 +27,7 @@ typedef struct
    unsigned char **flags;          /* Array that gives per-square flags 
 			   * (used only in server) */
    unsigned char **monster_grid;   /* Array that tells whether its legal for monsters to move between adjacent squares  (used only in server) */
+   unsigned int **highres_grid;
    int bkgnd;           /* Resource ID of background bitmap; 0 if none */
    unsigned char ambient_light;    /* Intensity of ambient light, 0 = min, 15 = max */
 

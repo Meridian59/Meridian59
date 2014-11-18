@@ -233,6 +233,201 @@ Bool CanMoveInRoom(roomdata_node *r,int from_row,int from_col,int to_row,int to_
    return (allow != 0);
 }
 
+Bool CanMoveInRoomHighRes(roomdata_node *r,int from_row,int from_col,int from_finerow,int from_finecol,
+						  int to_row,int to_col,int to_finerow, int to_finecol)
+{
+	int dir_row,dir_col,drow,dcol;
+	int from_row_comb,from_col_comb,to_row_comb,to_col_comb;
+	int from_fullrow,from_fullcol,to_fullrow,to_fullcol;
+	unsigned int allow = 0;
+	Bool debug;
+
+	// enable debug output or not
+	debug = ConfigBool(DEBUG_CANMOVEINROOMHIGHRES);
+
+	// handle null room
+	// don't allow move
+	if (!r)
+	{
+		if (debug)
+			dprintf("-- invalid room\n");
+
+		return False;
+	}
+
+	/*************** CALCULATIONS *************************/
+
+	// build a combined value in fine precision first
+	// a row has 64 fine rows, a col has 64 fine cols
+	// so a square has 4096 fine squares. 
+	// << 6 (LSHIFT 6) is a faster variant of (*64)
+	from_row_comb = (from_row << 6) + from_finerow;
+	from_col_comb = (from_col << 6) + from_finecol;
+	to_row_comb = (to_row << 6) + to_finerow;
+	to_col_comb = (to_col << 6) + to_finecol;
+
+	// scale to the highprecision scale
+	// a row has 4 highprecision rows, a col has 4 highprecision cols.
+	// so highres grid precision is NOT as good as fine precision!
+	// a highres row still has 16 finerows.
+	// >> 4 (RSHIFT 4) is faster variant of (/16)
+	from_row_comb = from_row_comb >> 4;
+	from_col_comb = from_col_comb >> 4;
+	to_row_comb = to_row_comb >> 4;
+	to_col_comb = to_col_comb >> 4;
+	
+	// get deltas
+	drow = to_row_comb - from_row_comb;
+	dcol = to_col_comb - from_col_comb;
+	
+	// here we build values which may add any
+	// full row or coll within the fine values
+	// to the major value (e.g. turns 1col, 64finecol into 2col)
+	// >> 6 (RSHIFT 6) is faster variant of (/64)
+	from_fullrow = from_row + (from_finerow >> 6);
+	from_fullcol = from_col + (from_finecol >> 6);
+	to_fullrow = to_row + (to_finerow >> 6);
+	to_fullcol = to_col + (to_finecol >> 6);
+
+	/*******************************************************/
+
+	// Handle non existing highres_grid
+	if (r->file_info.highres_grid == NULL)
+	{				
+		// in case the move was across a big grid square
+		// hand it over to CanMoveInRoom (lowres-grid)
+		if (abs(to_fullcol - from_fullcol) >= 1 ||
+			abs(to_fullrow - from_fullrow) >= 1)
+		{
+			if (debug)			
+				dprintf("room %i, from (%i/%i) to (%i/%i) (HANDOVER, NO HIGHRES)\n",
+					r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+			
+			return CanMoveInRoom(r, from_fullrow, from_fullcol, to_fullrow, to_fullcol);
+		}
+
+		// else allow small moves within big grid squares
+		else
+		{
+			if (debug)			
+				dprintf("room %i, from (%i/%i) to (%i/%i) (ALLOW, NO HIGHRES/SMALL)\n",
+					r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+
+			return True;
+		}
+	}
+
+	// don't allow if destination is oudside the grid bounds
+	// or if dest square is marked not walkable (=not part of a BSP sector).
+	// note: the new highres-flags still keep the walkable bit as first bit
+	if (to_row_comb < 0 || to_row_comb >= r->file_info.rowshighres ||
+		to_col_comb < 0 || to_col_comb >= r->file_info.colshighres ||
+		((r->file_info.highres_grid[to_row_comb][to_col_comb] & ROOM_FLAG_WALKABLE) == 0))
+	{
+		if (debug)
+		{
+			dprintf("room %i, from (%i/%i) to (%i/%i) (DENY, DEST OUTSIDE/NON WALKABLE)\n",
+				r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+		}
+
+		return False;	   
+	}
+	
+	// if someone called this with full square increments instead of
+	// increments of 16 fineunits, hand it over to the lowres grid
+	if (abs(drow) >= 4 || abs(dcol) >= 4)
+	{
+		if (debug)			
+			dprintf("room %i, from (%i/%i) to (%i/%i) (HANDOVER, TOO BIG)\n",
+				r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+			
+		return CanMoveInRoom(r, from_fullrow, from_fullcol, to_fullrow, to_fullcol);
+	}
+
+	// else if the size is still too big, allow (= teleport of the object)
+	// these cases would also (a) rather be part of a path finding solution
+	// and (b) would even if linear done between source and destination
+	// include major calculations (e.g. determine exit angle to determine direction)
+	// if you use highres grid, you must make your moves in 16fine increments (=1 highres increment).
+	else if (abs(drow) > 1 || abs(dcol) > 1)
+	{
+		if (debug)
+			dprintf("room %i, from (%i/%i) to (%i/%i) (ALLOW, TELEPORT)\n",
+				r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+
+		return True;
+	}
+	
+	// allow if the source for whatever reason is on a non-walkable square
+	// idea is to allow blocked objects get back in
+	if (from_row_comb < 0 || from_row_comb >= r->file_info.rowshighres ||
+		from_col_comb < 0 || from_col_comb >= r->file_info.colshighres)
+	{
+		if (debug)
+			dprintf("room %i, from (%i/%i) to (%i/%i) (ALLOW, FROM OUTSIDE)\n",
+				r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+
+		return True;
+	}
+	
+	// now determine the direction
+	// vertical/horizontal, return each in -1,0,1
+	dir_row = signum(drow);
+	dir_col = signum(dcol);
+
+	// allow moves in no direction (=no move)
+	if (dir_row == 0 && dir_col == 0)
+	{
+		if (debug)
+			dprintf("room %i, from (%i/%i) to (%i/%i) (ALLOW NO-MOVE)\n",
+				r,from_row_comb,from_col_comb,to_row_comb,to_col_comb);
+
+		return True;
+	}
+
+	// now verify the direction against the flags of the source-square
+	// note about the new highres-flags:
+	// the old movement bits for direction N,NE,E,... are stored at bits 1-9
+	// so the value is rightshifted by one to move them back in place
+	switch (dir_row)
+	{
+	case -1 :
+		switch (dir_col)
+		{
+		case -1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_NORTH_WEST; break;
+		case 0 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_NORTH; break;
+		case 1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_NORTH_EAST; break;
+		default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+		}
+		break;
+	case 0 :
+		switch (dir_col)
+		{
+		case -1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_WEST; break;
+		case 1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_EAST; break;
+		default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+		}
+		break;
+   case 1 :
+		switch (dir_col)
+		{
+		case -1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_SOUTH_WEST; break;
+		case 0 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_SOUTH; break;
+		case 1 : allow = (r->file_info.highres_grid[from_row_comb][from_col_comb] >> 1) & (unsigned int)MASK_SOUTH_EAST; break;
+		default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+		}
+		break;
+	default : eprintf("CanMoveInRoomHighRes got invalid direction %i, %i\n",dir_row,dir_col);
+	}
+
+	if (debug)
+		dprintf("room %i, from (%i/%i) to (%i/%i), DIR:(%i,%i) ALLOW:%i\n",
+			r,from_row_comb,from_col_comb,to_row_comb,to_col_comb,dir_row,dir_col,allow);
+
+	// allow is a bit, not necessarily 1 or 0, so need to make sure to make 1 or 0 here  
+	return (allow != 0);
+}
+
 Bool CanMoveInRoomFine(roomdata_node *r,int from_row,int from_col,int to_row,int to_col)
 {
    int dir_row,dir_col;
@@ -370,3 +565,25 @@ Bool LoadRoomFile(char *fname,room_type *file_info)
    return BSPRooFileLoadServer(s,file_info);
 }
 
+int GetHeight(roomdata_node *r,int row,int col,int finerow,int finecol)
+{
+	int highresrow,highrescol;
+	
+	// no room or no heightmap
+	if (!r || r->file_info.highres_grid == NULL)
+		return 0;
+
+	// build a combined value in fine precision first
+	// then scale it to highres precision
+	// formulas see in CanMoveInRoomHighRes
+	highresrow = ((row << 6) + finerow) >> 4;
+	highrescol = ((col << 6) + finecol) >> 4;
+	
+	// outside
+	if (highresrow >= r->file_info.rowshighres ||
+		highrescol >= r->file_info.colshighres)
+		return 0;
+
+	// return height from upper 23 bit
+	return (r->file_info.highres_grid[highresrow][highrescol] >> 9);
+}

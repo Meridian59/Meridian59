@@ -196,6 +196,7 @@ config_table_type config_table[] =
 
 { DEBUG_GROUP,            F, "[Debug]",       CONFIG_GROUP, "" },
 { DEBUG_CANMOVEINROOM,    T, "CanMoveInRoom", CONFIG_BOOL,  "No" },
+{ DEBUG_CANMOVEINROOMHIGHRES,    T, "CanMoveInRoomHighRes", CONFIG_BOOL,  "No" },
 { DEBUG_HEAP,             T, "Heap",          CONFIG_BOOL,  "No" },
 { DEBUG_TRANSMITTED_BYTES,T, "TransmittedBytes",CONFIG_BOOL,"No" },
 { DEBUG_HASH,             T, "Hash",          CONFIG_BOOL,  "No" },

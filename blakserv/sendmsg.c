@@ -143,7 +143,9 @@ void InitBkodInterpret(void)
 	ccall_table[ROOMDATA] = C_RoomData;
 	ccall_table[CANMOVEINROOM] = C_CanMoveInRoom;
 	ccall_table[CANMOVEINROOMFINE] = C_CanMoveInRoomFine;
-	
+	ccall_table[CANMOVEINROOMHIGHRES] = C_CanMoveInRoomHighRes;
+	ccall_table[GETHEIGHT] = C_GetHeight;
+
 	ccall_table[CONS] = C_Cons;
 	ccall_table[FIRST] = C_First;
 	ccall_table[REST] = C_Rest;

@@ -583,6 +583,8 @@ char * name_function(int fnum)
    case CREATEROOMDATA : return "LoadRoom";
    case ROOMDATA : return "RoomData";
    case CANMOVEINROOM : return "CanMoveInRoom";
+   case CANMOVEINROOMHIGHRES : return "CanMoveInRoomHighRes";
+   case GETHEIGHT : return "GetHeight";
 
    case CONS  : return "Cons";
    case FIRST  : return "First";

@@ -1355,12 +1355,8 @@
    MERCHANT_RIPOFF     = 5
 
    % Mob attributes
-   % Chase timer is 0 to 2.0sec + this many milliseconds.
-   MOB_CHASE_TIMER_WAIT = 150
    % Move timer is .3 to 8.5ec + this many milliseconds.
-   MOB_MOVE_TIMER_WAIT   = 1500
-   % Follow timer is when master <> $, .1 to 2.5ec + this many milliseconds.
-   MOB_FOLLOW_TIMER_WAIT = 500
+   MOB_MOVE_TIMER_WAIT   = 375
    % Attack timer  0 to 2.5sec + this many milliseconds.
    MOB_ATTACK_TIMER_WAIT = 1000
    % Monster will sit this many ms at birth.

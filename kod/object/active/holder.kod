@@ -533,7 +533,7 @@ messages:
       return TRUE;
    }
 
-   ReqSomethingMoved(what = $,new_row = $,new_col = $)
+   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $)
    {
       local i,each_obj;
 
@@ -541,10 +541,14 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
 
-         if NOT Send(each_obj,@ReqSomethingMoved,#what=what,#new_row=new_row,
-                     #new_col=new_col)
+         if each_obj = what
          {
-            return FALSE;
+            continue;
+         }
+		 if NOT Send(each_obj,@ReqSomethingMoved,#what=what,#new_row=new_row,
+                     #new_col=new_col,#new_finerow=new_finerow,#new_finecol=new_finecol)
+         {
+		   return FALSE;
          }
       }
       

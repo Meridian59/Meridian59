@@ -290,6 +290,168 @@ BYTE ComputeSquareFlags(BSPTree tree, int row, int col, int /*rows*/, int /*cols
 	return byte;
 }
 
+/************************************************************************/
+/*
+ * ComputeHighResSquareFlags: The new high resolution square has
+ *   4 bytes per square. The layout is like:
+ *   Bit 0:		Set to 1 if the gridsquare belongs to a sector (0=outside map)
+ *   Bit 1-9:	Each bit represents a direction (N, NE, E, SE, ...)
+ *   Bit 10-32:	The height of the floor
+ *   
+ *   Bits 0-9 are the old bits from move and flag grid combined.
+ *   Bits 10-32 are new.
+ */
+int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols, int min_distance)
+{
+	int x, y;
+	int source_x, source_y;
+	int dest_x, dest_y;
+	int maxx, maxy;
+	int allowed_dirs = 0;
+	BSPleaf *leaf;
+	
+	unsigned int flags = 0;
+	
+	// 
+	x = col * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+	y = row * FINENESSHIGHRESGRID + FINENESSHIGHRESGRID / 2;
+
+	/******** DIRECTION FLAGS ************/
+
+	maxx = cols * FINENESSHIGHRESGRID;
+	maxy = rows * FINENESSHIGHRESGRID;
+
+	// North
+	dest_x = x;
+	dest_y = max(0, y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_N << 1);
+		allowed_dirs++;
+	}
+
+	// Northeast
+	dest_x = min(maxx, x + FINENESSHIGHRESGRID);
+	dest_y = max(0, y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_NE << 1);
+		allowed_dirs++;
+	}
+
+	// East
+	dest_x = min(maxx, x + FINENESSHIGHRESGRID);
+	dest_y = y;
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_E << 1);
+		allowed_dirs++;
+	}
+
+	// Southeast
+	dest_x = min(maxx, x + FINENESSHIGHRESGRID);
+	dest_y = min(maxy, y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_SE << 1);
+		allowed_dirs++;
+	}
+
+	// South
+	dest_x = x;
+	dest_y = min(maxy, y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_S << 1);
+		allowed_dirs++;
+	}
+
+	// Southwest
+	dest_x = max(0, x - FINENESSHIGHRESGRID);
+	dest_y = min(maxy, y + FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_SW << 1);
+		allowed_dirs++;
+	}
+
+	// West
+	dest_x = max(0, x - FINENESSHIGHRESGRID);
+	dest_y = y;
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_W << 1);
+		allowed_dirs++;
+	}
+
+	// Northwest
+	dest_x = max(0, x - FINENESSHIGHRESGRID);
+	dest_y = max(0, y - FINENESSHIGHRESGRID);
+	if (!MoveTooCloseToWall(tree, x, y, dest_x, dest_y,
+							min_distance))
+	{
+		flags |= ((unsigned int)MOVE_NW << 1);
+		allowed_dirs++;
+	}
+
+	/******** MOVABLE / HEIGHT ************/
+
+	leaf = BSPFindLeafByPoint(tree, x, y);
+	if (leaf != NULL && leaf->floor_type != 0)
+	{
+		// set bit 0: walkable square
+		// only mark it as walkable
+		// if there is at least 1 direction
+		// you can get away from that square
+		if (allowed_dirs > 0)
+	 	  flags |= SF_PLAYABLE;
+
+		// if there is no allowed direction
+		// we don't set walkable, but
+		// allow any direction
+		// in case we still end up there
+		else
+		{
+			flags |= ((unsigned int)MOVE_N << 1);
+			flags |= ((unsigned int)MOVE_NE << 1);
+			flags |= ((unsigned int)MOVE_E << 1);
+			flags |= ((unsigned int)MOVE_SE << 1);
+			flags |= ((unsigned int)MOVE_S << 1);
+			flags |= ((unsigned int)MOVE_SW << 1);
+			flags |= ((unsigned int)MOVE_W << 1);
+			flags |= ((unsigned int)MOVE_NW << 1);
+		}
+
+		// set bits 9-31: height
+		// note: height in sectors is not stored in the same scale
+		// as the lines/walls. Instead it uses the EditorScale,
+		// which is the same as the fine serverscale.
+		// here we turn height into the same scale as highresgrid
+		flags |= ((leaf->floor_height * BLAK_FACTOR / FINENESSHIGHRESGRID) << 9);
+	}
+	else
+	{
+		// allow any outgoing direction from squares which should not be reached
+		flags |= ((unsigned int)MOVE_N << 1);
+		flags |= ((unsigned int)MOVE_NE << 1);
+		flags |= ((unsigned int)MOVE_E << 1);
+		flags |= ((unsigned int)MOVE_SE << 1);
+		flags |= ((unsigned int)MOVE_S << 1);
+		flags |= ((unsigned int)MOVE_SW << 1);
+		flags |= ((unsigned int)MOVE_W << 1);
+		flags |= ((unsigned int)MOVE_NW << 1);
+	}
+
+	return flags;
+}
+
 /*****************************************************************************/
 /*
  * BSPFindLeafByPoint:  Return leaf node of tree containing given point, or

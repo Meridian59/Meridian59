@@ -43,8 +43,8 @@ constants:
    USER_INACTIVE_TIME = 60 * 60 * 24 * 60
 
    % What's the "speed" of movement for the client?
-   USER_WALKING_SPEED = 18
-   USER_RUNNING_SPEED = 36
+   USER_WALKING_SPEED = 25
+   USER_RUNNING_SPEED = 50
 
    % How many packets incoming per second do we allow?
    INCOMING_PACKET_THROTTLE = 20

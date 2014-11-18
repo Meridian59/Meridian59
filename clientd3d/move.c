@@ -836,12 +836,17 @@ void MoveUpdatePosition(void)
 	   // debug output
 	   debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
    
-	   // base walkspeed
-	   speed = 18;
+	   // the following speed values must match
+	   // the actual speed a player is moving
+	   // defined by MOVEUNITS and MOVE_DELAY
+	   // as well as those defined in user.kod
+
+	   // walk-speed (USER_WALKING_SPEED from user.kod)
+	   speed = 25;
    
-	   // doubled on run
+	   // run-speed (USER_RUNNING_SPEED from user.kod)
 	   if (IsMoveFastAction(last_move_action))
-		 speed *= 2;
+		 speed = 50;
 
 	   // send update
 	   RequestMove(y, x, speed, player.room_id);

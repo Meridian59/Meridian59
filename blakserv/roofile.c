@@ -121,6 +121,35 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 			   dprintf("%2x ", room->monster_grid[i][j]);
 	   */
    }
+
+   room->highres_grid = NULL;
+
+   if (roo_version >= 13)
+   {   
+	   // Read highres gridsize
+	   if (read(infile, &room->rowshighres, 4) != 4)
+	   { close(infile); return False; }
+
+	   if (read(infile, &room->colshighres, 4) != 4)
+	   { close(infile); return False; }
+
+	   /* dprintf("found a new room version 13\n");*/
+	   // Allocate and read highres grid
+	   room->highres_grid = (unsigned int **)AllocateMemory(MALLOC_ID_ROOM,room->rowshighres * sizeof(int *));
+	   for (i=0; i < room->rowshighres; i++)
+	   {
+		   room->highres_grid[i] = (unsigned int *)AllocateMemory(MALLOC_ID_ROOM,room->colshighres * sizeof(int));
+		   if (read(infile, room->highres_grid[i], room->colshighres * sizeof(int)) != room->colshighres * sizeof(int))
+		   {
+			   for (j=0; j <= i; j++)
+				   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
+			   FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
+			   
+			   close(infile);
+			   return False;
+		   }
+	   }	   
+   }
    
 #if 0
    dprintf("%s: %d rows, %d cols\n", fname, room->rows, room->cols);
@@ -128,7 +157,7 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       for (j=0; j < room->cols; j++)
 	 dprintf("%2x ", room->grid[i][j]);
 #endif
-	 
+
    close(infile);
 
    return True;
@@ -155,9 +184,20 @@ void BSPRoomFreeServer(room_type *room)
 		   FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols);
 	   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
    }
+
+   if (room->highres_grid != NULL)
+   {
+	   for (i=0; i < room->rowshighres; i++)
+		   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
+	   FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
+   }
+
    room->grid = NULL;
    room->flags = NULL;
    room->monster_grid = NULL;
    room->rows = 0;
    room->cols = 0;
+   room->rowshighres = 0;
+   room->colshighres = 0;
+   room->highres_grid = NULL;
 }

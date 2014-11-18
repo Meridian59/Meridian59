@@ -1600,7 +1600,7 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])
 {
-	val_type room_val,ret_val,rows,cols,security;
+	val_type room_val,ret_val,rows,cols,security,rowshighres,colshighres;
 	roomdata_node *room;
 	
 	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -1625,8 +1625,18 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 	cols.v.data = room->file_info.cols;
 	security.v.tag = TAG_INT;
 	security.v.data = room->file_info.security;
-	
+	rowshighres.v.tag = TAG_INT;
+	rowshighres.v.data = room->file_info.rowshighres;
+	colshighres.v.tag = TAG_INT;
+	colshighres.v.data = room->file_info.colshighres;
+
 	ret_val.int_val = NIL;
+	
+	ret_val.v.data = Cons(colshighres,ret_val);
+	ret_val.v.tag = TAG_LIST;
+	
+	ret_val.v.data = Cons(rowshighres,ret_val);
+	ret_val.v.tag = TAG_LIST;
 	
 	ret_val.v.data = Cons(security,ret_val);
 	ret_val.v.tag = TAG_LIST;
@@ -1710,6 +1720,191 @@ int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
 	/* remember that kod uses 1-based arrays, and of course we don't */
 	ret_val.v.data = CanMoveInRoom(r,row_source.v.data-1,col_source.v.data-1,
 		row_dest.v.data-1,col_dest.v.data-1);
+	
+	return ret_val.int_val;
+}
+
+int C_CanMoveInRoomHighRes(int object_id,local_var_type *local_vars,
+					int num_normal_parms,parm_node normal_parm_array[],
+					int num_name_parms,parm_node name_parm_array[])
+{
+	val_type ret_val,room_val;
+	val_type row_source,col_source,finerow_source,finecol_source;
+	val_type row_dest,col_dest,finerow_dest,finecol_dest;
+	roomdata_node *r;
+	
+	/* determine whether there's a wall between the row,col to row,col
+    * in the given room.
+    */
+	
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+	
+	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row_source = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col_source = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow_source = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol_source = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
+		normal_parm_array[4].value);
+	
+	row_dest = RetrieveValue(object_id,local_vars,normal_parm_array[5].type,
+		normal_parm_array[5].value);
+	col_dest = RetrieveValue(object_id,local_vars,normal_parm_array[6].type,
+		normal_parm_array[6].value);
+	finerow_dest = RetrieveValue(object_id,local_vars,normal_parm_array[7].type,
+		normal_parm_array[7].value);
+	finecol_dest = RetrieveValue(object_id,local_vars,normal_parm_array[8].type,
+		normal_parm_array[8].value);
+	
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_CanMoveInRoomHighRes can't use non room %i,%i\n",
+			room_val.v.tag,room_val.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (row_source.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes row source can't use non int %i,%i\n",
+			row_source.v.tag,row_source.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (col_source.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes col source can't use non int %i,%i\n",
+			col_source.v.tag,col_source.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finerow_source.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes finerow source can't use non int %i,%i\n",
+			finerow_source.v.tag,finerow_source.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finecol_source.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes finecol source can't use non int %i,%i\n",
+			finecol_source.v.tag,finecol_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes row dest can't use non int %i,%i\n",
+			row_dest.v.tag,row_dest.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (col_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes col dest can't use non int %i,%i\n",
+			col_dest.v.tag,col_dest.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finerow_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes finerow dest can't use non int %i,%i\n",
+			finerow_dest.v.tag,finerow_dest.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finecol_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_CanMoveInRoomHighRes finecol dest can't use non int %i,%i\n",
+			finecol_dest.v.tag,finecol_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_CanMoveInRoomHighRes can't find room %i\n",room_val.v.data);
+		return ret_val.int_val;
+	}
+	
+	/* remember that kod uses 1-based arrays, and of course we don't */
+	ret_val.v.data = CanMoveInRoomHighRes(r,
+		row_source.v.data-1,col_source.v.data-1,finerow_source.v.data,finecol_source.v.data,
+		row_dest.v.data-1,col_dest.v.data-1,finerow_dest.v.data,finecol_dest.v.data);
+	
+	return ret_val.int_val;
+}
+
+int C_GetHeight(int object_id,local_var_type *local_vars,
+					int num_normal_parms,parm_node normal_parm_array[],
+					int num_name_parms,parm_node name_parm_array[])
+{
+	val_type ret_val,room_val;
+	val_type row,col,finerow,finecol;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+	
+	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
+		normal_parm_array[4].value);
+		
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_GetHeight can't use non room %i,%i\n",
+			room_val.v.tag,room_val.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (row.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight row can't use non int %i,%i\n",
+			row.v.tag,row.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (col.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight col can't use non int %i,%i\n",
+			col.v.tag,col.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finerow.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight finerow can't use non int %i,%i\n",
+			finerow.v.tag,finerow.v.data);
+		return ret_val.int_val;
+	}
+	
+	if (finecol.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeight finecol can't use non int %i,%i\n",
+			finecol.v.tag,finecol.v.data);
+		return ret_val.int_val;
+	}
+	
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_GetHeight can't find room %i\n",room_val.v.data);
+		return ret_val.int_val;
+	}
+	
+	/* remember that kod uses 1-based arrays, and of course we don't */
+	ret_val.v.data = GetHeight(r,
+		row.v.data-1,col.v.data-1,finerow.v.data,finecol.v.data);
 	
 	return ret_val.int_val;
 }

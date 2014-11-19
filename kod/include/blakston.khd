@@ -1360,7 +1360,7 @@
    % Attack timer  0 to 2.5sec + this many milliseconds.
    MOB_ATTACK_TIMER_WAIT = 1000
    % Monster will sit this many ms at birth.
-   MOB_START_FREEZE = 15000
+   MOB_START_FREEZE = 1000
 
    % Mob attributes
    MOB_NOFIGHT          = 0x00001   % Doesn't fight

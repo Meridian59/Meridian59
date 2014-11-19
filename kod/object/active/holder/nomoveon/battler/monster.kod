@@ -1986,7 +1986,7 @@ messages:
    GetVisionDistance()
    "With difficulty going from 0 to 10, this is either 4,5,or 6."
    {
-      return 4 + viDifficulty/2;
+      return 6 + viDifficulty * 2;
    }
 
    GetAttackRange()
@@ -5974,7 +5974,7 @@ messages:
       iCol = Send(self,@GetCol); 
 
       % Vision distance is a number from 4 to 6
-      iRangeSquared = Send(self,@GetVisionDistance) * 3;
+      iRangeSquared = Send(self,@GetVisionDistance);
       iRangeSquared = iRangeSquared * iRangeSquared;
 
       oTarget = $;
@@ -6050,7 +6050,7 @@ messages:
       iCol = Send(self,@GetCol);
 
       % Vision distance is a number from 4 to 6
-      iRangeSquared = Send(self,@GetVisionDistance) * 5;
+      iRangeSquared = Send(self,@GetVisionDistance);
       iRangeSquared = iRangeSquared * iRangeSquared;
 
       lActive = Send(poOwner,@GetHolderActive);

@@ -806,7 +806,10 @@ messages:
          iOpt_range = Send(mob,@GetOptimalRange);
 
          iRange = Send(mob,@SquaredDistanceTo,#what=target);
-         if iRange < (iOpt_range * iOpt_range)
+
+         % Check if we have a range first, we might be dead already.
+         if iRange <> $
+            AND iRange < (iOpt_range * iOpt_range)
          {
             Send(mob,@MoveAway,#oTarget=target,#face_away=TRUE);
 

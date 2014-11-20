@@ -50,7 +50,7 @@ classvars:
    vrDead_name = Shadowbeast_dead_name_rsc
  
    viTreasure_type = TID_VERY_TOUGH
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viSpeed = SPEED_AVERAGE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viLevel = 200

@@ -89,6 +89,9 @@ classvars:
 
    % Cannot enchant others with touch attacks.
    vbCanCastOnOthers = FALSE
+   
+   % The amount of light added to player's screen.
+   viEnchantmentLight = 0
 
 properties:
 
@@ -115,14 +118,14 @@ messages:
       %  we've checked for re-enchantment in CanPayCosts.
       Send(who,@RemoveEnchantmentClass,#class=&TouchAttackSpell);
       
-      Send(who,@GainLight,#amount=20);
+      Send(who,@GainLight,#amount=viEnchantmentLight);
       
       propagate;
    }
 
    EndEnchantment(who = $, report = TRUE, state = 0)
    {
-      Send(who,@LoseLight,#amount=20);
+      Send(who,@LoseLight,#amount=viEnchantmentLight);
       
       propagate;
    }

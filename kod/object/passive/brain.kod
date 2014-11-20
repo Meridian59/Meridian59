@@ -826,7 +826,6 @@ messages:
       if NOT (behavior & AI_FIGHT_HYPERAGGRESSIVE)
          AND NOT (behavior & AI_FIGHT_SINGLEMINDED)
          AND (Send(mob,@GetTimeAttacked) + 10) < GetTime()
-         AND Send(mob,@GetLastAttacker) = target
       {
          iSquaredVision = Send(mob,@GetVisionDistance) + 5;
          iSquaredVision = (iSquaredVision * iSquaredVision) / 5;

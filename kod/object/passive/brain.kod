@@ -44,7 +44,7 @@ properties:
    piHyperAggressive_factor = 60
 
    % The higher this is, the less likely monsters will 'swarm'.
-   piChaser_factor = 75
+   piChaser_factor = 120
 
    % The higher this number is, the more likely a wizard hater
    % will chase after wizards.
@@ -255,6 +255,9 @@ messages:
       if victim = mob
       {
          iType = TS_FIGHT_ME_VICTIM;
+
+         % Monster needs to record the time, used for when players flee it.
+         Send(mob,@RecordTimeAttacked,#who=what);
       }
       else
       {
@@ -822,13 +825,17 @@ messages:
       % as used in GetHatred, with 3 added to the monster vision.
       if NOT (behavior & AI_FIGHT_HYPERAGGRESSIVE)
          AND NOT (behavior & AI_FIGHT_SINGLEMINDED)
+         AND (Send(mob,@GetTimeAttacked) + 10) < GetTime()
+         AND Send(mob,@GetLastAttacker) = target
       {
-         iSquaredVision = Send(mob,@GetVisionDistance) + 3;
+         iSquaredVision = Send(mob,@GetVisionDistance) + 5;
          iSquaredVision = (iSquaredVision * iSquaredVision) / 5;
          iSquaredDistance = (Send(mob,@SquaredFineDistanceTo,#what=target) / 10000);
          if iSquaredVision < iSquaredDistance
          {
             Send(mob,@EnterStateWait,#actnow=TRUE);
+
+            return;
          }
       }
 
@@ -1215,8 +1222,11 @@ messages:
                                     * piPlayer_factor)/100);
 
          % If they already have a lot of people chasing them, run away.
-         iHatred = iHatred - (Send(what,@GetMonsterChasers)
-                                    * piChaser_factor)/100;
+         if NOT (event = TS_FIGHT_ME_VICTIM)
+         {
+            iHatred = iHatred - (Send(what,@GetMonsterChasers)
+                                       * piChaser_factor)/100;
+         }
       }
 
       if (behavior & AI_FIGHT_HYPERAGGRESSIVE)

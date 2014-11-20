@@ -390,6 +390,9 @@ properties:
 
    piArmor = 0
 
+   piLastTimeAttacked = 0
+   poLastAttacker = $
+
 messages:
 
    Constructor(color=0)
@@ -1006,6 +1009,41 @@ messages:
            #what=what,#victim=victim,#use_weapon=use_weapon);
 
       propagate;
+   }
+
+   RecordTimeAttacked(who=$)
+   "This records the last time the monster was attacked, "
+   "and the player or monster that did it."
+   {
+      local oMaster;
+
+      piLastTimeAttacked = GetTime();
+
+      if who <> $
+      {
+         if IsClass(who,&Monster)
+         {
+            % Check if the monster has a master. If so, use the master here.
+            oMaster = Send(who,@GetMaster);
+            if oMaster <> $
+            {
+               who = oMaster;
+            }
+         }
+      }
+      poLastAttacker = who;
+
+      return;
+   }
+
+   GetTimeAttacked()
+   {
+      return piLastTimeAttacked;
+   }
+
+   GetLastAttacker()
+   {
+      return poLastAttacker;
    }
 
    PlayerFirstMove(what=$, where = $, new_row = 0, new_col=0)

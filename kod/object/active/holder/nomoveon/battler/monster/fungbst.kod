@@ -55,7 +55,7 @@ classvars:
    viSpeed = SPEED_VERY_SLOW
    viAttributes = MOB_SPASM
    viLevel = 50
-   viDifficulty = 1
+   viDifficulty = 3
    viKarma = 10
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 100
@@ -105,7 +105,7 @@ messages:
       }
 
       Send(poOwner,@SomethingChanged,#what=self);
-      
+
       return;
    }
 
@@ -114,11 +114,11 @@ messages:
       local iAnim;
 
       iAnim = piAnimation;
-      
+
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = iAnim;
-            
+
       return;
    }
 
@@ -176,7 +176,6 @@ messages:
       % No lighting information.
       return LIGHT_FLAG_NONE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

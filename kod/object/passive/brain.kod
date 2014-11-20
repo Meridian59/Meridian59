@@ -44,7 +44,7 @@ properties:
    piHyperAggressive_factor = 60
 
    % The higher this is, the less likely monsters will 'swarm'.
-   piChaser_factor = 120
+   piChaser_factor = 150
 
    % The higher this number is, the more likely a wizard hater
    % will chase after wizards.

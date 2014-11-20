@@ -61,7 +61,7 @@ classvars:
 
    viTreasure_type = TID_LUPOGG_KING
    viSpeed = SPEED_SLOW
-   viAttack_types = ATCK_WEAP_CLAW
+   viAttack_type = ATCK_WEAP_CLAW
    viLevel = 200
    viDifficulty = 9
    viKarma = 0

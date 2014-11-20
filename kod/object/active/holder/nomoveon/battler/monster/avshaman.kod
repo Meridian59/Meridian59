@@ -77,7 +77,7 @@ classvars:
    
    viIndefinite = ARTICLE_AN
    viTreasure_type = TID_AVAR_SHAMAN
-   viAttack_types = ATCK_WEAP_PIERCE
+   viAttack_type = ATCK_WEAP_PIERCE
    viSpeed = SPEED_SLOW
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
    viLevel = 100
@@ -311,7 +311,7 @@ messages:
             {
                if iRandom < 90      
                {
-                  iSpell = SID_SHATTER;
+                  iSpell = SID_BRITTLE;
                   iManaCost = 10;
                }
                else

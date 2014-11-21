@@ -28,7 +28,7 @@ constants:
 
    ANIM_JUMPUP = 2
    ANIM_JUMPDOWN = 3
-   
+
    STATE_JUMPINGDOWN = 0
    STATE_ONROOF = 1
    STATE_READY = 2
@@ -39,11 +39,11 @@ resources:
    Kriipa_name_rsc = "kriipa"
    Kriipa_icon_rsc = kriipa.bgf
    Kriipa_desc_rsc = \
-      "This spindly-legged creature scuttles along the jungle canopy in search "
-      "of unsuspecting prey, which includes just about everything that moves. "
-      "Island travellers are warned to keep careful watch above, for the deadly "
-      "grinning lizards have been known to decapitate a grown man in a single "
-      "blow with their dagger-sharp claws."
+      "This spindly-legged creature scuttles along the jungle canopy in "
+      "search of unsuspecting prey, which includes just about everything that "
+      "moves. Island travellers are warned to keep careful watch above, for "
+      "the deadly grinning lizards have been known to decapitate a grown man "
+      "in a single blow with their dagger-sharp claws."
 
    Kriipa_dead_icon_rsc = kriipaX.bgf
    Kriipa_dead_name_rsc = "slain Kriipa"
@@ -88,7 +88,6 @@ properties:
 
 messages:
 
-
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_COLD, 30 ],
@@ -115,7 +114,7 @@ messages:
    {
       if poOwner = $
       {
-         debug("Unreachable. Null Owner");
+         Debug("Unreachable. Null Owner");
          Send(self,@EnterStateLimbo);
 
          return; 
@@ -143,39 +142,48 @@ messages:
       propagate;
    }
 
-   CanMonsterFight(who=$, oStroke = $)
+   CanMonsterFight(who=$,oStroke=$)
    {
       if piRoofState = STATE_ONROOF
       {
-         if NOT send(oStroke,@IsRangedAttack)
-         { 
-            send(who,@msgsenduser,#message_rsc=kriipa_cant_attack);
+         if NOT Send(oStroke,@IsRangedAttack)
+         {
+            if IsClass(who,&User)
+            {
+               Send(who,@MsgSendUser,#message_rsc=kriipa_cant_attack);
+            }
 
-            return FALSE; 
+            return FALSE;
          }
       }
 
-      return True;
+      return TRUE;
    }
 
    DropTimer()
    {
       ptDrop = $;
 
+      if poOwner = $
+      {
+         % We died and this still went off. Do nothing.
+         return;
+      }
+
       if piRoofState = STATE_JUMPINGDOWN
-      {  
-         piRoofState = STATE_READY;      
-         send(self,@TryAttack,#what=poTarget);
-         ptDrop=CreateTimer(self,@DropTimer,2000);          
+      {
+         piRoofState = STATE_READY;
+         Send(self,@TryAttack,#what=poTarget);
+         ptDrop=CreateTimer(self,@DropTimer,2000);
 
          return;
       }
 
       if piRoofState = STATE_READY
-      {         
+      {
          piRoofState = STATE_JUMPINGUP;
-         send(self,@MonsterJumpUp);
-         ptDrop=CreateTimer(self,@DropTimer,950);          
+         Send(self,@MonsterJumpUp);
+         ptDrop=CreateTimer(self,@DropTimer,950);
          Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
       }
 
@@ -183,7 +191,7 @@ messages:
       {
          piRoofState = STATE_ONROOF;
          piBehavior = (piBehavior & ~AI_NOMOVE);
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -194,27 +202,27 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
-   
+
    MonsterJumpUp(what = $)
    {
       piAnimation = ANIM_JUMPUP;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
-   }   
+   }
 
    MonsterJumpDown(what = $)
    {
       piAnimation = ANIM_JUMPDOWN;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
-   }   
+   }
 
    SendMoveAnimation()
    {
@@ -223,47 +231,48 @@ messages:
       return;
    }
 
-   AttackTimer( timer = $ )
+   AttackTimer(timer = $)
    "We were bashing on something before, and now its time to hit it again."
    {
       Send(self,@ClearBehavior,#timer=timer);
 
-      %%% sanity checks
+      % Sanity checks.
       if poOwner = $
       {
-         debug("Unreachable. Null Owner");
+         Debug("Unreachable. Null Owner");
          Send(self,@EnterStateLimbo);
 
          return;
       }
 
-      if poTarget=$
+      if poTarget = $
       {
-         Send(self,@EnterStateWait); 
+         Send(self,@EnterStateWait);
 
-         return; 
+         return;
       }
-      
-      send(poBrain,@GetAttackBehavior,#mob=self,#target=poTarget,#behavior=piBehavior);
-      
+
+      Send(poBrain,@GetAttackBehavior,#mob=self,#target=poTarget,
+            #behavior=piBehavior);
+
       if poTarget = $
       {
          Send(self,@EnterStateMove);
 
          return;
-      }      
+      }
 
-      if not Send(self,@CanReach,#what=poTarget) 
-      {         
+      if NOT Send(self,@CanReach,#what=poTarget) 
+      {
          Send(self,@EnterStateChase);
 
          return;
       }
 
       % We're close enough and in range.  Now, normally, we move 
-      %  around the player to keep him guessing.   Let's zigzag around,
-      %  instead of consistently moving to that player's right.
-      if random(1,100) < 50
+      % around the player to keep him guessing.   Let's zigzag around,
+      % instead of consistently moving to that player's right.
+      if Random(1,100) < 50
       {
          piState = piState | ESTATE_CLOCKWISE;
       }
@@ -274,10 +283,10 @@ messages:
 
       if ptDrop = $
       {
-         %%% carry out attack      
+         % Carry out attack.
          piRoofState = STATE_JUMPINGDOWN;
          piBehavior = (piBehavior | AI_NOMOVE);
-         send(self,@MonsterJumpDown);
+         Send(self,@MonsterJumpDown);
          ptDrop=CreateTimer(self,@DropTimer,1200);
       }
 
@@ -319,7 +328,7 @@ messages:
       {
          AddPacket(1,ANIMATE_NONE,2,FRAME_STAND);
       }
-      
+
       return;
    }
 
@@ -327,7 +336,7 @@ messages:
    {
       if ptDrop <> $
       {
-         deletetimer(ptDrop);
+         DeleteTimer(ptDrop);
          ptDrop = $;
       }
 
@@ -337,8 +346,7 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
-
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -58,7 +58,7 @@ classvars:
    viTerrain_type = TERRAIN_CAVES | TERRAIN_LAIR
 
    % 20 seconds
-   viBossResetTime = 20000  
+   viBossResetTime = 20000
 
 properties:
 
@@ -117,7 +117,8 @@ messages:
 
       lBraziers = [ [25, 40, 48, 8], [25, 42, 48, 56] ];
 
-      Send(self,@CreateObjFromList,#lObjlist=lBraziers,#oObjectClassName=&OrcTorch);
+      Send(self,@CreateObjFromList,#lObjlist=lBraziers,
+            #oObjectClassName=&OrcTorch);
 
       return;
    }
@@ -126,10 +127,14 @@ messages:
    CreateStandardExits()
    {
       plEdge_exits = $;
-      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_PIT_A, 7, 61, ROTATE_NONE,ROW_IS_LESS_THAN,42], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_PIT_B, 8, 4, ROTATE_NONE,ROW_IS_LESS_THAN,42], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_CAVE1_EXT, 18, 43, ROTATE_NONE,ROW_IS_GREATER_THAN,42], plEdge_exits);
-      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_CAVE5_EXT, 8, 3, ROTATE_NONE,ROW_IS_GREATER_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_PIT_A, 7, 61,
+                           ROTATE_NONE,ROW_IS_LESS_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_PIT_B, 8, 4,
+                           ROTATE_NONE,ROW_IS_LESS_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_CAVE1_EXT, 18, 43,
+                           ROTATE_NONE,ROW_IS_GREATER_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_CAVE5_EXT, 8, 3,
+                           ROTATE_NONE,ROW_IS_GREATER_THAN,42], plEdge_exits);
 
       propagate;
    }
@@ -138,22 +143,26 @@ messages:
 % Monster death code%
 %%%%%%%%%%%%%%%%%%%%%
 %
+
    BossKilledTrigger()
    {
       local i;
 
-      % just killed the orc pit boss (opening door, creating treasure...)
+      % Just killed the orc pit boss (opening door, creating treasure...)
 
-      % raise the gate
-      Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
-      Send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
-           #height=H_DOOR3a_UP,#speed=DOOR_UP_SPEED);
-      Send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
-           #height=H_DOOR3b_UP,#speed=DOOR_UP_SPEED);
+      % Raise the gate.
+      Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound);
+      Send(self,@SetSector,#sector=SECTOR_DOOR3a,
+            #animation=ANIMATE_CEILING_LIFT,
+            #height=H_DOOR3a_UP,#speed=DOOR_UP_SPEED);
+      Send(self,@SetSector,#sector=SECTOR_DOOR3b,
+            #animation=ANIMATE_CEILING_LIFT,
+            #height=H_DOOR3b_UP,#speed=DOOR_UP_SPEED);
       piDoor3Position = DOOR_UP;
 
       propagate;
    }
+
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%
 % end Monster death code%
@@ -168,11 +177,11 @@ messages:
    {
       local i;
 
-      % close the boss door instantaneously
-      Send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
-           #height=H_DOOR3a_DOWN,#speed=0);
-      Send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
-           #height=H_DOOR3b_DOWN,#speed=0);
+      % Close the boss door instantaneously.
+      Send(self,@SetSector,#sector=SECTOR_DOOR3a,
+            #animation=ANIMATE_CEILING_LIFT,#height=H_DOOR3a_DOWN,#speed=0);
+      Send(self,@SetSector,#sector=SECTOR_DOOR3b,
+            #animation=ANIMATE_CEILING_LIFT,#height=H_DOOR3b_DOWN,#speed=0);
       piDoor3Position = DOOR_DOWN;
 
       % Delete any boss bodies that may be lying around...
@@ -186,26 +195,30 @@ messages:
 
       propagate;
    }
+
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-% end Boss resetting code %
+% End Boss resetting code %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
-% normal moving doors %
+% Normal moving doors %
 %%%%%%%%%%%%%%%%%%%%%%%
 %
+
    SomethingTryGo(what=$,row=$,col=$)
    {
       if ((row = 56 OR row = 57) AND (col = 14 OR col = 15))
          AND piDoor1Position = DOOR_DOWN
       {
-         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
-         Send(self,@SetSector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR1a_UP,#speed=DOOR_UP_SPEED);
-         Send(self,@SetSector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR1b_UP,#speed=DOOR_UP_SPEED);
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound);
+         Send(self,@SetSector,#sector=SECTOR_DOOR1a,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR1a_UP,#speed=DOOR_UP_SPEED);
+         Send(self,@SetSector,#sector=SECTOR_DOOR1b,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR1b_UP,#speed=DOOR_UP_SPEED);
          piDoor1Position = DOOR_UP;
          ptDoor1ResetTimer = CreateTimer(self,@DoorResetTrigger1,DOOR_RESET_TIME);
 
@@ -213,13 +226,15 @@ messages:
       }
 
       if ((row = 63 OR row = 64) AND (col = 55 OR col = 56))
-          AND piDoor2Position = DOOR_DOWN
+         AND piDoor2Position = DOOR_DOWN
       {
-         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
-         Send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR2a_UP,#speed=DOOR_UP_SPEED);
-         Send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR2b_UP,#speed=DOOR_UP_SPEED);
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound);
+         Send(self,@SetSector,#sector=SECTOR_DOOR2a,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR2a_UP,#speed=DOOR_UP_SPEED);
+         Send(self,@SetSector,#sector=SECTOR_DOOR2b,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR2b_UP,#speed=DOOR_UP_SPEED);
          piDoor2Position = DOOR_UP;
          ptDoor2ResetTimer = CreateTimer(self,@DoorResetTrigger2,DOOR_RESET_TIME);
 
@@ -232,14 +247,16 @@ messages:
    DoorResetTrigger1()
    {
       ptDoor1ResetTimer = $;
-      
+
       if piDoor1Position = DOOR_UP
       {
-         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound); 
-         Send(self,@SetSector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR1a_DOWN,#speed=DOOR_DOWN_SPEED);
-         Send(self,@SetSector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR1b_DOWN,#speed=DOOR_DOWN_SPEED);
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound);
+         Send(self,@SetSector,#sector=SECTOR_DOOR1a,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR1a_DOWN,#speed=DOOR_DOWN_SPEED);
+         Send(self,@SetSector,#sector=SECTOR_DOOR1b,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR1b_DOWN,#speed=DOOR_DOWN_SPEED);
          piDoor1Position = DOOR_DOWN;
       }
 
@@ -249,14 +266,16 @@ messages:
    DoorResetTrigger2()
    {
       ptDoor2ResetTimer = $;
-      
+
       if piDoor2Position = DOOR_UP
       {
-         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound); 
-         Send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR2a_DOWN,#speed=DOOR_DOWN_SPEED);
-         Send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
-              #height=H_DOOR2b_DOWN,#speed=DOOR_DOWN_SPEED);
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound);
+         Send(self,@SetSector,#sector=SECTOR_DOOR2a,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR2a_DOWN,#speed=DOOR_DOWN_SPEED);
+         Send(self,@SetSector,#sector=SECTOR_DOOR2b,
+               #animation=ANIMATE_CEILING_LIFT,
+               #height=H_DOOR2b_DOWN,#speed=DOOR_DOWN_SPEED);
          piDoor2Position = DOOR_DOWN;
       }
 

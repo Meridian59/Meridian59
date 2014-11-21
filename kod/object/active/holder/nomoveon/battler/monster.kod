@@ -6135,10 +6135,10 @@ messages:
       return oTarget;
    }
 
-   IsAlly(target = $, regroup = FALSE)
-   {          
+   IsAlly(target=$,regroup=FALSE)
+   {
       if GetClass(target) = GetClass(self)
-         OR (poMaster <> $ AND Send(target,@GetMaster) <> poMaster)
+         OR (poMaster <> $ AND Send(target,@GetMaster) = poMaster)
       {
          return TRUE;
       }

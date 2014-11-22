@@ -1100,17 +1100,11 @@ messages:
          return;
       }
 
-      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 20)
+      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 25)
       {
-         if IsClass(self,&Reflection)
-            AND NOT Send(oNewRoom,@AllowGuildAttack,#what=poMaster)
-         {
-            return;
-         }
-
          Send(oNewRoom,@NewHold,#what=self,
-              #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
-              #new_angle=Send(poMaster,@GetAngle));
+               #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
+               #new_angle=Send(poMaster,@GetAngle));
       }
 
       return;

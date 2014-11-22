@@ -75,7 +75,7 @@ messages:
 
    CanPayCosts(who=$,lTargets=$)
    {
-      local oRoom, oTarget;
+      local oOwner, oRoom, oTarget;
 
       oRoom = Send(who,@GetOwner);
       oTarget = First(lTargets);

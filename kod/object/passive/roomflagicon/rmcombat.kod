@@ -1,0 +1,34 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RmCombat is RoomFlagIcon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   rmcombat_name_rsc = "PvP Combat Allowed"
+   rmcombat_icon_rsc = rmcombat.bgf
+   rmcombat_desc_rsc = "All types of combat are allowed here."
+
+classvars:
+
+   vrName = rmcombat_name_rsc
+   vrIcon = rmcombat_icon_rsc
+   vrDesc = rmcombat_desc_rsc
+
+properties:
+
+messages:
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

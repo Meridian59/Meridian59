@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GemJalaPower is GemSpellpower
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   gem_jalapower_name_rsc = "bard's jewel"
+   gem_jalapower_icon_rsc = sapphire.bgf
+   gem_jalapower_desc_rsc = \
+	"This shard of gemstone hums a low harmonic note."
+	
+classvars:
+   
+   vrName = gem_jalapower_name_rsc
+   vrIcon = gem_jalapower_icon_rsc
+   vrDesc = gem_jalapower_desc_rsc
+
+   viValue_average = 15000
+   viWeight = 0
+   viBulk = 0
+
+   viSchool = SS_JALA
+
+properties:
+   
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

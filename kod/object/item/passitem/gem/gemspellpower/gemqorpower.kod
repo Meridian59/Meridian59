@@ -17,7 +17,7 @@ constants:
 resources:
 
    gem_qorpower_name_rsc = "bloodstone agate"
-   gem_qorpower_icon_rsc = serapunc.bgf.bgf
+   gem_qorpower_icon_rsc = serapunc.bgf
    gem_qorpower_desc_rsc = \
 	"This shard of gemstone glows with a sliver of unholy hunger."
 	

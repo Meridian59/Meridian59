@@ -18,7 +18,9 @@ classvars:
    
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+
+   % Mob doesn't move and cannot be attacked.
+   viDefault_behavior = AI_NPC | AI_NOMOVE
 
    viSpeed = SPEED_SLOW
    viQuestID = 0
@@ -37,9 +39,9 @@ messages:
       if viQuestID<> 0
       {
          Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
-              #reward= [QST_REWARD_SERVICE,viQuestID]);
+               #reward= [QST_REWARD_SERVICE,viQuestID]);
       }
-      
+
       return;
    }
 
@@ -53,7 +55,7 @@ messages:
    Delete()
    {
       Send(Send(SYS,@GetParliament),@LiegeDeleted,#what=self);
-      
+
       propagate;
    }
 
@@ -69,16 +71,16 @@ messages:
       room = Send(SYS,@FindRoomByNum,#num=viHomeroom);
       Send(room,@teleport,#what=self);
       Send(room,@SomethingMoved,#what=self,#new_row=viMyRow,
-           #new_col=viMyCol,#fine_row=viMyFR,#fine_col=viMyFC);
+            #new_col=viMyCol,#fine_row=viMyFR,#fine_col=viMyFC);
       Send(room,@SomethingTurned,#what=self,#new_angle=viMyAngle);
-      
+
       return;
    }
 
    NewHoldObject(what = $)
    {
       % Don't want them holding anything, so just delete it.
-      send(what,@Delete);
+      Send(what,@Delete);
 
       return;
    }
@@ -86,7 +88,30 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
+
+   EnterStateWait()
+   {
+      % They shouldn't have acquired a target, but to be sure...
+      if poTarget <> $
+         AND Send(poTarget,@GetOwner) = poOwner
+         AND IsClass(poTarget,&user)
+      {
+         Send(poTarget,@SubtractFromMonsterChasers,
+               #level=Send(self,@GetLevel));
+      }
+
+      poTarget = $;
+      piHatred = 0;
+
+      % Leave them in the waiting state.
+      Send(self,@SetState,#bit=STATE_WAIT);
+      Send(self,@ClearBehavior);
+
+      % We no longer set a move timer for NPCs.
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

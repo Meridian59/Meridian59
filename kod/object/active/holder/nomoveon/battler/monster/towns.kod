@@ -15,19 +15,22 @@ constants:
    include blakston.khd
 
 classvars:
-   
+
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   % Set default gender to male, monster's default is now neuter instead of male, so most of the
-   %  subclasses with undefined gender under here will assume male.
-   viGender = GENDER_MALE   
 
-   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+   % Set default gender to male, monster's default is now neuter instead of
+   % male, so most of the subclasses with undefined gender under here
+   % will assume male.
+   viGender = GENDER_MALE
+
+   % Mob doesn't move and cannot be attacked.
+   viDefault_behavior = AI_NPC | AI_NOMOVE
 
    viSpeed = SPEED_AVERAGE
 
 properties:
-   
+
    % Palette translations; used only for NPCs that use player face parts
    piFace_translation = PT_GRAY_TO_SKIN1
    piHair_translation = PT_HAIR_DKBROWN
@@ -42,7 +45,30 @@ messages:
    NewHoldObject(what = $)
    {
       % Don't want them holding anything, so just delete it.
-      send(what,@Delete);
+      Send(what,@Delete);
+
+      return;
+   }
+
+   EnterStateWait()
+   {
+      % They shouldn't have acquired a target, but to be sure...
+      if poTarget <> $
+         AND Send(poTarget,@GetOwner) = poOwner
+         AND IsClass(poTarget,&user)
+      {
+         Send(poTarget,@SubtractFromMonsterChasers,
+               #level=Send(self,@GetLevel));
+      }
+
+      poTarget = $;
+      piHatred = 0;
+
+      % Leave them in the waiting state.
+      Send(self,@SetState,#bit=STATE_WAIT);
+      Send(self,@ClearBehavior);
+
+      % We no longer set a move timer for NPCs.
 
       return;
    }

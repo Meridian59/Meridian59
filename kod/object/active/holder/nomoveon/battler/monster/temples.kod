@@ -15,13 +15,18 @@ constants:
    include blakston.khd
 
 resources:
-   priestess_teach_quest_needed = "To learn that, you must first become my disciple by proving the strength of your faith."
+
+   priestess_teach_quest_needed = \
+      "To learn that, you must first become my disciple by proving "
+      "the strength of your faith."
 
 classvars:
-   
+
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
-   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+
+   % Mob doesn't move and cannot be attacked.
+   viDefault_behavior = AI_NPC | AI_NOMOVE
 
    viSpeed = SPEED_SLOW
    viQuestID = 0
@@ -35,22 +40,22 @@ messages:
       if viQuestID <> 0
       {
          Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
-           #reward= [QST_REWARD_ID,viQuestID]);
+            #reward= [QST_REWARD_ID,viQuestID]);
       }
-      
+
       return;
    }
 
    Constructor()
-   "We start a permanent quest for becomming a disciple"
+   "We start a permanent quest for becoming a disciple"
    {
       Send(self,@InitPermQuest);
-      
+
       propagate;
    }
 
    CanAddSpell(who=$,num=0,report=FALSE)
-   "We require that a quest be done before 3-5 level spells can be learned"
+   "We require that a quest be done before 3-5 level spells can be learned."
    {
       local oSpell;
 
@@ -62,24 +67,24 @@ messages:
       }
       
       if Send(oSpell,@GetLevel) > 2 
-         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+         AND NOT Send(self,@HasDoneLearnQuest,#who=who)
       {
          if report
          {
-            send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self, 
-                 #string=vrTeach_quest_needed);
+            Send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
+                  #string=vrTeach_quest_needed);
          }
-         
+
          return FALSE;
       }
-      
+
       propagate;
    }
 
    NewHoldObject(what = $)
    {
       % Don't want them holding anything, so just delete it.
-      send(what,@Delete);
+      Send(what,@Delete);
 
       return;
    }
@@ -87,7 +92,30 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
+
+   EnterStateWait()
+   {
+      % They shouldn't have acquired a target, but to be sure...
+      if poTarget <> $
+         AND Send(poTarget,@GetOwner) = poOwner
+         AND IsClass(poTarget,&user)
+      {
+         Send(poTarget,@SubtractFromMonsterChasers,
+               #level=Send(self,@GetLevel));
+      }
+
+      poTarget = $;
+      piHatred = 0;
+
+      % Leave them in the waiting state.
+      Send(self,@SetState,#bit=STATE_WAIT);
+      Send(self,@ClearBehavior);
+
+      % We no longer set a move timer for NPCs.
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -28,7 +28,7 @@ messages:
    
    constructed()
    {
-      plTreasure = [ [ &NeruditeArrow, 10 ],
+      plTreasure = [ [ &Spideye, 10 ],
                      [ &NightVisionPotion, 9],
                      [ &FireRing, 3],
                      [ &ColdRing, 3],

@@ -21,19 +21,26 @@ resources:
    Councilor_desc_rsc = ""
 
    blank_spec_rsc=""
-   con_token_delivered_rsc = "Thank you. You have done me a great service. %s %s"
-   con_duke_delivered_rsc = "I will pay more attention to the matters which concern the Duke."
-   con_princess_delivered_rsc = "I will look with more favor on the Princess Kateriina's ideas."
-   con_rebel_delivered_rsc = "I will look upon rebellion as a sign of good change."
-   con_neutral_delivered_rsc = "I shall endeavor to be as impartial at the court as ye."
+   con_token_delivered_rsc = \
+      "Thank you. You have done me a great service. %s %s"
+   con_duke_delivered_rsc = \
+      "I will pay more attention to the matters which concern the Duke."
+   con_princess_delivered_rsc = \
+      "I will look with more favor on the Princess Kateriina's ideas."
+   con_rebel_delivered_rsc = \
+      "I will look upon rebellion as a sign of good change."
+   con_neutral_delivered_rsc = \
+      "I shall endeavor to be as impartial at the court as ye."
 
 classvars:
    
    vrName = Councilor_name_rsc
    vrDesc = Councilor_desc_rsc
    vrIcon = Councilor_icon_rsc
-   viAttributes = MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE 
-   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+   viAttributes = MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE
+
+   % Mob doesn't move and cannot be attacked.
+   viDefault_behavior = AI_NPC | AI_NOMOVE
 
    viDefinite = ARTICLE_NONE
    viIndefinite = ARTICLE_NONE
@@ -55,6 +62,7 @@ messages:
    Delete()
    {
       Send(Send(SYS,@GetTokenGame),@CouncilorDeleted,#what=self);
+
       propagate;
    }
 
@@ -66,7 +74,8 @@ messages:
    CheckWhyWanted(obj=$,who=$)
    {
       local oMoney,spec_rsc,fact_rsc;
-      if isClass(obj,&Token)
+
+      if IsClass(obj,&Token)
       {
 
          spec_rsc=Send(self,@CheckSpecialDeliverer,#who=who);
@@ -79,12 +88,14 @@ messages:
          { fact_rsc=Con_princess_delivered_rsc;}
          if Send(who,@GetFaction)=FACTION_REBEL
          { fact_rsc=Con_rebel_delivered_rsc;}
-         
+
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                 #string=Con_token_delivered_rsc,
-                 #parm1=fact_rsc,#parm2=spec_rsc);
-         return True;
+               #string=Con_token_delivered_rsc,
+               #parm1=fact_rsc,#parm2=spec_rsc);
+
+         return TRUE;
       }
+
       propagate;
    }
 
@@ -101,18 +112,49 @@ messages:
    GotoHomeroom()
    {
       local room;
-      room=Send(SYS,@FindRoomByNum,#num=viHomeroom);
-      if room=$ {debug("FindRoombyNum num=",viHomeroom,"returned null");return;}
+
+      room = Send(SYS,@FindRoomByNum,#num=viHomeroom);
+      if room=$
+      {
+         Debug("FindRoombyNum num=",viHomeroom,"returned null");
+
+         return;
+      }
+
       Send(room,@teleport,#what=self);
       Send(room,@SomethingMoved,#what=self,#new_row=viMyRow,#new_col=viMyCol);
       Send(room,@SomethingTurned,#what=self,#new_angle=viMyAngle);
+
       return;
    }
 
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
+
+   EnterStateWait()
+   {
+      % They shouldn't have acquired a target, but to be sure...
+      if poTarget <> $
+         AND Send(poTarget,@GetOwner) = poOwner
+         AND IsClass(poTarget,&user)
+      {
+         Send(poTarget,@SubtractFromMonsterChasers,
+               #level=Send(self,@GetLevel));
+      }
+
+      poTarget = $;
+      piHatred = 0;
+
+      % Leave them in the waiting state.
+      Send(self,@SetState,#bit=STATE_WAIT);
+      Send(self,@ClearBehavior);
+
+      % We no longer set a move timer for NPCs.
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

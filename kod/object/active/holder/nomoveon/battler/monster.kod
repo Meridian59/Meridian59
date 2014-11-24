@@ -563,11 +563,11 @@ messages:
    {
       local i, j, k;
       % Minion Management - upon dying they should leave your control list
-      if Send(self,@GetMaster) <> $
+      if poMaster <> $
       {
-         if IsClass(Send(self,@GetMaster),&User)
+         if IsClass(poMaster,&User)
          {
-            Send(Send(self,@GetMaster),@RemoveControlledMinion,#what=self);
+            Send(poMaster,@RemoveControlledMinion,#what=self);
          }
       }
 
@@ -806,7 +806,7 @@ messages:
          AND isClass(poTarget,&User)
       {
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=Send(self,@GetLevel));
+              #level=viLevel);
       }
 
       poTarget = $;
@@ -824,7 +824,7 @@ messages:
          AND isClass(poTarget,&user)
       {
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=Send(self,@GetLevel));
+              #level=viLevel);
       }
 
       poTarget = $;
@@ -855,7 +855,7 @@ messages:
          AND isClass(poTarget,&User)
       {
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=Send(self,@GetLevel));
+              #level=viLevel);
       }
 
       poTarget = $;
@@ -1094,8 +1094,8 @@ messages:
          if iRow <> 0 AND iCol <> 0
             AND Send(poMaster,@GetOwner) <> $
          {
-            if ((Send(self,@GetRow) - iRow) <= 3
-               AND (Send(self,@GetCol) - iCol) <= 3)
+            if ((piRow - iRow) <= 3
+               AND (piCol - iCol) <= 3)
                OR IsClass(self,&Reflection) % Flecs follow.
                OR Send(self,@IsUndead) % So do undead (Animate).
             {
@@ -1680,7 +1680,7 @@ messages:
       % we can't either. If they can, we treat it as if they personally
       % attacked the target.
 
-      if Send(self,@GetMaster) <> $
+      if poMaster <> $
          AND IsClass(poMaster,&Player)
       {
          % Check the attack here. If it fails, AllowPlayerAttack handles
@@ -6008,8 +6008,8 @@ messages:
          return $;
       }
 
-      iRow = Send(self,@GetRow);
-      iCol = Send(self,@GetCol); 
+      iRow = piRow;
+      iCol = piCol;
 
       % Vision distance is a number from 4 to 6
       iRangeSquared = Send(self,@GetVisionDistance);
@@ -6084,8 +6084,8 @@ messages:
 
       oTarget = $;
 
-      iRow = Send(self,@GetRow);
-      iCol = Send(self,@GetCol);
+      iRow = piRow;
+      iCol = piCol;
 
       % Vision distance is a number from 4 to 6
       iRangeSquared = Send(self,@GetVisionDistance);
@@ -6180,7 +6180,7 @@ messages:
                AND IsClass(poTarget,&Player)
             {
                Send(poTarget,@SubtractFromMonsterChasers,
-                    #level=Send(self,@GetLevel));
+                    #level=viLevel);
             }
             Send(poMaster,@RemoveControlledMinion,#what=self);
             if poOwner <> $
@@ -6222,7 +6222,7 @@ messages:
                   if IsClass(poTarget,&User)
                   {
                      Send(poTarget,@AddToMonsterChasers,
-                           #level=Send(self,@GetLevel));
+                           #level=viLevel);
                   }
                }
             }
@@ -6287,13 +6287,13 @@ messages:
          AND IsClass(poTarget,&user)
       {
          Send(poTarget,@SubtractFromMonsterChasers,
-              #level=Send(self,@GetLevel));
+              #level=viLevel);
       }
 
       poTarget = what;
       if IsClass(poTarget,&user)
       {
-         Send(poTarget,@AddToMonsterChasers,#level=Send(self,@GetLevel));  
+         Send(poTarget,@AddToMonsterChasers,#level=viLevel);  
       }
 
       piState = (piState & VSTATE_VALIDITY_MASK);                  

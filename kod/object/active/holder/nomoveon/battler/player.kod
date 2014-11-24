@@ -2069,9 +2069,9 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=player_assgame_soon);
       }
 
-      if Send(self,@GetGuild) <> $
+      if poGuild <> $
       {
-         Send(Send(self,@GetGuild),@SendUserMOTD,#who=self);
+         Send(poGuild,@SendUserMOTD,#who=self);
       }
 
       if piPoisonStrength > 0
@@ -2838,7 +2838,7 @@ messages:
    "Return this player's guild hall, or NIL if none"
    {
       local oGuild;
-      oGuild = Send(self, @GetGuild);
+      oGuild = poGuild;
 
       if oGuild = $
       {
@@ -3981,7 +3981,7 @@ messages:
          AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
-         oGuild = Send(self,@GetGuild);
+         oGuild = poGuild;
          if oVictimGuild <> $
             AND oGuild <> $
             AND (oGuild = oVictimGuild
@@ -4680,8 +4680,8 @@ messages:
                AND Send(stroke_obj,@GetNumSpellTargets) = 1))
       {
          iAngle = Send(self,@GetAngle);
-         iRow = Send(self,@GetRow);
-         iCol = Send(self,@GetCol);
+         iRow = piRow;
+         iCol = piCol;
          iTargetRow = Send(oTarget,@GetRow);
          iTargetCol = Send(oTarget,@GetCol);
 

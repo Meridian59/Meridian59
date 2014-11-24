@@ -1783,6 +1783,11 @@ messages:
       return viAttack_spell;
    }
 
+   IsRangedAttack()
+   {
+      return FALSE;
+   }
+
    AssessDamage(what = $,damage = $,atype = 0, aspell = 0, bonus = 0, scalefactor = 1000,
                 absolute = FALSE)
    "This is called when something causes damage to us.  "

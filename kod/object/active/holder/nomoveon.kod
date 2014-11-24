@@ -67,57 +67,70 @@ messages:
       return piFine_col;
    }
 
-   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,new_finecol = $)
+   ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,
+   new_finecol = $)
    {
       local iRowWe,iColWe,iRowDest,iColDest,
             iRowWhat,iColWhat,iRowFineWhat,iColFineWhat,iDold,iDnew;
 
-      % get coordinates of what
+      % Get coordinates of what.
       iRowWhat = Send(what,@GetRow);
       iColWhat = Send(what,@GetCol);
-      iRowFineWhat = Send(what,@GetFineRow);
-      iColFineWhat = Send(what,@GetFineCol);
-            
-      % sanity check on the "big" values which can be $
-      if new_row = $ OR new_col = $ OR 
-         piRow = $ OR piCol = $ OR
-         iRowWhat = $ OR iColWhat = $
+
+      % Sanity check on the "big" values which can be $.
+      if new_row = $ OR new_col = $
+         OR piRow = $ OR piCol = $
       {
          propagate;
       }
 
-      % apply defaults on fine new values
+      % Apply defaults on fine new values.
       if new_finerow = $
       {
          new_finerow = FINENESS_HALF;
-	  }
+      }
       if new_finecol = $
       {
          new_finecol = FINENESS_HALF;
       }
 
-      % get squared distance in fine units to old and new location of the object
-      iDold = Send(self,@SquaredFineDistanceToLocation,#row=iRowWhat,#col=iColWhat,#fine_row=iRowFineWhat,#fine_col=iColFineWhat);
-      iDnew = Send(self,@SquaredFineDistanceToLocation,#row=new_row,#col=new_col,#fine_row=new_finerow,#fine_col=new_finecol);
-
-      % don't block anything that goes away from us
-      % not even the smallest steps
-      if iDnew > iDold
+      % Get squared distance in fine units to old and new location
+      % of the object. If the object has $ row and col values, we
+      % can skip this check.
+      if iRowWhat <> $
+         AND iColWhat <> $
       {
-         propagate;
+         iRowFineWhat = Send(what,@GetFineRow);
+         iColFineWhat = Send(what,@GetFineCol);
+
+         iDold = Send(self,@SquaredFineDistanceToLocation,#row=iRowWhat,
+                        #col=iColWhat,#fine_row=iRowFineWhat,
+                        #fine_col=iColFineWhat);
+         iDnew = Send(self,@SquaredFineDistanceToLocation,#row=new_row,
+                        #col=new_col,#fine_row=new_finerow,
+                        #fine_col=new_finecol);
+
+         % Don't block anything that goes away from us,
+         % not even the smallest steps.
+         if iDnew > iDold
+         {
+            propagate;
+         }
       }
 
-      % get highres square of ourself
+      % Get highres square of ourself.
       iRowWe = ((piRow * FINENESS) + piFine_row) / 16;
       iColWe = ((piCol * FINENESS) + piFine_col) / 16;
       
-      % get highres square of requested destination
+      % Get highres square of requested destination.
       iRowDest = ((new_row * FINENESS) + new_finerow) / 16;
       iColDest = ((new_col * FINENESS) + new_finecol) / 16;
 
-      % prevent them from stepping too close on each other
-      % these are in highres-squares, the typical stepwidth
-      if abs(iRowDest - iRowWe) < 3 AND abs(iColDest - iColWe) < 3 AND IsClass(what,&Battler)
+      % Prevent them from stepping too close on each other.
+      % These are in highres-squares, the typical stepwidth.
+      if Abs(iRowDest - iRowWe) < 3
+         AND Abs(iColDest - iColWe) < 3
+         AND IsClass(what,&Battler)
       {
          return FALSE;
       }
@@ -291,12 +304,12 @@ messages:
       }
       return oHighest;
    }
-   
+
    GetRadiusEnchantments()
    {
       return plRadiusEnchantments;
    }
-   
+
    IsInSameRoom(what = $)
    {
       if Send(self,@GetOwner) <> $
@@ -307,16 +320,17 @@ messages:
       {
          return 1;
       }
-         
+
       return 0;
    }
 
    SquaredDistanceTo(what = $)
-   "Computes squared distance to <what>. Returns $ for any object that is not within a room."
+   "Computes squared distance to <what>. Returns $ for any object that is "
+   "not within a room."
    {
       local iRow, iCol;
       
-      If NOT Send(self,@IsInSameRoom,#what=what)
+      if NOT Send(self,@IsInSameRoom,#what=what)
       {
          return $;
       }
@@ -325,7 +339,8 @@ messages:
       iCol = Send(what,@GetCol);
 
       % Sanity checking
-      if iRow = $ OR iCol = $ OR Send(self,@GetRow) = $ OR Send(self,@GetCol) = $
+      if iRow = $ OR iCol = $
+         OR piRow = $ OR piCol = $
       {
          return $;
       }
@@ -333,12 +348,24 @@ messages:
       return send(self,@SquaredDistanceToLocation,#row=iRow,#col=iCol);
    }
 
+   SquaredDistanceToLocation(row = $, col = $)
+   "Computes squared distance to (row,col)"
+   {
+      local iRow_diff, iCol_diff;
+
+      iRow_diff = piRow - row;
+      iCol_diff = piCol - col;
+
+      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+   }
+
    SquaredFineDistanceTo(what = $)
-   "Computes squared distance to <what> in fine-units. Returns $ for any object that is not within a room."
+   "Computes squared distance to <what> in fine-units. Returns $ for any "
+   "object that is not within a room."
    {
       local iRow, iCol, iFineRow, iFineCol;
       
-      If NOT Send(self,@IsInSameRoom,#what=what)
+      if NOT Send(self,@IsInSameRoom,#what=what)
       {
          return $;
       }
@@ -348,62 +375,38 @@ messages:
       iFineRow = Send(what,@GetFineRow);
       iFineCol = Send(what,@GetFineCol);
 
-      % Sanity checking
-      if iRow = $ OR iCol = $ OR Send(self,@GetRow) = $ OR Send(self,@GetCol) = $
-      {
-         return $;
-      }
-
-      return send(self,@SquaredFineDistanceToLocation,#row=iRow,#col=iCol,#fine_row=iFineRow,#fine_col=iFineCol);
+      return Send(self,@SquaredFineDistanceToLocation,#row=iRow,#col=iCol,
+                  #fine_row=iFineRow,#fine_col=iFineCol);
    }
 
-   SquaredDistanceToLocation(row = $, col = $)
-   "Computes squared distance to (row,col)"
-   {
-      local iRow_diff, iCol_diff;
-
-      iRow_diff = Send(self,@GetRow) - row;
-      iCol_diff = Send(self,@GetCol) - col;
-
-      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
-   }
-
-   SquaredFineDistanceToLocation(row = $, col = $, fine_row = $, fine_col = $)
+   SquaredFineDistanceToLocation(row = $,col = $,fine_row = FINENESS_HALF,
+                                 fine_col = FINENESS_HALF)
    "Computes squared distance to (row,col)"
    {
       local iRow, iCol, iRow_diff, iCol_diff;
 
-      % get own row/col
-      iRow = Send(self,@GetRow);
-      iCol = Send(self,@GetCol);
-	  
-	  % sanity check, big row/col can be $
+      % Get own row/col.
+      iRow = piRow;
+      iCol = piCol;
+
+      % Sanity check, big row/col can be $.
       if row = $ OR col = $ OR iRow = $ OR iCol = $
       {
          return $;
       }
-  
-      % set center of big square as defaults
-      if fine_row = $
-      {
-         fine_row = FINENESS_HALF;
-      }
-      if fine_col = $
-      {
-         fine_col = FINENESS_HALF;
-      }
 
-      % scale to fine
-      iRow = (iRow * FINENESS) + Send(self,@GetFineRow);
-	  iCol = (iCol * FINENESS) + Send(self,@GetFineCol);
-	  row = (row * FINENESS) + fine_row;
+      % Scale to fine
+      iRow = (iRow * FINENESS) + piFine_row;
+      iCol = (iCol * FINENESS) + piFine_col;
+      row = (row * FINENESS) + fine_row;
       col = (col * FINENESS) + fine_col;
 
-      % deltas
+      % Deltas
       iRow_diff = iRow - row;
       iCol_diff = iCol - col;
 
       return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
    }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -5469,7 +5469,8 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local bReflection, i, oSoldierShield, monstkarma, iChance, oEnemyGuild, shrunken;
+      local bReflection, i, oSoldierShield, monstkarma, iChance, oEnemyGuild,
+      shrunken, oVictimRoom;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -5524,92 +5525,109 @@ messages:
          Send(oSoldierShield,@KilledSomething,#what=what);
       }
 
-      if IsClass(what,&User) AND NOT Send(poOwner,@SafePlayerAttack)
+      if IsClass(what,&User)
          AND what <> self
       {
-         Send(Send(SYS, @GetStatistics), @PlayerKillsCounter);
+         % Use the room the victim died in to determine if there are penalties
+         % for this kill. Otherwise we can get away with it in rare instances.
+         % Victim's room is still the one they died in.
+         oVictimRoom = Send(what,@GetOwner);
 
-         if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-            OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         if oVictimRoom = $
+            OR NOT Send(oVictimRoom,@SafePlayerAttack)
          {
-            piJustified_kill_count = piJustified_kill_count + 1;
-         }
-         else
-         {
-            piKill_count = piKill_count + 1;
-            piKill_count_decay = piKill_count_decay + 1;
-         }
+            Send(Send(SYS,@GetStatistics),@PlayerKillsCounter);
 
-         if NOT bReflection
-            AND NOT Send(what,@IsIllusion)
-         {
-            Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
-                  #karma_killer=Send(self,@GetKarma),
-                  #karma_victim=Send(what,@GetKarma)));
-         }
-
-         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-            AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-            AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-            AND NOT IsClass(poOwner,&GuildHall)
-         {
-            %Attacked an innocent!
-
-            % Check for enemy guild - If both guilds are enemies, then they can
-            % whack on each other freely, without murderer or faction penalty.
-            oEnemyGuild = Send(what,@GetGuild);
-
-            % Check for various murderer things if any are true:
-            % We're not in a guild, opponent wasn't in a guild, we're not in a mutual war
-            % AND if we're not a faction soldier, the opponent isn't an opposing faction soldier
-            if (poGuild = $
-                OR oEnemyGuild = $
-                OR NOT Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild))
-               AND (oSoldierShield = $
-                    OR NOT Send(oSoldierShield,@IsEnemyAttack,#what=what,#damage=TRUE))
+            if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             {
-               % SUBTLE BUG: Somehow, the faction check is missed when you kill something.
-               % We check it here, but only for players. This means that if you score
-               % just the killing blow on a factioned monster, you won't get checked for
-               % faction loss. It's a bug, but currently not that vital.
-               
-               % Check to see if the attack was faction-based.
-               Send(self,@CheckFactionAttack,#what=what);
+               piJustified_kill_count = piJustified_kill_count + 1;
+            }
+            else
+            {
+               piKill_count = piKill_count + 1;
+               piKill_count_decay = piKill_count_decay + 1;
+            }
 
-               % Apply penalties for someone NOT holding a token
-               if Send(what,@FindUsing,#class=&Token) = $
+            if NOT bReflection
+               AND NOT Send(what,@IsIllusion)
+            {
+               Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
+                     #karma_killer=Send(self,@GetKarma),
+                     #karma_victim=Send(what,@GetKarma)));
+            }
+
+            if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+               AND NOT IsClass(oVictimRoom,&GuildHall)
+            {
+               % Attacked an innocent!
+
+               % Check for enemy guild - If both guilds are enemies, then
+               % they can whack on each other freely, without murderer or
+               % faction penalty.
+               oEnemyGuild = Send(what,@GetGuild);
+
+               % Check for various murderer things if any are true:
+               % We're not in a guild, opponent wasn't in a guild, we're
+               % not in a mutual war
+               % AND if we're not a faction soldier, the opponent isn't an
+               % opposing faction soldier
+               if (poGuild = $
+                   OR oEnemyGuild = $
+                   OR NOT Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild))
+                  AND (oSoldierShield = $
+                       OR NOT Send(oSoldierShield,@IsEnemyAttack,
+                                    #what=what,#damage=TRUE))
                {
-                  if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=player_killed_player);
-                  }
-                  else
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=player_wanted_now,
-                           #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-                     Send(self,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=TRUE);
-                     Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
-                     Send(self,@EvaluatePKStatus,#dbug=TRUE);
-                  }
+                  % SUBTLE BUG: Somehow, the faction check is missed when you
+                  % kill something. We check it here, but only for players.
+                  % This means that if you score just the killing blow on a
+                  % factioned monster, you won't get checked for faction loss.
+                  % It's a bug, but currently not that vital.
+                  
+                  % Check to see if the attack was faction-based.
+                  Send(self,@CheckFactionAttack,#what=what);
 
-                  % Does the lucky murderer win a Revenant?
-                  % If it was an easy fight, lets haunt em more often than if
-                  % it was competitive (or the victim at least had a shot)
-                  % If were twice as strong as them, we get haunted.
-                  % If the victim was good, we get haunted.
-                  iChance = Send(self,@RevenantChance,#target=what);
-                  if (random(1,100) < iChance) AND NOT Send(SYS,@GetChaosNight)
+                  % Apply penalties for someone NOT holding a token
+                  if Send(what,@FindUsing,#class=&Token) = $
                   {
-                     Send(self,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
-                     Send(self,@MsgSendUser,#message_rsc=player_haunted_on,
-                          #parm1=Send(what,@GetCapDef),
-                          #parm2=Send(what,@GetName,#Cap=TRUE));
-                     Create(&Revenant,#target=self,#location=poOwner,
-                            #level=Bound((((piBase_Max_health*110)/100)+
-                                 (7*piKill_Count_decay)),95,180),
-                            #diff=bound(piBase_Max_health/12,4,9),
-                            #karmic=-piKarma/100);
+                     if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                     {
+                        Send(self,@MsgSendUser,#message_rsc=player_killed_player);
+                     }
+                     else
+                     {
+                        Send(self,@MsgSendUser,#message_rsc=player_wanted_now,
+                              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+                        Send(self,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=TRUE);
+                        Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
+                        Send(self,@EvaluatePKStatus,#dbug=TRUE);
+                     }
+
+                     % Does the lucky murderer win a Revenant?
+                     % If it was an easy fight, lets haunt em more often than if
+                     % it was competitive (or the victim at least had a shot)
+                     % If were twice as strong as them, we get haunted.
+                     % If the victim was good, we get haunted.
+                     iChance = Send(self,@RevenantChance,#target=what);
+                     if (random(1,100) < iChance) AND NOT Send(SYS,@GetChaosNight)
+                     {
+                        Send(self,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
+                        if poOwner <> $
+                        {
+                           Send(self,@MsgSendUser,#message_rsc=player_haunted_on,
+                                 #parm1=Send(what,@GetCapDef),
+                                 #parm2=Send(what,@GetName,#Cap=TRUE));
+                           Create(&Revenant,#target=self,#location=poOwner,
+                                 #level=Bound((((piBase_Max_health*110)/100)+
+                                    (7*piKill_Count_decay)),95,180),
+                                 #diff=bound(piBase_Max_health/12,4,9),
+                                 #karmic=-piKarma/100);
+                        }
+                     }
                   }
                }
             }
@@ -5737,9 +5755,12 @@ messages:
 
    RevenantChance(who=$,target=$)
    {
-      local oChance, oGuild, iFaction, oSpell;
+      local oChance, oGuild, iFaction, oSpell, oVictimRoom;
 
-      if IsClass(poOwner,&Guildhall)
+      oVictimRoom = Send(target,@GetOwner);
+
+      if oVictimRoom = $
+         OR IsClass(oVictimRoom,&Guildhall)
       {
          return 0;
       }
@@ -5816,10 +5837,10 @@ messages:
       oChance = (bound(oChance,20,80) + (5*piKill_count_decay));
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
-      if Send(poOwner,@IsEnchanted,#what=oSpell)
+      if Send(oVictimRoom,@IsEnchanted,#what=oSpell)
       {
          oChance = oChance +
-               (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
+               (oChance * Send(oVictimRoom,@GetEnchantmentState,#what=oSpell) / 100);
       }
       oChance = Bound(oChance,40,95);
 

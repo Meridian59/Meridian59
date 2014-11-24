@@ -1100,17 +1100,11 @@ messages:
          return;
       }
 
-      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 20)
+      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 25)
       {
-         if IsClass(self,&Reflection)
-            AND NOT Send(oNewRoom,@AllowGuildAttack,#what=poMaster)
-         {
-            return;
-         }
-
          Send(oNewRoom,@NewHold,#what=self,
-              #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
-              #new_angle=Send(poMaster,@GetAngle));
+               #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
+               #new_angle=Send(poMaster,@GetAngle));
       }
 
       return;
@@ -1616,8 +1610,11 @@ messages:
          return FALSE;
       }
 
-      If IsClass(what,&User)
+      % Phased players can't be hit.
+      % Jig prevents combat between players and monsters.
+      if IsClass(what,&User)
          AND Send(what,@IsPhasedOut)
+         OR Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
       {
          return FALSE;
       }
@@ -1630,11 +1627,14 @@ messages:
          return FALSE;
       }
 
-      % Jig prevents combat between players and monsters.
-      if IsClass(what,&Player)
-         AND Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+      % If we're hitting another monster, check if we can reach or attack it.
+      if IsClass(what,&Monster)
       {
-         return FALSE;
+         if NOT Send(what,@CanMonsterFight,#who=self,#oStroke=stroke_obj,
+                     #use_weapon=stroke_obj)
+         {
+            return FALSE;
+         }
       }
 
       % Minions are attacking for a master. Handle ETs, Reflections,
@@ -1677,10 +1677,10 @@ messages:
       }
 
       % Face the target.
-      Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),#new_col=Send(what,@GetCol),
-           #new_finerow=Send(what,@GetFineRow),#new_finecol=Send(what,@GetFineCol),
-           #face_target=TRUE);
-				 
+      Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),
+            #new_col=Send(what,@GetCol),#new_finerow=Send(what,@GetFineRow),
+            #new_finecol=Send(what,@GetFineCol),#face_target=TRUE);
+
       % Do any special attack routines we might have.
       Send(self,@MonsterAttack,#what=what);
 
@@ -1781,6 +1781,11 @@ messages:
    GetSpellType(what = $)
    {
       return viAttack_spell;
+   }
+
+   IsRangedAttack()
+   {
+      return FALSE;
    }
 
    AssessDamage(what = $,damage = $,atype = 0, aspell = 0, bonus = 0, scalefactor = 1000,

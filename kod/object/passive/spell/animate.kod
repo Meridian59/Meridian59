@@ -75,12 +75,13 @@ messages:
 
    CanPayCosts(who=$,lTargets=$)
    {
-      local oRoom, oTarget;
+      local oOwner, oRoom, oTarget;
 
       oRoom = Send(who,@GetOwner);
       oTarget = First(lTargets);
 
-      if NOT IsClass(oTarget,&DeadBody)
+      if oTarget = $
+         OR NOT IsClass(oTarget,&DeadBody)
       {
          Send(who,@MsgSendUser,#message_rsc=Animate_bad_target,
                #parm1=Send(oTarget,@GetDef),
@@ -89,7 +90,10 @@ messages:
          return FALSE;
       }
 
-      if Send(Send(First(lTargets),@GetOwner),@SafePlayerAttack)
+      oOwner = Send(oTarget,@GetOwner);
+
+      if oOwner = $
+         OR Send(oOwner,@SafePlayerAttack)
       {
          Send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc);
 

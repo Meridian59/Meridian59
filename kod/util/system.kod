@@ -1773,7 +1773,7 @@ messages:
                %  mysterious murder message!
                if rMessage = $
                   AND Send(killer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-                  AND NOT Send(Send(killer,@GetOwner),@SafePlayerAttack)
+                  AND NOT Send(Send(what,@GetOwner),@SafePlayerAttack)
                {
                   rMessage = system_user_killed_by_pker;
                   poLastMurderer = killer;

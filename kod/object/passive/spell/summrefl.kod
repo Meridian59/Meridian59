@@ -79,17 +79,11 @@ messages:
 
             return FALSE;
          }
-
-         if NOT Send(oRoom,@AllowGuildAttack,#what=who)
-         {
-            Send(who,@MsgSendUser,#message_rsc=reflection_cannot_cast_here);
-
-            return FALSE;
-         }
       }
 
-      % limit reflections
-      if (Send(self,@CountPlayerReflections,#who=who) >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit))
+      % Limit reflections.
+      if (Send(self,@CountPlayerReflections,#who=who)
+         >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit))
          AND NOT (IsClass(who,&DM)
             AND Send(who,@PlayerIsImmortal))
       {

@@ -56,8 +56,8 @@ classvars:
    viBroken_group = 3
 
    viSpell_modifier = 10
-   viBulk = 160
-   viWeight = 130
+   viBulk = 130
+   viWeight = 100
    viValue_average = 2000
 
    vrLeftarm_male = $
@@ -114,7 +114,7 @@ messages:
    {
       if send(oSpell,@GetSchool) = piSchool
       {
-         return bound(4*piLevel,0,20);
+         return bound(3*piLevel,0,15);
       }
 
       return 5;

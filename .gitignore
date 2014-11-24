@@ -149,6 +149,9 @@ Desktop.ini
 debug
 release
 
+# Ignore shortcuts
+*.lnk
+
 #############
 ## Python
 #############

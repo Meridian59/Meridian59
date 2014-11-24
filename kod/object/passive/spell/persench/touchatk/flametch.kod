@@ -84,6 +84,8 @@ classvars:
 
    vrSucceed_wav = TouchOfFlame_sound
 
+   viEnchantmentLight = 20
+
 properties:
 
    plPrerequisites = $

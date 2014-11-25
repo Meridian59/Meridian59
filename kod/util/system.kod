@@ -3214,6 +3214,7 @@ messages:
       Send(self,@CreateOneItemAttIfNew,#num=WA_PARALYZER,#class=&WeapAttParalyzer);
       Send(self,@CreateOneItemAttIfNew,#num=WA_TWISTER,#class=&WeapAttTwister);
       Send(self,@CreateOneItemAttIfNew,#num=WA_VAMPER,#class=&WeapAttVamper);
+      Send(self,@CreateOneItemAttIfNew,#num=WA_SIPHON,#class=&WeapAttSiphon);
       Send(self,@CreateOneItemAttIfNew,#num=WA_PURGER,#class=&WeapAttPurger);
       Send(self,@CreateOneItemAttIfNew,#num=WA_GUILD_HALL_DEFENDER,#class=&WeapAttGuildHallDefender);
       Send(self,@CreateOneItemAttIfNew,#num=WA_FACTION,#class=&WeapAttFactionDefender);

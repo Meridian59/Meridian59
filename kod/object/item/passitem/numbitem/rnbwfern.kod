@@ -50,83 +50,74 @@ classvars:
 properties:
 
    piNumber = 4
-   ptColorChange = $
 
 messages:
-
 
    Constructed()
    {
       piItem_flags = piItem_flags | FERNCOLOR1;
-      ptColorChange = CreateTimer(self,@ChangeColor,600000);
 
       propagate;
    }
 
-   ChangeColor(color=0)
+   ChangeColor(color=0,iHour=0)
    {
       local iRandom, iColor;
 
-      ptColorChange = $;
+      if poOwner = $
+      {
+         return;
+      }
 
       iRandom = Random(1,5);
 
       if color <> 0
-      { iRandom = color; }
-
-      if send(SYS,@gethour) < 12
       {
-	 if iRandom = 1
-	    {  iColor = FERNCOLOR1; }
-	 if iRandom = 2
-	    {  iColor = FERNCOLOR2; }
-	 if iRandom = 3
-	    {  iColor = FERNCOLOR3; }
-	 if iRandom = 4
-	    {  iColor = FERNCOLOR5; }
-	 if iRandom = 5
-	    {  iColor = FERNCOLOR7; }
+         iRandom = color;
+      }
+
+      if iHour < 12
+      {
+         if iRandom = 1
+         {  iColor = FERNCOLOR1; }
+         if iRandom = 2
+         {  iColor = FERNCOLOR2; }
+         if iRandom = 3
+         {  iColor = FERNCOLOR3; }
+         if iRandom = 4
+         {  iColor = FERNCOLOR5; }
+         if iRandom = 5
+         {  iColor = FERNCOLOR7; }
       }
       else
       {
-	 if iRandom = 1
-	    {  iColor = FERNCOLOR4; }
-	 if iRandom = 2
-	    {  iColor = FERNCOLOR5; }
-	 if iRandom = 3
-	    {  iColor = FERNCOLOR6; }
-	 if iRandom = 4
-	    {  iColor = FERNCOLOR7; }
-	 if iRandom = 5
-	    {  iColor = FERNCOLOR8; }
+         if iRandom = 1
+         {  iColor = FERNCOLOR4; }
+         if iRandom = 2
+         {  iColor = FERNCOLOR5; }
+         if iRandom = 3
+         {  iColor = FERNCOLOR6; }
+         if iRandom = 4
+         {  iColor = FERNCOLOR7; }
+         if iRandom = 5
+         {  iColor = FERNCOLOR8; }
       }
       piItem_flags = piItem_flags & ITEM_INVERSE_PALETTE_MASK;
 
       piItem_flags = piItem_flags | iColor;
       if poOwner <> $
       {
-	 send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-      ptColorChange = CreateTimer(self,@ChangeColor,600000);
 
       return;
-   }
-
-   Delete()
-   {
-      if ptColorChange <> $
-      {
-	 DeleteTimer(ptColorChange);
-	 ptColorChange = $;
-      }
-      propagate;
    }
 
    SendAnimation()
    {
       if (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
-	 AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
       AddPacket(1,ANIMATE_NONE,2,1);
 

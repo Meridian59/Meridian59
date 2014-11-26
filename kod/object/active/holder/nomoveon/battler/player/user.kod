@@ -3010,14 +3010,13 @@ messages:
 
       %
       % 3.4 TCP workaround
-      % iDelta can be 0 (~16 within ms resolution for +- 1 tick) in case
-      % we're processing buffered up TCP segments with several requests at once.
+      % iDelta can be 0 in case we're processing buffered up TCP segments with several requests at once.
       % This can either happen because of IP packetloss and retransmits (legal)
       % or because someone is sending multiple positions at once by purpose (illegal).
       % So we must allow up to a certain amount of such buffered up requests,
       % but limit it so no one can exploit it too much.
       %
-      if iDelta <= 16
+      if iDelta < 10
       {
          % If within the limits of allowed multiple requests
          if piMovesInTick < Send(self,@GetMoveAmountTolerance)
@@ -3056,21 +3055,30 @@ messages:
       }
 
       %
-      % 4.1 Get move-deltas
+      % 4.1 Get move-deltas in FINENESS units
       %
       iDy = ((new_row * FINENESS) + fine_row) - ((iRow * FINENESS) + iFineRow);
       iDx = ((new_col * FINENESS) + fine_col) - ((iCol * FINENESS) + iFineCol);
 
       %
-      % 4.2 Get move-vector length. This is the squared move-vector length.
+      % 4.2 Scale them up a bit further for precision later
+      % We do the same with the iMaxMoveRun.
+      %
+      iDy = iDy * 16;
+      iDx = iDx * 16;
+
+      %
+      % 4.3 Get move-vector length. This is the squared move-vector length.
       %
       iMoveLength = (iDy * iDy) + (iDx * iDx);
 
       %
-      % 4.3 Calculate maximum allowed squared movesize for running in this dt.
+      % 4.4 Calculate maximum allowed squared movesize for running in this dt.
+      % USER_RUNNING_SPEED is defined as # of big squares per 10000ms
       %
-      iMaxMoveRun = ((8 * USER_RUNNING_SPEED * iDelta) / 1000) + Send(self,@GetMoveStepTolerance);
-      iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
+      iMaxMoveRun = (USER_RUNNING_SPEED * FINENESS * 16 * iDelta) / 10000;
+      iMaxMoveRun = iMaxMoveRun + Send(self,@GetMoveStepTolerance);
+	  iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
 
       % DEBUG output
       %Debug(

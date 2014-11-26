@@ -131,8 +131,13 @@ properties:
    % The default interval the server expects from the client
    piMoveDefaultInterval = 250
    
-   % A tolerance that is given on each move step
-   piMoveStepTolerance = 70
+   % A tolerance that is given on each player requested
+   % move step. The value here is 16x higher than fine-unit.
+   % A tolerance of 128 means someone is allowed to move up to
+   % 8 fine-squares farer than normal per move. This is somewhat
+   % like the minimum to avoid any rubberbanding on a LOCAL connection.
+   % This likely should be set to 256 or even higher for global servers.
+   piMoveStepTolerance = 128
    
    %
    % Miscellaneous

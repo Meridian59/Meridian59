@@ -3078,7 +3078,7 @@ messages:
       %
       iMaxMoveRun = (USER_RUNNING_SPEED * FINENESS * 16 * iDelta) / 10000;
       iMaxMoveRun = iMaxMoveRun + Send(self,@GetMoveStepTolerance);
-	  iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
+      iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
 
       % DEBUG output
       %Debug(

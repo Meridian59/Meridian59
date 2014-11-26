@@ -1442,20 +1442,17 @@ messages:
       {
          if Nth(client_msg,2) <> ENCHANTMENT_PLAYER
          {
-            Debug(self," user ",Send(self,@GetName),"got BP_SEND_ENCHANTMENTS with bad type",
-                  Nth(client_msg,2));
-            
             return;
          }
-         
+
          Send(self,@SendEnchantmentIcons);
-         
+
          return;
       }
-     
+
       Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
-	      liClient_cmd);
-            
+            liClient_cmd);
+
       return;
    }
 

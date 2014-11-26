@@ -2288,7 +2288,7 @@ int C_GetTickCount(int object_id,local_var_type *local_vars,
 	// the high-bit is the sign at bit-index 27/31
 	// recapitulate:
 	// 0x00000000 = 0000 0000 0000 0000 0000 0000 0000 = 0
-	// 0x07FFFFFF = 0111 1111 1111 1111 1111 1111 1111 = 134217728
+	// 0x07FFFFFF = 0111 1111 1111 1111 1111 1111 1111 = 134217727
 	// 0x08000000 = 1000 0000 0000 0000 0000 0000 0000 = -134217728
 	// 0x0FFFFFFF = 1111 1111 1111 1111 1111 1111 1111 = -1
 	

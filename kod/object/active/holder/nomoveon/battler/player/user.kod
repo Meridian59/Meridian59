@@ -402,10 +402,10 @@ properties:
    
    % The ms tick we last drained vigor
    piLastVigorDrainTime = 0
-   
-   % Count the move requests we received in same tick
-   % mostly due to buffered up TCP segments.
-   piMovesInTick = 0
+
+   % This is a token-bucket to limit speedhacking.
+   % Moves are accepted unless there is not enough tokens in the bucket left.
+   piMovementBucket = 0
    
    piCheaterLogs = 0
 
@@ -2927,35 +2927,6 @@ messages:
       return;
    }
 
-   GetMoveStepTolerance()
-   {
-      % Explanation:
-      % This tolerance is added to the maximum allowed stepsize	  
-      % TODO: measure and estimate RTT and adjust dynamically
-
-      return Send(Send(SYS, @GetSettings), @GetMoveStepTolerance);
-   }
-
-   GetMoveAmountTolerance()
-   {
-      % Explanation:
-      % This is the amount of move requests that are allowed 
-      % when processing several ones in one tick.
-      % This is required because of TCP retransmits,
-      % which can cause this to happen.
-      % But this is also exploitable by a speedhacker!
-
-      % Example:
-      % At an update interval of 250ms you probably want to
-      % keep this in between 2 and 12.
-      % At 8 the server will still accept a buffered-up movement
-      % processed at once, but legally created in steps within a 2s "lagspike".
-
-      % TODO: use estimated RTT to adjust dynamically.
-
-      return Send(Send(SYS, @GetSettings), @GetMoveMaxSimulReq);
-   }
-
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
@@ -3003,82 +2974,48 @@ messages:
 
       %
       % 3.3 Bound time-deltas
-      % Prevents long teleports after stops and negative numbers
+      %   These must not be too big for the calculations blow
       %
-      iDelta = bound(iDelta,0,Send(Send(SYS, @GetSettings), @GetMoveMaxLag));
-      iDeltaVigor = bound(iDeltaVigor,0,3000);
-
+      iDelta = bound(iDelta,0,2000);
+      iDeltaVigor = bound(iDeltaVigor,0,2000);
+	  
       %
-      % 3.4 TCP workaround
-      % iDelta can be 0 in case we're processing buffered up TCP segments with several requests at once.
-      % This can either happen because of IP packetloss and retransmits (legal)
-      % or because someone is sending multiple positions at once by purpose (illegal).
-      % So we must allow up to a certain amount of such buffered up requests,
-      % but limit it so no one can exploit it too much.
+      % 4.1 Calculate the squared movesize for running in this dt.
+      %   USER_RUNNING_SPEED is defined as # of big squares per 10000ms
+      %   The unit here is fine upscaled by another *16 (same is done below in 4.5)
       %
-      if iDelta < 10
-      {
-         % If within the limits of allowed multiple requests
-         if piMovesInTick < Send(self,@GetMoveAmountTolerance)
-         {
-            % Fallback to default dt expected from client
-            iDelta = Send(Send(SYS, @GetSettings), @GetMoveDefaultInterval);
-
-            piMovesInTick = piMovesInTick + 1;
-         }
-         else
-         {
-            % This is too many buffered up requests
-            % Reset position for this and any following in this tick
-            Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
-                  #new_row=iRow,
-                  #new_col=iCol,
-                  #fine_row=iFineRow,
-                  #fine_col=iFineCol,
-                  #new_angle=iAngle);
-
-            % Make a log entry
-            if piCheaterLogs < MAX_LOGGED_THRESHOLD
-            {
-               piCheaterLogs = piCheaterLogs + 1;
-               Debug("ALERT!",Send(self,@GetTrueName),self,
-                  "exceeded multiple reqmove limit");
-            }
-
-            return;
-         }
-      }
-      else
-      {
-         % Reset moves in tick counter
-         piMovesInTick = 1;
-      }
+      iMaxMoveRun = (USER_RUNNING_SPEED * FINENESS * 16 * iDelta) / 10000;
+      iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
+  
+      %
+      % 4.2 Fill up the movement bucket with tokens
+      %   for the squared distance one could have travelled at maximum.
+      %
+      piMovementBucket = piMovementBucket + iMaxMoveRun;        
 
       %
-      % 4.1 Get move-deltas in FINENESS units
+      % 4.3 Bound the maximum bucketsize
+      %
+      piMovementBucket = bound(piMovementBucket, 0, Send(Send(SYS, @GetSettings), @GetMovementBucketMax));
+      %Debug("Bucket before move:",piMovementBucket);
+			
+      %
+      % 4.4 Get move-deltas in FINENESS units
       %
       iDy = ((new_row * FINENESS) + fine_row) - ((iRow * FINENESS) + iFineRow);
       iDx = ((new_col * FINENESS) + fine_col) - ((iCol * FINENESS) + iFineCol);
 
       %
-      % 4.2 Scale them up a bit further for precision later
-      % We do the same with the iMaxMoveRun.
+      % 4.5 Scale them up a bit further for precision later
+      % We did the same with iMaxMoveRun in 4.1
       %
       iDy = iDy * 16;
       iDx = iDx * 16;
 
       %
-      % 4.3 Get move-vector length. This is the squared move-vector length.
+      % 4.6 Get squared move-vector length.
       %
       iMoveLength = (iDy * iDy) + (iDx * iDx);
-
-      %
-      % 4.4 Calculate maximum allowed squared movesize for running in this dt.
-      % USER_RUNNING_SPEED is defined as # of big squares per 10000ms
-      %
-      iMaxMoveRun = (USER_RUNNING_SPEED * FINENESS * 16 * iDelta) / 10000;
-      iMaxMoveRun = iMaxMoveRun + Send(self,@GetMoveStepTolerance);
-      iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
 
       % DEBUG output
       %Debug(
@@ -3095,9 +3032,10 @@ messages:
       %  "fine_col:",fine_col);
 
       %
-      % 5.1 This move is bigger than running allows (speedhack).
+      % 5.1 This move would consume more tokens
+      % than we have left -> deny
       %
-      if (iMoveLength > iMaxMoveRun)
+      if (piMovementBucket - iMoveLength < 0)
       {
          % Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -3225,10 +3163,12 @@ messages:
 
       %
       % 8. Save this move tick for next execution
-      %
+      % and subtract the move tokens we have consumed.
       piLastMoveUpdateTime = iCurrentTime;
+      piMovementBucket = piMovementBucket - iMoveLength;
+      %Debug("Bucket after:",piMovementBucket);
 
-      %
+	  %
       % 9. Process the move
       %
       Send(poOwner,@SomethingMoved,#what=self,

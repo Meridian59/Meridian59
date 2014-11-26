@@ -28,7 +28,7 @@ classvars:
 
    viTeleport_row = 34
    viTeleport_col = 26
-   
+
    viTerrain_type = TERRAIN_MOUNTAIN
 
 properties:
@@ -57,10 +57,10 @@ messages:
    Constructed()
    {
       plMonsters = [ [&Orc, 40], [&DeathSpider, 60] ];
-	
-      plGenerators = [ [4, 7], [11, 22], [15, 28], [19, 41], [32, 37],
-		      [24, 30], [21, 21], [20, 14], [9, 13], [15, 9],
-		      [30, 13], [30, 19], [36, 18], [40, 28], [46, 13] ];
+
+      plGenerators = [ [4, 7], [11, 22], [14, 28], [20, 42], [32, 37],
+                       [24, 30], [21, 21], [20, 14], [8, 13], [15, 9],
+                       [30, 13], [30, 19], [36, 18], [40, 28], [46, 13] ];
       propagate;
    }
 
@@ -77,7 +77,7 @@ messages:
    }
 
    CreateStandardExits()
-   {    
+   {
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_EAST, RID_I9, 67, 3, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_WEST, RID_G9, 39, 71, ROTATE_NONE], plEdge_exits);
@@ -87,9 +87,10 @@ messages:
 
    OpenQorTemple()
    {
-      send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
-                #height = 290, #speed = 8);
-      plYell_zone = cons (RID_TEMPLE_QOR, plYell_Zone);
+      Send(self,@SetSector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height = 290,#speed = 8);
+      plYell_zone = Cons(RID_TEMPLE_QOR, plYell_Zone);
+
       return;
    }
 
@@ -97,45 +98,48 @@ messages:
    {
       local i;
 
-      send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
-                #height = 350, #speed = 8);
+      Send(self,@SetSector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height = 350,#speed = 8);
+
       for i in plYell_zone
       {
-	 if i = RID_TEMPLE_QOR
-	 {
-	    plYell_Zone=dellistelem(plYell_zone,i);
-	 }
+         if i = RID_TEMPLE_QOR
+         {
+            plYell_Zone = DelListElem(plYell_zone,i);
+         }
       }
+
       return;
    }
 
    SomethingMoved(what = $,new_row = $, new_col = $)
    {
-     if new_row=26 and new_col= 12
-        {
-          send(send(SYS,@findroombynum,#num=RID_TEMPLE_QOR),@TempleEntrance,
-                #who=what);
-          return;
-         }
-     propagate;
+      if new_row=26 and new_col= 12
+      {
+         Send(Send(SYS,@FindRoomByNum,#num=RID_TEMPLE_QOR),@TempleEntrance,
+               #who=what);
+
+         return;
+      }
+
+      propagate;
    }
 
    ExitFromQor(who=$)
    {
-      send(SYS,@UtilGoNearSquare,#what=who,
-        #where=self,#new_row= 22,#new_col =13,#new_angle=ANGLE_NORTH);
+      Send(SYS,@UtilGoNearSquare,#what=who,
+            #where=self,#new_row= 22,#new_col =13,#new_angle=ANGLE_NORTH);
+
       return;
    }
 
    CreateStandardObjects()
    {
-
       Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_H9),
-           #new_row=45,#new_col=32,#new_angle=ANGLE_WEST);
+            #new_row=45,#new_col=32,#new_angle=ANGLE_WEST);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

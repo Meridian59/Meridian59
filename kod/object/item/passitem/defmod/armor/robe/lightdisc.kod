@@ -117,7 +117,7 @@ messages:
          return bound(3*piLevel,0,15);
       }
 
-      return 5;
+      return 2;
     }
 
    SetXLATTranslation(translation=$)

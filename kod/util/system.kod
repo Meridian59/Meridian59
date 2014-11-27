@@ -7054,6 +7054,37 @@ messages:
 
       return resistance_list;
    }
+   
+   GetUniqueIPs()
+   {
+      local i,j,lUserIPList,lIP,bFound;
+      
+      lUserIPList = $;
+      
+      for i in plUsers_logged_on
+      {
+         bFound = FALSE;
+      
+         lIP = send(i,@GetIP);
+         
+         for j in lUserIPList
+         {
+            if Nth(lIP,1) = Nth(j,1)
+               AND Nth(lIP,2) = Nth(j,2)
+               AND Nth(lIP,3) = Nth(j,3)
+               AND Nth(lIP,4) = Nth(j,4)
+            {
+               bFound = TRUE;
+            }
+         }
+         if NOT bFound
+         {
+            lUserIPList = Cons(lIP,lUserIPList);
+         }
+      }
+      
+      return Length(lUserIPList);
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

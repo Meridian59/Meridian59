@@ -239,15 +239,28 @@ classvars:
    % viOccupation is what this mob does for a living, used for NPCs.
    viOccupation   = 0
    viKarma        = 0
+
    % viLevel ranges from 25 to 200 (150 and above is for "boss" mobs)
    %  determines hit points.
    viLevel        = 25
+
+   % viDifficulty ranges from 1 to 9, increases combat prowess. 10 can
+   % be used but is far too difficult for general use.
+   viDifficulty = 0
+
+   % viVisionDistance is the radius (in row/col units) that the monster
+   % can see within. Default 10.
+   viVisionDistance = 10
+
+   % All monsters use BRAIN_ORIGINAL for now.
+   viBrain_type = BRAIN_ORIGINAL
+
+   % Bitvector for monster/NPC behaviors. This variable contains the flags
+   % monsters use for determining combat/aggro behavior.
+   viDefault_behavior = 0
+
    viCashmin = 1
    viCashmax = 10
-   % viDifficulty ranges from 1 to 9, increases combat prowess
-   viDifficulty   = 0
-   viBrain_type   = BRAIN_ORIGINAL
-   viDefault_behavior = 0
 
    % 1 in x chance to cast a spell. Default 10% chance.
    viSpellChance = 10
@@ -294,6 +307,7 @@ classvars:
 
 properties:
 
+   piVisionDistance
    piAnimation = ANIM_NONE
 
    % List of the mobs wanted items.
@@ -404,6 +418,7 @@ messages:
       piHit_points = piMax_hit_points;
       piMana = piMax_mana;
       piSpellChance = viSpellChance;
+      piVisionDistance = viVisionDistance;
 
       if Send(self,@MobIsSeller)
       {
@@ -2022,9 +2037,9 @@ messages:
    }
 
    GetVisionDistance()
-   "With difficulty going from 0 to 10, this is either 4,5,or 6."
+   "Returns vision radius."
    {
-      return 6 + viDifficulty * 2;
+      return piVisionDistance;
    }
 
    GetAttackRange()
@@ -2040,21 +2055,18 @@ messages:
 
    CanSee(what = $)
    {
-      local iVision;
-
       if what = $
       {
          return FALSE;
       }
-      
+
       if poOwner <> Send(what,@GetOwner)
       {
          return FALSE;
       }
 
-      iVision = Send(self,@GetVisionDistance);
-      
-      if (Send(self,@SqFineDistToVision,#what=what) / 10000) <= (iVision*iVision)
+      if (Send(self,@SqFineDistToVision,#what=what) / 10000)
+               <= (piVisionDistance*piVisionDistance)
       {
          return TRUE;
       }
@@ -6008,8 +6020,7 @@ messages:
          return $;
       }
 
-      iRangeSquared = Send(self,@GetVisionDistance);
-      iRangeSquared = iRangeSquared * iRangeSquared;
+      iRangeSquared = piVisionDistance * piVisionDistance;
 
       oTarget = $;
 
@@ -6085,8 +6096,7 @@ messages:
 
       oTarget = $;
 
-      iRangeSquared = Send(self,@GetVisionDistance);
-      iRangeSquared = iRangeSquared * iRangeSquared;
+      iRangeSquared = piVisionDistance * piVisionDistance;
 
       lActive = Send(poOwner,@GetHolderActive);
       for i in lActive
@@ -6139,7 +6149,7 @@ messages:
 
    IsAlly(target=$,regroup=FALSE)
    {
-      if GetClass(target) = GetClass(self)
+      if IsClass(target,GetClass(self))
          OR (poMaster <> $ AND Send(target,@GetMaster) = poMaster)
       {
          return TRUE;

@@ -822,14 +822,14 @@ messages:
 
       % Check here if we need to break target, perhaps they are now
       % too far away and have escaped us. This is the same vision check
-      % as used in GetHatred, with 3 added to the monster vision.
+      % as used in GetHatred, with 5 added to the monster vision.
       if NOT (behavior & AI_FIGHT_HYPERAGGRESSIVE)
          AND NOT (behavior & AI_FIGHT_SINGLEMINDED)
          AND (Send(mob,@GetTimeAttacked) + 10) < GetTime()
       {
          iSquaredVision = Send(mob,@GetVisionDistance) + 5;
-         iSquaredVision = (iSquaredVision * iSquaredVision) / 5;
-         iSquaredDistance = (Send(mob,@SquaredFineDistanceTo,#what=target) / 10000);
+         iSquaredVision = (iSquaredVision * iSquaredVision);
+         iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=target) / 10000);
          if iSquaredVision < iSquaredDistance
          {
             Send(mob,@EnterStateWait,#actnow=TRUE);
@@ -1183,13 +1183,13 @@ messages:
          if (oTarget = $)
          {
             % This is the actual range past which a monster can't 'see'. We
-            % use this as our base for this calculation. If vision is changed,
-            % this calculation might need to change too.
+            % use this as our base for this calculation.
             iSquaredVision = Send(mob,@GetVisionDistance);
-            iSquaredVision = (iSquaredVision * iSquaredVision) / 5;
+            iSquaredVision = (iSquaredVision * iSquaredVision);
 
-            % Use the new SquaredFineDistanceTo here for better resolution.
-            iSquaredDistance = (Send(mob,@SquaredFineDistanceTo,#what=what) / 10000);
+            % Use the new SqFineDistToVision here for better resolution.
+            % Based on SquaredFineDistanceTo, but without $ checks for speed.
+            iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=what) / 10000);
 
             iAdd = iSquaredVision - iSquaredDistance;
          }

@@ -408,5 +408,26 @@ messages:
       return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
    }
 
+   SqFineDistToVision(what = $)
+   "Computes squared distance to <what> in fine-units. Optimised for "
+   "monster vision check."
+   {
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff;
+
+      % Scale to fine.
+      iRow = (piRow * 100) + (piFine_row * 15625/10000);
+      iCol = (piCol * 100) + (piFine_col * 15625/10000);
+      iWhatRow = (Send(what,@GetRow) * 100)
+                  + (Send(what,@GetFineRow) * 15625/10000);
+      iWhatCol = (Send(what,@GetCol) * 100)
+                  + (Send(what,@GetFineCol) * 15625/10000);
+
+      % Deltas.
+      iRow_diff = iRow - iWhatRow;
+      iCol_diff = iCol - iWhatCol;
+
+      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

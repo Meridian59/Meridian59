@@ -2054,11 +2054,11 @@ messages:
 
       iVision = Send(self,@GetVisionDistance);
       
-      if Send(self,@SquaredDistanceTo,#what=what) <= (iVision*iVision)
+      if (Send(self,@SqFineDistToVision,#what=what) / 10000) <= (iVision*iVision)
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
@@ -5997,10 +5997,10 @@ messages:
 
       return;
    }
-      
+
    GetClosestFrightener()
    {
-      local lActive, iRangeSquared, oTarget, iThisRangeSquared, i, iRow, iCol,
+      local lActive, iRangeSquared, oTarget, iThisRangeSquared, i,
             iDistRow, iDistCol, oIllusion, oObject, oBodyType;
 
       if poOwner = $
@@ -6008,10 +6008,6 @@ messages:
          return $;
       }
 
-      iRow = piRow;
-      iCol = piCol;
-
-      % Vision distance is a number from 4 to 6
       iRangeSquared = Send(self,@GetVisionDistance);
       iRangeSquared = iRangeSquared * iRangeSquared;
 
@@ -6019,7 +6015,7 @@ messages:
 
       lActive = Send(poOwner,@GetHolderActive);
       for i in lActive
-      {         
+      {
          oObject = Send(poOwner,@HolderExtractObject,#data=i);
 
          % Pass if we're looking at ourself here.
@@ -6030,24 +6026,29 @@ messages:
 
          oBodyType = oObject;
          if IsClass(oObject,&User)
-         { 
-            oIllusion = Send(oObject,@GetIllusionForm); 
+         {
+            oIllusion = Send(oObject,@GetIllusionForm);
             if oIllusion <> $
             {
                oBodyType = oIllusion;
             }
          }
 
-         % If not an ally, or doesn't look like one, we don't care.
+         % Check if we are scared of this.
          if NOT Send(self,@IsFrightenedOf,#target=oBodyType,#regroup=TRUE)
          {
             continue;
          }
-         
-         iDistRow = iRow - Send(oObject,@GetRow);  
-         iDistCol = iCol - Send(oObject,@GetCol);
 
-         iThisRangeSquared = (iDistRow*iDistRow) + (iDistCol*iDistCol);
+         iDistRow = ((piRow * 100) + (piFine_row * 15625/10000))
+                     - ((Send(oObject,@GetRow) * 100)
+                        + (Send(oObject,@GetFineRow) * 15625/10000));
+
+         iDistCol = ((piCol * 100) + (piFine_col * 15625/10000))
+                     - ((Send(oObject,@GetCol) * 100)
+                        + (Send(oObject,@GetFineCol) * 15625/10000));
+
+         iThisRangeSquared = (iDistRow * iDistRow + iDistCol * iDistCol) / 10000;
 
          if iThisRangeSquared <= iRangeSquared
          {
@@ -6057,9 +6058,9 @@ messages:
       }
 
       % oTarget = nil if none are in range.
-      return oTarget;   
+      return oTarget;
    }
-      
+
    IsFrightenedOf(target = $)
    {
       if Send(self,@IsUndead)
@@ -6074,7 +6075,7 @@ messages:
 
    GetClosestAlly()
    {
-      local lActive, iRangeSquared, oTarget, iThisRangeSquared, i, iRow, iCol,
+      local lActive, iRangeSquared, oTarget, iThisRangeSquared, i,
             iDistRow, iDistCol, oIllusion, oObject, oBodyType;
 
       if poOwner = $
@@ -6084,10 +6085,6 @@ messages:
 
       oTarget = $;
 
-      iRow = piRow;
-      iCol = piCol;
-
-      % Vision distance is a number from 4 to 6
       iRangeSquared = Send(self,@GetVisionDistance);
       iRangeSquared = iRangeSquared * iRangeSquared;
 
@@ -6101,11 +6098,11 @@ messages:
          {
             continue;
          }
-         
+
          % is what it looks like, an ally?
          oBodyType = oObject;
          if IsClass(oObject,&User)
-         { 
+         {
             oIllusion = Send(oObject,@GetIllusionForm); 
             if oIllusion <> $
             {
@@ -6114,15 +6111,20 @@ messages:
          }
 
          % If not an ally, we don't care.
-         if not Send(self,@IsAlly,#target=oBodyType,#regroup=TRUE)
+         if NOT Send(self,@IsAlly,#target=oBodyType,#regroup=TRUE)
          {
             continue;
          }
 
-         iDistRow = iRow - Send(oObject,@GetRow);  
-         iDistCol = iCol - Send(oObject,@GetCol);
+         iDistRow = ((piRow * 100) + (piFine_row * 15625/10000))
+                     - ((Send(oObject,@GetRow) * 100)
+                        + (Send(oObject,@GetFineRow) * 15625/10000));
 
-         iThisRangeSquared = (iDistRow*iDistRow) + (iDistCol*iDistCol);
+         iDistCol = ((piCol * 100) + (piFine_col * 15625/10000))
+                     - ((Send(oObject,@GetCol) * 100)
+                        + (Send(oObject,@GetFineCol) * 15625/10000));
+
+         iThisRangeSquared = (iDistRow * iDistRow + iDistCol * iDistCol) / 10000;
 
          if iThisRangeSquared <= iRangeSquared
          {

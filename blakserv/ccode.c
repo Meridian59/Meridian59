@@ -2299,7 +2299,7 @@ int C_GetTickCount(int object_id,local_var_type *local_vars,
 	// 4) Roll-Over means anything calculating the timespan of something before and after the roll-over
 	//    will return a negative timespan (but only once).
 	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = (int)((unsigned int)tick & 0x07FFFFFF);
+	ret_val.v.data = (int)((unsigned int)tick & MAX_KOD_INT);
 	
 	return ret_val.int_val;
 }

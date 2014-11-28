@@ -2065,7 +2065,7 @@ messages:
          return FALSE;
       }
 
-      if (Send(self,@SqFineDistToVision,#what=what) / 10000)
+      if (Send(self,@SqFineDistToVision,#what=what) / FINENESS_SQUARED)
                <= (piVisionDistance*piVisionDistance)
       {
          return TRUE;
@@ -2541,20 +2541,21 @@ messages:
       return TRUE;
    }
 
-   ReqMonsterMove(new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol = FINENESS_HALF)
+   ReqMonsterMove(new_row = $,new_col = $,new_finerow = FINENESS_HALF,
+                  new_finecol = FINENESS_HALF)
    "Called by monster moving code to check if we really want to go"
    "to <new_row>,<new_col>."
    {
       local r,c;
-  
+
       if NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS)
       {
          return TRUE;
       }
 
-      % get coordinates in highres squares
-      r = ((new_row * 64) + new_finerow) / 16;
-      c = ((new_col * 64) + new_finecol) / 16;
+      % Get coordinates in highres squares
+      r = ((new_row * FINENESS) + new_finerow) / 16;
+      c = ((new_col * FINENESS) + new_finecol) / 16;
 
       % Monsters that can attack/move through walls shouldn't wander off the
       %  map.
@@ -2569,7 +2570,8 @@ messages:
       return TRUE;
    }
     
-   MonsterOrient(new_row = $,new_col = $,new_finerow = FINENESS_HALF,new_finecol=FINENESS_HALF,face_target = FALSE, face_away=FALSE)
+   MonsterOrient(new_row = $,new_col = $,new_finerow = FINENESS_HALF,
+               new_finecol=FINENESS_HALF,face_target = FALSE, face_away=FALSE)
    "Called by monster moving code before and after a real move"
    {
       local drow, dcol, iAngle;
@@ -6051,15 +6053,14 @@ messages:
             continue;
          }
 
-         iDistRow = ((piRow * 100) + (piFine_row * 15625/10000))
-                     - ((Send(oObject,@GetRow) * 100)
-                        + (Send(oObject,@GetFineRow) * 15625/10000));
+         iDistRow = (piRow * FINENESS + piFine_row)
+                     - (Send(oObject,@GetRow) * FINENESS + Send(oObject,@GetFineRow));
 
-         iDistCol = ((piCol * 100) + (piFine_col * 15625/10000))
-                     - ((Send(oObject,@GetCol) * 100)
-                        + (Send(oObject,@GetFineCol) * 15625/10000));
+         iDistCol = (piCol * FINENESS + piFine_col)
+                     - (Send(oObject,@GetCol) * FINENESS + Send(oObject,@GetFineCol));
 
-         iThisRangeSquared = (iDistRow * iDistRow + iDistCol * iDistCol) / 10000;
+         iThisRangeSquared = (iDistRow * iDistRow + iDistCol * iDistCol)
+                                 / FINENESS_SQUARED;
 
          if iThisRangeSquared <= iRangeSquared
          {
@@ -6126,15 +6127,14 @@ messages:
             continue;
          }
 
-         iDistRow = ((piRow * 100) + (piFine_row * 15625/10000))
-                     - ((Send(oObject,@GetRow) * 100)
-                        + (Send(oObject,@GetFineRow) * 15625/10000));
+         iDistRow = (piRow * FINENESS + piFine_row)
+                     - (Send(oObject,@GetRow) * FINENESS + Send(oObject,@GetFineRow));
 
-         iDistCol = ((piCol * 100) + (piFine_col * 15625/10000))
-                     - ((Send(oObject,@GetCol) * 100)
-                        + (Send(oObject,@GetFineCol) * 15625/10000));
+         iDistCol = (piCol * FINENESS + piFine_col)
+                     - (Send(oObject,@GetCol) * FINENESS + Send(oObject,@GetFineCol));
 
-         iThisRangeSquared = (iDistRow * iDistRow + iDistCol * iDistCol) / 10000;
+         iThisRangeSquared = (iDistRow * iDistRow + iDistCol * iDistCol)
+                              / FINENESS_SQUARED;
 
          if iThisRangeSquared <= iRangeSquared
          {

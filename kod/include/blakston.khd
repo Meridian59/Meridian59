@@ -1143,6 +1143,7 @@
    % Fineness per block
    FINENESS = 64
    FINENESS_HALF = 32
+   FINENESS_SQUARED = 4096
 
    SECTOR_UP = 1
    SECTOR_DN = 0

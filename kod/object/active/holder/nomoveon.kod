@@ -385,19 +385,15 @@ messages:
    {
       local iRow, iCol, iRow_diff, iCol_diff;
 
-      % Get own row/col.
-      iRow = piRow;
-      iCol = piCol;
-
       % Sanity check, big row/col can be $.
-      if row = $ OR col = $ OR iRow = $ OR iCol = $
+      if row = $ OR col = $ OR piRow = $ OR piCol = $
       {
          return $;
       }
 
       % Scale to fine
-      iRow = (iRow * FINENESS) + piFine_row;
-      iCol = (iCol * FINENESS) + piFine_col;
+      iRow = (piRow * FINENESS) + piFine_row;
+      iCol = (piCol * FINENESS) + piFine_col;
       row = (row * FINENESS) + fine_row;
       col = (col * FINENESS) + fine_col;
 
@@ -410,17 +406,16 @@ messages:
 
    SqFineDistToVision(what = $)
    "Computes squared distance to <what> in fine-units. Optimised for "
-   "monster vision check."
+   "monster vision check. Returns squared fine units, divide by "
+   "FINENESS_SQUARED to compare to squared row/col units."
    {
       local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff;
 
       % Scale to fine.
-      iRow = (piRow * 100) + (piFine_row * 15625/10000);
-      iCol = (piCol * 100) + (piFine_col * 15625/10000);
-      iWhatRow = (Send(what,@GetRow) * 100)
-                  + (Send(what,@GetFineRow) * 15625/10000);
-      iWhatCol = (Send(what,@GetCol) * 100)
-                  + (Send(what,@GetFineCol) * 15625/10000);
+      iRow = piRow * FINENESS + piFine_row;
+      iCol = piCol * FINENESS + piFine_col;
+      iWhatRow = Send(what,@GetRow) * FINENESS + Send(what,@GetFineRow);
+      iWhatCol = Send(what,@GetCol) * FINENESS + Send(what,@GetFineCol);
 
       % Deltas.
       iRow_diff = iRow - iWhatRow;

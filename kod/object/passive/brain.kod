@@ -829,7 +829,8 @@ messages:
       {
          iSquaredVision = Send(mob,@GetVisionDistance) + 5;
          iSquaredVision = (iSquaredVision * iSquaredVision);
-         iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=target) / 10000);
+         iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=target)
+                                 / FINENESS_SQUARED);
          if iSquaredVision < iSquaredDistance
          {
             Send(mob,@EnterStateWait,#actnow=TRUE);
@@ -1189,7 +1190,8 @@ messages:
 
             % Use the new SqFineDistToVision here for better resolution.
             % Based on SquaredFineDistanceTo, but without $ checks for speed.
-            iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=what) / 10000);
+            iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=what)
+                                    / FINENESS_SQUARED);
 
             iAdd = iSquaredVision - iSquaredDistance;
          }

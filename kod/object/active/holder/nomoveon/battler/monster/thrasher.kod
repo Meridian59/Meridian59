@@ -31,7 +31,7 @@ resources:
       "crafted in madness, and birthed in nightmares. Various limbs, none of "
       "them matching, sprout from this monster in disarray, and in its eye a "
       "strange malignance glows.  Run for your life. "
-   
+
    thrasher_shield_overlay = res0001e.bgf
    thrasher_mace_overlay = res0001c.bgf
    thrasher_scimitar_overlay = res0001d.bgf
@@ -43,7 +43,8 @@ resources:
    thrasher_sound_death = res0001c.wav
    thrasher_sound_aware = res0001a.wav
 
-   thrasher_spin_message = "~bThe thrasher spins, damaging you with its attack."
+   thrasher_spin_message = \
+      "~bThe thrasher spins, damaging you with its attack."
 
 classvars:
 
@@ -59,6 +60,7 @@ classvars:
    viCashmax = 6000
    viNormalSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BLUDGEON
+   viVisionDistance = 25
    viAttributes = 0
    viKarma = -75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE \
@@ -107,7 +109,7 @@ messages:
                         [-ATCK_SPELL_SHOCK, 90 ],
                         [-ATCK_SPELL_FIRE, -20 ],
                         [-ATCK_SPELL_HOLY, -15 ]
-                      ]; 
+                      ];
 
       Send(self,@SelectAdditionalWeapon);
       Send(self,@TweakBehavior);
@@ -122,7 +124,7 @@ messages:
       local RandomNumber, oObject;
 
       % Choose randomly
-      RandomNumber = random(0,2);
+      RandomNumber = Random(0,2);
       if RandomNumber = 0
       {
          % Shield: Increase hps.
@@ -186,7 +188,7 @@ messages:
    SomethingMoved(what = $,new_row = $,new_col = $)
    {
       local iDelay;
-      
+
       % Only care about moving stuff if we're not already moving
       % Only care about non-immortal players we can see and are "close"
       % We only care about players within 7 squares of us.
@@ -209,7 +211,7 @@ messages:
       }
 
       propagate;
-   } 
+   }
 
    WakeUp()
    {
@@ -237,7 +239,7 @@ messages:
       }
 
       lFinalTargets = Send(self,@GetFinalTargets);
-      If Length(lFinalTargets) > 1
+      if Length(lFinalTargets) > 1
          AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
          And NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
       {
@@ -254,8 +256,8 @@ messages:
       % The thrasher has a dual attack, like the Pit Boss...
       % but only if the thrasher has a secondary weapon on 
       % in its prShieldOverlay.
-      
-      if pbFirstAttack 
+
+      if pbFirstAttack
       {
          Send(self,@DoBludgeon);
          if ptSecondAttack = $ 
@@ -265,8 +267,8 @@ messages:
 
             return;
          }
- 
-         pbFirstAttack = TRUE; 
+
+         pbFirstAttack = TRUE;
       }
 
       return;
@@ -276,7 +278,7 @@ messages:
    {
       if pbFirstAttack
       {
-         return;  
+         return;
       }
 
       ptSecondAttack = $;
@@ -291,7 +293,7 @@ messages:
          }
 
          pbFirstAttack = TRUE;
-      }      
+      }
 
       return;
    }
@@ -301,7 +303,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -348,7 +350,7 @@ messages:
       iDamage = Random(SPIN_DAMAGE_MIN,SPIN_DAMAGE_MAX);
 
       lTargets = lFinalTargets;
-      
+
       if lTargets = $
       {
          lTargets = Send(self,@GetFinalTargets);
@@ -361,21 +363,21 @@ messages:
          if iDamage = $
          {
             Send(self,@KilledSomething,#what=i,#use_weapon=self);
-         } 
+         }
 
          Send(i,@MsgSendUser,#message_rsc=thrasher_spin_message);
          Send(i,@WaveSendUser,#wave_rsc=thrasher_sound_attack);
       }
 
       return;
-   }      
+   }
 
    %%% Animation for spin attack
 
    StartSpin(delay = 200)
-   { 
+   {
       local i;
-   
+
       if poOwner = $
       {
          return;
@@ -383,7 +385,7 @@ messages:
 
       piSpinDelay = delay;
       piSpinAngle = ANGLE_EAST;
-      Send(self,@SpinTimer);      
+      Send(self,@SpinTimer);
 
       return;
    }
@@ -412,7 +414,7 @@ messages:
 
       ptSpin = CreateTimer(self,@SpinTimer,piSpinDelay);
 
-      return;   
+      return;
    }
 
    %%% Animation and overlays
@@ -436,7 +438,7 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
       }
-      
+
       if piAnimation = ANIM_ATTACK
       {
          % Attacking is frames 6-8 then back to standing, (9)
@@ -464,13 +466,13 @@ messages:
       AddPacket(1,1);
       % Also walking, 1-5 I assume. currently 1, 2, 1 to test
       AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
-      
+
       return;
    }
 
    SendOverlays()
    {
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
       AddPacket(1,1);
 
       if piAnimation = ANIM_ATTACK
@@ -479,7 +481,7 @@ messages:
          % Scimitar animates from group 2-4 for an attack.
          AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_ONCE, 4,150,
                    2,1, 2,1, 2,1);
-  
+
          return;
       }
 
@@ -487,9 +489,8 @@ messages:
       AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
 
       return;
-      
    }
-  
+
    IsUndead()
    {
       % Let's see... walking pile o' body parts...
@@ -512,7 +513,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

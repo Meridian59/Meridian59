@@ -35,10 +35,9 @@ resources:
    OrcWizard_desc_rsc = \
       "Harnessing dark powers from deep underground, the Orc Wizards "
       "enforce the mandates of their chieftain, such as extermination "
-      "of the enemy shadow beasts.  How the orcs came "
-      "upon the powers of magic is unknown, but the thought of man's "
-      "greatest enemy armed with arcane power is enough to make any warrior "
-      "queasy."
+      "of the enemy shadow beasts.  How the orcs came upon the powers of "
+      "magic is unknown, but the thought of man's greatest enemy armed "
+      "with arcane power is enough to make any warrior queasy."
 
    OrcWizard_dead_icon_rsc = orcwizaX.bgf
    OrcWizard_dead_name_rsc = "dead orc"
@@ -65,6 +64,7 @@ classvars:
    viAttributes = 0
    viLevel = 80
    viDifficulty = 7
+   viVisionDistance = 20
    viKarma = -60
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
@@ -92,7 +92,7 @@ messages:
                         [ATCK_WEAP_SLASH, 40 ],
                         [-ATCK_SPELL_HOLY, -25 ] ];
 
-      plSpellBook = [ [SID_SLITHERBOLT,5,40], [SID_KILLING_FIELDS,10,50],
+      plSpellBook = [ [SID_SLITHERBOLT,5,40], [SID_KILLING_FIELDS,8,50],
                       [SID_PURGE,4,85], [SID_MANA_BOMB,6,90],
                       [SID_FORGET,4,100] ];
 

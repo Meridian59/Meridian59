@@ -22,10 +22,11 @@ resources:
    NecromancerTroop_name_rsc = "necromancer"
 
    NecromancerTroop_desc_rsc = \
-   "Transfixed under the unearthly stare of this foul being, your mind skitters "
-   "fearfully around the thought of the dark rituals which must have transformed it "
-   "into what it is.  Indeed, the necromancer is an unliving testimonial to the "
-   "terrible price of magical power."
+      "Transfixed under the unearthly stare of this foul being, your "
+      "mind skitters fearfully around the thought of the dark rituals "
+      "which must have transformed it into what it is.  Indeed, the "
+      "necromancer is an unliving testimonial to the terrible price "
+      "of magical power."
 
    NecromancerTroop_dead_name_rsc = "dead necromancer"
    NecromancerTroop_sound_aware = skl2_awr.wav
@@ -40,6 +41,7 @@ classvars:
    viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
+   viVisionDistance = 18
    viCashmin = 100
    viCashmax = 200
    viChanceFemale = 60  % percentage chance to be female
@@ -82,6 +84,7 @@ messages:
    SetKarma()
    {
       viKarma = -40;
+
       return;
    }
 

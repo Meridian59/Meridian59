@@ -25,14 +25,15 @@ resources:
    duskrat_icon_rsc = rat.bgf
 
    duskrat_desc_rsc = \
-      "The air around the rat is dark and thick with evil.  The smell of death "
-      "and disease linger on its fetid breath as it darts towards its target.  "
-      "The origins of this abomination are unknown.  The only definite knowledge "
-      "known is of the deadly poison it carries in its bite."
+      "The air around the rat is dark and thick with evil.  The smell of "
+      "death and disease linger on its fetid breath as it darts towards "
+      "its target.  The origins of this abomination are unknown.  The only "
+      "definite knowledge known is of the deadly poison it carries "
+      "in its bite."
 
    duskrat_poisoned_add_rsc = \
       "As the poison travels to your head, you begin "
-      "to feel a little lightheaded.  The room spins around you."
+      "to feel a little light-headed.  The room spins around you."
 
    duskrat_dead_icon_rsc = ratX.bgf
    duskrat_dead_name_rsc = "dead dusk rat"
@@ -59,8 +60,10 @@ classvars:
    viAttributes = 0
    viLevel = 50
    viDifficulty = 6
+   viVisionDistance = 11
    viKarma = -40
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP
    viLight_Penalty = 30
    viCashmin = 250
    viCashmax = 750
@@ -155,11 +158,12 @@ messages:
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,
-              #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+               #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
 
          if IsClass(what,&Player)
          {
-            Send(what,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=10000);
+            Send(what,@EffectSendUserDuration,#effect=EFFECT_WAVER,
+                  #duration=10000);
             Send(what,@MsgSendUser,#message_rsc=duskrat_poisoned_add_rsc);
          }
       }

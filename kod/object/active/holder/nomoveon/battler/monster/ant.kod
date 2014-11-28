@@ -48,6 +48,7 @@ classvars:
    viAttack_type = ATCK_WEAP_BITE
    viLevel = 40
    viDifficulty = 4
+   viVisionDistance = 14
    viKarma = -10
    viCashmin = 100
    viCashmax = 300
@@ -83,23 +84,25 @@ messages:
       if roll = 1
       {
          Send(self,@DoLegSpasm);
+
          propagate;
       }
 
       if roll <= 5
       {
-         Send(poOwner,@SomethingTurned,#what=self,#new_angle=Random(0,MAX_ANGLE-1));
+         Send(poOwner,@SomethingTurned,#what=self,
+               #new_angle=Random(0,MAX_ANGLE-1));
       }
 
       propagate;
    }
-         
+
    MonsterAttack(what = $)
    {
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -108,7 +111,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -142,7 +145,5 @@ messages:
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

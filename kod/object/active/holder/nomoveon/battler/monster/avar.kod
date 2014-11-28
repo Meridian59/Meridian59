@@ -27,7 +27,7 @@ resources:
    avar_icon_rsc = avwar.bgf
 
    % Default name and desc!
-   avar_name_rsc = "peet-seeeep avar warrior"      
+   avar_name_rsc = "peet-seeeep avar warrior"
    avar_desc_rsc = \
       "Fierce warriors, these flightless bird men demand caution as you "
       "approach.  The plumage clearly denotes this Avar as being part of "
@@ -65,9 +65,11 @@ classvars:
    viTreasure_type = TID_AVAR
    viAttack_type = ATCK_WEAP_BLUDGEON
    viSpeed = SPEED_AVERAGE
-   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE | AI_FIGHT_MONSTERS
+   viDefault_behavior = \
+      AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE | AI_FIGHT_MONSTERS
    viLevel = 120
    viDifficulty = 7
+   viVisionDistance = 16
    viKarma = 40
    viWimpy = 8
    viCashmin = -1800
@@ -91,11 +93,11 @@ messages:
    {
       if clan <> $
       {
-         send(self,@SetClan,#clan=clan);
+         Send(self,@SetClan,#clan=clan);
       }
       else
       {
-         post(self,@ChooseClan); 
+         Post(self,@ChooseClan);
       }
 
       propagate;
@@ -104,7 +106,7 @@ messages:
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_FIRE, 20 ],
-                        [-ATCK_SPELL_COLD, -25 ],                        
+                        [-ATCK_SPELL_COLD, -25 ],
                         [ATCK_WEAP_SLASH, 10 ],
                         [ATCK_WEAP_NERUDITE, -25 ] ];
 
@@ -135,9 +137,9 @@ messages:
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-      
+
       return;
    }
 
@@ -145,21 +147,22 @@ messages:
    {
       return piColor_translation;
    }
-   
+
    ChooseClan()
    {
-      if poOwner = $ OR NOT IsClass(poOwner,&KCForest)
-      {         
-         if random (1,5) > 1
+      if poOwner = $
+         OR NOT IsClass(poOwner,&KCForest)
+      {
+         if Random (1,5) > 1
          {
-            send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
+            Send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
          }
 
          return;
       }
 
       % Ask our owner what clan we should be in.
-      send(self,@SetClan,#clan=send(poOwner,@GetClan));
+      Send(self,@SetClan,#clan=Send(poOwner,@GetClan));
 
       return;
    }
@@ -179,7 +182,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -212,16 +215,16 @@ messages:
 
       % if no body animation
       AddPacket(1,ANIMATE_NONE,2,3);
-      
+
       return;
    }
-   
+
    IsAlly(target = $, regroup = FALSE)
    {
       if IsClass(target,&AvarShaman)
          OR IsClass(target,&AvarChieftain)
-      { 
-         if send(target,@GetClan) = send(self,@GetClan)   
+      {
+         if Send(target,@GetClan) = Send(self,@GetClan)
          {
             return TRUE;
          }
@@ -232,16 +235,16 @@ messages:
       if IsClass(target,&Avar)
       {
          % Regroup makes the avars run to their shamans when they are wounded,
-         %  instead of each other.
-         if regroup           
+         % instead of each other.
+         if regroup
          {
             return FALSE;
          }
 
-         if send(target,@GetClan) = send(self,@GetClan)   
+         if Send(target,@GetClan) = Send(self,@GetClan)
          {
             return TRUE;
-         }      
+         }
 
          propagate;
       }
@@ -258,8 +261,8 @@ messages:
          OR IsClass(what,&AvarChieftain)
          OR IsClass(what,&Avar)
       {
-         if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
-            AND send(what,@GetClan) <> send(self,@GetClan)
+         if poOwner <> $ AND Send(poOwner,@GetRoomNum) = RID_KC3
+            AND Send(what,@GetClan) <> Send(self,@GetClan)
          {
             return 45;
          }
@@ -270,7 +273,7 @@ messages:
 
    GetTreasureType()
    {
-      if poOwner <> $ and send(poOwner,@GetRoomNum) = RID_KC3
+      if poOwner <> $ and Send(poOwner,@GetRoomNum) = RID_KC3
       {
          return TID_NONE;
       }
@@ -286,14 +289,13 @@ messages:
       if vrDead_icon <> $
       {
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
-                        #BodyTranslation=send(self,@GetClan),
+                        #BodyTranslation=Send(self,@GetClan),
                         #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);         
+                        #monstername=vrName,#drawfx=viDead_drawfx);
       }
 
       return oBody;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -19,13 +19,12 @@ resources:
    guard_name_rsc = "guard cow"
    guard_koc_name_rsc = "tanahyijoa"
    guard_icon_rsc = cow.bgf
-   guard_desc_rsc = "This is the vicious guardcow, which punishes all wrongdoers."
+   guard_desc_rsc = \
+      "This is the vicious guardcow, which punishes all wrongdoers."
 
-   
    guard_dead_icon_rsc = cowX.bgf
    guard_dead_name_rsc = "dead guard cow"
 
-   
 classvars:
 
    vrKocName = guard_koc_name_rsc
@@ -35,16 +34,17 @@ classvars:
 
    viMove_delay_min = 2000
    viMove_delay_max = 10000
-      
+
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BITE
-   
+
    viLevel = 100
    viDifficulty = 5
+   viVisionDistance = 14
    viKarma = 100
    viDefault_behavior = AI_FIGHT_MURDERERS
 
-   viGender = GENDER_FEMALE   
+   viGender = GENDER_FEMALE
    viCashmin = 100
    viCashmax = 200
 
@@ -64,7 +64,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -74,16 +74,18 @@ messages:
 
       return;
    }
+
    SendAnimation()
    {
       if piAnimation = ANIM_ATTACK
       {
-	 AddPacket(1,ANIMATE_ONCE,4,300,2,2,2,5,2,1);
-	 return;
+         AddPacket(1,ANIMATE_ONCE,4,300,2,2,2,5,2,1);
+
+         return;
       }
 
       % if no body animation
-      
+
       propagate;
    }
 

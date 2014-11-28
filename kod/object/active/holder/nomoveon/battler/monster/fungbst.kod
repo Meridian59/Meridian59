@@ -56,6 +56,7 @@ classvars:
    viAttributes = MOB_SPASM
    viLevel = 50
    viDifficulty = 3
+   viVisionDistance = 10
    viKarma = 10
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 100
@@ -169,7 +170,7 @@ messages:
       AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,1);
 
       return;
-   }      
+   }
 
    GetProjectileLightFlags()
    {

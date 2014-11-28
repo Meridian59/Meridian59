@@ -24,7 +24,7 @@ resources:
    EvilEnt_desc_rsc = \
       "Feeding upon the dredges of the tainted soil in the land, this "
       "living tree exudes evil, its sap blackened with hate."
-      
+
    EvilEnt_leaves_sparse_rsc = res0003c.bgf
 
    EvilEnt_dead_icon_rsc = res0003d.bgf
@@ -48,10 +48,11 @@ classvars:
    viTreasure_type = TID_ENT
    viAttack_type = ATCK_WEAP_WHIP
    viSpeed = SPEED_NONE
-   viAttributes = MOB_NOMOVE 
+   viAttributes = MOB_NOMOVE
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
    viLevel = 50
    viDifficulty = 4
+   viVisionDistance = 14
    viKarma = -40
    viCashmin = 125
    viCashmax = 500
@@ -222,11 +223,11 @@ messages:
    CreateDeadBody(killer=$)
    {
       return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
-                    #playername=Send(killer,@GetTrueName),#mob=TRUE,
-                    #BodyTranslation=piColor_Translation,
-                    #LegsTranslation=piColor_Translation,
-                    #monstername=EvilEnt_dead_name_rsc,
-                    #PlayerBodyOverlay=vrDead_leaves);
+                     #playername=Send(killer,@GetTrueName),#mob=TRUE,
+                     #BodyTranslation=piColor_Translation,
+                     #LegsTranslation=piColor_Translation,
+                     #monstername=EvilEnt_dead_name_rsc,
+                     #PlayerBodyOverlay=vrDead_leaves);
    }
 
 end

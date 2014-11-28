@@ -52,6 +52,7 @@ classvars:
    viAttributes = 0
    viLevel = 170
    viDifficulty = 9
+   viVisionDistance = 15
    viKarma = 0
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_SWITCHALOT
@@ -82,6 +83,7 @@ messages:
                         [ATCK_WEAP_PIERCE, 90],
                         [-ATCK_SPELL_FIRE, -45 ]
                       ];
+
       propagate;
    }
 

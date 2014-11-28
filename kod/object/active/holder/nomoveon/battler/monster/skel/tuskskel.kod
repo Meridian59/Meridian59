@@ -23,7 +23,8 @@ resources:
    TuskedSkeleton_desc_rsc = \
       "A few scraps of rotten flesh cling to this collection of human "
       "bones topped by a skull with large tusks protruding from its mouth.  "
-      "You shudder to think what dark ritual brought this abomination into being."
+      "You shudder to think what dark ritual brought this abomination "
+      "into being."
 
    TuskedSkeleton_head = skelhed1.bgf
    TuskedSkeleton_dead_icon_rsc = skelX.bgf
@@ -48,8 +49,10 @@ classvars:
    viAttributes = 0
    viLevel = 100
    viDifficulty = 6
+   viVisionDistance = 12
    viKarma = -70
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 250
    viCashmax = 750
    vrSound_miss = TuskedSkeleton_sound_miss
@@ -61,7 +64,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   
+
 messages:
 
    SetResistances()
@@ -78,7 +81,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

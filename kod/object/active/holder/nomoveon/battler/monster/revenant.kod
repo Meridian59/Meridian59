@@ -67,7 +67,7 @@ properties:
    viSpeed = SPEED_FASTER
    viLevel = 55               %% These are reset in constructor
    viDifficulty = 5
-   viVisionDistance = 9999
+   viVisionDistance = 100
    viKarma = 20
    viCashmin = 0
    viCashmax = 0

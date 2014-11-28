@@ -55,6 +55,11 @@ classvars:
    viAttributes = 0
    viLevel = 45
    viDifficulty = 4
+
+   % Small vision range for acting on their own. Minion-based events
+   % have precedence over vision checks.
+   viVisionDistance = 6
+
    viKarma = 0
    viCashmin = 0
    viCashmax = 0

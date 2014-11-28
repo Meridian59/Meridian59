@@ -20,10 +20,10 @@ resources:
    lupogg_name_rsc = "lupogg"
    lupogg_icon_rsc = lupogg.bgf
    lupogg_desc_rsc = \
-      "This underwater denizen, although hideous and brutish, is rumored to be "
-      "peaceful in nature, but there is no evidence of that now.  The "
-      "lupoggs seem upset that their territory has been trespassed upon, and "
-      "seem eager to challenge any they can find."
+      "This underwater denizen, although hideous and brutish, is rumored "
+      "to be peaceful in nature, but there is no evidence of that now.  The "
+      "lupoggs seem upset that their territory has been trespassed upon, "
+      "and seem eager to challenge any they can find."
 
    lupogg_dead_icon_rsc = lupoggX.bgf
    lupogg_dead_name_rsc = "dead lupogg"
@@ -48,6 +48,7 @@ classvars:
    viAttributes = 0
    viLevel = 105
    viDifficulty = 9
+   viVisionDistance = 18
    viKarma = 75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 225
@@ -76,23 +77,6 @@ messages:
                         [ATCK_WEAP_BLUDGEON, 30 ]];
 
       propagate;
-   }
-
-   % Pretty sure this isn't even called anywhere
-   CalculateDamage(what=$,hit_roll=$)
-   "We hit <what> with a roll of <hit_roll>, and now need to calculate"
-   "how much damage we caused."
-   {
-      local damage;
-
-      damage = Send(self,@Fuzzy,#num=viLevel/Random(8,11));
-
-      if piEnch_flags & ENCH_PALSY
-      {
-         damage = damage * 3 / 4 ;
-      }
-
-      return damage;
    }
 
    GetAttackRange()

@@ -49,10 +49,11 @@ classvars:
    viTreasure_type = TID_ENT
    viAttack_type = ATCK_WEAP_WHIP
    viSpeed = SPEED_NONE
-   viAttributes = MOB_NOMOVE 
+   viAttributes = MOB_NOMOVE
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
    viLevel = 50
    viDifficulty = 4
+   viVisionDistance = 14
    viKarma = 40
    viCashmin = 100
    viCashmax = 500
@@ -220,4 +221,4 @@ messages:
    }
 
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

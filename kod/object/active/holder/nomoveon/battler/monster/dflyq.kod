@@ -38,8 +38,8 @@ resources:
    DragonFlyQueen_name_rsc = "dragonfly queen"
    DragonFlyQueen_icon_rsc = dflo.bgf
    DragonFlyQueen_desc_rsc = \
-      "The other dragonflies seem to revere this oddly colored female.  She looks "
-      "up at you out of curiosity or hunger, you are not sure which."
+      "The other dragonflies seem to revere this oddly colored female.  She "
+      "looks up at you out of curiosity or hunger, you are not sure which."
 
    DragonFlyQueen_wings_rsc = dflywing.bgf
 
@@ -51,9 +51,14 @@ resources:
    DragonFlyQueen_sound_death = df_dth.wav
    DragonFlyQueen_sound_aware = df_awr.wav
 
-   dragonfly_charmed = "The dragonfly scarfs down the %s and looks at you with obvious adoration."
-   dragonfly_notcharmed = "The dragonfly scarfs down the %s, sniffs your hand, and looks at you expectantly."
-   DragonFlyQueen_unwanted_give = "~k%s%s cocks its head quizzically and sniffs your hand.~n~k"
+   dragonfly_charmed = \
+      "The dragonfly scarfs down the %s and looks at you with "
+      "obvious adoration."
+   dragonfly_notcharmed = \
+      "The dragonfly scarfs down the %s, sniffs your hand, and looks at "
+      "you expectantly."
+   DragonFlyQueen_unwanted_give = \
+      "~k%s%s cocks its head quizzically and sniffs your hand.~n~k"
    
    DragonFlyQueen_spit = loogy.bgf
 
@@ -73,6 +78,7 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 145
    viDifficulty = 6
+   viVisionDistance = 18
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viAttributes = MOB_RECEIVE
@@ -91,8 +97,8 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   ptHover = $   
-   ptLand = $   
+   ptHover = $
+   ptLand = $
 
 messages:
 
@@ -128,7 +134,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       piDrawFX = piDrawFX | BOUNCE_YES;
       Send(poOwner,@SomethingChanged,#what=self);
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
       piAnimation = ANIM_HOVER;
       if ptHover = $
       {
@@ -142,7 +148,7 @@ messages:
    {
       return 8;
    }
-   
+
    SendProjectileAnimation()
    {
       AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
@@ -217,7 +223,8 @@ messages:
       AddPacket(1,1);
       AddPacket(4,DragonFlyQueen_wings_rsc,1,HS_WINGS);
       AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
+      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,
+            (FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
 
       return;
    }
@@ -229,7 +236,8 @@ messages:
          AddPacket(1,1);
          AddPacket(4,DragonFlyQueen_wings_rsc,1,HS_WINGS);
          AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_HOVER_START - 1),2,(FRAME_HOVER_END - 1) );
+         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,
+               (FRAME_HOVER_START - 1),2,(FRAME_HOVER_END - 1) );
 
          return;
       }
@@ -240,7 +248,8 @@ messages:
          AddPacket(1,1);
          AddPacket(4,DragonFlyQueen_wings_rsc,1,HS_WINGS);
          AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),
+               2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
 
          return;
       }
@@ -252,19 +261,21 @@ messages:
    {
       if piAnimation = ANIM_HOVER
       {
-         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_HOVER_START,2,FRAME_HOVER_END);
+         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_HOVER_START,
+               2,FRAME_HOVER_END);
 
          return;
       }
 
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,
+               2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
 
          return;
       }
 
-      % If no body animation.     
+      % If no body animation.
       propagate;
    }
 
@@ -272,13 +283,13 @@ messages:
    {
       if ptHover <> $
       {
-         deletetimer(ptHover);
+         DeleteTimer(ptHover);
          ptHover = $;
       }
 
       if ptLand <> $
       {
-         deletetimer(ptLand);
+         DeleteTimer(ptLand);
          ptLand = $;
       }
 
@@ -294,17 +305,20 @@ messages:
    {
       return TRUE;
    }
-   
+
    GotWantedItem(who=$, obj = 0)
    {
       local oPlayerObj, i;
 
-      if not isClass(obj,&Food)  { return false; }
-      
-      oPlayerObj = $;
-      for i in send(who,@GetHolderPassive)
+      if NOT IsClass(obj,&Food)
       {
-         if isClass(i,GetClass(obj))
+         return FALSE;
+      }
+
+      oPlayerObj = $;
+      for i in Send(who,@GetHolderPassive)
+      {
+         if IsClass(i,GetClass(obj))
          {
             oPlayerObj = i;
 
@@ -312,34 +326,37 @@ messages:
          }
       }
 
-      if oPlayerObj = $ 
+      if oPlayerObj = $
       {
-         debug("player offered some food he didn't have.");
+         Debug("player offered some food he didn't have.");
 
          return FALSE;
       }
 
-      if send(oPlayerObj,@GetNumber) < send(obj,@GetNumber)
+      if Send(oPlayerObj,@GetNumber) < Send(obj,@GetNumber)
       {
-         debug("Player offered more food than he had.");
+         Debug("Player offered more food than he had.");
 
          return FALSE;
       }
 
-      if isClass(obj,&Meatpie) and (send(self,@GetMaster)=$ or isClass(send(self,@GetMaster),&User))
+      if IsClass(obj,&Meatpie)
+         AND (poMaster = $ OR IsClass(poMaster,&User))
       {
          %% Dragonfly is charmed.
-         send(self,@SetMaster,#omaster=who);
-         post(self,@ResetBehaviorFlags);  
-         post(who,@msgsenduser,#message_rsc=dragonfly_charmed,#parm1=send(obj,@GetName));
+         Send(self,@SetMaster,#oMaster=who);
+         Post(self,@ResetBehaviorFlags);
+         Post(who,@MsgSendUser,#message_rsc=dragonfly_charmed,
+               #parm1=Send(obj,@GetName));
       }
       else
       {
-         post(who,@msgsenduser,#message_rsc=dragonfly_notcharmed,#parm1=send(obj,@GetName));
+         Post(who,@MsgSendUser,#message_rsc=dragonfly_notcharmed,
+               #parm1=Send(obj,@GetName));
       }
 
-      Send(oPlayerObj,@SubtractNumber,#number=send(obj,@Getnumber));      
-      send(obj,@Delete);
+      Send(oPlayerObj,@SubtractNumber,#number=Send(obj,@Getnumber));
+      Send(obj,@Delete);
 
       return TRUE;
    }
@@ -355,23 +372,22 @@ messages:
    }
 
    TweakBehavior(mob = $)
-   {      
+   {
       if poMaster <> $
       {
-         send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
-         send(self,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
-         send(self,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
-         send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
+         Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
+         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
       }
 
-      return;      
+      return;
    }
 
    CanMorphTo()
    {
       return FALSE;
-   }      
-
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

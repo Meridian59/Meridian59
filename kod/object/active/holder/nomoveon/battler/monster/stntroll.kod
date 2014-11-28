@@ -20,13 +20,15 @@ resources:
    stonetroll_realname_rsc = "stone troll"
    StoneTroll_icon_rsc = Troll.bgf
    StoneTroll_desc_rsc = \
-      "Given the ominous task of guarding the Heart of Zjiria, this stone troll "
-      "glares darkly at all passerbyers.  You have a feeling you better start running."
+      "Given the ominous task of guarding the Heart of Zjiria, this stone "
+      "troll glares darkly at all those passing by.  You have a feeling you "
+      "better start running."
 
-   StoneTroll_desc2_rsc = "This stone troll is the grey-skinned brother of his "
-      "more common brother.  Stone trolls were driven into the mountains ages "
-      "ago, and were thought extinct.  However, more recently, they have emerged from "
-      "the hills in small raiding parties."
+   StoneTroll_desc2_rsc = \
+      "This stone troll is the grey-skinned brother of his more common "
+      "brother.  Stone trolls were driven into the mountains ages ago, "
+      "and were thought extinct.  However, more recently, they have emerged "
+      "from the hills in small raiding parties."
 
    StoneTroll_koc_name_rsc = "ha'humoch"
 
@@ -50,6 +52,7 @@ classvars:
    viAttributes = 0
    viLevel = 120
    viDifficulty = 8
+   viVisionDistance = 20
    viKarma = -100
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viCashmin = 500
@@ -115,13 +118,12 @@ messages:
       }
 
       % if no body animation
-
      propagate;
    }
 
    NewOwner(what=$)
    {
-      if what <> $ AND send(what,@GetRoomNum) = RID_I9
+      if what <> $ AND Send(what,@GetRoomNum) = RID_I9
       {
          vrName = stonetroll_name_rsc;
          vrDesc = StoneTroll_desc_rsc;
@@ -140,7 +142,6 @@ messages:
       % Too many abuses were caused by morphing into a stone troll. :(
       return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

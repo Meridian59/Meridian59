@@ -44,7 +44,7 @@ properties:
    piHyperAggressive_factor = 60
 
    % The higher this is, the less likely monsters will 'swarm'.
-   piChaser_factor = 150
+   piChaser_factor = 100
 
    % The higher this number is, the more likely a wizard hater
    % will chase after wizards.
@@ -162,7 +162,7 @@ messages:
 
       %% There are so many move messages, don't do anything most of the time.
       if (ignoreWait = FALSE)
-         AND Random(1,10) <> 8
+         AND Random(1,5) <> 5
       {
          return;
       }
@@ -1165,40 +1165,28 @@ messages:
          return 0;
       }
 
-      % Lose points for proximity. A monster will ignore you if you are
-      % outside their vision limit. Limit is 6 + viDifficulty * 2, but is
-      % slightly modified here to give a better range for all monsters.
-      if (event = TS_FIGHT_ME_VICTIM)
+      % This is the monster vision check. If 'what' attacked us, skip
+      % this since we will attack regardless of where 'what' is (even
+      % if we can't see them, we can see where the attack comes from).
+      if NOT (event = TS_FIGHT_ME_VICTIM)
       {
-         if oTarget = $
-         {
-            iAdd = 100;
-         }
-         else
-         {
-            iAdd = Send(mob,@GetLevel)/2;
-         }
-      }
-      else
-      {
-         if (oTarget = $)
-         {
-            % This is the actual range past which a monster can't 'see'. We
-            % use this as our base for this calculation.
-            iSquaredVision = Send(mob,@GetVisionDistance);
-            iSquaredVision = (iSquaredVision * iSquaredVision);
+         % This is the actual range past which a monster can't 'see'. We
+         % use this as our base for this calculation.
+         iSquaredVision = Send(mob,@GetVisionDistance);
+         iSquaredVision = (iSquaredVision * iSquaredVision);
 
-            % Use the new SqFineDistToVision here for better resolution.
-            % Based on SquaredFineDistanceTo, but without $ checks for speed.
-            iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=what)
+         % Use the new SqFineDistToVision here for better resolution.
+         % Based on SquaredFineDistanceTo, but without $ checks for speed.
+         iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=what)
                                     / FINENESS_SQUARED);
 
-            iAdd = iSquaredVision - iSquaredDistance;
-         }
-         else
+         % If outside our vision range, return 0 and don't switch.
+         if iSquaredVision < iSquaredDistance
          {
-            iAdd = 0;
+            return 0;
          }
+         
+         iAdd = Sqrt(iSquaredVision - iSquaredDistance) * 2;
       }
       iHatred = iHatred + iAdd;
 

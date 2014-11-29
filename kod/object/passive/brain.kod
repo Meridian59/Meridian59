@@ -938,7 +938,7 @@ messages:
          % Don't attack faction soldier NPCs unless
          % they are attacking the master.
          if IsClass(what,&FactionTroop)
-            AND oMaster <> oMobTarget
+            AND oMaster <> Send(what,@GetTarget)
          {
             return 0;
          }

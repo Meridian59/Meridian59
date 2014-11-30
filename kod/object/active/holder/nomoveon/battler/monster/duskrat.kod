@@ -22,7 +22,7 @@ resources:
 
    duskrat_koc_name_rsc = "teotnapyijoa"
    duskrat_name_rsc = "dusk rat"
-   duskrat_icon_rsc = rat.bgf
+   duskrat_icon_rsc = duskrat.bgf
 
    duskrat_desc_rsc = \
       "The air around the rat is dark and thick with evil.  The smell of death "
@@ -57,7 +57,7 @@ classvars:
    viSpeed = SPEED_VERY_FAST
    viAttack_type = ATCK_WEAP_CLAW
    viAttributes = 0
-   viLevel = 50
+   viLevel = 90
    viDifficulty = 6
    viKarma = -40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP

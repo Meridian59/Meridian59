@@ -14,7 +14,7 @@ LIBS =  \
 	 ws2_32.lib comctl32.lib advapi32.lib \
 	 winmm.lib archive.lib rscload.lib wininet.lib \
 	 ole32.lib  waveplay.lib \
-	 dxerr8.lib d3d8.lib d3dx8.lib libpng.lib zdll.lib
+	 dxerr.lib d3d9.lib d3dx9.lib libpng.lib zdll.lib
 
 DEFFILE  = $(SOURCEDIR)\client.def
 

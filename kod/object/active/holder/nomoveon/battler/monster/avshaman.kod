@@ -78,7 +78,7 @@ classvars:
    viSpeed = SPEED_SLOW
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
-   viLevel = 100
+   viLevel = 120
    viDifficulty = 8
    viKarma = 80
    viCashmin = 500
@@ -99,6 +99,7 @@ properties:
    piAnimation = ANIM_NONE
    piColor_Translation = PT_PURPLETORED
 
+   piMax_mana = 30
    piSpellPower = 75
 
 messages:
@@ -129,7 +130,7 @@ messages:
                       ];
 
       plSpellBook = [ [SID_HOLD,5,40], [SID_MANA_BOMB,6,70],
-                      [SID_SAND_STORM,4,85], [SID_EVIL_TWIN,10,90],
+                      [SID_HEAT,4,85], [SID_EVIL_TWIN,10,90],
                       [SID_EARTHQUAKE,10,100] ];
 
       propagate;

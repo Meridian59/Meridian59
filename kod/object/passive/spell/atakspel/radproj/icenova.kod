@@ -83,6 +83,9 @@ properties:
 
    piNumber = 12
 
+   pbAccessible = FALSE
+   pbEnabled = FALSE
+
 messages:
 
    ResetReagents()

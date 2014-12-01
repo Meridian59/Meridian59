@@ -22,9 +22,9 @@ resources:
    chupacabra_name_rsc = "chupacabra"
    chupacabra_icon_rsc = chupa.bgf
    chupacabra_desc_rsc = \
-   "A chupacabra"
+      "A chupacabra"
 
-   chupacabra_dead_icon_rsc = chupa.bgf
+   chupacabra_dead_icon_rsc = chupaX.bgf
    chupacabra_dead_name_rsc = "dead chupacabra"
 
    chupacabra_sound_hit = chupa_atkh.wav
@@ -41,12 +41,13 @@ classvars:
    vrDead_icon = chupacabra_dead_icon_rsc
    vrDead_name = chupacabra_dead_name_rsc
 
-   viSpeed = SPEED_FAST
+   viSpeed = SPEED_VERY_FAST
    viAttack_type = ATCK_WEAP_SLASH
-   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE
 
-   viAttributes = MOB_SPASM
+   viAttributes = 0
 
+   viLevel = 100
    viDifficulty = 6
    viKarma = -75
    
@@ -60,7 +61,7 @@ classvars:
 
 properties:
 
-   viLevel = 100
+
    viTreasure_type = TID_TOUGH
 
    piAnimation = ANIM_NONE
@@ -77,22 +78,7 @@ messages:
                         [-ATCK_SPELL_HOLY, -25 ] ];
       propagate;
    }
-
-   Constructor(DropsTreasure=TRUE,Level=0)
-   {
-      if Level > 0
-      {
-	 viLevel = Level;
-      }
-      if not DropsTreasure
-      {
-         viTreasure_type = TID_NONE;
-         vbSummoned = TRUE;
-      }
-      propagate;
-   }
-
-
+   
    MonsterAttack(what = $)
    {
       piAnimation = ANIM_ATTACK;
@@ -129,7 +115,7 @@ messages:
    SendMoveAnimation()
    {
       % Cycle through "walking" bitmaps (groups 2-5) at 50 milliseconds per frame
-      AddPacket(1,ANIMATE_CYCLE,4,31,2,1,2,12);
+      AddPacket(1,ANIMATE_CYCLE,4,75,2,3,2,7);
 
       return;
    }
@@ -138,7 +124,7 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,28,2,13,2,18,2,1);
+         AddPacket(1,ANIMATE_ONCE,4,75,2,8,2,12,2,1);
          return;
       }
       if piAnimation = ANIM_SPIKES
@@ -149,27 +135,6 @@ messages:
       
       propagate;
    }
-
-   IsUndead()
-   {
-      return TRUE;
-   }
-
-   SetMaster(oMaster=$,DurationSecs=1)
-   {
-      if (oMaster <> $) and isClass(oMaster,&User)
-      {
-         ptRevertControl = createTimer(self,@RevertControl,(DurationSecs*1000));
-      }
-      propagate;
-   }
-   RevertControl()
-   {
-      ptRevertControl = $;
-      send(self,@SetMaster,#oMaster=$);
-      return;
-   }
-   
 
    Delete()
    {

@@ -9,11 +9,25 @@ BGFS = rmcombat.bgf \
        rmnocombat.bgf \
        rmgcombat.bgf 
 
+DIRS = \
+   snowman \
+   qormastree \
+   "rat king" \
+   "qormas gifts" \
+   qormas_textures \
+   "rat soldier" \
+   "small rat" \
+   minotaur \
+   bunny \
+   wolf \
+   elephant \
+   chupacabra \
+   
 all: 
 	@-for %i in ($(BGFS)) do \
       @echo copying %i to client & \
    	$(CP) %i $(CLIENTRUNDIR)\resource
-	@-for %i in (snowman qormastree "rat king" "qormas gifts" qormas_textures "rat soldier" "small rat") do \
+	@-for %i in ($(DIRS)) do \
 		@if EXIST %i (	cd %i & \
       @echo Make in %i & \
 	 	$(MAKE) /$(MAKEFLAGS) & \

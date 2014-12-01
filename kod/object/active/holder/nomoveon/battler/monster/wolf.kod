@@ -20,7 +20,7 @@ resources:
    wolf_name_rsc = "wolf"
    wolf_icon_rsc = wolf.bgf
    wolf_desc_rsc = \
-   "A Wolf"
+      "A Wolf"
 
    wolf_dead_icon_rsc = wolfX.bgf
    wolf_dead_name_rsc = "dead wolf"
@@ -39,11 +39,11 @@ classvars:
    vrDead_icon = wolf_dead_icon_rsc
    vrDead_name = wolf_dead_name_rsc
 
-   viSpeed = SPEED_VERY_SLOW
+   viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
-   viDifficulty = 4
+   viDifficulty = 8
    viKarma = -45
    viCashmin = 175
    viCashmax = 375
@@ -53,9 +53,6 @@ classvars:
    vrSound_death = wolf_sound_death
 
 properties:
-
-
-   % our private data
 
    viTreasure_type = TID_ZOMBIE
    viLevel = 55
@@ -74,21 +71,6 @@ messages:
                         [-ATCK_SPELL_HOLY, -25 ] ];
       propagate;
    }
-
-   Constructor(DropsTreasure=TRUE,Level=0)
-   {
-      if Level > 0
-      {
-	 viLevel = Level;
-      }
-      if not DropsTreasure
-      {
-         viTreasure_type = TID_NONE;
-         vbSummoned = TRUE;
-      }
-      propagate;
-   }
-
 
    MonsterAttack(what = $)
    {
@@ -127,27 +109,6 @@ messages:
       
       propagate;
    }
-
-   IsUndead()
-   {
-      return TRUE;
-   }
-
-   SetMaster(oMaster=$,DurationSecs=1)
-   {
-      if (oMaster <> $) and isClass(oMaster,&User)
-      {
-         ptRevertControl = createTimer(self,@RevertControl,(DurationSecs*1000));
-      }
-      propagate;
-   }
-   RevertControl()
-   {
-      ptRevertControl = $;
-      send(self,@SetMaster,#oMaster=$);
-      return;
-   }
-   
 
    Delete()
    {

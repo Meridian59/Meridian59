@@ -19,13 +19,9 @@ resources:
    bunny_koc_name_rsc = "ixleocbunny"
    bunny_name_rsc = "bunny"
    bunny_icon_rsc = bunny2.bgf
-   bunny_desc_rsc = \
-   "Unfettered evil has brought the dead back to life in the "
-   "form of this bunny.  Rotten flesh, white and pulpy, "
-   "clings to soft bone.  Its watery eyes stare out, "
-   "unseeing."
+   bunny_desc_rsc = "bunny"
 
-   bunny_dead_icon_rsc = bunnyX.bgf
+   bunny_dead_icon_rsc = bunny2X.bgf
    bunny_dead_name_rsc = "dead bunny"
 
    bunny_sound_hit = rat_atkh.wav
@@ -57,9 +53,6 @@ classvars:
 
 properties:
 
-
-   % our private data
-
    viTreasure_type = TID_ZOMBIE
    viLevel = 55
 
@@ -78,27 +71,12 @@ messages:
       propagate;
    }
 
-   Constructor(DropsTreasure=TRUE,Level=0)
-   {
-      if Level > 0
-      {
-	 viLevel = Level;
-      }
-      if not DropsTreasure
-      {
-         viTreasure_type = TID_NONE;
-         vbSummoned = TRUE;
-      }
-      propagate;
-   }
-
-
-   MonsterAttack(what = $)
+   MonsterAttack(what=$)
    {
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -122,35 +100,14 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-	 AddPacket(1,ANIMATE_ONCE,4,125,2,2,2,5,2,1);
-	 return;
+         AddPacket(1,ANIMATE_ONCE,4,125,2,2,2,5,2,1);
+         return;
       }
 
       % if no body animation
-      
+
       propagate;
    }
-
-   IsUndead()
-   {
-      return TRUE;
-   }
-
-   SetMaster(oMaster=$,DurationSecs=1)
-   {
-      if (oMaster <> $) and isClass(oMaster,&User)
-      {
-         ptRevertControl = createTimer(self,@RevertControl,(DurationSecs*1000));
-      }
-      propagate;
-   }
-   RevertControl()
-   {
-      ptRevertControl = $;
-      send(self,@SetMaster,#oMaster=$);
-      return;
-   }
-   
 
    Delete()
    {
@@ -161,6 +118,7 @@ messages:
       }
       propagate;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

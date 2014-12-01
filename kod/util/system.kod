@@ -340,6 +340,8 @@ properties:
    poSettings = $
 
    poWarEvent = $
+   
+   poQormas = $
 
    % Hash table for users.
    phUsers
@@ -4697,6 +4699,40 @@ messages:
       }
 
       return;
+   }
+   
+   GetQormas()
+   {
+      return poQormas;
+   }
+   
+   StartQormas()
+   {
+      % Qormas already started!
+      if (poQormas <> $)
+      {
+         return system_failure_rsc;
+      }
+      
+      poQormas = Create(&Qormas);
+      Send(poQormas,@StartQormas);
+      
+      return system_success_rsc;
+   }
+   
+   EndQormas()
+   {
+      % No Qormas to end!
+      if (poQormas = $)
+      {
+         return system_failure_rsc;
+      }
+      
+      Send(poQormas,@EndQormas);
+      Send(poQormas,@Delete);
+      poQormas = $;
+      
+      return system_success_rsc;
    }
 
    GetChaosNight()

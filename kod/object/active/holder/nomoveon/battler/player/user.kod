@@ -6609,12 +6609,12 @@ messages:
    }
 
    SomethingShotRadius(who=$,projectile=$,flags=PROJ_FLAG_NONE,
-                 iLightIntensity=0,iLightColor=0,range=$,number=$)
+                 iLightIntensity=0,iLightColor=0,range=0,number=0,speed=0)
    {
       local iCount, iValue, iAngle;
 
-      iCount=0;
-      iAngle=0;
+      iCount = 0;
+      iAngle = 0;
 
       while iCount < number
       {
@@ -6622,8 +6622,7 @@ messages:
          Send(projectile,@SendProjectileAnimation);
 
          % Send shooter.
-         AddPacket(4,who, 1,Send(projectile,@GetProjectileSpeed),
-                   2,(flags & 0x000F), 1,range, 4,iAngle);
+         AddPacket(4,who,1,speed,2,(flags & 0x000F),1,range,4,iAngle);
 
          if (flags & PROJ_FLAG_LIGHT_SOURCE)
          {
@@ -6635,9 +6634,7 @@ messages:
                % Make sure projectiles are on and have the dynamic flag set.
                iValue = iValue | LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
                % Flags, Intensity, color
-               AddPacket(2,iValue,
-                         1,Send(projectile,@GetProjectileLightIntensity),
-                         2,Send(projectile,@GetProjectileLightColor));
+               AddPacket(2,iValue,1,iLightIntensity,2,iLightColor);
             }
             else
             {

@@ -672,7 +672,8 @@ messages:
       return;
    }
 
-   SomethingShotRadius(who=$,projectile=$,flags=0,range=$,lighting=0,number=$)
+   SomethingShotRadius(who=$,projectile=$,flags=PROJ_FLAG_NONE,
+                 iLightIntensity=0,iLightColor=0,range=0,number=0,speed=0)
    {
       return;
    }

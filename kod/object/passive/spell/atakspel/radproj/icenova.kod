@@ -22,7 +22,7 @@ resources:
    icenova_desc_rsc = \
       "Call upon the magic of Faren and propel forth a blast of ice, "
       "chilling and blistering the skin of those around you.  "
-      "Requires red and blue mushrooms to cast."
+      "Requires one red and two blue mushrooms to cast."
 
    icenova_first_rsc = \
       "You channel the power of Faren and unleash a flurry of ice shards!"
@@ -75,6 +75,7 @@ properties:
 
    % Damage radius for ice nova
    piRange = 6
+
    piSpeed = 9
 
    piDamageMin = 14
@@ -93,31 +94,11 @@ messages:
       return;
    }
 
-   GetProjectileSpeed()
-   {
-      % Normally 9, slower for testing
-      return piSpeed;
-   }
-
-   GetProjectileRange()
-   {
-      return piRange;
-   }
-
    SendProjectileAnimation()
    {
-      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 2);   % 40ms between animations
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 2);  % 40ms between animations
+
       return;
-   }
-
-   GetProjectileIcon()
-   {
-      return vrProjectile_icon;
-   }
-
-   GetNumSpellTargets()
-   {
-      return 0;
    }
 
    GetTargets(who=$,lTargets=$)
@@ -138,7 +119,7 @@ messages:
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if each_obj <> who
-            AND IsClass(each_obj, &Battler)
+            AND IsClass(each_obj,&Battler)
          {
             iRowDiff = iRowCenter - Send(each_obj,@GetRow);
             iColDiff = iColCenter - Send(each_obj,@GetCol);

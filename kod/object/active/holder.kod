@@ -822,7 +822,8 @@ messages:
       return;
    }
 
-   SomethingShotRadius(who=$,projectile=$,flags=0,range=$,lighting=0,number=$)
+   SomethingShotRadius(who=$,projectile=$,flags=PROJ_FLAG_NONE,
+                 iLightIntensity=0,iLightColor=0,range=0,number=0,speed=0)
    {
       local i,each_obj;
 
@@ -830,7 +831,8 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingShotRadius,#who=who,#number=number,
-              #projectile=projectile,#flags=flags,#range=range,#lighting=lighting);
+               #projectile=projectile,#flags=flags,#range=range,#speed=speed,
+               #iLightIntensity=iLightIntensity,#iLightColor=iLightColor);
       }
 
       return;

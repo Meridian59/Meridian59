@@ -38,7 +38,8 @@ classvars:
 
 properties:
 
-   piRange = $
+   piRange = 6
+   piSpeed = 5
 
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
    piManaFocusBonus = 10
@@ -47,6 +48,11 @@ properties:
    piNumber = 8
 
 messages:
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
 
    CastSpell(who=$,lTargets=$)
    {
@@ -64,28 +70,37 @@ messages:
          if isClass(each_obj,&Player)
          {
             Send(oOwner,@SomethingShotRadius,#who=who,#projectile=self,
-               #flags=viProjectileFlag,#range=piRange,#number=piNumber);
+                  #flags=viProjectileFlag,#range=piRange,#number=piNumber,
+                  #iLightIntensity=viProjectileLightIntensity,
+                  #iLightColor=viProjectileLightColor,#speed=piSpeed);
          }
       }
 
       propagate;
    }
 
-   % Return the icon used to display a spell shooting through the air.
    GetProjectileIcon()
+   "Return the icon used to display a spell shooting through the air."
    {
       return vrProjectile_icon;
    }
 
-   % Return the speed at which a particular spell should appear to shoot through the air.
    GetProjectileSpeed()
+   "Return the speed of the projectile."
    {
-      return 5;
+      return piSpeed;
+   }
+
+   GetProjectileRange()
+   "Returns projectile range."
+   {
+      return piRange;
    }
 
    SendProjectileAnimation()
    {
-      % Send animation info to user.  Default is no animation, display with group 1
+      % Send animation info to user.
+      % Default is no animation, display with group 1
       AddPacket(1,ANIMATE_NONE, 2,1);
 
       return;

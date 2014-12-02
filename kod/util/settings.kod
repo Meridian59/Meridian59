@@ -122,17 +122,8 @@ properties:
    % Speedhack & Teleport protection
    %
    
-   % Worst lagspike
-   piMoveMaxLag = 1500
-   
-   % Limit for processing simultaneous move requests (due to TCP)
-   piMoveMaxSimulReq = 6
-   
-   % The default interval the server expects from the client
-   piMoveDefaultInterval = 250
-   
-   % A tolerance that is given on each move step
-   piMoveStepTolerance = 70
+   % Maximum amount of tokens in the movement bucket
+   piMovementBucketMax = 5000000
    
    %
    % Miscellaneous
@@ -377,26 +368,11 @@ messages:
    % Speedhack & teleport protection
    %
 
-   GetMoveMaxLag()
+   GetMovementBucketMax()
    {
-	  return piMoveMaxLag;
+	  return piMovementBucketMax;
    }
-   
-   GetMoveMaxSimulReq()
-   {
-      return piMoveMaxSimulReq;
-   }
-   
-   GetMoveDefaultInterval()
-   {
-      return piMoveDefaultInterval;
-   }
-   
-   GetMoveStepTolerance()
-   {
-      return piMoveStepTolerance;
-   }
-   
+     
    %
    % Miscellaneous
    %

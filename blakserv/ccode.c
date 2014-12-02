@@ -2278,17 +2278,28 @@ int C_GetTickCount(int object_id,local_var_type *local_vars,
 {
 	val_type ret_val;
 	
+	// GetMilliCount is from blakerv/time.c. 
+	// Its return is in ms and with a precision of 1ms.
+	// It also provides Windows & Linux implementations.
+	UINT64 tick = GetMilliCount();
+	
+	// but tick is unsigned 64-bit integer
+	// and blakserv integers are signed with only 28-bits
+	// the high-bit is the sign at bit-index 27/31
+	// recapitulate:
+	// 0x00000000 = 0000 0000 0000 0000 0000 0000 0000 = 0
+	// 0x07FFFFFF = 0111 1111 1111 1111 1111 1111 1111 = 134217727
+	// 0x08000000 = 1000 0000 0000 0000 0000 0000 0000 = -134217728
+	// 0x0FFFFFFF = 1111 1111 1111 1111 1111 1111 1111 = -1
+	
+	// convert:
+	// 1) We grab the low 32-bits by casting to unsigned int (so next & can easily be done in 32-bit registers)
+	// 2) We grab the value within the positive blakserv-integer mask by &
+	// 3) This means our returned tick rolls over every 134217.728s (~37 hrs)
+	// 4) Roll-Over means anything calculating the timespan of something before and after the roll-over
+	//    will return a negative timespan (but only once).
 	ret_val.v.tag = TAG_INT;
-
-    /*  We must subtract a number from the system time due to size
-        limitations within the blakod.  Blakod uses 32 bit values,
-        -4 bits for type and -1 bit for sign.  This leaves us with
-        27 bits for value,  This only allows us to have 134M or so
-        as a positive value.  Current system time is a bit larger
-        than that.  So, we subtract off time to compensate.
-    */
-
-	ret_val.v.data = GetTickCount();    // W32API 10ms-16ms precision call
+	ret_val.v.data = (int)((unsigned int)tick & MAX_KOD_INT);
 	
 	return ret_val.int_val;
 }

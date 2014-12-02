@@ -37,7 +37,10 @@ constants:
    NEWS_POSTING_LIMIT = 2
    % how long can news messages be
    NEWS_POSTING_MAX_LENGTH = 4096
-
+   
+   % how long a mail message may be (the client currently can;t handle > 4096)
+   MAIL_MESSAGE_MAX_LENGTH = 4096
+   
    % How long since last login before someone is considered "inactive"?
    %  This is measured in seconds.  Currently 60 days.
    %  This is used because the user objects have no concept of suspended
@@ -120,6 +123,9 @@ resources:
    user_show_nested_mail = "%s"
    user_logon_one_mail = "You have %i piece of new mail."
    user_logon_many_mail = "You have %i pieces of new mail."
+   user_mail_toobig = \
+      "Sorry, that message was so large the courier died trying to carry it, "
+      "delivery failed."
  
    user_was_killed = \
       "You are dead, poor soul.  Go now, and take revenge on %s%s!"
@@ -4702,13 +4708,20 @@ messages:
    {
       local i;
 
+      %  11/21/2014 Keen - why is this even here?  commented out for now.
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
-      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
-      {
-         Send(self,@NotifyMonstersOfPresence);
-      }   
+      %if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
+      %{
+      %   Send(self,@NotifyMonstersOfPresence);
+      %}   
 
+      if StringLength(string) > MAIL_MESSAGE_MAX_LENGTH
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_mail_toobig);
+         return;
+      }
+      
       Send(self,@MsgSendUser,#message_rsc=user_mail_to);
 
       for i in dest_list

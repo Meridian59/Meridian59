@@ -87,6 +87,7 @@ static handler_struct game_handler_table[] = {
 { BP_PLAY_MUSIC,        HandlePlayMusic },
 { BP_EFFECT,            HandleEffect },
 { BP_SHOOT,             HandleShoot },
+{ BP_RADIUS_SHOOT,      HandleRadiusShoot },
 { BP_LIGHT_AMBIENT,     HandleLightAmbient },
 { BP_LIGHT_PLAYER,      HandleLightPlayer },
 { BP_LIGHT_SHADING,     HandleLightShading },
@@ -1405,6 +1406,43 @@ Bool HandleShoot(char *ptr, long len)
 
    ProjectileAdd(p, source, dest, speed, flags, reserved);
    
+   return True;
+}
+/********************************************************************/
+Bool HandleRadiusShoot(char *ptr, long len)
+{
+   Projectile *p = (Projectile *) ZeroSafeMalloc(sizeof(Projectile));
+   BYTE speed, range;
+   char *start = ptr;
+   ID source;
+   WORD flags;
+   WORD reserved;
+   DWORD angle;
+   float initangle;
+   initangle = 0.0000;
+
+   Extract(&ptr, &p->icon_res, SIZE_ID);
+   ExtractPaletteTranslation(&ptr,&p->translation,&p->effect);
+   ExtractAnimation(&ptr, &p->animate);
+
+   Extract(&ptr, &source, SIZE_ID);
+   Extract(&ptr, &speed, 1);
+   Extract(&ptr, &flags, SIZE_PROJECTILE_FLAGS);
+
+   // no longer sent by the server
+   //Extract(&ptr, &reserved, SIZE_PROJECTILE_RESERVED);
+   reserved = 0;
+   Extract(&ptr, &range, 1);
+   Extract(&ptr, &angle, 4);
+   ExtractDLighting(&ptr, &p->dLighting);
+
+   len -= (ptr - start);
+   if (len != 0)
+      return False;
+   initangle = (float)angle;
+
+   RadiusProjectileAdd(p, source, speed, flags, reserved, range, initangle);
+
    return True;
 }
 /********************************************************************/

@@ -822,6 +822,22 @@ messages:
       return;
    }
 
+   SomethingShotRadius(who=$,projectile=$,flags=PROJ_FLAG_NONE,
+                 iLightIntensity=0,iLightColor=0,range=0,number=0,speed=0)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingShotRadius,#who=who,#number=number,
+               #projectile=projectile,#flags=flags,#range=range,#speed=speed,
+               #iLightIntensity=iLightIntensity,#iLightColor=iLightColor);
+      }
+
+      return;
+   }
+
    SomethingDidAction(what = $, action = $)
    {
       local i,each_obj;

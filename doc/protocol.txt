@@ -512,6 +512,10 @@ Shoot (move bitmap continuously from one place to another)
 <speed> =
 	1 byte		# of grid squares per second
 ----------------------------------------------------------
+RadiusShoot (move bitmap from source outwards at 45 degree angles)
+<BP_RADIUS_SHOOT> <icon resource> <animation> <source object>
+  <speed> <range> <angle>
+----------------------------------------------------------
 Add or change player overlay (bitmap drawn over graphics window)
 <BP_PLAYER_OVERLAY> <hotspot> <object_desc>
 

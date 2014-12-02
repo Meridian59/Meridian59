@@ -1251,7 +1251,10 @@ messages:
       }
 
       Send(self,@NewGameHour);
-      
+
+      % Change the color of rainbow ferns.
+      Send(&RainbowFern,@ChangeColor,#iHour=piHour);
+
       return;
    }
 

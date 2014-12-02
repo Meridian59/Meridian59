@@ -20,12 +20,13 @@ resources:
    SpectralMummy_name_rsc = "spectral mummy"
    SpectralMummy_icon_rsc = mummy.bgf
    SpectralMummy_desc_rsc = \
-      "This poor creature was once a person who was mummified in an ancient ritual and put "
-      "to rest in the crypt.  Ages have passed and only the spirit of the orignial person "
-      "remains.  It has been dead and mummified for so long it has forgotten what it originally "
-      "looked like and now wanders this plane as a spectral being, appearing as it did when it "
+      "This poor creature was once a person who was mummified in an ancient "
+      "ritual and put to rest in the crypt.  Ages have passed and only the "
+      "spirit of the original person remains.  It has been dead and mummified "
+      "for so long it has forgotten what it originally looked like and now "
+      "wanders this plane as a spectral being, appearing as it did when it "
       "was originally put to rest."
-      
+
    SpectralMummy_dead_icon_rsc = mummyX.bgf
    SpectralMummy_dead_name_rsc = "dead spectral mummy"
 
@@ -40,7 +41,7 @@ classvars:
    vrName = SpectralMummy_name_rsc
    vrIcon = SpectralMummy_icon_rsc
    vrDesc = SpectralMummy_desc_rsc
-   
+
    vrDead_icon = SpectralMummy_dead_icon_rsc
    vrDead_name = SpectralMummy_dead_name_rsc
    viDead_drawfx = DRAWFX_TRANSLUCENT_50
@@ -49,6 +50,7 @@ classvars:
    viSpeed = SPEED_SLOW
    viLevel = 40
    viDifficulty = 5
+   viVisionDistance = 8
    viKarma = -35
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 120
@@ -59,7 +61,7 @@ classvars:
    vrSound_death = SpectralMummy_sound_death
 
 properties:
-   
+
    piDrawfx = DRAWFX_TRANSLUCENT_50 | FLICKERING_YES
 
 messages:
@@ -81,7 +83,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -104,7 +106,7 @@ messages:
       if piAnimation = ANIM_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE,4,200,2,6,2,9,2,1);
-         
+
          return;
       }
 
@@ -126,7 +128,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

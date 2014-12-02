@@ -54,6 +54,7 @@ classvars:
    viAttributes = 0
    viLevel = 120
    viDifficulty = 7
+   viVisionDistance = 20
    viKarma = -70
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
    viCashmin = -3600
@@ -62,12 +63,11 @@ classvars:
    vrSound_aware = NarthylWorm_sound_aware
    vrSound_death = NarthylWorm_sound_death
 
-
 properties:
 
    piAnimation = ANIM_NONE
    ptRestartAnimation = $
-   
+
 messages:
 
    Constructed()
@@ -93,7 +93,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      ptRestartAnimation = createTimer(self,@RestartAnimation,SEC_PER_FRAME*5);
+      ptRestartAnimation = CreateTimer(self,@RestartAnimation,SEC_PER_FRAME*5);
 
       return;
    }

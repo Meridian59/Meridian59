@@ -47,6 +47,7 @@ classvars:
    viAttributes = 0
    viLevel = 30
    viDifficulty = 1
+   viVisionDistance = 6
    viKarma = -20
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 150
@@ -65,9 +66,9 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_FIRE, -20 ], 
-			[ATCK_WEAP_BLUDGEON, -10 ] ,
-			[ATCK_WEAP_SLASH, 20 ] ];
+      plResistances = [ [-ATCK_SPELL_FIRE, -20],
+                        [ATCK_WEAP_BLUDGEON, -10],
+                        [ATCK_WEAP_SLASH, 20] ];
       propagate;
    }
 
@@ -75,6 +76,7 @@ messages:
    {
       % add in any attack animation calls
       Send(self,@DoSlash);
+
       return;
    }
 
@@ -105,12 +107,13 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-	 AddPacket(1,ANIMATE_ONCE,4,100,2,7,2,11,2,1);
-	 return;
+         AddPacket(1,ANIMATE_ONCE,4,100,2,7,2,11,2,1);
+
+         return;
       }
 
       % if no body animation
-      
+
       propagate;
    }
 

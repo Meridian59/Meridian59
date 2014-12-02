@@ -26,8 +26,8 @@ resources:
 
    fairy_dead_icon_rsc = faerieXG.bgf
    fairy_dead_name_rsc = "dead fey"
-	
-	fairy_fireball = feyball.bgf
+
+   fairy_fireball = feyball.bgf
 
    fairy_sound_hit = god_atkh.wav
    fairy_sound_miss = god_atkm.wav
@@ -40,20 +40,22 @@ classvars:
    vrKocName = good_fairy_koc_name_rsc
    vrName = good_fairy_name_rsc
    vrIcon = good_fairy_icon_rsc
-   
+
    vrDead_icon = fairy_dead_icon_rsc
    vrDead_name = fairy_dead_name_rsc
- 
+
    viTreasure_type = TID_FAIRY
 
    viSpeed = SPEED_VERY_FAST
    viAttack_type = 0
    viAttack_spell = ATCK_SPELL_SHOCK
-   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
+   viDefault_behavior = \
+      AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
    viWimpy = 10
 
    viLevel = 60
    viDifficulty = 5
+   viVisionDistance = 15
    viCashmin = 300
    viCashmax = 600
    vrSound_hit = fairy_sound_hit
@@ -84,12 +86,12 @@ messages:
    {
       % add in any attack animation calls
       Send(self,@DoSlash);
-	   Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self,
-	        #flags=PROJ_FLAG_LIGHT_SOURCE);
+      Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self,
+            #flags=PROJ_FLAG_LIGHT_SOURCE);
 
-		return;
+      return;
    }
-   
+
    DoSlash()
    {
       piAnimation = ANIM_ATTACK;
@@ -123,7 +125,7 @@ messages:
       }
 
       AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,2);
-	             
+
       return;
    }
 
@@ -142,7 +144,7 @@ messages:
       AddPacket(1,ANIMATE_CYCLE,4,50,2,1,2,4);
 
       return;
-   }      
+   }
 
    GetProjectileLightFlags()
    {
@@ -164,7 +166,7 @@ messages:
 
    AssessDamage(what=$)
    {
-      if isClass(what,&EvilFairy)
+      if IsClass(what,&EvilFairy)
       {
          return 1;
       }
@@ -191,8 +193,7 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
-
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -38,9 +38,10 @@ resources:
    DragonFlyPet_name_rsc = "pet dragonfly"
    DragonFlyPet_icon_rsc = dflypet.bgf
    DragonFlyPet_desc_rsc = \
-      "These small lizards look exceptionally friendly.  Their gossamer wings allow "
-      "them to jump into the air and take flight for brief periods of time.  When "
-      "backed into a corner, dragonflies are known to have a nasty spitting attack."
+      "These small lizards look exceptionally friendly.  Their gossamer "
+      "wings allow them to jump into the air and take flight for brief "
+      "periods of time.  When backed into a corner, dragonflies are known "
+      "to have a nasty spitting attack."
 
    DragonFlyPet_wings_rsc = dflypetw.bgf
 
@@ -69,6 +70,7 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 120
    viDifficulty = 6
+   viVisionDistance = 18
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_NEWBIESAFE
    viCashmin = 0
@@ -83,8 +85,8 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   ptHover = $   
-   ptLand = $   
+   ptHover = $
+   ptLand = $
 
    piDrawfx = BOUNCE_YES
 
@@ -117,9 +119,10 @@ messages:
       piAnimation = ANIM_ATTACK;
       piDrawFX = piDrawFX | BOUNCE_YES;
       Send(poOwner,@SomethingChanged,#what=self);
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
            #projectile = self);
-      piAnimation = ANIM_HOVER;
+
+     piAnimation = ANIM_HOVER;
       if ptHover = $
       {
          ptHover = CreateTimer(self,@HoverTimer,HOVER_DELAY);
@@ -132,10 +135,11 @@ messages:
    {
       return 8;
    }
-   
+
    SendProjectileAnimation()
    {
       AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+
       return;
    }
 
@@ -143,15 +147,15 @@ messages:
    {
       return DragonFlyPet_spit;
    }
-      
+
    HoverTimer()
-   {  
+   {
       ptHover = $;
-      
+
       Send(poOwner,@SomethingChanged,#what=self);
       if ptLand <> $
       {
-         Deletetimer(ptLand);
+         DeleteTimer(ptLand);
       }
 
       ptLand = CreateTimer(self,@LandTimer,LAND_DELAY);
@@ -163,7 +167,7 @@ messages:
    {
       ptLand = $;
 
-      if (poTarget = $) and (piAnimation = ANIM_HOVER)
+      if (poTarget = $) AND (piAnimation = ANIM_HOVER)
       {
          piAnimation = ANIM_NONE;
          piDrawFX = (piDrawFX & (~BOUNCE_YES));
@@ -203,7 +207,8 @@ messages:
       AddPacket(1,1);
       AddPacket(4,DragonFlyPet_wings_rsc,1,HS_WINGS);
       AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
+      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,
+            2,(FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
 
       return;
    }
@@ -215,7 +220,8 @@ messages:
          AddPacket(1,1);
          AddPacket(4,DragonFlyPet_wings_rsc,1,HS_WINGS);
          AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_HOVER_START-1),2,(FRAME_HOVER_END-1));
+         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,
+               2,(FRAME_HOVER_START-1),2,(FRAME_HOVER_END-1));
 
          return;
       }
@@ -226,7 +232,8 @@ messages:
          AddPacket(1,1);
          AddPacket(4,DragonFlyPet_wings_rsc,1,HS_WINGS);
          AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),
+               2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
 
          return;
       }
@@ -240,17 +247,21 @@ messages:
 
       if piAnimation = ANIM_HOVER
       {
-         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_HOVER_START,2,FRAME_HOVER_END);
+         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,
+               2,FRAME_HOVER_START,2,FRAME_HOVER_END);
+
          return;
       }
 
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,
+               2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
+
          return;
       }
 
-      % No body animation.     
+      % No body animation.
       propagate;
    }
 
@@ -258,13 +269,13 @@ messages:
    {
       if ptHover <> $
       {
-         deletetimer(ptHover);
+         DeleteTimer(ptHover);
          ptHover = $;
       }
 
       if ptLand <> $
       {
-         deletetimer(ptLand);
+         DeleteTimer(ptLand);
          ptLand = $;
       }
 
@@ -280,23 +291,22 @@ messages:
 
       return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
-   
+
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
 
    SetColor(iColor=PT_GRAY_TO_DGREEN)
    {
       piColor = iColor;
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

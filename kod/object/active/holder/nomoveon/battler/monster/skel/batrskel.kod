@@ -23,7 +23,8 @@ resources:
       "A few scraps of rotten flesh cling to this collection of human "
       "bones topped by a battered and distinctly nonhuman skull.  Sizzling "
       "liquid drips from its teeth, leaving small pits in the ground below."
-      "You shudder to think what dark ritual brought this abomination into being."
+      "You shudder to think what dark ritual brought this "
+      "abomination into being."
 
    BatteredSkeleton_head = skelhed3.bgf
    BatteredSkeleton_dead_icon_rsc = skelX.bgf
@@ -48,8 +49,10 @@ classvars:
    viAttributes = 0
    viLevel = 60
    viDifficulty = 4
+   viVisionDistance = 7
    viKarma = -70
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 100
    viCashmax = 320
    vrSound_miss = BatteredSkeleton_sound_miss
@@ -61,7 +64,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   
+
 messages:
 
    SetResistances()

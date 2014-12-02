@@ -13,7 +13,7 @@ GroundWormLarva is GroundWorm
 constants:
 
    include blakston.khd
-   
+
    FRAME_UNDERGROUND = 1
    FRAME_POPUP_START = 2
    FRAME_POPUP_END = 4
@@ -54,6 +54,7 @@ classvars:
    viAttack_spell = ATCK_SPELL_ACID
    viLevel = 35
    viDifficulty = 3
+   viVisionDistance = 8
    viKarma = -10
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
    viCashmin = 75
@@ -62,33 +63,41 @@ classvars:
    vbTrailLarge = FALSE
 
 properties:
-   
+
 messages:
 
-   % These are exact duplicates of the code in the groundworm superclass, but the
-   %     constants are defined differently for the larva - different frames.
+   % These are exact duplicates of the code in the groundworm superclass,
+   %but the constants are defined differently for the larva - different frames.
 
    SendAttackAnimation()
    {
-      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_SURFACED);
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_ATTACK_START,
+            2,FRAME_ATTACK_END,2,FRAME_SURFACED);
+
       return;
    }
 
    SendPopupAnimation()
    {
-      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPUP_START,2,FRAME_POPUP_END,2,FRAME_SURFACED);
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPUP_START,
+            2,FRAME_POPUP_END,2,FRAME_SURFACED);
+
       return;
    }
 
    SendPopdownAnimation()
    {
-      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPDOWN_START,2,FRAME_POPDOWN_END,2,FRAME_UNDERGROUND);
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPDOWN_START,
+            2,FRAME_POPDOWN_END,2,FRAME_UNDERGROUND);
+
       return;
    }
 
    SendPopupAttackAnimation()
    {
-      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPUP_START,2,FRAME_ATTACK_END,2,FRAME_SURFACED);
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPUP_START,
+            2,FRAME_ATTACK_END,2,FRAME_SURFACED);
+
       return;
    }
 
@@ -102,31 +111,30 @@ messages:
       {
          AddPacket(1,ANIMATE_NONE,2,FRAME_POPUP_START);
       }
+
       return;
    }
 
    CanMonsterFight(who=$, oStroke = $, use_weapon = $)
    {
-
       if (oStroke <> $) AND IsClass(oStroke,&DMSpell)
       {
          return TRUE;
       }
-      
-      if not pbSurfaced
+
+      if NOT pbSurfaced
       {
          if use_weapon = $
             OR NOT (IsClass(use_weapon,&Hammer)
                     OR IsClass(use_weapon,&SpiritualHammer)
                     OR IsClass(use_weapon,&Mace))
-         { 
-            return FALSE; 
+         {
+            return FALSE;
          }
       }
-      
+
       return TRUE;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

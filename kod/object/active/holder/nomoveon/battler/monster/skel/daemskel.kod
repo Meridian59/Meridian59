@@ -50,8 +50,11 @@ classvars:
    viAttributes = 0
    viLevel = 130
    viDifficulty = 8
+   viVisionDistance = 15
    viKarma = -90
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE \
+      | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 450
    viCashmax = 1025
    vrSound_miss = DaemonSkeleton_sound_miss

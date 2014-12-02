@@ -55,6 +55,9 @@ classvars:
    viAttributes = 0
    viLevel = 45
    viDifficulty = 4
+
+   viVisionDistance = 60
+
    viKarma = 0
    viCashmin = 0
    viCashmax = 0

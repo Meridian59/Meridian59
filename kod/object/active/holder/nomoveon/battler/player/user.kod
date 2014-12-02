@@ -1448,20 +1448,17 @@ messages:
       {
          if Nth(client_msg,2) <> ENCHANTMENT_PLAYER
          {
-            Debug(self," user ",Send(self,@GetName),"got BP_SEND_ENCHANTMENTS with bad type",
-                  Nth(client_msg,2));
-            
             return;
          }
-         
+
          Send(self,@SendEnchantmentIcons);
-         
+
          return;
       }
-     
+
       Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
-	      liClient_cmd);
-            
+            liClient_cmd);
+
       return;
    }
 
@@ -2447,10 +2444,10 @@ messages:
          }
       }
 
-      oRoom = Send(self,@GetOwner);
+      oRoom = poOwner;
       if oRoom <> $
       {
-         if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
+         if Send(oRoom,@AreGroupedHere,#who=self,#what=what)
          {
             iFlags = (iFlags | PLAYER_IS_FRIEND);
          }
@@ -2944,10 +2941,10 @@ messages:
       % 1. Get current position values
       %
 
-      iRow = Send(self,@GetRow);
-      iCol = Send(self,@GetCol);
-      iFineRow = Send(self,@GetFineRow);
-      iFineCol = Send(self,@GetFineCol);
+      iRow = piRow;
+      iCol = piCol;
+      iFineRow = piFine_row;
+      iFineCol = piFine_col;
       iAngle = Send(self,@GetAngle);
 
       %
@@ -6390,10 +6387,10 @@ messages:
       % out a small space when they enter the zone, so that they don't appear in the middle of a wall spell.
       if old <> $
          AND Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         AND Send(Send(self,@GetOwner), @AllowGuildAttack,#what=self)
+         AND Send(poOwner,@AllowGuildAttack,#what=self)
          AND NOT IsClass(self,&DM)
       {
-         Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
+         Send(poOwner,@DeleteWallsAroundBattler,#who=self);
       }
       
       % This removes Death Rift's protection when the user enters any non-Underworld room

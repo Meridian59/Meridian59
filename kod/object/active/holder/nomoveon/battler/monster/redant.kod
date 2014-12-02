@@ -47,6 +47,7 @@ classvars:
    viAttributes = MOB_SPASM
    viLevel = 65
    viDifficulty = 8
+   viVisionDistance = 18
    viKarma = -40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 225
@@ -77,7 +78,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -96,18 +97,19 @@ messages:
 
       if roll <= 5
       {
-         Send(poOwner,@SomethingTurned,#what=self,#new_angle=Random(0,MAX_ANGLE-1));
+         Send(poOwner,@SomethingTurned,#what=self,
+               #new_angle=Random(0,MAX_ANGLE-1));
       }
 
       propagate;
    }
-    
+
    DoLegSpasm()
    {
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -135,12 +137,10 @@ messages:
       }
 
       % if no body animation
-      
       AddPacket(1,ANIMATE_NONE,2,1);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

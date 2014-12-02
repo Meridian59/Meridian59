@@ -80,6 +80,7 @@ classvars:
       AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
    viLevel = 120
    viDifficulty = 8
+   viVisionDistance = 22
    viKarma = 80
    viCashmin = 500
    viCashmax = 1500

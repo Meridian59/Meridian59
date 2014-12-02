@@ -41,17 +41,26 @@ resources:
    lupoggking_sound_death = lup_dth.wav
    lupoggking_sound_aware = lup_awr.wav
 
-   lupoggking_cast_spell = "The lupogg king covers you in a foul paralyzing slime!"
+   lupoggking_cast_spell = \
+      "The lupogg king covers you in a foul paralyzing slime!"
    lupoggking_cast_sound = bsp_dth.wav
 
-   lupoggking_death_blow    = "Your last attack ends the lupogg king's reign!"
-   lupoggking_single_killer = "You have personally slain the mighty lupogg king all by your lonesome!"
-   lupoggking_double_killer = "The lupogg king is dead, thanks to you and your comrade!"
-   lupoggking_helper_killer = "The lupogg king is dead, thanks to you and your comrades!"
-   lupoggking_no_truce      = "The evil in this place eliminates the possibility of any truce."
-   lupoggking_no_illusion   = "Your illusions have no effect on the mighty lupogg king!"
-   lupoggking_no_firewall   = "You cannot place a wall of fire here."
-   lupoggking_no_lwall      = "You cannot place a wall of lightning here."
+   lupoggking_death_blow = \
+      "Your last attack ends the lupogg king's reign!"
+   lupoggking_single_killer = \
+      "You have personally slain the mighty lupogg king all by your lonesome!"
+   lupoggking_double_killer = \
+      "The lupogg king is dead, thanks to you and your comrade!"
+   lupoggking_helper_killer = \
+      "The lupogg king is dead, thanks to you and your comrades!"
+   lupoggking_no_truce = \
+      "The evil in this place eliminates the possibility of any truce."
+   lupoggking_no_illusion = \
+      "Your illusions have no effect on the mighty lupogg king!"
+   lupoggking_no_firewall = \
+      "You cannot place a wall of fire here."
+   lupoggking_no_lwall = \
+      "You cannot place a wall of lightning here."
    lupoggking_spit = gob.bgf
 
 classvars:
@@ -66,10 +75,12 @@ classvars:
    viAttack_type = ATCK_WEAP_CLAW
    viLevel = 200
    viDifficulty = 9
+   viVisionDistance = 40
    viKarma = 0
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE
    viAttributes = MOB_SPASM
-   viGender = GENDER_MALE   
+   viGender = GENDER_MALE
    viCashmin = 20000
    viCashmax = 50000
    vrSound_hit = lupoggking_sound_hit
@@ -82,8 +93,8 @@ properties:
    piAnimation = ANIM_NONE
    plAttackers = $  % [player,player....]
 
-   piHoldAttackChance = 12       % Chance he'll attack with a hold
-   piHoldCounterChance = 5    % Chance he'll counter a spell or arrow with a hold
+   piHoldAttackChance = 12   % Chance he'll attack with a hold
+   piHoldCounterChance = 5   % Chance he'll counter a spell or arrow with a hold
    piHoldDurationMax = 45  % seconds
    piHoldDurationMin = 30  % seconds
 
@@ -102,10 +113,10 @@ messages:
                         [-ATCK_SPELL_FIRE, -20 ],
                         [ATCK_WEAP_NERUDITE, -40 ]
                       ];
+
       propagate;
    }
 
-   
    AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
    "This is called when something causes damage to us"
    {
@@ -242,34 +253,34 @@ messages:
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
       if oSpell = Send(SYS,@FindSpellByNum,#num=SID_TRUCE)
-      {  
-         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_truce);            
+      {
+         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_truce);
 
-         return FALSE; 
+         return FALSE;
       }
 
       if oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FIREWALL)
       {
          Send(who,@MsgSendUser,#message_rsc=lupoggking_no_illusion);
-		 
+
          return FALSE;
       }
-	  
+
       if oSpell = Send(SYS,@FindSpellByNum,#num=SID_FIREWALL)
       {
          Send(who,@MsgSendUser,#message_rsc=lupoggking_no_firewall);
-		 
+
          return FALSE;
       }
-	  
+
       if oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING_WALL)
       {
          Send(who,@MsgSendUser,#message_rsc=lupoggking_no_lwall);
-		 
+
          return FALSE;
       }
-	  
-      if Random(1,piHoldCounterChance) = 1 AND Send(self,@CanSee,#what=who)
+
+      if Random(1,piHoldCounterChance) = 1
       {
          Send(self,@MonsterCastAttackSpell,#what=who);
 
@@ -284,8 +295,7 @@ messages:
       if use_weapon <> $
          AND IsClass(use_weapon,&RangedWeapon)
          AND victim = self
-         AND Send(self,@CanSee,#what=what)
-         AND Random(1,piHoldCounterChance) = 1 
+         AND Random(1,piHoldCounterChance) = 1
       {
          Send(self,@MonsterCastAttackSpell,#What=what);
 
@@ -308,7 +318,7 @@ messages:
          oTarget = what;
       }
 
-      if not Send(self,@CanSee,#what=poTarget)
+      if NOT Send(self,@CanSee,#what=poTarget)
       {
          return;
       }
@@ -316,36 +326,39 @@ messages:
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
       iRandom = Random(piHoldDurationMin,piHoldDurationMax);
 
-      if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,#use_weapon=self)
+      if NOT Send(poOwner,@ReqSomethingAttack,#what=self,
+            #victim=poTarget,#use_weapon=self)
       {
          return;
       }
 
-      Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=lupoggking_cast_sound);
+      Send(poOwner,@SomethingWaveRoom,#what=self,
+            #wave_rsc=lupoggking_cast_sound);
       Send(self,@DoCast);
       Send(oSpell,@DoHold,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
       Send(oTarget,@MsgSendUser,#message_rsc=lupoggking_cast_spell);
-      Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=iRandom*1000,#xlat=SPIT_COLOR); 
+      Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,
+            #duration=iRandom*1000,#xlat=SPIT_COLOR); 
 
       % Do damage?
 
-      return; 
+      return;
    }
 
-   AttackTimer( timer = $ )
+   AttackTimer(timer = $)
    "We were bashing on something before, and now its time to hit it again."
    {
       local oSpell, iRandom;
-      
+
       iRandom = Random(1,piHoldAttackChance);
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
       Send(self,@ClearBehavior,#timer=timer);
 
-      % sanity checks
+      % Sanity checks.
 
       if poOwner = $
       {
-         debug("Unreachable. Null Owner"); 
+         Debug("Unreachable. Null Owner"); 
          Send(self,@EnterStateLimbo);
 
          return;
@@ -353,14 +366,14 @@ messages:
 
       if poTarget=$
       {
-         debug("Unreachable. Null poTarget","monster",self); 
+         Debug("Unreachable. Null poTarget","monster",self);
          Send(self,@EnterStateWait);
 
          return;
       }
 
       Send(self,@FindNewTarget);
-      if NOT Send(self,@CanReach,#what=poTarget) 
+      if NOT Send(self,@CanReach,#what=poTarget)
          AND Send(poTarget,@IsEnchanted,#what=oSpell)
       {
          Send(self,@EnterStateChase,#Target=poTarget);
@@ -377,13 +390,13 @@ messages:
             return;
          }
       }
- 
+
       if NOT Send(poTarget,@IsEnchanted,#what=oSpell)
          AND iRandom = 1
-      { 
+      {
          Send(self,@MonsterCastAttackSpell); 
       }
-      else 
+      else
       {
          Send(self,@TryAttack,#what=poTarget); 
       }
@@ -431,17 +444,17 @@ messages:
    {
       local oHold, lActive, iRandom, iDistance, iBestDistance, i, each_obj;
 
-      % Only one in three people are considered eligible 
+      % Only one in three people are considered eligible
       % targets.  The closest is targeted.  Held people
-      % aren't considered - he deals with his current 
+      % aren't considered - he deals with his current
       % target first.  Only people in view are considered.
 
       oHold = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-      lActive = Send(poOwner,@getholderactive);
+      lActive = Send(poOwner,@GetHolderActive);
       iRandom = Random(1,30);
       iBestDistance = 10000;
 
-      if Send(poTarget,@isenchanted,#what=oHold)
+      if Send(poTarget,@IsEnchanted,#what=oHold)
       {
          for i in lActive
          {
@@ -450,7 +463,7 @@ messages:
 
             if IsClass(each_obj,&User)
                AND Send(self,@CanSee,#what=each_obj)
-               AND NOT Send(each_obj,@isenchanted,#what=oHold)
+               AND NOT Send(each_obj,@IsEnchanted,#what=oHold)
                AND (iRandom < 10 OR iDistance < iBestDistance)
             {
                iBestDistance = iDistance;
@@ -471,12 +484,12 @@ messages:
       local oSpell, oRoom, NumAttackers, i, lFinalTargets;
 
       NumAttackers = length(plAttackers);
- 
+
       for i in plAttackers
       {
          if i = what
          {
-            Send(i,@MsgSendUser,#message_rsc=lupoggking_death_blow );      
+            Send(i,@MsgSendUser,#message_rsc=lupoggking_death_blow );
          }
 
          if NumAttackers = 1
@@ -498,7 +511,8 @@ messages:
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
       lFinalTargets = Send(oSpell,@GetTargets,#who=poOwner);
-      Post(oSpell,@CastSpell,#who=poOwner,#iSpellPower=40,#lTargets=lFinalTargets);
+      Post(oSpell,@CastSpell,#who=poOwner,#iSpellPower=40,
+            #lTargets=lFinalTargets);
 
       propagate;
    }
@@ -510,9 +524,10 @@ messages:
       oTreasure = Create(&BlueDragonScale,#corpse=corpse);
       iNumber = Random(3,8);
       Send(oTreasure,@AddNumber,#number=iNumber);
-      
+
       if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
+                  #new_row=piRow,#new_col=piCol)
       {
          Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
       }
@@ -520,15 +535,15 @@ messages:
       {
          Send(oTreasure,@Delete);
       }
-   
+
       propagate;
    }
-   
+
    CanMorphTo()
    {
       return FALSE;
-   }      
- 
+   }
+
    DMCanArmageddon()
    {
       % Can't destroy the lupogg king in his home.

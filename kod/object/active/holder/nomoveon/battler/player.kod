@@ -186,6 +186,9 @@ resources:
    player_cancel_rescue_phase = \
       "~IThe protective magics that might have rescued you instead "
       "snap and fade as you phase out of existence."
+   player_cancel_rescue_newowner = \
+      "~IYour change of location disrupts Shal'ille's attempt to whisk "
+      "you to safety."
 
    player_improved = "~I~BYou have improved in the art of %s."
    player_improved_wav_rsc = imp.wav
@@ -1671,6 +1674,17 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=phase_fatigue_cleared);
             Send(self,@RefreshPhaseTimeToBase);
          }
+      }
+
+      % Stop any rescue attempts if the user changes rooms.
+      if ptRescue <> $
+      {
+         if pbLogged_on
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_cancel_rescue_newowner);
+         }
+         DeleteTimer(ptRescue);
+         ptRescue = $;
       }
 
       return;

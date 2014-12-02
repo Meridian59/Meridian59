@@ -50,7 +50,7 @@ resources:
    item_condition_poor = " is in tatters, and barely holding together."
    item_condition_broken = " is covered in filth and ripped beyond use."
    
-   special_properties_header = "\n\nThis item has the following properties:\n\n"
+   special_properties_header = "\n\nThis item has the following properties:\n"
 
 classvars:
    
@@ -151,63 +151,6 @@ messages:
       %  weapon.
       local rItem_condition, iHit_percent, i, bFoundProperties, oSpell, iHigh_level, n,
                              iFarenPower, iRiijaPower, iKraananPower, iJalaPower, iShalPower, iQorPower, iInstrumentPower;
-
-      if vbShow_Condition
-         AND piHits_init > 0
-      {
-         rItem_condition = vrCondition_exc;
-      
-         iHit_Percent = (100 * piHits) / piHits_init;
-      
-         if iHit_Percent > 90
-         {
-            % If item is worse than what can be found in the wild, describe it
-            %  as being "patched".
-            if piHits_init >= viHits_init_min
-            {
-               rItem_condition = vrCondition_exc;
-            }
-            else
-            {
-               rItem_condition = vrCondition_exc_mended;
-            }
-         }
-         else
-         { 
-            if iHit_Percent > 65
-            {
-               ritem_condition = vrCondition_good;
-            }
-            else
-            {
-               if iHit_Percent > 30
-               {
-                  ritem_condition = vrCondition_med;
-               }
-               else
-               {
-                  if piHits > 0
-                  {
-                     ritem_condition= vrCondition_poor;
-                  }
-                  else
-                  {
-                     ritem_condition= vrCondition_broken;
-                  }
-               }
-            }
-         }
-      
-         AppendTempString("\n\n");
-         AppendTempString(vrPoss_Article);
-         AppendTempString(Send(self,@GetName));
-         AppendTempString(rItem_condition);
-         AppendTempString(" \(");
-         AppendTempString(piHits);
-         AppendTempString("/");
-         AppendTempString(piHits_init);
-         AppendTempString("\)");
-      }
 
       for i in plObject_attributes
       {
@@ -605,6 +548,63 @@ messages:
                AppendTempString("\n");
             }
          }
+      }
+
+      if vbShow_Condition
+         AND piHits_init > 0
+      {
+         rItem_condition = vrCondition_exc;
+      
+         iHit_Percent = (100 * piHits) / piHits_init;
+      
+         if iHit_Percent > 90
+         {
+            % If item is worse than what can be found in the wild, describe it
+            %  as being "patched".
+            if piHits_init >= viHits_init_min
+            {
+               rItem_condition = vrCondition_exc;
+            }
+            else
+            {
+               rItem_condition = vrCondition_exc_mended;
+            }
+         }
+         else
+         { 
+            if iHit_Percent > 65
+            {
+               ritem_condition = vrCondition_good;
+            }
+            else
+            {
+               if iHit_Percent > 30
+               {
+                  ritem_condition = vrCondition_med;
+               }
+               else
+               {
+                  if piHits > 0
+                  {
+                     ritem_condition= vrCondition_poor;
+                  }
+                  else
+                  {
+                     ritem_condition= vrCondition_broken;
+                  }
+               }
+            }
+         }
+      
+         AppendTempString("\n");
+         AppendTempString(vrPoss_Article);
+         AppendTempString(Send(self,@GetName));
+         AppendTempString(rItem_condition);
+         AppendTempString(" \(");
+         AppendTempString(piHits);
+         AppendTempString("/");
+         AppendTempString(piHits_init);
+         AppendTempString("\)");
       }
 
       return;

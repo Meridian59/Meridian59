@@ -8,6 +8,8 @@
 #ifndef __D3DRENDER_H__
 #define __D3DRENDER_H__
 
+inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
+
 #define DEGREES_TO_RADIANS(_x)	((float)_x * PITWICE / 360.0f)
 #define RADIANS_TO_DEGREES(_x)	((float)_x * 360.0f / PITWICE)
 

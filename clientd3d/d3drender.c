@@ -464,6 +464,8 @@ HRESULT D3DRenderInit(HWND hWnd)
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl0, &decl0dc);
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl1, &decl1dc);
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl2, &decl2dc);
+	
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SLOPESCALEDEPTHBIAS, F2DW((float)-1.0f));
 
 	D3DRenderLMapsBuild();
 
@@ -694,7 +696,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheSystemReset(&gLMapCacheSystem);
 	D3DCacheSystemReset(&gWorldCacheSystem);
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_DEFAULT);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_DEFAULT * -0.0001f));
 
 	UpdateRoom3D(room, params);
 
@@ -710,7 +712,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	if (draw_sky)
 	{
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, 0);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(0.0f));
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
       IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
 
@@ -745,7 +747,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// draw world
 	if (draw_world)
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
@@ -793,7 +795,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
 
-			//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, FALSE);
 		}
 
@@ -872,7 +874,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1,
                                             D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
 
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
 
@@ -895,7 +897,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, 1);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)1.0f * -0.0001f));
 
 	// draw particles
 	if (draw_particles)
@@ -970,7 +972,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
 
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_DEFAULT);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_DEFAULT * -0.0001f));
       
 		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
 			256, 256);
@@ -1024,7 +1026,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_DEFAULT);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_DEFAULT * -0.0001f));
    
 	IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 	IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
@@ -9352,15 +9354,19 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
-			//if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, 0);
-			//else
-            //IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
+			}
+			else
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
+			}
 		}
 	}
 	else
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
 	}
 
 	if (gD3DDriverProfile.bFogEnable)
@@ -9407,15 +9413,19 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
-			//if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, 0);
-			//else
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
+			}
+			else
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
+			}
 		}
 	}
 	else
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
 	}
 
 	if (gD3DDriverProfile.bFogEnable)
@@ -9450,7 +9460,7 @@ Bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
 	else
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, pChunk->zBias);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.0001f));
 
 	return TRUE;
 }
@@ -9503,14 +9513,20 @@ Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
-			//if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, 0);
-			//else
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
+			}
+			else
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
+			}
 		}
 	}
-	//else
-	//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+	else
+	{
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
+	}
 
 	return TRUE;
 }
@@ -9521,14 +9537,20 @@ Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 	{
 		if (pChunk->pSector)
 		{
-			//if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, 0);
-			//else
-			//	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
+			}
+			else
+			{
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
+			}
 		}
 	}
-	//else
-    //  IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, ZBIAS_WORLD);
+	else
+	{
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.0001f));
+	}
 
 	if (pChunk->pSector)
 		if (pChunk->pSector->flags & SF_HAS_ANIMATED)
@@ -9592,7 +9614,7 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 		lastXLat0 = lastXLat1 = 0;
 	}
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, pChunk->zBias);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.0001f));
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
@@ -9698,7 +9720,7 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 		lastXLat0 = lastXLat1 = 0;
 	}
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, pChunk->zBias);
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.0001f));
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,

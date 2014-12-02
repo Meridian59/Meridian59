@@ -265,6 +265,9 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[]);
 
+int C_GetSessionIP(int object_id,local_var_type *local_vars,
+				int num_normal_parms,parm_node normal_parm_array[],
+				int num_name_parms,parm_node name_parm_array[]);
 
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len);
 bool FuzzyBufferEqual(const char *s1,int len1,const char *s2,int len2);

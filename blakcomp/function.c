@@ -92,6 +92,7 @@ function_type Functions[] = {
 {"MinigameNumberToString", MINIGAMENUMBERTOSTRING,     AEXPRESSION,   AEXPRESSION,   ANONE},
 {"MinigameStringToNumber", MINIGAMESTRINGTONUMBER,     AEXPRESSION,   ANONE},
 {"RecordStat",		RECORDSTAT,		 AEXPRESSIONS,	ANONE},
+{"GetSessionIP",        GETSESSIONIP,    AEXPRESSION,   ANONE},
    };
 
 int numfuncs = (sizeof(Functions)/sizeof(function_type));

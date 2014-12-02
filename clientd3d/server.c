@@ -1286,6 +1286,9 @@ Bool HandlePlayWave(char *ptr,long len)
    Extract(&ptr, &radius, sizeof(radius));
    Extract(&ptr, &maxvol, sizeof(maxvol));
    
+   // client overrides any volume setting the server might think it should be
+   maxvol = config.sound_volume;
+   
    GamePlaySound(rsc, obj, flags, (WORD)row, (WORD)col, (WORD)radius, (WORD)maxvol);
    return True;
 }

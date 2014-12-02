@@ -9837,7 +9837,6 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 {
 	LPDIRECT3DSURFACE9	pSrc, pDest[2], pZBuf;
 	RECT				rect;
-	POINT				pnt;
 	D3DMATRIX			mat;
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
@@ -9853,14 +9852,12 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 	IDirect3DTexture9_GetSurfaceLevel(pTex0, 0, &pDest[0]);
 	IDirect3DTexture9_GetSurfaceLevel(pTex1, 0, &pDest[1]);
 
-	pnt.x = 0;
-	pnt.y = 0;
 	rect.left = rect.top = 0;
 	rect.right = gScreenWidth;
 	rect.bottom = gScreenHeight;
 
 	// copy framebuffer to texture
-	IDirect3DDevice9_UpdateSurface(gpD3DDevice, pSrc, &rect, pDest[0], &pnt);
+	IDirect3DDevice9_StretchRect(gpD3DDevice, pSrc, &rect, pDest[0], &rect, D3DTEXF_NONE);
    
 	// clear local->screen transforms
 	MatrixIdentity(&mat);
@@ -9913,6 +9910,8 @@ LPDIRECT3DTEXTURE9 D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 
 	// restore render target to backbuffer
 	IDirect3DDevice9_SetRenderTarget(gpD3DDevice, 0, pSrc);
+	IDirect3DDevice9_SetDepthStencilSurface(gpD3DDevice, pZBuf);
+	
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
    
 	IDirect3DSurface9_Release(pSrc);

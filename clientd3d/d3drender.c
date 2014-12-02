@@ -7088,14 +7088,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				}
 			}
 
-			pChunk->xyz[0].x -= 32.0f / (float)pDib->shrink;
-			pChunk->xyz[0].z += 32.0f / (float)pDib->shrink;
-			pChunk->xyz[1].x -= 32.0f / (float)pDib->shrink;
-			pChunk->xyz[1].z -= 32.0f / (float)pDib->shrink;
-			pChunk->xyz[2].x += 32.0f / (float)pDib->shrink;
-			pChunk->xyz[2].z -= 32.0f / (float)pDib->shrink;
-			pChunk->xyz[3].x += 32.0f / (float)pDib->shrink;
-			pChunk->xyz[3].z += 32.0f / (float)pDib->shrink;
+			pChunk->xyz[0].x -= 96.0f / (float)pDib->shrink;
+			pChunk->xyz[0].z += 96.0f / (float)pDib->shrink;
+			pChunk->xyz[1].x -= 96.0f / (float)pDib->shrink;
+			pChunk->xyz[1].z -= 96.0f / (float)pDib->shrink;
+			pChunk->xyz[2].x += 96.0f / (float)pDib->shrink;
+			pChunk->xyz[2].z -= 96.0f / (float)pDib->shrink;
+			pChunk->xyz[3].x += 96.0f / (float)pDib->shrink;
+			pChunk->xyz[3].z += 9.0f / (float)pDib->shrink;
 
 			pChunk->st0[0].s = 1.0f;
 			pChunk->st0[0].t = 0.0f;
@@ -7803,14 +7803,14 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							}
 						}
 
-						pChunk->xyz[0].x -= 32.0f  * invOvShrink;
-						pChunk->xyz[0].z += 32.0f  * invOvShrink;
-						pChunk->xyz[1].x -= 32.0f  * invOvShrink;
-						pChunk->xyz[1].z -= 32.0f  * invOvShrink;
-						pChunk->xyz[2].x += 32.0f  * invOvShrink;
-						pChunk->xyz[2].z -= 32.0f  * invOvShrink;
-						pChunk->xyz[3].x += 32.0f  * invOvShrink;
-						pChunk->xyz[3].z += 32.0f  * invOvShrink;
+						pChunk->xyz[0].x -= 96.0f  * invOvShrink;
+						pChunk->xyz[0].z += 96.0f  * invOvShrink;
+						pChunk->xyz[1].x -= 96.0f  * invOvShrink;
+						pChunk->xyz[1].z -= 96.0f  * invOvShrink;
+						pChunk->xyz[2].x += 96.0f  * invOvShrink;
+						pChunk->xyz[2].z -= 96.0f  * invOvShrink;
+						pChunk->xyz[3].x += 96.0f  * invOvShrink;
+						pChunk->xyz[3].z += 96.0f  * invOvShrink;
 
 						pChunk->st0[0].s = 1.0f;
 						pChunk->st0[0].t = 0.0f;

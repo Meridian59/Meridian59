@@ -1669,6 +1669,7 @@
    WA_SPELLCASTER          = 68
    WA_GLOWING              = 69
    WA_PURGER               = 70
+   WA_SIPHON               = 71
 
    %%% Herald shields
 

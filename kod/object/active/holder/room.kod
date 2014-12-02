@@ -1928,10 +1928,29 @@ messages:
       return;
    }
 
+   SendRoomIcons(what=$)
+   "Sends room icons such as guild pk only, etc."
+   {
+      local i,lRoomIcons;
+
+      lRoomIcons = Send(SYS,@GetRoomIcons,#flags=piRoom_Flags);
+
+      for i in lRoomIcons
+      {
+         Send(what,@ShowAddEnchantment,#what=i,#type=ENCHANTMENT_ROOM);
+      }
+
+      return;
+
+   }
+
    SendEnchantmentIcons(what = $)
    "Users send this after GC to redisplay the enchantments in the room"
    {
       local i,each_obj;
+
+      % first send room icons
+      Send(self,@SendRoomIcons,#what=what);
 
       for i in plEnchantments
       {

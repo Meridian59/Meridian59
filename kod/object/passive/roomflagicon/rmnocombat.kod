@@ -1,0 +1,37 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RmNoCombat is RoomFlagIcon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   rmnocombat_name_rsc = "Safe Room"
+   rmnocombat_icon_rsc = rmnocombat.bgf
+   rmnocombat_desc_rsc = "This is a safe room, combat is not allowed here."
+
+classvars:
+
+   vrName = rmnocombat_name_rsc
+   vrIcon = rmnocombat_icon_rsc
+   vrDesc = rmnocombat_desc_rsc
+%   vrSucceed_wav = rmnocombat_sound
+
+%   vrSpell_intro = rmnocombat_spell_intro
+
+properties:
+
+messages:
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -448,6 +448,9 @@ properties:
    % A master list of all object attributes, for maintenance, control, & statistics purposes
    plObject_attributes_master = $
 
+   % A list of room type objects used forr room icons
+   plRoomIcons = $
+
 messages:
 
    GetName()
@@ -2539,6 +2542,8 @@ messages:
          Send(i,@Delete);
       }
 
+      Send(self,@RecreateRoomIcons);
+
       plRooms = $;
       phRooms = $;
       Send(self,@CreateRoomTable);
@@ -2657,6 +2662,75 @@ messages:
       Debug("Tried to delete room that is not in plRooms.");
 
       return;
+   }
+
+   CreateRoomIcons()
+   {
+      plRoomIcons = [$,$,$,$,$,$,$,$,$,$,$,$,$,$];
+
+      SetNth(plRoomIcons, ICON_ROOM_NO_COMBAT, Create(&RmNoCombat));
+      SetNth(plRoomIcons, ICON_ROOM_GUILD_PK_ONLY, Create(&RmGCombat));
+
+      % use kill zone icon for both kill zone flagged rooms and rooms without
+      % guild combat or no combat flags
+      SetNth(plRoomIcons, ICON_ROOM_KILL_ZONE, Create(&RmCombat));
+
+      return;
+   }
+
+   DeleteRoomIcons()
+   {
+      local i;
+
+      for i in plRoomIcons
+      {
+         if (i <> $)
+         {
+            send(i,@Delete);
+         }
+      }
+
+      return;
+   }
+
+   RecreateRoomIcons()
+   {
+      send(self,@DeleteRoomIcons);
+      send(self,@CreateRoomIcons);
+      return;
+   }
+
+   GetRoomIcons(flags=0)
+   {
+      local lRoomIcons;
+
+      lRoomIcons = $;
+
+      if (flags & ROOM_NO_COMBAT)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_NO_COMBAT),lRoomIcons);
+      }
+
+      if (flags & ROOM_GUILD_PK_ONLY)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_GUILD_PK_ONLY),lRoomIcons);
+      }
+
+      if NOT (flags & ROOM_NO_COMBAT)
+         AND NOT (flags & ROOM_GUILD_PK_ONLY)
+         AND NOT (flags & ROOM_KILL_ZONE)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_KILL_ZONE),lRoomIcons);
+      }
+
+      if (flags & ROOM_KILL_ZONE)
+         AND NOT (flags & ROOM_NO_COMBAT)
+         AND NOT (flags & ROOM_GUILD_PK_ONLY)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_KILL_ZONE),lRoomIcons);
+      }
+
+      return lRoomIcons;
    }
 
    DeleteBank(what = $)

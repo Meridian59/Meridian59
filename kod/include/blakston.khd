@@ -2670,6 +2670,11 @@
    OO_RR_TABLE = 154
    OO_RR_BASIN = 155
 
+   OO_QORMAS_SNOWMAN = 156
+   OO_QORMAS_TREE = 157
+   OO_QORMAS_WREATH = 158
+   OO_QORMAS_TREE_BIG = 159
+   
    %%% Shrines
 
    % These IDs don't need to be bitvectors, just unique.

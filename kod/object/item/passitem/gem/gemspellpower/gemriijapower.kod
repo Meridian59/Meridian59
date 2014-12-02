@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GemRiijaPower is GemSpellpower
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   gem_riijapower_name_rsc = "trickster's jewel"
+   gem_riijapower_icon_rsc = serappol.bgf
+   gem_riijapower_desc_rsc = \
+	"This shard of gemstone radiates a mischievous sense of play."
+	
+classvars:
+   
+   vrName = gem_riijapower_name_rsc
+   vrIcon = gem_riijapower_icon_rsc
+   vrDesc = gem_riijapower_desc_rsc
+
+   viValue_average = 15000
+   viWeight = 0
+   viBulk = 0
+
+   viSchool = SS_RIIJA
+
+properties:
+   
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

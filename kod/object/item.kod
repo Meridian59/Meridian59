@@ -1856,7 +1856,7 @@ messages:
 
    GetSpellModifier(oSpell=$)
    {
-      local oItemAtt, iModifier, i, iNum;
+      local oItemAtt, iModifier, i, iNum, oObjectAttribute;
 
       iModifier = Send(self,@GetBaseSpellModifier,#oSpell=oSpell);
       for i in plItem_Attributes
@@ -1865,6 +1865,11 @@ messages:
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
          iModifier = iModifier + Send(oItemAtt,@ItemGetSpellModifier,
                                       #oSpell=oSpell,#oCaster=poOwner);
+      }
+      
+      for oObjectAttribute in plObject_attributes
+      {
+         iModifier = Send(oObjectAttribute,@ModifySpellPower,#iModifier=iModifier,#oSpell=oSpell,#oCaster=poOwner);
       }
       
       return iModifier;

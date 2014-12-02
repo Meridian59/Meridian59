@@ -5216,6 +5216,13 @@ messages:
       plItemTemplates = cons(create(&GemPierceResistance),plItemTemplates);
       plItemTemplates = cons(create(&GemRemove),plItemTemplates);
       
+      plItemTemplates = cons(create(&GemRiijaPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemKraananPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemFarenPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemShalillePower),plItemTemplates);
+      plItemTemplates = cons(create(&GemJalaPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemQorPower),plItemTemplates);
+      
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
       plItemTemplates = cons(create(&PotionSplitter),plItemTemplates);
       plItemTemplates = cons(create(&WandSplitter),plItemTemplates);

@@ -130,6 +130,11 @@ messages:
       return resistance_list;
    }
    
+   ModifySpellPower(iModifier=0,oSpell=$,oCaster=$)
+   {
+      return iModifier;
+   }
+   
    AppendDesc()
    {
       return;

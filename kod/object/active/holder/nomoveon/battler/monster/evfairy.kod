@@ -12,32 +12,32 @@ EvilFairy is Monster
 
 constants:
 
-	include blakston.khd
+   include blakston.khd
 
 resources:
-   
+
    dark_fairy_koc_name_rsc = "teotimixlal"
    dark_fairy_name_rsc = "fey dirhai"
-	
+
    dark_fairy_icon_rsc = faerie-e.bgf
    dark_fairy_desc_rsc = \
-	   "Dark, mischievious and ultimately malicious, these imps have but "
-	   "one goal - to bring the Quilicia wood into permanent darkness, so "
-	   "they can claim the Vale of Sorrows as their own.  They hate their "
-	   "kinsmen, the fey elhai, with a fervent passion."
+      "Dark, mischievous and ultimately malicious, these imps have but "
+      "one goal - to bring the Quilicia wood into permanent darkness, so "
+      "they can claim the Vale of Sorrows as their own.  They hate their "
+      "kinsmen, the fey elhai, with a fervent passion."
 
    darkfairy_fireball = feyball.bgf
 
    darkfairy_dead_icon_rsc = faerieXE.bgf
    darkfairy_dead_name_rsc = "dead fey"
-	
+
    darkfairy_sound_hit = evl_atkh.wav
    darkfairy_sound_miss = evl_atkm.wav
    darkfairy_sound_death = evl_die.wav
    darkfairy_sound_aware = evl_awr.wav
 
 classvars:
-   
+
    vrDesc = dark_fairy_desc_rsc
    vrName = dark_fairy_koc_name_rsc
    vrName = dark_fairy_name_rsc
@@ -51,10 +51,12 @@ classvars:
    viSpeed = SPEED_VERY_FAST
    viAttack_type = 0
    viAttack_spell = ATCK_SPELL_SHOCK
-    
+
    viLevel = 60
    viDifficulty = 5
-   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
+   viVisionDistance = 15
+   viDefault_behavior = \
+      AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
    viWimpy = 10
    viCashmin = 300
    viCashmax = 600
@@ -62,7 +64,7 @@ classvars:
    vrSound_miss = darkfairy_sound_miss
    vrSound_aware = darkfairy_sound_aware
    vrSound_death = darkfairy_sound_death
-   
+
 properties:
 
    piDrawfx = BOUNCE_YES
@@ -72,7 +74,7 @@ properties:
 messages:
 
    Constructor()
-   {	  
+   {
       plResistances = [ [-ATCK_SPELL_HOLY, -30 ],
                         [-ATCK_SPELL_ALL, 30 ],
                         [ATCK_WEAP_MAGIC, 30 ],
@@ -125,21 +127,21 @@ messages:
       }
 
       AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,2);
-	             
+                
       return;
    }
 
    GetProjectileSpeed()
    {
       return 7;
-   }   
+   }
 
    SendProjectileAnimation()
    {
       AddPacket(1,ANIMATE_CYCLE,4,50,2,1,2,4);
 
       return;
-   }      
+   }
 
    GetProjectileIcon()
    {
@@ -172,7 +174,7 @@ messages:
       }
 
       propagate;
-   }   
+   }
 
    GetObjectFlags()
    {
@@ -193,8 +195,7 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
-
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -18,10 +18,9 @@ constants:
    % 30 seconds duration
    POISON_DURATION = 30000
    % in health points * 10^-4 / second
-   POISON_LOSSRATE = 2500    
+   POISON_LOSSRATE = 2500
 
 resources:
-
 
    spiderqueen_name_rsc = "queen spider"
    spiderqueen_koc_name_rsc = "kokinich"
@@ -53,9 +52,13 @@ classvars:
    viAttributes = MOB_NOMOVE
    viLevel = 165
    viDifficulty = 9
+
+   % Low vision since we want her to switch targets if possible.
+   viVisionDistance = 6
+
    viKarma = -90
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
-   viGender = GENDER_FEMALE   
+   viGender = GENDER_FEMALE
    viCashmin = 0
    viCashmax = 4000
    vrSound_hit = spiderqueen_sound_hit
@@ -86,14 +89,14 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
    % Increasing how far the spider queen can reach, since she's immobile.
    GetAttackRange()
    {
-      return 3;
+      return 4;
    }
 
    SendLookAnimation()
@@ -121,7 +124,7 @@ messages:
       return;
    }
 
-   HitSideEffect( what = $ )
+   HitSideEffect(what = $)
    {
       local oSpell, oSpell2;
 
@@ -129,13 +132,14 @@ messages:
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,#lossrate=POISON_LOSSRATE,
-              #duration=POISON_DURATION);
+               #duration=POISON_DURATION);
       }
-      
-      if Random(1,2) = 2
+
+      if Random(1,4) = 1
       {
          oSpell2 = Send(SYS,@FindSpellByNum,#num=SID_SPIDER_WEB);
-         Send(oSpell2,@CastSpell,#who=self,#ltargets=[poTarget], #ispellpower=100);
+         Send(oSpell2,@CastSpell,#who=self,
+               #ltargets=[poTarget],#ispellpower=100);
       }
 
       return;
@@ -148,7 +152,7 @@ messages:
          return FALSE;
       }
 
-      if IsClass(target,&Spider)          
+      if IsClass(target,&Spider)
          OR IsClass(target,&SpiderBaby)
          OR IsClass(target,&SpiderQueen)
       {
@@ -157,7 +161,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

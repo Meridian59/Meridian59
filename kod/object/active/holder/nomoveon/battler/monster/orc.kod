@@ -20,9 +20,9 @@ resources:
    orc_name_rsc = "orc"
    orc_icon_rsc = orc.bgf
    orc_desc_rsc = \
-   "This foul servant of Qor, body covered in filth, towers "
-   "above human height.  It fiercely grips a blade in "
-   "one gnarled hand."
+      "This foul servant of Qor, body covered in filth, towers "
+      "above human height.  It fiercely grips a blade in "
+      "one gnarled hand."
 
    orc_dead_icon_rsc = orcX.bgf
    orc_dead_name_rsc = "dead orc"
@@ -31,7 +31,6 @@ resources:
    orc_sound_miss = orc_atkm.wav
    orc_sound_death = orc_dth.wav
    orc_sound_aware = orc_awr.wav
-
 
 classvars:
 
@@ -50,8 +49,10 @@ classvars:
    viAttributes = 0
    viLevel = 45
    viDifficulty = 6
+   viVisionDistance = 10
    viKarma = -40
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_SWITCHALOT
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_SWITCHALOT
    viCashmin = 150
    viCashmax = 450
 
@@ -80,16 +81,19 @@ messages:
    % Used for defense messages
    GetParryAbility(stroke_obj=$)
    {
-      if (stroke_obj <> $) and not Send(stroke_obj,@CanParry)
+      if stroke_obj <> $
+         AND NOT Send(stroke_obj,@CanParry)
       {
          return 0;
       }
+
       return (viDifficulty*10)/2;
    }
 
    MonsterAttack(what = $)
    {
       Send(self,@DoSlash);
+
       return;
    }
 
@@ -98,7 +102,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -123,17 +127,21 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-	 AddPacket(1,ANIMATE_ONCE,4,75,2,7,2,11,2,1);
-	 return;
-      } 
-      %% if no body animation.     
+         AddPacket(1,ANIMATE_ONCE,4,75,2,7,2,11,2,1);
+
+         return;
+      }
+
+      %% if no body animation.
       propagate;
    }
 
    IsFrightenedOf(target=$)
    {
-      if isClass(target,&giantrat)
-      { return TRUE; }
+      if IsClass(target,&GiantRat)
+      {
+         return TRUE;
+      }
 
       return FALSE;
    }

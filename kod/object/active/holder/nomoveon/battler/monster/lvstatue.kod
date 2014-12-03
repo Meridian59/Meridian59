@@ -152,12 +152,13 @@ classvars:
    viDead_drawfx = DRAWFX_SECONDTRANS
 
    % percentage chance to be female
-   viChanceFemale = 50  
+   viChanceFemale = 50
 
    % Our normal speed when active
    viNormalSpeed = SPEED_AVERAGE
    viCashmin = 150
    viCashmax = 500
+
 properties:
 
    % Put these as properties so they can be set
@@ -169,6 +170,7 @@ properties:
 
    viLevel = 75
    viDifficulty = 5
+   viVisionDistance = 3
    viGender = GENDER_MALE
 
    viSpeed = SPEED_NONE
@@ -231,7 +233,7 @@ messages:
          viLevel = viLevel + 15;
          viDifficulty = viDifficulty + 2;
 
-	 % This makes the soliders not have karma
+         % This makes the soliders not have karma
          pbDontDispose = TRUE;
       }
       else
@@ -428,12 +430,6 @@ messages:
       return;
    }
 
-   GetVisionDistance()
-   {
-      % A fairly short range for these monsters.
-      return 3;
-   }
-
    TweakBehavior()
    "Our default behavior it not be noticable as a monster."
    {
@@ -451,6 +447,7 @@ messages:
    {
       % Make ourselves mobile!
       viSpeed = viNormalSpeed;
+
       piBehavior = piBehavior & ~(AI_NOMOVE | AI_NOFIGHT | AI_NPC);
       if poOwner <> $
       {
@@ -1111,23 +1108,10 @@ messages:
       propagate;
    }
 
-   IsAlly(target = $, regroup = FALSE)
-   {
-      local iFaction;
-
-      if IsClass(target,GetClass(self))
-      {
-         return TRUE;
-      }
-      
-      propagate;
-   }
-
-   CanMorphTo() 
+   CanMorphTo()
    {
       return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

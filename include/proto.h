@@ -204,7 +204,7 @@ enum {
    BP_SECTOR_ANIMATE        = 226,
    BP_CHANGE_TEXTURE        = 227,
    BP_INVALIDATE_DATA       = 228,
-
+   BP_RADIUS_SHOOT          = 229,
    BP_REQ_DEPOSIT           = 230,
    BP_WITHDRAWAL_LIST       = 231,
    BP_REQ_WITHDRAWAL        = 232,

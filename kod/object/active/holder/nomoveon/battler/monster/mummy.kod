@@ -20,8 +20,9 @@ resources:
    mummy_name_rsc = "mummy"
    mummy_icon_rsc = mummy.bgf
    mummy_desc_rsc = \
-      "Unable to find peace, this poor, forsaken soul wanders dark and endless corridors, waiting to be judged at last. "
-      "Its flesh is putrid and soft, and its eyes ask for rest from its cursed unlife."
+      "Unable to find peace, this poor, forsaken soul wanders dark and "
+      "endless corridors, waiting to be judged at last.  Its flesh is putrid "
+      "and soft, and its eyes ask for rest from its cursed unlife."
 
    mummy_dead_icon_rsc = mummyX.bgf
    mummy_dead_name_rsc = "dead mummy"
@@ -46,6 +47,9 @@ classvars:
    viAttributes = 0
    viLevel = 30
    viDifficulty = 1
+
+   % Larger distance since we want them to seek out the newbies.
+   viVisionDistance = 16
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 1
@@ -61,11 +65,6 @@ properties:
 
 messages:
 
-   CalculateDamage()
-   {
-	   return random(1,2);
-   }
-
    Constructed()
    {
       plResistances = [ [-ATCK_SPELL_UNHOLY, 20],
@@ -80,7 +79,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -98,13 +97,12 @@ messages:
       return;
    }
 
-
    SendAnimation()
    {
       if piAnimation = ANIM_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE,4,200,2,6,2,9,2,1);
-         
+
          return;
       }
 

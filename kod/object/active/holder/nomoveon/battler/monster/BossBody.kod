@@ -50,6 +50,7 @@ classvars:
    viDefault_behavior = AI_NOMOVE| AI_NOFIGHT
    viLevel = 1
    viDifficulty = 1
+   viVisionDistance = 1
    viKarma = 0
    viCashmin = 1
    viCashmax = 1
@@ -72,8 +73,8 @@ messages:
       {
          oHead = Create(&OrcPitBossHead,#corpse=corpse);
          Send(poOwner,@NewHold,#what=oHead,
-               #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
-               #fine_row=Send(self,@GetFineRow),#fine_col=Send(self,@GetFineCol));
+               #new_row=piRow,#new_col=piCol,
+               #fine_row=piFine_row,#fine_col=piFine_col);
       }
 
       propagate;

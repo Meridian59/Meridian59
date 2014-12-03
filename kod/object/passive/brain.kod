@@ -44,7 +44,7 @@ properties:
    piHyperAggressive_factor = 60
 
    % The higher this is, the less likely monsters will 'swarm'.
-   piChaser_factor = 75
+   piChaser_factor = 100
 
    % The higher this number is, the more likely a wizard hater
    % will chase after wizards.
@@ -160,12 +160,12 @@ messages:
          return;
       }
 
-      %% There are so many move messages, don't do anything most of the time.
-      if (ignoreWait = FALSE)
-         AND Random(1,10) <> 8
-      {
-         return;
-      }
+      %% We now process all SomethingMoved calls for fluidity.
+      %if (ignoreWait = FALSE)
+      %   AND Random(1,5) <> 5
+      %{
+      %   return;
+      %}
 
       if state & STATE_LIMBO
       {
@@ -255,6 +255,9 @@ messages:
       if victim = mob
       {
          iType = TS_FIGHT_ME_VICTIM;
+
+         % Monster needs to record the time, used for when players flee it.
+         Send(mob,@RecordTimeAttacked,#who=what);
       }
       else
       {
@@ -713,7 +716,7 @@ messages:
    "6. Otherwise, move towards target."
    {
       local oMaster, oOwner, oMasterRoom, oFrightener,
-            oAlly, iRange, iOpt_range;
+            oAlly, iRange, iOpt_range, iSquaredVision, iSquaredDistance;
 
       if mob = $ OR target = $
       {
@@ -739,7 +742,7 @@ messages:
             return;
          }
       }
-	  
+
       if (behavior & AI_MOVE_FLEE_FRIGHTENERS)
       {
          oFrightener = Send(mob,@GetClosestFrightener);
@@ -806,9 +809,31 @@ messages:
          iOpt_range = Send(mob,@GetOptimalRange);
 
          iRange = Send(mob,@SquaredDistanceTo,#what=target);
-         if iRange < (iOpt_range * iOpt_range)
+
+         % Check if we have a range first, we might be dead already.
+         if iRange <> $
+            AND iRange < (iOpt_range * iOpt_range)
          {
             Send(mob,@MoveAway,#oTarget=target,#face_away=TRUE);
+
+            return;
+         }
+      }
+
+      % Check here if we need to break target, perhaps they are now
+      % too far away and have escaped us. This is the same vision check
+      % as used in GetHatred, with 5 added to the monster vision.
+      if NOT (behavior & AI_FIGHT_HYPERAGGRESSIVE)
+         AND NOT (behavior & AI_FIGHT_SINGLEMINDED)
+         AND (Send(mob,@GetTimeAttacked) + 10) < GetTime()
+      {
+         iSquaredVision = Send(mob,@GetVisionDistance) + 5;
+         iSquaredVision = (iSquaredVision * iSquaredVision);
+         iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=target)
+                                 / FINENESS_SQUARED);
+         if iSquaredVision < iSquaredDistance
+         {
+            Send(mob,@EnterStateWait,#actnow=TRUE);
 
             return;
          }
@@ -836,7 +861,8 @@ messages:
    "we attack. If iBalance ends up greater than 0, return TRUE."
    {
       local iBalance, oTarget, iHatred, iKarma1, iKarma2, oMaster,
-            oApparentForm, oApparentTarget, bKarmaHater, iAdd, oMobTarget;
+            oApparentForm, oApparentTarget, bKarmaHater, iAdd, oMobTarget,
+            iSquaredVision, iSquaredDistance;
 
       if mob = $ OR what = $
       {
@@ -881,28 +907,40 @@ messages:
       oMaster = Send(mob,@GetMaster);
 
       % Minions do not attack players unless provoked.
-      if oMaster <> $ AND IsClass(oMaster,&User)
-         AND IsClass(what,&User) AND event <> TS_FIGHT_ME_VICTIM
+      if oMaster <> $
       {
-         if NOT Send(SYS,@IsPKAllowed)
+         if IsClass(oMaster,&User)
+            AND IsClass(what,&User)
+            AND event <> TS_FIGHT_ME_VICTIM
+         {
+            if NOT Send(SYS,@IsPKAllowed)
+            {
+               return 0;
+            }
+         }
+
+         % Never switch to target your master
+         % UNLESS your master is attacking you.
+         if oMaster = what
+         {
+            if event <> TS_FIGHT_ME_VICTIM
+            {
+               return 0;
+            }
+            else
+            {
+               Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_SINGLEMINDED);
+
+               return 1000;
+            }
+         }
+
+         % Don't attack faction soldier NPCs unless
+         % they are attacking the master.
+         if IsClass(what,&FactionTroop)
+            AND oMaster <> Send(what,@GetTarget)
          {
             return 0;
-         }
-      }
-
-      % Never switch to target your master
-      % UNLESS your master is attacking you.
-      if oMaster = what
-      {
-         if event <> TS_FIGHT_ME_VICTIM
-         {
-            return 0;
-         }
-         else
-         {
-            Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_SINGLEMINDED);
-
-            return 1000;
          }
       }
 
@@ -1127,34 +1165,28 @@ messages:
          return 0;
       }
 
-      % Lose points for proximity.  Means a monster should ignore you
-      % if you're more than, say, 20 squares away.
-      if (event = TS_FIGHT_ME_VICTIM)
+      % This is the monster vision check. If 'what' attacked us, skip
+      % this since we will attack regardless of where 'what' is (even
+      % if we can't see them, we can see where the attack comes from).
+      if NOT (event = TS_FIGHT_ME_VICTIM)
       {
-         if oTarget = $
+         % This is the actual range past which a monster can't 'see'. We
+         % use this as our base for this calculation.
+         iSquaredVision = Send(mob,@GetVisionDistance);
+         iSquaredVision = (iSquaredVision * iSquaredVision);
+
+         % Use the new SqFineDistToVision here for better resolution.
+         % Based on SquaredFineDistanceTo, but without $ checks for speed.
+         iSquaredDistance = (Send(mob,@SqFineDistToVision,#what=what)
+                                    / FINENESS_SQUARED);
+
+         % If outside our vision range, return 0 and don't switch.
+         if iSquaredVision < iSquaredDistance
          {
-            iAdd = 100;
+            return 0;
          }
-         else
-         {
-            iAdd = Send(mob,@GetLevel)/2;
-         }
-      }
-      else
-      {
-         if (oTarget = $)
-         {
-            iAdd = (((Send(mob,@GetDifficulty)*piMax_distance)/10)
-                           * piDistance_factor);
-            iAdd = iAdd - (piDistance_factor
-                  * Bound(Sqrt(Send(mob,@SquaredDistanceTo,
-                              #what=what)),0,piMax_distance));
-            iAdd = Bound(iAdd,0,$);
-         }
-         else
-         {
-            iAdd = 0;
-         }
+         
+         iAdd = Sqrt(iSquaredVision - iSquaredDistance) * 2;
       }
       iHatred = iHatred + iAdd;
 
@@ -1179,8 +1211,11 @@ messages:
                                     * piPlayer_factor)/100);
 
          % If they already have a lot of people chasing them, run away.
-         iHatred = iHatred - (Send(what,@GetMonsterChasers)
-                                    * piChaser_factor)/100;
+         if NOT (event = TS_FIGHT_ME_VICTIM)
+         {
+            iHatred = iHatred - (Send(what,@GetMonsterChasers)
+                                       * piChaser_factor)/100;
+         }
       }
 
       if (behavior & AI_FIGHT_HYPERAGGRESSIVE)
@@ -1228,7 +1263,7 @@ messages:
       iHatred = Send(self,@GetHatred,#what=what,#mob=mob,
                      #event=event,#behavior=behavior);
 
-      if behavior & AI_FIGHT_SWITCHALOT 
+      if behavior & AI_FIGHT_SWITCHALOT
          AND (oTarget <> $ AND NOT Send(mob,@CanReach,#what=oTarget))
          AND Send(mob,@CanReach,#what=what)
       {

@@ -1,0 +1,112 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttSiphon is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   This weapon steals mana away from the target, bit by bit.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapattSiphon_desc = \
+      "  A mystical force seems to draw energy from the air around the weapon."
+   Siphon_dm = "Siphon"
+   Siphon_fail_use = "You are not ready to use %s%s."
+
+   siphon_worked = "%s%s appears weary as %s mystical energy is sucked away!"
+   siphon_worked_target = \
+      "Strands of energy spark from %s%s as the metal of %s weapon rips away your mystical energy!"
+
+classvars:
+
+   vrDesc = weapattSiphon_desc
+   vrDesc2 = $
+
+   viItem_Att_Num = WA_SIPHON
+
+   viDifficulty = 9
+   vrDM_trigger = Siphon_dm
+
+properties:
+
+   % modify the object's price by 100
+   piValue_modifier = 200
+   
+   piValue_power_modifier = 10
+   
+   % Percent chance the effect procs
+   piEffect_percent = 15
+   
+   % Range of mana that is taken
+   piMinManaStolen = 2
+   piMaxManaStolen = 6
+   
+   % Percent of mana to give the attacker
+   piSiphonFactor = 150
+
+messages:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
+   {
+      local oSpell,iAmountTaken,iAmountGiven,iProficiency;
+      if Random(1,100) <= piEffect_percent
+      {
+         iAmountTaken = Random(piMinManaStolen,piMaxManaStolen);
+         iAmountGiven = iAmountTaken * piSiphonFactor / 100;
+      
+         Send(wielder,@GainMana,#amount=iAmountGiven,#bCapped=TRUE,#bRespectMax=TRUE);
+         Send(wielder,@MsgSendUser,#message_rsc=siphon_worked,
+               #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName),
+               #parm3=send(target,@GetHisHer));
+               
+         Send(target,@LoseMana,#amount=iAmountTaken);
+         Send(target,@MsgSendUser,#message_rsc=siphon_worked_target,
+               #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName),
+               #parm3=Send(wielder,@GetHisHer));
+      }
+
+      return damage;
+   }
+
+
+   ItemReqUse(oItem=$,oPlayer=$)
+   {
+
+      if Send(oItem,@GetProf,#who=oPlayer) < 50      
+      {
+         Send(oPlayer, @MsgSendUser, #message_rsc = Siphon_fail_use,
+               #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+
+         return FALSE;  %% This person needs 50% in the weapon's proficiency to use
+      }
+
+      return TRUE;
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

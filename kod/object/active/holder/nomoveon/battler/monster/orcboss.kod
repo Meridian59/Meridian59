@@ -28,10 +28,10 @@ resources:
    OrcPitBoss_name_rsc = "orc pit boss"
    OrcPitBoss_icon_rsc = OrcPitB.bgf
    OrcPitBoss_desc_rsc = \
-	"In order to gain the ominous title and station of Pit Boss, "
-	"this orc had to battle and slay over one hundred other of its "
-	"kind.  In the caves, there is no more formidable warrior, "
-	"determined leader or grisly adversary than the horrendous Pit Bosses."  
+      "In order to gain the ominous title and station of Pit Boss, "
+      "this orc had to battle and slay over one hundred other of its "
+      "kind.  In the caves, there is no more formidable warrior, "
+      "determined leader or grisly adversary than the horrendous Pit Bosses."
 
    OrcPitBoss_dead_icon_rsc = OrcPitbX.bgf
    OrcPitBoss_dead_name_rsc = "dead orc pit boss"
@@ -40,7 +40,6 @@ resources:
    OrcPitBoss_sound_miss = orc_atkm.wav
    OrcPitBoss_sound_death = por_dth.wav
    OrcPitBoss_sound_aware = por_awr.wav
-
 
 classvars:
 
@@ -59,8 +58,10 @@ classvars:
    viAttributes = 0
    viLevel = 115
    viDifficulty = 7
+   viVisionDistance = 30
    viKarma = -90
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
    viCashmin = 1000
    viCashmax = 4500
 
@@ -78,7 +79,6 @@ properties:
    ptSecondAttack = $
 
 messages:
-
 
    Constructed()
    {
@@ -98,12 +98,13 @@ messages:
       {
          return 0;
       }
+
       return (viDifficulty*10);
    }
 
    MonsterAttack(what = $)
    {
-      if (not pbFirstAttack)
+      if (NOT pbFirstAttack)
       {
          Send(self,@DoSlash);
          pbFirstAttack = TRUE;
@@ -113,22 +114,29 @@ messages:
          pbFirstAttack = FALSE;
          if ptSecondAttack = $
          {
-            ptSecondAttack = CreateTimer(self,@SecondAttackTimer,400);   %% this code executes the attack twice,
-	 		                                                                %% but only does the animation once.
+            % This code executes the attack twice,
+            % but only does the animation once.
+            ptSecondAttack = CreateTimer(self,@SecondAttackTimer,400);
          }
       }
+
       return;
    }
-   
-   
+
    SecondAttackTimer()
    {
       if pbFirstAttack
-      {  return;  }
+      {
+         return;
+      }
 
       ptSecondAttack = $;
-      if poTarget <> $ and send(self,@getowner) = send(poTarget,@getowner)
-      {  Send(self,@tryAttack,#what=poTarget); }      
+      if poTarget <> $
+         AND poOwner = Send(poTarget,@GetOwner)
+      {
+         Send(self,@TryAttack,#what=poTarget);
+      }
+
       return;
    }
 
@@ -137,14 +145,15 @@ messages:
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
    SendLookAnimation()
-   {     
+   {
       %% Walk animation
-      AddPacket(1,ANIMATE_CYCLE,4,ANIMSPEED_WALK,2,FRAME_WALK_START,2,FRAME_WALK_END);
+      AddPacket(1,ANIMATE_CYCLE,4,ANIMSPEED_WALK,
+                2,FRAME_WALK_START,2,FRAME_WALK_END);
 
       return;
    }
@@ -153,7 +162,8 @@ messages:
    {
       % Make it look like OrcPitBoss is walking
       % Cycle through "walking" bitmaps (groups 2-6) at 50 ms per frame
-      AddPacket(1,ANIMATE_CYCLE,4,ANIMSPEED_WALK,2,FRAME_WALK_START,2,FRAME_WALK_END);
+      AddPacket(1,ANIMATE_CYCLE,4,ANIMSPEED_WALK,
+                2,FRAME_WALK_START,2,FRAME_WALK_END);
 
       return;
    }
@@ -162,10 +172,13 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-	 AddPacket(1,ANIMATE_ONCE,4,ANIMSPEED_ATTACK,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_STAND);
-	 return;
-      } 
-      %% if no body animation.     
+         AddPacket(1,ANIMATE_ONCE,4,ANIMSPEED_ATTACK,
+               2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_STAND);
+
+         return;
+      }
+
+      % if no body animation.
       propagate;
    }
 
@@ -173,18 +186,20 @@ messages:
    {
       if ptSecondAttack <> $
       {
-	 deletetimer(ptSecondAttack);
-	 ptSecondAttack = $;
+         DeleteTimer(ptSecondAttack);
+         ptSecondAttack = $;
       }
+
       propagate;
    }
 
    CreateDeadBody(killer=$)
    {
       local oBody;
+
       oBody = Create(&OrcPitBossBody);
-      
-      return oBody;			   
+
+      return oBody;
    }
 
    DMCanArmageddon()
@@ -196,6 +211,6 @@ messages:
    {
       return FALSE;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

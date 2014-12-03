@@ -111,6 +111,7 @@ Bool HandleBackground(char *ptr, long len);
 Bool HandleEffect(char *ptr, long len);
 Bool HandleTurn(char *ptr, long len);
 Bool HandleShoot(char *ptr, long len);
+Bool HandleRadiusShoot(char *ptr, long len);
 Bool HandleUsers(char *ptr, long len);
 Bool HandleLoadModule(char *ptr, long len);
 Bool HandleChangeResource(char *ptr, long len);

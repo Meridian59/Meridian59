@@ -20,7 +20,7 @@ classvars:
 
    % If true, reduce monster spawn rate when there are few players in the room
    vbScaleSpawnRateWithPlayers = FALSE
-   
+
 properties:
 
    piGen_Time = 15000
@@ -28,12 +28,12 @@ properties:
 
    ptOkay_To_Load = $
    pbOkay_To_Load = TRUE
-   
+
    % Timer makes 'em wait before new batch loads.
-   
+
    % This is how long they have to wait before room resets, in ms.
    piReload_Wait_Time = 90000
-   
+
    % Only loads the first monster in list plMonsters if set to true.
    pbLoad_first_monster_only = FALSE
 
@@ -71,14 +71,14 @@ messages:
          DeleteTimer(ptGen);
          ptGen = $;
       }
-      
+
       if ptOkay_To_Load <> $
       {
          DeleteTimer(ptOkay_To_Load);
          ptOkay_To_Load = $;
          pbOkay_To_Load = TRUE;
       }
-      
+
       propagate;
    }
 
@@ -101,7 +101,7 @@ messages:
       % GetSpawnRate =  1
       % iWaitTime = (20000 * (300 / 100));
       % iWaitTime = 200
-      iWaitTime = (piGen_Time * Send(Send(SYS, @GetSettings), @GetSpawnRate)) / 200;
+      iWaitTime = (piGen_Time * Send(Send(SYS,@GetSettings),@GetSpawnRate)) / 200;
 
       % Reduce spawn time for up to 5 people.
       iNumberOfPlayers = Send(self,@CountHoldingHowMany,#class=&Player);
@@ -109,12 +109,12 @@ messages:
       iMaxPlayers = 5;
       if vbScaleSpawnRateWithPlayers
       {
-        iNumberOfPlayers = Bound(iNumberOfPlayers,1,iMaxPlayers);
+         iNumberOfPlayers = Bound(iNumberOfPlayers,1,iMaxPlayers);
       }
       else
       {
-        % Always have max spawn rate
-        iNumberOfPlayers = iMaxPlayers;
+         % Always have max spawn rate
+         iNumberOfPlayers = iMaxPlayers;
       }
       iWaitTime = iWaitTime / iNumberOfPlayers;
 
@@ -126,8 +126,8 @@ messages:
       ptGen = $;
 
       Send(self,@TryCreateMonster);
-      
-      ptGen = CreateTimer(self,@MonsterGenTimer,send(self,@GetMonsterGenTime));
+
+      ptGen = CreateTimer(self,@MonsterGenTimer,Send(self,@GetMonsterGenTime));
 
       return;
    }
@@ -135,7 +135,7 @@ messages:
    SetMonsterGeneration(bValue=TRUE)
    {
       pbGenerateMonsters = bValue;
-      
+
       return;
    }
 
@@ -145,15 +145,18 @@ messages:
    {
       local oMonster,iRoll,iTotal,lMonster_info,iRow,iCol,lPos;
 
-      if NOT send(self,@IsMonsterCountBelowMax)
+      if NOT Send(self,@IsMonsterCountBelowMax)
          OR NOT pbGenerateMonsters
       {
          return;
       }
 
       iRoll = Random(1,100);
-      if (iRoll > piGen_percent) and (initroom=FALSE) {	 return; }
-      
+      if (iRoll > piGen_percent) AND (initroom=FALSE)
+      {
+         return;
+      }
+
       if NOT loadfirst
       {
          iRoll = Random(1,100);
@@ -171,22 +174,23 @@ messages:
          if iRoll <= iTotal
          {
             oMonster = Create(First(lMonster_info));
- 
-            if not Send(self,@GenerateMonster,#oMonster=oMonster)
+
+            if NOT Send(self,@GenerateMonster,#oMonster=oMonster)
             {
                return 0;
             }
-            
-	         break;
-	      }
+
+            break;
+         }
       }
-      
+
       return 1;
    }
 
    GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE)
-   "Pulled outside the function to be callable outside of the function"
-   "Can generate a monster at a specific location, or you can let it be put at a gen point"
+   "Pulled outside the function to be callable outside of the function. "
+   "Can generate a monster at a specific location, or you can let it be "
+   "put at a gen point."
    {
       local oOldOwner, iMRow, iMCol, lPos, iRoll;
       
@@ -198,14 +202,14 @@ messages:
          return;
       }
 
-      oOldOwner = send(oMonster,@GetOwner);
+      oOldOwner = Send(oMonster,@GetOwner);
       if oOldOwner <> $
       {
-         % Remove it from it's previous location.  This also stops the "warping" effect if
-         %  we try to "respawn" a monster in the same room.
-         if send(oOldOwner,@ReqLeaveHold,#what=oMonster)
+         % Remove it from it's previous location.  This also stops the
+         % "warping" effect if we try to "respawn" a monster in the same room.
+         if Send(oOldOwner,@ReqLeaveHold,#what=oMonster)
          {
-            send(oOldOwner,@LeaveHold,#what=oMonster);
+            Send(oOldOwner,@LeaveHold,#what=oMonster);
          }
          else
          {
@@ -213,11 +217,11 @@ messages:
             return;
          }
       }
-      
+
       if (iMRow=0 and iMCol=0)
       {
          if plGenerators = $
-         {	    
+         {
             iMRow = Random(1,piRows);
             iMCol = Random(1,piCols);
          }
@@ -231,19 +235,20 @@ messages:
       }
       
       if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
-         AND (Send(self,@ReqSomethingMoved,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
-              OR bStack)
+         AND (Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol)
+            OR bStack)
       {
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
-              #fine_row=FINENESS/2,#fine_col=FINENESS/2);
+               #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
       }
       else
       {
          Send(oMonster,@Delete);
-         
+
          return FALSE;
       }
-      
+
       return TRUE;
    }
 
@@ -258,7 +263,7 @@ messages:
       {
          piMonster_count = piMonster_count + 1;
       }
-      
+
       propagate;
    }
 
@@ -268,7 +273,7 @@ messages:
       {
          piMonster_count = piMonster_count - 1;
       }
-      
+
       propagate;
    }
 
@@ -288,13 +293,13 @@ messages:
 
       if ptGen <> $
       {
-         debug("Monster room got firstuserentered when apparently that wasn't true");
-         
+         Debug("Monster room got firstuserentered when apparently that wasn't true");
+
          propagate;
       }
 
       % Find a monster in the room, and update our count of monsters in the
-      %  in the room.  Sometimes this becomes inaccurate.
+      % in the room.  Sometimes this becomes inaccurate.
       bFound = FALSE;
       piMonster_Count = 0;
       for i in plActive
@@ -310,16 +315,17 @@ messages:
             piMonster_Count = piMonster_Count + 1;
          }
       }
-      
+
       if bFound OR NOT pbOkay_To_Load
       {
-         ptGen = CreateTimer(self,@MonsterGenTimer,send(self,@GetMonsterGenTime));
-         
-         propagate;                  
+         ptGen = CreateTimer(self,@MonsterGenTimer,
+                                    Send(self,@GetMonsterGenTime));
+
+         propagate;
       }
 
-      iHowMany = random(piInit_count_min,piInit_count_max); 
-			
+      iHowMany = Random(piInit_count_min,piInit_count_max); 
+
       if iHowMany > iLength
       {
          iHowMany = iLength;
@@ -327,20 +333,21 @@ messages:
 
       while iHowMany > 0 AND piMonster_Count < piMonster_count_max
       {
-         Send(self,@TryCreateMonster,#initroom=TRUE,#loadfirst=pbLoad_First_Monster_Only);
+         Send(self,@TryCreateMonster,#initroom=TRUE,
+               #loadfirst=pbLoad_First_Monster_Only);
          iHowMany = iHowMany - 1;
       }
-      
-      ptGen = CreateTimer(self,@MonsterGenTimer,send(self,@GetMonsterGenTime));
-      
+
+      ptGen = CreateTimer(self,@MonsterGenTimer,Send(self,@GetMonsterGenTime));
+
       propagate;
    }
-   
+
    OkayToLoadTimer()
    "When a player leaves a room with no monsters in it, this timer starts"
    "to be sure a player doesn't return immediately and trigger a reset."
    {
-      ptOkay_To_Load = $;  
+      ptOkay_To_Load = $;
       pbOkay_To_Load = TRUE;
 
       return;
@@ -351,7 +358,7 @@ messages:
    "Endless exp boosting."
    {
       local iWaitTime;
-   
+
       if ptGen <> $
       {
          DeleteTimer(ptGen);
@@ -359,16 +366,17 @@ messages:
       }
       else
       {
-         debug("Monster room got lastuserleft when apparently that wasn't true");
-      } 
+         Debug("Monster room got lastuserleft when apparently that wasn't true");
+      }
 
       if (ptOkay_To_Load = $) AND (piMonster_count = 0)
       {
-         iWaitTime = (piReload_Wait_Time * Send(Send(SYS, @GetSettings), @GetSpawnRate)) / 100;
+         iWaitTime = (piReload_Wait_Time
+                        * Send(Send(SYS,@GetSettings),@GetSpawnRate)) / 100;
          ptOkay_To_Load = CreateTimer(self,@OkaytoLoadTimer,iWaitTime);
-         pbOkay_To_Load = FALSE;     
+         pbOkay_To_Load = FALSE;
       }
-      
+
       propagate;
    }
 
@@ -376,48 +384,51 @@ messages:
    "A command to test the room--makes all generators create a monster, so"
    "that one can easily see where the generators are."
    {
-      local lPos, iRow, iCol, oMonster, bReqNewHold, bReqSomethingMoved, iCount, iLength;
-      
+      local lPos, iRow, iCol, oMonster, bReqNewHold, bReqSomethingMoved,
+            iCount, iLength;
+
       iCount = 1;  %initialize iCount
-      
+
       if plGenerators = $
       {
-         debug("There are no generators in this room!");
-         
+         Debug("There are no generators in this room!");
+
          return 0;
       }
-      
+
       iLength = Length(plGenerators);
-      
+
       while iCount <= iLength
       {
          if cClass = $
          {
-            oMonster = Create(&apple);
+            oMonster = Create(&Apple);
          }
          else
          {
             oMonster = Create(cClass);
          }
-         
-         lPos = Nth(plGenerators, iCount);
+
+         lPos = Nth(plGenerators,iCount);
          iRow = First(lPos);
          iCol = Nth(lPos, 2);
-         
-         bReqNewHold = Send(self,@ReqNewHold,#what=oMonster,#new_row=iRow,#new_col=iCol);
-         bReqSomethingMoved = Send(self,@ReqSomethingMoved,#what=oMonster,#new_row=iRow,#new_col=iCol);
+
+         bReqNewHold = Send(self,@ReqNewHold,#what=oMonster,
+                              #new_row=iRow,#new_col=iCol);
+         bReqSomethingMoved = Send(self,@ReqSomethingMoved,#what=oMonster,
+                                    #new_row=iRow,#new_col=iCol);
          
          if bReqNewHold and bReqSomethingMoved
          {
-            Send(self, @NewHold, #what = oMonster, #new_row = iRow, #new_col = iCol);	    
+            Send(self,@NewHold,#what=oMonster,#new_row=iRow,#new_col=iCol,
+                  #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
          }
-         
+
          iCount = iCount + 1;
       }
-      
+
       return iCount - 1;
    }
-	 
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

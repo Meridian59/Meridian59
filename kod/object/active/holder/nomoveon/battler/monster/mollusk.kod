@@ -35,10 +35,6 @@ constants:
    ANIMATION_THROW_SPEED = 80
    ANIMATION_POPUP_SPEED = 200
 
-   % Percent chance to throw a rock at someone.
-   THROW_CHANCE = 25
-   % Distance, squared, we can throw a rock.  It's 10 squares for now.
-   ROCK_RANGE_SQUARED = 100
    % Time from creation to "popping up"
    POPUP_DELAY = 2500
 
@@ -80,6 +76,7 @@ classvars:
    viAttributes = 0
    viLevel = 140
    viDifficulty = 7
+   viVisionDistance = 20
    viKarma = 90
    viCashmin = 400
    viCashmax = 1500
@@ -87,10 +84,15 @@ classvars:
    vrSound_aware = MolluskMonster_sound_aware
    vrSound_death = MolluskMonster_sound_death
 
+   % Chance to do a rock throw
+   viSpellChance = 4
+
 properties:
 
    piAnimation = ANIM_NONE
    ptActive = $
+
+   piSpellRange = 100
 
 messages:
 
@@ -143,28 +145,28 @@ messages:
          else
          {
             AddPacket(1,ANIMATE_NONE, 2,FRAME_POPUP_START);
-         }         
+         }
 
          return;
       }
 
       if piAnimation = ANIM_ATTACK
       {
-         send(self,@SendAttackAnimation);
+         Send(self,@SendAttackAnimation);
 
          return;
       }
 
       if piAnimation = ANIM_THROW
       {
-         send(self,@SendThrowAnimation);
+         Send(self,@SendThrowAnimation);
 
          return;
       }
 
       if piAnimation = ANIM_POPUP
       {
-         send(self,@SendPopupAnimation);
+         Send(self,@SendPopupAnimation);
 
          return;
       }
@@ -220,21 +222,24 @@ messages:
       return;
    }
 
+   % This is technically a ranged attack, and we use RangedAttackChance
+   % to see if we can do it. Use the same range as that for spells. We
+   % also use piSpellChance for the base chance to do our ranged attack.
    MonsterCastSpell()
    {
-      local iDistance;
+      local iBase;
 
-      iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
-      if Random(1,100) < THROW_CHANCE
-         AND iDistance > Send(self,@GetAttackRange)
-         AND iDistance <= ROCK_RANGE_SQUARED
+      iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
+
+      if Random(1,iBase) = 1
+         AND Send(self,@SquaredDistanceTo,#what=poTarget) <= piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
                   #use_weapon=self)
       {
-        Send(self,@DoMissileAttack);
+         Send(self,@DoMissileAttack);
 
-        return TRUE;
+         return TRUE;
       }
 
       return FALSE;
@@ -245,7 +250,7 @@ messages:
       piAnimation = ANIM_THROW;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
 
       return;
@@ -282,16 +287,16 @@ messages:
 
    GetOptimalRange()
    {
-      return random(6,10);
+      return Random(6,10);
    }
-   
+
    IsAlly(target = $)
    {
       if IsClass(target,&MolluskMonster)
       {
          return TRUE;
       }
-   
+
       propagate;
    }
 

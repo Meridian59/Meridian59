@@ -70,6 +70,7 @@ classvars:
    viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 150
    viDifficulty = 8
+   viVisionDistance = 60
    viSpeed = SPEED_AVERAGE
    viKarma = 0
 

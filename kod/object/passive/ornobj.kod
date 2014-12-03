@@ -692,6 +692,28 @@ resources:
       "kept eternally full of cool, fresh water, is ideal for rejuvenating the "
       "spirits of a traveller."
 
+   oo_Qormas_snowman_name = "snowman"
+   oo_Qormas_snowman_icon = snowman.bgf
+   oo_Qormas_snowman_desc = "This snowman seems innocent enough, but you can't "
+      "overcome the feeling that there is something inherently evil about it"
+      
+   oo_Qormas_tree_name = "qormas tree"
+   oo_Qormas_tree_icon = qormastree.bgf
+   oo_Qormas_tree_desc = "Each year millions of evil children race to see what "
+      "weapon of death is elegantly wrapped and waiting for them under the "
+      "qormas tree. "
+      
+   oo_Qormas_tree_big_name = "qormas tree "
+   oo_Qormas_tree_big_icon = qormastreebig.bgf
+   oo_Qormas_tree_big_desc = "Each year millions of evil children race to see what "
+      "weapon of death is elegantly wrapped and waiting for them under the "
+      "qormas tree.  "
+
+   oo_Qormas_wreath_name = "qormas wreath"
+   oo_Qormas_wreath_icon = wreath.bgf
+   oo_Qormas_wreath_desc = "A Qormas Wreath"
+   
+   
 classvars:
 
 properties:
@@ -1222,6 +1244,18 @@ messages:
 
       if type = OO_RR_BASIN
       {  vrName = oo_RRwashbasin_name;  vrIcon = oo_RRwashbasin_icon;  vrDesc = oo_RRwashbasin_desc;  }
+      
+      if type = OO_QORMAS_SNOWMAN
+      {  vrName = oo_Qormas_snowman_name;  vrIcon = oo_Qormas_snowman_icon;  vrDesc = oo_Qormas_snowman_desc;  }
+      
+      if type = OO_QORMAS_TREE
+      {  vrName = oo_Qormas_tree_name;  vrIcon = oo_Qormas_tree_icon;  vrDesc = oo_Qormas_tree_desc;  }
+      
+      if type = OO_QORMAS_TREE_BIG
+      {  vrName = oo_Qormas_tree_big_name;  vrIcon = oo_Qormas_tree_big_icon;  vrDesc = oo_Qormas_tree_big_desc;  }
+      
+      if type = OO_QORMAS_WREATH
+      {  vrName = oo_Qormas_wreath_name;  vrIcon = oo_Qormas_wreath_icon;  vrDesc = oo_Qormas_wreath_desc;  }
 
 
       %% tell the room we changed, unless this is in constructor

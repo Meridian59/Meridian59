@@ -51,6 +51,9 @@ classvars:
    viAttributes = 0
    viLevel = 20
    viDifficulty = 8
+
+   % Can't escape this monster's vision range.
+   viVisionDistance = 100
    viKarma = 0
    viCashmin = 0
    viCashmax = 0
@@ -60,7 +63,9 @@ classvars:
    vrSound_death = EvilTwin_sound_death
    vrMinion_trouble = EvilTwin_trouble
 
-   viDefault_behavior = AI_FIGHT_SINGLEMINDED | AI_FIGHT_MONSTERS | AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE
+   viDefault_behavior = \
+      AI_FIGHT_SINGLEMINDED | AI_FIGHT_MONSTERS \
+      | AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE
 
 properties:
 

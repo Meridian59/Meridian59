@@ -173,7 +173,9 @@ classvars:
    viShieldColor2 = XLAT_TO_RED
    viShieldShape = SHIELDSHAPE_SLASH
    viInsignia = $
-   
+
+   viVisionDistance = 12
+
    viCashMin = 200
    viCashMax = 600
 

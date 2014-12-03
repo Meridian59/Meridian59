@@ -70,6 +70,7 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
    viLevel = 160
    viDifficulty = 6
+   viVisionDistance = 20
    viKarma = -50
    viWimpy = 2
    viCashmin = 500

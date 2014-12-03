@@ -340,6 +340,8 @@ properties:
    poSettings = $
 
    poWarEvent = $
+   
+   poQormas = $
 
    % Hash table for users.
    phUsers
@@ -445,6 +447,9 @@ properties:
 
    % A master list of all object attributes, for maintenance, control, & statistics purposes
    plObject_attributes_master = $
+
+   % A list of room type objects used forr room icons
+   plRoomIcons = $
 
 messages:
 
@@ -1249,7 +1254,10 @@ messages:
       }
 
       Send(self,@NewGameHour);
-      
+
+      % Change the color of rainbow ferns.
+      Send(&RainbowFern,@ChangeColor,#iHour=piHour);
+
       return;
    }
 
@@ -2534,6 +2542,8 @@ messages:
          Send(i,@Delete);
       }
 
+      Send(self,@RecreateRoomIcons);
+
       plRooms = $;
       phRooms = $;
       Send(self,@CreateRoomTable);
@@ -2652,6 +2662,75 @@ messages:
       Debug("Tried to delete room that is not in plRooms.");
 
       return;
+   }
+
+   CreateRoomIcons()
+   {
+      plRoomIcons = [$,$,$,$,$,$,$,$,$,$,$,$,$,$];
+
+      SetNth(plRoomIcons, ICON_ROOM_NO_COMBAT, Create(&RmNoCombat));
+      SetNth(plRoomIcons, ICON_ROOM_GUILD_PK_ONLY, Create(&RmGCombat));
+
+      % use kill zone icon for both kill zone flagged rooms and rooms without
+      % guild combat or no combat flags
+      SetNth(plRoomIcons, ICON_ROOM_KILL_ZONE, Create(&RmCombat));
+
+      return;
+   }
+
+   DeleteRoomIcons()
+   {
+      local i;
+
+      for i in plRoomIcons
+      {
+         if (i <> $)
+         {
+            send(i,@Delete);
+         }
+      }
+
+      return;
+   }
+
+   RecreateRoomIcons()
+   {
+      send(self,@DeleteRoomIcons);
+      send(self,@CreateRoomIcons);
+      return;
+   }
+
+   GetRoomIcons(flags=0)
+   {
+      local lRoomIcons;
+
+      lRoomIcons = $;
+
+      if (flags & ROOM_NO_COMBAT)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_NO_COMBAT),lRoomIcons);
+      }
+
+      if (flags & ROOM_GUILD_PK_ONLY)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_GUILD_PK_ONLY),lRoomIcons);
+      }
+
+      if NOT (flags & ROOM_NO_COMBAT)
+         AND NOT (flags & ROOM_GUILD_PK_ONLY)
+         AND NOT (flags & ROOM_KILL_ZONE)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_KILL_ZONE),lRoomIcons);
+      }
+
+      if (flags & ROOM_KILL_ZONE)
+         AND NOT (flags & ROOM_NO_COMBAT)
+         AND NOT (flags & ROOM_GUILD_PK_ONLY)
+      {
+         lRoomIcons = cons(Nth(plRoomIcons,ICON_ROOM_KILL_ZONE),lRoomIcons);
+      }
+
+      return lRoomIcons;
    }
 
    DeleteBank(what = $)
@@ -3056,7 +3135,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_INVISIBLE,#class=&DetectInvisible);
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_GOOD,#class=&DetectGood);
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_EVIL,#class=&DetectEvil);
-
+      Send(self,@CreateOneSpellIfNew,#num=SID_ICE_NOVA,#class=&IceNova);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_NODEBURST,#class=&Nodeburst);
       Send(self,@CreateOneSpellIfNew,#num=SID_PURIFY,#class=&Purify);
@@ -3214,6 +3293,7 @@ messages:
       Send(self,@CreateOneItemAttIfNew,#num=WA_PARALYZER,#class=&WeapAttParalyzer);
       Send(self,@CreateOneItemAttIfNew,#num=WA_TWISTER,#class=&WeapAttTwister);
       Send(self,@CreateOneItemAttIfNew,#num=WA_VAMPER,#class=&WeapAttVamper);
+      Send(self,@CreateOneItemAttIfNew,#num=WA_SIPHON,#class=&WeapAttSiphon);
       Send(self,@CreateOneItemAttIfNew,#num=WA_PURGER,#class=&WeapAttPurger);
       Send(self,@CreateOneItemAttIfNew,#num=WA_GUILD_HALL_DEFENDER,#class=&WeapAttGuildHallDefender);
       Send(self,@CreateOneItemAttIfNew,#num=WA_FACTION,#class=&WeapAttFactionDefender);
@@ -4698,6 +4778,40 @@ messages:
 
       return;
    }
+   
+   GetQormas()
+   {
+      return poQormas;
+   }
+   
+   StartQormas()
+   {
+      % Qormas already started!
+      if (poQormas <> $)
+      {
+         return system_failure_rsc;
+      }
+      
+      poQormas = Create(&Qormas);
+      Send(poQormas,@StartQormas);
+      
+      return system_success_rsc;
+   }
+   
+   EndQormas()
+   {
+      % No Qormas to end!
+      if (poQormas = $)
+      {
+         return system_failure_rsc;
+      }
+      
+      Send(poQormas,@EndQormas);
+      Send(poQormas,@Delete);
+      poQormas = $;
+      
+      return system_success_rsc;
+   }
 
    GetChaosNight()
    "Return true if there's a chaos night (\"frenzy\") running."
@@ -5175,6 +5289,13 @@ messages:
       plItemTemplates = cons(create(&GemBludgeonResistance),plItemTemplates);
       plItemTemplates = cons(create(&GemPierceResistance),plItemTemplates);
       plItemTemplates = cons(create(&GemRemove),plItemTemplates);
+      
+      plItemTemplates = cons(create(&GemRiijaPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemKraananPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemFarenPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemShalillePower),plItemTemplates);
+      plItemTemplates = cons(create(&GemJalaPower),plItemTemplates);
+      plItemTemplates = cons(create(&GemQorPower),plItemTemplates);
       
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
       plItemTemplates = cons(create(&PotionSplitter),plItemTemplates);
@@ -7053,6 +7174,37 @@ messages:
       resistance_list = Send(self,@AddResistance,#what=what,#value=-value,#resistance_list=resistance_list);
 
       return resistance_list;
+   }
+   
+   GetUniqueIPs()
+   {
+      local i,j,lUserIPList,lIP,bFound;
+      
+      lUserIPList = $;
+      
+      for i in plUsers_logged_on
+      {
+         bFound = FALSE;
+      
+         lIP = send(i,@GetIP);
+         
+         for j in lUserIPList
+         {
+            if Nth(lIP,1) = Nth(j,1)
+               AND Nth(lIP,2) = Nth(j,2)
+               AND Nth(lIP,3) = Nth(j,3)
+               AND Nth(lIP,4) = Nth(j,4)
+            {
+               bFound = TRUE;
+            }
+         }
+         if NOT bFound
+         {
+            lUserIPList = Cons(lIP,lUserIPList);
+         }
+      }
+      
+      return Length(lUserIPList);
    }
 
 end

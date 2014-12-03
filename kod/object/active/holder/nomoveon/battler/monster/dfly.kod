@@ -37,9 +37,10 @@ resources:
    DragonFly_name_rsc = "dragonfly"
    DragonFly_icon_rsc = dfly.bgf
    DragonFly_desc_rsc = \
-      "These small lizards look exceptionally friendly.  Their gossamer wings allow "
-      "them to jump into the air and take flight for brief periods of time.  When "
-      "backed into a corner, dragonflies are known to have a nasty spitting attack."
+      "These small lizards look exceptionally friendly.  Their gossamer "
+      "wings allow them to jump into the air and take flight for brief "
+      "periods of time.  When backed into a corner, dragonflies are known "
+      "to have a nasty spitting attack."
 
    DragonFly_wings_rsc = dflywing.bgf
 
@@ -68,6 +69,7 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 120
    viDifficulty = 6
+   viVisionDistance = 16
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viCashmin = -10000
@@ -82,8 +84,8 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   ptHover = $   
-   ptLand = $   
+   ptHover = $
+   ptLand = $
 
    piDrawfx = BOUNCE_YES
 
@@ -114,7 +116,7 @@ messages:
       piAnimation = ANIM_ATTACK;
       piDrawFX = piDrawFX | BOUNCE_YES;
       Send(poOwner,@SomethingChanged,#what=self);
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       piAnimation = ANIM_HOVER;
 
       if ptHover = $
@@ -129,7 +131,7 @@ messages:
    {
       return 8;
    }
-   
+
    SendProjectileAnimation()
    {
       AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
@@ -141,7 +143,7 @@ messages:
    {
       return DragonFly_spit;
    }
-      
+
    GetProjectileLightFlags()
    {
       % No lighting information.
@@ -149,9 +151,9 @@ messages:
    }
 
    HoverTimer()
-   {  
+   {
       ptHover = $;
-      
+
       Send(poOwner,@SomethingChanged,#what=self);
       if ptLand <> $
       {
@@ -204,7 +206,8 @@ messages:
       AddPacket(1,1);
       AddPacket(4,DragonFly_wings_rsc,1,HS_WINGS);
       AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
+      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,
+            2,(FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
 
       return;
    }
@@ -216,17 +219,19 @@ messages:
          AddPacket(1,1);
          AddPacket(4,DragonFly_wings_rsc,1,HS_WINGS);
          AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_HOVER_START - 1),2,(FRAME_HOVER_END - 1) );
+         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,
+               2,(FRAME_HOVER_START - 1),2,(FRAME_HOVER_END - 1) );
 
          return;
       }
 
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,1);                                             %% uses normal body speed for attack
+         AddPacket(1,1);              %% uses normal body speed for attack
          AddPacket(4,DragonFly_wings_rsc,1,HS_WINGS);
          AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
-         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),
+               2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
 
          return;
       }
@@ -238,19 +243,21 @@ messages:
    {
       if piAnimation = ANIM_HOVER
       {
-         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_HOVER_START,2,FRAME_HOVER_END);
+         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_HOVER_START,
+               2,FRAME_HOVER_END);
 
          return;
       }
 
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,
+               2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
 
          return;
       }
 
-      % if no body animation.     
+      % if no body animation.
       propagate;
    }
 
@@ -280,12 +287,11 @@ messages:
 
       return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
-   
+
    CanMorphTo()
    {
       return FALSE;
-   }      
-
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

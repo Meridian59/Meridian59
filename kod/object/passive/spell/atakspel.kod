@@ -222,12 +222,17 @@ messages:
          % to iDamage at the beginning of each loop.
          if iTemp <> $
          {
+            % iTemp not $, so set damage to it.
             iDamage = iTemp;
+         }
+         else
+         {
+            % First loop, store initial damage in iTemp.
+            iTemp = iDamage;
          }
 
          if IsClass(self,&Earthquake)
          {
-            iTemp = iDamage;
             iDamage = Send(self,@ComputeDamage,
                         #who=who,#target=i,#iDamage=iDamage);
             if iDamage = 0

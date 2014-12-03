@@ -1110,6 +1110,22 @@
    OUTDOORS_9 = 9
    OUTDOORS_10 = 10
 
+   % Room Icons
+   ICON_ROOM_SAFE_DEATH    = 1
+   ICON_ROOM_NO_COMBAT     = 2
+   ICON_ROOM_NO_PK         = 3
+   ICON_ROOM_GUILD_PK_ONLY = 4
+   ICON_ROOM_NO_MAGIC      = 5
+   ICON_ROOM_HOMETOWN      = 6
+   ICON_ROOM_SANCTUARY     = 7
+   ICON_ROOM_ANTI_MAGIC    = 8
+   ICON_ROOM_KILL_ZONE     = 9
+   ICON_ROOM_GUEST_AREA    = 10
+   ICON_ROOM_HARD_LEARN    = 11
+   ICON_ROOM_SAFELOGOFF    = 12
+   ICON_ROOM_TRIPLE_HEAL   = 13
+   ICON_ROOM_NO_MOB_COMBAT = 14
+
    % Weather options
    WEATHER_DAY = 1
    WEATHER_NIGHT = 2
@@ -1143,6 +1159,7 @@
    % Fineness per block
    FINENESS = 64
    FINENESS_HALF = 32
+   FINENESS_SQUARED = 4096
 
    SECTOR_UP = 1
    SECTOR_DN = 0
@@ -1360,7 +1377,7 @@
    % Attack timer  0 to 2.5sec + this many milliseconds.
    MOB_ATTACK_TIMER_WAIT = 1000
    % Monster will sit this many ms at birth.
-   MOB_START_FREEZE = 15000
+   MOB_START_FREEZE = 1000
 
    % Mob attributes
    MOB_NOFIGHT          = 0x00001   % Doesn't fight
@@ -1669,6 +1686,7 @@
    WA_SPELLCASTER          = 68
    WA_GLOWING              = 69
    WA_PURGER               = 70
+   WA_SIPHON               = 71
 
    %%% Herald shields
 
@@ -1817,6 +1835,7 @@
 
    SID_LIGHTNING_BOLT = 1
    SID_MINOR_HEAL = 2
+   SID_ICE_NOVA = 3
    SID_NIGHT_VISION = 4
    SID_FIREBALL = 5
    SID_DMRESCUE = 6
@@ -1832,6 +1851,7 @@
    SID_POISON = 15
 
    SID_SUPER_STRENGTH = 17
+
    SID_TOUCH_OF_FLAME = 20
    SID_HOLY_TOUCH = 21
    SID_VAMPIRIC_DRAIN = 22
@@ -1902,6 +1922,7 @@
    SID_SPORE_BURST = 87
    SID_TRUTH     = 88
    SID_DISPEL_ILLUSION = 89
+
    SID_REFLECTION = 99
    SID_SPIRITUAL_HAMMER = 100
    SID_APPARITION = 101
@@ -1990,7 +2011,6 @@
    SID_CONVEYANCE = 184
    SID_DEATH_RIFT = 185
    SID_PHASE = 186
-
    SID_MEDITATE = 187
 
    % Depreciated spell IDs
@@ -2670,6 +2690,11 @@
    OO_RR_TABLE = 154
    OO_RR_BASIN = 155
 
+   OO_QORMAS_SNOWMAN = 156
+   OO_QORMAS_TREE = 157
+   OO_QORMAS_WREATH = 158
+   OO_QORMAS_TREE_BIG = 159
+   
    %%% Shrines
 
    % These IDs don't need to be bitvectors, just unique.

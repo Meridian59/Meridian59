@@ -672,6 +672,12 @@ messages:
       return;
    }
 
+   SomethingShotRadius(who=$,projectile=$,flags=PROJ_FLAG_NONE,
+                 iLightIntensity=0,iLightColor=0,range=0,number=0,speed=0)
+   {
+      return;
+   }
+
    SomethingDidAction(what = $, action = $)
    {
       return;

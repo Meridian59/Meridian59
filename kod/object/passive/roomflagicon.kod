@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RoomFlagIcon is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RoomFlag_name_rsc = "room flag"
+   RoomFlag_icon_rsc = iheat.bgf
+   RoomFlag_desc_rsc = \
+      "An indicator that shows the type of room."
+
+classvars:
+
+   vrName = RoomFlag_name_rsc
+   vrIcon = RoomFlag_icon_rsc
+   vrDesc = RoomFlag_desc_rsc
+
+   viShow_enchantment_icon = ENCHANTMENT_SHOW_ALL
+
+   % Default animation speed for icon; if set to 0, then no animation.
+   viAnimationSpeed = 0
+
+   viAnimation_start = 1
+   viAnimation_end = 1
+   viIcon_animation_start = 2
+   viIcon_animation_end = 2
+
+properties:
+
+messages:
+
+   EffectDesc(who=$)
+   {
+      return;
+   }
+
+   CreateStatsDesc(who=$)
+   {
+      ClearTempString();
+
+      if who <> $
+         AND IsClass(who,&User)
+         AND Send(Send(who,@GetOwner),@IsEnchanted,#what=self)
+      {
+         Send(self,@EffectDesc,#who=who);
+      }
+
+      return;
+   }
+
+   GetStatsDesc(who=$)
+   {
+      Send(self,@CreateStatsDesc,#who=who);
+
+      return GetTempString();
+   }
+
+   ShowEnchantmentIcon(type = $)
+   {
+      return viShow_enchantment_icon & 0x02;
+   }
+
+   SendAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,viAnimation_start,
+                   2,viAnimation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viAnimation_start);
+      }
+
+      return;
+   }
+
+   SendLookAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,viIcon_Animation_start,
+                   2,viIcon_Animation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viIcon_Animation_start);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

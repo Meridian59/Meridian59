@@ -6438,6 +6438,7 @@ messages:
       }
       return iCount;
    }
+
    AdminListPlayersWithSpell(num=$,includeDMs=FALSE)
    "Admin Supported."
    {
@@ -6479,6 +6480,37 @@ messages:
       SetString(sPlayers,GetTempString());
 
       return sPlayers;
+   }
+
+   FindPlayersOverLearnCount()
+   {
+      local i, iStartingLearnPoints, iMaxLearnPoints, iTotalLearnPoints, iList;
+
+      iList = $;
+      for i in plUsers
+      {
+         if Send(i,@GetSpellList) = $
+            OR Send(i,@GetSkillList) = $
+         {
+            continue;
+         }
+
+         iMaxLearnPoints = 0;
+         iTotalLearnPoints = 0;
+
+         iMaxLearnPoints = Send(poSettings,@GetMaxLearnPoints)
+                              + (Send(i,@GetRawIntellect) * 2) / 5;
+
+         iTotalLearnPoints = Send(i,@GetTotalLearnPoints);
+
+         if iTotalLearnPoints > iMaxLearnPoints
+         {
+            Debug("Player ",i,Send(i,@GetTrueName)," has extra levels!");
+            iList = Cons(i,iList);
+         }
+      }
+
+      return iList;
    }
 
    AdminListPlayersOverHP(hp=$)

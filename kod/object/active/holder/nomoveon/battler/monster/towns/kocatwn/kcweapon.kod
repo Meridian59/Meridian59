@@ -62,10 +62,15 @@ messages:
 
    SetForSale()
    {
-      plFor_Sale = [[ Create(&PracticeBow) ],
-                    [SKID_FIRE, SKID_PROFICIENCY_BOW],
-                    $,$
-                   ];
+      plFor_Sale = [
+         [ 
+            Create(&PracticeBow) 
+         ],
+         [
+            SKID_FIRE,
+            SKID_PROFICIENCY_BOW
+         ],
+      $,$];
 
       return;
    }

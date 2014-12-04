@@ -42,14 +42,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&Herbs,#number=5),
-                     Create(&Mushroom,#number=5),
-                     Create(&Elderberry,#number=4),
-                     Create(&RedMushroom,#number=4),
-                     Create(&BlueMushroom,#number=4),
-                     Create(&Robe,#color=XLAT_TO_SKIN1)],
-                     $,
-                     $];
+      plFor_sale = [
+         [ 
+            Create(&Robe,#color=XLAT_TO_SKIN1),
+            Create(&BlueMushroom,#number=4),
+            Create(&RedMushroom,#number=4),
+            Create(&Mushroom,#number=5),
+            Create(&Elderberry,#number=4),
+            Create(&Herbs,#number=5)
+         ],
+      $,$,$];
 
       return;
    }

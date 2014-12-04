@@ -75,15 +75,26 @@ messages:
    SetForSale()
    {
       plFor_sale = [
-       [ Create(&LongSword),
-         Create(&RingDefense),
-         Create(&ShortSword),
-         Create(&Mace),
-         Create(&LeatherArmor)],
-       [ SKID_DODGE, SKID_PUNCH, SKID_SLASH, SKID_PROFICIENCY_AXE,
-         SKID_PROFICIENCY_HAMMER, SKID_BRAWLING, SKID_PROFICIENCY_SHORTSWORD,
-         SKID_PROFICIENCY_MACE, SKID_PROFICIENCY_SWORD, SKID_PARRY ],
-         $,$];
+         [ 
+            Create(&RingDefense),
+            Create(&LeatherArmor),
+            Create(&LongSword),
+            Create(&ShortSword),
+            Create(&Mace)
+         ],
+         [ 
+            SKID_DODGE,
+            SKID_PUNCH,
+            SKID_SLASH,
+            SKID_PROFICIENCY_AXE,
+            SKID_PROFICIENCY_HAMMER,
+            SKID_BRAWLING,
+            SKID_PROFICIENCY_SHORTSWORD,
+            SKID_PROFICIENCY_MACE,
+            SKID_PROFICIENCY_SWORD,
+            SKID_PARRY 
+         ],
+      $,$];
 
       return;
    }

@@ -55,40 +55,41 @@ messages:
    {
       %% Cor Noth favors earth tones and dark, grim colors.
 
-      plFor_sale = [ [ Create(&PantsC),
-                 Create(&PantsC,#translation=PT_GRAY_TO_BGREEN),
-                 Create(&PantsC,#translation=PT_GRAY_TO_SKY),
-                 Create(&PantsC,#translation=PT_GRAY_TO_DBLUE),
-                 Create(&PantsC,#translation=PT_GRAY_TO_PURPLE),
-                 Create(&PantsC,#translation=PT_GRAY_TO_GOLD),
-                 Create(&PantsC,#translation=PT_GRAY_TO_BBLUE),
-                 Create(&PantsC,#translation=PT_HAIR_OLDHAIR1),
-                 Create(&PantsC,#translation=PT_HAIR_OLDHAIR2),
-                 Create(&PantsC,#translation=PT_HAIR_OLDHAIR3),
+      plFor_sale = [
+         [ 
+            Create(&PantsC),
+            Create(&PantsC,#translation=PT_GRAY_TO_BGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_SKY),
+            Create(&PantsC,#translation=PT_GRAY_TO_DBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_PURPLE),
+            Create(&PantsC,#translation=PT_GRAY_TO_GOLD),
+            Create(&PantsC,#translation=PT_GRAY_TO_BBLUE),
+            Create(&PantsC,#translation=PT_HAIR_OLDHAIR1),
+            Create(&PantsC,#translation=PT_HAIR_OLDHAIR2),
+            Create(&PantsC,#translation=PT_HAIR_OLDHAIR3),
 
-              Create(&PantsA,#color=XLAT_TO_SKIN1),
-              Create(&PantsA,#color=XLAT_TO_SKIN2),
-              Create(&PantsA,#color=XLAT_TO_SKIN4),
-              Create(&PantsA,#color=XLAT_TO_RED),
-              Create(&PantsA,#color=XLAT_TO_GRAY),
-              Create(&PantsA,#color=XLAT_TO_BLACK),
+            Create(&PantsA,#color=XLAT_TO_SKIN1),
+            Create(&PantsA,#color=XLAT_TO_SKIN2),
+            Create(&PantsA,#color=XLAT_TO_SKIN4),
+            Create(&PantsA,#color=XLAT_TO_RED),
+            Create(&PantsA,#color=XLAT_TO_GRAY),
+            Create(&PantsA,#color=XLAT_TO_BLACK),
 
-              Create(&Skirt,#color=XLAT_TO_SKIN1),
-              Create(&Skirt,#color=XLAT_TO_SKIN2),
-              Create(&Skirt,#color=XLAT_TO_SKIN4),
-              Create(&Skirt,#color=XLAT_TO_RED),
-              Create(&Skirt,#color=XLAT_TO_ORANGE),
-              Create(&Skirt,#color=XLAT_TO_GREEN),
-              Create(&Skirt,#color=XLAT_TO_BLUE),
-              Create(&Skirt,#color=XLAT_TO_YELLOW),
+            Create(&Skirt,#color=XLAT_TO_SKIN1),
+            Create(&Skirt,#color=XLAT_TO_SKIN2),
+            Create(&Skirt,#color=XLAT_TO_SKIN4),
+            Create(&Skirt,#color=XLAT_TO_RED),
+            Create(&Skirt,#color=XLAT_TO_ORANGE),
+            Create(&Skirt,#color=XLAT_TO_GREEN),
+            Create(&Skirt,#color=XLAT_TO_BLUE),
+            Create(&Skirt,#color=XLAT_TO_YELLOW),
 
-             %% Basic style shirts.
-              Create(&Shirt,#color=XLAT_TO_RED),
-              Create(&Shirt,#color=XLAT_TO_BLACK),
-              Create(&Shirt,#color=XLAT_TO_GRAY) ],
-                     $,
-                     $,
-                     $ ];
+            %% Basic style shirts.
+            Create(&Shirt,#color=XLAT_TO_RED),
+            Create(&Shirt,#color=XLAT_TO_BLACK),
+            Create(&Shirt,#color=XLAT_TO_GRAY) 
+         ],
+      $,$,$];
 
       return;
    }

@@ -83,14 +83,21 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&Torch),
-                      Create(&Herbs,#number=5),
-                      Create(&Mushroom,#number=5),
-                      Create(&Elderberry,#number=4),
-                      Create(&BlueMushroom,#number=4),
-                      Create(&RedMushroom,#number=4),
-                      Create(&Flask)],$,
-                     [SID_HOSPICE], $];
+      plFor_sale = [ 
+         [
+            Create(&Torch),
+            Create(&BlueMushroom,#number=4),
+            Create(&RedMushroom,#number=4),
+            Create(&Mushroom,#number=5),
+            Create(&Elderberry,#number=4),
+            Create(&Herbs,#number=5),
+            Create(&Flask)
+         ],
+         $,
+         [
+            SID_HOSPICE
+         ], 
+      $];
 
       return;
    }

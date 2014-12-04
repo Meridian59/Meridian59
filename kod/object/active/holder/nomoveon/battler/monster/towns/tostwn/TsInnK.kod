@@ -104,10 +104,14 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [[Create(&Mug),
-                     Create(&SetScroll,#labelled=TRUE),
-                     Create(&LoadoutScroll,#labelled=TRUE),
-                     Create(&Cheese,#number=3)],$,$,$];
+      plFor_sale = [ 
+         [
+            Create(&LoadoutScroll,#labelled=TRUE),
+            Create(&SetScroll,#labelled=TRUE),
+            Create(&Cheese,#number=3),
+            Create(&Mug)
+         ],
+      $,$,$];
 
       return;
    }

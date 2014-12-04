@@ -54,7 +54,12 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ $,$,[SID_BLIND]];
+      plFor_sale = [ 
+         $,$,
+       [
+            SID_BLIND
+         ],
+      $];
 
       return;
    }

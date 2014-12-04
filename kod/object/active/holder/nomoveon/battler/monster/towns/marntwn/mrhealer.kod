@@ -46,13 +46,19 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[  Create(&PurifyPotion,#labelled=TRUE),
-                     Create(&RemoveCursePotion,#labelled=TRUE),
-                     Create(&CurePoisonPotion,#labelled=TRUE),
-                     Create(&CureDiseasePotion,#labelled=TRUE),
-                     Create(&Flask)],
-                     $,
-                  [  SID_DISTILL ] ];
+      plFor_sale = [
+         [  
+            Create(&PurifyPotion,#labelled=TRUE),
+            Create(&RemoveCursePotion,#labelled=TRUE),
+            Create(&CurePoisonPotion,#labelled=TRUE),
+            Create(&CureDiseasePotion,#labelled=TRUE),
+            Create(&Flask)
+         ],
+         $,
+         [
+            SID_DISTILL
+         ],
+      $];
 
       return;
    }

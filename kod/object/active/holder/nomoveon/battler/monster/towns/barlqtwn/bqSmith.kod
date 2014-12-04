@@ -65,12 +65,19 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&ChainArmor),
-                     Create(&Axe),
-                     Create(&Hammer),
-                     Create(&MetalShield)],
-                     $,
-                     [SID_MAGICSHIELD], $ ];
+      plFor_sale = [
+         [ 
+            Create(&ChainArmor),
+            Create(&MetalShield),
+            Create(&Axe),
+            Create(&Hammer)
+         ],
+         $,
+         [
+            SID_MAGICSHIELD
+         ],
+      $];
+
       return;
    }
 

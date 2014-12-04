@@ -98,11 +98,12 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&LongBow),
-                       Create(&Arrow)
-                     ],
-                     $,$,$
-                   ];
+      plFor_sale = [ 
+         [ 
+            Create(&Arrow),
+            Create(&LongBow)
+         ],
+      $,$,$];
 
       return;
    }

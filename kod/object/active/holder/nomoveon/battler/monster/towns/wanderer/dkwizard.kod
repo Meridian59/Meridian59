@@ -100,11 +100,22 @@ messages:
 
    SetForSale()
    {
-      plFor_Sale = [$,$,[SID_SPORE_BURST, SID_CURSE_WEAPON,
-                   SID_DEATHLINK, SID_GAZE_OF_THE_BASILISK, SID_ANIMATE,
-                   SID_SHOCKING_FURY, SID_BLAST_OF_FIRE,
-                   SID_EXPLOSIVE_FROST, SID_SPLASH_OF_ACID, SID_VAMPIRIC_DRAIN,
-                   SID_DEATHS_DOOR ]];
+      plFor_Sale = [
+         $,$,
+         [
+            SID_SPORE_BURST,
+            SID_CURSE_WEAPON,
+            SID_DEATHLINK,
+            SID_GAZE_OF_THE_BASILISK,
+            SID_ANIMATE,
+            SID_SHOCKING_FURY,
+            SID_BLAST_OF_FIRE,
+            SID_EXPLOSIVE_FROST,
+            SID_SPLASH_OF_ACID,
+            SID_VAMPIRIC_DRAIN,
+            SID_DEATHS_DOOR 
+         ],
+       $];
 
       return;
    }

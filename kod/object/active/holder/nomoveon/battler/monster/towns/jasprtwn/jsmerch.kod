@@ -55,7 +55,8 @@ messages:
    SetForSale()
    {
       plFor_sale = [
-         [  Create(&PantsC,#translation=PT_GRAY_TO_RED),
+         [  
+            Create(&PantsC,#translation=PT_GRAY_TO_RED),
             Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
             Create(&PantsC,#translation=PT_GRAY_TO_LGREEN),
             Create(&PantsC,#translation=PT_GRAY_TO_LBGREEN),
@@ -76,8 +77,8 @@ messages:
             Create(&Emerald,#number=2),
             Create(&PurpleMushroom,#number=2),
             Create(&BlueMushroom,#number=4),
-            Create(&Elderberry,#number=4),
             Create(&Mushroom,#number=4),
+            Create(&Elderberry,#number=4),
             Create(&Herbs,#number=4)
          ],
          $,$,$];

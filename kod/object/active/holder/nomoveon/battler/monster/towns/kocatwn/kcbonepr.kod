@@ -150,9 +150,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ $,$,
-                     [SID_DETECT_INVIS,SID_HOLY_RESOLVE,SID_UNHOLY_RESOLVE,
-                      SID_SHALBANE, SID_QORBANE ]];
+      plFor_sale = [ 
+         $,$,
+         [
+            SID_DETECT_INVIS,
+            SID_HOLY_RESOLVE,
+            SID_UNHOLY_RESOLVE,
+            SID_SHALBANE,
+            SID_QORBANE 
+         ],
+      $];
 
       return;
    }

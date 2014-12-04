@@ -98,12 +98,15 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[Create(&Bread,#number=4),
-                   Create(&StoutGoblet),
-                   Create(&Chess),
-                   Create(&MeatPie,#number=4)
-                   ],
-                  $,$];
+      plFor_sale = [
+         [ 
+            Create(&Chess),
+            Create(&MeatPie,#number=4),
+            Create(&Bread,#number=4),
+            Create(&StoutGoblet)
+         ],
+      $,$,$];
+      
       return;
    }
 

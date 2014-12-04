@@ -100,7 +100,13 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[$,$,[SID_LIGHTNING_BOLT,SID_DEMENT]];
+      plFor_sale = [
+         $,$,
+         [
+            SID_LIGHTNING_BOLT,
+            SID_DEMENT
+         ],
+      $];
 
       return;
    }

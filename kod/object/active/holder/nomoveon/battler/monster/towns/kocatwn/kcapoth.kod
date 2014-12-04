@@ -109,13 +109,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&RainbowFern,#number=4),
-                       Create(&UncutSeraphym,#number=1),
-                       Create(&FireSand,#number=4),
-                       Create(&DragonflyEye,#number=2),
-                       Create(&Solagh,#number=4),
-                       Create(&WebMoss,#number=4) ],
-                      $, $, $ ];
+      plFor_sale = [ 
+         [ 
+            Create(&UncutSeraphym,#number=1),
+            Create(&DragonflyEye,#number=2),
+            Create(&FireSand,#number=4),
+            Create(&WebMoss,#number=4),
+            Create(&RainbowFern,#number=4),
+            Create(&Solagh,#number=4)
+         ], 
+      $,$,$];
 
       return;
    }

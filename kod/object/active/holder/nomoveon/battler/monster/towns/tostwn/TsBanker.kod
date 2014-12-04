@@ -103,10 +103,13 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&Emerald,#number=15),
-                       Create(&Sapphire,#number=10),
-                       Create(&Diamond,#number=8) ],
-                       $,$];
+      plFor_sale = [ 
+         [ 
+            Create(&Diamond,#number=8),
+            Create(&Sapphire,#number=10),
+            Create(&Emerald,#number=15)
+         ],
+      $,$,$];
 
       return;
    }

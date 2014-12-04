@@ -110,24 +110,45 @@ messages:
 
    SetForSaleWithShatterlock()
    {
-      plFor_Sale = [$,
-          [ SKID_BLOCK ],
-          [ SID_IDENTIFY, SID_REVEAL, SID_SHROUD,
-          SID_DISPEL_ILLUSION, SID_HASTE, SID_RESIST_POISON, SID_GLOW_WEAPON,
-          SID_FREE_ACTION,
-          SID_SHATTERLOCK]];
+      plFor_Sale = [ 
+         $,
+         [
+            SKID_BLOCK 
+         ],
+         [ 
+            SID_IDENTIFY,
+            SID_REVEAL,
+            SID_SHROUD,
+            SID_DISPEL_ILLUSION,
+            SID_HASTE,
+            SID_RESIST_POISON,
+            SID_GLOW_WEAPON,
+            SID_FREE_ACTION,
+            SID_SHATTERLOCK
+         ],
+      $];
 
       return;
    }
 
    SetForSaleNoShatterlock()
    {
-      plFor_Sale = [$,
-          [ SKID_BLOCK ],
-          [ SID_IDENTIFY, SID_REVEAL, SID_SHROUD,
-          SID_DISPEL_ILLUSION, SID_HASTE, SID_RESIST_POISON, SID_GLOW_WEAPON,
-          SID_FREE_ACTION
-          ]];
+      plFor_Sale = [ 
+         $,
+         [
+            SKID_BLOCK 
+         ],
+         [ 
+            SID_IDENTIFY,
+            SID_REVEAL,
+            SID_SHROUD,
+            SID_DISPEL_ILLUSION,
+            SID_HASTE,
+            SID_RESIST_POISON,
+            SID_GLOW_WEAPON,
+            SID_FREE_ACTION
+         ],
+      $];
 
       return;
    }

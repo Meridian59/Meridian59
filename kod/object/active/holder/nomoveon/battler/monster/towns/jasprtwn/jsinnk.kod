@@ -75,11 +75,18 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[Create(&Stew,#number=4),
-                   Create(&SetScroll,#labelled=TRUE),
-                   Create(&LoadoutScroll,#labelled=TRUE)],
-                   $,
-                   [ SID_SWEEP, SID_RESTORATE ] ];
+      plFor_sale = [
+         [ 
+            Create(&LoadoutScroll,#labelled=TRUE),
+            Create(&SetScroll,#labelled=TRUE),
+            Create(&Stew,#number=4)
+         ],
+         $,
+         [ 
+            SID_SWEEP,
+            SID_RESTORATE
+         ],
+      $];
 
       return;
    }

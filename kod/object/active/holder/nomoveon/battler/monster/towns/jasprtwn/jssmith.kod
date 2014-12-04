@@ -118,14 +118,18 @@ messages:
    SetForSale()
    {
       plFor_sale = [
-         [   Create(&Mace),
-            Create(&ShortSword),
-            Create(&GoldShield),
+         [ 
             Create(&ScaleArmor),
+            Create(&LeatherArmor),
+            Create(&GoldShield),
+            Create(&ShortSword),
             Create(&Hammer),
-            Create(&LeatherArmor)
+            Create(&Mace)
          ],
-         [SKID_PROFICIENCY_SCIMITAR], $ ];
+         [
+            SKID_PROFICIENCY_SCIMITAR
+         ], 
+      $,$];
 
       return;
    }

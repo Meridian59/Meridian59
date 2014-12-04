@@ -72,7 +72,12 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[$,$,[SID_TRUCE],$];
+      plFor_sale = [
+         $,$,
+         [
+            SID_TRUCE
+         ],
+      $];
 
       return;
    }

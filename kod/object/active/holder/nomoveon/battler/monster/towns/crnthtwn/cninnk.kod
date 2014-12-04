@@ -49,11 +49,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&SetScroll,#labelled=TRUE),
-                     Create(&LoadoutScroll,#labelled=TRUE)],
-                     $,
-                     [SID_INVIGORATE],
-                     $ ];
+      plFor_sale = [
+         [ 
+            Create(&LoadoutScroll,#labelled=TRUE),
+            Create(&SetScroll,#labelled=TRUE)
+         ],
+         $,
+         [
+            SID_INVIGORATE
+         ],
+      $];
 
       return;
    }

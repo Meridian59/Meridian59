@@ -131,44 +131,40 @@ messages:
       %% Madelia favors more regal clothes:  deep, luxurious colors and 
       %% full length robes and shirts.
 
-      plFor_sale=[[
-         Create(&PantsC,#translation=PT_GRAY_TO_DGREEN),
-         Create(&PantsC,#translation=PT_GRAY_TO_KBGREEN),
-         Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
-         Create(&PantsC,#translation=PT_GRAY_TO_DBLUE),
-         Create(&PantsC,#translation=PT_GRAY_TO_KPURPLE),
-         Create(&PantsC,#translation=PT_GRAY_TO_KGOLD),
-         Create(&PantsC,#translation=PT_GRAY_TO_KBLUE),
-         Create(&PantsC,#translation=PT_GRAY_TO_KBBLUE),
-         Create(&PantsC,#translation=PT_GRAY_TO_KRED),
-         Create(&PantsC,#translation=PT_GRAY_TO_KORANGE),
+      plFor_sale = [
+         [ 
+            Create(&Robe,#color=XLAT_TO_PURPLE),
+            Create(&Robe,#color=XLAT_TO_GRAY),
+            Create(&Robe,#color=XLAT_TO_BLACK),
+            Create(&Robe,#color=XLAT_TO_BLUE),
+            Create(&Robe,#color=XLAT_TO_RED),
+            Create(&Robe,#color=XLAT_TO_SKIN4),
+            Create(&Robe,#color=XLAT_TO_DGREEN),
 
-         Create(&PantsA,#color=XLAT_TO_BLUE),
-         Create(&PantsA,#color=XLAT_TO_PURPLE),
-         Create(&PantsA,#color=XLAT_TO_SKY),
-         Create(&PantsA,#color=XLAT_TO_DGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_DGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_KBGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
+            Create(&PantsC,#translation=PT_GRAY_TO_DBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_KPURPLE),
+            Create(&PantsC,#translation=PT_GRAY_TO_KGOLD),
+            Create(&PantsC,#translation=PT_GRAY_TO_KBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_KBBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_KRED),
+            Create(&PantsC,#translation=PT_GRAY_TO_KORANGE),
 
-         Create(&Shirt,#color=XLAT_TO_SKY),
-         Create(&Shirt,#color=XLAT_TO_PURPLE),
-         Create(&Shirt,#color=XLAT_TO_DGREEN),
-         Create(&Shirt,#color=XLAT_TO_BLUE),
+            Create(&PantsA,#color=XLAT_TO_BLUE),
+            Create(&PantsA,#color=XLAT_TO_PURPLE),
+            Create(&PantsA,#color=XLAT_TO_SKY),
+            Create(&PantsA,#color=XLAT_TO_DGREEN),
 
-         Create(&Robe,#color=XLAT_TO_PURPLE),
-         Create(&Robe,#color=XLAT_TO_GRAY),
-         Create(&Robe,#color=XLAT_TO_BLACK),
-         Create(&Robe,#color=XLAT_TO_BLUE),
-         Create(&Robe,#color=XLAT_TO_RED),
-         Create(&Robe,#color=XLAT_TO_SKIN4),
-         Create(&Robe,#color=XLAT_TO_DGREEN),
-         Create(&ReagentBag)
+            Create(&Shirt,#color=XLAT_TO_SKY),
+            Create(&Shirt,#color=XLAT_TO_PURPLE),
+            Create(&Shirt,#color=XLAT_TO_DGREEN),
+            Create(&Shirt,#color=XLAT_TO_BLUE),
 
-%%%% These ended up not looking too good.
-%   Create(&RoyalShirt,#color1=XLAT_TO_RED,#color2=XLAT_TO_BLUE),
-%   Create(&RoyalShirt,#color1=XLAT_TO_BLUE,#color2=XLAT_TO_PURPLE),
-%   Create(&RoyalShirt,#color1=XLAT_TO_GREEN,#color2=XLAT_TO_BLUE),
-%   Create(&RoyalShirt,#color1=XLAT_TO_BLUE,#color2=XLAT_TO_RED)
-
-      ],$,$];
+            Create(&ReagentBag)
+         ],
+      $,$,$];
 
       return;
    }

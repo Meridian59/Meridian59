@@ -84,10 +84,12 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [
-                       Create(&KocatanMug,#number=4),
-                       Create(&Bread,#number=4) ],
-                      $, $ ];
+      plFor_sale = [ 
+         [ 
+            Create(&Bread,#number=4),
+            Create(&KocatanMug,#number=4)
+         ], 
+      $,$,$];
 
       return;
    }

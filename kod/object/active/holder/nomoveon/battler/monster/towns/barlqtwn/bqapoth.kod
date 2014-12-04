@@ -139,19 +139,25 @@ messages:
    "Clears and recreates plFor_sale."
    {
       local lSale;
-      plFor_sale = [ [ Create(&Herbs,#number=5),
-                       Create(&Mushroom,#number=5),
-                       Create(&Elderberry,#number=5),
-                       Create(&RedMushroom,#number=4),
-                       Create(&Flask),
-                       Create(&MirthScroll,#labelled=TRUE),
-                       Create(&MelancholyScroll,#labelled=TRUE),
-                       Create(&PotionSplitter,#labelled=TRUE),
-                       Create(&WandSplitter,#labelled=TRUE),
-                       Create(&ScrollSplitter,#labelled=TRUE) ],
-                     $,
-                     [ SID_HEAT, SID_FADE ],
-                     $];
+      plFor_sale = [
+         [ 
+            Create(&WandSplitter,#labelled=TRUE),
+            Create(&PotionSplitter,#labelled=TRUE),
+            Create(&ScrollSplitter,#labelled=TRUE),
+            Create(&MirthScroll,#labelled=TRUE),
+            Create(&MelancholyScroll,#labelled=TRUE),
+            Create(&RedMushroom,#number=4),
+            Create(&Mushroom,#number=5),
+            Create(&Elderberry,#number=5),
+            Create(&Herbs,#number=5),
+            Create(&Flask)
+         ],
+           $,
+         [ 
+            SID_HEAT,
+            SID_FADE
+         ],
+      $];
 
       return;
    }

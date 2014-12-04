@@ -283,42 +283,45 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[
-                   Create(&PantsC,#translation=PT_GRAY_TO_LGREEN),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LBGREEN),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LBLUE),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LPURPLE),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LGOLD),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LBBLUE),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LRED),
-                   Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
-                      
-                   Create(&ShortSkirt,#color=XLAT_TO_ORANGE),
-                   Create(&ShortSkirt,#color=XLAT_TO_RED),
-                   Create(&ShortSkirt,#color=XLAT_TO_SKY),
-                   Create(&ShortSkirt,#color=XLAT_TO_GREEN),
-                   Create(&ShortSkirt,#color=XLAT_TO_BLACK),
-                   Create(&ShortSkirt,#color=XLAT_TO_YELLOW),
-                   Create(&ShortSkirt,#color=XLAT_TO_PURPLE),
+      plFor_sale = [
+         [
+            Create(&LightRobe,#color=XLAT_TO_ORANGE),
+            Create(&LightRobe,#color=XLAT_TO_RED),
+            Create(&LightRobe,#color=XLAT_TO_SKY),
+            Create(&LightRobe,#color=XLAT_TO_GREEN),
+            Create(&LightRobe,#color=XLAT_TO_BLACK),
+            Create(&LightRobe,#color=XLAT_TO_YELLOW),
+            Create(&LightRobe,#color=XLAT_TO_PURPLE),
+              
+            Create(&ShortSkirt,#color=XLAT_TO_ORANGE),
+            Create(&ShortSkirt,#color=XLAT_TO_RED),
+            Create(&ShortSkirt,#color=XLAT_TO_SKY),
+            Create(&ShortSkirt,#color=XLAT_TO_GREEN),
+            Create(&ShortSkirt,#color=XLAT_TO_BLACK),
+            Create(&ShortSkirt,#color=XLAT_TO_YELLOW),
+            Create(&ShortSkirt,#color=XLAT_TO_PURPLE),
 
-                   Create(&LightRobe,#color=XLAT_TO_ORANGE),
-                   Create(&LightRobe,#color=XLAT_TO_RED),
-                   Create(&LightRobe,#color=XLAT_TO_SKY),
-                   Create(&LightRobe,#color=XLAT_TO_GREEN),
-                   Create(&LightRobe,#color=XLAT_TO_BLACK),
-                   Create(&LightRobe,#color=XLAT_TO_YELLOW),
-                   Create(&LightRobe,#color=XLAT_TO_PURPLE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_LBGREEN),
+            Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
+            Create(&PantsC,#translation=PT_GRAY_TO_LBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LPURPLE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LGOLD),
+            Create(&PantsC,#translation=PT_GRAY_TO_LBBLUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LRED),
+            Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
 
-                   Create(&Tanktop,#color=XLAT_TO_ORANGE),
-                   Create(&Tanktop,#color=XLAT_TO_RED),
-                   Create(&Tanktop,#color=XLAT_TO_SKY),
-                   Create(&Tanktop,#color=XLAT_TO_GREEN),
-                   Create(&Tanktop,#color=XLAT_TO_BLACK),
-                   Create(&Tanktop,#color=XLAT_TO_YELLOW),
-                   Create(&Tanktop,#color=XLAT_TO_PURPLE)
+            Create(&Tanktop,#color=XLAT_TO_ORANGE),
+            Create(&Tanktop,#color=XLAT_TO_RED),
+            Create(&Tanktop,#color=XLAT_TO_SKY),
+            Create(&Tanktop,#color=XLAT_TO_GREEN),
+            Create(&Tanktop,#color=XLAT_TO_BLACK),
+            Create(&Tanktop,#color=XLAT_TO_YELLOW),
+            Create(&Tanktop,#color=XLAT_TO_PURPLE)
 
-                   ],$,$,$];
+         ],
+      $,$,$];
+
       return;
    }
 

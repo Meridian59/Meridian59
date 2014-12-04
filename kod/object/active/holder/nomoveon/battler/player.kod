@@ -11389,6 +11389,7 @@ messages:
          }
 
          if IsClass(nObj,&UtilitySpell)
+            OR IsClass(nObj,&Blink)
          {
             continue;
          }

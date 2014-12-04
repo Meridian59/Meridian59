@@ -32,9 +32,6 @@ properties:
 
    piDefault_behavior = 0
 
-   % The higher this number is, the more important range is.
-   piDistance_factor = 9
-
    % The higher this is, the more likely the monster
    % will pick the highest level player in the room.
    piPlayer_factor = 10
@@ -54,8 +51,10 @@ properties:
    % will choose someone of the opposite karma.
    piKarma_factor = 25
 
-   % The farthest away a monster can see you and trigger on distance alone.
-   piMax_distance = 7
+   % These two variables control how much hatred is removed
+   % by invisibility and shadow form.
+   piInvis_reduction = 85
+   piShadForm_reduction = 60
 
 messages:
 
@@ -949,13 +948,13 @@ messages:
       {
          if Send(what,@IsInvisible)
          {
-            iHatred = (iHatred - 50);
+            iHatred = (iHatred - piInvis_reduction);
          }
          else
          {
             if Send(what,@IsShadowForm)
             {
-               iHatred = (iHatred - 25);
+               iHatred = (iHatred - piShadForm_reduction);
             }
          }
       }

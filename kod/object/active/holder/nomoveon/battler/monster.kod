@@ -782,7 +782,7 @@ messages:
    {
       local i,state;
 
-      state = $ ;
+      state = $;
 
       for i in plEnchantments
       {
@@ -790,8 +790,12 @@ messages:
          {
             if First(i) <> $
             {
-               DeleteTimer(First(i));
+               if IsTimer(First(i))
+               {
+                  DeleteTimer(First(i));
+               }
             }
+            SetNth(i,1,$);
 
             if Length(i) > 2
             {

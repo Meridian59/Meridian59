@@ -3329,10 +3329,12 @@ messages:
             if Send(self,@IsLoggedOn)
                OR IsClass(what,&Phase)
             {
-               % TODO: First(i) isn't always a timer?
                if First(i) <> $
                {
-                  DeleteTimer(First(i));
+                  if IsTimer(First(i))
+                  {
+                     DeleteTimer(First(i));
+                  }
                   SetNth(i,1,$);
                }
             }

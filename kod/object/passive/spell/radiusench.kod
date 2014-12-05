@@ -167,6 +167,7 @@ messages:
             if Nth(i,1) = who
             {
                Send(self,@BreakTrance,#who=who,#event=EVENT_STEER);
+               return FALSE;
             }
          }
       }

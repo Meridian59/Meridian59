@@ -12855,15 +12855,138 @@ messages:
       return TRUE;
    }
 
+   % Designed this just like GetSpellSchoolLevels in case a skill school
+   % is added later and this needs to be extended.
+   GetSkillSchoolLevels()
+   {
+      local i, lSchoolLevels, oSkill, iLevel, weaponcraft_level;
+
+      weaponcraft_level = 0;
+      iLevel = 0;
+
+      for i in plSkills
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
+                                                      #compound=i));
+         iLevel = Send(oSkill,@GetLevel);
+
+         if iLevel > weaponcraft_level
+         {
+            weaponcraft_level = iLevel;
+         }
+      }
+
+      lSchoolLevels = [weaponcraft_level];
+
+      return lSchoolLevels;
+   }
+
+   GetSpellSchoolLevels(include_cant_forget=FALSE)
+   {
+      local i, lSchoolLevels, oSpell, iSchool, iLevel, iCanForget,
+            shalille_level, qor_level, kraanan_level, faren_level,
+            riija_level, jala_level;
+
+      shalille_level = 0;
+      qor_level = 0;
+      kraanan_level = 0;
+      faren_level = 0;
+      riija_level = 0;
+      jala_level = 0;
+      iCanForget = TRUE;
+
+      % Get max level in each school. Yes, this is ugly but I'm trying for
+      % the least number of comparisons possible per spell. Schools in order
+      % of popularity, your results may vary. 10/25/2014 103 stats: 578 kran,
+      % 228 faren, 284 shal, 160 riija, 216 qor, 151 jala
+      for i in plSpells
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
+                                                      #compound=i));
+         iSchool = Send(oSpell,@GetSchool);
+         iLevel = Send(oSpell,@GetLevel);
+         iCanForget = Send(oSpell,@CanForget);
+
+         if (iCanForget) OR (NOT iCanForget AND include_cant_forget)
+         {
+            if (iSchool = SS_KRAANAN)
+            {
+               if (iLevel > kraanan_level)
+               {
+                  kraanan_level = iLevel;
+               }
+            }
+            else
+            {
+               if (iSchool = SS_SHALILLE)
+               {
+                  if (iLevel > shalille_level)
+                  {
+                     shalille_level = iLevel;
+                  }
+               }
+               else
+               {
+                  if (iSchool = SS_QOR)
+                  {
+                     if (iLevel > qor_level)
+                     {
+                        qor_level = iLevel;
+                     }
+                  }
+                  else
+                  {
+                     if (iSchool = SS_FAREN)
+                     {
+                        if (iLevel > faren_level)
+                        {
+                           faren_level = iLevel;
+                        }
+                     }
+                     else
+                     {
+                        if (iSchool = SS_RIIJA)
+                        {
+                           if (iLevel > riija_level)
+                           {
+                              riija_level = iLevel;
+                           }
+                        }
+                        else
+                        {
+                           if (iSchool = SS_JALA)
+                           {
+                              if (iLevel > jala_level)
+                              {
+                                 jala_level = iLevel;
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      % Order matters here, they appear in the order listed in blakston.khd.
+      lSchoolLevels = [shalille_level,qor_level,kraanan_level,
+                       faren_level,riija_level,jala_level];
+
+      return lSchoolLevels;
+   }
+
    StripSpellsOfSchool(school = 0, All = FALSE)
    {
-      local i;
+      local i, iSpellNum, oSpell;
 
       for i in plSpells
       {
-         if All OR Send(Send(SYS,@FindSpellByNum,#num=i),@GetSchool) = school
+         iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
+         oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+         if All OR Send(oSpell,@GetSchool) = school
          {
-            Send(self,@RemoveSpell,#num=Send(self,@DecodeSpellNum,#compound=i));
+            Send(self,@RemoveSpell,#num=iSpellNum);
          }
       }
 

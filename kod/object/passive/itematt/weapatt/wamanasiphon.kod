@@ -18,7 +18,7 @@ WeapAttSiphon is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -29,7 +29,8 @@ resources:
 
    siphon_worked = "%s%s appears weary as %s mystical energy is sucked away!"
    siphon_worked_target = \
-      "Strands of energy spark from %s%s as the metal of %s weapon rips away your mystical energy!"
+      "Strands of energy spark from %s%s as the metal of %s weapon "
+      "rips away your mystical energy!"
 
 classvars:
 
@@ -43,18 +44,18 @@ classvars:
 
 properties:
 
-   % modify the object's price by 100
+   % Modify the object's price by 100
    piValue_modifier = 200
-   
+
    piValue_power_modifier = 10
-   
+
    % Percent chance the effect procs
    piEffect_percent = 15
-   
+
    % Range of mana that is taken
    piMinManaStolen = 2
    piMaxManaStolen = 6
-   
+
    % Percent of mana to give the attacker
    piSiphonFactor = 150
 
@@ -69,16 +70,18 @@ messages:
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    {
       local oSpell,iAmountTaken,iAmountGiven,iProficiency;
+
       if Random(1,100) <= piEffect_percent
       {
          iAmountTaken = Random(piMinManaStolen,piMaxManaStolen);
          iAmountGiven = iAmountTaken * piSiphonFactor / 100;
       
-         Send(wielder,@GainMana,#amount=iAmountGiven,#bCapped=TRUE,#bRespectMax=TRUE);
+         Send(wielder,@GainMana,#amount=iAmountGiven,
+               #bCapped=TRUE,#bRespectMax=TRUE);
          Send(wielder,@MsgSendUser,#message_rsc=siphon_worked,
                #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName),
                #parm3=send(target,@GetHisHer));
-               
+
          Send(target,@LoseMana,#amount=iAmountTaken);
          Send(target,@MsgSendUser,#message_rsc=siphon_worked_target,
                #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName),
@@ -88,13 +91,11 @@ messages:
       return damage;
    }
 
-
    ItemReqUse(oItem=$,oPlayer=$)
    {
-
-      if Send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50
       {
-         Send(oPlayer, @MsgSendUser, #message_rsc = Siphon_fail_use,
+         Send(oPlayer,@MsgSendUser,#message_rsc = Siphon_fail_use,
                #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
 
          return FALSE;  %% This person needs 50% in the weapon's proficiency to use

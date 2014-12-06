@@ -6484,13 +6484,15 @@ messages:
 
    FindPlayersOverLearnCount()
    {
-      local i, iStartingLearnPoints, iMaxLearnPoints, iTotalLearnPoints, iList;
+      local i, iStartingLearnPoints, iMaxLearnPoints, iTotalLearnPoints, iList,
+            lSpells, lSkills;
 
       iList = $;
       for i in plUsers
       {
          if Send(i,@GetSpellList) = $
-            OR Send(i,@GetSkillList) = $
+            OR IsClass(i,&DM)
+            OR IsClass(i,&EscapedConvict)
          {
             continue;
          }
@@ -6505,12 +6507,47 @@ messages:
 
          if iTotalLearnPoints > iMaxLearnPoints
          {
-            Debug("Player ",i,Send(i,@GetTrueName)," has extra levels!");
             iList = Cons(i,iList);
          }
       }
 
+      if iList = $
+      {
+         Debug("No players over learn count.");
+
+         return $;
+      }
+
+      for i in iList
+      {
+         lSkills = Send(i,@GetSkillSchoolLevels);
+         lSpells = Send(i,@GetSpellSchoolLevels);
+
+         % Give debug message for each player, describing what levels they have.
+         Debug("Player ",i,Send(i,@GetTrueName)," has extra levels! Has ",
+               Nth(lSkills,1)," WC ",Nth(lSpells,1)," Shal'ille ",Nth(lSpells,2),
+               " Qor ",Nth(lSpells,3)," Kraanan ",Nth(lSpells,4)," Faren ",
+               Nth(lSpells,5)," Riija and ",Nth(lSpells,6), " Jala. Player has ",
+               Send(i,@GetRawIntellect)," intellect.");
+      }
+
       return iList;
+   }
+
+   FixPlayersOverLearnCount()
+   "This assumes all 'bugged' players are due to having level 1 Riija."
+   {
+      local i, iList;
+
+      iList = Send(self,@FindPlayersOverLearnCount);
+
+      for i in iList
+      {
+         Send(i,@StripSpellsOfSchool,#school=SS_RIIJA);
+         Debug("Removed Riija from ",i,Send(i,@GetTrueName));
+      }
+
+      return;
    }
 
    AdminListPlayersOverHP(hp=$)

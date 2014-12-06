@@ -8997,125 +8997,6 @@ messages:
    
    }
 
-   % designed this just like GetSpellScoolLevels in case a skill school is added
-   % later and this needs to be extended
-   GetSkillSchoolLevels()
-   {
-      local i, lSchoolLevels, oSkill, iLevel, weaponcraft_level;
-      i = 0;
-      weaponcraft_level = 0;
-      iLevel = 0;
-      
-      for i in plSkills
-      {
-         oSkill = send(SYS, @FindSkillByNum,#num=Send(self, @DecodeSkillNum,#compound=i));
-         iLevel = Send(oSkill, @GetLevel);
-         
-         if iLevel > weaponcraft_level
-         {
-            weaponcraft_level = iLevel;
-         }
-      }
-      
-      lSchoolLevels = [weaponcraft_level];
-      
-      return lSchoolLevels;
-   }
-   
-   GetSpellSchoolLevels(include_cant_forget=FALSE)
-   {
-      local i, lSchoolLevels, oSpell, iSchool, iLevel, iCanForget,
-            shalille_level, qor_level, kraanan_level, faren_level,
-            riija_level, jala_level;
-            
-      lSchoolLevels = [0,0,0,0,0,0];
-      shalille_level = 0;
-      qor_level = 0;
-      kraanan_level = 0;
-      faren_level = 0;
-      riija_level = 0;
-      jala_level = 0;
-      iCanForget = TRUE;
-
-      % get max level in each school
-      % yes, this is ugly but I'm trying for the least number of comparisons possible per spell
-      % schools in order of popularity, your results may vary.
-      % 10/25/2014 103 stats: 578 kran, 228 faren, 284 shal, 160 riija, 216 qor, 151 jala
-      for i in plSpells
-      {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
-         iSchool = Send(oSpell,@GetSchool);
-         iLevel = Send(oSpell,@GetLevel);
-         iCanForget = Send(oSpell,@CanForget);
-
-         if (iCanForget) OR (NOT iCanForget AND include_cant_forget)
-         {
-            if (iSchool = SS_KRAANAN)
-            {
-               if (iLevel > kraanan_level)
-               {
-                  kraanan_level = iLevel;
-               }
-            }
-            else
-            {
-               if (iSchool = SS_SHALILLE)
-               {
-                  if (iLevel > shalille_level)
-                  {
-                     shalille_level = iLevel;
-                  }
-               }
-               else
-               {
-                  if (iSchool = SS_QOR)
-                  {
-                     if (iLevel > qor_level)
-                     {
-                        qor_level = iLevel;
-                     }
-                  }
-                  else 
-                  {
-                     if (iSchool = SS_FAREN)
-                     {
-                        if (iLevel > faren_level)
-                        {
-                           faren_level = iLevel;
-                        }
-                     }
-                     else
-                     {
-                        if (iSchool = SS_RIIJA)
-                        {
-                           if (iLevel > riija_level)
-                           {
-                              riija_level = iLevel;
-                           }
-                        }
-                        else
-                        {
-                           if (iSchool = SS_JALA)
-                           {
-                              if (iLevel > jala_level)
-                              {
-                                 jala_level = iLevel;
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-      
-      % order matters here, they appear in the order listed in blakston.khd
-      lSchoolLevels = [shalille_level,qor_level,kraanan_level,faren_level,riija_level,jala_level];
-   
-      return lSchoolLevels;
-   }
-   
    SendStatChange()
    "Sends a stat change request to the client"
    {
@@ -9154,7 +9035,7 @@ messages:
    "Processes a stat change request from the client"
    {
       local i,lSpellLevels,lSkillLevels,lSpellLevels_new,lSkillLevels_new,
-      totalLevels,totalSchools,iPrimaryStat,
+      totalLevels,totalSchools,totalLvlOnes,iPrimaryStat,
       oSpell,iSpellAbility,iSpellNum,
       oSkill,iSkillAbility,iSkillNum;
 
@@ -9182,10 +9063,14 @@ messages:
       % Spell Levels - skipping DM school (7)
       while (i < NUM_SCHOOLS)
       {
-         totalLevels = totalLevels + Nth(lSpellLevels_new,i);
+         if (Nth(lSpellLevels_new,i) = 1)
+         {
+            totalLvlOnes = totalLvlOnes + 1;
+         }
          if (Nth(lSpellLevels_new,i) > 1)
          {
             totalSchools = totalSchools + 1;
+            totalLevels = totalLevels + Nth(lSpellLevels_new,i);
          }
          if (Nth(lSpellLevels_new,i) > Nth(lSpellLevels,i))
          {
@@ -9199,10 +9084,14 @@ messages:
       i=1;
       while (i <= NUM_SKILL_SCHOOLS)
       {
-         totalLevels = totalLevels + Nth(lSkillLevels_new,i);
+         if (Nth(lSkillLevels_new,i) = 1)
+         {
+            totalLvlOnes = totalLvlOnes + 1;
+         }
          if (Nth(lSkillLevels,i) > 1)
          {
             totalSchools = totalSchools + 1;
+            totalLevels = totalLevels + Nth(lSkillLevels_new,i);
          }
          if (Nth(lSkillLevels_new,i) > Nth(lSkillLevels,1))
          {
@@ -9212,12 +9101,15 @@ messages:
          i=i+1;
       }
       
+      % treat level 1s as level 2s
+      totalLevels = totalLevels + totalLvlOnes;
+      
       % See if the player has enough int to support their levels
       if ((totalLevels - totalSchools > 8)
                AND (((totalLevels - totalSchools - 8) * 5) > intellect))
       {
          debug("Int Check: FAIL!");
-         debug(totalLevels,intellect);
+         %debug("total levels",totalLevels,"intellect",intellect,"needed",(totalLevels - totalSchools - 8) * 5);
          return FALSE;
       }
       

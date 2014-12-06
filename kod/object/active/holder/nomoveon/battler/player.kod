@@ -13077,11 +13077,12 @@ messages:
    
    StripSpellsOfSchoolByLevel(school = 0, level = 0)
    {
-      local i, oSpell, iSchool, iLevel, iCanForget;
+      local i, oSpell, iSchool, iLevel, iCanForget, iSpellNum;
    
       for i in plSpells
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
+         iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
+         oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
          iSchool = Send(oSpell,@GetSchool);
          iLevel = Send(oSpell,@GetLevel);
          iCanForget = Send(oSpell,@CanForget);
@@ -13106,7 +13107,6 @@ messages:
          if (iSchool = school) AND (iLevel = level)
          {
             Send(self,@RemoveSkill,#num=Send(self,@DecodeSkillNum,#compound=i));
-            debug("Removing Skill",Send(self,@DecodeSkillNum,#compound=i));
          }
       }
       return;

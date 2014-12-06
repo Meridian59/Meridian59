@@ -56,8 +56,8 @@ resources:
    potion_qor = "Qor"
    potion_shalille = "Shal'ille"
    
-   stat_window_trigger = "I would like to change my attributes"
-   elder_stats_speech = "Beware, there should be some sort of ominous warning here."
+   HzEl_stat_window_trigger = "I would like to change my attributes"
+   HzEl_stats_speech = "Beware, there should be some sort of ominous warning here."
 
 classvars:
 
@@ -84,14 +84,14 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,stat_window_trigger)
-	  {
-	      Post(poOwner,@someoneSaid,#what=self,#string=elder_stats_speech,
-          #type=SAY_RESOURCE);
-	      Send(what, @SendStatChange);
-	  }
-	  
-	  propagate;
+      if StringEqual(string,HzEl_stat_window_trigger)
+      {
+         Post(poOwner,@someoneSaid,#what=self,#string=HzEl_stats_speech,
+               #type=SAY_RESOURCE);
+         Send(what, @SendStatChange);
+      }
+
+      propagate;
    }
 
    InitCondSale()

@@ -102,10 +102,15 @@ int StatsIntellectNeeded()
    int i;
    int levels_count = 0;
    int schools_count = 0;
-   int intellect = stats[1].val;
+   int level_ones = 0;
+   int intellect_needed = 99;
     
    for (i = 0; i < NUM_CHAR_SCHOOLS; ++i)
    {
+      if (schools[i].val == 1)
+      {
+         level_ones += 1;
+      }
       if (schools[i].val > 1)
       {
          schools_count += 1;
@@ -115,19 +120,23 @@ int StatsIntellectNeeded()
          levels_count += schools[i].val;
       }
    }
+
+   // assume if the player has level 1 in something, that they
+   // must have enough int for level 2.  This prevents abusing the
+   // system to retain level 1s
+   levels_count += level_ones;
    
    if (levels_count <= 8)
    {
-      return 1;
-   }
-   else if (levels_count >= 9)
-   {
-         return ((levels_count - schools_count - 8) * 5);
+      intellect_needed = 1;
    }
    else
    {
-      return 99;
+      intellect_needed = ((levels_count - schools_count - 8) * 5);
    }
+   
+   return intellect_needed;
+   
 }
 /********************************************************************/
 void initStatsFromServer(int *stats_in, int *levels_in)
@@ -231,6 +240,12 @@ void CharStatsGraphChanging(HWND hDlg, WPARAM wParam, LPARAM lParam)
       if (sc == NULL)
          return;
       sc->val = lParam;
+      
+      if (SendMessage((HWND) wParam, GRPH_POSGET, 0, 0) < lParam)
+         if(StatsIntellectNeeded() <=50)
+            SendMessage(hIntellect, GRPH_POSSET, 0, StatsIntellectNeeded());
+         else
+            SendMessage(hIntellect, GRPH_POSSET, 0, 50);
    }
    else
    {
@@ -243,9 +258,10 @@ void CharStatsGraphChanging(HWND hDlg, WPARAM wParam, LPARAM lParam)
       
       s->val = lParam;
       
-         // Don't change points when controls are being created
+      // Don't change points when controls are being created
       if (controls_created)
          stat_points -= cost;
+      
       SendMessage(hPoints, GRPH_POSSET, 0, stat_points);
    }
 }

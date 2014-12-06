@@ -34,8 +34,8 @@ resources:
       "see, I know where their burial grounds are, and you could say that "
       "I’m a bit of a ~Icollector~I."
 	  
-   stat_window_trigger = "I would like to change my attributes"
-   Mrelder_stats_speech = "Beware, there should be some sort of ominous warning here."
+   MrEl_stat_window_trigger = "I would like to change my attributes"
+   MrEl_stats_speech = "Beware, there should be some sort of ominous warning here."
 
 classvars:
 
@@ -56,14 +56,14 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,stat_window_trigger)
-	  {
-	      Post(poOwner,@someoneSaid,#what=self,#string=Mrelder_stats_speech,
-          #type=SAY_RESOURCE);
-	      Send(what, @SendStatChange);
-	  }
-	  
-	  propagate;
+      if StringEqual(string,MrEl_stat_window_trigger)
+      {
+         Post(poOwner,@someoneSaid,#what=self,#string=MrEl_stats_speech,
+               #type=SAY_RESOURCE);
+         Send(what, @SendStatChange);
+      }
+
+      propagate;
    }
 
    AffectMood(what=$,why=$)

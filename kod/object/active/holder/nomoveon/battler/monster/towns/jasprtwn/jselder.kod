@@ -35,8 +35,8 @@ resources:
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-	stat_window_trigger = "I would like to change my attributes"
-   Jselder_stats_speech = "Beware, there should be some sort of ominous warning here."
+	JsEl_stat_window_trigger = "I would like to change my attributes"
+   JsEl_stats_speech = "Beware, there should be some sort of ominous warning here."
 
 classvars:
 
@@ -61,14 +61,14 @@ messages:
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
-      if StringEqual(string,stat_window_trigger)
-	  {
-	      Post(poOwner,@someoneSaid,#what=self,#string=Jselder_stats_speech,
-          #type=SAY_RESOURCE);
-	      Send(what, @SendStatChange);
-	  }
-	  
-	  propagate;
+      if StringEqual(string,JsEl_stat_window_trigger)
+      {
+         Post(poOwner,@someoneSaid,#what=self,#string=JsEl_stats_speech,
+               #type=SAY_RESOURCE);
+         Send(what, @SendStatChange);
+      }
+
+      propagate;
    }
 
    AffectMood(what=$,why=$)

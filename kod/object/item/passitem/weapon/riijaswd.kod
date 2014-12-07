@@ -74,6 +74,12 @@ messages:
       propagate;	 
    }
 
+   DropOnDeath()
+   "A player does NOT drop a Riija sword when he dies."
+   {
+      return FALSE;
+   }
+   
    AppendDesc()
    {
       if poQuester <> $

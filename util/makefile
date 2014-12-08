@@ -4,6 +4,7 @@ TOPDIR=..
 !include $(TOPDIR)\common.mak
 
 OBJS3 = $(OUTDIR)\scrshot.obj $(OUTDIR)\dibutil.obj $(OUTDIR)\copy.obj $(OUTDIR)\file.obj
+LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 
 SOURCEDIR = $(TOPDIR)\util
 

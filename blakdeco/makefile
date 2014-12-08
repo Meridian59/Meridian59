@@ -10,7 +10,7 @@ OBJS = $(OUTDIR)\blakdeco.obj
 all: makedirs $(OUTDIR)\blakdeco.exe
 
 $(OUTDIR)\blakdeco.exe : $(OBJS)
-	$(LINK) -nologo $(OBJS) -OUT:$@
+	$(LINK) -nologo /SUBSYSTEM:CONSOLE",5.01" $(OBJS) -OUT:$@
 	$(CP) $@ $(BLAKBINDIR)
 
 !include $(TOPDIR)\rules.mak

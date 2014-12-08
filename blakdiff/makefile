@@ -6,6 +6,7 @@ TOPDIR=..
 !include $(TOPDIR)\common.mak
 
 SOURCEDIR = $(DIFFDIR)
+LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 
 OBJS = $(OUTDIR)\blakdiff.obj
 

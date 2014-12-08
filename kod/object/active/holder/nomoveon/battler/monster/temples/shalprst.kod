@@ -108,16 +108,33 @@ messages:
    "We make the mob a spell teacher of bless and lighting (as well as"
    "letting her sell chalices for profit. Also, we add a skll for fun"
    {
-      plFor_sale = [$,$,
-        [ SID_MINOR_HEAL, SID_HOLY_WEAPON, SID_DETECT_EVIL,
-          SID_HOLY_TOUCH, SID_REMOVE_CURSE, SID_CURE_POISON,
-          SID_CURE_DISEASE, SID_RESCUE, SID_SPIRITUAL_HAMMER,
-          SID_MARK_OF_DISHONOR, SID_PURIFY, SID_BREATH_OF_LIFE,
-          SID_FORCES_OF_LIGHT, SID_MAJOR_HEAL, SID_UMBRELLA,
-          SID_PORTAL_OF_LIFE, SID_HOLY_SYMBOL, SID_FINAL_RITES,
-          SID_SEANCE, SID_RESIST_ACID, SID_DAZZLE,
-          SID_SACRED_RESONANCE ],
-        $ ];
+      plFor_Sale = [
+         $,$,
+         [
+            SID_MINOR_HEAL,
+            SID_HOLY_WEAPON,
+            SID_DETECT_EVIL,
+            SID_HOLY_TOUCH,
+            SID_REMOVE_CURSE,
+            SID_CURE_POISON,
+            SID_CURE_DISEASE,
+            SID_RESCUE,
+            SID_SPIRITUAL_HAMMER,
+            SID_MARK_OF_DISHONOR,
+            SID_PURIFY,
+            SID_BREATH_OF_LIFE,
+            SID_FORCES_OF_LIGHT,
+            SID_MAJOR_HEAL,
+            SID_UMBRELLA,
+            SID_PORTAL_OF_LIFE,
+            SID_HOLY_SYMBOL,
+            SID_FINAL_RITES,
+            SID_SEANCE,
+            SID_RESIST_ACID,
+            SID_DAZZLE,
+            SID_SACRED_RESONANCE
+         ],
+      $];
 
       return;
    }

@@ -132,14 +132,15 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [
-                       Create(&SetScroll,#labelled=TRUE),
-                       Create(&LoadoutScroll,#labelled=TRUE),
-                       Create(&Meatpie,#number=4),
-                       Create(&Bread,#number=4),
-                       Create(&Cheese,#number=6)
-                  ],
-                      $, $, $ ];
+      plFor_sale = [ 
+         [
+            Create(&LoadoutScroll,#labelled=TRUE),
+            Create(&SetScroll,#labelled=TRUE),
+            Create(&Meatpie,#number=4),
+            Create(&Cheese,#number=6),
+            Create(&Bread,#number=4)
+         ],
+      $,$,$];
 
       return;
    }

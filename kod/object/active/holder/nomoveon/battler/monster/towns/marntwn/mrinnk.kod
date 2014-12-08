@@ -236,16 +236,17 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[
-                  Create(&PantsC,#translation=PT_GRAY_TO_LRED),
-                  Create(&PantsC,#translation=PT_GRAY_TO_KORANGE),
-                  Create(&SetScroll,#labelled=TRUE),
-                  Create(&LoadoutScroll,#labelled=TRUE),
-                  Create(&Herbs,#number=5),
-                  Create(&Elderberry,#number=4),
-                  Create(&Torch)
-                  ],
-                  $,$];
+      plFor_sale = [
+         [
+            Create(&LoadoutScroll,#labelled=TRUE),
+            Create(&SetScroll,#labelled=TRUE),
+            Create(&PantsC,#translation=PT_GRAY_TO_LRED),
+            Create(&PantsC,#translation=PT_GRAY_TO_KORANGE),
+            Create(&Elderberry,#number=4),
+            Create(&Herbs,#number=5),
+            Create(&Torch)
+         ],
+      $,$,$];
 
       return;
    }

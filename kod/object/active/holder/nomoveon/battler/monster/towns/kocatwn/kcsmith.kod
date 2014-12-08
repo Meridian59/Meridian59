@@ -95,13 +95,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&ChainArmor),
-                     Create(&Axe),
-                     Create(&Hammer),
-                     Create(&GoldShield),
-                     Create(&NeruditeSword),
-                     Create(&NeruditeArmor)],
-                     $,$, $ ];
+      plFor_sale = [ 
+         [
+            Create(&NeruditeArmor),
+            Create(&ChainArmor),
+            Create(&GoldShield),
+            Create(&NeruditeSword),
+            Create(&Axe),
+            Create(&Hammer)
+         ],
+      $,$,$];
 
       return;
    }

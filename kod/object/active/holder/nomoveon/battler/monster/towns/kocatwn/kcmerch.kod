@@ -138,19 +138,24 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&KocatanMug,#number=4),
-                       Create(&WineGoblet,#number=4),
-                       Create(&Bread,#number=4),
-                       Create(&Apple),
-                       Create(&Mace),
-                       Create(&LeatherArmor),
-                       Create(&SilverArrow),
-                       Create(&NeruditeArrow),
-                       Create(&Torch),
-                       Create(&MetalShield) ],
-                     $,
-                     [ SID_BLOOD_INHERITANCE ],
-                     $ ];
+      plFor_sale = [ 
+         [ 
+            Create(&Torch),
+            Create(&NeruditeArrow),
+            Create(&SilverArrow),
+            Create(&LeatherArmor),
+            Create(&MetalShield),
+            Create(&Mace),
+            Create(&WineGoblet,#number=4),
+            Create(&KocatanMug,#number=4),
+            Create(&Bread,#number=4),
+            Create(&Apple)
+         ],
+         $,
+         [ 
+            SID_BLOOD_INHERITANCE
+         ],
+      $];
       return;
    }
 

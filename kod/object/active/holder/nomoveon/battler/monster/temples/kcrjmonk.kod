@@ -184,12 +184,30 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [$,$,
-                    [ SID_ANONYMITY, SID_APPARITION, SID_ARTIFICE, SID_SEDUCE,
-                      SID_FORGET, SID_MORPH, SID_REFLECTION, SID_ILLUSIONARY_FORM,
-                      SID_FORESIGHT, SID_VERTIGO, SID_DENIAL, SID_ILLUSIONARY_WOUNDS,
-                      SID_FLASH, SID_SHADOW_FORM, SID_ILLUSIONARY_FIREWALL, SID_BAIT,
-                      SID_FEIGN_DEATH, SID_ELUSION, SID_EVIL_TWIN ]];
+      plFor_Sale = [
+         $,$,
+         [
+            SID_ANONYMITY,
+            SID_APPARITION,
+            SID_ARTIFICE,
+            SID_SEDUCE,
+            SID_FORGET,
+            SID_MORPH,
+            SID_REFLECTION,
+            SID_ILLUSIONARY_FORM,
+            SID_FORESIGHT,
+            SID_VERTIGO,
+            SID_DENIAL,
+            SID_ILLUSIONARY_WOUNDS,
+            SID_FLASH,
+            SID_SHADOW_FORM,
+            SID_ILLUSIONARY_FIREWALL,
+            SID_BAIT,
+            SID_FEIGN_DEATH,
+            SID_ELUSION,
+            SID_EVIL_TWIN 
+         ],
+      $];
       return;
    }
 

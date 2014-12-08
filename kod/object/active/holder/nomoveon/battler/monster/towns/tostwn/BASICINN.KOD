@@ -207,7 +207,12 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [[Create(&WineGoblet),Create(&Mug)],$,$,$];
+      plFor_sale = [ 
+         [
+            Create(&WineGoblet),
+            Create(&Mug)
+         ],
+      $,$,$];
 
       return;
    }

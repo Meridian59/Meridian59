@@ -49,11 +49,14 @@ messages:
 
      SetForSale()
    {
-      plFor_sale = [ [ Create(&YrxlSap,#number=1),
-                       Create(&ShamanBlood,#number=1),
-                       Create(&KriipaClaw,#number=4),
-                       Create(&PolishedSeraphym,#number=2) ],
-                      $, $ ];
+      plFor_sale = [ 
+         [ 
+            Create(&YrxlSap,#number=1),
+            Create(&ShamanBlood,#number=1),
+            Create(&PolishedSeraphym,#number=2),
+            Create(&KriipaClaw,#number=4)
+         ],
+      $,$,$];
 
       return;
    }

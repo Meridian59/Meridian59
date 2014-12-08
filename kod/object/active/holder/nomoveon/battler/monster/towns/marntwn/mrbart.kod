@@ -174,10 +174,13 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[ [ Create(&Mug,#number=4),
-                     Create(&Bread),
-                     Create(&Meatpie) ],
-                   $,$,$];
+      plFor_sale = [
+         [
+            Create(&Meatpie),
+            Create(&Bread),
+            Create(&Mug,#number=4)
+         ],
+      $,$,$];
 
       return;
    }

@@ -142,12 +142,16 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&Diamond,#number=1),
-                       Create(&Torch),
-                       Create(&GemRemove),
-                       Create(&Sapphire,#number=1),
-                       Create(&Emerald,#number=1) ],
-                   $,$];
+      plFor_sale = [
+         [ 
+            %Create(&GemRemove),
+            Create(&Diamond,#number=1),
+            Create(&Torch),
+            Create(&Sapphire,#number=1),
+            Create(&Emerald,#number=1)
+         ],
+      $,$,$];
+
       return;
    }
 

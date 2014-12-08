@@ -57,13 +57,15 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[Create(&Bread,#number=4),
-                   Create(&Apple,#number=2),
-                   Create(&MeatPie,#number=4),
-                   Create(&Mug,#number=1),
-                   Create(&Soup,#number=1)
-                   ],
-                  $,$];
+      plFor_sale = [
+         [ 
+            Create(&MeatPie,#number=4),
+            Create(&Soup,#number=1),
+            Create(&Bread,#number=4),
+            Create(&Apple,#number=2),
+            Create(&Mug,#number=1)
+         ],
+      $,$,$];
 
       return;
    }

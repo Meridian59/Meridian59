@@ -70,13 +70,24 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&Mace),
-               Create(&ShortSword),
-               Create(&MetalShield),
-               Create(&ChainArmor),
-               Create(&Torch)],
-               [ SKID_PROFICIENCY_SHORTSWORD, SKID_DODGE, SKID_BRAWLING,
-               SKID_SLASH, SKID_PUNCH, SKID_PROFICIENCY_MACE, SKID_BLOCK ],$,$];
+      plFor_sale = [
+         [ 
+            Create(&ChainArmor),
+            Create(&MetalShield),
+            Create(&ShortSword),
+            Create(&Mace),
+            Create(&Torch)
+         ],
+         [ 
+            SKID_PROFICIENCY_SHORTSWORD,
+            SKID_DODGE,
+            SKID_BRAWLING,
+            SKID_SLASH,
+            SKID_PUNCH,
+            SKID_PROFICIENCY_MACE,
+            SKID_BLOCK 
+         ],
+      $,$];
 
       return;
    }

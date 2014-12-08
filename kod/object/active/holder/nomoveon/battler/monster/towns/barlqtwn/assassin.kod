@@ -361,10 +361,13 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [$,$,
-                    [ SID_EAVESDROP ],
-                    $ ];
-                    
+      plFor_sale = [
+         $,$,
+         [ 
+            SID_EAVESDROP
+         ],
+      $];
+       
       return;
    }
 

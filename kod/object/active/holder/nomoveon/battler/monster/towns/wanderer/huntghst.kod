@@ -59,8 +59,15 @@ messages:
 
    SetForSale()
    {
-      plFor_Sale = [$,$,[SID_SUMMON_WEB, SID_LIGHTNINGWALL,
-                         SID_DEFLECT, SID_HUNT]];
+      plFor_Sale = [
+         $,$,
+         [
+            SID_SUMMON_WEB,
+            SID_LIGHTNINGWALL,
+            SID_DEFLECT,
+            SID_HUNT
+         ],
+     $];
 
       return;
    }

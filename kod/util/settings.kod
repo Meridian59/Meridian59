@@ -123,7 +123,7 @@ properties:
    %
    
    % Maximum amount of tokens in the movement bucket
-   piMovementBucketMax = 5000000
+   piMovementBucketMax = 15000000
    
    %
    % Miscellaneous
@@ -370,9 +370,9 @@ messages:
 
    GetMovementBucketMax()
    {
-	  return piMovementBucketMax;
+      return piMovementBucketMax;
    }
-     
+
    %
    % Miscellaneous
    %

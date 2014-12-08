@@ -5054,10 +5054,17 @@ messages:
    {
       local oCommand;
 
-      oCommand = Send(SYS,@findGuildCommandByNum,#num=Command_num);
+      if poGuild = $
+      {
+         return;
+      }
+
+      oCommand = Send(SYS,@FindGuildCommandByNum,#num=Command_num);
 
       % If a player is in a trance, break it
       if piFlags & PFLAG_TRANCE
+         AND (Command_num = GCID_RENOUNCE
+            OR Command_num = GCID_DISBAND)
       {
          Send(self,@BreakTrance,#event=EVENT_CAST,#what=oCommand);
       }
@@ -5067,13 +5074,7 @@ messages:
       {
          Send(oCommand,@DoCommand,#who=self,#oTarget=oTarget,#data=data);
       }
-      else
-      {
-         % player doesn't have this guild command.  Bail out.
-         Debug("Player ",self," trying to use a guild command ",Command_num,
-               " he doesn't have!!!");
-      }
-      
+
       return;
    }
 

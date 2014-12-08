@@ -70,7 +70,7 @@ classvars:
    viLevel = 120
    viDifficulty = 7
    viVisionDistance = 16
-   viKarma = 40
+   viKarma = 80
    viWimpy = 8
    viCashmin = -1800
    viCashmax = 1250

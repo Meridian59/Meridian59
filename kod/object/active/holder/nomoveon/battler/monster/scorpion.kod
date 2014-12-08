@@ -13,7 +13,6 @@ Scorpion is Monster
 constants:
 
    include blakston.khd
-   PALSY_CHANCE = 5
 
 resources:
 
@@ -46,10 +45,10 @@ classvars:
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_STING
 
-   viLevel = 55
+   viLevel = 65
    viDifficulty = 8
    viVisionDistance = 10
-   viKarma = 20
+   viKarma = 60
    viWimpy = 40
    viCashmin = 275
    viCashmax = 650
@@ -60,6 +59,10 @@ classvars:
 
 properties:
 
+   piPoison_Chance = 18
+   piPoison_Duration = 180000
+   piPoison_Loss_Rate = 3500
+   
    piAnimation = ANIM_NONE
 
 messages:
@@ -105,13 +108,13 @@ messages:
    {
       local oSpell;
 
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_ENFEEBLE);
-      if NOT Send(what,@IsEnchanted,#what=oSpell)
-         AND Random(1,PALSY_CHANCE) = 1
+      if Random(1,piPoison_Chance) = 1
       {
-         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+         Send(oSpell,@MakePoisoned,#who=what,
+               #lossrate=piPoison_Loss_Rate,#duration=piPoison_Duration);
       }
-
+      
       return;
    }
 

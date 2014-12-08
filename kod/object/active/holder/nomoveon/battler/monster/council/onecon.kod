@@ -172,19 +172,18 @@ messages:
          }
       }
 
-      % Player has a fifth level spell, can learn shadowform.
-      if bOkay
-      {
-         return TRUE;
-      }
-
       % Player doesn't have a fifth level spell, denied.
-      if report
+      if NOT bOkay
       {
-         Post(self,@SayToOne,#target=who,#message_rsc=onecon_not_ready);
+         if report
+         {
+            Post(self,@SayToOne,#target=who,#message_rsc=onecon_not_ready);
+         }
+
+         return FALSE;
       }
 
-      return FALSE;
+      propagate;
    }
 
 end

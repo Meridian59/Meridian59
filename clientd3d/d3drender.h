@@ -214,5 +214,7 @@ Bool D3DMaterialParticlePacket(d3d_render_packet_new *pPacket, d3d_render_cache_
 Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk);
 
 void SandstormInit(void);
+void RainInit(void);
+void SnowInit(void);
 
 #endif	// __D3DRENDER_H__

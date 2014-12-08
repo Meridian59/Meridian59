@@ -19,6 +19,11 @@
 #define RAIN_B			128
 #define RAIN_A			128
 
+#define SNOW_R			255
+#define SNOW_G			255
+#define SNOW_B			255
+#define SNOW_A			180
+
 typedef struct particle
 {
 	int			energy;

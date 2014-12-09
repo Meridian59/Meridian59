@@ -935,14 +935,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 			D3DParticleSystemUpdate(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem);
 		}
-		if (effects.raining)
+		if (effects.raining && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
 			D3DParticleSystemUpdate(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem);
 		}
-		if (effects.snowing)
+		if (effects.snowing && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);

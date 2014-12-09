@@ -206,7 +206,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	}
 
 	// rain
-	if (effects.raining && !pdibCeiling)
+	if (effects.raining && config.weather && !pdibCeiling)
 	{
 		RainDib(gBits, MAXX, MAXY, 100/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
 		RedrawAll();
@@ -215,7 +215,7 @@ void DrawPreOverlayEffects(room_type* room, Draw3DParams* params)
 	}
 
 	// snow
-	if (effects.snowing && !pdibCeiling)
+	if (effects.snowing && config.weather && !pdibCeiling)
 	{
 		SnowDib(gBits, MAXX, MAXY, 40/*drops*/, params->viewer_angle/*myheading*/, 0/*windheading*/, 10/*windstrength*/, TRUE/*torch*/);
 		RedrawAll();

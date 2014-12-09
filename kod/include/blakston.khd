@@ -1045,6 +1045,10 @@
    ROOM_JIG           = 0x4000
    % Prevents monsters from fighting, but doesn't stop players
    ROOM_NO_MOB_COMBAT = 0x8000
+   % Is it raining here?
+   ROOM_RAINING       = 0x10000
+   % Is it snowing here?
+   ROOM_SNOWING       = 0x20000
 
    % Terrain constants, used to tell what type of terrain the room is.
    TERRAIN_GUILDHALL = 0x0000001

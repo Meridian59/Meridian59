@@ -2519,6 +2519,9 @@ messages:
       Send(poOwner,@SendWallChanges,#who=self);
       Send(poOwner,@SendTextureChanges,#who=self);
 
+      % Check weather here also.
+      Send(self,@WeatherChanged);
+
       return;
    }
 
@@ -7708,6 +7711,18 @@ messages:
          SendPacket(poSession);
       }
       
+      return;
+   }
+
+   WeatherChanged()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_EFFECT);
+         AddPacket(2,Send(poOwner,@GetRoomWeather));
+         SendPacket(poSession);
+      }
+
       return;
    }
 

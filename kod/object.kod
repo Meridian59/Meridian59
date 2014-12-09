@@ -714,6 +714,12 @@ messages:
       return;
    }
 
+   WeatherChanged()
+   "This is sent when the room weather changes."
+   {
+      return;
+   }
+
    CanAcceptOffer()
    "Returns TRUE if the object should 'hear' when a player makes an offer."
    "Returns FALSE for most things."

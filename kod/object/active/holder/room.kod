@@ -1742,6 +1742,9 @@ messages:
       Send(self,@BackgroundChanged);
       Send(self,@DirectionalLightChanged);
 
+      % This sends weather effects (i.e. rain, snow) to clients.
+      Send(self,@WeatherChanged);
+
       return;
    }
 
@@ -3501,6 +3504,44 @@ messages:
       }
 
       return;
+   }
+
+   WeatherChanged()
+   {
+      local i, each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@WeatherChanged);
+         }
+      }
+
+      return;
+   }
+
+   GetRoomWeather()
+   {
+      local effect;
+
+      effect = EFFECT_CLEARWEATHER;
+
+      % Snow takes precedence over rain.
+      if piRoom_flags & ROOM_SNOWING
+      {
+         effect =  EFFECT_SNOWING;
+      }
+      else
+      {
+         if piRoom_flags & ROOM_RAINING
+         {
+            effect = EFFECT_RAINING;
+         }
+      }
+
+      return effect;
    }
 
    StartChaosNight()

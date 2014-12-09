@@ -97,6 +97,16 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 			}
 			else
 			{
+				PDIB pdibCeiling = NULL;
+				pdibCeiling = GetPointCeilingTexture(pParticle->pos.x, pParticle->pos.y);
+				if ((effects.raining || effects.snowing) && pdibCeiling)
+				{
+					D3DParticleDestroy(pParticle);
+					pEmitter->numParticles--;
+
+					continue;
+				}
+
 				custom_xyzw	velocity;
 
 				velocity.x = pParticle->velocity.x;

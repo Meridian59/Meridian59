@@ -177,9 +177,12 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 								sign = -sign;
 							pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
 
-							if ((int)rand() & 1)
-								sign = -sign;
-							pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
+							if (!effects.raining && !effects.snowing)
+							{
+								if ((int)rand() & 1)
+									sign = -sign;
+								pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
+							}
 						}
 
 						pParticle->velocity.x = pEmitter->velocity.x;

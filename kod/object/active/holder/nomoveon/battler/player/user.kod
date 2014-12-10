@@ -7718,6 +7718,11 @@ messages:
    {
       if pbLogged_on
       {
+         % First clear whichever effect we have.
+         AddPacket(1,BP_EFFECT,2,EFFECT_CLEARWEATHER);
+         SendPacket(poSession);
+
+         % Then send the needed effect.
          AddPacket(1,BP_EFFECT);
          AddPacket(2,Send(poOwner,@GetRoomWeather));
          SendPacket(poSession);

@@ -105,17 +105,6 @@ void RainDib(BYTE* pabyBits, int width, int height, int drops, int heading, int 
 			allblow = -1;
 			delta = (windheading+NUMDEGREES/2) - heading;
 		}
-
-/*
-		delta = delta * alllength * windstrength / (NUMDEGREES/4) / 100;
-
-		if (delta == 0)
-			allrun = 10000;
-		else
-			allrun = alllength / delta;
-		if (allrun <= 0)
-			allrun = 1;
-*/
 		allrun = 3;
 	}
 

@@ -22,7 +22,7 @@
 #define SNOW_R			255
 #define SNOW_G			255
 #define SNOW_B			255
-#define SNOW_A			180
+#define SNOW_A			220
 
 typedef struct particle
 {

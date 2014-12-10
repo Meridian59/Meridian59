@@ -10141,293 +10141,101 @@ void SandstormInit(void)
 
 void RainInit(void)
 {
-#define RAIN_EMITTER_RADIUS	(1024)
+#define RAIN_EMITTER_RADIUS	(16384)
 #define RAIN_EMITTER_ENERGY	(250)
-#define RAIN_EMITTER_HEIGHT	(2000)
-#define RAIN_AREA_FACTOR (5)
+#define RAIN_EMITTER_HEIGHT	(4000)
 
    int i;
 
    D3DParticleSystemReset(&gParticleSystemRain);
 
-   for (i=0; i < 2; i++)
+   for (i=0; i < 12; i++)
    {
-      // Diagonals away from player
       D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
+         0, 0, RAIN_EMITTER_HEIGHT,
          0.0f, 0, -300.0f,
          RAIN_B, RAIN_G, RAIN_R, RAIN_A,
          RAIN_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
+         1, RAIN_EMITTER_RADIUS, 2);
       D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
+         0, 0, RAIN_EMITTER_HEIGHT*2,
          0.0f, 0, -300.0f,
          RAIN_B, RAIN_G, RAIN_R, RAIN_A,
          RAIN_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
+         1, RAIN_EMITTER_RADIUS, 2);
       D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
+         0, 0, RAIN_EMITTER_HEIGHT,
          0.0f, 0, -300.0f,
          RAIN_B, RAIN_G, RAIN_R, RAIN_A,
          RAIN_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-
-         // Cardinal points away from player
-         D3DParticleEmitterInit(&gParticleSystemRain,
-         0, RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR, 0, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR, 0, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         0, RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-
-      // points in-between
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR/2,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR/2,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR/2,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR/2,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-
-         D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR/2, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR/2, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR/2, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemRain,
-         RAIN_EMITTER_RADIUS * 1.0f * RAIN_AREA_FACTOR,
-         RAIN_EMITTER_RADIUS * -1.0f * RAIN_AREA_FACTOR/2, RAIN_EMITTER_HEIGHT,
-         0.0f, 0, -300.0f,
-         RAIN_B, RAIN_G, RAIN_R, RAIN_A,
-         RAIN_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, RAIN_EMITTER_RADIUS * RAIN_AREA_FACTOR, 2);
+         1, RAIN_EMITTER_RADIUS/4, 2);
    }
 }
 
 void SnowInit(void)
 {
-#define SNOW_EMITTER_RADIUS	(1024)
-#define SNOW_EMITTER_ENERGY	(150)
-#define SNOW_EMITTER_HEIGHT	(2500)
-#define SNOW_AREA_FACTOR (6)
+// Distance from the player to spawn particles.
+#define SNOW_EMITTER_RADIUS	(16384)
+// Amount of energy to give them.
+#define SNOW_EMITTER_ENERGY	(200)
+// Default height to spawn them at.
+#define SNOW_EMITTER_HEIGHT	(3600)
 
    int i;
 
    D3DParticleSystemReset(&gParticleSystemSnow);
 
-   for (i=0; i < 2; i++)
+  for (i=0; i < 5; i++)
    {
-      // Diagonals away from player
+      // Normal height.
       D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         5.0f, 0, -30.0f,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
+         5.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
          SNOW_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
+         1, SNOW_EMITTER_RADIUS, 2);
+     D3DParticleEmitterInit(&gParticleSystemSnow,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
+         -5.0f, 0.0f, -30.0f,
+         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
+         SNOW_EMITTER_ENERGY, 1,
+         0, 0, 0,
+         1, SNOW_EMITTER_RADIUS, 2);
       D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         -5.0f, 0, -30.0f,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
+         0.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
          SNOW_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
+         1, SNOW_EMITTER_RADIUS, 2);
+      // Low spawning particles.
       D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         5.0f, 0, -30.0f,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT/3,
+         0.0f, -5.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
+         SNOW_EMITTER_ENERGY/2, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
+         1, SNOW_EMITTER_RADIUS, 2);
+      // Spawn these ones higher up.
       D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         -5.0f, 0, -30.0f,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT*1.5f,
+         0.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
+         SNOW_EMITTER_ENERGY*2, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-
-         // Cardinal points away from player
-         D3DParticleEmitterInit(&gParticleSystemSnow,
-         0, SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
+         1, SNOW_EMITTER_RADIUS, 2);
+      // These ones are higher too, but disappear faster (filler).
       D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR, 0, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT*2,
+         0.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
+         SNOW_EMITTER_ENERGY/3, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR, 0, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0, SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-
-      // points in-between
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR/2,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR/2,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR/2,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR/2,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-
-         D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR/2, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR/2, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR/2, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         SNOW_EMITTER_RADIUS * 1.0f * SNOW_AREA_FACTOR,
-         SNOW_EMITTER_RADIUS * -1.0f * SNOW_AREA_FACTOR/2, SNOW_EMITTER_HEIGHT,
-         0.0f, 0, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS * SNOW_AREA_FACTOR, 2);
+         1, SNOW_EMITTER_RADIUS, 2);
    }
 }
 

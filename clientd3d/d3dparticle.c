@@ -181,17 +181,15 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 							if ((int)rand() & 1)
 								sign = -sign;
-							pParticle->pos.x += sign * ((int)rand() & pEmitter->randomPos);
-
+							pParticle->pos.x += sign * ((int)rand() % pEmitter->randomPos);
 							if ((int)rand() & 1)
 								sign = -sign;
-							pParticle->pos.y += sign * ((int)rand() & pEmitter->randomPos);
-
+							pParticle->pos.y += sign * ((int)rand() % pEmitter->randomPos);
 							if (!effects.raining && !effects.snowing)
 							{
 								if ((int)rand() & 1)
 									sign = -sign;
-								pParticle->pos.z += sign * ((int)rand() & pEmitter->randomPos);
+								pParticle->pos.z += sign * ((int)rand() % pEmitter->randomPos);
 							}
 						}
 
@@ -203,7 +201,7 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 						pParticle->rotation.y = pEmitter->rotation.y;
 						pParticle->rotation.z = pEmitter->rotation.z;
 
-						if (pEmitter->bRandomize)
+						if (pEmitter->bRandomize && effects.sand)
 						{
 							float	random, sign;
 

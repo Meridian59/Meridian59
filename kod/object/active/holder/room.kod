@@ -3594,7 +3594,7 @@ messages:
 
       if bOnGround
       {
-         if pbGroundEffect
+         if pbSnowGroundTexture
          {
             % Add snow to floor.
             Send(self,@ChangeTexture,#id=0,#new_texture=61015,#flags=CTF_FLOOR);
@@ -3602,6 +3602,7 @@ messages:
             Send(self,@ChangeTexture,#id=15,#new_texture=61016,
                   #flags=CTF_BELOWWALL);
          }
+      }
 
       Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=TRUE);
       Send(self,@WeatherChanged);
@@ -3611,7 +3612,7 @@ messages:
 
    EndSnow()
    {
-      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
       {
          Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
          Send(self,@WeatherChanged);

@@ -94,6 +94,18 @@ messages:
          plWreaths = Cons([oRoom,26],plWreaths);
       }
 
+      % East Tos
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_EAST_TOS);
+      if pbWreaths
+      {
+         Send(oRoom,@ChangeTexture,#id=21,#new_texture=61001,#flags=CTF_NORMALWALL);
+         plWreaths = Cons([oRoom,21],plWreaths);
+         Send(oRoom,@ChangeTexture,#id=22,#new_texture=61002,#flags=CTF_NORMALWALL);
+         plWreaths = Cons([oRoom,22],plWreaths);
+         Send(oRoom,@ChangeTexture,#id=23,#new_texture=61003,#flags=CTF_NORMALWALL);
+         plWreaths = Cons([oRoom,23],plWreaths);
+      }
+
       % Tos Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOSHALL);
       if pbWreaths

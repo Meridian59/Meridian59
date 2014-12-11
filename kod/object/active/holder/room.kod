@@ -2950,6 +2950,41 @@ messages:
       return;
    }
 
+   RemoveTextureChange(id = $,flags = 0)
+   "This message can remove a changed texture from the plTexture_changes "
+   "list by ID or by flags. Not a good idea to do this by texture number, "
+   "as multiple IDs could have the same texture change."
+   {
+      local i, each_obj;
+
+      % If room has no texture changes, return.
+      if plTexture_changes = $
+      {
+         return;
+      }
+
+      for i in plTexture_changes
+      {
+         if (id <> $ AND Nth(i,1) = id)
+            OR (flags <> 0 AND Nth(i,3) = flags)
+         {
+            plTexture_changes = DelListElem(plTexture_changes,i);
+         }
+      }
+      % Tell everyone in the room at the moment about the change.
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ToCliPlayer);
+            Send(each_obj,@ToCliRoomContents);
+         }
+      }
+
+      return;
+   }
+
    HolderExtractObject(data = $)
    {
       return First(data);

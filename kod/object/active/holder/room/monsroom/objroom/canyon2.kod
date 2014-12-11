@@ -53,6 +53,8 @@ properties:
 
    piDirectional_percent = 50
 
+   pbSnowGroundTexture = TRUE
+
    ptDoorway = $
    poNode = $
 

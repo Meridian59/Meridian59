@@ -86,6 +86,8 @@ properties:
 
    prMusic = mar_music
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateYellZoneList()

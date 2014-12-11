@@ -208,6 +208,11 @@ properties:
    piDirectional_light = 0
    % Background bitmap for room
    prBackground = $
+   % TRUE if we can have weather in this room. Weather effects in rooms
+   % with ceilings are blocked by the client anyway.
+   pbWeatherEffects = TRUE
+   % TRUE if we place snow on the ground.
+   pbSnowGroundTexture = FALSE
 
    % Default length: 2.5 minutes (in ms)
    piDispose_delay = 150000
@@ -3577,6 +3582,47 @@ messages:
       }
 
       return effect;
+   }
+
+   StartSnow(bOnGround=TRUE)
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      if bOnGround
+      {
+         if pbGroundEffect
+         {
+            % Add snow to floor.
+            Send(self,@ChangeTexture,#id=0,#new_texture=61015,#flags=CTF_FLOOR);
+            % Add snow to small vertical ledges.
+            Send(self,@ChangeTexture,#id=15,#new_texture=61016,
+                  #flags=CTF_BELOWWALL);
+         }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSnow()
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
+         Send(self,@WeatherChanged);
+
+         % Remove snow from floor.
+         Send(self,@RemoveTextureChange,#id=0);
+         % Remove from small vertical ledges.
+         Send(self,@RemoveTextureChange,#id=15);
+      }
+
+      return;
    }
 
    StartChaosNight()

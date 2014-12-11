@@ -45,6 +45,8 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
+   pbSnowGroundTexture = TRUE
+
    piInit_count_min = 3
    piInit_count_max = 6
 

@@ -47,6 +47,9 @@ properties:
 
    piMonster_count_max = 20
 
+   pbSnowGroundTexture = TRUE
+
+
 messages:
 
    Constructed()

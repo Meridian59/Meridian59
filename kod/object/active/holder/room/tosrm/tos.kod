@@ -49,6 +49,8 @@ properties:
 
    prMusic = tos_music
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateYellZoneList()

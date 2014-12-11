@@ -50,6 +50,8 @@ properties:
    piBaseLight = LIGHT_DARK
    piOutside_factor = OUTDOORS_5
 
+   pbSnowGroundTexture = TRUE
+
    piGen_time = 120000
    piGen_percent = 60
 

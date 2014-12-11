@@ -49,6 +49,9 @@ properties:
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    prMusic = cor_music
+
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateStandardExits()

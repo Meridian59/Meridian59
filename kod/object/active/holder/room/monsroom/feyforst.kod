@@ -47,6 +47,8 @@ properties:
                                     %%% and determines the state of the forest.
    ptFaerie = $
 
+   pbSnowGroundTexture = TRUE
+
 messages:
    
    Constructor()

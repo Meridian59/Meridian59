@@ -41,6 +41,8 @@ properties:
 
    piGen_object_time = 300000
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateObjectGeneration()

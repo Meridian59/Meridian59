@@ -41,6 +41,8 @@ properties:
    prRoom = room_castle1c
    piRoom_num = RID_CASTLE1C
 
+   pbSnowGroundTexture = TRUE
+
 messages:
    
    CreateStandardExits()

@@ -43,6 +43,8 @@ properties:
 
    prMusic = barloquesouth_music
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateYellZoneList()

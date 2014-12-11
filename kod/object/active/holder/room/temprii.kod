@@ -71,6 +71,8 @@ properties:
    ptDeathMessageTimer = $
    poDead = $
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    Constructor()

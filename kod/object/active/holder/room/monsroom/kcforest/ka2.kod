@@ -39,6 +39,8 @@ properties:
    piBaseLight = LIGHT_NICE
    piOutside_factor = 8
 
+   pbSnowGroundTexture = TRUE
+
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    piGen_time = 90000

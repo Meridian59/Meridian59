@@ -39,7 +39,8 @@ properties:
 
    piBaseLight = LIGHT_VERY_DARK
    piOutside_factor = OUTDOORS_6 
-   
+
+   pbSnowGroundTexture = TRUE
 
 messages:
 

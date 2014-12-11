@@ -40,6 +40,8 @@ properties:
    piBaseLight = LIGHT_DARK
    piOutside_factor = OUTDOORS_8
 
+   pbSnowGroundTexture = TRUE
+
    plTombstones = $
    viTerrain_type = TERRAIN_CITY | TERRAIN_MYSTICAL
 

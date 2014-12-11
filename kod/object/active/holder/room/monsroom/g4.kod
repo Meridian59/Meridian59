@@ -45,6 +45,8 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
+   pbSnowGroundTexture = TRUE
+
    piGen_time = 150000
    piGen_percent = 40
 

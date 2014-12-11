@@ -28,6 +28,8 @@ properties:
 
    piRoom_num = RID_NEWB2
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    Constructed()

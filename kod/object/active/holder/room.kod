@@ -229,6 +229,10 @@ properties:
    % sector ID #, animation (floor or ceiling), and height.
    plSector_changes = $
 
+   % List of all sectors that have flag changes. Each element in list is
+   % sector ID #, depth value and scroll speed value.
+   plSector_flag_changes = $
+
    % List of all walls that have animations changed.  Each element in list is
    %  wall ID #, animation (none or cycle), first group, second group, speed,
    %  passable second group and speed not used with animation none.
@@ -1985,6 +1989,22 @@ messages:
 
       return;
    }
+   
+   SendSectorFlagChanges(who = $)
+   "Called by user when gets into new room"
+   {
+      local i;
+
+      % It's a user, so send sector changes.
+
+      for i in plSector_flag_changes
+      {
+         Send(who,@SectorChangeSendUser,#sector=First(i),#depth=Nth(i,2),
+              #scrollSpeed=Nth(i,3));
+      }
+
+      return;
+   }
 
    SendSectorLightChanges(who = $)
    "Called by user when gets into new room"
@@ -2826,6 +2846,83 @@ messages:
 
       % Not already in list, so add
       plSector_changes = Cons([ sector, animation, height ],plSector_changes);
+
+      return;
+   }
+
+   SetSectorFlags(sector=$,depth=0,scrollSpeed=0)
+   "Call this to change the depth and scroll speed of a sector."
+   {
+      local i, each_obj;
+
+      if sector = $
+      {
+         return;
+      }
+
+      % Tell everyone in the room at the moment about the change
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         Send(each_obj,@SectorChangeSendUser,#sector=sector,#depth=depth,
+               #scrollSpeed=scrollSpeed);
+         if IsClass(each_obj,&User)
+         {
+            Post(each_obj,@ToCliPlayer);
+            Post(each_obj,@ToCliRoomContents);
+         }
+      }
+
+      % And store so that new people in room will get the change
+
+      for i in plSector_flag_changes
+      {
+         if First(i) = sector
+         {
+            SetNth(i,2,depth);
+            SetNth(i,3,scrollSpeed);
+
+            return;
+         }
+      }
+
+      % Not already in list, so add
+      plSector_flag_changes = Cons([sector,depth,scrollSpeed],
+                                    plSector_flag_changes);
+
+      return;
+   }
+
+   RemoveSectorFlagChange(id = $)
+   "This message can remove the changes made to a sector's flags from the "
+   "plSector_flag_changes list. Changes removed by sector ID."
+   {
+      local i, each_obj;
+
+      % If room has no texture changes, return.
+      if plSector_flag_changes = $
+      {
+         return;
+      }
+
+      for i in plSector_flag_changes
+      {
+         if (id <> $ AND Nth(i,1) = id)
+         {
+            plSector_flag_changes = DelListElem(plSector_flag_changes,i);
+         }
+      }
+      % Tell everyone in the room at the moment about the change.
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ToCliPlayer);
+            Send(each_obj,@ToCliRoomContents);
+         }
+      }
 
       return;
    }

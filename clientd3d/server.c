@@ -99,6 +99,7 @@ static handler_struct game_handler_table[] = {
 { BP_SECTOR_MOVE,       HandleSectorMove },
 { BP_WALL_ANIMATE,      HandleWallAnimate },
 { BP_SECTOR_ANIMATE,    HandleSectorAnimate },
+{ BP_SECTOR_CHANGE,     HandleSectorChange },
 { BP_ADD_BG_OVERLAY,    HandleAddBackgroundOverlay },
 { BP_REMOVE_BG_OVERLAY, HandleRemoveBackgroundOverlay },
 { BP_CHANGE_BG_OVERLAY, HandleChangeBackgroundOverlay },
@@ -1555,6 +1556,19 @@ Bool HandleSectorAnimate(char *ptr, long len)
    Extract(&ptr, &action, 1);
 
    SectorAnimate(sector_num, &a, action);
+   return True;
+}
+/********************************************************************/
+Bool HandleSectorChange(char *ptr, long len)
+{
+   WORD sector_num;
+   BYTE depth, scroll;
+
+   Extract(&ptr, &sector_num, 2);
+   Extract(&ptr, &depth,1);
+   Extract(&ptr, &scroll, 1);
+
+   SectorChange(sector_num, depth, scroll);
    return True;
 }
 /********************************************************************/

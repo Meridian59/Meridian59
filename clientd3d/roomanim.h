@@ -72,6 +72,7 @@ typedef struct {
 void MoveSector(BYTE type, WORD sector_num, WORD height, BYTE speed);
 void WallChange(WORD wall_num, Animate *a, BYTE action);
 void SectorAnimate(WORD sector_num, Animate *a, BYTE action);
+void SectorChange(WORD sector_num, BYTE depth, BYTE scroll);
 void TextureChange(WORD id_num, WORD texture_num, BYTE flags);
 void SectorFlickerChange(WORD sector_num, BYTE type);
 

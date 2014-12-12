@@ -565,6 +565,23 @@ Animate sector
 	1 byte		what to do to sector after animation is finished
 0 = 	do nothing
 ----------------------------------------------------------
+Change sector flags
+<BP_SECTOR_CHANGE> <sector_id> <depth> <scrollSpeed>
+<sector_id> = 
+	2 bytes		sector to change
+<depth> = 
+	1 byte		new depth value for the sector
+SF_DEPTH0 = 0x00000000      % Sector has default (0) depth
+SF_DEPTH1 = 0x00000001      % Sector has shallow depth
+SF_DEPTH2 = 0x00000002      % Sector has deep depth
+SF_DEPTH3 = 0x00000003      % Sector has very deep depth
+<scroll> = 
+	1 byte		new sector scroll speed
+SCROLL_NONE   = 0x00000000
+SCROLL_SLOW   = 0x00000001
+SCROLL_MEDIUM = 0x00000002
+SCROLL_FAST   = 0x00000003
+----------------------------------------------------------
 Add display enchantment
 <BP_ADD_ENCHANTMENT> <enchant_type> <object_desc>
 ----------------------------------------------------------

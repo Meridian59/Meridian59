@@ -1156,6 +1156,19 @@
    CTF_FLOOR           = 0x08
    CTF_CEILING         = 0x10
 
+   % Constants for sector depth (i.e. water sectors).
+   % Same names as those used in client.
+   SF_DEPTH0 = 0x00000000      % Sector has default (0) depth
+   SF_DEPTH1 = 0x00000001      % Sector has shallow depth
+   SF_DEPTH2 = 0x00000002      % Sector has deep depth
+   SF_DEPTH3 = 0x00000003      % Sector has very deep depth
+
+   % Constants for sector texture scroll speed.
+   SCROLL_NONE   = 0x00000000
+   SCROLL_SLOW   = 0x00000001
+   SCROLL_MEDIUM = 0x00000002
+   SCROLL_FAST   = 0x00000003
+
    % Fineness per block
    FINENESS = 64
    FINENESS_HALF = 32

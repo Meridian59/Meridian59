@@ -2515,6 +2515,7 @@ messages:
 
       Send(self,@ToCliShading);
       Send(poOwner,@SendSectorChanges,#who=self);
+      Send(poOwner,@SendSectorFlagChanges,#who=self);
       Send(poOwner,@SendSectorLightChanges,#who=self);
       Send(poOwner,@SendWallChanges,#who=self);
       Send(poOwner,@SendTextureChanges,#who=self);
@@ -3633,6 +3634,21 @@ messages:
          SendPacket(poSession);
       }
       
+      return;
+   }
+
+   SectorChangeSendUser(sector=$, depth=$, scrollSpeed=$)
+   "Sent by room when one of the sector's properties have changed. "
+   "This handles scrolling and depth which rarely require changing, "
+   "other protocols already handle animation and textures."
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_SECTOR_CHANGE,2,sector,1,depth,1,scrollSpeed);
+
+         SendPacket(poSession);
+      }
+
       return;
    }
 

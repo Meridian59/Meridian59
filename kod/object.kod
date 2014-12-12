@@ -554,6 +554,11 @@ messages:
       return;
    }
 
+   SectorChangeSendUser()
+   {
+      return;
+   }
+
    SectorLightSendUser()
    {
       return;

@@ -13,6 +13,6 @@ BOFS = arsenic.bof attmod.bof betap.bof bosshead.bof \
    prism.bof questitem.bof reagentbag.bof ring.bof rod.bof roomkeyc.bof \
    rose.bof sanctkey.bof scepter.bof shruhead.bof spcgift2.bof spdregg.bof \
    spdreggX.bof specgift.bof spelitem.bof spelitemsplit.bof swshard.bof \
-   token.bof totem.bof warjoin.bof weapon.bof bardnote.bof 
+   token.bof totem.bof warjoin.bof weapon.bof bardnote.bof qormasgift.bof
 
 !include $(KODDIR)\kod.mak

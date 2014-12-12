@@ -3601,6 +3601,12 @@ messages:
             % Add snow to small vertical ledges.
             Send(self,@ChangeTexture,#id=15,#new_texture=61016,
                   #flags=CTF_BELOWWALL);
+
+            % Turn any water to ice. Water tagged as ID 10.
+            Send(self,@ChangeTexture,#id=10,#new_texture=61017,#flags=CTF_FLOOR);
+            % Stop water scroll effect and remove depth.
+            Send(self,@SetSectorFlags,#sector=10,#depth=SF_DEPTH0,
+                  #scrollSpeed=SCROLL_NONE);
          }
       }
 
@@ -3610,17 +3616,26 @@ messages:
       return;
    }
 
-   EndSnow()
+   EndSnow(override=FALSE)
+   "Use override if rooms have manually placed textures."
    {
       if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
       {
          Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
          Send(self,@WeatherChanged);
 
-         % Remove snow from floor.
-         Send(self,@RemoveTextureChange,#id=0);
-         % Remove from small vertical ledges.
-         Send(self,@RemoveTextureChange,#id=15);
+         if pbSnowGroundTexture
+            OR override
+         {
+            % Remove snow from floor.
+            Send(self,@RemoveTextureChange,#id=0);
+            % Remove from small vertical ledges.
+            Send(self,@RemoveTextureChange,#id=15);
+            % Remove ice from water.
+            Send(self,@RemoveTextureChange,#id=10);
+            % Reset sector flag changes to water.
+            Send(self,@RemoveSectorFlagChange,#id=10);
+         }
       }
 
       return;

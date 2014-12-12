@@ -20,7 +20,10 @@ resources:
    room_OutdoorsE2 = E2.roo
    OutdoorsE2_music = walk7.mp3
 
-   E2_oceanwalk = "You decide you don't like saltwater enough to go swimming in the Great Ocean."
+   E2_oceanwalk = \
+      "You decide you don't like saltwater enough to go swimming "
+      "in the Great Ocean."
+   E2_icewalk = "The ice looks a bit too thin to risk going any farther out."
 
 classvars:
 
@@ -80,7 +83,15 @@ messages:
       {
          if (IsClass(what,&Player))
          {
-            send(what,@MsgSendUser,#message_rsc = E2_oceanwalk);
+            if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+               AND pbSnowGroundTexture
+            {
+               Send(what,@MsgSendUser,#message_rsc=E2_icewalk);
+            }
+            else
+            {
+               Send(what,@MsgSendUser,#message_rsc=E2_oceanwalk);
+            }
          }
 
          return;
@@ -106,7 +117,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

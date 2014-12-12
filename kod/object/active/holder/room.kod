@@ -2923,6 +2923,38 @@ messages:
       return;
    }
 
+   RemoveAnimateWallChange(wall=$)
+   "Removes a change from the plWall_changes list by wall ID #."
+   {
+      local i, each_obj;
+
+      % If room has no texture changes, return.
+      if plWall_changes = $
+      {
+         return;
+      }
+
+      for i in plWall_changes
+      {
+         if (wall <> $ AND Nth(i,1) = wall)
+         {
+            plWall_changes = DelListElem(plWall_changes,i);
+         }
+      }
+      % Tell everyone in the room at the moment about the change.
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ToCliPlayer);
+            Send(each_obj,@ToCliRoomContents);
+         }
+      }
+
+      return;
+   }
+
    ChangeTexture(id = $,new_texture = $,flags = 0)
    {
       local i,each_obj;
@@ -3598,12 +3630,22 @@ messages:
          {
             % Add snow to floor.
             Send(self,@ChangeTexture,#id=0,#new_texture=61015,#flags=CTF_FLOOR);
-            % Add snow to small vertical ledges.
+            % Add darker snow to small vertical ledges.
             Send(self,@ChangeTexture,#id=15,#new_texture=61016,
                   #flags=CTF_BELOWWALL);
+            % Add darker snow to paths.
+            Send(self,@ChangeTexture,#id=5,#new_texture=61016,#flags=CTF_FLOOR);
 
             % Turn any water to ice. Water tagged as ID 10.
-            Send(self,@ChangeTexture,#id=10,#new_texture=61017,#flags=CTF_FLOOR);
+            % Water sidedefs tagged as ID 11.
+            Send(self,@ChangeTexture,#id=10,#new_texture=61017,
+                  #flags=CTF_FLOOR);
+            % Stop vertically scrolling water from animating.
+            Send(self,@AnimateWall,#wall=11,#animation=ANIMATE_NONE,
+                  #first_group=1,#second_group=1,#end_group=1);
+            % Change texture.
+            Send(self,@ChangeTexture,#id=11,#new_texture=61017,
+                  #flags=CTF_BELOWWALL);
             % Stop water scroll effect and remove depth.
             Send(self,@SetSectorFlags,#sector=10,#depth=SF_DEPTH0,
                   #scrollSpeed=SCROLL_NONE);
@@ -3624,18 +3666,24 @@ messages:
          Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
          Send(self,@WeatherChanged);
 
-         if pbSnowGroundTexture
-            OR override
-         {
-            % Remove snow from floor.
-            Send(self,@RemoveTextureChange,#id=0);
-            % Remove from small vertical ledges.
-            Send(self,@RemoveTextureChange,#id=15);
-            % Remove ice from water.
-            Send(self,@RemoveTextureChange,#id=10);
-            % Reset sector flag changes to water.
-            Send(self,@RemoveSectorFlagChange,#id=10);
-         }
+      }
+
+      if pbSnowGroundTexture
+         OR override
+      {
+         % Remove snow from floor.
+         Send(self,@RemoveTextureChange,#id=0);
+         % Remove from small vertical ledges.
+         Send(self,@RemoveTextureChange,#id=15);
+         % Remove snow from paths.
+         Send(self,@RemoveTextureChange,#id=5);
+         % Remove ice from water.
+         Send(self,@RemoveTextureChange,#id=10);
+         % Reset sector flag changes to water.
+         Send(self,@RemoveSectorFlagChange,#id=10);
+         % Reset water sidedef animation changes.
+         Send(self,@RemoveAnimateWallChange,#wall=11);
+         Send(self,@RemoveTextureChange,#id=11);
       }
 
       return;

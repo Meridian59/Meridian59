@@ -1060,6 +1060,56 @@ messages:
       propagate;
    }
 
+   % Override the snow messages here, too many different
+   % sector IDs in this zone.
+   StartSnow(bOnGround=TRUE)
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      if bOnGround
+      {
+         if pbSnowGroundTexture
+         {
+            % Add snow to floor.
+            Send(self,@ChangeTexture,#id=0,#new_texture=61015,#flags=CTF_FLOOR);
+            % Add darker snow to small vertical ledges.
+            Send(self,@ChangeTexture,#id=15,#new_texture=61016,
+                  #flags=CTF_BELOWWALL);
+         }
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSnow(override=FALSE)
+   "Use override if rooms have manually placed textures."
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
+         Send(self,@WeatherChanged);
+
+      }
+
+      if pbSnowGroundTexture
+         OR override
+      {
+         % Remove snow from floor.
+         Send(self,@RemoveTextureChange,#id=0);
+         % Remove from small vertical ledges.
+         Send(self,@RemoveTextureChange,#id=15);
+         % Remove snow from paths.
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

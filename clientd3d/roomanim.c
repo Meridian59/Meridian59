@@ -284,14 +284,14 @@ void WallChange(WORD wall_num, Animate *a, BYTE action)
 }
 /************************************************************************/
 /*
- * SectorChange:  Animate sector with given ID # in given way.
+ * SectorAnimate:  Animate sector with given ID # in given way.
  */
-void SectorChange(WORD sector_num, Animate *a, BYTE action)
+void SectorAnimate(WORD sector_num, Animate *a, BYTE action)
 {
    int i;
    Sector *s;
 
-   debug(("SectorChange got sector %d\n", (int) sector_num));
+   debug(("SectorAnimate got sector %d\n", (int) sector_num));
 
    // Adjust animation if user has it turned off
    if (!config.animate)

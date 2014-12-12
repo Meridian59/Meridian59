@@ -1554,7 +1554,7 @@ Bool HandleSectorAnimate(char *ptr, long len)
    ExtractAnimation(&ptr, &a);
    Extract(&ptr, &action, 1);
 
-   SectorChange(sector_num, &a, action);
+   SectorAnimate(sector_num, &a, action);
    return True;
 }
 /********************************************************************/

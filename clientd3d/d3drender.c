@@ -10188,7 +10188,7 @@ void SnowInit(void)
 
    D3DParticleSystemReset(&gParticleSystemSnow);
 
-  for (i=0; i < 5; i++)
+  for (i=0; i < 6; i++)
    {
       // Normal height.
       D3DParticleEmitterInit(&gParticleSystemSnow,

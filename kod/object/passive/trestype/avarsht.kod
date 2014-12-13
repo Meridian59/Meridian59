@@ -32,12 +32,13 @@ messages:
                      [ &WebMoss, 10 ],
                      [ &RainbowFern, 9 ],
                      [ &KriipaClaw, 6],
-                     [ &CurePoisonPotion, 4],
-                     [ &CureDiseasePotion, 4],
+                     [ &CurePoisonPotion, 3],
+                     [ &CureDiseasePotion, 3],
                      [ &RemoveCursePotion, 4],
-                     [ &PurifyPotion, 4],
+                     [ &PurifyPotion, 3],
                      [ &UncutSeraphym, 3],
-                     [ &PolishedSeraphym, 3]
+                     [ &PolishedSeraphym, 3],
+                     [ &LightDiscipleRobe, 3]
                    ];
 
       propagate;

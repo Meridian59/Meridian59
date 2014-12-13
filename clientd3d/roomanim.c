@@ -340,33 +340,39 @@ void SectorChange(WORD sector_num, BYTE depth, BYTE scroll)
          continue;
 
       // Remove the current depth value and add the new one.
-      s->flags &= ~SectorDepth(s->flags);
-      s->flags |= depth;
+      if (depth != CHANGE_OVERRIDE)
+      {
+         s->flags &= ~SectorDepth(s->flags);
+         s->flags |= depth;
+      }
 
       // If we want to stop scrolling, remove all the scroll data.
-      if (scroll == SCROLL_NONE)
+      if (scroll != CHANGE_OVERRIDE)
       {
-         s->flags &= ~0x000001FC;
-      }
-      else
-      {
-         // Save other flag values that occupy the same space. Note that
-         // if we're changing an already changed value, we'll be using those
-         // values here. Client gets redrawn to prevent any issues with this
-         // i.e. if the previous change was to delete them all.
-         direction = SectorScrollDirection(s->flags);
-         floor = s->flags & SF_SCROLL_FLOOR;
-         ceiling = s->flags & SF_SCROLL_CEILING;
+         if (scroll == SCROLL_NONE)
+         {
+            s->flags &= ~0x000001FC;
+         }
+         else
+         {
+            // Save other flag values that occupy the same space. Note that
+            // if we're changing an already changed value, we'll be using those
+            // values here. Client gets redrawn to prevent any issues with this
+            // i.e. if the previous change was to delete them all.
+            direction = SectorScrollDirection(s->flags);
+            floor = s->flags & SF_SCROLL_FLOOR;
+            ceiling = s->flags & SF_SCROLL_CEILING;
 
-         s->flags &= ~0x000001FC;
-         s->flags |= scroll << 2;
-         // Replace the other ones.
-         if (direction != SCROLL_N)
-            s->flags |= direction << 4;
-         if (floor)
-            s->flags |= SF_SCROLL_FLOOR;
-         if (ceiling)
-            s->flags |= SF_SCROLL_CEILING;
+            s->flags &= ~0x000001FC;
+            s->flags |= scroll << 2;
+            // Replace the other ones.
+            if (direction != SCROLL_N)
+               s->flags |= direction << 4;
+            if (floor)
+               s->flags |= SF_SCROLL_FLOOR;
+            if (ceiling)
+               s->flags |= SF_SCROLL_CEILING;
+         }
       }
    }
    RedrawAll();

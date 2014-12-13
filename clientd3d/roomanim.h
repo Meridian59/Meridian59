@@ -21,6 +21,9 @@
 #define SCROLL_WALL_MEDIUM_PERIOD   32
 #define SCROLL_WALL_FAST_PERIOD      8
 
+// Constant to override a BP_SECTOR_CHANGE variable.
+#define CHANGE_OVERRIDE 0x00000004
+
 // Number of milliseconds between flickering a light
 #define FLICKER_PERIOD             100
 

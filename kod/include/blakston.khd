@@ -1169,6 +1169,9 @@
    SCROLL_MEDIUM = 0x00000002
    SCROLL_FAST   = 0x00000003
 
+   % Constant for a BP_SECTOR_CHANGE variable override.
+   CHANGE_OVERRIDE = 0x00000004
+
    % Fineness per block
    FINENESS = 64
    FINENESS_HALF = 32

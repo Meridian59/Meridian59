@@ -42,6 +42,8 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateStandardExits()
@@ -133,7 +135,52 @@ messages:
       propagate;
    }
 
+   % This room is majority indoors, so we're not using sector 0 for snow here.
+   StartSnow(bOnGround=TRUE)
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      if bOnGround
+      {
+         if pbSnowGroundTexture
+         {
+            Send(self,@ChangeTexture,#id=1,#new_texture=61015,#flags=CTF_FLOOR);
+            Send(self,@ChangeTexture,#id=5,#new_texture=61016,#flags=CTF_FLOOR);
+            Send(self,@ChangeTexture,#id=15,#new_texture=61016,
+                  #flags=CTF_BELOWWALL);
+         }
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSnow(override=FALSE)
+   "Use override if rooms have manually placed textures."
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
+         Send(self,@WeatherChanged);
+      }
+
+      if pbSnowGroundTexture
+         OR override
+      {
+         % Remove snow from lighting sectors.
+         Send(self,@RemoveTextureChange,#id=1);
+         Send(self,@RemoveTextureChange,#id=5);
+         Send(self,@RemoveTextureChange,#id=15);
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

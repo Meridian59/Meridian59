@@ -51,6 +51,8 @@ properties:
 
    ptFeyNode = $      %% Faerie node appears for 30 seconds.
 
+   pbSnowGroundTexture = FALSE
+
 messages:
 
    Constructor()

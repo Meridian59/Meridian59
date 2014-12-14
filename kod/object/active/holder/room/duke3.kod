@@ -50,6 +50,8 @@ properties:
 
    prMusic = Duke3_music
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
 

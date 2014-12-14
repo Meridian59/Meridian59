@@ -39,6 +39,8 @@ properties:
 
    prMusic = barloqueport_music
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateStandardExits()

@@ -42,6 +42,7 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
+   pbSnowGroundTexture = TRUE
 
    prRoom = room_mockers
    piRoom_num = RID_MOCKERS_ROOM

@@ -49,6 +49,8 @@ properties:
 
    prMusic = tos_music
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateYellZoneList()
@@ -242,25 +244,56 @@ messages:
       send(self,@SetSectorLight,#sector=2,#light_effect=iLight_effect);
       send(self,@SetSectorLight,#sector=3,#light_effect=iLight_effect);
       send(self,@SetSectorLight,#sector=4,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=5,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=6,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=7,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=8,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=9,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=10,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=11,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=12,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=13,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=14,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=15,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=16,#light_effect=iLight_effect);
-      send(self,@SetSectorLight,#sector=17,#light_effect=iLight_effect);
-      
+
       propagate;
    }
 
+   StartSnow(bOnGround=TRUE)
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      if bOnGround
+      {
+         if pbSnowGroundTexture
+         {
+            % Add snow to lighting sectors.
+            Send(self,@ChangeTexture,#id=1,#new_texture=61015,#flags=CTF_FLOOR);
+            Send(self,@ChangeTexture,#id=2,#new_texture=61015,#flags=CTF_FLOOR);
+            Send(self,@ChangeTexture,#id=3,#new_texture=61015,#flags=CTF_FLOOR);
+            Send(self,@ChangeTexture,#id=4,#new_texture=61016,#flags=CTF_FLOOR);
+         }
+      }
+
+      % Propagate to Room, do the rest there.
+      propagate;
+   }
+
+   EndSnow(override=FALSE)
+   "Use override if rooms have manually placed textures."
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
+         Send(self,@WeatherChanged);
+      }
+
+      if pbSnowGroundTexture
+         OR override
+      {
+         % Remove snow from lighting sectors.
+         Send(self,@RemoveTextureChange,#id=1);
+         Send(self,@RemoveTextureChange,#id=2);
+         Send(self,@RemoveTextureChange,#id=3);
+         Send(self,@RemoveTextureChange,#id=4);
+      }
+
+      % Propagate to Room, do the rest there.
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

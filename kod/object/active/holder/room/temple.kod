@@ -12,8 +12,8 @@ Temple is Room
 
 constants:
 
-   SECTOR_DOOR = 1
-   SECTOR_PILLAR = 2
+   SECTOR_DOOR = 3
+   SECTOR_PILLAR = 4
 
    include blakston.khd
 
@@ -47,6 +47,8 @@ properties:
 
    piBaseLight = LIGHT_NICE
    piOutside_factor = 3
+
+   pbSnowGroundTexture = TRUE
 
 messages:
 

@@ -34,6 +34,7 @@ properties:
    piBaseLight = LIGHT_VERY_DARK
    piOutside_factor = OUTDOORS_6 
 
+   pbSnowGroundTexture = TRUE
 
    prRoom = room_forest4
    piRoom_num = RID_FOREST4

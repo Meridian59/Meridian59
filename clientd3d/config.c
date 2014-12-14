@@ -231,7 +231,7 @@ void ConfigLoad(void)
    config.bounce       = GetConfigInt(interface_section, INIBounce, True, ini_file);
    config.toolbar      = GetConfigInt(interface_section, INIToolbar, True, ini_file);
    config.pain         = GetConfigInt(interface_section, INIPainFX, True, ini_file);
-   config.weather      = GetConfigInt(interface_section, INIWeatherFX, False, ini_file);
+   config.weather      = GetConfigInt(interface_section, INIWeatherFX, True, ini_file);
    config.antiprofane  = GetConfigInt(interface_section, INIAntiProfane, True, ini_file);
    config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, False, ini_file);
    config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, False, ini_file);

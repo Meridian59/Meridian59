@@ -47,6 +47,8 @@ properties:
 
    piDirectional_percent = 70
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    CreateStandardExits()

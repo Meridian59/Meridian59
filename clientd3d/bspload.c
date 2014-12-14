@@ -175,9 +175,12 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
 //   D3DGeometryBuild(room);
    gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
    SandstormInit();
-	playerOldPos.x = 0;
-	playerOldPos.y = 0;
-	playerOldPos.z = 0;
+   RainInit();
+   SnowInit();
+
+   playerOldPos.x = 0;
+   playerOldPos.y = 0;
+   playerOldPos.z = 0;
 
    CacheReport();
 

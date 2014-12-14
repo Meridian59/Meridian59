@@ -22,7 +22,11 @@ resources:
 
    OutdoorsF2_music = walk7.mp3
 
-   F2_oceanwalk = "You're already up to your ankles in saltwater, and you decide that's quite enough."
+   F2_oceanwalk = \
+      "You're already up to your ankles in saltwater, and you "
+      "decide that's quite enough."
+   F2_icewalk = "The ice looks a bit too thin to risk going any farther out."
+
    ocean_soundF2 = "ocean.wav"
    wavecrash1_soundF2 = "wave1.wav"
    wavecrash2_soundF2 = "wave2.wav"
@@ -52,6 +56,8 @@ properties:
    piOutside_factor = 8
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   pbSnowGroundTexture = TRUE
 
    piGen_time = 55000 % temporarily increased from 45000
    piGen_percent = 80
@@ -95,11 +101,20 @@ messages:
    {
       if (dir = LEAVE_NORTH)
       {
-	 if (IsClass(what,&Player))
-	 {
-	    send(what,@MsgSendUser,#message_rsc = F2_oceanwalk);
-	 }
-	 return;
+         if (IsClass(what,&Player))
+         {
+            if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+               AND pbSnowGroundTexture
+            {
+               Send(what,@MsgSendUser,#message_rsc=F2_icewalk);
+            }
+            else
+            {
+               Send(what,@MsgSendUser,#message_rsc=F2_oceanwalk);
+            }
+         }
+
+         return;
       }
 
       propagate;

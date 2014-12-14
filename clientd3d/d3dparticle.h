@@ -8,16 +8,21 @@
 #ifndef __D3DPARTICLE_H__
 #define __D3DPARTICLE_H__
 
-#define MAX_PARTICLES	128
+#define MAX_PARTICLES	512
 #define SANDSTORM_R		226
 #define SANDSTORM_G		153
 #define SANDSTORM_B		6
 #define SANDSTORM_A		255
 
-#define RAIN_R			128
-#define RAIN_G			128
-#define RAIN_B			128
-#define RAIN_A			128
+#define RAIN_R			175
+#define RAIN_G			228
+#define RAIN_B			249
+#define RAIN_A			100
+
+#define SNOW_R			255
+#define SNOW_G			255
+#define SNOW_B			255
+#define SNOW_A			220
 
 typedef struct particle
 {

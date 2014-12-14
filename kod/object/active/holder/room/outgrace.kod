@@ -40,6 +40,8 @@ properties:
    piBaseLight = LIGHT_NICE
    piOutside_factor = OUTDOORS_3
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    ReqSomethingAttack(what = $,victim = $,use_weapon = $)

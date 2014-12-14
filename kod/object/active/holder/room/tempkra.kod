@@ -89,6 +89,8 @@ properties:
 
    ptReset = $
 
+   pbSnowGroundTexture = TRUE
+
 messages:
 
    Delete()

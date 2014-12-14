@@ -1,0 +1,181 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+QormasGift is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   QormasGift_icon_rsc = gift1.bgf
+   QormasGift_icon_rsc1 = gift1.bgf
+   QormasGift_icon_rsc2 = gift2.bgf
+   QormasGift_icon_rsc3 = gift3.bgf
+   QormasGift_icon_rsc4 = gift4.bgf
+   QormasGift_name_rsc = "Qormas Present"
+   QormasGift_desc_rsc = \
+      "This gift is intricately wrapped in the finest paper available in the"
+      " land."
+   QormasGift_desc_append1 = " The tag reads:\n\nTo: "
+   QormasGift_desc_append2 = "\nFrom: Qor The Vile"
+
+classvars:
+   
+   vrName = QormasGift_name_rsc
+   vrDesc = QormasGift_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viUse_amount = 1
+   viWeight = 90
+   viBulk = 90
+
+
+properties:  
+   % viObject_Flags = GETTABLE_NO
+   vrIcon = QormasGift_icon_rsc
+   poRecipient = $
+
+messages:   
+
+   Constructor()
+   {
+      Send(self,@SetRandomPaper);
+      propagate;
+   }
+
+   SetRandomPaper()
+   {
+      local iRandom;
+
+      iRandom = Random(1,4);
+      
+      if iRandom = 1
+      {
+         vrIcon = QormasGift_icon_rsc1;
+      }
+      if iRandom = 2
+      {
+         vrIcon = QormasGift_icon_rsc2;
+      }
+      if iRandom = 3
+      {
+         vrIcon = QormasGift_icon_rsc3;
+      }
+      if iRandom = 4
+      {
+         vrIcon = QormasGift_icon_rsc4;
+      }
+      
+      return;
+   }
+
+   ReqNewApply()
+   {
+      return TRUE;
+   }
+
+   NewApplied(what = $)
+   {
+      local rand;
+      
+      rand = Random(1,8);
+      
+      if rand = 1
+      {
+         send(poOwner,@NewHold,#what=Create(&Scimitar));
+      }
+      if rand = 2
+      {
+         send(poOwner,@NewHold,#what=Create(&InkyCap,#number=10));
+      }
+      if rand = 3
+      {
+         send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
+         send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
+         send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
+      }
+      if rand = 4
+      {
+         send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+         send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+         send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+      }
+      if rand = 5
+      {
+         send(poOwner,@NewHold,#what=Create(&RescuePotion));
+         send(poOwner,@NewHold,#what=Create(&RescuePotion));
+         send(poOwner,@NewHold,#what=Create(&RescuePotion));
+      }
+      if rand = 6
+      {
+         send(poOwner,@NewHold,#what=Create(&BonkStick));
+      }
+      if rand = 7
+      {
+         send(poOwner,@NewHold,#what=Create(&SeduceWand));
+         send(poOwner,@NewHold,#what=Create(&SeduceWand));
+         send(poOwner,@NewHold,#what=Create(&SeduceWand));
+      }
+      if rand = 8
+      {
+         send(poOwner,@NewHold,#what=Create(&OrcTooth,#number=10));
+      }
+      
+      Send(self,@Delete);
+      
+      return;
+   }
+   
+   AppendDesc()
+   {
+      local lUsersOnline,iUsers;
+
+      if (IsClass(poOwner,&Room))
+      {
+         lUsersOnline = Send(SYS,@GetUsersLoggedOn);
+         iUsers = Length(lUsersOnline);
+         poRecipient=Nth(lUsersOnline,Random(1,iUsers));
+      }
+   
+      if poRecipient <> $
+      {
+         AppendTempString(QormasGift_desc_append1) ;
+         AppendTempString(send(poRecipient,@GetTrueName));
+         AppendTempString(QormasGift_desc_append2);
+      }
+      
+      propagate;
+   }
+   
+   ReqNewOwner(what = $)
+   {
+      if IsClass(what,&Room)
+      {
+         return TRUE;
+      }
+   
+      if (what = poRecipient)
+      {
+         return TRUE;
+      }
+      
+      return False;
+   }
+   
+   GetObjectFlags()
+   {
+      return LOOK_NO | GETTABLE_YES;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

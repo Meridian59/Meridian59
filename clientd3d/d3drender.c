@@ -5823,10 +5823,11 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 
 				lightScale = lo_end + ((lightScale * shade_amount)>>LOG_FINENESS);
 				
+				// Dx9.0 applies too much shading, so set a lower limit of 860 here for now.
 				if (lightScale > FINENESS)
 					lightScale = FINENESS;
-				else if ( lightScale < 0)
-					lightScale = 0;
+				else if ( lightScale < 860L)
+					lightScale = 860L;
 			}
 			else
 				lightScale = FINENESS;

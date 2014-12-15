@@ -40,18 +40,42 @@ classvars:
 
 
 properties:  
-   % viObject_Flags = GETTABLE_NO
    vrIcon = QormasGift_icon_rsc
    poRecipient = $
 
+   pbMaskPossible = FALSE
+
 messages:   
 
-   Constructor()
+   Constructor(mask=FALSE)
    {
       Send(self,@SetRandomPaper);
+      
+      if (mask)
+      {
+         pbMaskPossible = TRUE;
+      }
+      
       propagate;
    }
 
+   DestroyDisposable()
+   {
+      return;
+   }
+   
+   GetRecipient()
+   {
+      return poRecipient;
+   }
+   
+   SetRecipient(who=$)
+   {
+      poRecipient = who;
+      
+      return;
+   }
+   
    SetRandomPaper()
    {
       local iRandom;
@@ -87,47 +111,98 @@ messages:
    {
       local rand;
       
-      rand = Random(1,8);
+      if (pbMaskPossible)
+      {
+         rand = Random(1,35);
+      }
+      else
+      {
+         rand = Random(1,24);
+      }
       
-      if rand = 1
+      if rand >= 1 AND rand <=3
       {
          send(poOwner,@NewHold,#what=Create(&Scimitar));
       }
-      if rand = 2
+      if rand >= 4 AND rand <=6
       {
          send(poOwner,@NewHold,#what=Create(&InkyCap,#number=10));
       }
-      if rand = 3
+      if rand >= 7 AND rand <=9
       {
          send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
          send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
          send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
       }
-      if rand = 4
+      if rand >= 10 AND rand <=12
       {
          send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
          send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
          send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
       }
-      if rand = 5
+      if rand >= 13 AND rand <=15
       {
          send(poOwner,@NewHold,#what=Create(&RescuePotion));
          send(poOwner,@NewHold,#what=Create(&RescuePotion));
          send(poOwner,@NewHold,#what=Create(&RescuePotion));
       }
-      if rand = 6
+      if rand >= 16 AND rand <=18
       {
          send(poOwner,@NewHold,#what=Create(&BonkStick));
       }
-      if rand = 7
+      if rand >= 19 AND rand <=21
       {
          send(poOwner,@NewHold,#what=Create(&SeduceWand));
          send(poOwner,@NewHold,#what=Create(&SeduceWand));
          send(poOwner,@NewHold,#what=Create(&SeduceWand));
       }
-      if rand = 8
+      if rand >= 22 AND rand <=24
       {
          send(poOwner,@NewHold,#what=Create(&OrcTooth,#number=10));
+      }
+      if rand = 25
+      {
+         send(poOwner,@NewHold,#what=Create(&XeoMask));
+      }
+      if rand = 26
+      {
+         send(poOwner,@NewHold,#what=Create(&DaemonMask));
+      }
+      if rand = 27
+      {
+         send(poOwner,@NewHold,#what=Create(&MummyMask));
+      }
+      if rand = 28
+      {
+         send(poOwner,@NewHold,#what=Create(&FeyMask));
+      }
+      if rand = 29
+      {
+         send(poOwner,@NewHold,#what=Create(&ShrunkenHeadMask));
+      }
+      if rand = 30
+      {
+         send(poOwner,@NewHold,#what=Create(&CowMask));
+      }
+      if rand = 31
+      {
+         send(poOwner,@NewHold,#what=Create(&SkullMask));
+      }
+      if rand = 32
+      {
+         send(poOwner,@NewHold,#what=Create(&RatMask));
+      }
+      if rand = 33
+      {
+         send(poOwner,@NewHold,#what=Create(&AntMask));
+      }
+      if rand = 34
+      {
+         send(poOwner,@NewHold,#what=Create(&TrollMask));
+      }
+      if rand = 35
+      {
+         send(poOwner,@NewHold,#what=Create(&KriipaMask));
       }
       
       Send(self,@Delete);
@@ -137,15 +212,6 @@ messages:
    
    AppendDesc()
    {
-      local lUsersOnline,iUsers;
-
-      if (IsClass(poOwner,&Room))
-      {
-         lUsersOnline = Send(SYS,@GetUsersLoggedOn);
-         iUsers = Length(lUsersOnline);
-         poRecipient=Nth(lUsersOnline,Random(1,iUsers));
-      }
-   
       if poRecipient <> $
       {
          AppendTempString(QormasGift_desc_append1) ;
@@ -153,6 +219,23 @@ messages:
          AppendTempString(QormasGift_desc_append2);
       }
       
+      propagate;
+   }
+   
+   NewOwner(what=$)
+   {
+      local oQormas;
+      
+      oQormas = Send(SYS,@GetQormas);
+      
+      if (oQormas <> $)
+      {
+         if (IsClass(what,&User))
+         {
+            Send(oQormas,@GiftClaimed,#what=self,#who=what);
+         }
+      }
+   
       propagate;
    }
    
@@ -168,7 +251,7 @@ messages:
          return TRUE;
       }
       
-      return False;
+      return FALSE;
    }
    
    GetObjectFlags()

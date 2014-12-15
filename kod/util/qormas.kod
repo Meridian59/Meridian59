@@ -23,6 +23,9 @@ resources:
    Qormas_end_message = \
       "~B~kTired of looking at Qormas trees, the citizens of Meridian "
       "have removed all of the holiday decorations. "
+      
+   Qormas_gift_hint = \
+      "\n~kMerry Qormas!  A gift awaits you at %s.\n"
 
 classvars:
 
@@ -35,6 +38,18 @@ properties:
    pbWreaths = TRUE
    plWreaths = $
    pbSnow = TRUE
+   
+   plGifts = $
+   pbGifts = TRUE
+   pbGiftMasks = FALSE
+   
+   plGiftClaims = $
+   plGiftIPCount = $
+   
+   piIPGiftsPerDay = 5
+   
+   piGameDayCount = 0
+   piGDRefresh = 12
 
 messages:
 
@@ -108,6 +123,9 @@ messages:
 
       % Tos Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOSHALL);
+      oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=5,#new_col=21,#fine_row=50,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+      plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
          Send(oRoom,@ChangeTexture,#id=22,#new_texture=61002,#flags=CTF_NORMALWALL);
@@ -231,6 +249,9 @@ messages:
 
       % Cor Noth Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_CORHALL);
+      oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=2,#new_col=4,#fine_row=0,#fine_col=50,#new_angle=ANGLE_NORTH_WEST);
+      plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
          Send(oRoom,@ChangeTexture,#id=23,#new_texture=61003,#flags=CTF_NORMALWALL);
@@ -326,6 +347,9 @@ messages:
 
       % Jasper Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JASHALL);
+      oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=2,#fine_row=29,#fine_col=30,#new_angle=ANGLE_NORTH_WEST);
+      plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
          % Adv hall door.
@@ -355,11 +379,17 @@ messages:
 
       % The Barking Monster
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOCTAV);
+      oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=5,#fine_row=51,#fine_col=25,#new_angle=ANGLE_NORTH_WEST);
+      plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
          Send(oRoom,@ChangeTexture,#id=24,#new_texture=61004,#flags=CTF_BELOWWALL);
          plWreaths = Cons([oRoom,24],plWreaths);
       }
+      
+      % place gifts under the trees in inns and halls
+      Send(self,@PlaceGifts);
 
       % If snow is turned on, set all rooms to start snowing.
       if pbSnow
@@ -400,14 +430,646 @@ messages:
       }
 
       plDecorations = $;
-      pbActive = FALSE;
 
+      % remove any remaining gifts from rooms
+      Send(self,@RemoveGifts);
+      
       % If snow is turned on, stop snowing in all rooms.
       Send(&Room,@EndSnow);
 
+      pbActive = FALSE;
+      
       return;
    }
 
+   PlaceGifts()
+   {
+      local oRoom,oTree;
+      
+      if (NOT pbGifts)
+      {
+         return;
+      }
+      
+      % Tos Inn
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE,#bNE=FALSE);
+      
+      % Tos Hall
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_HALL);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE,#bNE=FALSE);
+      
+      % Barloque Inn
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bNW=FALSE);
+      
+      % Barloque Hall
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_HALL);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree);
+      
+      % Cor Noth Inn
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bS=FALSE);
+      
+      % Cor Noth Hall
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_HALL);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bN=FALSE,#bNW=FALSE);
+      
+      % Jasper Inn
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bS=FALSE,#bSE=FALSE);
+      
+      % Jasper Hall
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_HALL);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bS=FALSE);
+      
+      % Marion Inn
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      if (Send(oTree,@GetRow) = 14 AND Send(oTree,@GetCol) = 15)
+      {
+         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE);
+      }
+      else
+      {
+         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE,#bNE=FALSE);
+      }
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),2);
+      if (Send(oTree,@GetRow) = 6 AND Send(oTree,@GetCol) = 2)
+      {
+         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bSW=FALSE,#bS=FALSE,#bW=FALSE);
+      }
+      else
+      {
+         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE);
+      }
+      
+      % Marion Hall
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_HALL);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bS=FALSE);
+
+      % Kocatan Inn
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bN=FALSE,#bNW=FALSE);
+      
+      % Kocatan Tavern
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_TAVERN);
+      oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree);
+      
+      return;
+   }
+   
+   FindTrees(oRoom=$)
+   {
+      local i,j,lPassive,lTrees;
+   
+      lPassive = $;
+      lTrees = $;
+   
+      if oRoom = $
+      {
+         return;
+      }
+      
+      lPassive = Send(oRoom,@GetPlPassive);
+      
+      for j in lPassive
+      {
+         for i in j
+         {
+            if IsObject(i)
+            {
+               if IsClass(i,&OrnamentalObject)
+               {
+                  if (Send(i,@GetType) = OO_QORMAS_TREE)
+                     OR (Send(i,@GetType) = OO_QORMAS_TREE_BIG)
+                  {
+                     lTrees = Cons(i,lTrees);
+                  }
+               }
+            }
+         }
+      }
+      
+      return lTrees;
+   }
+   
+   PlaceGiftsAroundTree(oTree=$,bN=TRUE,bNE=TRUE,bE=TRUE,
+                        bSE=TRUE,bS=TRUE,bSW=TRUE,
+                        bW=TRUE,bNW=TRUE)
+   {
+      local oGift,oRoom,iRow,iCol,iFineRow,iFineCol,
+            iNewRow,iNewCol,iNewFineRow,iNewFineCol,TREE_DISTANCE;
+      
+      if (NOT pbGifts)
+      {
+         return;
+      }
+      
+      if (oTree = $)
+      {
+         return;
+      }
+      
+      TREE_DISTANCE = 30;
+      oRoom = Send(oTree,@GetOwner);
+      iRow = Send(oTree,@GetRow);
+      iCol = Send(oTree,@GetCol);
+      iFineRow = Send(oTree,@GetFineRow);
+      iFineCol = Send(oTree,@GetFineCol);
+      
+      if (Send(oTree,@GetType) = OO_QORMAS_TREE_BIG)
+      {
+         TREE_DISTANCE = 40;
+      }
+      
+      % North
+      if bN
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow - TREE_DISTANCE;
+         iNewFineCol = iFineCol;
+         
+         if (iNewFineRow < 0)
+         {
+            iNewRow = iNewRow - 1;
+            iNewFineRow = iNewFineRow + 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % NorthEast
+      if bNE
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow - (TREE_DISTANCE / 4 * 3);
+         iNewFineCol = iFineCol + (TREE_DISTANCE / 4 * 3);
+         
+         if (iNewFineRow < 0)
+         {
+            iNewRow = iNewRow - 1;
+            iNewFineRow = iNewFineRow + 64;
+         }
+         if (iNewFineCol > 63)
+         {
+            iNewCol = iNewCol + 1;
+            iNewFineCol = iNewFineCol - 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % East
+      if bE
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow;
+         iNewFineCol = iFineCol + TREE_DISTANCE;
+         
+         if (iNewFineCol > 63)
+         {
+            iNewCol = iNewCol + 1;
+            iNewFineCol = iNewFineCol - 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % SouthEast
+      if bSE
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow + (TREE_DISTANCE / 4 * 3);
+         iNewFineCol = iFineCol + (TREE_DISTANCE / 4 * 3);
+         
+         if (iNewFineRow > 63)
+         {
+            iNewRow = iNewRow + 1;
+            iNewFineRow = iNewFineRow - 64;
+         }
+         if (iNewFineCol > 63)
+         {
+            iNewCol = iNewCol + 1;
+            iNewFineCol = iNewFineCol - 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % South
+      if bS
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow + TREE_DISTANCE;
+         iNewFineCol = iFineCol;
+         
+         if (iNewFineRow > 63)
+         {
+            iNewRow = iNewRow + 1;
+            iNewFineRow = iNewFineRow - 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % SouthWest
+      if bSW
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow + (TREE_DISTANCE / 4 * 3);
+         iNewFineCol = iFineCol - (TREE_DISTANCE / 4 * 3);
+         
+         if (iNewFineRow > 63)
+         {
+            iNewRow = iNewRow + 1;
+            iNewFineRow = iNewFineRow - 64;
+         }
+         if (iNewFineCol < 0)
+         {
+            iNewCol = iNewCol - 1;
+            iNewFineCol = iNewFineCol + 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % West
+      if bW
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow;
+         iNewFineCol = iFineCol - TREE_DISTANCE;
+         
+         if (iNewFineCol < 0)
+         {
+            iNewCol = iNewCol - 1;
+            iNewFineCol = iNewFineCol + 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      
+      % NorthWest
+      if bNW
+      {
+         iNewRow=iRow;
+         iNewCol=iCol;
+         iNewFineRow = iFineRow - (TREE_DISTANCE / 4 * 3);
+         iNewFineCol = iFineCol - (TREE_DISTANCE / 4 * 3);
+         
+         if (iNewFineRow < 0)
+         {
+            iNewRow = iNewRow - 1;
+            iNewFineRow = iNewFineRow + 64;
+         }
+         if (iNewFineCol < 0)
+         {
+            iNewCol = iNewCol - 1;
+            iNewFineCol = iNewFineCol + 64;
+         }
+      
+         if (pbGiftMasks)
+         {
+            oGift = Create(&QormasGift,#mask=TRUE);
+         }
+         else
+         {
+            oGift = Create(&QormasGift);
+         }
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         plGifts = Cons(oGift,plGifts);
+      }
+      return;
+   }
+   
+   RemoveGifts()
+   {
+      local i,oOwner;
+
+      if plGifts = $
+      {
+         return;
+      }
+      
+      for i in plGifts
+      {
+         oOwner = Send(i,@GetOwner);
+         
+         if oOwner <> $ AND IsClass(oOwner,&Room)
+         {
+            Send(i,@Delete);
+         }
+      }
+      
+      plGifts = $;
+   
+      return;
+   }
+
+   RemoveGiftsFromPlayers()
+   {
+      local i,oOwner;
+      
+      if plGifts = $
+      {
+         return;
+      }
+      
+      for i in plGifts
+      {
+         oOwner = Send(i,@GetOwner);
+         
+         if IsClass(oOwner,&User)
+         {
+            Send(i,@Delete);
+         }
+      }
+   
+      return;
+   }
+   
+   UserLogon(who=$)
+   {
+      local i,j,lIP,count,oRecipient,oOwner,bSet;
+      
+      oOwner = $;
+      bSet = FALSE;
+      
+      % only 1 claim per user per day
+      for i in plGiftClaims
+      {
+         if i = who
+         {
+            return;
+         }
+      }
+      
+      % Check per IP limit
+      lIP = send(who,@GetIP);
+      for i in plGiftIPCount
+      {
+         j = Nth(i,1);
+         if Nth(lIP,1) = Nth(j,1)
+            AND Nth(lIP,2) = Nth(j,2)
+            AND Nth(lIP,3) = Nth(j,3)
+            AND Nth(lIP,4) = Nth(j,4)
+         {
+            count = Nth(i,2);
+            if (count >= piIPGiftsPerDay)
+            {
+               return;
+            }
+         }
+      }
+      
+      if (pbGifts)
+      {
+         % first attempt to randomly select a gift for the user, if that fails
+         % just try to find the first available gift in the list.
+         i = Nth(plGifts,Random(1,Length(plGifts)));
+         
+         oRecipient = Send(i,@GetRecipient);
+         oOwner = Send(i,@GetOwner);
+         if (oOwner <> $)
+         {
+            if (oRecipient = $ 
+               AND IsClass(oOwner,&Room))
+            {
+               Send(i,@SetRecipient,#who=who);
+               Send(self,@SendPlayerGiftHint,#what=i,#who=who);
+               bSet = TRUE;
+            }
+         }
+         if (NOT bSet)
+         {
+            for i in plGifts
+            {
+               if IsObject(i)
+               {
+                  oRecipient = Send(i,@GetRecipient);
+                  oOwner = Send(i,@GetOwner);
+                  if (oOwner <> $)
+                  {
+                     if (oRecipient = $ 
+                        AND IsClass(oOwner,&Room) 
+                        AND NOT bSet)
+                     {
+                        Send(i,@SetRecipient,#who=who);
+                        Send(self,@SendPlayerGiftHint,#what=i,#who=who);
+                        bSet = TRUE;
+                     }
+                  }
+               }
+            }
+         }
+      }
+      
+      return;
+   }
+   
+   UserLogoff(who=$)
+   {
+      local i,oRecipient,oOwner;
+
+      if (pbGifts)
+      {
+         for i in plGifts
+         {
+            if IsObject(i)
+            {
+               oRecipient = Send(i,@GetRecipient);
+               oOwner = Send(i,@GetOwner);
+               if (oOwner <> $)
+               {
+                  if oRecipient = who AND IsClass(oOwner,&Room)
+                  {
+                     Send(i,@SetRecipient,#who=$);
+                     break;
+                  }
+               }
+            }
+         }
+      }
+      return;
+   }
+   
+   NewDay()
+   {
+      piGameDayCount = piGameDayCount + 1;
+      
+      if (piGameDayCount >= piGDRefresh)
+      {
+         if (pbGifts)
+         {
+            Send(self,@RemoveGifts);
+            Send(self,@PlaceGifts);
+         }
+         piGameDayCount = 0;
+         plGiftClaims = $;
+         plGiftIPCount = $;
+      }
+      
+      return;
+   }
+   
+   SendPlayerGiftHint(what=$,who=$)
+   {
+      if (what = $ OR who = $)
+      {
+         return;
+      }
+      
+      Send(who,@MsgSendUser,#message_rsc=Qormas_gift_hint,#parm1=Send(Send(what,@GetOwner),@GetName));
+      
+      return;
+   }
+   
+   GiftClaimed(what=$,who=$)
+   {
+      local i,j,count,lIP,bFound;
+      
+      bFound = FALSE;
+      
+      if (who <> $)
+      {
+         if (what <> $)
+         {
+            plGifts = DelListElem(plGifts,what);
+         }
+         plGiftClaims = Cons(who,plGiftClaims);
+         lIP = send(who,@GetIP);
+         
+         for i in plGiftIPCount
+         {
+            j = Nth(i,1);
+            if Nth(lIP,1) = Nth(j,1)
+               AND Nth(lIP,2) = Nth(j,2)
+               AND Nth(lIP,3) = Nth(j,3)
+               AND Nth(lIP,4) = Nth(j,4)
+            {
+               bFound = TRUE;
+               count = Nth(i,2) + 1;
+               SetNth(i,2,count);
+            }
+         }
+         if NOT bFound
+         {
+            plGiftIPCount = Cons([lIp,1],plGiftIPCount);
+         }
+      }
+   
+      return;
+   }
+   
+   ClearGiftClaims()
+   {
+      plGiftClaims = $;
+     
+      return;
+   }
+   
+   ClearIPCounts()
+   {
+      plGiftIPCount = $;
+      
+      return;
+   }
+   
+   AdminOwnAllGifts(who=$)
+   {
+      local i;
+      
+      for i in plGifts
+      {
+         Send(i,@SetRecipient,#who=who);
+      }
+      
+      return;
+   }
+   
    IsActive()
    {
       return pbActive;

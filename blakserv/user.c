@@ -81,6 +81,11 @@ user_node * CreateNewUser(int account_id,int class_id)
    return u;
 }
 
+void CreateUseronAccount(account_node *a)
+{
+	CreateNewUser(a->account_id,USER_CLASS);
+}
+
 user_node * CreateNewUserByName(int account_id,int class_id,char*buf)
 {   
    user_node *u;

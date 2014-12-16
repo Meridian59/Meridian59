@@ -731,6 +731,11 @@ messages:
          Send(self,@RefigureAllAbilityTotals);
       }
 
+      if poQormas <> $
+      {
+         Send(poQormas,@Reset);
+      }
+      
       Send(self,@RecalcLightAndWeather);
       Send(self,@ReturnShrineAllegiance);
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure

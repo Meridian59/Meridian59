@@ -467,6 +467,9 @@ HRESULT D3DRenderInit(HWND hWnd)
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl1, &decl1dc);
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl2, &decl2dc);
 		
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SLOPESCALEDEPTHBIAS, F2DW(1.0f));
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(0.0f));
+
 	D3DRenderLMapsBuild();
 
 	ReleaseCapture();
@@ -813,7 +816,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 			D3DCacheFlush(&gWorldCacheSystemStatic, &gWorldPoolStatic, 1, D3DPT_TRIANGLESTRIP);
 			D3DCacheFlush(&gWorldCacheSystem, &gWorldPool, 1, D3DPT_TRIANGLESTRIP);
-			gWireframe = FALSE;			
+			gWireframe = FALSE;
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FILLMODE, D3DFILL_SOLID);		
 		}
@@ -2102,7 +2105,7 @@ void D3DGeometryBuildNew(room_type *room, d3d_render_pool_new *pPool)
 			break;
 		}
 	}
-
+	
 	{
 		D3DCacheFill(&gWorldCacheSystemStatic, &gWorldPoolStatic, 1);
 		D3DCacheFill(&gWallMaskCacheSystem, &gWallMaskPool, 1);
@@ -3501,10 +3504,13 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				pChunk->numIndices = 4;
 				pChunk->numVertices = 4;
 				pChunk->numPrimitives = pChunk->numVertices - 2;
+
+				// zBias is scaled way differently in Dx9
+				// try to put names as much in the front as possible
 				if (offset == 0)
-					pChunk->zBias = ZBIAS_BASE;
+					pChunk->zBias = 255;
 				else
-					pChunk->zBias = 0;
+					pChunk->zBias = 254;
 
 				if (offset)
 				{
@@ -9372,17 +9378,17 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
 			}
 			else
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.000001f));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 			}
 		}
 	}
 	else
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.000001f));
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 	}
 
 	if (gD3DDriverProfile.bFogEnable)
@@ -9398,7 +9404,7 @@ Bool D3DMaterialWorldDynamicChunk(d3d_render_chunk_new *pChunk)
 }
 
 Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
-{
+{	
 	if (gWireframe)
 	{
 		if (pChunk->pSector == &current_room.sectors[0])
@@ -9431,17 +9437,17 @@ Bool D3DMaterialWorldStaticChunk(d3d_render_chunk_new *pChunk)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
 			}
 			else
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.000001f));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 			}
 		}
 	}
 	else
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.000001f));
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 	}
 
 	if (gD3DDriverProfile.bFogEnable)
@@ -9476,7 +9482,7 @@ Bool D3DMaterialMaskChunk(d3d_render_chunk_new *pChunk)
 	else
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
 
-	//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.000001f));
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.00001f));
 
 	return TRUE;
 }
@@ -9531,17 +9537,17 @@ Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(-0.00001f));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
 			}
 			else
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(-0.00001f));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 			}
 		}
 	}
 	else
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(-0.00001f));
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 	}
 
 	return TRUE;
@@ -9555,17 +9561,17 @@ Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk)
 		{
 			if (pChunk->pSector->ceiling == current_room.sectors[0].ceiling)
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(-0.00001f));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)0));
 			}
 			else
 			{
-				//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(-0.00001f));
+				IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 			}
 		}
 	}
 	else
 	{
-		//IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(-0.00001f));
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)ZBIAS_WORLD * -0.00001f));
 	}
 
 	if (pChunk->pSector)
@@ -9632,7 +9638,7 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 
 	// apply Z-BIAS here to make sure coplanar object-layers are rendered correctly
 	// layer-ordering is saved in pChunk->zBias
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.000001f));
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.00001f));
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
@@ -9740,7 +9746,7 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 
 	// apply Z-BIAS here to make sure coplanar object-layers are rendered correctly
 	// layer-ordering is saved in pChunk->zBias
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.000001f));
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.00001f));
 
 	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,

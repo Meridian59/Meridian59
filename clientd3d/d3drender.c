@@ -539,45 +539,56 @@ void D3DRenderShutDown(void)
 		D3DRenderPoolShutdown(&gEffectPool);
 		D3DRenderPoolShutdown(&gParticlePool);
 
-      IDirect3DDevice9_Release(gpDLightWhite);
-		gpDLightWhite = NULL;
-      IDirect3DDevice9_Release(gpDLightOrange);
-		gpDLightOrange = NULL;
-      IDirect3DDevice9_Release(gpBloom);
-		gpBloom = NULL;
-      IDirect3DDevice9_Release(gpNoLookThrough);
-		gpNoLookThrough = NULL;
-      IDirect3DDevice9_Release(gpBackBufferTexFull);
+		/***************************************************************************/
+		/*                          CUSTOM TEXTURES                                */
+		/***************************************************************************/
+		
+		if (gpDLightWhite)			IDirect3DDevice9_Release(gpDLightWhite);
+		if (gpDLightOrange)			IDirect3DDevice9_Release(gpDLightOrange);
+		if (gpBloom)				IDirect3DDevice9_Release(gpBloom);
+		if (gpNoLookThrough)		IDirect3DDevice9_Release(gpNoLookThrough);
+		if (gpBackBufferTexFull)	IDirect3DDevice9_Release(gpBackBufferTexFull);
+		if (gpSunTex)				IDirect3DDevice9_Release(gpSunTex);
+		if (gFont.pTexture)			IDirect3DDevice9_Release(gFont.pTexture);
+
+		gpDLightWhite		= NULL;   
+		gpDLightOrange		= NULL;     
+		gpBloom				= NULL;
+		gpNoLookThrough		= NULL;
 		gpBackBufferTexFull = NULL;
-      IDirect3DDevice9_Release(gpSunTex);
-		gpSunTex = NULL;
-
-		if (gFont.pTexture)
-		{
-         IDirect3DDevice9_Release(gFont.pTexture);
-			gFont.pTexture = NULL;
-		}
-
+		gpSunTex			= NULL;
+		gFont.pTexture		= NULL;
+		
 		for (i = 0; i < 16; i++)
 		{
-         IDirect3DDevice9_Release(gpBackBufferTex[i]);
-			gpBackBufferTex[i] = NULL;
+			if (gpBackBufferTex[i])
+			{
+				IDirect3DDevice9_Release(gpBackBufferTex[i]);
+				gpBackBufferTex[i] = NULL;
+			}
 		}
 
 		for (j = 0; j < 5; j++)
+		{
 			for (i = 0; i < 6; i++)
 			{
 				if (gpSkyboxTextures[j][i])
 				{
-               IDirect3DDevice9_Release(gpSkyboxTextures[j][i]);
+					IDirect3DDevice9_Release(gpSkyboxTextures[j][i]);
 					gpSkyboxTextures[j][i] = NULL;
 				}
 			}
+		}
 
-      IDirect3DDevice9_Release(gpD3DDevice);
+		/***************************************************************************/
+		/*                               DEVICE                                    */
+		/***************************************************************************/
+		
+		if (gpD3DDevice)	IDirect3DDevice9_Release(gpD3DDevice);		
+		if (gpD3D)			IDirect3D9_Release(gpD3D);
+
 		gpD3DDevice = NULL;
-      IDirect3D9_Release(gpD3D);
-		gpD3D = NULL;
+		gpD3D		= NULL;
 	}
 }
 

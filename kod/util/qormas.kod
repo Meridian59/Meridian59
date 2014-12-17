@@ -5,7 +5,7 @@
 % the LICENSE file that accompanies it.
 %
 % Meridian is a registered trademark.
-
+ 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Qormas is UtilityFunctions
@@ -31,25 +31,41 @@ classvars:
 
 properties:
 
-   plDecorations = $
-
-   pbActive = FALSE
-
+   % Draw Wreaths?
    pbWreaths = TRUE
-   plWreaths = $
+
+   % turn on snow?
    pbSnow = TRUE
    
-   plGifts = $
+   % Distribute Gifts?
    pbGifts = TRUE
+   
+   % Do currently generated gifts have a chance to give a mask?
    pbGiftMasks = FALSE
    
-   plGiftClaims = $
-   plGiftIPCount = $
-   
+   % gifts allowed per ip per day
    piIPGiftsPerDay = 5
    
+   % number of game days before presents auto-reset
+   piGiftRefreshDays = 12
+   
+   % Queue to handle delayed gift assignment
+   plLogonQueue = $
+   
+   % Automatically refill gifts when low?
+   pbRefillGiftsWhenLow=FALSE
+   
+   % Present amount before refill is triggered
+   piMinimumGifts = 30
+   
+   plDecorations = $
+   plGiftClaims = $
+   plGiftIPCount = $
+   plGifts = $
+   pbActive = FALSE
+   plWreaths = $
    piGameDayCount = 0
-   piGDRefresh = 12
+
 
 messages:
 
@@ -84,13 +100,16 @@ messages:
       % Tos
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=53,#new_col=12,#fine_row=17,#fine_col=15,#new_angle=ANGLE_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=53,#new_col=12,#fine_row=17,
+            #fine_col=15,#new_angle=ANGLE_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=48,#new_col=22,#fine_row=17,#fine_col=59,#new_angle=ANGLE_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=48,#new_col=22,#fine_row=17,
+            #fine_col=59,#new_angle=ANGLE_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=54,#new_col=33,#fine_row=39,#fine_col=31,#new_angle=ANGLE_SOUTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=54,#new_col=33,#fine_row=39,
+            #fine_col=31,#new_angle=ANGLE_SOUTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -101,7 +120,8 @@ messages:
       % Tos Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=4,#new_col=10,#fine_row=44,#fine_col=30,#new_angle=ANGLE_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=4,#new_col=10,#fine_row=44,
+            #fine_col=30,#new_angle=ANGLE_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -124,7 +144,8 @@ messages:
       % Tos Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOSHALL);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=5,#new_col=21,#fine_row=50,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=5,#new_col=21,#fine_row=50,
+            #fine_col=0,#new_angle=ANGLE_NORTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -135,7 +156,8 @@ messages:
       % Barloque Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_INN);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=16,#new_col=8,#fine_row=37,#fine_col=34,#new_angle=ANGLE_NORTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=16,#new_col=8,#fine_row=37,
+            #fine_col=34,#new_angle=ANGLE_NORTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -146,10 +168,12 @@ messages:
       % Bhrama & Falcon
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_BAR);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=11,#fine_row=47,#fine_col=35,#new_angle=ANGLE_NORTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=11,#fine_row=47,
+            #fine_col=35,#new_angle=ANGLE_NORTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=7,#new_col=11,#fine_row=27,#fine_col=35,#new_angle=ANGLE_NORTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=7,#new_col=11,#fine_row=27,
+            #fine_col=35,#new_angle=ANGLE_NORTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -164,7 +188,8 @@ messages:
       % Barl Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BARHALL);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=18,#new_col=6,#fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=18,#new_col=6,#fine_row=32,
+            #fine_col=32,#new_angle=ANGLE_NORTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -176,16 +201,20 @@ messages:
       % North Barloque
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_NORTH);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=18,#new_col=25,#fine_row=43,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=18,#new_col=25,#fine_row=43,
+            #fine_col=0,#new_angle=ANGLE_NORTH_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=17,#new_col=34,#fine_row=5,#fine_col=15,#new_angle=ANGLE_SOUTH);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=17,#new_col=34,#fine_row=5,
+            #fine_col=15,#new_angle=ANGLE_SOUTH);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=29,#new_col=55,#fine_row=51,#fine_col=20,#new_angle=ANGLE_SOUTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=29,#new_col=55,#fine_row=51,
+            #fine_col=20,#new_angle=ANGLE_SOUTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=26,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=26,#fine_row=32,
+            #fine_col=32,#new_angle=ANGLE_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -215,16 +244,19 @@ messages:
       % South Barloque
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_SOUTH);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=34,#new_col=32,#fine_row=29,#fine_col=38,#new_angle=ANGLE_SOUTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=34,#new_col=32,#fine_row=29,
+            #fine_col=38,#new_angle=ANGLE_SOUTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
 
       % Cor Noth
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_CORNOTH);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=59,#fine_row=59,#fine_col=63,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=59,#fine_row=59,
+            #fine_col=63,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=5,#new_col=54,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=5,#new_col=54,#fine_row=32,
+            #fine_col=32,#new_angle=ANGLE_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -239,7 +271,8 @@ messages:
       % Cor Noth Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_INN);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=7,#new_col=2,#fine_row=19,#fine_col=45,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=7,#new_col=2,#fine_row=19,
+            #fine_col=45,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -250,7 +283,8 @@ messages:
       % Cor Noth Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_CORHALL);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=2,#new_col=4,#fine_row=0,#fine_col=50,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=2,#new_col=4,#fine_row=0,
+            #fine_col=50,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -261,10 +295,12 @@ messages:
       % Marion Inn/Tavern
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=15,#fine_row=55,#fine_col=54,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=15,#fine_row=55,
+            #fine_col=54,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=6,#new_col=2,#fine_row=25,#fine_col=7,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=6,#new_col=2,#fine_row=25,
+            #fine_col=7,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -281,10 +317,12 @@ messages:
       % Marion
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MARION);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=60,#new_col=57,#fine_row=52,#fine_col=61,#new_angle=ANGLE_SOUTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=60,#new_col=57,#fine_row=52,
+            #fine_col=61,#new_angle=ANGLE_SOUTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=60,#new_col=41,#fine_row=32,#fine_col=1,#new_angle=ANGLE_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=60,#new_col=41,#fine_row=32,
+            #fine_col=1,#new_angle=ANGLE_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -301,7 +339,8 @@ messages:
       % Marion Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MARHALL);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=2,#fine_row=4,#fine_col=32,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=2,#fine_row=4,
+            #fine_col=32,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -312,7 +351,8 @@ messages:
       % West Jasper
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_WEST);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=45,#new_col=27,#fine_row=13,#fine_col=61,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=45,#new_col=27,#fine_row=13,
+            #fine_col=61,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -324,7 +364,8 @@ messages:
       % East Japser
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_EAST);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_SNOWMAN);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=59,#new_col=30,#fine_row=42,#fine_col=23,#new_angle=ANGLE_EAST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=59,#new_col=30,#fine_row=42,
+            #fine_col=23,#new_angle=ANGLE_EAST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -336,7 +377,8 @@ messages:
       % Jasper Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_INN);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=6,#new_col=12,#fine_row=29,#fine_col=43,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=6,#new_col=12,#fine_row=29,
+            #fine_col=43,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -348,7 +390,8 @@ messages:
       % Jasper Adv Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JASHALL);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=2,#fine_row=29,#fine_col=30,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=14,#new_col=2,#fine_row=29,
+            #fine_col=30,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -369,7 +412,8 @@ messages:
       % Aerie Guest House
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=2,#new_col=2,#fine_row=48,#fine_col=49,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=2,#new_col=2,#fine_row=48,
+            #fine_col=49,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -380,7 +424,8 @@ messages:
       % The Barking Monster
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOCTAV);
       oDecoration = Create(&OrnamentalObject,#type=OO_QORMAS_TREE_BIG);
-      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=5,#fine_row=51,#fine_col=25,#new_angle=ANGLE_NORTH_WEST);
+      Send(oRoom,@NewHold,#what=oDecoration,#new_row=12,#new_col=5,#fine_row=51,
+            #fine_col=25,#new_angle=ANGLE_NORTH_WEST);
       plDecorations = Cons(oDecoration,plDecorations);
       if pbWreaths
       {
@@ -454,17 +499,20 @@ messages:
       % Tos Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE,#bNE=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
+            #bSE=FALSE,#bNE=FALSE);
       
       % Tos Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_HALL);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE,#bNE=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
+            #bSE=FALSE,#bNE=FALSE);
       
       % Barloque Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_INN);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bNW=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
+            #bSW=FALSE,#bNW=FALSE);
       
       % Barloque Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_HALL);
@@ -474,22 +522,26 @@ messages:
       % Cor Noth Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_INN);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bS=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
+            #bSW=FALSE,#bS=FALSE);
       
       % Cor Noth Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_COR_HALL);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bN=FALSE,#bNW=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
+            #bN=FALSE,#bNW=FALSE);
       
       % Jasper Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_INN);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bS=FALSE,#bSE=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
+            #bS=FALSE,#bSE=FALSE);
       
       % Jasper Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_JAS_HALL);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bS=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
+            #bSW=FALSE,#bS=FALSE);
       
       % Marion Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
@@ -500,13 +552,15 @@ messages:
       }
       else
       {
-         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,#bSE=FALSE,#bNE=FALSE);
+         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bE=FALSE,
+               #bSE=FALSE,#bNE=FALSE);
       }
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),2);
       if (Send(oTree,@GetRow) = 6 AND Send(oTree,@GetCol) = 2)
       {
-         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bSW=FALSE,#bS=FALSE,#bW=FALSE);
+         Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bSW=FALSE,
+               #bS=FALSE,#bW=FALSE);
       }
       else
       {
@@ -516,12 +570,14 @@ messages:
       % Marion Hall
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_MAR_HALL);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bSW=FALSE,#bS=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
+            #bSW=FALSE,#bS=FALSE);
 
       % Kocatan Inn
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
       oTree = Nth(Send(self,@FindTrees,#oRoom=oRoom),1);
-      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,#bN=FALSE,#bNW=FALSE);
+      Send(self,@PlaceGiftsAroundTree,#oTree=oTree,#bW=FALSE,
+            #bN=FALSE,#bNW=FALSE);
       
       % Kocatan Tavern
       oRoom = Send(SYS,@FindRoomByNum,#num=RID_KOC_TAVERN);
@@ -617,7 +673,9 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+                              #fine_row=iNewFineRow,#fine_col=iNewFineCol);
+                              
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -648,7 +706,8 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -674,7 +733,8 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -705,7 +765,8 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -731,7 +792,8 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -762,7 +824,8 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -788,7 +851,8 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
       
@@ -819,9 +883,51 @@ messages:
          {
             oGift = Create(&QormasGift);
          }
-         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,#fine_row=iNewFineRow,#fine_col=iNewFineCol);
+         Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
+               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
          plGifts = Cons(oGift,plGifts);
       }
+      return;
+   }
+   
+   RefillGifts()
+   {
+      local i,j,lGiftsBackup;
+   
+      lGiftsBackup = $;
+   
+      for i in plGifts
+      {
+         if (Send(i,@GetRecipient) <> $)
+         {
+            lGiftsBackup = Cons([Send(i,@GetRow),
+                                 Send(i,@GetCol),
+                                 Send(i,@GetFineRow),
+                                 Send(i,@GetFineCol),
+                                 Send(i,@GetRecipient)],lGiftsBackup);
+         }
+      }
+   
+      Send(self,@RemoveGifts);
+      Send(self,@PlaceGifts);
+   
+      if (lGiftsBackup <> $)
+      {
+         for i in lGiftsBackup
+         {
+            for j in plGifts
+            {
+               if (Nth(i,1) = Send(j,@GetRow))
+                  AND (Nth(i,2) = Send(j,@GetCol))
+                  AND (Nth(i,3) = Send(j,@GetFineRow))
+                  AND (Nth(i,4) = Send(j,@GetFineCol))
+                  {
+                     Send(j,@SetRecipient,#who=Nth(i,5));
+                  }
+            }
+         }
+      }
+   
       return;
    }
    
@@ -873,10 +979,26 @@ messages:
    
    UserLogon(who=$)
    {
-      local i,j,lIP,count,oRecipient,oOwner,bSet;
+      plLogonQueue = Cons(who,plLogonQueue);
+      CreateTimer(self,@OnLogonTimer,500);
+   
+      return;
+   }
+   
+   OnLogonTimer()
+   {
+      Send(self,@ProcessLogon,#who=Nth(plLogonQueue,Length(plLogonQueue)));
+      plLogonQueue = DelListElem(plLogonQueue,
+                                 Nth(plLogonQueue,Length(plLogonQueue)));
       
-      oOwner = $;
-      bSet = FALSE;
+      return;
+   }
+   
+   ProcessLogon(who=$)
+   {
+      local i,j,lIP,count,oGift;
+      
+      oGift = $;
       
       % only 1 claim per user per day
       for i in plGiftClaims
@@ -907,44 +1029,15 @@ messages:
       
       if (pbGifts)
       {
-         % first attempt to randomly select a gift for the user, if that fails
-         % just try to find the first available gift in the list.
-         i = Nth(plGifts,Random(1,Length(plGifts)));
+         oGift = Send(self,@SelectPlayerGift,#who=who);
          
-         oRecipient = Send(i,@GetRecipient);
-         oOwner = Send(i,@GetOwner);
-         if (oOwner <> $)
+         if (oGift = $)
          {
-            if (oRecipient = $ 
-               AND IsClass(oOwner,&Room))
-            {
-               Send(i,@SetRecipient,#who=who);
-               Send(self,@SendPlayerGiftHint,#what=i,#who=who);
-               bSet = TRUE;
-            }
+            return;
          }
-         if (NOT bSet)
-         {
-            for i in plGifts
-            {
-               if IsObject(i)
-               {
-                  oRecipient = Send(i,@GetRecipient);
-                  oOwner = Send(i,@GetOwner);
-                  if (oOwner <> $)
-                  {
-                     if (oRecipient = $ 
-                        AND IsClass(oOwner,&Room) 
-                        AND NOT bSet)
-                     {
-                        Send(i,@SetRecipient,#who=who);
-                        Send(self,@SendPlayerGiftHint,#what=i,#who=who);
-                        bSet = TRUE;
-                     }
-                  }
-               }
-            }
-         }
+      
+         Send(oGift,@SetRecipient,#who=who);
+         Send(self,@SendPlayerGiftHint,#what=oGift,#who=who);
       }
       
       return;
@@ -973,6 +1066,11 @@ messages:
             }
          }
       }
+      if (FindListElem(plLogonQueue,who))
+      {
+         plLogonQueue = DelListElem(plLogonQueue,who);
+      }
+      
       return;
    }
    
@@ -980,12 +1078,11 @@ messages:
    {
       piGameDayCount = piGameDayCount + 1;
       
-      if (piGameDayCount >= piGDRefresh)
+      if (piGameDayCount >= piGiftRefreshDays)
       {
          if (pbGifts)
          {
-            Send(self,@RemoveGifts);
-            Send(self,@PlaceGifts);
+            Send(self,@RefillGifts);
          }
          piGameDayCount = 0;
          plGiftClaims = $;
@@ -995,6 +1092,98 @@ messages:
       return;
    }
    
+   SelectPlayerGift(who=$)
+   {
+      local i,oRoom,iRoomNum,bIsland,rand,lIslandGifts,lMainlandGifts;
+      
+      lIslandGifts = $;
+      lMainlandGifts = $;
+      bIsland = FALSE;
+      oRoom = Send(who,@GetOwner);
+      iRoomNum = Send(oRoom,@GetRoomNum);
+      
+      % 2100 to 2599 is Island/Caves
+      if (iRoomNum >= 2000 AND iRoomNum <=2599)
+      {
+         bIsland = True;
+      }
+
+      % build lists of island and mainland gifts available
+      for i in plGifts
+      {
+         if (Send(i,@GetRecipient) = $)
+         {
+            oRoom = Send(i,@GetOwner);
+            iRoomNum = Send(oRoom,@GetRoomNum);
+            if ((iRoomNum >= 2000) AND (iRoomNum <=2599))
+            {
+               lIslandGifts = Cons(i,lIslandGifts);
+            }
+            else
+            {
+               lMainlandGifts = Cons(i,lMainlandGifts);
+            }
+         }
+      }
+      
+      if (bIsland)
+      {
+         rand = Random(1,Length(lIslandGifts));
+         if (Send(Nth(lIslandGifts,rand),@GetRecipient) = $)
+         {
+            return Nth(lIslandGifts,rand);
+         }
+      }
+      else
+      {
+         rand = Random(1,Length(lMainlandGifts));
+         if (Send(Nth(lMainlandGifts,rand),@GetRecipient) = $)
+         {
+            return Nth(lMainlandGifts,rand);
+         }
+      }
+      
+      % Random Failed, try first gift on the closest present list
+      % then try the non local presents.  Honestly Should not get
+      % to this point unless the local list is empty and we would
+      % be choosing a non-local gift anyway, or both lists are empty
+      % in which case we will be returning $ and the player gets no
+      % gift at all
+      if (bIsland)
+      {
+         if (Length(lIslandGifts) > 0)
+         {
+            return (Nth(lIslandGifts,1));
+         }
+         % no gifts on island, try mainland
+         else
+         {
+            if (Length(lMainlandGifts) > 0)
+            {
+               return (Nth(lMainlandGifts,1));
+            }
+         }
+      }
+      else
+      {
+         if (Length(lMainlandGifts) > 0)
+         {
+            return (Nth(lMainlandGifts,1));
+         }
+         % no gifts on island, try mainland
+         else
+         {
+            if (Length(lIslandGifts) > 0)
+            {
+               return (Nth(lIslandGifts,1));
+            }
+         }
+      }
+      
+      % Give up!, no Gift shosen/
+      return $;
+   }
+   
    SendPlayerGiftHint(what=$,who=$)
    {
       if (what = $ OR who = $)
@@ -1002,7 +1191,8 @@ messages:
          return;
       }
       
-      Send(who,@MsgSendUser,#message_rsc=Qormas_gift_hint,#parm1=Send(Send(what,@GetOwner),@GetName));
+      Send(who,@MsgSendUser,#message_rsc=Qormas_gift_hint,
+                            #parm1=Send(Send(what,@GetOwner),@GetName));
       
       return;
    }
@@ -1038,6 +1228,14 @@ messages:
          if NOT bFound
          {
             plGiftIPCount = Cons([lIp,1],plGiftIPCount);
+         }
+      }
+      
+      if (pbRefillGiftsWhenLow)
+      {
+         if (Length(plGifts) < piMinimumGifts)
+         {
+            Send(self,@RefillGifts);
          }
       }
    

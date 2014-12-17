@@ -466,7 +466,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl0, &decl0dc);
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl1, &decl1dc);
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl2, &decl2dc);
-		
+	
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SLOPESCALEDEPTHBIAS, F2DW(1.0f));
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(0.0f));
 
@@ -1203,18 +1203,22 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		if (error == D3DERR_DEVICELOST)
 		{
+			// Keep checking until we can reset.
 			while (error == D3DERR_DEVICELOST)
 				error = IDirect3DDevice9_TestCooperativeLevel(gpD3DDevice);
 
 			if (error == D3DERR_DEVICENOTRESET)
 			{
+				// error = IDirect3DDevice9_Reset(gpD3DDevice, &gPresentParam);
+				
+				//if (FAILED(error))
+				//	debug(((char*)DXGetErrorString(error)));
+
 				D3DRenderShutDown();
-
-				while (error != D3D_OK)
-					error = IDirect3DDevice9_Reset(gpD3DDevice, &gPresentParam);
-
+				gFrame = 0;
 				D3DRenderInit(hMain);
-				D3DGeometryBuildNew(room, &gWorldPoolStatic);
+				//ResetUserData();
+				//D3DGeometryBuildNew(room, &gWorldPoolStatic);
 			}
 		}
 	}

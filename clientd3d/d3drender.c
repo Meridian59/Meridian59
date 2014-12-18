@@ -532,17 +532,18 @@ HRESULT D3DRenderInit(HWND hWnd)
 void D3DRenderShutDown(void)
 {
 	int	i, j;
+	HRESULT hr;
 
 	if (!gD3DDriverProfile.bSoftwareRenderer)
 	{
 		if (config.bDynamicLighting)
 		{
 			D3DCacheSystemShutdown(&gLMapCacheSystem);
-			D3DCacheSystemShutdown(&gLMapCacheSystemStatic);
+			D3DCacheSystemShutdown(&gLMapCacheSystemStatic);		
 			D3DRenderPoolShutdown(&gLMapPool);
 			D3DRenderPoolShutdown(&gLMapPoolStatic);
 		}
-
+		
 		D3DCacheSystemShutdown(&gObjectCacheSystem);
 		D3DCacheSystemShutdown(&gWorldCacheSystem);
 		D3DCacheSystemShutdown(&gWorldCacheSystemStatic);
@@ -561,13 +562,13 @@ void D3DRenderShutDown(void)
 		/*                          CUSTOM TEXTURES                                */
 		/***************************************************************************/
 		
-		if (gpDLightWhite)			IDirect3DDevice9_Release(gpDLightWhite);
-		if (gpDLightOrange)			IDirect3DDevice9_Release(gpDLightOrange);
-		if (gpBloom)				IDirect3DDevice9_Release(gpBloom);
-		if (gpNoLookThrough)		IDirect3DDevice9_Release(gpNoLookThrough);
-		if (gpBackBufferTexFull)	IDirect3DDevice9_Release(gpBackBufferTexFull);
-		if (gpSunTex)				IDirect3DDevice9_Release(gpSunTex);
-		if (gFont.pTexture)			IDirect3DDevice9_Release(gFont.pTexture);
+		if (gpDLightWhite)			hr = IDirect3DDevice9_Release(gpDLightWhite);
+		if (gpDLightOrange)			hr = IDirect3DDevice9_Release(gpDLightOrange);
+		if (gpBloom)				hr = IDirect3DDevice9_Release(gpBloom);
+		if (gpNoLookThrough)		hr = IDirect3DDevice9_Release(gpNoLookThrough);
+		if (gpBackBufferTexFull)	hr = IDirect3DDevice9_Release(gpBackBufferTexFull);
+		if (gpSunTex)				hr = IDirect3DDevice9_Release(gpSunTex);
+		if (gFont.pTexture)			hr = IDirect3DDevice9_Release(gFont.pTexture);
 
 		gpDLightWhite		= NULL;   
 		gpDLightOrange		= NULL;     
@@ -581,7 +582,7 @@ void D3DRenderShutDown(void)
 		{
 			if (gpBackBufferTex[i])
 			{
-				IDirect3DDevice9_Release(gpBackBufferTex[i]);
+				hr = IDirect3DDevice9_Release(gpBackBufferTex[i]);
 				gpBackBufferTex[i] = NULL;
 			}
 		}
@@ -592,7 +593,7 @@ void D3DRenderShutDown(void)
 			{
 				if (gpSkyboxTextures[j][i])
 				{
-					IDirect3DDevice9_Release(gpSkyboxTextures[j][i]);
+					hr = IDirect3DDevice9_Release(gpSkyboxTextures[j][i]);
 					gpSkyboxTextures[j][i] = NULL;
 				}
 			}
@@ -602,9 +603,9 @@ void D3DRenderShutDown(void)
 		/*                       VERTEX DECLARATIONS                               */
 		/***************************************************************************/
 		
-		if (decl0dc) IDirect3DDevice9_Release(decl0dc);
-		if (decl1dc) IDirect3DDevice9_Release(decl1dc);
-		if (decl2dc) IDirect3DDevice9_Release(decl2dc);
+		if (decl0dc) hr = IDirect3DDevice9_Release(decl0dc);
+		if (decl1dc) hr = IDirect3DDevice9_Release(decl1dc);
+		if (decl2dc) hr = IDirect3DDevice9_Release(decl2dc);
 
 		decl0dc = NULL;
 		decl1dc = NULL;
@@ -613,9 +614,25 @@ void D3DRenderShutDown(void)
 		/***************************************************************************/
 		/*                               DEVICE                                    */
 		/***************************************************************************/
-		
-		if (gpD3DDevice)	IDirect3DDevice9_Release(gpD3DDevice);		
-		if (gpD3D)			IDirect3D9_Release(gpD3D);
+
+		// clean D3D device
+		if (gpD3DDevice)
+		{
+			// check cooperative level
+			hr = IDirect3DDevice9_TestCooperativeLevel(gpD3DDevice);
+			
+			// must reset devices in state DEVICENOTRESET
+			// or the release below will leave a mem-leak
+			if (hr == D3DERR_DEVICENOTRESET)		
+				hr = IDirect3DDevice9_Reset(gpD3DDevice, &gPresentParam);	
+
+			// release device
+			hr = IDirect3DDevice9_Release(gpD3DDevice);
+		}
+
+		// clean Direct3D
+		if (gpD3D)
+			hr = IDirect3D9_Release(gpD3D);
 
 		gpD3DDevice	= NULL;
 		gpD3D		= NULL;
@@ -1284,19 +1301,13 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		while (hr == D3DERR_DEVICELOST)
 			hr = IDirect3DDevice9_TestCooperativeLevel(gpD3DDevice);
 
+		// completely shutdown & restart D3D9
 		if (hr == D3DERR_DEVICENOTRESET)
-		{
-			// error = IDirect3DDevice9_Reset(gpD3DDevice, &gPresentParam);
-				
-			//if (FAILED(error))
-			//	debug(((char*)DXGetErrorString(error)));
-
+		{		
 			D3DRenderShutDown();
 			gFrame = 0;
 			D3DRenderInit(hMain);
 			ResetUserData();
-			
-			//D3DGeometryBuildNew(room, &gWorldPoolStatic);
 		}
 	}
 	

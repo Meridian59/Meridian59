@@ -490,16 +490,13 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 	for (i = 0; i <= 15; i++)
 	{
-		IDirect3DDevice9_CreateTexture(gpD3DDevice, 256, 256, 1,
-			D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-		&gpBackBufferTex[i], NULL);
+		IDirect3DDevice9_CreateTexture(gpD3DDevice, 256, 256, 1, D3DUSAGE_RENDERTARGET, 
+			D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &gpBackBufferTex[i], NULL);
 	}
 
-	IDirect3DDevice9_CreateTexture(gpD3DDevice, 1024, 1024, 1,
-			D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
-                                    &gpBackBufferTexFull, NULL);
+	IDirect3DDevice9_CreateTexture(gpD3DDevice, 1024, 1024, 1, D3DUSAGE_RENDERTARGET, 
+		D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &gpBackBufferTexFull, NULL);
 	
-
 	playerOldPos.x = 0;
 	playerOldPos.y = 0;
 	playerOldPos.z = 0;
@@ -5243,18 +5240,18 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 {
 	D3DCAPS9		d3dCaps;
 	HDC				hDC;
-   HBITMAP			hbmBitmap;
+	HBITMAP			hbmBitmap;
 	DWORD			*pBitmapBits;
-   BITMAPINFO		bmi;
-   long x = 0;
-   long y = 0;
-   TCHAR			str[2] = _T("x");
+	BITMAPINFO		bmi;
+	long			x = 0;
+	long			y = 0;
+	TCHAR			str[2] = _T("x");
 	TCHAR			c;
-   SIZE			size;
+	SIZE			size;
 	D3DLOCKED_RECT	d3dlr;
-   BYTE			*pDstRow;
-   WORD			*pDst16;
-   BYTE			bAlpha;
+	BYTE			*pDstRow;
+	WORD			*pDst16;
+	BYTE			bAlpha;
   
 	pFont->fontHeight = GetFontHeight(hFont);
 //	pFont->flags = flags;
@@ -5279,22 +5276,22 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	if (pFont->pTexture)
 		IDirect3DDevice9_Release(pFont->pTexture);
    
-   IDirect3DDevice9_CreateTexture(
-      gpD3DDevice, pFont->texWidth,
-      pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
-      D3DPOOL_MANAGED, &pFont->pTexture, NULL);
+	IDirect3DDevice9_CreateTexture(
+		gpD3DDevice, pFont->texWidth,
+		pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
+		D3DPOOL_MANAGED, &pFont->pTexture, NULL);
    
-   memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
-   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-   bmi.bmiHeader.biWidth = (int)pFont->texWidth;
-   bmi.bmiHeader.biHeight = -(int)pFont->texHeight;
-   bmi.bmiHeader.biPlanes = 1;
-   bmi.bmiHeader.biCompression = BI_RGB;
-   bmi.bmiHeader.biBitCount = 32;
+	memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
+	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	bmi.bmiHeader.biWidth = (int)pFont->texWidth;
+	bmi.bmiHeader.biHeight = -(int)pFont->texHeight;
+	bmi.bmiHeader.biPlanes = 1;
+	bmi.bmiHeader.biCompression = BI_RGB;
+	bmi.bmiHeader.biBitCount = 32;
    
-   hDC = CreateCompatibleDC(gBitsDC);
-   hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, NULL, 0 );
-   SetMapMode(hDC, MM_TEXT);
+	hDC = CreateCompatibleDC(gBitsDC);
+	hbmBitmap = CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (VOID**)&pBitmapBits, NULL, 0 );
+	SetMapMode(hDC, MM_TEXT);
   
 /*	nHeight = -MulDiv(pFont->fontHeight, (int)(GetDeviceCaps(hDC, LOGPIXELSY)
  * pFont->texScale), 72);
@@ -5310,66 +5307,67 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	SelectObject(hDC, hbmBitmap);
 	SelectObject(hDC, hFont);
    
-   // Set text properties
-   SetTextColor(hDC, RGB(255,255,255));
-   SetBkColor(hDC, 0);
-   SetTextAlign(hDC, TA_TOP);
+	// Set text properties
+	SetTextColor(hDC, RGB(255,255,255));
+	SetBkColor(hDC, 0);
+	SetTextAlign(hDC, TA_TOP);
    
-   for(c = 32; c < 127; c++ )
-   {
-      BOOL	temp;
-      int left_offset, right_offset;
+	for(c = 32; c < 127; c++ )
+	{
+		BOOL	temp;
+		int left_offset, right_offset;
       
-      str[0] = c;
-      GetTextExtentPoint32(hDC, str, 1, &size);
+		str[0] = c;
+		GetTextExtentPoint32(hDC, str, 1, &size);
       
-      if (!GetCharABCWidths(hDC, c, c, &pFont->abc[c-32])) {
-         pFont->abc[c-32].abcA = 0;
-         pFont->abc[c-32].abcB = size.cx;
-         pFont->abc[c-32].abcC = 0;
-      }
+		if (!GetCharABCWidths(hDC, c, c, &pFont->abc[c-32])) 
+		{
+			pFont->abc[c-32].abcA = 0;
+			pFont->abc[c-32].abcB = size.cx;
+			pFont->abc[c-32].abcC = 0;
+		}
       
-      left_offset = abs(pFont->abc[c-32].abcA);
-      right_offset = abs(pFont->abc[c-32].abcC);
-      size.cx = abs(pFont->abc[c-32].abcA) + pFont->abc[c-32].abcB + abs(pFont->abc[c-32].abcC);
+		left_offset = abs(pFont->abc[c-32].abcA);
+		right_offset = abs(pFont->abc[c-32].abcC);
+		size.cx = abs(pFont->abc[c-32].abcA) + pFont->abc[c-32].abcB + abs(pFont->abc[c-32].abcC);
       
-      if (x + size.cx + 1 > pFont->texWidth)
-      {
-         x  = 0;
-         y += size.cy + 1;
-      }
+		if (x + size.cx + 1 > pFont->texWidth)
+		{
+			x  = 0;
+			y += size.cy + 1;
+		}
       
-      temp = ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
+		temp = ExtTextOut(hDC, x + left_offset, y+0, ETO_OPAQUE, NULL, str, 1, NULL);
       
-      pFont->texST[c-32][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
-      pFont->texST[c-32][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
-      pFont->texST[c-32][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
-      pFont->texST[c-32][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
+		pFont->texST[c-32][0].s = ((FLOAT)(x+0)) / pFont->texWidth;
+		pFont->texST[c-32][0].t = ((FLOAT)(y+0)) / pFont->texHeight;
+		pFont->texST[c-32][1].s = ((FLOAT)(x+0 + size.cx)) / pFont->texWidth;
+		pFont->texST[c-32][1].t = ((FLOAT)(y+0 + size.cy)) / pFont->texHeight;
       
-      x += size.cx+1;
-   }
+		x += size.cx+1;
+	}
    
-   IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
+	IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
    
-   pDstRow = (BYTE*)d3dlr.pBits;
+	pDstRow = (BYTE*)d3dlr.pBits;
    
-   for(y = 0; y < pFont->texHeight; y++)
-   {
-      pDst16 = (WORD *)pDstRow;
-      for(x = 0; x < pFont->texWidth; x++)
-      {
-         bAlpha = (BYTE)((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
-         if (bAlpha > 0)
-         {
-            *pDst16++ = (bAlpha << 12) | 0x0fff;
-         }
-         else
-         {
-            *pDst16++ = 0x0000;
-         }
-      }
-      pDstRow += d3dlr.Pitch;
-   }
+	for(y = 0; y < pFont->texHeight; y++)
+	{
+		pDst16 = (WORD *)pDstRow;
+		for(x = 0; x < pFont->texWidth; x++)
+		{
+			bAlpha = (BYTE)((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
+			if (bAlpha > 0)
+			{
+				*pDst16++ = (bAlpha << 12) | 0x0fff;
+			}
+			else
+			{
+				*pDst16++ = 0x0000;
+			}
+		}
+		pDstRow += d3dlr.Pitch;
+	}
    
    IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
    

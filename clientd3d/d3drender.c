@@ -465,8 +465,16 @@ HRESULT D3DRenderInit(HWND hWnd)
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl1, &decl1dc);
 	IDirect3DDevice9_CreateVertexDeclaration(gpD3DDevice, decl2, &decl2dc);
 	
+	/***************************************************************************/
+	/*                    DEFAULT Z-BIAS/DEPTHBIAS                             */
+	/***************************************************************************/
+
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SLOPESCALEDEPTHBIAS, F2DW(1.0f));
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW(0.0f));
+
+	/***************************************************************************/
+	/*                    VERTEX DECLARATIONS                                  */
+	/***************************************************************************/
 
 	D3DRenderLMapsBuild();
 	ReleaseCapture();
@@ -485,7 +493,7 @@ HRESULT D3DRenderInit(HWND hWnd)
 	}
 
 	/***************************************************************************/
-	/*                  FRAMEBUFFER TEXTURES                                   */
+	/*                       FRAMEBUFFER TEXTURES                              */
 	/***************************************************************************/
 
 	for (i = 0; i <= 15; i++)
@@ -497,6 +505,17 @@ HRESULT D3DRenderInit(HWND hWnd)
 	IDirect3DDevice9_CreateTexture(gpD3DDevice, 1024, 1024, 1, D3DUSAGE_RENDERTARGET, 
 		D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &gpBackBufferTexFull, NULL);
 	
+	/***************************************************************************/
+	/*                                FONT                                     */
+	/***************************************************************************/
+
+	// This will call D3DRenderFontInit to make sure the font texture is created
+	GraphicsResetFont();
+
+	/***************************************************************************/
+	/*                                MISC                                     */
+	/***************************************************************************/
+
 	playerOldPos.x = 0;
 	playerOldPos.y = 0;
 	playerOldPos.z = 0;
@@ -1275,7 +1294,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			D3DRenderShutDown();
 			gFrame = 0;
 			D3DRenderInit(hMain);
-			//ResetUserData();
+			ResetUserData();
+			
 			//D3DGeometryBuildNew(room, &gWorldPoolStatic);
 		}
 	}
@@ -5264,7 +5284,8 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	BYTE			*pDstRow;
 	WORD			*pDst16;
 	BYTE			bAlpha;
-  
+	HRESULT			hr;
+
 	pFont->fontHeight = GetFontHeight(hFont);
 //	pFont->flags = flags;
 	pFont->flags = 0;
@@ -5288,11 +5309,11 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 	if (pFont->pTexture)
 		IDirect3DDevice9_Release(pFont->pTexture);
    
-	IDirect3DDevice9_CreateTexture(
+	hr = IDirect3DDevice9_CreateTexture(
 		gpD3DDevice, pFont->texWidth,
 		pFont->texHeight, 1, 0, D3DFMT_A4R4G4B4,
 		D3DPOOL_MANAGED, &pFont->pTexture, NULL);
-   
+
 	memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bmi.bmiHeader.biWidth = (int)pFont->texWidth;
@@ -5359,32 +5380,35 @@ void D3DRenderFontInit(font_3d *pFont, HFONT hFont)
 		x += size.cx+1;
 	}
    
-	IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
-   
-	pDstRow = (BYTE*)d3dlr.pBits;
-   
-	for(y = 0; y < pFont->texHeight; y++)
+	hr = IDirect3DTexture9_LockRect(pFont->pTexture, 0, &d3dlr, 0, 0);
+
+	if (SUCCEEDED(hr))
 	{
-		pDst16 = (WORD *)pDstRow;
-		for(x = 0; x < pFont->texWidth; x++)
+		pDstRow = (BYTE*)d3dlr.pBits;
+   
+		for(y = 0; y < pFont->texHeight; y++)
 		{
-			bAlpha = (BYTE)((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
-			if (bAlpha > 0)
+			pDst16 = (WORD *)pDstRow;
+			for(x = 0; x < pFont->texWidth; x++)
 			{
-				*pDst16++ = (bAlpha << 12) | 0x0fff;
+				bAlpha = (BYTE)((pBitmapBits[pFont->texWidth * y + x] & 0xff) >> 4);
+				if (bAlpha > 0)
+				{
+					*pDst16++ = (bAlpha << 12) | 0x0fff;
+				}
+				else
+				{
+					*pDst16++ = 0x0000;
+				}
 			}
-			else
-			{
-				*pDst16++ = 0x0000;
-			}
+			pDstRow += d3dlr.Pitch;
 		}
-		pDstRow += d3dlr.Pitch;
+   
+		IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
 	}
-   
-   IDirect3DTexture9_UnlockRect(pFont->pTexture, 0);
-   
-   DeleteObject(hbmBitmap);
-   DeleteDC(hDC);
+	
+	DeleteObject(hbmBitmap);
+	DeleteDC(hDC);
 }
 
 void D3DRenderSkyboxDraw(d3d_render_pool_new *pPool, int angleHeading, int anglePitch)

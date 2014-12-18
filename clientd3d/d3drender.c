@@ -555,7 +555,7 @@ void D3DRenderShutDown(void)
 		gpDLightOrange		= NULL;     
 		gpBloom				= NULL;
 		gpNoLookThrough		= NULL;
-		gpBackBufferTexFull = NULL;
+		gpBackBufferTexFull	= NULL;
 		gpSunTex			= NULL;
 		gFont.pTexture		= NULL;
 		
@@ -587,7 +587,7 @@ void D3DRenderShutDown(void)
 		if (gpD3DDevice)	IDirect3DDevice9_Release(gpD3DDevice);		
 		if (gpD3D)			IDirect3D9_Release(gpD3D);
 
-		gpD3DDevice = NULL;
+		gpD3DDevice	= NULL;
 		gpD3D		= NULL;
 	}
 }
@@ -607,6 +607,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	Bool		draw_particles = TRUE;
 	room_contents_node	*pRNode;
 	
+	/***************************************************************************/
+	/*                             PREPARATIONS                                */
+	/***************************************************************************/
+
 	// If blind, don't draw anything
 	if (effects.blind)
 	{
@@ -761,7 +765,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 
 	/***************************************************************************/
-	/*                               WORLD                                     */
+	/*                              WORLD                                      */
 	/***************************************************************************/
 	
 	if (draw_world)
@@ -969,13 +973,15 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	}
 
 	/***************************************************************************/
-	/*                           OBJECTS + NAMES                               */
+	/*                   NAMES / OBJECTS / PLAYEROVERLAYS                      */
 	/***************************************************************************/
 	
 	if (draw_objects)
 	{
 		timeObjects = timeGetTime();
-
+		
+		/************************** NAMES *********************************/
+		
 		if (config.draw_names)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -999,6 +1005,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			IDirect3DDevice9_SetSamplerState(gpD3DDevice, 0, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
 		}
 
+		/********************** NORMAL OBJECTS *****************************/
+		
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
@@ -1017,13 +1025,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
 
-		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0],
-			256, 256);
+		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0], 256, 256);
 
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
 		IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &proj);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, TRUE);
-      
+
+		/******************** INVISIBLE OBJECTS *****************************/
+
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
 
@@ -1035,8 +1044,12 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
 
+		/********************** PLAYER-OVERLAYS ****************************/
+
+		// get player node
 		pRNode = GetRoomObjectById(player.id);
 
+		// player is invisible
 		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
@@ -1066,6 +1079,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		timeObjects = timeGetTime() - timeObjects;
 	}
 
+	/***************************************************************************/
+	/*                        POST OVERLAYS                                    */
+	/***************************************************************************/
+	
 	D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 	D3DRENDER_SET_ALPHA_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, D3DTA_CURRENT, D3DTA_TEXTURE);
 
@@ -1183,7 +1200,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, TRUE);
 	}
 
-	// view elements
+	/***************************************************************************/
+	/*                             VIEW ELEMENTS                               */
+	/***************************************************************************/
+	
 	if (1)
 	{
 		D3DRENDER_SET_COLOR_STAGE(gpD3DDevice, 1, D3DTOP_DISABLE, 0, 0);

@@ -580,6 +580,18 @@ void D3DRenderShutDown(void)
 		}
 
 		/***************************************************************************/
+		/*                       VERTEX DECLARATIONS                               */
+		/***************************************************************************/
+		
+		if (decl0dc) IDirect3DDevice9_Release(decl0dc);
+		if (decl1dc) IDirect3DDevice9_Release(decl1dc);
+		if (decl2dc) IDirect3DDevice9_Release(decl2dc);
+
+		decl0dc = NULL;
+		decl1dc = NULL;
+		decl2dc = NULL;
+
+		/***************************************************************************/
 		/*                               DEVICE                                    */
 		/***************************************************************************/
 		

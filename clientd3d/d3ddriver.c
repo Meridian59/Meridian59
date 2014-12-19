@@ -86,7 +86,7 @@ Bool D3DDriverProfileInit(void)
 
 	memset(&gPresentParam, 0, sizeof(gPresentParam));
 	gPresentParam.Windowed = TRUE;
-	gPresentParam.SwapEffect = D3DSWAPEFFECT_COPY;
+	gPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	gPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	gPresentParam.BackBufferWidth = gScreenWidth;
 	gPresentParam.BackBufferHeight = gScreenHeight;
@@ -94,7 +94,17 @@ Bool D3DDriverProfileInit(void)
 	gPresentParam.BackBufferCount = 1;
 	gPresentParam.EnableAutoDepthStencil = TRUE;
 	gPresentParam.AutoDepthStencilFormat = D3DFMT_D24S8;
-	gPresentParam.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+	//gPresentParam.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+
+	// enabling this will enable AA but will kill effects like invis right now
+	/*DWORD qual = 0;
+	if (SUCCEEDED(IDirect3D9_CheckDeviceMultiSampleType(gpD3D, D3DADAPTER_DEFAULT, 
+					D3DDEVTYPE_HAL, D3DFMT_A8R8G8B8, FALSE, 
+					D3DMULTISAMPLE_8_SAMPLES, &qual)))
+	{
+		gPresentParam.MultiSampleType = D3DMULTISAMPLE_8_SAMPLES;
+		gPresentParam.MultiSampleQuality = qual - 1;
+	}*/
 
 	// first try hardware vertex processing
 	error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,

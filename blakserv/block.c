@@ -120,7 +120,7 @@ bool CheckBlockList(struct in_addr* piaPeer)
  *
  */
 
-void BuildBannedIPBlocks( char *filename )
+void BuildBannedIPBlocks( const char *filename )
 {
   
   FILE*fp;

@@ -31,7 +31,7 @@ enum
 };
 
 void UpdateSecurityRedbook(void);
-char* GetSecurityRedbook(void);
+const char* GetSecurityRedbook(void);
 int GetSecurityRedbookID(void);
 
 #endif

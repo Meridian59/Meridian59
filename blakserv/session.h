@@ -112,7 +112,7 @@ typedef struct
    unsigned int seeds[SEED_COUNT]; /* for security in game mode */
    Bool seeds_hacked;
    unsigned int secure_token;
-   char* sliding_token;
+   const char* sliding_token;
 
    HANDLE muxReceive;
    /* this protects the list of received data: receive_list, and receive_index */

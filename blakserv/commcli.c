@@ -140,7 +140,7 @@ void AddStringToPacket(int int_len,const char *ptr)
 void SecurePacketBufferList(int session_id, buffer_node *bl)
 {
    session_node *s = GetSessionByID(session_id);
-   char* pRedbook;
+   const char* pRedbook;
 
    if (!session_id || !s || !s->account || !s->account->account_id ||
        s->conn.type == CONN_CONSOLE)

@@ -215,7 +215,7 @@ void SaveEachTimer(timer_node *t)
 {
 	int save_time;
 	object_node *o;
-	char *s;
+	const char *s;
 	
 	o = GetObjectByID(t->object_id);
 	if (o == NULL)

@@ -18,10 +18,10 @@
 
 typedef struct
 {
-	char *name;
-	char *password;
+	const char *name;
+	const char *password;
 	int type;
-	char *game_name;
+	const char *game_name;
 } bi_account;
 
 bi_account bi_accounts[] =

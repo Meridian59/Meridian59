@@ -771,7 +771,7 @@ void UpdateSecurityRedbook()
    }
 }
 
-char* GetSecurityRedbook()
+const char* GetSecurityRedbook()
 {
    if (!_redbookstring)
       return "BLAKSTON: Greenwich Q Zjiria";

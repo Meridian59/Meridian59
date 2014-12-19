@@ -43,6 +43,8 @@ properties:
    piBaseLight = LIGHT_NICE
    piOutside_factor = 3
 
+   pbSnowGroundTexture = TRUE
+
    prMusic = barhall_music
 
 messages:
@@ -97,6 +99,51 @@ messages:
       propagate;
    }
 
+   StartSnow(bOnGround=TRUE)
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      if bOnGround
+      {
+         if pbSnowGroundTexture
+         {
+            % Just need to change the water outside the windows.
+            Send(self,@ChangeTexture,#id=10,#new_texture=61017,
+                  #flags=CTF_FLOOR);
+            % Stop water scroll effect and remove depth.
+            Send(self,@SetSectorFlags,#sector=10,#depth=SF_DEPTH0,
+                  #scrollSpeed=SCROLL_NONE);
+         }
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSnow(override=FALSE)
+   "Use override if rooms have manually placed textures."
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
+         Send(self,@WeatherChanged);
+      }
+
+      if pbSnowGroundTexture
+         OR override
+      {
+         Send(self,@RemoveTextureChange,#id=10);
+         Send(self,@RemoveSectorFlagChange,#id=10);
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

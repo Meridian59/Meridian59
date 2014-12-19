@@ -38,6 +38,8 @@ properties:
    piBaseLight = LIGHT_NICE
    piOutside_factor = 3
 
+   pbSnowGroundTexture = TRUE
+
    prMusic = koctavern_music
 
 messages:
@@ -105,6 +107,47 @@ messages:
              #new_angle=ANGLE_EAST);
 
       propagate;
+   }
+
+   StartSnow(bOnGround=TRUE)
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      if bOnGround
+      {
+         if pbSnowGroundTexture
+         {
+            % We just want to show snow in the outside area.
+            Send(self,@ChangeTexture,#id=1,#new_texture=61015,#flags=CTF_FLOOR);
+         }
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSnow(override=FALSE)
+   "Use override if rooms have manually placed textures."
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SNOWING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SNOWING,#value=FALSE);
+         Send(self,@WeatherChanged);
+      }
+
+      if pbSnowGroundTexture
+         OR override
+      {
+         Send(self,@RemoveTextureChange,#id=1);
+      }
+
+      return;
    }
 
 end

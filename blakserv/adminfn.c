@@ -1313,7 +1313,7 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	kod_statistics *kstat;
 	object_node *o;
 	class_node *c;
-	char *m;
+	const char *m;
 	int now = GetTime();
 	
 	aprintf("System Status -----------------------------\n");
@@ -3920,7 +3920,7 @@ void AdminSendClass(int session_id,admin_parm_type parms[],
 	class_node *c;
 	int executed;
 	
-	char *class_name,*message_name;
+	const char *class_name,*message_name;
 	class_name = (char *)parms[0];
 	message_name = (char *)parms[1];
 	
@@ -3965,7 +3965,7 @@ void AdminTraceOnMessage(int session_id,admin_parm_type parms[],
 	int message_id;
 	message_node *m;
 	
-	char *class_name,*message_name;
+	const char *class_name,*message_name;
 	class_name = (char *)parms[0];
 	message_name = (char *)parms[1];
 	
@@ -4002,8 +4002,8 @@ void AdminTraceOffMessage(int session_id,admin_parm_type parms[],
 	class_node *c;
 	int message_id;
 	message_node *m;
-	
-	char *class_name,*message_name;
+   
+	const char *class_name,*message_name;
 	class_name = (char *)parms[0];
 	message_name = (char *)parms[1];
 	

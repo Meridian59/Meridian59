@@ -26,7 +26,7 @@ void DeleteAllBlocks(void);
 
 bool CheckBlockList(struct in_addr* piaPeer);
 
-void BuildBannedIPBlocks( char *filename );
+void BuildBannedIPBlocks( const char *filename );
 
 
 #endif // BLOCK_H

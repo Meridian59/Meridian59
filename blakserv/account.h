@@ -33,7 +33,7 @@ account_node * GetConsoleAccount(void);
 int GetNextAccountID(void);
 int GetUsedGuestAccounts(void);
 Bool CreateAccount(char *name,char *password,int type,int *account_id);
-int CreateAccountSecurePassword(char *name,char *password,int type);
+int CreateAccountSecurePassword(const char *name,const char *password,int type);
 int RecreateAccountSecurePassword(int account_id,char *name,char *password,int type);
 void LoadAccount(int account_id,char *name,char *password,int type,int last_login_time,
 		 int suspend_time, int credits);
@@ -43,7 +43,7 @@ void SetAccountPassword(account_node *a,char *password);
 void SetAccountPasswordAlreadyEncrypted(account_node *a,char *password);
 void SetNextAccountID(int accountNum);
 account_node * GetAccountByID(int account_id);
-account_node * GetAccountByName(char *name);
+account_node * GetAccountByName(const char *name);
 account_node * AccountLoginByName(char *name);
 void AccountLogoff(account_node *a);
 void DoneLoadAccounts(void);

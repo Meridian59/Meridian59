@@ -196,7 +196,7 @@ Bool IsInterpreting(void)
 	return bkod != NULL;
 }
 
-void TraceInfo(int session_id,char *class_name,int message_id,int num_parms,
+void TraceInfo(int session_id,const char *class_name,int message_id,int num_parms,
 			   parm_node parms[])
 {
 	int i;
@@ -1144,7 +1144,7 @@ char *BlakodStackInfo()
 			else
 			{
 				char *bp;
-				char *class_name;
+				const char *class_name;
 				char buf2[200];
 				char parms[800];
 				int j;

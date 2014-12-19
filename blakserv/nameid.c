@@ -79,7 +79,7 @@ int GetIDByName(const char *name)
    return INVALID_ID;
 }
 
-char * GetNameByID(int id)
+const char * GetNameByID(int id)
 {
    nameid_node *nid;
 

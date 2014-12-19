@@ -141,15 +141,15 @@ Bool CreateAccount(char *name,char *password,int type,int *account_id)
 	return True;
 }
 
-int CreateAccountSecurePassword(char *name,char *password,int type)
+int CreateAccountSecurePassword(const char *name,const char *password,int type)
 {
-   char buf[100],*ptr;
+   char buf[100];
    int index;
    account_node *a;
    unsigned int ch;
 
    index = 0;
-   ptr = password;
+   const char *ptr = password;
    while (sscanf(ptr,"%02x",&ch) == 1)
    {
       buf[index++] = ch;
@@ -409,7 +409,7 @@ account_node * GetAccountByID(int account_id)
    return NULL;
 }
 
-account_node * GetAccountByName(char *name)
+account_node * GetAccountByName(const char *name)
 {
    account_node *a;
 

@@ -2920,21 +2920,13 @@ messages:
    {
       ptHealth = $;
 
-      % Only gain health if we've moved since entry.
-      if (piFlags & PFLAG_MOVED_SINCE_ENTRY) 
+      if piHealth < piMax_Health
       {
-         if piHealth < piMax_Health
-         {
-            Send(self,@GainHealth,#amount=1);
-         }
-         else
-         {
-            Send(self,@LoseHealth,#amount=1,#decay=TRUE);
-         }
+         Send(self,@GainHealth,#amount=1);
       }
       else
       {
-         Send(self,@NewHealth);
+         Send(self,@LoseHealth,#amount=1,#decay=TRUE);
       }
 
       return;

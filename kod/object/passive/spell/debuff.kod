@@ -65,27 +65,27 @@ messages:
 
    CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
-      local target, i;
+      local oTarget, i;
 
       if Length(lTargets) <> 1
       {
          return FALSE;
       }
 
-      target = First(lTargets);
-      if (NOT IsClass(target,&Battler)) OR IsClass(target,&Revenant)
-         OR (IsClass(self,&Seduce) AND NOT IsClass(target,&Monster))
+      oTarget = First(lTargets);
+      if NOT IsClass(oTarget,&Battler)
+         OR IsClass(oTarget,&Revenant)
       {
          if NOT bItemCast
          {
             Send(who,@MsgSendUser,#message_rsc=spell_bad_target,#parm1=vrName,
-                 #parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+                  #parm2=Send(oTarget,@GetDef),#parm3=Send(oTarget,@GetName));
          }
 
          return FALSE;
       }
 
-      if target = who
+      if oTarget = who
       {
          if NOT bItemCast
          {
@@ -96,12 +96,12 @@ messages:
       }
 
       % Check for enchantment already applied
-      if Send(target,@IsEnchanted,#what=self)
+      if Send(oTarget,@IsEnchanted,#what=self)
       {
          if NOT bItemCast
          {
             if IsClass(self,&Seduce)
-               AND NOT (Send(target,@GetEnchantedState,#what=self) = who)
+               AND NOT (Send(oTarget,@GetEnchantedState,#what=self) = who)
             {
                propagate;
             }
@@ -109,12 +109,14 @@ messages:
             if IsClass(self,&ForgetSpell)
             {
                Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
-                     #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+                     #parm1=Send(oTarget,@GetDef),
+                     #parm2=Send(oTarget,@GetName));
             }
             else
             {
                Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
-                     #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+                     #parm1=Send(oTarget,@GetCapDef),
+                     #parm2=Send(oTarget,@GetName));
             }
          }
 

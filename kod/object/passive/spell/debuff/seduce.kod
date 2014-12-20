@@ -82,6 +82,18 @@ messages:
       local oMaster, oTarget;
 
       oTarget = First(lTargets);
+
+      if NOT IsClass(oTarget,&Monster)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,#parm1=vrName,
+                  #parm2=Send(oTarget,@GetDef),#parm3=Send(oTarget,@GetName));
+         }
+
+         return FALSE;
+      }
+
       oMaster = Send(oTarget,@GetMaster);
 
       % We check here if we're charming a minion of another player

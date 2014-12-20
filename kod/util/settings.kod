@@ -195,10 +195,10 @@ properties:
    piDamageScaling = FALSE
    
    % A battler's chance to hit when offense equals defense in per MILLE
-   piEqualChanceToHit = 600
+   piEqualChanceToHit = 500
 
    % This amount is added to a battler's offense and defense and serves as a baseline for calculation.
-   piBaseRating = 1000
+   piBaseRating = 0
 
 messages:
 

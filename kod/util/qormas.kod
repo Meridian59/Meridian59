@@ -53,7 +53,7 @@ properties:
    plLogonQueue = $
    
    % Automatically refill gifts when low?
-   pbRefillGiftsWhenLow=FALSE
+   pbRefillGiftsWhenLow = TRUE
    
    % Present amount before refill is triggered
    piMinimumGifts = 30
@@ -1091,24 +1091,30 @@ messages:
       
       return;
    }
-   
+
    SelectPlayerGift(who=$)
    {
       local i,oRoom,iRoomNum,bIsland,rand,lIslandGifts,lMainlandGifts;
-      
+
       lIslandGifts = $;
       lMainlandGifts = $;
       bIsland = FALSE;
       oRoom = Send(who,@GetOwner);
+
+      if oRoom = $
+      {
+         return $;
+      }
+
       iRoomNum = Send(oRoom,@GetRoomNum);
-      
+
       % 2100 to 2599 is Island/Caves
       if (iRoomNum >= 2000 AND iRoomNum <=2599)
       {
          bIsland = True;
       }
 
-      % build lists of island and mainland gifts available
+      % Build lists of island and mainland gifts available.
       for i in plGifts
       {
          if (Send(i,@GetRecipient) = $)
@@ -1125,7 +1131,17 @@ messages:
             }
          }
       }
-      
+
+      if (bIsland AND lIslandGifts = $)
+         OR (NOT bIsland AND lMainlandGifts = $)
+      {
+         % No unassigned presents available.
+         Debug("No more Qormas presents available for players! Increase total amount",
+               " or set pbRefillGiftsWhenLow to TRUE if it is FALSE.");
+
+         return $;
+      }
+
       if (bIsland)
       {
          rand = Random(1,Length(lIslandGifts));
@@ -1142,7 +1158,7 @@ messages:
             return Nth(lMainlandGifts,rand);
          }
       }
-      
+
       % Random Failed, try first gift on the closest present list
       % then try the non local presents.  Honestly Should not get
       % to this point unless the local list is empty and we would
@@ -1179,11 +1195,11 @@ messages:
             }
          }
       }
-      
+
       % Give up!, no Gift shosen/
       return $;
    }
-   
+
    SendPlayerGiftHint(what=$,who=$)
    {
       if (what = $ OR who = $)

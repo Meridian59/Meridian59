@@ -22,7 +22,8 @@ resources:
       "Inherently having holy blessings, this hammer is even more powerful "
       "than the standard variation."
 
-   spirithammer_expires = "Your spiritual hammer disappears in a puff of smoke!"
+   spirithammer_expires = \
+      "Your spiritual hammer disappears in a puff of smoke!"
 
    spirithammer_window_overlay_rsc = povhamr.bgf
    spirithammer_player_overlay = hamrov.bgf
@@ -60,14 +61,14 @@ properties:
 
 messages:
 
-   Constructor(ilongevity=$, iToHitBonus=$)
+   Constructor(iLongevity=$, iToHitBonus=$)
    {
       local oWeapAtt;
 
-      if ilongevity = $
+      if iLongevity = $
       {
          % Default is 1 hour.
-         ilongevity = 3600000;
+         iLongevity = 3600000;
       }
 
       if iToHitBonus <> $
@@ -75,9 +76,9 @@ messages:
          piHitBonus = iToHitBonus;
       }
 
-      ptLongevity = CreateTimer(self,@WeaponExpires,ilongevity);
- 
-      send(self,@SetSpellFlag,#flag=ATCK_SPELL_HOLY,#value=TRUE);
+      ptLongevity = CreateTimer(self,@WeaponExpires,iLongevity);
+
+      Send(self,@SetSpellFlag,#flag=ATCK_SPELL_HOLY,#value=TRUE);
 
       propagate;
    }
@@ -86,13 +87,13 @@ messages:
    {
       ptLongevity = $;
       
-      if isclass(poOwner,&Player)
+      if IsClass(poOwner,&Player)
       {
-         send(poOwner,@MsgSendUser,#message_rsc=spirithammer_expires);
+         Send(poOwner,@MsgSendUser,#message_rsc=spirithammer_expires);
       }
-      
-      send(self,@Delete);
-      
+
+      Send(self,@Delete);
+
       return;
    }
 
@@ -103,7 +104,7 @@ messages:
          DeleteTimer(ptLongevity);
          ptLongevity = $;
       }
-      
+
       propagate;
    }
 
@@ -113,32 +114,11 @@ messages:
       return;
    }
 
-   ModifyHitRoll(hit_roll = 0, target = $)
-   {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
-
-      iBaseHit = hit_roll;
-
-      iBaseHit = iBaseHit + piHitBonus;
-
-      for i in plItem_Attributes
-      {
-         oWeapAtt = send(SYS,@FindItemAttByNum, #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
-         {
-            iBaseHit = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
-	                         #target=target,#lData=i);
-         }
-      }     
-
-      return iBaseHit;
-   }
-
    CanEnchant()
    {
       return FALSE;
    }
-   
+
    CanBeGivenToNPC()
    {
       return FALSE;
@@ -164,7 +144,6 @@ messages:
       % It's mystically created and temporary.  No penalties.
       return 0;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

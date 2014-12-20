@@ -728,6 +728,8 @@ properties:
    piXlat = $
    piGroup = 1
 
+   piType = 0
+   
 messages:
 
    Constructor(type=0, rName=$, rIcon=$, rDesc=$)
@@ -749,10 +751,17 @@ messages:
          vrIcon = rIcon;
          vrDesc = rDesc;
       }
+      
+      piType = type;
 
       propagate;
    }
 
+   GetType()
+   {
+      return piType;
+   }
+   
    GetObjectFlags()
    {
       local f;
@@ -1265,6 +1274,8 @@ messages:
       }
 
       post(self,@DuplicateCheck);
+      
+      piType = type;
 
       return;
    }
@@ -1311,7 +1322,7 @@ messages:
    {
       local oDuplicate;
 
-      oDuplicate = create(&OrnamentalObject,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
+      oDuplicate = create(&OrnamentalObject,#type=piType,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
       if send(self,@GetObjectFlags) & HANGING_YES
       {
          send(oDuplicate,@SetHanging,#value=TRUE);

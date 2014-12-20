@@ -27,6 +27,29 @@ resources:
       " land."
    QormasGift_desc_append1 = " The tag reads:\n\nTo: "
    QormasGift_desc_append2 = "\nFrom: Qor The Vile"
+   
+   Qormas_gift_msg = "You tear away the wrapping paper to reveal %s"
+   Qormas_gift1_msg = "a Rose!"
+   Qormas_gift2_msg = "twenty Inky-Cap Mushrooms!"
+   Qormas_gift3_msg = "three Scrolls of Dispelling!"
+   Qormas_gift4_msg = "three Brown Potions!"
+   Qormas_gift5_msg = "three Potions of Deliverance!"
+   Qormas_gift6_msg = "a Bonk Stick!"
+   Qormas_gift7_msg = "three Wands of Charming!"
+   Qormas_gift8_msg = "twenty Orc Teeth!"
+   Qormas_gift9_msg = "a Shrunken Head!"
+   
+   Qormas_gift10_msg = "a Cow Mask!"
+   Qormas_gift11_msg = "a Daemon Skeleton Mask!"
+   Qormas_gift12_msg = "a Mummy Mask!"
+   Qormas_gift13_msg = "a Fey Mask!"
+   Qormas_gift14_msg = "a Shrunken-Head Mask!"
+   Qormas_gift15_msg = "a Xeochicatl Mask!"
+   Qormas_gift16_msg = "a Skull Mask!"
+   Qormas_gift17_msg = "a Rat Mask!"
+   Qormas_gift18_msg = "an Ant Mask!"
+   Qormas_gift19_msg = "a Troll Mask!"
+   Qormas_gift20_msg = "a Kriipa Mask!"
 
 classvars:
    
@@ -40,18 +63,61 @@ classvars:
 
 
 properties:  
-   % viObject_Flags = GETTABLE_NO
    vrIcon = QormasGift_icon_rsc
+   
    poRecipient = $
 
+   % individual gift payload toggles
+   pbRose = TRUE
+   pbBonkStick = TRUE
+   pbSeduceWand = TRUE
+   pbShrunkenHead = TRUE
+   pbCowMask = TRUE
+   pbDaemonMask = TRUE
+   pbMummyMask = TRUE
+   pbFeyMask = TRUE
+   pbShrunkenHeadMask = TRUE
+   pbXeoMask = TRUE
+   pbSkullMask = TRUE
+   pbRatMask = TRUE
+   pbAntMask = TRUE
+   pbTrollMask = TRUE
+   pbKriipaMask = TRUE
+
+   % Set this in qormas kod, leave this one alone
+   pbMaskPossible = FALSE   
+   
 messages:   
 
-   Constructor()
+   Constructor(mask=FALSE)
    {
       Send(self,@SetRandomPaper);
+      
+      if (mask)
+      {
+         pbMaskPossible = TRUE;
+      }
+      
       propagate;
    }
 
+   DestroyDisposable()
+   {
+      return;
+   }
+   
+   GetRecipient()
+   {
+      return poRecipient;
+   }
+   
+   SetRecipient(who=$)
+   {
+      poRecipient = who;
+      
+      return;
+   }
+   
    SetRandomPaper()
    {
       local iRandom;
@@ -85,49 +151,232 @@ messages:
 
    NewApplied(what = $)
    {
-      local rand;
+      local rand,bSet,oPayload;
       
-      rand = Random(1,8);
-      
-      if rand = 1
+      bSet = FALSE;
+
+      While (NOT bSet)
       {
-         send(poOwner,@NewHold,#what=Create(&Scimitar));
-      }
-      if rand = 2
-      {
-         send(poOwner,@NewHold,#what=Create(&InkyCap,#number=10));
-      }
-      if rand = 3
-      {
-         send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
-         send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
-         send(poOwner,@NewHold,#what=Create(&DispellIllusionScroll));
-      }
-      if rand = 4
-      {
-         send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
-         send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
-         send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
-      }
-      if rand = 5
-      {
-         send(poOwner,@NewHold,#what=Create(&RescuePotion));
-         send(poOwner,@NewHold,#what=Create(&RescuePotion));
-         send(poOwner,@NewHold,#what=Create(&RescuePotion));
-      }
-      if rand = 6
-      {
-         send(poOwner,@NewHold,#what=Create(&BonkStick));
-      }
-      if rand = 7
-      {
-         send(poOwner,@NewHold,#what=Create(&SeduceWand));
-         send(poOwner,@NewHold,#what=Create(&SeduceWand));
-         send(poOwner,@NewHold,#what=Create(&SeduceWand));
-      }
-      if rand = 8
-      {
-         send(poOwner,@NewHold,#what=Create(&OrcTooth,#number=10));
+         if (pbMaskPossible)
+         {
+            rand = Random(1,60);
+         }
+         else
+         {
+            rand = Random(1,49);
+         }
+         
+         if rand = 1
+         {
+            if (pbRose)
+            {
+               send(poOwner,@NewHold,#what=Create(&Rose));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift1_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand >= 2 AND rand <= 12
+         {
+            send(poOwner,@NewHold,#what=Create(&InkyCap,#number=20));
+            Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                      #parm1=Qormas_gift2_msg);
+            bSet = TRUE;
+         }
+         if rand >= 13 AND rand <= 18
+         {
+            oPayload = Create(&DispellIllusionScroll);
+            Send(oPayload,@RevealHiddenAttributes);
+            send(poOwner,@NewHold,#what=oPayload);
+            oPayload = Create(&DispellIllusionScroll);
+            Send(oPayload,@RevealHiddenAttributes);
+            send(poOwner,@NewHold,#what=oPayload);
+            oPayload = Create(&DispellIllusionScroll);
+            Send(oPayload,@RevealHiddenAttributes);
+            send(poOwner,@NewHold,#what=oPayload);
+            Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                      #parm1=Qormas_gift3_msg);
+            bSet = TRUE;
+         }
+         if rand >= 19 AND rand <= 24
+         {
+            send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+            send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));
+            send(poOwner,@NewHold,#what=Create(&IllusionaryFormPotion));            
+            Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                      #parm1=Qormas_gift4_msg);
+            bSet = TRUE;
+         }
+         if rand >= 25 AND rand <= 30
+         {
+            oPayload = Create(&RescuePotion);
+            Send(oPayload,@RevealHiddenAttributes);
+            send(poOwner,@NewHold,#what=oPayload);
+            oPayload = Create(&RescuePotion);
+            Send(oPayload,@RevealHiddenAttributes);
+            send(poOwner,@NewHold,#what=oPayload);
+            oPayload = Create(&RescuePotion);
+            Send(oPayload,@RevealHiddenAttributes);
+            send(poOwner,@NewHold,#what=oPayload);
+            Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                      #parm1=Qormas_gift5_msg);
+            bSet = TRUE;
+         }
+         if rand >= 31 AND rand <= 36
+         {
+            if (pbBonkStick)
+            {
+               send(poOwner,@NewHold,#what=Create(&BonkStick));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift6_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand >= 37 AND rand <= 42
+         {
+            if (pbSeduceWand)
+            {
+               oPayload=Create(&SeduceWand);
+               Send(oPayload,@RevealHiddenAttributes);
+               send(poOwner,@NewHold,#what=oPayload);
+               oPayload=Create(&SeduceWand);
+               Send(oPayload,@RevealHiddenAttributes);
+               send(poOwner,@NewHold,#what=oPayload);
+               oPayload=Create(&SeduceWand);
+               Send(oPayload,@RevealHiddenAttributes);
+               send(poOwner,@NewHold,#what=oPayload);
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift7_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand >= 43 AND rand <= 48
+         {
+            send(poOwner,@NewHold,#what=Create(&OrcTooth,#number=20));
+            Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                      #parm1=Qormas_gift8_msg);
+            bSet = TRUE;
+         }
+         if rand = 49
+         {
+            if (pbShrunkenHead)
+            {
+               send(poOwner,@NewHold,#what=Create(&ShrunkenHead));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift9_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 50
+         {
+            if (pbCowMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&CowMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift10_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 51
+         {
+            if (pbDaemonMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&DaemonMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift11_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 52
+         {
+            if (pbMummyMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&MummyMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift12_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 53
+         {
+            if (pbFeyMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&FeyMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift13_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 54
+         {
+            if (pbShrunkenHeadMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&ShrunkenHeadMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift14_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 55
+         {
+            if (pbXeoMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&XeoMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift15_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 56
+         {
+            if (pbSkullMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&SkullMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift16_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 57
+         {
+            if (pbRatMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&RatMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift17_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 58
+         {
+            if (pbAntMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&AntMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift18_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 59
+         {
+            if (pbTrollMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&TrollMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift19_msg);
+               bSet = TRUE;
+            }
+         }
+         if rand = 60
+         {
+            if (pbKriipaMask)
+            {
+               send(poOwner,@NewHold,#what=Create(&KriipaMask));
+               Send(poOwner,@MsgSendUser,#message_rsc=Qormas_gift_msg,
+                                         #parm1=Qormas_gift20_msg);
+               bSet = TRUE;
+            }
+         }
       }
       
       Send(self,@Delete);
@@ -137,15 +386,6 @@ messages:
    
    AppendDesc()
    {
-      local lUsersOnline,iUsers;
-
-      if (IsClass(poOwner,&Room))
-      {
-         lUsersOnline = Send(SYS,@GetUsersLoggedOn);
-         iUsers = Length(lUsersOnline);
-         poRecipient=Nth(lUsersOnline,Random(1,iUsers));
-      }
-   
       if poRecipient <> $
       {
          AppendTempString(QormasGift_desc_append1) ;
@@ -153,6 +393,23 @@ messages:
          AppendTempString(QormasGift_desc_append2);
       }
       
+      propagate;
+   }
+   
+   NewOwner(what=$)
+   {
+      local oQormas;
+      
+      oQormas = Send(SYS,@GetQormas);
+      
+      if (oQormas <> $)
+      {
+         if (IsClass(what,&User))
+         {
+            Send(oQormas,@GiftClaimed,#what=self,#who=what);
+         }
+      }
+   
       propagate;
    }
    
@@ -168,7 +425,7 @@ messages:
          return TRUE;
       }
       
-      return False;
+      return FALSE;
    }
    
    GetObjectFlags()

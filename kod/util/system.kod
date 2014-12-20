@@ -731,6 +731,11 @@ messages:
          Send(self,@RefigureAllAbilityTotals);
       }
 
+      if poQormas <> $
+      {
+         Send(poQormas,@Reset);
+      }
+      
       Send(self,@RecalcLightAndWeather);
       Send(self,@ReturnShrineAllegiance);
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
@@ -1070,6 +1075,11 @@ messages:
       {
          Send(poChaosNight, @UserLogon, #who = what);
       }
+      
+      if (poQormas <> $)
+      {
+         Send(poQormas, @UserLogon, #who = what);
+      }
 
       return;
    }
@@ -1126,6 +1136,10 @@ messages:
 
             break;
          }
+      }
+      if (poQormas <> $)
+      {
+         Send(poQormas, @UserLogoff, #who = what);
       }
 
       return;
@@ -1302,6 +1316,11 @@ messages:
       Send(Send(self,@FindSpellByNum,#num=SID_NODEBURST),@NewDay);
 
       Send(self,@VerifyUsersLoggedOn);
+      
+      if (poQormas <> $)
+      {
+         Send(poQormas,@NewDay);
+      }
 
       return;
    }

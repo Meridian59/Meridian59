@@ -10073,28 +10073,32 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		500.0f, 0, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 
 	// four corners, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystemSand,
@@ -10103,28 +10107,32 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		353.55f, -353.55f, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		-353.55f, -353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 
 	// forward, left, right, and back, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystemSand,
@@ -10133,28 +10141,32 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 
 	// four corners, blowing around the perimeter
 	D3DParticleEmitterInit(&gParticleSystemSand,
@@ -10163,28 +10175,32 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		500.0f, 0, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 
 	// four corners, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystemSand,
@@ -10193,28 +10209,32 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * -724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		353.55f, -353.55f, 0,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * 724.0f, EMITTER_HEIGHT,
 		-353.55f, -353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 724.0f, EMITTER_RADIUS * -724.0f, EMITTER_HEIGHT,
 		-353.55f, 353.55f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 
 	// forward, left, right, and back, blowing towards player
 	D3DParticleEmitterInit(&gParticleSystemSand,
@@ -10223,41 +10243,45 @@ void SandstormInit(void)
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		EMITTER_RADIUS * 1024.0f, 0, EMITTER_HEIGHT,
 		-500.0f, 0, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		0, EMITTER_RADIUS * 1024.0f, EMITTER_HEIGHT,
 		0, -500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 	D3DParticleEmitterInit(&gParticleSystemSand,
 		0, EMITTER_RADIUS * -1024.0f, EMITTER_HEIGHT,
 		0, 500.0f, 0.0f,
 		SANDSTORM_B, SANDSTORM_G, SANDSTORM_R, SANDSTORM_A,
 		EMITTER_ENERGY, 1,
 		0, -PI / 500.0f, -PI / 500.0f,
-		1, 1024, 2);
+		1, 1, 1024, 2,
+		0, 0);
 }
 
 void RainInit(void)
 {
 #define RAIN_EMITTER_RADIUS	(16384)
-#define RAIN_EMITTER_ENERGY	(250)
-#define RAIN_EMITTER_HEIGHT	(4000)
+#define RAIN_EMITTER_ENERGY	(400)
+#define RAIN_EMITTER_HEIGHT	(2500)
 
    int i;
 
    D3DParticleSystemReset(&gParticleSystemRain);
 
-   for (i=0; i < 12; i++)
+   for (i=0; i < 16; i++)
    {
       D3DParticleEmitterInit(&gParticleSystemRain,
          0, 0, RAIN_EMITTER_HEIGHT,
@@ -10265,21 +10289,24 @@ void RainInit(void)
          RAIN_B, RAIN_G, RAIN_R, RAIN_A,
          RAIN_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, RAIN_EMITTER_RADIUS, 2);
+         1, 0, RAIN_EMITTER_RADIUS, 0,
+         1, 1);
       D3DParticleEmitterInit(&gParticleSystemRain,
          0, 0, RAIN_EMITTER_HEIGHT*2,
          0.0f, 0, -300.0f,
          RAIN_B, RAIN_G, RAIN_R, RAIN_A,
          RAIN_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, RAIN_EMITTER_RADIUS, 2);
+         1, 0, RAIN_EMITTER_RADIUS, 0,
+         1, 1);
       D3DParticleEmitterInit(&gParticleSystemRain,
          0, 0, RAIN_EMITTER_HEIGHT,
          0.0f, 0, -300.0f,
          RAIN_B, RAIN_G, RAIN_R, RAIN_A,
          RAIN_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, RAIN_EMITTER_RADIUS/4, 2);
+         1, 0, RAIN_EMITTER_RADIUS/4, 0,
+         1, 1);
    }
 }
 
@@ -10288,15 +10315,15 @@ void SnowInit(void)
 // Distance from the player to spawn particles.
 #define SNOW_EMITTER_RADIUS	(16384)
 // Amount of energy to give them.
-#define SNOW_EMITTER_ENERGY	(200)
+#define SNOW_EMITTER_ENERGY	(400)
 // Default height to spawn them at.
-#define SNOW_EMITTER_HEIGHT	(3600)
+#define SNOW_EMITTER_HEIGHT	(2500)
 
    int i;
 
    D3DParticleSystemReset(&gParticleSystemSnow);
 
-  for (i=0; i < 6; i++)
+   for (i=0; i < 8; i++)
    {
       // Normal height.
       D3DParticleEmitterInit(&gParticleSystemSnow,
@@ -10305,45 +10332,49 @@ void SnowInit(void)
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
          SNOW_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS, 2);
-     D3DParticleEmitterInit(&gParticleSystemSnow,
+         1, 0, SNOW_EMITTER_RADIUS, 0,
+         1, 1);
+      D3DParticleEmitterInit(&gParticleSystemSnow,
          0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
          -5.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
          SNOW_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS, 2);
+         1, 0, SNOW_EMITTER_RADIUS, 0,
+         1, 1);
       D3DParticleEmitterInit(&gParticleSystemSnow,
          0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
          0.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
          SNOW_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS, 2);
-      // Low spawning particles.
+         1, 0, SNOW_EMITTER_RADIUS, 0,
+         1, 1);
       D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT/3,
-         0.0f, -5.0f, -30.0f,
-         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY/2, 1,
-         0, 0, 0,
-         1, SNOW_EMITTER_RADIUS, 2);
-      // Spawn these ones higher up.
-      D3DParticleEmitterInit(&gParticleSystemSnow,
-         0.0f, 0.0f, SNOW_EMITTER_HEIGHT*1.5f,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
          0.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
-         SNOW_EMITTER_ENERGY*2, 1,
+         SNOW_EMITTER_ENERGY, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS, 2);
-      // These ones are higher too, but disappear faster (filler).
+         1, 0, SNOW_EMITTER_RADIUS, 0,
+         1, 1);
+      D3DParticleEmitterInit(&gParticleSystemSnow,
+         0.0f, 0.0f, SNOW_EMITTER_HEIGHT,
+         0.0f, 0.0f, -30.0f,
+         SNOW_B, SNOW_G, SNOW_R, SNOW_A,
+         SNOW_EMITTER_ENERGY, 1,
+         0, 0, 0,
+         1, 0, SNOW_EMITTER_RADIUS, 0,
+         1, 1);
+      // These ones are higher, but disappear faster (filler).
       D3DParticleEmitterInit(&gParticleSystemSnow,
          0.0f, 0.0f, SNOW_EMITTER_HEIGHT*2,
          0.0f, 0.0f, -30.0f,
          SNOW_B, SNOW_G, SNOW_R, SNOW_A,
          SNOW_EMITTER_ENERGY/3, 1,
          0, 0, 0,
-         1, SNOW_EMITTER_RADIUS, 2);
+         1, 0, SNOW_EMITTER_RADIUS, 0,
+         1, 1);
    }
 }
 

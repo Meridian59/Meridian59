@@ -197,6 +197,20 @@ int GetPointFloor(int x, int y)
 }
 /************************************************************************/
 /*
+ * GetPointCeiling:  Return sector height at (x, y).  If (x, y) is not in
+ *   a leaf node, return -1.
+ */
+int GetPointCeiling(int x, int y)
+{
+   BSPleaf *leaf = BSPFindLeafByPoint(current_room.tree, x, y);
+
+   if (leaf == NULL || leaf->sector == NULL)
+      return -1;
+
+   return GetCeilingHeight(x, y, leaf->sector);
+}
+/************************************************************************/
+/*
  * GetPointFloor:  Set floor to height of floor at (x, y), and ceiling to height
  *   of ceiling.  If (x, y) is not in a leaf node, return False; otherwise return True.
  */

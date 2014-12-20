@@ -4267,10 +4267,15 @@ messages:
             iHate1, iHate2, iHate3, iHate4, iHate5, oBrain,
             iHate, oTarg, iTempHate, oTempTarg;
 
-      if isClass(what,&user)
-      {
-         Send(what,@ResetMonsterChasers);
-      }
+      % We used to reset monster chasers here, but monsters have better AI
+      % now and can on occasion respond before a user makes a move. Calling
+      % this now would reset chasers after a user already has one chasing him,
+      % which leads to multiple aggro without the corresponding increase in
+      % 'chaser level'.
+      %if isClass(what,&user)
+      %{
+      %   Send(what,@ResetMonsterChasers);
+      %}
 
       oTarg1 = $;
       oTarg2 = $;

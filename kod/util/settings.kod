@@ -193,6 +193,12 @@ properties:
 
    % Turns damage scaling for chance to hit greater than 100 percent on or off
    piDamageScaling = FALSE
+   
+   % A battler's chance to hit when offense equals defense in per MILLE
+   piEqualChanceToHit = 500
+
+   % This amount is added to a battler's offense and defense and serves as a baseline for calculation.
+   piBaseRating = 0
 
 messages:
 
@@ -460,7 +466,7 @@ messages:
       return piRevSpeed;
    }
 
-GetPardonIndulgenceCost()
+   GetPardonIndulgenceCost()
    {
       return piPardonIndulgenceCost;
    }
@@ -478,6 +484,16 @@ GetPardonIndulgenceCost()
    GetDamageScaling()
    {
       return piDamageScaling;
+   }
+
+   GetEqualChanceToHit()
+   {
+      return piEqualChanceToHit;
+   }
+
+   GetBaseRating()
+   {
+      return piBaseRating;
    }
 
 end

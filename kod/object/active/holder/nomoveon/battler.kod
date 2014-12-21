@@ -14,10 +14,6 @@ constants:
 
    include blakston.khd
 
-   % What's the percent chance to hit if offense and defense are equal?
-   % The higher this number is, the easier it is to hit in combat.
-   EQUAL_CHANCE_HIT = 500      
-                              
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
    BATTLER_AVOID_CHANCE = 50  
@@ -537,19 +533,17 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iDamage, iScalefactor, oWeapon;
+      local iOffense, iDefense, iChanceToHit, iDamage, iScalefactor, oWeapon;
 
       oWeapon = Send(self,@GetWeapon);
 
-      % Derived class should have checked all specific restrictions by this
-      %  point.
+      % Derived class should have checked all specific restrictions by this point.
 
-      % This is the generic checks and the calculation of chance to hit and
-      %  damage.
-      iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj)
-                      * EQUAL_CHANCE_HIT)
-                     / Send(what,@GetDefense,#what=self,
-                            #stroke_obj=stroke_obj);
+      % These are the generic checks and the calculation of chance to hit and damage.
+
+      iOffense = Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj) + Send(Send(SYS,@GetSettings),@GetBaseRating);
+      iDefense = Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj) + Send(Send(SYS,@GetSettings),@GetBaseRating);
+      iChanceToHit = iOffense * Send(Send(SYS,@GetSettings),@GetEqualChanceToHit) / iDefense;
       iChanceToHit = bound(iChanceToHit,125,2000);
       if iChanceToHit >= random(1,1000)
       {

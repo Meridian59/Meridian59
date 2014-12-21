@@ -25,10 +25,13 @@ resources:
       "greater confidence and force."
 
    gauntlet_condition_exc = " shine with the glint of perfection."
-   gauntlet_condition_exc_mended = " are in excellent condition, but have been patched before."
+   gauntlet_condition_exc_mended = \
+      " are in excellent condition, but have been patched before."
    gauntlet_condition_good = " are tarnished and scarred but still usable."
    gauntlet_condition_med = " have been harshly dented in several places."
-   gauntlet_condition_poor = " are in danger of falling apart.  Large plates of metal have been torn away during battle."
+   gauntlet_condition_poor = \
+      " are in danger of falling apart.  Large plates of metal "
+      "have been torn away during battle."
    gauntlet_condition_broken = " are ruined and offer no benefit."
    gauntlet_broken = "Your %s are a tangled mess of metal."
 
@@ -48,9 +51,9 @@ classvars:
    vrIcon = gauntlet_icon_rsc
    vrDesc = gauntlet_desc_rsc
    vrPoss_article = object_article_cap_these_rsc
-   
+
    vrItem_broken = gauntlet_broken
-   
+
    viUse_type = ITEM_USE_GAUNTLET
    viItem_type = ITEMTYPE_ARMOR
    viUse_amount = 1
@@ -86,14 +89,31 @@ properties:
 
 messages:
 
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what,&Gauntlet)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
    NewUsed(what = $)
    {
       local i, oFound, iPriority;
-      
+
       oFound=$;
-      for i in send(what,@GetPlayerUsing)
+      for i in Send(what,@GetPlayerUsing)
       {
-         iPriority = send(i,@ItemChangesArms);
+         iPriority = Send(i,@ItemChangesArms);
          if iPriority <> 0
          {
             if oFound = $ 
@@ -102,42 +122,42 @@ messages:
             }
             else
             {
-               if iPriority > send(oFound,@ItemChangesArms)
+               if iPriority > Send(oFound,@ItemChangesArms)
                {
                   oFound = i;
                }
-            }	    
-         }	 
+            }
+         }
       }
-      
+
       if oFound <> $
       {
-         send(oFound,@DoPlayerArt); 
+         Send(oFound,@DoPlayerArt);
       }
       else
       {
-         send(what,@ResetPlayerArms);
+         Send(what,@ResetPlayerArms);
       }
 
       % We're also a defense modifier
       Send(what,@AddDefenseModifier,#what=self);
-      
+
       propagate;
    }
 
    NewUnused(what = $)
    {
       local i, oFound, iPriority;
-      
+
       oFound=$;
-      for i in send(what,@GetPlayerUsing)
+      for i in Send(what,@GetPlayerUsing)
       {
-         iPriority = send(i,@ItemChangesArms);
+         iPriority = Send(i,@ItemChangesArms);
          if iPriority <> 0
          {
             if oFound <> $ 
             {
-               if iPriority > send(oFound,@ItemChangesArms)
+               if iPriority > Send(oFound,@ItemChangesArms)
                {
                   oFound = i;
                }
@@ -146,16 +166,16 @@ messages:
             {
                oFound = i;
             }
-         }	 
+         }
       }
-      
+
       if oFound <> $
       {
-         send(oFound,@DoPlayerArt); 
+         Send(oFound,@DoPlayerArt); 
       }
       else
       {
-         send(what,@ResetPlayerArms);
+         Send(what,@ResetPlayerArms);
       }
 
       % We're also a defense modifier
@@ -177,37 +197,37 @@ messages:
    {
       return TRUE;
    }
-   
+
    GetOverrideRightArm(who=$)
-   {  
+   {
       local i, bFound;
-      
+
       bFound = FALSE;
-      for i in send(who,@GetPlayerUsing)
+      for i in Send(who,@GetPlayerUsing)
       {
-         if isClass(i,&TankTop)
+         if IsClass(i,&TankTop)
          {
             bFound = TRUE;
-            
+
             break;
          }
       }
-      
+
       if bFound
       {
-         if send(who,@GetGender) = GENDER_MALE
+         if Send(who,@GetGender) = GENDER_MALE
          {
             return barearm_rightarm_gauntlet_male;
          }
       
          return barearm_rightarm_gauntlet_female;
-      }      
-      
-      if send(who,@GetGender) = GENDER_MALE
+      }
+
+      if Send(who,@GetGender) = GENDER_MALE
       {
          return standardshirt_rightarm_gauntlet_male;
       }
-      
+
       return standardshirt_rightarm_gauntlet_female;
    }
 
@@ -216,19 +236,19 @@ messages:
       local i, bFound;
 
       bFound = FALSE;
-      for i in send(who,@GetPlayerUsing)
+      for i in Send(who,@GetPlayerUsing)
       {
-         if isClass(i,&TankTop)
+         if IsClass(i,&TankTop)
          {
             bFound = TRUE;
 
             break;
          }
       }
-      
+
       if bFound
       {
-         if send(who,@GetGender) = GENDER_MALE
+         if Send(who,@GetGender) = GENDER_MALE
          {
             return barearm_leftarm_gauntlet_male;
          }
@@ -236,11 +256,11 @@ messages:
          return barearm_leftarm_gauntlet_female;
       }
 
-      if send(who,@GetGender) = GENDER_MALE
+      if Send(who,@GetGender) = GENDER_MALE
       {
          return standardshirt_leftarm_gauntlet_male;
       }
-      
+
       return standardshirt_leftarm_gauntlet_female;
    }
 
@@ -263,7 +283,7 @@ messages:
 
       return hit_roll;
    }
-   
+
    ModifyDamage(who = $,what = $,damage = $)
    {
       local oWeapon;
@@ -290,39 +310,39 @@ messages:
    }
 
    CanMend()
-   { 
+   {
       local i, oItemAtt;
-		
+
       for i in plItem_Attributes
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,
-                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         oItemAtt = Send(SYS,@FindItemAttByNum,
+                         #num=Send(self,@GetNumFromCompound,#compound=First(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
-            
+            Debug("Illegal ItemAtt in list!");
+
             continue;
          }
-	 
-         if NOT send(oItemAtt,@ItemCanMend,#oItem=self)
+
+         if NOT Send(oItemAtt,@ItemCanMend,#oItem=self)
          {
             return FALSE;
-         }   
+         }
       }
-      
-      return TRUE; 
+
+      return TRUE;
    }
 
    GetHitBonus()
    {
       return piAttack_bonus;
    }
-   
+
    GetDefenseBonus()
    {
       return piDefense_bonus;
    }
-   
+
    GetMeleeDamageBonus()
    {
       return piDamage_bonus;
@@ -330,5 +350,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

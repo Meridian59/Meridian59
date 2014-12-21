@@ -3643,6 +3643,7 @@ messages:
 
          % These unequip amongst themselves automatically.
          if IsClass(what,&DefenseModifier)
+            OR IsClass(what,&Gauntlet)
          {
             return TRUE;
          }

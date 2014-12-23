@@ -184,21 +184,24 @@ properties:
    % Alternate Justicar system - buying a pardon with an indulgence
    % is now possible for a flat fee (initially 1 million).
    piPardonIndulgenceCost = 1000000
-   
+
    % The divisor for all skill post-softcap imp rates. Higher means harder. One means softcaps don't matter at all.
    piSkillSoftcapPenalty = 5
-   
+
    % The divisor for all spell post-softcap imp rates.
    piSpellSoftcapPenalty = 4
 
    % Turns damage scaling for chance to hit greater than 100 percent on or off
    piDamageScaling = FALSE
-   
+
    % A battler's chance to hit when offense equals defense in per MILLE
    piEqualChanceToHit = 500
 
    % This amount is added to a battler's offense and defense and serves as a baseline for calculation.
    piBaseRating = 0
+
+   % Percent of mana required/used for broadcasting. Default 0 (no cost).
+   piBroadcastManaPercent = 0
 
 messages:
 
@@ -475,7 +478,7 @@ messages:
    {
       return piSkillSoftcapPenalty;
    }
-   
+
    GetSpellSoftcapPenalty()
    {
       return piSpellSoftcapPenalty;
@@ -496,6 +499,10 @@ messages:
       return piBaseRating;
    }
 
+   GetBroadcastManaCost()
+   {
+      return piBroadcastManaPercent;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

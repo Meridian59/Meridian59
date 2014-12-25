@@ -109,7 +109,15 @@ function create_account()
 	fputs($sock, $command);
 	sleep(1);
 	$result = fread($sock, 1000);
-	echo "<B><font color=blue>Account $username created with two character slots.</font></B><BR>";
+	
+	fputs($sock, $command);
+	sleep(1);
+	$result = fread($sock, 1000);
+	
+	fputs($sock, $command);
+	sleep(1);
+	$result = fread($sock, 1000);
+	echo "<B><font color=blue>Account $username created with four character slots.</font></B><BR>";
 }
 ?>
 <HTML>

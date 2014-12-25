@@ -124,13 +124,15 @@ messages:
 
       propagate;
    }
-   
+
    ReqUseSomething(what = $)
    {
       % All defmods check for eachother in the defmod superclass. Here we are concerned with 2h non-armors.
       if NOT IsClass(self,&SoldierShield)
          AND (IsClass(what,&Bow)
          OR IsClass(what,&Lute))
+         OR (IsClass(what,&JewelOfFroz) AND
+            Send(poOwner,@IsUsingA,#class=&JewelOfFroz))
       {
          if Send(poOwner,@TryUnuseItem,#what=self)
          {

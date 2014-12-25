@@ -56,6 +56,61 @@ properties:
 
 messages:
 
+   ReqUseSomething(what=$)
+   {
+      local i, iUsing;
+
+
+      % If we are trying to use a Jewel of Froz, and we just have
+      % ourselves and a weapon equipped, don't remove the book. If we have
+      % a JoF equipped and are trying to use a weapon, same applies.
+      if (IsClass(what,&JewelOfFroz)
+            AND Send(poOwner,@IsUsingA,#class=&Weapon))
+         OR (IsClass(what,&Weapon)
+            AND Send(poOwner,@IsUsingA,#class=&JewelOfFroz))
+      {
+         propagate;
+      }
+
+      % Check for two-handed items.
+      if IsClass(what,&Bow)
+         OR IsClass(what,&Lute)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      % Any other combo and we remove the book.
+      iUsing = 0;
+      for i in Send(poOwner,@GetPlayerUsing)
+      {
+         if Send(i,@GetItemUseType) = ITEM_USE_HAND
+         {
+            iUsing = iUsing + 1;
+         }
+      }
+
+      if iUsing > 1
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
    NewUsed(what=$)
    {
       pbIn_use = True;

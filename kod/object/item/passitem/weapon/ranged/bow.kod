@@ -106,7 +106,6 @@ messages:
       % Here we are just concerned with shields and lutes.
       if (IsClass(what,&Shield)
          AND NOT IsClass(what,&SoldierShield))
-         OR IsClass(what,&JewelOfFroz)
          OR IsClass(what,&Book)
       {
          if Send(poOwner,@TryUnuseItem,#what=self)

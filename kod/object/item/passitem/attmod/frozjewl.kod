@@ -45,6 +45,8 @@ classvars:
    viBulk = 10
    viWeight = 15
 
+   vbShow_condition = TRUE
+
    viManaLossJewel = 1
    vbDoubleManaCost = FALSE
    viAttack_bonus = 200
@@ -126,14 +128,8 @@ messages:
    {
       local iBonus, iScale;
 
-      piHits = piHits - 1;
       if piHits <= 0
       {
-         Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
-               #parm1=Send(self,@GetCapDef),#parm2=vrName);
-         Send(poOwner,@TryUnuseItem,#what=self);
-         vrDesc = frozjewel_desc_broken_rsc;
-
          return hit_roll;
       }
 
@@ -160,6 +156,18 @@ messages:
    ModifyDamage(who=$,what=$,damage=$,stroke_obj=$)
    {
       local i, iMana;
+
+      piHits = piHits - 1;
+
+      if piHits <= 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
+               #parm1=Send(self,@GetCapDef),#parm2=vrName);
+         Send(poOwner,@TryUnuseItem,#what=self);
+         vrDesc = frozjewel_desc_broken_rsc;
+
+         return damage;
+      }
 
       if IsClass(stroke_obj,&Spell)
       {
@@ -195,6 +203,92 @@ messages:
 
       return damage;
    }
+
+   %
+   % Item description code.
+   %
+
+   GetHitBonus()
+   {
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         return Send(self,@ModifyHitRoll,#who=poOwner,#hit_roll=0);
+      }
+
+      return piAttack_bonus;
+   }
+
+   GetMinDamage()
+   {
+      local iPlayerHp, iMinDamage;
+
+      iMinDamage = 1;
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         iPlayerHp = Send(poOwner,@GetBaseMaxHealth);
+         if iPlayerHp < 100
+         {
+            iMinDamage = 1;
+         }
+         else
+         {
+            if iPlayerHp < 125
+            {
+               iMinDamage = 2;
+            }
+            else
+            {
+               iMinDamage = 3;
+            }
+         }
+      }
+
+      return iMinDamage;
+   }
+
+   GetMaxDamage()
+   {
+      local iPlayerHp, iMaxDamage;
+
+      iMaxDamage = 5;
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         iPlayerHp = Send(poOwner,@GetBaseMaxHealth);
+         if iPlayerHp < 50
+         {
+            iMaxDamage = 1;
+         }
+         else
+         {
+            if iPlayerHp < 75
+            {
+               iMaxDamage = 2;
+            }
+            else
+            {
+               if iPlayerHp < 125
+               {
+                  iMaxDamage = 3;
+               }
+               else
+               {
+                  iMaxDamage = 5;
+               }
+            }
+         }
+      }
+
+      return iMaxDamage;
+   }
+
+   %
+   % End item desciption code.
+   %
 
    GetHealthBonus(who=$)
    {

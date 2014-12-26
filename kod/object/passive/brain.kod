@@ -168,7 +168,12 @@ messages:
 
       if state & STATE_LIMBO
       {
-         Debug("Unreachable. In state LIMBO.");
+         if Send(mob,@GetOwner) <> $
+         {
+            Send(mob,@EnterStateMove,#actnow=FALSE);
+         }
+
+         return;
       }
 
       % Ignore moves if in WAIT

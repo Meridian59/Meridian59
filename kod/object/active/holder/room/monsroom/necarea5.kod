@@ -180,7 +180,6 @@ messages:
       bAreaOne = Send(self,@IsUserInArea,#who=who,#lArea=plMainAreaOne);
       bAreaTwo = Send(self,@IsUserInArea,#who=who,#lArea=plMainAreaTwo);
 
-      debug(who,bAreaOne,bAreaTwo);
       if bAreaOne
          OR bAreaTwo
       {

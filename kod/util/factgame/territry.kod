@@ -57,8 +57,8 @@ properties:
    piPrincessFlagItemCount = 0
    piRebelFlagItemCount = 0
 
-   % Time in minutes, originally defaults to 6 hours.
-   piFlagItemGenTime = 1440
+   % Time in minutes.
+   piFlagItemGenTime = 60
 
    piClaimTroopGenTime = 8000
    piClaimTroopCap = 15
@@ -66,10 +66,10 @@ properties:
    piNonclaimTroopCap = 4
 
    % Number of minutes to wait before a flag claim is done.
-   piClaimWait = 10
+   piClaimWait = 8
    
    % Number of minutes to wait before you can claim a flag again.
-   piClaimRetry = 480
+   piClaimRetry = 30
    
    % Minimum number of users needed online before you can take a flag
    piMinUsers = 20
@@ -692,7 +692,7 @@ messages:
       local iMaxFlagItems;
 
       ptGenerateFlagItems = $;
-      ptGenerateFlagItems = createTimer(self,@GenerateFlagItems,(((piFlagItemGenTime * 60000)/10)*random(8,12)));
+      ptGenerateFlagItems = CreateTimer(self,@GenerateFlagItems,piFlagItemGenTime * 1000 * 60);
       iMaxFlagItems = length(plFlagRIDs)*2/3;
 
       if (nth(plFlagCounts, (FACTION_DUKE+1)) + piDukeFlagItemCount) < iMaxFlagItems

@@ -1468,7 +1468,7 @@ messages:
          state = Send(self,@GetEnchantmentState,#what=roomench);
          if state <> $
          {
-            Send(roomench,@HurtCaster,#shalCaster=who,#iSpellPower=state,
+            Post(roomench,@HurtCaster,#shalCaster=who,#iSpellPower=state,
                  #shalSpellLevel=Send(oSpell,@GetLevel));
          }
       }
@@ -1479,7 +1479,7 @@ messages:
          state = Send(self,@GetEnchantmentState,#what=roomench);
          if state <> $
          {
-            Send(roomench,@HurtCaster,#qorCaster=who,#iSpellPower=state,
+            Post(roomench,@HurtCaster,#qorCaster=who,#iSpellPower=state,
                  #qorSpellLevel=Send(oSpell,@GetLevel));
          }
       }

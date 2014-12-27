@@ -1450,9 +1450,15 @@ messages:
       propagate;
    }
 
-   SpellCast(who = $, oSpell = $, lItems = $)
+   SpellCast(who = $,oSpell = $,lItems = $,bItemCast = FALSE)
    {
       local state, school, roomench;
+
+      % Skip these if the spell is cast by an item.
+      if bItemCast
+      {
+         propagate;
+      }
 
       school = Send(oSpell,@GetSchool);
 

@@ -34,7 +34,7 @@ classvars:
 
    vrName = frozjewel_name_rsc
    vrIcon = frozjewel_icon_rsc
-   
+
    viUse_type = ITEM_USE_HAND
    viUse_amount = 1
 
@@ -45,6 +45,13 @@ classvars:
    viBulk = 10
    viWeight = 15
 
+   vbShow_condition = TRUE
+
+   viManaLossJewel = 1
+   vbDoubleManaCost = FALSE
+   viAttack_bonus = 200
+   vbScaleHitrollBonus = TRUE
+
 properties:
 
    vrDesc = frozjewel_desc_rsc
@@ -52,18 +59,77 @@ properties:
 
    piAnimation = ANIM_NONE
 
+   % These allow setting JOFs up individually for testing, or just
+   % assigning the default values from the class variable in Constructor.
+   piManaLossJewel = 1
+   pbDoubleManaCost = FALSE
+   piAttack_bonus = 200
+   pbScaleHitrollBonus = TRUE
+
 messages:
+
+   Constructor()
+   {
+      piManaLossJewel = viManaLossJewel;
+      pbDoubleManaCost = vbDoubleManaCost;
+      piAttack_bonus = viAttack_bonus;
+      pbScaleHitrollBonus = vbScaleHitrollBonus;
+
+      propagate;
+   }
+
+   ReqUseSomething(what=$)
+   {
+      local i, iJewelNumber;
+
+      if IsClass(what,&Weapon)
+         OR IsClass(what,&Lute)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      if IsClass(what,&Shield)
+      {
+         iJewelNumber = 0;
+
+         for i in Send(poOwner,@GetPlayerUsing)
+         {
+            if IsClass(i,&JewelOfFroz)
+               OR IsClass(i,&Book)
+            {
+               iJewelNumber = iJewelNumber + 1;
+            }
+         }
+
+         if iJewelNumber > 1
+         {
+            if Send(poOwner,@TryUnuseItem,#what=self)
+            {
+               propagate;
+            }
+            else
+            {
+               return FALSE;
+            }
+         }
+      }
+
+      propagate;
+   }
 
    ModifyHitRoll(who=$,what=$,hit_roll=$,stroke_obj=$)
    {
-      piHits = piHits - 1;
+      local iBonus, iScale;
+
       if piHits <= 0
       {
-         Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
-	           #parm1=Send(self,@GetCapDef),#parm2=vrName);
-         Send(poOwner,@TryUnuseItem,#what=self);
-         vrDesc = frozjewel_desc_broken_rsc;
-      
          return hit_roll;
       }
 
@@ -71,46 +137,159 @@ messages:
          AND IsClass(stroke_obj,&Spell)
       {
          Send(self,@DoFlash);
-      
-         % Adjust bonus by how strong the wielder is relative to their maximum potential.
-         % Throwaway characters will get very little benefit.
-         return hit_roll + (30 * Send(self,@GetHealthBonus,#who=who));
       }
-      
-      return hit_roll + 50;
+
+      % Option to scale hitroll bonus by hitpoints. Default on.
+      if pbScaleHitrollBonus
+      {
+         iScale = Send(who,@GetBaseMaxHealth) * 100
+                        / (100 + Send(who,@GetRawStamina));
+         iBonus = piAttack_bonus * iScale / 100;
+
+         return hit_roll + iBonus;
+      }
+
+      % If no scaling, just return the hitroll + full bonus.
+      return hit_roll + piAttack_bonus;
    }
-   
+
    ModifyDamage(who=$,what=$,damage=$,stroke_obj=$)
    {
       local i, iMana;
-      
+
+      piHits = piHits - 1;
+
+      if piHits <= 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
+               #parm1=Send(self,@GetCapDef),#parm2=vrName);
+         Send(poOwner,@TryUnuseItem,#what=self);
+         vrDesc = frozjewel_desc_broken_rsc;
+
+         return damage;
+      }
+
       if IsClass(stroke_obj,&Spell)
       {
          iMana = 0;
-         for i in Send(who,@GetPlayerUsing)
+         if pbDoubleManaCost
          {
-            if IsClass(i,&JewelOfFroz)
+            for i in Send(who,@GetPlayerUsing)
             {
-               % First jewel = 1 mana cost.  Second = 2 mana each (4 total).
-               iMana = iMana + 1;
+               if IsClass(i,&JewelOfFroz)
+               {
+                  % 1 mana default for one jewel, 4 mana total for two.
+                  iMana = iMana + piManaLossJewel;
+               }
             }
+         }
+         else
+         {
+             % Default 1 per jewel.
+            iMana = iMana + piManaLossJewel;
          }
 
          if Send(who,@LoseMana,#amount=iMana) <> 0
          {
-            % Add big damage if we spent the mana.
-            % Adjust it by how strong the wielder is relative to their maximum potential.
-            % Throwaway characters will get very little benefit.
+            % Add big damage if we spent the mana. Adjust it by how strong
+            % the wielder is relative to their maximum potential. Throwaway
+            % characters will get very little benefit.
             return damage + Send(self,@GetHealthBonus,#who=who);
          }
 
          % Add a small amount of damage.
          return damage + Random(1,2);
       }
-      
+
       return damage;
    }
-   
+
+   %
+   % Item description code.
+   %
+
+   GetHitBonus()
+   {
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         return Send(self,@ModifyHitRoll,#who=poOwner,#hit_roll=0);
+      }
+
+      return piAttack_bonus;
+   }
+
+   GetMinDamage()
+   {
+      local iPlayerHp, iMinDamage;
+
+      iMinDamage = 1;
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         iPlayerHp = Send(poOwner,@GetBaseMaxHealth);
+         if iPlayerHp < 100
+         {
+            iMinDamage = 1;
+         }
+         else
+         {
+            if iPlayerHp < 125
+            {
+               iMinDamage = 2;
+            }
+            else
+            {
+               iMinDamage = 3;
+            }
+         }
+      }
+
+      return iMinDamage;
+   }
+
+   GetMaxDamage()
+   {
+      local iPlayerHp, iMaxDamage;
+
+      iMaxDamage = 5;
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         iPlayerHp = Send(poOwner,@GetBaseMaxHealth);
+         if iPlayerHp < 50
+         {
+            iMaxDamage = 1;
+         }
+         else
+         {
+            if iPlayerHp < 75
+            {
+               iMaxDamage = 2;
+            }
+            else
+            {
+               if iPlayerHp < 125
+               {
+                  iMaxDamage = 3;
+               }
+               else
+               {
+                  iMaxDamage = 5;
+               }
+            }
+         }
+      }
+
+      return iMaxDamage;
+   }
+
+   %
+   % End item desciption code.
+   %
+
    GetHealthBonus(who=$)
    {
       local hp;
@@ -140,13 +319,13 @@ messages:
    {
       return;
    }
-   
+
    DoFlash()
    {
       piAnimation = ANIM_FLASH;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -174,10 +353,9 @@ messages:
       {
          AddPacket(1,ANIMATE_NONE,2,1);
       }
-      
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -21,11 +21,6 @@ constants:
    SLAM_TIME = 2000
    FIGHT_TIME = 10000
 
-   MIN_GEN_ROW = 29
-   MIN_GEN_COL = 3
-   MAX_GEN_ROW = 37
-   MAX_GEN_COL = 8
-
    MIN_FINAL_ROW = 27
    MIN_FINAL_COL = 1
    MAX_FINAL_ROW = 40
@@ -618,17 +613,17 @@ messages:
          }
       }
 
-      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
-           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
-      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
-           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
-      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
-           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
-      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
-           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=29,#new_col=3,
+            #fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=30,#new_col=7,
+            #fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=34,#new_col=7,
+            #fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=35,#new_col=2,
+            #fine_row=32,#fine_col=32);
       
-      Send(self,@NewHold,#what=Create(&BlackMummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
-           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      Send(self,@NewHold,#what=Create(&BlackMummy),#new_row=37,#new_col=5,
+            #fine_row=0,#fine_col=0);
       
       return;
    }

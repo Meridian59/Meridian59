@@ -1450,9 +1450,15 @@ messages:
       propagate;
    }
 
-   SpellCast(who = $, oSpell = $, lItems = $)
+   SpellCast(who = $,oSpell = $,lItems = $,bItemCast = FALSE)
    {
       local state, school, roomench;
+
+      % Skip these if the spell is cast by an item.
+      if bItemCast
+      {
+         propagate;
+      }
 
       school = Send(oSpell,@GetSchool);
 
@@ -1462,7 +1468,7 @@ messages:
          state = Send(self,@GetEnchantmentState,#what=roomench);
          if state <> $
          {
-            Send(roomench,@HurtCaster,#shalCaster=who,#iSpellPower=state,
+            Post(roomench,@HurtCaster,#shalCaster=who,#iSpellPower=state,
                  #shalSpellLevel=Send(oSpell,@GetLevel));
          }
       }
@@ -1473,7 +1479,7 @@ messages:
          state = Send(self,@GetEnchantmentState,#what=roomench);
          if state <> $
          {
-            Send(roomench,@HurtCaster,#qorCaster=who,#iSpellPower=state,
+            Post(roomench,@HurtCaster,#qorCaster=who,#iSpellPower=state,
                  #qorSpellLevel=Send(oSpell,@GetLevel));
          }
       }

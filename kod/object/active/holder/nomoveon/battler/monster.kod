@@ -6154,7 +6154,9 @@ messages:
    IsAlly(target=$,regroup=FALSE)
    {
       if IsClass(target,GetClass(self))
-         OR (poMaster <> $ AND Send(target,@GetMaster) = poMaster)
+         OR (poMaster <> $
+            AND IsClass(target,&Battler)
+            AND Send(target,@GetMaster) = poMaster)
       {
          return TRUE;
       }

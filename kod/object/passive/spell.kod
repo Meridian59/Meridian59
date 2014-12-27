@@ -1539,7 +1539,8 @@ messages:
          }     
       
          Send(self,@PlaySpellSound,#room_obj=oRoom,#what=who);
-         Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets);
+         Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets,
+               #bItemCast=bItemCast);
       }
 
       if Send(self,@AffectsSpellPower)

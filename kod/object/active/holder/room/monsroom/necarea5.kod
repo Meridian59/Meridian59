@@ -55,6 +55,9 @@ properties:
 
    prMusic = Necropolis5_music
 
+   plMainAreaOne = $
+   plMainAreaTwo = $
+
 messages:
 
    Constructed()
@@ -63,6 +66,9 @@ messages:
       plGenerators = [ [8,18], [15,18], [15,32], [8,31] ];
 
       plLooping_sounds = [ [Necropolis5_loop, 0, 0, 200, 100] ];
+
+      plMainAreaOne = [675, 1737, 1337, 3487];
+      plMainAreaTwo = [1748, 3300, 3162, 3362];
 
       propagate;
    }
@@ -161,6 +167,50 @@ messages:
       propagate;
    }
 
+   IsInMainRoom(who=$)
+   {
+      local bAreaOne, bAreaTwo;
+
+      if who = $
+         OR Send(who,@GetOwner) <> self
+      {
+         return FALSE;
+      }
+
+      bAreaOne = Send(self,@IsUserInArea,#who=who,#lArea=plMainAreaOne);
+      bAreaTwo = Send(self,@IsUserInArea,#who=who,#lArea=plMainAreaTwo);
+
+      if bAreaOne
+         OR bAreaTwo
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   "Disallow attacks between the two parts of the room. "
+   {
+      if (what = $) or (victim = $)
+      {
+         propagate;
+      }
+
+      if Send(self,@IsInMainRoom,#who=what)
+            <> Send(self,@IsInMainRoom,#who=victim)
+      {
+         if IsClass(what,&Player)
+         {
+            Send(what,@SendAttackOutOfRangeMessage,#what=victim,
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj);
+         }
+
+         return FALSE;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

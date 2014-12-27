@@ -3572,7 +3572,7 @@ messages:
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
          AND NOT IsClass(self,&DM)
       {
-         iCost = Bound(piMax_mana/4+1,6,$);
+         iCost = piMana * Send(Send(SYS,@GetSettings),@GetBroadcastManaCost) / 100;
          if piMana < iCost
          {
             Send(self,@MsgSendUser,#message_rsc=player_cant_broadcast);

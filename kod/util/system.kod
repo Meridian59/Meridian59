@@ -1129,10 +1129,12 @@ messages:
          {
             for j in Nth(i,2)
             {
-               Send(j,@Delete);
+               Post(j,@Delete);
             }
-
-            plReflections = DelListElem(plReflections,i);
+            if FindListElem(plReflections,i)
+            {
+               plReflections = DelListElem(plReflections,i);
+            }
 
             break;
          }

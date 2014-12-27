@@ -209,7 +209,7 @@ messages:
    {
       if NOT Send(poOriginal,@IsLoggedOn)
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
       
       propagate;
@@ -219,7 +219,7 @@ messages:
    {
       if poOriginal = $
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
 
       if IsClass(poOriginal,&Player)

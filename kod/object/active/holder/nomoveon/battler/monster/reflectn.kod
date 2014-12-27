@@ -152,13 +152,13 @@ messages:
    {
       if poOriginal = $
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
 
       if IsClass(poOriginal,&Player)
          AND NOT Send(poOriginal,@IsLoggedOn)
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
 
       propagate;
@@ -168,14 +168,14 @@ messages:
    {
       if poOriginal = $
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
       else
       {
          if IsClass(poOriginal,&Player)
-            and not Send(poOriginal,@IsLoggedOn)
+            AND NOT Send(poOriginal,@IsLoggedOn)
          {
-            Send(self,@Delete);
+            Post(self,@Delete);
          }
       }
 
@@ -187,7 +187,7 @@ messages:
    {
       if victim = poOriginal
       {
-         post(self,@Delete);
+         Post(self,@Delete);
       }
 
       propagate;
@@ -274,7 +274,7 @@ messages:
    {
       if poOriginal = $
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
 
       if IsClass(poOriginal,&Player)
@@ -317,7 +317,7 @@ messages:
 
       if poOriginal = $
       {
-         post(self,@Delete);
+         Post(self,@Delete);
       }
 
       if IsClass(poOriginal,&Player)

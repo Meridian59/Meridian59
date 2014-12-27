@@ -144,6 +144,14 @@ messages:
          iCol = Send(who,@GetCol) + 2;
       }
 
+      % Sanity check for invalid location.
+      if iRow = $
+         OR iCol = $
+      {
+         % Don't try to place the web on $ coordinates.
+         return;
+      }
+
       oRoom = Send(who,@GetOwner);
 
       iFine_Row = Send(who,@GetFineRow);

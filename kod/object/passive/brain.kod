@@ -53,7 +53,7 @@ properties:
 
    % These two variables control how much hatred is removed
    % by invisibility and shadow form.
-   piInvis_reduction = 85
+   piInvis_reduction = 100
    piShadForm_reduction = 60
 
 messages:
@@ -168,7 +168,12 @@ messages:
 
       if state & STATE_LIMBO
       {
-         Debug("Unreachable. In state LIMBO.");
+         if Send(mob,@GetOwner) <> $
+         {
+            Send(mob,@EnterStateMove,#actnow=FALSE);
+         }
+
+         return;
       }
 
       % Ignore moves if in WAIT

@@ -6191,13 +6191,6 @@ messages:
       {
          if poMaster <> $
          {
-            if poTarget <> $
-               AND Send(poTarget,@GetOwner) = poOwner
-               AND IsClass(poTarget,&Player)
-            {
-               Send(poTarget,@SubtractFromMonsterChasers,
-                    #level=viLevel);
-            }
             Send(poMaster,@RemoveControlledMinion,#what=self);
             if poOwner <> $
             {
@@ -6206,15 +6199,14 @@ messages:
 
             % After the honeymoon is over, go after the master! Exception here
             % are Reflections who've been captured back by the original caster.
-            % Evil twins attack the player last master (if not caster) and if
-            % the last master was the caster, they go back after the original.
+            % Evil twins will go after the original target.
             if IsClass(self,&EvilTwin)
             {
                poMaster = Send(self,@GetCaster);
-               if poTarget = poMaster
-               {
-                  poTarget = Send(self,@GetIllusionForm);
-               }
+               Send(self,@TargetSwitch,#what=Send(self,@GetIllusionForm),
+                     #iHatred=1000);
+               Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
+                     #value=FALSE);
             }
             else
             {
@@ -6226,20 +6218,15 @@ messages:
                   {
                      return;
                   }
-                  poTarget = poMaster;
+                  Send(self,@TargetSwitch,#what=poMaster,#iHatred=150);
                   poMaster = Send(self,@GetOriginal);
                   % Add ourselves back to master's control list.
                   Send(poMaster,@NewControlledMinion,#minion=self);
                }
                else
                {
-                  poTarget = poMaster;
+                  Send(self,@TargetSwitch,#what=poMaster,#iHatred=150);
                   poMaster = $;
-                  if IsClass(poTarget,&User)
-                  {
-                     Send(poTarget,@AddToMonsterChasers,
-                           #level=viLevel);
-                  }
                }
             }
             Send(self,@EnterStateChase);
@@ -6248,7 +6235,19 @@ messages:
       else
       {
          poMaster = oMaster;
-         Send(self,@EnterStateWait);
+
+         if poTarget = poMaster
+         {
+            Send(self,@EnterStateWait);
+         }
+         else
+         {
+            if NOT IsClass(self,&EvilTwin)
+            {
+               Send(self,@EnterStateWait);
+            }
+         }
+
          if poOwner <> $
          {
             Post(poOwner,@SomethingChanged,#what=self);
@@ -6288,7 +6287,7 @@ messages:
    }
 
    TargetSwitch(what=$, iHatred = 0)
-   {      
+   {
       if what = $
       {
          Debug("BAD target we're switching to here!");
@@ -6309,13 +6308,13 @@ messages:
       poTarget = what;
       if IsClass(poTarget,&user)
       {
-         Send(poTarget,@AddToMonsterChasers,#level=viLevel);  
+         Send(poTarget,@AddToMonsterChasers,#level=viLevel);
       }
 
-      piState = (piState & VSTATE_VALIDITY_MASK);                  
+      piState = (piState & VSTATE_VALIDITY_MASK);
 
       % 'lock' sound
-      if vrSound_aware <> $       
+      if vrSound_aware <> $
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=vrSound_aware);
       }

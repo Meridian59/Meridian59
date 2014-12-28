@@ -26,6 +26,13 @@ resources:
       "aggression, using raw mana to boost elemental touch spells. "
       "Your hand tingles when you hold it."
 
+   jof_condition_exc = " is in immaculate condition."
+   jof_condition_good = " is lightly scratched."
+   jof_condition_med = \
+      " is moderately scratched, and appears slightly opaque."
+   jof_condition_poor = \
+      " is heavily scratched and seems to be losing its glow."
+
    frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."
 
    frozjewel_broken = "The Jewel of Froz now seems quite ordinary."
@@ -46,6 +53,12 @@ classvars:
    viWeight = 15
 
    vbShow_condition = TRUE
+
+   vrCondition_exc = jof_condition_exc
+   vrCondition_good = jof_condition_good
+   vrCondition_med = jof_condition_med
+   vrCondition_poor = jof_condition_poor
+   vrCondition_broken = frozjewel_desc_broken_rsc
 
    viManaLossJewel = 1
    vbDoubleManaCost = FALSE

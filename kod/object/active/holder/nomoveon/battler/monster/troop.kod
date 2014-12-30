@@ -215,6 +215,7 @@ properties:
    piBody_translations = 0
    piBody_translations2 = 0
    poHair_Remove = $
+   poArrow = $
 
 messages:
 
@@ -230,8 +231,9 @@ messages:
       send(self,@SetSkinColor);
       send(self,@SetTroopShirt,#translation=viColorTranslate1);
       send(self,@SetTroopLegs,#translation=viColorTranslate2);
-      send(self,@SetEquipment);
       send(self,@SetShield);
+      send(self,@SetEquipment);
+
 
       propagate;
    }
@@ -566,16 +568,34 @@ messages:
                }
                else
                {
-                  if iRandomNumber <= 90
+                  if iRandomNumber <= 80
                   {
                      oEquipmentItem = create(&ShortSword);
                      iBonusModifier = 1;
                   }
                   else
-                  {
-                     oEquipmentItem = create(&Scimitar);
-                     iBonusModifier = 4;
-                  }
+                  {   
+                     if iRandomNumber <= 85
+                     {
+                        oEquipmentItem = create(&Scimitar);
+                        iBonusModifier = 4;
+                     }
+                     else
+                     {
+                        if iRandomNumber <= 90
+                        {
+                          oEquipmentItem = create(&BattleBow);
+                          poArrow = create(&NeruditeArrow);
+                          iBonusModifier = 5;
+                        }
+                        else
+                        {
+                           oEquipmentItem = create(&LongBow);
+                           poArrow = create(&NeruditeArrow);
+                           iBonusModifier = 4;
+                        }
+                     }   
+                  }  
                }
             }
          }
@@ -600,10 +620,18 @@ messages:
          }
          else
          {
-            oEquipmentItem = create(&ScaleArmor);
-            iBonusModifier = 75;
-         }
-      }
+           if iRandomNumber <= 85
+           {
+              oEquipmentItem = create(&ScaleArmor);
+              iBonusModifier = 75;
+           }
+           else
+           {
+             oEquipmentItem = create(&PlateArmor);
+             iBonusModifier = 100;
+           }
+        }
+     }
 
       viLevel = piBaseLevel + iBonusModifier;
       send(self,@SetTroopArmor,#NewArmor=oEquipmentItem);
@@ -667,15 +695,66 @@ messages:
       
       return (viDifficulty*10);
    }
-   
-   MonsterAttack(what = $)
+   % Returns weapon used.
+
+   GetWeapon()
    {
-      % add in any attack animation calls
-      Send(self,@DoSlash);
-      
-      return;
+      local oWeapon;
+
+      oWeapon = Send(self,@LookupPlayerWeapon);
+      % If there is no wielded melee weapon, then see if we
+      % have a touch attack active.
+      if oWeapon = $
+      {
+         % This will return $ if there's no Touch Attacks enchanting player.
+         oWeapon = Send(self,@GetEnchantmentsByClass,
+               #EnchClass=&TouchAttackSpell);
+         if oWeapon <> $
+         {
+            % The spell object is the second element of the list. Get that.
+            oWeapon = Nth(first(oWeapon),2);
+         }
+      }
+
+      return oWeapon;
    }
 
+   % Returns wielded Melee/Ranged weapon.
+   LookupPlayerWeapon()
+   {
+      local i;
+
+      for i in plUsing
+      {
+         if IsClass(i,&Weapon)
+         {
+            return i;
+         }
+      }
+
+      return $;
+   }
+
+   MonsterAttack(what = $)
+   "Add in any attack animation calls."
+   {
+      local oWeapon;
+
+      oWeapon = Send(self,@GetWeapon);
+
+      if oWeapon <> $
+         AND IsClass(oWeapon,&Bow)
+      {
+         Send(oWeapon,@WeaponAttack);
+      }
+      else
+      {
+         Send(self,@DoSlash);
+      }
+
+      return;
+   }
+   
    DoSlash()
    {
       piAnimation = PANM_WEAPON_ATTACK;
@@ -683,6 +762,32 @@ messages:
       piAnimation = ANIM_NONE;
 
       return;
+   }
+
+   DoBowFire()
+   {
+      piAnimation = PANM_BOW_FIRE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+      
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+      #projectile=poArrow);
+
+      return;
+   }
+   
+     GetAttackRange()
+   {
+      local iWeapon;
+
+        iWeapon = Send(Self,@GetWeapon);
+
+        if iWeapon <> $
+        {
+           return Send(iWeapon,@GetRange);
+        }
+      
+      propagate;
    }
 
    SendMoveAnimation()
@@ -717,7 +822,16 @@ messages:
          
          return;
       }
-      
+      else
+      {
+         if piAnimation = PANM_BOW_FIRE
+         {
+            AddPacket(1,ANIMATE_ONCE, 4,1200, 2,5, 2,5, 2,1);
+
+            return;
+         }
+      }
+
       propagate;
    }
 
@@ -878,7 +992,14 @@ messages:
          }
          else
          {
-            AddPacket(1,ANIMATE_NONE,2,iLeft_group);
+            if piAnimation = PANM_BOW_FIRE
+            {
+               AddPacket(1,ANIMATE_ONCE, 4,1200, 2,9, 2,9, 2,iLeft_group);
+            }
+            else
+            {
+               AddPacket(1,ANIMATE_NONE,2,iLeft_group);
+            }
          }
       }
 
@@ -903,6 +1024,11 @@ messages:
          AddPacket(1,ANIMATE_ONCE,4,300,2,4,2,6,2,17);
       }
 
+      if piAnimation = PANM_BOW_FIRE
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,600, 2,15, 2,16, 2,iRight_group);
+      }
+
       AddPacket(4,prLegs,1,HS_LEGS);
       iLegs_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_LEGS_MASK)/FACTIONTROOP_TRANSLATION_LEGS_MUL;
       if iLegs_xlat <> 0
@@ -916,7 +1042,14 @@ messages:
       }
       else
       {
-         AddPacket(1,ANIMATE_NONE,2,1);
+         if piAnimation = PANM_BOW_FIRE
+         {
+            AddPacket(1,ANIMATE_ONCE, 4,1200, 2,7, 2,7, 2,1);
+         }
+         else
+         {
+            AddPacket(1,ANIMATE_NONE,2,1);
+         }
       }
   
       iSkin_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_Skin_MASK)/FACTIONTROOP_TRANSLATION_Skin_MUL;
@@ -1022,7 +1155,19 @@ messages:
             return;
          }
       }
+      if IsClass(what,&Bow)
+      {
+         for i in plUsing
+         {
+            if IsClass(i,&SoldierShield)
+            {
+               Send(i,@SlingOnBack,#report=FALSE);
 
+               break;
+            }
+         }
+      }
+      Send(self,@NewHold,#what=what);
       plUsing = Cons(what,plUsing);
       plOverlays = Cons(what,plOverlays);
 
@@ -1163,27 +1308,110 @@ messages:
 
    Delete()
    {
-      local oUsedItem;
+      local i, oUsedItem;
       
       for oUsedItem in plUsing
       {
-         send(oUsedItem,@delete);
+         Send(oUsedItem,@delete);
       }
+        
+      if poArrow<>$
+      {
+        Send(poArrow,@Delete);
+      }
+      poArrow = $;
       
       plUsing = $;
       plOverlays = $;
-      
+
       propagate;
    }
 
-   CanMorphTo() 
+   CanMorphTo()
    {
       return FALSE;
    }
-   
+
    GetEquippedItems()
    {
       return plUsing;
+   }
+
+   % Reproduce the Player overlay messages here, so we can use items such
+   % as bows/slung shields, lutes etc. These are generally called from the
+   % items themselves, as there is simpler/faster code for adding overlays
+   % already in this file.
+
+   SetOverlay(what = $)
+   "Adds <what> to plOverlays, and tells everyone we changed."
+   {
+      Send(self,@AddOverlayObject,#what=what);
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   RemoveOverlay(what = $)
+   "Removes <what> from plOverlays if it's in there, and "
+   "tells everyone we changed."
+   {
+      Send(self,@RemoveOverlayObject,#what=what);
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   AddOverlayObject(what = $)
+   "Adds <what> to plOverlays, so we can keep track of whom to "
+   "call about overlays"
+   {
+      local i;
+
+      for i in plOverlays
+      {
+         if i = what
+         {
+            return;
+         }
+      }
+
+      plOverlays = Cons(what,plOverlays);
+
+      return;
+   }
+
+   RemoveOverlayObject(what = $)
+   "Removes <what> from plOverlays if it's in there."
+   {
+      local i;
+
+      for i in plOverlays
+      {
+         if i = what
+         {
+            plOverlays = DelListElem(plOverlays,what);
+
+            return;
+         }
+      }
+
+      return;
+   }
+
+   ChangeWindowOverlay()
+   {
+      return;
+   }
+
+   RemoveWindowOverlay()
+   {
+      return;
    }
 
 end

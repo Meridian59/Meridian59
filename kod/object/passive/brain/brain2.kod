@@ -1,0 +1,111 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Brain2 is Brain
+
+constants:
+
+   include blakston.khd
+
+resources:
+   brain2_stub = ""
+
+classvars:
+
+   viBrain_num = BRAIN_2
+
+properties:
+
+messages:
+
+   MobConstructor( mob = $ )
+   { 
+      propagate;
+   }
+
+   MobDelete( mob = $, state = $ )
+   {
+      propagate; 
+   }
+
+   NewOwner( mob = $, state = 0, what = $ )
+   {
+      propagate;
+   }
+
+   FirstUserEntered( mob=$, state=$, what=$, new_row=$, new_col=$ )
+   {
+      propagate;
+   }
+
+   LastUserLeft( mob=$, state=$ )
+   {
+      propagate; 
+   }
+
+   SomethingMoved( mob=$, state=$, what=$, new_row=$, new_col=$ )
+   {
+      propagate; 
+   }
+
+   SomethingAttacked( mob=$, state=$, what=$, victim=$, use_weapon=$ )
+   {
+      propagate;
+   }
+
+   SomethingEntered( mob=$, state=$, what=$, where=$ )
+   {
+      propagate;
+   }
+
+   SomethingLeft( mob=$, state=$, what=$ )
+   {
+      propagate;
+   }
+
+   SomethingKilled( mob=$, state=$, what=$, victim=$, use_weapon=$ )
+   {
+      propagate;
+   }
+
+   PostAttackTimer( mob = $ )
+   {
+      propagate;
+   }
+
+   PreChaseTimer( mob = $ )
+   {
+      propagate;
+   }
+
+   PostChaseTimer( mob = $ )
+   {
+      propagate;
+   }
+
+   PostMoveTimer( mob = $ )
+   {
+      propagate;
+   }
+
+   PostWaitTimer( mob = $ )
+   {       
+      Send(mob,@EnterStateWait);
+      propagate; 
+   }
+
+   Reset( mob = $ )
+   {
+      Send(mob,@EnterStateWait);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

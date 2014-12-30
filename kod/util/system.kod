@@ -3565,6 +3565,7 @@ messages:
    {
       plBrains = $;
       plBrains = Cons(Create(&Brain),plBrains);
+      plBrains = Cons(Create(&Brain2),plBrains);
 
       return;
    }
@@ -3742,6 +3743,7 @@ messages:
       Create(&KriipaTreasure);
       Create(&MolluskTreasure);
       Create(&ShadowbeastTreasure);
+      Create(&RatKingTreasure);
       
       return;
    }
@@ -5003,6 +5005,8 @@ messages:
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
 
+      plMonsterTemplates = cons(create(&GiantRatKing),plMonsterTemplates);
+      
       return;
    }
 

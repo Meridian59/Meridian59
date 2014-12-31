@@ -1130,7 +1130,9 @@ messages:
             if IsClass(poMaster,&Player)
                AND NOT Send(poMaster,@IsLoggedOn)
             {
-               Post(self,@SetMaster,#oMaster=$);
+               % Send this rather than post, otherwise the master's
+               % piMonsterChasers isn't updated properly.
+               Send(self,@SetMaster,#oMaster=$);
             }
          }
       }
@@ -6297,8 +6299,15 @@ messages:
          return;
       }
 
+      if IsClass(what,&User)
+         AND NOT Send(what,@IsLoggedOn)
+      {
+         % Trying to switch to someone logged off. Can't do that.
+         return;
+      }
+
       piHatred = iHatred;
-      
+
       if poTarget <> $
          AND Send(poTarget,@GetOwner) = poOwner
          AND IsClass(poTarget,&user)

@@ -2,7 +2,7 @@
 # Packages for Meridian 59 Updates
 #
 # Each line:
-#   <filename.arq> <sequencenumber> <destination> [<arqsize>]
+#   <filename.zip> <sequencenumber> <destination> [<zipsize>]
 #
 # Where:
 #   <sequencenumber> increases as new packages are added to this file.
@@ -19,9 +19,9 @@
 #                 Special:
 #                  +1 = delete file (e.g., 21 = delete from .\mail)
 #                  +32 = guest clients should download (obsolete)
-#                 Actually, arq files are retrieved to .\download, then un-arq'd to location.
+#                 Actually, zip files are retrieved to .\download, then unzipped to location.
 #
-#   <arqsize> is in bytes, optional, used by new client versions to estimate download time
+#   <zipsize> is in bytes, optional, used by the client to estimate download time
 #
 #
 # For each update, a CD-ROM of the already-updated client is delivered.
@@ -36,8 +36,8 @@
 # will be retried on later attempts.
 #
 # Keep a record of what each file contains.  Keep items that may be replaced later in separate
-# archives.  This allows us to delete old archive file so that users do not have to re-download
+# archives.  This allows us to delete old archive files so that users do not have to re-download
 # files that will be replaced by later downloads later.  This saves on bandwidth, too!
 #
 # Sample line:
-# resu0009.arq      14 0 89007		# Statue monster sounds
+# resu0009.zip      14 0 89007		# Statue monster sounds

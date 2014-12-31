@@ -11,7 +11,7 @@ SOURCEDIR = $(MODULEDIR)\$(MODULE)
 
 .obj.dll:
 	$(LINK) -dll $(LINKFLAGS) \
-	  -subsystem:windows -def:$(SOURCEDIR)\$(*B).def -out:$@ \
+	  $(LINKWINDOWSFLAGS) -def:$(SOURCEDIR)\$(*B).def -out:$@ \
 	  $** $(LIBS)
 	$(CP) $@ $(MODULECLIENTDIR)
 

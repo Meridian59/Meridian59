@@ -135,7 +135,7 @@ $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ /subsystem:windows
+$(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS)
 <<
 	$(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
 	$(CP) $@ $(CLIENTRUNDIR)
@@ -150,7 +150,7 @@ $(OUTDIR)\makepal.exe: $(OUTDIR)\makepal.obj
 
 profile: $(OBJS) client.res $(BLAKNTLIBS) 
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe /subsystem:windows
+$(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe $(LINKWINDOWSFLAGS)
 <<
 #       prep /lc /excall /inc draw3d.obj meridian.exe   
 	prep /ft /excall /inc drawbsp.obj meridian.exe

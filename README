@@ -1,7 +1,7 @@
 Meridian 59 v1.0, September 2012.
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2012 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2015 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -30,7 +30,7 @@ compression library and audio library are not included.
 BUILD INSTRUCTIONS
 
 The code has been built successfully with Microsoft Visual Studio
-2008.  It hasn't been tested with any other compilers.
+2008 and Microsoft Visual Studio 2013.
 
 1. Make sure Visual Studio's binaries are in your path, e.g. by using
 the vcvars32.bat script that comes with Visual Studio.

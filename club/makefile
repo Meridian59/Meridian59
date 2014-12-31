@@ -14,7 +14,7 @@ OBJS = \
         $(OUTDIR)\transfer.obj
 
 $(OUTDIR)\club.exe : $(OBJS) $(OUTDIR)\club.res 
-        $(LINK) $(LINKFLAGS) $** $(CLUBLIBS) -out:$@ /subsystem:windows
+        $(LINK) $(LINKFLAGS) $** $(CLUBLIBS) -out:$@ $(LINKWINDOWSFLAGS)
         $(CP) $@ $(CLIENTRUNDIR)
 
 !include $(TOPDIR)\rules.mak

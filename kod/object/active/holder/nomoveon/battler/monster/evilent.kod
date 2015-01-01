@@ -47,7 +47,7 @@ classvars:
    vrDead_name = EvilEnt_dead_name_rsc
 
    viTreasure_type = TID_ENT
-   viAttack_types = ATCK_WEAP_WHIP
+   viAttack_type = ATCK_WEAP_WHIP
    viSpeed = SPEED_NONE
    viAttributes = MOB_NOMOVE 
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE

@@ -148,7 +148,7 @@ void handle_error(void)
    generate_code = False; /* Errors; don't generate code */
    if (++numerrors > MAXERRORS)
    {
-      printf("Too many errors. Aborting.\n");
+      fprintf(stderr, "Too many errors. Aborting.\n");
       exit(1);
    }
 }
@@ -158,9 +158,11 @@ void yyerror(const char *s)
 {
    /* If token is EOL, give useful error message */
    if (!strcmp(yytext, "\n"))
-      printf("%s(%d): error: Premature end of line\n", current_fname, lineno-1);
+      fprintf(stderr, "%s(%d): error: Premature end of line\n", 
+							 current_fname, lineno-1);
    else
-      printf("%s(%d): error: %s on token %s\n", current_fname, lineno, s, yytext);
+      fprintf(stderr, "%s(%d): error: %s on token %s\n", 
+							 current_fname, lineno, s, yytext);
    handle_error();
 }
 /************************************************************************/
@@ -174,12 +176,12 @@ void action_error(const char *fmt, ...)
    if (!strcmp(yytext, "\n"))
       errline--;
 
-   printf("%s(%d): error: ", current_fname, errline);  
+   fprintf(stderr, "%s(%d): error: ", current_fname, errline);  
 
    va_start(marker, fmt);
-   vprintf(fmt, marker);
+   vfprintf(stderr, fmt, marker);
    va_end(marker);
-   printf("\n");
+   fprintf(stderr, "\n");
 
    handle_error();
 }
@@ -189,11 +191,11 @@ void simple_error(const char *fmt, ...)
 {
    va_list marker;
 
-   printf("  error: ");
+   fprintf(stderr, "  error: ");
    va_start(marker, fmt);
-   vprintf(fmt, marker);
+   vfprintf(stderr, fmt, marker);
    va_end(marker);
-   printf("\n");
+   fprintf(stderr, "\n");
 
    handle_error();   
 }
@@ -472,7 +474,7 @@ int main(int argc, char **argv)
 	    
 	 case 'K' :              /* Specify kodbase filename */
 	    if (i == argc - 1)
-	       printf("Switch -%c needs a filename (ignoring)\n",*(arg+1));
+	       fprintf(stderr, "Switch -%c needs a filename (ignoring)\n",*(arg+1));
 	    else
 	    {
 	       i++;
@@ -483,7 +485,7 @@ int main(int argc, char **argv)
 	    
 	 case 'I':               /* Specify include file directory */
 	    if (i == argc - 1)
-	       printf("Switch -%c needs a directory (ignoring)\n",*(arg+1));
+		    fprintf(stderr, "Switch -%c needs a directory (ignoring)\n",*(arg+1));
 	    else
 	    {
 	       i++;
@@ -492,15 +494,15 @@ int main(int argc, char **argv)
 		  add_include_directory(arg);
 	       else
 	       {
-		  printf("Unable to read include file directory %s\n",arg);
-		  exit(1);
+			 fprintf(stderr, "Unable to read include file directory %s\n",arg);
+			 exit(1);
 	       }
 	    }
 	    break;
 
 
 	 default:
-	    printf("Ignoring unknown switch -%c.\n", *(arg + 1));
+	    fprintf(stderr, "Ignoring unknown switch -%c.\n", *(arg + 1));
 	    
 	 }
       else file_list = list_add_item(file_list, argv[i]);
@@ -508,7 +510,7 @@ int main(int argc, char **argv)
 
    if (file_list == NULL)
    {
-      printf("No files specified!\n");
+      fprintf(stderr, "No files specified!\n");
       exit(1);
    }
 

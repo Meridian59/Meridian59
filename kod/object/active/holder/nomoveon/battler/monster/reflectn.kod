@@ -254,10 +254,21 @@ messages:
          ptSomethingChanged = $;
       }
 
-      poOriginal = $;
-      Send(poArrow,@Delete);
+      if poArrow <> $
+      {
+         Send(poArrow,@Delete);
+      }
+      poArrow = $;
+      Post(self,@RemoveOriginal);
 
       propagate;
+   }
+
+   RemoveOriginal()
+   {
+      poOriginal = $;
+
+      return;
    }
 
    GetOriginal()

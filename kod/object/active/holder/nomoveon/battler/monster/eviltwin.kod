@@ -142,11 +142,22 @@ messages:
                #parm2=Send(self,@GetName,#cap=FALSE));
       }
 
-      poOriginal = $;
+      Post(self,@RemoveOriginal);
       poCaster = $;
+      if poArrow <> $
+      {
+         Send(poArrow,@Delete);
+      }
       poArrow = $;
 
       propagate;
+   }
+
+   RemoveOriginal()
+   {
+      poOriginal = $;
+
+      return;
    }
 
    SomethingKilled(what=$,victim=$)

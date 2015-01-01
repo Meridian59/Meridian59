@@ -63,7 +63,7 @@ classvars:
  
    viIndefinite = ARTICLE_AN
    viTreasure_type = TID_AVAR
-   viAttack_types = ATCK_WEAP_BLUDGEON
+   viAttack_type = ATCK_WEAP_BLUDGEON
    viSpeed = SPEED_AVERAGE
    viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE | AI_FIGHT_MONSTERS
    viLevel = 120

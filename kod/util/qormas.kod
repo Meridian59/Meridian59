@@ -452,12 +452,27 @@ messages:
 
    EndQormas(reporter=$,bDisplayMessage=TRUE)
    {
-      local i;
-
       if bDisplayMessage
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=Qormas_end_message);
       }
+
+      Send(self,@RemoveDecorations);
+
+      % remove any remaining gifts from rooms
+      Send(self,@RemoveGifts);
+      
+      % If snow is turned on, stop snowing in all rooms.
+      Send(&Room,@EndSnow);
+
+      pbActive = FALSE;
+      
+      return;
+   }
+
+   RemoveDecorations()
+   {
+      local i;
 
       for i in plDecorations
       {
@@ -476,14 +491,6 @@ messages:
 
       plDecorations = $;
 
-      % remove any remaining gifts from rooms
-      Send(self,@RemoveGifts);
-      
-      % If snow is turned on, stop snowing in all rooms.
-      Send(&Room,@EndSnow);
-
-      pbActive = FALSE;
-      
       return;
    }
 
@@ -930,7 +937,7 @@ messages:
    
       return;
    }
-   
+
    RemoveGifts()
    {
       local i,oOwner;
@@ -939,68 +946,76 @@ messages:
       {
          return;
       }
-      
+
       for i in plGifts
       {
          oOwner = Send(i,@GetOwner);
-         
+
          if oOwner <> $ AND IsClass(oOwner,&Room)
          {
             Send(i,@Delete);
          }
       }
-      
+
       plGifts = $;
-   
+
       return;
    }
 
    RemoveGiftsFromPlayers()
    {
       local i,oOwner;
-      
+
       if plGifts = $
       {
          return;
       }
-      
+
       for i in plGifts
       {
          oOwner = Send(i,@GetOwner);
-         
+
          if IsClass(oOwner,&User)
          {
             Send(i,@Delete);
          }
       }
-   
+
       return;
    }
-   
+
    UserLogon(who=$)
    {
-      plLogonQueue = Cons(who,plLogonQueue);
-      CreateTimer(self,@OnLogonTimer,500);
-   
+      if who <> $
+      {
+         plLogonQueue = Cons(who,plLogonQueue);
+         CreateTimer(self,@OnLogonTimer,500);
+      }
+
       return;
    }
-   
+
    OnLogonTimer()
    {
       Send(self,@ProcessLogon,#who=Nth(plLogonQueue,Length(plLogonQueue)));
       plLogonQueue = DelListElem(plLogonQueue,
                                  Nth(plLogonQueue,Length(plLogonQueue)));
-      
+
       return;
    }
-   
+
    ProcessLogon(who=$)
    {
-      local i,j,lIP,count,oGift;
-      
+      local i, j, lIP, count, oGift;
+
+      if who = $
+      {
+         return;
+      }
+
       oGift = $;
-      
-      % only 1 claim per user per day
+
+      % Only 1 claim per user per day.
       for i in plGiftClaims
       {
          if i = who
@@ -1008,9 +1023,9 @@ messages:
             return;
          }
       }
-      
+
       % Check per IP limit
-      lIP = send(who,@GetIP);
+      lIP = Send(who,@GetIP);
       for i in plGiftIPCount
       {
          j = Nth(i,1);
@@ -1026,26 +1041,26 @@ messages:
             }
          }
       }
-      
+
       if (pbGifts)
       {
          oGift = Send(self,@SelectPlayerGift,#who=who);
-         
+
          if (oGift = $)
          {
             return;
          }
-      
+
          Send(oGift,@SetRecipient,#who=who);
          Send(self,@SendPlayerGiftHint,#what=oGift,#who=who);
       }
-      
+
       return;
    }
-   
+
    UserLogoff(who=$)
    {
-      local i,oRecipient,oOwner;
+      local i, oRecipient, oOwner;
 
       if (pbGifts)
       {
@@ -1060,20 +1075,22 @@ messages:
                   if oRecipient = who AND IsClass(oOwner,&Room)
                   {
                      Send(i,@SetRecipient,#who=$);
+
                      break;
                   }
                }
             }
          }
       }
-      if (FindListElem(plLogonQueue,who))
+
+      if FindListElem(plLogonQueue,who)
       {
          plLogonQueue = DelListElem(plLogonQueue,who);
       }
-      
+
       return;
    }
-   
+
    NewDay()
    {
       piGameDayCount = piGameDayCount + 1;

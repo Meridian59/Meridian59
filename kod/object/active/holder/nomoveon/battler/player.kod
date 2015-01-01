@@ -12397,12 +12397,15 @@ messages:
    {
       local numMembers, oParliament, oQuestEngine, oQuest, oFlagPole;
 
-      oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
-      if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
+      if poOwner <> $
       {
-         if Send(oFlagPole,@GetClaimer) = self
+         oFlagPole = Send(poOwner,@FindHoldingActive,#Class=&Flagpole);
+         if oFlagPole <> $ AND Send(oFlagPole,@IsClaimAttemptInProgress)
          {
-            Send(oFlagPole,@ClaimFailed);
+            if Send(oFlagPole,@GetClaimer) = self
+            {
+               Send(oFlagPole,@ClaimFailed);
+            }
          }
       }
 

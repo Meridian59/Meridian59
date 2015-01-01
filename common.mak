@@ -54,6 +54,7 @@ BLAKLIBDIR = $(TOPDIR)\lib
 BLAKINCLUDEDIR = $(TOPDIR)\include
 BLAKSERVRUNDIR = $(TOPDIR)\run\server
 CLIENTRUNDIR = $(TOPDIR)\run\localclient
+DX9INCLUDEDIR = $(TOPDIR)\include\dx9
 
 KODDIR = $(TOPDIR)\kod
 KODINCLUDEDIR = $(KODDIR)\include
@@ -134,4 +135,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(DX9INCLUDEDIR);$(TOPDIR)\miles\include

@@ -270,6 +270,11 @@
    PT_REDTOBLACK2    = 0x007E
    PT_REDTOBLACK3    = 0x007F
 
+   % Color to black translations.
+   XLAT_REDTOBLACK     = 0x005A
+   XLAT_BLUETOBLACK    = 0x005B
+   XLAT_PURPLETOBLACK  = 0x005C
+
    % Translations used for Avar warriors.
    PT_PURPLETOBLUE   = 0x003A
    PT_PURPLETORED    = 0x003B

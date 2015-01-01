@@ -53,9 +53,9 @@ M59EXPORT void XlatDib(BYTE* pabyBits, int width, int height, xlat* pXlat);
 **************** 0x00 - 0x0F
 ****************
 ****************
-****-----*****--  (*'s are used XLAT_* constants.)
+****--********--  (*'s are used XLAT_* constants.)
 -*********---***
--***-*****------
+-***-********---
 **------------**
 ****************
 -------XXXXXXXXX 0x80 - 0x8F
@@ -102,6 +102,11 @@ Whenever you define a new color, mark off the appropriate spot above with *.
 #define XLAT_GRAYTOLBLUE   0x0017
 #define XLAT_GRAYTOLPURPLE 0x0018
 #define XLAT_GRAYTOLGOLD   0x0019
+
+// New red, blue and purple to black translations.
+#define XLAT_REDTOBLACK    0x005A
+#define XLAT_BLUETOBLACK   0x005B
+#define XLAT_PURPLETOBLACK 0x005C
 
 #define XLAT_REDTODGREEN1  0x007A
 #define XLAT_REDTODGREEN2  0x007B

@@ -170,6 +170,10 @@ xlat* FindStandardXlat(UINT uXlatID)
 
 	IMPLEMENT_XLAT(XLAT_DBLUETOASHEN);
 
+	IMPLEMENT_XLAT(XLAT_REDTOBLACK);
+	IMPLEMENT_XLAT(XLAT_BLUETOBLACK);
+	IMPLEMENT_XLAT(XLAT_PURPLETOBLACK);
+
 	IMPLEMENT_XLAT(XLAT_REDTOBLACK1);
 	IMPLEMENT_XLAT(XLAT_REDTOBLACK2);
 	IMPLEMENT_XLAT(XLAT_REDTOBLACK3);
@@ -559,10 +563,28 @@ void InitStandardXlats(HPALETTE hPalette)
 	CalcHalfRampXlat(hPalette, FindStandardXlat(XLAT_GRAYTOKBLUE), 0xF0, 0xD0, 0xE0, 8, TRUE);
 	CalcHalfRampXlat(hPalette, FindStandardXlat(XLAT_GRAYTOKGRAY), 0xF0, 0xD0, 0xD0, 8, TRUE);
 
-	// Black has lowered light level
+	// Red-to-Black has zero light level.
+	pXlat = FindStandardXlat(XLAT_REDTOBLACK);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette, pXlat, 0xF0, 0x10, 0);
+
+	// Blue-to-Black has zero light level.
+	pXlat = FindStandardXlat(XLAT_BLUETOBLACK);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette, pXlat, 0xF0, 0x90, 0);
+
+	// Purple-to-Black has zero light level.
+	pXlat = FindStandardXlat(XLAT_PURPLETOBLACK);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette, pXlat, 0xF0, 0xA0, 0);
+
+	// Gray-to-Black has lowered light level.
 	pXlat = FindStandardXlat(XLAT_GRAYTOBLACK);
 	for (i = 0; i < NUM_COLORS; i++)
-	   pXlat->entry[i] = i;
+		pXlat->entry[i] = i;
 	CalcLightXlat(hPalette, pXlat, 0xF0, 0xD0, LIGHT_LEVELS / 6);
 
 	CalcRampMoveXlat(hPalette, FindStandardXlat(XLAT_GRAYTOOLDHAIR1), 0xF0, 0xD0, oldhair1_indexes, TRUE);

@@ -46,21 +46,21 @@ messages:
 
    SendAnimation()
    {
-      AddPacket(1,ANIMATE_CYCLE,4,400,2,1,2,6);  % Frames 1 to 6, and back to 1
+      AddPacket(1,ANIMATE_CYCLE,4,170,2,1,2,6);  % Frames 1 to 6, and back to 1
 
       return;
    }
 
    SendLookAnimation()
    {
-      AddPacket(1,ANIMATE_CYCLE,4,400,2,1,2,6);  % Frames 1 to 6, and back to 1
+      AddPacket(1,ANIMATE_CYCLE,4,170,2,1,2,6);  % Frames 1 to 6, and back to 1
 
       return;
    }
 
    SendInventoryAnimation()
    {
-      AddPacket(1,ANIMATE_CYCLE,4,400,2,1,2,6);  % Frames 1 to 6, and back to 1
+      AddPacket(1,ANIMATE_CYCLE,4,170,2,1,2,6);  % Frames 1 to 6, and back to 1
 
       return;
    }

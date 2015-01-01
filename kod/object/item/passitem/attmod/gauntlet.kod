@@ -30,7 +30,7 @@ resources:
    gauntlet_condition_med = " have been harshly dented in several places."
    gauntlet_condition_poor = " are in danger of falling apart.  Large plates of metal have been torn away during battle."
    gauntlet_condition_broken = " are ruined and offer no benefit."
-   gauntlet_broken = "Your % are a tangled mess of metal."
+   gauntlet_broken = "Your %s are a tangled mess of metal."
 
    standardshirt_rightarm_gauntlet_male = bre.bgf
    standardshirt_rightarm_gauntlet_female =brf.bgf

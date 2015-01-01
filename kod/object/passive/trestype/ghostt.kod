@@ -40,7 +40,7 @@ messages:
                      [ &VampireWand, 4],
                      [ &DiscipleRobe, 4],
                      [ &FineLute, 5],
-					 [ &Key, 9 ],
+                     [ &Key, 9 ],
                      [ &HoldWand, 2],
                      [ &TruceScroll, 1]
                    ];

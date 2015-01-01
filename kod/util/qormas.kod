@@ -452,12 +452,27 @@ messages:
 
    EndQormas(reporter=$,bDisplayMessage=TRUE)
    {
-      local i;
-
       if bDisplayMessage
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=Qormas_end_message);
       }
+
+      Send(self,@RemoveDecorations);
+
+      % remove any remaining gifts from rooms
+      Send(self,@RemoveGifts);
+      
+      % If snow is turned on, stop snowing in all rooms.
+      Send(&Room,@EndSnow);
+
+      pbActive = FALSE;
+      
+      return;
+   }
+
+   RemoveDecorations()
+   {
+      local i;
 
       for i in plDecorations
       {
@@ -476,14 +491,6 @@ messages:
 
       plDecorations = $;
 
-      % remove any remaining gifts from rooms
-      Send(self,@RemoveGifts);
-      
-      % If snow is turned on, stop snowing in all rooms.
-      Send(&Room,@EndSnow);
-
-      pbActive = FALSE;
-      
       return;
    }
 

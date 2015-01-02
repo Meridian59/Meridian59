@@ -177,6 +177,11 @@ xlat* FindStandardXlat(UINT uXlatID)
 	IMPLEMENT_XLAT(XLAT_REDTOBLACK1);
 	IMPLEMENT_XLAT(XLAT_REDTOBLACK2);
 	IMPLEMENT_XLAT(XLAT_REDTOBLACK3);
+	IMPLEMENT_XLAT(XLAT_REDTODKBLACK1);
+	IMPLEMENT_XLAT(XLAT_REDTODKBLACK2);
+	IMPLEMENT_XLAT(XLAT_REDTODKBLACK3);
+	IMPLEMENT_XLAT(XLAT_REDBLK_BLWHT);
+	IMPLEMENT_XLAT(XLAT_BLBLK_REDWHT);
 	IMPLEMENT_XLAT(XLAT_REDTODGREEN1);
 	IMPLEMENT_XLAT(XLAT_REDTODGREEN2);
 	IMPLEMENT_XLAT(XLAT_REDTODGREEN3);
@@ -630,6 +635,37 @@ void InitStandardXlats(HPALETTE hPalette)
 	CalcRampXlat(hPalette,     FindStandardXlat(XLAT_REDTOBLACK2), 0xF0, 0x90, 0x30, FALSE);
 	CalcHalfRampXlat(hPalette, FindStandardXlat(XLAT_REDTOBLACK3), 0xF0, 0x10, 0xD0, 8, TRUE);
 	CalcRampXlat(hPalette,     FindStandardXlat(XLAT_REDTOBLACK3), 0xF0, 0x90, 0x40, FALSE);
+
+   // Custom colors: red->pitch black while blue->skin1.5,3,4
+	pXlat = FindStandardXlat(XLAT_REDTODKBLACK1);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette, pXlat, 0xF0, 0x10, 0);
+	CalcRampXlat(hPalette,  pXlat, 0xF0, 0x90, 0x20, FALSE);
+	pXlat = FindStandardXlat(XLAT_REDTODKBLACK2);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette, pXlat, 0xF0, 0x10, 0);
+	CalcRampXlat(hPalette,  pXlat, 0xF0, 0x90, 0x30, FALSE);
+	pXlat = FindStandardXlat(XLAT_REDTODKBLACK3);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette, pXlat, 0xF0, 0x10, 0);
+	CalcRampXlat(hPalette,  pXlat, 0xF0, 0x90, 0x40, FALSE);
+
+   // Red->black while blue->white.
+	pXlat = FindStandardXlat(XLAT_REDBLK_BLWHT);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette,pXlat, 0xF0, 0x10, 0);
+	CalcRampXlat(hPalette, pXlat, 0xF0, 0x90, 0xD0, FALSE);
+
+   // Blue->black while red->white.
+	pXlat = FindStandardXlat(XLAT_BLBLK_REDWHT);
+	for (i = 0; i < NUM_COLORS; i++)
+		pXlat->entry[i] = i;
+	CalcLightXlat(hPalette,pXlat, 0xF0, 0x90, 0);
+	CalcRampXlat(hPalette, pXlat, 0xF0, 0x10, 0xD0, FALSE);
 
 	CalcRampXlat(hPalette, FindStandardXlat(XLAT_PURPLETOLBLUE), 0xF0, 0xA0, 0x80, TRUE);
 	CalcRampXlat(hPalette, FindStandardXlat(XLAT_PURPLETOBRED), 0xF0, 0xA0, 0x10, TRUE);

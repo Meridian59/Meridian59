@@ -58,7 +58,7 @@ M59EXPORT void XlatDib(BYTE* pabyBits, int width, int height, xlat* pXlat);
 -***-********---
 **------------**
 ****************
--------XXXXXXXXX 0x80 - 0x8F
+*****--XXXXXXXXX 0x80 - 0x8F
 XXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXX  (X's are XLAT_GUILDCOLOR_BASE-XLAT_GUILDCOLOR_END.)
@@ -114,6 +114,11 @@ Whenever you define a new color, mark off the appropriate spot above with *.
 #define XLAT_REDTOBLACK1   0x007D
 #define XLAT_REDTOBLACK2   0x007E
 #define XLAT_REDTOBLACK3   0x007F
+#define XLAT_REDTODKBLACK1 0x0080
+#define XLAT_REDTODKBLACK2 0x0081
+#define XLAT_REDTODKBLACK3 0x0082
+#define XLAT_REDBLK_BLWHT  0x0083
+#define XLAT_BLBLK_REDWHT  0x0084
 
 #define XLAT_GRAYTOLBBLUE  0x0020
 #define XLAT_GRAYTOLRED    0x0021

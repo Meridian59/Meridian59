@@ -75,8 +75,6 @@ properties:
 
    vrName = Spellitem_name_rsc
 
-   viObject_flags = APPLY_YES | GETTABLE_YES
-   
    % Used by the item creation spells when making a spell item at a set power.
    piSpellPower = $   
    pbBad = FALSE

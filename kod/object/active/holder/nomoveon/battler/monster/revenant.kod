@@ -131,6 +131,17 @@ messages:
       propagate;
    }
 
+   Delete()
+   {
+      if ptPlace <> $
+      {
+         DeleteTimer(ptPlace);
+      }
+      ptPlace = $;
+
+      propagate;
+   }
+
    Place()
    "Sets revenant down near (but not too near) his target"
    {

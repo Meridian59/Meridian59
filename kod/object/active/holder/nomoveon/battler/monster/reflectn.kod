@@ -152,13 +152,17 @@ messages:
    {
       if poOriginal = $
       {
-         Post(self,@Delete);
+         return;
       }
-
-      if IsClass(poOriginal,&Player)
-         AND NOT Send(poOriginal,@IsLoggedOn)
+      else
       {
-         Post(self,@Delete);
+         if IsClass(poOriginal,&Player)
+            AND NOT Send(poOriginal,@IsLoggedOn)
+         {
+            Post(self,@Delete);
+
+            return;
+         }
       }
 
       propagate;
@@ -168,15 +172,16 @@ messages:
    {
       if poOriginal = $
       {
-         Post(self,@Delete);
+         return;
       }
-      else
+
+      if IsClass(poOriginal,&Player)
+         AND NOT Send(poOriginal,@IsLoggedOn)
       {
-         if IsClass(poOriginal,&Player)
-            AND NOT Send(poOriginal,@IsLoggedOn)
-         {
-            Post(self,@Delete);
-         }
+         % This happens when the original leaves (i.e. logs off), and the
+         % reflection is deleted when it is removed from the system list.
+         % We don't need to delete it again here.
+         return;
       }
 
       propagate;
@@ -188,6 +193,8 @@ messages:
       if victim = poOriginal
       {
          Post(self,@Delete);
+
+         return;
       }
 
       propagate;
@@ -199,7 +206,7 @@ messages:
 
       if poOriginal = $
       {
-         Send(self,@Delete);
+         return;
       }
 
       % Ignore mana drain for non-players.
@@ -208,9 +215,10 @@ messages:
          return;
       }
 
-      if not Send(poOriginal,@IsLoggedOn)
+      if NOT Send(poOriginal,@IsLoggedOn)
       {
          Send(self,@Delete);
+
          return;
       }
 
@@ -235,7 +243,7 @@ messages:
 
       if poOwner <> $
          AND (IsClass(poOriginal,&Monster)
-            OR Send(poOriginal,@isLoggedOn))
+            OR Send(poOriginal,@IsLoggedOn))
       {
          Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=reflection_delete,
               #what=self,#parm1=Send(self,@GetDef,#cap=TRUE),
@@ -285,7 +293,7 @@ messages:
    {
       if poOriginal = $
       {
-         Post(self,@Delete);
+         return;
       }
 
       if IsClass(poOriginal,&Player)
@@ -312,8 +320,6 @@ messages:
 
       if poOriginal = $
       {
-         Post(self,@Delete);
-
          return 0;
       }
 
@@ -328,7 +334,7 @@ messages:
 
       if poOriginal = $
       {
-         Post(self,@Delete);
+         return 0;
       }
 
       if IsClass(poOriginal,&Player)
@@ -361,6 +367,11 @@ messages:
    GetDamage(what = $, stroke_obj=$)
    {
       local oStroke;
+
+      if poOriginal = $
+      {
+         return 0;
+      }
 
       oStroke = stroke_obj;
       if IsClass(poOriginal,&Player)
@@ -395,7 +406,7 @@ messages:
    {
       if poOriginal = $
       {
-         post(self,@Delete);
+         return;
       }
 
       % Our source object changed; tell everyone that we've changed, too.
@@ -422,10 +433,12 @@ messages:
    }
 
    SomethingChangedTimer()
-   "Tell room that we've changed.  This is on a timer to avoid tons of changes sent all at once."
+   "Tell room that we've changed.  This is on a timer to avoid tons "
+   "of changes sent all at once."
    {
       ptSomethingChanged = $;
-      if (poOwner <> $) 
+      if poOriginal <> $
+         AND poOwner <> $
       {
          Post(poOwner,@SomethingChanged,#what=self);
       }
@@ -439,6 +452,7 @@ messages:
       {
          Debug("Reflection called with invalid $ SetOriginal");
       }
+
       poOriginal = who;
       piMax_Hit_Points = piSpellpower / 3;
       piMax_hit_points = Bound(piMax_hit_points,15,40);
@@ -559,6 +573,11 @@ messages:
          return;
       }
 
+      if poOriginal = $
+      {
+         return;
+      }
+
       if IsClass(poOriginal,&Player)
       {
          if Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
@@ -634,7 +653,7 @@ messages:
          OR IsClass(what,&Revenant)
          OR IsClass(what,&EvilTwin)
       {
-         return -100;
+         return -1000;
       }
 
       return 0;

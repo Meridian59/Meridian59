@@ -24,6 +24,12 @@
 #define SNOW_B			255
 #define SNOW_A			220
 
+#define MAX_FIREWORK_PARTICLES	256
+#define FIREWORKS_R			((int)rand() % 256)
+#define FIREWORKS_G			((int)rand() % 256)
+#define FIREWORKS_B			((int)rand() % 256)
+#define FIREWORKS_A			220
+
 typedef struct particle
 {
 	int			energy;
@@ -39,6 +45,8 @@ typedef struct particle
 typedef struct emitter
 {
 	int			numParticles;
+   int         numAlive;
+   int         maxParticles;
 	int			energy;
 	int			timer;
 	int			timerBase;
@@ -49,7 +57,7 @@ typedef struct emitter
 	custom_xyz	velocity;
 	custom_xyz	rotation;
 	custom_bgra	bgra;
-	particle	particles[MAX_PARTICLES];
+	particle	*particles;
 	Bool		bRandomizeXY;
 	Bool		bRandomizeZ;
 	Bool		bGroundDestroy;
@@ -67,10 +75,13 @@ void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float 
 							float velX, float velY, float velZ, unsigned char b, unsigned char g,
 							unsigned char r, unsigned char a, int energy, int timerBase,
 							float rotX, float rotY, float rotZ, Bool bRandomizeXY, Bool bRandomizeZ,
-							int randomPos, int randomRot, Bool bGroundDestroy, Bool bWeatherEffect);
+							int randomPos, int randomRot, Bool bGroundDestroy, Bool bWeatherEffect,
+                     int maxParticles);
 void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 //void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
+							 d3d_render_cache_system *pCacheSystem, Draw3DParams *params);
+void	D3DFireworksSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
 							 d3d_render_cache_system *pCacheSystem, Draw3DParams *params);
 
 #endif

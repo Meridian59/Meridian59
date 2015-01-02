@@ -104,9 +104,15 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
 	  RedrawAll();
 	  break;
 
+   case EFFECT_FIREWORKS:
+	  effects.fireworks = True;
+	  RedrawAll();
+	  break;
+
    case EFFECT_CLEARWEATHER:
 	  effects.raining = False;
 	  effects.snowing = False;
+     effects.fireworks = False;
 	  RedrawAll();
 	  break;
 

@@ -198,6 +198,7 @@ Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk);
 void SandstormInit(void);
 void RainInit(void);
 void SnowInit(void);
+void FireworksInit(void);
 
 // Use this function to determine if the bounding box is out of the player's
 //view. Useful for not adding stuff to draw that the player can't see.

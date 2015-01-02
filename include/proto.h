@@ -479,6 +479,7 @@ enum {
    EFFECT_FLASHXLAT     = 15,  // Flashes screen with a given XLAT number
    EFFECT_WHITEOUT	= 16,  // Got from full white and fade back to normal
    EFFECT_XLATOVERRIDE	= 17,  // Use this xlat at end over the whole screen
+   EFFECT_FIREWORKS = 18,
 };
 
 /* Room animation action codes */

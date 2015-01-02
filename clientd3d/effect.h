@@ -33,6 +33,7 @@ typedef struct {
    Bool raining;   // True when weather is rainy
    Bool snowing;   // True when weather is snowy
    Bool sand;      // True when in sandstorm
+   Bool fireworks;
 
    ID   wadingsound;  // ID of wav resource for wading in current room
    ID   ambientsound; // ID of wav resource played constantly in current room

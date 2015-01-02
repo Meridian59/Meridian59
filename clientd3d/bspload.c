@@ -197,6 +197,7 @@ Bool BSPRooFileLoad(char *fname, room_type *room)
    SandstormInit();
    RainInit();
    SnowInit();
+   FireworksInit();
 
    playerOldPos.x = 0;
    playerOldPos.y = 0;

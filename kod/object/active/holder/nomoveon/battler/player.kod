@@ -706,6 +706,8 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   second_wind_finished = "You feel more relaxed as your second wind dissipates."
 
 classvars:
 
@@ -1001,6 +1003,8 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+         	#type=ENCHANTMENT_PLAYER);
       }
 
       Send(self,@CancelRescue);
@@ -1254,6 +1258,9 @@ messages:
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
       Send(self,@NewVigor);
+      Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
+      Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+      		 #type=ENCHANTMENT_PLAYER);
       
       return;
    }
@@ -1855,6 +1862,13 @@ messages:
       % Restart Health and Mana timers
       Send(self,@NewHealth);
       Send(self,@NewMana);
+      
+      % Add second wind icon if timer still active
+      if ptSecondWind <> $
+      {
+      Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
+      	    #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
       
       Send(self,@SendUserAllWindowOverlays);
 
@@ -10137,6 +10151,9 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+         Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+         	#type=ENCHANTMENT_PLAYER);
       }
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);

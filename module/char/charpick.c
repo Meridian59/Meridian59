@@ -135,7 +135,6 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
              // sort character list using string comparison of existing character names and character flag (1==new character slot)
             if ( (info->characters[i].flags == 1 && info->characters[i+1].flags != 1) || (strcmpi(info->characters[i].name, info->characters[i+1].name) > 0) )
             {
-               // bubble all new character slots to the end of the list and non-alphabetical character positions.
                tmpCharacter = info->characters[i];
                info->characters[i] = info->characters[i+1];
                info->characters[i+1] = tmpCharacter;

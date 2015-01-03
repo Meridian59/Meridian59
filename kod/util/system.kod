@@ -5002,6 +5002,10 @@ messages:
       plMonsterTemplates = cons(create(&DuskRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
+      
+      plMonsterTemplates = cons(create(&EarthElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FireElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&IceElemental),plMonsterTemplates);
 
       return;
    }

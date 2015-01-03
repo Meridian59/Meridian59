@@ -118,32 +118,32 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
    switch (message)
    {
    case WM_INITDIALOG:
+      {
       CenterWindow(hDlg, GetParent(hDlg));
       hList = GetDlgItem(hDlg, IDC_CHARLIST);
       info = (PickCharStruct *) lParam;
 
-      // Sort thy account owned characters by their god given names alphabetically with new character slots *always* appearing last.
+	  
+      // Sort the account owned characters by their god given names alphabetically with new character slots *always* appearing last.
       // No more shall we suffer having to press down to select our only character!
       bool bSorted = false;
-      Character tmpCharacter;          
-      while (false == bSorted) 
+      Character tmpCharacter;
+      while (!bSorted) 
       {
          bSorted = true;
          for (i = 0; i < info->num_characters-1; i++)
-         {                
-            if ( (info->characters[i].flags == 1 && info->characters[i+1].flags != 1) 
-            ||  ( info->characters[i].flags != 1 && info->characters[i+1].flags != 1 && 
-            info->characters[i].name != NULL && info->characters[i+1].name != NULL 
-            && strcmpi(info->characters[i].name, info->characters[i+1].name) > 0 ) )
-            {        
+         {
+             // sort character list using string comparison of existing character names and character flag (1==new character slot)
+            if ( (info->characters[i].flags == 1 && info->characters[i+1].flags != 1) || (strcmpi(info->characters[i].name, info->characters[i+1].name) > 0) )
+            {
                // bubble all new character slots to the end of the list and non-alphabetical character positions.
                tmpCharacter = info->characters[i];
                info->characters[i] = info->characters[i+1];
                info->characters[i+1] = tmpCharacter;
                bSorted = false;
-               }
+            }
          }
-      }        // end while    
+      } // end while
 
       /* Display characters in list */
       for (i=0; i < info->num_characters; i++)
@@ -171,7 +171,7 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
 
       hPickCharDialog = hDlg;
       return TRUE;
-
+      }
    case WM_COMPAREITEM:
       return ItemListCompareItem(hDlg, (const COMPAREITEMSTRUCT *) lParam);
    case WM_MEASUREITEM:

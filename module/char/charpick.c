@@ -123,7 +123,6 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       hList = GetDlgItem(hDlg, IDC_CHARLIST);
       info = (PickCharStruct *) lParam;
 
-	  
       // Sort the account owned characters by their god given names alphabetically with new character slots *always* appearing last.
       // No more shall we suffer having to press down to select our only character!
       bool bSorted = false;

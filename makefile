@@ -82,11 +82,11 @@ Bbbgun:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bkeybind:
-	echo Making $(COMMAND) in $(KEYBINDDIR)
-	cd $(KEYBINDDIR)
-	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
+#Bkeybind:
+#	echo Making $(COMMAND) in $(KEYBINDDIR)
+#	cd $(KEYBINDDIR)
+#	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
+#	cd ..
 
 clean:
         set COMMAND=clean

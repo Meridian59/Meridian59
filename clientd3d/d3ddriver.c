@@ -359,8 +359,8 @@ Bool D3DDriverProfileInit(void)
 
 	gD3DDriverProfile.texMemTotal = IDirect3DDevice9_GetAvailableTextureMem(gpD3DDevice);
 
-//	if (gD3DDriverProfile.texMemTotal < (32 * 1024 * 1024))
-	if (1)
+	if (gD3DDriverProfile.texMemTotal < (32 * 1024 * 1024))
+//	if (1)
 	{
 //		gD3DDriverProfile.texMemTotal = (32 * 1024 * 1024);
 		gD3DDriverProfile.bManagedTextures = TRUE;

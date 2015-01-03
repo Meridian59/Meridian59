@@ -15,6 +15,7 @@
 // Structure passed to inner loops
 typedef struct {
    int   flags;             // Object flags
+   int   minimapflags;      /* Minimap dot color flags */
    BYTE  translation;       // Palette translation to use
    BYTE  secondtranslation; // Another palette translation to use
    BYTE *start_ptr;         // Points to start of row to draw in

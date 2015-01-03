@@ -396,16 +396,18 @@ enum {
 #define OF_EFFECT_MASK   0x00F00000    // Mask to get object drawing effect bits
 #define NUM_DRAW_EFFECTS 16            // # of possible object drawing effects
 
-// Minimap dot colors
-#define OF_ENEMY         0x01000000    // Enemy player
-#define OF_FRIEND        0x02000000    // Friendly player
-#define OF_GUILDMATE     0x04000000    // Guildmate player
-#define OF_MINION        0x08000000    // Monster is a minion owned by a player
-#define OF_MINION_OTHER  0x09000000    // Set if monster is other's minion
-#define OF_MINION_SELF   0x0A000000    // Set if a monster is our minion
-#define OF_MINIMAP_MASK  0x0F000000    // Mask to get minimap drawing effects
+// Minimap dot color bitfield. Now separate from object flags.
+#define MM_NONE          0x00000000    // No dot (default for all objects)
+#define MM_PLAYER        0x00000001    // Standard blue player dot
+#define MM_ENEMY         0x00000002    // Enemy (halo or attackable) player
+#define MM_FRIEND        0x00000004    // Friendly (guild ally) player
+#define MM_GUILDMATE     0x00000008    // Guildmate player
+#define MM_BUILDER_GROUP 0x00000010    // Player is in same building group
+#define MM_MONSTER       0x00000020    // Default monster dot
+#define MM_NPC           0x00000040    // NPC
+#define MM_MINION_OTHER  0x00000080    // Set if monster is other's minion
+#define MM_MINION_SELF   0x00000100    // Set if a monster is our minion
 
-#define GetMinimapFlags(flags)  ((flags) & OF_MINIMAP_MASK)
 #define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)
 #define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)
 #define GetDrawingEffectIndex(flags) (((flags) & OF_EFFECT_MASK) >> 20)

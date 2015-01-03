@@ -87,6 +87,7 @@ typedef struct {
    list_type overlays;         /* Bitmaps to draw over object */
    BYTE light;                 /* Strength of sector light at object */
    int  flags;                 /* Object flags, including moveon type */
+   int  minimapflags;          /* Minimap dot color flags */
    int  height;                /* Height to draw object (FINENESS units) */   
    int  center;                /* Screen column of center of object */
    int  depth;                 /* Depth under ground to draw object (FINENESS units) */

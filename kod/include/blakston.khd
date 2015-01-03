@@ -105,13 +105,17 @@
    PLAYER_EVENT      = 0x1C000
 
    % What is the target, according to the viewer?  Used for special flagging.
-   PLAYER_IS_ENEMY      = 0x01000000
-   PLAYER_IS_FRIEND     = 0x02000000
-   PLAYER_IS_GUILDMATE  = 0x04000000
-   MINION_YES           = 0x08000000
-   MINION_OTHER         = 0x09000000
-   MINION_SELF          = 0x0A000000
-   MINIMAP_MASK         = 0x0F000000
+   % This is now its own bitfield separate from object flags.
+   MM_NONE                 = 0x00000000
+   MM_PLAYER               = 0x00000001
+   MM_PLAYER_IS_ENEMY      = 0x00000002
+   MM_PLAYER_IS_FRIEND     = 0x00000004
+   MM_PLAYER_IS_GUILDMATE  = 0x00000008
+   MM_BUILDER_GROUP        = 0x00000010
+   MM_MONSTER              = 0x00000020
+   MM_NPC                  = 0x00000040
+   MM_MINION_OTHER         = 0x00000080
+   MM_MINION_SELF          = 0x00000100
 
    %%% Projectile and Light flags
 

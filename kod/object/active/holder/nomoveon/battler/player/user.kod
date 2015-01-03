@@ -2336,7 +2336,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, oRoom;
+      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2396,70 +2396,18 @@ messages:
             iFlags = (iFlags & (~FLICKERING_YES));
             iFlags = (iFlags | FLASHING_YES);
          }
-
-         if IsClass(what,&Player)
-         {
-            oIllusion = Send(what,@GetIllusionForm);
-
-            if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-               OR oIllusion = $
-               OR NOT IsClass(oIllusion,&Monster)
-            {
-               oOtherGuild = Send(what,@GetGuild);
-               if poGuild <> $ AND oOtherGuild <> $
-               {
-                  if poGuild = oOtherGuild
-                  {
-                     iFlags = (iFlags | PLAYER_IS_GUILDMATE);
-                  }
-
-                  if Send(poGuild,@IsAlly,#otherguild=oOtherGuild)
-                     AND Send(oOtherGuild,@IsAlly,#otherguild=poGuild)
-                  {
-                     iFlags = (iFlags | PLAYER_IS_FRIEND);
-                  }
-
-                  if Send(poGuild,@IsMutualEnemy,#otherguild=oOtherGuild)
-                  {
-                     iFlags = (iFlags | PLAYER_IS_ENEMY);
-                  }
-               }
-            }
-
-            If what <> self
-               AND NOT IsClass(self,&DM)
-               AND Send(self,@AllowPlayerAttack,#victim=what,#report=FALSE,#actual=FALSE)
-            {
-               iFlags = (iFlags | PLAYER_IS_ENEMY);
-            }
-         }
-
-         if IsClass(what,&Monster)
-            AND NOT (IsClass(what,&Reflection)
-               OR IsClass(what,&EvilTwin))
-            AND Send(what,@GetMaster) <> $
-         {
-            if (Send(what,@GetMaster) = self)
-            {
-               iFlags = (iFlags | MINION_SELF);
-            }
-            else
-            {
-               iFlags = (iFlags | MINION_OTHER);
-            }
-         }
       }
 
-      oRoom = poOwner;
-      if oRoom <> $
+      iMinimapFlags = Send(self,@BuildMinimapDotFlag,#what=what);
+      if iMinimapFlags = $
       {
-         if Send(oRoom,@AreGroupedHere,#who=self,#what=what)
-         {
-            iFlags = (iFlags | PLAYER_IS_FRIEND);
-         }
+         Debug("Got $ minimapflags for self ",self,Send(self,@GetTrueName),
+            " for object ",what,Send(what,@GetTrueName));
+         iMinimapFlags = 0;
       }
 
       AddPacket(4,iFlags);
+      AddPacket(4,iMinimapFlags);
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);
@@ -2490,6 +2438,102 @@ messages:
       }
 
       return;
+   }
+
+   BuildMinimapDotFlag(what=$)
+   "This message builds the minimap dot flags for each object we can see, "
+   "which is then sent to our client for drawing objects on the map/minimap."
+   {
+      local iBehavior, iFlags, oIllusion, oOtherGuild;
+
+      if what = self
+         OR what = $
+         OR poOwner <> Send(what,@GetOwner)
+      {
+         return MM_NONE;
+      }
+
+      iFlags = MM_NONE;
+
+      if IsClass(what,&Player)
+      {
+         oIllusion = Send(what,@GetIllusionForm);
+
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            OR oIllusion = $
+            OR NOT IsClass(oIllusion,&Monster)
+         {
+            % Standard player blue dot.
+            iFlags = iFlags | MM_PLAYER;
+
+            oOtherGuild = Send(what,@GetGuild);
+            if poGuild <> $ AND oOtherGuild <> $
+            {
+               if poGuild = oOtherGuild
+               {
+                  iFlags = (iFlags | MM_PLAYER_IS_GUILDMATE);
+               }
+
+               if Send(poGuild,@IsAlly,#otherguild=oOtherGuild)
+                  AND Send(oOtherGuild,@IsAlly,#otherguild=poGuild)
+               {
+                  iFlags = (iFlags | MM_PLAYER_IS_FRIEND);
+               }
+
+               if Send(poGuild,@IsMutualEnemy,#otherguild=oOtherGuild)
+               {
+                  iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
+               }
+            }
+         }
+
+         % Draw a red halo for any attackable player.
+         if NOT IsClass(self,&DM)
+            AND Send(self,@AllowPlayerAttack,#victim=what,
+                     #report=FALSE,#actual=FALSE)
+         {
+            iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
+         }
+      }
+
+      if IsClass(what,&Monster)
+         AND NOT (IsClass(what,&Reflection)
+            OR IsClass(what,&EvilTwin))
+      {
+         if Send(what,@GetMaster) <> $
+         {
+            if (Send(what,@GetMaster) = self)
+            {
+               iFlags = (iFlags | MM_MINION_SELF);
+            }
+            else
+            {
+               iFlags = (iFlags | MM_MINION_OTHER);
+            }
+         }
+         else
+         {
+            % Draw dots for NPCs.
+            if Send(what,@GetBehavior) & AI_NPC
+            {
+               iFlags = (iFlags | MM_NPC);
+            }
+            else
+            {
+               iFlags = (iFlags | MM_MONSTER);
+            }
+         }
+      }
+
+      if poOwner <> $
+      {
+         if Send(poOwner,@AreGroupedHere,#who=self,#what=what)
+         {
+            iFlags = (iFlags | MM_BUILDER_GROUP);
+         }
+      }
+
+      return iFlags;
    }
 
    ToCliPlayer()

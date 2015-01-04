@@ -1090,6 +1090,7 @@ messages:
                      j = Send(poOwner,@HolderExtractObject,#data=i);
                      if IsClass(j,&Monster)
                         AND NOT (Send(j,@GetBehavior) & AI_NPC)
+                        AND NOT (Send(j,@GetMaster) = poChampion)
                      {
                         Post(j,@Delete);
                      }
@@ -1880,9 +1881,9 @@ messages:
 
    Teleport(what=$, goinplay=FALSE, outofplay=FALSE)
    {
-      local i, bInList, iAmount;
+      local i, bInList, iAmount, lMinions;
 
-      if goinplay OR Send(self,@IsCombatant,#who=what)   
+      if goinplay OR Send(self,@IsCombatant,#who=what)
       {
          % teleport to the playing field
          bInList = FALSE;
@@ -1891,28 +1892,31 @@ messages:
             if First(i) = what
             {
                bInList = TRUE;
-            }   
+            }
          }
 
-         if NOT bInList
+         if IsClass(what,&Player)
          {
-            plUserStats = Cons([ what,Send(what,@GetHealth),
-                                 Send(what,@GetMana),Send(what,@GetVigor)
-                               ],plUserStats);     
-         }
+            if NOT bInList
+            {
+               plUserStats = Cons([ what,Send(what,@GetHealth),
+                                    Send(what,@GetMana),Send(what,@GetVigor)
+                                  ],plUserStats);     
+            }
 
-         if Send(what,@GetHealth) < Send(what,@GetMaxHealth)
-         {
-            Send(what,@GainHealthNormal,#amount=200);
-         }
+            if Send(what,@GetHealth) < Send(what,@GetMaxHealth)
+            {
+               Send(what,@GainHealthNormal,#amount=200);
+            }
 
-         if Send(what,@GetMana) < Send(what,@GetMaxMana)
-         {
-            iAmount = Send(what,@GetMaxMana) - Send(what,@GetMana);
-            Send(what,@GainMana,#amount=iAmount);
-         }
+            if Send(what,@GetMana) < Send(what,@GetMaxMana)
+            {
+               iAmount = Send(what,@GetMaxMana) - Send(what,@GetMana);
+               Send(what,@GainMana,#amount=iAmount);
+            }
 
-         Send(what,@AddExertion,#amount=-2000000);
+            Send(what,@AddExertion,#amount=-2000000);
+         }
       }
       else
       {
@@ -1931,10 +1935,25 @@ messages:
       }
 
       Send(poOwner,@Teleport,#what=what,#goinplay=goinplay,
-           #outofplay=outofplay);
+            #outofplay=outofplay);
+      if IsClass(what,&Player)
+      {
+         lMinions = Send(what,@GetControlledMinions);
+         if lMinions <> $
+         {
+            for i in lMinions
+            {
+               if Send(i,@GetOwner) = Send(self,@GetOwner)
+               {
+                  Send(poOwner,@Teleport,#what=i,#goinplay=goinplay,
+                        #outofplay=outofplay);
+               }
+            }
+         }
+      }
 
       return;
-    }
+   }
 
    ClearCombatants()
    {

@@ -78,8 +78,8 @@ CNODEBUGFLAGS = $(CCOMMONFLAGS) -W2 -DBLAKDEBUG
 LINKNORMALFLAGS =/release
 LINKDEBUGFLAGS = /debug
 LINKNODEBUGFLAGS =
-LINKCONSOLEFLAGS = -subsystem:console
-LINKWINDOWSFLAGS = -subsystem:windows
+LINKCONSOLEFLAGS = -subsystem:console,5.01
+LINKWINDOWSFLAGS = -subsystem:windows,5.01
 
 !ifdef DEBUG
 
@@ -117,7 +117,7 @@ CC     = cl
 MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
-RC     = rc
+RC     = rc -nologo
 
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t

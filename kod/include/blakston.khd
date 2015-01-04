@@ -1479,7 +1479,6 @@
    BRAIN_GUARD             = 5
    BRAIN_NONAGGRESSIVE     = 6
    BRAIN_KARMA_AGGRESSIVE  = 7
-   BRAIN_2                 = 8
 
    % AI Behaviors
    % Mob cannot be attacked.

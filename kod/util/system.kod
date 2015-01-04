@@ -3565,7 +3565,6 @@ messages:
    {
       plBrains = $;
       plBrains = Cons(Create(&Brain),plBrains);
-      plBrains = Cons(Create(&Brain2),plBrains);
 
       return;
    }
@@ -4944,6 +4943,9 @@ messages:
       plMonsterTemplates = cons(create(&fungusbeast),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ghost),plMonsterTemplates);
       plMonsterTemplates = cons(create(&giantrat),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GiantRatKing),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GiantRatSoldier),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SmallRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&iceperson),plMonsterTemplates);
       plMonsterTemplates = cons(create(&blackmummy),plMonsterTemplates);
       plMonsterTemplates = cons(create(&mummy),plMonsterTemplates);
@@ -5005,8 +5007,6 @@ messages:
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
 
-      plMonsterTemplates = cons(create(&GiantRatKing),plMonsterTemplates);
-      
       return;
    }
 

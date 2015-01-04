@@ -148,19 +148,20 @@ messages:
       local oRoom, bValid_location, iTries, iRow, iCol, iRow_sign, iCol_sign,
             iTarg_row, iTarg_col ;
 
+      ptPlace = $;
       oRoom = Send(poHauntee,@GetOwner);
-      
+
       if oRoom <> poRoom
       {
          %% target has moved on, let new revenant take over
          Send(self,@Delete);
-         
+
          return;
       }
-      
+
       iTarg_row = Send(poHauntee,@GetRow);
       iTarg_col = Send(poHauntee,@GetCol);
-      
+
       iTries = 0;
       bValid_location = FALSE;
       

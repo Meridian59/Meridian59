@@ -3440,9 +3440,9 @@ messages:
 
       % If we have a master, they are responsible for our kills.
       if poMaster <> $
-         AND IsClass(poMaster,&Player)
       {
          if IsClass(what,&Player)
+            AND IsClass(poMaster,&Player)
          {
             % If we killed an innocent, tell the master they're in trouble.
             if (NOT Send(poMaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))

@@ -167,7 +167,7 @@ messages:
          OR (poCaster <> $
             AND victim = poCaster)
       {
-         Post(self,@Delete);
+         Send(self,@Delete);
       }
 
       return;
@@ -221,17 +221,9 @@ messages:
    ReqSomethingEntered(what=$)
    {
       if poOriginal = $
+         OR NOT Send(poOriginal,@IsLoggedOn)
       {
          return;
-      }
-      else
-      {
-         if NOT Send(poOriginal,@IsLoggedOn)
-         {
-            Post(self,@Delete);
-
-            return;
-         }
       }
 
       propagate;
@@ -247,7 +239,7 @@ messages:
       if IsClass(poOriginal,&Player)
          AND NOT Send(poOriginal,@IsLoggedOn)
       {
-         Post(self,@Delete);
+         Send(self,@Delete);
 
          return;
       }
@@ -257,7 +249,7 @@ messages:
          % If target leaves room, hunt them down.
          if IsClass(Send(poOriginal,@GetOwner),&UnderWorld)
          {
-            Post(self,@Delete);
+            Send(self,@Delete);
 
             return;
          }
@@ -294,7 +286,6 @@ messages:
       }
 
       return;
-
    }
 
    GetOriginalInfo()

@@ -3141,6 +3141,12 @@ messages:
          }
       }
       
+      if ptSecondWind <> $
+      {
+	 Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
+	    #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+
       return;
    }
 

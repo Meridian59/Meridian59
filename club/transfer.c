@@ -25,7 +25,7 @@ static int bytes_read;                // Total # of bytes we've read
 Bool TransferStart(void)
 {
    Bool done;
-   const char *mime_types[2] = { "application/octet-stream" };
+   const char *mime_types[2] = { "application/x-zip-compressed" };
    char file_size_buf[20];
    DWORD file_size_buf_len = sizeof(file_size_buf);
    DWORD index = 0;

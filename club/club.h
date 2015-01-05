@@ -23,6 +23,7 @@
 #include <fcntl.h>
 #include <sys\stat.h>
 #include <process.h>
+#include <direct.h>
 #include "wininet.h"
 
 #define Bool char
@@ -37,8 +38,6 @@
 #define CM_PROGRESS   (WM_USER + 1006)
 
 #include "resource.h"
-
-#include "wrap.h"
 
 #include "clubarchive.h"
 #include "util.h"

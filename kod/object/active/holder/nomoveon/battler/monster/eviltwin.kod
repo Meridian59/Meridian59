@@ -223,7 +223,7 @@ messages:
       if poOriginal = $
          OR NOT Send(poOriginal,@IsLoggedOn)
       {
-         return;
+         return TRUE;
       }
 
       propagate;
@@ -282,6 +282,65 @@ messages:
          {
             Post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
             Post(self,@EnterStateChase);
+         }
+      }
+
+      return;
+   }
+
+   SetMaster(oMaster=$)
+   {
+      if oMaster = $
+      {
+         if poMaster <> $
+         {
+            Send(poMaster,@RemoveControlledMinion,#what=self);
+            if poOwner <> $
+            {
+               Post(poOwner,@SomethingChanged,#what=self);
+            }
+
+            % Evil twins will go after the original target.
+            if IsClass(self,&EvilTwin)
+            {
+               poMaster = Send(self,@GetCaster);
+               Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
+                     #value=FALSE);
+               Send(self,@GoToOriginal);
+            }
+         }
+      }
+      else
+      {
+         poMaster = oMaster;
+
+         if poMaster <> poCaster
+         {
+            % We've been captured, break target in case the new master
+            % doesn't want to attack them.
+            Send(self,@EnterStateWait);
+         }
+         else
+         {
+            % Original caster captured us back, break target unless we're
+            % attacking the original.
+            if poTarget <> poOriginal
+            {
+               Send(self,@EnterStateWait);
+            }
+         }
+
+         if poOwner <> $
+         {
+            Post(poOwner,@SomethingChanged,#what=self);
+         }
+
+         if NOT Send(SYS,@IsPKAllowed)
+            AND (poTarget <> $
+               AND IsClass(poTarget,&Player))
+         {
+            % Forget our target
+            Send(self,@EnterStateWait);
          }
       }
 

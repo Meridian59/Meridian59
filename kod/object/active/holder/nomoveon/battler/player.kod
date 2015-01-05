@@ -13921,6 +13921,7 @@ messages:
       if plControlledMinions = $
          OR oTarget = $
          OR NOT IsClass(oTarget,&Battler)
+         OR IsClass(oTarget,&Revenant)
       {
          return;
       }
@@ -13938,19 +13939,15 @@ messages:
          for oActive in plControlledMinions
          {
             if IsClass(oActive,&Monster)
+               AND Send(oActive,@GetMaster) = self
+               AND Send(oActive,@GetTarget) <> oTarget
             {
-               if Send(oActive,@GetMaster) = self
-               {
-                  if Send(oActive,@GetTarget) <> oTarget
-                  {
-                     Send(oActive,@SetBehaviorFlag,
-                           #flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
-                     Send(oActive,@TargetSwitch,#what=oTarget,
-                           #iHatred=100);
-                     Send(oActive,@EnterStateChase,#target=oTarget,
-                           #actnow=TRUE);
-                  }
-               }
+               Send(oActive,@SetBehaviorFlag,
+                     #flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+               Send(oActive,@TargetSwitch,#what=oTarget,
+                     #iHatred=100);
+               Send(oActive,@EnterStateChase,#target=oTarget,
+                     #actnow=TRUE);
             }
          }
       }

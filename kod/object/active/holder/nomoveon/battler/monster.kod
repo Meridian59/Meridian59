@@ -1112,6 +1112,7 @@ messages:
       {
          if iRow <> 0 AND iCol <> 0
             AND Send(poMaster,@GetOwner) <> $
+            AND (piBehavior & AI_MOVE_FOLLOW_MASTER)
          {
             if ((piRow - iRow) <= 3
                AND (piCol - iCol) <= 3)
@@ -6189,6 +6190,7 @@ messages:
       return poMaster;
    }
 
+   % Evil twin and reflection have an override for this.
    SetMaster(oMaster=$)
    {
       if oMaster = $
@@ -6196,43 +6198,11 @@ messages:
          if poMaster <> $
          {
             Send(poMaster,@RemoveControlledMinion,#what=self);
-            if poOwner <> $
-            {
-               Post(poOwner,@SomethingChanged,#what=self);
-            }
 
-            % After the honeymoon is over, go after the master! Exception here
-            % are Reflections who've been captured back by the original caster.
-            % Evil twins will go after the original target.
-            if IsClass(self,&EvilTwin)
-            {
-               poMaster = Send(self,@GetCaster);
-               Send(self,@TargetSwitch,#what=Send(self,@GetIllusionForm),
-                     #iHatred=1000);
-               Send(self,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
-                     #value=FALSE);
-            }
-            else
-            {
-               % Reflections return to owner's control, attacking
-               % the player who stole them.
-               if IsClass(self,&Reflection)
-               {
-                  if poMaster = Send(self,@GetOriginal)
-                  {
-                     return;
-                  }
-                  Send(self,@TargetSwitch,#what=poMaster,#iHatred=150);
-                  poMaster = Send(self,@GetOriginal);
-                  % Add ourselves back to master's control list.
-                  Send(poMaster,@NewControlledMinion,#minion=self);
-               }
-               else
-               {
-                  Send(self,@TargetSwitch,#what=poMaster,#iHatred=150);
-                  poMaster = $;
-               }
-            }
+            % After the honeymoon is over, go after the master!
+            Send(self,@TargetSwitch,#what=poMaster,#iHatred=150);
+            poMaster = $;
+
             Send(self,@EnterStateChase);
          }
       }
@@ -6240,27 +6210,22 @@ messages:
       {
          poMaster = oMaster;
 
-         if poTarget = poMaster
-         {
-            Send(self,@EnterStateWait);
-         }
-         else
-         {
-            if NOT IsClass(self,&EvilTwin)
-            {
-               Send(self,@EnterStateWait);
-            }
-         }
+         % Break target.
+         Send(self,@EnterStateWait);
 
-         if poOwner <> $
-         {
-            Post(poOwner,@SomethingChanged,#what=self);
-         }
-         if NOT Send(SYS,@IsPKAllowed) AND poTarget <> $
-         {
-            % Forget our target
-            Send(self,@EnterStateWait);
-         }
+         % Uncomment this if post-capture attack behavior changes.
+         %if NOT Send(SYS,@IsPKAllowed)
+         %   AND (poTarget <> $
+         %      AND IsClass(poTarget,&Player))
+         %{
+         %   % Forget our target
+         %   Send(self,@EnterStateWait);
+         %}
+      }
+
+      if poOwner <> $
+      {
+         Post(poOwner,@SomethingChanged,#what=self);
       }
 
       return;

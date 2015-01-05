@@ -152,7 +152,7 @@ messages:
    {
       if poOriginal = $
       {
-         return;
+         return TRUE;
       }
       else
       {
@@ -161,7 +161,7 @@ messages:
          {
             Post(self,@Delete);
 
-            return;
+            return TRUE;
          }
       }
 
@@ -198,6 +198,55 @@ messages:
       }
 
       propagate;
+   }
+
+   SetMaster(oMaster=$)
+   {
+      if oMaster = $
+      {
+         if poMaster <> $
+         {
+            % Reflections return to owner's control, attacking the player
+            % who stole them.
+
+            if poMaster = Send(self,@GetOriginal)
+            {
+               % Don't need to do anything.
+               return;
+            }
+
+            Send(poMaster,@RemoveControlledMinion,#what=self);
+            Send(self,@TargetSwitch,#what=poMaster,#iHatred=150);
+            poMaster = Send(self,@GetOriginal);
+            % Add ourselves back to master's control list.
+            Send(poMaster,@NewControlledMinion,#minion=self);
+            Send(self,@EnterStateChase);
+
+         }
+      }
+      else
+      {
+         poMaster = oMaster;
+
+         % Break target.
+         Send(self,@EnterStateWait);
+
+         % Uncomment this if post-capture attack behavior changes.
+         %if NOT Send(SYS,@IsPKAllowed)
+         %   AND (poTarget <> $
+         %      AND IsClass(poTarget,&Player))
+         %{
+         %   % Forget our target
+         %   Send(self,@EnterStateWait);
+         %}
+      }
+
+      if poOwner <> $
+      {
+         Post(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
    }
 
    ManaDrainTimer()

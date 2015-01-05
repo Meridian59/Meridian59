@@ -12,7 +12,6 @@
 #ifndef _ARCHIVE_H
 #define _ARCHIVE_H
 
-void Dearchive(char *dest_path, char *filename);
-bool UnarchiveProgressCallback(const char *filename, ExtractionStatus status);
+void Dearchive(char *dest_path, char *zip_file);
 
 #endif _ARCHIVE_H

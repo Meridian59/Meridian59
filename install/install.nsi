@@ -123,7 +123,7 @@ Function InstallWithUserPrivilege
   update_ini_timestamp:
 
     ; Set download time to reflect new installer
-    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 186
+    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 189
 
   no_previous_install:
 
@@ -139,7 +139,6 @@ Section "Meridian 59 (required)"
 
   ; Put executable files there
   File "${SOURCEDIR}\archive.dll"
-  File "${SOURCEDIR}\arq.exe"
   File "${SOURCEDIR}\club.exe"
   File "${SOURCEDIR}\heidelb1.ttf"
   File "${SOURCEDIR}\license.rtf"
@@ -149,7 +148,6 @@ Section "Meridian 59 (required)"
   File "${SOURCEDIR}\mss32midi.dll"
   File "${SOURCEDIR}\mssmp3.asi"
   File "${SOURCEDIR}\waveplay.dll"
-  File "${SOURCEDIR}\wrap.dll"
   File "${SOURCEDIR}\zlib1.dll"
 
   ; Install font

@@ -879,7 +879,7 @@ void DrawObjectDecorations(DrawnObject *object)
    y = range->top_row - s.cy - 2;
 
    // Give a shadowed look to be visible on all color backgrounds
-   fg_color = GetPlayerNameColor(r->obj.flags,name);
+   fg_color = GetPlayerNameColor(&r->obj,name);
    bg_color = NAME_COLOR_NORMAL_BG;
 
    // Some names never grow darker, they use PALETTEINDEX().

@@ -320,7 +320,7 @@ void ExtractDLighting(char **ptr, d_lighting *dLighting)
  *   ptr appropriately.  Place data in given object node.
  */
 void ExtractObject(char **ptr, object_node *item)
-{  
+{
    Extract(ptr, &item->id, SIZE_ID);
    if (IsNumberObj(item->id))
       Extract(ptr, &item->amount, SIZE_AMOUNT);
@@ -330,6 +330,8 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
    Extract(ptr, &item->minimapflags, 4);
+   Extract(ptr, &item->namecolor, 4);
+   Extract(ptr, &item->playertype, 1);
 
    ExtractDLighting(ptr, &item->dLighting);
 
@@ -1143,7 +1145,11 @@ Bool HandlePlayers(char *ptr,long len)
       ChangeResource(obj->name_res, name);
 
       Extract(&ptr, &obj->flags, SIZE_VALUE);
-      len -= SIZE_VALUE;
+      Extract(&ptr, &obj->namecolor, SIZE_VALUE);
+      len -= 2 * SIZE_VALUE;
+
+      Extract(&ptr, &obj->playertype, SIZE_TYPE);
+      len -= SIZE_TYPE;
 
       list = list_add_item(list, obj);
    }
@@ -1173,7 +1179,11 @@ Bool HandleAddPlayer(char *ptr,long len)
    ChangeResource(obj->name_res, name);
 
    Extract(&ptr, &obj->flags, SIZE_VALUE);
-   len -= SIZE_VALUE;
+   Extract(&ptr, &obj->namecolor, SIZE_VALUE);
+   len -= 2 * SIZE_VALUE;
+
+   Extract(&ptr, &obj->playertype, SIZE_TYPE);
+   len -= SIZE_TYPE;
 
    if (len != 0)
    {

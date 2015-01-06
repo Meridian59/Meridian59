@@ -365,16 +365,32 @@ messages:
 
    GetObjectFlags()
    {
-      local iFlags;
-
       if poOriginal = $
       {
          return 0;
       }
 
-      iFlags = Send(poOriginal,@GetObjectFlags);
+      return Send(poOriginal,@GetObjectFlags);
+   }
 
-      return iFlags;
+   GetPlayerNameColor()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetPlayerNameColor);
+   }
+
+   GetPlayerType()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetPlayerType);
    }
 
    GetAttackRange()

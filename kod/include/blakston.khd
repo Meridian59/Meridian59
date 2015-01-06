@@ -94,16 +94,6 @@
    DRAWFX_SECONDTRANS    = 0xA00000
    DRAWFX_MASK           = 0xF00000
 
-   % Bits 0x4000, 0x8000, 0x10000 in total describe the player type
-   PLAYER_NO         = 0
-   PLAYER_PK         = 0x4000
-   PLAYER_OUTLAW     = 0x8000
-   PLAYER_DM         = 0xC000
-   PLAYER_CREATOR    = 0x10000
-   PLAYER_SUPER      = 0x14000
-   PLAYER_MODERATOR  = 0x18000
-   PLAYER_EVENT      = 0x1C000
-
    % What is the target, according to the viewer?  Used for special flagging.
    % This is now its own bitfield separate from object flags.
    MM_NONE                 = 0x00000000
@@ -116,6 +106,30 @@
    MM_NPC                  = 0x00000040
    MM_MINION_OTHER         = 0x00000080
    MM_MINION_SELF          = 0x00000100
+
+   % Player name color sent as hex RGB value. Define constants
+   % for ease of use as needed.
+   NC_PLAYER       = 0xFFFFFF   % Default, white name.
+   NC_SHADOW       = 0x000000   % Set if name should be drawn black.
+   NC_KILLER       = 0xFF0000   % Set if object is a killer.
+   NC_OUTLAW       = 0xFC9E00   % Set if object is an outlaw.
+   NC_DM           = 0x00FFFF   % Set if object is a DM player.
+   NC_CREATOR      = 0xFFFF00   % Set if object is a creator player.
+   NC_SUPER        = 0x00FF00   % Set if object is a "super DM".
+   NC_MODERATOR    = 0x0078FF   % Set if object is a "moderator".
+   NC_EVENTCHAR    = 0xFF00FF   % Set if object is an event character.
+   NC_DAENKS       = 0xB300B3   % Purple name color for Daenks.
+   NC_COLOR_MAX    = 0xFFFFFF   % Max color, defined for clarity.
+
+   % Player type enum. Even if the name color displayed changes, these
+   % should still report the correct player type.
+   PF_KILLER       = 1   % Set if object is a killer.
+   PF_OUTLAW       = 2   % Set if object is an outlaw.
+   PF_DM           = 3   % Set if object is a DM player.
+   PF_CREATOR      = 4   % Set if object is a creator player.
+   PF_SUPER        = 5   % Set if object is a "super DM".
+   PF_MODERATOR    = 6   % Set if object is a "moderator".
+   PF_EVENTCHAR    = 7   % Set if object is an event character.
 
    %%% Projectile and Light flags
 

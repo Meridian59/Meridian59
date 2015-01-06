@@ -59,8 +59,6 @@ resources:
    object_cap_lord = "Lord"
    object_cap_lady = "Lady"
 
-
-
 classvars:
    vrName = object_name_rsc
    vrIcon = object_icon_rsc
@@ -70,7 +68,7 @@ classvars:
    viDefinite = ARTICLE_THE
 
    viBulk = 0
-   viWeight = 0 
+   viWeight = 0
 
    viIllusion = FALSE
    vbSummoned = FALSE
@@ -81,8 +79,10 @@ classvars:
 properties:
 
    poOwner = $
-   
+
    plObject_attributes = $
+
+   piNameColor = 0
 
 messages:
 
@@ -735,6 +735,64 @@ messages:
    GetObjectFlags()
    {
       return viObject_flags;
+   }
+
+   GetPlayerType()
+   "This is an enum of player types. Returns 0 for most objects."
+   {
+      return 0;
+   }
+
+   GetPlayerNameColor(rgb=FALSE)
+   "Returns the name color property, or if sent rgb TRUE, returns "
+   "a list with the int RGB value of piNameColor."
+   {
+      local lColor;
+
+      if rgb
+      {
+         lColor = Cons((piNameColor & 0x0000FF), lColor); % Blue
+         lColor = Cons((piNameColor  & 0x00FF00) / 256, lColor); % Green
+         lColor = Cons((piNameColor & 0xFF0000) / 65536, lColor); % Red
+
+         return lColor;
+      }
+
+      return piNameColor;
+   }
+
+   SetNameColor(red=0,green=0,blue=0,rgb=$)
+   "Can set the name color for any object. Currently, only objects "
+   "with USER_YES set to TRUE will display a name. Can change color "
+   "by red, green and blue value, or alternatively by rgb value."
+   {
+      if rgb <> $
+         AND rgb >= 0
+         AND rgb <= NC_COLOR_MAX
+      {
+         piNameColor = rgb;
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+
+         return TRUE;
+      }
+
+      if (red >= 0 AND red <= 255)
+         AND (green >= 0 AND green <= 255)
+         AND (blue >= 0 AND blue <= 255)
+      {
+         piNameColor = red * green * blue;
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    GetGender()

@@ -366,16 +366,6 @@ enum {
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
 
-// Player name colors
-#define PF_KILLER        0x00004000    // Set if object is a killer (must also have OF_PLAYER)
-#define PF_OUTLAW        0x00008000    // Set if object is an outlaw (must also have OF_PLAYER)
-#define PF_DM            0x0000C000    // Set if object is a DM player
-#define PF_CREATOR       0x00010000    // Set if object is a creator player
-#define PF_SUPER         0x00014000    // Set if object is a "super DM"
-#define PF_MODERATOR     0x00018000    // Set if object is a "moderator"
-#define PF_EVENTCHAR     0x0001C000    // Set if object is an event character
-#define OF_PLAYER_MASK   0x0001C000    // Mask to get player flag bits
-
 #define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
 #define OF_FLASHING      0x00040000    // For players or objects if flashing with light.
 #define OF_BOUNCING      0x00060000    // If both flags on then object is bouncing
@@ -396,6 +386,10 @@ enum {
 #define OF_EFFECT_MASK   0x00F00000    // Mask to get object drawing effect bits
 #define NUM_DRAW_EFFECTS 16            // # of possible object drawing effects
 
+#define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)
+#define GetDrawingEffectIndex(flags) (((flags) & OF_EFFECT_MASK) >> 20)
+#define GetItemFlags(flags)   ((flags))
+
 // Minimap dot color bitfield. Now separate from object flags.
 #define MM_NONE          0x00000000    // No dot (default for all objects)
 #define MM_PLAYER        0x00000001    // Standard blue player dot
@@ -408,17 +402,36 @@ enum {
 #define MM_MINION_OTHER  0x00000080    // Set if monster is other's minion
 #define MM_MINION_SELF   0x00000100    // Set if a monster is our minion
 
-#define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)
-#define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)
-#define GetDrawingEffectIndex(flags) (((flags) & OF_EFFECT_MASK) >> 20)
-#define GetItemFlags(flags)   ((flags))
+// Player names now sent as RGB values. Defining them here
+#define NC_PLAYER        0xFFFFFF   // Default, white name.
+#define NC_SHADOW        0x000000   // Set if name should be drawn black.
+#define NC_KILLER        0xFF0000   // Set if object is a killer.
+#define NC_OUTLAW        0xFC9E00   // Set if object is an outlaw.
+#define NC_DM            0x00FFFF   // Set if object is a DM player.
+#define NC_CREATOR       0xFFFF00   // Set if object is a creator player.
+#define NC_SUPER         0x00FF00   // Set if object is a "super DM".
+#define NC_MODERATOR     0x0078FF   // Set if object is a "moderator".
+#define NC_EVENTCHAR     0xFF00FF   // Set if object is an event character.
+#define NC_DAENKS        0xB300B3   // Purple name color for Daenks.
+#define NC_COLOR_MAX     0xFFFFFF   // Max color, defined for clarity.
+
+/* Enum of player types. */
+enum {
+   PF_KILLER       = 1,   // Set if object is a killer.
+   PF_OUTLAW       = 2,   // Set if object is an outlaw.
+   PF_DM           = 3,   // Set if object is a DM player.
+   PF_CREATOR      = 4,   // Set if object is a creator player.
+   PF_SUPER        = 5,   // Set if object is a "super DM".
+   PF_MODERATOR    = 6,   // Set if object is a "moderator".
+   PF_EVENTCHAR    = 7,   // Set if object is an event character.
+};
 
 /* How objects allow or disallow motion onto their square */
 enum {
    OF_MOVEON_YES        = 0,   // Can always move on object
    OF_MOVEON_NO         = 1,   // Can never move on object
    OF_MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
-   OF_MOVEON_NOTIFY	= 3,
+   OF_MOVEON_NOTIFY     = 3,
 };
 
 /* Effect codes */

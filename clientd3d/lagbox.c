@@ -297,7 +297,8 @@ void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify)
 	lagbox = *pobjLagbox;
 	lagbox.animate = &lagbox.normal_animate;
 	lagbox.overlays = &lagbox.normal_overlays;
-	lagbox.flags |= OF_PLAYER | PF_OUTLAW;
+	lagbox.flags |= OF_PLAYER;
+	lagbox.namecolor = NC_OUTLAW;
 
 	Lagbox_OnTooltipCallback(hWnd, &ttt);
 

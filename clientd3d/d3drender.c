@@ -3524,7 +3524,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 			((float)pRNode->boundingHeightAdjust * 4.0f), (float)pRNode->motion.y);
 		MatrixMultiply(&xForm, &rot, &mat);
 
-		fg_color = GetPlayerNameColor(pRNode->obj.flags, pName);
+		fg_color = GetPlayerNameColor(&pRNode->obj, pName);
 
 		// Some names never grow darker, they use PALETTEINDEX().
 		if (HIBYTE(HIWORD(fg_color)) == HIBYTE(HIWORD(PALETTEINDEX(0))))

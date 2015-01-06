@@ -80,6 +80,8 @@ typedef struct {
    DWORD        temp_amount;         /* Scratch field used when user is selecting amount of object */
    int          flags;               /* Flags describing various properties of objects */
    int          minimapflags;        // Flags used to draw the right color/icon on the minimap.
+   unsigned int namecolor;           // Player name color flags
+   BYTE         playertype;          // Enum of player type (i.e. outlaw, innocent)
    BYTE         translation;         // Palette translation information
    Animate      *animate;            /* Pointer to current animation (normal or motion animation) */
    list_type    *overlays;           /* Pointer to current overlays (normal or motion animation) */

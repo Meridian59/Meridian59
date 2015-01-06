@@ -533,7 +533,35 @@ messages:
 
       if piColor = COLOR_BLUE
       {
-         iFlags = iFlags | PLAYER_DM | USER_YES ;
+         iFlags = iFlags | USER_YES;
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerNameColor()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if piColor = COLOR_BLUE
+      {
+         iFlags = iFlags | NC_DM;
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if piColor = COLOR_BLUE
+      {
+         iFlags = iFlags | PF_DM;
       }
 
       return iFlags;

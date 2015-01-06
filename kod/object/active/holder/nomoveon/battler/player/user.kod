@@ -370,7 +370,7 @@ properties:
    vrName = user_name_rsc
 
    piHomeroom
-   
+
    piLastSafeRoom = $
 
    plNew_mail = $
@@ -928,6 +928,8 @@ messages:
          AddPacket(4,what,4,rName);
          AddPacket(STRING_RESOURCE,rName);
          AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,Send(what,@GetPlayerNameColor));
+         AddPacket(1,Send(what,@GetPlayerType));
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2336,7 +2338,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags;
+      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags, iNameColorFlags;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2406,8 +2408,12 @@ messages:
          iMinimapFlags = 0;
       }
 
+      iNameColorFlags = Send(what,@GetPlayerNameColor);
+
       AddPacket(4,iFlags);
       AddPacket(4,iMinimapFlags);
+      AddPacket(4,iNameColorFlags);
+      AddPacket(1,Send(what,@GetPlayerType));
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);
@@ -2615,6 +2621,8 @@ messages:
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
          AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,Send(i,@GetPlayerNameColor));
+         AddPacket(1,Send(i,@GetPlayerType));
       }
       
       SendPacket(poSession);
@@ -8216,53 +8224,6 @@ messages:
 
       iFlags = MOVEON_NO | BATTLER_YES | USER_YES | OFFER_YES;
 
-      if IsClass(self,&Creator)
-      {
-         iFlags = iFlags | PLAYER_CREATOR;
-      }
-      else
-      {
-         if Send(self,@IsEventCharacter)
-         {
-            iFlags = iFlags | PLAYER_EVENT;
-         }
-         else
-         {
-            if Send(self,@GetDM)
-            {
-               if Send(self,@GreenNamed)
-               {
-                  iFlags = iFlags | PLAYER_SUPER;
-               }
-               else
-               {
-                  if Send(self,@IsModerator)
-                  {
-                     iFlags = iFlags | PLAYER_MODERATOR;
-                  }
-                  else
-                  {
-                     iFlags = iFlags | PLAYER_DM;
-                  }
-               }
-            }
-            else
-            {
-               if piFlags & PFLAG_MURDERER
-               {
-                  iFlags = iFlags | PLAYER_PK;
-               }
-               else
-               {
-                  if (piFlags & PFLAG_OUTLAW)
-                  {
-                     iFlags = iFlags | PLAYER_OUTLAW;
-                  }
-               }
-            }
-         }
-      }
-
       if (piFlags & PFLAG_INVISIBLE)
       {
          % invisibility overrides any other drawfx
@@ -8298,6 +8259,68 @@ messages:
       if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          iFlags = (iFlags & ~MOVEON_NO);
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerNameColor()
+   {
+      local iDrawFX, iFlags;
+
+      iFlags = 0;
+
+      % Check for any shadow form effects.
+      iDrawfX = Send(self,@GetPlayerDrawFX);
+      if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
+      {
+         iFlags = iFlags | NC_SHADOW;
+      }
+
+      if piNameColor <> 0
+      {
+         iFlags = iFlags | piNameColor;
+
+         return iFlags;
+      }
+
+      % Send the appropriate flag to draw the name.
+      if piFlags & PFLAG_MURDERER
+      {
+         iFlags = iFlags | NC_KILLER;
+      }
+      else
+      {
+         if (piFlags & PFLAG_OUTLAW)
+         {
+            iFlags = iFlags | NC_OUTLAW;
+         }
+         else
+         {
+            iFlags = iFlags | NC_PLAYER;
+         }
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      % Send the appropriate flag to draw the name.
+      if piFlags & PFLAG_MURDERER
+      {
+         iFlags = iFlags | PF_KILLER;
+      }
+      else
+      {
+         if (piFlags & PFLAG_OUTLAW)
+         {
+            iFlags = iFlags | PF_OUTLAW;
+         }
       }
 
       return iFlags;

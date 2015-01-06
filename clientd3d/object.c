@@ -91,6 +91,8 @@ object_node *ObjectCopy(object_node *obj)
    temp->icon_res = obj->icon_res;
    temp->flags  = obj->flags;
    temp->minimapflags  = obj->minimapflags;
+   temp->namecolor = obj->namecolor;
+   temp->playertype = obj->playertype;
    temp->amount = obj->amount;
    temp->temp_amount = obj->temp_amount;
    temp->translation = obj->translation;

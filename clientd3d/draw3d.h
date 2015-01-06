@@ -88,7 +88,9 @@ typedef struct {
    BYTE light;                 /* Strength of sector light at object */
    int  flags;                 /* Object flags, including moveon type */
    int  minimapflags;          /* Minimap dot color flags */
-   int  height;                /* Height to draw object (FINENESS units) */   
+   unsigned int  namecolor;    /* Player name color flags */
+   BYTE playertype;            /* Enum of player type (i.e. outlaw, innocent) */
+   int  height;                /* Height to draw object (FINENESS units) */
    int  center;                /* Screen column of center of object */
    int  depth;                 /* Depth under ground to draw object (FINENESS units) */
    BYTE translation;           /* Color translation type */

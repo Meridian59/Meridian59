@@ -1774,6 +1774,98 @@ messages:
       return pbAppeal & 1;
    }
 
+   GetPlayerType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if IsClass(self,&Creator)
+      {
+         iFlags = iFlags | PF_CREATOR;
+      }
+      else
+      {
+         if Send(self,@IsEventCharacter)
+         {
+            iFlags = iFlags | PF_EVENTCHAR;
+         }
+         else
+         {
+            if pbImmortalSave = 2
+            {
+               iFlags = iFlags | PF_SUPER;
+            }
+            else
+            {
+               if prRank = dm_moderator
+               {
+                  iFlags = iFlags | PF_MODERATOR;
+               }
+               else
+               {
+                  iFlags = iFlags | PF_DM;
+               }
+            }
+         }
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerNameColor()
+   {
+      local iDrawFX, iFlags;
+
+      iFlags = 0;
+
+      % Check for any shadow form effects.
+      iDrawfX = Send(self,@GetPlayerDrawFX);
+      if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
+      {
+         iFlags = iFlags | NC_SHADOW;
+      }
+
+      if piNameColor <> 0
+      {
+         iFlags = iFlags | piNameColor;
+
+         return iFlags;
+      }
+
+      if IsClass(self,&Creator)
+      {
+         iFlags = iFlags | NC_CREATOR;
+      }
+      else
+      {
+         if Send(self,@IsEventCharacter)
+         {
+            iFlags = iFlags | NC_EVENTCHAR;
+         }
+         else
+         {
+            if pbImmortalSave = 2
+            {
+               iFlags = iFlags | NC_SUPER;
+            }
+            else
+            {
+               if prRank = dm_moderator
+               {
+                  iFlags = iFlags | NC_MODERATOR;
+               }
+               else
+               {
+                  iFlags = iFlags | NC_DM;
+               }
+            }
+         }
+      }
+
+      return iFlags;
+   }
+
    GreenNamed()
    {
       if pbImmortalSave = 2

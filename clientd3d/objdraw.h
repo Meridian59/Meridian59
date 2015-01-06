@@ -15,7 +15,9 @@
 // Structure passed to inner loops
 typedef struct {
    int   flags;             // Object flags
-   int   minimapflags;      /* Minimap dot color flags */
+   int   minimapflags;      // Minimap dot color flags
+   unsigned int namecolor;  // Player name color flags
+   BYTE  playertype;        // Enum of player type (i.e. outlaw, innocent)
    BYTE  translation;       // Palette translation to use
    BYTE  secondtranslation; // Another palette translation to use
    BYTE *start_ptr;         // Points to start of row to draw in

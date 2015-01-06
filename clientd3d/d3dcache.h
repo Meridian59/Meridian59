@@ -132,30 +132,30 @@ do	\
 do	\
 {	\
 	int	i;	\
-	IDirect3DVertexBuffer8_Unlock((_pCache)->xyzBuffer.pVBuffer);	\
+	IDirect3DVertexBuffer9_Unlock((_pCache)->xyzBuffer.pVBuffer);	\
 	for (i = 0; i < TEMP_NUM_STAGES; i++)	\
-		IDirect3DVertexBuffer8_Unlock((_pCache)->stBuffer[i].pVBuffer);	\
-	IDirect3DVertexBuffer8_Unlock((_pCache)->bgraBuffer.pVBuffer);	\
-	IDirect3DIndexBuffer8_Unlock((_pCache)->indexBuffer.pIBuffer);	\
+		IDirect3DVertexBuffer9_Unlock((_pCache)->stBuffer[i].pVBuffer);	\
+	IDirect3DVertexBuffer9_Unlock((_pCache)->bgraBuffer.pVBuffer);	\
+	IDirect3DIndexBuffer9_Unlock((_pCache)->indexBuffer.pIBuffer);	\
 } while (0)
 
 #define CACHE_BGRA_LOCK(_pCache)	\
 do	\
 {	\
-	IDirect3DVertexBuffer8_Lock((_pCache)->bgraBuffer.pVBuffer,	\
-                              0, 0, (BYTE **)&(_pCache)->bgraBuffer.u.pBGRA, \
+	IDirect3DVertexBuffer9_Lock((_pCache)->bgraBuffer.pVBuffer,	\
+                              0, 0, (void **)&(_pCache)->bgraBuffer.u.pBGRA, \
                               D3DLOCK_DISCARD);             \
 } while (0)
 
 #define CACHE_BGRA_UNLOCK(_pCache)	\
 do	\
 {	\
-	IDirect3DVertexBuffer8_Unlock((_pCache)->bgraBuffer.pVBuffer);	\
+	IDirect3DVertexBuffer9_Unlock((_pCache)->bgraBuffer.pVBuffer);	\
 } while (0)
 
 typedef struct d3d_texture_cache_entry
 {
-	LPDIRECT3DTEXTURE8	pTexture;
+	LPDIRECT3DTEXTURE9	pTexture;
 	unsigned int		pDibID;
 	unsigned int		pDibID2;
 	int					size;
@@ -239,7 +239,7 @@ typedef struct d3d_render_packet_new
 {
 	Bool				(*pMaterialFctn)(struct d3d_render_packet_new *pPacket,
 										d3d_render_cache_system *pCacheSystem);
-	LPDIRECT3DTEXTURE8	pTexture;
+	LPDIRECT3DTEXTURE9	pTexture;
 	PDIB				pDib;
 	BYTE				xLat0;
 	BYTE				xLat1;
@@ -271,9 +271,9 @@ void				D3DCacheFill(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new 
 								 int numStages);
 void				D3DCacheFlush(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *pPool,
 								  int numStages, int type);
-LPDIRECT3DTEXTURE8	D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
+LPDIRECT3DTEXTURE9	D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
 												 int effect);
-LPDIRECT3DTEXTURE8	D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
+LPDIRECT3DTEXTURE9	D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_render_packet_new *pPacket,
 												 int effect);
 void				D3DCacheReset(d3d_render_cache *pRenderCache);
 void				D3DCacheXYZAdd(d3d_render_cache *pRenderCache, float x, float y, float z);

@@ -38,44 +38,44 @@
 #define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\
 do	\
 {	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, _enable);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, _refValue);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, _compareFunc);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, _enable);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, _refValue);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, _compareFunc);	\
 } while (0)
 
 #define D3DRENDER_SET_ALPHABLEND_STATE(_pDevice, _enable, _srcBlend, _dstBlend)	\
 do	\
 {	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, _enable);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, _srcBlend);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, _dstBlend);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, _enable);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, _srcBlend);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, _dstBlend);	\
 } while (0)
 
 #define D3DRENDER_SET_STENCIL_STATE(_pDevice, _enable, _stencilFunc, _refValue, _pass, _fail, _zfail)	\
 do	\
 {	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, _enable);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_STENCILFUNC, _stencilFunc);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_STENCILREF, _refValue);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_STENCILPASS, _pass);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_STENCILFAIL, _fail);	\
-	IDirect3DDevice8_SetRenderState(gpD3DDevice, D3DRS_STENCILZFAIL, _zfail);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, _enable);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILFUNC, _stencilFunc);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILREF, _refValue);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILPASS, _pass);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILFAIL, _fail);	\
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILZFAIL, _zfail);	\
 } while (0)
 
 #define D3DRENDER_SET_COLOR_STAGE(_pDevice, _stage, _opValue, _arg0Value, _arg1Value)	\
 do	\
 {	\
-	IDirect3DDevice8_SetTextureStageState(_pDevice, _stage, D3DTSS_COLOROP,	_opValue);	\
-	IDirect3DDevice8_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG1, _arg0Value);	\
-	IDirect3DDevice8_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG2, _arg1Value);	\
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLOROP,	_opValue);	\
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG1, _arg0Value);	\
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG2, _arg1Value);	\
 } while (0)
 
 #define D3DRENDER_SET_ALPHA_STAGE(_pDevice, _stage, _opValue, _arg0Value, _arg1Value)	\
 do	\
 {	\
-	IDirect3DDevice8_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAOP,	_opValue);	\
-	IDirect3DDevice8_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG1, _arg0Value);	\
-	IDirect3DDevice8_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG2, _arg1Value);	\
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAOP,	_opValue);	\
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG1, _arg0Value);	\
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG2, _arg1Value);	\
 } while (0)
 
 #define D3DRENDER_SET_STREAMS(_pDevice, _pCache, _numStages)	\
@@ -83,14 +83,14 @@ do	\
 {	\
 	int	_i = 0;	\
 	int	_j;	\
-	IDirect3DDevice8_SetStreamSource(_pDevice, _i++,	\
-		(_pCache)->xyzBuffer.pVBuffer, sizeof(custom_xyz));	\
-	IDirect3DDevice8_SetStreamSource(_pDevice, _i++,	\
-		(_pCache)->bgraBuffer.pVBuffer, sizeof(custom_bgra));	\
+	IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
+      (_pCache)->xyzBuffer.pVBuffer, 0, sizeof(custom_xyz)); \
+	IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
+      (_pCache)->bgraBuffer.pVBuffer, 0, sizeof(custom_bgra)); \
 	for (_j = 0; _j < _numStages; _j++)	\
-		IDirect3DDevice8_SetStreamSource(_pDevice, _i++,	\
-			(_pCache)->stBuffer[_j].pVBuffer, sizeof(custom_st));	\
-	IDirect3DDevice8_SetIndices(_pDevice, (_pCache)->indexBuffer.pIBuffer, 0);	\
+		IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
+         (_pCache)->stBuffer[_j].pVBuffer, 0, sizeof(custom_st)); \
+	IDirect3DDevice9_SetIndices(_pDevice, (_pCache)->indexBuffer.pIBuffer);	\
 } while (0)
 
 #define D3DRENDER_CLEAR_STREAMS(_pDevice, _numStages)	\
@@ -98,11 +98,11 @@ do	\
 {	\
 	int	_i = 0;	\
 	int	_j;	\
-	IDirect3DDevice8_SetStreamSource(_pDevice, _i++, NULL, 0);	\
-	IDirect3DDevice8_SetStreamSource(_pDevice, _i++, NULL, 0);	\
+	IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
+	IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
 	for (_j = 0; _j < _numStages; _j++)	\
-		IDirect3DDevice8_SetStreamSource(_pDevice, _i++, NULL, 0);	\
-	IDirect3DDevice8_SetIndices(_pDevice,	NULL, 0);	\
+		IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
+	IDirect3DDevice9_SetIndices(_pDevice,	NULL);	\
 } while (0)
 
 typedef struct d_light
@@ -127,7 +127,7 @@ typedef struct font_3d
 	long				fontHeight;
 	long				flags;
 
-	LPDIRECT3DTEXTURE8	pTexture;
+	LPDIRECT3DTEXTURE9	pTexture;
 	long				texWidth;
 	long				texHeight;
 	float				texScale;
@@ -136,8 +136,8 @@ typedef struct font_3d
   ABC         abc[128 - 32];
 } font_3d;
 
-extern LPDIRECT3D8				gpD3D;
-extern LPDIRECT3DDEVICE8		gpD3DDevice;
+extern LPDIRECT3D9				gpD3D;
+extern LPDIRECT3DDEVICE9		gpD3DDevice;
 
 extern int		gNumVertices;
 extern BOOL		gbAlwaysRun;
@@ -153,15 +153,15 @@ void				D3DGeometryUpdate(room_type *room);
 void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
-LPDIRECT3DTEXTURE8	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
+LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
 												  unsigned int effect);
-LPDIRECT3DTEXTURE8	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
+LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
 												  unsigned int effect);
 void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
 void				D3DRenderBackgroundSet(ID background);
 void				D3DRenderBackgroundSet2(ID background);
-d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE8 pTexture,
+d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
 												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);

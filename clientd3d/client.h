@@ -41,9 +41,8 @@
 #include <tchar.h>
 #include "wininet.h"
 
-#include <d3d8.h>
-#include <dxerr8.h>
-#include <d3dx8tex.h>
+#include <d3d9.h>
+#include <DxErr.h>
 
 typedef unsigned char Bool;
 enum {False = 0, True = 1};

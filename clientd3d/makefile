@@ -9,6 +9,10 @@ SOURCEDIR = $(CLIENTDIR)
 # generated files are there.
 CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
 
+# On clientside: Use SSE instead of SSE2 (default for VS2013)
+# Because of old CPU (Athlon XP)
+CCOMMONFLAGS = $(CCOMMONFLAGS) /arch:SSE
+
 LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
 	 ws2_32.lib comctl32.lib advapi32.lib \

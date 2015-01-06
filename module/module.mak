@@ -10,6 +10,10 @@ MODULECLIENTDIR = $(TOPDIR)\run\localclient\resource
 
 SOURCEDIR = $(MODULEDIR)\$(MODULE)
 
+# On clientside: Use SSE instead of SSE2 (default for VS2013)
+# Because of old CPU (Athlon XP)
+CCOMMONFLAGS = $(CCOMMONFLAGS) /arch:SSE
+
 .obj.dll:
 	$(LINK) -dll $(LINKFLAGS) \
 	  -def:$(SOURCEDIR)\$(*B).def -out:$@ \

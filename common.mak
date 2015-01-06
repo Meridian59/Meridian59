@@ -66,11 +66,12 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /GR- turns off RTTI
 # /EHsc- turns off exceptions
 # /wd4996  disables warning (GetVersionExA has been deprecated)
+# -arch:IA32 disables SSE instructions (not supported on ancient Athlon CPUs)
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
              -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
              -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
-				 -TP -WX -GR- -EHsc-
+				 -TP -WX -GR- -EHsc- -arch:IA32
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -W3 -DBLAKDEBUG

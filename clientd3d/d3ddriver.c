@@ -53,7 +53,7 @@ Bool D3DDriverProfileInit(void)
 
 	memset(&gD3DDriverProfile, 0, sizeof(d3d_driver_profile));
 
-	HRESULT error = IDirect3D8_CheckDeviceType(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+	HRESULT error = IDirect3D9_CheckDeviceType(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
                                               D3DFMT_X8R8G8B8, D3DFMT_A8R8G8B8, TRUE);
 
 	if (FAILED(error))
@@ -69,7 +69,7 @@ Bool D3DDriverProfileInit(void)
 	}
 
    // This looks wrong.. "TRUE" stencil format??
-	error = IDirect3D8_CheckDepthStencilMatch(
+	error = IDirect3D9_CheckDepthStencilMatch(
       gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
       D3DFMT_X8R8G8B8, D3DFMT_D24S8, (D3DFORMAT) TRUE);
 
@@ -86,7 +86,8 @@ Bool D3DDriverProfileInit(void)
 
 	memset(&gPresentParam, 0, sizeof(gPresentParam));
 	gPresentParam.Windowed = TRUE;
-	gPresentParam.SwapEffect = D3DSWAPEFFECT_COPY_VSYNC;
+	gPresentParam.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	gPresentParam.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 	gPresentParam.BackBufferWidth = gScreenWidth;
 	gPresentParam.BackBufferHeight = gScreenHeight;
 	gPresentParam.BackBufferFormat = D3DFMT_A8R8G8B8;
@@ -96,7 +97,7 @@ Bool D3DDriverProfileInit(void)
 	gPresentParam.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 
 	// first try hardware vertex processing
-	error = IDirect3D8_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+	error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
                                    hMain, D3DCREATE_HARDWARE_VERTEXPROCESSING,
                                    &gPresentParam, &gpD3DDevice);
 
@@ -104,7 +105,7 @@ Bool D3DDriverProfileInit(void)
 	if (FAILED(error) || !gpD3DDevice)
 	{
 		fprintf(pFile, "Failed hardware vertex processing device creation...  Trying mixed\n");
-		error = IDirect3D8_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+		error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
                                       hMain, D3DCREATE_MIXED_VERTEXPROCESSING,
                                       &gPresentParam, &gpD3DDevice);
 	}
@@ -113,7 +114,7 @@ Bool D3DDriverProfileInit(void)
 	if (FAILED(error) || !gpD3DDevice)
 	{
 		fprintf(pFile, "Failed mixed vertex processing device creation...  Trying software\n");
-		error = IDirect3D8_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+		error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
                                       hMain, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
                                       &gPresentParam, &gpD3DDevice);
 	}
@@ -133,10 +134,10 @@ Bool D3DDriverProfileInit(void)
 		return FALSE;
 	}
 
-	IDirect3DDevice8_GetDeviceCaps(gpD3DDevice, &gD3DDriverProfile.d3dCaps);
+	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &gD3DDriverProfile.d3dCaps);
 
 	// now run through and check for everything we need
-	IDirect3D8_GetAdapterIdentifier(gpD3D, D3DADAPTER_DEFAULT, 0,
+	IDirect3D9_GetAdapterIdentifier(gpD3D, D3DADAPTER_DEFAULT, 0,
                                    &gD3DDriverProfile.adapterID);
 
 	fprintf(pFile, "Video Hardware Detected\nDriver:  %s\nDescription:  %s\nProduct:  %d\nVersion:  %d\nSubversion:  %d\nBuild:  %d\nGUID:  %x, %x, %x, %s\n",
@@ -172,9 +173,9 @@ Bool D3DDriverProfileInit(void)
 		else
 		{
 			// destroy device, recreate as software, and shoot the fricken' driver writers
-			IDirect3DDevice8_Release(gpD3DDevice);
+			IDirect3DDevice9_Release(gpD3DDevice);
 			
-			error = IDirect3D8_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
+			error = IDirect3D9_CreateDevice(gpD3D, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,
                                          hMain, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
                                          &gPresentParam, &gpD3DDevice);
 
@@ -195,10 +196,10 @@ Bool D3DDriverProfileInit(void)
 			else
 			{
 				// repoll caps
-				IDirect3DDevice8_GetDeviceCaps(gpD3DDevice, &gD3DDriverProfile.d3dCaps);
+				IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &gD3DDriverProfile.d3dCaps);
 
 				// now run through and check for everything we need
-				IDirect3D8_GetAdapterIdentifier(gpD3D, D3DADAPTER_DEFAULT, 0,
+				IDirect3D9_GetAdapterIdentifier(gpD3D, D3DADAPTER_DEFAULT, 0,
                                             &gD3DDriverProfile.adapterID);
 
 				gD3DDriverProfile.vertexProcessFlag = D3DUSAGE_SOFTWAREPROCESSING;
@@ -206,10 +207,10 @@ Bool D3DDriverProfileInit(void)
 		}
 	}
 
-	// if max streams == 0, driver is not dx8 compliant
+	// if max streams == 0, driver is not dx9 compliant
 	if (gD3DDriverProfile.d3dCaps.MaxStreams <= 0)
 	{
-		fprintf(pFile, "Driver is not a DirectX 8 compliant driver.  Please verify your video card and latest drivers are DirectX 8 compliant.\n");
+		fprintf(pFile, "Driver is not a DirectX 9 compliant driver.  Please verify your video card and latest drivers are DirectX 9 compliant.\n");
 		bProblem = TRUE;
 	}
 
@@ -220,19 +221,6 @@ Bool D3DDriverProfileInit(void)
 		fprintf(pFile, "No multitexture hardware detected.  Please verify your video card and latest drivers support multitexture.\n");
 		bProblem = TRUE;
 	}
-
-	// required caps
-	if ((gD3DDriverProfile.d3dCaps.Caps2 & D3DCAPS2_CANRENDERWINDOWED) == 0)
-	{
-		fprintf(pFile, "CANRENDERWINDOWED check failed\n");
-		bProblem = TRUE;
-	}
-
-/*	if ((gD3DDriverProfile.d3dCaps.Caps2 & D3DCAPS2_CANMANAGERESOURCE) == 0)
-	{
-		fprintf(pFile, "D3DCAPS2_CANMANAGERESOURCE == 0\n");
-		bProblem = TRUE;
-	}*/
 
 	if ((gD3DDriverProfile.d3dCaps.ZCmpCaps & gZCmpCaps) != gZCmpCaps)
 	{
@@ -309,7 +297,8 @@ Bool D3DDriverProfileInit(void)
 
 	gD3DDriverProfile.maxAnisotropy = gD3DDriverProfile.d3dCaps.MaxAnisotropy;
 
-	if ((gD3DDriverProfile.d3dCaps.RasterCaps & D3DPRASTERCAPS_ZBIAS) == 0)
+	if ((gD3DDriverProfile.d3dCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS) == 0 ||
+       (gD3DDriverProfile.d3dCaps.RasterCaps & D3DRS_SLOPESCALEDEPTHBIAS) == 0)
 	{
 		fprintf(pFile, "Zbias check failed\n");
 		gD3DDriverProfile.bZBias = FALSE;
@@ -351,7 +340,7 @@ Bool D3DDriverProfileInit(void)
 	else
 		WritePrivateProfileString("config", "rendererfailedonce", "false", "./config.ini");
 
-	gD3DDriverProfile.texMemTotal = IDirect3DDevice8_GetAvailableTextureMem(gpD3DDevice);
+	gD3DDriverProfile.texMemTotal = IDirect3DDevice9_GetAvailableTextureMem(gpD3DDevice);
 
 	if (gD3DDriverProfile.texMemTotal < (32 * 1024 * 1024))
 //	if (1)

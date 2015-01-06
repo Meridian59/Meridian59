@@ -1,4 +1,4 @@
-Meridian 59 v1.0, September 2012.
+Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
 Copyright 1994-2015 Andrew Kirmse and Chris Kirmse
@@ -24,22 +24,17 @@ WHAT'S INCLUDED AND NOT INCLUDED
 
 The source to the client, server, game code, Blakod compiler, room
 editor, and all associated tools are included.  The source code to the
-compression library and audio library are not included.
+Miles Sound System audio library and the fallback waveplay.dll are not
+included.
 
 
 BUILD INSTRUCTIONS
 
 The code has been built successfully with Microsoft Visual Studio 2013
-Express, which you can download for free <a
-href="http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx">here</a>.
-You will also need the Direct X 8 SDK, which you can find <a
-href="http://stackoverflow.com/questions/5192384/looking-for-the-old-directx-8-1-sdk">here</a>
-(we're working on moving to a more recent version).
+Express, which you can download for free at http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
 
 1. Make sure Visual Studio's binaries are in your path, e.g. by using
-the vcvars32.bat script that comes with Visual Studio.  Also add the
-DirectX include and lib directories to your INCLUDE and LIB
-environment variables.
+the vcvars32.bat script that comes with Visual Studio.
 
 2. Go to the top-level directory (the one that contains this README).
 

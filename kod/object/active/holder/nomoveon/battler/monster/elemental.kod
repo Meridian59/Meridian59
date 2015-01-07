@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-IceElemental is Monster
+Elemental is Monster
 
 constants:
 
@@ -16,28 +16,26 @@ constants:
 
 resources:
    
-   iceelemental_name_rsc = "ice golem"
-   iceelemental_icon_rsc = iceleme.bgf
-   iceelemental_desc_rsc = \
-      "Ice Elemental"
-   iceelemental_koc_name_rsc = "Atzmochyal"
+   elemental_name_rsc = "golem"
+   elemental_icon_rsc = fieleme.bgf
+   elemental_desc_rsc = \
+      "Elemental"
+   
+   elemental_dead_icon_rsc = fielemeX.bgf
+   elemental_dead_name_rsc = "dead fire golem"
 
-   iceelemental_dead_icon_rsc = icelemeX.bgf
-   iceelemental_dead_name_rsc = "dead ice golem"
-
-   iceelemental_sound_hit = elem_atkh.wav
-   iceelemental_sound_miss = elem_atkm.wav
-   iceelemental_sound_death = elem_dth.wav
-   iceelemental_sound_aware = elem_awr.wav
+   elemental_sound_hit = elem_atkh.wav
+   elemental_sound_miss = elem_atkm.wav
+   elemental_sound_death = elem_dth.wav
+   elemental_sound_aware = elem_awr.wav
 
 classvars:
 
-   vrKocName = iceelemental_koc_name_rsc
-   vrName = iceelemental_name_rsc
-   vrIcon = iceelemental_icon_rsc
-   vrDesc = iceelemental_desc_rsc
-   vrDead_icon = iceelemental_dead_icon_rsc
-   vrDead_name = iceelemental_dead_name_rsc
+   vrName = elemental_name_rsc
+   vrIcon = elemental_icon_rsc
+   vrDesc = elemental_desc_rsc
+   vrDead_icon = elemental_dead_icon_rsc
+   vrDead_name = elemental_dead_name_rsc
 
    viTreasure_type = TID_NONE
    viSpeed = SPEED_AVERAGE
@@ -49,10 +47,10 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viCashmin = 1100
    viCashmax = 2000
-   vrSound_hit = iceelemental_sound_hit
-   vrSound_miss = iceelemental_sound_miss
-   vrSound_aware = iceelemental_sound_aware
-   vrSound_death = iceelemental_sound_death
+   vrSound_hit = elemental_sound_hit
+   vrSound_miss = elemental_sound_miss
+   vrSound_aware = elemental_sound_aware
+   vrSound_death = elemental_sound_death
 
 properties:
 
@@ -62,9 +60,8 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_FIRE, -50 ],
-                        [-ATCK_SPELL_QUAKE, -50 ],
-                        [-ATCK_SPELL_ALL, 80 ],
+      plResistances = [ [-ATCK_SPELL_COLD, -50 ],
+                        [-ATCK_SPELL_ALL, 90 ],
                         [ATCK_WEAP_BLUDGEON, -100],
                         [ATCK_WEAP_ALL, 90 ] ];
 

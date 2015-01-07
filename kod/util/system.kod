@@ -5327,6 +5327,8 @@ messages:
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
+      plItemTemplates = cons(create(&FireArrow),plItemTemplates);
+      plItemTemplates = cons(create(&IceArrow),plItemTemplates);
 
       % Weapons
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);

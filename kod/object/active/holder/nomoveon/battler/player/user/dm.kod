@@ -1774,7 +1774,7 @@ messages:
       return pbAppeal & 1;
    }
 
-   GetPlayerType()
+   GetClientObjectType()
    {
       local iFlags;
 
@@ -1782,29 +1782,29 @@ messages:
 
       if IsClass(self,&Creator)
       {
-         iFlags = iFlags | PF_CREATOR;
+         iFlags = iFlags | OT_CREATOR;
       }
       else
       {
          if Send(self,@IsEventCharacter)
          {
-            iFlags = iFlags | PF_EVENTCHAR;
+            iFlags = iFlags | OT_EVENTCHAR;
          }
          else
          {
             if pbImmortalSave = 2
             {
-               iFlags = iFlags | PF_SUPER;
+               iFlags = iFlags | OT_SUPER;
             }
             else
             {
                if prRank = dm_moderator
                {
-                  iFlags = iFlags | PF_MODERATOR;
+                  iFlags = iFlags | OT_MODERATOR;
                }
                else
                {
-                  iFlags = iFlags | PF_DM;
+                  iFlags = iFlags | OT_DM;
                }
             }
          }

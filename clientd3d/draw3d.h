@@ -89,7 +89,7 @@ typedef struct {
    int  flags;                 /* Object flags, including moveon type */
    int  minimapflags;          /* Minimap dot color flags */
    unsigned int  namecolor;    /* Player name color flags */
-   BYTE playertype;            /* Enum of player type (i.e. outlaw, innocent) */
+   object_type objecttype;     /* Enum of object type (i.e. outlaw, murderer, NPC) */
    int  height;                /* Height to draw object (FINENESS units) */
    int  center;                /* Screen column of center of object */
    int  depth;                 /* Depth under ground to draw object (FINENESS units) */

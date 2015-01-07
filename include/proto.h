@@ -402,7 +402,9 @@ enum {
 #define MM_MINION_OTHER  0x00000080    // Set if monster is other's minion
 #define MM_MINION_SELF   0x00000100    // Set if a monster is our minion
 
-// Player names now sent as RGB values. Defining them here
+/* Player name color sent as hex RGB value. Define constants
+   for ease of use as needed. Requires OF_PLAYER boolean flag
+   to be set to draw a name. */
 #define NC_PLAYER        0xFFFFFF   // Default, white name.
 #define NC_SHADOW        0x000000   // Set if name should be drawn black.
 #define NC_KILLER        0xFF0000   // Set if object is a killer.
@@ -415,16 +417,17 @@ enum {
 #define NC_DAENKS        0xB300B3   // Purple name color for Daenks.
 #define NC_COLOR_MAX     0xFFFFFF   // Max color, defined for clarity.
 
-/* Enum of player types. */
-enum {
-   PF_KILLER       = 1,   // Set if object is a killer.
-   PF_OUTLAW       = 2,   // Set if object is an outlaw.
-   PF_DM           = 3,   // Set if object is a DM player.
-   PF_CREATOR      = 4,   // Set if object is a creator player.
-   PF_SUPER        = 5,   // Set if object is a "super DM".
-   PF_MODERATOR    = 6,   // Set if object is a "moderator".
-   PF_EVENTCHAR    = 7,   // Set if object is an event character.
-};
+/* Enum of object types. */
+typedef enum {
+   OT_NONE         = 0,   // Default for most objects.
+   OT_KILLER       = 1,   // Set if object is a killer.
+   OT_OUTLAW       = 2,   // Set if object is an outlaw.
+   OT_DM           = 3,   // Set if object is a DM player.
+   OT_CREATOR      = 4,   // Set if object is a creator player.
+   OT_SUPER        = 5,   // Set if object is a "super DM".
+   OT_MODERATOR    = 6,   // Set if object is a "moderator".
+   OT_EVENTCHAR    = 7,   // Set if object is an event character.
+} object_type;
 
 /* How objects allow or disallow motion onto their square */
 enum {

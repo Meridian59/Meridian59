@@ -553,7 +553,7 @@ messages:
       return iFlags;
    }
 
-   GetPlayerType()
+   GetClientObjectType()
    {
       local iFlags;
 
@@ -561,7 +561,7 @@ messages:
 
       if piColor = COLOR_BLUE
       {
-         iFlags = iFlags | PF_DM;
+         iFlags = iFlags | OT_DM;
       }
 
       return iFlags;

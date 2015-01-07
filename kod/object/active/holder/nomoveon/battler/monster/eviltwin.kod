@@ -392,14 +392,14 @@ messages:
       return Send(poOriginal,@GetPlayerNameColor);
    }
 
-   GetPlayerType()
+   GetClientObjectType()
    {
       if poOriginal = $
       {
          return 0;
       }
 
-      return Send(poOriginal,@GetPlayerType);
+      return Send(poOriginal,@GetClientObjectType);
    }
 
    GetAttackRange()

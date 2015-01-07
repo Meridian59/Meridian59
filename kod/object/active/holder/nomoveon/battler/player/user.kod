@@ -928,8 +928,9 @@ messages:
          AddPacket(4,what,4,rName);
          AddPacket(STRING_RESOURCE,rName);
          AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,0); % minimapflags, don't need the value here.
          AddPacket(4,Send(what,@GetPlayerNameColor));
-         AddPacket(1,Send(what,@GetPlayerType));
+         AddPacket(1,Send(what,@GetClientObjectType));
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2413,7 +2414,7 @@ messages:
       AddPacket(4,iFlags);
       AddPacket(4,iMinimapFlags);
       AddPacket(4,iNameColorFlags);
-      AddPacket(1,Send(what,@GetPlayerType));
+      AddPacket(1,Send(what,@GetClientObjectType));
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);
@@ -2621,8 +2622,9 @@ messages:
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
          AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,0); % minimapflags, don't need the value here.
          AddPacket(4,Send(i,@GetPlayerNameColor));
-         AddPacket(1,Send(i,@GetPlayerType));
+         AddPacket(1,Send(i,@GetClientObjectType));
       }
       
       SendPacket(poSession);
@@ -8304,7 +8306,7 @@ messages:
       return iFlags;
    }
 
-   GetPlayerType()
+   GetClientObjectType()
    {
       local iFlags;
 
@@ -8313,13 +8315,13 @@ messages:
       % Send the appropriate flag to draw the name.
       if piFlags & PFLAG_MURDERER
       {
-         iFlags = iFlags | PF_KILLER;
+         iFlags = iFlags | OT_KILLER;
       }
       else
       {
          if (piFlags & PFLAG_OUTLAW)
          {
-            iFlags = iFlags | PF_OUTLAW;
+            iFlags = iFlags | OT_OUTLAW;
          }
       }
 

@@ -331,7 +331,10 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
    Extract(ptr, &item->minimapflags, 4);
    Extract(ptr, &item->namecolor, 4);
-   Extract(ptr, &item->playertype, 1);
+
+   BYTE temptype = 0;
+   Extract(ptr, &temptype, 1);
+   item->objecttype = (object_type)temptype;
 
    ExtractDLighting(ptr, &item->dLighting);
 
@@ -365,6 +368,12 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
+   Extract(ptr, &item->minimapflags, 4);
+   Extract(ptr, &item->namecolor, 4);
+
+   BYTE temptype = 0;
+   Extract(ptr, &temptype, 1);
+   item->objecttype = (object_type)temptype;
 
    ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
    item->normal_translation = item->translation;
@@ -1145,10 +1154,13 @@ Bool HandlePlayers(char *ptr,long len)
       ChangeResource(obj->name_res, name);
 
       Extract(&ptr, &obj->flags, SIZE_VALUE);
+      Extract(&ptr, &obj->minimapflags, SIZE_VALUE);
       Extract(&ptr, &obj->namecolor, SIZE_VALUE);
-      len -= 2 * SIZE_VALUE;
+      len -= 3 * SIZE_VALUE;
 
-      Extract(&ptr, &obj->playertype, SIZE_TYPE);
+      BYTE temptype = 0;
+      Extract(&ptr, &temptype, SIZE_TYPE);
+      obj->objecttype = (object_type)temptype;
       len -= SIZE_TYPE;
 
       list = list_add_item(list, obj);
@@ -1169,6 +1181,7 @@ Bool HandleAddPlayer(char *ptr,long len)
    object_node *obj;
    char *start = ptr;
    char name[MAXNAME + 1];
+   BYTE temptype = 0;
 
    obj = ObjectGetBlank();
    Extract(&ptr, &obj->id, SIZE_ID);
@@ -1179,10 +1192,12 @@ Bool HandleAddPlayer(char *ptr,long len)
    ChangeResource(obj->name_res, name);
 
    Extract(&ptr, &obj->flags, SIZE_VALUE);
+   Extract(&ptr, &obj->minimapflags, SIZE_VALUE);
    Extract(&ptr, &obj->namecolor, SIZE_VALUE);
-   len -= 2 * SIZE_VALUE;
+   len -= 3 * SIZE_VALUE;
 
-   Extract(&ptr, &obj->playertype, SIZE_TYPE);
+   Extract(&ptr, &temptype, SIZE_TYPE);
+   obj->objecttype = (object_type)temptype;
    len -= SIZE_TYPE;
 
    if (len != 0)

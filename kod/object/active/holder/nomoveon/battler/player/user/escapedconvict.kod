@@ -171,9 +171,9 @@ messages:
       propagate;
    }
 
-   GetPlayerType()
+   GetClientObjectType()
    {
-      return PF_EVENTCHAR;
+      return OT_EVENTCHAR;
    }
 
 end

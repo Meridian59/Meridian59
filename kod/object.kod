@@ -737,8 +737,8 @@ messages:
       return viObject_flags;
    }
 
-   GetPlayerType()
-   "This is an enum of player types. Returns 0 for most objects."
+   GetClientObjectType()
+   "This is an enum of object types. Returns 0 for most objects for now."
    {
       return 0;
    }

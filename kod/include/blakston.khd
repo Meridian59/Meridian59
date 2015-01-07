@@ -108,7 +108,8 @@
    MM_MINION_SELF          = 0x00000100
 
    % Player name color sent as hex RGB value. Define constants
-   % for ease of use as needed.
+   % for ease of use as needed. Requires OF_PLAYER boolean flag
+   % to be set to draw a name.
    NC_PLAYER       = 0xFFFFFF   % Default, white name.
    NC_SHADOW       = 0x000000   % Set if name should be drawn black.
    NC_KILLER       = 0xFF0000   % Set if object is a killer.
@@ -121,15 +122,15 @@
    NC_DAENKS       = 0xB300B3   % Purple name color for Daenks.
    NC_COLOR_MAX    = 0xFFFFFF   % Max color, defined for clarity.
 
-   % Player type enum. Even if the name color displayed changes, these
-   % should still report the correct player type.
-   PF_KILLER       = 1   % Set if object is a killer.
-   PF_OUTLAW       = 2   % Set if object is an outlaw.
-   PF_DM           = 3   % Set if object is a DM player.
-   PF_CREATOR      = 4   % Set if object is a creator player.
-   PF_SUPER        = 5   % Set if object is a "super DM".
-   PF_MODERATOR    = 6   % Set if object is a "moderator".
-   PF_EVENTCHAR    = 7   % Set if object is an event character.
+   % Object type enum. Used in the client for differentiating objects.
+   OT_NONE         = 0   % Default, no type set.
+   OT_KILLER       = 1   % Set if object is a killer.
+   OT_OUTLAW       = 2   % Set if object is an outlaw.
+   OT_DM           = 3   % Set if object is a DM player.
+   OT_CREATOR      = 4   % Set if object is a creator player.
+   OT_SUPER        = 5   % Set if object is a "super DM".
+   OT_MODERATOR    = 6   % Set if object is a "moderator".
+   OT_EVENTCHAR    = 7   % Set if object is an event character.
 
    %%% Projectile and Light flags
 

@@ -17,7 +17,7 @@ typedef struct {
    int   flags;             // Object flags
    int   minimapflags;      // Minimap dot color flags
    unsigned int namecolor;  // Player name color flags
-   BYTE  playertype;        // Enum of player type (i.e. outlaw, innocent)
+   object_type objecttype;  // Enum of object type (i.e. outlaw, murderer, NPC)
    BYTE  translation;       // Palette translation to use
    BYTE  secondtranslation; // Another palette translation to use
    BYTE *start_ptr;         // Points to start of row to draw in

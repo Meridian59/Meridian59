@@ -280,9 +280,19 @@ messages:
                #new_angle = Send(poOriginal,@GetAngle));
          if poOriginal <> poMaster
          {
-            Post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
-            Post(self,@EnterStateChase);
+            Post(self,@AttackOriginal);
          }
+      }
+
+      return;
+   }
+
+   AttackOriginal()
+   {
+      if poOriginal <> poMaster
+      {
+         Send(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
+         Send(self,@EnterStateChase);
       }
 
       return;

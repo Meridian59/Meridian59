@@ -22,7 +22,7 @@ resources:
       "Dirt"
 
    eaelem_champion_dead_icon_rsc = eartheleX.bgf
-   eaelem_champion_dead_name_rsc = "dead earth golem champion"
+   eaelem_champion_dead_name_rsc = "The corpse of Dirt"
 
    eaelem_champion_sound_hit = elem_atkh.wav
    eaelem_champion_sound_miss = elem_atkm.wav
@@ -37,16 +37,19 @@ classvars:
    vrDead_icon = eaelem_champion_dead_icon_rsc
    vrDead_name = eaelem_champion_dead_name_rsc
 
-   %viTreasure_type = TID_NONE
-   %viSpeed = SPEED_AVERAGE
-   %viAttributes = 0
+   vbNamedMob = TRUE
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viTreasure_type = TID_NONE
+   viSpeed = SPEED_FAST
+
    viLevel = 230
    viDifficulty = 9
-   %viVisionDistance = 28
-   %viKarma = 0
-   %viDefault_behavior = AI_FIGHT_AGGRESSIVE
+
    viCashmin = 3000
    viCashmax = 5000
+   
    vrSound_hit = eaelem_champion_sound_hit
    vrSound_miss = eaelem_champion_sound_miss
    vrSound_aware = eaelem_champion_sound_aware

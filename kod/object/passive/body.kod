@@ -19,6 +19,8 @@ resources:
 
    deadbody_desc_rsc = "This is a dead, decomposing %s, slain by %q."
 
+   deadbody_named_mob_rsc = "The dead body of %s, slain by %q."
+   
    deadbody_player_desc_rsc = \
       "The dead body of %q, decomposing quickly in the living air of Meridian."
 
@@ -29,6 +31,7 @@ classvars:
 
    vrDesc = deadbody_desc_rsc
    vrPlayer_desc = deadbody_player_desc_rsc
+   vrNamed_Mob_Desc = deadbody_named_mob_rsc
 
    vrAssassinated_desc = deadbody_assassinated_rsc
    viIndefinite = ARTICLE_A
@@ -46,6 +49,7 @@ properties:
    prPlayer_name = $
    pbWas_good_player = FALSE
    pbMob = FALSE
+   pbNamedMob
    pbAssassinated = FALSE
 
    piDrawfx = 0
@@ -66,11 +70,12 @@ messages:
    Constructor(name = $,icon = $,playername = $,good = FALSE, mob=FALSE ,monstername = $,
                inKocatan = FALSE, assassinated = FALSE,drawfx = 0, BodyTranslation = 0,
                LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes=TRUE,
-               DearlyDeparted = $)
+               DearlyDeparted = $, NamedMob = FALSE)
    {
       vrName = name;
       vrIcon = icon;
       pbMob = mob;
+      pbNamedMob = NamedMob;
       piDrawfx = drawfx;
       prPlayer_name = playername;
       pbWas_good_player = good; 
@@ -169,9 +174,18 @@ messages:
       % need to do STRING_RESOURCE for names because player might not be logged in
       if pbMob
       {
-         AddPacket(4,vrDesc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
+         if NOT pbNamedMob
+         {
+            AddPacket(4,vrDesc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
          
-         return;
+            return;
+         }
+         else
+         {
+            AddPacket(4,vrNamed_Mob_Desc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
+         
+            return;
+         }
       }
       
       if pbAssassinated

@@ -215,6 +215,9 @@ classvars:
 
    vrKocName = monster_koc_name
    viGender = GENDER_NEUTER
+   
+   vbNamedMob = FALSE
+   
    vrDead_icon = $
    vrDead_name = $
 
@@ -3490,7 +3493,8 @@ messages:
       {
          oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,
                         #mob=TRUE,#playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);       
+                        #monstername=vrName,#drawfx=viDead_drawfx,
+                        #NamedMob=vbNamedMob);       
       }
 
       return oBody;

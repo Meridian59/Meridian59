@@ -22,7 +22,7 @@ resources:
       "Tundra"
 
    icelem_champion_dead_icon_rsc = icelemeX.bgf
-   icelem_champion_dead_name_rsc = "dead ice golem champion"
+   icelem_champion_dead_name_rsc = "The corpse of Tundra"
 
    icelem_champion_sound_hit = elem_atkh.wav
    icelem_champion_sound_miss = elem_atkm.wav
@@ -37,16 +37,19 @@ classvars:
    vrDead_icon = icelem_champion_dead_icon_rsc
    vrDead_name = icelem_champion_dead_name_rsc
 
-   %viTreasure_type = TID_NONE
-   %viSpeed = SPEED_AVERAGE
-   %viAttributes = 0
+   vbNamedMob = TRUE
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viTreasure_type = TID_NONE
+   viSpeed = SPEED_FAST
+
    viLevel = 230
    viDifficulty = 9
-   %viVisionDistance = 28
-   %viKarma = 0
-   %viDefault_behavior = AI_FIGHT_AGGRESSIVE
+
    viCashmin = 3000
    viCashmax = 5000
+   
    vrSound_hit = icelem_champion_sound_hit
    vrSound_miss = icelem_champion_sound_miss
    vrSound_aware = icelem_champion_sound_aware
@@ -68,6 +71,6 @@ messages:
 
       propagate;
    }
-
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

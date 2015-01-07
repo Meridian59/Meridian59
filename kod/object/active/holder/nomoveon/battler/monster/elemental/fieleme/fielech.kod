@@ -22,7 +22,7 @@ resources:
       "Inferno"
 
    fielem_champion_dead_icon_rsc = fielemeX.bgf
-   fielem_champion_dead_name_rsc = "dead fire golem champion"
+   fielem_champion_dead_name_rsc = "The corpse of Inferno"
 
    fielem_champion_sound_hit = elem_atkh.wav
    fielem_champion_sound_miss = elem_atkm.wav
@@ -37,16 +37,19 @@ classvars:
    vrDead_icon = fielem_champion_dead_icon_rsc
    vrDead_name = fielem_champion_dead_name_rsc
 
-   %viTreasure_type = TID_NONE
-   %viSpeed = SPEED_AVERAGE
-   %viAttributes = 0
+   vbNamedMob = TRUE   
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viTreasure_type = TID_NONE
+   viSpeed = SPEED_FAST
+
    viLevel = 230
    viDifficulty = 9
-   %viVisionDistance = 28
-   %viKarma = 0
-   %viDefault_behavior = AI_FIGHT_AGGRESSIVE
+
    viCashmin = 3000
    viCashmax = 5000
+   
    vrSound_hit = fielem_champion_sound_hit
    vrSound_miss = fielem_champion_sound_miss
    vrSound_aware = fielem_champion_sound_aware

@@ -45,7 +45,7 @@ classvars:
    viSpeed = SPEED_FAST
 
    viLevel = 230
-   viDifficulty = 9
+   viDifficulty = 8
 
    viCashmin = 3000
    viCashmax = 5000
@@ -58,11 +58,15 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
+   
+   piSpellPower = 99
 
 messages:
 
    Constructed()
    {
+      plSpellBook = [ [SID_ICE_NOVA,3,100] ];
+   
       plResistances = [ [-ATCK_SPELL_FIRE, -50 ],
                         [-ATCK_SPELL_QUAKE, -50 ],
                         [-ATCK_SPELL_ALL, 80 ],

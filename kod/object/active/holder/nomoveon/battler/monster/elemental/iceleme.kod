@@ -39,6 +39,8 @@ classvars:
    vrDead_icon = iceelemental_dead_icon_rsc
    vrDead_name = iceelemental_dead_name_rsc
 
+   viAttack_Spell = ATCK_SPELL_COLD
+   
    %viTreasure_type = TID_NONE
    %viSpeed = SPEED_AVERAGE
    %viAttributes = 0

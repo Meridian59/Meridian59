@@ -22,7 +22,7 @@ resources:
       "Elemental"
    
    elemental_dead_icon_rsc = fielemeX.bgf
-   elemental_dead_name_rsc = "dead fire golem"
+   elemental_dead_name_rsc = "dead golem"
 
    elemental_sound_hit = elem_atkh.wav
    elemental_sound_miss = elem_atkm.wav

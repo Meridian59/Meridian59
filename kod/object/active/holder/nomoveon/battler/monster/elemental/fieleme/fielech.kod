@@ -45,7 +45,7 @@ classvars:
    viSpeed = SPEED_FAST
 
    viLevel = 230
-   viDifficulty = 9
+   viDifficulty = 8
 
    viCashmin = 3000
    viCashmax = 5000
@@ -63,6 +63,8 @@ messages:
 
    Constructed()
    {
+      plSpellBook = [ [SID_FIRE_STORM,3,100] ];
+   
       plResistances = [ [-ATCK_SPELL_COLD, -50 ],
                         [-ATCK_SPELL_ALL, 90 ],
                         [ATCK_WEAP_BLUDGEON, -100],

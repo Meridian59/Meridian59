@@ -352,7 +352,6 @@ enum {
 
 
 /* Object flag values and masks */
-#define OF_NOMOVEON_MASK 0x00000003
 #define OF_PLAYER        0x00000004    // Set if object is a player
 #define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
@@ -430,12 +429,12 @@ typedef enum {
 } object_type;
 
 /* How objects allow or disallow motion onto their square */
-enum {
+typedef enum {
    OF_MOVEON_YES        = 0,   // Can always move on object
    OF_MOVEON_NO         = 1,   // Can never move on object
    OF_MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
    OF_MOVEON_NOTIFY     = 3,
-};
+} moveon_type;
 
 /* Effect codes */
 enum {

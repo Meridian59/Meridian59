@@ -256,7 +256,7 @@ messages:
 
    GetObjectFlags()
    {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
+      return BOUNCE_YES | BATTLER_YES;
    }
 
    CanMorphTo()

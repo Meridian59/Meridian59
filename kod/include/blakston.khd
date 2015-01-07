@@ -35,18 +35,19 @@
    HOUR = 3600
    MINUTE = 60
 
-   %%% Object type constants
+   %%% KOD Object type constants
 
    ACTIVE = 1
    PASSIVE = 2
 
-   %%% Object flags for client
-
-   % 0's are default value
+   % MoveOn type enum, now separate from object flags.
    MOVEON_YES        = 0
-   MOVEON_NO         = 0x00000001
-   MOVEON_TELEPORTER = 0x00000002
-   MOVEON_NOTIFY     = 0x00000003
+   MOVEON_NO         = 1
+   MOVEON_TELEPORTER = 2
+   MOVEON_NOTIFY     = 3
+
+   % Object flags for client.
+   % 0's are default value
    USER_NO           = 0
    USER_YES          = 0x00000004
    BATTLER_NO        = 0

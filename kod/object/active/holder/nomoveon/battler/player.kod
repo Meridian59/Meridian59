@@ -9376,7 +9376,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0, 4,0, 4,0, 1,0);
+         AddPacket(4,0, 4,0, 4,0, 4,0, 1,0, 1,0);
          AddPacket(1,ANIMATE_ONCE, 4,175, 2,1, 2,3, 2,0);
          AddPacket(1,0);
 
@@ -9407,7 +9407,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0, 4,0, 4,0, 1,0);
+         AddPacket(4,0, 4,0, 4,0, 4,0, 1,0, 1,0);
          AddPacket(1,ANIMATE_ONCE,4,300,2,4,2,6,2,iGroup);
          AddPacket(1,1);
          AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
@@ -9441,7 +9441,8 @@ messages:
          AddPacket(4,Send(what,@GetWindowOverlayID)); % supposedly "object id" in client
          AddPacket(4,Send(what,@GetWindowOverlay));
          AddPacket(4,Send(what,@GetName)); % useless field, used to make client parsing easier
-         AddPacket(4,0, 4,0, 4,0, 1,0); % Flags, minimapflags, namecolor, playertype.
+         % Flags, minimapflags, namecolor, playertype, moveon type.
+         AddPacket(4,0, 4,0, 4,0, 1,0, 1,0);
          Send(what,@SendWindowOverlayAnimation);
          Send(what,@SendWindowOverlayOverlays);
 

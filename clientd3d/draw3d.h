@@ -90,6 +90,7 @@ typedef struct {
    int  minimapflags;          /* Minimap dot color flags */
    unsigned int  namecolor;    /* Player name color flags */
    object_type objecttype;     /* Enum of object type (i.e. outlaw, murderer, NPC) */
+   moveon_type moveontype;     /* MoveOn type of the object */
    int  height;                /* Height to draw object (FINENESS units) */
    int  center;                /* Screen column of center of object */
    int  depth;                 /* Depth under ground to draw object (FINENESS units) */

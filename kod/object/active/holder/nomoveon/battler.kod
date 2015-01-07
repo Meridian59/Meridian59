@@ -134,7 +134,7 @@ resources:
 
 classvars:
 
-   viObject_flags = MOVEON_NO | BATTLER_YES
+   viObject_flags = BATTLER_YES
 
    viBattler_level = 50
 

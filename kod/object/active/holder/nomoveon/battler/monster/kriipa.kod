@@ -105,10 +105,20 @@ messages:
    {
       if (piRoofState <> STATE_ONROOF)
       {
-         return MOVEON_NO | piDrawFX | BATTLER_YES;
+         return piDrawFX | BATTLER_YES;
       }
 
       return piDrawFX | HANGING_YES | BATTLER_YES;
+   }
+
+   GetMoveOnType()
+   {
+      if (piRoofState <> STATE_ONROOF)
+      {
+         propagate;
+      }
+
+      return MOVEON_YES;
    }
 
    TryAttack()

@@ -931,6 +931,7 @@ messages:
          AddPacket(4,0); % minimapflags, don't need the value here.
          AddPacket(4,Send(what,@GetPlayerNameColor));
          AddPacket(1,Send(what,@GetClientObjectType));
+         AddPacket(1,0); % MoveOn type, don't need it here.
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2339,7 +2340,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags, iNameColorFlags;
+      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2409,12 +2410,11 @@ messages:
          iMinimapFlags = 0;
       }
 
-      iNameColorFlags = Send(what,@GetPlayerNameColor);
-
       AddPacket(4,iFlags);
       AddPacket(4,iMinimapFlags);
-      AddPacket(4,iNameColorFlags);
+      AddPacket(4,Send(what,@GetPlayerNameColor));
       AddPacket(1,Send(what,@GetClientObjectType));
+      AddPacket(1,Send(what,@GetMoveOnType));
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);
@@ -2461,6 +2461,12 @@ messages:
       }
 
       iFlags = MM_NONE;
+
+      if IsClass(what,&Reflection)
+         OR IsClass(what,&EvilTwin)
+      {
+         what = Send(what,@GetMaster);
+      }
 
       if IsClass(what,&Player)
       {
@@ -2625,6 +2631,7 @@ messages:
          AddPacket(4,0); % minimapflags, don't need the value here.
          AddPacket(4,Send(i,@GetPlayerNameColor));
          AddPacket(1,Send(i,@GetClientObjectType));
+         AddPacket(1,0); % MoveOn type, don't need it here.
       }
       
       SendPacket(poSession);
@@ -8220,11 +8227,31 @@ messages:
       return ret_val;
    }
 
+   GetMoveOnType()
+   {
+      local iFlags;
+
+      iFlags = MOVEON_NO;
+
+      if Send(self,@IsPhasedOut)
+      {
+         iFlags = (iFlags & ~MOVEON_NO);
+      }
+
+      % Angeled characters cannot block other players.
+      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         iFlags = (iFlags & ~MOVEON_NO);
+      }
+
+      return iFlags;
+   }
+
    GetObjectFlags()
    {
       local iFlags, oIllusion;
 
-      iFlags = MOVEON_NO | BATTLER_YES | USER_YES | OFFER_YES;
+      iFlags = BATTLER_YES | USER_YES | OFFER_YES;
 
       if (piFlags & PFLAG_INVISIBLE)
       {
@@ -8232,7 +8259,7 @@ messages:
          iFlags = iFlags & (~DRAWFX_MASK);
          iFlags = iFlags | DRAWFX_INVISIBLE;
       }
-      
+
       if (piFlags & PFLAG_SAFETY)
       {
          iFlags = iFlags | SAFETY_YES;
@@ -8254,13 +8281,7 @@ messages:
       if Send(self,@IsPhasedOut)
       {
          iFlags = iFlags | LOOK_NO;
-         iFlags = (iFlags & ~MOVEON_NO & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
-      }
-      
-      % Angeled characters cannot block other players
-      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         iFlags = (iFlags & ~MOVEON_NO);
+         iFlags = (iFlags & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
       }
 
       return iFlags;

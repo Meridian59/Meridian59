@@ -40,7 +40,7 @@ classvars:
    vrIcon = WallofLightning_icon_rsc
    vrdesc = WallofLightning_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY | FLICKERING_YES
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | FLICKERING_YES
 
    vrDissipateMessage = lightningwall_dissipates
    vrUnaffectedMessage = lightningwall_damage0

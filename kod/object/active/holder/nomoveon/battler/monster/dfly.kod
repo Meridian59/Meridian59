@@ -282,10 +282,10 @@ messages:
    {
       if piAnimation = ANIM_NONE
       {
-         return MOVEON_NO | BATTLER_YES;
+         return BATTLER_YES;
       }
 
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
+      return BOUNCE_YES | BATTLER_YES;
    }
 
    CanMorphTo()

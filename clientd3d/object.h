@@ -24,7 +24,7 @@ typedef DWORD ID;  /* Server id #s */
 #define IsNumberObj(id) (GetObjTag(id) == CLIENT_TAG_NUMBER)
 
 // Object flag values and macros
-#define ObjectMoveonType(obj)    ((obj).flags & OF_NOMOVEON_MASK)
+#define ObjectMoveonType(obj)    ((obj).moveontype)
 
 #define MAX_CHARNAME 30   // Maximum length of character name
 #define MAX_DESCRIPTION 1000  /* Maximum length of character description */
@@ -82,6 +82,7 @@ typedef struct {
    int          minimapflags;        // Flags used to draw the right color/icon on the minimap.
    unsigned int namecolor;           // Player name color flags
    object_type  objecttype;          /* Enum of object type (i.e. outlaw, murderer, NPC) */
+   moveon_type moveontype;           // MoveOn type of the object
    BYTE         translation;         // Palette translation information
    Animate      *animate;            /* Pointer to current animation (normal or motion animation) */
    list_type    *overlays;           /* Pointer to current overlays (normal or motion animation) */

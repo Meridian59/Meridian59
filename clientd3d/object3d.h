@@ -48,6 +48,7 @@ typedef struct {
    int       minimapflags;      // Flag field for minimap dot drawing
    unsigned int namecolor;      /* Player name color flags */
    object_type objecttype;      /* Enum of object type (i.e. outlaw, murderer, NPC) */
+   moveon_type moveontype;      // MoveOn type of the object
    int       cutoff;            // Last screen row in which to draw object (to cut off at ground level)
    BYTE      translation;       // Color translation type, 0 = none
    BYTE      secondtranslation; // Overriding second translation for all overlays.

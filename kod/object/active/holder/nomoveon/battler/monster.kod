@@ -5876,7 +5876,7 @@ messages:
    {
       local iFlags;
 
-      iFlags = MOVEON_NO;
+      iFlags = 0;
 
       if NOT (piBehavior & AI_NPC)
       {

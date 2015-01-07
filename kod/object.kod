@@ -74,7 +74,9 @@ classvars:
    vbSummoned = FALSE
 
    viGender = GENDER_NEUTER
+
    viObject_flags = 0
+   viMoveOn_type = 0
 
 properties:
 
@@ -730,6 +732,11 @@ messages:
    "Returns FALSE for most things."
    {
       return FALSE;
+   }
+
+   GetMoveOnType()
+   {
+      return viMoveOn_type;
    }
 
    GetObjectFlags()

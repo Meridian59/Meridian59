@@ -41,16 +41,6 @@ classvars:
 
    viAttack_Spell = ATCK_SPELL_QUAKE
    
-   %viTreasure_type = TID_NONE
-   %viSpeed = SPEED_AVERAGE
-   %viAttributes = 0
-   %viLevel = 200
-   %viDifficulty = 7
-   %viVisionDistance = 28
-   %viKarma = 0
-   %viDefault_behavior = AI_FIGHT_AGGRESSIVE
-   %viCashmin = 1100
-   %viCashmax = 2000
    vrSound_hit = earthelemental_sound_hit
    vrSound_miss = earthelemental_sound_miss
    vrSound_aware = earthelemental_sound_aware

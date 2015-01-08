@@ -5009,6 +5009,8 @@ messages:
       plMonsterTemplates = cons(create(&FireElementalChampion),plMonsterTemplates);
       plMonsterTemplates = cons(create(&IceElemental),plMonsterTemplates);
       plMonsterTemplates = cons(create(&IceElementalChampion),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&NeruElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&NeruElementalChampion),plMonsterTemplates);
 
       return;
    }

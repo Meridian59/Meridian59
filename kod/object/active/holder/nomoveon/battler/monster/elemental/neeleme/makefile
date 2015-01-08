@@ -4,8 +4,8 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\elemental.bof
-BOFS  = iceleme.bof fieleme.bof eaeleme.bof neeleme.bof \
+DEPEND = ..\neeleme.bof
+BOFS  = neelech.bof \
 
 
 

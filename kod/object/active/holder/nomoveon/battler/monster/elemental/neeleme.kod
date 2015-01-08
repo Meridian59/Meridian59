@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NeruElemental is Elemental
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   neruelemental_name_rsc = "neru golem"
+   neruelemental_icon_rsc = neeleme.bgf
+   neruelemental_desc_rsc = \
+      "Nerudite Elemental"
+   neruelemental_koc_name_rsc = "atzmochner"
+
+   neruelemental_dead_icon_rsc = neelemeX.bgf
+   neruelemental_dead_name_rsc = "dead nerudite golem"
+
+   neruelemental_sound_hit = elem_atkh.wav
+   neruelemental_sound_miss = elem_atkm.wav
+   neruelemental_sound_death = elem_dth.wav
+   neruelemental_sound_aware = elem_awr.wav
+
+classvars:
+
+   vrKocName = neruelemental_koc_name_rsc
+   vrName = neruelemental_name_rsc
+   vrIcon = neruelemental_icon_rsc
+   vrDesc = neruelemental_desc_rsc
+   vrDead_icon = neruelemental_dead_icon_rsc
+   vrDead_name = neruelemental_dead_name_rsc
+
+   viAttack_type = ATCK_WEAP_NERUDITE
+   
+   vrSound_hit = neruelemental_sound_hit
+   vrSound_miss = neruelemental_sound_miss
+   vrSound_aware = neruelemental_sound_aware
+   vrSound_death = neruelemental_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [-ATCK_SPELL_QUAKE, -50 ],
+                        [-ATCK_SPELL_ALL, 80 ],
+                        [ATCK_WEAP_BLUDGEON, -100],
+                        [ATCK_WEAP_ALL, 90 ] ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

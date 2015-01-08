@@ -381,6 +381,8 @@ HRESULT D3DRenderInit(HWND hWnd)
 
 	IDirect3DDevice9_GetDeviceCaps(gpD3DDevice, &gD3DCaps);
 
+   gFrame = 0;
+   
 	gViewport.X = 0;
 	gViewport.Y = 0;
 	gViewport.Width = gScreenWidth;
@@ -491,7 +493,14 @@ HRESULT D3DRenderInit(HWND hWnd)
                                   D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT,
                                   &gpBackBufferTexFull, NULL);
 
-	playerOldPos.x = 0;
+	/***************************************************************************/
+	/*                                FONT                                     */
+	/***************************************************************************/
+
+	// This will call D3DRenderFontInit to make sure the font texture is created
+	GraphicsResetFont();
+
+   playerOldPos.x = 0;
 	playerOldPos.y = 0;
 	playerOldPos.z = 0;
 
@@ -1170,35 +1179,28 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	IDirect3DDevice9_EndScene(gpD3DDevice);
 
-	{
-		RECT	rect;
+   RECT	rect;
+   
+   rect.top = 0;
+   rect.bottom = gScreenHeight;
+   rect.left = 0;
+   rect.right = gScreenWidth;
+   
+   HRESULT hr = IDirect3DDevice9_Present(gpD3DDevice, &rect, &gD3DRect, NULL, NULL);
 
-		rect.top = 0;
-		rect.bottom = gScreenHeight;
-		rect.left = 0;
-		rect.right = gScreenWidth;
+   if (hr == D3DERR_DEVICELOST)
+   {
+      while (hr == D3DERR_DEVICELOST)
+         hr = IDirect3DDevice9_TestCooperativeLevel(gpD3DDevice);
+      
+      if (hr == D3DERR_DEVICENOTRESET)
+      {
+         D3DRenderShutDown();
+         D3DRenderInit(hMain);
+         D3DGeometryBuildNew(room, &gWorldPoolStatic);
+      }
+   }
 
-		HRESULT error = IDirect3DDevice9_Present(gpD3DDevice, &rect, &gD3DRect, NULL, NULL);
-
-		if (error == D3DERR_DEVICELOST)
-		{
-			while (error == D3DERR_DEVICELOST)
-				error = IDirect3DDevice9_TestCooperativeLevel(gpD3DDevice);
-
-			if (error == D3DERR_DEVICENOTRESET)
-			{
-				D3DRenderShutDown();
-
-				while (error != D3D_OK)
-					error = IDirect3DDevice9_Reset(gpD3DDevice, &gPresentParam);
-
-				D3DRenderInit(hMain);
-				D3DGeometryBuildNew(room, &gWorldPoolStatic);
-			}
-		}
-	}
-
-//	debug(("number of objects = %d\n", gNumObjects));
 	if ((gFrame & 255) == 255)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices,
 		gNumDPCalls));

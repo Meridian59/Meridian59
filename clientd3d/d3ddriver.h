@@ -39,7 +39,7 @@ typedef struct d3d_driver_profile
 	DWORD					minFilter;
 	DWORD					magFilter;
 	DWORD					vertexProcessFlag;
-	float					maxAnisotropy;
+	DWORD					maxAnisotropy;
 	DWORD					vertexProcessingMode;
 	DWORD					lmapMode;
 	Bool					bZBias;

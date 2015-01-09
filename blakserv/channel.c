@@ -153,11 +153,21 @@ void gprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
+   
+
    sprintf(s,"%s | ",TimeStr(GetTime()));
 
    va_start(marker,fmt);
    vsprintf(s+strlen(s),fmt,marker);
    va_end(marker);
+
+   char *excludedword1 = "account";
+   char *excludedword2 = "ACCOUNT";
+
+   if (strstr(s, excludedword1) != NULL || strstr(s, excludedword2) != NULL)
+   {
+	   sprintf(s, "%s | Line excluded due to personal information.", TimeStr(GetTime()));
+   }
 
    TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs */
    if (s[strlen(s)-1] != '\n')

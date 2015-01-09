@@ -28,7 +28,6 @@ classvars:
 
    vrName = corpseportal_name_rsc
 
-   viObject_flags = DRAWFX_TRANSLUCENT_75
    viMoveOn_type = MOVEON_TELEPORTER
 
    viAnimationSpeed = 400
@@ -40,6 +39,7 @@ properties:
 
    ptExpire = $
    poCorpse = $
+   piDrawFx = DRAWFX_TRANSLUCENT_75
 
 messages:
 

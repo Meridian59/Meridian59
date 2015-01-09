@@ -74,6 +74,7 @@ properties:
    % our private data
 
    piAnimation = ANIM_NONE
+   piDrawFx = DRAWFX_INVISIBLE
 
    poRoom = $                %% The room we are scheduled to be created in.
    poHauntee = $             %% The player we are to hunt.
@@ -260,11 +261,6 @@ messages:
       % if no body animation
 
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return BATTLER_YES | DRAWFX_INVISIBLE;
    }
 
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

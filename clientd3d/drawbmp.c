@@ -31,10 +31,10 @@ extern HPALETTE hPal;
 extern BYTE light_palettes[NUM_PALETTES][NUM_COLORS];
 
 /* local function prototypes */
-static void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE secondtranslation, int flags);
+static void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE secondtranslation, BYTE flags);
 static Bool ComputeObjectBoundingBox(PDIB pdib, list_type overlays, Bool include_object, RECT *max_rect, int angle);
 static void DrawOverlays(PDIB pdib_obj, RECT *obj_rect, list_type overlays, 
-						 int inc, Bool underlays, BYTE secondtranslation, int flags, int angle);
+						 int inc, Bool underlays, BYTE secondtranslation, BYTE flags, int angle);
 static void OffscreenBitCopy(HDC hdc, int dest_x, int dest_y, int width, int height,
 							 BYTE *bits, int source_x, int source_y, int source_width, int options);
 /************************************************************************/
@@ -190,14 +190,14 @@ void DrawObjectIcon(HDC hdc, ID icon, int group, Bool draw_obj, AREA *area, HBRU
 	
 	// Draw underlays
 	//if (obj->overlays != NULL)
-	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->flags);
+	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->drawingflags);
 	
 	if (draw_obj)
 		DrawStretchedBitmap(pdib, obj_rect, inc, 0, 0, 0);
 	
 	// Draw overlays
 	//if (obj->overlays != NULL)
-	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->flags);
+	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->drawingflags);
 	
 	if (!copy) 
 		return;
@@ -279,14 +279,14 @@ void DrawObject(HDC hdc, object_node *obj, int group, Bool draw_obj, AREA *area,
 	
 	// Draw underlays
 	if (obj->overlays != NULL)
-		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->flags, angle);
+		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->drawingflags, angle);
 	
 	if (draw_obj)
-		DrawStretchedBitmap(pdib, obj_rect, inc, obj->translation, obj->secondtranslation, obj->flags);
+		DrawStretchedBitmap(pdib, obj_rect, inc, obj->translation, obj->secondtranslation, obj->drawingflags);
 	
 	// Draw overlays
 	if (obj->overlays != NULL)
-		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->flags, angle);
+		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->drawingflags, angle);
 	
 	if (!copy) 
 		return;
@@ -307,7 +307,7 @@ void DrawObject(HDC hdc, object_node *obj, int group, Bool draw_obj, AREA *area,
 *   flags is a set of object flags, specifying any special drawing effects.
 */
 void DrawOverlays(PDIB pdib_obj, RECT *obj_rect, list_type overlays, 
-				  int inc, Bool underlays, BYTE secondtranslation, int flags, int angle)
+				  int inc, Bool underlays, BYTE secondtranslation, BYTE flags, int angle)
 {
 	RECT rect;
 	list_type l;
@@ -388,7 +388,7 @@ void DrawOverlays(PDIB pdib_obj, RECT *obj_rect, list_type overlays,
 			
 			if (overlay->effect)
 			{
-				DWORD effect = overlay->effect << 20;
+				BYTE effect = overlay->effect;
 				DrawStretchedBitmap(pdib_ov, rect, inc * shrink / obj_shrink, overlay->translation, secondtranslation, flags | effect);
 			}
 			else
@@ -403,7 +403,7 @@ void DrawOverlays(PDIB pdib_obj, RECT *obj_rect, list_type overlays,
 *   translation gives the palette translation type.
 *   flags is a set of object flags, used to specify special drawing effects
 */
-void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE secondtranslation, int flags)
+void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE secondtranslation, BYTE flags)
 {
 	int bitmap_width;
 	BYTE *obj_bits, *offscreen_ptr, *object_ptr, *end_ptr, index;
@@ -420,7 +420,7 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 	obj_bits = DibPtr(pdib);
 	
 	y = 0;
-	d.flags = flags;
+	d.drawingflags = flags;
 	d.translation = translation;
 	d.secondtranslation = secondtranslation;
 	// Dummy palette for use with special effects--draws at max brightness
@@ -449,12 +449,12 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 		{
 			// Call correct inner loop for effect
 			DrawingLoop loop;
-			int effect;
+			BYTE effect;
 			
 			// Take effect from palette translation or object flags
 			effect = GetDrawingEffectIndex(flags);
 			if (effect == 0)
-				effect = GetDrawingEffectIndex(OF_TRANSLATE);
+				effect = GetDrawingEffectIndex(DRAWFX_TRANSLATE);
 			
 			loop = drawing_loops[effect];
 			

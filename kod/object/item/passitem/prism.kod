@@ -413,7 +413,7 @@ messages:
 
       if piGlowing
       {
-         iNewFlags = iNewFlags | FLICKERING_YES;
+         iNewFlags = iNewFlags | OF_FLICKERING;
       }
 
       return iNewFlags;

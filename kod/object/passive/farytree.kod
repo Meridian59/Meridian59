@@ -122,7 +122,7 @@ messages:
       if piKarma_state = KVERY_GOOD
          OR piKarma_state = KGOOD
       {
-         return LOOK_NO | FLICKERING_YES;
+         return LOOK_NO | OF_FLICKERING;
       }
 
       return LOOK_NO;

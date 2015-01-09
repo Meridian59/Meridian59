@@ -156,15 +156,15 @@ void				D3DRenderResizeDisplay(int left, int top, int right, int bottom);
 void				D3DRenderEnableToggle(void);
 int					D3DRenderIsEnabled(void);
 LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
+												  BYTE effect);
 LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
-void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
+												  BYTE effect);
+void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags);
 int					D3DRenderObjectGetLight(BSPnode *tree, room_contents_node *pRNode);
 void				D3DRenderBackgroundSet(ID background);
 void				D3DRenderBackgroundSet2(ID background);
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
-												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
+												PDIB pDib, BYTE xLat0, BYTE xLat1, BYTE effect);
 d3d_render_packet_new *D3DRenderPacketNew(d3d_render_pool_new *pPool);
 d3d_render_chunk_new *D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void				D3DRenderPoolReset(d3d_render_pool_new *pPool, void *pMaterialFunc);

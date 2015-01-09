@@ -691,13 +691,6 @@ messages:
       return;
    }
 
-   %%% DrawFX
-
-   GetDrawFX()
-   {
-      return piDrawfx;
-   }
-
    %%% Enchantments of Monsters
 
    EnchantmentTimer(timer = $)
@@ -5894,8 +5887,6 @@ messages:
          iFlags = iFlags | OFFER_YES;
       }
 
-      iFlags = iFlags | piDrawfx;
-
       return iFlags;
    }
 
@@ -6344,12 +6335,12 @@ messages:
 
    IsInvisible()
    {
-      return (Send(self,@GetObjectFlags) & DRAWFX_INVISIBLE);
+      return (Send(self,@GetDrawingFlags) & DRAWFX_INVISIBLE);
    }
 
    IsShadowForm()
    {
-      return (Send(self,@GetObjectFlags) & DRAWFX_BLACK);
+      return (Send(self,@GetDrawingFlags) & DRAWFX_BLACK);
    }
 
    GetVaultNum()

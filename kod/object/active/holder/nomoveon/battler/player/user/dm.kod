@@ -872,7 +872,7 @@ messages:
             piAttack_start = 1;
             piAttack_end = 1;
             piAttack_delay = 500;
-            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NONE);
             piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
             piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
             Send(self,@ResetPlayerFlagList);
@@ -898,7 +898,7 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=dm_plain);
             Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
             Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
-            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NONE);
 
             piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
             piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
@@ -1820,7 +1820,7 @@ messages:
       iFlags = 0;
 
       % Check for any shadow form effects.
-      iDrawfX = Send(self,@GetPlayerDrawFX);
+      iDrawfX = Send(self,@GetDrawingFlags);
       if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
       {
          iFlags = iFlags | NC_SHADOW;

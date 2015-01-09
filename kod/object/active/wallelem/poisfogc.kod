@@ -41,12 +41,14 @@ classvars:
    vrIcon = PoisonFogCloud_icon_rsc
    vrDesc = PoisonFogCloud_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50
+   viObject_flags = LOOK_NO
 
    vrDissipateMessage = PoisonFog_dissipates
    vrUnaffectedMessage = PoisonFog_unaffected
 
 properties:
+
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    piOdds = 0
 

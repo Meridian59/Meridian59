@@ -767,8 +767,16 @@ messages:
       local f;
 
       f = LOOK_NO;
-      if pbHanging { f = f | HANGING_YES; }
-      if pbFlicker { f = f | FLICKERING_YES; }
+
+      if pbHanging
+      {
+         f = f | HANGING_YES;
+      }
+
+      if pbFlicker
+      {
+         f = f | OF_FLICKERING;
+      }
 
       return f;
    }

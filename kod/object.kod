@@ -85,6 +85,8 @@ properties:
    plObject_attributes = $
 
    piNameColor = 0
+   piDrawfx = 0
+   piDrawType = 0
 
 messages:
 
@@ -741,7 +743,22 @@ messages:
 
    GetObjectFlags()
    {
-      return viObject_flags;
+      return viObject_flags | piDrawType;
+   }
+
+   GetDrawingFlags()
+   "This returns any special drawing effect the object has. Default is "
+   "no drawing effect."
+   {
+      return piDrawfx;
+   }
+
+   GetDrawType()
+   "This returns any special drawing type the object has. Default is "
+   "no drawing type. Drawing types are phasing, flickering, flashing "
+   "and bouncing, stored separately from object flags and drawing effects."
+   {
+      return piDrawType;
    }
 
    GetClientObjectType()

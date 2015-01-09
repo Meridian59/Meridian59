@@ -927,7 +927,8 @@ messages:
          AddPacket(1,BP_PLAYER_ADD);
          AddPacket(4,what,4,rName);
          AddPacket(STRING_RESOURCE,rName);
-         AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,Send(what,@GetObjectFlags));
+         AddPacket(1,Send(what,@GetDrawingFlags) & ~DRAWFX_INVISIBLE);
          AddPacket(4,0); % minimapflags, don't need the value here.
          AddPacket(4,Send(what,@GetPlayerNameColor));
          AddPacket(1,Send(what,@GetClientObjectType));
@@ -2340,7 +2341,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags;
+      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags, iDrawingFlags;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2366,14 +2367,16 @@ messages:
          AddPacket(4,Send(what,@GetApparentName));
       }
 
+      iDrawingFlags = Send(what,@GetDrawingFlags);
       iFlags = Send(what,@GetObjectFlags);
-
+      % If we can see the invisible object, remove its invis drawing flag
+      % and set it to flash instead (in object flags).
       if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2)
-         AND (iFlags & DRAWFX_MASK) = DRAWFX_INVISIBLE
+         AND (iDrawingFlags & DRAWFX_MASK) = DRAWFX_INVISIBLE
       {
-         iFlags = (iFlags & (~DRAWFX_MASK));
-         iFlags = (iFlags & (~FLICKERING_YES));
-         iFlags = (iFlags | FLASHING_YES);
+         iDrawingFlags = (iDrawingFlags & (~DRAWFX_MASK));
+         iFlags = (iFlags & (~OF_FLICKERING));
+         iFlags = (iFlags | OF_FLASHING);
       }
 
       if IsClass(what,&Battler)
@@ -2387,8 +2390,8 @@ messages:
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND abs(iEnemyKarma) > iSelfKarma))
          {
-            iFlags = (iFlags & (~FLICKERING_YES));
-            iFlags = (iFlags | FLASHING_YES);
+            iFlags = (iFlags & (~OF_FLICKERING));
+            iFlags = (iFlags | OF_FLASHING);
          }
 
          if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_GOOD,#flagset=2)
@@ -2397,8 +2400,8 @@ messages:
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND iEnemyKarma > abs(iSelfKarma)))
          {
-            iFlags = (iFlags & (~FLICKERING_YES));
-            iFlags = (iFlags | FLASHING_YES);
+            iFlags = (iFlags & (~OF_FLICKERING));
+            iFlags = (iFlags | OF_FLASHING);
          }
       }
 
@@ -2411,6 +2414,7 @@ messages:
       }
 
       AddPacket(4,iFlags);
+      AddPacket(1,iDrawingFlags);
       AddPacket(4,iMinimapFlags);
       AddPacket(4,Send(what,@GetPlayerNameColor));
       AddPacket(1,Send(what,@GetClientObjectType));
@@ -2627,7 +2631,8 @@ messages:
          rName = Send(i,@GetTrueName);
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
-         AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,Send(i,@GetObjectFlags));
+         AddPacket(1,Send(i,@GetDrawingFlags) & ~DRAWFX_INVISIBLE);
          AddPacket(4,0); % minimapflags, don't need the value here.
          AddPacket(4,Send(i,@GetPlayerNameColor));
          AddPacket(1,Send(i,@GetClientObjectType));
@@ -8247,11 +8252,11 @@ messages:
       return iFlags;
    }
 
-   GetObjectFlags()
+   GetDrawingFlags()
    {
-      local iFlags, oIllusion;
+      local iFlags;
 
-      iFlags = BATTLER_YES | USER_YES | OFFER_YES;
+      iFlags = piDrawFx;
 
       if (piFlags & PFLAG_INVISIBLE)
       {
@@ -8260,13 +8265,20 @@ messages:
          iFlags = iFlags | DRAWFX_INVISIBLE;
       }
 
+      return iFlags;
+   }
+
+   GetObjectFlags()
+   {
+      local iFlags, oIllusion;
+
+      iFlags = BATTLER_YES | USER_YES | OFFER_YES;
+
+
       if (piFlags & PFLAG_SAFETY)
       {
          iFlags = iFlags | SAFETY_YES;
       }
-
-      iFlags = iFlags | (piDrawfx & DRAWFX_MASK)
-               | (piDrawfx & (FLASHING_YES | FLICKERING_YES | PHASING_YES));
 
       oIllusion = Send(self,@GetIllusionForm);
 
@@ -8284,6 +8296,9 @@ messages:
          iFlags = (iFlags & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
       }
 
+      % Get the flashing/flickering/phasing/bouncing flags.
+      iFlags = iFlags | piDrawType;
+
       return iFlags;
    }
 
@@ -8294,7 +8309,7 @@ messages:
       iFlags = 0;
 
       % Check for any shadow form effects.
-      iDrawfX = Send(self,@GetPlayerDrawFX);
+      iDrawfX = Send(self,@GetDrawingFlags);
       if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
       {
          iFlags = iFlags | NC_SHADOW;

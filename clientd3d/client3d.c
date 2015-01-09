@@ -39,12 +39,13 @@ extern RECT rcBackgroundOveray;
  *   The list is newly allocated and should be freed by the caller.
  *   The "distance" field of each element in the list is also filled in.
  */
-list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags)
+list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags,
+                       BYTE pos_drawingflags, BYTE neg_drawingflags)
 {
    static room_contents_node sunNode;
    list_type new_list = NULL;
    room_contents_node *r;
-   int i, pos_effect, neg_effect, obj_flags;
+   int i, obj_flags, obj_drawingflags;
    extern Bool map;
 
    if (IsBlind())
@@ -53,44 +54,39 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags)
    if (map)
       return NULL;
 
-   // Split out object drawing effects
-   pos_effect = GetDrawingEffect(pos_flags);
-   neg_effect = GetDrawingEffect(neg_flags);
-   pos_flags &= ~OF_EFFECT_MASK;
-   neg_flags &= ~OF_EFFECT_MASK;
-
    for (i=0; i < num_visible_objects; i++)
    {
       if (distance > 0 && visible_objects[i].distance > distance)
-	 continue;
+         continue;
 
       r = GetRoomObjectById(visible_objects[i].id);
       if (r == NULL)
-	 continue;
+         continue;
 
       if (visible_objects[i].id != r->obj.id)
-	 continue;
+         continue;
 
       // Check screen area, if desired
       if (x != NO_COORD_CHECK && y != NO_COORD_CHECK)
       {
-	 if (visible_objects[i].left_col > x ||
-	  visible_objects[i].right_col < x ||
-	  visible_objects[i].top_row > y ||
-	  visible_objects[i].bottom_row < y)
-	    continue;
+         if (visible_objects[i].left_col > x ||
+         visible_objects[i].right_col < x ||
+         visible_objects[i].top_row > y ||
+         visible_objects[i].bottom_row < y)
+            continue;
       }
 
       obj_flags = r->obj.flags;
+      obj_drawingflags = r->obj.drawingflags;
 
-      if ((pos_effect != 0 && GetDrawingEffect(obj_flags) != pos_effect) ||
-	  (neg_effect != 0 && GetDrawingEffect(obj_flags) == neg_effect))
-	 continue;
+      if ((pos_drawingflags != 0 && GetDrawingEffect(obj_drawingflags) != pos_drawingflags)
+      || (neg_drawingflags != 0 && GetDrawingEffect(obj_drawingflags) == neg_drawingflags))
+         continue;
 
       if ((pos_flags == 0 || (obj_flags & pos_flags) != 0) && (obj_flags & neg_flags) == 0)
       {
-	 r->distance = visible_objects[i].distance;
-	 new_list = list_add_sorted_item(new_list, r, CompareRoomObjectDistance);
+         r->distance = visible_objects[i].distance;
+         new_list = list_add_sorted_item(new_list, r, CompareRoomObjectDistance);
       }
    }
 
@@ -100,18 +96,18 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags)
       for (l = current_room.bg_overlays; l != NULL; l = l->next)
       {
          BackgroundOverlay *overlay = (BackgroundOverlay *)(l->data);
-	 if (overlay->drawn)
-	 {
-	    POINT pt;
-	    pt.x = x;
-	    pt.y = y;
-	    if (PtInRect(&overlay->rcScreen,pt))
-	    {
-	       memset(&sunNode,0,sizeof(sunNode));
-	       memcpy(&sunNode.obj,&overlay->obj,sizeof(object_node));
-	       new_list = list_add_item(new_list,&sunNode);
-	    }
-	 }
+         if (overlay->drawn)
+         {
+            POINT pt;
+            pt.x = x;
+            pt.y = y;
+            if (PtInRect(&overlay->rcScreen,pt))
+            {
+               memset(&sunNode,0,sizeof(sunNode));
+               memcpy(&sunNode.obj,&overlay->obj,sizeof(object_node));
+               new_list = list_add_item(new_list,&sunNode);
+            }
+         }
       }
    }
    return new_list;
@@ -119,7 +115,8 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags)
 /************************************************************************/
 /*
  * GetObjectByPosition:  Return the room_contents_node for the closest object
- *   under (x, y), or NULL if none.  Arguments are as in GetObjects3D above.
+ *   under (x, y), or NULL if none.  Arguments are as in GetObjects3D above,
+ *   except that function also handles drawingflags and this one does not.
  */
 room_contents_node *GetObjectByPosition(int x, int y, int distance, int pos_flags, int neg_flags)
 {

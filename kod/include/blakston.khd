@@ -73,27 +73,24 @@
    SAFETY_YES        = 0x00002000
    SAFETY_NO         = 0
 
-   % Visual effects
-   FLICKERING_YES    = 0x00020000
-   FLICKERING_NO     = 0
-   FLASHING_YES      = 0x00040000
-   FLASHING_NO       = 0
-   BOUNCE_YES        = 0x00060000
-   BOUNCE_NO         = 0
-   PHASING_YES       = 0x00080000
-   PHASING_NO        = 0
+   OF_FLICKERING     = 0x00010000
+   OF_FLASHING       = 0x00020000
+   OF_BOUNCING       = 0x00040000
+   OF_PHASING        = 0x00080000
 
-   DRAWFX_NO = 0
-   DRAWFX_TRANSLUCENT_25 = 0x100000
-   DRAWFX_TRANSLUCENT_50 = 0x200000
-   DRAWFX_TRANSLUCENT_75 = 0x300000
-   DRAWFX_BLACK          = 0x400000
-   DRAWFX_INVISIBLE      = 0x500000
-   DRAWFX_DITHERINVIS    = 0x700000
-   DRAWFX_DITHERTRANS    = 0x800000
-   DRAWFX_DOUBLETRANS    = 0x900000
-   DRAWFX_SECONDTRANS    = 0xA00000
-   DRAWFX_MASK           = 0xF00000
+   % Drawing effects flags, separate from the boolean object flags.
+   DRAWFX_NONE           = 0
+   DRAWFX_TRANSLUCENT_25 = 0x00000001
+   DRAWFX_TRANSLUCENT_50 = 0x00000002
+   DRAWFX_TRANSLUCENT_75 = 0x00000003
+   DRAWFX_BLACK          = 0x00000004
+   DRAWFX_INVISIBLE      = 0x00000005
+   DRAWFX_TRANSLATE      = 0x00000006 % This is reserved by client, do not use.
+   DRAWFX_DITHERINVIS    = 0x00000007
+   DRAWFX_DITHERTRANS    = 0x00000008
+   DRAWFX_DOUBLETRANS    = 0x00000009
+   DRAWFX_SECONDTRANS    = 0x0000000A
+   DRAWFX_MASK           = 0x000000FF % First byte reserved for drawing effects.
 
    % What is the target, according to the viewer?  Used for special flagging.
    % This is now its own bitfield separate from object flags.

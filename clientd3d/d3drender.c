@@ -248,14 +248,14 @@ unsigned char gSkyboxBGRA[] =
 
 void				D3DRenderBackgroundsLoad(char *pFilename, int index);
 LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
+												  BYTE effect);
 LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect);
+												  BYTE effect);
 LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromResource(BYTE *ptr, int width, int height);
 void				D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room,
 										  Draw3DParams *params);
-void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags);
-void				D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags);
+void				D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags);
+void				D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, BYTE flags);
 void				D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool_new *pPool,
 						room_type *room, Draw3DParams *params, font_3d *pFont);
 void				D3DRenderLMapsBuild(void);
@@ -282,7 +282,7 @@ void					D3DRenderPacketInit(d3d_render_packet_new *pPacket);
 d3d_render_chunk_new	*D3DRenderChunkNew(d3d_render_packet_new *pPacket);
 void					D3DRenderChunkInit(d3d_render_chunk_new *pChunk);
 d3d_render_packet_new	*D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
-												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect);
+												PDIB pDib, BYTE xLat0, BYTE xLat1, BYTE effect);
 float					D3DRenderObjectLightGetNearest(room_contents_node *pRNode);
 void					D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 							Draw3DParams *params, int flags);
@@ -1103,9 +1103,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
-		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, OF_INVISIBLE);
-		D3DRenderObjectsDraw(&gObjectPool, room, params, OF_INVISIBLE);
-		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, OF_INVISIBLE);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, DRAWFX_INVISIBLE);
+		D3DRenderObjectsDraw(&gObjectPool, room, params, DRAWFX_INVISIBLE);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, DRAWFX_INVISIBLE);
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
 
@@ -1115,7 +1115,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		pRNode = GetRoomObjectById(player.id);
 
 		// player is invisible
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl2dc);
@@ -3446,7 +3446,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 		if (pRNode->obj.id == player.id)
 			continue;
 
-		if (!(pRNode->obj.flags & OF_PLAYER) || (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE))
+		if (!(pRNode->obj.flags & OF_PLAYER) || (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE))
 			continue;
 
 		vector.x = pRNode->motion.x - player.x;
@@ -3678,12 +3678,12 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 				pChunk->indices[2] = 0;
 				pChunk->indices[3] = 3;
 
-				if (pRNode->obj.flags & OF_SECONDTRANS)
+				if (pRNode->obj.drawingflags & DRAWFX_SECONDTRANS)
 				{
 					pChunk->xLat0 = 0;
 					pChunk->xLat1 = pRNode->obj.secondtranslation;
 				}
-				else if (pRNode->obj.flags & OF_DOUBLETRANS)
+				else if (pRNode->obj.drawingflags & DRAWFX_DOUBLETRANS)
 				{
 					pChunk->xLat0 = pRNode->obj.translation;
 					pChunk->xLat1 = pRNode->obj.secondtranslation;
@@ -3702,7 +3702,7 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 
 // straight texture loader for objects
 LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect)
+												  BYTE effect)
 {
 	D3DLOCKED_RECT		lockedRect;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
@@ -3853,7 +3853,7 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLa
 
 // texture loader that rotates for walls and such
 LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromBGFSwizzled(PDIB pDib, BYTE xLat0, BYTE xLat1,
-												  unsigned int effect)
+												  BYTE effect)
 {
 	D3DLOCKED_RECT		lockedRect;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
@@ -4258,12 +4258,12 @@ int D3DRenderIsEnabled(void)
 	return gD3DEnabled;
 }
 
-void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
+void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags)
 {
 	xlat	*pXLat0, *pXLat1;
 	Color	*pPalette;
 	int		i;
-	unsigned int	effect;
+	BYTE	effect;
 
 	return;
 
@@ -4275,9 +4275,9 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 
 	switch (effect)
 	{
-		case OF_DRAW_PLAIN:
-		case OF_DOUBLETRANS:
-		case OF_BLACK:
+		case DRAWFX_DRAW_PLAIN:
+		case DRAWFX_DOUBLETRANS:
+		case DRAWFX_BLACK:
 			for (i = 0; i < 256; i++)
 			{
 				gPalette[i].peRed = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].red;
@@ -4291,9 +4291,9 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_TRANSLUCENT25:
-		case OF_TRANSLUCENT50:
-		case OF_TRANSLUCENT75:
+		case DRAWFX_TRANSLUCENT25:
+		case DRAWFX_TRANSLUCENT50:
+		case DRAWFX_TRANSLUCENT75:
 			for (i = 0; i < 256; i++)
 			{
 				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
@@ -4307,13 +4307,13 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_INVISIBLE:
+		case DRAWFX_INVISIBLE:
 		break;
 
-		case OF_TRANSLATE:
+		case DRAWFX_TRANSLATE:
 		break;
 
-		case OF_DITHERINVIS:
+		case DRAWFX_DITHERINVIS:
 			for (i = 0; i < 256; i++)
 			{
 				pXLat0 = FindStandardXlat(xlatID0);
@@ -4329,7 +4329,7 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_DITHERTRANS:
+		case DRAWFX_DITHERTRANS:
 			if ((0 == xlatID1) || (xlatID0 == xlatID1))
 			{
 				for (i = 0; i < 256; i++)
@@ -4360,7 +4360,7 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_SECONDTRANS:
+		case DRAWFX_SECONDTRANS:
 			for (i = 0; i < 256; i++)
 			{
 				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
@@ -4394,12 +4394,12 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, unsigned int flags)
 	IDirect3DDevice9_SetCurrentTexturePalette(gpD3DDevice, 0);
 }
 
-void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags)
+void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, BYTE flags)
 {
 	xlat	*pXLat0, *pXLat1;
 	Color	*pPalette;
 	int		i;
-	unsigned int	effect;
+	BYTE	effect;
 
 	pXLat0 = FindStandardXlat(xlatID0);
 	pXLat1 = FindStandardXlat(xlatID1);
@@ -4409,9 +4409,9 @@ void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags)
 
 	switch (effect)
 	{
-		case OF_DRAW_PLAIN:
-		case OF_DOUBLETRANS:
-		case OF_BLACK:
+		case DRAWFX_DRAW_PLAIN:
+		case DRAWFX_DOUBLETRANS:
+		case DRAWFX_BLACK:
 			for (i = 0; i < 256; i++)
 			{
 				gPalette[i].peRed = pPalette[fastXLAT(fastXLAT(i, pXLat0), pXLat1)].red;
@@ -4425,9 +4425,9 @@ void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_TRANSLUCENT25:
-		case OF_TRANSLUCENT50:
-		case OF_TRANSLUCENT75:
+		case DRAWFX_TRANSLUCENT25:
+		case DRAWFX_TRANSLUCENT50:
+		case DRAWFX_TRANSLUCENT75:
 			for (i = 0; i < 256; i++)
 			{
 				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
@@ -4441,13 +4441,13 @@ void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_INVISIBLE:
+		case DRAWFX_INVISIBLE:
 		break;
 
-		case OF_TRANSLATE:
+		case DRAWFX_TRANSLATE:
 		break;
 
-		case OF_DITHERINVIS:
+		case DRAWFX_DITHERINVIS:
 			for (i = 0; i < 256; i++)
 			{
 				pXLat0 = FindStandardXlat(xlatID0);
@@ -4463,7 +4463,7 @@ void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_DITHERTRANS:
+		case DRAWFX_DITHERTRANS:
 			if ((0 == xlatID1) || (xlatID0 == xlatID1))
 			{
 				for (i = 0; i < 256; i++)
@@ -4494,7 +4494,7 @@ void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, unsigned int flags)
 			}
 		break;
 
-		case OF_SECONDTRANS:
+		case DRAWFX_SECONDTRANS:
 			for (i = 0; i < 256; i++)
 			{
 				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
@@ -6741,7 +6741,7 @@ void D3DRenderChunkInit(d3d_render_chunk_new *pChunk)
 }
 
 d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDIRECT3DTEXTURE9 pTexture,
-												PDIB pDib, BYTE xLat0, BYTE xLat1, int effect)
+												PDIB pDib, BYTE xLat0, BYTE xLat1, BYTE effect)
 {
 	u_int						count, numPackets;
 	d3d_render_packet_new	*pPacket;
@@ -6831,14 +6831,14 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		if (pRNode->obj.id == player.id)
 			continue;
 
-		if (flags & OF_INVISIBLE)
+		if (flags & DRAWFX_INVISIBLE)
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) != DRAWFX_INVISIBLE)
 				continue;
 		}
 		else
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 				continue;
 		}
 
@@ -6852,12 +6852,12 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		if (NULL == pDib)
 			continue;
 
-		if (pRNode->obj.flags & OF_SECONDTRANS)
+		if (pRNode->obj.drawingflags & DRAWFX_SECONDTRANS)
 		{
 			xLat0 = 0;
 			xLat1 = pRNode->obj.secondtranslation;
 		}
-		else if (pRNode->obj.flags & OF_DOUBLETRANS)
+		else if (pRNode->obj.drawingflags & DRAWFX_DOUBLETRANS)
 		{
 			xLat0 = pRNode->obj.translation;
 			xLat1 = pRNode->obj.secondtranslation;
@@ -6869,16 +6869,16 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		}
 
 		pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1,
-			GetDrawingEffect(pRNode->obj.flags));
+			GetDrawingEffect(pRNode->obj.drawingflags));
 		if (NULL == pPacket)
 			return;
 
 		pChunk = D3DRenderChunkNew(pPacket);
 		assert(pChunk);
 
-		pChunk->flags = pRNode->obj.flags;
+		pChunk->drawingflags = pRNode->obj.drawingflags;
 
-		if (flags & OF_INVISIBLE)
+		if (flags & DRAWFX_INVISIBLE)
 		{
 			pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 			pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -6959,7 +6959,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 		lastDistance = 0;
 
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_BLACK)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_BLACK)
 		{
 			bgra.b = bgra.g = bgra.r = 0;
 			bgra.a = 255;
@@ -6977,15 +6977,15 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			bgra.r = 255.0f;
 		}*/
 
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_TRANSLUCENT25)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT25)
 			bgra.a = D3DRENDER_TRANS25;
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_TRANSLUCENT50)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT50)
 			bgra.a = D3DRENDER_TRANS50;
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_TRANSLUCENT75)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT75)
 			bgra.a = D3DRENDER_TRANS75;
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_DITHERTRANS)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_DITHERTRANS)
 			bgra.a = D3DRENDER_TRANS50;
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_DITHERINVIS)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_DITHERINVIS)
 			bgra.a = D3DRENDER_TRANS50;
 
 		for (i = 0; i < 4; i++)
@@ -7093,7 +7093,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 			center.z = topLeft.z;
 
-			if (flags & OF_INVISIBLE)
+			if (flags & DRAWFX_INVISIBLE)
 			{
 				pChunk->st1[0].s = D3DRENDER_CLIP_TO_SCREEN_X(bottomRight.x, gScreenWidth) / gScreenWidth;
 				pChunk->st1[0].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
@@ -7169,17 +7169,17 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		}
 
 		if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID() &&
-			(GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE))
+			(GetDrawingEffect(pRNode->obj.drawingflags) != DRAWFX_INVISIBLE))
 		{
 			pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1,
-				GetDrawingEffect(pRNode->obj.flags));
+				GetDrawingEffect(pRNode->obj.drawingflags));
 			if (NULL == pPacket)
 				return;
 			pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
 			pChunk = D3DRenderChunkNew(pPacket);
 			assert(pChunk);
 
-			pChunk->flags = pRNode->obj.flags | OF_TRANSLUCENT50;
+			pChunk->drawingflags = pRNode->obj.drawingflags | DRAWFX_TRANSLUCENT50;
 			pChunk->numIndices = 4;
 			pChunk->numVertices = 4;
 			pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -7190,7 +7190,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 
 			MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
-			if (flags & OF_INVISIBLE)
+			if (flags & DRAWFX_INVISIBLE)
 			{
 				pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
 			}
@@ -7302,14 +7302,14 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 		if (pRNode->obj.id == player.id)
 			continue;
 
-		if (flags & OF_INVISIBLE)
+		if (flags & DRAWFX_INVISIBLE)
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) != DRAWFX_INVISIBLE)
 				continue;
 		}
 		else
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 				continue;
 		}
 
@@ -7542,12 +7542,12 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 				if (bHotspot)
 				{
-					if (pRNode->obj.flags & OF_SECONDTRANS)
+					if (pRNode->obj.drawingflags & DRAWFX_SECONDTRANS)
 					{
 						xLat0 = 0;
 						xLat1 = pRNode->obj.secondtranslation;
 					}
-					else if (pRNode->obj.flags & OF_DOUBLETRANS)
+					else if (pRNode->obj.drawingflags & DRAWFX_DOUBLETRANS)
 					{
 						xLat0 = pOverlay->translation;
 						xLat1 = pRNode->obj.secondtranslation;
@@ -7559,7 +7559,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 					}
 
 					pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDibOv, xLat0, xLat1,
-						GetDrawingEffect(pRNode->obj.flags));
+						GetDrawingEffect(pRNode->obj.drawingflags));
 //					pPacket = D3DRenderPacketNew(pPool);
 	//				pPacket = D3DRenderPacketNew(pPool);
 	//				pPacket = NULL;
@@ -7571,7 +7571,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 					pChunk = D3DRenderChunkNew(pPacket);
 					assert(pChunk);
 
-					pChunk->flags = pRNode->obj.flags;
+					pChunk->drawingflags = pRNode->obj.drawingflags;
 					pChunk->numIndices = 4;
 					pChunk->numVertices = 4;
 					pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -7581,7 +7581,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 					zBias++;
 
-					if (flags & OF_INVISIBLE)
+					if (flags & DRAWFX_INVISIBLE)
 					{
 						pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 						pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -7646,7 +7646,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 					lastDistance = 0;
 
-					if (GetDrawingEffect(pRNode->obj.flags) == OF_BLACK)
+					if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_BLACK)
 					{
 						bgra.b = bgra.g = bgra.r = 0;
 						bgra.a = 255;
@@ -7664,15 +7664,15 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						bgra.r = 255.0f;
 					}*/
 
-					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
+					if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT25)
 						bgra.a = D3DRENDER_TRANS25;
-					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT50 >> 20))
+					if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT50)
 						bgra.a = D3DRENDER_TRANS50;
-					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT75 >> 20))
+					if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT75)
 						bgra.a = D3DRENDER_TRANS75;
-					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERTRANS >> 20))
+					if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_DITHERTRANS)
 						bgra.a = D3DRENDER_TRANS50;
-					if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERINVIS >> 20))
+					if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_DITHERINVIS)
 						bgra.a = D3DRENDER_TRANS50;
 
 					for (i = 0; i < 4; i++)
@@ -7773,7 +7773,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						center.y = (topLeft.y + bottomLeft.y) / 2.0f;
 						center.z = topLeft.z;
 
-						if (flags & OF_INVISIBLE)
+						if (flags & DRAWFX_INVISIBLE)
 						{
 							pChunk->st1[0].s = D3DRENDER_CLIP_TO_SCREEN_X(bottomRight.x, gScreenWidth) / gScreenWidth;
 							pChunk->st1[0].t = D3DRENDER_CLIP_TO_SCREEN_Y(topLeft.y, gScreenHeight) / gScreenHeight;
@@ -7883,10 +7883,10 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 					}
 
 					if (pRNode->obj.id != INVALID_ID && pRNode->obj.id == GetUserTargetID() &&
-						(GetDrawingEffect(pRNode->obj.flags) != OF_INVISIBLE))
+						(GetDrawingEffect(pRNode->obj.drawingflags) != DRAWFX_INVISIBLE))
 					{
 						pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDibOv, xLat0, xLat1,
-															GetDrawingEffect(pRNode->obj.flags));
+															GetDrawingEffect(pRNode->obj.drawingflags));
 						if (NULL == pPacket)
 							continue;
 						pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
@@ -7894,7 +7894,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						pChunk = D3DRenderChunkNew(pPacket);
 						assert(pChunk);
 
-						pChunk->flags = pRNode->obj.flags | OF_TRANSLUCENT50;
+						pChunk->drawingflags = pRNode->obj.drawingflags | DRAWFX_TRANSLUCENT50;
 						pChunk->numIndices = 4;
 						pChunk->numVertices = 4;
 						pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -7905,7 +7905,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 
 						MatrixMultiply(&pChunk->xForm, &rot, &mat);
 
-						if (flags & OF_INVISIBLE)
+						if (flags & DRAWFX_INVISIBLE)
 						{
 							pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
 						}
@@ -8107,7 +8107,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 	int i, count;
 	object_node *obj;
 	list_type overlays;
-	int flags;
+	BYTE drawingflags;
 
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
@@ -8124,12 +8124,12 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &mat);
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_PROJECTION, &mat);
 
-	// Get player's object flags for special drawing effects
+	// Get player's object drawing flags for special drawing effects
 	pRNode = GetRoomObjectById(player.id);
 	if (pRNode == NULL)
-		flags = 0;
+		drawingflags = 0;
 	else
-		flags = pRNode->obj.flags;
+		drawingflags = pRNode->obj.drawingflags;
 
 	for (i=0; i < NUM_PLAYER_OVERLAYS; i++)
 	{
@@ -8158,12 +8158,12 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			D3DRenderPlayerOverlayOverlaysDraw(pPool, overlays, pDib, room, params,
 				&objArea, TRUE);
 
-		if (obj->flags & OF_SECONDTRANS)
+		if (obj->drawingflags & DRAWFX_SECONDTRANS)
 		{
 			xLat0 = 0;
 			xLat1 = obj->secondtranslation;
 		}
-		else if (obj->flags & OF_DOUBLETRANS)
+		else if (obj->drawingflags & DRAWFX_DOUBLETRANS)
 		{
 			xLat0 = obj->translation;
 			xLat1 = obj->secondtranslation;
@@ -8175,7 +8175,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		}
 
 		pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDib, xLat0, xLat1,
-			GetDrawingEffect(pRNode->obj.flags));
+			GetDrawingEffect(pRNode->obj.drawingflags));
 		if (NULL == pPacket)
 			return;
 
@@ -8188,7 +8188,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 		pChunk->xLat0 = xLat0;
 		pChunk->xLat1 = xLat1;
 
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 		{
 			pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 			pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -8199,11 +8199,11 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			pChunk->pMaterialFctn = &D3DMaterialObjectChunk;
 		}
 
-		pChunk->flags = pRNode->obj.flags;
+		pChunk->drawingflags = pRNode->obj.drawingflags;
 
 		MatrixIdentity(&pChunk->xForm);
 
-		if (GetDrawingEffect(pRNode->obj.flags) == OF_BLACK)
+		if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_BLACK)
 		{
 			bgra.b = bgra.g = bgra.r = 0;
 			bgra.a = 255;
@@ -8228,15 +8228,15 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			bgra.a = 255;*/
 		}
 
-		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
+		if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT25)
 			bgra.a = D3DRENDER_TRANS25;
-		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT50 >> 20))
+		if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT50)
 			bgra.a = D3DRENDER_TRANS50;
-		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT75 >> 20))
+		if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT75)
 			bgra.a = D3DRENDER_TRANS75;
-		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERTRANS >> 20))
+		if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_DITHERTRANS)
 			bgra.a = D3DRENDER_TRANS50;
-		if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERINVIS >> 20))
+		if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_DITHERINVIS)
 			bgra.a = D3DRENDER_TRANS50;
 
 		pChunk->xyz[0].x = pChunk->xyz[1].x = objArea.x;
@@ -8248,7 +8248,7 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 
 		for (count = 0; count < 4; count++)
 		{
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 			{
 				pChunk->st1[count].s = pChunk->xyz[count].x / gScreenWidth;
 				pChunk->st1[count].t = pChunk->xyz[count].z / gScreenHeight;
@@ -8320,9 +8320,9 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 	custom_bgra			bgra;
 	PDIB				pDibOv;
 	Overlay				*pOverlay;
-	int					flags, i, zBias;
+	int					i, zBias;
 	float				lastDistance, screenW, screenH;
-	BYTE				xLat0, xLat1;
+	BYTE				xLat0, xLat1, drawingflags;
 
 	d3d_render_packet_new	*pPacket;
 	d3d_render_chunk_new	*pChunk;
@@ -8330,13 +8330,13 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 	screenW = (float)(gD3DRect.right - gD3DRect.left) / (float)(MAXX * (stretchfactor * 1.5f));
 	screenH = (float)(gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * (stretchfactor * 1.5f));
 
-   // Get player's object flags for special drawing effects
+   // Get player's object drawing flags for special drawing effects
 	pRNode = GetRoomObjectById(player.id);
 
 	if (pRNode == NULL)
-		flags = 0;
+		drawingflags = 0;
 	else
-		flags = pRNode->obj.flags;
+		drawingflags = pRNode->obj.drawingflags;
 
 	pass = 0;
 
@@ -8423,12 +8423,12 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				xyz[i].z += objArea->y;
 			}
 
-			if (pRNode->obj.flags & OF_SECONDTRANS)
+			if (pRNode->obj.drawingflags & DRAWFX_SECONDTRANS)
 			{
 				xLat0 = 0;
 				xLat1 = pRNode->obj.secondtranslation;
 			}
-			else if (pRNode->obj.flags & OF_DOUBLETRANS)
+			else if (pRNode->obj.drawingflags & DRAWFX_DOUBLETRANS)
 			{
 				xLat0 = pOverlay->translation;
 				xLat1 = pRNode->obj.secondtranslation;
@@ -8440,21 +8440,21 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 			}
 
 			pPacket = D3DRenderPacketFindMatch(pPool, NULL, pDibOv, xLat0, xLat1,
-				GetDrawingEffect(pRNode->obj.flags));
+				GetDrawingEffect(pRNode->obj.drawingflags));
 			if (NULL == pPacket)
 				return;
 
 			pChunk = D3DRenderChunkNew(pPacket);
 			assert(pChunk);
 
-			pChunk->flags = pRNode->obj.flags;
+			pChunk->drawingflags = pRNode->obj.drawingflags;
 			pChunk->numIndices = 4;
 			pChunk->numVertices = 4;
 			pChunk->numPrimitives = pChunk->numVertices - 2;
 			pChunk->xLat0 = xLat0;
 			pChunk->xLat1 = xLat1;
 			
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 			{
 				pPacket->pMaterialFctn = &D3DMaterialObjectInvisiblePacket;
 				pChunk->pMaterialFctn = &D3DMaterialObjectInvisibleChunk;
@@ -8469,7 +8469,7 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 
 			lastDistance = 0;
 
-			if (GetDrawingEffect(pRNode->obj.flags) == OF_BLACK)
+			if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_BLACK)
 			{
 				bgra.b = bgra.g = bgra.r = 0;
 				bgra.a = 255;
@@ -8479,20 +8479,20 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 				D3DObjectLightingCalc(room, pRNode, &bgra, 0);
 			}
 
-			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT25 >> 20))
+			if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT25)
 				bgra.a = D3DRENDER_TRANS25;
-			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT50 >> 20))
+			if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT50)
 				bgra.a = D3DRENDER_TRANS50;
-			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_TRANSLUCENT75 >> 20))
+			if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_TRANSLUCENT75)
 				bgra.a = D3DRENDER_TRANS75;
-			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERTRANS >> 20))
+			if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_DITHERTRANS)
 				bgra.a = D3DRENDER_TRANS50;
-			if (GetDrawingEffectIndex(pRNode->obj.flags) == (OF_DITHERINVIS >> 20))
+			if (GetDrawingEffectIndex(pRNode->obj.drawingflags) == DRAWFX_DITHERINVIS)
 				bgra.a = D3DRENDER_TRANS50;
 
 			for (i = 0; i < 4; i++)
 			{
-				if (GetDrawingEffect(pRNode->obj.flags) == OF_INVISIBLE)
+				if (GetDrawingEffect(pRNode->obj.drawingflags) == DRAWFX_INVISIBLE)
 				{
 					pChunk->st1[i].s = xyz[i].x / gScreenWidth;
 					pChunk->st1[i].t = xyz[i].z / gScreenHeight;
@@ -9736,7 +9736,7 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 
 	if ((pChunk->xLat0) || (pChunk->xLat1))
 	{
-		D3DRenderPaletteSet(pChunk->xLat0, pChunk->xLat1, pChunk->flags);
+		D3DRenderPaletteSet(pChunk->xLat0, pChunk->xLat1, pChunk->drawingflags);
 		lastXLat0 = pChunk->xLat0;
 		lastXLat1 = pChunk->xLat1;
 	}
@@ -9750,18 +9750,18 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 	// layer-ordering is saved in pChunk->zBias
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.00001f));
 
-	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
+	if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS25 - 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT50)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_TRANSLUCENT50)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT75)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_TRANSLUCENT75)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS75 - 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_DITHERTRANS)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_DITHERTRANS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_DITHERINVIS)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_DITHERINVIS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
 	else
@@ -9844,7 +9844,7 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 
 	if ((pChunk->xLat0) || (pChunk->xLat1))
 	{
-		D3DRenderPaletteSet(pChunk->xLat0, pChunk->xLat1, pChunk->flags);
+		D3DRenderPaletteSet(pChunk->xLat0, pChunk->xLat1, pChunk->drawingflags);
 		lastXLat0 = pChunk->xLat0;
 		lastXLat1 = pChunk->xLat1;
 	}
@@ -9858,19 +9858,19 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 	// layer-ordering is saved in pChunk->zBias
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DEPTHBIAS, F2DW((float)pChunk->zBias * -0.00001f));
 
-	if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT25)
+	if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_TRANSLUCENT25)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS25 - 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT50)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_TRANSLUCENT50)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_TRANSLUCENT75)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_TRANSLUCENT75)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS75 - 1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_DITHERTRANS)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_DITHERTRANS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       1);
-	else if (GetDrawingEffect(pChunk->flags) == OF_DITHERINVIS)
+	else if (GetDrawingEffect(pChunk->drawingflags) == DRAWFX_DITHERINVIS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
    

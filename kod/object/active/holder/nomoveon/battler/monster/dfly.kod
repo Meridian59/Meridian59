@@ -87,8 +87,6 @@ properties:
    ptHover = $
    ptLand = $
 
-   piDrawfx = BOUNCE_YES
-
 messages:
 
    Constructed()
@@ -114,7 +112,7 @@ messages:
    DoSpit()
    {
       piAnimation = ANIM_ATTACK;
-      piDrawFX = piDrawFX | BOUNCE_YES;
+      piDrawType = piDrawType | OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       piAnimation = ANIM_HOVER;
@@ -172,7 +170,7 @@ messages:
       if (poTarget = $) AND (piAnimation = ANIM_HOVER)
       {
          piAnimation = ANIM_NONE;
-         piDrawFX = (piDrawFX & (~BOUNCE_YES));
+         piDrawType = (piDrawType & (~OF_BOUNCING));
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -285,7 +283,7 @@ messages:
          return BATTLER_YES;
       }
 
-      return BOUNCE_YES | BATTLER_YES;
+      return BATTLER_YES | OF_BOUNCING;
    }
 
    CanMorphTo()

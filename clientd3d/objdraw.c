@@ -108,7 +108,7 @@ void DrawObjectTranslucent(ObjectRowData *d)
 
 	bixlat* pBiXlat = &_blend75;
 	BYTE index;
-	int effect;
+	BYTE effect;
 	register BYTE *start, *end;
 	int x, xinc;
 	BYTE *palette, *row_bits;
@@ -119,13 +119,13 @@ void DrawObjectTranslucent(ObjectRowData *d)
 	xinc = d->xinc;
 	row_bits = d->obj_bits;
 	palette = d->palette;
-	effect = GetDrawingEffect(d->flags);// this is a macro
+	effect = GetDrawingEffect(d->drawingflags);// this is a macro
 
 	switch( effect ) {
-		case OF_TRANSLUCENT25:
+		case DRAWFX_TRANSLUCENT25:
 			pBiXlat = &_blend25;
 			break;
-		case OF_TRANSLUCENT50:
+		case DRAWFX_TRANSLUCENT50:
 			pBiXlat = &_blend50;
 			break;
 		default:

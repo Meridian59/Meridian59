@@ -88,8 +88,6 @@ properties:
    ptHover = $
    ptLand = $
 
-   piDrawfx = BOUNCE_YES
-
    piColor = PT_GRAY_TO_DGREEN
 
 messages:
@@ -117,7 +115,7 @@ messages:
    DoSpit()
    {
       piAnimation = ANIM_ATTACK;
-      piDrawFX = piDrawFX | BOUNCE_YES;
+      piDrawType = piDrawType | OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
            #projectile = self);
@@ -170,7 +168,7 @@ messages:
       if (poTarget = $) AND (piAnimation = ANIM_HOVER)
       {
          piAnimation = ANIM_NONE;
-         piDrawFX = (piDrawFX & (~BOUNCE_YES));
+         piDrawType = (piDrawType & (~OF_BOUNCING));
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -282,6 +280,11 @@ messages:
       propagate;
    }
 
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
    GetObjectFlags()
    {
       if piAnimation = ANIM_NONE
@@ -289,12 +292,7 @@ messages:
          return BATTLER_YES;
       }
 
-      return BOUNCE_YES | BATTLER_YES;
-   }
-
-   CanMorphTo()
-   {
-      return FALSE;
+      return BATTLER_YES | OF_BOUNCING;
    }
 
    SetColor(iColor=PT_GRAY_TO_DGREEN)

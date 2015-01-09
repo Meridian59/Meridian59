@@ -78,11 +78,12 @@ typedef struct {
    DWORD        amount;              /* If top bits of id signify CLIENT_TAG_NUMBER, then
                                         this field gives amount of object */
    DWORD        temp_amount;         /* Scratch field used when user is selecting amount of object */
-   int          flags;               /* Flags describing various properties of objects */
+   int          flags;               // Boolean object flags.
+   BYTE         drawingflags;        // Object flags for drawing effects (invisibility, lighting type etc.)
    int          minimapflags;        // Flags used to draw the right color/icon on the minimap.
    unsigned int namecolor;           // Player name color flags
    object_type  objecttype;          /* Enum of object type (i.e. outlaw, murderer, NPC) */
-   moveon_type moveontype;           // MoveOn type of the object
+   moveon_type  moveontype;          // MoveOn type of the object
    BYTE         translation;         // Palette translation information
    Animate      *animate;            /* Pointer to current animation (normal or motion animation) */
    list_type    *overlays;           /* Pointer to current overlays (normal or motion animation) */

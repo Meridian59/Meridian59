@@ -168,7 +168,7 @@ Bool WINAPI EventUserAction(int action, void *action_data)
       if (!MouseToRoom(&x, &y))
 	 return True;
 
-      objects = GetObjects3D(x, y, 0, 0, 0);
+      objects = GetObjects3D(x, y, 0, 0, 0, 0, 0);
       if (objects == NULL)
 	 return True;
 

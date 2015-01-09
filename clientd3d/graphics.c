@@ -453,7 +453,7 @@ void UserStartDrag(void)
    if (!MouseToRoom(&x, &y))
       return;
 
-   objects = GetObjects3D(x, y, CLOSE_DISTANCE, OF_GETTABLE | OF_CONTAINER, 0);
+   objects = GetObjects3D(x, y, CLOSE_DISTANCE, OF_GETTABLE | OF_CONTAINER, 0, 0, 0);
    if (objects == NULL)
       return;
 

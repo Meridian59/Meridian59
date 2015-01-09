@@ -328,7 +328,8 @@ void ExtractObject(char **ptr, object_node *item)
       item->amount = 0;
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
-   Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
+   Extract(ptr, &item->flags, 4);
+   Extract(ptr, &item->drawingflags, 1);
    Extract(ptr, &item->minimapflags, 4);
    Extract(ptr, &item->namecolor, 4);
 
@@ -371,7 +372,8 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
       item->amount = 0;
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
-   Extract(ptr, &item->flags, 4); // includes drawfx_mask bits
+   Extract(ptr, &item->flags, 4);
+   Extract(ptr, &item->drawingflags, 1);
    Extract(ptr, &item->minimapflags, 4);
    Extract(ptr, &item->namecolor, 4);
 
@@ -1162,9 +1164,12 @@ Bool HandlePlayers(char *ptr,long len)
       ChangeResource(obj->name_res, name);
 
       Extract(&ptr, &obj->flags, SIZE_VALUE);
+      len -= SIZE_VALUE;
+      Extract(&ptr, &obj->drawingflags, SIZE_TYPE);
+      len -= SIZE_TYPE;
       Extract(&ptr, &obj->minimapflags, SIZE_VALUE);
       Extract(&ptr, &obj->namecolor, SIZE_VALUE);
-      len -= 3 * SIZE_VALUE;
+      len -= 2 * SIZE_VALUE;
 
       BYTE temptype = 0;
       Extract(&ptr, &temptype, SIZE_TYPE);
@@ -1203,9 +1208,12 @@ Bool HandleAddPlayer(char *ptr,long len)
    ChangeResource(obj->name_res, name);
 
    Extract(&ptr, &obj->flags, SIZE_VALUE);
+   len -= SIZE_VALUE;
+   Extract(&ptr, &obj->drawingflags, SIZE_TYPE);
+   len -= SIZE_TYPE;
    Extract(&ptr, &obj->minimapflags, SIZE_VALUE);
    Extract(&ptr, &obj->namecolor, SIZE_VALUE);
-   len -= 3 * SIZE_VALUE;
+   len -= 2 * SIZE_VALUE;
 
    BYTE temptype = 0;
    Extract(&ptr, &temptype, SIZE_TYPE);

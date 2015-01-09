@@ -529,7 +529,7 @@ messages:
    {
       local iFlags;
 
-      iFlags = piDrawFX;
+      iFlags = 0;
 
       if piColor = COLOR_BLUE
       {

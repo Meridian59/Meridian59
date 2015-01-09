@@ -1004,11 +1004,5 @@ messages:
       return poGhostedPlayer;
    }
 
-   GetObjectFlags()
-   {
-      return piDrawFX;
-   }
-
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

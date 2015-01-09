@@ -365,29 +365,35 @@ enum {
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
 
-#define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
-#define OF_FLASHING      0x00040000    // For players or objects if flashing with light.
-#define OF_BOUNCING      0x00060000    // If both flags on then object is bouncing
+#define OF_FLICKERING    0x00010000    // For players or objects if holding a flickering light.
+#define OF_FLASHING      0x00020000    // For players or objects if flashing with light.
+#define OF_BOUNCING      0x00040000    // If both flags on then object is bouncing
 #define OF_PHASING       0x00080000    // For players or objects if phasing translucent/solid.
-
-// Object drawing effects
-#define OF_DRAW_PLAIN    0x00000000    // No special drawing effects
-#define OF_TRANSLUCENT25 0x00100000    // Set if object should be drawn at 25% opacity
-#define OF_TRANSLUCENT50 0x00200000    // Set if object should be drawn at 50% opacity
-#define OF_TRANSLUCENT75 0x00300000    // Set if object should be drawn at 75% opacity
-#define OF_BLACK         0x00400000    // Set if object should be drawn all black
-#define OF_INVISIBLE     0x00500000    // Set if object should be drawn with invisibility effect
-#define OF_TRANSLATE     0x00600000    // Reserved (used internally by client)
-#define OF_DITHERINVIS   0x00700000    // Haze (dither with transparency) 50% of pixels
-#define OF_DITHERTRANS   0x00800000    // Dither (with two translates) 50% of pixels
-#define OF_DOUBLETRANS   0x00900000    // Translate twice each pixel, plus lighting
-#define OF_SECONDTRANS   0x00A00000    // Ignore per-overlay xlat and use only secondary xlat
-#define OF_EFFECT_MASK   0x00F00000    // Mask to get object drawing effect bits
-#define NUM_DRAW_EFFECTS 16            // # of possible object drawing effects
-
-#define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)
-#define GetDrawingEffectIndex(flags) (((flags) & OF_EFFECT_MASK) >> 20)
 #define GetItemFlags(flags)   ((flags))
+
+// Drawing effects. Separate from object flags.
+#define NUM_DRAW_EFFECTS 256       // # of object drawing effects.
+enum {
+   DRAWFX_DRAW_PLAIN    = 0x00,    // No special drawing effects
+   DRAWFX_TRANSLUCENT25 = 0x01,    // Set if object should be drawn at 25% opacity
+   DRAWFX_TRANSLUCENT50 = 0x02,    // Set if object should be drawn at 50% opacity
+   DRAWFX_TRANSLUCENT75 = 0x03,    // Set if object should be drawn at 75% opacity
+   DRAWFX_BLACK         = 0x04,    // Set if object should be drawn all black
+   DRAWFX_INVISIBLE     = 0x05,    // Set if object should be drawn with invisibility effect
+   DRAWFX_TRANSLATE     = 0x06,    // Reserved (used internally by client)
+   DRAWFX_DITHERINVIS   = 0x07,    // Haze (dither with transparency) 50% of pixels
+   DRAWFX_DITHERTRANS   = 0x08,    // Dither (with two translates) 50% of pixels
+   DRAWFX_DOUBLETRANS   = 0x09,    // Translate twice each pixel, plus lighting
+   DRAWFX_SECONDTRANS   = 0x0A,    // Ignore per-overlay xlat and use only secondary xlat
+   DRAWFX_EFFECT_MASK   = 0xFF,    // Mask to get object drawing effect bits
+};
+
+#define GetDrawingEffect(flags) ((flags) & DRAWFX_EFFECT_MASK)
+/* Bit shifts the drawing effects to the first bits, if not already there.
+ * Note the shift has been removed since the drawing effects now occupy the
+ * first byte now. If these constants are moved, replace the bit shift here
+ * and any place GetDrawingEffectIndex is used. */
+#define GetDrawingEffectIndex(flags) ((flags) & DRAWFX_EFFECT_MASK)
 
 // Minimap dot color bitfield. Now separate from object flags.
 #define MM_NONE          0x00000000    // No dot (default for all objects)
@@ -404,7 +410,7 @@ enum {
 /* Player name color sent as hex RGB value. Define constants
    for ease of use as needed. Requires OF_PLAYER boolean flag
    to be set to draw a name. */
-#define NC_PLAYER        0xFFFFFF   // Default, white name.
+#define NC_PLAYER        0xFFFFFF   // White name.
 #define NC_SHADOW        0x000000   // Set if name should be drawn black.
 #define NC_KILLER        0xFF0000   // Set if object is a killer.
 #define NC_OUTLAW        0xFC9E00   // Set if object is an outlaw.

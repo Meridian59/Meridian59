@@ -4971,6 +4971,7 @@ messages:
       plMonsterTemplates = cons(create(&OrcWizard),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DragonFly),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DragonFlyQueen),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DragonFlyPet),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Kriipa),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&Lich),plMonsterTemplates);

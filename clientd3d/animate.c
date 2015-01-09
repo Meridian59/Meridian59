@@ -37,9 +37,9 @@ static DWORD timeLastFrame;
 
 #define TIME_FULL_OBJECT_PHASE 1800
 static int phaseStates[] = {
-   OF_DRAW_PLAIN,OF_TRANSLUCENT75,OF_TRANSLUCENT50,OF_TRANSLUCENT25,OF_INVISIBLE,
-   OF_INVISIBLE,OF_INVISIBLE,
-   OF_TRANSLUCENT25,OF_TRANSLUCENT50,OF_TRANSLUCENT75,OF_DRAW_PLAIN};
+   DRAWFX_DRAW_PLAIN,DRAWFX_TRANSLUCENT75,DRAWFX_TRANSLUCENT50,DRAWFX_TRANSLUCENT25,DRAWFX_INVISIBLE,
+   DRAWFX_INVISIBLE,DRAWFX_INVISIBLE,
+   DRAWFX_TRANSLUCENT25,DRAWFX_TRANSLUCENT50,DRAWFX_TRANSLUCENT75,DRAWFX_DRAW_PLAIN};
 static int numPhases = sizeof(phaseStates) / sizeof(int);
 
 extern room_type current_room;
@@ -179,13 +179,13 @@ Bool AnimateObject(object_node *obj, int dt)
    Bool need_redraw = False;
    list_type over_list;
 
-   if (OF_FLICKERING == (OF_BOUNCING & obj->flags))
+   if (OF_FLICKERING == (OF_FLICKERING & obj->flags))
    {
       obj->lightAdjust = rand() % FLICKER_LEVEL;
       need_redraw = TRUE;
    }
 
-   if (OF_FLASHING == (OF_BOUNCING & obj->flags))
+   if (OF_FLASHING == (OF_FLASHING & obj->flags))
    {
       DWORD angleFlash;
       obj->bounceTime += min(dt,50);
@@ -211,7 +211,7 @@ Bool AnimateObject(object_node *obj, int dt)
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
 	 obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;
-      obj->flags = (~OF_EFFECT_MASK & obj->flags) | phaseStates[anglePhase];
+      obj->drawingflags = (~DRAWFX_EFFECT_MASK & obj->drawingflags) | phaseStates[anglePhase];
       need_redraw = TRUE;
    }
    // Animate object's overlays

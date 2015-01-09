@@ -382,8 +382,9 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
       room_contents_node *r = (room_contents_node *) (l->data);
 
       // Skip ourselves, invisible objects and anything with
-      // minimapflags of 0, except if it's another player.
-      if ((r->obj.id == player.id) || (GetDrawingEffect(r->obj.flags) == OF_INVISIBLE)
+      // minimapflags of 0.
+      if ((r->obj.id == player.id)
+         || (GetDrawingEffect(r->obj.drawingflags) == DRAWFX_INVISIBLE)
          || (r->obj.minimapflags == MM_NONE))
          continue;
 

@@ -38,7 +38,7 @@ classvars:
 
    vrName = corpsenode_name_rsc
 
-   viObject_flags = ACTIVATE_YES | DRAWFX_TRANSLUCENT_75
+   viObject_flags = ACTIVATE_YES
    viMoveOn_type = MOVEON_TELEPORTER
 
    viAnimationSpeed = 400
@@ -49,6 +49,7 @@ properties:
    vrDesc = corpsenode_desc_rsc
 
    piNode_num = NODE_CORPSENODE
+   piDrawFx = DRAWFX_TRANSLUCENT_75
 
 messages:
 

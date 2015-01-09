@@ -94,10 +94,10 @@ messages:
       local iFlags;
 
       iFlags = viObject_flags;
-      
+
       if pbIsLit
       {
-         iFlags = iFlags | FLICKERING_YES;
+         iFlags = iFlags | OF_FLICKERING;
       }
 
       return iFlags;

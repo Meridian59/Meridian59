@@ -199,11 +199,6 @@ messages:
       return (NOT pbMob);
    }
 
-   GetObjectFlags()
-   {
-      return viObject_flags | piDrawfx;
-   }
-   
    SendAnimation()
    {
       if piBodyTrans <> 0

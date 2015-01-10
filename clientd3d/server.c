@@ -1418,9 +1418,7 @@ Bool HandleRadiusShoot(char *ptr, long len)
    ID source;
    WORD flags;
    WORD reserved;
-   DWORD angle;
-   float initangle;
-   initangle = 0.0000;
+   BYTE number;
 
    Extract(&ptr, &p->icon_res, SIZE_ID);
    ExtractPaletteTranslation(&ptr,&p->translation,&p->effect);
@@ -1434,15 +1432,14 @@ Bool HandleRadiusShoot(char *ptr, long len)
    //Extract(&ptr, &reserved, SIZE_PROJECTILE_RESERVED);
    reserved = 0;
    Extract(&ptr, &range, 1);
-   Extract(&ptr, &angle, 4);
+   Extract(&ptr, &number, 1);
    ExtractDLighting(&ptr, &p->dLighting);
 
    len -= (ptr - start);
    if (len != 0)
       return False;
-   initangle = (float)angle;
 
-   RadiusProjectileAdd(p, source, speed, flags, reserved, range, initangle);
+   RadiusProjectileAdd(p, source, speed, flags, reserved, range, number);
 
    return True;
 }

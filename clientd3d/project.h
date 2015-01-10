@@ -29,5 +29,5 @@ typedef struct {
 
 void ProjectileAdd(Projectile *p, ID source_obj, ID dest_obj, BYTE speed, WORD flags, WORD reserved);
 Bool ProjectilesMove(int dt);
-void RadiusProjectileAdd(Projectile *p, ID source_obj, BYTE speed, WORD flags, WORD reserved, BYTE range, FLOAT initangle);
+void RadiusProjectileAdd(Projectile *p, ID source_obj, BYTE speed, WORD flags, WORD reserved, BYTE range, BYTE number);
 #endif /* #ifndef _PROJECT_H */

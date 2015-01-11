@@ -19,12 +19,15 @@ resources:
    vampireRod_name_rsc = "rod of vampiric shock"
    vampireRod_icon_rsc = wand3.bgf
    vampireRod_desc_rsc = \
-   "This ancient rod is cold to the touch.  Its dark, smooth surface seems to draw in all of the life force around it. "
-   "You sense that this wand cannot be charged by places of safety, and is instead fed by the energy of good souls slain in battle."
+   "This ancient rod is cold to the touch.  Its dark, smooth surface seems to "
+   "draw in all of the life force around it. "
+   "You sense that this wand cannot be charged by places of safety, and is "
+   "instead fed by the energy of good souls slain in battle."
    vampireRod_success_wav_rsc = vamp_wand.wav
 
    vampireRod_success_rsc = \
-   "You shiver uncontrollably as you gleefully consume slivers of raw soul energy! Your black feast darkens your karma."
+   "You shiver uncontrollably as you gleefully consume slivers of raw soul "
+   "energy! Your black feast darkens your karma."
 
 classvars:
 
@@ -51,9 +54,8 @@ messages:
       local iKarma_change;
 
       % User moves toward (-80) karma.
-      iKarma_change=Send(poOwner,@CalculateKarmaChangeFromAct,#karma_act=-80, 
-                                                              #karma_doer=Send(poOwner,@GetKarma),
-                                                              #swing_factor=10);
+      iKarma_change=Send(poOwner,@CalculateKarmaChangeFromAct,#karma_act=-80,
+         #karma_doer=Send(poOwner,@GetKarma),#swing_factor=10);
       Send(poOwner,@AddKarma,#amount=iKarma_Change);
 
       propagate;

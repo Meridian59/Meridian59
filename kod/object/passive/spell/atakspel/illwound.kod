@@ -105,8 +105,7 @@ messages:
            #parm1=Send(poRandomSpell,@GetName));
       
       iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower);
-      iDamage = Send(self,@GetHPLoss,#who=who,#victim=first(lTargets),
-                     #iSpellPower=iSpellPower);
+      iDamage = Send(self,@GetHPLoss,#who=who,#victim=first(lTargets),#iSpellPower=iSpellPower);
 
       if IsClass(who,&Player)
       {
@@ -125,7 +124,7 @@ messages:
       % After figuring damage, do an AssessDamage.  This will handle the necessary
       %  attack messages.
       iDamage = Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
-                     #aspell=viAttack_spell,#absolute=pbAbsolute);
+                     #aspell=viAttack_spell,#absolute=pbAbsolute,#precision=TRUE);
 
       Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self);
 
@@ -135,15 +134,17 @@ messages:
       }
       else
       {
-         Send(oTarget,@StartEnchantment,#what=self,#time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
-              #lastcall=TRUE,#state=iDamage,#addicon=FALSE);
+         Send(oTarget,@StartEnchantment,#what=self,
+            #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+            #lastcall=TRUE,#state=iDamage,#addicon=FALSE);
       }
 
       Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=self);
 
       Send(self,@DoSideEffect,#who=who,#victim=oTarget,#damage=iDamage);
 
-      % If the spell was cast on a monster, let the monster keep track of that for loot.
+      % If the spell was cast on a monster, let the monster keep track of that 
+      % for loot.
       if IsClass(oTarget,&Monster) AND NOT bItemCast
       {
          Send(oTarget,@AddToSpellList,#spellobject=self);
@@ -195,14 +196,18 @@ messages:
          iMaxHPs = Send(victim,@ReturnMaxHitPoints);
       }
 
-      % Intellect boosts base damage
-      iBaseDamage = Send(self,@DamageFactors,#damage=iBaseDamage,#who=who,#victim=victim);
+      % Inflation by factor 100 for greater accuracy.
+      iBaseDamage = iBaseDamage * 100;
 
-      iHPLoss = (iBaseDamage * (iSpellPower+1)) / 100;
+      % Intellect boosts base damage
+      iBaseDamage = Send(self,@DamageFactors,#damage=iBaseDamage,#who=who,
+         #victim=victim);
+
+      iHPLoss = iBaseDamage * iSpellPower / SPELLPOWER_MAXIMUM;
 
       % Always leaves 1 HP behind, no more than 1/3 damage.
-      iHPLoss = bound(iHPLoss,0,(iMaxHps/3));
-      iHPLoss = bound(iHPLoss,0,Send(victim,@GetHealth)-1);
+      iHPLoss = bound(iHPLoss,0,(iMaxHps*33));
+      iHPLoss = bound(iHPLoss,0,Send(victim,@GetExactHealth)-1);
 
       if iFactor > 1
       {
@@ -242,9 +247,9 @@ messages:
 
    EndEnchantmentEffects(who=$, state=$, report = TRUE)
    {
-      if (Send(who,@GetHealth) > 0)
+      if (Send(who,@GetExactHealth) > 0)
       {
-         Send(who,@GainHealthNormal,#amount=state);
+         Send(who,@GainHealthNormal,#amount=state,#precision=TRUE);
          if IsClass(who,&Player)
             AND report
          {

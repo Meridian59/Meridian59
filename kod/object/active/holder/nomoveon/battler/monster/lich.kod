@@ -144,7 +144,7 @@ messages:
       %send(send(SYS,@GetNecromancerBalance),@ActivateScenario);
 
       pimax_Hit_Points = pimax_hit_Points * 2;
-      piHit_Points = pimax_hit_points;
+      piHit_Points = pimax_hit_points*100;
 
       plResistances = [ [-ATCK_SPELL_ALL, 60],
                         [ATCK_WEAP_ALL, 60],

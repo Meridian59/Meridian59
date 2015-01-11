@@ -221,8 +221,8 @@ messages:
 
          Send(who,@MsgSendUser,#message_rsc=heat_hurts_you);
          
-         if Send(who,@AssessDamage,#report=FALSE,#what=self,
-                 #damage=iDamage,#aspell=ATCK_SPELL_FIRE) = $
+         if Send(who,@AssessDamage,#report=FALSE,#what=self,#damage=iDamage,
+            #aspell=ATCK_SPELL_FIRE) = $
          {
             if IsClass(who,&Player)
             {

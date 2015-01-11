@@ -7015,7 +7015,7 @@ messages:
    SendStatHealth()
    {
       AddPacket(1,1, 4,user_stat_health, 1,STAT_VALUE, 1,STAT_INTEGER,
-                4,piHealth, 4,0, 4,100, 4,piMax_health);
+                4,Send(self,@GetHealth), 4,0, 4,100, 4,piMax_health);
       
       return;
    }

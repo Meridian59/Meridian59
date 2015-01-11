@@ -43,14 +43,12 @@ classvars:
 
    viSchool = SKS_FENCING
    viSkill_Num = SKID_FIRE
-   viSkill_level = 4
+   viSkill_level = 4 
    viChance_to_increase = 50
    viMeditate_ratio = 30
 
    viSkillExertion = 2
    vbCheck_exertion = FALSE
-
-   viDamage_factor = 100
 
 properties:
 
@@ -165,25 +163,6 @@ messages:
       }
 
       propagate;
-   }
-
-   DamageFactors(damage=0,who=$,weapon_used=$)
-   "Different skills/strokes are affected by strength differently."
-   {
-      local iDamage, stat;
-
-      iDamage = damage;
-      % Get weapon proficiency bonuses.
-      if weapon_used <> $
-      {
-         iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
-      }
-
-      % Get Aim damage bonus.
-      stat = Send(self,@GetRequisiteStat,#who=who);
-      iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
-
-      return iDamage;
    }
 
    IsRangedAttack()

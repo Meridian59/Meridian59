@@ -623,8 +623,8 @@ messages:
       iDamageReduce = 0;
       if piDamage_reduce <> 0
       {
-         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
-         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+         iDamageReduce = random(piDamage_reduce*33,piDamage_reduce*100);
+         iDamageReduce = bound(iDamageReduce,0,(damage-100));
       }
 
       if aspell <> 0

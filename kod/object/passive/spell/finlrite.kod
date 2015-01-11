@@ -133,11 +133,9 @@ messages:
          }
             
          % Do damage to them.
-         iDamage = random(1,5) + (iSpellpower/20)
-                   + (2*((Send(who,@GetKarma,#detect=TRUE)
-                         - Send(oUndead,@GetKarma,#detect=TRUE))/40));
-         if Send(oUndead,@AssessDamage,#what=who,#damage=iDamage,
-                 #aspell=ATCK_SPELL_HOLY) = $
+         iDamage = random(1,5) + (iSpellpower/20) + (2*((Send(who,@GetKarma,#detect=TRUE)
+            - Send(oUndead,@GetKarma,#detect=TRUE))/40));
+         if Send(oUndead,@AssessDamage,#what=who,#damage=iDamage,#aspell=ATCK_SPELL_HOLY) = $
          {
             Send(who,@KilledSomething,#what=oUndead,#use_weapon=self);
          }

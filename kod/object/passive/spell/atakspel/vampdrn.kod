@@ -86,18 +86,18 @@ messages:
       if damage <> $
       {
          % Add half of the damage done.
-         iToHeal = bound(damage/DAMAGE_FACTOR_TO_HEAL,1,$);
+         iToHeal = bound(damage/DAMAGE_FACTOR_TO_HEAL,0,$);
       }
       else
       {
          % Ah!  We killed someone.  Give them a large bonus based on max damage.
-         iToHeal = bound(piDamageMax/DAMAGE_FACTOR_TO_HEAL,1,$);
+         iToHeal = bound(piDamageMax*100/DAMAGE_FACTOR_TO_HEAL,0,$);
          Post(who,@MsgSendUser,#message_rsc=VampiricDrain_death,
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }
 
-      Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iToHeal);
-      Send(who,@GainHealth,#amount=iToHeal);
+      Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iToHeal/100);
+      Send(who,@GainHealth,#amount=iToHeal,#precision=TRUE);
 
       propagate;
    }

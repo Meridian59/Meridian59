@@ -505,7 +505,7 @@ messages:
       poOriginal = who;
       piMax_Hit_Points = piSpellpower / 3;
       piMax_hit_points = Bound(piMax_hit_points,15,40);
-      piHit_Points = piMax_Hit_Points;
+      piHit_Points = piMax_Hit_Points*100;
 
       Send(self,@GetOriginalInfo);
 

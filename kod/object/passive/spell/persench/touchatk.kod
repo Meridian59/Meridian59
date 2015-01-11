@@ -160,7 +160,8 @@ messages:
    {
       local iDamage, iMysticism;
 
-      iDamage = damage + (Send(self,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      % Proficiency damage adjusted to high precision
+      iDamage = damage + (Send(self,@GetProf,#who=who)+1)*viMaxProficiencyDamage;
       
       % Get myst damage bonus.
       iMysticism = Send(who,@GetMysticism);
@@ -292,8 +293,8 @@ messages:
    {
       local damage, iAbility;
 
-      % base weapon damage
-      damage = random(viMin_Damage,viMax_damage);
+      % Base weapon damage adjusted to high precision
+      damage = random(viMin_Damage*100,viMax_damage*100);
 
       % Rather than an active spellpower check, use the player's
       % ability in the spell. This makes touch spells function
@@ -309,7 +310,7 @@ messages:
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,
                     #victim=victim);
       
-      return bound(damage,1,$);
+      return bound(damage,0,$);
    }
 
    PlayerWasHitMsg(who=$,attacker=$,damage=$)

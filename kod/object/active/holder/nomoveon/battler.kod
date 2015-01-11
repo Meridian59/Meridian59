@@ -19,8 +19,8 @@ constants:
    BATTLER_AVOID_CHANCE = 50  
 
    % Threshold for the "wound" and "damage" levels of feedback.
-   DAMAGE_THRESHOLD_WOUND = 5
-   DAMAGE_THRESHOLD_DAMAGE = 15
+   DAMAGE_THRESHOLD_WOUND = 500
+   DAMAGE_THRESHOLD_DAMAGE = 1500
 
 resources:
 
@@ -33,16 +33,20 @@ resources:
    % battler_attacker_hit - Your scimitar wounds Psychochild for (10) damage.
    % battler_attacker_slay - Your scimitar slays Psychochild.
    % battler_attacker_miss - Your attack is blocked by Psychochild.
+   % battler_attacker_fail - Your scimitar scrapes Psychochild, failing to cause any real harm.
    % battler_defender_hit - Psychochild's scimitar wounds you for (10) damage.
    % battler_defender_slay - Psychochild's scimitar slays you.
    % battler_defender_miss - Psychochild's attack is blocked by you.
+   % battler_defender_fail - Psychochild's scimitar scrapes you, failing to cause any real harm.
 
-   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage."       
-   battler_attacker_slay = "%sYour %s %s %s%s."   
-   battler_attacker_miss = "%sYour attack %s %s%s."    
+   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage."
+   battler_attacker_slay = "%sYour %s %s %s%s."
+   battler_attacker_miss = "%sYour attack %s %s%s."
+   battler_attacker_fail = "%sYour %s %s %s%s, failing to cause any real harm."
    battler_defender_hit = "%s%s%s's %s %s you for ~r~B%i~B%s damage."
-   battler_defender_slay = "%s%s%s's %s %s you."  
-   battler_defender_miss = "%s%s%s's attack %s you."   
+   battler_defender_slay = "%s%s%s's %s %s you."
+   battler_defender_miss = "%s%s%s's attack %s you."
+   battler_defender_fail = "%s%s%s's %s %s you, failing to cause any real harm."
 
    battler_punch = "punch"
    battler_attack = "attack"
@@ -51,86 +55,101 @@ resources:
    battler_parried  = "is parried by"
    battler_misses = "misses"
 
-   battler_fail = "fails to damage"
+   battler_fail = "barely touches"
    battler_nick = "nicks"
    battler_wound = "wounds"
    battler_damage = "damages"
    battler_slay = "slays"
 
+   battler_acid_fail = "wets"
    battler_acid_nick = "burns"
    battler_acid_wound = "sears"
    battler_acid_damage = "disfigures"
    battler_acid_slay = "dissolves"
 
-   battler_fire_slay = "incinerates"
-   battler_fire_damage = "scorches"
-   battler_fire_wound = "chars"
+   battler_fire_fail = "warms"
    battler_fire_nick = "singes"
+   battler_fire_wound = "chars"
+   battler_fire_damage = "scorches"
+   battler_fire_slay = "incinerates"
 
-   battler_shock_slay = "electrocutes"
-   battler_shock_damage = "fries"
-   battler_shock_wound = "shocks"
+   battler_shock_fail = "tingles"
    battler_shock_nick =  "jolts"
+   battler_shock_wound = "shocks"
+   battler_shock_damage = "fries"
+   battler_shock_slay = "electrocutes"
 
-   battler_cold_slay = "freezes"
-   battler_cold_damage = "frosts"
-   battler_cold_wound = "chills"
+   battler_cold_fail = "refreshes"
    battler_cold_nick = "cools"
+   battler_cold_wound = "chills"
+   battler_cold_damage = "frosts"
+   battler_cold_slay = "freezes"
 
-   battler_holy_slay = "purifies"
-   battler_holy_damage = "mortifies"
-   battler_holy_wound = "cleanses"
+   battler_holy_fail = "inspires"
    battler_holy_nick = "infuses"
+   battler_holy_wound = "cleanses"
+   battler_holy_damage = "exorcises"
+   battler_holy_slay = "purifies"
 
-   battler_unholy_slay = "corrupts"
-   battler_unholy_damage = "appalls"
-   battler_unholy_wound = "pollutes"
+   battler_unholy_fail = "unsettles"
    battler_unholy_nick = "maligns"
+   battler_unholy_wound = "pollutes"
+   battler_unholy_damage = "appalls"
+   battler_unholy_slay = "corrupts"
 
-   battler_quake_slay = "flattens"
-   battler_quake_damage = "slams"
-   battler_quake_wound = "buffets"
+   battler_quake_fail = "startles"
    battler_quake_nick = "shakes"
+   battler_quake_wound = "buffets"
+   battler_quake_damage = "slams"
+   battler_quake_slay = "flattens"
 
-   battler_bite_slay = "devours"
-   battler_bite_damage = "gnaws"
+   battler_bite_fail = "nips"
+   battler_bite_nick = "gnaws"
    battler_bite_wound = "bites"
-   battler_bite_nick = "nips"
+   battler_bite_damage = "tears into"
+   battler_bite_slay = "devours"
 
-   battler_claw_slay = "shreds"
-   battler_claw_damage = "rends"
-   battler_claw_wound = "rakes"
+   battler_claw_fail = "scratches"
    battler_claw_nick = "claws"
+   battler_claw_wound = "rakes"
+   battler_claw_damage = "rends"
+   battler_claw_slay = "shreds"
 
-   battler_sting_slay = "impales"
-   battler_sting_damage = "pricks"
-   battler_sting_wound = "stings"
+   battler_sting_fail = "annoys"
    battler_sting_nick = "irritates"
+   battler_sting_wound = "stings"
+   battler_sting_damage = "pricks"
+   battler_sting_slay = "impales"
 
-   battler_punch_slay = "thrashes"
-   battler_punch_damage = "mangles"
-   battler_punch_wound = "pummels"
+   battler_punch_fail = "nudges"
    battler_punch_nick = "slaps"
+   battler_punch_wound = "pummels"
+   battler_punch_damage = "mangles"
+   battler_punch_slay = "thrashes"
 
-   battler_slash_slay = "cleaves"
-   battler_slash_damage = "maims"
-   battler_slash_wound = "slashes"
+   battler_slash_fail = "scrapes"
    battler_slash_nick = "cuts"
+   battler_slash_wound = "slashes"
+   battler_slash_damage = "maims"
+   battler_slash_slay = "cleaves"
 
-   battler_bludgeon_slay = "brutalizes"
-   battler_bludgeon_damage = "smashes"
-   battler_bludgeon_wound = "crushes"
+   battler_bludgeon_fail = "bonks"
    battler_bludgeon_nick = "bashes"
+   battler_bludgeon_wound = "crushes"
+   battler_bludgeon_damage = "smashes"
+   battler_bludgeon_slay = "brutalizes"
 
-   battler_thrust_slay = "runs through"
-   battler_thrust_damage = "impales"
-   battler_thrust_wound = "stabs"
+   battler_thrust_fail = "tickles"
    battler_thrust_nick = "pokes"
+   battler_thrust_wound = "stabs"
+   battler_thrust_damage = "impales"
+   battler_thrust_slay = "runs through"
 
-   battler_pierce_slay = "fells"
-   battler_pierce_damage = "lacerates"
-   battler_pierce_wound = "pierces"
+   battler_pierce_fail = "bounces off of"
    battler_pierce_nick = "grazes"
+   battler_pierce_wound = "pierces"
+   battler_pierce_damage = "lacerates"
+   battler_pierce_slay = "fells"
 
 classvars:
 
@@ -529,20 +548,35 @@ messages:
 
    %%% Combat functionality.
 
-   % This does one attack by the battler.
-   % For a monster, the stroke_obj is itself.
+   % All conditions have been checked at this point and the battler is eligible
+   % to attack his target. TryAttack figures out whether he hits the target
+   % based on his offense and the target's defense and passes this information
+   % on to AssessDamage, AssessHit/AssessMiss etc.
+   %
+   % NOTES on settings: piEqualChanceToHit, piBaseRating and piDamageScaling can
+   % be adjusted in settings.kod to tweak the calculations.
+   % piEqualChanceToHit: This is the chance for an attacker to hit his target if
+   % his defense equals the target's offense. A setting of 500 is equivalent to 
+   % a 50 percent chance to hit.
+   % piBaseRating: This is a flat number that serves as a base value for defense
+   % and offense, softening the effect of any modifiers and avoiding
+   % pathological ratios when one of the two battler's rating is extremely low.
+   % piDamageScaling: This allows damage to scale when chance to hit exceeds 100
+   % percent, allowing offense to be useful even when the target has very low
+   % defense and we hit with every attack. People are less and less likely to 
+   % run into this cap as piBaseRating is increased though.
+   %
+   % NOTE: For a monster, the stroke_obj is the monster itself for now.
    TryAttack(what = $,stroke_obj=$)
    {
       local iOffense, iDefense, iChanceToHit, iDamage, iScalefactor, oWeapon;
 
       oWeapon = Send(self,@GetWeapon);
 
-      % Derived class should have checked all specific restrictions by this point.
-
-      % These are the generic checks and the calculation of chance to hit and damage.
-
-      iOffense = Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj) + Send(Send(SYS,@GetSettings),@GetBaseRating);
-      iDefense = Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj) + Send(Send(SYS,@GetSettings),@GetBaseRating);
+      iOffense = Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj) 
+         + Send(Send(SYS,@GetSettings),@GetBaseRating);
+      iDefense = Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj) 
+         + Send(Send(SYS,@GetSettings),@GetBaseRating);
       iChanceToHit = iOffense * Send(Send(SYS,@GetSettings),@GetEqualChanceToHit) / iDefense;
       iChanceToHit = bound(iChanceToHit,125,2000);
       if iChanceToHit >= random(1,1000)
@@ -559,14 +593,13 @@ messages:
 
          iDamage = Send(what,@AssessDamage,#what=self,#damage=iDamage,
             #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),
-            #scalefactor=iScalefactor);
+            #scalefactor=iScalefactor,#precision=TRUE);
 
-         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
-              #damage=iDamage);
+         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
+
          if iDamage = $
          {
-            Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
-                 #stroke_obj=stroke_obj);
+            Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,#stroke_obj=stroke_obj);
          }
          else
          {
@@ -656,10 +689,12 @@ messages:
                return battler_fire_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_fire_nick;
             }
+
+            return battler_fire_fail;
          }
 
          if (type & ATCK_SPELL_SHOCK)
@@ -679,10 +714,12 @@ messages:
                return battler_shock_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_shock_nick;
             }
+
+            return battler_shock_fail;
          }
 
          if (type & ATCK_SPELL_COLD)
@@ -702,10 +739,12 @@ messages:
                return battler_cold_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_cold_nick;
             }
+
+            return battler_cold_fail;
          }
 
          if (type & ATCK_SPELL_ACID)
@@ -725,10 +764,12 @@ messages:
                return battler_acid_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_acid_nick;
             }
+
+            return battler_acid_fail;
          }
 
          if (type & ATCK_SPELL_HOLY)
@@ -748,10 +789,12 @@ messages:
                return battler_holy_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_holy_nick;
             }
+
+            return battler_holy_fail;
          }
 
          if (type & ATCK_SPELL_UNHOLY)
@@ -771,10 +814,12 @@ messages:
                return battler_unholy_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_unholy_nick;
             }
+
+            return battler_unholy_fail;
          }
 
          if (type & ATCK_SPELL_QUAKE)
@@ -794,10 +839,12 @@ messages:
                return battler_quake_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_quake_nick;
             }
+
+            return battler_quake_fail;
          }
       }
       else
@@ -819,10 +866,12 @@ messages:
                return battler_bite_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_bite_nick;
-            }            
+            }
+
+               return battler_bite_fail;
          }
 
          if (type & ATCK_WEAP_CLAW)
@@ -842,10 +891,12 @@ messages:
                return battler_claw_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_claw_nick;
             }
+
+            return battler_claw_fail;
          }
 
          if (type & ATCK_WEAP_STING)
@@ -865,10 +916,12 @@ messages:
                return battler_sting_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_sting_nick;
             }
+
+            return battler_sting_fail;
          }
 
          % Repeat the acid spell words here
@@ -889,10 +942,12 @@ messages:
                return battler_acid_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_acid_nick;
             }
+
+            return battler_acid_fail;
          }
 
          if (type & ATCK_WEAP_PUNCH)
@@ -912,10 +967,12 @@ messages:
                return battler_punch_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_punch_nick;
             }
+
+            return battler_punch_fail;
          }
 
          if (type & ATCK_WEAP_SLASH)
@@ -935,10 +992,12 @@ messages:
                return battler_slash_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_slash_nick;
             }
+
+            return battler_slash_fail;
          }
 
          if (type & ATCK_WEAP_BLUDGEON)
@@ -958,10 +1017,12 @@ messages:
                return battler_bludgeon_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_bludgeon_nick;
-            }         
+            }   
+
+            return battler_bludgeon_fail;
          }
 
          if (type & ATCK_WEAP_THRUST)
@@ -981,10 +1042,12 @@ messages:
                return battler_thrust_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_thrust_nick;
             } 
+
+            return battler_thrust_fail;
          }
 
          if (type & ATCK_WEAP_PIERCE)
@@ -1004,10 +1067,12 @@ messages:
                return battler_pierce_wound;
             }
 
-            if damage > 0
+            if damage > 99
             {
                return battler_pierce_nick;
-            } 
+            }
+            
+            return battler_pierce_fail;
          }
       }
       
@@ -1027,7 +1092,7 @@ messages:
          return battler_wound;
       }
 
-      if damage > 0
+            if damage > 99
       {
          return battler_nick;
       }
@@ -1127,7 +1192,7 @@ messages:
 
       if IsClass(what,&Player)
          AND damage <> $
-         AND damage >= (Send(what,@GetMaxHealth)/3)
+         AND damage >= (Send(what,@GetMaxHealth)*33)
       {
          % If we did at least 1/3 a player's hps in damage, then give
          %  the best damage message.
@@ -1172,10 +1237,19 @@ messages:
             }
             else
             {
-               Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-               #parm6=damage,#parm7=rColor);
+               if damage > 99
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                  #parm6=damage/100,#parm7=rColor);
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_fail,
+                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+               }
             }
          }
       }
@@ -1200,10 +1274,20 @@ messages:
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
-              #parm1=rColor,#parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),#parm4=rWeaponName,
-              #parm5=rDamageDesc,#parm6=damage,#parm7=rColor);
+            if damage > 99
+            {
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                 #parm5=rDamageDesc,#parm6=damage/100,#parm7=rColor);
+            }
+            else
+            {
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_fail,
+                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                 #parm5=rDamageDesc);
+            }
          }
       }
 

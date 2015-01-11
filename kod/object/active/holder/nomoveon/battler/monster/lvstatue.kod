@@ -285,7 +285,7 @@ messages:
    {
       local i, iThreshold, iRandomDamage, rDamageReport, each_obj;
 
-      iThreshold = piHit_points*5/piMax_hit_points;
+      iThreshold = piHit_points/(piMax_hit_points*20);
 
       % General damage report
       rDamageReport = LivingStatue_damage;

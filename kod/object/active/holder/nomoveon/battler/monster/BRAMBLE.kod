@@ -370,7 +370,7 @@ messages:
    {
       local iMaxHPDiv;
 
-      iMaxHPDiv = piMax_Hit_Points / 5;
+      iMaxHPDiv = piMax_Hit_Points * 20;
 
       if piAnimation = ANIM_BRAMBLE_GROW
       {

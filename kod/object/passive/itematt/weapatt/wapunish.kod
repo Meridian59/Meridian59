@@ -172,8 +172,7 @@ messages:
          Send(oPlayer, @MsgSendUser, #message_rsc = punisher_fail_use,
               #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
 
-         if Send(oPlayer, @AssessDamage, #what=self,#damage=Random(3,7),
-                  #report=False) = $
+         if Send(oPlayer, @AssessDamage, #what=self,#damage=Random(3,7),#report=False) = $
          {
             % we killed someone off... heh heh heh
             Send(Send(oPlayer,@GetOwner),@SomethingKilled,#what=self,#victim=oPlayer);

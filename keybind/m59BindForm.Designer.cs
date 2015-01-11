@@ -151,6 +151,8 @@
             this.label36 = new System.Windows.Forms.Label();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.labelMouselookYScaleValue = new System.Windows.Forms.Label();
+            this.labelMouselookXScaleValue = new System.Windows.Forms.Label();
             this.label40 = new System.Windows.Forms.Label();
             this.label39 = new System.Windows.Forms.Label();
             this.trackBarMouseYScale = new System.Windows.Forms.TrackBar();
@@ -167,8 +169,6 @@
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
-            this.labelMouselookXScaleValue = new System.Windows.Forms.Label();
-            this.labelMouselookYScaleValue = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -1527,6 +1527,24 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mouse Scale";
             // 
+            // labelMouselookYScaleValue
+            // 
+            this.labelMouselookYScaleValue.AutoSize = true;
+            this.labelMouselookYScaleValue.Location = new System.Drawing.Point(250, 154);
+            this.labelMouselookYScaleValue.Name = "labelMouselookYScaleValue";
+            this.labelMouselookYScaleValue.Size = new System.Drawing.Size(13, 13);
+            this.labelMouselookYScaleValue.TabIndex = 5;
+            this.labelMouselookYScaleValue.Text = "0";
+            // 
+            // labelMouselookXScaleValue
+            // 
+            this.labelMouselookXScaleValue.AutoSize = true;
+            this.labelMouselookXScaleValue.Location = new System.Drawing.Point(250, 73);
+            this.labelMouselookXScaleValue.Name = "labelMouselookXScaleValue";
+            this.labelMouselookXScaleValue.Size = new System.Drawing.Size(13, 13);
+            this.labelMouselookXScaleValue.TabIndex = 4;
+            this.labelMouselookXScaleValue.Text = "0";
+            // 
             // label40
             // 
             this.label40.AutoSize = true;
@@ -1700,24 +1718,7 @@
             this.buttonHelp.TabIndex = 5;
             this.buttonHelp.Text = "Help";
             this.buttonHelp.UseVisualStyleBackColor = true;
-            // 
-            // labelMouselookXScaleValue
-            // 
-            this.labelMouselookXScaleValue.AutoSize = true;
-            this.labelMouselookXScaleValue.Location = new System.Drawing.Point(250, 73);
-            this.labelMouselookXScaleValue.Name = "labelMouselookXScaleValue";
-            this.labelMouselookXScaleValue.Size = new System.Drawing.Size(13, 13);
-            this.labelMouselookXScaleValue.TabIndex = 4;
-            this.labelMouselookXScaleValue.Text = "0";
-            // 
-            // labelMouselookYScaleValue
-            // 
-            this.labelMouselookYScaleValue.AutoSize = true;
-            this.labelMouselookYScaleValue.Location = new System.Drawing.Point(250, 154);
-            this.labelMouselookYScaleValue.Name = "labelMouselookYScaleValue";
-            this.labelMouselookYScaleValue.Size = new System.Drawing.Size(13, 13);
-            this.labelMouselookYScaleValue.TabIndex = 5;
-            this.labelMouselookYScaleValue.Text = "0";
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
             // M59Bind
             // 

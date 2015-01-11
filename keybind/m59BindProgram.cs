@@ -19,9 +19,21 @@ namespace m59bind
             Application.Run(new M59Bind());
         }
 
-        [DllImport("KERNEL32.DLL", EntryPoint = "GetPrivateProfileStringW",
+        /// <summary>
+        /// uses kernel32.dll to read from an ini file
+        /// </summary>
+        /// <param name="lpAppName">ini file section</param>
+        /// <param name="lpKeyName">key</param>
+        /// <param name="lpDefault">default value if key not found in file</param>
+        /// <param name="lpReturnString">string to hold return</param>
+        /// <param name="nSize">size of return string</param>
+        /// <param name="lpFilename">filename</param>
+        /// <returns>status int</returns>
+        [DllImport("KERNEL32.DLL",
+        EntryPoint = "GetPrivateProfileStringW",
         SetLastError = true,
-        CharSet = CharSet.Unicode, ExactSpelling = true,
+        CharSet = CharSet.Unicode,
+        ExactSpelling = true,
         CallingConvention = CallingConvention.StdCall)]
         private static extern int GetPrivateProfileString(
           string lpAppName,
@@ -31,9 +43,19 @@ namespace m59bind
           int nSize,
           string lpFilename);
 
-        [DllImport("KERNEL32.DLL", EntryPoint = "WritePrivateProfileStringW",
+        /// <summary>
+        /// Uses kernel32.dll to write to ini files
+        /// </summary>
+        /// <param name="lpAppName">ini file section</param>
+        /// <param name="lpKeyName">key</param>
+        /// <param name="lpString">value</param>
+        /// <param name="lpFilename">filename</param>
+        /// <returns>status int</returns>
+        [DllImport("KERNEL32.DLL",
+        EntryPoint = "WritePrivateProfileStringW",
         SetLastError = true,
-        CharSet = CharSet.Unicode, ExactSpelling = true,
+        CharSet = CharSet.Unicode,
+        ExactSpelling = true,
         CallingConvention = CallingConvention.StdCall)]
         private static extern int WritePrivateProfileString(
         string lpAppName,
@@ -41,24 +63,14 @@ namespace m59bind
         string lpString,
         string lpFilename);
 
-        private static List<string> GetCategories(string iniFile)
-        {
-            string returnString = new string(' ', 65536);
-            GetPrivateProfileString(null, null, null, returnString, 65536, iniFile);
-            List<string> result = new List<string>(returnString.Split('\0'));
-            result.RemoveRange(result.Count - 2, 2);
-            return result;
-        }
-
-        private static List<string> GetKeys(string iniFile, string category)
-        {
-            string returnString = new string(' ', 32768);
-            GetPrivateProfileString(category, null, null, returnString, 32768, iniFile);
-            List<string> result = new List<string>(returnString.Split('\0'));
-            result.RemoveRange(result.Count-2,2);
-            return result;
-        }
-
+        /// <summary>
+        /// gets a specific key's value from an ini file
+        /// </summary>
+        /// <param name="iniFile">filename</param>
+        /// <param name="category">ini section</param>
+        /// <param name="key">key</param>
+        /// <param name="defaultValue">default value if not found</param>
+        /// <returns>a string containing the key value, or default if none found</returns>
         public static string GetIni(string iniFile, string category, string key, string defaultValue)
         {
             string returnString = new string(' ', 1024);
@@ -66,6 +78,14 @@ namespace m59bind
             return returnString.Split('\0')[0];
         }
 
+        /// <summary>
+        /// Writes to a specific key in an ini file
+        /// </summary>
+        /// <param name="iniFile">filename</param>
+        /// <param name="category">ini section</param>
+        /// <param name="key">key</param>
+        /// <param name="value">value</param>
+        /// <returns>status int</returns>
         public static int WriteIni(string iniFile, string category, string key, string value)
         {
             return WritePrivateProfileString(category, key, value, iniFile);

@@ -11,114 +11,197 @@ namespace m59bind
 {
     public partial class M59Bind : Form
     {
-
-        //public bool capturing = false;
         string configFile = "./config.ini";
         string keyPrompt = "press a key";
         bool capturing = false;
         bool configChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public M59Bind()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Loads keybind and config data from file
+        /// </summary>
+        /// <param name="sender">object that initiated this event</param>
+        /// <param name="e">event details</param>
         private void M59Bind_Load(object sender, EventArgs e)
         {
             // Movement Tab
-            this.buttonForward.Text = m59BindProgram.GetIni(configFile, "keys", "forward", "w");
-            this.buttonBackward.Text = m59BindProgram.GetIni(configFile, "keys", "backward", "s");
-            this.buttonTurnLeft.Text = m59BindProgram.GetIni(configFile, "keys", "left", "left");
-            this.buttonTurnRight.Text = m59BindProgram.GetIni(configFile, "keys", "right", "right");
-            this.buttonSlideLeft.Text = m59BindProgram.GetIni(configFile, "keys", "slideleft", "a");
-            this.buttonSlideRight.Text = m59BindProgram.GetIni(configFile, "keys", "slideright", "d");
-            this.buttonRunWalk.Text = m59BindProgram.GetIni(configFile, "keys", "run/walk", "shift");
-            this.buttonLookUp.Text = m59BindProgram.GetIni(configFile, "keys", "lookup", "pageup");
-            this.buttonLookDown.Text = m59BindProgram.GetIni(configFile, "keys", "lookdown", "pagedown");
-            this.buttonLookStraight.Text = m59BindProgram.GetIni(configFile, "keys", "lookstraight", "home");
-            this.buttonFlip.Text = m59BindProgram.GetIni(configFile, "keys", "flip", "end");
-            this.buttonMouselookToggle.Text = m59BindProgram.GetIni(configFile, "keys", "mouselooktoggle", "c+any");
+            buttonForward.Text = m59BindProgram.GetIni(configFile, "keys", "forward", "w");
+            buttonBackward.Text = m59BindProgram.GetIni(configFile, "keys", "backward", "s");
+            buttonTurnLeft.Text = m59BindProgram.GetIni(configFile, "keys", "left", "left");
+            buttonTurnRight.Text = m59BindProgram.GetIni(configFile, "keys", "right", "right");
+            buttonSlideLeft.Text = m59BindProgram.GetIni(configFile, "keys", "slideleft", "a");
+            buttonSlideRight.Text = m59BindProgram.GetIni(configFile, "keys", "slideright", "d");
+            buttonRunWalk.Text = m59BindProgram.GetIni(configFile, "keys", "run/walk", "shift");
+            buttonLookUp.Text = m59BindProgram.GetIni(configFile, "keys", "lookup", "pageup");
+            buttonLookDown.Text = m59BindProgram.GetIni(configFile, "keys", "lookdown", "pagedown");
+            buttonLookStraight.Text = m59BindProgram.GetIni(configFile, "keys", "lookstraight", "home");
+            buttonFlip.Text = m59BindProgram.GetIni(configFile, "keys", "flip", "end");
+            buttonMouselookToggle.Text = m59BindProgram.GetIni(configFile, "keys", "mouselooktoggle", "c+any");
 
             // Communication Tab
-            this.buttonSay.Text = m59BindProgram.GetIni(configFile, "keys", "say", "f");
-            this.buttonChat.Text = m59BindProgram.GetIni(configFile, "keys", "chat", "enter");
-            this.buttonTell.Text = m59BindProgram.GetIni(configFile, "keys", "tell", "t");
-            this.buttonYell.Text = m59BindProgram.GetIni(configFile, "keys", "yell", "y");
-            this.buttonBroadcast.Text = m59BindProgram.GetIni(configFile, "keys", "broadcast", "b");
-            this.buttonWho.Text = m59BindProgram.GetIni(configFile, "keys", "who", "w+ctrl");
-            this.buttonEmote.Text = m59BindProgram.GetIni(configFile, "keys", "emote", ";");
+            buttonSay.Text = m59BindProgram.GetIni(configFile, "keys", "say", "f");
+            buttonChat.Text = m59BindProgram.GetIni(configFile, "keys", "chat", "enter");
+            buttonTell.Text = m59BindProgram.GetIni(configFile, "keys", "tell", "t");
+            buttonYell.Text = m59BindProgram.GetIni(configFile, "keys", "yell", "y");
+            buttonBroadcast.Text = m59BindProgram.GetIni(configFile, "keys", "broadcast", "b");
+            buttonWho.Text = m59BindProgram.GetIni(configFile, "keys", "who", "w+ctrl");
+            buttonEmote.Text = m59BindProgram.GetIni(configFile, "keys", "emote", ";");
 
             // Interaction Tab
-            this.buttonOpen.Text = m59BindProgram.GetIni(configFile, "keys", "open", "space");
-            this.buttonPickUp.Text = m59BindProgram.GetIni(configFile, "keys", "pickup", "g");
-            this.buttonLook.Text = m59BindProgram.GetIni(configFile, "keys", "look", "l");
-            this.buttonExamine.Text = m59BindProgram.GetIni(configFile, "keys", "examine", "mouse1+any");
-            this.buttonOffer.Text = m59BindProgram.GetIni(configFile, "keys", "offer", "o+ctrl");
-            this.buttonBuy.Text = m59BindProgram.GetIni(configFile, "keys", "buy", "b+shift");
-            this.buttonDeposit.Text = m59BindProgram.GetIni(configFile, "keys", "deposit", "i+shift");
-            this.buttonWithdraw.Text = m59BindProgram.GetIni(configFile, "keys", "withdraw", "o+shift");
-            this.buttonAttack.Text = m59BindProgram.GetIni(configFile, "keys", "attack", "e+any");
+            buttonOpen.Text = m59BindProgram.GetIni(configFile, "keys", "open", "space");
+            buttonPickUp.Text = m59BindProgram.GetIni(configFile, "keys", "pickup", "g");
+            buttonLook.Text = m59BindProgram.GetIni(configFile, "keys", "look", "l");
+            buttonExamine.Text = m59BindProgram.GetIni(configFile, "keys", "examine", "mouse1+any");
+            buttonOffer.Text = m59BindProgram.GetIni(configFile, "keys", "offer", "o+ctrl");
+            buttonBuy.Text = m59BindProgram.GetIni(configFile, "keys", "buy", "b+shift");
+            buttonDeposit.Text = m59BindProgram.GetIni(configFile, "keys", "deposit", "i+shift");
+            buttonWithdraw.Text = m59BindProgram.GetIni(configFile, "keys", "withdraw", "o+shift");
+            buttonAttack.Text = m59BindProgram.GetIni(configFile, "keys", "attack", "e+any");
 
             // Targeting Tab
-            this.buttonTargetNext.Text = m59BindProgram.GetIni(configFile, "keys", "targetnext", "]");
-            this.buttonTargetPrevious.Text = m59BindProgram.GetIni(configFile, "keys", "targetprevious", "[");
-            this.buttonTargetClear.Text = m59BindProgram.GetIni(configFile, "keys", "targetclear", "esc");
-            this.buttonTargetSelf.Text = m59BindProgram.GetIni(configFile, "keys", "targetself", "q");
-            this.buttonTabForward.Text = m59BindProgram.GetIni(configFile, "keys", "tabforward", "tab");
-            this.buttonTabBackward.Text = m59BindProgram.GetIni(configFile, "keys", "tabbackward", "tab+shift");
-            this.buttonSelectTarget.Text = m59BindProgram.GetIni(configFile, "keys", "mousetarget", "mouse0");
+            buttonTargetNext.Text = m59BindProgram.GetIni(configFile, "keys", "targetnext", "]");
+            buttonTargetPrevious.Text = m59BindProgram.GetIni(configFile, "keys", "targetprevious", "[");
+            buttonTargetClear.Text = m59BindProgram.GetIni(configFile, "keys", "targetclear", "esc");
+            buttonTargetSelf.Text = m59BindProgram.GetIni(configFile, "keys", "targetself", "q");
+            buttonTabForward.Text = m59BindProgram.GetIni(configFile, "keys", "tabforward", "tab");
+            buttonTabBackward.Text = m59BindProgram.GetIni(configFile, "keys", "tabbackward", "tab+shift");
+            buttonSelectTarget.Text = m59BindProgram.GetIni(configFile, "keys", "mousetarget", "mouse0");
 
             // Map Tab
-            this.buttonMap.Text = m59BindProgram.GetIni(configFile, "keys", "map", "m+shift");
-            this.buttonMapZoomIn.Text = m59BindProgram.GetIni(configFile, "keys", "mapzoomin", "add");
-            this.buttonMapZoomOut.Text = m59BindProgram.GetIni(configFile, "keys", "mapzoomout", "subtract");
+            buttonMap.Text = m59BindProgram.GetIni(configFile, "keys", "map", "m+shift");
+            buttonMapZoomIn.Text = m59BindProgram.GetIni(configFile, "keys", "mapzoomin", "add");
+            buttonMapZoomOut.Text = m59BindProgram.GetIni(configFile, "keys", "mapzoomout", "subtract");
 
             // Mouse Tab
             if (m59BindProgram.GetIni(configFile, "config", "invertmouse", "false") == "true")
-                this.checkBoxInvertMouse.Checked = true;
+                checkBoxInvertMouse.Checked = true;
             else
-                this.checkBoxInvertMouse.Checked = false;
+                checkBoxInvertMouse.Checked = false;
 
-            this.trackBarMouseXScale.Value = Convert.ToInt32(m59BindProgram.GetIni(configFile, "config", "mouselookxscale", "15"));
+            trackBarMouseXScale.Value = Convert.ToInt32(m59BindProgram.GetIni(configFile, "config", "mouselookxscale", "15"));
             labelMouselookXScaleValue.Text = trackBarMouseXScale.Value.ToString();
 
-            this.trackBarMouseYScale.Value = Convert.ToInt32(m59BindProgram.GetIni(configFile, "config", "mouselookyscale", "9"));
+            trackBarMouseYScale.Value = Convert.ToInt32(m59BindProgram.GetIni(configFile, "config", "mouselookyscale", "9"));
             labelMouselookYScaleValue.Text = trackBarMouseYScale.Value.ToString();
 
             // Options Group
             if (m59BindProgram.GetIni(configFile, "config", "classickeybindings", "false") == "true")
-                this.checkBoxClassicKeyBind.Checked = true;
+                checkBoxClassicKeyBind.Checked = true;
             else
-                this.checkBoxClassicKeyBind.Checked = false;
+                checkBoxClassicKeyBind.Checked = false;
 
             if (m59BindProgram.GetIni(configFile, "config", "quickchat", "false") == "true")
-                this.checkBoxQuickChat.Checked = true;
+                checkBoxQuickChat.Checked = true;
             else
-                this.checkBoxQuickChat.Checked = false;
+                checkBoxQuickChat.Checked = false;
 
             if (m59BindProgram.GetIni(configFile, "config", "alwaysrun", "true") == "true")
-                this.checkBoxAlwaysRun.Checked = true;
+                checkBoxAlwaysRun.Checked = true;
             else
-                this.checkBoxAlwaysRun.Checked = false;
+                checkBoxAlwaysRun.Checked = false;
 
             if (m59BindProgram.GetIni(configFile, "config", "attackontarget", "false") == "true")
-                this.checkBoxAttackOnTarget.Checked = true;
+                checkBoxAttackOnTarget.Checked = true;
             else
-                this.checkBoxAttackOnTarget.Checked = false;
+                checkBoxAttackOnTarget.Checked = false;
 
             if (m59BindProgram.GetIni(configFile, "config", "dynamiclighting", "true") == "true")
-                this.checkBoxDynamicLighting.Checked = true;
+                checkBoxDynamicLighting.Checked = true;
             else
-                this.checkBoxDynamicLighting.Checked = false;
+                checkBoxDynamicLighting.Checked = false;
 
             if (m59BindProgram.GetIni(configFile, "config", "softwarerendering", "false") == "true")
-                this.checkBoxSoftwareRenderer.Checked = true;
+                checkBoxSoftwareRenderer.Checked = true;
             else
-                this.checkBoxSoftwareRenderer.Checked = false;
+                checkBoxSoftwareRenderer.Checked = false;
 
             configChanged = false;
         }
 
+        ///
+        /// <summary>
+        /// Load default values into the configuration form
+        /// </summary>
+        /// <param name="sender">control that initiated the event</param>
+        /// <param name="e">event details</param>
+        ///
+        private void buttonRestoreDefaults_Click(object sender, EventArgs e)
+        {
+            // Movement Tab
+            buttonForward.Text = "w";
+            buttonBackward.Text = "s";
+            buttonTurnLeft.Text = "left";
+            buttonTurnRight.Text = "right";
+            buttonSlideLeft.Text = "a";
+            buttonSlideRight.Text = "d";
+            buttonRunWalk.Text = "shift";
+            buttonLookUp.Text = "pageup";
+            buttonLookDown.Text = "pagedown";
+            buttonLookStraight.Text = "home";
+            buttonFlip.Text = "end";
+            buttonMouselookToggle.Text = "c+any";
+
+            // Communication Tab
+            buttonSay.Text = "f";
+            buttonChat.Text = "enter";
+            buttonTell.Text = "t";
+            buttonYell.Text = "y";
+            buttonBroadcast.Text = "b";
+            buttonWho.Text = "w+ctrl";
+            buttonEmote.Text = ";";
+
+            // Interaction Tab
+            buttonOpen.Text = "space";
+            buttonPickUp.Text = "g";
+            buttonLook.Text = "l";
+            buttonExamine.Text = "mouse1+any";
+            buttonOffer.Text = "o+ctrl";
+            buttonBuy.Text = "b+shift";
+            buttonDeposit.Text = "i+shift";
+            buttonWithdraw.Text = "o+shift";
+            buttonAttack.Text = "e+any";
+
+            // Targeting Tab
+            buttonTargetNext.Text = "]";
+            buttonTargetPrevious.Text = "[";
+            buttonTargetClear.Text = "esc";
+            buttonTargetSelf.Text = "q";
+            buttonTabForward.Text = "tab";
+            buttonTabBackward.Text = "tab+shift";
+            buttonSelectTarget.Text = "mouse0";
+
+            // Map Tab
+            buttonMap.Text = "m+shift";
+            buttonMapZoomIn.Text = "add";
+            buttonMapZoomOut.Text = "subtract";
+
+            // Mouse Tab
+            m59BindProgram.GetIni(configFile, "config", "invertmouse", "false");
+
+            trackBarMouseXScale.Value = 15;
+            trackBarMouseYScale.Value = 9;
+
+            // Options Group
+            m59BindProgram.GetIni(configFile, "config", "classickeybindings", "false");
+            m59BindProgram.GetIni(configFile, "config", "quickchat", "false");
+            m59BindProgram.GetIni(configFile, "config", "alwaysrun", "true");
+            m59BindProgram.GetIni(configFile, "config", "attackontarget", "false");
+            m59BindProgram.GetIni(configFile, "config", "dynamiclighting", "true");
+            m59BindProgram.GetIni(configFile, "config", "softwarerendering", "false");
+
+            configChanged = false;
+        }
+
+        /// <summary>
+        /// Writes keybind and config data to file
+        /// </summary>
         private void writeToConfigFile()
         {
             // movement tab
@@ -238,6 +321,11 @@ namespace m59bind
             }
         }
 
+        /// <summary>
+        /// Captures a key press and saves a keystring into a control
+        /// </summary>
+        /// <param name="e">key event details</param>
+        /// <returns>a string representation of the key</returns>
         private string handleKeyDown(KeyEventArgs e)
         {
             string returnString;
@@ -337,6 +425,13 @@ namespace m59bind
             return returnString;
         }
 
+        // NOTE:  The following event handler is required to handle special
+        // keys like tab and enter which would otherwise be used by a form
+        // to navigate through the controls on the form.
+        /// <summary>
+        /// overrides default behavior for special keys in the form
+        /// </summary>
+        /// <param name="e">key event details</param>
         private void previewKeySetIsInputKey(PreviewKeyDownEventArgs e)
         {
             switch (e.KeyCode)
@@ -371,6 +466,11 @@ namespace m59bind
             }
         }
 
+        /// <summary>
+        /// Captures a mouse click and enters a string into the control
+        /// </summary>
+        /// <param name="e">mouse event details</param>
+        /// <returns>a string representation of the mouse click</returns>
         private string handleMouseDown(MouseEventArgs e)
         {
             string returnString = "";
@@ -395,16 +495,21 @@ namespace m59bind
             return returnString;
         }
 
-        public void handleKeyModFormClose(object originalCaller, string modifier)
-        {
-
-        }
-
+        /// <summary>
+        /// Closes the form without saving
+        /// </summary>
+        /// <param name="sender">objec tthat initiated this event</param>
+        /// <param name="e">event details</param>
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
+        /// <summary>
+        /// Closes the form, saves settings and notifies user to restart the game
+        /// </summary>
+        /// <param name="sender">object that initiated this event</param>
+        /// <param name="e">event details</param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
             if (configChanged)
@@ -416,20 +521,52 @@ namespace m59bind
             Application.Exit();
         }
 
-        private void buttonForward_MouseDown(object sender, MouseEventArgs e)
+        /// <summary>
+        /// Opens the help dialog
+        /// </summary>
+        /// <param name="sender">object that initiated this event</param>
+        /// <param name="e">event details</param>
+        private void buttonHelp_Click(object sender, EventArgs e)
         {
-            buttonForward.Text = handleMouseDown(e);
+            HelpForm helpForm = new HelpForm();
+            helpForm.ShowDialog(this);
         }
 
+        #region Forward Keybind
+        // Forward Keybind
         private void buttonForward_KeyDown(object sender, KeyEventArgs e)
         {
             buttonForward.Text = handleKeyDown(e);
             capturing = false;
         }
 
+        private void buttonForward_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonForward.Text = handleMouseDown(e);
+        }
+
         private void buttonForward_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
+        }
+
+        private void buttonForwardMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonForward);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Backward Keybind
+        // Backward Keybind
+        private void buttonBackward_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonBackward.Text = handleKeyDown(e);
         }
 
         private void buttonBackward_MouseDown(object sender, MouseEventArgs e)
@@ -442,9 +579,23 @@ namespace m59bind
             previewKeySetIsInputKey(e);
         }
 
-        private void buttonBackward_KeyDown(object sender, KeyEventArgs e)
+        private void buttonBackwardMod_Click(object sender, EventArgs e)
         {
-            buttonBackward.Text = handleKeyDown(e);
+            KeyModForm modForm = new KeyModForm(buttonBackward);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Turn Left Keybind
+        // Turn Left Keybind
+        private void buttonTurnLeft_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTurnLeft.Text = handleKeyDown(e);
         }
 
         private void buttonTurnLeft_MouseDown(object sender, MouseEventArgs e)
@@ -452,14 +603,28 @@ namespace m59bind
             buttonTurnLeft.Text = handleMouseDown(e);
         }
 
-        private void buttonTurnLeft_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTurnLeft.Text = handleKeyDown(e);
-        }
-
         private void buttonTurnLeft_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTurnLeftMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTurnLeft);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Turn Right Keybind
+        // Turn Right Keybind
+        private void buttonTurnRight_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTurnRight.Text = handleKeyDown(e);
         }
 
         private void buttonTurnRight_MouseDown(object sender, MouseEventArgs e)
@@ -467,14 +632,28 @@ namespace m59bind
             buttonTurnRight.Text = handleMouseDown(e);
         }
 
-        private void buttonTurnRight_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTurnRight.Text = handleKeyDown(e);
-        }
-
         private void buttonTurnRight_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTurnRightMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTurnRight);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Slide Left Keybind
+        // Slide Left Keybind
+        private void buttonSlideLeft_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonSlideLeft.Text = handleKeyDown(e);
         }
 
         private void buttonSlideLeft_MouseDown(object sender, MouseEventArgs e)
@@ -482,14 +661,28 @@ namespace m59bind
             buttonSlideLeft.Text = handleMouseDown(e);
         }
 
-        private void buttonSlideLeft_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonSlideLeft.Text = handleKeyDown(e);
-        }
-
         private void buttonSlideLeft_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
+        }
+
+        private void buttonSlideLeftMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonSlideLeft);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Slide Right Keybind
+        // Slide Right Keybind
+        private void buttonSlideRight_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonSlideRight.Text = handleKeyDown(e);
         }
 
         private void buttonSlideRight_MouseDown(object sender, MouseEventArgs e)
@@ -497,14 +690,28 @@ namespace m59bind
             buttonSlideRight.Text = handleMouseDown(e);
         }
 
-        private void buttonSlideRight_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonSlideRight.Text = handleKeyDown(e);
-        }
-
         private void buttonSlideRight_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
+        }
+
+        private void buttonSlideRightMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonSlideRight);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Run/Walk Keybind
+        // Run/Walk Keybind
+        private void buttonRunWalk_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonRunWalk.Text = handleKeyDown(e);
         }
 
         private void buttonRunWalk_MouseDown(object sender, MouseEventArgs e)
@@ -512,14 +719,28 @@ namespace m59bind
             buttonRunWalk.Text = handleMouseDown(e);
         }
 
-        private void buttonRunWalk_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonRunWalk.Text = handleKeyDown(e);
-        }
-
         private void buttonRunWalk_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
+        }
+
+        private void buttonRunWalkMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonRunWalk);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Look Up Keybind
+        // Look Up Keybind
+        private void buttonLookUp_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonBackward.Text = handleKeyDown(e);
         }
 
         private void buttonLookUp_MouseDown(object sender, MouseEventArgs e)
@@ -527,24 +748,33 @@ namespace m59bind
             buttonLookUp.Text = handleMouseDown(e);
         }
 
-        private void buttonLookUp_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonBackward.Text = handleKeyDown(e);
-        }
-
         private void buttonLookUp_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             previewKeySetIsInputKey(e);
         }
 
-        private void buttonLookDown_MouseDown(object sender, MouseEventArgs e)
+        private void buttonLookUpMod_Click(object sender, EventArgs e)
         {
-            buttonLookDown.Text = handleMouseDown(e);
-        }
+            KeyModForm modForm = new KeyModForm(buttonLookUp);
+            Point position = Cursor.Position;
+            position.Y -= 115;
 
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Look Down Keybind
+        // Look Down Keybind
         private void buttonLookDown_KeyDown(object sender, KeyEventArgs e)
         {
             buttonLookDown.Text = handleKeyDown(e);
+        }
+        
+        private void buttonLookDown_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonLookDown.Text = handleMouseDown(e);
         }
 
         private void buttonLookDown_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -552,14 +782,28 @@ namespace m59bind
             previewKeySetIsInputKey(e);
         }
 
-        private void buttonLookStraight_MouseDown(object sender, MouseEventArgs e)
+        private void buttonLookDownMod_Click(object sender, EventArgs e)
         {
-            buttonLookStraight.Text = handleMouseDown(e);
-        }
+            KeyModForm modForm = new KeyModForm(buttonLookDown);
+            Point position = Cursor.Position;
+            position.Y -= 115;
 
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Look Straight Keybind
+        // Look Straight Keybind
         private void buttonLookStraight_KeyDown(object sender, KeyEventArgs e)
         {
             buttonLookStraight.Text = handleKeyDown(e);
+        }
+
+        private void buttonLookStraight_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonLookStraight.Text = handleMouseDown(e);
         }
 
         private void buttonLookStraight_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -567,14 +811,28 @@ namespace m59bind
             previewKeySetIsInputKey(e);
         }
 
-        private void buttonFlip_MouseDown(object sender, MouseEventArgs e)
+        private void buttonLookStraightMod_Click(object sender, EventArgs e)
         {
-            buttonFlip.Text = handleMouseDown(e);
-        }
+            KeyModForm modForm = new KeyModForm(buttonLookStraight);
+            Point position = Cursor.Position;
+            position.Y -= 115;
 
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Flip Keybind
+        // Flip Keybind
         private void buttonFlip_KeyDown(object sender, KeyEventArgs e)
         {
             buttonFlip.Text = handleKeyDown(e);
+        }
+
+        private void buttonFlip_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonFlip.Text = handleMouseDown(e);
         }
 
         private void buttonFlip_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -582,14 +840,28 @@ namespace m59bind
             previewKeySetIsInputKey(e);
         }
 
-        private void buttonMouselookToggle_MouseDown(object sender, MouseEventArgs e)
+        private void buttonFlipMod_Click(object sender, EventArgs e)
         {
-            buttonMouselookToggle.Text = handleMouseDown(e);
-        }
+            KeyModForm modForm = new KeyModForm(buttonFlip);
+            Point position = Cursor.Position;
+            position.Y -= 115;
 
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Mouselook Toggle Keybind
+        // Mouselook Toggle Keybind
         private void buttonMouselookToggle_KeyDown(object sender, KeyEventArgs e)
         {
             buttonMouselookToggle.Text = handleKeyDown(e);
+        }
+
+        private void buttonMouselookToggle_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonMouselookToggle.Text = handleMouseDown(e);
         }
 
         private void buttonMouselookToggle_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -597,6 +869,774 @@ namespace m59bind
             previewKeySetIsInputKey(e);
         }
 
+        private void buttonMouselookToggleMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonMouselookToggle);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Say Keybind
+        // Say Keybind
+        private void buttonSay_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonSay.Text = handleKeyDown(e);
+        }
+
+        private void buttonSay_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonSay.Text = handleMouseDown(e);
+        }
+
+        private void buttonSay_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonSayMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonSay);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Chat Keybind
+        // Chat Keybind
+        private void buttonChat_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonChat.Text = handleKeyDown(e);
+        }
+
+        private void buttonChat_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonChat.Text = handleMouseDown(e);
+        }
+
+        private void buttonChat_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonChatMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonChat);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Tell Keybind
+        // Tell Keybind
+        private void buttonTell_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTell.Text = handleKeyDown(e);
+        }
+
+        private void buttonTell_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTell.Text = handleMouseDown(e);
+        }
+
+        private void buttonTell_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTellMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTell);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Yell Keybind
+        // Yell Keybind
+        private void buttonYell_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonYell.Text = handleKeyDown(e);
+        }
+
+        private void buttonYell_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonYell.Text = handleMouseDown(e);
+        }
+
+        private void buttonYell_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonYellMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonYell);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Broadcast Keybind
+        // Broadcast Keybind
+        private void buttonBroadcast_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonBroadcast.Text = handleKeyDown(e);
+        }
+
+        private void buttonBroadcast_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonBroadcast.Text = handleMouseDown(e);
+        }
+
+        private void buttonBroadcast_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonBroadcastMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonBroadcast);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Who Keybind
+        // Who Keybind
+        private void buttonWho_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonWho.Text = handleKeyDown(e);
+        }
+
+        private void buttonWho_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonWho.Text = handleMouseDown(e);
+        }
+
+        private void buttonWho_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonWhoMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonWho);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Emote Keybind
+        // Emote Keybind
+        private void buttonEmote_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonEmote.Text = handleKeyDown(e);
+        }
+
+        private void buttonEmote_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonEmote.Text = handleMouseDown(e);
+        }
+
+        private void buttonEmote_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonEmoteMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonEmote);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Open Keybind
+        // Open Keybind
+        private void buttonOpen_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonOpen.Text = handleKeyDown(e);
+        }
+
+        private void buttonOpen_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonOpen.Text = handleMouseDown(e);
+        }
+
+        private void buttonOpen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonOpenMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonOpen);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Pick Up Keybind
+        // Pick Up Keybind
+        private void buttonPickUp_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonPickUp.Text = handleKeyDown(e);
+        }
+
+        private void buttonPickUp_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonPickUp.Text = handleMouseDown(e);
+        }
+
+        private void buttonPickUp_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonPickUpMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonPickUp);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Look Keybind
+        // Look Keybind
+        private void buttonLook_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonLook.Text = handleKeyDown(e);
+        }
+
+        private void buttonLook_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonLook.Text = handleMouseDown(e);
+        }
+
+        private void buttonLook_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonLookMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonLook);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Examine Keybind
+        // Examine Keybind
+        private void buttonExamine_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonExamine.Text = handleKeyDown(e);
+        }
+
+        private void buttonExamine_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonExamine.Text = handleMouseDown(e);
+        }
+
+        private void buttonExamine_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonExamineMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonExamine);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Offer Keybind
+        // Offer Keybind
+        private void buttonOffer_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonOffer.Text = handleKeyDown(e);
+        }
+
+        private void buttonOffer_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonOffer.Text = handleMouseDown(e);
+        }
+
+        private void buttonOffer_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonOfferMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonOffer);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Buy Keybind
+        // Buy Keybind
+        private void buttonBuy_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonBuy.Text = handleKeyDown(e);
+        }
+
+        private void buttonBuy_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonBuy.Text = handleMouseDown(e);
+        }
+
+        private void buttonBuy_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonBuyMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonBuy);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Deposit Keybind
+        // Deposit Keybind
+        private void buttonDeposit_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonDeposit.Text = handleKeyDown(e);
+        }
+
+        private void buttonDeposit_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonDeposit.Text = handleMouseDown(e);
+        }
+
+        private void buttonDeposit_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonDepositMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonDeposit);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Withdraw Keybind
+        // Withdraw Keybind
+        private void buttonWithdraw_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonWithdraw.Text = handleKeyDown(e);
+        }
+
+        private void buttonWithdraw_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonWithdraw.Text = handleMouseDown(e);
+        }
+
+        private void buttonWithdraw_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonWithdrawMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonWithdraw);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Attack Keybind
+        // Attack Keybind
+        private void buttonAttack_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonAttack.Text = handleKeyDown(e);
+        }
+
+        private void buttonAttack_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonAttack.Text = handleMouseDown(e);
+        }
+
+        private void buttonAttack_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonAttackMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonAttack);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Target Next Keybind
+        // Target Next Keybind
+        private void buttonTargetNext_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTargetNext.Text = handleKeyDown(e);
+        }
+
+        private void buttonTargetNext_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTargetNext.Text = handleMouseDown(e);
+        }
+
+        private void buttonTargetNext_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTargetNextMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTargetNext);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Target Previos Keybind
+        // Target Previous Keybind
+        private void buttonTargetPrevious_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTargetPrevious.Text = handleKeyDown(e);
+        }
+
+        private void buttonTargetPrevious_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTargetPrevious.Text = handleMouseDown(e);
+        }
+
+        private void buttonTargetPrevious_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTargetPreviousMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTargetPrevious);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Target Clear Keybind
+        // Target Clear Keybind
+        private void buttonTargetClear_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTargetClear.Text = handleKeyDown(e);
+        }
+
+        private void buttonTargetClear_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTargetClear.Text = handleMouseDown(e);
+        }
+
+        private void buttonTargetClear_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTargetClearMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTargetClear);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Target Self Keybind
+        // Target Self Keybind
+        private void buttonTargetSelf_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTargetSelf.Text = handleKeyDown(e);
+        }
+
+        private void buttonTargetSelf_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTargetSelf.Text = handleMouseDown(e);
+        }
+
+        private void buttonTargetSelf_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTargetSelfMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTargetSelf);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Tab Forward Keybind
+        // Tab Forward Keybind
+        private void buttonTabForward_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTabForward.Text = handleKeyDown(e);
+        }
+
+        private void buttonTabForward_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTabForward.Text = handleMouseDown(e);
+        }
+
+        private void buttonTabForward_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonTabForwardMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTabForward);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Tab Backward Keybind
+        // Tab Backward Keybind
+        private void buttonTabBackward_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonTabBackward.Text = handleKeyDown(e);
+        }
+
+        private void buttonTabBackward_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonTabBackward.Text = handleMouseDown(e);
+        }
+
+        private void buttonTabBackward_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+        
+        private void buttonTabBackwardMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonTabBackward);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Select Target Keybind
+        // Select Target Keybind
+        private void buttonSelectTarget_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonSelectTarget.Text = handleKeyDown(e);
+        }
+
+        private void buttonSelectTarget_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonSelectTarget.Text = handleMouseDown(e);
+        }
+
+        private void buttonSelectTarget_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonSelectTargetMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonSelectTarget);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Map Keybind
+        // Map Keybind
+        private void buttonMap_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonMap.Text = handleKeyDown(e);
+        }
+
+        private void buttonMap_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonMap.Text = handleMouseDown(e);
+        }
+
+        private void buttonMap_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonMapMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonMap);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Map Zoom In Keybind
+        // Map Zoom In Keybind
+        private void buttonMapZoomIn_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonMapZoomIn.Text = handleKeyDown(e);
+        }
+
+        private void buttonMapZoomIn_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonMapZoomIn.Text = handleMouseDown(e);
+        }
+
+        private void buttonMapZoomIn_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonMapZoomInMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonMapZoomIn);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Map Zoom Out Keybind
+        // Map Zoom Out Keybind
+        private void buttonMapZoomOut_KeyDown(object sender, KeyEventArgs e)
+        {
+            buttonMapZoomOut.Text = handleKeyDown(e);
+        }
+
+        private void buttonMapZoomOut_MouseDown(object sender, MouseEventArgs e)
+        {
+            buttonMapZoomOut.Text = handleMouseDown(e);
+        }
+
+        private void buttonMapZoomOut_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            previewKeySetIsInputKey(e);
+        }
+
+        private void buttonMapZoomOutMod_Click(object sender, EventArgs e)
+        {
+            KeyModForm modForm = new KeyModForm(buttonMapZoomOut);
+            Point position = Cursor.Position;
+            position.Y -= 115;
+
+            modForm.StartPosition = FormStartPosition.Manual;
+            modForm.Location = position;
+            modForm.ShowDialog(this);
+        }
+        #endregion
+
+        #region Mouse Tab Controls
+        // Mouse Tab Controls
         private void checkBoxInvertMouse_CheckedChanged(object sender, EventArgs e)
         {
             configChanged = true;
@@ -613,7 +1653,10 @@ namespace m59bind
             labelMouselookYScaleValue.Text = trackBarMouseYScale.Value.ToString();
             configChanged = true;
         }
+        #endregion
 
+        #region Options Group Controls
+        // Options Group Controls
         private void checkBoxClassicKeyBind_CheckedChanged(object sender, EventArgs e)
         {
             configChanged = true;
@@ -643,937 +1686,6 @@ namespace m59bind
         {
             configChanged = true;
         }
-
-        private void buttonForwardMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonForward);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonBackwardMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonBackward);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonTurnLeftMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTurnLeft);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonTurnRightMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTurnRight);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonSlideLeftMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonSlideLeft);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonSlideRightMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonSlideRight);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonRunWalkMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonRunWalk);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonLookUpMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonLookUp);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonLookDownMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonLookDown);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonLookStraightMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonLookStraight);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonFlipMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonFlip);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonMouselookToggleMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonMouselookToggle);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonRestoreDefaults_Click(object sender, EventArgs e)
-        {
-            // Movement Tab
-            this.buttonForward.Text = "w";
-            this.buttonBackward.Text = "s";
-            this.buttonTurnLeft.Text = "left";
-            this.buttonTurnRight.Text = "right";
-            this.buttonSlideLeft.Text = "a";
-            this.buttonSlideRight.Text = "d";
-            this.buttonRunWalk.Text = "shift";
-            this.buttonLookUp.Text = "pageup";
-            this.buttonLookDown.Text = "pagedown";
-            this.buttonLookStraight.Text = "home";
-            this.buttonFlip.Text = "end";
-            this.buttonMouselookToggle.Text = "c+any";
-
-            // Communication Tab
-            this.buttonSay.Text = "f";
-            this.buttonChat.Text = "enter";
-            this.buttonTell.Text = "t";
-            this.buttonYell.Text = "y";
-            this.buttonBroadcast.Text = "b";
-            this.buttonWho.Text = "w+ctrl";
-            this.buttonEmote.Text = ";";
-
-            // Interaction Tab
-            this.buttonOpen.Text = "space";
-            this.buttonPickUp.Text = "g";
-            this.buttonLook.Text = "l";
-            this.buttonExamine.Text = "mouse1+any";
-            this.buttonOffer.Text = "o+ctrl";
-            this.buttonBuy.Text = "b+shift";
-            this.buttonDeposit.Text = "i+shift";
-            this.buttonWithdraw.Text = "o+shift";
-            this.buttonAttack.Text = "e+any";
-
-            // Targeting Tab
-            this.buttonTargetNext.Text = "]";
-            this.buttonTargetPrevious.Text = "[";
-            this.buttonTargetClear.Text = "esc";
-            this.buttonTargetSelf.Text = "q";
-            this.buttonTabForward.Text = "tab";
-            this.buttonTabBackward.Text = "tab+shift";
-            this.buttonSelectTarget.Text = "mouse0";
-
-            // Map Tab
-            this.buttonMap.Text = "m+shift";
-            this.buttonMapZoomIn.Text = "add";
-            this.buttonMapZoomOut.Text = "subtract";
-
-            // Mouse Tab
-            m59BindProgram.GetIni(configFile, "config", "invertmouse", "false");
-
-            this.trackBarMouseXScale.Value = 15;
-            this.trackBarMouseYScale.Value = 9;
-
-            // Options Group
-            m59BindProgram.GetIni(configFile, "config", "classickeybindings", "false");
-            m59BindProgram.GetIni(configFile, "config", "quickchat", "false");
-            m59BindProgram.GetIni(configFile, "config", "alwaysrun", "true");
-            m59BindProgram.GetIni(configFile, "config", "attackontarget", "false");
-            m59BindProgram.GetIni(configFile, "config", "dynamiclighting", "true");
-            m59BindProgram.GetIni(configFile, "config", "softwarerendering", "false");
-
-            configChanged = false;
-        }
-
-        private void buttonSay_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonSay.Text = handleKeyDown(e);
-        }
-
-        private void buttonSay_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonSay.Text = handleMouseDown(e);
-        }
-
-        private void buttonSay_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonChat_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonChat.Text = handleKeyDown(e);
-        }
-
-        private void buttonChat_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonChat.Text = handleMouseDown(e);
-        }
-
-        private void buttonChat_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTell_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTell.Text = handleKeyDown(e);
-        }
-
-        private void buttonTell_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTell.Text = handleMouseDown(e);
-        }
-
-        private void buttonTell_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonYell_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonYell.Text = handleKeyDown(e);
-        }
-
-        private void buttonYell_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonYell.Text = handleMouseDown(e);
-        }
-
-        private void buttonYell_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonBroadcast_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonBroadcast.Text = handleKeyDown(e);
-        }
-
-        private void buttonBroadcast_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonBroadcast.Text = handleMouseDown(e);
-        }
-
-        private void buttonBroadcast_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonWho_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonWho.Text = handleKeyDown(e);
-        }
-
-        private void buttonWho_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonWho.Text = handleMouseDown(e);
-        }
-
-        private void buttonWho_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonEmote_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonEmote.Text = handleKeyDown(e);
-        }
-
-        private void buttonEmote_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonEmote.Text = handleMouseDown(e);
-        }
-
-        private void buttonEmote_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonSayMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonSay);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonChatMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonChat);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonTellMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTell);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonYellMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonYell);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonBroadcastMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonBroadcast);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonWhoMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonWho);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        private void buttonEmoteMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonEmote);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-        * Open
-        */
-        private void buttonOpen_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonOpen.Text = handleKeyDown(e);
-        }
-
-        private void buttonOpen_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonOpen.Text = handleMouseDown(e);
-        }
-
-        private void buttonOpen_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonOpenMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonOpen);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Pick Up
-         */
-        private void buttonPickUp_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonPickUp.Text = handleKeyDown(e);
-        }
-
-        private void buttonPickUp_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonPickUp.Text = handleMouseDown(e);
-        }
-
-        private void buttonPickUp_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonPickUpMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonPickUp);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Look
-         */
-        private void buttonLook_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonLook.Text = handleKeyDown(e);
-        }
-
-        private void buttonLook_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonLook.Text = handleMouseDown(e);
-        }
-
-        private void buttonLook_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonLookMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonLook);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Examine
-         */
-        private void buttonExamine_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonExamine.Text = handleKeyDown(e);
-        }
-
-        private void buttonExamine_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonExamine.Text = handleMouseDown(e);
-        }
-
-        private void buttonExamine_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonExamineMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonExamine);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Offer
-         */
-        private void buttonOffer_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonOffer.Text = handleKeyDown(e);
-        }
-
-        private void buttonOffer_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonOffer.Text = handleMouseDown(e);
-        }
-
-        private void buttonOffer_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonOfferMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonOffer);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Buy
-         */
-        private void buttonBuy_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonBuy.Text = handleKeyDown(e);
-        }
-
-        private void buttonBuy_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonBuy.Text = handleMouseDown(e);
-        }
-
-        private void buttonBuy_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonBuyMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonBuy);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Deposit
-         */
-        private void buttonDeposit_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonDeposit.Text = handleKeyDown(e);
-        }
-
-        private void buttonDeposit_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonDeposit.Text = handleMouseDown(e);
-        }
-
-        private void buttonDeposit_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonDepositMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonDeposit);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Withdraw
-         */
-        private void buttonWithdraw_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonWithdraw.Text = handleKeyDown(e);
-        }
-
-        private void buttonWithdraw_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonWithdraw.Text = handleMouseDown(e);
-        }
-
-        private void buttonWithdraw_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonWithdrawMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonWithdraw);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Attack
-         */
-        private void buttonAttack_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonAttack.Text = handleKeyDown(e);
-        }
-
-        private void buttonAttack_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonAttack.Text = handleMouseDown(e);
-        }
-
-        private void buttonAttack_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonAttackMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonAttack);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Target Next
-         */
-        private void buttonTargetNext_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTargetNext.Text = handleKeyDown(e);
-        }
-
-        private void buttonTargetNext_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTargetNext.Text = handleMouseDown(e);
-        }
-
-        private void buttonTargetNext_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTargetNextMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTargetNext);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Target Previous
-         */
-        private void buttonTargetPrevious_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTargetPrevious.Text = handleKeyDown(e);
-        }
-
-        private void buttonTargetPrevious_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTargetPrevious.Text = handleMouseDown(e);
-        }
-
-        private void buttonTargetPrevious_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTargetPreviousMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTargetPrevious);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Target Clear
-         */
-        private void buttonTargetClear_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTargetClear.Text = handleKeyDown(e);
-        }
-
-        private void buttonTargetClear_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTargetClear.Text = handleMouseDown(e);
-        }
-
-        private void buttonTargetClear_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTargetClearMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTargetClear);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Target Self
-         */
-        private void buttonTargetSelf_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTargetSelf.Text = handleKeyDown(e);
-        }
-
-        private void buttonTargetSelf_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTargetSelf.Text = handleMouseDown(e);
-        }
-
-        private void buttonTargetSelf_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTargetSelfMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTargetSelf);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Tab Forward
-         */
-        private void buttonTabForward_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTabForward.Text = handleKeyDown(e);
-        }
-
-        private void buttonTabForward_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTabForward.Text = handleMouseDown(e);
-        }
-
-        private void buttonTabForward_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTabForwardMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTabForward);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Tab Backward
-         */
-        private void buttonTabBackward_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonTabBackward.Text = handleKeyDown(e);
-        }
-
-        private void buttonTabBackward_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonTabBackward.Text = handleMouseDown(e);
-        }
-
-        private void buttonTabBackward_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonTabBackwardMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonTabBackward);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Select Target
-         */
-        private void buttonSelectTarget_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonSelectTarget.Text = handleKeyDown(e);
-        }
-
-        private void buttonSelectTarget_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonSelectTarget.Text = handleMouseDown(e);
-        }
-
-        private void buttonSelectTarget_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonSelectTargetMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonSelectTarget);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Map
-         */
-        private void buttonMap_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonMap.Text = handleKeyDown(e);
-        }
-
-        private void buttonMap_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonMap.Text = handleMouseDown(e);
-        }
-
-        private void buttonMap_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonMapMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonMap);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Map Zoom In
-         */
-        private void buttonMapZoomIn_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonMapZoomIn.Text = handleKeyDown(e);
-        }
-
-        private void buttonMapZoomIn_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonMapZoomIn.Text = handleMouseDown(e);
-        }
-
-        private void buttonMapZoomIn_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonMapZoomInMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonMapZoomIn);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
-
-        /*
-         * Map Zoom Out
-         */
-        private void buttonMapZoomOut_KeyDown(object sender, KeyEventArgs e)
-        {
-            buttonMapZoomOut.Text = handleKeyDown(e);
-        }
-
-        private void buttonMapZoomOut_MouseDown(object sender, MouseEventArgs e)
-        {
-            buttonMapZoomOut.Text = handleMouseDown(e);
-        }
-
-        private void buttonMapZoomOut_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            previewKeySetIsInputKey(e);
-        }
-
-        private void buttonMapZoomOutMod_Click(object sender, EventArgs e)
-        {
-            KeyModForm modForm = new KeyModForm(buttonMapZoomOut);
-            Point position = Cursor.Position;
-            position.Y -= 115;
-
-            modForm.StartPosition = FormStartPosition.Manual;
-            modForm.Location = position;
-            modForm.ShowDialog(this);
-        }
+        #endregion
     }
 }

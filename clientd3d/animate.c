@@ -190,7 +190,7 @@ Bool AnimateObject(object_node *obj, int dt)
       DWORD angleFlash;
       obj->bounceTime += min(dt,50);
       if (obj->bounceTime > TIME_FLASH)
-	 obj->bounceTime -= TIME_FLASH;
+         obj->bounceTime -= TIME_FLASH;
       angleFlash = NUMDEGREES * obj->bounceTime / TIME_FLASH;
       obj->lightAdjust = FIXED_TO_INT(fpMul(FLASH_LEVEL, SIN(angleFlash)));
       need_redraw = TRUE;
@@ -209,7 +209,7 @@ Bool AnimateObject(object_node *obj, int dt)
       int anglePhase;
       obj->phaseTime += min(dt,40);
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
-	 obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
+         obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;
       obj->drawingflags = (~DRAWFX_EFFECT_MASK & obj->drawingflags) | phaseStates[anglePhase];
       need_redraw = TRUE;

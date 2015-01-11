@@ -393,7 +393,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 
 
       // Handle common case of no effects specially here
-      if (d.translation == 0 && GetDrawingEffect(d.drawingflags) == 0)
+      if (d.translation == 0 && d.drawingflags == 0)
       {	 // Draw normally
 #if 1
 	 while (screen_ptr <= end_screen_ptr)
@@ -539,13 +539,13 @@ END_TRANS_BLIT:
 	 DrawingLoop loop;
 
 	 // Take effect from palette translation or object flags
-	 effect = GetDrawingEffectIndex(d.drawingflags);
+	 effect = d.drawingflags;
 	 if (effect == 0)
-	    effect = GetDrawingEffectIndex(DRAWFX_TRANSLATE);
+	    effect = DRAWFX_TRANSLATE;
 
 	 loop = drawing_loops[effect];
 	 if (loop == NULL)
-	    debug(("DrawObjectBitmap got unknown effect index %d\n", GetDrawingEffectIndex(d.drawingflags)));
+	    debug(("DrawObjectBitmap got unknown effect index %d\n", d.drawingflags));
 	 else
 	 {
 	    d.start_ptr = screen_ptr;
@@ -862,7 +862,7 @@ void DrawObjectDecorations(DrawnObject *object)
    if (r == NULL)
       return;
 
-   if (!(r->obj.flags & OF_PLAYER) || (GetDrawingEffect(r->obj.drawingflags) == DRAWFX_INVISIBLE))
+   if (!(r->obj.flags & OF_PLAYER) || (r->obj.drawingflags == DRAWFX_INVISIBLE))
       return;
 
    // Draw player name

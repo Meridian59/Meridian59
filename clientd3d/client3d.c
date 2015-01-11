@@ -79,8 +79,8 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags,
       obj_flags = r->obj.flags;
       obj_drawingflags = r->obj.drawingflags;
 
-      if ((pos_drawingflags != 0 && GetDrawingEffect(obj_drawingflags) != pos_drawingflags)
-      || (neg_drawingflags != 0 && GetDrawingEffect(obj_drawingflags) == neg_drawingflags))
+      if ((pos_drawingflags != 0 && obj_drawingflags != pos_drawingflags)
+      || (neg_drawingflags != 0 && obj_drawingflags == neg_drawingflags))
          continue;
 
       if ((pos_flags == 0 || (obj_flags & pos_flags) != 0) && (obj_flags & neg_flags) == 0)

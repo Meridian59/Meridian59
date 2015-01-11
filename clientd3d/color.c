@@ -441,7 +441,7 @@ COLORREF GetPlayerNameColor(object_node* obj, char *name)
 {
    int r, g, b;
 
-   if (GetDrawingEffect(obj->drawingflags) == DRAWFX_BLACK)
+   if (obj->drawingflags == DRAWFX_BLACK)
       return PALETTERGB(0,0,0);
 
      r = (obj->namecolor & 0xFF0000) >> 16;

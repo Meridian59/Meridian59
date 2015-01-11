@@ -384,7 +384,7 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
       // Skip ourselves, invisible objects and anything with
       // minimapflags of 0.
       if ((r->obj.id == player.id)
-         || (GetDrawingEffect(r->obj.drawingflags) == DRAWFX_INVISIBLE)
+         || (r->obj.drawingflags == DRAWFX_INVISIBLE)
          || (r->obj.minimapflags == MM_NONE))
          continue;
 

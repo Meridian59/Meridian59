@@ -1739,7 +1739,7 @@ Bool WINAPI EventAnimate(int dt)
 
       // If self is invisible, redraw self view to make it shimmer
       r = GetRoomObjectById(cinfo->player->id);
-      if (r != NULL && GetDrawingEffect(r->obj.drawingflags) == DRAWFX_INVISIBLE)
+      if (r != NULL && r->obj.drawingflags == DRAWFX_INVISIBLE)
 	 UserAreaRedraw();
    }
    return True;

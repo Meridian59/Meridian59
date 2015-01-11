@@ -434,7 +434,7 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 		// NOTE: Could make effect cases faster by making separate loops without palette indirection
 		
 		// Handle common case of no effects specially here
-		if (translation == 0 && GetDrawingEffect(flags) == 0)
+		if (translation == 0 && flags == 0)
 		{
 			for (j = rect.left; j < rect.right; j++)
 			{
@@ -452,15 +452,15 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 			BYTE effect;
 			
 			// Take effect from palette translation or object flags
-			effect = GetDrawingEffectIndex(flags);
+			effect = flags;
 			if (effect == 0)
-				effect = GetDrawingEffectIndex(DRAWFX_TRANSLATE);
+				effect = DRAWFX_TRANSLATE;
 			
 			loop = drawing_loops[effect];
 			
 			if (loop == NULL)
 			{
-				//debug(("DrawStretchedBitmap got unknown effect index %d\n", GetDrawingEffectIndex(flags)));
+				//debug(("DrawStretchedBitmap got unknown effect index %d\n", flags));
 			}
 			else
 			{

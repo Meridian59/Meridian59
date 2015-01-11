@@ -388,13 +388,6 @@ enum {
    DRAWFX_EFFECT_MASK   = 0xFF,    // Mask to get object drawing effect bits
 };
 
-#define GetDrawingEffect(flags) ((flags) & DRAWFX_EFFECT_MASK)
-/* Bit shifts the drawing effects to the first bits, if not already there.
- * Note the shift has been removed since the drawing effects now occupy the
- * first byte now. If these constants are moved, replace the bit shift here
- * and any place GetDrawingEffectIndex is used. */
-#define GetDrawingEffectIndex(flags) ((flags) & DRAWFX_EFFECT_MASK)
-
 // Minimap dot color bitfield. Now separate from object flags.
 #define MM_NONE          0x00000000    // No dot (default for all objects)
 #define MM_PLAYER        0x00000001    // Standard blue player dot

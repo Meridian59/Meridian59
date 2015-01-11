@@ -3,31 +3,16 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-SOURCEDIR = $(KEYBINDDIR)
+MSBUILD = msbuild.exe
+PROJECT = m59Bind.csproj
+LIB = 
 
-CFLAGS = $(CFLAGS) /EHsc
-LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:WINDOWS",5.01"
-LIBS = $(LIBS) nafxcw.lib
+all: m59Bind
 
-OBJS = \
-	$(OUTDIR)\Assignkey.obj \
-	$(OUTDIR)\Communication.obj \
-	$(OUTDIR)\Interaction.obj \
-	$(OUTDIR)\Keybindsps.obj \
-	$(OUTDIR)\m59bind.obj \
-	$(OUTDIR)\m59bind.res \
-	$(OUTDIR)\m59bindDlg.obj \
-	$(OUTDIR)\Modifier.obj \
-	$(OUTDIR)\Mouse.obj \
-	$(OUTDIR)\Movement.obj \
-	$(OUTDIR)\Stdafx.obj \
-	$(OUTDIR)\Targeting.obj \
-	$(OUTDIR)\Themap.obj
+m59Bind:
+	$(MSBUILD) $(PROJECT)
+	$(CP) bin\debug\m59Bind.exe $(CLIENTRUNDIR)
 
-all: makedirs $(OUTDIR)\m59bind.exe
-
-$(OUTDIR)\m59bind.exe: $(OBJS)
-	$(LINK) $(OBJS) $(LIBS) -OUT:$@ $(LINKFLAGS)
-	$(CP) $@ $(CLIENTRUNDIR)
-
-!include $(TOPDIR)\rules.mak
+clean:
+	$(RMDIR) /S /Q obj
+	$(RMDIR) /S /Q bin

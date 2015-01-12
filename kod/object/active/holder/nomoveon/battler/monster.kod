@@ -6335,12 +6335,12 @@ messages:
 
    IsInvisible()
    {
-      return (Send(self,@GetDrawingFlags) & DRAWFX_INVISIBLE);
+      return (Send(self,@GetDrawingEffects) & DRAWFX_INVISIBLE);
    }
 
    IsShadowForm()
    {
-      return (Send(self,@GetDrawingFlags) & DRAWFX_BLACK);
+      return (Send(self,@GetDrawingEffects) & DRAWFX_BLACK);
    }
 
    GetVaultNum()

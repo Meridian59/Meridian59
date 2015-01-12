@@ -337,9 +337,8 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &temptype, 1);
    item->objecttype = (object_type)temptype;
 
-   BYTE tempmovetype = 0;
-   Extract(ptr, &tempmovetype, 1);
-   item->moveontype = (moveon_type)tempmovetype;
+   Extract(ptr, &temptype, 1);
+   item->moveontype = (moveon_type)temptype;
 
    ExtractDLighting(ptr, &item->dLighting);
 
@@ -381,9 +380,8 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
    Extract(ptr, &temptype, 1);
    item->objecttype = (object_type)temptype;
 
-   BYTE tempmovetype = 0;
-   Extract(ptr, &tempmovetype, 1);
-   item->moveontype = (moveon_type)tempmovetype;
+   Extract(ptr, &temptype, 1);
+   item->moveontype = (moveon_type)temptype;
 
    ExtractPaletteTranslation(ptr,&item->translation,&item->effect);
    item->normal_translation = item->translation;
@@ -1175,9 +1173,8 @@ Bool HandlePlayers(char *ptr,long len)
       Extract(&ptr, &temptype, SIZE_TYPE);
       obj->objecttype = (object_type)temptype;
 
-      BYTE movetemptype = 0;
-      Extract(&ptr, &movetemptype, SIZE_TYPE);
-      obj->moveontype = (moveon_type)movetemptype;
+      Extract(&ptr, &temptype, SIZE_TYPE);
+      obj->moveontype = (moveon_type)temptype;
       len -= 2 * SIZE_TYPE;
 
       list = list_add_item(list, obj);
@@ -1219,9 +1216,8 @@ Bool HandleAddPlayer(char *ptr,long len)
    Extract(&ptr, &temptype, SIZE_TYPE);
    obj->objecttype = (object_type)temptype;
 
-   BYTE movetemptype = 0;
-   Extract(&ptr, &movetemptype, SIZE_TYPE);
-   obj->moveontype = (moveon_type)movetemptype;
+   Extract(&ptr, &temptype, SIZE_TYPE);
+   obj->moveontype = (moveon_type)temptype;
    len -= 2 * SIZE_TYPE;
 
    if (len != 0)

@@ -367,7 +367,7 @@ messages:
       vrIcon = Send(poOriginal,@GetPlayerIcon);
       vrName = Send(poOriginal,@GetTrueName);
       piGender = Send(poOriginal,@GetGender);
-      piDrawfx = Send(poOriginal,@GetDrawingFlags);
+      piDrawfx = Send(poOriginal,@GetDrawingEffects);
 
       return;
    }
@@ -382,14 +382,14 @@ messages:
       return Send(poOriginal,@GetObjectFlags);
    }
 
-   GetDrawingFlags()
+   GetDrawingEffects()
    {
       if poOriginal = $
       {
          return 0;
       }
 
-      return Send(poOriginal,@GetDrawingFlags);
+      return Send(poOriginal,@GetDrawingEffects);
    }
 
    GetPlayerNameColor()
@@ -509,7 +509,7 @@ messages:
             Send(self,@DoDance);
          }
 
-         piDrawfx = Send(poOriginal,@GetDrawingFlags);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
       }
 
       propagate;

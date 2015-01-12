@@ -110,7 +110,12 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 	dos.light  = object->light;
 	dos.draw   = object->draw;
 	dos.cone   = clip;
+	dos.flags = object->flags;
 	dos.drawingtype  = object->drawingtype;
+	dos.minimapflags  = object->minimapflags;
+	dos.namecolor = object->namecolor;
+	dos.objecttype = object->objecttype;
+	dos.moveontype = object->moveontype;
 	dos.translation = object->translation;
 	dos.secondtranslation = object->secondtranslation;
 

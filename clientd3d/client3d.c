@@ -116,7 +116,7 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags,
 /*
  * GetObjectByPosition:  Return the room_contents_node for the closest object
  *   under (x, y), or NULL if none.  Arguments are as in GetObjects3D above,
- *   except that function also handles drawingflags and this one does not.
+ *   except that function also handles drawingtype and this one does not.
  */
 room_contents_node *GetObjectByPosition(int x, int y, int distance, int pos_flags, int neg_flags)
 {

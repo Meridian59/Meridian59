@@ -746,7 +746,7 @@ messages:
       return viObject_flags | piDrawType;
    }
 
-   GetDrawingFlags()
+   GetDrawingEffects()
    "This returns any special drawing effect the object has. Default is "
    "no drawing effect."
    {

@@ -40,12 +40,12 @@ extern RECT rcBackgroundOveray;
  *   The "distance" field of each element in the list is also filled in.
  */
 list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags,
-                       BYTE pos_drawingflags, BYTE neg_drawingflags)
+                       BYTE pos_drawingtype, BYTE neg_drawingtype)
 {
    static room_contents_node sunNode;
    list_type new_list = NULL;
    room_contents_node *r;
-   int i, obj_flags, obj_drawingflags;
+   int i, obj_flags, obj_drawingtype;
    extern Bool map;
 
    if (IsBlind())
@@ -77,10 +77,10 @@ list_type GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags,
       }
 
       obj_flags = r->obj.flags;
-      obj_drawingflags = r->obj.drawingflags;
+      obj_drawingtype = r->obj.drawingtype;
 
-      if ((pos_drawingflags != 0 && obj_drawingflags != pos_drawingflags)
-      || (neg_drawingflags != 0 && obj_drawingflags == neg_drawingflags))
+      if ((pos_drawingtype != 0 && obj_drawingtype != pos_drawingtype)
+      || (neg_drawingtype != 0 && obj_drawingtype == neg_drawingtype))
          continue;
 
       if ((pos_flags == 0 || (obj_flags & pos_flags) != 0) && (obj_flags & neg_flags) == 0)

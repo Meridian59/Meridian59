@@ -79,7 +79,7 @@ typedef struct {
                                         this field gives amount of object */
    DWORD        temp_amount;         /* Scratch field used when user is selecting amount of object */
    int          flags;               // Boolean object flags.
-   BYTE         drawingflags;        // Object flags for drawing effects (invisibility, lighting type etc.)
+   BYTE         drawingtype;        // Object flags for drawing effects (invisibility, lighting type etc.)
    int          minimapflags;        // Flags used to draw the right color/icon on the minimap.
    unsigned int namecolor;           // Player name color flags
    object_type  objecttype;          /* Enum of object type (i.e. outlaw, murderer, NPC) */

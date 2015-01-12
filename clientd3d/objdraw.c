@@ -119,7 +119,7 @@ void DrawObjectTranslucent(ObjectRowData *d)
 	xinc = d->xinc;
 	row_bits = d->obj_bits;
 	palette = d->palette;
-	effect = d->drawingflags;
+	effect = d->drawingtype;
 
 	switch( effect ) {
 		case DRAWFX_TRANSLUCENT25:

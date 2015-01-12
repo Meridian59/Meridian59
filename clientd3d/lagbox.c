@@ -109,7 +109,7 @@ BOOL Lagbox_Create()
 	pobjLagbox->normal_animate.group = 1;
 	pobjLagbox->normal_animate.group_low = 1;
 	pobjLagbox->normal_animate.group_high = 1;
-	pobjLagbox->drawingflags = DRAWFX_DITHERTRANS;
+	pobjLagbox->drawingtype = DRAWFX_DITHERTRANS;
 
 	dwLagboxLatency = s_adwLatencyMetric[0];
 

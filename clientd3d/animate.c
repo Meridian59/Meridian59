@@ -211,7 +211,7 @@ Bool AnimateObject(object_node *obj, int dt)
       if (obj->phaseTime > TIME_FULL_OBJECT_PHASE)
          obj->phaseTime -= TIME_FULL_OBJECT_PHASE;
       anglePhase = numPhases * obj->phaseTime / TIME_FULL_OBJECT_PHASE;
-      obj->drawingflags = (~DRAWFX_EFFECT_MASK & obj->drawingflags) | phaseStates[anglePhase];
+      obj->drawingtype = (~DRAWFX_EFFECT_MASK & obj->drawingtype) | phaseStates[anglePhase];
       need_redraw = TRUE;
    }
    // Animate object's overlays

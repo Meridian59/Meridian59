@@ -500,7 +500,7 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
 
       // If object was user's selected target, and target became invisible, clear selection.
       if(GetUserTargetID() == r->obj.id
-            && (r->obj.drawingflags == DRAWFX_INVISIBLE))
+            && (r->obj.drawingtype == DRAWFX_INVISIBLE))
          SetUserTargetID(INVALID_ID);
 
       // Object may have changed its effects such as OF_HANGING.

@@ -45,7 +45,7 @@ typedef struct {
    Bool         draw;              // True if object should actually be drawn (False = just compute location)
    ViewCone     *cone;             // Cone in which to draw object
    int          flags;             // Boolean object flags.
-   BYTE         drawingflags;      // Object flags for drawing effects (invisibility, lighting type etc.)
+   BYTE         drawingtype;      // Object flags for drawing effects (invisibility, lighting type etc.)
    int          minimapflags;      // Flag field for minimap dot drawing
    unsigned int namecolor;         /* Player name color flags */
    object_type  objecttype;        /* Enum of object type (i.e. outlaw, murderer, NPC) */

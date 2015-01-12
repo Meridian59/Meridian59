@@ -15,7 +15,7 @@
 // Structure passed to inner loops
 typedef struct {
    int          flags;             // Boolean object flags.
-   BYTE         drawingflags;      // Object flags for drawing effects (invisibility, lighting type etc.)
+   BYTE         drawingtype;      // Object flags for drawing effects (invisibility, lighting type etc.)
    int          minimapflags;      // Minimap dot color flags
    unsigned int namecolor;         // Player name color flags
    object_type  objecttype;        // Enum of object type (i.e. outlaw, murderer, NPC)

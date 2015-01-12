@@ -190,14 +190,14 @@ void DrawObjectIcon(HDC hdc, ID icon, int group, Bool draw_obj, AREA *area, HBRU
 	
 	// Draw underlays
 	//if (obj->overlays != NULL)
-	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->drawingflags);
+	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->drawingtype);
 	
 	if (draw_obj)
 		DrawStretchedBitmap(pdib, obj_rect, inc, 0, 0, 0);
 	
 	// Draw overlays
 	//if (obj->overlays != NULL)
-	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->drawingflags);
+	//DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->drawingtype);
 	
 	if (!copy) 
 		return;
@@ -279,14 +279,14 @@ void DrawObject(HDC hdc, object_node *obj, int group, Bool draw_obj, AREA *area,
 	
 	// Draw underlays
 	if (obj->overlays != NULL)
-		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->drawingflags, angle);
+		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, True, obj->secondtranslation, obj->drawingtype, angle);
 	
 	if (draw_obj)
-		DrawStretchedBitmap(pdib, obj_rect, inc, obj->translation, obj->secondtranslation, obj->drawingflags);
+		DrawStretchedBitmap(pdib, obj_rect, inc, obj->translation, obj->secondtranslation, obj->drawingtype);
 	
 	// Draw overlays
 	if (obj->overlays != NULL)
-		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->drawingflags, angle);
+		DrawOverlays(pdib, &obj_rect, *(obj->overlays), inc, False, obj->secondtranslation, obj->drawingtype, angle);
 	
 	if (!copy) 
 		return;
@@ -420,7 +420,7 @@ void DrawStretchedBitmap(PDIB pdib, RECT rect, int inc, BYTE translation, BYTE s
 	obj_bits = DibPtr(pdib);
 	
 	y = 0;
-	d.drawingflags = flags;
+	d.drawingtype = flags;
 	d.translation = translation;
 	d.secondtranslation = secondtranslation;
 	// Dummy palette for use with special effects--draws at max brightness

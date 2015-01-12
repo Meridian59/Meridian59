@@ -329,7 +329,7 @@ void ExtractObject(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4);
-   Extract(ptr, &item->drawingflags, 1);
+   Extract(ptr, &item->drawingtype, 1);
    Extract(ptr, &item->minimapflags, 4);
    Extract(ptr, &item->namecolor, 4);
 
@@ -373,7 +373,7 @@ void ExtractObjectNoLight(char **ptr, object_node *item)
    Extract(ptr, &item->icon_res, SIZE_ID);
    Extract(ptr, &item->name_res, SIZE_ID);
    Extract(ptr, &item->flags, 4);
-   Extract(ptr, &item->drawingflags, 1);
+   Extract(ptr, &item->drawingtype, 1);
    Extract(ptr, &item->minimapflags, 4);
    Extract(ptr, &item->namecolor, 4);
 
@@ -1165,7 +1165,7 @@ Bool HandlePlayers(char *ptr,long len)
 
       Extract(&ptr, &obj->flags, SIZE_VALUE);
       len -= SIZE_VALUE;
-      Extract(&ptr, &obj->drawingflags, SIZE_TYPE);
+      Extract(&ptr, &obj->drawingtype, SIZE_TYPE);
       len -= SIZE_TYPE;
       Extract(&ptr, &obj->minimapflags, SIZE_VALUE);
       Extract(&ptr, &obj->namecolor, SIZE_VALUE);
@@ -1209,7 +1209,7 @@ Bool HandleAddPlayer(char *ptr,long len)
 
    Extract(&ptr, &obj->flags, SIZE_VALUE);
    len -= SIZE_VALUE;
-   Extract(&ptr, &obj->drawingflags, SIZE_TYPE);
+   Extract(&ptr, &obj->drawingtype, SIZE_TYPE);
    len -= SIZE_TYPE;
    Extract(&ptr, &obj->minimapflags, SIZE_VALUE);
    Extract(&ptr, &obj->namecolor, SIZE_VALUE);

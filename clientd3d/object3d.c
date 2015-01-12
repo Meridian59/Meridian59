@@ -110,7 +110,7 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 	dos.light  = object->light;
 	dos.draw   = object->draw;
 	dos.cone   = clip;
-	dos.drawingflags  = object->drawingflags;
+	dos.drawingtype  = object->drawingtype;
 	dos.translation = object->translation;
 	dos.secondtranslation = object->secondtranslation;
 
@@ -328,7 +328,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    //palette = GetLightPalette(dos->distance, rand() % 60 + 1, FINENESS);
 
    d.palette = palette;
-   d.drawingflags = dos->drawingflags | (dos->effect);
+   d.drawingtype = dos->drawingtype | (dos->effect);
    d.translation = dos->translation;
    d.secondtranslation = dos->secondtranslation;
    rowTimesMAXX = starty * MAXX;
@@ -393,7 +393,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 
 
       // Handle common case of no effects specially here
-      if (d.translation == 0 && d.drawingflags == 0)
+      if (d.translation == 0 && d.drawingtype == 0)
       {	 // Draw normally
 #if 1
 	 while (screen_ptr <= end_screen_ptr)
@@ -539,13 +539,13 @@ END_TRANS_BLIT:
 	 DrawingLoop loop;
 
 	 // Take effect from palette translation or object flags
-	 effect = d.drawingflags;
+	 effect = d.drawingtype;
 	 if (effect == 0)
 	    effect = DRAWFX_TRANSLATE;
 
 	 loop = drawing_loops[effect];
 	 if (loop == NULL)
-	    debug(("DrawObjectBitmap got unknown effect index %d\n", d.drawingflags));
+	    debug(("DrawObjectBitmap got unknown effect index %d\n", d.drawingtype));
 	 else
 	 {
 	    d.start_ptr = screen_ptr;
@@ -862,7 +862,7 @@ void DrawObjectDecorations(DrawnObject *object)
    if (r == NULL)
       return;
 
-   if (!(r->obj.flags & OF_PLAYER) || (r->obj.drawingflags == DRAWFX_INVISIBLE))
+   if (!(r->obj.flags & OF_PLAYER) || (r->obj.drawingtype == DRAWFX_INVISIBLE))
       return;
 
    // Draw player name

@@ -68,7 +68,7 @@ classvars:
 properties:
 
    pbIllusioned = TRUE
-   piDrawType = OF_BOUNCING
+   piDrawEffectFlag = OF_BOUNCING
 
    ptGoIllusioned = $
    ptWorthyTimer = $
@@ -78,7 +78,7 @@ messages:
 
    Constructed()
    {
-      piDrawType = OF_BOUNCING;
+      piDrawEffectFlag = OF_BOUNCING;
 
       propagate;
    }
@@ -150,7 +150,7 @@ messages:
 
       pbIllusioned = FALSE;
       piDrawfx = DRAWFX_NONE;
-      piDrawType = ~OF_BOUNCING;
+      piDrawEffectFlag = ~OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
 
       if ptGoIllusioned <> $
@@ -177,7 +177,7 @@ messages:
             #type=SAY_RESOURCE);
 
       pbIllusioned = TRUE;
-      piDrawType = OF_BOUNCING;
+      piDrawEffectFlag = OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
 
       return;

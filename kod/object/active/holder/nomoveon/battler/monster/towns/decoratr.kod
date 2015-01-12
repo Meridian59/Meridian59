@@ -164,7 +164,7 @@ classvars:
 
 properties:
 
-   piDrawType = OF_BOUNCING
+   piDrawEffectFlag = OF_BOUNCING
 
    piDialogTopic = TOPIC_NONE
    ptDialogTopicTimeout = $

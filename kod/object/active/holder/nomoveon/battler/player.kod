@@ -11026,14 +11026,14 @@ messages:
 
    SetFlickerFlag()
    {
-      piDrawType = piDrawType | OF_FLICKERING;
+      piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
 
       return;
    }
 
    ClearFlickerFlag()
    {
-      piDrawType = piDrawType & (~OF_FLICKERING);
+      piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
 
       return;
    }
@@ -11042,14 +11042,14 @@ messages:
    {
       local i;
 
-      piDrawType = piDrawType & (~OF_FLICKERING);
+      piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
       for i in plUsing
       {
          if IsClass(i,&Torch)
             OR (IsClass(i,&Weapon) 
                AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
          {
-            piDrawType = piDrawType | OF_FLICKERING;
+            piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
 
             return;
          }
@@ -13518,7 +13518,7 @@ messages:
                if Nth(oLightObject,3) = self
                   AND NOT Send(Nth(oLightObject,1),@GetOldAreaEnchStyle)
                {
-                  if (piDrawType & OF_FLICKERING)
+                  if (piDrawEffectFlag & OF_FLICKERING)
                   {
                       iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
                       iColor = Send(Nth(oLightObject,1),@GetLightColor);
@@ -13532,7 +13532,7 @@ messages:
             }
          }
 
-         if (piDrawType & OF_FLICKERING)
+         if (piDrawEffectFlag & OF_FLICKERING)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
             % 75 out of 255 intensity of light

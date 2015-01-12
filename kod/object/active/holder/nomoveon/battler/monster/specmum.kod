@@ -63,7 +63,7 @@ classvars:
 properties:
 
    piDrawfx = DRAWFX_TRANSLUCENT_50
-   piDrawType = OF_FLICKERING
+   piDrawEffectFlag = OF_FLICKERING
 
 messages:
 

@@ -37,7 +37,7 @@ classvars:
 
 properties:
 
-   piDrawType = OF_FLICKERING
+   piDrawEffectFlag = OF_FLICKERING
    piDrawFx = DRAWFX_TRANSLUCENT_50
 
    viIllusion = TRUE

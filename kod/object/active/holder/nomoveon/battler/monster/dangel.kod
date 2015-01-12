@@ -83,7 +83,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piDrawType = OF_BOUNCING
+   piDrawEffectFlag = OF_BOUNCING
 
    piSpellPower = 99
    piMax_mana = 40

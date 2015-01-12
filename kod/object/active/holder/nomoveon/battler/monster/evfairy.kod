@@ -67,7 +67,7 @@ classvars:
 
 properties:
 
-   piDrawType = OF_BOUNCING
+   piDrawEffectFlag = OF_BOUNCING
    viKarma = -50
    piAnimation = ANIM_NONE
 

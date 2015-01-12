@@ -8297,7 +8297,7 @@ messages:
       }
 
       % Get the flashing/flickering/phasing/bouncing flags.
-      iFlags = iFlags | piDrawType;
+      iFlags = iFlags | piDrawEffectFlag;
 
       return iFlags;
    }

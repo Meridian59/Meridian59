@@ -388,12 +388,11 @@ void DrawOverlays(PDIB pdib_obj, RECT *obj_rect, list_type overlays,
 				DIVUP(((DibHeight(pdib_ov) * obj_shrink / shrink) << FIX_DECIMAL), inc);
 			
 			if (overlay->effect)
-			{
-				BYTE effect = overlay->effect;
-				DrawStretchedBitmap(pdib_ov, rect, inc * shrink / obj_shrink, overlay->translation, secondtranslation, flags, drawingtype | effect);
-			}
+				DrawStretchedBitmap(pdib_ov, rect, inc * shrink / obj_shrink,
+					overlay->translation, secondtranslation, flags, overlay->effect);
 			else
-				DrawStretchedBitmap(pdib_ov, rect, inc * shrink / obj_shrink, overlay->translation, secondtranslation, flags, drawingtype);
+				DrawStretchedBitmap(pdib_ov, rect, inc * shrink / obj_shrink,
+					overlay->translation, secondtranslation, flags, drawingtype);
 		}
 	}
 }

@@ -452,6 +452,11 @@ static void AddObjects(room_type *room)
       d->draw.group    = r->obj.animate->group;
       d->draw.overlays = *(r->obj.overlays);
       d->draw.flags    = r->obj.flags;
+      d->draw.drawingtype  = r->obj.drawingtype;
+      d->draw.minimapflags  = r->obj.minimapflags;
+      d->draw.namecolor = r->obj.namecolor;
+      d->draw.objecttype = r->obj.objecttype;
+      d->draw.moveontype = r->obj.moveontype;
       d->draw.translation = r->obj.translation;
       d->draw.secondtranslation = r->obj.secondtranslation;
       d->draw.obj      = r;
@@ -577,6 +582,11 @@ static void AddObjects(room_type *room)
       d->draw.overlays = NULL;
       d->draw.draw     = True;
       d->draw.flags    = 0;
+      d->draw.drawingtype  = DRAWFX_DRAW_PLAIN;
+      d->draw.minimapflags  = 0;
+      d->draw.namecolor = 0;
+      d->draw.objecttype = OT_NONE;
+      d->draw.moveontype = OF_MOVEON_YES;
       d->draw.height   = proj->motion.z;
       d->draw.translation = proj->translation;
       d->draw.secondtranslation = 0;

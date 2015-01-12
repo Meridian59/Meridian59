@@ -334,7 +334,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 
    d.palette = palette;
    d.flags  = dos->flags;
-   d.drawingtype = dos->drawingtype; // had | dos->effect here
+   d.drawingtype = dos->drawingtype | dos->effect;
    d.minimapflags  = dos->minimapflags;
    d.namecolor = dos->namecolor;
    d.objecttype = dos->objecttype;

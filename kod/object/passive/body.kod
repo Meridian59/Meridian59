@@ -49,7 +49,7 @@ properties:
    prPlayer_name = $
    pbWas_good_player = FALSE
    pbMob = FALSE
-   pbNamedMob
+   pbNamedMob = FALSE
    pbAssassinated = FALSE
 
    piDrawfx = 0
@@ -67,38 +67,45 @@ properties:
 messages:
 
    % you gotta pass in name, icon, and description to constructor
-   Constructor(name = $,icon = $,playername = $,good = FALSE, mob=FALSE ,monstername = $,
-               inKocatan = FALSE, assassinated = FALSE,drawfx = 0, BodyTranslation = 0,
-               LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes=TRUE,
-               DearlyDeparted = $, NamedMob = FALSE)
+   Constructor(victim = $,killer = $,inKocatan = FALSE, assassinated = FALSE,
+         drawfx = 0, BodyTranslation = 0, LegsTranslation = 0, 
+         PlayerBodyOverlay = $, Decomposes = TRUE)
    {
-      vrName = name;
-      vrIcon = icon;
-      pbMob = mob;
-      pbNamedMob = NamedMob;
+      vrName = Send(victim,@GetDeadName);
+      vrIcon = Send(victim,@GetDeadIcon);
+      pbMob = IsClass(victim,&Monster);
       piDrawfx = drawfx;
-      prPlayer_name = playername;
-      pbWas_good_player = good; 
       pbAssassinated = assassinated;
       prPlayerBodyOverlay = PlayerBodyOverlay;
       piBodyTrans = BodyTranslation;
       piLegsTrans = LegsTranslation;      
-      poDearlyDeparted = DearlyDeparted;
       piTimeOfDeath = GetTime();
-
-      if decomposes
+      
+      if Decomposes
       {
-         if mob
-         { 
-            ptDelete = CreateTimer(self,@DeleteTimerMessage,120000);
-            prmonster_name = monstername;
+         if pbMob
+         {
+            prPlayer_name = Send(killer,@GetTrueName);
+            prmonster_name = Send(victim,@GetName);
+            pbNamedMob = Send(victim,@IsNamedMob);
          }
          else
          {
-            % Make player corpses hang around longer.
-            ptDelete = CreateTimer(self,@DeleteTimerMessage,600000);	    
-            Send(Send(SYS,@Findroombynum,#num=RID_UNDERWORLD),@Newdeath,#what=self,#inKocatan=inKocatan);
+            prPlayer_name = Send(victim,@GetName);
+            pbWas_good_player = (Send(victim,@GetKarma) > 0); 
+            poDearlyDeparted = victim;
          }
+      }
+      
+      if pbMob
+      { 
+         ptDelete = CreateTimer(self,@DeleteTimerMessage,120000);
+      }
+      else
+      {
+         % Make player corpses hang around longer.
+         ptDelete = CreateTimer(self,@DeleteTimerMessage,600000);	    
+         Send(Send(SYS,@Findroombynum,#num=RID_UNDERWORLD),@Newdeath,#what=self,#inKocatan=inKocatan);
       }
 
       % only the killer can pick up things for the first 25 seconds.

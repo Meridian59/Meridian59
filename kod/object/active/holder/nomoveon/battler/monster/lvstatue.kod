@@ -1073,10 +1073,11 @@ messages:
    % Override from monster superclass
    CreateDeadBody(killer=$)
    {
-      return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
-                    #playername=Send(killer,@GetTrueName),#mob=TRUE,
-                    #monstername=LivingStatue_name_rsc,
-                    #PlayerBodyOverlay=vrDead_Legs,#DrawFX=viDead_drawfx);
+      return Create(&DeadBody,
+                     #victim=self,
+                     #killer=killer,
+                     #PlayerBodyOverlay=vrDead_Legs,
+                     #DrawFX=viDead_drawfx);
    }
 
    CreateTreasure(who=$,corpse=$)

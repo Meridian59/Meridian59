@@ -63,7 +63,8 @@ messages:
 
    Constructed()
    {
-      plSpellBook = [ [SID_FIRE_STORM,3,100] ];
+      % Fire Storm not in until next update
+      %plSpellBook = [ [SID_FIRE_STORM,3,100] ];
    
       plResistances = [ [-ATCK_SPELL_COLD, -50 ],
                         [-ATCK_SPELL_ALL, 90 ],

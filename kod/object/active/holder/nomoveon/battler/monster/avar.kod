@@ -288,10 +288,11 @@ messages:
       oBody = $;
       if vrDead_icon <> $
       {
-         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
+         oBody = Create(&DeadBody,
+                        #victim=self,
+                        #killer=killer,
                         #BodyTranslation=Send(self,@GetClan),
-                        #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);
+                        #drawfx=viDead_drawfx);
       }
 
       return oBody;

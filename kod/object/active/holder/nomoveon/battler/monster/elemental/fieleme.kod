@@ -19,16 +19,14 @@ resources:
    fireelemental_name_rsc = "fire golem"
    fireelemental_icon_rsc = fieleme.bgf
    fireelemental_desc_rsc = \
-      "Fire Elemental"
+      "This creature is a mass of pure elemental energy.  You feel a powerful"
+      " heat emanating off its immense body.  Its movements crackle like"
+      " hungry flames."
+      
    fireelemental_koc_name_rsc = "atzmochcho"
 
    fireelemental_dead_icon_rsc = fielemeX.bgf
    fireelemental_dead_name_rsc = "dead fire golem"
-
-   fireelemental_sound_hit = elem_atkh.wav
-   fireelemental_sound_miss = elem_atkm.wav
-   fireelemental_sound_death = elem_dth.wav
-   fireelemental_sound_aware = elem_awr.wav
 
 classvars:
 
@@ -41,11 +39,6 @@ classvars:
 
    viAttack_Spell = ATCK_SPELL_FIRE
    
-   vrSound_hit = fireelemental_sound_hit
-   vrSound_miss = fireelemental_sound_miss
-   vrSound_aware = fireelemental_sound_aware
-   vrSound_death = fireelemental_sound_death
-
 properties:
 
    piAnimation = ANIM_NONE

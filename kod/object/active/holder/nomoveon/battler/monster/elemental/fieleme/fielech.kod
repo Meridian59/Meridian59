@@ -17,24 +17,15 @@ constants:
 resources:
    
    fielem_champion_name_rsc = "Inferno"
-   fielem_champion_icon_rsc = fieleme.bgf
    fielem_champion_desc_rsc = \
       "Inferno"
 
-   fielem_champion_dead_icon_rsc = fielemeX.bgf
    fielem_champion_dead_name_rsc = "The corpse of Inferno"
-
-   fielem_champion_sound_hit = elem_atkh.wav
-   fielem_champion_sound_miss = elem_atkm.wav
-   fielem_champion_sound_death = elem_dth.wav
-   fielem_champion_sound_aware = elem_awr.wav
 
 classvars:
 
    vrName = fielem_champion_name_rsc
-   vrIcon = fielem_champion_icon_rsc
    vrDesc = fielem_champion_desc_rsc
-   vrDead_icon = fielem_champion_dead_icon_rsc
    vrDead_name = fielem_champion_dead_name_rsc
 
    vbNamedMob = TRUE   
@@ -50,11 +41,6 @@ classvars:
    viCashmin = 3000
    viCashmax = 5000
    
-   vrSound_hit = fielem_champion_sound_hit
-   vrSound_miss = fielem_champion_sound_miss
-   vrSound_aware = fielem_champion_sound_aware
-   vrSound_death = fielem_champion_sound_death
-
 properties:
 
    piAnimation = ANIM_NONE
@@ -63,8 +49,7 @@ messages:
 
    Constructed()
    {
-      % Fire Storm not in until next update
-      %plSpellBook = [ [SID_FIRE_STORM,3,100] ];
+      plSpellBook = [ [SID_FIRE_STORM,3,100] ];
    
       plResistances = [ [-ATCK_SPELL_COLD, -50 ],
                         [-ATCK_SPELL_ALL, 90 ],

@@ -19,16 +19,14 @@ resources:
    iceelemental_name_rsc = "ice golem"
    iceelemental_icon_rsc = iceleme.bgf
    iceelemental_desc_rsc = \
-      "Ice Elemental"
+      "A penetrating cold wafts over you from this creature, chilling you to"
+      " the bone.  Frost coats the ground with each of its steps, and the very"
+      " air around it seems heavy with icy fog."
+      
    iceelemental_koc_name_rsc = "atzmochyal"
 
    iceelemental_dead_icon_rsc = icelemeX.bgf
    iceelemental_dead_name_rsc = "dead ice golem"
-
-   iceelemental_sound_hit = elem_atkh.wav
-   iceelemental_sound_miss = elem_atkm.wav
-   iceelemental_sound_death = elem_dth.wav
-   iceelemental_sound_aware = elem_awr.wav
 
 classvars:
 
@@ -41,11 +39,6 @@ classvars:
 
    viAttack_Spell = ATCK_SPELL_COLD
    
-   vrSound_hit = iceelemental_sound_hit
-   vrSound_miss = iceelemental_sound_miss
-   vrSound_aware = iceelemental_sound_aware
-   vrSound_death = iceelemental_sound_death
-
 properties:
 
    piAnimation = ANIM_NONE

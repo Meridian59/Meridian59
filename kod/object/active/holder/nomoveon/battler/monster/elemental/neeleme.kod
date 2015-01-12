@@ -19,16 +19,14 @@ resources:
    neruelemental_name_rsc = "neru golem"
    neruelemental_icon_rsc = neeleme.bgf
    neruelemental_desc_rsc = \
-      "Nerudite Elemental"
+      "This creature’s imposing stature speaks of raw power and strength.  Its"
+      " body gleams with a green, metallic sheen.  A sound like drawn steel"
+      " accompanies its every movement."
+      
    neruelemental_koc_name_rsc = "atzmochner"
 
    neruelemental_dead_icon_rsc = neelemeX.bgf
    neruelemental_dead_name_rsc = "dead nerudite golem"
-
-   neruelemental_sound_hit = elem_atkh.wav
-   neruelemental_sound_miss = elem_atkm.wav
-   neruelemental_sound_death = elem_dth.wav
-   neruelemental_sound_aware = elem_awr.wav
 
 classvars:
 
@@ -41,11 +39,6 @@ classvars:
 
    viAttack_type = ATCK_WEAP_NERUDITE
    
-   vrSound_hit = neruelemental_sound_hit
-   vrSound_miss = neruelemental_sound_miss
-   vrSound_aware = neruelemental_sound_aware
-   vrSound_death = neruelemental_sound_death
-
 properties:
 
    piAnimation = ANIM_NONE

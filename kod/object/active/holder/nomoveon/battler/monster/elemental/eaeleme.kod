@@ -19,16 +19,14 @@ resources:
    earthelemental_name_rsc = "earth golem"
    earthelemental_icon_rsc = earthele.bgf
    earthelemental_desc_rsc = \
-      "Earth Elemental"
+      "A creature of living earth, this towering monster stalks toward you,"
+      " causing the ground to shake with every step.  Its every move sounds"
+      " like grinding stone, and the aroma of fresh soil fills your nostrils."
+      
    earthelemental_koc_name_rsc = "atzmochzhu"
 
    earthelemental_dead_icon_rsc = eartheleX.bgf
    earthelemental_dead_name_rsc = "dead earth golem"
-
-   earthelemental_sound_hit = elem_atkh.wav
-   earthelemental_sound_miss = elem_atkm.wav
-   earthelemental_sound_death = elem_dth.wav
-   earthelemental_sound_aware = elem_awr.wav
 
 classvars:
 
@@ -41,11 +39,6 @@ classvars:
 
    viAttack_Spell = ATCK_SPELL_QUAKE
    
-   vrSound_hit = earthelemental_sound_hit
-   vrSound_miss = earthelemental_sound_miss
-   vrSound_aware = earthelemental_sound_aware
-   vrSound_death = earthelemental_sound_death
-
 properties:
 
    piAnimation = ANIM_NONE

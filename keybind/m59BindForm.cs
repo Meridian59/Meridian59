@@ -117,7 +117,7 @@ namespace m59bind
             else
                 checkBoxDynamicLighting.Checked = false;
 
-            if (m59BindProgram.GetIni(configFile, "config", "softwarerendering", "false") == "true")
+            if (m59BindProgram.GetIni(configFile, "config", "softwarerenderer", "false") == "true")
                 checkBoxSoftwareRenderer.Checked = true;
             else
                 checkBoxSoftwareRenderer.Checked = false;
@@ -194,7 +194,7 @@ namespace m59bind
             m59BindProgram.GetIni(configFile, "config", "alwaysrun", "true");
             m59BindProgram.GetIni(configFile, "config", "attackontarget", "false");
             m59BindProgram.GetIni(configFile, "config", "dynamiclighting", "true");
-            m59BindProgram.GetIni(configFile, "config", "softwarerendering", "false");
+            m59BindProgram.GetIni(configFile, "config", "softwarerenderer", "false");
 
             configChanged = false;
         }
@@ -313,11 +313,11 @@ namespace m59bind
 
             if (checkBoxSoftwareRenderer.Checked)
             {
-                m59BindProgram.WriteIni(configFile, "config", "softwarerendering", "true");
+                m59BindProgram.WriteIni(configFile, "config", "softwarerenderer", "true");
             }
             else
             {
-                m59BindProgram.WriteIni(configFile, "config", "softwarerendering", "false");
+                m59BindProgram.WriteIni(configFile, "config", "softwarerenderer", "false");
             }
         }
 

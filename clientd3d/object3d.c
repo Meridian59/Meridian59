@@ -333,7 +333,12 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    //palette = GetLightPalette(dos->distance, rand() % 60 + 1, FINENESS);
 
    d.palette = palette;
-   d.drawingtype = dos->drawingtype | (dos->effect);
+   d.flags  = dos->flags;
+   d.drawingtype = dos->drawingtype; // had | dos->effect here
+   d.minimapflags  = dos->minimapflags;
+   d.namecolor = dos->namecolor;
+   d.objecttype = dos->objecttype;
+   d.moveontype = dos->moveontype;
    d.translation = dos->translation;
    d.secondtranslation = dos->secondtranslation;
    rowTimesMAXX = starty * MAXX;

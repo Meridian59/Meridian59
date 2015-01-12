@@ -419,7 +419,7 @@ static void AddObjects(room_type *room)
       dx = r->motion.x - viewer_x;
       dy = r->motion.y - viewer_y;
       dist = GetDistance(dx,dy);
-      if (dist <= 0 || (dist < MIN_DISTANCE && ObjectMoveonType(r->obj) == OF_MOVEON_YES))
+      if (dist <= 0 || (dist < MIN_DISTANCE && r->obj.moveontype == OF_MOVEON_YES))
 	continue;
       
       /* compute angle that object is viewed at */

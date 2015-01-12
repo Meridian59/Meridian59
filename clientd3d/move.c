@@ -655,7 +655,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
       dx = abs(r->motion.x - *new_x);
       dy = abs(r->motion.y - *new_y);
       
-      switch (ObjectMoveonType(r->obj))
+      switch (r->obj.moveontype)
       {
       case OF_MOVEON_NOTIFY:
          if ((dx > MIN_HOTPLATE_DIST) || (dy > MIN_HOTPLATE_DIST))

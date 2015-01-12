@@ -365,9 +365,9 @@ enum {
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
 
-#define OF_FLICKERING    0x00010000    // For players or objects if holding a flickering light.
-#define OF_FLASHING      0x00020000    // For players or objects if flashing with light.
-#define OF_BOUNCING      0x00040000    // If both flags on then object is bouncing
+#define OF_BOUNCING      0x00010000    // If both flags on then object is bouncing
+#define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
+#define OF_FLASHING      0x00040000    // For players or objects if flashing with light.
 #define OF_PHASING       0x00080000    // For players or objects if phasing translucent/solid.
 #define GetItemFlags(flags)   ((flags))
 

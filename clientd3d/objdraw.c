@@ -45,7 +45,7 @@ DrawingLoop drawing_loops[NUM_DRAW_EFFECTS] = {
 };
 
 /************************************************************************/
-#define INVISIBLE_MAGNITUDE 3   // Size of distortion for invisibility effect
+#define INVISIBLE_MAGNITUDE 1   // Size of distortion for invisibility effect
 void DrawObjectInvisible(ObjectRowData *d)
 {
 	BYTE *copy_ptr;
@@ -60,26 +60,8 @@ void DrawObjectInvisible(ObjectRowData *d)
 	xinc = d->xinc;
 	row_bits = d->obj_bits;
 	copy_ptr = start;
-	if (rand() % 2 == 0)
-	{
-		if (d->ysize > 2 * INVISIBLE_MAGNITUDE)
-			if (d->row + INVISIBLE_MAGNITUDE >= d->ysize)
-				copy_ptr -= INVISIBLE_MAGNITUDE * d->xsize;
-			else copy_ptr += INVISIBLE_MAGNITUDE * d->xsize;
-			while (start <= end)
-			{
-				/* Don't draw transparent pixels */
-				index = *(row_bits + (x >> FIX_DECIMAL));
-				if (index != TRANSPARENT_INDEX)
-					*start = *(copy_ptr + INVISIBLE_MAGNITUDE);
-				
-				/* Move to next column of screen */
-				start++;
-				copy_ptr++;
-				x += xinc;
-			}
-	}
-	else
+
+	if (rand() % 8 == 0)
 	{
 		if (d->ysize > 2 * INVISIBLE_MAGNITUDE)
 			if (d->row <= INVISIBLE_MAGNITUDE)
@@ -91,6 +73,25 @@ void DrawObjectInvisible(ObjectRowData *d)
 				index = *(row_bits + (x >> FIX_DECIMAL));
 				if (index != TRANSPARENT_INDEX)
 					*start = *(copy_ptr - INVISIBLE_MAGNITUDE);
+				
+				/* Move to next column of screen */
+				start++;
+				copy_ptr++;
+				x += xinc;
+			}
+	}
+	else
+	{
+		if (d->ysize > 2 * INVISIBLE_MAGNITUDE)
+			if (d->row + INVISIBLE_MAGNITUDE >= d->ysize)
+				copy_ptr -= INVISIBLE_MAGNITUDE * d->xsize;
+			else copy_ptr += INVISIBLE_MAGNITUDE * d->xsize;
+			while (start <= end)
+			{
+				/* Don't draw transparent pixels */
+				index = *(row_bits + (x >> FIX_DECIMAL));
+				if (index != TRANSPARENT_INDEX)
+					*start = *(copy_ptr + INVISIBLE_MAGNITUDE);
 				
 				/* Move to next column of screen */
 				start++;

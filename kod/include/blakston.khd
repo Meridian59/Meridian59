@@ -73,9 +73,9 @@
    SAFETY_YES        = 0x00002000
    SAFETY_NO         = 0
 
-   OF_FLICKERING     = 0x00010000
-   OF_FLASHING       = 0x00020000
-   OF_BOUNCING       = 0x00040000
+   OF_BOUNCING       = 0x00010000
+   OF_FLICKERING     = 0x00020000
+   OF_FLASHING       = 0x00040000
    OF_PHASING        = 0x00080000
 
    % Drawing effects flags, separate from the boolean object flags.

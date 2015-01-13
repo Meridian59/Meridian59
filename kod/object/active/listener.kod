@@ -29,7 +29,7 @@ resources:
 classvars:
 
    viListenToEmotes = TRUE  %% toggle this if we want to ignore Emotes in the future.
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    vrIcon = Listener_icon_rsc
 
 properties:

@@ -280,10 +280,10 @@ messages:
    {
       if piAnimation = ANIM_NONE
       {
-         return BATTLER_YES;
+         return OF_ATTACKABLE;
       }
 
-      return BATTLER_YES | OF_BOUNCING;
+      return OF_ATTACKABLE | OF_BOUNCING;
    }
 
    CanMorphTo()

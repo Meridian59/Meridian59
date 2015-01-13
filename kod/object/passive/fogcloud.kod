@@ -25,7 +25,7 @@ classvars:
    vrName = fogcloud_name_rsc
    vrIcon = fogcloud_icon_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    vrDesc = fogcloud_desc_rsc
 
 properties:

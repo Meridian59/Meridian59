@@ -5873,18 +5873,18 @@ messages:
 
       if NOT (piBehavior & AI_NPC)
       {
-         iFlags = iFlags | BATTLER_YES;
+         iFlags = iFlags | OF_ATTACKABLE;
       }
 
       if Send(Self,@MobIsSeller)
       {
-         iFlags = iFlags | BUY_YES;
+         iFlags = iFlags | OF_BUYABLE;
       }
 
       if (viAttributes & MOB_BUYER)
          OR (viAttributes & MOB_RECEIVE)
       {
-         iFlags = iFlags | OFFER_YES;
+         iFlags = iFlags | OF_OFFERABLE;
       }
 
       return iFlags;

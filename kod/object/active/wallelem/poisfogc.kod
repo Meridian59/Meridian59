@@ -41,7 +41,7 @@ classvars:
    vrIcon = PoisonFogCloud_icon_rsc
    vrDesc = PoisonFogCloud_desc_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = PoisonFog_dissipates
    vrUnaffectedMessage = PoisonFog_unaffected

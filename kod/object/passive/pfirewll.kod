@@ -32,7 +32,7 @@ classvars:
    vrName = PassiveWallofFire_name_rsc
    vrIcon = PassiveWallofFire_icon_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    vrdesc = PassiveWallofFire_desc_rsc
 
 properties:

@@ -766,11 +766,11 @@ messages:
    {
       local f;
 
-      f = LOOK_NO;
+      f = OF_NOEXAMINE;
 
       if pbHanging
       {
-         f = f | HANGING_YES;
+         f = f | OF_HANGING;
       }
 
       if pbFlicker
@@ -1340,7 +1340,7 @@ messages:
       local oDuplicate;
 
       oDuplicate = create(&OrnamentalObject,#type=piType,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
-      if send(self,@GetObjectFlags) & HANGING_YES
+      if send(self,@GetObjectFlags) & OF_HANGING
       {
          send(oDuplicate,@SetHanging,#value=TRUE);
       }

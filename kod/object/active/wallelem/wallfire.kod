@@ -38,7 +38,7 @@ classvars:
    vrIcon = WallofFire_icon_rsc
    vrdesc = WallofFire_desc_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = firewall_dissipates
    vrUnaffectedMessage = firewall_damage0

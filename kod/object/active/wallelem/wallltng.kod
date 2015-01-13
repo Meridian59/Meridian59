@@ -40,7 +40,7 @@ classvars:
    vrIcon = WallofLightning_icon_rsc
    vrdesc = WallofLightning_desc_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = lightningwall_dissipates
    vrUnaffectedMessage = lightningwall_damage0

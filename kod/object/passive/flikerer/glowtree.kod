@@ -32,7 +32,7 @@ classvars:
    vrDesc = GlowTree_desc
    vrIcon = GlowTree_icon
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    viMoveOn_type = MOVEON_NO
 
    viStart_frame = 1

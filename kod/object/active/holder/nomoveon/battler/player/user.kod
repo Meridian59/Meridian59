@@ -8272,12 +8272,12 @@ messages:
    {
       local iFlags, oIllusion;
 
-      iFlags = BATTLER_YES | USER_YES | OFFER_YES;
+      iFlags = OF_ATTACKABLE | OF_PLAYER | OF_OFFERABLE;
 
 
       if (piFlags & PFLAG_SAFETY)
       {
-         iFlags = iFlags | SAFETY_YES;
+         iFlags = iFlags | OF_SAFETY;
       }
 
       oIllusion = Send(self,@GetIllusionForm);
@@ -8287,13 +8287,13 @@ messages:
          AND oIllusion <> $
          AND IsClass(oIllusion,&Monster)
       {
-         iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
+         iFlags = (iFlags & ~OF_PLAYER & ~OF_OFFERABLE);
       }
       
       if Send(self,@IsPhasedOut)
       {
-         iFlags = iFlags | LOOK_NO;
-         iFlags = (iFlags & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
+         iFlags = iFlags | OF_NOEXAMINE;
+         iFlags = (iFlags & ~OF_ATTACKABLE & ~OF_OFFERABLE & ~OF_PLAYER);
       }
 
       % Get the flashing/flickering/phasing/bouncing flags.

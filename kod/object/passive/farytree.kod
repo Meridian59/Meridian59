@@ -122,10 +122,10 @@ messages:
       if piKarma_state = KVERY_GOOD
          OR piKarma_state = KGOOD
       {
-         return LOOK_NO | OF_FLICKERING;
+         return OF_NOEXAMINE | OF_FLICKERING;
       }
 
-      return LOOK_NO;
+      return OF_NOEXAMINE;
    }
 
    SendLightingInformation()

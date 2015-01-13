@@ -80,7 +80,7 @@ classvars:
 properties:
 
    vrName = Spellitem_name_rsc
-   viObject_flags = GETTABLE_YES
+   viObject_flags = OF_GETTABLE
 
    % Used by the item creation spells when making a spell item at a set power.
    piSpellPower = $

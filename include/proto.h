@@ -428,10 +428,10 @@ typedef enum {
 
 /* How objects allow or disallow motion onto their square */
 typedef enum {
-   OF_MOVEON_YES        = 0,   // Can always move on object
-   OF_MOVEON_NO         = 1,   // Can never move on object
-   OF_MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
-   OF_MOVEON_NOTIFY     = 3,
+   MOVEON_YES        = 0,   // Can always move on object
+   MOVEON_NO         = 1,   // Can never move on object
+   MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
+   MOVEON_NOTIFY     = 3,
 } moveon_type;
 
 /* Effect codes */

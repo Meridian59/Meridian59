@@ -35,7 +35,7 @@ classvars:
    vrIcon = ActiveSporeCloud_icon_rsc
    vrDesc = ActiveSporeCloud_desc_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = ActiveSporeCloud_dissipates
    vrUnaffectedMessage = ActiveSporeCloud_unaffected

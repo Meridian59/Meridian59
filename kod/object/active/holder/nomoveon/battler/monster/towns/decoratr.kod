@@ -160,7 +160,7 @@ classvars:
    viOccupation = MOB_ROLE_SCHOLAR
    viDefinite = ARTICLE_THE
 
-   viObject_flags = OFFER_YES
+   viObject_flags = OF_OFFERABLE
 
 properties:
 

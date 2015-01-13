@@ -114,7 +114,7 @@ BOOL Lagbox_Create()
 	pobjLagbox->minimapflags = 0;
 	pobjLagbox->namecolor = NC_OUTLAW;
 	pobjLagbox->objecttype = OT_NONE;
-	pobjLagbox->moveontype = OF_MOVEON_YES;
+	pobjLagbox->moveontype = MOVEON_YES;
 	dwLagboxLatency = s_adwLatencyMetric[0];
 
 	hwndLagbox = CreateWindow("button", "", WS_CHILD | BS_OWNERDRAW, 

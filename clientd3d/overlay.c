@@ -209,7 +209,7 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation,
    dos.minimapflags  = 0;
    dos.namecolor = 0;
    dos.objecttype = OT_NONE;
-   dos.moveontype = OF_MOVEON_YES;
+   dos.moveontype = MOVEON_YES;
    dos.cone     = &c;
    dos.distance = 1;
    dos.cutoff   = MAXY;

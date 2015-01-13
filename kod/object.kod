@@ -787,7 +787,7 @@ messages:
 
    SetNameColor(red=0,green=0,blue=0,rgb=$)
    "Can set the name color for any object. Currently, only objects "
-   "with USER_YES set to TRUE will display a name. Can change color "
+   "with OF_PLAYER set to TRUE will display a name. Can change color "
    "by red, green and blue value, or alternatively by rgb value."
    {
       if rgb <> $

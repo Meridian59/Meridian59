@@ -25,7 +25,7 @@ classvars:
    vrName = SporeCloud_name_rsc
    vrIcon = SporeCloud_icon_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    vrdesc = SporeCloud_desc_rsc
 
 properties:

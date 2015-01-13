@@ -92,7 +92,7 @@ messages:
 
    GetObjectFlags()
    {
-      return LOOK_NO;
+      return OF_NOEXAMINE;
    }
 
 

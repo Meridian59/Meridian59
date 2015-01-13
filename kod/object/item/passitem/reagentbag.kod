@@ -39,7 +39,7 @@ properties:
 
    plReagents = $
 
-   viObject_flags = CONTAINER_YES | GETTABLE_YES
+   viObject_flags = OF_CONTAINER | OF_GETTABLE
 
 messages:
 

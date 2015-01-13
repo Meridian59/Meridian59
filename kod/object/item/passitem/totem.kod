@@ -49,7 +49,7 @@ classvars:
 
 properties:
 
-   viObject_flags = GETTABLE_YES | LOOK_NO
+   viObject_flags = OF_GETTABLE | OF_NOEXAMINE
 
 messages:
 

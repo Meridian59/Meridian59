@@ -38,7 +38,7 @@ classvars:
 
    vrName = corpsenode_name_rsc
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
    viMoveOn_type = MOVEON_TELEPORTER
 
    viAnimationSpeed = 400

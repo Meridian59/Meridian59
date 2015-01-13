@@ -24,7 +24,7 @@ resources:
 
 classvars:
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    viMoveOn_type = MOVEON_NOTIFY
 
@@ -42,17 +42,17 @@ messages:
    {
       if NOT Send(Send(SYS,@GetSettings),@ShowHotPlates)
       {
-         return (LOOK_NO);
+         return (OF_NOEXAMINE);
       }
 
       % Used for debugging.
 
       if piHotPlateID = 1
       {
-         return (BATTLER_YES | USER_YES | LOOK_NO);
+         return (OF_ATTACKABLE | OF_PLAYER | OF_NOEXAMINE);
       }
 
-      return (BATTLER_YES | LOOK_NO);
+      return (OF_ATTACKABLE | OF_NOEXAMINE);
    }
 
    Constructor(hpid = 0)

@@ -105,7 +105,7 @@ messages:
    {
       if (piRoofState = STATE_ONROOF)
       {
-         return HANGING_YES | BATTLER_YES;
+         return OF_HANGING | OF_ATTACKABLE;
       }
 
       propagate;

@@ -144,7 +144,7 @@ messages:
       % Show up with a name and map location if we're "visible"
       if vrIcon <> DynamicLight_icon
       {
-         return (viObject_flags | BATTLER_YES | USER_YES);
+         return (viObject_flags | OF_ATTACKABLE | OF_PLAYER);
       }
 
       propagate;

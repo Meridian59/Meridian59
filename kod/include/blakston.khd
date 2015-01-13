@@ -47,31 +47,19 @@
    MOVEON_NOTIFY     = 3
 
    % Object flags for client.
-   % 0's are default value
-   USER_NO           = 0
-   USER_YES          = 0x00000004
-   BATTLER_NO        = 0
-   BATTLER_YES       = 0x00000008
-   GETTABLE_NO       = 0
-   GETTABLE_YES      = 0x00000010
+   OF_PLAYER         = 0x00000004
+   OF_ATTACKABLE     = 0x00000008
+   OF_GETTABLE       = 0x00000010
    % careful--only one's user is ALLOWED to put/get in.
-   CONTAINER_NO      = 0
-   CONTAINER_YES     = 0x00000020
-   LOOK_YES          = 0
-   LOOK_NO           = 0x00000040
-   ITEM_MAGIC_YES    = 0x00000080
-   ITEM_MAGIC_NO     = 0
-   HANGING_YES       = 0x00000100
-   OFFER_YES         = 0x00000200
-   OFFER_NO          = 0
-   BUY_YES           = 0x00000400
-   BUY_NO            = 0
-   ACTIVATE_YES      = 0x00000800
-   ACTIVATE_NO       = 0
-   APPLY_YES         = 0x00001000
-   APPLY_NO          = 0
-   SAFETY_YES        = 0x00002000
-   SAFETY_NO         = 0
+   OF_CONTAINER      = 0x00000020
+   OF_NOEXAMINE      = 0x00000040
+   OF_ITEM_MAGIC     = 0x00000080
+   OF_HANGING        = 0x00000100
+   OF_OFFERABLE      = 0x00000200
+   OF_BUYABLE        = 0x00000400
+   OF_ACTIVATABLE    = 0x00000800
+   OF_APPLYABLE      = 0x00001000
+   OF_SAFETY         = 0x00002000
 
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000

@@ -31,7 +31,7 @@ classvars:
    vrIcon = kocatanbrazier_icon_rsc
    vrDesc = kocatanbrazier_desc_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    % Lighting flags.  Default "on" and wavering flags
    viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING

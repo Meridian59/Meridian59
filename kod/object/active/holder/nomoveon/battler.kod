@@ -134,7 +134,7 @@ resources:
 
 classvars:
 
-   viObject_flags = BATTLER_YES
+   viObject_flags = OF_ATTACKABLE
 
    viBattler_level = 50
 

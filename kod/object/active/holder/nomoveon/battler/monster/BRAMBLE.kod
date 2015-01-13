@@ -62,7 +62,6 @@ classvars:
    viDifficulty = 4 
    viKarma = 0
    viDefault_behavior = AI_NOFIGHT | AI_NOMOVE
-   viObject_flags = BATTLER_YES
    viCashmin = 0
    viCashmax = 0
    vrSound_hit = $

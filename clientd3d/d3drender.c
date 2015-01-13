@@ -285,9 +285,9 @@ d3d_render_packet_new	*D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 												PDIB pDib, BYTE xLat0, BYTE xLat1, BYTE effect);
 float					D3DRenderObjectLightGetNearest(room_contents_node *pRNode);
 void					D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
-							Draw3DParams *params, int flags);
+							Draw3DParams *params, BYTE flags);
 void					D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params,
-							BOOL underlays, int flags);
+							BOOL underlays, BYTE flags);
 void					D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params);
 void					D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params);
 void					D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type overlays,
@@ -4260,10 +4260,9 @@ int D3DRenderIsEnabled(void)
 
 void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags)
 {
-	xlat	*pXLat0, *pXLat1;
+	xlat	*pXLat0, *pXLat1, *pXLatGrey;
 	Color	*pPalette;
 	int		i;
-	BYTE	effect;
 
 	return;
 
@@ -4271,9 +4270,8 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags)
 	pXLat1 = FindStandardXlat(xlatID1);
 
 	pPalette = base_palette;
-	effect = flags;
 
-	switch (effect)
+	switch (flags)
 	{
 		case DRAWFX_DRAW_PLAIN:
 		case DRAWFX_DOUBLETRANS:
@@ -4316,11 +4314,24 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags)
 		case DRAWFX_DITHERINVIS:
 			for (i = 0; i < 256; i++)
 			{
-				pXLat0 = FindStandardXlat(xlatID0);
-				pXLat1 = FindStandardXlat(xlatID1);
-				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
-				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
-				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
+				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
+				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat0)].green;
+				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat0)].blue;
+
+				if (i == 254)
+					gPalette[i].peFlags = 0;
+				else
+					gPalette[i].peFlags = 255;
+			}
+		break;
+
+		case DRAWFX_DITHERGREY:
+			pXLatGrey = FindStandardXlat(XLAT_FILTERWHITE90);
+			for (i = 0; i < 256; i++)
+			{
+				gPalette[i].peRed = pPalette[fastXLAT(i, pXLatGrey)].red;
+				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLatGrey)].green;
+				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLatGrey)].blue;
 
 				if (i == 254)
 					gPalette[i].peFlags = 0;
@@ -4396,7 +4407,7 @@ void D3DRenderPaletteSet(UINT xlatID0, UINT xlatID1, BYTE flags)
 
 void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, BYTE flags)
 {
-	xlat	*pXLat0, *pXLat1;
+	xlat	*pXLat0, *pXLat1, *pXLatGrey;
 	Color	*pPalette;
 	int		i;
 	BYTE	effect;
@@ -4450,11 +4461,24 @@ void D3DRenderPaletteSetNew(UINT xlatID0, UINT xlatID1, BYTE flags)
 		case DRAWFX_DITHERINVIS:
 			for (i = 0; i < 256; i++)
 			{
-				pXLat0 = FindStandardXlat(xlatID0);
-				pXLat1 = FindStandardXlat(xlatID1);
-				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat1)].red;
-				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat1)].green;
-				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat1)].blue;
+				gPalette[i].peRed = pPalette[fastXLAT(i, pXLat0)].red;
+				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLat0)].green;
+				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLat0)].blue;
+
+				if (i == 254)
+					gPalette[i].peFlags = 0;
+				else
+					gPalette[i].peFlags = 255;
+			}
+		break;
+
+		case DRAWFX_DITHERGREY:
+			pXLatGrey = FindStandardXlat(XLAT_FILTERWHITE90);
+			for (i = 0; i < 256; i++)
+			{
+				gPalette[i].peRed = pPalette[fastXLAT(i, pXLatGrey)].red;
+				gPalette[i].peGreen = pPalette[fastXLAT(i, pXLatGrey)].green;
+				gPalette[i].peBlue = pPalette[fastXLAT(i, pXLatGrey)].blue;
 
 				if (i == 254)
 					gPalette[i].peFlags = 0;
@@ -6791,7 +6815,7 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 }
 
 void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
-							 Draw3DParams *params, int flags)
+							 Draw3DParams *params, BYTE flags)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -6987,6 +7011,8 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			bgra.a = D3DRENDER_TRANS50;
 		if (pRNode->obj.drawingtype == DRAWFX_DITHERINVIS)
 			bgra.a = D3DRENDER_TRANS50;
+		if (pRNode->obj.drawingtype == DRAWFX_DITHERGREY)
+			bgra.a = D3DRENDER_TRANS50;
 
 		for (i = 0; i < 4; i++)
 		{
@@ -7178,8 +7204,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 			pPacket->pMaterialFctn = &D3DMaterialObjectPacket;
 			pChunk = D3DRenderChunkNew(pPacket);
 			assert(pChunk);
-
-			pChunk->drawingtype = pRNode->obj.drawingtype | DRAWFX_TRANSLUCENT50;
+			pChunk->drawingtype = DRAWFX_TRANSLUCENT50;
 			pChunk->numIndices = 4;
 			pChunk->numVertices = 4;
 			pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -7259,7 +7284,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 }
 
 void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params,
-						   BOOL underlays, int flags)
+						   BOOL underlays, BYTE flags)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -7571,7 +7596,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 					pChunk = D3DRenderChunkNew(pPacket);
 					assert(pChunk);
 
-					pChunk->drawingtype = pRNode->obj.drawingtype;
+					pChunk->drawingtype = DRAWFX_TRANSLUCENT50;;
 					pChunk->numIndices = 4;
 					pChunk->numVertices = 4;
 					pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -7673,6 +7698,8 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 					if (pRNode->obj.drawingtype == DRAWFX_DITHERTRANS)
 						bgra.a = D3DRENDER_TRANS50;
 					if (pRNode->obj.drawingtype == DRAWFX_DITHERINVIS)
+						bgra.a = D3DRENDER_TRANS50;
+					if (pRNode->obj.drawingtype == DRAWFX_DITHERGREY)
 						bgra.a = D3DRENDER_TRANS50;
 
 					for (i = 0; i < 4; i++)
@@ -7894,7 +7921,7 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 						pChunk = D3DRenderChunkNew(pPacket);
 						assert(pChunk);
 
-						pChunk->drawingtype = pRNode->obj.drawingtype | DRAWFX_TRANSLUCENT50;
+						pChunk->drawingtype = DRAWFX_TRANSLUCENT50;
 						pChunk->numIndices = 4;
 						pChunk->numVertices = 4;
 						pChunk->numPrimitives = pChunk->numVertices - 2;
@@ -8238,6 +8265,8 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 			bgra.a = D3DRENDER_TRANS50;
 		if (pRNode->obj.drawingtype == DRAWFX_DITHERINVIS)
 			bgra.a = D3DRENDER_TRANS50;
+		if (pRNode->obj.drawingtype == DRAWFX_DITHERGREY)
+			bgra.a = D3DRENDER_TRANS50;
 
 		pChunk->xyz[0].x = pChunk->xyz[1].x = objArea.x;
 		pChunk->xyz[0].z = pChunk->xyz[3].z = objArea.y;
@@ -8488,6 +8517,8 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 			if (pRNode->obj.drawingtype == DRAWFX_DITHERTRANS)
 				bgra.a = D3DRENDER_TRANS50;
 			if (pRNode->obj.drawingtype == DRAWFX_DITHERINVIS)
+				bgra.a = D3DRENDER_TRANS50;
+			if (pRNode->obj.drawingtype == DRAWFX_DITHERGREY)
 				bgra.a = D3DRENDER_TRANS50;
 
 			for (i = 0; i < 4; i++)
@@ -9764,7 +9795,10 @@ Bool D3DMaterialObjectChunk(d3d_render_chunk_new *pChunk)
 	else if (pChunk->drawingtype == DRAWFX_DITHERINVIS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
-	else
+	else if (pChunk->drawingtype == DRAWFX_DITHERGREY)
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
+                                      D3DRENDER_TRANS50 - 1);
+   else
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, TEMP_ALPHA_REF);
 
 	if (pChunk->isTargeted)
@@ -9873,7 +9907,9 @@ Bool D3DMaterialObjectInvisibleChunk(d3d_render_chunk_new *pChunk)
 	else if (pChunk->drawingtype == DRAWFX_DITHERINVIS)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
                                       D3DRENDER_TRANS50 - 1);
-   
+	else if (pChunk->drawingtype == DRAWFX_DITHERGREY)
+		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF,
+                                      D3DRENDER_TRANS50 - 1);
 	return TRUE;
 }
 

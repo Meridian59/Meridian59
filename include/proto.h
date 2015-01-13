@@ -385,6 +385,7 @@ enum {
    DRAWFX_DITHERTRANS   = 0x08,    // Dither (with two translates) 50% of pixels
    DRAWFX_DOUBLETRANS   = 0x09,    // Translate twice each pixel, plus lighting
    DRAWFX_SECONDTRANS   = 0x0A,    // Ignore per-overlay xlat and use only secondary xlat
+   DRAWFX_DITHERGREY    = 0x0B,    // Haze (dither with transparency) 50% of pixels, greyscale other 50%
 };
 
 // Minimap dot color bitfield. Now separate from object flags.

@@ -26,6 +26,7 @@ static void DrawObjectDoubleTranslate(ObjectRowData *d);
 static void DrawObjectDitherTranslate(ObjectRowData *d);
 static void DrawObjectSecondTranslate(ObjectRowData *d);
 static void DrawObjectDither50Invisible(ObjectRowData *d);
+static void DrawObjectDitherGrey(ObjectRowData *d);
 
 static xlat* pHaloXlat = NULL;
 
@@ -41,6 +42,7 @@ DrawingLoop drawing_loops[NUM_DRAW_EFFECTS] = {
 		DrawObjectDitherTranslate, // 50% dither between two translates
 		DrawObjectDoubleTranslate, // translate once, then twice
 		DrawObjectSecondTranslate, // ignore first translate, use second translate
+		DrawObjectDitherGrey,      // 50% dither invis, 50% greyscale
 		DrawObjectSilhouette,     // solid color index
 };
 
@@ -162,6 +164,41 @@ void DrawObjectDither50Invisible(ObjectRowData *d)
 	if (pXlat == NULL)
 	{
 		//debug(("DrawObjectDither50Invisible got unknown translation type %d\n", d->translation));
+		return;
+	}
+	
+	start = d->start_ptr;
+	end = d->end_ptr;
+	x = d->x;
+	xinc = d->xinc;
+	row_bits = d->obj_bits;
+	palette = d->palette;
+	
+	while (start <= end)
+	{
+		/* Don't draw transparent pixels or half of remaining pixels */
+		index = *(row_bits + (x >> FIX_DECIMAL));
+		if (index != TRANSPARENT_INDEX)
+			if ((d->row ^ (int)start) & 1)
+				*start = palette[fastXLAT(index, pXlat)];
+			
+			/* Move to next column of screen */
+			start++;
+			x += xinc;
+	}
+}
+/************************************************************************/
+void DrawObjectDitherGrey(ObjectRowData *d)
+{
+	xlat *pXlat = FindStandardXlat(XLAT_FILTERWHITE90);
+	BYTE index;
+	BYTE *start, *end;
+	int x, xinc;
+	BYTE *palette, *row_bits;
+	
+	if (pXlat == NULL)
+	{
+		//debug(("DrawObjectDitherGrey got unknown translation type %d\n", XLAT_FILTERWHITE90));
 		return;
 	}
 	

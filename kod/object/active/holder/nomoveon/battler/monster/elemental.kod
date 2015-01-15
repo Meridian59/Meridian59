@@ -104,6 +104,11 @@ messages:
       % if no body animation
       propagate;
    }
+   
+   CanMorphTo()
+   {
+      return false;
+   } 
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

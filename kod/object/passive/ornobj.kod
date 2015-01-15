@@ -766,7 +766,7 @@ messages:
    {
       local f;
 
-      f = OF_NOEXAMINE;
+      f = viObject_flags | piDrawEffectFlag | OF_NOEXAMINE;
 
       if pbHanging
       {

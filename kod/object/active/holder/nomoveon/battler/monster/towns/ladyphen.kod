@@ -529,7 +529,7 @@ messages:
    {
       local iFlags;
 
-      iFlags = 0;
+      iFlags = viObject_flags | piDrawEffectFlag;
 
       if piColor = COLOR_BLUE
       {

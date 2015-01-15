@@ -5869,7 +5869,7 @@ messages:
    {
       local iFlags;
 
-      iFlags = 0;
+      iFlags = viObject_flags | piDrawEffectFlag;
 
       if NOT (piBehavior & AI_NPC)
       {

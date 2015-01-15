@@ -3024,7 +3024,7 @@ messages:
    }
 
    StartEnchantment(what=$,who=$,time=$,state=$,lastcall=TRUE,
-                     addicon=TRUE,ltype=$)
+                     addicon=TRUE,ltype=$,bItemCast=FALSE)
    "Adds <what> to our enchantments, and creates a timer that will cause it "
    "to end."
    {
@@ -3061,6 +3061,7 @@ messages:
       % to our passive improvement list. ltype has the form:
       % [oSpell,Defensive,Offensive,Resistance]
       if who = self
+         AND NOT bItemCast
       {
          plPassiveImprovement = Cons(ltype,plPassiveImprovement);
       }

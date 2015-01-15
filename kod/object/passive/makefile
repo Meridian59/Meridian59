@@ -19,6 +19,6 @@ BOFS = tree.bof spell.bof boulder.bof news.bof trestype.bof arsign01.bof \
 	pltngwll.bof nectome.bof modlnode.bof wrmtrail.bof fogcloud.bof \
 	bell.bof dflycage.bof pillow.bof ghostitm.bof ventstem.bof shrinfog.bof \
 	psporec.bof evntsign.bof maillist.bof objectatt.bof roomflagicon.bof \
-   qormastree.bof snowman.bof
+   qormastree.bof snowman.bof heatshimmer.bof
 
 !include $(KODDIR)\kod.mak

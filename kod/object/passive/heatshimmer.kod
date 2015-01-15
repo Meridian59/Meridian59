@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HeatShimmer is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   heatshimmer_name_rsc = "shimmer"
+   heatshimmer_icon_rsc = grd02101.bgf
+   heatshimmer_desc_rsc = "This wall shimmers elusively."
+
+classvars:
+   vrName = heatshimmer_name_rsc
+   vrIcon = heatshimmer_icon_rsc
+   vrDesc = heatshimmer_desc_rsc
+
+properties:
+
+   piDrawFx = DRAWFX_INVISIBLE
+
+messages:
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      return OF_NOEXAMINE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

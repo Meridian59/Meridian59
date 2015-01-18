@@ -707,6 +707,8 @@ resources:
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
 
+   player_truced = "Shal'ille's magic compels you to respect the truce."
+
 classvars:
 
    viHand_space = 2
@@ -865,6 +867,10 @@ properties:
    % List of enchantments.
    % Each element is [ timer, object of spell, [optional state] ].
    plEnchantments = $
+   
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   plRadiusEnchantments = $
 
    % Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
@@ -1460,6 +1466,8 @@ messages:
 
    NewOwner(what = $)
    {
+      local i;
+   
       Send(self,@ResetGainFlags);
       
       % Are we moving somewhere "safe" or in a frenzy??
@@ -3130,6 +3138,127 @@ messages:
       return;
    }
 
+   AddRadiusEnchantment(what=$,iPower=0,caster=$)
+   "Adds what and power to plRadiusEnchantments, which carry out spell effects."
+   {
+      plRadiusEnchantments = Cons([what,iPower,caster],plRadiusEnchantments);
+      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what=$,iPower=0,caster=$)
+   "Removes <what> from plRadiusEnchantments."
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = caster
+         {
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
+               plRadiusEnchantments);
+      }
+
+      return;
+   }
+   
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(Nth(i,1), byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,2) > Nth(oHighest,2)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
+   }
+
    AddAttackModifier(what = $)
    "Adds <what> to plAttack_modifiers, which can modify attack strength and damage."
    {
@@ -3554,11 +3683,11 @@ messages:
       return TRUE;
    }
 
-   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
+   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE, spell_obj=$)
    "Will not let a person attack someone who isnt pkill_enabled."
    "Wll not let a person who isnt pkill_enabled attack another person."
    {
-      local oRoom;
+      local oRoom, i;
       
       % Default location to check is where we are.
       oRoom = poOwner;
@@ -3573,7 +3702,7 @@ messages:
 
       % Make sure room allows the attack. Check if room has special combat affects.
       if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
-                  #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#report=report)
       {
          return FALSE;
       }
@@ -3693,6 +3822,31 @@ messages:
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report)
       {
          return FALSE;
+      }
+
+      % Here we would allow the attack, time to check for Truce
+      % Let Truce itself return true to avoid issues
+      if spell_obj <> $
+         AND IsClass(spell_obj,&Truce)
+      {
+         return TRUE;
+      }
+      else
+      {
+         if (Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
+         {
+            if IsClass(victim,&Monster)
+               OR (IsClass(victim,&User)
+                   AND Send(victim,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
+            {
+               if spell_obj = $
+                  AND report
+               {
+                  Send(self,@MsgSendUser,#message_rsc=player_truced);
+               }
+               return FALSE;
+            }
+         }
       }
 
       % Stop any rescue attempts if the user makes an attack.
@@ -3901,7 +4055,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
+      local iRange, lWindsState, lSandstormState;
 
       % Can't target self.
       if what = self
@@ -4018,17 +4172,17 @@ messages:
       %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
-         oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
-         oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
+         lWindsState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Winds);
+         lSandStormState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&SandStorm);
          
-         if Send(poOwner,@IsEnchanted,#what=oWinds)
-            AND Send(oWinds,@WindsRuinShot,#who=self)
+         if lWindsState <> $
+            AND Send(Nth(lWindsState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lWindsState,2))
          {
             return FALSE;
          }
-
-         if Send(poOwner,@IsEnchanted,#what=oSandstorm)
-            AND Send(oSandstorm,@WindsRuinShot,#who=self)
+         
+         if lSandStormState <> $
+            AND Send(Nth(lSandStormState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lSandStormState,2))
          {
             return FALSE;
          }
@@ -4168,7 +4322,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster, lMirthState, lMelancholyState;
 
       oWeapon = $;
 
@@ -4210,6 +4364,18 @@ messages:
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
+      }
+
+      lMirthState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+      if lMirthState <> $
+      {
+         iOffense = Send(Nth(lMirthState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+      }
+
+      lMelancholyState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+      if lMelancholyState <> $
+      {
+         iOffense = Send(Nth(lMelancholyState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),
@@ -4265,6 +4431,11 @@ messages:
       for i in plDefense_modifiers
       {
          iDefense = Send(i,@ModifyDefensePower,#who=self,#what=what,#defense_power=iDefense);
+      }
+      
+      for i in plRadiusEnchantments
+      {
+         iDefense = Send(Nth(i,1),@ModifyDefensePower,#attacker=what,#iPower=Nth(i,2),#caster=Nth(i,3),#defense_power=iDefense);
       }
 
       iDefense = iDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
@@ -4351,7 +4522,7 @@ messages:
    GetDamage(what = $, stroke_obj=$)
    {
       local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster;
+            oSpell, oMonster, lKillingFieldsState, lMirthState, lMelancholyState;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4401,7 +4572,25 @@ messages:
 
          Send(i,@WeaponHitTarget);
       }
-               
+
+      lKillingFieldsState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&KillingFields);
+      if lKillingFieldsState <> $
+      {
+         iDamageBonus = Send(Nth(lKillingFieldsState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+
+      lMirthState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+      if lMirthState <> $
+      {
+         iDamageBonus = Send(Nth(lMirthState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+
+      lMelancholyState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+      if lMelancholyState <> $
+      {
+         iDamageBonus = Send(Nth(lMelancholyState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+      
       iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),
                                          @GetFactionDamageBonus,#who=self);
 
@@ -4518,7 +4707,13 @@ messages:
             Send(i,@DefendingHit,#who=self,#what=what);
          }
       
-         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);                             
+         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
+
+         for i in plRadiusEnchantments
+         {
+            iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
+         }
+         
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 
          % Add attmods AFTER resistance/suscep mods.    
@@ -12298,6 +12493,8 @@ messages:
 
    SendLightingInformation()
    {
+      local oLightObject, iColor, iIntensity;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12312,6 +12509,26 @@ messages:
       {
          % A bit of a kludge.  Ideally, we should query the objects we are using
          %  to find out if any want to add lighting information to us.
+         if plRadiusEnchantments <> $
+         {
+            for oLightObject in plRadiusEnchantments
+            {
+               if Nth(oLightObject,3) = self
+               {
+                  if (piDrawFX & FLICKERING_YES)
+                  {
+                      iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
+                      iColor = Send(Nth(oLightObject,1),@GetLightColor);
+                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+                      AddPacket(1,iIntensity);
+                      AddPacket(2,iColor);
+
+                      return;
+                  }
+               }
+            }
+         }
+
          if (piDrawFX & FLICKERING_YES)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
@@ -12377,7 +12594,6 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

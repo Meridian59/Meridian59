@@ -1,0 +1,148 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SandStorm is RadiusEnchantment
+
+constants:
+
+   include blakston.khd
+
+   SANDSTORM_VIGOR_LOSS = 5          % 5 vigor / 10 sec
+   SANDSTORM_PERIOD = 10000          % damage every 15 secs
+   SANDSTORM_TIME = 120000           % 2 realtime minutes
+
+resources:
+
+   sandstorm_name_rsc = "sandstorm"
+   sandstorm_icon_rsc = isandsto.bgf
+   sandstorm_desc_rsc = \
+      "All the dust in the room is swept up into a swirling storm, "
+	   "making it harder and more strenuous to move and fight.  "
+	   "Also has a small chance to knock arrows out of the air.  "
+      "Requires orc teeth to cast."
+   
+   sandstorm_already_enchanted = "A sandstorm already rages here."
+
+   sandstorm_on = \
+      "From out of nowhere, swirling dust begins to needle into your skin, "
+	   "making it very difficult to breathe.  "
+	   "You feel yourself tiring."
+
+   sandstorm_off = "The air clears."
+   sandstorm_new_entrant = \
+      "The air is full of dust, making it very difficult to breathe. "
+	   "You feel yourself tiring."
+
+   sandstorm_hurts_you = "You are becoming exhausted from the buffeting winds of sand."
+   sandstorm_miss_rsc = "The powerful sandstorm snatches your shot away."
+   
+   Sandstorm_cast = "Swirling dust begins to needle into your skin, making it very difficult to breathe."
+   Sandstorm_starts = "%s calls upon the rage of Faren to bear utter tempest across the area!"
+   Sandstorm_ends = "The air clears."
+   Sandstorm_caster_ends = "The air clears."
+   Sandstorm_caster_enter = "Swirling dust begins to needle into your skin, making it very difficult to breathe."
+   Sandstorm_enter = "Swirling dust begins to needle into your skin, making it very difficult to breathe."
+   Sandstorm_leave = "The air around you clears."
+   
+   sandstorm_sound = fheat.wav
+
+classvars:
+
+   radius_ench_cast = Sandstorm_cast
+   radius_ench_starts = Sandstorm_starts
+   radius_ench_ends = Sandstorm_ends
+   radius_ench_caster_ends = Sandstorm_caster_ends
+   radius_ench_caster_enter = Sandstorm_caster_enter
+   radius_ench_enter = Sandstorm_enter
+   radius_ench_leave = Sandstorm_leave
+   
+   viSpell_num = SID_SANDSTORM
+
+   vrName = sandstorm_name_rsc
+   vrIcon = sandstorm_icon_rsc
+   vrDesc = sandstorm_desc_rsc
+
+   viSchool = SS_FAREN
+   viSpell_level = 5
+   viMana = 14
+   viChance_To_Increase = 35
+   viBaseRange = 10
+
+   vrSucceed_wav = sandstorm_sound
+
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+
+   viCasterPersist = TRUE
+   
+properties:
+
+   piOldAreaEnchStyle = TRUE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&OrcTooth,2],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      return Bound(80000+(iSpellPower*1000),80000,180000);
+   }
+
+   StartSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      If IsClass(who,&User)
+         AND iPower <> 0
+      {
+         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_SAND);
+         Send(who,@AddAim,#points=-(iPower/4));
+      }
+
+      return;
+   }
+   
+   EndSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      If IsClass(who,&User)
+         AND iPower <> 0
+      {
+         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_CLEARSAND);
+         Send(who,@AddAim,#points=(iPower/4));
+      }
+      return;
+   }
+
+   TryRuinShot(who=$,iSpellPower=0)
+   "Returns TRUE if it manages to knock down a shot."
+   {
+      local iMissChance;
+
+      % This is a bit less than Winds which is (iSpellpower/2 + 10), bound 25 to 60.
+      iMissChance = iSpellpower/3 + 10; 
+      iMissChance = bound(iMissChance,15,40);
+      if Random(1,100) < iMissChance
+      {
+         send(who,@MsgSendUser,#message_rsc=sandstorm_miss_rsc);
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

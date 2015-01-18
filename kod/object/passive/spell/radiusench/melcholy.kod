@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Melancholy is Jala
+Melancholy is RadiusEnchantment
 
 constants:
 
@@ -27,9 +27,25 @@ resources:
 
    Melancholy_on = "%s%s's melancholy song makes your heart feel heavy."
 
+   Melancholy_cast = "You begin to play a song of deep mourning."
+   Melancholy_starts = "%s begins to play a song of deep mourning."
+   Melancholy_ends = "The last notes of the sad song fade into echoes."
+   Melancholy_caster_ends = "Your sad song fades into echoes."
+   Melancholy_caster_enter = "The song reminds you of times gone by."
+   Melancholy_enter = "%s's melancholy song makes your heart feel heavy."
+   Melancholy_leave = "The last notes of the sad song fade from your awareness."
+
    Melancholy_song = ksong.mid
  
 classvars:
+
+   radius_ench_cast = Melancholy_cast
+   radius_ench_starts = Melancholy_starts
+   radius_ench_ends = Melancholy_ends
+   radius_ench_caster_ends = Melancholy_caster_ends
+   radius_ench_caster_enter = Melancholy_caster_enter
+   radius_ench_enter = Melancholy_enter
+   radius_ench_leave = Melancholy_leave
 
    vrName = Melancholy_name_rsc
    vrIcon = Melancholy_icon_rsc
@@ -46,7 +62,9 @@ classvars:
    viSpellExertion = 2      
    viChance_To_Increase = 25
 
-   viHarmful = FALSE
+   viAffectsEveryone = TRUE
+
+   viCasterPersist = TRUE
 
 properties:
 
@@ -63,89 +81,27 @@ messages:
       return;
    }
 
-   StartEnchantment(who = $)
-   "Starts enchantment effect on one player"
+   StartSpecialEffect(who=$,iPower=0,caster=$)
    {
-      local lState, oCaster, iSpellpower;
-
-      lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
-
-      % The caster is the second element of state.
-      oCaster = Nth(lState,2);
-
-      % Our spellpower is in the third element of state.
-      iSpellpower = Nth(lState,3);
-
-      if random(1,100) < iSpellPower
+      If IsClass(who,&User)
+         AND iPower <> 0
       {
-         Send(who,@SetAction,#action=UA_SAD);
-         Send(who,@MsgSendUser,#message_rsc=Melancholy_on,
-              #parm1=Send(oCaster,@GetCapDef),
-              #parm2=Send(oCaster,@GetName));
-         Send(who,@AddAttackModifier,#what=self);       
-      }
-      else
-      {
-         % No smiling during the sad song.
-         if Send(who,@GetAction) = UA_HAPPY
+         if random(1,100) < iPower
          {
-            Send(who,@SetAction,#action=UA_NORMAL);
+            Send(who,@SetAction,#action=UA_SAD);
+         }
+         else
+         {
+            % No smiling during the sad song.
+            if Send(who,@GetAction) = UA_HAPPY
+            {
+               Send(who,@SetAction,#action=UA_NORMAL);
+            }
          }
       }
-
-      propagate;
-   }
-
-   StartEnchantmentNewOccupant(who = $, state = $)
-   "Called on new occupants of the enchanted room."
-   {
-      Send(self,@StartEnchantment,#who=who,#state=state);
 
       return;
    }
-
-   EndRoomEnchantment(who = $, state = $)
-   "Called when user leaves the room."
-   {
-      Send(self,@RemoveEnchantment,#who=who);
-
-      propagate;
-   }
-
-   RemoveEnchantment(who=$)
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      if IsClass(who,&Player)
-      {
-         % We try to remove ourselves from everyone, even though it's possible
-         %  that not everyone was enchanted.
-         Send(who,@RemoveAttackModifier,#what=self);
-      }
-
-      propagate;
-   }
-
-   StartPeriodicEnchantment(where=$, state=$)
-   {
-      local lActive, i, oObject;
-
-      lActive = Send(where,@GetHolderActive);
-      for i in lActive
-      {
-         oObject = Send(where,@HolderExtractObject,#data=i);
-
-         % Affect NPCs in room.
-         if IsClass(oObject,&Monster)
-            AND (Send(oObject,@GetBehavior) & AI_NPC)
-         {
-            Send(oObject,@ChangeMood,#amount=-1);
-         }
-      }
-      
-      propagate;
-   }
-
-   % Stuff we handle to be an attack modifier.
 
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {

@@ -6,7 +6,7 @@
 
 DEPEND = ..\jala.bof
 BOFS = spelbane.bof warptime.bof manaconv.bof jig.bof hinder.bof \
-       invigor.bof restorat.bof rejuven.bof mirth.bof melcholy.bof \
+       invigor.bof restorat.bof rejuven.bof \
        crysmana.bof
 
 !include $(KODDIR)\kod.mak

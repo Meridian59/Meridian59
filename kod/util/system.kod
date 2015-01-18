@@ -400,6 +400,9 @@ properties:
 
    % What server-wide flags are we using?
    piServerFlags = 0
+   
+   % A master list of all spell-casting active objects
+   plSpellTotems = $
 
 messages:
 
@@ -514,6 +517,9 @@ messages:
 
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
+      
+      % Don't leave any active spellcasting objects
+      Send(self,@DeleteAllSpellTotems);
 
       Send(self,@RecreateSettings);
       Send(self,@RecreateNecromancerBalance);
@@ -6555,6 +6561,40 @@ messages:
          total = total + Send(i,@CleanBadMail);
       }
       return total;
+   }
+   
+   AddSpellTotemToServerList(oTotem=$)
+   {
+      if oTotem <> $
+         AND IsClass(oTotem,&RadiusEnchantmentTotem)
+      {
+         plSpellTotems = Cons(oTotem,plSpellTotems);
+      }
+      return;
+   }
+   
+   DeleteSpellTotemFromMasterList(oTotem=$)
+   {
+      if oTotem <> $
+         AND IsClass(oTotem,&RadiusEnchantmentTotem)
+         AND plSpellTotems <> $
+         AND FindListElem(plSpellTotems,oTotem) = 0
+      {
+         plSpellTotems = DelListElem(plSpellTotems,oTotem);
+      }
+      return;
+   }
+   
+   DeleteAllSpellTotems()
+   {
+      local i;
+
+      for i in plSpellTotems
+      {
+         Send(i,@Delete);
+      }
+
+      return;
    }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

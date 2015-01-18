@@ -4,7 +4,7 @@ TOPDIR=..
 !include $(TOPDIR)\common.mak
 
 SOURCEDIR = $(BLAKCOMPDIR)
-
+CFLAGS = $(CFLAGS) /wd4065
 LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 LIBS =
 
@@ -34,7 +34,6 @@ $(OUTDIR)\lexyy.c: {$(SOURCEDIR)}blakcomp.l {$(SOURCEDIR)}blakcomp.h
 	$(LEX) -o$(OUTDIR)\lexyy.c $(SOURCEDIR)\blakcomp.l
 
 $(OUTDIR)\blakcomp.tab.c $(OUTDIR)\blakcomp.tab.h: {$(SOURCEDIR)}blakcomp.y {$(SOURCEDIR)}blakcomp.h
-        set BISON_SIMPLE=$(SOURCEDIR)\bison.simple
 	$(YACC) $(SOURCEDIR)\blakcomp.y -o $(OUTDIR)\blakcomp.tab.c
 
 !include $(TOPDIR)\rules.mak

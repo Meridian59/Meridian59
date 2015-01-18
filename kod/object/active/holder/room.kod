@@ -3893,6 +3893,13 @@ messages:
 
       return FALSE;
    }
+   
+   IsRestrictedToMules()
+   "Returns if a zone is restricted to mules"
+   {
+      % Most zones are not restricted
+      return FALSE;
+   }
 
    DeleteWallsAroundBattler(who=$)
    "Deletes walls in a small radius around target battler."   

@@ -969,7 +969,6 @@ messages:
       {
          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
               #new_row=viTrap1_row,#new_col=viTrap1_col);
-
          propagate;
       }
 
@@ -1158,6 +1157,13 @@ messages:
    {
       % Don't allow portals into this room, bypassing puzzle
       return false;
+   }
+   
+   IsRestrictedToMules()
+   "Returns if a zone is restricted to mules"
+   {
+      % Most zones are not restricted
+      return TRUE;
    }
 
 end

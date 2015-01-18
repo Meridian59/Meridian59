@@ -299,6 +299,13 @@ messages:
 
       propagate;
    }
+   
+   IsRestrictedToMules()
+   "Returns if a zone is restricted to mules"
+   {
+      % Most zones are not restricted
+      return TRUE;
+   }
 
 
 end

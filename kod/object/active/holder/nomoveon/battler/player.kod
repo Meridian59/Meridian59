@@ -12291,6 +12291,7 @@ messages:
       piGuildRejoinTimestamp = time;
       piLast_restart_time = time;
       piTimeLastStomachUpdate = time;
+      piTimeAttackedPlayer = time;
 
       return;
    }

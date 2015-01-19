@@ -174,12 +174,12 @@ messages:
    {
       local iDamage, oSkill;
 
-      iDamage = Send(self,@GetMinDamage);
+      iDamage = Send(self,@GetMinDamage)*100;
 
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -193,12 +193,12 @@ messages:
    {
       local iDamage, oSkill;
       
-      iDamage = Send(self,@GetMaxDamage);
+      iDamage = Send(self,@GetMaxDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {

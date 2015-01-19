@@ -270,10 +270,10 @@ messages:
 
       damage = viMin_Damage;
       iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
-      damage = (damage * (iAbility+1)) / 100;
-      damage = Send(self,@DamageFactors,#damage=damage,#who=who);
+      damage = (damage * (iAbility+1));
+      damage = Send(self,@DamageFactors,#damage=damage,#who=who)/100;
       
-      return bound(damage,1,$);
+      return bound(damage,0,$);
    }
    
    FindMaxDamage(who=$)
@@ -282,10 +282,10 @@ messages:
 
       damage = viMax_Damage;
       iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
-      damage = (damage * (iAbility+1)) / 100;
-      damage = Send(self,@DamageFactors,#damage=damage,#who=who);
+      damage = (damage * (iAbility+1));
+      damage = Send(self,@DamageFactors,#damage=damage,#who=who)/100;
       
-      return bound(damage,1,$);
+      return bound(damage,0,$);
    }
 
    FindDamage(weapon_used=$,who=$,victim=$)

@@ -319,12 +319,12 @@ messages:
          }
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -362,12 +362,12 @@ messages:
          }
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -411,12 +411,12 @@ messages:
          return 0;
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -460,12 +460,12 @@ messages:
          return 0;
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {

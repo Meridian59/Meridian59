@@ -2633,10 +2633,11 @@ messages:
 
       if group = 1
       {
-         AddPacket(1,BP_STAT_GROUP, 1,group, 1,3);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,4);
          Send(self,@SendStatHealth);
          Send(self,@SendStatMana);
          Send(self,@SendStatVigor);
+         Send(self,@SendStatHPChance);
          SendPacket(poSession);
          
          return;
@@ -4331,12 +4332,12 @@ messages:
          string = psPlayerDescription;
       }
       
-      if StringContain(psPlayerDescription,"¶")
+      if StringContain(psPlayerDescription,"Â¶")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"¶")
+         while StringContain(psPlayerDescription,"Â¶")
          {
-            StringSubstitute(psPlayerDescription,"¶","");
+            StringSubstitute(psPlayerDescription,"Â¶","");
             iCount = iCount + 1;
             if iCount > 10
             {
@@ -6712,6 +6713,42 @@ messages:
                 4,iKarma_Send, 4,-100, 4,100, 4,iKarma_Send);
 
       return;
+   }
+   
+   SendStatHPChance()
+   {
+	local iHPChance_Send, highmark;
+
+	   highmark = Send(self,@GetHighMark);
+
+
+	   % (piGain_chance*100)/highmark = percent chance to gain HP
+
+	   if piGain_chance < 0
+	{
+	   iHPChance_Send = piGain_chance;
+	}
+	   else
+	   {
+	   	iHPChance_Send = bound(((piGain_chance*100)/highmark),1,100);
+	   }
+	% user_stat_hpgainchance = "Tougher Chance"
+	AddPacket(1,8, 4,user_stat_hpgainchance, 1,STAT_VALUE, 1,STAT_INTEGER,
+		  4,iHPChance_Send, 4,0, 4,100, 4,iHPChance_Send);
+
+	return;
+   }
+
+   DrawHPChance()
+   {
+	if pbLogged_on
+	{
+	   AddPacket(1,BP_STAT, 1,2);
+	   Send(self,@SendStatHPChance);
+	   SendPacket(poSession);
+	}
+
+	return;
    }
 
    DrawVigor()

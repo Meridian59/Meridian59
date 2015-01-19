@@ -28,7 +28,7 @@ properties:
    % each element of this list is a list, containing
    % the player, and a list of all of his stuff.
    plStored = $
-   piCapacity = 3000
+   piCapacity = 6000
 
 messages:
 
@@ -42,7 +42,7 @@ messages:
       if capacity <> $ { piCapacity = capacity; }
       piVault_num = vid;
 
-      propagate;      
+      propagate;
    }
 
    Delete()

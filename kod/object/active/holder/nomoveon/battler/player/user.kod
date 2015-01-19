@@ -140,6 +140,7 @@ resources:
    user_stat_mysticism = "Mysticism"
    user_stat_aim = "Aim"
    user_stat_karma = "Karma"
+   user_stat_capacity = "Weight Carried"
 
    user_stat_health = heal.bgf
    user_stat_mana = ankh.bgf
@@ -2416,6 +2417,7 @@ messages:
       {
          Send(what,@SendInventoryAnimation);
          Send(what,@SendInventoryOverlays);
+         Post(self,@DrawCapacity);
       }
       
       if show_type = SHOW_NORMAL
@@ -2646,7 +2648,7 @@ messages:
 
       if group = 2
       {
-         AddPacket(1,BP_STAT_GROUP, 1,group, 1,7);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,8);
 
          Send(self,@SendStatMight);
          Send(self,@SendStatIntellect);
@@ -2655,6 +2657,7 @@ messages:
          Send(self,@SendStatMysticism);
          Send(self,@SendStatAim);
          Send(self,@SendStatKarma);
+         Send(self,@SendStatCapacity);
          SendPacket(poSession);
          
          return;
@@ -5923,6 +5926,8 @@ messages:
          SendPacket(poSession);
       }
       
+      Post(self,@DrawCapacity);
+      
       propagate;
    }
 
@@ -5933,6 +5938,8 @@ messages:
          AddPacket(1,BP_INVENTORY_REMOVE,4,what);
          SendPacket(poSession);
       }
+      
+      Post(self,@DrawCapacity);
       
       propagate;
    }
@@ -6716,6 +6723,31 @@ messages:
       return;
    }
    
+   DrawCapacity()
+   {
+	if pbLogged_on
+	{
+	   AddPacket(1,BP_STAT,1,2);
+	   Send(self,@SendStatCapacity);
+	   SendPacket(poSession);
+	}
+
+	return;
+   }
+
+   SendStatCapacity()
+   {
+	local iCapacity_send, iMaxCapacity_send;
+
+	iCapacity_send = Send(self,@GetWeightHold);
+	iMaxCapacity_send = Send(self,@GetWeightMax);
+
+	AddPacket(1,8, 4,user_stat_capacity, 1,STAT_VALUE, 1,STAT_INTEGER,
+		  4,iCapacity_send, 4,0, 4,iMaxCapacity_send, 4,iCapacity_send);
+
+	return;
+   }
+   
    SendStatHPChance()
    {
 	local iHPChance_Send, highmark;
@@ -6733,18 +6765,19 @@ messages:
 	   {
 	   	iHPChance_Send = bound(((piGain_chance*100)/highmark),1,100);
 	   }
-	% user_stat_hpgainchance = "Tougher Chance"
-	AddPacket(1,8, 4,user_stat_hpgainchance, 1,STAT_VALUE, 1,STAT_INTEGER,
-		  4,iHPChance_Send, 4,0, 4,100, 4,iHPChance_Send);
+	   % user_stat_hpgainchance = "Tougher Chance"
 
-	return;
+	   AddPacket(1,4, 4,user_stat_hpgainchance, 1,STAT_VALUE, 1,STAT_INTEGER,
+		     4,iHPChance_Send, 4,-(piBase_Max_health/2), 4,30, 4,0);
+
+	   return;
    }
 
    DrawHPChance()
    {
 	if pbLogged_on
 	{
-	   AddPacket(1,BP_STAT, 1,2);
+	   AddPacket(1,BP_STAT, 1,1);
 	   Send(self,@SendStatHPChance);
 	   SendPacket(poSession);
 	}

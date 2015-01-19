@@ -7631,14 +7631,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 2;
+               gain = 3;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 1;
+               gain = 2;
                roll = TRUE;
             }
          }
@@ -7663,7 +7663,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
+         if piBase_Max_health = PKILL_ENABLE_HP
          {
             gain = gain + 1;
          }

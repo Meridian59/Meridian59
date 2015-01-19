@@ -9699,6 +9699,7 @@ messages:
       }
 
       Send(self,@DrawMight);
+      Post(self,@DrawCapacity);
       
       return piMightMod - iOrigMight;
    }

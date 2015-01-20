@@ -6597,47 +6597,36 @@ messages:
    {
       local iCount, iValue, iAngle;
 
-      iCount = 0;
-      iAngle = 0;
+      AddPacket(1,BP_RADIUS_SHOOT,4,Send(projectile,@GetProjectileIcon));
+      Send(projectile,@SendProjectileAnimation);
 
-      while iCount < number
+      % Send shooter.
+      AddPacket(4,who,1,speed,2,(flags & 0x000F),1,range,1,number);
+
+      if (flags & PROJ_FLAG_LIGHT_SOURCE)
       {
-         AddPacket(1,BP_RADIUS_SHOOT,4,Send(projectile,@GetProjectileIcon));
-         Send(projectile,@SendProjectileAnimation);
-
-         % Send shooter.
-         AddPacket(4,who,1,speed,2,(flags & 0x000F),1,range,4,iAngle);
-
-         if (flags & PROJ_FLAG_LIGHT_SOURCE)
+         % Lighting flags
+         iValue = Send(projectile,@GetProjectileLightFlags);
+         % Double-check for sanity
+         if iValue <> LIGHT_FLAG_NONE
          {
-            % Lighting flags
-            iValue = Send(projectile,@GetProjectileLightFlags);
-            % Double-check for sanity
-            if iValue <> LIGHT_FLAG_NONE
-            {
-               % Make sure projectiles are on and have the dynamic flag set.
-               iValue = iValue | LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
-               % Flags, Intensity, color
-               AddPacket(2,iValue,1,iLightIntensity,2,iLightColor);
-            }
-            else
-            {
-               % No lighting info
-               AddPacket(2,0);
-            }
+            % Make sure projectiles are on and have the dynamic flag set.
+            iValue = iValue | LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+            % Flags, Intensity, color
+            AddPacket(2,iValue,1,iLightIntensity,2,iLightColor);
          }
          else
          {
             % No lighting info
             AddPacket(2,0);
          }
-
-         SendPacket(poSession);
-         iCount = iCount + 1;
-
-         % Increment iAngle by 360 degrees/number of projectiles needed.
-         iAngle = iAngle + (360/number);
       }
+      else
+      {
+         % No lighting info
+         AddPacket(2,0);
+      }
+      SendPacket(poSession);
 
       propagate;
    }

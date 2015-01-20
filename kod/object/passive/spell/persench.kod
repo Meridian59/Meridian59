@@ -159,7 +159,7 @@ messages:
       propagate;
    }
 
-   CastSpell(who=$,iSpellPower=0,lTargets=$)
+   CastSpell(who=$,iSpellPower=0,lTargets=$,bItemCast=FALSE)
    {
 
       local oTarget, lType;
@@ -197,7 +197,8 @@ messages:
       Send(oTarget,@StartEnchantment,#what=self,
             #state=Send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,
             #target=oTarget),#time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
-            #lastcall=Send(self,@GetLastCall),#addicon=Send(self,@GetAddicon),#who=who,#ltype=lType);
+            #lastcall=Send(self,@GetLastCall),#addicon=Send(self,@GetAddicon),
+            #who=who,#ltype=lType,#bItemCast=bItemCast);
 
       % GetStateValue is sometimes (eg used for pre-enchantment behaviors,
       % who is the caster, target is the target (sometimes the same as who).

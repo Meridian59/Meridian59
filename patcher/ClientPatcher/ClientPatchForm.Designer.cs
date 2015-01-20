@@ -293,12 +293,14 @@
             // 
             // txtLog
             // 
+            this.txtLog.BackColor = System.Drawing.SystemColors.Control;
+            this.txtLog.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txtLog.Location = new System.Drawing.Point(6, 6);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(948, 468);
+            this.txtLog.Size = new System.Drawing.Size(1127, 468);
             this.txtLog.TabIndex = 11;
             // 
             // pbFileProgress
@@ -324,11 +326,14 @@
             this.tabControl1.Controls.Add(this.tabBrowser);
             this.tabControl1.Controls.Add(this.tabLog);
             this.tabControl1.Controls.Add(this.tabOptions);
+            this.tabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabControl1.Location = new System.Drawing.Point(208, 9);
+            this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1147, 506);
             this.tabControl1.TabIndex = 14;
+            this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
             // 
             // tabBrowser
             // 
@@ -338,7 +343,6 @@
             this.tabBrowser.Size = new System.Drawing.Size(1139, 480);
             this.tabBrowser.TabIndex = 2;
             this.tabBrowser.Text = "News";
-            this.tabBrowser.UseVisualStyleBackColor = true;
             // 
             // webControl
             // 

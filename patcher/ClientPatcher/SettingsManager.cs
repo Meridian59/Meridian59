@@ -11,6 +11,9 @@ namespace ClientPatcher
 {
     class SettingsManager
     {
+        //Where to download latest setting from
+        public const string SettingsUrl = "http://localhost/patchersettings/settings.php";
+
         private readonly string _settingsPath; //Path to JSON file settings.txt
         private readonly string _settingsFile;
 
@@ -22,38 +25,46 @@ namespace ClientPatcher
             _settingsFile = "\\settings.txt";
         }
 
+        public void Refresh()
+        {
+            LoadSettings();
+            GetNewSettings();
+            SaveSettings();
+        }
+
         public void GetNewSettings()
         {
             try
             {
                 var myClient = new WebClient();
+                
+                //Download the settings from the web, store them in a list.
                 var webSettingsList =
-                    JsonConvert.DeserializeObject<List<PatcherSettings>>(
-                        myClient.DownloadString("http://ww1.openmeridian.org/settings.txt")); //Download the settings from the web, store them in a list.
+                    JsonConvert.DeserializeObject<List<PatcherSettings>>(myClient.DownloadString(SettingsUrl)); 
 
-                foreach (PatcherSettings currentSettings in Servers) //Loop through loaded settings from settings.txt
+                foreach (PatcherSettings webProfile in webSettingsList) //Loop through loaded settings from settings.txt
                 {
-                    PatcherSettings settings = currentSettings;
-                    PatcherSettings temp = webSettingsList.First(i => i.Guid == settings.Guid); //Find the server loaded settings that match the local profile by Guid
-                    if (temp != null) //If null, we have profiles to add from the remote server
+                    //find the matching local profile by Guid
+                    PatcherSettings localProfile = Servers.FirstOrDefault(i => i.Guid == webProfile.Guid);
+                    //if a local match, update, else, add a new local profile
+                    if (localProfile != null) 
                     {
-                        if (currentSettings.PatchBaseUrl != temp.PatchBaseUrl ||
-                            currentSettings.PatchInfoUrl != temp.PatchInfoUrl ||
-                            currentSettings.ServerName != temp.ServerName) //If different
-                        {
-                            currentSettings.PatchBaseUrl = temp.PatchBaseUrl; //Update the server-side settings only
-                            currentSettings.PatchInfoUrl = temp.PatchInfoUrl;
-                            currentSettings.ServerName = temp.ServerName;
-                        }
-                        //Todo: add the new profilses from the server
+                        localProfile.PatchBaseUrl = webProfile.PatchBaseUrl;
+                        localProfile.PatchInfoUrl = webProfile.PatchInfoUrl;
+                        localProfile.ServerName = webProfile.ServerName;
+                        localProfile.FullInstallUrl = webProfile.FullInstallUrl;
+                        localProfile.AccountCreationUrl = webProfile.AccountCreationUrl;
+                    }
+                    else
+                    {
+                        Servers.Add(webProfile);
                     }
                 }
             }
             catch (Exception e)
             {
                 throw new InvalidOperationException("Unable to download settings from server." + e);
-            }
-            
+            }         
         }
 
         public void LoadSettings()
@@ -64,8 +75,6 @@ namespace ClientPatcher
 
                 Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd()); //convert
                 file.Close(); //close
-
-                //TODO GetNewSettings() goes here once the infrastructure to support it is in place
             }
             else
             {
@@ -74,7 +83,6 @@ namespace ClientPatcher
                 Servers.Add(new PatcherSettings(104));
                 Servers.Add(new PatcherSettings(1));
                 GrantAccess();
-                SaveSettings();
             }
         }
 

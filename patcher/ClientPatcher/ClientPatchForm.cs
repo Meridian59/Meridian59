@@ -38,8 +38,8 @@ namespace ClientPatcher
             btnPlay.Enabled = false;
 
             _settings = new SettingsManager();
-            _settings.LoadSettings();
-            _settings.SaveSettings();
+            //Loads settings.txt, updates from the web, saves
+            _settings.Refresh();
 
             _patcher = new ClientPatcher(_settings.GetDefault());
             _patcher.FileScanned += Patcher_FileScanned;
@@ -58,6 +58,7 @@ namespace ClientPatcher
 
             RefreshDdl();
         }
+
 
         void CheckForShortcut()
         {

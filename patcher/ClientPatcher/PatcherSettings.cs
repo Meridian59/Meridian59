@@ -5,9 +5,6 @@ namespace ClientPatcher
 {
     public class PatcherSettings
     {
-        //Where to download latest setting from
-        public const string SettingsUrl = "http://localhost/patchersettings/settings.php";
-
         public string ServerName { get; set; }     //What do we call this profile?
         public string PatchInfoUrl { get; set; }   //Where is the file containing md5 hashes to compare?
         public string ClientFolder { get; set; }   //Where is the local copy of the client?

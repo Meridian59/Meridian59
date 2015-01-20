@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Anonymity is Spell
+Anonymity is PersonalEnchantment
 
 constants:
 
@@ -23,33 +23,41 @@ resources:
    anonymity_name_rsc = "anonymity"
    anonymity_icon_rsc = ianonymo.bgf
    anonymity_desc_rsc = \
-      "Makes you indistinct, and unrecognizable to all but those who you'd like to know its you.  "
-      "Note that Shal'ille can not punish transgressors against you when you are anonymous.  "
-      "Requires rainbow ferns and firesand to cast."
+      "Makes you indistinct, and unrecognizable to all but those who you'd "
+      "like to know its you.  Note that Shal'ille can not punish "
+      "transgressors against you when you are anonymous.  "
+      "Requires two rainbow ferns and one firesand to cast."
+
    anonymity_sound = ranonym.wav
-   
+
 classvars:
 
-   viPersonal_ench = True
    vrName = anonymity_name_rsc
    vrIcon = anonymity_icon_rsc
    vrDesc = anonymity_desc_rsc
 
+   vrAlreadyEnchanted = anonymity_already_enchanted
+   vrEnchantment_On = anonymity_start
+   vrEnchantment_Off = anonymity_stop
+   vrSucceed = anonymity_start
+
    viSpell_num = SID_ANONYMITY
    viSchool = SS_RIIJA
    viSpell_level = 1
-   
+
    viMana = 15
-   viSpellExertion = 10      
+   viSpellExertion = 10
    viChance_To_Increase = 40
    viMeditate_ratio = 20
    viCast_time = 5000
-   
+
    viFlash = FLASH_GOOD_SELF
    vrSucceed_wav = anonymity_sound
 
+   vbCanCastOnOthers = FALSE
+
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -61,73 +69,51 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
+   GetStateValue(iSpellpower=$,who=$,target=$)
    {
-      return 0;
-   }
+      Post(target,@ResetPlayerFlagList);
 
-   CanPayCosts(who = $, lTargets = $)
-   {
-      if lTargets = $
-      {
-         lTargets = [who];
-      }
-      
-      % check for enchantment already applied
-      if Send(first(lTargets),@IsEnchanted,#what=self)
-      {
-         Send(first(lTargets),@MsgSendUser,#message_rsc=anonymity_already_enchanted,
-              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
-
-         return FALSE;
-      }
-
-      propagate;
-   }
-
-   CastSpell( who = $, iSpellPower = 1 )
-   {
-      local iduration;
-
-      % Spell lasts 1 to 10 minutes.
-      iduration = ((iSpellPower / 10) + 1) * 60000; 
-      
-      send(who,@StartEnchantment,#what=self,#time=iduration,#state=1);
-      send(who,@MsgSendUser,#message_rsc=anonymity_start);
-      send(who,@ResetPlayerFlagList);
-
-      propagate;
+      return 1;
    }
 
    SetSpellPlayerFlag(who=$)
    {
       Send(who,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
-      
+
       return;
    }
 
-   EndEnchantment( who = $, state = 0, report = TRUE )
+   EndEnchantment(who=$,state=0,report=TRUE)
    {
       local oRoom;
-      %% just in case something snuck by
+      %% Just in case something snuck by
 
-      send(who,@MsgSendUser,#message_rsc=anonymity_stop);
-      post(who,@ResetPlayerFlagList);
+      Send(who,@MsgSendUser,#message_rsc=anonymity_stop);
+      Post(who,@ResetPlayerFlagList);
 
-      oRoom = send(who,@GetOwner);
+      oRoom = Send(who,@GetOwner);
       if oRoom <> $
       {
          post(oRoom,@SomethingChanged,#what=who);
       }
-      
+
       return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % Spell lasts 1 to 10 minutes.
+      iDuration = ((iSpellPower / 10) + 1) * 60000;
+
+      return iDuration;
    }
 
    GetPotionClass()
    {
-      RETURN &AnonymityPotion;
+      return &AnonymityPotion;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

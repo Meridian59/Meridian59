@@ -6383,7 +6383,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lRadiusState, oSpell;
+      local iTime, oSpell, iSpellPower;
 
       if piMana > piMax_mana
       {
@@ -6398,13 +6398,18 @@ messages:
          iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                               #who=self,#hpregen=FALSE);
 
-         iTime = bound(iTime,1000,60000);
+         iTime = Bound(iTime,1000,60000);
 
          % Mana Focus will adjust mana regen time based on its spellpower.
-         oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
-         if Send(self,@IsEnchanted,#what=oSpell)
+         % Flag check for speed.
+         if piFlags & PFLAG_MANA_FOCUS
          {
-            iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
+            oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
+            % Spellpower is returned directly from this.
+            iSpellPower = Send(self,@GetEnchantedState,#what=oSpell);
+            % Mana Focus bounds this to 500-60000 ms.
+            iTime = Send(oSpell,@AdjustManaTime,#iSpellPower=iSpellPower,
+                           #time=iTime);
          }
       }
 

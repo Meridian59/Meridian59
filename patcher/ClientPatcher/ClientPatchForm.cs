@@ -114,8 +114,24 @@ namespace ClientPatcher
             txtServerName.Text = "";
             cbDefaultServer.Checked = false;
         }
+
+        private void CheckMeridianRunning()
+        {
+            Process[] pname = Process.GetProcessesByName("meridian");
+            if (pname.Length != 0)
+            { 
+                MessageBox.Show("Warning! You must close Meridian in order to patch successfully!\nPressing OK will close all instances of meridian!",
+                    "Meridian Already Running!!",MessageBoxButtons.OK);
+                foreach (Process process in pname)
+                {
+                    process.Kill();
+                }
+            }
+        }
+
         private void btnPatch_Click(object sender, EventArgs e)
         {
+            CheckMeridianRunning();
             StartScan();
         }
         private void btnAdd_Click(object sender, EventArgs e)

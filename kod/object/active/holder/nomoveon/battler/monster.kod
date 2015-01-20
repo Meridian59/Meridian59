@@ -124,11 +124,14 @@ resources:
    Lm_monster_healing = \
       "%s%s falls back to recover for a moment, then returns to the fight."
 
-   Lm_condition_good = "%s\n\n%s%s is injured, but is still relatively strong."
-   Lm_condition_fair = "%s\n\n%s%s is wounded, but is still relatively strong."
-   Lm_condition_poor = "%s\n\n%s%s is suffering from deep wounds."
+   Lm_condition_healthy = "%s\n\n%q"
+   Lm_condition_good = \
+      "%s\n\n%q\n\n%s%s is injured, but is still relatively strong."
+   Lm_condition_fair = \
+      "%s\n\n%q\n\n%s%s is wounded, but is still relatively strong."
+   Lm_condition_poor = "%s\n\n%q\n\n%s%s is suffering from deep wounds."
    Lm_condition_bad = \
-      "%s\n\n%s%s is weak and seems unlikely to survive much longer."
+      "%s\n\n%q\n\n%s%s is weak and seems unlikely to survive much longer."
 
    Lm_cant_remove_item = "You can't give %s%s away right now."
    Lm_mrcnt_not_selling = "You tried to buy something that is not being sold."
@@ -280,6 +283,7 @@ classvars:
    % templates, and copies are sold.
    vbSellFromInventory = FALSE
 
+   vrCondition_healthy = Lm_condition_healthy
    vrCondition_good = Lm_condition_good
    vrCondition_fair = Lm_condition_fair
    vrCondition_poor = Lm_condition_poor
@@ -4639,9 +4643,22 @@ messages:
    }
 
    ShowDesc(iHitPoint_Percent = $)
-   "Recently modified to show the condition of the monster."
+   "Adds max HP that can be gained from monster, followed by its condition."
    {
-      local iHit_Percent,rMonster_condition;
+      local iHit_Percent, rHitPoints, rMonster_condition;
+
+      ClearTempString();
+      if piBehavior & AI_NPC
+      {
+         AppendTempString(monster_nothing);
+      }
+      else
+      {
+         AppendTempString("This monster will take you to ");
+         AppendTempString(viLevel);
+         AppendTempString(" hitpoints.");
+      }
+      rHitPoints = GetTempString();
 
       if iHitPoint_Percent = $
       {
@@ -4654,9 +4671,12 @@ messages:
 
       if iHit_Percent > 80
       {
-         propagate;
+         rMonster_condition = vrCondition_healthy;
+         AddPacket(4,vrCondition_healthy,4,vrDesc,4,rHitPoints);
+
+         return;
       }
-      else 
+      else
       {
          if iHit_Percent > 60
          {
@@ -4682,8 +4702,8 @@ messages:
          }
       }
 
-      AddPacket(4,rMonster_Condition, 4,vrDesc, 4,Send(self,@GetCapDef),
-                4,Send(self,@GetName));
+      AddPacket(4,rMonster_Condition, 4,vrDesc, 4,rHitPoints,
+            4,Send(self,@GetCapDef), 4,Send(self,@GetName));
 
       return;
    }

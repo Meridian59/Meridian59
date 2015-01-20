@@ -67,7 +67,8 @@ namespace ClientPatcher
                     subControl.BackColor = _backColorEnabled;
                     subControl.ForeColor = _foreColorEnabled;
                 }
-                this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
+                tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
+                tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
             }
             CheckForShortcut();
 

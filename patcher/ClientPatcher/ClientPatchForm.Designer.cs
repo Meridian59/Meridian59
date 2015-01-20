@@ -323,10 +323,10 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabBrowser);
             this.tabControl1.Controls.Add(this.tabLog);
             this.tabControl1.Controls.Add(this.tabOptions);
-            this.tabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.tabControl1.Location = new System.Drawing.Point(208, 9);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
@@ -346,8 +346,9 @@
             // 
             // webControl
             // 
-            this.webControl.Location = new System.Drawing.Point(3, 3);
-            this.webControl.Size = new System.Drawing.Size(1133, 474);
+            this.webControl.Dock = System.Windows.Forms.DockStyle.Right;
+            this.webControl.Location = new System.Drawing.Point(6, 0);
+            this.webControl.Size = new System.Drawing.Size(1133, 480);
             this.webControl.Source = new System.Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea", System.UriKind.Absolute);
             this.webControl.TabIndex = 0;
             // 
@@ -392,16 +393,16 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1367, 527);
-            this.Controls.Add(this.btnCreateAccount);
+            this.Controls.Add(this.btnPlay);
+            this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.pbFileProgress);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ddlServer);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.pbProgress);
+            this.Controls.Add(this.btnCreateAccount);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ClientPatchForm";
             this.Text = "OpenMeridian Client Patcher";

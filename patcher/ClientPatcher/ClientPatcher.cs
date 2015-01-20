@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using PatchListGenerator;
@@ -65,10 +66,14 @@ namespace ClientPatcher
 
     class ClientPatcher
     {
+        const string CacheFile = "\\cache.txt";
+
         private string _patchInfoJason = "";
 
         public List<ManagedFile> PatchFiles; //Loaded from the web server at PatchInfoURL
-        public List<ManagedFile> LocalFiles; //Loaded with files that do NOT match
+        public List<ManagedFile> downloadFiles; //Loaded with files that do NOT match
+        private List<ManagedFile> cacheFiles; //Loaded with cache.txt to compare to PatchFiles
+
         public WebClient MyWebClient;
 
         bool _continueAsync;
@@ -108,16 +113,16 @@ namespace ClientPatcher
 
         public ClientPatcher()
         {
-            LocalFiles = new List<ManagedFile>();
+            downloadFiles = new List<ManagedFile>();
             MyWebClient = new WebClient();
         }
         public ClientPatcher(PatcherSettings settings)
         {
-            LocalFiles = new List<ManagedFile>();
+            downloadFiles = new List<ManagedFile>();
             MyWebClient = new WebClient();
             CurrentProfile = settings;
         }
-        public int DownloadJson()
+        public int DownloadPatchDefinition()
         {
             var wc = new WebClient();
             try
@@ -136,6 +141,11 @@ namespace ClientPatcher
         private bool IsNewClient()
         {
             return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.ini");
+        }
+
+        public bool HasCache()
+        {
+            return File.Exists(CurrentProfile.ClientFolder + CacheFile);
         }
 
         private void CreateFolderStructure()
@@ -193,7 +203,62 @@ Download=10016
             {
                 CreateNewClient();
             }
+            CompareFiles();
+        }
 
+        public void GenerateCache()
+        {
+            string fullpath = CurrentProfile.ClientFolder;
+            var scanner = new ClientScanner(fullpath);
+            scanner.ScanSource();
+            using (var sw = new StreamWriter(fullpath + CacheFile))
+            {
+                sw.Write(scanner.ToJson());
+            }    
+        }
+
+        public void SavePatchAsCache()
+        {
+            string fullpath = CurrentProfile.ClientFolder;
+            using (var sw = new StreamWriter(fullpath + CacheFile))
+            {
+                sw.Write(JsonConvert.SerializeObject(PatchFiles));
+            }
+        }
+
+        public void LoadCache()
+        {
+            if (HasCache())
+            {
+                StreamReader file = File.OpenText(CurrentProfile.ClientFolder + CacheFile); //Open the file
+
+                cacheFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(file.ReadToEnd()); //convert
+                file.Close(); //close
+            }
+
+        }
+
+        public void CompareCache()
+        {
+            foreach (ManagedFile patchFile in PatchFiles)
+            {
+                FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
+                ManagedFile currentFile =
+                    cacheFiles.FirstOrDefault(x => x.Basepath + x.Filename == patchFile.Basepath + patchFile.Filename);
+                if (currentFile == null) //file not in cache, download it.
+                    downloadFiles.Add(patchFile);
+                else
+                    if (patchFile.MyHash != currentFile.MyHash)
+                    {
+                        currentFile.Length = patchFile.Length;
+                        downloadFiles.Add(currentFile);
+                    }
+
+            }
+        }
+
+        public void CompareFiles()
+        {
             foreach (ManagedFile patchFile in PatchFiles)
             {
                 string fullpath = CurrentProfile.ClientFolder + patchFile.Basepath + patchFile.Filename;
@@ -202,26 +267,15 @@ Download=10016
                 localFile.ComputeHash();
                 if (patchFile.MyHash != localFile.MyHash)
                 {
-                    LocalFiles.Add(localFile);
+                    downloadFiles.Add(localFile);
                     localFile.Length = patchFile.Length;
                 }
             }
         }
 
-        public void GenerateCache()
-        {
-            string fullpath = CurrentProfile.ClientFolder;
-            var scanner = new ClientScanner(fullpath);
-            scanner.ScanSource();
-            using (var sw = new StreamWriter(fullpath + "\\cache.txt"))
-            {
-                sw.Write(scanner.ToJson());
-            }
-        }
-
         public void DownloadFiles()
         {
-            foreach (ManagedFile file in LocalFiles)
+            foreach (ManagedFile file in downloadFiles)
             {
                 string temp = file.Basepath.Replace("\\", "/");
                 try
@@ -238,7 +292,7 @@ Download=10016
         }
         public void DownloadFilesAsync()
         {
-            foreach (ManagedFile file in LocalFiles)
+            foreach (ManagedFile file in downloadFiles)
             {
                 string temp = file.Basepath.Replace("\\", "/");
                 StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));

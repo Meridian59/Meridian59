@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Deployment.Application;
 using System.Globalization;
 using System.Windows.Forms;
-using System.Net;
 using System.Diagnostics;
+using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
+using System.Deployment;
 
 namespace ClientPatcher
 {
@@ -20,6 +22,8 @@ namespace ClientPatcher
         SettingsManager _settings;
         ClientPatcher _patcher;
         ChangeType _changetype = ChangeType.None;
+
+        public bool showFileNames = false;
 
 
         public ClientPatchForm()
@@ -39,6 +43,15 @@ namespace ClientPatcher
             _patcher.StartedDownload += Patcher_StartedDownload;
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
+
+            
+
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                Version myVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion;
+                Text += string.Concat("- Version: v", myVersion);
+            }
+                
 
             RefreshDdl();
         }
@@ -76,7 +89,7 @@ namespace ClientPatcher
         }
         private void btnPatch_Click(object sender, EventArgs e)
         {
-            PreScan();
+            StartScan();
         }
         private void btnAdd_Click(object sender, EventArgs e)
         {
@@ -132,7 +145,8 @@ namespace ClientPatcher
         private void Patcher_FileScanned(object sender, ScanEventArgs e)
         {
             PbProgressPerformStep();
-            TxtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
+            if (showFileNames)
+                TxtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
         }
         private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
         {
@@ -171,16 +185,29 @@ namespace ClientPatcher
                     ddlServer.SelectedItem = profile.ServerName;
             }
         }
-        private void PreScan()
+        private void StartScan()
         {
             btnPatch.Enabled = false;
             ddlServer.Enabled = false;
             txtLog.AppendText("Downloading Patch Information....\r\n");
-            if (_patcher.DownloadJson() == 1)
+            if (_patcher.DownloadPatchDefinition() == 1)
             {
                 pbProgress.Value = 0;
                 pbProgress.Maximum = _patcher.PatchFiles.Count;
-                bgScanWorker.RunWorkerAsync(_patcher);
+                if (_patcher.HasCache())
+                {
+                    TxtLogAppendText("Using local cache....\r\n");
+                    showFileNames = false;
+                    _patcher.LoadCache();
+                    _patcher.CompareCache();
+                    PostScan();
+                }
+                else
+                {
+                    TxtLogAppendText("Scanning local files...\r\n");
+                    showFileNames = true;
+                    bgScanWorker.RunWorkerAsync(_patcher);
+                }
             }
             else
             {
@@ -190,10 +217,10 @@ namespace ClientPatcher
         }
         private void PostScan()
         {
-            if (_patcher.LocalFiles.Count > 0)
+            if (_patcher.downloadFiles.Count > 0)
             {
                 pbProgress.Value = 0;
-                pbProgress.Maximum = _patcher.LocalFiles.Count;
+                pbProgress.Maximum = _patcher.downloadFiles.Count;
                 pbFileProgress.Visible = true;
                 bgDownloadWorker.RunWorkerAsync(_patcher);
             }
@@ -205,7 +232,8 @@ namespace ClientPatcher
             pbProgress.Value = pbProgress.Maximum;
             pbFileProgress.Visible = true;
             pbFileProgress.Value = pbFileProgress.Maximum;
-            txtLog.AppendText("Patching Complete!\r\n");
+            TxtLogAppendText("Patching Complete!\r\nWriting File Cache.\r\n");
+            _patcher.SavePatchAsCache();
             btnPlay.Enabled = true;
         }
         
@@ -278,8 +306,9 @@ namespace ClientPatcher
         }
         #endregion
 
-        private void btnGenerateCache_Click(object sender, EventArgs e)
+        private void btnCacheGen_Click(object sender, EventArgs e)
         {
+            TxtLogAppendText("Generating Cache of local files, this may take a while..\r\n");
             _patcher.GenerateCache();
         }
 

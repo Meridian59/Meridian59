@@ -3743,6 +3743,7 @@ messages:
       Create(&KriipaTreasure);
       Create(&MolluskTreasure);
       Create(&ShadowbeastTreasure);
+      Create(&RatKingTreasure);
       
       return;
    }
@@ -4943,6 +4944,9 @@ messages:
       plMonsterTemplates = cons(create(&fungusbeast),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ghost),plMonsterTemplates);
       plMonsterTemplates = cons(create(&giantrat),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GiantRatKing),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GiantRatSoldier),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SmallRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&iceperson),plMonsterTemplates);
       plMonsterTemplates = cons(create(&blackmummy),plMonsterTemplates);
       plMonsterTemplates = cons(create(&mummy),plMonsterTemplates);

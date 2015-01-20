@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SmallRat is GiantRat
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   smallratkoc_name_rsc = "imixnapyij"
+   smallratname_rsc = "small rat"
+   smallraticon_rsc = ratsm.bgf
+   smallratdesc_rsc = \
+   "The small rat bares its yellow teeth in defiance.  A "
+   "smell of rot emanates from its filthy coat."
+
+   smallratdead_icon_rsc = ratsmX.bgf
+   smallratdead_name_rsc = "dead rat"
+
+   smallratsound_hit = rat_atkh.wav
+   smallratsound_miss = rat_atkm.wav
+   smallratsound_death = rat_dth.wav
+   smallratsound_aware = rat_awr.wav
+
+classvars:
+
+   vrKocName = smallratkoc_name_rsc
+   vrName = smallratname_rsc
+   vrIcon = smallraticon_rsc
+   vrDesc = smallratdesc_rsc
+   vrDead_icon = smallratdead_icon_rsc
+   vrDead_name = smallratdead_name_rsc
+
+   viTreasure_type = TID_NONE
+
+   viSpeed = SPEED_VERY_FAST
+   viAttack_type = ATCK_WEAP_CLAW
+   viAttributes = 0
+   viLevel = 10
+   viDifficulty = 5
+   viVisionDistance = 50
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viCashmin = 150
+   viCashmax = 250
+
+   vrSound_hit = smallratsound_hit
+   vrSound_miss = smallratsound_miss
+   vrSound_aware = smallratsound_aware
+   vrSound_death = smallratsound_death
+
+properties:
+
+messages:
+
+   Constructed()
+   {
+      propagate;
+   }
+   
+   IsAlly(target = $)
+   {
+      if IsClass(target,&GiantRat)
+      {
+         return TRUE;
+      }
+   
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

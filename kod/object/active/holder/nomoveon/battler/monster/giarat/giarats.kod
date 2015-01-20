@@ -1,0 +1,84 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GiantRatSoldier is GiantRat
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   giantratskoc_name_rsc = "napyijca"
+   giantratsname_rsc = "rat soldier"
+   giantratsicon_rsc = ratsold.bgf
+   giantratsdesc_rsc = \
+   "The giant rat soldier bares its yellow teeth in defiance.  A "
+   "smell of rot emanates from its filthy coat."
+
+   giantratsdead_icon_rsc = ratsoldX.bgf
+   giantratsdead_name_rsc = "dead rat soldier"
+
+   giantratssound_hit = rat_atkh.wav
+   giantratssound_miss = rat_atkm.wav
+   giantratssound_death = rat_dth.wav
+   giantratssound_aware = rat_awr.wav
+
+classvars:
+
+   vrKocName = giantratskoc_name_rsc
+   vrName = giantratsname_rsc
+   vrIcon = giantratsicon_rsc
+   vrDesc = giantratsdesc_rsc
+   vrDead_icon = giantratsdead_icon_rsc
+   vrDead_name = giantratsdead_name_rsc
+
+   viTreasure_type = TID_NONE
+
+   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_CLAW
+   viAttributes = 0
+   viLevel = 60
+   viDifficulty = 5
+   viVisionDistance = 1
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viCashmin = 150
+   viCashmax = 250
+
+   vrSound_hit = giantratssound_hit
+   vrSound_miss = giantratssound_miss
+   vrSound_aware = giantratssound_aware
+   vrSound_death = giantratssound_death
+
+properties:
+
+messages:
+
+   Constructed()
+   {
+      piHit_Points = 200 * 100;
+      piMax_Hit_Points = 200;                  
+                        
+      propagate;
+   }
+
+   IsAlly(target = $)
+   {
+      if IsClass(target,&GiantRat)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

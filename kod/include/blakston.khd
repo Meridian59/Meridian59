@@ -1627,6 +1627,8 @@
    TID_MOLLUSK       = 56
    TID_SHADOWBEAST   = 57
 
+   TID_RAT_KING      = 58
+   
    %%% English articles
 
    ARTICLE_NONE = 0

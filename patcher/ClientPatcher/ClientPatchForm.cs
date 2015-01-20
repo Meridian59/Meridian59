@@ -358,7 +358,7 @@ namespace ClientPatcher
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
         {
-            webControl.Source = new Uri("http://ww1.openmeridian.org/103/acctcreate.php");
+            webControl.Source = new Uri(_patcher.CurrentProfile.AccountCreationUrl); 
         }
 
         

@@ -58,21 +58,21 @@
             this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
             this.bgDownloadWorker = new System.ComponentModel.BackgroundWorker();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabBrowser = new System.Windows.Forms.TabPage();
+            this.webControl = new Awesomium.Windows.Forms.WebControl(this.components);
             this.tabLog = new System.Windows.Forms.TabPage();
             this.tabOptions = new System.Windows.Forms.TabPage();
-            this.tabBrowser = new System.Windows.Forms.TabPage();
-            this.webControl1 = new Awesomium.Windows.Forms.WebControl(this.components);
-            this.webControl2 = new Awesomium.Windows.Forms.WebControl(this.components);
+            this.btnCreateAccount = new System.Windows.Forms.Button();
             this.groupProfileSettings.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tabBrowser.SuspendLayout();
             this.tabLog.SuspendLayout();
             this.tabOptions.SuspendLayout();
-            this.tabBrowser.SuspendLayout();
             this.SuspendLayout();
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(15, 224);
+            this.pbProgress.Location = new System.Drawing.Point(15, 426);
             this.pbProgress.Name = "pbProgress";
             this.pbProgress.Size = new System.Drawing.Size(187, 32);
             this.pbProgress.Step = 1;
@@ -80,7 +80,7 @@
             // 
             // btnPlay
             // 
-            this.btnPlay.Location = new System.Drawing.Point(15, 262);
+            this.btnPlay.Location = new System.Drawing.Point(15, 464);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(187, 46);
             this.btnPlay.TabIndex = 1;
@@ -118,7 +118,7 @@
             // 
             // btnPatch
             // 
-            this.btnPatch.Location = new System.Drawing.Point(15, 134);
+            this.btnPatch.Location = new System.Drawing.Point(15, 336);
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(187, 46);
             this.btnPatch.TabIndex = 7;
@@ -130,7 +130,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(10, 102);
+            this.label3.Location = new System.Drawing.Point(10, 304);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(174, 29);
             this.label3.TabIndex = 8;
@@ -303,7 +303,7 @@
             // 
             // pbFileProgress
             // 
-            this.pbFileProgress.Location = new System.Drawing.Point(15, 186);
+            this.pbFileProgress.Location = new System.Drawing.Point(15, 388);
             this.pbFileProgress.Name = "pbFileProgress";
             this.pbFileProgress.Size = new System.Drawing.Size(187, 32);
             this.pbFileProgress.TabIndex = 12;
@@ -329,6 +329,23 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1147, 506);
             this.tabControl1.TabIndex = 14;
+            // 
+            // tabBrowser
+            // 
+            this.tabBrowser.Controls.Add(this.webControl);
+            this.tabBrowser.Location = new System.Drawing.Point(4, 22);
+            this.tabBrowser.Name = "tabBrowser";
+            this.tabBrowser.Size = new System.Drawing.Size(1139, 480);
+            this.tabBrowser.TabIndex = 2;
+            this.tabBrowser.Text = "News";
+            this.tabBrowser.UseVisualStyleBackColor = true;
+            // 
+            // webControl
+            // 
+            this.webControl.Location = new System.Drawing.Point(3, 3);
+            this.webControl.Size = new System.Drawing.Size(1133, 474);
+            this.webControl.Source = new System.Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea", System.UriKind.Absolute);
+            this.webControl.TabIndex = 0;
             // 
             // tabLog
             // 
@@ -356,34 +373,22 @@
             this.tabOptions.Text = "Options";
             this.tabOptions.UseVisualStyleBackColor = true;
             // 
-            // tabBrowser
+            // btnCreateAccount
             // 
-            this.tabBrowser.Controls.Add(this.webControl2);
-            this.tabBrowser.Location = new System.Drawing.Point(4, 22);
-            this.tabBrowser.Name = "tabBrowser";
-            this.tabBrowser.Size = new System.Drawing.Size(1139, 480);
-            this.tabBrowser.TabIndex = 2;
-            this.tabBrowser.Text = "News";
-            this.tabBrowser.UseVisualStyleBackColor = true;
-            // 
-            // webControl1
-            // 
-            this.webControl1.Location = new System.Drawing.Point(0, 0);
-            this.webControl1.Size = new System.Drawing.Size(0, 0);
-            this.webControl1.TabIndex = 0;
-            // 
-            // webControl2
-            // 
-            this.webControl2.Location = new System.Drawing.Point(3, 3);
-            this.webControl2.Size = new System.Drawing.Size(1133, 474);
-            this.webControl2.Source = new System.Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea", System.UriKind.Absolute);
-            this.webControl2.TabIndex = 0;
+            this.btnCreateAccount.Location = new System.Drawing.Point(15, 161);
+            this.btnCreateAccount.Name = "btnCreateAccount";
+            this.btnCreateAccount.Size = new System.Drawing.Size(187, 46);
+            this.btnCreateAccount.TabIndex = 15;
+            this.btnCreateAccount.Text = "Create Account";
+            this.btnCreateAccount.UseVisualStyleBackColor = true;
+            this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1367, 527);
+            this.Controls.Add(this.btnCreateAccount);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.pbFileProgress);
             this.Controls.Add(this.label3);
@@ -400,10 +405,10 @@
             this.groupProfileSettings.ResumeLayout(false);
             this.groupProfileSettings.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            this.tabBrowser.ResumeLayout(false);
             this.tabLog.ResumeLayout(false);
             this.tabLog.PerformLayout();
             this.tabOptions.ResumeLayout(false);
-            this.tabBrowser.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -442,8 +447,8 @@
         private System.Windows.Forms.TabPage tabLog;
         private System.Windows.Forms.TabPage tabOptions;
         private System.Windows.Forms.TabPage tabBrowser;
-        private Awesomium.Windows.Forms.WebControl webControl2;
-        private Awesomium.Windows.Forms.WebControl webControl1;
+        private Awesomium.Windows.Forms.WebControl webControl;
+        private System.Windows.Forms.Button btnCreateAccount;
     }
 }
 

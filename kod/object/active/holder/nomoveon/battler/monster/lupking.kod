@@ -103,7 +103,7 @@ messages:
    Constructed()
    {
       pimax_Hit_Points = pimax_hit_Points * 3;
-      piHit_Points = pimax_hit_points;
+      piHit_Points = pimax_hit_points*100;
 
       plResistances = [ [ATCK_WEAP_ALL, 40 ],
                         [ATCK_WEAP_PIERCE, 90 ],

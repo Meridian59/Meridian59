@@ -78,11 +78,11 @@ messages:
    MonsterAttack(what = $)
    {
       piAnimation = ANIM_ATTACK;
-      if piHit_points < (2*viLevel/3)
+      if piHit_points < (200*viLevel/3)
       {
          piAnimation = ANIM_ATTACK_WOUNDED1;
       }
-      if piHit_points < (viLevel/3)
+      if piHit_points < (100*viLevel/3)
       {
          piAnimation = ANIM_ATTACK_WOUNDED2;
       }

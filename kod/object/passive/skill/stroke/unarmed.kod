@@ -33,7 +33,6 @@ classvars:
    viSchool = SKS_BRAWLING
 
    viskillExertion = 10
-   viHit_Factor = 30
 
    viMin_Damage = 1
    viMax_Damage = 3
@@ -98,7 +97,8 @@ messages:
    {
       local damage, might;
 
-      damage = random(viMin_Damage, viMax_Damage);
+      % Convert to high precision.
+      damage = random(viMin_Damage, viMax_Damage)*100;
 
       % Take various damage factors into consideration.
       damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=$);

@@ -49,10 +49,10 @@ messages:
    {
       local amount, amount_healed;
       
-      amount = Random(piHeal_min, piHeal_max);
+      amount = Random(piHeal_min*100, piHeal_max*100);
       
-      amount_healed = Send(poOwner,@GainHealthNormal,#amount=amount);
-      Send(poOwner,@MsgSendUser,#message_rsc=healWand_success_rsc,#parm1=amount_healed);
+      amount_healed = Send(poOwner,@GainHealthNormal,#amount=amount,#precision=TRUE);
+      Send(poOwner,@MsgSendUser,#message_rsc=healWand_success_rsc,#parm1=amount_healed/100);
       Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
 
       return;

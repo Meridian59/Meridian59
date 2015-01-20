@@ -50,7 +50,6 @@ classvars:
    viChance_to_increase = 60
    viMeditate_ratio = 30
 
-   viHit_Factor = 30
    viSkill_level = 1
 
    viSkill_Num = SKID_PUNCH
@@ -81,8 +80,6 @@ messages:
    "The stroke may choose it's own damage give or recieve message.  Otherwise"
    "player.kod will offer the default 'You killed the whatever' message."
    {
-      % Is this really necessary?  Can't we just use the messages defined in battler instead?
-      
       if (Send(who,@GetWeapon) <> $)
       {
          % They have a weapon, probably a touch attack.  Let that do it's own damage message.

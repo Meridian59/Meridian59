@@ -70,7 +70,7 @@ messages:
       if poOwner <> $ AND isClass(poOwner,&User)
       {
          if send(poOwner,@AssessDamage,#what=self,#damage=random(10,25),
-                 #report=FALSE,#atype=ATCK_WEAP_NERUDITE) = $
+            #report=FALSE,#atype=ATCK_WEAP_NERUDITE) = $
          {
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);

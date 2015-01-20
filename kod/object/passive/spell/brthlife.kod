@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   MAX_TOTAL_AMOUNT = 130      % Max target can reach after getting benefit.
+   MAX_TOTAL_AMOUNT = 130     % Max target can reach after getting benefit.
 
 resources:
 
@@ -132,25 +132,25 @@ messages:
       
       % Amount of life transferred depends on the Karma of our target.
       iPercent = bound(send(oTarget,@GetKarma),10,80);
-      iHpAmount = (Send(who,@GetHealth) * iPercent) / 100;
+      iHpAmount = (Send(who,@GetExactHealth) * iPercent) / 100;
 
       % Don't drain caster below 10 hps,
-      iHpAmount = bound(iHpAmount,$,(Send(who,@GetHealth)-10));
+      iHpAmount = bound(iHpAmount,$,(Send(who,@GetExactHealth)-1000));
 
-      % Alter amount transferred to 75 + spell power/2% of sacrifice.
+      % Alter amount transferred to (75 + spell power/2) percent of sacrifice.
       iTransfer = (iHpAmount * (75 + iSpellPower/2)) / 100;
 
       % Don't let target get more than 150% over max, don't let target get over 150
-      iTransfer = bound(iTransfer,$,((Send(oTarget,@GetMaxHealth)*3)/2)-Send(oTarget,@GetHealth));
-      iTransfer = bound(iTransfer,$,(MAX_TOTAL_AMOUNT-Send(oTarget,@GetHealth)));
+      iTransfer = bound(iTransfer,$,((Send(oTarget,@GetMaxHealth)*3)/2)*100-Send(oTarget,@GetExactHealth));
+      iTransfer = bound(iTransfer,$,(MAX_TOTAL_AMOUNT*100-Send(oTarget,@GetExactHealth)));
 
       Send(who,@MsgSendUser,#message_rsc=breathoflife_caster_msg_rsc,
-           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHpAmount);  
-      Send(who,@LoseHealth,#amount=iHpAmount);
+           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHpAmount/100);  
+      Send(who,@LoseHealth,#amount=iHpAmount,#precision=TRUE);
 
       Send(oTarget,@MsgSendUser,#message_rsc=breathoflife_cast_rsc,
-      	   #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),#parm3=iTransfer);
-      Send(oTarget,@GainHealth,#amount=iTransfer);
+      	   #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),#parm3=iTransfer/100);
+      Send(oTarget,@GainHealth,#amount=iTransfer,#precision=TRUE);
 
       propagate;
    }

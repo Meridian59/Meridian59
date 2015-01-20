@@ -171,7 +171,7 @@ messages:
          oRoom = Send(who,@GetOwner);
       }
 
-      iDamage = Random(piDamageMin, piDamageMax);
+      iDamage = Random(piDamageMin*100, piDamageMax*100);
 
       if IsClass(who,&Player)
       {
@@ -194,7 +194,7 @@ messages:
                % This takes the spellpower of Mana Focus (iManaFocus), and uses
                %  that to scale our "bonus" damage.
                % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
-               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM);
+               iDamage = iDamage + ((iManaFocus * piManaFocusBonus * 100) / SPELLPOWER_MAXIMUM);
             }
          }
       }
@@ -233,15 +233,14 @@ messages:
 
          if IsClass(self,&Earthquake)
          {
-            iDamage = Send(self,@ComputeDamage,
-                        #who=who,#target=i,#iDamage=iDamage);
-            if iDamage = 0
+            iDamage = Send(self,@ComputeDamage,#who=who,#target=i,#iDamage=iDamage);
+            if iDamage < 100
             {
                % To prevent spam, we don't consider 0 damage earthquake hits.
                continue;
             }
             iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
-                           #aspell=Send(self,@GetAttackSpell),#absolute=pbAbsolute);
+                           #aspell=Send(self,@GetAttackSpell),#absolute=pbAbsolute,#precision=TRUE);
             if iDamage = $
             {
                if IsClass(who,&Room)
@@ -266,7 +265,7 @@ messages:
          {
             iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,
                         #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
-                        #absolute=pbAbsolute);
+                        #absolute=pbAbsolute,#precision=TRUE);
          }
 
          if IsClass(who,&Battler)
@@ -334,7 +333,7 @@ messages:
       {
          % Apply the spell damage to the caster. Kill them if necessary.
          iFinalDamage = Send(who,@AssessDamage,#what=who,#damage=iDamage,#atype=0,
-                           #aspell=viAttack_spell,#report=TRUE);
+                           #aspell=viAttack_spell,#report=TRUE,#precision=TRUE);
 
          if iFinalDamage = $
          {

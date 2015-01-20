@@ -122,8 +122,7 @@ messages:
    LashOut(who=$)
    {
       Send(who,@MsgSendUser,#message_rsc=feynode_scream);
-      if Send(who,@AssessDamage,#what=self,#damage=FEYNODE_DAMAGE,
-              #report=FALSE) = $
+      if Send(who,@AssessDamage,#what=self,#damage=FEYNODE_DAMAGE,#report=FALSE) = $
       {
          Send(poOwner,@SomethingKilled,#what=self,#victim=who);
          Send(who,@Killed,#what=self);

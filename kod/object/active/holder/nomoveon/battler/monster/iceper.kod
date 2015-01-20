@@ -165,12 +165,12 @@ messages:
 
       iGroup = 1;
 
-      if piHit_points < (2*viLevel/3)
+      if piHit_points < (200*viLevel/3)
       {
          iGroup = 2;
       }
 
-      if piHit_points < (viLevel/3)
+      if piHit_points < (100*viLevel/3)
       {
          iGroup = 3;
       }

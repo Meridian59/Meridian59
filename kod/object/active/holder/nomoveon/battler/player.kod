@@ -7663,7 +7663,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health = PKILL_ENABLE_HP
+         if piBase_Max_health = < Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
          {
             gain = gain + 1;
          }

@@ -77,7 +77,8 @@ properties:
 
    piAnimation = ANIM_NONE
    piGroup = 1
-   piDrawfx = DRAWFX_TRANSLUCENT_75 | FLICKERING_YES
+   piDrawEffectFlag = OF_FLICKERING
+   piDrawfx = DRAWFX_TRANSLUCENT_75
    piMinDamage = 6
    piMaxDamage = 16
    vrDesc = ghost_desc_rsc

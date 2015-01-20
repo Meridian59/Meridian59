@@ -83,7 +83,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
 
    piSpellPower = 99
    piMax_mana = 40
@@ -252,11 +252,6 @@ messages:
    Delete()
    {
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
 
    CanMorphTo()

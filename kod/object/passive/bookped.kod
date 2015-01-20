@@ -27,6 +27,8 @@ classvars:
 
    vrIcon = bookped_icon_rsc
 
+   viMoveOn_type = MOVEON_NO
+
 properties:
 
    vrName = bookped_name_rsc
@@ -39,9 +41,14 @@ messages:
    Constructor(Name=$,Text=$)
    {
       if name <> $
-	 { vrName = name; }
+      {
+         vrName = name;
+      }
+
       if Text <> $
-	 { prText = Text; }
+      {
+         prText = Text;
+      }
 
       propagate;
    }
@@ -54,7 +61,7 @@ messages:
 
    GetObjectFlags()
    {
-      return MOVEON_NO | LOOK_NO;
+      return OF_NOEXAMINE;
    }
 
    CanEditInscription()

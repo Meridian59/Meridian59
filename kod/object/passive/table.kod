@@ -22,6 +22,8 @@ resources:
 
 classvars:
 
+   viMoveOn_type = MOVEON_NO
+
    vrName = table_name_rsc
    vrIcon = table_icon_rsc
    vrDesc = table_desc_rsc
@@ -33,7 +35,7 @@ messages:
 
    GetObjectFlags()
    {
-      return MOVEON_NO + LOOK_NO;
+      return OF_NOEXAMINE;
    }
 
 end

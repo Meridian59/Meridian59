@@ -22,7 +22,8 @@ PDIB GetPointCeilingTexture(int x, int y);
 PDIB GetPointFloorTexture(int x, int y);
 int GetPointDepth(int x, int y);
 
-M59EXPORT list_type    GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags);
+M59EXPORT list_type    GetObjects3D(int x, int y, int distance, int pos_flags, int neg_flags,
+                                    BYTE pos_drawingtype, BYTE neg_drawingtype);
 M59EXPORT room_contents_node *GetObjectByPosition(int x, int y, int distance, int pos_flags, int neg_flags);
 int          GetVisibleObjects(ObjectRange **objs);
 ObjectRange *FindVisibleObjectById(ID obj_id);

@@ -21,7 +21,7 @@ resources:
 
 classvars:
 
-   viObject_flags = ACTIVATE_YES | LOOK_NO
+   viObject_flags = OF_ACTIVATABLE | OF_NOEXAMINE
 
 properties:
 

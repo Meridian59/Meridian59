@@ -53,7 +53,7 @@ properties:
    vrName = Wand_name_rsc
    vrDesc = Wand_desc_rsc
 
-   viObject_flags = APPLY_YES | GETTABLE_YES
+   viObject_flags = OF_APPLYABLE | OF_GETTABLE
 
    % Set to negative so it doesn't expire naturally.
    piGoBadTime = -1

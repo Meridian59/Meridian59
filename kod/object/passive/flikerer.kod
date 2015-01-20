@@ -23,7 +23,7 @@ resources:
 
 classvars:
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    % Definitions for animations
    viOff_frame = 1
@@ -94,10 +94,10 @@ messages:
       local iFlags;
 
       iFlags = viObject_flags;
-      
+
       if pbIsLit
       {
-         iFlags = iFlags | FLICKERING_YES;
+         iFlags = iFlags | OF_FLICKERING;
       }
 
       return iFlags;

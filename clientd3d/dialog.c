@@ -229,7 +229,7 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 			(int)FONT_TITLES, info->name);
 		SetDlgItemText(hDlg, IDC_DESCNAME, info->name);
 		hdc = GetDC(hDlg);
-		SetTextColor(hdc,GetPlayerNameColor(info->obj->flags,info->name));
+		SetTextColor(hdc,GetPlayerNameColor(info->obj,info->name));
 		ReleaseDC(hDlg,hdc);
 		
 		// Item Description.
@@ -404,7 +404,7 @@ BOOL CALLBACK DescDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lParam)
 		   SetTextColor(lpdis->hDC, NAME_COLOR_NORMAL_BG);
 		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   OffsetRect(&lpdis->rcItem, -1, -1);
-		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj->flags,info->name));
+		   SetTextColor(lpdis->hDC, GetPlayerNameColor(info->obj, info->name));
 		   DrawText(lpdis->hDC, str, strlen(str), &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_NOPREFIX);
 		   
 		   break;

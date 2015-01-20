@@ -103,12 +103,22 @@ messages:
 
    GetObjectFlags()
    {
-      if (piRoofState <> STATE_ONROOF)
+      if (piRoofState = STATE_ONROOF)
       {
-         return MOVEON_NO | piDrawFX | BATTLER_YES;
+         return OF_HANGING | OF_ATTACKABLE;
       }
 
-      return piDrawFX | HANGING_YES | BATTLER_YES;
+      propagate;
+   }
+
+   GetMoveOnType()
+   {
+      if (piRoofState = STATE_ONROOF)
+      {
+         return MOVEON_YES;
+      }
+
+      propagate;
    }
 
    TryAttack()

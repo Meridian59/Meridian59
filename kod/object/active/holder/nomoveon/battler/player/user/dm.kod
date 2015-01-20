@@ -872,7 +872,7 @@ messages:
             piAttack_start = 1;
             piAttack_end = 1;
             piAttack_delay = 500;
-            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NONE);
             piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
             piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
             Send(self,@ResetPlayerFlagList);
@@ -898,7 +898,7 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=dm_plain);
             Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
             Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
-            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+            Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NONE);
 
             piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
             piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
@@ -1772,6 +1772,98 @@ messages:
    IsAppealOn()
    {
       return pbAppeal & 1;
+   }
+
+   GetClientObjectType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if IsClass(self,&Creator)
+      {
+         iFlags = iFlags | OT_CREATOR;
+      }
+      else
+      {
+         if Send(self,@IsEventCharacter)
+         {
+            iFlags = iFlags | OT_EVENTCHAR;
+         }
+         else
+         {
+            if pbImmortalSave = 2
+            {
+               iFlags = iFlags | OT_SUPER;
+            }
+            else
+            {
+               if prRank = dm_moderator
+               {
+                  iFlags = iFlags | OT_MODERATOR;
+               }
+               else
+               {
+                  iFlags = iFlags | OT_DM;
+               }
+            }
+         }
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerNameColor()
+   {
+      local iDrawFX, iFlags;
+
+      iFlags = 0;
+
+      % Check for any shadow form effects.
+      iDrawfX = Send(self,@GetDrawingEffects);
+      if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
+      {
+         iFlags = iFlags | NC_SHADOW;
+      }
+
+      if piNameColor <> 0
+      {
+         iFlags = iFlags | piNameColor;
+
+         return iFlags;
+      }
+
+      if IsClass(self,&Creator)
+      {
+         iFlags = iFlags | NC_CREATOR;
+      }
+      else
+      {
+         if Send(self,@IsEventCharacter)
+         {
+            iFlags = iFlags | NC_EVENTCHAR;
+         }
+         else
+         {
+            if pbImmortalSave = 2
+            {
+               iFlags = iFlags | NC_SUPER;
+            }
+            else
+            {
+               if prRank = dm_moderator
+               {
+                  iFlags = iFlags | NC_MODERATOR;
+               }
+               else
+               {
+                  iFlags = iFlags | NC_DM;
+               }
+            }
+         }
+      }
+
+      return iFlags;
    }
 
    GreenNamed()

@@ -28,6 +28,8 @@ classvars:
    vrIcon = fountainjet_icon_rsc
    vrDesc = fountainjet_desc_rsc
 
+   viMoveOn_type = MOVEON_NO
+
 properties:
 
    % These settings are specific to the Duke's Feast Hall (RID_DUKE2).
@@ -35,7 +37,7 @@ properties:
    piSoundIntensity = 80
 
 messages:
-   
+
    Constructor(iSoundRadius = 18, iSoundIntensity = 80)
    {
       piSoundRadius = iSoundRadius;
@@ -49,7 +51,7 @@ messages:
       if poOwner <> $ AND IsClass(poOwner,&Room)
       {
          % Remove ourselves as part of the sound list.
-         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
       }
 
       propagate;
@@ -59,23 +61,24 @@ messages:
    {
       local lPosition, lSoundData;
 
-      % Check the old (current) owner.  It shouldn't happen, but let's be sane about it.
+      % Check the old (current) owner.  It shouldn't
+      % happen, but let's be sane about it.
       if poOwner <> $ AND IsClass(poOwner,&Room)
       {
          % Remove ourselves as part of the sound list.
-         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
       }
 
       if piSoundRadius AND what <> $ AND IsClass(what,&Room)
       {
          % Sound data is [wave_file, row, col, cutoff radius, maximum volume, object]
-         lPosition = send(what,@GetRoomPos,#what=self);
+         lPosition = Send(what,@GetRoomPos,#what=self);
          lSoundData = [fountainjet_sound_rsc, First(lPosition), Nth(lPosition,2),
                        piSoundRadius, piSoundIntensity, self];
-         send(what,@AddLoopingSound,#lSoundData=lSoundData);
+         Send(what,@AddLoopingSound,#lSoundData=lSoundData);
       }
 
-		propagate;
+      propagate;
    }
 
    SendAnimation()
@@ -84,12 +87,6 @@ messages:
 
       return;
    }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | LOOK_NO;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

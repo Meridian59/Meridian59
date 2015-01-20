@@ -74,7 +74,7 @@ classvars:
    vrIcon = flag_icon_rsc
    vrDesc = flag_desc_rsc
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
 
 properties:
 
@@ -749,10 +749,10 @@ messages:
    {
       if pbClaimable
       {
-         return (viObject_flags | ACTIVATE_YES);
+         return (viObject_flags | OF_ACTIVATABLE);
       }
 
-      return (viObject_flags & ~ACTIVATE_YES);
+      return (viObject_flags & ~OF_ACTIVATABLE);
    }
 
    NewOwner(what=$)

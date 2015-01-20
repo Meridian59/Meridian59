@@ -39,17 +39,22 @@ typedef struct {
 
 // Options to DrawObjectBitmap
 typedef struct {
-   PDIB      pdib;       // Object bitmap
-   int       distance;   // Distance to object in FINENESS units
-   BYTE      light;      // Light level to draw object
-   Bool      draw;       // True if object should actually be drawn (False = just compute location)
-   ViewCone *cone;       // Cone in which to draw object
-   int       flags;      // Object flags for special options (invisibility, etc.)
-   int       cutoff;     // Last screen row in which to draw object (to cut off at ground level)
-   BYTE      translation;// Color translation type, 0 = none
-   BYTE      secondtranslation; // Overriding second translation for all overlays.
-   BYTE	     effect;
-   room_contents_node *obj;    // Pointer to room_contents_node for object
+   PDIB         pdib;              // Object bitmap
+   int          distance;          // Distance to object in FINENESS units
+   BYTE         light;             // Light level to draw object
+   Bool         draw;              // True if object should actually be drawn (False = just compute location)
+   ViewCone     *cone;             // Cone in which to draw object
+   int          flags;             // Boolean object flags.
+   BYTE         drawingtype;      // Object flags for drawing effects (invisibility, lighting type etc.)
+   int          minimapflags;      // Flag field for minimap dot drawing
+   unsigned int namecolor;         /* Player name color flags */
+   object_type  objecttype;        /* Enum of object type (i.e. outlaw, murderer, NPC) */
+   moveon_type  moveontype;        // MoveOn type of the object
+   int          cutoff;            // Last screen row in which to draw object (to cut off at ground level)
+   BYTE         translation;       // Color translation type, 0 = none
+   BYTE         secondtranslation; // Overriding second translation for all overlays.
+   BYTE         effect;
+   room_contents_node *obj;         // Pointer to room_contents_node for object
 } DrawObjectInfo;
 
 #define NAME_COLOR_NORMAL_BG   PALETTERGB(0, 0, 0)

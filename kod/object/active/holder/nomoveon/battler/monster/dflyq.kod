@@ -132,7 +132,7 @@ messages:
    DoSpit()
    {
       piAnimation = ANIM_ATTACK;
-      piDrawFX = piDrawFX | BOUNCE_YES;
+      piDrawEffectFlag = piDrawEffectFlag | OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
       piAnimation = ANIM_HOVER;
@@ -189,8 +189,8 @@ messages:
       if (poTarget = $) AND (piAnimation = ANIM_HOVER)
       {
          piAnimation = ANIM_NONE;
-         piDrawFX = (piDrawFX & (~BOUNCE_YES));
-          Send(poOwner,@SomethingChanged,#what=self);
+         piDrawEffectFlag = (piDrawEffectFlag & (~OF_BOUNCING));
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -296,11 +296,6 @@ messages:
       propagate;
    }
 
-   GetDrawfx()
-   {
-      return piDrawfx;
-   }
-
    CanAcceptOffer()
    {
       return TRUE;
@@ -361,16 +356,6 @@ messages:
       return TRUE;
    }
 
-   GetObjectFlags()
-   {
-      if piAnimation = ANIM_NONE
-      {
-         return MOVEON_NO | BATTLER_YES | OFFER_YES;
-      }
-
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES | OFFER_YES;
-   }
-
    TweakBehavior(mob = $)
    {
       if poMaster <> $
@@ -382,6 +367,16 @@ messages:
       }
 
       return;
+   }
+
+   GetObjectFlags()
+   {
+      if piAnimation = ANIM_NONE
+      {
+         return OF_ATTACKABLE | OF_OFFERABLE;
+      }
+
+      return OF_ATTACKABLE | OF_OFFERABLE | OF_BOUNCING;
    }
 
    CanMorphTo()

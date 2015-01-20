@@ -30,13 +30,15 @@ properties:
    plAttackers = $
    % Number of attackers to keep in queue.
    piAttackers = 15
-   
+
    % List of treasure items
    plTreasure = $
-   
+
    % List of list of numbered treasure items and value
 
    pbDebug = FALSE
+
+   piNameColor = NC_EVENTCHAR
 
 messages:
 
@@ -167,6 +169,11 @@ messages:
       plAttackers = $;
 
       propagate;
+   }
+
+   GetClientObjectType()
+   {
+      return OT_EVENTCHAR;
    }
 
 end

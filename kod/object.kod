@@ -59,8 +59,6 @@ resources:
    object_cap_lord = "Lord"
    object_cap_lady = "Lady"
 
-
-
 classvars:
    vrName = object_name_rsc
    vrIcon = object_icon_rsc
@@ -70,19 +68,25 @@ classvars:
    viDefinite = ARTICLE_THE
 
    viBulk = 0
-   viWeight = 0 
+   viWeight = 0
 
    viIllusion = FALSE
    vbSummoned = FALSE
 
    viGender = GENDER_NEUTER
+
    viObject_flags = 0
+   viMoveOn_type = 0
 
 properties:
 
    poOwner = $
-   
+
    plObject_attributes = $
+
+   piNameColor = 0
+   piDrawfx = 0
+   piDrawEffectFlag = 0
 
 messages:
 
@@ -732,9 +736,87 @@ messages:
       return FALSE;
    }
 
+   GetMoveOnType()
+   {
+      return viMoveOn_type;
+   }
+
    GetObjectFlags()
    {
-      return viObject_flags;
+      return viObject_flags | piDrawEffectFlag;
+   }
+
+   GetDrawingEffects()
+   "This returns any special drawing effect the object has. Default is "
+   "no drawing effect."
+   {
+      return piDrawfx;
+   }
+
+   GetDrawType()
+   "This returns any special drawing type the object has. Default is "
+   "no drawing type. Drawing types are phasing, flickering, flashing "
+   "and bouncing, stored separately from object flags and drawing effects."
+   {
+      return piDrawEffectFlag;
+   }
+
+   GetClientObjectType()
+   "This is an enum of object types. Returns 0 for most objects for now."
+   {
+      return 0;
+   }
+
+   GetPlayerNameColor(rgb=FALSE)
+   "Returns the name color property, or if sent rgb TRUE, returns "
+   "a list with the int RGB value of piNameColor."
+   {
+      local lColor;
+
+      if rgb
+      {
+         lColor = Cons((piNameColor & 0x0000FF), lColor); % Blue
+         lColor = Cons((piNameColor  & 0x00FF00) / 256, lColor); % Green
+         lColor = Cons((piNameColor & 0xFF0000) / 65536, lColor); % Red
+
+         return lColor;
+      }
+
+      return piNameColor;
+   }
+
+   SetNameColor(red=0,green=0,blue=0,rgb=$)
+   "Can set the name color for any object. Currently, only objects "
+   "with OF_PLAYER set to TRUE will display a name. Can change color "
+   "by red, green and blue value, or alternatively by rgb value."
+   {
+      if rgb <> $
+         AND rgb >= 0
+         AND rgb <= NC_COLOR_MAX
+      {
+         piNameColor = rgb;
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+
+         return TRUE;
+      }
+
+      if (red >= 0 AND red <= 255)
+         AND (green >= 0 AND green <= 255)
+         AND (blue >= 0 AND blue <= 255)
+      {
+         piNameColor = red * green * blue;
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
    GetGender()

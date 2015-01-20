@@ -348,13 +348,13 @@ messages:
       if IsClass(poOriginal,&Player)
       {
          vrIcon = Send(poOriginal,@GetPlayerIcon);
-         piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
          vrName = Send(poOriginal,@GetTrueName);
       }
       else
       {
          vrIcon = Send(poOriginal,@GetIcon);
-         piDrawfx = Send(poOriginal,@GetDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
          vrName = Send(poOriginal,@GetName);
       }
 
@@ -365,16 +365,42 @@ messages:
 
    GetObjectFlags()
    {
-      local iFlags;
-
       if poOriginal = $
       {
          return 0;
       }
 
-      iFlags = Send(poOriginal,@GetObjectFlags);
+      return Send(poOriginal,@GetObjectFlags);
+   }
 
-      return iFlags;
+   GetDrawingEffects()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetDrawingEffects);
+   }
+
+   GetPlayerNameColor()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetPlayerNameColor);
+   }
+
+   GetClientObjectType()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetClientObjectType);
    }
 
    GetAttackRange()
@@ -463,7 +489,7 @@ messages:
       if (what = poOriginal)
          AND IsClass(poOriginal,&Player)
       {
-         piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
 
          % Players report that if a character casts a lot of
          % reflections and then changes state, e.g. by putting on lots

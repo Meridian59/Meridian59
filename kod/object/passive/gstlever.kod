@@ -38,7 +38,7 @@ classvars:
    vrIcon = guestlever_icon_rsc
    vrDesc = guestlever_desc_rsc
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
 
 properties:
 

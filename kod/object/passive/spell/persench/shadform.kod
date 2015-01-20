@@ -79,7 +79,7 @@ messages:
       % Check for lighting effect already applied
       if oTarget <> who
       {
-         iDrawfX = Send(oTarget,@GetPlayerDrawFX);
+         iDrawfX = Send(oTarget,@GetDrawingEffects);
 
          if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
             OR (iDrawFX & DRAWFX_SECONDTRANS) = DRAWFX_SECONDTRANS

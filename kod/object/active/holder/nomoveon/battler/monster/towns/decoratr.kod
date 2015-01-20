@@ -160,9 +160,11 @@ classvars:
    viOccupation = MOB_ROLE_SCHOLAR
    viDefinite = ARTICLE_THE
 
+   viObject_flags = OF_OFFERABLE
+
 properties:
 
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
 
    piDialogTopic = TOPIC_NONE
    ptDialogTopicTimeout = $
@@ -192,11 +194,6 @@ messages:
       AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,2);
 
       return;
-   }
-
-   GetObjectFlags()
-   {
-      return BOUNCE_YES | OFFER_YES;
    }
 
    CanMorphTo()

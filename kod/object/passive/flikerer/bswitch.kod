@@ -31,7 +31,7 @@ classvars:
    vrName = brazierswitch_name_rsc
    vrIcon = brazierswitch_icon_rsc
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
 
 properties:
 

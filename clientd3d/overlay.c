@@ -18,9 +18,9 @@ extern player_info player;
 
 /* local function prototypes */
 Bool ComputePlayerOverlayArea(PDIB pdib, char hotspot, AREA *obj_area);
-static void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags);
+static void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags, BYTE drawingtype);
 static void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays,
-			       Bool underlays, BYTE secondtranslation, int flags);
+			       Bool underlays, BYTE secondtranslation, int flags, BYTE drawingtype);
 /************************************************************************/
 void SetPlayerOverlay(char hotspot, object_node *poverlay)
 {
@@ -80,12 +80,20 @@ void DrawPlayerOverlays(void)
    list_type overlays;
    room_contents_node *r;
    int flags;
+   BYTE drawingtype;
 
    // Get player's object flags for special drawing effects
    r = GetRoomObjectById(player.id);
    if (r == NULL)
+   {
       flags = 0;
-   else flags = r->obj.flags;
+      drawingtype = 0;
+   }
+   else
+   {
+      flags = r->obj.flags;
+      drawingtype = r->obj.drawingtype;
+   }
    
    for (i=0; i < NUM_PLAYER_OVERLAYS; i++)
    {
@@ -105,13 +113,13 @@ void DrawPlayerOverlays(void)
       // Draw underlays
       overlays = *(obj->overlays);
       if (overlays != NULL)
-	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, True, obj->secondtranslation, flags | (obj->effect << 20));
+	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, True, obj->secondtranslation, flags, drawingtype | obj->effect);
 
-      DrawPlayerOverlayBitmap(pdib, &obj_area, obj->translation, obj->secondtranslation, flags | (obj->effect << 20));
+      DrawPlayerOverlayBitmap(pdib, &obj_area, obj->translation, obj->secondtranslation, flags, drawingtype | obj->effect);
 
       // Draw overlays
       if (overlays != NULL)
-	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, False, obj->secondtranslation, flags | (obj->effect << 20));
+	 DrawPlayerOverlayOverlays(pdib, &obj_area, overlays, False, obj->secondtranslation, flags, drawingtype | obj->effect);
    }
 }
 /************************************************************************/
@@ -123,7 +131,7 @@ void DrawPlayerOverlays(void)
  *   flags gives the object flags for special drawing effects.
  */
 void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays, Bool underlays,
-			       BYTE secondtranslation, int flags)
+			       BYTE secondtranslation, int flags, BYTE drawingtype)
 {
    list_type l;
    AREA overlay_area;
@@ -164,7 +172,7 @@ void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays
 	 // Scale offset, and place on base bitmap
 	 overlay_area.x = overlay_area.x / OVERLAY_FACTOR + obj_area->x;
 	 overlay_area.y = overlay_area.y / OVERLAY_FACTOR + obj_area->y;
-	 DrawPlayerOverlayBitmap(pdib_ov, &overlay_area, overlay->translation, secondtranslation, flags | (overlay->effect << 20));
+	 DrawPlayerOverlayBitmap(pdib_ov, &overlay_area, overlay->translation, secondtranslation, flags, drawingtype | overlay->effect);
       }
    }
 }
@@ -175,7 +183,8 @@ void DrawPlayerOverlayOverlays(PDIB pdib_obj, AREA *obj_area, list_type overlays
  *   translation gives the palette translation type.
  *   flags gives the object flags for special drawing effects.
  */
-void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE secondtranslation, int flags)
+void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation,
+                           BYTE secondtranslation, int flags, BYTE drawingtype)
 {
    room_contents_node *pPlayer;
    DrawObjectInfo dos;
@@ -196,6 +205,11 @@ void DrawPlayerOverlayBitmap(PDIB pdib, AREA *obj_area, BYTE translation, BYTE s
    dos.light    = KOD_LIGHT_LEVELS - 1;
    dos.draw     = True;
    dos.flags    = flags;
+   dos.drawingtype  = drawingtype;
+   dos.minimapflags  = 0;
+   dos.namecolor = 0;
+   dos.objecttype = OT_NONE;
+   dos.moveontype = MOVEON_YES;
    dos.cone     = &c;
    dos.distance = 1;
    dos.cutoff   = MAXY;

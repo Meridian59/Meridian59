@@ -201,7 +201,7 @@ messages:
          Send(who,@SetPlayerFlag,#flag=PFLAG_MORPHED,#value=TRUE);
       }
 
-      iFX = Send(oIllusion,@GetDrawFX);
+      iFX = Send(oIllusion,@GetDrawingEffects);
       if iFX <> 0
       {
          Send(who,@SetPlayerDrawFX,#drawfx=iFX);

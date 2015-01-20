@@ -24,7 +24,7 @@ resources:
 
 classvars:  
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    vrName = ghostItem_name_rsc
    vrDesc = ghostItem_desc_rsc
    

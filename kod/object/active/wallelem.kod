@@ -35,7 +35,9 @@ classvars:
    vrIcon = ActiveWallElement_icon_rsc
    vrdesc = ActiveWallElement_desc_rsc
 
-   viObject_flags = LOOK_NO | MOVEON_NOTIFY
+   viObject_flags = OF_NOEXAMINE
+
+   viMoveOn_type = MOVEON_NOTIFY
 
    vrDissipateMessage = ActiveWallElement_dissipate_rsc
    vrUnaffectedMessage = ActiveWallElement_unaffected_rsc

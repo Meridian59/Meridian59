@@ -28,7 +28,7 @@ classvars:
    vrDesc = SmokeColumn_desc
    vrIcon = SmokeColumn_icon
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_25
+   viObject_flags = OF_NOEXAMINE
 
    viStart_frame = 1
    viEnd_frame = 5
@@ -40,6 +40,8 @@ classvars:
    viLightColor = LIGHT_FIRE
 
 properties:
+
+   piDrawFx = DRAWFX_TRANSLUCENT_25
 
    % Intensity, from 0-255.
    piLightIntensity = 10

@@ -67,7 +67,7 @@ classvars:
 
 properties:
 
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
    viKarma = -50
    piAnimation = ANIM_NONE
 
@@ -174,11 +174,6 @@ messages:
       }
 
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
 
    SendLightingInformation()

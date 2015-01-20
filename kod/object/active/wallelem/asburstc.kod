@@ -35,7 +35,7 @@ classvars:
    vrIcon = ActiveSporeCloud_icon_rsc
    vrDesc = ActiveSporeCloud_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = ActiveSporeCloud_dissipates
    vrUnaffectedMessage = ActiveSporeCloud_unaffected
@@ -43,6 +43,8 @@ classvars:
    vbPeriodic = FALSE
 
 properties:
+
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    piRangeSquared = 1
    piBonus = 1

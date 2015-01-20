@@ -110,7 +110,12 @@ BOOL DrawObject3D(DrawnObject *object, ViewCone *clip)
 	dos.light  = object->light;
 	dos.draw   = object->draw;
 	dos.cone   = clip;
-	dos.flags  = object->flags;
+	dos.flags = object->flags;
+	dos.drawingtype  = object->drawingtype;
+	dos.minimapflags  = object->minimapflags;
+	dos.namecolor = object->namecolor;
+	dos.objecttype = object->objecttype;
+	dos.moveontype = object->moveontype;
 	dos.translation = object->translation;
 	dos.secondtranslation = object->secondtranslation;
 
@@ -255,7 +260,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    long col, row, rowTimesMAXX;
    long lefttop,righttop,leftbot,rightbot;
    ViewCone *c;
-   int effect;
+   BYTE effect;
    ObjectRowData d;
 
 //	Bool	bClipHaloLeft;
@@ -328,7 +333,12 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
    //palette = GetLightPalette(dos->distance, rand() % 60 + 1, FINENESS);
 
    d.palette = palette;
-   d.flags = dos->flags | (dos->effect << 20);
+   d.flags  = dos->flags;
+   d.drawingtype = dos->drawingtype | dos->effect;
+   d.minimapflags  = dos->minimapflags;
+   d.namecolor = dos->namecolor;
+   d.objecttype = dos->objecttype;
+   d.moveontype = dos->moveontype;
    d.translation = dos->translation;
    d.secondtranslation = dos->secondtranslation;
    rowTimesMAXX = starty * MAXX;
@@ -393,7 +403,7 @@ Bool DrawObjectBitmap( DrawObjectInfo *dos, AREA *obj_area, Bool bTargetSelectEf
 
 
       // Handle common case of no effects specially here
-      if (d.translation == 0 && GetDrawingEffect(d.flags) == 0)
+      if (d.translation == 0 && d.drawingtype == 0)
       {	 // Draw normally
 #if 1
 	 while (screen_ptr <= end_screen_ptr)
@@ -539,13 +549,13 @@ END_TRANS_BLIT:
 	 DrawingLoop loop;
 
 	 // Take effect from palette translation or object flags
-	 effect = GetDrawingEffectIndex(d.flags);
+	 effect = d.drawingtype;
 	 if (effect == 0)
-	    effect = GetDrawingEffectIndex(OF_TRANSLATE);
+	    effect = DRAWFX_TRANSLATE;
 
 	 loop = drawing_loops[effect];
 	 if (loop == NULL)
-	    debug(("DrawObjectBitmap got unknown effect index %d\n", GetDrawingEffectIndex(d.flags)));
+	    debug(("DrawObjectBitmap got unknown effect index %d\n", d.drawingtype));
 	 else
 	 {
 	    d.start_ptr = screen_ptr;
@@ -862,7 +872,7 @@ void DrawObjectDecorations(DrawnObject *object)
    if (r == NULL)
       return;
 
-   if (!(r->obj.flags & OF_PLAYER) || (GetDrawingEffect(r->obj.flags) == OF_INVISIBLE))
+   if (!(r->obj.flags & OF_PLAYER) || (r->obj.drawingtype == DRAWFX_INVISIBLE))
       return;
 
    // Draw player name
@@ -879,7 +889,7 @@ void DrawObjectDecorations(DrawnObject *object)
    y = range->top_row - s.cy - 2;
 
    // Give a shadowed look to be visible on all color backgrounds
-   fg_color = GetPlayerNameColor(r->obj.flags,name);
+   fg_color = GetPlayerNameColor(&r->obj,name);
    bg_color = NAME_COLOR_NORMAL_BG;
 
    // Some names never grow darker, they use PALETTEINDEX().

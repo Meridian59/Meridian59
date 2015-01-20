@@ -766,12 +766,29 @@ messages:
    {
       local f;
 
-      f = LOOK_NO;
-      if pbHanging { f = f | HANGING_YES; }
-      if pbFlicker { f = f | FLICKERING_YES; }
-      if pbNoMoveOn { f = f | MOVEON_NO; }
-      
+      f = viObject_flags | piDrawEffectFlag | OF_NOEXAMINE;
+
+      if pbHanging
+      {
+         f = f | OF_HANGING;
+      }
+
+      if pbFlicker
+      {
+         f = f | OF_FLICKERING;
+      }
+
       return f;
+   }
+
+   GetMoveOnType()
+   {
+      if pbNoMoveOn
+      {
+         return MOVEON_NO;
+      }
+
+      propagate;
    }
 
    SetHanging(value = TRUE)
@@ -1323,11 +1340,11 @@ messages:
       local oDuplicate;
 
       oDuplicate = create(&OrnamentalObject,#type=piType,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
-      if send(self,@GetObjectFlags) & HANGING_YES
+      if send(self,@GetObjectFlags) & OF_HANGING
       {
          send(oDuplicate,@SetHanging,#value=TRUE);
       }
-      if send(self,@GetObjectFlags) & MOVEON_NO
+      if send(self,@GetMoveOnType) & MOVEON_NO
       {
          send(oDuplicate,@SetNoMoveOn,#value=TRUE);
       }

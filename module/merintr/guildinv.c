@@ -35,7 +35,7 @@ BOOL CALLBACK GuildInviteDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
 	room_contents_node *r = (room_contents_node *) (l->data);
 
 	if ((r->obj.flags & OF_PLAYER) && r->obj.id != cinfo->player->id &&
-	   GetDrawingEffect(r->obj.flags) != OF_INVISIBLE)
+	   r->obj.drawingtype != DRAWFX_INVISIBLE)
 	{
 	   index = ListBox_AddString(hList, LookupNameRsc(r->obj.name_res));
 	   ListBox_SetItemData(hList, index, r->obj.id);

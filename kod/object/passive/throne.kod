@@ -18,9 +18,13 @@ resources:
 
    throne_name_rsc = "throne"
    throne_icon_rsc = throne.bgf
-   throne_desc_rsc = "This looks like a very uncomfortable place to sit, even if it means you get to boss people around."
+   throne_desc_rsc = \
+      "This looks like a very uncomfortable place to sit, "
+      "even if it means you get to boss people around."
 
 classvars:
+
+   viMoveOn_type = MOVEON_NO
 
    vrName = throne_name_rsc
    vrIcon = throne_icon_rsc
@@ -35,12 +39,6 @@ messages:
    {
       return False;
    }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -370,7 +370,7 @@ properties:
    vrName = user_name_rsc
 
    piHomeroom
-   
+
    piLastSafeRoom = $
 
    plNew_mail = $
@@ -927,7 +927,12 @@ messages:
          AddPacket(1,BP_PLAYER_ADD);
          AddPacket(4,what,4,rName);
          AddPacket(STRING_RESOURCE,rName);
-         AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,Send(what,@GetObjectFlags));
+         AddPacket(1,Send(what,@GetDrawingEffects) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,0); % minimapflags, don't need the value here.
+         AddPacket(4,Send(what,@GetPlayerNameColor));
+         AddPacket(1,Send(what,@GetClientObjectType));
+         AddPacket(1,0); % MoveOn type, don't need it here.
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2336,7 +2341,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, oRoom;
+      local iFlags, iEnemyKarma, iSelfKarma, iMinimapFlags, iDrawingFlags;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2362,14 +2367,16 @@ messages:
          AddPacket(4,Send(what,@GetApparentName));
       }
 
+      iDrawingFlags = Send(what,@GetDrawingEffects);
       iFlags = Send(what,@GetObjectFlags);
-
+      % If we can see the invisible object, remove its invis drawing flag
+      % and set it to flash instead (in object flags).
       if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2)
-         AND (iFlags & DRAWFX_MASK) = DRAWFX_INVISIBLE
+         AND (iDrawingFlags & DRAWFX_MASK) = DRAWFX_INVISIBLE
       {
-         iFlags = (iFlags & (~DRAWFX_MASK));
-         iFlags = (iFlags & (~FLICKERING_YES));
-         iFlags = (iFlags | FLASHING_YES);
+         iDrawingFlags = (iDrawingFlags & (~DRAWFX_MASK));
+         iFlags = (iFlags & (~OF_FLICKERING));
+         iFlags = (iFlags | OF_FLASHING);
       }
 
       if IsClass(what,&Battler)
@@ -2383,8 +2390,8 @@ messages:
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND abs(iEnemyKarma) > iSelfKarma))
          {
-            iFlags = (iFlags & (~FLICKERING_YES));
-            iFlags = (iFlags | FLASHING_YES);
+            iFlags = (iFlags & (~OF_FLICKERING));
+            iFlags = (iFlags | OF_FLASHING);
          }
 
          if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_GOOD,#flagset=2)
@@ -2393,73 +2400,25 @@ messages:
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND iEnemyKarma > abs(iSelfKarma)))
          {
-            iFlags = (iFlags & (~FLICKERING_YES));
-            iFlags = (iFlags | FLASHING_YES);
-         }
-
-         if IsClass(what,&Player)
-         {
-            oIllusion = Send(what,@GetIllusionForm);
-
-            if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-               OR oIllusion = $
-               OR NOT IsClass(oIllusion,&Monster)
-            {
-               oOtherGuild = Send(what,@GetGuild);
-               if poGuild <> $ AND oOtherGuild <> $
-               {
-                  if poGuild = oOtherGuild
-                  {
-                     iFlags = (iFlags | PLAYER_IS_GUILDMATE);
-                  }
-
-                  if Send(poGuild,@IsAlly,#otherguild=oOtherGuild)
-                     AND Send(oOtherGuild,@IsAlly,#otherguild=poGuild)
-                  {
-                     iFlags = (iFlags | PLAYER_IS_FRIEND);
-                  }
-
-                  if Send(poGuild,@IsMutualEnemy,#otherguild=oOtherGuild)
-                  {
-                     iFlags = (iFlags | PLAYER_IS_ENEMY);
-                  }
-               }
-            }
-
-            If what <> self
-               AND NOT IsClass(self,&DM)
-               AND Send(self,@AllowPlayerAttack,#victim=what,#report=FALSE,#actual=FALSE)
-            {
-               iFlags = (iFlags | PLAYER_IS_ENEMY);
-            }
-         }
-
-         if IsClass(what,&Monster)
-            AND NOT (IsClass(what,&Reflection)
-               OR IsClass(what,&EvilTwin))
-            AND Send(what,@GetMaster) <> $
-         {
-            if (Send(what,@GetMaster) = self)
-            {
-               iFlags = (iFlags | MINION_SELF);
-            }
-            else
-            {
-               iFlags = (iFlags | MINION_OTHER);
-            }
+            iFlags = (iFlags & (~OF_FLICKERING));
+            iFlags = (iFlags | OF_FLASHING);
          }
       }
 
-      oRoom = poOwner;
-      if oRoom <> $
+      iMinimapFlags = Send(self,@BuildMinimapDotFlag,#what=what);
+      if iMinimapFlags = $
       {
-         if Send(oRoom,@AreGroupedHere,#who=self,#what=what)
-         {
-            iFlags = (iFlags | PLAYER_IS_FRIEND);
-         }
+         Debug("Got $ minimapflags for self ",self,Send(self,@GetTrueName),
+            " for object ",what,Send(what,@GetTrueName));
+         iMinimapFlags = 0;
       }
 
       AddPacket(4,iFlags);
+      AddPacket(1,iDrawingFlags);
+      AddPacket(4,iMinimapFlags);
+      AddPacket(4,Send(what,@GetPlayerNameColor));
+      AddPacket(1,Send(what,@GetClientObjectType));
+      AddPacket(1,Send(what,@GetMoveOnType));
 
       % Send the lighting information.
       Send(what,@SendLightingInformation);
@@ -2490,6 +2449,108 @@ messages:
       }
 
       return;
+   }
+
+   BuildMinimapDotFlag(what=$)
+   "This message builds the minimap dot flags for each object we can see, "
+   "which is then sent to our client for drawing objects on the map/minimap."
+   {
+      local iBehavior, iFlags, oIllusion, oOtherGuild;
+
+      if what = self
+         OR what = $
+         OR poOwner <> Send(what,@GetOwner)
+      {
+         return MM_NONE;
+      }
+
+      iFlags = MM_NONE;
+
+      if IsClass(what,&Reflection)
+         OR IsClass(what,&EvilTwin)
+      {
+         what = Send(what,@GetMaster);
+      }
+
+      if IsClass(what,&Player)
+      {
+         oIllusion = Send(what,@GetIllusionForm);
+
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            OR oIllusion = $
+            OR NOT IsClass(oIllusion,&Monster)
+         {
+            % Standard player blue dot.
+            iFlags = iFlags | MM_PLAYER;
+
+            oOtherGuild = Send(what,@GetGuild);
+            if poGuild <> $ AND oOtherGuild <> $
+            {
+               if poGuild = oOtherGuild
+               {
+                  iFlags = (iFlags | MM_PLAYER_IS_GUILDMATE);
+               }
+
+               if Send(poGuild,@IsAlly,#otherguild=oOtherGuild)
+                  AND Send(oOtherGuild,@IsAlly,#otherguild=poGuild)
+               {
+                  iFlags = (iFlags | MM_PLAYER_IS_FRIEND);
+               }
+
+               if Send(poGuild,@IsMutualEnemy,#otherguild=oOtherGuild)
+               {
+                  iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
+               }
+            }
+         }
+
+         % Draw a red halo for any attackable player.
+         if NOT IsClass(self,&DM)
+            AND Send(self,@AllowPlayerAttack,#victim=what,
+                     #report=FALSE,#actual=FALSE)
+         {
+            iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
+         }
+      }
+
+      if IsClass(what,&Monster)
+         AND NOT (IsClass(what,&Reflection)
+            OR IsClass(what,&EvilTwin))
+      {
+         if Send(what,@GetMaster) <> $
+         {
+            if (Send(what,@GetMaster) = self)
+            {
+               iFlags = (iFlags | MM_MINION_SELF);
+            }
+            else
+            {
+               iFlags = (iFlags | MM_MINION_OTHER);
+            }
+         }
+         else
+         {
+            % Draw dots for NPCs.
+            if Send(what,@GetBehavior) & AI_NPC
+            {
+               iFlags = (iFlags | MM_NPC);
+            }
+            else
+            {
+               iFlags = (iFlags | MM_MONSTER);
+            }
+         }
+      }
+
+      if poOwner <> $
+      {
+         if Send(poOwner,@AreGroupedHere,#who=self,#what=what)
+         {
+            iFlags = (iFlags | MM_BUILDER_GROUP);
+         }
+      }
+
+      return iFlags;
    }
 
    ToCliPlayer()
@@ -2570,7 +2631,12 @@ messages:
          rName = Send(i,@GetTrueName);
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
-         AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,Send(i,@GetObjectFlags));
+         AddPacket(1,Send(i,@GetDrawingEffects) & ~DRAWFX_INVISIBLE);
+         AddPacket(4,0); % minimapflags, don't need the value here.
+         AddPacket(4,Send(i,@GetPlayerNameColor));
+         AddPacket(1,Send(i,@GetClientObjectType));
+         AddPacket(1,0); % MoveOn type, don't need it here.
       }
       
       SendPacket(poSession);
@@ -8155,58 +8221,31 @@ messages:
       return ret_val;
    }
 
-   GetObjectFlags()
+   GetMoveOnType()
    {
-      local iFlags, oIllusion;
+      local iFlags;
 
-      iFlags = MOVEON_NO | BATTLER_YES | USER_YES | OFFER_YES;
+      iFlags = MOVEON_NO;
 
-      if IsClass(self,&Creator)
+      if Send(self,@IsPhasedOut)
       {
-         iFlags = iFlags | PLAYER_CREATOR;
+         iFlags = (iFlags & ~MOVEON_NO);
       }
-      else
+
+      % Angeled characters cannot block other players.
+      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         if Send(self,@IsEventCharacter)
-         {
-            iFlags = iFlags | PLAYER_EVENT;
-         }
-         else
-         {
-            if Send(self,@GetDM)
-            {
-               if Send(self,@GreenNamed)
-               {
-                  iFlags = iFlags | PLAYER_SUPER;
-               }
-               else
-               {
-                  if Send(self,@IsModerator)
-                  {
-                     iFlags = iFlags | PLAYER_MODERATOR;
-                  }
-                  else
-                  {
-                     iFlags = iFlags | PLAYER_DM;
-                  }
-               }
-            }
-            else
-            {
-               if piFlags & PFLAG_MURDERER
-               {
-                  iFlags = iFlags | PLAYER_PK;
-               }
-               else
-               {
-                  if (piFlags & PFLAG_OUTLAW)
-                  {
-                     iFlags = iFlags | PLAYER_OUTLAW;
-                  }
-               }
-            }
-         }
+         iFlags = (iFlags & ~MOVEON_NO);
       }
+
+      return iFlags;
+   }
+
+   GetDrawingEffects()
+   {
+      local iFlags;
+
+      iFlags = piDrawFx;
 
       if (piFlags & PFLAG_INVISIBLE)
       {
@@ -8214,14 +8253,21 @@ messages:
          iFlags = iFlags & (~DRAWFX_MASK);
          iFlags = iFlags | DRAWFX_INVISIBLE;
       }
-      
+
+      return iFlags;
+   }
+
+   GetObjectFlags()
+   {
+      local iFlags, oIllusion;
+
+      iFlags = OF_ATTACKABLE | OF_PLAYER | OF_OFFERABLE;
+
+
       if (piFlags & PFLAG_SAFETY)
       {
-         iFlags = iFlags | SAFETY_YES;
+         iFlags = iFlags | OF_SAFETY;
       }
-
-      iFlags = iFlags | (piDrawfx & DRAWFX_MASK)
-               | (piDrawfx & (FLASHING_YES | FLICKERING_YES | PHASING_YES));
 
       oIllusion = Send(self,@GetIllusionForm);
 
@@ -8230,19 +8276,78 @@ messages:
          AND oIllusion <> $
          AND IsClass(oIllusion,&Monster)
       {
-         iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
+         iFlags = (iFlags & ~OF_PLAYER & ~OF_OFFERABLE);
       }
       
       if Send(self,@IsPhasedOut)
       {
-         iFlags = iFlags | LOOK_NO;
-         iFlags = (iFlags & ~MOVEON_NO & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
+         iFlags = iFlags | OF_NOEXAMINE;
+         iFlags = (iFlags & ~OF_ATTACKABLE & ~OF_OFFERABLE & ~OF_PLAYER);
       }
-      
-      % Angeled characters cannot block other players
-      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+
+      % Get the flashing/flickering/phasing/bouncing flags.
+      iFlags = iFlags | piDrawEffectFlag;
+
+      return iFlags;
+   }
+
+   GetPlayerNameColor()
+   {
+      local iDrawFX, iFlags;
+
+      iFlags = 0;
+
+      % Check for any shadow form effects.
+      iDrawfX = Send(self,@GetDrawingEffects);
+      if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
       {
-         iFlags = (iFlags & ~MOVEON_NO);
+         iFlags = iFlags | NC_SHADOW;
+      }
+
+      if piNameColor <> 0
+      {
+         iFlags = iFlags | piNameColor;
+
+         return iFlags;
+      }
+
+      % Send the appropriate flag to draw the name.
+      if piFlags & PFLAG_MURDERER
+      {
+         iFlags = iFlags | NC_KILLER;
+      }
+      else
+      {
+         if (piFlags & PFLAG_OUTLAW)
+         {
+            iFlags = iFlags | NC_OUTLAW;
+         }
+         else
+         {
+            iFlags = iFlags | NC_PLAYER;
+         }
+      }
+
+      return iFlags;
+   }
+
+   GetClientObjectType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      % Send the appropriate flag to draw the name.
+      if piFlags & PFLAG_MURDERER
+      {
+         iFlags = iFlags | OT_KILLER;
+      }
+      else
+      {
+         if (piFlags & PFLAG_OUTLAW)
+         {
+            iFlags = iFlags | OT_OUTLAW;
+         }
       }
 
       return iFlags;

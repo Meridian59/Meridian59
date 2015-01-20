@@ -34,7 +34,7 @@ messages:
 
    GetObjectFlags()
    {
-      return LOOK_NO | HANGING_YES;
+      return OF_NOEXAMINE | OF_HANGING;
    }
 
    ReqNewOwner(what = $)

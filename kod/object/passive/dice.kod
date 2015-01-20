@@ -42,14 +42,14 @@ resources:
    dice_wav = dice.wav
 
 classvars:
-      
-   viObject_flags = ACTIVATE_YES 
+
+   viObject_flags = OF_ACTIVATABLE
 
 properties:
 
    vbPair = FALSE
    vrName = dice_name
-   vrDesc = dice_desc   
+   vrDesc = dice_desc
    vrIcon = dice_icon
 
    ptRoll = $     %% This is simply used to keep the spam level tolerable.  3 seconds after each roll.

@@ -655,9 +655,9 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
       dx = abs(r->motion.x - *new_x);
       dy = abs(r->motion.y - *new_y);
       
-      switch (ObjectMoveonType(r->obj))
+      switch (r->obj.moveontype)
       {
-      case OF_MOVEON_NOTIFY:
+      case MOVEON_NOTIFY:
          if ((dx > MIN_HOTPLATE_DIST) || (dy > MIN_HOTPLATE_DIST))
          {
             if ((int)r->obj.id == idLastObjNotify)
@@ -681,7 +681,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
          }
          break;
 
-      case OF_MOVEON_NO:
+      case MOVEON_NO:
          if (dx > MIN_NOMOVEON || dy > MIN_NOMOVEON ||
              (dx * dx + dy * dy) > MIN_NOMOVEON * MIN_NOMOVEON)
             continue;
@@ -716,7 +716,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
          return MOVE_BLOCKED;
          break;
          
-      case OF_MOVEON_TELEPORTER:
+      case MOVEON_TELEPORTER:
          if (dx > MIN_NOMOVEON || dy > MIN_NOMOVEON ||
              (dx * dx + dy * dy) > MIN_NOMOVEON * MIN_NOMOVEON)
             continue;

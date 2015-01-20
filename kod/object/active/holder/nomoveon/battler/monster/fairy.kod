@@ -62,10 +62,10 @@ classvars:
    vrSound_miss = fairy_sound_miss
    vrSound_aware = fairy_sound_aware
    vrSound_death = fairy_sound_death
-   
+
 properties:
 
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
    viKarma = 50
    piAnimation = ANIM_NONE
 
@@ -172,11 +172,6 @@ messages:
       }
 
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
 
    SendLightingInformation()

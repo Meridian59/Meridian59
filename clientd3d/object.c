@@ -90,6 +90,11 @@ object_node *ObjectCopy(object_node *obj)
    temp->name_res = obj->name_res;
    temp->icon_res = obj->icon_res;
    temp->flags  = obj->flags;
+   temp->drawingtype  = obj->drawingtype;
+   temp->minimapflags  = obj->minimapflags;
+   temp->namecolor = obj->namecolor;
+   temp->objecttype = obj->objecttype;
+   temp->moveontype = obj->moveontype;
    temp->amount = obj->amount;
    temp->temp_amount = obj->temp_amount;
    temp->translation = obj->translation;

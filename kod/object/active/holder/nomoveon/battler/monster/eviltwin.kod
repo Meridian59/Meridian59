@@ -368,23 +368,49 @@ messages:
       vrIcon = Send(poOriginal,@GetPlayerIcon);
       vrName = Send(poOriginal,@GetTrueName);
       piGender = Send(poOriginal,@GetGender);
-      piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+      piDrawfx = Send(poOriginal,@GetDrawingEffects);
 
       return;
    }
 
    GetObjectFlags()
    {
-      local iFlags;
-
       if poOriginal = $
       {
          return 0;
       }
 
-      iFlags = Send(poOriginal,@GetObjectFlags);
+      return Send(poOriginal,@GetObjectFlags);
+   }
 
-      return iFlags;
+   GetDrawingEffects()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetDrawingEffects);
+   }
+
+   GetPlayerNameColor()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetPlayerNameColor);
+   }
+
+   GetClientObjectType()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetClientObjectType);
    }
 
    GetAttackRange()
@@ -485,7 +511,7 @@ messages:
             Send(self,@DoDance);
          }
 
-         piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
       }
 
       propagate;

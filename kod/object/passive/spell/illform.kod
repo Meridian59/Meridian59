@@ -125,7 +125,7 @@ messages:
       }
          
       oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
-      iFX = Send(oIllusion,@GetDrawFX);
+      iFX = Send(oIllusion,@GetDrawingEffects);
 
       if oIllusion <> $ AND iFX <> 0
       {

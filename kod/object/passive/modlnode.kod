@@ -39,9 +39,9 @@ classvars:
    vrIcon = ModelNode_icon_rsc
    vrDesc = ModelNode_desc_rsc
 
-   viObject_flags = DRAWFX_TRANSLUCENT_50
-
 properties:
+
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    vrName = ModelNode_name_rsc
    piState = NODE_NORMAL

@@ -23,9 +23,6 @@ typedef DWORD ID;  /* Server id #s */
 #define GetObjTag(id) ( ((id) & 0xf0000000) >> 28)
 #define IsNumberObj(id) (GetObjTag(id) == CLIENT_TAG_NUMBER)
 
-// Object flag values and macros
-#define ObjectMoveonType(obj)    ((obj).flags & OF_NOMOVEON_MASK)
-
 #define MAX_CHARNAME 30   // Maximum length of character name
 #define MAX_DESCRIPTION 1000  /* Maximum length of character description */
 
@@ -72,27 +69,32 @@ typedef struct
 } d_lighting;
 
 typedef struct {
-   ID        id;
-   ID        icon_res;
-   ID        name_res;
-   DWORD     amount;              /* If top bits of id signify CLIENT_TAG_NUMBER, then
-		                     this field gives amount of object */
-   DWORD     temp_amount;         /* Scratch field used when user is selecting amount of object */
-   int       flags;               /* Flags describing various properties of objects */
-   BYTE      translation;         // Palette translation information
-   Animate   *animate;            /* Pointer to current animation (normal or motion animation) */
-   list_type *overlays;           /* Pointer to current overlays (normal or motion animation) */
-   Animate   normal_animate;      /* Holds normal (non-motion) animation info */
-   list_type normal_overlays;     /* Bitmaps to be overlaid on this object when drawn */
-   BYTE      normal_translation;  // Palette translation when not moving
-   BYTE      secondtranslation;   // Overriding, additional second translation.
-   WORD	     bounceTime;
-   WORD	     phaseTime;
-   int	     boundingHeight;
-   int	     boundingWidth;
-   int	     lightAdjust;	  // For flicker and flash
-   BYTE	     effect;		  // Display effect
-   d_lighting	dLighting;			// new lighting flags for d3d client
+   ID           id;
+   ID           icon_res;
+   ID           name_res;
+   DWORD        amount;              /* If top bits of id signify CLIENT_TAG_NUMBER, then
+                                        this field gives amount of object */
+   DWORD        temp_amount;         /* Scratch field used when user is selecting amount of object */
+   int          flags;               // Boolean object flags.
+   BYTE         drawingtype;        // Object flags for drawing effects (invisibility, lighting type etc.)
+   int          minimapflags;        // Flags used to draw the right color/icon on the minimap.
+   unsigned int namecolor;           // Player name color flags
+   object_type  objecttype;          /* Enum of object type (i.e. outlaw, murderer, NPC) */
+   moveon_type  moveontype;          // MoveOn type of the object
+   BYTE         translation;         // Palette translation information
+   Animate      *animate;            /* Pointer to current animation (normal or motion animation) */
+   list_type    *overlays;           /* Pointer to current overlays (normal or motion animation) */
+   Animate      normal_animate;      /* Holds normal (non-motion) animation info */
+   list_type    normal_overlays;     /* Bitmaps to be overlaid on this object when drawn */
+   BYTE         normal_translation;  // Palette translation when not moving
+   BYTE         secondtranslation;   // Overriding, additional second translation.
+   WORD         bounceTime;          //
+   WORD         phaseTime;           //
+   int          boundingHeight;      //
+   int          boundingWidth;       //
+   int          lightAdjust;         // For flicker and flash
+   BYTE         effect;              // Display effect
+   d_lighting   dLighting;           // new lighting flags for d3d client
 } object_node;
 
 typedef struct {

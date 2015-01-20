@@ -35,83 +35,89 @@
    HOUR = 3600
    MINUTE = 60
 
-   %%% Object type constants
+   %%% KOD Object type constants
 
    ACTIVE = 1
    PASSIVE = 2
 
-   %%% Object flags for client
-
-   % 0's are default value
+   % MoveOn type enum, now separate from object flags.
    MOVEON_YES        = 0
-   MOVEON_NO         = 0x00000001
-   MOVEON_TELEPORTER = 0x00000002
-   MOVEON_NOTIFY     = 0x00000003
-   USER_NO           = 0
-   USER_YES          = 0x00000004
-   BATTLER_NO        = 0
-   BATTLER_YES       = 0x00000008
-   GETTABLE_NO       = 0
-   GETTABLE_YES      = 0x00000010
+   MOVEON_NO         = 1
+   MOVEON_TELEPORTER = 2
+   MOVEON_NOTIFY     = 3
+
+   % Object flags for client.
+   OF_PLAYER         = 0x00000004
+   OF_ATTACKABLE     = 0x00000008
+   OF_GETTABLE       = 0x00000010
    % careful--only one's user is ALLOWED to put/get in.
-   CONTAINER_NO      = 0
-   CONTAINER_YES     = 0x00000020
-   LOOK_YES          = 0
-   LOOK_NO           = 0x00000040
-   ITEM_MAGIC_YES    = 0x00000080
-   ITEM_MAGIC_NO     = 0
-   HANGING_YES       = 0x00000100
-   OFFER_YES         = 0x00000200
-   OFFER_NO          = 0
-   BUY_YES           = 0x00000400
-   BUY_NO            = 0
-   ACTIVATE_YES      = 0x00000800
-   ACTIVATE_NO       = 0
-   APPLY_YES         = 0x00001000
-   APPLY_NO          = 0
-   SAFETY_YES        = 0x00002000
-   SAFETY_NO         = 0
+   OF_CONTAINER      = 0x00000020
+   OF_NOEXAMINE      = 0x00000040
+   OF_ITEM_MAGIC     = 0x00000080
+   OF_HANGING        = 0x00000100
+   OF_OFFERABLE      = 0x00000200
+   OF_BUYABLE        = 0x00000400
+   OF_ACTIVATABLE    = 0x00000800
+   OF_APPLYABLE      = 0x00001000
+   OF_SAFETY         = 0x00002000
 
-   % Visual effects
-   FLICKERING_YES    = 0x00020000
-   FLICKERING_NO     = 0
-   FLASHING_YES      = 0x00040000
-   FLASHING_NO       = 0
-   BOUNCE_YES        = 0x00060000
-   BOUNCE_NO         = 0
-   PHASING_YES       = 0x00080000
-   PHASING_NO        = 0
+   OF_BOUNCING       = 0x00010000
+   OF_FLICKERING     = 0x00020000
+   OF_FLASHING       = 0x00040000
+   OF_PHASING        = 0x00080000
 
-   DRAWFX_NO = 0
-   DRAWFX_TRANSLUCENT_25 = 0x100000
-   DRAWFX_TRANSLUCENT_50 = 0x200000
-   DRAWFX_TRANSLUCENT_75 = 0x300000
-   DRAWFX_BLACK          = 0x400000
-   DRAWFX_INVISIBLE      = 0x500000
-   DRAWFX_DITHERINVIS    = 0x700000
-   DRAWFX_DITHERTRANS    = 0x800000
-   DRAWFX_DOUBLETRANS    = 0x900000
-   DRAWFX_SECONDTRANS    = 0xA00000
-   DRAWFX_MASK           = 0xF00000
-
-   % Bits 0x4000, 0x8000, 0x10000 in total describe the player type
-   PLAYER_NO         = 0
-   PLAYER_PK         = 0x4000
-   PLAYER_OUTLAW     = 0x8000
-   PLAYER_DM         = 0xC000
-   PLAYER_CREATOR    = 0x10000
-   PLAYER_SUPER      = 0x14000
-   PLAYER_MODERATOR  = 0x18000
-   PLAYER_EVENT      = 0x1C000
+   % Drawing effects flags, separate from the boolean object flags.
+   DRAWFX_NONE           = 0
+   DRAWFX_TRANSLUCENT_25 = 0x01
+   DRAWFX_TRANSLUCENT_50 = 0x02
+   DRAWFX_TRANSLUCENT_75 = 0x03
+   DRAWFX_BLACK          = 0x04
+   DRAWFX_INVISIBLE      = 0x05
+   DRAWFX_TRANSLATE      = 0x06 % This is reserved by client, do not use.
+   DRAWFX_DITHERINVIS    = 0x07
+   DRAWFX_DITHERTRANS    = 0x08
+   DRAWFX_DOUBLETRANS    = 0x09
+   DRAWFX_SECONDTRANS    = 0x0A
+   DRAWFX_DITHERGREY     = 0x0B % Old logoff ghost greyscale effect.
+   DRAWFX_MASK           = 0xFF
 
    % What is the target, according to the viewer?  Used for special flagging.
-   PLAYER_IS_ENEMY      = 0x01000000
-   PLAYER_IS_FRIEND     = 0x02000000
-   PLAYER_IS_GUILDMATE  = 0x04000000
-   MINION_YES           = 0x08000000
-   MINION_OTHER         = 0x09000000
-   MINION_SELF          = 0x0A000000
-   MINIMAP_MASK         = 0x0F000000
+   % This is now its own bitfield separate from object flags.
+   MM_NONE                 = 0x00000000
+   MM_PLAYER               = 0x00000001
+   MM_PLAYER_IS_ENEMY      = 0x00000002
+   MM_PLAYER_IS_FRIEND     = 0x00000004
+   MM_PLAYER_IS_GUILDMATE  = 0x00000008
+   MM_BUILDER_GROUP        = 0x00000010
+   MM_MONSTER              = 0x00000020
+   MM_NPC                  = 0x00000040
+   MM_MINION_OTHER         = 0x00000080
+   MM_MINION_SELF          = 0x00000100
+
+   % Player name color sent as hex RGB value. Define constants
+   % for ease of use as needed. Requires OF_PLAYER boolean flag
+   % to be set to draw a name.
+   NC_PLAYER       = 0xFFFFFF   % Default, white name.
+   NC_SHADOW       = 0x000000   % Set if name should be drawn black.
+   NC_KILLER       = 0xFF0000   % Set if object is a killer.
+   NC_OUTLAW       = 0xFC9E00   % Set if object is an outlaw.
+   NC_DM           = 0x00FFFF   % Set if object is a DM player.
+   NC_CREATOR      = 0xFFFF00   % Set if object is a creator player.
+   NC_SUPER        = 0x00FF00   % Set if object is a "super DM".
+   NC_MODERATOR    = 0x0078FF   % Set if object is a "moderator".
+   NC_EVENTCHAR    = 0xFF00FF   % Set if object is an event character.
+   NC_DAENKS       = 0xB300B3   % Purple name color for Daenks.
+   NC_COLOR_MAX    = 0xFFFFFF   % Max color, defined for clarity.
+
+   % Object type enum. Used in the client for differentiating objects.
+   OT_NONE         = 0   % Default, no type set.
+   OT_KILLER       = 1   % Set if object is a killer.
+   OT_OUTLAW       = 2   % Set if object is an outlaw.
+   OT_DM           = 3   % Set if object is a DM player.
+   OT_CREATOR      = 4   % Set if object is a creator player.
+   OT_SUPER        = 5   % Set if object is a "super DM".
+   OT_MODERATOR    = 6   % Set if object is a "moderator".
+   OT_EVENTCHAR    = 7   % Set if object is an event character.
 
    %%% Projectile and Light flags
 

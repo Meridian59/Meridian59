@@ -40,7 +40,7 @@ classvars:
    vrIcon = WallofLightning_icon_rsc
    vrdesc = WallofLightning_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY | FLICKERING_YES
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = lightningwall_dissipates
    vrUnaffectedMessage = lightningwall_damage0
@@ -48,6 +48,9 @@ classvars:
    viLightBonus = 7
 
 properties:
+
+   piDrawEffectFlag = OF_FLICKERING
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    piMaxDamage = 0
    ptPeriodicEffect = $

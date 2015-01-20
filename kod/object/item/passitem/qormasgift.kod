@@ -61,10 +61,11 @@ classvars:
    viWeight = 90
    viBulk = 90
 
+properties:
 
-properties:  
+   viObject_flags = OF_NOEXAMINE | OF_GETTABLE
    vrIcon = QormasGift_icon_rsc
-   
+
    poRecipient = $
 
    % individual gift payload toggles
@@ -427,12 +428,6 @@ messages:
       
       return FALSE;
    }
-   
-   GetObjectFlags()
-   {
-      return LOOK_NO | GETTABLE_YES;
-   }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

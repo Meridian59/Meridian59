@@ -35,7 +35,7 @@ properties:
    vrIcon = ViewPointGlobe_icon
    vrDesc = ViewPointGlobe_desc
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
    poTargetGlobe = $
    piRange = 1
 

@@ -53,9 +53,12 @@ classvars:
 
    vrIcon = ManaNode_icon_rsc
 
-   viObject_flags = ACTIVATE_YES | DRAWFX_TRANSLUCENT_50 | FLICKERING_YES
+   viObject_flags = OF_ACTIVATABLE
 
 properties:
+
+   piDrawEffectFlag = OF_FLICKERING
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    vrName = ManaNode_name_rsc
    vrDesc = ManaNode_desc_rsc

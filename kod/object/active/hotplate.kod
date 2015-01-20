@@ -19,12 +19,15 @@ constants:
    include blakston.khd
 
 resources:
-   
+
    hotplate_icon_rsc = blank.bgf
 
 classvars:
 
-   viObject_flags = MOVEON_NOTIFY | LOOK_NO
+   viObject_flags = OF_NOEXAMINE
+
+   viMoveOn_type = MOVEON_NOTIFY
+
    vrIcon = hotplate_icon_rsc
 
 properties:
@@ -37,24 +40,29 @@ messages:
 
    GetObjectFlags()
    {
-      if not Send(Send(SYS, @GetSettings), @ShowHotPlates)
+      if NOT Send(Send(SYS,@GetSettings),@ShowHotPlates)
       {
-         return (MOVEON_NOTIFY | LOOK_NO);
+         return (OF_NOEXAMINE);
       }
-      
-      %% used for debugging
+
+      % Used for debugging.
 
       if piHotPlateID = 1
       {
-         return (MOVEON_NOTIFY | BATTLER_YES | USER_YES | LOOK_NO);
+         return (OF_ATTACKABLE | OF_PLAYER | OF_NOEXAMINE);
       }
 
-      return (MOVEON_NOTIFY | BATTLER_YES | LOOK_NO);
+      return (OF_ATTACKABLE | OF_NOEXAMINE);
    }
 
    Constructor(hpid = 0)
-   {      
-      if hpid = $  { Debug("hotplate created with bad HPID!");  propagate; }
+   {
+      if hpid = $
+      {
+         Debug("hotplate created with bad HPID!");
+
+         propagate;
+      }
 
       piHotPlateID = hpid;
 
@@ -64,10 +72,10 @@ messages:
    SomethingMoved(what = $,new_row = $,new_col = $)
    {
       local iRow,iCol;
-      
+
       iRow = Send(self,@GetRow);
       iCol = Send(self,@GetCol);
-     
+
       if new_row = iRow AND new_col = iCol
       {
          if what = self
@@ -100,7 +108,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

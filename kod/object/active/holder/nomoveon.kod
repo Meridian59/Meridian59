@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viObject_flags = MOVEON_NO
+   viMoveOn_type = MOVEON_NO
 
 properties:
 

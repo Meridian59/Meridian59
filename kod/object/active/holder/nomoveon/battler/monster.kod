@@ -699,13 +699,6 @@ messages:
       return;
    }
 
-   %%% DrawFX
-
-   GetDrawFX()
-   {
-      return piDrawfx;
-   }
-
    %%% Enchantments of Monsters
 
    EnchantmentTimer(timer = $)
@@ -5917,25 +5910,23 @@ messages:
    {
       local iFlags;
 
-      iFlags = MOVEON_NO;
+      iFlags = viObject_flags | piDrawEffectFlag;
 
       if NOT (piBehavior & AI_NPC)
       {
-         iFlags = iFlags | BATTLER_YES;
+         iFlags = iFlags | OF_ATTACKABLE;
       }
 
       if Send(Self,@MobIsSeller)
       {
-         iFlags = iFlags | BUY_YES;
+         iFlags = iFlags | OF_BUYABLE;
       }
 
       if (viAttributes & MOB_BUYER)
          OR (viAttributes & MOB_RECEIVE)
       {
-         iFlags = iFlags | OFFER_YES;
+         iFlags = iFlags | OF_OFFERABLE;
       }
-
-      iFlags = iFlags | piDrawfx;
 
       return iFlags;
    }
@@ -6385,12 +6376,12 @@ messages:
 
    IsInvisible()
    {
-      return (Send(self,@GetObjectFlags) & DRAWFX_INVISIBLE);
+      return (Send(self,@GetDrawingEffects) & DRAWFX_INVISIBLE);
    }
 
    IsShadowForm()
    {
-      return (Send(self,@GetObjectFlags) & DRAWFX_BLACK);
+      return (Send(self,@GetDrawingEffects) & DRAWFX_BLACK);
    }
 
    GetVaultNum()

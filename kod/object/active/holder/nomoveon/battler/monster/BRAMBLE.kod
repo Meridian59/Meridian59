@@ -56,12 +56,12 @@ classvars:
 
    viTreasure_type = TID_NONE
    viAttack_type = ATCK_WEAP_SLASH
-   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOVEON_NOTIFY | MOB_NOQUEST
+   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_NOQUEST
+   viMoveOn_type = MOVEON_NOTIFY
    viLevel = 25
    viDifficulty = 4 
    viKarma = 0
    viDefault_behavior = AI_NOFIGHT | AI_NOMOVE
-   viObject_flags = BATTLER_YES
    viCashmin = 0
    viCashmax = 0
    vrSound_hit = $

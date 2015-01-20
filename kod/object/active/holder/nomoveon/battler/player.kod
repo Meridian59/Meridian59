@@ -983,9 +983,6 @@ properties:
    % The user's string description, typed when created (and editable in game).
    psPlayerDescription = $
 
-   % Draw effects flags
-   piDrawFX = 0
-
    % graphics stuff
 
    prLegs = player_legs_a_rsc
@@ -9443,7 +9440,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0);
+         AddPacket(4,0, 4,0, 1,0, 4,0, 4,0, 1,0, 1,0);
          AddPacket(1,ANIMATE_ONCE, 4,175, 2,1, 2,3, 2,0);
          AddPacket(1,0);
 
@@ -9474,7 +9471,7 @@ messages:
          AddPacket(1,HS_SE);
          AddPacket(4,PWO_RIGHT_HAND);
          AddPacket(4,player_window_overlay_hand);
-         AddPacket(4,0, 4,0);
+         AddPacket(4,0, 4,0, 1,0, 4,0, 4,0, 1,0, 1,0);
          AddPacket(1,ANIMATE_ONCE,4,300,2,4,2,6,2,iGroup);
          AddPacket(1,1);
          AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
@@ -9508,7 +9505,8 @@ messages:
          AddPacket(4,Send(what,@GetWindowOverlayID)); % supposedly "object id" in client
          AddPacket(4,Send(what,@GetWindowOverlay));
          AddPacket(4,Send(what,@GetName)); % useless field, used to make client parsing easier
-         AddPacket(4,0);
+         % Flags, drawing flags, minimapflags, namecolor, playertype, moveon type.
+         AddPacket(4,0, 1,0, 4,0, 4,0, 1,0, 1,0);
          Send(what,@SendWindowOverlayAnimation);
          Send(what,@SendWindowOverlayOverlays);
 
@@ -9677,16 +9675,10 @@ messages:
       return;
    }
 
-   GetPlayerDrawfx()
-   {
-      return piDrawfx;
-   }
-
    ResetPlayerDrawfx(drawfx = 0, SendSomethingChanged = TRUE)
    {
-      piDrawfx = piDrawfx & (FLICKERING_YES | PHASING_YES | FLASHING_YES);
-      piDrawfx = piDrawfx | drawfx;
-      
+      piDrawfx = piDrawfx & drawfx;
+
       if poOwner <> $ AND SendSomethingChanged
       {
          Send(poOwner,@SomethingChanged,#what=self);
@@ -11101,14 +11093,14 @@ messages:
 
    SetFlickerFlag()
    {
-      piDrawfx = piDrawfx | FLICKERING_YES;
+      piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
 
       return;
    }
 
    ClearFlickerFlag()
    {
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
+      piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
 
       return;
    }
@@ -11117,14 +11109,14 @@ messages:
    {
       local i;
 
-      piDrawfx = piDrawfx & (~FLICKERING_YES);
+      piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
       for i in plUsing
       {
          if IsClass(i,&Torch)
             OR (IsClass(i,&Weapon) 
                AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
          {
-            piDrawfx = piDrawfx | FLICKERING_YES;
+            piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
 
             return;
          }
@@ -13593,7 +13585,7 @@ messages:
                if Nth(oLightObject,3) = self
                   AND NOT Send(Nth(oLightObject,1),@GetOldAreaEnchStyle)
                {
-                  if (piDrawFX & FLICKERING_YES)
+                  if (piDrawEffectFlag & OF_FLICKERING)
                   {
                       iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
                       iColor = Send(Nth(oLightObject,1),@GetLightColor);
@@ -13607,7 +13599,7 @@ messages:
             }
          }
 
-         if (piDrawFX & FLICKERING_YES)
+         if (piDrawEffectFlag & OF_FLICKERING)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
             % 75 out of 255 intensity of light

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientPatchForm));
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnPlay = new System.Windows.Forms.Button();
@@ -36,7 +37,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.btnPatch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.gbOptions = new System.Windows.Forms.GroupBox();
+            this.btnCacheGen = new System.Windows.Forms.Button();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
@@ -54,27 +55,34 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.pbFileProgress = new System.Windows.Forms.ProgressBar();
-            this.btnOptions = new System.Windows.Forms.Button();
             this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
             this.bgDownloadWorker = new System.ComponentModel.BackgroundWorker();
-            this.btnCacheGen = new System.Windows.Forms.Button();
-            this.gbOptions.SuspendLayout();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabLog = new System.Windows.Forms.TabPage();
+            this.tabOptions = new System.Windows.Forms.TabPage();
+            this.tabBrowser = new System.Windows.Forms.TabPage();
+            this.webControl1 = new Awesomium.Windows.Forms.WebControl(this.components);
+            this.webControl2 = new Awesomium.Windows.Forms.WebControl(this.components);
             this.groupProfileSettings.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabLog.SuspendLayout();
+            this.tabOptions.SuspendLayout();
+            this.tabBrowser.SuspendLayout();
             this.SuspendLayout();
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(7, 373);
+            this.pbProgress.Location = new System.Drawing.Point(15, 224);
             this.pbProgress.Name = "pbProgress";
-            this.pbProgress.Size = new System.Drawing.Size(706, 32);
+            this.pbProgress.Size = new System.Drawing.Size(187, 32);
             this.pbProgress.Step = 1;
             this.pbProgress.TabIndex = 0;
             // 
             // btnPlay
             // 
-            this.btnPlay.Location = new System.Drawing.Point(727, 339);
+            this.btnPlay.Location = new System.Drawing.Point(15, 262);
             this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(95, 70);
+            this.btnPlay.Size = new System.Drawing.Size(187, 46);
             this.btnPlay.TabIndex = 1;
             this.btnPlay.Text = "Play!";
             this.btnPlay.UseVisualStyleBackColor = true;
@@ -94,7 +102,7 @@
             this.ddlServer.FormattingEnabled = true;
             this.ddlServer.Location = new System.Drawing.Point(15, 57);
             this.ddlServer.Name = "ddlServer";
-            this.ddlServer.Size = new System.Drawing.Size(277, 21);
+            this.ddlServer.Size = new System.Drawing.Size(187, 21);
             this.ddlServer.TabIndex = 4;
             this.ddlServer.SelectionChangeCommitted += new System.EventHandler(this.ddlServer_SelectionChangeCommitted);
             // 
@@ -112,7 +120,7 @@
             // 
             this.btnPatch.Location = new System.Drawing.Point(15, 134);
             this.btnPatch.Name = "btnPatch";
-            this.btnPatch.Size = new System.Drawing.Size(279, 46);
+            this.btnPatch.Size = new System.Drawing.Size(187, 46);
             this.btnPatch.TabIndex = 7;
             this.btnPatch.Text = "Update/Install";
             this.btnPatch.UseVisualStyleBackColor = true;
@@ -128,20 +136,15 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Update/Install";
             // 
-            // gbOptions
+            // btnCacheGen
             // 
-            this.gbOptions.Controls.Add(this.btnCacheGen);
-            this.gbOptions.Controls.Add(this.groupProfileSettings);
-            this.gbOptions.Controls.Add(this.btnStartModify);
-            this.gbOptions.Controls.Add(this.btnRemove);
-            this.gbOptions.Controls.Add(this.btnAdd);
-            this.gbOptions.Location = new System.Drawing.Point(300, 12);
-            this.gbOptions.Name = "gbOptions";
-            this.gbOptions.Size = new System.Drawing.Size(522, 321);
-            this.gbOptions.TabIndex = 10;
-            this.gbOptions.TabStop = false;
-            this.gbOptions.Text = "Options";
-            this.gbOptions.Visible = false;
+            this.btnCacheGen.Location = new System.Drawing.Point(405, 10);
+            this.btnCacheGen.Name = "btnCacheGen";
+            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
+            this.btnCacheGen.TabIndex = 15;
+            this.btnCacheGen.Text = "Verify All Files";
+            this.btnCacheGen.UseVisualStyleBackColor = true;
+            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
             // 
             // groupProfileSettings
             // 
@@ -157,16 +160,16 @@
             this.groupProfileSettings.Controls.Add(this.txtPatchInfoURL);
             this.groupProfileSettings.Controls.Add(this.txtServerName);
             this.groupProfileSettings.Enabled = false;
-            this.groupProfileSettings.Location = new System.Drawing.Point(7, 109);
+            this.groupProfileSettings.Location = new System.Drawing.Point(6, 91);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(509, 200);
+            this.groupProfileSettings.Size = new System.Drawing.Size(504, 200);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(406, 110);
+            this.btnBrowse.Location = new System.Drawing.Point(399, 109);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(97, 20);
             this.btnBrowse.TabIndex = 22;
@@ -234,33 +237,33 @@
             // 
             this.txtPatchBaseURL.Location = new System.Drawing.Point(6, 149);
             this.txtPatchBaseURL.Name = "txtPatchBaseURL";
-            this.txtPatchBaseURL.Size = new System.Drawing.Size(400, 20);
+            this.txtPatchBaseURL.Size = new System.Drawing.Size(382, 20);
             this.txtPatchBaseURL.TabIndex = 15;
             // 
             // txtClientFolder
             // 
             this.txtClientFolder.Location = new System.Drawing.Point(6, 110);
             this.txtClientFolder.Name = "txtClientFolder";
-            this.txtClientFolder.Size = new System.Drawing.Size(400, 20);
+            this.txtClientFolder.Size = new System.Drawing.Size(382, 20);
             this.txtClientFolder.TabIndex = 14;
             // 
             // txtPatchInfoURL
             // 
             this.txtPatchInfoURL.Location = new System.Drawing.Point(6, 71);
             this.txtPatchInfoURL.Name = "txtPatchInfoURL";
-            this.txtPatchInfoURL.Size = new System.Drawing.Size(400, 20);
+            this.txtPatchInfoURL.Size = new System.Drawing.Size(382, 20);
             this.txtPatchInfoURL.TabIndex = 13;
             // 
             // txtServerName
             // 
             this.txtServerName.Location = new System.Drawing.Point(6, 32);
             this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Size = new System.Drawing.Size(400, 20);
+            this.txtServerName.Size = new System.Drawing.Size(382, 20);
             this.txtServerName.TabIndex = 12;
             // 
             // btnStartModify
             // 
-            this.btnStartModify.Location = new System.Drawing.Point(6, 79);
+            this.btnStartModify.Location = new System.Drawing.Point(234, 10);
             this.btnStartModify.Name = "btnStartModify";
             this.btnStartModify.Size = new System.Drawing.Size(108, 23);
             this.btnStartModify.TabIndex = 2;
@@ -270,7 +273,7 @@
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(6, 48);
+            this.btnRemove.Location = new System.Drawing.Point(120, 10);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(108, 23);
             this.btnRemove.TabIndex = 1;
@@ -280,7 +283,7 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(6, 19);
+            this.btnAdd.Location = new System.Drawing.Point(6, 9);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(108, 23);
             this.btnAdd.TabIndex = 0;
@@ -290,31 +293,21 @@
             // 
             // txtLog
             // 
-            this.txtLog.Location = new System.Drawing.Point(298, 13);
+            this.txtLog.Location = new System.Drawing.Point(6, 6);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(524, 320);
+            this.txtLog.Size = new System.Drawing.Size(504, 285);
             this.txtLog.TabIndex = 11;
             // 
             // pbFileProgress
             // 
-            this.pbFileProgress.Location = new System.Drawing.Point(7, 339);
+            this.pbFileProgress.Location = new System.Drawing.Point(15, 186);
             this.pbFileProgress.Name = "pbFileProgress";
-            this.pbFileProgress.Size = new System.Drawing.Size(706, 32);
+            this.pbFileProgress.Size = new System.Drawing.Size(187, 32);
             this.pbFileProgress.TabIndex = 12;
             this.pbFileProgress.Visible = false;
-            // 
-            // btnOptions
-            // 
-            this.btnOptions.Location = new System.Drawing.Point(7, 309);
-            this.btnOptions.Name = "btnOptions";
-            this.btnOptions.Size = new System.Drawing.Size(51, 23);
-            this.btnOptions.TabIndex = 13;
-            this.btnOptions.Text = "Options";
-            this.btnOptions.UseVisualStyleBackColor = true;
-            this.btnOptions.Click += new System.EventHandler(this.btnOptions_Click);
             // 
             // bgScanWorker
             // 
@@ -326,24 +319,73 @@
             this.bgDownloadWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgDownloadWorker_DoWork);
             this.bgDownloadWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgDownloadWorker_RunWorkerCompleted);
             // 
-            // btnCacheGen
+            // tabControl1
             // 
-            this.btnCacheGen.Location = new System.Drawing.Point(127, 19);
-            this.btnCacheGen.Name = "btnCacheGen";
-            this.btnCacheGen.Size = new System.Drawing.Size(105, 23);
-            this.btnCacheGen.TabIndex = 15;
-            this.btnCacheGen.Text = "Verify All Files";
-            this.btnCacheGen.UseVisualStyleBackColor = true;
-            this.btnCacheGen.Click += new System.EventHandler(this.btnCacheGen_Click);
+            this.tabControl1.Controls.Add(this.tabBrowser);
+            this.tabControl1.Controls.Add(this.tabLog);
+            this.tabControl1.Controls.Add(this.tabOptions);
+            this.tabControl1.Location = new System.Drawing.Point(208, 9);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1147, 506);
+            this.tabControl1.TabIndex = 14;
+            // 
+            // tabLog
+            // 
+            this.tabLog.Controls.Add(this.txtLog);
+            this.tabLog.Location = new System.Drawing.Point(4, 22);
+            this.tabLog.Name = "tabLog";
+            this.tabLog.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLog.Size = new System.Drawing.Size(1139, 480);
+            this.tabLog.TabIndex = 0;
+            this.tabLog.Text = "Log";
+            this.tabLog.UseVisualStyleBackColor = true;
+            // 
+            // tabOptions
+            // 
+            this.tabOptions.Controls.Add(this.groupProfileSettings);
+            this.tabOptions.Controls.Add(this.btnCacheGen);
+            this.tabOptions.Controls.Add(this.btnStartModify);
+            this.tabOptions.Controls.Add(this.btnRemove);
+            this.tabOptions.Controls.Add(this.btnAdd);
+            this.tabOptions.Location = new System.Drawing.Point(4, 22);
+            this.tabOptions.Name = "tabOptions";
+            this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabOptions.Size = new System.Drawing.Size(1139, 480);
+            this.tabOptions.TabIndex = 1;
+            this.tabOptions.Text = "Options";
+            this.tabOptions.UseVisualStyleBackColor = true;
+            // 
+            // tabBrowser
+            // 
+            this.tabBrowser.Controls.Add(this.webControl2);
+            this.tabBrowser.Location = new System.Drawing.Point(4, 22);
+            this.tabBrowser.Name = "tabBrowser";
+            this.tabBrowser.Size = new System.Drawing.Size(1139, 480);
+            this.tabBrowser.TabIndex = 2;
+            this.tabBrowser.Text = "News";
+            this.tabBrowser.UseVisualStyleBackColor = true;
+            // 
+            // webControl1
+            // 
+            this.webControl1.Location = new System.Drawing.Point(0, 0);
+            this.webControl1.Size = new System.Drawing.Size(0, 0);
+            this.webControl1.TabIndex = 0;
+            // 
+            // webControl2
+            // 
+            this.webControl2.Location = new System.Drawing.Point(3, 3);
+            this.webControl2.Size = new System.Drawing.Size(1133, 474);
+            this.webControl2.Source = new System.Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea", System.UriKind.Absolute);
+            this.webControl2.TabIndex = 0;
             // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(834, 417);
-            this.Controls.Add(this.btnOptions);
+            this.ClientSize = new System.Drawing.Size(1367, 527);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.pbFileProgress);
-            this.Controls.Add(this.gbOptions);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.label2);
@@ -351,14 +393,17 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.pbProgress);
-            this.Controls.Add(this.txtLog);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ClientPatchForm";
             this.Text = "OpenMeridian Client Patcher";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.gbOptions.ResumeLayout(false);
             this.groupProfileSettings.ResumeLayout(false);
             this.groupProfileSettings.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabLog.ResumeLayout(false);
+            this.tabLog.PerformLayout();
+            this.tabOptions.ResumeLayout(false);
+            this.tabBrowser.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -373,7 +418,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnPatch;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.GroupBox gbOptions;
         private System.Windows.Forms.Button btnRemove;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnStartModify;
@@ -391,10 +435,15 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.ProgressBar pbFileProgress;
-        private System.Windows.Forms.Button btnOptions;
         private System.ComponentModel.BackgroundWorker bgScanWorker;
         private System.ComponentModel.BackgroundWorker bgDownloadWorker;
         private System.Windows.Forms.Button btnCacheGen;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabLog;
+        private System.Windows.Forms.TabPage tabOptions;
+        private System.Windows.Forms.TabPage tabBrowser;
+        private Awesomium.Windows.Forms.WebControl webControl2;
+        private Awesomium.Windows.Forms.WebControl webControl1;
     }
 }
 

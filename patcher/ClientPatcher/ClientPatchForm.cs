@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using DownloadProgressChangedEventArgs = System.Net.DownloadProgressChangedEventArgs;
 using System.Deployment;
+using System.Reflection;
 
 namespace ClientPatcher
 {
@@ -32,6 +33,8 @@ namespace ClientPatcher
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            CheckForShortcut();
+
             btnPlay.Enabled = false;
 
             _settings = new SettingsManager();
@@ -54,6 +57,30 @@ namespace ClientPatcher
                 
 
             RefreshDdl();
+        }
+
+        void CheckForShortcut()
+        {
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+            {
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+                if (ad.IsFirstRun)  //first time user has run the app
+                {
+                    string company = "OpenMeridian";
+                    string description = "Open Meridian Patch and Client Management";
+
+                    string desktopPath = string.Empty;
+                    desktopPath =
+                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                        "\\", description, ".appref-ms");
+                    string shortcutName = string.Empty;
+                    shortcutName =
+                        string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs),
+                        "\\", company, "\\", description, ".appref-ms");
+                    System.IO.File.Copy(shortcutName, desktopPath, true);
+
+                }
+            }
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
@@ -136,10 +163,6 @@ namespace ClientPatcher
             var fbd = new FolderBrowserDialog();
             fbd.ShowDialog(this);
             txtClientFolder.Text = fbd.SelectedPath;
-        }
-        private void btnOptions_Click(object sender, EventArgs e)
-        {
-            gbOptions.Visible = !gbOptions.Visible;
         }
 
         private void Patcher_FileScanned(object sender, ScanEventArgs e)

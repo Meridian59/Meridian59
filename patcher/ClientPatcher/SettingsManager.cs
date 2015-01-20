@@ -18,9 +18,8 @@ namespace ClientPatcher
 
         public SettingsManager()
         {
-            _settingsPath = "%PROGRAMFILES%\\Open Meridian";
+            _settingsPath = "C:\\Program Files\\Open Meridian";
             _settingsFile = "\\settings.txt";
-            _settingsPath = Environment.ExpandEnvironmentVariables(_settingsPath);
         }
 
         public void GetNewSettings()

@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientPatcher", "ClientPatcher\ClientPatcher.csproj", "{EBE4D60C-DE56-485B-8199-020C52BA76FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatchListGenerator", "PatchServer\PatchListGenerator.csproj", "{2C9756F2-CA3D-443B-8EAB-B0CB006A1900}"
@@ -23,8 +25,8 @@ Global
 		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Debug|x86.Build.0 = Debug|x86
 		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|Mixed Platforms.Build.0 = Release|x86
 		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|x86.ActiveCfg = Release|x86
 		{EBE4D60C-DE56-485B-8199-020C52BA76FA}.Release|x86.Build.0 = Release|x86
 		{2C9756F2-CA3D-443B-8EAB-B0CB006A1900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

@@ -21,7 +21,7 @@ resources:
    Barloque_Innkeep_icon_rsc = bqinnk.bgf
    Barloque_Innkeep_desc_rsc = \
       "Of everyone in Barloque, the former sailor turned innkeeper Pritchett "
-      "is the least haughty.  Perhaps it is because he was not originally from"
+      "is the least haughty.  Perhaps it is because he was not originally from "
       "the Royal City and moved to North Barloque to buy a title."
    BqInn_entry_welcome = "I am gladeth to see you, mate."
 

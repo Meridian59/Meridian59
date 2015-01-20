@@ -220,6 +220,9 @@ classvars:
 
    vrKocName = monster_koc_name
    viGender = GENDER_NEUTER
+   
+   vbNamedMob = FALSE
+   
    vrDead_icon = $
    vrDead_name = $
 
@@ -498,6 +501,11 @@ messages:
       return vrKocName;
    }
 
+   IsNamedMob()
+   {
+      return vbNamedMob;
+   }
+   
    % Overridden for specific NPCs,
    % common point for mood changes, except word triggers
    AffectMood( why = $, what = $ )
@@ -3505,14 +3513,25 @@ messages:
 
       if vrDead_icon <> $
       {
-         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,
-                        #mob=TRUE,#playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);       
+         oBody = Create(&DeadBody,
+                        #victim=self,
+                        #killer=killer,
+                        #drawfx=viDead_drawfx);       
       }
 
       return oBody;
    }
 
+   GetDeadName()
+   {
+      return vrDead_name;
+   }
+   
+   GetDeadIcon()
+   {
+      return vrDead_Icon;
+   }
+   
    Killed(what=$)
    "The mob was just killed."
    {

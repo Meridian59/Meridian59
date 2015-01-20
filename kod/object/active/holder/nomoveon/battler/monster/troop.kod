@@ -1219,11 +1219,8 @@ messages:
    CreateDeadBody(killer=$)
    {
       return Create(&DeadBody,
-         #icon=vrDead_Icon,
-         #name=vrDead_Name,
-         #playername=send(killer,@GetTrueName),
-         #mob=TRUE,
-         #monstername=FactionTroop_name_rsc,
+         #victim=self,
+         #killer=killer,
          #PlayerBodyOverlay=vrDead_Legs,
          #BodyTranslation=(piBody_translations & FACTIONTROOP_TRANSLATION_BODY_MASK)/FACTIONTROOP_TRANSLATION_BODY_MUL,
          #LegsTranslation=(piBody_translations & FACTIONTROOP_TRANSLATION_LEGS_MASK)/FACTIONTROOP_TRANSLATION_LEGS_MUL);

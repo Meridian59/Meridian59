@@ -7,7 +7,7 @@
 DEPEND = ..\monster.bof
 BOFS  = ant.bof centip.bof cow.bof ent.bof fairy.bof \
         flytrap.bof fungbst.bof ghost.bof giarat.bof mummy.bof \
-        orc.bof redant.bof scorpion.bof skel.bof \
+        orc.bof redant.bof scorpion.bof skel.bof elemental.bof \
         slime.bof spdrbaby.bof spdrquen.bof spider.bof \
         temples.bof towns.bof troll.bof yeti.bof zombie.bof thief.bof \
         revenant.bof frogman.bof iceper.bof council.bof factions.bof \

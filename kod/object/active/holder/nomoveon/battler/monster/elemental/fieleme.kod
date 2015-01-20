@@ -1,0 +1,59 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FireElemental is Elemental
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   fireelemental_name_rsc = "fire golem"
+   fireelemental_icon_rsc = fieleme.bgf
+   fireelemental_desc_rsc = \
+      "This creature is a mass of pure elemental energy.  You feel a powerful"
+      " heat emanating off its immense body.  Its movements crackle like"
+      " hungry flames."
+      
+   fireelemental_koc_name_rsc = "atzmochcho"
+
+   fireelemental_dead_icon_rsc = fielemeX.bgf
+   fireelemental_dead_name_rsc = "dead fire golem"
+
+classvars:
+
+   vrKocName = fireelemental_koc_name_rsc
+   vrName = fireelemental_name_rsc
+   vrIcon = fireelemental_icon_rsc
+   vrDesc = fireelemental_desc_rsc
+   vrDead_icon = fireelemental_dead_icon_rsc
+   vrDead_name = fireelemental_dead_name_rsc
+
+   viAttack_Spell = ATCK_SPELL_FIRE
+   
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [-ATCK_SPELL_COLD, -50 ],
+                        [-ATCK_SPELL_ALL, 90 ],
+                        [ATCK_WEAP_BLUDGEON, -100],
+                        [ATCK_WEAP_ALL, 90 ] ];
+
+      propagate;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

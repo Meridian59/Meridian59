@@ -9274,50 +9274,67 @@ messages:
          if piGender = GENDER_MALE
          {
             % male, current colors
-            return Create(&DeadBody,#icon=player_dead_male_icona_rsc,
-                          #name=player_dead_male_name_rsc,
-                          #playername=vrName,
-                          #good=(piKarma>0),
+            return Create(&DeadBody,
+                          #victim=self,
                           #assassinated=Assassinated,
                           #PlayerBodyOverlay=player_dead_male_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
                           #LegsTranslation=Send(self,@GetLegsTranslation),
-                          #inKocatan = inKocatan,#DearlyDeparted=self);
+                          #inKocatan = inKocatan);
          }
          else
          {
             % female, current colors
-            return Create(&DeadBody,#icon=player_dead_female_icona_rsc,
-                          #name=player_dead_female_name_rsc,
-                          #playername=vrName,
-                          #good=(piKarma>0),
+            return Create(&DeadBody,
+                          #victim=self,
                           #assassinated=Assassinated,
                           #PlayerBodyOverlay=player_dead_female_iconb_rsc,
                           #BodyTranslation=Send(self,@GetBodyTranslation),
                           #LegsTranslation=Send(self,@GetLegsTranslation),
-                          #inKocatan = inKocatan,#DearlyDeparted=self);
+                          #inKocatan = inKocatan);
          }
       }
 
       if piGender = GENDER_MALE
       {
          % male, default colors
-         return Create(&DeadBody,#icon=player_dead_male_icona_rsc,
-                       #name=player_dead_male_name_rsc,#playername=vrName,
-                       #good=(piKarma>0),#PlayerBodyOverlay=player_dead_male_iconb_rsc,
+         return Create(&DeadBody,
+                       #victim=self,
+                       #PlayerBodyOverlay=player_dead_male_iconb_rsc,
                        #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                        #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
-                       #inKocatan = inKocatan,#DearlyDeparted=self);
+                       #inKocatan = inKocatan);
       }
       % female, default colors
-      return Create(&DeadBody,#icon=player_dead_female_icona_rsc,
-                    #name=player_dead_female_name_rsc,#playername=vrName,
-                    #good=(piKarma>0),#PlayerBodyOverlay=player_dead_female_iconb_rsc,
+      return Create(&DeadBody,
+                    #victim=self,
+                    #PlayerBodyOverlay=player_dead_female_iconb_rsc,
                     #BodyTranslation=Send(self,@GetDefaultShirtTranslation),
                     #LegsTranslation=Send(self,@GetDefaultPantsTranslation),
-                    #inKocatan = inKocatan,#DearlyDeparted=self);
+                    #inKocatan = inKocatan);
    }
 
+   GetDeadName()
+   {
+      if piGender = GENDER_MALE
+      {
+         return player_dead_male_name_rsc;
+      }
+      
+      return player_dead_female_name_rsc;
+
+   }
+   
+   GetDeadIcon()
+   {
+      if piGender = GENDER_MALE
+      {
+         return player_dead_male_icona_rsc;
+      }
+ 
+      return player_dead_female_icona_rsc;
+   }
+   
    FreeHands()
    "Attempts to remove all items from hands if possible."
    {

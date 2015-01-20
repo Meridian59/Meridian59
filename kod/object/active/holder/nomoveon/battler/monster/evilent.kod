@@ -222,11 +222,11 @@ messages:
 
    CreateDeadBody(killer=$)
    {
-      return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
-                     #playername=Send(killer,@GetTrueName),#mob=TRUE,
+      return Create(&DeadBody,
+                     #victim=self,
+                     #killer=killer,
                      #BodyTranslation=piColor_Translation,
                      #LegsTranslation=piColor_Translation,
-                     #monstername=EvilEnt_dead_name_rsc,
                      #PlayerBodyOverlay=vrDead_leaves);
    }
 

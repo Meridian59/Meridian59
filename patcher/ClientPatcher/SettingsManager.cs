@@ -12,7 +12,7 @@ namespace ClientPatcher
     class SettingsManager
     {
         //Where to download latest setting from
-        public const string SettingsUrl = "http://localhost/patchersettings/settings.php";
+        public const string SettingsUrl = "http://ww1.openmeridian.org/settings.php";
 
         private readonly string _settingsPath; //Path to JSON file settings.txt
         private readonly string _settingsFile;

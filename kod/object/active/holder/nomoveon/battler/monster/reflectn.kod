@@ -55,7 +55,7 @@ classvars:
    viAttributes = 0
    viLevel = 45
    viDifficulty = 4
-
+   viDamagePercent = 50
    viVisionDistance = 60
 
    viKarma = 0
@@ -84,7 +84,7 @@ properties:
 
    piSpellpower = 1
    poArrow = $
-
+   piDamagePercent
    ptSomethingChanged = $
 
 messages:
@@ -99,7 +99,7 @@ messages:
       piSpellpower = iSpellpower;
       ptManaDrain = CreateTimer(self,@ManaDrainTimer,MANA_DRAIN_DELAY);
       poArrow = Create(&Arrow);
-
+      piDamagePercent = viDamagePercent;
       propagate;
    }
 
@@ -415,7 +415,7 @@ messages:
 
    GetDamage(what = $, stroke_obj=$)
    {
-      local oStroke;
+      local oStroke, iDamage;
 
       if poOriginal = $
       {
@@ -427,8 +427,9 @@ messages:
       {
          oStroke = $;
       }
+      iDamage = Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
 
-      return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
+      return iDamage * piDamagePercent / 100;
    }
 
    GetDamageType(what=$,use_weapon=$)

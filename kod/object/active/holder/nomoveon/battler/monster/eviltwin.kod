@@ -51,6 +51,7 @@ classvars:
    viAttributes = 0
    viLevel = 20
    viDifficulty = 8
+   viDamagePercent = 50
 
    % Can't escape this monster's vision range.
    viVisionDistance = 100
@@ -77,7 +78,7 @@ properties:
    poOriginal = $         % Who the EvilTwin is of.
    piGender = GENDER_MALE
    pbIllusion = TRUE
-
+   piDamagePercent
    piSpellpower = 1
    poArrow = $
 
@@ -112,7 +113,7 @@ messages:
             }
          }
       }
-
+      piDamagePercent = viDamagePercent;
       piSpellpower = iSpellpower;
       poArrow = Create(&Arrow);
       Post(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
@@ -418,7 +419,7 @@ messages:
 
    GetDamage(what=$,stroke_obj=$)
    {
-      local oStroke;
+      local oStroke, iDamage;
 
       if poOriginal = $
       {
@@ -430,8 +431,9 @@ messages:
       {
          oStroke = $;
       }
+      iDamage = Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
 
-      return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
+      return iDamage * piDamagePercent / 100;
    }
 
    GetDamageType(what=$,use_weapon=$)

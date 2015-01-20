@@ -47,7 +47,7 @@ namespace ClientPatcher
             _patcher.ProgressedDownload += Patcher_ProgressedDownload;
             _patcher.EndedDownload += Patcher_EndedDownload;
 
-            
+            btnCreateAccount.Text = String.Format("Create Account for {0}",_patcher.CurrentProfile.ServerName);
 
             if (ApplicationDeployment.IsNetworkDeployed)
             {
@@ -106,6 +106,10 @@ namespace ClientPatcher
             _patcher.CurrentProfile = selected;
             txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", selected.ServerName, selected.ClientFolder);
             btnPlay.Enabled = false;
+
+            webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
+            btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
+            _creatingAccount = false;
 
             if (groupProfileSettings.Enabled != true) return;
             groupProfileSettings.Enabled = false;
@@ -357,13 +361,22 @@ namespace ClientPatcher
             _patcher.GenerateCache();
         }
 
+        private bool _creatingAccount = false;
+
         private void btnCreateAccount_Click(object sender, EventArgs e)
         {
-            webControl.Source = new Uri(_patcher.CurrentProfile.AccountCreationUrl); 
+            if (!_creatingAccount)
+            {
+                webControl.Source = new Uri(_patcher.CurrentProfile.AccountCreationUrl);
+                btnCreateAccount.Text = "Back to News";
+                _creatingAccount = true;
+            }
+            else
+            {
+                webControl.Source = new Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea");
+                btnCreateAccount.Text = String.Format("Create Account for {0}", _patcher.CurrentProfile.ServerName);
+                _creatingAccount = false;
+            }
         }
-
-        
-
-
     }
 }

@@ -298,7 +298,7 @@
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(504, 285);
+            this.txtLog.Size = new System.Drawing.Size(948, 468);
             this.txtLog.TabIndex = 11;
             // 
             // pbFileProgress

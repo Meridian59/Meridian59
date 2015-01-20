@@ -53,12 +53,12 @@ M59EXPORT void XlatDib(BYTE* pabyBits, int width, int height, xlat* pXlat);
 **************** 0x00 - 0x0F
 ****************
 ****************
-****-----*****--  (*'s are used XLAT_* constants.)
+****--********--  (*'s are used XLAT_* constants.)
 -*********---***
--***-*****------
+-***-********---
 **------------**
 ****************
--------XXXXXXXXX 0x80 - 0x8F
+*****--XXXXXXXXX 0x80 - 0x8F
 XXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXX  (X's are XLAT_GUILDCOLOR_BASE-XLAT_GUILDCOLOR_END.)
@@ -103,12 +103,22 @@ Whenever you define a new color, mark off the appropriate spot above with *.
 #define XLAT_GRAYTOLPURPLE 0x0018
 #define XLAT_GRAYTOLGOLD   0x0019
 
+// New red, blue and purple to black translations.
+#define XLAT_REDTOBLACK    0x005A
+#define XLAT_BLUETOBLACK   0x005B
+#define XLAT_PURPLETOBLACK 0x005C
+
 #define XLAT_REDTODGREEN1  0x007A
 #define XLAT_REDTODGREEN2  0x007B
 #define XLAT_REDTODGREEN3  0x007C
 #define XLAT_REDTOBLACK1   0x007D
 #define XLAT_REDTOBLACK2   0x007E
 #define XLAT_REDTOBLACK3   0x007F
+#define XLAT_REDTODKBLACK1 0x0080
+#define XLAT_REDTODKBLACK2 0x0081
+#define XLAT_REDTODKBLACK3 0x0082
+#define XLAT_REDBLK_BLWHT  0x0083
+#define XLAT_BLBLK_REDWHT  0x0084
 
 #define XLAT_GRAYTOLBBLUE  0x0020
 #define XLAT_GRAYTOLRED    0x0021

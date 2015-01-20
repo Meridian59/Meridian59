@@ -243,9 +243,9 @@ resources:
    user_temp_safe_on = \
       "~B~U~k[###]~n ~B~vYou will receive a temporary guardian angel on death."
    user_temp_safe_off = \
-      ""~B~U~k[###]~n ~B~vYou will no longer receive a temporary guardian angel on death."
+      "~B~U~k[###]~n ~B~vYou will no longer receive a temporary guardian angel on death."
    user_temp_safe_invalid = \
-      ""~B~U~k[###]~n ~B~vYour guardian angel can no longer protect you."
+      "~B~U~k[###]~n ~B~vYour guardian angel can no longer protect you."
 
    user_cant_go = "You are unable to go anywhere."
    user_cant_go_wav_rsc = cant_go_anywhere_louder.wav

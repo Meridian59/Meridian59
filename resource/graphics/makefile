@@ -11,6 +11,7 @@ BGFS = \
 	$(OUTDIR)\arrowfir.bgf \
 	$(OUTDIR)\arrowsil.bgf \
 	$(OUTDIR)\arrowner.bgf \
+	$(OUTDIR)\arrowice.bgf \
 	$(OUTDIR)\mystswd.bgf \
 	$(OUTDIR)\mystwdov.bgf \
 	$(OUTDIR)\ring3.bgf \

@@ -188,8 +188,8 @@ messages:
             if Send(who,@CheckPlayerFlag,#flag=PFLAG_MANA_FOCUS)
             {
                % Bonus if we have mana focus up.
-               iManaFocus = First(Send(who,@GetEnchantedState,
-                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS)));
+               iManaFocus = Send(who,@GetEnchantedState,
+                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS));
 
                % This takes the spellpower of Mana Focus (iManaFocus), and uses
                %  that to scale our "bonus" damage.

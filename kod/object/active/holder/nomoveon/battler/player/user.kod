@@ -2502,14 +2502,19 @@ messages:
                   iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
                }
             }
-         }
 
-         % Draw a red halo for any attackable player.
-         if NOT IsClass(self,&DM)
-            AND Send(self,@AllowPlayerAttack,#victim=what,
-                     #report=FALSE,#actual=FALSE)
+            % Draw a red halo for any attackable player.
+            if NOT IsClass(self,&DM)
+               AND Send(self,@AllowPlayerAttack,#victim=what,
+                        #report=FALSE,#actual=FALSE)
+            {
+               iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
+            }
+         }
+         else
          {
-            iFlags = (iFlags | MM_PLAYER_IS_ENEMY);
+
+            iFlags = (iFlags | MM_MONSTER);
          }
       }
 

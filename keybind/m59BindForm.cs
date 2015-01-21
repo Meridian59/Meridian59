@@ -321,6 +321,52 @@ namespace m59bind
             }
         }
 
+        private bool checkForDuplicates()
+        {
+            for (int i = 0; i < tabControl1.TabPages.Count; ++i)
+            {
+                foreach (Control current in tabControl1.TabPages[i].Controls)
+                {
+                    if (current.GetType() == typeof(Button) &&
+                        current.Text.CompareTo("+") != 0)
+                    {
+                        for (int j = 0; j < tabControl1.TabPages.Count; ++j)
+                        {
+                            foreach (Control compare in tabControl1.TabPages[j].Controls)
+                            {
+                                if (current != compare)
+                                {
+                                    if (current.Text.CompareTo(compare.Text) == 0)
+                                    {
+                                        MessageBox.Show("You have multiple actions assigned to the same key.  (" + current.Text + ")", "Duplicates");
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool checkForUnset()
+        {
+            for (int i = 0; i < tabControl1.TabPages.Count; ++i)
+            {
+                foreach (Control current in tabControl1.TabPages[i].Controls)
+                {
+                    if (current.GetType() == typeof(Button) &&
+                        current.Text.CompareTo("press a key") == 0)
+                    {
+                        MessageBox.Show("One or more actions have not been set", "Unset Action");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Captures a key press and saves a keystring into a control
         /// </summary>
@@ -332,21 +378,24 @@ namespace m59bind
 
             switch (e.KeyCode)
             {
-                case Keys.Shift:
-                case Keys.ShiftKey:
-                case Keys.LShiftKey:
-                case Keys.RShiftKey:
-                case Keys.Control:
-                case Keys.ControlKey:
-                case Keys.LControlKey:
-                case Keys.RControlKey:
                 case Keys.Alt:
                 case Keys.Menu:
                 case Keys.LMenu:
                 case Keys.RMenu:
-                    e.Handled = true;
-                    return keyPrompt;
-
+                    returnString = "alt";
+                    break;
+                case Keys.Control:
+                case Keys.ControlKey:
+                case Keys.LControlKey:
+                case Keys.RControlKey:
+                    returnString = "ctrl";
+                    break;
+                case Keys.ShiftKey:
+                case Keys.LShiftKey:
+                case Keys.RShiftKey:
+                case Keys.Shift:
+                    returnString = "shift";
+                    break;
                 case Keys.Down:
                     returnString = "down";
                     break;
@@ -406,15 +455,24 @@ namespace m59bind
                     returnString += e.KeyData.ToString().ToLower().Substring(0, 1);
                     break;
             }
-            if (e.Shift == true)
+            if (e.Shift && !(e.KeyCode == Keys.Shift || 
+                             e.KeyCode == Keys.ShiftKey ||
+                             e.KeyCode == Keys.LShiftKey ||
+                             e.KeyCode == Keys.RShiftKey ))
             {
                 returnString += "+shift";
             }
-            else if (e.Control)
+            else if (e.Control && !(e.KeyCode == Keys.Control ||
+                                    e.KeyCode == Keys.ControlKey ||
+                                    e.KeyCode == Keys.LControlKey ||
+                                    e.KeyCode == Keys.RControlKey))
             {
                 returnString += "+ctrl";
             }
-            else if (e.Alt)
+            else if (e.Alt && !(e.KeyCode == Keys.Alt ||
+                                e.KeyCode == Keys.Menu ||
+                                e.KeyCode == Keys.LMenu ||
+                                e.KeyCode == Keys.RMenu))
             {
                 returnString += "+alt";
             }
@@ -512,13 +570,16 @@ namespace m59bind
         /// <param name="e">event details</param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (configChanged)
+            if (!checkForDuplicates() && !checkForUnset())
             {
-                MessageBox.Show("You must restart Meridian before these changes will take effect.", "Reload Game");
-                writeToConfigFile();
-            }
+                if (configChanged)
+                {
+                    MessageBox.Show("You must restart Meridian before these changes will take effect.", "Reload Game");
+                    writeToConfigFile();
+                }
 
-            Application.Exit();
+                Application.Exit();
+            }
         }
 
         /// <summary>

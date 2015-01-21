@@ -332,21 +332,24 @@ namespace m59bind
 
             switch (e.KeyCode)
             {
-                case Keys.Shift:
-                case Keys.ShiftKey:
-                case Keys.LShiftKey:
-                case Keys.RShiftKey:
-                case Keys.Control:
-                case Keys.ControlKey:
-                case Keys.LControlKey:
-                case Keys.RControlKey:
                 case Keys.Alt:
                 case Keys.Menu:
                 case Keys.LMenu:
                 case Keys.RMenu:
-                    e.Handled = true;
-                    return keyPrompt;
-
+                    returnString = "alt";
+                    break;
+                case Keys.Control:
+                case Keys.ControlKey:
+                case Keys.LControlKey:
+                case Keys.RControlKey:
+                    returnString = "ctrl";
+                    break;
+                case Keys.ShiftKey:
+                case Keys.LShiftKey:
+                case Keys.RShiftKey:
+                case Keys.Shift:
+                    returnString = "shift";
+                    break;
                 case Keys.Down:
                     returnString = "down";
                     break;
@@ -406,15 +409,24 @@ namespace m59bind
                     returnString += e.KeyData.ToString().ToLower().Substring(0, 1);
                     break;
             }
-            if (e.Shift == true)
+            if (e.Shift && !(e.KeyCode == Keys.Shift || 
+                             e.KeyCode == Keys.ShiftKey ||
+                             e.KeyCode == Keys.LShiftKey ||
+                             e.KeyCode == Keys.RShiftKey ))
             {
                 returnString += "+shift";
             }
-            else if (e.Control)
+            else if (e.Control && !(e.KeyCode == Keys.Control ||
+                                    e.KeyCode == Keys.ControlKey ||
+                                    e.KeyCode == Keys.LControlKey ||
+                                    e.KeyCode == Keys.RControlKey))
             {
                 returnString += "+ctrl";
             }
-            else if (e.Alt)
+            else if (e.Alt && !(e.KeyCode == Keys.Alt ||
+                                e.KeyCode == Keys.Menu ||
+                                e.KeyCode == Keys.LMenu ||
+                                e.KeyCode == Keys.RMenu))
             {
                 returnString += "+alt";
             }

@@ -321,6 +321,52 @@ namespace m59bind
             }
         }
 
+        private bool checkForDuplicates()
+        {
+            for (int i = 0; i < tabControl1.TabPages.Count; ++i)
+            {
+                foreach (Control current in tabControl1.TabPages[i].Controls)
+                {
+                    if (current.GetType() == typeof(Button) &&
+                        current.Text.CompareTo("+") != 0)
+                    {
+                        for (int j = 0; j < tabControl1.TabPages.Count; ++j)
+                        {
+                            foreach (Control compare in tabControl1.TabPages[j].Controls)
+                            {
+                                if (current != compare)
+                                {
+                                    if (current.Text.CompareTo(compare.Text) == 0)
+                                    {
+                                        MessageBox.Show("You have multiple actions assigned to the same key.  (" + current.Text + ")", "Duplicates");
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool checkForUnset()
+        {
+            for (int i = 0; i < tabControl1.TabPages.Count; ++i)
+            {
+                foreach (Control current in tabControl1.TabPages[i].Controls)
+                {
+                    if (current.GetType() == typeof(Button) &&
+                        current.Text.CompareTo("press a key") == 0)
+                    {
+                        MessageBox.Show("One or more actions have not been set", "Unset Action");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Captures a key press and saves a keystring into a control
         /// </summary>
@@ -524,13 +570,16 @@ namespace m59bind
         /// <param name="e">event details</param>
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (configChanged)
+            if (!checkForDuplicates() && !checkForUnset())
             {
-                MessageBox.Show("You must restart Meridian before these changes will take effect.", "Reload Game");
-                writeToConfigFile();
-            }
+                if (configChanged)
+                {
+                    MessageBox.Show("You must restart Meridian before these changes will take effect.", "Reload Game");
+                    writeToConfigFile();
+                }
 
-            Application.Exit();
+                Application.Exit();
+            }
         }
 
         /// <summary>

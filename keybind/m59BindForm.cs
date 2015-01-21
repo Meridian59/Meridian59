@@ -359,7 +359,7 @@ namespace m59bind
                     if (current.GetType() == typeof(Button) &&
                         current.Text.CompareTo("press a key") == 0)
                     {
-                        MessageBox.Show("One or more actions have not been set", "Unset Action");
+                        MessageBox.Show("One or more actions have not been set.", "Unset Action");
                         return true;
                     }
                 }

@@ -79,11 +79,6 @@ messages:
 
    ItemReqUse(oItem=$,oPlayer=$)
   {
-      if send(oPlayer,@GetKarma) > -30
-      {
-	 send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use_karma);
-	 return FALSE;	    
-      }
       if send(oItem,@GetProf,#who=oPlayer) < 50      
       {
 	 send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use,

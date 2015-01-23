@@ -32,7 +32,7 @@ resources:
    NarthylWorm_dead_name_rsc = "dead narthyl worm"
 
    NarthylWorm_sound_miss = wrm_atk.wav
-   NarthylWorm_sound_death = wrm_dth.wav
+   NarthylWorm_sound_death = wrm_die.wav
    NarthylWorm_sound_aware = wrm_awr.wav
 
    NarthylWorm_sound_flap1 = wrm_flp1.wav

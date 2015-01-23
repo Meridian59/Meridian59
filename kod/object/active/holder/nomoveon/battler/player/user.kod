@@ -145,7 +145,7 @@ resources:
    user_stat_health = heal.bgf
    user_stat_mana = ankh.bgf
    user_stat_vigor = bolticon.bgf  %stickman.bgf
-   user_stat_hpgainchance = iboonint.bgf
+   user_stat_hpgainchance = exp.bgf
 
    user_group_condition = "Condition"
    user_group_stats = "Stats"

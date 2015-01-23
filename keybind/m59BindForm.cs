@@ -380,9 +380,8 @@ namespace m59bind
             if ((e.KeyValue >= 48 && e.KeyValue <= 57)
                 || (e.KeyValue >= 96 && e.KeyValue <= 105))
             {
-                returnString = "";
-
-                return returnString;
+                e.Handled = true;
+                return keyPrompt;
             }
 
             switch (e.KeyCode)
@@ -511,9 +510,9 @@ namespace m59bind
                 case Keys.F10:
                 case Keys.F11:
                 case Keys.F12:
-                    returnString = "";
                     // These are used for aliases.
-                    return returnString;
+                    e.Handled = true;
+                    return keyPrompt;
                 default:
                     returnString = "";
                     returnString += e.KeyData.ToString().ToLower().Substring(0, 1);

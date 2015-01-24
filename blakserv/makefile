@@ -6,13 +6,13 @@ TOPDIR=..
 
 !include $(TOPDIR)\common.mak
 
-CFLAGS = $(CFLAGS) /Gr
+CFLAGS = $(CFLAGS) 
 
 BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug /SUBSYSTEM:WINDOWS",5.01"
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib libmysql.lib
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib libmysql.lib libcurl.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \
@@ -101,6 +101,7 @@ $(OUTDIR)\blakserv.exe: $(OBJS) $(OUTDIR)\blakserv.res
 	$(LINK)	$** $(LIBS) -OUT:$@ $(BLAKSERVLINKFLAGS) $(LINKFLAGS)
 	$(CP) $@ $(BLAKSERVRUNDIR)
 	$(CP) $(BLAKLIBDIR)\libmysql.dll $(BLAKSERVRUNDIR)
+   $(CP) $(BLAKBINDIR)\libcurl.dll $(BLAKSERVRUNDIR)
 
 
 !include $(TOPDIR)\rules.mak

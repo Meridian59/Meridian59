@@ -5951,9 +5951,9 @@ messages:
 
       iFlags = viObject_flags | piDrawEffectFlag;
 
-      if NOT (piBehavior & AI_NPC)
+      if (piBehavior & AI_NPC)
       {
-         iFlags = iFlags | OF_ATTACKABLE;
+         iFlags = iFlags & ~OF_ATTACKABLE;
       }
 
       if Send(Self,@MobIsSeller)

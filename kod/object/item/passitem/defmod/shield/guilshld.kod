@@ -79,6 +79,8 @@ resources:
    guildshield_yellow = "gold"
    guildshield_gray = "gris"
    guildshield_sky = "azure"
+   guildshield_darkgray = "dark gray"
+   guildshield_black = "black"
    guildshield_unknown = "a color"
 
    guildshield_slash = " tierced in bend sinister by "
@@ -134,7 +136,8 @@ properties:
 
 messages:
 
-   Constructor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT,guildMember=$)
+   Constructor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,
+               shape=SHIELDSHAPE_DEFAULT,guildMember=$)
    {
       local oGuild;
 
@@ -146,7 +149,8 @@ messages:
          shape  = Send(oGuild,@GetShieldShape);
       }
 
-      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,
+            #shape=shape,#override=TRUE);
 
       propagate;
    }
@@ -176,7 +180,7 @@ messages:
       return TRUE;
    }
 
-   AppendColor(color=0)
+   AppendColor(color=0,iColorNum=1)
    {
       if color = XLAT_TO_RED { AppendTempString(guildshield_red); return; }
       if color = XLAT_TO_SKIN1 { AppendTempString(guildshield_skin1); return; }
@@ -189,6 +193,71 @@ messages:
       if color = XLAT_TO_YELLOW { AppendTempString(guildshield_yellow); return; }
       if color = XLAT_TO_GRAY { AppendTempString(guildshield_gray); return; }
       if color = XLAT_TO_SKY { AppendTempString(guildshield_sky); return; }
+      if color = XLAT_TO_BLACK { AppendTempString(guildshield_darkgray); return; }
+
+      if color = XLAT_REDTOBLACK
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_black);
+         }
+         else
+         {
+            AppendTempString(guildshield_blue);
+         }
+
+         return;
+      }
+      if color = XLAT_BLUETOBLACK
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_blue);
+         }
+         else
+         {
+            AppendTempString(guildshield_black);
+         }
+
+         return;
+      }
+
+      % Secondary skin colors return earlier.
+      if color >= PT_REDTODKBLACK1
+         AND color <= PT_REDTODKBLACK3
+      {
+         AppendTempString(guildshield_black);
+
+         return;
+      }
+      
+      if color = PT_REDBLK_BLWHT
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_black);
+         }
+         else
+         {
+            AppendTempString(guildshield_gray);
+         }
+
+         return;
+      }
+
+      if color = PT_BLBLK_REDWHT
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_gray);
+         }
+         else
+         {
+            AppendTempString(guildshield_black);
+         }
+
+         return;
+      }
 
       AppendTempString(guildshield_unknown);
 
@@ -208,7 +277,7 @@ messages:
       % color 1
       x = Send(self,@GetPaletteTranslation);
       a = Send(SYS,@DecodePrimaryColor,#xlat=x);
-      Send(self,@AppendColor,#color=a);
+      Send(self,@AppendColor,#color=a,#iColorNum=1);
 
       % shape
       if piShield_shape = SHIELDSHAPE_SLASH { AppendTempString(guildshield_slash); }
@@ -218,7 +287,7 @@ messages:
 
       % color 2
       b = Send(SYS,@DecodeSecondaryColor,#xlat=x);
-      Send(self,@AppendColor,#color=b);
+      Send(self,@AppendColor,#color=b,#iColorNum=2);
 
       % guild, if known
       x = Send(SYS,@FindGuildByShield,#color1=a,#color2=b,#shape=piShield_shape);

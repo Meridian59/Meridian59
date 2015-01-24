@@ -79,8 +79,9 @@ resources:
    guildshield_yellow = "gold"
    guildshield_gray = "gris"
    guildshield_sky = "azure"
-   guildshield_darkgray = "dark gray"
-   guildshield_black = "black"
+   guildshield_darkgray = "silver"
+   guildshield_black = "ebony"
+   guildshield_darkgreen = "forest green"
    guildshield_unknown = "a color"
 
    guildshield_slash = " tierced in bend sinister by "
@@ -194,6 +195,7 @@ messages:
       if color = XLAT_TO_GRAY { AppendTempString(guildshield_gray); return; }
       if color = XLAT_TO_SKY { AppendTempString(guildshield_sky); return; }
       if color = XLAT_TO_BLACK { AppendTempString(guildshield_darkgray); return; }
+      if color = XLAT_TO_DGREEN { AppendTempString(guildshield_darkgreen); return; }
 
       if color = XLAT_REDTOBLACK
       {
@@ -230,7 +232,7 @@ messages:
 
          return;
       }
-      
+
       if color = PT_REDBLK_BLWHT
       {
          if iColorNum = 1

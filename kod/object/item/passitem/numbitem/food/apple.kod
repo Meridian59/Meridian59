@@ -25,11 +25,23 @@ resources:
 
    apple_name_plural_rsc = "apples"
 
+   apple_disp_name = "apple tree"
+   apple_disp_icon = appletree.bgf
+   apple_disp_desc = \
+     "This apple tree variety is common in the forest of Farol and is "
+     "known for its delicious, juicy apples.  Several of them look low "
+     "enough for you to pick."
+   apple_got_one = "You reach up and pick an apple from the tree."
+
 classvars:
 
    vrName = apple_name_rsc
    vrIcon = apple_icon_rsc
    vrDesc = apple_desc_rsc
+
+   vrDisp_name = apple_disp_name
+   vrDisp_icon = apple_disp_icon
+   vrDisp_desc = apple_disp_desc
 
    vrName_plural = apple_name_plural_rsc
 
@@ -37,15 +49,23 @@ classvars:
 
    viBulk = 6
    viWeight = 6
-   viValue_average = 25
+   viValue_average = 5
 
 properties:
 
    viNutrition = 10
-   viFilling = 24   
-   piNumber = 2
+   viFilling = 24
+   piNumber = 1
 
 messages:
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      Send(who,@MsgSendUser,#message_rsc=apple_got_one);
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

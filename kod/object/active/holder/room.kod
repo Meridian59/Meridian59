@@ -3910,7 +3910,7 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if (IsClass(each_obj,&ActiveWallElement)
-            or IsClass(each_obj,&Brambles)
+            or IsClass(each_obj,&Brambles))
             AND NOT IsClass(each_obj,&ActiveSporeCloud)
             AND NOT IsClass(each_obj,&Web)
          {

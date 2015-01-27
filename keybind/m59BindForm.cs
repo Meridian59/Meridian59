@@ -196,7 +196,7 @@ namespace m59bind
             m59BindProgram.GetIni(configFile, "config", "dynamiclighting", "true");
             m59BindProgram.GetIni(configFile, "config", "softwarerenderer", "false");
 
-            configChanged = false;
+            configChanged = true;
         }
 
         /// <summary>

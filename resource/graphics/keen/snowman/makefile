@@ -5,13 +5,11 @@ TOPDIR=..\..\..\..
 
 SOURCEDIR = .
 
-BGFS = \
-	snowman.bgf \
+BGFS = snowman.bgf \
 
 
 all: 
 	@-for %i in ($(BGFS)) do \
-   @if NOT EXIST $(CLIENTRUNDIR)\resource\%i \
    @echo copying %i to client & \
 	$(CP) %i $(CLIENTRUNDIR)\resource
 

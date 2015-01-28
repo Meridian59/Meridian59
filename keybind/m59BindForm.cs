@@ -196,7 +196,7 @@ namespace m59bind
             m59BindProgram.GetIni(configFile, "config", "dynamiclighting", "true");
             m59BindProgram.GetIni(configFile, "config", "softwarerenderer", "false");
 
-            configChanged = false;
+            configChanged = true;
         }
 
         /// <summary>
@@ -376,8 +376,65 @@ namespace m59bind
         {
             string returnString;
 
+            // Don't allow assigning of numbers.
+            if ((e.KeyValue >= 48 && e.KeyValue <= 57)
+                || (e.KeyValue >= 96 && e.KeyValue <= 105))
+            {
+                e.Handled = true;
+                return keyPrompt;
+            }
+
             switch (e.KeyCode)
             {
+                case Keys.Add:
+                    returnString = "add";
+                    break;
+                case Keys.Subtract:
+                    returnString = "subtract";
+                    break;
+                  case Keys.Divide:
+                    returnString = "divide";
+                    break;
+               case Keys.Multiply:
+                    returnString = "multiply";
+                    break;
+               case Keys.OemBackslash:
+                    returnString = "\\";
+                    break;
+              case Keys.OemCloseBrackets:
+                    returnString = "]";
+                    break;
+               case Keys.OemOpenBrackets:
+                    returnString = "[";
+                    break;
+               case Keys.OemPeriod:
+                    returnString = ".";
+                    break;
+               case Keys.OemPipe:
+                    returnString = "|";
+                    break;
+               case Keys.OemQuestion:
+                    returnString = "?";
+                    break;
+               case Keys.OemQuotes:
+                    returnString = "'";
+                    break;
+               case Keys.OemSemicolon:
+                    returnString = ";";
+                    break;
+               case Keys.Oemcomma:
+                    returnString = ",";
+                    break;
+               case Keys.Oemplus:
+                    returnString = "+";
+                    break;
+               case Keys.Oemtilde:
+                    returnString = "`";
+                    break;
+               case Keys.OemMinus:
+               case Keys.Separator:
+                    returnString = "-";
+                    break;
                 case Keys.Alt:
                 case Keys.Menu:
                 case Keys.LMenu:
@@ -389,6 +446,9 @@ namespace m59bind
                 case Keys.LControlKey:
                 case Keys.RControlKey:
                     returnString = "ctrl";
+                    break;
+                case Keys.Escape:
+                    returnString = "esc";
                     break;
                 case Keys.ShiftKey:
                 case Keys.LShiftKey:
@@ -435,6 +495,9 @@ namespace m59bind
                 case Keys.Space:
                     returnString = "space";
                     break;
+                case Keys.Back:
+                    returnString = "backspace";
+                    break;
                 case Keys.F1:
                 case Keys.F2:
                 case Keys.F3:
@@ -447,9 +510,9 @@ namespace m59bind
                 case Keys.F10:
                 case Keys.F11:
                 case Keys.F12:
-                    returnString = "";
-                    returnString += e.KeyData.ToString().Substring(0, 2);
-                    break;
+                    // These are used for aliases.
+                    e.Handled = true;
+                    return keyPrompt;
                 default:
                     returnString = "";
                     returnString += e.KeyData.ToString().ToLower().Substring(0, 1);
@@ -519,6 +582,7 @@ namespace m59bind
                 case Keys.Delete:
                 case Keys.Enter:
                 case Keys.Space:
+                case Keys.Escape:
                     e.IsInputKey = true;
                     break;
             }
@@ -801,7 +865,7 @@ namespace m59bind
         // Look Up Keybind
         private void buttonLookUp_KeyDown(object sender, KeyEventArgs e)
         {
-            buttonBackward.Text = handleKeyDown(e);
+            buttonLookUp.Text = handleKeyDown(e);
         }
 
         private void buttonLookUp_MouseDown(object sender, MouseEventArgs e)

@@ -13052,7 +13052,8 @@ messages:
       {
          iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
          oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
-         if All OR Send(oSpell,@GetSchool) = school
+         if (All OR Send(oSpell,@GetSchool) = school)
+            AND Send(oSpell,@CanForget)
          {
             Send(self,@RemoveSpell,#num=iSpellNum);
          }

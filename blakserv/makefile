@@ -6,8 +6,6 @@ TOPDIR=..
 
 !include $(TOPDIR)\common.mak
 
-CFLAGS = $(CFLAGS) /Gr
-
 BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug $(LINKWINDOWSFLAGS)
 
 SOURCEDIR = .

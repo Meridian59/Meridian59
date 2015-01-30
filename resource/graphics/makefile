@@ -10,7 +10,8 @@ OUTDIR = $(TOPDIR)\resource\graphics
 
 DIRS = keen\
 		 mark \
-
+		 diggie
+       
 BGFS = \
 	$(OUTDIR)\arrowfir.bgf \
 	$(OUTDIR)\arrowsil.bgf \
@@ -29,6 +30,7 @@ all: $(BGFS)
       
 clean:
 	@-for %i in ($(DIRS)) do \
+      @echo Making clean in %i & \
 		@if EXIST %i ( cd %i & \
 	 	$(MAKE) /$(MAKEFLAGS) clean & \
 		cd .. )

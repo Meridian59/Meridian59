@@ -1,4 +1,4 @@
-TOPDIR=..\..\..\..\..
+TOPDIR=..\..\..
 !include $(TOPDIR)\common.mak
 
 SOURCEDIR = .
@@ -6,8 +6,8 @@ OUTDIR = .
 
 .SUFFIXES: .bbg
 
-BGFS = fieleme.bgf \
-       fielemeX.bgf \
+BGFS = neeleme.bgf \
+       neelemeX.bgf \
 
 all: $(BGFS)
 	@-for %i in ($(BGFS)) do \
@@ -16,7 +16,6 @@ all: $(BGFS)
 
 {$(SOURCEDIR)}.bbg.bgf:
 	$(MAKEBGF) -o $(OUTDIR)\$*.bgf @$*.bbg
-
+   
 clean:
-	$(RM) $(OUTDIR)\fieleme.bgf
-	$(RM) $(CLIENTRUNDIR)\resource\fieleme.bgf
+	

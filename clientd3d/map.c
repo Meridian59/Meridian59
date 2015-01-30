@@ -34,6 +34,7 @@
 #define MAP_GUILDMATE_COLOR     PALETTERGB(255, 255, 0)  // Yellow
 #define MAP_BUILDGRP_COLOR      PALETTERGB(0, 255, 0)    // Bright Green
 #define MAP_NPC_COLOR           PALETTERGB(0, 0, 0)      // Black
+#define MAP_TEMPSAFE_COLOR      PALETTERGB(0,170,255)    // Cyan
 
 #define MAP_OBJECT_RADIUS (FINENESS / 4)  // Radius of circle drawn for an object
 
@@ -44,9 +45,10 @@
 
 #define MAP_OBJECT_DISTANCE (7 * FINENESS) // Draw all object closer than this to player
 
-static HBRUSH hObjectBrush, hPlayerBrush, hNullBrush, hMinionBrush, hMinionOtherBrush, hNpcBrush;
+static HBRUSH hObjectBrush, hPlayerBrush, hNullBrush, hMinionBrush,
+               hMinionOtherBrush, hNpcBrush, hTempsafeBrush;
 static HPEN hWallPen, hPlayerPen, hObjectPen, hMinionPen, hMinionOtherPen;
-static HPEN hFriendPen, hEnemyPen, hGuildmatePen, hBuilderPen, hNpcPen;
+static HPEN hFriendPen, hEnemyPen, hGuildmatePen, hBuilderPen, hNpcPen, hTempsafePen;
 
 static float zoom;              // Factor to zoom in on map
 
@@ -139,12 +141,14 @@ void MapInitialize(void)
    hMinionOtherPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_MINION_OTH_COLOR);
    hBuilderPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_BUILDGRP_COLOR);
    hNpcPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_NPC_COLOR);
+   hTempsafePen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_TEMPSAFE_COLOR);
 
    hNpcBrush = CreateSolidBrush(MAP_NPC_COLOR);
    hMinionOtherBrush = CreateSolidBrush(MAP_MINION_OTH_COLOR);
    hMinionBrush = CreateSolidBrush(MAP_MINION_COLOR);
    hObjectBrush = CreateSolidBrush(MAP_OBJECT_COLOR);
    hPlayerBrush = CreateSolidBrush(MAP_PLAYER_COLOR);
+   hTempsafeBrush = CreateSolidBrush(MAP_TEMPSAFE_COLOR);
    hNullBrush = CreateBrushIndirect(&logBrush);
 
    zoom = (float) 1.0;
@@ -178,12 +182,14 @@ void MapClose(void)
    DeleteObject(hMinionOtherPen);
    DeleteObject(hBuilderPen);
    DeleteObject(hNpcPen);
+   DeleteObject(hTempsafePen);
    DeleteObject(hMinionOtherBrush);
    DeleteObject(hMinionBrush);
    DeleteObject(hObjectBrush);
    DeleteObject(hPlayerBrush);
    DeleteObject(hNullBrush);
    DeleteObject(hNpcBrush);
+   DeleteObject(hTempsafeBrush);
 
    if (pMapWalls)
       SafeFree(pMapWalls);
@@ -456,6 +462,11 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
       {
          SelectObject(hdc, hPlayerPen);
          SelectObject(hdc, hPlayerBrush);
+      }
+      else if (r->obj.minimapflags & MM_TEMPSAFE)
+      {
+         SelectObject(hdc, hTempsafePen);
+         SelectObject(hdc, hTempsafeBrush);
       }
       else if (r->obj.minimapflags & MM_MINION_SELF)
       {

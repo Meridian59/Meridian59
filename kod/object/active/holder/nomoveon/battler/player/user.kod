@@ -2538,7 +2538,14 @@ messages:
             OR NOT IsClass(oIllusion,&Monster)
          {
             % Standard player blue dot.
-            iFlags = iFlags | MM_PLAYER;
+            if Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+            {
+               iFlags = iFlags | MM_TEMPSAFE;
+            }
+            else
+            {
+               iFlags = iFlags | MM_PLAYER;
+            }
 
             oOtherGuild = Send(what,@GetGuild);
             if poGuild <> $ AND oOtherGuild <> $

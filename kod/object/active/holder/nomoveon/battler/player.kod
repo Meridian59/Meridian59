@@ -12175,7 +12175,12 @@ messages:
    EndTempSafe()
    {
       Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
-      Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
+      if poOwner <> $
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
       ptTempSafe = $;
 
       return;

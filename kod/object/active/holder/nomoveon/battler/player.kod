@@ -3958,7 +3958,7 @@ messages:
    }
 
    AllowPlayerAttack(victim=$,stroke_obj=$,use_weapon=$,report=TRUE,
-                     actual=TRUE)
+                     actual=TRUE,minion=FALSE)
    "Will not let a person attack someone who isn't pkill_enabled."
    "Will not let a person who isn't pkill_enabled attack another person."
    {
@@ -4108,13 +4108,10 @@ messages:
             % Check status and safety against the owner of the minion.
             if NOT IsClass(oRoom,&GuildHall)
             {
-               if NOT Send(oRoom,@ReqSomethingAttack,#what=self,
+               if NOT Send(self,@AllowPlayerAttack,
                            #victim=Send(victim,@GetMaster),
                            #use_weapon=use_weapon,#stroke_obj=stroke_obj,
-                           #report=report,#actual=actual)
-                  OR NOT Send(self,@CheckStatusAndSafety,
-                              #victim=Send(victim,@GetMaster),
-                              #report=report,#minion=TRUE)
+                           #report=report,#actual=actual,#minion=TRUE)
                {
                   return FALSE;
                }
@@ -4247,7 +4244,7 @@ messages:
 
       % Finally, check status and safety.
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,
-                  #report=report,#actual=actual)
+                  #report=report,#actual=actual,#minion=minion)
       {
          return FALSE;
       }

@@ -8782,12 +8782,12 @@ messages:
                
                gain = 1;
 
-               % No roll for kills by others. This puts tension on group size.
-               % As group sizes increase, getting kills oneself becomes 
-               % difficult. Groups that are too large create their own 
-               % advancement problems organically. Also, this keeps advancement
-               % based on the player himself. His own kill rate matters the most.
+               % We still roll for a tougher if we killed the monster but
+               % didn't take damage or dodge, if we helped kill the monster,
+               % or if it was a group member kill and the setting for group
+               % member toughers is set to TRUE.
                if NOT group_member_kill
+                  OR Send(Send(SYS,@GetSettings),@GetGroupTougherSetting)
                {
                   roll = TRUE;
                }

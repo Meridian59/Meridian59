@@ -28,7 +28,7 @@ resources:
    chupacabra_dead_name_rsc = "dead chupacabra"
 
    chupacabra_sound_hit = chupa_atkh.wav
-   chupacabra_sound_miss = chupa_atkm.wav
+   chupacabra_sound_miss = chupa_atkh.wav
    chupacabra_sound_death = chupa_dth.wav
    chupacabra_sound_aware = chupa_awr.wav
 

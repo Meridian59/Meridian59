@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Faun is Monster
+Minotaur is Monster
 
 constants:
 
@@ -16,28 +16,28 @@ constants:
 
 resources:
 
-   faun_koc_name_rsc = "minotaur"
-   faun_name_rsc = "faun"
-   faun_icon_rsc = minotaur.bgf
-   faun_desc_rsc = \
+   minotaur_koc_name_rsc = "minotaur"
+   minotaur_name_rsc = "minotaur"
+   minotaur_icon_rsc = minotaur.bgf
+   minotaur_desc_rsc = \
       "minotaur."
 
-   faun_dead_icon_rsc = minotaurX.bgf
-   faun_dead_name_rsc = "dead faun"
+   minotaur_dead_icon_rsc = minotaurX.bgf
+   minotaur_dead_name_rsc = "dead minotaur"
 
-   faun_sound_hit = zmb_atkh.wav
-   faun_sound_miss = zmb_atkm.wav
-   faun_sound_death = zmb_dth.wav
-   faun_sound_aware = zmb_awr.wav
+   minotaur_sound_hit = mino_atkh.wav
+   minotaur_sound_miss = mino_atkh.wav
+   minotaur_sound_death = mino_dth.wav
+   minotaur_sound_aware = mino_awr.wav
 
 classvars:
 
-   vrKocName = faun_koc_name_rsc
-   vrName = faun_name_rsc
-   vrIcon = faun_icon_rsc
-   vrDesc = faun_desc_rsc
-   vrDead_icon = faun_dead_icon_rsc
-   vrDead_name = faun_dead_name_rsc
+   vrKocName = minotaur_koc_name_rsc
+   vrName = minotaur_name_rsc
+   vrIcon = minotaur_icon_rsc
+   vrDesc = minotaur_desc_rsc
+   vrDead_icon = minotaur_dead_icon_rsc
+   vrDead_name = minotaur_dead_name_rsc
 
    viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_SLASH
@@ -47,10 +47,10 @@ classvars:
    viKarma = -45
    viCashmin = 175
    viCashmax = 375
-   vrSound_hit = faun_sound_hit
-   vrSound_miss = faun_sound_miss
-   vrSound_aware = faun_sound_aware
-   vrSound_death = faun_sound_death
+   vrSound_hit = minotaur_sound_hit
+   vrSound_miss = minotaur_sound_miss
+   vrSound_aware = minotaur_sound_aware
+   vrSound_death = minotaur_sound_death
 
 properties:
 
@@ -101,7 +101,7 @@ messages:
    {
       if piAnimation = ANIM_ATTACK
       {
-         AddPacket(1,ANIMATE_ONCE,4,30,2,1,2,16,2,1);
+         AddPacket(1,ANIMATE_ONCE,4,20,2,1,2,16,2,1);
          return;
       }
 

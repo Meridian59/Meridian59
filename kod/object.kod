@@ -251,6 +251,18 @@ messages:
       return Nth(lPos,4);
    }
 
+   GetObjectHeight()
+   {
+      if poOwner <> $
+      {
+         return GetHeight(Send(poOwner,@GetRoomData),
+                     Send(self,@GetRow),Send(self,@GetCol),
+                     Send(self,@GetFineRow),Send(self,@GetFineCol));
+      }
+
+      return 0;
+   }
+
    GetOwner()
    {
       return poOwner;

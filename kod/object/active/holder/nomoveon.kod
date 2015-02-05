@@ -67,6 +67,17 @@ messages:
       return piFine_col;
    }
 
+   GetObjectHeight()
+   {
+      if poOwner <> $
+      {
+         return GetHeight(Send(poOwner,@GetRoomData),piRow,piCol,
+                     piFine_row,piFine_col);
+      }
+
+      return 0;
+   }
+
    ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,
    new_finecol = $)
    {
@@ -422,6 +433,33 @@ messages:
       iCol_diff = iCol - iWhatCol;
 
       return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+   }
+
+   SquaredFineDistanceTo3D(what=$)
+   {
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iHeight_diff,
+      iResult;
+
+      % Scale to fine.
+      iRow = piRow * FINENESS + piFine_row;
+      iCol = piCol * FINENESS + piFine_col;
+      iWhatRow = Send(what,@GetRow) * FINENESS + Send(what,@GetFineRow);
+      iWhatCol = Send(what,@GetCol) * FINENESS + Send(what,@GetFineCol);
+
+      % Deltas.
+      iRow_diff = iRow - iWhatRow;
+      iCol_diff = iCol - iWhatCol;
+      iHeight_diff = (Send(self,@GetObjectHeight)
+                           - Send(what,@GetObjectHeight)) * 16;
+
+      iResult = (iRow_diff * iRow_diff + iCol_diff * iCol_diff
+                  + iHeight_diff * iHeight_diff);
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
    }
 
 end

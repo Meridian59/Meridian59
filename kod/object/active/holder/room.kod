@@ -1106,6 +1106,11 @@ messages:
       return;
    }
 
+   GetRoomData()
+   {
+      return prmRoom;
+   }
+
    ReqNewOwner()
    {
       return FALSE;

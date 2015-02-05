@@ -2117,8 +2117,8 @@ messages:
 
       if who = poTarget
       {
-         iRange = Send(self,@GetAttackRange);
-         if Send(self,@SquaredDistanceTo,#what=who) > (iRange*iRange)
+         iRange = Send(self,@GetAttackRange) * FINENESS;
+         if Send(self,@SquaredFineDistanceTo3D,#what=who) > (iRange*iRange)
          {
             return;
          }
@@ -2140,8 +2140,8 @@ messages:
       }
 
       % Check range first, for speed
-      iRange = Send(self,@GetAttackRange);
-      if Send(self,@SquaredDistanceTo,#what=what) > (iRange*iRange)
+      iRange = Send(self,@GetAttackRange) * FINENESS;
+      if Send(self,@SquaredFineDistanceTo3D,#what=what) > (iRange*iRange)
       {
          if what = poTarget
          {

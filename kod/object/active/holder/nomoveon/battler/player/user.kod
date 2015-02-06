@@ -8263,6 +8263,12 @@ messages:
          iFlags = iFlags | DRAWFX_INVISIBLE;
       }
 
+      if Send(self,@IsPhasedOut)
+      {
+         iFlags = iFlags & ~DRAWFX_MASK;
+         iFlags = iFlags | DRAWFX_DITHERINVIS;
+      }
+
       return iFlags;
    }
 

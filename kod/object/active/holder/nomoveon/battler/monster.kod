@@ -263,6 +263,10 @@ classvars:
    % can see within. Default 10.
    viVisionDistance = 10
 
+   % viAttackRange is the radius (in FINENESS units) that the monster
+   % can attack within. Default 128, or 2 row/cols.
+   viAttackRange = 128
+
    % All monsters use BRAIN_ORIGINAL for now.
    viBrain_type = BRAIN_ORIGINAL
 
@@ -320,6 +324,7 @@ classvars:
 properties:
 
    piVisionDistance
+   piAttackRange
    piAnimation = ANIM_NONE
 
    % List of the mobs wanted items.
@@ -409,7 +414,7 @@ properties:
    % Monster's spellpower. Default 50 sp.
    piSpellPower = 50
 
-   % Monster's spell range, squared. Default 666.
+   % Monster's spell range, squared. Default 666. This is in row/col units.
    piSpellRange = 666
 
    piOffense = $
@@ -434,6 +439,7 @@ messages:
       piMana = piMax_mana;
       piSpellChance = viSpellChance;
       piVisionDistance = viVisionDistance;
+      piAttackRange = viAttackRange;
 
       if Send(self,@MobIsSeller)
       {
@@ -1016,7 +1022,7 @@ messages:
       propagate;
    }
    
-   SomethingMoved(what = $,new_row = $,new_col = $)
+   SomethingMoved(what=$,new_row=$,new_col=$,fine_row=$,fine_col=$)
    "Check to see if we need to change our combat plan because someone moved."
    {
       % If either we or our target moved, then we no longer know 
@@ -1027,7 +1033,8 @@ messages:
       }
 
       Send(poBrain,@SomethingMoved,#mob=self,#state=piState,
-           #what=what,#new_row=new_row,#new_col=new_col);
+           #what=what,#new_row=new_row,#new_col=new_col,
+           #fine_row=fine_row,#fine_col=fine_col);
 
       propagate;
    }
@@ -2080,14 +2087,16 @@ messages:
    }
 
    GetAttackRange()
-   "With difficulty going from 0 to 10, this is either 2 or 3."
+   "Returns the attack range of the monster, in FINENESS units. "
+   "Default for most monsters is 128 (2 row/col units)."
    {
-      return Bound(2 + viDifficulty/6,2,3);
+      return piAttackRange;
    }
 
    GetOptimalRange()
+   "For most monsters, this is the attack range."
    {
-      return Send(self,@GetAttackRange);
+      return piAttackRange;
    }
 
    CanSee(what = $)
@@ -2113,12 +2122,11 @@ messages:
 
    ValidAttack(who=$)
    {
-      local iRange;
-
       if who = poTarget
       {
-         iRange = Send(self,@GetAttackRange) * FINENESS;
-         if Send(self,@SquaredFineDistanceTo3D,#what=who) > (iRange*iRange)
+         % Range in FINENESS units.
+         if Send(self,@SquaredFineDistanceTo3D,#what=who)
+               > (piAttackRange*piAttackRange)
          {
             return;
          }
@@ -2139,9 +2147,9 @@ messages:
          return FALSE;
       }
 
-      % Check range first, for speed
-      iRange = Send(self,@GetAttackRange) * FINENESS;
-      if Send(self,@SquaredFineDistanceTo3D,#what=what) > (iRange*iRange)
+      % Check range first, for speed (in FINENESS units).
+      if Send(self,@SquaredFineDistanceTo3D,#what=what)
+            > (piAttackRange*piAttackRange)
       {
          if what = poTarget
          {
@@ -2195,13 +2203,11 @@ messages:
       return FALSE;
    }
 
-   CanReachLocation( row = $, col = $ )
+   CanReachLocation(row=$,col=$,fine_row=$,fine_col=$)
    {
-      local iRange;
-
-      iRange = Send(self,@GetAttackRange);
-      if Send(self,@SquaredDistanceToLocation,#row=row,#col=col)
-         <= (iRange*iRange)
+      if Send(self,@SquaredFineDistanceToLocation3D,#row=row,#col=col,
+            #fine_row=fine_row,#fine_col=fine_col)
+         <= (piAttackRange*piAttackRange)
       {
          return TRUE;
       }
@@ -4453,14 +4459,14 @@ messages:
       }
 
       % Get distance to target.
-      iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
+      iDistance = Send(self,@SquaredFineDistanceTo3D,#what=poTarget);
 
       % Check LoS to target here so we don't waste mana casting
       % when we can't get our target. Instead, we use that time
       % walking to the target.
 
-      if iDistance > Send(self,@GetAttackRange)
-         AND iDistance <= piSpellRange
+      if iDistance > (piAttackRange * piAttackRange)
+         AND iDistance <= piSpellRange * FINENESS_SQUARED
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
                   #use_weapon=self)

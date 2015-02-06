@@ -125,7 +125,7 @@ messages:
 
       if piRange <> $
       {
-         iTotalRange = piRange;
+         iTotalRange = piRange * FINENESS;
 
          % A little fudge factor to account for lag drift, etc.
          if IsClass(target,&Player) AND Send(target,@HasMovedRecently)
@@ -134,7 +134,8 @@ messages:
          }
 
          if Send(target,@GetOwner) <> $
-            AND Send(who,@SquaredDistanceTo,#what=target) > (iTotalRange * iTotalRange)
+            AND Send(who,@SquaredFineDistanceTo3D,#what=target)
+                     > (iTotalRange * iTotalRange)
          {
             if NOT bItemCast
             {

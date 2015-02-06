@@ -34,7 +34,7 @@ classvars:
    vrDesc = crossbow_desc_rsc
 
    viAmmo_Type = AMMO_BOLT
-   viRange = 100
+   viRange = 100 * FINENESS
    viBulk = 100
    viWeight = 120
    viValue_average = 4000

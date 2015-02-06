@@ -149,8 +149,8 @@ messages:
    %%% In fact, this might be preferable, since then the special XLocation
    %%% calls would not be needed, as the player *would* be in the new
    %%% location when this message was processed. Duh.
-   SomethingMoved(mob=$, state=$, what=$, new_row=$,
-                  new_col=$, ignoreWait=FALSE)
+   SomethingMoved(mob=$, state=$, what=$, new_row=$, new_col=$,
+                  fine_row=$, fine_col=$, ignoreWait=FALSE)
    {
       local iVisionRange, oTarget;
 
@@ -201,7 +201,8 @@ messages:
 
       if (state & STATE_MOVE) OR (state & STATE_WAIT)
       {
-         if Send(mob,@CanReachLocation,#row=new_row,#col=new_col)
+         if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
+                  #fine_row=fine_row,#fine_col=fine_col)
          {
             Send(mob,@EnterStateAttack,#actnow=True);   % Used to be post.
 
@@ -215,7 +216,8 @@ messages:
 
       if state & STATE_CHASE
       {
-         if Send(mob,@CanReachLocation,#row=new_row,#col=new_col)
+         if Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
+                  #fine_row=fine_row,#fine_col=fine_col)
          {
             Send(mob,@EnterStateAttack,#target=what,#actnow=True); % Used to be post.
          }
@@ -225,7 +227,8 @@ messages:
 
       if state & STATE_ATTACK
       {
-         if NOT Send(mob,@CanReachLocation,#row=new_row,#col=new_col)
+         if NOT Send(mob,@CanReachLocation,#row=new_row,#col=new_col,
+                     #fine_row=fine_row,#fine_col=fine_col)
          {
             Send(mob,@EnterStateChase,#target=what,#actnow=True); % Used to be post.
 
@@ -690,7 +693,7 @@ messages:
          % shamans may want to be optimal spellcasting range away!
          iOpt_range = Send(mob,@GetOptimalRange);
 
-         iRange = Send(mob,@SquaredDistanceTo,#what=target);
+         iRange = Send(mob,@SquaredFineDistanceTo3D,#what=target);
          if iRange < (iOpt_range * iOpt_range)
          {
             Send(mob,@MoveAway,#oTarget=target,#face_target=TRUE);
@@ -812,11 +815,8 @@ messages:
          % shamans want to get far away and cast spells!
          iOpt_range = Send(mob,@GetOptimalRange);
 
-         iRange = Send(mob,@SquaredDistanceTo,#what=target);
-
-         % Check if we have a range first, we might be dead already.
-         if iRange <> $
-            AND iRange < (iOpt_range * iOpt_range)
+         iRange = Send(mob,@SquaredFineDistanceTo3D,#what=target);
+         if iRange < (iOpt_range * iOpt_range)
          {
             Send(mob,@MoveAway,#oTarget=target,#face_away=TRUE);
 

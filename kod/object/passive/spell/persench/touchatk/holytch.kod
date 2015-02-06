@@ -73,8 +73,6 @@ classvars:
    viMin_Damage = 6
    viMax_Damage = 10
 
-   viRange = 2
-
    viSpellType = ATCK_SPELL_HOLY+ATCK_SPELL_ALL
    viStroke = STROKE_HOLY_TOUCH
 

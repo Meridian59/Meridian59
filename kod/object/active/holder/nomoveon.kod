@@ -462,5 +462,34 @@ messages:
       return iResult;
    }
 
+   SquaredFineDistanceToLocation3D(row = $,col = $,fine_row = FINENESS_HALF,
+                                 fine_col = FINENESS_HALF)
+   {
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iHeight_diff,
+      iResult;
+
+      % Scale to fine
+      iRow = piRow * FINENESS + piFine_row;
+      iCol = piCol * FINENESS + piFine_col;
+      iWhatRow = (row * FINENESS) + fine_row;
+      iWhatCol = (col * FINENESS) + fine_col;
+
+      % Deltas.
+      iRow_diff = iRow - iWhatRow;
+      iCol_diff = iCol - iWhatCol;
+      iHeight_diff = (Send(self,@GetObjectHeight)
+                           - GetHeight(Send(poOwner,@GetRoomData),row,col,
+                                    fine_row,fine_col)) * 16;
+
+      iResult = (iRow_diff * iRow_diff + iCol_diff * iCol_diff
+                  + iHeight_diff * iHeight_diff);
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

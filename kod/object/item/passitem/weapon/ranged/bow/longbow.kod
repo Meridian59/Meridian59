@@ -27,7 +27,7 @@ classvars:
    vrDesc = Longbow_desc_rsc
 
    viWeaponDamage = 0
-   viRange = 100
+   viRange = 100 * FINENESS
    viHit_roll_modifier = 100
 
    viValue_average = 2500

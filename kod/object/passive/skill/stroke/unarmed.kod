@@ -36,7 +36,7 @@ classvars:
 
    viMin_Damage = 1
    viMax_Damage = 3
-   viRange = 2
+   viRange = 2 * FINENESS
 
    viAttack_type = 0
    viSpell_type = 0

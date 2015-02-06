@@ -34,7 +34,7 @@ classvars:
    vrWeaponBroke = NeruditeBow_shatters
 
    viWeaponDamage = 3
-   viRange = 20
+   viRange = 20 * FINENESS
    viHit_roll_modifier = 0
    
    viValue_average = 3500

@@ -91,7 +91,9 @@ properties:
 
    piSpellPower = 99
    piMax_mana = 40
-   piSpellRange = 100
+
+   % piSpellRange in FINENESS units. 10 row/cols.
+   piSpellRange = 640
 
 messages:
 

@@ -69,10 +69,11 @@ classvars:
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
 
+   % Earthquake still handles range in row/col units, as it affects
+   % everyone in the radius regardless of height difference.
    % Damage is 100% within this distance
    viMax_damage_distance = 8
-
-   % Damage is 0 outside this distance 
+   % Damage is 0 outside this distance
    viZero_damage_distance = 20
 
    vbIsAreaEffect = TRUE

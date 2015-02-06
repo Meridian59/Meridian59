@@ -48,7 +48,7 @@ classvars:
 
 properties:
 
-   piRange = 4
+   piRange = 4 * FINENESS
 
    piManaFocusBonus = 0
 

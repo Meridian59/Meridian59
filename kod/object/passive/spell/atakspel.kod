@@ -97,7 +97,8 @@ messages:
       if target = who AND (NOT bItemCast)
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-         Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,#parm1=vrName);
+         Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,
+               #parm1=vrName);
 
          return FALSE;
       }
@@ -106,7 +107,8 @@ messages:
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
          Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
-               #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
 
          return FALSE;
       }
@@ -125,7 +127,7 @@ messages:
 
       if piRange <> $
       {
-         iTotalRange = piRange * FINENESS;
+         iTotalRange = piRange;
 
          % A little fudge factor to account for lag drift, etc.
          if IsClass(target,&Player) AND Send(target,@HasMovedRecently)

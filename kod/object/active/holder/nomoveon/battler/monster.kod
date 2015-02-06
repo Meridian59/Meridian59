@@ -414,8 +414,8 @@ properties:
    % Monster's spellpower. Default 50 sp.
    piSpellPower = 50
 
-   % Monster's spell range, squared. Default 666. This is in row/col units.
-   piSpellRange = 666
+   % Monster's spell range, in FINENESS units. Default is 25 row/cols.
+   piSpellRange = 1600
 
    piOffense = $
    piDefense = $
@@ -437,9 +437,9 @@ messages:
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
       piHit_points = piMax_hit_points*100;
       piMana = piMax_mana;
+      piAttackRange = viAttackRange;
       piSpellChance = viSpellChance;
       piVisionDistance = viVisionDistance;
-      piAttackRange = viAttackRange;
 
       if Send(self,@MobIsSeller)
       {
@@ -4466,7 +4466,7 @@ messages:
       % walking to the target.
 
       if iDistance > (piAttackRange * piAttackRange)
-         AND iDistance <= piSpellRange * FINENESS_SQUARED
+         AND iDistance <= piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
                   #use_weapon=self)

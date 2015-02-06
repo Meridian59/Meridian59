@@ -57,7 +57,7 @@ properties:
    piDamageMin = 12
    piDamageMax = 18
 
-   piRange = 4
+   piRange = 4 * FINENESS
 
    % No bonus from Mana Focus
    piManaFocusBonus = 0

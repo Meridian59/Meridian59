@@ -67,7 +67,7 @@ messages:
       return piFine_col;
    }
 
-   GetObjectHeight()
+   GetHeightAtObject()
    {
       if poOwner <> $
       {
@@ -394,7 +394,7 @@ messages:
                                  fine_col = FINENESS_HALF)
    "Computes squared distance to (row,col)"
    {
-      local iRow, iCol, iRow_diff, iCol_diff;
+      local iRow, iCol, iRow_diff, iCol_diff, iResult;
 
       % Sanity check, big row/col can be $.
       if row = $ OR col = $ OR piRow = $ OR piCol = $
@@ -412,7 +412,13 @@ messages:
       iRow_diff = iRow - row;
       iCol_diff = iCol - col;
 
-      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+      iResult = (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
    }
 
    SqFineDistToVision(what = $)
@@ -420,7 +426,7 @@ messages:
    "monster vision check. Returns squared fine units, divide by "
    "FINENESS_SQUARED to compare to squared row/col units."
    {
-      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff;
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iResult;
 
       % Scale to fine.
       iRow = piRow * FINENESS + piFine_row;
@@ -432,7 +438,13 @@ messages:
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
 
-      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+      iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff;
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
    }
 
    SquaredFineDistanceTo3D(what=$)
@@ -449,11 +461,11 @@ messages:
       % Deltas.
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
-      iHeight_diff = (Send(self,@GetObjectHeight)
-                           - Send(what,@GetObjectHeight)) * 16;
+      iHeight_diff = (Send(self,@GetHeightAtObject)
+                           - Send(what,@GetHeightAtObject)) * 16;
 
-      iResult = (iRow_diff * iRow_diff + iCol_diff * iCol_diff
-                  + iHeight_diff * iHeight_diff);
+      iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
+                  + iHeight_diff * iHeight_diff;
       if iResult < 0
       {
          iResult = MAX_INT;
@@ -477,12 +489,12 @@ messages:
       % Deltas.
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
-      iHeight_diff = (Send(self,@GetObjectHeight)
+      iHeight_diff = (Send(self,@GetHeightAtObject)
                            - GetHeight(Send(poOwner,@GetRoomData),row,col,
                                     fine_row,fine_col)) * 16;
 
-      iResult = (iRow_diff * iRow_diff + iCol_diff * iCol_diff
-                  + iHeight_diff * iHeight_diff);
+      iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
+                  + iHeight_diff * iHeight_diff;
       if iResult < 0
       {
          iResult = MAX_INT;

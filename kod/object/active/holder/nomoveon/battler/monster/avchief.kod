@@ -274,7 +274,7 @@ messages:
 
       if Random(1,iBase) = 1
          AND Send(self,@SquaredFineDistanceTo3D,#what=poTarget)
-                  < piSpellRange * FINENESS_SQUARED
+                  < piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
                   #use_weapon=self)

@@ -13,7 +13,7 @@ LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
 	 ws2_32.lib comctl32.lib advapi32.lib \
 	 winmm.lib archive.lib rscload.lib wininet.lib \
-	 ole32.lib mss32.lib mss32midi.lib waveplay.lib \
+	 ole32.lib waveplay.lib \
 	 d3d9.lib libpng.lib zdll.lib
 
 DEFFILE  = $(SOURCEDIR)\client.def

@@ -1127,7 +1127,9 @@ messages:
             AND Send(poMaster,@GetOwner) <> $
          {
             if ((piRow - iRow) <= 3
-               AND (piCol - iCol) <= 3)
+               AND (piCol - iCol) <= 3
+               AND NOT (IsClass(self,&EvilTwin)
+                  AND (NOT Send(self,@IsEnchanted,#byClass=&Seduce))))
                OR IsClass(self,&Reflection) % Flecs follow.
                OR Send(self,@IsUndead) % So do undead (Animate).
             {

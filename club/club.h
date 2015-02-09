@@ -42,6 +42,7 @@
 #include "clubarchive.h"
 #include "util.h"
 #include "transfer.h"
+#include <string>
 
 #define sprintf wsprintf
 
@@ -55,9 +56,9 @@ char *GetLastErrorStr();
 
 extern HINSTANCE hInst;
 extern HWND hwndMain;
-extern char *transfer_machine;
-extern char *transfer_filename;
-extern char *transfer_local_filename;
+extern std::string transfer_machine;
+extern std::string transfer_filename;
+extern std::string transfer_local_filename;
 
 extern Bool success;
 

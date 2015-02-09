@@ -14,6 +14,8 @@
  */
 
 #include "club.h"
+#include <vector>
+#include <sstream>
 
 /* time to wait at program start */
 #define INIT_TIME 3000
@@ -25,21 +27,21 @@ Bool success;
 
 static Bool retry = True;   // True when an error occurs and user asks to retry
 
-char *restart_filename;
+std::string restart_filename;
 
 int transfer_progress = 0;
 int transfer_file_size = 0;
 char string[256];
 char format[256];
 
-char *transfer_machine;
-char *transfer_filename;
-char *transfer_local_filename;
+std::string transfer_machine;
+std::string transfer_filename;
+std::string transfer_local_filename;
 
-char *dest_path;
+std::string dest_path;
 
 /* local function prototypes */
-Bool ParseCommandLine();
+Bool ParseCommandLine(const char *args);
 void RestartFilename();
 void StartupError();
 void RestartClient();
@@ -57,7 +59,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_li
 
    success = False; /* whether the copy compeletely succeeded */
 
-   if (ParseCommandLine())
+   if (ParseCommandLine(command_line))
    {
       Interface(how_show);
    }
@@ -69,30 +71,59 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_li
       return 1;
    
    return 0;
-}   
+}
 /************************************************************************/
-Bool ParseCommandLine()
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+/************************************************************************/
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+/************************************************************************/
+Bool ParseCommandLine(const char *args)
 {
-   if (__argc != 7) /* six command line parameters, actually. */
+   std::string argstring(args);
+   std::vector<std::string> arguments = split(argstring, ' ');
+   
+   if (arguments.size() != 6) /* six command line parameters, actually. */
    {
       StartupError();
       return False;
    }
 
-   restart_filename = __argv[1];
-
-   if (strncmp(__argv[2],"UPDATE",6) != 0)
+   // The client puts quotes around most of our arguments, which we
+   // need to undo here
+   for (std::vector<std::string>::size_type i = 0; i < arguments.size(); ++i)
+   {
+      if (arguments[i][0] == '"')
+         arguments[i].erase(0, 1);
+      std::string::size_type size = arguments[i].size();
+      if (size > 0 && arguments[i][size - 1] == '"')
+         arguments[i].resize(size - 1);
+   }
+   
+   if (arguments[1] != "UPDATE")
    {
       StartupError();
       return False;
    }
 
-   transfer_machine = __argv[3];
-   transfer_filename = __argv[4];
+   restart_filename = arguments[0];
 
-   transfer_local_filename = __argv[5];
+   transfer_machine = arguments[2];
+   transfer_filename = arguments[3];
 
-   dest_path = __argv[6];
+   transfer_local_filename = arguments[4];
+
+   dest_path = arguments[5];
 
    return True;
 }
@@ -113,9 +144,9 @@ void RestartClient()
    si.cb = sizeof(si);
    GetStartupInfo(&si); /* shouldn't need to do this.  very weird */
 
-   if (!CreateProcess(restart_filename,"",NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
+   if (!CreateProcess(restart_filename.c_str(),"",NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
    {
-      sprintf(s,GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename);
+      sprintf(s,GetString(hInst, IDS_CANTRESTART),GetLastError(),restart_filename.c_str());
       MessageBox(NULL,s,GetString(hInst, IDS_APPNAME),MB_ICONSTOP);
    }
 }
@@ -180,7 +211,7 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
    case CM_RETRYABORT:
       if (retry)
       {
-        Status(GetString(hInst, IDS_CONNECTING), transfer_machine);
+         Status(GetString(hInst, IDS_CONNECTING), transfer_machine.c_str());
         _beginthread((void(*)(void*))TransferStart, 0, NULL);
       }
       else
@@ -190,7 +221,7 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
       break;
       
    case CM_DEARCHIVE :
-      Dearchive(dest_path, transfer_local_filename);
+      Dearchive(dest_path.c_str(), transfer_local_filename.c_str());
       break;
 
    case CM_FILESIZE:
@@ -302,8 +333,9 @@ char *GetLastErrorStr()
    
    error_str = "No error string"; /* in case the call  fails */
 
-   FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		 NULL,GetLastError(),MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US),
-		 (LPTSTR) &error_str,0,NULL);
+   // This works only for wininet.dll errors
+   FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_HMODULE,
+                 GetModuleHandle("wininet.dll"), GetLastError(), 0,
+                 (LPTSTR) &error_str, 0, NULL);
    return error_str;
 }

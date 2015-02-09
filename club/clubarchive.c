@@ -115,7 +115,7 @@ static bool ExtractArchive(const char *zip_file, const char *out_dir)
    return retval;
 }
 /*****************************************************************************/
-void Dearchive(char *dest_path, char *zip_name)
+void Dearchive(const char *dest_path, const char *zip_name)
 {
    char msg[500];
    

@@ -15,7 +15,6 @@
 
 #include "club.h"
 #include <vector>
-#include <sstream>
 
 /* time to wait at program start */
 #define INIT_TIME 3000
@@ -73,41 +72,58 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_li
    return 0;
 }
 /************************************************************************/
-std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
-}
-/************************************************************************/
 std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, elems);
-    return elems;
+   std::vector<std::string> args;
+   bool in_quotes = false;
+   std::string::size_type start = 0;
+   for (std::string::size_type i = 0; i < s.size(); ++i)
+   {
+      // Hit end of argument
+      if (s[i] == delim && !in_quotes)
+      {
+         // Leave out delimiter
+         std::string arg = s.substr(start, i - start);
+
+         args.push_back(arg);
+         start = i + 1;
+      }
+
+      // Hit quotes
+      if (s[i] == '"')
+      {
+         in_quotes = !in_quotes;
+      }
+   }
+
+   // Add the last argument
+   if (start < s.size())
+   {
+      args.push_back(s.substr(start, s.size() - start + 1));
+   }
+
+   // The client puts quotes around some of our arguments, which we
+   // need to undo here
+   for (std::vector<std::string>::size_type i = 0; i < args.size(); ++i)
+   {
+      if (args[i][0] == '"')
+         args[i].erase(0, 1);
+      std::string::size_type size = args[i].size();
+      if (size > 0 && args[i][size - 1] == '"')
+         args[i].resize(size - 1);
+   }
+   
+   return args;
 }
 /************************************************************************/
 Bool ParseCommandLine(const char *args)
 {
    std::string argstring(args);
    std::vector<std::string> arguments = split(argstring, ' ');
-   
-   if (arguments.size() != 6) /* six command line parameters, actually. */
+
+   if (arguments.size() != 6)
    {
       StartupError();
       return False;
-   }
-
-   // The client puts quotes around most of our arguments, which we
-   // need to undo here
-   for (std::vector<std::string>::size_type i = 0; i < arguments.size(); ++i)
-   {
-      if (arguments[i][0] == '"')
-         arguments[i].erase(0, 1);
-      std::string::size_type size = arguments[i].size();
-      if (size > 0 && arguments[i][size - 1] == '"')
-         arguments[i].resize(size - 1);
    }
    
    if (arguments[1] != "UPDATE")

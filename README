@@ -87,7 +87,7 @@ libarchive was built from source, with the following cmake environment
 variables set to use zlib:
 
 ZLIB_INCLUDE_DIR points to the include directory
-ZLIB_LIBRARY points to lib/zdll.lib
+ZLIB_LIBRARY points to lib/zlib.lib
 
 
 CONTACT INFORMATION

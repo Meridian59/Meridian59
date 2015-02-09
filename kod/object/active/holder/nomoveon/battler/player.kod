@@ -7706,7 +7706,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
                piHealth = piMax_Health;
                Send(self,@DrawHealth);
-               Send(self,@EatSomething,#nutrition=200)
+               Send(self,@EatSomething,#nutrition=200);
 
                piGain_chance = -(piBase_Max_health/2);
                

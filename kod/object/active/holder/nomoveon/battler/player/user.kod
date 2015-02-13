@@ -9002,14 +9002,18 @@ messages:
    {
       local lSpellLevels, lSkillLevels;
 
+      % if stats reset is turned off, ignore the request
+      if NOT Send(Send(Sys,@GetSettings),@GetStatsResetEnabled)
+      {
+         return;
+      }
+      
       lSpellLevels = Send(self, @GetSpellSchoolLevels);
       lSkillLevels = Send(self, @GetSkillSchoolLevels);
  
       % TODO: don't load module if it is already loaded
 
-      % TODO: figure out how to handle invalid (DM) stats
 
-      % TODO: BIG PACKET, is this ok?
       Send(self,@UserLoadModule,#module=user_statchange_module);
       AddPacket(1,BP_STAT_CHANGE);
       AddPacket(1,piMight);
@@ -9039,6 +9043,12 @@ messages:
       oSpell,iSpellAbility,iSpellNum,
       oSkill,iSkillAbility,iSkillNum;
 
+      % if stats reset is turned off, ignore the request
+      if NOT Send(Send(Sys,@GetSettings),@GetStatsResetEnabled)
+      {
+         return;
+      }
+      
       i = 1;
       totallevels = 0;
       totalSchools = 0;

@@ -35,7 +35,7 @@ resources:
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
-	JsEl_stat_window_trigger = "I would like to change my attributes"
+	JsEl_stat_window_trigger = "change stats"
    JsEl_stats_speech = "Beware, there should be some sort of ominous warning here."
 
 classvars:
@@ -63,9 +63,12 @@ messages:
    {
       if StringEqual(string,JsEl_stat_window_trigger)
       {
-         Post(poOwner,@someoneSaid,#what=self,#string=JsEl_stats_speech,
+         if Send(what,@GetBaseMaxHealth) < 250
+         {
+            Send(poOwner,@someoneSaid,#what=self,#string=JsEl_stats_speech,
                #type=SAY_RESOURCE);
-         Send(what, @SendStatChange);
+            Send(what, @SendStatChange);
+         }
       }
 
       propagate;
@@ -97,6 +100,8 @@ messages:
    Constructor()
    "We start a permanent quest for learning a spell" 
    {
+      plWantedItems = [&StatsResetToken];
+      
       Send(self,@InitPermQuest);
 
       propagate;
@@ -150,5 +155,26 @@ messages:
       propagate;
    }
 
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+   
+   GotWantedItem(who=$, obj = 0)
+   {
+      local oPlayerObj, i;
+
+      if IsClass(obj,&StatsResetToken)
+      {
+         Send(poOwner,@someoneSaid,#what=self,
+                                   #string=MrEl_stats_speech,
+                                   #type=SAY_RESOURCE);
+         Send(obj,@Delete);
+         Send(who,@SendStatChange);
+      }
+
+      return FALSE;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -52,6 +52,8 @@ properties:
    piKillKarmaSwingPlayer = 10
 
    pbAtrophyOn = FALSE
+   
+   pbStatsResetEnabled = TRUE
 
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
@@ -275,6 +277,11 @@ messages:
    % Player advancement
    %
 
+   GetStatsResetEnabled()
+   {
+      return pbStatsResetEnabled;
+   }
+   
    CleanNewbieInventoryOnEnteringRealWorld()
    {
       return pbCleanNewbieInventoryOnEnteringRealWorld;

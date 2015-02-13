@@ -7,7 +7,8 @@ SOURCEDIR = .
 
 BGFS = rmcombat.bgf \
        rmnocombat.bgf \
-       rmgcombat.bgf 
+       rmgcombat.bgf \
+       srtoken.bgf
 
 all: 
 	@-for %i in ($(BGFS)) do \

@@ -17,9 +17,10 @@ constants:
 resources:
 
    StatsResetToken_name_rsc = "Token of Stats Resetting"
-   StatsResetToken_icon_rsc = soupbowl.bgf
+   StatsResetToken_icon_rsc = srtoken.bgf
    StatsResetToken_desc_rsc = \
-      "This token grants you one stat reset."
+      "This token grants you one stat reset.  Seek out a village elder "
+      "who may offer you a statistics reset in exchange for this item. "
 
 classvars:
 
@@ -27,13 +28,62 @@ classvars:
    vrIcon = StatsResetToken_icon_rsc
    vrDesc = StatsResetToken_desc_rsc
 
-   viValue_average = 20
-   viWeight = 15
-   viBulk = 20
+   viValue_average = 0
+   viWeight = 0
+   viBulk = 0
 
 properties:
 
+   pbTemporary
+   piDaysRemaining
+
 messages:
+
+   reqNewOwner(what = $)
+   {
+      if IsClass(Send(self,@GetOwner),&Room)
+      {
+         return TRUE;
+      }
+      
+      if IsClass(what,&MarionElder)
+         OR IsClass(what,&JasperElder)
+         OR IsClass(what,&HazarElder)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+   CanWeaken()
+   { 
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanEnchant()
+   {
+      return FALSE;
+   }
+   
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+   
+   DropOnDeath()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

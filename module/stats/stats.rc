@@ -217,9 +217,8 @@ END
 STRINGTABLE
 BEGIN
     IDS_STATPOINTSLEFT      "You have some points remaining to allocate to statistics; are you sure you want to discard these points?"
-    IDS_SPELLPOINTSLEFT     "You have some points remaining to allocate to spells and skills; are you sure you want to discard these points?"
-    IDS_CONFIRM1            "Are you sure you would like to change your character using these stats?"
-    IDS_CONFIRM2            "Are you REALLY, REALLY, sure you would like to change your character using these stats?"
+    IDS_CONFIRM1            "Are you sure you would like to change your character using these stats?\n\nIf you have reduced stats, you WILL lose 2 percent PER stat point reduced, in every spell that depends on that stat, this cannot be reversed!"
+    IDS_CONFIRM2            "Are you REALLY, REALLY, sure you would like to change your character using these stats?\n\nServer admins will not undo any changes you make,  LAST CHANCE!\n\nI'm Serious!  Don't be sending tells to the admins if you blow up your character, this is on you."
 END
 
 STRINGTABLE

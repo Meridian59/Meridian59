@@ -1468,9 +1468,6 @@ messages:
          return;
       }
 
-      Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
-            liClient_cmd);
-
       if liClient_cmd = BP_CHANGED_STATS
       {
          Send(self,@UserChangedStats, #might=Nth(client_msg,2),
@@ -9008,6 +9005,11 @@ messages:
          return;
       }
       
+      if Send(self,@FindHolding,#class=&StatsResetToken) = $
+      {
+         return;
+      }
+      
       lSpellLevels = Send(self, @GetSpellSchoolLevels);
       lSkillLevels = Send(self, @GetSkillSchoolLevels);
  
@@ -9049,6 +9051,11 @@ messages:
          return;
       }
       
+      if Send(self,@FindHolding,#what=&StatsResetToken) = $
+      {
+         return;
+      }
+      
       i = 1;
       totallevels = 0;
       totalSchools = 0;
@@ -9058,6 +9065,31 @@ messages:
       lSkillLevels = Send(self, @GetSkillSchoolLevels);
       lSkillLevels_new = [weaponcraft_lvl];
    
+      % Range Checks, no client hacking negative stats funny business!
+      if (might < 1 OR might > 50)
+         OR (intellect < 1 OR intellect > 50)
+         OR (stamina < 1 OR stamina > 50)
+         OR (agility < 1 OR agility > 50)
+         OR (mysticism < 1 OR mysticism > 50)
+         OR (aim < 1 OR aim > 50)
+      {
+         debug("Stat Range Check: Failed!");
+         return FALSE;
+      }
+      
+      % School Range Check
+      if (shallile_lvl < 0 OR shallile_lvl > 6)
+         OR (qor_lvl < 0 OR qor_lvl > 6)
+         OR (kraanan_lvl < 0 OR kraanan_lvl > 6)
+         OR (faren_lvl < 0 OR faren_lvl > 6)
+         OR (riija_lvl < 0 OR riija_lvl > 6)
+         OR (jala_lvl < 0 OR jala_lvl > 6)
+         OR (weaponcraft_lvl < 0 OR weaponcraft_lvl > 6)
+      {
+         debug("School Range Check: Failed!");
+         return FALSE;
+      }
+         
       % Quick check for too many points in stats
       if ((might + intellect + stamina + agility + mysticism + aim) > 200 )
       {
@@ -9126,8 +9158,11 @@ messages:
       debug(("School Level Check: PASS"));
       
       % everything looks good, start adjusting stats
-      %
-      % Start by stripping spell levels
+      
+      % Consume token
+      Send(Send(self,@FindHolding,#class=&StatsResetToken),@Delete);
+      
+      % Strip Spell Levels
       i = 1;
       while (i < NUM_SCHOOLS)
       {
@@ -9174,7 +9209,9 @@ messages:
             if (iSpellAbility > (stamina * 2)) AND (stamina < piStamina)
                OR (iSpellAbility = 99 AND piStamina = 50 AND stamina < 50)
             {
-               Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,#amount=((piStamina - stamina) * -2));
+               Send(self,@ChangeSpellAbility,
+                  #spell_num=iSpellNum,
+                  #amount=((piStamina - stamina) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
             }
          }
          else
@@ -9184,7 +9221,9 @@ messages:
                if (iSpellAbility > (intellect * 2)) AND (intellect < piIntellect)
                   OR (iSpellAbility = 99 AND piIntellect = 50 AND intellect < 50)
                {
-                  Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,#amount=((piIntellect - intellect) * -2));
+                  Send(self,@ChangeSpellAbility,
+                     #spell_num=iSpellNum,
+                     #amount=((piIntellect - intellect) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
                }
             }
             % must be STAT_ID_MYSTICISM
@@ -9193,7 +9232,9 @@ messages:
                if (iSpellAbility > (piMysticism * 2)) AND (mysticism < piMysticism)
                   OR (iSpellAbility = 99 AND piMysticism = 50 AND mysticism < 50)
                {
-                  Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,#amount=((piMysticism - mysticism) * -2));
+                  Send(self,@ChangeSpellAbility,
+                     #spell_num=iSpellNum,
+                     #amount=((piMysticism - mysticism) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
                }
             }
          }

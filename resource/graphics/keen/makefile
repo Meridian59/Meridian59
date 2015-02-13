@@ -8,6 +8,7 @@ SOURCEDIR = .
 BGFS = rmcombat.bgf \
        rmnocombat.bgf \
        rmgcombat.bgf \
+       frogman.bgf \
        srtoken.bgf
 
 all: 

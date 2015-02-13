@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   StatsResetToken_name_rsc = "Token of Stats Resetting"
+   StatsResetToken_name_rsc = "Ancient Trinket"
    StatsResetToken_icon_rsc = srtoken.bgf
    StatsResetToken_desc_rsc = \
       "This token grants you one stat reset.  Seek out a village elder "
@@ -28,6 +28,8 @@ classvars:
    vrIcon = StatsResetToken_icon_rsc
    vrDesc = StatsResetToken_desc_rsc
 
+   viIndefinite = ARTICLE_AN
+   
    viValue_average = 0
    viWeight = 0
    viBulk = 0

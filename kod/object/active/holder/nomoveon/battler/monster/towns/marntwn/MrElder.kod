@@ -143,7 +143,6 @@ messages:
          Send(poOwner,@someoneSaid,#what=self,
                                    #string=MrEl_stats_speech,
                                    #type=SAY_RESOURCE);
-         Send(obj,@Delete);
          Send(who,@SendStatChange);
       }
 

@@ -179,6 +179,8 @@ resources:
    activateallgenpoints_err = "You can't test the gen points here."
    exitpoints_err = "You can't test the exit points here."
 
+   dm_no_statreset_msg = "Stat reset is not available for DMs."
+   
    invisible_admin_rsc = res0002o.bgf
 
    % Spell messages
@@ -2674,6 +2676,13 @@ messages:
       return;
    }
 
+   SendStatChange()
+   {
+      Send(self,@MsgSendUser,#message_rsc=dm_no_statreset_msg);
+   
+      return;
+   }
+   
    % Used by the WarEvent event.  Don't remove DM+ shirts.
    RemoveShirt()
    {

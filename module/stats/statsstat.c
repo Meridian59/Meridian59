@@ -82,9 +82,33 @@ BOOL CALLBACK CharStatsDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
          break;
 
       case PSN_APPLY:
-         VerifySettings();
-         // Don't quit dialog until we hear result from server
-         //SetWindowLong(hDlg, DWL_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
+         if (stat_points > 0)
+         {
+            if (!AreYouSure(hInst,hDlg,NO_BUTTON,IDS_STATPOINTSLEFT))
+            {
+               // No clicked, don't close
+               SetWindowLong(hDlg, DWL_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
+               return TRUE;
+            }
+            else
+            {
+               if (!VerifySettings())
+               {
+                  // No clicked (in VerifySettings()), don't close
+                  SetWindowLong(hDlg, DWL_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
+                  return TRUE;
+               }
+            }
+         }
+         else
+         {
+            if (!VerifySettings())
+            {
+               // No clicked (in VerifySettings()), don't close
+               SetWindowLong(hDlg, DWL_MSGRESULT, PSNRET_INVALID_NOCHANGEPAGE);
+               return TRUE;
+            }
+         }
          break;
 
       }

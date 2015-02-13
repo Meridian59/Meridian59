@@ -54,6 +54,7 @@ properties:
    pbAtrophyOn = FALSE
    
    pbStatsResetEnabled = TRUE
+   piStatsResetPenalty = -2
 
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
@@ -280,6 +281,11 @@ messages:
    GetStatsResetEnabled()
    {
       return pbStatsResetEnabled;
+   }
+   
+   GetStatsResetPenalty()
+   {
+      return piStatsResetPenalty;
    }
    
    CleanNewbieInventoryOnEnteringRealWorld()

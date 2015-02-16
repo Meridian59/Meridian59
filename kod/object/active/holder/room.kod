@@ -3792,6 +3792,32 @@ messages:
       return;
    }
 
+   StartRain()
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndRain()
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_RAINING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=FALSE);
+         Send(self,@WeatherChanged);
+
+      }
+
+      return;
+   }
+
    StartChaosNight()
    {
       %% set the room flags so the only safe place in the world is the inns.

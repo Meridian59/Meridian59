@@ -9191,7 +9191,7 @@ messages:
                AND Send(self,@FindUsing,#class=&SoldierShield) = $
                AND ptTempSafe = $
             {
-               Send(self,@StartTempSafe);
+               Post(self,@StartTempSafe);
             }
          }
       }
@@ -12157,6 +12157,17 @@ messages:
    {
       local iTime;
 
+      % First, check if we're in a guild hall. Players can exploit this
+      % system by dying in a guild hall and using PoL or the UW node to
+      % teleport back to their bodies with temp safe activated, which would
+      % leave them unable to be killed and inside a hall. Teleport players
+      % from the guild hall to their hometown.
+      if poOwner <> $
+         AND IsClass(poOwner,&GuildHall)
+      {
+         Send(self,@AdminGotoSafety);
+      }
+
       % This returns minutes, so convert to milliseconds.
       iTime = Send(Send(SYS,@GetSettings),@GetTempSafeTime);
       iTime = iTime * 60 * 1000;
@@ -12842,7 +12853,8 @@ messages:
       }
 
       if IsClass(oRoom,&GuildHall)
-         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND (NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            OR Send(self,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
       {
          Send(self,@MsgSendUser,#message_rsc=player_no_enter);
 

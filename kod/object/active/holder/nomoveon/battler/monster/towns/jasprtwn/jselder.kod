@@ -36,8 +36,7 @@ resources:
       "to an old man like me.~n~k\""
 
 	JsEl_stat_window_trigger = "change stats"
-   JsEl_stats_speech = "Beware, there should be some sort of ominous warning here."
-
+   
 classvars:
 
    viDefinite = ARTICLE_NONE
@@ -63,11 +62,9 @@ messages:
    {
       if StringEqual(string,JsEl_stat_window_trigger)
       {
-         if Send(what,@GetBaseMaxHealth) < 250
+         if Send(what,@GetBaseMaxHealth) <= Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
          {
-            Send(poOwner,@someoneSaid,#what=self,#string=JsEl_stats_speech,
-               #type=SAY_RESOURCE);
-            Send(what, @SendStatChange);
+               Send(what, @SendStatChange);
          }
       }
 
@@ -166,9 +163,6 @@ messages:
 
       if IsClass(obj,&StatsResetToken)
       {
-         Send(poOwner,@someoneSaid,#what=self,
-                                   #string=JsEl_stats_speech,
-                                   #type=SAY_RESOURCE);
          Send(who,@SendStatChange);
       }
 

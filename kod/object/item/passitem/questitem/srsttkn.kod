@@ -16,11 +16,19 @@ constants:
 
 resources:
 
-   StatsResetToken_name_rsc = "Ancient Trinket"
+   StatsResetToken_name_rsc = "ancient trinket"
    StatsResetToken_icon_rsc = srtoken.bgf
    StatsResetToken_desc_rsc = \
       "This token grants you one stat reset.  Seek out a village elder "
       "who may offer you a statistics reset in exchange for this item. "
+      
+   StatsResetToken_desc_append1 = \
+      "\n\nThis token will expire in "
+   StatsResetToken_desc_append2= \
+      " Meridian years."
+      
+   StatsResetToken_desc_noTrade = \
+      "\n\nNo Trade"
 
 classvars:
 
@@ -37,9 +45,27 @@ classvars:
 properties:
 
    pbTemporary
-   piDaysRemaining
+   piGameYearsRemaining
+   pbTradeable
 
 messages:
+
+   Constructor(temporary=TRUE,lifetime=-1,tradeable=FALSE)
+   {
+      pbTradeable = tradeable;
+      pbTemporary = temporary;
+      if lifetime <> -1
+      {
+         piGameYearsRemaining = lifetime;
+      }
+      else
+      {
+         piGameYearsRemaining = Send(Send(Sys,@GetSettings),
+            @GetStatResetTokenLife);
+      }
+      
+      propagate;
+   }
 
    reqNewOwner(what = $)
    {
@@ -55,8 +81,9 @@ messages:
          return TRUE;
       }
       
-      return FALSE;
+      return pbTradeable;
    }
+   
    CanWeaken()
    { 
       return FALSE;
@@ -86,6 +113,37 @@ messages:
    {
       return FALSE;
    }
+   
+   NewYear()
+   {
+      if pbTemporary
+      {
+         piGameYearsRemaining = piGameYearsRemaining - 1;
+      
+         if piGameYearsRemaining <= 0
+         {
+            Send(self,@Delete);
+         }
+      }
+   
+      return;
+   }
 
+   AppendDesc()
+   {
+      if pbTemporary
+      {
+         AppendTempString(StatsResetToken_desc_append1);
+         AppendTempString(piGameYearsRemaining);
+         AppendTempString(StatsResetToken_desc_append2);
+      }
+      
+      if NOT pbTradeable
+      {
+         AppendTempString(StatsResetToken_desc_noTrade);
+      }
+      
+      propagate;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

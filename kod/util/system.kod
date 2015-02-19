@@ -1347,6 +1347,10 @@ messages:
             Send(i,@GetAge);
          }
       }
+      
+      % Notify stat reset tokens that a game year has passed
+      % (deletes temporary tokens without unecessary timers)
+      Send(&StatsResetToken,@NewYear);
 
       return;
    }

@@ -996,7 +996,7 @@ messages:
       local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets;
+            lTargets, i;
 
       % This checks to see if the user is trying to Send too many packets
       %  per second.  If they are, then we mark them as a spammer and
@@ -1470,6 +1470,20 @@ messages:
 
       if liClient_cmd = BP_CHANGED_STATS
       {
+      
+         if Length(client_msg) <> 14
+         {
+            return;
+         }
+      
+         for i in client_msg
+         {
+            if i = $
+            {
+               return;
+            }
+         }
+      
          Send(self,@UserChangedStats, #might=Nth(client_msg,2),
                                        #intellect=Nth(client_msg,3),
                                        #stamina=Nth(client_msg,4),
@@ -9005,7 +9019,9 @@ messages:
          return;
       }
       
+      % must have a token if over the free stat reset cap
       if Send(self,@FindHolding,#class=&StatsResetToken) = $
+         AND (piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap))
       {
          return;
       }
@@ -9052,12 +9068,14 @@ messages:
       }
       
       if Send(self,@FindHolding,#what=&StatsResetToken) = $
+         AND (piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap))
       {
          return;
       }
       
       i = 1;
       totallevels = 0;
+      totalLvlOnes = 0;
       totalSchools = 0;
       lSpellLevels = Send(self, @GetSpellSchoolLevels);
       lSpellLevels_new = [shallile_lvl,qor_lvl,kraanan_lvl,
@@ -9160,7 +9178,10 @@ messages:
       % everything looks good, start adjusting stats
       
       % Consume token
-      Send(Send(self,@FindHolding,#class=&StatsResetToken),@Delete);
+      if piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+      {
+         Send(Send(self,@FindHolding,#class=&StatsResetToken),@Delete);
+      }
       
       % Strip Spell Levels
       i = 1;

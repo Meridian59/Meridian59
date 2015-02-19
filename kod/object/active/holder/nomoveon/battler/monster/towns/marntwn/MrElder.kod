@@ -35,7 +35,6 @@ resources:
       "I’m a bit of a ~Icollector~I."
 	  
    MrEl_stat_window_trigger = "change stats"
-   MrEl_stats_speech = "Beware, there should be some sort of ominous warning here."
 
 classvars:
 
@@ -65,10 +64,8 @@ messages:
    {
       if StringEqual(string,MrEl_stat_window_trigger)
       {
-         if Send(what,@GetBaseMaxHealth) < 250
+         if Send(what,@GetBaseMaxHealth) <= Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
          {
-            Send(poOwner,@someoneSaid,#what=self,#string=MrEl_stats_speech,
-               #type=SAY_RESOURCE);
             Send(what, @SendStatChange);
          }
       }
@@ -140,9 +137,6 @@ messages:
 
       if IsClass(obj,&StatsResetToken)
       {
-         Send(poOwner,@someoneSaid,#what=self,
-                                   #string=MrEl_stats_speech,
-                                   #type=SAY_RESOURCE);
          Send(who,@SendStatChange);
       }
 

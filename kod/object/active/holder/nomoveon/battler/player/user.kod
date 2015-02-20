@@ -6386,12 +6386,11 @@ messages:
       {	  
          AddPacket(1,BP_INVENTORY_ADD);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
-         SendPacket(poSession);		 
-
+         SendPacket(poSession);
+         
+         Post(self,@DrawCapacity);
+         Post(self,@DrawBulk);
       }
-      
-      Post(self,@DrawCapacity);
-      Post(self,@DrawBulk);      
       
       propagate;
    }
@@ -6402,11 +6401,10 @@ messages:
       {
          AddPacket(1,BP_INVENTORY_REMOVE,4,what);
          SendPacket(poSession);
+         Post(self,@DrawCapacity);
+         Post(self,@DrawBulk);    
       }
 
-      Post(self,@DrawCapacity);
-      Post(self,@DrawBulk);      
-      
       propagate;
    }
 

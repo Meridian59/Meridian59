@@ -11,7 +11,7 @@
 
 #include "club.h"
 
-#define MAXSTRINGLEN 255
+#define MAXSTRINGLEN 512
 
 void CenterWindow(HWND hwnd, HWND hwndParent)
 {

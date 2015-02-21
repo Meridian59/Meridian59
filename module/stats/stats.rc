@@ -31,7 +31,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Ändere die Werte Deines Characters.",-1,37,6,110,8
+    LTEXT           "Ändere die Werte Deines Charakters.",-1,37,6,150,8
     LTEXT           "Stärke",-1,18,26,24,8
     CONTROL         "",1021,"BlakGraph",WS_TABSTOP | 0xb,42,24,102,14
     LTEXT           "Klugheit",-1,14,44,26,8
@@ -134,8 +134,8 @@ END
 STRINGTABLE
 BEGIN
     5   "Du hast noch einige Punkte zu vergeben. Bist Du sicher das Du diese verwerfen möchtest?"
-    7   "Bist Du sicher, dass Du die Änderungen der Werte übernehmen willst?\n\nWenn Du Werte reduziert hast wirst Du 2 Prozent bei jedem Zauber verlieren der von dem reduzierten Wert abhängt.  Dies kann nicht mehr rückgängig gemacht werden!"
-    8   "Bist du WIRKLICH, WIRKLICH sicher das Du die Änderungen der Werte so übernehmen willst?\n\nDie Server Administratoren werden die Änderungen die Du machst nicht rückgängig machen. LETZTE CHANCE\n\nIch meine es ernst! Sende keine Nachricht an die Administratoren wenn du Deinen Character zerstört hast, das ist Deine Sache."
+    7   "Bist Du sicher, dass Du die Änderungen der Werte übernehmen willst?\n\nWenn Du Werte reduziert hast wirst Du 2 Prozent bei jedem Zauber verlieren der von dem reduzierten Wert abhängt.\n\nDies kann nicht mehr rückgängig gemacht werden!"
+    8   "Bist du WIRKLICH, WIRKLICH sicher das Du die Änder- ungen der Werte so übernehmen willst?\n\nDie Server Administratoren werden die Änderungen die Du machst nicht rückgängig machen. LETZTE CHANCE\n\nIch meine es ernst! Sende keine Nachricht an die Admini- stratoren wenn du Deinen Character zerstört hast, das ist Deine Sache."
 END
 
 STRINGTABLE

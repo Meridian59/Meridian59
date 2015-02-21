@@ -288,7 +288,8 @@ messages:
          AND who <> $
          AND IsClass(who,&User)
       {
-         iStatTokenChance = 150000 / Bound(Send(mob,@GetLevel),50,150);
+         iStatTokenChance = Send(Send(SYS,@GetSettings),@GetStatResetTokenDropFactor)
+                                 / Bound(Send(mob,@GetLevel),50,150);
          if Random(1,iStatTokenChance) = 1
             AND Send(mob,@GetLevel) > Send(who,@GetBaseMaxHealth)
          {

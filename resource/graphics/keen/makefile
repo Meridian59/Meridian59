@@ -9,6 +9,7 @@ BGFS = rmcombat.bgf \
        rmnocombat.bgf \
        rmgcombat.bgf \
        frogman.bgf \
+       frogmanX.bgf \
        srtoken.bgf
 
 all: 

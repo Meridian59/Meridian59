@@ -19,20 +19,18 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Neutral) resources
+// German resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
-#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MAINMENU MENU 
+IDR_MAINMENU MENU
 BEGIN
     POPUP "&Spiel"
     BEGIN
@@ -141,7 +139,7 @@ BEGIN
     PUSHBUTTON      "Angebot...",1189,138,167,93,14
 END
 
-166 DIALOG  0, 0, 186, 95
+166 DIALOG 0, 0, 186, 95
 STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -151,7 +149,7 @@ BEGIN
     LTEXT           "Drücke unten um die Aktion abzubrechen.",-1,26,22,139,8
 END
 
-159 DIALOG  0, 0, 161, 67
+159 DIALOG 0, 0, 161, 67
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Legende zur Karte"
 FONT 8, "MS Sans Serif"
@@ -179,7 +177,7 @@ BEGIN
     DEFPUSHBUTTON   "Bestätigen",1,181,361,50,14,WS_GROUP
 END
 
-148 DIALOG  0, 0, 236, 50
+148 DIALOG 0, 0, 236, 50
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -192,7 +190,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",4,126,32,44,14
 END
 
-126 DIALOG  0, 0, 149, 81
+126 DIALOG 0, 0, 149, 81
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Logout timer"
 FONT 8, "MS Sans Serif"
@@ -206,7 +204,7 @@ BEGIN
     ICON            IDI_CLOCK,-1,8,7,18,20
 END
 
-123 DIALOG  0, 0, 249, 153
+123 DIALOG 0, 0, 249, 153
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Passwort ändern"
 FONT 8, "MS Sans Serif"
@@ -224,7 +222,7 @@ BEGIN
     LTEXT           "Gib niemals deinen Benutzernamen oder dein Passwort an andere Spieler weiter; du bist für deinen Account verantwortlich, gleich wer ihn benutzt im Meridian 59 zu spielen.",-1,40,124,205,25
 END
 
-122 DIALOG  0, 0, 252, 146
+122 DIALOG 0, 0, 252, 146
 STYLE DS_SETFONT | DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Update Meridian 59..."
 FONT 8, "MS Sans Serif"
@@ -242,7 +240,7 @@ BEGIN
     GROUPBOX        "Gesamt:",-1,9,108,188,31
 END
 
-120 DIALOG  0, 0, 189, 281
+120 DIALOG 0, 0, 189, 281
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Über Meridian 59"
 FONT 8, "MS Sans Serif"
@@ -290,7 +288,7 @@ BEGIN
     LTEXT           "Warte auf ein Gegenangebot...",1055,10,345,218,9
 END
 
-117 DIALOG  0, 0, 201, 92
+117 DIALOG 0, 0, 201, 92
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Farbauswahl"
 FONT 8, "MS Sans Serif"
@@ -303,7 +301,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",2,140,71,54,14,WS_GROUP
 END
 
-1165 DIALOG  0, 0, 163, 151
+1165 DIALOG 0, 0, 163, 151
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Zurückgenommene Gegenstände"
 FONT 8, "MS Sans Serif"
@@ -321,7 +319,7 @@ BEGIN
     LTEXT           "Menge:",-1,135,5,25,8
 END
 
-1164 DIALOG  0, 0, 321, 201
+1164 DIALOG 0, 0, 321, 201
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Einstellungen des Textfilters"
 FONT 8, "MS Sans Serif"
@@ -345,7 +343,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",2,267,183,50,14
 END
 
-116 DIALOGEX 0, 0, 256, 295
+116 DIALOGEX 0, 0, 257, 318
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Voreinstellungen"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -362,37 +360,37 @@ BEGIN
     CONTROL         "Stapelgröße bei Gegenständen anzeigen",1148,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,111,50,135,18
     CONTROL         "Wettereffekte anzeigen",1208,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,111,72,132,9
     CONTROL         "Zeige Partikeleffekt",1184,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,111,61,126,10
-    GROUPBOX        "Spieloptionen",IDC_STATIC,6,84,245,28,WS_GROUP
-    CONTROL         "Vorübergehender PvP-Schutz nach Tod",1209,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,96,185,9
-    GROUPBOX        "Audio Effekte",IDC_STATIC,6,114,245,67,WS_GROUP
-    CONTROL         "Musik",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,127,35,9
-    CONTROL         "Sounds",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,127,44,9
-    CONTROL         "Klangschleifen",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,127,64,9
-    CONTROL         "Umgebungs-Sound",1154,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,165,127,80,9
-    LTEXT           "Sound Lautstärke",IDC_STATIC,13,144,73,10
-    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,141,173,15
-    LTEXT           "Musik Lautstärke",IDC_STATIC,13,161,73,10
-    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,159,173,15
-    GROUPBOX        "Oberfläche",IDC_STATIC,5,183,245,59,WS_GROUP
-    CONTROL         "Toolbar anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,194,70,9
-    CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,194,100,9
-    CONTROL         "Tooltips anzeigen",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,205,65,9
-    CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,205,79,10
-    CONTROL         "Kartenanmerkungen",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,205,80,9
-    CONTROL         "Textfenster beim zurückscrollen einfrieren",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,216,163,9
-    CONTROL         "Bunter Text",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,216,72,10
-    CONTROL         "Textfilter",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,228,77,9
-    PUSHBUTTON      "Filtereinstellungen",1164,101,226,142,12
-    GROUPBOX        "Web Browser",IDC_STATIC,6,243,245,31,WS_GROUP
-    LTEXT           "Programm:",IDC_STATIC,13,256,45,8
-    EDITTEXT        1155,59,254,136,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "&Durchsuchen",1162,197,254,49,12
-    DEFPUSHBUTTON   "Bestätigen",1,145,279,50,12,WS_GROUP
-    PUSHBUTTON      "Abbrechen",2,201,279,50,12,WS_GROUP
-
+    GROUPBOX        "Spieloptionen",IDC_STATIC,6,84,245,41,WS_GROUP
+    CONTROL         "Vorübergehender PvP-Schutz nach Tod",1209,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,96,140,9
+    CONTROL         "An Gruppenbildung teilnehmen",1210,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,110,120,9
+    GROUPBOX        "Audio Effekte",IDC_STATIC,6,128,245,63,WS_GROUP
+    CONTROL         "Musik",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,140,35,9
+    CONTROL         "Sounds",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,140,44,9
+    CONTROL         "Klangschleifen",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,140,64,9
+    CONTROL         "Umgebungs-Sound",1154,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,165,140,80,9
+    LTEXT           "Sound Lautstärke",IDC_STATIC,13,157,73,10
+    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,154,173,15
+    LTEXT           "Musik Lautstärke",IDC_STATIC,13,175,73,10
+    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,172,173,15
+    GROUPBOX        "Oberfläche",IDC_STATIC,5,196,245,64,WS_GROUP
+    CONTROL         "Toolbar anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,209,70,9
+    CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,209,100,9
+    CONTROL         "Tooltips anzeigen",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,220,65,9
+    CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,220,79,10
+    CONTROL         "Kartenanmerkungen",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,220,80,9
+    CONTROL         "Textfenster beim zurückscrollen einfrieren",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,232,163,9
+    CONTROL         "Bunter Text",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,232,72,10
+    CONTROL         "Textfilter",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,244,77,9
+    PUSHBUTTON      "Filtereinstellungen",1164,101,244,142,12
+    GROUPBOX        "Web Browser",IDC_STATIC,5,262,245,31,WS_GROUP
+    LTEXT           "Programm:",IDC_STATIC,13,275,45,8
+    EDITTEXT        1155,59,274,136,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Durchsuchen",1162,197,274,49,12
+    DEFPUSHBUTTON   "Bestätigen",1,145,300,50,12,WS_GROUP
+    PUSHBUTTON      "Abbrechen",2,200,300,50,12,WS_GROUP
 END
 
-110 DIALOG  0, 0, 340, 140
+110 DIALOG 0, 0, 340, 140
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Objektbeschreibung"
 FONT 8, "MS Sans Serif"
@@ -428,7 +426,7 @@ BEGIN
     PUSHBUTTON      "&Alle auswählen",1008,169,59,53,14,WS_GROUP
 END
 
-106 DIALOG  0, 0, 180, 159
+106 DIALOG 0, 0, 180, 159
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -441,7 +439,7 @@ BEGIN
     LISTBOX         1076,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-103 DIALOG  0, 0, 197, 124
+103 DIALOG 0, 0, 197, 124
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Fehlermeldung!"
 FONT 8, "MS Sans Serif"
@@ -453,7 +451,7 @@ BEGIN
     LTEXT           "Willst du es noch einmal versuchen?",3,42,82,118,8
 END
 
-1020 DIALOG  0, 0, 152, 46
+1020 DIALOG 0, 0, 152, 46
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59"
 FONT 8, "MS Sans Serif"
@@ -462,7 +460,7 @@ BEGIN
     LTEXT           "Performing routine maintenance...",-1,22,9,106,8
 END
 
-1019 DIALOG  0, 0, 338, 157
+1019 DIALOG 0, 0, 338, 157
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Beschreibung"
 FONT 8, "MS Sans Serif"
@@ -477,7 +475,7 @@ BEGIN
     LTEXT           "Homepage:",1158,129,123,36,8
 END
 
-1018 DIALOG  0, 0, 181, 159
+1018 DIALOG 0, 0, 181, 159
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -544,7 +542,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     155, DIALOG
     BEGIN
@@ -558,12 +556,45 @@ BEGIN
 
     116, DIALOG
     BEGIN
-        BOTTOMMARGIN, 266
+        RIGHTMARGIN, 256
+        BOTTOMMARGIN, 295
+    END
+
+    110, DIALOG
+    BEGIN
+    END
+
+    108, DIALOG
+    BEGIN
+    END
+
+    106, DIALOG
+    BEGIN
+    END
+
+    103, DIALOG
+    BEGIN
+    END
+
+    1020, DIALOG
+    BEGIN
+    END
+
+    1019, DIALOG
+    BEGIN
+    END
+
+    1018, DIALOG
+    BEGIN
     END
 
     1017, DIALOG
     BEGIN
         BOTTOMMARGIN, 159
+    END
+
+    1016, DIALOG
+    BEGIN
     END
 
     1014, DIALOG
@@ -579,7 +610,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     1                       "Ich kann den Socket nicht initialisieren!"
     2                       "Ich kann den Kommunikationsport nicht ansteuern!"
@@ -594,7 +625,7 @@ BEGIN
     15                      "Unerwartetes Socket-Problem."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     17                      "Alle Spiel-Dateien zu herunterzuladen kann sehr lange dauern.\nBist Du sicher?"
     18                      "m59bind.exe"
@@ -611,7 +642,7 @@ BEGIN
     31                      "Kann eine oder mehrere Dateien nicht vom Verzeichnis %s in das Verzeichnis %s verschieben. Stelle sicher, daß das Verzeichnis existiert und versuche den Download erneut."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     32                      "Das Spiel ist kurzfristig zu Wartungszwecken heruntergefahren.\\Bitte versuche es später noch einmal."
     33                      "You are out of credits.\nFor information on purchasing credits,\nselect ""Help"" from the main menu."
@@ -626,7 +657,7 @@ BEGIN
     46                      "Warte auf Antwort ..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     49                      "Soll das Spiel wirklich beendet werden??"
     51                      "Soll das Spiel wirklich beendet werden??"
@@ -636,7 +667,7 @@ BEGIN
     63                      "Passwort abgeändert."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     64                      "Address:\n"
     65                      "Phone number:\n"
@@ -656,7 +687,7 @@ BEGIN
     79                      "Nicht mehr benutzen"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     80                      "Angreifen"
     81                      "Anbieten"
@@ -674,7 +705,7 @@ BEGIN
     95                      "Kaufen"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     97                      "Das Programm, welches Deine Dateien aktualisiert, kann nicht gestartet werden (%s).\nBitte wende Dich an einen System Administrator oder an unseren Kundenservice."
     98                      "Du benötigst eine aktualisierte Version von Meridian 59.\nMöchtest Du sie automatisch erhalten?"
@@ -690,7 +721,7 @@ BEGIN
     111                     "Übertragungsfehler; versuche die Verbindung erneut aufzubauen."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     112                     "Übertragungsfehler: Versuche es nochmal."
     113                     "Ich kann keine temporären Dateien anlegen."
@@ -705,7 +736,7 @@ BEGIN
     122                     "Alle Meridian Server sind momentan überlastet. Bitte versuche es später."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     128                     "Es ist niemand in der Nähe, von dem Du etwas kaufen kannst."
     129                     "Es ist niemand in der Nähe, dem Du etwas anbieten kannst."
@@ -718,7 +749,7 @@ BEGIN
     143                     "Unbekannter Fehler."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     145                     "Ich kann das File %s nicht abspeichern."
     146                     "Ich kann das FTP-File %s nicht lesen."
@@ -735,44 +766,42 @@ BEGIN
     159                     "Der Würfel zeigt an, wie gut die Verbindung zum Spielserver ist."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     160                     "http://openmeridian.org/"
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
     164                     "http://openmeridian.org/"
-    189                     "http://openmeridian.org/forums"
-    190                     "http://wiki.openmeridian.org/index.php/Main_Page"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     179                     "Du kannst Dein ausgewähltes Ziel nicht sehen."
     180                     "Wähle die Gegenstände zum Hinterlegen aus."
     187                     "Unable to send an HTTP request for the file %s to the server %s."
     188                     "Unable to get size of file %s from the server %s."
+    189                     "http://openmeridian.org/forums"
+    190                     "http://wiki.openmeridian.org/index.php/Main_Page"
 END
 
-#endif    // German (Neutral) resources
+#endif    // German resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MAINMENU MENU 
+IDR_MAINMENU MENU
 BEGIN
     POPUP "&Game"
     BEGIN
@@ -879,7 +908,7 @@ BEGIN
     PUSHBUTTON      "&All",IDC_ALL,167,59,44,14,WS_GROUP
 END
 
-IDD_DESC DIALOG  0, 0, 338, 133
+IDD_DESC DIALOG 0, 0, 338, 133
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Object Description"
 FONT 8, "MS Sans Serif"
@@ -900,7 +929,7 @@ BEGIN
     EDITTEXT        IDC_DESCBOX,127,42,193,66,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN
 END
 
-IDD_ITEMLISTSINGLE DIALOG  0, 0, 180, 159
+IDD_ITEMLISTSINGLE DIALOG 0, 0, 180, 159
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -931,7 +960,8 @@ BEGIN
     CONTROL         "Show amounts for inventory items",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
     CONTROL         "Show weather effects",IDC_WEATHER,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,111,61,132,9
     GROUPBOX        "Game Options",IDC_STATIC,6,79,245,28,WS_GROUP
-    CONTROL         "Receive temporary angel on death",IDC_TEMPSAFE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,91,173,9
+    CONTROL         "Receive temporary angel on death",IDC_TEMPSAFE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,91,130,9
+    CONTROL         "Join building groups",IDC_GROUPING,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,150,91,100,9
     GROUPBOX        "Audio Effects",IDC_STATIC,6,109,245,66,WS_GROUP
     CONTROL         "Music",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,122,35,9
     CONTROL         "Sounds",IDC_SOUNDFX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,122,44,9
@@ -960,7 +990,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,201,277,50,12,WS_GROUP
 END
 
-IDD_COLOR DIALOG  0, 0, 201, 92
+IDD_COLOR DIALOG 0, 0, 201, 92
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Color selection"
 FONT 8, "MS Sans Serif"
@@ -1058,7 +1088,7 @@ BEGIN
     LTEXT           "Server:",IDC_STATIC,43,139,44,8
 END
 
-IDD_DOWNLOAD DIALOG  0, 0, 252, 146
+IDD_DOWNLOAD DIALOG 0, 0, 252, 146
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Updating Meridian 59..."
 FONT 8, "MS Sans Serif"
@@ -1076,7 +1106,7 @@ BEGIN
     GROUPBOX        "Total",IDC_STATIC,9,108,188,31
 END
 
-IDD_PASSWORD DIALOG  0, 0, 249, 153
+IDD_PASSWORD DIALOG 0, 0, 249, 153
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Change Password"
 FONT 8, "MS Sans Serif"
@@ -1094,7 +1124,7 @@ BEGIN
     LTEXT           "Be careful not to give other players your account name or password; you are responsible for the actions of whoever uses your account to play Meridian 59.",IDC_STATIC,40,124,205,25
 END
 
-IDD_TIMEOUT DIALOG  0, 0, 149, 81
+IDD_TIMEOUT DIALOG 0, 0, 149, 81
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Logout timer"
 FONT 8, "MS Sans Serif"
@@ -1108,7 +1138,7 @@ BEGIN
     ICON            IDI_CLOCK,IDC_STATIC,8,7,18,20
 END
 
-IDD_MSGBOX DIALOG  0, 0, 236, 50
+IDD_MSGBOX DIALOG 0, 0, 236, 50
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -1140,7 +1170,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,181,359,50,14,WS_GROUP
 END
 
-IDD_FTPERROR DIALOG  0, 0, 197, 124
+IDD_FTPERROR DIALOG 0, 0, 197, 124
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Error"
 FONT 8, "MS Sans Serif"
@@ -1152,7 +1182,7 @@ BEGIN
     LTEXT           "Do you want to retry?",IDC_STATIC,64,82,68,8
 END
 
-IDD_ITEMLISTSORTED DIALOG  0, 0, 181, 159
+IDD_ITEMLISTSORTED DIALOG 0, 0, 181, 159
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -1165,7 +1195,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,144,127,28,12,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_DESCPLAYER DIALOG  0, 0, 338, 157
+IDD_DESCPLAYER DIALOG 0, 0, 338, 157
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Player Description"
 FONT 8, "MS Sans Serif"
@@ -1180,7 +1210,7 @@ BEGIN
     LTEXT           "Web page:",IDC_URLLABEL,129,124,36,8
 END
 
-IDD_ANNOTATE DIALOG  0, 0, 161, 67
+IDD_ANNOTATE DIALOG 0, 0, 161, 67
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Map annotation"
 FONT 8, "MS Sans Serif"
@@ -1192,7 +1222,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,112,46,35,14
 END
 
-IDD_ABOUT DIALOG  0, 0, 189, 281
+IDD_ABOUT DIALOG 0, 0, 189, 281
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "About Meridian 59"
 FONT 8, "MS Sans Serif"
@@ -1204,7 +1234,7 @@ BEGIN
     CONTROL         "",IDC_SCROLL,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
 
-IDD_GUEST DIALOG  0, 0, 186, 95
+IDD_GUEST DIALOG 0, 0, 186, 95
 STYLE DS_SETFONT | DS_3DLOOK | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -1214,7 +1244,7 @@ BEGIN
     LTEXT           "Press Cancel to stop",IDC_STATIC,59,22,66,8
 END
 
-IDD_DOWNLOADAD DIALOG  0, 0, 152, 46
+IDD_DOWNLOADAD DIALOG 0, 0, 152, 46
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59"
 FONT 8, "MS Sans Serif"
@@ -1223,7 +1253,7 @@ BEGIN
     LTEXT           "Performing routine maintenance...",IDC_STATIC,22,9,106,8
 END
 
-IDC_PROFANESETTINGS DIALOG  0, 0, 321, 201
+IDC_PROFANESETTINGS DIALOG 0, 0, 321, 201
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Profanity Filter Settings"
 FONT 8, "MS Sans Serif"
@@ -1248,7 +1278,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,267,183,50,14
 END
 
-IDD_WITHDRAWAL DIALOG  0, 0, 163, 151
+IDD_WITHDRAWAL DIALOG 0, 0, 163, 151
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Withdraw items"
 FONT 8, "MS Sans Serif"
@@ -1290,7 +1320,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ITEMLISTMULTIPLE, DIALOG
     BEGIN
@@ -1536,7 +1566,7 @@ IDA_DOWNLOAD            AVI                     "bitmap\\download.avi"
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CANTINITSOCKET      "Can't initialize socket!"
     IDS_CANTWRITE           "Couldn't write to communications port!"
@@ -1551,7 +1581,7 @@ BEGIN
     IDS_SOCKETMESSAGE       "Unexpected socket message type."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_DOWNLOADALL         "Downloading all game files may take a long time.\nAre you sure you want to do this?"
     IDS_CONFIGMENUEXE       "m59bind.exe"
@@ -1568,7 +1598,7 @@ BEGIN
     IDS_CANTRENAME          "Unable to move one or more files from the %s directory to the %s directory.    Make sure the directories exist, and try the download again."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_NOGAME              "The game is temporarily down for servicing.\nPlease try again later."
     IDS_NOCREDITS           "You are out of credits.\nFor information on purchasing credits,\nselect ""Help"" from the main menu."
@@ -1583,7 +1613,7 @@ BEGIN
     IDS_WAITRESPONSE        "Waiting for response..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_QUIT                "Are you sure you want to quit?"
     IDS_LOGOFF              "Are you sure you want to disconnect?"
@@ -1593,7 +1623,7 @@ BEGIN
     IDS_PASSWORDCHANGED     "Password changed."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ADDRESS             "Address:\n"
     IDS_PHONENUM            "Phone number:\n"
@@ -1613,7 +1643,7 @@ BEGIN
     IDS_UNUSE               "Stop using"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_ATTACK              "Attack"
     IDS_OFFERTO             "Offer to"
@@ -1622,8 +1652,6 @@ BEGIN
     IDS_ACTIVATE            "Activate"
     IDS_HTTPKEY             "Software\\Classes\\http\\shell\\open\\command"
     IDS_HELPFILE            "http://wiki.openmeridian.org/index.php/Gameplay"
-    IDS_FORUMURL            "http://openmeridian.org/forums"
-    IDS_WIKIURL             "http://wiki.openmeridian.org/index.php/Main_Page"
     IDS_BADCOMMAND          "What?  (Press F1 or '?' for help.)"
     IDS_DECOMPRESSING       "Decompressing..."
     IDS_APPNAME             "Meridian 59"
@@ -1633,7 +1661,17 @@ BEGIN
     IDS_BUYFROM             "Buy from"
 END
 
-STRINGTABLE 
+STRINGTABLE
+BEGIN
+    IDS_TARGETNOTVISIBLEFORATTACK "You can't see your selected target."
+    IDS_DEPOSIT_ITEMS       "Select Items to Deposit"
+    IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
+    IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
+    IDS_FORUMURL            "http://openmeridian.org/forums"
+    IDS_WIKIURL             "http://wiki.openmeridian.org/index.php/Main_Page"
+END
+
+STRINGTABLE
 BEGIN
     IDS_CANTUPDATE          "Unable to run %s, the program that updates your copy of Meridian 59.\nPlease report the problem to a system administrator."
     IDS_NEEDNEWVERSION      "You need to get an updated version of Meridian 59.\nDo you want to retrieve it automatically now?"
@@ -1649,7 +1687,7 @@ BEGIN
     IDS_TRANSMITERROR       "Transmission error; trying to reestablish connection."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CANTUNCOMPRESS      "Couldn't uncompress the downloaded file %s.\nReason:\n%s\nTry again?"
     IDS_BADTEMPFILE         "Unable to create temporary file."
@@ -1664,7 +1702,7 @@ BEGIN
     IDS_GUESTFULL           "All Meridian servers are currently busy.  Please try again later."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_NOSELLERS           "There's no one nearby to buy from."
     IDS_NOOFFERERS          "There's no one nearby to offer to."
@@ -1677,15 +1715,7 @@ BEGIN
     IDS_BADCALLBACK         "Unknown error (unable to install callback function)."
 END
 
-STRINGTABLE 
-BEGIN
-    IDS_TARGETNOTVISIBLEFORATTACK "You can't see your selected target."
-    IDS_DEPOSIT_ITEMS       "Select Items to Deposit"
-    IDS_CANTSENDREQUEST     "Unable to send an HTTP request for the file %s to the server %s."
-    IDS_CANTGETFILESIZE     "Unable to get size of file %s from the server %s."
-END
-
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_LAGBOXURL           "http://openmeridian.org/"
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
@@ -1694,7 +1724,7 @@ BEGIN
     IDS_HOMEPAGEURL         "http://openmeridian.org/"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CANTWRITELOCALFILE  "Unable to write to the file %s."
     IDS_CANTREADFTPFILE     "Can't read the remove file %s."
@@ -1711,7 +1741,7 @@ BEGIN
     IDS_LAGBOXSUBNAME       "A measurement of your network delay."
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

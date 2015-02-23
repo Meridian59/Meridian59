@@ -47,6 +47,7 @@
    MOVEON_NOTIFY     = 3
 
    % Object flags for client.
+   OF_GROUPING       = 0x00000002
    OF_PLAYER         = 0x00000004
    OF_ATTACKABLE     = 0x00000008
    OF_GETTABLE       = 0x00000010
@@ -2175,7 +2176,7 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x463D7E
+   PFLAG_MASK              = 0xC63D7E
 
    PFLAG_INVISIBLE         = 0x000001
    PFLAG_MURDERER          = 0x000002
@@ -2203,6 +2204,7 @@
    PFLAG_MORPHED           = 0x200000
    % this player has moved since he's entered the room.
    PFLAG_MOVED_SINCE_ENTRY = 0x400000
+   PFLAG_GROUPING          = 0x800000
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList

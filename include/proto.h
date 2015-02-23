@@ -253,7 +253,7 @@ enum {
    UC_GUILD_SHIELD = 31,
    UC_GUILD_SHIELDS = 32,
    UC_CLAIM_SHIELD = 33,
-
+   UC_GROUPING = 34,
    UC_DEPOSIT = 35,
    UC_WITHDRAW = 36,
    UC_BALANCE = 37,
@@ -352,6 +352,7 @@ enum {
 
 
 /* Object flag values and masks */
+#define OF_GROUPING      0x00000002    // Set if player is grouping (self only)
 #define OF_PLAYER        0x00000004    // Set if object is a player
 #define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object

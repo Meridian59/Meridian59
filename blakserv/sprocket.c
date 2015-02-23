@@ -122,6 +122,7 @@ client_def_table_type usercommand_def_table[] =
 	{ UC_ABANDON_GUILD_HALL,    { {0, DONE_PARM} } },
 	{ UC_GUILD_SET_PASSWORD,    { {0, TAG_STRING}, {0, DONE_PARM} } },
 	{ UC_CHANGE_URL,            { {4, TAG_OBJECT}, {0,TAG_STRING}, {0, DONE_PARM} } },
+	{ UC_GROUPING,              { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_DEPOSIT,               { {4, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_BALANCE,               { {0, DONE_PARM} } },
 	{ UC_WITHDRAW,              { {4, TAG_INT}, {0, DONE_PARM} } },

@@ -5568,6 +5568,7 @@ messages:
          if IsClass(what,&Monster)
             AND (use_weapon = $
                OR NOT IsClass(use_weapon,&ActiveWallElement))
+            AND (piFlags & PFLAG_GROUPING)
          {
             Send(self,@JoinBuilderGroup);
          }
@@ -8571,8 +8572,10 @@ messages:
             % with one other player in the room. Bonus requires that the 
             % player is fighting normally (no firewalls / distance killing)
             lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
-            if lBuilderGroup <> $
-               AND Length(lBuilderGroup) = 1
+            if (lBuilderGroup = $
+                  OR Length(lBuilderGroup) = 1
+                  OR (FindListElem(lBuilderGroup,self) = 0
+                     AND (piFlags & ~PFLAG_GROUPING)))
                AND NOT group_member_kill
                AND killing_blow
                AND (monster_level + 5) > piBase_Max_health

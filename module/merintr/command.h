@@ -59,5 +59,7 @@ void CommandSafetyOn(char *args);
 void CommandSafetyOff(char *args);
 void CommandTempSafeOn(char *args);
 void CommandTempSafeOff(char *args);
+void CommandGroupingOn(char *args);
+void CommandGroupingOff(char *args);
 
 #endif /* #ifndef _COMMAND_H */

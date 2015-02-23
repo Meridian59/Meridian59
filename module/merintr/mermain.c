@@ -33,6 +33,9 @@ static Bool safety_flipped;
 // True when we've told server to change temp safe flag; prevents multiple requests
 static Bool temp_safe_flipped;
 
+// True when we've told server to change player's grouping flag; prevents multiple requests
+static Bool grouping_flipped;
+
 /****************************************************************************/
 /*
  * InterfaceInit:  Called on startup.  Initialize interface.
@@ -423,6 +426,7 @@ void InterfaceUserChanged(void)
    room_contents_node *r;
    Bool new_safety;
    Bool new_temp_safe;
+   Bool new_grouping;
 
    UserAreaRedraw();
    AliasInit();
@@ -498,6 +502,41 @@ void InterfaceUserChanged(void)
          temp_safe_flipped = True;
       }
    }
+
+   new_grouping = ((r->obj.flags & OF_GROUPING) != 0);
+   
+   if (new_grouping)
+   {
+      if (cinfo->config->grouping)
+      {
+         // Flag on, setting on, don't change.
+         pinfo.grouping = cinfo->config->grouping = True;
+         grouping_flipped = False;
+      }
+      else
+      {
+         // Flag on, setting off, turn flag off.
+         if (!temp_safe_flipped)
+            SendGrouping(0);
+         grouping_flipped = True;
+      }
+   }
+   else
+   {
+      if (!cinfo->config->grouping)
+      {
+         // Flag off, setting off, don't change.
+         pinfo.grouping = cinfo->config->grouping = False;
+         grouping_flipped = False;
+      }
+      else
+      {
+         // Flag off, setting on, turn flag on.
+         if (!grouping_flipped)
+            SendGrouping(1);
+         grouping_flipped = True;
+      }
+   }
 }
 /****************************************************************************/
 void InterfaceConfigChanged(void)
@@ -519,9 +558,18 @@ void InterfaceConfigChanged(void)
          SendTempSafe(1);
       else SendTempSafe(0);
    }
+
+   // See if user changed grouping flag
+   if (pinfo.grouping != cinfo->config->grouping)
+   {
+      pinfo.grouping = cinfo->config->grouping;
+      if (pinfo.grouping)
+         SendGrouping(1);
+      else SendGrouping(0);
+   }
 }
 
-/* utility functions */
+/* Utility functions */
 /****************************************************************************/
 
 

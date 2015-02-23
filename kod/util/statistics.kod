@@ -42,6 +42,9 @@ properties:
 
    % Money Created this save period
    piMoneyCreated = 0
+   
+   % How many players have entered Survival Rooms?
+   piSurvivalRoomsEntered = 0
 
 messages:
 

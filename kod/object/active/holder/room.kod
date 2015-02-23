@@ -286,6 +286,12 @@ properties:
    % A list of players building together
    plBuilderGroup = $
 
+   % Some rooms handle player deaths themselves.
+   piOverridesDeathFunction = FALSE
+
+   % Players may fight with no legal consequences (death and log penalties remain)
+   piChaosZone = FALSE
+   
    % Flag for reagent use. If set to true, no reagent use in room
    pbNoReagents = FALSE
    
@@ -4733,6 +4739,36 @@ messages:
    {
       pbNoReagents=FALSE;
       return;
+   }
+   
+   GetBaseLight()
+   {
+      return piBaseLight;
+   }
+   
+   GetDirectionalPercent()
+   {
+      return piDirectional_percent;
+   }
+   
+   GetMusic()
+   {
+      return prMusic;
+   }
+   
+   OverridesDeathFunction()
+   {
+      return piOverridesDeathFunction;
+   }
+   
+   OverrideDeathFunction(who=$,what=$)
+   {
+      return;
+   }
+   
+   GetChaosZone()
+   {
+      return piChaosZone;
    }
       
 end

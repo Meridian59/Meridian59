@@ -37,6 +37,8 @@ classvars:
    vrDead_icon = earthelemental_dead_icon_rsc
    vrDead_name = earthelemental_dead_name_rsc
 
+   viTreasure_type = TID_EARTH_ELE
+
    viAttack_Spell = ATCK_SPELL_QUAKE
    
 properties:

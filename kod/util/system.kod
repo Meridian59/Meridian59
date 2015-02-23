@@ -332,6 +332,7 @@ properties:
    poTerritoryGame = $
    poNodeAttack = $
    poRentableRoomMaintenance = $
+   poSurvivalRoomMaintenance = $
    
    % Singleton object that keeps track of various game statistics
    poStatistics = $
@@ -483,6 +484,7 @@ messages:
       Send(self,@RecreateQuestEngine);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
+      Send(self,@RecreateSurvivalRoomMaintenance);
 
       Send(self,@RecreateAllSpells,#figure_totals=FALSE);
       Send(self,@RecreateAllSkills,#figure_totals=FALSE);
@@ -586,6 +588,7 @@ messages:
       Send(self,@RecreateParliament);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
+      Send(self,@RecreateSurvivalRoomMaintenance);
       Send(self,@RecreateWarEvent);
 	  Send(self,@CreateAllSpellsIfNew);
 	  Send(self,@CreateAllRoomsIfNew);
@@ -2165,14 +2168,16 @@ messages:
       return;
    }
 
-   CreateOneRoomIfNew(num = $,class = $)
+   CreateOneRoomIfNew(num = $,class = $,poGuild = $,iPublic = FALSE,
+                      base_room=$)
    {
       local oRoom;
 
       if Send(self,@FindRoomByNum,#num=num) = $
       {
          % note: only rentable rooms use the iRID parameter.
-         oRoom = Create(class,#iRID=num);
+         oRoom = Create(class,#iRID=num,#poGuild=poGuild,#iPublic=iPublic,
+                              #base_room=base_room);
          if oRoom = $
          {
             Debug("Tried to create room RID",num,"FAILED!");
@@ -3744,6 +3749,10 @@ messages:
       Create(&MolluskTreasure);
       Create(&ShadowbeastTreasure);
       Create(&RatKingTreasure);
+      Create(&EarthElementalTreasure);
+      Create(&FireElementalTreasure);
+      Create(&IceElementalTreasure);
+      Create(&NeruditeElementalTreasure);
       
       return;
    }
@@ -4733,6 +4742,11 @@ messages:
    {
       return poRentableRoomMaintenance;
    }
+   
+   GetSurvivalRoomMaintenance()
+   {
+      return poSurvivalRoomMaintenance;
+   }
 
    RecreateTerritoryGame()
    {
@@ -4791,6 +4805,20 @@ messages:
          poRentableRoomMaintenance = Create(&RentableRoomMaintenance);
       }
 
+      return TRUE;
+   }
+   
+   RecreateSurvivalRoomMaintenance()
+   {
+      if poSurvivalRoomMaintenance <> $
+      {
+         Send(poSurvivalRoomMaintenance,@Recreate);
+      }
+      else
+      {
+         poSurvivalRoomMaintenance = Create(&SurvivalRoomMaintenance);
+      }
+      
       return TRUE;
    }
 

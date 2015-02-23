@@ -858,6 +858,10 @@
    RID_OLD_MARION = 9001
    RID_OLD_BAR_NORTH = 9002
    RID_OLD_BAR_SOUTH = 9003
+   
+   % Survival Rooms 9500 - 9999
+   RID_SURVIVAL_START = 9500
+   RID_SURVIVAL_END = 9999
 
    % Rentable Rooms 10000+
    RID_RENTABLE_START = 10000
@@ -1628,6 +1632,10 @@
    TID_SHADOWBEAST   = 57
 
    TID_RAT_KING      = 58
+   TID_EARTH_ELE     = 59
+   TID_FIRE_ELE      = 60
+   TID_ICE_ELE       = 61
+   TID_NERU_ELE      = 62
    
    %%% English articles
 

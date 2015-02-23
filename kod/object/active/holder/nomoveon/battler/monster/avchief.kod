@@ -84,6 +84,10 @@ classvars:
    viLevel = 135
    viDifficulty = 9
    viVisionDistance = 28
+
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
+
    viKarma = 85
    viCashmin = 650
    viCashmax = 2000

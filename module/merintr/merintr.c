@@ -347,12 +347,12 @@ static TypedCommand commands[] = {
 { "appeal",       CommandAppeal, },
 { "tellguild",    CommandTellGuild, },
 { "tguild",       CommandTellGuild, },
-{ "safetyon",     CommandSafetyOn, },
-{ "safetyoff",    CommandSafetyOff, },
-{ "tempsafeon",   CommandTempSafeOn, },
-{ "tempsafeoff",  CommandTempSafeOff, },
-{ "groupingon",   CommandGroupingOn, },
-{ "groupingoff",  CommandGroupingOff, },
+{ "safety on",    CommandSafetyOn, },
+{ "safety off",   CommandSafetyOff, },
+{ "tempsafe on",  CommandTempSafeOn, },
+{ "tempsafe off", CommandTempSafeOff, },
+{ "grouping on",  CommandGroupingOn, },
+{ "grouping off", CommandGroupingOff, },
 { NULL,          NULL},    // Must end table this way
 };
 

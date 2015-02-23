@@ -41,7 +41,7 @@ Bool ParseCommand(char *str, TypedCommand *commands)
    char *ptr1, *ptr2;
    int max_index;  // Index of best matching command
    int index, match, max_match;
-   Bool tied;            // True if a different index matches as well as best_index
+   Bool tied;      // True if a different index matches as well as best_index
 
    // Skip initial spaces
    while (*str == ' ')
@@ -57,44 +57,44 @@ Bool ParseCommand(char *str, TypedCommand *commands)
 
       while (*ptr1 != 0 && *ptr2 != 0)
       {
-	 // Stop comparing when we reach end of typed word
-	 if (*ptr1 == ' ')
-	    break;
+         // Stop comparing when we reach end of typed word
+         if (*ptr1 == ' ' && *ptr2 != ' ')
+            break;
 
-	 if (toupper(*ptr1) != toupper(*ptr2))
-	 {
-	    match = 0;
-	    break;
-	 }
-	 match++;
-	 ptr1++;
-	 ptr2++;
+         if (toupper(*ptr1) != toupper(*ptr2))
+         {
+            match = 0;
+               break;
+         }
+         match++;
+         ptr1++;
+         ptr2++;
       }
 
       if (*ptr2 == 0)
-	{
-	  // Check for exact match
-	  if (*ptr1 == 0 || *ptr1 == ' ')
-	  {
-	    max_match = 1;
-	    max_index = index;
-	    break;
-	  }
-	else 
-	  {
-	    // Don't match if extra characters typed
-	    index++;
-	    continue;
-	  }
-	}
+      {
+         // Check for exact match
+         if (*ptr1 == 0 || *ptr1 == ' ')
+         {
+            max_match = 1;
+            max_index = index;
+            break;
+         }
+         else
+         {
+            // Don't match if extra characters typed
+            index++;
+            continue;
+         }
+      }
 
       if (match > max_match)
       {
-	 max_match = match;
-	 max_index = index;
+         max_match = match;
+         max_index = index;
       }
       else if (match == max_match)
-	 tied = True;
+         tied = True;
       index++;
    }
 

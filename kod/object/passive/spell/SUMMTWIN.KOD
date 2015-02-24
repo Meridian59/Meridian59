@@ -154,7 +154,7 @@ messages:
          % Should be a monster. Make a low HP copy of it.
          oTwin = Create((GetClass(oTarget)));
          Send(oTwin,@SetIllusion,#value=TRUE);
-         Send(oTwin,@EvilTwinOrignial,#what=oTarget);
+         Send(oTwin,@EvilTwinOrignial,#what=oTarget,#who=who);
       }
 
       Send(oTarget,@AddEvilTwin,#what=oTwin);

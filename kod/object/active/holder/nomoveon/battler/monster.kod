@@ -381,6 +381,7 @@ properties:
    % Evil twin objects
    poEvilTwin = $
    poEvilTwinOriginal = $
+   poEvilTwinCaster = $
 
    % Should this monster stick around through a call to DestroyDisposable()?
    pbDontDispose = FALSE
@@ -3496,6 +3497,19 @@ messages:
                      #use_weapon=use_weapon);
       }
 
+      % If this is a monster evil twin, and it has no master,
+      % the caster of the evil twin acts as the master for
+      % tracking the results of monster kills, but not any
+      % accidental player kills (or player minion kills).
+      if poEvilTwinCaster <> $
+         AND IsClass(what,&Monster)
+         AND (Send(what,@GetMaster) = $
+            OR IsClass(Send(what,@GetMaster),&Monster))
+      {
+         return Send(poEvilTwinCaster,@KilledSomething,#what=what,
+                     #use_weapon=use_weapon);
+      }
+
       % If we don't have a master, proceed as normal.
       Send(Send(what,@GetOwner),@SomethingKilled,#what=self,#victim=what);
 
@@ -6020,9 +6034,10 @@ messages:
    }
 
    % If this monster is an Evil Twin, this keeps track of the original target.
-   EvilTwinOrignial(what=$)
+   EvilTwinOrignial(what=$,who=$)
    {
       poEvilTwinOriginal = what;
+      poEvilTwinCaster = who;
 
       return;
    }

@@ -17,6 +17,9 @@ constants:
 
 resources:
 
+   trinket_found_rsc = \
+      "You notice something of interest on the corpse of %s%s!"
+
 classvars:
 
 
@@ -296,6 +299,12 @@ messages:
             oObj = Create(&StatsResetToken,#tradeable=TRUE,#corpse=corpse);
             if oObj <> $
             {
+               if IsClass(who,&User)
+               {
+                  Send(who,@MsgSendUser,#message_rsc=trinket_found_rsc,
+                        #parm1=Send(mob,@GetDef),#parm2=Send(mob,@GetName));
+               }
+
                return oObj;
             }
          }

@@ -84,7 +84,7 @@ messages:
       return;
    }
 
-     HitSideEffect(what = $)
+     HitSideEffect(what = $, who = $)
    {
       local oSpell;
 
@@ -92,14 +92,28 @@ messages:
       if NOT Send(what,@IsEnchanted,#what=oSpell)
          AND Random(1,PALSY_CHANCE) = 1
       {
-         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         if who <> $
+         {
+            Send(oSpell,@CastSpell,#who=who,#lTargets=[what],#iSpellPower=50);
+         }
+         else
+         {
+            Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         }
       }
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENT);
       if NOT Send(what,@IsEnchanted,#what=oSpell) 
          AND Random(1,DEMENTIA_CHANCE) = 1
       {
-         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         if who <> $
+         {
+            Send(oSpell,@CastSpell,#who=who,#lTargets=[what],#iSpellPower=50);
+         }
+         else
+         {
+            Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         }
       }
 
       return;

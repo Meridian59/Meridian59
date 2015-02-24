@@ -28,6 +28,8 @@ resources:
    spiderqueen_desc_rsc = \
       "The huge egg sac of the queen spider makes her slow and heavy, but "
       "dark intelligence shines in her many red eyes."
+   qspider_illusion_poisoned = \
+      "%s%s reels as poison from your attack courses through %s veins."
 
    spiderqueen_dead_icon_rsc = spdrquX.bgf
    spiderqueen_dead_name_rsc = "dead queen spider"
@@ -124,7 +126,7 @@ messages:
       return;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what = $, who = $)
    {
       local oSpell, oSpell2;
 
@@ -133,13 +135,28 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,#lossrate=POISON_LOSSRATE,
                #duration=POISON_DURATION);
+
+         if who <> $
+         {
+            Send(who,@MsgSendUser,#message_rsc=qspider_illusion_poisoned,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(what,@GetHisHer));
+         }
       }
 
       if Random(1,4) = 1
       {
          oSpell2 = Send(SYS,@FindSpellByNum,#num=SID_SPIDER_WEB);
-         Send(oSpell2,@CastSpell,#who=self,
-               #ltargets=[poTarget],#ispellpower=100);
+         if who <> $
+         {
+            Send(oSpell2,@CastSpell,#who=who,
+                  #lTargets=[what],#ispellpower=30);
+         }
+         else
+         {
+            Send(oSpell2,@CastSpell,#who=self,
+                  #lTargets=[poTarget],#ispellpower=100);
+         }
       }
 
       return;

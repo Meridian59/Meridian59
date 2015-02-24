@@ -155,7 +155,7 @@ messages:
       return;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what = $, who = $)
    {
       local oSpell;
 
@@ -163,7 +163,14 @@ messages:
       if NOT Send(what,@IsEnchanted,#what=oSpell)
          AND Random(1,PALSY_CHANCE) = 1
       {
-         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=90);
+         if who <> $
+         {
+            Send(oSpell,@CastSpell,#who=who,#lTargets=[what],#iSpellPower=90);
+         }
+         else
+         {
+            Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=90);
+         }
       }
 
       return;

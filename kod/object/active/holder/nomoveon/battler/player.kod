@@ -5130,7 +5130,7 @@ messages:
       oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $)
       {
-         Send(oMonster,@HitSideEffect,#what=what);
+         Send(oMonster,@HitSideEffect,#what=what,#who=self);
       }
 
       Send(self,@DoHitMessageSound,#what=what,#damage=damage,#stroke_obj=stroke_obj);

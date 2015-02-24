@@ -34,6 +34,8 @@ resources:
    duskrat_poisoned_add_rsc = \
       "As the poison travels to your head, you begin "
       "to feel a little light-headed.  The room spins around you."
+   duskrat_illusion_poisoned = \
+      "%s%s reels as poison from your attack courses through %s veins."
 
    duskrat_dead_icon_rsc = ratX.bgf
    duskrat_dead_name_rsc = "dead dusk rat"
@@ -150,7 +152,7 @@ messages:
       propagate;
    }
 
-   HitSideEffect(what=$)
+   HitSideEffect(what=$,who=$)
    {
       local oSpell;
 
@@ -165,6 +167,13 @@ messages:
             Send(what,@EffectSendUserDuration,#effect=EFFECT_WAVER,
                   #duration=10000);
             Send(what,@MsgSendUser,#message_rsc=duskrat_poisoned_add_rsc);
+         }
+         
+         if who <> $
+         {
+            Send(who,@MsgSendUser,#message_rsc=duskrat_illusion_poisoned,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(what,@GetHisHer));
          }
       }
 

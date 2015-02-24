@@ -3513,6 +3513,8 @@ messages:
       % tracking the results of monster kills, but not any
       % accidental player kills (or player minion kills).
       % Handle apparitions the same way.
+      oIllusionCaster = $;
+
       if poApparitionCaster <> $
       {
          oIllusionCaster = poApparitionCaster;
@@ -3523,7 +3525,6 @@ messages:
       }
 
       if oIllusionCaster <> $
-         OR poApparitionCaster <> $
          AND IsClass(what,&Monster)
          AND (Send(what,@GetMaster) = $
             OR IsClass(Send(what,@GetMaster),&Monster))

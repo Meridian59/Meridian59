@@ -86,6 +86,10 @@ void InterfaceInit(void)
       SendTempSafe(1);
    else
       SendTempSafe(0);
+   if (cinfo->config->grouping)
+      SendGrouping(1);
+   else
+      SendGrouping(0);
 }
 /****************************************************************************/
 /*

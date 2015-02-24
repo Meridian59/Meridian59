@@ -382,6 +382,9 @@ properties:
    poEvilTwin = $
    poEvilTwinOriginal = $
    poEvilTwinCaster = $
+   
+   % Apparition object (caster)
+   poApparitionCaster = $
 
    % Should this monster stick around through a call to DestroyDisposable()?
    pbDontDispose = FALSE
@@ -611,6 +614,8 @@ messages:
       if poEvilTwinOriginal <> $
       {
          Send(poEvilTwinOriginal,@RemoveEvilTwin);
+         poEvilTwinOriginal = $;
+         poEvilTwinCaster = $;
       }
 
       % If this monster has an Evil Twin, delete it too.
@@ -633,13 +638,17 @@ messages:
       if poApparitionOriginal <> $
       {
          Send(poApparitionOriginal,@RemoveApparition,#what=self);
+         poApparitionOriginal = $;
+         poApparitionCaster = $;
       }
+
       % Under rare conditions delete is called twice in succession
       if poBrain <> $
       {
          Send(poBrain,@MobDelete,#mob=self,#state=piState);
-         poBrain = $ ;
+         poBrain = $;
       }
+
       Send(self,@ClearBehavior);
       Send(self,@ClearBasicTimers);
 
@@ -3463,6 +3472,8 @@ messages:
 
    KilledSomething(what=$,use_weapon=$)
    {
+      local oIllusionCaster;
+
       if what = $
       {
          Debug("Bad info in killedsomething().");
@@ -3501,12 +3512,23 @@ messages:
       % the caster of the evil twin acts as the master for
       % tracking the results of monster kills, but not any
       % accidental player kills (or player minion kills).
+      % Handle apparitions the same way.
+      if poApparitionCaster <> $
+      {
+         oIllusionCaster = poApparitionCaster;
+      }
       if poEvilTwinCaster <> $
+      {
+         oIllusionCaster = poEvilTwinCaster;
+      }
+
+      if oIllusionCaster <> $
+         OR poApparitionCaster <> $
          AND IsClass(what,&Monster)
          AND (Send(what,@GetMaster) = $
             OR IsClass(Send(what,@GetMaster),&Monster))
       {
-         return Send(poEvilTwinCaster,@KilledSomething,#what=what,
+         return Send(oIllusionCaster,@KilledSomething,#what=what,
                      #use_weapon=use_weapon);
       }
 
@@ -6038,6 +6060,14 @@ messages:
    {
       poEvilTwinOriginal = what;
       poEvilTwinCaster = who;
+
+      return;
+   }
+
+   ApparitionCaster(who=$)
+   "If this monster is an apparition, keep track of the caster."
+   {
+      poApparitionCaster = who;
 
       return;
    }

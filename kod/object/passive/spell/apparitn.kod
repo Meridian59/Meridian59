@@ -148,9 +148,10 @@ messages:
          }
       }
 
-      % These two functions allow monsters to keep track of Apparitions.
+      % These three functions allow monsters to keep track of Apparitions.
       Send(oTarget,@AddApparition,#what=oApparition);
       Send(oApparition,@AddApparitionOriginal,#what=oTarget);
+      Send(oApparition,@ApparitionCaster,#who=who);
 
       Send(oApparition,@SetIllusion,#value=TRUE);
 

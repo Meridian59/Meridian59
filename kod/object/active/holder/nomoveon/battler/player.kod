@@ -1426,6 +1426,11 @@ messages:
       return;
    }
 
+   GetSecondWindTimer()
+   {
+      return ptSecondWind;
+   }
+
    GetVigorRestThreshold()
    {
       return piVigor_rest_threshold;
@@ -13950,6 +13955,11 @@ messages:
       Send(self,@ComputeMaxMana);
 
       return;
+   }
+
+   GetManaSurgeTimer()
+   {
+      return ptCrystalizeManaSurgeTimer;
    }
 
    RechargeAllRods()

@@ -553,6 +553,56 @@ messages:
    {
       return FALSE;
    }
- 
+
+   GetStatsDesc(who=$)
+   {
+      ClearTempString();
+
+      if who <> $
+         AND IsClass(who,&User)
+      {
+         Send(self,@CreateStatsDesc,#who=who);
+      }
+
+      return GetTempString();
+   }
+
+   CreateStatsDesc(who=$)
+   {
+      local iDuration, iMinutes, iSeconds;
+
+      % Always returns the remaining time as an integer.
+      iDuration = Send(who,@GetRemainingPhaseTime);
+      if iDuration = $
+      {
+         return;
+      }
+
+      iDuration = iDuration;
+      iDuration = iDuration / 1000;
+      iMinutes = iDuration / 60;
+      iSeconds = iDuration MOD 60;
+
+      AppendTempString("\n\n");
+      AppendTempString("You have ");
+      if iMinutes > 0
+      {
+         AppendTempString(iMinutes);
+         if iMinutes = 1
+         {
+            AppendTempString(" minute and ");
+         }
+         else
+         {
+            AppendTempString(" minutes and ");
+         }
+      }
+
+      AppendTempString(iSeconds);
+      AppendTempString(" seconds of phase time remaining.");
+
+      return GetTempString();
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

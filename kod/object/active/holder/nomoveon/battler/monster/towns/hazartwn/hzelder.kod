@@ -55,6 +55,8 @@ resources:
    potion_kraanan = "Kraanan"
    potion_qor = "Qor"
    potion_shalille = "Shal'ille"
+   
+   HzEl_stat_window_trigger = "change stats"
 
 classvars:
 
@@ -70,10 +72,31 @@ classvars:
 
 messages:
 
+   Constructor()
+   {
+      plWantedItems = [&StatsResetToken];
+   
+      propagate;
+   }
+
    UserEntered(who=$)
    {
       Post(who,@SomeoneSaid,#what=self,#string=HzEl_entry_welcome,
             #type=SAY_RESOURCE);
+
+      propagate;
+   }
+   
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      if StringEqual(string,HzEl_stat_window_trigger)
+      {
+         if Send(what,@GetBaseMaxHealth) <= Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+         {
+            Send(what,@SendStatChange);
+         }
+      }
 
       propagate;
    }
@@ -147,6 +170,23 @@ messages:
       $];
 
       return;
+   }
+   
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+   
+   GotWantedItem(who=$, obj = 0)
+   {
+      local oPlayerObj, i;
+
+      if IsClass(obj,&StatsResetToken)
+      {
+         Send(who,@SendStatChange);
+      }
+
+      return FALSE;
    }
 
 end

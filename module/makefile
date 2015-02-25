@@ -3,7 +3,7 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-MODULES = admin char mailnews merintr intro dm chess
+MODULES = admin char mailnews merintr intro dm chess stats
 
 all:
 	-@for %i in ($(MODULES)) do @if EXIST %i (cd %i & $(MAKE) /$(MAKEFLAGS) & cd ..)

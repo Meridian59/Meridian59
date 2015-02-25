@@ -458,6 +458,22 @@ messages:
       return Send(who,@GetMysticism);
    }
 
+   GetPrimaryStat()
+   {
+      if viSchool = SS_KRAANAN
+      {
+         return STAT_ID_STAMINA;
+      }
+
+      if viSchool = SS_JALA
+         OR viSchool = SS_RIIJA
+      {
+         return STAT_ID_INTELLECT;
+      }
+
+      return STAT_ID_MYSTICISM;
+   }
+   
    GetAbility(who=$)
    {
       return Send(who,@GetSpellAbility,#spell_num=viSpell_num);

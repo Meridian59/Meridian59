@@ -1,0 +1,298 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "statsrc.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#include "commctrl.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// German resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+144 DIALOGEX 0, 0, 316, 291
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Ändere die Werte Deines Charakters.",-1,37,6,150,8
+    LTEXT           "Stärke",-1,18,26,24,8
+    CONTROL         "",1021,"BlakGraph",WS_TABSTOP | 0xb,42,24,102,14
+    LTEXT           "Klugheit",-1,14,44,26,8
+    CONTROL         "",1022,"BlakGraph",WS_TABSTOP | 0xb,42,43,102,14
+    LTEXT           "Konstitution",-1,2,64,40,8
+    CONTROL         "",1023,"BlakGraph",WS_TABSTOP | 0xb,42,62,102,14
+    LTEXT           "Gewandheit",-1,2,83,40,8
+    CONTROL         "",1024,"BlakGraph",WS_TABSTOP | 0xb,42,81,102,14
+    LTEXT           "Magie",-1,20,101,20,8
+    CONTROL         "",1025,"BlakGraph",WS_TABSTOP | 0xb,42,100,102,14
+    LTEXT           "Genauigkeit",-1,2,122,40,8
+    CONTROL         "",1026,"BlakGraph",WS_TABSTOP | 0xb,42,120,102,14
+    LTEXT           "Eigenschaftspunkte übrig:",-1,42,136,110,8
+    CONTROL         "",1027,"BlakGraph",0x8,43,147,98,11
+    LTEXT           "Deine Stärke bestimmt den Schaden, den Du",-1,149,23,147,8
+    LTEXT           "Kluge Charaktere können schneller ihre Fähigkeiten",-1,149,42,160,8
+    LTEXT           "ausbauen und neue erlernen.",-1,149,50,162,8
+    LTEXT           "Eine hohe Konstitution wirkt sich positiv auf",-1,149,61,155,8
+    LTEXT           "anrichtest und Deine Tragkraft.",-1,149,31,131,8
+    LTEXT           "Krieger benötigen eine hohe Gewandheit um ihre",-1,149,80,160,8
+    LTEXT           "Eine hohe Magie wirkt sich positiv auf die",-1,149,99,161,8
+    LTEXT           "Beeinflußt die Trefferwarscheinlichkeit",-1,149,119,151,8
+    LTEXT           "die Lebenskraft und Ausdauer aus.",-1,149,69,150,8
+    LTEXT           "Waffen wirkungsvoll einzusetzen.",-1,149,88,162,8
+    LTEXT           "Zauberkraft und die Zaubersprüche aus.",-1,149,107,158,8
+    LTEXT           "von Zaubersprüchen und Waffen.",-1,149,127,140,8
+    GROUPBOX        "Schulen",-1,16,186,286,100
+    CONTROL         "",1028,"BlakGraph",WS_TABSTOP | 0xb,57,202,79,14
+    CONTROL         "",1029,"BlakGraph",WS_TABSTOP | 0xb,57,223,79,14
+    CONTROL         "",1030,"BlakGraph",WS_TABSTOP | 0xb,57,242,79,14
+    CONTROL         "",1031,"BlakGraph",WS_TABSTOP | 0xb,208,202,79,14
+    CONTROL         "",1032,"BlakGraph",WS_TABSTOP | 0xb,208,223,79,14
+    CONTROL         "",1033,"BlakGraph",WS_TABSTOP | 0xb,208,242,79,14
+    CONTROL         "",1034,"BlakGraph",WS_TABSTOP | 0xb,208,263,79,14
+    LTEXT           "Shal'ill",-1,21,205,24,8
+    LTEXT           "Qor",-1,21,224,12,8
+    LTEXT           "Kraanan",-1,21,245,28,8
+    LTEXT           "Faren",-1,154,205,19,8
+    LTEXT           "Riija",-1,154,224,14,8
+    LTEXT           "Jala",-1,154,245,42,8
+    LTEXT           "Waffenfertigkeiten",-1,140,265,70,8
+    LTEXT           "HINWEIS: Um die Intelligenz zu reduzieren musst Du",-1,80,164,224,8
+    LTEXT           "möglicherweise unten aufgeführte Schullevel reduzieren.",-1,78,174,224,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    144, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 311
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "statsrc.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#include ""commctrl.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    5   "Du hast noch einige Punkte zu vergeben. Bist Du sicher das Du diese verwerfen möchtest?"
+    7   "Bist Du sicher, dass Du die Änderungen der Werte übernehmen willst?\n\nWenn Du Werte reduziert hast wirst Du 2 Prozent bei jedem Zauber verlieren der von dem reduzierten Wert abhängt.\n\nDies kann nicht mehr rückgängig gemacht werden!"
+    8   "Bist du WIRKLICH, WIRKLICH sicher das Du die Änder- ungen der Werte so übernehmen willst?\n\nDie Server Administratoren werden die Änderungen die Du machst nicht rückgängig machen. LETZTE CHANCE\n\nIch meine es ernst! Sende keine Nachricht an die Admini- stratoren wenn du Deinen Character zerstört hast, das ist Deine Sache."
+END
+
+STRINGTABLE
+BEGIN
+    17   "Zauber"
+    18   "Fertigkeiten"
+    20   "Werte"
+    21   "Passe Deinen Character an"
+END
+
+
+#endif    // German resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CHARSTATS DIALOGEX 0, 0, 316, 291
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Change your character's statistics.",IDC_STATIC,37,6,110,8
+    LTEXT           "Might",IDC_STATIC,20,26,18,8
+    CONTROL         "",IDC_CHAR_GRAPH1,"BlakGraph",WS_TABSTOP | 0xb,42,24,102,14
+    LTEXT           "Intellect",IDC_STATIC,12,44,26,8
+    CONTROL         "",IDC_CHAR_GRAPH2,"BlakGraph",WS_TABSTOP | 0xb,42,43,102,14
+    LTEXT           "Stamina",IDC_STATIC,12,64,26,8
+    CONTROL         "",IDC_CHAR_GRAPH3,"BlakGraph",WS_TABSTOP | 0xb,42,62,102,14
+    LTEXT           "Agility",IDC_STATIC,19,83,19,8
+    CONTROL         "",IDC_CHAR_GRAPH4,"BlakGraph",WS_TABSTOP | 0xb,42,81,102,14
+    LTEXT           "Mysticism",IDC_STATIC,7,101,31,8
+    CONTROL         "",IDC_CHAR_GRAPH5,"BlakGraph",WS_TABSTOP | 0xb,42,100,102,14
+    LTEXT           "Aim",IDC_STATIC,26,122,12,8
+    CONTROL         "",IDC_CHAR_GRAPH6,"BlakGraph",WS_TABSTOP | 0xb,42,120,102,14
+    LTEXT           "Stat points left",IDC_STATIC,67,136,46,8
+    CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,43,147,98,11
+    LTEXT           "Might affects how much you can carry and the",IDC_STATIC,149,23,147,8
+    LTEXT           "With a high intellect, you can learn more spells and",IDC_STATIC,149,42,160,8
+    LTEXT           "skills faster than others. Used for advanced magics.",IDC_STATIC,149,50,162,8
+    LTEXT           "Stamina helps you weather the rough times when",IDC_STATIC,149,61,155,8
+    LTEXT           "damage you inflict. Important for warriors.",IDC_STATIC,149,31,131,8
+    LTEXT           "An agile fighter dodges his opponent's attacks and",IDC_STATIC,149,80,160,8
+    LTEXT           "Mysticism is important for gaining and restoring your",IDC_STATIC,149,99,161,8
+    LTEXT           "A true aim guides an attack to its target. Vital for",IDC_STATIC,149,119,151,8
+    LTEXT           "you are hurt and tired. Used for Kraanan spells.",IDC_STATIC,149,69,150,8
+    LTEXT           "is more skilled in certain fighting and defensive arts.",IDC_STATIC,149,88,162,8
+    LTEXT           "magical energy. Used for Faren, Shal'ille, and Qor.",IDC_STATIC,149,107,158,8
+    LTEXT           "high skill with ranged weapons.",IDC_STATIC,149,127,99,8
+    GROUPBOX        "Schools",IDC_STATIC,16,186,286,100
+    CONTROL         "",IDC_CHAR_GRAPH7,"BlakGraph",WS_TABSTOP | 0xb,57,202,79,14
+    CONTROL         "",IDC_CHAR_GRAPH8,"BlakGraph",WS_TABSTOP | 0xb,57,223,79,14
+    CONTROL         "",IDC_CHAR_GRAPH9,"BlakGraph",WS_TABSTOP | 0xb,57,242,79,14
+    CONTROL         "",IDC_CHAR_GRAPH10,"BlakGraph",WS_TABSTOP | 0xb,208,202,79,14
+    CONTROL         "",IDC_CHAR_GRAPH11,"BlakGraph",WS_TABSTOP | 0xb,208,223,79,14
+    CONTROL         "",IDC_CHAR_GRAPH12,"BlakGraph",WS_TABSTOP | 0xb,208,242,79,14
+    CONTROL         "",IDC_CHAR_GRAPH13,"BlakGraph",WS_TABSTOP | 0xb,208,263,79,14
+    LTEXT           "Shal'ille",IDC_STATIC,21,205,24,8
+    LTEXT           "Qor",IDC_STATIC,21,224,12,8
+    LTEXT           "Kraanan",IDC_STATIC,21,245,28,8
+    LTEXT           "Faren",IDC_STATIC,154,205,19,8
+    LTEXT           "Riija",IDC_STATIC,154,224,14,8
+    LTEXT           "Jala",IDC_STATIC,154,245,42,8
+    LTEXT           "Weaponcraft",IDC_STATIC,154,268,42,8
+    LTEXT           "NOTE: To reduce intellect, you may have to forfeit school levels below.",IDC_STATIC,44,170,224,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_CHARSTATS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 311
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "statsrc.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#include ""commctrl.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_STATPOINTSLEFT      "You have some points remaining to allocate to statistics; are you sure you want to discard these points?"
+    IDS_CONFIRM1            "Are you sure you would like to change your character using these stats?\n\nIf you have reduced stats, you WILL lose 2 percent PER stat point reduced, in every spell that depends on that stat, this cannot be reversed!"
+    IDS_CONFIRM2            "Are you REALLY, REALLY, sure you would like to change your character using these stats?\n\nServer admins will not undo any changes you make,  LAST CHANCE!\n\nI'm Serious!  Don't be sending tells to the admins if you blow up your character, this is on you."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_CHARSPELLS          "Spells"
+    IDS_CHARSKILLS          "Skills"
+    IDS_CHARSTATS           "Statistics"
+    IDS_DIALOGTITLE         "Adjust your character"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

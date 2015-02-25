@@ -1,0 +1,8 @@
+;
+; DEF file for char DLL
+; 
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventServerMessage      @2  NONAME
+	EventStateChanged       @11 NONAME

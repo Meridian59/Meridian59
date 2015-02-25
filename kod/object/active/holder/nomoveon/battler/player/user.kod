@@ -309,6 +309,7 @@ resources:
 
    user_interface_module = merintr.dll
    user_mailnews_module = mailnews.dll
+   user_statchange_module = stats.dll
 
    user_cant_withdraw = "You can't withdraw anything here!"
    user_cant_withdraw_items = "You can't withdraw items here!"
@@ -667,7 +668,7 @@ messages:
       
       return;
    }
-
+   
    UserLogon(session_id = $)
    {
       local i;
@@ -1012,7 +1013,7 @@ messages:
       local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets;
+            lTargets, i;
 
       % This checks to see if the user is trying to Send too many packets
       %  per second.  If they are, then we mark them as a spammer and
@@ -1484,9 +1485,41 @@ messages:
          return;
       }
 
-      Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
-            liClient_cmd);
-
+      if liClient_cmd = BP_CHANGED_STATS
+      {
+      
+         if Length(client_msg) <> 14
+         {
+            return;
+         }
+      
+         for i in client_msg
+         {
+            if i = $
+            {
+               return;
+            }
+         }
+      
+         Send(self,@UserChangedStats, #might=Nth(client_msg,2),
+                                       #intellect=Nth(client_msg,3),
+                                       #stamina=Nth(client_msg,4),
+                                       #agility=Nth(client_msg,5),
+                                       #mysticism=Nth(client_msg,6),
+                                       #aim=Nth(client_msg,7),
+                                       #shallile_lvl=Nth(client_msg,8),
+                                       #qor_lvl=Nth(client_msg,9),
+                                       #kraanan_lvl=Nth(client_msg,10),
+                                       #faren_lvl=Nth(client_msg,11),
+                                       #riija_lvl=Nth(client_msg,12),
+                                       #jala_lvl=Nth(client_msg,13),
+                                       #weaponcraft_lvl=Nth(client_msg,14));
+         return;
+      }
+     
+      Debug(Send(self,@GetTrueName),
+            self,"sent unknown command from client",liClient_cmd);
+            
       return;
    }
 
@@ -1913,7 +1946,7 @@ messages:
          
          return;
       }
-
+	  
       if iClient_cmd = UC_DEPOSIT
       {
          if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
@@ -9000,19 +9033,19 @@ messages:
       for lNew_mail in plNew_mail
       {
          % This is a list of [ from, time, list of to, other ]
-	 iTime = Nth(lNew_mail,2);
-	 if (iTime > iCutoff_time)
-	 {
-	    lRecent_mail = Cons(lNew_mail,lRecent_mail);
-	 }
-	 else
-	 {
-	    iRemoved = iRemoved + 1;
-	 }
+         iTime = Nth(lNew_mail,2);
+         if (iTime > iCutoff_time)
+         {
+            lRecent_mail = Cons(lNew_mail,lRecent_mail);
+         }
+         else
+         {
+            iRemoved = iRemoved + 1;
+         }
       }
       if Length(plNew_mail) <> Length(lRecent_mail)
       {
-	Debug("for user",self,vrName,"had",Length(plNew_mail),"now",Length(lRecent_mail));
+         Debug("for user",self,vrName,"had",Length(plNew_mail),"now",Length(lRecent_mail));
       }
       plNew_mail = lRecent_mail;
       return iRemoved;
@@ -9103,5 +9136,341 @@ messages:
    
    }
 
+   SendStatChange()
+   "Sends a stat change request to the client"
+   {
+      local lSpellLevels, lSkillLevels;
+
+      % if stats reset is turned off, ignore the request
+      if NOT Send(Send(Sys,@GetSettings),@GetStatsResetEnabled)
+      {
+         return;
+      }
+      
+      % must have a token if over the free stat reset cap
+      if Send(self,@FindHolding,#class=&StatsResetToken) = $
+         AND (piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap))
+      {
+         return;
+      }
+      
+      lSpellLevels = Send(self, @GetSpellSchoolLevels);
+      lSkillLevels = Send(self, @GetSkillSchoolLevels);
+ 
+      % TODO: don't load module if it is already loaded
+
+
+      Send(self,@UserLoadModule,#module=user_statchange_module);
+      AddPacket(1,BP_STAT_CHANGE);
+      AddPacket(1,piMight);
+      AddPacket(1,piIntellect);
+      AddPacket(1,piStamina);
+      AddPacket(1,piAgility);
+      AddPacket(1,piMysticism);
+      AddPacket(1,piAim);
+      AddPacket(1,Nth(lSpellLevels,1));
+      AddPacket(1,Nth(lSpellLevels,2));
+      AddPacket(1,Nth(lSpellLevels,3));
+      AddPacket(1,Nth(lSpellLevels,4));
+      AddPacket(1,Nth(lSpellLevels,5));
+      AddPacket(1,Nth(lSpellLevels,6));
+      AddPacket(1,Nth(lSkillLevels,1));
+      SendPacket(poSession);
+      return;
+   }
+   
+   UserChangedStats(might=25,intellect=25,stamina=25,agility=25,mysticism=25,
+                     aim=25,shallile_lvl=0,qor_lvl=0,kraanan_lvl=0,faren_lvl=0,
+                     riija_lvl=0,jala_lvl=0,weaponcraft_lvl=0)
+   "Processes a stat change request from the client"
+   {
+      local i,lSpellLevels,lSkillLevels,lSpellLevels_new,lSkillLevels_new,
+      totalLevels,totalSchools,totalLvlOnes,iPrimaryStat,
+      oSpell,iSpellAbility,iSpellNum,
+      oSkill,iSkillAbility,iSkillNum;
+
+      % if stats reset is turned off, ignore the request
+      if NOT Send(Send(Sys,@GetSettings),@GetStatsResetEnabled)
+      {
+         return;
+      }
+      
+      if Send(self,@FindHolding,#what=&StatsResetToken) = $
+         AND (piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap))
+      {
+         return;
+      }
+      
+      i = 1;
+      totallevels = 0;
+      totalLvlOnes = 0;
+      totalSchools = 0;
+      lSpellLevels = Send(self, @GetSpellSchoolLevels);
+      lSpellLevels_new = [shallile_lvl,qor_lvl,kraanan_lvl,
+                           faren_lvl,riija_lvl,jala_lvl];
+      lSkillLevels = Send(self, @GetSkillSchoolLevels);
+      lSkillLevels_new = [weaponcraft_lvl];
+   
+      % Range Checks, no client hacking negative stats funny business!
+      if (might < 1 OR might > 50)
+         OR (intellect < 1 OR intellect > 50)
+         OR (stamina < 1 OR stamina > 50)
+         OR (agility < 1 OR agility > 50)
+         OR (mysticism < 1 OR mysticism > 50)
+         OR (aim < 1 OR aim > 50)
+      {
+         debug("Stat Range Check: Failed!");
+         return FALSE;
+      }
+      
+      % School Range Check
+      if (shallile_lvl < 0 OR shallile_lvl > 6)
+         OR (qor_lvl < 0 OR qor_lvl > 6)
+         OR (kraanan_lvl < 0 OR kraanan_lvl > 6)
+         OR (faren_lvl < 0 OR faren_lvl > 6)
+         OR (riija_lvl < 0 OR riija_lvl > 6)
+         OR (jala_lvl < 0 OR jala_lvl > 6)
+         OR (weaponcraft_lvl < 0 OR weaponcraft_lvl > 6)
+      {
+         debug("School Range Check: Failed!");
+         return FALSE;
+      }
+         
+      % Quick check for too many points in stats
+      if ((might + intellect + stamina + agility + mysticism + aim) > 200 )
+      {
+         debug("Points Check: FAIL!");
+         return FALSE;
+      }
+      debug(("points check: PASS"));
+
+      % Check school levels for funny business
+      
+      % Count schools above level 1
+      
+      % Spell Levels - skipping DM school (7)
+      while (i < NUM_SCHOOLS)
+      {
+         if (Nth(lSpellLevels_new,i) = 1)
+         {
+            totalLvlOnes = totalLvlOnes + 1;
+         }
+         if (Nth(lSpellLevels_new,i) > 1)
+         {
+            totalSchools = totalSchools + 1;
+            totalLevels = totalLevels + Nth(lSpellLevels_new,i);
+         }
+         if (Nth(lSpellLevels_new,i) > Nth(lSpellLevels,i))
+         {
+            debug("School Not Increased Check: FAIL!");
+            return FALSE;
+         }
+         i=i+1;
+      }
+      
+      % skill levels
+      i=1;
+      while (i <= NUM_SKILL_SCHOOLS)
+      {
+         if (Nth(lSkillLevels_new,i) = 1)
+         {
+            totalLvlOnes = totalLvlOnes + 1;
+         }
+         if (Nth(lSkillLevels,i) > 1)
+         {
+            totalSchools = totalSchools + 1;
+            totalLevels = totalLevels + Nth(lSkillLevels_new,i);
+         }
+         if (Nth(lSkillLevels_new,i) > Nth(lSkillLevels,1))
+         {
+            debug("School Not Increased Check: FAIL!");
+            return FALSE;
+         }
+         i=i+1;
+      }
+      
+      % treat level 1s as level 2s
+      totalLevels = totalLevels + totalLvlOnes;
+      
+      % See if the player has enough int to support their levels
+      if ((totalLevels - totalSchools > 8)
+               AND (((totalLevels - totalSchools - 8) * 5) > intellect))
+      {
+         debug("Int Check: FAIL!");
+         %debug("total levels",totalLevels,"intellect",intellect,"needed",(totalLevels - totalSchools - 8) * 5);
+         return FALSE;
+      }
+      
+      debug(("School Level Check: PASS"));
+      
+      % everything looks good, start adjusting stats
+      
+      % Consume token
+      if piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+      {
+         Send(Send(self,@FindHolding,#class=&StatsResetToken),@Delete);
+      }
+      
+      % Strip Spell Levels
+      i = 1;
+      while (i < NUM_SCHOOLS)
+      {
+         if (Nth(lSpellLevels,i) > 0 )
+         {
+            while (Nth(lSpellLevels,i) > Nth(lSpellLevels_new,i))
+            {
+               Send(self,@StripSpellsOfSchoolByLevel,#school=i,
+                     #level=Nth(lSpellLevels,i));
+               SetNth(lSpellLevels,i,Nth(lSpellLevels,i) - 1);
+            }
+         }
+         i=i+1;
+      }
+      debug("Spell Schools Stripped");
+      % Strip Skills (Skill schools start at 10)
+      i=1;
+      while (i <= NUM_SKILL_SCHOOLS)
+      {
+         if (Nth(lSkillLevels,i) > 0)
+         {
+            while(Nth(lSkillLevels,i) > Nth(lSkillLevels_new,i))
+            {
+               % have to add 9 to i to get the proper school id
+               Send(self,@StripSkillsOfSchoolByLevel,#school=i+9,
+                     #level=Nth(lSkillLevels,i));
+               SetNth(lSkillLevels,i,Nth(lSkillLevels,i) - 1);
+            }
+         }
+         i=i+1;
+      }
+      debug("Skill Schools Stripped");
+      
+      % Now iterate through the player's spells and strip 2% per stat loss
+      for i in plSpells
+      {
+         iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
+         oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
+         iPrimaryStat = Send(oSpell,@GetPrimaryStat);
+         iSpellAbility = Send(self,@DecodeSpellAbility,#compound=i);
+
+         if (iPrimaryStat = STAT_ID_STAMINA)
+         {
+            if (iSpellAbility > (stamina * 2)) AND (stamina < piStamina)
+               OR (iSpellAbility = 99 AND piStamina = 50 AND stamina < 50)
+            {
+               Send(self,@ChangeSpellAbility,
+                  #spell_num=iSpellNum,
+                  #amount=((piStamina - stamina) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
+            }
+         }
+         else
+         {
+            if (iPrimaryStat = STAT_ID_INTELLECT)
+            {
+               if (iSpellAbility > (intellect * 2)) AND (intellect < piIntellect)
+                  OR (iSpellAbility = 99 AND piIntellect = 50 AND intellect < 50)
+               {
+                  Send(self,@ChangeSpellAbility,
+                     #spell_num=iSpellNum,
+                     #amount=((piIntellect - intellect) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
+               }
+            }
+            % must be STAT_ID_MYSTICISM
+            else
+            {
+               if (iSpellAbility > (piMysticism * 2)) AND (mysticism < piMysticism)
+                  OR (iSpellAbility = 99 AND piMysticism = 50 AND mysticism < 50)
+               {
+                  Send(self,@ChangeSpellAbility,
+                     #spell_num=iSpellNum,
+                     #amount=((piMysticism - mysticism) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
+               }
+            }
+         }
+      }
+      debug("Spell % Recalculated");
+      
+      for i in plSkills
+      {
+         iSkillNum = Send(self,@DecodeSkillNum,#compound=i);
+         oSkill = Send(SYS,@FindSkillByNum,#num=iSkillNum);
+         iPrimaryStat = Send(oSkill,@GetPrimaryStat);
+         iSkillAbility = Send(self,@DecodeSkillAbility,#compound=i);
+         
+         if (iPrimaryStat = STAT_ID_AGILITY)
+         {
+            if (iSkillAbility > (agility * 2)) AND (agility < piAgility)
+               OR (iSkillAbility = 99 AND piAgility = 50 AND agility < 50)
+            {
+               Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piAgility - agility) * -2));
+            }
+         }
+         else
+         {
+            if (iPrimaryStat = STAT_ID_AIM)
+            {
+               if (iSkillAbility > (aim * 2)) AND (aim < piAim)
+                  OR (iSkillAbility = 99 AND piAim = 50 AND aim < 50)
+               {
+                  Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piAim - aim) * -2));
+               }
+            }
+            else
+            {
+               if (iPrimaryStat = STAT_ID_MIGHT)
+               {
+                  if (iSkillAbility > (might * 2)) AND (might < piMight)
+                     OR (iSkillAbility = 99 AND piMight = 50 AND might < 50)
+                  {
+                     Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piMight - might) * -2));
+                  }
+               }
+               else
+               {
+                  if (iPrimaryStat = STAT_ID_STAMINA)
+                  {
+                     if (iSkillAbility > (stamina * 2)) AND (stamina < piStamina)
+                        OR (iSkillAbility = 99 AND piStamina = 50 AND stamina < 50)
+                     {
+                        Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piStamina - stamina) * -2));
+                     }
+                  }
+               }
+            }
+         }
+      }
+      debug("Skill % Recalculated");
+      
+      % A change in stamina results in a reduction in hitpoints if the
+      %   player's hitpoints will be > 100 + new Stamina
+      if (piBase_Max_Health > 100 + stamina)
+      {
+         Send(self,@GainBaseMaxHealth,#amount=((100 + stamina) - piBase_Max_health));
+         debug("HitPoints Adjusted");   
+      }
+      
+
+      % Now set the stats
+      piStamina = stamina;
+      piIntellect = intellect;
+      piMight = might;
+      piAgility = agility;
+      piMysticism = mysticism;
+      piAim = aim;
+      debug("Stats Changed");
+      
+      % recalculate mana pool based on nodes and mysticism
+      Send(self,@ComputeMaxMana);
+      debug("Mana Recalculated");
+      
+      % TODO: Unload stats.dll module.
+
+      % Refresh the client screen so they see the new stats
+      send(self, @InvalidateData);
+      debug("Player Updated!");
+
+      return;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

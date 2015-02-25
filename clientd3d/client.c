@@ -28,7 +28,7 @@ char *szAppName;
 /************************************************************************/
 void _cdecl dprintf(char *fmt,...)
 {
-	char s[300];
+	char s[1024];
 	va_list marker;
 	DWORD written;
 
@@ -36,7 +36,7 @@ void _cdecl dprintf(char *fmt,...)
 	vsprintf(s,fmt,marker);
 	va_end(marker);
 
-	assert(strlen(s)<300);	/* overflowed local stack buffer, increase sizeof s buffer */
+	assert(strlen(s)<1024);	/* overflowed local stack buffer, increase sizeof s buffer */
 
 	_RPT1(_CRT_WARN,"dprintf() says : %s",s);
 

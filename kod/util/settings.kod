@@ -52,6 +52,16 @@ properties:
    piKillKarmaSwingPlayer = 10
 
    pbAtrophyOn = FALSE
+   
+   % Stat reset options
+   pbStatsResetEnabled = TRUE
+   piStatsResetPenalty = -2
+   piFreeStatsResetCap = 49
+   piStatResetTokenLife = 2
+
+   % Stat reset token has a 1 in (piStatResetTokenDropFactor / monster_level)
+   % chance to drop, with monster_level bound between 50 and 150.
+   piStatResetTokenDropFactor = 150000
 
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
@@ -274,6 +284,31 @@ messages:
    %
    % Player advancement
    %
+
+   GetStatsResetEnabled()
+   {
+      return pbStatsResetEnabled;
+   }
+   
+   GetStatsResetPenalty()
+   {
+      return piStatsResetPenalty;
+   }
+   
+   GetFreeStatsResetCap()
+   {
+      return piFreeStatsResetCap;
+   }
+   
+   GetStatResetTokenLife()
+   {
+      return piStatResetTokenLife;
+   }
+   
+   GetStatResetTokenDropFactor()
+   {
+      return piStatResetTokenDropFactor;
+   }
 
    CleanNewbieInventoryOnEnteringRealWorld()
    {

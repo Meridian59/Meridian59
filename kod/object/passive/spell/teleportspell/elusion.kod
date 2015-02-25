@@ -177,6 +177,7 @@ messages:
          oGuildHall = Send(who,@GetGuildHall);
 
          if oGuildHall <> $
+            AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
          {
             lAllTargets = Cons(oGuildHall,lAllTargets);
          }

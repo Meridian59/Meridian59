@@ -183,12 +183,18 @@ resources:
    player_cancel_rescue = \
       "~IYour aggression halts your attempt to escape from the "
       "current situation."
+
    player_cancel_rescue_phase = \
       "~IThe protective magics that might have rescued you instead "
       "snap and fade as you phase out of existence."
    player_cancel_rescue_newowner = \
       "~IYour change of location disrupts Shal'ille's attempt to whisk "
       "you to safety."
+
+   player_temp_safe = \
+      "~I~BYou feel your guardian angel is near to you."
+   player_temp_safe_end = \
+      "~I~BYou feel your guardian angel has departed once more."
 
    player_improved = "~I~BYou have improved in the art of %s."
    player_improved_wav_rsc = imp.wav
@@ -1029,6 +1035,9 @@ properties:
 
    piLastDeathTime = 0
 
+   % Temp safe timer for giving players a period of safety after a death
+   ptTempSafe = $
+   
    % This keeps the duration of our Second Wind skill's "downtime"
    ptSecondWind = $
 
@@ -1133,6 +1142,12 @@ messages:
          ptSecondWind = $;
          Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,
                #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+
+      if ptTempSafe <> $
+      {
+         DeleteTimer(ptTempSafe);
+         ptTempSafe = $;
       }
 
       if ptCrystalizeManaSurgeTimer <> $
@@ -2099,6 +2114,12 @@ messages:
          Send(poGuild,@SendUserMOTD,#who=self);
       }
 
+      if ptTempSafe <> $
+      {
+         Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=TRUE);
+         Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
+      }
+
       if piPoisonStrength > 0
       {
          ptPoison = CreateTimer(self,@PoisonTimer,10000);
@@ -2612,6 +2633,7 @@ messages:
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_LOCK,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_INTRIGUING,#value=FALSE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
 
       Send(SYS,@SystemRemoveFromChampionLists,#oldchamp=self);
 
@@ -3953,7 +3975,7 @@ messages:
    }
 
    AllowPlayerAttack(victim=$,stroke_obj=$,use_weapon=$,report=TRUE,
-                     actual=TRUE)
+                     actual=TRUE,minion=FALSE)
    "Will not let a person attack someone who isn't pkill_enabled."
    "Will not let a person who isn't pkill_enabled attack another person."
    {
@@ -4042,6 +4064,21 @@ messages:
          }
       }
 
+      % Check for temporary safety flag.
+      if IsClass(victim,&Player)
+         AND (Send(self,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+            OR Send(victim,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
+      {
+         if report
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_guardian_angel,
+                  #parm1=Send(victim,@GetDef),
+                  #parm2=Send(victim,@GetName));
+         }
+
+         return FALSE;
+      }
+
       % Can always attack mortal event characters.
       if IsClass(victim,&DM)
          AND Send(victim,@IsEventCharacter)
@@ -4093,13 +4130,10 @@ messages:
             % Check status and safety against the owner of the minion.
             if NOT IsClass(oRoom,&GuildHall)
             {
-               if NOT Send(oRoom,@ReqSomethingAttack,#what=self,
+               if NOT Send(self,@AllowPlayerAttack,
                            #victim=Send(victim,@GetMaster),
                            #use_weapon=use_weapon,#stroke_obj=stroke_obj,
-                           #report=report,#actual=actual)
-                  OR NOT Send(self,@CheckStatusAndSafety,
-                              #victim=Send(victim,@GetMaster),
-                              #report=report,#minion=TRUE)
+                           #report=report,#actual=actual,#minion=TRUE)
                {
                   return FALSE;
                }
@@ -4232,7 +4266,7 @@ messages:
 
       % Finally, check status and safety.
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,
-                  #report=report,#actual=actual)
+                  #report=report,#actual=actual,#minion=minion)
       {
          return FALSE;
       }
@@ -5569,6 +5603,7 @@ messages:
          if IsClass(what,&Monster)
             AND (use_weapon = $
                OR NOT IsClass(use_weapon,&ActiveWallElement))
+            AND (piFlags & PFLAG_GROUPING)
          {
             Send(self,@JoinBuilderGroup);
          }
@@ -8573,8 +8608,10 @@ messages:
             % with one other player in the room. Bonus requires that the 
             % player is fighting normally (no firewalls / distance killing)
             lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
-            if lBuilderGroup <> $
-               AND Length(lBuilderGroup) = 1
+            if (lBuilderGroup = $
+                  OR Length(lBuilderGroup) = 1
+                  OR (FindListElem(lBuilderGroup,self) = 0
+                     AND (piFlags & ~PFLAG_GROUPING)))
                AND NOT group_member_kill
                AND killing_blow
                AND (monster_level + 5) > piBase_Max_health
@@ -9202,6 +9239,18 @@ messages:
             {
                Send(self,@GainBaseMaxHealth,#amount=-1);
                bLostHealth = TRUE;
+            }
+
+            % Under 100HP and killed by a player? Receive a temporary angel.
+            if bLostHealth=TRUE
+               AND piBase_max_health<=99
+               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TEMP_SAFETY)
+               AND Send(self,@FindUsing,#class=&SoldierShield) = $
+               AND ptTempSafe = $
+            {
+               Post(self,@StartTempSafe);
             }
          }
       }
@@ -12163,6 +12212,50 @@ messages:
       return Send(SYS,@GetSuccessRsc);
    }
 
+   StartTempSafe()
+   {
+      local iTime;
+
+      % First, check if we're in a guild hall. Players can exploit this
+      % system by dying in a guild hall and using PoL or the UW node to
+      % teleport back to their bodies with temp safe activated, which would
+      % leave them unable to be killed and inside a hall. Teleport players
+      % from the guild hall to their hometown.
+      if poOwner <> $
+         AND IsClass(poOwner,&GuildHall)
+      {
+         Send(self,@AdminGotoSafety);
+      }
+
+      % This returns minutes, so convert to milliseconds.
+      iTime = Send(Send(SYS,@GetSettings),@GetTempSafeTime);
+      iTime = iTime * 60 * 1000;
+
+      if ptTempSafe <> $
+      {
+         DeleteTimer(ptTempSafe);
+      }
+      ptTempSafe = CreateTimer(self,@EndTempSafe,iTime);
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=TRUE);
+      Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
+
+      return;
+   }
+
+   EndTempSafe()
+   {
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
+      if poOwner <> $
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      ptTempSafe = $;
+
+      return;
+   }
+
    ResetFaction(faction = FACTION_NEUTRAL)
    {
       local oSoldierShield;
@@ -12819,7 +12912,8 @@ messages:
       }
 
       if IsClass(oRoom,&GuildHall)
-         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND (NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            OR Send(self,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
       {
          Send(self,@MsgSendUser,#message_rsc=player_no_enter);
 

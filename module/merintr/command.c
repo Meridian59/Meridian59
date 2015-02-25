@@ -551,6 +551,7 @@ void CommandActivate(char *args)
  */
 void CommandSafetyOn(char *args)
 {
+   cinfo->config->aggressive = False;
    SendSafety(1);
 }
 /************************************************************************/
@@ -559,7 +560,44 @@ void CommandSafetyOn(char *args)
  */
 void CommandSafetyOff(char *args)
 {
+   cinfo->config->aggressive = True;
    SendSafety(0);
+}
+/************************************************************************/
+/*
+ * SendTempSafeOn: "tempSafeOn" command
+ */
+void CommandTempSafeOn(char *args)
+{
+   cinfo->config->tempsafe = True;
+   SendTempSafe(1);
+}
+/************************************************************************/
+/*
+ * SendTempSafeOff: "tempSafeoff" command
+ */
+void CommandTempSafeOff(char *args)
+{
+   cinfo->config->tempsafe = False;
+   SendTempSafe(0);
+}
+/************************************************************************/
+/*
+ * SendGroupingOn: "groupingon" command
+ */
+void CommandGroupingOn(char *args)
+{
+   cinfo->config->grouping = True;
+   SendGrouping(1);
+}
+/************************************************************************/
+/*
+ * SendGroupingOff: "groupingoff" command
+ */
+void CommandGroupingOff(char *args)
+{
+   cinfo->config->grouping = False;
+   SendGrouping(0);
 }
 /************************************************************************/
 /*

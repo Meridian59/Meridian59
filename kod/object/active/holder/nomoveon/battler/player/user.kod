@@ -236,10 +236,25 @@ resources:
    user_guildmate_logoff = "~IYour guildmate %s has just departed."
 
    user_safety_on = \
-      "~B~U~k[###]~n ~B~vYour safety is now ~I~gON~n~B:  You can no longer strike innocents."
+      "~B~U~k[###]~n ~B~vYour safety is now ~I~gON~n~B:  You can no longer "
+      "strike innocents."
    user_safety_off = \
-      "~B~U~k[###]~n ~B~vYour safety is now ~B~rOFF~n~B:  Be careful, you are now able to "
-      "hurt those around you."   
+      "~B~U~k[###]~n ~B~vYour safety is now ~B~rOFF~n~B:  Be careful, you are "
+      "now able to hurt those around you."
+
+   user_temp_safe_on = \
+      "~B~U~k[###]~n ~B~vYou will receive a temporary guardian angel on death."
+   user_temp_safe_off = \
+      "~B~U~k[###]~n ~B~vYou will no longer receive a temporary guardian "
+      "angel on death."
+   user_temp_safe_invalid = \
+      "~B~U~k[###]~n ~B~vYour guardian angel can no longer protect you."
+
+   user_grouping_on = \
+      "~B~U~k[###]~n ~B~vYou will now join builder groups."
+
+   user_grouping_off = \
+      "~B~U~k[###]~n ~B~vYou will no longer join builder groups."
 
    user_cant_go = "You are unable to go anywhere."
    user_cant_go_wav_rsc = cant_go_anywhere_louder.wav
@@ -1641,10 +1656,9 @@ messages:
             if Send(SYS,@IsPKAllowed)
             {
                Send(self,@MsgSendUser,#message_rsc=user_safety_on);
-               Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_on_wav_rsc);
+               Send(self,@WaveSendUser,#what=self,
+                     #wave_rsc=user_safety_on_wav_rsc);
             }
-            
-            return;
          }
          else
          {
@@ -1652,12 +1666,65 @@ messages:
             if Send(SYS,@IsPKAllowed)
             {
                Send(self,@MsgSendUser,#message_rsc=user_safety_off);
-               Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_off_wav_rsc);
+               Send(self,@WaveSendUser,#what=self,
+                     #wave_rsc=user_safety_off_wav_rsc);
             }
-            
-            return;
          }
-         
+
+         return;
+      }
+
+      if iClient_cmd = UC_TEMPSAFE
+      {
+         if Nth(client_msg,2) <> 0
+         {
+            Send(self,@SetPlayerFlag,#flag=PFLAG_TEMP_SAFETY,#value=TRUE);
+
+            if Send(self,@GetBaseMaxHealth) > 99
+               OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               OR Send(self,@FindUsing,#class=&SoldierShield) <> $
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_invalid);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_on);
+            }
+         }
+         else
+         {
+            Send(self,@SetPlayerFlag,#flag=PFLAG_TEMP_SAFETY,#value=FALSE);
+
+            if Send(self,@GetBaseMaxHealth) > 99
+               OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               OR Send(self,@FindUsing,#class=&SoldierShield) <> $
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_invalid);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_off);
+            }
+         }
+
+         return;
+      }
+
+      if iClient_cmd = UC_GROUPING
+      {
+         if Nth(client_msg,2) <> 0
+         {
+            Send(self,@SetPlayerFlag,#flag=PFLAG_GROUPING,#value=TRUE);
+            Send(self,@MsgSendUser,#message_rsc=user_grouping_on);
+         }
+         else
+         {
+            Send(self,@SetPlayerFlag,#flag=PFLAG_GROUPING,#value=FALSE);
+            Send(self,@MsgSendUser,#message_rsc=user_grouping_off);
+         }
+
          return;
       }
 
@@ -2537,7 +2604,14 @@ messages:
             OR NOT IsClass(oIllusion,&Monster)
          {
             % Standard player blue dot.
-            iFlags = iFlags | MM_PLAYER;
+            if Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+            {
+               iFlags = iFlags | MM_TEMPSAFE;
+            }
+            else
+            {
+               iFlags = iFlags | MM_PLAYER;
+            }
 
             oOtherGuild = Send(what,@GetGuild);
             if poGuild <> $ AND oOtherGuild <> $
@@ -8480,6 +8554,16 @@ messages:
       if (piFlags & PFLAG_SAFETY)
       {
          iFlags = iFlags | OF_SAFETY;
+      }
+
+      if (piFlags & PFLAG_TEMP_SAFETY)
+      {
+         iFlags = iFlags | OF_TEMPSAFE;
+      }
+
+      if (piFlags & PFLAG_GROUPING)
+      {
+         iFlags = iFlags | OF_GROUPING;
       }
 
       oIllusion = Send(self,@GetIllusionForm);

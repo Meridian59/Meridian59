@@ -67,20 +67,6 @@ messages:
 
    CanPayCosts(who=$)
    {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-
-      if IsClass(who,&Player)
-      {
-         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         {
-            Send(who,@MsgSendUser,#message_rsc=spell_guardian);
-
-            return FALSE;
-         }
-      }
-
       % Limit reflections.
       if (Send(self,@CountPlayerReflections,#who=who)
          >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit))

@@ -232,7 +232,7 @@ enum {
    UC_STAND = 6,
    UC_SAFETY = 7,
    UC_SUICIDE = 8,
-
+   UC_TEMPSAFE = 9,
    UC_REQ_GUILDINFO = 10,
    UC_GUILDINFO = 11,
    UC_INVITE = 12,
@@ -257,7 +257,7 @@ enum {
    UC_GUILD_SHIELD = 31,
    UC_GUILD_SHIELDS = 32,
    UC_CLAIM_SHIELD = 33,
-
+   UC_GROUPING = 34,
    UC_DEPOSIT = 35,
    UC_WITHDRAW = 36,
    UC_BALANCE = 37,
@@ -356,6 +356,7 @@ enum {
 
 
 /* Object flag values and masks */
+#define OF_GROUPING      0x00000002    // Set if player is grouping (self only)
 #define OF_PLAYER        0x00000004    // Set if object is a player
 #define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
@@ -368,6 +369,7 @@ enum {
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
+#define OF_TEMPSAFE      0x00004000    // Set if player has temp safety on death activated
 
 #define OF_BOUNCING      0x00010000    // If both flags on then object is bouncing
 #define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
@@ -403,6 +405,7 @@ enum {
 #define MM_NPC           0x00000040    // NPC
 #define MM_MINION_OTHER  0x00000080    // Set if monster is other's minion
 #define MM_MINION_SELF   0x00000100    // Set if a monster is our minion
+#define MM_TEMPSAFE      0x00000200    // Set if player has a temporary angel.
 
 /* Player name color sent as hex RGB value. Define constants
    for ease of use as needed. Requires OF_PLAYER boolean flag

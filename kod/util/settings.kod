@@ -190,6 +190,9 @@ properties:
 
    % Length of hold effect players experience when logging or phasing in
    piLogonDelay = 2500
+   
+   % Length of time the temporary guardian angel lasts, in minutes
+   piTempSafeMinutes = 180
 
    % Revenant speed setting
    piRevSpeed = 18
@@ -495,6 +498,11 @@ messages:
    GetLogonDelay()
    {
       return piLogonDelay;
+   }
+
+   GetTempSafeTime()
+   {
+      return piTempSafeMinutes;
    }
 
    GetOutlawMurdererLogoffPenaltyGhostTime()

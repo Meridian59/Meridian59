@@ -1,0 +1,155 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Chupacabra is Monster
+
+constants:
+
+   include blakston.khd
+
+   ANIM_SPIKES = 2
+   
+resources:
+
+   chupacabra_koc_name_rsc = "ixleocchupacabra"
+   chupacabra_name_rsc = "chupacabra"
+   chupacabra_icon_rsc = chupa.bgf
+   chupacabra_desc_rsc = \
+      "A chupacabra"
+
+   chupacabra_dead_icon_rsc = chupaX.bgf
+   chupacabra_dead_name_rsc = "dead chupacabra"
+
+   chupacabra_sound_hit = chupa_atkh.wav
+   chupacabra_sound_miss = chupa_atkh.wav
+   chupacabra_sound_death = chupa_dth.wav
+   chupacabra_sound_aware = chupa_awr.wav
+
+classvars:
+
+   vrKocName = chupacabra_koc_name_rsc
+   vrName = chupacabra_name_rsc
+   vrIcon = chupacabra_icon_rsc
+   vrDesc = chupacabra_desc_rsc
+   vrDead_icon = chupacabra_dead_icon_rsc
+   vrDead_name = chupacabra_dead_name_rsc
+
+   viSpeed = SPEED_VERY_FAST
+   viAttack_type = ATCK_WEAP_SLASH
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE
+
+   viAttributes = 0
+
+   viLevel = 100
+   viDifficulty = 6
+   viKarma = -75
+   
+   viCashmin = 250
+   viCashmax = 750
+   
+   vrSound_hit = chupacabra_sound_hit
+   vrSound_miss = chupacabra_sound_miss
+   vrSound_aware = chupacabra_sound_aware
+   vrSound_death = chupacabra_sound_death
+
+properties:
+
+
+   viTreasure_type = TID_TOUGH
+
+   piAnimation = ANIM_NONE
+
+   vbSummoned = FALSE
+
+   ptRevertControl = $
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [-ATCK_SPELL_UNHOLY, 50 ],
+                        [-ATCK_SPELL_HOLY, -25 ] ];
+      propagate;
+   }
+   
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   DoSpasm()
+   {
+      local roll;
+
+      roll = Random(1,10);
+
+      if roll <= 10
+      {
+         piAnimation = ANIM_SPIKES;
+         Send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+      }
+
+      propagate;
+   }
+   
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,200,2,2,2,3);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Cycle through "walking" bitmaps (groups 2-5) at 50 milliseconds per frame
+      AddPacket(1,ANIMATE_CYCLE,4,75,2,3,2,7);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,75,2,8,2,12,2,1);
+         return;
+      }
+      if piAnimation = ANIM_SPIKES
+      {
+         AddPacket(1,ANIMATE_ONCE,4,150,2,1,2,2,2,1);
+      }
+      % if no body animation
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptRevertControl <> $
+      {
+         deleteTimer(ptRevertControl);
+         ptRevertControl = $;
+      }
+      propagate;
+   }
+   
+   CanMorphTo()
+   {
+      return false;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

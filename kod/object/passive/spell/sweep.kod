@@ -252,9 +252,8 @@ messages:
       Post(oRoom,@SomeoneSaid,#what=who,#string=rRant,#type=SAY_MESSAGE,
            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
-      propagate;
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

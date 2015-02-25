@@ -55,6 +55,8 @@ resources:
    no_phasing_in_safe_place_msg = "This place of safety is anchored and calm, and you cannot phase out here."
    no_phasing_in_guildhall_msg = "The magical defenses here keep you grounded in reality."
    no_phasing_in_arena_msg = "The unique combat magics in play here prevent you from phasing out."
+   no_phasing_while_specator_msg = \
+      "If you tried to phase while you're already phased, you might explode!"
    
    phase_time_low = "You feel your hold slipping..."
    phase_time_gone = "You're losing your grip on reality!"
@@ -125,6 +127,12 @@ messages:
       if Send(Send(who,@GetOwner),@OverridesDeathFunction)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_here_override_msg);
+         return FALSE;
+      }
+      
+      if Send(who,@IsInCannotInteractMode)
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_phasing_while_specator_msg);
          return FALSE;
       }
       

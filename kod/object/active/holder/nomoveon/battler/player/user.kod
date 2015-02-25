@@ -2597,6 +2597,11 @@ messages:
 
       if IsClass(what,&Player)
       {
+         if Send(what,@IsInCannotInteractMode)
+         {
+            return MM_NONE;
+         }
+
          oIllusion = Send(what,@GetIllusionForm);
 
          if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
@@ -3906,7 +3911,7 @@ messages:
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, oSplit, oCorpse, bFromReagentBag;
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
@@ -4100,7 +4105,7 @@ messages:
          return;
       }
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=phased_out_cant_drop);
          return FALSE;
@@ -5319,6 +5324,7 @@ messages:
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
          AND NOT IsClass(oSpell,&Phase)
+         OR Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_cast);
 
@@ -5466,7 +5472,7 @@ messages:
    {
       local i, lObjects, lNumbers, oOffer_num;
       
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          return FALSE;
       }
@@ -8508,7 +8514,7 @@ messages:
 
       iFlags = MOVEON_NO;
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          iFlags = (iFlags & ~MOVEON_NO);
       }
@@ -8536,6 +8542,12 @@ messages:
       }
 
       if Send(self,@IsPhasedOut)
+      {
+         iFlags = iFlags & ~DRAWFX_MASK;
+         iFlags = iFlags | DRAWFX_DITHERGREY;
+      }
+
+      if Send(self,@IsInSpectatorMode)
       {
          iFlags = iFlags & ~DRAWFX_MASK;
          iFlags = iFlags | DRAWFX_DITHERINVIS;
@@ -8576,7 +8588,7 @@ messages:
          iFlags = (iFlags & ~OF_PLAYER & ~OF_OFFERABLE);
       }
       
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          iFlags = iFlags | OF_NOEXAMINE;
          iFlags = (iFlags & ~OF_ATTACKABLE & ~OF_OFFERABLE & ~OF_PLAYER);

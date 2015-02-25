@@ -126,7 +126,7 @@ messages:
       % Check for range
       if IsClass(what,&Battler)
          AND NOT (IsClass(what,&Player)
-                  AND Send(what,@IsPhasedOut))
+                  AND Send(what,@IsInCannotInteractMode))
          AND Send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol)
       {
          Send(self,@CheckForEffect,#what=what,#new_row=iRow,#new_col=iCol,
@@ -179,7 +179,7 @@ messages:
          plAffected = Cons(what,plAffected);
 
          if IsClass(what,&Player)
-            AND NOT Send(what,@IsPhasedOut)
+            AND NOT Send(what,@IsInCannotInteractMode)
          {
             Send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
          }
@@ -208,7 +208,7 @@ messages:
             oObject = Send(poOwner,@HolderExtractobject,#data=i);
             if IsClass(oObject,&Battler)
                AND NOT (IsClass(oObject,&Player)
-                  AND Send(oObject,@IsPhasedOut))
+                  AND Send(oObject,@IsInCannotInteractMode))
                AND Send(self,@InRange,#what=oObject,
                         #iRow=Send(oObject,@GetRow),
                         #iCol=Send(oObject,@GetCol))

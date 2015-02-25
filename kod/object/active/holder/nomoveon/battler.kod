@@ -496,7 +496,7 @@ messages:
       iManaGained = amount;
 
       if IsClass(self,&Player)
-         AND Send(self,@IsPhasedOut)
+         AND Send(self,@IsInCannotInteractMode)
       {
          return 0;
       }

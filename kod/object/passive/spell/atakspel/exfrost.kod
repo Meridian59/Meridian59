@@ -51,8 +51,8 @@ properties:
 
    piDamageMin = 13
    piDamageMax = 25
-   piRange = 4
-   
+   piRange = 4 * FINENESS
+
 messages:
 
    ResetReagents()

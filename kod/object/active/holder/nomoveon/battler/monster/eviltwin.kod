@@ -428,7 +428,7 @@ messages:
          return Send(iWeapon,@GetRange);
       }
 
-      return 1;
+      return 64;
    }
 
    % This returns the battler's ability to-hit.

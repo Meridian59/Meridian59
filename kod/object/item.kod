@@ -166,7 +166,7 @@ messages:
             AppendTempString(special_properties_header);
          }
 
-         AppendTempString(Send(self,@GetRange));
+         AppendTempString(Send(self,@GetRange)/FINENESS);
          AppendTempString(" range");
          AppendTempString("\n");
 

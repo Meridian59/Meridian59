@@ -58,6 +58,9 @@ classvars:
    % Low vision since we want her to switch targets if possible.
    viVisionDistance = 6
 
+   % Attack range of 256 (4 row/col units).
+   viAttackRange = 256
+
    viKarma = -90
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
    viGender = GENDER_FEMALE
@@ -93,12 +96,6 @@ messages:
       piAnimation = ANIM_NONE;
 
       return;
-   }
-
-   % Increasing how far the spider queen can reach, since she's immobile.
-   GetAttackRange()
-   {
-      return 4;
    }
 
    SendLookAnimation()

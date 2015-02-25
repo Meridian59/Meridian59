@@ -97,7 +97,8 @@ messages:
       if target = who AND (NOT bItemCast)
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-         Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,#parm1=vrName);
+         Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,
+               #parm1=vrName);
 
          return FALSE;
       }
@@ -106,7 +107,8 @@ messages:
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
          Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
-               #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
 
          return FALSE;
       }
@@ -134,7 +136,8 @@ messages:
          }
 
          if Send(target,@GetOwner) <> $
-            AND Send(who,@SquaredDistanceTo,#what=target) > (iTotalRange * iTotalRange)
+            AND Send(who,@SquaredFineDistanceTo3D,#what=target)
+                     > (iTotalRange * iTotalRange)
          {
             if NOT bItemCast
             {

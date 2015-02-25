@@ -29,7 +29,7 @@ classvars:
    vrDesc = PracticeBow_desc_rsc
 
    viWeaponDamage = -3
-   viRange = 30
+   viRange = 30 * FINENESS
    viHit_roll_modifier = 200
    
    viValue_average = 1750

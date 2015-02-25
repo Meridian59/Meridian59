@@ -251,6 +251,28 @@ messages:
       return Nth(lPos,4);
    }
 
+   GetHeightAtObject()
+   "Returns the height at the object's coordinates. If the object is not "
+   "in a room, this message recursively checks the owner's coordinates "
+   "until one in a room is found."
+   {
+      if poOwner <> $
+      {
+         if IsClass(poOwner,&Room)
+         {
+            return GetHeight(Send(poOwner,@GetRoomData),
+                        Send(self,@GetRow),Send(self,@GetCol),
+                        Send(self,@GetFineRow),Send(self,@GetFineCol));
+         }
+         else
+         {
+            Send(poOwner,@GetHeightAtObject);
+         }
+      }
+
+      return 0;
+   }
+
    GetOwner()
    {
       return poOwner;

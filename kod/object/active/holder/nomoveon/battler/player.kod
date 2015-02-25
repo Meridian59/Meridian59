@@ -4682,7 +4682,7 @@ messages:
          oTargetOwner = Send(oFinalTarget,@GetOwner);
       }
 
-      iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
+      iDist = Send(self,@SquaredFineDistanceTo3D,#what=oFinalTarget);
 
       % If we don't share the same owner, then we're not in range.
       if poOwner <> oTargetOwner

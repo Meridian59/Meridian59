@@ -1775,7 +1775,8 @@
    WEAPON_TYPE_SLASH = 2
 
    % How much range bonus do we get if a player target has moved recently?
-   RANGE_MOVEMENT_BONUS = 1
+   % In FINENESS units.
+   RANGE_MOVEMENT_BONUS = 64
 
    % Missile weapons ammo-type, determined by each missile weapon.
    AMMO_ARROW = 1

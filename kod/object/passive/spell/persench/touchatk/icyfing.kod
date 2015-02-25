@@ -70,8 +70,6 @@ classvars:
    % Max amount of damage that punch or 2*myst can add
    viMaxProficiencyDamage = 7
 
-   viRange = 2              %% touch spell range can vary, but are typically good     
-
    viSpellType = ATCK_SPELL_COLD + ATCK_SPELL_ALL
    viStroke = STROKE_ICY_FINGERS
 

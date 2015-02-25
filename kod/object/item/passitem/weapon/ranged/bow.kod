@@ -51,7 +51,7 @@ classvars:
 
    % Base damage determined by ammo, but this can add to the bow's strength.
    viWeaponDamage = 0
-   viRange = 100
+   viRange = 100 * FINENESS
 
    viValue_average = 2500
    viBulk = 80

@@ -79,11 +79,6 @@ messages:
       propagate;
    }
 
-   GetAttackRange()
-   {
-      return 2;
-   }
-
    MonsterAttack(what=$)
    {
       piAnimation = ANIM_ATTACK;

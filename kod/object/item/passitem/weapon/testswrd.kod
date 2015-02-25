@@ -61,7 +61,7 @@ properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
    piBaseDamage = 10
-   piRange = 4
+   piRange = 256
    piDisarmBonus = 0
    piSpellModifier = 0
    viProficiency_Needed = SKID_PROFICIENCY_SWORD

@@ -50,7 +50,7 @@ classvars:
                         % in them.  viWeaponDamage is the bow's contribution to that,
                         % due to things like stiffer bowstrings, harder wood, whatever.
 
-   viRange = 100
+   viRange = 100 * FINENESS
 
 properties:
    

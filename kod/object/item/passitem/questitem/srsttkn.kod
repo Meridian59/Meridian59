@@ -19,9 +19,9 @@ resources:
    StatsResetToken_name_rsc = "ancient trinket"
    StatsResetToken_icon_rsc = srtoken.bgf
    StatsResetToken_desc_rsc = \
-      "This is a trinket of the elders, said to be handed to them by the Gods."
+      "This is a trinket of the elders, said to be handed to them by the Gods. "
       "The legend holds that these ancient trinkets hold the power to change "
-	  "the very structure of a mortal. Surely the returner of this trinket    "
+	  "the very structure of a mortal. Surely the returner of this trinket "
 	  "would be greatly rewarded."
       
    StatsResetToken_desc_append1 = \

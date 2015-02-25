@@ -1012,7 +1012,7 @@ messages:
          AND Send(what,@IsInSpectatorMode)
       {
          Send(what,@DeactivateSpectatorMode);
-         Send(self,@BootUser,#who=what);
+         Post(self,@BootUser,#who=what);
          propagate;
       }
 
@@ -1256,7 +1256,7 @@ messages:
 
       Send(who,@MsgSendUser,#message_rsc=you_were_spectated);
       Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
-      Send(who,@ActivateSpectatorMode);
+      Post(who,@ActivateSpectatorMode);
 
       if inform
       {

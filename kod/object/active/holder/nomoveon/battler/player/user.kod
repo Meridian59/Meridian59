@@ -4342,6 +4342,7 @@ messages:
          If StringEqual(String,"start solo survival")
          {
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
@@ -4361,6 +4362,7 @@ messages:
             }
             
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
@@ -4383,6 +4385,7 @@ messages:
          If StringEqual(String,"start public survival")
          {
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
@@ -4404,6 +4407,7 @@ messages:
          If StringEqual(String,"join guild survival")
             AND Send(self,@GetGuild) <> $
             AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            AND NOT Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
                      #oGuild=Send(self,@GetGuild)) <> $
          {
@@ -4424,6 +4428,7 @@ messages:
 
          If StringEqual(String,"join public survival")
             AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            AND NOT Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) <>$
          {
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),

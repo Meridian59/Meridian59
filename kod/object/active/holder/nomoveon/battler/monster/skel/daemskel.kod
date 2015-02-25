@@ -84,7 +84,7 @@ messages:
       return;
    }
 
-     HitSideEffect(what = $, who = $)
+   HitSideEffect(what = $, who = $)
    {
       local oSpell;
 

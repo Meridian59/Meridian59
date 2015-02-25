@@ -3716,9 +3716,17 @@ messages:
       }
       else
       {
+         % Rain takes precedence over sandstorm.
          if piRoom_flags & ROOM_RAINING
          {
             effect = EFFECT_RAINING;
+         }
+         else
+         {
+            if piRoom_flags & ROOM_SANDSTORM
+            {
+               effect = EFFECT_SAND;
+            }
          }
       }
 
@@ -3731,6 +3739,12 @@ messages:
       if NOT pbWeatherEffects
       {
          return;
+      }
+
+      % If there's a sandstorm effect here, clear it.
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@EndSandstorm);
       }
 
       if bOnGround
@@ -3793,6 +3807,78 @@ messages:
          % Reset water sidedef animation changes.
          Send(self,@RemoveAnimateWallChange,#wall=11);
          Send(self,@RemoveTextureChange,#id=11);
+      }
+
+      return;
+   }
+
+   StartRain()
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      % If there's a sandstorm effect here, clear it.
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@EndSandstorm);
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndRain()
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_RAINING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=FALSE);
+         Send(self,@WeatherChanged);
+
+      }
+
+      return;
+   }
+
+   StartSandstorm()
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SANDSTORM,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSandstorm()
+   {
+      local i, each_obj;
+
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SANDSTORM,#value=FALSE);
+
+         for i in plActive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+            {
+               if NOT Send(each_obj,@IsAffectedByRadiusEnchantment,
+                           #byClass=&Sandstorm)
+               {
+                  Send(each_obj,@EffectSendUser,#what=each_obj,
+                        #effect=EFFECT_CLEARSAND);
+               }
+            }
+         }
       }
 
       return;

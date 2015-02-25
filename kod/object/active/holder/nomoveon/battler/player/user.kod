@@ -7927,6 +7927,15 @@ messages:
          AddPacket(1,BP_EFFECT,2,EFFECT_CLEARWEATHER);
          SendPacket(poSession);
 
+         % If we came from a room with a sandstorm weather effect we
+         % clear it here, unless we're affected by the Sandstorm spell.
+         if NOT Send(self,@IsAffectedByRadiusEnchantment,
+                     #byClass=&Sandstorm)
+         {
+            AddPacket(1,BP_EFFECT,2,EFFECT_CLEARSAND);
+            SendPacket(poSession);
+         }
+
          % Then send the needed effect.
          AddPacket(1,BP_EFFECT);
          AddPacket(2,Send(poOwner,@GetRoomWeather));

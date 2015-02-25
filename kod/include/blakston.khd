@@ -1069,6 +1069,8 @@
    ROOM_RAINING       = 0x10000
    % Is it snowing here?
    ROOM_SNOWING       = 0x20000
+   % Is there a sandstorm (weather, not spell) happening?
+   ROOM_SANDSTORM     = 0x40000
 
    % Terrain constants, used to tell what type of terrain the room is.
    TERRAIN_GUILDHALL = 0x0000001

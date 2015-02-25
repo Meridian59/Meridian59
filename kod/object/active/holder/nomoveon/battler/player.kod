@@ -228,9 +228,6 @@ resources:
    player_logon_bonus = \
       "You have received your daily training bonus of ~B%i~B points!  "
       "Come back tomorrow for more!"
-   player_nologon_bonus =  \
-      "Welcome back!  Log in again tomorrow to receive some "
-      "bonus training points!"
 
    player_health_gain_maxed = "Your health cannot increase any further."
    
@@ -824,10 +821,13 @@ properties:
    piTraining_points = 0
    piInform = TRUE
 
-   % This is the amount of training points people receive for logging on daily.
-   piLogon_bonus = 0
-   piLogon_timestamp = 0
+   % This keeps track of when we've last received our daily training points.
    piReward_timestamp = 0
+
+   % For those crazy people who stay logged on 24/7 and may forget to relog
+   % and cash in on their daily training points, we grant the points every 24
+   % hours of online time.
+   ptReward_timer = $
 
    % Flags for various character attributes.
    piFlags = 0
@@ -1142,6 +1142,12 @@ messages:
          Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSpellByNum,
                #num=SID_CRYSTALIZE_MANA),#type=ENCHANTMENT_PLAYER);
          piCrystalizeManaSurging = FALSE;
+      }
+
+      if ptReward_timer <> $
+      {
+         DeleteTimer(ptReward_timer);
+         ptReward_timer = $;
       }
 
       Send(self,@CancelRescue);
@@ -2045,7 +2051,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oParl, oRoom, iBonus;
+      local i, oGame, oParl, oRoom, iBonus, iDefaultBonus, iTimespan;
 
       for i in plPassive
       {
@@ -2124,40 +2130,42 @@ messages:
                #wave_rsc=player_logged_on_wav_rsc);
       }
 
-      % Reset the training points bonus if people
-      % haven't logged in for a while.
-      if abs(GetTime() - piLogon_timestamp) > 40*60*60
-      {
-         piLogon_bonus = 0;
-      }
+      % Reward people for logging on by granting them some free training points!
+      % We take the absolute value to automatically fix bugs with people
+      % mysteriously ending up with a timestamp in the distant future.
+      iTimespan = abs(GetTime() - piReward_timestamp);
 
-      % Reward people for logging on by granting
-      % them some free training points!
-      if abs(GetTime() - piReward_timestamp) > 20*60*60
+      % We restrict the timespan to reasonable limits here since the bonus to
+      % training points scales with the time since the last bonus has been
+      % received. 36 hours means that players have a decent leeway to log on
+      % again before missing out on training points, but are still encouraged
+      % to log on daily to cash in maximum points.
+      iTimespan = bound(iTimespan,0,36*60*60);
+
+      if iTimespan > 16*60*60
       {
          if piTraining_points = 1000
          {
             return;
          }
 
-         if piLogon_bonus <> 200
-         {
-            if piReward_timestamp <> 0
-            {
-               Send(self,@MsgSendUser,#message_rsc=player_nologon_bonus);
-            }
-            
-            piLogon_bonus = 200;
-         }
-         else
-         {
-            iBonus = piLogon_bonus * (GetTime() - piReward_timestamp) / (24*60*60);
-            Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
-            Send(self,@AddTrainingPoints,#points=iBonus,#report=FALSE);
-         }
+         % Retrieve the daily logon bonus from settings.
+         iDefaultBonus = Send(Send(SYS,@GetSettings),@GetLogonBonus);
+         
+         % Scale the logon bonus with the time that has passed since it has last
+         % been received for a total bonus of up to 150 percent.
+         iBonus = iDefaultBonus * iTimespan / (24*60*60);
+         
+         Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
+         Send(self,@AddTrainingPoints,#points=iBonus,#report=FALSE);
 
          piReward_timestamp = GetTime();
       }
+
+      % For people who never log off, start the reward timer that will grant
+      % them the daily training bonus every 24 hours, even if they don't log
+      % off and back on.
+      ptReward_timer = CreateTimer(self,@GetDailyTrainingReward,24*60*60*1000);
 
       return;
    }
@@ -2165,8 +2173,6 @@ messages:
    UserLogoffHook()
    {
       local i, oRoom;
-
-      piLogon_timestamp = GetTime();
 
       for i in plPassive
       {
@@ -2197,6 +2203,12 @@ messages:
       {
          DeleteTimer(ptMana);
          ptMana = $;
+      }
+
+      if ptReward_timer <> $
+      {
+         DeleteTimer(ptReward_timer);
+         ptReward_timer = $;
       }
 
       Send(self,@CancelRescue);
@@ -8766,24 +8778,27 @@ messages:
       return;
    }
 
-   GetLogOnBonus()
+   GetDailyTrainingReward()
    {
-      return piLogon_bonus;
-   }
+      local iBonus;
 
-   SetLogOnBonus(points=0)
-   {
-      piLogon_bonus = points;
+      ptReward_timer = CreateTimer(self,@GetDailyTrainingReward,24*60*60*1000);
 
-      return;
-   }
+      if piTraining_points = 1000
+      {
+         return;
+      }
 
-   ResetLogOnBonus()
-   {
-      piLogon_bonus = 0;
+      % Retrieve the daily logon bonus from settings.
+      iBonus = Send(Send(SYS,@GetSettings),@GetLogonBonus);
+
+      Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
+      Send(self,@AddTrainingPoints,#points=iBonus,#report=FALSE);
+
       piReward_timestamp = GetTime();
 
       return;
+      
    }
 
    GetHighMark()

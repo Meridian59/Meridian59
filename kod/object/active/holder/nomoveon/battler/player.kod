@@ -3987,6 +3987,11 @@ messages:
       {
          return TRUE;
       }
+      
+      if Send(oRoom,@GetChaosZone)
+      {
+         return TRUE;
+      }
 
       % Frenzies!  Anything goes if allowed by the room!
       if Send(SYS,@GetChaosNight)
@@ -4258,6 +4263,17 @@ messages:
          OR (IsClass(victim,&Player)
             AND (Send(victim,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
                OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_MORPHED)))
+      {
+         return TRUE;
+      }
+      
+      % No penalties for chaos zone battles
+      if Send(self,@GetOwner) <> $
+         AND Send(victim,@GetOwner) <> $
+         AND IsClass(Send(self,@GetOwner),&Room)
+         AND IsClass(Send(victim,@GetOwner),&Room)
+         AND Send(Send(self,@GetOwner),@GetChaosZone)
+         AND Send(Send(victim,@GetOwner),@GetChaosZone)
       {
          return TRUE;
       }
@@ -5260,6 +5276,8 @@ messages:
       }
 
       if NOT absolute
+         AND what <> $
+         AND IsClass(what,&Player)
       {
          % If we have more health than twice our max, no percent limit on damage.
          % If we are outlaw or murderer, no percent limit on damage.
@@ -5274,7 +5292,7 @@ messages:
             damage = Bound(damage,$,iLimit);
          }
 
-         % maximum of 30 damage per hit.
+         % maximum of 30 damage per hit
          damage = bound(damage,$,MAX_DAMAGE_PER_HIT*100);
       }
 
@@ -5561,8 +5579,9 @@ messages:
          % Victim's room is still the one they died in.
          oVictimRoom = Send(what,@GetOwner);
 
-         if oVictimRoom = $
-            OR NOT Send(oVictimRoom,@SafePlayerAttack)
+         if (oVictimRoom = $
+            OR NOT Send(oVictimRoom,@SafePlayerAttack))
+            AND NOT Send(oVictimRoom,@GetChaosZone)
          {
             Send(Send(SYS,@GetStatistics),@PlayerKillsCounter);
 
@@ -8553,6 +8572,13 @@ messages:
                gain = gain + 1;
             }
          }
+         
+         % Give a bonus for Survival Rooms
+         if Send(what,@GetBoostedLevel) > 0
+         {
+            gain = gain + (Send(what,@GetBoostedLevel)/5
+                 * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalXP));
+         }
 
          % If they're cheesing the situation by fighting wussy monsters
          % in an altered form, penalize the gain amount.
@@ -8575,7 +8601,9 @@ messages:
          if gain > 0
             AND killing_blow
          {
-            piTraining_points = piTraining_points + 1;
+            piTraining_points = piTraining_points + 1
+               + (Send(what,@GetBoostedLevel)
+               * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
          }
 
          % Let the player know how many training points they have, if they
@@ -8784,6 +8812,14 @@ messages:
       if Send(self,@GetOwner) <> $
          AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
       {
+         return;
+      }
+      
+      if Send(self,@GetOwner) <> $
+         AND IsClass(Send(self,@GetOwner),&Room)
+         AND Send(Send(self,@GetOwner),@OverridesDeathFunction)
+      {
+         Send(Send(self,@GetOwner),@OverrideDeathFunction,#who=self,#what=what);
          return;
       }
 

@@ -16,11 +16,11 @@ constants:
 
 resources:
    
-   neruelemental_name_rsc = "neru golem"
+   neruelemental_name_rsc = "nerudite golem"
    neruelemental_icon_rsc = neeleme.bgf
    neruelemental_desc_rsc = \
-      "This creature’s imposing stature speaks of raw power and strength.  Its"
-      " body gleams with a green, metallic sheen.  A sound like drawn steel"
+      "The imposing stature of this beast speaks of raw power and strength.  "
+      "Its body gleams with a green, metallic sheen.  A sound like drawn steel"
       " accompanies its every movement."
       
    neruelemental_koc_name_rsc = "atzmochner"
@@ -37,6 +37,8 @@ classvars:
    vrDead_icon = neruelemental_dead_icon_rsc
    vrDead_name = neruelemental_dead_name_rsc
 
+   viTreasure_type = TID_NERU_ELE
+
    viAttack_type = ATCK_WEAP_NERUDITE
    
 properties:
@@ -47,10 +49,12 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_QUAKE, -50 ],
-                        [-ATCK_SPELL_ALL, 80 ],
-                        [ATCK_WEAP_BLUDGEON, -100],
-                        [ATCK_WEAP_ALL, 90 ] ];
+      plResistances = [ [-ATCK_SPELL_QUAKE, -70 ],
+                        [-ATCK_SPELL_HOLY, -40 ],
+                        [-ATCK_SPELL_UNHOLY, -40 ],
+                        [-ATCK_SPELL_ALL, 50 ],
+                        [ATCK_WEAP_PIERCE, -60],
+                        [ATCK_WEAP_ALL, 50 ] ];
 
       propagate;
    }

@@ -18,7 +18,7 @@ resources:
    
    icelem_champion_name_rsc = "Tundra"
    icelem_champion_desc_rsc = \
-      "Tundra"
+      "This gigantic golem seems to be made entirely out of ice. "
 
    icelem_champion_dead_name_rsc = "The corpse of Tundra"
 
@@ -39,7 +39,7 @@ classvars:
    viDifficulty = 8
 
    viCashmin = 3000
-   viCashmax = 5000
+   viCashmax = 12000
    
 properties:
 
@@ -53,11 +53,11 @@ messages:
    {
       plSpellBook = [ [SID_ICE_NOVA,3,100] ];
    
-      plResistances = [ [-ATCK_SPELL_FIRE, -50 ],
-                        [-ATCK_SPELL_QUAKE, -50 ],
-                        [-ATCK_SPELL_ALL, 80 ],
-                        [ATCK_WEAP_BLUDGEON, -100],
-                        [ATCK_WEAP_ALL, 90 ] ];
+      plResistances = [ [-ATCK_SPELL_FIRE, -70 ],
+                        [-ATCK_SPELL_QUAKE, -40 ],
+                        [-ATCK_SPELL_ALL, 50 ],
+                        [ATCK_WEAP_SLASH, -60],
+                        [ATCK_WEAP_ALL, 50 ] ];
 
       propagate;
    }

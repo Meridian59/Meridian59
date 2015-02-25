@@ -422,22 +422,27 @@ properties:
    piMaxDamage = $
 
    piArmor = 0
+   
+   % Was this monster boosted by a Survival Room?
+   piBoostedLevel = 0
 
    piLastTimeAttacked = 0
    poLastAttacker = $
 
 messages:
 
-   Constructor(color=0)
+   Constructor(color=0, piSurvivalLevel=0)
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
       local iStatPoints, iMin, iMax;
 
-      piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
+      piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints))
+                         + piSurvivalLevel*viDifficulty;
       piHit_points = piMax_hit_points*100;
       piMana = piMax_mana;
       piSpellChance = viSpellChance;
-      piVisionDistance = viVisionDistance;
+      piVisionDistance = viVisionDistance + piSurvivalLevel;
+      piBoostedLevel = piSurvivalLevel;
 
       if Send(self,@MobIsSeller)
       {
@@ -495,6 +500,15 @@ messages:
 
       piAgility = Random(iMin,iMax);
       piAim = iStatPoints - piAgility;
+
+      if piSurvivalLevel > 0
+      {
+         piOffense = Send(self,@GetOffense) + piSurvivalLevel*viDifficulty;
+         piDefense = Send(self,@GetDefense) + piSurvivalLevel*viDifficulty;
+         piMinDamage = viLevel/15 + piSurvivalLevel/2;
+         piMaxDamage = viLevel/10 + piSurvivalLevel/2;
+         piArmor = piSurvivalLevel/2;
+      }
 
       if color <> 0
       {
@@ -3483,6 +3497,7 @@ messages:
 
       % If we have a master, they are responsible for our kills.
       if poMaster <> $
+         AND IsClass(poMaster,&Player)
       {
          if IsClass(what,&Player)
             AND IsClass(poMaster,&Player)
@@ -5631,6 +5646,12 @@ messages:
          return 0;
       }
       
+      % A survival mob
+      if piBoostedLevel > 0
+      {
+         return 0;
+      }
+      
       return viKarma;
    }
 
@@ -5676,8 +5697,11 @@ messages:
             % Random number of treasure items are dropped based on viLevel
             %  and viDifficulty.  The higher these values are, the more items
             %  that may be dropped.
-            iNumberItems = 1 + (viLevel/55) + Random(0,viDifficulty/3);
-            iNumberItems = Bound(iNumberItems,$,6);
+            iNumberItems = 1 + (viLevel/55) + Random(0,viDifficulty/3)
+                             + (piBoostedLevel/4
+              * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot));
+            iNumberItems = Bound(iNumberItems,$,6 + (piBoostedLevel/4
+              * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot)));
             iNumberItems = (Send(Send(SYS, @GetSettings), @GetItemFactor)*iNumberItems)/100;
             iNumberItems = Bound(iNumberItems,1,$);
          }
@@ -5743,7 +5767,10 @@ messages:
             corpse = $;
          }
 
-         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount);
+         oMoney = Create(&Money,#corpse=corpse,
+                                #number=iRandomCashAmount+
+               (piBoostedLevel*50*
+                Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          lTreasureItems = cons(oMoney,lTreasureItems);
@@ -6691,6 +6718,11 @@ messages:
    GetBaseResistances()
    {
       return plResistances;
+   }
+   
+   GetBoostedLevel()
+   {
+      return piBoostedLevel;
    }
 
 end

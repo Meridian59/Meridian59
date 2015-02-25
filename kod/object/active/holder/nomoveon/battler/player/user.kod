@@ -350,6 +350,23 @@ resources:
    autoloot_on_msg = "You decide to pick up treasure as it drops."
    autoloot_off_msg = "You stop picking up treasure as it drops."
 
+   guild_survival_too_late = \
+      "Your guild is already running a survival room. You will have to wait."
+   public_survival_too_late = \
+      "A public survival room is already running. You will have to wait."
+   
+   survival_err_not_safe = \
+      "You have to be somewhere safe to join a survival arena!"
+   survival_err_no_guild = \
+      "You don't have a guild!"
+   survival_err_already_guild = \
+      "There is already a guild survival arena running."
+   survival_err_already_public = \
+      "There is already a public survival arena running."
+      
+   survival_err_cant_join = \
+      "That survival arena has already begun, and you cannot join."
+   
    phased_out_cant_drop = "You can't drop items while phased out of existence."
                                
    reagentbag_auto_on = "You start putting new reagents in your bag."
@@ -4207,6 +4224,108 @@ messages:
 
       if type = SAY_NORMAL
       {
+         If StringEqual(String,"start solo survival")
+         {
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+
+            Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
+                      #who=self);
+            return;
+         }
+
+         If StringEqual(String,"start guild survival")
+         {
+            if Send(self,@GetGuild) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
+               return;
+            }
+            
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+            
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
+                     #oGuild=Send(self,@GetGuild)) = $
+            {
+               Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
+                         #who=self,#guild_survival=TRUE);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_already_guild);
+            }
+
+            return;
+         }
+
+         If StringEqual(String,"start public survival")
+         {
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+            
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
+            {
+               Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
+                         #who=self,#iPublic=TRUE);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_already_public);
+            }
+            
+            return;
+         }
+
+         If StringEqual(String,"join guild survival")
+            AND Send(self,@GetGuild) <> $
+            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
+                     #oGuild=Send(self,@GetGuild)) <> $
+         {
+            if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                    @FindRoomByGuild,#oGuild=Send(self,@GetGuild)),
+                    @GetAllowJoins)
+            {
+               Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                    @FindRoomByGuild,#oGuild=Send(self,@GetGuild)),
+                    @Teleport,#what=self);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=guild_survival_too_late);
+            }
+            return;
+         }
+
+         If StringEqual(String,"join public survival")
+            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) <>$
+         {
+            if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                    @FindPublicRoom),
+                    @GetAllowJoins)
+            {
+               Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                    @FindPublicRoom),
+                    @Teleport,#what=self);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=public_survival_too_late);
+            }
+            return;
+         }
+         
          If StringContain(String,"autocombine on")
             AND NOT Send(self,@IsAutoCombining)
          {

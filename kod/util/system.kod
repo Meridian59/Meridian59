@@ -6597,22 +6597,6 @@ messages:
       return iList;
    }
 
-   FixPlayersOverLearnCount()
-   "This assumes all 'bugged' players are due to having level 1 Riija."
-   {
-      local i, iList;
-
-      iList = Send(self,@FindPlayersOverLearnCount);
-
-      for i in iList
-      {
-         Send(i,@StripSpellsOfSchool,#school=SS_RIIJA);
-         Debug("Removed Riija from ",i,Send(i,@GetTrueName));
-      }
-
-      return;
-   }
-
    AdminListPlayersOverHP(hp=$)
    {
       local i;

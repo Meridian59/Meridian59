@@ -477,7 +477,12 @@ messages:
    {
       return viWeight * piHits;
    }
-   
+
+   GetInitValue()
+   {
+      return viValue_average * piHits;
+   }
+
    GetValue()
    {
       return viValue_average * piHits;

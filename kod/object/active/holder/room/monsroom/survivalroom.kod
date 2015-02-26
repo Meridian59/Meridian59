@@ -401,13 +401,13 @@ messages:
                         [&XeoMask,50],
                         [&KriipaMask,55],
                         [&CowMask,75],
-                        [&SteelTorc,100]];
+                        [&KraananCharm,100]];
 
       Send(self,@RecalcLightAndWeather);
-      
+
       propagate;
    }
-   
+
    InitiateNextLevel(timer=$)
    {
       local i, n, p;

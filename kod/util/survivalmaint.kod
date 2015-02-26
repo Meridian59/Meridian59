@@ -18,7 +18,7 @@ resources:
 
    public_survival_started = \
       "%s has started a public co-op survival arena. It will begin in "
-      "five minutes."
+      "three minutes."
    
    public_ended = \
       "The public co-op survival arena has ended at level %i."

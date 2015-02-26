@@ -29,6 +29,24 @@ constants:
    GOAL_BOSS = 2
    GOAL_MINIBOSSES = 3
    GOAL_KILL_FRIENDLY = 4
+   
+   % 3 minutes per wave until they begin moving through walls
+   WALL_BLITZ_TIME = 180000
+   
+   % 3 minutes to begin public survivals
+   PB_START_TIME = 180000
+   
+   % 1 minute to begin other survivals
+   DEFLT_START_TIME = 60000
+   
+   % Report goals every 1 minute
+   REPORT_TIME = 60000
+
+   % Starts when Miniboss is killed
+   RESPAWN_MINIBOSS_TIME = 60000
+   
+   % milliseconds in between waves
+   NEXT_LEVEL_WAIT = 10000
 
 resources:
 
@@ -43,8 +61,8 @@ resources:
    beginning_in_sixty = \
       "~BThe attacks will begin in sixty seconds."
    
-   next_level_in_twenty = \
-      "~BYou have defeated wave number %i. The next arrives in twenty seconds."
+   next_level_in_seconds = \
+      "~BYou have defeated wave number %i. The next arrives in %i seconds."
       
    begin_level = \
       "~BWave %i of the enemy force has arrived."
@@ -466,8 +484,8 @@ messages:
          plMonsters = plAllMonsters;
       }
       
-      ptWallBlitzTimer = CreateTimer(self,@ActivateWallBlitz,300000);
-      ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,60000);
+      ptWallBlitzTimer = CreateTimer(self,@ActivateWallBlitz,WALL_BLITZ_TIME);
+      ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,REPORT_TIME);
       
       if Random(1,20) < piLevel
       {
@@ -502,7 +520,7 @@ messages:
       ptReportGoalsTimer = $;
       
       Send(self,@ReportGoals);
-      ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,60000);
+      ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,REPORT_TIME);
       
       return;
    }
@@ -633,14 +651,15 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
-      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,20000);
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,NEXT_LEVEL_WAIT);
       
       for i in plActive
       {
          if IsClass(First(i),&User)
          {
-            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_twenty,
-                                #parm1 = piLevel);
+            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
+                                #parm1 = piLevel,
+                                #parm2 = NEXT_LEVEL_WAIT);
          }
       }
       
@@ -693,10 +712,10 @@ messages:
          }
       }
       
-      iRand = Random((Length(plParticipants)-iNumAdmins)*10,
-                     (Length(plParticipants)-iNumAdmins)*30);
+      iRand = Random((Length(plParticipants)-iNumAdmins)*5,
+                     (Length(plParticipants)-iNumAdmins)*15);
                      
-      iRand = Bound(iRand,1,150);
+      iRand = Bound(iRand,1,75);
 
       plLevelGoals = Cons([GOAL_KILLS,iRand],plLevelGoals);
 
@@ -790,7 +809,7 @@ messages:
                AND ptRespawnMiniBossTimer = $
             {
                ptRespawnMiniBossTimer = 
-                    CreateTimer(self,@RespawnMiniboss,60000);
+                    CreateTimer(self,@RespawnMiniboss,RESPAWN_MINIBOSS_TIME);
             }
          }
          
@@ -1304,7 +1323,13 @@ messages:
       % They logged off.
       if Send(who,@GetOwner) = $
       {
-         Post(who,@AdminGoToLastSafeRoom);
+         Send(who,@AdminGoToLastSafeRoom);
+      }
+      
+      % They're still here.
+      if Send(who,@GetOwner) = self
+      {
+         Send(who,@AdminGoToLastSafeRoom);
       }
 
       if inform
@@ -1352,11 +1377,11 @@ messages:
       
       if piPublic
       {
-         ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,300000);
+         ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,PB_START_TIME);
          propagate;
       }
 
-      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,60000);
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,DEFLT_START_TIME);
       
       for i in plActive
       {
@@ -1455,7 +1480,8 @@ messages:
 
       if StringEqual(string,"leave survival")
       {
-         Send(self,@BootUser,#who=what);
+         Post(self,@BootUser,#who=what);
+         return;
       }
 
       propagate;
@@ -1467,6 +1493,9 @@ messages:
          OR IsClass(oSpell,&Rescue)
          OR IsClass(oSpell,&DeathRift)
          OR IsClass(oSpell,&Truce)
+         OR IsClass(oSpell,&Jig)
+         OR IsClass(oSpell,&SporeBurst)
+         OR IsClass(oSpell,&SummonWeb)
       {
          return FALSE;
       }

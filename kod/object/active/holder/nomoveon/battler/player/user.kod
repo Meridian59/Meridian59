@@ -380,6 +380,10 @@ resources:
       "There is already a guild survival arena running."
    survival_err_already_public = \
       "There is already a public survival arena running."
+   survival_no_public_rooms = \
+      "There are no public survival rooms currently running."
+   survival_no_guild_rooms = \
+      "Your guild has no survival rooms running at this time."
       
    survival_err_cant_join = \
       "That survival arena has already begun, and you cannot join."
@@ -4341,7 +4345,7 @@ messages:
       {
          If StringEqual(String,"start solo survival")
          {
-            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
@@ -4361,7 +4365,7 @@ messages:
                return;
             }
             
-            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
@@ -4384,7 +4388,7 @@ messages:
 
          If StringEqual(String,"start public survival")
          {
-            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
@@ -4405,12 +4409,27 @@ messages:
          }
 
          If StringEqual(String,"join guild survival")
-            AND Send(self,@GetGuild) <> $
-            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-            AND NOT Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
-            AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
-                     #oGuild=Send(self,@GetGuild)) <> $
          {
+            if Send(self,@GetGuild) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
+               return;
+            }
+
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+            
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
+                     #oGuild=Send(self,@GetGuild)) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_no_guild_rooms);
+               return;
+            }
+
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
                     @FindRoomByGuild,#oGuild=Send(self,@GetGuild)),
                     @GetAllowJoins)
@@ -4427,10 +4446,20 @@ messages:
          }
 
          If StringEqual(String,"join public survival")
-            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-            AND NOT Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
-            AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) <>$
          {
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+            
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_no_public_rooms);
+               return;
+            }
+
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
                     @FindPublicRoom),
                     @GetAllowJoins)
@@ -5327,9 +5356,9 @@ messages:
          Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
+      if (Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
+         OR Send(self,@IsInCannotInteractMode))
          AND NOT IsClass(oSpell,&Phase)
-         OR Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_cast);
 
@@ -8549,13 +8578,13 @@ messages:
       if Send(self,@IsPhasedOut)
       {
          iFlags = iFlags & ~DRAWFX_MASK;
-         iFlags = iFlags | DRAWFX_DITHERGREY;
+         iFlags = iFlags | DRAWFX_DITHERINVIS;
       }
 
-      if Send(self,@IsInSpectatorMode)
+      if pbSpectatorMode
       {
          iFlags = iFlags & ~DRAWFX_MASK;
-         iFlags = iFlags | DRAWFX_DITHERINVIS;
+         iFlags = iFlags | DRAWFX_DITHERGREY;
       }
 
       return iFlags;

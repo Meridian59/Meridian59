@@ -230,6 +230,19 @@ messages:
       % Keep track that we've affected this object.
       plAffected = Cons(what,plAffected);
 
+      % Event monsters with boosted levels are granted walkthrough walls
+      % when a wall element damages or affects them
+      if IsClass(what,&Monster)
+         AND Send(what,@GetBoostedLevel) > 0
+      {
+         Send(what,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
+      }
+      
+      if IsClass(what,&LupoggKing)
+      {
+         Send(what,@AngeredByWallElement,#what=self);
+      }
+
       return;
    }
 

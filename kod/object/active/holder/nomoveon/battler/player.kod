@@ -7122,7 +7122,9 @@ messages:
       {
          piHealth = bound(amount*100,0,$);
       }
-      
+
+      Send(self,@DrawHealth);
+
       return;
    }
 

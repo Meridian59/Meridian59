@@ -62,6 +62,9 @@ resources:
    lupoggking_no_lwall = \
       "You cannot place a wall of lightning here."
    lupoggking_spit = gob.bgf
+   
+   angered_by_wall_element_msg = \
+      "Enraged by %s%s, the lupogg king stomps down hard!"
 
 classvars:
    vrName = lupoggking_name_rsc
@@ -111,6 +114,7 @@ messages:
                         [-ATCK_SPELL_SHOCK, 90],
                         [-ATCK_SPELL_ACID, -20 ],
                         [-ATCK_SPELL_FIRE, -20 ],
+                        [-ATCK_SPELL_QUAKE, 100 ],
                         [ATCK_WEAP_NERUDITE, -40 ]
                       ];
 
@@ -255,27 +259,6 @@ messages:
       if oSpell = Send(SYS,@FindSpellByNum,#num=SID_TRUCE)
       {
          Send(who,@MsgSendUser,#message_rsc=lupoggking_no_truce);
-
-         return FALSE;
-      }
-
-      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FIREWALL)
-      {
-         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_illusion);
-
-         return FALSE;
-      }
-
-      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_FIREWALL)
-      {
-         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_firewall);
-
-         return FALSE;
-      }
-
-      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING_WALL)
-      {
-         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_lwall);
 
          return FALSE;
       }
@@ -559,6 +542,27 @@ messages:
    CanEvilTwin()
    {
       return FALSE;
+   }
+   
+   AngeredByWallElement(what=$)
+   {
+      local i, oSpell, lFinalTargets;
+      
+      for i in plAttackers
+      {
+         Send(i,@MsgSendUser,#message_rsc=angered_by_wall_element_msg,
+                             #parm1=Send(what,@GetDef),
+                             #parm2=Send(what,@GetName));
+      }
+      
+      Send(poOwner,@DeleteWallsAroundBattler,#who=self);
+      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
+      lFinalTargets = Send(oSpell,@GetTargets,#who=poOwner);
+      Post(oSpell,@CastSpell,#who=poOwner,#iSpellPower=40,
+            #lTargets=lFinalTargets);
+
+      return;
    }
 
 end

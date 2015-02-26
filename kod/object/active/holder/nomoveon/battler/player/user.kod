@@ -4066,7 +4066,7 @@ messages:
 	  % shrunken head picked up
 	  if isClass(what, &ShrunkenHead)
 	  {
-		 send(what,@PickedUp,#by=self);
+		 Send(what,@PickedUp,#by=self);
 	  }
 
       Send(self,@NewHold,#what=what,#bFromReagentBag=bFromReagentBag);
@@ -5479,7 +5479,7 @@ messages:
             AND FindListElem(lObjects,i) <> 0
          {
             Debug("ALERT! ",Send(self,@GetTrueName),self,"tried to offer a "
-                  "duplicate item to",send(what,@GetTrueName),what,".");
+                  "duplicate item to",Send(what,@GetTrueName),what,".");
 
             return FALSE;
          }
@@ -8230,7 +8230,7 @@ messages:
                % If the user is in a different region from their last safe room, use region default homeroom instead.
                % This can happen if a player goes to a new region but never stops in at a safe room.
 
-               oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               oTargetRoom = Send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
                Send(oTargetRoom,@Teleport,#what=self);
                Send(self,@MsgSendUser,#message_rsc=user_goto_safety);
             }
@@ -8253,7 +8253,7 @@ messages:
             }
             else
             {
-               oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               oTargetRoom = Send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
 
                piSave_room = Send(oTargetRoom,@GetRoomNum);
                piSave_row = Send(oTargetRoom,@GetTeleportRow);
@@ -9311,13 +9311,13 @@ messages:
       oSkill,iSkillAbility,iSkillNum;
 
       % if stats reset is turned off, ignore the request
-      if NOT Send(Send(Sys,@GetSettings),@GetStatsResetEnabled)
+      if NOT Send(Send(SYS,@GetSettings),@GetStatsResetEnabled)
       {
          return;
       }
       
       if Send(self,@FindHolding,#what=&StatsResetToken) = $
-         AND (piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap))
+         AND (piBase_Max_Health > Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap))
       {
          return;
       }
@@ -9340,7 +9340,7 @@ messages:
          OR (mysticism < 1 OR mysticism > 50)
          OR (aim < 1 OR aim > 50)
       {
-         debug("Stat Range Check: Failed!");
+         Debug("Stat Range Check: Failed!");
          return FALSE;
       }
       
@@ -9353,17 +9353,17 @@ messages:
          OR (jala_lvl < 0 OR jala_lvl > 6)
          OR (weaponcraft_lvl < 0 OR weaponcraft_lvl > 6)
       {
-         debug("School Range Check: Failed!");
+         Debug("School Range Check: Failed!");
          return FALSE;
       }
          
       % Quick check for too many points in stats
       if ((might + intellect + stamina + agility + mysticism + aim) > 200 )
       {
-         debug("Points Check: FAIL!");
+         Debug("Points Check: FAIL!");
          return FALSE;
       }
-      debug(("points check: PASS"));
+      Debug(("points check: PASS"));
 
       % Check school levels for funny business
       
@@ -9383,7 +9383,7 @@ messages:
          }
          if (Nth(lSpellLevels_new,i) > Nth(lSpellLevels,i))
          {
-            debug("School Not Increased Check: FAIL!");
+            Debug("School Not Increased Check: FAIL!");
             return FALSE;
          }
          i=i+1;
@@ -9404,7 +9404,7 @@ messages:
          }
          if (Nth(lSkillLevels_new,i) > Nth(lSkillLevels,1))
          {
-            debug("School Not Increased Check: FAIL!");
+            Debug("School Not Increased Check: FAIL!");
             return FALSE;
          }
          i=i+1;
@@ -9417,17 +9417,18 @@ messages:
       if ((totalLevels - totalSchools > 8)
                AND (((totalLevels - totalSchools - 8) * 5) > intellect))
       {
-         debug("Int Check: FAIL!");
-         %debug("total levels",totalLevels,"intellect",intellect,"needed",(totalLevels - totalSchools - 8) * 5);
+         Debug("Int Check: FAIL!");
+         %Debug("total levels",totalLevels,"intellect",intellect,"needed",
+         %      (totalLevels - totalSchools - 8) * 5);
          return FALSE;
       }
       
-      debug(("School Level Check: PASS"));
+      Debug(("School Level Check: PASS"));
       
       % everything looks good, start adjusting stats
       
       % Consume token
-      if piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+      if piBase_Max_Health > Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap)
       {
          Send(Send(self,@FindHolding,#class=&StatsResetToken),@Delete);
       }
@@ -9447,7 +9448,7 @@ messages:
          }
          i=i+1;
       }
-      debug("Spell Schools Stripped");
+      Debug("Spell Schools Stripped");
       % Strip Skills (Skill schools start at 10)
       i=1;
       while (i <= NUM_SKILL_SCHOOLS)
@@ -9464,7 +9465,7 @@ messages:
          }
          i=i+1;
       }
-      debug("Skill Schools Stripped");
+      Debug("Skill Schools Stripped");
       
       % Now iterate through the player's spells and strip 2% per stat loss
       for i in plSpells
@@ -9479,9 +9480,9 @@ messages:
             if (iSpellAbility > (stamina * 2)) AND (stamina < piStamina)
                OR (iSpellAbility = 99 AND piStamina = 50 AND stamina < 50)
             {
-               Send(self,@ChangeSpellAbility,
-                  #spell_num=iSpellNum,
-                  #amount=((piStamina - stamina) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
+               Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
+                     #amount=((piStamina - stamina)
+                     * Send(Send(SYS,@GetSettings),@GetStatsResetPenalty)));
             }
          }
          else
@@ -9491,9 +9492,9 @@ messages:
                if (iSpellAbility > (intellect * 2)) AND (intellect < piIntellect)
                   OR (iSpellAbility = 99 AND piIntellect = 50 AND intellect < 50)
                {
-                  Send(self,@ChangeSpellAbility,
-                     #spell_num=iSpellNum,
-                     #amount=((piIntellect - intellect) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
+                  Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
+                        #amount=((piIntellect - intellect)
+                        * Send(Send(SYS,@GetSettings),@GetStatsResetPenalty)));
                }
             }
             % must be STAT_ID_MYSTICISM
@@ -9502,14 +9503,14 @@ messages:
                if (iSpellAbility > (piMysticism * 2)) AND (mysticism < piMysticism)
                   OR (iSpellAbility = 99 AND piMysticism = 50 AND mysticism < 50)
                {
-                  Send(self,@ChangeSpellAbility,
-                     #spell_num=iSpellNum,
-                     #amount=((piMysticism - mysticism) * Send(Send(Sys,@GetSettings),@GetStatsResetPenalty)));
+                  Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
+                        #amount=((piMysticism - mysticism)
+                        * Send(Send(SYS,@GetSettings),@GetStatsResetPenalty)));
                }
             }
          }
       }
-      debug("Spell % Recalculated");
+      Debug("Spell % Recalculated");
       
       for i in plSkills
       {
@@ -9523,7 +9524,8 @@ messages:
             if (iSkillAbility > (agility * 2)) AND (agility < piAgility)
                OR (iSkillAbility = 99 AND piAgility = 50 AND agility < 50)
             {
-               Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piAgility - agility) * -2));
+               Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                     #amount=((piAgility - agility) * -2));
             }
          }
          else
@@ -9533,7 +9535,8 @@ messages:
                if (iSkillAbility > (aim * 2)) AND (aim < piAim)
                   OR (iSkillAbility = 99 AND piAim = 50 AND aim < 50)
                {
-                  Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piAim - aim) * -2));
+                  Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                        #amount=((piAim - aim) * -2));
                }
             }
             else
@@ -9543,7 +9546,8 @@ messages:
                   if (iSkillAbility > (might * 2)) AND (might < piMight)
                      OR (iSkillAbility = 99 AND piMight = 50 AND might < 50)
                   {
-                     Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piMight - might) * -2));
+                     Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                           #amount=((piMight - might) * -2));
                   }
                }
                else
@@ -9553,24 +9557,27 @@ messages:
                      if (iSkillAbility > (stamina * 2)) AND (stamina < piStamina)
                         OR (iSkillAbility = 99 AND piStamina = 50 AND stamina < 50)
                      {
-                        Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,#amount=((piStamina - stamina) * -2));
+                        Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                              #amount=((piStamina - stamina) * -2));
                      }
                   }
                }
             }
          }
       }
-      debug("Skill % Recalculated");
+      Debug("Skill % Recalculated");
       
       % A change in stamina results in a reduction in hitpoints if the
       %   player's hitpoints will be > 100 + new Stamina
       if (piBase_Max_Health > 100 + stamina)
       {
          Send(self,@GainBaseMaxHealth,#amount=((100 + stamina) - piBase_Max_health));
-         debug("HitPoints Adjusted");   
+         Debug("HitPoints Adjusted");   
       }
       
-
+      Debug(Send(self,@GetTrueName), " changed stats from ",
+         piMight, piIntellect, piStamina, piAgility, piMysticism, piAim,
+         " to ", might, intellect, stamina, agility, mysticism, aim);
       % Now set the stats
       piStamina = stamina;
       piIntellect = intellect;
@@ -9578,17 +9585,16 @@ messages:
       piAgility = agility;
       piMysticism = mysticism;
       piAim = aim;
-      debug("Stats Changed");
       
       % recalculate mana pool based on nodes and mysticism
       Send(self,@ComputeMaxMana);
-      debug("Mana Recalculated");
+      Debug("Mana Recalculated");
       
       % TODO: Unload stats.dll module.
 
       % Refresh the client screen so they see the new stats
-      send(self, @InvalidateData);
-      debug("Player Updated!");
+      Send(self, @InvalidateData);
+      Debug("Player Updated!");
 
       return;
    }

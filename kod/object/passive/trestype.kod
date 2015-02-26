@@ -304,6 +304,9 @@ messages:
                   Send(who,@MsgSendUser,#message_rsc=trinket_found_rsc,
                         #parm1=Send(mob,@GetDef),#parm2=Send(mob,@GetName));
                }
+               Debug(Send(who,@GetTrueName)," found an ancient trinket on a ",
+                  Send(mob,@GetName));
+               Send(Send(SYS,@GetStatistics),@TrinketFound);
 
                return oObj;
             }

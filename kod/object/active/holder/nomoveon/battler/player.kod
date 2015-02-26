@@ -4728,13 +4728,13 @@ messages:
          oTargetOwner = Send(oFinalTarget,@GetOwner);
       }
 
-      iDist = Send(self,@SquaredFineDistanceTo3D,#what=oFinalTarget);
-
       % If we don't share the same owner, then we're not in range.
       if poOwner <> oTargetOwner
       {
          return FALSE;
       }
+
+      iDist = Send(self,@SquaredFineDistanceTo3D,#what=oFinalTarget);
 
       % See if target is within range, if we provided a range.
       if iRange <> $

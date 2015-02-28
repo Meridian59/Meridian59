@@ -625,9 +625,9 @@ messages:
    
    LevelComplete()
    {
-      local i, each_obj, lFixedReward, oReward, oRewardTime, lRandomSpawnPoint;
+      local i, each_obj, lFixedReward, oReward, iRewardTime, lRandomSpawnPoint;
 
-      oRewardTime = 0;
+      iRewardTime = 0;
 
       % Prevent multi-level completion
       if NOT pbSpawnWaves
@@ -692,12 +692,12 @@ messages:
             Send(self,@NewHold,#what=oReward,
                                #new_row=Nth(lRandomSpawnPoint,1),
                                #new_col=Nth(lRandomSpawnPoint,2));
-            oRewardTime = oRewardTime + 45000;
+            iRewardTime = iRewardTime + 45000;
          }
       }
 
       ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
-                              piRegroupTime + oRewardTime);
+                              piRegroupTime + iRewardTime);
       
       for i in plActive
       {
@@ -705,7 +705,7 @@ messages:
          {
             Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
                                 #parm1 = piLevel,
-                                #parm2 = (piRegroupTime + oRewardTime)/1000);
+                                #parm2 = (piRegroupTime + iRewardTime)/1000);
          }
       }
 

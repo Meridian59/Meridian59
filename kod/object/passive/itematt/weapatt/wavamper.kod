@@ -67,6 +67,13 @@ messages:
    "Wielder has a 10% chance of stealing life from target with any hit."
    {
       local oSpell;
+      
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if Random(1,100) <= piEffect_percent
       {
          Send(wielder,@GainHealth,
@@ -79,7 +86,7 @@ messages:
                #parm3=Send(wielder,@GetHisHer));
       }
 
-      return Damage;
+      return damage;
    }
 
    ItemReqUse(oItem=$,oPlayer=$)

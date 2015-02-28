@@ -24,7 +24,7 @@ WeapAttCeremonial is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
    weapattcerem_desc = " Beautiful and ornate, this weapon is obviously "
@@ -80,6 +80,11 @@ messages:
    {
       local oRoom, iPower;
 
+      if wielder = $
+      {
+         return hitroll;
+      }
+
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
@@ -87,7 +92,7 @@ messages:
 
       if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
       {
-         return (hitroll + iPower);  
+         return (hitroll + iPower);
       }
 
       return (hitroll - iPower);
@@ -98,12 +103,17 @@ messages:
    {
       local oRoom, iPower;
 
+      if wielder = $
+      {
+         return damage;
+      }
+
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
       oRoom = Send(wielder,@GetOwner);
 
-      if Send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
       {
          return (damage + iPower);
       }

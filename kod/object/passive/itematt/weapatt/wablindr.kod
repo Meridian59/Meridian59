@@ -27,7 +27,8 @@ constants:
 
 resources:
 
-   weapattblinder_desc = " Q's insignia is emblazoned on the metal of the weapon."
+   weapattblinder_desc = \
+      " Q's insignia is emblazoned on the metal of the weapon."
    blinder_fail_use = "You are not yet ready to use %s%s."
    blinder_worked = "%s%s stumbles away, screaming and clutching %s eyes!"
    blinder_dm = "blinder"
@@ -64,7 +65,6 @@ messages:
       return TRUE;
    }
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
@@ -76,6 +76,12 @@ messages:
    {
       local oSpell;
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if Random(1,100) < piEffect_percent
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_blind);
@@ -83,7 +89,8 @@ messages:
          %% No duplicates
          if NOT Send(target,@IsEnchanted,#what=oSpell)
          {
-            Send(oSpell,@CastSpell,#who=self,#ltargets=[target],#iSpellPower=50,#bItemCast=TRUE);
+            Send(oSpell,@CastSpell,#who=self,#ltargets=[target],
+                  #iSpellPower=50,#bItemCast=TRUE);
             Send(wielder,@MsgSendUser,#message_rsc=blinder_worked,
                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName),
                  #parm3=Send(target,@GetHisher));

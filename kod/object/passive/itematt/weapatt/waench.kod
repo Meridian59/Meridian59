@@ -74,9 +74,9 @@ messages:
          Send(self,@AddToItem,#oItem=oItem,
                #timer_duration = random(3600000,86400000),#random_gen=TRUE);
       }
+
       return;
    }
-
 
    ReqAddToItem(oItem=$)
    "You currently cannot have two different spelltypes "

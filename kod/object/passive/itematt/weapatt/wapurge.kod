@@ -74,6 +74,12 @@ messages:
    {
       local oSpell;
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if Random(1,100) < piEffect_percent
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_PURGE);
@@ -86,12 +92,14 @@ messages:
             {
                % Only tell our victim if they lost enchantments.
                Send(target,@MsgSendUser,#message_rsc=purger_worked_target,
-                     #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
+                     #parm1=Send(wielder,@GetCapDef),
+                     #parm2=Send(wielder,@GetName));
             }
 
             % Tell the wielder every time we fired so they think it's cool.
             Send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
-                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+                  #parm1=Send(target,@GetCapDef),
+                  #parm2=Send(target,@GetName));
          }
       }
 

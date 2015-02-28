@@ -71,6 +71,12 @@ messages:
    {
       local oSpell,iAmountTaken,iAmountGiven,iProficiency;
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if Random(1,100) <= piEffect_percent
       {
          iAmountTaken = Random(piMinManaStolen,piMaxManaStolen);

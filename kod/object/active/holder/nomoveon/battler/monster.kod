@@ -624,10 +624,7 @@ messages:
       % Minion Management - upon dying they should leave your control list
       if poMaster <> $
       {
-         if IsClass(poMaster,&User)
-         {
-            Send(poMaster,@RemoveControlledMinion,#what=self);
-         }
+         Send(poMaster,@RemoveControlledMinion,#what=self);
       }
 
       % If this monster is an 'Evil Twin', tell the original it was deleted.
@@ -1781,6 +1778,9 @@ messages:
          }
       }
 
+      % If we have minions, see if they can attack too
+      Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+
       % Face the target.
       Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),
             #new_col=Send(what,@GetCol),#new_finerow=Send(what,@GetFineRow),
@@ -1920,6 +1920,9 @@ messages:
          return 0;
       }
 
+      % Attacks against a minion master will cause minions to defend the master
+      Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+
       % check for any applicable resistances.
 
       if NOT absolute
@@ -1987,7 +1990,7 @@ messages:
          Post(what,@MsgPlayerHitResisted,#what=what,#resistance=iResist,
               #target=self,#color_rsc=monster_color_blue_rsc);
       }
-      
+
       return iDamage;
    }
 
@@ -3503,7 +3506,6 @@ messages:
 
       % If we have a master, they are responsible for our kills.
       if poMaster <> $
-         AND IsClass(poMaster,&Player)
       {
          if IsClass(what,&Player)
             AND IsClass(poMaster,&Player)
@@ -6102,6 +6104,48 @@ messages:
    "If this monster is an apparition, keep track of the caster."
    {
       poApparitionCaster = who;
+
+      return;
+   }
+
+   % This section deals with minion code.
+   CommandMinionAttack(oMaster=$,oTarget=$)
+   {
+      local oActive;
+
+      % If we have minions, we only want them to attack Battlers,
+      % not items or anything else that can damage us.
+      if plControlledMinions = $
+         OR oTarget = $
+         OR NOT IsClass(oTarget,&Battler)
+         OR IsClass(oTarget,&Revenant)
+      {
+         return;
+      }
+
+      % Lets not have the minions kill each other. Check if the target is
+      % a minion under our control.
+      if IsClass(oTarget,&Monster)
+         AND Send(oTarget,@GetMaster) = self
+      {
+         return;
+      }
+
+
+      for oActive in plControlledMinions
+      {
+         if IsClass(oActive,&Monster)
+            AND Send(oActive,@GetMaster) = self
+            AND Send(oActive,@GetTarget) <> oTarget
+         {
+            Send(oActive,@SetBehaviorFlag,
+                  #flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+            Send(oActive,@TargetSwitch,#what=oTarget,
+                  #iHatred=100);
+            Send(oActive,@EnterStateChase,#target=oTarget,
+                  #actnow=TRUE);
+         }
+      }
 
       return;
    }

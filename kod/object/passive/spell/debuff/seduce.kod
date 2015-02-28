@@ -101,7 +101,8 @@ messages:
 
       if oMaster <> $
       {
-         if NOT Send(Send(who,@GetOwner),@IsArena)
+         if IsClass(who,&Player)
+            AND NOT Send(Send(who,@GetOwner),@IsArena)
             AND NOT Send(who,@CheckStatusAndSafety,#victim=oMaster,
                         #report=TRUE,#minion=TRUE)
          {
@@ -118,12 +119,23 @@ messages:
          }
       }
 
-      if Send(who,@CheckPlayerMinionCount) 
-            >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+      if IsClass(who,&Player)
       {
-         Send(who,@MsgSendUser,#message_rsc=seduce_too_many);
+         if Send(who,@CheckBattlerMinionCount)
+               >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+         {
+            Send(who,@MsgSendUser,#message_rsc=seduce_too_many);
 
-         return FALSE;
+            return FALSE;
+         }
+      }
+      else
+      {
+         if Send(who,@CheckBattlerMinionCount)
+               >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+         {
+            return FALSE;
+         }
       }
 
       propagate;
@@ -145,6 +157,33 @@ messages:
    DoSpell(what=$,oTarget=$,iDuration=0,iSpellPower=0)
    {
       local iRoll, oMaster;
+
+      if IsClass(what,&Monster)
+      {
+         % If a monster successfully casts this spell, we assume
+         % they're allowed to have whatever they're casting on
+         % as a minion.
+
+         oMaster = Send(oTarget,@GetMaster);
+         if oMaster <> $
+         {
+            Send(oMaster,@MsgSendUser,#message_rsc=seduce_stolen,
+                  #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(oTarget,@GetName));
+            % Since we don't necessarily want it going after the old master,
+            % use RemoveEnchantment instead of EndEnchantment
+            Send(oMaster,@RemoveControlledMinion,#what=oTarget);
+            Send(oTarget,@RemoveEnchantment,#what=self);
+         }
+
+         Post(oTarget,@StartEnchantment,#what=self,
+               #time=iDuration,#state=what);
+         Post(oTarget,@SetMaster,#oMaster=what);
+         Send(what,@NewControlledMinion,#minion=oTarget);
+         Post(oTarget,@ResetBehaviorFlags);
+         
+         propagate;
+      }
 
       % We determine our chances of success by adding together the caster's
       % HP/2, intellect and spellpower, and if this is larger than the
@@ -180,10 +219,7 @@ messages:
                #parm3=Send(oTarget,@GetName));
             % Since we don't necessarily want it going after the old master,
             % use RemoveEnchantment instead of EndEnchantment
-            if IsClass(oMaster,&Player)
-            {
-               Send(oMaster,@RemoveControlledMinion,#what=oTarget);
-            }
+            Send(oMaster,@RemoveControlledMinion,#what=oTarget);
             Send(oTarget,@RemoveEnchantment,#what=self);
          }
 

@@ -172,6 +172,7 @@ properties:
 
    % Number of minions allowed per caster.
    piPlayerMinionLimit = 4
+   piMonsterMinionLimit = 4
 
    % Minimum swings needed for a chance to improve a weaponcraft skill.
    piWeaponcraftImprovementMinimumSwings = 50
@@ -483,6 +484,11 @@ messages:
    GetPlayerMinionLimit()
    {
       return piPlayerMinionLimit;
+   }
+
+   GetMonsterMinionLimit()
+   {
+      return piMonsterMinionLimit;
    }
 
    GetSwingsPerImproveCheck()

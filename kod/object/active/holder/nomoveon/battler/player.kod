@@ -848,10 +848,6 @@ properties:
    poGuild = $
    piGuildRejoinTimestamp = 0
 
-   % store minions
-   plControlledMinions = $
-   ptMinionControlCheck = $
-
    % Evil twin object
    poEvilTwin = $
 
@@ -14184,13 +14180,8 @@ messages:
       return;
    }
 
-   % Can the user have controllable units
-   CanUserHaveMinions(who = $)
-   {
-      return TRUE;
-   }
-
-  CommandMinionAttack(oMaster=$,oTarget=$)
+   % This section deals with minion code.
+   CommandMinionAttack(oMaster=$,oTarget=$)
    {
       local oActive;
 
@@ -14228,90 +14219,6 @@ messages:
                      #actnow=TRUE);
             }
          }
-      }
-
-      return;
-   }
-
-   NewControlledMinion(minion=$)
-   {
-      if ptMinionControlCheck = $
-      {
-         CreateTimer(self,@MinionControlCheck,2000);
-      }
-
-      plControlledMinions = Cons(minion,plControlledMinions);
-
-      return;
-   }
-
-   RemoveControlledMinion(what=$)
-   {
-      if plControlledMinions <> $
-      {
-         % Use FindListElem; there are rare cases where we have
-         % a valid minion that doesn't go on our control list.
-         if FindListElem(plControlledMinions,what)
-         {
-            plControlledMinions = DelListElem(plControlledMinions,what);
-         }
-      }
-
-      return;
-   }
-
-   GetControlledMinions()
-   {
-      return plControlledMinions;
-   }
-
-   CheckPlayerMinionCount()
-   {
-      local i,iMinionCount;
-
-      iMinionCount = 0;
-
-      for i in plControlledMinions
-      {
-         if NOT IsClass(i,&Reflection)
-         {
-            iMinionCount = iMinionCount + 1;
-         }
-      }
-
-      return iMinionCount;
-   }
-
-   MinionControlCheck()
-   {
-      local i;
-
-      if Length(plControlledMinions) > 0
-      {
-         for i in plControlledMinions
-         {
-            if Send(i,@GetMaster) <> self
-            {
-               Send(self,@RemoveControlledMinion,#what=i);
-
-               continue;
-            }
-
-            if Send(i,@GetTarget) = $
-            {
-               Send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
-                     #value=TRUE);
-            }
-         }
-         CreateTimer(self,@MinionControlCheck,2000);
-      }
-      else
-      {
-         if ptMinionControlCheck <> $
-         {
-            DeleteTimer(ptMinionControlCheck);
-         }
-         ptMinionControlCheck = $;
       }
 
       return;

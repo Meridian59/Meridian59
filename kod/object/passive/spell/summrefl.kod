@@ -109,11 +109,12 @@ messages:
       if IsClass(who,&Player)
       {
          Send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
-         Send(who,@NewControlledMinion,#minion=oReflection);
       }
-
+      
+      Send(who,@NewControlledMinion,#minion=oReflection);
       Send(SYS,@AddReflection,#who=who,#oReflection=oReflection);
-      Send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      Send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
+            #value=TRUE);
 
       propagate;
    }

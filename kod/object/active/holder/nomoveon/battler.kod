@@ -166,6 +166,10 @@ properties:
    plApparitionList = $
    poApparitionOriginal = $
 
+   % Store minions
+   plControlledMinions = $
+   ptMinionControlCheck = $
+
    % list of resistances, Each element is [value, type].
    plResistances = $
 
@@ -190,7 +194,30 @@ messages:
    {
       return FALSE;
    }
-  
+
+   Delete()
+   {
+      local i;
+
+      % Clear minion control list. Delete each of our minions
+      % unless they are reflections, which are handled separately.
+      % Deleted minions will remove themselves from our list, we
+      % just need to let them know they're to be deleted.
+      if plControlledMinions <> $
+      {
+         for i in plControlledMinions
+         {
+            if IsClass(i,&Monster)
+               AND NOT IsClass(i,&Reflection)
+            {
+               Send(i,@Delete);
+            }
+         }
+      }
+
+      propagate;
+   }
+
    ReqNewOwner(what = $)
    {
       return IsClass(what,&Room);
@@ -1392,6 +1419,93 @@ messages:
       }
       
       return 0;
+   }
+
+   % This section deals with minion control code.
+   % Player and Monster both have a copy of CommandMinionAttack.
+
+   NewControlledMinion(minion=$)
+   {
+      if ptMinionControlCheck = $
+      {
+         CreateTimer(self,@MinionControlCheck,2000);
+      }
+
+      plControlledMinions = Cons(minion,plControlledMinions);
+
+      return;
+   }
+
+   RemoveControlledMinion(what=$)
+   {
+      if plControlledMinions <> $
+      {
+         % Use FindListElem; there are rare cases where we have
+         % a valid minion that doesn't go on our control list.
+         if FindListElem(plControlledMinions,what)
+         {
+            plControlledMinions = DelListElem(plControlledMinions,what);
+         }
+      }
+
+      return;
+   }
+
+   GetControlledMinions()
+   {
+      return plControlledMinions;
+   }
+
+   CheckBattlerMinionCount()
+   {
+      local i,iMinionCount;
+
+      iMinionCount = 0;
+
+      for i in plControlledMinions
+      {
+         if NOT IsClass(i,&Reflection)
+         {
+            iMinionCount = iMinionCount + 1;
+         }
+      }
+
+      return iMinionCount;
+   }
+
+   MinionControlCheck()
+   {
+      local i;
+
+      if Length(plControlledMinions) > 0
+      {
+         for i in plControlledMinions
+         {
+            if Send(i,@GetMaster) <> self
+            {
+               Send(self,@RemoveControlledMinion,#what=i);
+
+               continue;
+            }
+
+            if Send(i,@GetTarget) = $
+            {
+               Send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
+                     #value=TRUE);
+            }
+         }
+         CreateTimer(self,@MinionControlCheck,2000);
+      }
+      else
+      {
+         if ptMinionControlCheck <> $
+         {
+            DeleteTimer(ptMinionControlCheck);
+         }
+         ptMinionControlCheck = $;
+      }
+
+      return;
    }
 
    % This section deals with illusions cast by/on the battler

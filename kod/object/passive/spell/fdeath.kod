@@ -19,8 +19,9 @@ resources:
    feigndeath_name_rsc = "feign death"
    feigndeath_icon_rsc = ifeignde.bgf
    feigndeath_desc_rsc = \
-      "Makes you appear to be deceased, that hopefully someone won't really make you as such.  "
-      "Requires solagh and rainbow ferns to cast."
+      "Makes you appear to be deceased, that hopefully someone won't "
+      "really make you as such.  Requires one solagh and one rainbow "
+      "fern to cast."
 
    feigndeath_user_killed = "~B~U~k[###]~n ~B~v%s was just killed by %s%s."
    feigndeath_angrymocker = "an angry guy named Mocker"
@@ -64,20 +65,21 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oMonster, oBody, oRoom, oScapegoat, iRand, i, each_obj, row, col, iDropChance;
+      local oMonster, oBody, oRoom, oScapegoat, iRand, i, each_obj,
+            row, col, iDropChance;
       
-      oRoom = send(who,@GetOwner);
-      row = send(who,@GetRow);
-      col = send(who,@GetCol);
+      oRoom = Send(who,@GetOwner);
+      row = Send(who,@GetRow);
+      col = Send(who,@GetCol);
 
       if IsClass(oRoom,&MonsterRoom)
-         AND send(oRoom,@GetMonsterList) <> $
+         AND Send(oRoom,@GetMonsterList) <> $
       {
-         oScapeGoat = create(First(First(send(oRoom,@GetMonsterList))));
+         oScapeGoat = Create(First(First(Send(oRoom,@GetMonsterList))));
       }
       else
       {
-         oScapeGoat = create(&GiantRat);
+         oScapeGoat = Create(&GiantRat);
       }
 
       oBody = $;
@@ -90,53 +92,53 @@ messages:
 
          if oMonster <> $
          {
-            oBody = send(oMonster,@CreateDeadBody,#killer=oScapeGoat);
+            oBody = Send(oMonster,@CreateDeadBody,#killer=oScapeGoat);
          }
 
-         send(who,@RemoveEnchantmentClass,#class=&Morph);
+         Send(who,@RemoveEnchantmentClass,#class=&Morph);
       }
 
       if Send(who,@IsEnchanted,#class=&IllusionaryForm)
       {
-         send(who,@RemoveEnchantmentClass,#class=&IllusionaryForm);
+         Send(who,@RemoveEnchantmentClass,#class=&IllusionaryForm);
       }
 
       if oBody = $
       {
-         oBody = send(who,@CreateCorpse,#Decomposes=FALSE);
+         oBody = Send(who,@CreateCorpse,#Decomposes=FALSE);
       }
 
-      send(who,@SetPlayerIllusion,#what=self);
-      send(who,@StartEnchantment,#what=self,#time=viDrainTime,
+      Send(who,@SetPlayerIllusion,#what=self);
+      Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
            #state=[oBody,iSpellPower],#addicon=TRUE,#lastcall=FALSE);
 
-      if NOT send(who,@PlayerIsImmortal)
+      if NOT Send(who,@PlayerIsImmortal)
       {
          % Chance to drop item, 1-10%, decreasing with increasing spellpower.
          iDropChance = bound((10 - (iSpellPower/10)),1,10);
 
-         for i in send(who,@GetPlayerUsing)
+         for i in Send(who,@GetPlayerUsing)
          {
-            if (send(i,@GetItemUseType) & (ITEM_USE_HAND | ITEM_USE_HEAD))
-               AND (NOT send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
-               AND send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
-               AND send(i,@ReqUnUse)
-               AND send(i,@ReqNewOwner,#what=oRoom)
-               AND send(i,@ReqLeaveOwner)
-               AND send(i,@DropOnDeath)
+            if (Send(i,@GetItemUseType) & (ITEM_USE_HAND | ITEM_USE_HEAD))
+               AND (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
+               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
+               AND Send(i,@ReqUnUse)
+               AND Send(i,@ReqNewOwner,#what=oRoom)
+               AND Send(i,@ReqLeaveOwner)
+               AND Send(i,@DropOnDeath)
                AND NOT IsClass(i,&RiijaSword)
             {
                Send(oRoom,@NewHold,#what=i,#new_row=row,#new_col=col);
             }
          }
          
-         for i in send(who,@GetHolderActive)
+         for i in Send(who,@GetHolderActive)
          {
-            if (NOT send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
-               AND send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
-               AND send(i,@ReqNewOwner,#what=oRoom)
-               AND send(i,@ReqLeaveOwner)
-               AND send(i,@DropOnDeath)
+            if (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
+               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
+               AND Send(i,@ReqNewOwner,#what=oRoom)
+               AND Send(i,@ReqLeaveOwner)
+               AND Send(i,@DropOnDeath)
                AND NOT IsClass(i,&RiijaSword)
                AND Random(1,100) < iDropChance
             {
@@ -144,14 +146,14 @@ messages:
             }
          }
          
-         for i in send(who,@GetHolderPassive)
+         for i in Send(who,@GetHolderPassive)
          {
-            if (NOT send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
-               AND send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
-               AND send(i,@ReqNewOwner,#what=oRoom)
-               AND send(i,@ReqLeaveOwner)
+            if (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
+               AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
+               AND Send(i,@ReqNewOwner,#what=oRoom)
+               AND Send(i,@ReqLeaveOwner)
                AND NOT IsClass(i,&RiijaSword)
-               AND send(i,@DropOnDeath)
+               AND Send(i,@DropOnDeath)
                AND Random(1,100) < iDropChance
             {
                Send(oRoom,@NewHold,#what=i,#new_row=row,#new_col=col);
@@ -164,20 +166,20 @@ messages:
       iRand = Random(1,100);
       if iRand > 3
       {
-         send(self,@SendMessage,#who=who,
+         Send(self,@SendMessage,#who=who,
               #string=feigndeath_user_killed,
-              #parm1=send(who,@GetUserName),
-              #parm2=send(oScapeGoat,@GetIndef),
-              #parm3=send(oScapeGoat,@GetName));
-         send(oScapeGoat,@Delete);
+              #parm1=Send(who,@GetUserName),
+              #parm2=Send(oScapeGoat,@GetIndef),
+              #parm3=Send(oScapeGoat,@GetName));
+         Send(oScapeGoat,@Delete);
       }
       else
       {
          if iRand = 1
          {
-            send(self,@SendMessage,#who=who,
+            Send(self,@SendMessage,#who=who,
                  #string=feigndeath_user_killed,
-                 #parm1=send(who,@GetUserName),
+                 #parm1=Send(who,@GetUserName),
                  #parm2=feigndeath_nuthin,
                  #parm3=feigndeath_angrymocker);
          }
@@ -185,18 +187,18 @@ messages:
          {
             if iRand = 2
             {
-               send(self,@SendMessage,#who=who,
+               Send(self,@SendMessage,#who=who,
                     #string=feigndeath_user_killed,
-                    #parm1=send(who,@GetUserName),
+                    #parm1=Send(who,@GetUserName),
                     #parm2=feigndeath_nuthin,
                     #parm3=feigndeath_fallingpiano);
             }
             else
             {
                % if iRand = 3
-               send(self,@SendMessage,#who=who,
+               Send(self,@SendMessage,#who=who,
                     #string=feigndeath_user_killed,
-                    #parm1=send(who,@GetUserName),
+                    #parm1=Send(who,@GetUserName),
                     #parm2=feigndeath_nuthin,
                     #parm3=feigndeath_firebunny);
             }
@@ -211,36 +213,36 @@ messages:
       local i, j, each_obj, oRoom, lYellList, oYellRoom, bThisRoom;
 
       bThisRoom = FALSE;
-      oRoom = send(who,@GetOwner);
-      lYellList = send(oRoom,@GetYellZone);
+      oRoom = Send(who,@GetOwner);
+      lYellList = Send(oRoom,@GetYellZone);
 
       for i in lYellList
       {
-         oYellRoom = send(SYS,@FindRoomByNum,#Num=i);
+         oYellRoom = Send(SYS,@FindRoomByNum,#Num=i);
          if oYellRoom = oRoom
          {
             bThisRoom = TRUE;
          }
-         for j in send(oYellRoom,@GetHolderActive)
+         for j in Send(oYellRoom,@GetHolderActive)
          {
-            each_obj = send(oYellRoom,@HolderExtractObject,#data=j);
-            if isclass(each_obj,&player)
+            each_obj = Send(oYellRoom,@HolderExtractObject,#data=j);
+            if IsClass(each_obj,&player)
             {
-               send(each_obj,@MsgSendUser,#message_rsc=string,#parm1=parm1,#parm2=parm2,
-                    #parm3=parm3);
+               Send(each_obj,@MsgSendUser,#message_rsc=string,
+                     #parm1=parm1,#parm2=parm2,#parm3=parm3);
             }
          }
       }
-      
+
       if NOT bThisRoom
       {
-         for j in send(oRoom,@GetHolderActive)
+         for j in Send(oRoom,@GetHolderActive)
          {
-            each_obj = send(oRoom,@HolderExtractObject,#data=j);
-            if isclass(each_obj,&player)
+            each_obj = Send(oRoom,@HolderExtractObject,#data=j);
+            if IsClass(each_obj,&player)
             {
-               send(each_obj,@MsgSendUser,#message_rsc=string,#parm1=parm1,#parm2=parm2,
-                    #parm3=parm3);
+               Send(each_obj,@MsgSendUser,#message_rsc=string,
+                     #parm1=parm1,#parm2=parm2,#parm3=parm3);
             }
          }
       }
@@ -248,19 +250,23 @@ messages:
       return;
    }
 
-   RemoveEnchantmentEffects(who=$, state=$)
+   RemoveEnchantmentEffects(who=$,state=$)
    {
-      send(who,@RemoveDefenseModifier,#what=self);
-      send(who,@ResetPlayerIllusion);
-      send(First(state),@Delete);
-      
+      Send(who,@RemoveDefenseModifier,#what=self);
+      Send(who,@ResetPlayerIllusion);
+
+      if state <> $
+      {
+         Send(First(state),@Delete);
+      }
+
       return;
    }
 
    EndEnchantment(who = $, state=$)
-   {      
-      post(self,@RemoveEnchantmentEffects,#who=who,#state=state);
-      
+   {
+      Post(self,@RemoveEnchantmentEffects,#who=who,#state=state);
+
       return;
    }
 
@@ -275,19 +281,19 @@ messages:
    StartPeriodicEnchantment(who = $, state = $)
    {
       % If caster runs out of mana or loses trance, spell ends.
-      if send(who,@GetMana) < viManaDrain * 2
+      if Send(who,@GetMana) < viManaDrain * 2
       {
          Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
-              #state=state,#addicon=FALSE,#lastcall=TRUE);
+               #state=state,#addicon=FALSE,#lastcall=TRUE);
       }
       else
-      {      
+      {
          Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
-              #state=state,#addicon=FALSE,#lastcall=FALSE);
+               #state=state,#addicon=FALSE,#lastcall=FALSE);
       }
-      
+
       Send(who,@LoseMana,#amount=viManaDrain);
-      
+
       return;
    }
 
@@ -295,7 +301,7 @@ messages:
    {
       Send(who,@SetTranceFlag);
       Send(who,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
-      
+
       return;
    }
 
@@ -305,7 +311,7 @@ messages:
    {
       local lState, iSpellpower;
 
-      lState = send(who,@GetEnchantedState,#what=self);
+      lState = Send(who,@GetEnchantedState,#what=self);
 
       if lState <> $
       {
@@ -313,11 +319,11 @@ messages:
       }
       else
       {
-         send(self,@EndEnchantment,#who=who,#state=lState);
+         Send(self,@EndEnchantment,#who=who,#state=lState);
          
          return defense_power;
       }
-      
+
       return (defense_power + (3 * iSpellpower));
    }
 
@@ -337,13 +343,13 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
 
       if oBody = $
       {
          return object_icon_rsc;
       }
-      
+
       return Send(oBody,@GetIcon);
    }
 
@@ -351,7 +357,7 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          AddPacket(1,ANIMATE_NONE,2,1);
@@ -360,7 +366,7 @@ messages:
       {
          Send(oBody,@SendAnimation);
       }
-      
+
       return;
    }
 
@@ -368,7 +374,7 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          AddPacket(1,ANIMATE_NONE,2,1);
@@ -377,7 +383,7 @@ messages:
       {
          Send(oBody,@SendAnimation);
       }
-      
+
       return;
    }
 
@@ -385,7 +391,7 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          AddPacket(1,0);
@@ -394,7 +400,7 @@ messages:
       {
          Send(oBody,@SendOverlays);
       }
-      
+
       return;
    }
 
@@ -402,29 +408,29 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          AddPacket(1,0);
       }
       else
       {
-         send(oBody,@SendOverlays);
+         Send(oBody,@SendOverlays);
       }
-      
+
       return;
    }
 
    IllusionGetTemplate(who = $)
-   {      
+   {
       local oState;
    
       if who <> $
       {
-         oState = send(who,@GetEnchantedState,#what=self);
+         oState = Send(who,@GetEnchantedState,#what=self);
          if oState <> $
          {
-            return first(oState);
+            return First(oState);
          }
       }
 
@@ -435,7 +441,7 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          AddPacket(1,0);
@@ -444,7 +450,7 @@ messages:
       {
          Send(oBody,@ShowDesc);
       }
-      
+
       return;
    }
 
@@ -452,52 +458,51 @@ messages:
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          return object_article_none_rsc;
       }
-      
+
       return Send(oBody,@GetDef);
    }
-   
+
    IllusionGetCapDef(who = $)
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          return object_article_none_rsc;
       }
-      
-      return Send(oBody,@GetCapDef);
 
+      return Send(oBody,@GetCapDef);
    }
-   
+
    IllusionGetInDef(who = $)
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          return object_article_none_rsc;
       }
-      
+
       return Send(oBody,@GetInDef);
    }
-   
+
    IllusionGetCapInDef(who = $)
    {
       local oBody;
 
-      oBody = send(self,@IllusionGetTemplate,#who=who);
+      oBody = Send(self,@IllusionGetTemplate,#who=who);
       if oBody = $
       {
          return object_article_none_rsc;
       }
-      
+
       return Send(oBody,@GetCapInDef);
    }
 
@@ -516,7 +521,6 @@ messages:
    {
       return &FeignDeathPotion;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

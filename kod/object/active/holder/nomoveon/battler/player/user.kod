@@ -8268,7 +8268,7 @@ messages:
       return;
    }
 
-   AdminGoToLastSafeRoom()
+   AdminGoToLastSafeRoom(from_special=FALSE)
    "Admin supported\n"
    "Sends the user to the last safe room they visited, whether they're logged in or not!\n"
    {
@@ -8285,6 +8285,7 @@ messages:
             iCurrentRegion = Send(oCurrentRoom,@GetRegion);
 
             if iCurrentRegion = iLastSafeRegion
+               OR from_special
             {
                Send(oLastSafeRoom,@Teleport,#what=self);
                Send(self,@MsgSendUser,#message_rsc=user_goto_lastsaferoom);
@@ -8308,6 +8309,7 @@ messages:
             iCurrentRegion = Send(oCurrentRoom,@GetRegion);
             
             if iCurrentRegion = iLastSafeRegion
+               OR from_special
             {
                piSave_room = piLastSafeRoom;
                piSave_row = Send(oLastSafeRoom,@GetTeleportRow);

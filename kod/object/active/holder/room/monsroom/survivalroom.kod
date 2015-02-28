@@ -754,6 +754,7 @@ messages:
       if iRand = 3
          AND (piPublic
          OR poGuildAssociation = $)
+         AND piChaosZone
       {
          plExtraLifeGoals = Cons([GOAL_KILL_FRIENDLY,1],plExtraLifeGoals);
       }
@@ -793,7 +794,7 @@ messages:
    
    SomethingKilled(what=$,victim=$)
    {
-      local i, n, p, cDeadClass, respawnCheck;
+      local i, n, p, cDeadClass, respawnCheck, oTarget, mob;
       
       if IsClass(victim,&User)
       {
@@ -921,6 +922,19 @@ messages:
 
             plLevelGoals = DelListElem(plLevelGoals,i);
          }
+         
+         % Finish it up if only one guy remains in a public room.
+         if piPublic
+            AND plParticipants <> $
+            AND Length(plParticipants) = 1
+         {
+            for mob in plActive
+            {
+               oTarget = First(plParticipants);
+               Post(First(mob),@TargetSwitch,#what=oTarget,#iHatred=100);
+               Post(First(mob),@EnterStateChase,#target=oTarget,#actnow=True);
+            }
+         }
       }
       
       for i in plExtraLifeGoals
@@ -1009,21 +1023,9 @@ messages:
          AND FindListElem(plBosses,GetClass(what)) = 0
          AND FindListElem(plMinibosses,GetClass(what)) = 0
       {
-         if Length(plParticipants) > 1
-         {
-            oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
-            Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
-            Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
-         }
-         else
-         {
-            if Random(1,5) = 1
-            {
-               oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
-               Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
-               Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
-            }
-         }
+         oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+         Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
+         Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
       }
       
       if IsClass(what,&Monster)
@@ -1333,13 +1335,13 @@ messages:
       % They logged off.
       if Send(who,@GetOwner) = $
       {
-         Send(who,@AdminGoToLastSafeRoom);
+         Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
       
       % They're still here.
       if Send(who,@GetOwner) = self
       {
-         Send(who,@AdminGoToLastSafeRoom);
+         Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
 
       if inform

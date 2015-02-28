@@ -501,6 +501,12 @@ messages:
    {
       local iManaLost;
 
+      if IsClass(self,&Player)
+         AND Send(self,@IsInCannotInteractMode)
+      {
+         return 0;
+      }
+
       piMana = piMana - amount;
       if piMana < 0
       {

@@ -130,7 +130,7 @@ messages:
          return FALSE;
       }
       
-      if Send(who,@IsInCannotInteractMode)
+      if Send(who,@IsInSpectatorMode)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_while_specator_msg);
          return FALSE;

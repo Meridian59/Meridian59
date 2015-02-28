@@ -513,7 +513,7 @@ messages:
          piDefense = Send(self,@GetDefense) + piSurvivalLevel*viDifficulty;
          piMinDamage = viLevel/15 + piSurvivalLevel/2;
          piMaxDamage = viLevel/10 + piSurvivalLevel/2;
-         piArmor = piSurvivalLevel/2;
+         piArmor = piSurvivalLevel/5;
       }
 
       if color <> 0
@@ -5655,7 +5655,8 @@ messages:
       }
       
       % A survival mob
-      if piBoostedLevel > 0
+      if poOwner <> $
+         AND IsClass(poOwner,&SurvivalRoom)
       {
          return 0;
       }

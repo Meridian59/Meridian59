@@ -3864,6 +3864,13 @@ messages:
    {
       local bFound, i;
 
+      if Send(self,@IsInCannotInteractMode)
+      {
+         Send(self,@MsgSendUser,#message_rsc=phased_out_cant_use);
+
+         return FALSE;
+      }
+
       bFound = FALSE;
 
       %check and see if item disallows
@@ -14588,6 +14595,7 @@ messages:
 
       if poOwner <> $
       {
+         Send(self,@LeaveBuilderGroup);
          Send(poOwner,@SomethingChanged,#what=self);
       }
 

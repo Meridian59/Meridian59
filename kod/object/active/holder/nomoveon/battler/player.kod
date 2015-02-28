@@ -5600,7 +5600,9 @@ messages:
 
       if pbLogged_on
       {
-         if IsClass(what,&Monster)
+         if (IsClass(what,&Monster)
+               AND NOT (IsClass(what,&Bramble)
+                  OR Send(what,@IsIllusion))
             AND (use_weapon = $
                OR NOT IsClass(use_weapon,&ActiveWallElement))
             AND (piFlags & PFLAG_GROUPING)

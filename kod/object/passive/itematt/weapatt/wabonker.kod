@@ -26,7 +26,8 @@ constants:
 
 resources:
 
-   weapattbonker_desc = " Mocker's signature flamboyantly emblazons the pommel."      
+   weapattbonker_desc = \
+      " Mocker's signature flamboyantly emblazons the pommel."
    bonker_dm = "bonker"
 
 classvars:
@@ -58,10 +59,17 @@ messages:
    {
       local oSpell;
 
-      if random(1,100) <= piEffect_percent
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
+      if Random(1,100) <= piEffect_percent
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_BONK);
-         Send(oSpell,@CastSpell,#who=wielder,#lTargets=[target],#iSpellPower=50,#bItemCast=TRUE);
+         Send(oSpell,@CastSpell,#who=wielder,#lTargets=[target],
+               #iSpellPower=50,#bItemCast=TRUE);
       }
 
       return Damage;

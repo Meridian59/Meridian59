@@ -71,13 +71,21 @@ Constructor()
    {
       local oSpell;
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if (Random(1,100) <= ((100-Nth(lData,3))/10))
          AND Send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          oSpell = Nth(lData,2);
-         if Send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],#ispellpower=Nth(lData,3))
+         if Send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],
+               #ispellpower=Nth(lData,3))
          {
-            Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=Nth(lData,3),#bItemCast=TRUE);
+            Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],
+                  #ispellpower=Nth(lData,3),#bItemCast=TRUE);
          }
       }
 

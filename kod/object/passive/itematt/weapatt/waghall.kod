@@ -89,7 +89,7 @@ messages:
             iHall = Send(oGuild,@GetGuildHallNum);
          }
       }
-      
+
       if iHall = $ or (iHall < RID_GUILDH_MIN or iHall > RID_GUILDH_MAX)
       {
          %% choose a random guild hall
@@ -145,6 +145,12 @@ messages:
          return;
       }
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       oGuild = Send(wielder,@GetGuild);
       oRoom = Send(SYS,@FindRoomByNum,#num=Nth(lData,3));
 
@@ -161,7 +167,7 @@ messages:
             iPower = iPower/2;
          }
 
-         return (damage + iPower);  
+         return (damage + iPower);
       }
 
       return damage;
@@ -180,6 +186,12 @@ messages:
          return;
       }
 
+      if target = $
+         OR wielder = $
+      {
+         return hitroll;
+      }
+
       oGuild = Send(wielder,@GetGuild);
       oRoom = Send(SYS,@FindRoomByNum,#num=Nth(lData,3));
 
@@ -196,7 +208,7 @@ messages:
             iPower = iPower/2;
          }
 
-         return (hitroll + iPower);  
+         return (hitroll + iPower);
       }
 
       return hitroll;

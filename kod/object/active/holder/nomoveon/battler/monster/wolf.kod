@@ -44,6 +44,8 @@ classvars:
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
    viDifficulty = 8
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = -45
    viCashmin = 175
    viCashmax = 375

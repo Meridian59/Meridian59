@@ -20,7 +20,7 @@ WeapAttExpert is WeaponAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -71,13 +71,18 @@ messages:
    {
       local oWeapon, iProf, iPower;
 
+      if wielder = $
+      {
+         return damage;
+      }
+
       oWeapon = Send(wielder,@LookUpPlayerWeapon);
       iProf = Send(oWeapon,@GetProf,#who=wielder);
 
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
-      if iPower = 0 
+      if iPower = 0
       {
          % If no proficiency, then give a penalty to damage.
          if iProf = 0
@@ -102,6 +107,11 @@ messages:
    "Wielder gets a bonus, equal to (proficiency/4) - 2."
    {
       local oWeapon, iProf, iPower;
+
+      if wielder = $
+      {
+         return hitroll;
+      }
 
       oWeapon = Send(wielder,@LookUpPlayerWeapon);
       iProf = Send(oWeapon,@GetProf,#who=wielder);

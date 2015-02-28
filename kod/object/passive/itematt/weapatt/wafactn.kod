@@ -83,21 +83,24 @@ messages:
 
       if StringContain(string,iafaction_duke_dm)
       {
-         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_DUKE);
+         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,
+               #who=who,#iFact=FACTION_DUKE);
 
          return TRUE;
       }
 
       if StringContain(string,iafaction_princess_dm)
       {
-         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_PRINCESS);
+         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,
+               #who=who,#iFact=FACTION_PRINCESS);
 
          return TRUE;
       }
 
       if StringContain(string,iafaction_rebel_dm)
       {
-         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_REBEL);
+         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,
+               #who=who,#iFact=FACTION_REBEL);
 
          return TRUE;
       }
@@ -131,7 +134,7 @@ messages:
             % Choose a random faction, because either the weapatt 
             %  failed the random check, or the player isn't allied with either.
 
-            iFact = Random(FACTION_NEUTRAL+1, FACTION_MAX);         
+            iFact = Random(FACTION_NEUTRAL+1, FACTION_MAX);
          }
       }
 
@@ -206,11 +209,13 @@ messages:
          return damage;
       }
 
-      if target <> $
+      if target = $
+         OR wielder = $
       {
-         iTargetFaction = Send(target,@GetFaction);
+         return damage;
       }
 
+      iTargetFaction = Send(target,@GetFaction);
       iWielderFaction = Send(wielder,@GetFaction);
       iWeaponFaction = Nth(lData,3);
 
@@ -246,11 +251,13 @@ messages:
          return hitroll;
       }
 
-      if target <> $
+      if target = $
+         OR wielder = $
       {
-         iTargetFaction = Send(target,@GetFaction);
+         return hitroll;
       }
 
+      iTargetFaction = Send(target,@GetFaction);
       iWielderFaction = Send(wielder,@GetFaction);
       iWeaponFaction = Nth(lData,3);
 
@@ -283,7 +290,7 @@ messages:
       local iData, iPower;
 
       iData = 0;
-      if lData = $ 
+      if lData = $
       {
          if iFakeData = 0
          {
@@ -395,7 +402,7 @@ messages:
          }
       }
 
-      Addpacket(4,Send(oItem,@GetName));
+      AddPacket(4,Send(oItem,@GetName));
 
       return;
    }

@@ -69,6 +69,8 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 120
    viDifficulty = 6
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viVisionDistance = 16
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE

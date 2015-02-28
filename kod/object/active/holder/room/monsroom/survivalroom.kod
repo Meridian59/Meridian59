@@ -229,7 +229,7 @@ messages:
       }
       else
       {
-         Send(self,@SetRoomFlag,#flag=ROOM_NO_PK,#value=TRUE);
+         Post(self,@SetRoomFlag,#flag=ROOM_NO_PK,#value=TRUE);
       }
       
       piBaseLight = Send(poBaseRoom,@GetBaseLight);

@@ -62,7 +62,7 @@ messages:
    }
    
    CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE,
-              lSurvivalOptions=$)
+              lSurvivalOptions=$,poForceBaseRoom=$)
    {
       local poRoom, poBaseRoom, plAllRooms, iRID, i, plPlayersLoggedOn, z,
             plExcludedRoomsObjs, iNatural, iPvP, o;
@@ -131,6 +131,11 @@ messages:
       if NOT IsClass(poBaseRoom,&MonsterRoom)
       {
          return $;
+      }
+      
+      if poForceBaseRoom <> $
+      {
+         poBaseRoom = poForceBaseRoom;
       }
       
       iRID = Send(self,@GetNextAvailableRID);

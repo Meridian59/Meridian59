@@ -205,6 +205,9 @@ properties:
    % Combat has not yet begun
    piHasBegun = FALSE
 
+   % Last level that players can join the public/guild arenas
+   piLastJoinLevel = 6
+
 messages:
 
    Constructor(iRID=RID_SURVIVAL_START,base_room=$,poGuild=$,iPublic=FALSE,
@@ -982,7 +985,8 @@ messages:
       local oTarget;
       
       if IsClass(what,&User)
-         AND piHasBegun
+         AND (piHasBegun
+            AND piLevel > piLastJoinLevel)
       {
          Send(self,@SpectateUser,#who=what);
          Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
@@ -990,9 +994,14 @@ messages:
       }
 
       if IsClass(what,&User)
-         AND NOT piHasBegun
+         AND (NOT piHasBegun
+            OR piLevel <= piLastJoinLevel)
+         
       {
          plParticipants = Cons(what,plParticipants);
+         plLivesPerPlayer = Cons([what,3],plLivesPerPlayer);
+
+
          if Length(plParticipants) = 1
             AND NOT piPublic
             AND poGuildAssociation = $

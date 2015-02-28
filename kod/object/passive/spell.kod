@@ -776,7 +776,7 @@ messages:
          oTarget = First(lTargets);
 
          if IsClass(oTarget,&Player)
-            AND Send(oTarget,@IsPhasedOut)
+            AND Send(oTarget,@IsInCannotInteractMode)
          {
             Send(who,@MsgSendUser,#message_rsc=cannot_cast_on_phased_out,
                   #parm1=Send(oTarget,@GetName),

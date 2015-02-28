@@ -1269,14 +1269,14 @@ messages:
 
       if what <> $
          AND IsClass(what,&Player)
-         AND Send(what,@IsPhasedOut)
+         AND Send(what,@IsInCannotInteractMode)
       {
          return FALSE;
       }
       
       if victim <> $
          AND IsClass(victim,&Player)
-         AND Send(victim,@IsPhasedOut)
+         AND Send(victim,@IsInCannotInteractMode)
       {
          return FALSE;
       }
@@ -4814,6 +4814,25 @@ messages:
       }
       return;
    }
+   
+   WentSpectatorMode(who=$)
+   {
+      local i;
+      
+      % Ditch aggros on fresh spectators
+      if IsClass(who,&Player)
+      {
+         for i in plActive
+         {
+            if IsClass(First(i),&Monster)
+            {
+               Send(First(i),@SomethingLeft,#what=who);
+            }
+         }
+      }
+
+      return;
+   }
 
    NoReagents()
    {
@@ -4860,6 +4879,11 @@ messages:
    GetChaosZone()
    {
       return piChaosZone;
+   }
+   
+   GetGenerators()
+   {
+      return $;
    }
       
 end

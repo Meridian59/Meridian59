@@ -695,7 +695,7 @@ resources:
    oo_Qormas_snowman_name = "snowman"
    oo_Qormas_snowman_icon = snowman.bgf
    oo_Qormas_snowman_desc = "This snowman seems innocent enough, but you can't "
-      "overcome the feeling that there is something inherently evil about it"
+      "overcome the feeling that there is something inherently evil about it."
       
    oo_Qormas_tree_name = "qormas tree"
    oo_Qormas_tree_icon = qormastree.bgf

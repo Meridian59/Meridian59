@@ -1715,7 +1715,7 @@ messages:
       % Phased players can't be hit.
       % Jig prevents combat between players and monsters.
       if IsClass(what,&User)
-         AND Send(what,@IsPhasedOut)
+         AND Send(what,@IsInCannotInteractMode)
          OR Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
       {
          return FALSE;

@@ -1086,6 +1086,9 @@ properties:
 
    % Put new reagents in your bag
    pbReagentBagAuto = TRUE
+   
+   % Spectator mode?
+   pbSpectatorMode = FALSE
 
 messages:
 
@@ -1521,7 +1524,8 @@ messages:
 
       % If we cannot gain vigor (probably due to Second Wind), return
       % out if trying to take away exertion
-      if ((ptSecondWind <> $) AND (amount < 0)) OR Send(self,@IsPhasedOut)
+      if ((ptSecondWind <> $) AND (amount < 0))
+         OR Send(self,@IsInCannotInteractMode)
       {
          return;
       }
@@ -3698,7 +3702,7 @@ messages:
    {
       local i,iSpace,iUse_type;
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=phased_out_cant_use);
 
@@ -4083,7 +4087,7 @@ messages:
          return TRUE;
       }
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=cannot_attack_phased_self_rsc);
 
@@ -4091,7 +4095,7 @@ messages:
       }
 
       if IsClass(victim,&Player)
-         AND Send(victim,@IsPhasedOut)
+         AND Send(victim,@IsInCannotInteractMode)
       {
          return FALSE;
       }
@@ -6540,7 +6544,7 @@ messages:
          amount = amount*100;
       }
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          return;
       }
@@ -6564,7 +6568,7 @@ messages:
          amount = amount*100;
       }
 
-      if NOT Send(self,@IsPhasedOut)
+      if NOT Send(self,@IsInCannotInteractMode)
       {
          if (200*piMax_health) < (piHealth+amount)
          {
@@ -6604,7 +6608,7 @@ messages:
          return 0;
       }
 
-      if NOT Send(self,@IsPhasedOut)
+      if NOT Send(self,@IsInCannotInteractMode)
       {
          pihealth = piHealth + amount;
          if piHealth > piMax_health*100
@@ -7116,7 +7120,9 @@ messages:
       {
          piHealth = bound(amount*100,0,$);
       }
-      
+
+      Send(self,@DrawHealth);
+
       return;
    }
 
@@ -10938,7 +10944,7 @@ messages:
          return;
       }
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          return;
       }
@@ -14510,6 +14516,92 @@ messages:
       }
 
       return;
+   }
+   
+   % Use this for when either phase or spectator do the same thing
+   IsInCannotInteractMode()
+   {
+      if Send(self,@IsPhasedOut)
+         OR Send(self,@IsInSpectatorMode)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   IsInSpectatorMode()
+   {
+      return pbSpectatorMode;
+   }
+   
+   DeactivateSpectatorMode()
+   {
+      pbSpectatorMode = FALSE;
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+   
+   ActivateSpectatorMode()
+   {
+      local i,j,m;
+      
+      if pbSpectatorMode
+      {
+         return;
+      }
+      
+      for m in plControlledMinions
+      {
+         if IsClass(m,&Monster)
+         {
+            Send(m,@Delete);
+         }
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@WentSpectatorMode,#who=self);
+      }
+
+      if Send(self,@IsPhasedOut)
+      {
+         % Check for phase when going from normal to spectator
+         for j in plEnchantments
+         {
+            if IsClass(Nth(j,2),&Phase)
+            {
+               Send(self,@FreezePhaseTimer);
+               Send(self,@RemoveEnchantment,#what=Nth(j,2),#report=FALSE);
+
+               break;
+            }
+         }
+      }
+
+      pbSpectatorMode = TRUE;
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+   
+   IsLikelyVictim()
+   {
+      if Send(self,@IsInCannotInteractMode)
+      {
+         return FALSE;
+      }
+
+      propagate;
    }
 
 end

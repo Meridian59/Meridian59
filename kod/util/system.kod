@@ -2173,7 +2173,7 @@ messages:
    }
 
    CreateOneRoomIfNew(num = $,class = $,poGuild = $,iPublic = FALSE,
-                      base_room=$)
+                      base_room=$,iPvP=FALSE)
    {
       local oRoom;
 
@@ -2181,7 +2181,7 @@ messages:
       {
          % note: only rentable rooms use the iRID parameter.
          oRoom = Create(class,#iRID=num,#poGuild=poGuild,#iPublic=iPublic,
-                              #base_room=base_room);
+                              #base_room=base_room,#iPvP=iPvP);
          if oRoom = $
          {
             Debug("Tried to create room RID",num,"FAILED!");

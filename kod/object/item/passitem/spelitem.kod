@@ -203,7 +203,7 @@ messages:
          AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT))
          OR pbDisabled
          OR (IsClass(apply_on,&Player)
-             AND Send(apply_on,@IsPhasedOut))
+             AND Send(apply_on,@IsInCannotInteractMode))
       {
          return FALSE;
       }

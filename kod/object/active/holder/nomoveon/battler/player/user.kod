@@ -380,6 +380,10 @@ resources:
       "There is already a guild survival arena running."
    survival_err_already_public = \
       "There is already a public survival arena running."
+   survival_no_public_rooms = \
+      "There are no public survival rooms currently running."
+   survival_no_guild_rooms = \
+      "Your guild has no survival rooms running at this time."
       
    survival_err_cant_join = \
       "That survival arena has already begun, and you cannot join."
@@ -2597,6 +2601,11 @@ messages:
 
       if IsClass(what,&Player)
       {
+         if Send(what,@IsInCannotInteractMode)
+         {
+            return MM_NONE;
+         }
+
          oIllusion = Send(what,@GetIllusionForm);
 
          if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
@@ -3906,7 +3915,7 @@ messages:
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, oSplit, oCorpse, bFromReagentBag;
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
@@ -4100,7 +4109,7 @@ messages:
          return;
       }
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          Send(self,@MsgSendUser,#message_rsc=phased_out_cant_drop);
          return FALSE;
@@ -4319,7 +4328,8 @@ messages:
 
    UserSay(type=$,string=$)
    {
-      local i, oSpell, lEnchantData, bTranceBlocksSay;
+      local i, oSpell, lEnchantData, bTranceBlocksSay, lSurvivalOptions,
+            poForceBaseRoom;
 
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
@@ -4334,9 +4344,11 @@ messages:
 
       if type = SAY_NORMAL
       {
-         If StringEqual(String,"start solo survival")
+         If StringContain(String,"start solo survival")
          {
-            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            lSurvivalOptions = $;
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
@@ -4347,15 +4359,17 @@ messages:
             return;
          }
 
-         If StringEqual(String,"start guild survival")
+         If StringContain(String,"start guild survival")
          {
+            lSurvivalOptions = $;
             if Send(self,@GetGuild) = $
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
                return;
             }
             
-            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
@@ -4375,18 +4389,40 @@ messages:
             return;
          }
 
-         If StringEqual(String,"start public survival")
+         If StringContain(String,"start public survival")
          {
-            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            lSurvivalOptions = $;
+            if (NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD)
+               AND NOT IsClass(self,&DM)
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
             }
             
+            poForceBaseRoom = $;
+            if IsClass(self,&DM)
+            {
+               if StringContain(String,"--natural")
+               {
+                  lSurvivalOptions = Cons(OPT_NATURAL,lSurvivalOptions);
+               }
+               if StringContain(String,"--pvpon")
+               {
+                  lSurvivalOptions = Cons(OPT_PVP_ON,lSurvivalOptions);
+               }
+               if StringContain(String,"--thisbase")
+               {
+                 poForceBaseRoom = poOwner;
+               }
+            }
+            
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
             {
                Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                         #who=self,#iPublic=TRUE);
+                         #who=self,#iPublic=TRUE,
+                         #lSurvivalOptions=lSurvivalOptions,
+                         #poForceBaseRoom=poForceBaseRoom);
             }
             else
             {
@@ -4397,11 +4433,27 @@ messages:
          }
 
          If StringEqual(String,"join guild survival")
-            AND Send(self,@GetGuild) <> $
-            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-            AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
-                     #oGuild=Send(self,@GetGuild)) <> $
          {
+            if Send(self,@GetGuild) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
+               return;
+            }
+
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+            
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
+                     #oGuild=Send(self,@GetGuild)) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_no_guild_rooms);
+               return;
+            }
+
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
                     @FindRoomByGuild,#oGuild=Send(self,@GetGuild)),
                     @GetAllowJoins)
@@ -4418,9 +4470,20 @@ messages:
          }
 
          If StringEqual(String,"join public survival")
-            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-            AND Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) <>$
          {
+            if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+               return;
+            }
+            
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=survival_no_public_rooms);
+               return;
+            }
+
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
                     @FindPublicRoom),
                     @GetAllowJoins)
@@ -5317,7 +5380,8 @@ messages:
          Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
+      if (Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
+         OR Send(self,@IsInCannotInteractMode))
          AND NOT IsClass(oSpell,&Phase)
       {
          Send(self,@MsgSendUser,#message_rsc=user_no_cast);
@@ -5466,7 +5530,7 @@ messages:
    {
       local i, lObjects, lNumbers, oOffer_num;
       
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          return FALSE;
       }
@@ -8508,7 +8572,7 @@ messages:
 
       iFlags = MOVEON_NO;
 
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          iFlags = (iFlags & ~MOVEON_NO);
       }
@@ -8539,6 +8603,12 @@ messages:
       {
          iFlags = iFlags & ~DRAWFX_MASK;
          iFlags = iFlags | DRAWFX_DITHERINVIS;
+      }
+
+      if pbSpectatorMode
+      {
+         iFlags = iFlags & ~DRAWFX_MASK;
+         iFlags = iFlags | DRAWFX_DITHERGREY;
       }
 
       return iFlags;
@@ -8576,7 +8646,7 @@ messages:
          iFlags = (iFlags & ~OF_PLAYER & ~OF_OFFERABLE);
       }
       
-      if Send(self,@IsPhasedOut)
+      if Send(self,@IsInCannotInteractMode)
       {
          iFlags = iFlags | OF_NOEXAMINE;
          iFlags = (iFlags & ~OF_ATTACKABLE & ~OF_OFFERABLE & ~OF_PLAYER);

@@ -3089,3 +3089,7 @@
    STAT_MONEYCREATED = 2
    STAT_PLAYERLOGIN = 3
    STAT_ASSESS_DAM = 4
+   
+   % Survival options
+   OPT_NATURAL = 1    % Rooms with natural monster spawn only
+   OPT_PVP_ON = 2     % Players can fight

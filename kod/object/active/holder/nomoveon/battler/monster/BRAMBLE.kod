@@ -205,7 +205,7 @@ messages:
          plAffected = Cons(what,plAffected);
 
          if IsClass(what,&Player)
-            AND NOT Send(what,@IsPhasedOut)
+            AND NOT Send(what,@IsInCannotInteractMode)
          {
             Send(what,@MsgSendUser,#message_rsc=Brambles_damage0);
          }

@@ -18,7 +18,7 @@ resources:
 
    public_survival_started = \
       "%s has started a public co-op survival arena. It will begin in "
-      "five minutes."
+      "three minutes."
    
    public_ended = \
       "The public co-op survival arena has ended at level %i."
@@ -61,10 +61,11 @@ messages:
       return;
    }
    
-   CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE)
+   CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE,
+              lSurvivalOptions=$,poForceBaseRoom=$)
    {
       local poRoom, poBaseRoom, plAllRooms, iRID, i, plPlayersLoggedOn, z,
-            plExcludedRoomsObjs;
+            plExcludedRoomsObjs, iNatural, iPvP, o;
       
       if guild_survival = TRUE
          AND NOT piGuildSurvivalEnabled
@@ -85,6 +86,21 @@ messages:
          return $;
       }
       
+      iNatural = FALSE;
+      iPvP = FALSE;
+      for o in lSurvivalOptions
+      {
+         if o = OPT_NATURAL
+         {
+            iNatural = TRUE;
+         }
+         
+         if o = OPT_PVP_ON
+         {
+            iPvP = TRUE;
+         }
+      }
+      
       plAllRooms = Send(SYS,@ListCopy,#source=Send(SYS,@GetRooms));
       
       plExcludedRoomsObjs = $;
@@ -99,11 +115,13 @@ messages:
       % Ensure it's a monster room, and shrink the list on every failure.
       if NOT IsClass(poBaseRoom,&MonsterRoom)
          OR IsClass(poBaseRoom,&SurvivalRoom)
-         OR FindListElem(plExcludedRoomsList,poBaseRoom)
+         OR FindListElem(plExcludedRoomsList,poBaseRoom) <> 0
+         OR (iNatural AND Send(poBaseRoom,@GetGenerators) = $)
       {
          while NOT IsClass(poBaseRoom,&MonsterRoom)
             OR IsClass(poBaseRoom,&SurvivalRoom)
-            OR FindListElem(plExcludedRoomsList,poBaseRoom)
+            OR FindListElem(plExcludedRoomsList,poBaseRoom) <> 0
+            OR (iNatural AND Send(poBaseRoom,@GetGenerators) = $)
          {
             plAllRooms = DelListElem(plAllRooms,poBaseRoom);
             poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
@@ -113,6 +131,11 @@ messages:
       if NOT IsClass(poBaseRoom,&MonsterRoom)
       {
          return $;
+      }
+      
+      if poForceBaseRoom <> $
+      {
+         poBaseRoom = poForceBaseRoom;
       }
       
       iRID = Send(self,@GetNextAvailableRID);
@@ -127,14 +150,16 @@ messages:
          Send(SYS,@CreateOneRoomIfNew,#num=iRID,
                #class=&SurvivalRoom,
                #poGuild=Send(who,@GetGuild),
-               #base_room=poBaseRoom);
+               #base_room=poBaseRoom,
+               #iPvP=iPvP);
       }
       else
       {
          Send(SYS,@CreateOneRoomIfNew,#num=iRID,
                #class=&SurvivalRoom,
                #iPublic=iPublic,
-               #base_room=poBaseRoom);
+               #base_room=poBaseRoom,
+               #iPvP=iPvP);
       }
 
       poRoom = Send(SYS,@FindRoomByNum,#num=iRID);

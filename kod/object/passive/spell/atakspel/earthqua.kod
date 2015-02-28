@@ -214,7 +214,7 @@ messages:
 
       if IsClass(who,&Room)
       {
-         return 30;
+         return 3000;
       }
       
       % Do full damage within viMax_damage_distance, zero damage outside

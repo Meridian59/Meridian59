@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcInvasion is Invasion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OrcInvasion_start_msg = \
+      "The orc invasion has begun."
+      
+   OrcInvasion_end_msg = \
+      "The orc invasion has ended."
+
+classvars:
+
+   vrStartMessage = OrcInvasion_start_msg
+   vrEndMessage = OrcInvasion_end_msg
+
+   vbAnnounce = TRUE
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+
+   Delete()
+   {
+      propagate;
+   }
+   
+   StartEvent()
+   {
+      propagate;
+   }
+
+   EndEvent()
+   {
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

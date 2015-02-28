@@ -1,0 +1,60 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GameEvent is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   event_start_msg = "Event Started."
+   event_end_msg = "Event Ended"
+
+classvars:
+
+   vrStartMessage = event_start_msg
+   vrEndMessage = event_end_msg
+   
+   vbAnnounce = FALSE
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      return;
+   }
+   
+   Delete()
+   {
+      return;
+   }
+
+   StartEvent()
+   {
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrStartMessage);
+      }
+
+      return;
+   }
+
+   EndEvent()
+   {
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

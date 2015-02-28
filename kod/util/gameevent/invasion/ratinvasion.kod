@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RatInvasion is Invasion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RatInvasion_start_msg = \
+      "The reign of the Rat King has begun."
+      
+   RatInvasion_end_msg = \
+      "The reign of the Rat King has ended."
+
+classvars:
+
+   vrStartMessage = RatInvasion_start_msg
+   vrEndMessage = RatInvasion_end_msg
+
+   vbAnnounce = TRUE
+
+properties:
+
+   plEventRooms = $
+
+messages:
+
+   Constructor()
+   {
+      plEventRooms = [ RID_TOS, RID_BAR_NORTH ];
+      propagate;
+   }
+   
+   Delete()
+   {
+      propagate;
+   }
+
+   StartEvent()
+   {
+      debug("Begin &RatInvasion");
+      
+      Send(self,@PhaseOne);
+      
+      propagate;
+   }
+   
+   PhaseOne()
+   {
+      local oMonster;
+      
+      debug("Beginning phase one of &RatInvasion");
+      
+      oMonster = Create(&GiantRatKing);
+   
+      Send(Send(sys,@FindRoomByNum,#num=RID_TOS),@NewHold,#what=oMonster,#new_row=51,#new_col=18);
+   
+      Send(self,@EndEvent);
+   
+      return;
+   }
+
+   EndEvent()
+   {
+      debug("End &RatInvasion");
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

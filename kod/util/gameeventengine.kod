@@ -1,0 +1,142 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GameEventEngine is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+   MSG_EVT_START = 1
+   
+   EVENT_RAT_INVASION = 1
+   
+resources:
+
+classvars:
+
+properties:
+
+   plGameEvents = $
+   plActiveEvents = $
+   
+   pbOogTimeEvents = FALSE
+   
+messages:
+
+   Constructor()
+   {
+      Send(self,@Recreate);
+   
+      return;
+   }
+   
+   Recreate()
+   {
+      plGameEvents = $;
+   
+      debug("Creating Events");
+      plGameEvents = Cons(&RatInvasion,plGameEvents);
+      plGameEvents = Cons(&OrcInvasion,plGameEvents);
+   
+      return;
+   }
+   
+   Delete()
+   {
+      return;
+   }
+   
+   NewMinute()
+   {
+      return;
+   }
+   
+   NewHour()
+   {
+      
+      return;
+   }
+   
+   NewDay()
+   {
+      return;
+   }
+   
+   NewMonth()
+   {
+      return;
+   }
+   
+   NewYear()
+   {
+      debug("It actually Worked");
+      return;
+   }
+   
+   TestScheduleEvent(iHour=0,iMinute=0)
+   {
+      Send(self,@ScheduleEvent,#iClass=&RatInvasion,#iYear=2015,#iMonth=2,#iDay=28,#iHour=iHour,#iMinute=iMinute);
+      
+      return;
+   }
+   
+   ScheduleEvent(iClass=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   {
+      local oOogTime;
+      
+      oOogTime = Send(SYS,@GetOogTimeObject);
+      
+      Send(oOogTime,@RegisterCallback,#oObject=self,
+         #message=MSG_EVT_START,#iYear=iYear,#iMonth=iMonth,
+         #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=iClass);
+      
+      return;
+   }
+   
+   EventStart(iClass=$)
+   {
+      local oEvent;
+      debug(iClass);
+      if iClass <> $
+      {
+         oEvent = Create(iClass);
+         Send(oEvent,@StartEvent);
+      }
+   
+      return oEvent;
+   }
+   
+   OogTimeCallback(message=0,parm1=$,parm2=$,parm3=$,
+      parm4=$,parm5=$,parm6=$,parm7=$,Parm8=$)
+   {
+      local oEvent;
+      
+      if message > 0
+      {
+         if message = MSG_EVT_START
+         {
+            oEvent = Send(self,@EventStart,#iClass=parm1);
+            if oEvent <> $
+            {
+               plActiveEvents = Cons(oEvent,plActiveEvents);
+            }
+            else
+            {
+               debug("Error Starting Event!",parm1);
+            }
+         }
+      }
+   
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

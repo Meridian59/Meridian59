@@ -1,0 +1,286 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OogTime is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+   % IMPORTANT!!!!
+   % change this offset time whenever the server offset is
+   % changed due to the kod int overflow issue
+   OFFSET_YEAR = 2014
+   OFFSET_MONTH = 1
+   OFFSET_DAY = 1
+   OFFSET_HOUR = 0
+   OFFSET_MINUTE = 0
+   OFFSET_SECOND = 0
+   
+resources:
+
+classvars:
+
+properties:
+
+   % time zone offset in seconds
+   piTimeZoneOffset = -18000
+   ptTick = $
+   
+   plCallbacks = $
+
+messages:
+
+   Constructor()
+   {
+      ptTick = CreateTimer(self,@TimeTick,60000);
+      
+      return;
+   }
+   
+   Recreate()
+   {
+      return;
+   }
+   
+   TimeTick()
+   {
+      
+      ptTick = CreateTimer(self,@TimeTick,60000);
+      Send(self,@NewMinute);
+      
+      return;
+   }
+   
+   Delete()
+   {
+      DeleteTimer(ptTick);
+      return;
+   }
+   
+   RegisterCallback(iHour=0,iMinute=0,iSecond=0,iMonth=0,iDay=0,iYear=0,oObject=$,message=$,parm1=$,parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
+   {
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,iSecond],oObject,message,parm1,parm2,parm3,parm4,parm5,parm6,parm7],plCallbacks);
+      
+      return;
+   }
+   
+   ClearCallbacks()
+   {
+      plCallbacks = $;
+   
+      return;
+   }
+   
+   NewMinute()
+   {
+      local i,iYear,iMonth,iDay,iHour,iMinute;
+      
+      if plCallbacks <> $
+      {
+         iYear = Send(self,@GetYear);
+         iMonth = Send(self,@GetMonth);
+         iDay = Send(self,@GetDay);
+         iHour = Send(self,@GetHour);
+         iMinute = Send(self,@GetMinute);
+         
+         %debug ("Executing NewMinute",iYear,iMonth,iDay,iHour,iMinute);
+      
+         for i in plCallbacks
+         {
+            if Nth(Nth(i,1),3) <= iYear
+            {
+               if Nth(Nth(i,1),1) <= iMonth
+               {
+                  if Nth(Nth(i,1),2) <= iDay
+                  {
+                     if Nth(Nth(i,1),4) <= iHour
+                     {
+                        if Nth(Nth(i,1),5) = iMinute
+                        {
+                           Send(Nth(i,2),@OogTimeCallback,
+                              #message=Nth(i,3),
+                              #parm1=Nth(i,4),
+                              #parm2=Nth(i,5),
+                              #parm3=Nth(i,6),
+                              #parm4=Nth(i,7),
+                              #parm5=Nth(i,8),
+                              #parm6=Nth(i,9),
+                              #parm7=Nth(i,10));
+                           plCallbacks = DelListElem(plCallbacks,i);
+                        }
+                        else
+                        {
+                           if Nth(Nth(i,1),5) < iMinute
+                           {
+                              plCallbacks = DelListElem(plCallbacks,i);
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   
+      return;
+   }
+   
+   NewHour()
+   {
+      
+      return;
+   }
+   
+   NewDay()
+   {
+      return;
+   }
+   
+   NewMonth()
+   {
+      return;
+   }
+   
+   NewYear()
+   {
+      return;
+   }
+
+   GetYear()
+   {
+      local iTime,iYear;
+      
+      iTime = GetTime() + piTimeZoneOffset;
+      iYear=(iTime / 31536000) + OFFSET_YEAR;
+      
+      return iYear;
+   }
+   
+   GetYearDay()
+   {
+      local iTime,iDay;
+   
+      iTime = GetTime() + piTimeZoneOffset;
+      iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
+   
+      return iDay;
+   }
+   
+   GetMonth()
+   {
+      local i,iMonthDays,iMonth,iYearDays;
+      
+      iYearDays = Send(self,@GetYearDay);
+      
+      iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+   
+      i = 1;
+      while i <= Length(iMonthDays)
+      {
+         if i = 2 AND Send(self,@IsLeapYear,#iYear=Send(self,@GetYear))
+         {
+            if iYearDays <= 29
+            {
+               return i;
+            }
+            else
+            {
+               iYearDays = iYearDays - 29;
+            }
+         }
+         else
+         {
+            if iYearDays <= Nth(iMonthDays,i)
+            {
+               return i;
+            }
+            else
+            {
+               iYearDays = iYearDays - Nth(iMonthDays,i);
+            }
+         }
+         
+         i = i + 1;
+      }
+   
+      return;
+   }
+   
+   GetDay()
+   {
+      local i,iTime,iDay,iMonthDays;
+      
+      if Send(self,@IsLeapYear,#iYear=Send(self,@GetYear))
+      {
+         iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+      }
+      else
+      {
+         iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+      }
+   
+      iTime = GetTime() + piTimeZoneOffset;
+      iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
+   
+      for i in iMonthDays
+      {
+         if iDay > i
+         {
+            iDay = iDay - i;
+         }
+      }
+   
+      return iDay;
+   }
+   
+   GetHour()
+   {
+      local iTime,iHour;
+      
+      iTime = GetTime() + piTimeZoneOffset;
+      iHour = (iTime MOD 86400) / 3600;
+      
+      if (iHour < 0)
+      {
+         iHour = iHour + 24;
+      }
+   
+      return iHour;
+   }
+   
+   GetMinute()
+   {
+      local iTime,iMinute;
+      
+      iTime = GetTime() + piTimeZoneOffset;
+      iMinute = (iTime MOD 3600) / 60;
+      
+      return iMinute;
+   }
+   
+   GetSecond()
+   {
+      return GetTime() MOD 60;
+   }
+   
+   IsLeapYear(iYear=1901)
+   {
+      if (iYear MOD 4 = 0) AND (iYear MOD 100 <> 0) OR (iYear MOD 400 = 0)
+      {
+         return true;
+      }
+      
+      return false;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

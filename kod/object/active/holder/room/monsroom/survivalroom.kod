@@ -44,9 +44,6 @@ constants:
 
    % Starts when Miniboss is killed
    RESPAWN_MINIBOSS_TIME = 60000
-   
-   % milliseconds in between waves
-   NEXT_LEVEL_WAIT = 10000
 
 resources:
 
@@ -166,6 +163,7 @@ properties:
    
    piLevel = 1
    
+   piRegroupTime = 15000
    ptNextLevelTimer = $
 
    piGen_time = 5000
@@ -624,8 +622,10 @@ messages:
    
    LevelComplete()
    {
-      local i, each_obj, lFixedReward, oReward, lRandomSpawnPoint;
-      
+      local i, each_obj, lFixedReward, oReward, oRewardTime, lRandomSpawnPoint;
+
+      oRewardTime = 0;
+
       % Prevent multi-level completion
       if NOT pbSpawnWaves
          OR ptNextLevelTimer <> $
@@ -661,18 +661,6 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
-      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,NEXT_LEVEL_WAIT);
-      
-      for i in plActive
-      {
-         if IsClass(First(i),&User)
-         {
-            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
-                                #parm1 = piLevel,
-                                #parm2 = NEXT_LEVEL_WAIT/1000);
-         }
-      }
-      
       for lFixedReward in plFixedRewards
       {
          if Nth(lFixedReward,2) = piLevel
@@ -701,9 +689,23 @@ messages:
             Send(self,@NewHold,#what=oReward,
                                #new_row=Nth(lRandomSpawnPoint,1),
                                #new_col=Nth(lRandomSpawnPoint,2));
+            oRewardTime = oRewardTime + 45000;
          }
       }
+
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
+                              piRegroupTime + oRewardTime);
       
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
+                                #parm1 = piLevel,
+                                #parm2 = (piRegroupTime + oRewardTime)/1000);
+         }
+      }
+
       piLevel = piLevel + 1;
       
       return;

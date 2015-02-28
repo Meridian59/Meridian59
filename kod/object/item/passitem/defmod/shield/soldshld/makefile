@@ -7,6 +7,6 @@
 DEPEND = ..\soldshld.bof
 
 BOFS = \
-	prinshld.bof dukeshld.bof reblshld.bof
+   prinshld.bof dukeshld.bof reblshld.bof necshield.bof
 
 !include $(KODDIR)\kod.mak

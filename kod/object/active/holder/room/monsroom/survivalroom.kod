@@ -669,7 +669,7 @@ messages:
          {
             Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
                                 #parm1 = piLevel,
-                                #parm2 = NEXT_LEVEL_WAIT);
+                                #parm2 = NEXT_LEVEL_WAIT/1000);
          }
       }
       

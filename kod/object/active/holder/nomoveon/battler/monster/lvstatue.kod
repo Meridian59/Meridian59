@@ -171,6 +171,8 @@ properties:
    viLevel = 75
    viDifficulty = 5
    viVisionDistance = 3
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viGender = GENDER_MALE
 
    viSpeed = SPEED_NONE

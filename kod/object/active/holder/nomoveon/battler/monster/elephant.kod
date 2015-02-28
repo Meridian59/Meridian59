@@ -43,6 +43,8 @@ classvars:
    viAttack_type = ATCK_WEAP_BITE
    viLevel = 75
    viDifficulty = 8
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = 90
    viCashmin = 300
    viCashmax = 700

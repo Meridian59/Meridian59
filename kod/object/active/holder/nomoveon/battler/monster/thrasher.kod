@@ -61,6 +61,8 @@ classvars:
    viNormalSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BLUDGEON
    viVisionDistance = 25
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viAttributes = 0
    viKarma = -75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE \

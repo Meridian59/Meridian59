@@ -68,6 +68,8 @@ properties:
    viLevel = 55               %% These are reset in constructor
    viDifficulty = 5
    viVisionDistance = 100
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = 20
    viCashmin = 0
    viCashmax = 0

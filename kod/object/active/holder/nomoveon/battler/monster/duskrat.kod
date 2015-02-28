@@ -62,6 +62,8 @@ classvars:
    viAttributes = 0
    viLevel = 90
    viDifficulty = 6
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viVisionDistance = 11
    viKarma = -40
    viDefault_behavior = \

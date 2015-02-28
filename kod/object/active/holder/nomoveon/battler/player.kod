@@ -5602,7 +5602,7 @@ messages:
       {
          if (IsClass(what,&Monster)
                AND NOT (IsClass(what,&Bramble)
-                  OR Send(what,@IsIllusion))
+                  OR Send(what,@IsIllusion)))
             AND (use_weapon = $
                OR NOT IsClass(use_weapon,&ActiveWallElement))
             AND (piFlags & PFLAG_GROUPING)

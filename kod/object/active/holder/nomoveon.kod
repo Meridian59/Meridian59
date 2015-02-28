@@ -81,7 +81,7 @@ messages:
    ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,
    new_finecol = $)
    {
-      local iRowWe,iColWe,iRowDest,iColDest,
+      local iRowWe,iColWe,iRowDest,iColDest,iFlags,
             iRowWhat,iColWhat,iRowFineWhat,iColFineWhat,iDold,iDnew;
 
       % Get coordinates of what.
@@ -91,6 +91,12 @@ messages:
       % Sanity check on the "big" values which can be $.
       if new_row = $ OR new_col = $
          OR piRow = $ OR piCol = $
+      {
+         propagate;
+      }
+
+      iFlags = Send(self,@GetMoveOnType);
+      if (iFlags = MOVEON_YES)
       {
          propagate;
       }

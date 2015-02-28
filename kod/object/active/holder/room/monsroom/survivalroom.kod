@@ -184,7 +184,7 @@ properties:
    
    ptWallBlitzTimer = $
    
-   piChaosZone = TRUE
+   piChaosZone = FALSE
    
    % Custom opening level spawns
    plRoundOneMonsters = $
@@ -209,7 +209,8 @@ properties:
 
 messages:
 
-   Constructor(iRID=RID_SURVIVAL_START,base_room=$,poGuild=$,iPublic=FALSE)
+   Constructor(iRID=RID_SURVIVAL_START,base_room=$,poGuild=$,iPublic=FALSE,
+               iPvP=FALSE)
    {
       poBaseRoom = base_room;
       prRoom = Send(poBaseRoom,@GetRoomResource);
@@ -221,6 +222,15 @@ messages:
       }
       
       piPublic = iPublic;
+      
+      if iPvP
+      {
+         piChaosZone = TRUE;
+      }
+      else
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_NO_PK,#value=TRUE);
+      }
       
       piBaseLight = Send(poBaseRoom,@GetBaseLight);
       piOutside_factor = Send(poBaseRoom,@GetOutsideFactor);

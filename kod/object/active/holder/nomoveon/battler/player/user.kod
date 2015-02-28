@@ -4328,7 +4328,7 @@ messages:
 
    UserSay(type=$,string=$)
    {
-      local i, oSpell, lEnchantData, bTranceBlocksSay;
+      local i, oSpell, lEnchantData, bTranceBlocksSay, lSurvivalOptions;
 
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
@@ -4343,8 +4343,9 @@ messages:
 
       if type = SAY_NORMAL
       {
-         If StringEqual(String,"start solo survival")
+         If StringContain(String,"start solo survival")
          {
+            lSurvivalOptions = $;
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
@@ -4357,8 +4358,9 @@ messages:
             return;
          }
 
-         If StringEqual(String,"start guild survival")
+         If StringContain(String,"start guild survival")
          {
+            lSurvivalOptions = $;
             if Send(self,@GetGuild) = $
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
@@ -4386,8 +4388,9 @@ messages:
             return;
          }
 
-         If StringEqual(String,"start public survival")
+         If StringContain(String,"start public survival")
          {
+            lSurvivalOptions = $;
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
             {
@@ -4395,10 +4398,23 @@ messages:
                return;
             }
             
+            if IsClass(self,&DM)
+            {
+               if StringContain(String,"--natural")
+               {
+                  lSurvivalOptions = Cons(OPT_NATURAL,lSurvivalOptions);
+               }
+               if StringContain(String,"--pvpon")
+               {
+                  lSurvivalOptions = Cons(OPT_PVP_ON,lSurvivalOptions);
+               }
+            }
+            
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
             {
                Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                         #who=self,#iPublic=TRUE);
+                         #who=self,#iPublic=TRUE,
+                         #lSurvivalOptions=lSurvivalOptions);
             }
             else
             {

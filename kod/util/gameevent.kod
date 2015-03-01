@@ -28,6 +28,8 @@ classvars:
 
 properties:
 
+   pbComplete = FALSE
+
 messages:
 
    Constructor()
@@ -52,7 +54,19 @@ messages:
 
    EndEvent()
    {
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrEndMessage);
+      }
+      
+      pbComplete = TRUE;
+   
       return;
+   }
+   
+   IsComplete()
+   {
+      return pbComplete;
    }
 
 end

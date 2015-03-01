@@ -314,7 +314,7 @@ properties:
    piDay = 0
    piYear = 0
 
-   poOogTime = $
+   poRealTime = $
    
    % outdoor brightness level (0-100), updated hourly
    piBrightness
@@ -469,7 +469,7 @@ messages:
       % This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
       
-      Send(self,@RecreateOogTime);
+      Send(self,@RecreateRealTime);
 
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -575,7 +575,7 @@ messages:
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
       
-      Send(self,@RecreateOogTime);
+      Send(self,@RecreateRealTime);
       
       plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
       plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
@@ -808,15 +808,15 @@ messages:
       return;
    }
    
-   RecreateOogTime()
+   RecreateRealTime()
    {
-      if poOogTime <> $
+      if poRealTime <> $
       {
-         Send(poOogTime,@Recreate);
+         Send(poRealTime,@Recreate);
       }
       else
       {
-         poOogTime = Create(&OogTime);
+         poRealTime = Create(&RealTime);
       }
 
       return;
@@ -4890,9 +4890,9 @@ messages:
       return;
    }
    
-   GetOogTimeObject()
+   GetRealTimeObject()
    {
-      return poOogTime;
+      return poRealTime;
    }
    
    GetQormas()

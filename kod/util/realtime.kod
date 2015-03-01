@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-OogTime is UtilityFunctions
+RealTime is UtilityFunctions
 
 constants:
 
@@ -105,7 +105,7 @@ messages:
                      {
                         if Nth(Nth(i,1),5) = iMinute
                         {
-                           Send(Nth(i,2),@OogTimeCallback,
+                           Send(Nth(i,2),@RealTimeCallback,
                               #message=Nth(i,3),
                               #parm1=Nth(i,4),
                               #parm2=Nth(i,5),
@@ -120,6 +120,7 @@ messages:
                         {
                            if Nth(Nth(i,1),5) < iMinute
                            {
+                              debug("Deleting expired event that would never have started! (event time is less than current time)");
                               plCallbacks = DelListElem(plCallbacks,i);
                            }
                         }

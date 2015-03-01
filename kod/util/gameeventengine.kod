@@ -16,8 +16,6 @@ constants:
 
    MSG_EVT_START = 1
    
-   EVENT_RAT_INVASION = 1
-   
 resources:
 
 classvars:
@@ -26,8 +24,8 @@ properties:
 
    plGameEvents = $
    plActiveEvents = $
-   
-   pbOogTimeEvents = FALSE
+   ptMaintenance = $
+   piMaintenanceInterval = 1000
    
 messages:
 
@@ -38,9 +36,34 @@ messages:
       return;
    }
    
+   OnTimer()
+   {
+      local i;
+      
+      for i in plActiveEvents
+      {
+         if Send(i,@IsComplete)
+         {
+            Send(self,@EventEnd,#oEvent=i);
+         }
+         else
+         {
+            Send(i,@Update);
+         }
+      }
+      
+      if plActiveEvents <> $
+      {
+         CreateTimer(self,@OnTimer,piMaintenanceInterval);
+      }
+      
+      return;
+   }
+   
    Recreate()
    {
       plGameEvents = $;
+      plActiveEvents = $;
    
       debug("Creating Events");
       plGameEvents = Cons(&RatInvasion,plGameEvents);
@@ -77,24 +100,23 @@ messages:
    
    NewYear()
    {
-      debug("It actually Worked");
       return;
    }
    
    TestScheduleEvent(iHour=0,iMinute=0)
    {
-      Send(self,@ScheduleEvent,#iClass=&RatInvasion,#iYear=2015,#iMonth=2,#iDay=28,#iHour=iHour,#iMinute=iMinute);
+      Send(self,@ScheduleEvent,#iClass=&RatInvasion,#iYear=2015,#iMonth=3,#iDay=2,#iHour=iHour,#iMinute=iMinute);
       
       return;
    }
    
    ScheduleEvent(iClass=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
    {
-      local oOogTime;
+      local oRealTime;
       
-      oOogTime = Send(SYS,@GetOogTimeObject);
+      oRealTime = Send(SYS,@GetRealTimeObject);
       
-      Send(oOogTime,@RegisterCallback,#oObject=self,
+      Send(oRealTime,@RegisterCallback,#oObject=self,
          #message=MSG_EVT_START,#iYear=iYear,#iMonth=iMonth,
          #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=iClass);
       
@@ -104,7 +126,7 @@ messages:
    EventStart(iClass=$)
    {
       local oEvent;
-      debug(iClass);
+
       if iClass <> $
       {
          oEvent = Create(iClass);
@@ -114,7 +136,13 @@ messages:
       return oEvent;
    }
    
-   OogTimeCallback(message=0,parm1=$,parm2=$,parm3=$,
+   EventEnd(oEvent=$)
+   {
+      plActiveEvents = DelListElem(plActiveEvents,oEvent);
+      return;
+   }
+   
+   RealTimeCallback(message=0,parm1=$,parm2=$,parm3=$,
       parm4=$,parm5=$,parm6=$,parm7=$,Parm8=$)
    {
       local oEvent;
@@ -127,6 +155,10 @@ messages:
             if oEvent <> $
             {
                plActiveEvents = Cons(oEvent,plActiveEvents);
+               if ptMaintenance = $
+               {
+                  CreateTimer(self,@OnTimer,piMaintenanceInterval);
+               }
             }
             else
             {

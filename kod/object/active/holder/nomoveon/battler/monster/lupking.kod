@@ -321,9 +321,12 @@ messages:
             #wave_rsc=lupoggking_cast_sound);
       Send(self,@DoCast);
       Send(oSpell,@DoHold,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
-      Send(oTarget,@MsgSendUser,#message_rsc=lupoggking_cast_spell);
-      Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,
-            #duration=iRandom*1000,#xlat=SPIT_COLOR); 
+      if IsClass(oTarget,&User)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=lupoggking_cast_spell);
+         Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,
+               #duration=iRandom*1000,#xlat=SPIT_COLOR);
+      }
 
       % Do damage?
 

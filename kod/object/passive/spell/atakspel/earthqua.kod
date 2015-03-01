@@ -108,6 +108,11 @@ messages:
    {
       local oRoom, i, each_obj, lFinalTargets;
 
+      if who = $
+      {
+         return;
+      }
+
       lFinalTargets = $;
 
       if IsClass(who,&Room)

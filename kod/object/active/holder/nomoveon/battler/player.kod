@@ -4096,8 +4096,10 @@ messages:
 
       if Send(self,@IsInCannotInteractMode)
       {
-         Send(self,@MsgSendUser,#message_rsc=cannot_attack_phased_self_rsc);
-
+         if report
+         {
+            Send(self,@MsgSendUser,#message_rsc=cannot_attack_phased_self_rsc);
+         }
          return FALSE;
       }
 

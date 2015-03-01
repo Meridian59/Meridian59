@@ -1037,6 +1037,7 @@ messages:
       {
          Send(self,@SpectateUser,#who=what);
          Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
+
          propagate;
       }
 

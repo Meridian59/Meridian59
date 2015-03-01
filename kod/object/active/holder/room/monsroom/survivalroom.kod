@@ -714,7 +714,7 @@ messages:
    
    ChooseGoals()
    {
-      local iRand,plBosses,iNumAdmins,i;
+      local iRand,plBosses,iNumAdmins,i,iTotalParticipants;
       
       iNumAdmins = 0;
       for i in plParticipants
@@ -725,8 +725,19 @@ messages:
          }
       }
       
-      iRand = Random((Length(plParticipants)-iNumAdmins)*5,
-                     (Length(plParticipants)-iNumAdmins)*15);
+      iTotalParticipants = 0;
+      if plParticipants <> $
+      {
+         iTotalParticipants = Length(plParticipants - iNumAdmins);
+      }
+      
+      if plCrashProtection <> $
+      {
+         iTotalParticipants = iTotalParticipants + Length(plCrashProtection);
+      }
+      
+      iRand = Random((iTotalParticipants)*5,
+                     (iTotalParticipants)*15);
                      
       iRand = Bound(iRand,1,75);
 
@@ -1005,6 +1016,11 @@ messages:
                DeleteTimer(Nth(i,2));
                SetNth(i,2,$);
                plCrashProtection = DelListElem(plCrashProtection,i);
+               
+               plParticipants = Cons(what,plParticipants);
+               
+               Send(self,@AggroSome,#who=what);
+               propagate;
             }
          }
       }
@@ -1051,6 +1067,34 @@ messages:
       }
       
       propagate;
+   }
+   
+   AggroSome(who=$)
+   {
+      local i, iCount;
+
+      iCount = 0;
+      
+      if IsClass(who,&User)
+      {
+         for i in plActive
+         {
+            if IsClass(First(i),&Monster)
+               AND Random(1,5) = 1
+            {
+               Post(First(i),@TargetSwitch,#what=who,#iHatred=100);
+               Post(First(i),@EnterStateChase,#target=who,#actnow=True);
+               iCount = iCount + 1;
+               
+               if iCount >= 5
+               {
+                  return;
+               }
+            }
+         }
+      }
+      
+      return;
    }
    
    LeaveHold(what=$)
@@ -1332,6 +1376,12 @@ messages:
    {
       plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
                                plCrashProtection);
+      
+      if plParticipants <> $
+         AND FindListElem(plParticipants,who) <> 0
+      {
+         plParticipants = DelListElem(plParticipants,who);
+      }
 
       return;
    }
@@ -1429,12 +1479,24 @@ messages:
    
    BootAllUsers()
    {
-      local i;
+      local i, logged_player;
       
-      % Boot all participants (logged on or not)
+      % Boot all participants
       for i in plParticipants
       {
          Send(self,@BootUser,#who=i,#inform=FALSE,#booting_all=TRUE);
+      }
+      
+      % Boot all crash protection players
+      for i in plCrashProtection
+      {
+         DeleteTimer(Nth(i,2));
+         SetNth(i,2,$);
+         logged_player = Nth(i,1);
+         SetNth(i,1,$);
+         plCrashProtection = DelListElem(plCrashProtection,i);
+         Send(self,@BootUser,#who=logged_player,#inform=FALSE,
+                             #booting_all=TRUE);
       }
       
       % Boot everyone who remains (spectators)

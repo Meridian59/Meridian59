@@ -1093,6 +1093,20 @@ messages:
    GainALife()
    {
       local i, p;
+      
+      if piPublic
+      {
+         for p in plLivesPerPlayer
+         {
+            SetNth(p,2,Nth(p,2)+1);
+            Send(Nth(p,1),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=Nth(p,2));
+         }
+         return;
+      }
+      else
+      {
+         piLives = piLives + 1;
+      }
 
       for i in plActive
       {
@@ -1100,18 +1114,6 @@ messages:
          {
             Send(First(i),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=piLives);
          }
-      }
-      
-      if piPublic
-      {
-         for p in plLivesPerPlayer
-         {
-            SetNth(p,2,Nth(p,2)+1);
-         }
-      }
-      else
-      {
-         piLives = piLives + 1;
       }
       
       return;
@@ -1335,12 +1337,14 @@ messages:
       % They logged off.
       if Send(who,@GetOwner) = $
       {
+         Send(who,@DeactivateSpectatorMode);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
       
       % They're still here.
       if Send(who,@GetOwner) = self
       {
+         Send(who,@DeactivateSpectatorMode);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
 
@@ -1491,6 +1495,9 @@ messages:
       }
 
       if StringEqual(string,"leave survival")
+         OR (piPublic AND StringEqual(string,"leave public survival"))
+         OR (poGuildAssociation <> $ 
+             AND StringEqual(string,"leave guild survival"))
       {
          Post(self,@BootUser,#who=what);
          return;

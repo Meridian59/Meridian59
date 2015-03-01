@@ -204,7 +204,7 @@ properties:
    
    plLivesPerPlayer = $
    
-   % of the form [player,lives,timer]
+   % of the form [player,timer]
    plCrashProtection = $
 
    % Combat has not yet begun
@@ -994,7 +994,20 @@ messages:
    
    NewHoldObject(what=$)
    {
-      local oTarget;
+      local oTarget, i;
+      
+      if IsClass(what,&User)
+      {
+         for i in plCrashProtection
+         {
+            if what = Nth(i,1)
+            {
+               DeleteTimer(Nth(i,2));
+               SetNth(i,2,$);
+               plCrashProtection = DelListElem(plCrashProtection,i);
+            }
+         }
+      }
       
       if IsClass(what,&User)
          AND piHasBegun
@@ -1054,7 +1067,8 @@ messages:
          AND plParticipants <> $
          AND FindListElem(plParticipants,what) <> 0
       {
-         Post(self,@BootUser,#who=what);
+         Post(self,@CountdownToBoot,#who=what);
+         %Post(self,@BootUser,#who=what);
       }
 
       propagate;
@@ -1314,10 +1328,49 @@ messages:
       return;
    }
    
+   CountdownToBoot(who=$)
+   {
+      plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
+                               plCrashProtection);
+
+      return;
+   }
+   
+   CountdownBootUser(timer=$)
+   {
+      local crashprot, ingrate;
+
+      for crashprot in plCrashProtection
+      {
+         if timer = Nth(crashprot,2)
+         {
+            ingrate = Nth(crashprot,1);
+            SetNth(crashprot,2,$);
+            SetNth(crashprot,1,$);
+            plCrashProtection = DelListElem(plCrashProtection, crashprot);
+         }
+      }
+      
+      Send(self,@BootUser,#who=ingrate);
+      
+      return;
+   }
+   
    BootUser(who=$,inform=TRUE,booting_all=FALSE)
    {
-      local i, p;
+      local i, p, crashprot;
 
+      % Take this person out of the crash protection list if they're there.
+      for crashprot in plCrashProtection
+      {
+         if who = Nth(crashprot,1)
+         {
+            DeleteTimer(Nth(crashprot,2));
+            SetNth(crashprot,2,$);
+            plCrashProtection = DelListElem(plCrashProtection, crashprot);
+         }
+      }
+      
       if plParticipants <> $
          AND FindListElem(plParticipants,who) <> 0
       {
@@ -1378,6 +1431,13 @@ messages:
    {
       local i;
       
+      % Boot all participants (logged on or not)
+      for i in plParticipants
+      {
+         Send(self,@BootUser,#who=i,#inform=FALSE,#booting_all=TRUE);
+      }
+      
+      % Boot everyone who remains (spectators)
       for i in plActive
       {
          if IsClass(First(i),&User)

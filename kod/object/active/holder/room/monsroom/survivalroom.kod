@@ -1465,7 +1465,12 @@ messages:
 
       return Send(poBaseRoom,@GetTerrainType);
    }
-   
+
+   GetBaseRoom()
+   {
+      return poBaseRoom;
+   }
+
    GetAllowJoins()
    {
       return piAllowJoins;
@@ -1480,7 +1485,12 @@ messages:
    {
       return piPublic;
    }
-   
+
+   GetParticipants()
+   {
+      return plParticipants;
+   }
+
    GetLevel()
    {
       return piLevel;

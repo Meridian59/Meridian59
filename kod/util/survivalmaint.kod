@@ -330,5 +330,48 @@ messages:
       return;
    }
 
+   SurvivalStatusReport()
+   {
+      local i;
+      
+      if plSurvivalRooms = $
+      {
+         Debug("No survival arenas active.");
+
+         return;
+      }
+
+      for i in plSurvivalRooms
+      {
+         if Send(i,@GetPublicStatus)
+         {
+            Debug("Public arena is active, object is ",i," and base room is ",
+                  Send(Send(i,@GetBaseRoom),@GetName));
+            Debug("Public arena is on level ",Send(i,@GetLevel)," and has ",
+                  Length(Send(i,@GetParticipants))," participants remaining.");
+         }
+         else
+         {
+            if Send(i,@GetGuildAssociation)
+            {
+               Debug("Guild arena is active, object is ",i," and base room is ",
+                     Send(Send(i,@GetBaseRoom),@GetName));
+               Debug("Guild arena is on level ",Send(i,@GetLevel)," and has ",
+                     Length(Send(i,@GetParticipants))," participants remaining.");
+            }
+            else
+            {
+               % Must be solo.
+               Debug("Solo arena is active, object is ",i," and base room is ",
+                     Send(Send(i,@GetBaseRoom),@GetName));
+               Debug("Solo arena is on level ",Send(i,@GetLevel)," and was started by ",
+                     Send(First(Send(i,@GetParticipants)),@GetTrueName));
+            }
+         }
+      }
+
+      return plSurvivalRooms;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

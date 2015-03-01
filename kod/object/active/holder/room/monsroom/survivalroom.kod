@@ -241,9 +241,13 @@ messages:
       piDirectional_percent = Send(poBaseRoom,@GetDirectionalPercent);
 
       prMusic = Send(poBaseRoom,@GetMusic);
-      
+
       plGenerators = Send(poBaseRoom,@GetGenerators);
-      
+
+      % Set the regroup time from the SurvivalRoomMaintenance default
+      piRegroupTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                           @GetRegroupTime);
+
       plRoundOneMonsters = [[&GiantRat, 14],
                             [&SpiderBaby, 14],
                             [&Centipede, 21],

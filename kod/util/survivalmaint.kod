@@ -27,7 +27,7 @@ properties:
 
    plSurvivalRooms = $
    
-   % Are Surival Arenas active?
+   % Are Survival Arenas active?
    piPublicSurvivalEnabled = FALSE
    piSoloSurvivalEnabled = FALSE
    piGuildSurvivalEnabled = FALSE
@@ -40,6 +40,9 @@ properties:
    
    % Don't use these rooms (list of RIDs)
    plExcludedRoomsList = $
+
+   % Default time between rounds
+   piRegroupTime = 15000
 
 messages:
 
@@ -106,21 +109,23 @@ messages:
       plExcludedRoomsObjs = $;
       for z in plExcludedRoomsList
       {
-         plExcludedRoomsObjs = Cons(plExcludedRoomsObjs,
-                                    Send(SYS,@FindRoomByNum,#num=z));
+         plExcludedRoomsObjs = Cons(Send(SYS,@FindRoomByNum,#num=z),
+                                    plExcludedRoomsObjs);
       }
 
       poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
       
       % Ensure it's a monster room, and shrink the list on every failure.
-      if NOT IsClass(poBaseRoom,&MonsterRoom)
+      if (NOT IsClass(poBaseRoom,&MonsterRoom))
          OR IsClass(poBaseRoom,&SurvivalRoom)
-         OR FindListElem(plExcludedRoomsList,poBaseRoom) <> 0
+         OR (plExcludedRoomsObjs <> $
+            AND FindListElem(plExcludedRoomsObjs,poBaseRoom))
          OR (iNatural AND Send(poBaseRoom,@GetGenerators) = $)
       {
-         while NOT IsClass(poBaseRoom,&MonsterRoom)
+         while (NOT IsClass(poBaseRoom,&MonsterRoom))
             OR IsClass(poBaseRoom,&SurvivalRoom)
-            OR FindListElem(plExcludedRoomsList,poBaseRoom) <> 0
+            OR (plExcludedRoomsObjs <> $
+               AND FindListElem(plExcludedRoomsObjs,poBaseRoom))
             OR (iNatural AND Send(poBaseRoom,@GetGenerators) = $)
          {
             plAllRooms = DelListElem(plAllRooms,poBaseRoom);
@@ -273,6 +278,11 @@ messages:
       return;
    }
    
+   GetRegroupTime()
+   {
+      return piRegroupTime;
+   }
+
    GetPublicSurvivalEnabled()
    {
       return piPublicSurvivalEnabled;
@@ -314,20 +324,24 @@ messages:
          OR FindListElem(plExcludedRoomsList,iRID) = 0
       {
          plExcludedRoomsList = Cons(iRID,plExcludedRoomsList);
+
+         return TRUE;
       }
 
-      return;
+      return FALSE;
    }
-   
+
    AllowRID(iRID=0)
    {
       if plExcludedRoomsList <> $
          AND FindListElem(plExcludedRoomsList,iRID) <> 0
       {
          plExcludedRoomsList = DelListElem(plExcludedRoomsList,iRID);
+
+         return TRUE;
       }
 
-      return;
+      return FALSE;
    }
 
    SurvivalStatusReport()

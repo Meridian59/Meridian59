@@ -101,6 +101,7 @@ messages:
       }
 
       if (Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
+         AND NOT IsClass(oRoom,&SurvivalRoom)
       {
          Send(who,@MsgSendUser,#message_rsc=Animate_failed_full_rsc);
 

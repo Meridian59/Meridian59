@@ -452,7 +452,7 @@ messages:
                AND (iRandom < 10 OR iDistance < iBestDistance)
             {
                iBestDistance = iDistance;
-               poTarget = each_obj;
+               Send(self,@TargetSwitch,#what=each_obj,#iHatred=100);
                if iRandom < 5
                {
                   return;

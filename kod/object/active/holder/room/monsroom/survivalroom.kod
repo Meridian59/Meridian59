@@ -44,9 +44,6 @@ constants:
 
    % Starts when Miniboss is killed
    RESPAWN_MINIBOSS_TIME = 60000
-   
-   % milliseconds in between waves
-   NEXT_LEVEL_WAIT = 10000
 
 resources:
 
@@ -166,6 +163,7 @@ properties:
    
    piLevel = 1
    
+   piRegroupTime = 15000
    ptNextLevelTimer = $
 
    piGen_time = 5000
@@ -209,6 +207,9 @@ properties:
 
    % Combat has not yet begun
    piHasBegun = FALSE
+
+   % Last level that players can join the public/guild arenas
+   piLastJoinLevel = 6
 
 messages:
 
@@ -627,8 +628,10 @@ messages:
    
    LevelComplete()
    {
-      local i, each_obj, lFixedReward, oReward, lRandomSpawnPoint;
-      
+      local i, each_obj, lFixedReward, oReward, iRewardTime, lRandomSpawnPoint;
+
+      iRewardTime = 0;
+
       % Prevent multi-level completion
       if NOT pbSpawnWaves
          OR ptNextLevelTimer <> $
@@ -665,18 +668,6 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
-      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,NEXT_LEVEL_WAIT);
-      
-      for i in plActive
-      {
-         if IsClass(First(i),&User)
-         {
-            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
-                                #parm1 = piLevel,
-                                #parm2 = NEXT_LEVEL_WAIT/1000);
-         }
-      }
-      
       for lFixedReward in plFixedRewards
       {
          if Nth(lFixedReward,2) = piLevel
@@ -705,9 +696,23 @@ messages:
             Send(self,@NewHold,#what=oReward,
                                #new_row=Nth(lRandomSpawnPoint,1),
                                #new_col=Nth(lRandomSpawnPoint,2));
+            iRewardTime = iRewardTime + 45000;
          }
       }
+
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
+                              piRegroupTime + iRewardTime);
       
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
+                                #parm1 = piLevel,
+                                #parm2 = (piRegroupTime + iRewardTime)/1000);
+         }
+      }
+
       piLevel = piLevel + 1;
       
       return;
@@ -1027,7 +1032,8 @@ messages:
       }
       
       if IsClass(what,&User)
-         AND piHasBegun
+         AND (piHasBegun
+            AND piLevel > piLastJoinLevel)
       {
          Send(self,@SpectateUser,#who=what);
          Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
@@ -1035,9 +1041,14 @@ messages:
       }
 
       if IsClass(what,&User)
-         AND NOT piHasBegun
+         AND (NOT piHasBegun
+            OR piLevel <= piLastJoinLevel)
+         
       {
          plParticipants = Cons(what,plParticipants);
+         plLivesPerPlayer = Cons([what,3],plLivesPerPlayer);
+
+
          if Length(plParticipants) = 1
             AND NOT piPublic
             AND poGuildAssociation = $
@@ -1586,7 +1597,12 @@ messages:
 
       return Send(poBaseRoom,@GetTerrainType);
    }
-   
+
+   GetBaseRoom()
+   {
+      return poBaseRoom;
+   }
+
    GetAllowJoins()
    {
       return piAllowJoins;
@@ -1601,7 +1617,12 @@ messages:
    {
       return piPublic;
    }
-   
+
+   GetParticipants()
+   {
+      return plParticipants;
+   }
+
    GetLevel()
    {
       return piLevel;

@@ -203,6 +203,9 @@ properties:
    ptRespawnMiniBossTimer = $
    
    plLivesPerPlayer = $
+   
+   % of the form [player,lives,timer]
+   plCrashProtection = $
 
    % Combat has not yet begun
    piHasBegun = FALSE

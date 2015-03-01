@@ -4403,7 +4403,7 @@ messages:
             poForceBaseRoom = $;
             if IsClass(self,&DM)
             {
-               if StringContain(String,"--natural")
+               if StringContain(String,"--unnatural")
                {
                   lSurvivalOptions = Cons(OPT_NATURAL,lSurvivalOptions);
                }

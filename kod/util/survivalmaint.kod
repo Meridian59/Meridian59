@@ -86,13 +86,13 @@ messages:
          return $;
       }
       
-      iNatural = FALSE;
+      iNatural = TRUE;
       iPvP = FALSE;
       for o in lSurvivalOptions
       {
          if o = OPT_NATURAL
          {
-            iNatural = TRUE;
+            iNatural = FALSE;
          }
          
          if o = OPT_PVP_ON

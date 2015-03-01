@@ -734,7 +734,7 @@ messages:
       iTotalParticipants = 0;
       if plParticipants <> $
       {
-         iTotalParticipants = Length(plParticipants - iNumAdmins);
+         iTotalParticipants = Length(plParticipants) - iNumAdmins;
       }
       
       if plCrashProtection <> $
@@ -814,7 +814,7 @@ messages:
    
    SomethingKilled(what=$,victim=$)
    {
-      local i, n, p, cDeadClass, respawnCheck, oTarget, mob;
+      local i, n, p, cDeadClass, respawnCheck, oTarget, mob, oMonster;
       
       if IsClass(victim,&User)
       {
@@ -950,9 +950,14 @@ messages:
          {
             for mob in plActive
             {
-               oTarget = First(plParticipants);
-               Post(First(mob),@TargetSwitch,#what=oTarget,#iHatred=100);
-               Post(First(mob),@EnterStateChase,#target=oTarget,#actnow=True);
+               oMonster = First(mob);
+               if IsClass(oMonster,&Monster)
+                  AND Send(oMonster,@GetMaster) = $
+               {
+                  oTarget = First(plParticipants);
+                  Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
+                  Send(oMonster,@EnterStateChase,#target=oTarget,#actnow=True);
+               }
             }
          }
       }

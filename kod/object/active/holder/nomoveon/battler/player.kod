@@ -14522,7 +14522,7 @@ messages:
    IsInCannotInteractMode()
    {
       if Send(self,@IsPhasedOut)
-         OR Send(self,@IsInSpectatorMode)
+         OR pbSpectatorMode
       {
          return TRUE;
       }

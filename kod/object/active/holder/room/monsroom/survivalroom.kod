@@ -1367,7 +1367,7 @@ messages:
 
       Send(who,@MsgSendUser,#message_rsc=you_were_spectated);
       Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
-      Post(who,@ActivateSpectatorMode);
+      Send(who,@ActivateSpectatorMode);
 
       if inform
       {

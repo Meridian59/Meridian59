@@ -643,6 +643,7 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Monster)
+            AND Send(each_obj,@GetMaster) = $
          {
             Send(each_obj,@Delete);
          }

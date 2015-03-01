@@ -458,16 +458,7 @@ messages:
       piHasBegun = TRUE;
       ptNextLevelTimer = $;
       pbSpawnWaves = TRUE;
-      
-      if piLevel = 1
-         AND piPublic
-      {
-         for p in plParticipants
-         {
-            plLivesPerPlayer = Cons([p,3],plLivesPerPlayer);
-         }
-      }
-      
+
       if piLevel = 2
       {
          plMonsters = plRoundTwoMonsters;

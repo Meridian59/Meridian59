@@ -93,22 +93,33 @@ classvars:
    vrSound_aware = lupoggking_sound_aware
    vrSound_death = lupoggking_sound_death
 
+   viHoldDurationMax = 25  % seconds
+   viHoldDurationMin = 15  % seconds
+
 properties:
 
    piAnimation = ANIM_NONE
    plAttackers = $  % [player,player....]
 
-   piHoldAttackChance = 12   % Chance he'll attack with a hold
-   piHoldCounterChance = 5   % Chance he'll counter a spell or arrow with a hold
-   piHoldDurationMax = 45  % seconds
-   piHoldDurationMin = 30  % seconds
+   piHoldAttackChance = 12 % Chance he'll attack with a hold
+   piHoldCounterChance = 5 % Chance he'll counter a spell or arrow with a hold
+   piHoldDurationMax = 25  % seconds
+   piHoldDurationMin = 15  % seconds
 
 messages:
 
    Constructed()
    {
-      pimax_Hit_Points = pimax_hit_Points * 3;
-      piHit_Points = pimax_hit_points*100;
+      % Give lupogg king more HP.
+      piMax_Hit_Points = piMax_Hit_Points * 3;
+      % piHit_Points uses high-precision numbers, so multiply by 100.
+      piHit_Points = piMax_Hit_Points * 100;
+
+      % Set hold duration from class variables. Allows modifying
+      % classvars for ALL lupogg kings, or modifying the property
+      % for one specific lupogg king.
+      piHoldDurationMin = viHoldDurationMin;
+      piHoldDurationMax = viHoldDurationMax;
 
       plResistances = [ [ATCK_WEAP_ALL, 40 ],
                         [ATCK_WEAP_PIERCE, 90 ],
@@ -136,7 +147,7 @@ messages:
          }
       }
 
-      plAttackers = cons(what,plAttackers);
+      plAttackers = Cons(what,plAttackers);
 
       propagate;
    }
@@ -178,7 +189,8 @@ messages:
    {
       piAnimation = ANIM_SPIT;
       Send(poOwner,@SomethingChanged,#what=self);
-      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+            #projectile=self);
       piAnimation = ANIM_NONE;
 
       return;

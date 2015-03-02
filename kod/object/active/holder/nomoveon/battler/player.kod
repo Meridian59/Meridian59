@@ -7312,6 +7312,14 @@ messages:
    {
       local iChange, iSwing, oRoom, oSpellDeathLink;
 
+      % No karma change in survival room. Mobs in this room *should*
+      % return 0 karma, but there are cases where it doesn't happen.
+      if poOwner <> $
+         AND IsClass(poOwner,&SurvivalRoom)
+      {
+         return 0;
+      }
+
       % No karma changes from killing players during Frenzies.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.
       if (Send(SYS,@GetChaosNight) AND NOT bIsMob)

@@ -135,6 +135,13 @@ messages:
                AND Send(oRoom,@InFoyer,#who=each_obj)
                   <> Send(oRoom,@InFoyer,#who=who))
          {
+            % Skip players who are phased/in spectator mode.
+            if IsClass(each_obj,&Player)
+               AND Send(each_obj,@IsInCannotInteractMode)
+            {
+               continue;
+            }
+
             lFinalTargets = Cons(each_obj,lFinalTargets);
          }
       }

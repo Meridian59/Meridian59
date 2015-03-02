@@ -575,5 +575,11 @@ messages:
       return retVal;
    }
 
+   CreateSpellBook(SID=SID_FIREBALL,mana=1)
+   "Creates a monster spellbook with a single spell."
+   {
+      return [[SID,mana,100]];
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

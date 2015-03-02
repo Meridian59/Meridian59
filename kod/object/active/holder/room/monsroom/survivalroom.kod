@@ -816,11 +816,12 @@ messages:
          propagate;
       }
       
-      % Minions!
-      if IsClass(victim,&Monster)
-         AND (Send(victim,@GetMaster) <> $
+      % Minions! Keep these checks instead of using IsOwnedByPlayer
+      % as we don't want monster minions to count either.
+      if (IsClass(victim,&Monster)
+         AND Send(victim,@GetMaster) <> $)
          OR IsClass(victim,&Brambles)
-         OR Send(victim,@IsIllusion))
+         OR Send(victim,@IsIllusion)
       {
          propagate;
       }
@@ -937,22 +938,29 @@ messages:
 
             plLevelGoals = DelListElem(plLevelGoals,i);
          }
-         
-         % Finish it up if only one guy remains in a public room.
-         if piPublic
-            AND plParticipants <> $
+
+         if plParticipants <> $
             AND Length(plParticipants) = 1
          {
-            for mob in plActive
+            % Finish it up if only one guy remains in a public room.
+            if piPublic
             {
-               oMonster = First(mob);
-               if IsClass(oMonster,&Monster)
-                  AND Send(oMonster,@GetMaster) = $
+               for mob in plActive
                {
-                  oTarget = First(plParticipants);
-                  Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
-                  Send(oMonster,@EnterStateChase,#target=oTarget,#actnow=True);
+                  oMonster = First(mob);
+                  if IsClass(oMonster,&Monster)
+                     AND (NOT Send(oMonster,@IsOwnedByPlayer))
+                  {
+                     oTarget = First(plParticipants);
+                     Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
+                     Send(oMonster,@EnterStateChase,#target=oTarget,#actnow=True);
+                  }
                }
+            }
+            else
+            {
+               % Aggro one mob on the player.
+               Send(self,@AggroOne,#who=(First(plParticipants)));
             }
          }
       }
@@ -980,7 +988,12 @@ messages:
    
    AggroBosses()
    {
-      local oTarget, i, n, each_obj;
+      local oTarget, i, n, each_obj, count;
+
+      if plParticipants = $
+      {
+         return;
+      }
 
       for i in plActive
       {
@@ -990,7 +1003,28 @@ messages:
          {
             if GetClass(each_obj) = n
             {
-               oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+               if Length(plParticipants) = 1
+               {
+                  oTarget = First(plParticipants);
+               }
+               else
+               {
+                  oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                  count = 0;
+                  while (oTarget = $
+                     OR ((IsClass(oTarget,&DM)
+                        AND Send(oTarget,@PlayerIsImmortal))
+                     OR Send(oTarget,@IsInCannotInteractMode)))
+                  {
+                     oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                     count = count + 1;
+                     if count > 10
+                     {
+                        break;
+                     }
+                  }
+               }
+
                Send(each_obj,@TargetSwitch,#what=oTarget,#iHatred=100);
                Send(each_obj,@EnterStateChase,#target=oTarget,#actnow=True);
             }
@@ -1000,18 +1034,40 @@ messages:
          {
             if GetClass(each_obj) = n
             {
-               oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+               if Length(plParticipants) = 1
+               {
+                  oTarget = First(plParticipants);
+               }
+               else
+               {
+                  oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                  count = 0;
+                  while (oTarget = $
+                     OR ((IsClass(oTarget,&DM)
+                        AND Send(oTarget,@PlayerIsImmortal))
+                     OR Send(oTarget,@IsInCannotInteractMode)))
+                  {
+                     oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                     count = count + 1;
+                     if count > 10
+                     {
+                        break;
+                     }
+                  }
+               }
+
                Send(each_obj,@TargetSwitch,#what=oTarget,#iHatred=100);
                Send(each_obj,@EnterStateChase,#target=oTarget,#actnow=True);
             }
          }
       }
+
       return;
    }
-   
+
    NewHoldObject(what=$)
    {
-      local oTarget, i;
+      local oTarget, i, count;
       
       if IsClass(what,&User)
       {
@@ -1026,11 +1082,12 @@ messages:
                plParticipants = Cons(what,plParticipants);
                
                Send(self,@AggroSome,#who=what);
+
                propagate;
             }
          }
       }
-      
+
       if IsClass(what,&User)
          AND (piHasBegun
             AND piLevel > piLastJoinLevel)
@@ -1044,11 +1101,9 @@ messages:
       if IsClass(what,&User)
          AND (NOT piHasBegun
             OR piLevel <= piLastJoinLevel)
-         
       {
          plParticipants = Cons(what,plParticipants);
          plLivesPerPlayer = Cons([what,3],plLivesPerPlayer);
-
 
          if Length(plParticipants) = 1
             AND NOT piPublic
@@ -1058,19 +1113,59 @@ messages:
             piLevel = Bound(piLevel,1,$);
          }
          Post(what,@MsgSendUser,#message_rsc=welcome_message);
+
          propagate;
       }
 
       if IsClass(what,&Monster)
          AND plParticipants <> $
-         AND plBosses <> $
-         AND plMinibosses <> $
-         AND FindListElem(plBosses,GetClass(what)) = 0
-         AND FindListElem(plMinibosses,GetClass(what)) = 0
+         AND (plBosses = $
+            OR (plBosses <> $
+               AND FindListElem(plBosses,GetClass(what)) = 0))
+         AND (plMiniBosses = $
+            OR (plMinibosses <> $
+               AND FindListElem(plMinibosses,GetClass(what)) = 0))
+         AND (NOT Send(what,@IsOwnedByPlayer))
       {
-         oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
-         Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
-         Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
+         if Length(plParticipants) = 1
+         {
+            oTarget = First(plParticipants);
+         }
+         else
+         {
+            oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+            count = 0;
+            while (oTarget = $
+               OR ((IsClass(oTarget,&DM)
+                     AND Send(oTarget,@PlayerIsImmortal))
+                  OR Send(oTarget,@IsInCannotInteractMode)))
+            {
+               oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+               count = count + 1;
+               if count > 10
+               {
+                  break;
+               }
+            }
+         }
+
+         if NOT piPublic
+            AND poGuildAssociation = $
+         {
+            % Cut aggro to 1/5th in solo.
+            if Random(1,5) = 1
+            {
+               Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
+               Post(what,@EnterStateChase,#target=oTarget,
+                     #actnow=True);
+            }
+         }
+         else
+         {
+            % Public arenas get full aggro.
+            Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
+            Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
+         }
       }
       
       if IsClass(what,&Monster)
@@ -1081,35 +1176,73 @@ messages:
       
       propagate;
    }
-   
+
+   AggroOne(who = $)
+   {
+      local i, iCount;
+
+      if (IsClass(who,&DM)
+            AND Send(who,@PlayerIsImmortal))
+         OR Send(who,@IsInCannotInteractMode)
+      {
+         return;
+      }
+
+      iCount = 0;
+
+      for i in plActive
+      {
+         if IsClass(First(i),&Monster)
+            AND (NOT Send(First(i),@IsOwnedByPlayer))
+            AND Random(1,5) = 1
+         {
+            Post(First(i),@TargetSwitch,#what=who,#iHatred=100);
+            Post(First(i),@EnterStateChase,#target=who,#actnow=True);
+            iCount = iCount + 1;
+            
+            if iCount >= 1
+            {
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
    AggroSome(who=$)
    {
       local i, iCount;
 
-      iCount = 0;
-      
-      if IsClass(who,&User)
+      if (IsClass(who,&DM)
+            AND Send(who,@PlayerIsImmortal))
+         OR Send(who,@IsInCannotInteractMode)
       {
-         for i in plActive
+         return;
+      }
+
+      iCount = 0;
+
+      for i in plActive
+      {
+         if IsClass(First(i),&Monster)
+            AND (NOT Send(First(i),@IsOwnedByPlayer))
+            AND Random(1,5) = 1
          {
-            if IsClass(First(i),&Monster)
-               AND Random(1,5) = 1
+            Post(First(i),@TargetSwitch,#what=who,#iHatred=100);
+            Post(First(i),@EnterStateChase,#target=who,#actnow=True);
+            iCount = iCount + 1;
+            
+            if iCount >= 5
             {
-               Post(First(i),@TargetSwitch,#what=who,#iHatred=100);
-               Post(First(i),@EnterStateChase,#target=who,#actnow=True);
-               iCount = iCount + 1;
-               
-               if iCount >= 5
-               {
-                  return;
-               }
+               return;
             }
          }
       }
-      
+
       return;
    }
-   
+
    LeaveHold(what=$)
    {
       if IsClass(what,&User)
@@ -1117,6 +1250,7 @@ messages:
       {
          Send(what,@DeactivateSpectatorMode);
          Post(self,@BootUser,#who=what);
+
          propagate;
       }
 

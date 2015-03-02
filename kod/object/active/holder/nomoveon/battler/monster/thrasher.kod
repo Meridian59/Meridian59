@@ -17,8 +17,10 @@ constants:
    
    PALSY_CHANCE = 20
 
-   SPIN_DAMAGE_MIN = 7
-   SPIN_DAMAGE_MAX = 15
+   % These are high precision damage amounts, with two 'decimal places'.
+   % Actual damage shown to player will be (default) 7-15.
+   SPIN_DAMAGE_MIN = 700
+   SPIN_DAMAGE_MAX = 1500
 
 resources:
 
@@ -344,12 +346,13 @@ messages:
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
             AND Send(self,@CanReach,#what=each_obj)
+            AND (NOT Send(each_obj,@IsInCannotInteractMode))
          {
             lValidTargets = Cons(each_obj,lValidTargets);
          }
       }
 
-      return lValidTargets; 
+      return lValidTargets;
    }
 
    DoSpinAttack(lFinalTargets=$)
@@ -367,9 +370,9 @@ messages:
 
       for i in lTargets
       {
-         iDamage = Send(i,@AssessDamage,#what=self,#damage=iDamage,
-                        #atype=viAttack_type,#aspell=viAttack_spell);
-         if iDamage = $
+         if Send(i,@AssessDamage,#what=self,#damage=iDamage,
+                        #atype=viAttack_type,#aspell=viAttack_spell,
+                        #precision=TRUE) = $
          {
             Send(self,@KilledSomething,#what=i,#use_weapon=self);
          }

@@ -75,6 +75,13 @@ messages:
          if each_obj <> who
             AND IsClass(each_obj,&Battler)
          {
+            % Skip players who are phased/in spectator mode.
+            if IsClass(each_obj,&Player)
+               AND Send(each_obj,@IsInCannotInteractMode)
+            {
+               continue;
+            }
+
             iDistance = Send(who,@SquaredFineDistanceToLocation3D,
                               #row=Send(each_obj,@GetRow),
                               #col=Send(each_obj,@GetCol),

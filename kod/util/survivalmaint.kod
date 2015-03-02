@@ -269,6 +269,22 @@ messages:
             {
                Send(i,@MsgSendUser,#message_rsc=public_ended,
                                    #parm1=Send(what,@GetLevel));
+               % Keep track of highest level.
+               Send(Send(SYS,@GetStatistics),@RecordPublicSurvivalLevel,
+                     #iLevel=Send(what,@GetLevel));
+            }
+         }
+         else
+         {
+            if Send(what,@GetGuildAssociation) <> $
+            {
+               Send(Send(SYS,@GetStatistics),@RecordGuildSurvivalLevel,
+                     #iLevel=Send(what,@GetLevel));
+            }
+            else
+            {
+               Send(Send(SYS,@GetStatistics),@RecordSoloSurvivalLevel,
+                     #iLevel=Send(what,@GetLevel));
             }
          }
 
@@ -277,7 +293,7 @@ messages:
 
       return;
    }
-   
+
    GetRegroupTime()
    {
       return piRegroupTime;
@@ -347,13 +363,21 @@ messages:
    SurvivalStatusReport()
    {
       local i;
-      
+
       if plSurvivalRooms = $
       {
          Debug("No survival arenas active.");
 
          return;
       }
+
+      % Report highest levels reached.
+      Debug("Highest Public Survival level reached is ",
+                  Send(Send(SYS,@GetStatistics),@RecordPublicSurvivalLevel));
+      Debug("Highest Guild Survival level reached is ",
+                  Send(Send(SYS,@GetStatistics),@RecordGuildSurvivalLevel));
+      Debug("Highest Solo Survival level reached is ",
+                  Send(Send(SYS,@GetStatistics),@RecordSoloSurvivalLevel));
 
       for i in plSurvivalRooms
       {

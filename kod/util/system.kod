@@ -4751,6 +4751,16 @@ messages:
    {
       return poSurvivalRoomMaintenance;
    }
+   
+   GetSurvivalReport()
+   {
+      if poSurvivalRoomMaintenance <> $
+      {
+         return Send(poSurvivalRoomMaintenance,@SurvivalStatusReport);
+      }
+
+      return $;
+   }
 
    RecreateTerritoryGame()
    {

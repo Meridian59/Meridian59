@@ -236,14 +236,16 @@ messages:
 
          if IsClass(self,&Earthquake)
          {
-            iDamage = Send(self,@ComputeDamage,#who=who,#target=i,#iDamage=iDamage);
+            iDamage = Send(self,@ComputeDamage,#who=who,#target=i,
+                           #iDamage=iDamage);
             if iDamage < 100
             {
                % To prevent spam, we don't consider 0 damage earthquake hits.
                continue;
             }
-            iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
-                           #aspell=Send(self,@GetAttackSpell),#absolute=pbAbsolute,#precision=TRUE);
+            iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,
+                           #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
+                           #absolute=pbAbsolute,#precision=TRUE);
             if iDamage = $
             {
                if IsClass(who,&Room)
@@ -253,8 +255,9 @@ messages:
                }
                else
                {
-                  Send(who,@MsgSendUser,#message_rsc=vrKilled_Someone,#parm1=Send(i,@GetDef),
-                        #parm2=Send(i,@GetName),#parm3=Send(i,@GetHeShe));
+                  Send(who,@MsgSendUser,#message_rsc=vrKilled_Someone,
+                        #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName),
+                        #parm3=Send(i,@GetHeShe));
                }
 
                Send(i,@MsgSendUser,#message_rsc=vrKilled_Self);
@@ -295,8 +298,8 @@ messages:
       local iDamage, iMysticism, iIntellect;
 
       % Get dual stats damage bonus.
-      % These difficult to master attack spells require both high mysticism and high intellect
-      %    to reach their full potential.
+      % These difficult to master attack spells require both high mysticism
+      % and high intellect to reach their full potential.
       iMysticism = Send(who,@GetMysticism);
       iIntellect = Send(who,@GetIntellect);
       iDamage = ((100+bound(((iMysticism+iIntellect)/2)-25,0,40))*damage)/100;
@@ -346,7 +349,8 @@ messages:
          else
          {
             Send(who,@MsgSendUser,#message_rsc=vrCast);
-            Send(who,@AssessHit,#what=who,#damage=iFinalDamage,#use_weapon=self);
+            Send(who,@AssessHit,#what=who,#damage=iFinalDamage,
+                  #use_weapon=self);
          }
       }
 

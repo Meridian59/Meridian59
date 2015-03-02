@@ -5239,8 +5239,12 @@ messages:
       origdamage = damage/100;
       color_rsc = player_hit_color_none;
 
-      % Attacks against a minion master will cause minions to defend the master
-      Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+      % Attacks against a minion master will cause minions to defend the master.
+      if what <> $
+         AND IsClass(what,&Battler)
+      {
+         Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+      }
 
       if what <> $ AND IsClass(what,&monster)
       {
@@ -5275,7 +5279,8 @@ messages:
                   #caster=Nth(i,3),#resistance=iResistance);
          }
 
-         damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
+         damage = Send(self,@GetDamageFromResistance,#what=damage,
+                        #value=iResistance);
 
          % Allow protective spells a chance to improve when they take effect!
          for i in plPassiveImprovement
@@ -5391,12 +5396,14 @@ messages:
       if piHealth <= 0
       {
          if stroke_obj = $
-            OR NOT Send(stroke_obj,@PlayerWasKilledMsg,#who=self,#attacker=what,#damage=$)
+            OR NOT Send(stroke_obj,@PlayerWasKilledMsg,#who=self,
+                        #attacker=what,#damage=$)
          {
             if report
             {
-               Send(self,@MsgSendUser,#message_rsc=Send(self,@PlayerWasHit,#atype=atype,#aspell=aspell),
-                     #parm1=color_rsc,#parm2=Send(what,@GetCapDef),#parm3=Send(what,@GetName));
+               Send(self,@MsgSendUser,#message_rsc=Send(self,@PlayerWasHit,
+                     #atype=atype,#aspell=aspell),#parm1=color_rsc,
+                     #parm2=Send(what,@GetCapDef),#parm3=Send(what,@GetName));
             }
          }
 

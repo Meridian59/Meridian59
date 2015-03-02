@@ -6109,6 +6109,63 @@ messages:
       return;
    }
 
+   IsOwnedByPlayer()
+   "Checks the three cases of minions, and returns TRUE if owned by "
+   "a player, FALSE if not. If minion has a monster for a master, "
+   "IsOwnedByPlayer is called on the master."
+   {
+      if poMaster <> $
+      {
+         if IsClass(poMaster,&Player)
+         {
+            return TRUE;
+         }
+
+         if IsClass(poMaster,&Monster)
+         {
+            return Send(poMaster,@IsOwnedByPlayer);
+         }
+
+         % Could be a room or an item that owns the monster.
+         % If we allow players to attach minions to guild halls
+         % or other creative uses of non-player/monster owners,
+         % we may need to change this.
+         return FALSE;
+      }
+
+      if poApparitionCaster <> $
+      {
+         if IsClass(poApparitionCaster,&Player)
+         {
+            return TRUE;
+         }
+
+         if IsClass(poApparitionCaster,&Monster)
+         {
+            return Send(poApparitionCaster,@IsOwnedByPlayer);
+         }
+
+         return FALSE;
+      }
+      
+      if poEvilTwinCaster <> $
+      {
+         if IsClass(poEvilTwinCaster,&Player)
+         {
+            return TRUE;
+         }
+
+         if IsClass(poEvilTwinCaster,&Monster)
+         {
+            return Send(poEvilTwinCaster,@IsOwnedByPlayer);
+         }
+
+         return FALSE;
+      }
+
+      return FALSE;
+   }
+
    % This section deals with minion code.
    CommandMinionAttack(oMaster=$,oTarget=$)
    {

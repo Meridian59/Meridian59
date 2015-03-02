@@ -43,13 +43,48 @@ properties:
    % Money Created this save period
    piMoneyCreated = 0
    
-   % How many players have entered Survival Rooms?
-   piSurvivalRoomsEntered = 0
+   % Highest level in a Survival Arenas
+   piPublicSurvivalLevel = 0
+   piGuildSurvivalLevel = 0
+   piSoloSurvivalLevel = 0
    
    % How many ancient trinkets (stat reset tokens) have been found?
    piFoundTrinkets = 0
 
 messages:
+
+   RecordPublicSurvivalLevel(iLevel=$)
+   {
+      if iLevel <> $
+         AND iLevel > piPublicSurvivalLevel
+      {
+         piPublicSurvivalLevel = iLevel;
+      }
+
+      return piPublicSurvivalLevel;
+   }
+
+   RecordGuildSurvivalLevel(iLevel=$)
+   {
+      if iLevel <> $
+         AND iLevel > piGuildSurvivalLevel
+      {
+         piGuildSurvivalLevel = iLevel;
+      }
+
+      return piGuildSurvivalLevel;
+   }
+
+   RecordSoloSurvivalLevel(iLevel=$)
+   {
+      if iLevel <> $
+         AND iLevel > piSoloSurvivalLevel
+      {
+         piSoloSurvivalLevel = iLevel;
+      }
+
+      return piSoloSurvivalLevel;
+   }
 
    MoneyCreated(amount = 0)
    {

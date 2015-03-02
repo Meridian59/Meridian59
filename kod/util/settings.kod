@@ -56,12 +56,12 @@ properties:
    % Stat reset options
    pbStatsResetEnabled = TRUE
    piStatsResetPenalty = -2
-   piFreeStatsResetCap = 49
+   piFreeStatsResetCap = 19
    piStatResetTokenLife = 2
 
    % Stat reset token has a 1 in (piStatResetTokenDropFactor / monster_level)
    % chance to drop, with monster_level bound between 50 and 150.
-   piStatResetTokenDropFactor = 150000
+   piStatResetTokenDropFactor = 500000
 
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell

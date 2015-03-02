@@ -43,6 +43,9 @@ properties:
 
    % Default time between rounds
    piRegroupTime = 15000
+   
+   % Default time between wall blitzes (mobs walk through walls)
+   piWallBlitzTime = 300000
 
 messages:
 
@@ -333,7 +336,12 @@ messages:
    {
       return piSurvivalLoot;
    }
-   
+
+   GetWallBlitzTime()
+   {
+      return piWallBlitzTime;
+   }
+
    ExcludeRID(iRID=RID_MAR_SMITHY)
    {
       if plExcludedRoomsList = $

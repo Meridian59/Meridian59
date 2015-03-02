@@ -29,10 +29,7 @@ constants:
    GOAL_BOSS = 2
    GOAL_MINIBOSSES = 3
    GOAL_KILL_FRIENDLY = 4
-   
-   % 3 minutes per wave until they begin moving through walls
-   WALL_BLITZ_TIME = 180000
-   
+
    % 3 minutes to begin public survivals
    PB_START_TIME = 180000
    
@@ -165,6 +162,7 @@ properties:
    
    piRegroupTime = 15000
    ptNextLevelTimer = $
+   piWallBlitzTime = 300000
 
    piGen_time = 5000
    piGen_percent = 100
@@ -247,6 +245,8 @@ messages:
       % Set the regroup time from the SurvivalRoomMaintenance default
       piRegroupTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
                            @GetRegroupTime);
+      piWallBlitzTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                              @GetWallBlitzTime);
 
       plRoundOneMonsters = [[&GiantRat, 14],
                             [&SpiderBaby, 14],
@@ -493,7 +493,7 @@ messages:
          plMonsters = plAllMonsters;
       }
       
-      ptWallBlitzTimer = CreateTimer(self,@ActivateWallBlitz,WALL_BLITZ_TIME);
+      ptWallBlitzTimer = CreateTimer(self,@ActivateWallBlitz,piWallBlitzTime);
       ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,REPORT_TIME);
       
       if Random(1,20) < piLevel

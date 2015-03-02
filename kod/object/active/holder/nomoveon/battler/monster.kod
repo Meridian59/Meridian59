@@ -6513,6 +6513,7 @@ messages:
    TargetSwitch(what=$, iHatred = 0)
    {
       if what = $
+         OR poOwner = $
       {
          Debug("BAD target we're switching to here!");
 

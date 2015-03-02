@@ -911,7 +911,7 @@ messages:
          {
             if Nth(i,1) = GOAL_KILLS
             {
-               Send(self,@AggroBosses);
+               Post(self,@AggroBosses);
             }
             if Nth(i,1) = GOAL_BOSS
             {
@@ -960,7 +960,10 @@ messages:
             else
             {
                % Aggro one mob on the player.
-               Send(self,@AggroOne,#who=(First(plParticipants)));
+               if plLevelGoals <> $
+               {
+                  Send(self,@AggroOne,#who=(First(plParticipants)));
+               }
             }
          }
       }
@@ -991,6 +994,7 @@ messages:
       local oTarget, i, n, each_obj, count;
 
       if plParticipants = $
+         OR plLevelGoals = $
       {
          return;
       }
@@ -1024,7 +1028,6 @@ messages:
                      }
                   }
                }
-
                Send(each_obj,@TargetSwitch,#what=oTarget,#iHatred=100);
                Send(each_obj,@EnterStateChase,#target=oTarget,#actnow=True);
             }

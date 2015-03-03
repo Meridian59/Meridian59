@@ -62,7 +62,7 @@ classvars:
    viSpell_num = 0
    viStroke = 0
 
-   viSpellExertion = 2
+   viSpellExertion = 1
 
    viChance_To_Increase = 10
    viMeditate_ratio = 20

@@ -56,7 +56,7 @@ classvars:
    viChance_To_Increase = 15
    viMeditate_ratio = 100
 
-   viSpellExertion = 14
+   viSpellExertion = 3
 
    vrSucceed_wav = seduce_sound
 

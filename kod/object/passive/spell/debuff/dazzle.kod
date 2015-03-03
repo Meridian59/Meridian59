@@ -43,7 +43,7 @@ classvars:
    viChance_To_Increase = 15
    viMeditate_ratio = 30
 
-   viSpellExertion = 6
+   viSpellExertion = 3
 
    viOutlaw = TRUE
    viHarmful = TRUE

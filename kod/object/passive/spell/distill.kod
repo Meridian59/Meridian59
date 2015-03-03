@@ -51,7 +51,7 @@ classvars:
    viSpell_level = 3
    viSchool = SS_JALA
    viMana = 20
-   viSpellExertion = 25
+   viSpellExertion = 4
    viCast_time = 30000
    viChance_To_Increase = 20
    viMeditate_ratio = 50

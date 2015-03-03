@@ -57,9 +57,9 @@ classvars:
 
    viSchool = SS_FAREN
    viSpell_num = SID_ZAP
-   viSpellExertion = 2
+   viSpellExertion = 1
    viSpell_level = 1
-   viMana = 6
+   viMana = 4
    viMeditate_ratio = 10
 
    viMin_Damage = 5         %% touch spells typically do good damage    

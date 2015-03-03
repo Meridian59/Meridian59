@@ -40,7 +40,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 3
    viMana = 15
-   viSpellExertion = 10
+   viSpellExertion = 3
    viCast_time = 3000
 
    vrSucceed_wav = SummonWeb_sound

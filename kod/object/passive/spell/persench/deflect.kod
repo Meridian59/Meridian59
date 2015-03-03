@@ -49,7 +49,7 @@ classvars:
 
    viPersonal_ench = True
 
-   viSpellExertion = 10
+   viSpellExertion = 4
    vrName = Deflect_name_rsc
    vrIcon = Deflect_icon_rsc
    vrDesc = Deflect_desc_rsc

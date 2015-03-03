@@ -51,7 +51,7 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 5
    viMana = 20
-   viSpellExertion = 15
+   viSpellExertion = 4
 
    % This will disallow people from trucing, and then killing undead.
    viHarmful = TRUE   

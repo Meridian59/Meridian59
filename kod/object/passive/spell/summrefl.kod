@@ -47,7 +47,7 @@ classvars:
    viMana = 15
    viMeditate_ratio = 30
 
-   viSpellExertion = 10
+   viSpellExertion = 4
    viCast_time = 1000
 
    vrSucceed_wav = summonreflection_sound

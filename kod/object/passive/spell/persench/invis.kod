@@ -50,7 +50,7 @@ classvars:
    viSchool = SS_QOR
    viSpell_level = 5
    viMana = 12
-   viSpellExertion = 8
+   viSpellExertion = 3
    viMeditate_ratio = 75
 
    vrSucceed_wav = invisibility_sound

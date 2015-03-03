@@ -39,7 +39,7 @@ classvars:
    viSchool = SS_QOR
    viSpell_level = 3
    viMana = 20
-   viSpellExertion = 15
+   viSpellExertion = 3
 
    viCast_time = 2000
    vrSucceed_wav = SummonPoisonFog_sound

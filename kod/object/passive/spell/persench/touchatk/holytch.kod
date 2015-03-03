@@ -64,9 +64,9 @@ classvars:
 
    viSchool = SS_SHALILLE
    viSpell_num = SID_HOLY_TOUCH
-   viSpellExertion = 3
+   viSpellExertion = 1
    viSpell_level = 2
-   viMana = 12
+   viMana = 4
 
    % It's alright if Holy Touch has high base damage.
    % It gets no intrinsic proficiency damage, instead doing double base against undead.

@@ -46,7 +46,7 @@ classvars:
    viSchool = SS_RIIJA
    viSpell_level = 2
    viMana = 8
-   viSpellExertion = 4
+   viSpellExertion = 1
 
    viManaDrain = 1       % Drain is amount used every so often
    

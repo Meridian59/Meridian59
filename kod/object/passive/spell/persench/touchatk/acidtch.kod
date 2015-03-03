@@ -59,9 +59,9 @@ classvars:
 
    viSchool = SS_QOR
    viSpell_num = SID_ACID_TOUCH
-   viSpellExertion = 3
+   viSpellExertion = 1
    viSpell_level = 2
-   viMana = 10
+   viMana = 4
 
    viMin_Damage = 4        %% touch spells typically do good damage    
    viMax_Damage = 8       %% but are unaffected by weapon or strength bonuses

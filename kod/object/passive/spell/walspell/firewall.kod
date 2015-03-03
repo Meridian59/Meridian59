@@ -37,7 +37,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 4
    viMana = 15
-   viSpellExertion = 10
+   viSpellExertion = 3
    viMeditate_ratio = 30
 
    viCast_time = 1000

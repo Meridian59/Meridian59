@@ -1199,8 +1199,8 @@ messages:
             AND (NOT Send(First(i),@IsOwnedByPlayer))
             AND Random(1,5) = 1
          {
-            Post(First(i),@TargetSwitch,#what=who,#iHatred=100);
-            Post(First(i),@EnterStateChase,#target=who,#actnow=True);
+            Send(First(i),@TargetSwitch,#what=who,#iHatred=100);
+            Send(First(i),@EnterStateChase,#target=who,#actnow=True);
             iCount = iCount + 1;
             
             if iCount >= 1
@@ -1232,8 +1232,8 @@ messages:
             AND (NOT Send(First(i),@IsOwnedByPlayer))
             AND Random(1,5) = 1
          {
-            Post(First(i),@TargetSwitch,#what=who,#iHatred=100);
-            Post(First(i),@EnterStateChase,#target=who,#actnow=True);
+            Send(First(i),@TargetSwitch,#what=who,#iHatred=100);
+            Send(First(i),@EnterStateChase,#target=who,#actnow=True);
             iCount = iCount + 1;
             
             if iCount >= 5

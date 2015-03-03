@@ -28,8 +28,6 @@ classvars:
 
 properties:
 
-   pbComplete = FALSE
-
 messages:
 
    Constructor()
@@ -42,6 +40,37 @@ messages:
       return;
    }
 
+   Update()
+   {
+      return;
+   }
+   
+   NewMinute()
+   {
+      return;
+   }
+   
+   NewHour()
+   {
+      
+      return;
+   }
+   
+   NewDay()
+   {
+      return;
+   }
+   
+   NewMonth()
+   {
+      return;
+   }
+   
+   NewYear()
+   {
+      return;
+   }
+   
    StartEvent()
    {
       if vbAnnounce
@@ -59,16 +88,16 @@ messages:
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrEndMessage);
       }
       
-      pbComplete = TRUE;
+      Send(Send(SYS,@GetEventEngine),@EventEnd,#oEvent=self);
    
       return;
    }
    
-   IsComplete()
+   AdvanceEvent()
    {
-      return pbComplete;
+      return;
    }
-
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

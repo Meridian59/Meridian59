@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
    MSG_EVT_START = 1
+   MSG_EVT_STOP = 2
+   MSG_EVT_ADVANCE = 3
    
 resources:
 
@@ -42,14 +44,7 @@ messages:
       
       for i in plActiveEvents
       {
-         if Send(i,@IsComplete)
-         {
-            Send(self,@EventEnd,#oEvent=i);
-         }
-         else
-         {
-            Send(i,@Update);
-         }
+         Send(i,@Update);
       }
       
       if plActiveEvents <> $
@@ -79,38 +74,227 @@ messages:
    
    NewMinute()
    {
+      local i;
+      
+      for i in plActiveEvents
+      {
+         Send(i,@NewMinute);
+      }
+   
       return;
    }
    
    NewHour()
    {
+      local i;
+      
+      for i in plActiveEvents
+      {
+         Send(i,@NewHOur);
+      }
       
       return;
    }
    
    NewDay()
    {
+      local i;
+      
+      for i in plActiveEvents
+      {
+         Send(i,@NewDay);
+      }
+      
       return;
    }
    
    NewMonth()
    {
+      local i;
+      
+      for i in plActiveEvents
+      {
+         Send(i,@Update);
+      }
+      
       return;
    }
    
    NewYear()
    {
+      local i;
+      
+      for i in plActiveEvents
+      {
+         Send(i,@NewYear);
+      }
+   
       return;
    }
    
-   TestScheduleEvent(iHour=0,iMinute=0)
+   ScheduleEventInMinutes(iClass=$,minutes=$,message=MSG_EVT_START,parm1=$,
+                          parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
    {
-      Send(self,@ScheduleEvent,#iClass=&RatInvasion,#iYear=2015,#iMonth=3,#iDay=2,#iHour=iHour,#iMinute=iMinute);
+      local oRealTime;
+   
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallbackInMinutes,
+                     #oObject=self,
+                     #minutes=minutes,
+                     #message=message,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
       
       return;
    }
    
-   ScheduleEvent(iClass=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   ScheduleEventInHours(iClass=$,hours=$,message=MSG_EVT_START,parm1=$,
+                          parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime;
+   
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallbackInHours,
+                     #oObject=self,
+                     #hours=hours,
+                     #message=message,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+      
+      return;
+   }
+   
+   ScheduleEventInDays(iClass=$,days=$,message=MSG_EVT_START,parm1=$,
+                       parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime;
+   
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallbackInDays,
+                     #oObject=self,
+                     #days=days,
+                     #message=message,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+      
+      return;
+   }
+   
+   ScheduleEventInWeeks(iClass=$,weeks=$,message=MSG_EVT_START,parm1=$,
+                        parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime;
+   
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallbackInDays,
+                     #oObject=self,
+                     #days=weeks * 7,
+                     #message=message,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+      
+      return;
+   }
+   
+   ScheduleEventInMonths(iClass=$,months=$,message=MSG_EVT_START,parm1=$,
+                         parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime;
+   
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallbackInMonths,
+                     #oObject=self,
+                     #months=months,
+                     #message=message,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+      
+      return;
+   }
+   
+   ScheduleEventInYears(iClass=$,years=$,message=MSG_EVT_START,parm1=$,
+                        parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime;
+   
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallbackInYears,
+                     #oObject=self,
+                     #years=years,
+                     #message=message,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+      
+      return;
+   }
+   
+   TestScheduleEvent(iHour=$,iMinute=$)
+   {
+      local iYear,iMonth,iDay;
+      
+      iYear=Send(Send(SYS,@GetRealTimeObject),@GetYear);
+      iMonth=Send(Send(SYS,@GetRealTimeObject),@GetMonth);
+      iDay=Send(Send(SYS,@GetRealTimeObject),@GetDay);
+      if iHour = $
+      {
+         iHour=Send(Send(SYS,@GetRealTimeObject),@GetHour); 
+      }
+      if IMinute = $
+      {
+         iMinute=Send(Send(SYS,@GetRealTimeObject),@GetMinute) + 2;
+         if iMinute >= 60
+         {
+            iMinute = iMinute - 60;
+         }
+      }
+   
+      Send(self,@ScheduleStartEvent,#iClass=&RatInvasion,
+                                    #iYear=iYear,
+                                    #iMonth=iMonth,
+                                    #iDay=iDay,
+                                    #iHour=iHour,
+                                    #iMinute=iMinute);
+      
+      return;
+   }
+   
+   ScheduleStartEvent(iClass=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
    {
       local oRealTime;
       
@@ -119,6 +303,32 @@ messages:
       Send(oRealTime,@RegisterCallback,#oObject=self,
          #message=MSG_EVT_START,#iYear=iYear,#iMonth=iMonth,
          #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=iClass);
+      
+      return;
+   }
+   
+   ScheduleEndEvent(oObject=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   {
+      local oRealTime;
+      
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallback,#oObject=self,
+         #message=MSG_EVT_STOP,#iYear=iYear,#iMonth=iMonth,
+         #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=oObject);
+      
+      return;
+   }
+   
+   ScheduleAdvanceEvent(oObject=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   {
+      local oRealTime;
+      
+      oRealTime = Send(SYS,@GetRealTimeObject);
+      
+      Send(oRealTime,@RegisterCallback,#oObject=self,
+         #message=MSG_EVT_ADVANCE,#iYear=iYear,#iMonth=iMonth,
+         #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=oObject);
       
       return;
    }
@@ -163,6 +373,22 @@ messages:
             else
             {
                debug("Error Starting Event!",parm1);
+            }
+         }
+         if message = MSG_EVT_STOP
+         {
+            oEvent = parm1;
+            if oEvent <> $
+            {
+               Send(oEvent,@EndEvent);
+            }
+         }
+         if message = MSG_EVT_ADVANCE
+         {
+            oEvent = parm1;
+            if oEvent <> $
+            {
+               Send(oEvent,@AdvanceEvent);
             }
          }
       }

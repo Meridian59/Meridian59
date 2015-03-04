@@ -162,6 +162,9 @@ properties:
    % Evil twin object
    poEvilTwin = $
 
+   % List of active evil twins (i.e. ETs we've created).
+   plEvilTwins = $
+
    % Apparition list and target
    plApparitionList = $
    poApparitionOriginal = $
@@ -213,6 +216,27 @@ messages:
                Send(i,@Delete);
             }
          }
+         plControlledMinions = $;
+      }
+
+      % If this Battler has created any evil twins, delete them.
+      if plEvilTwins <> $
+      {
+         for i in plEvilTwins
+         {
+            Send(i,@Delete);
+         }
+         plEvilTwins = $;
+      }
+
+      % If this Battler has Apparitions attacking it, delete them.
+      if plApparitionList <> $
+      {
+         for i in plApparitionList
+         {
+            Send(i,@Delete);
+         }
+         plApparitionList = $;
       }
 
       propagate;
@@ -1517,10 +1541,11 @@ messages:
    % This section deals with illusions cast by/on the battler
 
    AddEvilTwin(what=$)
+   "If something casts evil twin on us, we store it here."
    {
-      if poEvilTwin=$
+      if poEvilTwin = $
       {
-         poEvilTwin=what;
+         poEvilTwin = what;
 
          return TRUE;
       }
@@ -1550,10 +1575,39 @@ messages:
       return FALSE;
    }
 
+   EvilTwinsCreated(what=$)
+   "If we cast evil twin on something, we add the ET to our "
+   "list of created evil twins."
+   {
+      if what <> $
+      {
+         plEvilTwins = Cons(what,plEvilTwins);
+      }
+
+      return;
+   }
+
+   RemoveCreatedEvilTwin(what=$)
+   "Remove an evil twin from our list of created evil twins."
+   {
+      local i;
+
+      if plEvilTwins <> $
+         AND FindListElem(plEvilTwins,what)
+      {
+         plEvilTwins = DelListElem(plEvilTwins,what);
+      }
+
+      return;
+   }
+
    % If Apparition is cast on the monster, this list keeps track of it.
    AddApparition(what=$)
    {
-      plApparitionList = Cons(what,plApparitionList);
+      if what <> $
+      {
+         plApparitionList = Cons(what,plApparitionList);
+      }
 
       return;
    }
@@ -1586,7 +1640,7 @@ messages:
 
       return;
    }
-   
+
    GetBoostedLevel()
    {
       return 0;

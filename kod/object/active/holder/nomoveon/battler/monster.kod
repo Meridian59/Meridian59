@@ -632,6 +632,9 @@ messages:
       {
          Send(poEvilTwinOriginal,@RemoveEvilTwin);
          poEvilTwinOriginal = $;
+
+         % Tell the caster it was deleted too.
+         Send(poEvilTwinCaster,@RemoveCreatedEvilTwin,#what=self);
          poEvilTwinCaster = $;
       }
 
@@ -639,16 +642,6 @@ messages:
       if poEvilTwin <> $
       {
          Post(poEvilTwin,@Delete);
-      }
-
-      % If this monster has Apparitions attacking it, delete them.
-      if plApparitionList <> $
-      {
-         for k in plApparitionList
-         {
-            Send(k,@Delete);
-         }
-         plApparitionList = $;
       }
 
       % If this monster is an Apparition, tell the original it was deleted.

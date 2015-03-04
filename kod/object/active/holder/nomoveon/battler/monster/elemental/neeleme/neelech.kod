@@ -35,12 +35,12 @@ classvars:
    viTreasure_type = TID_NONE
    viSpeed = SPEED_FAST
 
-   viLevel = 230
-   viDifficulty = 8
+   viLevel = 250
+   viDifficulty = 9
 
    viCashmin = 3000
    viCashmax = 12000
-   
+
 properties:
 
    piAnimation = ANIM_NONE
@@ -49,9 +49,7 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_QUAKE, -70 ],
-                        [-ATCK_SPELL_HOLY, -40 ],
-                        [-ATCK_SPELL_UNHOLY, -40 ],
+      plResistances = [ [-ATCK_SPELL_QUAKE, -60 ],
                         [-ATCK_SPELL_ALL, 50 ],
                         [ATCK_WEAP_PIERCE, -60],
                         [ATCK_WEAP_ALL, 50 ] ];

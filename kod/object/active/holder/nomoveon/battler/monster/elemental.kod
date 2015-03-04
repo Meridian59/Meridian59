@@ -41,7 +41,7 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttributes = 0
    viLevel = 200
-   viDifficulty = 7
+   viDifficulty = 8
    viVisionDistance = 28
 
    % Attack range of 192, or 3 row/col.
@@ -64,10 +64,11 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_COLD, -50 ],
-                        [-ATCK_SPELL_ALL, 90 ],
-                        [ATCK_WEAP_BLUDGEON, -100],
-                        [ATCK_WEAP_ALL, 90 ] ];
+      if plResistances = $
+      {
+         plResistances = [ [-ATCK_SPELL_ALL, 90 ],
+                           [ATCK_WEAP_ALL, 90 ] ];
+      }
 
       propagate;
    }
@@ -105,14 +106,14 @@ messages:
          return;
       }
 
-      % if no body animation
+      % If no body animation.
       propagate;
    }
    
    CanMorphTo()
    {
-      return false;
-   } 
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -49,12 +49,15 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_QUAKE, -70 ],
-                        [-ATCK_SPELL_HOLY, -40 ],
-                        [-ATCK_SPELL_UNHOLY, -40 ],
-                        [-ATCK_SPELL_ALL, 50 ],
-                        [ATCK_WEAP_PIERCE, -60],
-                        [ATCK_WEAP_ALL, 50 ] ];
+      if plResistances = $
+      {
+         plResistances = [ [-ATCK_SPELL_QUAKE, -70 ],
+                           [-ATCK_SPELL_HOLY, -20 ],
+                           [-ATCK_SPELL_UNHOLY, -20 ],
+                           [-ATCK_SPELL_ALL, 50 ],
+                           [ATCK_WEAP_PIERCE, -60],
+                           [ATCK_WEAP_ALL, 50 ] ];
+      }
 
       propagate;
    }

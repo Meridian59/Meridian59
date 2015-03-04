@@ -40,7 +40,7 @@ classvars:
    viTreasure_type = TID_ICE_ELE
 
    viAttack_Spell = ATCK_SPELL_COLD
-   
+
 properties:
 
    piAnimation = ANIM_NONE
@@ -49,11 +49,13 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_FIRE, -50 ],
-                        [-ATCK_SPELL_QUAKE, -50 ],
-                        [-ATCK_SPELL_ALL, 80 ],
-                        [ATCK_WEAP_BLUDGEON, -100],
-                        [ATCK_WEAP_ALL, 90 ] ];
+      if plResistances = $
+      {
+         plResistances = [ [-ATCK_SPELL_FIRE, -60 ],
+                           [-ATCK_SPELL_ALL, 70 ],
+                           [ATCK_WEAP_SLASH, -50],
+                           [ATCK_WEAP_ALL, 60 ] ];
+      }
 
       propagate;
    }

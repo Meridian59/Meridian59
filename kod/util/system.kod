@@ -5490,8 +5490,10 @@ messages:
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);
       plItemTemplates = cons(create(&RatMask),plItemTemplates);
+      plItemTemplates = cons(create(&DuskRatMask),plItemTemplates);
       plItemTemplates = cons(create(&AntMask),plItemTemplates);
       plItemTemplates = cons(create(&TrollMask),plItemTemplates);
+      plItemTemplates = cons(create(&StoneTrollMask),plItemTemplates);
       plItemTemplates = cons(create(&KriipaMask),plItemTemplates);
 
       plItemTemplates = cons(create(&FarenCharm),plItemTemplates);

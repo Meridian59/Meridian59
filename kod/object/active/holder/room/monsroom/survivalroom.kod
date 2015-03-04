@@ -208,6 +208,9 @@ properties:
 
    % Last level that players can join the public/guild arenas
    piLastJoinLevel = 6
+   
+   % Boolean for resource restoration on level completion.
+   pbRestoreResources = TRUE
 
 messages:
 
@@ -245,8 +248,13 @@ messages:
       % Set the regroup time from the SurvivalRoomMaintenance default
       piRegroupTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
                            @GetRegroupTime);
+      % Set wall blitz time.
       piWallBlitzTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
                               @GetWallBlitzTime);
+      piLastJoinLevel = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                              @GetLastJoinLevel);
+      pbRestoreResources = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                              @GetRestoreResources);
 
       plRoundOneMonsters = [[&GiantRat, 14],
                             [&SpiderBaby, 14],
@@ -702,6 +710,16 @@ messages:
       {
          if IsClass(First(i),&User)
          {
+            if pbRestoreResources
+            {
+               Send(First(i),@SetHealth,#amount=Send(First(i),@GetMaxHealth));
+               Send(First(i),@EatSomething,#nutrition=200);
+               if NOT Send(First(i),@IsCrystalizeManaSurging)
+               {
+                  Send(First(i),@GainMana,#amount=Send(First(i),@GetMaxMana),
+                     #bCapped=TRUE);
+               }
+            }
             Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
                                 #parm1 = piLevel,
                                 #parm2 = (piRegroupTime + iRewardTime)/1000);
@@ -815,19 +833,16 @@ messages:
       {
          propagate;
       }
-      
-      % Minions! Keep these checks instead of using IsOwnedByPlayer
-      % as we don't want monster minions to count either.
-      if (IsClass(victim,&Monster)
-         AND Send(victim,@GetMaster) <> $)
-         OR IsClass(victim,&Brambles)
-         OR Send(victim,@IsIllusion)
-      {
-         propagate;
-      }
 
       if IsClass(victim,&Monster)
       {
+         % These kills don't count towards the room goals.
+         if Send(victim,@IsMinion)
+            OR IsClass(victim,&Brambles)
+         {
+            propagate;
+         }
+
          cDeadClass = GetClass(victim);
          
          for respawnCheck in plMinibosses
@@ -1089,35 +1104,33 @@ messages:
                propagate;
             }
          }
-      }
 
-      if IsClass(what,&User)
-         AND (piHasBegun
-            AND piLevel > piLastJoinLevel)
-      {
-         Send(self,@SpectateUser,#who=what);
-         Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
-
-         propagate;
-      }
-
-      if IsClass(what,&User)
-         AND (NOT piHasBegun
-            OR piLevel <= piLastJoinLevel)
-      {
-         plParticipants = Cons(what,plParticipants);
-         plLivesPerPlayer = Cons([what,3],plLivesPerPlayer);
-
-         if Length(plParticipants) = 1
-            AND NOT piPublic
-            AND poGuildAssociation = $
+         if piHasBegun
+            AND piLevel > piLastJoinLevel
          {
-            piLevel = Send(what,@GetBaseMaxHealth) / 25;
-            piLevel = Bound(piLevel,1,$);
-         }
-         Post(what,@MsgSendUser,#message_rsc=welcome_message);
+            Send(self,@SpectateUser,#who=what);
+            Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
 
-         propagate;
+            propagate;
+         }
+
+         if (NOT piHasBegun)
+            OR piLevel <= piLastJoinLevel
+         {
+            plParticipants = Cons(what,plParticipants);
+            plLivesPerPlayer = Cons([what,3],plLivesPerPlayer);
+
+            if Length(plParticipants) = 1
+               AND NOT piPublic
+               AND poGuildAssociation = $
+            {
+               piLevel = Send(what,@GetBaseMaxHealth) / 25;
+               piLevel = Bound(piLevel,1,$);
+            }
+            Post(what,@MsgSendUser,#message_rsc=welcome_message);
+
+            propagate;
+         }
       }
 
       if IsClass(what,&Monster)
@@ -1128,8 +1141,12 @@ messages:
          AND (plMiniBosses = $
             OR (plMinibosses <> $
                AND FindListElem(plMinibosses,GetClass(what)) = 0))
-         AND (NOT Send(what,@IsOwnedByPlayer))
       {
+         if Send(what,@IsMinion)
+         {
+            propagate;
+         }
+
          if Length(plParticipants) = 1
          {
             oTarget = First(plParticipants);
@@ -1152,10 +1169,11 @@ messages:
             }
          }
 
-         if NOT piPublic
-            AND poGuildAssociation = $
+         if ((NOT piPublic)
+            AND poGuildAssociation = $)
          {
-            % Cut aggro to 1/5th in solo.
+            % Cut aggro to 1/5th in solo. Post these so they
+            % run after mob is set up in room.
             if Random(1,5) = 1
             {
                Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
@@ -1165,18 +1183,18 @@ messages:
          }
          else
          {
-            % Public arenas get full aggro.
+            % Public arenas get full aggro. Post these so they
+            % run after mob is set up in room.
             Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
             Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
          }
+
+         if ptWallBlitzTimer = $
+         {
+            Send(what,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
+         }
       }
-      
-      if IsClass(what,&Monster)
-         AND ptWallBlitzTimer = $
-      {
-         Send(what,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
-      }
-      
+
       propagate;
    }
 

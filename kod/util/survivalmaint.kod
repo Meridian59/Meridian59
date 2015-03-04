@@ -46,6 +46,12 @@ properties:
    
    % Default time between wall blitzes (mobs walk through walls)
    piWallBlitzTime = 300000
+   
+   % Default last join level
+   piLastJoinLevel = 6
+
+   % Do we restore resources on level completion?
+   pbRestoreResources = TRUE
 
 messages:
 
@@ -340,6 +346,16 @@ messages:
    GetWallBlitzTime()
    {
       return piWallBlitzTime;
+   }
+
+   GetLastJoinLevel()
+   {
+      return piLastJoinLevel;
+   }
+
+   GetRestoreResources()
+   {
+      return pbRestoreResources;
    }
 
    ExcludeRID(iRID=RID_MAR_SMITHY)

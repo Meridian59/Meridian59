@@ -202,7 +202,7 @@ messages:
    "Can generate a monster at a specific location, or you can let it be "
    "put at a gen point."
    {
-      local oOldOwner, iMRow, iMCol, lPos, iRoll;
+      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount;
       
       iMRow = iRow;
       iMCol = iCol;
@@ -232,8 +232,22 @@ messages:
       {
          if plGenerators = $
          {
+            iCount = 0;
             iMRow = Random(1,piRows);
             iMCol = Random(1,piCols);
+            while ((NOT Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol))
+                  AND iCount < 15)
+            {
+               iMRow = Random(1,piRows);
+               iMCol = Random(1,piCols);
+               iCount = iCount + 1;
+            }
+            if iCount = 15
+            {
+               Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
+                     " in room ",self,Send(self,@GetName));
+            }
          }
          else
          {

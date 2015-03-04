@@ -6166,6 +6166,20 @@ messages:
       return FALSE;
    }
 
+   IsMinion()
+   "Returns TRUE for seduced and animated mobs, reflections, "
+   "evil twins and apparitions."
+   {
+      if poMaster <> $
+         OR poApparitionCaster <> $
+         OR poEvilTwinCaster <> $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    % This section deals with minion code.
    CommandMinionAttack(oMaster=$,oTarget=$)
    {

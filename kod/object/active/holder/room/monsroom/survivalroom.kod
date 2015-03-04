@@ -926,7 +926,7 @@ messages:
          {
             if Nth(i,1) = GOAL_KILLS
             {
-               Post(self,@AggroBosses);
+               Post(self,@AggroBosses,#victim=victim);
             }
             if Nth(i,1) = GOAL_BOSS
             {
@@ -965,6 +965,7 @@ messages:
                   oMonster = First(mob);
                   if IsClass(oMonster,&Monster)
                      AND (NOT Send(oMonster,@IsOwnedByPlayer))
+                     AND oMonster <> victim
                   {
                      oTarget = First(plParticipants);
                      Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
@@ -977,7 +978,8 @@ messages:
                % Aggro one mob on the player.
                if plLevelGoals <> $
                {
-                  Send(self,@AggroOne,#who=(First(plParticipants)));
+                  Send(self,@AggroOne,#who=(First(plParticipants)),
+                        #victim=victim);
                }
             }
          }
@@ -1003,8 +1005,8 @@ messages:
 
       propagate;
    }
-   
-   AggroBosses()
+
+   AggroBosses(victim = $)
    {
       local oTarget, i, n, each_obj, count;
 
@@ -1017,7 +1019,13 @@ messages:
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         
+
+         if victim <> $
+            AND victim = each_obj
+         {
+            continue;
+         }
+
          for n in plBosses
          {
             if GetClass(each_obj) = n
@@ -1198,9 +1206,9 @@ messages:
       propagate;
    }
 
-   AggroOne(who = $)
+   AggroOne(who = $,victim = $)
    {
-      local i, iCount;
+      local i, iCount, oMonster;
 
       if (IsClass(who,&DM)
             AND Send(who,@PlayerIsImmortal))
@@ -1213,12 +1221,20 @@ messages:
 
       for i in plActive
       {
-         if IsClass(First(i),&Monster)
-            AND (NOT Send(First(i),@IsOwnedByPlayer))
+         oMonster = First(i);
+         if IsClass(oMonster,&Monster)
+            AND (NOT Send(oMonster,@IsOwnedByPlayer))
             AND Random(1,5) = 1
          {
-            Send(First(i),@TargetSwitch,#what=who,#iHatred=100);
-            Send(First(i),@EnterStateChase,#target=who,#actnow=True);
+            % If this is called from SomethingKilled, don't aggro
+            % the mob that was just killed.
+            if victim <> $
+               AND oMonster = victim
+            {
+               continue;
+            }
+            Send(oMonster,@TargetSwitch,#what=who,#iHatred=100);
+            Send(oMonster,@EnterStateChase,#target=who,#actnow=True);
             iCount = iCount + 1;
             
             if iCount >= 1

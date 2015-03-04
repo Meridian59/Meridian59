@@ -4333,11 +4333,11 @@ messages:
       }
       
       % No penalties for chaos zone battles
-      if Send(self,@GetOwner) <> $
+      if poOwner <> $
          AND Send(victim,@GetOwner) <> $
-         AND IsClass(Send(self,@GetOwner),&Room)
+         AND IsClass(poOwner,&Room)
          AND IsClass(Send(victim,@GetOwner),&Room)
-         AND Send(Send(self,@GetOwner),@GetChaosZone)
+         AND Send(poOwner,@GetChaosZone)
          AND Send(Send(victim,@GetOwner),@GetChaosZone)
       {
          return TRUE;
@@ -8493,7 +8493,7 @@ messages:
       {
          % Let players share XP if they're grouped, even if
          % they're not fighting the same mob.
-         if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
+         if Send(poOwner,@AreGroupedHere,#who=self,#what=what)
          {
             Post(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,
                   #group_member_kill=TRUE,#group_member=what);
@@ -8645,7 +8645,7 @@ messages:
             % appropriate monsters. This will roughly equal building 
             % with one other player in the room. Bonus requires that the 
             % player is fighting normally (no firewalls / distance killing)
-            lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
+            lBuilderGroup = Send(poOwner,@GetBuilderGroup);
             if (lBuilderGroup = $
                   OR Length(lBuilderGroup) = 1
                   OR (FindListElem(lBuilderGroup,self) = 0
@@ -8663,8 +8663,8 @@ messages:
          % Give a bonus for Survival Rooms
          if Send(what,@GetBoostedLevel) > 0
          {
-            gain = gain + (Send(what,@GetBoostedLevel)/5
-                 * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalXP));
+            gain = gain + (Send(what,@GetBoostedLevel)
+                 / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalXP));
          }
 
          % If they're cheesing the situation by fighting wussy monsters
@@ -8690,7 +8690,7 @@ messages:
          {
             piTraining_points = piTraining_points + 1
                + (Send(what,@GetBoostedLevel)
-               * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
+               / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
          }
 
          % Let the player know how many training points they have, if they
@@ -13430,7 +13430,7 @@ messages:
 
    SetSkinColor(color = 1)
    {
-      local iColor, i, oRoom;
+      local iColor, i;
 
       % Arms (hands) and face are the only default things that need to
       % have skin colors associated with it.  Other items in use
@@ -13444,10 +13444,9 @@ messages:
          Send(i,@DoPlayerArt);
       }
 
-      oRoom = Send(self,@GetOwner);
-      if oRoom <> $
+      if poOwner <> $
       {
-         Send(oRoom,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -13945,10 +13944,6 @@ messages:
    BindPlayerToCurrentLocation()
    "Saves the player's current location as a special teleport destination."
    {
-      local poOwner;
-
-      poOwner = Send(self,@GetOwner);
-
       if poOwner = $
       {
          return;
@@ -13967,10 +13962,6 @@ messages:
    SendPlayerToBoundLocation()
    "Sends the player to their saved teleport destination."
    {
-      local poOwner;
-
-      poOwner = Send(self,@GetOwner);
-
       if poOwner = $
          OR piBound_Room = $
          OR NOT Send(self,@IsLoggedOn)
@@ -14015,8 +14006,8 @@ messages:
    SetDeathRiftProtection(value=FALSE)
    {
       if value=TRUE
-         AND Send(self,@GetOwner) <> $
-         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+         AND poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
       {
          % Only allow Death Rift Protection for those already
          % logged on and in the Underworld
@@ -14054,14 +14045,10 @@ messages:
    "Players that linger too long will find themselves cast "
    "out of the Underworld."
    {
-      local oRoom;
-
       ptDeathRiftTimer = $;
 
-      oRoom = Send(self,@GetOwner);
-
-      if oRoom <> $
-         AND Send(oRoom,@GetRoomNum) = RID_UNDERWORLD
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
          AND Send(self,@GetDeathRiftProtection) = TRUE
       {
          Send(self,@AdminGoToSafety);
@@ -14086,9 +14073,7 @@ messages:
 
    LeaveBuilderGroup()
    {
-      local oRoom, i, each_obj;
-
-      oRoom = Send(self,@GetOwner);
+      local i, each_obj;
 
       if ptLeaveBuilderGroupTimer <> $
       {
@@ -14096,17 +14081,17 @@ messages:
          ptLeaveBuilderGroupTimer = $;
       }
 
-      if oRoom <> $
+      if poOwner <> $
       {
-         Send(oRoom,@RemoveFromBuilderGroup,#who=self);
-         Send(oRoom,@SomethingChanged,#what=self);
+         Send(poOwner,@RemoveFromBuilderGroup,#who=self);
+         Send(poOwner,@SomethingChanged,#what=self);
 
          % Let's see that we left the group
-         for i in Send(oRoom,@GetPlActive)
+         for i in Send(poOwner,@GetPlActive)
          {
-            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
-               AND Send(oRoom,@AreGroupedHere,#who=self,#what=each_obj)
+               AND Send(poOwner,@AreGroupedHere,#who=self,#what=each_obj)
             {
                Send(self,@SomethingChanged,#what=each_obj);
             }
@@ -14118,33 +14103,31 @@ messages:
 
    JoinBuilderGroup()
    {
-      local oRoom, i, each_obj;
-
-      oRoom = Send(self,@GetOwner);
+      local i, each_obj;
 
       % Refresh an active group membership
       if ptLeaveBuilderGroupTimer <> $
       {
          DeleteTimer(ptLeaveBuilderGroupTimer);
          ptLeaveBuilderGroupTimer = CreateTimer(self,@LeaveBuilderGroupTimer,
-                                       Send(Send(self,@GetOwner),@GetGroupTime));
+                                       Send(poOwner,@GetGroupTime));
 
          return;
       }
 
-      if oRoom <> $
+      if poOwner <> $
       {
-         Send(oRoom,@AddToBuilderGroup,#who=self);
-         Send(oRoom,@SomethingChanged,#what=self);
+         Send(poOwner,@AddToBuilderGroup,#who=self);
+         Send(poOwner,@SomethingChanged,#what=self);
          ptLeaveBuilderGroupTimer = CreateTimer(self,@LeaveBuilderGroupTimer,
-                                       Send(Send(self,@GetOwner),@GetGroupTime));
+                                       Send(poOwner,@GetGroupTime));
 
          % Let's see our new group
-         for i in Send(oRoom,@GetPlActive)
+         for i in Send(poOwner,@GetPlActive)
          {
-            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
-               AND Send(oRoom,@AreGroupedHere,#who=self,#what=each_obj)
+               AND Send(poOwner,@AreGroupedHere,#who=self,#what=each_obj)
             {
                Send(self,@SomethingChanged,#what=each_obj);
             }

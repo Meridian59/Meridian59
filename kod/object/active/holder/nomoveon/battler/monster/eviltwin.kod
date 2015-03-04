@@ -131,7 +131,15 @@ messages:
    {
       if poOriginal <> $
       {
+         % Clear the original's chasing evil twin property.
          Send(poOriginal,@RemoveEvilTwin);
+      }
+
+      if poCaster <> $
+      {
+         % Let the caster know to remove us from their list of
+         % created ETs.
+         Send(poCaster,@RemoveCreatedEvilTwin,#what=self);
       }
 
       if (poOwner <> $)

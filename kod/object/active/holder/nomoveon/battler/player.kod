@@ -2205,6 +2205,16 @@ messages:
          Send(i,@UserLogoff);
       }
 
+      % If this player has created any evil twins, delete them.
+      if plEvilTwins <> $
+      {
+         for i in plEvilTwins
+         {
+            Send(i,@Delete);
+         }
+         plEvilTwins = $;
+      }
+
       % client assumes not resting upon login
       Send(self,@StopResting);
 
@@ -8884,34 +8894,14 @@ messages:
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem,
             iRoom, lInventoryContents, lReagentBagContents;
 
-      % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
-      % is called from LeaveHold() in the Underworld.  This is to allow time
-      % for Portal of Life to reduce penalties.  We get the default value of
-      % piDeathCost from SYS, so that we can adjust global death penalties.
-
-      if Send(self,@GetOwner) <> $
-         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      % If this player has created any evil twins, delete them.
+      if plEvilTwins <> $
       {
-         return;
-      }
-      
-      if Send(self,@GetOwner) <> $
-         AND IsClass(Send(self,@GetOwner),&Room)
-         AND Send(Send(self,@GetOwner),@OverridesDeathFunction)
-      {
-         Send(Send(self,@GetOwner),@OverrideDeathFunction,#who=self,#what=what);
-         return;
-      }
-
-      % "Normal" value is 100.
-      piDeathCost = Send(Send(SYS,@GetSettings),@GetDefaultDeathCost);
-
-      % A player (probably) cannot die twice in two seconds in any valid way.
-      if GetTime() < (piLastDeathTime + 2)
-      {
-         Debug("Averted double-death of",vrName);
-
-         return;
+         for i in plEvilTwins
+         {
+            Send(i,@Delete);
+         }
+         plEvilTwins = $;
       }
 
       % If we have Apparitions attacking us, delete them.
@@ -8922,6 +8912,36 @@ messages:
             Send(j,@Delete);
          }
          plApparitionList = $;
+      }
+
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+      {
+         return;
+      }
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Room)
+         AND Send(poOwner,@OverridesDeathFunction)
+      {
+         Send(poOwner,@OverrideDeathFunction,#who=self,#what=what);
+
+         return;
+      }
+
+      % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
+      % is called from LeaveHold() in the Underworld.  This is to allow time
+      % for Portal of Life to reduce penalties.  We get the default value of
+      % piDeathCost from SYS, so that we can adjust global death penalties.
+      % "Normal" value is 100.
+      piDeathCost = Send(Send(SYS,@GetSettings),@GetDefaultDeathCost);
+
+      % A player (probably) cannot die twice in two seconds in any valid way.
+      if GetTime() < (piLastDeathTime + 2)
+      {
+         Debug("Averted double-death of",vrName);
+
+         return;
       }
 
       % Stop any rescue attempts that were going on.
@@ -14320,6 +14340,8 @@ messages:
 
    StartPhaseTimer()
    {
+      local i;
+
       if ptPhaseTimer = $
       {
          ptPhaseTimer = CreateTimer(self,@PhaseTimerEnd,piRemainingPhaseTime);
@@ -14331,8 +14353,18 @@ messages:
             DeleteTimer(ptRescue);
             ptRescue = $;
          }
+
+         % If this player has created any evil twins, delete them.
+         if plEvilTwins <> $
+         {
+            for i in plEvilTwins
+            {
+               Send(i,@Delete);
+            }
+            plEvilTwins = $;
+         }
       }
-      
+
       if ptPhaseVisualEffectTimer = $
       {
          ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);

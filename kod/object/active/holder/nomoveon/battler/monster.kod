@@ -632,6 +632,9 @@ messages:
       {
          Send(poEvilTwinOriginal,@RemoveEvilTwin);
          poEvilTwinOriginal = $;
+
+         % Tell the caster it was deleted too.
+         Send(poEvilTwinCaster,@RemoveCreatedEvilTwin,#what=self);
          poEvilTwinCaster = $;
       }
 
@@ -639,16 +642,6 @@ messages:
       if poEvilTwin <> $
       {
          Post(poEvilTwin,@Delete);
-      }
-
-      % If this monster has Apparitions attacking it, delete them.
-      if plApparitionList <> $
-      {
-         for k in plApparitionList
-         {
-            Send(k,@Delete);
-         }
-         plApparitionList = $;
       }
 
       % If this monster is an Apparition, tell the original it was deleted.
@@ -5674,7 +5667,7 @@ messages:
       local i,j,oReagent,iNumberItems,oTreasure,oTreasure_type,tokengen,
             iSafetyCntr,lTreasureItems,iNumberOfItemsDropped,
             iNumberOfItemsLooted,iRandomCashAmount,oMoney,iGetResult,
-            bCapacityFailure,bRangeFailure;
+            bCapacityFailure,bRangeFailure,iSurvivalLoot;
 
       % Apparitions, etc, provide no treasure
       if pbIllusion
@@ -5706,12 +5699,13 @@ messages:
             % Random number of treasure items are dropped based on viLevel
             %  and viDifficulty.  The higher these values are, the more items
             %  that may be dropped.
+            iSurvivalLoot = piBoostedLevel
+              / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot);
+
             iNumberItems = 1 + (viLevel/55) + Random(0,viDifficulty/3)
-                             + (piBoostedLevel/4
-              * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot));
-            iNumberItems = Bound(iNumberItems,$,6 + (piBoostedLevel/4
-              * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot)));
-            iNumberItems = (Send(Send(SYS, @GetSettings), @GetItemFactor)*iNumberItems)/100;
+                              + iSurvivalLoot;
+            iNumberItems = Bound(iNumberItems,$,6 + iSurvivalLoot);
+            iNumberItems = (Send(Send(SYS,@GetSettings),@GetItemFactor)*iNumberItems)/100;
             iNumberItems = Bound(iNumberItems,1,$);
          }
       
@@ -5776,10 +5770,8 @@ messages:
             corpse = $;
          }
 
-         oMoney = Create(&Money,#corpse=corpse,
-                                #number=iRandomCashAmount+
-               (piBoostedLevel*50*
-                Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
+         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
+                     * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          lTreasureItems = cons(oMoney,lTreasureItems);
@@ -6161,6 +6153,20 @@ messages:
          }
 
          return FALSE;
+      }
+
+      return FALSE;
+   }
+
+   IsMinion()
+   "Returns TRUE for seduced and animated mobs, reflections, "
+   "evil twins and apparitions."
+   {
+      if poMaster <> $
+         OR poApparitionCaster <> $
+         OR poEvilTwinCaster <> $
+      {
+         return TRUE;
       }
 
       return FALSE;

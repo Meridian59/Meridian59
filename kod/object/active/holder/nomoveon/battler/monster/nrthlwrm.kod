@@ -92,10 +92,14 @@ messages:
 
    DoSlash()
    {
-      piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-      ptRestartAnimation = CreateTimer(self,@RestartAnimation,SEC_PER_FRAME*5);
+      if poOwner <> $
+      {
+         piAnimation = ANIM_ATTACK;
+         Send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+         ptRestartAnimation = CreateTimer(self,@RestartAnimation,
+                                    SEC_PER_FRAME*5);
+      }
 
       return;
    }
@@ -103,7 +107,11 @@ messages:
    RestartAnimation()
    {
       ptRestartAnimation = $;
-      Send(poOwner,@SomethingChanged,#what=self);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
 
       return;
    }

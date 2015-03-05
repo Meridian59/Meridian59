@@ -153,11 +153,20 @@ messages:
       {
          % Should be a monster. Make a low HP copy of it.
          oTwin = Create((GetClass(oTarget)));
+         % Set the illusion boolean on the ET, so it doesn't drop loot.
          Send(oTwin,@SetIllusion,#value=TRUE);
+         % Set the ET's original to the target.
          Send(oTwin,@EvilTwinOrignial,#what=oTarget,#who=who);
       }
 
+      % Add this ET to the target's evil twin property, which keeps
+      % track of the current ET pursuing them.
       Send(oTarget,@AddEvilTwin,#what=oTwin);
+
+      % Also add this ET to the list of ETs created by the caster.
+      % If the caster dies or is otherwise deleted, we delete any
+      % ETs they've created.
+      Send(who,@EvilTwinsCreated,#what=oTwin);
 
       oRoom = Send(who,@GetOwner);
 

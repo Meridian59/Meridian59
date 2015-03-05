@@ -32,12 +32,14 @@ properties:
    piSoloSurvivalEnabled = FALSE
    piGuildSurvivalEnabled = FALSE
    
-   % Do survival arenas give these rewards?
-   piSurvivalXP = TRUE
-   piSurvivalCash = TRUE
-   piSurvivalTP = TRUE
-   piSurvivalLoot = TRUE
-   
+   % At what level multiple do these increase?
+   piSurvivalXPIncreaseLevel = 8
+   piSurvivalTPIncreaseLevel = 8
+   piSurvivalLootIncreaseLevel = 4
+
+   % How much extra cash on each monster kill per level?
+   piSurvivalCashPerLevel = 30
+
    % Don't use these rooms (list of RIDs)
    plExcludedRoomsList = $
 
@@ -46,6 +48,12 @@ properties:
    
    % Default time between wall blitzes (mobs walk through walls)
    piWallBlitzTime = 300000
+   
+   % Default last join level
+   piLastJoinLevel = 6
+
+   % Do we restore resources on level completion?
+   pbRestoreResources = TRUE
 
 messages:
 
@@ -319,27 +327,37 @@ messages:
    
    GetSurvivalXP()
    {
-      return piSurvivalXP;
+      return piSurvivalXPIncreaseLevel;
    }
    
    GetSurvivalCash()
    {
-      return piSurvivalCash;
+      return piSurvivalCashPerLevel;
    }
    
    GetSurvivalTP()
    {
-      return piSurvivalTP;
+      return piSurvivalTPIncreaseLevel;
    }
    
    GetSurvivalLoot()
    {
-      return piSurvivalLoot;
+      return piSurvivalLootIncreaseLevel;
    }
 
    GetWallBlitzTime()
    {
       return piWallBlitzTime;
+   }
+
+   GetLastJoinLevel()
+   {
+      return piLastJoinLevel;
+   }
+
+   GetRestoreResources()
+   {
+      return pbRestoreResources;
    }
 
    ExcludeRID(iRID=RID_MAR_SMITHY)
@@ -372,13 +390,6 @@ messages:
    {
       local i;
 
-      if plSurvivalRooms = $
-      {
-         Debug("No survival arenas active.");
-
-         return;
-      }
-
       % Report highest levels reached.
       Debug("Highest Public Survival level reached is ",
                   Send(Send(SYS,@GetStatistics),@RecordPublicSurvivalLevel));
@@ -386,6 +397,13 @@ messages:
                   Send(Send(SYS,@GetStatistics),@RecordGuildSurvivalLevel));
       Debug("Highest Solo Survival level reached is ",
                   Send(Send(SYS,@GetStatistics),@RecordSoloSurvivalLevel));
+
+      if plSurvivalRooms = $
+      {
+         Debug("No survival arenas active.");
+
+         return;
+      }
 
       for i in plSurvivalRooms
       {

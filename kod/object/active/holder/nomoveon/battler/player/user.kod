@@ -6629,7 +6629,7 @@ messages:
       if what = $
       {
          Debug(Send(self,@GetTrueName),self," got newhold of $. Owner is ",
-               Send(Send(self,@GetOwner),@GetName));
+               Send(poOwner,@GetName));
 
          return;
       }
@@ -8281,7 +8281,7 @@ messages:
 
          if pbLogged_on
          {
-            oCurrentRoom = Send(self,@GetOwner);
+            oCurrentRoom = poOwner;
             iCurrentRegion = Send(oCurrentRoom,@GetRegion);
 
             if iCurrentRegion = iLastSafeRegion

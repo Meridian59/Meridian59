@@ -315,19 +315,22 @@ messages:
          oTarget = what;
       }
 
+      % Vision distance check.
       if NOT Send(self,@CanSee,#what=poTarget)
+      {
+         return;
+      }
+
+      % Req attack and line of sight check.
+      if NOT Send(poOwner,@ReqSomethingAttack,#what=self,
+                  #victim=poTarget,#use_weapon=self)
+         OR NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=oTarget)
       {
          return;
       }
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
       iRandom = Random(piHoldDurationMin,piHoldDurationMax);
-
-      if NOT Send(poOwner,@ReqSomethingAttack,#what=self,
-            #victim=poTarget,#use_weapon=self)
-      {
-         return;
-      }
 
       Send(poOwner,@SomethingWaveRoom,#what=self,
             #wave_rsc=lupoggking_cast_sound);

@@ -52,7 +52,7 @@ Bool DibInitCompression()
 	// failed ...
 	if (zlib_moduleptr == NULL)
 	{
-		MessageBox(NULL, "Error loading zlib1.dll", "ERROR", 0);
+		Notify("Error loading zlib1.dll");
 
 		// force crash
 		assert(zlib_moduleptr != NULL);
@@ -64,7 +64,7 @@ Bool DibInitCompression()
 	// failed ...
 	if (uncompress_entryptr == NULL)
 	{
-		MessageBox(NULL, "Unable to find procedure 'uncompress' in zlib1.dll", "ERROR", 0);
+		Notify("Unable to find procedure 'uncompress' in zlib1.dll");
 
 		// force crash
 		assert(uncompress_entryptr != NULL);

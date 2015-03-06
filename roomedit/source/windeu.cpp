@@ -221,6 +221,9 @@ void InitWindeu (int argc, char **argv, char *init_level)
 	// Initialize graphics data (GDI pen cache, ...)
 	// InitGfxData();
 
+	// Load zlib1.dll dynamically
+	DibInitCompression();
+
 	// Init. MainWad file name to default (DOOM.WAD)
 	MainWad = (char *)GetMemory (strlen(DEFAULT_MAIN_WAD)+1);
 	strcpy (MainWad, DEFAULT_MAIN_WAD);
@@ -317,6 +320,9 @@ void CleanupWindeu ()
 
 	// that's all, folks!
 	CloseWadFiles();
+
+	// unload compression
+	DibCloseCompression();
 
   // Disabled 7/04 ARK
 //	UnloadKodObjects();

@@ -202,7 +202,8 @@ void ForgetFTextureInfo()
  */
 TextureInfo *FindTextureByName(char *name)
 {
-   assert (WTexture!=NULL);
+	if (WTexture == NULL || name == NULL)
+		return NULL;
    
    for (SHORT ti = 0 ; ti < NumWTexture ; ti++ )
    {
@@ -221,10 +222,9 @@ TextureInfo *FindTextureByName(char *name)
  */
 TextureInfo *FindTextureByNumber(int num)
 {
-   assert (WTexture!=NULL);
-   if (num == 0)
+   if (WTexture == NULL || num == 0)
       return NULL;
-   
+
    for (SHORT ti = 0 ; ti < NumWTexture ; ti++ )
    {
       assert (WTexture[ti] != NULL);
@@ -232,7 +232,7 @@ TextureInfo *FindTextureByNumber(int num)
       if (WTexture[ti]->number == num)
 	 return WTexture[ti];
    }
-   Notify ("Couldn't find Wall texture info: \"%d\" (BUG)!", num);
+   Notify("Couldn't find Wall texture info: \"%d\" (BUG)!", num);
    return NULL;
 }
 

@@ -311,7 +311,6 @@ void TSectorEditDialog::SetSectorList ()
 void TSectorEditDialog::SetTextureList ()
 {
 	assert (pTextureList->IsWindow());
-	assert (FTexture != NULL);
 
 	pTextureList->ClearList();
 

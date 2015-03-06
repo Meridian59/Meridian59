@@ -85,6 +85,9 @@ properties:
    % If not we want to enforce size limits on the groups.
    pbRestricted = WAR_UNRESTRICTED
 
+   % Do we allow allies to attack each other?
+   pbCanAttackAllies = FALSE
+
    % Is war active?
    pbActive = FALSE
 
@@ -460,6 +463,53 @@ messages:
       return $;
    }
 
+   IsSameSide(player1 = $, player2 = $)
+   "Returns TRUE if player1 is on the same side as player 2, "
+   "FALSE otherwise."
+   {
+      local lSoldiers, iSide, iSide1, iSide2;
+
+      if player1 = $
+         OR player2 = $
+      {
+         return FALSE;
+      }
+
+      iSide = 0;
+      iSide1 = $;
+      iSide2 = $;
+
+      for lSoldiers in plSoldiers
+      {
+         iSide = iSide + 1;
+
+         if lSoldiers <> $
+         {
+            if FindListElem(lSoldiers,player1) <> 0
+            {
+               iSide1 = iSide;
+            }
+            if FindListElem(lSoldiers,player2) <> 0
+            {
+               iSide2 = iSide;
+            }
+         }
+      }
+
+      if iSide1 = $
+         OR iSide2 = $
+      {
+         return FALSE;
+      }
+
+      if iSide1 = iSide2
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    GetSideName(side=$)
    "Returns the resource for the name of the side."
    {
@@ -502,6 +552,12 @@ messages:
    "Returns if war event is active or not."
    {
       return pbActive;
+   }
+
+   CanAttackAllies()
+   "Returns TRUE if allies can attack each other, FALSE if not."
+   {
+      return pbCanAttackAllies;
    }
 
    GetScores()

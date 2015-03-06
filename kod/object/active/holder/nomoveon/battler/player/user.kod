@@ -2612,6 +2612,16 @@ messages:
             OR oIllusion = $
             OR NOT IsClass(oIllusion,&Monster)
          {
+            if Send(Send(SYS,@GetWarEvent),@IsActive)
+            {
+               if Send(Send(SYS,@GetWarEvent),@IsSameSide,#player1=self,#player2=what)
+               {
+                  return MM_PLAYER | MM_PLAYER_IS_GUILDMATE;
+               }
+
+               return MM_PLAYER | MM_PLAYER_IS_ENEMY;
+            }
+
             % Standard player blue dot.
             if Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
             {

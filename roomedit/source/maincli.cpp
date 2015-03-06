@@ -149,6 +149,12 @@ void TMainClient::SetupWindow ()
 //
 void TMainClient::CmFileOpenWad ()
 {
+	// save current working directory (of windeu32.exe)
+	// the TFileOpenDialog below is going to set
+	// it to the folder of the file being opened...
+	char workdir[256];
+	GetCurrentDirectory(256, workdir);
+
 	SET_HELP_CONTEXT(Open_WAD_file);
 	//
 	// Display standard Open dialog box to select a file name.
@@ -156,6 +162,8 @@ void TMainClient::CmFileOpenWad ()
 	*FileData.FileName = 0;
 	if (TFileOpenDialog(this, FileData).Execute() == IDOK)
 	{
+		// restore workingdirectory to folder of windeu32.exe
+		SetCurrentDirectory(workdir);
 #if 0
 		OpenPatchWad(FileData.FileName);
 		CloseUnusedWadFiles();

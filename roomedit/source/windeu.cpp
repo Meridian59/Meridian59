@@ -128,10 +128,10 @@ BOOL   GridShown  = FALSE;
 #define DEFAULT_LOWER_TEXTURE 	"-"
 #define DEFAULT_FLOOR_TEXTURE	"-"
 #define DEFAULT_CEILING_TEXTURE "-"
-#define DEFAULT_BITMAP_DIR      "..\run\localclient\resource"
+#define DEFAULT_BITMAP_DIR      "..\\run\\localclient\\resource"
 #define DEFAULT_BITMAP_SPEC     "grd*.bgf"
-#define DEFAULT_KOD_DIR			"..\kod\"
-#define DEFAULT_SERVER_DIR      "..\run\server\"
+#define DEFAULT_KOD_DIR			"..\\kod\\"
+#define DEFAULT_SERVER_DIR      "..\\run\\server\\"
 #define DEFAULT_ENTRANCE_FILE	"entrance.dat"
 
 char *DefaultWallTexture;		/* default normal wall texture */

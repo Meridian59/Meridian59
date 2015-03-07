@@ -137,7 +137,7 @@ protected:
 	void	GetWindowClass (WNDCLASS &wc);
 	LPSTR	GetClassName ();
 
-	void 	Paint (TDC &dc, BOOL erase, TRect &rc);
+	void 	Paint (TDC &dc, bool erase, TRect &rc);
 	void	EvTimer (UINT uiTimerId);
 
 	void	SetCaption (const char far* title);

@@ -407,7 +407,7 @@ void TMainFrame::DrawFreeMemory()
 // -------------
 //  Ignore mouse movements when window is deactivated
 //
-BOOL TMainFrame::PreProcessMsg (MSG& msg)
+bool TMainFrame::PreProcessMsg (MSG& msg)
 {
 	switch (msg.message)
 	{
@@ -427,7 +427,7 @@ BOOL TMainFrame::PreProcessMsg (MSG& msg)
 // ----------
 //  Keep 'activated' member up to date.
 //
-void TMainFrame::EvActivate (UINT active, BOOL minimized, HWND hWndOther )
+void TMainFrame::EvActivate (UINT active, bool minimized, HWND hWndOther )
 {
 	if (active == WA_ACTIVE ||
 		active == WA_CLICKACTIVE )

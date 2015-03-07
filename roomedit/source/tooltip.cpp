@@ -165,11 +165,12 @@ void TTipStatusBar::SetHintText (const char *lpszText)
 	if (lpszText != NULL)
 	{
 		static char	buf[128];
+		int n;
 
 		lstrcpy (buf, lpszText);
 
 		// locate the tooltip text
-		for (int n = 0; buf[n] && buf[n] != '\n'; n++) ;
+		for (n = 0; buf[n] && buf[n] != '\n'; n++) ;
 
 		if (buf[n])
 		{
@@ -381,7 +382,7 @@ LPSTR TToolTip::GetClassName ()
 	return "WinDEUTooltip";
 }
 
-void TToolTip::Paint (TDC &dc, BOOL, TRect &)
+void TToolTip::Paint (TDC &dc, bool, TRect &)
 {
 	char	szText[50];
 	TRect	client;

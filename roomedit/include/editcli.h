@@ -151,7 +151,7 @@ public:
 //{{TEditorClientVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow ();
-	virtual void Paint (TDC& dc, BOOL erase, TRect& rect);
+	virtual void Paint (TDC& dc, bool erase, TRect& rect);
 	virtual char far* GetClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void CloseWindow (int retVal = 0);

@@ -87,7 +87,7 @@ public:
 //{{TInfoControlVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow();
-	virtual void Paint( TDC& dc, BOOL erase, TRect& rect);
+	virtual void Paint( TDC& dc, bool erase, TRect& rect);
     virtual char far* GetClassName ();
     virtual void GetWindowClass (WNDCLASS& wndClass);
 //{{TInfoControlVIRTUAL_END}}
@@ -95,7 +95,7 @@ public:
 //{{TInfoControlRSP_TBL_BEGIN}}
 protected:
 	UINT EvNCHitTest (TPoint& point);
-	BOOL EvSetCursor (HWND hWndCursor, UINT hitTest, UINT mouseMsg);
+	bool EvSetCursor (HWND hWndCursor, UINT hitTest, UINT mouseMsg);
 //{{TInfoControlRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TInfoControl);
 };    //{{TInfoControl}}

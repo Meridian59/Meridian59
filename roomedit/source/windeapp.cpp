@@ -210,7 +210,8 @@ void WinDEUApp::InitInstance ()
 	// Retrieve module directory to construct help file full path
 	if ( GetModuleFileName (HelpFileName, MAXPATH) )
 	{
-		for (int i = strlen(HelpFileName) - 1;
+		int i;
+		for (i = strlen(HelpFileName) - 1;
 			 (i >= 0) && (HelpFileName[i] != '\\');
 			 i--)
 			;
@@ -363,7 +364,7 @@ void WinDEUApp::Enable3DControls (BOOL enable)
 // WinDEUApp
 // ---------
 // Ask for confirmation before exiting application
-BOOL WinDEUApp::CanClose ()
+bool WinDEUApp::CanClose ()
 {
 	BOOL result;
 
@@ -403,7 +404,7 @@ BOOL WinDEUApp::CanClose ()
 // WinDEUApp
 // ---------
 //
-BOOL WinDEUApp::ProcessAppMsg (MSG& msg)
+bool WinDEUApp::ProcessAppMsg (MSG& msg)
 {
 #if 0
 

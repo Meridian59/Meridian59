@@ -990,7 +990,7 @@ void TEditorClient::ChangeMode (int NewMode)
 // TEditorClient
 // -------------
 //
-void TEditorClient::Paint (TDC& dc, BOOL erase, TRect& rect)
+void TEditorClient::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	// Save GDI object and set WAIT cursor
 	// SELECT_WAIT_CURSOR();
@@ -5046,10 +5046,11 @@ void TEditorClient::CmUndoEnable (TCommandEnabler &tce)
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];
+		int i;
 
 		menu.GetMenuString (CM_EDIT_UNDO, ItemString,
 							sizeof(ItemString), MF_BYCOMMAND);
-		for(int i = 0 ; i < strlen(ItemString) ; i++)
+		for(i = 0 ; i < strlen(ItemString) ; i++)
 		{
 			if ( ItemString[i] == '\t' )
 				break;
@@ -5092,10 +5093,11 @@ void TEditorClient::CmRedoEnable (TCommandEnabler &tce)
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];
+		int i;
 
 		menu.GetMenuString (CM_EDIT_REDO, ItemString,
 							sizeof(ItemString), MF_BYCOMMAND);
-		for(int i = 0 ; i < strlen(ItemString) ; i++)
+		for(i = 0 ; i < strlen(ItemString) ; i++)
 		{
 			if ( ItemString[i] == '\t' )
 				break;

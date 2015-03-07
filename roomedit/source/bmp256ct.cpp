@@ -330,7 +330,7 @@ TBitmap256Control::AdjustWindowSize ()
 // -----------------
 //  Display bitmap
 void
-TBitmap256Control::Paint (TDC& dc, BOOL erase, TRect& rect)
+TBitmap256Control::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	TControl::Paint(dc, erase, rect);
 
@@ -669,7 +669,7 @@ void TBitmap256Control::ConvertBitmapToDib()
 // TBitmap256Control
 // -----------------
 //
-BOOL TBitmap256Control::EvEraseBkgnd (HDC dc)
+bool TBitmap256Control::EvEraseBkgnd (HDC dc)
 {
 	// Suppress flicker when there's a bitmap to be repainted.
 	if ( pDIBInfo != NULL )

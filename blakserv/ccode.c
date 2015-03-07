@@ -2879,6 +2879,7 @@ int C_SetClassVar(int object_id,local_var_type *local_vars,
    class_node *c;
    val_type ret_val, class_val, data_str, var_name;
    int var_id;
+   const char *pStrConst;
 
    ret_val.v.tag = TAG_INT;
    ret_val.v.data = False;
@@ -2906,30 +2907,23 @@ int C_SetClassVar(int object_id,local_var_type *local_vars,
 
    if (var_name.v.tag != TAG_DEBUGSTR)
    {
-      bprintf("C_SetClassVar passed bad class var string");
+      bprintf("C_SetClassVar passed bad class var string.\n");
       return ret_val.int_val;
    }
 
    kod_statistics *kstat = GetKodStats();
    class_node *c2 = GetClassByID(kstat->interpreting_class);
-   const char *pStrConst;
-   int strLen = 0;
-
    if (c2 == NULL)
    {
       bprintf("C_SetClassVar can't find class %i, can't get debug str\n",
             kstat->interpreting_class);
       return ret_val.int_val;
    }
+
    pStrConst = GetClassDebugStr(c2,var_name.v.data);
-   strLen = 0;
-   if (pStrConst != NULL)
+   if (pStrConst == NULL)
    {
-      strLen = strlen(pStrConst);
-   }
-   else
-   {
-      bprintf("C_SetClassVar: GetClassDebugStr returned NULL");
+      bprintf("C_SetClassVar: GetClassDebugStr returned NULL\n");
       return ret_val.int_val;
    }
 

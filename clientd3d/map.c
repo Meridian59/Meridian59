@@ -22,6 +22,7 @@
 #define MAP_WALL_THICKNESS 1
 #define MAP_PLAYER_THICKNESS 4
 #define MAP_OBJECT_THICKNESS 2
+#define MAP_BOSS_THICKNESS 3
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
 #define MAP_PLAYER_COLOR        PALETTERGB(0, 0, 255)
@@ -35,6 +36,8 @@
 #define MAP_BUILDGRP_COLOR      PALETTERGB(0, 255, 0)    // Bright Green
 #define MAP_NPC_COLOR           PALETTERGB(0, 0, 0)      // Black
 #define MAP_TEMPSAFE_COLOR      PALETTERGB(0,170,255)    // Cyan
+#define MAP_MINIBOSS_COLOR      PALETTERGB(160, 66, 194) // Purple
+#define MAP_BOSS_COLOR          PALETTERGB(127, 0, 0)    // Dark Red
 
 #define MAP_OBJECT_RADIUS (FINENESS / 4)  // Radius of circle drawn for an object
 
@@ -47,7 +50,8 @@
 
 static HBRUSH hObjectBrush, hPlayerBrush, hNullBrush, hMinionBrush,
                hMinionOtherBrush, hNpcBrush, hTempsafeBrush;
-static HPEN hWallPen, hPlayerPen, hObjectPen, hMinionPen, hMinionOtherPen;
+static HPEN hWallPen, hPlayerPen, hObjectPen, hMinionPen, hMinionOtherPen,
+            hMinibossPen, hBossPen;
 static HPEN hFriendPen, hEnemyPen, hGuildmatePen, hBuilderPen, hNpcPen, hTempsafePen;
 
 static float zoom;              // Factor to zoom in on map
@@ -142,6 +146,8 @@ void MapInitialize(void)
    hBuilderPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_BUILDGRP_COLOR);
    hNpcPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_NPC_COLOR);
    hTempsafePen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_TEMPSAFE_COLOR);
+   hMinibossPen = CreatePen(PS_SOLID, MAP_BOSS_THICKNESS, MAP_MINIBOSS_COLOR);
+   hBossPen = CreatePen(PS_SOLID, MAP_BOSS_THICKNESS, MAP_BOSS_COLOR);
 
    hNpcBrush = CreateSolidBrush(MAP_NPC_COLOR);
    hMinionOtherBrush = CreateSolidBrush(MAP_MINION_OTH_COLOR);
@@ -183,6 +189,8 @@ void MapClose(void)
    DeleteObject(hBuilderPen);
    DeleteObject(hNpcPen);
    DeleteObject(hTempsafePen);
+   DeleteObject(hMinibossPen);
+   DeleteObject(hBossPen);
    DeleteObject(hMinionOtherBrush);
    DeleteObject(hMinionBrush);
    DeleteObject(hObjectBrush);
@@ -400,17 +408,18 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
       dy = (r->motion.y - player.y) >> 4;
       if (((dx * dx + dy * dy) > mapObjectDistanceShiftAndSquare) &&
           (!r->visible && !config.showUnseenMonsters) &&
-          !(r->obj.flags & OF_PLAYER) && !(r->obj.minimapflags & MM_NPC))
+          !(r->obj.flags & OF_PLAYER) && !(r->obj.minimapflags & MM_NPC) &&
+          !(r->obj.minimapflags & MM_MINIBOSS) && !(r->obj.minimapflags & MM_BOSS))
           continue;
 
       new_x = x + (r->motion.x * scale);
       new_y = y + (r->motion.y * scale);
-      
+      float ring_radius;
+
       // Draw rings around players
       if (r->obj.flags & OF_PLAYER)
       {
          SelectObject(hdc, hPlayerBrush);
-         float ring_radius;
 
          // Builder group?
          if (r->obj.minimapflags & MM_BUILDER_GROUP)
@@ -488,10 +497,40 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
          SelectObject(hdc, hNpcPen);
          SelectObject(hdc, hNpcBrush);
       }
+      else if (r->obj.minimapflags & MM_MINIBOSS)
+      {
+         SelectObject(hdc, hObjectBrush);
+         SelectObject(hdc, hMinibossPen);
+         ring_radius = 2.1f * radius;
+         Ellipse(hdc,(int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         SelectObject(hdc, hObjectPen);
+         Ellipse(hdc,(int) (new_x - radius * 1.2f), (int) (new_y - radius * 1.2f),
+            (int) (new_x + radius * 1.2f), (int) (new_y + radius * 1.2f));
+
+         continue;
+      }
+      else if (r->obj.minimapflags & MM_BOSS)
+      {
+         SelectObject(hdc, hObjectBrush);
+         SelectObject(hdc, hBossPen);
+         ring_radius = 2.6f * radius;
+         Ellipse(hdc,(int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         SelectObject(hdc, hObjectPen);
+         Ellipse(hdc,(int) (new_x - radius * 1.6f), (int) (new_y - radius * 1.6f),
+            (int) (new_x + radius * 1.6f), (int) (new_y + radius * 1.6f));
+
+         continue;
+      }
       else
       {
          // No dots for anything else, yet.
-         return;
+         continue;
       }
 
       // Draw a circle at the object's position

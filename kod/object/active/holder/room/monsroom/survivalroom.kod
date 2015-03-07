@@ -1841,5 +1841,43 @@ messages:
       propagate;
    }
 
+   IsBoss(what=$)
+   {
+      local i, cMob;
+
+      if what <> $
+      {
+         cMob = GetClass(what);
+         for i in plBosses
+         {
+            if cMob = i
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+   IsMiniBoss(what=$)
+   {
+      local i, cMob;
+
+      if what <> $
+      {
+         cMob = GetClass(what);
+         for i in plMiniBosses
+         {
+            if cMob = i
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

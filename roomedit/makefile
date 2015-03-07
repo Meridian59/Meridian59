@@ -3,7 +3,7 @@
 #
 # Borland C++ tools
 #
-COMPILERDIR = d:\bc45
+COMPILERDIR = c:\bc5
 TOPDIR=..
 
 # BCC flags

@@ -8690,7 +8690,29 @@ messages:
          {
             piTraining_points = piTraining_points + 1
                + (Send(what,@GetBoostedLevel)
-               / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
+               * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
+            
+            if monster_level > 75
+            {
+               if monster_level <= 121
+               {
+                  piTraining_points = piTraining_points + 1;
+               }
+               else
+               {
+                  if monster_level <= 150
+                  {
+                     piTraining_points = piTraining_points + 2;
+                  }
+                  else
+                  {
+                     if monster_level >= 151
+                     {
+                        piTraining_points = piTraining_points + 3;
+                     }
+                  }
+               }
+            }
          }
 
          % Let the player know how many training points they have, if they

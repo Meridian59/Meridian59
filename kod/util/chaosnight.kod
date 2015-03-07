@@ -39,7 +39,12 @@ resources:
        "properly!  The 'Reign of Blood Frenzy' ~Imust~n be ended by restoring "
        "LASTSAVE.TXT at the server.  Otherwise, character status may be "
        "corrupted due to the Frenzy."
-
+   chaos_night_npcs_rsc = \
+      "~B~U~k[###]~n ~B~rThe Innkeepers in each city have been preparing for "
+      "this day, and have stockpiled massive quantities of items useful for "
+      "defending their homes!  To outfit yourself for the coming battles, "
+      "go to your nearest Innkeeper and check what they have for sale.  For "
+      "a price, they may part with some much needed supplies."
    chaos_gift = \
        "~B~U~k[###]~n ~B~vQor grants you %s%s to smite your enemies!"
 
@@ -98,11 +103,8 @@ messages:
          Post(self,@SetFrenzyNPCSellers);
       }
 
-      % Reduce the weight and bulk of all items.
-      Post(SYS,@ReduceAllItemWeightAndBulk,#iNumber=1);
-
       % Tell the users online what's going on.
-      for i in Send(SYS, @GetUsersLoggedOn)
+      for i in Send(SYS,@GetUsersLoggedOn)
       {
          Send(i,@MsgSendUser,#message_rsc=chaos_night_rsc);
          Send(i,@WaveSendUser,#wave_rsc=chaos_wav);
@@ -110,6 +112,11 @@ messages:
          if IsClass(i,&Admin)
          {
             Send(i,@MsgSendUser,#message_rsc=chaos_night_admin_rsc);
+         }
+
+         if pbSellFrenzyLoot
+         {
+            Send(i,@MsgSendUser,#message_rsc=chaos_night_npcs_rsc);
          }
       }
 
@@ -160,6 +167,11 @@ messages:
       Send(who,@MsgSendUser,#message_rsc=chaos_night_rsc);
       Send(who,@WaveSendUser,#wave_rsc=chaos_wav);
 
+      if pbSellFrenzyLoot
+      {
+         Send(who,@MsgSendUser,#message_rsc=chaos_night_npcs_rsc);
+      }
+
       return;
    }
 
@@ -173,6 +185,9 @@ messages:
       Send(&TosInnKeeper,@SetForSaleFrenzy);
       Send(&HazarInnKeeper,@SetForSaleFrenzy);
       Send(&KocatanInnkeeper,@SetForSaleFrenzy);
+
+      % Reduce the weight and bulk of all items.
+      Send(SYS,@ReduceAllItemWeightAndBulk,#iNumber=1);
 
       return;
    }

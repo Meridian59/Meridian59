@@ -300,9 +300,9 @@ messages:
       if plSides = $
          OR FindListElem(plSides,side) = 0
       {
-         plSides = cons(side,plSides);
-         plSoldiers = cons($,plSoldiers);
-         plKills = cons(0,plKills);
+         plSides = Cons(side,plSides);
+         plSoldiers = Cons($,plSoldiers);
+         plKills = Cons(0,plKills);
       }
 
       return;
@@ -341,7 +341,7 @@ messages:
       {
          if pbRestricted = WAR_FACTION_RESTRICTED
          {
-            % Side is a faction
+            % Side is a faction.
             if Send(who,@GetFaction) <> side
                OR Send(who,@GetFaction) = FACTION_NEUTRAL
             {
@@ -350,7 +350,7 @@ messages:
          }
          else
          {
-            % Side is a homeroom
+            % Side is a homeroom.
             if pbRestricted = WAR_TOWN_RESTRICTED
             {
                if Send(who,@GetHomeRoom) <> side
@@ -384,7 +384,7 @@ messages:
       }
 
       % Add to the appropriate list.
-      SetNth(plSoldiers,iSidePosition,cons(who,Nth(plSoldiers,iSidePosition)));
+      SetNth(plSoldiers,iSidePosition,Cons(who,Nth(plSoldiers,iSidePosition)));
 
       % Give a message and set the color.
       Send(who,@MsgSendUser,#Message_rsc=WarEvent_join_rsc,

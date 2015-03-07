@@ -2616,7 +2616,7 @@ messages:
             {
                if Send(Send(SYS,@GetWarEvent),@IsSameSide,#player1=self,#player2=what)
                {
-                  return MM_PLAYER | MM_PLAYER_IS_GUILDMATE;
+                  return MM_PLAYER | MM_PLAYER_IS_FRIEND;
                }
 
                return MM_PLAYER | MM_PLAYER_IS_ENEMY;

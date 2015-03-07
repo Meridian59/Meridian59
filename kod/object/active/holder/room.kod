@@ -3303,7 +3303,10 @@ messages:
                           #iAngle=Send(what,@GetAngle),
                           #iAngle_Change=Nth(i,6));
 
-            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            if IsClass(what,&User)
+            {
+               Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            }
 
             Send(SYS,@UtilGoNearSquare,#what=what,
                  #where=Send(SYS,@FindRoomByNum,#num=Nth(i,3)),

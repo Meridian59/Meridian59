@@ -102,7 +102,27 @@ messages:
       propagate;
    }
 
+   SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS/2,
+                  fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
+                  non_monsters_only = FALSE)
+   {
+      if IsClass(what,&Skeleton)
+      {
+         if new_row = 9
+            OR new_row = 8
+         {
+            if new_col = 4
+               OR new_col = 10
+               OR new_col = 26
+               OR new_col = 32
+            {
+               Post(self,@SomethingTryGo,#what=what,#row=new_row,#col=new_col);
+            }
+         }
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

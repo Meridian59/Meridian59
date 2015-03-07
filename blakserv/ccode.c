@@ -2877,6 +2877,7 @@ int C_SetClassVar(int object_id,local_var_type *local_vars,
 {
    // Note that setting a class var is only temporary until the server restarts.
    class_node *c;
+   object_node *o;
    val_type ret_val, class_val, data_str, var_name;
    int var_id;
    const char *pStrConst;
@@ -2890,6 +2891,20 @@ int C_SetClassVar(int object_id,local_var_type *local_vars,
                   normal_parm_array[1].value);
    data_str = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
                   normal_parm_array[2].value);
+
+   if (class_val.v.tag == TAG_OBJECT)
+   {
+      o = GetObjectByID(class_val.v.data);
+      if (o == NULL)
+      {
+         bprintf("C_SetClassVar can't find the class of object %i\n",
+               class_val.v.data);
+         return ret_val.int_val;
+      }
+
+      class_val.v.tag = TAG_CLASS;
+      class_val.v.data = o->class_id;
+   }
 
    if (class_val.v.tag != TAG_CLASS)
    {

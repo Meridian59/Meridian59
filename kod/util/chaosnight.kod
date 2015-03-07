@@ -98,6 +98,9 @@ messages:
          Post(self,@SetFrenzyNPCSellers);
       }
 
+      % Reduce the weight and bulk of all items.
+      Post(SYS,@ReduceAllItemWeightAndBulk,#iNumber=1);
+
       % Tell the users online what's going on.
       for i in Send(SYS, @GetUsersLoggedOn)
       {
@@ -146,6 +149,9 @@ messages:
          }
       }
 
+      % Set NPCs back to selling the correct items.
+      Send(self,@UnsetFrenzyNPCSellers);
+
       return;
    }
 
@@ -167,6 +173,20 @@ messages:
       Send(&TosInnKeeper,@SetForSaleFrenzy);
       Send(&HazarInnKeeper,@SetForSaleFrenzy);
       Send(&KocatanInnkeeper,@SetForSaleFrenzy);
+
+      return;
+   }
+
+   UnsetFrenzyNPCSellers()
+   "If the Innkeepers need to be set back to selling the correct items."
+   {
+      Send(&JasperInnKeeper,@SetForSale);
+      Send(&MarionInnkeeper,@SetForSale);
+      Send(&CorNothInnkeeper,@SetForSale);
+      Send(&BarloqueInnkeeper,@SetForSale);
+      Send(&TosInnKeeper,@SetForSale);
+      Send(&HazarInnKeeper,@SetForSale);
+      Send(&KocatanInnkeeper,@SetForSale);
 
       return;
    }

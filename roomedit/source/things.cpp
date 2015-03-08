@@ -1161,7 +1161,7 @@ LPCSTR GetKodTypeDecorativeName(int objectNum, int index)
 {
 	if ((objectNum >= 0) && (objectNum < numKodObjects))
 	{
-		if (0 == strncmpi(GetKodTypeName(objectNum, index),"OO_",3))
+		if (0 == strnicmp(GetKodTypeName(objectNum, index), "OO_", 3))
 			return GetKodTypeName(objectNum, index)+3;
 		else
 			return GetKodTypeName(objectNum, index);

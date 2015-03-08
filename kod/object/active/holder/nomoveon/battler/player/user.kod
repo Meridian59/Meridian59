@@ -2665,11 +2665,11 @@ messages:
          {
             if (Send(what,@GetMaster) = self)
             {
-               iFlags = (iFlags | MM_MINION_SELF);
+               return MM_MINION_SELF;
             }
             else
             {
-               iFlags = (iFlags | MM_MINION_OTHER);
+               return MM_MINION_OTHER;
             }
          }
          else
@@ -2677,11 +2677,27 @@ messages:
             % Draw dots for NPCs.
             if Send(what,@GetBehavior) & AI_NPC
             {
-               iFlags = (iFlags | MM_NPC);
+               return MM_NPC;
             }
             else
             {
-               iFlags = (iFlags | MM_MONSTER);
+               % Survival room specific dots.
+               if IsClass(poOwner,&SurvivalRoom)
+               {
+                  if Send(poOwner,@IsMiniBoss,#what=what)
+                  {
+                     return MM_MINIBOSS;
+                  }
+                  else
+                  {
+                     if Send(poOwner,@IsBoss,#what=what)
+                     {
+                        return MM_BOSS;
+                     }
+                  }
+               }
+
+               return MM_MONSTER;
             }
          }
       }

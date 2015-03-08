@@ -406,6 +406,8 @@ enum {
 #define MM_MINION_OTHER  0x00000080    // Set if monster is other's minion
 #define MM_MINION_SELF   0x00000100    // Set if a monster is our minion
 #define MM_TEMPSAFE      0x00000200    // Set if player has a temporary angel.
+#define MM_MINIBOSS      0x00000400    // Set if mob is a miniboss (survival arena).
+#define MM_BOSS          0x00000800    // Set if mob is a boss (survival arena).
 
 /* Player name color sent as hex RGB value. Define constants
    for ease of use as needed. Requires OF_PLAYER boolean flag

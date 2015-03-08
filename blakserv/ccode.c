@@ -2922,7 +2922,8 @@ int C_SetClassVar(int object_id,local_var_type *local_vars,
 
    if (var_name.v.tag != TAG_DEBUGSTR)
    {
-      bprintf("C_SetClassVar passed bad class var string.\n");
+      bprintf("C_SetClassVar passed bad class var string, tag %i.\n",
+         var_name.v.tag);
       return ret_val.int_val;
    }
 
@@ -2945,8 +2946,8 @@ int C_SetClassVar(int object_id,local_var_type *local_vars,
    var_id = GetClassVarIDByName(c, pStrConst);
    if (var_id == INVALID_CLASSVAR)
    {
-      bprintf("C_SetClassVar cannot find classvar named in class %i.\n",
-            class_val.v.data);
+      bprintf("C_SetClassVar cannot find classvar named %s in class %i.\n",
+            pStrConst,class_val.v.data);
       return ret_val.int_val;
    }
 

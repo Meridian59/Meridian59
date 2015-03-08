@@ -127,7 +127,6 @@ TPreferencesDialog::TPreferencesDialog (TWindow* parent, TResId resId, TModule* 
 	pBelowText     = newTStatic(this, IDC_BELOW_TEXT, MAX_BITMAPNAME + 1);
 	pAboveText     = newTStatic(this, IDC_ABOVE_TEXT, MAX_BITMAPNAME + 1);
 
-	p3DControlsCheck = newTCheckBox(this, IDC_PREF_3DCONTROLS, 0);
 	pAddSelBoxCheck  = newTCheckBox(this, IDC_PREF_ADDSELBOX, 0);
 	pDebugCheck      = newTCheckBox(this, IDC_PREF_DEBUG, 0);
 	pDrawLengthCheck = newTCheckBox(this, IDC_PREF_DRAWLENGTH, 0);
@@ -203,7 +202,6 @@ void TPreferencesDialog::SetupWindow ()
 	pMaxUndoEdit->SetText (str);
 
 	// Misc BOOLEAN options
-	p3DControlsCheck->SetCheck(Use3DControls ? BF_CHECKED : BF_UNCHECKED);
 	pAddSelBoxCheck->SetCheck(AdditiveSelBox ? BF_CHECKED : BF_UNCHECKED);
 	pDebugCheck->SetCheck(Debug ? BF_CHECKED : BF_UNCHECKED);
 	pDrawLengthCheck->SetCheck(DrawLineDefsLen ? BF_CHECKED : BF_UNCHECKED);
@@ -309,9 +307,6 @@ void TPreferencesDialog::CmOk ()
 	Quieter         = (pQuiterCheck->GetCheck()     == BF_CHECKED);
 	Select0         = (pSelect0Check->GetCheck()    == BF_CHECKED);
 	AutoScroll      = (pAutoScrollCheck->GetCheck() == BF_CHECKED);
-
-	Use3DControls   = (p3DControlsCheck->GetCheck() == BF_CHECKED);
-	((WinDEUApp *)GetApplication())->Enable3DControls(Use3DControls);
 
 	// Toggle status bar if
 	if ( InfoShown != (pInfoBarCheck->GetCheck() == BF_CHECKED) )

@@ -164,7 +164,6 @@ extern BOOL  AdditiveSelBox;/* additive selection box or select in box only? */
 extern int   SplitFactor;   /* factor used by the Nodes builder */
 extern BOOL  Select0;       /* select object 0 by default when switching modes */
 extern char *MainWad;       /* name of the main wad file */
-extern Bool  Use3DControls;	/* Enable CTL3DV2.DLL or CTL3D32.DLL? */
 extern Bool  DrawLineDefsLen;/* Display length of moving LineDefs */
 extern int   BuildPriority;	/* Priority for the nodes builder */
 extern int   RoomID;        /* used in batch file for reseting room contents */

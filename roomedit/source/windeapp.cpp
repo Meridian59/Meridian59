@@ -229,9 +229,6 @@ void WinDEUApp::InitInstance ()
 	// Parse command line and INI file.
 	InitWindeu(argc, argv, init_level);
 
-	// Enable CTL3D controls if needed
-	Enable3DControls(Use3DControls);
-
 // removed annoyances ARK
 #if 0
 	// Create and display credits for WinDEU
@@ -268,85 +265,6 @@ void WinDEUApp::InitInstance ()
 			TYPESAFE_DOWNCAST(MainWindow->GetApplication()->GetMainWindow(), TMainFrame);
 		MainFrame->EditLevel (init_level, FALSE) ;
 	}
-}
-
-
-//////////////////////////////////////////////////////////
-// WinDEUApp
-// ---------
-// Application instance intialisation. Read the INI file
-// for default application options.
-void WinDEUApp::Enable3DControls (BOOL enable)
-{
-/*
-	//
-	// If we are running Win95 or greater, then ctl3d is unnecessary
-	//
-	// Note: This line display 70005F03 got GetVerion() under the final
-	//       beta release of Win95. So, the Win95 version is 395 (0x03 + 0x5F)
-	// Notify ("GetVersion() : %08lx", ::GetVersion());
-	if ( LOBYTE(LOWORD(::GetVersion())) * 100 +
-		 HIBYTE(LOWORD(::GetVersion())) >= 395)
-	   return;
-*/
-
-#if 0
-	static enabled = FALSE;
-
-	if ( enable == enabled )
-		return;
-
-	if ( enable )
-	{
-		Ctl3dRegister(*this);
-		Ctl3dAutoSubclass(*this);
-	}
-	else
-		Ctl3dUnregister(*this);
-	enabled = enable;
-#else
-	if ( ! enable )
-	{
-		EnableCtl3d(FALSE);
-		return;
-	}
-
-	// Don't try to define this message in the 'CATCH' bloc,
-	// because we can't use var definition in it.
-	// Maybe a Borland bug ?
-	char *ErrorMsg =
-			"Can't load 3D controls Dynamic Library.\n\n"
-			"This version of WinDEU is the Win32 version. If you "
-			"want 3D controls: you must have the 'CTL3D32.DLL' "
-			"file if your path (preferably in the "
-			"windows\\system' directory).\n\n"
-			"If you are under Windows NT, the system directory is "
-			"'%SystemRoot%\\<NT_Directory_name>\\system32',\n"
-			"Example:\tc:\\winnt35\\system32\n\n"
-			"If you don't want 3D controls, use the '3DControls' "
-			"configuration option (see help file)";
-
-	TRY
-	{
-		EnableCtl3d (TRUE);
-	}
-	CATCH ((...)
-	{
-//		MainWindow->MessageBox (ErrorMsg,
-//								"WinDEU: 3D Controls library load error",
-//								MB_OK | MB_ICONINFORMATION);
-	})
-
-#if 0
-	if ( ! Ctl3dEnabled() )
-	{
-		MainWindow->MessageBox (ErrorMsg,
-								"WinDEU: 3D Controls library load error",
-								MB_OK | MB_ICONINFORMATION);
-	}
-#endif
-
-#endif
 }
 
 

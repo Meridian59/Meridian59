@@ -6683,15 +6683,15 @@ messages:
    NewHoldObject(what = $)
    {
       if pbLogged_on
-      {	  
+      {
          AddPacket(1,BP_INVENTORY_ADD);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
          SendPacket(poSession);
-         
+
          Post(self,@DrawCapacity);
          Post(self,@DrawBulk);
       }
-      
+
       propagate;
    }
 
@@ -6702,7 +6702,7 @@ messages:
          AddPacket(1,BP_INVENTORY_REMOVE,4,what);
          SendPacket(poSession);
          Post(self,@DrawCapacity);
-         Post(self,@DrawBulk);    
+         Post(self,@DrawBulk);
       }
 
       propagate;
@@ -7311,13 +7311,13 @@ messages:
       {
          AddPacket(1,BP_USE,4,what);
          SendPacket(poSession);
+
+         if IsClass(what,&Weapon)
+         {
+            Post(self,@DrawOffense);
+         }
       }
-      
-      if IsClass(what,&Weapon)
-      {
-         Post(self,@DrawOffense);
-      }
-      
+
       return;
    }
 
@@ -7327,13 +7327,13 @@ messages:
       {
          AddPacket(1,BP_UNUSE,4,what);
          SendPacket(poSession);
+
+         if IsClass(what,&Weapon)
+         {
+            Post(self,@DrawOffense);
+         }
       }
 
-      if IsClass(what,&Weapon)
-      {
-         Post(self,@DrawOffense);
-      }
-      
       return;
    }
 

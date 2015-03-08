@@ -3556,8 +3556,11 @@ messages:
          if i = what
          {
             plDefense_modifiers = DelListElem(plDefense_modifiers,i);
-            Post(self,@DrawDefense);
-            Post(self,@DrawArmor);
+            if pbLogged_on
+            {
+               Post(self,@DrawDefense);
+               Post(self,@DrawArmor);
+            }
             bFound = TRUE;
 
             return;
@@ -3929,7 +3932,11 @@ messages:
                Send(what,@NewUnused,#what=self);
             }
 
-            Post(self,@DrawResistances);
+            if pbLogged_on
+            {
+               Post(self,@DrawResistances);
+            }
+
             return TRUE;
          }
       }

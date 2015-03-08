@@ -77,6 +77,12 @@ properties:
 
    % A count of the kills scored by each side.
    plKills = $
+   
+   % A count of the kills scored by each player.
+   plKillsByName = $
+
+   % A count of the deaths taken by each player.
+   plDeathsByName = $
 
    % Who do we mail final statistics to?
    poReporter = $
@@ -111,6 +117,8 @@ messages:
       plSides = $;
       plSoldiers = $;
       plKills = $;
+      plKillsByName = $;
+      plDeathsByName = $;
       pbRestricted = WAR_UNRESTRICTED;
 
       % Delete out WarJoin Items
@@ -398,7 +406,7 @@ messages:
    "Checks to see if who and victim are in the war, then "
    "increments the kill count if appropriate."
    {
-      local lSoldiers, iSidePosition, iVictimSide;
+      local lSoldiers, iSidePosition, iVictimSide, i, bFound;
 
       % Bail for missing info, if victim isn't a player, or if not active.
       if who = $ OR victim = $
@@ -432,6 +440,56 @@ messages:
 
       % Send a message
       Send(who,@MsgSendUser,#message_rsc=WarEvent_got_kill_rsc);
+
+      bFound = FALSE;
+      % Record a kill for the killer.
+      if plKillsByName = $
+      {
+         % First kill!
+         plKillsByName = [ [ who, 1 ] ];
+      }
+      else
+      {
+         for i in plKillsByName
+         {
+            if First(i) = who
+            {
+               SetNth(i,2,Nth(i,2) + 1);
+               bFound = TRUE;
+
+               break;
+            }
+         }
+         if bFound = FALSE
+         {
+            plKillsByName = Cons([who,1],plKillsByName);
+         }
+      }
+
+      bFound = FALSE;
+      % Record a death for the victim.
+      if plDeathsByName = $
+      {
+         % First death!
+         plDeathsByName = [ [ victim, 1 ] ];
+      }
+      else
+      {
+         for i in plDeathsByName
+         {
+            if First(i) = victim
+            {
+               SetNth(i,2,Nth(i,2) + 1);
+               bFound = TRUE;
+
+               break;
+            }
+         }
+         if bFound = FALSE
+         {
+            plDeathsByName = Cons([victim,1],plDeathsByName);
+         }
+      }
 
       return TRUE;
    }
@@ -576,7 +634,7 @@ messages:
 
    ConstructScores()
    {
-      local n, iKills;
+      local n, iKills, i;
 
       n = 1;
 
@@ -598,6 +656,38 @@ messages:
          }
 
          n = n + 1;
+      }
+
+      if plKillsByName <> $
+      {
+         AppendTempString("\n\n~B~kList of kills:~n\n");
+         for i in plKillsByName
+         {
+            AppendTempString("[");
+            AppendTempString(Send(self,@GetSideName,
+                  #side=Send(self,@GetPlayerSide,#who=First(i))));
+            AppendTempString("] ");
+            AppendTempString(Send(First(i),@GetTrueName));
+            AppendTempString(": ");
+            AppendTempString(Nth(i,2));
+            AppendTempString(" kills.\n");
+         }
+      }
+
+      if plDeathsByName <> $
+      {
+         AppendTempString("\n~B~kList of deaths:~n\n");
+         for i in plDeathsByName
+         {
+            AppendTempString("[");
+            AppendTempString(Send(self,@GetSideName,
+                  #side=Send(self,@GetPlayerSide,#who=First(i))));
+            AppendTempString("] ");
+            AppendTempString(Send(First(i),@GetTrueName));
+            AppendTempString(": ");
+            AppendTempString(Nth(i,2));
+            AppendTempString(" deaths.\n");
+         }
       }
 
       return;

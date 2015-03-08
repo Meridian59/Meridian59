@@ -86,9 +86,9 @@ void TMasterDialog::SetupWindow ()
 	CenterWindow(this);
 
 	// Set tab stops for list box
-	const Tab1 = 12*4;
-	const Tab2 = Tab1 + 36 * 4;
-	const Tab3 = Tab2 + 8 * 4;
+	const int Tab1 = 12*4;
+	const int Tab2 = Tab1 + 36 * 4;
+	const int Tab3 = Tab2 + 8 * 4;
 	int TabStops[] = { Tab1, Tab2, Tab3 };
 
 	pMasterList->SetTabStops (3, TabStops);

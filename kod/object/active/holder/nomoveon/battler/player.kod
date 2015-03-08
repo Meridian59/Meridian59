@@ -9123,7 +9123,16 @@ messages:
          }
          else
          {
-            oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_PKPOINTER);
+
+            if what <> $
+            {
+               % We've been killed by a player, so set the PKed flag for
+               % the temp safety angel to trigger later, provided we meet
+               % all the requirements. Check for not $ here - fastest way
+               % to implement this without performing another IsClass check.
+               piFlags = piFlags | PFLAG_KILLED_BY_PLAYER;
+            }
          }
 
          lReagentBagContents = Send(self,@GetReagentBagContents);
@@ -9280,9 +9289,17 @@ messages:
 
    ApplyDeathPenalties()
    {
-      local iAmount, bLostHealth, i;
+      local iAmount, bLostHealth, i, bTempSafe;
 
-      if Send(self,@GetDeathRiftProtection) = TRUE
+      bTempSafe = FALSE;
+
+      if (piFlags & PFLAG_KILLED_BY_PLAYER)
+      {
+         bTempSafe = TRUE;
+         piFlags = piFlags & ~PFLAG_KILLED_BY_PLAYER;
+      }
+
+      if Send(self,@GetDeathRiftProtection)
       {
          % Leaving the Underworld while protected, no penalties. Protection
          % is removed in NewOwner to allow them to log off without penalties.
@@ -9301,7 +9318,7 @@ messages:
       bLostHealth = FALSE;
 
       % Lose your revenant, satisfied if you took a real death.
-      if piDeathCost >= Send(Send(SYS, @GetSettings), @GetDefaultDeathCost)
+      if piDeathCost >= Send(Send(SYS,@GetSettings),@GetDefaultDeathCost)
       {
          % As an outlaw, justice was met by dying. But, not if it's a cheap death!
          Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
@@ -9329,18 +9346,19 @@ messages:
          else
          {
             % If you're not new, chance to lose a hp!
-            if random(1,100) <= piDeathCost
+            if Random(1,100) <= piDeathCost
             {
                Send(self,@GainBaseMaxHealth,#amount=-1);
                bLostHealth = TRUE;
             }
 
             % Under 100HP and killed by a player? Receive a temporary angel.
-            if bLostHealth=TRUE
-               AND piBase_max_health<=99
-               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TEMP_SAFETY)
+            if bLostHealth
+               AND bTempSafe
+               AND piBase_max_health <= 99
+               AND NOT ((piFlags & PFLAG_MURDERER)
+                  OR (piFlags & PFLAG_OUTLAW))
+               AND (piFlags & PFLAG_TEMP_SAFETY)
                AND Send(self,@FindUsing,#class=&SoldierShield) = $
                AND ptTempSafe = $
             {

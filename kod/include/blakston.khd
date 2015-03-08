@@ -2204,35 +2204,36 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0xC63D7E
+   PFLAG_MASK              = 0x1C63D7E
 
-   PFLAG_INVISIBLE         = 0x000001
-   PFLAG_MURDERER          = 0x000002
-   PFLAG_SAFETY            = 0x000004
-   PFLAG_OUTLAW            = 0x000008
-   PFLAG_DID_DAMAGE        = 0x000010
-   PFLAG_TOOK_DAMAGE       = 0x000020
-   PFLAG_DODGED            = 0x000040
-   PFLAG_TRANCE            = 0x000080
-   PFLAG_HAUNTED           = 0x000100
-   PFLAG_MANA_FOCUS        = 0x000200
-   PFLAG_PKILL_ENABLE      = 0x000400
-   PFLAG_TUTORIAL          = 0x000800
-   PFLAG_PKILL_LOCK        = 0x001000
+   PFLAG_INVISIBLE         = 0x0000001
+   PFLAG_MURDERER          = 0x0000002
+   PFLAG_SAFETY            = 0x0000004
+   PFLAG_OUTLAW            = 0x0000008
+   PFLAG_DID_DAMAGE        = 0x0000010
+   PFLAG_TOOK_DAMAGE       = 0x0000020
+   PFLAG_DODGED            = 0x0000040
+   PFLAG_TRANCE            = 0x0000080
+   PFLAG_HAUNTED           = 0x0000100
+   PFLAG_MANA_FOCUS        = 0x0000200
+   PFLAG_PKILL_ENABLE      = 0x0000400
+   PFLAG_TUTORIAL          = 0x0000800
+   PFLAG_PKILL_LOCK        = 0x0001000
    % Taking part in factions?
-   PFLAG_INTRIGUING        = 0x002000
-   PFLAG_NO_FIGHT          = 0x004000
-   PFLAG_NO_MAGIC          = 0x008000
-   PFLAG_NO_MOVE           = 0x010000
-   PFLAG_LOG               = 0x020000
+   PFLAG_INTRIGUING        = 0x0002000
+   PFLAG_NO_FIGHT          = 0x0004000
+   PFLAG_NO_MAGIC          = 0x0008000
+   PFLAG_NO_MOVE           = 0x0010000
+   PFLAG_LOG               = 0x0020000
    % Setting for the player's temp safety
-   PFLAG_TEMP_SAFETY       = 0x040000
-   PFLAG_ANONYMOUS         = 0x080000
-   PFLAG_FORGOTTEN         = 0x100000
-   PFLAG_MORPHED           = 0x200000
+   PFLAG_TEMP_SAFETY       = 0x0040000
+   PFLAG_ANONYMOUS         = 0x0080000
+   PFLAG_FORGOTTEN         = 0x0100000
+   PFLAG_MORPHED           = 0x0200000
    % this player has moved since he's entered the room.
-   PFLAG_MOVED_SINCE_ENTRY = 0x400000
-   PFLAG_GROUPING          = 0x800000
+   PFLAG_MOVED_SINCE_ENTRY = 0x0400000
+   PFLAG_GROUPING          = 0x0800000
+   PFLAG_KILLED_BY_PLAYER  = 0x1000000
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList

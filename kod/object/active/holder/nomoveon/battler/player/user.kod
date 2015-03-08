@@ -2612,6 +2612,16 @@ messages:
             OR oIllusion = $
             OR NOT IsClass(oIllusion,&Monster)
          {
+            if Send(Send(SYS,@GetWarEvent),@IsActive)
+            {
+               if Send(Send(SYS,@GetWarEvent),@IsSameSide,#player1=self,#player2=what)
+               {
+                  return MM_PLAYER | MM_PLAYER_IS_FRIEND;
+               }
+
+               return MM_PLAYER | MM_PLAYER_IS_ENEMY;
+            }
+
             % Standard player blue dot.
             if Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
             {
@@ -6689,15 +6699,15 @@ messages:
    NewHoldObject(what = $)
    {
       if pbLogged_on
-      {	  
+      {
          AddPacket(1,BP_INVENTORY_ADD);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
          SendPacket(poSession);
-         
+
          Post(self,@DrawCapacity);
          Post(self,@DrawBulk);
       }
-      
+
       propagate;
    }
 
@@ -6708,7 +6718,7 @@ messages:
          AddPacket(1,BP_INVENTORY_REMOVE,4,what);
          SendPacket(poSession);
          Post(self,@DrawCapacity);
-         Post(self,@DrawBulk);    
+         Post(self,@DrawBulk);
       }
 
       propagate;
@@ -7317,13 +7327,13 @@ messages:
       {
          AddPacket(1,BP_USE,4,what);
          SendPacket(poSession);
+
+         if IsClass(what,&Weapon)
+         {
+            Post(self,@DrawOffense);
+         }
       }
-      
-      if IsClass(what,&Weapon)
-      {
-         Post(self,@DrawOffense);
-      }
-      
+
       return;
    }
 
@@ -7333,13 +7343,13 @@ messages:
       {
          AddPacket(1,BP_UNUSE,4,what);
          SendPacket(poSession);
+
+         if IsClass(what,&Weapon)
+         {
+            Post(self,@DrawOffense);
+         }
       }
 
-      if IsClass(what,&Weapon)
-      {
-         Post(self,@DrawOffense);
-      }
-      
       return;
    }
 

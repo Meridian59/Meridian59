@@ -3556,8 +3556,11 @@ messages:
          if i = what
          {
             plDefense_modifiers = DelListElem(plDefense_modifiers,i);
-            Post(self,@DrawDefense);
-            Post(self,@DrawArmor);
+            if pbLogged_on
+            {
+               Post(self,@DrawDefense);
+               Post(self,@DrawArmor);
+            }
             bFound = TRUE;
 
             return;
@@ -3929,7 +3932,11 @@ messages:
                Send(what,@NewUnused,#what=self);
             }
 
-            Post(self,@DrawResistances);
+            if pbLogged_on
+            {
+               Post(self,@DrawResistances);
+            }
+
             return TRUE;
          }
       }
@@ -4047,6 +4054,23 @@ messages:
       % Frenzies!  Anything goes if allowed by the room!
       if Send(SYS,@GetChaosNight)
       {
+         if Send(Send(SYS,@GetWarEvent),@IsActive)
+         {
+            % If there's a war event going, disallow attacks between teammates.
+            if Send(Send(SYS,@GetWarEvent),@IsSameSide,#player1=self,#player2=victim)
+               AND NOT Send(Send(SYS,@GetWarEvent),@CanAttackAllies)
+            {
+               if report
+               {
+                  Send(self,@MsgSendUser,#message_rsc=cannot_attack_ally,
+                        #parm1=Send(victim,@GetName),
+                        #parm2=Send(victim,@GetHeShe));
+               }
+
+               return FALSE;
+            }
+         }
+
          return TRUE;
       }
 

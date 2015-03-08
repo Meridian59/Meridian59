@@ -5514,6 +5514,60 @@ messages:
       return;
    }
 
+   SetForSaleFrenzy(override=FALSE)
+   "Used to give Innkeepers a frenzy sale list."
+   {
+      if Send(SYS,@GetChaosNight)
+         OR override
+      {
+         plFor_sale = [
+            [
+               Create(&ShockRing),
+               Create(&FireRing),
+               Create(&ColdRing),
+               Create(&AcidRing),
+               Create(&BerserkerRing),
+               Create(&RingInvisibility),
+               Create(&LeatherArmor),
+               Create(&ChainArmor),
+               Create(&ScaleArmor),
+               Create(&NeruditeArmor),
+               Create(&PlateArmor),
+               Create(&DiscipleRobe),
+               Create(&GuildShield),
+               Create(&NeruditeSword),
+               Create(&Mace),
+               Create(&Hammer),
+               Create(&Axe),
+               Create(&MysticSword),
+               Create(&Scimitar),
+               Create(&Longsword),
+               Create(&Longbow),
+               Create(&BattleBow),
+               Create(&HealWand),
+               Create(&Gauntlet),
+               Create(&JewelOfFroz),
+               Create(&Arrow,#number=150),
+               Create(&SilverArrow,#number=150),
+               Create(&NeruditeArrow,#number=150),
+               Create(&IceArrow,#number=150),
+               Create(&FireArrow,#number=150),
+               Create(&Helm),
+               Create(&Mint,#number=100),
+               Create(&NeruditeBow),
+               Create(&Gift),
+               Create(&Chaosfood,#number=100),
+               Create(&KarmaPotion,#karma=-10000),
+               Create(&KarmaPotion,#karma=10000)
+            ],
+            $,
+            $,
+         $];
+      }
+
+      return;
+   }
+
    AssembleVaultList(who=$)
    {
       local oVault, i, j;

@@ -22,9 +22,9 @@ resources:
       "This will allow you to join the war on the side of:\n"
    WarJoinPendant_desc_after_rsc = \
       "This pendant shows your allegiance to:\n"
-	
+
 classvars:
-   
+
    vrName = WarJoinPendant_name_rsc
    vrIcon = WarJoinPendant_icon_rsc
 
@@ -52,15 +52,18 @@ messages:
       {
          piSide = side;
 
-         piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=send(send(SYS,@GetWarEvent),@GetSideColor,#side=piSide),#color2=XLAT_TO_SKIN1);
+         piItem_flags = Send(SYS,@EncodeTwoColorXLAT,
+                           #color1=Send(Send(SYS,@GetWarEvent),
+                           @GetSideColor,#side=piSide),#color2=XLAT_TO_SKIN1);
       }
-      
+
       propagate;
    }
 
    ReqUse()
    {
-      return send(send(SYS,@GetWarEvent),@AddPlayerToSide,#who=poOwner,#side=piSide);
+      return Send(Send(SYS,@GetWarEvent),@AddPlayerToSide,
+                  #who=poOwner,#side=piSide);
    }
 
    ReqUnuse()
@@ -71,22 +74,22 @@ messages:
    NewUsed()
    {
       local iSequence, oRobe, oJoinItem;
-      
+
       pbUsed = TRUE;
       vrDesc = WarJoinPendant_desc_after_rsc;
 
       % Fix possible disciple robe problems
-      oRobe = send(poOwner,@FindUsing,#class=&Robe);
+      oRobe = Send(poOwner,@FindUsing,#class=&Robe);
 
       % Are they using a robe?
       if oRobe <> $
       {
          % Fix art/color problems.
-         send(oRobe,@ResetColors);
-         send(oRobe,@DoPlayerArt);
+         Send(oRobe,@ResetColors);
+         Send(oRobe,@DoPlayerArt);
       }
-         
-      % Delete all other WarJoin pendants
+
+      % Delete all other WarJoin pendants.
       iSequence = 1;
       oJoinItem = Send(poOwner,@FindHolding,#class=&WarJoinPendant);
 
@@ -95,21 +98,22 @@ messages:
          % Delete the item if it's not this one!
          if oJoinItem <> self
          {
-            post(oJoinItem,@Delete);
+            Post(oJoinItem,@Delete);
          }
 
-         % Find the next in line
+         % Find the next in line.
          iSequence = iSequence + 1;
-         oJoinItem = send(poOwner,@FindHolding,#class=&WarJoinPendant,#sequence=iSequence);
+         oJoinItem = Send(poOwner,@FindHolding,#class=&WarJoinPendant,
+                           #sequence=iSequence);
       }
-            
+
       return;
    }
 
    AppendDesc()
    {
-      AppendTempString(send(send(SYS,@GetWarEvent),@GetSideName,#side=piSide));
-      
+      AppendTempString(Send(Send(SYS,@GetWarEvent),@GetSideName,#side=piSide));
+
       return;
    }
 
@@ -123,7 +127,7 @@ messages:
       return FALSE;
    }
 
-   CanBeStoredInVault()   
+   CanBeStoredInVault()
    {
       return FALSE;
    }
@@ -152,7 +156,7 @@ messages:
       }
       else
       {
-         % no dropping into oblivion
+         % No dropping into oblivion.
          return FALSE;
       }
 
@@ -161,4 +165,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

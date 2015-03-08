@@ -60,12 +60,12 @@
 
 
 // Last DOOM2 check button state
-static LastDoom2Check = -1;
+static int LastDoom2Check = -1;
 // Last episode/mission selected
-static LastEpisode = 1;
-static LastMission = 1;
+static int LastEpisode = 1;
+static int LastMission = 1;
 // Last map selected
-static LastMap     = 1;
+static int LastMap     = 1;
 
 //
 // Build a response table for all messages/commands handled

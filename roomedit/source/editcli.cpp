@@ -282,7 +282,7 @@ END_RESPONSE_TABLE;
 //  Constructor
 //
 TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
-							  BOOL newLevel, const char far* title,
+							  BOOL newLevel, const char* title,
 							  TModule* module):
 	TLayoutWindow(parent, title, module)
 {
@@ -427,7 +427,7 @@ TEditorClient::~TEditorClient ()
 // TEditorClient
 // -------------
 //
-char far* TEditorClient::GetClassName ()
+char* TEditorClient::GetClassName ()
 {
 	return "WinDEUEditor";
 }
@@ -1499,7 +1499,7 @@ void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
 				NewSel = NULL;
 				if (Selected == NULL && CurObject >= 0)
 				{
-					LineDef HUGE *pLineDef = &LineDefs[CurObject];
+					LineDef *pLineDef = &LineDefs[CurObject];
 
 					SelectObject (&NewSel, pLineDef->start);
 					SelectObject (&NewSel, pLineDef->end);
@@ -1508,7 +1508,7 @@ void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
 				{
 					for (cur = Selected; cur; cur = cur->next)
 					{
-						LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+						LineDef *pLineDef = &LineDefs[cur->objnum];
 
 						if ( !IsSelected (NewSel, pLineDef->start) )
 							SelectObject (&NewSel, pLineDef->start);
@@ -1865,7 +1865,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 		else
 		{
 			assert (objnum >= 0 && objnum < NumThings);
-			Thing HUGE *pThing = &Things[objnum];
+			Thing *pThing = &Things[objnum];
 
 			pThingInfo->SetStyle (TA_CENTER, BLACK);
 			pThingInfo->Insert ("Selected Thing (#%d)", objnum);
@@ -1901,7 +1901,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 		{
 			assert_ldnum(objnum);
 
-			LineDef HUGE *pLineDef = &LineDefs[objnum];
+			LineDef *pLineDef = &LineDefs[objnum];
 
 			pLineDefInfo->SetStyle (TA_CENTER, BLACK);
 			pLineDefInfo->Insert ("Selected LineDef (#%d)", objnum);
@@ -1957,7 +1957,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 		}
 		else
 		{
-			SideDef HUGE *pSideDef1 = &SideDefs[sd1];
+			SideDef *pSideDef1 = &SideDefs[sd1];
 			pSideDef1Info->SetStyle (TA_CENTER, BLACK);
 			pSideDef1Info->Insert ("First SideDef (#%d)", sd1);
 
@@ -2008,7 +2008,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 		}
 		else
 		{
-			SideDef HUGE *pSideDef2 = &SideDefs[sd2];
+			SideDef *pSideDef2 = &SideDefs[sd2];
 			pSideDef2Info->SetStyle (TA_CENTER, BLACK);
 			pSideDef2Info->Insert ("Second SideDef (#%d)", sd2);
 
@@ -2093,7 +2093,7 @@ void TEditorClient::DisplayObjectInfo (int objtype, SHORT objnum)
 		else
 		{
 			assert (objnum >= 0 && objnum < NumSectors);
-			Sector HUGE *pSector = &Sectors[objnum];
+			Sector *pSector = &Sectors[objnum];
 
 			pSectorInfo->SetStyle (TA_CENTER, BLACK);
 			pSectorInfo->Insert ("Selected Sector (#%d)", objnum);
@@ -2326,13 +2326,13 @@ void TEditorClient::SelectMovingLineDefs ()
 		// Select the LineDefs
 		for (n = 0 ; n < NumLineDefs ; n++ )
 		{
-			LineDef HUGE *pLineDef = &LineDefs[n];
+			LineDef *pLineDef = &LineDefs[n];
 			SHORT nstart = pLineDef->start;
 			SHORT nend   = pLineDef->end;
 
 			for (cur = Selected ; cur != NULL ; cur = cur->next)
 			{
-				LineDef HUGE *pCLineDef = &LineDefs[cur->objnum];
+				LineDef *pCLineDef = &LineDefs[cur->objnum];
 				SHORT cstart = pCLineDef->start;
 				SHORT cend   = pCLineDef->end;
 
@@ -2350,7 +2350,7 @@ void TEditorClient::SelectMovingLineDefs ()
 		// Select the LineDefs connected to the selected Vertexes
 		for (n = 0 ; n < NumLineDefs ; n++ )
 		{
-			LineDef HUGE *pLineDef = &LineDefs[n];
+			LineDef *pLineDef = &LineDefs[n];
 			SHORT nstart = pLineDef->start;
 			SHORT nend   = pLineDef->end;
 			// For each selected Vertex, look if it's an extremity of a LineDef
@@ -2370,7 +2370,7 @@ void TEditorClient::SelectMovingLineDefs ()
 		SectorLineDefs = NULL;
 		for (n = 0 ; n < NumLineDefs ; n++ )
 		{
-			LineDef HUGE *pLineDef = &LineDefs[n];
+			LineDef *pLineDef = &LineDefs[n];
 			SHORT s1 = pLineDef->sidedef1;
 			SHORT s2 = pLineDef->sidedef2;
 
@@ -2389,13 +2389,13 @@ void TEditorClient::SelectMovingLineDefs ()
 		// Select the LineDefs connected to the LineDefs of the sectors
 		for (n = 0 ; n < NumLineDefs ; n++ )
 		{
-			LineDef HUGE *pLineDef = &LineDefs[n];
+			LineDef *pLineDef = &LineDefs[n];
 			SHORT nstart = pLineDef->start;
 			SHORT nend   = pLineDef->end;
 
 			for (cur = SectorLineDefs ; cur != NULL ; cur = cur->next)
 			{
-				LineDef HUGE *pCLineDef = &LineDefs[cur->objnum];
+				LineDef *pCLineDef = &LineDefs[cur->objnum];
 				SHORT start  = pCLineDef->start;
 				SHORT end    = pCLineDef->end;
 
@@ -3620,7 +3620,7 @@ void TEditorClient::CmMiscLDAlignY ()
 	sdlist = NULL;
 	for (cur = Selected; cur; cur = cur->next)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+		LineDef *pLineDef = &LineDefs[cur->objnum];
 
 		if (pLineDef->sidedef1 >= 0)
 			SelectObject (&sdlist, pLineDef->sidedef1);
@@ -4073,7 +4073,7 @@ void TEditorClient::CmEditAdd ()
 			// check if there is already a LineDef between the two Vertices
 			for (CurObject = 0; CurObject < NumLineDefs; CurObject++)
 			{
-				LineDef HUGE *pCurLineDef = &LineDefs[CurObject];
+				LineDef *pCurLineDef = &LineDefs[CurObject];
 				SHORT start = pCurLineDef->start;
 				SHORT end   = pCurLineDef->end;
 
@@ -4100,7 +4100,7 @@ void TEditorClient::CmEditAdd ()
 			// check if there is already a LineDef between the two Vertices
 			for (CurObject = 0; CurObject < NumLineDefs; CurObject++)
 			{
-				LineDef HUGE *pCurLineDef = &LineDefs[CurObject];
+				LineDef *pCurLineDef = &LineDefs[CurObject];
 				SHORT start = pCurLineDef->start;
 				SHORT end   = pCurLineDef->end;
 
@@ -4141,7 +4141,7 @@ void TEditorClient::CmEditAdd ()
 
 		for (cur = Selected; cur; cur = cur->next)
 		{
-			LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+			LineDef *pLineDef = &LineDefs[cur->objnum];
 			if (pLineDef->sidedef1 >= 0  &&  pLineDef->sidedef2 >= 0)
 			{
 				Beep();
@@ -4162,7 +4162,7 @@ void TEditorClient::CmEditAdd ()
 			for (cur = Selected; cur; cur = cur->next)
 			{
 				//BUG(NOT) can keep it here since no LineDefs inserted
-				LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+				LineDef *pLineDef = &LineDefs[cur->objnum];
 
 				InsertObject (OBJ_SIDEDEFS, -1, 0, 0);
 				SideDefs[NumSideDefs - 1].sector = CurObject;
@@ -4822,7 +4822,7 @@ void TEditorClient::AlignX (SHORT sdType, SHORT texType)
 	sdlist = NULL;
 	for (cur = Selected; cur; cur = cur->next)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+		LineDef *pLineDef = &LineDefs[cur->objnum];
 
 		if (pLineDef->sidedef1 >= 0)
 		   SelectObject (&sdlist, pLineDef->sidedef1);

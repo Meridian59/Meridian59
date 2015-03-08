@@ -494,7 +494,7 @@ void TLineDefEditDialog::CmOk ()
    }
    
    // Did the user made changes ?
-   LineDef HUGE *pLineDef = &LineDefs[ldnum];
+   LineDef *pLineDef = &LineDefs[ldnum];
    if ( memcmp (&CurLineDef, pLineDef, sizeof (CurLineDef)) != 0 )
       MadeChanges = TRUE;
    
@@ -573,7 +573,7 @@ void TLineDefEditDialog::CmOk ()
 	      LdPtr != NULL ;
 	      LdPtr = LdPtr->next)
 	 {
-	    LineDef HUGE *pSelLineDef = &LineDefs[LdPtr->objnum];
+	    LineDef *pSelLineDef = &LineDefs[LdPtr->objnum];
 	    LineDef LineDefBefore = *pSelLineDef;
 	    
 	    if ( ConfirmData.pTypeCheck )
@@ -895,7 +895,7 @@ void TLineDefEditDialog::CopySDData (int sdnum, SHORT DestLD,
    if ( xfer.pSDCheck[sdnum] == FALSE )
       return;
    
-   LineDef HUGE *pDestLineDef = &LineDefs[DestLD];
+   LineDef *pDestLineDef = &LineDefs[DestLD];
    
    // Retreive source and dest. SideDef numbers
    SHORT SrcSD, DestSD;
@@ -943,8 +943,8 @@ void TLineDefEditDialog::CopySDData (int sdnum, SHORT DestLD,
    }
    
    // Copy selected data members to the Dest. SideDef
-   SideDef HUGE *pSrcSideDef = &SideDefs[SrcSD];
-   SideDef HUGE *pDestSideDef = &SideDefs[DestSD];
+   SideDef *pSrcSideDef = &SideDefs[SrcSD];
+   SideDef *pDestSideDef = &SideDefs[DestSD];
    
    if ( xfer.pSDAboveCheck[sdnum] )
    {

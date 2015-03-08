@@ -65,7 +65,7 @@ int TInfoControl::NbObjects = 0 ;
 // ------------
 //
 TInfoControl::TInfoControl (TWindow* parent, int id, unsigned _NumLines,
-							const char far* title, int x, int y, int w, int h,
+							const char* title, int x, int y, int w, int h,
 							TModule* module):
 	TControl(parent, id, title, x, y, w, h, module)
 {
@@ -357,7 +357,7 @@ void TInfoControl::InsertAt (int linePos, const char *format, ...)
 }
 
 
-char far* TInfoControl::GetClassName ()
+char* TInfoControl::GetClassName ()
 {
 	return "WinDEU_InfoControl";
 }

@@ -1014,15 +1014,9 @@ FONT 8, "MS Sans Serif"
 // Version info.
 //
 
-#ifdef __WIN32__
 #define INTERNAL_NAME       "WINDEU32\000"
 #define FILE_OS             VOS__WINDOWS32
 #define ORIGINAL_FILENAME   "WINDEU32.EXE\000"
-#else
-#define INTERNAL_NAME       "WINDEU\000"
-#define FILE_OS             VOS__WINDOWS16
-#define ORIGINAL_FILENAME   "WINDEU.EXE\000"
-#endif
 #define COMPANY_NAME        "FUNDP"
 #define FILE_DESCRIPTION    "WinDEU: DEU for Windows"
 #define FILE_VERSION        "5.23\000"

@@ -348,11 +348,7 @@ TToolTip::TToolTip (Tip::Style _style, TFont* _font) : TWindow (NULL, "")
 	uiTimer			= NULL;
 	bEnabled		= TRUE;
 
-#ifdef __WIN32__
 	::hookKbd		= SetWindowsHookEx (WH_KEYBOARD, KbdProc, NULL, GetCurrentThreadId ());
-#else
-	::hookKbd		= SetWindowsHookEx (WH_KEYBOARD, KbdProc, GetApplication ()->GetInstance (), GetCurrentTask ());
-#endif
 	::ptTooltip		= this;
 
 	Create ();
@@ -435,7 +431,7 @@ void TToolTip::Paint (TDC &dc, bool, TRect &)
 	dc.DrawText (szText, -1, client, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 }
 
-void TToolTip::SetCaption (const char far* title)
+void TToolTip::SetCaption (const char* title)
 {
 	static DWORD dwTickCount = 0;
 

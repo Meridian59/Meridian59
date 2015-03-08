@@ -694,7 +694,7 @@ void TSectorEditDialog::CmOk ()
       {
 	 for (SelPtr cur = SelSectors->next ; cur != NULL ; cur = cur->next)
 	 {
-	    Sector HUGE *pSector = &Sectors[cur->objnum];
+	    Sector *pSector = &Sectors[cur->objnum];
 	    Sector SectorBefore = *pSector;	// Copy before changing
 	    
 	    if ( ConfirmData.pSpecialCheck )

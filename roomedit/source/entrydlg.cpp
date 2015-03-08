@@ -179,7 +179,7 @@ void TViewEntryDialog::EntrySelChange ()
 // EvDrawItem
 // ----------
 //
-void TViewEntryDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT far& drawInfo)
+void TViewEntryDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
 {
 	char Buf[128];
 

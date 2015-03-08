@@ -65,7 +65,7 @@ public:
 	BOOL controlBarOn;	// Control bar shown ?
 	BOOL statusBarOn;	// Status bar shown ?
 
-	TMainFrame (const char far *title, TModule* module = 0);
+	TMainFrame (const char* title, TModule* module = 0);
 	virtual ~TMainFrame ();
 
 	void EditLevel (char *levelName, BOOL newLevel);

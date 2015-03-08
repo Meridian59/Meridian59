@@ -26,15 +26,7 @@
 #ifndef __common_h
 #define __common_h
 
-#ifndef __WIN32__
-#ifndef __LARGE__
-#error This application can only be compiled with the LARGE memory model
-#endif
-#endif
-
-#ifdef __WIN32__
 #pragma warn -sig
-#endif
 
 // If release version, undefines all debug and trace options
 #ifdef RELEASE

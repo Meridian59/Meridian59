@@ -469,7 +469,7 @@ void TThingEditDialog::CmOk ()
 			// Copy the selected attributes of CurThing to the selection list
 			for (SelPtr cur = SelThings->next ; cur != NULL ; cur = cur->next )
 			{
-				Thing HUGE *pThing = &Things[cur->objnum];
+				Thing *pThing = &Things[cur->objnum];
 				Thing ThingBefore = *pThing;	// Copy before changes
 
 				if ( ConfirmData.pXPosCheck )	pThing->xpos  = CurThing.xpos;

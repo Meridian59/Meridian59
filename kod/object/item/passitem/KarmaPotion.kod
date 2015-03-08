@@ -19,23 +19,28 @@ resources:
    KarmaPotion_icon_rsc = potion01.bgf
    
    KarmaPotion_name_rsc = "Karma Potion"
-   KarmaPotion_desc_rsc = "Drinking this potion during a frenzy will change your karma."
+   KarmaPotion_desc_rsc = \
+      "Drinking this potion during a frenzy will change your karma."
 
    KarmaPotion_pos_name_rsc = "Positive Karma Potion"
-   KarmaPotion_pos_desc_rsc = "Drinking this potion during a Frenzy will change your karma to +100."
+   KarmaPotion_pos_desc_rsc = \
+      "Drinking this potion during a Frenzy will change your karma to +100."
    
    KarmaPotion_neg_name_rsc = "Negative Karma Potion"
-   KarmaPotion_neg_desc_rsc = "Drinking this potion during a Frenzy will change your karma to -100."
+   KarmaPotion_neg_desc_rsc = \
+      "Drinking this potion during a Frenzy will change your karma to -100."
    
-   KarmaPotion_drink = "You quaff the contents of the Karma Potion in a single gulp."
-   KarmaPotion_no_drink = "You can't use this potion when it is not a frenzy."
+   KarmaPotion_drink = \
+      "You quaff the contents of the Karma Potion in a single gulp."
+   KarmaPotion_no_drink = \
+      "You can't use this potion when it is not a frenzy."
 
 classvars:
 
    vrIcon = KarmaPotion_icon_rsc
 
    viBulk = 20
-   viWeight = 5000          % weighs more than a mortal can normally hold - ensures can only be given out via admin globally
+   viWeight = 20
    viValue_average = 60
 
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
@@ -52,69 +57,94 @@ properties:
    piItem_flags = XLAT_TO_SKY
    piKarma = 0
 
-
 messages:
 
-   Constructor(Karma=$)
-   "Creates the Karma Potion with a negative or positive karma value. INT above zero makes positive potion INT below zero makes a negative potion."
+   Constructor(karma=$,model=$)
+   "Creates the Karma Potion with a negative or positive karma value. "
+   "INT above zero makes positive potion INT below zero makes a "
+   "negative potion."
    {
-     if karma > 0
-     {
-       vrName = KarmaPotion_pos_name_rsc;
-       vrDesc = KarmaPotion_pos_desc_rsc;
-       piItem_Flags = PT_MET_GREEN;
-       piKarma = 10000;
-     }
-		
-     if karma < 0
-     {
-       vrName = KarmaPotion_neg_name_rsc;
-       vrDesc = KarmaPotion_neg_desc_rsc;
-       piItem_Flags = PT_MET_RED;
-       piKarma = -10000;
-     }
-		
-     propagate;
+      % If we buy the potion (i.e. during a frenzy) we use the model
+      % parameter to determine which type of potion it is.
+      if model <> $
+      {
+         karma = Send(model,@GetKarma);
+      }
+
+      % If we somehow end up with $ karma, pick it at random.
+      if karma = $
+      {
+         if Random(0,1) = 1
+         {
+            karma = 10000;
+         }
+         else
+         {
+            karma = -10000;
+         }
+      }
+
+      if karma > 0
+      {
+         vrName = KarmaPotion_pos_name_rsc;
+         vrDesc = KarmaPotion_pos_desc_rsc;
+         piItem_Flags = PT_MET_GREEN;
+         piKarma = 10000;
+      }
+
+      if karma < 0
+      {
+         vrName = KarmaPotion_neg_name_rsc;
+         vrDesc = KarmaPotion_neg_desc_rsc;
+         piItem_Flags = PT_MET_RED;
+         piKarma = -10000;
+      }
+
+      propagate;
    }
-   
+
    ApplyPotionEffects(apply_on = $)
    {
-     if Send(SYS, @GetChaosNight)				
-     {	
-       Send(apply_on,@SetKarma,#value=piKarma);
-     }    
-     else
-     {
-       Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_no_drink);
-       Send(self,@Delete);								% deletes it self if someone tries to use it outside frenzy.	
+      if Send(SYS,@GetChaosNight)
+         OR IsClass(apply_on,&DM)
+      {
+         Send(apply_on,@SetKarma,#value=piKarma);
+      }
+      else
+      {
+         Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_no_drink);
+         % Delete and log a message if outside frenzy.
+         Debug("ALERT!  ",Send(apply_on,@GetTrueName)," tried to drink a ",
+               "karma potion!");
+         Send(self,@Delete);
      }
 
      return;
    }
-   
+
    ReqNewApply(what = $,apply_on = $)
    {
-     if what = apply_on
-     {
-       return TRUE;
-     }
-      
-     return FALSE;
+      if what = apply_on
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
-   
+
    NewApplied(what = $,apply_on = $)
    {
-     if isClass(apply_on,&Player) 
-     {
-       Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
-     }
+      if isClass(apply_on,&Player) 
+      {
+         Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
+      }
 
-     Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_drink);
-     Send(self,@ApplyPotionEffects,#apply_on=apply_on);
+      Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_drink);
+      Send(self,@ApplyPotionEffects,#apply_on=apply_on);
 
-     Send(self,@Delete);
+      Send(self,@Delete);
 
-     return;
+      return;
    }
 
    IsBeverage()
@@ -131,12 +161,11 @@ messages:
    {
      return FALSE;
    }
-   
+
    GetKarma()
    {
      return piKarma;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

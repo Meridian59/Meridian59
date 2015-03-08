@@ -31,7 +31,6 @@
 #include "common.h"
 #pragma hdrstop
 #include <time.h>
-#include <dir.h> // MAXPATH
 
 #if 0
 	#include <ctl3d.h>
@@ -73,7 +72,7 @@
 // Generated help file.
 //
 const char HelpName[] = "windeu.hlp";
-static char HelpFileName[MAXPATH];
+static char HelpFileName[MAX_PATH];
 
 //
 // Context sensitive help item ID
@@ -208,7 +207,7 @@ void WinDEUApp::InitInstance ()
 	TApplication::InitInstance();
 
 	// Retrieve module directory to construct help file full path
-	if ( GetModuleFileName (HelpFileName, MAXPATH) )
+	if ( GetModuleFileName (HelpFileName, MAX_PATH) )
 	{
 		int i;
 		for (i = strlen(HelpFileName) - 1;

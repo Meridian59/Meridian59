@@ -2668,7 +2668,7 @@ BOOL TEditorClient::SaveChanges ()
 //
 BOOL TEditorClient::SaveLevel ()
 {
-	char filename[MAXPATH];
+	char filename[MAX_PATH];
 
 	if (Registered                               == FALSE ||
 		CheckStartingPos()                       == FALSE ||

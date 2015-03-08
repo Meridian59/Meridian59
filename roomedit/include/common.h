@@ -43,7 +43,6 @@
 #include <ctype.h>
 #include <io.h>
 #include <fcntl.h>
-#include <dir.h>
 #include <alloc.h>
 #include <assert.h>
 #include <math.h>

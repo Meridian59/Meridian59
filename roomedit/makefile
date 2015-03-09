@@ -6,7 +6,7 @@
 COMPILERDIR = c:\bc5
 TOPDIR=..
 
-# BCC flags
+# bcc32 flags
 # -v      Turn on source debugging
 # -vi     Generate inline functions inline (use -vi- for out-of-line)
 # -H      Generate and use precompiled headers
@@ -26,9 +26,14 @@ RC   = $(COMPILERDIR)\bin\Brc32
 
 
 #
-# Options
-#
-IDE_LFLAGS32 =  -L$(COMPILERDIR)\LIB;. -c -Tpe -aa -x
+# tlink32 flags
+# -L    Specify library search path
+# -c    Case sensitive link
+# -Tpe  Output file type: EXE
+# -aa   Application Type: Windowing API (Subsystem Windows)
+# -x    No map
+# -v    Full symbolic debug information
+IDE_LFLAGS32 =  -L$(COMPILERDIR)\LIB;. -c -Tpe -aa -x -v
 IDE_RFLAGS32 =  -w32
 CNIEAT_RESbwindeappdrc = -I$(COMPILERDIR)\INCLUDE;RES;INCLUDE -D_OWLPCH;
 
@@ -93,7 +98,7 @@ LIBS = \
 	cw32.lib
 
 windeu32.exe : makedirs $(OBJS) OBJ\windeapp.res
-  $(LINK) /v $(IDE_LFLAGS32) @<<
+  $(LINK) $(IDE_LFLAGS32) @<<
 $(COMPILERDIR)\LIB\c0w32.obj $(OBJS), $@,,$(LIBS),,OBJ\windeapp.res
 <<
 

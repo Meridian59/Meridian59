@@ -696,55 +696,23 @@ STRINGTABLE
 //
 
 // Application ICON
-IDI_SDIAPPLICATION ICON "applsdi.ico"
-
-
-IDI_BOSS ICON "boss.ico"
-
-
-IDI_CACO ICON "caco.ico"
-
-
-IDI_DEMON ICON "demon.ico"
-
-
-IDI_DOOMFAC1 ICON "doomfac1.ico"
-
-
-IDI_GORY5 ICON "gory5.ico"
-
-
-IDI_HELMET1 ICON "helmet1.ico"
-
-
-IDI_IMP ICON "imp.ico"
-
-
-IDI_INVISBL ICON "invisbl.ico"
-
-
-IDI_INVUL ICON "invul.ico"
-
-
-IDI_PLAYER5 ICON "player5.ico"
-
-
-IDI_PLAYR1 ICON "playr1.ico"
-
-
-IDI_SARG ICON "sarg.ico"
-
-
-IDI_SKULL6 ICON "skull6.ico"
-
-
-IDI_SOUL ICON "soul.ico"
-
-
-IDI_NOEL_1 ICON "noel1.ico"
-
-
-IDI_NOEL_2 ICON "noel2.ico"
+IDI_SDIAPPLICATION ICON "icons\applsdi.ico"
+IDI_BOSS ICON "icons\boss.ico"
+IDI_CACO ICON "icons\caco.ico"
+IDI_DEMON ICON "icons\demon.ico"
+IDI_DOOMFAC1 ICON "icons\doomfac1.ico"
+IDI_GORY5 ICON "icons\gory5.ico"
+IDI_HELMET1 ICON "icons\helmet1.ico"
+IDI_IMP ICON "icons\imp.ico"
+IDI_INVISBL ICON "icons\invisbl.ico"
+IDI_INVUL ICON "icons\invul.ico"
+IDI_PLAYER5 ICON "icons\player5.ico"
+IDI_PLAYR1 ICON "icons\playr1.ico"
+IDI_SARG ICON "icons\sarg.ico"
+IDI_SKULL6 ICON "icons\skull6.ico"
+IDI_SOUL ICON "icons\soul.ico"
+IDI_NOEL_1 ICON "icons\noel1.ico"
+IDI_NOEL_2 ICON "icons\noel2.ico"
 
 
 

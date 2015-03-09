@@ -38,23 +38,23 @@
 	#include "episdlg.h"
 #endif
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	#include <owl\radiobut.h>
 #endif
 
-#ifndef __OWL_GROUPBOX_H
+#ifndef OWL_GROUPBOX_H
 	#include <owl\groupbox.h>
 #endif
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	#include <owl\checkbox.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 

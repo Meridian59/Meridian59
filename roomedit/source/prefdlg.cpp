@@ -34,19 +34,19 @@
 	#include "prefdlg.h"
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 

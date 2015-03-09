@@ -31,7 +31,7 @@
 #pragma hdrstop
 #include "windeu.h"
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	#include <owl\checkbox.h>
 #endif
 

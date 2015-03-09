@@ -31,7 +31,7 @@ classvars:
    vrName = twoCouncilor_name_rsc
    vrDesc = twoCouncilor_desc_rsc
    vrIcon = twoCouncilor_icon_rsc
-   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE 
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_COUNCILMEMBER
    viInitialState = 101  %leaning to the duke
    viGender = GENDER_MALE   
@@ -120,7 +120,16 @@ messages:
      else { return TwoCon_half_ideal_rsc; }
      return;
    }
-
+   
+   SetForSale()
+   {
+      plFor_sale = [$,$,
+        [ SID_CONVEYANCE],
+       $ ];
+       
+      return;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

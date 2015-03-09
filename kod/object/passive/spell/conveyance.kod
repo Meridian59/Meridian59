@@ -1,0 +1,150 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Conveyance is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   Conveyance_name_rsc = "conveyance"
+   Conveyance_icon_rsc = iboonint.bgf
+   Conveyance_desc_rsc = \
+     "Sends a stack of items to your closest personal vault.  "
+	 "Requires only the fee for depositing items."
+ 
+   Conveyance_cant = "You cannot cast conveyance on %s%s."
+   Conveyance_not_enough_cash = "You don't have enough shillings to convey %s%s."
+   Conveyance_not_enough_space = "Your vault does not have enough space!"
+   Conveyance_not_holding = "You cannot cast conveyance on an item you are not holding!"
+
+   Conveyance_cast = "A small portal whips into existence, pulling %s%s to your vault."
+     
+classvars:
+
+   vrName = Conveyance_name_rsc
+   vrIcon = Conveyance_icon_rsc
+   vrDesc = Conveyance_desc_rsc
+
+   viCast_time = 0
+
+   viSpell_num = SID_CONVEYANCE
+   viSpell_level = 4
+   viSchool = SS_KRAANAN
+   viMana = 5
+   viSpellExertion = 2
+   viChance_To_Increase = 15
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local oTarget, oRoom, oVault, iFee, oMoney, iCash;
+      
+      oTarget = First(lTargets);
+   
+      if NOT isClass(oTarget,&NumberItem)
+         OR NOT Send(oTarget,@CanBeStoredInVault)
+         OR isClass(oTarget,&Money)
+      {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
+            #parm1=Send(oTarget,@GetDef),
+            #parm2=Send(oTarget,@GetName));
+
+         return;
+      }
+    
+      if NOT Send(who,@IsHolding,#what=oTarget)
+      {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_not_holding);
+         return;
+      }
+
+      oRoom = Send(who,@GetOwner);
+      if oRoom = $
+         OR Send(oRoom,@GetRegion) <> RID_KOCATAN
+      {
+         oVault = Send(SYS,@FindVaultByNum,#num=VID_BARLOQUE);
+         iFee = Send(oTarget,@GetBulk);
+      }
+      else
+      {
+         oVault = Send(SYS,@FindVaultByNum,#num=VID_KOCATAN);
+         iFee = Send(oTarget,@GetBulk) * 2;
+      }
+      
+      if iFee = $
+         OR iFee = 0
+         OR NOT Send(who,@ReqLeaveHold,#what=oTarget)
+      {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
+            #parm1=Send(oTarget,@GetDef),
+            #parm2=Send(oTarget,@GetName));
+         return;
+      }
+      
+      oMoney = Send(who,@GetMoneyObject);
+      if oMoney = $
+      {
+         % No cash.
+         iCash = 0;
+      }
+      else
+      {
+         iCash = Send(oMoney,@GetValue);
+      }
+
+      if iCash < iFee
+         AND iFee <> 0
+      {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_not_enough_cash,
+            #parm1=Send(oTarget,@GetDef),
+            #parm2=Send(oTarget,@GetName));
+
+         return;
+      }
+
+      if Send(oVault,@CanDepositItems,#lItems=lTargets,#who=who)
+      {
+         Send(oVault,@DepositItems,#lItems=lTargets,#who=who);
+         Send(who,@MsgSendUser,#message_rsc=Conveyance_cast,
+                  #parm1=Send(First(lTargets),@GetDef),
+                  #parm2=Send(First(lTargets),@GetName));
+                  
+         if iFee <> 0
+         {
+            Send(oMoney,@SubtractNumber,#number=iFee);
+         }
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=Conveyance_not_enough_space);
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

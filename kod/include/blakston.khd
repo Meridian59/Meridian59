@@ -1988,6 +1988,7 @@
    SID_MIRTH = 179
    SID_MELANCHOLY = 180
    SID_CRYSTALIZE_MANA = 181
+   SID_CONVEYANCE = 182
 
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT

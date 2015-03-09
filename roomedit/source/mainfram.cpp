@@ -81,7 +81,7 @@ END_RESPONSE_TABLE;
 //
 TMainFrame::TMainFrame (const char* title, TModule* module):
 	TDecoratedFrame(0, title, new TMainClient (0,""), TRUE, module),
-	tooltip (Tip::RoundedBorder | Tip::Shadow)
+	tooltip((Tip::Style)(Tip::RoundedBorder | Tip::Shadow), (TFont*)0)
 {
 	inEditor = FALSE;
 	activated = FALSE;

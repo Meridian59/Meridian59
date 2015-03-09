@@ -788,12 +788,10 @@ void ProgError( char *errstr, ...)
 		fprintf( logfile, " ***\n");
 	}
 	va_end( args);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "WinDEU error",
 				  MB_OK | MB_ICONSTOP | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	// clean up things
 	CleanupWindeu();
@@ -947,12 +945,10 @@ BOOL Confirm(char *confstr, ...)
 	vsprintf( msg, confstr, args);
 	va_end( args);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	int ans = ::MessageBox (0,
 							msg,
 							"Confirmation",
 							MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	return ((ans == IDYES) ? TRUE : FALSE);
 }
@@ -971,12 +967,10 @@ void Notify(char *notstr, ...)
 	vsprintf( msg, notstr, args);
 	va_end( args);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "Notification message",
 				  MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 }
 
 

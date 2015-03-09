@@ -5454,7 +5454,7 @@ messages:
 
       % Look for active shield rods in inventory, reduce final damage to 1 if any active
       bShielded = FALSE;
-      for oRod in Send(self,@GetHolderPassive)
+      for oRod in plPassive
       {
          if IsClass(oRod,&ShieldRod)
             AND Send(oRod,@IsActive)
@@ -8513,7 +8513,7 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
-      local i, bGained, bGainedCharge, oSpellDeathLink;
+      local i, bGainedCharge, oSpellDeathLink;
 
       if NOT IsClass(victim,&Battler)
       {
@@ -8536,13 +8536,9 @@ messages:
          for i in plPassive
          {
             if IsClass(i,&Rod)
+               AND Send(i,@SomethingKilled,#what=what,#victim=victim)
             {
-               bGained = Send(i,@SomethingKilled,#what=what,#victim=victim);
-               
-               if bGained
-               {
-                  bGainedCharge = TRUE;
-               }
+               bGainedCharge = TRUE;
             }
          }
 
@@ -14308,18 +14304,14 @@ messages:
 
    RechargeAllRods()
    {
-      local i, bResult, bGainedCharges;
+      local i, bGainedCharges;
 
       bGainedCharges = FALSE;
-      bResult = FALSE;
-      for i in Send(self,@GetHolderPassive)
+
+      for i in plPassive
       {
          if IsClass(i,&Rod)
-         {
-            bResult = Send(i,@FullyRecharge);
-         }
-
-         if bResult
+            AND Send(i,@FullyRecharge)
          {
             bGainedCharges = TRUE;
          }

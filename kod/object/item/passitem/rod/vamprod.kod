@@ -39,12 +39,12 @@ classvars:
    viValue_average = 200
    viGround_group = 2
    
+   vrGoodDesc = vampireRod_desc_rsc
+   
    use_success_wav = vampireRod_success_wav_rsc
    use_success_msg = vampireRod_success_rsc
 
 properties:
-   
-   vrDesc = vampireRod_desc_rsc
 
 messages:
 

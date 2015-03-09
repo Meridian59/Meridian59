@@ -18,13 +18,17 @@ resources:
 
    SpellWand_name_rsc = "spell rod"
    SpellWand_icon_rsc = wand1.bgf
-   SpellWand_desc_rsc = "Magical energy crackles about this slender rod. It contains a personal enchantment spell, but "
-                        "you sense that this kind of wand can only be charged by the energy of slain monsters."
+   SpellWand_desc_rsc = \
+      "Magical energy crackles about this slender rod. It contains a personal "
+      "enchantment spell, but you sense that this kind of wand can only be "
+      "charged by the energy of slain monsters."
 
 classvars:
 
    vrName = SpellWand_name_rsc
    vrIcon = SpellWand_icon_rsc
+
+   vrGoodDesc = SpellWand_desc_rsc
 
 properties:
 

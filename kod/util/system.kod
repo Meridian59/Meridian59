@@ -5422,6 +5422,9 @@ messages:
 
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
       plItemTemplates = cons(create(&DamageRod),plItemTemplates);
+      plItemTemplates = cons(create(&BreakRodHold),plItemTemplates);
+      plItemTemplates = cons(create(&BreakRodBlind),plItemTemplates);
+      plItemTemplates = cons(create(&BreakRodPurge),plItemTemplates);
 
       return;
    }

@@ -21,12 +21,13 @@ resources:
    Rod_desc_rsc = "You can feel magical energy pulsing through the rod."
    Rod_broken = "%s%s goes dark, having expended its last charge!"
    Rod_useless = "The rod must be recharged before it can be used again."
-   Rod_desc_broken_rsc = "This once pristine rod is dull and dark, and must be recharged."
+   Rod_desc_broken_rsc = \
+      "This once pristine rod is dull and dark, and must be recharged."
    Rod_success_msg = "The rod pulses in your hand."
-   
+
    rod_consumes_charges_a_rsc = " Unleashing the magic within will consume "
    rod_consumes_charges_b_rsc = " charges."
-   
+
    rod_charges_left_a_rsc = "This rod has "
    rod_charges_left_b_rsc = " charges remaining, and can hold a maximum of "
    rod_charges_left_c_rsc = " charges."
@@ -35,24 +36,45 @@ resources:
    rod_fail_wav_default_rsc = spelfail.wav
    
    rod_cannot_hold_more_rsc = "If you held another rod, their competing magics would all conflict and explode!"
+   rod_default_expire_msg = \
+      "Your rod effect has expired."
+   rod_default_secondary_expire_msg = \
+      "Your rod's secondary effect has expired."
 
 classvars:
 
    viUse_type = ITEM_SINGLE_USE
    viItem_type = ITEMTYPE_ROD
-   
+
    viStartHits = 0
    viStartMaxHits = 5
    viConsumesHits = 1
+
+   vrGoodDesc = Rod_desc_rsc
+   vrBrokenDesc = Rod_desc_broken_rsc
 
    use_fail_msg = Rod_useless
    use_fail_wav = rod_fail_wav_default_rsc
    use_success_msg = Rod_success_msg
    use_success_wav = rod_success_wav_default_rsc
+   duration_expire_msg = rod_default_expire_msg
+   secondary_duration_expire_msg = rod_default_secondary_expire_msg
+   
+   vbDurationEffect = FALSE
+   viEffectDuration = 0
+   vbSecondaryDurationEffect = FALSE
+   viSecondaryEffectDuration = 0
 
 properties:
 
    vrDesc = Rod_desc_rsc
+   
+   % For rods with durations
+   ptActiveTimer = $
+   pbActive = FALSE
+   
+   ptSecondaryActiveTimer = $
+   pbSecondaryActive = FALSE
 
 messages:
 
@@ -126,7 +148,7 @@ messages:
       {
          Send(poOwner,@MsgSendUser,#message_rsc=Rod_broken,
            #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
-         vrDesc = Rod_desc_broken_rsc;
+         vrDesc = vrBrokenDesc;
       }
       
       return;
@@ -134,6 +156,31 @@ messages:
 
    CastSpell(what = $, apply_on = $)
    {
+      if vbDurationEffect
+      {
+         if ptActiveTimer <> $
+         {
+            DeleteTimer(ptActiveTimer);
+            ptActiveTimer = $;
+         }
+
+         pbActive = TRUE;
+         ptActiveTimer = CreateTimer(self,@DurationEffectExpire,viEffectDuration);
+      }
+      
+      if vbSecondaryDurationEffect
+      {
+         if ptSecondaryActiveTimer <> $
+         {
+            DeleteTimer(ptSecondaryActiveTimer);
+            ptSecondaryActiveTimer = $;
+         }
+
+         pbSecondaryActive = TRUE;
+         ptSecondaryActiveTimer = CreateTimer(self,
+                @SecondaryDurationEffectExpire,viSecondaryEffectDuration);
+      }
+
       Send(poOwner,@MsgSendUser,#message_rsc=use_success_msg);
       Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
       return;
@@ -163,6 +210,29 @@ messages:
       
       return FALSE;
    }
+
+   SetHits(number = $)
+   {
+      if number = $
+      {
+         return;
+      }
+      
+      if number = 0
+      {
+         vrDesc = vrBrokenDesc;
+      }
+
+      if piHits = 0
+         AND number > 0
+      {
+         vrDesc = vrGoodDesc;
+      }
+
+      piHits = number;
+
+      propagate;
+   }
    
    AppendDesc()
    {
@@ -181,6 +251,63 @@ messages:
       AppendTempString(rod_charges_left_c_rsc);
 
       return;
+   }
+   
+   DurationEffectExpire()
+   {
+      ptActiveTimer = $;
+      pbActive = FALSE;
+      
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+         AND Send(poOwner,@IsLoggedOn)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=duration_expire_msg);
+      }
+
+      return;
+   }
+   
+   SecondaryDurationEffectExpire()
+   {
+      ptSecondaryActiveTimer = $;
+      pbSecondaryActive = FALSE;
+      
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+         AND Send(poOwner,@IsLoggedOn)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=secondary_duration_expire_msg);
+      }
+
+      return;
+   }
+   
+   IsActive()
+   {
+      return pbActive;
+   }
+   
+   IsSecondaryActive()
+   {
+      return pbSecondaryActive;
+   }
+   
+   Delete()
+   {
+      If ptActiveTimer <> $
+      {
+         DeleteTimer(ptActiveTimer);
+         ptActiveTimer = $;
+      }
+      
+      if ptSecondaryActiveTimer <> $
+      {
+         DeleteTimer(ptSecondaryActiveTimer);
+         ptSecondaryActiveTimer = $;
+      }
+
+      propagate;
    }
 
 end

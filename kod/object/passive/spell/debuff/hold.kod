@@ -27,6 +27,9 @@ resources:
    hold_caster = "%s%s is now held in place by a magical force."
    hold_on = "A magical tingling pulses through your body.  You are unable to move."
    hold_off = "The magical hold lifts and you are able to move once more."
+   
+   hold_break_rod_active = \
+      "Flowing energies dissipate your spell before you even begin!"
 
 classvars:
 
@@ -108,6 +111,32 @@ messages:
          }
          
          return FALSE;
+      }
+      
+      if IsClass(target,&Player)
+      {
+         for i in Send(target,@GetHolderPassive)
+         {
+            if IsClass(i,&BreakRodHold)
+               AND Send(i,@IsActive)
+            {
+               Send(who,@MsgSendUser,#message_rsc=hold_break_rod_active);
+               return FALSE;
+            }
+         }
+      }
+      
+      if IsClass(who,&Player)
+      {
+         for i in Send(who,@GetHolderPassive)
+         {
+            if IsClass(i,&BreakRodHold)
+               AND Send(i,@IsSecondaryActive)
+            {
+               Send(who,@MsgSendUser,#message_rsc=hold_break_rod_active);
+               return FALSE;
+            }
+         }
       }
 
       propagate;   % Check other things higher up

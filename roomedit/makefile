@@ -28,7 +28,7 @@ RC   = $(COMPILERDIR)\bin\Brc32
 #
 # Options
 #
-IDE_LFLAGS32 =  -L$(COMPILERDIR)\LIB;. -c -Tpe -aa -c -x
+IDE_LFLAGS32 =  -L$(COMPILERDIR)\LIB;. -c -Tpe -aa -x -V4.0
 IDE_RFLAGS32 =  -w32
 CNIEAT_RESbwindeappdrc = -I$(COMPILERDIR)\INCLUDE;RES;INCLUDE -D_OWLPCH;
 

@@ -1,40 +1,44 @@
 # Makefile for room editor
 
 #
-# Borland C++ tools
+# Borland C++ 5.02 compiler package required
+#
 #
 COMPILERDIR = c:\bc5
 TOPDIR=..
-
-# bcc32 flags
-# -v      Turn on source debugging
-# -vi     Generate inline functions inline (use -vi- for out-of-line)
-# -H      Generate and use precompiled headers
-# -H=     Set the name of the file to use for precompiled headers
-# -N ???
-# -WM     Target is a 32-bit multi-threaded target (-WM- = single)
-# -Od     Disable all optimizations
-# -y      Debug line numbers on
-# -W      Target is a Windows application
-# -I      Set the include file search path
-# -a2     Align data on two byte (word) boundaries (CRASHES ON BCC 5> ?)
-COMPILERFLAGS = -v -vi -H -H=obj\WINDEU.CSM -N -WM- -Od -y -W -I$(COMPILERDIR)\include;include;res -D_OWLPCH
 
 CC   = $(COMPILERDIR)\bin\Bcc32
 LINK = $(COMPILERDIR)\bin\TLink32
 RC   = $(COMPILERDIR)\bin\Brc32
 
+# bcc32
+# -4      80486 instructions (default -3 for 80386)
+# -v      Turn on source debugging
+# -vi     Generate inline functions inline (use -vi- for out-of-line)
+# -H      Generate and use precompiled headers
+# -H=     Set the name of the file to use for precompiled headers
+# -N      Check stack overflow
+# -WM     Target is a 32-bit multi-threaded target (-WM- = single)
+# -Od     Disable all optimizations
+# -y      Debug line numbers on
+# -W      Target is a Windows application
+# -I      Set the include file search path
+COMPILERFLAGS = -4 -v -vi -H -H=obj\WINDEU.CSM -N -WM- -Od -y -W -I$(COMPILERDIR)\include;include;res -D_OWLPCH
 
-#
-# tlink32 flags
+# tlink32
 # -L    Specify library search path
 # -c    Case sensitive link
 # -Tpe  Output file type: EXE
 # -aa   Application Type: Windowing API (Subsystem Windows)
 # -x    No map
 # -v    Full symbolic debug information
-IDE_LFLAGS32 =  -L$(COMPILERDIR)\LIB;. -c -Tpe -aa -x -v
-IDE_RFLAGS32 =  -w32
+# -V4.0 Linker subsystem NT 4.0 (is 3.5 by default)
+IDE_LFLAGS32 =  -L$(COMPILERDIR)\LIB;. -c -Tpe -aa -x -v -V4.0
+
+# brc32
+# -32   build 32-bit Windows compatible res/exe files
+# -w32  provided for downward compatibility
+IDE_RFLAGS32 =  -32
 CNIEAT_RESbwindeappdrc = -I$(COMPILERDIR)\INCLUDE;RES;INCLUDE -D_OWLPCH;
 
 #

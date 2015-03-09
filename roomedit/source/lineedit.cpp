@@ -147,7 +147,7 @@ const SHORT *D1_LineDefSetTab[] =
    };
 
 // const NB_LINEDEFSET = sizeof(LineDefSetTab) / sizeof (int *);
-const NB_LINEDEFSET = 6;
+const int NB_LINEDEFSET = 6;
 
 
 /////////////////////////////////////////////////////////////////////

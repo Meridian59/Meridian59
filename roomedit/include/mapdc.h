@@ -41,11 +41,11 @@
 	#include "objects.h"	// SelPtr
 #endif
 
-#ifndef __OWL_DC_H
+#ifndef OWL_DC_H
 	#include <owl\dc.h>
 #endif
 
-#ifndef __OWL_GDIOBJEC_H
+#ifndef OWL_GDIOBJEC_H
 	#include <owl\gdiobjec.h>
 #endif
 

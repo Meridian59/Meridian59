@@ -33,11 +33,11 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_WINDOW_H
+#ifndef OWL_WINDOW_H
 	#include <owl\window.h>
 #endif
 
-#ifndef __OWL_OPENSAVE_H
+#ifndef OWL_OPENSAVE_H
 	#include <owl\opensave.h>
 #endif
 

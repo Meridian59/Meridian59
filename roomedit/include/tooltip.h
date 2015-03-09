@@ -34,15 +34,15 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_CONTROLB_H
+#ifndef OWL_CONTROLB_H
 	#include <owl\controlb.h>
 #endif
 
-#ifndef __OWL_STATUSBA_H
+#ifndef OWL_STATUSBA_H
 	#include <owl\statusba.h>
 #endif
 
-#ifndef __OWL_BUTTONGA_H
+#ifndef OWL_BUTTONGA_H
 	#include <owl\buttonga.h>
 #endif
 

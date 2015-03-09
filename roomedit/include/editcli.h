@@ -38,15 +38,15 @@
 	#include "objects.h"	// SelPtr
 #endif
 
-#ifndef __OWL_LAYOUTWI_H
+#ifndef OWL_LAYOUTWI_H
 	#include <owl\layoutwi.h>
 #endif
 
-#ifndef __OWL_STATUSBA_H
+#ifndef OWL_STATUSBA_H
 	class _OWLCLASS TStatusBar;
 #endif
 
-#ifndef __OWL_OPENSAVE_H
+#ifndef OWL_OPENSAVE_H
 	#include <owl\opensave.h>
 #endif
 

@@ -33,11 +33,11 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_CONTROL_H
+#ifndef OWL_CONTROL_H
 	#include <owl\control.h>
 #endif
 
-#ifndef __OWL_DC_H
+#ifndef OWL_DC_H
 	class _OWLCLASS TDC;
 #endif
 

@@ -810,9 +810,9 @@ void TEditorClient::SetupInfoWindows()
 //
 void TEditorClient::SetupSelection (BOOL SaveSel)
 {
-	static ForgetCurObject = FALSE;	// Did we select CurObject?
-	static OldCurObject    = -1;    // If Yes, CurOjbect at that time
-	static OldEditMode     = -1;    //         EditMode at that time
+	static int ForgetCurObject = FALSE;	// Did we select CurObject?
+	static int OldCurObject    = -1;    // If Yes, CurOjbect at that time
+	static int OldEditMode     = -1;    //         EditMode at that time
 
 	// If not saving, remember selection
 	if ( SaveSel == FALSE )

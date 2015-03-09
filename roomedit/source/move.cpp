@@ -304,7 +304,6 @@ BYTE ComputeSquareFlags(BSPTree tree, int row, int col, int /*rows*/, int /*cols
 int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols, int min_distance)
 {
 	int x, y;
-	int source_x, source_y;
 	int dest_x, dest_y;
 	int maxx, maxy;
 	int allowed_dirs = 0;

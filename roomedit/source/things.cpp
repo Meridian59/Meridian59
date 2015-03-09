@@ -1453,7 +1453,7 @@ LPCSTR GetKodRoomDecorativeName(int index)
 {
 	if ((index >= 0) && (index < numKodRooms))
 	{
-		if (0 == strncmpi(pKodRooms[index].name,"RID_",4))
+		if (0 == strnicmp(pKodRooms[index].name,"RID_",4))
 		{
 			return &pKodRooms[index].name[4];
 		}
@@ -1487,7 +1487,7 @@ int GetKodRoomID(int index)
 int FindKodRoomID(LPCSTR roomName)
 {
 	char name[256];
-	if (0 != strncmpi(roomName,"RID_",4))
+	if (0 != strnicmp(roomName,"RID_",4))
 	{
 		strcpy(name,"RID_");
 		strcat(name,roomName);

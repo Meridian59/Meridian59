@@ -5045,7 +5045,7 @@ void TEditorClient::CmUndoEnable (TCommandEnabler &tce)
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];
-		int i;
+		unsigned int i;
 
 		menu.GetMenuString (CM_EDIT_UNDO, ItemString,
 							sizeof(ItemString), MF_BYCOMMAND);
@@ -5092,7 +5092,7 @@ void TEditorClient::CmRedoEnable (TCommandEnabler &tce)
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];
-		int i;
+		unsigned int i;
 
 		menu.GetMenuString (CM_EDIT_REDO, ItemString,
 							sizeof(ItemString), MF_BYCOMMAND);

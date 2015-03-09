@@ -137,7 +137,7 @@ void TInfoControl::Cleanup()
 	if ( TextLineTab != NULL )
 	{
 		// Free TextLines
-		for (int i = 0 ; i < NumLines ; i++)
+		for (unsigned int i = 0 ; i < NumLines ; i++)
 		{
 			if ( TextLineTab[i] != NULL )
 			{
@@ -208,7 +208,7 @@ void TInfoControl::Paint (TDC& dc, bool erase, TRect& rect)
 	// Draw each text line
 	if ( TextLineTab != NULL )
 	{
-		for (int i = 0 ; i < NumLines ; i++)
+		for (unsigned int i = 0 ; i < NumLines ; i++)
 		{
 			if (TextLineTab[i] != NULL  && TextLineTab[i]->Text != NULL)
 			{
@@ -310,7 +310,7 @@ void TInfoControl::Insert (const char *format, ...)
 	if ( TextLineTab == NULL )
 	{
 		TextLineTab = (TextLine **)GetMemory( NumLines * sizeof (TextLine *));
-		for (int i = 0 ; i < NumLines ; i++)
+		for (unsigned int i = 0 ; i < NumLines ; i++)
 			TextLineTab[i] = NULL;
 	}
 

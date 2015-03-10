@@ -43,7 +43,7 @@
 #endif
 
 #ifndef OWL_STATUSBA_H
-	class _OWLCLASS TStatusBar;
+	#include <owl/statusba.h>
 #endif
 
 #ifndef OWL_OPENSAVE_H

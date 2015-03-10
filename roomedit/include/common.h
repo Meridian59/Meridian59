@@ -107,6 +107,14 @@ typedef unsigned char BYTE;
 
 #define DEU_VERSION "5.23"  /* the version number */
 
+/* 1312 is shipped with BC 5.02 */
+#define OWLVERBC502 1312
+
+/* include ::owl namespace for OWLNext/VS */
+#if OWLVersion > OWLVERBC502
+	using namespace owl;
+#endif
+
 
 /*
    syntactic sugar
@@ -116,16 +124,6 @@ typedef int Bool;               /* Boolean data: true or false */
 #include "fixed.h"
 #include "memry.h"
 #include "windeu.h"
-
-#define OWLVERBC502 1312
-
-/* 
-  include ::owl namespace for OWLNext/VS 
-  1312 is shipped with BC 5.02
-*/
-#if OWLVersion > OWLVERBC502
-  using namespace owl;
-#endif
 
 #define List_SelectStringExact(pList, indexStart, findStr) \
     pList->HandleMessage(LB_SETCURSEL, (WPARAM)pList->HandleMessage(LB_FINDSTRINGEXACT, (WPARAM)indexStart, (LPARAM)findStr), (LPARAM)0)

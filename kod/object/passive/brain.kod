@@ -905,6 +905,7 @@ messages:
          % If they already have a lot of people chasing them then run away,
          % unless they attacked us.
          if NOT (event = TS_FIGHT_ME_VICTIM)
+            OR Send(Send(SYS,@GetSettings),@AlwaysCheckMonsterChasers)
          {
             iHatred = iHatred - (Send(what,@GetMonsterChasers)
                                        * piChaser_factor)/100;

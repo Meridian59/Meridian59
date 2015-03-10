@@ -26,7 +26,10 @@
 #ifndef __common_h
 #define __common_h
 
+// don't do this for vs compiler
+#ifndef _MSC_VER
 #pragma warn -sig
+#endif
 
 // If release version, undefines all debug and trace options
 #ifdef RELEASE

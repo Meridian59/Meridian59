@@ -114,6 +114,13 @@ typedef int Bool;               /* Boolean data: true or false */
 #include "memry.h"
 #include "windeu.h"
 
+/* 
+  include ::owl namespace for OWLNext/VS 
+  1312 is shipped with BC 5.02
+*/
+#if OWLVersion > 1312
+  using namespace owl;
+#endif
 
 #define List_SelectStringExact(pList, indexStart, findStr) \
     pList->HandleMessage(LB_SETCURSEL, (WPARAM)pList->HandleMessage(LB_FINDSTRINGEXACT, (WPARAM)indexStart, (LPARAM)findStr), (LPARAM)0)

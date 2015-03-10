@@ -8714,8 +8714,8 @@ messages:
          {
             piTraining_points = piTraining_points + 1
                + (Send(what,@GetBoostedLevel)
-               * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
-            
+               / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
+
             if monster_level > 75
             {
                if monster_level <= 121
@@ -8730,10 +8730,8 @@ messages:
                   }
                   else
                   {
-                     if monster_level >= 151
-                     {
-                        piTraining_points = piTraining_points + 3;
-                     }
+                     piTraining_points = piTraining_points + 3;
+
                   }
                }
             }

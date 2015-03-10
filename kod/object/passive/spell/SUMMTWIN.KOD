@@ -69,10 +69,9 @@ messages:
       return 1;
    }
 
-
    CanPayCosts(who=$,lTargets=$)
    {
-      local  oTarget, oRoom;
+      local oTarget, oRoom;
 
       oTarget = First(lTargets);
 
@@ -93,8 +92,9 @@ messages:
          % all not valid targets
 
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
-              #parm1=Send(oTarget,@GetDef),
-              #parm2=Send(oTarget,@GetName));
+               #parm1=Send(oTarget,@GetDef),
+               #parm2=Send(oTarget,@GetName));
+
          return FALSE;
       }
 
@@ -142,8 +142,14 @@ messages:
    {
       local i, j, oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget;
 
+      % Monster casters can rarely end up with $ target.
+      if lTargets = $
+      {
+         return;
+      }
+
       oTarget = First(lTargets);
-      
+
       if IsClass(oTarget,&Player)
       {
          oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,

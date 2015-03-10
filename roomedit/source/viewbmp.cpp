@@ -399,7 +399,7 @@ void TViewBitmapListDialog::LBNDblclk ()
 	if ( pBitmapList->GetSelString (BitmapName, MAX_BITMAPNAME) > 1 )
 	{
 	   TextureInfo *info = FindTextureByName(BitmapName);
-	   pBitmapControl->SelectBitmap (info->filename);
+	   pBitmapControl->SelectBitmap2 (info->filename);
 	}
 }
 
@@ -415,7 +415,7 @@ void TViewBitmapListDialog::LBNSelchange ()
 	if ( pBitmapList->GetSelString (BitmapName, MAX_BITMAPNAME) > 1 )
 	{
 	   TextureInfo *info = FindTextureByName(BitmapName);
-	   pBitmapControl->SelectBitmap (info->filename);
+	   pBitmapControl->SelectBitmap2 (info->filename);
 	   SetCaption(info->filename);
 	}
 }
@@ -709,9 +709,9 @@ void TDisplayBitmapDialog::SetupWindow ()
 // TDisplayBitmapDialog
 // -------------------
 //
-int TDisplayBitmapDialog::SelectBitmap (const char *str)
+int TDisplayBitmapDialog::SelectBitmap2 (const char *str)
 {
-	pBitmapControl->SelectBitmap (str);
+	pBitmapControl->SelectBitmap2 (str);
 
 	SetCaption(str);
 

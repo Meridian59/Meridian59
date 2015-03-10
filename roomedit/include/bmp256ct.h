@@ -98,7 +98,7 @@ public:
 					   int x, int y, int w, int h, TModule* module = 0);
 	virtual ~TBitmap256Control ();
 
-	void SelectBitmap (const char *name, SHORT remap = 0, int palnum = 0);
+	void SelectBitmap2 (const char *name, SHORT remap = 0, int palnum = 0);
 	void SetZoomFactor (UINT factor);
 	UINT GetZoomFactor() 	{ return ZoomFactor; }
 	void SetGammaLevel (BYTE level);

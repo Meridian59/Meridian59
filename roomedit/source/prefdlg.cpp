@@ -475,7 +475,7 @@ void TPreferencesDialog::FTextureDblClk ()
    {
       TextureInfo *info = FindTextureByName(FTextureName);
       
-      if ( pFTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Floor/Ceiling Texture view ! (BUG)",
 		 FTextureName);
@@ -537,7 +537,7 @@ void TPreferencesDialog::WTextureDblClk ()
    {
       TextureInfo *info = FindTextureByName(WTextureName);
       
-      if ( pWTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Wall Texture view ! (BUG)",
 		 WTextureName);

@@ -117,11 +117,13 @@ typedef int Bool;               /* Boolean data: true or false */
 #include "memry.h"
 #include "windeu.h"
 
+#define OWLVERBC502 1312
+
 /* 
   include ::owl namespace for OWLNext/VS 
   1312 is shipped with BC 5.02
 */
-#if OWLVersion > 1312
+#if OWLVersion > OWLVERBC502
   using namespace owl;
 #endif
 

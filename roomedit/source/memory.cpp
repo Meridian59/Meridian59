@@ -148,7 +148,16 @@ long GetAvailMemory ()
 
 	memstat.dwLength = sizeof (memstat);
 	::GlobalMemoryStatus (&memstat);
-	return (long)memstat.dwAvailPhys + memstat.dwAvailPageFile;
+
+	LONGLONG avail = (LONGLONG)(memstat.dwAvailPhys + memstat.dwAvailPageFile);
+
+	if (avail > MAXLONG)
+		avail = MAXLONG;
+
+	else if (avail < 0)
+		avail = 0;
+
+	return (long)avail;
 }
 
 /* end of file */

@@ -136,6 +136,11 @@ properties:
    % If disabled, outlaws & murderers will not be afforded the 1/3-hp damage cap protection.
    pbDamageCapProtectionMurderersEnable = FALSE
 
+   % If enabled, mobs will always check how many other mobs are aggroed on
+   % a player in hatred calculations. This is off by default, enabling it
+   % will allow players to attack monsters without them fighting back.
+   pbAlwaysCheckMonsterChasers = FALSE
+
 messages:
 
    Constructor(server_num = $)
@@ -332,6 +337,11 @@ messages:
    {
       return piLogoffPenaltyGhostTime;
    }
+
+   AlwaysCheckMonsterChasers()
+   {
+      return pbAlwaysCheckMonsterChasers;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

@@ -2512,29 +2512,36 @@ void TEditorClient::DrawStatusBar()
 		// We must be editing a level
 		assert (Level != NULL);
 #endif
-
-		// Draw the mode info in the first text gadget of status bar
-		len = wsprintf (msg, "Editing %s on %s",
+		if (pStatusBar && pStatusBar->GadgetCount() >= 1)
+		{
+			// Draw the mode info in the first text gadget of status bar
+			len = wsprintf(msg, "Editing %s on %s",
 				GetEditModeName(EditMode), LevelName);
 
-		if (MadeMapChanges == TRUE)
-			strcpy (&msg[len], " *+");
+			if (MadeMapChanges == TRUE)
+				strcpy(&msg[len], " *+");
 
-		else if (MadeChanges == TRUE)
-			strcpy (&msg[len], " *");
-		((TTextGadget *)pStatusBar->FirstGadget())->SetText(msg);
-		// Draw the scale info in the third text gadget of status bar
-		len = wsprintf (msg, "Scale: %d/%d  Grid: %d",
-							 ScaleNum, ScaleDen, GridScale);
-		if ( SnapToGrid )
-			strcpy (&msg[len], "*");
+			else if (MadeChanges == TRUE)
+				strcpy(&msg[len], " *");
 
-		((TTextGadget *)pStatusBar->FirstGadget()->NextGadget()->NextGadget())->SetText(msg);
+			((TTextGadget *)pStatusBar->FirstGadget())->SetText(msg);
+		}
+
+		if (pStatusBar && pStatusBar->GadgetCount() >= 3)
+		{
+			// Draw the scale info in the third text gadget of status bar
+			len = wsprintf(msg, "Scale: %d/%d  Grid: %d",
+				ScaleNum, ScaleDen, GridScale);
+			if (SnapToGrid)
+				strcpy(&msg[len], "*");
+
+			((TTextGadget *)pStatusBar->FirstGadget()->NextGadget()->NextGadget())->SetText(msg);
+		}
 
 		// Draw the memory info
 		TMainFrame *mainFrame =
-			TYPESAFE_DOWNCAST (GetApplication()->GetMainWindow(), TMainFrame);
-		mainFrame->DrawFreeMemory();
+			TYPESAFE_DOWNCAST(GetApplication()->GetMainWindow(), TMainFrame);
+		mainFrame->DrawFreeMemory();	
 	}
 }
 

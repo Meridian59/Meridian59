@@ -900,18 +900,31 @@ void LogError(char *logstr, ...)
 
 void WorkMessage (char *workstr, ...)
 {
-	va_list  args;
+	va_list		args;
 	static char msg[256];
+
+	if (!::Module)
+		return;
+
 	TMainFrame *mainFrame =
-		TYPESAFE_DOWNCAST(((TApplication *)::Module)->GetMainWindow(),
-						  TMainFrame);
+		TYPESAFE_DOWNCAST(((TApplication*)::Module)->GetMainWindow(), TMainFrame);
 
 	va_start( args, workstr);
 	vsprintf( msg, workstr, args);
 	va_end( args);
 
-	((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->SetText(msg);
-	mainFrame->GetStatusBar()->UpdateWindow();
+	if (!mainFrame)
+		return;
+
+	TStatusBar* bar = mainFrame->GetStatusBar();
+
+	if (!bar)
+		return;
+
+	if (bar->GadgetCount() > 0)
+		((TTextGadget *)bar->FirstGadget())->SetText(msg);
+
+	bar->UpdateWindow();
 }
 
 
@@ -921,9 +934,14 @@ void WorkMessage (char *workstr, ...)
 
 void GetWorkMessage (char *buffer, size_t bufferSize)
 {
+	if (!::Module)
+		return;
+
 	TMainFrame *mainFrame =
-		TYPESAFE_DOWNCAST(((TApplication *)::Module)->GetMainWindow(),
-						  TMainFrame);
+		TYPESAFE_DOWNCAST(((TApplication *)::Module)->GetMainWindow(), TMainFrame);
+
+	if (!mainFrame || !mainFrame->GetStatusBar() || mainFrame->GetStatusBar()->GadgetCount() == 0)
+		return;
 
 	strncpy (buffer,
 			 ((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->GetText(),

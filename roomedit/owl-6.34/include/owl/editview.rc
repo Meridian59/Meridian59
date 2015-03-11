@@ -1,0 +1,109 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Menu and accelerators for use with TEditView
+//----------------------------------------------------------------------------
+
+#include <owl/editsear.rh>
+#include <owl/editview.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#define NO_IDM_EDITSEARCH
+#define NO_IDA_EDITSEARCH
+#include <owl/editsear.rc>
+
+#if !defined(NO_IDM_EDITVIEW) && !defined(__IDM_EDITVIEW)
+#define __IDM_EDITVIEW
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDM_EDITVIEW MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  POPUP "&Edit"
+  {
+    MENUITEM  "&Undo\aCtrl+Z",        CM_EDITUNDO
+    MENUITEM  SEPARATOR
+    MENUITEM  "Cu&t\aCtrl+X",         CM_EDITCUT
+    MENUITEM  "&Copy\aCtrl+C",        CM_EDITCOPY
+    MENUITEM  "&Paste\aCtrl+V",       CM_EDITPASTE
+    MENUITEM  "&Delete\aDel",         CM_EDITDELETE
+    MENUITEM  "C&lear All\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "&Search"
+  {
+    MENUITEM  "&Find...",    CM_EDITFIND
+    MENUITEM  "&Replace...", CM_EDITREPLACE
+    MENUITEM  "&Next\aF3",   CM_EDITFINDNEXT
+  }
+  POPUP "&Help"
+  {
+    MENUITEM  "OWL EditView", 0, INACTIVE
+  }
+}
+#endif // english
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDM_EDITVIEW MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  POPUP "ï“èW(&E)"
+  {
+    MENUITEM  "å≥Ç…ñﬂÇ∑(&U)\aCtrl+Z",     CM_EDITUNDO
+    MENUITEM  SEPARATOR
+    MENUITEM  "êÿÇËéÊÇË(&T)\aCtrl+X",     CM_EDITCUT
+    MENUITEM  "∫Àﬂ∞(&C)\aCtrl+C",         CM_EDITCOPY
+    MENUITEM  "ì\ÇËïtÇØ(&P)\aCtrl+V",     CM_EDITPASTE
+    MENUITEM  "çÌèú(&D)\aDel",            CM_EDITDELETE
+    MENUITEM  "Ç∑Ç◊ÇƒçÌèú(&L)\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "åüçı(&S)"
+  {
+    MENUITEM  "ï∂éöóÒÇÃåüçı(&F)...", CM_EDITFIND
+    MENUITEM  "ï∂éöóÒÇÃíuä∑(&R)...", CM_EDITREPLACE
+    MENUITEM  "éüÇåüçı(&N)\aF3",    CM_EDITFINDNEXT
+  }
+  POPUP "ÕŸÃﬂ(&H)"
+  {
+    MENUITEM  "OWL EditView", 0, INACTIVE
+  }
+}
+#endif // japanez
+
+#endif
+
+#if !defined(NO_IDA_EDITVIEW) && !defined(__IDA_EDITVIEW)
+#define __IDA_EDITVIEW
+IDA_EDITVIEW ACCELERATORS
+{
+  "Z",        CM_EDITUNDO,       VIRTKEY, CONTROL
+  "X",        CM_EDITCUT,       VIRTKEY, CONTROL
+  "C",        CM_EDITCOPY,       VIRTKEY, CONTROL
+  "V",        CM_EDITPASTE,     VIRTKEY, CONTROL
+  VK_DELETE,   CM_EDITDELETE,     VIRTKEY
+  VK_DELETE,   CM_EDITCLEAR,     VIRTKEY, CONTROL
+  VK_F3,       CM_EDITFINDNEXT,  VIRTKEY
+}
+#endif
+
+#endif  // defined(RC_INVOKED)

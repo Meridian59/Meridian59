@@ -1,0 +1,900 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{03FBA622-F187-48E0-B573-83D355303C0D}</ProjectGuid>
+    <RootNamespace>owl</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\lib\x86\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\obj\x86\debug\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\lib\x86\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\obj\x86\release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">owl-6.40-v12-x64-dt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">owl-6.40-v12-x64-t</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">owl-6.34-v12-x86-t</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">owl-6.34-v12-x86-dt</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__DEBUG=2;__TRACE;__WARN;_OWLPCH;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;OWL5_COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owl/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>.\include;.\include\owl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x86 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__DEBUG=2;__TRACE;__WARN;_OWLPCH;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owl/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\include\owl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x64 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>.\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_OWLALLPCH;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;OWL5_COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owl/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>.\include;.\include\owl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x86 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+      <MinimumRequiredVersion>5.01</MinimumRequiredVersion>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_OWLALLPCH;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>owl/pch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>..\..\..\include;..\..\..\include\owl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalOptions>/MACHINE:x64 %(AdditionalOptions)</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\animctrl.cpp" />
+    <ClCompile Include="source\appdict.cpp" />
+    <ClCompile Include="source\applicat.cpp" />
+    <ClCompile Include="source\bardescr.cpp" />
+    <ClCompile Include="source\bitmap.cpp" />
+    <ClCompile Include="source\bitmapga.cpp" />
+    <ClCompile Include="source\bitset.cpp" />
+    <ClCompile Include="source\brush.cpp" />
+    <ClCompile Include="source\btntextg.cpp" />
+    <ClCompile Include="source\button.cpp" />
+    <ClCompile Include="source\buttonga.cpp" />
+    <ClCompile Include="source\castable.cpp" />
+    <ClCompile Include="source\celarray.cpp" />
+    <ClCompile Include="source\checkbox.cpp" />
+    <ClCompile Include="source\checklst.cpp" />
+    <ClCompile Include="source\checks.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\chooseco.cpp" />
+    <ClCompile Include="source\choosefo.cpp" />
+    <ClCompile Include="source\clipboar.cpp" />
+    <ClCompile Include="source\clipview.cpp" />
+    <ClCompile Include="source\cmdline.cpp" />
+    <ClCompile Include="source\colmnhdr.cpp" />
+    <ClCompile Include="source\color.cpp" />
+    <ClCompile Include="source\combobex.cpp" />
+    <ClCompile Include="source\combobox.cpp" />
+    <ClCompile Include="source\commctrl.cpp" />
+    <ClCompile Include="source\commdial.cpp" />
+    <ClCompile Include="source\commview.cpp" />
+    <ClCompile Include="source\configfl.cpp" />
+    <ClCompile Include="source\control.cpp" />
+    <ClCompile Include="source\controlb.cpp" />
+    <ClCompile Include="source\controlg.cpp" />
+    <ClCompile Include="source\coolbar.cpp" />
+    <ClCompile Include="source\createdc.cpp" />
+    <ClCompile Include="source\cursor.cpp" />
+    <ClCompile Include="source\date.cpp" />
+    <ClCompile Include="source\dateio.cpp" />
+    <ClCompile Include="source\datep.cpp" />
+    <ClCompile Include="source\datetime.cpp" />
+    <ClCompile Include="source\dc.cpp" />
+    <ClCompile Include="source\decframe.cpp" />
+    <ClCompile Include="source\decmdifr.cpp" />
+    <ClCompile Include="source\diaginit.cpp" />
+    <ClCompile Include="source\dialog.cpp" />
+    <ClCompile Include="source\dib.cpp" />
+    <ClCompile Include="source\dibdc.cpp" />
+    <ClCompile Include="source\dibitmap.cpp" />
+    <ClCompile Include="source\dispatch.cpp" />
+    <ClCompile Include="source\docking.cpp" />
+    <ClCompile Include="source\docmanag.cpp" />
+    <ClCompile Include="source\doctpl.cpp" />
+    <ClCompile Include="source\document.cpp" />
+    <ClCompile Include="source\draglist.cpp" />
+    <ClCompile Include="source\drawitem.cpp" />
+    <ClCompile Include="source\dumpstack.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="source\edit.cpp" />
+    <ClCompile Include="source\editfile.cpp" />
+    <ClCompile Include="source\editsear.cpp" />
+    <ClCompile Include="source\editview.cpp" />
+    <ClCompile Include="source\eventhan.cpp" />
+    <ClCompile Include="source\exbase.cpp" />
+    <ClCompile Include="source\except.cpp" />
+    <ClCompile Include="source\file.cpp" />
+    <ClCompile Include="source\filedoc.cpp" />
+    <ClCompile Include="source\filename.cpp" />
+    <ClCompile Include="source\filtval.cpp" />
+    <ClCompile Include="source\findrepl.cpp" />
+    <ClCompile Include="source\flatctrl.cpp" />
+    <ClCompile Include="source\floatfra.cpp" />
+    <ClCompile Include="source\font.cpp" />
+    <ClCompile Include="source\framewin.cpp" />
+    <ClCompile Include="source\fscroll.cpp" />
+    <ClCompile Include="source\functor.cpp" />
+    <ClCompile Include="source\gadget.cpp" />
+    <ClCompile Include="source\gadgetli.cpp" />
+    <ClCompile Include="source\gadgetwi.cpp" />
+    <ClCompile Include="source\gauge.cpp" />
+    <ClCompile Include="source\gdibase.cpp" />
+    <ClCompile Include="source\gdiobjec.cpp" />
+    <ClCompile Include="source\geometrp.cpp" />
+    <ClCompile Include="source\geometrs.cpp" />
+    <ClCompile Include="source\geometry.cpp" />
+    <ClCompile Include="source\global.cpp" />
+    <ClCompile Include="source\glyphbtn.cpp" />
+    <ClCompile Include="source\groupbox.cpp" />
+    <ClCompile Include="source\hlpmanag.cpp" />
+    <ClCompile Include="source\hotkey.cpp" />
+    <ClCompile Include="source\hslider.cpp" />
+    <ClCompile Include="source\icon.cpp" />
+    <ClCompile Include="source\imagelst.cpp" />
+    <ClCompile Include="source\initdll.cpp" />
+    <ClCompile Include="source\inputdia.cpp" />
+    <ClCompile Include="source\ipaddres.cpp" />
+    <ClCompile Include="source\layoutwi.cpp" />
+    <ClCompile Include="source\libmain.cpp" />
+    <ClCompile Include="source\listbox.cpp" />
+    <ClCompile Include="source\listboxview.cpp" />
+    <ClCompile Include="source\listviewctrl.cpp" />
+    <ClCompile Include="source\locale.cpp" />
+    <ClCompile Include="source\localeco.cpp" />
+    <ClCompile Include="source\localeid.cpp" />
+    <ClCompile Include="source\lookval.cpp" />
+    <ClCompile Include="source\mailer.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\mci.cpp" />
+    <ClCompile Include="source\mciwav.cpp" />
+    <ClCompile Include="source\mdichild.cpp" />
+    <ClCompile Include="source\mdiclien.cpp" />
+    <ClCompile Include="source\mdiframe.cpp" />
+    <ClCompile Include="source\memcbox.cpp" />
+    <ClCompile Include="source\memory.cpp" />
+    <ClCompile Include="source\memorydc.cpp" />
+    <ClCompile Include="source\menu.cpp" />
+    <ClCompile Include="source\menudesc.cpp" />
+    <ClCompile Include="source\menugadg.cpp" />
+    <ClCompile Include="source\messageb.cpp" />
+    <ClCompile Include="source\metafile.cpp" />
+    <ClCompile Include="source\metafldc.cpp" />
+    <ClCompile Include="source\modegad.cpp" />
+    <ClCompile Include="source\module.cpp" />
+    <ClCompile Include="source\modversi.cpp" />
+    <ClCompile Include="source\monthcal.cpp" />
+    <ClCompile Include="source\msgthred.cpp" />
+    <ClCompile Include="source\notetab.cpp" />
+    <ClCompile Include="source\objstrm.cpp" />
+    <ClCompile Include="source\opensave.cpp" />
+    <ClCompile Include="source\owl.cpp" />
+    <ClCompile Include="source\owlmain.cpp" />
+    <ClCompile Include="source\pager.cpp" />
+    <ClCompile Include="source\paintdc.cpp" />
+    <ClCompile Include="source\palette.cpp" />
+    <ClCompile Include="source\panespli.cpp" />
+    <ClCompile Include="source\pen.cpp" />
+    <ClCompile Include="source\picker.cpp" />
+    <ClCompile Include="source\picklist.cpp" />
+    <ClCompile Include="source\pictval.cpp" />
+    <ClCompile Include="source\pictwind.cpp" />
+    <ClCompile Include="source\popupgad.cpp" />
+    <ClCompile Include="source\preview.cpp" />
+    <ClCompile Include="source\prevwin.cpp" />
+    <ClCompile Include="source\printdc.cpp" />
+    <ClCompile Include="source\printdia.cpp" />
+    <ClCompile Include="source\printer.cpp" />
+    <ClCompile Include="source\printout.cpp" />
+    <ClCompile Include="source\profile.cpp" />
+    <ClCompile Include="source\progressbar.cpp" />
+    <ClCompile Include="source\propsht.cpp" />
+    <ClCompile Include="source\psview.cpp" />
+    <ClCompile Include="source\radiobut.cpp" />
+    <ClCompile Include="source\rangeval.cpp" />
+    <ClCompile Include="source\rcntfile.cpp" />
+    <ClCompile Include="source\regexp.cpp" />
+    <ClCompile Include="source\regheap.cpp" />
+    <ClCompile Include="source\region.cpp" />
+    <ClCompile Include="source\registry.cpp" />
+    <ClCompile Include="source\reglink.cpp" />
+    <ClCompile Include="source\resource.cpp" />
+    <ClCompile Include="source\richedit.cpp" />
+    <ClCompile Include="source\richedpr.cpp" />
+    <ClCompile Include="source\richedv.cpp" />
+    <ClCompile Include="source\rolldial.cpp" />
+    <ClCompile Include="source\scrollba.cpp" />
+    <ClCompile Include="source\scroller.cpp" />
+    <ClCompile Include="source\serialze.cpp" />
+    <ClCompile Include="source\shellitm.cpp" />
+    <ClCompile Include="source\shelwapi.cpp" />
+    <ClCompile Include="source\slider.cpp" />
+    <ClCompile Include="source\splashwi.cpp" />
+    <ClCompile Include="source\static.cpp" />
+    <ClCompile Include="source\statusba.cpp" />
+    <ClCompile Include="source\swindow.cpp" />
+    <ClCompile Include="source\system.cpp" />
+    <ClCompile Include="source\tabbed.cpp" />
+    <ClCompile Include="source\tabctrl.cpp" />
+    <ClCompile Include="source\textgadg.cpp" />
+    <ClCompile Include="source\theme.cpp" />
+    <ClCompile Include="source\thread.cpp" />
+    <ClCompile Include="source\time.cpp" />
+    <ClCompile Include="source\timegadg.cpp" />
+    <ClCompile Include="source\timeio.cpp" />
+    <ClCompile Include="source\timep.cpp" />
+    <ClCompile Include="source\tinycapt.cpp" />
+    <ClCompile Include="source\tmplinst.cpp" />
+    <ClCompile Include="source\toolbox.cpp" />
+    <ClCompile Include="source\tooltip.cpp" />
+    <ClCompile Include="source\tracewnd.cpp" />
+    <ClCompile Include="source\transfer.cpp" />
+    <ClCompile Include="source\transferbuffer.cpp" />
+    <ClCompile Include="source\trayicon.cpp" />
+    <ClCompile Include="source\treeviewctrl.cpp" />
+    <ClCompile Include="source\uiborder.cpp" />
+    <ClCompile Include="source\uiface.cpp" />
+    <ClCompile Include="source\uihandle.cpp" />
+    <ClCompile Include="source\uimetric.cpp" />
+    <ClCompile Include="source\uipart.cpp" />
+    <ClCompile Include="source\updown.cpp" />
+    <ClCompile Include="source\urllink.cpp" />
+    <ClCompile Include="source\ustring.cpp" />
+    <ClCompile Include="source\validate.cpp" />
+    <ClCompile Include="source\version.cpp" />
+    <ClCompile Include="source\view.cpp" />
+    <ClCompile Include="source\vslider.cpp" />
+    <ClCompile Include="source\window.cpp" />
+    <ClCompile Include="source\windowdc.cpp" />
+    <ClCompile Include="source\winmain.cpp" />
+    <ClCompile Include="source\winsock.cpp" />
+    <ClCompile Include="source\wskaddr.cpp" />
+    <ClCompile Include="source\wskerr.cpp" />
+    <ClCompile Include="source\wskhostm.cpp" />
+    <ClCompile Include="source\wskservm.cpp" />
+    <ClCompile Include="source\wsksock.cpp" />
+    <ClCompile Include="source\wsksockd.cpp" />
+    <ClCompile Include="source\wsksockm.cpp" />
+    <ClCompile Include="source\wsyscls.cpp" />
+    <ClCompile Include="source\owlpch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\owl\gdiplus.h" />
+    <ClInclude Include="include\owl\version.h" />
+    <ClInclude Include="include\owl\animctrl.h" />
+    <ClInclude Include="include\owl\appdict.h" />
+    <ClInclude Include="include\owl\applicat.h" />
+    <ClInclude Include="include\owl\bardescr.h" />
+    <ClInclude Include="include\owl\bitmapga.h" />
+    <ClInclude Include="include\owl\bitset.h" />
+    <ClInclude Include="include\owl\btntextg.h" />
+    <ClInclude Include="include\owl\button.h" />
+    <ClInclude Include="include\owl\buttonga.h" />
+    <ClInclude Include="include\owl\celarray.h" />
+    <ClInclude Include="include\owl\checkbox.h" />
+    <ClInclude Include="include\owl\checklst.h" />
+    <ClInclude Include="include\owl\chooseco.h" />
+    <ClInclude Include="include\owl\choosefo.h" />
+    <ClInclude Include="include\owl\clipboar.h" />
+    <ClInclude Include="include\owl\clipview.h" />
+    <ClInclude Include="include\owl\cmdline.h" />
+    <ClInclude Include="include\owl\colmnhdr.h" />
+    <ClInclude Include="include\owl\color.h" />
+    <ClInclude Include="include\owl\combobex.h" />
+    <ClInclude Include="include\owl\combobox.h" />
+    <ClInclude Include="include\owl\commctrl.h" />
+    <ClInclude Include="include\owl\commdial.h" />
+    <ClInclude Include="include\owl\commview.h" />
+    <ClInclude Include="include\owl\configfl.h" />
+    <ClInclude Include="include\owl\contain.h" />
+    <ClInclude Include="include\owl\control.h" />
+    <ClInclude Include="include\owl\controlb.h" />
+    <ClInclude Include="include\owl\controlg.h" />
+    <ClInclude Include="include\owl\coolbar.h" />
+    <ClInclude Include="include\owl\date.h" />
+    <ClInclude Include="include\owl\datetime.h" />
+    <ClInclude Include="include\owl\dc.h" />
+    <ClInclude Include="include\owl\decframe.h" />
+    <ClInclude Include="include\owl\decmdifr.h" />
+    <ClInclude Include="include\owl\defs.h" />
+    <ClInclude Include="include\owl\dialog.h" />
+    <ClInclude Include="include\owl\dibitmap.h" />
+    <ClInclude Include="include\owl\dispatch.h" />
+    <ClInclude Include="include\owl\docking.h" />
+    <ClInclude Include="include\owl\docmanag.h" />
+    <ClInclude Include="include\owl\doctpl.h" />
+    <ClInclude Include="include\owl\docview.h" />
+    <ClInclude Include="include\owl\doublescroller.h" />
+    <ClInclude Include="include\owl\draglist.h" />
+    <ClInclude Include="include\owl\drawitem.h" />
+    <ClInclude Include="include\owl\edit.h" />
+    <ClInclude Include="include\owl\editfile.h" />
+    <ClInclude Include="include\owl\editsear.h" />
+    <ClInclude Include="include\owl\editview.h" />
+    <ClInclude Include="include\owl\eventhan.h" />
+    <ClInclude Include="include\owl\exbase.h" />
+    <ClInclude Include="include\owl\except.h" />
+    <ClInclude Include="include\owl\file.h" />
+    <ClInclude Include="include\owl\filedoc.h" />
+    <ClInclude Include="include\owl\filename.h" />
+    <ClInclude Include="include\owl\findrepl.h" />
+    <ClInclude Include="include\owl\fixedpnt.h" />
+    <ClInclude Include="include\owl\flatctrl.h" />
+    <ClInclude Include="include\owl\floatfra.h" />
+    <ClInclude Include="include\owl\framewin.h" />
+    <ClInclude Include="include\owl\fscroll.h" />
+    <ClInclude Include="include\owl\functor.h" />
+    <ClInclude Include="include\owl\gadget.h" />
+    <ClInclude Include="include\owl\gadgetwi.h" />
+    <ClInclude Include="include\owl\gauge.h" />
+    <ClInclude Include="include\owl\gdibase.h" />
+    <ClInclude Include="include\owl\gdiobjec.h" />
+    <ClInclude Include="include\owl\geometry.h" />
+    <ClInclude Include="include\owl\glyphbtn.h" />
+    <ClInclude Include="include\owl\groupbox.h" />
+    <ClInclude Include="include\owl\hlpmanag.h" />
+    <ClInclude Include="include\owl\hotkey.h" />
+    <ClInclude Include="include\owl\imagelst.h" />
+    <ClInclude Include="include\owl\inputdia.h" />
+    <ClInclude Include="include\owl\ipaddres.h" />
+    <ClInclude Include="include\owl\layoutco.h" />
+    <ClInclude Include="include\owl\layoutwi.h" />
+    <ClInclude Include="include\owl\lclstrng.h" />
+    <ClInclude Include="include\owl\listbox.h" />
+    <ClInclude Include="include\owl\listboxview.h" />
+    <ClInclude Include="include\owl\listviewctrl.h" />
+    <ClInclude Include="include\owl\mailer.h" />
+    <ClInclude Include="include\owl\mci.h" />
+    <ClInclude Include="include\owl\mdi.h" />
+    <ClInclude Include="include\owl\mdichild.h" />
+    <ClInclude Include="include\owl\memcbox.h" />
+    <ClInclude Include="include\owl\menu.h" />
+    <ClInclude Include="include\owl\menugadg.h" />
+    <ClInclude Include="include\owl\messageb.h" />
+    <ClInclude Include="include\owl\metafile.h" />
+    <ClInclude Include="include\owl\modegad.h" />
+    <ClInclude Include="include\owl\module.h" />
+    <ClInclude Include="include\owl\monthcal.h" />
+    <ClInclude Include="include\owl\msgthred.h" />
+    <ClInclude Include="include\owl\notetab.h" />
+    <ClInclude Include="include\owl\objstrm.h" />
+    <ClInclude Include="include\owl\opensave.h" />
+    <ClInclude Include="include\owl\owlall.h" />
+    <ClInclude Include="include\owl\owlcore.h" />
+    <ClInclude Include="include\owl\owlvcl.h" />
+    <ClInclude Include="include\owl\pager.h" />
+    <ClInclude Include="include\owl\panespli.h" />
+    <ClInclude Include="include\owl\pch.h" />
+    <ClInclude Include="include\owl\picker.h" />
+    <ClInclude Include="include\owl\picklist.h" />
+    <ClInclude Include="include\owl\pictwind.h" />
+    <ClInclude Include="include\owl\pointer.h" />
+    <ClInclude Include="include\owl\popupgad.h" />
+    <ClInclude Include="include\owl\posclass.h" />
+    <ClInclude Include="include\owl\preclass.h" />
+    <ClInclude Include="include\owl\preview.h" />
+    <ClInclude Include="include\owl\prevwin.h" />
+    <ClInclude Include="include\owl\printdia.h" />
+    <ClInclude Include="include\owl\printer.h" />
+    <ClInclude Include="include\owl\profile.h" />
+    <ClInclude Include="include\owl\progressbar.h" />
+    <ClInclude Include="include\owl\property.h" />
+    <ClInclude Include="include\owl\propsht.h" />
+    <ClInclude Include="include\owl\psview.h" />
+    <ClInclude Include="include\owl\radiobut.h" />
+    <ClInclude Include="include\owl\rcntfile.h" />
+    <ClInclude Include="include\owl\registry.h" />
+    <ClInclude Include="include\owl\resource.h" />
+    <ClInclude Include="include\owl\richedit.h" />
+    <ClInclude Include="include\owl\richedpr.h" />
+    <ClInclude Include="include\owl\richedv.h" />
+    <ClInclude Include="include\owl\rolldial.h" />
+    <ClInclude Include="include\owl\scrollba.h" />
+    <ClInclude Include="include\owl\scroller.h" />
+    <ClInclude Include="include\owl\serialze.h" />
+    <ClInclude Include="include\owl\shddel.h" />
+    <ClInclude Include="include\owl\shellitm.h" />
+    <ClInclude Include="include\owl\shelwapi.h" />
+    <ClInclude Include="include\owl\signatur.h" />
+    <ClInclude Include="include\owl\slider.h" />
+    <ClInclude Include="include\owl\splashwi.h" />
+    <ClInclude Include="include\owl\splitter.h" />
+    <ClInclude Include="include\owl\static.h" />
+    <ClInclude Include="include\owl\statusba.h" />
+    <ClInclude Include="include\owl\streambl.h" />
+    <ClInclude Include="include\owl\string.h" />
+    <ClInclude Include="include\owl\system.h" />
+    <ClInclude Include="include\owl\tabbed.h" />
+    <ClInclude Include="include\owl\tabctrl.h" />
+    <ClInclude Include="include\owl\template.h" />
+    <ClInclude Include="include\owl\textgadg.h" />
+    <ClInclude Include="include\owl\theme.h" />
+    <ClInclude Include="include\owl\thread.h" />
+    <ClInclude Include="include\owl\time.h" />
+    <ClInclude Include="include\owl\timegadg.h" />
+    <ClInclude Include="include\owl\tinycapt.h" />
+    <ClInclude Include="include\owl\toolbox.h" />
+    <ClInclude Include="include\owl\tooltip.h" />
+    <ClInclude Include="include\owl\tracewnd.h" />
+    <ClInclude Include="include\owl\transfer.h" />
+    <ClInclude Include="include\owl\transferbuffer.h" />
+    <ClInclude Include="include\owl\trayicon.h" />
+    <ClInclude Include="include\owl\treeviewctrl.h" />
+    <ClInclude Include="include\owl\uihelper.h" />
+    <ClInclude Include="include\owl\uimetric.h" />
+    <ClInclude Include="include\owl\updown.h" />
+    <ClInclude Include="include\owl\urllink.h" />
+    <ClInclude Include="include\owl\validate.h" />
+    <ClInclude Include="source\version.h" />
+    <ClInclude Include="include\owl\window.h" />
+    <ClInclude Include="include\owl\windowev.h" />
+    <ClInclude Include="include\owl\winsock.h" />
+    <ClInclude Include="include\owl\wskaddr.h" />
+    <ClInclude Include="include\owl\wskerr.h" />
+    <ClInclude Include="include\owl\wskhostm.h" />
+    <ClInclude Include="include\owl\wskservm.h" />
+    <ClInclude Include="include\owl\wsksock.h" />
+    <ClInclude Include="include\owl\wsksockd.h" />
+    <ClInclude Include="include\owl\wsksockm.h" />
+    <ClInclude Include="include\owl\wsyscls.h" />
+    <ClInclude Include="include\owl\wsysinc.h" />
+    <ClInclude Include="include\owl\private\borlandc.h" />
+    <ClInclude Include="include\owl\private\bwcc.h" />
+    <ClInclude Include="include\owl\private\checks.h" />
+    <ClInclude Include="include\owl\private\cygwin.h" />
+    <ClInclude Include="include\owl\private\defs.h" />
+    <ClInclude Include="include\owl\private\dir.h" />
+    <ClInclude Include="include\owl\private\dumpstack.h" />
+    <ClInclude Include="include\owl\private\except.h" />
+    <ClInclude Include="include\owl\private\forte.h" />
+    <ClInclude Include="include\owl\private\gmodule.h" />
+    <ClInclude Include="include\owl\private\gnuc.h" />
+    <ClInclude Include="include\owl\private\memory.h" />
+    <ClInclude Include="include\owl\private\mingw32.h" />
+    <ClInclude Include="include\owl\private\msc.h" />
+    <ClInclude Include="include\owl\private\number.h" />
+    <ClInclude Include="include\owl\private\ole2inc.h" />
+    <ClInclude Include="include\owl\private\owllink.h" />
+    <ClInclude Include="include\owl\private\regexp.h" />
+    <ClInclude Include="include\owl\private\strmdefs.h" />
+    <ClInclude Include="include\owl\private\watcom.h" />
+    <ClInclude Include="include\owl\private\winelib.h" />
+    <ClInclude Include="include\owl\private\wsysinc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\owl\colmnhdr.rh" />
+    <None Include="include\owl\docview.rh" />
+    <None Include="include\owl\edit.rh" />
+    <None Include="include\owl\editfile.rh" />
+    <None Include="include\owl\editsear.rh" />
+    <None Include="include\owl\editview.rh" />
+    <None Include="include\owl\except.rh" />
+    <None Include="include\owl\glyphbtn.rh" />
+    <None Include="include\owl\hlpmanag.rh" />
+    <None Include="include\owl\inputdia.rh" />
+    <None Include="include\owl\lclstrng.rh" />
+    <None Include="include\owl\listboxview.rh" />
+    <None Include="include\owl\mdi.rh" />
+    <None Include="include\owl\panespli.rh" />
+    <None Include="include\owl\picklist.rh" />
+    <None Include="include\owl\prevwin.rh" />
+    <None Include="include\owl\printer.rh" />
+    <None Include="include\owl\propsht.rh" />
+    <None Include="include\owl\rcntfile.rh" />
+    <None Include="include\owl\richedv.rh" />
+    <None Include="include\owl\slider.rh" />
+    <None Include="include\owl\statusba.rh" />
+    <None Include="include\owl\urllink.rh" />
+    <None Include="include\owl\validate.rh" />
+    <None Include="include\owl\window.rh" />
+    <None Include="include\owl\winres.rh" />
+    <None Include="include\owl\winsock.rh" />
+    <None Include="include\owl\res\appldocv.ico" />
+    <None Include="include\owl\res\applmdi.ico" />
+    <None Include="include\owl\res\applsdi.ico" />
+    <None Include="include\owl\res\borabout.bmp" />
+    <None Include="include\owl\res\btn_appl.bmp" />
+    <None Include="include\owl\res\btn_brws.bmp" />
+    <None Include="include\owl\res\btn_canc.bmp" />
+    <None Include="include\owl\res\btn_edit.bmp" />
+    <None Include="include\owl\res\btn_hlp.bmp" />
+    <None Include="include\owl\res\btn_key.bmp" />
+    <None Include="include\owl\res\btn_min.bmp" />
+    <None Include="include\owl\res\btn_no.bmp" />
+    <None Include="include\owl\res\btn_ok.bmp" />
+    <None Include="include\owl\res\btn_plus.bmp" />
+    <None Include="include\owl\res\btn_rev.bmp" />
+    <None Include="include\owl\res\btn_setp.bmp" />
+    <None Include="include\owl\res\copy.bmp" />
+    <None Include="include\owl\res\cut.bmp" />
+    <None Include="include\owl\res\find.bmp" />
+    <None Include="include\owl\res\findnext.bmp" />
+    <None Include="include\owl\res\font.bmp" />
+    <None Include="include\owl\res\fontbld.bmp" />
+    <None Include="include\owl\res\fontclr.bmp" />
+    <None Include="include\owl\res\fontitl.bmp" />
+    <None Include="include\owl\res\fontund.bmp" />
+    <None Include="include\owl\res\hand.cur" />
+    <None Include="include\owl\res\help.bmp" />
+    <None Include="include\owl\res\help.cur" />
+    <None Include="include\owl\res\helpicon.bmp" />
+    <None Include="include\owl\res\hslider.bmp" />
+    <None Include="include\owl\res\mdichild.ico" />
+    <None Include="include\owl\res\new.bmp" />
+    <None Include="include\owl\res\next.bmp" />
+    <None Include="include\owl\res\open.bmp" />
+    <None Include="include\owl\res\owlapp.ico" />
+    <None Include="include\owl\res\owlappsm.ico" />
+    <None Include="include\owl\res\parbullt.bmp" />
+    <None Include="include\owl\res\parcentr.bmp" />
+    <None Include="include\owl\res\parleft.bmp" />
+    <None Include="include\owl\res\parright.bmp" />
+    <None Include="include\owl\res\paste.bmp" />
+    <None Include="include\owl\res\preview.bmp" />
+    <None Include="include\owl\res\preview1.bmp" />
+    <None Include="include\owl\res\preview2.bmp" />
+    <None Include="include\owl\res\previous.bmp" />
+    <None Include="include\owl\res\prexit.bmp" />
+    <None Include="include\owl\res\prexitj.bmp" />
+    <None Include="include\owl\res\print.bmp" />
+    <None Include="include\owl\res\resiz_hv.cur" />
+    <None Include="include\owl\res\resize_h.cur" />
+    <None Include="include\owl\res\resize_v.cur" />
+    <None Include="include\owl\res\save.bmp" />
+    <None Include="include\owl\res\saveas.bmp" />
+    <None Include="include\owl\res\sizebarh.cur" />
+    <None Include="include\owl\res\sizebarv.cur" />
+    <None Include="include\owl\res\splith.cur" />
+    <None Include="include\owl\res\splitv.cur" />
+    <None Include="include\owl\res\undo.bmp" />
+    <None Include="include\owl\res\vslider.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="include\owl\all.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\colmnhdr.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\docview.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\editfile.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\editsear.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\editview.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\except.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\glyphbtn.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\hlpmanag.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\inputdia.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\listboxview.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\mdi.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="source\owl.rc" />
+    <ResourceCompile Include="include\owl\owlapp.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\panespli.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\picklist.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\prevwin.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\printer.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\propsht.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\rcntfile.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\richedv.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\slider.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\statusba.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\urllink.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\validate.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="source\version.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+    <ResourceCompile Include="include\owl\winsock.rc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ResourceCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

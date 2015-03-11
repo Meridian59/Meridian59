@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31206.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OWLNext", "owl-6.34\OWLNext.vcxproj", "{03FBA622-F187-48E0-B573-83D355303C0D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "roomedit", "roomedit.vcxproj", "{DE0219C9-BA72-42AB-BE41-E62BA0678FF4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03FBA622-F187-48E0-B573-83D355303C0D} = {03FBA622-F187-48E0-B573-83D355303C0D}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03FBA622-F187-48E0-B573-83D355303C0D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{03FBA622-F187-48E0-B573-83D355303C0D}.Debug|Win32.Build.0 = Debug|Win32
+		{03FBA622-F187-48E0-B573-83D355303C0D}.Release|Win32.ActiveCfg = Release|Win32
+		{03FBA622-F187-48E0-B573-83D355303C0D}.Release|Win32.Build.0 = Release|Win32
+		{DE0219C9-BA72-42AB-BE41-E62BA0678FF4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DE0219C9-BA72-42AB-BE41-E62BA0678FF4}.Debug|Win32.Build.0 = Debug|Win32
+		{DE0219C9-BA72-42AB-BE41-E62BA0678FF4}.Release|Win32.ActiveCfg = Release|Win32
+		{DE0219C9-BA72-42AB-BE41-E62BA0678FF4}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

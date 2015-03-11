@@ -891,21 +891,32 @@ messages:
       {
         iHatred = iHatred + 20;
       }
-           
-      %% up to 20 points for level.
-      if isClass(what,&monster)
-      { iHatred = (iHatred + bound(send(what,@GetLevel),1,100)/5); }
-      else
-      { 	 
-      	 iHatred = (iHatred + (bound(send(what,@GetMaxHealth)-20,0,150)*piPlayer_factor)/100); 
-        
-        %% if they already have a lot of people chasing them, run away
-        iHatred = iHatred - (send(what,@GetMonsterChasers)*piChaser_factor)/100;
-      }   %% give newbies a break
-      if (behavior & AI_FIGHT_HYPERAGGRESSIVE)
-      { 
-        iHatred = iHatred + piHyperAggressive_factor;
+
+      % Up to 20 points for level.
+      if IsClass(what,&monster)
+      {
+         iHatred = (iHatred + Bound(Send(what,@GetLevel),1,100)/5);
       }
+      else
+      {
+         iHatred = (iHatred + (Bound(Send(what,@GetMaxHealth)-20,0,150)
+                        * piPlayer_factor)/100);
+
+         % If they already have a lot of people chasing them then run away,
+         % unless they attacked us.
+         if NOT (event = TS_FIGHT_ME_VICTIM)
+            OR Send(Send(SYS,@GetSettings),@AlwaysCheckMonsterChasers)
+         {
+            iHatred = iHatred - (Send(what,@GetMonsterChasers)
+                                       * piChaser_factor)/100;
+         }
+      }
+
+      if (behavior & AI_FIGHT_HYPERAGGRESSIVE)
+      {
+         iHatred = iHatred + piHyperAggressive_factor;
+      }
+
       return iHatred;
    }
 

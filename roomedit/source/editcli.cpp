@@ -1799,11 +1799,15 @@ void TEditorClient::EvChar (UINT key, UINT repeatCount, UINT flags)
 void TEditorClient::AdjustScroller ()
 {
 	SHORT step = SlowScroll ? 50 : 20;
-	SHORT XUnit = MAP_X_SIZE / (20 * step * (SHORT)MUL_SCALE);
-	SHORT YUnit = MAP_Y_SIZE / (20 * step * (SHORT)MUL_SCALE);
-	// int XUnit = MAP_X_SIZE / 40;
-	// int YUnit = MAP_Y_SIZE / 40;
-	Scroller->SetUnits (XUnit, YUnit);
+	SHORT val = (20 * step * (SHORT)MUL_SCALE);
+
+	if (val == 0)
+		val = 1;
+
+	SHORT XUnit = MAP_X_SIZE / val;
+	SHORT YUnit = MAP_Y_SIZE / val;
+
+	Scroller->SetUnits(XUnit, YUnit);
 
 	//
 	// Note: In this routine, we calc. the legal values of OrigX, OrigY,

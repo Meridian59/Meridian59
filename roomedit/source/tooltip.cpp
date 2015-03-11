@@ -165,11 +165,12 @@ void TTipStatusBar::SetHintText (const char *lpszText)
 	if (lpszText != NULL)
 	{
 		static char	buf[128];
+		int n;
 
 		lstrcpy (buf, lpszText);
 
 		// locate the tooltip text
-		for (int n = 0; buf[n] && buf[n] != '\n'; n++) ;
+		for (n = 0; buf[n] && buf[n] != '\n'; n++) ;
 
 		if (buf[n])
 		{

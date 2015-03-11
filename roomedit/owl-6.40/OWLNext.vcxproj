@@ -79,8 +79,8 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">owl-6.40-v12-x64-dt</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">owl-6.40-v12-x64-t</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">owl-6.40-v12-x86-t</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">owl-6.40-v12-x86-dt</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">owl-6.34-v12-x86-t</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">owl-6.34-v12-x86-dt</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

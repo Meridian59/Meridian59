@@ -64,7 +64,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>owl-6.40-v12-x86-dt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>owl-6.34-v12-x86-dt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>owl-6.40\lib\x86\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -86,7 +86,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>owl-6.40-v12-x86-t.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>owl-6.34-v12-x86-t.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>owl-6.40\lib\x86\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

@@ -5046,10 +5046,11 @@ void TEditorClient::CmUndoEnable (TCommandEnabler &tce)
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];
+		unsigned int i;
 
 		menu.GetMenuString (CM_EDIT_UNDO, ItemString,
 							sizeof(ItemString), MF_BYCOMMAND);
-		for(int i = 0 ; i < strlen(ItemString) ; i++)
+		for(i = 0 ; i < strlen(ItemString) ; i++)
 		{
 			if ( ItemString[i] == '\t' )
 				break;
@@ -5088,14 +5089,15 @@ void TEditorClient::CmRedoEnable (TCommandEnabler &tce)
 	TMenu menu(GetApplication()->GetMainWindow()->GetMenu());
 
 	// Get original menu name at first call
-	static char OriginalName[50] ;
+	static char OriginalName[50];
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];
+		unsigned int i;
 
 		menu.GetMenuString (CM_EDIT_REDO, ItemString,
 							sizeof(ItemString), MF_BYCOMMAND);
-		for(int i = 0 ; i < strlen(ItemString) ; i++)
+		for(i = 0 ; i < strlen(ItemString) ; i++)
 		{
 			if ( ItemString[i] == '\t' )
 				break;

@@ -223,6 +223,7 @@ void TViewEntryDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
 
 		// Line len
 		int len;
+		int i;
 
 		BasicWadSeek (CurrentEntry->wadfile, WadOffset);
 
@@ -230,7 +231,7 @@ void TViewEntryDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
 		len = sprintf(Buf, "%06lX:\t", EntryOffset);
 
 		// 16 hex values
-		for (int i = 0 ; i < NbChars ; i++)
+		for (i = 0 ; i < NbChars ; i++)
 		{
 			BasicWadRead (CurrentEntry->wadfile, &(HexBuf[i]), 1);
 
@@ -264,8 +265,10 @@ void TViewEntryDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
 
 			// Setup tab stops in HexDump list
 			int TabStops[NB_HEX_LINE+1];
+			int i;
+
 			TabStops[0] = 6 * tm.tmAveCharWidth;
-			for (int i = 1 ; i < NB_HEX_LINE ; i++)
+			for (i = 1 ; i < NB_HEX_LINE ; i++)
 				TabStops[i] = TabStops[i-1] + 3 * tm.tmAveCharWidth + 2;
 			TabStops[i] = TabStops[i-1] + 4 * tm.tmAveCharWidth;
 

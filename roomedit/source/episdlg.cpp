@@ -90,6 +90,8 @@ TEpisodeMissionDialog::TEpisodeMissionDialog (TWindow* parent, char *levelName, 
 											  int resId, TModule* module):
 	TDialog(parent, resId, module)
 {
+	int i;
+
 	pLevelName = levelName;
 	MustExist = mustExist;
 
@@ -103,7 +105,7 @@ TEpisodeMissionDialog::TEpisodeMissionDialog (TWindow* parent, char *levelName, 
 	pDoom2Check = new TCheckBox(this, IDC_EM_DOOM2_CHECK, 0);
 
 	pDoom1Group = new TGroupBox(this, IDC_EM_DOOM1_GROUP);
-	for (SHORT i = 0 ; i < 3 * 9 ; i++)
+	for (i = 0 ; i < 3 * 9 ; i++)
 		pDoom1Radio[i] = new TRadioButton(this, IDC_EM_FIRST + i);
 
 	for (i = 0 ; i < 3 ; i++)
@@ -138,13 +140,15 @@ void TEpisodeMissionDialog::SetupWindow ()
 	TDialog::SetupWindow();
 	::CenterWindow (this);
 
+	int i;
+
 	// Check previous selection
 	pDoom1Radio[(LastEpisode - 1) * 9 + (LastMission - 1)]->SetCheck (BF_CHECKED);
 	pDoom2Radio[(LastMap - 1)]->SetCheck (BF_CHECKED);
 
 	if ( MustExist )
 	{
-		for (SHORT i = 0 ; i < 3 * 9 ; i++ )
+		for (i = 0 ; i < 3 * 9 ; i++ )
 		{
 			char name[9];
 
@@ -237,11 +241,13 @@ void TEpisodeMissionDialog::CmOk ()
 //
 void TEpisodeMissionDialog::Doom2CheckClicked ()
 {
+	int i;
+
 	// Enable DOOM2 map number
 	if ( pDoom2Check->GetCheck() == BF_CHECKED )
 	{
 		pDoom1Group->ShowWindow(SW_HIDE);
-		for (SHORT i = 0 ; i < 2 ; i++)
+		for (i = 0 ; i < 2 ; i++)
 			pSeparatorStatic[i]->ShowWindow(SW_HIDE);
 
 		for (i = 0 ; i < 3 ; i++)

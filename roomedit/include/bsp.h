@@ -6,6 +6,7 @@
 #define _BSP_H
 
 #define FINENESS 1024
+#define FINENESSHIGHRESGRID 256
 #define NUMDEGREES 4096
 
 #define BLAK_FACTOR 16  // Multiply by this to convert roomeditor coordinates to client coordinates
@@ -220,5 +221,6 @@ void BSPTreeFree(void);
 BYTE ComputeMoveFlags(BSPTree tree, int row, int col, int rows, int cols,
                       int min_distance);
 BYTE ComputeSquareFlags(BSPTree tree, int row, int col, int rows, int cols);
+int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols, int min_distance);
 
 #endif  /* #ifndef _BSP_H */

@@ -1155,7 +1155,7 @@ void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
 	if ( PointerX != point.x  ||  PointerY != point.y )
 	{
 		// Display mouse coord. in MAP coord.
-		TClientDC dc (HWindow);
+		TClientDC dc (Handle);
 		DrawMouseCoord (dc);
 	}
 

@@ -172,7 +172,7 @@ void TInfoControl::SetupWindow ()
 	// Calculate font height on first time
 	if ( FontHeight == 0 )
 	{
-		TClientDC dc(HWindow);
+		TClientDC dc(Handle);
 		dc.SelectObject (*StaticFont);
 
 		TEXTMETRIC textMetric;
@@ -255,7 +255,7 @@ UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
 BOOL TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
 								UINT /* mouseMsg */)
 {
-	if (hWndCursor == HWindow && hitTest == HTCAPTION && HCursor)
+	if (hWndCursor == Handle && hitTest == HTCAPTION && HCursor)
 	{
 		::SetCursor(HCursor);
 		return TRUE;

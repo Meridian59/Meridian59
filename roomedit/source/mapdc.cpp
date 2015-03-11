@@ -354,7 +354,7 @@ TMapDC::TMapDC (TEditorClient *pEditor, TDC &dc):
 // ------
 //
 TMapDC::TMapDC (TEditorClient *pEditor):
-	TDC (::GetDC(pEditor->HWindow))
+	TDC (::GetDC(pEditor->Handle))
 {
 	FromWindow = TRUE;
 	Init (pEditor);
@@ -374,7 +374,7 @@ TMapDC::~TMapDC()
 	// If DC created with GetDC, call ReleseDC
 	if ( FromWindow )
 	{
-		::ReleaseDC (pEditor->HWindow, GetHDC());
+		::ReleaseDC (pEditor->Handle, GetHDC());
 		Handle = 0;		// DC destroyed
 	}
 }

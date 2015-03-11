@@ -455,7 +455,7 @@ void TToolTip::SetCaption (const char far* title)
 
 		// work out the extent of the text
 		{
-			TClientDC	dc (HWindow);
+			TClientDC	dc (Handle);
 
 			dc.SelectObject (*font);
 			sizeText = dc.GetTextExtent (title, lstrlen (title));

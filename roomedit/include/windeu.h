@@ -387,16 +387,16 @@ void BuildCoopExecTab(void);
 // Last time (tick count) Cooperate was called by COOPERATE
 extern ULONG LastCoopCallTick;
 
-#define COOPERATE()                      							\
-{                                        							\
-	if ( BuildPriority > 0 )										\
-	{                                                           	\
-		if ( ::GetTickCount() - LastCoopCallTick >= BuildPriority ) \
-		{                                    						\
-			Cooperate();                                        	\
-			LastCoopCallTick = ::GetTickCount();					\
-		}                                    						\
-	}                                                           	\
+#define COOPERATE()                      									\
+{                                        									\
+	if ( BuildPriority > 0 )												\
+		{                                                           		\
+		if ( ::GetTickCount() - LastCoopCallTick >= (ULONG)BuildPriority )	\
+				{                                    						\
+			Cooperate();                                        			\
+			LastCoopCallTick = ::GetTickCount();							\
+				}                                    						\
+		}                                                           		\
 }
 
 #endif	// COOPERATION_VERSION

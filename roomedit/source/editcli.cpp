@@ -990,7 +990,7 @@ void TEditorClient::ChangeMode (int NewMode)
 // TEditorClient
 // -------------
 //
-void TEditorClient::Paint (TDC& dc, BOOL erase, TRect& rect)
+void TEditorClient::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	// Save GDI object and set WAIT cursor
 	// SELECT_WAIT_CURSOR();

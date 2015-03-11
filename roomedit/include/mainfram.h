@@ -81,13 +81,13 @@ public:
 //{{TMainFrameVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow ();
-	virtual BOOL PreProcessMsg (MSG& msg);
+	virtual bool PreProcessMsg (MSG& msg);
 //{{TMainFrameVIRTUAL_END}}
 
 //{{TMainFrameRSP_TBL_BEGIN}}
 protected:
 	void EvTimer (UINT timerId);
-	void EvActivate (UINT active, BOOL minimized, HWND hWndOther);
+	void EvActivate (UINT active, bool minimized, HWND hWndOther);
 //{{TMainFrameRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TMainFrame);
 };    //{{TMainFrame}}

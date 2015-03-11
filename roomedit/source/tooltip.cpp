@@ -377,7 +377,7 @@ LPSTR TToolTip::GetClassName ()
 	return "WinDEUTooltip";
 }
 
-void TToolTip::Paint (TDC &dc, BOOL, TRect &)
+void TToolTip::Paint (TDC &dc, bool, TRect &)
 {
 	char	szText[50];
 	TRect	client;

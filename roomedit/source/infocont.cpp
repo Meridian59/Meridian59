@@ -195,7 +195,7 @@ void TInfoControl::SetupWindow ()
 // TInfoControl
 // ------------
 //
-void TInfoControl::Paint (TDC& dc, BOOL erase, TRect& rect)
+void TInfoControl::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	TControl::Paint(dc, erase, rect);
 
@@ -252,7 +252,7 @@ UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
 // TInfoControl
 // ------------
 //
-BOOL TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
+bool TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
 								UINT /* mouseMsg */)
 {
 	if (hWndCursor == Handle && hitTest == HTCAPTION && HCursor)

@@ -106,7 +106,7 @@ public:
 
 //{{TBitmap256ControlVIRTUAL_BEGIN}}
 public:
-	virtual void Paint (TDC& dc, BOOL erase, TRect& rect);
+	virtual void Paint (TDC& dc, bool erase, TRect& rect);
 	virtual char* GetClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void SetupWindow ();
@@ -115,7 +115,7 @@ public:
 
 //{{TBitmap256ControlRSP_TBL_BEGIN}}
 protected:
-	BOOL EvEraseBkgnd (HDC dc);
+	bool EvEraseBkgnd (HDC dc);
 //{{TBitmap256ControlRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TBitmap256Control);
 };    //{{TBitmap256Control}}

@@ -392,7 +392,7 @@ BOOL WinDEUApp::CanClose ()
 // WinDEUApp
 // ---------
 //
-BOOL WinDEUApp::ProcessAppMsg (MSG& msg)
+bool WinDEUApp::ProcessAppMsg (MSG& msg)
 {
 #if 0
 

@@ -3366,7 +3366,6 @@ BOOL CheckFailed (BOOL fatal, char *format, ...)
 	}
 
 	// Display dialog box
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 #if 0
 	rc = ::MessageBox (((TApplication *)::Module)->GetMainWindow()->GetActiveWindow(),
 					   msg,
@@ -3380,7 +3379,6 @@ BOOL CheckFailed (BOOL fatal, char *format, ...)
 					   "Q would not approve...",
 					   MBStyle | MB_ICONEXCLAMATION | MB_TASKMODAL);
 #endif
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	return (rc == IDNO);
 }
@@ -3603,12 +3601,10 @@ void Statistics ()
 					 NumSectors,
 					 ((ULONG) NumSectors * sizeof(Sector) + 512L) / 1024L);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "Statistics of level objects",
 				  MB_OK | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 }
 #endif
 

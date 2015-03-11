@@ -31,7 +31,6 @@
 #include "common.h"
 #pragma hdrstop
 #include <time.h>
-#include <dir.h> // MAXPATH
 
 #if 0
 	#include <ctl3d.h>
@@ -67,13 +66,13 @@
 //
 // Main window title
 //
-#define TITLE "BlakSton Room Editor version 1.96 (July 3, 2004)"
+#define TITLE "BlakSton Room Editor version 1.97 (March 6, 2015)"
 
 //
 // Generated help file.
 //
 const char HelpName[] = "windeu.hlp";
-static char HelpFileName[MAXPATH];
+static char HelpFileName[MAX_PATH];
 
 //
 // Context sensitive help item ID
@@ -208,9 +207,10 @@ void WinDEUApp::InitInstance ()
 	TApplication::InitInstance();
 
 	// Retrieve module directory to construct help file full path
-	if ( GetModuleFileName (HelpFileName, MAXPATH) )
+	if ( GetModuleFileName (HelpFileName, MAX_PATH) )
 	{
-		for (int i = strlen(HelpFileName) - 1;
+		int i;
+		for (i = strlen(HelpFileName) - 1;
 			 (i >= 0) && (HelpFileName[i] != '\\');
 			 i--)
 			;
@@ -227,9 +227,6 @@ void WinDEUApp::InitInstance ()
 									 0);
 	// Parse command line and INI file.
 	InitWindeu(argc, argv, init_level);
-
-	// Enable CTL3D controls if needed
-	Enable3DControls(Use3DControls);
 
 // removed annoyances ARK
 #if 0
@@ -273,97 +270,8 @@ void WinDEUApp::InitInstance ()
 //////////////////////////////////////////////////////////
 // WinDEUApp
 // ---------
-// Application instance intialisation. Read the INI file
-// for default application options.
-void WinDEUApp::Enable3DControls (BOOL enable)
-{
-/*
-	//
-	// If we are running Win95 or greater, then ctl3d is unnecessary
-	//
-	// Note: This line display 70005F03 got GetVerion() under the final
-	//       beta release of Win95. So, the Win95 version is 395 (0x03 + 0x5F)
-	// Notify ("GetVersion() : %08lx", ::GetVersion());
-	if ( LOBYTE(LOWORD(::GetVersion())) * 100 +
-		 HIBYTE(LOWORD(::GetVersion())) >= 395)
-	   return;
-*/
-
-#if 0
-	static enabled = FALSE;
-
-	if ( enable == enabled )
-		return;
-
-	if ( enable )
-	{
-		Ctl3dRegister(*this);
-		Ctl3dAutoSubclass(*this);
-	}
-	else
-		Ctl3dUnregister(*this);
-	enabled = enable;
-#else
-	if ( ! enable )
-	{
-		EnableCtl3d(FALSE);
-		return;
-	}
-
-	// Don't try to define this message in the 'CATCH' bloc,
-	// because we can't use var definition in it.
-	// Maybe a Borland bug ?
-	char *ErrorMsg =
-			"Can't load 3D controls Dynamic Library.\n\n"
-#ifdef __WIN32__
-			"This version of WinDEU is the Win32 version. If you "
-			"want 3D controls: you must have the 'CTL3D32.DLL' "
-			"file if your path (preferably in the "
-			"windows\\system' directory).\n\n"
-			"If you are under Windows NT, the system directory is "
-			"'%SystemRoot%\\<NT_Directory_name>\\system32',\n"
-			"Example:\tc:\\winnt35\\system32\n\n"
-#else
-			"This version of WinDEU is the Win16 version. If you "
-			"want 3D controls: you must have the 'CTL3DV2.DLL' "
-			"file if your path (preferably in the "
-			"'windows\\system' directory).\n\n"
-			"If you are under Windows NT, the system directory is "
-			"'%SystemRoot%\\<NT_Directory_name>\\system',\n"
-			"Example:\tc:\\winnt35\\system\n\n"
-#endif
-			"If you don't want 3D controls, use the '3DControls' "
-			"configuration option (see help file)";
-
-	TRY
-	{
-		EnableCtl3d (TRUE);
-	}
-	CATCH ((...)
-	{
-//		MainWindow->MessageBox (ErrorMsg,
-//								"WinDEU: 3D Controls library load error",
-//								MB_OK | MB_ICONINFORMATION);
-	})
-
-#if 0
-	if ( ! Ctl3dEnabled() )
-	{
-		MainWindow->MessageBox (ErrorMsg,
-								"WinDEU: 3D Controls library load error",
-								MB_OK | MB_ICONINFORMATION);
-	}
-#endif
-
-#endif
-}
-
-
-//////////////////////////////////////////////////////////
-// WinDEUApp
-// ---------
 // Ask for confirmation before exiting application
-BOOL WinDEUApp::CanClose ()
+bool WinDEUApp::CanClose ()
 {
 	BOOL result;
 
@@ -403,7 +311,7 @@ BOOL WinDEUApp::CanClose ()
 // WinDEUApp
 // ---------
 //
-BOOL WinDEUApp::ProcessAppMsg (MSG& msg)
+bool WinDEUApp::ProcessAppMsg (MSG& msg)
 {
 #if 0
 

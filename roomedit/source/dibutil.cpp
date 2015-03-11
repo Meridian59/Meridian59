@@ -6,7 +6,6 @@
 #pragma hdrstop
 
 #include "dibutil.h"
-#include "zlib.h"
 
 typedef struct
 {
@@ -18,9 +17,19 @@ typedef struct
 } file_node;
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
-#define BGF_VERSION 8
+#define BGF_VERSION 10
 
 static int version;   // Version of file being loaded
+
+/************* for dynamic zlib loading ******************/
+
+// signature of uncompress method in zlib1.dll
+typedef int(*uncompress_functype)(void* dest, unsigned long* destLen, const void* source, unsigned long sourceLen);
+
+HMODULE             zlib_moduleptr = NULL;	// loaded dll
+uncompress_functype uncompress     = NULL;	// callable function ptr
+
+/*********************************************************/
 
 int  MappedFileRead(file_node *f, void *buf, int num);
 Bool MappedFileOpenRead(const char *filename, file_node *f);
@@ -29,6 +38,58 @@ Bool MappedFileClose(file_node *f);
 static Bool DibReadHeader(file_node *f, Bitmaps *b, BYTE *shrink);
 static void RotateBits(BYTE *b, int width, int height);
 static Bool DibReadBits(file_node *f, PDIB pdib, int version);
+
+/************************************************************************/
+/*
+* DibInitCompression: Dynamically loads the compression library (zlib1.dll)
+*   Return TRUE on success or crashes with error message.
+*/
+Bool DibInitCompression()
+{
+   // try load the DLL into the process
+   zlib_moduleptr = LoadLibraryEx("zlib1.dll", NULL, 0x00000200);
+
+   // failed ...
+   if (zlib_moduleptr == NULL)
+   {
+      Notify("Error loading zlib1.dll");
+
+      // force crash
+      assert(zlib_moduleptr != NULL);
+   }
+
+   // try get the entry point of 'uncompress'
+   FARPROC uncompress_entryptr = GetProcAddress(zlib_moduleptr, "uncompress");
+
+   // failed ...
+   if (uncompress_entryptr == NULL)
+   {
+      Notify("Unable to find procedure 'uncompress' in zlib1.dll");
+
+      // force crash
+      assert(uncompress_entryptr != NULL);
+   }
+
+   // cast entry point to function
+   uncompress = (uncompress_functype)uncompress_entryptr;
+
+   return TRUE;
+}
+/************************************************************************/
+/*
+* DibCloseCompression: Dynamically unloads the compression library (zlib1.dll)
+*   Return TRUE on success.
+*/
+Bool DibCloseCompression()
+{
+   if (zlib_moduleptr != NULL)
+      FreeLibrary(zlib_moduleptr);
+
+   zlib_moduleptr = NULL;
+   uncompress = NULL;
+
+   return TRUE;
+}
 /************************************************************************/
 /*
  * DibOpenFile: Load the bitmaps in the file given by filename into the
@@ -226,7 +287,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
 {
    BYTE *bits, type;
    int length, temp, compressed_length, retval;
-   uLongf len;
+   unsigned long len;
 
    bits = DibPtr(pdib);
    length = DibWidth(pdib) * DibHeight(pdib);
@@ -247,8 +308,8 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       if (MappedFileRead(f, &compressed_length, 4) != 4) return False;
 
       len = length;
-      retval = uncompress((Bytef *) bits, &len, (const Bytef *) f->ptr, compressed_length);
-      if (retval != Z_OK)
+      retval = uncompress((void*)bits, &len, (const void*)f->ptr, (unsigned long)compressed_length);
+      if (retval != 0) // 0 = Z_OK
       {
          dprintf("DibReadBits error during decompression\n");
          return False;

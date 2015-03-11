@@ -34,19 +34,19 @@
 #endif
 
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	class _OWLCLASS TListBox;
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	class _OWLCLASS TStatic;
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	class _OWLCLASS TEdit;
 #endif
 
@@ -111,8 +111,15 @@ protected:
 	void NewTagClicked ();
 	void DepthClicked ();
 	void ScrollClicked ();
+
+#if OWLVersion > OWLVERBC502
+	void EvLButtonDown (UINT modKeys, const TPoint& point);
+	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
+#else
 	void EvLButtonDown (UINT modKeys, TPoint& point);
 	void EvLButtonDblClk (UINT modKeys, TPoint& point);
+#endif
+
 //{{TSectorEditDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TSectorEditDialog);
 

@@ -32,11 +32,11 @@
 
 #include "inpt2dlg.h"
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
-#ifndef __OLW_STATIC_H
+#ifndef OLW_STATIC_H
 	#include <owl\static.h>
 #endif
 

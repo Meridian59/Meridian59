@@ -34,19 +34,19 @@
 	#include "seditdlg.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
@@ -311,7 +311,6 @@ void TSectorEditDialog::SetSectorList ()
 void TSectorEditDialog::SetTextureList ()
 {
 	assert (pTextureList->IsWindow());
-	assert (FTexture != NULL);
 
 	pTextureList->ClearList();
 
@@ -695,7 +694,7 @@ void TSectorEditDialog::CmOk ()
       {
 	 for (SelPtr cur = SelSectors->next ; cur != NULL ; cur = cur->next)
 	 {
-	    Sector HUGE *pSector = &Sectors[cur->objnum];
+	    Sector *pSector = &Sectors[cur->objnum];
 	    Sector SectorBefore = *pSector;	// Copy before changing
 	    
 	    if ( ConfirmData.pSpecialCheck )
@@ -970,7 +969,7 @@ void TSectorEditDialog::TextureDblclick ()
 	{
 	   TextureInfo *info = FindTextureByName(TextureName);
 	   
-	   if ( pFTextureDialog->SelectBitmap (info->filename) < 0 )
+	   if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	      Notify ("Error: Cannot select the texture name \"%s\" in the "
 		      "dialog box of Floor/Ceiling Texture view ! (BUG)",
 		      TextureName);
@@ -985,12 +984,16 @@ void TSectorEditDialog::TextureDblclick ()
 // TSectorEditDialog
 // -----------------
 //
+#if OWLVersion > OWLVERBC502
+void TSectorEditDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
+#else
 void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
+#endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic (point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 
@@ -1010,12 +1013,16 @@ void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TSectorEditDialog
 // -----------------
 //
+#if OWLVersion > OWLVERBC502
+void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
+#else
 void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
+#endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic (point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 

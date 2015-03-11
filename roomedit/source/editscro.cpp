@@ -42,7 +42,7 @@
 	#include "mapdc.h"	// InfoShown
 #endif
 
-#ifndef __OWL_SCROLLER_H
+#ifndef OWL_SCROLLER_H
 	#include <owl\scroller.h>
 #endif
 

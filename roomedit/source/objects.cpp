@@ -30,7 +30,7 @@
 #include "common.h"
 #pragma hdrstop
 
-#ifndef __OWL_INPUTDIA_H
+#ifndef OWL_INPUTDIA_H
 	#include <owl\inputdia.h>
 #endif
 
@@ -1007,12 +1007,12 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 
 BOOL IsLineDefInside (SHORT ldnum, SHORT x0, SHORT y0, SHORT x1, SHORT y1)
 {
-	LineDef HUGE *pLD = &LineDefs[ldnum];
+	LineDef *pLD = &LineDefs[ldnum];
 	SHORT start = pLD->start;
 	SHORT end   = pLD->end;
 
-	Vertex HUGE *pVStart = &Vertexes[start];
-	Vertex HUGE *pVEnd   = &Vertexes[end];
+	Vertex *pVStart = &Vertexes[start];
+	Vertex *pVEnd   = &Vertexes[end];
 	SHORT lx0 = pVStart->x;
 	SHORT ly0 = pVStart->y;
 	SHORT lx1 = pVEnd->x;
@@ -1079,7 +1079,7 @@ SHORT GetOppositeSector (SHORT ld1, BOOL firstside)
 	SHORT bestld, bestdist, bestmdist;
 
 	/* get the coords for this LineDef */
-	LineDef HUGE *pLineDef1 = &LineDefs[ld1];
+	LineDef *pLineDef1 = &LineDefs[ld1];
 	Vertex v1s = Vertexes[pLineDef1->start];
 	Vertex v1e = Vertexes[pLineDef1->end];
 
@@ -1113,7 +1113,7 @@ SHORT GetOppositeSector (SHORT ld1, BOOL firstside)
 			bestmdist = 32767;
 			for (ld2 = 0; ld2 < NumLineDefs; ld2++)
 			{
-				LineDef HUGE *pLineDef2 = &LineDefs[ld2];
+				LineDef *pLineDef2 = &LineDefs[ld2];
 				Vertex v2s = Vertexes[pLineDef2->start];
 				Vertex v2e = Vertexes[pLineDef2->end];
 				if (ld2 != ld1 && ((v2s.x > x1) != (v2e.x > x1)))
@@ -1141,7 +1141,7 @@ SHORT GetOppositeSector (SHORT ld1, BOOL firstside)
 			bestmdist = -32767;
 			for (ld2 = 0; ld2 < NumLineDefs; ld2++)
 			{
-				LineDef HUGE *pLineDef2 = &LineDefs[ld2];
+				LineDef *pLineDef2 = &LineDefs[ld2];
 				Vertex v2s = Vertexes[pLineDef2->start];
 				Vertex v2e = Vertexes[pLineDef2->end];
 				if (ld2 != ld1 && ((v2s.x > x1) != (v2e.x > x1)))
@@ -1172,7 +1172,7 @@ SHORT GetOppositeSector (SHORT ld1, BOOL firstside)
 			bestmdist = 32767;
 			for (ld2 = 0; ld2 < NumLineDefs; ld2++)
 			{
-				LineDef HUGE *pLineDef2 = &LineDefs[ld2];
+				LineDef *pLineDef2 = &LineDefs[ld2];
 				Vertex v2s = Vertexes[pLineDef2->start];
 				Vertex v2e = Vertexes[pLineDef2->end];
 				if (ld2 != ld1 && ((v2s.y > y1) != (v2e.y > y1)))
@@ -1200,7 +1200,7 @@ SHORT GetOppositeSector (SHORT ld1, BOOL firstside)
 			bestmdist = -32767;
 			for (ld2 = 0; ld2 < NumLineDefs; ld2++)
 			{
-				LineDef HUGE *pLineDef2 = &LineDefs[ld2];
+				LineDef *pLineDef2 = &LineDefs[ld2];
 				Vertex v2s = Vertexes[pLineDef2->start];
 				Vertex v2e = Vertexes[pLineDef2->end];
 				if (ld2 != ld1 && ((v2s.y > y1) != (v2e.y > y1)))
@@ -1279,7 +1279,7 @@ void CopyObjects (int objtype, SelPtr obj)
 	case OBJ_THINGS:
 		for (cur = obj; cur; cur = cur->next)
 		{
-			Thing HUGE *pThing = &Things[cur->objnum];
+			Thing *pThing = &Things[cur->objnum];
 			InsertObject (OBJ_THINGS, cur->objnum, pThing->xpos, pThing->ypos);
 			cur->objnum = NumThings - 1;
 		}
@@ -1289,7 +1289,7 @@ void CopyObjects (int objtype, SelPtr obj)
 	case OBJ_VERTEXES:
 		for (cur = obj; cur; cur = cur->next)
 		{
-			Vertex HUGE *pVertex = &Vertexes[cur->objnum];
+			Vertex *pVertex = &Vertexes[cur->objnum];
 			InsertObject (OBJ_VERTEXES, cur->objnum, pVertex->x, pVertex->y);
 			cur->objnum = NumVertexes - 1;
 		}
@@ -1305,7 +1305,7 @@ void CopyObjects (int objtype, SelPtr obj)
 		{
 			InsertObject (OBJ_LINEDEFS, cur->objnum, 0, 0);
 			cur->objnum = NumLineDefs - 1;
-			LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+			LineDef *pLineDef = &LineDefs[cur->objnum];
 			if (!IsSelected( list1, pLineDef->start))
 			{
 				SelectObject(&list1, pLineDef->start);
@@ -1327,7 +1327,7 @@ void CopyObjects (int objtype, SelPtr obj)
 		{
 			for (cur = obj; cur; cur = cur->next)
 			{
-				LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+				LineDef *pLineDef = &LineDefs[cur->objnum];
 
 				if (ref1->objnum == pLineDef->start)
 					pLineDef->start = ref2->objnum;
@@ -1349,7 +1349,7 @@ void CopyObjects (int objtype, SelPtr obj)
 		{
 			for (n = 0; n < NumLineDefs; n++)
 			{
-				LineDef HUGE *pLineDef = &LineDefs[n];
+				LineDef *pLineDef = &LineDefs[n];
 				SHORT sd1 = pLineDef->sidedef1;
 				SHORT sd2 = pLineDef->sidedef2;
 				if ( ((sd1 >= 0 && SideDefs[sd1].sector == cur->objnum) ||
@@ -1371,8 +1371,8 @@ void CopyObjects (int objtype, SelPtr obj)
 			 ref1 = ref1->next, ref2 = ref2->next)
 		{
 			//BUG(NO) Don't need to update later since insert SideDefs only
-			LineDef HUGE *pLineDef1 = &LineDefs[ref1->objnum];
-			LineDef HUGE *pLineDef2 = &LineDefs[ref2->objnum];
+			LineDef *pLineDef1 = &LineDefs[ref1->objnum];
+			LineDef *pLineDef2 = &LineDefs[ref2->objnum];
 			SHORT sd1 = pLineDef1->sidedef1;
 			SHORT sd2 = pLineDef1->sidedef2;
 
@@ -1403,8 +1403,8 @@ void CopyObjects (int objtype, SelPtr obj)
 			{
 				SHORT sd1 = ref1->objnum;
 				SHORT sd2 = ref2->objnum;
-				SideDef HUGE *pSideDef1;
-				SideDef HUGE *pSideDef2;
+				SideDef *pSideDef1;
+				SideDef *pSideDef2;
 				if (sd1 >= 0 )		pSideDef1 = &SideDefs[sd1];
 				if (sd2 >= 0 )		pSideDef2 = &SideDefs[sd2];
 
@@ -1466,7 +1466,7 @@ BOOL MoveObjectsToCoords (int objtype, SelPtr obj, SHORT newx, SHORT newy,
 		for (cur = obj; cur; cur = cur->next)
 		{
 			assert (cur->objnum >= 0  &&  cur->objnum < NumThings);
-			Thing HUGE *pThing = &Things[cur->objnum];
+			Thing *pThing = &Things[cur->objnum];
 			pThing->xpos += dx;
 			pThing->ypos += dy;
 			if (pThing->type == kodEntrance)
@@ -1483,7 +1483,7 @@ BOOL MoveObjectsToCoords (int objtype, SelPtr obj, SHORT newx, SHORT newy,
 		for (cur = obj; cur; cur = cur->next)
 		{
 			assert_vnum(cur->objnum);
-			Vertex HUGE *pVertex = &Vertexes[cur->objnum];
+			Vertex *pVertex = &Vertexes[cur->objnum];
 
 			pVertex->x += dx;
 			pVertex->y += dy;
@@ -1499,7 +1499,7 @@ BOOL MoveObjectsToCoords (int objtype, SelPtr obj, SHORT newx, SHORT newy,
 		for (cur = obj; cur; cur = cur->next)
 		{
 			assert_ldnum(cur->objnum);
-			LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+			LineDef *pLineDef = &LineDefs[cur->objnum];
 			SHORT start = pLineDef->start;
 			SHORT end   = pLineDef->end;
 
@@ -1520,7 +1520,7 @@ BOOL MoveObjectsToCoords (int objtype, SelPtr obj, SHORT newx, SHORT newy,
 			assert_snum (cur->objnum);
 			for (n = 0; n < NumLineDefs; n++)
 			{
-				LineDef HUGE *pLineDef = &LineDefs[n];
+				LineDef *pLineDef = &LineDefs[n];
 				SHORT sd1   = pLineDef->sidedef1;
 				SHORT sd2   = pLineDef->sidedef2;
 				SHORT start = pLineDef->start;
@@ -1554,11 +1554,11 @@ void GetObjectCoords (int objtype, SHORT objnum, SHORT *xpos, SHORT *ypos)
 {
 	SHORT         n;
 	LONG          accx, accy, num;
-	Thing   HUGE *pThing;
-	Vertex  HUGE *pVertex;
-	LineDef HUGE *pLineDef;
-	Vertex  HUGE *pv1;
-	Vertex  HUGE *pv2;
+	Thing   *pThing;
+	Vertex  *pVertex;
+	LineDef *pLineDef;
+	Vertex  *pv1;
+	Vertex  *pv2;
 
 	switch (objtype)
 	{
@@ -1673,7 +1673,7 @@ void RotateAndScaleObjects (int objtype, SelPtr obj, double angle, double scale)
 		for (cur = obj; cur; cur = cur->next)
 		{
 			assert_tnum(cur->objnum);
-			Thing HUGE *pThing = &Things[cur->objnum];
+			Thing *pThing = &Things[cur->objnum];
 
 			accx += (LONG) pThing->xpos;
 			accy += (LONG) pThing->ypos;
@@ -1685,7 +1685,7 @@ void RotateAndScaleObjects (int objtype, SelPtr obj, double angle, double scale)
 		for (cur = obj; cur; cur = cur->next)
 		{
 			assert_tnum(cur->objnum);
-			Thing HUGE *pThing = &Things[cur->objnum];
+			Thing *pThing = &Things[cur->objnum];
 
 			dx = pThing->xpos - centerx;
 			dy = pThing->ypos - centery;
@@ -1801,7 +1801,7 @@ void FlipLineDefs (SelPtr obj, BOOL swapvertices)
 
 	for (cur = obj; cur; cur = cur->next)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[cur->objnum];
+		LineDef *pLineDef = &LineDefs[cur->objnum];
 		if (swapvertices)
 		{
 			/* swap starting and ending Vertices */
@@ -1891,7 +1891,7 @@ void MergeVertices (SelPtr *list)
 	// change the LineDefs starts & ends
 	for (l = 0; l < NumLineDefs; l++)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[l];
+		LineDef *pLineDef = &LineDefs[l];
 		SHORT start = pLineDef->start;
 		SHORT end   = pLineDef->end;
 
@@ -1955,10 +1955,10 @@ BOOL AutoMergeVertices (SelPtr *list)
 		// check if there is a Vertex at the same position (same X and Y)
 		for (v = 0; v < NumVertexes; v++)
 		{
-			Vertex HUGE *pv2 = &Vertexes[v];
+			Vertex *pv2 = &Vertexes[v];
 			//BUG put this line here since the Vertexes ptr may have
 			//    changed (when deleting somme vertices)
-			Vertex HUGE *pv1 = &Vertexes[refv];
+			Vertex *pv1 = &Vertexes[refv];
 
 			// RP: Vertex position comparaison is more approximative
 			//     (box of 7*7 instead of pure equality)
@@ -2012,14 +2012,14 @@ BOOL AutoMergeVertices (SelPtr *list)
 	{
 		refv = ref->objnum;
 		assert_vnum(refv);
-		Vertex  HUGE *pCurV  = &Vertexes[refv];
+		Vertex  *pCurV  = &Vertexes[refv];
 		ref = ref->next;
 		oldnumld = NumLineDefs;
 		// check if this Vertex is on a LineDef
 		for (ld = 0; ld < oldnumld; ld++)
 		{
-			LineDef HUGE *pCurLD = &LineDefs[ld];
-			LineDef HUGE *pNewLD;
+			LineDef *pCurLD = &LineDefs[ld];
+			LineDef *pNewLD;
 
 			if (pCurLD->start == refv || pCurLD->end == refv)
 			{
@@ -2086,10 +2086,10 @@ BOOL AutoMergeVertices (SelPtr *list)
 
 		for (ld = v + 1; ld < NumLineDefs; ld++)
 		{
-			LineDef HUGE *pLineDefLD = &LineDefs[ld];
+			LineDef *pLineDefLD = &LineDefs[ld];
 			//BUG put this line here since the LineDefs ptr may have
 			//    changed (when deleting somme LineDefs)
-			LineDef HUGE *pLineDefV = &LineDefs[v];
+			LineDef *pLineDefV = &LineDefs[v];
 
 			if ( (pLineDefV->start == pLineDefLD->start &&
 				  pLineDefV->end   == pLineDefLD->end  ) ||
@@ -3239,7 +3239,7 @@ void InsertRectangle (SHORT xpos, SHORT ypos, SHORT width, SHORT height)
 	// Setup start and end vertices of LineDefs
 	if (sector >= 0)
 	{
-		LineDef HUGE *pLD = &LineDefs[NumLineDefs - 4];
+		LineDef *pLD = &LineDefs[NumLineDefs - 4];
 		pLD->start = NumVertexes - 4;
 		pLD->end   = NumVertexes - 3;		  pLD++;
 		pLD->start = NumVertexes - 3;
@@ -3251,7 +3251,7 @@ void InsertRectangle (SHORT xpos, SHORT ypos, SHORT width, SHORT height)
 	}
 	else
 	{
-		LineDef HUGE *pLD = &LineDefs[NumLineDefs - 4];
+		LineDef *pLD = &LineDefs[NumLineDefs - 4];
 
 		pLD->start = NumVertexes - 1;
 		pLD->end   = NumVertexes - 2;		  pLD++;
@@ -3301,7 +3301,7 @@ void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius)
 	// If inside a sector, join LineDef clockwise
 	if (sector >= 0)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[NumLineDefs-1];
+		LineDef *pLineDef = &LineDefs[NumLineDefs-1];
 
 		// Close polygon with last LineDef
 		pLineDef->start = NumVertexes - 1;
@@ -3319,7 +3319,7 @@ void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius)
 	// If outside a sector, join LineDef anti-clockwise
 	else
 	{
-		LineDef HUGE *pLineDef = &LineDefs[NumLineDefs-1];
+		LineDef *pLineDef = &LineDefs[NumLineDefs-1];
 
 		pLineDef->start = NumVertexes - nsides;
 		pLineDef->end   = NumVertexes - 1;
@@ -3366,7 +3366,6 @@ BOOL CheckFailed (BOOL fatal, char *format, ...)
 	}
 
 	// Display dialog box
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 #if 0
 	rc = ::MessageBox (((TApplication *)::Module)->GetMainWindow()->GetActiveWindow(),
 					   msg,
@@ -3380,7 +3379,6 @@ BOOL CheckFailed (BOOL fatal, char *format, ...)
 					   "Q would not approve...",
 					   MBStyle | MB_ICONEXCLAMATION | MB_TASKMODAL);
 #endif
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	return (rc == IDNO);
 }
@@ -3603,12 +3601,10 @@ void Statistics ()
 					 NumSectors,
 					 ((ULONG) NumSectors * sizeof(Sector) + 512L) / 1024L);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "Statistics of level objects",
 				  MB_OK | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 }
 #endif
 
@@ -3692,7 +3688,7 @@ BOOL CheckCrossReferences ()
 	cur = NULL;
 	for (n = NumLineDefs - 1; n >= 1; n--)
 	{
-		LineDef HUGE *pLineDefn = &LineDefs[n];
+		LineDef *pLineDefn = &LineDefs[n];
 		SHORT nstart = pLineDefn->start;
 		SHORT nend   = pLineDefn->end;
 		if ( n % 16 == 0 || n == 1)
@@ -3706,7 +3702,7 @@ BOOL CheckCrossReferences ()
 		}
 		for (m = n - 1; m >= 0; m--)
 		{
-			LineDef HUGE *pLineDefm = &LineDefs[m];
+			LineDef *pLineDefm = &LineDefs[m];
 			SHORT mstart = pLineDefm->start;
 			SHORT mend   = pLineDefm->end;
 			if ( (nstart == mstart && nend == mend  ) ||
@@ -3743,7 +3739,7 @@ BOOL CheckCrossReferences ()
 	assert (cur == NULL);
 	for (n = 0; n < NumLineDefs; n++)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		LineDef *pLineDef = &LineDefs[n];
 		if ( (pLineDef->flags & 0x01) == 0  &&  pLineDef->sidedef2 < 0)
 		{
 			SelectObject (&cur, n);
@@ -3771,7 +3767,7 @@ BOOL CheckCrossReferences ()
 	assert (cur == NULL);
 	for (n = 0; n < NumLineDefs; n++)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		LineDef *pLineDef = &LineDefs[n];
 		if ( (pLineDef->flags & 0x04) != 0  &&  pLineDef->sidedef2 < 0)
 		{
 			SelectObject (&cur, n);
@@ -3798,7 +3794,7 @@ BOOL CheckCrossReferences ()
 	assert (cur == NULL);
 	for (n = 0; n < NumLineDefs; n++)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		LineDef *pLineDef = &LineDefs[n];
 		if ( (pLineDef->flags & 0x04) == 0  &&  pLineDef->sidedef2 >= 0)
 		{
 			SelectObject (&cur, n);
@@ -3838,7 +3834,7 @@ BOOL CheckCrossReferences ()
 	/* unselect Vertices used in a LineDef */
 	for (n = 0; n < NumLineDefs &&  cur != NULL ; n++)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		LineDef *pLineDef = &LineDefs[n];
 		if ( n % 16 == 0 || n == NumLineDefs - 1 )
 		{
 			pWorkDlg->SetValue(n);
@@ -3884,7 +3880,7 @@ BOOL CheckCrossReferences ()
 	/* unselect SideDefs bound to a LineDef */
 	for (n = 0; n < NumLineDefs && cur != NULL; n++)
 	{
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		LineDef *pLineDef = &LineDefs[n];
 		if ( n % 16 == 0 || n == NumLineDefs-1 )
 		{
 			pWorkDlg->SetValue(n);
@@ -3941,7 +3937,7 @@ BOOL CheckCrossReferences ()
 			//			 n, NumLineDefs-1);
 		}
 
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		LineDef *pLineDef = &LineDefs[n];
 		SHORT sector;
 		m = pLineDef->sidedef1;
 		if (m >= 0 && (sector = SideDefs[m].sector) >= 0)
@@ -3998,7 +3994,7 @@ BOOL CheckTextures ()
 	pWorkDlg->SetWorkText ("Checking texture and height of Sectors...");
 	for (n = 0; n < NumSectors; n++)
 	{
-		Sector HUGE *pSector = &Sectors[n];
+		Sector *pSector = &Sectors[n];
 
 		if ( n % 16 == 0 || n == NumSectors-1)
 		{
@@ -4065,13 +4061,13 @@ BOOL CheckTextures ()
 			// WorkMessage ("Checking textures of LineDefs & SideDefs %d/%d...",
 			//			 n, NumLineDefs-1);
 		}
-		SHORT         sd1, sd2;
-		SHORT         s1, s2;
-		SideDef HUGE *pSideDef1;
-		SideDef HUGE *pSideDef2;
-		Sector  HUGE *pSector1;
-		Sector  HUGE *pSector2;
-		LineDef HUGE *pLineDef = &LineDefs[n];
+		SHORT   sd1, sd2;
+		SHORT   s1, s2;
+		SideDef *pSideDef1;
+		SideDef *pSideDef2;
+		Sector  *pSector1;
+		Sector  *pSector2;
+		LineDef *pLineDef = &LineDefs[n];
 		sd1 = pLineDef->sidedef1;
 		sd2 = pLineDef->sidedef2;
 
@@ -4275,7 +4271,7 @@ BOOL CheckTextureNames ()
 			// WorkMessage ("Looking for invalid Sector texture names %d/%d...",
 			//			 n, NumSectors-1);
 		}
-		Sector HUGE *pSector = &Sectors[n];
+		Sector *pSector = &Sectors[n];
 
 		strncpy (texname, pSector->ceilt, MAX_BITMAPNAME);
 		if (! IsTextureNameInList (texname, FTexture, NumFTexture))
@@ -4311,7 +4307,7 @@ BOOL CheckTextureNames ()
 
 	for (n = 0; n < NumSideDefs; n++)
 	{
-		SideDef HUGE *pSideDef = &SideDefs[n];
+		SideDef *pSideDef = &SideDefs[n];
 
 		if ( n % 16 == 0 || n == NumSideDefs-1)
 		{

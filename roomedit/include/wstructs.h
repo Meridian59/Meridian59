@@ -52,7 +52,7 @@ struct Thing
 	SHORT id;
 	char comment[64];
 };
-typedef struct Thing HUGE *TPtr;
+typedef struct Thing *TPtr;
 
 
 
@@ -73,7 +73,7 @@ struct LineDef
    WORD  file_sidedef1;  // Used during saving ARK
    WORD  file_sidedef2;  // Used during saving ARK
 };
-typedef struct LineDef HUGE *LDPtr;
+typedef struct LineDef *LDPtr;
 
 
 
@@ -94,7 +94,7 @@ struct SideDef
    BYTE animate_speed;                  /* speed of animation (tenths of frame per second) ARK */
    WORD user_id;                        /* User-id of sidedef ARK */
 };
-typedef struct SideDef HUGE *SDPtr;
+typedef struct SideDef *SDPtr;
 
 /*
    this data structure contains the information about the VERTEXES
@@ -104,13 +104,13 @@ struct Vertex
    SHORT x;         /* X coordinate */
    SHORT y;         /* Y coordinate */
 };
-typedef struct Vertex HUGE *VPtr;
+typedef struct Vertex *VPtr;
 
 
 /*
    this data structure contains the information about the SEGS
 */
-typedef struct Seg HUGE *SEPtr;
+typedef struct Seg *SEPtr;
 struct Seg
 {
    SEPtr next;      /* next Seg in list */
@@ -128,7 +128,7 @@ struct Seg
 /*
    this data structure contains the information about the SSECTORS
 */
-typedef struct SSector HUGE *SSPtr;
+typedef struct SSector *SSPtr;
 struct SSector
 {
    SSPtr next;	    /* next Sub-Sector in list */
@@ -141,7 +141,7 @@ struct SSector
 /*
    this data structure contains the information about the NODES
 */
-typedef struct Node HUGE *NPtr;
+typedef struct Node *NPtr;
 struct Node
 {
    SHORT x, y;                      // starting point
@@ -199,7 +199,7 @@ struct Sector
    SlopeInfo floor_slope;        // Info on sloped floor (if sloped floor blak_flag set)
    SlopeInfo ceiling_slope;      // Info on sloped ceiling (if sloped ceiling blak_flag set)
 };
-typedef struct Sector HUGE *SPtr;
+typedef struct Sector *SPtr;
 
 
 // Sidedef info saved to file

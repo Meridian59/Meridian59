@@ -35,7 +35,7 @@
 
 #include "maincli.h"
 
-#ifndef __OWL_INPUTDIA
+#ifndef OWL_INPUTDIA
 	#include <owl\inputdia.h>
 #endif
 
@@ -110,7 +110,7 @@ END_RESPONSE_TABLE;
 // TMainClient
 // -----------
 //
-TMainClient::TMainClient (TWindow* parent, const char far* title,
+TMainClient::TMainClient (TWindow* parent, const char* title,
 						  TModule* module):
 	TWindow(parent, title, module)
 {
@@ -325,7 +325,7 @@ End:
 void TMainClient::CmFileInsertRaw ()
 {
 	static char ObjectName[12];
-	char input[MAXPATH];
+	char input[MAX_PATH];
 	MDirPtr entry;
 	FILE *raw;
 	FILE *file;

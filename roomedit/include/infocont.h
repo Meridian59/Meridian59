@@ -37,7 +37,7 @@
 	#include "gfx.h"	// Colors
 #endif
 
-#ifndef __OWL_CONTROL_H
+#ifndef OWL_CONTROL_H
 	#include <owl\control.h>
 #endif
 
@@ -68,7 +68,7 @@ private:
 	TextLine **TextLineTab;
 
 public:
-	TInfoControl (TWindow* parent, int id, unsigned _NumLines, const char far* title,
+	TInfoControl (TWindow* parent, int id, unsigned _NumLines, const char* title,
 				  int x=100, int y=100, int w=200, int h=50,
 				  TModule* module = 0);
 	virtual ~TInfoControl();
@@ -87,15 +87,21 @@ public:
 //{{TInfoControlVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow();
-	virtual void Paint( TDC& dc, BOOL erase, TRect& rect);
-    virtual char far* GetClassName ();
+	virtual void Paint( TDC& dc, bool erase, TRect& rect);
+    virtual char* GetClassName ();
     virtual void GetWindowClass (WNDCLASS& wndClass);
 //{{TInfoControlVIRTUAL_END}}
 
 //{{TInfoControlRSP_TBL_BEGIN}}
 protected:
+
+#if OWLVersion > OWLVERBC502
+	UINT EvNCHitTest (const TPoint& point);
+#else
 	UINT EvNCHitTest (TPoint& point);
-	BOOL EvSetCursor (HWND hWndCursor, UINT hitTest, UINT mouseMsg);
+#endif
+
+	bool EvSetCursor (HWND hWndCursor, UINT hitTest, UINT mouseMsg);
 //{{TInfoControlRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TInfoControl);
 };    //{{TInfoControl}}

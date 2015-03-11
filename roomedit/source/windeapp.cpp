@@ -31,7 +31,6 @@
 #include "common.h"
 #pragma hdrstop
 #include <time.h>
-#include <dir.h> // MAXPATH
 
 #if 0
 	#include <ctl3d.h>
@@ -73,7 +72,7 @@
 // Generated help file.
 //
 const char HelpName[] = "windeu.hlp";
-static char HelpFileName[MAXPATH];
+static char HelpFileName[MAX_PATH];
 
 //
 // Context sensitive help item ID
@@ -206,11 +205,12 @@ void WinDEUApp::InitInstance ()
 {
 	// Initialize and create MainWindow
 	TApplication::InitInstance();
+	int i;
 
 	// Retrieve module directory to construct help file full path
-	if ( GetModuleFileName (HelpFileName, MAXPATH) )
+	if ( GetModuleFileName (HelpFileName, MAX_PATH) )
 	{
-		for (int i = strlen(HelpFileName) - 1;
+		for (i = strlen(HelpFileName) - 1;
 			 (i >= 0) && (HelpFileName[i] != '\\');
 			 i--)
 			;
@@ -315,7 +315,6 @@ void WinDEUApp::Enable3DControls (BOOL enable)
 	// Maybe a Borland bug ?
 	char *ErrorMsg =
 			"Can't load 3D controls Dynamic Library.\n\n"
-#ifdef __WIN32__
 			"This version of WinDEU is the Win32 version. If you "
 			"want 3D controls: you must have the 'CTL3D32.DLL' "
 			"file if your path (preferably in the "
@@ -323,28 +322,8 @@ void WinDEUApp::Enable3DControls (BOOL enable)
 			"If you are under Windows NT, the system directory is "
 			"'%SystemRoot%\\<NT_Directory_name>\\system32',\n"
 			"Example:\tc:\\winnt35\\system32\n\n"
-#else
-			"This version of WinDEU is the Win16 version. If you "
-			"want 3D controls: you must have the 'CTL3DV2.DLL' "
-			"file if your path (preferably in the "
-			"'windows\\system' directory).\n\n"
-			"If you are under Windows NT, the system directory is "
-			"'%SystemRoot%\\<NT_Directory_name>\\system',\n"
-			"Example:\tc:\\winnt35\\system\n\n"
-#endif
 			"If you don't want 3D controls, use the '3DControls' "
-			"configuration option (see help file)";
-
-	TRY
-	{
-		EnableCtl3d (TRUE);
-	}
-	CATCH ((...)
-	{
-//		MainWindow->MessageBox (ErrorMsg,
-//								"WinDEU: 3D Controls library load error",
-//								MB_OK | MB_ICONINFORMATION);
-	})
+			"configuration option (see help file)";	
 
 #if 0
 	if ( ! Ctl3dEnabled() )
@@ -363,7 +342,7 @@ void WinDEUApp::Enable3DControls (BOOL enable)
 // WinDEUApp
 // ---------
 // Ask for confirmation before exiting application
-BOOL WinDEUApp::CanClose ()
+bool WinDEUApp::CanClose ()
 {
 	BOOL result;
 
@@ -403,7 +382,7 @@ BOOL WinDEUApp::CanClose ()
 // WinDEUApp
 // ---------
 //
-BOOL WinDEUApp::ProcessAppMsg (MSG& msg)
+bool WinDEUApp::ProcessAppMsg (MSG& msg)
 {
 #if 0
 

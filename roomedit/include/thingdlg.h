@@ -37,24 +37,24 @@
 	#include "viewbmp.h"
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	class _OWLCLASS TListBox;
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	class _OWLCLASS TEdit;
 #endif
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	class _OWLCLASS TCheckBox;
 #endif
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	class _OWLCLASS TRadioButton;
 #endif
 
-#ifndef __OWL_COMBOBOX_H
-	class _OWLCLASS TComboBox;
+#ifndef OWL_COMBOBOX_H
+	#include <owl\combobox.h>
 #endif
 
 #ifndef __objects_h

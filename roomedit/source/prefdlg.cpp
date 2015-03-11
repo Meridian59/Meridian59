@@ -34,19 +34,19 @@
 	#include "prefdlg.h"
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 
@@ -480,7 +480,7 @@ void TPreferencesDialog::FTextureDblClk ()
    {
       TextureInfo *info = FindTextureByName(FTextureName);
       
-      if ( pFTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Floor/Ceiling Texture view ! (BUG)",
 		 FTextureName);
@@ -542,7 +542,7 @@ void TPreferencesDialog::WTextureDblClk ()
    {
       TextureInfo *info = FindTextureByName(WTextureName);
       
-      if ( pWTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Wall Texture view ! (BUG)",
 		 WTextureName);
@@ -557,12 +557,16 @@ void TPreferencesDialog::WTextureDblClk ()
 // TPreferencesDialog
 // ------------------
 //
-void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TPreferencesDialog::EvLButtonDown(UINT modKeys, const TPoint& point)
+#else
+void TPreferencesDialog::EvLButtonDown(UINT modKeys, TPoint& point)
+#endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic (point);
+	TStatic *pStatic = GetPointedStatic((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 
@@ -593,12 +597,16 @@ void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TPreferencesDialog
 // ------------------
 //
-void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TPreferencesDialog::EvLButtonDblClk(UINT modKeys, const TPoint& point)
+#else
+void TPreferencesDialog::EvLButtonDblClk(UINT modKeys, TPoint& point)
+#endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic (point);
+	TStatic *pStatic = GetPointedStatic((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 

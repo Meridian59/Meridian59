@@ -35,19 +35,19 @@
 
 #include <time.h>
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_INPUTDIA_H
+#ifndef OWL_INPUTDIA_H
 	#include <owl\inputdia.h>
 #endif
 
-#ifndef __OWL_TEXTGADG_H
+#ifndef OWL_TEXTGADG_H
 	#include <owl\textgadg.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
@@ -221,6 +221,9 @@ void InitWindeu (int argc, char **argv, char *init_level)
 	// Initialize graphics data (GDI pen cache, ...)
 	// InitGfxData();
 
+	// Load zlib1.dll dynamically
+	DibInitCompression();
+
 	// Init. MainWad file name to default (DOOM.WAD)
 	MainWad = (char *)GetMemory (strlen(DEFAULT_MAIN_WAD)+1);
 	strcpy (MainWad, DEFAULT_MAIN_WAD);
@@ -317,6 +320,9 @@ void CleanupWindeu ()
 
 	// that's all, folks!
 	CloseWadFiles();
+
+	// unload compression
+	DibCloseCompression();
 
   // Disabled 7/04 ARK
 //	UnloadKodObjects();
@@ -784,12 +790,10 @@ void ProgError( char *errstr, ...)
 		fprintf( logfile, " ***\n");
 	}
 	va_end( args);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "WinDEU error",
 				  MB_OK | MB_ICONSTOP | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	// clean up things
 	CleanupWindeu();
@@ -908,7 +912,7 @@ void WorkMessage (char *workstr, ...)
 	vsprintf( msg, workstr, args);
 	va_end( args);
 
-	((TTextGadget *)((*mainFrame->GetStatusBar())[0]))->SetText( msg);
+	((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->SetText(msg);
 	mainFrame->GetStatusBar()->UpdateWindow();
 }
 
@@ -924,7 +928,7 @@ void GetWorkMessage (char *buffer, size_t bufferSize)
 						  TMainFrame);
 
 	strncpy (buffer,
-			 ((TTextGadget *)((*mainFrame->GetStatusBar())[0]))->GetText (),
+			((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->GetText(),
 			 bufferSize);
 	buffer[bufferSize-1] = '\0';
 }
@@ -943,12 +947,10 @@ BOOL Confirm(char *confstr, ...)
 	vsprintf( msg, confstr, args);
 	va_end( args);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	int ans = ::MessageBox (0,
 							msg,
 							"Confirmation",
 							MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	return ((ans == IDYES) ? TRUE : FALSE);
 }
@@ -967,12 +969,10 @@ void Notify(char *notstr, ...)
 	vsprintf( msg, notstr, args);
 	va_end( args);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "Notification message",
 				  MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 }
 
 

@@ -34,19 +34,19 @@
 	#include "viewbmp.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_SLIDER_H
+#ifndef OWL_SLIDER_H
 	#include <owl\slider.h>
 #endif
 
@@ -369,7 +369,12 @@ void TViewBitmapListDialog::SetupWindow ()
 //
 int TViewBitmapListDialog::SetSelection (const char *str)
 {
-	int SelIndex = pBitmapList->FindExactString (str, -1);
+#if OWLVersion > OWLVERBC502
+	int SelIndex = pBitmapList->FindStringExact(str, -1);
+#else
+	int SelIndex = pBitmapList->FindExactString(str, -1);
+#endif
+
 	if ( SelIndex >= 0 )
 	{
 		pBitmapList->SetSelIndex (SelIndex);
@@ -394,7 +399,7 @@ void TViewBitmapListDialog::LBNDblclk ()
 	if ( pBitmapList->GetSelString (BitmapName, MAX_BITMAPNAME) > 1 )
 	{
 	   TextureInfo *info = FindTextureByName(BitmapName);
-	   pBitmapControl->SelectBitmap (info->filename);
+	   pBitmapControl->SelectBitmap2 (info->filename);
 	}
 }
 
@@ -410,7 +415,7 @@ void TViewBitmapListDialog::LBNSelchange ()
 	if ( pBitmapList->GetSelString (BitmapName, MAX_BITMAPNAME) > 1 )
 	{
 	   TextureInfo *info = FindTextureByName(BitmapName);
-	   pBitmapControl->SelectBitmap (info->filename);
+	   pBitmapControl->SelectBitmap2 (info->filename);
 	   SetCaption(info->filename);
 	}
 }
@@ -704,9 +709,9 @@ void TDisplayBitmapDialog::SetupWindow ()
 // TDisplayBitmapDialog
 // -------------------
 //
-int TDisplayBitmapDialog::SelectBitmap (const char *str)
+int TDisplayBitmapDialog::SelectBitmap2 (const char *str)
 {
-	pBitmapControl->SelectBitmap (str);
+	pBitmapControl->SelectBitmap2 (str);
 
 	SetCaption(str);
 

@@ -65,7 +65,7 @@ int TInfoControl::NbObjects = 0 ;
 // ------------
 //
 TInfoControl::TInfoControl (TWindow* parent, int id, unsigned _NumLines,
-							const char far* title, int x, int y, int w, int h,
+							const char* title, int x, int y, int w, int h,
 							TModule* module):
 	TControl(parent, id, title, x, y, w, h, module)
 {
@@ -172,7 +172,7 @@ void TInfoControl::SetupWindow ()
 	// Calculate font height on first time
 	if ( FontHeight == 0 )
 	{
-		TClientDC dc(HWindow);
+		TClientDC dc(Handle);
 		dc.SelectObject (*StaticFont);
 
 		TEXTMETRIC textMetric;
@@ -195,7 +195,7 @@ void TInfoControl::SetupWindow ()
 // TInfoControl
 // ------------
 //
-void TInfoControl::Paint (TDC& dc, BOOL erase, TRect& rect)
+void TInfoControl::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	TControl::Paint(dc, erase, rect);
 
@@ -242,7 +242,11 @@ void TInfoControl::Paint (TDC& dc, BOOL erase, TRect& rect)
 // TInfoControl
 // ------------
 //
-UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
+#if OWLVersion > OWLVERBC502
+UINT TInfoControl::EvNCHitTest(const TPoint& /*point*/)
+#else
+UINT TInfoControl::EvNCHitTest(TPoint& /*point*/)
+#endif
 {
 	return HTCAPTION;
 }
@@ -252,10 +256,10 @@ UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
 // TInfoControl
 // ------------
 //
-BOOL TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
+bool TInfoControl::EvSetCursor (HWND hWndCursor, UINT hitTest,
 								UINT /* mouseMsg */)
 {
-	if (hWndCursor == HWindow && hitTest == HTCAPTION && HCursor)
+	if (hWndCursor == Handle && hitTest == HTCAPTION && HCursor)
 	{
 		::SetCursor(HCursor);
 		return TRUE;
@@ -357,7 +361,7 @@ void TInfoControl::InsertAt (int linePos, const char *format, ...)
 }
 
 
-char far* TInfoControl::GetClassName ()
+char* TInfoControl::GetClassName ()
 {
 	return "WinDEU_InfoControl";
 }

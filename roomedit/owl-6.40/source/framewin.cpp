@@ -251,9 +251,9 @@ GetMenuStateBits(HMENU hmenu, int count)
 /// the pop-up menu. sysMenu indicates if the pop-up menu is the system menu.
 //
 void
-TFrameWindow::EvInitMenuPopup(HMENU hPopupMenu, uint index, bool isSysMenu)
+TFrameWindow::EvInitMenuPopup(HMENU hPopupMenu, uint index, bool sysMenu)
 {
-  if (!isSysMenu && hPopupMenu) {
+  if (!sysMenu && hPopupMenu) {
     const int count = ::GetMenuItemCount(hPopupMenu);
 
     // Save current state of visible top level menus
@@ -262,7 +262,7 @@ TFrameWindow::EvInitMenuPopup(HMENU hPopupMenu, uint index, bool isSysMenu)
     if (hPopupMenu == GetMenu())
       preState = GetMenuStateBits(hPopupMenu, count);
 
-    TWindow::EvInitMenuPopup(hPopupMenu, index, isSysMenu);
+    TWindow::EvInitMenuPopup(hPopupMenu, index, sysMenu);
 
     // If the top level menu state changes, redraw the menu bar
     //
@@ -914,28 +914,27 @@ TFrameWindow::EvSetFocus(HWND hWndLostFocus)
 /// or EvClose messages.
 //
 void
-TFrameWindow::EvParentNotify(const TParentNotify& n)
-{
-  switch (n.Event)
-  {
-  case WM_DESTROY:
-    {
-      const TParentNotifyChildInfo& i = static_cast<const TParentNotifyChildInfo&>(n);
-      if (ClientWnd && ClientWnd->GetHandle() == i.Child)
-        PostMessage(WM_CLOSE); // Using ShutDownWindow() has side effects.
-      TWindow* c = GetWindowPtr(i.Child);
-      if (c)
-        c->ClearFlag(wfFullyCreated);
-    }
-    break;
+TFrameWindow::EvParentNotify(uint event, TParam1, TParam2 p2)
 
-  case WM_SIZE: // TODO: This is not a documented event for the WM_PARENTNOTIFY message. Investigate.
-    {
-      const TParentNotifyChildInfo& i = static_cast<const TParentNotifyChildInfo&>(n);
-      if (IsFlagSet(wfShrinkToClient) && ClientWnd && ClientWnd->GetHandle() == i.Child && !IsIconic())
-        ResizeClientWindow(true);
-    }
-    break;
+{
+  if (event == WM_DESTROY) 
+  {
+    HWND child = reinterpret_cast<HWND>(p2);
+    if (ClientWnd && ClientWnd->GetHandle() == child)
+      PostMessage(WM_CLOSE);  // using ShutDownWindow() has side effects
+
+    TWindow* c = GetWindowPtr(child);
+    if (c)
+      c->ClearFlag(wfFullyCreated);
+  }
+  else if (event == WM_SIZE) 
+  {
+    HWND child = reinterpret_cast<HWND>(p2);
+    if (IsFlagSet(wfShrinkToClient)
+        && ClientWnd
+        && ClientWnd->GetHandle() == child
+        && !IsIconic())
+      ResizeClientWindow(true); // !CQ defer repaint?
   }
   DefaultProcessing();
 }

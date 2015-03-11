@@ -469,7 +469,7 @@ void ipstream::freadBytes( void *data, size_t sz )
   PRECONDITION( data != 0 );
 
   if( good() && sz > 0){
-    TTmpBuffer<char> buf(static_cast<int>(sz));
+    TTmpBuffer<char> buf(sz);
 
     if( bp->sgetn( (char*)buf, sz ) != static_cast<int>(sz))
       clear( ios::failbit );
@@ -893,7 +893,7 @@ void opstream::writeString( const char* str )
     return;
   }
   size_t len = strlen( str );
-  writeWord32(static_cast<uint32>(len));
+  writeWord32( len );
   writeBytes( str, len );
 }
 
@@ -908,7 +908,7 @@ void opstream::fwriteString( const char * str )
     return;
   }
   size_t len = strlen( str );
-  writeWord32(static_cast<uint32>(len));
+  writeWord32( len );
   fwriteBytes(str, len);
 }
 
@@ -992,6 +992,7 @@ void fpbase::open( LPCSTR b, int m, int)
     clear(ios::badbit);
 }
 
+#if defined(BI_HAS_STREAMWCHAROPEN)
 /// Opens the named file in the given mode (app, ate, in, out, binary, trunc,
 /// nocreate, or noreplace) and protection. The opened file is attached to this
 /// stream.
@@ -1004,6 +1005,7 @@ void fpbase::open(LPCWSTR b, int m, int)
   else
     clear(ios::badbit);
 }
+#endif
 
 /// Closes the stream and associated file.
 void fpbase::close()

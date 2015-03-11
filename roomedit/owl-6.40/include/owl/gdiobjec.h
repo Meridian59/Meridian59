@@ -389,35 +389,15 @@ private:
 };
 
 //
-/// Encapsulates the system font used for a specific GUI element, e.g. icon, caption, menu, message.
+/// \class TDefaultGUIFont
+// ~~~~~ ~~~~~~~~~~~~~~~
+/// Derived from TFont, TDefaultGUIFont encapsulates the font used for user
+/// interface objects such as menus and dialog boxes.
 //
-class _OWLCLASS TDefaultGuiFont
-  : public TFont 
-{
+class _OWLCLASS TDefaultGUIFont : public TFont {
 public:
-
-  //
-  /// Defines the various GUI elements for which a default font can be created.
-  //
-  enum TSystemFontId
-  {
-    sfiLegacyDefault, ///< Represents the font returned by GetStockObject (DEFAULT_GUI_FONT).
-    sfiIcon, ///< Represents ICONMETRICS::lfFont.
-    sfiCaption, ///< Represents NONCLIENTMETRICS::lfCaptionFont.
-    sfiSmallCaption, ///< Represents NONCLIENTMETRICS::lfSmCaptionFont.
-    sfiMenu, ///< Represents NONCLIENTMETRICS::lfMenuFont.
-    sfiStatus, ///< Represents NONCLIENTMETRICS::lfStatusFont.
-    sfiMessage ///< Represents NONCLIENTMETRICS::lfMessageFont.
-  };
-
-  TDefaultGuiFont(TSystemFontId = sfiLegacyDefault);
-
+	TDefaultGUIFont();
 };
-
-//
-/// Deprecated alias
-//
-typedef TDefaultGuiFont TDefaultGUIFont;
 
 //
 /// \class TPalette

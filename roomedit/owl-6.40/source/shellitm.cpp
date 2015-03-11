@@ -412,12 +412,10 @@ TShellItem::TShellItem(const tchar* path, bool throwOnInvalidPath, HWND windowOw
   HRESULT hr = desktop.ParseDisplayName(cs, path, &eaten, windowOwner);
   WARNX(OwlShell, FAILED(hr), 0, _T("Invalid path.  Path = ") << path);
   if (FAILED(hr))
-  {
     if (throwOnInvalidPath)
       TXShell::Raise(IDS_INVALIDPATH);
     else
       return;
-  }
 
   Pidl = cs.Pidl.GetLastItem();
 
@@ -1905,7 +1903,7 @@ TXShell::TXShell(uint resId, HANDLE handle)
 {
 }
 
-TXShell* TXShell::Clone()
+TXShell* TXShell::Clone() const
 {
   return new TXShell(*this);
 }

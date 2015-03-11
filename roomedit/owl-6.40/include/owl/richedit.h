@@ -477,6 +477,7 @@ class _OWLCLASS TRichEdit : public TEditFile {
     uint         EvGetDlgCode(const MSG*);
     void         EvSetFocus(HWND hWndLostFocus);
     void         EvKillFocus(HWND hWndGetFocus);
+    void         EvChildInvalid(HWND);
 
   private:
     // Hidden to prevent accidental copying or assignment

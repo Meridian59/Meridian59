@@ -35,7 +35,7 @@ class _OWLCLASS TModeGadget : public TTextGadget {
   public:
     TModeGadget(int vkKey, LPCTSTR text, int id = 0,
                 TBorderStyle = Recessed, TAlign = Center,
-                TFont* font = 0);
+                TFont* font = 0 /*new TGadgetWindowFont*/);
 
     TModeGadget(
       int vkKey, 

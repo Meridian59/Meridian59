@@ -77,6 +77,7 @@ _OWLDATA(TDialog*) DlgCreationWindow = 0;
 DEFINE_RESPONSE_TABLE1(TDialog, TWindow)
   EV_WM_CLOSE,
   EV_WM_PAINT,
+  EV_WM_CTLCOLOR,
   EV_WM_SETFONT,
   EV_DM_GETDEFID,
   EV_DM_SETDEFID,
@@ -316,15 +317,35 @@ TDialog::EvPaint()
 }
 
 //
+/// Passes the handle to the display context for the child window, the handle to the
+/// child window, and the default system colors to the parent window. The parent
+/// window then uses the display-context handle given in hDC to set the text and
+/// background colors of the child window.
+/// 
+HBRUSH
+TDialog::EvCtlColor(HDC hDC, THandle hChild, uint ctlType)
+{
+#if defined(OWL_SUPPORT_CTL3D)
+  if (GetApplication()->Ctl3dEnabled()) {
+    HBRUSH hBr = GetApplication()->GetCtl3dModule()->CtlColorEx(
+                 WM_CTLCOLORMSGBOX+ctlType, TParam1(hDC), TParam2(hChild));
+    if (hBr)
+      return hBr;
+  }
+#endif
+  return TWindow::EvCtlColor(hDC, hChild, ctlType);
+}
+
+//
 /// Return the default Id.
 /// High word must be DC_HASDEFID.
 //
 /// Calls the DefaultProcessing() function. Returns the result.
 //
-uint
+uint32
 TDialog::EvGetDefId()
 {
-  return static_cast<uint>(DefaultProcessing());
+  return DefaultProcessing();
 }
 
 //
@@ -335,7 +356,7 @@ TDialog::EvGetDefId()
 bool
 TDialog::EvSetDefId(int /*id*/)
 {
-  return static_cast<bool>(DefaultProcessing());
+  return (bool)DefaultProcessing();
 }
 
 //
@@ -433,19 +454,27 @@ TDialog::StdDlgProc(HWND hDlg, UINT msg, WPARAM param1, LPARAM param2) throw()
     //
     return dlg->DialogFunction(msg, param1, param2);
   }
-  catch (...)
+  catch (const TXBase& x) 
   {
-    TRACEX(OwlWin, 0, _T("TDialog::StdDlgProc: Suspending unhandled exception for message: ") << msg);
-
-#if defined(OWL_HAS_STD_EXCEPTION_PTR)
-    using std::current_exception;
-#else
-    using boost::current_exception;
-#endif
-
-    OWLGetAppDictionary().GetApplication()->SuspendThrow(current_exception());
+    TRACEX(OwlWin, 0, _T("TDialog::StdDlgProc: Suspending unhandled TXBase exception for message: ") << msg);
+    OWLGetAppDictionary().GetApplication()->SuspendThrow(x);
   }
-
+  catch (const TXEndSession& x)
+  {
+    TRACEX(OwlWin, 0, _T("TDialog::StdDlgProc: Suspending unhandled TXEndSession for message: ") << msg);
+    OWLGetAppDictionary().GetApplication()->SuspendThrow(x);
+  }
+  catch (const std::exception& x) 
+  {
+    TRACEX(OwlWin, 0, _T("TDialog::StdDlgProc: Suspending unhandled std::exception for message: ") << msg);
+    OWLGetAppDictionary().GetApplication()->SuspendThrow(x);
+  }
+  catch (...) 
+  {
+    TRACEX(OwlWin, 0, _T("TDialog::StdDlgProc: Suspending unhandled unknown exception for message: ") << msg);
+    OWLGetAppDictionary().GetApplication()->SuspendThrow();
+  }
+  
   return false; // If we get here, an error occurred.
 }
 
@@ -616,14 +645,20 @@ TDialog::DoExecute()
   if (IsFlagSet(dfModalWindow))
     return TWindow::DoExecute();
 
-  TModule::THandle m = GetModule()->GetHandle();
-  TWindow::THandle p = GetParent() ? GetParent()->GetHandle() : 0;
-  LPCDLGTEMPLATE t = reinterpret_cast<LPCDLGTEMPLATE>(DialogAttr.Name);
-  INT_PTR r = IsFlagSet(dfTmplMask) ?
-    ::DialogBoxIndirectParam(m, t, p, StdDlgProc, DialogAttr.Param) :
-    ::DialogBoxParam(m, DialogAttr.Name, p, StdDlgProc, DialogAttr.Param);
-  WARN(r > INT_MAX, _T("TDialog::DoExecute: EndDialog 64-bit result truncated to 32 bits."));
-  return static_cast<int>(r);
+  if (!IsFlagSet(dfTmplMask))
+    return ::DialogBoxParam(
+      *GetModule(), 
+      DialogAttr.Name,
+      GetParentO() ? GetParentO()->GetHandle() : 0,
+      StdDlgProc,
+      DialogAttr.Param);
+  else
+    return ::DialogBoxIndirectParam(
+      *GetModule(), 
+      reinterpret_cast<LPCDLGTEMPLATE>(DialogAttr.Name),
+      GetParentO() ? GetParentO()->GetHandle() : 0,
+      StdDlgProc,
+      DialogAttr.Param);
 }
 
 

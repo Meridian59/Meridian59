@@ -27,6 +27,8 @@ namespace owl {
 
 OWL_DIAGINFO;
 
+#if !defined(NO_HTMLHELP)
+
 static tchar HtmlHelpDllName[] = _T("HHCTRL.OCX");
 
 THtmlHelpDll::THtmlHelpDll()
@@ -89,14 +91,19 @@ THlpWinType::SetWindowsPos(const TRect& rect)
   rcWindowPos  = rect;
 }
 
+#endif
+
+
 //
 /// Constructor. Saves the name of the help file and creates the global context
 /// table.
 //
 THelpFileManager::THelpFileManager(const tstring& helpFileName)
 :
+#if !defined(NO_HTMLHELP)
   UseHTMLHelp(false),
   WinToHTML(true),
+#endif
   HelpCursor(0),
   ContextHelp(false),
   HelpState(false),
@@ -124,6 +131,7 @@ THelpFileManager::ActivateHelp(TWindow* /*window*/, int helpFileContextId, uint 
   if (helpCmd == HELP_INDEX || helpCmd == HELP_CONTENTS)
     helpCmd = HELP_FINDER;
   TApplication* app = TYPESAFE_DOWNCAST(this, TApplication);
+#if !defined(NO_HTMLHELP)
   if(UseHTMLHelp){
     if (app)
       HelpState = ToBool(HtmlHelp(app->GetMainWindow(), GetHelpFile().c_str(),
@@ -133,13 +141,16 @@ THelpFileManager::ActivateHelp(TWindow* /*window*/, int helpFileContextId, uint 
                                   helpCmd, helpFileContextId) != 0);
   }
   else{
+#endif
     if (app)
       HelpState = ToBool(app->GetMainWindow()->WinHelp(GetHelpFile().c_str(),
                          helpCmd, helpFileContextId));
     else
       HelpState = ToBool(::WinHelp(0, GetHelpFile().c_str(),
                          helpCmd, helpFileContextId));
+#if !defined(NO_HTMLHELP)
   }
+#endif
 }
 
 //
@@ -149,6 +160,7 @@ void
 THelpFileManager::DeactivateHelp()
 {
   TApplication* app = TYPESAFE_DOWNCAST(this, TApplication);
+#if !defined(NO_HTMLHELP)
   if(UseHTMLHelp){
     if (app)
       HtmlHelp(app->GetMainWindow(), GetHelpFile().c_str(), HELP_QUIT, 0);
@@ -156,13 +168,18 @@ THelpFileManager::DeactivateHelp()
       HtmlHelp(0, GetHelpFile().c_str(), HELP_QUIT, 0);
   }
   else{
+#endif
     if (app)
       app->GetMainWindow()->WinHelp(GetHelpFile().c_str(), HELP_QUIT, 0);
     else
       ::WinHelp(0, GetHelpFile().c_str(), HELP_QUIT, 0);
+#if !defined(NO_HTMLHELP)
   }
+#endif
 }
 
+
+#if !defined(NO_HTMLHELP)
 //
 // Support for nwe HTML Help
 //
@@ -236,6 +253,7 @@ THelpFileManager::HtmlHelp(TWindow* wnd, LPCTSTR lpszHelp, uint uCmd,  uint32 da
   }
   return 0;
 }
+#endif
 
 //
 /// Changes the name of the help file.
@@ -244,10 +262,12 @@ void
 THelpFileManager::SetHelpFile(const tstring& helpFileName)
 {
   HelpFileName = helpFileName;
+#if !defined(NO_HTMLHELP)
   UseHTMLHelp = false;
   LPCTSTR ptr = _tcsrchr(HelpFileName.c_str(),_T('.'));
   if(ptr && _tcsicmp(ptr, _T(".chm"))==0)
     UseHTMLHelp = true;
+#endif
 }
 
 DEFINE_RESPONSE_TABLE1(THelpFileManager, TEventHandler)

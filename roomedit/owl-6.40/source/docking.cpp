@@ -22,7 +22,6 @@
 # include <owl/profile.h>
 #endif
 
-#include <vector>
 #include <algorithm>
 
 using namespace std;
@@ -150,9 +149,9 @@ TDockableGadgetWindow::EvOwlWindowDocked(uint loc, const TDockingSlip&)
 //
 //
 bool
-TDockableGadgetWindow::EvSetCursor(HWND hWndCursor, uint codeHitTest, TMsgId mouseMsg)
+TDockableGadgetWindow::EvSetCursor(THandle hWndCursor, uint hitTest, uint mouseMsg)
 {
-  if(hWndCursor == GetHandle() && codeHitTest == HTCLIENT && Cursor){
+  if(hWndCursor == GetHandle() && hitTest == HTCLIENT && Cursor){
     TPoint point;
     GetCursorPos(point);
     ScreenToClient(point);
@@ -171,7 +170,7 @@ TDockableGadgetWindow::EvSetCursor(HWND hWndCursor, uint codeHitTest, TMsgId mou
       return true;
     }
   }
-   return TGadgetWindow::EvSetCursor(hWndCursor, codeHitTest, mouseMsg);
+   return TGadgetWindow::EvSetCursor(hWndCursor,hitTest,mouseMsg);
 }
 
 //
@@ -544,7 +543,7 @@ DEFINE_RESPONSE_TABLE1(TFloatingSlip, TFloatingFrame)
   EV_WM_SIZING,             // Win 4.0 message only.
   EV_WM_WINDOWPOSCHANGING,
   EV_WM_WINDOWPOSCHANGED,
-  EV_WM_SETTINGCHANGE,
+  EV_WM_WININICHANGE,       // WM_SETTINGCHANGE is same ID, new args in 4.x
   EV_WM_GETMINMAXINFO,
 END_RESPONSE_TABLE;
 
@@ -719,7 +718,7 @@ TFloatingSlip::EvSizing(uint side, TRect& rect)
 /// Handles WM_WINDOWPOSCHANGING to make sure that the frame is properly constrained
 /// by the dimensions of the dockable client.
 //
-bool
+void
 TFloatingSlip::EvWindowPosChanging(WINDOWPOS & windowPos)
 {
   TFloatingFrame::EvWindowPosChanging(windowPos);
@@ -752,7 +751,6 @@ TFloatingSlip::EvWindowPosChanging(WINDOWPOS & windowPos)
     }
   }
   windowPos.flags |= SWP_NOACTIVATE;  // Not very effective, but worth a try
-  return false;
 }
 
 //
@@ -784,7 +782,7 @@ TFloatingSlip::EvWindowPosChanged(const WINDOWPOS& windowPos)
 /// because the user has changed the caption size.
 //
 void
-TFloatingSlip::EvSettingChange(uint /*flags*/, LPCTSTR /*section*/)
+TFloatingSlip::EvWinIniChange(LPCTSTR /*section*/)
 
 {
   TWindow* w = GetClientWindow();
@@ -958,6 +956,200 @@ TFloatingSlip::GetLocation() const
 }
 
 
+//----------------------------------------------------------------------------
+///YB Maeby better way to use List ???
+//
+// Create a linked list of layouts.
+//
+template <class T>
+TFastList<T>::TFastList(int initSize, int deltaGrowth, bool sorted, bool unique)
+:
+  Delta(deltaGrowth),
+  SpaceCount(initSize),
+  EntryCount(0),
+  SortEntries(sorted),
+  UniqueEntries(unique)
+{
+  DataPtr = new TDatum[SpaceCount];
+}
+
+//
+// Destructor.
+// Cleans up the previously allocated memory.
+//
+template <class T>
+TFastList<T>::~TFastList()
+{
+  for (int i = 0; i < EntryCount; i++)
+    delete DataPtr[i].Object;
+  delete[] DataPtr;
+}
+
+//
+// Grow the list by Delta if it is not as big as a given minimum size
+//
+template <class T> void
+TFastList<T>::Grow(int minNewSize)
+{
+  if (minNewSize > SpaceCount) {
+    SpaceCount += Delta;
+    TDatum* newPtr = new TDatum[SpaceCount];
+    memcpy(newPtr, DataPtr, sizeof(TDatum) * SpaceCount);
+
+    delete[] DataPtr;
+    DataPtr = newPtr;
+  }
+}
+
+//
+// Open up space at a given index (may be past end) and increase the entry
+// count
+//
+template <class T> void
+TFastList<T>::OpenUpSpace(int index)
+{
+  Grow(EntryCount+1);
+
+  for (int i = EntryCount-1; i >= index; i--)
+    DataPtr[i + 1] = DataPtr[i];
+  EntryCount++;
+}
+
+//
+// Close up space at a given index and reduce the entry count
+// !CQ leaks ptr at index
+//
+template <class T> void
+TFastList<T>::CloseUpSpace(int index)
+{
+  for (int i = index; i < EntryCount - 1; i++)
+    DataPtr[i] = DataPtr[i + 1];
+  EntryCount--;
+}
+
+//
+// Add a layout object into the list.
+// Makes a copy of the object.
+//
+template <class T> bool
+TFastList<T>::Add(uint32 comparison, T object)
+{
+  T* newObject = new T(object); // !CQ will leak...
+  return Add(comparison, newObject);
+}
+
+//
+// Add a layout object into the list.
+//
+template <class T> bool
+TFastList<T>::Add(uint32 comparison, T* object)
+{
+  int i;             // Index of slot to add at
+  if (SortEntries) {
+    i = 0;
+    while (i < EntryCount) {  // !CQ Linear search. Could use binary since sorted!
+      if (comparison >= DataPtr[i].CompareItem)
+        i++;
+      else
+        break;
+    }
+
+    // Already in list & duplicates not wanted
+    //
+    if (UniqueEntries && i < EntryCount && DataPtr[i].CompareItem == comparison) {
+      return true;  // !CQ How caller to know to delete object? We delete?
+    }
+  }
+  else
+    i = EntryCount;  // Append to the end
+
+  // Open up one space at this location
+  //
+  OpenUpSpace(i);
+
+  DataPtr[i].CompareItem = comparison;
+  DataPtr[i].Object = object;
+
+  return true;
+}
+
+//
+// Remove the item from the list.
+//
+template <class T> T*
+TFastList<T>::Remove(uint32 comparison)
+{
+  int i = FindEntry(comparison);
+  return (i >= 0) ? RemoveEntry(i) : 0;
+}
+
+//
+// Remove an indexed entry from the list.
+//
+template <class T> T*
+TFastList<T>::RemoveEntry(int index)
+{
+  if (index < EntryCount) {
+    T* object = DataPtr[index].Object;
+    CloseUpSpace(index);
+    return object;
+  }
+  return 0;
+}
+
+//
+// Find a particular entry.
+//
+template <class T> int
+TFastList<T>::FindEntry(uint32 comparison)
+{
+  for (int i = 0; i < EntryCount; i++)   // !CQ Linear search. Could use binary!
+    if (DataPtr[i].CompareItem == comparison)
+      return i;
+  return -1;
+}
+
+//
+// Retrieve the indexed entry.
+//
+template <class T> T&
+TFastList<T>::GetEntry(int index)
+{
+//  if (index >= EntryCount)
+// !CQ bogus access. Throw?
+  return *DataPtr[index].Object;
+}
+
+//
+// Clear the entries in the list.
+//
+template <class T> void
+TFastList<T>::Clear()
+{
+  // !CQ delete ptrs
+  EntryCount = 0;
+}
+
+//
+// Fill the list with items of where they should be.
+//
+template <class T> void
+TFastList<T>::Fill(TWindow* parent, TGridType gridType)
+{
+  TWindow* first = parent->GetFirstChild();
+  if (first) {
+    TWindow* w = first;
+    do {
+      T* deco = new T(w,gridType);
+      Add(deco->GetSortKey(), deco);
+      w = w->Next();
+    }
+    while (w != first);
+  }
+}
+
+//----------------------------------------------------------------------------
+
 DEFINE_RESPONSE_TABLE1(TEdgeSlip, TWindow)
   EV_WM_LBUTTONDOWN,
   EV_WM_LBUTTONDBLCLK,  // !CQ
@@ -1004,9 +1196,7 @@ struct TEachDecoration {
   
   TEachDecoration(TWindow*, TGridType);
   TEachDecoration(int Top, int Bottom, TWindow* w);
-
-  bool operator <(const TEachDecoration& other) const 
-  {return Top < other.Top;}
+  uint32 GetSortKey() const;
 };
 
 //
@@ -1038,20 +1228,15 @@ TEachDecoration::TEachDecoration(int top, int bottom, TWindow* w)
 {
 }
 
-namespace
+//
+// Return the sort key for the object.
+// It currently uses either the left or the top coordinate.
+//
+uint32
+TEachDecoration::GetSortKey() const
 {
-
-template <class TDecoration>
-vector<TDecoration> MakeDecorationList_(TEdgeSlip& s, TGridType g)
-{
-  vector<TDecoration> v;
-  for (TWindow* w = s.GetFirstChild(); w; w = (w == s.GetLastChild()) ? 0 : w->Next())
-    v.push_back(TDecoration(w, g));
-  sort(v.begin(), v.end());
-  return v;
+  return Top;
 }
-
-} // namespace
 
 //
 /// Ensures that all decorations in the docking window are abutted against each
@@ -1062,7 +1247,8 @@ TEdgeSlip::SetupWindow()
 {
   TWindow::SetupWindow();                         // Create all children.
 
-  vector<TEachDecoration> decoList = MakeDecorationList_<TEachDecoration>(*this, GridType);
+  TFastList<TEachDecoration>  decoList(20, 10, true, true);
+  decoList.Fill(this, GridType);
 
   // Look for any gaping holes between the dockable windows and collapse them.
   // Normally, this doesn't occur unless the to be created size is different
@@ -1074,7 +1260,7 @@ TEdgeSlip::SetupWindow()
   int diff = 0;
   int startWindowChange = -1;
   int rowHeight = 0;
-  for (size_t i = 1; i < decoList.size(); ++i) {
+  for (int i = 1; i < decoList.Count(); i++) {
     // Are the two decorations we're going to look at on the same vertical?
     //
     if (decoList[i-1].Top != decoList[i].Top) {
@@ -1086,7 +1272,7 @@ TEdgeSlip::SetupWindow()
         // completely adjusted.
         //
         if (startWindowChange == -1)
-          startWindowChange = static_cast<int>(i);
+          startWindowChange = i;
 
         // Found a spot. Compute the offset.
         //
@@ -1107,7 +1293,7 @@ TEdgeSlip::SetupWindow()
   // Re-adjust all windows which have changed location.
   //
   if (startWindowChange != -1) {
-    for (size_t i = startWindowChange; i < decoList.size(); ++i) {
+    for (int i = startWindowChange; i < decoList.Count(); i++) {
       TEachDecoration& decoItem = decoList[i];
       TRect r;
       decoItem.Window->GetWindowRect(r);
@@ -1275,9 +1461,9 @@ TEdgeSlip::EvEraseBkgnd(HDC hDC)
 /// Makes sure that the slip size is updated when a child changes size.
 //
 void
-TEdgeSlip::EvParentNotify(const TParentNotify& n)
+TEdgeSlip::EvParentNotify(uint event, TParam1, TParam2)
 {
-  if (n.Event == WM_SIZE)
+  if (event == WM_SIZE)
     ReLayout(false);
   else
     DefaultProcessing();
@@ -1296,9 +1482,8 @@ public:
   bool     Moved;
 
   TDecorationSpan(TWindow* w, TGridType);
-
-  bool operator <(const TDecorationSpan& other) const
-  {return Top < other.Top || (Top == other.Top && Left < other.Left);}
+  uint32 GetSortKey() const;
+  void Move(TGridType gridType);
 };
 
 //
@@ -1326,15 +1511,24 @@ TDecorationSpan::TDecorationSpan(TWindow* w, TGridType gridType)
 }
 
 //
+// Return the sorting key of the object.
+//
+uint32
+TDecorationSpan::GetSortKey() const
+{
+  return (Top<<16)+Left;
+}
+
+//
 /// When the slip shrinks, this function adjusts dockables where needed.
 //
-bool
+void
 TEdgeSlip::EvWindowPosChanging(WINDOWPOS & windowPos)
 {
   if (!(windowPos.flags & SWP_NOSIZE)) {
     CompressParallel(windowPos.cx);
   }
-  return TWindow::EvWindowPosChanging(windowPos);
+  TWindow::EvWindowPosChanging(windowPos);
 }
 
 //
@@ -1343,20 +1537,20 @@ TEdgeSlip::EvWindowPosChanging(WINDOWPOS & windowPos)
 void
 TEdgeSlip::CompressGridLines()
 {
-  vector<TDecorationSpan> decoList = MakeDecorationList_<TDecorationSpan>(*this, GridType);
+  TFastList<TDecorationSpan>  decoList(20, 10, true, true);
+  decoList.Fill(this, GridType);
 
   // Tile dockables perpendicular to grid lines
   //
-  CHECK(!decoList.empty());
-  int gridLine = decoList[0].Top;
-  int lastTop = gridLine - 1;
+  int gridLine = 0;
+  int lastTop = -1;
   int delta = 0;
-  for (size_t i = 0; i < decoList.size(); ++i) {
+  for (int i=0; i < decoList.Count(); i++) {
     decoList[i].Moved = false;
     int t = decoList[i].Top;
     if (t != lastTop) {
       delta = gridLine-t;
-      gridLine = t;
+      gridLine = 0;
       lastTop = t;
     }
     if (delta != 0) {
@@ -1369,7 +1563,7 @@ TEdgeSlip::CompressGridLines()
 
   // Move all dockables that have changed location.
   //
-  for (size_t j = 0; j < decoList.size(); ++j) {
+  for (int j = 0; j < decoList.Count(); j++) {
     TPoint pt;
     TDecorationSpan& decoItem = decoList[j];
     if (decoItem.Moved) {
@@ -1395,17 +1589,22 @@ TEdgeSlip::CompressGridLines()
 void
 TEdgeSlip::CompressParallel(int width)
 {
+  // scan for dockables that stick off the right side, where there is space to close
+  // up the row.
+  TFastList<TDecorationSpan>  decoList(20, 10, true, true);
+  decoList.Fill(this, GridType);
+
   // Scan each row looking for a decoration that hangs off the end.
   // If possible, pull that decoration in by collapsing empty space between
   // decorations on that row.
   //
-  vector<TDecorationSpan> decoList = MakeDecorationList_<TDecorationSpan>(*this, GridType);
-  size_t firstOnRow = 0;
-  size_t lastOnRow = 0;
-  while (firstOnRow < decoList.size()) {
+  int firstOnRow = 0;
+  int lastOnRow = 0;
+
+  while (firstOnRow < decoList.Count()) {
     int spaceOnRow = decoList[firstOnRow].Left;
     int rowTop = decoList[firstOnRow].Top;
-    while (lastOnRow + 1 < decoList.size() && decoList[lastOnRow + 1].Top == rowTop) {
+    while (lastOnRow+1 < decoList.Count() && decoList[lastOnRow+1].Top == rowTop) {
       spaceOnRow += decoList[lastOnRow+1].Left-(decoList[lastOnRow].Right+1);
       lastOnRow ++;
     }
@@ -1416,7 +1615,7 @@ TEdgeSlip::CompressParallel(int width)
         // if there is extra empty space, collapse from the right
         //
         int r = width;
-        size_t i = lastOnRow;
+        int i=lastOnRow;
         while (i >= firstOnRow && (decoList[i].Right+1) > r) {
           int dx = (decoList[i].Right+1) - r;
           decoList[i].Left -= dx;
@@ -1430,7 +1629,7 @@ TEdgeSlip::CompressParallel(int width)
         // if there is not extra empty space, just collapse the space
         //
         int r = 0;
-        for (size_t i = firstOnRow; i <= lastOnRow; ++i) {
+        for (int i=firstOnRow; i<=lastOnRow; i++) {
           if (decoList[i].Left > r) {
             int dx = decoList[i].Left - r;
             decoList[i].Left -= dx;
@@ -1448,7 +1647,7 @@ TEdgeSlip::CompressParallel(int width)
 
   // Move all dockables that have changed location.
   //
-  for (size_t i = 0; i < decoList.size(); ++i) {
+  for (int i = 0; i < decoList.Count(); i++) {
     TPoint pt;
     TDecorationSpan& decoItem = decoList[i];
     if (decoItem.Moved) {
@@ -1623,18 +1822,21 @@ TEdgeSlip::DockableMove(TDockable& dockable, const TPoint* topLeft,
     }
   }
 
+  // Make a list of the dockables, sorted by y-coord
+  //
+  TFastList<TEachDecoration>  GridList(20, 10, true, true);
+  GridList.Fill(this, GridType);
+
   // Find a gridline on which to put the dockable
   //
   int dockableEdge;
-  vector<TEachDecoration> GridList = MakeDecorationList_<TEachDecoration>(*this, GridType);
-  CHECK(!GridList.empty());
-  int bottomEdge = GridList[0].Top;
+  int bottomEdge = 0;
   if (Location == alTop || Location == alBottom)
     dockableEdge = dockPos.y;
   else
     dockableEdge = dockPos.x;
 
-  for (size_t i = 0; i < GridList.size(); ++i) {
+  for (int i = 0; i < GridList.Count(); i++) {
     if (dockableEdge <= (GridList[i].Top+GridList[i].Bottom)/2)
       break;
     if (GridList[i].Window != dockableWindow)

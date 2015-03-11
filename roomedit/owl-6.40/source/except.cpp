@@ -163,7 +163,7 @@ TXOwl::Unhandled(TModule* app, uint promptResId)
 }
 
 TXOwl*
-TXOwl::Clone()
+TXOwl::Clone() const
 {
 	return new TXOwl(*this);
 }
@@ -279,7 +279,7 @@ TXOutOfMemory::TXOutOfMemory()
 }
 
 TXOutOfMemory*
-TXOutOfMemory::Clone()
+TXOutOfMemory::Clone() const
 {
 	return new TXOutOfMemory(*this);
 }
@@ -312,7 +312,7 @@ TXNotSupportedCall::TXNotSupportedCall()
 }
 
 TXNotSupportedCall* 
-TXNotSupportedCall::Clone()
+TXNotSupportedCall::Clone() const
 {
 	return new TXNotSupportedCall(*this);
 }

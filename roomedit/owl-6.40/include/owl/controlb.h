@@ -67,7 +67,7 @@ class _OWLCLASS TControlBar : public TGadgetWindow {
   public:
     TControlBar(TWindow*        parent = 0,
                 TTileDirection  direction= Horizontal,
-                TFont*          font = 0,
+                TFont*          font = new TGadgetWindowFont,
                 TModule*        module = 0);
    ~TControlBar();
 

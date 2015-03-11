@@ -80,7 +80,7 @@ class _OWLCLASS TMDIClient : public virtual TWindow {
     void                CmCloseChildren();      ///< CM_CLOSECHILDREN
     void                CmChildActionEnable(TCommandEnabler& commandEnabler);
 
-    HWND                EvMDICreate(MDICREATESTRUCT& createStruct);
+    TResult             EvMDICreate(MDICREATESTRUCT & createStruct);
     void                EvMDIDestroy(HWND hWnd);
 
     void                EvDropFiles(TDropInfo);

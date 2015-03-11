@@ -1282,8 +1282,8 @@ TGridPicker::LoadTipText(int resId)
   }
   if (tipText.length() > 0)
   {
-    tstring::size_type i = tipText.find_first_of(_T('\n'));
-    if (i != tstring::npos)
+    int i = tipText.find_first_of(_T('\n'));
+    if (i != NPOS)
       tipText = tipText.substr(i + 1);
     else
     {
@@ -1398,9 +1398,9 @@ TPopupPicker::EvKillFocus(THandle hWndGetFocus )
 
 // Another application has the focus, so we hide the picker window.
 void
-TPopupPicker::EvActivateApp(bool active, DWORD taskId)
+TPopupPicker::EvActivateApp(bool active, HTASK hTask)
 {
-  TGridPicker::EvActivateApp(active, taskId);
+  TGridPicker::EvActivateApp(active, hTask);
 
   if ((!active) && !IsSet(ppCustomOpen))
     ExitPicker(false);
@@ -1759,7 +1759,7 @@ TColorPicker::Paint(TDC& dc, bool erase, TRect& rect)
 // Someone has changed the palette. We must realize our palette again.
 //
 void
-TColorPicker::EvPaletteChanged(HWND hWndPalChg)
+TColorPicker::EvPaletteChanged(THandle hWndPalChg)
 {
   TPopupPicker::EvPaletteChanged(hWndPalChg);
   if (hWndPalChg != GetHandle())

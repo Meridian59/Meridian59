@@ -78,7 +78,9 @@ class _OWLCLASS TSplitter : public TLayoutWindow {
     void                        EvLButtonDown(uint modKeys, const TPoint& point);
     void                        EvLButtonUp(uint modKeys, const TPoint& point);
     void                        EvMouseMove(uint modKeys, const TPoint& point);
-    bool                        EvSetCursor(HWND hwndCursor, uint codeHitTest, TMsgId mouseMsg);
+    bool                        EvSetCursor(HWND /*hWndCursor*/,
+                                            uint /*hitTest*/,
+                                            uint /*mouseMsg*/);
     void                        EvSize(uint sizeType, const TSize& size);
     void                        Paint(TDC& dc, bool erase, TRect& rect);
 
@@ -154,8 +156,6 @@ class _OWLCLASS THSplitter : public TSplitter {
 class _OWLCLASS TSplitterIndicator : public TRect {
   public:
     TSplitterIndicator(TSplitter* splitter, const TRect& rect, uint cushion=0);
-    virtual ~TSplitterIndicator() {}
-
     bool              operator == (const TSplitterIndicator& si) const;
     // make happy STL
     bool              operator < (const TSplitterIndicator& si) const;

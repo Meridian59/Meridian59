@@ -28,7 +28,7 @@ using namespace owl;
 ///       LibMain, DllEntryPoint (or DllMain).
 //
 bool
-OWLInitUserDLL(HINSTANCE hInstance, LPCTSTR cmdLine)
+OWLInitUserDLL(HINSTANCE hInstance, LPTSTR cmdLine)
 {
   // If no global ::Module ptr exists yet, provide a default now
   //

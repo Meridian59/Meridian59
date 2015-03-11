@@ -86,7 +86,7 @@ TSerializeReceiver::BlockReceived(TParam1 param1, TParam2 param2)
 {
   switch (param1) {
     case TSerializer::Begin: {
-      Length = static_cast<uint32>(param2);
+      Length = param2;
       Data = new char[Length];
       CurPtr = Data;
       return 0;
@@ -101,7 +101,7 @@ TSerializeReceiver::BlockReceived(TParam1 param1, TParam2 param2)
 
     case TSerializer::Data4: {
       uint32* ptr = (uint32*)CurPtr;
-      *ptr = static_cast<uint32>(param2);
+      *ptr = param2;
       CurPtr += 4;
       return 0;
     }

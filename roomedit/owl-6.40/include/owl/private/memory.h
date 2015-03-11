@@ -61,22 +61,25 @@ inline UINT CharSize(const _TCHAR* s) {return static_cast<UINT>(sizeof(_TCHAR) *
 inline _TCHAR CharUpper(_TCHAR c) {::CharUpperBuff(&c,1); return c;}
 inline _TCHAR CharLower(_TCHAR c) {::CharLowerBuff(&c,1); return c;}
 
-#if defined(_CONVERSION_USES_THREAD_LOCALE)
-#  define BI_CONVERSION_USES_THREAD_LOCALE
-#endif
-
-#if !defined(USES_CONVERSION)
-#  ifdef BI_CONVERSION_USES_THREAD_LOCALE
-#    define OWL_USES_CONVERSION_ACP_INIT_ GetACP()
-#  else
-#    define OWL_USES_CONVERSION_ACP_INIT_ CP_ACP
+#  if defined(_CONVERSION_USES_THREAD_LOCALE)
+#    define BI_CONVERSION_USES_THREAD_LOCALE
 #  endif
-#  define USES_CONVERSION\
-     int _convert = 0; static_cast<void>(_convert);\
-     UINT _acp = OWL_USES_CONVERSION_ACP_INIT_; static_cast<void>(_acp);\
-     LPCWSTR _lpw = NULL; static_cast<void>(_lpw);\
-     LPCSTR _lpa = NULL; static_cast<void>(_lpa)
-#endif
+
+#  if !defined(USES_CONVERSION)
+#    ifdef BI_CONVERSION_USES_THREAD_LOCALE
+#      ifndef _DEBUG
+#        define USES_CONVERSION int _convert = 0; _convert; UINT _acp = GetACP(); _acp; LPCWSTR _lpw = NULL; _lpw; LPCSTR _lpa = NULL; _lpa
+#      else
+#        define USES_CONVERSION int _convert = 0; _convert; UINT _acp = GetACP(); _acp; LPCWSTR _lpw = NULL; _lpw; LPCSTR _lpa = NULL; _lpa
+#      endif
+#    else
+#      ifndef _DEBUG
+#        define USES_CONVERSION int _convert = 0; _convert; UINT _acp = CP_ACP; _acp; LPCWSTR _lpw = NULL; _lpw; LPCSTR _lpa = NULL; _lpa
+#      else
+#        define USES_CONVERSION int _convert = 0; _convert; UINT _acp = CP_ACP; _acp; LPCWSTR _lpw = NULL; _lpw; LPCSTR _lpa = NULL; _lpa
+#      endif
+#    endif
+#  endif
 
 // Global UNICODE<>ANSI translation helpers
 inline LPWSTR OwlA2WHelper(LPWSTR lpw, LPCSTR lpa, int nChars, unsigned int acp)

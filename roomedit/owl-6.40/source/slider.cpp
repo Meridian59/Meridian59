@@ -38,7 +38,7 @@ TSlider::TSlider(TWindow* parent, int id, int x, int y, int w, int h, TResId thu
   Tics = 0;
   TicCount = 0;
   SlotThick = 4;      // Default for all sliders
-  Snap = false;
+  Snap = true;
   SelStart = SelEnd = 0;
 
   Sliding = false;
@@ -60,7 +60,7 @@ TSlider::TSlider(TWindow* parent, int resId, TResId thumbResId, TModule* module)
   Tics = 0;
   TicCount = 0;
   SlotThick = 4;      // Default for all sliders
-  Snap = false;
+  Snap = true;
   SelStart = SelEnd = 0;
 
   Sliding = false;
@@ -75,11 +75,9 @@ TSlider::TSlider(THandle hWnd, TModule* module)
   ThumbResId(0),
   ThumbRect(0, 0, 0, 0)  // This will get setup when bitmap is loaded.
 {
-  int rMin = static_cast<int>(SendMessage(TBM_GETRANGEMIN));
-  int rMax = static_cast<int>(SendMessage(TBM_GETRANGEMAX));
-  SetRange(rMin, rMax); 
-  Pos = static_cast<int>(SendMessage(TBM_GETPOS));
-  GetClassName();
+  SetRange(SendMessage(TBM_GETRANGEMIN), SendMessage(TBM_GETRANGEMAX)); 
+  Pos = SendMessage(TBM_GETPOS);
+  GetClassName(); 
 
   ThumbRgn = 0;
   TicGap = Range/10;  // Setup 10 evenly spaced tics by default, no array.

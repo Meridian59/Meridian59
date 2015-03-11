@@ -37,18 +37,18 @@ namespace owl {
 //
 /// \name Definitions of dmXxx document manager operational mode flags
 /// @{
-const uint dmSDI        = 0x0001;  ///< Does not support multiple open documents
-const uint dmMDI        = 0x0002;  ///< Supports multiple open documents
-const uint dmMenu       = 0x0004;  ///< Set IDs for file menu
-const uint dmSaveEnable = 0x0010;  ///< Enable FileSave even if doc is unmodified
-const uint dmNoRevert   = 0x0020;  ///< Disable FileRevert menu item
+const int dmSDI        = 0x0001;  ///< Does not support multiple open documents
+const int dmMDI        = 0x0002;  ///< Supports multiple open documents
+const int dmMenu       = 0x0004;  ///< Set IDs for file menu
+const int dmSaveEnable = 0x0010;  ///< Enable FileSave even if doc is unmodified
+const int dmNoRevert   = 0x0020;  ///< Disable FileRevert menu item
 /// @}
 
 //
 /// Flags which are stripped off when invoking Open/Save dialogs [See
 /// SelectDocPath() method for more information ]
 //
-const uint dtProhibited = OFN_ENABLEHOOK | 
+const long dtProhibited = OFN_ENABLEHOOK | 
                           OFN_ENABLETEMPLATE | 
                           OFN_ALLOWMULTISELECT |
                           OFN_ENABLETEMPLATEHANDLE;
@@ -355,14 +355,20 @@ class _OWLCLASS TDvFileSaveDialog : public TFileSaveDialog, public TDvOpenSaveDa
 };
 
 /// \name Custom OWL Window  Messages
+/// @{
 /// These macros handle OWL-defined window messages used internally by the
 /// framework:
-/// @{
+#define EV_WM_PREPROCMENU\
+  {{WM_OWLPREPROCMENU}, 0, (::owl::TAnyDispatcher) ::owl::v_WPARAM_Dispatch,\
+   (TMyPMF)::owl::v_HMENU_Sig(&TMyClass::EvPreProcessMenu)}
 
-#define EV_WM_PREPROCMENU OWL_EV_(WM_OWLPREPROCMENU, EvPreProcessMenu)
-#define EV_WM_CANCLOSE OWL_EV_(WM_OWLCANCLOSE, EvCanClose)
-#define EV_WM_WAKEUP OWL_EV_(WM_OWLWAKEUP, EvWakeUp)
+#define EV_WM_CANCLOSE\
+  {{WM_OWLCANCLOSE}, 0, (::owl::TAnyDispatcher) ::owl::B_Dispatch,\
+   (TMyPMF)::owl::B_Sig(&TMyClass::EvCanClose)}
 
+#define EV_WM_WAKEUP\
+  {{WM_OWLWAKEUP}, 0, (::owl::TAnyDispatcher) ::owl::v_Dispatch,\
+   (TMyPMF)::owl::v_Sig(&TMyClass::EvWakeUp)}
 /// @}
 
 /// @}

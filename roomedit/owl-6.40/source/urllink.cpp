@@ -30,7 +30,7 @@ DEFINE_RESPONSE_TABLE1(TUrlLink, TStatic)
   EV_WM_PAINT,
   EV_WM_LBUTTONDOWN,
   EV_WM_MOUSEMOVE,
-  EV_WM_CTLCOLORSTATIC(EvCtlColor),
+  EV_WM_CTLCOLOR,
   EV_WM_GETFONT,
   EV_WM_SETFONT,
   EV_WM_GETDLGCODE,
@@ -130,12 +130,22 @@ TUrlLink::SetupWindow()
 
   // Try to get our parent's font.
   //
-  HFONT parentFont = GetParentO()->GetWindowFont();
-  LOGFONT f = parentFont ?
-    TFont(parentFont).GetObject() :
-    TDefaultGuiFont().GetObject();
-  f.lfUnderline = bUnderline;
-  LinkFont = new TFont(f);
+  HFONT font = GetParentO()->GetWindowFont();
+
+  // Settle for the ANSI proportional one.
+  //
+  if (font)
+  {
+    LOGFONT logFont = TFont(font).GetObject();
+    logFont.lfUnderline = bUnderline;
+    LinkFont = new TFont(logFont);
+  }
+  else
+  {
+    LOGFONT logFont = TDefaultGUIFont().GetObject();
+    logFont.lfUnderline = bUnderline;
+    LinkFont = new TFont(logFont);
+  }
   CHECK(LinkFont != 0);
 
   // If no URL is given, get it from the window text.
@@ -488,11 +498,11 @@ TUrlLink::SetVisited(bool visited/* = true*/)
 /// Sets whether the caption should be displayed in underlined text
 //
 void
-TUrlLink::SetUnderline(bool underline)
+TUrlLink::SetUnderline(bool bUnderline/* = true */)
 {
-  if(bUnderline == underline)
+  if(bUnderline == bUnderline)
     return;
-  bUnderline = underline;
+  bUnderline = bUnderline;
   if (GetHandle())
   {
     LOGFONT logFont = LinkFont->GetObject();

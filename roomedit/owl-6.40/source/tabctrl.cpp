@@ -102,7 +102,7 @@ void
 TTabItem::SetLabel(LPCTSTR str, int len)
 {
   pszText = CONST_CAST(LPTSTR, str);
-  cchTextMax = len ? len : static_cast<int>(::_tcslen(str));
+  cchTextMax = len ? len : ::_tcslen(str);
   mask |= TCIF_TEXT;
 }
 
@@ -393,8 +393,7 @@ TTabControl::SetItemExtra(int extra)
 TSize
 TTabControl::SetItemSize(const TSize& size)
 {
-  DWORD r = static_cast<DWORD>(SendMessage(TCM_SETITEMSIZE, 0, MkParam2(size.cx, size.cy)));  
-  return TSize(r);
+    return TSize(SendMessage(TCM_SETITEMSIZE, 0, MkParam2(size.cx, size.cy)));
 }
 
 //

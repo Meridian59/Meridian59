@@ -399,7 +399,7 @@ TGlyphButton::SetupWindow()
   //
   delete BtnFont;
   HFONT hFont = GetParentO()->GetWindowFont();
-  BtnFont = hFont ? new TFont(hFont) : new TDefaultGuiFont();
+  BtnFont = hFont ? new TFont(hFont) : new TDefaultGUIFont;
 }
 
 
@@ -984,14 +984,27 @@ TGlyphButton::PaintFace(TDC& dc, const TRect& rect)
 
       // Select the font
       //
-      if (!BtnFont)
-      {
-        HFONT parentFont = reinterpret_cast<HFONT>(::SendMessage(GetParentH(), WM_GETFONT, 0, 0));
-        tmpFnt = parentFont ? new TFont(parentFont) : static_cast<TFont*>(new TDefaultGuiFont());
+      if (!BtnFont){
+        HFONT hFont = HFONT(::SendMessage(::GetParent(*this), WM_GETFONT,
+                                          0, 0));
+#if defined(BI_DBCS_SUPPORT)
+        if (!hFont)
+          tmpFnt = (TFont*)new TDefaultGUIFont();
+#else
+        if(!hFont)
+          hFont = HFONT(GetStockObject(ANSI_VAR_FONT));
+        if(hFont)
+          tmpFnt = new TFont(hFont);
+#endif
       }
-      const TFont& f = BtnFont ? *BtnFont : *tmpFnt;
-      CHECK(f.IsGDIObject());
-      dc.SelectObject(f);
+      if (BtnFont){
+        CHECK(BtnFont->IsGDIObject());
+        dc.SelectObject(*BtnFont);
+      }
+      else if (tmpFnt) {
+        CHECK(tmpFnt->IsGDIObject());
+        dc.SelectObject(*tmpFnt);
+      }
 
       text = new tchar[len+1];
       GetWindowText(text, len+1);

@@ -676,7 +676,7 @@ TXCommCtrl::TXCommCtrl()
 /// resume the exception.
 //
 TXCommCtrl*
-TXCommCtrl::Clone()
+TXCommCtrl::Clone() const
 {
   return new TXCommCtrl(*this);
 }
@@ -702,5 +702,16 @@ TXCommCtrl::Raise()
   TXCommCtrl().Throw();
 }
 
+//----------------------------------------------------------------------------
+// DISPATCH.CPP
+//
+_OWLFUNC(LRESULT)
+v_NMHDRCode_Dispatch(TGeneric& i, void (TGeneric::*f)(uint), WPARAM, LPARAM p2)
+{
+  (i.*f)((LPNMHDR(p2))->code);
+  return 0;
+}
+
 } // OWL namespace
+/* ========================================================================== */
 

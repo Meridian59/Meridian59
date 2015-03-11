@@ -281,7 +281,7 @@ class _OWLCLASS TGridPicker : public TControl, public TBitFlags<uint> {
     //JJH - removed, no definition provided
     #if !defined(STRIP_UNDEFINED)
     uint EvGetDlgCode(const MSG* msg) { return TControl::EvGetDlgCode(msg); }
-    void EvActivateApp(bool active, DWORD threadId) { TControl::EvActivateApp(active, threadId); }
+    void EvActivateApp(bool active, HTASK hTask) { TControl::EvActivateApp(active, hTask); }
     #endif
     void EvSetFocus(THandle hWndLostFocus);
     void EvKillFocus(THandle hWndGetFocus);
@@ -358,7 +358,7 @@ class _OWLCLASS TPopupPicker : public TGridPicker{
     virtual void  Paint(TDC& dc, bool erase, TRect& rect);
 
   protected:
-    void EvActivateApp(bool active, DWORD taskId);
+    void EvActivateApp(bool active, HTASK hTask);
     void EvKillFocus(THandle hWndGetFocus );
     void EvLButtonDown(uint modKeys, const TPoint& point);
     virtual void  GetWindowClass(WNDCLASS& wndClass);
@@ -392,7 +392,7 @@ class _OWLCLASS TColorPicker: public TPopupPicker{
 
     // Event handlers
   protected:
-    void EvPaletteChanged(HWND hWndPalChg);
+    void EvPaletteChanged(THandle hWndPalChg);
     bool EvQueryNewPalette();
 
     virtual bool     CallCustomBox();

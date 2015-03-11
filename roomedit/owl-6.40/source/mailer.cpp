@@ -100,20 +100,22 @@ TMailer::SendDocuments(TWindow* owner, LPCTSTR docPaths,
   // system's shared session.  If no shared session exists, it prompts for
   // logon information to establish a session.  Before the function return,
   // it closes the session.
-  //
-  _USES_CONVERSION;
-  ULONG err = MAPISendDocuments(
-    reinterpret_cast<ULONG_PTR>(owner->GetHandle()),
-    const_cast<LPSTR>(";"), // delim
-    const_cast<LPSTR>(_W2A(docPaths)),
-    const_cast<LPSTR>(_W2A(docNames)),
-    asynchWork ? 1 : 0 // TODO: This parameter is documented as reserved; eliminate use.
-    );
-
-  if (err) 
-  {
-    TRACE(_T("TMailer::SendDocuments failed. Error: ") << err);
-    // TODO: A problem was encountered; throw exception.
+#if defined(UNICODE)
+  USES_CONVERSION;
+  uint32 err = MAPISendDocuments(uint32(owner->GetHandle()), ";",
+                                 W2A(docPaths),
+                                 W2A(docNames),
+                                 asynchWork);
+#else
+  uint32 err = MAPISendDocuments(uint32(owner->GetHandle()), ";",
+                                 (LPSTR)docPaths,
+                                 (LPSTR)docNames,
+                                 asynchWork);
+#endif
+  if (err) {
+    // A problem was encountered.  Report it to the user?
+    //sprintf(docNames, "Failed to send the documents. Error: %d", err); //?????????
+    //owner->MessageBox(docNames, 0, MB_OK);
   }
 
   // Delete the temp names string if we new'd one here

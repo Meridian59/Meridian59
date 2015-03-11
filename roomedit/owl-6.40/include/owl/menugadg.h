@@ -36,7 +36,7 @@ class _OWLCLASS TMenuGadget : public TTextGadget {
   public:
     TMenuGadget(TMenu& menu, TWindow* window, int id = 0,
                 TBorderStyle borderStyle = TGadget::ButtonUp,
-                LPTSTR text = 0, TFont* font = 0);
+                LPTSTR text = 0, TFont* font = new TGadgetWindowFont);
    ~TMenuGadget();
 
     // Override from TGadget

@@ -68,13 +68,13 @@ class _OWLCLASS TConfigFile {
     virtual void    LoadValues(const TConfigFile& file);
     
     virtual bool    SectionExists(LPCTSTR section) const;
-    virtual uint    ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const = 0;
-    virtual uint    ReadSections(LPTSTR sections, uint bufSize) const = 0;
+    virtual int     ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const = 0;
+    virtual int     ReadSections(LPTSTR sections, uint bufSize) const = 0;
     virtual bool    EraseSection(LPCTSTR section) = 0;
     virtual bool    EraseEntry(LPCTSTR section, LPCTSTR entry) = 0;
     virtual void    UpdateFile() = 0;
 
-    virtual uint    ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr= 0) const = 0;
+    virtual int     ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr= 0) const = 0;
     virtual bool    WriteString(LPCTSTR section, LPCTSTR entry, LPCTSTR value) = 0;
 
     virtual bool    ReadData(LPCTSTR section, LPCTSTR entry, void* buffer, uint size) const;
@@ -175,10 +175,10 @@ class _OWLCLASS TConfigFileSection {
     bool    Erase()   { return File.EraseSection(Section.c_str());  }
     bool    EraseEntry(LPCTSTR entry);
 
-    uint    ReadString(LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
+    int     ReadString(LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
     bool    WriteString(LPCTSTR entry, LPCTSTR value);
-    uint    ReadString(const tstring& entry, tstring& buffer, LPCTSTR defstr=0) const;
-    uint    ReadString(const tstring& entry, tstring& buffer, const tstring& defstr) const
+    int     ReadString(const tstring& entry, tstring& buffer, LPCTSTR defstr=0) const;
+    int     ReadString(const tstring& entry, tstring& buffer, const tstring& defstr) const
     {return ReadString(entry, buffer, defstr.c_str());}
     bool    WriteString(const tstring& entry, const tstring& value);
     
@@ -258,13 +258,13 @@ class _OWLCLASS TIniConfigFile: public TConfigFile {
 
     virtual ~TIniConfigFile(){}
 
-    virtual uint    ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const;
-    virtual uint    ReadSections(LPTSTR buffer, uint bufSize) const;
+    virtual int     ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const;
+    virtual int     ReadSections(LPTSTR buffer, uint bufSize) const;
     virtual bool    EraseSection(LPCTSTR section);
     virtual bool    EraseEntry(LPCTSTR section, LPCTSTR entry);
     virtual void    UpdateFile();
 
-    virtual uint    ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
+    virtual int     ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
     virtual bool    WriteString(LPCTSTR section, LPCTSTR entry, LPCTSTR value);
     virtual bool    ReadData(LPCTSTR section, LPCTSTR entry, void* buffer, uint size) const;
     virtual bool    WriteData(LPCTSTR section, LPCTSTR entry, void* buffer, uint size);
@@ -301,13 +301,13 @@ class _OWLCLASS TMemConfigFile: public TConfigFile {
     virtual ~TMemConfigFile();
     virtual void    LoadValues(const TConfigFile& file);
 
-    virtual uint    ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const;
-    virtual uint    ReadSections(LPTSTR buffer, uint bufSize) const;
+    virtual int     ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const;
+    virtual int     ReadSections(LPTSTR buffer, uint bufSize) const;
     virtual bool    EraseSection(LPCTSTR section);
     virtual bool    EraseEntry(LPCTSTR section, LPCTSTR entry);
     virtual void    UpdateFile();
 
-    virtual uint    ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
+    virtual int     ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
     virtual bool    WriteString(LPCTSTR section, LPCTSTR entry, LPCTSTR value);
 
     // Overloads from base
@@ -338,15 +338,15 @@ class _OWLCLASS TRegConfigFile : public TConfigFile {
     //  Override these to change storage technique:
     //
     virtual bool    SectionExists(LPCTSTR section) const;
-    virtual uint    ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const;
-    virtual uint    ReadSections(LPTSTR buffer, uint bufSize) const;
+    virtual int     ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const;
+    virtual int     ReadSections(LPTSTR buffer, uint bufSize) const;
     virtual bool    EraseSection(LPCTSTR section);
     virtual bool    EraseEntry(LPCTSTR section, LPCTSTR entry);
     virtual void    UpdateFile();
 
     virtual int     ReadInteger(LPCTSTR section, LPCTSTR entry,int defint=0) const;
     virtual bool    WriteInteger(LPCTSTR section, LPCTSTR entry, int value);
-    virtual uint    ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
+    virtual int     ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr=0) const;
     virtual bool    WriteString(LPCTSTR section, LPCTSTR entry, LPCTSTR value);
     virtual bool    ReadData(LPCTSTR section, LPCTSTR entry, void* buffer, uint size) const;
     virtual bool    WriteData(LPCTSTR section, LPCTSTR entry, void* buffer, uint size);
@@ -589,7 +589,7 @@ TConfigFileSection::EraseEntry(LPCTSTR entry)
 //
 //
 //
-inline uint 
+inline int 
 TConfigFileSection::ReadString(LPCTSTR entry, LPTSTR buffer, uint bufSize, 
                                LPCTSTR defstr) const
 {
@@ -606,7 +606,7 @@ TConfigFileSection::WriteString(LPCTSTR entry, LPCTSTR value)
 //
 //
 //
-inline uint 
+inline int 
 TConfigFileSection::ReadString(const tstring& entry, tstring& buffer, 
                                LPCTSTR defstr) const
 {

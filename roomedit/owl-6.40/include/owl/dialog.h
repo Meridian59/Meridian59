@@ -180,7 +180,8 @@ class _OWLCLASS TDialog : virtual public TWindow {
     //
     void            EvClose();
     void            EvPaint();
-    uint            EvGetDefId();
+    HBRUSH          EvCtlColor(HDC, HWND hWndChild, uint ctlType);
+    uint32          EvGetDefId();
     bool            EvSetDefId(int id);
     void            EvReposition();
 

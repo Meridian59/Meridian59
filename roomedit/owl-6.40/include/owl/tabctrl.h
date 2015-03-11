@@ -250,7 +250,7 @@ inline void TTabControl::DeselectAll(bool exclFocus)
 inline uint32 TTabControl::GetExtendedStyle() const
 {
   PRECONDITION(GetHandle());
-  return static_cast<uint32>(SendMessage(TCM_GETEXTENDEDSTYLE));
+  return CONST_CAST(TTabControl*,this)->SendMessage(TCM_GETEXTENDEDSTYLE);
 }
 
 // Version 4.71

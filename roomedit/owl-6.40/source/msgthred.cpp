@@ -129,8 +129,8 @@ TMsgThread::PumpWaitingMessages()
     foundOne = true;
     if (msg.message == WM_QUIT) {
       BreakMessageLoop = true;
-      MessageLoopResult = static_cast<int>(msg.wParam);
-      ::PostQuitMessage(MessageLoopResult);  // make sure all loops exit
+      MessageLoopResult = msg.wParam;
+      ::PostQuitMessage(msg.wParam);  // make sure all loops exit
       break;
     }
     bool shouldBreak = ProcessMsg(msg);

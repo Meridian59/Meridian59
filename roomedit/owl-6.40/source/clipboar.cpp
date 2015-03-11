@@ -186,7 +186,7 @@ TXClipboard::TXClipboard(uint resId)
 // Clone the exception for safe throwing in Windows.
 //
 TXClipboard*
-TXClipboard::Clone()
+TXClipboard::Clone() const
 {
   return new TXClipboard(*this);
 }

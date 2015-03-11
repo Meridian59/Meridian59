@@ -223,21 +223,12 @@ TTabbedWindow::TTabbedWindow(TWindow* parent, LPCTSTR title, TModule* module)
   TLayoutWindow(parent, title, module),
   TTabbedBase(this,0,0,0,0)
 {
-  Init();
 }
 
 TTabbedWindow::TTabbedWindow(TWindow* parent, const tstring& title, TModule* module)
   : TLayoutWindow(parent, title, module),
   TTabbedBase(this,0,0,0,0)
-{
-  Init();
-}
-
-void TTabbedWindow::Init()
-{
-  SetBkgndColor(TColor::Transparent); // No erase; see TWindow::EvEraseBkgnd.
-  ModifyStyle(0, WS_CLIPCHILDREN | WS_CLIPSIBLINGS); // Clipping reduces resize flicker.
-}
+{}
 
 //
 bool TTabbedWindow::Create()
@@ -248,10 +239,11 @@ bool TTabbedWindow::Create()
     TWindow* wnd = GetPage(i);
     wnd->ModifyStyle(WS_VISIBLE, 0);
   }
-
-  // Calculate tab control height and layout.
+  // Use the default UI font
   //
-  uint height = GetTabControl()->GetMinimalHeight() + 1;
+  TScreenDC dc;
+  uint height = TDefaultGUIFont().GetHeight(dc);
+
   TLayoutMetrics lmWindow;
   TLayoutMetrics lmNoteTab;
   setWindowLayoutMetrics(lmWindow, GetTabControl(), Position);
@@ -260,7 +252,6 @@ bool TTabbedWindow::Create()
       lmNoteTab.X.SameAs(lmParent, lmLeft);
       lmNoteTab.Y.SameAs(lmParent, lmTop);
       lmNoteTab.Width.Absolute(lmRight, height);
-      lmNoteTab.Width.Units = lmPixels;
       lmNoteTab.Height.SameAs(lmParent, lmHeight);
       break;
     case tpRight:
@@ -268,27 +259,17 @@ bool TTabbedWindow::Create()
       lmNoteTab.Y.SameAs(lmParent, lmTop);
       lmNoteTab.Height.SameAs(lmParent, lmHeight);
       lmNoteTab.Width.Absolute(lmLeft, height);
-      lmNoteTab.Width.Units = lmPixels;
       break;
     case tpTop:
       lmNoteTab.X.SameAs(lmParent, lmLeft);
       lmNoteTab.Y.SameAs(lmParent, lmTop);
       lmNoteTab.Width.SameAs(lmParent, lmWidth);
       lmNoteTab.Height.Absolute(lmBottom, height);
-      lmNoteTab.Height.Units = lmPixels;
       break;
     case tpBottom:
       lmNoteTab.X.SameAs(lmParent, lmLeft);
-      
-      // Needed an adjustment of -1 here, otherwise there is a 1 pixel gap 
-      // below the tab control.
-      //
-      // TODO: Determine if this is a bug in TLayoutWindow,  or whether this 
-      // bottom pixel exclusion is indeed correct.
-      //
-      lmNoteTab.Y.Set(lmBottom, lmAbove, lmParent, lmBottom, -1);
+      lmNoteTab.Y.Set(lmBottom, lmAbove, lmParent, lmBottom, 0);
       lmNoteTab.Height.Absolute(height);
-      lmNoteTab.Height.Units = lmPixels;
       lmNoteTab.Width.SameAs(lmParent, lmRight);
       break;
   }
@@ -355,19 +336,6 @@ bool TTabbedWindow::DeletePage(TWindow& wnd)
    }
    return false;
 }
-
-void TTabbedWindow::ResizeTabControl(int newHeight)
-{
-  TNoteTab* t = GetTabControl(); CHECK(t);
-  TLayoutMetrics m;
-  GetChildLayoutMetrics(*t, m);
-  m.Height.Absolute(newHeight);
-  m.SetMeasurementUnits(lmPixels);
-  SetChildLayoutMetrics(*t, m);
-  Layout();
-  t->Invalidate();
-}
-
 //------------------------------------------------------------------------------
 // TTabbedView Implementation
 //

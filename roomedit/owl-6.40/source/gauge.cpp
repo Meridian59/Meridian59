@@ -375,7 +375,7 @@ TGauge::Paint(TDC& dc, bool /*erase*/, TRect&)
       tchar buff[32];
       wsprintf(buff, c, Value);
 
-      int   len = static_cast<int>(::_tcslen(buff));
+      int   len = ::_tcslen(buff);
       TSize extent = dc.GetTextExtent(&buff[0], len);
       int   x = innerRect.left;
       int   y = innerRect.top;
@@ -391,10 +391,9 @@ TGauge::Paint(TDC& dc, bool /*erase*/, TRect&)
       //
       dc.SetBkMode(TRANSPARENT);
       dc.SetTextColor(bkcolor);
-      int n = static_cast<int>(::_tcslen(buff));
-      dc.ExtTextOut(x, y, ETO_CLIPPED, &barRect, &buff[0], n);
+      dc.ExtTextOut(x, y, ETO_CLIPPED, &barRect, &buff[0], ::_tcslen(buff));
       dc.SetTextColor(ledcolor);
-      dc.ExtTextOut(x, y, ETO_CLIPPED, &emptyRect, &buff[0], n);
+      dc.ExtTextOut(x, y, ETO_CLIPPED, &emptyRect, &buff[0], ::_tcslen(buff));
     }
   }
 }

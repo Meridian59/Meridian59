@@ -28,7 +28,7 @@
 // All other version numbers and strings should be defined in terms of this.
 // NB! No leading zeroes in the numbers! (leading zero = octal)
 //
-#define OWL_VERSION(v) v(6,40,5,$WCREV$)
+#define OWL_VERSION(v) v(6,34,3,$WCREV$)
 
 // OWL File Version (major, minor, release, build)
 //

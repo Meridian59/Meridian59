@@ -103,8 +103,8 @@ class _OWLCLASS TFloatingFrame : public TFrameWindow, public TTinyCaption {
     void     EvNCPaint(HRGN);
     uint    EvNCHitTest(const TPoint& screenPt);
     bool    EvNCActivate(bool active);
-    uint    EvMouseActivate(HWND hTopLevel, uint hitCode, TMsgId);
-    void    EvActivateApp(bool active, DWORD taskId);
+    uint    EvMouseActivate(THandle hTopLevel, uint hitCode, TMsgId);
+    void    EvActivateApp(bool active, HTASK hTask);
 
   private:
     TSize   Margin;       ///< Left and right, top and bottom

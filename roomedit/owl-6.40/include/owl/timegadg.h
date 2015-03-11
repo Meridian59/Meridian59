@@ -44,7 +44,7 @@ class _OWLCLASS TTimeGadget : public TTextGadget {
                 TAlign = Center,
                 uint numChars = 12, 
                 LPCTSTR text = 0,
-                TFont* font = 0);
+                TFont* font = 0 /*new TGadgetWindowFont*/);
 
     TTimeGadget(
       TGetTimeFunc timeFunc,

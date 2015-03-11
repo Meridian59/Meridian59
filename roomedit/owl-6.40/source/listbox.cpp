@@ -11,6 +11,10 @@
 #include <stdlib.h>
 #include <vector>
 
+#if defined(__BORLANDC__) && __BORLANDC__ < 0x600
+# pragma option -w-csu // Disable warning in standard library; "Comparison of signed and unsigned".
+#endif
+
 using namespace std;
 
 namespace owl {
@@ -119,9 +123,9 @@ TListBoxData::SelectString(LPCTSTR str)
 int
 TListBoxData::GetSelStringLength(int index) const
 {
-  return index >= 0 && index < GetSelCount() ?
-    static_cast<int>((*Strings)[(*SelIndices)[index]].length()) :
-    -1;
+  if (index >= 0 && index < GetSelCount())
+    return (*Strings)[(*SelIndices)[index]].length();
+  return -1;
 }
 
 //
@@ -518,7 +522,7 @@ TListBox::SetSelStrings(const TStringArray& strs, bool shouldSet)
     return -1;
 
   int successes = 0;
-  for (int i = 0; i < static_cast<int>(strs.size()); i++) 
+  for (size_t i = 0; i < strs.size(); i++) 
   {
     int selIndex = FindString(strs[i], -1);
     if (selIndex > -1)
@@ -565,8 +569,8 @@ TListBox::GetSelIndexes() const
 {
   TIntArray selections;
   std::vector<int> buf(GetSelCount());
-  int n = GetSelIndexes(&buf[0], static_cast<int>(buf.size()));
-  CHECK(n == static_cast<int>(buf.size()));
+  int n = GetSelIndexes(&buf[0], buf.size());
+  CHECK(n == buf.size());
   for (int i = 0; i != n; ++i)
     selections.Add(buf[i]);
   return selections;
@@ -624,8 +628,8 @@ TListBox::SetSelIndexes(const TIntArray& indexes, bool shouldSet)
     return -1;  // including if it's a combobox
 
   int successes = 0;
-  for (int i = 0; i < static_cast<int>(indexes.size()); i++)
-    if (static_cast<int>(SendMessage(LB_SETSEL, shouldSet, indexes[i])) > -1)
+  for (size_t i = 0; i < indexes.size(); i++)
+    if ((int)SendMessage(LB_SETSEL, shouldSet, indexes[i]) > -1)
       successes++;
   return successes;
 }

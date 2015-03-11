@@ -134,16 +134,18 @@ TCommDlg::PageSetupDlg(LPPAGESETUPDLG p1)
          pageSetupDlg(GetModule(), PageSetupDlgStr);
   return pageSetupDlg(p1);
 }
+#if(WINVER >= 0x0500)
 //
 /// Invokes 'PrintDlgEx' indirectly
 //
-HRESULT
+BOOL
 TCommDlg::PrintDlgEx(LPPRINTDLGEX p1)
 {
-  static TModuleProc1<HRESULT,LPPRINTDLGEX>
+  static TModuleProc1<BOOL,LPPRINTDLGEX>
          printDlg(GetModule(), PrintDlgExStr);
   return printDlg(p1);
 }
+#endif // #if(WINVER >= 0x0500)
 //
 /// Invokes 'PrintDlg' indirectly
 //

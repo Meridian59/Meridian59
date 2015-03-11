@@ -31,9 +31,6 @@
 #if !defined(DS_CONTEXTHELP)
 # define DS_CONTEXTHELP       0x2000L
 #endif
-#if !defined(DS_SHELLFONT)
-# define DS_SHELLFONT         (DS_SETFONT | DS_FIXEDSYS)
-#endif
 
 //
 // Commands

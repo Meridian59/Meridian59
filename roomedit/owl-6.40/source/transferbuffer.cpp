@@ -6,6 +6,10 @@
 // Distributed under the OWLNext License (see http://owlnext.sourceforge.net).
 //
 
+#if defined(__BORLANDC__) && __BORLANDC__ < 0x600
+# pragma option -w-inl // Disable warning in standard library; "Functions containing 'statement' are not expanded inline".
+#endif
+
 #include <owl/pch.h>
 
 #include <owl/transferbuffer.h>

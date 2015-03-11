@@ -261,7 +261,7 @@ class _OWLCLASS TDC : protected TGdiBase {
     bool        RectVisible(const TRect& rect) const;
     bool        GetBoundsRect(TRect& bounds, uint16 flags) const;
     uint        SetBoundsRect(TRect& bounds, uint flags);
-    int         GetClipRgn(TRegion& region) const;
+    bool        GetClipRgn(TRegion& region) const;
 
     // MetaFile functions
     //
@@ -320,7 +320,7 @@ class _OWLCLASS TDC : protected TGdiBase {
     bool        TextRect(const TRect& rect);
     bool        TextRect(int x1, int y1, int x2, int y2, const TColor& color);
     bool        TextRect(const TRect& rect, const TColor& color);
-    bool        FillSolidRect(const TRect& r, const TColor& color) {return TextRect(r,color);}
+	bool        FillSolidRect(TRect& r, const TColor& color) { return TextRect(r,color); } //DLN added MFC look-alike
 
     //
     //
@@ -489,7 +489,6 @@ class _OWLCLASS TDC : protected TGdiBase {
     tstring GetTextFace() const;
 
     bool GetTextMetrics(TEXTMETRIC & metrics) const;
-    TEXTMETRIC GetTextMetrics() const;
 
     uint32 GetGlyphOutline(uint chr, uint format, GLYPHMETRICS & gm,
       uint32 buffSize, void* buffer, const MAT2 & mat2);
@@ -758,10 +757,23 @@ class _OWLCLASS TMemoryDC : public TCreatedDC {
     TMemoryDC(TBitmap& bitmap);
    ~TMemoryDC();
 
+    // Select GDI objects into this DC and restore them to original
+    //
+    void        SelectObject(const TBrush& brush);
+    void        SelectObject(const TPen& pen);
+    void        SelectObject(const TFont& font);
+    void        SelectObject(const TPalette& palette, bool forceBackground=false);
+    void        SelectObject(const TBitmap& bitmap);
+
+    void        RestoreBitmap();
+    void        RestoreObjects();
+
   protected:
     TMemoryDC(LPCTSTR driver, LPCTSTR device,
               LPCTSTR output, const DEVMODE * initData=0);
     TMemoryDC(const tstring& driver, const tstring& device, const tstring& output, const DEVMODE* initData);
+
+    HBITMAP     OrgBitmap;
 
   private:
     void Init();
@@ -1551,12 +1563,9 @@ inline uint TDC::SetBoundsRect(TRect& bounds, uint flags)
 //
 /// Retrieves this DC's current clip-region and, if successful, places a copy of it
 /// in the region argument. You can alter this copy without affecting the current
-/// clip-region. If the function succeeds and there is no clipping region for the 
-/// given device context, the return value is zero. If the function succeeds and 
-/// there is a clipping region for the given device context, the return value is 1.
-/// If an error occurs, the return value is -1.
+/// clip-region. Returns true if the call is successful; otherwise, returns false.
 //
-inline int TDC::GetClipRgn(TRegion& region) const
+inline bool TDC::GetClipRgn(TRegion& region) const
 {
   return ::GetClipRgn(GetHDC(), (HRGN)region);
 }
@@ -3407,6 +3416,38 @@ inline bool TDC::SelectClipPath(int mode)
 inline HRGN TDC::PathToRegion()
 {
   return ::PathToRegion(GetHDC());
+}
+
+//
+inline void TMemoryDC::SelectObject(const TBrush& brush)
+{
+  TDC::SelectObject(brush);
+}
+
+//
+inline void TMemoryDC::SelectObject(const TPen& pen)
+{
+  TDC::SelectObject(pen);
+}
+
+//
+inline void TMemoryDC::SelectObject(const TFont& font)
+{
+  TDC::SelectObject(font);
+}
+
+//
+inline void TMemoryDC::SelectObject(const TPalette& palette,
+                                    bool forceBackground)
+{
+  TDC::SelectObject(palette, forceBackground);
+}
+
+//
+inline void TMemoryDC::RestoreObjects()
+{
+  TDC::RestoreObjects();
+  RestoreBitmap();
 }
 
 //

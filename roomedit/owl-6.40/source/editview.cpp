@@ -111,7 +111,7 @@ TEditView::LoadData()
     return false;
   }
   inStream->seekg(0, ios::end);
-  streamsize count = static_cast<streamsize>(inStream->tellg() - streampos(0));
+  streamsize count = inStream->tellg() - streampos(0);
   inStream->seekg(0, ios::beg);
 
   // TODO: Widen the parameter type to LockBuffer to avoid this check and narrowing cast.

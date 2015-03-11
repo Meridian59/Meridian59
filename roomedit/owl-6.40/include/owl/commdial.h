@@ -110,7 +110,9 @@ class _OWLCLASS TCommDlg {
     static  short GetFileTitle(LPCTSTR,LPTSTR,WORD);
     static  BOOL  GetOpenFileName(LPOPENFILENAME);
     static  BOOL  PageSetupDlg(LPPAGESETUPDLG);
-    static HRESULT PrintDlgEx(LPPRINTDLGEX);
+#if WINVER >= 0x500
+    static  BOOL  PrintDlgEx(LPPRINTDLGEX);
+#endif
     static  BOOL  PrintDlg(LPPRINTDLG);
     static  HWND  ReplaceText(LPFINDREPLACE);
     static  BOOL  GetSaveFileName(LPOPENFILENAME);

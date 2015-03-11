@@ -357,7 +357,7 @@ TTreeNode::SetText(LPCTSTR text, bool sendNow /*=true*/)
   size_t length = ::_tcslen(text) + 1;
   _tcsncpy(CacheText, text, length);
   ItemStruct.pszText    = CacheText;
-  ItemStruct.cchTextMax = static_cast<int>(length);
+  ItemStruct.cchTextMax = length;
   ItemStruct.mask      |= TVIF_TEXT;
   return sendNow ? SetItem() : true;
 }

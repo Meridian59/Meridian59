@@ -44,7 +44,7 @@ TUpDown::TUpDown(TWindow* parent, int id, int x, int y, int w, int h,
   Pos(0)
 {
   Attr.Style = WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP;
-  DisableTransfer(); // No transfer implemented for this control; data resides in buddy.
+
   CHECK(TCommCtrl::IsAvailable());
 }
 
@@ -59,7 +59,6 @@ TUpDown::TUpDown(TWindow* parent, int resourceId, TWindow* buddy, TModule* modul
   Upper(100),
   Pos(0)
 {
-  DisableTransfer(); // No transfer implemented for this control; data resides in buddy.
   CHECK(TCommCtrl::IsAvailable());
 }
 

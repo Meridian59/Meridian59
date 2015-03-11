@@ -60,7 +60,7 @@ class _OWLCLASS TXGdi : public TXOwl {
 
     static tstring Msg(uint resId, HANDLE);
 
-    TXGdi* Clone();
+    virtual TXGdi* Clone() const; // overide
     void Throw();
 
     static void Raise(uint resId = IDS_GDIFAILURE, HANDLE handle = 0);

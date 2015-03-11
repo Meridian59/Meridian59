@@ -170,12 +170,10 @@ bool
 TEditFile::Read(LPCTSTR fileName)
 {
   if (!fileName)
-  {
     if (FileName)
       fileName = FileName;
     else
       return false;
-  }
 
   bool   success = false;
   TFile file(fileName, TFile::ReadOnly|TFile::OpenExisting);
@@ -271,12 +269,10 @@ bool
 TEditFile::Write(LPCTSTR fileName)
 {
   if (!fileName)
-  {
     if (FileName)
       fileName = FileName;
     else
       return false;
-  }
 
   TFile file(fileName, TFile::WriteOnly|TFile::PermExclusive|TFile::CreateAlways);
   if (!file.IsOpen())

@@ -40,9 +40,9 @@ namespace owl {
 /// 
 /// In addition to TButtonGadget, TButtonTextGadget has several types to deal with text:
 /// 
-/// - \c \b  	TAlign					Defines alignment for text (aLeft, aCenter, aRight),
-/// - \c \b  	TStyle					Defines style of gadget (sBitmap, sText, sBitmapText).
-/// - \c \b  	TLayoutStyle		Defines Layout Bitmap with text(lTextLeft,lTextTop,lTextRight,lTextBottom).
+/// - \c \b  TAlign        Defines alignment for text (aLeft, aCenter, aRight),
+/// - \c \b  TStyle        Defines style of gadget (sBitmap, sText, sBitmapText).
+/// - \c \b  TLayoutStyle  Defines Layout Bitmap with text(lTextLeft,lTextTop,lTextRight,lTextBottom).
 //
 class _OWLCLASS TButtonTextGadget : public TButtonGadget
 {
@@ -53,19 +53,19 @@ class _OWLCLASS TButtonTextGadget : public TButtonGadget
     //
     enum TAlign 
     {
-    	aLeft, ///< Aligns the text at the left edge of the bounding rectangle.
-    	aCenter, ///< Aligns the text horizontally at the center of the bounding rectangle.
-    	aRight	///< Aligns the text at the right edge of the bounding rectangle.
+      aLeft,   ///< Aligns the text at the left edge of the bounding rectangle.
+      aCenter, ///< Aligns the text horizontally at the center of the bounding rectangle.
+      aRight   ///< Aligns the text at the right edge of the bounding rectangle.
     };
-    	
+    
     //
     /// TStyle contains values that defines how gadget will be displayed:
     //
     enum TStyle 
     {
-    	sBitmap=0x001, ///< Only the bitmap is displayed.
-    	sText=0x002, ///< Only text is displayed.
-    	sBitmapText=0x003	///< Both text and bitmap are displayed.
+      sBitmap=0x001, ///< Only the bitmap is displayed.
+      sText=0x002, ///< Only text is displayed.
+      sBitmapText=0x003	///< Both text and bitmap are displayed.
     };
     
     //
@@ -93,7 +93,7 @@ class _OWLCLASS TButtonTextGadget : public TButtonGadget
 
     LPCTSTR GetText() const;
     void SetText(const tstring& text, bool repaint=true);
-    void SetText(LPCTSTR s, bool repaint = true) {SetText(s ? owl::tstring(s) : owl::tstring(), repaint);}
+    void SetText(LPCTSTR s, bool repaint = true) {SetText(owl::tstring(s ? s : _T("")), repaint);}
     TStyle GetStyle() const;
     void SetStyle(const TStyle style, bool   repaint=true);
     TAlign GetAlign() const;
@@ -101,8 +101,8 @@ class _OWLCLASS TButtonTextGadget : public TButtonGadget
     TLayoutStyle GetLayoutStyle() const;
     void SetLayoutStyle(const TLayoutStyle style, bool repaint=true);
 
-    const TFont& GetFont() const;
-    void SetFont(const TFont&, bool repaint = true);
+    TFont* GetFont()  const;
+    void SetFont(TFont* font, bool repaint = true);
 
     //
     // Override virtual methods defined in TGadget
@@ -164,6 +164,13 @@ inline TButtonTextGadget::TStyle TButtonTextGadget::GetStyle() const{
 //
 inline LPCTSTR TButtonTextGadget::GetText() const {
   return Text.c_str();
+}
+
+//
+/// Returns the Font used by gadget (or NULL if it doesn't exist).
+//
+inline TFont* TButtonTextGadget::GetFont() const {
+  return Font;
 }
 
 //

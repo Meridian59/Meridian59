@@ -142,7 +142,7 @@ TXValidator::TXValidator(uint resId)
 /// Copies the exception so it can be rethrown at a safer time.
 //
 TXValidator*
-TXValidator::Clone()
+TXValidator::Clone() const
 {
   return new TXValidator(*this);
 }

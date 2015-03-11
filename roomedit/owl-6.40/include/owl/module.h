@@ -55,9 +55,9 @@ class _OWLCLASS TModule : public TStreamableBase {
 
     // Constructors & destructor
     //
-    explicit TModule(const tstring& name, bool shouldLoad = true, bool mustLoad = true, bool addToList=true);
-    explicit TModule(const tstring& name, THandle handle, bool addToList=true);
-    explicit TModule(const tstring& name, THandle handle, const tstring& cmdLine, bool addToList=true);
+    TModule(const tstring& name, bool shouldLoad = true, bool mustLoad = true, bool addToList=true);
+    TModule(const tstring& name, THandle handle, bool addToList=true);
+    TModule(const tstring& name, THandle handle, const tstring& cmdLine, bool addToList=true);
     virtual ~TModule();
 
     /// Finish-up initialization of a module
@@ -276,7 +276,7 @@ class _OWLCLASS TXInvalidModule : public TXOwl {
   public:
     TXInvalidModule(const tstring& name = tstring());
 
-    TXInvalidModule* Clone();
+    virtual TXInvalidModule* Clone() const; // override
     void Throw();
 
     static void Raise(const tstring& name = tstring());
@@ -289,7 +289,7 @@ class _OWLCLASS TXModuleVersionInfo : public TXOwl {
   public:
     TXModuleVersionInfo(const tstring& name = tstring());
 
-    TXModuleVersionInfo* Clone();
+    virtual TXModuleVersionInfo* Clone() const; // override
     void Throw();
 
     static void Raise(const tstring& name = tstring());
@@ -345,20 +345,14 @@ class TErrorMode {
 // Unmanagled to allow easy loading via LoadLibrary
 //
 namespace owl {class _OWLCLASS TDocTemplate;};
-
 #if defined(BI_COMP_BORLANDC) 
-
-extern "C" 
-{
-  owl::TDocTemplate** PASCAL __declspec(dllexport) GetDocTemplateHead(owl::uint32 version);
-  owl::TModule** PASCAL __declspec(dllexport) GetModulePtr(owl::uint32 version);
+extern "C" {
+  owl::TDocTemplate** PASCAL GetDocTemplateHead(owl::uint32 version);
+  owl::TModule** PASCAL GetModulePtr(owl::uint32 version);
 }
-
 #else
-
 STDAPI_(owl::TDocTemplate**) GetDocTemplateHead(owl::uint32 version);
 STDAPI_(owl::TModule**) GetModulePtr(owl::uint32 version);
-
 #endif
 //
 /// Main entry point for an Owl application
@@ -371,7 +365,7 @@ extern "C" {
 /// Initialization routine that must be called from User DLL if DLL
 /// provides it's own entry point [i.e. LibMain or DllEntryPoint]
 //
-bool OWLInitUserDLL(HINSTANCE hInstance, LPCTSTR cmdLine);
+bool OWLInitUserDLL(HINSTANCE hInstance, LPTSTR cmdLine);
 }
 
 namespace owl {

@@ -234,58 +234,12 @@ TFont::GetObject() const
   return lf;
 }
 
-namespace {
-
-  //
-  // Returns the default system font for the given GUI element.
-  //
-  LOGFONT GetSystemFont_(TDefaultGuiFont::TSystemFontId element)
-  {
-    switch (element)
-    {
-      case TDefaultGuiFont::sfiLegacyDefault:
-      {
-        TFont f(reinterpret_cast<HFONT>(::GetStockObject(DEFAULT_GUI_FONT)));
-        return f.GetObject();
-      }
-
-      case TDefaultGuiFont::sfiIcon:
-      {
-        ICONMETRICS im = {sizeof(im)};
-        bool r = SystemParametersInfo(SPI_GETICONMETRICS, sizeof(im), &im, 0);
-        CHECK(r); InUse(r);
-        return im.lfFont;
-      }
-
-      default:
-      {
-        typedef LOGFONT (NONCLIENTMETRICS::*TNonClientMetricsMember);
-        TNonClientMetricsMember font = 
-          (element == TDefaultGuiFont::sfiCaption) ? &NONCLIENTMETRICS::lfCaptionFont :
-          (element == TDefaultGuiFont::sfiSmallCaption) ? &NONCLIENTMETRICS::lfSmCaptionFont :
-          (element == TDefaultGuiFont::sfiMenu) ? &NONCLIENTMETRICS::lfMenuFont :
-          (element == TDefaultGuiFont::sfiStatus) ? &NONCLIENTMETRICS::lfStatusFont :
-          (element == TDefaultGuiFont::sfiMessage) ? &NONCLIENTMETRICS::lfMessageFont : 
-          0;
-        CHECK(font);
-
-        NONCLIENTMETRICS ncm = {sizeof(ncm)};
-        bool r = SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
-        CHECK(r); InUse(r);
-        return ncm.*font;
-      }
-    }
-  }
-
-} // namespace
-
 //
-/// Create a wrapper for the given system font.
-/// See TSystemFontId for valid arguments.
-/// If no argument is passed, sfiLegacyDefault is used.
+// Create a wrapper for the default GUI font.
 //
-TDefaultGuiFont::TDefaultGuiFont(TSystemFontId element)
-  : TFont(GetSystemFont_(element))
+TDefaultGUIFont::TDefaultGUIFont()
+:
+  TFont(HFONT(::GetStockObject(DEFAULT_GUI_FONT)))
 {
 }
 

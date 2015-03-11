@@ -60,12 +60,10 @@ LPCTSTR TRegList::Lookup(LPCSTR key, TLangId lang)
   if (key) {
     for (TRegItem* regItem = Items; regItem->Key != 0; regItem++) {
       if (strcmp(regItem->Key, key) == 0)
-      {
         if (regItem->Value.Private)  // current can't test Value directly
           return regItem->Value.Translate(lang);
         else
           return _T("");
-      }
     }
   }
   return 0;

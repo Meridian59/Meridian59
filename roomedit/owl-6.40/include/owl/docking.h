@@ -98,7 +98,7 @@ class _OWLCLASS TDockableGadgetWindow : public TGadgetWindow, public TDockable {
   public:
     TDockableGadgetWindow(TWindow*        parent = 0,
                           TTileDirection  direction = Horizontal,
-                          TFont*          font = 0,
+                          TFont*          font = new TGadgetWindowFont,
                           TModule*        module = 0);
    ~TDockableGadgetWindow();
 
@@ -119,7 +119,7 @@ class _OWLCLASS TDockableGadgetWindow : public TGadgetWindow, public TDockable {
   protected:
     void          EvLButtonDown(uint modKeys, const TPoint& point);
     void          EvOwlWindowDocked(uint pos, const TDockingSlip& slip);
-    bool          EvSetCursor(HWND hWndCursor, uint codeHitTest, TMsgId mouseMsg);
+    bool           EvSetCursor(THandle hWndCursor, uint hitTest, uint mouseMsg);
 
     /// Returns the layout direction to use when placed in a slip
     /// This can be overridden to provide different docking behaviour
@@ -139,7 +139,7 @@ class _OWLCLASS TDockableControlBar : public TDockableGadgetWindow {
   public:
     TDockableControlBar(TWindow*        parent = 0,
                         TTileDirection  direction = Horizontal,
-                        TFont*          font = 0,
+                        TFont*          font = new TGadgetWindowFont,
                         TModule*        module = 0);
 
   protected:
@@ -222,10 +222,10 @@ class _OWLCLASS TFloatingSlip : public TFloatingFrame,
     void    EvNCLButtonDown(uint hitTest, const TPoint& point);
     void    EvLButtonDown(uint hitTest, const TPoint& point);
     bool    EvSizing(uint side, TRect& rect);
-    bool    EvWindowPosChanging(WINDOWPOS & windowPos);
+    void    EvWindowPosChanging(WINDOWPOS & windowPos);
     void    EvWindowPosChanged(const WINDOWPOS& windowPos);
     void    EvClose();
-    void    EvSettingChange(uint, LPCTSTR);
+    void    EvWinIniChange(LPCTSTR);
     void    EvGetMinMaxInfo(MINMAXINFO & info);
 
   DECLARE_RESPONSE_TABLE(TFloatingSlip);
@@ -234,6 +234,50 @@ class _OWLCLASS TFloatingSlip : public TFloatingFrame,
 enum TGridType {   ///< Grid type corresponds with Location:
   YCoord,            ///< Top & bottom edge have Y coords parallel horiz
   XCoord,            ///< Left & right edge have X coords parallel vertically
+};
+
+//
+// Stuff for edge slip managing the dockable layout.
+//
+template <class T> class TFastList {
+  public:
+    TFastList(int initSize = 10, int deltaGrowth = 10, bool sorted = true,
+              bool unique = true);
+   ~TFastList();
+
+    bool Add(uint32 comparison, T* object);
+    bool Add(uint32 comparison, T object);
+    T*   Remove(uint32 comparison);
+    T*   RemoveEntry(int index);
+    int  FindEntry(uint32 comparison);    ///< Find an object with the comparison return it's index.
+    T&   GetEntry(int index);             ///< Return the object.
+
+    int  Count() const;                   ///< The count of entries in list
+
+    void Clear();     // !CQ leaky
+///   void Free();              // Clear and free all Objects (delete the items).
+    T& operator [](int i);
+
+    void Fill(TWindow* parent, TGridType gridType);
+
+  private:
+    void Grow(int minNewSize);
+    void OpenUpSpace(int index);
+    void CloseUpSpace(int index);
+
+    int   Delta;
+
+    struct TDatum {
+      uint32 CompareItem;
+      T*     Object;
+    };
+
+    TDatum* DataPtr;
+    int     SpaceCount;
+    int     EntryCount;
+
+    bool  SortEntries;
+    bool  UniqueEntries;
 };
 
 //
@@ -275,8 +319,8 @@ class _OWLCLASS TEdgeSlip : public TWindow, public TDockingSlip {
     void     EvNCPaint(HRGN);
 
     bool     EvEraseBkgnd(HDC);
-    void     EvParentNotify(const TParentNotify&);
-    bool     EvWindowPosChanging(WINDOWPOS & windowPos);
+    void     EvParentNotify(uint event, TParam1, TParam2);
+    void     EvWindowPosChanging(WINDOWPOS & windowPos);
 
     // Internal dockable tiling support
     //
@@ -409,6 +453,24 @@ inline THarbor* TDockingSlip::GetHarbor() const
 {
   return Harbor;
 }
+
+//
+/// Return the count of layouts.
+//
+template <class T>
+inline int TFastList<T>::Count() const
+{
+  return EntryCount;
+}
+
+//
+/// Retrieve the indexed layout.
+//
+template <class T>
+inline T& TFastList<T>::operator [](int i) {
+  return GetEntry(i);
+}
+
 
 } // OWL namespace
 

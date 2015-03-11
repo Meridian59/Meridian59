@@ -211,8 +211,8 @@ TSemaphoreSet::TLock::TLock(ulong msgMask, const TSemaphoreSet& set,
 //
 bool TSemaphoreSet::TLock::InitLock(int count, TWaitWhat wait, int index)
 {
-  if ((index >= static_cast<int>(WAIT_OBJECT_0) && index < static_cast<int>(WAIT_OBJECT_0 + count)) ||
-    (index >= static_cast<int>(WAIT_ABANDONED_0) && index < static_cast<int>(WAIT_ABANDONED_0 + count)))
+  if (index >= (int)WAIT_OBJECT_0 && index < int(WAIT_OBJECT_0+count) ||
+      index >= (int)WAIT_ABANDONED_0 && index < int(WAIT_ABANDONED_0+count))
   {
     if (wait == WaitAny) {
       if (index >= (int)WAIT_ABANDONED_0)
@@ -722,7 +722,7 @@ TThread::TThreadError::TThreadError(TErrorType type)
 //
 tstring TThread::TThreadError::MakeString(TErrorType type)
 {
-  static const tchar* const Names[] = {
+  static tchar* Names[] = {
     _T("Suspend() before Run()"),
     _T("Resume() before Run()"),
     _T("Resume() during Run()"),

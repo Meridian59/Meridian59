@@ -345,12 +345,9 @@ inline bool TFileNameIterator::IsDir() const
 inline bool TFileNameIterator::IsSysDir() const
 {
   LPCTSTR p = Status.fullName;
-  return IsDir() && p[0] == _T('.') &&
-    (
-      p[1] == _T('\0') || // "."
-      (p[1] == _T('.') && p[2] == _T('\0')) // ".."
-    );
-}
+  return IsDir() && p[0]==_T('.') &&
+          (p[1]==_T('\0') || p[1]==_T('.') && p[2]==_T('\0'));
+}    
 
 } // OWL namespace
 

@@ -94,10 +94,11 @@ TClipboardViewer::SetupWindow()
 /// that's being removed. hWndNext is the window following the removed window.
 //
 void
-TClipboardViewer::EvChangeCBChain(HWND hWndRemoved, HWND hWndNext)
+TClipboardViewer::EvChangeCBChain(THandle hWndRemoved, THandle hWndNext)
 {
   if (hWndRemoved == hWndNext)
     HWndNext = hWndNext;
+
   else
     ForwardMessage(HWndNext);
 }

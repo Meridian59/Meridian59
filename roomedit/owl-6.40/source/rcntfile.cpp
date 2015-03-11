@@ -87,7 +87,9 @@ TRecentFiles__ReadMaxNum(bool useRegistry, const tstring& mruName,
 
   // Force it to be a reasonable number
   //
-  if (maxCount > TRecentFiles::MaxMenuItems)
+  if (maxCount < 0) 
+      maxCount = abs(defaultCount);
+  if (maxCount < 0 || maxCount > TRecentFiles::MaxMenuItems) 
       maxCount = TRecentFiles::MaxMenuItems;
   return maxCount;
 }
@@ -455,7 +457,7 @@ TRecentFiles::Write()
     for (int i = 0; i < MruCount; i++){
       wsprintf(dstKeyBuffer, _T("%s%d"), MruPrefix, i);
       tstring fname = MruNames[i].GetParts(FullFileName);
-      regKey.SetValue((tchar*)dstKeyBuffer, REG_SZ,  (const uint8*)fname.c_str(), static_cast<uint32>(fname.length() * sizeof(tchar)));
+      regKey.SetValue((tchar*)dstKeyBuffer, REG_SZ,  (const uint8*)fname.c_str(), fname.length() * sizeof(tchar));
     }
   }
   else{

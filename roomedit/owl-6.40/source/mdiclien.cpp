@@ -235,7 +235,7 @@ TMDIClient::CloseChildren()
 /// WS_VISIBLE, WS_CHILD, WS_CLIPSIBLINGS, WS_CLIPCHILDREN, WS_SYSMENU, WS_CAPTION,
 /// WS_THICKFRAME, WS_MINIMIZEBOX, and WS_MAXIMIZEBOX.
 //
-HWND
+TResult
 TMDIClient::EvMDICreate(MDICREATESTRUCT & createStruct)
 {
   // Fill in default child window styles if they request style 0 since this
@@ -263,7 +263,7 @@ TMDIClient::EvMDICreate(MDICREATESTRUCT & createStruct)
     HandleMessage(WM_MDIREFRESHMENU);
   }
 
-  return reinterpret_cast<HWND>(result);
+  return result;
 }
 
 //

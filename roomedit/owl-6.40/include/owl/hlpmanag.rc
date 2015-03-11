@@ -47,7 +47,7 @@ LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
 #endif
 IDM_WHAT_IS_THIS  MENU
 {
-  MENUITEM "これは何ですか？", CM_WHAT_IS_THIS
+  MENUITEM "What's this?", CM_WHAT_IS_THIS
 }
 #endif  // BI_MSG_LANGUAGE_JAPAN
 
@@ -73,11 +73,7 @@ STRINGTABLE
 #if defined(WIN32)
 LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
 #endif
-STRINGTABLE
-{
-  CM_CONTEXTHELP, "\nこれは何ですか？"
-  CM_WHAT_IS_THIS, "指定された項目のヘルプを表\示する\nこれは何ですか？"
-}
+//
 #endif  // BI_MSG_LANGUAGE_JAPAN
 
 #endif  // __IDS_HELPSTRING

@@ -75,7 +75,7 @@ struct _OWLCLASS TLocaleString {
   //TLocaleString(const TLocaleString& lstr):Private(lstr.Private){}
   //TLocaleString(const tchar* str):Private(str){}
   const tchar * Translate(TLangId lang);                      ///< translate string
-  operator const tchar *() const;      ///< return current string
+  operator const tchar *();      ///< return current string
   void operator =(const tchar * str) { Private = str; }
   int   Compare(const tchar* str, TLangId lang);   ///< insensitive compare
 

@@ -299,7 +299,7 @@ TMDIChild::PerformCreate(int)
 /// deactivated.
 //
 void
-TMDIChild::EvMDIActivate(HWND hActivated, HWND hDeactivated)
+TMDIChild::EvMDIActivate(THandle hActivated, THandle hDeactivated)
 {
   if (GetHandle() == hActivated) {
 

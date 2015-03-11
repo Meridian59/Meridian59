@@ -113,7 +113,7 @@ class _OWLCLASS TXValidator : public TXOwl {
   public:
     TXValidator(uint resId = IDS_VALIDATORSYNTAX);
 
-    TXValidator* Clone();
+    virtual TXValidator* Clone() const; // override
     void Throw();
 
     static void Raise();

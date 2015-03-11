@@ -55,38 +55,47 @@ END_RESPONSE_TABLE;
 
 uint TGadgetWindow::FlatStyle = NonFlatNormal;
 
-namespace {
-
-  //
-  // Returns a font variation based on the default TGadgetWindowFont.
-  //
-  LOGFONT MakeGadgetWindowFont_(int pointSize, bool bold, bool italic)
-  {
-    PRECONDITION(pointSize > 0);
-    LOGFONT f = TGadgetWindowFont().GetObject();
-    f.lfHeight = -pointSize * TScreenDC().GetDeviceCaps(LOGPIXELSY) / 72;
-    f.lfWeight = bold ? FW_BOLD : FW_NORMAL;
-    f.lfItalic = italic ? TRUE : FALSE;
-    return f;
-  }
-
-} // namespace
+//
+// Calculate & return the height in pixels of a given number of points on
+// the screen.
+//
+static inline int heightInPixels(int pointSize)
+{
+  TScreenDC  dc;
+  return MulDiv(-pointSize, dc.GetDeviceCaps(LOGPIXELSY), 72);
+}
 
 //
-/// Constructs a font based on TDefaultGuiFont.
 //
-TGadgetWindowFont::TGadgetWindowFont()
-  : TFont(TDefaultGuiFont())
-{}
-
-//
-/// Constructs a font with the given size, boldness and italics style.
-/// Note that the size should be given in points, not pixels.
-/// The font is based on the system font encapsulated by TDefaultGuiFont.
+/// Constructs a TGadgetWindowFont interface object with a default point size of 10
+/// picas without bold or italic typeface. By default, the constructor creates the
+/// system font: a variable-width, sans-serif Helvetica.
 //
 TGadgetWindowFont::TGadgetWindowFont(int pointSize, bool bold, bool italic)
-  : TFont(MakeGadgetWindowFont_(pointSize, bold, italic))
-{}
+:
+  TFont(TDefaultGUIFont().GetFaceName().c_str(),
+        heightInPixels(pointSize),
+        0, 0, 0,
+        bold ? FW_BOLD : FW_NORMAL,
+        TDefaultGUIFont().GetPitchAndFamily(),
+        uint8(italic))
+/*
+  TFont("MS Sans Serif", heightInPixels(pointSize), 0, 0, 0,
+        bold ? FW_BOLD : FW_NORMAL,
+        uint8(VARIABLE_PITCH | FF_SWISS), uint8(italic))
+*/
+{
+}
+
+//
+/// Construct a specialized gadget window font. Base it on an existing font
+/// object.
+//
+TGadgetWindowFont::TGadgetWindowFont(const TFont& font)
+:
+  TFont(font)
+{
+}
 
 //----------------------------------------------------------------------------
 
@@ -111,7 +120,11 @@ TGadgetWindow::TGadgetWindow(TWindow*       parent,
 
   Capture = 0;
   AtMouse = 0;
-  Font = font ? font : new TGadgetWindowFont(); 
+#if !defined(BI_DBCS_SUPPORT)
+  Font = font ? font : new TGadgetWindowFont(6); 
+#else
+  Font = font ? font : new TDefaultGUIFont(); 
+#endif
 
   Direction = direction;
 
@@ -544,8 +557,7 @@ TGadgetWindow::IsBackgroundThemed() const
 void
 TGadgetWindow::SetRectangularDimensions(int width, int /*height*/, int rowMargin)
 {
-  if (width != RowWidth || (rowMargin >= 0 && rowMargin != RowMargin))
-  {
+  if (width != RowWidth || rowMargin >= 0 && rowMargin != RowMargin) {
     RowWidth = width;
     if (rowMargin >= 0)
       RowMargin = rowMargin;
@@ -604,12 +616,10 @@ TGadgetWindow::PositionGadget(TGadget* previous, TGadget* next, TPoint& origin)
   //
   if (previous->GetBorderStyle() == TGadget::Plain &&
       next->GetBorderStyle() == TGadget::Plain)
-  {
     if (Direction == Horizontal)
       origin.x -= TUIMetric::CxBorder;
     else
       origin.y -= TUIMetric::CyBorder;
-  }
 }
 
 //
@@ -1182,7 +1192,8 @@ TGadgetWindow::SetupWindow()
 //  if (DirtyLayout)  // !CQ was here in old OWL 5, & Conrad's is here...
 //    LayoutSession();
 
-  if ((ShrinkWrapWidth && Attr.W != size.cx) || (ShrinkWrapHeight && Attr.H != size.cy))
+  if (ShrinkWrapWidth  && Attr.W != size.cx ||
+      ShrinkWrapHeight && Attr.H != size.cy)
   {
     if (ShrinkWrapWidth)
       Attr.W = size.cx;
@@ -1270,7 +1281,7 @@ TGadgetWindow::EvCreateTooltips()
 /// Intercepts window size changes to make sure that this gadget window follows its
 /// own sizing rules. Also gives it a chance to layout wide-as-possible gadgets.
 //
-bool
+void
 TGadgetWindow::EvWindowPosChanging(WINDOWPOS & windowPos)
 {
   TWindow::EvWindowPosChanging(windowPos);
@@ -1305,7 +1316,6 @@ TGadgetWindow::EvWindowPosChanging(WINDOWPOS & windowPos)
     if (IsBackgroundThemed())
       Invalidate(true); 
   }
-  return false;
 }
 
 //

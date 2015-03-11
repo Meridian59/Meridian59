@@ -18,11 +18,16 @@
 
 #include <owl/module.h>
 
+#if defined(BI_NEED_UXTHEME_H)
+#include <api_upd/uxtheme.h>
+#include <api_upd/tmschema.h>
+#else
 #include <uxtheme.h>
 #if _MSC_VER >= 1700
 #include <vssym32.h>
 #else
 #include <tmschema.h>
+#endif
 #endif
 
 namespace owl {
@@ -163,7 +168,7 @@ public:
 
   TXTheme(const tstring& = tstring(), HRESULT = 0);
 
-  TXTheme* Clone();
+  virtual TXTheme* Clone() const; // override
   void Throw();
 
   static void Raise(const tstring& name = tstring(), HRESULT = 0);

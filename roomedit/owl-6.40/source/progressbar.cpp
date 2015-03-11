@@ -65,8 +65,6 @@ TProgressBar::GetClassName()
 //
 /// Sets the Min and Max data members to minValue and maxValue values returned by the
 /// constructor. If Max is less than or equal to Min, SetRange resets Max to Min + 1.
-/// Note: This function is now implemented in terms of the PBM_SETRANGE32 message, thus
-/// supporting a full 32-bit range. Previous implementations used the 16-bit PBM_SETRANGE.
 //
 void
 TProgressBar::SetRange(int minValue, int maxValue)
@@ -74,8 +72,10 @@ TProgressBar::SetRange(int minValue, int maxValue)
   if (maxValue <= minValue)
     maxValue = minValue+1;
 
-  if (GetHandle())
-    SendMessage(PBM_SETRANGE32, minValue, maxValue);
+  if (GetHandle()) {
+    if (!SendMessage(PBM_SETRANGE, 0, MkParam2(minValue, maxValue)))
+      return;
+  }
 
   Min = minValue;
   Max = maxValue;

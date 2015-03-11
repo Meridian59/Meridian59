@@ -18,36 +18,54 @@
 #if defined(__BORLANDC__)
 #define OWL_LIB_COMPILER "b"
 
-#if (__BORLANDC__ >= 0x690) // XE7
+#if (__BORLANDC__ >= 0x690)
 #define OWL_LIB_COMPILER_VERSION "18"
-#elif (__BORLANDC__ >= 0x680) // XE6
+#elif (__BORLANDC__ >= 0x680)
 #define OWL_LIB_COMPILER_VERSION "17"
-#elif (__BORLANDC__ >= 0x670) // XE5
+#elif (__BORLANDC__ >= 0x670)
 #define OWL_LIB_COMPILER_VERSION "16"
-#elif (__BORLANDC__ >= 0x660) // XE4
+#elif (__BORLANDC__ >= 0x660)
 #define OWL_LIB_COMPILER_VERSION "15"
-#elif (__BORLANDC__ >= 0x650) // XE3
+#elif (__BORLANDC__ >= 0x650)
 #define OWL_LIB_COMPILER_VERSION "14"
-#elif (__BORLANDC__ >= 0x640) // XE2
+#elif (__BORLANDC__ >= 0x640)
 #define OWL_LIB_COMPILER_VERSION "13"
-#elif (__BORLANDC__ >= 0x630) // XE
+#elif (__BORLANDC__ >= 0x630)
 #define OWL_LIB_COMPILER_VERSION "12"
-#else
-#error OWLNext: Unsupported compiler.
+#elif (__BORLANDC__ >= 0x620)
+#define OWL_LIB_COMPILER_VERSION "11"
+#elif (__BORLANDC__ >= 0x610)
+#define OWL_LIB_COMPILER_VERSION "10"
+#elif (__BORLANDC__ >= 0x590)
+#define OWL_LIB_COMPILER_VERSION "9"
+#elif (__BORLANDC__ >= 0x580)
+#define OWL_LIB_COMPILER_VERSION "8"
+#elif (__BORLANDC__ >= 0x570)
+#define OWL_LIB_COMPILER_VERSION "7"
+#elif (__BORLANDC__ >= 0x560)
+#define OWL_LIB_COMPILER_VERSION "6"
+#elif (__BORLANDC__ >= 0x550)
+#define OWL_LIB_COMPILER_VERSION "5"
 #endif
 
 #elif defined(_MSC_VER)	//#if defined(__BORLANDC__)
 
 #define OWL_LIB_COMPILER "v"
 
-#if _MSC_VER >= 1800 // VS 2013
-#define OWL_LIB_COMPILER_VERSION "12" 
-#elif _MSC_VER >= 1700 // VS 2012
+#if _MSC_VER >= 1800
+#define OWL_LIB_COMPILER_VERSION "12"
+#elif _MSC_VER >= 1700
 #define OWL_LIB_COMPILER_VERSION "11"
-#elif _MSC_VER >= 1600 // VS 2010
+#elif _MSC_VER >= 1600
 #define OWL_LIB_COMPILER_VERSION "10"
-#else
-#error OWLNext: Unsupported compiler.
+#elif _MSC_VER >= 1500
+#define OWL_LIB_COMPILER_VERSION "9"
+#elif _MSC_VER >= 1400
+#define OWL_LIB_COMPILER_VERSION "8"
+#elif _MSC_VER >= 1300
+#define OWL_LIB_COMPILER_VERSION "7"
+#elif _MSC_VER >= 1200
+#define OWL_LIB_COMPILER_VERSION "6"
 #endif
 
 #endif	//#if defined(__BORLANDC__)
@@ -105,24 +123,5 @@
 #else
 #define OWL_LIB_IMPORT ""
 #endif
-
-// Compose the appropriate pragma link directive.
-
-/*#pragma comment(lib, \
-	  OWL_LIB_NAME \
-	  OWL_LIB_DELIMITER \
-	  OWL_LIB_VERSION \
-	  OWL_LIB_DELIMITER \
-	  OWL_LIB_COMPILER \
-	  OWL_LIB_COMPILER_VERSION \
-	  OWL_LIB_DELIMITER \
-	  OWL_LIB_PLATFORM \
-	  OWL_LIB_DELIMITER \
-	  OWL_LIB_COMPAT \
-	  OWL_LIB_DEBUG \
-	  OWL_LIB_THREADING \
-	  OWL_LIB_CHARACTERTYPE \
-	  OWL_LIB_IMPORT \
-    ".lib")*/
-
+	
 #endif // OWL_PRIVATE_OWLLINK_H

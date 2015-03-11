@@ -75,7 +75,7 @@ DEFINE_RESPONSE_TABLE1(TEdit, TStatic)
   EV_COMMAND_ENABLE(CM_EDITPASTE, CmPasteEnable),
   EV_COMMAND_ENABLE(CM_EDITCLEAR, CmCharsEnable),
   EV_COMMAND_ENABLE(CM_EDITUNDO, CmModEnable),
-  EV_UDN_DELTAPOS(UINT_MAX, EvUpDown),
+  EV_UDN_DELTAPOS(static_cast<unsigned int>(-1), EvUpDown),
   EV_NOTIFY_AT_CHILD(EN_ERRSPACE, ENErrSpace),
   EV_WM_CHAR,
   EV_WM_KEYDOWN,
@@ -236,7 +236,7 @@ TEdit::EvChar(uint key, uint repeatCount, uint flags)
     // then restore the original text.  Otherwise, range check & position
     // the selection as needed.
     //
-    if (!Validator->HasOption(voOnAppend) || (wasAppending && endSel == buffLen)) {
+    if (!Validator->HasOption(voOnAppend) || wasAppending && endSel == buffLen) {
       if (!Validator->IsValidInput(buff, false)) {
         ::_tcscpy(buff, oldBuff);          // Restore old buffer
         postMsgModify = preMsgModify;   // Restore old modify state too!
@@ -782,19 +782,17 @@ TEdit::Search(int startPos, LPCTSTR text, bool caseSensitive,
       if (pos > buffer)
          prevPos = ::AnsiPrev(buffer, pos);
 
-      if ((pos > buffer && _istalnum(*prevPos)) || // Match is in preceding word
-        (textLen < static_cast<int>(::_tcslen(pos)) && _istalnum(pos[textLen])))
-      {
+      if (pos > buffer && _istalnum((tchar)*prevPos) || // Match is in preceding word
+        textLen < (int)::_tcslen(pos) && isalnum((utchar)pos[textLen])) {
         if (up)
-          startPos = static_cast<int>(prevPos - buffer + ::_tcslen(text));
+          startPos = (prevPos - buffer) + ::_tcslen(text);
         else
-          startPos = static_cast<int>(::AnsiNext(pos) - buffer);
+          startPos = ::AnsiNext(pos) - buffer;
         continue;  // Skip this match and keep searching
       }
 #else
-      if ((pos > buffer && _istalnum(pos[-1])) || // Match is in preceding word
-        (textLen < static_cast<int>(::_tcslen(pos)) && _istalnum(pos[textLen])))
-      {
+      if (pos > buffer && (_istdigit(pos[-1])||_istalpha(pos[-1])) || // Match is in preceding word
+        textLen < (int)::_tcslen(pos) && (_istdigit(pos[textLen])||_istalpha(pos[textLen])) ) { //_istalnum is not yet implemented in WineLib
         startPos = (uint)(pos-buffer) + !up;
         continue;  // Skip this match and keep searching
       }
@@ -806,7 +804,7 @@ TEdit::Search(int startPos, LPCTSTR text, bool caseSensitive,
   // If we've got a match, select that text, cleanup & return.
   //
   if (pos) {
-    int sBeg = static_cast<int>(pos - buffer);
+    int sBeg = pos - buffer;
     UnlockBuffer(buffer);
     SetSelection(sBeg, sBeg + textLen);
     SendMessage(WM_KEYDOWN, VK_RIGHT);
@@ -1072,7 +1070,7 @@ TEdit::Transfer(void* buffer, TTransferDirection direction)
     //
     const size_t bigEnough = max<size_t>(1024, TextLimit + 1);
     vector<tchar> text(bigEnough);
-    GetText(&text[0], static_cast<int>(text.size()));
+    GetText(&text[0], text.size());
 
     uint result = Validator->Transfer(&text[0], buffer, direction);
     if (result == 0)

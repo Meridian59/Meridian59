@@ -34,7 +34,7 @@ namespace owl {
 TLangId TLocaleString::SystemDefaultLangId = TLocaleString::GetSystemLangId();
 TLangId TLocaleString::UserDefaultLangId   = TLocaleString::GetUserLangId();
 HINSTANCE TLocaleString::Module = 0;
-static const tchar* const null_string = _T("");
+static tchar* null_string = _T("");
 TLocaleString TLocaleString::Null = {null_string};
 
 //----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ struct _TLocaleCacheBase {
 //
 struct _TLocaleCache : public _TLocaleCacheBase {
   void* operator new(size_t size, unsigned buflen);
-#if defined(BI_COMP_MSC)
+#if defined(BI_COMP_MSC) && _MSC_VER >= 1200
   void operator delete(void* p, unsigned buflen);
 #endif
   _TLocaleCache(const tchar* name, long hash, HRSRC rscHdl, HGLOBAL resData);
@@ -152,7 +152,7 @@ void* _TLocaleCache::operator new(size_t size, unsigned buflen)
 {
   return ::operator new(size+buflen);
 }
-#if defined(BI_COMP_MSC)
+#if defined(BI_COMP_MSC) && _MSC_VER >= 1200
 void _TLocaleCache::operator delete(void* p, unsigned )
 {
   ::operator delete(p);
@@ -381,7 +381,7 @@ const tchar* TLocaleString::Translate(TLangId reqLang)
   }
 }
 
-TLocaleString::operator const tchar*() const
+TLocaleString::operator const tchar*()
 {
   if (Private == 0)
     return 0;

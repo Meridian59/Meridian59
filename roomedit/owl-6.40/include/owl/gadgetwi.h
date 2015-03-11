@@ -90,14 +90,49 @@ class _OWLCLASS TGadgetList {
 //
 /// \class TGadgetWindowFont
 // ~~~~~ ~~~~~~~~~~~~~~~~~
-/// Derived from TFont, TGadgetWindowFont is the default font used by TGadgetWindow.
-/// The font is based on TDefaultGuiFont, but you can specify the point size, boldness and italics 
-/// style in the constructor.
+/// Derived from TFont, TGadgetWindowFont is a specific font used in gadget windows
+/// for sizing and default text. You can specify the point size of the font (not the
+/// size in pixels) and whether it is bold or italic. You can use one of the
+/// following FF_xxxx constants to indicate the font family type:
+/// - \c \b  FF_DECORATIVE	Specialty fonts such as Old English.
+/// - \c \b  FF_DONTCARE	The font type does not matter.
+/// - \c \b  FF_MODERN	Fonts such as Pica, Elite, or Courier with a constant stroke, width,
+/// and with or without serifs.
+/// - \c \b  FF_ROMAN	Fonts such as Times New Roman and New Century Schoolbook with varied
+/// stroke and with serifs.
+/// - \c \b  FF_SCRIPT	Fonts such as Script that are designed to resemble handwriting.
+/// - \c \b  FF_SWISS	Fonts such as MS Sans Serif with variable stroke width and without
+/// serifs.
+/// 
+/// Depending on the typeface, the font weight can be one of the following FW_xxxx
+/// constants:
+/// 
+/// - \c \b  FW_DONTCARE	Does not matter
+/// - \c \b  FW_THIN	Thin
+/// - \c \b  FW_EXTRALIGHT	Extra light
+/// - \c \b  FW_ULTRALIGHT	Extra light
+/// - \c \b  FW_LIGHT	Light
+/// - \c \b  FW_NORMAL	Normal
+/// - \c \b  FW_REGULAR	Normal font weight
+/// - \c \b  FW_MEDIUM	Medium
+/// - \c \b  FW_SEMIBOLD	Somewhat bold
+/// - \c \b  FW_DEMIBOLD	Somewhat bold
+/// - \c \b  FW_BOLD	Bold
+/// - \c \b  FW_EXTRABOLD	Extra bold
+/// - \c \b  FW_ULTRABOLD	Extra bold
+/// - \c \b  FW_BLACK	Heavy weight
+/// - \c \b  FW_HEAVY	Heavy weight
+/// 
+/// Because the font's appearance depends on the typeface, some fonts have only
+/// FW_NORMAL, FW_REGULAR, and FW_BOLD available. If FW_DONTCARE is indicated, the
+/// default font weight is used.
 //
 class _OWLCLASS TGadgetWindowFont : public TFont {
   public:
-    TGadgetWindowFont();
-    explicit TGadgetWindowFont(int pointSize, bool bold = false, bool italic = false);
+    TGadgetWindowFont(int  pointSize = 10,
+                      bool bold = false,
+                      bool italic = false);
+    TGadgetWindowFont(const TFont& font);
 };
 
 //
@@ -140,7 +175,7 @@ class _OWLCLASS TGadgetWindow : virtual public TWindow, public TGadgetList {
 
     TGadgetWindow(TWindow*        parent = 0,
                   TTileDirection  direction = Horizontal,
-                  TFont*          font = 0,
+                  TFont*          font = new TGadgetWindowFont,
                   TModule*        module = 0);
    ~TGadgetWindow();
 
@@ -164,7 +199,7 @@ class _OWLCLASS TGadgetWindow : virtual public TWindow, public TGadgetList {
 
     void          SetRectangularDimensions(int width, int height, int rowMargin= -1);
 
-    const TFont& GetFont() const;
+    TFont&        GetFont();
     uint          GetFontHeight() const;
 
     // Retrieves/assigns tooltip of/to window
@@ -313,7 +348,7 @@ class _OWLCLASS TGadgetWindow : virtual public TWindow, public TGadgetList {
     void          EvRButtonDown(uint modKeys, const TPoint& point);
     void          EvRButtonUp(uint modKeys, const TPoint& point);
     void          EvMouseMove(uint modKeys, const TPoint& point);
-    bool          EvWindowPosChanging(WINDOWPOS & windowPos);
+    void          EvWindowPosChanging(WINDOWPOS & windowPos);
     void          EvSysColorChange();
 
     void          EvCreateTooltips();
@@ -369,7 +404,11 @@ class _OWLCLASS TGadgetWindow : virtual public TWindow, public TGadgetList {
   DECLARE_CASTABLE;
 };
 
-#define EV_WM_CREATETOOLTIP OWL_EV_(WM_OWLCREATETTIP, EvCreateTooltips)
+
+#define EV_WM_CREATETOOLTIP\
+  {{WM_OWLCREATETTIP}, 0, (::owl::TAnyDispatcher) ::owl::v_Dispatch,\
+   (TMyPMF)::owl::v_Sig(&TMyClass::EvCreateTooltips)}
+
 
 //
 /// \class TGadgetControl
@@ -381,7 +420,7 @@ class _OWLCLASS TGadgetControl : public TGadgetWindow {
   public:
     TGadgetControl(TWindow*        parent = 0,
                    TGadget*        soleGadget = 0,
-                   TFont*          font = 0,
+                   TFont*          font = new TGadgetWindowFont,
                    TModule*        module = 0);
 };
 
@@ -426,8 +465,9 @@ inline TGadgetWindow::TTileDirection TGadgetWindow::GetDirection() const {
 
 //
 /// Returns the font being used by this gadget window.
+/// \note The font is Sans Serif by default.
 //
-inline const TFont& TGadgetWindow::GetFont() const {
+inline TFont& TGadgetWindow::GetFont() {
   return *Font;
 }
 

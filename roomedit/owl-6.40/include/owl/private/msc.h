@@ -12,10 +12,9 @@
 //   1300 - Microsoft Visual C++ 2002 (7.0) - no longer supported (since OWLNext 6.33)
 //   1310 - Microsoft Visual C++ 2003 (7.1) - no longer supported (since OWLNext 6.33)
 //   1400 - Microsoft Visual C++ 2005 (8.0) - no longer supported (since OWLNext 6.33)
-//   1500 - Microsoft Visual C++ 2008 (9.0) - no longer supported (since OWLNext 6.40)
+//   1500 - Microsoft Visual C++ 2008 (9.0)
 //   1600 - Microsoft Visual C++ 2010 (10.0)
 //   1700 - Microsoft Visual C++ 2012 (11.0)
-//   1800 - Microsoft Visual C++ 2013 (12.0)
 //
 //----------------------------------------------------------------------------
 #if !defined(OWL_PRIVATE_MSC_H)
@@ -26,8 +25,8 @@
 //
 // Check compiler support.
 //
-#if _MSC_VER < 1600
-# error Unsupported Microsoft C++ compiler version
+#if _MSC_VER < 1500
+# error OWLNext 6.33 and later require version 9 or later of this compiler.
 #endif
 
 //
@@ -129,8 +128,6 @@
 #endif
 
 #define OWL_OUTPUT_DEBUG_STRING(lpsz) ::OutputDebugString(lpsz) 
-
-#define OWL_HAS_STD_EXCEPTION_PTR
 
 //
 // Disable some MSC warnings, & move some to level 4 since they really are OK

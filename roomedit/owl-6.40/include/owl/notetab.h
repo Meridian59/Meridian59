@@ -34,10 +34,7 @@
 
 #include <owl/control.h>
 #include <owl/commctrl.h>
-#include <owl/celarray.h>
-#include <owl/gdiobjec.h>
-#include <vector>
-#include <memory>
+
 
 namespace owl {
 
@@ -45,7 +42,9 @@ namespace owl {
 // definition of classes
 #include <owl/preclass.h>
 
+class _OWLCLASS TFont;
 class _OWLCLASS TScrollBar;
+class _OWLCLASS TCelArray;
 
 /// \addtogroup ctrl
 /// @{
@@ -58,6 +57,10 @@ struct TNoteTabItem {
     TNoteTabItem(const tstring& label, INT_PTR clientData = 0, int imageIdx = -1, TAbsLocation imageLoc = alLeft);
     TNoteTabItem();
 
+    // operators to make STL happy
+    bool operator==(const TNoteTabItem& str) const;
+    bool operator<(const TNoteTabItem& str) const;
+
     TRect          Rect;       ///< Location of tab [client-area base coords]
     tstring    Label;      ///< Label of tab
     TSize          LabelSize;  ///< Width and height of label
@@ -66,6 +69,7 @@ struct TNoteTabItem {
     TAbsLocation  ImageLoc;    ///< Placement of tab image
 };
 
+class TNoteTabItemArray;
 //
 /// \class TNoteTab
 // ~~~~~ ~~~~~~~~
@@ -86,44 +90,34 @@ class _OWLCLASS TNoteTab : public TControl {
              TWindow* buddy = 0,
              bool     dialogBuddy = true,
              TModule* module = 0);
+   ~TNoteTab();
 
     // Add/remove tab items
     //
-    int Add(
-      LPCTSTR txt, 
-      INT_PTR clientData = 0, 
-      int imageIdx = -1,
-      TAbsLocation imageLoc = alLeft, 
-      bool shouldSelect = true);
+    int         Add(LPCTSTR txt, INT_PTR clientData = 0, int imageIdx = -1,
+                    TAbsLocation imageLoc = alLeft);
 
-    int Add(
-      const tstring& txt, 
-      INT_PTR clientData = 0, 
-      int imageIdx = -1, 
-      TAbsLocation imageLoc = alLeft,
-      bool shouldSelect = true)
-    {
-      return Add(txt.c_str(), clientData, imageIdx, imageLoc, shouldSelect);
-    }
+    int Add(const tstring& txt, INT_PTR clientData = 0, int imageIdx = -1, TAbsLocation imageLoc = alLeft)
+    {return Add(txt.c_str(), clientData, imageIdx, imageLoc);}
 
-    int Insert(
-      LPCTSTR txt, 
-      int index, 
-      INT_PTR clientData = 0, 
-      int imageIdx = -1,
-      TAbsLocation imageLoc = alLeft,
-      bool shouldSelect = true);
+    int         Insert(LPCTSTR txt, int index, INT_PTR clientData = 0, 
+                       int imageIdx = -1,TAbsLocation imageLoc = alLeft);
 
-    int Insert(
-      const tstring& txt, 
-      int index, 
-      INT_PTR clientData = 0, 
-      int imageIdx = -1, 
-      TAbsLocation imageLoc = alLeft, 
-      bool shouldSelect = true)
-    {
-      return Insert(txt.c_str(), index, clientData, imageIdx, imageLoc, shouldSelect);
-    }
+    int Insert(const tstring& txt, int index, INT_PTR clientData = 0, int imageIdx = -1, TAbsLocation imageLoc = alLeft)
+    {return Insert(txt.c_str(), index, clientData, imageIdx, imageLoc);}
+
+ 
+    // Added by DLN (3/15/2000)
+
+    int AddNoSelect(LPCTSTR label, INT_PTR clientData = 0);
+
+    int AddNoSelect(const tstring& label, INT_PTR clientData = 0)
+    {return AddNoSelect(label.c_str(), clientData);}
+
+    int InsertNoSelect(LPCTSTR label, int index, INT_PTR clientData = 0);
+
+    int InsertNoSelect(const tstring& label, int index, INT_PTR clientData = 0)
+    {return InsertNoSelect(label.c_str(), index, clientData);}
 
     bool        Delete(int index);
     bool        DeleteAll();
@@ -137,89 +131,9 @@ class _OWLCLASS TNoteTab : public TControl {
     bool        GetWindowFace() const;
     void        SetStyle3d(bool);
     bool        GetStyle3d() const;
-    void        EnableThemes(bool);
-    bool        AreThemesEnabled() const {return ShouldUseThemes;}
     int         GetFirstVisibleTab() const;
     void        SetFirstVisibleTab(int index);
     bool        EnsureVisible(int index);
-       
-    //
-    /// Returns the minimal control height for which tabs are not clipped.
-    //
-    int GetMinimalHeight();
-
-    //
-    /// Returns the amount of vertical space above the tabs.
-    //
-    TSize GetMargin() const {return Margin;}
-    void SetMargin(const TSize&);
-
-    //
-    /// Returns the amount of padding around the tab label.
-    //
-    TSize GetLabelMargin() const {return LabelMargin;}
-    void SetLabelMargin(const TSize&);
-
-    //
-    /// Returns the horizontal spacing between image and text in the label.
-    //
-    int GetLabelImageMargin() const {return LabelImageMargin;}
-    void SetLabelImageMargin(int);
-
-    //
-    /// Returns the margin around the focus rectangle for the selected tab.
-    //
-    TSize GetFocusMargin() const {return FocusMargin;}
-    void SetFocusMargin(const TSize&);
-
-    //
-    /// Returns the horizontal distance between two tabs.
-    //
-    int GetTabSpacing() const {return TabSpacing;}
-    void SetTabSpacing(int);
-
-    //
-    /// Returns the amount of narrowing on each side of the tab towards the bottom.
-    //
-    int GetTabTapering() const {return TabTapering;}
-    void SetTabTapering(int);
-
-    //
-    /// Returns the amount of extra height of the selected tab.
-    //
-    int GetSelectedTabProtrusion() const {return SelectedTabProtrusion;}
-    void SetSelectedTabProtrusion(int);
-
-    const TFont& GetTabFont() const;
-    void SetTabFont(const TFont&);
-
-    const TFont& GetSelectedTabFont() const;
-    void SetSelectedTabFont(const TFont&);
-
-    //
-    /// Returns the fill color used to paint the tabs.
-    //
-    TColor GetTabColor() const {return TabColor;}
-    void SetTabColor(const TColor&);
-
-    //
-    /// Returns the fill color used to paint the selected tab.
-    /// This color is only used when WindowFace mode is selected.
-    //
-    TColor GetSelectedTabColor() const {return SelectedTabColor;}
-    void SetSelectedTabColor(const TColor&);
-    
-    //
-    /// Returns the pen color used to draw the edges of the tabs.
-    //
-    TColor GetEdgeColor() const {return EdgeColor;}
-    void SetEdgeColor(const TColor&);
-
-    //
-    /// Returns the fill color used to paint the surface below and between the tabs.
-    //
-    TColor GetBkgndColor() const {return TWindow::BkgndColor;}
-    void SetBkgndColor(const TColor&);
 
     // Set/Query attributes of Tab Items
     //
@@ -227,13 +141,12 @@ class _OWLCLASS TNoteTab : public TControl {
     TNoteTabItem GetItem(int index) const;
     bool        SetItem(int index, const TNoteTabItem& item);
     bool        IsVisible(int index) const;
-    bool        IsFullyVisible(int index) const;
+    void        SetTabFont(HFONT font, bool redraw = true);
+    int         GetTabHeight() const;
     TAbsLocation GetScrollLocation() const;
     void        SetScrollLocation(TAbsLocation pos);
     void        SetCelArray(TCelArray* array, TAutoDelete = AutoDelete);
     TCelArray*  GetCelArray();
-    void        SetCelArrayTransparentColor(const TColor&);
-    TColor      GetCelArrayTransparentColor() const;
 
     // Set/Query buddy window
     //
@@ -262,36 +175,25 @@ class _OWLCLASS TNoteTab : public TControl {
     void        EvKillFocus(THandle hwndGetFocus);
     void         EvHScroll(uint scrollCode, uint thumbPos, HWND hWndCtl);
     void         EvPaint();
-    bool EvEraseBkgnd(HDC);
+
 
     // Routines handling underlying implementation
     //
     void        InitCtrl();
+    void        SetupFont(HFONT font = 0);
     void        SetTabRects(int firstTab);
-    void        InvalidateTab(int index);
+    void        InvalidateTabRect(int index);
     void        SetTabSize(int index);
-    int         TabFromPoint(const TPoint& pt) const;
-    TRect       GetScrollingTabsArea() const;
-    TRect       GetScrollerArea() const;
-    bool        NotifyAndSelect(int index);
-    void        Update();
+    int         TabFromPoint(const TPoint& pt);
+    void        GetTabsArea(TRect& rect);
+    void        GetScrollerArea(TRect& rect);
+    void        NotifyAndSelect(int index);
 
   protected_data:
-    bool WindowFace;
-    bool Style3d;
-    bool ShouldUseThemes;
-    TSize Margin;
-    TSize LabelMargin;
-    int LabelImageMargin;
-    TSize FocusMargin;
-    int TabSpacing;
-    int TabTapering;
-    int SelectedTabProtrusion;
-    std::auto_ptr<TFont> TabFont;
-    std::unique_ptr<TFont> SelectedTabFont;
-    TColor TabColor;
-    TColor SelectedTabColor;
-    TColor EdgeColor;
+    bool        WindowFace;         ///< True if active tab should use window color.
+    bool        Style3d;            ///< If true draws with 3D style.
+    int         TopMargin;          ///< Amount of a extra space to be left between the tab items and 
+                                    ///< the top of the control when computing the location of the tabs.
 
   private:
     // Hidden to prevent accidental copying or assignment
@@ -299,28 +201,21 @@ class _OWLCLASS TNoteTab : public TControl {
     TNoteTab(const TNoteTab&);
     TNoteTab& operator =(const TNoteTab&);
 
+    TFont*      TabFont;
     TWindow*    Buddy;
     THandle     BuddyHandle;
     int         FirstVisibleTab;
     int         SelectedTab;
-    typedef std::vector<TNoteTabItem> TNoteTabItemArray;
-    TNoteTabItemArray TabList;
+    TNoteTabItemArray* TabList;
     TScrollBar*  ScrollBar;
+    int         TabHeight;
     TAbsLocation ScrollLoc;
     TCelArray*  CelArray;
-    std::auto_ptr<TCelArray> OwnedCelArray;
-    TColor TransparentColor;
-    TRect LastClientRectPainted;
-    TRect EffectiveTabsArea;
+    bool         ShouldDelete;
 
-    TRect GetBoundingRect(const TRect& tabRect) const;
-    TRect CalculateTabRect(const TNoteTabItem& tab, const TPoint& p, bool isSelected) const;
-    typedef std::vector<TRect> TRects;
-    TRects CalculateTabRects(int firstTab, const TRect& area) const;
-    void AssignTabRect(TNoteTabItem&, const TRect& newRect);
+    void        DrawFocusRect(TDC& dc);
 
-    template <class TPartRenderer>
-    void PaintTabs(TDC& dc, const TRect& rect);
+    friend class TNoteTabItemArray;
 
   DECLARE_RESPONSE_TABLE(TNoteTab);
 };
@@ -369,7 +264,6 @@ inline void
 TNoteTab::SetWindowFace(bool wf)
 {
   WindowFace = wf;
-  Update();
 }
 
 //
@@ -390,7 +284,6 @@ inline void
 TNoteTab::SetStyle3d(bool st)
 {
   Style3d = st;
-  Update();
 }
 
 //
@@ -403,16 +296,6 @@ TNoteTab::GetStyle3d() const
 }
 
 //
-/// Specifies whether the note tab should use Windows visual styles (themes).
-//
-inline void 
-TNoteTab::EnableThemes(bool st)
-{
-  ShouldUseThemes = st;
-  Update();
-}
-
-//
 /// Returns FirstVisibleTab.
 //
 inline int
@@ -420,7 +303,14 @@ TNoteTab::GetFirstVisibleTab() const
 {
   return FirstVisibleTab;
 }
-
+//
+/// Returns the height of the tab.
+//
+inline int
+TNoteTab::GetTabHeight() const
+{
+  return TabHeight;
+}
 //
 /// Get the scroller location.
 //
@@ -438,14 +328,8 @@ TNoteTab::GetCelArray()
   return CelArray;
 }
 //
-/// Returns the color assigned to denote transparency in the bitmaps used for the
-/// tabs (see SetCelArray).
 //
-inline TColor
-TNoteTab::GetCelArrayTransparentColor() const
-{
-  return TransparentColor;
-}
+//
 
 } // OWL namespace
 

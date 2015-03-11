@@ -133,7 +133,7 @@ TXBase::~TXBase() throw()
 {}
 
 /// Makes a copy of the exception object.
-TXBase* TXBase::Clone()
+TXBase* TXBase::Clone() const
 {
   return new TXBase(*this);
 }

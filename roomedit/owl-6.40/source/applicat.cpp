@@ -299,6 +299,7 @@ TApplication::TApplication(const tstring& name, TModule*& module, TAppDictionary
   Ctl3dOn(false),Ctl3dModule(0),
 #endif
   CondemnedWindows(0),
+  XState(0), XBase(), XWhat(),
   Dictionary(appDict ? appDict : &(OWLGetAppDictionary()))
 {
   TRACEX(OwlApp, OWL_CDLEVEL, _T("TApplication constructing @") << (void*)this);
@@ -351,6 +352,7 @@ TApplication::TApplication
   Ctl3dOn(false),Ctl3dModule(0),
 #endif
   CondemnedWindows(0),
+  XState(0), XBase(), XWhat(),
   Dictionary(appDict ? appDict : &(OWLGetAppDictionary()))
 {
   TRACEX(OwlApp, OWL_CDLEVEL, _T("TApplication constructing @") << (void*)this);
@@ -688,6 +690,7 @@ TApplication::Run()
   }
 }
 
+
 //
 /// Start this application and return immediately. Used for component DLLs
 //
@@ -712,6 +715,7 @@ TApplication::Start() throw()
   catch (...) {status = -1;}
   return status;
 }
+
 
 //
 /// Operates the application's message loop, which runs during the lifetime of the
@@ -753,6 +757,7 @@ TApplication::MessageLoop()
   BreakMessageLoop = false;
   return MessageLoopResult;
 }
+
 
 //
 /// Called each time there are no messages in the queue. Idle count is
@@ -925,32 +930,101 @@ void TApplication::WaitOnObject(HANDLE handle, bool wait)
     } 
 }
 
+/// The SuspendThrow overloads store away a caught exception to allow foreign code
+/// to be re-entered. Call ResumeThrow to rethrow the exception, if any, upon
+/// return from the foreign code.
+/// \name Exception propagation mechanism
+/// @{
+
 //
-/// Stores the given exception so that it can be rethrown later by a call to ResumeThrow.
+/// Saves off a copy of a TXBase exception to be rethrown later.
 /// Calls PostQuitMessage to break the application message loop, thus ensuring that the
 /// application will not linger in a corrupt state.
 //
-void 
-TApplication::SuspendThrow(exception_ptr e)
+void
+TApplication::SuspendThrow(const TXBase& x) throw()
 {
-  CurrentException = e;
+  XState |= xsBase;
+  XBase.reset(x.Clone()); // May fail due to lack of memory!
   ::PostQuitMessage(-1);
 }
 
 //
-/// Rethrows the suspended exception stored by a previous call to SuspendThrow.
-/// Otherwise, if no exception has been suspended, does nothing.
+/// Saves off a TXEndSession exception to be rethrown later.
+/// Calls PostQuitMessage to break the application message loop, thus ensuring that the
+/// application will shut down.
+//
+void
+TApplication::SuspendThrow(const TXEndSession&) throw()
+{
+  XState |= xsEndSession;
+  ::PostQuitMessage(0);
+}
+
+//
+/// Saves off exception information to be rethrown later.
+/// The exception is rethrown as std::runtime_error (x.what()).
+/// All exception information, except for the message, is lost.
+/// Calls PostQuitMessage to break the application message loop, thus ensuring that the
+/// application will not linger in a corrupt state.
+//
+void
+TApplication::SuspendThrow(const exception& x) throw()
+{
+  XState |= xsStandard;
+  XWhat = x.what(); // May fail due to lack of memory!
+  ::PostQuitMessage(-1);
+}
+
+//
+/// Saves off an unknown exception information to be rethrown later.
+/// The unknown exception is rethrown as std::runtime_error ("Unknown").
+/// All exception information is lost.
+/// Calls PostQuitMessage to break the application message loop, thus ensuring that the
+/// application will not linger in a corrupt state.
+//
+void
+TApplication::SuspendThrow() throw()
+{
+  XState |= xsUnknown;
+  ::PostQuitMessage(-1);
+}
+
+
+//
+/// Rethrows any previously suspended exception, otherwise does nothing.
 //
 void
 TApplication::ResumeThrow()
 {
-  if (CurrentException == 0) return;
-
-  TRACEX(OwlApp, 0, _T("TApplication::ResumeThrow: Rethrowing suspended exception."));
-  exception_ptr e = CurrentException;
-  CurrentException = exception_ptr(); // clear
-  rethrow_exception(e);
+  if (XState != 0)
+  {
+    TRACEX(OwlApp, 0, _T("TApplication::ResumeThrow: Rethrowing suspended exception."));
+    if (XState & xsEndSession)
+    {
+      XState &= ~xsEndSession;
+      throw TXEndSession();
+    }
+    else if (XState & xsBase) 
+    {
+      XState &= ~xsBase;
+      XBase->Throw();
+    }
+    else if (XState & xsStandard)
+    {
+      XState &= ~xsStandard;
+      throw std::runtime_error(XWhat);
+    }
+    else if (XState & xsUnknown)
+    {
+      XState &= ~xsUnknown;
+      throw std::runtime_error("Unknown");
+    }
+  }
+  CHECKX(XState == 0, _T("Unhandled XState exception flag!"));
 }
+
+/// @}
 
 
 //
@@ -1031,7 +1105,7 @@ END_RESPONSE_TABLE;
 /// Catch the EV_WM_ACTIVATEAPP message, and activate main window
 //
 void 
-TApplication::EvActivateApp(bool active, DWORD /*threadId*/)
+TApplication::EvActivateApp(bool active, HTASK /*hTask*/)
 {
   if(active && GetMainWindow())
     GetMainWindow()->SetWindowPos(NULL,0,0,0,0, SWP_NOMOVE|SWP_NOSIZE|SWP_NOACTIVATE);
@@ -1194,7 +1268,7 @@ TXInvalidMainWindow::TXInvalidMainWindow()
 }
 
 TXInvalidMainWindow*
-TXInvalidMainWindow::Clone()
+TXInvalidMainWindow::Clone() const
 {
   return new TXInvalidMainWindow(*this);
 }
@@ -1757,7 +1831,11 @@ void TWaitHook::SetWaitCursor()
   ::SetCursor(*Cursor);
 }
 //
-LRESULT CALLBACK TWaitHook::WaitWndProc(HWND wnd, UINT msg, WPARAM param1, LPARAM param2)
+LRESULT CALLBACK
+#if defined(BI_COMP_BORLANDC) && __BORLANDC__ < 0x0630
+__declspec(dllexport)
+#endif
+TWaitHook::WaitWndProc(HWND wnd, UINT msg, WPARAM param1, LPARAM param2)
 {
   return GetEnumInfo().Hook->WaitWndMethod(wnd, msg, param1, param2);
 }

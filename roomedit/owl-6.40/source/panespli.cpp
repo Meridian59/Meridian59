@@ -113,15 +113,15 @@ TSplitter::EvLButtonUp(uint /*modKeys*/, const TPoint& point)
 // Notify TPaneSplitter object that it should set the appropriate cursor.
 //
 bool
-TSplitter::EvSetCursor(HWND hWndCursor, uint codeHitTest, TMsgId mouseMsg)
+TSplitter::EvSetCursor(THandle hWndCursor, uint hitTest, uint mouseMsg)
 {
   TPoint p;
-  if (hWndCursor == GetHandle() && codeHitTest == HTCLIENT) {
+  if (hWndCursor == GetHandle() && hitTest == HTCLIENT) {
     GetCursorPos(p);
     PaneSplitter->SetSplitterMoveCursor(this, p);
   }
   else
-    TLayoutWindow::EvSetCursor(hWndCursor, codeHitTest, mouseMsg);
+    TLayoutWindow::EvSetCursor(hWndCursor, hitTest, mouseMsg);
   return true;
 }
 

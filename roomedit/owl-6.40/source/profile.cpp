@@ -114,8 +114,8 @@ TProfile::GetString(const tstring& key, const tstring& defaultString)
   {
     buf.resize(buf_size);
     DWORD n = FileName ? 
-      ::GetPrivateProfileString(Section, key.c_str(), defaultString.c_str(), &buf[0], static_cast<DWORD>(buf.size()), FileName) : 
-      ::GetProfileString(Section, key.c_str(), defaultString.c_str(), &buf[0], static_cast<DWORD>(buf.size()));
+      ::GetPrivateProfileString(Section, key.c_str(), defaultString.c_str(), &buf[0], buf.size(), FileName) : 
+      ::GetProfileString(Section, key.c_str(), defaultString.c_str(), &buf[0], buf.size());
     if (n < buf_size - 2) // Sure it's not truncated? (See doc for GetProfileString.)
     {
       buf.resize(n); // Shrink to contents.

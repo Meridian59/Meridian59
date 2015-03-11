@@ -79,7 +79,7 @@ TFormattedStatic::SetupWindow()
   // the one or two text strings, then update the control text with the result.
   //
   tstring c = GetText();
-  int len = static_cast<int>(c.length() + Text.length() + Text2.length() + 5);
+  int len = c.length() + Text.length() + Text2.length() + 5;
   TAPointer<tchar> buff(new tchar[len]);
   _stprintf(buff, c.c_str(), Text.c_str(), Text2.c_str());
   SetText(buff);
@@ -126,13 +126,13 @@ TNumericStatic::TNumericStatic(TWindow* parent, int resId, int number)
 TResult
 TNumericStatic::EvSetNumber(TParam1 param1, TParam2)
 {
-  Number = static_cast<int>(param1);
+  Number = param1;
   if (Number > 0) {
     LPCTSTR c = GetCaption();
     CHECK(c);
     if (c)
     {
-      int len = static_cast<int>(::_tcslen(c) + sizeof(Number) + 5);
+      int len = ::_tcslen(c) + sizeof(Number) + 5;
       TAPointer<tchar> buff(new tchar[len]);
       wsprintf(buff, c, Number);
       SetText(buff);
@@ -255,7 +255,7 @@ TXPrinter::TXPrinter(uint resId)
 /// Clone the exception object for safe throwing across stack frames.
 //
 TXPrinter*
-TXPrinter::Clone()
+TXPrinter::Clone() const
 {
   return new TXPrinter(*this);
 }
@@ -288,6 +288,15 @@ TXPrinting::TXPrinting(int error)
   TXOwl(IDS_PRINTERERROR), // TODO: Create specific string for this exception?
   Error(error)
 {
+}
+
+//
+/// Clones the exception object for safe throwing across stack frames.
+//
+TXPrinting*
+TXPrinting::Clone() const
+{
+  return new TXPrinting(*this);
 }
 
 //
@@ -871,7 +880,7 @@ TPrinter::Print(TWindow* parent, TPrintout& printout, bool prompt)
   //
   int fromPage;
   int toPage;
-  if ((prompt && (Data->Flags & PD_SELECTION)) || selFromPage)
+  if (prompt && (Data->Flags & PD_SELECTION) || selFromPage) 
   {
     fromPage = selFromPage;
     toPage = selToPage;

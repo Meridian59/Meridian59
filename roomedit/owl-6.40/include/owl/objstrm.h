@@ -139,8 +139,6 @@ class _OWLCLASS _RTTI TStreamer {
 
   public:
 
-    virtual ~TStreamer() {}
-
 /// Returns the address of the TStreamableBase component of the streamable object.
     TStreamableBase *  GetObject() const { return object; }
 
@@ -557,10 +555,14 @@ class _OWLCLASS fpbase : virtual public pstream {
     enum { openprot = 0666 }; // default open mode
      fpbase();
      fpbase( LPCSTR, int, int = openprot );
+#if defined(BI_HAS_STREAMWCHAROPEN)    
      fpbase( LPCWSTR, int, int = openprot );
+#endif
     
     void  open( LPCSTR, int, int = openprot );
+#if defined(BI_HAS_STREAMWCHAROPEN)    
     void  open( LPCWSTR, int, int = openprot );
+#endif    
 
     void  close();
     void  setbuf( LPSTR, int );
@@ -585,10 +587,12 @@ class _OWLCLASS ifpstream : public fpbase, public ipstream {
                       int = std::ios::in,
                       int = fpbase::openprot
                     );
+#if defined(BI_HAS_STREAMWCHAROPEN)    
      ifpstream( LPCWSTR,
                       int = std::ios::in,
                       int = fpbase::openprot
                     );
+#endif                    
 
     std::filebuf *  rdbuf();
     	
@@ -596,10 +600,12 @@ class _OWLCLASS ifpstream : public fpbase, public ipstream {
                       int = std::ios::in,
                       int = fpbase::openprot
                     );
+#if defined(BI_HAS_STREAMWCHAROPEN)    
     void  open( LPCWSTR ,
                       int = std::ios::in,
                       int = fpbase::openprot
                     );
+#endif                   
 };
 
 ///   \class ofpstream                                                       
@@ -616,10 +622,12 @@ class _OWLCLASS ofpstream : public fpbase, public opstream {
                       int = std::ios::out,
                       int = fpbase::openprot
                     );
+#if defined(BI_HAS_STREAMWCHAROPEN)    
      ofpstream( LPCWSTR ,
                       int = std::ios::out,
                       int = fpbase::openprot
                     );
+#endif                    
 
     std::filebuf *  rdbuf();
 
@@ -627,10 +635,12 @@ class _OWLCLASS ofpstream : public fpbase, public opstream {
                       int = std::ios::out,
                       int = fpbase::openprot
                     );
+#if defined(BI_HAS_STREAMWCHAROPEN)    
     void  open( LPCWSTR,
                       int = std::ios::out,
                       int = fpbase::openprot
                     );
+#endif
 };
 
 // Generic definitions/compiler options (eg. alignment) following the
@@ -788,12 +798,14 @@ inline  fpbase::fpbase( LPCSTR name, int omode, int prot ){
   open( name, omode, prot );
 }
 
+#if defined(BI_HAS_STREAMWCHAROPEN)
 /// Creates a buffered fpbase object. It opens the file specified by name,
 /// using the mode omode and protection prot; and attaches this file to the stream.
 inline  fpbase::fpbase( LPCWSTR name, int omode, int prot ){
   pstream::init( &buf );
   open( name, omode, prot );
 }
+#endif
 
 /// Returns a pointer to the current file buffer.
 inline std::filebuf *  fpbase::rdbuf(){
@@ -812,6 +824,7 @@ inline  ifpstream::ifpstream( LPCSTR name, int omode, int prot )
 {
 }
 
+#if defined(BI_HAS_STREAMWCHAROPEN)
 /// Creates a buffered ifpstream object. It opens the file specified by name
 /// using the mode mode and protection prot; and attaches this file to the stream.
 inline  ifpstream::ifpstream( LPCWSTR name, int omode, int prot )
@@ -819,6 +832,7 @@ inline  ifpstream::ifpstream( LPCWSTR name, int omode, int prot )
   fpbase( name, omode | std::ios::in | std::ios::binary, prot )
 {
 }
+#endif
 
 /// Returns a pointer to the current file buffer.
 inline std::filebuf *  ifpstream::rdbuf(){
@@ -837,6 +851,7 @@ inline void  ifpstream::open( LPCSTR name,
   readVersion();
 }
 
+#if defined(BI_HAS_STREAMWCHAROPEN)
 /// It opens the named file in the given mode (app, ate, in, out, binary, trunc,
 /// nocreate, or noreplace) and protection. The default mode for ifpstream is
 /// ios::in (input) with openprot protection. The opened file is attached to this
@@ -848,6 +863,7 @@ inline void  ifpstream::open( LPCWSTR name,
   fpbase::open( name, omode | std::ios::in | std::ios::binary, prot );
   readVersion();
 }
+#endif
 
 /// Creates a buffered ofpstream object using a default buffer.
 inline  ofpstream::ofpstream(){
@@ -862,6 +878,7 @@ inline  ofpstream::ofpstream( LPCSTR name, int omode, int prot )
 {
 }
 
+#if defined(BI_HAS_STREAMWCHAROPEN)
 /// Creates a buffered ofpstream object. It opens the file specified by
 /// name, using the mode mode, and protection prot; and attaches this file to the
 /// stream
@@ -870,6 +887,7 @@ inline  ofpstream::ofpstream( LPCWSTR name, int omode, int prot )
   fpbase( name, omode | std::ios::out | std::ios::binary, prot )
 {
 }
+#endif
 
 inline std::filebuf *  ofpstream::rdbuf(){
   return fpbase::rdbuf();
@@ -887,6 +905,7 @@ inline void  ofpstream::open( LPCSTR name,
   writeVersion();
 }
 
+#if defined(BI_HAS_STREAMWCHAROPEN)
 /// Returns a pointer to the current file buffer.
 inline void  ofpstream::open( LPCWSTR name,
                                     int omode,
@@ -895,6 +914,7 @@ inline void  ofpstream::open( LPCWSTR name,
   fpbase::open( name, omode | std::ios::out | std::ios::binary, prot );
   writeVersion();
 }
+#endif
 
 /// This friend operator of ipstream extracts (reads) from the ipstream ps, to the
 /// given argument. It returns a reference to the stream that lets you chain >>

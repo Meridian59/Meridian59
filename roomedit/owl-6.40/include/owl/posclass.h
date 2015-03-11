@@ -12,7 +12,7 @@
 #endif
 
 #if !(defined(lint) || defined(_lint)) && !defined(RC_INVOKED)
-# if defined(_MSC_VER)
+# if defined(_MSC_VER) && ( _MSC_VER >= 800 ) 
 #   pragma pack(pop)
 #   pragma warning(pop)
 # elif(defined(__BORLANDC__)) //for Win32, Win64 and OSX

@@ -18,9 +18,8 @@
 #include <owl/scrollba.h>
 #include <owl/uimetric.h>
 #include <owl/celarray.h>
-#include <owl/theme.h>
-#include <owl/gdiplus.h>
-#include <algorithm>
+
+#include <owl/template.h>
 
 using namespace std;
 
@@ -28,21 +27,23 @@ namespace owl {
 
 OWL_DIAGINFO;
 
-#define OWL_CLIP_TAB_BOUNDING_RECT_ 0 // debugging
-#define OWL_DRAW_TAB_BOUNDING_RECT_ 0 // debugging
 
-#if OWL_CLIP_TAB_BOUNDING_RECT_
+//
+// Constants used when drawing control
+//
+const int LabelMargin = 5;        // Pad on each side of tab label
+const int LabelVMargin= 1;        // Pad above/below the tab label
+const int TabMargin   = 4;        // Margin between two tabs
+const int CtrlMargin  = 5;        // Margin on each side of tab row
+const int CtrlVMargin = 1;        // Margin above row of tab
+const int HorzSelInc  = 2;        // Increment for selected tab
+const int VertSelInc  = 2;        // Increment for selected tab
 
-bool ShouldClipTabBoundingRect_ = false;
 
-#endif
-
-#if OWL_DRAW_TAB_BOUNDING_RECT_
-
-bool ShouldDrawTabBoundingRect_ = false;
-
-#endif
-
+class TNoteTabItemArray : public TIPtrArray<TNoteTabItem*>{
+  public:
+    TNoteTabItemArray(){}
+};
 //----------------------------------------------------------------------------
 
 DEFINE_RESPONSE_TABLE1(TNoteTab, TControl)
@@ -54,7 +55,6 @@ DEFINE_RESPONSE_TABLE1(TNoteTab, TControl)
   EV_WM_KILLFOCUS,
   EV_WM_HSCROLL,
   EV_WM_PAINT,
-  EV_WM_ERASEBKGND,
 END_RESPONSE_TABLE;
 
 //
@@ -93,6 +93,23 @@ TNoteTab::TNoteTab(TWindow*   parent,
 }
 
 //
+/// Destructor of NoteTab object - cleans up allocated resources.
+//
+TNoteTab::~TNoteTab()
+{
+  // Cleanup memory associated with notetab items
+  //
+  DeleteAll();
+
+  // Cleanup font and tab item collection
+  //
+  delete TabFont;
+  delete TabList;
+  if(ShouldDelete)
+    delete CelArray;
+}
+
+//
 /// Returns "OWL_Notetab" - the Window class name of the notetab control object
 //
 TWindow::TGetClassNameReturnType
@@ -110,6 +127,13 @@ TNoteTab::SetupWindow()
 {
   TControl::SetupWindow();
 
+  SetTabFont(0, false);
+
+  TabHeight = Attr.H = std::max(TabHeight, Attr.H);
+
+  SetWindowPos(0, 0, 0, Attr.W, Attr.H, SWP_NOMOVE|SWP_NOACTIVATE|
+                                                     SWP_NOZORDER);
+
   // Initialize BuddyHandle if we have a Buddy.
   //
   if (Buddy)
@@ -120,38 +144,61 @@ TNoteTab::SetupWindow()
 /// Adds a new tabitem to the notetab control
 //
 int
-TNoteTab::Add(
-  LPCTSTR label, 
-  INT_PTR clientData, 
-  int imageIdx, 
-  TAbsLocation imageLoc,
-  bool shouldSelect)
+TNoteTab::Add(LPCTSTR label, INT_PTR clientData, 
+              int imageIdx, TAbsLocation imageLoc)
 {
-  return Insert(label, GetCount(), clientData, imageIdx, imageLoc, shouldSelect);
+  return Insert(label, GetCount(), clientData, imageIdx, imageLoc);
 }
 
 //
 /// Inserts a new TTabItem at the specified index.
 //
 int
-TNoteTab::Insert(
-  LPCTSTR label, 
-  int index, 
-  INT_PTR clientData, 
-  int imageIdx, 
-  TAbsLocation imageLoc,
-  bool shouldSelect)
+TNoteTab::Insert(LPCTSTR label, int index, INT_PTR clientData, 
+                 int imageIdx, TAbsLocation imageLoc)
 {
   PRECONDITION(index >= 0 && index <= GetCount());
 
-  TabList.insert(TabList.begin() + index, 
-    TNoteTabItem(label, clientData, imageIdx, imageLoc));
+  if(index == GetCount())
+    TabList->Add(new TNoteTabItem(label, clientData, imageIdx, imageLoc));
+  else{
+    *(*TabList)[index] = TNoteTabItem(label, clientData, imageIdx, imageLoc);
+  }
 
   SetTabSize(index);
   SetTabRects(FirstVisibleTab);
-  if (shouldSelect)
-    SetSel(index);
 
+  // Select [Could selection only if it's the first one inserted]
+  //
+  SetSel(index);
+  return index;
+}
+
+//NoSelects added by DLN (3/15/2000)
+
+//------------------------------------------------------------------------------
+// Add a new tabitem to the notetab control without selecting it //DLN
+//------------------------------------------------------------------------------
+int TNoteTab::AddNoSelect(LPCTSTR label, INT_PTR clientData)
+{
+  return InsertNoSelect(label, GetCount(), clientData);
+}
+
+//------------------------------------------------------------------------------
+// Insert a new tabitem at the specified index 
+//  (doesn't call SetSel like Owl Insert fcn)
+//------------------------------------------------------------------------------
+int TNoteTab::InsertNoSelect(LPCTSTR label, int index, INT_PTR clientData)
+{
+  PRECONDITION(index >= 0 && index <= GetCount());
+
+  TabList->AddAt(new TNoteTabItem(label, clientData), index);
+
+  SetTabSize(index);
+  SetTabRects(FirstVisibleTab);
+
+  // Return the index of the tab
+  //
   return index;
 }
 
@@ -169,12 +216,12 @@ TNoteTab::Delete(int index)
   if (IsVisible(index))
   {
     for (int i = index; i < GetCount(); i++)
-      InvalidateTab(i);
+      InvalidateTabRect(i);
   }
 
   // Remove the tab.
   //
-  TabList.erase(TabList.begin() + index);
+  TabList->Destroy(index);
 
   // Adjust SelectedTab and FirstVisibleTab.
   // If a tab before SelectedTab is deleted, then correct the index so that it
@@ -194,7 +241,7 @@ TNoteTab::Delete(int index)
   // Force SelectedTab to have focus.
   //
   if ((SelectedTab >= 0) && (SelectedTab < n))
-    InvalidateTab(SelectedTab);
+    InvalidateTabRect(SelectedTab);
 
   // Calculate new tab rectangles, if any left.
   //
@@ -209,7 +256,7 @@ TNoteTab::Delete(int index)
 bool
 TNoteTab::DeleteAll()
 {
-  TabList.clear();
+  TabList->Flush(true);
   FirstVisibleTab = 0;
   SelectedTab = -1;
 
@@ -222,8 +269,7 @@ TNoteTab::DeleteAll()
 int
 TNoteTab::GetCount() const
 {
-  PRECONDITION(TabList.size() <= INT_MAX);
-  return static_cast<int>(TabList.size());
+  return TabList->Size();
 }
 
 //
@@ -246,196 +292,28 @@ TNoteTab::GetSel() const
 int
 TNoteTab::SetSel(int index)
 {
-  if (index < 0 || index >= GetCount()) return -1;
-  if (index == SelectedTab) return index;
+  if (index < GetCount() && index >= 0) {
+    if (index != SelectedTab) {
 
-  // Change the selection.
-  // First, invalidate area occupied by previously selected item.
-  //
-  if (SelectedTab >= 0 && SelectedTab < GetCount())
-    InvalidateTab(SelectedTab);
+      // Invalidate area occupied by previously selected item
+      //
+      if ( (SelectedTab >= 0) && (SelectedTab < GetCount()) ) {
+        InvalidateTabRect(SelectedTab);
+      }
 
-  // Update selected index and tab rectangles (selected tab may differ from the rest).
-  //
-  SelectedTab = index;
-  SetTabRects(FirstVisibleTab);
+      // Update selected index
+      //
+      SelectedTab = index;
 
-  // Invalidate area occupied by new selection.
-  //
-  if (SelectedTab >= 0 && SelectedTab < GetCount())
-    InvalidateTab(SelectedTab);
-
-  return index;
-}
-
-int
-TNoteTab::GetMinimalHeight()
-{
-  int labelHeight = 0;
-  for (int i = 0; i != GetCount(); ++i)
-  {
-    SetTabSize(i);
-    labelHeight = std::max(labelHeight, static_cast<int>(TabList[i].LabelSize.cy));
+      // Invalidate area occupied by new selection
+      //
+      if ( (SelectedTab >= 0) && (SelectedTab < GetCount()) ) {
+        InvalidateTabRect(SelectedTab);
+      }
+    }
+    return index;
   }
-  return Margin.cy +
-    LabelMargin.cy +
-    labelHeight +
-    LabelMargin.cy +
-    (Style3d ? TUIMetric::CyEdge.Get() : 0);
-}
-
-//
-/// Sets the amount of vertical space above the tabs.
-//
-void
-TNoteTab::SetMargin(const TSize& v)
-{
-  Margin = v;
-  Update();
-}
-
-//
-/// Sets the amount of padding around the tab label.
-//
-void
-TNoteTab::SetLabelMargin(const TSize& v)
-{
-  LabelMargin = v;
-  Update();
-}
-
-//
-/// Sets the horizontal spacing between image and text in the label.
-//
-void
-TNoteTab::SetLabelImageMargin(int v)
-{
-  LabelImageMargin = v;
-  Update();
-}
-
-//
-/// Sets the margin around the focus rectangle for the selected tab.
-//
-void
-TNoteTab::SetFocusMargin(const TSize& v)
-{
-  FocusMargin = v;
-  Update();
-}
-
-//
-/// Sets the horizontal distance between two tabs.
-//
-void
-TNoteTab::SetTabSpacing(int v)
-{
-  TabSpacing = v;
-  Update();
-}
-
-//
-/// Sets the amount of narrowing on each side of the tab towards the bottom.
-//
-void
-TNoteTab::SetTabTapering(int v)
-{
-  TabTapering = v;
-  Update();
-}
-
-//
-/// Sets the amount of extra height of the selected tab.
-//
-void
-TNoteTab::SetSelectedTabProtrusion(int v)
-{
-  SelectedTabProtrusion = v;
-  Update();
-}
-
-//
-/// Returns the font used to render the text part of the tab labels.
-//
-const TFont&
-TNoteTab::GetTabFont() const 
-{
-  PRECONDITION(TabFont.get());
-  return *TabFont;
-}
-
-//
-/// Sets the font used to render the text part of the tab labels.
-//
-void
-TNoteTab::SetTabFont(const TFont& font)
-{
-  TabFont.reset(new TFont(font.GetObject()));
-  Update();
-}
-
-//
-/// Returns the font used to render the text part of the selected tab label.
-//
-const TFont&
-TNoteTab::GetSelectedTabFont() const
-{
-  PRECONDITION(TabFont.get());
-  return SelectedTabFont.get() ? *SelectedTabFont : *TabFont;
-}
-
-//
-/// Sets the font used to render the text part of the selected tab label.
-//
-void
-TNoteTab::SetSelectedTabFont(const TFont& font)
-{
-  SelectedTabFont.reset(new TFont(font.GetObject()));
-  Update();
-}
-
-//
-/// Sets the fill color used to paint the tabs.
-//
-void
-TNoteTab::SetTabColor(const TColor& v)
-{
-  TabColor = v;
-  Update();
-}
-
-//
-/// Sets the fill color used to paint the selected tab.
-/// This color is only used when WindowFace mode is selected.
-//
-void
-TNoteTab::SetSelectedTabColor(const TColor& v)
-{
-  SelectedTabColor = v;
-  Update();
-}
-    
-//
-/// Sets the pen color used to draw the edges of the tabs.
-//
-void
-TNoteTab::SetEdgeColor(const TColor& v)
-{
-  EdgeColor = v;
-  Update();
-}
-
-//
-/// Sets the fill color used to paint the surface below and between the tabs.
-/// Note: This function hides TWindow::SetBkgndColor and provides extra fuctionality.
-/// Since TWindow::SetBkgndColor is not virtual, you should therefore always call 
-/// this version, i.e. don't call SetBkgndColor through a base pointer.
-//
-void 
-TNoteTab::SetBkgndColor(const TColor& v)
-{
-  TWindow::SetBkgndColor(v);
-  Update();
+  return -1;
 }
 
 //
@@ -448,7 +326,7 @@ TNoteTab::GetItem(int index, TNoteTabItem& tabItem) const
   PRECONDITION(index >= 0);
   PRECONDITION(index < GetCount());
 
-  tabItem = TabList[index];
+  tabItem = *(*TabList)[index];
   return true;
 }
 
@@ -459,7 +337,7 @@ TNoteTabItem
 TNoteTab::GetItem(int index) const
 {
   TNoteTabItem n;
-  bool r = GetItem(index, n); CHECK(r); InUse(r);
+  bool r = GetItem(index, n); CHECK(r);
   return n;
 }
 
@@ -471,12 +349,11 @@ TNoteTab::SetItem(int index, const TNoteTabItem& tabItem)
 {
   if (index < GetCount() && index >= 0) {
 
-    TabList[index] = tabItem;
+    *(*TabList)[index] = tabItem;
 
     // !BB Need to recalc/invalidate etc...
     SetTabSize(index);
     SetTabRects(FirstVisibleTab);
-    InvalidateTab(index);
     return true;
   }
   return false;
@@ -521,625 +398,218 @@ TNoteTab::Transfer(void* /*buffer*/, TTransferDirection /*direction*/)
 void
 TNoteTab::InitCtrl()
 {
-  Style3d = true;
-  ShouldUseThemes = false;
-  Margin = TSize(5, TUIMetric::CySizeFrame);
-  LabelMargin = TSize(5, 3);
-  SelectedTabProtrusion = 0;
-  LabelImageMargin = 3;
-  FocusMargin = TSize(2, 2);
-  TabSpacing = 4;
-  TabTapering = 4;
-  TabColor = TColor::Sys3dFace;
-  SelectedTabColor = TColor::SysWindow;
-  EdgeColor = TColor::SysWindowFrame;
-  SetBkgndColor(TColor::Sys3dFace);
-
-  TabList.clear();
-  SetTabFont(TDefaultGuiFont());
-  SelectedTabFont.reset(); // Causes TabFont to be used for selected tabs.
+  // Initialize internal structures when using OWL's implementation
+  //
+  TabList = new TNoteTabItemArray;
+  TabFont = 0;
   SelectedTab = -1;
   FirstVisibleTab = 0;
+  ShouldDelete = false;
   CelArray = 0;
-  OwnedCelArray.reset();
-  TransparentColor = TColor::Sys3dFace;
+  TabHeight = 0;
   ScrollLoc = alRight;
 
-  ModifyStyle(0, WS_CLIPCHILDREN); // Clipping eliminates scrollbar flicker.
+  // If on new shell, use 3d look by default, and add extra space for a margin
+  // at the top
+  //
+  Style3d = true;
+  TopMargin = TUIMetric::CySizeFrame;
+
+  SetBkgndColor(TColor::Sys3dFace);
+
   ScrollBar = new TScrollBar(this, -1, 0, 0, 0, 0, true);
   ScrollBar->ModifyStyle(WS_TABSTOP, 0); // No focus, please.
-}
-
-//
-/// Returns the bounding rectangle of a tab given its hit rectangle.
-/// The bounding rectangle is the smallest rectangle that encapsulates the 
-/// whole tab, and outside which the tab will not draw. 
-/// The bounding rectangle may be larger than the tab's hit rectangle.
-//
-TRect
-TNoteTab::GetBoundingRect(const TRect& tabRect) const
-{
-  // Adjust for the widening of the tab towards the page edge (top).
-  //
-  return tabRect.IsEmpty() ? TRect() : tabRect.InflatedBy(TabTapering, 0);
 }
 
 //
 /// Invalidates the rectangle occupied by the tab at the specified index.
 //
 void
-TNoteTab::InvalidateTab(int index)
+TNoteTab::InvalidateTabRect(int index)
 {
-  PRECONDITION(index >= 0 && index < GetCount());
-  if (!GetHandle()) return;
-
-  const TNoteTabItem& tab = TabList[index];
-  InvalidateRect(GetBoundingRect(tab.Rect));
-}
-
-namespace
-{
-
-  //
-  // Returns `true` if themes are enabled for this application and
-  // themed Common Controls (version 6 or later) are in use.
-  //
-  // Important: This function must be called after the creation of the main 
-  // window, otherwise it may always return `false`.
-  //
-  // Note that IsAppThemed will return `false` if either (a) themes have been
-  // disabled for the application by selecting "Disable visual themes" in the
-  // Compatibility tab in the Properties dialog for the executable, or (b)
-  // themes have been deactivated by selecting the Windows Classic style in 
-  // the Windows XP/7/Vista Control Panel (not available in Windows 8).
-  // Note that (b) may change at run-time.
-  //
-  // Note we do not have to use IsThemeActive here. This function only reports
-  // the state of the Control Panel setting (Classic vs themed).
-  //
-  bool IsThemed_()
-  {
-    return TThemeModule::GetInstance().IsAppThemed() &&
-      TCommCtrl::Dll()->GetCtrlVersion() >= 0x60000;
+  if (GetHandle()) {
+    TRect tbRect = (*TabList)[index]->Rect;
+    tbRect.Inflate(TabMargin, 1);
+    InvalidateRect(tbRect, true);
   }
-
-  // 
-  // Defines a base class with common implementation and utilities for derived
-  // UI part renderers.
-  //
-  struct TRenderer_
-  {
-    TWindow& Window;
-    TDC& Dc;
-    const TFont& TabFont;
-    const TFont& SelectedTabFont;
-    TColor TabTextColor;
-
-    TRenderer_(
-      TWindow& w, 
-      TDC& dc, 
-      const TRect& paintRect, 
-      const TFont& tabFont, 
-      const TFont& selectedTabFont, 
-      TColor tabTextColor,
-      TColor tabColor, 
-      TColor selectedTabColor, 
-      TColor edgeColor
-      )
-      : Window(w), Dc(dc), TabFont(tabFont), SelectedTabFont(selectedTabFont), TabTextColor(tabTextColor)
-    {InUse(paintRect); InUse(tabColor); InUse(selectedTabColor); InUse(edgeColor);}
-
-    void PaintPageEdge(const TSize& margin)
-    {CHECKX(false, _T("Not implemented")); InUse(margin);}
-
-    void PaintTabFace(const TRect& tabBoundingRect, TPoint (&pt)[4], bool isSelectedTab)
-    {CHECKX(false, _T("Not implemented")); InUse(tabBoundingRect); InUse(pt); InUse(isSelectedTab);}
-
-    void DrawTabContour(const TPoint (&pt)[4], bool isSelectedTab)
-    {CHECKX(false, _T("Not implemented")); InUse(pt); InUse(isSelectedTab);}
-
-    void PaintTabIcon(const TNoteTabItem& tab, const TCelArray& celArray, TColor transparentColor, const TSize& labelMargin, bool isSelectedTab, int selectedTabProtrusion)
-    {
-      CHECK(!tab.Rect.IsEmpty());
-      int dy = isSelectedTab ? selectedTabProtrusion : 0;
-      TRect imageRect(tab.Rect.TopLeft() + TSize(0, dy), tab.Rect.BottomRight());
-      TUIFace face(imageRect, celArray, transparentColor);
-      TSize size = celArray.CelSize();
-      TRect srcRect(celArray.CelRect(tab.ImageIdx));
-      TPoint dstPt(
-        (tab.ImageLoc == alRight) ? imageRect.Width() - (size.cx + labelMargin.cx) : labelMargin.cx, 
-        (imageRect.Height() - size.cy) / 2);
-      face.Paint(Dc, srcRect, dstPt, TUIFace::Normal, false, false);
-    }
-
-    void DrawTabText(const TNoteTabItem& tab, const TCelArray* celArray, const TSize& labelMargin, int labelImageMargin, bool isSelectedTab, int selectedTabProtrusion)
-    {
-      bool hasImage = celArray && tab.ImageIdx >= 0;
-      int leftMargin = tab.Rect.left + labelMargin.cx;
-      int rightMargin = tab.Rect.right - labelMargin.cx;
-      int topMargin = labelMargin.cy + (isSelectedTab ? selectedTabProtrusion : 0);
-      TRect labelRect(
-        (hasImage && tab.ImageLoc == alLeft) ? (leftMargin + celArray->CelSize().cx + labelImageMargin) : leftMargin,
-        tab.Rect.top + topMargin,
-        (hasImage && tab.ImageLoc == alRight) ? (rightMargin - celArray->CelSize().cx - labelImageMargin) : rightMargin,
-        tab.Rect.bottom - labelMargin.cy);
-      uint16 labelAlign = static_cast<uint16>(!hasImage ? DT_CENTER : (tab.ImageLoc == alRight ? DT_RIGHT : DT_LEFT));
-      uint16 labelFormat = static_cast<uint16>(DT_SINGLELINE | DT_VCENTER | labelAlign);
-      int oldBkMode = Dc.SetBkMode(TRANSPARENT);
-      Dc.SetTextColor(TabTextColor);
-      Dc.SelectObject(isSelectedTab ? SelectedTabFont : TabFont);
-      Dc.DrawText(tab.Label, -1, labelRect, labelFormat);
-      Dc.SetBkMode(oldBkMode);
-    }
-
-    void DrawTabFocusRect(const TNoteTabItem& tab, const TSize& focusMargin, int selectedTabProtrusion)
-    {
-      DrawTabFocusRect(Dc, tab, focusMargin, selectedTabProtrusion);
-    }
-
-    static void DrawTabFocusRect(TDC& dc, const TNoteTabItem& tab, const TSize& focusMargin, int selectedTabProtrusion)
-    {
-      int oldBkMode = dc.SetBkMode(TRANSPARENT);
-      TRect selectedRect = TRect(
-        tab.Rect.TopLeft().OffsetBy(0, selectedTabProtrusion), 
-        tab.Rect.BottomRight())
-        .InflatedBy(-focusMargin);
-      dc.DrawFocusRect(selectedRect);
-      dc.SetBkMode(oldBkMode);
-    }
-
-  protected:
-
-    //
-    // Utilities for concrete renderers.
-    //
-
-    void FillPageEdge(const TSize& margin, const TBrush& brush)
-    {
-      TRect r = Window.GetClientRect();
-      TRect m(r.TopLeft(), TSize(r.Width(), margin.cy));
-      Dc.FillRect(m, brush);
-    }
-
-    void DrawPageEdge(const TSize& margin, const TPen& pen)
-    {
-      TRect r = Window.GetClientRect();
-      TRect m(r.TopLeft(), TSize(r.Width(), margin.cy));
-      Dc.SelectObject(pen);
-      Dc.MoveTo(m.BottomLeft());
-      Dc.LineTo(m.BottomRight());
-    }
-
-    void FillPolygon(const TPoint (&pt)[4], const TBrush& brush)
-    {
-      Dc.SelectStockObject(NULL_PEN);
-      Dc.SelectObject(brush);
-      Dc.Polygon(pt, COUNTOF(pt));
-    }
-
-    void DrawContour(const TPoint (&pt)[4], const TPen& pen)
-    {
-
-#if defined(OWL_GDIPLUS_H)
-
-      // Draw anti-aliased lines using GDI+.
-      //
-      Gdiplus::Graphics g(Dc);
-      Gdiplus::Pen gdiPlusPen(gdiplus_cast<Gdiplus::Color>(TColor(pen.GetObject().lopnColor)));
-      Gdiplus::Point points[COUNTOF(pt)];
-      std::transform(&pt[0], &pt[0] + COUNTOF(pt), &points[0], &TransformPoint);
-      g.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
-      g.DrawLines(&gdiPlusPen, points, COUNTOF(points));
-
-#else
-
-      Dc.SelectObject(pen);
-      Dc.Polyline(pt, COUNTOF(pt));
-      Dc.SetPixel(pt[3], pen.GetObject().lopnColor); // We want that last pixel as well!
-
-#endif
-
-    }
-
-#if defined(OWL_GDIPLUS_H)
-
-  private:
-
-    static Gdiplus::Point TransformPoint(const TPoint& p)
-    {
-      return gdiplus_cast<Gdiplus::Point>(p);
-    }
-
-#endif
-
-  };
-
-  struct TFlatRenderer_
-    : TRenderer_
-  {
-    TBrush TabBrush;
-    TPen EdgePen;
-
-    TFlatRenderer_(
-      TWindow& w,
-      TDC& dc,
-      const TRect& paintRect,
-      const TFont& tabFont,
-      const TFont& selectedTabFont,
-      TColor tabTextColor,
-      TColor tabColor,
-      TColor selectedTabColor,
-      TColor edgeColor
-      )
-      : TRenderer_(w, dc, paintRect, tabFont, selectedTabFont, tabTextColor, tabColor, selectedTabColor, edgeColor),
-      TabBrush(tabColor),
-      EdgePen(edgeColor)
-    {}
-
-    void PaintPageEdge(const TSize& margin) // non-virtual override
-    {
-      FillPageEdge(margin, TabBrush);
-      DrawPageEdge(margin, EdgePen);
-    }
-
-    void PaintTabFace(const TRect& tabBoundingRect, TPoint (&pt)[4], bool isSelectedTab)
-    {
-      InUse(tabBoundingRect); InUse(isSelectedTab); // non-virtual override
-      FillPolygon(pt, TabBrush);
-    }
-
-    void DrawTabContour(const TPoint (&pt)[4], bool isSelectedTab) // non-virtual override
-    {
-      InUse(isSelectedTab);
-      DrawContour(pt, EdgePen);
-    }
-
-  };
-
-  struct TWindowFaceRenderer_
-    : TFlatRenderer_
-  {
-    TBrush SelectedTabBrush;
-
-    TWindowFaceRenderer_(
-      TWindow& w,
-      TDC& dc, 
-      const TRect& paintRect, 
-      const TFont& tabFont, 
-      const TFont& selectedTabFont, 
-      TColor tabTextColor,
-      TColor tabColor, 
-      TColor selectedTabColor, 
-      TColor edgeColor
-      )
-      : TFlatRenderer_(w, dc, paintRect, tabFont, selectedTabFont, tabTextColor, tabColor, selectedTabColor, edgeColor),
-      SelectedTabBrush(selectedTabColor)
-    {}
-
-    void PaintPageEdge(const TSize& margin) // non-virtual override
-    {
-      FillPageEdge(margin, SelectedTabBrush);
-      DrawPageEdge(margin, EdgePen);
-    }
-
-    void PaintTabFace(const TRect& tabBoundingRect, TPoint (&pt)[4], bool isSelectedTab) // non-virtual override
-    {
-      InUse(tabBoundingRect);
-      FillPolygon(pt, isSelectedTab ? SelectedTabBrush : TabBrush);
-    }
-
-  };
-
-  struct TStyle3dRenderer_
-    : TRenderer_
-  {
-    TBrush FaceBrush;
-    TPen LightPen;
-    TPen HilightPen;
-    TPen ShadowPen;
-    TPen DkShadowPen;
-
-    TStyle3dRenderer_(
-      TWindow& w,
-      TDC& dc,
-      const TRect& paintRect,
-      const TFont& tabFont,
-      const TFont& selectedTabFont,
-      TColor tabTextColor,
-      TColor tabColor,
-      TColor selectedTabColor,
-      TColor edgeColor
-      )
-      : TRenderer_(w, dc, paintRect, tabFont, selectedTabFont, tabTextColor, tabColor, selectedTabColor, edgeColor),
-      FaceBrush(tabColor),
-      LightPen(TColor::Sys3dLight),
-      HilightPen(TColor::Sys3dHilight),
-      ShadowPen(TColor::Sys3dShadow),
-      DkShadowPen(TColor::Sys3dDkShadow)
-    {}
-
-    void PaintPageEdge(const TSize& margin) // non-virtual override
-    {
-      FillPageEdge(margin, FaceBrush);
-
-      // Draw a recessed frame around the tabs.
-      //
-      TRect r = Window.GetClientRect();
-      TRect f(
-        r.TopLeft().OffsetBy(0, margin.cy), 
-        r.BottomRight());
-      TUIBorder(f, TUIBorder::WndRecessed).Paint(Dc);
-    }
-
-    void PaintTabFace(const TRect& tabBoundingRect, TPoint (&pt)[4], bool isSelectedTab) // non-virtual override
-    {
-      InUse(tabBoundingRect); InUse(isSelectedTab);
-      FillPolygon(pt, FaceBrush);
-    }
-
-    void DrawTabContour(const TPoint (&pt)[4], bool isSelectedTab) // non-virtual override
-    {
-      InUse(isSelectedTab);
-
-      Dc.SelectObject(LightPen); // inside left
-      Dc.MoveTo(pt[0].x + 1, pt[0].y);
-      Dc.LineTo(pt[1].x + 1, pt[1].y - 1);
-
-      Dc.SelectObject(HilightPen); // outside left
-      Dc.MoveTo(pt[0].x, pt[0].y);
-      Dc.LineTo(pt[1].x, pt[1].y);
-
-      Dc.SelectObject(ShadowPen); // inside bottom & right
-      Dc.MoveTo(pt[1].x + 1, pt[1].y - 1);
-      Dc.LineTo(pt[2].x - 1, pt[2].y - 1);
-      Dc.MoveTo(pt[2].x - 1, pt[2].y);
-      Dc.LineTo(pt[3].x - 1, pt[3].y);
-
-      Dc.SelectObject(DkShadowPen); // outside bottom & right
-      Dc.MoveTo(pt[1].x + 1, pt[1].y);
-      Dc.LineTo(pt[2].x, pt[2].y);
-      Dc.LineTo(pt[3].x, pt[3].y);
-    }
-
-  };
-
-  struct TThemeRenderer_
-    : TRenderer_
-  {
-    TPen EdgePen;
-
-    TThemeRenderer_(
-      TWindow& w,
-      TDC& dc, 
-      const TRect& paintRect, 
-      const TFont& tabFont, 
-      const TFont& selectedTabFont, 
-      TColor tabTextColor,
-      TColor tabColor, 
-      TColor selectedTabColor, 
-      TColor edgeColor
-      )
-      : TRenderer_(w, dc, paintRect, tabFont, selectedTabFont, tabTextColor, tabColor, selectedTabColor, edgeColor),
-      EdgePen(edgeColor)
-    {}
-
-    void PaintPageEdge(const TSize& margin) // non-virtual override
-    {
-      TRect r = Window.GetClientRect();
-      TRect m(r.TopLeft(), TSize(r.Width(), margin.cy));
-      TThemePart p(Window, L"TAB", TABP_BODY, 0);
-      p.DrawBackground(Dc, m);
-      DrawPageEdge(margin, EdgePen);
-    }
-
-    void PaintTabFace(const TRect& tabBoundingRect, TPoint (&pt)[4], bool isSelectedTab) // non-virtual override
-    {
-      int item = isSelectedTab ? TABP_TOPTABITEM : TABP_TABITEM;
-      int state = isSelectedTab ? TIS_SELECTED : TIS_NORMAL;
-      TThemePart p(Window, L"TAB", item, state);
-      TRegion savedClipRegion;
-      int r = Dc.GetClipRgn(savedClipRegion); CHECK(r != -1);
-      TRegion clipRegion(pt, COUNTOF(pt), WINDING);
-      Dc.SelectClipRgn(clipRegion);
-      p.DrawBackground(Dc, tabBoundingRect.InflatedBy(0, 1)); // Inflate to not paint the edge.
-      Dc.SelectClipRgn(r == 1 ? savedClipRegion.GetHandle() : NULL);
-    }
-
-    void DrawTabContour(const TPoint (&pt)[4], bool isSelectedTab) // non-virtual override
-    {
-      InUse(isSelectedTab);
-      DrawContour(pt, EdgePen);
-    }
-
-  };
-
-} // namespace
-
-//
-/// Implements the rendering of the window, using the given part renderer.
-//
-template <class TPartRenderer>
-void TNoteTab::PaintTabs(TDC& dc, const TRect& paintRect)
-{
-  if (GetCount() == 0) return;
-
-  TPartRenderer renderer(
-    *this, 
-    dc, 
-    paintRect, 
-    GetTabFont(),
-    GetSelectedTabFont(),
-    TColor::SysWindowText,
-    TabColor, 
-    SelectedTabColor,
-    EdgeColor);
-
-  // Now, go through the tab list in reverse order and paint each tab, except for
-  // the selected one, which has its painting deferred to the end (since it overlaps
-  // both its neighbours). We iterate in reverse order so that the tabs overlap
-  // correctly from left to right.
-  //
-  for (int i = GetCount(); --i >= -1;)
-  {
-    // Skip the selected tab; it's drawn last. Otherwise get the working index.
-    //
-    if (i == GetSel()) continue;
-    const bool isSelectedTab = (i == -1);
-
-    // If this is the final item (selected tab), then draw the page edge.
-    //
-    if (isSelectedTab)
-      renderer.PaintPageEdge(Margin);
-
-    // Retrieve tab item information.
-    //
-    const TNoteTabItem& tab = TabList[isSelectedTab ? GetSel() : i];
-    TRect tabBoundingRect = GetBoundingRect(tab.Rect);
-    if (tabBoundingRect.IsNull()) continue;
-    CHECK(!tabBoundingRect.IsEmpty());
-
-    // If the tab is completely outside the painting area, then skip it.
-    // Note that we inflate the paint area by 1 here to avoid edge conditions,
-    // i.e. whether or not a shared edge constitutes touching.
-    //
-    if (!(tabBoundingRect.InflatedBy(1, 1).Touches(paintRect)))
-      continue;
-
-#if OWL_CLIP_TAB_BOUNDING_RECT_
-
-    struct TTabBoundingRectClipper
-    {
-      TDC& Dc;
-      TRegion SavedClipRegion;
-      bool DidSaveClipRegion;
-
-      TTabBoundingRectClipper(TDC& d, const TRect& b)
-        : Dc(d), SavedClipRegion(), DidSaveClipRegion(false)
-      {
-        if (!ShouldClipTabBoundingRect_) return;
-        int rc = Dc.GetClipRgn(SavedClipRegion);
-        CHECK(rc != -1);
-        DidSaveClipRegion = rc == 1;
-        int ri = Dc.IntersectClipRect(b);
-        CHECK(ri != ERROR);
-      }
-
-      ~TTabBoundingRectClipper()
-      {
-        if (!ShouldClipTabBoundingRect_) return;
-        int r = DidSaveClipRegion ?
-          Dc.SelectClipRgn(SavedClipRegion) :
-          Dc.RemoveClipRgn();
-        CHECK(r != ERROR);
-      }
-    }
-    tbrc_(dc, tabBoundingRect);
-
-#endif
-
-    // Define the contour of the tab.
-    //
-    // Note that we exclude the edge on the right and bottom of our bounding 
-    // rectangle, as per Windows drawing conventions. See the documentation
-    // for GDI, e.g. for the Rectangle function:
-    //
-    // "The rectangle that is drawn excludes the bottom and right edges."
-    // http://msdn.microsoft.com/en-us/library/windows/desktop/dd162898.aspx
-    //
-    // By doing so we draw only within the clipping rectangle that would be 
-    // visible if we had intersected the clipping region with the tab's 
-    // bounding rectangle. This ensures that invalidation of our bounding 
-    // rectangle covers all pixels drawn.
-    //
-    int dx = TabTapering; // amount of narrowing on each side
-    TPoint pt[4] =
-    {
-      tabBoundingRect.TopLeft(),
-      tabBoundingRect.BottomLeft().OffsetBy(dx, -1),
-      tabBoundingRect.BottomRight().OffsetBy(-dx - 1, -1),
-      tabBoundingRect.TopRight().OffsetBy(-1, 0)
-    };
-
-    // Fill the face of the tab, draw the contour and paint the label.
-    // If the note tab has input focus, also draw the focus rectangle.
-    //
-    renderer.PaintTabFace(tabBoundingRect, pt, isSelectedTab);
-    renderer.DrawTabContour(pt, isSelectedTab);
-    if (isSelectedTab && GetFocus() == GetHandle())
-      renderer.DrawTabFocusRect(tab, FocusMargin, SelectedTabProtrusion);
-    bool hasImage = CelArray && tab.ImageIdx >= 0;
-    if (hasImage)
-      renderer.PaintTabIcon(tab, *CelArray, TransparentColor, LabelMargin, isSelectedTab, SelectedTabProtrusion);
-    renderer.DrawTabText(tab, CelArray, LabelMargin, LabelImageMargin, isSelectedTab, SelectedTabProtrusion);
-  }
-
-#if OWL_DRAW_TAB_BOUNDING_RECT_
-
-  if (ShouldDrawTabBoundingRect_)
-    for (int i = 0; i != GetCount(); ++i)
-    {
-      const TNoteTabItem& tab = TabList[i];
-      if (tab.Rect.IsNull()) continue;
-
-      // Use Polyline for accuracy; Rectangle excludes right and bottom edge.
-      //
-      TPen tabRectPen(TColor::LtRed, 0, PS_DOT);
-      dc.SelectObject(tabRectPen);
-      TRect b = GetBoundingRect(tab.Rect);
-      TPoint bp[] = {b.TopLeft(), b.BottomLeft(), b.BottomRight(), b.TopRight(), b.TopLeft()};
-      dc.Polyline(bp, COUNTOF(bp));
-    }
-
-#endif
-
-  dc.RestorePen();
-  dc.RestoreBrush();
-  dc.RestoreFont();
 }
 
 //
-/// TWindow::Paint override
+/// Overriden Paint routine.
 //
 void
-TNoteTab::Paint(TDC& dc, bool erase, TRect& paintRect)
+TNoteTab::Paint(TDC& dc, bool /*erase*/, TRect& /*rect*/)
 {
-  if (erase)
-  {
-    if (GetCount() == 0)
-      dc.FillSolidRect(paintRect, BkgndColor);
-    else
-    {
-      // First create a region consisting of the invalidated parts of the tabs
-      // area, i.e. excluding the top margin, which will be painted later.
-      // Then clip this against the tabs, since these will be painted anyway.
-      // This leaves only the invalidated parts around the tabs. Note that we
-      // do not exclude the scroller, since we rely on WS_CLIPCHILDREN.
+  int i = GetCount();
+  if (i) {
+
+    TRect clientRect;
+    GetClientRect(clientRect);
+
+    // Create tools & select initial ones into the DC
+    //
+    TBrush faceBrush(TColor::Sys3dFace);
+
+    // A pen with the active page color
+    //
+    TPen facePen((WindowFace && !Style3d) ?
+                  TColor::SysWindow : TColor::Sys3dFace);
+
+    TPen hilitePen(TColor::Sys3dHilight);
+    TPen lightPen(TColor::Sys3dLight);
+    TPen edgePen(Style3d ? TColor::Sys3dShadow : TColor::SysWindowFrame);
+    TPen dkShadowPen(TColor::Sys3dDkShadow);
+
+    dc.SelectObject(faceBrush);
+    dc.SelectObject(*TabFont);
+
+    while (--i >= -1) {
+      // Skip the selected tab, it's drawn last. Otherwise get the
+      // working index
       //
-      TRect c = GetClientRect();
-      TRect tabsArea(c.TopLeft().OffsetBy(0, Margin.cy), c.BottomRight());
-      TRegion r(paintRect & tabsArea);
-      for (TNoteTabItemArray::const_iterator i = TabList.begin(); i != TabList.end(); ++i)
-      {
-        const TNoteTabItem& t = *i;
-        CHECK(t.Rect.IsNull() || !t.Rect.IsEmpty());
-        r -= t.Rect;
+      if (i == GetSel())
+        continue;
+      int ti = (i == -1) ? GetSel() : i;
+
+      // If this is the final item (selected tab), then draw the page edge.
+      //
+      if (i == -1) {
+         if (Style3d) { // Draw a recessed frame around the tabs.
+           clientRect.top += TUIMetric::CySizeFrame;
+           TUIBorder(clientRect, TUIBorder::WndRecessed).Paint(dc);
+         }
+         else {
+           TRect r = clientRect;
+           TRect a; GetTabsArea(a);
+           r.top = a.top - 1;
+           dc.MoveTo(r.TopLeft());
+           dc.LineTo(r.TopRight());
+         }
       }
-      dc.FillRgn(r, BkgndColor); // May be NULLREGION at this point.
+
+      // Retrieve tab item information
+      //
+      TNoteTabItem& tab = *(*TabList)[ti];
+      TRect& tbRect = tab.Rect;
+      if (tbRect.IsNull ()) continue;
+      CHECK(!tbRect.IsEmpty());
+
+      // Draw border of tab
+      //
+      TPoint pt[4] = {                                // Corner points
+        TPoint(tbRect.left-TabMargin, tbRect.top-1),  // Top left
+        TPoint(tbRect.left, tbRect.bottom),           // Bottom left
+        TPoint(tbRect.right, tbRect.bottom),          // Bottom right
+        TPoint(tbRect.right+TabMargin, tbRect.top-1)  // Top right
+      };
+
+      // In 3-d mode, draw all in face, w/ hilite
+      //
+      if (Style3d) {
+        dc.SelectObject(facePen);          // draw tab w/ face
+        dc.Polygon(pt, COUNTOF(pt));
+
+        dc.SelectObject(lightPen);         // inside left
+        dc.MoveTo(pt[0].x+1, pt[0].y);
+        dc.LineTo(pt[1].x+1, pt[1].y);
+
+        dc.SelectObject(edgePen);          // inside bottom & right
+        dc.MoveTo(pt[1].x+1, pt[1].y-1);
+        dc.LineTo(pt[2].x-1, pt[2].y-1);
+        dc.MoveTo(pt[2].x-1, pt[2].y);
+        dc.LineTo(pt[3].x-1, pt[3].y);
+
+        dc.SelectObject(hilitePen);        // outside left
+        dc.MoveTo(pt[0].x, pt[0].y);
+        dc.LineTo(pt[1].x, pt[1].y);
+
+        dc.SelectObject(dkShadowPen);      // outside bottom & right
+        dc.LineTo(pt[2].x, pt[2].y);
+        dc.LineTo(pt[3].x, pt[3].y);
+        dc.RestorePen();
+      }
+      // In WindowFace mode, draw selected tab in window color
+      //
+      else if (i == -1 && WindowFace) {
+        TBrush windowBrush(TColor::SysWindow);
+        dc.SelectObject(facePen);
+        dc.SelectObject(windowBrush);
+        dc.Polygon(pt, COUNTOF(pt));
+        dc.RestoreBrush();
+        dc.RestorePen();
+        dc.Polyline(pt, COUNTOF(pt));
+      }
+      else {
+        dc.SelectObject(facePen);
+        dc.Polygon(pt, COUNTOF(pt));
+        dc.RestorePen();
+        dc.Polyline(pt, COUNTOF(pt));
+      }
+
+      TRect rect(tbRect);
+
+      uint16 formatText = DT_SINGLELINE|DT_VCENTER;
+      // Draw tab image
+      if (CelArray && tab.ImageIdx >= 0 && !rect.IsNull()) {
+        TSize size = CelArray->CelSize();
+        
+        switch (tab.ImageLoc) {
+          default:
+          case alLeft:{
+#if 0 // not transparent
+              rect.left += LabelMargin;
+              CelArray->BitBlt(tab.ImageIdx, dc, rect.left, 
+                              (rect.top + rect.bottom - size.cy) / 2);
+#else
+              TRect  srcRect(CelArray->CelRect(tab.ImageIdx));
+              TPoint dstPt(LabelMargin,(rect.Height() - size.cy) / 2);
+              TUIFace face(rect, CelArray->operator TBitmap&(), TColor::Sys3dFace);
+              face.Paint(dc, srcRect, dstPt, TUIFace::Normal, false, false);
+              rect.left += LabelMargin;
+#endif
+              rect.left += size.cx;
+              formatText |= DT_LEFT;
+            }
+            break;
+
+          case alRight:{
+#if 0 // not transparent
+              rect.right -= size.cx + LabelMargin;
+              CelArray->BitBlt(tab.ImageIdx, dc, rect.right, 
+                            (rect.top + rect.bottom - size.cy) / 2);
+#else
+              TRect  srcRect(CelArray->CelRect(tab.ImageIdx));
+              TPoint dstPt(rect.Width()-(size.cx + LabelMargin),
+                          (rect.Height() - size.cy) / 2);
+              TUIFace face(rect, CelArray->operator TBitmap&(), TColor::Sys3dFace);
+              face.Paint(dc, srcRect, dstPt, TUIFace::Normal, false, false);
+              rect.right -= size.cx + LabelMargin;
+#endif
+              formatText |= DT_RIGHT;
+            }
+            break;
+        }
+      }
+      else // No tab image, so draw text centered 
+        formatText |= DT_CENTER;
+
+
+      // Draw tab label
+      //
+      dc.SetBkMode(TRANSPARENT);
+      dc.SetTextColor((WindowFace && !Style3d) ?
+                      TColor::SysWindowText : TColor::SysBtnText);
+      dc.DrawText(tab.Label, -1, rect, formatText);
+
+      // If the note tab has input focus, draw the focus rectangle
+      //
+      if (i == -1 && GetFocus() == GetHandle()) 
+          DrawFocusRect(dc);
     }
+
+    dc.RestoreBrush();
+    dc.RestoreFont();
   }
-
-  if (GetCount() == 0) return;
-
-  if (ShouldUseThemes && IsThemed_())
-    PaintTabs<TThemeRenderer_>(dc, paintRect);
-  else if (Style3d)
-    PaintTabs<TStyle3dRenderer_>(dc, paintRect);
-  else if (WindowFace)
-    PaintTabs<TWindowFaceRenderer_>(dc, paintRect);
-  else
-    PaintTabs<TFlatRenderer_>(dc, paintRect);
-
-  LastClientRectPainted = GetClientRect(); // See EvSize.
 }
 
 //
@@ -1150,38 +620,11 @@ TNoteTab::EvSize(uint sizeType, const TSize& size)
 {
   TControl::EvSize(sizeType, size);
 
-  // Unless the layout of the tabs changes in response to the size change,
-  // the only stale part of the old painting is possibly the right and bottom 
-  // edges, which are only drawn for 3D style. These need to be invalidated if
-  // the width or height of the window increases.
-  //
-  const TRect& p = LastClientRectPainted;
-  if (Style3d && !p.IsNull())
-  {
-    TRect n = GetClientRect();
-    if (n.Width() > p.Width()) // Increasing width; invalidate right edge.
-    {
-      TRect oldEdge(
-        p.TopRight().OffsetBy(-TUIMetric::CyEdge, 0),
-        p.BottomRight()); 
-      InvalidateRect(oldEdge);
-    }
-    if (n.Height() > p.Height()) // Inreasing height; invalidate bottom edge.
-    {
-      TRect oldEdge(
-        p.BottomLeft().OffsetBy(0, -TUIMetric::CxEdge),
-        p.BottomRight()); 
-      InvalidateRect(oldEdge);
-    }
-  }
+  Invalidate();
 
-  // Layout tab items.
+  // Layout tab items
   //
-  int s = GetSel();
-  bool hasVisibleSel = GetCount() > 0 && s >= 0 && IsVisible(s);
   SetTabRects(FirstVisibleTab);
-  if (hasVisibleSel)
-    EnsureVisible(s);
 }
 
 //
@@ -1199,7 +642,8 @@ TNoteTab::EvLButtonDown(uint /*modKeys*/, const TPoint& point)
   if (hitIndex != -1) {
     NotifyAndSelect(hitIndex);
   }
-  TRect rect = GetScrollerArea();
+  TRect rect;
+  GetScrollerArea(rect);
   if(rect.Contains(point))
     return;
 
@@ -1213,10 +657,9 @@ TNoteTab::EvLButtonDown(uint /*modKeys*/, const TPoint& point)
 void
 TNoteTab::EvSetFocus(THandle hWndLostFocus)
 {
-  PRECONDITION(SelectedTab >= 0 && SelectedTab < GetCount());
   TControl::EvSetFocus(hWndLostFocus);
-  InvalidateRect(TabList[SelectedTab].Rect);
-  UpdateWindow();
+  TClientDC dc(*this);
+  DrawFocusRect(dc);
 }
 
 //
@@ -1225,10 +668,36 @@ TNoteTab::EvSetFocus(THandle hWndLostFocus)
 void
 TNoteTab::EvKillFocus(THandle hWndGetFocus)
 {
-  PRECONDITION(SelectedTab >= 0 && SelectedTab < GetCount());
   TControl::EvKillFocus(hWndGetFocus);
-  InvalidateRect(TabList[SelectedTab].Rect);
-  UpdateWindow();
+  TClientDC dc(*this);
+  DrawFocusRect(dc);
+}
+
+//
+// Draw a dashed rectangle around the selected tab if it has input focus.
+// calling this function a second time for the same tab erases the
+// rectangle.
+//
+void
+TNoteTab::DrawFocusRect(TDC& dc)
+{
+  if (GetCount() > 0 && GetSel() >= 0) {
+
+    // Set the appropriate background color so the the focus rectangle
+    // will erase cleanly.
+    //
+    // Setting color here is redundant when called from Paint, because
+    // Windows sets the background color for the Paint DC.  Windows does
+    // not set it, however, for the DC passed to SetFocus and KillFocus.
+    //
+    dc.SetBkColor(TColor::Sys3dFace);
+
+    // Calculate coordinates and draw the focus rectangle
+    //
+    TRect selectedRect = (*TabList)[GetSel()]->Rect;
+    selectedRect.Inflate(-HorzSelInc, -VertSelInc);
+    dc.DrawFocusRect(selectedRect);
+  }
 }
 
 //
@@ -1251,29 +720,14 @@ TNoteTab::EvKeyDown(uint key, uint /*repeatCount*/, uint /*flags*/)
   if (tab < 0) return;
   CHECK(tab < GetCount());
 
-  if (GetKeyState(VK_CONTROL) & 0x8000) switch (key)
-  {
-    case VK_RIGHT:
-      EvHScroll(SB_LINERIGHT, 0, NULL);
-      break;
-
-    case VK_LEFT:
-      EvHScroll(SB_LINELEFT, 0, NULL);
-      break;
-  }
-  else switch (key)
+  switch (key)
   {
     case VK_RIGHT:
     {
-      int last = GetCount() - 1;
-      if (tab < last)
+      if (tab < GetCount() - 1)
       {
-        if (NotifyAndSelect(++tab))
-        {
-          EnsureVisible(tab);
-          while (!IsFullyVisible(tab) && GetFirstVisibleTab() < last)
-            SetFirstVisibleTab(GetFirstVisibleTab() + 1);
-        }
+        NotifyAndSelect(++tab);
+        EnsureVisible(tab);
       }
       break;
     }
@@ -1281,30 +735,11 @@ TNoteTab::EvKeyDown(uint key, uint /*repeatCount*/, uint /*flags*/)
     {
       if (tab > 0)
       {
-        if (NotifyAndSelect(--tab))
-          EnsureVisible(tab);
+        NotifyAndSelect(--tab);
+        EnsureVisible(tab);
       }
       break;
     }
-
-#if OWL_CLIP_TAB_BOUNDING_RECT_
-
-    case VK_F2:
-      ShouldClipTabBoundingRect_ = !ShouldClipTabBoundingRect_;
-      Invalidate();
-      break;
-
-#endif
-
-#if OWL_DRAW_TAB_BOUNDING_RECT_
-
-    case VK_F3:
-      ShouldDrawTabBoundingRect_ = !ShouldDrawTabBoundingRect_;
-      Invalidate();
-      break;
-
-#endif
-
   }
 }
 
@@ -1315,120 +750,25 @@ TNoteTab::EvKeyDown(uint key, uint /*repeatCount*/, uint /*flags*/)
 void
 TNoteTab::SetTabSize(int index)
 {
-  PRECONDITION(TabFont.get());
-
-  const TFont& selectedTabFont = GetSelectedTabFont();
-
-  // Compute size of label.
-  // Accommodate the largest font in both dimensions.
-  // Use screen DC (may be called before 'HWND').
-  //
-  TScreenDC dc;
-  TNoteTabItem& tab = TabList[index];
-  static const tchar overhangSet[] = _T("dfkmVWY"); // TODO: Add complete set, or query font.
-  static const tchar* const begin = overhangSet;
-  static const tchar* const end = overhangSet + COUNTOF(overhangSet);
-  bool hasOverhang = !tab.Label.empty() && 
-    (TabFont->GetObject().lfItalic || selectedTabFont.GetObject().lfItalic) && 
-    find(begin, end, tab.Label[tab.Label.size() - 1]) != end;
-  tstring s = tab.Label + (hasOverhang ? _T(" ") : _T(""));
-  TRect regularExtent = TRect(TPoint(), TabFont->GetTextExtent(dc, s));
-  TRect selectedExtent = TRect(TPoint(), selectedTabFont.GetTextExtent(dc, s));
-  tab.LabelSize = (regularExtent | selectedExtent).Size();
-
-  // Add image dimensions to LabelSize.
-  //
-  if (tab.ImageIdx >= 0 && CelArray) 
-  {
-    TSize size = CelArray->CelSize();
-    tab.LabelSize.cx += size.cx + LabelImageMargin;
-    tab.LabelSize.cy = std::max(tab.LabelSize.cy, size.cy);
-  }
-}
-
-//
-/// Calculates the tab rectangle for the given tab and position.
-//
-TRect 
-TNoteTab::CalculateTabRect(const TNoteTabItem& tab, const TPoint& p, bool isSelected) const
-{
-  TSize padding(2 * LabelMargin.cx, 2 * LabelMargin.cy + (isSelected ? SelectedTabProtrusion : 0));
-  return TRect(p.OffsetBy(TabTapering, 0), tab.LabelSize + padding);
-};
-
-
-//
-/// Calculates and returns a list of updated tab hit rectangles based on the
-/// given start index and the given area for the tabs.
-//
-TNoteTab::TRects 
-TNoteTab::CalculateTabRects(int firstTab, const TRect& area) const
-{
-  TRects rects;
-  rects.reserve(GetCount());
-  
-  // Reset all the tab rectangles preceeding the first visible tab.
-  // Value-initialize these by calling `resize` (i.e. insert empty rectangles).
-  //
-  rects.resize(std::min(firstTab, GetCount()));
-
-  // Assign rectangles to all visible tabs.
-  //
-  TPoint p = area.TopLeft();
-  for (int i = firstTab; i != GetCount(); ++i) 
-  {
-    const TNoteTabItem& tab = TabList[i];
-    const TRect r = CalculateTabRect(tab, p, i == SelectedTab);
- 
-    // If the tab is completely outside the tabs area, then break. In other
-    // words; include partially visible tabs.
+  if (TabFont) {
+    // Use screen DC (may be called before 'HWND') & selected font
     //
-    const TRect b = GetBoundingRect(r);
-    bool isVisible = (b.left < area.right);
-    if (!isVisible)
-    {
-      // Reset the rectangles for the remaining tabs, then exit.
-      //
-      rects.resize(GetCount()); 
-      break;
+    TScreenDC dc;
+    dc.SelectObject(*TabFont);
+
+    // Compute size of label
+    //
+    TNoteTabItem& tab = *(*TabList)[index];
+    dc.GetTextExtent(tab.Label.c_str(), tab.Label.length(), tab.LabelSize);
+    dc.RestoreFont();
+    // Add image dimensions to LabelSize
+    if (CelArray) {
+      TSize size = CelArray->CelSize();
+      tab.LabelSize.cx += size.cx;
+      tab.LabelSize.cy = std::max(tab.LabelSize.cy, size.cy);
     }
-    rects.push_back(r);
-    p.Offset(r.Width() + TabSpacing, 0); // Move to next tab position.
   }
-  return rects;
 }
-
-
-//
-/// Assigns the given new rectangle to the given tab item.
-/// Both old and new rectangle is invalidated in the client area.
-//
-void 
-TNoteTab::AssignTabRect(TNoteTabItem& tab, const TRect& newRect)
-{
-  TRect& r = tab.Rect;
-  if (r == newRect) return;
-  if (GetHandle() && !r.IsNull()) 
-    InvalidateRect(GetBoundingRect(r));
-  r = newRect;
-  if (GetHandle() && !r.IsNull())
-    InvalidateRect(GetBoundingRect(r));
-}
-
-namespace
-{
-
-  //
-  // Returns true if the horizontal projection of the given rect `r`
-  // lies within the horizontal projection of the given rect `area`.
-  //
-  bool ContainsHorizontalExtents_(const TRect& area, const TRect& r)
-  {
-    if (area.IsEmpty() || r.IsEmpty()) return false;
-    return r.left >= area.left && r.right <= area.right;
-  }
-
-} // namespace
 
 //
 /// Lays out tab items with the specified index at the leftmost.
@@ -1436,58 +776,169 @@ namespace
 void
 TNoteTab::SetTabRects(int firstTab)
 {
-  if (!GetHandle()) return;
-
-  // First, calculate tab layout with no scrollbar present.
+  // First hide the tabs preceeding the first one
   //
-  TRect scrollingTabsArea = GetScrollingTabsArea();
-  TRect scrollerArea = GetScrollerArea();
-  TRect allArea = scrollingTabsArea | scrollerArea;
-  TRects newRects = CalculateTabRects(firstTab, allArea);
-  CHECK(static_cast<int>(newRects.size()) == GetCount());
+  for (int i = 0; i < firstTab; i++) {
+    TRect& tbRect = (*TabList)[i]->Rect;
 
-  // If all tabs did not fit, we need to reserve space for the scrollbar, so
-  // calculate the rectangles anew within the dedicated tabs area.
-  //
-  bool doesAllFit = newRects.empty() ||
-    (
-      firstTab == 0 &&
-      !newRects.back().IsNull() &&
-      ContainsHorizontalExtents_(allArea, GetBoundingRect(newRects.back()))
-    );
-
-  if (!doesAllFit)
-    newRects = CalculateTabRects(firstTab, scrollingTabsArea);
-
-  // Store the effective tabs area.
-  //
-  EffectiveTabsArea = doesAllFit ? allArea : scrollingTabsArea;
-
-  // Assign new rectangles.
-  //
-  for (int i = 0; i != GetCount(); ++i) 
-  {
-    TNoteTabItem& t = TabList[i];
-    AssignTabRect(t, newRects[i]);
+    if (!tbRect.IsNull()) {
+      InvalidateTabRect(i);
+      tbRect.SetNull();
+    }
   }
 
-  // If not all tabs are fully visible then show scrollbar.
+  // Retrieve the area where tabs can hang out
   //
-  if (ScrollBar && ScrollBar->GetHandle() && ScrollLoc != alNone)
-  {
-    if (!doesAllFit)
-    {
-      // Count the visible.
-      //
-      int n = GetCount();
-      while (n > 0 && !IsFullyVisible(n - 1))
-        --n;
-      ScrollBar->SetRange(0, GetCount() - n);
-      ScrollBar->ShowWindow(SW_SHOW);
-      ScrollBar->MoveWindow(scrollerArea, true);
+  TRect tabArea;
+  GetTabsArea(tabArea);
+
+  // Loop vars to keep track of upper left corner assignments
+  //
+  int x = tabArea.left;
+  int y = tabArea.top;
+
+  // 3d tabs need extra room for 3d edges
+  //
+  int edgeVMargin = Style3d ? TUIMetric::CyBorder*2 : 0;
+
+  // Iterate through each tab
+  //
+  int index;
+  for (index = firstTab; index < GetCount(); index++) {
+    TNoteTabItem& tab = *(*TabList)[index];
+    TRect& tbRect = tab.Rect;
+
+    // Compute tab's width with margins
+    //
+    int tabWidth1 = tab.LabelSize.cx + LabelMargin*2;
+    // If tab is completely off viewport, break;
+    //
+    if(ScrollLoc == alNone){
+        if ((x+TabMargin) >= tabArea.right)   //If no scrollbar, paint if any is showing
+            break;
     }
-    else
+    else{
+        // If this is the last tab, then we may not want to hide if it fits in the area
+        // were the scrollbar would be (since if it fits, no scrollbar may be drawn).
+        // This special case only applies when all tabs are visible (firstTab == 0).
+
+        if (firstTab == 0 && index == GetCount()-1){  
+            TRect scrollRect;     
+            GetScrollerArea(scrollRect);
+            if ((x+tabWidth1+TabMargin) >= tabArea.right+scrollRect.Width())
+                break;
+        }
+        else{
+            if ((x+tabWidth1+TabMargin) >= tabArea.right)
+                break;
+        }
+    }
+
+    // Compute new rectangle
+    //
+    TRect newRect(x+TabMargin, y, x+TabMargin+tabWidth1,
+                  y+tab.LabelSize.cy+LabelVMargin*2+edgeVMargin);
+
+    // Set left side of next tab
+    //
+    x += tabWidth1+TabMargin;
+
+    // Invalidate rectangle(s) and assign new area to tab
+    //
+    if (tbRect != newRect) {
+      if (!tbRect.IsNull())
+        InvalidateTabRect(index);
+
+      tbRect = newRect;
+
+      // Force new rectangle to be repainted
+      //
+      if (!tbRect.IsNull())
+        InvalidateTabRect(index);
+    }
+  }
+  
+  if(ScrollBar && ScrollBar->GetHandle() && ScrollLoc != alNone){
+    // if not all tabs are visible -> show ScrollBar
+    if(index < GetCount() || firstTab > 0){
+      ScrollBar->SetRange(0, GetCount() - index/* + firstTab*/);
+      ScrollBar->ShowWindow(SW_SHOW);
+
+      TRect rect;
+      GetScrollerArea(rect);
+
+      ScrollBar->MoveWindow(rect, true);
+    }
+    else {
       ScrollBar->ShowWindow(SW_HIDE);
+
+      // if all tabs are visible and the scroller position
+      // is to the left -> adjust tab rectangles
+      if (ScrollLoc == alLeft) {
+        for (int index = firstTab; index < GetCount(); index++) {
+          TNoteTabItem& tab = *(*TabList)[index];
+          TRect& tbRect = tab.Rect;
+
+          tbRect.Offset(-TUIMetric::CxHScroll*2, 0);
+        }
+      }
+    }
+  }
+
+  // Partially show the tab under the scrollbar.
+  //
+  if (index < GetCount()) {
+    TNoteTabItem& tab = *(*TabList)[index];
+    TRect& tbRect = tab.Rect;
+
+    if (!tbRect.IsNull())
+      InvalidateTabRect(index);
+
+    int tabWidth = tab.LabelSize.cx + LabelMargin*2;
+    int tabHeight = tab.LabelSize.cy + LabelVMargin*2;
+    TRect newRect(x+TabMargin, y, x+TabMargin+tabWidth, y+tabHeight+edgeVMargin);
+    tbRect = newRect;
+    index++;
+  }
+
+  // Hide any remaining tabs
+  //
+  while (index < GetCount()) {
+    TNoteTabItem& tab = *(*TabList)[index];
+    TRect& tbRect = tab.Rect;
+
+    if (!tbRect.IsNull())
+      InvalidateTabRect(index);
+
+    tbRect.SetNull();
+    index++;
+  }
+}
+
+//
+/// Sets the specified font handle as the one to be used when drawing the labels of
+/// tab items.
+//
+void
+TNoteTab::SetupFont(HFONT font)
+{
+  bool autoDelete = false;
+  if (font == 0) {
+    // Try to get our parent's font
+    if (GetParentO() && GetParentO()->GetHandle())
+      font = GetParentO()->GetWindowFont();
+
+    // Use the default UI font
+    if (!font) {
+      LOGFONT lf = TDefaultGUIFont().GetObject();
+      font = CreateFontIndirect(&lf);
+      autoDelete = true;
+    }
+  }
+
+  if (font){
+    delete TabFont;
+    TabFont = new TFont(font,autoDelete?AutoDelete:NoAutoDelete);
   }
 }
 
@@ -1496,139 +947,115 @@ TNoteTab::SetTabRects(int firstTab)
 /// on failure.
 //
 int
-TNoteTab::TabFromPoint(const TPoint& pt) const
+TNoteTab::TabFromPoint(const TPoint& pt)
 {
-  for (int i = 0; i < GetCount(); i++) 
-  {
-    const TNoteTabItem& tab = TabList[i];
-    if (tab.Rect.Contains(pt))
+  for (int i = 0; i < GetCount(); i++) {
+    if ((*TabList)[i]->Rect.Contains(pt))
       return i;
   }
   return -1;
 }
 
 //
-/// Selects the tab at the given index and sends the appropriate notifications.
-/// Returns false if the change was vetoed by the buddy/parent, true otherwise.
+/// Select a tab and send the appropriate notifications.
 //
-bool
+void
 TNoteTab::NotifyAndSelect(int index)
 {
   PRECONDITION(index >= 0);
   PRECONDITION(index < GetCount());
 
-  HWND receiver = Buddy ? BuddyHandle : ::GetParent(GetHandle());
+  // First notify that we're about to change selection
+  //
+  TNotify _not(*this, Attr.Id, TCN_SELCHANGING); /* error if 'not' for GNU */ 
+  if (!SendNotification(::GetParent(*this), Attr.Id, _not)) {
 
-  // First notify that we're about to change selection.
-  //
-  TNotify nSelChanging(*this, Attr.Id, TCN_SELCHANGING);
-  bool wasVetoed = SendNotification(receiver, Attr.Id, nSelChanging);
-  if (wasVetoed) return false;
-  
-  // Set new selection and notify that it has changed.
-  //
-  SetSel(index);
-  TNotify nSelChange(*this, Attr.Id, TCN_SELCHANGE);
-  SendNotification(receiver, Attr.Id, nSelChange);
-  return true;
+    // If notification was not vetoed, proceed...
+    //
+    SetSel(index);
+
+    // Notify of selection change to the buddy if one, otherwise
+    // the parent.
+    //
+    _not.code = TCN_SELCHANGE;
+    if( Buddy )
+      SendNotification( BuddyHandle, Attr.Id, _not);
+    else
+      SendNotification(::GetParent(*this), Attr.Id, _not);
+  }
 }
 
 //
-// Refreshes the drawing of the control.
-// If the control has not been created yet, does nothing.
+/// Retrieves the desired location of the scrollers within the tab.
 //
 void
-TNoteTab::Update()
+TNoteTab::GetScrollerArea(TRect& rect)
 {
-  if (!GetHandle()) return;
-  for (int i = 0; i != GetCount(); ++i)
-    SetTabSize(i);
-  SetTabRects(GetFirstVisibleTab());
-  Invalidate();
-}
+  PRECONDITION(GetCount() > 0);
 
-//
-/// Returns the desired location of the scrollers within the tab.
-//
-TRect
-TNoteTab::GetScrollerArea() const
-{
-  TRect rect = GetClientRect();
-  rect.bottom -= TUIMetric::CyFixedFrame;
-  rect.top = std::max(
-    rect.top + Margin.cy + TUIMetric::CyFixedFrame, 
-    rect.bottom - TUIMetric::CyHScroll);
-  switch (ScrollLoc) 
-  {
+  GetClientRect(rect);
+
+  // Shrink area to match tabs height with a width twice as big
+  //
+  rect.bottom  -= TUIMetric::CyFixedFrame;
+  rect.top = rect.bottom - TUIMetric::CyHScroll;
+
+  switch (ScrollLoc) {
     default:
+    case alTop:       //?????????????
+    case alBottom:    //??????????????
     case alNone:
       rect.left = rect.right = 0;
       break;
 
     case alLeft:
-      rect.left += TUIMetric::CxFixedFrame;
-      rect.right = rect.left + 2 * TUIMetric::CxHScroll;
+      rect.left  += TUIMetric::CxFixedFrame;
+      rect.right = rect.left + TUIMetric::CxHScroll*2;
       break;
 
     case alRight:
-      rect.left = rect.right - 2 * TUIMetric::CxHScroll;
       rect.right -= TUIMetric::CxFixedFrame;
+      rect.left = rect.right - TUIMetric::CxHScroll*2;
       break;
   }
-  return rect;
 }
 
+/// Retrieve the rectangle within tabs lie. 
+/// If there are no tabs in the control, then only the left, top and right sides are
+/// valid as the bottom requires tabs to be computed.
 //
-/// Returns the rectangle of the area reserved for tabs when scrolling is active. 
-//
-TRect
-TNoteTab::GetScrollingTabsArea() const
+void
+TNoteTab::GetTabsArea(TRect& rect)
 {
   // First retrieve left, top and right borders
   //
-  TRect rect = GetClientRect();
-  rect.Inflate(-Margin.cx, 0);
-  rect.top += Margin.cy;
-  TRect scrollArea = GetScrollerArea();
-  switch (ScrollLoc)
-  {
+  GetClientRect(rect);
+  rect.Inflate(-CtrlMargin, -CtrlVMargin);
+  rect.top    += TopMargin;
+  //rect.right  -= TUIMetric::CxHScroll*2;
+
+  switch (ScrollLoc) {
     default:
+    case alTop:       //?????????????
+    case alBottom:    //??????????????
     case alRight:
-      rect.right -= scrollArea.Width();
+      rect.right -= TUIMetric::CxHScroll*2; 
       break;
     case alLeft:
-      rect.left += scrollArea.Width();
+      rect.left  += TUIMetric::CxHScroll*2; 
       break;
   }
-  return rect;
 }
 
 //
-/// Returns true if the tab item at the specified index is visible. 
-/// Note that true is returned even if the tab is only partially visible.
-/// Use IsFullyVisible to check for full visibility.
+/// Returns true if the tab item at the specified index is visible. Returns false
+/// otherwise.
 //
 bool
 TNoteTab::IsVisible(int index) const
 {
   PRECONDITION(index < GetCount() && index >= 0);
-  return TabList[index].Rect.IsNull() ? false : true;
-}
-
-//
-/// Returns true if the horizontal projection of the tab item at the specified
-/// index is contained within the horizontal projection of the current 
-/// effective tabs area. Vertical visibility is ignored.
-//
-bool
-TNoteTab::IsFullyVisible(int index) const
-{
-  PRECONDITION(index < GetCount() && index >= 0);
-  if (EffectiveTabsArea.IsEmpty()) return false;
-  if (!IsVisible(index)) return false;
-  TRect b = GetBoundingRect(TabList[index].Rect);
-  CHECK(!b.IsEmpty());
-  return ContainsHorizontalExtents_(EffectiveTabsArea, b);
+  return (*TabList)[index]->Rect.IsNull() ? false : true;
 }
 
 //
@@ -1644,22 +1071,21 @@ TNoteTab::SetFirstVisibleTab(int index)
 }
 
 //
-/// If the tab specified by index is not visible, it is scrolled into view. 
-/// If the given index is -1, the index of the selected tab is used instead.
-/// Returns true if successful, false on failure.
+/// If the tab specified by index is not visible, it is set as the first visible
+/// tab. Returns true if visible; false otherwise.
 //
 bool
 TNoteTab::EnsureVisible(int index)
 {
-  PRECONDITION(GetCount() > 0);
-  PRECONDITION(index >= -1 && index < GetCount());
-  int i = (index == -1) ? GetSel() : index; CHECK(i >= 0);
-  while (i != GetFirstVisibleTab() && !IsFullyVisible(i))
-  {
-    int v = GetFirstVisibleTab(); CHECK(v != i);
-    SetFirstVisibleTab(v + (i < v ? -1 : +1));
-  }
-  return true;
+  if (index == -1)
+    index = GetSel();
+
+  TRect& tbRect = (*TabList)[index]->Rect;
+
+  if (tbRect.IsNull())
+    SetFirstVisibleTab(index);
+
+  return !tbRect.IsNull();
 }
 
 //
@@ -1668,30 +1094,17 @@ TNoteTab::EnsureVisible(int index)
 void
 TNoteTab::EvHScroll(uint scrollCode, uint thumbPos, HWND /*hWndCtl*/)
 {
-  if (GetCount() <= 0) return;
-
   int index = GetFirstVisibleTab();
-  switch (scrollCode) 
-  {
-    case SB_LINERIGHT:
-    case SB_PAGERIGHT:      
-    {
-      int last = GetCount() - 1;
-      if (index < last && !IsFullyVisible(last))
-        ++index; 
-      break;
-    }
+  int minValue, maxValue;
+  ScrollBar->GetRange(minValue, maxValue);
 
-    case SB_LINELEFT:
-    case SB_PAGELEFT:
-      if (index > 0) 
-        --index; 
-      break;
-
-    case SB_THUMBPOSITION:
-    case SB_THUMBTRACK:    
-      index = thumbPos; 
-      break;
+  switch (scrollCode) {
+    case SB_LINEDOWN:       if(maxValue > 0) index++; break;
+    case SB_LINEUP:        if(index > minValue) index--; break;
+    case SB_PAGEDOWN:      if(maxValue > 0) index++; break;
+    case SB_PAGEUP:        if(index > minValue) index--; break;
+    case SB_THUMBPOSITION: index = thumbPos; break;
+    case SB_THUMBTRACK:    index = thumbPos; break;
   }
 
   SetFirstVisibleTab(index);
@@ -1708,14 +1121,35 @@ TNoteTab::EvPaint()
   TControl::EvPaint();
   ScrollBar->Invalidate(true);
 }
-
 //
-/// Disables automatic background erasure by returning `false`.
+/// Sets the font for the TNoteTab and the tab to font. If redraw is true, the
+/// NoteTab is redrawn.
 //
-bool
-TNoteTab::EvEraseBkgnd(HDC)
+void
+TNoteTab::SetTabFont(HFONT font, bool redraw)
 {
-  return false;
+  TControl::SetWindowFont(font, redraw);
+
+  SetupFont(font);
+
+  // Scan here & update sizes now that we know the font
+  //
+  TabHeight = TabFont->GetHeight();
+  for (int i = 0; i < GetCount(); i++) {
+    SetTabSize(i);
+    TNoteTabItem& tab = *(*TabList)[i];
+
+    TabHeight = std::max(TabHeight, (int)tab.LabelSize.cy + CtrlVMargin*2 + LabelVMargin*2);
+  }
+
+  SetTabRects(FirstVisibleTab);
+
+  // Add in the margin at the bottom and at the top if 3d
+  //
+  TabHeight += TUIMetric::CySizeFrame;
+
+  if (Style3d)
+    TabHeight += TUIMetric::CyBorder*6;
 }
 
 //
@@ -1733,28 +1167,17 @@ TNoteTab::SetScrollLocation(TAbsLocation loc)
 }
 
 //
-/// Sets the bitmap array to be used for the tabs.
-/// Use SetCelArrayTransparentColor to set the bitmap pixel color that should
-/// not be drawn. The default color is TColor::Sys3dFace.
+/// Set the bitmap array to be used for the tabs.
 //
 void
 TNoteTab::SetCelArray(TCelArray* array, TAutoDelete del)
 {
-  CelArray = array;
-  OwnedCelArray.reset(del == AutoDelete ? array : 0);
-  Update();
-}
+  if (ShouldDelete)
+    delete CelArray;
 
-//
-/// Sets the color assigned to denote transparency in the bitmaps used for the
-/// tabs (see SetCelArray). All the bitmap pixels of this color will be fully 
-/// transparent (i.e. not drawn).
-//
-void
-TNoteTab::SetCelArrayTransparentColor(const TColor& c)
-{
-  TransparentColor = c;
-  Update();
+  ShouldDelete = del == AutoDelete;
+
+  CelArray = array;
 }
 
 } // OWL namespace

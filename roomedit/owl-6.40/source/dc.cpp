@@ -96,12 +96,10 @@ TDC::SelectObject(const TPen& pen)
   if (oldPen) {
     TGdiObject::RefInc(pen);
     if (uint(oldPen) > 1)
-    {
       if (!OrgPen)
         OrgPen = oldPen;
       else
         TGdiObject::RefDec(oldPen, false);
-    }
   }
 }
 
@@ -118,12 +116,10 @@ TDC::SelectObject(const TBrush& brush)
   if (oldBrush) {
     TGdiObject::RefInc(brush);
     if (uint(oldBrush) > 1)
-    {
       if (!OrgBrush)
         OrgBrush = oldBrush;
       else
         TGdiObject::RefDec(oldBrush, false);
-    }
   }
 }
 
@@ -140,12 +136,10 @@ TDC::SelectObject(const TFont& font)
   if (oldFont) {
     TGdiObject::RefInc(font);
     if (uint(oldFont) > 1)
-    {
       if (!OrgFont)
         OrgFont = oldFont;
       else
         TGdiObject::RefDec(oldFont, false);
-    }
   }
 }
 
@@ -166,12 +160,10 @@ TDC::SelectObject(const TPalette& palette, bool forceBackground)
   if (oldPalette) {
     TGdiObject::RefInc(palette);
     if (uint(oldPalette) > 1)
-    {
       if (!OrgPalette)
         OrgPalette = oldPalette;
       else
         TGdiObject::RefDec(oldPalette, false);
-    }
   }
 }
 
@@ -188,12 +180,10 @@ TDC::SelectObject(const TBitmap& bitmap)
   if (oldBitmap) {
     TGdiObject::RefInc(bitmap);
     if (uint(oldBitmap) > 1)
-    {
       if (!OrgBitmap)
         OrgBitmap = oldBitmap;
       else
         TGdiObject::RefDec(oldBitmap, false);
-    }
   }
 }
 
@@ -375,18 +365,6 @@ int
 TDC::GetDeviceCaps(int index) const
 {
   return ::GetDeviceCaps(GetAttributeHDC(), index);
-}
-
-//
-/// Functional style overload
-//
-TEXTMETRIC
-TDC::GetTextMetrics() const
-{
-  TEXTMETRIC t;
-  bool r = GetTextMetrics(t);
-  if (!r) throw TXGdi(IDS_GDIFAILURE, GetHDC());
-  return t;
 }
 
 //

@@ -173,6 +173,7 @@ TMemoryDC::TMemoryDC(const TDC& dc)
 {
   Handle = ::CreateCompatibleDC(dc);
   CheckValid();
+  OrgBitmap = 0;
 }
 
 //
@@ -231,6 +232,36 @@ TMemoryDC::Init()
     Handle = ::CreateCompatibleDC(0);  // Cache is full, we own the handle
     CheckValid();
   }
+  OrgBitmap = 0;
+}
+
+//
+/// Selects a bitmap object into this memory DC.
+//
+void
+TMemoryDC::SelectObject(const TBitmap& bitmap)
+{
+  HBITMAP oldBitmap = (HBITMAP)::SelectObject(HDC(Handle), bitmap);
+  if (oldBitmap) {
+    TGdiObject::RefInc(bitmap);
+    if (uint(oldBitmap) > 1)
+      if (!OrgBitmap)
+        OrgBitmap = oldBitmap;
+      else
+        TGdiObject::RefDec(oldBitmap, false);
+  }
+}
+
+//
+/// Restores the original bitmap object into this memory DC.
+//
+void
+TMemoryDC::RestoreBitmap()
+{
+  if (OrgBitmap) {
+    TGdiObject::RefDec(::SelectObject(HDC(Handle), OrgBitmap), false);
+    OrgBitmap = 0;
+  }
 }
 
 //
@@ -238,8 +269,10 @@ TMemoryDC::Init()
 //
 TMemoryDC::~TMemoryDC()
 {
+  RestoreBitmap();
+  RestoreObjects();
   if (!ShouldDelete)  // The HDC is never from the cache if ShouldDelete
-    GetMemDCCache().Release(GetHDC());
+    GetMemDCCache().Release(HDC(Handle));
 }
 
 } // OWL namespace

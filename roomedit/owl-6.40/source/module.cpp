@@ -44,10 +44,6 @@ long TlsRelease();
 # pragma option -w-ccc // Disable "Condition is always true/false"
 #endif
 
-#if defined(_MSC_VER)
-# pragma warning(disable: 4996) // Turn off deprecation warnings (triggered by GetVersion/GetVersionEx).
-#endif
-
 namespace owl {
 
 OWL_DIAGINFO;
@@ -1183,7 +1179,7 @@ TXInvalidModule::TXInvalidModule(const tstring& name)
 /// Creates a copy of the exception 
 //
 TXInvalidModule*
-TXInvalidModule::Clone()
+TXInvalidModule::Clone() const
 {
   return new TXInvalidModule(*this);
 }

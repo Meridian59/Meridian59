@@ -212,7 +212,9 @@ template <class A> class TMBlockList {
   private:
     void *operator new( size_t, size_t, const A& );
     void operator delete( void * );
+#if _MSC_VER >= 1200
     void operator delete(void *p, size_t, const A& );
+#endif
 
     TMBlockList*  Next;
     friend class TMBaseMemBlocks<A>;
@@ -235,11 +237,13 @@ TMBlockList<A>::operator delete ( void *ptr )
 {
   A::operator delete (ptr);
 }
+#if _MSC_VER >= 1200
 template <class A> inline void 
 TMBlockList<A>::operator delete(void *p, size_t, const A& )
 {
   A::operator delete (p);
 }
+#endif
 
 /// \addtogroup utility
 /// @{
@@ -1934,7 +1938,11 @@ TBaseList<T>::Add(const T& data)
 
 //
 template<class T> inline void
-TBaseList<T>::Add(TBaseListIterator<T>* iter, const T& data)
+TBaseList<T>::Add(
+#ifdef _MSC_VER
+  typename
+#endif
+  TBaseListIterator<T>* iter, const T& data)
 {
   Add( iter ? iter->Cur : 0, new TBaseNode<T>(data));
 }

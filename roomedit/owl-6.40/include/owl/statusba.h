@@ -54,7 +54,7 @@ class _OWLCLASS TStatusBar : public TMessageBar {
     TStatusBar(TWindow*              parent = 0,
                TGadget::TBorderStyle borderStyle = TGadget::Recessed,
                uint                  modeIndicators = 0,
-               TFont*                font = 0,
+               TFont*                font = 0, //new TGadgetWindowFont(6),
                TModule*              module = 0);
 
     /// By default, adds "gadget" after the existing text gadgets and before

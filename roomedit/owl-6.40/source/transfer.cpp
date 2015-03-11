@@ -369,6 +369,8 @@ void TransferSliderData(const TTransferInfo& i, HWND ctrl, int& position)
   }
 }
 
+#if _HAS_TR1 // TDelegatedTransferWindow requires std::tr1::function
+
 TDelegatedTransferWindow::TDelegatedTransferWindow(TTransferFunction f)
 : TransferFunction(f)
 {}
@@ -383,5 +385,7 @@ TDelegatedTransferDialog::TDelegatedTransferDialog(TWindow* parent, TResId id, T
 : TDialog(parent, id, module),
   TDelegatedTransferWindow(f)
 {}
+
+#endif
 
 } // OWL namespace

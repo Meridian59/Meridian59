@@ -144,7 +144,7 @@ const size_t NPOS = static_cast<size_t>(-1);
 // in OWL 5.
 //
 #if defined(OWL_STRICT_DATA) || defined(OWL_PROTECTED_DATA)
-# error OWLNext: OWL_STRICT_DATA and OWL_PROTECTED_DATA are not yet supported.
+# error "OWLNext: OWL_STRICT_DATA and OWL_PROTECTED_DATA are not yet supported.
 #elif !defined(OWL_PUBLIC_DATA)
 # define OWL_PUBLIC_DATA
 #endif
@@ -299,10 +299,7 @@ namespace detail
   struct TIsRepresentable<T, U, true>
   {
 
-#if defined(__clang__)
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wtautological-compare"
-#elif defined(BI_COMP_BORLANDC)
+#if defined(BI_COMP_BORLANDC)
 # pragma warn -ccc // Disable warning "Condition is always true/false".
 #endif
 
@@ -313,10 +310,8 @@ namespace detail
       static_cast<LONG_PTR>(v) >= static_cast<LONG_PTR>(Range::min());
     }
 
-#if defined(__clang__)
-# pragma clang diagnostics pop
-#elif defined(BI_COMP_BORLANDC)
-# pragma warn .ccc // Restore warning "Condition is always true/false".
+#if defined(BI_COMP_BORLANDC)
+# pragma warn .ccc // Retore warning "Condition is always true/false".
 #endif
 
   };

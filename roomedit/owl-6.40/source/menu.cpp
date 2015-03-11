@@ -471,7 +471,7 @@ TXMenu::TXMenu(uint resId)
 /// It will be rethrown at a safer time.
 //
 TXMenu*
-TXMenu::Clone()
+TXMenu::Clone() const
 {
   return new TXMenu(*this);
 }

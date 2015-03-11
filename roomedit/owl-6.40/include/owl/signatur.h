@@ -18,7 +18,7 @@
 # pragma read_only_file
 #endif
 
-#if defined(OWL5_COMPAT)
+
 
 namespace owl {
 
@@ -155,6 +155,7 @@ DECLARE_SIGNATURE1(bool,B_RECT_Sig,TRect *)
 DECLARE_SIGNATURE1(bool,B_HDC_Sig,HDC)
 DECLARE_SIGNATURE2(bool,B_U_RECT_Sig,uint,TRect&)
 DECLARE_SIGNATURE2(bool,B_U_U_Sig,uint,uint)
+DECLARE_SIGNATURE2(bool,B_U_LPARAM_Sig,uint,LPARAM)
 DECLARE_SIGNATURE3(bool,B_W_U_U_Sig,HWND,uint,uint)
 DECLARE_SIGNATURE3(bool,B_U_U_POINT_Sig,uint,uint,const TPoint&)
 DECLARE_SIGNATURE3(bool,B_U_i_POINT_Sig,uint,int,const TPoint&)
@@ -180,7 +181,7 @@ DECLARE_SIGNATURE3(int,i_U_W_U_Sig,uint,HWND,uint)
 //----------------------------------------------------------------------------
 
 DECLARE_SIGNATURE1(LRESULT,LRESULT_MDICREATESTRUCT_Sig,MDICREATESTRUCT &)
-DECLARE_SIGNATURE2(int,LRESULT_U_COMPAREITEM_Sig,uint,const COMPAREITEMSTRUCT&)
+DECLARE_SIGNATURE2(int,int_U_COMPAREITEM_Sig,uint,const COMPAREITEMSTRUCT&)
 DECLARE_SIGNATURE2(int32,I32_U_I32_Sig,uint,int32)
 DECLARE_SIGNATURE2(LRESULT,LRESULT_WPARAM_LPARAM_Sig,WPARAM,LPARAM) //Used for EV_MESSAGE
 DECLARE_SIGNATURE3(LRESULT,LRESULT_U_U_HMENU_Sig,uint,uint,HMENU)
@@ -241,6 +242,7 @@ DECLARE_SIGNATURE2(void,v_U_SIZE_Sig,uint,const TSize&)
 DECLARE_SIGNATURE2(void,v_U_STYLE_Sig,uint,STYLESTRUCT&)
 DECLARE_SIGNATURE2(void,v_U_CSTYLE_Sig,uint,const STYLESTRUCT&)
 DECLARE_SIGNATURE2(void,v_U_U_Sig,uint,uint)
+DECLARE_SIGNATURE2(void,v_WPARAM_U_Sig,WPARAM,uint)
 DECLARE_SIGNATURE3(void,v_U_U_HMENU_Sig,uint,uint,HMENU)
 DECLARE_SIGNATURE3(void,v_U_U_U_Sig,uint,uint,uint)
 DECLARE_SIGNATURE3(void,v_U_U_W_Sig,uint,uint,HWND)
@@ -252,17 +254,8 @@ DECLARE_SIGNATURE3(void,v_W_U_U_Sig,HWND,uint,uint)
 DECLARE_SIGNATURE2(void,v_W_W_Sig,HWND,HWND)
 DECLARE_SIGNATURE1(void,v_WINDOWPOS_Sig,WINDOWPOS &)
 DECLARE_SIGNATURE1(void,v_CWINDOWPOS_Sig,const WINDOWPOS&)
-
+DECLARE_SIGNATURE3(void,v_ParentNotify_Sig,uint,WPARAM,LPARAM)
 
 } // OWL namespace
-//
-// Aliases for compatibility
-//
-#define B_LPARAM_Sig                B_I32_Sig
-#define I32_U_U_HMENU_Sig           LRESULT_U_U_HMENU_Sig       
-#define I32_U_COMPAREITEM_Sig       LRESULT_U_COMPAREITEM_Sig   
-#define I32_MDICREATESTRUCT_Sig     LRESULT_MDICREATESTRUCT_Sig 
-
-#endif
 
 #endif  // OWL_SIGNATUR_H

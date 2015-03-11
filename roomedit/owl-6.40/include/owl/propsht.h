@@ -135,15 +135,15 @@ class _OWLCLASS TPropertyPage: public TDialog {
     // Virtual methods to handle the Sheet notifications. Some of these
     // methods will most likely be overriden by TPropertyPage-derived classes
     //
-    virtual   int   SetActive(TPshNotify&);    ///< PSN_SETACTIVE
-    virtual   bool  KillActive(TPshNotify&);   ///< PSN_KILLACTIVE
-    virtual   int   Apply(TPshNotify&);        ///< PSN_APPLY
-    virtual   void  Reset(TPshNotify&);        ///< PSN_RESET
-    virtual   void  Help(TPshNotify&);         ///< PSN_HELP
-    virtual   int   WizBack(TPshNotify&);      ///< PSN_WIZBACK
-    virtual   int   WizNext(TPshNotify&);      ///< PSN_WIZNEXT
-    virtual   bool  WizFinish(TPshNotify&);    ///< PSN_WIZFINISH
-    virtual   bool  QueryCancel(TPshNotify&);  ///< PSN_QUERYCANCEL
+    virtual   int   SetActive(TNotify&);    ///< PSN_SETACTIVE
+    virtual   bool  KillActive(TNotify&);   ///< PSN_KILLACTIVE
+    virtual   int   Apply(TNotify&);        ///< PSN_APPLY
+    virtual   void  Reset(TNotify&);        ///< PSN_RESET
+    virtual   void  Help(TNotify&);         ///< PSN_HELP
+    virtual   int   WizBack(TNotify&);      ///< PSN_WIZBACK
+    virtual   int   WizNext(TNotify&);      ///< PSN_WIZNEXT
+    virtual   bool  WizFinish(TNotify&);    ///< PSN_WIZFINISH
+    virtual   bool  QueryCancel(TNotify&);  ///< PSN_QUERYCANCEL
 
     /// Following structure holds information about this dialog when it is
     /// inserted into a PropertySheet
@@ -211,6 +211,15 @@ class _OWLCLASS TPropertyPage: public TDialog {
     friend class _OWLCLASS TPropertySheet;
     DECLARE_RESPONSE_TABLE(TPropertyPage);
 /// DECLARE_STREAMABLE(_OWLCLASS, owl::TPropertyPage, 1);
+};
+
+//----------------------------------------------------------------------------
+// TPropertySheet
+//----------------------------------------------------------------------------
+class _OWLCLASS TPshNotify : public PSHNOTIFY {
+  public:
+    TPshNotify(HWND hwnd, uint id, uint code, LPARAM lp);
+    operator  NMHDR&() { return hdr; }
 };
 
 //
@@ -318,7 +327,7 @@ class _OWLCLASS TPropertySheet : public TWindow {
   protected:
     bool            SubClassSheet;  ///< Should we subclass the sheet (OS only)
     bool            WantTimer;      ///< Flags whether to start a timer
-    UINT_PTR        TimerID;        ///< Timer identifier
+    uint            TimerID;        ///< Timer identifier
 
     // Holds information necessary to create the property sheet
     //
@@ -357,71 +366,6 @@ class _OWLCLASS TPropertySheet : public TWindow {
 // Generic definitions/compiler options (eg. alignment) following the
 // definition of classes
 #include <owl/posclass.h>
-
-//----------------------------------------------------------------------------
-/// \name Property sheet notifications
-/// @{
-
-//
-/// Property sheets notify property pages of events via the standard WM_NOTIFY message. 
-/// However, there is no Control ID involved in this particular flavour of notification. 
-/// The WM_NOTIFY handler of ObjectWindows relies on the CtlID for subdispatching. Hence, we'll 
-/// have PropPageID as the default identifier so that we do not have to repeat dispatching logic
-/// in the EvNotify of TPropertyPage.
-//
-const int PropPageID = 0xFFF0;
-
-//
-/// void method(TPshNotify&)
-//
-#define EV_PSN_APPLY(method) OWL_EV_NOTIFICATION(PSN_APPLY, ::owl::PropPageID, method)
-
-//
-/// int method(TNmObjectNotify&)
-//
-#define EV_PSN_GETOBJECT(method) OWL_EV_NOTIFICATION(PSN_GETOBJECT, ::owl::PropPageID, method)
-
-//
-/// void method(TPshNotify&)
-//
-#define EV_PSN_HELP(method) OWL_EV_NOTIFICATION(PSN_HELP, ::owl::PropPageID, method)
-
-//
-/// bool method(TPshNotify&)
-//
-#define EV_PSN_KILLACTIVE(method) OWL_EV_NOTIFICATION(PSN_KILLACTIVE, ::owl::PropPageID, method)
-
-//
-/// bool method(TPshNotify&)
-//
-#define EV_PSN_QUERYCANCEL(method) OWL_EV_NOTIFICATION(PSN_QUERYCANCEL, ::owl::PropPageID, method)
-
-//
-/// void method(TPshNotify&)
-//
-#define EV_PSN_RESET(method) OWL_EV_NOTIFICATION(PSN_RESET, ::owl::PropPageID, method)
-
-//
-/// int method(TPshNotify&)
-//
-#define EV_PSN_SETACTIVE(method) OWL_EV_NOTIFICATION(PSN_SETACTIVE, ::owl::PropPageID, method)
-
-//
-/// int method(TPshNotify&)
-//
-#define EV_PSN_WIZBACK(method) OWL_EV_NOTIFICATION(PSN_WIZBACK, ::owl::PropPageID, method)
-
-//
-/// bool method(TPshNotify&)
-//
-#define EV_PSN_WIZFINISH(method) OWL_EV_NOTIFICATION(PSN_WIZFINISH, ::owl::PropPageID, method)
-
-//
-/// int method(TPshNotify&)
-//
-#define EV_PSN_WIZNEXT(method) OWL_EV_NOTIFICATION(PSN_WIZNEXT, ::owl::PropPageID, method)
-
-/// @}
 
 //----------------------------------------------------------------------------
 // Inline implementations

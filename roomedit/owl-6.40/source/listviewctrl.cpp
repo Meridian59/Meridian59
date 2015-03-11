@@ -456,7 +456,7 @@ TLvColumn::SetWidth(int pixels, const tstring& text)
   // Use user provided pixel size, or compute from text - if provided.
   //
   cx = (pixels) ? pixels :
-    (text.length() != 0) ? TDefaultGuiFont(TDefaultGuiFont::sfiIcon).GetTextExtent(text).cx :
+    (text.length() != 0) ? TDefaultGUIFont().GetTextExtent(text).cx :
     0;
 }
 
@@ -885,7 +885,7 @@ int
 TListViewCtrl::GetNextItem(int index, TNextItemCode code) const
 {
   PRECONDITION(GetHandle());
-  return static_cast<int>(SendMessage(LVM_GETNEXTITEM, TParam1(index), code));
+  return static_cast<int>(SendMessage(LVM_GETNEXTITEM, TParam1(index), MkParam2(code, 0)));
 }
 
 bool
@@ -934,7 +934,7 @@ bool
 TListViewCtrl::Scroll(int dx, int dy)
 {
   PRECONDITION(GetHandle());
-  return ToBool(SendMessage(LVM_SCROLL, dx, dy));
+  return ToBool(SendMessage(LVM_SCROLL, 0, MkParam2(dx, dy)));
 }
 
 bool
@@ -962,7 +962,7 @@ bool
 TListViewCtrl::SetColumnWidth(int index, int width)
 {
   PRECONDITION(GetHandle());
-  return ToBool(SendMessage(LVM_SETCOLUMNWIDTH, TParam1(index), width));
+  return ToBool(SendMessage(LVM_SETCOLUMNWIDTH, TParam1(index), MkParam2(width, 0)));
 }
 
 bool
@@ -1058,7 +1058,7 @@ TSize
 TListViewCtrl::GetApproxRect(int x, int y, int count) const
 {
   PRECONDITION(GetHandle());
-  if ((x != -1 && !IsRepresentable<uint16>(x)) || (y != -1 && !IsRepresentable<uint16>(y)))
+  if (x != -1 && !IsRepresentable<uint16>(x) || y != -1 && !IsRepresentable<uint16>(y))
     throw TXOwl(_T("TListViewCtrl:GetApproxRect: Argument is outside valid range"));
   TResult r = SendMessage(LVM_APPROXIMATEVIEWRECT, TParam1(count), MkParam2(x, y));
   return TPoint(static_cast<DWORD>(r));

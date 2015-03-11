@@ -756,9 +756,9 @@ bool TPalette::Read_BMP(TRiffFile& file)
   // sizes.
   // Will add BITMAPV4HEADER support when available
   uint32 headerSize;
-  if (file.Read((char*)&headerSize, sizeof headerSize) == TFILE_ERROR ||
-    (headerSize != sizeof(BITMAPCOREHEADER) && headerSize != sizeof(BITMAPINFOHEADER)))
-  {
+  if (file.Read((char*)&headerSize, sizeof headerSize)==TFILE_ERROR
+      || headerSize != sizeof(BITMAPCOREHEADER)
+      && headerSize != sizeof(BITMAPINFOHEADER)) {
     WARNX(OwlGDI, 1, 0, "TPalette::Read_BMP() Not a Windows 3.x or PM 1.x bitmap file");
     TXBadFormat::Raise();
     return false;

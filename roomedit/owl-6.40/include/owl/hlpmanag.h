@@ -18,7 +18,17 @@
 #endif
 
 #include <owl/window.h>
-#include <htmlhelp.h>
+
+#if !defined(NO_HTMLHELP)
+# if !defined(__HTMLHELP_H__)
+#  if defined(BI_NEED_HTMLHELP_H) || defined(WINELIB)
+#   include <api_upd/htmlhelp.h>
+#  else
+#   include <htmlhelp.h>
+#  endif
+# endif
+#endif
+
 
 namespace owl {
 
@@ -41,6 +51,8 @@ struct THelpHitInfo
   TWindow*  Window;
 };
 
+
+#if !defined(NO_HTMLHELP)
 
 class _OWLCLASS THlpNotify : public HHN_NOTIFY{
   public:
@@ -110,6 +122,8 @@ class _OWLCLASS THlpTrack : public  HHNTRACK {
     operator  NMHDR&() { return hdr; }
 };
 
+
+#endif
 //
 /// \class THelpContext
 // ~~~~~ ~~~~~~~~~~~~
@@ -185,6 +199,7 @@ DECLARE_CASTABLE;
     void   CeContextHelp (TCommandEnabler& ce);
     void   CmWhatIsThis();
 
+#if !defined(NO_HTMLHELP)
     //  not finished wil be changed ???????????????
   public:
     HWND   HtmlHelp(TWindow*, LPCTSTR lpszHelp, uint hlpCmd, uint32 data);
@@ -197,6 +212,7 @@ DECLARE_CASTABLE;
   protected:
     bool   UseHTMLHelp;
     bool   WinToHTML;
+#endif
 
   protected:
     typedef TBaseList<THelpContext>          TContextList;
@@ -214,6 +230,8 @@ DECLARE_CASTABLE;
 
   DECLARE_RESPONSE_TABLE(THelpFileManager);
 };
+
+#if !defined(NO_HTMLHELP)
 
 /// \class THtmlHelpDll
 // ~~~~~ ~~~~~~~~~~~~
@@ -237,6 +255,8 @@ typedef _OWLCLASS TDllLoader<THtmlHelpDll> THtmlHelp;
   /// DLL and provide import declaration of DLL instance for users of the class.
   //
   template class _OWLCLASS TDllLoader<THtmlHelpDll>;
+#endif
+
 #endif
 
 // Generic definitions/compiler options (eg. alignment) following the

@@ -34,7 +34,7 @@ namespace owl {
 //
 TDrawItemProxy::TDrawItemProxy(TFont* font)
 :
-  Font(font ? font : new TGadgetWindowFont()), CelArray(0), DeleteCel(false)
+  Font(font),CelArray(0),DeleteCel(false)
 {
   ItemArray = new TDrawItemArray;
 }

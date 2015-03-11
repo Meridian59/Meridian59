@@ -25,19 +25,7 @@
 #include <owl/gdibase.h>
 #include <owl/lclstrng.h>
 
-#if defined(OWL_HAS_STD_EXCEPTION_PTR)
-#include <stdexcept>
-#else
-#include <boost/exception_ptr.hpp>
-#endif
-
 namespace owl {
-
-#if defined(OWL_HAS_STD_EXCEPTION_PTR)
-typedef std::exception_ptr exception_ptr;
-#else
-typedef boost::exception_ptr exception_ptr;
-#endif
 
 
 #if defined(OWL_SUPPORT_BWCC)
@@ -209,7 +197,7 @@ class _OWLCLASS TApplication : virtual public TEventHandler,
 
     virtual bool     CanClose();
     virtual int      Run();
-    virtual int      Start() throw(); // nothrow
+    virtual int      Start() throw();
 
     /// \name Message queue thread synchronization mechanism
     /// @{
@@ -236,9 +224,12 @@ class _OWLCLASS TApplication : virtual public TEventHandler,
 
     /// \name Exception propagation mechanism
     /// @{
-    void SuspendThrow(exception_ptr);
+    void SuspendThrow(const TXBase& x) throw();
+    void SuspendThrow(const TXEndSession& x) throw();
+    void SuspendThrow(const std::exception& x) throw();
+    void SuspendThrow() throw();
     void ResumeThrow();
-    bool HasSuspendedException() const {return !(CurrentException == exception_ptr());}
+    bool HasSuspendedException() const {return XState != 0;}
     /// @}
 
 		tstring ConvertA2W(LPCSTR string);
@@ -374,7 +365,19 @@ class _OWLCLASS TApplication : virtual public TEventHandler,
 #endif
 
     TCurrentEvent CurrentEvent;
-    exception_ptr CurrentException;
+
+    // Exception handling state
+    //
+    enum
+    {
+      xsBase = 1,
+      xsStandard = 2,
+      xsUnknown = 4,
+      xsEndSession = 8
+    };
+    uint XState; // Container of exception flags (xsBase etc.)
+    std::auto_ptr<TXBase> XBase; // Clone of a TXBase exception
+    std::string XWhat; // Description for std::exception
 
     /// \name Condemned TWindow garbage collection
     /// @{
@@ -396,21 +399,11 @@ class _OWLCLASS TApplication : virtual public TEventHandler,
 
     // Response tables
     //
-
-#if OWL_NEW_RESPONSE_TABLE
-
-    typedef TApplication TMyClass;
-    static TResponseTableEntry __entries[];
-
-#else
-
     typedef TResponseTableEntry<TApplication>::PMF TMyPMF;
     typedef TApplication                           TMyClass;
+
     static TResponseTableEntry<TApplication> __entries[];
-
-#endif
-
-    void EvActivateApp(bool active, DWORD threadId); ///< activate main window
+    void EvActivateApp(bool active, HTASK hTask); ///< activate main window
     void CmExit();            ///< Exit from file menu
 
     // Hidden to prevent accidental copying or assignment
@@ -531,7 +524,7 @@ class _OWLCLASS TXInvalidMainWindow : public TXOwl {
   public:
     TXInvalidMainWindow();
 
-    TXInvalidMainWindow* Clone();
+    virtual TXInvalidMainWindow* Clone() const; // override
     void Throw();
 
     static void Raise();

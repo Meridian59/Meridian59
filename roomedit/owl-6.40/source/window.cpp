@@ -25,7 +25,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined(BI_NEED_ZMOUSE_H)
+# include <api_upd/zmouse.h>
+#else
 #include <zmouse.h>
+#endif
 
 #include <owl/registry.h>
 
@@ -77,14 +81,17 @@ DEFINE_RESPONSE_TABLE(TWindow)
   EV_WM_HSCROLL,
   EV_WM_CHILDINVALID,
   EV_WM_ERASEBKGND,
-  EV_WM_CTLCOLORBTN(EvCtlColor),
-  EV_WM_CTLCOLORDLG(EvCtlColor),
-  EV_WM_CTLCOLORMSGBOX(EvCtlColor),
-  EV_WM_CTLCOLORSCROLLBAR(EvCtlColor),
-  EV_WM_CTLCOLORSTATIC(EvCtlColor),
+  EV_WM_CTLCOLOR,
   EV_WM_PAINT,
   EV_WM_LBUTTONDOWN,
   EV_WM_KILLFOCUS,
+  EV_MESSAGE(WM_CTLCOLORMSGBOX, EvWin32CtlColor),
+  EV_MESSAGE(WM_CTLCOLOREDIT, EvWin32CtlColor),
+  EV_MESSAGE(WM_CTLCOLORLISTBOX, EvWin32CtlColor),
+  EV_MESSAGE(WM_CTLCOLORBTN, EvWin32CtlColor),
+  EV_MESSAGE(WM_CTLCOLORDLG, EvWin32CtlColor),
+  EV_MESSAGE(WM_CTLCOLORSCROLLBAR, EvWin32CtlColor),
+  EV_MESSAGE(WM_CTLCOLORSTATIC, EvWin32CtlColor),
   EV_WM_CREATE,
   EV_WM_CLOSE,
   EV_WM_DESTROY,
@@ -800,8 +807,8 @@ TWindow::SetScroller(TScroller* scroller)
 //
 // Wildcard check used for child id notifications
 //
-static bool wildcardCheck(const TGenericTableEntry & entry, const TEventHandler::TEventInfo& info) 
-{
+static bool wildcardCheck(TGenericTableEntry & entry,
+                          TEventHandler::TEventInfo& info) {
   return entry.Id == info.Id && (entry.Msg == UINT_MAX || entry.Msg == info.Msg);
 }
 
@@ -895,7 +902,7 @@ TWindow::DefaultProcessing()
   else {
     TNotify& _not = *(TNotify*)currentEvent.Param2;
     notifyCode = _not.code;
-    id = static_cast<uint>(_not.idFrom); //currentEvent.Param1; // Y.B. In help written -> use not.idFrom.
+    id = _not.idFrom; //currentEvent.Param1; // Y.B. In help written -> use not.idFrom.
     if (_not.code == (uint)TTN_NEEDTEXT && 
         ((TTooltipText*)&_not)->uFlags&TTF_IDISHWND){
       id = ::GetDlgCtrlID((HWND)_not.idFrom);
@@ -1272,14 +1279,14 @@ TWindow::DefWindowProc(TMsgId message, TParam1 param1, TParam2 param2)
 static const int     msgCacheSize = 31;
 struct TCacheEntry{
   uint32                       UniqueId;
-  const TGenericTableEntry* Entry;
+  TGenericTableEntry  * Entry;
   TMsgId                         Msg;
   int                          Delta;  // adjustment to "this" pointer
 
 	//30.05.2007 - Submitted by Frank Rast: Initialization of TCacheEntry data members was missing.
 	TCacheEntry() : UniqueId(0), Entry(0), Msg(0), Delta(0) {}
 
-  void Set(uint32 uniqueId, TMsgId msg, const TGenericTableEntry* entry, int delta = 0) {
+  void Set(uint32 uniqueId, TMsgId msg, TGenericTableEntry * entry, int delta = 0) {
     UniqueId = uniqueId;
     Entry = entry;
     Msg = msg;
@@ -1307,7 +1314,7 @@ struct TCacheEntryStr
   bool         Enabled;
 
   void CacheFlush(uint32 id);
-  void Set(int index, uint32 uniqueId, TMsgId, const TGenericTableEntry* entry, int delta = 0); 
+  void Set(int index, uint32 uniqueId, TMsgId, TGenericTableEntry * entry, int delta = 0); 
   bool Check(int index, TMsgId, uint32 id); 
 
 #if defined(BI_MULTI_THREAD_RTL)
@@ -1350,7 +1357,7 @@ void TCacheEntryStr::CacheFlush(uint32 id)
       Cache[i].Msg = 0;
 }
 //
-void TCacheEntryStr::Set(int index, uint32 uniqueId, TMsgId msg, const TGenericTableEntry* entry, int delta) 
+void TCacheEntryStr::Set(int index, uint32 uniqueId, TMsgId msg, TGenericTableEntry * entry, int delta) 
 {
   LOCKCACHE
   Cache[index].Set(uniqueId, msg, entry, delta);
@@ -1450,7 +1457,7 @@ TWindow::WindowProc(TMsgId msg, TParam1 param1, TParam2 param2)
                                     << notify->code     << _T(", ")\
                                     << hex << uint(notify->hwndFrom) << _T(", ")\
                                     << _T(" ! => ") << *this);
-    return EvNotify(static_cast<uint>(param1), *notify);
+    return EvNotify(param1, *notify);
   }
 
   // Handle all other messages by looking up and dispatching using the
@@ -1492,7 +1499,7 @@ TWindow::WindowProc(TMsgId msg, TParam1 param1, TParam2 param2)
     // pass the message back to whomever we subclassed
     //
     if (IsFlagSet(wfMainWindow)) {
-      TEventInfo cmdEventInfo(msg, static_cast<uint>(param1));
+      TEventInfo cmdEventInfo(msg, param1);
       if (GetApplication()->Find(cmdEventInfo))
         return GetApplication()->Dispatch(cmdEventInfo, param1, param2);
       if (GetApplication()->Find(eventInfo))
@@ -1517,43 +1524,55 @@ TWindow::WindowProc(TMsgId msg, TParam1 param1, TParam2 param2)
 TResult
 TWindow::ReceiveMessage(HWND hwnd, TMsgId msg, TParam1 param1, TParam2 param2) throw()
 {
-  WARNX(OwlWin, hwnd != Handle, 0, "ReceiveMessage: The passed handle does not match this window."); 
-  InUse(hwnd);
-
-  // If it's a "GetWindowPtr" message, then return pointer to this window
+  // If it's a "GetWindowPtr" message, then return pointer to this window.
   //
-  if (msg == GetWindowPtrMsgId && (!param2 || param2 == TParam2(Application)))
-    return TResult(this);
+  if (msg == GetWindowPtrMsgId && (!param2 || param2 == reinterpret_cast<TParam2>(Application)))
+    return reinterpret_cast<TResult>(this);
 
-  // Save event away in "CurrentEvent"
+  // Save away the current event to support nested calls.
   //
   TCurrentEvent& currentEvent = GetCurrentEvent();
-  TCurrentEvent  saveEvent = currentEvent;  // for nested calls
+  TCurrentEvent  saveEvent = currentEvent;
   currentEvent.Win = this;
   currentEvent.Message = msg;
   currentEvent.Param1 = param1;
   currentEvent.Param2 = param2;
 
-  // Call window object's WindowProc virtual function
+  // Dispatch the message to the WindowProc virtual function.
+  // Suspend any exception thrown. It will be rethrown in the message loop on the return from
+  // this function.
   //
   TResult result = 0;
   try
   {
+    PRECONDITIONX(hwnd == Handle, _T("ReceiveMessage: The passed handle does not match this window.")); 
+    InUse(hwnd);
     result = WindowProc(msg, param1, param2);
   }
-  catch (...)
+  catch (const TXBase& x) 
   {
-    TRACEX(OwlWin, 0, _T("TWindow::ReceiveMessage: Suspending unhandled exception for message: ") << msg);
-
-#if defined(OWL_HAS_STD_EXCEPTION_PTR)
-    using std::current_exception;
-#else
-    using boost::current_exception;
-#endif
-
-    GetApplication()->SuspendThrow(current_exception());
+    TRACEX(OwlWin, 0, _T("TWindow::ReceiveMessage: Suspending unhandled TXBase exception for message: ") << msg);
+    GetApplication()->SuspendThrow(x);
   }
-  currentEvent = saveEvent;  // restore previous event to current event
+  catch (const TXEndSession& x)
+  {
+    TRACEX(OwlWin, 0, _T("TDialog::ReceiveMessage: Suspending unhandled TXEndSession for message: ") << msg);
+    GetApplication()->SuspendThrow(x);
+  }
+  catch (const exception& x) 
+  {
+    TRACEX(OwlWin, 0, _T("TWindow::ReceiveMessage: Suspending unhandled std::exception for message: ") << msg);
+    GetApplication()->SuspendThrow(x);
+  }
+  catch (...) 
+  {
+    TRACEX(OwlWin, 0, _T("TWindow::ReceiveMessage: Suspending unhandled unknown exception for message: ") << msg);
+    GetApplication()->SuspendThrow();
+  }
+  
+  // Restore the current event; could have been changed by nested calls.
+  //
+  currentEvent = saveEvent;
   return result;
 }
 
@@ -1593,15 +1612,14 @@ _OWLFUNC(TWindow*) GetWindowPtr(HWND hWnd, const TApplication* app)
 //
 /// Response method for an incoming WM_CREATE message
 ///
-/// Performs setup and data transfer now that we are created & have a Handle.
-/// Should return true if the 
+/// Performs setup and data transfer
+/// now that we are created & have a Handle
 //
-bool
+int
 TWindow::EvCreate(CREATESTRUCT &)
 {
-  PerformSetupAndTransfer(); // TODO: Add exception handling and return false on exceptions.
-  TResult r = DefaultProcessing();
-  return r == 0;
+  PerformSetupAndTransfer();
+  return (int)DefaultProcessing();
 }
 
 //
@@ -1701,9 +1719,10 @@ TWindow::EvMove(const TPoint&)
 int
 TWindow::EvCompareItem(uint /*ctrlId*/, const COMPAREITEMSTRUCT& compareInfo)
 {
-  TWindow* w = GetWindowPtr(compareInfo.hwndItem);
-  TResult r = w ? w->ForwardMessage() : DefaultProcessing();  
-  return static_cast<int>(r);
+  TWindow* win = GetWindowPtr(compareInfo.hwndItem);
+  if (win)
+    return win->ForwardMessage();
+  return DefaultProcessing();
 }
 
 //
@@ -1799,6 +1818,29 @@ TWindow::EvMeasureItem(uint ctrlId, MEASUREITEMSTRUCT & measureInfo)
     }
   }
   DefaultProcessing();
+}
+
+//
+/// Processes Win32 control color messages (WM_CTLCOLOR*) by redispatching to the old-style 
+/// handler for the Win16 WM_CTLCOLOR message.
+//
+TResult
+TWindow::EvWin32CtlColor(TParam1 param1, TParam2 param2)
+{
+  int  ctlType = GetCurrentEvent().Message - WM_CTLCOLORMSGBOX;
+
+  CHECK(ctlType >= CTLCOLOR_MSGBOX && ctlType <= CTLCOLOR_STATIC);
+
+  TEventInfo  eventInfo(WM_CTLCOLOR);
+
+  if (Find(eventInfo)) {
+    typedef HBRUSH(TGeneric::*CTL_COLOR_PMF)(HDC, HWND, uint);
+
+    CTL_COLOR_PMF&  pmf = (CTL_COLOR_PMF&)(eventInfo.Entry->Pmf);
+
+    return (TResult)(eventInfo.Object->*pmf)((HDC)param1, (HWND)param2, ctlType);
+  }
+  return DefWindowProc(GetCurrentEvent().Message, param1, param2);
 }
 
 //
@@ -1963,38 +2005,33 @@ TWindow::EvVScroll(uint scrollCode, uint thumbPos, HWND hWndCtl)
 }
 
 //
-/// Response method for an incoming WM_ERASEBKGND message;
-///
-/// If the background color (see TWindow::SetBkgndColor) is not set, or
-/// it has been set to TColor::None, then this function simply forwards the 
-/// message to DefaultProcessing. The default processing uses the brush
-/// specified in the window class (WNDCLASS:hbrBackground) to clear the client
-/// area. If the background color is set to TColor::Transparent, no clearing is
-/// done, and the function simply returns `true`. Otherwise, the current 
-/// background color is used to clear the client area, and `true` is returned,
-/// indicating no further erasing is required.
-///
-/// If you want to handle erasure in your Paint override, then override this
-/// handler and return false. Paint will then receive `true` in its `erase`
-/// parameter, and you must ensure that all of the background is painted within
-/// the invalidated region.
-///
-/// http://msdn.microsoft.com/en-us/library/windows/desktop/ms648055.aspx
+/// Response method for an incoming WM_ERASEBKGND message
+/// If a background color is set, and is not transparent - paint the background.
 //
 bool
 TWindow::EvEraseBkgnd(HDC hDC)
 {
-  if (BkgndColor == TColor::None) 
-    return static_cast<bool>(DefaultProcessing()); // Use WNDCLASS::hbrBackground.
-    
-  else if (BkgndColor == TColor::Transparent)
-    return true; // We want no erasing, please.
+  // If color is set, we'll handle erasing (or doing nothing) here
+  //
+  if (BkgndColor != TColor::None) {
 
-  else // We have a true color. Use it to clear the client area.
-  {
-    TDC(hDC).FillSolidRect(GetClientRect(), BkgndColor);
+    // If a color is set, blt out a rectangle of it, else don't erase & let
+    // paint handle background
+    //
+    if (BkgndColor != TColor::Transparent) {
+      TDC dc(hDC);
+      TBrush bkBrush(BkgndColor);
+      dc.SelectObject(bkBrush);
+      dc.SetBkColor(BkgndColor);
+      dc.PatBlt(GetClientRect());
+      dc.RestoreBrush();
+    }
     return true;
   }
+
+  // No color set, use default class brush
+  //
+  return (bool)DefaultProcessing();
 }
 
 //
@@ -2068,9 +2105,9 @@ TWindow::Paint(TDC&, bool /*erase*/, TRect&)
 /// client area, set the cursor
 //
 bool
-TWindow::EvSetCursor(HWND hWndCursor, uint codeHitTest, TMsgId /*mouseMsg*/)
+TWindow::EvSetCursor(HWND hWndCursor, uint hitTest, TMsgId /*mouseMsg*/)
 {
-  if (hWndCursor == GetHandle() && codeHitTest == HTCLIENT && HCursor) {
+  if (hWndCursor == GetHandle() && hitTest == HTCLIENT && HCursor) {
     ::SetCursor(HCursor);
     return true;
   }
@@ -2452,16 +2489,15 @@ TWindow::Create()
 #endif
 
     GetApplication()->ResumeThrow();
+    WARNX(OwlWin, !GetHandle(), 0, _T("PerformCreate failed: ") <<
+      _T("Class: \"") << tstring(GetClassName()).c_str() << _T("\", ") <<
+      _T("Title: \"") << tstring(Title).c_str() << _T("\", ") <<
+      _T("Style: ") << Attr.Style << _T(", ") <<
+      _T("Parent: ") << (Parent ? uint(Parent->GetHandle()) : 0) << _T(", ") <<
+      _T("Module: \"") << GetModule()->GetModuleFileName());
+    if (!GetHandle())
+      TXWindow::Raise(this, IDS_WINDOWCREATEFAIL);
   }
-
-  WARNX(OwlWin, !GetHandle(), 0, _T("Create failed: ") <<
-    _T("Class: \"") << GetClassName() << _T("\", ") <<
-    _T("Title: \"") << (Title ? Title : _T("")) << _T("\", ") <<
-    _T("Style: ") << Attr.Style << _T(", ") <<
-    _T("Parent: ") << reinterpret_cast<uint>(Parent ? Parent->GetHandle() : 0) << _T(", ") <<
-    _T("Module: \"") << GetModule()->GetModuleFileName());
-  if (!GetHandle())
-    TXWindow::Raise(this, IDS_WINDOWCREATEFAIL);
 
   // Here we deal with non-subclassed handles. This may be caused by two scenarios:
   //
@@ -2712,7 +2748,7 @@ TWindow::Transfer(void* buffer, TTransferDirection direction)
   if (buffer) {
     TTransferIterInfo info = { buffer, direction };
     ForEach((TActionFunc)transferDatchild, &info);
-    return static_cast<uint>(reinterpret_cast<char*>(info.Data) - reinterpret_cast<char*>(buffer));
+    return (char*)info.Data - (char*)buffer;
   }
   return 0;
 }
@@ -2958,7 +2994,6 @@ TWindow::EvEndSession(bool endSession, uint /*flags*/)
     DefaultProcessing();
 }
 
-
 //
 /// Handle message posted to us by a control needing assistance in dealing with
 /// invalid inputs
@@ -3122,18 +3157,16 @@ TWindow::CreateChildren()
 void
 TWindow::AddChild(TWindow* child)
 {
-  if (!child) return;
-  if (ChildList)
-  {
-    child->SiblingList = ChildList->SiblingList;
-    ChildList->SiblingList = child;
-    ChildList = child;
-  }
-  else
-  {
-    ChildList = child;
-    child->SiblingList = child;
-  }
+  if (child)
+    if (ChildList) {
+      child->SiblingList = ChildList->SiblingList;
+      ChildList->SiblingList = child;
+      ChildList = child;
+    }
+    else {
+      ChildList = child;
+      child->SiblingList = child;
+    }
 }
 
 //
@@ -3887,12 +3920,12 @@ TWindow::SetCursor(TModule* module, TResId resId)
 /// could rearrange code to share better.
 //
 void
-TWindow::EvInitMenuPopup(HMENU hPopupMenu, uint /*index*/, bool isSysMenu)
+TWindow::EvInitMenuPopup(HMENU hPopupMenu, uint /*index*/, bool sysMenu)
 {
   if (IsFlagSet(wfAlias))
     DefaultProcessing();
 
-  else if (!isSysMenu && hPopupMenu) {
+  else if (!sysMenu && hPopupMenu) {
     const int count = ::GetMenuItemCount(hPopupMenu);
 
     for (int pos = 0; pos < count; pos++) {
@@ -4589,7 +4622,7 @@ TXWindow::Unhandled(TModule* app, uint promptResId)
 /// Clone the exception object for safe-throwing.
 //
 TXWindow*
-TXWindow::Clone()
+TXWindow::Clone() const
 {
   return new TXWindow(*this);
 }

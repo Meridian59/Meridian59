@@ -228,10 +228,14 @@ TDib::TDib(const TDib& src)
 //
 TDib::~TDib()
 {
-  if (!Handle || IsResHandle) return;
-  ::GlobalUnlock(Handle);
-  if (ShouldDelete)
-    ::GlobalFree(Handle);
+  if (Handle)
+    if (IsResHandle) {
+    }
+    else {
+      ::GlobalUnlock(Handle);
+      if (ShouldDelete)
+        ::GlobalFree(Handle);
+    }
 }
 
 
@@ -653,10 +657,10 @@ TDib::Read(IFileIn& in, bool readFileHeader)
   // Will add BITMAPV4HEADER support when available
   //
   uint32 headerSize;
-  size_t n = static_cast<size_t>(in.Read(&headerSize, sizeof(headerSize)));
-  if (n != sizeof(headerSize) ||
-    (headerSize != sizeof(BITMAPCOREHEADER) && headerSize != sizeof(BITMAPINFOHEADER)))
-  {
+  if ((size_t)in.Read(&headerSize, sizeof(headerSize)) != sizeof(headerSize)
+      || headerSize != sizeof(BITMAPCOREHEADER)
+      && headerSize != sizeof(BITMAPINFOHEADER)
+     ) {
     TRACEX(OwlGDI, 0, "Not a Windows 3.x or PM 1.x bitmap file");
     TXBadFormat::Raise();
     return false;

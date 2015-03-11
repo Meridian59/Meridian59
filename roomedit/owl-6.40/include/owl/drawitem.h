@@ -21,10 +21,8 @@
 # pragma read_only_file
 #endif
 
-#include <owl/dc.h>
-#include <owl/gdiobjec.h>
-#include <owl/celarray.h>
-#include <owl/wsyscls.h>
+#include <owl/gadgetwi.h>
+
 
 namespace owl {
 
@@ -46,7 +44,7 @@ class _OWLCLASS TDrawItemProxy {
   public:
     typedef TIPtrArray<TDrawItem*> TDrawItemArray;
   public:
-    TDrawItemProxy(TFont* font = 0);
+    TDrawItemProxy(TFont* font = new TGadgetWindowFont);
     virtual ~TDrawItemProxy();
 
             void        SetFont(TFont* font);

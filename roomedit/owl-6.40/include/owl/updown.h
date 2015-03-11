@@ -19,6 +19,8 @@
 
 #include <owl/control.h>
 #include <owl/commctrl.h>
+#include <owl/bitset.h>
+
 
 namespace owl {
 
@@ -42,7 +44,7 @@ class TUDAccel : public UDACCEL {
 /// TUpDown encapsulates an up-down control, which is a window with a pair of arrow
 /// buttons that the user can click to increment or decrement a value.
 //
-class _OWLCLASS TUpDown : public TControl {
+class _OWLCLASS TUpDown : public TControl, public TBitFlags<uint> {
   public:
     TUpDown(TWindow* parent,
             int      id,

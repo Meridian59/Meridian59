@@ -741,7 +741,7 @@ TDocManager::InitDoc(TDocument* doc, LPCTSTR path, long flags)
 
   // Post event that document has been created
   //
-  PostEvent(dnCreate, *doc); // WM_OWLDOCUMENT
+  PostEvent(dnCreate, *doc);
 
   return doc;
 }
@@ -1118,11 +1118,12 @@ TDocManager::IsAMatch(LPCTSTR path, LPCTSTR fltr)
   //
   if (pfe)
     *pfe++ = 0;
-  const tchar* const cpfe = pfe ? pfe : _T("");
+  else
+    pfe = _T("");
 
   // Match the name and extension
   //
-  return nameMatch(ppn, pfn) && nameMatch(ppe, cpfe);
+  return nameMatch(ppn, pfn) && nameMatch(ppe, pfe);
 }
 
 //
@@ -1647,7 +1648,7 @@ TDocManager::FileSaveAs()
       if (tpl != doc->Template)
         doc->SetTemplate(tpl);       // replace existing template
       if (doc->Commit(true))         // force rewrite to new path
-        PostEvent(dnRename, *doc); // WM_OWLDOCUMENT
+        PostEvent(dnRename, *doc);   // notify that doc has been renamed
     }
   }
 }

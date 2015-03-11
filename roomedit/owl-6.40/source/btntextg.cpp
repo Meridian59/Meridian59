@@ -173,28 +173,18 @@ TButtonTextGadget::SetText(const tstring& text, bool repaint)
 }
 
 //
-/// Returns the effective font used to render the text for this gadget.
-/// If no font was passed to the constructor, the font of the gadget window is returned.
-//
-const TFont&
-TButtonTextGadget::GetFont() const
-{
-  PRECONDITION(GetGadgetWindow());
-  return Font ? *Font : GetGadgetWindow()->GetFont();
-}
-
-//
-/// Sets the font to be used by the gadget. If repaint is true, calls
-/// TGadgetWindow::GadgetChangedSize to recalculate the size of the gadget.
+/// Set Font to be used by the Gadget. If repaint is true calls
+/// Window->GadgetChangedSize(*this) to recalculate size of gadget.
 //
 void
-TButtonTextGadget::SetFont(const TFont& font, bool repaint)
+TButtonTextGadget::SetFont(TFont* font, bool repaint)
 {
   delete Font;
-  Font = new TFont(font);
+  Font = font;
   if (GetGadgetWindow() && repaint)
     GetGadgetWindow()->GadgetChangedSize(*this);
 }
+
 
 //
 /// If the style stored in Style is not the same as the new style, SetStyle sets
@@ -287,7 +277,16 @@ TButtonTextGadget::SysColorChange()
 void
 TButtonTextGadget::GetTextSize(TSize& size)
 {
-  TEXTMETRIC tm = GetFont().GetTextMetrics();
+  TFont* font = Font;
+  if (font == 0)
+    font = &(GetGadgetWindow()->GetFont());
+
+  if (font == 0)
+    return;
+
+  TEXTMETRIC tm;
+  font->GetTextMetrics(tm);
+
   size.cx += tm.tmAveCharWidth * NumChars;
   size.cy += tm.tmHeight + 2;
 }
@@ -449,7 +448,10 @@ TButtonTextGadget::Layout(TRect& faceRect, TRect& textRect, TRect& btnRect)
 void
 TButtonTextGadget::PaintText(TDC& dc, TRect& rect, const tstring& text)
 {
-  dc.SelectObject(GetFont());
+  if (!Font)
+    dc.SelectObject(GetGadgetWindow()->GetFont());
+  else
+    dc.SelectObject(*Font);
 
   TColor textColor = TColor::SysBtnText;
   if(!GetEnabled())

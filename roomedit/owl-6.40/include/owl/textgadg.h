@@ -52,7 +52,7 @@ class _OWLCLASS TTextGadget : public TGadget {
 
     TTextGadget(int id = 0, TBorderStyle = Recessed, TAlign = Left,
                 uint numChars = 10, LPCTSTR text = 0,
-                TFont* font = 0);
+                TFont* font = 0 /*new TGadgetWindowFont*/);
 
     TTextGadget(
       int id, 
@@ -63,9 +63,6 @@ class _OWLCLASS TTextGadget : public TGadget {
       TFont* font = 0);
 
     ~TTextGadget();
-
-    const TFont& GetFont() const;
-    void SetFont(const TFont&, bool repaint = true);
 
     // Return a copy of gadget's text
     //

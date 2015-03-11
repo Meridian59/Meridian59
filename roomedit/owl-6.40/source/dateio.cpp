@@ -91,6 +91,7 @@ ParseMonth(tistream& s, tchar* month)
 void TDate::ParseFrom(tistream& s )
 {
   unsigned d,m,y;
+  JulTy julnum = 0; // Assume failure.
   tchar month[20];
 
   if (s.good()){
@@ -118,7 +119,7 @@ void TDate::ParseFrom(tistream& s )
     SkipDelim(s);
     s >> y;
   }
-  JulTy julnum = !s.fail() ? Jday(m, d, y) : 0;
+  julnum = !s.fail() ? Jday(m, d, y) : 0;
   if (julnum != 0)
     Julnum = julnum;
   else

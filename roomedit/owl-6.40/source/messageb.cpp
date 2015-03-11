@@ -16,7 +16,10 @@ OWL_DIAGINFO;
 
 static TFont* createMsgBarFont()
 {
-  return new TDefaultGuiFont(TDefaultGuiFont::sfiStatus);
+  NONCLIENTMETRICS ncm;
+  ncm.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
+  return new TFont(ncm.lfStatusFont);
 }
 //
 /// Constructs a TMessageBar object with the gadget window font. Sets IDW_STATUSBAR,
@@ -58,7 +61,7 @@ TMessageBar::PaintGadgets(TDC& dc, bool erase, TRect& rect)
       clientRect.top += TUIMetric::CyBorder;
     dc.SelectObject(GetFont());
     dc.SetBkColor(TColor::Sys3dFace);
-    dc.ExtTextOut(5, y, ETO_OPAQUE, &clientRect, HintText, static_cast<int>(HintText.length()));
+    dc.ExtTextOut(5, y, ETO_OPAQUE, &clientRect, HintText, HintText.length());
   }
   else 
   {

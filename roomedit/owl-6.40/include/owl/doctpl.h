@@ -232,30 +232,30 @@ class _DOCVIEWENTRY TDocTemplateT : public TDocTemplate {
 //
 // Definitions of dtXxx document/view flags for templates and CreateDoc()
 //
-const uint dtNewDoc     = 0x80000000L; ///< create new document, no path used
-const uint dtAutoDelete = 0x40000000L; ///< delete doc when last view is deleted
-const uint dtNoAutoView = 0x20000000L; ///< no automatic create of default view
-const uint dtSingleView = 0x10000000L; ///< only a single view per document
-const uint dtAutoOpen   = 0x08000000L; ///< open document upon creation
-const uint dtUpdateDir  = 0x04000000L; ///< syncronize directory with dialog dir
-const uint dtHidden     = 0x02000000L; ///< hide template from user selection
-const uint dtSelected   = 0x01000000L; ///< indicates template last selected
-const uint dtDynRegInfo = 0x00800000L; ///< reginfo table is dynamic, not static
-const uint dtSingleUse  = 0x00400000L; ///< to be registered as single use
-const uint dtRegisterExt= 0x00200000L; ///< register extension with this app
-const uint dtForbidNew  = 0x00100000L; ///< forbids creating new document
+const long dtNewDoc     = 0x80000000L; ///< create new document, no path used
+const long dtAutoDelete = 0x40000000L; ///< delete doc when last view is deleted
+const long dtNoAutoView = 0x20000000L; ///< no automatic create of default view
+const long dtSingleView = 0x10000000L; ///< only a single view per document
+const long dtAutoOpen   = 0x08000000L; ///< open document upon creation
+const long dtUpdateDir  = 0x04000000L; ///< syncronize directory with dialog dir
+const long dtHidden     = 0x02000000L; ///< hide template from user selection
+const long dtSelected   = 0x01000000L; ///< indicates template last selected
+const long dtDynRegInfo = 0x00800000L; ///< reginfo table is dynamic, not static
+const long dtSingleUse  = 0x00400000L; ///< to be registered as single use
+const long dtRegisterExt= 0x00200000L; ///< register extension with this app
+const long dtForbidNew  = 0x00100000L; ///< forbids creating new document
 
 //
 // Flags defined by Windows in <commdlg.h> - use the low order 17 bits
 //
-const uint dtReadOnly       = 0x0001; //OFN_READONLY;         ///< initial check readonly box
-const uint dtOverwritePrompt= 0x0002; //OFN_OVERWRITEPROMPT;  ///< prompt before overwrite
-const uint dtHideReadOnly   = 0x0004; //OFN_HIDEREADONLY;     ///< no show readonly box
-const uint dtPathMustExist  = 0x0800; //OFN_PATHMUSTEXIST;    ///< path must be valid
-const uint dtFileMustExist  = 0x1000; //OFN_FILEMUSTEXIST;    ///< file must exist
-const uint dtCreatePrompt   = 0x2000; //OFN_CREATEPROMPT;     ///< prompt before create
-const uint dtNoReadOnly     = 0x8000; //OFN_NOREADONLYRETURN; ///< return writable file
-const uint dtNoTestCreate   = 0x10000L;//OFN_NOTESTFILECREATE; ///< skip create tests;
+const long dtReadOnly       = 0x0001; //OFN_READONLY;         ///< initial check readonly box
+const long dtOverwritePrompt= 0x0002; //OFN_OVERWRITEPROMPT;  ///< prompt before overwrite
+const long dtHideReadOnly   = 0x0004; //OFN_HIDEREADONLY;     ///< no show readonly box
+const long dtPathMustExist  = 0x0800; //OFN_PATHMUSTEXIST;    ///< path must be valid
+const long dtFileMustExist  = 0x1000; //OFN_FILEMUSTEXIST;    ///< file must exist
+const long dtCreatePrompt   = 0x2000; //OFN_CREATEPROMPT;     ///< prompt before create
+const long dtNoReadOnly     = 0x8000; //OFN_NOREADONLYRETURN; ///< return writable file
+const long dtNoTestCreate   = 0x10000L;//OFN_NOTESTFILECREATE; ///< skip create tests;
 
 /// @}
 

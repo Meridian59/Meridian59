@@ -31,7 +31,7 @@ class _OWLCLASS TDocTemplate;
 // Global module pointer representing this executable instance
 // provides the default instance for resources contructed within this module
 //
-TModule* Module = 0;   // Global Module ptr in each DLL/EXE
+extern TModule* Module = 0;   // Global Module ptr in each DLL/EXE
 
 void InitGlobalModule(HINSTANCE hInstance)
 {
@@ -74,9 +74,8 @@ const uint32 CompatibleVersionMask = 0xFFF00000;
 //
 // Exported access to global variables for DLLs that use OWL
 //
-
+//#if defined(BI_APP_DLL)
 #if defined(BI_COMP_BORLANDC)
-
 extern "C" { 
 TDocTemplate** PASCAL __declspec(dllexport) GetDocTemplateHead(uint32 version)
 {
@@ -88,9 +87,7 @@ GetModulePtr(uint32 version)
   return (version&CompatibleVersionMask) == (OWLGetVersion()&CompatibleVersionMask) ? &owl::Module : 0;
 }
 }
-
 #elif defined(BI_COMP_GNUC)
-
 extern "C" { 
 __declspec(dllexport) TDocTemplate** PASCAL GetDocTemplateHead(uint32 version)
 {
@@ -102,7 +99,6 @@ GetModulePtr(uint32 version)
   return (version&CompatibleVersionMask) == (OWLGetVersion()&CompatibleVersionMask) ? &owl::Module : 0;
 }
 }
-
 #else
 
 // EMF __export removed because it isn't needed in win32
@@ -117,6 +113,8 @@ GetModulePtr(uint32 version)
 }
 
 #endif
+
+//#endif
 
 /* ========================================================================== */
 

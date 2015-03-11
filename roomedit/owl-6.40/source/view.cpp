@@ -111,12 +111,12 @@ TView::SetViewBar(TBarDescr* bar)
   ViewBar = bar;
 }
 
-static const tchar* const TView_PropertyNames[] = {
+static tchar* TView_PropertyNames[] = {
   _T("View Class"),      // ViewClass
   _T("View Name"),       // ViewName
 };
 
-static const int TView_PropertyFlags[] = {
+static int TView_PropertyFlags[] = {
   pfGetText|pfConstant,  // ViewClass
   pfGetText|pfConstant,  // ViewName
 };
@@ -207,7 +207,7 @@ TView::GetProperty(int prop, void * dest, int textlen)
     return 0;
   }
 
-  int srclen = src ? static_cast<int>(::_tcslen(src)) : 0;
+  int srclen = src ? ::_tcslen(src) : 0;
   if (textlen > srclen)
     textlen = srclen;
   if (textlen)

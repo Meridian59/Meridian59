@@ -13,7 +13,7 @@
 #endif
 
 #if !(defined(lint) || defined(_lint)) && !defined(RC_INVOKED)
-#  if defined(_MSC_VER)
+#  if defined(_MSC_VER) && ( _MSC_VER >= 800 ) 
 #    pragma warning(push)
 #    pragma warning(disable:4103) // 'filename' : used #pragma pack to change alignment
 #    pragma pack(push, BI_OWL_PACKING)

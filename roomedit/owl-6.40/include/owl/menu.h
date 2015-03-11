@@ -187,7 +187,7 @@ class _OWLCLASS TXMenu : public TXOwl {
   public:
     TXMenu(uint resId = IDS_MENUFAILURE);
 
-    TXMenu* Clone();
+    virtual TXMenu* Clone() const; // override
     void Throw();
 
     static void Raise(uint resId = IDS_MENUFAILURE);

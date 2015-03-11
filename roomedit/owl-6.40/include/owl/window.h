@@ -117,22 +117,10 @@ enum TEventStatus {
 /// @}
 
 //
-// Windows 3.1 windowsx.h name conflicts
+// Windows 3.1 windowsx.h name confict with TWindows::GetFirstChild()
 //
 #if defined(GetFirstChild)
-# undef GetFirstChild
-#endif
-
-#if defined(MapWindowRect)
-# undef MapWindowRect
-#endif
-
-#if defined(GetWindowFont)
-# undef GetWindowFont
-#endif
-
-#if defined(SetWindowFont)
-# undef SetWindowFont
+# undef GetFirstChild(hwnd)
 #endif
 
 //----------------------------------------------------------------------------
@@ -423,9 +411,9 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     
     // Constructors and destructor for TWindow
     //
-    explicit TWindow(TWindow* parent, LPCTSTR title = 0, TModule* module = 0);
-    explicit TWindow(TWindow* parent, const tstring& title, TModule* module = 0);
-    explicit TWindow(HWND handle, TModule* module = 0);
+    TWindow(TWindow* parent, LPCTSTR title = 0, TModule* module = 0);
+    TWindow(TWindow* parent, const tstring& title, TModule* module = 0);
+    TWindow(HWND handle, TModule* module = 0);
 
     virtual ~TWindow();
 
@@ -1126,7 +1114,7 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     /// \name These events are processed by TWindow
     /// @{
     void              EvClose();
-    bool              EvCreate(CREATESTRUCT&);
+    int               EvCreate(CREATESTRUCT & createStruct);
     void              EvDestroy();
     int               EvCompareItem(uint ctrlId, const COMPAREITEMSTRUCT& compareInfo);
     void              EvDeleteItem(uint ctrlId, const DELETEITEMSTRUCT& deleteInfo);
@@ -1142,6 +1130,7 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     bool              EvEraseBkgnd(HDC);
     void              EvPaint();
     void              EvSysColorChange();
+    TResult           EvWin32CtlColor(TParam1, TParam2);
     /// @}
 
     /// \name Input validation message handler
@@ -1151,22 +1140,18 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
 
     /// \name System messages
     /// @{
+    void              EvCommNotify(uint commId, uint status);
     void              EvCompacting(uint compactRatio);
     void              EvDevModeChange(LPCTSTR devName);
     void              EvEnable(bool enabled);
     void              EvEndSession(bool endSession, uint flags);
     void              EvFontChange();
+    int               EvPower(uint powerEvent);
     void              EvSysCommand(uint cmdType, const TPoint& point);
+    void              EvSystemError(uint error);
     void              EvTimeChange();
     void              EvTimer(uint timerId);
-    void              EvSettingChange(uint flags, LPCTSTR section) {DefaultProcessing(); InUse(flags); InUse(section);}
-
-#if defined(OWL5_COMPAT)
-
-    void EvWinIniChange(LPCTSTR section); // WM_SETTINGCHANGE supercedes WM_WININICHANGE.
-
-#endif
-
+    void              EvWinIniChange(LPCTSTR section);
     /// @}
 
     /// \name Window manager messages
@@ -1174,47 +1159,31 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     void              EvActivate(uint active,
                                  bool minimized,
                                  HWND hWndOther /* may be 0 */);
-    void              EvActivateApp(bool active, DWORD threadId);
+    void              EvActivateApp(bool active, HTASK hTask);
     void              EvCancelMode();
     void              EvGetMinMaxInfo(MINMAXINFO & minmaxinfo);
-
-#if defined(OWL5_COMPAT)
-
-    void              EvGetText(uint bufSize, LPTSTR buf);
+    void              EvGetText(uint buffSize, LPTSTR buff);
     uint              EvGetTextLength();
-
-#else
-
-    int EvGetText(int bufSize, LPTSTR buf);
-    int EvGetTextLength();
-
-#endif
-
+    void              EvIconEraseBkgnd(HDC hDC);
     void              EvKillFocus(HWND hWndGetFocus /* may be 0 */);
     uint              EvMouseActivate(HWND hTopLevel, uint hitCode, TMsgId);
     /// @}
 
     /// \name The following are called under Win32 only
     /// @{
+    void              EvInputFocus(bool gainingFocus);
+    void              EvOtherWindowCreated(HWND hWndOther);
+    void              EvOtherWindowDestroyed(HWND hWndOther);
+    void              EvPaintIcon();
+    void              EvHotKey(int idHotKey);
+    bool              EvCopyData(HWND hwnd, const COPYDATASTRUCT& dataStruct);
 
-#if defined(OWL5_COMPAT)
-
-    void              EvHotKey(int idHotKey) {DefaultProcessing(); InUse(idHotKey);}
-
-#else
-
-    void              EvHotKey(int idHotKey, uint modifiers, uint vk) {DefaultProcessing(); InUse(idHotKey | modifiers | vk);}
-
-#endif
-
-    bool              EvCopyData(HWND hwnd, const COPYDATASTRUCT&);
-
-    void              EvNextDlgCtl(TParam1 handleOrDirectionFlag, bool isHandle) {DefaultProcessing(); InUse(handleOrDirectionFlag); InUse(isHandle);}
-    void              EvParentNotify(const TParentNotify&);
+    void              EvNextDlgCtl(TParam1 hctlOrDir, uint isHCtl);
+    void              EvParentNotify(uint event, TParam1, TParam2);
     HANDLE            EvQueryDragIcon();
     bool              EvQueryOpen();
     void              EvQueueSync();
-    bool              EvSetCursor(HWND hWndCursor, uint codeHitTest, TMsgId mouseMsg);
+    bool              EvSetCursor(HWND hWndCursor, uint hitTest, TMsgId mouseMsg);
     void              EvSetFocus(HWND hWndLostFocus /* may be 0 */);
     HFONT             EvGetFont();
     void              EvSetFont(HFONT hFont, bool redraw);
@@ -1222,7 +1191,7 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     void              EvSetText(LPCTSTR text);
     void              EvShowWindow(bool show, uint status);
     void              EvWindowPosChanged(const WINDOWPOS& windowPos);
-    bool              EvWindowPosChanging(WINDOWPOS&);
+    void              EvWindowPosChanging(WINDOWPOS & windowPos);
     /// @}
 
     /// \name Controls
@@ -1254,13 +1223,16 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     void              EvRButtonDblClk(uint modKeys, const TPoint& point);
     void              EvRButtonDown(uint modKeys, const TPoint& point);
     void              EvRButtonUp(uint modKeys, const TPoint& point);
+    TResult            EvRegisteredMouseWheel(TParam1, TParam2);
     /// @}
 
 
     /// \name Menu related messages
     /// @{
     void              EvInitMenu(HMENU hMenu);
-    void              EvInitMenuPopup(HMENU hPopupMenu, uint index, bool isSysMenu);
+    void              EvInitMenuPopup(HMENU hPopupMenu,
+                                      uint  index,
+                                      bool  sysMenu);
     int32             EvMenuChar(uint nChar, uint menuType, HMENU hMenu);
     void              EvMenuSelect(uint menuItemId, uint flags, HMENU hMenu);
     void              EvContextMenu(HWND childHwnd, int x, int y);
@@ -1284,10 +1256,10 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
     void              EvDrawClipboard();
     void              EvDestroyClipboard();
     void              EvHScrollClipboard(HWND hCBViewer, uint scrollCode, uint pos);
-    void              EvPaintClipboard(HWND hWnd, const PAINTSTRUCT&);
+    void              EvPaintClipboard(HWND hWnd, HANDLE hPaintStruct);
     void              EvRenderAllFormats();
     void              EvRenderFormat(uint dataFormat);
-    void              EvSizeClipboard(HWND hWndViewer, const TRect&);
+    void              EvSizeClipboard(HWND hWndViewer, HANDLE hRect);
     void              EvVScrollClipboard(HWND hCBViewer, uint scrollCode, uint pos);
     /// @}
 
@@ -1305,33 +1277,38 @@ class _OWLCLASS TWindow : virtual public TEventHandler,
 
     /// \name List box messages
     /// @{
-    int               EvCharToItem(uint ch, HWND hWndListBox, uint caretIndex);
-    int               EvVKeyToItem(uint key, HWND hWndListBox, uint caretIndex);
+    int               EvCharToItem(uint key, HWND hWndListBox, uint caretPos);
+    int               EvVKeyToItem(uint key, HWND hWndListBox, uint caretPos);
     /// @}
 
     /// \name Non-client messages
     /// @{
     bool              EvNCActivate(bool active);
-    uint              EvNCCalcSize(bool calcValidRects, NCCALCSIZE_PARAMS&);
-    bool              EvNCCreate(CREATESTRUCT&);
-    uint              EvNCHitTest(const TPoint&);
-    void              EvNCLButtonDblClk(uint codeHitTest, const TPoint&);
-    void              EvNCLButtonDown(uint codeHitTest, const TPoint&);
-    void              EvNCLButtonUp(uint codeHitTest, const TPoint&);
-    void              EvNCMButtonDblClk(uint codeHitTest, const TPoint&);
-    void              EvNCMButtonDown(uint codeHitTest, const TPoint&);
-    void              EvNCMButtonUp(uint codeHitTest, const TPoint&);
-    void              EvNCMouseMove(uint codeHitTest, const TPoint&);
+    uint              EvNCCalcSize(bool calcValidRects, NCCALCSIZE_PARAMS & params);
+    bool              EvNCCreate(CREATESTRUCT & createStruct);
+    uint              EvNCHitTest(const TPoint& point);
+    void              EvNCLButtonDblClk(uint hitTest, const TPoint& point);
+    void              EvNCLButtonDown(uint hitTest, const TPoint& point);
+    void              EvNCLButtonUp(uint hitTest, const TPoint& point);
+    void              EvNCMButtonDblClk(uint hitTest, const TPoint& point);
+    void              EvNCMButtonDown(uint hitTest, const TPoint& point);
+    void              EvNCMButtonUp(uint hitTest, const TPoint& point);
+    void              EvNCMouseMove(uint hitTest, const TPoint& point);
+
+    // WM_NCPAINT now passes an HRGN under Win32.
+    //
     void              EvNCPaint(HRGN);
-    void              EvNCRButtonDblClk(uint codeHitTest, const TPoint&);
-    void              EvNCRButtonDown(uint codeHitTest, const TPoint&);
-    void              EvNCRButtonUp(uint codeHitTest, const TPoint&);
+
+    void              EvNCRButtonDblClk(uint hitTest, const TPoint& point);
+    void              EvNCRButtonDown(uint hitTest, const TPoint& point);
+    void              EvNCRButtonUp(uint hitTest, const TPoint& point);
     /// @}
 
     /// \name Icon messages
+    /// \todo There is no implementation for these functions
     /// @{
-    HICON EvGetIcon(bool isBigIcon) {InUse(isBigIcon); return reinterpret_cast<HICON>(DefaultProcessing());}
-    HICON EvSetIcon(bool isBigIcon, HICON) {InUse(isBigIcon); return reinterpret_cast<HICON>(DefaultProcessing());}
+    HICON             EvGetIcon(bool largeIcon);
+    HICON             EvSetIcon(bool largeIcon, HICON icon);
     /// @}
 
     /// \name Callback procs for hooking TWindow to native window
@@ -1531,7 +1508,7 @@ class _OWLCLASS TXWindow : public TXOwl {
     TXWindow(const TXWindow& src);
     int Unhandled(TModule* app, uint promptResId);
 
-    TXWindow* Clone();
+    virtual TXWindow* Clone() const; // override
     void Throw();
 
     static void Raise(TWindow* win = 0, uint resourceId = IDS_INVALIDWINDOW);
@@ -3160,7 +3137,7 @@ TWindow::HiliteMenuItem(HMENU hMenu, uint idItem, uint hilite)
 inline void
 TWindow::DrawMenuBar()
 {
-  //PRECONDITION(GetHandle());
+  PRECONDITION(GetHandle());
   ::DrawMenuBar(GetHandle());
 }
 
@@ -3441,7 +3418,7 @@ inline void TWindow::EvActivate(uint /*active*/,
 
 //
 /// The default message handler for WM_ACTIVATEAPP.
-inline void TWindow::EvActivateApp(bool, DWORD)
+inline void TWindow::EvActivateApp(bool /*active*/, HTASK /*hTask or threadId*/)
 {
   DefaultProcessing();
 }
@@ -3476,16 +3453,23 @@ inline void TWindow::EvChar(uint /*key*/, uint /*repeatCount*/, uint /*flags*/)
 
 //
 /// The default message handler for WM_CHARTOITEM.
-inline int TWindow::EvCharToItem(uint /*ch*/, HWND /*hWndListBox*/, uint /*caretIndex*/)
+inline int TWindow::EvCharToItem(uint /*key*/, HWND /*hWndListBox*/, uint /*caretPos*/)
 {
   return (int)DefaultProcessing();
 }
 
 //
 /// The default message handler for WM_VKEYTOITEM.
-inline int TWindow::EvVKeyToItem(uint /*key*/, HWND /*hWndListBox*/, uint /*caretIndex*/)
+inline int TWindow::EvVKeyToItem(uint /*key*/, HWND /*hWndListBox*/, uint /*caretPos*/)
 {
   return (int)DefaultProcessing();
+}
+
+//
+/// The default message handler for WM_COMMNOTIFY.
+inline void TWindow::EvCommNotify(uint /*commId*/, uint /*status*/)
+{
+  DefaultProcessing();
 }
 
 //
@@ -3500,6 +3484,7 @@ inline bool TWindow::EvCopyData(HWND /*hwnd*/, const COPYDATASTRUCT& /*dataStruc
 {
   return DefaultProcessing();
 }
+
 
 //
 /// The default message handler for WM_DEADCHAR.
@@ -3571,8 +3556,6 @@ inline void TWindow::EvGetMinMaxInfo(MINMAXINFO & /*info*/)
   DefaultProcessing();
 }
 
-#if defined(OWL5_COMPAT)
-
 //
 /// The default message handler for WM_GETTEXT.
 inline void TWindow::EvGetText(uint /*buffSize*/, LPTSTR /*buff*/)
@@ -3587,31 +3570,32 @@ inline uint TWindow::EvGetTextLength()
   return (uint)DefaultProcessing();
 }
 
-#else
-
 //
-/// The default message handler for WM_GETTEXT.
-//
-inline int TWindow::EvGetText(int /*buffSize*/, LPTSTR /*buff*/)
+/// The default message handler for WM_HOTKEY.
+inline void TWindow::EvHotKey(int /*idHotKey*/)
 {
-  return static_cast<int>(DefaultProcessing());
+  DefaultProcessing();
 }
 
 //
-/// The default message handler for WM_GETTEXTLENGTH.
-//
-inline int TWindow::EvGetTextLength()
+/// The default message handler for WM_INPUTFOCUS.
+inline void TWindow::EvInputFocus(bool /*gainingFocus*/)
 {
-  return static_cast<int>(DefaultProcessing());
+  DefaultProcessing();
 }
-
-#endif
 
 //
 /// The default message handler for WM_HSCROLLCLIPBOARD.
 inline void TWindow::EvHScrollClipboard(HWND /*hWndCBViewer*/,
                                            uint /*scrollCode*/,
                                            uint /*pos*/)
+{
+  DefaultProcessing();
+}
+
+//
+/// The default message handler for WM_ICONERASEBKGND.
+inline void TWindow::EvIconEraseBkgnd(HDC /*dc*/)
 {
   DefaultProcessing();
 }
@@ -3806,8 +3790,36 @@ inline void TWindow::EvNCRButtonUp(uint /*hitTest*/, const TPoint&)
 }
 
 //
+/// The default message handler for WM_NEXTDLGCTL.
+inline void TWindow::EvNextDlgCtl(TParam1 /*hctlOrDir*/, uint /*isHCtl*/)
+{
+  DefaultProcessing();
+}
+
+//
+/// The default message handler for WM_OTHERWINDOWCREATED.
+inline void TWindow::EvOtherWindowCreated(HWND /*hWndOther*/)
+{
+  DefaultProcessing();
+}
+
+//
+/// The default message handler for WM_OTHERWINDOWDESTROYED.
+inline void TWindow::EvOtherWindowDestroyed(HWND /*hWndOther*/)
+{
+  DefaultProcessing();
+}
+
+//
+/// The default message handler for WM_PAINTICON.
+inline void TWindow::EvPaintIcon()
+{
+  DefaultProcessing();
+}
+
+//
 /// The default message handler for WM_PAINTCLIPBOARD.
-inline void TWindow::EvPaintClipboard(HWND, const PAINTSTRUCT&)
+inline void TWindow::EvPaintClipboard(HWND, HANDLE /*hPaintStruct*/)
 {
   DefaultProcessing();
 }
@@ -3828,9 +3840,16 @@ inline void TWindow::EvPaletteIsChanging(HWND /*hWndPalChg*/)
 
 //
 /// The default message handler for WM_PARENTNOTIFY.
-inline void TWindow::EvParentNotify(const TParentNotify&)
+inline void TWindow::EvParentNotify(uint /*event*/, TParam1, TParam2)
 {
   DefaultProcessing();
+}
+
+//
+/// The default message handler for WM_POWER.
+inline int  TWindow::EvPower(uint)
+{
+  return (int)DefaultProcessing();
 }
 
 //
@@ -3973,7 +3992,7 @@ inline void TWindow::EvShowWindow(bool /*show*/, uint /*status*/)
 
 //
 /// The default message handler for WM_SIZECLIPBOARD.
-inline void TWindow::EvSizeClipboard(HWND /*hWndViewer*/, const TRect&)
+inline void TWindow::EvSizeClipboard(HWND /*hWndViewer*/, HANDLE /*hRect*/)
 {
   DefaultProcessing();
 }
@@ -4014,6 +4033,13 @@ inline void TWindow::EvSysKeyUp(uint /*key*/, uint /*repeatCount*/, uint /*flags
 }
 
 //
+/// The default message handler for WM_SYSTEMERROR.
+inline void TWindow::EvSystemError(uint /*error*/)
+{
+  DefaultProcessing();
+}
+
+//
 /// The default message handler for WM_TIMECHANGE.
 inline void TWindow::EvTimeChange()
 {
@@ -4027,16 +4053,12 @@ inline void TWindow::EvTimer(uint /*timerId*/)
   DefaultProcessing();
 }
 
-#if defined(OWL5_COMPAT)
-
 //
 /// The default message handler for WM_WININICHANGE.
 inline void TWindow::EvWinIniChange(LPCTSTR /*section*/)
 {
   DefaultProcessing();
 }
-
-#endif
 
 //
 /// The default message handler for WM_VSCROLLCLIPBOARD.
@@ -4056,9 +4078,9 @@ inline void TWindow::EvWindowPosChanged(const WINDOWPOS& /*windowPos*/)
 
 //
 /// The default message handler for WM_WINDOWPOSCHANGING.
-inline bool TWindow::EvWindowPosChanging(WINDOWPOS & /*windowPos*/)
+inline void TWindow::EvWindowPosChanging(WINDOWPOS & /*windowPos*/)
 {
-  return DefaultProcessing();
+  DefaultProcessing();
 }
 
 } // OWL namespace

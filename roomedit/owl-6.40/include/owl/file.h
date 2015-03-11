@@ -542,7 +542,7 @@ class _OWLCLASS TXBadFormat : public TXOwl {
   public:
     TXBadFormat();
 
-    TXBadFormat* Clone();
+    virtual TXBadFormat* Clone() const; // override
     void   Throw();
 
     static void Raise();

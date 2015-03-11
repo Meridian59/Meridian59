@@ -86,7 +86,7 @@ TXGdi::TXGdi(uint resId, HANDLE handle)
 // Clone the exception object for safe-throwing across Windows.
 //
 TXGdi*
-TXGdi::Clone()
+TXGdi::Clone() const
 {
   return new TXGdi(*this);
 }

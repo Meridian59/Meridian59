@@ -48,7 +48,7 @@ class _OWLCLASS TXOwl : public TXBase {
 
     // Override TXBase's virtuals
     //
-    TXOwl* Clone();
+    virtual TXOwl* Clone() const; // override
     void Throw();
 
     /// Per-exception class unhandled-handler, will default to the per-module
@@ -84,7 +84,7 @@ class _OWLCLASS TXOutOfMemory : public TXOwl {
   public:
     TXOutOfMemory();
 
-    TXOutOfMemory* Clone();
+    virtual TXOutOfMemory* Clone() const; // override
     void   Throw();
 
     static void Raise();
@@ -97,7 +97,7 @@ class _OWLCLASS TXNotSupportedCall : public TXOwl {
   public:
     TXNotSupportedCall();
 
-    TXNotSupportedCall* Clone();
+    virtual TXNotSupportedCall* Clone() const; // override
     void   Throw();
 
     static void Raise();

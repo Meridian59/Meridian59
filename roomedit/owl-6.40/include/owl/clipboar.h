@@ -97,7 +97,7 @@ class _OWLCLASS TClipboard {
 class _OWLCLASS TXClipboard : public TXOwl {
   public:
     TXClipboard(uint resourceId = IDS_CLIPBOARDBUSY);
-    TXClipboard* Clone();
+    virtual TXClipboard* Clone() const; // override
     void Throw();
 
     static void Raise(uint resourceId = IDS_CLIPBOARDBUSY);

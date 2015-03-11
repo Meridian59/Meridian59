@@ -51,6 +51,15 @@ class _OWLCLASS TImageInfo : public _IMAGEINFO
     HBITMAP GetMaskBM() const;
     TRect   GetImageRect() const;
 
+//JJH this operator is never used in gcc
+//Jogy - is this still the case?
+#if !defined(__GNUC__)
+    operator _IMAGEINFO&();
+#endif
+
+//  private:
+//    _IMAGEINFO rep;
+
   friend class _OWLCLASS TImageList;
 };
 
@@ -210,6 +219,17 @@ inline HBITMAP TImageInfo::GetMaskBM() const {
 inline TRect TImageInfo::GetImageRect() const {
   return rcImage;
 }
+
+//This operator is never used in gcc
+#if !defined(__GNUC__)
+//
+/// Converts to an _IMAGEINFO structure
+//
+inline TImageInfo::operator _IMAGEINFO&() {
+  return *this;
+}
+#endif
+
 
 //
 /// Returns the size each image.

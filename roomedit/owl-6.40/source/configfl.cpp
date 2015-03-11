@@ -888,12 +888,12 @@ bool TConfigFile::SectionExists(LPCTSTR section) const
 // class TIniConfigFile 
 // ~~~~~ ~~~~~~~~~~~~~~
 //
-uint TIniConfigFile::ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const
+int TIniConfigFile::ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const
 {
   return GetPrivateProfileString(section, 0, _T(""), buffer, bufSize, FileName.c_str());
 }
 //
-uint TIniConfigFile::ReadSections(LPTSTR buffer, uint bufSize) const
+int TIniConfigFile::ReadSections(LPTSTR buffer, uint bufSize) const
 {
   return GetPrivateProfileString(0, 0, _T(""), buffer, bufSize,FileName.c_str());
 }
@@ -923,8 +923,8 @@ void TIniConfigFile::UpdateFile()
 //
 ///  This method is the base method for reading strings.
 //
-uint TIniConfigFile::ReadString (LPCTSTR section, LPCTSTR entry, 
-                                LPTSTR buffer, uint bufSize, LPCTSTR def) const
+int TIniConfigFile::ReadString (LPCTSTR section, LPCTSTR entry, 
+                                LPTSTR buffer,  uint bufSize, LPCTSTR def) const
 {
   return ::GetPrivateProfileString (section, entry, def?def:_T(""), buffer, bufSize, FileName.c_str());
 }
@@ -1092,96 +1092,78 @@ bool TMemConfigFile::EraseSection(LPCTSTR section)
   TStringNode sn(section);
   return Sections->DestroyItem(&sn);
 }
-
 //
-/// Copies all value names of the given section to the specified buffer.
-/// Each string is null-terminated, and the buffer is then terminated with a trailing null.
-/// Returns the number of characters written, excluding the trailing null-terminators.
-/// If the buffer is too small, the last string copied to the buffer may be truncated.
-/// If the given section does not exist, or has no values, 0 is returned and nothing is written to the buffer.
+// Copies all value names to specified buffer
 //
-uint TMemConfigFile::ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const
+int  TMemConfigFile::ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const
 {
-  if (!buffer || bufSize < 2) return 0; // Need at least space for the null-terminators.
-  tchar* p = buffer;
   TStringNode sn(section);
-  int k = Sections->Find(&sn);
-  if (k == INT_NPOS) return 0;
-  const TStringMap& map = (*Sections)[k]->Value;
-  if (map.Empty()) return 0;
-  for (uint i = 0; i != map.Size(); ++i)
-  {
-    const tstring& s = map[i].Name;
-    size_t m = static_cast<size_t>(buffer + bufSize - 1 - p); // space left
-    if (m == 0) break; // We've run out of space.
-    size_t n = min(s.size(), m - 1);
-    ::_tcsncpy(p, s.c_str(), n);
-    p += n;
-    *p++ = _T('\0');
-  }
-
-  // Add buffer terminator.
-  //
-  *p++ = _T('\0');
-  return static_cast<uint>(p - buffer) - 2; // Exclude trailing nulls in the count.
-}
-
-//
-/// Copies all section names to the specified buffer.
-/// Each string is null-terminated, and the buffer is then terminated with a trailing null.
-/// Returns the number of characters written, excluding the trailing null-terminators.
-/// If the buffer is too small, the last string copied to the buffer may be truncated.
-/// If the file has no sections, 0 is returned and nothing is written to the buffer.
-//
-uint TMemConfigFile::ReadSections(LPTSTR buffer, uint bufSize) const
-{
-  if (!buffer || bufSize < 2) return 0; // Need at least space for the null-terminators.
-  if (Sections->Empty()) return 0;
+  int index = Sections->Find(&sn);
+  uint count = 0; 
   tchar* p = buffer;
-  for (uint i = 0; i != Sections->Size(); ++i)
-  {
-    const tstring& s = (*Sections)[i]->Name;
-    size_t m = static_cast<size_t>(buffer + bufSize - 1 - p); // space left
-    if (m == 0) break; // We've run out of space.
-    size_t n = min(s.size(), m - 1);
-    ::_tcsncpy(p, s.c_str(), n);
-    p += n;
-    *p++ = _T('\0');
-  }
-
-  // Add buffer terminator.
-  //
-  *p++ = _T('\0');
-  return static_cast<uint>(p - buffer) - 2; // Exclude trailing nulls in the count.
-}
-
-//
-/// Looks up the value of the given entry of the given section, and if found, copies it to the given buffer.
-/// If not found, the given default value `defstr` is copied to the buffer, unless `defstr` is null, in which
-/// case an empty string is copied to the buffer.
-/// Returns 0 if the buffer is too small, otherwise the number of characters written (excluding null-terminator).
-//
-uint TMemConfigFile::ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr) const
-{
-  if (!buffer || bufSize < 1) return 0; // Need at least space for the buffer terminator.
-  LPCTSTR s = defstr ? defstr : _T(""); 
-  {
-    TStringNode sn(section);
-    int i = Sections->Find(&sn);
-    if (i != INT_NPOS)
-    {
-      const TStringMap& map = (*Sections)[i]->Value;
-      int j = map.Find(TStringMapNode(entry));
-      if (j != INT_NPOS)
-        s = map[j].Value.c_str();
+  if(index != INT_NPOS){
+    const TStringMap& map = (*Sections)[index]->Value;
+    for(uint i = 0; i < map.Size(); i++){
+      uint size = static_cast<uint>(::_tcslen(map[i].Name.c_str()));
+      if(bufSize > size){
+        ::_tcscpy(p,map[i].Name.c_str());
+        bufSize -= size - 1;
+        count    += size + 1;
+        p += size;
+        *p++ = _T('\0');
+      }
+      else
+        return bufSize -2;
     }
   }
-  size_t n = min(::_tcslen(s), static_cast<size_t>(bufSize - 1));
-  ::_tcsncpy(buffer, s, n);
-  buffer[n] = _T('\0');
-  return static_cast<uint>(n); // Exclude null-terminator in the count.
+  // last trailing null
+  *p = _T('\0');
+  return ++count;
 }
-
+//
+/// Copies all section names to specified buffer
+//
+int TMemConfigFile::ReadSections(LPTSTR buffer, uint bufSize) const
+{
+  size_t count = 0; 
+  tchar* p = buffer;
+  for(uint i = 0; i < Sections->Size(); i++){
+    size_t size = ::_tcslen((*Sections)[i]->Name.c_str());
+    if(bufSize > size){
+      ::_tcscpy(p, (*Sections)[i]->Name.c_str());
+      bufSize -= size - 1;
+      count    += size + 1;
+      p += size;
+      *p++ = _T('\0');
+    }
+    else
+      return bufSize -2;
+  }
+  // last trailing null
+  *p = _T('\0');
+  return ++count;
+}
+//
+int TMemConfigFile::ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer,  uint bufSize, LPCTSTR defstr) const
+{
+  TStringNode sn(section);
+  int index = Sections->Find(&sn);
+  if(index != INT_NPOS){
+    const TStringMap& map = (*Sections)[index]->Value;
+    index = map.Find(TStringMapNode(entry));
+    if(index != INT_NPOS){
+      size_t count = ::_tcslen(map[index].Value.c_str());
+      if(count < bufSize)
+        ::_tcscpy(buffer,map[index].Value.c_str());
+      else
+        _tcsncpy(buffer,map[index].Value.c_str(), bufSize);
+      buffer[bufSize-1] = 0;
+      return count;
+    }
+  }
+  ::_tcscpy(buffer,defstr?defstr:_T(""));
+  return 0;
+}
 //
 bool TMemConfigFile::WriteString(LPCTSTR section, LPCTSTR entry, LPCTSTR value)
 {
@@ -1337,71 +1319,60 @@ bool TRegConfigFile::SectionExists(LPCTSTR section) const
   TRegKey key(hRoot,value_name.c_str(), KEY_QUERY_VALUE, TRegKey::NoCreate);
   return key != HKEY(0);
 }
-
 //
-/// Copies all value names of the given section to the specified buffer.
-/// Each string is null-terminated, and the buffer is then terminated with a trailing null.
-/// Returns the number of characters written, excluding the trailing null-terminators.
-/// If the buffer is too small, the last string copied to the buffer may be truncated.
-/// If the given section does not exist, or has no values, 0 is returned and nothing is written to the buffer.
-//
-uint TRegConfigFile::ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const
+int TRegConfigFile::ReadSection(LPCTSTR section, LPTSTR buffer, uint bufSize) const
 {
-  if (!buffer || bufSize < 2) return 0; // Need at least space for the buffer terminator.
+  size_t count = 0; 
   tchar* p = buffer;
-  TRegKey root(hRoot, FileName + szSep + section);
-  TRegValueIterator i(root);
-  if (!i) return 0;
-  for (; i; ++i)
-  {
-    TRegValue v(i);
-    LPCTSTR s = v.GetName();
-    size_t m = static_cast<size_t>(buffer + bufSize - 1 - p); // space left
-    if (m == 0) break; // We've run out of space.
-    size_t n = min(::_tcslen(s), m - 1);
-    ::_tcsncpy(p, s, n);
-    p += n;
-    *p++ = _T('\0');
+
+  tstring value_name = FileName;
+  value_name += szSep;
+  value_name += section;
+
+  TRegKey root(hRoot,value_name.c_str());
+  TRegValueIterator iter(root);
+  while(iter){
+    TRegValue cur_value(iter);
+    size_t size = ::_tcslen(cur_value.GetName());
+    if(bufSize > size){
+      ::_tcscpy(p, cur_value.GetName());
+      bufSize -= size - 1;
+      count    += size + 1;
+      p += size;
+      *p++ = _T('\0');
+    }
+    ++iter;
   }
-
-  // Add buffer terminator.
-  //
-  *p++ = _T('\0');
-  return static_cast<uint>(p - buffer) - 2; // Exclude trailing nulls in the count.
+  // last trailing null
+  *p = _T('\0');
+  return ++count;
 }
-
 //
-/// Copies all section names to the specified buffer.
-/// Each string is null-terminated, and the buffer is then terminated with a trailing null.
-/// Returns the number of characters written, excluding the trailing null-terminators.
-/// If the buffer is too small, the last string copied to the buffer may be truncated.
-/// If the file has no sections, 0 is returned and nothing is written to the buffer.
 //
-uint TRegConfigFile::ReadSections(LPTSTR buffer, uint bufSize) const
+//
+int TRegConfigFile::ReadSections(LPTSTR buffer, uint bufSize) const
 {
-  if (!buffer || bufSize < 2) return 0; // Need at least space for the buffer terminator.
+  TRegKey root(hRoot,FileName.c_str());
+  uint count = 0; 
   tchar* p = buffer;
-  TRegKey root(hRoot, FileName);
-  TRegKeyIterator i(root);
-  if (!i) return 0;
-  for (; i; ++i)
-  {
-    TRegKey k(i);
-    LPCTSTR s = k.GetName();
-    size_t m = static_cast<size_t>(buffer + bufSize - 1 - p); // space left
-    if (m == 0) break; // We've run out of space.
-    size_t n = min(::_tcslen(s), m - 1);
-    ::_tcsncpy(p, s, n);
-    p += n;
-    *p++ = _T('\0');
+
+  TRegKeyIterator iter(root);
+  while(iter){
+    TRegKey cur_key(iter);
+    uint size = static_cast<uint>(::_tcslen(cur_key.GetName()));
+    if(bufSize > size){
+      ::_tcscpy(p, cur_key.GetName());
+      bufSize -= size - 1;
+      count    += size + 1;
+      p += size;
+      *p++ = _T('\0');
+    }
+    ++iter;
   }
-
-  // Add buffer terminator.
-  //
-  *p++ = _T('\0');
-  return static_cast<uint>(p - buffer) - 2; // Exclude trailing nulls in the count.
+  // last trailing null
+  *p = _T('\0');
+  return ++count;
 }
-
 //
 bool TRegConfigFile::EraseSection(LPCTSTR section)
 {
@@ -1444,32 +1415,22 @@ bool TRegConfigFile::WriteInteger(LPCTSTR section, LPCTSTR entry, int value)
   value_name += section;
   return TRegKey(hRoot,value_name.c_str()).SetValue(entry, value) == ERROR_SUCCESS;
 }
-
 //
-/// Looks up the value of the given entry of the given section, and if found, copies it to the given buffer.
-/// If not found, the given default value `defstr` is copied to the buffer, unless `defstr` is null, in which
-/// case an empty string is copied to the buffer.
-/// Returns 0 if the buffer is too small, otherwise the number of characters written (excluding null-terminator).
-//
-uint TRegConfigFile::ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr) const
+int TRegConfigFile::ReadString(LPCTSTR section, LPCTSTR entry, LPTSTR buffer, uint bufSize, LPCTSTR defstr) const
 {
-  if (bufSize < 1) return 0; // Need at least space for the buffer terminator.
-  TRegKey k(hRoot, FileName + szSep + section);
-  uint32 size = bufSize * sizeof(tchar);
+  uint32 size  = bufSize;
   uint32 type;
-  long r = k.QueryValue(entry, &type, reinterpret_cast<uint8*>(buffer), &size);
-  if (r == ERROR_FILE_NOT_FOUND) // Vaule is missing; use default.
-  {
-    LPCTSTR s = defstr ? defstr: _T("");
-    size_t n = min(::_tcslen(s), static_cast<size_t>(bufSize - 1));
-    ::_tcsncpy(buffer, s, n);
-    buffer[n] = _T('\0');
-    return static_cast<uint>(n); // Exclude null-terminator in the count.
-  }
-  if (r != ERROR_SUCCESS) return 0;
-  return static_cast<uint>(size / sizeof(tchar)) - 1; // Exclude null-terminator in the count.
-}
 
+  tstring value_name = FileName;
+  value_name += szSep;
+  value_name += section;
+  
+  if(TRegKey(hRoot,value_name.c_str()).QueryValue(entry,&type,(uint8*)buffer,&size)!=ERROR_SUCCESS){
+    ::_tcscpy(buffer,defstr?defstr:_T(""));
+    return static_cast<int>(::_tcslen(buffer));
+  }
+  return static_cast<int>(size);
+}
 //
 bool TRegConfigFile::WriteString(LPCTSTR section, LPCTSTR entry, LPCTSTR value)
 {

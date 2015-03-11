@@ -141,7 +141,7 @@ void TRegKey::Init(THandle baseKey, REGSAM samDesired, TCreateOK createOK)
 {
   if (createOK == CreateOK) {
     DWORD disposition;
-    ::RegCreateKeyEx(baseKey, Name, 0, NULL /*class*/,
+    ::RegCreateKeyEx(baseKey, Name, 0, _T("")/*class*/, 
       REG_OPTION_NON_VOLATILE, samDesired, 
       0/*SecurityAttributes*/, &Key, &disposition);
   }
@@ -693,7 +693,7 @@ TRegTemplateList::Activate(LPCTSTR set)
 // Initialize the object with the passed-in data.
 // Counts the number of items in the list.
 //
-TRegParamList::TRegParamList(const TEntry* list)
+TRegParamList::TRegParamList(TEntry* list)
 :
   List(list)
 {
@@ -746,7 +746,7 @@ int TRegParamList::Find(LPCTSTR param)
 // Initialize the symbol table with the data.
 //
 TRegSymbolTable::TRegSymbolTable(TRegKey& basekey, LPCTSTR tplList[],
-                                 const TRegParamList::TEntry* paramList)
+                                 TRegParamList::TEntry* paramList)
 :
   Templates(basekey, tplList),
   Params(paramList)
@@ -759,7 +759,7 @@ TRegSymbolTable::TRegSymbolTable(TRegKey& basekey, LPCTSTR tplList[],
 // Initialize paramater values with defaults
 //
 void
-TRegSymbolTable::Init(LPCTSTR filter)
+TRegSymbolTable::Init(tchar* filter)
 {
   if (filter) {
     Templates.DisableAll();
@@ -930,16 +930,17 @@ void TRegistry::Update(TRegKey& baseKey, tistream& in)
 
     // Split entry into keys-value and data strings
     //
-    tchar* pdata = _tcschr(entry, _T('='));
-    if (pdata) {
-      tchar* pc = pdata;
+    tchar* data = _tcschr(entry, _T('='));
+    if (data) {
+      tchar* pc = data;
       while (*(pc-1) == _T(' '))
         pc--;
       *pc = 0;
-      while (*(++pdata) == _T(' '))
+      while (*(++data) == _T(' '))
         ;
     }
-    const tchar* data = pdata ? pdata : _T("");
+    else
+      data = _T("");
     tchar* valName = _tcschr(entry, _T('|'));
     if (valName)
       *valName++ = 0;  // Terminate key at value name separator
@@ -1010,7 +1011,7 @@ int TRegistry::Validate(TRegKey& baseKey, tistream& in)
 /// the number of errors from deleting keys.
 //
 int
-TRegistry::Unregister(TRegList& regInfo, const TUnregParams* params, const TRegItem* overrides)
+TRegistry::Unregister(TRegList& regInfo, TUnregParams* params, TRegItem* overrides)
 {
 #if defined(UNICODE)
   _USES_CONVERSION;

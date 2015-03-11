@@ -276,7 +276,8 @@ TFloatingFrame::DoNCHitTest(const TPoint& screenPt, uint& evRes)
 // window.
 //
 uint
-TFloatingFrame::EvMouseActivate(HWND /*hWndTopLevel*/, uint /*hitTestCode*/, TMsgId)
+TFloatingFrame::EvMouseActivate(THandle /*hWndTopLevel*/, uint /*hitTestCode*/,
+                                uint /*msg*/)
 {
   // Make our main window active if the current active is not in this
   // process
@@ -314,7 +315,7 @@ TFloatingFrame::EvNCActivate(bool /*active*/)
 // whenever this app is activated
 //
 void
-TFloatingFrame::EvActivateApp(bool active, DWORD /*threadId*/)
+TFloatingFrame::EvActivateApp(bool active, HTASK /*threadId*/)
 {
   AppearActive = active;
 

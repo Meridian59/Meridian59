@@ -10,6 +10,10 @@
 
 #include <owl/combobox.h>
 
+#if defined(__BORLANDC__) && __BORLANDC__ < 0x600
+# pragma option -w-inl // Disable warning in standard library.
+#endif
+
 using namespace std;
 
 namespace owl {

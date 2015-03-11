@@ -189,6 +189,12 @@ bool TFileTime::ToUniversalTime()
   return retval; 
 }
 
+//#if WINVER < 0x0501 // TODO: This is a guess (Windows XP). In which version did the signature actually change?
+#if (defined(__BORLANDC__) && __BORLANDC__ < 0x590) || (defined(_MSC_VER) && _MSC_VER < 1500)
+#define VARDATEFROMSTR_PARAM1(a) const_cast<OLECHAR*>(a)
+#else
+#define VARDATEFROMSTR_PARAM1(a) a
+#endif
 
 TSystemTime::TSystemTime(const tstring& s, LCID locale)
 {
@@ -197,7 +203,7 @@ TSystemTime::TSystemTime(const tstring& s, LCID locale)
   const LCID lcid = locale ? locale : GetUserDefaultLCID();
   const ULONG flags = 0;
   DATE date;
-  HRESULT hr = VarDateFromStr(olestr, lcid, flags, &date);
+  HRESULT hr = VarDateFromStr(VARDATEFROMSTR_PARAM1(olestr), lcid, flags, &date);
   if (hr != S_OK) TXOwl::Raise(IDS_SYSTEMTIMEPARSEFAIL);
   int r = VariantTimeToSystemTime(date, this);
   if (r == FALSE) TXOwl::Raise(IDS_SYSTEMTIMEPARSEFAIL);

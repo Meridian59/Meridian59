@@ -40,8 +40,6 @@ namespace owl {
 /// 
 /// TXBase contains the function Throw(), which is overridden in all
 /// derived classes, as well as two constructors. 
-///
-/// \note The function Clone() is deprecated, as it was needed only in 16-bit Windows
 //
 class _OWLCLASS TXBase : public std::exception {
   public:
@@ -49,7 +47,7 @@ class _OWLCLASS TXBase : public std::exception {
     TXBase(const TXBase& src);
     virtual ~TXBase() throw();
 
-    virtual TXBase* Clone();
+    virtual TXBase* Clone() const;
     virtual void Throw();
 
     static void Raise(const tstring& msg);

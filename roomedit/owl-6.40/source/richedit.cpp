@@ -772,9 +772,9 @@ TRichEdit::TRichEdit(TWindow*   parent,
 ulong
 TRichEdit::GetCharFormat(TCharFormat & cf, bool selection) const
 {
-  TParam1 a1 = selection ? SCF_SELECTION : 0;
-  TParam2 a2 = reinterpret_cast<TParam2>(&cf);
-  return static_cast<ulong>(SendMessage(EM_GETCHARFORMAT, a1, a2));
+  return CONST_CAST(TRichEdit*,this)->SendMessage(
+                         EM_GETCHARFORMAT, selection ? SCF_SELECTION : 0,
+                                                  TParam2(&cf));
 }
 
 //
@@ -786,8 +786,8 @@ TRichEdit::GetCharFormat(TCharFormat & cf, bool selection) const
 ulong
 TRichEdit::GetParaFormat(TParaFormat & pf) const
 {
-  TParam2 a2 = reinterpret_cast<TParam2>(&pf);
-  return static_cast<ulong>(SendMessage(EM_GETPARAFORMAT, 0, a2));
+  return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETPARAFORMAT, 0,
+                                                    TParam2(&pf));
 }
 
 //
@@ -961,7 +961,7 @@ TRichEdit::HideSelection(bool hide, bool changeStyle)
 ulong
 TRichEdit::GetSelectionType() const
 {
-  return static_cast<ulong>(SendMessage(EM_SELECTIONTYPE));
+  return CONST_CAST(TRichEdit*,this)->SendMessage(EM_SELECTIONTYPE);
 }
 
 
@@ -984,7 +984,7 @@ TRichEdit::GetTextLength() const
     gtl.codepage = CP_ACP;
 #endif
 
-    return static_cast<int>(SendMessage(EM_GETTEXTLENGTHEX, TParam1(&gtl), TParam2(0)));
+    return SendMessage(EM_GETTEXTLENGTHEX, TParam1(&gtl), TParam2(0));
   }
   else
   {
@@ -1279,9 +1279,9 @@ TRichEdit::EnableAutoURL(bool enable)
 int
 TRichEdit::GetIMEMode() const
 {
-  return TRichEditDll::Dll()->GetVersion() >= 2 ?
-    static_cast<int>(SendMessage(EM_GETIMECOMPMODE)) : 
-    ICM_NOTOPEN;
+  if(TRichEditDll::Dll()->GetVersion() >= 2)
+    return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETIMECOMPMODE);
+  return ICM_NOTOPEN;
 }
 
 //
@@ -1300,9 +1300,9 @@ TRichEdit::SetLangOptions(int options)
 int
 TRichEdit::GetLangOptions() const
 {
-  return TRichEditDll::Dll()->GetVersion() >= 2 ?
-    static_cast<int>(SendMessage(EM_GETLANGOPTIONS)) : 
-    0;
+  if(TRichEditDll::Dll()->GetVersion() >= 2)
+    return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETLANGOPTIONS);
+  return 0;
 }
 
 //
@@ -1326,9 +1326,13 @@ TRichEdit::SetTextMode(int mode)
 int
 TRichEdit::GetTextMode() const
 {
-  return TRichEditDll::Dll()->GetVersion() >= 2 ?
-    static_cast<int>(SendMessage(EM_GETTEXTMODE)) :
-    IsRTF() ? TM_RICHTEXT : TM_PLAINTEXT;
+  if(TRichEditDll::Dll()->GetVersion() >= 2)
+    return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETTEXTMODE);
+
+  if(IsRTF())
+    return TM_RICHTEXT;
+  else
+    return TM_PLAINTEXT;
 }
 
 //
@@ -1378,9 +1382,9 @@ TRichEdit::CanRedo() const
 int
 TRichEdit::GetUndoName() const
 {
-  return TRichEditDll::Dll()->GetVersion() >= 2 ?
-    static_cast<int>(SendMessage(EM_GETUNDONAME)) : 
-    0;
+  if(TRichEditDll::Dll()->GetVersion() >= 2)
+    return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETUNDONAME);
+  return 0;
 }
 
 //
@@ -1389,9 +1393,9 @@ TRichEdit::GetUndoName() const
 int
 TRichEdit::GetRedoName() const
 {
-  return TRichEditDll::Dll()->GetVersion() >= 2 ?
-    static_cast<int>(SendMessage(EM_GETREDONAME)) :
-    0;
+  if(TRichEditDll::Dll()->GetVersion() >= 2)
+    return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETREDONAME);
+  return 0;
 }
 
 //
@@ -1452,7 +1456,7 @@ TRichEdit::Paste()
 ulong
 TRichEdit::StreamIn(uint format, TEditStream & es)
 {
-  return static_cast<ulong>(SendMessage(EM_STREAMIN, TParam1(format), TParam2(&es)));
+  return SendMessage(EM_STREAMIN, TParam1(format), TParam2(&es));
 }
 
 //
@@ -1477,7 +1481,7 @@ TRichEdit::StreamIn(uint format, TEditStream & es)
 ulong
 TRichEdit::StreamOut(uint format, TEditStream & es)
 {
-  return static_cast<ulong>(SendMessage(EM_STREAMOUT, TParam1(format), TParam2(&es)));
+  return SendMessage(EM_STREAMOUT, TParam1(format), TParam2(&es));
 }
 
 //
@@ -1569,7 +1573,7 @@ TRichEdit::SetOleInterface(IRichEditOleCallback * pInterface)
 ulong
 TRichEdit::GetEventMask() const
 {
-  return static_cast<ulong>(SendMessage(EM_GETEVENTMASK));
+  return CONST_CAST(TRichEdit*,this)->SendMessage(EM_GETEVENTMASK);
 }
 
 //
@@ -1593,7 +1597,7 @@ TRichEdit::GetEventMask() const
 ulong
 TRichEdit::SetEventMask(ulong msk)
 {
-  return static_cast<ulong>(SendMessage(EM_SETEVENTMASK, 0, TParam2(msk)));
+  return SendMessage(EM_SETEVENTMASK, 0, TParam2(msk));
 }
 
 //
@@ -1762,7 +1766,7 @@ TRichEdit::PosFromChar(uint charIndex)
   PRECONDITION(TWindow::GetHandle());
 
   if (TRichEditDll::Dll()->GetVersion() == 2)
-    return (uint32)SendMessage(EM_POSFROMCHAR, charIndex);
+	  return (uint32)SendMessage(EM_POSFROMCHAR, charIndex);
   else
   {
     POINTL pt;
@@ -1910,12 +1914,10 @@ bool
 TRichEdit::Read(LPCTSTR fileName)
 {
   if (!fileName)
-  {
     if (GetFileName())
       fileName = GetFileName();
     else
       return false;
-  }
   
   _USES_CONVERSION;
   tifstream ifs(_W2A(fileName), ios::in|ios::binary);
@@ -1943,12 +1945,10 @@ bool
 TRichEdit::Write(LPCTSTR fileName)
 {
   if (!fileName)
-  {
     if (GetFileName())
       fileName = GetFileName();
     else
       return false;
-  }
 
   _USES_CONVERSION;
   tofstream ofs(_W2A(fileName), ios::out|ios::binary);

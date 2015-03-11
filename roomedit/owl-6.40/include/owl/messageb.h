@@ -40,7 +40,7 @@ const int IDW_STATUSBAR     = 32040;  // Window ID used to locate status bars
 class _OWLCLASS TMessageBar : public TGadgetWindow {
   public:
     TMessageBar(TWindow*   parent = 0,
-                TFont*     font = 0,
+                TFont*     font = new TGadgetWindowFont,
                 TModule*   module = 0);
 
     // Set the text for the default text message gadget or a text gadget by id

@@ -256,7 +256,7 @@ class _OWLCLASS TXPrinter : public TXOwl
   public:
     TXPrinter(uint resId = IDS_PRINTERERROR);
 
-    TXPrinter* Clone();
+    virtual TXPrinter* Clone() const; // override
     void Throw();
     static void Raise(uint resId = IDS_PRINTERERROR);
 };
@@ -271,6 +271,7 @@ class _OWLCLASS TXPrinting : public TXOwl
   public:
     TXPrinting(int error = SP_ERROR);
 
+    virtual TXPrinting* Clone() const; // override
     void Throw();
     static void Raise(int error = SP_ERROR);
 

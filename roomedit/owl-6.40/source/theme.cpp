@@ -221,7 +221,7 @@ TXTheme::TXTheme(const tstring& name, HRESULT r)
 /// Creates a copy of the exception
 //
 TXTheme*
-TXTheme::Clone()
+TXTheme::Clone() const
 {
   return new TXTheme(*this);
 }

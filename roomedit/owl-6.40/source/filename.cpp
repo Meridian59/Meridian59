@@ -592,7 +592,7 @@ static tstring& trimPath(tstring& s, uint len)
   if(s.length() < len)
     return s;
 
-  const tchar* addPath = _T("\\...");
+  tchar* addPath = _T("\\...");
   // find ?
   // 1. get last path  path1\path2\path3 -> \path3
   tstring subpath = s;
@@ -606,10 +606,10 @@ static tstring& trimPath(tstring& s, uint len)
   subpath.erase(pos);
 
   // calculate minimum path length include "\\..."
-  int length = static_cast<int>(len - 4 - lastpath.length());
+  int length = len-4-lastpath.length();
   while(length < 0 && lastpath.length() > 0){
       lastpath = lastpath.substr(1); //Remove the first character
-      length = static_cast<int>(len - 4 - lastpath.length());
+      length = len-4-lastpath.length();
   }
   uint iteration = 0;
 
@@ -696,7 +696,7 @@ const tchar* TFileName::Squeezed(int maxLen, bool keepName) const
     if (n > dname.length() + 3)
     {
       tstring p = PathStr;
-      trimPath(p, n - static_cast<int>(dname.length())); 
+      trimPath(p, n - dname.length()); 
       if (p.length() > 0 && p[p.length() - 1] != dirSeparatorStr[0])
         p += dirSeparatorStr;
       attempt = GetParts(Server | Device) + p + fname;

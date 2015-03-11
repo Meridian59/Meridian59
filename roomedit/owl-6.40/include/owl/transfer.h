@@ -19,9 +19,11 @@
 #include <owl/dialog.h>
 #include <utility>
 
+#if _HAS_TR1
 # include <functional>
 # include <algorithm>
 # include <type_traits>
+#endif
 
 namespace owl {
 
@@ -649,6 +651,8 @@ void DDX_Text(const TTransferInfo& i, int id, T& value)
 
 /// @}
 
+#if _HAS_TR1
+
 namespace detail
 {
 
@@ -1166,6 +1170,7 @@ void TransferStaticData(const TTransferInfo& i, const TCtrl& ctrl, const TTransf
 
 /// @}
 
+#endif
 
 //
 /// Mix-in class template providing support for data transfer to and from controls
@@ -1465,6 +1470,8 @@ public:
 
 };
 
+#if _HAS_TR1
+
 //
 /// TWindow mix-in
 /// Delegates the job of transferring data to the given function object.
@@ -1556,6 +1563,7 @@ private:
   std::tr1::function<void(TValue)> Setter;
 };
 
+#endif
 
 } // OWL namespace
 

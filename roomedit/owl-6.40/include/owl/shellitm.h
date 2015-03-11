@@ -629,7 +629,7 @@ class _OWLCLASS TXShell: public TXOwl {
 
     // Clone a TXShell
     //
-    TXShell* Clone();
+    virtual TXShell* Clone() const; // override
 
     // Throw an exception
     //

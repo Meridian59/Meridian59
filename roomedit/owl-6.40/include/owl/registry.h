@@ -679,25 +679,25 @@ class _OWLCLASS TRegTemplateList {
 class _OWLCLASS TRegParamList {
   public:
     struct TEntry {
-      LPCTSTR Param;            ///< Substituted parameter name
-      LPCTSTR Default;          ///< Default value, 0 if no default & param is required
-      LPCTSTR TemplatesNeeded;  ///< Octal string list of template indices to activate
+      tchar* Param;            ///< Substituted parameter name
+      tchar* Default;          ///< Default value, 0 if no default & param is required
+      tchar* TemplatesNeeded;  ///< Octal string list of template indices to activate
     };
 
-    TRegParamList(const TEntry*);
+    TRegParamList(TEntry* _list);
    ~TRegParamList();
 
     int Find(LPCTSTR  param);   ///< Associative lookup of value by param
     int Find(const tstring& param) {return Find(param.c_str());}
     int GetCount() const;
 
-    const TEntry& operator [](int i) const;
+    TEntry& operator [](int i);
 
     const tchar*& Value(int i);
     void   ResetDefaultValues();
 
   private:
-    const TEntry* List;
+    TEntry*        List;
     int            Count;
     const tchar** Values;
 };
@@ -710,9 +710,9 @@ class _OWLCLASS TRegParamList {
 //
 class _OWLCLASS TRegSymbolTable {
   public:
-    TRegSymbolTable(TRegKey& basekey, LPCTSTR tplList[], const TRegParamList::TEntry* paramList);
+    TRegSymbolTable(TRegKey& basekey, LPCTSTR tplList[], TRegParamList::TEntry* paramList);
 
-    void Init(LPCTSTR filter);
+    void Init(tchar* filter);
     void UpdateParams(TLangId lang, TRegItem* item);
     void StreamOut(TRegItem* item, tostream& out);
 //    void StreamIn(TRegItem* item, tistream& in);
@@ -734,11 +734,11 @@ class _OWLCLASS TRegistry {
 #pragma pack(push,4)
     struct TUnregParams {
       tchar    Prepend;    ///< Optional tchar to prepend to key before removing
-      LPCTSTR Name; ///< Name of param
+      tchar*   Name;       ///< Name of param
       TRegKey*  BaseKey;    ///< Key that that the param is based upon
     };
 #pragma pack(pop)
-    static int  Unregister(TRegList& regInfo, const TUnregParams* params, const TRegItem* overrides = 0);
+    static int  Unregister(TRegList& regInfo, TUnregParams* params, TRegItem* overrides = 0);
 };
 
 /// @}
@@ -1415,8 +1415,8 @@ TRegParamList::GetCount() const
 //
 /// Return the template string at the passed index.
 //
-inline const TRegParamList::TEntry&
-TRegParamList::operator [](int i) const
+inline TRegParamList::TEntry&
+TRegParamList::operator [](int i)
 {
   PRECONDITION(i >= 0 && i < Count); ///CM added range check
   if (i < 0 || i >= Count)

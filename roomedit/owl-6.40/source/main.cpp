@@ -8,7 +8,9 @@
 #include <owl/pch.h>
 #include <owl/applicat.h>
 #include <owl/lclstrng.h>
-#include <owl/gdiplus.h>
+
+// link owl libraries
+//#include <owl/private/owllink.h>
 
 #if defined(__BORLANDC__)
 # pragma option -w-ccc // Disable "Condition is always true/false"
@@ -31,23 +33,21 @@ _tmain(int argc, tchar* argv[])
 {
   TRACEX(OwlMain, 0, _T("main() called"));
 
-  Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  ULONG_PTR gdiplusToken;
-  Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-  
   HINSTANCE hInstance = ::GetModuleHandle(NULL);
   InitGlobalModule(hInstance);
 
   LPCTSTR cmdLine = GetCommandLine();
-  owl::TApplication::SetWinMainParams(hInstance, 0, cmdLine ? cmdLine : _T(""), SW_SHOWNORMAL);
-  int retVal;
-  try {
-    retVal = OwlMain(argc, argv);
-    TRACEX(OwlMain, 0, _T("WinMain() returns ") << retVal);
-  }
-  catch (owl::TXEndSession&) {return retVal = 0;} 
-  catch (owl::TXBase& x) {return retVal = owl::HandleGlobalException(x, 0);} 
+  owl::TApplication::SetWinMainParams(hInstance, 0, 
+                        cmdLine?cmdLine:_T(""), SW_SHOWNORMAL);
 
-  Gdiplus::GdiplusShutdown(gdiplusToken);
-  return retVal;
+  try {
+    int retVal = OwlMain(argc, argv);
+    TRACEX(OwlMain, 0, _T("WinMain() returns ") << retVal);
+    return retVal;
+  }
+  catch (owl::TXEndSession&) {return 0;} 
+  catch (owl::TXBase& x) {return owl::HandleGlobalException(x, 0);} 
 }
+
+/* ========================================================================== */
+

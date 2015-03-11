@@ -19,8 +19,6 @@ OWL_DIAGINFO;
 //
 /// Constructs a TTextGadget object with the specified ID, border style, and
 /// alignment. Sets Margins.Left and Margins.Right to 2. Sets Text and TextLen to 0.
-/// Unless a font is passed (or a null-pointer is passed) the gadget will use the
-/// font of the containing gadget window.
 //
 TTextGadget::TTextGadget(int          id,
                          TBorderStyle borderStyle,
@@ -98,30 +96,6 @@ TTextGadget::Invalidate()
 }
 
 //
-/// Returns the effective font used to render the text for this gadget.
-/// If no font was passed to the constructor, the font of the gadget window is returned.
-//
-const TFont&
-TTextGadget::GetFont() const
-{
-  PRECONDITION(GetGadgetWindow());
-  return Font ? *Font : GetGadgetWindow()->GetFont();
-}
-
-//
-/// Sets the font to be used by the gadget. If repaint is true, calls
-/// TGadgetWindow::GadgetChangedSize to recalculate the size of the gadget.
-//
-void
-TTextGadget::SetFont(const TFont& font, bool repaint)
-{
-  delete Font;
-  Font = new TFont(font);
-  if (GetGadgetWindow() && repaint)
-    GetGadgetWindow()->GadgetChangedSize(*this);
-}
-
-//
 /// Set the text for this gadget
 //
 /// If the text stored in Text is not the same as the new text, SetText deletes the
@@ -141,7 +115,7 @@ TTextGadget::SetText(LPCTSTR text)
 
   if (text) {
     Text = strnewdup(text);
-    TextLen = static_cast<uint>(::_tcslen(Text));
+    TextLen = ::_tcslen(Text);
   }
   else {
     Text = 0;
@@ -166,20 +140,25 @@ void
 TTextGadget::GetDesiredSize(TSize& size)
 {
   TGadget::GetDesiredSize(size);
-  const TFont& f = GetFont();
+  TFont* font = Font;
+  if (font == 0)
+    font = &(GetGadgetWindow()->GetFont());
+
+  if (font == 0)
+    return;
 
   if (ShrinkWrapWidth)
-    size.cx += f.GetTextExtent(Text).cx;
+    size.cx += font->GetTextExtent(Text).cx;
   else {
     int  left, right, top, bottom;
     GetOuterSizes(left, right, top, bottom);
 
-    int newW = f.GetMaxWidth() * NumChars;
+    int newW = font->GetMaxWidth() * NumChars;
     size.cx += newW + left + right - Bounds.Width();  // Old bounds already considered
   }
 
   if (ShrinkWrapHeight)
-    size.cy += f.GetHeight() + 2;
+    size.cy += font->GetHeight() + 2;
 }
 
 //
@@ -204,7 +183,10 @@ TTextGadget::Paint(TDC& dc)
   TRect  innerRect;
   GetInnerRect(innerRect);
 
-  dc.SelectObject(GetFont());
+  if (!Font)
+    dc.SelectObject(GetGadgetWindow()->GetFont());
+  else
+    dc.SelectObject(*Font);
 
   TColor textColor = GetEnabledColor();
   if(!GetEnabled())

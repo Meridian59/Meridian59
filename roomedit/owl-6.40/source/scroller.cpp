@@ -16,6 +16,7 @@
 
 namespace owl {
 
+
 OWL_DIAGINFO;
 
 //
@@ -327,7 +328,7 @@ TScroller::ScrollTo(long x, long y)
       //
       // EndScroll() performs the necessary scaling
       //
-      if (AutoOrg || (abs(YPos-newYPos) < YPage && abs(XPos-newXPos) < XPage))
+      if (AutoOrg || abs(YPos-newYPos) < YPage && abs(XPos-newXPos) < XPage)
         Window->ScrollWindow((int)(XPos - newXPos) * XUnit,
                 (int)(YPos - newYPos) * YUnit, 0, 0);
 

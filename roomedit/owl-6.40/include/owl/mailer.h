@@ -53,7 +53,7 @@ class _OWLCLASS TMailer : public TModule {
     void  SendDocuments(TWindow* owner, const tstring& paths, const tstring& names = tstring(), bool asynchWork = false)
     {SendDocuments(owner, paths.c_str(), names.empty() ? 0 : names.c_str(), asynchWork);}
 
-    TModuleProc5<ULONG, ULONG_PTR, LPSTR, LPSTR, LPSTR, ULONG> MAPISendDocuments;
+    TModuleProc5<uint32,uint32,LPSTR,LPSTR,LPSTR,uint32> MAPISendDocuments;
 };
 
 // Generic definitions/compiler options (eg. alignment) following the

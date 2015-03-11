@@ -400,7 +400,7 @@ TXModuleVersionInfo::TXModuleVersionInfo(const tstring& name)
 /// Creates a copy of the exception 
 //
 TXModuleVersionInfo*
-TXModuleVersionInfo::Clone()
+TXModuleVersionInfo::Clone() const
 {
   return new TXModuleVersionInfo(*this);
 }

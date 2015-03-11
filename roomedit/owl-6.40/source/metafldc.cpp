@@ -42,17 +42,14 @@ TMetaFileDC::TMetaFileDC(const tstring& filename)
 //
 TMetaFileDC::~TMetaFileDC()
 {
-  if (Handle)
-  {
+  if (Handle) {
     if (ShouldDelete)
-    {
       // Do not restore objects, Metafiles cleanup after themselves
       //
       if (IsEnhanced())
         ::DeleteEnhMetaFile(CloseEnh());
       else
         ::DeleteMetaFile(Close());
-    }
     Handle = 0;
   }
 }

@@ -9,19 +9,20 @@
 #include <owl/defs.h>
 #include <owl/applicat.h>
 #include <owl/lclstrng.h>
-#include <owl/gdiplus.h>
 
 #if defined(BI_COMP_BORLANDC)
 #include <dos.h>
 #endif
 
-#if defined(BI_COMP_GNUC) || defined(BI_COMP_CLANG)
+//#ifndef MAX_PATH
+//#if !defined(WINELIB)
+//#include <dos.h>
+//#endif
+//#endif
 
-// We need some headers for our command line parser.
-//
-#include <vector>
-#include <algorithm>
-
+//Changes by Peter Sliepenbeek, revised by Sebastian Ledesma
+#if defined __GNUC__ //since 3.x and above (probably 2.x also, but not tested)
+# include <vector>
 #endif 
 
 #if defined(__BORLANDC__)
@@ -37,56 +38,6 @@ DIAG_DECLARE_GROUP(OwlMain);
 
 using namespace std;
 using namespace owl;
-
-#if defined(BI_COMP_GNUC) || defined(BI_COMP_CLANG)
-
-namespace
-{
-
-  // Parse the command line into an argv-style string list.
-  // Note: Does not handle escape characters.
-  //
-  auto ParseCmdLine_(const tstring& cmd) -> vector<tstring>
-  {
-    using TIt = tstring::const_iterator;
-    const auto quote = _T('\"');
-
-    auto parseQuotedString = [&](TIt& i, TIt end) -> tstring
-    {
-      PRECONDITION(i != end && *i == quote);
-      const auto e = find(++i, end, quote);
-      if (e == end) throw TXOwl{_T("Unpaired quote in command-line.")};
-      const auto s = tstring{i, e};
-      i = next(e);
-      return s;
-    };
-
-    auto parseString = [](TIt& i, TIt end) -> tstring
-    {
-      PRECONDITION(i != end);
-      const auto e = find_if(i, end, [](tchar c) { return !_istspace(c); });
-      const auto s = tstring{i, e};
-      i = e;
-      return s;
-    };
-
-    auto a = vector<tstring>{};
-    for (auto i = cmd.begin(); i != cmd.end();)
-    {
-      auto c = *i;
-      if (_istspace(c))
-        ++i;
-      else if (c == quote)
-        a.push_back(parseQuotedString(i, cmd.end()));
-      else
-        a.push_back(parseString(i, cmd.end()));
-    }
-    return a;
-  };
-
-} // namespace
-
-#endif
 
 // MSC code in module.cpp
 #if !defined(_BUILDOWLDLL) && !defined(_OWLDLL)
@@ -117,6 +68,9 @@ using owl::TApplication;
 
 #if defined(BI_COMP_BORLANDC) && defined(_UNICODE)
 
+#if __BORLANDC__ < 0x610
+extern wchar_t ** _RTLENTRY _EXPDATA _wargv;
+#endif
 extern "C" int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR cmdLine, int cmdShow);
 
 #elif defined(BI_COMP_GNUC)
@@ -131,47 +85,62 @@ extern "C" int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LP
 int WINAPI 
 _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR cmdLine, int cmdShow)
 {
-  TRACEX(OwlMain, 0, _T("WinMain(") 
-    << hex << static_cast<void*>(hInstance) << _T(", ")
-    << hex << static_cast<void*>(hPrevInstance) << _T(", \"")
-    << TResId(cmdLine) << _T("\", ")
-    << cmdShow << _T(") called"));
+  TRACEX(OwlMain, 0, _T("WinMain(") << hex << uint(hInstance) << _T(", ") <<
+                                  hex << uint(hPrevInstance) << _T(", \"") <<
+                                  TResId(cmdLine) << _T("\", ") <<
+                                  cmdShow << _T(") called"));
 
-  Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-  ULONG_PTR gdiplusToken;
-  Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-  
   InitGlobalModule(hInstance);
 
-  TApplication::SetWinMainParams(hInstance, hPrevInstance, cmdLine ? cmdLine : _T(""), cmdShow);
-  int retVal;
-  try
-  {
+  TApplication::SetWinMainParams(hInstance, hPrevInstance, 
+                                 cmdLine?cmdLine:_T(""), cmdShow);
+  try {
+#if defined(BI_COMP_BORLANDC)
+    int retVal = OwlMain(_argc, _targv);
+#elif defined(BI_COMP_GNUC)
+    std::basic_string<TCHAR> cmdLine(::GetCommandLine());
+    std::vector<std::basic_string<TCHAR> > argumentVector;
+    
+    std::basic_string<TCHAR>::size_type tokenStart = 0;
+    std::basic_string<TCHAR>::size_type commandLineStringLength = 
+      cmdLine.size();
+    while (tokenStart != std::basic_string<TCHAR>::npos && 
+     tokenStart != commandLineStringLength)
+      {
+  std::basic_string<TCHAR>::size_type tokenEnd = 
+    cmdLine.find(' ', tokenStart);
+  argumentVector.push_back
+    (std::basic_string<TCHAR>
+     (cmdLine.substr(tokenStart, 
+         tokenEnd == std::basic_string<TCHAR>::npos ? 
+         tokenEnd : tokenEnd - tokenStart)));
+  std::cerr << (argumentVector.end()-1)->c_str() << std::endl;
+  if (tokenEnd != std::basic_string<TCHAR>::npos && 
+      tokenEnd != commandLineStringLength) // <- should never happen
+    tokenStart = tokenEnd + 1;
+  else
+    tokenStart = tokenEnd;
+      }
 
-#if defined(BI_COMP_GNUC) || defined(BI_COMP_CLANG)
-
-    // Create an argv-style array of string pointers to the command line arguments.
-    //
-    auto a = ParseCmdLine_(::GetCommandLine());
-    auto argv = vector<LPTSTR>{a.size()};
-    transform(a.begin(), a.end(), argv.begin(), [](tstring& s) {return &s[0];});
-    retVal = OwlMain(argv.size(), &argv[0]);
-
-#elif defined(BI_COMP_BORLANDC)
-
-    retVal = OwlMain(_argc, _targv);
-
+    // argvArray is never freed, since it must be kept around until 
+    // at least the end of OwlMain.  We could probably release
+    // it after the call to OwlMain, but I'd rather not risk
+    // then chance of crashes over a few hundred bytes
+    TCHAR** argvArray = new TCHAR*[argumentVector.size() + 1];
+    for (int i = 0; i < argumentVector.size(); i++)
+      argvArray[i] = (TCHAR*)argumentVector[i].c_str();
+    argvArray[argumentVector.size() + 1] = 0;
+    int retVal = OwlMain(argumentVector.size(), argvArray);
 #else
-
-    retVal = OwlMain(__argc, __targv);
-
+    int retVal = OwlMain(__argc, __targv);
 #endif
-
+    TRACEX(OwlMain, 0, _T("WinMain() returns ") << retVal);
+    return retVal;
   }
-  catch (owl::TXEndSession&) {retVal = 0;} 
-  catch (owl::TXBase& x) {retVal = owl::HandleGlobalException(x, 0);} 
-
-  Gdiplus::GdiplusShutdown(gdiplusToken);
-  TRACEX(OwlMain, 0, _T("WinMain() returns ") << retVal);
-  return retVal;
+  catch (owl::TXEndSession&) {return 0;} 
+  catch (owl::TXBase& x) {return owl::HandleGlobalException(x, 0);} 
 }
+
+//} // OWL namespace
+/* ========================================================================== */
+

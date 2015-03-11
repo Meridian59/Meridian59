@@ -533,7 +533,7 @@ TFileBuf::TFileBuf(int fhdl, int omode, streampos seekpos)
 TFileBuf::pos_type TFileBuf::seekoff(off_type off, ios_base::seekdir dir,
                                      ios_base::openmode /*which*/)
 {
-  streamsize loff = static_cast<streamsize>(off);
+  streamsize loff = off;
   if (out_waiting()) {       // flush the output
      if (sync() == eof())
         return eof();

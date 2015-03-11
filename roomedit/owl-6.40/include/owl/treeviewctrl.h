@@ -20,17 +20,6 @@
 #include <owl/commctrl.h>
 #include <owl/control.h>
 
-//
-// Resolve naming conflicts from <windowsx.h>.
-//
-
-#ifdef GetNextSibling
-#undef GetNextSibling
-#endif
-
-#ifdef GetPrevSibling
-#undef GetPrevSibling
-#endif
 
 namespace owl {
 

@@ -549,7 +549,7 @@ TPrintDialog::TData::SetDevNames(const tstring& driver, const tstring& device, c
   // and the resulting total size, in bytes, of the DEVNAMES structure including trailing strings.
   // Then allocate and lock the required amount of global memory.
   //
-  const int n = static_cast<int>(driver.length() + 1 + device.length() + 1 + output.length() + 1); 
+  const int n = driver.length() + 1 + device.length() + 1 + output.length() + 1; 
   const int size = sizeof(DEVNAMES) + (n * sizeof(tchar));
   HDevNames = ::GlobalAlloc(GHND, size); 
   DevNames = static_cast<DEVNAMES*>(::GlobalLock(HDevNames));

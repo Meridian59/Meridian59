@@ -294,7 +294,7 @@ TPXPictureValidator::Scan(LPTSTR input, uint termCh, uint& i, uint& j)
   tchar ch;
   TPicResult rslt = prEmpty;
 
-  uint len = static_cast<uint>(::_tcslen(input));
+  uint len = ::_tcslen(input);
   while (i != termCh && Pic[i] != _T(',')) {
     if (j >= len)
       return CheckComplete(termCh, i, rslt);
@@ -464,12 +464,10 @@ TPXPictureValidator::Scan(LPTSTR input, uint termCh, uint& i, uint& j)
         if (Pic[i] == _T(';'))
           i++;
         if (_totupper(Pic[i]) != _totupper(ch))
-        {
           if (ch == _T(' '))
             ch = Pic[i];
           else
             return prError;
-        }
         input[j++] = Pic[i];
         i++;
 #endif
@@ -619,7 +617,7 @@ TPXPictureValidator::Picture(LPTSTR input, bool autoFill)
   uint j = 0;  // index for input[]
   uint i = 0;  // index for Pic[]
 
-  TPicResult rslt = Process(input, static_cast<uint>(Pic.length()), i, j);
+  TPicResult rslt = Process(input, Pic.length(), i, j);
   if (rslt != prError && rslt != prSyntax && j < ::_tcslen(input))
     rslt = prError;
 
@@ -637,7 +635,7 @@ TPXPictureValidator::Picture(LPTSTR input, bool autoFill)
       if (Pic[i] == _T(';'))
         i++;
 #if defined(BI_DBCS_SUPPORT)
-      uint k = static_cast<uint>(::_tcslen(input));
+      uint k = ::_tcslen(input);
       uint n = CharSize((LPCTSTR)Pic.c_str() + i) / sizeof(tchar);
       memmove(input + k, Pic.c_str() + i, n);
       input[k + n] = _T('\0');
@@ -651,13 +649,14 @@ TPXPictureValidator::Picture(LPTSTR input, bool autoFill)
     if (reprocess) {
       input[j] = 0;   // terminate the copy, since we are probably appending
       j = i = 0;
-      rslt = Process(input, static_cast<uint>(Pic.length()), i, j);
+      rslt = Process(input, Pic.length(), i, j);
     }
   }
 
   return (rslt == prAmbiguous) ? prComplete
                                : (rslt == prIncompNoFill) ? prIncomplete : rslt;
 }
+
 
 IMPLEMENT_STREAMABLE1(TPXPictureValidator, TValidator);
 
@@ -687,3 +686,5 @@ TPXPictureValidator::Streamer::Write(opstream& os) const
 #endif  // if !defined(BI_NO_OBJ_STREAMING)
 
 } // OWL namespace
+/* ========================================================================== */
+

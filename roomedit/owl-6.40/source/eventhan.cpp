@@ -31,12 +31,12 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0001, "WM_CREATE"                },
     { 0x0002, "WM_DESTROY"               },
     { 0x0003, "WM_MOVE"                  },
-    { 0x0004, "WM_SIZEWAIT"              },
+    { 0x0004, "wm_sizewait"              },
     { 0x0005, "WM_SIZE"                  },
     { 0x0006, "WM_ACTIVATE"              },
     { 0x0007, "WM_SETFOCUS"              },
     { 0x0008, "WM_KILLFOCUS"             },
-    { 0x0009, "WM_SETVISIBLE"            },
+    { 0x0009, "wm_setvisible"            },
     { 0x000A, "WM_ENABLE"                },
     { 0x000B, "WM_SETREDRAW"             },
     { 0x000C, "WM_SETTEXT"               },
@@ -50,9 +50,9 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0014, "WM_ERASEBKGND"            },
     { 0x0015, "WM_SYSCOLORCHANGE"        },
     { 0x0016, "WM_ENDSESSION"            },
-    { 0x0017, "WM_SYSTEMERROR"           }, // Obsolete
+    { 0x0017, "wm_systemerror"           },
     { 0x0018, "WM_SHOWWINDOW"            },
-    { 0x0019, "WM_CTLCOLOR"              }, // Obsolete
+    { 0x0019, "WM_CTLCOLOR"              },
     { 0x001A, "WM_SETTINGCHANGE"         },
     { 0x001B, "WM_DEVMODECHANGE"         },
     { 0x001C, "WM_ACTIVATEAPP"           },
@@ -65,10 +65,10 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0023, "WM_QUEUESYNC"             },
     { 0x0024, "WM_GETMINMAXINFO"         },
    // 0x0025
-    { 0x0026, "WM_PAINTICON"             }, // Obsolete
-    { 0x0027, "WM_ICONERASEBKGND"        }, // Obsolete
+    { 0x0026, "WM_PAINTICON"             },
+    { 0x0027, "WM_ICONERASEBKGND"        },
     { 0x0028, "WM_NEXTDLGCTL"            },
-    { 0x0029, "WM_ALTTABACTIVE"          },
+    { 0x0029, "wm_alttabactive"          },
     { 0x002A, "WM_SPOOLERSTATUS"         },
     { 0x002B, "WM_DRAWITEM"              },
     { 0x002C, "WM_MEASUREITEM"           },
@@ -79,21 +79,21 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0031, "WM_GETFONT"               },
     { 0x0032, "WM_SETHOTKEY"             },
     { 0x0033, "WM_GETHOTKEY"             },
-    { 0x0034, "WM_FILESYSCHANGE"         },
-    { 0x0035, "WM_ISACTIVEICON"          },
-    { 0x0036, "WM_QUERYPARKICON"         },
+    { 0x0034, "wm_filesyschange"         },
+    { 0x0035, "wm_isactiveicon"          },
+    { 0x0036, "wm_queryparkicon"         },
     { 0x0037, "WM_QUERYDRAGICON"         },
-    { 0x0038, "WM_QUERYSAVESTATE"        },
+    { 0x0038, "wm_querysavestate"        },
     { 0x0039, "WM_COMPAREITEM"           },
-    { 0x0040, "WM_TESTING"               },
+    { 0x0040, "wm_testing"               },
     { 0x0041, "WM_COMPACTING"            },
-    { 0x0042, "WM_OTHERWINDOWCREATED"    }, 
-    { 0x0043, "WM_OTHERWINDOWDESTROYED"  },
-    { 0x0044, "WM_COMMNOTIFY"            }, // Obsolete
-    { 0x0045, "WM_HOTKEYEVENT"           },
+    { 0x0042, "wm_otherwindowcreated"    },
+    { 0x0043, "wm_otherwindowdestroyed"  },
+    { 0x0044, "WM_COMMNOTIFY"            },  /* no longer suported */
+    { 0x0045, "wm_hotkeyevent"           },
     { 0x0046, "WM_WINDOWPOSCHANGING"     },
     { 0x0047, "WM_WINDOWPOSCHANGED"      },
-    { 0x0048, "WM_POWER"                 }, // Obsolete
+    { 0x0048, "WM_POWER"                 },
     { 0x004A, "WM_COPYDATA"              },
     { 0x004B, "WM_CANCELJOURNAL"         },
    // 0x004C
@@ -120,8 +120,8 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0085, "WM_NCPAINT"               },
     { 0x0086, "WM_NCACTIVATE"            },
     { 0x0087, "WM_GETDLGCODE"            },
-    { 0x0088, "WM_SYNCPAINT"             },
-    { 0x0089, "WM_SYNCTASK"              },
+    { 0x0088, "wm_syncpaint"             },
+    { 0x0089, "wm_synctask"              },
     { 0x00A0, "WM_NCMOUSEMOVE"           },
     { 0x00A1, "WM_NCLBUTTONDOWN"         },
     { 0x00A2, "WM_NCLBUTTONUP"           },
@@ -141,11 +141,11 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0105, "WM_SYSKEYUP"              },
     { 0x0106, "WM_SYSCHAR"               },
     { 0x0107, "WM_SYSDEADCHAR"           },
-    { 0x0108, "WM_YOMICHAR"              },
+    { 0x0108, "wm_yomichar"              },
    // ...
-    { 0x010A, "WM_CONVERTREQUEST"        },
-    { 0x010B, "WM_CONVERTRESULT"         },
-    { 0x010C, "WM_INTERIM"               },
+    { 0x010A, "wm_convertrequest"        },
+    { 0x010B, "wm_convertresult"         },
+    { 0x010C, "wm_interim"               },
     { 0x010D, "WM_IME_STARTCOMPOSITION"  },
     { 0x010E, "WM_IME_ENDCOMPOSITION"    },
     { 0x010F, "WM_IME_COMPOSITION"       },
@@ -158,12 +158,12 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0115, "WM_VSCROLL"               },
     { 0x0116, "WM_INITMENU"              },
     { 0x0117, "WM_INITMENUPOPUP"         },
-    { 0x0118, "WM_SYSTIMER"              },
+    { 0x0118, "wm_systimer"              },
    // ...
     { 0x011F, "WM_MENUSELECT"            },
     { 0x0120, "WM_MENUCHAR"              },
     { 0x0121, "WM_ENTERIDLE"             },
-    { 0x0131, "WM_LBTRACKPOINT"          },
+    { 0x0131, "wm_lbtrackpoint"          },
     { 0x0132, "WM_CTLCOLORMSGBOX"        },
     { 0x0133, "WM_CTLCOLOREDIT"          },
     { 0x0134, "WM_CTLCOLORLISTBOX"       },
@@ -205,12 +205,12 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x0227, "WM_MDICASCADE"            },
     { 0x0228, "WM_MDIICONARRANGE"        },
     { 0x0229, "WM_MDIGETACTIVE"          },
-    { 0x022A, "WM_DROPOBJECT"            },
-    { 0x022B, "WM_QUERYDROPOBJECT"       },
-    { 0x022C, "WM_BEGINDRAG"             },
-    { 0x022D, "WM_DRAGLOOP"              },
-    { 0x022E, "WM_DRAGSELECT"            },
-    { 0x022F, "WM_DRAGMOVE"              },
+    { 0x022A, "wm_dropobject"            },
+    { 0x022B, "wm_querydropobject"       },
+    { 0x022C, "wm_begindrag"             },
+    { 0x022D, "wm_dragloop"              },
+    { 0x022E, "wm_dragselect"            },
+    { 0x022F, "wm_dragmove"              },
     { 0x0230, "WM_MDISETMENU"            },
     { 0x0231, "WM_ENTERSIZEMOVE"         },
     { 0x0232, "WM_EXITSIZEMOVE"          },
@@ -281,22 +281,22 @@ DIAG_DEFINE_GROUP_INIT(OWL_INI, OwlMsg, 1, 0);
     { 0x8000, "WM_APP"                   },
 
     // OWL Specific
-    { WM_OWLHELPHIT, "WM_OWLHELPHIT"}, // 0x7EF1
-    { WM_OWLCREATETTIP, "WM_OWLCREATETTIP"}, // 0x7EF2
-    { WM_OWLWINDOWDOCKED, "WM_OWLWINDOWDOCKED"}, // 0x7EF3 Notify window it was [un]docked/reparented
-    { WM_OWLSLIPDBLCLK, "WM_OWLSLIPDBLCLK"}, // 0x7EF4 Notify parent of user dblclick of edge slip
-    { WM_OWLFRAMESIZE, "WM_OWLFRAMESIZE"}, // 0x7EF5 Notify children of frame resizing
-    { WM_OWLWAKEUP, "WM_OWLWAKEUP"}, // 0x7EF6
-    { WM_VBXBASE, "WM_VBXBASE"}, // 0x7EF7
-    { WM_VBXNAME, "WM_VBXNAME"}, // 0x7FF7
-    { WM_VBXINITFORM, "WM_VBXINITFORM"}, // 0x7FF8
-    { WM_OWLCANCLOSE, "WM_OWLCANCLOSE"}, // 0x7FF9
-    { WM_OWLPREPROCMENU, "WM_OWLPREPROCMENU"}, // 0x7FFA
-    { WM_OWLNOTIFY, "WM_OWLNOTIFY"}, // 0x7FFB
-    { WM_OWLVIEW, "WM_OWLVIEW"}, // 0x7FFC
-    { WM_OWLDOCUMENT, "WM_OWLDOCUMENT"}, // 0x7FFD
-    { WM_CHILDINVALID, "WM_CHILDINVALID"}, // 0x7FFE
-    { WM_COMMAND_ENABLE, "WM_COMMAND_ENABLE"}, // 0x7FFF
+    { WM_OWLHELPHIT,            "WM_OWLHELPHIT"           }, // 0x7EF1
+    { WM_OWLCREATETTIP,         "WM_OWLCREATETTIP"        }, // 0x7EF2
+    { WM_OWLWINDOWDOCKED,        "WM_OWLWINDOWDOCKED"      }, // 0x7EF3 Notify window it was [un]docked/reparented
+    { WM_OWLSLIPDBLCLK,          "WM_OWLSLIPDBLCLK"         }, // 0x7EF4 Notify parent of user dblclick of edge slip
+    { WM_OWLFRAMESIZE,          "WM_OWLFRAMESIZE"          }, // 0x7EF5 Notify children of frame resizing
+    { WM_OWLWAKEUP,             "WM_OWLWAKEUP"            }, // 0x7EF6
+    { WM_VBXBASE,               "WM_VBXBASE"              }, // 0x7EF7
+    { WM_VBXNAME,               "WM_VBXNAME"              }, // 0x7FF7
+    { WM_VBXINITFORM,           "WM_VBXINITFORM"          }, // 0x7FF8
+    { WM_OWLCANCLOSE,           "WM_OWLCANCLOSE"          }, // 0x7FF9
+    { WM_OWLPREPROCMENU,        "WM_OWLPREPROCMENU"       }, // 0x7FFA
+    { WM_OWLNOTIFY,             "WM_OWLNOTIFY"            }, // 0x7FFB
+    { WM_OWLVIEW,               "WM_OWLVIEW"              }, // 0x7FFC
+    { WM_OWLDOCUMENT,           "WM_OWLDOCUMENT"          }, // 0x7FFD
+    { WM_CHILDINVALID,          "WM_CHILDINVALID"         }, // 0x7FFE
+    { WM_COMMAND_ENABLE,        "WM_COMMAND_ENABLE"       }, // 0x7FFF
   };
 
   //
@@ -372,21 +372,6 @@ TEventHandler::Find(TEventInfo&, TEqualOperator)
   return false;
 }
 
-#if OWL_NEW_RESPONSE_TABLE // New response table implementation:
-
-//
-/// Takes the message data from TEventInfo's Msg data member and forwards it to
-/// the registered dispatcher.
-//
-TResult
-TEventHandler::Dispatch(TEventInfo& eventInfo, TParam1 param1, TParam2 param2)
-{
-  PRECONDITION(eventInfo.Entry);
-  return (*eventInfo.Entry->Dispatcher)(eventInfo.Object, param1, param2);
-}
-
-#else // Old response table implementation:
-
 //
 /// Takes the message data from TEventInfo's Msg data member and dispatches it to
 /// the correct event-handling function.
@@ -401,8 +386,6 @@ TEventHandler::Dispatch(TEventInfo& eventInfo, TParam1 param1, TParam2 param2)
            param1, param2
          );
 }
-
-#endif
 
 //
 /// Search for the event given the message and it and dispatch to the
@@ -427,7 +410,7 @@ TEventHandler::DispatchMsg(TMsgId msg, uint id, TParam1 p1, TParam2 p2)
 /// Fills in Entry member of eventInfo and returns true if found.
 //
 bool
-TEventHandler::SearchEntries(const TGenericTableEntry* entries,
+TEventHandler::SearchEntries(TGenericTableEntry * entries,
                              TEventInfo&         eventInfo,
                              TEqualOperator      equal)
 {

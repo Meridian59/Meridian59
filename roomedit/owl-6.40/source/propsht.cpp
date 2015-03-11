@@ -37,7 +37,7 @@ END_RESPONSE_TABLE;
 namespace
 {
 
-  //
+//
   // Initializes the structure representing the property sheet.
   //
   PROPSHEETHEADER InitHeaderInfo_(
@@ -75,7 +75,7 @@ TPropertySheet::TPropertySheet(
   IsWizard(isWizard)
 {}
 
-//
+  //
 /// String-aware overload
 //
 TPropertySheet::TPropertySheet(
@@ -93,7 +93,7 @@ TPropertySheet::TPropertySheet(
   HeaderInfo(InitHeaderInfo_(*this, startPage, isWizard, flags)),
   IsWizard(isWizard)
 {}
-
+  
 //
 // Clean up resources used by PropertySheet object
 //
@@ -1173,7 +1173,7 @@ TPropertyPage::PropCallback(HWND hwnd, UINT uMsg, LPPROPSHEETPAGE ppsp)
 /// Virtual methods to handle the Sheet notifications: PSN_APPLY
 //
 int
-TPropertyPage::Apply(TPshNotify&)
+TPropertyPage::Apply(TNotify&)
 {
   // Check if it's OK to close and attempt to retrieve data
   // 
@@ -1205,7 +1205,7 @@ TPropertyPage::Apply(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_KILLACTIVE
 //
 bool
-TPropertyPage::KillActive(TPshNotify&)
+TPropertyPage::KillActive(TNotify&)
 {
   return false;
 }
@@ -1214,7 +1214,7 @@ TPropertyPage::KillActive(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_APPLY
 //
 void
-TPropertyPage::Help(TPshNotify&)
+TPropertyPage::Help(TNotify&)
 {
 }
 
@@ -1224,7 +1224,7 @@ TPropertyPage::Help(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_RESET
 //
 void
-TPropertyPage::Reset(TPshNotify&)
+TPropertyPage::Reset(TNotify&)
 {
 }
 
@@ -1232,7 +1232,7 @@ TPropertyPage::Reset(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_SETACTIVE
 //
 int
-TPropertyPage::SetActive(TPshNotify&)
+TPropertyPage::SetActive(TNotify&)
 {
   return 0;
 }
@@ -1241,7 +1241,7 @@ TPropertyPage::SetActive(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_WIZBACK
 //
 int
-TPropertyPage::WizBack(TPshNotify&)
+TPropertyPage::WizBack(TNotify&)
 {
   return 0;
 }
@@ -1250,7 +1250,7 @@ TPropertyPage::WizBack(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_FINISH
 //
 bool
-TPropertyPage::WizFinish(TPshNotify&)
+TPropertyPage::WizFinish(TNotify&)
 {
   return false;
 }
@@ -1259,7 +1259,7 @@ TPropertyPage::WizFinish(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_WIZNEXT
 //
 int
-TPropertyPage::WizNext(TPshNotify&)
+TPropertyPage::WizNext(TNotify&)
 {
   return 0;
 }
@@ -1268,7 +1268,7 @@ TPropertyPage::WizNext(TPshNotify&)
 /// Virtual methods to handle the Sheet notifications: PSN_QUERYCANCEL
 //
 bool
-TPropertyPage::QueryCancel(TPshNotify&)
+TPropertyPage::QueryCancel(TNotify&)
 {
   return false;
 }

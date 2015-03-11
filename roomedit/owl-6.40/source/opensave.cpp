@@ -131,7 +131,7 @@ TOpenSaveDialog::TData::SetFilter(LPCTSTR filter)
   if (filter) {
     delete[] Filter;
     if (_tcschr(filter, _T('|'))) {
-      uint len = static_cast<uint>(::_tcslen(filter)) + 2; // one for each terminating 0
+      uint len = ::_tcslen(filter) + 2; // one for each terminating 0
       Filter = ::_tcscpy(new tchar[len], filter);
       Filter[len-1] = 0;             // in case trailing '|' is missing
     }
@@ -260,7 +260,7 @@ TOpenSaveDialog::DialogFunction(TMsgId msg, TParam1 param1, TParam2 param2)
   TNotify* n = (msg == WM_NOTIFY) ? reinterpret_cast<TNotify*>(param2) : 0;
   if (n && n->code == CDN_SHAREVIOLATION)
   {
-    WARN(!explorerStyle, _T("CDN_SHAREVIOLATION was sent to old-style dialog."));
+    WARN(!explorerStyle, "CDN_SHAREVIOLATION was sent to old-style dialog.");
     int r = ShareViolation();
 
     // The documentation for CDN_SHAREVIOLATION states that 0 should be 
@@ -272,7 +272,7 @@ TOpenSaveDialog::DialogFunction(TMsgId msg, TParam1 param1, TParam2 param2)
       return 0;
 
     CHECK(!OWL_STRICT || r == OFN_SHAREFALLTHROUGH || r == OFN_SHARENOWARN);
-    WARN(r != OFN_SHAREFALLTHROUGH && r != OFN_SHARENOWARN, _T("ShareViolation returned undefined value: ") << r);
+    WARN(r != OFN_SHAREFALLTHROUGH && r != OFN_SHARENOWARN, "ShareViolation returned undefined value: " << r);
     return SetMsgResult(r);    
   }
 
@@ -288,13 +288,13 @@ TOpenSaveDialog::DialogFunction(TMsgId msg, TParam1 param1, TParam2 param2)
     //
     if (explorerStyle)
     {
-      WARN(r != OFN_SHAREWARN, _T("ShareViolation returned unexpected value in Explorer-style dialog:") << r);
+      WARN(r != OFN_SHAREWARN, "ShareViolation returned unexpected value in Explorer-style dialog:" << r);
       return 0;
     }
 
     CHECK(!OWL_STRICT || r == OFN_SHAREFALLTHROUGH || r == OFN_SHARENOWARN || r == OFN_SHAREWARN);
     WARN(r != OFN_SHAREFALLTHROUGH && r != OFN_SHARENOWARN && r != OFN_SHAREWARN,
-      _T("ShareViolation returned undefined value: ") << r);
+      "ShareViolation returned undefined value: " << r);
 
     // The documentation for SHAREVISTRING states that the result should be
     // returned directly, rather than through DWL_MSGRESULT.

@@ -94,7 +94,7 @@ TListBoxView::SetExtent(const tstring& str)
     return;
 
   TClientDC  clientDC(*this);
-  TSize extent = clientDC.GetTextExtent(str, static_cast<int>(str.length()));
+  TSize extent = clientDC.GetTextExtent(str, str.length());
   extent.cx += 2; // room for focus rectangle
 
   if (extent.cx > MaxWidth)

@@ -182,14 +182,14 @@ class _OWLCLASS TFrameWindow : virtual public TWindow {
 
     // Message response functions
     //
-    void            EvInitMenuPopup(HMENU hPopupMenu, uint index, bool isSysMenu);
+    void            EvInitMenuPopup(HMENU hPopupMenu, uint index, bool sysMenu);
     void            EvPaint();
     bool            EvEraseBkgnd(HDC);
     HANDLE          EvQueryDragIcon();
     void            EvSetFocus(HWND hWndLostFocus);
     void            EvSize(uint sizeType, const TSize& size);
-    void            EvParentNotify(const TParentNotify&);
-    void            EvPaletteChanged(HWND hWndPalChg);
+    void            EvParentNotify(uint event, TParam1, TParam2);
+    void            EvPaletteChanged(THandle hWndPalChg);
     bool            EvQueryNewPalette();
 
     // Override virtual functions defined by TWindow

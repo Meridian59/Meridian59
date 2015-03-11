@@ -69,7 +69,7 @@ TXBadFormat::Raise()
 
 
 TXBadFormat*
-TXBadFormat::Clone()
+TXBadFormat::Clone() const
 {
   return new TXBadFormat(*this);
 }
@@ -2068,10 +2068,17 @@ uint64 TStreamHandle::Seek(int64 offset, TFile::seek_dir origin)
 uint32 TStreamHandle::Seek(long offset, TFile::seek_dir origin)
 {
   uint32 position  = Position();
+# if defined(__BORLANDC__) && (__BORLANDC__ < 0x580)
+//older BC compilers use ios::seek_dir instead of ios::seekdir
+#  define seekdir seek_dir
+# endif
   if(OpenMode & TFile::WriteOnly)
     Parent->seekp((streamoff)offset, (ios::seekdir)origin);
   else
     Parent->seekg((streamoff)offset, (ios::seekdir)origin);
+# if defined(__BORLANDC__) && (__BORLANDC__ < 0x580) 
+#  undef seekdir 
+# endif
   return position;
 }
 //

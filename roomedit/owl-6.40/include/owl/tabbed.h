@@ -115,22 +115,10 @@ class _OWLCLASS TTabbedWindow: public TLayoutWindow, public TTabbedBase {
 
     // Need at least one page in order to add a page
     int    AddPage(TWindow& wnd, LPCTSTR titles = 0);
-    int AddPage(TWindow& wnd, const tstring& titles) {return AddPage(wnd, titles.c_str());}
     bool  DeletePage(TWindow& wnd);
-
-    //
-    /// Sets the height of the tab control to the given value, then updates the
-    /// layout of the window and invalidates the tab control. You can call 
-    /// TNoteTab::GetMinimalHeight to get the shortest height that will show the
-    /// full vertical extent of the tabs.
-    //
-    void ResizeTabControl(int newHeight);
   
   public:
     virtual bool Create();
-
-  private:
-    void Init();
 
   DECLARE_RESPONSE_TABLE(TTabbedWindow);
   // add streaming

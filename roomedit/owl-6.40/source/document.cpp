@@ -116,7 +116,7 @@ TDocument::~TDocument()
   }
   else {
     CHECK(DocManager);
-    DocManager->PostEvent(dnClose, *this); // WM_OWLDOCUMENT
+    DocManager->PostEvent(dnClose, *this);
     DocManager->DocList.Remove(this);
   }
 
@@ -127,7 +127,7 @@ TDocument::~TDocument()
 //
 //
 //
-static const LPCTSTR PropNames[] = {
+static LPTSTR PropNames[] = {
   _T("Document Class"),  // DocumentClass
   _T("Template Name"),   // TemplateName
   _T("View Count"),      // ViewCount
@@ -463,7 +463,7 @@ TDocument::AttachView(TView& view)
   *ppview = &view;    // insert at end of list
   view.NextView = 0;
   view.Doc = this;
-  NotifyViews(vnViewOpened, reinterpret_cast<TParam2>(&view), &view);
+  NotifyViews(vnViewOpened, (long)&view, &view);
 }
 
 //
@@ -484,7 +484,7 @@ TDocument::InitView(TView* view)
   }
 
   CHECK(DocManager);
-  DocManager->PostEvent(dnCreate, *view); // WM_OWLVIEW
+  DocManager->PostEvent(dnCreate, *view);
 
   if (!view->IsOK()) {
     TRACEX(OwlDocView, 0, _T("InitView(): Invalid view object post dnCreate!"));
@@ -512,9 +512,9 @@ TDocument::DetachView(TView& view)
 
       // Found the view, now detach it and notify app and other views
       //
-      DocManager->PostEvent(dnClose, view); // WM_OWLVIEW
+      DocManager->PostEvent(dnClose, view);
       *plist = view.NextView;
-      NotifyViews(vnViewClosed, reinterpret_cast<TParam2>(&view), &view);
+      NotifyViews(vnViewClosed, (long)&view, &view);
 
       // Cleanup doc if last view was just closed and dtAutoDelete
       // or dtAutoOpen is set. dtAutoOpen will cause an autoclose, while
@@ -588,23 +588,23 @@ TDocument::Revert(bool clear)
 /// of a change. In contrast to QueryViews, NotifyViews sends notification of an
 /// event to all views and returns true if all views returned a true result. The
 /// event, EV_OWLNOTIFY, is sent with an event code, which is private to the
-/// particular document and view class, and a custom argument, which can be cast
+/// particular document and view class, and a long argument, which can be cast
 /// appropriately to the actual type passed in the argument of the response
 /// function.
 //
 bool
-TDocument::NotifyViews(int event, TParam2 param, TView* exclude)
+TDocument::NotifyViews(int event, long item, TView* exclude)
 {
   bool answer = true;
 
   TDocument* pdoc = 0;
   while ((pdoc = ChildDoc.Next(pdoc)) != 0)
-    answer = (answer && pdoc->NotifyViews(event, param, exclude));
+    answer = (answer && pdoc->NotifyViews(event, item, exclude));
 
   TEventHandler::TEventInfo eventInfo(WM_OWLNOTIFY, event);
   for (TView* view = ViewList; view != 0; view = view->NextView)
     if (view != exclude && view->Find(eventInfo))
-      answer = (answer && (view->Dispatch(eventInfo, 0, param) != 0));
+      answer = (answer && (view->Dispatch(eventInfo, 0, item) != 0));
 
   return answer;
 }
@@ -615,23 +615,23 @@ TDocument::NotifyViews(int event, TParam2 param, TView* exclude)
 /// contrast to NotifyViews(), QueryViews returns a pointer to the first view that
 /// responded to an event with a true result. The event, EV_OWLNOTIFY, is sent with
 /// an event code (which is private to the particular document and view class) and a
-/// custom argument (which can be cast appropriately to the actual type passed in the
+/// long argument (which can be cast appropriately to the actual type passed in the
 /// argument of the response function).
 //
 TView*
-TDocument::QueryViews(int event, TParam2 param, TView* exclude)
+TDocument::QueryViews(int event, long item, TView* exclude)
 {
   TView* view;
   TDocument* pdoc = 0;
   while ((pdoc = ChildDoc.Next(pdoc)) != 0)
-    if ((view = pdoc->QueryViews(event, param, exclude)) != 0)
+    if ((view = pdoc->QueryViews(event, item, exclude)) != 0)
       return view;
 
   TEventHandler::TEventInfo eventInfo(WM_OWLNOTIFY, event);
   for (view = ViewList; view != 0; view = view->NextView) {
     if (view != exclude) {
       if (view->Find(eventInfo)) {
-        if (view->Dispatch(eventInfo, 0, param)) {
+        if (view->Dispatch(eventInfo, 0, item)) {
           return view;            // Return first acknowledger
         }
       }
@@ -683,7 +683,7 @@ TDocument::DocWithFocus(HWND hWnd)
     if (pdoc->DocWithFocus(hWnd))
       return pdoc;
 
-  return QueryViews(vnIsWindow, reinterpret_cast<TParam2>(hWnd)) ? this : 0;
+  return QueryViews(vnIsWindow, (long)hWnd) ? this : 0;
 }
 
 //

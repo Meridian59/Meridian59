@@ -94,35 +94,19 @@ enum TDocMode {
 #define IS_PREV_OPEN(omode) ((omode & PREV_OPEN)==PREV_OPEN)
 
 //
-// These macros are for internal use, and only serve to eliminate an issue in the BCC32
-// compiler, an issue which causes template instantiations to fail in certain contexts. 
-// The macros are used, instead of their "const int" counterparts defined below, wherever
-// a template instantiation would fail when using the latter as a template argument. See 
-// the definitions of the EV_VN_* macros later in this file for the primary use-case.
-//
-#define OWL_VN_VIEWOPENED 1
-#define OWL_VN_VIEWCLOSED 2
-#define OWL_VN_DOCOPENED 3
-#define OWL_VN_DOCCLOSED 4
-#define OWL_VN_COMMIT 5
-#define OWL_VN_REVERT 6
-#define OWL_VN_ISDIRTY 7
-#define OWL_VN_ISWINDOW 8
-
-//
-/// \name Definitions of WM_OWLNOTIFY event IDs (view notifications)
+/// \name Definitions of vnXxxx view notification event IDs
 /// @{
 /// event ID's up to vnCustomBase reserved for general doc-view notifications
 //
-const uint vnViewOpened = OWL_VN_VIEWOPENED; ///< a new view has just been constructed
-const uint vnViewClosed = OWL_VN_VIEWCLOSED; ///< another view is about to be destructed
-const uint vnDocOpened = OWL_VN_DOCOPENED; ///< document has just been opened
-const uint vnDocClosed = OWL_VN_DOCCLOSED; ///< document has just been closed
-const uint vnCommit = OWL_VN_COMMIT; ///< document is committing, flush cached changes
-const uint vnRevert = OWL_VN_REVERT; ///< document has reverted, reload data from doc
-const uint vnIsDirty = OWL_VN_ISDIRTY; ///< respond true if uncommitted changes present
-const uint vnIsWindow = OWL_VN_ISWINDOW; ///< respond true if passed HWND is that of view
-const uint vnCustomBase = 100; ///< base of document class specific notifications
+const int vnViewOpened  = 1;   ///< a new view has just been constructed
+const int vnViewClosed  = 2;   ///< another view is about to be destructed
+const int vnDocOpened   = 3;   ///< document has just been opened
+const int vnDocClosed   = 4;   ///< document has just been closed
+const int vnCommit      = 5;   ///< document is committing, flush cached changes
+const int vnRevert      = 6;   ///< document has reverted, reload data from doc
+const int vnIsDirty     = 7;   ///< respond true if uncommitted changes present
+const int vnIsWindow    = 8;   ///< respond true if passed HWND is that of view
+const int vnCustomBase = 100;  ///< base of document class specific notifications
 /// @}
 
 //
@@ -131,13 +115,13 @@ const uint vnCustomBase = 100; ///< base of document class specific notification
 /// Define document and view property attributes. Documents, views, and applications
 /// use these attributes to determine how to process a document or view.
 //
-const uint pfGetText   =  1;   ///< property accessible as text format
-const uint pfGetBinary =  2;   ///< property accessible as native non-text format
-const uint pfConstant  =  4;   ///< property is invariant for object instance
-const uint pfSettable  =  8;   ///< property settable as native format
-const uint pfUnknown   = 16;   ///< property defined but unavailable in object
-const uint pfHidden    = 32;   ///< property should be hidden from normal browse
-const uint pfUserDef   =128;   ///< property has been user-defined at run time
+const int pfGetText   =  1;   ///< property accessible as text format
+const int pfGetBinary =  2;   ///< property accessible as native non-text format
+const int pfConstant  =  4;   ///< property is invariant for object instance
+const int pfSettable  =  8;   ///< property settable as native format
+const int pfUnknown   = 16;   ///< property defined but unavailable in object
+const int pfHidden    = 32;   ///< property should be hidden from normal browse
+const int pfUserDef   =128;   ///< property has been user-defined at run time
 /// @}
 
 //
@@ -280,8 +264,8 @@ class _OWLCLASS TDocument : public TStreamableBase {
     virtual bool   HasFocus(HWND hwnd);  ///< Document (or child doc) has Focus
     virtual TDocument* DocWithFocus(HWND hwnd); // Doc/ChildDoc with focus
 
-    bool           NotifyViews(int event, TParam2 = 0, TView* exclude = 0);
-    TView*         QueryViews(int event, TParam2 = 0, TView* exclude = 0);
+    bool           NotifyViews(int event, long item=0, TView* exclude=0);
+    TView*         QueryViews(int event, long item=0, TView* exclude=0);
     virtual uint   PostError(uint sid, uint choice = MB_OK);
 
     // Property access and info
@@ -367,7 +351,7 @@ class _OWLCLASS TDocument : public TStreamableBase {
   DECLARE_ABSTRACT_STREAMABLE_OWL(TDocument,1);
 };
 // define streameable inlines (VC)
-DECLARE_STREAMABLE_INLINES( ::owl::TDocument );
+DECLARE_STREAMABLE_INLINES( owl::TDocument );
 
 //
 /// \class TView
@@ -493,7 +477,7 @@ class _OWLCLASS TView : virtual public TEventHandler,
   DECLARE_ABSTRACT_STREAMABLE_OWL(TView,1);
 };
 // define streameable inlines (VC)
-DECLARE_STREAMABLE_INLINES( ::owl::TView );
+DECLARE_STREAMABLE_INLINES( owl::TView );
 
 //
 /// \class TWindowView
@@ -527,11 +511,11 @@ class _OWLCLASS TWindowView : public TWindow, public TView {
     bool     VnIsWindow(HWND hWnd);
 
   DECLARE_RESPONSE_TABLE(TWindowView);
-  //DECLARE_STREAMABLE (_OWLCLASS, ::owl::TWindowView,1);
+  //DECLARE_STREAMABLE (_OWLCLASS, owl::TWindowView,1);
   DECLARE_STREAMABLE_OWL(TWindowView, 1);
 };
 // define streameable inlines (VC)
-DECLARE_STREAMABLE_INLINES( ::owl::TWindowView );
+DECLARE_STREAMABLE_INLINES( owl::TWindowView );
 
 
 //
@@ -566,13 +550,13 @@ class _OWLCLASS TDialogView : public TDialog, public TView {
     bool     VnIsWindow(HWND hWnd);
 
   DECLARE_RESPONSE_TABLE(TDialogView);
-  //DECLARE_STREAMABLE (_OWLCLASS, ::owl::TDialogView,1);
+  //DECLARE_STREAMABLE (_OWLCLASS, owl::TDialogView,1);
   DECLARE_STREAMABLE_OWL(TDialogView,1);
 
 };
 
 // define streameable inlines (VC)
-DECLARE_STREAMABLE_INLINES( ::owl::TDialogView );
+DECLARE_STREAMABLE_INLINES( owl::TDialogView );
 
 //
 /// \class TStream
@@ -630,14 +614,13 @@ class TOutStream : public TStream, public tostream {
 // View Notification Handler Definitions
 //
 
-#if defined(OWL5_COMPAT)
-
 //
 // DocView aliases to actual dispatchers
 //
-#define Dispatch_B_void Dispatch_B ///< No parameters
-#define Dispatch_B_int Dispatch_B_I ///< TParam2 as int
-#define Dispatch_B_pointer Dispatch_B_POINTER ///< TParam2 as void*
+#define B_void_Dispatch     B_Dispatch            ///< No parameters
+#define B_int_Dispatch      B_I2_Dispatch         ///< LPARAM as int
+#define B_pointer_Dispatch  B_POINTER_Dispatch    ///< LPARAM as void*
+#define B_long_Dispatch     B_LPARAM_Dispatch     ///< LPARAM as long
 
 //
 // Define a DocView notification signature
@@ -657,125 +640,34 @@ NOTIFY_SIG(vnRevert,      bool)
 NOTIFY_SIG(vnIsDirty,     void)
 NOTIFY_SIG(vnIsWindow,    HWND)
 
-#endif
-
 //
-// TDispatch specializations for the DocView messages
+/// Define a DocView notification response entry
+///   'id' is the id from NOTIFY_SIG above
+///   'method' is the method name called by the notification
+///   'disp' is the type of the lParam dispacher to use, and can be:
+///     'void'    lParam not passed
+///     'int'     integer size (16bit for win16, or 32bit on win32)
+///     'pointer' pointer size (16bit for small & medium, or 32bit all other)
+///     'long'    32 bit passed always
 //
+#define VN_DEFINE(id, method, disp) \
+  {{WM_OWLNOTIFY}, id, \
+  (::owl::TAnyDispatcher) ::owl::B_##disp##_Dispatch, \
+  (TMyPMF)id##_Sig(&TMyClass::method)}
 
-template <> struct TDispatch<WM_OWLDOCUMENT>
-{
-  template <class F>
-  static void Encode(F sendMessage, HWND wnd, TDocument& d)
-  {sendMessage(wnd, WM_OWLDOCUMENT, 0, reinterpret_cast<TParam2>(&d));}
-
-  template <class T, void (T::*M)(TDocument&)>
-  static TResult Decode(void* i, TParam1, TParam2 p2)
-  {
-    PRECONDITION(p2);
-    return p2 != 0 ? ((ConvertVoidPtr<T>(i)->*M)(*reinterpret_cast<TDocument*>(p2)), 0) : 0;
-  }
-};
-
-template <> struct TDispatch<WM_OWLVIEW>
-{
-  template <class F>
-  static void Encode(F sendMessage, HWND wnd, TView& v)
-  {sendMessage(wnd, WM_OWLVIEW, 0, reinterpret_cast<TParam2>(&v));}
-
-  template <class T, void (T::*M)(TView&)>
-  static TResult Decode(void* i, TParam1, TParam2 p2)
-  {
-    PRECONDITION(p2);
-    return p2 != 0 ? ((ConvertVoidPtr<T>(i)->*M)(*reinterpret_cast<TView*>(p2)), 0) : 0;
-  }
-};
-
-template <> struct TDispatch<WM_OWLNOTIFY>
-{
-  static const TMsgId MessageId = WM_OWLNOTIFY;
-
-  template <class F>
-  static bool Encode(F sendMessage, HWND wnd, TParam2 p2)
-  {return static_cast<bool>(sendMessage(wnd, MessageId, 0, p2));}
-
-  template <class T, bool (T::*M)(TParam2)>
-  static TResult Decode(void* i, TParam1, TParam2 p2)
-  {return (ConvertVoidPtr<T>(i)->*M)(p2) ? TRUE : FALSE;}
-
-  template <uint NotificationCode>
-  struct TNotificationDispatch;
-
-  //
-  // All the standard DocView notifications return 'bool' and have a single (or no) parameter
-  // passed through TParam2. We can implement this as a common base template.
-  //
-  template <uint NotificationCode, class P>
-  struct TNotificationDispatchBase
-  {
-    template <class F>
-    static bool Encode(F sendMessage, HWND wnd, P p)
-    {return static_cast<bool>(sendMessage(wnd, MessageId, NotificationCode, (TParam2) p));}
-
-    template <class T, bool (T::*M)(P)>
-    static TResult Decode(void* i, TParam1, TParam2 p2)
-    {return (ConvertVoidPtr<T>(i)->*M)((P) p2) ? TRUE : FALSE;}
-  };
-
-  //
-  // Specialization for the void parameter case
-  //
-  template <uint NotificationCode>
-  struct TNotificationDispatchBase<NotificationCode, void>
-  {
-    template <class F>
-    static bool Encode(F sendMessage, HWND wnd)
-    {return static_cast<bool>(sendMessage(wnd, MessageId, NotificationCode));}
-
-    template <class T, bool (T::*M)()>
-    static TResult Decode(void* i, TParam1, TParam2)
-    {return (ConvertVoidPtr<T>(i)->*M)() ? TRUE : FALSE;}
-  };
-
-};
-
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnDocOpened> : TNotificationDispatchBase<vnDocOpened, int> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnDocClosed> : TNotificationDispatchBase<vnDocClosed, int> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnViewOpened> : TNotificationDispatchBase<vnViewOpened, TView*> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnViewClosed> : TNotificationDispatchBase<vnViewClosed, TView*> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnCommit> : TNotificationDispatchBase<vnCommit, bool> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnRevert> : TNotificationDispatchBase<vnRevert, bool> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnIsDirty> : TNotificationDispatchBase<vnIsDirty, void> {};
-template <> struct TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<vnIsWindow> : TNotificationDispatchBase<vnIsWindow, HWND> {};
-
-//
-/// Defines a DocView notification response entry.
-/// - 'id' is the notification id,
-/// - 'method' is the name of the method to be notified, and
-/// - 'dispatcher' is the name of the dispatcher to use.
-//
-#define VN_DEFINE(id, method, dispatcher)\
-  {{WM_OWLNOTIFY}, id, OWL_DISPATCH(dispatcher, method)}
-
-// 
-// Internal macro using dispatcher lookup in the TDispatch<WM_OWLNOTIFY> specialization
-//
-#define VN_DEFINE_STANDARD_(id, method)\
-  VN_DEFINE(id, method, ::owl::TDispatch<WM_OWLNOTIFY>::TNotificationDispatch<id>::Decode)
-
-//
-/// \name Standard view notificaton events
+/// \name Document View  Messages
 /// @{
 /// These macros handle view-related messages generated by the document manager.
-//
-#define EV_VN_VIEWOPENED  VN_DEFINE_STANDARD_(OWL_VN_VIEWOPENED, VnViewOpened)
-#define EV_VN_VIEWCLOSED  VN_DEFINE_STANDARD_(OWL_VN_VIEWCLOSED, VnViewClosed)
-#define EV_VN_DOCOPENED   VN_DEFINE_STANDARD_(OWL_VN_DOCOPENED, VnDocOpened)
-#define EV_VN_DOCCLOSED   VN_DEFINE_STANDARD_(OWL_VN_DOCCLOSED, VnDocClosed)
-#define EV_VN_COMMIT      VN_DEFINE_STANDARD_(OWL_VN_COMMIT, VnCommit)
-#define EV_VN_REVERT      VN_DEFINE_STANDARD_(OWL_VN_REVERT, VnRevert)
-#define EV_VN_ISDIRTY     VN_DEFINE_STANDARD_(OWL_VN_ISDIRTY, VnIsDirty)
-#define EV_VN_ISWINDOW    VN_DEFINE_STANDARD_(OWL_VN_ISWINDOW, VnIsWindow)
+/// VnHandler is a generic term for the view notification handler function.
+
+#define EV_VN_VIEWOPENED  VN_DEFINE(::owl::vnViewOpened,  VnViewOpened,  pointer)
+#define EV_VN_VIEWCLOSED  VN_DEFINE(::owl::vnViewClosed,  VnViewClosed,  pointer)
+#define EV_VN_DOCOPENED   VN_DEFINE(::owl::vnDocOpened,   VnDocOpened,   int)
+#define EV_VN_DOCCLOSED   VN_DEFINE(::owl::vnDocClosed,   VnDocClosed,   int)
+#define EV_VN_COMMIT      VN_DEFINE(::owl::vnCommit,      VnCommit,      int)
+#define EV_VN_REVERT      VN_DEFINE(::owl::vnRevert,      VnRevert,      int)
+#define EV_VN_ISDIRTY     VN_DEFINE(::owl::vnIsDirty,     VnIsDirty,     void)
+#define EV_VN_ISWINDOW    VN_DEFINE(::owl::vnIsWindow,    VnIsWindow,    int)
 
 /// @}
 

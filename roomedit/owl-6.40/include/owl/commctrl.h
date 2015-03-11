@@ -1,14 +1,10 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1995, 1996 by Borland International, All Rights Reserved
 //
 /// \file
 /// Definition of classes for CommonControl encapsulation
-//
-// Part of OWLNext - the next generation Object Windows Library 
-// Copyright (c) 1995, 1996 by Borland International, All Rights Reserved
-// Copyright (c) 2013 Vidar Hasfjord
-//
-// For more information, including license details, see 
-// http://owlnext.sourceforge.net
-//
+//----------------------------------------------------------------------------
 
 #if !defined(OWL_COMMCTRL_H)
 #define OWL_COMMCTRL_H
@@ -43,6 +39,16 @@
 #include <owl/shelwapi.h>
 
 namespace owl {
+
+//
+// Property sheets notify property pages of events via the standard WM_NOTIFY/
+// NMHDR* mechanism. However, there is no Control ID involved in this
+// particular flavour of notification. The WM_NOTIFY handler of ObjectWindows
+// relies on the CtlID for subdispatching. Hence, we'll have 'PropPageID' as
+// the default identifier so that we do not have to repeat dispatching logic
+// in the 'EvNotify' of TPropertyPage.
+//
+const int PropPageID = 0xFFF0;
 
 //
 //
@@ -168,7 +174,7 @@ class _OWLCLASS TCommCtrlDll : public TModule {
 
     static  int    LBItemFromPt(HWND hLB, POINT pt, bool bAutoScroll);
     static  bool  MakeDragList(HWND hLB);
-    static  void  MenuHelp(uint uMsg, TParam1 wParam, TParam2 lParam, HMENU hMainMenu, HINSTANCE hInst, HWND hwndStatus, uint*lpwIDs);
+    static  void  MenuHelp(uint uMsg, WPARAM wParam, LPARAM lParam, HMENU hMainMenu, HINSTANCE hInst, HWND hwndStatus, uint*lpwIDs);
     static  int    PropertySheet(LPCPROPSHEETHEADER hHeader);
     static  bool  ShowHideMenuCtl(HWND hWnd, uint uFlags, int* lpInfo);
 
@@ -221,7 +227,7 @@ class _OWLCLASS TCommCtrl {
 class _OWLCLASS TXCommCtrl : public TXOwl {
   public:
     TXCommCtrl();
-    TXCommCtrl* Clone();
+    virtual TXCommCtrl* Clone() const; // override
     void        Throw();
     static void Raise();
 };
@@ -838,279 +844,22 @@ class _OWLCLASS TNmIPAddress:  public NMIPADDRESS{
     operator  NMHDR&() { return hdr; }
 };
 
-// Property Sheet notifications
-
-class _OWLCLASS TPshNotify : public PSHNOTIFY {
-  public:
-    TPshNotify(HWND hwnd, uint id, uint code, LPARAM lp);
-    operator  NMHDR&() { return hdr; }
-};
 
 // Generic definitions/compiler options (eg. alignment) following the
 // definition of classes
 #include <owl/posclass.h>
 
 //----------------------------------------------------------------------------
-// Control notification message dispatch
-// TODO: Change handler parameters to const where applicable.
+// DISPATCH.H
 //
 
-template <> struct TDispatch<WM_NOTIFY>
-{
-  static const TMsgId MessageId = WM_NOTIFY;
-  typedef TResult THandlerResult;
-
-  //
-  // General encoder - used when the notification code is not known at compile-time.
-  //
-  template <class F>
-  static THandlerResult Encode(F sendMessage, HWND wnd, NMHDR& nmhdr)
-  {return FORWARD_WM_NOTIFY(wnd, nmhdr.idFrom, &nmhdr, sendMessage);}
-
-  //
-  // General decoder - used when the notification code is not known at compile-time.
-  //
-  template <class T, THandlerResult (T::*M)(NMHDR&)>
-  static TResult Decode(void* i, TParam1 p1, TParam2 p2)
-  {
-    struct TForwarder
-    {
-      T* i_;
-      typedef THandlerResult (T::*THandler)(NMHDR&);
-      THandler m;
-      LRESULT operator ()(HWND, int, LPNMHDR pnmhdr)
-      {
-        PRECONDITION(pnmhdr);
-        return pnmhdr ? (i_->*m)(*pnmhdr) : 0;
-      };
-    }
-    forwarder = {ConvertVoidPtr<T>(i), M};
-    return HANDLE_WM_NOTIFY(0, p1, p2, forwarder);
-  }
-
-  //
-  // Base class for specialized notification dispatch
-  // Defines NotificationCode and THandlerResult.
-  //
-  template <uint NotificationCode, class THandlerResult, class TParam>
-  struct TNotificationDispatchBase;
-
-  //
-  // Specialization for non-void return and reference parameter
-  //
-  template <uint NotificationCode_, class THandlerResult_, class TNmParam>
-  struct TNotificationDispatchBase<NotificationCode_, THandlerResult_, TNmParam&>
-  {
-    enum {NotificationCode = NotificationCode_};
-    typedef THandlerResult_ THandlerResult; // Hides TDispatch<WM_NOTIFY>::THandlerResult.
-
-    template <class F>
-    static THandlerResult Encode(F sendMessage, HWND wnd, TNmParam& n)
-    {return static_cast<THandlerResult>(sendMessage(wnd, MessageId, static_cast<TParam1>(n.idFrom), reinterpret_cast<TParam2>(&n)));}
-
-    template <class T, THandlerResult (T::*M)(TNmParam&)>
-    static TResult Decode(void* i, TParam1, TParam2 p2)
-    {
-      PRECONDITION(p2);
-      return p2 != 0 ? static_cast<TResult>((ConvertVoidPtr<T>(i)->*M)(*reinterpret_cast<TNmParam*>(p2))) : 0;
-    }
-  };
-
-  //
-  // Specialization for void return and reference parameter
-  //
-  template <uint NotificationCode_, class TNmParam>
-  struct TNotificationDispatchBase<NotificationCode_, void, TNmParam&>
-  {
-    enum {NotificationCode = NotificationCode_};
-    typedef void THandlerResult; // Hides TDispatch<WM_NOTIFY>::THandlerResult.
-
-    template <class F>
-    static THandlerResult Encode(F sendMessage, HWND wnd, TNmParam& n)
-    {sendMessage(wnd, MessageId, static_cast<TParam1>(n.idFrom), reinterpret_cast<TParam2>(&n));}
-
-    template <class T, THandlerResult (T::*M)(TNmParam&)>
-    static TResult Decode(void* i, TParam1, TParam2 p2)
-    {
-      PRECONDITION(p2);
-      return p2 != 0 ? ((ConvertVoidPtr<T>(i)->*M)(*reinterpret_cast<TNmParam*>(p2)), 0) : 0;
-    }
-  };
-
-  //
-  // The next two specializations allow a message to be handled without passing any arguments.
-  // Note: Since notification info is required to send a notification message, no encoder can be provided. 
-  // TODO: Ideally, all notification handlers should use at least a notification info parameter.
-  //
-  template <uint NotificationCode_, class THandlerResult_>
-  struct TNotificationDispatchBase<NotificationCode_, THandlerResult_, void>
-  {
-    enum {NotificationCode = NotificationCode_};
-    typedef THandlerResult_ THandlerResult; // Hides TDispatch<WM_NOTIFY>::THandlerResult.
-
-    template <class T, THandlerResult (T::*M)()>
-    static TResult Decode(void* i, TParam1, TParam2)
-    {return static_cast<TResult>((ConvertVoidPtr<T>(i)->*M)());}
-  };
-
-  template <uint NotificationCode_>
-  struct TNotificationDispatchBase<NotificationCode_, void, void>
-  {
-    enum {NotificationCode = NotificationCode_};
-    typedef void THandlerResult; // Hides TDispatch<WM_NOTIFY>::THandlerResult.
-
-    template <class T, THandlerResult (T::*M)()>
-    static TResult Decode(void* i, TParam1, TParam2)
-    {return (ConvertVoidPtr<T>(i)->*M)(), 0;}
-  };
-
-  //
-  // Dispatch template for Common Controls notifications passed by WM_NOTIFY
-  // Note that notification codes are unique among all Common Controls, so they all share this dispatch template.
-  // This default implementation is looked up if a notification does not provide a full specialization.
-  // Passes the general NMHDR& and returns TResult.
-  //
-  template <uint NotificationCode>
-  struct TNotificationDispatch : TNotificationDispatchBase<NotificationCode, TResult, NMHDR&>
-  {};
-
-};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_CHAR> : TNotificationDispatchBase<NM_CHAR, void, TNmChar&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_CLICK> : TNotificationDispatchBase<NM_CLICK, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_CUSTOMDRAW> : TNotificationDispatchBase<NM_CUSTOMDRAW, int, TNmCustomDraw&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_DBLCLK> : TNotificationDispatchBase<NM_DBLCLK, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_HOVER> : TNotificationDispatchBase<NM_HOVER, bool, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_KEYDOWN> : TNotificationDispatchBase<NM_KEYDOWN, bool, TNmKey&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_KILLFOCUS> : TNotificationDispatchBase<NM_KILLFOCUS, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_NCHITTEST> : TNotificationDispatchBase<NM_NCHITTEST, int, TNmMouse&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_OUTOFMEMORY> : TNotificationDispatchBase<NM_OUTOFMEMORY, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_RCLICK> : TNotificationDispatchBase<NM_RCLICK, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_RDBLCLK> : TNotificationDispatchBase<NM_RDBLCLK, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_RELEASEDCAPTURE> : TNotificationDispatchBase<NM_RELEASEDCAPTURE, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_RETURN> : TNotificationDispatchBase<NM_RETURN, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_SETCURSOR> : TNotificationDispatchBase<NM_SETCURSOR, int, TNmMouse&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<NM_SETFOCUS> : TNotificationDispatchBase<NM_SETFOCUS, void, void> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<ACN_START> : TNotificationDispatchBase<ACN_START, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<ACN_STOP> : TNotificationDispatchBase<ACN_STOP, void, void> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_BEGINDRAG> : TNotificationDispatchBase<HDN_BEGINDRAG, bool, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_BEGINTRACK> : TNotificationDispatchBase<HDN_BEGINTRACK, bool, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_DIVIDERDBLCLICK> : TNotificationDispatchBase<HDN_DIVIDERDBLCLICK, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_ENDDRAG> : TNotificationDispatchBase<HDN_ENDDRAG, bool, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_ENDTRACK> : TNotificationDispatchBase<HDN_ENDTRACK, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_GETDISPINFO> : TNotificationDispatchBase<HDN_GETDISPINFO, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_ITEMCHANGED> : TNotificationDispatchBase<HDN_ITEMCHANGED, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_ITEMCHANGING> : TNotificationDispatchBase<HDN_ITEMCHANGING, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_ITEMCLICK> : TNotificationDispatchBase<HDN_ITEMCLICK, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_ITEMDBLCLICK> : TNotificationDispatchBase<HDN_ITEMDBLCLICK, void, THdrNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<HDN_TRACK> : TNotificationDispatchBase<HDN_TRACK, bool, THdrNotify&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_CLOSEUP> : TNotificationDispatchBase<DTN_CLOSEUP, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_DATETIMECHANGE> : TNotificationDispatchBase<DTN_DATETIMECHANGE, int, TDateTimeChange&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_DROPDOWN> : TNotificationDispatchBase<DTN_DROPDOWN, void, void> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_FORMAT> : TNotificationDispatchBase<DTN_FORMAT, int, TDateTimeFormat&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_FORMATQUERY> : TNotificationDispatchBase<DTN_FORMATQUERY, int, TDateTimeFormat&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_USERSTRING> : TNotificationDispatchBase<DTN_USERSTRING, int, TDateTimeString&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<DTN_WMKEYDOWN> : TNotificationDispatchBase<DTN_WMKEYDOWN, int, TDateTimeKeyDown&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TCN_GETOBJECT> : TNotificationDispatchBase<TCN_GETOBJECT, void, TNmObjectNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TCN_KEYDOWN> : TNotificationDispatchBase<TCN_KEYDOWN, void, TTabKeyDown&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TCN_SELCHANGE> : TNotificationDispatchBase<TCN_SELCHANGE, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TCN_SELCHANGING> : TNotificationDispatchBase<TCN_SELCHANGING, bool, TNotify&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<EN_DROPFILES> : TNotificationDispatchBase<EN_DROPFILES, bool, TEnDropFiles&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<EN_MSGFILTER> : TNotificationDispatchBase<EN_MSGFILTER, bool, TMsgFilter&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<EN_PROTECTED> : TNotificationDispatchBase<EN_PROTECTED, bool, TEnProtected&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<EN_REQUESTRESIZE> : TNotificationDispatchBase<EN_REQUESTRESIZE, void, TReqResize&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<EN_SELCHANGE> : TNotificationDispatchBase<EN_SELCHANGE, bool, TSelChange&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<UDN_DELTAPOS> : TNotificationDispatchBase<UDN_DELTAPOS, bool, TNmUpDown&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TTN_GETDISPINFO> : TNotificationDispatchBase<TTN_GETDISPINFO, void, TTooltipDispInfo&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TTN_POP> : TNotificationDispatchBase<TTN_POP, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TTN_SHOW> : TNotificationDispatchBase<TTN_SHOW, void, TNotify&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_BEGINDRAG> : TNotificationDispatchBase<TVN_BEGINDRAG, void, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_BEGINLABELEDIT> : TNotificationDispatchBase<TVN_BEGINLABELEDIT, bool, TTvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_BEGINRDRAG> : TNotificationDispatchBase<TVN_BEGINRDRAG, void, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_DELETEITEM> : TNotificationDispatchBase<TVN_DELETEITEM, void, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_ENDLABELEDIT> : TNotificationDispatchBase<TVN_ENDLABELEDIT, void, TTvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_GETDISPINFO> : TNotificationDispatchBase<TVN_GETDISPINFO, void, TTvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_GETINFOTIP> : TNotificationDispatchBase<TVN_GETINFOTIP, void, TTvGetInfoTip&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_ITEMEXPANDED> : TNotificationDispatchBase<TVN_ITEMEXPANDED, void, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_ITEMEXPANDING> : TNotificationDispatchBase<TVN_ITEMEXPANDING, bool, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_KEYDOWN> : TNotificationDispatchBase<TVN_KEYDOWN, void, TTvKeyDownNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_SELCHANGED> : TNotificationDispatchBase<TVN_SELCHANGED, void, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_SELCHANGING> : TNotificationDispatchBase<TVN_SELCHANGING, bool, TTvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_SETDISPINFO> : TNotificationDispatchBase<TVN_SETDISPINFO, void, TTvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<TVN_SINGLEEXPAND> : TNotificationDispatchBase<TVN_SINGLEEXPAND, void, TTvNotify&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_BEGINDRAG> : TNotificationDispatchBase<LVN_BEGINDRAG, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_BEGINLABELEDIT> : TNotificationDispatchBase<LVN_BEGINLABELEDIT, bool, TLvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_BEGINRDRAG> : TNotificationDispatchBase<LVN_BEGINRDRAG, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_COLUMNCLICK> : TNotificationDispatchBase<LVN_COLUMNCLICK, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_DELETEALLITEMS> : TNotificationDispatchBase<LVN_DELETEALLITEMS, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_DELETEITEM> : TNotificationDispatchBase<LVN_DELETEITEM, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ENDLABELEDIT> : TNotificationDispatchBase<LVN_ENDLABELEDIT, bool, TLvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_GETDISPINFO> : TNotificationDispatchBase<LVN_GETDISPINFO, void, TLvDispInfoNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_GETINFOTIP> : TNotificationDispatchBase<LVN_GETINFOTIP, void, TLvGetInfoTip&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_HOTTRACK> : TNotificationDispatchBase<LVN_HOTTRACK, bool, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_INSERTITEM> : TNotificationDispatchBase<LVN_INSERTITEM, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ITEMACTIVATE> : TNotificationDispatchBase<LVN_ITEMACTIVATE, void, TLvItemActivate&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ITEMCHANGED> : TNotificationDispatchBase<LVN_ITEMCHANGED, void, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ITEMCHANGING> : TNotificationDispatchBase<LVN_ITEMCHANGING, bool, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_KEYDOWN> : TNotificationDispatchBase<LVN_KEYDOWN, void, TLvKeyDownNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_MARQUEEBEGIN> : TNotificationDispatchBase<LVN_MARQUEEBEGIN, bool, TLvNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ODCACHEHINT> : TNotificationDispatchBase<LVN_ODCACHEHINT, bool, TLvCacheHint&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ODFINDITEM> : TNotificationDispatchBase<LVN_ODFINDITEM, int, TLvFindItem&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_ODSTATECHANGED> : TNotificationDispatchBase<LVN_ODSTATECHANGED, bool, TLvOdStateChanged&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<LVN_SETDISPINFO> : TNotificationDispatchBase<LVN_SETDISPINFO, void, TLvDispInfoNotify&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_AUTOSIZE> : TNotificationDispatchBase<RBN_AUTOSIZE, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_BEGINDRAG> : TNotificationDispatchBase<RBN_BEGINDRAG, bool, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_CHILDSIZE> : TNotificationDispatchBase<RBN_CHILDSIZE, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_DELETEDBAND> : TNotificationDispatchBase<RBN_DELETEDBAND, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_DELETINGBAND> : TNotificationDispatchBase<RBN_DELETINGBAND, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_ENDDRAG> : TNotificationDispatchBase<RBN_ENDDRAG, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_GETOBJECT> : TNotificationDispatchBase<RBN_GETOBJECT, bool, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_HEIGHTCHANGE> : TNotificationDispatchBase<RBN_HEIGHTCHANGE, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<RBN_LAYOUTCHANGED> : TNotificationDispatchBase<RBN_LAYOUTCHANGED, void, TNotify&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<CBEN_BEGINEDIT> : TNotificationDispatchBase<CBEN_BEGINEDIT, void, TNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<CBEN_DELETEITEM> : TNotificationDispatchBase<CBEN_DELETEITEM, bool, TCBExItemInfo&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<CBEN_DRAGBEGIN> : TNotificationDispatchBase<CBEN_DRAGBEGIN, void, TCBExDragInfo&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<CBEN_ENDEDIT> : TNotificationDispatchBase<CBEN_ENDEDIT, bool, TCBExEditInfo&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<CBEN_GETDISPINFO> : TNotificationDispatchBase<CBEN_GETDISPINFO, bool, TCBExItemInfo&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<CBEN_INSERTITEM> : TNotificationDispatchBase<CBEN_INSERTITEM, bool, TCBExItemInfo&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<MCN_GETDAYSTATE> : TNotificationDispatchBase<MCN_GETDAYSTATE, void, TNmDayState&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<MCN_SELCHANGE> : TNotificationDispatchBase<MCN_SELCHANGE, void, TNmSelChange&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<MCN_SELECT> : TNotificationDispatchBase<MCN_SELECT, void, TNmSelChange&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PGN_CALCSIZE> : TNotificationDispatchBase<PGN_CALCSIZE, void, TNmPGCalcSize&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PGN_SCROLL> : TNotificationDispatchBase<PGN_SCROLL, void, TNmPGScroll&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<IPN_FIELDCHANGED> : TNotificationDispatchBase<IPN_FIELDCHANGED, void, TNmIPAddress&> {};
-
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_APPLY> : TNotificationDispatchBase<PSN_APPLY, int, TPshNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_GETOBJECT> : TNotificationDispatchBase<PSN_GETOBJECT, void, TNmObjectNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_HELP> : TNotificationDispatchBase<PSN_HELP, void, TPshNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_KILLACTIVE> : TNotificationDispatchBase<PSN_KILLACTIVE, bool, TPshNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_QUERYCANCEL> : TNotificationDispatchBase<PSN_QUERYCANCEL, bool, TPshNotify&> {};
-// TODO: template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_QUERYINITIALFOCUS> {...};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_RESET> : TNotificationDispatchBase<PSN_RESET, void, TPshNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_SETACTIVE> : TNotificationDispatchBase<PSN_SETACTIVE, int, TPshNotify&> {};
-// TODO: template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_TRANSLATEACCELERATOR> {...};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_WIZBACK> : TNotificationDispatchBase<PSN_WIZBACK, int, TPshNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_WIZFINISH> : TNotificationDispatchBase<PSN_WIZFINISH, bool, TPshNotify&> {};
-template <> struct TDispatch<WM_NOTIFY>::TNotificationDispatch<PSN_WIZNEXT> : TNotificationDispatchBase<PSN_WIZNEXT, int, TPshNotify&> {};
+_OWLFUNC(LRESULT)
+v_NMHDRCode_Dispatch(TGeneric&, void (TGeneric::*)(uint), WPARAM, LPARAM);
 
 //----------------------------------------------------------------------------
-
-#if defined(OWL5_COMPAT)
-
+// SIGNATURE.H
+//
+//} // OWL namespace
 DECLARE_SIGNATURE1(void,v_NMHDR_Sig,NMHDR &)
 DECLARE_SIGNATURE1(bool,b_NMHDR_Sig,NMHDR &)
 DECLARE_SIGNATURE1(void,v_NOTIFY_Sig,TNotify &)
@@ -1123,14 +872,496 @@ DECLARE_SIGNATURE1(bool,b_NMOBJECTNOTIFY_Sig,TNmObjectNotify &)
 DECLARE_SIGNATURE1(bool,b_NMKEY_Sig,TNmKey &)
 DECLARE_SIGNATURE2(void,v_i_NOTIFY_Sig,int,TNotify &)
 DECLARE_SIGNATURE2(bool,b_i_NOTIFY_Sig,int,TNotify &)
+// documentd but not defined
+#if 0
+DECLARE_SIGNATURE1(void,v_TOOLTIPSCREATED_Sig,TTooltipCreated &)
+#endif
+//namespace owl {
+
+
+//----------------------------------------------------------------------------
+// WINDOWEV.H
+//
+
+//
+/// Notification handled by parent with handler returning void
+///      i.e.  void method()
+//
+#define EV_COMMCTL_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_Dispatch,\
+  (TMyPMF)::owl::v_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting notification
+/// code.        i.e. void method(uint notifyCode)
+//
+#define EV_COMMCTL_NOTIFY_AND_CODE(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_NMHDRCode_Dispatch,\
+  (TMyPMF)::owl::v_U_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting NMHDR&
+/// as parameter.        i.e. void method(NMHDR& nmHdr)
+//
+#define EV_COMMCTL_NOTIFY_AND_NMHDR(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMHDR_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting NMHDR& and
+/// returning a bool.
+///                      i.e. bool method(NMHDR& nmHdr)
+//
+#define EV_COMMCTL_NOTIFY_BOOL_AND_NMHDR(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMHDR_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TNotify&
+/// as parameter.
+///                      i.e. void method(TNotify& nmHdr)
+//
+#define EV_COMMCTL_NOTIFY_AND_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TNotify& and
+/// returning a bool.
+///                     i.e. bool method(TNotify& nmHdr)
+//
+#define EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TNotify& and
+/// returning an int.
+///                      i.e. int method(TNotify& not)
+//
+#define EV_COMMCTL_NOTIFY_INT_AND_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+/// Notification handled by parent with handler expecting TNmMouse&
+/// as parameter.
+///                      i.e. int method(TNmMouse& nmHdr)
+//
+#define EV_COMMCTL_NOTIFY_AND_NMMOUSE(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMMOUSE_Sig<TMyClass>(&TMyClass::method)}
+
+
+/// Notification handled by parent with handler expecting TNmCustomDraw &
+/// as parameter.
+///                      i.e. int method(TNmCustomDraw & )
+//
+#define EV_COMMCTL_NOTIFY_AND_CUSTOMDRAW(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_CUSTOMDRAW_Sig<TMyClass>(&TMyClass::method)}
+
+
+/// Notification handled by parent with handler expecting TNmChar &
+/// as parameter.
+///                      i.e. void method(TNmChar & )
+//
+#define EV_COMMCTL_NOTIFY_AND_NMCHAR(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMCHAR_Sig<TMyClass>(&TMyClass::method)}
+
+/// Notification handled by parent with handler expecting TNmKey &
+/// as parameter.
+///                      i.e. bool method(TNmKey & nmKey)
+//
+#define EV_COMMCTL_NOTIFY_AND_NMKEY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMKEY_Sig<TMyClass>(&TMyClass::method)}
+
+/// Notification handled by parent with handler expecting int and TNotify &
+/// as parameter.
+///                      i.e. void method(int id, TNotify & not)
+//
+#define EV_COMMCTL_NOTIFY_AND_ID_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_WPARAM_LPARAM_Dispatch,\
+   (TMyPMF)::owl::v_i_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+   	
+#define EV_COMMCTL_NOTIFY_AND_ID_NOTIFY_RETURN(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::U_WPARAM_LPARAM_Dispatch,\
+  	(TMyPMF)::owl::b_i_NOTIFY_Sig<TMyClass>(&TMyClass::method)} 
+
+/// \name Common Control Notification  Messages
+/// @{
+/// These common control macros handle NM_xxxx notification codes. To determine the
+/// name of the notification code that corresponds to the EV_XXXX macro, remove the
+/// EV_ prefix.
+#define EV_NM_CLICK(id, method)       EV_COMMCTL_NOTIFY(id, NM_CLICK, method)
+#define EV_NM_DBLCLK(id, method)      EV_COMMCTL_NOTIFY(id, NM_DBLCLK, method)
+#define EV_NM_KILLFOCUS(id, method)   EV_COMMCTL_NOTIFY(id, NM_KILLFOCUS, method)
+#define EV_NM_OUTOFMEMORY(id, method) EV_COMMCTL_NOTIFY(id, NM_OUTOFMEMORY, method)
+#define EV_NM_RCLICK(id, method)      EV_COMMCTL_NOTIFY(id, NM_RCLICK, method)
+#define EV_NM_RDBLCLK(id, method)     EV_COMMCTL_NOTIFY(id, NM_RDBLCLK, method)
+#define EV_NM_RETURN(id, method)      EV_COMMCTL_NOTIFY(id, NM_RETURN, method)
+#define EV_NM_SETFOCUS(id, method)    EV_COMMCTL_NOTIFY(id, NM_SETFOCUS, method)
+#define EV_NM_CUSTOMDRAW(id, method)  EV_COMMCTL_NOTIFY_AND_CUSTOMDRAW(id, NM_CUSTOMDRAW,method)
+#define EV_NM_HOVER(id, method)        EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(id, NM_HOVER, method)
+#define EV_NM_NCHITTEST(id, method)    EV_COMMCTL_NOTIFY_AND_NMMOUSE(id, NM_NCHITTEST, method)
+#define EV_NM_KEYDOWN(id, method)      EV_COMMCTL_NOTIFY_AND_NMKEY(id, NM_KEYDOWN, method)
+#define EV_NM_RELEASEDCAPTURE(id, method) EV_COMMCTL_NOTIFY(id, NM_RELEASEDCAPTURE, method)
+#define EV_NM_SETCURSOR(id, method)   EV_COMMCTL_NOTIFY_AND_NMMOUSE(id, NM_SETCURSOR, method)
+#define EV_NM_CHAR(id, method)         EV_COMMCTL_NOTIFY_AND_NMCHAR(id, NM_CHAR, method)
+/// @}
+
+// documentd but not defined
+//~~~~~~~~~~~~~~~~~~~~~~~~~~
+#if 0
+//
+/// Version 4.72 
+/// Notification handled by parent with handler expecting TTooltipCreated &
+/// as parameter.
+///                      i.e. void method(TTooltipCreated & tip)
+//
+#define EV_NM_TOOLTIPSCREATED(id, method)\
+  {{NM_TOOLTIPSCREATED}, 0, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+   (TMyPMF)::owl::v_TOOLTIPSCREATED_Sig<TMyClass>(&TMyClass::method)}
+#endif
+
+//----------------------------------------------------------------------------
+//
+// Animation control notifications
+//
+// void method()
+//
+#define EV_ACN_START(id, method)      EV_CHILD_NOTIFY(id, ACN_START, method)
+#define EV_ACN_STOP(id, method)       EV_COMMCTL_NOTIFY(id, ACN_STOP, method)
+
+
+//----------------------------------------------------------------------------
+// Header control notifications
+//
 DECLARE_SIGNATURE1(void,v_HEADERNOTIFY_Sig,THdrNotify &)
 DECLARE_SIGNATURE1(bool,b_HEADERNOTIFY_Sig,THdrNotify &)
 DECLARE_SIGNATURE1(void,v_HDN_DISPINFO_NOTIFY_Sig,THdrDispInfo &)
 DECLARE_SIGNATURE1(void,b_HDN_DISPINFO_NOTIFY_Sig,THdrDispInfo &)
+
+//
+/// Notification handled by parent with handler expecting THdrNotify&
+/// as parameter.        i.e. void method(THdrNotify& nmHdr)
+//
+#define EV_HEADERNOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_HEADERNOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting THdrNotify& and
+/// returning a bool.
+///                      i.e. bool method(THdrNotify& nmHdr)
+//
+#define EV_HEADERNOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_HEADERNOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting THdrDispInfo& and
+/// returning a void.    i.e. bool method(THdrDispInfo& nmHdr)
+//
+#define EV_HDN_DISPINFO_NOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_HDN_DISPINFO_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting THdrDispInfo&
+/// i.e. void method(THdrDispInfo& nmHdr)
+//
+#define EV_HDN_DISPINFO_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_HDN_DISPINFO_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+
+/// \name Header Control Notification  Messages
+/// @{
+/// These header control macros handle EN_xxxx notification codes. To determine the
+/// name of the notification code that corresponds to the EV_XXXX macro, remove the
+/// EV_ prefix.
+#define EV_HDN_BEGINDRAG(id, method)        EV_HEADERNOTIFY_BOOL(id, HDN_BEGINDRAG, method)
+#define EV_HDN_BEGINTRACK(id, method)       EV_HEADERNOTIFY_BOOL(id, HDN_BEGINTRACK, method)
+#define EV_HDN_DIVIDERDBLCLICK(id, method)  EV_HEADERNOTIFY(id, HDN_DIVIDERDBLCLICK, method)
+#define EV_HDN_ENDDRAG(id, method)          EV_HEADERNOTIFY_BOOL(id, HDN_ENDDRAG, method)
+#define EV_HDN_ENDTRACK(id, method)         EV_HEADERNOTIFY(id, HDN_ENDTRACK, method)
+#define EV_HDN_ITEMCHANGED(id,method)       EV_HEADERNOTIFY(id, HDN_ITEMCHANGED, method)
+#define EV_HDN_ITEMCHANGING(id,method)      EV_HEADERNOTIFY_BOOL(id, HDN_ITEMCHANGING, method)
+#define EV_HDN_ITEMCLICK(id, method)        EV_HEADERNOTIFY(id, HDN_ITEMCLICK, method)
+#define EV_HDN_ITEMDBLCLICK(id, method)     EV_HEADERNOTIFY(id, HDN_ITEMDBLCLICK, method)
+#define EV_HDN_TRACK(id, method)            EV_HEADERNOTIFY_BOOL(id, HDN_TRACK, method)
+#define EV_HDN_GETDISPINFO(id, method)      EV_HDN_DISPINFO_NOTIFY(id, HDN_GETDISPINFO, method)  // new
+/// @}
+
+//----------------------------------------------------------------------------
+// TDateTimepicker control notifications
+//
+DECLARE_SIGNATURE1(int,i_DATETIMECHANGE_Sig,TDateTimeChange &)
+DECLARE_SIGNATURE1(int,i_NMDATETIMEFORMAT_Sig,TDateTimeFormat &)
+DECLARE_SIGNATURE1(int,i_NMDATETIMEFORMATQUERY_Sig,TDateTimeFormatQuery &)
+DECLARE_SIGNATURE1(int,i_NMDATETIMESTRING_Sig,TDateTimeString &)
+DECLARE_SIGNATURE1(int,i_NMDATETIMEWMKEYDOWN_Sig,TDateTimeKeyDown &)
+
+//
+// void method()
+#define EV_DTN_CLOSEUP(id, method)          EV_COMMCTL_NOTIFY(id, DTN_CLOSEUP, method)
+
+//
+/// i.e. int method(TDateTimeChange & dtNot)
+/// owner of control must return zerro
+#define EV_DTN_DATETIMECHANGE(id, method)                       \
+  {{DTN_DATETIMECHANGE}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch, \
+  (TMyPMF)::owl::i_DATETIMECHANGE_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// void method()
+#define EV_DTN_DROPDOWN(id, method)         EV_COMMCTL_NOTIFY(id, DTN_DROPDOWN, method)
+
+//
+/// i.e. int method(TDateTimeFormat & dtNot)
+/// owner of control must return zerro
+#define EV_DTN_FORMAT(id, method)                       \
+  {{DTN_FORMAT}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch, \
+  (TMyPMF)::owl::i_NMDATETIMEFORMAT_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// i.e. int method(TDateTimeFormat & dtNot)
+/// owner of control must return zerro
+#define EV_DTN_FORMATQUERY(id, method)                      \
+  {{DTN_FORMATQUERY}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMDATETIMEFORMATQUERY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// i.e. int method(TDateTimeString & dtNot)
+/// owner of control must return zerro
+#define EV_DTN_USERSTRING(id, method)                      \
+  {{DTN_FORMATQUERY}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMDATETIMESTRING_Sig<TMyClass>(&TMyClass::method)}
+
+//
+//
+/// i.e. int method(TDateTimeKeyDown & dtNot)
+/// owner of control must return zerro
+#define EV_DTN_WMKEYDOWN(id, method)                      \
+  {{DTN_FORMATQUERY}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMDATETIMEWMKEYDOWN_Sig<TMyClass>(&TMyClass::method)}
+
+/// \name Tab Control Notificaiton  Messages
+/// @{
+/// The following tab control macros handle TCN_xxxx notification codes. To
+/// determine the name of the notification code that corresponds to the EV_XXXX
+/// macro, remove the EV_ prefix.
+
+//} // OWL namespace
+DECLARE_SIGNATURE1(void,v_KEYDOWNNOTIFY_Sig,TTabKeyDown &)
+//namespace owl {
+
+//
+/// Notification handled by parent with handler expecting THdrNotify&
+/// as parameter.        i.e. void method(TTabKeyDown& nmHdr)
+//
+#define EV_TCN_KEYDOWN(id, method)\
+  {{TCN_KEYDOWN}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_KEYDOWNNOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+
+#define EV_TCN_SELCHANGE(id, method)    EV_COMMCTL_NOTIFY_AND_NOTIFY(id, TCN_SELCHANGE, method)
+#define EV_TCN_SELCHANGING(id, method)  EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(id, TCN_SELCHANGING, method)
+
+// Version 4.71 : bool method(TNmObjectNotify& nmHdr)
+#define EV_TCN_GETOBJECT(id, method) \
+  {{TCN_GETOBJECT}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMOBJECTNOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+/// @}
+
+/// \name Property Sheet Notification  Messages
+/// @{
+/// The following property sheet macros handle PSN_xxxx notification codes. To
+/// determine the name of the notification code that corresponds to the EV_XXXX
+/// macro, remove the EV_ prefix.
+///
+/// \note These macros hard-code the CtlID to PropPageID. Since Property
+//       Pages do not have the concept of IDs [the way Ctls have an
+//       ID by which their parent can identify them] this mechanism
+//       facilitates NOTIFICATION dispatching.
+//
+
+#define EV_PSN_APPLY(method) \
+        EV_COMMCTL_NOTIFY_INT_AND_NOTIFY(PropPageID, (uint)PSN_APPLY, method)
+
+// Version 4.71
+#define EV_PSN_GETOBJECT(method) \
+  {{PSN_GETOBJECT}, PropPageID, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMOBJECTNOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+#define EV_PSN_HELP(method) \
+        EV_COMMCTL_NOTIFY_AND_NOTIFY(PropPageID, (uint)PSN_HELP, method)
+
+#define EV_PSN_KILLACTIVE(method)\
+        EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(PropPageID, (uint)PSN_KILLACTIVE, method)
+
+#define EV_PSN_QUERYCANCEL(method)\
+        EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(PropPageID, (uint)PSN_QUERYCANCEL, method)
+
+#define EV_PSN_RESET(method)\
+        EV_COMMCTL_NOTIFY_AND_NOTIFY(PropPageID, (uint)PSN_RESET, method)
+
+#define EV_PSN_SETACTIVE(method)\
+        EV_COMMCTL_NOTIFY_INT_AND_NOTIFY(PropPageID, (uint)PSN_SETACTIVE, method)
+
+#define EV_PSN_WIZBACK(method)\
+        EV_COMMCTL_NOTIFY_INT_AND_NOTIFY(PropPageID, (uint)PSN_WIZBACK, method)
+
+#define EV_PSN_WIZFINISH(method)\
+        EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(PropPageID, (uint)PSN_WIZFINISH, method)
+
+#define EV_PSN_WIZNEXT(method)\
+        EV_COMMCTL_NOTIFY_INT_AND_NOTIFY(PropPageID, (uint)PSN_WIZNEXT, method)
+
+/// @}
+
+/// \name Rich Edit Notification  Messages
+/// @{
+/// The following rich edit macros handle EN_xxxx notification codes. To determine
+/// the name of the notification code that corresponds to the EV_XXXX macro, remove
+/// the EV_ prefix.
+
+DECLARE_SIGNATURE1(bool,b_ENDROPFILES_Sig,TEnDropFiles &)
+DECLARE_SIGNATURE1(bool,b_MSGFILTER_Sig,TMsgFilter &)
+DECLARE_SIGNATURE1(bool,b_PROTECTED_Sig,TEnProtected &)
+DECLARE_SIGNATURE1(void,v_REQRESIZE_Sig,TReqResize &)
+DECLARE_SIGNATURE1(bool,b_SELCHANGE_Sig,TSelChange &)
+
+//
+/// Notification handled by parent with handler expecting TEnDropFiles& and
+/// returning a bool.
+///                      i.e. bool method(TEnDropFiles& nmHdr)
+//
+#define EV_EN_DROPFILES(id, method)\
+  {{EN_DROPFILES}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_ENDROPFILES_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TMsgFilter& and
+/// returning a bool.
+///                      i.e. bool method(TMsgFilter& nmHdr)
+//
+#define EV_EN_MSGFILTER(id, method)\
+  {{EN_MSGFILTER}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_MSGFILTER_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TEnProtected& and
+/// returning a bool.
+///                      i.e. bool method(TEnProtected& nmHdr)
+//
+#define EV_EN_PROTECTED(id, method)\
+  {{EN_PROTECTED}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_PROTECTED_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TReqResize&.
+//
+///                      i.e. void method(TReqResize& nmHdr)
+//
+#define EV_EN_REQRESIZE(id, method)\
+  {{EN_REQUESTRESIZE}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_REQRESIZE_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TSelChange& and
+/// returning a bool.
+///                      i.e. bool method(TSelChange& nmHdr)
+//
+#define EV_RICHED_EN_SELCHANGE(id, method)\
+  {{EN_SELCHANGE}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_SELCHANGE_Sig<TMyClass>(&TMyClass::method)}
+
+/// @}
+
+
+/// \name UpDown Notification  Messages
+/// @{
+/// The following Up/Down control macro handles UDN_xxxx notification codes. To
+/// determine the name of the notification code that corresponds to the EV_XXXX
+/// macro, remove the EV_ prefix.
+
+//
+//
+//
+inline
+TNmUpDown::TNmUpDown(HWND hwnd, uint id, uint code, int pos, int delta)
+{
+  iPos = pos;
+  iDelta = delta;
+  hdr.hwndFrom = hwnd;
+  hdr.idFrom = id;
+  hdr.code = code;
+}
+
 DECLARE_SIGNATURE1(bool,b_NMUPDOWN_NOTIFY_Sig,TNmUpDown &)
+
+//
+/// Notification handled by parent expecting a TNmUpDown notification
+//
+///      i.e. bool HandleUpDown(TNmUpDown& updownNot);
+//
+#define EV_UDN_DELTAPOS(id, method) \
+  {{UDN_DELTAPOS}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMUPDOWN_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+/// @}
+
+
+/// \name Tool Tip Notification  Messages
+/// @{
+/// The following tooltip macros handle TTN_xxxx notification codes. To determine
+/// the name of the notification code that corresponds to the EV_XXXX macro, remove
+/// the EV_ prefix.
+
 DECLARE_SIGNATURE1(void,v_NEEDTEXT_Sig,TTooltipText &)
 DECLARE_SIGNATURE1(int,i_NMTTCUSTOMDRAW_Sig,TTtCustomDraw &)
 DECLARE_SIGNATURE1(void,v_NMTTDISPINFO_Sig,TTooltipDispInfo &)
+
+/// Notification handled by parent with handler expecting TTooltipText &
+/// as parameter.
+///                      i.e. void method(TTooltipText & )
+//
+#define EV_TTN_NEEDTEXT(id, method)  \
+  {{TTN_NEEDTEXT}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NEEDTEXT_Sig<TMyClass>(&TMyClass::method)}
+
+/// Notification handled by parent with handler expecting TNmCustomDraw &
+/// as parameter.
+///                     i.e. int method(TTtCustomDraw & )
+//
+#define EV_TTN_CUSTOMDRAW(id, method)  \
+  {{NM_CUSTOMDRAW}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMTTCUSTOMDRAW_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// supersedes the TTN_NEEDTEXT notification !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/// Notification handled by parent with handler expecting TTooltipDispInfo &
+/// as parameter.
+///                      i.e. void method(TTooltipDispInfo & )
+//
+#define EV_TTN_GETDISPINFO(id, method)  \
+  {{TTN_GETDISPINFO}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMTTDISPINFO_Sig<TMyClass>(&TMyClass::method)}
+
+#define EV_TTN_POP(id, method)  EV_COMMCTL_NOTIFY_AND_ID_NOTIFY(id, TTN_POP, method)
+#define EV_TTN_SHOW(id, method) EV_COMMCTL_NOTIFY_AND_ID_NOTIFY_RETURN(id, TTN_SHOW, method)
+
+/// @}
+
+/// \name Tree View Notification  Messages
+/// @{
+/// The following tree view macros handle TVN_xxxx notification codes. To determine
+/// the name of the notification code that corresponds to the EV_XXXX macro, remove
+/// the EV_ prefix.
 DECLARE_SIGNATURE1(void,v_TREEWIND_NOTIFY_Sig,TTvNotify &)
 DECLARE_SIGNATURE1(bool,b_TREEWIND_NOTIFY_Sig,TTvNotify &)
 DECLARE_SIGNATURE1(void,v_TV_KEYDOWN_NOTIFY_Sig,TTvKeyDownNotify &)
@@ -1138,6 +1369,112 @@ DECLARE_SIGNATURE1(bool,b_TV_DISPINFO_NOTIFY_Sig,TTvDispInfoNotify &)
 DECLARE_SIGNATURE1(void,v_TV_DISPINFO_NOTIFY_Sig,TTvDispInfoNotify &)
 DECLARE_SIGNATURE1(int,i_TV_CUSTOMDRAW_Sig,TTvCustomDraw &) // Version 4.70/4.71
 DECLARE_SIGNATURE1(void,v_TV_GETINFOTIP_Sig,TTvGetInfoTip &) // Version 4.70/4.71
+
+#if _WIN32_WINNT >= 0x0600 // _WIN32_WINNT_VISTA
+
+DECLARE_SIGNATURE1(bool, b_NMTVITEMCHANGE_Sig, NMTVITEMCHANGE&)
+DECLARE_SIGNATURE1(VOID, v_NMTVSTATEIMAGECHANGING_Sig, NMTVSTATEIMAGECHANGING&)
+
+#endif
+
+//
+/// Notification handled by parent with handler expecting TTvNotify&
+/// as parameter.        i.e. void method(TTvNotify& nmHdr)
+//
+#define EV_TREEWIND_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_TREEWIND_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TTvNotify& and
+/// returning a bool.    i.e. bool method(TTvNotify& nmHdr)
+//
+#define EV_TREEWIND_NOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_TREEWIND_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TTvDispInfoNotify&
+/// as parameter.        i.e. void method(TTvDispInfoNotify& nmHdr)
+//
+#define EV_TV_DISPINFO_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_TV_DISPINFO_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TTvDispInfoNotify& and
+/// returning a bool.    i.e. bool method(TTvDispInfoNotify& nmHdr)
+//
+#define EV_TV_DISPINFO_NOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_TV_DISPINFO_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+#if _WIN32_WINNT >= 0x0600 // _WIN32_WINNT_VISTA
+
+//
+/// Notification handled by parent with handler expecting NMTVITEMCHANGE& and
+/// returning a bool.    i.e. bool method(NMTVITEMCHANGE& nmHdr)
+//
+#define EV_TREEWIND_NMTVITEMCHANGE(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMTVITEMCHANGE_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting NMTVSTATEIMAGECHANGING&
+/// as a parameter.      i.e. void method(NMTVSTATEIMAGECHANGING& nmHdr)
+//
+#define EV_NM_TVSTATEIMAGECHANGING(id, method)\
+  {{NM_TVSTATEIMAGECHANGING}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMTVSTATEIMAGECHANGING_Sig<TMyClass>(&TMyClass::method)}
+
+#endif
+
+#define EV_TVN_BEGINDRAG(id, method)      EV_TREEWIND_NOTIFY        (id, TVN_BEGINDRAG, method)
+#define EV_TVN_BEGINLABELEDIT(id, method) EV_TV_DISPINFO_NOTIFY_BOOL(id, TVN_BEGINLABELEDIT, method)
+#define EV_TVN_BEGINRDRAG(id, method)     EV_TREEWIND_NOTIFY        (id, TVN_BEGINRDRAG, method)
+#define EV_TVN_DELETEITEM(id, method)     EV_TREEWIND_NOTIFY        (id, TVN_DELETEITEM, method)
+#define EV_TVN_ENDLABELEDIT(id, method)   EV_TV_DISPINFO_NOTIFY     (id, TVN_ENDLABELEDIT, method)
+#define EV_TVN_GETDISPINFO(id, method)    EV_TV_DISPINFO_NOTIFY     (id, TVN_GETDISPINFO, method)
+#define EV_TVN_ITEMEXPANDED(id, method)   EV_TREEWIND_NOTIFY        (id, TVN_ITEMEXPANDED, method)
+#define EV_TVN_ITEMEXPANDING(id, method)  EV_TREEWIND_NOTIFY_BOOL   (id, TVN_ITEMEXPANDING, method)
+#define EV_TVN_SELCHANGED(id, method)     EV_TREEWIND_NOTIFY        (id, TVN_SELCHANGED, method)
+#define EV_TVN_SELCHANGING(id, method)    EV_TREEWIND_NOTIFY_BOOL   (id, TVN_SELCHANGING, method)
+#define EV_TVN_SETDISPINFO(id, method)    EV_TV_DISPINFO_NOTIFY     (id, TVN_SETDISPINFO, method)
+#define EV_TVN_KEYDOWN(id, method)\
+  {{TVN_KEYDOWN}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_TV_KEYDOWN_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+#if _WIN32_WINNT >= 0x0600 // _WIN32_WINNT_VISTA
+
+#define EV_TVN_ITEMCHANGED(id, method)    EV_TREEWIND_NMTVITEMCHANGE(id, TVN_ITEMCHANGED, method)
+#define EV_TVN_ITEMCHANGING(id, method)   EV_TREEWIND_NMTVITEMCHANGE(id, TVN_ITEMCHANGING, method)
+
+#endif
+
+/// Notification handled by parent with handler expecting TTvCustomDraw &
+/// as parameter.
+///                      i.e. int method(TTvCustomDraw & )
+//
+#define EV_TVN_CUSTOMDRAW(id, method)  \
+  {{NM_CUSTOMDRAW}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_TV_CUSTOMDRAW_Sig<TMyClass>(&TMyClass::method)}
+
+/// Notification handled by parent with handler expecting TTvGetInfoTip &
+/// as parameter.
+///                      i.e. void method(TTvGetInfoTip & )
+//
+#define EV_TVN_GETINFOTIP(id, method)  \
+  {{TVN_GETINFOTIP}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_TV_GETINFOTIP_Sig<TMyClass>(&TMyClass::method)}
+
+#define EV_TVN_SINGLEEXPAND(id, method)  EV_TREEWIND_NOTIFY(id, TVN_SINGLEEXPAND, method)
+/// @}
+
+//----------------------------------------------------------------------------
+// ListWindow control notifications
+//
+//
+
 DECLARE_SIGNATURE1(void,v_LISTWIND_NOTIFY_Sig,TLvNotify &)
 DECLARE_SIGNATURE1(bool,b_LISTWIND_NOTIFY_Sig,TLvNotify &)
 DECLARE_SIGNATURE1(void,v_LV_KEYDOWN_NOTIFY_Sig,TLvKeyDownNotify &)
@@ -1148,660 +1485,253 @@ DECLARE_SIGNATURE1(bool,b_NMLVCACHEHINT_Sig,TLvCacheHint &)  // Version 4.70
 DECLARE_SIGNATURE1(int,i_NMLVFINDITEM_Sig,TLvFindItem &)     // Version 4.70
 DECLARE_SIGNATURE1(bool,b_NMLVODSTATECHANGE_Sig,TLvOdStateChanged &) // Version 4.70
 DECLARE_SIGNATURE1(int,i_NMLVCUSTOMDRAW_Sig,TLvCustomDraw &) // Version 4.70/4.71
+
+
+
+//
+/// Notification handled by parent with handler expecting TLvNotify&
+/// as parameter.        i.e. void method(TLwNotify& nmHdr)
+//
+#define EV_LISTWIND_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_LISTWIND_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TLvNotify& and
+/// returning a bool.
+///                      i.e. bool method(TLvNotify& nmHdr)
+//
+#define EV_LISTWIND_NOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_LISTWIND_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TLvDispInfoNotify&
+/// as parameter.        i.e. void method(TLvDispInfoNotify& nmHdr)
+//
+#define EV_LV_DISPINFO_NOTIFY(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_LV_DISPINFO_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+//
+/// Notification handled by parent with handler expecting TLvDispInfoNotify& and
+/// returning a bool.
+//                      i.e. bool method(TLvDispInfoNotify& nmHdr)
+//
+#define EV_LV_DISPINFO_NOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_LV_DISPINFO_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+/// \name List View Notification  Messages
+/// @{
+/// These list view macros handle LVN_xxxx notification codes. To determine the name
+/// of the notification code that corresponds to the EV_XXXX macro, remove the EV_
+/// prefix.
+
+/// void method(TLvKeyDownNotify & nmHdr)
+#define EV_LVN_KEYDOWN(id, method)\
+  {{LVN_KEYDOWN}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_LV_KEYDOWN_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+/// void method(TLvGetInfoTip& info)        Version 4.71
+#define EV_LVN_GETINFOTIP(id, method)\
+  {{LVN_GETINFOTIP}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_LV_GETINFOTIP_Sig<TMyClass>(&TMyClass::method)}
+
+/// bool method(TLvCacheHint& info)        Version 4.70
+#define EV_LVN_ODCACHEHINT(id, method)\
+  {{LVN_ODCACHEHINT}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMLVCACHEHINT_Sig<TMyClass>(&TMyClass::method)}
+
+/// int method(TLvFindItem& info)        Version 4.70
+#define EV_LVN_ODFINDITEM(id, method)\
+  {{LVN_ODFINDITEM}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMLVFINDITEM_Sig<TMyClass>(&TMyClass::method)}
+
+/// bool method(TLvOdStateChanged& info)        Version 4.70
+#define EV_LVN_ODSTATECHANGED(id, method)\
+  {{LVN_ODSTATECHANGED}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_NMLVODSTATECHANGE_Sig<TMyClass>(&TMyClass::method)}
+
+/// int method(TLvCustomDraw& info)        Version 4.70/4.71
+#define EV_LVN_CUSTOMDRAW(id, method)\
+  {{NM_CUSTOMDRAW}, id, (::owl::TAnyDispatcher) ::owl::i_LPARAM_Dispatch,\
+  (TMyPMF)::owl::i_NMLVCUSTOMDRAW_Sig<TMyClass>(&TMyClass::method)}
+
+
+#define EV_LVN_BEGINDRAG(id, method)        EV_LISTWIND_NOTIFY(id, LVN_BEGINDRAG, method)
+#define EV_LVN_BEGINLABELEDIT(id, method)   EV_LV_DISPINFO_NOTIFY_BOOL(id, LVN_BEGINLABELEDIT, method)
+#define EV_LVN_BEGINRDRAG(id, method)       EV_LISTWIND_NOTIFY(id, LVN_BEGINRDRAG, method)
+#define EV_LVN_COLUMNCLICK(id, method)      EV_LISTWIND_NOTIFY(id, LVN_COLUMNCLICK, method)
+#define EV_LVN_DELETEALLITEMS(id, method)   EV_LISTWIND_NOTIFY(id, LVN_DELETEALLITEMS, method)
+#define EV_LVN_DELETEITEM(id, method)       EV_LISTWIND_NOTIFY(id, LVN_DELETEITEM, method)
+#define EV_LVN_SETDISPINFO(id, method)      EV_LV_DISPINFO_NOTIFY(id, LVN_SETDISPINFO, method)
+
+#if 0   // LVN_ENDDRAG is documented but not defined (currently)
+#define EV_LVN_ENDDRAG(id, method)          EV_LISTWIND_NOTIFY(id, LVN_ENDDRAG, method)
+#endif
+
+#if 0   // LVN_ENDRDRAG is documented but not defined (currently)
+#define EV_LVN_ENDRDRAG(id, method)         EV_LISTWIND_NOTIFY(id, LVN_ENDRDRAG, method)
+#endif
+
+#define EV_LVN_ENDLABELEDIT(id, method)     EV_LV_DISPINFO_NOTIFY_BOOL(id, LVN_ENDLABELEDIT, method)
+#define EV_LVN_GETDISPINFO(id, method)      EV_LV_DISPINFO_NOTIFY(id, LVN_GETDISPINFO, method)
+#define EV_LVN_INSERTITEM(id, method)       EV_LISTWIND_NOTIFY(id, LVN_INSERTITEM, method)
+#define EV_LVN_ITEMCHANGED(id, method)      EV_LISTWIND_NOTIFY(id, LVN_ITEMCHANGED, method)
+#define EV_LVN_ITEMCHANGING(id, method)     EV_LISTWIND_NOTIFY_BOOL(id, LVN_ITEMCHANGING, method)
+#define EV_LVN_HOTTRACK(id, method)         EV_LISTWIND_NOTIFY_BOOL(id, LVN_HOTTRACK, method)     // Version 4.71
+#define EV_LVN_MARQUEEBEGIN(id, method)     EV_LISTWIND_NOTIFY_BOOL(id, LVN_MARQUEEBEGIN, method) // Version 4.70
+
+
+// Version 4.70
+// if ctrl version > 4.7 -> can be casted to TLvItemActivate
+//  bool method(TNotify& nmHdr)
+// bool method(TNotify& nmHdr)
+// {
+//  TLvItemActivate& item = (TLvItemActivate&)nmHdr;
+// }
+#define EV_LVN_ITEMACTIVATE(id, method)     EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(id, LVN_ITEMACTIVATE, method)
+
+/// @}
+
+
+//
+// Rebar notifications
+//
+//#define RBN_AUTOSIZE           void method(TNotify& not)
+#define EV_RBN_AUTOSIZE(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_AUTOSIZE, method)
+//#define RBN_BEGINDRAG         bool method(TNotify& not)
+#define EV_RBN_BEGINDRAG(id, method)\
+  EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(id, RBN_BEGINDRAG, method)
+//#define RBN_CHILDSIZE          void method(TNotify& not)
+#define EV_RBN_CHILDSIZE(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_CHILDSIZE, method)
+//#define RBN_DELETEDBAND        void method(TNotify& not)
+#define EV_RBN_DELETEDBAND(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_DELETEDBAND, method)
+//#define RBN_DELETINGBAND      void method(TNotify& not)
+#define EV_RBN_DELETINGBAND(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_DELETINGBAND, method)
+//#define RBN_ENDDRAG            void method(TNotify& not)
+#define EV_RBN_ENDDRAG(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_ENDDRAG, method)
+//#define RBN_GETOBJECT         bool method(TNotify& not) -> must return true
+#define EV_RBN_GETOBJECT(id, method)\
+  EV_COMMCTL_NOTIFY_BOOL_AND_NOTIFY(id, RBN_GETOBJECT, method)
+//#define RBN_HEIGHTCHANGE      void method(TNotify& not)
+#define EV_RBN_HEIGHTCHANGE(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_HEIGHTCHANGE, method)
+//#define RBN_LAYOUTCHANGED      void method(TNotify& not)
+#define EV_RBN_LAYOUTCHANGED(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, RBN_LAYOUTCHANGED, method)
+
+
+//
+// ComboBoxEx notifications
+//
+//
 DECLARE_SIGNATURE1(bool,b_CBEN_ITEMINFO_NOTIFY_Sig,TCBExItemInfo &)
 DECLARE_SIGNATURE1(void,v_CBEN_DRAGBEGIN_NOTIFY_Sig,TCBExDragInfo &)
 DECLARE_SIGNATURE1(bool,b_CBEN_ENDEDIT_NOTIFY_Sig,TCBExEditInfo &)
+//namespace owl {
+
+//
+// bool method(TCBExItemInfo &)
+#define EV_CBEN_ITEMINFO_NOTIFY_BOOL(id, notifyCode, method)\
+  {{notifyCode}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_LISTWIND_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+// void method(TNotify &)
+#define EV_CBEN_BEGINEDIT(id, method)\
+  EV_COMMCTL_NOTIFY_AND_NOTIFY(id, CBEN_BEGINEDIT, method)
+// bool method(TCBExItemInfo &)
+#define EV_CBEN_DELETEITEM(id, method)\
+  EV_CBEN_ITEMINFO_NOTIFY_BOOL(id, CBEN_DELETEITEM, method)
+
+// void method(TCBExDragInfo &)
+#define EV_CBEN_DRAGBEGIN(id, method)\
+  {{CBEN_DRAGBEGIN}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_CBEN_DRAGBEGIN_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+// bool method(TCBExEditInfo &)
+#define EV_CBEN_ENDEDIT(id, method)\
+  {{CBEN_ENDEDIT}, id, (::owl::TAnyDispatcher) ::owl::B_LPARAM_Dispatch,\
+  (TMyPMF)::owl::b_CBEN_ENDEDIT_NOTIFY_Sig<TMyClass>(&TMyClass::method)}
+
+// bool method(TCBExItemInfo &)
+#define EV_CBEN_GETDISPINFO(id, method)\
+   EV_CBEN_ITEMINFO_NOTIFY_BOOL(id, CBEN_GETDISPINFO, method)
+// bool method(TCBExItemInfo &)
+#define EV_CBEN_INSERTITEM(id, method)\
+   EV_CBEN_ITEMINFO_NOTIFY_BOOL(id, CBEN_INSERTITEM, method)
+
+
+//
+// Month Calendar Control
+//
+//
+//
 DECLARE_SIGNATURE1(void,v_NMDAYSTATE_Sig,TNmDayState &)
 DECLARE_SIGNATURE1(void,v_NMSELCHANGE_Sig,TNmSelChange &)
+
+// void method(TNmDayState &)
+#define EV_MCN_GETDAYSTATE(id, method)\
+  {{MCN_GETDAYSTATE}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMDAYSTATE_Sig<TMyClass>(&TMyClass::method)}
+
+// void method(TNmSelChange &)
+#define EV_MCN_SELCHANGE(id, method)\
+  {{MCN_SELCHANGE}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMSELCHANGE_Sig<TMyClass>(&TMyClass::method)}
+
+// void method(TNmSelChange &)
+#define EV_MCN_SELECT(id, method)\
+  {{MCN_SELECT}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMSELCHANGE_Sig<TMyClass>(&TMyClass::method)}
+
+//
+// Pager Control notifications
+//
+
+
 DECLARE_SIGNATURE1(void,v_NMPGCALCSIZE_Sig,TNmPGCalcSize &)
 DECLARE_SIGNATURE1(void,v_NMPGSCROLL_Sig,TNmPGScroll &)
+
+
+// void method(TNmPGCalcSize &)
+#define EV_PGN_CALCSIZE(id, method)\
+  {{PGN_CALCSIZE}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMPGCALCSIZE_Sig<TMyClass>(&TMyClass::method)}
+
+// void method(TNmPGScroll &)
+#define EV_PGN_SCROLL(id, method)\
+  {{PGN_SCROLL}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMPGSCROLL_Sig<TMyClass>(&TMyClass::method)}
+
+
+//
+// IP Address control notifications
+//
+
+
 DECLARE_SIGNATURE1(void,v_NMIPADDRESS_Sig,TNmIPAddress &)
-DECLARE_SIGNATURE1(int,i_DATETIMECHANGE_Sig,TDateTimeChange &)
-DECLARE_SIGNATURE1(int,i_NMDATETIMEFORMAT_Sig,TDateTimeFormat &)
-DECLARE_SIGNATURE1(int,i_NMDATETIMEFORMATQUERY_Sig,TDateTimeFormatQuery &)
-DECLARE_SIGNATURE1(int,i_NMDATETIMESTRING_Sig,TDateTimeString &)
-DECLARE_SIGNATURE1(int,i_NMDATETIMEWMKEYDOWN_Sig,TDateTimeKeyDown &)
-DECLARE_SIGNATURE1(void,v_KEYDOWNNOTIFY_Sig,TTabKeyDown &)
-DECLARE_SIGNATURE1(bool,b_ENDROPFILES_Sig,TEnDropFiles &)
-DECLARE_SIGNATURE1(bool,b_MSGFILTER_Sig,TMsgFilter &)
-DECLARE_SIGNATURE1(bool,b_PROTECTED_Sig,TEnProtected &)
-DECLARE_SIGNATURE1(void,v_REQRESIZE_Sig,TReqResize &)
-DECLARE_SIGNATURE1(bool,b_SELCHANGE_Sig,TSelChange &)
 
-#endif
+// void method(TNmIPAddress &)
+#define EV_IPN_FIELDCHANGED(id, method)\
+  {{IPN_FIELDCHANGED}, id, (::owl::TAnyDispatcher) ::owl::v_LPARAM_Dispatch,\
+  (TMyPMF)::owl::v_NMIPADDRESS_Sig<TMyClass>(&TMyClass::method)}
 
-//----------------------------------------------------------------------------
-/// \name Common control notification macros
-/// @{
 
 //
-/// \brief Response table entry macro for WM_NOTIFY messages
-/// Looks up the correct dispatcher for the given notificationCode.
+// Track Bar notifications
 //
-#define OWL_EV_NOTIFICATION(notificationCode, sourceId, method)\
-  {{notificationCode}, sourceId,\
-    OWL_DISPATCH(::owl::TDispatch<WM_NOTIFY>::TNotificationDispatch<notificationCode>::Decode, method)}
-
 //
-/// \brief Response table entry macro for WM_NOTIFY messages handled at the child
-/// Looks up the correct dispatcher for the given notificationCode.
-//
-#define OWL_EV_NOTIFICATION_AT_CHILD(notificationCode, method)\
-  OWL_EV_NOTIFICATION(notificationCode, UINT_MAX, method)
-
-//
-/// void method(TNmChar&)
-//
-#define EV_NM_CHAR(id, method) OWL_EV_NOTIFICATION(NM_CHAR, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_CLICK(id, method) OWL_EV_NOTIFICATION(NM_CLICK, id, method)
-
-//
-/// int method(TNmCustomDraw&)
-//
-#define EV_NM_CUSTOMDRAW(id, method) OWL_EV_NOTIFICATION(NM_CUSTOMDRAW, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_DBLCLK(id, method) OWL_EV_NOTIFICATION(NM_DBLCLK, id, method)
-
-//
-/// bool method(TNmHdr&)
-//
-#define EV_NM_HOVER(id, method) OWL_EV_NOTIFICATION(NM_HOVER, id, method)
-
-// 
-/// bool method(TNmKey&)
-//
-#define EV_NM_KEYDOWN(id, method) OWL_EV_NOTIFICATION(NM_KEYDOWN, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_KILLFOCUS(id, method) OWL_EV_NOTIFICATION(NM_KILLFOCUS, id, method)
-
-//
-/// int method(TNmMouse&)
-//
-#define EV_NM_NCHITTEST(id, method) OWL_EV_NOTIFICATION(NM_NCHITTEST, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_OUTOFMEMORY(id, method) OWL_EV_NOTIFICATION(NM_OUTOFMEMORY, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_RCLICK(id, method) OWL_EV_NOTIFICATION(NM_RCLICK, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_RDBLCLK(id, method) OWL_EV_NOTIFICATION(NM_RDBLCLK, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_RELEASEDCAPTURE(id, method) OWL_EV_NOTIFICATION(NM_RELEASEDCAPTURE, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_RETURN(id, method) OWL_EV_NOTIFICATION(NM_RETURN, id, method)
-
-//
-/// int method(TNmMouse&)
-//
-#define EV_NM_SETCURSOR(id, method) OWL_EV_NOTIFICATION(NM_SETCURSOR, id, method)
-
-//
-/// void method()
-//
-#define EV_NM_SETFOCUS(id, method) OWL_EV_NOTIFICATION(NM_SETFOCUS, id, method)
 
 /// @}
 
-//----------------------------------------------------------------------------
-/// \name Animation control notifications
-/// @{
-
-//
-/// void method()
-//
-#define EV_ACN_START(id, method) OWL_EV_NOTIFICATION(ACN_START, id, method)
-
-//
-/// void method()
-//
-#define EV_ACN_STOP(id, method) OWL_EV_NOTIFICATION(ACN_STOP, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Header control notifications
-/// @{
-
-//
-/// bool method(TNmHeader&)
-//
-#define EV_HDN_BEGINDRAG(id, method) OWL_EV_NOTIFICATION(HDN_BEGINDRAG, id, method)
-
-//
-/// bool method(TNmHeader&)
-//
-#define EV_HDN_BEGINTRACK(id, method) OWL_EV_NOTIFICATION(HDN_BEGINTRACK, id, method)
-
-//
-/// void method(TNmHeader&)
-//
-#define EV_HDN_DIVIDERDBLCLICK(id, method) OWL_EV_NOTIFICATION(HDN_DIVIDERDBLCLICK, id, method)
-
-//
-/// bool method(TNmHeader&)
-//
-#define EV_HDN_ENDDRAG(id, method) OWL_EV_NOTIFICATION(HDN_ENDDRAG, id, method)
-
-//
-/// void method(TNmHeader&)
-//
-#define EV_HDN_ENDTRACK(id, method) OWL_EV_NOTIFICATION(HDN_ENDTRACK, id, method)
-
-//
-/// void method(TNmHdDispInfo&)
-//
-#define EV_HDN_GETDISPINFO(id, method) OWL_EV_NOTIFICATION(HDN_GETDISPINFO, id, method)
-
-//
-/// void method(TNmHeader&)
-//
-#define EV_HDN_ITEMCHANGED(id, method) OWL_EV_NOTIFICATION(HDN_ITEMCHANGED, id, method)
-
-//
-/// bool method(TNmHeader&)
-//
-#define EV_HDN_ITEMCHANGING(id, method) OWL_EV_NOTIFICATION(HDN_ITEMCHANGING, id, method)
-
-//
-/// void method(TNmHeader&)
-//
-#define EV_HDN_ITEMCLICK(id, method) OWL_EV_NOTIFICATION(HDN_ITEMCLICK, id, method)
-
-//
-/// void method(TNmHeader&)
-//
-#define EV_HDN_ITEMDBLCLICK(id, method) OWL_EV_NOTIFICATION(HDN_ITEMDBLCLICK, id, method)
-
-//
-/// bool method(TNmHeader&)
-//
-#define EV_HDN_TRACK(id, method) OWL_EV_NOTIFICATION(HDN_TRACK, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name TDateTimepicker control notifications
-/// @{
-
-//
-/// void method()
-//
-#define EV_DTN_CLOSEUP(id, method) OWL_EV_NOTIFICATION(DTN_CLOSEUP, id, method)
-
-//
-/// int method(TNmDateTimeChange&)
-/// The owner of the control must return zero.
-//
-#define EV_DTN_DATETIMECHANGE(id, method) OWL_EV_NOTIFICATION(DTN_DATETIMECHANGE, id, method)
-
-//
-/// void method()
-//
-#define EV_DTN_DROPDOWN(id, method) OWL_EV_NOTIFICATION(DTN_DROPDOWN, id, method)
-
-//
-/// int method(TNmDateTimeFormat&)
-/// The owner of the control must return zero.
-//
-#define EV_DTN_FORMAT(id, method) OWL_EV_NOTIFICATION(DTN_FORMAT, id, method)
-
-//
-/// int method(TNmDateTimeFormatQuery&)
-/// The owner of the control must return zero.
-//
-#define EV_DTN_FORMATQUERY(id, method) OWL_EV_NOTIFICATION(DTN_FORMATQUERY, id, method)
-
-//
-/// int method(TNmDateTimeString&)
-/// The owner of the control must return zero.
-//
-#define EV_DTN_USERSTRING(id, method) OWL_EV_NOTIFICATION(DTN_USERSTRING, id, method)
-
-//
-/// int method(TNmDateTimeKeyDown&)
-/// The owner of the control must return zero.
-//
-#define EV_DTN_WMKEYDOWN(id, method) OWL_EV_NOTIFICATION(DTN_WMKEYDOWN, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Tab control notifications
-/// @{
-
-//
-/// void method(TNmObjectNotify&)
-//
-#define EV_TCN_GETOBJECT(id, method) OWL_EV_NOTIFICATION(TCN_GETOBJECT, id, method)
-
-//
-/// void method(TNmTcKeyDown&)
-//
-#define EV_TCN_KEYDOWN(id, method) OWL_EV_NOTIFICATION(TCN_KEYDOWN, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_TCN_SELCHANGE(id, method) OWL_EV_NOTIFICATION(TCN_SELCHANGE, id, method)
-
-//
-/// bool method(TNmHdr&)
-//
-#define EV_TCN_SELCHANGING(id, method) OWL_EV_NOTIFICATION(TCN_SELCHANGING, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Rich Edit control notifications
-/// @{
-
-//
-/// bool method(TEnDropFiles&)
-//
-#define EV_EN_DROPFILES(id, method) OWL_EV_NOTIFICATION(EN_DROPFILES, id, method)
-
-//
-/// bool method(TMsgFilter&)
-//
-#define EV_EN_MSGFILTER(id, method) OWL_EV_NOTIFICATION(EN_MSGFILTER, id, method)
-
-//
-/// bool method(TEnProtected&)
-//
-#define EV_EN_PROTECTED(id, method) OWL_EV_NOTIFICATION(EN_PROTECTED, id, method)
-
-//
-/// void method(TReqResize&)
-//
-#define EV_EN_REQRESIZE(id, method) OWL_EV_NOTIFICATION(EN_REQUESTRESIZE, id, method)
-
-//
-/// bool method(TSelChange&)
-//
-#define EV_EN_SELCHANGE(id, method) OWL_EV_NOTIFICATION(EN_SELCHANGE, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name UpDown control notifications
-/// @{
-
-//
-/// bool method(TNmUpDown&)
-//
-#define EV_UDN_DELTAPOS(id, method) OWL_EV_NOTIFICATION(UDN_DELTAPOS, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Tool Tip control notifications
-/// @{
-
-//
-/// void method(TNmTtDispInfo&)
-//
-#define EV_TTN_GETDISPINFO(id, method) OWL_EV_NOTIFICATION(TTN_GETDISPINFO, id, method)
-
-//
-/// void method(TNmTtDispInfo&)
-/// Note: This notification code is identical to TTN_GETDISPINFO.
-//
-#define EV_TTN_NEEDTEXT(id, method) OWL_EV_TTN_GETDISPINFO(id, method)
-
-//
-/// void method(int id, TNmHdr&)
-//
-#define EV_TTN_POP(id, method) OWL_EV_NOTIFICATION(TTN_POP, id, method)
-
-//
-/// void method(int id, TNmHdr&)
-//
-#define EV_TTN_SHOW(id, method) OWL_EV_NOTIFICATION(TTN_SHOW, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Tree View control notifications
-/// @{
-
-//
-/// void method(TNmTreeView&)
-//
-#define EV_TVN_BEGINDRAG(id, method) OWL_EV_NOTIFICATION(TVN_BEGINDRAG, id, method)
-
-//
-/// bool method(TNmTvDispInfo&)
-//
-#define EV_TVN_BEGINLABELEDIT(id, method) OWL_EV_NOTIFICATION(TVN_BEGINLABELEDIT, id, method)
-
-//
-/// void method(TNmTreeView&)
-//
-#define EV_TVN_BEGINRDRAG(id, method) OWL_EV_NOTIFICATION(TVN_BEGINRDRAG, id, method)
-
-//
-/// void method(TNmTreeView&)
-//
-#define EV_TVN_DELETEITEM(id, method) OWL_EV_NOTIFICATION(TVN_DELETEITEM, id, method)
-
-//
-/// void method(TNmTvDispInfo&)
-//
-#define EV_TVN_ENDLABELEDIT(id, method) OWL_EV_NOTIFICATION(TVN_ENDLABELEDIT, id, method)
-
-//
-/// void method(TNmTvDispInfo&)
-//
-#define EV_TVN_GETDISPINFO(id, method) OWL_EV_NOTIFICATION(TVN_GETDISPINFO, id, method)
-
-//
-/// void method(TNmTvGetInfoTip&)
-//
-#define EV_TVN_GETINFOTIP(id, method) OWL_EV_NOTIFICATION(TVN_GETINFOTIP, id, method)
-
-//
-/// void method(TNmTreeView&)
-//
-#define EV_TVN_ITEMEXPANDED(id, method) OWL_EV_NOTIFICATION(TVN_ITEMEXPANDED, id, method)
-
-//
-/// bool method(TNmTreeView&)
-//
-#define EV_TVN_ITEMEXPANDING(id, method) OWL_EV_NOTIFICATION(TVN_ITEMEXPANDING, id, method)
-
-//
-/// void method(TNmTvKeyDown&)
-//
-#define EV_TVN_KEYDOWN(id, method) OWL_EV_NOTIFICATION(TVN_KEYDOWN, id, method)
-
-//
-/// void method(TNmTreeView&)
-//
-#define EV_TVN_SELCHANGED(id, method) OWL_EV_NOTIFICATION(TVN_SELCHANGED, id, method)
-
-//
-/// bool method(TNmTreeView&)
-//
-#define EV_TVN_SELCHANGING(id, method) OWL_EV_NOTIFICATION(TVN_SELCHANGING, id, method)
-
-//
-/// void method(TNmTvDispInfo&)
-//
-#define EV_TVN_SETDISPINFO(id, method) OWL_EV_NOTIFICATION(TVN_SETDISPINFO, id, method)
-
-//
-/// void method(TNmTreeView&)
-//
-#define EV_TVN_SINGLEEXPAND(id, method) OWL_EV_NOTIFICATION(TVN_SINGLEEXPAND, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name List View control notifications
-/// @{
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_BEGINDRAG(id, method) OWL_EV_NOTIFICATION(LVN_BEGINDRAG, id, method)
-
-//
-/// bool method(TNmLvDispInfo&)
-//
-#define EV_LVN_BEGINLABELEDIT(id, method) OWL_EV_NOTIFICATION(LVN_BEGINLABELEDIT, id, method)
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_BEGINRDRAG(id, method) OWL_EV_NOTIFICATION(LVN_BEGINRDRAG, id, method)
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_COLUMNCLICK(id, method) OWL_EV_NOTIFICATION(LVN_COLUMNCLICK, id, method)
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_DELETEALLITEMS(id, method) OWL_EV_NOTIFICATION(LVN_DELETEALLITEMS, id, method)
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_DELETEITEM(id, method) OWL_EV_NOTIFICATION(LVN_DELETEITEM, id, method)
-
-//
-/// bool method(TNmLvDispInfo&)
-//
-#define EV_LVN_ENDLABELEDIT(id, method) OWL_EV_NOTIFICATION(LVN_ENDLABELEDIT, id, method)
-
-//
-/// void method(TNmLvDispInfo&)
-//
-#define EV_LVN_GETDISPINFO(id, method) OWL_EV_NOTIFICATION(LVN_GETDISPINFO, id, method)
-
-//
-/// void method(TNmLvGetInfoTip& info)        
-//
-#define EV_LVN_GETINFOTIP(id, method) OWL_EV_NOTIFICATION(LVN_GETINFOTIP, id, method)
-
-//
-/// bool method(TNmListView&)
-//
-#define EV_LVN_HOTTRACK(id, method) OWL_EV_NOTIFICATION(LVN_HOTTRACK, id, method)
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_INSERTITEM(id, method) OWL_EV_NOTIFICATION(LVN_INSERTITEM, id, method)
-
-//
-/// void method(TNmItemActivate&)
-//
-#define EV_LVN_ITEMACTIVATE(id, method) OWL_EV_NOTIFICATION(LVN_ITEMACTIVATE, id, method)
-
-//
-/// void method(TNmListView&)
-//
-#define EV_LVN_ITEMCHANGED(id, method) OWL_EV_NOTIFICATION(LVN_ITEMCHANGED, id, method)
-
-//
-/// bool method(TNmListView&)
-//
-#define EV_LVN_ITEMCHANGING(id, method) OWL_EV_NOTIFICATION(LVN_ITEMCHANGING, id, method)
-
-//
-/// void method(TNmLvKeyDown&)
-//
-#define EV_LVN_KEYDOWN(id, method) OWL_EV_NOTIFICATION(LVN_KEYDOWN, id, method)
-
-//
-/// bool method(TNmListView&)
-//
-#define EV_LVN_MARQUEEBEGIN(id, method) OWL_EV_NOTIFICATION(LVN_MARQUEEBEGIN, id, method)
-
-//
-/// bool method(TNmLvCacheHint& info)
-//
-#define EV_LVN_ODCACHEHINT(id, method) OWL_EV_NOTIFICATION(LVN_ODCACHEHINT, id, method)
-
-//
-/// int method(TNmLvFindItem& info)
-//
-#define EV_LVN_ODFINDITEM(id, method) OWL_EV_NOTIFICATION(LVN_ODFINDITEM, id, method)
-
-//
-/// bool method(TNmLvOdStateChanged& info)
-//
-#define EV_LVN_ODSTATECHANGED(id, method) OWL_EV_NOTIFICATION(LVN_ODSTATECHANGED, id, method)
-
-//
-/// void method(TNmLvDispInfo&)
-//
-#define EV_LVN_SETDISPINFO(id, method) OWL_EV_NOTIFICATION(LVN_SETDISPINFO, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Rebar control notifications
-/// @{
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_AUTOSIZE(id, method) OWL_EV_NOTIFICATION(RBN_AUTOSIZE, id, method)
-
-//
-/// bool method(TNmHdr&)
-//
-#define EV_RBN_BEGINDRAG(id, method) OWL_EV_NOTIFICATION(RBN_BEGINDRAG, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_CHILDSIZE(id, method) OWL_EV_NOTIFICATION(RBN_CHILDSIZE, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_DELETEDBAND(id, method) OWL_EV_NOTIFICATION(RBN_DELETEDBAND, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_DELETINGBAND(id, method) OWL_EV_NOTIFICATION(RBN_DELETINGBAND, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_ENDDRAG(id, method) OWL_EV_NOTIFICATION(RBN_ENDDRAG, id, method)
-
-//
-/// bool method(TNmHdr&)
-/// Must return true.
-//
-#define EV_RBN_GETOBJECT(id, method) OWL_EV_NOTIFICATION(RBN_GETOBJECT, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_HEIGHTCHANGE(id, method) OWL_EV_NOTIFICATION(RBN_HEIGHTCHANGE, id, method)
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_RBN_LAYOUTCHANGED(id, method) OWL_EV_NOTIFICATION(RBN_LAYOUTCHANGED, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name ComboBoxEx control notifications
-/// @{
-
-//
-/// void method(TNmHdr&)
-//
-#define EV_CBEN_BEGINEDIT(id, method) OWL_EV_NOTIFICATION(CBEN_BEGINEDIT, id, method)
-
-//
-/// bool method(TComboBoxExItem&)
-//
-#define EV_CBEN_DELETEITEM(id, method) OWL_EV_NOTIFICATION(CBEN_DELETEITEM, id, method)
-
-//
-/// void method(TNmCbeDragBegin&)
-//
-#define EV_CBEN_DRAGBEGIN(id, method) OWL_EV_NOTIFICATION(CBEN_DRAGBEGIN, id, method)
-
-//
-/// bool method(TNmCbeEndEdit&)
-//
-#define EV_CBEN_ENDEDIT(id, method) OWL_EV_NOTIFICATION(CBEN_ENDEDIT, id, method)
-
-//
-/// bool method(TComboBoxExItem&)
-//
-#define EV_CBEN_GETDISPINFO(id, method) OWL_EV_NOTIFICATION(CBEN_GETDISPINFO, id, method)
-
-//
-/// bool method(TComboBoxExItem&)
-//
-#define EV_CBEN_INSERTITEM(id, method) OWL_EV_NOTIFICATION(CBEN_INSERTITEM, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Month Calendar control notifications
-/// @{
-
-//
-/// void method(TNmDayState&)
-//
-#define EV_MCN_GETDAYSTATE(id, method) OWL_EV_NOTIFICATION(MCN_GETDAYSTATE, id, method)
-
-//
-/// void method(TNmSelChange&)
-//
-#define EV_MCN_SELCHANGE(id, method) OWL_EV_NOTIFICATION(MCN_SELCHANGE, id, method)
-
-//
-/// void method(TNmSelChange&)
-//
-#define EV_MCN_SELECT(id, method) OWL_EV_NOTIFICATION(MCN_SELECT, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name Pager control notifications
-/// @{
-
-//
-/// void method(TNmPgCalcSize&)
-//
-#define EV_PGN_CALCSIZE(id, method) OWL_EV_NOTIFICATION(PGN_CALCSIZE, id, method)
-
-//
-/// void method(TNmPgScroll&)
-//
-#define EV_PGN_SCROLL(id, method) OWL_EV_NOTIFICATION(PGN_SCROLL, id, method)
-
-/// @}
-
-//----------------------------------------------------------------------------
-/// \name IP Address control notifications
-/// @{
-
-//
-/// void method(TNmIpAddress&)
-//
-#define EV_IPN_FIELDCHANGED(id, method) OWL_EV_NOTIFICATION(IPN_FIELDCHANGED, id, method)
-
-/// @}
-
+////////////////////////////////////////////////////////////////////////////////
 //----------------------------------------------------------------------------
 // Inline implemenations
 //
@@ -1831,16 +1761,6 @@ TNotify::TNotify() {
   hwndFrom = 0;
   idFrom = 0;
   code = 0;
-}
-
-inline
-TNmUpDown::TNmUpDown(HWND hwnd, uint id, uint code, int pos, int delta)
-{
-  iPos = pos;
-  iDelta = delta;
-  hdr.hwndFrom = hwnd;
-  hdr.idFrom = id;
-  hdr.code = code;
 }
 
 //
@@ -1876,11 +1796,21 @@ TRebarInfo::SetImageList(HIMAGELIST Images)
   himl = Images;
 }
 
+//
+//
+//
 inline HIMAGELIST
 TRebarInfo::GetImageList()
 {
   return himl;
 }
+
+
+// !BB   ostream& _OWLFUNC operator << (ostream&, const TNotify&);
+// !BB   istream& _OWLFUNC operator >> (istream&, TNotify&);
+// !BB   ostream& _OWLFUNC operator << (ostream&, const THdrNotify&);
+// !BB   istream& _OWLFUNC operator >> (istream&, THdrNotify&);
+
 
 } // OWL namespace
 

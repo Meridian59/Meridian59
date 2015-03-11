@@ -63,7 +63,6 @@ static FileSideDef *FileSideDefs;  // Array of sidedef info read in from file
 static WORD NumFileSideDefs;
 
 static Bool LoadRoom(int infile);
-static BOOL GetRoomSubRect(RECT *rect);
 static BOOL ReadSlopeInfo(int infile, SlopeInfo *info);
 
 /***************************************************************************/

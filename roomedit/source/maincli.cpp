@@ -110,7 +110,7 @@ END_RESPONSE_TABLE;
 // TMainClient
 // -----------
 //
-TMainClient::TMainClient (TWindow* parent, const char far* title,
+TMainClient::TMainClient (TWindow* parent, const char* title,
 						  TModule* module):
 	TWindow(parent, title, module)
 {

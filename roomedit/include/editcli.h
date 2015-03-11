@@ -143,7 +143,7 @@ private:
 
 public:
 	TEditorClient (TWindow* parent, char *_LevelName, BOOL newLevel,
-				   const char far* title = 0, TModule* module = 0);
+				   const char* title = 0, TModule* module = 0);
 	virtual ~TEditorClient ();
 	BOOL SaveChanges ();
 
@@ -152,7 +152,7 @@ public:
 public:
 	virtual void SetupWindow ();
 	virtual void Paint (TDC& dc, BOOL erase, TRect& rect);
-	virtual char far* GetClassName ();
+	virtual char* GetClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void CloseWindow (int retVal = 0);
 	virtual void Destroy (int retVal = 0);

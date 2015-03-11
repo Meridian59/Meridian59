@@ -26,12 +26,6 @@
 #ifndef __common_h
 #define __common_h
 
-#ifndef __WIN32__
-#ifndef __LARGE__
-#error This application can only be compiled with the LARGE memory model
-#endif
-#endif
-
 // don't do this for vs compiler
 #ifndef _MSC_VER
 #pragma warn -sig

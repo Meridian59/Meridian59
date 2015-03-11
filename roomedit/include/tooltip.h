@@ -140,7 +140,7 @@ protected:
 	void 	Paint (TDC &dc, BOOL erase, TRect &rc);
 	void	EvTimer (UINT uiTimerId);
 
-	void	SetCaption (const char far* title);
+	void	SetCaption (const char* title);
 
 public:
 	TToolTip (Tip::Style style = Tip::SquareBorder, TFont* font = new TToolTipFont);

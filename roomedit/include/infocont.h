@@ -68,7 +68,7 @@ private:
 	TextLine **TextLineTab;
 
 public:
-	TInfoControl (TWindow* parent, int id, unsigned _NumLines, const char far* title,
+	TInfoControl (TWindow* parent, int id, unsigned _NumLines, const char* title,
 				  int x=100, int y=100, int w=200, int h=50,
 				  TModule* module = 0);
 	virtual ~TInfoControl();
@@ -88,7 +88,7 @@ public:
 public:
 	virtual void SetupWindow();
 	virtual void Paint( TDC& dc, BOOL erase, TRect& rect);
-    virtual char far* GetClassName ();
+    virtual char* GetClassName ();
     virtual void GetWindowClass (WNDCLASS& wndClass);
 //{{TInfoControlVIRTUAL_END}}
 

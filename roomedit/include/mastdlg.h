@@ -64,7 +64,7 @@ public:
 
 //{{TMasterDialogRSP_TBL_BEGIN}}
 protected:
-	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT far& drawInfo);
+	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo);
 //{{TMasterDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TMasterDialog);
 };    //{{TMasterDialog}}

@@ -50,7 +50,7 @@ private:
 	TOpenSaveDialog::TData FileData;
 
 public:
-	TMainClient (TWindow* parent, const char far* title = 0,
+	TMainClient (TWindow* parent, const char* title = 0,
 				 TModule* module = 0);
 	virtual ~TMainClient ();
 

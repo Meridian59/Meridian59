@@ -2542,7 +2542,7 @@ void TEditorClient::DrawStatusBar()
 
 		else if (MadeChanges == TRUE)
 			strcpy (&msg[len], " *");
-		((TTextGadget *)((*pStatusBar)[0]))->SetText (msg);
+		((TTextGadget *)pStatusBar->FirstGadget())->SetText(msg);
 
 		// Draw the scale info in the third text gadget of status bar
 		len = wsprintf (msg, "Scale: %d/%d  Grid: %d",
@@ -2550,7 +2550,7 @@ void TEditorClient::DrawStatusBar()
 		if ( SnapToGrid )
 			strcpy (&msg[len], "*");
 
-		((TTextGadget *)((*pStatusBar)[2]))->SetText (msg);
+		((TTextGadget *)pStatusBar->FirstGadget()->NextGadget()->NextGadget())->SetText(msg);
 
 		// Draw the memory info
 		TMainFrame *mainFrame =

@@ -158,8 +158,14 @@ protected:
 	void SectorTagNewClicked ();
 	void EvSetFocus (HWND hWndLostFocus );
 	void EvActivate (UINT active, BOOL minimized, HWND hWndOther );
-	void EvLButtonDown (UINT modKeys, TPoint& point);
-	void EvLButtonDblClk (UINT modKeys, TPoint& point);
+
+#if OWLVersion > OWLVERBC502
+	void EvLButtonDown (UINT modKeys, const TPoint& point);
+	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
+#else
+	void EvLButtonDown(UINT modKeys, TPoint& point);
+	void EvLButtonDblClk(UINT modKeys, TPoint& point);
+#endif
 
 	void PassPosClicked();
 	void PassNegClicked();

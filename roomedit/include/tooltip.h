@@ -99,7 +99,7 @@ public:
 #else
 	void			EvMouseMove (UINT modKeys, TPoint& point);
 	void			EvLButtonDown(UINT modKeys, TPoint& point);
-+#endif
+#endif
 
 	void 			SetHintText (const char *lpszText);
 	void            DrawHintText (const char *lpszText);

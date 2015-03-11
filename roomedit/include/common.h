@@ -51,7 +51,6 @@
 #include <ctype.h>
 #include <io.h>
 #include <fcntl.h>
-#include <alloc.h>
 #include <assert.h>
 #include <math.h>
 #include <sys\stat.h>

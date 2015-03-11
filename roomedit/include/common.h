@@ -32,7 +32,8 @@
 #endif
 #endif
 
-#ifdef __WIN32__
+// don't do this for vs compiler
+#ifndef _MSC_VER
 #pragma warn -sig
 #endif
 

@@ -17,7 +17,7 @@ typedef struct
 } file_node;
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
-#define BGF_VERSION 8
+#define BGF_VERSION 10
 
 static int version;   // Version of file being loaded
 

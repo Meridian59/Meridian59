@@ -35,7 +35,7 @@
 
 #include "maincli.h"
 
-#ifndef __OWL_INPUTDIA
+#ifndef OWL_INPUTDIA
 	#include <owl\inputdia.h>
 #endif
 

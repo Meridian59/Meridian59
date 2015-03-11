@@ -34,11 +34,11 @@
 	#include "editcli.h"
 #endif
 
-#ifndef __OWL_LAYOUTWI_H
+#ifndef OWL_LAYOUTWI_H
 	#include <owl\layoutwi.h>
 #endif
 
-#ifndef __OWL_STATUSBA_H
+#ifndef OWL_STATUSBA_H
 	#include <owl\statusba.h>
 #endif
 
@@ -46,19 +46,19 @@
 	#include <editscro.h>
 #endif
 
-#ifndef __OWL_POINT_H
+#ifndef OWL_POINT_H
 	#include <owl\point.h>		// TResID
 #endif
 
-#ifndef __OWL_OPENSAVE_H
+#ifndef OWL_OPENSAVE_H
 	#include <owl\opensave.h>
 #endif
 
-#ifndef __OWL_INPUTDIA_H
+#ifndef OWL_INPUTDIA_H
 	#include <owl\inputdia.h>
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 

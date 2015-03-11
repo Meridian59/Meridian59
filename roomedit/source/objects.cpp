@@ -30,7 +30,7 @@
 #include "common.h"
 #pragma hdrstop
 
-#ifndef __OWL_INPUTDIA_H
+#ifndef OWL_INPUTDIA_H
 	#include <owl\inputdia.h>
 #endif
 

@@ -30,11 +30,11 @@
 #include "common.h"
 #pragma hdrstop
 
-#ifndef __OWL_STATUSBA_H
+#ifndef OWL_STATUSBA_H
 	#include <owl\statusba.h>
 #endif
 
-#ifndef __OWL_TEXTGADG_H
+#ifndef OWL_TEXTGADG_H
 	#include <owl\textgadg.h>
 #endif
 

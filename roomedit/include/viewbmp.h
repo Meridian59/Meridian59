@@ -33,19 +33,19 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	class _OWLCLASS TListBox;
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	class _OWLCLASS TStatic;
 #endif
 
-#ifndef __OWL_SLIDER_H
+#ifndef OWL_SLIDER_H
 	class _OWLCLASS TSlider;
 #endif
 

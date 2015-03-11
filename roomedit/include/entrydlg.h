@@ -38,15 +38,15 @@
 	#include "wads.h"		// MDirPtr
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_COMBOBOX_H
+#ifndef OWL_COMBOBOX_H
 	#include <owl\combobox.h>
 #endif
 

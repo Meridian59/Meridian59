@@ -36,15 +36,15 @@
 	#include "wads.h"		// FindMasterDir(), BasicWadRead(), ...
 #endif
 
-#ifndef __OWL_DC_H
+#ifndef OWL_DC_H
 	#include <owl\dc.h>
 #endif
 
-#ifndef __OWL_CONTROL_H
+#ifndef OWL_CONTROL_H
 	#include <owl\control.h>
 #endif
 
-#ifndef __OWL_SCROLLER_H
+#ifndef OWL_SCROLLER_H
 	#include <owl\scroller.h>
 #endif
 

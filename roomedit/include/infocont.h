@@ -37,7 +37,7 @@
 	#include "gfx.h"	// Colors
 #endif
 
-#ifndef __OWL_CONTROL_H
+#ifndef OWL_CONTROL_H
 	#include <owl\control.h>
 #endif
 

@@ -553,15 +553,15 @@ void TPreferencesDialog::WTextureDblClk ()
 // ------------------
 //
 #if OWLVersion > OWLVERBC502
-void TPreferencesDialog::EvLButtonDown(UINT modKeys, const TPoint& point)
+void TPreferencesDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
 #else
-void TPreferencesDialog::EvLButtonDown(UINT modKeys, TPoint& point)
+void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 #endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic((TPoint&)point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 
@@ -593,15 +593,15 @@ void TPreferencesDialog::EvLButtonDown(UINT modKeys, TPoint& point)
 // ------------------
 //
 #if OWLVersion > OWLVERBC502
-void TPreferencesDialog::EvLButtonDblClk(UINT modKeys, const TPoint& point)
+void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
 #else
-void TPreferencesDialog::EvLButtonDblClk(UINT modKeys, TPoint& point)
+void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
 #endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic((TPoint&)point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 

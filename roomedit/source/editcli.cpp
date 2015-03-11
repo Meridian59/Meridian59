@@ -1099,9 +1099,9 @@ void TEditorClient::DrawMouseCoord (TDC &dc)
 // -------------
 //
 #if OWLVersion > OWLVERBC502
-void TEditorClient::EvSize(UINT sizeType, const TSize& size)
+void TEditorClient::EvSize (UINT sizeType, const TSize& size)
 #else
-void TEditorClient::EvSize(UINT sizeType, TSize& size)
+void TEditorClient::EvSize (UINT sizeType, TSize& size)
 #endif
 {
 	TRect clientRect = GetClientRect ();
@@ -1149,9 +1149,9 @@ void TEditorClient::EvSize(UINT sizeType, TSize& size)
 //          if CTRL key not pressed
 //
 #if OWLVersion > OWLVERBC502
-void TEditorClient::EvMouseMove(UINT modKeys, const TPoint& point)
+void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
 #else
-void TEditorClient::EvMouseMove(UINT modKeys, TPoint& point)
+void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
 #endif
 {
 	TLayoutWindow::EvMouseMove(modKeys, point);
@@ -1329,9 +1329,9 @@ void TEditorClient::EvMouseMove(UINT modKeys, TPoint& point)
 //     stop when Left mouse button is released.
 //
 #if OWLVersion > OWLVERBC502
-void TEditorClient::EvLButtonDown(UINT modKeys, const TPoint& point)
+void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
 #else
-void TEditorClient::EvLButtonDown(UINT modKeys, TPoint& point)
+void TEditorClient::EvLButtonDown (UINT modKeys, TPoint& point)
 #endif
 {
 	PointerX = point.x;
@@ -1422,9 +1422,9 @@ void TEditorClient::EvLButtonDown(UINT modKeys, TPoint& point)
 //		- Stop Drag mode or Stretch selection box mode.
 //
 #if OWLVersion > OWLVERBC502
-void TEditorClient::EvLButtonUp(UINT modKeys, const TPoint& point)
+void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
 #else
-void TEditorClient::EvLButtonUp(UINT modKeys, TPoint& point)
+void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
 #endif
 {
 	PointerX = point.x;
@@ -1553,9 +1553,9 @@ void TEditorClient::EvLButtonUp(UINT modKeys, TPoint& point)
 // -------------
 //
 #if OWLVersion > OWLVERBC502
-void TEditorClient::EvLButtonDblClk(UINT modKeys, const TPoint& point)
+void TEditorClient::EvLButtonDblClk (UINT modKeys, const TPoint& point)
 #else
-void TEditorClient::EvLButtonDblClk(UINT modKeys, TPoint& point)
+void TEditorClient::EvLButtonDblClk (UINT modKeys, TPoint& point)
 #endif
 {
 	PointerX = point.x;
@@ -1582,9 +1582,9 @@ void TEditorClient::EvLButtonDblClk(UINT modKeys, TPoint& point)
 // -------------
 //
 #if OWLVersion > OWLVERBC502
-void TEditorClient::EvRButtonDown(UINT modKeys, const TPoint& point)
+void TEditorClient::EvRButtonDown (UINT modKeys, const TPoint& point)
 #else
-void TEditorClient::EvRButtonDown(UINT modKeys, TPoint& point)
+void TEditorClient::EvRButtonDown (UINT modKeys, TPoint& point)
 #endif
 {
 	// Ignore if "insert object" mode
@@ -2536,30 +2536,36 @@ void TEditorClient::DrawStatusBar()
 		// We must be editing a level
 		assert (Level != NULL);
 #endif
-
-		// Draw the mode info in the first text gadget of status bar
-		len = wsprintf (msg, "Editing %s on %s",
+		if (pStatusBar && pStatusBar->GadgetCount() >= 1)
+		{
+			// Draw the mode info in the first text gadget of status bar
+			len = wsprintf(msg, "Editing %s on %s",
 				GetEditModeName(EditMode), LevelName);
 
-		if (MadeMapChanges == TRUE)
-			strcpy (&msg[len], " *+");
+			if (MadeMapChanges == TRUE)
+				strcpy(&msg[len], " *+");
 
-		else if (MadeChanges == TRUE)
-			strcpy (&msg[len], " *");
-		((TTextGadget *)pStatusBar->FirstGadget())->SetText(msg);
+			else if (MadeChanges == TRUE)
+				strcpy(&msg[len], " *");
 
-		// Draw the scale info in the third text gadget of status bar
-		len = wsprintf (msg, "Scale: %d/%d  Grid: %d",
-							 ScaleNum, ScaleDen, GridScale);
-		if ( SnapToGrid )
-			strcpy (&msg[len], "*");
+			((TTextGadget *)pStatusBar->FirstGadget())->SetText(msg);
+		}
 
-		((TTextGadget *)pStatusBar->FirstGadget()->NextGadget()->NextGadget())->SetText(msg);
+		if (pStatusBar && pStatusBar->GadgetCount() >= 3)
+		{
+			// Draw the scale info in the third text gadget of status bar
+			len = wsprintf(msg, "Scale: %d/%d  Grid: %d",
+				ScaleNum, ScaleDen, GridScale);
+			if (SnapToGrid)
+				strcpy(&msg[len], "*");
+
+			((TTextGadget *)pStatusBar->FirstGadget()->NextGadget()->NextGadget())->SetText(msg);
+		}
 
 		// Draw the memory info
 		TMainFrame *mainFrame =
-			TYPESAFE_DOWNCAST (GetApplication()->GetMainWindow(), TMainFrame);
-		mainFrame->DrawFreeMemory();
+			TYPESAFE_DOWNCAST(GetApplication()->GetMainWindow(), TMainFrame);
+		mainFrame->DrawFreeMemory();	
 	}
 }
 
@@ -5113,7 +5119,7 @@ void TEditorClient::CmRedoEnable (TCommandEnabler &tce)
 	TMenu menu(GetApplication()->GetMainWindow()->GetMenu());
 
 	// Get original menu name at first call
-	static char OriginalName[50];
+	static char OriginalName[50] ;
 	if ( OriginalName[0] == '\0' )
 	{
 		char ItemString[50];

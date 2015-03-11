@@ -55,7 +55,7 @@ private:
 protected:
 	USHORT     BitmapXSize;
 	USHORT     BitmapYSize;
-	BYTE      *pBitmapData;		// huge on Win16
+	BYTE      *pBitmapData;
 	BOOL      *pUsedColors;
 	BYTE      *pEntryMapping;
 	BYTE       NbEntries;

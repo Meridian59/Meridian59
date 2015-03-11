@@ -51,7 +51,7 @@
 #endif
 
 #ifndef OWL_GROUPBOX_H
-#include <owl\groupbox.h>
+	#include <owl\groupbox.h>
 #endif
 
 #include "episdlg.rh"

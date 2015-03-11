@@ -445,7 +445,7 @@ void TToolTip::SetCaption (const char far* title)
 	{
 		KillTipTimer ();
 
-		Show (SW_HIDE);
+		ShowWindow (SW_HIDE);
 
 		dwTickCount = GetTickCount ();
 	}
@@ -463,7 +463,7 @@ void TToolTip::SetCaption (const char far* title)
 			sizeText.cx	+= 5;
 			sizeText.cy	+= 4;
 
-			Show (SW_HIDE);
+			ShowWindow (SW_HIDE);
 		}
 
 		// create the timer - this will send a WM_TIMER message
@@ -545,7 +545,7 @@ void TToolTip::ShowNow ()
 	PositionTip ();
 
 	// show the tip window
-	Show (SW_SHOWNA);
+	ShowWindow (SW_SHOWNA);
 	UpdateWindow ();
 }
 

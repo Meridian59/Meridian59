@@ -1,0 +1,27 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+//  Bidus Yura 1998
+//
+// Resource IDs to use with UrlLink classes
+//----------------------------------------------------------------------------
+#if !defined(OWL_URLLINK_RH)
+#define OWL_URLLINK_RH
+
+//
+// The index from which the error strings start in resource file
+//
+#define IDS_PATHNOTFOUND        32718
+#define IDS_FILENOTFOUIND       32719
+#define IDS_FILEINVALID         32720
+#define IDS_ACCESSDENIED        32721
+#define IDS_INVALIDASSOC        32722
+#define IDS_DDEBISY             32723
+#define IDS_DDEFAILED           32724
+#define IDS_DDETYMEOUT          32725
+#define IDS_NOINSTANCE          32726
+#define IDS_SHAREDERROR         32727
+#define IDS_UNCKNOWNERR         32728
+
+#define IDC_HANDCURSOR          1016
+
+#endif  //  OWL_URLLINK_RH

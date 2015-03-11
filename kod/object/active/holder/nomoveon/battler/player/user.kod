@@ -443,7 +443,7 @@ properties:
 
    % The ms tick we received last position update from user
    piLastMoveUpdateTime = 0
-   
+
    % The ms tick we last drained vigor
    piLastVigorDrainTime = 0
 
@@ -3198,7 +3198,7 @@ messages:
       % 2. Do not allow any moves if player is marked as not allowed to move
       %
 
-      if Send(self,@CheckPlayerflag,#flag=PFLAG_NO_MOVE)
+      if (piFlags & PFLAG_NO_MOVE)
       {
          % Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -3224,31 +3224,31 @@ messages:
 
       %
       % 3.3 Bound time-deltas
-      %   These must not be too big for the calculations blow
+      %   These must not be too big for the calculations below
       %
-      iDelta = bound(iDelta,0,2000);
+      iDelta = Bound(iDelta,0,2000);
       iDeltaVigor = bound(iDeltaVigor,0,2000);
-	  
+
       %
       % 4.1 Calculate the squared movesize for running in this dt.
       %   USER_RUNNING_SPEED is defined as # of big squares per 10000ms
       %   The unit here is fine upscaled by another *16 (same is done below in 4.5)
       %
-      iMaxMoveRun = (USER_RUNNING_SPEED * FINENESS * 16 * iDelta) / 10000;
+      iMaxMoveRun = (Bound(speed,0,50) * FINENESS * 16 * iDelta) / 10000;
       iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
-  
+
       %
       % 4.2 Fill up the movement bucket with tokens
       %   for the squared distance one could have travelled at maximum.
       %
-      piMovementBucket = piMovementBucket + iMaxMoveRun;        
+      piMovementBucket = piMovementBucket + iMaxMoveRun;
 
       %
       % 4.3 Bound the maximum bucketsize
       %
-      piMovementBucket = bound(piMovementBucket, 0, Send(Send(SYS, @GetSettings), @GetMovementBucketMax));
+      piMovementBucket = Bound(piMovementBucket, 0, Send(Send(SYS,@GetSettings),@GetMovementBucketMax));
       %Debug("Bucket before move:",piMovementBucket);
-			
+
       %
       % 4.4 Get move-deltas in FINENESS units
       %
@@ -3306,13 +3306,28 @@ messages:
       }
 
       %
-      % 5.2 This move is bigger than walking allows.
-      % Right now: Still use the transmitted speed
+      % 5.2 Double check the user's speed. USER_WALKING_SPEED should
+      % be 25, USER_RUNNING_SPEED should be 50. If the speed we've
+      % received is less than 25, make it 50 and log that we've
+      % changed it.
+      %
+
+      if speed < USER_WALKING_SPEED
+         OR speed > USER_RUNNING_SPEED
+      {
+         Debug("ALERT! ",Send(self,@GetTrueName),self,
+               " had transmitted speed changed from ",speed, "to ",
+               USER_RUNNING_SPEED);
+         speed = USER_RUNNING_SPEED;
+      }
+
+      %
+      % 5.3 This move is bigger than walking allows.
       %
       if (speed > USER_WALKING_SPEED)
       {
          % Disallow run with low vigor
-         if Send(self,@GetVigor) < VIGOR_RUN_THRESHOLD
+         if piVigor < VIGOR_RUN_THRESHOLD
          {
             % Reset position
             Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -3340,14 +3355,14 @@ messages:
          }
 
          % Stop dance
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DANCING,#flagset=2)
+         if (piFlags2 & PFLAG2_DANCING)
          {
             Send(self,@StopDancing);
          }
       }
 
       %
-      % 5.3 Manual move checks in some rooms
+      % 5.4 Manual move checks in some rooms
       %
       iRoomNum = Send(poOwner,@GetRoomNum);
       if iRoomNum = RID_CAVE2
@@ -3385,10 +3400,10 @@ messages:
          iExertion = iExertion * iExertion;
          iExertion = EXERTION_PER_MOVE * iExertion;
 
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_HASTED,#flagset=2)
+         if (piFlags2 & PFLAG2_HASTED)
          {
             iHasteLevel = Send(self,@GetEnchantedState,
-                               #what=Send(SYS,@FindSpellByNum,#num=SID_HASTE));
+                              #what=Send(SYS,@FindSpellByNum,#num=SID_HASTE));
 
             if iHasteLevel <> $
             {
@@ -3400,7 +3415,6 @@ messages:
 
          % Save vigor drain tick
          piLastVigorDrainTime = iCurrentTime;
-
       }
 
       %
@@ -3414,11 +3428,12 @@ messages:
       %
       % 8. Save this move tick for next execution
       % and subtract the move tokens we have consumed.
+      %
       piLastMoveUpdateTime = iCurrentTime;
       piMovementBucket = piMovementBucket - iMoveLength;
       %Debug("Bucket after:",piMovementBucket);
 
-	  %
+      %
       % 9. Process the move
       %
       Send(poOwner,@SomethingMoved,#what=self,

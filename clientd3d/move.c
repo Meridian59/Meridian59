@@ -64,6 +64,9 @@
 
 #define MIN_SIDE_MOVE (MOVEUNITS / 4)
 
+#define USER_WALKING_SPEED 25 // Speed we send to the server for walking.
+#define USER_RUNNING_SPEED 50 // Speed we send to the server for running.
+
 // Number of milliseconds between retrying to change rooms
 #define MOVE_OFF_ROOM_INTERVAL 1000
 // Time when we last tried to move off room
@@ -355,22 +358,22 @@ void UserMovePlayer(int action)
       // See if trying to move off room.
       if (!IsInRoom(row, col, current_room))
       {
-	 // Delay between consecutive attempts to move off room
-	 if (now - move_off_room_time >= MOVE_OFF_ROOM_INTERVAL)
-	 {
-	    RequestMove(y, x, 0, player.room_id);
-	    move_off_room_time = now;
-	 }
-	 // Don't actually move player off room
-	 x = last_x;
-	 y = last_y;
-	 z = last_z;
-	 break;
+         // Delay between consecutive attempts to move off room
+         if (now - move_off_room_time >= MOVE_OFF_ROOM_INTERVAL) // current time 
+         {
+            RequestMove(y, x, USER_RUNNING_SPEED, player.room_id);
+            move_off_room_time = now;
+         }
+         // Don't actually move player off room
+         x = last_x;
+         y = last_y;
+         z = last_z;
+         break;
       }
       else
       {
-	 // Reset moving-off-room timer, since this move doesn't go off the room
-	 move_off_room_time = 0;
+         // Reset moving-off-room timer, since this move doesn't go off the room
+         move_off_room_time = 0;
       }
 
       // Check next part of step with new floor height or current player height, whichever
@@ -819,7 +822,7 @@ void MoveUpdateServer(void)
 /************************************************************************/
 /*
  * MoveUpdatePosition:  Update the server's knowledge of our position.
- *   This procudure does not care about elapsed interval, but  
+ *   This procedure does not care about elapsed interval, but
  *   sends the update only when the position has changed at least a bit.
  */ 
 void MoveUpdatePosition(void)
@@ -833,28 +836,28 @@ void MoveUpdatePosition(void)
    // don't send update if we didn't move
    if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
    {
-	   // debug output
-	   debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
+      // debug output
+      debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
    
-	   // the following speed values must match
-	   // the actual speed a player is moving
-	   // defined by MOVEUNITS and MOVE_DELAY
-	   // as well as those defined in user.kod
+      // the following speed values must match
+      // the actual speed a player is moving
+      // defined by MOVEUNITS and MOVE_DELAY
+      // as well as those defined in user.kod
 
-	   // walk-speed (USER_WALKING_SPEED from user.kod)
-	   speed = 25;
+      // walk-speed (USER_WALKING_SPEED from user.kod)
+      speed = USER_WALKING_SPEED;
    
-	   // run-speed (USER_RUNNING_SPEED from user.kod)
-	   if (IsMoveFastAction(last_move_action))
-		 speed = 50;
+      // run-speed (USER_RUNNING_SPEED from user.kod)
+      if (IsMoveFastAction(last_move_action))
+         speed = USER_RUNNING_SPEED;
 
-	   // send update
-	   RequestMove(y, x, speed, player.room_id);
+      // send update
+      RequestMove(y, x, speed, player.room_id);
    
-	   // save last sent position and tick
-	   server_x = x;
-	   server_y = y;
-	   server_time = timeGetTime();
+      // save last sent position and tick
+      server_x = x;
+      server_y = y;
+      server_time = timeGetTime();
    }
 }
 /************************************************************************/
@@ -876,8 +879,8 @@ void MoveSetValidity(Bool valid)
 
       if (player_obj == NULL)
       {
-	 debug(("MoveSetValidity got NULL player object\n"));
-	 return;
+         debug(("MoveSetValidity got NULL player object\n"));
+         return;
       }
 
       player.x = player_obj->motion.x;
@@ -886,7 +889,6 @@ void MoveSetValidity(Bool valid)
       server_y = player.y;
    }
 }
-
 /************************************************************************/
 void UserTurnPlayer(int action)
 {

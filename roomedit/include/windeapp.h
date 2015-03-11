@@ -57,7 +57,6 @@ public:
 	virtual void InitMainWindow();
 	virtual bool CanClose ();
 	virtual bool ProcessAppMsg (MSG& msg);
-	void Enable3DControls (BOOL enable = TRUE);	// TRY to open CTL3D dll
 //{{WinDEUAppVIRTUAL_END}}
 
 //{{WinDEUAppRSP_TBL_BEGIN}}

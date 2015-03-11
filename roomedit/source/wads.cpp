@@ -78,7 +78,7 @@ void OpenMainWad(char *filename)
 	}
 
 	/* create the master directory */
-	assert (wad->dirsize < (LONG)USHRT_MAX);
+	assert(wad->dirsize < (LONG)USHRT_MAX);
 	lastp = NULL;
 	for (n = 0; n < (USHORT)wad->dirsize; n++)
 	{
@@ -184,7 +184,7 @@ void OpenPatchWad (char *filename)
 	}
 
 	/* alter the master directory */
-	assert (wad->dirsize <= (LONG)USHRT_MAX);
+	assert(wad->dirsize <= (LONG)USHRT_MAX);
 	l = 0;
 	for (n = 0; n < wad->dirsize; n++)
 	{
@@ -435,8 +435,8 @@ WadPtr BasicWadOpen(char *filename)
 
 void BasicWadRead (WadPtr wadfile, void *addr, long size)
 {
-	assert(size >= 0 && (UINT)size < UINT_MAX);
-	if (fread( addr, 1, (size_t)size, wadfile->fileinfo) != (UINT)size)
+	assert (size >= 0 && (UINT)size < UINT_MAX);
+	if (fread(addr, 1, (size_t)size, wadfile->fileinfo) != (UINT)size)
 		ProgError ("Error reading from \"%s\"", wadfile->filename);
 }
 
@@ -721,7 +721,7 @@ void WriteBytes (FILE *file, void *addr, long size)
 		ptr += 0x8000;
 		size -= 0x8000;
 	}
-	if (fwrite (ptr, 1, (size_t)size, file) != size)
+	if (fwrite (ptr, 1, (size_t)size, file) != (ULONG)size)
 		ProgError ("error writing to file");
 }
 

@@ -389,13 +389,13 @@ extern ULONG LastCoopCallTick;
 #define COOPERATE()                      									\
 {                                        									\
 	if ( BuildPriority > 0 )												\
-		{                                                           		\
+	{                                                           			\
 		if ( ::GetTickCount() - LastCoopCallTick >= (ULONG)BuildPriority )	\
-				{                                    						\
+		{                                    								\
 			Cooperate();                                        			\
 			LastCoopCallTick = ::GetTickCount();							\
-				}                                    						\
-		}                                                           		\
+		}                                    								\
+	}                                                           			\
 }
 
 #endif	// COOPERATION_VERSION

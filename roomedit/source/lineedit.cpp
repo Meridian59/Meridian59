@@ -1777,15 +1777,15 @@ void TLineDefEditDialog::TextureListDBLClick ()
 // ------------------
 //
 #if OWLVersion > OWLVERBC502
-void TLineDefEditDialog::EvLButtonDown(UINT modKeys, const TPoint& point)
+void TLineDefEditDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
 #else
-void TLineDefEditDialog::EvLButtonDown(UINT modKeys, TPoint& point)
+void TLineDefEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 #endif
 {
    TDialog::EvLButtonDown(modKeys, point);
    
    // Retreive object for handle
-   TStatic *pStatic = GetPointedStatic((TPoint&)point);
+   TStatic *pStatic = GetPointedStatic ((TPoint&)point);
    if ( pStatic == NULL )
       return;
    
@@ -1807,15 +1807,15 @@ void TLineDefEditDialog::EvLButtonDown(UINT modKeys, TPoint& point)
 // ------------------
 //
 #if OWLVersion > OWLVERBC502
-void TLineDefEditDialog::EvLButtonDblClk(UINT modKeys, const TPoint& point)
+void TLineDefEditDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
 #else
-void TLineDefEditDialog::EvLButtonDblClk(UINT modKeys, TPoint& point)
+void TLineDefEditDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
 #endif
 {
    TDialog::EvLButtonDblClk(modKeys, point);
    
    // Retreive object for handle
-   TStatic *pStatic = GetPointedStatic((TPoint&)point);
+   TStatic *pStatic = GetPointedStatic ((TPoint&)point);
    if ( pStatic == NULL )
       return;
    

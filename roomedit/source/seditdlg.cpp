@@ -311,7 +311,6 @@ void TSectorEditDialog::SetSectorList ()
 void TSectorEditDialog::SetTextureList ()
 {
 	assert (pTextureList->IsWindow());
-	assert (FTexture != NULL);
 
 	pTextureList->ClearList();
 
@@ -986,15 +985,15 @@ void TSectorEditDialog::TextureDblclick ()
 // -----------------
 //
 #if OWLVersion > OWLVERBC502
-void TSectorEditDialog::EvLButtonDown(UINT modKeys, const TPoint& point)
+void TSectorEditDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
 #else
-void TSectorEditDialog::EvLButtonDown(UINT modKeys, TPoint& point)
+void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 #endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic((TPoint&)point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 
@@ -1015,15 +1014,15 @@ void TSectorEditDialog::EvLButtonDown(UINT modKeys, TPoint& point)
 // -----------------
 //
 #if OWLVersion > OWLVERBC502
-void TSectorEditDialog::EvLButtonDblClk(UINT modKeys, const TPoint& point)
+void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
 #else
-void TSectorEditDialog::EvLButtonDblClk(UINT modKeys, TPoint& point)
+void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
 #endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic((TPoint&)point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 

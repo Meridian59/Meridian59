@@ -26,11 +26,10 @@ static int version;   // Version of file being loaded
 // signature of uncompress method in zlib1.dll
 typedef int(*uncompress_functype)(void* dest, unsigned long* destLen, const void* source, unsigned long sourceLen);
 
-HMODULE zlib_moduleptr = NULL; // loaded dll
-uncompress_functype uncompress = NULL; // callable function ptr
+HMODULE             zlib_moduleptr = NULL;	// loaded dll
+uncompress_functype uncompress     = NULL;	// callable function ptr
 
 /*********************************************************/
-
 
 int  MappedFileRead(file_node *f, void *buf, int num);
 Bool MappedFileOpenRead(const char *filename, file_node *f);
@@ -47,34 +46,34 @@ static Bool DibReadBits(file_node *f, PDIB pdib, int version);
 */
 Bool DibInitCompression()
 {
-	// try load the DLL into the process
-	zlib_moduleptr = LoadLibraryEx("zlib1.dll", NULL, 0x00000200);
+   // try load the DLL into the process
+   zlib_moduleptr = LoadLibraryEx("zlib1.dll", NULL, 0x00000200);
 
-	// failed ...
-	if (zlib_moduleptr == NULL)
-	{
-		Notify("Error loading zlib1.dll");
+   // failed ...
+   if (zlib_moduleptr == NULL)
+   {
+      Notify("Error loading zlib1.dll");
 
-		// force crash
-		assert(zlib_moduleptr != NULL);
-	}
+      // force crash
+      assert(zlib_moduleptr != NULL);
+   }
 
-	// try get the entry point of 'uncompress'
-	FARPROC uncompress_entryptr = GetProcAddress(zlib_moduleptr, "uncompress");
+   // try get the entry point of 'uncompress'
+   FARPROC uncompress_entryptr = GetProcAddress(zlib_moduleptr, "uncompress");
 
-	// failed ...
-	if (uncompress_entryptr == NULL)
-	{
-		Notify("Unable to find procedure 'uncompress' in zlib1.dll");
+   // failed ...
+   if (uncompress_entryptr == NULL)
+   {
+      Notify("Unable to find procedure 'uncompress' in zlib1.dll");
 
-		// force crash
-		assert(uncompress_entryptr != NULL);
-	}
+      // force crash
+      assert(uncompress_entryptr != NULL);
+   }
 
-	// cast entry point to function
-	uncompress = (uncompress_functype)uncompress_entryptr;
+   // cast entry point to function
+   uncompress = (uncompress_functype)uncompress_entryptr;
 
-	return TRUE;
+   return TRUE;
 }
 /************************************************************************/
 /*
@@ -83,13 +82,13 @@ Bool DibInitCompression()
 */
 Bool DibCloseCompression()
 {
-	if (zlib_moduleptr != NULL)
-		FreeLibrary(zlib_moduleptr);
+   if (zlib_moduleptr != NULL)
+      FreeLibrary(zlib_moduleptr);
 
-	zlib_moduleptr = NULL;
-	uncompress = NULL;
+   zlib_moduleptr = NULL;
+   uncompress = NULL;
 
-	return TRUE;
+   return TRUE;
 }
 /************************************************************************/
 /*
@@ -309,7 +308,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       if (MappedFileRead(f, &compressed_length, 4) != 4) return False;
 
       len = length;
-      retval = uncompress((void*) bits, &len, (const void*) f->ptr, (unsigned long)compressed_length);
+      retval = uncompress((void*)bits, &len, (const void*)f->ptr, (unsigned long)compressed_length);
       if (retval != 0) // 0 = Z_OK
       {
          dprintf("DibReadBits error during decompression\n");

@@ -205,11 +205,11 @@ void WinDEUApp::InitInstance ()
 {
 	// Initialize and create MainWindow
 	TApplication::InitInstance();
-	int i;
 
 	// Retrieve module directory to construct help file full path
 	if ( GetModuleFileName (HelpFileName, MAX_PATH) )
 	{
+		int i;
 		for (i = strlen(HelpFileName) - 1;
 			 (i >= 0) && (HelpFileName[i] != '\\');
 			 i--)

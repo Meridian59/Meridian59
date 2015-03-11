@@ -55,7 +55,7 @@
 #include <math.h>
 #include <sys\stat.h>
 
-#include <owl\owldefs.h>
+#include <owl\defs.h>
 #include <owl\version.h>
 #include <owl\module.h>
 #include <owl\applicat.h>

@@ -244,9 +244,9 @@ BOOL TMainFrame::StopEditLevel ()
 	delete pClient ;
 
 	// Clear status bar
-	((TTextGadget *)(*GetStatusBar())[0])->SetText ("");
+	((TTextGadget *)GetStatusBar()->FirstGadget())->SetText("");
 	// ((TTextGadget *)(*GetStatusBar())[1])->SetText ("");
-	((TTextGadget *)(*GetStatusBar())[2])->SetText ("");
+	((TTextGadget *)GetStatusBar()->FirstGadget()->NextGadget()->NextGadget())->SetText("");
 
 	// Setup gadgets for main window
 	SetupMainControlBar();
@@ -396,7 +396,7 @@ void TMainFrame::DrawFreeMemory()
 	// Draw the memory info in the third text gadget of status bar
 	wsprintf (msg, "Free mem: %sKb",
 				   FormatNumber (::GetAvailMemory() / 1024L));
-	((TTextGadget *)((*GetStatusBar())[1]))->SetText (msg);
+	((TTextGadget *)GetStatusBar()->FirstGadget()->NextGadget())->SetText(msg);
 
 	GetStatusBar()->UpdateWindow();
 }

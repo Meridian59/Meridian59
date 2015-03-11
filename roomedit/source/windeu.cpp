@@ -912,7 +912,7 @@ void WorkMessage (char *workstr, ...)
 	vsprintf( msg, workstr, args);
 	va_end( args);
 
-	((TTextGadget *)((*mainFrame->GetStatusBar())[0]))->SetText( msg);
+	((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->SetText(msg);
 	mainFrame->GetStatusBar()->UpdateWindow();
 }
 
@@ -928,7 +928,7 @@ void GetWorkMessage (char *buffer, size_t bufferSize)
 						  TMainFrame);
 
 	strncpy (buffer,
-			 ((TTextGadget *)((*mainFrame->GetStatusBar())[0]))->GetText (),
+			((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->GetText(),
 			 bufferSize);
 	buffer[bufferSize-1] = '\0';
 }

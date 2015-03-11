@@ -130,10 +130,10 @@ protected:
 	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
 #else
 	void EvLButtonDown (UINT modKeys, TPoint& point);
-	void EvLButtonDblClk (UINT modKeys, TPoint& point);
+	void EvLButtonDblClk(UINT modKeys, TPoint& point);
 #endif
 
-	//{{TPreferencesDialogRSP_TBL_END}}
+//{{TPreferencesDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TPreferencesDialog);
 };    //{{TPreferencesDialog}}
 

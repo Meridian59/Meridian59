@@ -590,7 +590,7 @@ void TBitmap256Control::BuildBitmap ()
 		for (x = 0 ; x < BitmapXSize ; x++)
 		{
 			wsprintf (&msg[strlen(msg)], "%02x ",
-					  ((char*)pDIBits)[y * ((BitmapXSize+3)& ~3) + x]);
+					  ((char *)pDIBits)[y * ((BitmapXSize+3)& ~3) + x]);
 		}
 		LogMessage ("Y = %03d : %s\n", y, msg);
 	}
@@ -634,7 +634,7 @@ void TBitmap256Control::ConvertBitmapToDib()
 
 	pDIBInfo = (LPBITMAPINFO)GetMemory (bitsAlloc);
 	pDIBInfo->bmiHeader = infoHeader;
-	pDIBits = ((BYTE*)pDIBInfo) + ((int)infoHeader.biSize + colorAlloc);
+	pDIBits = ((BYTE *)pDIBInfo) + ((int)infoHeader.biSize + colorAlloc);
 
 	// Inverse the bits from the Bitmap to the DIB bits.
 #if 0

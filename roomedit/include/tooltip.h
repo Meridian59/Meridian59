@@ -64,9 +64,9 @@ protected:
 //{{TTipControlBarRSP_TBL_BEGIN}}
 
 #if OWLVersion > OWLVERBC502
-	void 	EvMouseMove(UINT modKeys, const TPoint& point);
-	void 	EvLButtonDown(UINT modKeys, const TPoint& point);
-	void 	EvLButtonUp(UINT modKeys, const TPoint& point);
+	void 	EvMouseMove (UINT modKeys, const TPoint& point);
+	void 	EvLButtonDown (UINT modKeys, const TPoint& point);
+	void 	EvLButtonUp (UINT modKeys, const TPoint& point);
 #else
 	void 	EvMouseMove(UINT modKeys, TPoint& point);
 	void 	EvLButtonDown(UINT modKeys, TPoint& point);
@@ -94,11 +94,11 @@ public:
 					TModule*              	module = 0);
 
 #if OWLVersion > OWLVERBC502
-	void			EvMouseMove (UINT modKeys, const TPoint& point);
-	void			EvLButtonDown (UINT modKeys, const TPoint& point);
+	void 			EvMouseMove (UINT modKeys, const TPoint& point);
+	void 			EvLButtonDown (UINT modKeys, const TPoint& point);
 #else
-	void			EvMouseMove (UINT modKeys, TPoint& point);
-	void			EvLButtonDown(UINT modKeys, TPoint& point);
+	void 			EvMouseMove (UINT modKeys, TPoint& point);
+	void 			EvLButtonDown(UINT modKeys, TPoint& point);
 #endif
 
 	void 			SetHintText (const char *lpszText);

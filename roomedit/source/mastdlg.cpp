@@ -134,9 +134,9 @@ void TMasterDialog::SetupWindow ()
 // ----------
 //
 #if OWLVersion > OWLVERBC502
-void TMasterDialog::EvDrawItem(UINT ctrlId, const DRAWITEMSTRUCT& drawInfo)
+void TMasterDialog::EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT& drawInfo)
 #else
-void TMasterDialog::EvDrawItem(UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
+void TMasterDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
 #endif
 {
 	char Buf[128];

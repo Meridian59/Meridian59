@@ -165,10 +165,10 @@ protected:
 #if OWLVersion > OWLVERBC502	
 	void EvSize(UINT sizeType, const TSize& size);
 	void EvMouseMove(UINT modKeys, const TPoint& point);
-	void EvLButtonDown(UINT modKeys, const TPoint& point);
-	void EvLButtonUp(UINT modKeys, const TPoint& point);
-	void EvLButtonDblClk(UINT modKeys, const TPoint& point);
-	void EvRButtonDown(UINT modKeys, const TPoint& point);
+	void EvLButtonDown (UINT modKeys, const TPoint& point);
+	void EvLButtonUp (UINT modKeys, const TPoint& point);
+	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
+	void EvRButtonDown (UINT modKeys, const TPoint& point);
 #else
 	void EvSize(UINT sizeType, TSize& size);
 	void EvMouseMove(UINT modKeys, TPoint& point);

@@ -112,8 +112,9 @@ typedef unsigned char BYTE;
 
 /* include ::owl namespace for OWLNext/VS */
 #if OWLVersion > OWLVERBC502
-  using namespace owl;
+	using namespace owl;
 #endif
+
 
 /*
    syntactic sugar
@@ -123,7 +124,6 @@ typedef int Bool;               /* Boolean data: true or false */
 #include "fixed.h"
 #include "memry.h"
 #include "windeu.h"
-
 
 #define List_SelectStringExact(pList, indexStart, findStr) \
     pList->HandleMessage(LB_SETCURSEL, (WPARAM)pList->HandleMessage(LB_FINDSTRINGEXACT, (WPARAM)indexStart, (LPARAM)findStr), (LPARAM)0)

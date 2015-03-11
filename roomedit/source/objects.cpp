@@ -4061,8 +4061,8 @@ BOOL CheckTextures ()
 			// WorkMessage ("Checking textures of LineDefs & SideDefs %d/%d...",
 			//			 n, NumLineDefs-1);
 		}
-		SHORT         sd1, sd2;
-		SHORT         s1, s2;
+		SHORT   sd1, sd2;
+		SHORT   s1, s2;
 		SideDef *pSideDef1;
 		SideDef *pSideDef2;
 		Sector  *pSector1;

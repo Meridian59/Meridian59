@@ -243,9 +243,9 @@ void TInfoControl::Paint (TDC& dc, bool erase, TRect& rect)
 // ------------
 //
 #if OWLVersion > OWLVERBC502
-UINT TInfoControl::EvNCHitTest(const TPoint& /*point*/)
+UINT TInfoControl::EvNCHitTest (const TPoint& /*point*/)
 #else
-UINT TInfoControl::EvNCHitTest(TPoint& /*point*/)
+UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
 #endif
 {
 	return HTCAPTION;

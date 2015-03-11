@@ -1660,7 +1660,7 @@ void TEditorClient::EvRButtonDown(UINT modKeys, TPoint& point)
 	TPopupMenu PopupMenu (TrackMenu.GetSubMenu (0));
 	if ( TrackMenu.IsOK() && PopupMenu.IsOK() )
 	{
-		ClientToScreen (point);
+		ClientToScreen ((TPoint&)point);
 		PopupMenu.TrackPopupMenu (TPM_LEFTALIGN | TPM_RIGHTBUTTON,
 								  point, 0 /* reserved */, *Parent);
 	}

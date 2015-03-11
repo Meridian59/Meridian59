@@ -46,10 +46,6 @@
 	#include <editscro.h>
 #endif
 
-#ifndef OWL_POINT_H
-	#include <owl\point.h>		// TResID
-#endif
-
 #ifndef OWL_OPENSAVE_H
 	#include <owl\opensave.h>
 #endif

@@ -76,7 +76,6 @@ protected:
 	TEdit    *pCeilingHeight;
 	TStatic  *pBelowText;
 	TStatic  *pAboveText;
-	TCheckBox *p3DControlsCheck;
 	TCheckBox *pAddSelBoxCheck;
 	TCheckBox *pDebugCheck;
 	TCheckBox *pDrawLengthCheck;

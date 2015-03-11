@@ -104,7 +104,6 @@ Bool Reminder = TRUE;		/* display a funny message when DEU starts */
 Bool AutoScroll = FALSE;	/* Auto scroll mode */
 char *MainWad = NULL;	/* name of the main wad file */
 char **PatchWads = NULL;	/* list of patch wad files */
-Bool Use3DControls = TRUE;	/* Enable CTL3DV2.DLL or CTL3D32.DLL? */
 Bool DrawLineDefsLen = FALSE;	/* Display length of moving LineDefs */
 int BuildPriority = 0;		/* Priority for the nodes builder */
 int RoomID = 0;
@@ -190,7 +189,6 @@ OptDesc options[] =
 	{ "s0", "select0",     OPT_BOOLEAN,    "Select 0 by default",		"No default selection",	&Select0          },
 	{ NULL, "reminder1",   OPT_BOOLEAN,	  	NULL,								NULL,			      		&Reminder         },
 	// New for Windows:
-	{ "3d", "3dcontrols",  	OPT_BOOLEAN,   NULL,								"3DControls disabled",	&Use3DControls	   },
 	{ "dl", "drawlength",  	OPT_BOOLEAN,   "LineDefs length enabled",	NULL,	  	               &DrawLineDefsLen	},
 	{ "bp", "buildpriority",OPT_INTEGER,	"Nodes builder priority",	NULL,                   &BuildPriority	   },
 	{ "mu", "maxundo",     	OPT_INTEGER,   "Maximum UNDO levels",		NULL,                   &MaxUndo			   },

@@ -62,7 +62,7 @@ typedef struct
 #define DEU_CONFIG_FILE     "WINDEU.INI"
 
 /* name of the log file (debug mode) */
-#define DEU_LOG_FILE        "c:\\roomedit.txt"
+#define DEU_LOG_FILE        "windeu32.log"
 
 /*
 

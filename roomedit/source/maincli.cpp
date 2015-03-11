@@ -325,7 +325,7 @@ End:
 void TMainClient::CmFileInsertRaw ()
 {
 	static char ObjectName[12];
-	char input[MAXPATH];
+	char input[MAX_PATH];
 	MDirPtr entry;
 	FILE *raw;
 	FILE *file;

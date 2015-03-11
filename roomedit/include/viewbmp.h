@@ -46,7 +46,7 @@
 #endif
 
 #ifndef OWL_SLIDER_H
-	class _OWLCLASS TSlider;
+	#include <owl\slider.h>
 #endif
 
 #ifndef __bmp256ct_h

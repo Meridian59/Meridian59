@@ -323,18 +323,7 @@ void WinDEUApp::Enable3DControls (BOOL enable)
 			"'%SystemRoot%\\<NT_Directory_name>\\system32',\n"
 			"Example:\tc:\\winnt35\\system32\n\n"
 			"If you don't want 3D controls, use the '3DControls' "
-			"configuration option (see help file)";
-
-	TRY
-	{
-		EnableCtl3d (TRUE);
-	}
-	CATCH ((...)
-	{
-//		MainWindow->MessageBox (ErrorMsg,
-//								"WinDEU: 3D Controls library load error",
-//								MB_OK | MB_ICONINFORMATION);
-	})
+			"configuration option (see help file)";	
 
 #if 0
 	if ( ! Ctl3dEnabled() )

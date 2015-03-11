@@ -73,7 +73,13 @@ public:
 //{{TViewEntryDialogRSP_TBL_BEGIN}}
 protected:
 	void EntrySelChange ();
+
+#if OWLVersion > OWLVERBC502
+	void EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT& drawInfo);
+#else
 	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo);
+#endif
+
 //{{TViewEntryDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TViewEntryDialog);
 };    //{{TViewEntryDialog}}

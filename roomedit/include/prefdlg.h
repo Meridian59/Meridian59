@@ -125,9 +125,16 @@ protected:
 	void ClearAboveClicked ();
 	void WTextureSelChange ();
 	void WTextureDblClk ();
+
+#if OWLVersion > OWLVERBC502
+	void EvLButtonDown (UINT modKeys, const TPoint& point);
+	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
+#else
 	void EvLButtonDown (UINT modKeys, TPoint& point);
 	void EvLButtonDblClk (UINT modKeys, TPoint& point);
-//{{TPreferencesDialogRSP_TBL_END}}
+#endif
+
+	//{{TPreferencesDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TPreferencesDialog);
 };    //{{TPreferencesDialog}}
 

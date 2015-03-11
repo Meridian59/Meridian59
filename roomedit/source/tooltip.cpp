@@ -82,7 +82,11 @@ TTipControlBar::TTipControlBar (TToolTip& tip, TWindow* parent, TTileDirection d
 	SetHintMode(TGadgetWindow::EnterHints);
 }
 
-void TTipControlBar::EvMouseMove (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TTipControlBar::EvMouseMove(UINT modKeys, const TPoint& point)
+#else
+void TTipControlBar::EvMouseMove(UINT modKeys, TPoint& point)
+#endif
 {
 	if (!Capture && !GadgetFromPoint (point))
 	{
@@ -97,7 +101,11 @@ void TTipControlBar::EvMouseMove (UINT modKeys, TPoint& point)
 	bEnableHints = FALSE;
 }
 
-void TTipControlBar::EvLButtonDown (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TTipControlBar::EvLButtonDown(UINT modKeys, const TPoint& point)
+#else
+void TTipControlBar::EvLButtonDown(UINT modKeys, TPoint& point)
+#endif
 {
 	// hide the tip window if mouse-button pressed
 	tooltip.HideTip ();
@@ -106,7 +114,11 @@ void TTipControlBar::EvLButtonDown (UINT modKeys, TPoint& point)
 }
 
 
-void TTipControlBar::EvLButtonUp (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TTipControlBar::EvLButtonUp(UINT modKeys, const TPoint& point)
+#else
+void TTipControlBar::EvLButtonUp(UINT modKeys, TPoint& point)
+#endif
 {
 	// Hide hint text
 	ptStatusBar->SetHintText(NULL);
@@ -269,7 +281,11 @@ void TTipStatusBar::DrawHintText (const char *lpszText)
 }
 
 
-void TTipStatusBar::EvMouseMove (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TTipStatusBar::EvMouseMove(UINT modKeys, const TPoint& point)
+#else
+void TTipStatusBar::EvMouseMove(UINT modKeys, TPoint& point)
+#endif
 {
 	if (bShowTips)
 	{
@@ -291,7 +307,11 @@ void TTipStatusBar::EvMouseMove (UINT modKeys, TPoint& point)
 	}
 }
 
-void TTipStatusBar::EvLButtonDown (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TTipStatusBar::EvLButtonDown(UINT modKeys, const TPoint& point)
+#else
+void TTipStatusBar::EvLButtonDown(UINT modKeys, TPoint& point)
+#endif
 {
 	if (bShowTips)
 	{

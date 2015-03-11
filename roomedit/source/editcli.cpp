@@ -1098,7 +1098,11 @@ void TEditorClient::DrawMouseCoord (TDC &dc)
 // TEditorClient
 // -------------
 //
-void TEditorClient::EvSize (UINT sizeType, TSize& size)
+#if OWLVersion > OWLVERBC502
+void TEditorClient::EvSize(UINT sizeType, const TSize& size)
+#else
+void TEditorClient::EvSize(UINT sizeType, TSize& size)
+#endif
 {
 	TRect clientRect = GetClientRect ();
 
@@ -1144,7 +1148,11 @@ void TEditorClient::EvSize (UINT sizeType, TSize& size)
 //       OR Highlight pointed object (and set it to new current object), only
 //          if CTRL key not pressed
 //
-void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TEditorClient::EvMouseMove(UINT modKeys, const TPoint& point)
+#else
+void TEditorClient::EvMouseMove(UINT modKeys, TPoint& point)
+#endif
 {
 	TLayoutWindow::EvMouseMove(modKeys, point);
 
@@ -1320,7 +1328,11 @@ void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
 //     won't realy take effect until the mouse is moved, and will
 //     stop when Left mouse button is released.
 //
-void TEditorClient::EvLButtonDown (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TEditorClient::EvLButtonDown(UINT modKeys, const TPoint& point)
+#else
+void TEditorClient::EvLButtonDown(UINT modKeys, TPoint& point)
+#endif
 {
 	PointerX = point.x;
 	PointerY = point.y;
@@ -1409,7 +1421,11 @@ void TEditorClient::EvLButtonDown (UINT modKeys, TPoint& point)
 //	Left mouse button UP:
 //		- Stop Drag mode or Stretch selection box mode.
 //
-void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TEditorClient::EvLButtonUp(UINT modKeys, const TPoint& point)
+#else
+void TEditorClient::EvLButtonUp(UINT modKeys, TPoint& point)
+#endif
 {
 	PointerX = point.x;
 	PointerY = point.y;
@@ -1536,7 +1552,11 @@ void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
 // TEditorClient
 // -------------
 //
-void TEditorClient::EvLButtonDblClk (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TEditorClient::EvLButtonDblClk(UINT modKeys, const TPoint& point)
+#else
+void TEditorClient::EvLButtonDblClk(UINT modKeys, TPoint& point)
+#endif
 {
 	PointerX = point.x;
 	PointerY = point.y;
@@ -1561,7 +1581,11 @@ void TEditorClient::EvLButtonDblClk (UINT modKeys, TPoint& point)
 // TEditorClient
 // -------------
 //
-void TEditorClient::EvRButtonDown (UINT modKeys, TPoint& point)
+#if OWLVersion > OWLVERBC502
+void TEditorClient::EvRButtonDown(UINT modKeys, const TPoint& point)
+#else
+void TEditorClient::EvRButtonDown(UINT modKeys, TPoint& point)
+#endif
 {
 	// Ignore if "insert object" mode
 	if ( InsertingObject )

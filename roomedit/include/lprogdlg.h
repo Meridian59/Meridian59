@@ -92,8 +92,14 @@ public:
 
 //{{TLevelProgressDialogRSP_TBL_BEGIN}}
 protected:
+	void EvPaint();
+
+#if OWLVersion > OWLVERBC502
+	void EvSize (UINT sizeType, const TSize& size);
+#else
 	void EvSize (UINT sizeType, TSize& size);
-	void EvPaint ();
+#endif
+
 //{{TLevelProgressDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TLevelProgressDialog);
 };    //{{TLevelProgressDialog}}

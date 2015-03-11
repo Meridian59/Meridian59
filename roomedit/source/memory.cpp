@@ -73,7 +73,7 @@ void *AllocMemory (long size)
 	// ULONG asksize = size;
 
 	// limit fragmentation on large blocks
-	if (size >= (ULONG) SIZE_THRESHOLD)
+	if (size >= (LONG) SIZE_THRESHOLD)
 		size = (size + (ULONG) SIZE_OF_BLOCK) & ~((ULONG) SIZE_OF_BLOCK);
 
 	// TRACE ("Alloc: ask size = " << dec << asksize ", real size = " << size << " bytes");
@@ -112,7 +112,7 @@ void *ReallocMemory (void *old, long size)
 	// ULONG asksize = size;
 
 	/* limit fragmentation on large blocks */
-	if (size >= (ULONG) SIZE_THRESHOLD)
+	if (size >= (LONG) SIZE_THRESHOLD)
 		size = (size + (ULONG) SIZE_OF_BLOCK) & ~((ULONG) SIZE_OF_BLOCK);
 
 	// TRACE ("Realloc: ask size = " << dec << asksize << ", real size = " << size << " bytes");
@@ -148,7 +148,16 @@ long GetAvailMemory ()
 
 	memstat.dwLength = sizeof (memstat);
 	::GlobalMemoryStatus (&memstat);
-	return (long)memstat.dwAvailPhys + memstat.dwAvailPageFile;
+
+	LONGLONG avail = (LONGLONG)(memstat.dwAvailPhys + memstat.dwAvailPageFile);
+
+	if (avail > MAXLONG)
+		avail = MAXLONG;
+
+	else if (avail < 0)
+		avail = 0;
+
+	return (long)avail;
 }
 
 /* end of file */

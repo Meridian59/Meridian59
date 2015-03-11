@@ -444,7 +444,7 @@ TBitmap256Control::SetZoomFactor (UINT factor)
 void
 TBitmap256Control::SetGammaLevel (BYTE level)
 {
-	if ( level == GammaLevel )
+	if ( (UINT)level == GammaLevel )
 		return;
 
 	GammaLevel  = level;

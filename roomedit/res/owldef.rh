@@ -64,12 +64,12 @@
 #define IDS_INVALIDMODULE       32760
 #define IDS_INVALIDMAINWINDOW   32759
 
-//
-// Owl 1 compatibility messages
-//
-#define IDS_INVALIDWINDOW       32756
-#define IDS_INVALIDCHILDWINDOW  32755
-#define IDS_INVALIDCLIENTWINDOW 32754
+//                                        
+// Owl 1 compatibility messages           
+//                                        
+#define IDS_INVALIDWINDOW       32709
+#define IDS_INVALIDCHILDWINDOW  32708
+#define IDS_INVALIDCLIENTWINDOW 32707
 
 //
 // TXWindow messages

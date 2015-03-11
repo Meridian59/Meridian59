@@ -104,7 +104,6 @@ Bool Reminder = TRUE;		/* display a funny message when DEU starts */
 Bool AutoScroll = FALSE;	/* Auto scroll mode */
 char *MainWad = NULL;	/* name of the main wad file */
 char **PatchWads = NULL;	/* list of patch wad files */
-Bool Use3DControls = TRUE;	/* Enable CTL3DV2.DLL or CTL3D32.DLL? */
 Bool DrawLineDefsLen = FALSE;	/* Display length of moving LineDefs */
 int BuildPriority = 0;		/* Priority for the nodes builder */
 int RoomID = 0;
@@ -128,11 +127,11 @@ BOOL   GridShown  = FALSE;
 #define DEFAULT_LOWER_TEXTURE 	"-"
 #define DEFAULT_FLOOR_TEXTURE	"-"
 #define DEFAULT_CEILING_TEXTURE "-"
-#define DEFAULT_BITMAP_DIR      "e:\\blakston\\resource\\nt"
+#define DEFAULT_BITMAP_DIR      "..\\run\\localclient\\resource"
 #define DEFAULT_BITMAP_SPEC     "grd*.bgf"
-#define DEFAULT_KOD_DIR				"c:\\blakston\\kod\\"
-#define DEFAULT_SERVER_DIR      	"c:\\blakrun\\server\\"
-#define DEFAULT_ENTRANCE_FILE		"c:\\blakston\\roomedit\\entrance.dat"
+#define DEFAULT_KOD_DIR			"..\\kod\\"
+#define DEFAULT_SERVER_DIR      "..\\run\\server\\"
+#define DEFAULT_ENTRANCE_FILE	"entrance.dat"
 
 char *DefaultWallTexture;		/* default normal wall texture */
 char *DefaultUpperTexture;		/* default upper wall texture */
@@ -190,7 +189,6 @@ OptDesc options[] =
 	{ "s0", "select0",     OPT_BOOLEAN,    "Select 0 by default",		"No default selection",	&Select0          },
 	{ NULL, "reminder1",   OPT_BOOLEAN,	  	NULL,								NULL,			      		&Reminder         },
 	// New for Windows:
-	{ "3d", "3dcontrols",  	OPT_BOOLEAN,   NULL,								"3DControls disabled",	&Use3DControls	   },
 	{ "dl", "drawlength",  	OPT_BOOLEAN,   "LineDefs length enabled",	NULL,	  	               &DrawLineDefsLen	},
 	{ "bp", "buildpriority",OPT_INTEGER,	"Nodes builder priority",	NULL,                   &BuildPriority	   },
 	{ "mu", "maxundo",     	OPT_INTEGER,   "Maximum UNDO levels",		NULL,                   &MaxUndo			   },

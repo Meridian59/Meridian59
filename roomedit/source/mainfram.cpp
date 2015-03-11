@@ -163,7 +163,9 @@ void TMainFrame::SetMenuAndAccel (TResId id)
 	AssignMenu (id);
 	Attr.AccelTable = id;
 	LoadAcceleratorTable();
-	DrawMenuBar();
+	
+	if (GetHandle())
+		DrawMenuBar();
 }
 
 

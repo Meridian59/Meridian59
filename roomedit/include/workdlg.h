@@ -42,7 +42,7 @@
 #endif
 
 #ifndef OWL_GAUGE_H
-	#include <owl\gauge.h>;
+	#include <owl\gauge.h>
 #endif
 
 #include "workdlg.rh"            // Definition of all resources.

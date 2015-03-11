@@ -264,7 +264,7 @@ void TEpisodeMissionDialog::Doom2CheckClicked ()
 	else
 	{
 		pDoom2Group->ShowWindow(SW_HIDE);
-		for (SHORT i = 0 ; i < 32 ; i++)
+		for (i = 0 ; i < 32 ; i++)
 			pDoom2Radio[i]->ShowWindow(SW_HIDE);
 
 		pDoom1Group->ShowWindow(SW_SHOW);

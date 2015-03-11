@@ -311,7 +311,11 @@ void TLevelProgressDialog::ShowBlockmapProgress (int value)
 // TLevelProgressDialog
 // --------------------
 //
+#if OWLVersion > OWLVERBC502
+void TLevelProgressDialog::EvSize (UINT sizeType, const TSize& size)
+#else
 void TLevelProgressDialog::EvSize (UINT sizeType, TSize& size)
+#endif
 {
 	if ( sizeType == SIZE_MINIMIZED )
 	{

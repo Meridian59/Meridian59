@@ -353,7 +353,7 @@ void WinDEUApp::Enable3DControls (BOOL enable)
 // WinDEUApp
 // ---------
 // Ask for confirmation before exiting application
-BOOL WinDEUApp::CanClose ()
+bool WinDEUApp::CanClose ()
 {
 	BOOL result;
 

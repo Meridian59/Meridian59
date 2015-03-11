@@ -970,7 +970,7 @@ void TSectorEditDialog::TextureDblclick ()
 	{
 	   TextureInfo *info = FindTextureByName(TextureName);
 	   
-	   if ( pFTextureDialog->SelectBitmap (info->filename) < 0 )
+	   if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	      Notify ("Error: Cannot select the texture name \"%s\" in the "
 		      "dialog box of Floor/Ceiling Texture view ! (BUG)",
 		      TextureName);

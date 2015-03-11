@@ -1763,7 +1763,7 @@ void TLineDefEditDialog::TextureListDBLClick ()
    {
       TextureInfo *info = FindTextureByName(TextureName);
 
-      if ( pWTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Wall Texture view ! (BUG)", TextureName);
    }

@@ -467,7 +467,7 @@ TBitmap256Control::SetGammaLevel (BYTE level)
 //  data by calling the virtual function BuildBitmapData, then
 //  calc. the bitmap palette and create the bitmap GDI object.
 //  Then call AdjustWindowSize and DisplayBitmap.
-void TBitmap256Control::SelectBitmap (const char *name, SHORT remapPlayer, int palnum)
+void TBitmap256Control::SelectBitmap2 (const char *name, SHORT remapPlayer, int palnum)
 {
    char buf[MAX_PATH];
    

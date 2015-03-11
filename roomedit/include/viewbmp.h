@@ -203,7 +203,7 @@ protected:
 public:
 	TDisplayBitmapDialog (TWindow* parent, TResId resId = IDD_DISPLAY_BITMAP, TModule* module = 0);
 	virtual ~TDisplayBitmapDialog ();
-	int SelectBitmap (const char *str);
+	int SelectBitmap2 (const char *str);
 
 public:
 	virtual void SetupWindow ();

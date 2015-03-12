@@ -2528,7 +2528,8 @@ void TEditorClient::DrawStatusBar()
 {
 	if (InfoShown)
 	{
-		char msg[80] ;
+		// 500 is from LevelName size, 20 from 'Editing %s..' below, 20 for EditMode
+		char msg[500 + 20 + 20];
 		int len;
 
 		// OK to print stats without level now
@@ -2565,7 +2566,7 @@ void TEditorClient::DrawStatusBar()
 		// Draw the memory info
 		TMainFrame *mainFrame =
 			TYPESAFE_DOWNCAST(GetApplication()->GetMainWindow(), TMainFrame);
-		mainFrame->DrawFreeMemory();	
+		mainFrame->DrawFreeMemory();
 	}
 }
 

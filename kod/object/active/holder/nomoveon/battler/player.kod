@@ -1204,7 +1204,7 @@ messages:
 
       if flagset = 1 AND (flag & PFLAG_PKILL_ENABLE) AND value
       {
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         if (piFlags & PFLAG_PKILL_ENABLE)
          {
             return;
          }
@@ -1672,7 +1672,7 @@ messages:
          Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=FALSE);
 
          % Don't create the revenant if we're in a safe location.
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_HAUNTED)
+         if (piFlags & PFLAG_HAUNTED)
          {
             Create(&Revenant,#target=self,#location=poOwner,
                    #level=bound((((piBase_Max_health*150)/100)+
@@ -1755,7 +1755,7 @@ messages:
    {
       local i,oEnchanter, rank, HitPoint_Percent;
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (piFlags & PFLAG_MORPHED)
          AND poIllusion_set <> $
       {
          % Since piHealth is internally inflated by a factor of 100, this 
@@ -2066,7 +2066,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oParl, oRoom, iBonus, iDefaultBonus, iTimespan;
+      local i, oGame, oParl, iBonus, iDefaultBonus, iTimespan;
 
       for i in plPassive
       {
@@ -2133,7 +2133,7 @@ messages:
       %   then give us a commands list.
       if IsClass(poOwner,&Guest1)
          OR (IsClass(poOwner,&Newb1)
-            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
+            AND NOT (piFlags & PFLAG_TUTORIAL))
       {
          Post(self,@MsgSendUser,#message_rsc=player_newbie_commands);
       }
@@ -2144,10 +2144,9 @@ messages:
       Send(self,@ComputeMaxMana);
 
       % Tell others that we're here
-      oRoom = Send(self, @GetOwner);
-      if oRoom <> $ AND NOT IsClass(self, &DM)
+      if poOwner <> $ AND NOT IsClass(self, &DM)
       {
-         Send(oRoom, @SomethingWaveRoom, #what=self,
+         Send(poOwner,@SomethingWaveRoom,#what=self,
                #wave_rsc=player_logged_on_wav_rsc);
       }
 
@@ -2193,7 +2192,7 @@ messages:
 
    UserLogoffHook()
    {
-      local i, oRoom;
+      local i;
 
       for i in plPassive
       {
@@ -2245,10 +2244,9 @@ messages:
       Send(self,@CancelRescue);
 
       % Tell others that we're leaving
-      oRoom = Send(self, @GetOwner);
-      if oRoom <> $ AND NOT IsClass(self, &DM) 
+      if poOwner <> $ AND NOT IsClass(self,&DM)
       {
-         Send(oRoom, @SomethingWaveRoom, #what=self, 
+         Send(poOwner,@SomethingWaveRoom,#what=self,
                #wave_rsc=player_logged_off_wav_rsc);
       }
 
@@ -2556,7 +2554,7 @@ messages:
 
       % Send first mail the first time player plays.
       % Set their honor strong if this is a truly new character (max 1 reroll)
-      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL) 
+      if NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@ReceiveNestedMail,#from=player_angel,
                #dest_list=[self],#nest_list=[4,player_first_mail]);
@@ -3722,7 +3720,7 @@ messages:
          return FALSE;
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (piFlags & PFLAG_MORPHED)
       {
          Send(self,@MsgSendUser,#message_rsc=player_cant_use);
 
@@ -4107,7 +4105,7 @@ messages:
 
       % Check for temporary safety flag.
       if IsClass(victim,&Player)
-         AND (Send(self,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+         AND ((piFlags2 & PFLAG2_TEMPSAFE)
             OR Send(victim,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
       {
          if report
@@ -4149,7 +4147,7 @@ messages:
             OR IsClass(victim,&EvilTwin)
             OR Send(victim,@GetMaster) <> $
          {
-            if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            if NOT (piFlags & PFLAG_PKILL_ENABLE)
             {
                if report
                {
@@ -4231,7 +4229,7 @@ messages:
 
          if NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
          {
-            if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            if NOT (piFlags & PFLAG_PKILL_ENABLE)
             {
                % A newbie (someone below GetPKillEnableHP) tried to attack
                % another player! note that this does not affect murderers
@@ -4422,8 +4420,8 @@ messages:
          }
          else
          {
-            if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            if NOT (piFlags & PFLAG_MURDERER)
+               AND NOT (piFlags & PFLAG_OUTLAW)
                AND actual = TRUE
             {
                % attacking someone who is without fault is cause to
@@ -4867,7 +4865,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          iOffense = Send(oMonster,@GetOffense,#what=what,#stroke_obj=stroke_obj);
       }
@@ -4954,7 +4953,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if (oMonster <> $) and Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          iDefense = Send(oMonster,@GetDefense,#what=what,
                         #stroke_obj=stroke_obj);
@@ -5014,7 +5014,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          return Send(oMonster,@GetParryAbility,#stroke_obj=stroke_obj);
       }
@@ -5037,7 +5038,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          % Should only be one morph enchantment on the player.
          return Send(oMonster,@GetBlockAbility,#stroke_obj=stroke_obj);
@@ -5066,8 +5068,9 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MOVE)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
+         AND NOT (piFlags & PFLAG_NO_MOVE)
       {
          return Send(oMonster,@GetDodgeAbility,#stroke_obj=stroke_obj);
       }
@@ -5088,7 +5091,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          iDamage = Send(oMonster,@GetDamage,#what=what,#stroke_obj=stroke_obj);
       }
@@ -5172,7 +5176,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          return Send(oMonster,@GetDamageType,#what=what);
       }
@@ -5201,7 +5206,8 @@ messages:
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      if (oMonster <> $)
+         AND (piFlags & PFLAG_MORPHED)
       {
          return Send(oMonster,@GetSpellType,#what=what);
       }
@@ -5362,7 +5368,7 @@ messages:
 
       if damage > 0
       {
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_PARALYZED,#flagset=2)
+         if (piFlags2 & PFLAG2_PARALYZED)
          {
             Send(self,@RemoveEnchantment,
                   #what=Send(SYS,@FindSpellByNum,#num=SID_PARALYZE));
@@ -5376,8 +5382,8 @@ messages:
          % If we have more health than twice our max, no percent limit on damage.
          % If we are outlaw or murderer, no percent limit on damage.
          if piHealth < (piBase_Max_Health * 200)
-            AND ((NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+            AND ((NOT (piFlags & PFLAG_OUTLAW)
+               AND NOT (piFlags & PFLAG_MURDERER))
                OR Send(Send(SYS,@GetSettings),@DamageCapProtectionMurderersEnabled))
          {
             % Cap damage to 1/3 of max health (+2 so we "round up")
@@ -5740,7 +5746,7 @@ messages:
                   % Apply penalties for someone NOT holding a token
                   if Send(what,@FindUsing,#class=&Token) = $
                   {
-                     if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                     if (piFlags & PFLAG_MURDERER)
                      {
                         Send(self,@MsgSendUser,#message_rsc=player_killed_player);
                      }
@@ -5915,7 +5921,7 @@ messages:
 
       % PFLAG2_NOHAUNT is only settable by a guide or guardian. The last
       % two checks prevent outlaw/murderer players from creating revenants.
-      if Send(Self,@CheckPlayerFlag,#flagset=2,#flag=PFLAG2_NOHAUNT)
+      if (piFlags2 & PFLAG2_NOHAUNT)
          OR Send(target,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          OR Send(target,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
@@ -6759,7 +6765,7 @@ messages:
       % Give them the "further info" gmail if they've advanced to 25.
       if piBase_Max_health = 25
          AND amount > 0
-         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL)
+         AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@ReceiveNestedMail,#from=player_angel,
                #dest_list=[self],#nest_list=[4,player_tutorial_mail]);
@@ -7344,7 +7350,7 @@ messages:
 
    CalculateKarmaChangeFromKill(karma_killer=0,karma_victim=0,bIsMob=FALSE)
    {
-      local iChange, iSwing, oRoom, oSpellDeathLink;
+      local iChange, iSwing, oSpellDeathLink;
 
       % No karma change in survival room. Mobs in this room *should*
       % return 0 karma, but there are cases where it doesn't happen.
@@ -7364,8 +7370,8 @@ messages:
 
       % No karma changes in the newbie area. Otherwise e.g. killing a negative
       % karma monster may make your spell inoperable.
-      oRoom = Send(self, @GetOwner);
-      if oRoom <> $ AND Send(oRoom, @GetRegion) = RID_NEWB_BASE
+      if poOwner <> $
+         AND Send(poOwner,@GetRegion) = RID_NEWB_BASE
       {
          return 0;
       }
@@ -7553,7 +7559,7 @@ messages:
                       refigureschools = TRUE)
    {
       local i, bFound, elemNum, iAbility, bUsed, spellName, iChange,
-            newAbility, oSpell, oRoom, shrunken;
+            newAbility, oSpell, shrunken;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=spell_num);
       if oSpell = $
@@ -7601,16 +7607,19 @@ messages:
       Send(self,@DrawStatSpell,#index=elemNum);
       if report AND iChange > 0
       {
-         oRoom = Send(self, @GetOwner);
-         Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
-         Send(oRoom, @SomethingWaveRoom, #what=self, 
-              #wave_rsc=player_improved_wav_rsc);
-
-         % report to shrunken head
-         shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-         if shrunken <> $
+         if poOwner <> $
          {
-            Send(shrunken,@Improvement,#spellName=spellName);
+            Post(self,@MsgSendUser,#message_rsc=player_improved,
+                  #parm1=spellName);
+            Send(poOwner,@SomethingWaveRoom,#what=self,
+                  #wave_rsc=player_improved_wav_rsc);
+
+            % Report to shrunken head.
+            shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+            if shrunken <> $
+            {
+               Send(shrunken,@Improvement,#spellName=spellName);
+            }
          }
       }
 
@@ -8089,7 +8098,7 @@ messages:
    ChangeSkillAbility(Skill_num=0,amount=0,report=FALSE,refigureschools=TRUE,bDM=FALSE)
    {
       local i, bFound, elemnum, iability, bUsed, iChange, skillname, 
-            newability, oSkill, oRoom;
+            newability, oSkill;
 
       oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
       if oSkill = $
@@ -8144,16 +8153,19 @@ messages:
       Send(self,@DrawStatSkill,#index=elemnum);
       if report AND (iChange > 0)
       {
-         oRoom = Send(self, @GetOwner);
-         Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=skillName);
-         Send(oRoom, @SomethingWaveRoom, #what=self, 
-              #wave_rsc=player_improved_wav_rsc);
+         if poOwner <> $
+         {
+            Post(self,@MsgSendUser,#message_rsc=player_improved,
+                  #parm1=skillName);
+            Send(poOwner,@SomethingWaveRoom,#what=self,
+                  #wave_rsc=player_improved_wav_rsc);
+         }
       }
 
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
-      {    
+      {
          Send(self,@AddToSchools,#school=Send(oSkill,@GetSchool),
                #change=iChange);
       }
@@ -8569,14 +8581,14 @@ messages:
          monster_level = Send(what,@GetLevel);
       }
 
-      if (Send(self,@CheckPlayerFlag,#flag=PFLAG_DID_DAMAGE)
+      if (piFlags & PFLAG_DID_DAMAGE)
          AND poKill_target = what)
          OR group_member_kill
       {
          % Allow players to improve defensive spells!
          if killing_blow 
-            AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
-               OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
+            AND ((piFlags & PFLAG_TOOK_DAMAGE)
+               OR (piFlags & PFLAG_DODGED))
          {
             for i in plPassiveImprovement
             {
@@ -8590,8 +8602,8 @@ messages:
          if monster_level > piBase_Max_health
          {
             if killing_blow
-               AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
-                  OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
+               AND ((piFlags & PFLAG_TOOK_DAMAGE)
+                  OR (piFlags & PFLAG_DODGED))
             {
                % Player took damage and landed killing blow
                gain = 2;
@@ -8643,8 +8655,8 @@ messages:
             %  no roll chance.
             if (monster_level + 5) > piBase_Max_health
                AND IsClass(what,&monster) AND killing_blow 
-               AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
-                  OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
+               AND ((piFlags & PFLAG_TOOK_DAMAGE)
+                  OR (piFlags & PFLAG_DODGED))
             {
                gain = 1;
             }
@@ -8677,8 +8689,8 @@ messages:
                AND NOT group_member_kill
                AND killing_blow
                AND (monster_level + 5) > piBase_Max_health
-               AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
-                  OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
+               AND ((piFlags & PFLAG_TOOK_DAMAGE)
+                  OR (piFlags & PFLAG_DODGED))
             {
                gain = gain + 1;
             }
@@ -8817,7 +8829,7 @@ messages:
          }
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
+      if (piFlags & PFLAG_DODGED)
          AND NOT group_member_kill
       {
          oWeapon = Send(self,@LookupPlayerWeapon);
@@ -9264,8 +9276,8 @@ messages:
       }
 
       if piDeathCost > 0
-         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL)
-         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         AND NOT (piFlags & PFLAG_TUTORIAL)
+         AND NOT (piFlags & PFLAG_MURDERER)
       {
          % Give an encouraging gmail and some mana to broadcast.
          Send(self,@ReceiveNestedMail,#from=player_angel,
@@ -9322,7 +9334,7 @@ messages:
          Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
          Post(self,@EvaluatePKStatus);
 
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_HAUNTED)
+         if (piFlags & PFLAG_HAUNTED)
          {
             if pbLogged_on
             {
@@ -9336,8 +9348,8 @@ messages:
       % Only do this stuff if the cost of death is not zero.
       if piDeathCost > 0
       {
-         if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL)
-            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         if NOT (piFlags & PFLAG_TUTORIAL)
+            AND NOT (piFlags & PFLAG_MURDERER)
          {
             piDeathCost = piDeathCost / 3;
          }
@@ -9392,7 +9404,7 @@ messages:
       % Lose some skill or spell proficiency.
 
       % Murderers get hit harder.
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      if (piFlags & PFLAG_MURDERER)
       {
          iAmount = -2;
       }
@@ -12222,17 +12234,17 @@ messages:
    {
       local i, ass_game;
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_LOCK)
+      if (piFlags & PFLAG_PKILL_LOCK)
       {
          return FALSE;
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      if (piFlags & PFLAG_PKILL_ENABLE)
       {
          if poGuild = $
             AND piBase_Max_health < Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
-            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            AND NOT (piFlags & PFLAG_MURDERER)
+            AND NOT (piFlags & PFLAG_OUTLAW)
          {
             ass_game = Send(SYS,@GetAssassinGame);
             if Send(ass_game,@IsCombatant,#who=self)
@@ -12251,8 +12263,8 @@ messages:
       {
          if poGuild <> $
             OR piBase_Max_health >= Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
-            OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            OR (piFlags & PFLAG_MURDERER)
+            OR (piFlags & PFLAG_OUTLAW)
          {
             if Send(SYS,@IsPKAllowed)
             {
@@ -12557,7 +12569,7 @@ messages:
          return FALSE;
       }
 
-      wasint = Send(self,@CheckPlayerFlag,#flag=PFLAG_INTRIGUING);
+      wasint = (piFlags & PFLAG_INTRIGUING);
 
       if wasint AND Send(oParl,@IsShutdown)
       {
@@ -12587,7 +12599,7 @@ messages:
          return FALSE;
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      if (piFlags & PFLAG_PKILL_ENABLE)
          AND (Send(self,@PlayerIsHPIntrigue)
               OR Send(self,@PlayerIsAdept))
       {
@@ -12974,7 +12986,7 @@ messages:
 
    CheckLog()
    {
-      return (Send(self,@CheckPlayerFlag,#flag=PFLAG_LOG));
+      return (piFlags & PFLAG_LOG);
    }
 
    DecayPKillCount()
@@ -13022,8 +13034,8 @@ messages:
       }
 
       if IsClass(oRoom,&GuildHall)
-         AND (NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-            OR Send(self,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
+         AND (NOT (piFlags & PFLAG_PKILL_ENABLE)
+            OR (piFlags & PFLAG2_TEMPSAFE))
       {
          Send(self,@MsgSendUser,#message_rsc=player_no_enter);
 
@@ -13395,7 +13407,7 @@ messages:
 
    IsInvisible()
    {
-      return Send(self,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE);
+      return (piFlags & PFLAG_INVISIBLE);
    }
 
    IsShadowForm()
@@ -13405,7 +13417,7 @@ messages:
 
    IsMorphed()
    {
-      return Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED);
+      return (piFlags & PFLAG_MORPHED);
    }
 
    %%% Get Color Routines
@@ -14012,10 +14024,10 @@ messages:
       }
 
       piBound_Room = Send(poOwner,@GetRoomNum);
-      piBound_row = Send(self,@GetRow);
-      piBound_col = Send(self,@GetCol);
-      piBound_fine_row = Send(self,@GetFineRow);
-      piBound_fine_col = Send(self,@GetFineCol);
+      piBound_row = piRow;
+      piBound_col = piCol;
+      piBound_fine_row = piFine_row;
+      piBound_fine_col = piFine_col;
       piBound_angle = Send(self,@GetAngle);
 
       return;
@@ -14520,8 +14532,8 @@ messages:
 
    GetBasePhaseTime()
    {
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-         OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      if (piFlags & PFLAG_MURDERER)
+         OR (piFlags & PFLAG_OUTLAW)
       {
          return Send(Send(SYS,@GetSettings),
                @GetOutlawMurdererLogoffPenaltyGhostTime);
@@ -14600,25 +14612,20 @@ messages:
    
    DoPvpNotify()
    {
-      local oRoom;
-
       % Don't gong if we are already in pvp
       if piTimeAttackedPlayer < GetTime() - PVP_NOTIFY_DECAY
       {
-         oRoom = Send(self, @GetOwner);
-         
-         if oRoom <> $
+         if poOwner <> $
          {
-            Send(oRoom, @SomethingWaveRoom, #what=self,
-               #wave_rsc=pvp_notify_wav);
-               
+            Send(poOwner,@SomethingWaveRoom,#what=self,
+                  #wave_rsc=pvp_notify_wav);
             piTimeAttackedByPlayer = GetTime();
          }
       }
 
       return;
    }
-   
+
    % Use this for when either phase or spectator do the same thing
    IsInCannotInteractMode()
    {

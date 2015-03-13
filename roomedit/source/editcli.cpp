@@ -385,7 +385,7 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 
 	MadeChanges = FALSE;
 	MadeMapChanges = FALSE;
-	ScaleMax = 4.0;
+	ScaleMax = 32.0;
 	ScaleMin = 1.0 / 20.0;
 	if (InitialScale < 1)
 		InitialScale = 1;

@@ -75,7 +75,7 @@ messages:
       return;
    }
    
-   CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE,
+   CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE,sString=$,
               lSurvivalOptions=$,poForceBaseRoom=$)
    {
       local poRoom, poBaseRoom, plAllRooms, iRID, i, plPlayersLoggedOn, z,
@@ -114,9 +114,25 @@ messages:
             iPvP = TRUE;
          }
       }
-      
+
       plAllRooms = Send(SYS,@ListCopy,#source=Send(SYS,@GetRooms));
-      
+
+      % If we sent the string used to activate the arena (only for public)
+      % check it for a room name to use. If we sent a room name, use that
+      % for the survival room.
+      if sString <> $
+      {
+         for i in plAllRooms
+         {
+            if StringContain(sString,Send(i,@GetName))
+            {
+               poForceBaseRoom = i;
+
+               break;
+            }
+         }
+      }
+
       plExcludedRoomsObjs = $;
       for z in plExcludedRoomsList
       {
@@ -124,8 +140,20 @@ messages:
                                     plExcludedRoomsObjs);
       }
 
-      poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
-      
+      % DMs can choose any room, but users can only pick from the allowed
+      % rooms.  Set poBaseRoom to the chosen room so it can be checked
+      % in the following code.
+      if NOT IsClass(who,&DM)
+         AND poForceBaseRoom <> $
+      {
+         poBaseRoom = poForceBaseRoom;
+         poForceBaseRoom = $;
+      }
+      else
+      {
+         poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
+      }
+
       % Ensure it's a monster room, and shrink the list on every failure.
       if (NOT IsClass(poBaseRoom,&MonsterRoom))
          OR IsClass(poBaseRoom,&SurvivalRoom)
@@ -143,17 +171,19 @@ messages:
             poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
          }
       }
-      
+
       if NOT IsClass(poBaseRoom,&MonsterRoom)
       {
          return $;
       }
-      
+
+      % If we still have a forced base room, it was given by a DM.
+      % Set the base room to the forced one.
       if poForceBaseRoom <> $
       {
          poBaseRoom = poForceBaseRoom;
       }
-      
+
       iRID = Send(self,@GetNextAvailableRID);
       
       if iRID = 0

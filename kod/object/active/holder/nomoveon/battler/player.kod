@@ -8581,7 +8581,7 @@ messages:
          monster_level = Send(what,@GetLevel);
       }
 
-      if (piFlags & PFLAG_DID_DAMAGE)
+      if ((piFlags & PFLAG_DID_DAMAGE)
          AND poKill_target = what)
          OR group_member_kill
       {

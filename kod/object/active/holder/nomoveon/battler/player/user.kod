@@ -4440,7 +4440,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
                return;
             }
-            
+
             poForceBaseRoom = $;
             if IsClass(self,&DM)
             {
@@ -4454,8 +4454,16 @@ messages:
                }
                if StringContain(String,"--thisbase")
                {
-                 poForceBaseRoom = poOwner;
+                  poForceBaseRoom = poOwner;
                }
+            }
+
+            if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
+            {
+               Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
+                         #who=self,#iPublic=TRUE,#sString=string,
+                         #lSurvivalOptions=lSurvivalOptions,
+                         #poForceBaseRoom=poForceBaseRoom);
             }
             
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
@@ -5421,7 +5429,7 @@ messages:
          Send(self,@BreakTrance,#event=EVENT_CAST,#what=oSpell);
       }
 
-      if (piFlags & PFLAG_NO_MAGIC)
+      if ((piFlags & PFLAG_NO_MAGIC)
          OR Send(self,@IsInCannotInteractMode))
          AND NOT IsClass(oSpell,&Phase)
       {

@@ -30,7 +30,7 @@
 #include "common.h"
 #pragma hdrstop
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
@@ -39,7 +39,7 @@ TEdit *newTEdit(TWindow* parent, int resourceID, UINT textLen, TModule* module)
 	return new TEdit(parent, resourceID, textLen, module);
 }
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
@@ -50,7 +50,7 @@ TStatic *newTStatic(TWindow* parent, int resourceId, UINT textLen, TModule* modu
 }
 
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
@@ -60,7 +60,7 @@ TListBox *newTListBox(TWindow* Parent, int resourceId, TModule* module)
 }
 
 
-#ifndef __OWL_COMBOBOX_H
+#ifndef OWL_COMBOBOX_H
 	#include <owl\combobox.h>
 #endif
 
@@ -70,7 +70,7 @@ TComboBox *newTComboBox(TWindow* parent, int ResourceId, UINT textLen, TModule*m
 }
 
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	#include <owl\checkbox.h>
 #endif
 
@@ -80,7 +80,7 @@ TCheckBox *newTCheckBox(TWindow* parent, int resourceId, TGroupBox* group, TModu
 }
 
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	#include <owl\radiobut.h>
 #endif
 
@@ -90,7 +90,7 @@ TRadioButton *newTRadioButton(TWindow* parent,int resourceId,TGroupBox *group, T
 }
 
 
-#ifndef __OWL_BUTTON_H
+#ifndef OWL_BUTTON_H
 	#include <owl\button.h>
 #endif
 

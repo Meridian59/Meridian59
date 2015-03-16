@@ -26,13 +26,8 @@
 #ifndef __common_h
 #define __common_h
 
-#ifndef __WIN32__
-#ifndef __LARGE__
-#error This application can only be compiled with the LARGE memory model
-#endif
-#endif
-
-#ifdef __WIN32__
+// don't do this for vs compiler
+#ifndef _MSC_VER
 #pragma warn -sig
 #endif
 
@@ -51,13 +46,11 @@
 #include <ctype.h>
 #include <io.h>
 #include <fcntl.h>
-#include <dir.h>
-#include <alloc.h>
 #include <assert.h>
 #include <math.h>
 #include <sys\stat.h>
 
-#include <owl\owldefs.h>
+#include <owl\defs.h>
 #include <owl\version.h>
 #include <owl\module.h>
 #include <owl\applicat.h>
@@ -114,6 +107,14 @@ typedef unsigned char BYTE;
 
 #define DEU_VERSION "5.23"  /* the version number */
 
+/* 1312 is shipped with BC 5.02 */
+#define OWLVERBC502 1312
+
+/* include ::owl namespace for OWLNext/VS */
+#if OWLVersion > OWLVERBC502
+	using namespace owl;
+#endif
+
 
 /*
    syntactic sugar
@@ -123,7 +124,6 @@ typedef int Bool;               /* Boolean data: true or false */
 #include "fixed.h"
 #include "memry.h"
 #include "windeu.h"
-
 
 #define List_SelectStringExact(pList, indexStart, findStr) \
     pList->HandleMessage(LB_SETCURSEL, (WPARAM)pList->HandleMessage(LB_FINDSTRINGEXACT, (WPARAM)indexStart, (LPARAM)findStr), (LPARAM)0)

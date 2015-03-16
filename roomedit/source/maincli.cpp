@@ -35,7 +35,7 @@
 
 #include "maincli.h"
 
-#ifndef __OWL_INPUTDIA
+#ifndef OWL_INPUTDIA
 	#include <owl\inputdia.h>
 #endif
 
@@ -110,7 +110,7 @@ END_RESPONSE_TABLE;
 // TMainClient
 // -----------
 //
-TMainClient::TMainClient (TWindow* parent, const char far* title,
+TMainClient::TMainClient (TWindow* parent, const char* title,
 						  TModule* module):
 	TWindow(parent, title, module)
 {
@@ -149,6 +149,12 @@ void TMainClient::SetupWindow ()
 //
 void TMainClient::CmFileOpenWad ()
 {
+	// save current working directory (of windeu32.exe)
+	// the TFileOpenDialog below is going to set
+	// it to the folder of the file being opened...
+	char workdir[256];
+	GetCurrentDirectory(256, workdir);
+
 	SET_HELP_CONTEXT(Open_WAD_file);
 	//
 	// Display standard Open dialog box to select a file name.
@@ -156,6 +162,8 @@ void TMainClient::CmFileOpenWad ()
 	*FileData.FileName = 0;
 	if (TFileOpenDialog(this, FileData).Execute() == IDOK)
 	{
+		// restore workingdirectory to folder of windeu32.exe
+		SetCurrentDirectory(workdir);
 #if 0
 		OpenPatchWad(FileData.FileName);
 		CloseUnusedWadFiles();
@@ -325,7 +333,7 @@ End:
 void TMainClient::CmFileInsertRaw ()
 {
 	static char ObjectName[12];
-	char input[MAXPATH];
+	char input[MAX_PATH];
 	MDirPtr entry;
 	FILE *raw;
 	FILE *file;

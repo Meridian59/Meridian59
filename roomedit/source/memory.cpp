@@ -73,32 +73,17 @@ void *AllocMemory (long size)
 	// ULONG asksize = size;
 
 	// limit fragmentation on large blocks
-	if (size >= (ULONG) SIZE_THRESHOLD)
+	if (size >= (LONG) SIZE_THRESHOLD)
 		size = (size + (ULONG) SIZE_OF_BLOCK) & ~((ULONG) SIZE_OF_BLOCK);
 
 	// TRACE ("Alloc: ask size = " << dec << asksize ", real size = " << size << " bytes");
 
-#ifdef __WIN32__
 	ret = malloc (size);
-#else
-	ret = farmalloc (size);
-#endif
 
 	if (ret == NULL)
 		ProgError ("Out of memory (cannot allocate %lu bytes)", size);
 
-#ifdef __WIN32__
 	memset (ret, 0, size);
-#else
-	BYTE HUGE *ptr = (BYTE *)ret;
-	while ( size > UINT_MAX )
-	{
-		memset (ptr, 0, UINT_MAX);
-		ptr += UINT_MAX;
-		size -= UINT_MAX;
-	}
-	memset (ptr, 0, (size_t)size);
-#endif
 
 	return ret;
 #endif
@@ -127,16 +112,12 @@ void *ReallocMemory (void *old, long size)
 	// ULONG asksize = size;
 
 	/* limit fragmentation on large blocks */
-	if (size >= (ULONG) SIZE_THRESHOLD)
+	if (size >= (LONG) SIZE_THRESHOLD)
 		size = (size + (ULONG) SIZE_OF_BLOCK) & ~((ULONG) SIZE_OF_BLOCK);
 
 	// TRACE ("Realloc: ask size = " << dec << asksize << ", real size = " << size << " bytes");
 
-#ifdef __WIN32__
 	ret = realloc (old, size);
-#else
-	ret = farrealloc (old, size);
-#endif
 
 	if (ret == NULL)
 		ProgError ("Out of memory! (cannot reallocate %lu bytes)", size);
@@ -154,11 +135,7 @@ void UnallocMemory (void *ptr)
 {
 	/* just a wrapper around farfree(), but provide an entry point */
 	/* for memory debugging routines... */
-#ifdef __WIN32__
 	free( ptr);
-#else
-	farfree( ptr);
-#endif
 }
 
 /*
@@ -167,15 +144,20 @@ void UnallocMemory (void *ptr)
 
 long GetAvailMemory ()
 {
-#ifdef __WIN32__
 	MEMORYSTATUS memstat;
 
 	memstat.dwLength = sizeof (memstat);
 	::GlobalMemoryStatus (&memstat);
-	return (long)memstat.dwAvailPhys + memstat.dwAvailPageFile;
-#else
-	return (long)::GetFreeSpace (0);
-#endif
+
+	LONGLONG avail = (LONGLONG)(memstat.dwAvailPhys + memstat.dwAvailPageFile);
+
+	if (avail > MAXLONG)
+		avail = MAXLONG;
+
+	else if (avail < 0)
+		avail = 0;
+
+	return (long)avail;
 }
 
 /* end of file */

@@ -34,19 +34,19 @@
 	#include "prefdlg.h"
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 
@@ -127,7 +127,6 @@ TPreferencesDialog::TPreferencesDialog (TWindow* parent, TResId resId, TModule* 
 	pBelowText     = newTStatic(this, IDC_BELOW_TEXT, MAX_BITMAPNAME + 1);
 	pAboveText     = newTStatic(this, IDC_ABOVE_TEXT, MAX_BITMAPNAME + 1);
 
-	p3DControlsCheck = newTCheckBox(this, IDC_PREF_3DCONTROLS, 0);
 	pAddSelBoxCheck  = newTCheckBox(this, IDC_PREF_ADDSELBOX, 0);
 	pDebugCheck      = newTCheckBox(this, IDC_PREF_DEBUG, 0);
 	pDrawLengthCheck = newTCheckBox(this, IDC_PREF_DRAWLENGTH, 0);
@@ -203,7 +202,6 @@ void TPreferencesDialog::SetupWindow ()
 	pMaxUndoEdit->SetText (str);
 
 	// Misc BOOLEAN options
-	p3DControlsCheck->SetCheck(Use3DControls ? BF_CHECKED : BF_UNCHECKED);
 	pAddSelBoxCheck->SetCheck(AdditiveSelBox ? BF_CHECKED : BF_UNCHECKED);
 	pDebugCheck->SetCheck(Debug ? BF_CHECKED : BF_UNCHECKED);
 	pDrawLengthCheck->SetCheck(DrawLineDefsLen ? BF_CHECKED : BF_UNCHECKED);
@@ -309,9 +307,6 @@ void TPreferencesDialog::CmOk ()
 	Quieter         = (pQuiterCheck->GetCheck()     == BF_CHECKED);
 	Select0         = (pSelect0Check->GetCheck()    == BF_CHECKED);
 	AutoScroll      = (pAutoScrollCheck->GetCheck() == BF_CHECKED);
-
-	Use3DControls   = (p3DControlsCheck->GetCheck() == BF_CHECKED);
-	((WinDEUApp *)GetApplication())->Enable3DControls(Use3DControls);
 
 	// Toggle status bar if
 	if ( InfoShown != (pInfoBarCheck->GetCheck() == BF_CHECKED) )
@@ -480,7 +475,7 @@ void TPreferencesDialog::FTextureDblClk ()
    {
       TextureInfo *info = FindTextureByName(FTextureName);
       
-      if ( pFTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pFTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Floor/Ceiling Texture view ! (BUG)",
 		 FTextureName);
@@ -542,7 +537,7 @@ void TPreferencesDialog::WTextureDblClk ()
    {
       TextureInfo *info = FindTextureByName(WTextureName);
       
-      if ( pWTextureDialog->SelectBitmap (info->filename) < 0 )
+      if ( pWTextureDialog->SelectBitmap2 (info->filename) < 0 )
 	 Notify ("Error: Cannot select the texture name \"%s\" in the "
 		 "dialog box of Wall Texture view ! (BUG)",
 		 WTextureName);
@@ -557,12 +552,16 @@ void TPreferencesDialog::WTextureDblClk ()
 // TPreferencesDialog
 // ------------------
 //
+#if OWLVersion > OWLVERBC502
+void TPreferencesDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
+#else
 void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
+#endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic (point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 
@@ -593,12 +592,16 @@ void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TPreferencesDialog
 // ------------------
 //
+#if OWLVersion > OWLVERBC502
+void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
+#else
 void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
+#endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 
 	// Retreive object for handle
-	TStatic *pStatic = GetPointedStatic (point);
+	TStatic *pStatic = GetPointedStatic ((TPoint&)point);
 	if ( pStatic == NULL )
 		return;
 

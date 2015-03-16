@@ -33,15 +33,15 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_GAUGE_H
+#ifndef OWL_GAUGE_H
 	#include <owl\gauge.h>
 #endif
 
@@ -92,8 +92,14 @@ public:
 
 //{{TLevelProgressDialogRSP_TBL_BEGIN}}
 protected:
+	void EvPaint();
+
+#if OWLVersion > OWLVERBC502
+	void EvSize (UINT sizeType, const TSize& size);
+#else
 	void EvSize (UINT sizeType, TSize& size);
-	void EvPaint ();
+#endif
+
 //{{TLevelProgressDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TLevelProgressDialog);
 };    //{{TLevelProgressDialog}}

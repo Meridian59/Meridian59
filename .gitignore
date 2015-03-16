@@ -185,3 +185,5 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+/roomedit/windeu32.log
+/roomedit/owl-6.40/lib

@@ -33,7 +33,7 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_GDIOBJEC_H
+#ifndef OWL_GDIOBJEC_H
 	#include "owl\gdiobjec.h"
 #endif
 

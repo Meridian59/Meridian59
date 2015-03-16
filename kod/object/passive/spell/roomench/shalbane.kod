@@ -47,7 +47,7 @@ classvars:
    viSchool = SS_QOR
    viMana = 15
    viSpell_level = 4
-   viSpellExertion = 5
+   viSpellExertion = 3
    viCast_time = 5000
    viChance_To_Increase = 40
    viMeditate_ratio = 30

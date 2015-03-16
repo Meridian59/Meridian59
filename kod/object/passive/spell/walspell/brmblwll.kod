@@ -44,7 +44,7 @@ classvars:
 
    viChance_To_Increase = 25
    viMeditate_ratio = 20
-   viSpellExertion = 10
+   viSpellExertion = 2
    viCast_time = 4000
    vrSucceed_wav = BrambleWall_sound
 

@@ -36,9 +36,9 @@ classvars:
    viSpell_num = SID_ILLUSIONARY_WOUNDS
    viSchool = SS_RIIJA
    viSpell_level = 3
-   viMana = 10
+   viMana = 7
 
-   viSpellExertion = 3
+   viSpellExertion = 2
 
    vrSucceed_wav = illusionarywounds_sound
 

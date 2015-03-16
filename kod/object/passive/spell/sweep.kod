@@ -49,7 +49,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 1
    viMana = 8
-   viSpellExertion = 8
+   viSpellExertion = 1
    viCast_time = 10000
 
    viChance_To_Increase = 20

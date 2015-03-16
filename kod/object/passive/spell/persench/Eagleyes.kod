@@ -59,7 +59,7 @@ classvars:
    viSchool = SS_KRAANAN
    viSpell_level = 4
    viMana = 5
-   viSpellExertion = 10
+   viSpellExertion = 3
 
    viCast_time = 2000
    viChance_To_Increase = 20

@@ -39,7 +39,7 @@ classvars:
    viMana = 10
    viMeditate_ratio = 50
 
-   viSpellExertion = 20
+   viSpellExertion = 4
    viCast_time = 500
    viHarmful = TRUE
    viOutlaw = TRUE

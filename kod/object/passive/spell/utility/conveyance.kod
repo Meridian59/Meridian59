@@ -18,16 +18,16 @@ resources:
    Conveyance_name_rsc = "conveyance"
    Conveyance_icon_rsc = iboonint.bgf
    Conveyance_desc_rsc = \
-     "Sends a stack of items to your closest personal vault.  "
-	 "Requires only the fee for depositing items."
- 
+      "Sends a stack of items to your closest personal vault.  "
+      "Requires only the fee for depositing items."
+
    Conveyance_cant = "You cannot cast conveyance on %s%s."
    Conveyance_not_enough_cash = "You don't have enough shillings to convey %s%s."
    Conveyance_not_enough_space = "Your vault does not have enough space!"
    Conveyance_not_holding = "You cannot cast conveyance on an item you are not holding!"
 
    Conveyance_cast = "A small portal whips into existence, pulling %s%s to your vault."
-     
+
 classvars:
 
    vrName = Conveyance_name_rsc

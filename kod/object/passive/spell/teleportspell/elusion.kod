@@ -55,7 +55,7 @@ classvars:
    viSchool = SS_RIIJA
    viSpell_level = 6
    viMana = 20
-   viSpellExertion = 50
+   viSpellExertion = 15
 
    viChance_To_Increase = 10
    viMeditate_ratio = 50

@@ -46,7 +46,7 @@ classvars:
    viMana = 6
    viMeditate_ratio = 10
 
-   viSpellExertion = 4
+   viSpellExertion = 1
    viCast_time = 2000
    vrSucceed_wav = SummonFog_sound
    viChance_To_Increase = 20

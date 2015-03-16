@@ -40,7 +40,7 @@ classvars:
    viManaDrain = 5     % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
    viSpell_num = SID_FEIGN_DEATH
-   viSpellExertion = 10
+   viSpellExertion = 1
    viChance_To_Increase = 40
    viMeditate_ratio = 20
 

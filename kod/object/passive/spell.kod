@@ -161,7 +161,7 @@ classvars:
 
    % Some spells and skills do not check your exertion.
    vbCheck_Exertion = TRUE    
-   viSpellExertion = 2
+   viSpellExertion = 1
 
    viSpell_Num = $
    viSchool = $

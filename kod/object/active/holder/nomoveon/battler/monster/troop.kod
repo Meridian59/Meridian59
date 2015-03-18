@@ -225,15 +225,22 @@ messages:
       plUsing = [ ];
       plResistances = [ ];
       
-      send(self,@SetGender);
-      send(self,@SetHair);
-      send(self,@SetFace);
-      send(self,@SetSkinColor);
-      send(self,@SetTroopShirt,#translation=viColorTranslate1);
-      send(self,@SetTroopLegs,#translation=viColorTranslate2);
-      send(self,@SetShield);
-      send(self,@SetEquipment);
+      Send(self,@SetGender);
+      Send(self,@SetHair);
+      Send(self,@SetFace);
+      Send(self,@SetSkinColor);
+      Send(self,@SetTroopShirt,#translation=viColorTranslate1);
+      Send(self,@SetTroopLegs,#translation=viColorTranslate2);
+      Send(self,@SetShield);
+      Send(self,@SetEquipment);
 
+      propagate;
+   }
+
+   Constructed()
+   {
+      % Have to set attack range for mobs with weapon.
+      piAttackRange = Send(self,@GetAttackRange);
 
       propagate;
    }
@@ -269,7 +276,7 @@ messages:
       if random(1,100) < 30
       {
          HelmetHair = create(&SimpleHelm);
-         send(self,@AddEquipmentObject,#what=HelmetHair);
+         Send(self,@AddEquipmentObject,#what=HelmetHair);
          poHair_Remove = HelmetHair;
          return;
       }
@@ -602,7 +609,7 @@ messages:
       }
                   
       viDifficulty = piBaseDifficulty + iBonusModifier;
-      send(self,@AddEquipmentObject,#what=oEquipmentItem);
+      Send(self,@AddEquipmentObject,#what=oEquipmentItem);
 
       iRandomNumber = random(1,100);
 
@@ -634,7 +641,7 @@ messages:
      }
 
       viLevel = piBaseLevel + iBonusModifier;
-      send(self,@SetTroopArmor,#NewArmor=oEquipmentItem);
+      Send(self,@SetTroopArmor,#NewArmor=oEquipmentItem);
 
       % Gauntlets?
       iRandomNumber = random(1,100);
@@ -667,10 +674,10 @@ messages:
                               #shape=viShieldShape);
       if viInsignia <> $
       {
-         send(oEquipmentItem,@ChangeGuildInsignia,#insignia=viInsignia);
+         Send(oEquipmentItem,@ChangeGuildInsignia,#insignia=viInsignia);
       }
 
-      send(self,@AddEquipmentObject,#what=oEquipmentItem);
+      Send(self,@AddEquipmentObject,#what=oEquipmentItem);
       
       return;
    }
@@ -769,31 +776,33 @@ messages:
       piAnimation = PANM_BOW_FIRE;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;
-      
+
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
-      #projectile=poArrow);
+            #projectile=poArrow);
 
       return;
    }
-   
-     GetAttackRange()
+
+   GetAttackRange()
    {
       local iWeapon;
 
-        iWeapon = Send(Self,@GetWeapon);
+      iWeapon = Send(Self,@GetWeapon);
 
-        if iWeapon <> $
-        {
-           return Send(iWeapon,@GetRange);
-        }
-      
+      if iWeapon <> $
+      {
+         return Send(iWeapon,@GetRange);
+      }
+
       propagate;
    }
 
    SendMoveAnimation()
    {
       local iBody_xlat;
-      iBody_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_BODY_MASK)/FACTIONTROOP_TRANSLATION_BODY_MUL;
+
+      iBody_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_BODY_MASK)
+                        / FACTIONTROOP_TRANSLATION_BODY_MUL;
       if iBody_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,iBody_xlat);
@@ -809,7 +818,8 @@ messages:
    {
       local iBody_xlat;
       
-      iBody_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_BODY_MASK)/FACTIONTROOP_TRANSLATION_BODY_MUL;
+      iBody_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_BODY_MASK)
+                        / FACTIONTROOP_TRANSLATION_BODY_MUL;
       if (piBody_translations & FACTIONTROOP_TRANSLATION_BODY_MASK) <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,iBody_xlat);
@@ -837,10 +847,11 @@ messages:
 
    SendMoveOverlays()
    {
-      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat,iArms_xlat,iLegs_xlat;
+      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat,
+            iArms_xlat,iLegs_xlat;
 
       % Player has 7 standard overlays: right arm, left arm, legs, head, eyes, 
-      % mouth, nose      
+      % mouth, nose
       iOverlays = 7;
       
       if poHair_remove = $
@@ -853,7 +864,7 @@ messages:
 
       for i in plOverlays
       {
-         iOverlays = iOverlays + send(i,@GetNumberOverlays);  %bows can have more than 1.
+         iOverlays = iOverlays + Send(i,@GetNumberOverlays);  %bows can have more than 1.
          hotspot = Send(i,@GetOverlayHotspot);
          if hotspot = HS_RIGHT_WEAPON
          {
@@ -872,7 +883,8 @@ messages:
       AddPacket(1,iOverlays);
       AddPacket(4,prLeft_arm,1,HS_LEFT_HAND);
       
-      iArms_xlat = (piBody_translations2 & FACTIONTROOP_TRANSLATION2_ARMS_MASK)/FACTIONTROOP_TRANSLATION2_ARMS_MUL;
+      iArms_xlat = (piBody_translations2 & FACTIONTROOP_TRANSLATION2_ARMS_MASK)
+                        / FACTIONTROOP_TRANSLATION2_ARMS_MUL;
       if iArms_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,iArms_xlat);
@@ -890,7 +902,7 @@ messages:
       AddPacket(4,prRight_arm,1,HS_RIGHT_HAND);
       if iArms_xlat <> 0
       {
-         AddPacket(1,ANIMATE_TRANSLATION,1,iArms_xlat);       
+         AddPacket(1,ANIMATE_TRANSLATION,1,iArms_xlat);
       }
       
       if iRight_group = 1
@@ -903,7 +915,8 @@ messages:
       }
 
       AddPacket(4,prLegs,1,HS_LEGS);
-      iLegs_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_LEGS_MASK)/FACTIONTROOP_TRANSLATION_LEGS_MUL;
+      iLegs_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_LEGS_MASK)
+                        / FACTIONTROOP_TRANSLATION_LEGS_MUL;
       if iLegs_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,iLegs_xlat);
@@ -911,7 +924,8 @@ messages:
       
       AddPacket(1,ANIMATE_CYCLE,4,100,2,2,2,5);
 
-      iSkin_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_Skin_MASK)/FACTIONTROOP_TRANSLATION_SKIN_MUL;
+      iSkin_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_Skin_MASK)
+                        / FACTIONTROOP_TRANSLATION_SKIN_MUL;
 
       AddPacket(4,prHead,1,HS_HEAD,1,ANIMATE_TRANSLATION,1,iSkin_xlat);
       Addpacket(1,ANIMATE_NONE,2,1);        
@@ -923,20 +937,22 @@ messages:
       if poHair_remove = $
       {  
          AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,1,
-                   (piBody_translations2 & FACTIONTROOP_TRANSLATION2_HAIR_MASK)/FACTIONTROOP_TRANSLATION2_HAIR_MUL);         
+                   (piBody_translations2 & FACTIONTROOP_TRANSLATION2_HAIR_MASK)
+                     / FACTIONTROOP_TRANSLATION2_HAIR_MUL);
          AddPacket(1,ANIMATE_NONE,2,1); 
       }
 
       for i in plOverlays
       {
-         send(i,@SendOverlayInformation,#iAnimation = $);
+         Send(i,@SendOverlayInformation,#iAnimation = $);
       }
       return;
    }
 
    SendOverlays()
    {
-      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat, iArms_xlat, iLegs_xlat;
+      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat,
+            iArms_xlat, iLegs_xlat;
 
       % Send overlay bitmap info to user.  
 
@@ -955,7 +971,7 @@ messages:
 
       for i in plOverlays
       {
-         iOverlays = iOverlays + send(i,@GetNumberOverlays,#iAnimation=piAnimation);  %bows can have more than 1.
+         iOverlays = iOverlays + Send(i,@GetNumberOverlays,#iAnimation=piAnimation);  %bows can have more than 1.
          hotspot = Send(i,@GetOverlayHotspot);
          if hotspot = HS_RIGHT_WEAPON
          {
@@ -972,7 +988,8 @@ messages:
       }
 
       AddPacket(1, iOverlays);
-      iArms_xlat = (piBody_translations2 & FACTIONTROOP_TRANSLATION2_ARMS_MASK)/FACTIONTROOP_TRANSLATION2_ARMS_MUL;
+      iArms_xlat = (piBody_translations2 & FACTIONTROOP_TRANSLATION2_ARMS_MASK)
+                        / FACTIONTROOP_TRANSLATION2_ARMS_MUL;
 
       AddPacket(4,prLeft_arm,1,HS_LEFT_HAND);
       if iArms_Xlat <> 0
@@ -1030,7 +1047,8 @@ messages:
       }
 
       AddPacket(4,prLegs,1,HS_LEGS);
-      iLegs_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_LEGS_MASK)/FACTIONTROOP_TRANSLATION_LEGS_MUL;
+      iLegs_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_LEGS_MASK)
+                        / FACTIONTROOP_TRANSLATION_LEGS_MUL;
       if iLegs_xlat <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,iLegs_xlat);
@@ -1052,7 +1070,8 @@ messages:
          }
       }
   
-      iSkin_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_Skin_MASK)/FACTIONTROOP_TRANSLATION_Skin_MUL;
+      iSkin_xlat = (piBody_translations & FACTIONTROOP_TRANSLATION_Skin_MASK)
+                        / FACTIONTROOP_TRANSLATION_Skin_MUL;
       AddPacket(4,prHead,1,HS_HEAD,1,ANIMATE_TRANSLATION,1,iSkin_xlat);
       Addpacket(1,ANIMATE_NONE,2,1); 
       
@@ -1063,7 +1082,8 @@ messages:
       if poHair_remove = $
       {  
          AddPacket(4,prToupee,1,HS_TOUPEE,1,ANIMATE_TRANSLATION,
-                   1,(piBody_translations2 & FACTIONTROOP_TRANSLATION2_HAIR_MASK)/FACTIONTROOP_TRANSLATION2_HAIR_MUL);
+                   1,(piBody_translations2 & FACTIONTROOP_TRANSLATION2_HAIR_MASK)
+                     / FACTIONTROOP_TRANSLATION2_HAIR_MUL);
          AddPacket(1,ANIMATE_NONE,2,1); 
       }
       
@@ -1078,7 +1098,7 @@ messages:
    SetTroopArmor(NewArmor = $)
    % Sets the troop's armor icon.
    {
-      vrIcon = send(NewArmor,@GetShirtIcon,#who=self);
+      vrIcon = Send(NewArmor,@GetShirtIcon,#who=self);
       plUsing = cons(NewArmor, plUsing);
 
       if poOwner <> $
@@ -1096,8 +1116,8 @@ messages:
       local iShirtXlat, iSkinColor;
       
       iSkinColor = (piBody_translations & FACTIONTROOP_TRANSLATION_SKIN_MASK)/FACTIONTROOP_TRANSLATION_SKIN_MUL;
-      iSkinColor = send(self,@ConvertSkinColorToXLAT,#Skin_color=iSkinColor);
-      iShirtXlat = send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=iSkinColor);
+      iSkinColor = Send(self,@ConvertSkinColorToXLAT,#Skin_color=iSkinColor);
+      iShirtXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=iSkinColor);
 
       piBody_translations2 = piBody_translations2 & ~FACTIONTROOP_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirtXlat * FACTIONTROOP_TRANSLATION2_ARMS_MUL);
@@ -1120,7 +1140,7 @@ messages:
       local iPantsXlat, iSkinColor;
       
       iSkinColor = (piBody_translations & FACTIONTROOP_TRANSLATION_SKIN_MASK)/FACTIONTROOP_TRANSLATION_SKIN_MUL;
-      iSkinColor = send(self,@ConvertSkinColorToXLAT,#Skin_color=iSkinColor);
+      iSkinColor = Send(self,@ConvertSkinColorToXLAT,#Skin_color=iSkinColor);
 
       % A hack for non-standard skin colors with the "special" pants colors.
       if translation >= XLAT_TO_DGREEN
@@ -1130,7 +1150,7 @@ messages:
          iSkinColor = XLAT_TO_SKIN4;
       }
       
-      iPantsXlat = send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=iSkinColor);
+      iPantsXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=iSkinColor);
 
       piBody_translations = piBody_translations & ~FACTIONTROOP_TRANSLATION_LEGS_MASK;
       piBody_translations = piBody_translations | (iPantsXlat * FACTIONTROOP_TRANSLATION_LEGS_MUL);
@@ -1185,7 +1205,7 @@ messages:
    {
       local oUsedItem, oItemAtt;
 
-      oItemAtt = send(SYS,@FindItemAttByNum,#num=IA_CORPSEPOINTER);
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_CORPSEPOINTER);
 
       for oUsedItem in plUsing
       {
@@ -1195,7 +1215,7 @@ messages:
             AND (NOT IsClass(oUsedItem,vcShieldClass))
             AND NOT pbIllusion
          {
-            if (oItemAtt <> $) AND send(oItemAtt,@ReqAddToItem,#oItem=oUsedItem)
+            if (oItemAtt <> $) AND Send(oItemAtt,@ReqAddToItem,#oItem=oUsedItem)
             {
                Send(oItemAtt,@AddToItem,#oItem=oUsedItem,#state1=corpse);
             }       
@@ -1205,7 +1225,7 @@ messages:
          }
          else
          {
-            send(oUsedItem,@Delete);
+            Send(oUsedItem,@Delete);
          }
       }
 
@@ -1245,9 +1265,9 @@ messages:
       if skin_color = PT_BLEND25RED  { return XLAT_TO_BLUE; }
       if skin_color = PT_BLUE_TO_LBLUE  { return XLAT_TO_SKY; }
 
-      if send(SYS,@IsTwoColorXLAT,#Xlat=skin_color)
+      if Send(SYS,@IsTwoColorXLAT,#Xlat=skin_color)
       {
-         return send(SYS,@DecodeSecondaryColor,#Xlat=skin_color);
+         return Send(SYS,@DecodeSecondaryColor,#Xlat=skin_color);
       }
 
       return XLAT_TO_SKIN1;   %% Skin color 3 uses 2nd xlat too.
@@ -1263,7 +1283,7 @@ messages:
       
       if isClass(target,&Player)
       {
-         iFaction = send(target,@GetFaction);
+         iFaction = Send(target,@GetFaction);
          if (not regroup) and (iFaction = FACTION_NEUTRAL)
          {
             return TRUE;
@@ -1288,7 +1308,7 @@ messages:
       
       if isClass(what,&User) or isClass(what,&FactionTroop)
       {
-         iFaction=send(what,@GetFaction);
+         iFaction=Send(what,@GetFaction);
          if iFaction = viFaction
          {
             return -30;

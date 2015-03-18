@@ -13035,7 +13035,7 @@ messages:
 
       if IsClass(oRoom,&GuildHall)
          AND (NOT (piFlags & PFLAG_PKILL_ENABLE)
-            OR (piFlags & PFLAG2_TEMPSAFE))
+            OR (piFlags2 & PFLAG2_TEMPSAFE))
       {
          Send(self,@MsgSendUser,#message_rsc=player_no_enter);
 

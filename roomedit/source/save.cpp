@@ -401,12 +401,16 @@ void SaveRoomeditWalls(FILE *file)
    // Write out walls
    for (i=0; i < NumLineDefs; i++)
    {
-      LineDef CurLD = LineDefs[i];
-      if (CurLD.sidedef1 >= 0)
-	 SD1 = SideDefs[CurLD.sidedef1];
+	   LineDef CurLD = LineDefs[i];
+	   if (CurLD.sidedef1 >= 0)
+		   SD1 = SideDefs[CurLD.sidedef1];
+	   else
+		   CurLD.file_sidedef1 = 0;
 
-      if (CurLD.sidedef2 >= 0)
-	 SD2 = SideDefs[CurLD.sidedef2];
+	   if (CurLD.sidedef2 >= 0)
+		   SD2 = SideDefs[CurLD.sidedef2];
+	   else
+		   CurLD.file_sidedef2 = 0;
 
       // Write sidedef numbers
       WriteBytes(file, &CurLD.file_sidedef1, 2);

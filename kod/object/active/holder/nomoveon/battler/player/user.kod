@@ -60,7 +60,7 @@ constants:
 
    % Speedhack/cheating detection:
    % What's the maximum number of times we should log a violation?
-   MAX_LOGGED_THRESHOLD = 25
+   MAX_LOGGED_THRESHOLD = 50
 
 resources:
 
@@ -3315,9 +3315,14 @@ messages:
       if speed < USER_WALKING_SPEED
          OR speed > USER_RUNNING_SPEED
       {
-         Debug("ALERT! ",Send(self,@GetTrueName),self,
-               " had transmitted speed changed from ",speed, "to ",
-               USER_RUNNING_SPEED);
+         % Make a log entry
+         if piCheaterLogs < MAX_LOGGED_THRESHOLD
+         {
+            piCheaterLogs = piCheaterLogs + 1;
+            Debug("ALERT! ",Send(self,@GetTrueName),self,
+                  " had transmitted speed changed from ",speed, "to ",
+                  USER_RUNNING_SPEED);
+         }
          speed = USER_RUNNING_SPEED;
       }
 

@@ -716,6 +716,8 @@ messages:
          ptUnturn = $;
       }
 
+      poLastAttacker = $;
+
       propagate;
    }
 

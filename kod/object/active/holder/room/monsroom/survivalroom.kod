@@ -970,10 +970,15 @@ messages:
                      AND (NOT Send(oMonster,@IsOwnedByPlayer))
                      AND oMonster <> victim
                      AND Random(1,2) = 1
+                     AND plParticipants <> $ % Sometimes $ by this stage?
                   {
                      oTarget = First(plParticipants);
-                     Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
-                     Send(oMonster,@EnterStateChase,#target=oTarget,#actnow=True);
+                     if oTarget <> $
+                     {
+                        Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
+                        Send(oMonster,@EnterStateChase,#target=oTarget,
+                              #actnow=True);
+                     }
                   }
                }
             }

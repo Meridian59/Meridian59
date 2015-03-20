@@ -89,7 +89,7 @@ messages:
 
 
       % Facing East
-      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      if iAngle >= ANGLE_ENE OR iAngle < ANGLE_ESE
       {
          iCol = Send(who,@GetCol) + 2;
          iRow = Send(who,@GetRow);

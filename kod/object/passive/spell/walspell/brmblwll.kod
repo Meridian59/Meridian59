@@ -89,7 +89,7 @@ messages:
       iBrambleHits = bound(iSpellPower/2,10,50);
 
       % Facing East
-      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      if iAngle >= ANGLE_ENE OR iAngle < ANGLE_ESE
       {
          iRow = Send(who,@GetRow) - 2;
          iCol = Send(who,@GetCol) + 1;

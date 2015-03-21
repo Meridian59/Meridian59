@@ -53,6 +53,8 @@ enum {False = 0, True = 1};
 #define MAXAMOUNT 9     /* Max # of digits in a server integer */
 #define MAXSTRINGLEN 512 /* Max length of a string loaded from string table */
 
+#define MAX_LANGUAGE_ID 184 /* Max number of languages */
+
 /* Main window size & position */
 #define MAIN_DEF_LEFT     0
 #define MAIN_DEF_TOP      0

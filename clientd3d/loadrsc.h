@@ -16,9 +16,10 @@
 #define MAXNAME      256    /* Maximum name resource length */
 #define MAXRSCSTRING 4096   /* Maximum string length in resources */
 
+
 typedef struct {
    ID    idnum;
-   char *data;
+   char *resource[MAX_LANGUAGE_ID];
 } *resource_type, resource_struct;
 
 #ifdef __cplusplus

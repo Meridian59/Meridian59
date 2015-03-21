@@ -43,7 +43,7 @@
 %type <string_val>	fname
 %type <expr_val>	expression
 %type <arg_val>	        argument
-
+%type <int_val> language_const
 %type <param_val>	parameter
 %type <classvar_val>	classvar
 %type <prop_val>	property
@@ -133,13 +133,19 @@ constant_assign:
 
 resource_list:
 		/* empty */		{ $$ = NULL; }
-	|	resource_list resource  { $$ = list_add_item($1, $2); }
+	|	resource_list resource  { if ($2 != NULL) $$ = list_add_item($1, $2); }
 	;
 
 resource:
-		id '=' resource_const EOL	{ $$ = make_resource($1, $3); }
-	|	error EOL			{ $$ = NULL; } 
+		id '=' resource_const EOL{ $$ = make_resource($1, $3, 0); }
+	|	id '=' language_const resource_const EOL{ $$ = make_resource($1, $4, $3); }
+	|	INCLUDE fname EOL { include_file($2); $$ = NULL; }
+	|	error EOL			{ $$ = NULL; }
 	;
+
+language_const:
+		IDENTIFIER { $$ = make_language_id($1); }
+;
 
 resource_const:
 		STRING_CONSTANT { $$ = make_string_resource($1); }

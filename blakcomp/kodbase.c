@@ -291,7 +291,11 @@ int load_add_resource(char *resource_name, int resource_id)
    id->source = DBASE;
 
    r->lhs = id;
-   r->rhs = NULL;
+   // Have to load in resources from *rsc files
+   for (int i = 0; i < sizeof(r->resource) / sizeof(r->resource[i]); i++)
+   {
+      r->resource[i] = NULL;
+   }
 
    /* Add resource to resource list of current class */
    if (current_class == NULL)

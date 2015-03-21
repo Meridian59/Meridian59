@@ -1215,7 +1215,7 @@ void AdminWhoEachSession(session_node *s)
 				if (r == NULL)
 					aprintf("Invalid resource id %i",name_val.v.data);
 				else
-					aprintf("%s",r->resource_val);
+					aprintf("%s",r->resource_val[0]);
 			}
 			else
 				aprintf("Non-resource %i,%i",name_val.v.tag,name_val.v.data);
@@ -1670,7 +1670,7 @@ void AdminShowOneUser(user_node *u)
 		if (r == NULL)
 			aprintf("Invalid resource id %i.",name_val.v.data);
 		else
-			aprintf("%s",r->resource_val);
+			aprintf("%s",r->resource_val[0]);
 	}
 	else
 		aprintf("Non-resource %i,%i.",name_val.v.tag,name_val.v.data);
@@ -1858,7 +1858,7 @@ void AdminPrintResource(resource_node *r)
 	else
 	{
 		aprintf("%-7i %s = %s\n",r->resource_id,
-			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val);
+			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val[0]);
 	}
 }
 
@@ -3902,12 +3902,12 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 		{
 			resource_node* rnod = GetResourceByID(blak_val.v.data);
 			int len;
-			if (rnod && rnod->resource_val && *rnod->resource_val)
+			if (rnod && rnod->resource_val[0] && *rnod->resource_val[0])
 			{
-            len = std::min(strlen(rnod->resource_val), (size_t) 60);
+            len = std::min(strlen(rnod->resource_val[0]), (size_t) 60);
 			  aprintf(":   == \"");
-			  AdminBufferSend(rnod->resource_val, len);
-			  if (len < (int)strlen(rnod->resource_val))
+			  AdminBufferSend(rnod->resource_val[0], len);
+			  if (len < (int)strlen(rnod->resource_val[0]))
 			    aprintf("...");
 			  aprintf("\"\n");
 			}

@@ -13,13 +13,44 @@
 static const int RSC_VERSION = 4;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
-char *GetStringFromResource(resource_type r);
+char *GetStringFromResource(resource_type r, int j);
 /******************************************************************************/
 /*
- * write_resources: Write out resources to a .rsc file.  fname should be the 
- *    name of the .rsc file to receive the resources.  Resources are found by
- *    looping through all the classes in the symbol table.
+ * check_for_class_resource_string: Uses a resource's ID to check if the same
+ * resource has been defined in another class. Returns 1 if it has, 0 otherwise.
  */
+/******************************************************************************/
+Bool check_for_class_resource_string(id_type id)
+{
+   list_type c, l;
+   resource_type r;
+   class_type cl;
+
+   for (c = st.classes; c != NULL; c = c->next)
+   {
+      cl = (class_type)c->data;
+
+      for (l = cl->resources; l != NULL; l = l->next)
+      {
+         r = (resource_type)(l->data);
+         printf("Checking %i and %i\n", r->lhs->idnum, id->idnum);
+         // Check for matching ID.
+         if (r->lhs->idnum == id->idnum)
+         {
+            return 1;
+         }
+      }
+   }
+
+   return 0;
+}
+/******************************************************************************/
+/*
+* write_resources: Write out resources to a .rsc file.  fname should be the
+*    name of the .rsc file to receive the resources.  Resources are found by
+*    looping through all the classes in the symbol table.
+*/
+/******************************************************************************/
 void write_resources(char *fname)
 {
    list_type c, l;
@@ -40,6 +71,9 @@ void write_resources(char *fname)
             r = (resource_type) (l->data);
             
             num_resources++;
+            //for (int j = 1; j < sizeof(r->resource) / sizeof(r->resource[0]); j++)
+            //   if (r->resource[j])
+            //      num_resources++;
          }
    }
    /* If no resources, do nothing */
@@ -69,31 +103,38 @@ void write_resources(char *fname)
          for (l = cl->resources; l != NULL; l = l->next)
          {
             r = (resource_type) (l->data);
-            
-            // Write out id #
-            fwrite(&r->lhs->idnum, 4, 1, f);
-            
-            // Write string
-            str = GetStringFromResource(r);
-            fwrite(str, strlen(str) + 1, 1, f);
+
+            // For each language string present,
+            // write out language data and string.
+            for (int j = 0; j < sizeof(r->resource) / sizeof(r->resource[0]); j++)
+            {
+               if (r->resource[j])
+               {
+                  // Write out id #
+                  fwrite(&r->lhs->idnum, 4, 1, f);
+
+                  fwrite(&j,sizeof(j),1,f);
+                  str = GetStringFromResource(r, j);
+                  fwrite(str, strlen(str) + 1, 1, f);
+               }
+            }
          }
    }
 
    fclose(f);
 }
-/***************************************************************************/
-char *GetStringFromResource(resource_type r)
+/******************************************************************************/
+char *GetStringFromResource(resource_type r, int j)
 {
-   switch (r->rhs->type)
+   switch (r->resource[j]->type)
    {
-   case C_STRING:
-      return r->rhs->value.stringval;
-
-   case C_FNAME:
-      return r->rhs->value.fnameval;
-
-   default:
-      simple_error("Unknown resource type (%d) encountered", r->rhs->type);
-      return NULL;
+      case C_STRING:
+         return r->resource[j]->value.stringval;
+      case C_FNAME:
+         return r->resource[j]->value.fnameval;
+      default:
+         simple_error("Unknown resource type (%d) encountered",
+            r->resource[j]->type);
+         return NULL;
    }
 }

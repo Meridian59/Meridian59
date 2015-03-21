@@ -80,7 +80,8 @@ typedef struct {
    Bool antiprofane;             /* Kill annoying incoming profanity. */
    Bool guest;                   /* Automatically log in as "guest"? */
    int  server_low, server_high; /* Closed interval of legal server numbers for guest logins */
-   int	halocolor;					//	0 = red, 1 = blue, 2 = green
+   int  halocolor;               // 0 = red, 1 = blue, 2 = green
+   int  language;                // 0 = English, 1 = German, 2 = Korean
 
    Bool lagbox;                  /* Display lag meter? */
    Bool ignoreprofane;           /* Kill messages including any profanity. */

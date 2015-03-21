@@ -177,7 +177,7 @@ int C_GodLog(int object_id,local_var_type *local_vars,
 				}
 				else
 				{
-					sprintf(buf+strlen(buf),"%s",r->resource_val);
+					sprintf(buf+strlen(buf),"%s",r->resource_val[0]);
 				}
 			}
 			break;
@@ -321,7 +321,7 @@ int C_Debug(int object_id,local_var_type *local_vars,
 				}
 				else
 				{
-					sprintf(buf+strlen(buf),"%s",r->resource_val);
+					sprintf(buf+strlen(buf),"%s",r->resource_val[0]);
 				}
 			}
 			break;
@@ -721,7 +721,7 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
                   function_name, val.v.data );
 			return false;
 		}
-		*str = r->resource_val;
+		*str = r->resource_val[0];
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -922,8 +922,8 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 			bprintf( "C_StringSub can't sub for invalid resource %i\n", s1_val.v.data );
 			return NIL;
 		}
-		s1 = r->resource_val;
-		len1 = strlen( r->resource_val );
+		s1 = r->resource_val[0];
+		len1 = strlen( r->resource_val[0] );
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -1130,8 +1130,8 @@ int C_SetResource(int object_id,local_var_type *local_vars,
 					str_val.v.data);
 				return NIL;
 			}
-			new_len = strlen(r->resource_val);
-			new_str = r->resource_val;
+			new_len = strlen(r->resource_val[0]);
+			new_str = r->resource_val[0];
 			break;
 		}
 	case TAG_STRING :
@@ -1314,7 +1314,7 @@ int C_SetString(int object_id,local_var_type *local_vars,
          return NIL;
       }
       //bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
-      SetString(snod,r->resource_val,strlen(r->resource_val));
+      SetString(snod,r->resource_val[0],strlen(r->resource_val[0]));
       break;
 
    case TAG_MESSAGE :
@@ -1408,7 +1408,7 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 			bprintf("C_AppendTempString can't set from invalid resource %i\n",s_val.v.data);
 			return NIL;
 		}
-		AppendTempString(r->resource_val,strlen(r->resource_val));
+		AppendTempString(r->resource_val[0],strlen(r->resource_val[0]));
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -3084,17 +3084,17 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				r_weapon = GetResourceByID(stat7.v.data);
 				
 				if (!r_who_damaged || !r_who_attacker || !r_weapon ||
-					!r_who_damaged->resource_val || !r_who_attacker->resource_val || !r_weapon->resource_val)
+					!r_who_damaged->resource_val[0] || !r_who_attacker->resource_val[0] || !r_weapon->resource_val[0])
 				{
 					bprintf("NULL string in C_RecordStat() for STAT_ASSESS_DAM");				
 				}
 				else
 				{					
 					MySQLRecordPlayerAssessDamage(
-						r_who_damaged->resource_val, 
-						r_who_attacker->resource_val, 
+						r_who_damaged->resource_val[0], 
+						r_who_attacker->resource_val[0], 
 						stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, 
-						r_weapon->resource_val);
+						r_weapon->resource_val[0]);
 				}
 			}
 			break;

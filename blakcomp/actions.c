@@ -13,6 +13,7 @@
 /************************************************************************/
 #include "blakcomp.h"
 #include "bkod.h"
+#include "resource.h"
 
 extern function_type Functions[];
 extern int numfuncs;
@@ -22,6 +23,201 @@ extern int lineno;
 
 static int loop_depth = 0;
 SymbolTable st;
+
+typedef struct {
+  char   *two_letter_code;
+  char   *language_name;
+  int    languageid;
+} lang_table;
+
+// Table of all languages we could possibly use.
+static lang_table language_id_table[] = {
+   { "en", "English",      0,   },
+   { "de", "German",       1,   },
+   { "ko", "Korean",       2,   },
+   { "ru", "Russian",      3,   },
+   { "sv", "Swedish",      4,   },
+   { "ab", "Abkhazian",    5,   },
+   { "aa", "Afar",         6,   },
+   { "af", "Afrikaans",    7,   },
+   { "ak", "Akan",         8,   },
+   { "sq", "Albanian",     9,   },
+   { "am", "Amharic",      10,  },
+   { "ar", "Arabic",       11,  },
+   { "an", "Aragonese",    12,  },
+   { "hy", "Armenian",     13,  },
+   { "as", "Assamese",     14,  },
+   { "av", "Avaric",       15,  },
+   { "ae", "Avestan",      16,  },
+   { "ay", "Aymara",       17,  },
+   { "az", "Azerbaijani",  18,  },
+   { "bm", "Bambara",      19,  },
+   { "ba", "Bashkir",      20,  },
+   { "eu", "Basque",       21,  },
+   { "be", "Belarusian",   22,  },
+   { "bn", "Bengali",      23,  },
+   { "bh", "Bihari",       24,  },
+   { "bi", "Bislama",      25,  },
+   { "nb", "Bokmål",       26,  },
+   { "bs", "Bosnian",      27,  },
+   { "br", "Breton",       28,  },
+   { "bg", "Bulgarian",    29,  },
+   { "my", "Burmese",      30,  },
+   { "ca", "Catalan",      31,  },
+   { "ch", "Chamorro",     32,  },
+   { "ce", "Chechen",      33,  },
+   { "zh", "Chinese",      34,  },
+   { "cv", "Chuvash",      35,  },
+   { "kw", "Cornish",      36,  },
+   { "co", "Corse",        37,  },
+   { "cr", "Cree",         38,  },
+   { "hr", "Croatian",     39,  },
+   { "cs", "Czech",        40,  },
+   { "da", "Danish",       41,  },
+   { "dv", "Divehi",       42,  },
+   { "nl", "Dutch",        43,  },
+   { "dz", "Dzongkha",     44,  },
+   { "eo", "Esperanto",    45,  },
+   { "et", "Estonian",     46,  },
+   { "ee", "Ewe",          47,  },
+   { "fo", "Faroese",      48,  },
+   { "fj", "Fijian",       49,  },
+   { "fi", "Finnish",      50,  },
+   { "fr", "Français",     51,  },
+   { "fy", "Frisian",      52,  },
+   { "ff", "Fulah",        53,  },
+   { "gd", "Gaelic",       54,  },
+   { "gl", "Gallegan",     55,  },
+   { "lg", "Ganda",        56,  },
+   { "ka", "Georgian",     57,  },
+   { "el", "Greek",        58,  },
+   { "kl", "Greenlandic",  59,  },
+   { "gn", "Guarani",      60,  },
+   { "gu", "Gujarati",     61,  },
+   { "ha", "Hausa",        62,  },
+   { "he", "Hebrew",       63,  },
+   { "hz", "Herero",       64,  },
+   { "hi", "Hindi",        65,  },
+   { "ho", "Hiri Motu",    66,  },
+   { "hu", "Hungarian",    67,  },
+   { "is", "Icelandic",    68,  },
+   { "io", "Ido",          69,  },
+   { "ig", "Igbo",         70,  },
+   { "id", "Indonesian",   71,  },
+   { "ia", "Interlingua",  72,  },
+   { "ie", "Interlingue",  73,  },
+   { "iu", "Inuktitut",    74,  },
+   { "ik", "Inupiaq",      75,  },
+   { "ga", "Irish",        76,  },
+   { "it", "Italian",      77,  },
+   { "ja", "Japanese",     78,  },
+   { "jv", "Javanese",     79,  },
+   { "kn", "Kannada",      80,  },
+   { "kr", "Kanuri",       81,  },
+   { "ks", "Kashmiri",     82,  },
+   { "kk", "Kazakh",       83,  },
+   { "km", "Khmer",        84,  },
+   { "ki", "Kikuyu",       85,  },
+   { "rw", "Kinyarwanda",  86,  },
+   { "ky", "Kirghiz",      87,  },
+   { "kv", "Komi",         88,  },
+   { "kg", "Kongo",        89,  },
+   { "kj", "Kuanyama",     90,  },
+   { "ku", "Kurdish",      91,  },
+   { "lo", "Lao",          92,  },
+   { "la", "Latin",        93,  },
+   { "lv", "Latvian",      94,  },
+   { "lb", "Letzeburgesch",95,  },
+   { "li", "Limburgan",    96,  },
+   { "ln", "Lingala",      97,  },
+   { "lt", "Lithuanian",   98,  },
+   { "lu", "Luba-Katanga", 99,  },
+   { "mk", "Macedonian",   100, },
+   { "mg", "Malagasy",     101, },
+   { "ms", "Malay",        102, },
+   { "ml", "Malayalam",    103, },
+   { "mt", "Maltese",      104, },
+   { "gv", "Manx",         105, },
+   { "mi", "Maori",        106, },
+   { "mr", "Marathi",      107, },
+   { "mh", "Marshallese",  108, },
+   { "mo", "Moldavian",    109, },
+   { "mn", "Mongolian",    110, },
+   { "na", "Nauru",        111, },
+   { "nv", "Navaho",       112, },
+   { "nd", "Ndebele North",113, },
+   { "nr", "Ndebele South",114, },
+   { "ng", "Ndonga",       115, },
+   { "ne", "Nepali",       116, },
+   { "se", "Northern Sami",117, },
+   { "no", "Norwegian",    118, },
+   { "nn", "Nynorsk",      119, },
+   { "ny", "Nyanja",       120, },
+   { "oc", "Provençal",    121, },
+   { "oj", "Ojibwa",       122, },
+   { "cu", "Old Bulgarian",123, },
+   { "or", "Oriya",        124, },
+   { "om", "Oromo",        125, },
+   { "os", "Ossetian",     126, },
+   { "pi", "Pali",         127, },
+   { "pa", "Panjabi",      128, },
+   { "fa", "Persian",      129, },
+   { "pl", "Polish",       130, },
+   { "pt", "Portuguese",   131, },
+   { "ps", "Pushto",       132, },
+   { "qu", "Quechua",      133, },
+   { "rm", "Raeto-Romance",134, },
+   { "ro", "Romanian",     135, },
+   { "rn", "Rundi",        136, },
+   { "sm", "Samoan",       137, },
+   { "sg", "Sango",        138, },
+   { "sa", "Sanskrit",     139, },
+   { "sc", "Sardinian",    140, },
+   { "sr", "Serbian",      141, },
+   { "sn", "Shona",        142, },
+   { "ii", "Sichuan Yi",   143, },
+   { "sd", "Sindhi",       144, },
+   { "si", "Sinhalese",    145, },
+   { "sk", "Slovak",       146, },
+   { "sl", "Slovenian",    147, },
+   { "so", "Somali",       148, },
+   { "st", "Sotho",        149, },
+   { "es", "Spanish",      150, },
+   { "su", "Sundanese",    151, },
+   { "sw", "Swahili",      152, },
+   { "ss", "Swati",        153, },
+   { "tl", "Tagalog",      154, },
+   { "ty", "Tahitian",     155, },
+   { "tg", "Tajik",        156, },
+   { "ta", "Tamil",        157, },
+   { "tt", "Tatar",        158, },
+   { "te", "Telugu",       159, },
+   { "th", "Thai",         160, },
+   { "bo", "Tibetan",      161, },
+   { "ti", "Tigrinya",     162, },
+   { "to", "Tonga",        163, },
+   { "ts", "Tsonga",       164, },
+   { "tn", "Tswana",       165, },
+   { "tr", "Turkish",      166, },
+   { "tk", "Turkmen",      167, },
+   { "tw", "Twi",          168, },
+   { "ug", "Uighur",       169, },
+   { "uk", "Ukrainian",    170, },
+   { "ur", "Urdu",         171, },
+   { "uz", "Uzbek",        172, },
+   { "ve", "Venda",        173, },
+   { "vi", "Vietnamese",   174, },
+   { "vo", "Volapük",      175, },
+   { "wa", "Walloon",      176, },
+   { "cy", "Welsh",        177, },
+   { "wo", "Wolof",        178, },
+   { "xh", "Xhosa",        179, },
+   { "yi", "Yiddish",      180, },
+   { "yo", "Yoruba",       181, },
+   { "za", "Zhuang",       182, },
+   { "zu", "Zulu",         183, },
+   {NULL,   NULL,          184  }
+};
 
 /* Miscellaneous procedures */
 /************************************************************************/
@@ -809,16 +1005,48 @@ property_type make_property(id_type id, expr_type e)
    p->rhs = e->value.constval;
    return p;   
 }
-/************************************************************************/
-resource_type make_resource(id_type id, const_type c)
+/*******************************************************************************/
+/*  
+ * make_language_id: Compares str to an array of 2 - letter ISO - 639 - 1
+ * language codes, and returns an identifying integer.
+ */
+/******************************************************************************/
+int make_language_id(char *str)
 {
-   resource_type r = (resource_type) SafeMalloc(sizeof(resource_struct));
+   int lid = 0;
+
+   for(int i = 0; i < MAX_LANGUAGE_ID; i++)
+   {
+      if(!strcmp(language_id_table[i].two_letter_code, str))
+      {
+         lid = language_id_table[i].languageid;
+
+         return lid;
+      }
+   }
+
+   // If we get here, lid should be 0 and we can log an error.
+   if (lid == 0)
+      action_error("Invalid language code %s!", str);
+
+   return lid;
+}
+/************************************************************************/
+resource_type make_resource(id_type id, const_type c, int la_id)
+{
    id_type old_id;
 
    id->ownernum = st.curclass;
 
    /* Left-hand side must not have appeared before, except maybe in dbase */
    old_id = lookup_id(id);
+
+   /* Check if this resource is already present in another class.
+    * old_id will be NULL if it isn't, and if it is defined in the
+    * same class, old_id->ownernum is st.curclass (class ID). */
+   if (old_id != NULL && old_id->ownernum != st.curclass)
+      action_error("Resource already defined in another class!\n");
+
    switch(id->type) {
    case I_UNDEFINED:
       id->source = COMPILE;
@@ -827,20 +1055,39 @@ resource_type make_resource(id_type id, const_type c)
 
    case I_RESOURCE:
       /* Allow redefinition of resources listed in database file */
-      if (id->source == COMPILE)
-	 action_error("Resource %s is defined twice", id->name);
-      else
-	 old_id->source = COMPILE;
+      if (id->source != COMPILE)
+         old_id->source = COMPILE;
 
       id->source = COMPILE;
       break;
       
    default:
-      action_error("Duplicate identifier %s", id->name);
+      action_error("Resource defined without type I_UNDEFINED or I_RESOURCE! %s",
+         id->name);
    }
 
+   // Try to get the old resource if present.
+   //r = GetResourceByID(id);
+   //if (r == NULL)
+      resource_type r = (resource_type)SafeMalloc(sizeof(resource_struct));
+  
+   // Assign ID to resource.
    r->lhs = id;
-   r->rhs = c;
+
+   // Assign c to the appropriate resource const_type in r,
+   // allocate memory for the others and NULL it.
+   // TODO: re-use the old r if present (i.e. if another resource of the same ID has been added w/ diff language.
+   for (int i = 0; i < sizeof(r->resource) / sizeof(r->resource[i]); i++)
+   {
+      if (i == la_id)
+         r->resource[i] = c;
+      else
+      {
+         r->resource[i] = (const_type) SafeMalloc(sizeof(const_struct));
+         r->resource[i] = NULL;
+      }
+   }
+
    return r;
 }
 /************************************************************************/

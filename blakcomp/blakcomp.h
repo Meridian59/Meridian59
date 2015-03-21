@@ -45,6 +45,8 @@
 
 #define TABLESIZE       1023    /* Size of symbol tables */
 
+#define MAX_LANGUAGE_ID 184
+
 typedef int Bool;
 enum {False = 0, True = 1};
 
@@ -93,7 +95,7 @@ typedef struct {
 
 typedef struct {
    id_type lhs;
-   const_type rhs;
+   const_type resource[MAX_LANGUAGE_ID];
 } *resource_type, resource_struct;
 
 enum { E_BINARY_OP, E_UNARY_OP, E_IDENTIFIER, E_CONSTANT, E_CALL, };
@@ -284,7 +286,8 @@ id_type make_constant_id(id_type, expr_type);
 param_type make_parameter(id_type, expr_type);
 classvar_type make_classvar(id_type, expr_type);
 property_type make_property(id_type, expr_type);
-resource_type make_resource(id_type, const_type);
+resource_type make_resource(id_type, const_type, int);
+int make_language_id(char *);
 
 void check_break(void);
 void check_continue(void);

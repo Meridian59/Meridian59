@@ -128,9 +128,9 @@ void FreeTable(table_node *tn)
       hn = tn->table[i];
       while (hn != NULL)
       {
-	 temp = hn->next;
-	 FreeMemory(MALLOC_ID_TABLE,hn,sizeof(hash_node));
-	 hn = temp;
+         temp = hn->next;
+         FreeMemory(MALLOC_ID_TABLE,hn,sizeof(hash_node));
+         hn = temp;
       }
    }
    
@@ -174,7 +174,7 @@ table_node * GetTableByID(int table_id)
    while (tn != NULL)
    {
       if (tn->table_id == table_id)
-	 return tn;
+         return tn;
       tn = tn->next;
    }
    return NULL;
@@ -237,7 +237,7 @@ int GetTableEntry(int table_id,val_type key_val)
    while (hn != NULL)
    {
       if (EqualTableEntry(hn->key_val,key_val))
-	 return hn->data_val.int_val;
+         return hn->data_val.int_val;
       hn = hn->next;
    }
    return NIL;
@@ -261,7 +261,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
    if (tn->table[index] == NULL)
    {
       dprintf("DeleteTableEntry can't delete %i,%i from table %i\n",key_val.v.tag,
-	      key_val.v.data,table_id);
+         key_val.v.data,table_id);
       return;
    }
 
@@ -279,96 +279,94 @@ void DeleteTableEntry(int table_id,val_type key_val)
    {
       if (EqualTableEntry(hn->next->key_val,key_val))
       {
-	 temp = hn->next;
-	 hn->next = hn->next->next;
-	 FreeMemory(MALLOC_ID_TABLE,temp,sizeof(hash_node));
-	 return;
+         temp = hn->next;
+         hn->next = hn->next->next;
+         FreeMemory(MALLOC_ID_TABLE,temp,sizeof(hash_node));
+         return;
       }
       hn = hn->next;
    }
    dprintf("DeleteTableEntry can't delete %i,%i from table %i\n",key_val.v.tag,
-	   key_val.v.data,table_id);
+      key_val.v.data,table_id);
 }
 
 Bool EqualTableEntry(val_type s1_val,val_type s2_val)
 {
    char *s1,*s2;
    int len1,len2;
-
-   
    resource_node *r;
    string_node *snod;
 
    s1 = NULL;
    switch (s1_val.v.tag)
    {
-   case TAG_RESOURCE :
-      r = GetResourceByID(s1_val.v.data);
-      if (r == NULL)
-      {
-	 bprintf("EqualTableEntry can't find resource %i,%i\n",
-		 s1_val.v.tag,s1_val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
-      }
-      s1 = r->resource_val;
-      len1 = strlen(r->resource_val);
-      break;
+      case TAG_RESOURCE :
+         r = GetResourceByID(s1_val.v.data);
+         if (r == NULL)
+         {
+            bprintf("EqualTableEntry can't find resource %i,%i\n",
+            s1_val.v.tag,s1_val.v.data);
+            eprintf("%s\n",BlakodStackInfo());
+            return False;
+         }
+         s1 = r->resource_val[0];
+         len1 = strlen(r->resource_val[0]);
+         break;
 
-   case TAG_STRING :
-      snod = GetStringByID(s1_val.v.data);
-      if (snod == NULL)
-      {
-	 bprintf("EqualTableEntry can't find string %i,%i\n",
-		 s1_val.v.tag,s1_val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
-      }
-      s1 = snod->data;
-      len1 = snod->len_data;
-      break;
+      case TAG_STRING :
+         snod = GetStringByID(s1_val.v.data);
+         if (snod == NULL)
+         {
+            bprintf("EqualTableEntry can't find string %i,%i\n",
+            s1_val.v.tag,s1_val.v.data);
+            eprintf("%s\n",BlakodStackInfo());
+            return False;
+         }
+         s1 = snod->data;
+         len1 = snod->len_data;
+         break;
 
-   case TAG_TEMP_STRING :
-      snod = GetTempString();
-      s1 = snod->data;
-      len1 = snod->len_data;
-      break;
+      case TAG_TEMP_STRING :
+         snod = GetTempString();
+         s1 = snod->data;
+         len1 = snod->len_data;
+         break;
    }
 
    s2 = NULL;
    switch (s2_val.v.tag)
    {
-   case TAG_RESOURCE :
-      r = GetResourceByID(s2_val.v.data);
-      if (r == NULL)
-      {
-	 bprintf("EqualTableEntry can't find resource %i,%i\n",
-		 s2_val.v.tag,s2_val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
-      }
-      s2 = r->resource_val;
-      len2 = strlen(r->resource_val);
-      break;
+      case TAG_RESOURCE :
+         r = GetResourceByID(s2_val.v.data);
+         if (r == NULL)
+         {
+            bprintf("EqualTableEntry can't find resource %i,%i\n",
+            s2_val.v.tag,s2_val.v.data);
+            eprintf("%s\n",BlakodStackInfo());
+            return False;
+         }
+         s2 = r->resource_val[0];
+         len2 = strlen(r->resource_val[0]);
+         break;
 
-   case TAG_STRING :
-      snod = GetStringByID(s2_val.v.data);
-      if (snod == NULL)
-      {
-	 bprintf("EqualTableEntry can't find string %i,%i\n",
-		 s2_val.v.tag,s2_val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
-	 return False;
-      }
-      s2 = snod->data;
-      len2 = snod->len_data;
-      break;
+      case TAG_STRING :
+         snod = GetStringByID(s2_val.v.data);
+         if (snod == NULL)
+         {
+            bprintf("EqualTableEntry can't find string %i,%i\n",
+            s2_val.v.tag,s2_val.v.data);
+            eprintf("%s\n",BlakodStackInfo());
+            return False;
+         }
+         s2 = snod->data;
+         len2 = snod->len_data;
+         break;
 
-   case TAG_TEMP_STRING :
-      snod = GetTempString();
-      s2 = snod->data;
-      len2 = snod->len_data;
-      break;
+      case TAG_TEMP_STRING :
+         snod = GetTempString();
+         s2 = snod->data;
+         len2 = snod->len_data;
+         break;
    }
 
    /* neither strings */
@@ -379,8 +377,8 @@ Bool EqualTableEntry(val_type s1_val,val_type s2_val)
    if (s1 == NULL || s2 == NULL)
    {
       eprintf("EqualTableEntry can't match %i,%i with %i,%i\n",
-	      s1_val.v.tag,s1_val.v.data,s2_val.v.tag,s2_val.v.data);
-		eprintf("%s\n",BlakodStackInfo());
+         s1_val.v.tag,s1_val.v.data,s2_val.v.tag,s2_val.v.data);
+      eprintf("%s\n",BlakodStackInfo());
       return False;
    }
 
@@ -396,43 +394,43 @@ unsigned int GetTableHash(val_type val)
 
    switch (val.v.tag)
    {
-   case TAG_RESOURCE :
-      r = GetResourceByID(val.v.data);
-      if (r == NULL)
-      {
-	 bprintf("GetTableHash can't find resource %i\n",val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
-	 return 0;
-      }
-      s = r->resource_val;
-      len = strlen(r->resource_val);
-      break;
+      case TAG_RESOURCE :
+         r = GetResourceByID(val.v.data);
+         if (r == NULL)
+         {
+            bprintf("GetTableHash can't find resource %i\n",val.v.data);
+            eprintf("%s\n",BlakodStackInfo());
+            return 0;
+         }
+         s = r->resource_val[0];
+         len = strlen(r->resource_val[0]);
+         break;
 
-   case TAG_STRING :
-      snod = GetStringByID(val.v.data);
-      if (snod == NULL)
-      {
-	 bprintf("GetTableHash can't find string %i\n",val.v.data);
-	 eprintf("%s\n",BlakodStackInfo());
-	 return 0;
-      }
-      s = snod->data;
-      len = snod->len_data;
-      break;
+      case TAG_STRING :
+         snod = GetStringByID(val.v.data);
+         if (snod == NULL)
+         {
+            bprintf("GetTableHash can't find string %i\n",val.v.data);
+            eprintf("%s\n",BlakodStackInfo());
+            return 0;
+         }
+         s = snod->data;
+         len = snod->len_data;
+         break;
 
-   case TAG_TEMP_STRING :
-      snod = GetTempString();
-      if (snod == NULL)
-      {
-	 bprintf("GetTableHash can't find temp string\n");
-	 return 0;
-      }
-      s = snod->data;
-      len = snod->len_data;
-      break;
+      case TAG_TEMP_STRING :
+         snod = GetTempString();
+         if (snod == NULL)
+         {
+            bprintf("GetTableHash can't find temp string\n");
+            return 0;
+         }
+         s = snod->data;
+         len = snod->len_data;
+         break;
 
-   default:
-      return GetBufferHash((char *)&val.int_val,4);
+      default:
+         return GetBufferHash((char *)&val.int_val,4);
    }
 
    if (!s || len <= 0)
@@ -454,7 +452,7 @@ unsigned int GetBufferHash(const char *buf,unsigned int len_buf)
    {
       h = (h << 4) + (unsigned char)(toupper(buf[i]));
       if (g = h & 0xF0000000)
-	 h ^= g >> 24;
+         h ^= g >> 24;
       h &= ~g;
    }
 

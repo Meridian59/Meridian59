@@ -16,14 +16,14 @@
 typedef struct resource_struct
 {
    int resource_id;
-   char *resource_val;
+   char *resource_val[MAX_LANGUAGE_ID];
    char *resource_name;
    struct resource_struct *next;
 } resource_node;
 
 void InitResource(void);
 void ResetResource(void);
-void AddResource(int id,char *str_value);
+void AddResource(int id, int lang_id, char *str_value);
 void SetResourceName(int id,char *name);
 int AddDynamicResource(char *str_value);
 void ChangeDynamicResourceStr(resource_node *r,char *str_value);

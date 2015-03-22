@@ -161,3 +161,11 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+blakcomp/blakcomp.tab.c
+blakcomp/blakcomp.tab.h
+blakcomp/lexyy.c
+run/localclient/config.ini
+lib/meridian.lib
+clientd3d/pal.c
+clientd3d/trig.h
+clientd3d/trig.c

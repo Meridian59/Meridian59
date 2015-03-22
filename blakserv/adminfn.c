@@ -711,7 +711,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				char *command)
 {
 	int mode_type,i,index,num_parms,num,num_blak_parm;
-	char *parm_str,*prev_tok;
+	char *parm_str = NULL,*prev_tok = NULL;
 	admin_parm_type admin_parm[MAX_ADMIN_PARM];
 	parm_node blak_parm[MAX_ADMIN_BLAK_PARM];
 	val_type blak_val;

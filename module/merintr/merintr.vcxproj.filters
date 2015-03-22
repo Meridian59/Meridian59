@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="actions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="alias.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="enchant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="groupdlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="groups.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="guild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="guildinv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inventry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="merintr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="merintrc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mermain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skills.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spells.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="statbtn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="statcach.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="statlist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="statmain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="statnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="userarea.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="actions.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alias.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="command.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="drawint.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="enchant.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="groupdlg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="groups.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guild.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildaly.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildbuy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildhal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildinv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildmem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildmtr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="guildshi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="inventry.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="merintr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mermain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="skills.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spells.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="statbtn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="statcach.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="statlist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="statmain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="statnum.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stats.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="userarea.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="merintr.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

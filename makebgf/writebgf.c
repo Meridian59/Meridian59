@@ -178,7 +178,7 @@ BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options)
 
    if (options->compress) 
    {
-      int len = compressBound(width * height);
+      len = compressBound(width * height);
       int retval = compress2((Bytef *) (f->ptr + 5), (uLongf *) &len, buf, width * height, Z_BEST_COMPRESSION);
       if (retval == Z_OK)
       {

@@ -117,10 +117,6 @@ enum
 #define PACKAGE_FILE "packages.txt"
 #define SPROCKET_FILE "sprocket.dll"
 
-#if !defined(BLAK_PLATFORM_WINDOWS) && !defined(BLAK_PLATFORM_LINUX)
-#error You must specify BLAK_PLATFORM_WINDOWS or BLAK_PLATFORM_LINUX
-#endif
-
 #ifdef BLAK_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX

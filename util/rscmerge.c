@@ -151,7 +151,7 @@ bool LoadRscFiles(int num_files, char **filenames)
 int main(int argc, char **argv)
 {
    int arg, len;
-   char *output_filename = NULL;
+   char *output_filename;
    int output_file_found = 0;
    
    if (argc < 3)

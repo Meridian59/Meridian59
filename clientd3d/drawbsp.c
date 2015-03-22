@@ -3960,7 +3960,7 @@ static void doDrawBackground(ViewCone *c)
    long mincol,maxcol;
    long row,col;
    long width,height;
-   BYTE *bkgnd_bmap = NULL, *bkgnd_ptr = NULL;
+   BYTE *bkgnd_bmap, *bkgnd_ptr;
    long length;
    long xoffset;
    list_type l;

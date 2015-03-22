@@ -4,7 +4,7 @@ DYNAMIC=1
 
 SOURCEDIR = $(TOPDIR)\club
 
-CLUBLIBS = user32.lib gdi32.lib archive.lib comctl32.lib wininet.lib zlib.lib advapi32.lib
+CLUBLIBS = user32.lib gdi32.lib archive_static.lib comctl32.lib wininet.lib zlib.lib advapi32.lib
 
 all: makedirs $(OUTDIR)\club.exe
 

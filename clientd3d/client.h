@@ -22,7 +22,7 @@
 
 #include <assert.h>
 #include <stdio.h>
-//#include <malloc.h>
+#include <malloc.h>
 #include <string.h>
 #include <commdlg.h>
 #include <time.h>

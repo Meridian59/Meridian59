@@ -294,7 +294,7 @@ void GameSyncProcessSessionBuffer(session_node *s)
 void GameSyncInputChar(session_node *s,char ch)
 {
    int sync_len;
-   unsigned char *sync_buf = NULL;
+   unsigned char *sync_buf;
 
    switch (s->game->game_state)
    {

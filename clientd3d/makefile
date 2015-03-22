@@ -134,12 +134,11 @@ $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
-	ECHO $@
 	$(LINK) $(LINKFLAGS) @<<
 $(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS)
 <<
-	ECHO $(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
-	ECHO $(CP) $@ $(CLIENTRUNDIR)
+	$(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
+	$(CP) $@ $(CLIENTRUNDIR)
 
 $(OUTDIR)\maketrig.exe: $(OUTDIR)\maketrig.obj
 	$(LINK) $** -out:$@ $(LINKFLAGS)
@@ -154,6 +153,6 @@ profile: $(OBJS) client.res $(BLAKNTLIBS)
 $(OBJS) /PROFILE /MAP $(LIBS) -def:$(DEFFILE) client.res -OUT:meridian.exe $(LINKWINDOWSFLAGS)
 <<
 #       prep /lc /excall /inc draw3d.obj meridian.exe   
-	ECHO prep /ft /excall /inc drawbsp.obj meridian.exe
+	prep /ft /excall /inc drawbsp.obj meridian.exe
 
 !include $(TOPDIR)\rules.mak

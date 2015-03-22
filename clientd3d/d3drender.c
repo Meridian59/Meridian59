@@ -2398,12 +2398,12 @@ void D3DRenderPacketCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, Bool 
 void D3DRenderPacketWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsigned int type, int side,
 							   Bool bDynamic)
 {
-	Sidedef			*pSideDef = NULL;
+	Sidedef			*pSideDef;
 	custom_xyz		xyz[4];
 	custom_st		st[4];
 	custom_bgra		bgra[MAX_NPTS];
 	unsigned int	flags = 0;
-	PDIB			pDib = NULL;
+	PDIB			pDib;
 	int				vertex;
 
 	d3d_render_packet_new	*pPacket;
@@ -2534,12 +2534,12 @@ void D3DRenderPacketWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsigne
 void D3DRenderPacketWallMaskAdd(WallData *pWall, d3d_render_pool_new *pPool, unsigned int type,
 								int side, Bool bDynamic)
 {
-	Sidedef			*pSideDef = NULL;
+	Sidedef			*pSideDef;
 	custom_xyz		xyz[4];
 	custom_st		st[4];
 	custom_bgra		bgra[MAX_NPTS];
 	unsigned int	flags;
-	PDIB			pDib = NULL;
+	PDIB			pDib;
 	int				vertex;
 	Bool			bNoVTile = FALSE;
 	Bool			bNoLookThrough = FALSE;
@@ -4904,8 +4904,8 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
 	custom_st		stBase[4];
 	custom_bgra		bgra[4];
 	unsigned int	flags;
-	PDIB			pDib = NULL;
-	Sidedef			*pSideDef = NULL;
+	PDIB			pDib;
+	Sidedef			*pSideDef;
 	int				numLights;
 
 	d3d_render_packet_new	*pPacket;
@@ -5378,7 +5378,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 {
 	int				top, bottom;
 	int				xOffset, yOffset;
-	Sidedef			*pSideDef = NULL;
+	Sidedef			*pSideDef;
 	int				drawTopDown;
 	int				paletteIndex;
 	BYTE			light;

@@ -7,7 +7,7 @@ SOURCEDIR = $(KEYBINDDIR)
 
 CFLAGS = $(CFLAGS) /EHsc
 LINKFLAGS = $(LINKFLAGS) $(LINKWINDOWSFLAGS)
-#LIBS = $(LIBS) nafxcw.lib
+LIBS = $(LIBS) nafxcw.lib
 
 OBJS = \
 	$(OUTDIR)\Assignkey.obj \

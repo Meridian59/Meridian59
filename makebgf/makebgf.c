@@ -279,8 +279,8 @@ void Usage(void)
 /**************************************************************************/
 int main(int argc, char **argv)
 {
-   int arg, len = 0;
-   char *output_filename = NULL;
+   int arg, len;
+   char *output_filename;
    int output_file_found = 0;
    Options options;
 

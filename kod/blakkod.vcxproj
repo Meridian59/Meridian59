@@ -43,6 +43,7 @@
     <NMakeBuildCommandLine>nmake all</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake clean all</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(Configuration)\</OutDir>
@@ -50,6 +51,7 @@
     <NMakeBuildCommandLine>nmake all</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake clean all</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

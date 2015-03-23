@@ -47,12 +47,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>palcomp</TargetName>
     <OutDir>$(SolutionDir)bin\</OutDir>
-    <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetName>palcomp</TargetName>
     <OutDir>$(SolutionDir)bin\</OutDir>
-    <IntDir>$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

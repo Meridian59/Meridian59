@@ -161,3 +161,40 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+# Generated code
+blakcomp/blakcomp.tab.c
+blakcomp/blakcomp.tab.h
+blakcomp/lexyy.c
+clientd3d/pal.c
+clientd3d/trig.h
+clientd3d/trig.c
+
+# Build outputs
+lib/meridian.lib
+lib/rscload.lib
+bin/bbgun.exe
+bin/bc.exe
+bin/blakdeco.exe
+bin/blakdiff.exe
+bin/bmpdump.exe
+bin/makebgf.exe
+bin/makepal.exe
+bin/maketrig.exe
+bin/palcomp.exe
+bin/paldump.exe
+bin/porttest.exe
+bin/rscmerge.exe
+bin/rscprint.exe
+run/localclient/config.ini
+run/localclient/debug.txt
+run/localclient/d3dlog.txt
+run/localclient/m59bind.exe
+run/localclient/meridian.exe
+run/localclient/club.exe
+run/server/blakserv.exe
+
+# KOD built data
+kod/**/*.rsc
+kod/**/*.bof
+kod/kodbase.txt

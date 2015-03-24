@@ -162,14 +162,6 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
-# Generated code
-blakcomp/blakcomp.tab.c
-blakcomp/blakcomp.tab.h
-blakcomp/lexyy.c
-clientd3d/pal.c
-clientd3d/trig.h
-clientd3d/trig.c
-
 # Build outputs
 lib/meridian.lib
 lib/rscload.lib
@@ -195,6 +187,6 @@ run/localclient/club.exe
 run/server/blakserv.exe
 
 # KOD built data
-kod/**/*.rsc
-kod/**/*.bof
+*.rsc
+*.bof
 kod/kodbase.txt

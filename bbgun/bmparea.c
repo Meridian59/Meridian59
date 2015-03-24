@@ -63,7 +63,7 @@ void DoDraw(HDC hDC1, HWND hWnd)
    int OverX, OverY;
    int i;
    BOOL highlight;
-   Bitmap *b, *anchor, *wanderer;
+   Bitmap *b, *anchor, *wanderer = NULL;
 
    ClearBitmap();
       

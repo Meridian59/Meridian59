@@ -4379,7 +4379,7 @@ messages:
 
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
-      %  non-DMs, as well as Guild Tells and Broadcasts
+      % non-DMs, as well as Guild Tells and Broadcasts
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -4395,13 +4395,15 @@ messages:
             lSurvivalOptions = $;
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+               OR Send(poOwner,@GetRoomNum) = RID_FIELD1
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+
                return;
             }
 
-            Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                      #who=self);
+            Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,#who=self);
+
             return;
          }
 
@@ -4411,21 +4413,24 @@ messages:
             if poGuild = $
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
+
                return;
             }
-            
+
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+               OR Send(poOwner,@GetRoomNum) = RID_FIELD1
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+
                return;
             }
-            
+
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
                      #oGuild=poGuild) = $
             {
                Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                         #who=self,#guild_survival=TRUE);
+                     #who=self,#guild_survival=TRUE);
             }
             else
             {
@@ -4439,10 +4444,12 @@ messages:
          {
             lSurvivalOptions = $;
             if (NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
-               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD)
-               AND NOT IsClass(self,&DM)
+               OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+               OR Send(poOwner,@GetRoomNum) = RID_FIELD1)
+               AND NOT IsClass(self,&Admin)
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+
                return;
             }
 
@@ -4466,23 +4473,23 @@ messages:
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
             {
                Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                         #who=self,#iPublic=TRUE,#sString=string,
-                         #lSurvivalOptions=lSurvivalOptions,
-                         #poForceBaseRoom=poForceBaseRoom);
+                     #who=self,#iPublic=TRUE,#sString=string,
+                     #lSurvivalOptions=lSurvivalOptions,
+                     #poForceBaseRoom=poForceBaseRoom);
             }
             
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
             {
                Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                         #who=self,#iPublic=TRUE,
-                         #lSurvivalOptions=lSurvivalOptions,
-                         #poForceBaseRoom=poForceBaseRoom);
+                     #who=self,#iPublic=TRUE,
+                     #lSurvivalOptions=lSurvivalOptions,
+                     #poForceBaseRoom=poForceBaseRoom);
             }
             else
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_already_public);
             }
-            
+
             return;
          }
 
@@ -4491,35 +4498,38 @@ messages:
             if poGuild = $
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_no_guild);
+
                return;
             }
 
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+               OR Send(poOwner,@GetRoomNum) = RID_FIELD1
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+
                return;
             }
-            
+
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindRoomByGuild,
                      #oGuild=poGuild) = $
             {
                Send(self,@MsgSendUser,#message_rsc=survival_no_guild_rooms);
+
                return;
             }
 
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
-                    @FindRoomByGuild,#oGuild=poGuild),
-                    @GetAllowJoins)
+                     @FindRoomByGuild,#oGuild=poGuild),@GetAllowJoins)
             {
                Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
-                    @FindRoomByGuild,#oGuild=poGuild),
-                    @Teleport,#what=self);
+                     @FindRoomByGuild,#oGuild=poGuild),@Teleport,#what=self);
             }
             else
             {
                Send(self,@MsgSendUser,#message_rsc=guild_survival_too_late);
             }
+
             return;
          }
 
@@ -4527,37 +4537,40 @@ messages:
          {
             if NOT Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
                OR Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+               OR Send(poOwner,@GetRoomNum) = RID_FIELD1
             {
                Send(self,@MsgSendUser,#message_rsc=survival_err_not_safe);
+
                return;
             }
             
             if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
             {
                Send(self,@MsgSendUser,#message_rsc=survival_no_public_rooms);
+
                return;
             }
 
             if Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
-                    @FindPublicRoom),
-                    @GetAllowJoins)
+                     @FindPublicRoom),@GetAllowJoins)
             {
                Send(Send(Send(SYS,@GetSurvivalRoomMaintenance),
-                    @FindPublicRoom),
-                    @Teleport,#what=self);
+                     @FindPublicRoom),@Teleport,#what=self);
             }
             else
             {
                Send(self,@MsgSendUser,#message_rsc=public_survival_too_late);
             }
+
             return;
          }
-         
+
          if StringContain(String,"autocombine on")
             AND NOT Send(self,@IsAutoCombining)
          {
             Send(self,@SetAutoCombine,#value=TRUE);
             Send(self,@MsgSendUser,#message_rsc=autocombine_on_msg);
+
             return;
          }
 
@@ -4566,6 +4579,7 @@ messages:
          {
             Send(self,@SetAutoCombine,#value=FALSE);
             Send(self,@MsgSendUser,#message_rsc=autocombine_off_msg);
+
             return;
          }
 
@@ -4574,6 +4588,7 @@ messages:
          {
             Send(self,@SetAutoloot,#value=TRUE);
             Send(self,@MsgSendUser,#message_rsc=autoloot_on_msg);
+
             return;
          }
 
@@ -4582,6 +4597,7 @@ messages:
          {
             Send(self,@SetAutoloot,#value=FALSE);
             Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
+
             return;
          }
 
@@ -4590,6 +4606,7 @@ messages:
          {
             Send(self,@SetReagentBagAuto,#value=TRUE);
             Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_on);
+
             return;
          }
 
@@ -4598,6 +4615,7 @@ messages:
          {
             Send(self,@SetReagentBagAuto,#value=FALSE);
             Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_off);
+
             return;
          }
       }
@@ -4613,18 +4631,20 @@ messages:
          if StringContain(string,guild_motd_command)
             AND poGuild <> $
             AND (Send(poGuild,@GetRank,#who=self) = RANK_MASTER
-                OR Send(poGuild,@GetRank,#who=self) = RANK_LIEUTENANT)
+               OR Send(poGuild,@GetRank,#who=self) = RANK_LIEUTENANT)
          {
             Send(poGuild,@SetGuildMOTD,#who=self,#string=string);
+
             return;
          }
          if StringContain(string,guild_clear_motd_command)
             AND poGuild <> $
             AND Send(poGuild,@GetGuildMaster) = self
             AND (Send(poGuild,@GetRank,#who=self) = RANK_MASTER
-                OR Send(poGuild,@GetRank,#who=self) = RANK_LIEUTENANT)
+               OR Send(poGuild,@GetRank,#who=self) = RANK_LIEUTENANT)
          {
             Send(poGuild,@SetGuildMOTD,#who=self,#string=$);
+
             return;
          }
 

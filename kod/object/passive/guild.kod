@@ -666,7 +666,7 @@ messages:
                      #message_rsc=guild_threeperson_failed);
             }
 
-            Send(self,@Delete,#timerdelete=TRUE);
+            Send(self,@Delete,#timerdelete=FALSE);
 
             return;
          }

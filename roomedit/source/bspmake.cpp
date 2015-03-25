@@ -1013,7 +1013,8 @@ BSPnode *BSPBuildNode(WallDataList walls, Poly *poly, int sector)
 #endif
 
 	// If empty polygon, there is nothing on this side of wall
-	if (poly->npts == 0)
+	// Also skip if no sector (= part of start boundingbox, but not of any sector)
+	if (poly->npts == 0 || (walls == NULL && sector == -1))
 		return NULL;
 
 	node = BSPGetNewNode();

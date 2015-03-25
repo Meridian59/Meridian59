@@ -154,7 +154,11 @@ messages:
          }
       }
 
-      plAttackers = Cons(what,plAttackers);
+      if what <> $
+         AND IsClass(what,&Battler)
+      {
+         plAttackers = Cons(what,plAttackers);
+      }
 
       propagate;
    }

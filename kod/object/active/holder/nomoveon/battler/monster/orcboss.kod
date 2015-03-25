@@ -127,12 +127,13 @@ messages:
 
    SecondAttackTimer()
    {
+      ptSecondAttack = $;
+
       if pbFirstAttack
       {
          return;
       }
 
-      ptSecondAttack = $;
       if poTarget <> $
          AND poOwner = Send(poTarget,@GetOwner)
       {

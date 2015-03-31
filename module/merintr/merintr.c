@@ -1656,6 +1656,13 @@ Bool WINAPI EventMenuItem(int id)
       return False;  // Don't pass this menu item on
    }
 
+   // Check for language menu items
+   if (id >= ID_LANGUAGE && id < ID_LANGUAGE + MAX_LANGUAGE_ID)
+   {
+      MenuLanguageChosen(id);
+      return False;
+   }
+
    return True;
 }
 /****************************************************************************/

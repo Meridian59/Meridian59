@@ -27,6 +27,7 @@ EXPORTS
 	WebLaunchBrowser
 	InitMenuPopupHandler
 	GetHBitmapFromResource
+	GetAvailableLanguages
 
 ; Keyboard handling
 	KeyAddTable

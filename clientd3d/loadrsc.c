@@ -25,6 +25,8 @@
 
 static Table *t;      /* Hash table of all resources loaded in */
 
+static Bool available_languages[MAX_LANGUAGE_ID]; // 1 if language present.
+
 static char resource_dir[] = "resource";
 static char room_dir[] = "resource";
 static char rsb_spec[] = "*.rsb";
@@ -251,10 +253,16 @@ bool RscAddCallback(char *fname, int res, int lang_id, char *string)
    r->resource[lang_id] = (char *) SafeMalloc(strlen(string) + 1);
    strcpy(r->resource[lang_id], string);
 
+   available_languages[lang_id] = True;
+
    // Replace the existing resource if we used it.
    table_insert(t, r, ResourceHash, ResourceCompare);
 
    return true;
+}
+Bool *GetAvailableLanguages(void)
+{
+   return available_languages;
 }
 /******************************************************************************/
 /*

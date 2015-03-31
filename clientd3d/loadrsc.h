@@ -35,6 +35,7 @@ void MissingResource(void);
 void DeleteRscFiles(list_type files);
 void DeleteAllRscFiles(void);
 
+M59EXPORT Bool *GetAvailableLanguages(void);
 M59EXPORT char *LookupRsc(ID idnum);
 M59EXPORT char *LookupNameRsc(ID idnum);
 M59EXPORT char *LookupRscNoError(ID idnum);

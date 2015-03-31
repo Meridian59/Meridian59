@@ -57,6 +57,7 @@ void InterfaceInit(void)
 
    SpellsInit();
    ActionsInit();
+   LanguageInit();
    InventoryBoxCreate(cinfo->hMain);
    StatsCreate(cinfo->hMain);
    GroupsLoad();
@@ -98,6 +99,7 @@ void InterfaceInit(void)
  */
 void InterfaceExit(void)
 {
+   LanguageExit();
    AliasExit();
    ActionsExit();
    SpellsExit();

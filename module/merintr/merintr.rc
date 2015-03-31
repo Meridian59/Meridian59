@@ -450,6 +450,11 @@ BEGIN
     IDS_MENU_WRY            "Gri&mmig"
 END
 
+STRINGTABLE 
+BEGIN
+    IDS_LANGUAGE_MENU       "&Sprache"
+END
+
 #endif    // German (Neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1119,6 +1124,11 @@ BEGIN
     IDS_MENU_SAD            "&Sad"
     IDS_MENU_NEUTRAL        "&Neutral"
     IDS_MENU_WRY            "W&ry"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LANGUAGE_MENU       "&Language"
 END
 
 #endif    // English (U.S.) resources

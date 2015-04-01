@@ -32,7 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientPatchForm));
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnPlay = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.ddlServer = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPatch = new System.Windows.Forms.Button();
@@ -88,19 +87,10 @@
             this.btnPlay.UseVisualStyleBackColor = true;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 41);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Server Selection";
-            // 
             // ddlServer
             // 
             this.ddlServer.FormattingEnabled = true;
-            this.ddlServer.Location = new System.Drawing.Point(15, 57);
+            this.ddlServer.Location = new System.Drawing.Point(12, 41);
             this.ddlServer.Name = "ddlServer";
             this.ddlServer.Size = new System.Drawing.Size(187, 21);
             this.ddlServer.TabIndex = 4;
@@ -114,7 +104,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(192, 29);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Select a Profile";
+            this.label2.Text = "Select a Server";
             // 
             // btnPatch
             // 
@@ -295,12 +285,12 @@
             // 
             this.txtLog.BackColor = System.Drawing.SystemColors.Control;
             this.txtLog.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.txtLog.Location = new System.Drawing.Point(6, 6);
+            this.txtLog.Location = new System.Drawing.Point(6, 3);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(1127, 468);
+            this.txtLog.Size = new System.Drawing.Size(722, 468);
             this.txtLog.TabIndex = 11;
             // 
             // pbFileProgress
@@ -327,11 +317,11 @@
             this.tabControl1.Controls.Add(this.tabBrowser);
             this.tabControl1.Controls.Add(this.tabLog);
             this.tabControl1.Controls.Add(this.tabOptions);
-            this.tabControl1.Location = new System.Drawing.Point(208, 9);
+            this.tabControl1.Location = new System.Drawing.Point(212, 12);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1147, 506);
+            this.tabControl1.Size = new System.Drawing.Size(739, 506);
             this.tabControl1.TabIndex = 14;
             this.tabControl1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabControl1_DrawItem);
             // 
@@ -340,15 +330,14 @@
             this.tabBrowser.Controls.Add(this.webControl);
             this.tabBrowser.Location = new System.Drawing.Point(4, 22);
             this.tabBrowser.Name = "tabBrowser";
-            this.tabBrowser.Size = new System.Drawing.Size(1139, 480);
+            this.tabBrowser.Size = new System.Drawing.Size(731, 480);
             this.tabBrowser.TabIndex = 2;
             this.tabBrowser.Text = "News";
             // 
             // webControl
             // 
-            this.webControl.Dock = System.Windows.Forms.DockStyle.Right;
-            this.webControl.Location = new System.Drawing.Point(6, 0);
-            this.webControl.Size = new System.Drawing.Size(1133, 480);
+            this.webControl.Location = new System.Drawing.Point(3, 0);
+            this.webControl.Size = new System.Drawing.Size(725, 480);
             this.webControl.Source = new System.Uri("http://openmeridian.org/forums/index.php/board,16.0.html#bodyarea", System.UriKind.Absolute);
             this.webControl.TabIndex = 0;
             // 
@@ -358,7 +347,7 @@
             this.tabLog.Location = new System.Drawing.Point(4, 22);
             this.tabLog.Name = "tabLog";
             this.tabLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabLog.Size = new System.Drawing.Size(1139, 480);
+            this.tabLog.Size = new System.Drawing.Size(731, 480);
             this.tabLog.TabIndex = 0;
             this.tabLog.Text = "Log";
             this.tabLog.UseVisualStyleBackColor = true;
@@ -373,7 +362,7 @@
             this.tabOptions.Location = new System.Drawing.Point(4, 22);
             this.tabOptions.Name = "tabOptions";
             this.tabOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOptions.Size = new System.Drawing.Size(1139, 480);
+            this.tabOptions.Size = new System.Drawing.Size(731, 480);
             this.tabOptions.TabIndex = 1;
             this.tabOptions.Text = "Options";
             this.tabOptions.UseVisualStyleBackColor = true;
@@ -392,7 +381,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1367, 527);
+            this.ClientSize = new System.Drawing.Size(963, 527);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.tabControl1);
@@ -400,7 +389,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ddlServer);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.pbProgress);
             this.Controls.Add(this.btnCreateAccount);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -423,7 +411,6 @@
 
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Button btnPlay;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ddlServer;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnPatch;

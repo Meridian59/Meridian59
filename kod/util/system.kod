@@ -332,6 +332,7 @@ properties:
    poTerritoryGame = $
    poNodeAttack = $
    poRentableRoomMaintenance = $
+   poSurvivalRoomMaintenance = $
    
    % Singleton object that keeps track of various game statistics
    poStatistics = $
@@ -483,6 +484,7 @@ messages:
       Send(self,@RecreateQuestEngine);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
+      Send(self,@RecreateSurvivalRoomMaintenance);
 
       Send(self,@RecreateAllSpells,#figure_totals=FALSE);
       Send(self,@RecreateAllSkills,#figure_totals=FALSE);
@@ -586,6 +588,7 @@ messages:
       Send(self,@RecreateParliament);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
+      Send(self,@RecreateSurvivalRoomMaintenance);
       Send(self,@RecreateWarEvent);
 	  Send(self,@CreateAllSpellsIfNew);
 	  Send(self,@CreateAllRoomsIfNew);
@@ -1347,6 +1350,10 @@ messages:
             Send(i,@GetAge);
          }
       }
+      
+      % Notify stat reset tokens that a game year has passed
+      % (deletes temporary tokens without unecessary timers)
+      Send(&StatsResetToken,@NewYear);
 
       return;
    }
@@ -2165,14 +2172,16 @@ messages:
       return;
    }
 
-   CreateOneRoomIfNew(num = $,class = $)
+   CreateOneRoomIfNew(num = $,class = $,poGuild = $,iPublic = FALSE,
+                      base_room=$,iPvP=FALSE)
    {
       local oRoom;
 
       if Send(self,@FindRoomByNum,#num=num) = $
       {
          % note: only rentable rooms use the iRID parameter.
-         oRoom = Create(class,#iRID=num);
+         oRoom = Create(class,#iRID=num,#poGuild=poGuild,#iPublic=iPublic,
+                              #base_room=base_room,#iPvP=iPvP);
          if oRoom = $
          {
             Debug("Tried to create room RID",num,"FAILED!");
@@ -3161,6 +3170,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_GOOD,#class=&DetectGood);
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_EVIL,#class=&DetectEvil);
       Send(self,@CreateOneSpellIfNew,#num=SID_ICE_NOVA,#class=&IceNova);
+      Send(self,@CreateOneSpellIfNew,#num=SID_FIRE_STORM,#class=&FireStorm);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_NODEBURST,#class=&Nodeburst);
       Send(self,@CreateOneSpellIfNew,#num=SID_PURIFY,#class=&Purify);
@@ -3742,6 +3752,11 @@ messages:
       Create(&KriipaTreasure);
       Create(&MolluskTreasure);
       Create(&ShadowbeastTreasure);
+      Create(&RatKingTreasure);
+      Create(&EarthElementalTreasure);
+      Create(&FireElementalTreasure);
+      Create(&IceElementalTreasure);
+      Create(&NeruditeElementalTreasure);
       
       return;
    }
@@ -4731,6 +4746,21 @@ messages:
    {
       return poRentableRoomMaintenance;
    }
+   
+   GetSurvivalRoomMaintenance()
+   {
+      return poSurvivalRoomMaintenance;
+   }
+   
+   GetSurvivalReport()
+   {
+      if poSurvivalRoomMaintenance <> $
+      {
+         return Send(poSurvivalRoomMaintenance,@SurvivalStatusReport);
+      }
+
+      return $;
+   }
 
    RecreateTerritoryGame()
    {
@@ -4789,6 +4819,20 @@ messages:
          poRentableRoomMaintenance = Create(&RentableRoomMaintenance);
       }
 
+      return TRUE;
+   }
+   
+   RecreateSurvivalRoomMaintenance()
+   {
+      if poSurvivalRoomMaintenance <> $
+      {
+         Send(poSurvivalRoomMaintenance,@Recreate);
+      }
+      else
+      {
+         poSurvivalRoomMaintenance = Create(&SurvivalRoomMaintenance);
+      }
+      
       return TRUE;
    }
 
@@ -4942,6 +4986,9 @@ messages:
       plMonsterTemplates = cons(create(&fungusbeast),plMonsterTemplates);
       plMonsterTemplates = cons(create(&ghost),plMonsterTemplates);
       plMonsterTemplates = cons(create(&giantrat),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GiantRatKing),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&GiantRatSoldier),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&SmallRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&iceperson),plMonsterTemplates);
       plMonsterTemplates = cons(create(&blackmummy),plMonsterTemplates);
       plMonsterTemplates = cons(create(&mummy),plMonsterTemplates);
@@ -4971,7 +5018,13 @@ messages:
       plMonsterTemplates = cons(create(&OrcWizard),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DragonFly),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DragonFlyQueen),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DragonFlyPet),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Kriipa),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Elephant),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Bunny),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Wolf),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Chupacabra),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Minotaur),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&Lich),plMonsterTemplates);
       plMonsterTemplates = cons(create(&BatteredSkeleton),plMonsterTemplates);
@@ -5002,6 +5055,15 @@ messages:
       plMonsterTemplates = cons(create(&DuskRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
+      
+      plMonsterTemplates = cons(create(&EarthElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&EarthElementalChampion),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FireElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&FireElementalChampion),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&IceElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&IceElementalChampion),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&NeruElemental),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&NeruElementalChampion),plMonsterTemplates);
 
       return;
    }
@@ -5087,6 +5149,7 @@ messages:
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
 
       plItemTemplates = cons(create(&Money),plItemTemplates);
+      plItemTemplates = cons(create(&StatsResetToken),plItemTemplates);
 
       % Gems
       plItemTemplates = cons(create(&GemRiijaPower),plItemTemplates);
@@ -5327,6 +5390,8 @@ messages:
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
+      plItemTemplates = cons(create(&FireArrow),plItemTemplates);
+      plItemTemplates = cons(create(&IceArrow),plItemTemplates);
 
       % Weapons
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
@@ -5354,6 +5419,32 @@ messages:
    GetItemTemplates()
    {
       return plItemTemplates;
+   }
+
+   ReduceAllItemWeightAndBulk(iNumber=1)
+   "Reduces (or increases) the weight and bulk of all items "
+   "to the number given. Default 1. Item has to be in the "
+   "item templates list. Does not affect shillings."
+   {
+      local i;
+
+      % Check for frenzy active first, to avoid running
+      % this accidentally.
+      if poChaosNight = $
+      {
+         return;
+      }
+
+      for i in plItemTemplates
+      {
+         if NOT IsClass(i,&Money)
+         {
+            SetClassVar(i,"viBulk",iNumber);
+            SetClassVar(i,"viWeight",iNumber);
+         }
+      }
+
+      return;
    }
 
    RecreateMoneyTemplates()
@@ -6578,22 +6669,6 @@ messages:
       }
 
       return iList;
-   }
-
-   FixPlayersOverLearnCount()
-   "This assumes all 'bugged' players are due to having level 1 Riija."
-   {
-      local i, iList;
-
-      iList = Send(self,@FindPlayersOverLearnCount);
-
-      for i in iList
-      {
-         Send(i,@StripSpellsOfSchool,#school=SS_RIIJA);
-         Debug("Removed Riija from ",i,Send(i,@GetTrueName));
-      }
-
-      return;
    }
 
    AdminListPlayersOverHP(hp=$)

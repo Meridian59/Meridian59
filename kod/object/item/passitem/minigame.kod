@@ -67,7 +67,7 @@ properties:
    plObservers = $      % People who should be informed of game events (doesn't include players)
    psState = $          % Current state of game, stored as a string  
 
-   viObject_flags = ACTIVATE_YES | GETTABLE_YES
+   viObject_flags = OF_ACTIVATABLE | OF_GETTABLE
 
 messages:
    

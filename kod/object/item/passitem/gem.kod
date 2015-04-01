@@ -35,7 +35,7 @@ properties:
 
    poSocketedObject = $
 
-   viObject_flags = APPLY_YES
+   viObject_flags = OF_APPLYABLE
 
 messages:
    

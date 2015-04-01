@@ -43,7 +43,7 @@ classvars:
    viSpell_level = 1
    viSchool = SS_RIIJA
    viMana = 5
-   viSpellExertion = 5
+   viSpellExertion = 1
    viCast_time = 3000
 
    vrSucceed_wav = shadowform_wave_rsc
@@ -79,7 +79,7 @@ messages:
       % Check for lighting effect already applied
       if oTarget <> who
       {
-         iDrawfX = Send(oTarget,@GetPlayerDrawFX);
+         iDrawfX = Send(oTarget,@GetDrawingEffects);
 
          if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
             OR (iDrawFX & DRAWFX_SECONDTRANS) = DRAWFX_SECONDTRANS

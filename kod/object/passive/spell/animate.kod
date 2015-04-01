@@ -49,7 +49,7 @@ classvars:
    viSpell_level = 4
    viMana = 20
 
-   viSpellExertion = 10
+   viSpellExertion = 3
    viCast_time = 10000
    viChance_To_Increase = 20
    viMeditate_ratio = 40
@@ -101,18 +101,30 @@ messages:
       }
 
       if (Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
+         AND NOT IsClass(oRoom,&SurvivalRoom)
       {
          Send(who,@MsgSendUser,#message_rsc=Animate_failed_full_rsc);
 
          return FALSE;
       }
 
-      if Send(who,@CheckPlayerMinionCount)
-            >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+      if IsClass(who,&Player)
       {
-         Send(who,@MsgSendUser,#message_rsc=Animate_too_many_rsc);
+         if Send(who,@CheckBattlerMinionCount)
+               >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+         {
+            Send(who,@MsgSendUser,#message_rsc=Animate_too_many_rsc);
 
-         return FALSE;
+            return FALSE;
+         }
+      }
+      else
+      {
+         if Send(who,@CheckBattlerMinionCount)
+            >= Send(Send(SYS,@GetSettings),@GetMonsterMinionLimit)
+         {
+            return FALSE;
+         }
       }
 
       propagate;
@@ -126,8 +138,12 @@ messages:
       oTarget = First(lTargets);
       if oRoom <> Send(oTarget,@GetOwner)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_trance_break,#parm1=vrName);
-         Send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+         if IsClass(who,&User)
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_trance_break,
+                  #parm1=vrName);
+            Send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+         }
 
          return FALSE;
       }
@@ -145,8 +161,12 @@ messages:
 
       if oRoom <> Send(oTarget,@GetOwner)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_trance_break,#parm1=vrName);
-         Send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+         if IsClass(who,&User)
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_trance_break,
+                  #parm1=vrName);
+            Send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+         }
 
          return;
       }

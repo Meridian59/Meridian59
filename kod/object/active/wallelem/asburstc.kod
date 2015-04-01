@@ -21,11 +21,14 @@ resources:
 
    ActiveSporeCloud_name_rsc = "thick fog"
    ActiveSporeCloud_icon_rsc = poisoncl.bgf
-   ActiveSporeCloud_desc_rsc = "You choke just looking at the thick putrid fog."
+   ActiveSporeCloud_desc_rsc = \
+      "You choke just looking at the thick putrid fog."
 
    ActiveSporeCloud_dissipates = "The spore clouds drift away on the wind."
-   ActiveSporeCloud_poisoned = "You suddenly feel sick as you inhale the vapors of the fog."
-   ActiveSporeCloud_unaffected = "Strangely, the noxious cloud does not affect you."
+   ActiveSporeCloud_poisoned = \
+      "You suddenly feel sick as you inhale the vapors of the fog."
+   ActiveSporeCloud_unaffected = \
+      "Strangely, the noxious cloud does not affect you."
 
    ActiveSporeCloud_poison_snd = psncough.wav
 
@@ -35,7 +38,7 @@ classvars:
    vrIcon = ActiveSporeCloud_icon_rsc
    vrDesc = ActiveSporeCloud_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = ActiveSporeCloud_dissipates
    vrUnaffectedMessage = ActiveSporeCloud_unaffected
@@ -44,11 +47,13 @@ classvars:
 
 properties:
 
+   piDrawFx = DRAWFX_TRANSLUCENT_50
+
    piRangeSquared = 1
    piBonus = 1
 
 messages:
-   
+
    Constructor(caster=$,duration=$,range=$)
    {
       if range <> $
@@ -67,18 +72,19 @@ messages:
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
 
       Send(oSpell,@DoHold,#what=self,#otarget=what,
-           #iDurationSecs=BASE_HOLD_DURATION+piBonus);
+            #iDurationSecs=BASE_HOLD_DURATION+piBonus);
+      Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
+            #use_weapon=self,#stroke_obj=self);
 
       propagate;
-   }   
+   }
 
    SendAnimation()
    {
       AddPacket(1,ANIMATE_CYCLE, 4,random(240,280), 2,1, 2,5);
-      
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

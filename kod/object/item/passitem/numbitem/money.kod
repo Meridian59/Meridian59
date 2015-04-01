@@ -45,7 +45,7 @@ classvars:
 
 properties:
 
-   viObject_flags = GETTABLE_YES
+   viObject_flags = OF_GETTABLE
 
 messages:
 

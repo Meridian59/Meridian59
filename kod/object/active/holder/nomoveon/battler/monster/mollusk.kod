@@ -77,6 +77,8 @@ classvars:
    viLevel = 140
    viDifficulty = 7
    viVisionDistance = 20
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = 90
    viCashmin = 400
    viCashmax = 1500
@@ -92,7 +94,8 @@ properties:
    piAnimation = ANIM_NONE
    ptActive = $
 
-   piSpellRange = 100
+   % piSpellRange in FINENESS units. 10 row/cols.
+   piSpellRange = 640
 
 messages:
 
@@ -232,7 +235,8 @@ messages:
       iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
 
       if Random(1,iBase) = 1
-         AND Send(self,@SquaredDistanceTo,#what=poTarget) <= piSpellRange
+         AND Send(self,@SquaredFineDistanceTo3D,#what=poTarget)
+            <= piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
                   #use_weapon=self)
@@ -287,7 +291,8 @@ messages:
 
    GetOptimalRange()
    {
-      return Random(6,10);
+      % Random range between 6 and 10 row/col units.
+      return Random(384,640);
    }
 
    IsAlly(target = $)

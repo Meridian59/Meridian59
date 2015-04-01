@@ -69,10 +69,11 @@ classvars:
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
 
+   % Earthquake still handles range in row/col units, as it affects
+   % everyone in the radius regardless of height difference.
    % Damage is 100% within this distance
    viMax_damage_distance = 8
-
-   % Damage is 0 outside this distance 
+   % Damage is 0 outside this distance
    viZero_damage_distance = 20
 
    vbIsAreaEffect = TRUE
@@ -107,6 +108,11 @@ messages:
    {
       local oRoom, i, each_obj, lFinalTargets;
 
+      if who = $
+      {
+         return;
+      }
+
       lFinalTargets = $;
 
       if IsClass(who,&Room)
@@ -129,6 +135,13 @@ messages:
                AND Send(oRoom,@InFoyer,#who=each_obj)
                   <> Send(oRoom,@InFoyer,#who=who))
          {
+            % Skip players who are phased/in spectator mode.
+            if IsClass(each_obj,&Player)
+               AND Send(each_obj,@IsInCannotInteractMode)
+            {
+               continue;
+            }
+
             lFinalTargets = Cons(each_obj,lFinalTargets);
          }
       }
@@ -213,7 +226,7 @@ messages:
 
       if IsClass(who,&Room)
       {
-         return 30;
+         return 3000;
       }
       
       % Do full damage within viMax_damage_distance, zero damage outside

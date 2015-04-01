@@ -1,0 +1,155 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FireStorm is RadiusProjectile
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   firestorm_name_rsc = "fire storm"
+   firestorm_icon_rsc = ifirebal.bgf
+   firestorm_projectile_rsc = fireball.bgf
+   firestorm_desc_rsc = \
+      "Call upon the magic of Faren and propel forth a devastating "
+      "barrage of fireballs, searing the flesh of those around you.  "
+      "Requires two orc teeth, two red mushrooms and a green mushroom."
+
+   firestorm_first_rsc = \
+      "You channel the power of Faren and unleash a barrage of fire!"
+   firestorm_third_rsc = \
+      "%s%s channels the power of Faren and unleashes a barrage of fire!"
+
+   % These aren't in use at the moment.
+   firestorm_killed_someone = \
+      "The ice shards fatally wound %s%s."
+   firestorm_cast_rsc = \
+      "You let out a cry of pain as flames sear your flesh, "
+      "causing ~r~B%i~n damage."
+   firestorm_hit_rsc = \
+      "%s%s lets out a cry of pain as flames sear %s flesh "
+      "for ~k~B%i~n damage."
+
+   firestorm_sound = ffirebal.wav
+
+classvars:
+
+   vrName = firestorm_name_rsc
+   vrDesc = firestorm_desc_rsc
+   vrIcon = firestorm_icon_rsc
+
+   viSpell_num = SID_FIRE_STORM
+   viSchool = SS_FAREN
+   viSpell_level = 6
+   viMana = 30
+
+   viChance_to_increase = 10
+   viMeditate_ratio = 100
+   vrSucceed_wav = firestorm_sound
+
+   viAttack_spell = ATCK_SPELL_ALL+ATCK_SPELL_FIRE
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 175
+   % Color is orange.
+   viProjectileLightColor = LIGHT_BORANGE
+
+   vrProjectile_icon = firestorm_projectile_rsc
+   vbIsAreaEffect = TRUE
+
+properties:
+
+   % Range in FINENESS units, default 6 row/col units.
+   piRange = 640
+
+   piSpeed = 6
+
+   piDamageMin = 22
+   piDamageMax = 30
+
+   piNumber = 16
+
+   pbAccessible = FALSE
+   pbEnabled = FALSE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RedMushroom,2],plReagents);
+      plReagents = Cons([&OrcTooth,2],plReagents);
+      plReagents = Cons([&GreenMushroom,1],plReagents);
+
+      return;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4,40, 2,1, 2,2);  % 40ms between animations
+
+      return;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)
+   {
+      % This is an area damage spell, so add room messages
+      % showing the spell being cast.
+      Send(self,@DoFireStorm,#who=who,#bItemCast=bItemCast);
+
+      propagate;
+   }
+
+   DoFireStorm(who=$,bItemCast=FALSE)
+   {
+      local i, oRoom, lActive, each_obj;
+
+      if who <> $
+      {
+         oRoom = Send(who,@GetOwner);
+      }
+      else
+      {
+         return;
+      }
+
+      lActive = Send(oRoom,@GetHolderActive);
+
+      % Send a message to all in room of spellcasters actions
+      for i in lActive
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+
+         if isClass(each_obj,&Player)
+         {
+            if each_obj = who
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=firestorm_first_rsc);
+            }
+            else
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=firestorm_third_rsc,
+                     #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+            }
+         }
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

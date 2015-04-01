@@ -20,7 +20,7 @@ resources:
    
 classvars:
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
    vrIcon = RadiusEnchantmentTotem_icon_rsc
 
 properties:

@@ -37,7 +37,7 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 3
    viMana = 10
-   viSpellExertion = 15
+   viSpellExertion = 3
    viCast_time = 10000
    vrSucceed_wav = identify_sound
    viChance_To_Increase = 15

@@ -52,7 +52,7 @@ classvars:
    viMana = 20
    viSchool = SS_QOR
    viSpell_level = 5
-   viSpellExertion = 10
+   viSpellExertion = 3
 
    viChance_To_Increase = 20
    viMeditate_ratio = 50

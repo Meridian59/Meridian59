@@ -60,7 +60,7 @@ classvars:
    viDrainTime = 5000
    viBaseRange = 3
 
-   viSpellExertion = 2      
+   viSpellExertion = 1
    viChance_To_Increase = 25
    viMeditate_ratio = 20
 

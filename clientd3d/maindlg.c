@@ -179,6 +179,8 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       CheckDlgButton(hDlg, IDC_PAIN, config.pain);
       CheckDlgButton(hDlg, IDC_INVNUM, config.inventory_num);
       CheckDlgButton(hDlg, IDC_SAFETY, config.aggressive);
+      CheckDlgButton(hDlg, IDC_TEMPSAFE, config.tempsafe);
+      CheckDlgButton(hDlg, IDC_GROUPING, config.grouping);
       CheckDlgButton(hDlg, IDC_BOUNCE, config.bounce);
       CheckDlgButton(hDlg, IDC_WEATHER, config.weather);
       CheckDlgButton(hDlg, IDC_TOOLBAR, config.toolbar);
@@ -262,6 +264,8 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          config.pain          = IsDlgButtonChecked(hDlg, IDC_PAIN);
          config.inventory_num = IsDlgButtonChecked(hDlg, IDC_INVNUM);
          config.aggressive    = IsDlgButtonChecked(hDlg, IDC_SAFETY);
+         config.tempsafe      = IsDlgButtonChecked(hDlg, IDC_TEMPSAFE);
+         config.grouping      = IsDlgButtonChecked(hDlg, IDC_GROUPING);
          config.bounce        = IsDlgButtonChecked(hDlg, IDC_BOUNCE);
          config.weather       = IsDlgButtonChecked(hDlg, IDC_WEATHER);
          config.antiprofane   = IsDlgButtonChecked(hDlg, IDC_PROFANE);

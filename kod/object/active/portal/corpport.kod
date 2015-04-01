@@ -28,7 +28,7 @@ classvars:
 
    vrName = corpseportal_name_rsc
 
-   viObject_flags = MOVEON_TELEPORTER | DRAWFX_TRANSLUCENT_75
+   viMoveOn_type = MOVEON_TELEPORTER
 
    viAnimationSpeed = 400
 
@@ -39,6 +39,7 @@ properties:
 
    ptExpire = $
    poCorpse = $
+   piDrawFx = DRAWFX_TRANSLUCENT_75
 
 messages:
 
@@ -56,9 +57,9 @@ messages:
       }
 
       duration = (10 + (SpellPower / 2)) * 1000;
-      
+
       ptExpire = CreateTimer(self,@Expire,duration);
-  
+
       propagate;
    }
 
@@ -84,10 +85,10 @@ messages:
 
    TeleportSomething(what = $)
    {
-      if (send(what,@GetName) = send(poCorpse,@GetCorpseName))
+      if (Send(what,@GetName) = Send(poCorpse,@GetCorpseName))
       {
-         send(poOwner,@ZapToCorpse,#who=what);
-         send(self,@Delete);
+         Send(poOwner,@ZapToCorpse,#who=what);
+         Send(self,@Delete);
       }
 
       return;
@@ -95,14 +96,13 @@ messages:
 
    ReqNewOwner(what = $)
    {
-      if what <> send(SYS,@FindRoomByNum,#num=RID_UNDERWORLD)
+      if what <> Send(SYS,@FindRoomByNum,#num=RID_UNDERWORLD)
       {
          return FALSE;
       }
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

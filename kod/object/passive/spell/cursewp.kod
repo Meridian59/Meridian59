@@ -44,7 +44,7 @@ classvars:
 
    viSpell_level =4
    viMana = 25
-   viSpellExertion = 40
+   viSpellExertion = 3
    viCast_time = 20000
    vrSucceed_wav = CurseWeapon_sound
 

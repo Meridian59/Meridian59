@@ -46,7 +46,7 @@ classvars:
    viMana = 6
    viMeditate_ratio = 10
 
-   viSpellExertion = 4
+   viSpellExertion = 1
    viCast_time = 2000
    vrSucceed_wav = SummonFog_sound
    viChance_To_Increase = 20
@@ -92,7 +92,7 @@ messages:
       iDuration = Bound(iDuration,15,95);
 
       % Facing East
-      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      if iAngle >= ANGLE_ENE OR iAngle < ANGLE_ESE
       {
          iCol = Send(who,@GetCol) + 2;
          iRow = Send(who,@GetRow);

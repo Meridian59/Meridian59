@@ -26,10 +26,12 @@ constants:
 
 resources:
 
-   weapatt_twister_desc = "  A swirling green 'GMT' is stamped into the pommel."
+   weapatt_twister_desc = \
+      "  A swirling green 'GMT' is stamped into the pommel."
    twister_dm = "twister"
 
-   weapatt_twister_victim_effect = "~gYou feel disoriented, losing your bearings."
+   weapatt_twister_victim_effect = \
+      "~gYou feel disoriented, losing your bearings."
 
 classvars:
 
@@ -60,13 +62,20 @@ messages:
    {
       local oRoom;
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if Random(1,100) <= piEffect_percent
       {
          oRoom = Send(target,@GetOwner);
 
          if oRoom <> $
          {
-            Send(oRoom,@SomethingTurned,#what=target,#new_angle=random(0,MAX_ANGLE-1));
+            Send(oRoom,@SomethingTurned,#what=target,
+                  #new_angle=random(0,MAX_ANGLE-1));
             Send(target,@MsgSendUser,#message_rsc=weapatt_twister_victim_effect);
          }
       }

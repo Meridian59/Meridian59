@@ -180,8 +180,21 @@ messages:
    {
       local oRoom, bDoDamage, iDamage, oArmor;
 
+      if who = $
+      {
+         return;
+      }
+
+      if ((IsClass(who,&DM)
+            AND Send(who,@PlayerIsImmortal))
+         OR Send(who,@IsInCannotInteractMode))
+      {
+         return;
+      }
+
       bDoDamage = FALSE;
-      oArmor = send(who,@GetArmor);
+
+      oArmor = Send(who,@GetArmor);
       oRoom = Send(who,@GetOwner);
 
       if oArmor <> $
@@ -191,14 +204,14 @@ messages:
             bDoDamage = TRUE;
          }
          
-         if send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
+         if Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
          {
             bDoDamage = TRUE;
          }
          
-         if send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+         if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          {
-            if send(oRoom,@IsValidTarget,#who=who)
+            if Send(oRoom,@IsValidTarget,#who=who)
             {
                bDoDamage = TRUE;
             }
@@ -211,7 +224,7 @@ messages:
       
       if bDoDamage
       {
-         iDamage = send(oArmor,@GetHeatDamage);
+         iDamage = Send(oArmor,@GetHeatDamage);
 
          % robes = no heat damage
          if iDamage = 0
@@ -221,8 +234,8 @@ messages:
 
          Send(who,@MsgSendUser,#message_rsc=heat_hurts_you);
          
-         if Send(who,@AssessDamage,#report=FALSE,#what=self,
-                 #damage=iDamage,#aspell=ATCK_SPELL_FIRE) = $
+         if Send(who,@AssessDamage,#report=FALSE,#what=self,#damage=iDamage,
+            #aspell=ATCK_SPELL_FIRE) = $
          {
             if IsClass(who,&Player)
             {
@@ -261,7 +274,5 @@ messages:
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

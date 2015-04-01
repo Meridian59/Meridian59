@@ -61,7 +61,9 @@ static char colorinfo[][15] = {
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
 
-// Colors for drawing player names
+/* Colors for drawing player names. These are no longer
+   needed since we send RGB hex values. Keeping these
+   here for now.
 #define NAME_COLOR_NORMAL_FG   PALETTERGB(255, 255, 255)
 #define NAME_COLOR_OUTLAW_FG   PALETTERGB(252, 128, 0)
 #define NAME_COLOR_KILLER_FG   PALETTERGB(255, 0, 0)
@@ -71,7 +73,7 @@ static char color_section[] = "Colors";  /* Section for colors in INI file */
 #define NAME_COLOR_DM_FG       PALETTEINDEX(254) // cyan
 #define NAME_COLOR_MOD_FG      PALETTERGB(0, 120, 255)
 #define NAME_COLOR_BLACK_FG    PALETTERGB(0, 0, 0)
-#define NAME_COLOR_DAENKS_FG   PALETTERGB(179,0,179)
+#define NAME_COLOR_DAENKS_FG   PALETTERGB(179,0,179)*/
 
 extern HPALETTE hPal;
 
@@ -435,31 +437,18 @@ WORD GetItemListColor(HWND hwnd, int type, int flags)
 * GetPlayerNameColor:  Return color that player's name should be drawn in,
 *   depending on player's object flags
 */
-COLORREF GetPlayerNameColor(int flags,char*name)
+COLORREF GetPlayerNameColor(object_node* obj, char *name)
 {
-	if (GetDrawingEffect(flags) == OF_BLACK)
-		return NAME_COLOR_BLACK_FG;
+   int r, g, b;
 
-	switch (GetPlayerFlags(flags))
-	{
-		case PF_DM:
-			return NAME_COLOR_DM_FG;
-		case PF_KILLER:
-			return NAME_COLOR_KILLER_FG;
-		case PF_OUTLAW:
-			return NAME_COLOR_OUTLAW_FG;
-		case PF_CREATOR:
-			return NAME_COLOR_DAENKS_FG;
-		case PF_SUPER:
-			return NAME_COLOR_SUPER_FG;
-		case PF_MODERATOR:
-			return NAME_COLOR_MOD_FG;
-		case PF_EVENTCHAR:
-			return NAME_COLOR_EVENT_FG;
-            
-    default:
-			return NAME_COLOR_NORMAL_FG;
-	}
+   if (obj->drawingtype == DRAWFX_BLACK)
+      return PALETTERGB(0,0,0);
+
+     r = (obj->namecolor & 0xFF0000) >> 16;
+     g = (obj->namecolor & 0x00FF00) >> 8;
+     b = (obj->namecolor & 0x0000FF);
+
+     return PALETTERGB(r, g, b);
 }
 
 /****************************************************************************/
@@ -467,26 +456,13 @@ COLORREF GetPlayerNameColor(int flags,char*name)
 * GetPlayerWhoNameColor:  Return color that player's name should be drawn on
 *   the who list, depending on player's object flags
 */
-COLORREF GetPlayerWhoNameColor(int flags,char*name)
+COLORREF GetPlayerWhoNameColor(object_node* obj, char *name)
 {
-    switch (GetPlayerFlags(flags))
-    {
-        case PF_DM:
-            return NAME_COLOR_DM_FG;
-        case PF_CREATOR:
-            return NAME_COLOR_DAENKS_FG;
-        case PF_SUPER:
-            return NAME_COLOR_SUPER_FG;
-        case PF_EVENTCHAR:
-            return NAME_COLOR_EVENT_FG;
-        case PF_KILLER:
-            return NAME_COLOR_KILLER_FG;
-        case PF_OUTLAW:
-            return NAME_COLOR_OUTLAW_FG;
-        case PF_MODERATOR:
-            return NAME_COLOR_MOD_FG;
+     int r, g, b;
 
-        default:
-            return NAME_COLOR_NORMAL_FG;
-    }
+     r = (obj->namecolor & 0xFF0000) >> 16;
+     g = (obj->namecolor & 0x00FF00) >> 8;
+     b = (obj->namecolor & 0x0000FF);
+
+      return PALETTERGB(r, g, b);
 }

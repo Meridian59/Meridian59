@@ -25,7 +25,7 @@ WeapAttPunisher is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -70,7 +70,7 @@ messages:
          return;
       }
 
-      return send(self,@InitialWeaponPower,#oItem=oItem);
+      return Send(self,@InitialWeaponPower,#oItem=oItem);
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,8 +84,8 @@ messages:
    {
       local iNum, iPower;
 
-      %% here, iNum = power itself
-      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+      % Here, iNum = power itself.
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
       if target <> $
@@ -113,15 +113,16 @@ messages:
    }
 
    ModifyHitRoll(hitroll=0,target=$,wielder=$,lData= $)
-   "Wielder gets a hit bonus based on whether or not the target is a murderer or outlaw."
+   "Wielder gets a hit bonus based on whether or not the target is a "
+   "murderer or outlaw."
    {
       local iNum, iPower;
 
-      %% here, iNum = power itself
+      % Here, iNum = power itself.
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
       iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
-      %% no special effects for monsters
+      % No special effects for monsters.
       if target <> $
       {
          if IsClass(target,&Monster)
@@ -172,11 +173,12 @@ messages:
          Send(oPlayer, @MsgSendUser, #message_rsc = punisher_fail_use,
               #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
 
-         if Send(oPlayer, @AssessDamage, #what=self,#damage=Random(3,7),
-                  #report=False) = $
+         if Send(oPlayer,@AssessDamage,#what=self,
+               #damage=Random(3,7),#report=False) = $
          {
             % we killed someone off... heh heh heh
-            Send(Send(oPlayer,@GetOwner),@SomethingKilled,#what=self,#victim=oPlayer);
+            Send(Send(oPlayer,@GetOwner),@SomethingKilled,
+                  #what=self,#victim=oPlayer);
             Send(oPlayer,@Killed,#what=oItem);
             Send(oItem,@Delete);
          }

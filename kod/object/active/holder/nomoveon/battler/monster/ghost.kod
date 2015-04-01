@@ -57,6 +57,8 @@ classvars:
    viLevel = 200
    viDifficulty = 9
    viVisionDistance = 60
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = -100
    viCashmin = 1000
    viCashmax = 5500
@@ -77,7 +79,8 @@ properties:
 
    piAnimation = ANIM_NONE
    piGroup = 1
-   piDrawfx = DRAWFX_TRANSLUCENT_75 | FLICKERING_YES
+   piDrawEffectFlag = OF_FLICKERING
+   piDrawfx = DRAWFX_TRANSLUCENT_75
    piMinDamage = 6
    piMaxDamage = 16
    vrDesc = ghost_desc_rsc

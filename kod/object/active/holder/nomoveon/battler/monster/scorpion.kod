@@ -20,9 +20,11 @@ resources:
    scorpion_name_rsc = "giant scorpion"
    scorpion_icon_rsc = scorp.bgf
    scorpion_desc_rsc = \
-   "The scorpion's deadly stinger rises high in the air "
-   "and its hard plated body protects it from all but the "
-   "strongest attacks."
+      "The scorpion's deadly stinger rises high in the air "
+      "and its hard plated body protects it from all but the "
+      "strongest attacks."
+   scorpion_illusion_poisoned = \
+      "%s%s reels as poison from your attack courses through %s veins."
 
    scorpion_dead_icon_rsc = scorpX.bgf
    scorpion_dead_name_rsc = "dead scorpion"
@@ -48,6 +50,8 @@ classvars:
    viLevel = 65
    viDifficulty = 8
    viVisionDistance = 10
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = 60
    viWimpy = 40
    viCashmin = 275
@@ -104,7 +108,7 @@ messages:
       propagate;
    }
 
-   HitSideEffect(what=$)
+   HitSideEffect(what=$,who=$)
    {
       local oSpell;
 
@@ -113,8 +117,15 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,
                #lossrate=piPoison_Loss_Rate,#duration=piPoison_Duration);
+
+         if who <> $
+         {
+            Send(who,@MsgSendUser,#message_rsc=scorpion_illusion_poisoned,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(what,@GetHisHer));
+         }
       }
-      
+
       return;
    }
 

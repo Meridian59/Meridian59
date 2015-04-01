@@ -12,43 +12,46 @@
 TreasureType is PassiveObject
 
 constants:
-   
+
    include blakston.khd
-   
+
 resources:
-  
+
+   trinket_found_rsc = \
+      "You notice something of interest on the corpse of %s%s!"
+
 classvars:
 
 
 properties:
-   
-   piTreasure_num	        % treasure type id
-   plTreasure = $		     % list of treasures
+
+   piTreasure_num      % treasure type id
+   plTreasure = $      % list of treasures
 
    piDiff_seed = 0
    piItem_att_chance = 0
-   
+
 messages:
-   
+
    Constructed()
    {
       local iAdjust, iValue, iTotal, lItem;
-      
+
       if piTreasure_num = $
       {
-         debug("Treasure type created with no treasure type id");
-         
+         Debug("Treasure type created with no treasure type id.");
+
          propagate;
       }
 
-      % normalize treasure wieghts to total 100%
+      % Normalize treasure weights to total 100%.
       if plTreasure <> $
       {
          iAdjust = 0;
 
          for lItem in plTreasure
          {
-            iAdjust = iAdjust + nth(lItem,2);
+            iAdjust = iAdjust + Nth(lItem,2);
          }
 
          if iAdjust = 0
@@ -58,23 +61,23 @@ messages:
 
          iTotal = 0;
 
-         % normalize total to approx. 100
+         % Normalize total to approx. 100.
          for lItem in plTreasure
          {
-            iValue = (nth(lItem,2)*100)/iAdjust;
-            Setnth(lItem,2,iValue);
+            iValue = (Nth(lItem,2)*100)/iAdjust;
+            SetNth(lItem,2,iValue);
             iTotal = iTotal + iValue;
-         }            
+         }
 
          if iTotal < 100
          {
             % correct for integer division roundoff, adding extra to first element
-            Setnth(first(plTreasure),2,nth(first(plTreasure),2)+100-iTotal);  
+            SetNth(First(plTreasure),2,Nth(First(plTreasure),2)+100-iTotal);
          }
       }
-      
+
       Send(SYS,@SystemNewTreasureType,#what=self);
-      
+
       propagate;
    }
 
@@ -84,15 +87,15 @@ messages:
    {
       local oItem;
       
-      oItem = send(self,@GenerateItemAtt,#diff_seed=diff_seed,#who=who);
+      oItem = Send(self,@GenerateItemAtt,#diff_seed=diff_seed,#who=who);
       
       if oItem <> $
       {
-         send(who,@NewHold,#what=oItem);
+         Send(who,@NewHold,#what=oItem);
       }
       else 
       {
-         debug("Problems, boss!");
+         Debug("Problems, boss!");
       }
 
       return;
@@ -100,35 +103,38 @@ messages:
 
    GenerateItemAtt(diff_seed=0, raw=FALSE, who = $)
    {
-      local diff_bonus, random_x, i, j, index, iChoice, oItem, oItemAtt, lOptions;
+      local diff_bonus, random_x, i, j, index, iChoice, oItem,
+            oItemAtt, lOptions;
 
-      %% The diff seed tells the basic (lowest) level of difficulty that killing
-      %% this monster will generate.  A random formula can add or subtract 1 to 5 from 
-      %% that value.  The final value is bounded from 1 to 10.
+      % The diff seed tells the basic (lowest) level of difficulty
+      % that killing this monster will generate.  A random formula
+      % can add or subtract 1 to 5 from that value.  The final value
+      % is bounded from 1 to 10.
 
-      diff_bonus = send(self,@GetRandomDiffBonus);
+      diff_bonus = Send(self,@GetRandomDiffBonus);
 
-      if random(1,100) < 50
+      if Random(1,100) < 50
       {
          diff_bonus = -diff_bonus;
       }
-      
+
       if raw
       {
          diff_bonus = 0;
       }
 
       diff_seed = bound(diff_seed + diff_bonus,1,10);
-      
-      %% system stores a list of weapon atts at each difficulty level.  Choose one.
-      %% if it returns nil list (which should never happen), subtract one and choose again.
-      
+
+      % System stores a list of weapon atts at each difficulty
+      % level.  Choose one.  If it returns nil list (which should
+      % never happen), subtract one and choose again.
+
       lOptions = $;
       while lOptions = $
       {
-         lOptions = send(SYS,@GetitemAttTreasureList,#diff_seed=diff_seed);
+         lOptions = Send(SYS,@GetitemAttTreasureList,#diff_seed=diff_seed);
 
-         diff_seed = diff_seed - 1;  
+         diff_seed = diff_seed - 1;
 
          if diff_seed < 1
          {
@@ -136,41 +142,41 @@ messages:
          }
       }
 
-      %% you now have a list of options.  Choose one.
+      % You now have a list of options.  Choose one.
 
       index = 0;
 
       for i in lOptions
       {
-         index = index + nth(i,2);      
+         index = index + Nth(i,2);
       }
-      
-      random_x = random(1, index);
-      
+
+      random_x = Random(1, index);
+
       iChoice = $;
-      
+
       for i in lOptions
       {
-         random_x = random_x - nth(i,2);
+         random_x = random_x - Nth(i,2);
          if random_x <= 0
          {
-            iChoice = first(i);
+            iChoice = First(i);
             
             break;
          }
       }
-      
+
       if iChoice = $
       {
          return $;
       }
 
-      oItemAtt = send(SYS,@FindItemAttByNum,#num=iChoice);
-      
-      %% ask that ItemAtt to generate an item with this attribute.
-      oItem = send(oItemAtt,@GenerateItemWithAttribute, #who=who);
-             
-      return oItem;       
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iChoice);
+
+      % Ask that ItemAtt to generate an item with this attribute.
+      oItem = Send(oItemAtt,@GenerateItemWithAttribute, #who=who);
+
+      return oItem;
    }
 
    GetRandomDiffBonus(random_x = $)
@@ -178,27 +184,28 @@ messages:
       local index_y, i;
 
       %% Each Treasure Type tells what level of difficulty weapon
-      %% att is generated.  TresType then takes that level of difficulty (a number from 1-10).
-      %% and sees if a bonus from 1-5 should be added.  The formula is x = sqrt(100/(random(1,100)+1)) - 1.
-      %% this results in the following odds
+      %% att is generated.  TresType then takes that level of
+      %% difficulty (a number from 1-10) and sees if a bonus from 1-5
+      %% should be added.  The formula is x = sqrt(100/(Random(1,100)+1)) - 1.
+      %% This results in the following odds:
       %%
       %%      no bonus  76%
-      %%      +1 diff   13%            
-      %%      +2 diff    5%          
-      %%      +3 diff    2%          
+      %%      +1 diff   13%
+      %%      +2 diff    5%
+      %%      +3 diff    2%
       %%      +4 diff    2%
       %%      +5 diff    1%
       %%
-      %% Note that almost no treasure type has a base difficulty greater than 5, making high difficulty
-      %% weapons exceedingly, exceedingly rare.
+      %% Note that almost no treasure type has a base difficulty greater
+      %% than 5, making high difficulty weapons relatively rare.
 
       if random_x = $
       {
-         random_x = random(1,100);
+         random_x = Random(1,100);
       }
-      
+
       index_y = 100/(random_x + 1);
-      
+
       i = 1;
       while i < 9
       {
@@ -209,9 +216,9 @@ messages:
 
          i = i + 1;
       }
-      
-      debug("this shouldn't have happened");
-      
+
+      Debug("this shouldn't have happened");
+
       return -1;
    }
 
@@ -222,14 +229,14 @@ messages:
 
    GenerateTreasure(level=1,who=$,mob=$,tokengen=TRUE,corpse=$)
    {
-      local i, lItem_info, iRnd, iCount, oObj, iNumber;
+      local i, lItem_info, iRnd, iCount, oObj, iNumber, iStatTokenChance;
 
-      % Check for a token generation here
+      % Check for a token generation here.
       if who <> $
          AND Send(SYS,@GetTokenGame) <> $ AND tokengen
          AND Random(1,100) <= TOKEN_GENERATION_CHANCE 
       {
-         %find open token looks for one in the given room.
+         % Find open token looks for one in the given room.
          oObj=Send(Send(SYS,@GetTokenGame),@FindOpenToken,
                    #location=Send(who,@GetOwner));
                    
@@ -241,46 +248,71 @@ messages:
          }
       }
 
-      %Check for the newbie signet ring, do we have an eligible newbie?
-
-      if who <> $ AND isClass(who,&User)
-         AND Send(SYS,@GetLibrary)<>$
-         AND random(1,100) <= Send(Send(SYS,@GetLibrary),@GetSignetChance)
+      % Check for the newbie signet ring, do we have an eligible newbie?
+      if who <> $ AND IsClass(who,&User)
+         AND Send(SYS,@GetLibrary) <> $
+         AND Random(1,100) <= Send(Send(SYS,@GetLibrary),@GetSignetChance)
          AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          AND Send(Send(SYS,@GetLibrary),@IsNewbieSignetEligible,#who=who)
       {
          %%% one more check.  only the default region makes these
-         if RID_DEFAULT = send(send(who,@GetOwner),@GetRegion)
-         {                         
-            %Ok, things are good, lets generate that signetring.
+         if RID_DEFAULT = Send(Send(who,@GetOwner),@GetRegion)
+         {
+            % Ok, things are good, lets generate that signet ring.
             oObj=Send(Send(SYS,@GetLibrary),@CreateSignetRing,#who=who);
             
             if oObj <> $
             {
                return oObj;
             }
-         }       
+         }
       }
 
       %%% Item Attributed weapons:  each trestype has two values:
       %%% a Difficulty Seed which determines the level of itematt
       %%% applied to a weapon, and a chance out of 400 
       %%% that a weapatt will appear.
-     
       if piDiff_seed > 0
       {
          if who <> $ and IsClass(who,&User)
-            AND random(1,400) <= (Send(Send(SYS, @GetSettings), @GetMagicItemModifier) *
+            AND Random(1,400) <= (Send(Send(SYS,@GetSettings),@GetMagicItemModifier) *
                                     piItem_Att_chance) / 100 
-         {         
+         {
             oObj = Send(self,@GenerateItemAtt,#who=who,#diff_seed=piDiff_seed);
             if oObj <> $
             {
                return oObj;
             }
-         }         
+         }
       }
-      
+
+      % Stats reset token generation. System has to be turned on to drop tokens.
+      if Send(Send(SYS,@GetSettings),@GetStatsResetEnabled)
+         AND who <> $
+         AND IsClass(who,&User)
+      {
+         iStatTokenChance = Send(Send(SYS,@GetSettings),@GetStatResetTokenDropFactor)
+                                 / Bound(Send(mob,@GetLevel),50,150);
+         if Random(1,iStatTokenChance) = 1
+            AND Send(mob,@GetLevel) > Send(who,@GetBaseMaxHealth)
+         {
+            oObj = Create(&StatsResetToken,#tradeable=TRUE,#corpse=corpse);
+            if oObj <> $
+            {
+               if IsClass(who,&User)
+               {
+                  Send(who,@MsgSendUser,#message_rsc=trinket_found_rsc,
+                        #parm1=Send(mob,@GetDef),#parm2=Send(mob,@GetName));
+               }
+               Debug(Send(who,@GetTrueName)," found an ancient trinket on a ",
+                  Send(mob,@GetName));
+               Send(Send(SYS,@GetStatistics),@TrinketFound);
+
+               return oObj;
+            }
+         }
+      }
+
       iCount=0;
       iRnd = Random(0,100);
       for lItem_info in plTreasure
@@ -288,7 +320,7 @@ messages:
          iCount = iCount+Nth(lItem_info,2);
          if iRnd <=iCount
          {
-            if isClass(who,&Monster) or isClass(corpse,&OrcPitBossBody)
+            if IsClass(who,&Monster) OR IsClass(corpse,&OrcPitBossBody)
             {
                oObj = Create(First(lItem_info));
             }
@@ -297,69 +329,69 @@ messages:
                oObj = Create(First(lItem_info),#corpse=corpse);
             }
             
-			if isClass(oObj,&Money)
-
+            if IsClass(oObj,&Money)
             {
-
                iNumber = 0;
-
-            
-
                Send(oObj,@AddNumber,#number=iNumber);
-
-			   Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oObj,@GetNumber));
-
+               Send(Send(SYS,@GetStatistics),@MoneyCreated,
+                     #amount=Send(oObj,@GetNumber));
             }
-           
+
             return oObj;
          }
       }
+      Debug("Create treasure didn't get an object");
 
-      debug("Create treasure didn't get an object");
       return $;
    }
 
    GenerateSockets(oDefenseModifier=$)
-   "Here we attempt to create a DefModSockets object attribute for appropriate armors."
+   "Here we attempt to create a DefModSockets object attribute for "
+   "appropriate armors."
    {
       local iRandom, iNumSockets, iDifficultyBonus;
-      
+
       % Nerudite armor can't have sockets. It's anti-magic!
-      If IsClass(oDefenseModifier,&NeruditeArmor)
+      if IsClass(oDefenseModifier,&NeruditeArmor)
       {
          return;
       }
       
-      % Orc shields always have 1 socket - but only if they're dropped by a monster.
-      % Most orc shields come from the Orc Pit Boss's treasure chamber - those won't have sockets.
-      If IsClass(oDefenseModifier,&OrcShield)
+      % Orc shields always have 1 socket - but only if they're
+      % dropped by a monster.  Most orc shields come from the Orc
+      % Pit Boss's treasure chamber - those won't have sockets.
+      if IsClass(oDefenseModifier,&OrcShield)
       {
          Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=1);
+
          return;
       }
-      
+
       % Knight's shields have a 10% chance for 1 socket.
-      If IsClass(oDefenseModifier,&KnightShield)
+      if IsClass(oDefenseModifier,&KnightShield)
       {
          iRandom = Random(1,1000);
          if iRandom > 900
          {
             Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=1);
          }
+
          return;
       }
-      
+
       % Helms have a 5% chance for 1 socket.
       if IsClass(oDefenseModifier,&SimpleHelm)
       {
          iRandom = Random(1,1000);
          if iRandom > 950
          {
-            Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=1);
+            Create(&DefModSockets,#host_object=oDefenseModifier,
+                  #num_sockets=1);
          }
+
          return;
       }
-      
+
       if IsClass(oDefenseModifier,&Armor)
       {
          % Mob difficulty makes a huge difference for armor max sockets
@@ -382,13 +414,14 @@ messages:
          {
             iNumSockets = 1;
          }
-         Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=iNumSockets);
+         Create(&DefModSockets,#host_object=oDefenseModifier,
+               #num_sockets=iNumSockets);
+
          return;
       }
+
       return;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

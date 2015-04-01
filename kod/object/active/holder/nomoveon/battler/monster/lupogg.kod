@@ -49,6 +49,8 @@ classvars:
    viLevel = 105
    viDifficulty = 9
    viVisionDistance = 18
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = 75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 225
@@ -77,11 +79,6 @@ messages:
                         [ATCK_WEAP_BLUDGEON, 30 ]];
 
       propagate;
-   }
-
-   GetAttackRange()
-   {
-      return 2;
    }
 
    MonsterAttack(what=$)

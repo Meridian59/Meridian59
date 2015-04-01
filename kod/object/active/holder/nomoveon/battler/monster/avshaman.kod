@@ -81,6 +81,10 @@ classvars:
    viLevel = 120
    viDifficulty = 8
    viVisionDistance = 22
+
+   % Attack range of 320, or 5 row/col.
+   viAttackRange = 320
+
    viKarma = 80
    viCashmin = 500
    viCashmax = 1500
@@ -213,11 +217,6 @@ messages:
       return;
    }
 
-   GetAttackRange()
-   {
-      return 5;
-   }
-
    SendMoveAnimation()
    {
       if (piColor_Translation <> 0)
@@ -319,7 +318,8 @@ messages:
 
    GetOptimalRange()
    {
-      return Random(6,12);
+      % Random range between 6 and 12 row/cols.
+      return Random(384,768);
    }
 
    IsAlly(target = $)
@@ -371,10 +371,11 @@ messages:
       oBody = $;
       if vrDead_icon <> $
       {
-         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
+         oBody = Create(&DeadBody,
+                        #victim=self,
+                        #killer=killer,
                         #BodyTranslation=Send(self,@GetClan),
-                        #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);
+                        #drawfx=viDead_drawfx);
       }
 
       return oBody;

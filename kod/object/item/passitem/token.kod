@@ -12,11 +12,11 @@ Token is PassiveItem
 
 % The token is a used in the faction games.  It drains vigor from the holder.
 % The token takes both hand slots and the holder cannot cast spells while
-%  holding it.  This is to prevent cheezy PvP tactics while holding a token.
-%  Players holding a token at death take a no-peanlty death.
+% holding it.  This is to prevent cheezy PvP tactics while holding a token.
+% Players holding a token at death take a no-penalty death.
 
 constants:
-   
+
    include blakston.khd
    TOKEN_FATIGUE_TIME=10000
    LAZY_RESET_TIME=180000
@@ -27,23 +27,33 @@ resources:
    token_icon_rsc = rat.bgf
    token_desc_rsc = "A Token of the Meridian Council"
    token_used_desc_rsc = \
-      "The token is very heavy, and you feel your vigor drain away as you hold it."
+      "The token is very heavy, and you feel your vigor drain "
+      "away as you hold it."
 
    token_use_rsc = \
       "You feel drained and out of breath from carrying the token."
    token_unuse_rsc = \
-      "You are relieved to feel your vigor begin returning as you let go of the token."
+      "You are relieved to feel your vigor begin returning as you "
+      "let go of the token."
    token_cantuse_rsc = \
-      "You are unable to hold so many items in your hands, and the token slips to the ground."
+      "You are unable to hold so many items in your hands, and the token "
+      "slips to the ground."
    token_noteligible_rsc = \
-      "The token recognizes you are beneath notice of the Royal Court, and writhes in your hands. You cannot hold it."
+      "The token recognizes you are beneath notice of the Royal Court, "
+      "and writhes in your hands. You cannot hold it."
 
-   token_realized_rsc = "~IYou are astonished to see %s%s in the loot from your kill.~n"
-   token_was_realized_rsc = "~IYour nerves jangle, and you suddenly know that %s%s has recovered %s%s from %s%s.~n"
+   token_realized_rsc = \
+      "~IYou are astonished to see %s%s in the loot from your kill.~n"
+   token_was_realized_rsc = \
+      "~IYour nerves jangle, and you suddenly know that %s%s has "
+      "recovered %s%s from %s%s.~n"
 
-   token_was_delivered_rsc = "~IAll hail %s%s who has returned %s%s to the Meridian Council.~n"
+   token_was_delivered_rsc = \
+      "~IAll hail %s%s who has returned %s%s to the Meridian Council.~n"
 
-   tok_faction_too_strong = "I am sorry, but my current followers provide all the support I need. Perhaps if you were to try again later, I will have need of you."
+   tok_faction_too_strong = \
+      "I am sorry, but my current followers provide all the support I need. "
+      "Perhaps if you were to try again later, I will have need of you."
 
    token_drops = "%s%s slips from your grasp and falls to the ground!"
 
@@ -56,7 +66,7 @@ classvars:
    viBulk = 50
    viWeight = 500
    viValue_average = 2500
-   
+
    viUse_type = ITEM_USE_HAND
    viUse_Amount = 2
 
@@ -81,8 +91,9 @@ messages:
    Constructor()
    {
       poOwner = $;
-      ptGenerationTimer=CreateTimer(self,@TokenGenerationTimer,viInitialTimeval);
-      
+      ptGenerationTimer = CreateTimer(self,@TokenGenerationTimer,
+                                 viInitialTimeval);
+
       propagate;
    }
 
@@ -92,33 +103,33 @@ messages:
       {
          Send(self,@NewUnused);
       }
-      
+
       if ptTortureTimer <> $
       {
          DeleteTimer(ptTortureTimer);
          ptTortureTimer = $;
       }
-      
+
       if ptLazyTimer <> $
       {
          DeleteTimer(ptLazyTimer);
          ptLazyTimer=$;
       }
-      
+
       if ptGenerationTimer <> $
       {
          DeleteTimer(ptGenerationTimer);
          ptGenerationTimer=$;
       }
-      
+
       if Send(SYS,@GetTokenGame) <> $
       {
          Send(Send(SYS,@GetTokenGame),@TokenDeleted,#what=self);
       }
-      
+
       propagate;
    }
-   
+
    GetInitialTimeval()
    {
       return viInitialTimeval;
@@ -151,40 +162,41 @@ messages:
       }
 
       if IsClass(what,&User)
-         and NOT send(what,@PlayerIsImmortal)
+         AND NOT Send(what,@PlayerIsImmortal)
       {
-         post(self,@TryingToUse,#what=what);
+         Post(self,@TryingToUse,#what=what);
       }
       
       if IsClass(what,&Room)
       {
          ptLazyTimer = CreateTimer(self,@LazyTokenTimer,LAZY_RESET_TIME);
       }
-      
+
       propagate;
    }
 
    LazyTokenTimer()
    {
       ptLazyTimer = $;
-      
+
       if IsClass(poOwner,&Room)
       {
          Send(self,@TeleportToken,#myroom=poOwner);
       }
-      
+
       return;
    }
 
    TryingToUse(what = $)
    {
-      local i,Temp;
-      
+      local i, Temp;
+
       Temp = FALSE;
-      
+
       Send(what,@TryUseItem,#what=self);
-      
+
       if Send(what,@PlayerIsIntriguing)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
       {
          for i in Send(what,@GetPlayerUsing)
          {
@@ -193,34 +205,35 @@ messages:
                return;
             }
          }
-         
+
          Send(what,@MsgSendUser,#message_rsc=token_cantuse_rsc);
-         
+
          Post(Send(what,@GetOwner),@NewHold,#what=self,
-              #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+               #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
       }
       else
       {
          for i in Send(what,@GetPlayerUsing)
          {
-            if i=self
+            if i = self
             {
                Send(what,@MsgSendUser,#message_rsc=token_noteligible_rsc);
                Send(self,@NewUnused);
                Temp = TRUE;
-               
+
                break;
             }
          }
-        
-         if not Temp 
+
+         if NOT Temp
          {
             Send(what,@MsgSendUser,#message_rsc=token_cantuse_rsc);
             Post(Send(what,@GetOwner),@NewHold,#what=self,
-                 #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+                  #new_row=Send(poOwner,@GetRow),
+                  #new_col=Send(poOwner,@GetCol));
          }
       }
-      
+
       return;
    }
 
@@ -228,9 +241,9 @@ messages:
    "When the token is carried, the wearer's rest threshold goes down"
    {
       local iVigorRestThreshold;
-      
+
       pbIn_use = TRUE;
-      
+
       if Send(poOwner,@PlayerIsImmortal)
       {
          piVigorRestThresholdChange = 0;
@@ -238,28 +251,29 @@ messages:
          propagate;
       }
 
-      iVigorRestThreshold = send(poOwner, @GetVigorRestThreshold);
+      iVigorRestThreshold = Send(poOwner, @GetVigorRestThreshold);
 
-      % This is to ensure both that the player's rest threshold does not drop below
-      %   10 as well as to make sure we don't make it above maximum when the token is
-      %   dropped.  (see player.kod for why)
+      % This is to ensure both that the player's rest threshold does
+      % not drop below 10 as well as to make sure we don't make it
+      % above maximum when the token is dropped (see player.kod for why).
 
       piVigorRestThresholdChange = iVigorRestThreshold - 10;
 
       Send(poOwner,@MsgSendUser,#message_rsc=token_used_desc_rsc);
       
-      Send(poOwner,@SetVigorRestThreshold,#amount=iVigorRestThreshold-piVigorRestThresholdChange);
-      send(poOwner,@AddExertion,#amount=viVigorDrop/2+Random(0,viVigorDrop/2));
-           
+      Send(poOwner,@SetVigorRestThreshold,
+            #amount=iVigorRestThreshold-piVigorRestThresholdChange);
+      Send(poOwner,@AddExertion,#amount=viVigorDrop/2+Random(0,viVigorDrop/2));
+
       ptTortureTimer = CreateTimer(self,@TortureHolder,TOKEN_FATIGUE_TIME);
 
-      % Cancels rescue and elusion when a player picks up a token
+      % Cancels rescue and elusion when a player picks up a token.
       Send(poOwner,@BreakTrance);
       Send(poOwner,@CancelRescue);
-      
+
       if vrTokenOverlay <> $
       {
-         post(poOwner,@SetOverlay,#what=self);
+         Post(poOwner,@SetOverlay,#what=self);
       }
 
       propagate;
@@ -271,73 +285,76 @@ messages:
       {
          return;
       }
-      
+
       if ptTortureTimer<>$
       {
          ptTortureTimer=$;
       }
-      
+
       if Send(poOwner,@PlayerIsImmortal)
       {
          return;
       }
-      
-      send(poOwner,@MsgSendUser,#message_rsc=token_use_rsc);
-      send(poOwner,@AddExertion,#amount = viVigorDrop/2+Random(0,viVigorDrop/2));
-      
+
+      Send(poOwner,@MsgSendUser,#message_rsc=token_use_rsc);
+      Send(poOwner,@AddExertion,#amount=viVigorDrop/2+Random(0,viVigorDrop/2));
+
       ptTortureTimer = CreateTimer(self,@TortureHolder,TOKEN_FATIGUE_TIME);
-      
+
       return;
    }
 
    OfferRejected()
    {
       pbRejectedOffer = TRUE;
-      
+
       return;
    }
 
-   NewUnused(what = $,where=$,death=FALSE)
+   NewUnused(what=$,where=$,death=FALSE)
    "Called when the token is dropped or unused (same thing). The special"
    "where flag is needed to handle guild hall enterings."
    {
-      local iVigorRestThreshold,oldOwner,oldrow,oldcol,oldroom;
-      
-      if (not pbIn_use)
+      local iVigorRestThreshold, oldOwner, oldrow, oldcol, oldroom;
+
+      if (NOT pbIn_use)
       {
          propagate;
       }
-      
+
       pbIn_use = FALSE;
-      
-      iVigorRestThreshold = send(poOwner, @GetVigorRestThreshold);
+
+      iVigorRestThreshold = Send(poOwner, @GetVigorRestThreshold);
       if ptTortureTimer<>$
       {
          DeleteTimer(ptTortureTimer);
          ptTortureTimer=$;
       }
-      
+
       if NOT Send(poOwner,@PlayerIsImmortal)
       {
-         send(poOwner,@MsgSendUser,#message_rsc=token_unuse_rsc);
+         Send(poOwner,@MsgSendUser,#message_rsc=token_unuse_rsc);
       }
-      
-      send(poOwner,@SetVigorRestThreshold,#amount=iVigorRestThreshold+piVigorRestThresholdChange);
+
+      Send(poOwner,@SetVigorRestThreshold,
+            #amount=iVigorRestThreshold+piVigorRestThresholdChange);
       piVigorRestThresholdChange = 200;
 
       if where<>$
       {
-         Post(where,@NewHold,#what=self,#new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+         Post(where,@NewHold,#what=self,#new_row=Send(poOwner,@GetRow),
+               #new_col=Send(poOwner,@GetCol));
       }
       else
       {
          oldOwner = poOwner;
-         oldRoom = send(poOwner,@getowner);
-         oldCol = send(poOwner,@getcol);
-         oldRow = send(poOwner,@getrow);
-         Post(self,@CheckForDrop,#owned=oldOwner,#oldroom=oldroom,#oldrow=oldrow,#oldcol=oldcol);
+         oldRoom = Send(poOwner,@GetOwner);
+         oldCol = Send(poOwner,@GetCol);
+         oldRow = Send(poOwner,@GetRow);
+         Post(self,@CheckForDrop,#owned=oldOwner,#oldroom=oldroom,
+               #oldrow=oldrow,#oldcol=oldcol);
       }
-      
+
       if vrTokenOverlay <> $
       {
          Send(poOwner,@RemoveOverlay,#what=self);
@@ -353,37 +370,39 @@ messages:
 
    CheckForDrop(owned=$, oldroom = $, oldrow = 20, oldcol = 20)
    {
-      Post(self,@CheckForDropTwo,#owned=owned,#oldroom=oldroom, #oldrow=oldrow, #oldcol=oldcol);
+      Post(self,@CheckForDropTwo,#owned=owned,#oldroom=oldroom,
+            #oldrow=oldrow,#oldcol=oldcol);
 
       return;
    }
-   
-   CheckForDropTwo(owned=$, oldroom = $, oldrow= 20, oldcol = 20)
+
+   CheckForDropTwo(owned=$,oldroom=$,oldrow=20,oldcol=20)
    {
       if poOwner = owned AND NOT pbRejectedOffer
       {
-         if send(poOwner,@GetOwner) = $ AND oldroom <> $
+         if Send(poOwner,@GetOwner) = $ AND oldroom <> $
          {
             Send(oldroom,@NewHold,#what=self,#new_row=oldrow,#new_col=oldcol);
          }
          else
          {
             Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
-                 #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+                  #new_row=Send(poOwner,@GetRow),
+                  #new_col=Send(poOwner,@GetCol));
          }
       }
-      
+
       pbRejectedOffer = FALSE;
-      
+
       return;
    }
 
    UserLogoff()
    {
-      send(poOwner,@MsgSendUser,#message_rsc=Token_drops,
-           #parm1=send(self,@GetCapDef),#parm2=vrName);
+      Send(poOwner,@MsgSendUser,#message_rsc=Token_drops,
+            #parm1=Send(self,@GetCapDef),#parm2=vrName);
       Send(poOwner,@TryUnuseItem,#what=self);
-      
+
       propagate;
    }
 
@@ -398,9 +417,9 @@ messages:
       {
          return;
       }
-      
+
       Send(myroom,@teleport,#what=self);
-      
+
       return;
    }
 
@@ -422,33 +441,34 @@ messages:
       else
       {
          ptGenerationTimer = CreateTimer(self,@TokenGenerationTimer,
-                                         Send(Send(SYS,@GetTokenGame),@GetTimeval,#mytoken=self)/2);
+                                 Send(Send(SYS,@GetTokenGame),@GetTimeval,
+                                       #mytoken=self)/2);
       }
 
       return;
    }
-   
+
    TokenDelivered(who=$,mob=$)
    {
       local i;
 
       for i in Send(SYS,@GetUsersLoggedOn)
       {
-         if NOT send(i,@PlayerIsIntriguing)
+         if NOT Send(i,@PlayerIsIntriguing)
          {
             continue;
          }
-         
+
          if i <> who
          {
             Send(i,@MsgSendUser,#message_rsc=token_was_delivered_rsc,
-                 #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName),
-                 #parm3=Send(self,@GetIndef),#parm4=Send(self,@GetName));
+                  #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName),
+                  #parm3=Send(self,@GetIndef),#parm4=Send(self,@GetName));
          }
          else
          {
             if Send(who,@GetFaction) <> FACTION_NEUTRAL
-               AND (isClass(mob,&Council)
+               AND (IsClass(mob,&Council)
                     OR Send(who,@GetFaction) = Send(mob,@GetFaction))
             {
                Send(who,@UpdateFactionService,#full=TRUE);
@@ -456,24 +476,24 @@ messages:
 
             Send(who,@TokenDeliveryReward,#mob=mob);
 
-            if isClass(mob,&Factions)
+            if IsClass(mob,&Factions)
                AND Send(Send(SYS,@GetParliament),@GetPower,
                         #faction=Send(mob,@GetFaction)) = FACTION_STRONGLY_IN
             {
                Send(who,@MsgSendUser,#message_Rsc=tok_faction_too_strong);
             }
-            else  
+            else
             {
-               if (isClass(mob,&Factions)
-                   AND (Send(who,@GetFaction) <> Send(mob,@GetFaction)))
-                  OR (isClass(mob,&ShalillePriestess)
-                      AND (Send(who,@GetFaction) <> FACTION_NEUTRAL))
-               { 
+               if (IsClass(mob,&Factions)
+                     AND (Send(who,@GetFaction) <> Send(mob,@GetFaction)))
+                  OR (IsClass(mob,&ShalillePriestess)
+                     AND (Send(who,@GetFaction) <> FACTION_NEUTRAL))
+               {
                   Send(who,@ResignFaction);
                   Send(who,@JoinFaction,#new_faction=Send(mob,@GetFaction));
                }
 
-               if Send(who,@GetFaction)=FACTION_NEUTRAL AND isClass(mob,&Factions)
+               if Send(who,@GetFaction)=FACTION_NEUTRAL AND IsClass(mob,&Factions)
                {
                   Send(who,@JoinFaction,#new_faction=Send(mob,@GetFaction));
                }
@@ -482,39 +502,43 @@ messages:
       }
 
       Send(Send(SYS,@GetTokenGame),@DeliveryEffects,
-           #mob=mob,#who=who,#mytoken=self);
+            #mob=mob,#who=who,#mytoken=self);
       ptGenerationTimer = CreateTimer(self,@TokenGenerationTimer,
-                                      Send(Send(SYS,@GetTokenGame),@GetTimeval,#mytoken=self));
-     
+                              Send(Send(SYS,@GetTokenGame),@GetTimeval,
+                                    #mytoken=self));
+
       return;
    }
 
    TokenRealized(who=$,mob=$)
    {
       local i;
-      
-      For i in Send(SYS,@GetUsersLoggedOn)
+
+      for i in Send(SYS,@GetUsersLoggedOn)
       {
-         if (not send(i,@playerisintriguing)) {continue;}
+         if (NOT Send(i,@PlayerIsIntriguing))
+         {
+            continue;
+         }
+
          if i = who
          {
             Send(i,@MsgSendUser,#message_rsc=token_realized_rsc,
-                 #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
+                  #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
          }
          else
          {
             Send(i,@MsgSendUser,#message_rsc=token_was_realized_rsc,
-                 #parm1=Send(who,@GetIndef),
-                 #parm2=Send(who,@GetName),
-                 #parm3=Send(self,@GetIndef),#parm4=Send(self,@GetName),
-                 #parm5=Send(mob,@GetIndef),#parm6=Send(mob,@GetName));
+                  #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName),
+                  #parm3=Send(self,@GetIndef),#parm4=Send(self,@GetName),
+                  #parm5=Send(mob,@GetIndef),#parm6=Send(mob,@GetName));
          }
       }
       if Send(SYS,@GetTokenGame) <> $
       {
          Send(Send(SYS,@GetTokenGame),@CloseToken,#mytoken=self);
       }
-      
+
       return;
    }
 
@@ -524,7 +548,7 @@ messages:
    {
       return vrTokenOverlay;
    }
-   
+
    GetOverlayHotspot()
    {
       return HS_TOKEN;
@@ -532,17 +556,17 @@ messages:
 
    SendOverlayAnimation()
    {
-      % group 1 is the player-overlay group
+      % Group 1 is the player-overlay group.
       if vrTokenOverlay <> $
       {
          AddPacket(1,ANIMATE_NONE,2,1);
       }
-      
+
       return;
    }
 
    % Misc. infrastructure to keep the tokens in play.
-   
+
    CanShatter()
    "Tokens may NOT be shattered."
    {
@@ -554,28 +578,25 @@ messages:
    {
       return FALSE;
    }
-   
-   CanBeStoredInVault()   
+
+   CanBeStoredInVault()
    {
       return FALSE;
    }
 
    RandomTeleport()
    {
-      local oGame, iRoom, oRoom;
+      local iRoom, oRoom;
 
-      oGame = send(SYS,@GetTokenGame);
-      iRoom = send(oGame,@ChooseTokenRoom);
+      iRoom = Send(Send(SYS,@GetTokenGame),@ChooseTokenRoom);
       if iRoom <> $
       {
-         oRoom = send(SYS,@FindRoomByNum,#num=iRoom);
-         send(oRoom,@Teleport,#what=self);
+         oRoom = Send(SYS,@FindRoomByNum,#num=iRoom);
+         Send(oRoom,@Teleport,#what=self);
       }
-      
+
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

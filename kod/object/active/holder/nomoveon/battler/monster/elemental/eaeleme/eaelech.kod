@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EarthElementalChampion is EarthElemental
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   eaelem_champion_name_rsc = "Dirt"
+   eaelem_champion_desc_rsc = \
+      "This gigantic golem seems to be made entirely out of earth. "
+
+   eaelem_champion_dead_name_rsc = "The corpse of Dirt"
+
+classvars:
+
+   vrName = eaelem_champion_name_rsc
+   vrDesc = eaelem_champion_desc_rsc
+   vrDead_name = eaelem_champion_dead_name_rsc
+
+   vbNamedMob = TRUE
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viTreasure_type = TID_NONE
+   viSpeed = SPEED_FAST
+
+   viLevel = 250
+   viDifficulty = 9
+
+   viCashmin = 3000
+   viCashmax = 12000
+   
+properties:
+
+   piAnimation = ANIM_NONE
+
+   piSpellpower = 99
+   piMax_Mana = 20
+
+messages:
+
+   Constructed()
+   {
+      plSpellBook = [ [SID_EARTHQUAKE,3,100] ];
+
+      plResistances = [ [-ATCK_SPELL_ACID, -70 ],
+                        [-ATCK_SPELL_COLD, -25 ],
+                        [-ATCK_SPELL_FIRE, -25 ],
+                        [-ATCK_SPELL_ALL, 50 ],
+                        [ATCK_WEAP_BLUDGEON, -50],
+                        [ATCK_WEAP_ALL, 50 ] ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

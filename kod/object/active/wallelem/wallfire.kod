@@ -38,7 +38,7 @@ classvars:
    vrIcon = WallofFire_icon_rsc
    vrdesc = WallofFire_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY | FLICKERING_YES
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = firewall_dissipates
    vrUnaffectedMessage = firewall_damage0
@@ -46,6 +46,9 @@ classvars:
    viLightBonus = 15
 
 properties:
+
+   piDrawEffectFlag = OF_FLICKERING
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    viIllusion = FALSE
    piMaxDamage = 0
@@ -96,15 +99,19 @@ messages:
             %  Also, don't lower damage based on resistances.
             iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,iDamage),
                            #aspell=ATCK_SPELL_ALL,#absolute=TRUE,#report=FALSE,
-                           #report_resistance=FALSE);
+                           #report_resistance=FALSE,#precision=TRUE);
+            Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
+                  #use_weapon=self,#stroke_obj=self);
             Send(what,@StartEnchantment,#what=oIllusWounds,#time=iDuration,#lastcall=TRUE,
-                 #state=iDamage,#addicon=FALSE);
+                  #state=iDamage,#addicon=FALSE);
          }
       }
       else
       {
          iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,piMaxDamage),
                         #aspell=ATCK_SPELL_ALL+ATCK_SPELL_FIRE,#report=FALSE,#report_resistance=FALSE);
+         Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
+               #use_weapon=self,#stroke_obj=self);
       }
 
       if iDamage = $

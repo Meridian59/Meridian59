@@ -62,6 +62,9 @@ properties:
    % Should we generate monsters?
    pbGenerateMonsters = TRUE
 
+   % Is this a room where monsters grow in strength?
+   piLevel = 0
+
 messages:
 
    Delete()
@@ -173,7 +176,14 @@ messages:
 
          if iRoll <= iTotal
          {
-            oMonster = Create(First(lMonster_info));
+            if IsClass(self,&SurvivalRoom)
+            {
+               oMonster = Create(First(lMonster_info),#piSurvivalLevel=piLevel);
+            }
+            else
+            {
+               oMonster = Create(First(lMonster_info));
+            }
 
             if NOT Send(self,@GenerateMonster,#oMonster=oMonster)
             {
@@ -192,7 +202,7 @@ messages:
    "Can generate a monster at a specific location, or you can let it be "
    "put at a gen point."
    {
-      local oOldOwner, iMRow, iMCol, lPos, iRoll;
+      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount;
       
       iMRow = iRow;
       iMCol = iCol;
@@ -222,8 +232,22 @@ messages:
       {
          if plGenerators = $
          {
+            iCount = 0;
             iMRow = Random(1,piRows);
             iMCol = Random(1,piCols);
+            while ((NOT Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol))
+                  AND iCount < 15)
+            {
+               iMRow = Random(1,piRows);
+               iMCol = Random(1,piCols);
+               iCount = iCount + 1;
+            }
+            if iCount = 15
+            {
+               Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
+                     " in room ",self,Send(self,@GetName));
+            }
          }
          else
          {
@@ -428,6 +452,11 @@ messages:
       }
 
       return iCount - 1;
+   }
+   
+   GetGenerators()
+   {
+      return plGenerators;
    }
 
 end

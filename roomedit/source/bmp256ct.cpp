@@ -36,15 +36,15 @@
 	#include "wads.h"		// FindMasterDir(), BasicWadRead(), ...
 #endif
 
-#ifndef __OWL_DC_H
+#ifndef OWL_DC_H
 	#include <owl\dc.h>
 #endif
 
-#ifndef __OWL_CONTROL_H
+#ifndef OWL_CONTROL_H
 	#include <owl\control.h>
 #endif
 
-#ifndef __OWL_SCROLLER_H
+#ifndef OWL_SCROLLER_H
 	#include <owl\scroller.h>
 #endif
 
@@ -95,7 +95,7 @@ END_RESPONSE_TABLE;
 // -----------------
 //
 TBitmap256Control::TBitmap256Control (TWindow* parent, int id,
-									  const char far* title, int x, int y,
+									  const char* title, int x, int y,
 									  int w, int h, TModule* module):
 	TControl(parent, id, title, x, y, w, h, module)
 {
@@ -163,7 +163,7 @@ TBitmap256Control::~TBitmap256Control ()
 // TBitmap256Control
 // -----------------
 //
-char far*
+char*
 TBitmap256Control::GetClassName ()
 {
 	return "Bitmap256Control";
@@ -330,7 +330,7 @@ TBitmap256Control::AdjustWindowSize ()
 // -----------------
 //  Display bitmap
 void
-TBitmap256Control::Paint (TDC& dc, BOOL erase, TRect& rect)
+TBitmap256Control::Paint (TDC& dc, bool erase, TRect& rect)
 {
 	TControl::Paint(dc, erase, rect);
 
@@ -444,7 +444,7 @@ TBitmap256Control::SetZoomFactor (UINT factor)
 void
 TBitmap256Control::SetGammaLevel (BYTE level)
 {
-	if ( level == GammaLevel )
+	if ( (UINT)level == GammaLevel )
 		return;
 
 	GammaLevel  = level;
@@ -467,7 +467,7 @@ TBitmap256Control::SetGammaLevel (BYTE level)
 //  data by calling the virtual function BuildBitmapData, then
 //  calc. the bitmap palette and create the bitmap GDI object.
 //  Then call AdjustWindowSize and DisplayBitmap.
-void TBitmap256Control::SelectBitmap (const char *name, SHORT remapPlayer, int palnum)
+void TBitmap256Control::SelectBitmap2 (const char *name, SHORT remapPlayer, int palnum)
 {
    char buf[MAX_PATH];
    
@@ -590,7 +590,7 @@ void TBitmap256Control::BuildBitmap ()
 		for (x = 0 ; x < BitmapXSize ; x++)
 		{
 			wsprintf (&msg[strlen(msg)], "%02x ",
-					  ((char HUGE *)pDIBits)[y * ((BitmapXSize+3)& ~3) + x]);
+					  ((char *)pDIBits)[y * ((BitmapXSize+3)& ~3) + x]);
 		}
 		LogMessage ("Y = %03d : %s\n", y, msg);
 	}
@@ -634,19 +634,19 @@ void TBitmap256Control::ConvertBitmapToDib()
 
 	pDIBInfo = (LPBITMAPINFO)GetMemory (bitsAlloc);
 	pDIBInfo->bmiHeader = infoHeader;
-	pDIBits = ((BYTE HUGE *)pDIBInfo) + ((int)infoHeader.biSize + colorAlloc);
+	pDIBits = ((BYTE *)pDIBInfo) + ((int)infoHeader.biSize + colorAlloc);
 
 	// Inverse the bits from the Bitmap to the DIB bits.
 #if 0
 	dc.GetDIBits (*pBitmap, 0, BitmapYSize, pDIBits, *pDIBInfo, DIB_PAL_COLORS);
 #else
 	// Set the DIB byte from pBitmapData with palette color mapping
-	BYTE HUGE *ptrData = pBitmapData;
-	SHORT xBytes       = (BitmapXSize + 3) & ~3;
+	BYTE *ptrData = pBitmapData;
+	SHORT xBytes  = (BitmapXSize + 3) & ~3;
 
 	for (SHORT y = BitmapYSize - 1 ; y >= 0 ; y--)
 	{
-		BYTE HUGE *pDIBLineOffset = &pDIBits[y * xBytes];
+		BYTE *pDIBLineOffset = &pDIBits[y * xBytes];
 
 		for (SHORT x = 0 ; x < BitmapXSize ; x++)
 		{
@@ -658,8 +658,8 @@ void TBitmap256Control::ConvertBitmapToDib()
 #endif
 
 	// Set the INDEX of the DIB palette
-	WORD FAR *lpTable;
-	lpTable = (WORD FAR *)((char far *)pDIBInfo + (int)infoHeader.biSize);
+	WORD *lpTable;
+	lpTable = (WORD*)((char*)pDIBInfo + (int)infoHeader.biSize);
 	for (WORD i = 0; i < (WORD)infoHeader.biClrUsed; i++)
 		*lpTable++ = i;
 }
@@ -669,7 +669,7 @@ void TBitmap256Control::ConvertBitmapToDib()
 // TBitmap256Control
 // -----------------
 //
-BOOL TBitmap256Control::EvEraseBkgnd (HDC dc)
+bool TBitmap256Control::EvEraseBkgnd (HDC dc)
 {
 	// Suppress flicker when there's a bitmap to be repainted.
 	if ( pDIBInfo != NULL )
@@ -694,7 +694,7 @@ BOOL TBitmap256Control::EvEraseBkgnd (HDC dc)
 // TSprite256Control
 // -----------------
 //
-TSprite256Control::TSprite256Control (TWindow* parent, int id, const char far* title, int x, int y, int w, int h, TModule* module):
+TSprite256Control::TSprite256Control (TWindow* parent, int id, const char* title, int x, int y, int w, int h, TModule* module):
 	TBitmap256Control(parent, id, title, x, y, w, h, module)
 {
 }
@@ -722,14 +722,14 @@ TSprite256Control::BuildBitmapData (const char *name, SHORT remapPlayer)
 // TSprite256Control
 // -----------------
 //
-void TSprite256Control::LoadPictureData (const char *picname, BYTE HUGE **ppData,
+void TSprite256Control::LoadPictureData (const char *picname, BYTE **ppData,
 										 USHORT *pxsize, USHORT *pysize,
 										 SHORT remapPlayer)
 {
   MDirPtr  dir;
 	SHORT  x, y;
 	SHORT  xofs, yofs;
-	 BYTE HUGE *lpColumnData;
+	 BYTE *lpColumnData;
 	 BYTE *lpColumn;
 	 BYTE  color;
 	 LONG *lpNeededOffsets;
@@ -787,7 +787,7 @@ void TSprite256Control::LoadPictureData (const char *picname, BYTE HUGE **ppData
 	   this situation before..... I'll keep them huge pointers anyway,
 	   in case something changes later
 	*/
-	lpColumnData = (BYTE HUGE *)GetMemory (CD_BUFFER_SIZE);
+	lpColumnData = (BYTE*)GetMemory (CD_BUFFER_SIZE);
 
 	// Initialize columns offsets
 	lpNeededOffsets = (LONG *)GetMemory (nColumns * 4L);
@@ -852,7 +852,7 @@ void TSprite256Control::LoadPictureData (const char *picname, BYTE HUGE **ppData
 // TWallTextureontrol
 // -----------------
 //
-TWallTextureControl::TWallTextureControl (TWindow* parent, int id, const char far* title, int x, int y, int w, int h, TModule* module):
+TWallTextureControl::TWallTextureControl (TWindow* parent, int id, const char* title, int x, int y, int w, int h, TModule* module):
 	TSprite256Control(parent, id, title, x, y, w, h, module)
 {
 }
@@ -921,7 +921,7 @@ TWallTextureControl::BuildBitmapData (const char *texname, SHORT /*remapPlayer*/
 // TFloorTextureontrol
 // -----------------
 //
-TFloorTextureControl::TFloorTextureControl (TWindow* parent, int id, const char far* title, int x, int y, int w, int h, TModule* module):
+TFloorTextureControl::TFloorTextureControl (TWindow* parent, int id, const char* title, int x, int y, int w, int h, TModule* module):
 	TSprite256Control(parent, id, title, x, y, w, h, module)
 {
 }

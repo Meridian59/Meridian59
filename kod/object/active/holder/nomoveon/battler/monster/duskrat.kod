@@ -34,6 +34,8 @@ resources:
    duskrat_poisoned_add_rsc = \
       "As the poison travels to your head, you begin "
       "to feel a little light-headed.  The room spins around you."
+   duskrat_illusion_poisoned = \
+      "%s%s reels as poison from your attack courses through %s veins."
 
    duskrat_dead_icon_rsc = ratX.bgf
    duskrat_dead_name_rsc = "dead dusk rat"
@@ -60,6 +62,8 @@ classvars:
    viAttributes = 0
    viLevel = 90
    viDifficulty = 6
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viVisionDistance = 11
    viKarma = -40
    viDefault_behavior = \
@@ -150,7 +154,7 @@ messages:
       propagate;
    }
 
-   HitSideEffect(what=$)
+   HitSideEffect(what=$,who=$)
    {
       local oSpell;
 
@@ -165,6 +169,13 @@ messages:
             Send(what,@EffectSendUserDuration,#effect=EFFECT_WAVER,
                   #duration=10000);
             Send(what,@MsgSendUser,#message_rsc=duskrat_poisoned_add_rsc);
+         }
+         
+         if who <> $
+         {
+            Send(who,@MsgSendUser,#message_rsc=duskrat_illusion_poisoned,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(what,@GetHisHer));
          }
       }
 

@@ -286,6 +286,12 @@ properties:
    % A list of players building together
    plBuilderGroup = $
 
+   % Some rooms handle player deaths themselves.
+   piOverridesDeathFunction = FALSE
+
+   % Players may fight with no legal consequences (death and log penalties remain)
+   piChaosZone = FALSE
+   
    % Flag for reagent use. If set to true, no reagent use in room
    pbNoReagents = FALSE
    
@@ -1106,6 +1112,11 @@ messages:
       return;
    }
 
+   GetRoomData()
+   {
+      return prmRoom;
+   }
+
    ReqNewOwner()
    {
       return FALSE;
@@ -1258,14 +1269,14 @@ messages:
 
       if what <> $
          AND IsClass(what,&Player)
-         AND Send(what,@IsPhasedOut)
+         AND Send(what,@IsInCannotInteractMode)
       {
          return FALSE;
       }
       
       if victim <> $
          AND IsClass(victim,&Player)
-         AND Send(victim,@IsPhasedOut)
+         AND Send(victim,@IsInCannotInteractMode)
       {
          return FALSE;
       }
@@ -3292,7 +3303,10 @@ messages:
                           #iAngle=Send(what,@GetAngle),
                           #iAngle_Change=Nth(i,6));
 
-            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            if IsClass(what,&User)
+            {
+               Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+            }
 
             Send(SYS,@UtilGoNearSquare,#what=what,
                  #where=Send(SYS,@FindRoomByNum,#num=Nth(i,3)),
@@ -3710,9 +3724,17 @@ messages:
       }
       else
       {
+         % Rain takes precedence over sandstorm.
          if piRoom_flags & ROOM_RAINING
          {
             effect = EFFECT_RAINING;
+         }
+         else
+         {
+            if piRoom_flags & ROOM_SANDSTORM
+            {
+               effect = EFFECT_SAND;
+            }
          }
       }
 
@@ -3725,6 +3747,12 @@ messages:
       if NOT pbWeatherEffects
       {
          return;
+      }
+
+      % If there's a sandstorm effect here, clear it.
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@EndSandstorm);
       }
 
       if bOnGround
@@ -3787,6 +3815,78 @@ messages:
          % Reset water sidedef animation changes.
          Send(self,@RemoveAnimateWallChange,#wall=11);
          Send(self,@RemoveTextureChange,#id=11);
+      }
+
+      return;
+   }
+
+   StartRain()
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      % If there's a sandstorm effect here, clear it.
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@EndSandstorm);
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndRain()
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_RAINING)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=FALSE);
+         Send(self,@WeatherChanged);
+
+      }
+
+      return;
+   }
+
+   StartSandstorm()
+   {
+      % Check if we can have weather effects here.
+      if NOT pbWeatherEffects
+      {
+         return;
+      }
+
+      Send(self,@SetRoomFlag,#flag=ROOM_SANDSTORM,#value=TRUE);
+      Send(self,@WeatherChanged);
+
+      return;
+   }
+
+   EndSandstorm()
+   {
+      local i, each_obj;
+
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@SetRoomFlag,#flag=ROOM_SANDSTORM,#value=FALSE);
+
+         for i in plActive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+            {
+               if NOT Send(each_obj,@IsAffectedByRadiusEnchantment,
+                           #byClass=&Sandstorm)
+               {
+                  Send(each_obj,@EffectSendUser,#what=each_obj,
+                        #effect=EFFECT_CLEARSAND);
+               }
+            }
+         }
       }
 
       return;
@@ -4717,6 +4817,25 @@ messages:
       }
       return;
    }
+   
+   WentSpectatorMode(who=$)
+   {
+      local i;
+      
+      % Ditch aggros on fresh spectators
+      if IsClass(who,&Player)
+      {
+         for i in plActive
+         {
+            if IsClass(First(i),&Monster)
+            {
+               Send(First(i),@SomethingLeft,#what=who);
+            }
+         }
+      }
+
+      return;
+   }
 
    NoReagents()
    {
@@ -4733,6 +4852,41 @@ messages:
    {
       pbNoReagents=FALSE;
       return;
+   }
+   
+   GetBaseLight()
+   {
+      return piBaseLight;
+   }
+   
+   GetDirectionalPercent()
+   {
+      return piDirectional_percent;
+   }
+   
+   GetMusic()
+   {
+      return prMusic;
+   }
+   
+   OverridesDeathFunction()
+   {
+      return piOverridesDeathFunction;
+   }
+   
+   OverrideDeathFunction(who=$,what=$)
+   {
+      return;
+   }
+   
+   GetChaosZone()
+   {
+      return piChaosZone;
+   }
+   
+   GetGenerators()
+   {
+      return $;
    }
       
 end

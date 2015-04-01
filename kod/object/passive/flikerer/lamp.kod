@@ -28,7 +28,7 @@ classvars:
    vrName = lamp_name_rsc
    vrIcon = lamp_icon_rsc
 
-   viObject_flags = LOOK_NO
+   viObject_flags = OF_NOEXAMINE
 
    % Lighting flags.  Default "on" and wavering flags
    viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING

@@ -49,7 +49,7 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_PIERCE
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
-   viLevel = 70
+   viLevel = 85
    viDifficulty = 5
    viVisionDistance = 20
    viKarma = 70
@@ -78,11 +78,11 @@ messages:
    MonsterAttack(what = $)
    {
       piAnimation = ANIM_ATTACK;
-      if piHit_points < (2*viLevel/3)
+      if piHit_points < (200*viLevel/3)
       {
          piAnimation = ANIM_ATTACK_WOUNDED1;
       }
-      if piHit_points < (viLevel/3)
+      if piHit_points < (100*viLevel/3)
       {
          piAnimation = ANIM_ATTACK_WOUNDED2;
       }

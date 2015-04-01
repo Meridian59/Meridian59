@@ -529,11 +529,39 @@ messages:
    {
       local iFlags;
 
-      iFlags = piDrawFX;
+      iFlags = viObject_flags | piDrawEffectFlag;
 
       if piColor = COLOR_BLUE
       {
-         iFlags = iFlags | PLAYER_DM | USER_YES ;
+         iFlags = iFlags | OF_PLAYER;
+      }
+
+      return iFlags;
+   }
+
+   GetPlayerNameColor()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if piColor = COLOR_BLUE
+      {
+         iFlags = iFlags | NC_DM;
+      }
+
+      return iFlags;
+   }
+
+   GetClientObjectType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if piColor = COLOR_BLUE
+      {
+         iFlags = iFlags | OT_DM;
       }
 
       return iFlags;

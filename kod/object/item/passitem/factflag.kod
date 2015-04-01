@@ -72,6 +72,7 @@ messages:
 
          if oSoldierShield = $
             OR Send(oSoldierShield,@GetFaction) <> viFaction
+            OR Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
          {
             return FALSE;
          }

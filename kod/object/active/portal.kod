@@ -26,7 +26,7 @@ classvars:
 
    vrName = portal_name_rsc
 
-   viObject_flags = MOVEON_TELEPORTER
+   viMoveOn_type = MOVEON_TELEPORTER
 
    viAnimationSpeed = 100
    viMaxDistance = 3
@@ -163,11 +163,11 @@ messages:
       return;
    }
 
-   GetObjectFlags()
+   GetMoveOnType()
    {
       if NOT pbAnimate
       {
-         return MOVEON_NO;
+         return (viMoveOn_type | MOVEON_NO);
       }
 
       propagate;

@@ -84,6 +84,10 @@ classvars:
    viLevel = 135
    viDifficulty = 9
    viVisionDistance = 28
+
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
+
    viKarma = 85
    viCashmin = 650
    viCashmax = 2000
@@ -273,7 +277,8 @@ messages:
       iBase = Send(self,@RangedAttackChance,#base=(piSpellChance*6));
 
       if Random(1,iBase) = 1
-         AND Send(self,@SquaredDistanceTo,#what=poTarget) < piSpellRange
+         AND Send(self,@SquaredFineDistanceTo3D,#what=poTarget)
+                  < piSpellRange * piSpellRange
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
          AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
                   #use_weapon=self)
@@ -320,7 +325,8 @@ messages:
 
    GetOptimalRange()
    {
-      return random(8,15);
+      % Random range between 8-15 row/col units.
+      return random(512,960);
    }
 
    IsAlly(target = $)
@@ -401,10 +407,11 @@ messages:
       oBody = $;
       if vrDead_icon <> $
       {
-         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
+         oBody = Create(&DeadBody,
+                        #victim=self,
+                        #killer=killer,
                         #BodyTranslation=Send(self,@GetClan),
-                        #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);
+                        #drawfx=viDead_drawfx);
       }
 
       return oBody;

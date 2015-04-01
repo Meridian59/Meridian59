@@ -30,7 +30,7 @@ classvars:
    vrIcon = Bell_icon_rsc
    vrDesc = Bell_desc_rsc
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
 
 properties:
 

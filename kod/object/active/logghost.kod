@@ -17,22 +17,23 @@ constants:
 
 resources:
 
-   LogoffGhost_name_rsc = "logoff ghost"
-   LogoffGhost_desc_rsc = \
+   logoffghost_name_rsc = "logoff ghost"
+   logoffghost_desc_rsc = \
       "This is the ghosted body of %q, whose consciousness has travelled to "
       "another plane of existence."
 
-   LogoffGhost_default_icon = ptb.bgf
-   LogoffGhost_default_larm = plb.bgf
-   LogoffGhost_default_rarm = prb.bgf
-   LogoffGhost_default_legs = pfb.bgf
+   logoffghost_default_icon = ptb.bgf
+   logoffghost_default_larm = plb.bgf
+   logoffghost_default_rarm = prb.bgf
+   logoffghost_default_legs = pfb.bgf
 
-   LogoffGhost_default_sword = swordov.bgf
-   LogoffGhost_default_shield = rshield.bgf
+   logoffghost_default_sword = swordov.bgf
+   logoffghost_default_shield = rshield.bgf
 
-   LogoffGhost_penalty_mail_Sender = "Your guardian angel"
+   logoffghost_penalty_mail_Sender = "Your guardian angel"
 
-   LogoffGhost_penalty_mail = "Subject: Penalties for logging off in an unsafe area\n"
+   logoffghost_noflatpenalty_mail = \
+      "Subject: Penalties for logging off in an unsafe area\n"
       "You have suffered some penalties for logging off in an unsafe area:\n"
       "You lost %q items, %q spell points, and %q skill points."
       "\n\n"
@@ -42,17 +43,21 @@ resources:
       "Abandoning your body in an unsafe area weakens it, which may cause you "
       "to suffer some of the effects of death: you could lose proficiency in "
       "spells and skills, as well as loosening your grip on items in your "
-      "possession.  You have a 10 minute grace period after logoff before "
-      "penalties are incurred, so if you lose your connection involuntarily, "
-      "simply reconnect within 10 minutes and your character will be fine.  "
-      "Every time you log off unsafely in a short period of time, your body "
-      "becomes progressively weaker and as such will suffer more from being "
-      "abandoned.  The first time you logoff unsafely, you will suffer little "
-      "or no penalties, but once you have performed enough unsafe logoffs, "
-      "the damage to your body will be comparable to the losses incurred when "
-      "your character dies.  This penalty escalation recedes over time, so if "
+      "possession.  You have an 8 minute grace period (3 minutes for "
+      "murderers) after logoff before penalties are incurred, so if you "
+      "lose your connection involuntarily, simply reconnect within 8 minutes "
+      "and your character will be fine.  Every time you log off unsafely "
+      "in a short period of time, your body becomes progressively weaker "
+      "and as such will suffer more from being abandoned.  The first "
+      "time you logoff unsafely, you will suffer little or no penalties, "
+      "but once you have performed enough unsafe logoffs, the damage to "
+      "your body will be comparable to the losses incurred when your character "
+      "dies.  This penalty escalation recedes over time, so if "
       "you don't log off unsafely too frequently, your character should "
-      "suffer only mild if any penalties."
+      "suffer only mild if any penalties.  You can also use the Phase spell "
+      "to simulate the effects of logging off while remaining in-game, but if "
+      "you do not Phase back to reality after the grace period, you will take "
+      "penalties as if you had logged off unsafely."
       "\n\n"
       "I recommend you do not use this as a tactic to avoid danger, since "
       "it could work against you should your connection to the Meridian "
@@ -60,7 +65,32 @@ resources:
       "\n\n"
       "  -- Your guardian angel"
 
-   LogoffGhost_newbie_mail = "Subject: Logging off in an unsafe area\n"
+   logoffghost_penalty_mail = \
+      "Subject: Penalties for logging off in an unsafe area\n"
+      "You have suffered some penalties for logging off in an unsafe area:\n"
+      "You lost %q items, %q spell points, and %q skill points."
+      "\n\n"
+      "In the future, it would be wise to log off in a safe area such as an "
+      "inn, an adventurer's hall, or the interior of your guild's hall."
+      "\n\n"
+      "Abandoning your body in an unsafe area weakens it, which may cause you "
+      "to suffer some of the effects of death: you could lose proficiency in "
+      "spells and skills, as well as loosening your grip on items in your "
+      "possession.  You have an 8 minute grace period (3 minutes for "
+      "murderers) after logoff before penalties are incurred, so if you "
+      "lose your connection involuntarily, simply reconnect within 8 minutes "
+      "and your character will be fine.  You can also use the Phase spell "
+      "to simulate the effects of logging off while remaining in-game, but if "
+      "you do not Phase back to reality after the grace period, you will take "
+      "penalties as if you had logged off unsafely."
+      "\n\n"
+      "I recommend you do not use this as a tactic to avoid danger, since "
+      "it could work against you should your connection to the Meridian "
+      "become too unstable soon after."
+      "\n\n"
+      "  -- Your guardian angel"
+
+   logoffghost_newbie_mail = "Subject: Logging off in an unsafe area\n"
       "You last logged off in an unsafe area, where the lines of connection "
       "to the Meridian are weak.  I have managed to protect you from the harm "
       "that usually would result from passing back through the Meridian in "
@@ -71,15 +101,15 @@ resources:
       "Abandoning your body in an unsafe area weakens it, which may cause "
       "you to experience some effects of death: you could lose proficiency "
       "in spells and skills, as well as lose your grip on items in your "
-      "possession.  You have a 10 minute grace period after logoff before "
+      "possession.  You have an 8 minute grace period after logoff before "
       "penalties are incurred, so if you lose your connection involuntarily, "
-      "simply reconnect within 10 minutes and your character will be fine."
+      "simply reconnect within 8 minutes and your character will be fine."
       "\n\n"
       "  -- Your guardian angel"
 
-   LogoffGhost_someone = "Someone"
+   logoffghost_someone = "Someone"
 
-   LogoffGhost_poof_wav_rsc = logoffghost_poof.wav
+   logoffghost_poof_wav_rsc = logoffghost_poof.wav
 
 classvars:
 
@@ -88,9 +118,9 @@ properties:
 
    piDrawFX = DRAWFX_DITHERINVIS
 
-   vrDesc = LogoffGhost_desc_rsc
-   vrName = LogoffGhost_name_rsc
-   vrIcon = LogoffGhost_default_icon
+   vrDesc = logoffghost_desc_rsc
+   vrName = logoffghost_name_rsc
+   vrIcon = logoffghost_default_icon
 
    % Who the LogoffGhost is of.
    poGhostedPlayer = $
@@ -100,12 +130,12 @@ properties:
    prMouth = charinfo_mouth_lx_icon
    prNose = charinfo_nose_mx_icon
    prHead = charinfo_head_kx_icon
-   prRight_arm = LogoffGhost_default_rarm
-   prLeft_arm = LogoffGhost_default_larm
-   prLegs = LogoffGhost_default_legs
+   prRight_arm = logoffghost_default_rarm
+   prLeft_arm = logoffghost_default_larm
+   prLegs = logoffghost_default_legs
 
-   prWeapon = LogoffGhost_default_sword
-   prShield = LogoffGhost_default_shield
+   prWeapon = logoffghost_default_sword
+   prShield = logoffghost_default_shield
    prBowTop = $
 
    piIcon_frame = 1
@@ -178,7 +208,7 @@ messages:
       else
       {
          Addpacket(4,vrDesc);
-         AddPacket(STRING_RESOURCE,LogoffGhost_someone);
+         AddPacket(STRING_RESOURCE,logoffghost_someone);
          Post(self,@Delete);
       }
 
@@ -214,9 +244,9 @@ messages:
          else
          {
             Send(poGhostedPlayer,@ReceiveNestedMail,
-                 #from=LogoffGhost_penalty_mail_Sender,
+                 #from=logoffghost_penalty_mail_Sender,
                  #dest_list=[poGhostedPlayer],
-                 #nest_list=[4,LogoffGhost_newbie_mail]);
+                 #nest_list=[4,logoffghost_newbie_mail]);
          }
       }
 
@@ -224,7 +254,7 @@ messages:
       if poOwner <> $ 
       {
          Send(poOwner, @SomethingWaveRoom, #what=self,
-              #wave_rsc = LogoffGhost_poof_wav_rsc);
+              #wave_rsc = logoffghost_poof_wav_rsc);
       }
 
       % Send this person to the room's blink coordinates, or to their hometown if
@@ -457,9 +487,9 @@ messages:
       prSkillPointsLost = Send(SYS,@IntToString,#num=numSkillPointsLost);
 
       Send(poGhostedPlayer,@ReceiveNestedMail,
-           #from=LogoffGhost_penalty_mail_Sender,
+           #from=logoffghost_penalty_mail_Sender,
            #dest_list=[poGhostedPlayer],
-           #nest_list=[4,LogoffGhost_penalty_mail, 4,prItemsLost,
+           #nest_list=[4,logoffghost_penalty_mail, 4,prItemsLost,
                        4,prSpellPointsLost, 4,prSkillPointsLost]);
 
       % Reset the time to avoid any funny business like potential double
@@ -730,9 +760,9 @@ messages:
       prSkillPointsLost = Send(SYS,@IntToString,#num=numSkillPointsLost);
 
       Send(poGhostedPlayer,@ReceiveNestedMail,
-           #from=LogoffGhost_penalty_mail_Sender,
+           #from=logoffghost_penalty_mail_Sender,
            #dest_list=[poGhostedPlayer],
-           #nest_list=[4,LogoffGhost_penalty_mail, 4,prItemsLost,
+           #nest_list=[4,logoffghost_noflatpenalty_mail, 4,prItemsLost,
                        4,prSpellPointsLost, 4,prSkillPointsLost]);
 
       % Let the faction shield know of this person's naughtiness if we took a
@@ -1003,12 +1033,6 @@ messages:
    {
       return poGhostedPlayer;
    }
-
-   GetObjectFlags()
-   {
-      return piDrawFX;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -599,6 +599,7 @@ char * name_function(int fnum)
 
    case GETTIME : return "GetTime";
    case GETTICKCOUNT : return "GetTickCount";
+   case SETCLASSVAR : return "SetClassVar";
 
    case RANDOM  : return "Random";
    case RECORDSTAT : return "RecordStat";

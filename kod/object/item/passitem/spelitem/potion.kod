@@ -185,11 +185,11 @@ messages:
 
    SetPotionFlags()
    "This can be used to fix potions that have their "
-   "viObject_flags set to APPLY_YES."
+   "viObject_flags set to OF_APPLYABLE."
    {
-      if viObject_flags = (GETTABLE_YES | APPLY_YES)
+      if viObject_flags = (OF_GETTABLE | OF_APPLYABLE)
       {
-         viObject_flags = viObject_flags & ~APPLY_YES;
+         viObject_flags = viObject_flags & ~OF_APPLYABLE;
       }
 
       return;

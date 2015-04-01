@@ -23,7 +23,8 @@ resources:
    silver_arrow_icon_rsc = arrowsil.bgf
    silver_arrow_desc_rsc = \
       "The sharp clean edge of the arrowhead makes for nasty wounds.  "
-      "Some archers have found these to be the nock of choice for battling the undead."
+      "Some archers have found these to be the nock of choice for "
+      "battling the undead."
 
    silver_arrow_burns_you = "The silver arrowhead stings your undead flesh!"
 
@@ -45,7 +46,7 @@ classvars:
 
    viMinDamage = 2
    viMaxDamage = 6
-   
+
    viMinUndeadDamage = 5
    viMaxUndeadDamage = 10
 
@@ -58,17 +59,27 @@ messages:
 
    GetDamage(who=$,target=$)
    {
-      if (target <> $) AND send(target,@IsUndead)
+      if (target <> $) AND Send(target,@IsUndead)
       {
-         if isClass(target,&Player)
+         if IsClass(target,&Player)
          {
-            send(target,@MsgSendUser,#message_rsc=silver_arrow_burns_you);
+            Send(target,@MsgSendUser,#message_rsc=silver_arrow_burns_you);
          }
 
-         return random(viMinUndeadDamage,viMaxUndeadDamage);
+         return Random(viMinUndeadDamage,viMaxUndeadDamage);
       }
 
       propagate;
+   }
+
+   GetMinSpecialDamage()
+   {
+      return viMinUndeadDamage;
+   }
+
+   GetMaxSpecialDamage()
+   {
+      return viMaxUndeadDamage;
    }
 
    SendProjectileAnimation()
@@ -85,19 +96,8 @@ messages:
 
    GetProjectileIcon()
    {
-      return arrow_icon_rsc;
+      return vrIcon;
    }
-
-   GetMinSpecialDamage()
-   {
-      return viMinUndeadDamage;
-   }
-   
-   GetMaxSpecialDamage()
-   {
-      return viMaxUndeadDamage;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

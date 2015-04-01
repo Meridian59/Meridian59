@@ -25,13 +25,15 @@ classvars:
    vrName = VentCloud_name_rsc
    vrIcon = VentCloud_icon_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50
-   vrdesc = VentCloud_desc_rsc
+   viObject_flags = OF_NOEXAMINE
+   vrDesc = VentCloud_desc_rsc
 
 properties:
 
+   piDrawFx = DRAWFX_TRANSLUCENT_50
+
 messages:
-	
+
    Delete(obj=$)
    {
       %%delete message with item disolving

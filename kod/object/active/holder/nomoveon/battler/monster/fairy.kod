@@ -55,6 +55,8 @@ classvars:
 
    viLevel = 60
    viDifficulty = 5
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viVisionDistance = 15
    viCashmin = 300
    viCashmax = 600
@@ -62,10 +64,10 @@ classvars:
    vrSound_miss = fairy_sound_miss
    vrSound_aware = fairy_sound_aware
    vrSound_death = fairy_sound_death
-   
+
 properties:
 
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
    viKarma = 50
    piAnimation = ANIM_NONE
 
@@ -172,11 +174,6 @@ messages:
       }
 
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
 
    SendLightingInformation()

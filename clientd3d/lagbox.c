@@ -109,8 +109,12 @@ BOOL Lagbox_Create()
 	pobjLagbox->normal_animate.group = 1;
 	pobjLagbox->normal_animate.group_low = 1;
 	pobjLagbox->normal_animate.group_high = 1;
-	pobjLagbox->flags = OF_DITHERTRANS;
-
+	pobjLagbox->drawingtype = DRAWFX_DITHERTRANS;
+	pobjLagbox->flags = OF_PLAYER;
+	pobjLagbox->minimapflags = 0;
+	pobjLagbox->namecolor = NC_OUTLAW;
+	pobjLagbox->objecttype = OT_NONE;
+	pobjLagbox->moveontype = MOVEON_YES;
 	dwLagboxLatency = s_adwLatencyMetric[0];
 
 	hwndLagbox = CreateWindow("button", "", WS_CHILD | BS_OWNERDRAW, 
@@ -297,7 +301,8 @@ void Lagbox_Command(HWND hWnd, int id, HWND hwndCtrl, UINT uNotify)
 	lagbox = *pobjLagbox;
 	lagbox.animate = &lagbox.normal_animate;
 	lagbox.overlays = &lagbox.normal_overlays;
-	lagbox.flags |= OF_PLAYER | PF_OUTLAW;
+	lagbox.flags |= OF_PLAYER;
+	lagbox.namecolor = NC_OUTLAW;
 
 	Lagbox_OnTooltipCallback(hWnd, &ttt);
 

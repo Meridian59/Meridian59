@@ -51,7 +51,7 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 5
    viMana = 20
-   viSpellExertion = 15
+   viSpellExertion = 4
 
    % This will disallow people from trucing, and then killing undead.
    viHarmful = TRUE   
@@ -133,11 +133,9 @@ messages:
          }
             
          % Do damage to them.
-         iDamage = random(1,5) + (iSpellpower/20)
-                   + (2*((Send(who,@GetKarma,#detect=TRUE)
-                         - Send(oUndead,@GetKarma,#detect=TRUE))/40));
-         if Send(oUndead,@AssessDamage,#what=who,#damage=iDamage,
-                 #aspell=ATCK_SPELL_HOLY) = $
+         iDamage = random(1,5) + (iSpellpower/20) + (2*((Send(who,@GetKarma,#detect=TRUE)
+            - Send(oUndead,@GetKarma,#detect=TRUE))/40));
+         if Send(oUndead,@AssessDamage,#what=who,#damage=iDamage,#aspell=ATCK_SPELL_HOLY) = $
          {
             Send(who,@KilledSomething,#what=oUndead,#use_weapon=self);
          }

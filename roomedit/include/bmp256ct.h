@@ -33,11 +33,11 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_CONTROL_H
+#ifndef OWL_CONTROL_H
 	#include <owl\control.h>
 #endif
 
-#ifndef __OWL_DC_H
+#ifndef OWL_DC_H
 	class _OWLCLASS TDC;
 #endif
 
@@ -55,7 +55,7 @@ private:
 protected:
 	USHORT     BitmapXSize;
 	USHORT     BitmapYSize;
-	BYTE HUGE *pBitmapData;		// huge on Win16
+	BYTE      *pBitmapData;
 	BOOL      *pUsedColors;
 	BYTE      *pEntryMapping;
 	BYTE       NbEntries;
@@ -65,7 +65,7 @@ protected:
 
 	// DIB info
 	LPBITMAPINFO pDIBInfo;
-	BYTE HUGE   *pDIBits;
+	BYTE        *pDIBits;
 
 protected:
 	// pure Virtual function redefined for things, walls, floors/celings
@@ -94,11 +94,11 @@ protected:
 	}
 
 public:
-	TBitmap256Control (TWindow* parent, int id, const char far* title,
+	TBitmap256Control (TWindow* parent, int id, const char* title,
 					   int x, int y, int w, int h, TModule* module = 0);
 	virtual ~TBitmap256Control ();
 
-	void SelectBitmap (const char *name, SHORT remap = 0, int palnum = 0);
+	void SelectBitmap2 (const char *name, SHORT remap = 0, int palnum = 0);
 	void SetZoomFactor (UINT factor);
 	UINT GetZoomFactor() 	{ return ZoomFactor; }
 	void SetGammaLevel (BYTE level);
@@ -106,8 +106,8 @@ public:
 
 //{{TBitmap256ControlVIRTUAL_BEGIN}}
 public:
-	virtual void Paint (TDC& dc, BOOL erase, TRect& rect);
-	virtual char far*GetClassName ();
+	virtual void Paint (TDC& dc, bool erase, TRect& rect);
+	virtual char* GetClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void SetupWindow ();
 //{{TBitmap256ControlVIRTUAL_END}}
@@ -115,7 +115,7 @@ public:
 
 //{{TBitmap256ControlRSP_TBL_BEGIN}}
 protected:
-	BOOL EvEraseBkgnd (HDC dc);
+	bool EvEraseBkgnd (HDC dc);
 //{{TBitmap256ControlRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TBitmap256Control);
 };    //{{TBitmap256Control}}
@@ -129,12 +129,12 @@ DECLARE_RESPONSE_TABLE(TBitmap256Control);
 class TSprite256Control : public TBitmap256Control
 {
 protected:
-	void LoadPictureData (const char *picname, BYTE HUGE **ppData,
+	void LoadPictureData (const char *picname, BYTE **ppData,
 						  USHORT *pxsize, USHORT *pysize, SHORT remapPlayer = 0);
 	virtual void BuildBitmapData (const char *name, SHORT remapPlayer = 0);
 
 public:
-	TSprite256Control (TWindow* parent, int id, const char far* title,
+	TSprite256Control (TWindow* parent, int id, const char* title,
 					   int x, int y, int w, int h, TModule* module = 0);
 };
 
@@ -150,7 +150,7 @@ protected:
 	virtual void BuildBitmapData (const char *name, SHORT remapPlayer = 0);
 
 public:
-	TWallTextureControl (TWindow* parent, int id, const char far* title,
+	TWallTextureControl (TWindow* parent, int id, const char* title,
 						 int x, int y, int w, int h, TModule* module = 0);
 };
 
@@ -165,7 +165,7 @@ protected:
 	virtual void BuildBitmapData (const char *name, SHORT remapPlayer = 0);
 
 public:
-	TFloorTextureControl (TWindow* parent, int id, const char far* title,
+	TFloorTextureControl (TWindow* parent, int id, const char* title,
 						  int x, int y, int w, int h, TModule* module = 0);
 };
 

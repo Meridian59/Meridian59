@@ -26,7 +26,8 @@ resources:
    web_stick3 = "Is there something stuck to your boot or are you stuck to IT?"
    web_stick5 = "You find yourself helplessly stuck to the spider web!"
 
-   web_dissipates = "A piece of the web withers and disappears before your eyes."
+   web_dissipates = \
+      "A piece of the web withers and disappears before your eyes."
 
    web_stick_snd = frying.wav
 
@@ -38,7 +39,7 @@ classvars:
    vrIcon = Web_icon_rsc
    vrdesc = Web_desc_rsc
 
-   viObject_flags = LOOK_NO | MOVEON_NOTIFY
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = web_dissipates
    vrUnaffectedMessage = web_stick0
@@ -65,7 +66,7 @@ messages:
                              &Lich, &LupoggKing, &Yeti, &Ghost,
                              &DragonFly, &DragonFlyQueen, &EvilFairy, &Fairy,
                              &DarkAngel, &Kriipa, &XeoAir, &XeoFire,
-                             &Revenant
+                             &Revenant, &Elemental
                            ];
      
       propagate;
@@ -123,8 +124,10 @@ messages:
 
       if iHoldTime > 0
       {
-         Send(oSpell,@DoHold,#what=poCaster,#oTarget=what,#iDurationSecs=iHoldTime,
-              #report=FALSE);
+         Send(oSpell,@DoHold,#what=poCaster,#oTarget=what,
+               #iDurationSecs=iHoldTime,#report=FALSE);
+         Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
+               #use_weapon=self,#stroke_obj=self);
       }
 
       if isClass(what,&User)

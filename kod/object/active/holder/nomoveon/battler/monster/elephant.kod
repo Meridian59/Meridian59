@@ -1,0 +1,138 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Elephant is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   elephant_name_rsc = "elephant"
+   elephant_icon_rsc = elephant.bgf
+   elephant_desc_rsc = \
+      "This elephant's massive tusks are stained with the blood of its "
+      "last foe. "
+
+   elephant_dead_icon_rsc = elephantX.bgf
+   elephant_dead_name_rsc = "dead elephant"
+
+   elephant_sound_hit = elephant_atkh.wav
+   elephant_sound_miss = elephant_atkh.wav
+   elephant_sound_death = elephant_dth.wav
+   elephant_sound_aware = elephant_awr.wav
+
+classvars:
+
+   vrName = elephant_name_rsc
+   vrIcon = elephant_icon_rsc
+   vrDesc = elephant_desc_rsc
+
+   vrDead_icon = elephant_dead_icon_rsc
+   vrDead_name = elephant_dead_name_rsc
+
+   viSpeed = SPEED_SLOW
+   viAttack_type = ATCK_WEAP_BITE
+   viLevel = 75
+   viDifficulty = 8
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
+   viKarma = 90
+   viCashmin = 300
+   viCashmax = 700
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE
+   viAttributes = 0
+
+   viTreasure_type = TID_MEDIUM_TOUGH
+
+   vrSound_hit = elephant_sound_hit
+   vrSound_miss = elephant_sound_miss
+   vrSound_aware = elephant_sound_aware
+   vrSound_death = elephant_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [-ATCK_SPELL_HOLY, 80 ],
+                        [-ATCK_SPELL_ACID, 80 ],
+                        [ATCK_WEAP_NERUDITE, -80 ],
+                        [ATCK_WEAP_NONMAGIC, 80 ] ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,150, 2,1, 2,8);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,150, 2,1, 2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      local iSet;
+      
+      iSet = Random(1,3);
+   
+      if piAnimation = ANIM_ATTACK
+      {
+         if (iSet = 1)
+         {
+            AddPacket(1,ANIMATE_ONCE, 4,150, 2,9, 2,11, 2,1);
+         }
+         if (iSet = 2)
+         {
+            AddPacket(1,ANIMATE_ONCE, 4,150, 2,12, 2,14, 2,1);
+         }
+         if (iSet = 3)
+         {
+            AddPacket(1,ANIMATE_ONCE, 4,150, 2,15, 2,17, 2,1);
+         }
+
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return false;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

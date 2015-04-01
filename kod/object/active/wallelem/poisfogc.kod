@@ -26,27 +26,33 @@ resources:
 
    PoisonFogCloud_name_rsc = "thick fog"
    PoisonFogCloud_icon_rsc = poisoncl.bgf
-   PoisonFogCloud_desc_rsc = "You choke just looking at the thick putrid fog."
+   PoisonFogCloud_desc_rsc = \
+      "You choke just looking at the thick putrid fog."
 
-   PoisonFogCloud_poisoned = "You suddenly feel sick as you inhale the vapors of the fog."
+   PoisonFogCloud_poisoned = \
+      "You suddenly feel sick as you inhale the vapors of the fog."
 
    PoisonFogCloud_poison_snd = psncough.wav
 
-   PoisonFog_dissipates = "Some of the poison fog fades, then clears."
-   PoisonFog_unaffected = "You hold your breath and the noxious cloud does not affect you."
-   
+   PoisonFog_dissipates = \
+      "Some of the poison fog fades, then clears."
+   PoisonFog_unaffected = \
+      "You hold your breath and the noxious cloud does not affect you."
+
 classvars:
 
    vrName = PoisonFogCloud_name_rsc
    vrIcon = PoisonFogCloud_icon_rsc
    vrDesc = PoisonFogCloud_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = PoisonFog_dissipates
    vrUnaffectedMessage = PoisonFog_unaffected
 
 properties:
+
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    piOdds = 0
 
@@ -89,7 +95,8 @@ messages:
 
             Send(oSpell,@MakePoisoned,#who=what,#lossrate=POISON_LOSSRATE,
                  #duration=POISON_DURATION);
-            
+            Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
+                  #use_weapon=self,#stroke_obj=self);
             if IsClass(poCaster,&Player)
             {
                Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);

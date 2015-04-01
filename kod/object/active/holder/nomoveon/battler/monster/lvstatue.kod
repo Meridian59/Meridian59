@@ -171,6 +171,8 @@ properties:
    viLevel = 75
    viDifficulty = 5
    viVisionDistance = 3
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viGender = GENDER_MALE
 
    viSpeed = SPEED_NONE
@@ -285,7 +287,7 @@ messages:
    {
       local i, iThreshold, iRandomDamage, rDamageReport, each_obj;
 
-      iThreshold = piHit_points*5/piMax_hit_points;
+      iThreshold = piHit_points/(piMax_hit_points*20);
 
       % General damage report
       rDamageReport = LivingStatue_damage;
@@ -1073,10 +1075,11 @@ messages:
    % Override from monster superclass
    CreateDeadBody(killer=$)
    {
-      return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
-                    #playername=Send(killer,@GetTrueName),#mob=TRUE,
-                    #monstername=LivingStatue_name_rsc,
-                    #PlayerBodyOverlay=vrDead_Legs,#DrawFX=viDead_drawfx);
+      return Create(&DeadBody,
+                     #victim=self,
+                     #killer=killer,
+                     #PlayerBodyOverlay=vrDead_Legs,
+                     #DrawFX=viDead_drawfx);
    }
 
    CreateTreasure(who=$,corpse=$)

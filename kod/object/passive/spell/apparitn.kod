@@ -51,7 +51,7 @@ classvars:
    viSpell_level = 4
    viMana = 15
 
-   viSpellExertion = 12
+   viSpellExertion = 3
    viChance_To_Increase = 25
    viMeditate_ratio = 30
    vrSucceed_wav = summonapparition_sound
@@ -148,9 +148,10 @@ messages:
          }
       }
 
-      % These two functions allow monsters to keep track of Apparitions.
+      % These three functions allow monsters to keep track of Apparitions.
       Send(oTarget,@AddApparition,#what=oApparition);
       Send(oApparition,@AddApparitionOriginal,#what=oTarget);
+      Send(oApparition,@ApparitionCaster,#who=who);
 
       Send(oApparition,@SetIllusion,#value=TRUE);
 

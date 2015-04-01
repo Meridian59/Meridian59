@@ -74,6 +74,10 @@ client_def_table_type client_def_table[] =
 	
 	{ BP_REQ_ACTIVATE,         { {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ BP_SEND_ENCHANTMENTS,    { {1, TAG_INT}, {0, DONE_PARM} } },
+	{ BP_CHANGED_STATS,               { {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT},
+                                       {1, TAG_INT}, {1, TAG_INT},{1, TAG_INT}, {1, TAG_INT},
+                                       {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT}, {1, TAG_INT},
+                                       {1, TAG_INT}, {0, DONE_PARM} } },
 	
 };
 int num_client_msgs = sizeof(client_def_table)/sizeof(client_def_table_type);
@@ -96,6 +100,7 @@ client_def_table_type usercommand_def_table[] =
 	{ UC_STAND,                 { {0, DONE_PARM} } },
 	{ UC_SUICIDE,               { {0, DONE_PARM} } },
 	{ UC_SAFETY,                { {1, TAG_INT}, {0, DONE_PARM} } },
+	{ UC_TEMPSAFE,              { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_REQ_GUILDINFO,         { {0, DONE_PARM} } },
 	{ UC_INVITE,                { {4, TAG_OBJECT}, {0, DONE_PARM} } },
 	{ UC_RENOUNCE,              { {0, DONE_PARM} } },
@@ -121,6 +126,7 @@ client_def_table_type usercommand_def_table[] =
 	{ UC_ABANDON_GUILD_HALL,    { {0, DONE_PARM} } },
 	{ UC_GUILD_SET_PASSWORD,    { {0, TAG_STRING}, {0, DONE_PARM} } },
 	{ UC_CHANGE_URL,            { {4, TAG_OBJECT}, {0,TAG_STRING}, {0, DONE_PARM} } },
+	{ UC_GROUPING,              { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_DEPOSIT,               { {4, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_BALANCE,               { {0, DONE_PARM} } },
 	{ UC_WITHDRAW,              { {4, TAG_INT}, {0, DONE_PARM} } },

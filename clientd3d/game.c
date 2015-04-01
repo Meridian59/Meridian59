@@ -499,8 +499,9 @@ void ChangeObject(object_node *new_obj, BYTE translation, BYTE effect, Animate *
       r->obj.overlays = &r->obj.normal_overlays;
 
       // If object was user's selected target, and target became invisible, clear selection.
-      if(GetUserTargetID() == r->obj.id && (GetDrawingEffect(r->obj.flags) == OF_INVISIBLE))
-	 SetUserTargetID(INVALID_ID);
+      if(GetUserTargetID() == r->obj.id
+            && (r->obj.drawingtype == DRAWFX_INVISIBLE))
+         SetUserTargetID(INVALID_ID);
 
       // Object may have changed its effects such as OF_HANGING.
       RoomObjectSetHeight(r);

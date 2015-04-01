@@ -36,7 +36,7 @@ classvars:
 properties:
 
    % Placed here so we can change it when locked.
-   viObject_flags = CONTAINER_YES
+   viObject_flags = OF_CONTAINER
 
    pbLocked = FALSE
    ptClean = $
@@ -48,7 +48,7 @@ messages:
       if bLocked
       {
          pbLocked = TRUE;
-         viObject_Flags = viObject_Flags & ~CONTAINER_YES;
+         viObject_Flags = viObject_Flags & ~OF_CONTAINER;
       }
 
       propagate;
@@ -192,12 +192,12 @@ messages:
 
       if pbLocked
       {
-         viObject_Flags = viObject_Flags & ~CONTAINER_YES;
+         viObject_Flags = viObject_Flags & ~OF_CONTAINER;
       }
 
       if NOT pbLocked
       {
-         viObject_Flags = viObject_Flags | CONTAINER_YES;
+         viObject_Flags = viObject_Flags | OF_CONTAINER;
       }
       
       Send(poOwner,@SomethingChanged,#what=self);

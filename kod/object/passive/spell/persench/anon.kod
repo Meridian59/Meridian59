@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Anonymity is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   anonymity_start = "Your features fade, and you begin to feel indistinct."
+   anonymity_stop  = "You suddenly feel more like yourself again."
+   anonymity_already_enchanted = "You already have %s%s."
+
+   anonymity_name_rsc = "anonymity"
+   anonymity_icon_rsc = ianonymo.bgf
+   anonymity_desc_rsc = \
+      "Makes you indistinct, and unrecognizable to all but those who you'd "
+      "like to know its you.  Note that Shal'ille can not punish "
+      "transgressors against you when you are anonymous.  "
+      "Requires two rainbow ferns and one firesand to cast."
+
+   anonymity_sound = ranonym.wav
+
+classvars:
+
+   vrName = anonymity_name_rsc
+   vrIcon = anonymity_icon_rsc
+   vrDesc = anonymity_desc_rsc
+
+   vrAlreadyEnchanted = anonymity_already_enchanted
+   vrEnchantment_On = anonymity_start
+   vrEnchantment_Off = anonymity_stop
+   vrSucceed = anonymity_start
+
+   viSpell_num = SID_ANONYMITY
+   viSchool = SS_RIIJA
+   viSpell_level = 1
+
+   viMana = 15
+   viSpellExertion = 1
+   viChance_To_Increase = 40
+   viMeditate_ratio = 20
+   viCast_time = 5000
+
+   viFlash = FLASH_GOOD_SELF
+   vrSucceed_wav = anonymity_sound
+
+   vbCanCastOnOthers = FALSE
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RainbowFern,2],plReagents);
+      plReagents = Cons([&FireSand,1],plReagents);
+
+      return;
+   }
+
+   GetStateValue(iSpellpower=$,who=$,target=$)
+   {
+      Post(target,@ResetPlayerFlagList);
+
+      return 1;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
+
+      return;
+   }
+
+   EndEnchantment(who=$,state=0,report=TRUE)
+   {
+      local oRoom;
+      %% Just in case something snuck by
+
+      Send(who,@MsgSendUser,#message_rsc=anonymity_stop);
+      Post(who,@ResetPlayerFlagList);
+
+      oRoom = Send(who,@GetOwner);
+      if oRoom <> $
+      {
+         post(oRoom,@SomethingChanged,#what=who);
+      }
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % Spell lasts 1 to 10 minutes.
+      iDuration = ((iSpellPower / 10) + 1) * 60000;
+
+      return iDuration;
+   }
+
+   GetPotionClass()
+   {
+      return &AnonymityPotion;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

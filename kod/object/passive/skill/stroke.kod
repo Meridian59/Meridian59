@@ -58,10 +58,6 @@ classvars:
    viSkill_num = SKID_DEFAULT
    viSkill_Exertion = 2
 
-   viHit_Factor = 100
-   viDamage_Factor = 100
-   viRange_Factor = 0
-
    vbAutomatic = FALSE
 
    viMaxProficiencyDamage = 5     % What's the max damage the proficiency can add for this stroke?
@@ -193,11 +189,9 @@ messages:
    }
 
    GetRange(weapon_used = $)
-   "Each weapon stroke checks the weapon for it's natural range, and then"
-   "affects it depending on the stroke.  Default:  viRangeFactor = 0, meaning"
-   "the weapon's raw range is used."
+   "May be tuned later on if we expand on the stroke system."
    {
-      return send(weapon_used,@getrange) + viRange_Factor;
+      return send(weapon_used,@getrange);
    }
 
    FindDamage(weapon_used=$, who=$, victim=$)
@@ -208,12 +202,12 @@ messages:
       % base weapon damage
       damage = send(weapon_used,@GetDamage,#who=who,#target=victim);
       
-      % put in the individual skills factor
-      damage = (damage*viDamage_factor)/100;
+      % convert to high precision
+      damage = damage*100;
       
       damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=weapon_used);
 
-      return bound(damage,1,$);
+      return bound(damage,0,$);
    }
 
    SendMissMessageToAttacker(who=$,victim=$,weapon_used = $,color_rsc = $,bText = TRUE)
@@ -332,7 +326,7 @@ messages:
    }
 
    DamageFactors(damage=0, who=$, weapon_used = $)
-   "Different skills/strokes are affected by strength differently."
+   "Different skills/strokes are affected by stats differently."
    {
       local iDamage, stat, weapProf, profAbility, bonusPercentage;
 
@@ -348,13 +342,16 @@ messages:
          profAbility = send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1;
       }
 
-      % Add a portion of the proficiency damage based on skill level.
-      iDamage = iDamage + profAbility * viMaxProficiencyDamage / 100;
+      % Add a portion of the proficiency damage based on skill level. 
+      % Proficiency damage is converted to high precision.
+      iDamage = iDamage + profAbility * viMaxProficiencyDamage;
       
-      % Get the relevant amount of primary stat for our proficiency. This will be our base bonus percentage.
+      % Get the relevant amount of primary stat for our proficiency. This will 
+      % be our base bonus percentage.
       stat = send(weapProf,@GetRequisiteStat,#who=who) - 25;
       
-      % Scale down the bonus damage percentage if the user is not fully proficient in the weapon.
+      % Scale down the bonus damage percentage if the user is not fully 
+      % proficient in the weapon.
       bonusPercentage = 100 + bound(stat * profAbility / 100, 0, 40);
 
       iDamage = iDamage * bonusPercentage / 100;

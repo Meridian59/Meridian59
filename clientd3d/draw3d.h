@@ -86,8 +86,13 @@ typedef struct {
    int  group;                 /* Bitmap group to use to display object */
    list_type overlays;         /* Bitmaps to draw over object */
    BYTE light;                 /* Strength of sector light at object */
-   int  flags;                 /* Object flags, including moveon type */
-   int  height;                /* Height to draw object (FINENESS units) */   
+   int  flags;                 // Boolean object flags.
+   BYTE drawingtype;          // Object flags for drawing effects (invisibility, lighting type etc.)
+   int  minimapflags;          /* Minimap dot color flags */
+   unsigned int  namecolor;    /* Player name color flags */
+   object_type objecttype;     /* Enum of object type (i.e. outlaw, murderer, NPC) */
+   moveon_type moveontype;     /* MoveOn type of the object */
+   int  height;                /* Height to draw object (FINENESS units) */
    int  center;                /* Screen column of center of object */
    int  depth;                 /* Depth under ground to draw object (FINENESS units) */
    BYTE translation;           /* Color translation type */

@@ -16,7 +16,7 @@ constants:
 
 classvars:
 
-   viObject_flags = MOVEON_NO
+   viMoveOn_type = MOVEON_NO
 
 properties:
 
@@ -67,10 +67,21 @@ messages:
       return piFine_col;
    }
 
+   GetHeightAtObject()
+   {
+      if poOwner <> $
+      {
+         return GetHeight(Send(poOwner,@GetRoomData),piRow,piCol,
+                     piFine_row,piFine_col);
+      }
+
+      return 0;
+   }
+
    ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,
    new_finecol = $)
    {
-      local iRowWe,iColWe,iRowDest,iColDest,
+      local iRowWe,iColWe,iRowDest,iColDest,iFlags,
             iRowWhat,iColWhat,iRowFineWhat,iColFineWhat,iDold,iDnew;
 
       % Get coordinates of what.
@@ -80,6 +91,12 @@ messages:
       % Sanity check on the "big" values which can be $.
       if new_row = $ OR new_col = $
          OR piRow = $ OR piCol = $
+      {
+         propagate;
+      }
+
+      iFlags = Send(self,@GetMoveOnType);
+      if (iFlags = MOVEON_YES)
       {
          propagate;
       }
@@ -383,7 +400,7 @@ messages:
                                  fine_col = FINENESS_HALF)
    "Computes squared distance to (row,col)"
    {
-      local iRow, iCol, iRow_diff, iCol_diff;
+      local iRow, iCol, iRow_diff, iCol_diff, iResult;
 
       % Sanity check, big row/col can be $.
       if row = $ OR col = $ OR piRow = $ OR piCol = $
@@ -401,7 +418,13 @@ messages:
       iRow_diff = iRow - row;
       iCol_diff = iCol - col;
 
-      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+      iResult = (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
    }
 
    SqFineDistToVision(what = $)
@@ -409,7 +432,7 @@ messages:
    "monster vision check. Returns squared fine units, divide by "
    "FINENESS_SQUARED to compare to squared row/col units."
    {
-      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff;
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iResult;
 
       % Scale to fine.
       iRow = piRow * FINENESS + piFine_row;
@@ -421,7 +444,69 @@ messages:
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
 
-      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+      iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff;
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
+   }
+
+   SquaredFineDistanceTo3D(what=$)
+   {
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iHeight_diff,
+      iResult;
+
+      % Scale to fine.
+      iRow = piRow * FINENESS + piFine_row;
+      iCol = piCol * FINENESS + piFine_col;
+      iWhatRow = Send(what,@GetRow) * FINENESS + Send(what,@GetFineRow);
+      iWhatCol = Send(what,@GetCol) * FINENESS + Send(what,@GetFineCol);
+
+      % Deltas.
+      iRow_diff = iRow - iWhatRow;
+      iCol_diff = iCol - iWhatCol;
+      iHeight_diff = (Send(self,@GetHeightAtObject)
+                           - Send(what,@GetHeightAtObject)) * 16;
+
+      iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
+                  + iHeight_diff * iHeight_diff;
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
+   }
+
+   SquaredFineDistanceToLocation3D(row = $,col = $,fine_row = FINENESS_HALF,
+                                 fine_col = FINENESS_HALF)
+   {
+      local iRow, iCol, iWhatRow, iWhatCol, iRow_diff, iCol_diff, iHeight_diff,
+      iResult;
+
+      % Scale to fine
+      iRow = piRow * FINENESS + piFine_row;
+      iCol = piCol * FINENESS + piFine_col;
+      iWhatRow = (row * FINENESS) + fine_row;
+      iWhatCol = (col * FINENESS) + fine_col;
+
+      % Deltas.
+      iRow_diff = iRow - iWhatRow;
+      iCol_diff = iCol - iWhatCol;
+      iHeight_diff = (Send(self,@GetHeightAtObject)
+                           - GetHeight(Send(poOwner,@GetRoomData),row,col,
+                                    fine_row,fine_col)) * 16;
+
+      iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
+                  + iHeight_diff * iHeight_diff;
+      if iResult < 0
+      {
+         iResult = MAX_INT;
+      }
+
+      return iResult;
    }
 
 end

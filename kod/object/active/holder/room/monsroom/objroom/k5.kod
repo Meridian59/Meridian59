@@ -56,7 +56,7 @@ properties:
    piBrambleDamage = 20    % Maximum damage the brambles do.
    piBrambleHits = 100     % Number of hit points the brambles have.
    poShrine = $
-   
+
 messages:
 
    Constructed()
@@ -64,11 +64,11 @@ messages:
       plMonsters = [ [&GroundwormQueen, 100] ];
 
       plGenerators = [ [10, 15], [19, 12], [23, 23], [4, 24], [8, 50],
-		      [11, 30], [25, 37], [37, 28], [36, 43], [41, 48], 
-		      [49, 34], [45, 22], [14, 41], [19, 30], [28, 50], [39, 37] ];
+                     [11, 30], [25, 37], [37, 28], [36, 43], [41, 48], 
+                     [49, 34], [45, 22], [14, 41], [19, 30], [28, 49], [39, 37] ];
 
-      poShrine = create(&shrine,#shrine_num=SHRINE_BRAMBLE);
-      send(self,@newhold,#what=poShrine,#new_row=43,#new_col=32,#fine_col=32);
+      poShrine = Create(&shrine,#shrine_num=SHRINE_BRAMBLE);
+      Send(self,@NewHold,#what=poShrine,#new_row=43,#new_col=32,#fine_col=32);
 
       % Fill this list with all the brambles we want to create.
       plDeadBrambles = $;
@@ -103,8 +103,8 @@ messages:
    CreateObjectGeneration()
    {
       plObject_gen = $;
-
       plObject_gen = Cons([ &Apple, GEN_ONE, 1, 33, 32 ],plObject_gen);
+
       propagate;
    }
 
@@ -116,42 +116,49 @@ messages:
       {
          Send(self,@CreateBramble,#lLocation=lLocation);
       }
+
       propagate;
    }
 
    ObjectGenTimer()
    {
       local lLocation;
-   
+
       Send(self,@CreateBramble);
-         
+
       propagate;
    }
 
    CreateBramble(lLocation=$)
    {
       local lLoc, oBramble;
-   
-      if lLocation=$
+
+      if lLocation = $
       {
-         if length(plDeadBrambles) > 0
+         if Length(plDeadBrambles) > 0
          {
-            lLoc = nth(plDeadBrambles,random(1,length(plDeadBrambles)));
-         } else {
+            lLoc = Nth(plDeadBrambles,Random(1,Length(plDeadBrambles)));
+         }
+         else
+         {
             return;
          }
-      } else {
+      }
+      else
+      {
          lLoc = lLocation;
       }
 
       plDeadBrambles = DelListElem(plDeadBrambles,lLoc);
-      % No duration when creating the Bramble means it doesn't go away, it isn't DestroyDisposable'd.
-      oBramble = Create(&Brambles,#MaxDamage=piBrambleDamage,#HitPoints=piBrambleHits); 
-      Send(self,@NewHold,#what=oBramble,#New_row=nth(lLoc,1),#New_col=nth(lLoc,2));
+      % No duration when creating the Bramble means it doesn't
+      % go away, it isn't DestroyDisposable'd.
+      oBramble = Create(&Brambles,#MaxDamage=piBrambleDamage,
+                        #HitPoints=piBrambleHits); 
+      Send(self,@NewHold,#what=oBramble,#New_row=nth(lLoc,1),
+            #New_col=nth(lLoc,2));
 
       return;
    }
-      
 
    BrambleKilled(row=$,col=$)
    {
@@ -159,6 +166,7 @@ messages:
 
       lLocation = Cons(row,Cons(col,[]));
       plDeadBrambles = Cons(lLocation,plDeadBrambles);
+
       return;
    }
 
@@ -167,10 +175,12 @@ messages:
       if (dir = LEAVE_WEST)
       {
          Send(SYS,@UtilGoNearSquare,#what=what,
-              #where=Send(SYS,@FindRoomByNum,#num=RID_BADLAND1),
-              #new_row=3,#new_col=80,#new_angle=send(what,@getangle));
+               #where=Send(SYS,@FindRoomByNum,#num=RID_BADLAND1),
+               #new_row=3,#new_col=80,#new_angle=send(what,@GetAngle));
+
          return;
       }
+
       propagate;
    }
 
@@ -178,18 +188,19 @@ messages:
    {
       if isClass(what,&Item)
       {
-         post(self,@PostShrineCheckItem,#what=what);  
-         %%Have to post this to handle numberitems and SYS can't handle posts.
+         Post(self,@PostShrineCheckItem,#what=what);  
+         % Have to post this to handle numberitems and SYS can't handle posts.
       }
+
       propagate;
    }
 
    PostShrineCheckItem(what=$)
    {
-      send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
+      Send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
+
       return;
    }
-                                                             
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

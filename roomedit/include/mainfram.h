@@ -33,11 +33,11 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_OPENSAVE_H
+#ifndef OWL_OPENSAVE_H
 	#include <owl\opensave.h>
 #endif
 
-#ifndef __OWL_STATUSBA_H
+#ifndef OWL_STATUSBA_H
 	#include <owl\statusba.h>
 #endif
 
@@ -65,7 +65,7 @@ public:
 	BOOL controlBarOn;	// Control bar shown ?
 	BOOL statusBarOn;	// Status bar shown ?
 
-	TMainFrame (const char far *title, TModule* module = 0);
+	TMainFrame (const char* title, TModule* module = 0);
 	virtual ~TMainFrame ();
 
 	void EditLevel (char *levelName, BOOL newLevel);
@@ -81,13 +81,13 @@ public:
 //{{TMainFrameVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow ();
-	virtual BOOL PreProcessMsg (MSG& msg);
+	virtual bool PreProcessMsg (MSG& msg);
 //{{TMainFrameVIRTUAL_END}}
 
 //{{TMainFrameRSP_TBL_BEGIN}}
 protected:
 	void EvTimer (UINT timerId);
-	void EvActivate (UINT active, BOOL minimized, HWND hWndOther);
+	void EvActivate (UINT active, bool minimized, HWND hWndOther);
 //{{TMainFrameRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TMainFrame);
 };    //{{TMainFrame}}

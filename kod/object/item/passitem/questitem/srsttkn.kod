@@ -1,0 +1,151 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StatsResetToken is QuestItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   StatsResetToken_name_rsc = "ancient trinket"
+   StatsResetToken_icon_rsc = srtoken.bgf
+   StatsResetToken_desc_rsc = \
+      "This is a Trinket of the Elders, said to be handed to them by the Gods. "
+      "Legend holds that these Ancient Trinkets contain the power to change "
+	  "the very structure of a Mortal. Surely the Elders would greatly "
+	  "reward anyone who returns this Trinket to them."
+      
+   StatsResetToken_desc_append1 = \
+      "\n\nThis token will expire in "
+   StatsResetToken_desc_append2= \
+      " Meridian years."
+      
+   StatsResetToken_desc_noTrade = \
+      "\n\nNo Trade"
+
+classvars:
+
+   vrName = StatsResetToken_name_rsc
+   vrIcon = StatsResetToken_icon_rsc
+   vrDesc = StatsResetToken_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+   
+   viValue_average = 0
+   viWeight = 0
+   viBulk = 0
+
+properties:
+
+   pbTemporary
+   piGameYearsRemaining
+   pbTradeable
+
+messages:
+
+   Constructor(temporary=TRUE,lifetime=-1,tradeable=FALSE)
+   {
+      pbTradeable = tradeable;
+      pbTemporary = temporary;
+      if lifetime <> -1
+      {
+         piGameYearsRemaining = lifetime;
+      }
+      else
+      {
+         piGameYearsRemaining = Send(Send(Sys,@GetSettings),
+            @GetStatResetTokenLife);
+      }
+      
+      propagate;
+   }
+
+   reqNewOwner(what = $)
+   {
+      if IsClass(Send(self,@GetOwner),&Room)
+      {
+         return TRUE;
+      }
+      
+      if IsClass(what,&MarionElder)
+         OR IsClass(what,&JasperElder)
+         OR IsClass(what,&HazarElder)
+      {
+         return TRUE;
+      }
+      
+      return pbTradeable;
+   }
+   
+   CanWeaken()
+   { 
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanEnchant()
+   {
+      return FALSE;
+   }
+   
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+   
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+   
+   NewYear()
+   {
+      if pbTemporary
+      {
+         piGameYearsRemaining = piGameYearsRemaining - 1;
+      
+         if piGameYearsRemaining <= 0
+         {
+            Send(self,@Delete);
+         }
+      }
+   
+      return;
+   }
+
+   AppendDesc()
+   {
+      if pbTemporary
+      {
+         AppendTempString(StatsResetToken_desc_append1);
+         AppendTempString(piGameYearsRemaining);
+         AppendTempString(StatsResetToken_desc_append2);
+      }
+      
+      if NOT pbTradeable
+      {
+         AppendTempString(StatsResetToken_desc_noTrade);
+      }
+      
+      propagate;
+   }
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

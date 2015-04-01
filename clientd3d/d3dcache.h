@@ -209,6 +209,7 @@ typedef struct d3d_render_chunk_new
 	Bool				(*pMaterialFctn)(struct d3d_render_chunk_new *pChunk);
 	d3d_render_cache	*pRenderCache;
 	u_int				flags;
+	BYTE				drawingtype;
 	u_int				curIndex;
 	u_int				startIndex;
 	u_int				numIndices;
@@ -246,6 +247,7 @@ typedef struct d3d_render_packet_new
 	int					effect;
 	int					numStages;
 	u_int				flags;
+	BYTE				drawingtype;
 	u_int				curChunk;
 	u_int				size;
 	d3d_render_chunk_new	renderChunks[PACKET_SIZE];

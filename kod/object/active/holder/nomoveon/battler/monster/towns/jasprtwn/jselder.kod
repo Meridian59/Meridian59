@@ -35,6 +35,8 @@ resources:
       "~k%s%s tells you, \"Most material goods are of little consequence "
       "to an old man like me.~n~k\""
 
+	JsEl_stat_window_trigger = "change stats"
+   
 classvars:
 
    viDefinite = ARTICLE_NONE
@@ -54,6 +56,20 @@ classvars:
    vrUnwanted_give = JasperElder_unwanted_give
 
 messages:
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      if StringEqual(string,JsEl_stat_window_trigger)
+      {
+         if Send(what,@GetBaseMaxHealth) <= Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+         {
+               Send(what, @SendStatChange);
+         }
+      }
+
+      propagate;
+   }
 
    AffectMood(what=$,why=$)
    {
@@ -81,6 +97,8 @@ messages:
    Constructor()
    "We start a permanent quest for learning a spell" 
    {
+      plWantedItems = [&StatsResetToken];
+      
       Send(self,@InitPermQuest);
 
       propagate;
@@ -134,5 +152,22 @@ messages:
       propagate;
    }
 
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+   
+   GotWantedItem(who=$, obj = 0)
+   {
+      local oPlayerObj, i;
+
+      if IsClass(obj,&StatsResetToken)
+      {
+         Send(who,@SendStatChange);
+      }
+
+      return FALSE;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

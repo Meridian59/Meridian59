@@ -68,6 +68,10 @@ classvars:
    viLevel = 200
    viDifficulty = 9
    viVisionDistance = 28
+
+   % Attack range of 448, or 7 row/col.
+   viAttackRange = 448
+
    viKarma = -100
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE \
                         | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP \
@@ -83,11 +87,13 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
 
    piSpellPower = 99
    piMax_mana = 40
-   piSpellRange = 100
+
+   % piSpellRange in FINENESS units. 10 row/cols.
+   piSpellRange = 640
 
 messages:
 
@@ -104,12 +110,6 @@ messages:
                        [SID_ENFEEBLE,8,80], [SID_FORGET,5,100] ];
 
       propagate;
-   }
-
-   % Dark Angels have a range with their fireballs.
-   GetAttackRange()
-   {
-      return 7;
    }
 
    MonsterAttack(what=$)
@@ -252,11 +252,6 @@ messages:
    Delete()
    {
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
 
    CanMorphTo()

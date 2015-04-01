@@ -82,7 +82,11 @@ TTipControlBar::TTipControlBar (TToolTip& tip, TWindow* parent, TTileDirection d
 	SetHintMode(TGadgetWindow::EnterHints);
 }
 
+#if OWLVersion > OWLVERBC502
+void TTipControlBar::EvMouseMove (UINT modKeys, const TPoint& point)
+#else
 void TTipControlBar::EvMouseMove (UINT modKeys, TPoint& point)
+#endif
 {
 	if (!Capture && !GadgetFromPoint (point))
 	{
@@ -97,7 +101,11 @@ void TTipControlBar::EvMouseMove (UINT modKeys, TPoint& point)
 	bEnableHints = FALSE;
 }
 
+#if OWLVersion > OWLVERBC502
+void TTipControlBar::EvLButtonDown (UINT modKeys, const TPoint& point)
+#else
 void TTipControlBar::EvLButtonDown (UINT modKeys, TPoint& point)
+#endif
 {
 	// hide the tip window if mouse-button pressed
 	tooltip.HideTip ();
@@ -105,8 +113,11 @@ void TTipControlBar::EvLButtonDown (UINT modKeys, TPoint& point)
 	TControlBar::EvLButtonDown (modKeys, point);
 }
 
-
+#if OWLVersion > OWLVERBC502
+void TTipControlBar::EvLButtonUp (UINT modKeys, const TPoint& point)
+#else
 void TTipControlBar::EvLButtonUp (UINT modKeys, TPoint& point)
+#endif
 {
 	// Hide hint text
 	ptStatusBar->SetHintText(NULL);
@@ -165,11 +176,12 @@ void TTipStatusBar::SetHintText (const char *lpszText)
 	if (lpszText != NULL)
 	{
 		static char	buf[128];
+		int n;
 
 		lstrcpy (buf, lpszText);
 
 		// locate the tooltip text
-		for (int n = 0; buf[n] && buf[n] != '\n'; n++) ;
+		for (n = 0; buf[n] && buf[n] != '\n'; n++) ;
 
 		if (buf[n])
 		{
@@ -267,8 +279,11 @@ void TTipStatusBar::DrawHintText (const char *lpszText)
 	dc.DrawText(lpszText, -1, rc1, DT_LEFT);
 }
 
-
+#if OWLVersion > OWLVERBC502
+void TTipStatusBar::EvMouseMove (UINT modKeys, const TPoint& point)
+#else
 void TTipStatusBar::EvMouseMove (UINT modKeys, TPoint& point)
+#endif
 {
 	if (bShowTips)
 	{
@@ -290,7 +305,11 @@ void TTipStatusBar::EvMouseMove (UINT modKeys, TPoint& point)
 	}
 }
 
+#if OWLVersion > OWLVERBC502
+void TTipStatusBar::EvLButtonDown (UINT modKeys, const TPoint& point)
+#else
 void TTipStatusBar::EvLButtonDown (UINT modKeys, TPoint& point)
+#endif
 {
 	if (bShowTips)
 	{
@@ -347,11 +366,7 @@ TToolTip::TToolTip (Tip::Style _style, TFont* _font) : TWindow (NULL, "")
 	uiTimer			= NULL;
 	bEnabled		= TRUE;
 
-#ifdef __WIN32__
 	::hookKbd		= SetWindowsHookEx (WH_KEYBOARD, KbdProc, NULL, GetCurrentThreadId ());
-#else
-	::hookKbd		= SetWindowsHookEx (WH_KEYBOARD, KbdProc, GetApplication ()->GetInstance (), GetCurrentTask ());
-#endif
 	::ptTooltip		= this;
 
 	Create ();
@@ -381,7 +396,7 @@ LPSTR TToolTip::GetClassName ()
 	return "WinDEUTooltip";
 }
 
-void TToolTip::Paint (TDC &dc, BOOL, TRect &)
+void TToolTip::Paint (TDC &dc, bool, TRect &)
 {
 	char	szText[50];
 	TRect	client;
@@ -434,7 +449,7 @@ void TToolTip::Paint (TDC &dc, BOOL, TRect &)
 	dc.DrawText (szText, -1, client, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 }
 
-void TToolTip::SetCaption (const char far* title)
+void TToolTip::SetCaption (const char* title)
 {
 	static DWORD dwTickCount = 0;
 
@@ -445,7 +460,7 @@ void TToolTip::SetCaption (const char far* title)
 	{
 		KillTipTimer ();
 
-		Show (SW_HIDE);
+		ShowWindow (SW_HIDE);
 
 		dwTickCount = GetTickCount ();
 	}
@@ -455,7 +470,7 @@ void TToolTip::SetCaption (const char far* title)
 
 		// work out the extent of the text
 		{
-			TClientDC	dc (HWindow);
+			TClientDC	dc (Handle);
 
 			dc.SelectObject (*font);
 			sizeText = dc.GetTextExtent (title, lstrlen (title));
@@ -463,7 +478,7 @@ void TToolTip::SetCaption (const char far* title)
 			sizeText.cx	+= 5;
 			sizeText.cy	+= 4;
 
-			Show (SW_HIDE);
+			ShowWindow (SW_HIDE);
 		}
 
 		// create the timer - this will send a WM_TIMER message
@@ -545,7 +560,7 @@ void TToolTip::ShowNow ()
 	PositionTip ();
 
 	// show the tip window
-	Show (SW_SHOWNA);
+	ShowWindow (SW_SHOWNA);
 	UpdateWindow ();
 }
 

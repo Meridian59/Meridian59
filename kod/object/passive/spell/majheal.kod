@@ -99,16 +99,16 @@ messages:
 
       oTarget = First(lTargets);
       
-      iHeal  = random(7,13) + iSpellPower/5 + Send(oTarget,@GetKarma)/5;
-      iheal = bound(iHeal,0,50);
+      iHeal  = random(700,1300) + iSpellPower*20 + Send(oTarget,@GetKarma)*20;
+      iheal = bound(iHeal,0,5000);
 
       if who <> oTarget 
       {
          Send(who,@MsgSendUser,#message_rsc=majorheal_cast_on_other,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal);
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal/100);
               
          Send(oTarget,@MsgSendUser,#message_rsc=majorheal_cast_rsc,
-              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal);
+              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal/100);
          
          % Nudge the karma of the caster towards that of the healed.
          send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
@@ -118,10 +118,10 @@ messages:
 
       else
       {
-         Send(who,@MsgSendUser,#message_rsc=majorheal_cast_self,#parm1=iHeal);
+         Send(who,@MsgSendUser,#message_rsc=majorheal_cast_self,#parm1=iHeal/100);
       }
       
-      Send(oTarget,@GainHealthNormal,#amount=iHeal);
+      Send(oTarget,@GainHealthNormal,#amount=iHeal,#precision=TRUE);
 
       propagate;
    }

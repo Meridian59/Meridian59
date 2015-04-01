@@ -409,11 +409,11 @@ messages:
    {
       local iNewFlags;
 
-      iNewFlags = viObject_flags;
+      iNewFlags = viObject_flags | piDrawEffectFlag;
 
       if piGlowing
       {
-         iNewFlags = iNewFlags | FLICKERING_YES;
+         iNewFlags = iNewFlags | OF_FLICKERING;
       }
 
       return iNewFlags;

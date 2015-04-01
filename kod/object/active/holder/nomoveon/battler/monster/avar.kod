@@ -70,6 +70,10 @@ classvars:
    viLevel = 120
    viDifficulty = 7
    viVisionDistance = 16
+
+   % Attack range of 160, or 2.5 row/col.
+   viAttackRange = 160
+
    viKarma = 80
    viWimpy = 8
    viCashmin = -1800
@@ -288,10 +292,11 @@ messages:
       oBody = $;
       if vrDead_icon <> $
       {
-         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
+         oBody = Create(&DeadBody,
+                        #victim=self,
+                        #killer=killer,
                         #BodyTranslation=Send(self,@GetClan),
-                        #playername=Send(killer,@GetTrueName),
-                        #monstername=vrName,#drawfx=viDead_drawfx);
+                        #drawfx=viDead_drawfx);
       }
 
       return oBody;

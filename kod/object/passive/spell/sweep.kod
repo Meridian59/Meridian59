@@ -49,7 +49,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 1
    viMana = 8
-   viSpellExertion = 8
+   viSpellExertion = 1
    viCast_time = 10000
 
    viChance_To_Increase = 20
@@ -252,9 +252,8 @@ messages:
       Post(oRoom,@SomeoneSaid,#what=who,#string=rRant,#type=SAY_MESSAGE,
            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
-      propagate;
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

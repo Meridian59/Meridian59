@@ -39,7 +39,7 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 5
    viMana = 30
-   viSpellExertion = 20
+   viSpellExertion = 3
    viChance_to_increase = 30
    viCast_time = 15000
 

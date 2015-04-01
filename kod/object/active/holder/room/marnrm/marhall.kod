@@ -61,7 +61,7 @@ resources:
         "walk directly from one territory to the other without passing through other "
         "territories.  A special exception can be found below.\n"
         "\n"
-        "Once you stake the claim and place the flag, it will take ten minutes or so "
+        "Once you stake the claim and place the flag, it will take eight minutes or so "
         "for the information to reach the faction leaders via scouts and the power "
         "will shift.  Unclaimed territories may have soldiers defending it, so be "
         "wary, it is best to eliminate the threat before proceeding with claiming "
@@ -69,7 +69,7 @@ resources:
         "flagpole from being taken.\n"
         "\n"
         "Should the soldier leave the area or be killed, the claim will be considered "
-        "failed.  If failure occurs, it will be at least eight hours before an "
+        "failed.  If failure occurs, it will be thirty minutes before an "
         "attempt can be made again."
         "¶"
         "CITIES AND FACTIONS\n"
@@ -141,7 +141,6 @@ properties:
 
 messages:
 
-
    CreateStandardExits()
    {
       plExits = $;
@@ -158,32 +157,32 @@ messages:
       local oBook, oNews;
 
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=12,
-           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+            #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,
-           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+            #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=13,
-           #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+            #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
 
       Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=13,
-           #fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
+            #fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=16,
-           #fine_row=16,#fine_col=0,#new_angle=ANGLE_EAST);
+            #fine_row=16,#fine_col=0,#new_angle=ANGLE_EAST);
       Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=18,
-           #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+            #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
 
       oBook = Create(&BookPedestal,#Name=MarHall_factionflag_book,
                      #text=MarHall_factionflag_text);
       Send(self,@NewHold,#what=oBook,#new_row=3,#new_col=19,
-           #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+            #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
 
       oNews = Create(&Newslink,#nid=NID_TOS_HALL,
-              #name=news_mar_hall,#desc=news_mar_hall_desc);
+                     #name=news_mar_hall,#desc=news_mar_hall_desc);
 
-      Send(self,@NewHold,#what=oNews,#new_row=10,#new_col=3,#fine_row=0,#fine_col=32);
+      Send(self,@NewHold,#what=oNews,#new_row=10,#new_col=3,
+            #fine_row=0,#fine_col=32);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

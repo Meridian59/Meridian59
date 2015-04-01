@@ -26,6 +26,7 @@ static void DrawObjectDoubleTranslate(ObjectRowData *d);
 static void DrawObjectDitherTranslate(ObjectRowData *d);
 static void DrawObjectSecondTranslate(ObjectRowData *d);
 static void DrawObjectDither50Invisible(ObjectRowData *d);
+static void DrawObjectDitherGrey(ObjectRowData *d);
 
 static xlat* pHaloXlat = NULL;
 
@@ -41,11 +42,12 @@ DrawingLoop drawing_loops[NUM_DRAW_EFFECTS] = {
 		DrawObjectDitherTranslate, // 50% dither between two translates
 		DrawObjectDoubleTranslate, // translate once, then twice
 		DrawObjectSecondTranslate, // ignore first translate, use second translate
+		DrawObjectDitherGrey,      // 50% dither invis, 50% greyscale
 		DrawObjectSilhouette,     // solid color index
 };
 
 /************************************************************************/
-#define INVISIBLE_MAGNITUDE 3   // Size of distortion for invisibility effect
+#define INVISIBLE_MAGNITUDE 1   // Size of distortion for invisibility effect
 void DrawObjectInvisible(ObjectRowData *d)
 {
 	BYTE *copy_ptr;
@@ -60,26 +62,8 @@ void DrawObjectInvisible(ObjectRowData *d)
 	xinc = d->xinc;
 	row_bits = d->obj_bits;
 	copy_ptr = start;
-	if (rand() % 2 == 0)
-	{
-		if (d->ysize > 2 * INVISIBLE_MAGNITUDE)
-			if (d->row + INVISIBLE_MAGNITUDE >= d->ysize)
-				copy_ptr -= INVISIBLE_MAGNITUDE * d->xsize;
-			else copy_ptr += INVISIBLE_MAGNITUDE * d->xsize;
-			while (start <= end)
-			{
-				/* Don't draw transparent pixels */
-				index = *(row_bits + (x >> FIX_DECIMAL));
-				if (index != TRANSPARENT_INDEX)
-					*start = *(copy_ptr + INVISIBLE_MAGNITUDE);
-				
-				/* Move to next column of screen */
-				start++;
-				copy_ptr++;
-				x += xinc;
-			}
-	}
-	else
+
+	if (rand() % 8 == 0)
 	{
 		if (d->ysize > 2 * INVISIBLE_MAGNITUDE)
 			if (d->row <= INVISIBLE_MAGNITUDE)
@@ -98,6 +82,25 @@ void DrawObjectInvisible(ObjectRowData *d)
 				x += xinc;
 			}
 	}
+	else
+	{
+		if (d->ysize > 2 * INVISIBLE_MAGNITUDE)
+			if (d->row + INVISIBLE_MAGNITUDE >= d->ysize)
+				copy_ptr -= INVISIBLE_MAGNITUDE * d->xsize;
+			else copy_ptr += INVISIBLE_MAGNITUDE * d->xsize;
+			while (start <= end)
+			{
+				/* Don't draw transparent pixels */
+				index = *(row_bits + (x >> FIX_DECIMAL));
+				if (index != TRANSPARENT_INDEX)
+					*start = *(copy_ptr + INVISIBLE_MAGNITUDE);
+				
+				/* Move to next column of screen */
+				start++;
+				copy_ptr++;
+				x += xinc;
+			}
+	}
 }
 /************************************************************************/
 void DrawObjectTranslucent(ObjectRowData *d)
@@ -108,7 +111,7 @@ void DrawObjectTranslucent(ObjectRowData *d)
 
 	bixlat* pBiXlat = &_blend75;
 	BYTE index;
-	int effect;
+	BYTE effect;
 	register BYTE *start, *end;
 	int x, xinc;
 	BYTE *palette, *row_bits;
@@ -119,13 +122,13 @@ void DrawObjectTranslucent(ObjectRowData *d)
 	xinc = d->xinc;
 	row_bits = d->obj_bits;
 	palette = d->palette;
-	effect = GetDrawingEffect(d->flags);// this is a macro
+	effect = d->drawingtype;
 
 	switch( effect ) {
-		case OF_TRANSLUCENT25:
+		case DRAWFX_TRANSLUCENT25:
 			pBiXlat = &_blend25;
 			break;
-		case OF_TRANSLUCENT50:
+		case DRAWFX_TRANSLUCENT50:
 			pBiXlat = &_blend50;
 			break;
 		default:
@@ -161,6 +164,41 @@ void DrawObjectDither50Invisible(ObjectRowData *d)
 	if (pXlat == NULL)
 	{
 		//debug(("DrawObjectDither50Invisible got unknown translation type %d\n", d->translation));
+		return;
+	}
+	
+	start = d->start_ptr;
+	end = d->end_ptr;
+	x = d->x;
+	xinc = d->xinc;
+	row_bits = d->obj_bits;
+	palette = d->palette;
+	
+	while (start <= end)
+	{
+		/* Don't draw transparent pixels or half of remaining pixels */
+		index = *(row_bits + (x >> FIX_DECIMAL));
+		if (index != TRANSPARENT_INDEX)
+			if ((d->row ^ (int)start) & 1)
+				*start = palette[fastXLAT(index, pXlat)];
+			
+			/* Move to next column of screen */
+			start++;
+			x += xinc;
+	}
+}
+/************************************************************************/
+void DrawObjectDitherGrey(ObjectRowData *d)
+{
+	xlat *pXlat = FindStandardXlat(XLAT_FILTERWHITE90);
+	BYTE index;
+	BYTE *start, *end;
+	int x, xinc;
+	BYTE *palette, *row_bits;
+	
+	if (pXlat == NULL)
+	{
+		//debug(("DrawObjectDitherGrey got unknown translation type %d\n", XLAT_FILTERWHITE90));
 		return;
 	}
 	

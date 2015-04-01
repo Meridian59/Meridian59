@@ -73,9 +73,6 @@ classvars:
 
 properties:
 
-   % Damage radius for ice nova
-   piRange = 6
-
    piSpeed = 9
 
    piDamageMin = 14
@@ -102,41 +99,6 @@ messages:
       AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 2);  % 40ms between animations
 
       return;
-   }
-
-   GetTargets(who=$,lTargets=$)
-   "This returns a list of valid targets in range."
-   {
-      local lFinalTargets, oRoom, i, each_obj, iRange_squared,
-      iRowDiff, iColDiff, iRowCenter, iColCenter, lActive;
-
-      lFinalTargets = $;
-
-      iRange_squared = piRange * piRange;
-      iRowCenter = Send(who,@GetRow);
-      iColCenter = Send(who,@GetCol);
-      oRoom = Send(who,@GetOwner);
-      lActive = Send(oRoom,@GetplActive);
-
-      for i in lActive
-      {
-         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-         if each_obj <> who
-            AND IsClass(each_obj,&Battler)
-         {
-            iRowDiff = iRowCenter - Send(each_obj,@GetRow);
-            iColDiff = iColCenter - Send(each_obj,@GetCol);
-            if (iRowDiff*iRowDiff + iColDiff*iColDiff) < iRange_squared
-               AND NOT (IsClass(oRoom,&GuildHall)
-                     AND Send(oRoom,@InFoyer,#who=each_obj)
-                        <> Send(oRoom,@InFoyer,#who=who))
-            {
-               lFinalTargets = Cons(each_obj,lFinalTargets);
-            }
-         }
-      }
-
-      return lFinalTargets;
    }
 
    CastSpell(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)

@@ -2109,6 +2109,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case RECYCLEUSER : strcpy(c_name, "RecycleUser"); break;
 		case RANDOM : strcpy(c_name, "Random"); break;
 		case RECORDSTAT : strcpy(c_name, "RecordStat"); break;
+		case SETCLASSVAR : strcpy(c_name, "SetClassVar"); break;
 			
 		default : 
 			sprintf(c_name,"Unknown (%i)",max_index);

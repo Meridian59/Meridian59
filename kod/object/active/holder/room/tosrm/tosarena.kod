@@ -781,6 +781,12 @@ messages:
          return;
       }
 
+      % If there's a sandstorm weather effect here, clear it.
+      if Send(self,@CheckRoomFlag,#flag=ROOM_SANDSTORM)
+      {
+         Send(self,@EndSandstorm);
+      }
+
       if bOnGround
       {
          if pbSnowGroundTexture

@@ -55,9 +55,14 @@ resources:
    no_phasing_in_safe_place_msg = "This place of safety is anchored and calm, and you cannot phase out here."
    no_phasing_in_guildhall_msg = "The magical defenses here keep you grounded in reality."
    no_phasing_in_arena_msg = "The unique combat magics in play here prevent you from phasing out."
+   no_phasing_while_specator_msg = \
+      "If you tried to phase while you're already phased, you might explode!"
    
    phase_time_low = "You feel your hold slipping..."
    phase_time_gone = "You're losing your grip on reality!"
+   
+   no_phasing_here_override_msg = \
+      "A mysterious force prevents you from phasing out here."
 
 classvars:
 
@@ -116,6 +121,18 @@ messages:
       if Send(Send(who,@GetOwner),@IsArena)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_in_arena_msg);
+         return FALSE;
+      }
+
+      if Send(Send(who,@GetOwner),@OverridesDeathFunction)
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_phasing_here_override_msg);
+         return FALSE;
+      }
+      
+      if Send(who,@IsInSpectatorMode)
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_phasing_while_specator_msg);
          return FALSE;
       }
       
@@ -553,6 +570,56 @@ messages:
    {
       return FALSE;
    }
- 
+
+   GetStatsDesc(who=$)
+   {
+      ClearTempString();
+
+      if who <> $
+         AND IsClass(who,&User)
+      {
+         Send(self,@CreateStatsDesc,#who=who);
+      }
+
+      return GetTempString();
+   }
+
+   CreateStatsDesc(who=$)
+   {
+      local iDuration, iMinutes, iSeconds;
+
+      % Always returns the remaining time as an integer.
+      iDuration = Send(who,@GetRemainingPhaseTime);
+      if iDuration = $
+      {
+         return;
+      }
+
+      iDuration = iDuration;
+      iDuration = iDuration / 1000;
+      iMinutes = iDuration / 60;
+      iSeconds = iDuration MOD 60;
+
+      AppendTempString("\n\n");
+      AppendTempString("You have ");
+      if iMinutes > 0
+      {
+         AppendTempString(iMinutes);
+         if iMinutes = 1
+         {
+            AppendTempString(" minute and ");
+         }
+         else
+         {
+            AppendTempString(" minutes and ");
+         }
+      }
+
+      AppendTempString(iSeconds);
+      AppendTempString(" seconds of phase time remaining.");
+
+      return GetTempString();
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

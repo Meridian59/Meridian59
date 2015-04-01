@@ -97,7 +97,8 @@ messages:
       if target = who AND (NOT bItemCast)
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-         Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,#parm1=vrName);
+         Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,
+               #parm1=vrName);
 
          return FALSE;
       }
@@ -106,7 +107,8 @@ messages:
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
          Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
-               #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
 
          return FALSE;
       }
@@ -134,7 +136,8 @@ messages:
          }
 
          if Send(target,@GetOwner) <> $
-            AND Send(who,@SquaredDistanceTo,#what=target) > (iTotalRange * iTotalRange)
+            AND Send(who,@SquaredFineDistanceTo3D,#what=target)
+                     > (iTotalRange * iTotalRange)
          {
             if NOT bItemCast
             {
@@ -171,7 +174,7 @@ messages:
          oRoom = Send(who,@GetOwner);
       }
 
-      iDamage = Random(piDamageMin, piDamageMax);
+      iDamage = Random(piDamageMin*100, piDamageMax*100);
 
       if IsClass(who,&Player)
       {
@@ -188,13 +191,13 @@ messages:
             if Send(who,@CheckPlayerFlag,#flag=PFLAG_MANA_FOCUS)
             {
                % Bonus if we have mana focus up.
-               iManaFocus = First(Send(who,@GetEnchantedState,
-                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS)));
+               iManaFocus = Send(who,@GetEnchantedState,
+                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS));
 
                % This takes the spellpower of Mana Focus (iManaFocus), and uses
                %  that to scale our "bonus" damage.
                % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
-               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM);
+               iDamage = iDamage + ((iManaFocus * piManaFocusBonus * 100) / SPELLPOWER_MAXIMUM);
             }
          }
       }
@@ -233,15 +236,16 @@ messages:
 
          if IsClass(self,&Earthquake)
          {
-            iDamage = Send(self,@ComputeDamage,
-                        #who=who,#target=i,#iDamage=iDamage);
-            if iDamage = 0
+            iDamage = Send(self,@ComputeDamage,#who=who,#target=i,
+                           #iDamage=iDamage);
+            if iDamage < 100
             {
                % To prevent spam, we don't consider 0 damage earthquake hits.
                continue;
             }
-            iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
-                           #aspell=Send(self,@GetAttackSpell),#absolute=pbAbsolute);
+            iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,
+                           #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
+                           #absolute=pbAbsolute,#precision=TRUE);
             if iDamage = $
             {
                if IsClass(who,&Room)
@@ -251,8 +255,9 @@ messages:
                }
                else
                {
-                  Send(who,@MsgSendUser,#message_rsc=vrKilled_Someone,#parm1=Send(i,@GetDef),
-                        #parm2=Send(i,@GetName),#parm3=Send(i,@GetHeShe));
+                  Send(who,@MsgSendUser,#message_rsc=vrKilled_Someone,
+                        #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName),
+                        #parm3=Send(i,@GetHeShe));
                }
 
                Send(i,@MsgSendUser,#message_rsc=vrKilled_Self);
@@ -266,7 +271,7 @@ messages:
          {
             iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,
                         #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
-                        #absolute=pbAbsolute);
+                        #absolute=pbAbsolute,#precision=TRUE);
          }
 
          if IsClass(who,&Battler)
@@ -293,8 +298,8 @@ messages:
       local iDamage, iMysticism, iIntellect;
 
       % Get dual stats damage bonus.
-      % These difficult to master attack spells require both high mysticism and high intellect
-      %    to reach their full potential.
+      % These difficult to master attack spells require both high mysticism
+      % and high intellect to reach their full potential.
       iMysticism = Send(who,@GetMysticism);
       iIntellect = Send(who,@GetIntellect);
       iDamage = ((100+bound(((iMysticism+iIntellect)/2)-25,0,40))*damage)/100;
@@ -334,7 +339,7 @@ messages:
       {
          % Apply the spell damage to the caster. Kill them if necessary.
          iFinalDamage = Send(who,@AssessDamage,#what=who,#damage=iDamage,#atype=0,
-                           #aspell=viAttack_spell,#report=TRUE);
+                           #aspell=viAttack_spell,#report=TRUE,#precision=TRUE);
 
          if iFinalDamage = $
          {
@@ -344,7 +349,8 @@ messages:
          else
          {
             Send(who,@MsgSendUser,#message_rsc=vrCast);
-            Send(who,@AssessHit,#what=who,#damage=iFinalDamage,#use_weapon=self);
+            Send(who,@AssessHit,#what=who,#damage=iFinalDamage,
+                  #use_weapon=self);
          }
       }
 

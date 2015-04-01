@@ -62,7 +62,8 @@ classvars:
 
 properties:
 
-   piDrawfx = DRAWFX_TRANSLUCENT_50 | FLICKERING_YES
+   piDrawfx = DRAWFX_TRANSLUCENT_50
+   piDrawEffectFlag = OF_FLICKERING
 
 messages:
 

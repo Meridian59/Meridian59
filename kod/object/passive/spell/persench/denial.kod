@@ -101,12 +101,12 @@ messages:
    {
       local iHPGain, iSpellpowerBonus;
 
-      iHPGain = Send(who,@GetMaxHealth) - Send(who,@GetHealth);
+      iHPGain = Send(who,@GetMaxHealth)*100 - Send(who,@GetExactHealth);
 
       % 0 - 20, this is the percent of damage you don't
       % get back when the enchantment fails.
       iSpellpowerBonus = (iSpellpower + 1) / 5;
-      iHPGain = Send(who,@GainHealthNormal,#amount=iHPGain);
+      iHPGain = Send(who,@GainHealthNormal,#amount=iHPGain,#precision=TRUE);
 
       return iHPGain - (iSpellpowerBonus * iHPGain)/ 100 ;
    }
@@ -123,12 +123,12 @@ messages:
    {
       if state
       {
-         Send(who,@LoseHealth,#amount=state);
+         Send(who,@LoseHealth,#amount=state,#precision=TRUE);
 
-         if Send(who,@GetHealth) < 1
+         if Send(who,@GetExactHealth) < 1
          {
             % Don't die: too harsh; makes spell unusable.
-            Send(who,@GainHealthNormal,#amount=1);
+            Send(who,@SetExactHealth,#amount=1);
          }
       }
 

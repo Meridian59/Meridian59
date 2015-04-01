@@ -15,8 +15,8 @@ constants:
    include blakston.khd
 
    SEC_PER_FRAME = 150
-   EXERTION_DAMAGE_MIN = 3
-   EXERTION_DAMAGE_MAX = 7
+   EXERTION_DAMAGE_MIN = 0
+   EXERTION_DAMAGE_MAX = 3
 
 resources:
 
@@ -55,6 +55,8 @@ classvars:
    viLevel = 120
    viDifficulty = 7
    viVisionDistance = 20
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = -70
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
    viCashmin = -3600
@@ -90,10 +92,14 @@ messages:
 
    DoSlash()
    {
-      piAnimation = ANIM_ATTACK;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-      ptRestartAnimation = CreateTimer(self,@RestartAnimation,SEC_PER_FRAME*5);
+      if poOwner <> $
+      {
+         piAnimation = ANIM_ATTACK;
+         Send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+         ptRestartAnimation = CreateTimer(self,@RestartAnimation,
+                                    SEC_PER_FRAME*5);
+      }
 
       return;
    }
@@ -101,7 +107,11 @@ messages:
    RestartAnimation()
    {
       ptRestartAnimation = $;
-      Send(poOwner,@SomethingChanged,#what=self);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
 
       return;
    }

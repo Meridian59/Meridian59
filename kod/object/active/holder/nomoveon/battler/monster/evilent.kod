@@ -206,7 +206,7 @@ messages:
       propagate;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what = $, who=$)
    {
       local oSpell;
 
@@ -214,7 +214,14 @@ messages:
       if NOT Send(what,@IsEnchanted,#what=oSpell)
          AND Random(1,PALSY_CHANCE) = 1
       {
-         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         if who <> $
+         {
+            Send(oSpell,@CastSpell,#who=who,#lTargets=[what],#iSpellPower=50);
+         }
+         else
+         {
+            Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
+         }
       }
 
       return;
@@ -222,11 +229,11 @@ messages:
 
    CreateDeadBody(killer=$)
    {
-      return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
-                     #playername=Send(killer,@GetTrueName),#mob=TRUE,
+      return Create(&DeadBody,
+                     #victim=self,
+                     #killer=killer,
                      #BodyTranslation=piColor_Translation,
                      #LegsTranslation=piColor_Translation,
-                     #monstername=EvilEnt_dead_name_rsc,
                      #PlayerBodyOverlay=vrDead_leaves);
    }
 

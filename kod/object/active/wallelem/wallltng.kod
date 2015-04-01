@@ -40,7 +40,7 @@ classvars:
    vrIcon = WallofLightning_icon_rsc
    vrdesc = WallofLightning_desc_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY | FLICKERING_YES
+   viObject_flags = OF_NOEXAMINE
 
    vrDissipateMessage = lightningwall_dissipates
    vrUnaffectedMessage = lightningwall_damage0
@@ -48,6 +48,9 @@ classvars:
    viLightBonus = 7
 
 properties:
+
+   piDrawEffectFlag = OF_FLICKERING
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    piMaxDamage = 0
    ptPeriodicEffect = $
@@ -81,6 +84,9 @@ messages:
       
       iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,iMaxDamage),
                      #aspell=ATCK_SPELL_ALL+ATCK_SPELL_SHOCK,#report=FALSE,#report_resistance=FALSE);
+
+      Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
+            #use_weapon=self,#stroke_obj=self);
 
       if iDamage = $
       {

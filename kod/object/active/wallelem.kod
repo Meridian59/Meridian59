@@ -35,7 +35,9 @@ classvars:
    vrIcon = ActiveWallElement_icon_rsc
    vrdesc = ActiveWallElement_desc_rsc
 
-   viObject_flags = LOOK_NO | MOVEON_NOTIFY
+   viObject_flags = OF_NOEXAMINE
+
+   viMoveOn_type = MOVEON_NOTIFY
 
    vrDissipateMessage = ActiveWallElement_dissipate_rsc
    vrUnaffectedMessage = ActiveWallElement_unaffected_rsc
@@ -124,7 +126,7 @@ messages:
       % Check for range
       if IsClass(what,&Battler)
          AND NOT (IsClass(what,&Player)
-                  AND Send(what,@IsPhasedOut))
+                  AND Send(what,@IsInCannotInteractMode))
          AND Send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol)
       {
          Send(self,@CheckForEffect,#what=what,#new_row=iRow,#new_col=iCol,
@@ -177,7 +179,7 @@ messages:
          plAffected = Cons(what,plAffected);
 
          if IsClass(what,&Player)
-            AND NOT Send(what,@IsPhasedOut)
+            AND NOT Send(what,@IsInCannotInteractMode)
          {
             Send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
          }
@@ -206,7 +208,7 @@ messages:
             oObject = Send(poOwner,@HolderExtractobject,#data=i);
             if IsClass(oObject,&Battler)
                AND NOT (IsClass(oObject,&Player)
-                  AND Send(oObject,@IsPhasedOut))
+                  AND Send(oObject,@IsInCannotInteractMode))
                AND Send(self,@InRange,#what=oObject,
                         #iRow=Send(oObject,@GetRow),
                         #iCol=Send(oObject,@GetCol))
@@ -227,6 +229,19 @@ messages:
    {
       % Keep track that we've affected this object.
       plAffected = Cons(what,plAffected);
+
+      % Event monsters with boosted levels are granted walkthrough walls
+      % when a wall element damages or affects them
+      if IsClass(what,&Monster)
+         AND Send(what,@GetBoostedLevel) > 0
+      {
+         Send(what,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
+      }
+      
+      if IsClass(what,&LupoggKing)
+      {
+         Send(what,@AngeredByWallElement,#what=self);
+      }
 
       return;
    }

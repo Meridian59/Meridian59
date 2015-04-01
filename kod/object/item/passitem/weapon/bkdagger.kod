@@ -314,7 +314,7 @@ messages:
       piPlayer_hits = piPlayer_hits - 1;
       if piPlayer_hits < 1
       {
-         Send(self,@AssassinDies,#attacker=attacker);
+         Post(self,@AssassinDies,#attacker=attacker);
       }
       else
       {

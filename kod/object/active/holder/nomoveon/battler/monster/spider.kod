@@ -25,6 +25,8 @@ resources:
    spider_desc_rsc = \
       "This strangely delicate creature moves with stealth and strikes "
       "with deadly precision."
+   spider_illusion_poisoned = \
+      "%s%s reels as poison from your attack courses through %s veins."
 
    spider_dead_icon_rsc = spiderX.bgf
    spider_dead_name_rsc = "dead spider"
@@ -124,7 +126,7 @@ messages:
       propagate;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what = $, who = $)
    {
       local oSpell;
 
@@ -133,6 +135,13 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,
                #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+
+         if who <> $
+         {
+            Send(who,@MsgSendUser,#message_rsc=spider_illusion_poisoned,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(what,@GetHisHer));
+         }
       }
 
       return;

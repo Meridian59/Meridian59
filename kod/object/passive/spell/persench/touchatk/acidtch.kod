@@ -59,9 +59,9 @@ classvars:
 
    viSchool = SS_QOR
    viSpell_num = SID_ACID_TOUCH
-   viSpellExertion = 3
+   viSpellExertion = 1
    viSpell_level = 2
-   viMana = 10
+   viMana = 4
 
    viMin_Damage = 4        %% touch spells typically do good damage    
    viMax_Damage = 8       %% but are unaffected by weapon or strength bonuses
@@ -69,8 +69,6 @@ classvars:
    % Max amount of damage that punch or 2*myst can add
    % Acid touch is slightly weaker than Faren touch spells
    viMaxProficiencyDamage = 3
-
-   viRange = 2             %% touch spell range can vary, but are typically good     
 
    viSpellType = ATCK_SPELL_ACID + ATCK_SPELL_ALL
    viStroke = STROKE_ACID_TOUCH

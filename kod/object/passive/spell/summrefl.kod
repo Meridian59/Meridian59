@@ -47,7 +47,7 @@ classvars:
    viMana = 15
    viMeditate_ratio = 30
 
-   viSpellExertion = 10
+   viSpellExertion = 4
    viCast_time = 1000
 
    vrSucceed_wav = summonreflection_sound
@@ -67,20 +67,6 @@ messages:
 
    CanPayCosts(who=$)
    {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-
-      if IsClass(who,&Player)
-      {
-         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         {
-            Send(who,@MsgSendUser,#message_rsc=spell_guardian);
-
-            return FALSE;
-         }
-      }
-
       % Limit reflections.
       if (Send(self,@CountPlayerReflections,#who=who)
          >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit))
@@ -123,11 +109,12 @@ messages:
       if IsClass(who,&Player)
       {
          Send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
-         Send(who,@NewControlledMinion,#minion=oReflection);
       }
-
+      
+      Send(who,@NewControlledMinion,#minion=oReflection);
       Send(SYS,@AddReflection,#who=who,#oReflection=oReflection);
-      Send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      Send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
+            #value=TRUE);
 
       propagate;
    }

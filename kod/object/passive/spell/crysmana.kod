@@ -171,6 +171,66 @@ messages:
       return bound((spell_ability+1)/5,0,20);
    }
 
+   GetStatsDesc(who=$)
+   {
+      ClearTempString();
+
+      if who <> $
+         AND IsClass(who,&User)
+      {
+         Send(self,@CreateStatsDesc,#who=who);
+      }
+
+      return GetTempString();
+   }
+
+   CreateStatsDesc(who=$)
+   {
+      local iDuration, iMinutes, iSeconds, iTimer;
+
+      iTimer = Send(who,@GetManaSurgeTimer);
+      if iTimer = $
+      {
+         return;
+      }
+
+      if IsTimer(iTimer)
+      {
+         iDuration = GetTimeRemaining(iTimer);
+      }
+      else
+      {
+         % Should be an integer.
+         iDuration = iTimer;
+      }
+
+      iDuration = iDuration / 1000;
+      iMinutes = iDuration / 60;
+      iSeconds = iDuration MOD 60;
+
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will last for ");
+      if iMinutes > 0
+      {
+         AppendTempString(iMinutes);
+         if iMinutes = 1
+         {
+            AppendTempString(" minute and ");
+         }
+         else
+         {
+            AppendTempString(" minutes and ");
+         }
+      }
+
+      AppendTempString(iSeconds);
+      AppendTempString(" seconds.");
+
+      return GetTempString();
+   }
+
    GetWaitTime(who=$)
    {
       local iWaitTime, iIntellect;
@@ -192,6 +252,11 @@ messages:
 
    SuccessChance(who=$)
    "Crystalize Mana cannot fizzle."
+   {
+      return TRUE;
+   }
+
+   CanForget()
    {
       return TRUE;
    }

@@ -276,6 +276,17 @@ messages:
          return TRUE;
       }
 
+      % These translations are red->color while blue->skin and
+      % red->black while blue->white and vice versa, or
+      % red->black/blue->black.
+      if Xlat = XLAT_REDTOBLACK
+         OR Xlat = XLAT_BLUETOBLACK
+         OR (Xlat >= PT_REDTODGREEN1
+            AND Xlat <= PT_BLBLK_REDWHT)
+      {
+         return TRUE;
+      }
+
       return FALSE;
    }
 
@@ -287,6 +298,47 @@ messages:
 
       if color1 >  XLAT_TO_SKY
       {
+         % Handle new black/white translations. These include red->black and
+         % red->black while blue->skin, red->black while blue->white and
+         % vice versa. We include them here so they can be used to translate
+         % guild shields and other items correctly. These single two-color
+         % XLATS are sent as color1, with no color2 added (raw value returned).
+         if color1 = XLAT_REDTOBLACK
+            OR color1 = XLAT_BLUETOBLACK
+            OR color1 = PT_REDBLK_BLWHT
+            OR color1 = PT_BLBLK_REDWHT
+         {
+            return color1;
+         }
+
+         % We might need to modify these based on a given skin color.
+         if color2 >= XLAT_TO_SKIN1
+            AND color2 <= XLAT_TO_SKIN4
+         {
+            if (color1 >= PT_REDTODGREEN1
+                  AND color1 <= PT_REDTODGREEN3)
+            {
+               return 121 + color2;
+            }
+            if (color1 >= PT_REDTOBLACK1
+                  AND color1 <= PT_REDTOBLACK3)
+            {
+               return 124 + color2;
+            }
+            if (color1 >= PT_REDTODKBLACK1
+                  AND color1 <= PT_REDTODKBLACK3)
+            {
+               return 127 + color2;
+            }
+         }
+
+         % Skin colors handled, return the raw value for new two-color XLATs.
+         if color1 >= PT_REDTODGREEN1
+            AND color1 <= PT_REDTODKBLACK3
+         {
+            return color1;
+         }
+
          if color2 < XLAT_TO_SKIN1
             OR color2 > XLAT_TO_SKIN4
          {
@@ -326,6 +378,13 @@ messages:
          return XLAT_TO_BLACK;
       }
 
+      if (Xlat > 127 AND Xlat < 133)
+         OR Xlat = XLAT_REDTOBLACK
+         OR Xlat = XLAT_BLUETOBLACK
+      {
+         return Xlat;
+      }
+
       Xlat = Xlat - XLAT_BASE_VALUE;
       Xlat = Xlat / 11;
 
@@ -334,7 +393,7 @@ messages:
 
    DecodeSecondaryColor(Xlat = 0)
    {
-      if Xlat > 120 AND Xlat < 128
+      if Xlat > 120 AND Xlat < 131
       {
          Xlat = xlat - 121;
          xlat = xlat mod 3;
@@ -346,6 +405,14 @@ messages:
          {
             return xlat;
          }
+      }
+
+      if Xlat = PT_REDBLK_BLWHT
+         OR Xlat = PT_BLBLK_REDWHT
+         OR Xlat = XLAT_REDTOBLACK
+         OR Xlat = XLAT_BLUETOBLACK
+      {
+         return Xlat;
       }
 
       Xlat = Xlat - XLAT_BASE_VALUE;
@@ -506,6 +573,12 @@ messages:
       SetString(retVal,GetTempString());
 
       return retVal;
+   }
+
+   CreateSpellBook(SID=SID_FIREBALL,mana=1)
+   "Creates a monster spellbook with a single spell."
+   {
+      return [[SID,mana,100]];
    }
 
 end

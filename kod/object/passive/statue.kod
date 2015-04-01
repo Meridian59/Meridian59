@@ -614,31 +614,79 @@ messages:
    GetOriginal()
    {
       return poOriginal;
-   }  
+   }
 
    GetObjectFlags()
    {
       local iFlags;
-      iFlags = piDrawFX;
-      
+
+      iFlags = viObject_flags | piDrawEffectFlag;
+
       if piColor = COLOR_GREEN
       {
-         iFlags = iFlags | PLAYER_SUPER | USER_YES ;
+         iFlags = iFlags | OF_PLAYER;
       }
 
       if piColor = COLOR_BLUE
       {
-         iFlags = iFlags | PLAYER_DM | USER_YES ;
+         iFlags = iFlags | OF_PLAYER;
       }
 
       if piColor = COLOR_YELLOW
       {
-         iFlags = iFlags | PLAYER_CREATOR | USER_YES;
+         iFlags = iFlags | OF_PLAYER;
       }
 
       return iFlags;
    }
 
+   GetPlayerNameColor()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if piColor = COLOR_GREEN
+      {
+         iFlags = iFlags | NC_SUPER;
+      }
+
+      if piColor = COLOR_BLUE
+      {
+         iFlags = iFlags | NC_DM;
+      }
+
+      if piColor = COLOR_YELLOW
+      {
+         iFlags = iFlags | NC_CREATOR;
+      }
+
+      return iFlags;
+   }
+
+   GetClientObjectType()
+   {
+      local iFlags;
+
+      iFlags = 0;
+
+      if piColor = COLOR_GREEN
+      {
+         iFlags = iFlags | OT_SUPER;
+      }
+
+      if piColor = COLOR_BLUE
+      {
+         iFlags = iFlags | OT_DM;
+      }
+
+      if piColor = COLOR_YELLOW
+      {
+         iFlags = iFlags | OT_CREATOR;
+      }
+
+      return iFlags;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

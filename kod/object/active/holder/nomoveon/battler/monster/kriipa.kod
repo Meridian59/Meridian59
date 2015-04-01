@@ -70,6 +70,8 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
    viLevel = 160
    viDifficulty = 6
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viVisionDistance = 20
    viKarma = -50
    viWimpy = 2
@@ -103,12 +105,22 @@ messages:
 
    GetObjectFlags()
    {
-      if (piRoofState <> STATE_ONROOF)
+      if (piRoofState = STATE_ONROOF)
       {
-         return MOVEON_NO | piDrawFX | BATTLER_YES;
+         return OF_HANGING | OF_ATTACKABLE;
       }
 
-      return piDrawFX | HANGING_YES | BATTLER_YES;
+      propagate;
+   }
+
+   GetMoveOnType()
+   {
+      if (piRoofState = STATE_ONROOF)
+      {
+         return MOVEON_YES;
+      }
+
+      propagate;
    }
 
    TryAttack()

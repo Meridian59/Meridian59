@@ -160,6 +160,10 @@ enum {
    BP_REMOVE_BG_OVERLAY     = 153,
    BP_CHANGE_BG_OVERLAY     = 154,
    BP_USERCOMMAND           = 155,
+   BP_REQ_STAT_CHANGE       = 156,
+   BP_CHANGED_STATS         = 157,
+   BP_CHANGED_STATS_OK      = 158,
+   BP_CHANGED_STATS_NOT_OK	 = 159,
 
    BP_PASSWORD_OK           = 160,
    BP_PASSWORD_NOT_OK       = 161,
@@ -228,7 +232,7 @@ enum {
    UC_STAND = 6,
    UC_SAFETY = 7,
    UC_SUICIDE = 8,
-
+   UC_TEMPSAFE = 9,
    UC_REQ_GUILDINFO = 10,
    UC_GUILDINFO = 11,
    UC_INVITE = 12,
@@ -253,7 +257,7 @@ enum {
    UC_GUILD_SHIELD = 31,
    UC_GUILD_SHIELDS = 32,
    UC_CLAIM_SHIELD = 33,
-
+   UC_GROUPING = 34,
    UC_DEPOSIT = 35,
    UC_WITHDRAW = 36,
    UC_BALANCE = 37,
@@ -352,7 +356,7 @@ enum {
 
 
 /* Object flag values and masks */
-#define OF_NOMOVEON_MASK 0x00000003
+#define OF_GROUPING      0x00000002    // Set if player is grouping (self only)
 #define OF_PLAYER        0x00000004    // Set if object is a player
 #define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
@@ -365,59 +369,80 @@ enum {
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
 #define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
+#define OF_TEMPSAFE      0x00004000    // Set if player has temp safety on death activated
 
-// Player name colors
-#define PF_KILLER        0x00004000    // Set if object is a killer (must also have OF_PLAYER)
-#define PF_OUTLAW        0x00008000    // Set if object is an outlaw (must also have OF_PLAYER)
-#define PF_DM            0x0000C000    // Set if object is a DM player
-#define PF_CREATOR       0x00010000    // Set if object is a creator player
-#define PF_SUPER         0x00014000    // Set if object is a "super DM"
-#define PF_MODERATOR     0x00018000    // Set if object is a "moderator"
-#define PF_EVENTCHAR     0x0001C000    // Set if object is an event character
-#define OF_PLAYER_MASK   0x0001C000    // Mask to get player flag bits
-
+#define OF_BOUNCING      0x00010000    // If both flags on then object is bouncing
 #define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
 #define OF_FLASHING      0x00040000    // For players or objects if flashing with light.
-#define OF_BOUNCING      0x00060000    // If both flags on then object is bouncing
 #define OF_PHASING       0x00080000    // For players or objects if phasing translucent/solid.
-
-// Object drawing effects
-#define OF_DRAW_PLAIN    0x00000000    // No special drawing effects
-#define OF_TRANSLUCENT25 0x00100000    // Set if object should be drawn at 25% opacity
-#define OF_TRANSLUCENT50 0x00200000    // Set if object should be drawn at 50% opacity
-#define OF_TRANSLUCENT75 0x00300000    // Set if object should be drawn at 75% opacity
-#define OF_BLACK         0x00400000    // Set if object should be drawn all black
-#define OF_INVISIBLE     0x00500000    // Set if object should be drawn with invisibility effect
-#define OF_TRANSLATE     0x00600000    // Reserved (used internally by client)
-#define OF_DITHERINVIS   0x00700000    // Haze (dither with transparency) 50% of pixels
-#define OF_DITHERTRANS   0x00800000    // Dither (with two translates) 50% of pixels
-#define OF_DOUBLETRANS   0x00900000    // Translate twice each pixel, plus lighting
-#define OF_SECONDTRANS   0x00A00000    // Ignore per-overlay xlat and use only secondary xlat
-#define OF_EFFECT_MASK   0x00F00000    // Mask to get object drawing effect bits
-#define NUM_DRAW_EFFECTS 16            // # of possible object drawing effects
-
-// Minimap dot colors
-#define OF_ENEMY         0x01000000    // Enemy player
-#define OF_FRIEND        0x02000000    // Friendly player
-#define OF_GUILDMATE     0x04000000    // Guildmate player
-#define OF_MINION        0x08000000    // Monster is a minion owned by a player
-#define OF_MINION_OTHER  0x09000000    // Set if monster is other's minion
-#define OF_MINION_SELF   0x0A000000    // Set if a monster is our minion
-#define OF_MINIMAP_MASK  0x0F000000    // Mask to get minimap drawing effects
-
-#define GetMinimapFlags(flags)  ((flags) & OF_MINIMAP_MASK)
-#define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)
-#define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)
-#define GetDrawingEffectIndex(flags) (((flags) & OF_EFFECT_MASK) >> 20)
 #define GetItemFlags(flags)   ((flags))
 
-/* How objects allow or disallow motion onto their square */
+// Drawing effects. Separate from object flags.
+#define NUM_DRAW_EFFECTS 256       // # of object drawing effects.
 enum {
-   OF_MOVEON_YES        = 0,   // Can always move on object
-   OF_MOVEON_NO         = 1,   // Can never move on object
-   OF_MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
-   OF_MOVEON_NOTIFY	= 3,
+   DRAWFX_DRAW_PLAIN    = 0x00,    // No special drawing effects
+   DRAWFX_TRANSLUCENT25 = 0x01,    // Set if object should be drawn at 25% opacity
+   DRAWFX_TRANSLUCENT50 = 0x02,    // Set if object should be drawn at 50% opacity
+   DRAWFX_TRANSLUCENT75 = 0x03,    // Set if object should be drawn at 75% opacity
+   DRAWFX_BLACK         = 0x04,    // Set if object should be drawn all black
+   DRAWFX_INVISIBLE     = 0x05,    // Set if object should be drawn with invisibility effect
+   DRAWFX_TRANSLATE     = 0x06,    // Reserved (used internally by client)
+   DRAWFX_DITHERINVIS   = 0x07,    // Haze (dither with transparency) 50% of pixels
+   DRAWFX_DITHERTRANS   = 0x08,    // Dither (with two translates) 50% of pixels
+   DRAWFX_DOUBLETRANS   = 0x09,    // Translate twice each pixel, plus lighting
+   DRAWFX_SECONDTRANS   = 0x0A,    // Ignore per-overlay xlat and use only secondary xlat
+   DRAWFX_DITHERGREY    = 0x0B,    // Haze (dither with transparency) 50% of pixels, greyscale other 50%
 };
+
+// Minimap dot color bitfield. Now separate from object flags.
+#define MM_NONE          0x00000000    // No dot (default for all objects)
+#define MM_PLAYER        0x00000001    // Standard blue player dot
+#define MM_ENEMY         0x00000002    // Enemy (halo or attackable) player
+#define MM_FRIEND        0x00000004    // Friendly (guild ally) player
+#define MM_GUILDMATE     0x00000008    // Guildmate player
+#define MM_BUILDER_GROUP 0x00000010    // Player is in same building group
+#define MM_MONSTER       0x00000020    // Default monster dot
+#define MM_NPC           0x00000040    // NPC
+#define MM_MINION_OTHER  0x00000080    // Set if monster is other's minion
+#define MM_MINION_SELF   0x00000100    // Set if a monster is our minion
+#define MM_TEMPSAFE      0x00000200    // Set if player has a temporary angel.
+#define MM_MINIBOSS      0x00000400    // Set if mob is a miniboss (survival arena).
+#define MM_BOSS          0x00000800    // Set if mob is a boss (survival arena).
+
+/* Player name color sent as hex RGB value. Define constants
+   for ease of use as needed. Requires OF_PLAYER boolean flag
+   to be set to draw a name. */
+#define NC_PLAYER        0xFFFFFF   // White name.
+#define NC_SHADOW        0x000000   // Set if name should be drawn black.
+#define NC_KILLER        0xFF0000   // Set if object is a killer.
+#define NC_OUTLAW        0xFC9E00   // Set if object is an outlaw.
+#define NC_DM            0x00FFFF   // Set if object is a DM player.
+#define NC_CREATOR       0xFFFF00   // Set if object is a creator player.
+#define NC_SUPER         0x00FF00   // Set if object is a "super DM".
+#define NC_MODERATOR     0x0078FF   // Set if object is a "moderator".
+#define NC_EVENTCHAR     0xFF00FF   // Set if object is an event character.
+#define NC_DAENKS        0xB300B3   // Purple name color for Daenks.
+#define NC_COLOR_MAX     0xFFFFFF   // Max color, defined for clarity.
+
+/* Enum of object types. */
+typedef enum {
+   OT_NONE         = 0,   // Default for most objects.
+   OT_KILLER       = 1,   // Set if object is a killer.
+   OT_OUTLAW       = 2,   // Set if object is an outlaw.
+   OT_DM           = 3,   // Set if object is a DM player.
+   OT_CREATOR      = 4,   // Set if object is a creator player.
+   OT_SUPER        = 5,   // Set if object is a "super DM".
+   OT_MODERATOR    = 6,   // Set if object is a "moderator".
+   OT_EVENTCHAR    = 7,   // Set if object is an event character.
+} object_type;
+
+/* How objects allow or disallow motion onto their square */
+typedef enum {
+   MOVEON_YES        = 0,   // Can always move on object
+   MOVEON_NO         = 1,   // Can never move on object
+   MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
+   MOVEON_NOTIFY     = 3,
+} moveon_type;
 
 /* Effect codes */
 enum {

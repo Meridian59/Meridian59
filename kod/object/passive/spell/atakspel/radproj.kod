@@ -38,7 +38,10 @@ classvars:
 
 properties:
 
-   piRange = 6
+   % Range in FINENESS units, default 6 row/col units.
+   % The client needs to be sent range in row/col units, so divide
+   % by FINENESS whenever the row/col value is needed.
+   piRange = 384
    piSpeed = 5
 
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
@@ -52,6 +55,49 @@ messages:
    GetNumSpellTargets()
    {
       return 0;
+   }
+
+   GetTargets(who=$,lTargets=$)
+   "This returns a list of valid targets in range."
+   {
+      local lFinalTargets, oRoom, i, each_obj, iRange_squared, lActive,
+            iDistance;
+
+      lFinalTargets = $;
+
+      iRange_squared = piRange * piRange;
+      oRoom = Send(who,@GetOwner);
+      lActive = Send(oRoom,@GetplActive);
+
+      for i in lActive
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if each_obj <> who
+            AND IsClass(each_obj,&Battler)
+         {
+            % Skip players who are phased/in spectator mode.
+            if IsClass(each_obj,&Player)
+               AND Send(each_obj,@IsInCannotInteractMode)
+            {
+               continue;
+            }
+
+            iDistance = Send(who,@SquaredFineDistanceToLocation3D,
+                              #row=Send(each_obj,@GetRow),
+                              #col=Send(each_obj,@GetCol),
+                              #fine_row=Send(each_obj,@GetFineRow),
+                              #fine_col=Send(each_obj,@GetFineCol));
+            if iDistance <= iRange_squared
+               AND NOT (IsClass(oRoom,&GuildHall)
+                     AND Send(oRoom,@InFoyer,#who=each_obj)
+                        <> Send(oRoom,@InFoyer,#who=who))
+            {
+               lFinalTargets = Cons(each_obj,lFinalTargets);
+            }
+         }
+      }
+
+      return lFinalTargets;
    }
 
    CastSpell(who=$,lTargets=$)
@@ -70,8 +116,8 @@ messages:
          if isClass(each_obj,&Player)
          {
             Send(oOwner,@SomethingShotRadius,#who=who,#projectile=self,
-                  #flags=viProjectileFlag,#range=piRange,#number=piNumber,
-                  #iLightIntensity=viProjectileLightIntensity,
+                  #flags=viProjectileFlag,#range=piRange/FINENESS,
+                  #number=piNumber,#iLightIntensity=viProjectileLightIntensity,
                   #iLightColor=viProjectileLightColor,#speed=piSpeed);
          }
       }
@@ -92,9 +138,9 @@ messages:
    }
 
    GetProjectileRange()
-   "Returns projectile range."
+   "Returns projectile range, in row/col units."
    {
-      return piRange;
+      return piRange/FINENESS;
    }
 
    SendProjectileAnimation()

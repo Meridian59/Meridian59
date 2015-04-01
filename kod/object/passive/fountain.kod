@@ -18,28 +18,41 @@ resources:
 
    fountain_name_rsc = "fountain"
    fountain_icon_rsc = fountain.bgf
-   fountain_desc_tos_rsc = "This masterpiece is made of carefully shaped marble. Artfully placed jets spray water into the air and cool any who stand near it.  This fountain was reputedly made by the tinkerer Froz himself, and has become a common meeting place in the world of Meridian."
-   fountain_desc_rsc = "While ornate and beautiful, it is clear upon closer inspection that this fountain is merely an imitation of Froz' masterpiece in the city square of Tos."
+   fountain_frozen_icon_rsc = fountfrozen.bgf
+   fountain_desc_tos_rsc = \
+      "This masterpiece is made of carefully shaped marble. Artfully placed "
+      "jets spray water into the air and cool any who stand near it.  This "
+      "fountain was reputedly made by the tinkerer Froz himself, and has "
+      "become a common meeting place in the world of Meridian."
+   fountain_desc_rsc = \
+      "While ornate and beautiful, it is clear upon closer inspection that "
+      "this fountain is merely an imitation of Froz' masterpiece in the city "
+      "square of Tos."
 
    fountain_water_rsc = fountwat.bgf
+   fountain_frozen_water_rsc = fountjetfrozen.bgf
    fountain_sound_rsc = fountain.wav
 
 classvars:
 
+   viMoveOn_type = MOVEON_NO
    vrName = fountain_name_rsc
-   vrIcon = fountain_icon_rsc
-   
+
 properties:
 
    vrDesc = fountain_desc_rsc
+   vrIcon = fountain_icon_rsc
 
    piSoundRadius = 40
    piSoundIntensity = 100
    pbIsLit = FALSE
 
+   pbFrozen = FALSE
+   pbJetIce = TRUE
+
 messages:
 
-   Constructor(iSoundRadius = 40, iSoundIntensity = 100, bIsLit = FALSE )
+   Constructor(iSoundRadius = 40,iSoundIntensity = 100,bIsLit = FALSE)
    {
       Send(self,@SetSwitchOnTime);
       piSoundRadius = iSoundRadius;
@@ -48,13 +61,13 @@ messages:
 
       propagate;
    }
-   
+
    Delete()
    {
       if poOwner <> $ AND IsClass(poOwner,&Room)
       {
          % Remove ourselves as part of the sound list.
-         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
       }
 
       propagate;
@@ -62,48 +75,73 @@ messages:
 
    NewOwner(what=$)
    {
-      local lPosition, lSoundData;
-
-      % Check the old (current) owner.  It shouldn't happen, but let's be sane about it.
+      % Check the old (current) owner.  It shouldn't happen,
+      % but let's be sane about it.
       if poOwner <> $ AND IsClass(poOwner,&Room)
       {
          % Remove ourselves as part of the sound list.
-         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
       }
 
       if what <> $ AND IsClass(what,&Room)
       {
-   		if send(what,@GetRoomNum) = RID_TOS
-   		{
-   			vrDesc = fountain_desc_tos_rsc;
-   		}
-
-         if piSoundRadius
+         if Send(what,@GetRoomNum) = RID_TOS
          {
-            % Sound data is [wave_file, row, col, cutoff radius, maximum volume, object]
-            lPosition = send(what,@GetRoomPos,#what=self);
-            lSoundData = [fountain_sound_rsc, First(lPosition), Nth(lPosition,2),
-                          piSoundRadius, piSoundIntensity, self];
-            send(what,@AddLoopingSound,#lSoundData=lSoundData);
+            vrDesc = fountain_desc_tos_rsc;
          }
+
+         Send(self,@StartSound,#what=what);
       }
 
-		propagate;
+      propagate;
    }
 
-   SendOverlays()
+   StartSound(what=$)
    {
-      % Attach water to hotspot 1.
-      AddPacket(1,1, 4,fountain_water_rsc, 1,1); 
-      % Cycle through all the water bmps continuously, 100 ms per frame.
-      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,1);
+      local lPosition, lSoundData;
+
+      if what = $
+      {
+         return;
+      }
+
+      if piSoundRadius
+      {
+         % Sound data is [wave_file, row, col, cutoff radius, maximum volume, object]
+         lPosition = Send(what,@GetRoomPos,#what=self);
+         lSoundData = [fountain_sound_rsc, First(lPosition), Nth(lPosition,2),
+                       piSoundRadius, piSoundIntensity, self];
+         Send(what,@AddLoopingSound,#lSoundData=lSoundData);
+      }
 
       return;
    }
 
-   GetObjectFlags()
+   SendOverlays()
    {
-      return MOVEON_NO;
+      if pbFrozen
+      {
+         if pbJetIce
+         {
+            % Attach jets + ice to hotspot 1.
+            AddPacket(1,1, 4,fountain_frozen_water_rsc, 1,1);
+            % No animation.
+            AddPacket(1,ANIMATE_NONE, 2,1);
+         }
+         else
+         {
+            AddPacket(1, 0);
+         }
+      }
+      else
+      {
+         % Attach water to hotspot 1.
+         AddPacket(1,1, 4,fountain_water_rsc, 1,1);
+         % Cycle through all the water bmps continuously, 100 ms per frame.
+         AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,1);
+      }
+
+      return;
    }
 
    AmbientLightChanged()
@@ -155,7 +193,7 @@ messages:
 
    SendLightingInformation()
    {
-      if send(poOwner,@GetRoomNum) = RID_TOS
+      if Send(poOwner,@GetRoomNum) = RID_TOS
          AND pbIsLit
       {   
          AddPacket(2,LIGHT_FLAG_ON);
@@ -168,7 +206,44 @@ messages:
       propagate;
    }
 
+   FreezeFountain(bJetIce=TRUE)
+   "Use bJetIce to determine whether to display ice coming out of the jets. "
+   "Default TRUE."
+   {
+      pbFrozen = TRUE;
+      vrIcon = fountain_frozen_icon_rsc;
+
+      if bJetIce
+      {
+         pbJetIce = TRUE;
+      }
+      else
+      {
+         pbJetIce = FALSE;
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@RemoveObjectLoopingSound,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   UnfreezeFountain()
+   {
+      pbFrozen = FALSE;
+      vrIcon = fountain_icon_rsc;
+
+      if poOwner <> $
+      {
+         Send(self,@StartSound,#what=poOwner);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

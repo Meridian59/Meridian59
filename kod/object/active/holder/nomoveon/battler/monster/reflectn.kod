@@ -55,7 +55,7 @@ classvars:
    viAttributes = 0
    viLevel = 45
    viDifficulty = 4
-
+   viDamagePercent = 50
    viVisionDistance = 60
 
    viKarma = 0
@@ -84,7 +84,7 @@ properties:
 
    piSpellpower = 1
    poArrow = $
-
+   piDamagePercent
    ptSomethingChanged = $
 
 messages:
@@ -99,7 +99,7 @@ messages:
       piSpellpower = iSpellpower;
       ptManaDrain = CreateTimer(self,@ManaDrainTimer,MANA_DRAIN_DELAY);
       poArrow = Create(&Arrow);
-
+      piDamagePercent = viDamagePercent;
       propagate;
    }
 
@@ -348,13 +348,13 @@ messages:
       if IsClass(poOriginal,&Player)
       {
          vrIcon = Send(poOriginal,@GetPlayerIcon);
-         piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
          vrName = Send(poOriginal,@GetTrueName);
       }
       else
       {
          vrIcon = Send(poOriginal,@GetIcon);
-         piDrawfx = Send(poOriginal,@GetDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
          vrName = Send(poOriginal,@GetName);
       }
 
@@ -365,16 +365,42 @@ messages:
 
    GetObjectFlags()
    {
-      local iFlags;
-
       if poOriginal = $
       {
          return 0;
       }
 
-      iFlags = Send(poOriginal,@GetObjectFlags);
+      return Send(poOriginal,@GetObjectFlags);
+   }
 
-      return iFlags;
+   GetDrawingEffects()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetDrawingEffects);
+   }
+
+   GetPlayerNameColor()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetPlayerNameColor);
+   }
+
+   GetClientObjectType()
+   {
+      if poOriginal = $
+      {
+         return 0;
+      }
+
+      return Send(poOriginal,@GetClientObjectType);
    }
 
    GetAttackRange()
@@ -400,7 +426,7 @@ messages:
          return Send(poOriginal,@GetAttackRange);
       }
 
-      return 1;
+      return 64;
    }
 
    GetOffense(what=$,stroke_obj=$)
@@ -415,7 +441,7 @@ messages:
 
    GetDamage(what = $, stroke_obj=$)
    {
-      local oStroke;
+      local oStroke, iDamage;
 
       if poOriginal = $
       {
@@ -427,8 +453,9 @@ messages:
       {
          oStroke = $;
       }
+      iDamage = Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
 
-      return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
+      return iDamage * piDamagePercent / 100;
    }
 
    GetDamageType(what=$,use_weapon=$)
@@ -462,7 +489,7 @@ messages:
       if (what = poOriginal)
          AND IsClass(poOriginal,&Player)
       {
-         piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+         piDrawfx = Send(poOriginal,@GetDrawingEffects);
 
          % Players report that if a character casts a lot of
          % reflections and then changes state, e.g. by putting on lots
@@ -505,7 +532,7 @@ messages:
       poOriginal = who;
       piMax_Hit_Points = piSpellpower / 3;
       piMax_hit_points = Bound(piMax_hit_points,15,40);
-      piHit_Points = piMax_Hit_Points;
+      piHit_Points = piMax_Hit_Points*100;
 
       Send(self,@GetOriginalInfo);
 

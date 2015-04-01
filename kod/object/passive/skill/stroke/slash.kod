@@ -41,8 +41,6 @@ classvars:
    viskillExertion = 2
    vbCheck_exertion = FALSE
 
-   viDamage_factor = 100
-
 properties:
 
    plPrerequisites = $

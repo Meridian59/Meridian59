@@ -1,0 +1,1893 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SurvivalRoom is MonsterRoom
+
+% Players enter a Survival Arena from any inn.
+% Members of a guild may join a Survival Arena together.
+% Survival Arena begins after 60 seconds of waiting for participants.
+% The Survival Arena begins at Level 1.
+% When players complete certain objectives, the level increases.
+% Monsters are more difficult at each level, and loot drops and XP increase.
+% Players can complete special objectives to gain extra lives.
+
+% If players aren't attacked for a long period of time, they're clearly
+% abusing something. Enemies will begin spawning with MOVES_THROUGH_WALLS.
+
+constants:
+
+   include blakston.khd
+   
+   GOAL_KILLS = 1
+   GOAL_BOSS = 2
+   GOAL_MINIBOSSES = 3
+   GOAL_KILL_FRIENDLY = 4
+
+   % 3 minutes to begin public survivals
+   PB_START_TIME = 180000
+   
+   % 1 minute to begin other survivals
+   DEFLT_START_TIME = 60000
+   
+   % Report goals every 1 minute
+   REPORT_TIME = 60000
+
+   % Starts when Miniboss is killed
+   RESPAWN_MINIBOSS_TIME = 60000
+
+resources:
+
+   SurvivalRoom_name = "Survival Arena"
+   
+   welcome_message = \
+      "As you enter the new plane of reality, you can feel powerful energies "
+      "converging toward you. This place will grow progressively more "
+      "dangerous as time goes on. Fortunately, you can sense that there is no "
+      "Underworld here. Death will mean nothing for you in this realm."
+      
+   beginning_in_sixty = \
+      "~BThe attacks will begin in sixty seconds."
+   
+   next_level_in_seconds = \
+      "~BYou have defeated wave number %i. The next arrives in %i seconds."
+      
+   begin_level = \
+      "~BWave %i of the enemy force has arrived."
+   
+   you_died_to_monster = \
+      "The %s stands triumphantly over your crumpled body."
+      
+   player_died_to_monster = \
+      "~B%s was slain by %s%s!"
+      
+   you_were_booted = \
+      "The magics enabling your battle fail, and you are flung home."
+      
+   player_was_booted = \
+      "%s has been cast out of this reality."
+      
+   lives_remain_update = \
+      "You sense death can be cheated here only %i more times."
+      
+   one_life_remains = \
+      "~BYou sense death may only be cheated once more."
+      
+   no_lives_remain = \
+      "From this point on, deaths will expel you from this place."
+
+   survival_no_cast_rsc = "You cannot cast %s here."
+
+   goals_header = \
+      "To defeat this wave of enemies, you must:"
+   kill_goal_msg = \
+      "Kill %i enemy creatures."
+   boss_goal_msg = \
+      "Kill a boss."
+   minibosses_goal_msg = \
+      "Kill %i minibosses."
+      
+   boss_slain_goal_msg = \
+      "~BA boss has been slain!"
+   minibosses_slain_goal_msg = \
+      "~BTwo minibosses have been slain!"
+      
+   kills_remaining = \
+      "There are %i kills remaining until the next wave."
+      
+   extralife_header = \
+      "To acquire an extra life, you must:"
+   kill_friendly_msg = \
+      "Kill a fellow adventurer."
+   
+   player_murdered_player_no_goal = \
+      "~B%s has been murdered by %s!"
+   player_murdered_player_goal = \
+      "~B%s has been sacrificed by %s!"
+   
+   gain_a_life_msg = \
+      "~BYou acquire enough energy to form an extra ward against death! "
+      "You now have %i lives."
+      
+   wall_blitz_activated = \
+      "~BA surge of ethereal fury overcomes the horde!"
+
+   fixed_reward_msg = \
+      "It seems one of the fallen enemies has dropped one %s on the battlefield!"
+   
+   your_lives_remain = \
+      "You have %i lives remaining."
+   
+   spectator_only_msg = \
+      "Combat has already begun. You may spectate until all participants "
+      "have died."
+   player_was_spectated = \
+      "%s has lost physical touch with this reality."
+   you_were_spectated = \
+      "You have lost your physical connection to this place!"
+      
+   round_begin_wav = gong.wav
+      
+classvars:
+
+   vrName = SurvivalRoom_name
+
+   viTeleport_row = 1
+   viTeleport_col = 1
+
+   viPermanent_flags = ROOM_SAFELOGOFF
+
+properties:
+
+   poBaseRoom = $
+   prRoom = $
+   piRoom_num = $
+   
+   piOverridesDeathFunction = TRUE
+   pbNoReagents = FALSE
+   
+   plParticipants = $
+   
+   plLevelGoals = $
+   plExtraLifeGoals = $
+   piLives = 3
+   plBosses = $
+   plMinibosses = $
+   
+   piLevel = 1
+   
+   piRegroupTime = 15000
+   ptNextLevelTimer = $
+   piWallBlitzTime = 300000
+
+   piGen_time = 5000
+   piGen_percent = 100
+
+   piInit_count_min = 0
+   piInit_count_max = 0
+
+   piMonster_count_max = 30
+   
+   pbSpawnWaves = FALSE
+   
+   piAllowJoins = TRUE
+   poGuildAssociation = $
+   piPublic = FALSE
+   
+   ptWallBlitzTimer = $
+   
+   piChaosZone = FALSE
+   
+   % Custom opening level spawns
+   plRoundOneMonsters = $
+   plRoundTwoMonsters = $
+   plRoundThreeMonsters = $
+   plRoundFourMonsters = $
+   plRoundFiveMonsters = $
+   plRoundSixMonsters = $
+   plAllMonsters = $
+   
+   plFixedRewards = $
+   
+   piSpawnedBossThisRound = FALSE
+   
+   ptReportGoalsTimer = $
+   ptRespawnMiniBossTimer = $
+   
+   plLivesPerPlayer = $
+   
+   % of the form [player,timer]
+   plCrashProtection = $
+
+   % Combat has not yet begun
+   piHasBegun = FALSE
+
+   % Last level that players can join the public/guild arenas
+   piLastJoinLevel = 6
+   
+   % Boolean for resource restoration on level completion.
+   pbRestoreResources = TRUE
+
+messages:
+
+   Constructor(iRID=RID_SURVIVAL_START,base_room=$,poGuild=$,iPublic=FALSE,
+               iPvP=FALSE)
+   {
+      poBaseRoom = base_room;
+      prRoom = Send(poBaseRoom,@GetRoomResource);
+      piRoom_num = iRID;
+      
+      if poGuild <> $
+      {
+         poGuildAssociation = poGuild;
+      }
+      
+      piPublic = iPublic;
+      
+      if iPvP
+      {
+         piChaosZone = TRUE;
+      }
+      else
+      {
+         Post(self,@SetRoomFlag,#flag=ROOM_NO_PK,#value=TRUE);
+      }
+      
+      piBaseLight = Send(poBaseRoom,@GetBaseLight);
+      piOutside_factor = Send(poBaseRoom,@GetOutsideFactor);
+      piDirectional_percent = Send(poBaseRoom,@GetDirectionalPercent);
+
+      prMusic = Send(poBaseRoom,@GetMusic);
+
+      plGenerators = Send(poBaseRoom,@GetGenerators);
+
+      % Set the regroup time from the SurvivalRoomMaintenance default
+      piRegroupTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                           @GetRegroupTime);
+      % Set wall blitz time.
+      piWallBlitzTime = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                              @GetWallBlitzTime);
+      piLastJoinLevel = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                              @GetLastJoinLevel);
+      pbRestoreResources = Send(Send(SYS,@GetSurvivalRoomMaintenance),
+                              @GetRestoreResources);
+
+      plRoundOneMonsters = [[&GiantRat, 14],
+                            [&SpiderBaby, 14],
+                            [&Centipede, 21],
+                            [&EvilFairy, 7],
+                            [&FungusBeast, 16],
+                            [&SpectralMummy, 14],
+                            [&Slime, 14]];
+      
+      plRoundTwoMonsters = [[&GiantRat, 6],
+                            [&SpiderBaby, 6],
+                            [&Centipede, 6],
+                            [&EvilFairy, 3],
+                            [&FungusBeast, 9],
+                            [&SpectralMummy, 6],
+                            [&Slime, 9],
+                            [&Zombie, 11],
+                            [&Spider, 6],
+                            [&Scorpion, 9],
+                            [&BatteredSkeleton, 11],
+                            [&Skeleton, 3],
+                            [&RedAnt, 6],
+                            [&Frogman, 6],
+                            [&Troll, 3]];
+      
+      plRoundThreeMonsters = [[&GiantRat, 3],
+                            [&SpiderBaby, 3],
+                            [&Centipede, 3],
+                            [&EvilFairy, 3],
+                            [&FungusBeast, 6],
+                            [&SpectralMummy, 6],
+                            [&Slime, 9],
+                            [&Zombie, 11],
+                            [&Spider, 6],
+                            [&Scorpion, 6],
+                            [&BatteredSkeleton, 11],
+                            [&Skeleton, 3],
+                            [&RedAnt, 3],
+                            [&Frogman, 6],
+                            [&Troll, 3],
+                            [&GroundWorm, 3],
+                            [&CaveOrc, 6],
+                            [&OrcWizard, 6],
+                            [&SnowRat, 3]];
+      
+      plRoundFourMonsters = [[&GiantRat, 3],
+                            [&SpiderBaby, 3],
+                            [&Centipede, 3],
+                            [&EvilFairy, 3],
+                            [&FungusBeast, 3],
+                            [&SpectralMummy, 3],
+                            [&Slime, 6],
+                            [&Zombie, 3],
+                            [&Spider, 3],
+                            [&Scorpion, 6],
+                            [&BatteredSkeleton, 11],
+                            [&Skeleton, 3],
+                            [&RedAnt, 3],
+                            [&Frogman, 6],
+                            [&Troll, 3],
+                            [&GroundWorm, 3],
+                            [&CaveOrc, 6],
+                            [&OrcWizard, 6],
+                            [&SnowRat, 3],
+                            [&TuskedSkeleton, 11],
+                            [&Lupogg, 3],
+                            [&DeathSpider, 3],
+                            [&DragonFly, 3],
+                            [&Avar, 3]];
+      
+      plRoundFiveMonsters = [[&GiantRat, 3],
+                            [&SpiderBaby, 3],
+                            [&Centipede, 3],
+                            [&EvilFairy, 3],
+                            [&FungusBeast, 3],
+                            [&SpectralMummy, 3],
+                            [&Slime, 6],
+                            [&Zombie, 3],
+                            [&Spider, 3],
+                            [&Scorpion, 6],
+                            [&BatteredSkeleton, 5],
+                            [&Skeleton, 3],
+                            [&RedAnt, 3],
+                            [&Frogman, 6],
+                            [&Troll, 3],
+                            [&GroundWorm, 3],
+                            [&CaveOrc, 6],
+                            [&OrcWizard, 6],
+                            [&SnowRat, 3],
+                            [&TuskedSkeleton, 5],
+                            [&Lupogg, 3],
+                            [&DeathSpider, 3],
+                            [&DragonFly, 3],
+                            [&Avar, 3],
+                            [&AvarShaman, 3],
+                            [&DuskRat, 3],
+                            [&EvilEnt, 3],
+                            [&Iceperson, 3]];
+      
+      plRoundSixMonsters = [[&GiantRat, 3],
+                            [&SpiderBaby, 3],
+                            [&Centipede, 3],
+                            [&EvilFairy, 3],
+                            [&FungusBeast, 3],
+                            [&SpectralMummy, 3],
+                            [&Slime, 3],
+                            [&Zombie, 3],
+                            [&Spider, 3],
+                            [&Scorpion, 6],
+                            [&BatteredSkeleton, 5],
+                            [&Skeleton, 3],
+                            [&RedAnt, 3],
+                            [&Frogman, 6],
+                            [&Troll, 3],
+                            [&GroundWorm, 3],
+                            [&CaveOrc, 3],
+                            [&OrcWizard, 3],
+                            [&SnowRat, 3],
+                            [&TuskedSkeleton, 5],
+                            [&Lupogg, 3],
+                            [&DeathSpider, 3],
+                            [&DragonFly, 3],
+                            [&Avar, 3],
+                            [&AvarShaman, 3],
+                            [&DuskRat, 3],
+                            [&EvilEnt, 3],
+                            [&Iceperson, 3],
+                            [&MolluskMonster, 3],
+                            [&NarthylWorm, 3],
+                            [&DaemonSkeleton, 3]];
+      
+      plAllMonsters = [[&GiantRat, 3],
+                    [&SpiderBaby, 2],
+                    [&Centipede, 3],
+                    [&EvilFairy, 2],
+                    [&FungusBeast, 3],
+                    [&SpectralMummy, 3],
+                    [&Slime, 3],
+                    [&Zombie, 3],
+                    [&Spider, 3],
+                    [&Scorpion, 3],
+                    [&BatteredSkeleton, 3],
+                    [&Skeleton, 3],
+                    [&RedAnt, 3],
+                    [&Frogman, 3],
+                    [&Troll, 3],
+                    [&GroundWorm, 3],
+                    [&CaveOrc, 3],
+                    [&OrcWizard, 3],
+                    [&SnowRat, 3],
+                    [&TuskedSkeleton, 3],
+                    [&Lupogg, 3],
+                    [&DeathSpider, 3],
+                    [&DragonFly, 3],
+                    [&Avar, 3],
+                    [&AvarShaman, 3],
+                    [&DuskRat, 3],
+                    [&EvilEnt, 3],
+                    [&Iceperson, 3],
+                    [&MolluskMonster, 3],
+                    [&NarthylWorm, 3],
+                    [&DaemonSkeleton, 3],
+                    [&AvarChieftain, 3],
+                    [&Kriipa, 3],
+                    [&StoneTroll, 3]];
+                    
+
+      plBosses = [&LupoggKing,
+                  &EarthElementalChampion,
+                  &FireElementalChampion,
+                  &IceElementalChampion,
+                  &NeruElementalChampion,
+                  &GiantRatKing,
+                  &DarkAngel,
+                  &Thrasher,
+                  &Ghost];
+      
+      plMinibosses = [&GroundWormQueen,
+                      &OrcPitBoss,
+                      &DragonFlyQueen,
+                      &Shadowbeast,
+                      &SpiderQueen,
+                      &Yeti,
+                      &EarthElemental,
+                      &FireElemental,
+                      &IceElemental,
+                      &NeruElemental];
+                      
+      plMonsters = plRoundOneMonsters;
+      
+      plFixedRewards = [[&AntMask,10],
+                        [&RatMask,15],
+                        [&MummyMask,20],
+                        [&SkullMask,25],
+                        [&TrollMask,30],
+                        [&ShrunkenHeadMask,35],
+                        [&DaemonMask,40],
+                        [&FeyMask,45],
+                        [&XeoMask,50],
+                        [&KriipaMask,55],
+                        [&CowMask,75],
+                        [&KraananCharm,100]];
+
+      Send(self,@RecalcLightAndWeather);
+
+      propagate;
+   }
+
+   InitiateNextLevel(timer=$)
+   {
+      local i, n, p;
+
+      piHasBegun = TRUE;
+      ptNextLevelTimer = $;
+      pbSpawnWaves = TRUE;
+
+      if piLevel = 2
+      {
+         plMonsters = plRoundTwoMonsters;
+      }
+      
+      if piLevel = 3
+      {
+         plMonsters = plRoundThreeMonsters;
+      }
+      
+      if piLevel = 4
+      {
+         plMonsters = plRoundFourMonsters;
+      }
+      
+      if piLevel = 5
+      {
+         plMonsters = plRoundFiveMonsters;
+      }
+      
+      if piLevel = 6
+      {
+         plMonsters = plRoundSixMonsters;
+      }
+      
+      if piLevel > 6
+      {
+         plMonsters = plAllMonsters;
+      }
+      
+      ptWallBlitzTimer = CreateTimer(self,@ActivateWallBlitz,piWallBlitzTime);
+      ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,REPORT_TIME);
+      
+      if Random(1,20) < piLevel
+      {
+         Send(self,@SpawnBoss);
+      }
+      
+      Send(self,@SpawnMiniboss);
+      Send(self,@SpawnMiniboss);
+      
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=begin_level,
+                                #parm1=piLevel);
+         }
+      }
+      
+      plLevelGoals = $;
+      plExtraLifeGoals = $;
+      Send(self,@ChooseGoals);
+      
+      Send(self,@ReportGoals);
+      
+      Send(self,@SomethingWaveRoom,#wave_rsc=round_begin_wav);
+
+      return;
+   }
+   
+   ReportGoalsTrigger(timer=$)
+   {
+      ptReportGoalsTimer = $;
+      
+      Send(self,@ReportGoals);
+      ptReportGoalsTimer = CreateTimer(self,@ReportGoalsTrigger,REPORT_TIME);
+      
+      return;
+   }
+   
+   ReportGoals()
+   {
+      local i, n;
+   
+      for i in plActive
+      {
+         if NOT IsClass(First(i),&User)
+         {
+            continue;
+         }
+
+         Send(First(i),@MsgSendUser,#message_rsc=goals_header);
+         for n in plLevelGoals
+         {
+            if Nth(n,1) = GOAL_KILLS
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=kill_goal_msg,
+                                   #parm1=Nth(n,2));
+            }
+            if Nth(n,1) = GOAL_BOSS
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=boss_goal_msg);
+            }
+            if Nth(n,1) = GOAL_MINIBOSSES
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=minibosses_goal_msg,
+                                   #parm1=Nth(n,2));
+            }
+         }
+         
+         if plExtraLifeGoals <> $
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=extralife_header);
+         }
+         for n in plExtraLifeGoals
+         {
+            if Nth(n,1) = GOAL_BOSS
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=boss_goal_msg);
+            }
+            if Nth(n,1) = GOAL_MINIBOSSES
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=minibosses_goal_msg,
+                                   #parm1=Nth(n,2));
+            }
+            if Nth(n,1) = GOAL_KILL_FRIENDLY
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=kill_friendly_msg);
+            }
+         }
+      }
+      return;
+   }
+   
+   ActivateWallBlitz()
+   {
+      local i, each_obj;
+      
+      ptWallBlitzTimer = $;
+      
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Monster)
+         {
+            Send(each_obj,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
+         }
+         
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=wall_blitz_activated);
+         }
+      }
+      
+      return;
+   }
+   
+   TryCreateMonster()
+   {
+      if NOT pbSpawnWaves
+      {
+         return;
+      }
+
+      propagate;
+   }
+   
+   LevelComplete()
+   {
+      local i, each_obj, lFixedReward, oReward, iRewardTime, lRandomSpawnPoint;
+
+      iRewardTime = 0;
+
+      % Prevent multi-level completion
+      if NOT pbSpawnWaves
+         OR ptNextLevelTimer <> $
+      {
+         return;
+      }
+
+      pbSpawnWaves = FALSE;
+      piSpawnedBossThisRound = FALSE;
+      
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Monster)
+            AND Send(each_obj,@GetMaster) = $
+         {
+            Send(each_obj,@Delete);
+         }
+      }
+      
+      if ptWallBlitzTimer <> $
+      {
+         DeleteTimer(ptWallBlitzTimer);
+         ptWallBlitzTimer = $;
+      }
+      if ptReportGoalsTimer <> $
+      {
+         DeleteTimer(ptReportGoalsTimer);
+         ptReportGoalsTimer = $;
+      }
+      if ptRespawnMiniBossTimer <> $
+      {
+         DeleteTimer(ptRespawnMiniBossTimer);
+         ptRespawnMiniBossTimer = $;
+      }
+
+      for lFixedReward in plFixedRewards
+      {
+         if Nth(lFixedReward,2) = piLevel
+         {
+            oReward = Create(Nth(lFixedReward,1));
+            for i in plActive
+            {
+               if IsClass(First(i),&User)
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=fixed_reward_msg,
+                                      #parm1=Send(oReward,@GetName));
+               }
+            }
+            
+            if plGenerators <> $
+            {
+               lRandomSpawnPoint = Nth(plGenerators,
+                                       Random(1,Length(plGenerators)));
+            }
+            else
+            {
+               lRandomSpawnPoint = [Send(self,@GetTeleportRow),
+                                    Send(self,@GetTeleportCol)];
+            }
+            
+            Send(self,@NewHold,#what=oReward,
+                               #new_row=Nth(lRandomSpawnPoint,1),
+                               #new_col=Nth(lRandomSpawnPoint,2));
+            iRewardTime = iRewardTime + 45000;
+         }
+      }
+
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
+                              piRegroupTime + iRewardTime);
+      
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            if pbRestoreResources
+            {
+               Send(First(i),@SetHealth,#amount=Send(First(i),@GetMaxHealth));
+               Send(First(i),@EatSomething,#nutrition=200);
+               if NOT Send(First(i),@IsCrystalizeManaSurging)
+               {
+                  Send(First(i),@GainMana,#amount=Send(First(i),@GetMaxMana),
+                     #bCapped=TRUE);
+               }
+            }
+            Send(First(i),@MsgSendUser,#message_rsc=next_level_in_seconds,
+                                #parm1 = piLevel,
+                                #parm2 = (piRegroupTime + iRewardTime)/1000);
+         }
+      }
+
+      piLevel = piLevel + 1;
+      
+      return;
+   }
+   
+   ChooseGoals()
+   {
+      local iRand,plBosses,iNumAdmins,i,iTotalParticipants;
+      
+      iNumAdmins = 0;
+      for i in plParticipants
+      {
+         if IsClass(i,&DM)
+         {
+            iNumAdmins = iNumAdmins+1;
+         }
+      }
+      
+      iTotalParticipants = 0;
+      if plParticipants <> $
+      {
+         iTotalParticipants = Length(plParticipants) - iNumAdmins;
+      }
+      
+      if plCrashProtection <> $
+      {
+         iTotalParticipants = iTotalParticipants + Length(plCrashProtection);
+      }
+      
+      iRand = Random((iTotalParticipants)*5,
+                     (iTotalParticipants)*15);
+                     
+      iRand = Bound(iRand,1,75);
+
+      plLevelGoals = Cons([GOAL_KILLS,iRand],plLevelGoals);
+
+      iRand = Random(1,3);
+      if iRand = 1
+         AND piSpawnedBossThisRound
+      {
+         plLevelGoals = Cons([GOAL_BOSS,1],plLevelGoals);
+      }
+
+      if iRand = 2
+      {
+         plLevelGoals = Cons([GOAL_MINIBOSSES,2],plLevelGoals);
+      }
+
+      iRand = Random(1,5);
+      if iRand = 1
+         AND piSpawnedBossThisRound
+      {
+         plExtraLifeGoals = Cons([GOAL_BOSS,1],plExtraLifeGoals);
+      }
+      if iRand = 2
+      {
+         plExtraLifeGoals = Cons([GOAL_MINIBOSSES,2],plExtraLifeGoals);
+      }
+      if iRand = 3
+         AND (piPublic
+         OR poGuildAssociation = $)
+         AND piChaosZone
+      {
+         plExtraLifeGoals = Cons([GOAL_KILL_FRIENDLY,1],plExtraLifeGoals);
+      }
+      
+      return;
+   }
+   
+   SpawnBoss()
+   {
+      local cBoss;
+
+      cBoss = Nth(plBosses,Random(1,Length(plBosses)));
+      Send(self,@GenerateMonster,#oMonster=Create(cBoss),#bStack=TRUE,
+                                    #piSurvivalLevel=piLevel);
+      piSpawnedBossThisRound = TRUE;
+
+      return;
+   }
+   
+   RespawnMiniboss(timer=$)
+   {
+      ptRespawnMiniBossTimer = $;
+      Send(self,@SpawnMiniboss);
+
+      return;
+   }
+   
+   SpawnMiniboss()
+   {
+      local cMiniboss;
+
+      cMiniboss = Nth(plMinibosses,Random(1,Length(plMinibosses)));
+      Send(self,@GenerateMonster,#oMonster=Create(cMiniboss),#bStack=TRUE,
+                                 #piSurvivalLevel=piLevel);
+      return;
+   }
+   
+   SomethingKilled(what=$,victim=$)
+   {
+      local i, n, p, cDeadClass, respawnCheck, oTarget, mob, oMonster;
+      
+      if IsClass(victim,&User)
+      {
+         propagate;
+      }
+
+      if IsClass(victim,&Monster)
+      {
+         % These kills don't count towards the room goals.
+         if Send(victim,@IsMinion)
+            OR IsClass(victim,&Brambles)
+         {
+            propagate;
+         }
+
+         cDeadClass = GetClass(victim);
+         
+         for respawnCheck in plMinibosses
+         {
+            if respawnCheck = cDeadClass
+               AND ptRespawnMiniBossTimer = $
+            {
+               ptRespawnMiniBossTimer = 
+                    CreateTimer(self,@RespawnMiniboss,RESPAWN_MINIBOSS_TIME);
+            }
+         }
+         
+         for i in plLevelGoals
+         {
+            if Nth(i,1) = GOAL_KILLS
+            {
+               SetNth(i,2,Nth(i,2)-1);
+               
+               for p in plActive
+               {
+                  if IsClass(First(p),&User)
+                  {
+                     Send(First(p),@MsgSendUser,#message_rsc=kills_remaining,
+                                         #parm1=Nth(i,2));
+                  }
+               }
+            }
+            
+            if Nth(i,1) = GOAL_BOSS
+            {
+               for n in plBosses
+               {
+                  if n = cDeadClass
+                  {
+                     SetNth(i,2,Nth(i,2)-1);
+                  }
+               }
+            }
+            
+            if Nth(i,1) = GOAL_MINIBOSSES
+            {
+               for n in plMinibosses
+               {
+                  if n = cDeadClass
+                  {
+                     SetNth(i,2,Nth(i,2)-1);
+                  }
+               }
+            }
+         }
+         
+         for i in plExtraLifeGoals
+         {
+            if Nth(i,1) = GOAL_BOSS
+            {
+               for n in plBosses
+               {
+                  if n = cDeadClass
+                  {
+                     SetNth(i,2,Nth(i,2)-1);
+                  }
+               }
+            }
+            
+            if Nth(i,1) = GOAL_MINIBOSSES
+            {
+               for n in plMinibosses
+               {
+                  if n = cDeadClass
+                  {
+                     SetNth(i,2,Nth(i,2)-1);
+                  }
+               }
+            }
+         }
+      }
+      
+      for i in plLevelGoals
+      {
+         if Nth(i,2) <= 0
+         {
+            if Nth(i,1) = GOAL_KILLS
+            {
+               Post(self,@AggroBosses,#victim=victim);
+            }
+            if Nth(i,1) = GOAL_BOSS
+            {
+               for n in plActive
+               {
+                  if IsClass(First(n),&User)
+                  {
+                     Send(First(n),@MsgSendUser,
+                            #message_rsc=boss_slain_goal_msg);
+                  }
+               }
+            }
+            if Nth(i,1) = GOAL_MINIBOSSES
+            {
+               for n in plActive
+               {
+                  if IsClass(First(n),&User)
+                  {
+                     Send(First(n),@MsgSendUser,
+                          #message_rsc=minibosses_slain_goal_msg);
+                  }
+               }
+            }
+
+            plLevelGoals = DelListElem(plLevelGoals,i);
+         }
+
+         if plParticipants <> $
+            AND Length(plParticipants) = 1
+            AND plLevelGoals <> $
+         {
+            % Finish it up if only one guy remains in a public room.
+            if piPublic
+            {
+               for mob in plActive
+               {
+                  oMonster = First(mob);
+                  if IsClass(oMonster,&Monster)
+                     AND (NOT Send(oMonster,@IsOwnedByPlayer))
+                     AND oMonster <> victim
+                     AND Random(1,2) = 1
+                     AND plParticipants <> $ % Sometimes $ by this stage?
+                  {
+                     oTarget = First(plParticipants);
+                     if oTarget <> $
+                     {
+                        Send(oMonster,@TargetSwitch,#what=oTarget,#iHatred=100);
+                        Send(oMonster,@EnterStateChase,#target=oTarget,
+                              #actnow=True);
+                     }
+                  }
+               }
+            }
+            else
+            {
+               % Aggro one mob on the player.
+               Send(self,@AggroOne,#who=(First(plParticipants)),
+                     #victim=victim);
+            }
+         }
+      }
+      
+      for i in plExtraLifeGoals
+      {
+         if Nth(i,2) <= 0
+         {
+            plExtraLifeGoals = DelListElem(plExtraLifeGoals,i);
+      
+            if plExtraLifeGoals = $
+            {
+               Send(self,@GainALife);
+            }
+         }
+      }
+
+      if plLevelGoals = $
+      {
+         Send(self,@LevelComplete);
+      }
+
+      propagate;
+   }
+
+   AggroBosses(victim = $)
+   {
+      local oTarget, i, n, each_obj, count;
+
+      if plParticipants = $
+         OR plLevelGoals = $
+      {
+         return;
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+
+         if victim <> $
+            AND victim = each_obj
+         {
+            continue;
+         }
+
+         for n in plBosses
+         {
+            if GetClass(each_obj) = n
+            {
+               if Length(plParticipants) = 1
+               {
+                  oTarget = First(plParticipants);
+               }
+               else
+               {
+                  oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                  count = 0;
+                  while (oTarget = $
+                     OR ((IsClass(oTarget,&DM)
+                        AND Send(oTarget,@PlayerIsImmortal))
+                     OR Send(oTarget,@IsInCannotInteractMode)))
+                  {
+                     oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                     count = count + 1;
+                     if count > 10
+                     {
+                        break;
+                     }
+                  }
+               }
+               Send(each_obj,@TargetSwitch,#what=oTarget,#iHatred=100);
+               Send(each_obj,@EnterStateChase,#target=oTarget,#actnow=True);
+            }
+         }
+         
+         for n in plMinibosses
+         {
+            if GetClass(each_obj) = n
+            {
+               if Length(plParticipants) = 1
+               {
+                  oTarget = First(plParticipants);
+               }
+               else
+               {
+                  oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                  count = 0;
+                  while (oTarget = $
+                     OR ((IsClass(oTarget,&DM)
+                        AND Send(oTarget,@PlayerIsImmortal))
+                     OR Send(oTarget,@IsInCannotInteractMode)))
+                  {
+                     oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+                     count = count + 1;
+                     if count > 10
+                     {
+                        break;
+                     }
+                  }
+               }
+
+               Send(each_obj,@TargetSwitch,#what=oTarget,#iHatred=100);
+               Send(each_obj,@EnterStateChase,#target=oTarget,#actnow=True);
+            }
+         }
+      }
+
+      return;
+   }
+
+   NewHoldObject(what=$)
+   {
+      local oTarget, i, count;
+      
+      if IsClass(what,&User)
+      {
+         for i in plCrashProtection
+         {
+            if what = Nth(i,1)
+            {
+               DeleteTimer(Nth(i,2));
+               SetNth(i,2,$);
+               plCrashProtection = DelListElem(plCrashProtection,i);
+               
+               plParticipants = Cons(what,plParticipants);
+               
+               Post(self,@AggroSome,#who=what);
+
+               propagate;
+            }
+         }
+
+         if piHasBegun
+            AND piLevel > piLastJoinLevel
+         {
+            Send(self,@SpectateUser,#who=what);
+            Post(what,@MsgSendUser,#message_rsc=spectator_only_msg);
+
+            propagate;
+         }
+
+         if (NOT piHasBegun)
+            OR piLevel <= piLastJoinLevel
+         {
+            plParticipants = Cons(what,plParticipants);
+            plLivesPerPlayer = Cons([what,3],plLivesPerPlayer);
+
+            if Length(plParticipants) = 1
+               AND NOT piPublic
+               AND poGuildAssociation = $
+            {
+               piLevel = Send(what,@GetBaseMaxHealth) / 25;
+               piLevel = Bound(piLevel,1,$);
+            }
+            Post(what,@MsgSendUser,#message_rsc=welcome_message);
+
+            propagate;
+         }
+      }
+
+      if IsClass(what,&Monster)
+         AND plParticipants <> $
+         AND (plBosses = $
+            OR (plBosses <> $
+               AND FindListElem(plBosses,GetClass(what)) = 0))
+         AND (plMiniBosses = $
+            OR (plMinibosses <> $
+               AND FindListElem(plMinibosses,GetClass(what)) = 0))
+      {
+         if Send(what,@IsMinion)
+         {
+            propagate;
+         }
+
+         if Length(plParticipants) = 1
+         {
+            oTarget = First(plParticipants);
+         }
+         else
+         {
+            oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+            count = 0;
+            while (oTarget = $
+               OR ((IsClass(oTarget,&DM)
+                     AND Send(oTarget,@PlayerIsImmortal))
+                  OR Send(oTarget,@IsInCannotInteractMode)))
+            {
+               oTarget = Nth(plParticipants,Random(1,Length(plParticipants)));
+               count = count + 1;
+               if count > 10
+               {
+                  break;
+               }
+            }
+         }
+
+         if ((NOT piPublic)
+            AND poGuildAssociation = $)
+         {
+            % Cut aggro to 1/5th in solo. Post these so they
+            % run after mob is set up in room.
+            if Random(1,5) = 1
+            {
+               Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
+               Post(what,@EnterStateChase,#target=oTarget,
+                     #actnow=True);
+            }
+         }
+         else
+         {
+            % Public arenas get full aggro. Post these so they
+            % run after mob is set up in room.
+            Post(what,@TargetSwitch,#what=oTarget,#iHatred=100);
+            Post(what,@EnterStateChase,#target=oTarget,#actnow=True);
+         }
+
+         if ptWallBlitzTimer = $
+         {
+            Send(what,@SetBehaviorFlag,#flag=AI_MOVE_WALKTHROUGH_WALLS);
+         }
+      }
+
+      propagate;
+   }
+
+   AggroOne(who = $,victim = $)
+   {
+      local i, iCount, oMonster;
+
+      if (IsClass(who,&DM)
+            AND Send(who,@PlayerIsImmortal))
+         OR Send(who,@IsInCannotInteractMode)
+      {
+         return;
+      }
+
+      iCount = 0;
+
+      for i in plActive
+      {
+         oMonster = First(i);
+         if IsClass(oMonster,&Monster)
+            AND (NOT Send(oMonster,@IsOwnedByPlayer))
+            AND Random(1,5) = 1
+         {
+            % If this is called from SomethingKilled, don't aggro
+            % the mob that was just killed.
+            if victim <> $
+               AND oMonster = victim
+            {
+               continue;
+            }
+            Send(oMonster,@TargetSwitch,#what=who,#iHatred=100);
+            Send(oMonster,@EnterStateChase,#target=who,#actnow=True);
+            iCount = iCount + 1;
+            
+            if iCount >= 1
+            {
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
+   AggroSome(who=$)
+   {
+      local i, iCount;
+
+      if (IsClass(who,&DM)
+            AND Send(who,@PlayerIsImmortal))
+         OR Send(who,@IsInCannotInteractMode)
+      {
+         return;
+      }
+
+      iCount = 0;
+
+      for i in plActive
+      {
+         if IsClass(First(i),&Monster)
+            AND (NOT Send(First(i),@IsOwnedByPlayer))
+            AND Random(1,5) = 1
+         {
+            Send(First(i),@TargetSwitch,#what=who,#iHatred=100);
+            Send(First(i),@EnterStateChase,#target=who,#actnow=True);
+            iCount = iCount + 1;
+            
+            if iCount >= 5
+            {
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
+   LeaveHold(what=$)
+   {
+      if IsClass(what,&User)
+         AND Send(what,@IsInSpectatorMode)
+      {
+         Send(what,@DeactivateSpectatorMode);
+         Post(self,@BootUser,#who=what);
+
+         propagate;
+      }
+
+      if IsClass(what,&User)
+         AND plParticipants <> $
+         AND FindListElem(plParticipants,what) <> 0
+      {
+         Post(self,@CountdownToBoot,#who=what);
+         %Post(self,@BootUser,#who=what);
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      Send(self,@BootAllUsers);
+      
+      if ptNextLevelTimer <> $
+      {
+         DeleteTimer(ptNextLevelTimer);
+         ptNextLevelTimer = $;
+      }
+      
+      if ptWallBlitzTimer <> $
+      {
+         DeleteTimer(ptWallBlitzTimer);
+         ptWallBlitzTimer = $;
+      }
+      if ptReportGoalsTimer <> $
+      {
+         DeleteTimer(ptReportGoalsTimer);
+         ptReportGoalsTimer = $;
+      }
+      if ptRespawnMiniBossTimer <> $
+      {
+         DeleteTimer(ptRespawnMiniBossTimer);
+         ptRespawnMiniBossTimer = $;
+      }
+      
+      plLivesPerPlayer = $;
+
+      Send(Send(SYS,@GetSurvivalRoomMaintenance),@RoomDeleted,#what=self);
+
+      propagate;
+   }
+   
+   GainALife()
+   {
+      local i, p;
+      
+      if piPublic
+      {
+         for p in plLivesPerPlayer
+         {
+            SetNth(p,2,Nth(p,2)+1);
+            Send(Nth(p,1),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=Nth(p,2));
+         }
+         return;
+      }
+      else
+      {
+         piLives = piLives + 1;
+      }
+
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=piLives);
+         }
+      }
+      
+      return;
+   }
+   
+   OverrideDeathFunction(who=$,what=$)
+   {
+      local i, iCheckForFriendlyKillGoal, bFoundGoal, p;
+
+      Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
+
+      bFoundGoal = FALSE;
+      for iCheckForFriendlyKillGoal in plExtraLifeGoals
+      {
+         if Nth(iCheckForFriendlyKillGoal,1) = GOAL_KILL_FRIENDLY
+            AND IsClass(what,&User)
+            AND who <> what
+            AND bFoundGoal = FALSE
+         {
+            Send(self,@GainALife);
+            
+            for i in plActive
+            {
+               if IsClass(First(i),&User)
+               {
+                  Send(First(i),@MsgSendUser,
+                                      #message_rsc=player_murdered_player_goal,
+                                      #parm1=Send(who,@GetTrueName),
+                                      #parm2=Send(what,@GetTrueName));
+               }
+            }
+            
+            Send(self,@SpectateUser,#who=who);
+            
+            plExtraLifeGoals = DelListElem(plExtraLifeGoals,
+                                           iCheckForFriendlyKillGoal);
+            break;
+         }
+      }
+      
+      if IsClass(what,&User)
+         AND who <> what
+         AND NOT bFoundGoal
+      {
+         for i in plActive
+         {
+            if IsClass(First(i),&User)
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=player_murdered_player_no_goal);
+            }
+         }
+         Send(self,@SpectateUser,#who=who);
+         return;
+      }
+      
+      for i in plActive
+      {
+         if First(i) = who
+         {
+            if IsClass(First(i),&User)
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=you_died_to_monster,
+                                   #parm1=Send(what,@GetTrueName));
+            }
+         }
+         else
+         {
+            if IsClass(First(i),&User)
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=player_died_to_monster,
+                                   #parm1=Send(who,@GetTrueName),
+                                   #parm2=Send(what,@GetIndef),
+                                   #parm3=Send(what,@GetTrueName));
+            }
+         }
+      }
+      
+      if piPublic
+      {
+         for p in plLivesPerPlayer
+         {
+            if who = Nth(p,1)
+            {
+               if Nth(p,2) > 0
+               {
+                  Send(who,@GainMana,#amount=Send(who,@GetMaxMana),#bCapped=TRUE);
+                  Send(self,@Teleport,#what=who);
+                  SetNth(p,2,Nth(p,2)-1);
+                  
+                  if Nth(p,2) > 1
+                  {
+                     Send(Nth(p,1),@MsgSendUser,#message_rsc=your_lives_remain,
+                                             #parm1=Nth(p,2));
+                  }
+                  if Nth(p,2) = 1
+                  {
+                     Send(Nth(p,1),@MsgSendUser,#message_rsc=one_life_remains,
+                                             #parm1=Nth(p,2));
+                  }
+                  if Nth(p,2) = 0
+                  {
+                     Send(Nth(p,1),@MsgSendUser,#message_rsc=no_lives_remain,
+                                             #parm1=Nth(p,2));
+                  }
+                  
+                  return;
+               }
+            }
+         
+         }
+      }
+      
+      if NOT piPublic
+         AND piLives > 0
+      {
+         piLives = piLives - 1;
+         Send(who,@GainMana,#amount=Send(who,@GetMaxMana),#bCapped=TRUE);
+         Send(self,@Teleport,#what=who);
+         
+         for i in plActive
+         {
+            if NOT IsClass(First(i),&User)
+            {
+               continue;
+            }
+
+            if piLives > 1
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=lives_remain_update,
+                                   #parm1=piLives);
+            }
+            else
+            {
+               if piLives = 1
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=one_life_remains);
+               }
+               
+               if piLives = 0
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=no_lives_remain);
+               }
+            }
+         }
+         
+         return;
+      }
+
+      Send(self,@SpectateUser,#who=who);
+      return;
+   }
+   
+   SpectateUser(who=$,inform=TRUE)
+   {
+      local i, p;
+
+      if plParticipants <> $
+         AND FindListElem(plParticipants,who) <> 0
+      {
+         plParticipants = DelListElem(plParticipants,who);
+      }
+      
+      if piPublic
+      {
+         for p in plLivesPerPlayer
+         {
+            if Nth(p,1) = who
+            {
+               plLivesPerPlayer = DelListElem(plLivesPerPlayer,p);
+            }
+         }
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=you_were_spectated);
+      Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
+      Send(who,@ActivateSpectatorMode);
+
+      if inform
+      {
+         for i in plActive
+         {
+            if IsClass(First(i),&User)
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=player_was_spectated,
+                                #parm1=Send(who,@GetTrueName));
+            }
+         }
+      }
+      
+      if plParticipants = $
+      {
+         Send(self,@BootAllUsers);
+      }
+
+      return;
+   }
+   
+   CountdownToBoot(who=$)
+   {
+      plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
+                               plCrashProtection);
+      
+      if plParticipants <> $
+         AND FindListElem(plParticipants,who) <> 0
+      {
+         plParticipants = DelListElem(plParticipants,who);
+      }
+
+      return;
+   }
+   
+   CountdownBootUser(timer=$)
+   {
+      local crashprot, ingrate;
+
+      for crashprot in plCrashProtection
+      {
+         if timer = Nth(crashprot,2)
+         {
+            ingrate = Nth(crashprot,1);
+            SetNth(crashprot,2,$);
+            SetNth(crashprot,1,$);
+            plCrashProtection = DelListElem(plCrashProtection, crashprot);
+         }
+      }
+      
+      Send(self,@BootUser,#who=ingrate);
+      
+      return;
+   }
+   
+   BootUser(who=$,inform=TRUE,booting_all=FALSE)
+   {
+      local i, p, crashprot;
+
+      % Take this person out of the crash protection list if they're there.
+      for crashprot in plCrashProtection
+      {
+         if who = Nth(crashprot,1)
+         {
+            DeleteTimer(Nth(crashprot,2));
+            SetNth(crashprot,2,$);
+            plCrashProtection = DelListElem(plCrashProtection, crashprot);
+         }
+      }
+      
+      if plParticipants <> $
+         AND FindListElem(plParticipants,who) <> 0
+      {
+         plParticipants = DelListElem(plParticipants,who);
+      }
+      
+      if piPublic
+      {
+         for p in plLivesPerPlayer
+         {
+            if Nth(p,1) = who
+            {
+               plLivesPerPlayer = DelListElem(plLivesPerPlayer,p);
+            }
+         }
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=you_were_booted);
+      
+      % They logged off.
+      if Send(who,@GetOwner) = $
+      {
+         Send(who,@DeactivateSpectatorMode);
+         Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
+      }
+      
+      % They're still here.
+      if Send(who,@GetOwner) = self
+      {
+         Send(who,@DeactivateSpectatorMode);
+         Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
+      }
+
+      if inform
+      {
+         for i in plActive
+         {
+            if IsClass(First(i),&User)
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=player_was_booted,
+                                #parm1=Send(who,@GetTrueName));
+            }
+         }
+      }
+      
+      if NOT booting_all
+      {
+         if plParticipants = $
+         {
+            Send(self,@BootAllUsers);
+         }
+      }
+
+      return;
+   }
+   
+   BootAllUsers()
+   {
+      local i, logged_player;
+      
+      % Boot all participants
+      for i in plParticipants
+      {
+         Send(self,@BootUser,#who=i,#inform=FALSE,#booting_all=TRUE);
+      }
+      
+      % Boot all crash protection players
+      for i in plCrashProtection
+      {
+         DeleteTimer(Nth(i,2));
+         SetNth(i,2,$);
+         logged_player = Nth(i,1);
+         SetNth(i,1,$);
+         plCrashProtection = DelListElem(plCrashProtection,i);
+         Send(self,@BootUser,#who=logged_player,#inform=FALSE,
+                             #booting_all=TRUE);
+      }
+      
+      % Boot everyone who remains (spectators)
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            Send(self,@BootUser,#who=First(i),#inform=FALSE,
+                                #booting_all=TRUE);
+         }
+      }
+      
+      return;
+   }
+   
+   FirstUserEntered()
+   {
+      local i;
+      
+      if piPublic
+      {
+         ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,PB_START_TIME);
+         propagate;
+      }
+
+      ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,DEFLT_START_TIME);
+      
+      for i in plActive
+      {
+         if IsClass(First(i),&User)
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=beginning_in_sixty);
+         }
+      }
+   
+      propagate;
+   }
+   
+   LastUserLeft()
+   {
+      Post(self,@Delete);
+      propagate;
+   }
+
+   CanHavePlayerPortal(who = $)
+   {
+      return FALSE;
+   }
+
+   GetTeleportRow()
+   {
+      if IsClass(poBaseRoom,&SurvivalRoom)
+      {
+         return viTeleport_row;
+      }
+
+      return Send(poBaseRoom,@GetTeleportRow);
+   }
+
+   GetTeleportCol()
+   {
+      if IsClass(poBaseRoom,&SurvivalRoom)
+      {
+         return viTeleport_col;
+      }
+
+      return Send(poBaseRoom,@GetTeleportCol);
+   }
+
+   GetTeleportAngle()
+   {
+      if IsClass(poBaseRoom,&SurvivalRoom)
+      {
+         return 0;
+      }
+
+      return Send(poBaseRoom,@GetTeleportAngle);
+   }
+
+   GetTerrainType()
+   {
+      if IsClass(poBaseRoom,&SurvivalRoom)
+      {
+         return 0;
+      }
+
+      return Send(poBaseRoom,@GetTerrainType);
+   }
+
+   GetBaseRoom()
+   {
+      return poBaseRoom;
+   }
+
+   GetAllowJoins()
+   {
+      return piAllowJoins;
+   }
+   
+   GetGuildAssociation()
+   {
+      return poGuildAssociation;
+   }
+   
+   GetPublicStatus()
+   {
+      return piPublic;
+   }
+
+   GetParticipants()
+   {
+      return plParticipants;
+   }
+
+   GetLevel()
+   {
+      return piLevel;
+   }
+   
+   GetHasBegun()
+   {
+      return piHasBegun;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      if NOT isClass(what,&player) OR type = SAY_YELL
+      {
+         propagate;
+      }
+
+      if StringEqual(string,"leave survival")
+         OR (piPublic AND StringEqual(string,"leave public survival"))
+         OR (poGuildAssociation <> $ 
+             AND StringEqual(string,"leave guild survival"))
+      {
+         Post(self,@BootUser,#who=what);
+         return;
+      }
+
+      propagate;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if IsClass(oSpell,&Elusion)
+         OR IsClass(oSpell,&Rescue)
+         OR IsClass(oSpell,&DeathRift)
+         OR IsClass(oSpell,&Truce)
+         OR IsClass(oSpell,&Jig)
+         OR IsClass(oSpell,&SporeBurst)
+         OR IsClass(oSpell,&SummonWeb)
+      {
+         % We have to provide the fail message here.
+         Send(who,@MsgSendUser,#message_rsc=survival_no_cast_rsc,
+               #parm1=Send(oSpell,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   IsBoss(what=$)
+   {
+      local i, cMob;
+
+      if what <> $
+      {
+         cMob = GetClass(what);
+         for i in plBosses
+         {
+            if cMob = i
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+   IsMiniBoss(what=$)
+   {
+      local i, cMob;
+
+      if what <> $
+      {
+         cMob = GetClass(what);
+         for i in plMiniBosses
+         {
+            if cMob = i
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

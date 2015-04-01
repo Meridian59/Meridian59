@@ -29,14 +29,16 @@ resources:
    
    skill_sound_fail = spelfail.wav
 
-   skill_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%i%s"
-   skill_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s"
+   skill_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%q%s%i%s"
+   skill_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%q"
    skill_school_fencing = "Weaponcraft"
    skill_school_brawling = "Brawling"
    skill_school_thievery = "Thievery"
 
    Skill_meditate_ratio_one_rsc = "\n\nIt will cost you "
    Skill_meditate_ratio_two_rsc = " training points to improve in this skill."
+
+   skill_nothing = " "
 
 classvars:
 
@@ -116,9 +118,9 @@ messages:
       return oSchool;
    }
 
-   ShowDesc()
+   ShowDesc(who=$)
    {
-      local rSchool;
+      local rSchool, rStats;
 
       rSchool = skill_school_fencing;
 
@@ -132,17 +134,37 @@ messages:
          rSchool = skill_school_thievery;
       }
       
+      rStats = Send(self,@GetStatsDesc,#who=who);
+      if rStats = $
+      {
+         rStats = CreateString();
+         SetString(rStats,skill_nothing);
+      }
+
       if piMeditate_ratio = 0
       {
-         AddPacket(4,skill_desc_no_train_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+         AddPacket(4,skill_desc_no_train_rsc,4,rSchool,
+                  4,viSkill_Level,4,vrDesc,4,rStats);
       }
       else
       {
-         AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
-         AddPacket(4,Skill_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Skill_meditate_ratio_two_rsc);
+         AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,
+                   4,vrDesc,4,rStats);
+         AddPacket(4,Skill_meditate_ratio_one_rsc,4,piMeditate_ratio,
+                   4,Skill_meditate_ratio_two_rsc);
       }
 
       return;
+   }
+
+   GetStatsDesc()
+   {
+      local sString;
+
+      sString = CreateString();
+      SetString(sString,skill_nothing);
+
+      return sString;
    }
 
    GetValue()
@@ -179,6 +201,48 @@ messages:
    GetDivisionReq(who=$)
    {
       return Send(who,@GetAgility);
+   }
+   
+   GetPrimaryStat()
+   {
+      if (viSkill_Num = SKID_DEFAULT)
+         OR (viSkill_Num = SKID_BRAWLING)
+         OR (viSkill_Num = SKID_PROFICIENCY_MACE)
+         OR (viSkill_Num = SKID_PROFICIENCY_HAMMER)
+      {
+         return STAT_ID_MIGHT;
+      }
+   
+      if (viSkill_Num = SKID_SECOND_WIND)
+      {
+         return STAT_ID_STAMINA;
+      }
+
+      if (viSkill_Num = SKID_DODGE)
+         OR (viSkill_Num = SKID_PARRY)
+         OR (viSkill_Num = SKID_ASSESS)
+         OR (viSkill_Num = SKID_BLOCK)
+         OR (viSkill_Num = SKID_DISARM)
+         OR (viSkill_Num = SKID_SLASH)
+         OR (viSkill_Num = SKID_THRUST)
+         OR (viSkill_Num = SKID_PUNCH)
+         OR (viSkill_Num = SKID_KICK)
+         OR (viSkill_Num = SKID_PROFICIENCY_SCIMITAR)
+         OR (viSkill_Num = SKID_PROFICIENCY_AXE)
+      {
+         return STAT_ID_AGILITY;
+      }
+
+      if (viSkill_Num = SKID_FIRE)
+         OR (viSkill_Num = SKID_PROFICIENCY_SWORD)
+         OR (viSkill_Num = SKID_PROFICIENCY_BOW)
+         OR (viSkill_Num = SKID_PROFICIENCY_SHORT_SWORD)
+         OR (viSkill_Num = SKID_PROFICIENCY_SHORTSWORD)
+      {
+         return STAT_ID_AIM;
+      }
+      
+      return;
    }
    
    GetSkillNum()

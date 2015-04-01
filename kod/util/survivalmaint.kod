@@ -1,0 +1,471 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SurvivalRoomMaintenance is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   public_survival_started = \
+      "%s has started a public co-op survival arena. It will begin in "
+      "three minutes."
+   
+   public_ended = \
+      "The public co-op survival arena has ended at level %i."
+
+properties:
+
+   plSurvivalRooms = $
+   
+   % Are Survival Arenas active?
+   piPublicSurvivalEnabled = FALSE
+   piSoloSurvivalEnabled = FALSE
+   piGuildSurvivalEnabled = FALSE
+   
+   % At what level multiple do these increase?
+   piSurvivalXPIncreaseLevel = 8
+   piSurvivalTPIncreaseLevel = 8
+   piSurvivalLootIncreaseLevel = 4
+
+   % How much extra cash on each monster kill per level?
+   piSurvivalCashPerLevel = 30
+
+   % Don't use these rooms (list of RIDs)
+   plExcludedRoomsList = $
+
+   % Default time between rounds
+   piRegroupTime = 15000
+   
+   % Default time between wall blitzes (mobs walk through walls)
+   piWallBlitzTime = 300000
+   
+   % Default last join level
+   piLastJoinLevel = 6
+
+   % Do we restore resources on level completion?
+   pbRestoreResources = TRUE
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@Recreate);
+      
+      plExcludedRoomsList = [RID_MAR_SMITHY,
+                             RID_MAR_ELDER_HUT,
+                             RID_SEWER_KING,
+                             RID_TEMPLE_RIIJA,
+                             RID_MAR_CRYPT3A];
+
+      return;
+   }
+
+   Recreate()
+   {
+      return;
+   }
+   
+   CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE,sString=$,
+              lSurvivalOptions=$,poForceBaseRoom=$)
+   {
+      local poRoom, poBaseRoom, plAllRooms, iRID, i, plPlayersLoggedOn, z,
+            plExcludedRoomsObjs, iNatural, iPvP, o;
+      
+      if guild_survival = TRUE
+         AND NOT piGuildSurvivalEnabled
+      {
+         return $;
+      }
+      
+      if iPublic = TRUE
+         AND NOT piPublicSurvivalEnabled
+      {
+         return $;
+      }
+      
+      if iPublic = FALSE
+         AND guild_survival = FALSE
+         AND NOT piSoloSurvivalEnabled
+      {
+         return $;
+      }
+      
+      iNatural = TRUE;
+      iPvP = FALSE;
+      for o in lSurvivalOptions
+      {
+         if o = OPT_NATURAL
+         {
+            iNatural = FALSE;
+         }
+         
+         if o = OPT_PVP_ON
+         {
+            iPvP = TRUE;
+         }
+      }
+
+      plAllRooms = Send(SYS,@ListCopy,#source=Send(SYS,@GetRooms));
+
+      % If we sent the string used to activate the arena (only for public)
+      % check it for a room name to use. If we sent a room name, use that
+      % for the survival room.
+      if sString <> $
+      {
+         for i in plAllRooms
+         {
+            if StringContain(sString,Send(i,@GetName))
+            {
+               poForceBaseRoom = i;
+
+               break;
+            }
+         }
+      }
+
+      plExcludedRoomsObjs = $;
+      for z in plExcludedRoomsList
+      {
+         plExcludedRoomsObjs = Cons(Send(SYS,@FindRoomByNum,#num=z),
+                                    plExcludedRoomsObjs);
+      }
+
+      % DMs can choose any room, but users can only pick from the allowed
+      % rooms.  Set poBaseRoom to the chosen room so it can be checked
+      % in the following code.
+      if NOT IsClass(who,&DM)
+         AND poForceBaseRoom <> $
+      {
+         poBaseRoom = poForceBaseRoom;
+         poForceBaseRoom = $;
+      }
+      else
+      {
+         poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
+      }
+
+      % Ensure it's a monster room, and shrink the list on every failure.
+      if (NOT IsClass(poBaseRoom,&MonsterRoom))
+         OR IsClass(poBaseRoom,&SurvivalRoom)
+         OR (plExcludedRoomsObjs <> $
+            AND FindListElem(plExcludedRoomsObjs,poBaseRoom))
+         OR (iNatural AND Send(poBaseRoom,@GetGenerators) = $)
+      {
+         while (NOT IsClass(poBaseRoom,&MonsterRoom))
+            OR IsClass(poBaseRoom,&SurvivalRoom)
+            OR (plExcludedRoomsObjs <> $
+               AND FindListElem(plExcludedRoomsObjs,poBaseRoom))
+            OR (iNatural AND Send(poBaseRoom,@GetGenerators) = $)
+         {
+            plAllRooms = DelListElem(plAllRooms,poBaseRoom);
+            poBaseRoom = Nth(plAllRooms,Random(1,Length(plAllRooms)));
+         }
+      }
+
+      if NOT IsClass(poBaseRoom,&MonsterRoom)
+      {
+         return $;
+      }
+
+      % If we still have a forced base room, it was given by a DM.
+      % Set the base room to the forced one.
+      if poForceBaseRoom <> $
+      {
+         poBaseRoom = poForceBaseRoom;
+      }
+
+      iRID = Send(self,@GetNextAvailableRID);
+      
+      if iRID = 0
+      {
+         return $;
+      }
+      
+      if guild_survival
+      {
+         Send(SYS,@CreateOneRoomIfNew,#num=iRID,
+               #class=&SurvivalRoom,
+               #poGuild=Send(who,@GetGuild),
+               #base_room=poBaseRoom,
+               #iPvP=iPvP);
+      }
+      else
+      {
+         Send(SYS,@CreateOneRoomIfNew,#num=iRID,
+               #class=&SurvivalRoom,
+               #iPublic=iPublic,
+               #base_room=poBaseRoom,
+               #iPvP=iPvP);
+      }
+
+      poRoom = Send(SYS,@FindRoomByNum,#num=iRID);
+      
+      if poRoom <> $
+      {
+         plSurvivalRooms = Cons(poRoom,plSurvivalRooms);
+         Send(Send(SYS,@GetStatistics),@AddToRoomCount,#iNum=iRID);
+         Send(poRoom,@Teleport,#what=who);
+
+         if iPublic
+         {
+            plPlayersLoggedOn = Send(SYS,@GetUsersLoggedOn);
+         
+            for i in plPlayersLoggedOn
+            {
+               Send(i,@MsgSendUser,#message_rsc=public_survival_started,
+                                   #parm1=Send(who,@GetTrueName));
+            }
+         }
+      }
+      
+      return poRoom;
+   }
+
+   GetNextAvailableRID()
+   {
+      local iRID, i, bExists;
+
+      iRID = RID_SURVIVAL_START;
+
+      if plSurvivalRooms = $
+      {
+         return iRID;
+      }
+
+      while iRID <= RID_SURVIVAL_END
+      {
+         bExists = FALSE;
+         for i in plSurvivalRooms
+         {
+            if Send(i,@GetRoomNum) = iRID
+            {
+               bExists = TRUE;
+            }
+         }
+         
+         if NOT bExists
+         {
+            return iRID;
+         }
+         
+         iRID = iRID + 1;
+      }
+
+      return 0;
+   }
+   
+   FindRoomByGuild(oGuild=$)
+   {
+      local i;
+      
+      for i in plSurvivalRooms
+      {
+         if Send(i,@GetGuildAssociation) = oGuild
+            AND Send(i,@GetAllowJoins)
+         {
+            return i;
+         }
+      }
+      
+      return $;
+   }
+   
+   FindPublicRoom()
+   {
+      local i;
+      
+      for i in plSurvivalRooms
+      {
+         if Send(i,@GetPublicStatus) = TRUE
+            AND Send(i,@GetAllowJoins)
+         {
+            return i;
+         }
+      }
+      
+      return $;
+   }
+
+   RoomDeleted(what = $)
+   {
+      local plUsers, i;
+
+      if plSurvivalRooms <> $
+         AND FindListElem(plSurvivalRooms,what) <> 0
+      {
+         if Send(what,@GetPublicStatus)
+         {
+            plUsers = Send(SYS,@GetUsersLoggedOn);
+            for i in plUsers
+            {
+               Send(i,@MsgSendUser,#message_rsc=public_ended,
+                                   #parm1=Send(what,@GetLevel));
+               % Keep track of highest level.
+               Send(Send(SYS,@GetStatistics),@RecordPublicSurvivalLevel,
+                     #iLevel=Send(what,@GetLevel));
+            }
+         }
+         else
+         {
+            if Send(what,@GetGuildAssociation) <> $
+            {
+               Send(Send(SYS,@GetStatistics),@RecordGuildSurvivalLevel,
+                     #iLevel=Send(what,@GetLevel));
+            }
+            else
+            {
+               Send(Send(SYS,@GetStatistics),@RecordSoloSurvivalLevel,
+                     #iLevel=Send(what,@GetLevel));
+            }
+         }
+
+         plSurvivalRooms = DelListElem(plSurvivalRooms,what);
+      }
+
+      return;
+   }
+
+   GetRegroupTime()
+   {
+      return piRegroupTime;
+   }
+
+   GetPublicSurvivalEnabled()
+   {
+      return piPublicSurvivalEnabled;
+   }
+   
+   GetGuildSurvivalEnabled()
+   {
+      return piGuildSurvivalEnabled;
+   }
+   
+   GetSoloSurvivalEnabled()
+   {
+      return piSoloSurvivalEnabled;
+   }
+   
+   GetSurvivalXP()
+   {
+      return piSurvivalXPIncreaseLevel;
+   }
+   
+   GetSurvivalCash()
+   {
+      return piSurvivalCashPerLevel;
+   }
+   
+   GetSurvivalTP()
+   {
+      return piSurvivalTPIncreaseLevel;
+   }
+   
+   GetSurvivalLoot()
+   {
+      return piSurvivalLootIncreaseLevel;
+   }
+
+   GetWallBlitzTime()
+   {
+      return piWallBlitzTime;
+   }
+
+   GetLastJoinLevel()
+   {
+      return piLastJoinLevel;
+   }
+
+   GetRestoreResources()
+   {
+      return pbRestoreResources;
+   }
+
+   ExcludeRID(iRID=RID_MAR_SMITHY)
+   {
+      if plExcludedRoomsList = $
+         OR FindListElem(plExcludedRoomsList,iRID) = 0
+      {
+         plExcludedRoomsList = Cons(iRID,plExcludedRoomsList);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   AllowRID(iRID=0)
+   {
+      if plExcludedRoomsList <> $
+         AND FindListElem(plExcludedRoomsList,iRID) <> 0
+      {
+         plExcludedRoomsList = DelListElem(plExcludedRoomsList,iRID);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   SurvivalStatusReport()
+   {
+      local i;
+
+      % Report highest levels reached.
+      Debug("Highest Public Survival level reached is ",
+                  Send(Send(SYS,@GetStatistics),@RecordPublicSurvivalLevel));
+      Debug("Highest Guild Survival level reached is ",
+                  Send(Send(SYS,@GetStatistics),@RecordGuildSurvivalLevel));
+      Debug("Highest Solo Survival level reached is ",
+                  Send(Send(SYS,@GetStatistics),@RecordSoloSurvivalLevel));
+
+      if plSurvivalRooms = $
+      {
+         Debug("No survival arenas active.");
+
+         return;
+      }
+
+      for i in plSurvivalRooms
+      {
+         if Send(i,@GetPublicStatus)
+         {
+            Debug("Public arena is active, object is ",i," and base room is ",
+                  Send(Send(i,@GetBaseRoom),@GetName));
+            Debug("Public arena is on level ",Send(i,@GetLevel)," and has ",
+                  Length(Send(i,@GetParticipants))," participants remaining.");
+         }
+         else
+         {
+            if Send(i,@GetGuildAssociation)
+            {
+               Debug("Guild arena is active, object is ",i," and base room is ",
+                     Send(Send(i,@GetBaseRoom),@GetName));
+               Debug("Guild arena is on level ",Send(i,@GetLevel)," and has ",
+                     Length(Send(i,@GetParticipants))," participants remaining.");
+            }
+            else
+            {
+               % Must be solo.
+               Debug("Solo arena is active, object is ",i," and base room is ",
+                     Send(Send(i,@GetBaseRoom),@GetName));
+               Debug("Solo arena is on level ",Send(i,@GetLevel)," and was started by ",
+                     Send(First(Send(i,@GetParticipants)),@GetTrueName));
+            }
+         }
+      }
+
+      return plSurvivalRooms;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

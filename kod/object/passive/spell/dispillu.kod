@@ -41,7 +41,7 @@ classvars:
    viSchool = SS_KRAANAN
    viSpell_level = 4
    viMana = 20
-   viSpellExertion = 15
+   viSpellExertion = 3
    viMeditate_ratio = 30
 
 properties:

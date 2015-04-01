@@ -70,6 +70,8 @@ classvars:
    viAttack_type = ATCK_WEAP_PIERCE
    viLevel = 120
    viDifficulty = 6
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viVisionDistance = 18
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_NEWBIESAFE
@@ -87,8 +89,6 @@ properties:
    piAnimation = ANIM_NONE
    ptHover = $
    ptLand = $
-
-   piDrawfx = BOUNCE_YES
 
    piColor = PT_GRAY_TO_DGREEN
 
@@ -117,7 +117,7 @@ messages:
    DoSpit()
    {
       piAnimation = ANIM_ATTACK;
-      piDrawFX = piDrawFX | BOUNCE_YES;
+      piDrawEffectFlag = piDrawEffectFlag | OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
       Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
            #projectile = self);
@@ -170,7 +170,7 @@ messages:
       if (poTarget = $) AND (piAnimation = ANIM_HOVER)
       {
          piAnimation = ANIM_NONE;
-         piDrawFX = (piDrawFX & (~BOUNCE_YES));
+         piDrawEffectFlag = (piDrawEffectFlag & (~OF_BOUNCING));
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -282,19 +282,19 @@ messages:
       propagate;
    }
 
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
    GetObjectFlags()
    {
       if piAnimation = ANIM_NONE
       {
-         return MOVEON_NO | BATTLER_YES;
+         return OF_ATTACKABLE;
       }
 
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
-   }
-
-   CanMorphTo()
-   {
-      return FALSE;
+      return OF_ATTACKABLE | OF_BOUNCING;
    }
 
    SetColor(iColor=PT_GRAY_TO_DGREEN)

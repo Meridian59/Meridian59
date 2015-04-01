@@ -118,8 +118,12 @@ messages:
    }
 
    IsAlly(target = $)
-   "Newbie monster has no allies."
    {
+      if IsClass(target,&GiantRat)
+      {
+         return TRUE;
+      }
+   
       return FALSE;
    }
 

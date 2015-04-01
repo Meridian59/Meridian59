@@ -44,7 +44,7 @@ properties:
 
    piNumber = 1
    
-   viObject_flags = APPLY_YES | GETTABLE_YES
+   viObject_flags = OF_APPLYABLE | OF_GETTABLE
 
 messages:
 

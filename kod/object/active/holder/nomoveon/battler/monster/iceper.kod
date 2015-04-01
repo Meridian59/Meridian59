@@ -55,6 +55,8 @@ classvars:
    viLevel = 75
    viDifficulty = 5
    viVisionDistance = 10
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = -70
    viCashmin = 200
    viCashmax = 450
@@ -165,12 +167,12 @@ messages:
 
       iGroup = 1;
 
-      if piHit_points < (2*viLevel/3)
+      if piHit_points < (200*viLevel/3)
       {
          iGroup = 2;
       }
 
-      if piHit_points < (viLevel/3)
+      if piHit_points < (100*viLevel/3)
       {
          iGroup = 3;
       }

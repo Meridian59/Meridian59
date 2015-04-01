@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EarthElemental is Elemental
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   earthelemental_name_rsc = "earth golem"
+   earthelemental_icon_rsc = earthele.bgf
+   earthelemental_desc_rsc = \
+      "A creature of living earth, this towering monster stalks toward you,"
+      " causing the ground to shake with every step.  Its every move sounds"
+      " like grinding stone, and the aroma of fresh soil fills your nostrils."
+      
+   earthelemental_koc_name_rsc = "atzmochzhu"
+
+   earthelemental_dead_icon_rsc = eartheleX.bgf
+   earthelemental_dead_name_rsc = "dead earth golem"
+
+classvars:
+
+   vrKocName = earthelemental_koc_name_rsc
+   vrName = earthelemental_name_rsc
+   vrIcon = earthelemental_icon_rsc
+   vrDesc = earthelemental_desc_rsc
+   vrDead_icon = earthelemental_dead_icon_rsc
+   vrDead_name = earthelemental_dead_name_rsc
+
+   viTreasure_type = TID_EARTH_ELE
+
+   viAttack_Spell = ATCK_SPELL_QUAKE
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      if plResistances = $
+      {
+         plResistances = [ [-ATCK_SPELL_ACID, -70 ],
+                           [-ATCK_SPELL_COLD, -25 ],
+                           [-ATCK_SPELL_FIRE, -25 ],
+                           [-ATCK_SPELL_ALL, 50 ],
+                           [ATCK_WEAP_BLUDGEON, -50],
+                           [ATCK_WEAP_ALL, 50 ] ];
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -19,6 +19,8 @@ resources:
 
    deadbody_desc_rsc = "This is a dead, decomposing %s, slain by %q."
 
+   deadbody_named_mob_rsc = "The dead body of %s, slain by %q."
+   
    deadbody_player_desc_rsc = \
       "The dead body of %q, decomposing quickly in the living air of Meridian."
 
@@ -29,6 +31,7 @@ classvars:
 
    vrDesc = deadbody_desc_rsc
    vrPlayer_desc = deadbody_player_desc_rsc
+   vrNamed_Mob_Desc = deadbody_named_mob_rsc
 
    vrAssassinated_desc = deadbody_assassinated_rsc
    viIndefinite = ARTICLE_A
@@ -46,6 +49,7 @@ properties:
    prPlayer_name = $
    pbWas_good_player = FALSE
    pbMob = FALSE
+   pbNamedMob = FALSE
    pbAssassinated = FALSE
 
    piDrawfx = 0
@@ -63,37 +67,45 @@ properties:
 messages:
 
    % you gotta pass in name, icon, and description to constructor
-   Constructor(name = $,icon = $,playername = $,good = FALSE, mob=FALSE ,monstername = $,
-               inKocatan = FALSE, assassinated = FALSE,drawfx = 0, BodyTranslation = 0,
-               LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes=TRUE,
-               DearlyDeparted = $)
+   Constructor(victim = $,killer = $,inKocatan = FALSE, assassinated = FALSE,
+         drawfx = 0, BodyTranslation = 0, LegsTranslation = 0, 
+         PlayerBodyOverlay = $, Decomposes = TRUE)
    {
-      vrName = name;
-      vrIcon = icon;
-      pbMob = mob;
+      vrName = Send(victim,@GetDeadName);
+      vrIcon = Send(victim,@GetDeadIcon);
+      pbMob = IsClass(victim,&Monster);
       piDrawfx = drawfx;
-      prPlayer_name = playername;
-      pbWas_good_player = good; 
       pbAssassinated = assassinated;
       prPlayerBodyOverlay = PlayerBodyOverlay;
       piBodyTrans = BodyTranslation;
       piLegsTrans = LegsTranslation;      
-      poDearlyDeparted = DearlyDeparted;
       piTimeOfDeath = GetTime();
-
-      if decomposes
+      
+      if Decomposes
       {
-         if mob
-         { 
-            ptDelete = CreateTimer(self,@DeleteTimerMessage,120000);
-            prmonster_name = monstername;
+         if pbMob
+         {
+            prPlayer_name = Send(killer,@GetTrueName);
+            prmonster_name = Send(victim,@GetName);
+            pbNamedMob = Send(victim,@IsNamedMob);
          }
          else
          {
-            % Make player corpses hang around longer.
-            ptDelete = CreateTimer(self,@DeleteTimerMessage,600000);	    
-            Send(Send(SYS,@Findroombynum,#num=RID_UNDERWORLD),@Newdeath,#what=self,#inKocatan=inKocatan);
+            prPlayer_name = Send(victim,@GetName);
+            pbWas_good_player = (Send(victim,@GetKarma) > 0); 
+            poDearlyDeparted = victim;
          }
+      }
+      
+      if pbMob
+      { 
+         ptDelete = CreateTimer(self,@DeleteTimerMessage,120000);
+      }
+      else
+      {
+         % Make player corpses hang around longer.
+         ptDelete = CreateTimer(self,@DeleteTimerMessage,600000);	    
+         Send(Send(SYS,@Findroombynum,#num=RID_UNDERWORLD),@Newdeath,#what=self,#inKocatan=inKocatan);
       }
 
       % only the killer can pick up things for the first 25 seconds.
@@ -169,9 +181,18 @@ messages:
       % need to do STRING_RESOURCE for names because player might not be logged in
       if pbMob
       {
-         AddPacket(4,vrDesc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
+         if NOT pbNamedMob
+         {
+            AddPacket(4,vrDesc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
          
-         return;
+            return;
+         }
+         else
+         {
+            AddPacket(4,vrNamed_Mob_Desc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
+         
+            return;
+         }
       }
       
       if pbAssassinated
@@ -199,11 +220,6 @@ messages:
       return (NOT pbMob);
    }
 
-   GetObjectFlags()
-   {
-      return viObject_flags | piDrawfx;
-   }
-   
    SendAnimation()
    {
       if piBodyTrans <> 0

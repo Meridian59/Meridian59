@@ -56,12 +56,12 @@ classvars:
 
    viTreasure_type = TID_NONE
    viAttack_type = ATCK_WEAP_SLASH
-   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOVEON_NOTIFY | MOB_NOQUEST
+   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_NOQUEST
+   viMoveOn_type = MOVEON_NOTIFY
    viLevel = 25
    viDifficulty = 4 
    viKarma = 0
    viDefault_behavior = AI_NOFIGHT | AI_NOMOVE
-   viObject_flags = BATTLER_YES
    viCashmin = 0
    viCashmax = 0
    vrSound_hit = $
@@ -128,7 +128,7 @@ messages:
       
    Constructed()
    {
-      piHit_points = piBrambleHits;
+      piHit_points = piBrambleHits * 100;
       piMax_hit_points = piBrambleHits;
 
       propagate;
@@ -205,7 +205,7 @@ messages:
          plAffected = Cons(what,plAffected);
 
          if IsClass(what,&Player)
-            AND NOT Send(what,@IsPhasedOut)
+            AND NOT Send(what,@IsInCannotInteractMode)
          {
             Send(what,@MsgSendUser,#message_rsc=Brambles_damage0);
          }
@@ -272,21 +272,21 @@ messages:
             return;
          }
 
-         if iDamage < 3
+         if iDamage <= 200
          {
             Send(what,@MsgSendUser,#message_rsc=Brambles_damage2);
 
             return;
          }
 
-         if iDamage = 3
+         if iDamage <= 300
          {
             Send(what,@MsgSendUser,#message_rsc=Brambles_damage3);
 
             return;
          }
 
-         if iDamage = 4
+         if iDamage <= 400
          {
             Send(what,@MsgSendUser,#message_rsc=Brambles_damage4);
 
@@ -370,7 +370,7 @@ messages:
    {
       local iMaxHPDiv;
 
-      iMaxHPDiv = piMax_Hit_Points / 5;
+      iMaxHPDiv = piMax_Hit_Points * 20;
 
       if piAnimation = ANIM_BRAMBLE_GROW
       {

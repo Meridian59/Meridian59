@@ -43,7 +43,7 @@ classvars:
 
    viSpell_level = 5
    viMana = 10
-   viSpellExertion = 10
+   viSpellExertion = 2
    viCast_time = 4000
 
 properties:

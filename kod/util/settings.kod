@@ -52,6 +52,16 @@ properties:
    piKillKarmaSwingPlayer = 10
 
    pbAtrophyOn = FALSE
+   
+   % Stat reset options
+   pbStatsResetEnabled = TRUE
+   piStatsResetPenalty = -2
+   piFreeStatsResetCap = 19
+   piStatResetTokenLife = 2
+
+   % Stat reset token has a 1 in (piStatResetTokenDropFactor / monster_level)
+   % chance to drop, with monster_level bound between 50 and 150.
+   piStatResetTokenDropFactor = 500000
 
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
@@ -62,6 +72,9 @@ properties:
    %  spells and skills.  This is a percent of normal, and only affects the
    %  secondary chance.
    piAdvancementRate = 100
+
+   % The training points we grant players each day to reward them for logging on.
+   piLogonBonus = 200
 
    % Multiplier for the amount of %s each mob you kill adds to your levelup chance.
    piHPGainMultiplier = 1
@@ -159,6 +172,7 @@ properties:
 
    % Number of minions allowed per caster.
    piPlayerMinionLimit = 4
+   piMonsterMinionLimit = 4
 
    % Minimum swings needed for a chance to improve a weaponcraft skill.
    piWeaponcraftImprovementMinimumSwings = 50
@@ -177,6 +191,9 @@ properties:
 
    % Length of hold effect players experience when logging or phasing in
    piLogonDelay = 2500
+   
+   % Length of time the temporary guardian angel lasts, in minutes
+   piTempSafeMinutes = 180
 
    % Revenant speed setting
    piRevSpeed = 18
@@ -275,6 +292,31 @@ messages:
    % Player advancement
    %
 
+   GetStatsResetEnabled()
+   {
+      return pbStatsResetEnabled;
+   }
+   
+   GetStatsResetPenalty()
+   {
+      return piStatsResetPenalty;
+   }
+   
+   GetFreeStatsResetCap()
+   {
+      return piFreeStatsResetCap;
+   }
+   
+   GetStatResetTokenLife()
+   {
+      return piStatResetTokenLife;
+   }
+   
+   GetStatResetTokenDropFactor()
+   {
+      return piStatResetTokenDropFactor;
+   }
+
    CleanNewbieInventoryOnEnteringRealWorld()
    {
       return pbCleanNewbieInventoryOnEnteringRealWorld;
@@ -288,6 +330,11 @@ messages:
    GetAdvancementRate()
    {
       return piAdvancementRate;
+   }
+
+   GetLogonBonus()
+   {
+      return piLogonBonus;
    }
 
    GetHPGainMultiplier()
@@ -439,6 +486,11 @@ messages:
       return piPlayerMinionLimit;
    }
 
+   GetMonsterMinionLimit()
+   {
+      return piMonsterMinionLimit;
+   }
+
    GetSwingsPerImproveCheck()
    {
       return piWeaponcraftImprovementMinimumSwings;
@@ -452,6 +504,11 @@ messages:
    GetLogonDelay()
    {
       return piLogonDelay;
+   }
+
+   GetTempSafeTime()
+   {
+      return piTempSafeMinutes;
    }
 
    GetOutlawMurdererLogoffPenaltyGhostTime()

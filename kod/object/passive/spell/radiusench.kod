@@ -448,7 +448,7 @@ messages:
       }
 
       If IsClass(target,&Player)
-         AND Send(target,@IsPhasedOut)
+         AND Send(target,@IsInCannotInteractMode)
       {
          return FALSE;
       }

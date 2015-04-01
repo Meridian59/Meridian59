@@ -21,7 +21,7 @@ resources:
 
 classvars:
 
-   viObject_flags = CONTAINER_YES
+   viObject_flags = OF_CONTAINER
 
    viBulk_hold_max = 2500
    viWeight_hold_max = $

@@ -38,9 +38,6 @@ classvars:
    viChance_to_increase = 12
 
    viskillExertion = 500
-   viHit_Factor = 20
-
-   viDamage = 120
 
 properties:
 

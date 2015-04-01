@@ -57,7 +57,7 @@ classvars:
    
    viPeriodicEffect = TRUE
    
-   viSpellExertion = 10      
+   viSpellExertion = 3
    viChance_To_Increase = 20
    viMeditate_ratio = 20
 

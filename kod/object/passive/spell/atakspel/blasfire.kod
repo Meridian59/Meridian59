@@ -51,7 +51,7 @@ properties:
 
    piDamageMin = 15
    piDamageMax = 23
-   piRange = 4
+   piRange = 4 * FINENESS
 
 messages:
 

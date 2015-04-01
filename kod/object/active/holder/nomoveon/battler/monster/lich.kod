@@ -106,6 +106,8 @@ classvars:
    viLevel = 200
    viDifficulty = 9
    viVisionDistance = 60
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viKarma = -100
    viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT
    viAttributes = MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER
@@ -144,7 +146,7 @@ messages:
       %send(send(SYS,@GetNecromancerBalance),@ActivateScenario);
 
       pimax_Hit_Points = pimax_hit_Points * 2;
-      piHit_Points = pimax_hit_points;
+      piHit_Points = pimax_hit_points*100;
 
       plResistances = [ [-ATCK_SPELL_ALL, 60],
                         [ATCK_WEAP_ALL, 60],

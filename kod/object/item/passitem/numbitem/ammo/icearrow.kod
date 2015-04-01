@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IceArrow is Ammo
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ice_arrow_name_rsc = "ice arrows"
+   ice_arrow_icon_rsc = arrowice.bgf
+   ice_arrow_desc_rsc = \
+      "These arrows are colder then Qor's heart, some "
+      "say if held too long they may freeze your hand."
+      
+   ice_arrow_freezes = \
+      "The ice arrowhead explodes into a flurry of razor-sharp shards!"
+
+classvars:
+
+   vrName = ice_arrow_name_rsc
+   vrIcon = ice_arrow_icon_rsc
+   vrDesc = ice_arrow_desc_rsc
+
+   viAmmo_type = AMMO_ARROW
+   viValue_average = 20
+
+   viGround_group = 4
+   viInventory_group = 3
+   viBroken_group = 2
+
+   viBulk = 4
+   viWeight = 4
+   
+   viMinDamage = 2
+   viMaxDamage = 6
+   
+   viMiniceDamage = 3
+   viMaxiceDamage = 8
+
+properties:
+
+   piNumber = 10
+   piAttack_spell = ATCK_SPELL_COLD
+
+messages:
+
+   GetDamage(who=$,target=$)
+   {
+      if target <> $ AND Random(1,100) <= 10
+      {
+         Send(who,@MsgSendUser,#message_rsc=ice_arrow_freezes);
+         if IsClass(target,&Player)
+         {
+            Send(target,@MsgSendUser,#message_rsc=ice_arrow_freezes);
+         }
+
+         return Random(viMiniceDamage,viMaxiceDamage);
+      }
+
+      propagate;
+   }
+
+   GetMinSpecialDamage()
+   {
+      return viMiniceDamage;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return viMaxiceDamage;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   GetProjectileIcon()
+   {
+      return vrIcon;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

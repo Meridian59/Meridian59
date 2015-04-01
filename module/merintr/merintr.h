@@ -52,6 +52,8 @@
 #define RequestStand()             ToServer(BP_USERCOMMAND, user_msg_table, UC_STAND)
 #define RequestSuicide()           ToServer(BP_USERCOMMAND, user_msg_table, UC_SUICIDE)
 #define SendSafety(val)            ToServer(BP_USERCOMMAND, user_msg_table, UC_SAFETY, val)
+#define SendTempSafe(val)          ToServer(BP_USERCOMMAND, user_msg_table, UC_TEMPSAFE, val)
+#define SendGrouping(val)          ToServer(BP_USERCOMMAND, user_msg_table, UC_GROUPING, val)
 #define RequestGuildInfo()         ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_GUILDINFO)
 #define RequestInvite(obj)         ToServer(BP_USERCOMMAND, user_msg_table, UC_INVITE, obj)
 #define RequestRenounce()          ToServer(BP_USERCOMMAND, user_msg_table, UC_RENOUNCE)

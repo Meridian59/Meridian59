@@ -33,6 +33,8 @@ resources:
       "I've pulled a few from their rotting skulls up in the mountains. You "
       "see, I know where their burial grounds are, and you could say that "
       "I’m a bit of a ~Icollector~I."
+	  
+   MrEl_stat_window_trigger = "change stats"
 
 classvars:
 
@@ -49,6 +51,27 @@ classvars:
 properties:
 
 messages:
+
+   Constructor()
+   {
+      plWantedItems = [&StatsResetToken];
+      
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      if StringEqual(string,MrEl_stat_window_trigger)
+      {
+         if Send(what,@GetBaseMaxHealth) <= Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+         {
+            Send(what, @SendStatChange);
+         }
+      }
+
+      propagate;
+   }
 
    AffectMood(what=$,why=$)
    {
@@ -101,6 +124,23 @@ messages:
             #parm2=Send(who,@GetName));
 
       propagate;
+   }
+   
+   CanAcceptOffer()
+   {
+      return TRUE;
+   }
+   
+   GotWantedItem(who=$, obj = 0)
+   {
+      local oPlayerObj, i;
+
+      if IsClass(obj,&StatsResetToken)
+      {
+         Send(who,@SendStatChange);
+      }
+
+      return FALSE;
    }
 
 end

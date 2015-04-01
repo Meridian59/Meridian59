@@ -38,15 +38,15 @@
 	#include "wads.h"		// MDirPtr
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_COMBOBOX_H
+#ifndef OWL_COMBOBOX_H
 	#include <owl\combobox.h>
 #endif
 
@@ -73,7 +73,13 @@ public:
 //{{TViewEntryDialogRSP_TBL_BEGIN}}
 protected:
 	void EntrySelChange ();
-	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT far& drawInfo);
+
+#if OWLVersion > OWLVERBC502
+	void EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT& drawInfo);
+#else
+	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo);
+#endif
+
 //{{TViewEntryDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TViewEntryDialog);
 };    //{{TViewEntryDialog}}

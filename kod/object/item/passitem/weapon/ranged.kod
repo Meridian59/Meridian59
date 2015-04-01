@@ -50,7 +50,7 @@ classvars:
                         % in them.  viWeaponDamage is the bow's contribution to that,
                         % due to things like stiffer bowstrings, harder wood, whatever.
 
-   viRange = 100
+   viRange = 100 * FINENESS
 
 properties:
    
@@ -319,12 +319,12 @@ messages:
          }
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -362,12 +362,12 @@ messages:
          }
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -411,12 +411,12 @@ messages:
          return 0;
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {
@@ -460,12 +460,12 @@ messages:
          return 0;
       }
 
-      iDamage = iDamage + viWeaponDamage;
+      iDamage = (iDamage + viWeaponDamage)*100;
       
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self)/100;
       }
       else
       {

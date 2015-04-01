@@ -17,8 +17,10 @@ constants:
    
    PALSY_CHANCE = 20
 
-   SPIN_DAMAGE_MIN = 7
-   SPIN_DAMAGE_MAX = 15
+   % These are high precision damage amounts, with two 'decimal places'.
+   % Actual damage shown to player will be (default) 7-15.
+   SPIN_DAMAGE_MIN = 700
+   SPIN_DAMAGE_MAX = 1500
 
 resources:
 
@@ -61,6 +63,8 @@ classvars:
    viNormalSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BLUDGEON
    viVisionDistance = 25
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viAttributes = 0
    viKarma = -75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE \
@@ -155,7 +159,7 @@ messages:
       return;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what = $, who = $)
    {
       local oSpell;
 
@@ -163,7 +167,14 @@ messages:
       if NOT Send(what,@IsEnchanted,#what=oSpell)
          AND Random(1,PALSY_CHANCE) = 1
       {
-         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=90);
+         if who <> $
+         {
+            Send(oSpell,@CastSpell,#who=who,#lTargets=[what],#iSpellPower=90);
+         }
+         else
+         {
+            Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=90);
+         }
       }
 
       return;
@@ -335,12 +346,13 @@ messages:
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
             AND Send(self,@CanReach,#what=each_obj)
+            AND (NOT Send(each_obj,@IsInCannotInteractMode))
          {
             lValidTargets = Cons(each_obj,lValidTargets);
          }
       }
 
-      return lValidTargets; 
+      return lValidTargets;
    }
 
    DoSpinAttack(lFinalTargets=$)
@@ -358,9 +370,9 @@ messages:
 
       for i in lTargets
       {
-         iDamage = Send(i,@AssessDamage,#what=self,#damage=iDamage,
-                        #atype=viAttack_type,#aspell=viAttack_spell);
-         if iDamage = $
+         if Send(i,@AssessDamage,#what=self,#damage=iDamage,
+                        #atype=viAttack_type,#aspell=viAttack_spell,
+                        #precision=TRUE) = $
          {
             Send(self,@KilledSomething,#what=i,#use_weapon=self);
          }

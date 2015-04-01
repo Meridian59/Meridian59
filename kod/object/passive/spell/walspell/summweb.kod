@@ -40,7 +40,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 3
    viMana = 15
-   viSpellExertion = 10
+   viSpellExertion = 3
    viCast_time = 3000
 
    vrSucceed_wav = SummonWeb_sound
@@ -89,7 +89,7 @@ messages:
 
 
       % Facing East
-      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      if iAngle >= ANGLE_ENE OR iAngle < ANGLE_ESE
       {
          iCol = Send(who,@GetCol) + 2;
          iRow = Send(who,@GetRow);

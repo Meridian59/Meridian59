@@ -68,6 +68,8 @@ typedef struct {
    Bool tooltips;                /* Display tooltips? */
    Bool inventory_num;           /* Display amounts for number items in inventory? */
    Bool aggressive;              /* Allowed to attack other players? */
+   Bool tempsafe;                /* Do we get a temporary angel when we die? */
+   Bool grouping;                /* Do we join building groups? */
    Bool bounce;                  /* Display player "bouncing" animation? */
    Bool toolbar;                 /* Display toolbar? */
 

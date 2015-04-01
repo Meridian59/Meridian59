@@ -54,7 +54,7 @@ classvars:
    viSpell_level = 5
    viSchool = SS_RIIJA
    viMana = 20
-   viSpellExertion = 10
+   viSpellExertion = 4
    viCast_time = 20000
    viChance_to_increase = 35
    viMeditate_ratio = 50
@@ -201,7 +201,7 @@ messages:
          Send(who,@SetPlayerFlag,#flag=PFLAG_MORPHED,#value=TRUE);
       }
 
-      iFX = Send(oIllusion,@GetDrawFX);
+      iFX = Send(oIllusion,@GetDrawingEffects);
       if iFX <> 0
       {
          Send(who,@SetPlayerDrawFX,#drawfx=iFX);

@@ -2870,3 +2870,89 @@ int C_GetSessionIP(int object_id,local_var_type *local_vars,
    	
 	return ret_val.int_val;  
 }
+
+int C_SetClassVar(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   // Note that setting a class var is only temporary until the server restarts.
+   class_node *c;
+   object_node *o;
+   val_type ret_val, class_val, data_str, var_name;
+   int var_id;
+   const char *pStrConst;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = False;
+
+   class_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+   var_name = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+                  normal_parm_array[1].value);
+   data_str = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+                  normal_parm_array[2].value);
+
+   if (class_val.v.tag == TAG_OBJECT)
+   {
+      o = GetObjectByID(class_val.v.data);
+      if (o == NULL)
+      {
+         bprintf("C_SetClassVar can't find the class of object %i\n",
+               class_val.v.data);
+         return ret_val.int_val;
+      }
+
+      class_val.v.tag = TAG_CLASS;
+      class_val.v.data = o->class_id;
+   }
+
+   if (class_val.v.tag != TAG_CLASS)
+   {
+      bprintf("C_SetClassVar can't look for non-class %i,%i\n",
+         class_val.v.tag,class_val.v.data);
+      return ret_val.int_val;
+   }
+
+   c = GetClassByID(class_val.v.data);
+   if (c == NULL)
+   {
+      bprintf("C_SetClassVar cannot find class %i.\n",class_val.v.data);
+      return ret_val.int_val;
+   }
+
+   if (var_name.v.tag != TAG_DEBUGSTR)
+   {
+      bprintf("C_SetClassVar passed bad class var string, tag %i.\n",
+         var_name.v.tag);
+      return ret_val.int_val;
+   }
+
+   kod_statistics *kstat = GetKodStats();
+   class_node *c2 = GetClassByID(kstat->interpreting_class);
+   if (c2 == NULL)
+   {
+      bprintf("C_SetClassVar can't find class %i, can't get debug str\n",
+            kstat->interpreting_class);
+      return ret_val.int_val;
+   }
+
+   pStrConst = GetClassDebugStr(c2,var_name.v.data);
+   if (pStrConst == NULL)
+   {
+      bprintf("C_SetClassVar: GetClassDebugStr returned NULL\n");
+      return ret_val.int_val;
+   }
+
+   var_id = GetClassVarIDByName(c, pStrConst);
+   if (var_id == INVALID_CLASSVAR)
+   {
+      bprintf("C_SetClassVar cannot find classvar named %s in class %i.\n",
+            pStrConst,class_val.v.data);
+      return ret_val.int_val;
+   }
+
+   c->vars[var_id].val = data_str;
+   ret_val.v.data = True;
+
+   return ret_val.int_val;
+}

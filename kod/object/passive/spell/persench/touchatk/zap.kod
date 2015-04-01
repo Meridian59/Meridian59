@@ -57,9 +57,9 @@ classvars:
 
    viSchool = SS_FAREN
    viSpell_num = SID_ZAP
-   viSpellExertion = 2
+   viSpellExertion = 1
    viSpell_level = 1
-   viMana = 6
+   viMana = 4
    viMeditate_ratio = 10
 
    viMin_Damage = 5         %% touch spells typically do good damage    
@@ -67,8 +67,6 @@ classvars:
 
    % Max amount of damage that punch or 2*myst can add
    viMaxProficiencyDamage = 6
-
-   viRange = 2              %% touch spell range can vary, but are typically good     
 
    viSpellType = ATCK_SPELL_SHOCK + ATCK_SPELL_ALL
    viStroke = STROKE_ZAP

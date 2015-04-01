@@ -71,6 +71,8 @@ classvars:
    viLevel = 150
    viDifficulty = 8
    viVisionDistance = 60
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viSpeed = SPEED_AVERAGE
    viKarma = 0
 

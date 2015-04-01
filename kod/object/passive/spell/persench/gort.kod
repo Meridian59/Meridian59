@@ -99,9 +99,8 @@ messages:
       local iSpellPower, iAbsorbed, iMax, iFinalDamage, iFinalAbsorbed;
 
       iSpellPower = Send(who,@GetEnchantedState,#what=self);
-      iMax = 15;
-      iAbsorbed = random(0,iSpellPower/25);
-      iAbsorbed = bound(iAbsorbed,1,4);
+      iMax = 1500;
+      iAbsorbed = bound(random(0,iSpellPower*4),0,400);
 
       if aspell <> 0
       {
@@ -111,13 +110,13 @@ messages:
             % Only 1/2 of the damage reduction if we're doing both weapon
             %  and spell damage types.
             iAbsorbed = iAbsorbed / 2;
-            iMax = 20;
+            iMax = 2000;
          }
          else
          {
             % If we're doing pure spell damage, we get no reduction.
             iAbsorbed = 0;
-            iMax = 25;
+            iMax = 2500;
          }
       }
       

@@ -33,16 +33,16 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	class _OWLCLASS TStatic;
 #endif
 
-#ifndef __OWL_GAUGE_H
-	#include <owl\gauge.h>;
+#ifndef OWL_GAUGE_H
+	#include <owl\gauge.h>
 #endif
 
 #include "workdlg.rh"            // Definition of all resources.

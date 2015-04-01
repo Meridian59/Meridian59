@@ -1,0 +1,122 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The only way to lose this enchantment is to break the trance.
+ManaFocus is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   manafocus_name_rsc = "mana focus"
+   manafocus_icon_rsc = imanafoc.bgf
+   manafocus_desc_rsc = \
+      "Focuses your magical energy, "
+      "regenerating your mana at an accelerated rate and "
+      "increasing the damage of natural elemental attack spells. "
+      "Dissipates if your concentration is broken.  "
+      "Requires one mushroom to cast."
+
+   manafocus_on = "You feel newly focused magic raging through your body."
+   manafocus_break_trance = "You have lost your mana focus."
+   manafocus_already_enchanted = "You already have %s%s."
+
+classvars:
+
+   vrName = manafocus_name_rsc
+   vrIcon = manafocus_icon_rsc
+   vrDesc = Manafocus_desc_rsc
+
+   vrAlreadyEnchanted = manafocus_already_enchanted
+   vrEnchantment_On = manafocus_on
+   vrEnchantment_Off = manafocus_break_trance
+   vrSuccess = manafocus_on
+
+   viSpell_num = SID_MANA_FOCUS
+   viMana = 1
+   viSchool = SS_FAREN
+   viSpell_level = 3
+
+   viCast_time = 3000            %% 3 seconds
+   viChance_To_Increase = 15
+   viMeditate_ratio = 20
+
+   vbCanCastOnOthers = FALSE
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Mushroom,1],plReagents);
+
+      return;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetTranceFlag);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_MANA_FOCUS,#value=TRUE);
+
+      return;
+   }
+
+   BreakTrance(who=$,state=$,event=0,what=$)
+   {
+      %% Attack Spells (fireballs and lightning bolts) must not break this trance
+      if event = EVENT_CAST
+         AND IsClass(what,&AttackSpell)
+      {
+         return;
+      }
+
+      Send(who,@RemoveEnchantment,#what=self);
+      return;
+   }
+
+   AdjustManaTime(time=0, iSpellPower=0)
+   "Reduces time passed in so that mana regens faster.  Returns reduced time."
+   {
+      local iTime;
+
+      iTime = (time * (200-iSpellPower)) / 200;
+      iTime = Bound(iTime,500,60000);
+
+      return iTime;
+   }
+
+   GetStateValue(iSpellPower=0)
+   {
+      return iSpellPower;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      return SPELL_INDEFINITE_DURATION;
+   }
+
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment was cast with ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString(" spellpower.");
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

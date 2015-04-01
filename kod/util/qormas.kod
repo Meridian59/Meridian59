@@ -997,9 +997,12 @@ messages:
 
    OnLogonTimer()
    {
-      Send(self,@ProcessLogon,#who=Nth(plLogonQueue,Length(plLogonQueue)));
-      plLogonQueue = DelListElem(plLogonQueue,
-                                 Nth(plLogonQueue,Length(plLogonQueue)));
+      if plLogonQueue <> $
+      {
+         Send(self,@ProcessLogon,#who=Nth(plLogonQueue,Length(plLogonQueue)));
+         plLogonQueue = DelListElem(plLogonQueue,
+                              Nth(plLogonQueue,Length(plLogonQueue)));
+      }
 
       return;
    }

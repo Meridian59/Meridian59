@@ -5,16 +5,59 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\spell.bof
-BOFS = heal.bof atakspel.bof dmspell.bof winds.bof remcurse.bof\
-       cdisease.bof cpoison.bof discord.bof hospice.bof majheal.bof\
-       debuff.bof defile.bof radiusench.bof creaweap.bof shatter.bof swap.bof\
-       brittle.bof creafood.bof fade.bof focus.bof manabomb.bof purify.bof\
-       nodebrst.bof illform.bof engrave.bof anon.bof boon.bof dispillu.bof\
-       summrefl.bof apparitn.bof creasphm.bof morph.bof portlife.bof\
-       forsight.bof bait.bof persench.bof roomench.bof flash.bof animate.bof\
-       holysymb.bof finlrite.bof fdeath.bof multicst.bof summtwin.bof\
-       brthlife.bof seance.bof sweep.bof mysttch.bof relay.bof distill.bof\
-       walspell.bof utility.bof crysmana.bof itemench.bof cursewp.bof \
-       teleportspell.bof purge.bof
+BOFS = animate.bof \
+       apparitn.bof \
+       atakspel.bof \
+       bait.bof \
+       boon.bof \
+       brittle.bof \
+       brthlife.bof \
+       cdisease.bof \
+       cpoison.bof \
+       creafood.bof \
+       creasphm.bof \
+       creaweap.bof \
+       crysmana.bof \
+       cursewp.bof \
+       debuff.bof \
+       defile.bof \
+       discord.bof \
+       dispillu.bof \
+       distill.bof \
+       dmspell.bof \
+       engrave.bof \
+       fade.bof \
+       fdeath.bof \
+       finlrite.bof \
+       flash.bof \
+       forsight.bof \
+       heal.bof \
+       holysymb.bof \
+       hospice.bof \
+       illform.bof \
+       itemench.bof \
+       majheal.bof \
+       manabomb.bof \
+       morph.bof \
+       multicst.bof \
+       mysttch.bof \
+       nodebrst.bof \
+       persench.bof \
+       portlife.bof \
+       purge.bof \
+       purify.bof \
+       radiusench.bof \
+       relay.bof \
+       remcurse.bof \
+       roomench.bof \
+       seance.bof \
+       shatter.bof \
+       summrefl.bof \
+       summtwin.bof \
+       swap.bof \
+       sweep.bof \
+       teleportspell.bof \
+       utility.bof \
+       walspell.bof
 
 !include $(KODDIR)\kod.mak

@@ -31,6 +31,8 @@ resources:
       "transformed in return for longevity.  All the old tales, however, "
       "warn travellers to beware of this malignant creature's extraordinarily "
       "poisonous bite."
+   dspider_illusion_poisoned = \
+      "%s%s reels as poison from your attack courses through %s veins."
 
    DeathSpider_dead_icon_rsc = spidmagX.bgf
    DeathSpider_dead_name_rsc = "dead spider"
@@ -130,7 +132,7 @@ messages:
       propagate;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what = $, who = $)
    {
       local oSpell;
 
@@ -139,6 +141,13 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,
                #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+      
+         if who <> $
+         {
+            Send(who,@MsgSendUser,#message_rsc=dspider_illusion_poisoned,
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                  #parm3=Send(what,@GetHisHer));
+         }
       }
 
       return;

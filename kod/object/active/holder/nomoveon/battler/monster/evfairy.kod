@@ -55,6 +55,8 @@ classvars:
    viLevel = 60
    viDifficulty = 5
    viVisionDistance = 15
+   % Attack range of 192, or 3 row/col.
+   viAttackRange = 192
    viDefault_behavior = \
       AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
    viWimpy = 10
@@ -67,7 +69,7 @@ classvars:
 
 properties:
 
-   piDrawfx = BOUNCE_YES
+   piDrawEffectFlag = OF_BOUNCING
    viKarma = -50
    piAnimation = ANIM_NONE
 
@@ -174,11 +176,6 @@ messages:
       }
 
       propagate;
-   }
-
-   GetObjectFlags()
-   {
-      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
    }
 
    SendLightingInformation()

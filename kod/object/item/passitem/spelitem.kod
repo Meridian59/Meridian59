@@ -80,7 +80,7 @@ classvars:
 properties:
 
    vrName = Spellitem_name_rsc
-   viObject_flags = GETTABLE_YES
+   viObject_flags = OF_GETTABLE
 
    % Used by the item creation spells when making a spell item at a set power.
    piSpellPower = $
@@ -203,7 +203,7 @@ messages:
          AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT))
          OR pbDisabled
          OR (IsClass(apply_on,&Player)
-             AND Send(apply_on,@IsPhasedOut))
+             AND Send(apply_on,@IsInCannotInteractMode))
       {
          return FALSE;
       }
@@ -477,7 +477,12 @@ messages:
    {
       return viWeight * piHits;
    }
-   
+
+   GetInitValue()
+   {
+      return viValue_average * piHits;
+   }
+
    GetValue()
    {
       return viValue_average * piHits;

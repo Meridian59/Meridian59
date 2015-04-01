@@ -33,7 +33,7 @@ classvars:
    vrIcon = candelabra_icon_rsc
    vrDesc = candelabra_desc_on
 
-   viObject_flags = ACTIVATE_YES
+   viObject_flags = OF_ACTIVATABLE
 
    viOff_frame = 1
    viStart_frame = 2

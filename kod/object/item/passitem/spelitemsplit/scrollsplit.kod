@@ -47,7 +47,7 @@ classvars:
 
 properties:
 
-   viObject_flags = APPLY_YES | GETTABLE_YES
+   viObject_flags = OF_APPLYABLE | OF_GETTABLE
 
 messages:
 

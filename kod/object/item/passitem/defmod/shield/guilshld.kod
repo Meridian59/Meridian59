@@ -79,6 +79,9 @@ resources:
    guildshield_yellow = "gold"
    guildshield_gray = "gris"
    guildshield_sky = "azure"
+   guildshield_darkgray = "silver"
+   guildshield_black = "ebony"
+   guildshield_darkgreen = "forest green"
    guildshield_unknown = "a color"
 
    guildshield_slash = " tierced in bend sinister by "
@@ -134,7 +137,8 @@ properties:
 
 messages:
 
-   Constructor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT,guildMember=$)
+   Constructor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,
+               shape=SHIELDSHAPE_DEFAULT,guildMember=$)
    {
       local oGuild;
 
@@ -146,7 +150,8 @@ messages:
          shape  = Send(oGuild,@GetShieldShape);
       }
 
-      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,
+            #shape=shape,#override=TRUE);
 
       propagate;
    }
@@ -176,7 +181,7 @@ messages:
       return TRUE;
    }
 
-   AppendColor(color=0)
+   AppendColor(color=0,iColorNum=1)
    {
       if color = XLAT_TO_RED { AppendTempString(guildshield_red); return; }
       if color = XLAT_TO_SKIN1 { AppendTempString(guildshield_skin1); return; }
@@ -189,6 +194,72 @@ messages:
       if color = XLAT_TO_YELLOW { AppendTempString(guildshield_yellow); return; }
       if color = XLAT_TO_GRAY { AppendTempString(guildshield_gray); return; }
       if color = XLAT_TO_SKY { AppendTempString(guildshield_sky); return; }
+      if color = XLAT_TO_BLACK { AppendTempString(guildshield_darkgray); return; }
+      if color = XLAT_TO_DGREEN { AppendTempString(guildshield_darkgreen); return; }
+
+      if color = XLAT_REDTOBLACK
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_black);
+         }
+         else
+         {
+            AppendTempString(guildshield_blue);
+         }
+
+         return;
+      }
+      if color = XLAT_BLUETOBLACK
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_blue);
+         }
+         else
+         {
+            AppendTempString(guildshield_black);
+         }
+
+         return;
+      }
+
+      % Secondary skin colors return earlier.
+      if color >= PT_REDTODKBLACK1
+         AND color <= PT_REDTODKBLACK3
+      {
+         AppendTempString(guildshield_black);
+
+         return;
+      }
+
+      if color = PT_REDBLK_BLWHT
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_black);
+         }
+         else
+         {
+            AppendTempString(guildshield_gray);
+         }
+
+         return;
+      }
+
+      if color = PT_BLBLK_REDWHT
+      {
+         if iColorNum = 1
+         {
+            AppendTempString(guildshield_gray);
+         }
+         else
+         {
+            AppendTempString(guildshield_black);
+         }
+
+         return;
+      }
 
       AppendTempString(guildshield_unknown);
 
@@ -208,7 +279,7 @@ messages:
       % color 1
       x = Send(self,@GetPaletteTranslation);
       a = Send(SYS,@DecodePrimaryColor,#xlat=x);
-      Send(self,@AppendColor,#color=a);
+      Send(self,@AppendColor,#color=a,#iColorNum=1);
 
       % shape
       if piShield_shape = SHIELDSHAPE_SLASH { AppendTempString(guildshield_slash); }
@@ -218,7 +289,7 @@ messages:
 
       % color 2
       b = Send(SYS,@DecodeSecondaryColor,#xlat=x);
-      Send(self,@AppendColor,#color=b);
+      Send(self,@AppendColor,#color=b,#iColorNum=2);
 
       % guild, if known
       x = Send(SYS,@FindGuildByShield,#color1=a,#color2=b,#shape=piShield_shape);
@@ -250,12 +321,26 @@ messages:
    Randomize()
    "Admin supported."
    {
-      local color1, color2, shape, insignia;
+      local color1, color2, lNewColors, shape, insignia;
 
-      color1 = random(XLAT_TO_RED, XLAT_TO_SKY);
-      color2 = random(XLAT_TO_RED, XLAT_TO_SKY);
-      shape = random(SHIELDSHAPE_SLASH, SHIELDSHAPE_CHECKER);
-      insignia = random(INSIG_RIIJA, INSIG_NONE);
+      if Random(1,10) = 1
+      {
+         lNewColors = [PT_REDTODGREEN1, PT_REDTODGREEN2, PT_REDTODGREEN3,
+                       PT_REDTOBLACK1, PT_REDTOBLACK2, PT_REDTOBLACK3,
+                       PT_REDTODKBLACK1, PT_REDTODKBLACK2, PT_REDTODKBLACK3,
+                       PT_REDBLK_BLWHT, PT_BLBLK_REDWHT, XLAT_REDTOBLACK,
+                       XLAT_BLUETOBLACK];
+         color1 = Nth(lNewColors,Random(1,Length(lNewColors)));
+         color2 = 0;
+      }
+      else
+      {
+         color1 = Random(XLAT_TO_RED, XLAT_TO_SKY);
+         color2 = Random(XLAT_TO_RED, XLAT_TO_SKY);
+      }
+      
+      shape = Random(SHIELDSHAPE_SLASH, SHIELDSHAPE_CHECKER);
+      insignia = Random(INSIG_RIIJA, INSIG_NONE);
 
       Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,
             #shape=shape,#override=TRUE);
@@ -345,33 +430,29 @@ messages:
          return FALSE;
       }
 
-      if (color1 > XLAT_HIGH_VALUE) or (color2 > XLAT_HIGH_VALUE)
+      if color1 > XLAT_HIGH_VALUE
+         AND NOT ((color1 >= PT_REDTODGREEN1 AND color1 <= PT_BLBLK_REDWHT)
+            OR color1 = XLAT_REDTOBLACK
+            OR color1 = XLAT_BLUETOBLACK)
       {
-         if color1 = XLAT_TO_DGREEN
-         {
-            color1 = XLAT_TO_GREEN;
-         }
+         Debug("Incorrect color1 passed to ChangeGuildShieldColor!",
+               "color1 = ",color1," color2 = ",color2);
+         color1 = XLAT_TO_SKIN1;
+      }
 
+      if color2 > XLAT_HIGH_VALUE
+      {
+         Debug("Incorrect color2 passed to ChangeGuildShieldColor!",
+               "color1 = ",color1," color2 = ",color2);
          if color2 = XLAT_TO_DGREEN
          {
             color2 = XLAT_TO_GREEN;
-         }
-
-         if color1 = XLAT_TO_BLACK
-         {
-            color1 = XLAT_TO_GRAY;
          }
 
          if color2 = XLAT_TO_BLACK
          {
             color2 = XLAT_TO_GRAY;
          }
-      }
-
-      if (color1 < XLAT_LOW_VALUE) OR (color1 > XLAT_HIGH_VALUE)
-         OR (color2 < XLAT_LOW_VALUE) OR (color2 > XLAT_HIGH_VALUE)
-      {
-         return FALSE;
       }
 
       XLAT = Send(SYS,@EncodeTwoColorXLAT,#color1=color1,#color2=color2);

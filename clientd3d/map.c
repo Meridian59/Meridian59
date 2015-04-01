@@ -22,18 +22,24 @@
 #define MAP_WALL_THICKNESS 1
 #define MAP_PLAYER_THICKNESS 4
 #define MAP_OBJECT_THICKNESS 2
+#define MAP_BOSS_THICKNESS 3
 
 #define MAP_WALL_COLOR          PALETTERGB(0, 0, 0)
 #define MAP_PLAYER_COLOR        PALETTERGB(0, 0, 255)
 #define MAP_PLAYER_FRONT_COLOR  PALETTERGB(0, 0, 0)      // Pixel at front of player
 #define MAP_OBJECT_COLOR        PALETTERGB(255, 0, 0)    // Red
 #define MAP_MINION_COLOR        PALETTERGB(0,200,0)      // Green
-#define MAP_MINION_OTH_COLOR    PALETTERGB(70,5,100)     // Purple
-#define MAP_FRIEND_COLOR        PALETTERGB(0, 255, 0)    // Bright Green
+#define MAP_MINION_OTH_COLOR    PALETTERGB(70,5,130)     // Purple
+#define MAP_FRIEND_COLOR        PALETTERGB(0, 255, 120)  // Green with blue tint
 #define MAP_ENEMY_COLOR         PALETTERGB(255, 0, 0)    // Red
 #define MAP_GUILDMATE_COLOR     PALETTERGB(255, 255, 0)  // Yellow
+#define MAP_BUILDGRP_COLOR      PALETTERGB(0, 255, 0)    // Bright Green
+#define MAP_NPC_COLOR           PALETTERGB(0, 0, 0)      // Black
+#define MAP_TEMPSAFE_COLOR      PALETTERGB(0,170,255)    // Cyan
+#define MAP_MINIBOSS_COLOR      PALETTERGB(160, 66, 194) // Purple
+#define MAP_BOSS_COLOR          PALETTERGB(127, 0, 0)    // Dark Red
 
-#define MAP_OBJECT_RADIUS (FINENESS / 6)  // Radius of circle drawn for an object
+#define MAP_OBJECT_RADIUS (FINENESS / 4)  // Radius of circle drawn for an object
 
 #define MAP_ZOOM_INCREMENT 0.1       // Amount to change zoom factor per user command
 #define MAP_ZOOM_DELAY     100       // # of milliseconds between zooming in by INCREMENT
@@ -42,9 +48,11 @@
 
 #define MAP_OBJECT_DISTANCE (7 * FINENESS) // Draw all object closer than this to player
 
-static HBRUSH hObjectBrush, hPlayerBrush, hNullBrush, hMinionBrush, hMinionOtherBrush;
-static HPEN hWallPen, hPlayerPen, hObjectPen, hMinionPen, hMinionOtherPen;
-static HPEN hFriendPen, hEnemyPen, hGuildmatePen;
+static HBRUSH hObjectBrush, hPlayerBrush, hNullBrush, hMinionBrush,
+               hMinionOtherBrush, hNpcBrush, hTempsafeBrush;
+static HPEN hWallPen, hPlayerPen, hObjectPen, hMinionPen, hMinionOtherPen,
+            hMinibossPen, hBossPen;
+static HPEN hFriendPen, hEnemyPen, hGuildmatePen, hBuilderPen, hNpcPen, hTempsafePen;
 
 static float zoom;              // Factor to zoom in on map
 
@@ -135,11 +143,18 @@ void MapInitialize(void)
    hGuildmatePen = CreatePen(PS_SOLID, MAP_PLAYER_THICKNESS, MAP_GUILDMATE_COLOR);
    hMinionPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_MINION_COLOR);
    hMinionOtherPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_MINION_OTH_COLOR);
+   hBuilderPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_BUILDGRP_COLOR);
+   hNpcPen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_NPC_COLOR);
+   hTempsafePen = CreatePen(PS_SOLID, MAP_OBJECT_THICKNESS, MAP_TEMPSAFE_COLOR);
+   hMinibossPen = CreatePen(PS_SOLID, MAP_BOSS_THICKNESS, MAP_MINIBOSS_COLOR);
+   hBossPen = CreatePen(PS_SOLID, MAP_BOSS_THICKNESS, MAP_BOSS_COLOR);
 
+   hNpcBrush = CreateSolidBrush(MAP_NPC_COLOR);
    hMinionOtherBrush = CreateSolidBrush(MAP_MINION_OTH_COLOR);
    hMinionBrush = CreateSolidBrush(MAP_MINION_COLOR);
    hObjectBrush = CreateSolidBrush(MAP_OBJECT_COLOR);
    hPlayerBrush = CreateSolidBrush(MAP_PLAYER_COLOR);
+   hTempsafeBrush = CreateSolidBrush(MAP_TEMPSAFE_COLOR);
    hNullBrush = CreateBrushIndirect(&logBrush);
 
    zoom = (float) 1.0;
@@ -171,11 +186,18 @@ void MapClose(void)
    DeleteObject(hGuildmatePen);
    DeleteObject(hMinionPen);
    DeleteObject(hMinionOtherPen);
+   DeleteObject(hBuilderPen);
+   DeleteObject(hNpcPen);
+   DeleteObject(hTempsafePen);
+   DeleteObject(hMinibossPen);
+   DeleteObject(hBossPen);
    DeleteObject(hMinionOtherBrush);
    DeleteObject(hMinionBrush);
    DeleteObject(hObjectBrush);
    DeleteObject(hPlayerBrush);
    DeleteObject(hNullBrush);
+   DeleteObject(hNpcBrush);
+   DeleteObject(hTempsafeBrush);
 
    if (pMapWalls)
       SafeFree(pMapWalls);
@@ -207,8 +229,6 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
    else
       DrawWindowBackgroundMem(&map_bkgnd, bits, &rect, width, (int)( player.x * scaleMiniMap ), (int)( player.y * scaleMiniMap ) );
 
-
-   
       if (config.drawmap)
       {
 	 HPEN hOldPen = (HPEN) SelectObject(hdc, hWallPen);
@@ -361,8 +381,6 @@ void MapDrawWall(HDC hdc, int x, int y, float scale, WallData *wall)
 /*
  * MapDrawObjects:  Draw a dot for each object in list, skipping the player.
  *   (x, y) is the upper-left corner of the drawing area on hdc.
- * Note 2014-09-04: Should we be using a Switch for this, since we're
- * expanding the amount of possible dots?
  */
 void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
 {
@@ -376,44 +394,57 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
    for (l = objects; l != NULL; l = l->next)
    {
       room_contents_node *r = (room_contents_node *) (l->data);
-      
-      // Skip player and inanimate or invisible objects
-      if (r->obj.id == player.id || !(r->obj.flags & OF_ATTACKABLE) 
-	  || (GetDrawingEffect(r->obj.flags) == OF_INVISIBLE))
-	 continue;
+
+      // Skip ourselves, invisible objects and anything with
+      // minimapflags of 0.
+      if ((r->obj.id == player.id)
+         || (r->obj.drawingtype == DRAWFX_INVISIBLE)
+         || (r->obj.minimapflags == MM_NONE))
+         continue;
 
       // Only draw monsters that are visible, or within a certain range.
+      // Draw NPC dots no matter where they are.
       dx = (r->motion.x - player.x) >> 4;
       dy = (r->motion.y - player.y) >> 4;
       if (((dx * dx + dy * dy) > mapObjectDistanceShiftAndSquare) &&
           (!r->visible && !config.showUnseenMonsters) &&
-          !(r->obj.flags & OF_PLAYER)) 
+          !(r->obj.flags & OF_PLAYER) && !(r->obj.minimapflags & MM_NPC) &&
+          !(r->obj.minimapflags & MM_MINIBOSS) && !(r->obj.minimapflags & MM_BOSS))
           continue;
 
       new_x = x + (r->motion.x * scale);
       new_y = y + (r->motion.y * scale);
-      
+      float ring_radius;
+
       // Draw rings around players
       if (r->obj.flags & OF_PLAYER)
       {
          SelectObject(hdc, hPlayerBrush);
-         float ring_radius = 1.6f * radius;
 
-         if (r->obj.flags & OF_FRIEND)
+         // Builder group?
+         if (r->obj.minimapflags & MM_BUILDER_GROUP)
          {
-            if ((r->obj.flags & OF_ENEMY) || (r->obj.flags & OF_GUILDMATE))
-               ring_radius = 2.4f * radius;
+            ring_radius = 2.6f * radius;
+            SelectObject(hdc, hBuilderPen);
+            Ellipse(hdc, (int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         }
 
+         ring_radius = 1.6f * radius;
+         // Friend?
+         if (r->obj.minimapflags & MM_FRIEND)
+         {
             SelectObject(hdc, hFriendPen);
             Ellipse(hdc, (int) (new_x - ring_radius),
                      (int) (new_y - ring_radius),
                      (int) (new_x + ring_radius),
                      (int) (new_y + ring_radius));
-            ring_radius = 1.6f * radius;
          }
 
          // Enemy?
-         if (r->obj.flags & OF_ENEMY)
+         if (r->obj.minimapflags & MM_ENEMY)
          {
             SelectObject(hdc, hEnemyPen);
             Ellipse(hdc, (int) (new_x - ring_radius),
@@ -423,7 +454,7 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
          }
 
          // Guildmate?
-         if (r->obj.flags & OF_GUILDMATE)
+         if (r->obj.minimapflags & MM_GUILDMATE)
          {
              SelectObject(hdc, hGuildmatePen);
              Ellipse(hdc, (int) (new_x - ring_radius),
@@ -433,33 +464,78 @@ void MapDrawObjects(HDC hdc, list_type objects, int x, int y, float scale)
          }
       }
 
-      /* Draw middle of player dot in a different color. If
-      / a monster is a minion then color it appropriately,
-      / otherwise it gets the standard red dot. */
-      if (r->obj.flags & OF_PLAYER)
+      /* Draw middle of player dot in a different color. If a monster
+         is a minion or NPC then color it appropriately, otherwise it
+         gets the standard red dot. */
+      if (r->obj.minimapflags & MM_PLAYER)
       {
-          SelectObject(hdc, hPlayerPen);
-          SelectObject(hdc, hPlayerBrush);
+         SelectObject(hdc, hPlayerPen);
+         SelectObject(hdc, hPlayerBrush);
       }
-      else if ((r->obj.flags & OF_MINION_SELF) == OF_MINION_SELF)
+      else if (r->obj.minimapflags & MM_TEMPSAFE)
       {
-          SelectObject(hdc, hMinionPen);
-          SelectObject(hdc, hMinionBrush);
+         SelectObject(hdc, hTempsafePen);
+         SelectObject(hdc, hTempsafeBrush);
       }
-      else if ((r->obj.flags & OF_MINION_OTHER) == OF_MINION_OTHER)
+      else if (r->obj.minimapflags & MM_MINION_SELF)
       {
-          SelectObject(hdc, hMinionOtherPen);
-          SelectObject(hdc, hMinionOtherBrush);
+         SelectObject(hdc, hMinionPen);
+         SelectObject(hdc, hMinionBrush);
+      }
+      else if (r->obj.minimapflags & MM_MINION_OTHER)
+      {
+         SelectObject(hdc, hMinionOtherPen);
+         SelectObject(hdc, hMinionOtherBrush);
+      }
+      else if (r->obj.minimapflags & MM_MONSTER)
+      {
+         SelectObject(hdc, hObjectPen);
+         SelectObject(hdc, hObjectBrush);
+      }
+      else if (r->obj.minimapflags & MM_NPC)
+      {
+         SelectObject(hdc, hNpcPen);
+         SelectObject(hdc, hNpcBrush);
+      }
+      else if (r->obj.minimapflags & MM_MINIBOSS)
+      {
+         SelectObject(hdc, hObjectBrush);
+         SelectObject(hdc, hMinibossPen);
+         ring_radius = 2.1f * radius;
+         Ellipse(hdc,(int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         SelectObject(hdc, hObjectPen);
+         Ellipse(hdc,(int) (new_x - radius * 1.2f), (int) (new_y - radius * 1.2f),
+            (int) (new_x + radius * 1.2f), (int) (new_y + radius * 1.2f));
+
+         continue;
+      }
+      else if (r->obj.minimapflags & MM_BOSS)
+      {
+         SelectObject(hdc, hObjectBrush);
+         SelectObject(hdc, hBossPen);
+         ring_radius = 2.6f * radius;
+         Ellipse(hdc,(int) (new_x - ring_radius),
+                     (int) (new_y - ring_radius),
+                     (int) (new_x + ring_radius),
+                     (int) (new_y + ring_radius));
+         SelectObject(hdc, hObjectPen);
+         Ellipse(hdc,(int) (new_x - radius * 1.6f), (int) (new_y - radius * 1.6f),
+            (int) (new_x + radius * 1.6f), (int) (new_y + radius * 1.6f));
+
+         continue;
       }
       else
       {
-          SelectObject(hdc, hObjectPen);
-          SelectObject(hdc, hObjectBrush);
+         // No dots for anything else, yet.
+         continue;
       }
 
       // Draw a circle at the object's position
-      Ellipse(hdc, (int) (new_x - radius), (int) (new_y - radius), 
-	      (int) (new_x + radius), (int) (new_y + radius));
+      Ellipse(hdc, (int) (new_x - radius), (int) (new_y - radius),
+         (int) (new_x + radius), (int) (new_y + radius));
 
    }
 }

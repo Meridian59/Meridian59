@@ -1,0 +1,84 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GiantRatKing is GiantRat
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   giantratkkoc_name_rsc = "konapyijoa"
+   giantratkname_rsc = "rat king"
+   giantratkicon_rsc = ratking.bgf
+   giantratkdesc_rsc = \
+   "The giant rat king bares its yellow teeth in defiance.  A "
+   "smell of rot emanates from its filthy coat."
+
+   giantratkdead_icon_rsc = ratkingX.bgf
+   giantratkdead_name_rsc = "dead rat king"
+
+   giantratksound_hit = rat_atkh.wav
+   giantratksound_miss = rat_atkm.wav
+   giantratksound_death = rat_dth.wav
+   giantratksound_aware = rat_awr.wav
+
+classvars:
+
+   vrKocName = giantratkkoc_name_rsc
+   vrName = giantratkname_rsc
+   vrIcon = giantratkicon_rsc
+   vrDesc = giantratkdesc_rsc
+   vrDead_icon = giantratkdead_icon_rsc
+   vrDead_name = giantratkdead_name_rsc
+
+   viTreasure_type = TID_RAT_KING
+
+   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_CLAW
+   viAttributes = 0
+   viLevel = 60
+   viDifficulty = 5
+   viVisionDistance = 1
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT
+   viCashmin = 150
+   viCashmax = 250
+
+   vrSound_hit = giantratksound_hit
+   vrSound_miss = giantratksound_miss
+   vrSound_aware = giantratksound_aware
+   vrSound_death = giantratksound_death
+
+properties:
+
+messages:
+
+   Constructed()
+   {
+      piHit_Points = 700 * 100;
+      piMax_Hit_Points = 700;                  
+                        
+      propagate;
+   }
+
+   IsAlly(target = $)
+   {
+      if IsClass(target,&GiantRat)
+      {
+         return TRUE;
+      }
+   
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

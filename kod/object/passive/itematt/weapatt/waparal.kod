@@ -59,6 +59,12 @@ messages:
    {
       local oSpell;
 
+      if target = $
+         OR wielder = $
+      {
+         return damage;
+      }
+
       if Random(1,100) <= piEffect_percent
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
@@ -66,7 +72,8 @@ messages:
          %% no duplicates
          if NOT Send(target,@IsEnchanted,#what=oSpell)
          {
-            Send(oSpell,@CastSpell,#who=self,#lTargets=[target],#iSpellPower=50,#bItemCast=TRUE);
+            Send(oSpell,@CastSpell,#who=self,#lTargets=[target],
+                  #iSpellPower=50,#bItemCast=TRUE);
             Send(wielder,@MsgSendUser,#message_rsc=holder_worked,
                   #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }

@@ -25,10 +25,12 @@ classvars:
    vrName = fogcloud_name_rsc
    vrIcon = fogcloud_icon_rsc
 
-   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50
-   vrdesc = fogcloud_desc_rsc
+   viObject_flags = OF_NOEXAMINE
+   vrDesc = fogcloud_desc_rsc
 
 properties:
+
+   piDrawFx = DRAWFX_TRANSLUCENT_50
 
    poCaster = $
    ptExpire = $

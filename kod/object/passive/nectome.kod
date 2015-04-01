@@ -25,6 +25,8 @@ resources:
 
 classvars:
 
+   viMoveOn_type = MOVEON_NO
+
    vrIcon = NecromancerTome_icon_rsc
 
 properties:
@@ -39,9 +41,14 @@ messages:
    Constructor(Name=$,Text=$)
    {
       if name <> $
-	 { vrName = name; }
+      {
+         vrName = name;
+      }
+
       if Text <> $
-	 { prText = Text; }
+      {
+         prText = Text;
+      }
 
       propagate;
    }
@@ -49,12 +56,13 @@ messages:
    SendLookAnimation()
    {
       AddPacket(1, ANIMATE_NONE, 2, 2);
+
       return;
    }
 
    GetObjectFlags()
    {
-      return MOVEON_NO | LOOK_NO;
+      return OF_NOEXAMINE;
    }
 
    CanEditInscription()
@@ -75,12 +83,14 @@ messages:
    ShowInscription()
    {
       AddPacket(4, prText);
+
       return;
    }
 
    ShowDesc()
    {
       AddPacket(4, vrDesc);
+
       return;
    }
 

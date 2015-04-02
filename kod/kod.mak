@@ -3,10 +3,11 @@
 # makefile reproduces this with some commands to run after recursing.
 #
 
-.SUFFIXES : .kod
+.SUFFIXES : .kod .lkod
 
 BCFLAGS = -d -I $(KODINCLUDEDIR) -K $(KODDIR)\kodbase.txt
 
+.lkod.kod::
 .kod.bof::
 	$(BC) $(BCFLAGS) $<
 	@for %i in ($<) do @$(KODDIR)\bin\instbofrsc $(TOPDIR) $(BLAKSERVRUNDIR) %i

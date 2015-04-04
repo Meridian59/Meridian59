@@ -1612,27 +1612,31 @@ messages:
             }
          }
       }
-		
+
       % Count that this spell was cast successfully
-      Send(Send(SYS, @GetStatistics), @SpellCast, #oSpell = self, #who = who);
+      Send(Send(SYS,@GetStatistics),@SpellCast,#oSpell=self,#who=who);
+
       return;
    }
 
    PlaySpellSound(room_obj = $,what = $)
-   {      
+   {
       local wave_rsc;
 
-      wave_rsc = Send(self,@GetSpellSound);
+      if room_obj <> $
+      {
+         wave_rsc = Send(self,@GetSpellSound);
 
-      if wave_rsc <> $        
-      {
-         Send(room_obj,@SomethingWaveRoom,#what=what,#wave_rsc=wave_rsc);
+         if wave_rsc <> $
+         {
+            Send(room_obj,@SomethingWaveRoom,#what=what,#wave_rsc=wave_rsc);
+         }
+         else
+         {
+            debug("Spell has no spell sound defined, is not a jala song!");
+         }
       }
-      else
-      {
-         debug("Spell has no spell sound defined, is not a jala song!");
-      }
-      
+
       return;
    }
 

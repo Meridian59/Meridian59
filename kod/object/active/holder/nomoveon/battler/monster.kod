@@ -3577,7 +3577,8 @@ messages:
          oBody = Create(&DeadBody,
                         #victim=self,
                         #killer=killer,
-                        #drawfx=viDead_drawfx);       
+                        #drawfx=viDead_drawfx,
+                        #BodyTranslation = piColor_translation);
       }
 
       return oBody;

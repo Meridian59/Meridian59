@@ -12,7 +12,7 @@ namespace ClientPatcher
         [STAThread]
         static void Main()
         {
-            string path = "C:\\Program Files\\Open Meridian";
+            string path = Environment.ExpandEnvironmentVariables("%PROGRAMFILES%\\Open Meridian");
             if (!Directory.Exists(path)) //if we're not installed yet, we need admin this run
             {
                 MessageBox.Show("In order to set up your computer for the Meridian 59 Patcher, you will need to allow it to run as an administrator once.");

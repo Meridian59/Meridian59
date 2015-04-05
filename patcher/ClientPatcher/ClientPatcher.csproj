@@ -12,8 +12,8 @@
     <AssemblyName>ClientPatcher</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ManifestCertificateThumbprint>595F6297DE6965590A9E7AD1D5CD0F6ECCD32BA2</ManifestCertificateThumbprint>
-    <ManifestKeyFile>ClientPatcher_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>EEBE1E3DE082F91F3851BE5BBFCFD38C5F230E9D</ManifestCertificateThumbprint>
+    <ManifestKeyFile>ClientPatcherKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <SignManifests>true</SignManifests>
     <IsWebBootstrapper>true</IsWebBootstrapper>
@@ -40,7 +40,7 @@
     <PublisherName>OpenMeridian</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
-    <ApplicationRevision>11</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>1.4.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -132,6 +132,8 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="ClientPatcherKey.pfx" />
+    <None Include="ClientPatcher_1_TemporaryKey.pfx" />
     <None Include="ClientPatcher_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

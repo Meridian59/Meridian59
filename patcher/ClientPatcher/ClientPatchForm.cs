@@ -165,13 +165,13 @@ namespace ClientPatcher
             Process[] processlist = Process.GetProcessesByName("meridian");
             if (processlist.Length != 0)
             { 
-                MessageBox.Show("Warning! You must close Meridian in order to patch successfully!\nPressing OK will close meridian!",
-                    "Meridian Already Running!!",MessageBoxButtons.OK);
                 foreach (Process process in processlist)
                 {
                     if (process.Modules[0].FileName.ToLower() ==
                         (_patcher.CurrentProfile.ClientFolder + "\\meridian.exe").ToLower())
                     {
+                        MessageBox.Show("Warning! You must close Meridian in order to patch successfully!\nPressing OK will close meridian!",
+                            "Meridian Already Running!!", MessageBoxButtons.OK);
                         process.Kill();
                     }
                         

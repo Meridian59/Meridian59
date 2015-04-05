@@ -5354,6 +5354,7 @@ messages:
       plItemTemplates = cons(create(&Bread),plItemTemplates);
       plItemTemplates = cons(create(&Grapes),plItemTemplates);
       plItemTemplates = cons(create(&Apple),plItemTemplates);
+      plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
 
       % Head
       plItemTemplates = cons(create(&Helm),plItemTemplates);

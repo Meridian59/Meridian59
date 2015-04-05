@@ -18,18 +18,23 @@ resources:
    heal_name_rsc = "minor heal"
    heal_icon_rsc = iheal.bgf
    heal_desc_rsc = \
-      "The compassionate power of Shal'ille heals the wounds of the caster or another "
-      "person.  Is particularly potent on those protected by guardian angels.  "
-      "Shal'ille gives a small reward toward the karma of the mage who heals another "
-      "good soul.  "
-      "Requires herbs to cast."
+      "The compassionate power of Shal'ille heals the wounds of the caster "
+      "or another person.  Is particularly potent on those protected by "
+      "guardian angels.  Shal'ille gives a small reward toward the karma "
+      "of the mage who heals another good soul.  "
+      "Requires one herb to cast."
 
-   heal_cast_rsc = "%s%s's spell heals some minor injuries, restoring ~g~B%i~B~n hitpoints."
-   heal_cast_self = "Shal'ille's holy magic heals some minor injuries, restoring ~g~B%i~B~n hitpoints."
+   heal_cast_rsc = \
+      "%s%s's spell heals some minor injuries, restoring ~g~B%i~B~n hitpoints."
+   heal_cast_self = \
+      "Shal'ille's holy magic heals some minor injuries, restoring "
+      "~g~B%i~B~n hitpoints."
    heal_cast_on_other = "You heal %s%s for ~g~B%i~B~n hitpoints."
    heal_unnecessary_rsc = "%s%s is perfectly healthy."
 
-   heal_spell_intro = "Shal'ille Lv. 1: Bestows the healing touch of Shal'ille, restoring points of health."
+   heal_spell_intro = \
+      "Shal'ille Lv. 1: Bestows the healing touch of Shal'ille, restoring "
+      "points of health."
 
 classvars:
 
@@ -71,7 +76,7 @@ messages:
    CanPayCosts(who = $, lTargets = $)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -79,19 +84,20 @@ messages:
       }
 
       target = First(lTargets);
-      if not IsClass(target,&User)
+      if NOT IsClass(target,&User)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
-           
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
+
          return FALSE;
       }
-      
+
       if Send(target,@GetHealth) >= Send(target,@GetMaxHealth)
       {
          Send(who,@MsgSendUser,#message_rsc=heal_unnecessary_rsc,
-              #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
-              
+               #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+
          return FALSE;
       }
 
@@ -103,43 +109,43 @@ messages:
       local iHeal, oTarget;
 
       oTarget = First(lTargets);
-      
-      iHeal = random(100,500) + ((iSpellPower + 1)*5) + (Send(oTarget,@GetKarma)*5);
-      iHeal = bound(iHeal,0,1000);
+
+      iHeal = Random(100,500) + ((iSpellPower + 1)*5) + (Send(oTarget,@GetKarma)*5);
+      iHeal = Bound(iHeal,0,1000);
+
+      iHeal = Send(oTarget,@GainHealthNormal,#amount=iHeal,#precision=TRUE);
 
       % A little boost for casting on newbies, even if you're the newbie!
-      if NOT send(oTarget,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      if NOT Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          iHeal = iHeal + random(200,500);
       }
-      
+
       if who <> oTarget
       {
          Send(who,@MsgSendUser,#message_rsc=heal_cast_on_other,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal/100);
-              
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),
+               #parm3=iHeal/100);
+
          Send(oTarget,@MsgSendUser,#message_rsc=heal_cast_rsc,
-              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal/100);
+               #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+               #parm3=iHeal/100);
 
          % Give them a little boost if they help someone of higher Karma.
-         if send(who,@GetKarma) < send(oTarget,@GetKarma)
+         if Send(who,@GetKarma) < Send(oTarget,@GetKarma)
          {
-            send(who,@AddKarma,#amount = send(who,@CalculateKarmaChangeFromAct,
-                #karma_doer=send(who,@GetKarma),#karma_act=send(oTarget,@GetKarma),
-                #Swing_factor = 1));
+            Send(who,@AddKarma,#amount = Send(who,@CalculateKarmaChangeFromAct,
+                  #karma_doer=Send(who,@GetKarma),#karma_act=Send(oTarget,@GetKarma),
+                  #Swing_factor = 1));
          }
       }
-
       else
       {
          Send(who,@MsgSendUser,#message_rsc=heal_cast_self,#parm1=iHeal/100);
       }
-           
-      Send(oTarget,@GainHealthNormal,#amount=iHeal,#precision=TRUE);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

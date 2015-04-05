@@ -413,6 +413,19 @@ messages:
       return TRUE;
    }
 
+   Killed(what = $)
+   {
+      % Delete this now, in case this timer is active.
+      if ptPostPop <> $
+      {
+         DeleteTimer(ptPostPop);
+      }
+
+      ptPostPop = $;
+
+      propagate;
+   }
+
    Delete()
    {
       local i;
@@ -426,8 +439,8 @@ messages:
       if ptPostPop <> $
       {
          DeleteTimer(ptPostPop);
-         ptPostPop = $;
       }
+      ptPostPop = $;
 
       propagate;
    }

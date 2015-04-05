@@ -346,8 +346,8 @@ messages:
          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
               #new_row=row,#new_col=col);
 
-         % Mark position as occupied.
-         SetNth(plOccupied,rand,1);
+         % Mark position as occupied, with the player object number.
+         SetNth(plOccupied,rand,what);
 
          if ptCheckLavaTimer = $
          {
@@ -489,6 +489,21 @@ messages:
    BeginFight(lCombatants=$)
    {
       plOccupied = [0,0,0,0,0,0];
+
+      return;
+   }
+
+   ClearFromOccupiedList(who=$)
+   "Clears a combatant from the occupied list."
+   {
+      local i;
+
+      if who <> $
+         AND plOccupied <> $
+         AND FindListElem(plOccupied,who)
+      {
+         SetNth(plOccupied,FindListElem(plOccupied,who),0);
+      }
 
       return;
    }

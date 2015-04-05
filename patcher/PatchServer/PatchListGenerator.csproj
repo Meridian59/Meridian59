@@ -12,8 +12,8 @@
     <AssemblyName>PatchListGenerator</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ManifestCertificateThumbprint>DC361A2EFB285E404B4A500F222E998DB3388063</ManifestCertificateThumbprint>
-    <ManifestKeyFile>PatchListGenerator_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestCertificateThumbprint>CA0166047BBE0D05F5BA52E54B2656F165E9BE2E</ManifestCertificateThumbprint>
+    <ManifestKeyFile>PatchServer_TemporaryKey.pfx</ManifestKeyFile>
     <GenerateManifests>true</GenerateManifests>
     <TargetZone>LocalIntranet</TargetZone>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -89,7 +89,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PatchListGenerator_TemporaryKey.pfx" />
     <None Include="PatchServer_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
   </ItemGroup>

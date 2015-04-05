@@ -11,17 +11,15 @@ namespace ClientPatcher
         public string PatchBaseUrl { get; set; }   //Where to download individual files?
         public string Guid { get; set; }           //Will be used to get updated settings from server
         public string FullInstallUrl { get; set; } //Path to a .zip file of the full client to download for first run
-        public string AccountCreationUrl { get; set; }
         public bool Default { get; set; }          //Is this profile the default-selected at start up?
 
         public PatcherSettings()
         {
             ServerName = "103";
             PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";
-            ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+            ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
+            ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
             PatchBaseUrl = "http://ww1.openmeridian.org/103/clientpatch";
-            AccountCreationUrl = "http://ww1.openmeridian.org/103/acctcreate.php";
-            Guid = "5AD1FB01-A84A-47D1-85B8-5F85FB0C201E";
             Default = true;
         }
 
@@ -32,20 +30,20 @@ namespace ClientPatcher
                 case 1:
                     ServerName = "Korea 1";
                     PatchInfoUrl = "http://m59.iptime.org/1/patchinfo.txt";
-                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 1";
+                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 1";
+                    ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
                     PatchBaseUrl = "http://m59.iptime.org/1/clientpatch";
                     Guid = "3B89295C-F19C-46C3-8B8A-2F51F2C3A8C9";
-                    AccountCreationUrl = "http://ww1.openmeridian.org/1/acctcreate.php";
                     Default = false;
                     break;
 
                 case 104:
                     ServerName = "104";
                     PatchInfoUrl = "http://ww1.openmeridian.org/104/patchinfo.txt";
-                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 104";
+                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 104";
+                    ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
                     PatchBaseUrl = "http://ww1.openmeridian.org/104/clientpatch";
                     Guid = "EACFDF63-65A6-46C3-AC99-1C5BAB07EDEB";
-                    AccountCreationUrl = "http://ww1.openmeridian.org/104/acctcreate.php";
                     Default = false;
                     break;
                 
@@ -53,9 +51,9 @@ namespace ClientPatcher
                 default:
                     ServerName = "103";
                     PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";
-                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
+                    ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
                     PatchBaseUrl = "http://ww1.openmeridian.org/103/clientpatch";
-                    AccountCreationUrl = "http://ww1.openmeridian.org/103/acctcreate.php";
                     Guid = "5AD1FB01-A84A-47D1-85B8-5F85FB0C201E";
                     Default = true;
                     break;

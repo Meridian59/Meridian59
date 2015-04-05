@@ -235,6 +235,10 @@ Download=10016
                 cacheFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(file.ReadToEnd()); //convert
                 file.Close(); //close
             }
+            else
+            {
+                cacheFiles = new List<ManagedFile>();
+            }
 
         }
 

@@ -24,19 +24,20 @@ constants:
 
 resources:
 
-   ee_g_one_bgf = eegrey.bgf
-   ee_g_two_bgf = eegrey2.bgf
-   ee_g_three_bgf = eegrey3.bgf
-   ee_g_four_bgf = eegrey4.bgf
-   ee_g_five_bgf = eegrey5.bgf
+   ee_g_one_bgf = eegray1.bgf
+   ee_g_two_bgf = eegray2.bgf
+   ee_g_three_bgf = eegray3.bgf
+   ee_g_four_bgf = eegray4.bgf
+   ee_g_five_bgf = eegray5.bgf
    ee_rb_one_bgf = eeredblue1.bgf
    ee_rb_two_bgf = eeredblue2.bgf
    ee_rb_three_bgf = eeredblue3.bgf
    ee_rb_four_bgf = eeredblue4.bgf
-   ee_rb_five_bgf = eeredblue7.bgf
+   ee_rb_five_bgf = eeredblue5.bgf
    ee_rb_six_bgf = eeredblue6.bgf
    ee_rb_seven_bgf = eeredblue7.bgf
    ee_rb_eight_bgf = eeredblue8.bgf
+   ee_rb_nine_bgf  = eeredblue9.bgf
 
    easteregg_name_rsc = "easter egg"
    easteregg_desc_rsc = \
@@ -90,6 +91,9 @@ classvars:
 
    viFilling = 5
 
+   % Spellpower for egg-cast spells. Default 99.
+   viSpellPower = 99
+
 properties:
 
    vrIcon = ee_g_one_bgf
@@ -103,6 +107,9 @@ properties:
    % No nutrition unless vigor egg.
    viNutrition = 0
 
+   % Spellpower for egg-cast spells. Default 99.
+   piSpellPower = 99
+
 messages:
 
    Constructor(iType=$,iColor=0,rBGF=$)
@@ -112,6 +119,8 @@ messages:
       Send(self,@SetEggType,#iEggType=iType);
       Send(self,@SetEggBGF,#rEggBGF=rBGF);
       Send(self,@SetColor,#iEggColor=iColor);
+
+      piSpellpower = viSpellPower;
 
       propagate;
    }
@@ -173,6 +182,7 @@ messages:
             OR vrIcon = ee_rb_six_bgf
             OR vrIcon = ee_rb_seven_bgf
             OR vrIcon = ee_rb_eight_bgf
+            OR vrIcon = ee_rb_nine_bgf
             OR bRBOverride
          {
             % We only allow guild shield colors and the extra two-color
@@ -252,7 +262,7 @@ messages:
                       ee_g_four_bgf, ee_g_five_bgf, ee_rb_one_bgf,
                       ee_rb_two_bgf, ee_rb_three_bgf, ee_rb_four_bgf,
                       ee_rb_five_bgf, ee_rb_six_bgf, ee_rb_seven_bgf,
-                      ee_rb_eight_bgf ];
+                      ee_rb_eight_bgf, ee_rb_nine_bgf ];
 
       % Then, pick a type.
       vrIcon = Nth(lBGFChoices,Random(1,Length(lBGFChoices)));
@@ -437,11 +447,21 @@ messages:
       lTargets = $;
 
       if (Send(oSpell,@CanPayCosts,#who=poOwner,#lTargets=lTargets,
-           #iSpellPower=99,#bItemCast=TRUE))
+           #iSpellPower=piSpellPower,#bItemCast=TRUE))
          AND (Send(Send(who,@GetOwner),@ReqSpellCast,#who=who,#oSpell=oSpell))
       {
-         Send(oSpell,@CastSpell,#who=poOwner,#lTargets=lTargets,
-               #iSpellPower=99,#bItemCast=TRUE);
+         % Deal with Elusion's odd spell structure, so we can have it
+         % as an item-castable spell.
+         if viSpellEffect = SID_ELUSION
+         {
+            Send(oSpell,@BeginCastingTrance,#who=poOwner,#lTargets=lTargets,
+                  #iSpellPower=piSpellPower);
+         }
+         else
+         {
+            Send(oSpell,@CastSpell,#who=poOwner,#lTargets=lTargets,
+                  #iSpellPower=piSpellPower,#bItemCast=TRUE);
+         }
       }
 
       return;

@@ -49,7 +49,7 @@ classvars:
 
 properties:
 
-   viTreasure_type = TID_ZOMBIE
+   viTreasure_type = TID_KILLER_BUNNY
 
 messages:
 

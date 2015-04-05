@@ -1643,7 +1643,10 @@
    TID_FIRE_ELE      = 60
    TID_ICE_ELE       = 61
    TID_NERU_ELE      = 62
-   
+
+   TID_EASTER_BUNNY  = 63
+   TID_KILLER_BUNNY  = 64
+
    %%% English articles
 
    ARTICLE_NONE = 0

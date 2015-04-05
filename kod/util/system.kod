@@ -3757,7 +3757,10 @@ messages:
       Create(&FireElementalTreasure);
       Create(&IceElementalTreasure);
       Create(&NeruditeElementalTreasure);
-      
+
+      Create(&EasterBunnyTreasure);
+      Create(&KillerBunnyTreasure);
+
       return;
    }
 
@@ -5354,6 +5357,7 @@ messages:
       plItemTemplates = cons(create(&Bread),plItemTemplates);
       plItemTemplates = cons(create(&Grapes),plItemTemplates);
       plItemTemplates = cons(create(&Apple),plItemTemplates);
+
       plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
 
       % Head

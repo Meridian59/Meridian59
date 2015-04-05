@@ -57,12 +57,15 @@ classvars:
 
 properties:
 
-   viTreasure_type = TID_ZOMBIE
+   viTreasure_type = TID_EASTER_BUNNY
 
    ptSpawnKillerBunny = $
 
    piMax_mana = 30
    piSpellPower = 40
+
+   % Spawns a new killer bunny every 30 sec by default.
+   piSpawnBunnyTime = 30000
 
 messages:
 
@@ -74,7 +77,7 @@ messages:
       plSpellBook = [ [SID_DAZZLE, 5, 30], [SID_APPARITION, 5, 60],
                       [SID_KILLING_FIELDS, 5, 90], [SID_VERTIGO, 5, 100] ];
 
-      ptSpawnKillerBunny = CreateTimer(self,@SpawnKillerBunny,30000);
+      ptSpawnKillerBunny = CreateTimer(self,@SpawnKillerBunny,piSpawnBunnyTime);
 
       propagate;
    }
@@ -164,7 +167,7 @@ messages:
          }
       }
 
-      ptSpawnKillerBunny = CreateTimer(self,@SpawnKillerBunny,30000);
+      ptSpawnKillerBunny = CreateTimer(self,@SpawnKillerBunny,piSpawnBunnyTime);
 
       return;
    }

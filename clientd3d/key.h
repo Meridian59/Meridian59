@@ -20,6 +20,7 @@
 #define VK_COMMA		0xBC
 #define VK_SLASH		0xBF
 #define VK_LBRACKET		0xDB
+#define VK_BACKSLASH 0xDC
 #define VK_RBRACKET		0xDD
 #define VK_BACKQUOTE	0xC0
 

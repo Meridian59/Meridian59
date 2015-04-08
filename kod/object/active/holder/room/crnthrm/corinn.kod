@@ -63,21 +63,20 @@ messages:
       local oNews;
 
       Send(self,@NewHold,#what=Create(&CorNothInnKeeper),
-           #new_row=3,#new_col=11,#new_angle=ANGLE_WEST);
+            #new_row=3,#new_col=11,#new_angle=ANGLE_WEST);
 
       % Create news globe.
       oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
                      #name=cornews_god_name,#desc=cornews_god_desc);
-      Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=9,#fine_row=40,#fine_col=40);
+      Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=9,
+            #fine_row=40,#fine_col=40);
 
       % And some braziers.
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=7,#new_col=3);
-      Send(self,@NewHold,#what=Create(&Brazier),#new_row=7,#new_col=10);
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=4,#new_col=12);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

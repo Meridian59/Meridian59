@@ -7823,13 +7823,13 @@ messages:
          {
             if Nth(i,1) = ATCK_WEAP_THRUST
             {
-               AddPacket(1,16, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+               AddPacket(1,15, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
                bWeaponThrust = TRUE;
             }
          }
          if NOT bWeaponThrust
          {
-            AddPacket(1,16, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+            AddPacket(1,15, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
          }
       }
       if num = 3

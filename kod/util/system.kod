@@ -7403,6 +7403,48 @@ messages:
       
       return Length(lUserIPList);
    }
+   
+   SortItemsByType(lItems = $, lClassOrder=$)
+   {
+      local lBaseList, lSortedItems, oItem, lSuperClass, cClass;
+      
+      if lItems = $
+         OR lClassOrder = $
+      {
+         return $;
+      }
+      
+      % lClassOrder is a list of lists with specific formatting
+      % Example: [[&DefenseModifier,&Armor,&Gauntlets],
+      %          [&Rod,&HealRod,&ShieldRod]
+      %          [&Weapon,&MysticSword,&NeruditeSword]]
+      
+      lBaseList = Send(self,@ListCopy,#source=lItems);
+      
+      lSortedItems = $;
+      for lSuperClass in lClassOrder
+      {
+         for cClass in lSuperClass
+         {
+            for oItem in lBaseList
+            {
+               if IsClass(oItem,cClass)
+               {
+                  lSortedItems = Cons(oItem,lSortedItems);
+                  lBaseList = DelListElem(lBaseList,oItem);
+               }
+            }
+         }
+      }
+      
+      if lBaseList <> $
+      {
+         return lItems;
+         Debug("SortItemsByType attempted without handling all item types.");
+      }
+      
+      return lSortedItems;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

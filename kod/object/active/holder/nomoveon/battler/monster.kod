@@ -138,6 +138,8 @@ resources:
    Lm_mrcnt_too_costly = "Come back when you have enough money for %s%s."
    Lm_mrcnt_cant_give = \
       "I'm unable to give you %s%s.  Perhaps you carry too much?"
+   Lm_mrcnt_can_give_some = \
+      "It looks like you can only hold some of %s%s. I'll reduce your tally."
 
    Lm_only_receiver = "%s%s says, \"I don't buy things, but I do take gifts.\""
    Lm_buyer_offer_busy = "%s is busy right now with another customer." 
@@ -4228,7 +4230,7 @@ messages:
    "This is used for both teachers and sellers"
    {
       local i, j, bFound, oBuy, oMoney, iPrice, lNumbers,
-            iAmount, oItemAtt; 
+            iAmount, oItemAtt, iCan_hold, oSplit; 
 
       % Ensure that buyer and seller are in the same room
       if Send(what,@GetOwner) <> poOwner
@@ -4400,11 +4402,52 @@ messages:
             }
             else
             {
-               % Buyer can't accept the item for some reason.
-               Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_cant_give,
-                     #type=SAY_RESOURCE,#parm1=Send(oBuy,@GetDef),
-                     #parm2=Send(oBuy,@GetName));
-               Send(oBuy,@Delete);
+               % Check if this is a number item we're buying too much of.
+               if IsClass(oBuy,&NumberItem)
+                  AND Send(what,@GetNumberCanHold,#what=oBuy) > 0
+               {
+                  iCan_hold = Send(what,@GetNumberCanHold,#what=oBuy);
+                  if iCan_hold > 0
+                  {
+                     oSplit = Send(oBuy,@Split,#number=iCan_hold);
+                     if Send(oBuy,@ReqNewOwner,#what=oSplit)
+                     {
+                        Send(oMoney,@SubtractNumber,
+                              #number=Send(self,@GetPrice,#what=oBuy,#who=what)*
+                                           Send(oSplit,@GetNumber));
+                        Send(i,@SubtractNumber,#Number=Send(oSplit,@GetNumber));
+                        Send(what,@NewHold,#what=oSplit);
+                        Post(poOwner,@SomeoneSaid,#what=self,
+                              #string=Lm_mrcnt_can_give_some,
+                              #type=SAY_RESOURCE,#parm1=Send(oBuy,@GetDef),
+                              #parm2=Send(oBuy,@GetName));
+                              
+                        Send(self,@RemoveFromConditionalList,
+                           #obj=Send(self,@GetObjectOnConditionalList,
+                           #class=GetClass(i)));
+
+                        Send(self,@AffectMood,#why=MOODMOD_SELL_ITEM,#what=oBuy);
+
+                        if Send(oBuy,@HasAttribute,#ItemAtt=IA_SELL_INFO)
+                        {
+                           oItemAtt = Send(oBuy,@GetAttributeData,
+                                           #ItemAtt=IA_SELL_INFO);
+                           Post(poOwner,@SomeoneSaid,#what=self,
+                               #string=Nth(oItemAtt,2),
+                               #type=SAY_RESOURCE);
+                        }
+                        Send(oBuy,@Delete);
+                     }
+                  }
+               }
+               else
+               {
+                  % Buyer can't accept the item for some reason.
+                  Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_cant_give,
+                        #type=SAY_RESOURCE,#parm1=Send(oBuy,@GetDef),
+                        #parm2=Send(oBuy,@GetName));
+                  Send(oBuy,@Delete);
+               }
             }
          }
          else

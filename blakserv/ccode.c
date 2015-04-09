@@ -471,85 +471,114 @@ int C_DumpStack(int object_id,local_var_type *local_vars,
 }
 
 int C_SendMessage(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
 {
-	val_type object_val,message_val;
-	
-	/* get the message to send first; that way other errors are more descriptive */
-	message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	if (message_val.v.tag != TAG_MESSAGE)
-	{
-		bprintf("C_SendMessage OBJECT %i can't send non-message %i,%i\n",
-			object_id,message_val.v.tag,message_val.v.data);
-		return NIL;
-	}
-	
-	/* get the object (or class or int 0) to which we are sending the message */
-	/* not to be confused with object_id, which is the 'self' object sending the message */
-	object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	
-	/* special:  sending to int 0 goes to system */
-	if (object_val.v.tag == TAG_INT && object_val.v.data == 0)
-	{
-		/* allowed to send to INT 0 rather than OBJECT 0 (obsolete but backwards compatible) */
-		object_val.v.data = GetSystemObjectID();
-	}
-	else if (object_val.v.tag == TAG_CLASS)
-	{
-		/* allowed to send to TAG_CLASS (below) */
-	}
-	else if (object_val.v.tag != TAG_OBJECT)
-	{
-		/* assumes object_id (the current 'self') is a valid object */
-		bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
-			object_id,
-			GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
-			GetNameByID(message_val.v.data), message_val.v.data,
-			object_val.v.tag,object_val.v.data);
-		return NIL;
-	}
-	
-	if (object_val.v.tag == TAG_CLASS)
-		return SendBlakodClassMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
-	else
-		return SendBlakodMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
+   val_type object_val,message_val;
+
+   /* Get the object (or class or int 0) to which we are sending the message */
+   /* Not to be confused with object_id, which is the 'self' object sending the message */
+   object_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   /* Handle the message to send first; that way other errors are more descriptive */
+   message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_SendMessage OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return NIL;
+         }
+      }
+      else
+      {
+         bprintf("C_SendMessage OBJECT %i can't send non-message %i,%i\n",
+               object_id, message_val.v.tag, message_val.v.data);
+         return NIL;
+      }
+   }
+
+   /* Special:  sending to int 0 goes to system */
+   if (object_val.v.tag == TAG_INT && object_val.v.data == 0)
+   {
+      /* Allowed to send to INT 0 rather than OBJECT 0 (obsolete but backwards compatible) */
+      object_val.v.data = GetSystemObjectID();
+   }
+   else if (object_val.v.tag == TAG_CLASS)
+   {
+      /* allowed to send to TAG_CLASS (below) */
+   }
+   else if (object_val.v.tag != TAG_OBJECT)
+   {
+      /* Assumes object_id (the current 'self') is a valid object */
+      bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+         object_id,
+         GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
+         GetNameByID(message_val.v.data), message_val.v.data,
+         object_val.v.tag,object_val.v.data);
+         return NIL;
+   }
+
+   if (object_val.v.tag == TAG_CLASS)
+      return SendBlakodClassMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
+   else
+      return SendBlakodMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
 }
 
 int C_PostMessage(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
 {
-	val_type object_val,message_val;
-	
-	/* get message to send first; later errors can be more descriptive */
-	message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	if (message_val.v.tag != TAG_MESSAGE)
-	{
-		bprintf("C_PostMessage OBJECT %i can't send non-messsage %i,%i\n",
-			object_id,message_val.v.tag,message_val.v.data);
-		return NIL;
-	}
-	
-	object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	if (object_val.v.tag != TAG_OBJECT)
-	{
-		/* assumes object_id (the current 'self') is a valid object */
-		bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
-			object_id,
-			GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
-			GetNameByID(message_val.v.data), message_val.v.data,
-			object_val.v.tag,object_val.v.data);
-		return NIL;
-	}
-	
-	PostBlakodMessage(object_val.v.data,message_val.v.data,
-		num_name_parms,name_parm_array);
-	return NIL;
+   val_type object_val,message_val;
+
+   object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   /* Handle the message to send first; that way other errors are more descriptive */
+   message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_PostMessage OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return NIL;
+         }
+      }
+      else
+      {
+         bprintf("C_PostMessage OBJECT %i can't send non-messsage %i,%i\n",
+            object_id,message_val.v.tag,message_val.v.data);
+         return NIL;
+      }
+   }
+
+   if (object_val.v.tag != TAG_OBJECT)
+   {
+      /* Assumes object_id (the current 'self') is a valid object */
+      bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+         object_id,
+         GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
+         GetNameByID(message_val.v.data), message_val.v.data,
+         object_val.v.tag,object_val.v.data);
+      return NIL;
+   }
+
+   PostBlakodMessage(object_val.v.data,message_val.v.data,
+      num_name_parms,name_parm_array);
+   return NIL;
 }
 
 int C_CreateObject(int object_id,local_var_type *local_vars,

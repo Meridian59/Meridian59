@@ -272,6 +272,19 @@ resources:
    nerudite_damage_name = "nerudite"
    silver_damage_name = "silver"
    unknown_damage_name = "unknown"
+
+   inventory_weapon_class_name = "weapons"
+   inventory_armor_class_name = "armors"
+   inventory_shield_class_name = "shields"
+   inventory_helmet_class_name = "helmets"
+   inventory_food_class_name = "food"
+   inventory_ammo_class_name = "ammo"
+   inventory_reagent_class_name = "reagents"
+   inventory_rod_class_name = "rods"
+   inventory_potion_class_name = "potions"
+   inventory_wand_class_name = "wands"
+   inventory_scroll_class_name = "scrolls"
+   inventory_ring_class_name = "rings"
    
    system_message_sound = system.wav
    
@@ -7406,44 +7419,166 @@ messages:
    
    SortItemsByType(lItems = $, lClassOrder=$)
    {
-      local lBaseList, lSortedItems, oItem, lSuperClass, cClass;
+      local lBaseList, lSortedItems, oItem, lSuperClass, cClass,
+            lTempClassOrder;
       
       if lItems = $
-         OR lClassOrder = $
       {
          return $;
       }
       
-      % lClassOrder is a list of lists with specific formatting
-      % Example: [[&DefenseModifier,&Armor,&Gauntlets],
-      %          [&Rod,&HealRod,&ShieldRod]
-      %          [&Weapon,&MysticSword,&NeruditeSword]]
+      if lClassOrder = $
+      {
+         lTempClassOrder = [&Weapon,
+                            &DefenseModifier,
+                            &Rod,
+                            &Ring,
+                            &NumberItem];
+      }
+      else
+      {
+         lTempClassOrder = lClassOrder;
+      }
       
       lBaseList = Send(self,@ListCopy,#source=lItems);
       
       lSortedItems = $;
-      for lSuperClass in lClassOrder
+      for cClass in lTempClassOrder
       {
-         for cClass in lSuperClass
+         for oItem in lBaseList
          {
-            for oItem in lBaseList
+            if IsClass(oItem,cClass)
             {
-               if IsClass(oItem,cClass)
-               {
-                  lSortedItems = Cons(oItem,lSortedItems);
-                  lBaseList = DelListElem(lBaseList,oItem);
-               }
+               lSortedItems = Cons(oItem,lSortedItems);
+               lBaseList = DelListElem(lBaseList,oItem);
             }
          }
+      }
+
+      % Anything left over
+      for oItem in lBaseList
+      {
+         lSortedItems = Cons(oItem,lSortedItems);
+         lBaseList = DelListElem(lBaseList,oItem);
       }
       
       if lBaseList <> $
       {
          return lItems;
-         Debug("SortItemsByType attempted without handling all item types.");
+         Debug("SortItemsByType attempted without handling all items.");
       }
       
       return lSortedItems;
+   }
+   
+   GetSortInfo()
+   {
+      local lSortInfo;
+      
+      lSortInfo = [[inventory_weapon_class_name,&Weapon],
+                   [inventory_armor_class_name,&Armor],
+                   [inventory_shield_class_name,&Shield],
+                   [inventory_helmet_class_name,&Helmet],
+                   [inventory_food_class_name,&Food],
+                   [inventory_ammo_class_name,&Ammo],
+                   [inventory_reagent_class_name,&Reagent],
+                   [inventory_rod_class_name,&Rod],
+                   [inventory_potion_class_name,&Potion],
+                   [inventory_wand_class_name,&Wand],
+                   [inventory_scroll_class_name,&Scroll],
+                   [inventory_ring_class_name,&Ring]];
+      
+      return lSortInfo;
+   }
+   
+   FindItemClassByName(string=$)
+   {
+      local i;
+      
+      for i in plItemTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return GetClass(i);
+         }
+      }
+      
+      for i in plMoneyTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return GetClass(i);
+         }
+      }
+      
+      return $;
+   }
+   
+   FindTemplateItemByName(string=$)
+   {
+      local i;
+
+      for i in plItemTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return i;
+         }
+      }
+      
+      for i in plMoneyTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return i;
+         }
+      }
+      
+      return $;
+   }
+   
+   FindTemplateItemByClass(cClass=$)
+   {
+      local i;
+
+      for i in plItemTemplates
+      {
+         if GetClass(i) = cClass
+         {
+            return i;
+         }
+      }
+      
+      for i in plMoneyTemplates
+      {
+         if GetClass(i) = cClass
+         {
+            return i;
+         }
+      }
+      
+      return $;
+   }
+   
+   AddToEndOfList(lList=$,oObject=$)
+   {
+      local lNewList, lCopyList, i, n;
+      
+      lCopyList = $;
+      lNewList = $;
+      
+      for i in lList
+      {
+         lCopyList = Cons(i,lCopyList);
+      }
+
+      lNewList = Cons(oObject,lNewList);
+      for i in lCopyList
+      {
+         lNewList = Cons(i,lNewList);
+      }
+
+      return lNewList;
    }
 
 end

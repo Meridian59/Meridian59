@@ -395,6 +395,27 @@ resources:
 
    user_logon_delay = \
       "You take a moment to recollect your senses."
+   
+   inventory_sort_cleared = \
+      "Your sort preferences have been cleared."
+   inventory_class_added = \
+      "You add %s to your sort preferences."
+   inventory_sort_no_item = \
+      "There is no item or type of item with that name."
+   inventory_sort_help = \
+      "Say 'inventory sort add scimitar' to add a scimitar, for example, to "
+      "your preferences. Any item will work; you may also use item types, "
+      "such as weapons, armors, helmets, shields, rings, potions, scrolls, "
+      "wands, rods, reagents, ammo, and food. Say 'sort inventory' to "
+      "instantly sort your inventory at any time. Say 'inventory sort clear' "
+      "to delete your current preferences. Say 'inventory sort report' to "
+      "see your current preferences."
+   inventory_sort_report_header = \
+      "Your inventory will sort with this order:"
+   inventory_sort_report = \
+      "%s"
+   inventory_already_in_list = \
+      "That is already in your list."  
 
 classvars:
 
@@ -457,6 +478,9 @@ properties:
    pbAutoloot = TRUE
 
    ptLogonDelayTimer = $
+   
+   % What order do you want your inventory sorted in?
+   plClassOrderPreferences = $
 
 messages:
 
@@ -4375,7 +4399,7 @@ messages:
    UserSay(type=$,string=$)
    {
       local i, oSpell, lEnchantData, bTranceBlocksSay, lSurvivalOptions,
-            poForceBaseRoom;
+            poForceBaseRoom, lSortInfo, oTemplateItem, n, bFound;
 
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
@@ -4530,6 +4554,113 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=guild_survival_too_late);
             }
 
+            return;
+         }
+
+         if StringEqual(String,"inventory sort clear")
+         {
+            plClassOrderPreferences = $;
+            Send(self,@MsgSendUser,#message_rsc=inventory_sort_cleared);
+            return;
+         }
+
+         if StringEqual(String,"inventory sort report")
+         {
+            Send(self,@MsgSendUser,#message_rsc=inventory_sort_report_header);
+
+            lSortInfo = Send(SYS,@GetSortInfo);
+
+            for i in plClassOrderPreferences
+            {
+               bFound = FALSE;
+               for n in lSortInfo
+               {
+                  if Nth(n,2) = i
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=inventory_sort_report,
+                                      #parm1=Nth(n,1));
+                     bFound = TRUE;
+                     break;
+                  }
+               }
+               
+               if bFound
+               {
+                  continue;
+               }
+               
+               oTemplateItem = Send(SYS,@FindTemplateItemByClass,
+                                        #cClass=i);
+               
+               if oTemplateItem <> $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=inventory_sort_report,
+                                      #parm1=Send(oTemplateItem,@GetName));
+               }
+            }
+            
+            return;
+         }
+
+         if StringContain(String,"inventory sort add ")
+         {
+            StringSubstitute(String,"inventory sort add ","");
+            
+            lSortInfo = Send(SYS,@GetSortInfo);
+            
+            for i in lSortInfo
+            {
+               if StringEqual(String,First(i))
+               {
+                  if plClassOrderPreferences <> $
+                     AND FindListElem(plClassOrderPreferences,Nth(i,2)) <> 0
+                  {
+                     Send(self,@MsgSendUser,
+                               #message_rsc=inventory_already_in_list);
+                     return;
+                  }
+               
+                  plClassOrderPreferences =
+                          Send(SYS,@AddToEndOfList,
+                                   #lList=plClassOrderPreferences,
+                                   #oObject=Nth(i,2));
+                          
+                  Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
+                                         #parm1=Nth(i,1));
+                  return;
+               }
+            }
+            
+            oTemplateItem = Send(SYS,@FindTemplateItemByName,#string=String);
+            
+            if oTemplateItem <> $
+            {
+               plClassOrderPreferences =
+                       Send(SYS,@AddToEndOfList,
+                                #lList=plClassOrderPreferences,
+                                #oObject=GetClass(oTemplateItem));
+               Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
+                                      #parm1=Send(oTemplateItem,@GetName));
+               return;
+            }
+            
+            Send(self,@MsgSendUser,#message_rsc=inventory_sort_no_item);
+            
+            return;
+         }
+
+         if StringEqual(String,"inventory sort help")
+         {
+            Send(self,@MsgSendUser,#message_rsc=inventory_sort_help);
+            return;
+         }
+
+         if StringEqual(String,"sort inventory")
+         {
+            plPassive = Send(SYS,@SortItemsByType,#lItems=plPassive,
+                                 #lClassOrder=plClassOrderPreferences);
+            Send(self,@ToCliInventory);
+            Send(self,@ToCliUseList);
             return;
          }
 

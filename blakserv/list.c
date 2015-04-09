@@ -124,6 +124,33 @@ int Rest(int list_id)
 	return (l? l->rest.int_val : NIL);
 }
 
+int ConsEnd(val_type source,int list_id)
+{
+   int new_list_id;
+   list_node *l, *new_node;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+      return NIL;
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+   }
+
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+   if (!new_node)
+      return NIL;
+
+   new_node->rest.int_val = NIL;
+   new_node->first.int_val = source.int_val;
+   l->rest.v.data = new_list_id;
+   l->rest.v.tag = TAG_LIST;
+
+   return list_id;
+}
+
 int Cons(val_type source,val_type dest)
 {
 	int list_id;

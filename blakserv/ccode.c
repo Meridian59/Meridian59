@@ -1983,6 +1983,28 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_ConsEnd(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type source_val, list_val, ret_val;
+   
+   source_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_ConsEnd object %i can't add to non-list %i,%i\n",
+         object_id,list_val.v.tag,list_val.v.data);
+      return NIL;
+   }
+   ret_val.v.tag = TAG_LIST;
+   ret_val.v.data = ConsEnd(source_val,list_val.v.data);
+   return ret_val.int_val;
+}
+
 int C_Cons(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[])

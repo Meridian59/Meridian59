@@ -586,6 +586,7 @@ char * name_function(int fnum)
    case CANMOVEINROOMHIGHRES : return "CanMoveInRoomHighRes";
    case GETHEIGHT : return "GetHeight";
 
+   case CONSEND : return "ConsEnd";
    case CONS  : return "Cons";
    case FIRST  : return "First";
    case REST  : return "Rest";

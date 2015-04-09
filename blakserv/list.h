@@ -31,6 +31,7 @@ list_node * GetListNodeByID(int list_id);
 Bool IsListNodeByID(int list_id);
 int First(int list_id);
 int Rest(int list_id);
+int ConsEnd(val_type source,int list_id);
 int Cons(val_type source,val_type dest);
 int Length(int list_id);
 int Nth(int n,int list_id);

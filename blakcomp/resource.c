@@ -69,11 +69,10 @@ void write_resources(char *fname)
          for (l = cl->resources; l != NULL; l = l->next)
          {
             r = (resource_type) (l->data);
-            
-            num_resources++;
-            //for (int j = 1; j < sizeof(r->resource) / sizeof(r->resource[0]); j++)
-            //   if (r->resource[j])
-            //      num_resources++;
+
+            for (int j = 0; j < MAX_LANGUAGE_ID; j++)
+               if (r->resource[j])
+                  num_resources++;
          }
    }
    /* If no resources, do nothing */

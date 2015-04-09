@@ -1035,6 +1035,9 @@ int make_language_id(char *str)
 resource_type make_resource(id_type id, const_type c, int la_id)
 {
    id_type old_id;
+   list_type l;
+   class_type cl;
+   resource_type r;
 
    id->ownernum = st.curclass;
 
@@ -1066,19 +1069,32 @@ resource_type make_resource(id_type id, const_type c, int la_id)
          id->name);
    }
 
-   // Try to get the old resource if present.
-   //r = GetResourceByID(id);
-   //if (r == NULL)
-      resource_type r = (resource_type)SafeMalloc(sizeof(resource_struct));
-  
-   // Assign ID to resource.
-   r->lhs = id;
-
-   // Assign c to the appropriate resource const_type in r,
-   // allocate memory for the others and NULL it.
-   // TODO: re-use the old r if present (i.e. if another resource of the same ID has been added w/ diff language.
-   for (int i = 0; i < sizeof(r->resource) / sizeof(r->resource[i]); i++)
+   // Get data for this class
+   for (l = st.classes; l != NULL; l = l->next)
    {
+      cl = (class_type) (l->data);
+      if (st.curclass == cl->class_id->idnum)
+         break;
+   }
+
+   // Try to get the old resource if present.
+   for (l = cl->resources; l != NULL; l = l->next)
+   {
+      r = (resource_type) (l->data);
+      if (r->lhs->idnum == id->idnum)
+         break;
+      r = NULL;
+   }
+
+   // If the resource list for this class is empty and thus we don't have
+   // a resource, allocate a new one and put our data in it. Also add this
+   // to the resources list for this class, so we can check other resources
+   // against it.
+   if (!cl->resources || !r)
+   {
+      r = (resource_type)SafeMalloc(sizeof(resource_struct));
+      r->lhs = id;
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
       if (i == la_id)
          r->resource[i] = c;
       else
@@ -1086,6 +1102,20 @@ resource_type make_resource(id_type id, const_type c, int la_id)
          r->resource[i] = (const_type) SafeMalloc(sizeof(const_struct));
          r->resource[i] = NULL;
       }
+      cl->resources = list_add_item(cl->resources, r);
+   }
+   else
+   {
+      // If we have a valid resource from the class resource list,
+      // check the appropriate language ID in this resource and if
+      // empty, store our data in it. Working with the resource list
+      // so don't return this resource (will be duplicated).
+      if (r->resource[la_id])
+         action_error("Resource already defined with language ID %i\n",la_id);
+      else
+         r->resource[la_id] = c;
+
+      return NULL;
    }
 
    return r;

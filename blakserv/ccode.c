@@ -1237,71 +1237,102 @@ int C_ParseString(int object_id,local_var_type *local_vars,
 }
 
 int C_SetString(int object_id,local_var_type *local_vars,
-				int num_normal_parms,parm_node normal_parm_array[],
-				int num_name_parms,parm_node name_parm_array[])
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
 {
-	val_type s1_val,s2_val;
-	string_node *snod,*snod2;
-	resource_node *r;
-	
-	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	
-	if (s1_val.v.tag != TAG_STRING)
-	{
-		bprintf("C_SetString can't set non-string %i,%i\n",
-			s1_val.v.tag,s1_val.v.data);
-		return NIL;
-	}
-	
-	snod = GetStringByID(s1_val.v.data);
-	if (snod == NULL)
-	{
-		bprintf("C_SetString can't set invalid string %i,%i\n",
-			s1_val.v.tag,s1_val.v.data);
-		return NIL;
-	}
-	
-	s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	switch (s2_val.v.tag)
-	{
-	case TAG_STRING :
-		snod2 = GetStringByID( s2_val.v.data);
-		if( snod2 == NULL )
-		{
-			bprintf( "C_SetString can't find string %i,%i\n",
-				s2_val.v.tag, s2_val.v.data );
-			return NIL;
-		}
-		//bprintf("SetString string%i<--string%i\n",s1_val.v.data,s2_val.v.data);
-		SetString(snod,snod2->data,snod2->len_data);
-		break;
-		
-	case TAG_TEMP_STRING :
-		snod2 = GetTempString();
-		//bprintf("SetString string%i<--tempstring\n",s1_val.v.data);
-		SetString(snod,snod2->data,snod2->len_data);
-		break;
-		
-	case TAG_RESOURCE :
-		r = GetResourceByID(s2_val.v.data);
-		if (r == NULL)
-		{
-			bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
-			return NIL;
-		}
-		//bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
-		SetString(snod,r->resource_val,strlen(r->resource_val));
-		break;
-		
-	default :
-		bprintf("C_SetString can't set from non-string thing %i,%i\n",
-			s2_val.v.tag,s2_val.v.data);
-		return NIL;
-	}
-	
-	return s1_val.int_val;
+   val_type s1_val,s2_val;
+   string_node *snod,*snod2;
+   resource_node *r;
+   const char *str;
+
+   s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   if (s1_val.v.tag != TAG_STRING)
+   {
+      /* If we're passed a NULL string, create one and use that. Allows
+       * us to create and set a string with one call.*/
+      if (s1_val.v.tag == TAG_NIL)
+      {
+         s1_val.v.tag = TAG_STRING;
+         s1_val.v.data = CreateString("");
+      }
+      else
+      {
+         bprintf("C_SetString can't set non-string %i,%i\n",
+            s1_val.v.tag,s1_val.v.data);
+         return NIL;
+      }
+   }
+
+   snod = GetStringByID(s1_val.v.data);
+   if (snod == NULL)
+   {
+      bprintf("C_SetString can't set invalid string %i,%i\n",
+         s1_val.v.tag,s1_val.v.data);
+      return NIL;
+   }
+
+   s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   switch (s2_val.v.tag)
+   {
+   case TAG_STRING :
+      snod2 = GetStringByID( s2_val.v.data);
+      if( snod2 == NULL )
+      {
+         bprintf( "C_SetString can't find string %i,%i\n",
+            s2_val.v.tag, s2_val.v.data );
+         return NIL;
+      }
+      //bprintf("SetString string%i<--string%i\n",s1_val.v.data,s2_val.v.data);
+      SetString(snod,snod2->data,snod2->len_data);
+      break;
+
+   case TAG_TEMP_STRING :
+      snod2 = GetTempString();
+      //bprintf("SetString string%i<--tempstring\n",s1_val.v.data);
+      SetString(snod,snod2->data,snod2->len_data);
+      break;
+
+   case TAG_RESOURCE :
+      r = GetResourceByID(s2_val.v.data);
+      if (r == NULL)
+      {
+         bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
+         return NIL;
+      }
+      //bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
+      SetString(snod,r->resource_val,strlen(r->resource_val));
+      break;
+
+   case TAG_MESSAGE :
+      str = GetNameByID(s2_val.v.data);
+      if (str == NULL)
+      {
+         bprintf("C_SetString can't set from invalid message %i\n",s2_val.v.data);
+         return NIL;
+      }
+      SetString(snod,GetNameByID(s2_val.v.data),strlen(GetNameByID(s2_val.v.data)));
+      break;
+
+   case TAG_DEBUGSTR :
+      str = GetClassDebugStr(GetClassByID(GetKodStats()->interpreting_class),s2_val.v.data);
+      if (str == NULL)
+      {
+         bprintf("C_SetString can't set from invalid debug string %i\n",s2_val.v.data);
+         return NIL;
+      }
+      SetString(snod,(char*)str,strlen(str));
+      break;
+
+   default :
+      bprintf("C_SetString can't set from non-string thing %i,%i\n",
+         s2_val.v.tag,s2_val.v.data);
+      return NIL;
+   }
+
+   return s1_val.int_val;
 }
 
 int C_ClearTempString(int object_id,local_var_type *local_vars,

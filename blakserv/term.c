@@ -105,25 +105,29 @@ const char * GetDataName(val_type val)
       r = GetResourceByID(val.v.data);
       if (r == NULL)
       {
-	 sprintf(s,"%i",val.v.data);
-	 return s;
+         sprintf(s,"%i",val.v.data);
+         return s;
       }
       if (r->resource_name == NULL)
       {
-	 sprintf(s,"%i",r->resource_id);
-	 return s;
+         sprintf(s,"%i",r->resource_id);
+         return s;
       }
       return r->resource_name;
+
    case TAG_CLASS :
       c = GetClassByID(val.v.data);
       if (c == NULL)
       {
-	 eprintf("GetTagData error, can't find class id %i\n",val.v.data);
-	 sprintf(s,"%i",val.v.data);
-	 return s;
+         eprintf("GetTagData error, can't find class id %i\n",val.v.data);
+         sprintf(s,"%i",val.v.data);
+         return s;
       }
       return c->class_name;
+
    case TAG_MESSAGE :
+      // Message tag saving *is* supported, however is not advised as message ID
+      // numbers can change and any resulting call could have undesired effects.
       eprintf("GetTagData error, message tag saving not supported %i\n",val.v.data);
 
       /* fall through */
@@ -194,12 +198,12 @@ int GetDataNum(int tag_val,const char *data_str)
       r = GetResourceByName(data_str);
       if (r != NULL)
       {
-	 retval = r->resource_id;
-	 break;
+         retval = r->resource_id;
+         break;
       }
 
       if (sscanf(data_str,"%i",&retval) != 1)
-	 retval = INVALID_DATA;
+         retval = INVALID_DATA;
 
       break;
 
@@ -207,18 +211,19 @@ int GetDataNum(int tag_val,const char *data_str)
       c = GetClassByName(data_str);
       if (c != NULL)
       {
-	 retval = c->class_id;
-	 break;
+         retval = c->class_id;
+         break;
       }
 
       if (sscanf(data_str,"%i",&retval) != 1)
-	 retval = INVALID_DATA;
+         retval = INVALID_DATA;
 
       break;
 
    case TAG_MESSAGE :
-      eprintf("GetDataNum error, message ID loading not supported\n");
-      retval = INVALID_DATA;
+      retval = GetIDByName(data_str);
+      if (retval == INVALID_ID)
+         retval = INVALID_DATA;
       break;
 
    case TAG_TEMP_STRING :
@@ -228,9 +233,8 @@ int GetDataNum(int tag_val,const char *data_str)
 
    default :
       if (sscanf(data_str,"%i",&retval) != 1)
-	 retval = INVALID_DATA;
+         retval = INVALID_DATA;
    }
 
    return retval;
 }
-

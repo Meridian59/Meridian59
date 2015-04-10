@@ -329,16 +329,20 @@ messages:
 
    IsInSameRoom(what = $)
    {
-      if Send(self,@GetOwner) <> $
-         AND IsClass(Send(self,@GetOwner),&Room)
-         AND Send(what,@GetOwner) <> $
-         AND IsClass(Send(what,@GetOwner),&Room)
-         AND Send(self,@GetOwner) = Send(what,@GetOwner)
+      local oOwner;
+      
+      oOwner = Send(what,@GetOwner);
+
+      if poOwner <> $
+         AND IsClass(poOwner,&Room)
+         AND oOwner <> $
+         AND IsClass(oOwner,&Room)
+         AND poOwner = oOwner
       {
-         return 1;
+         return TRUE;
       }
 
-      return 0;
+      return FALSE;
    }
 
    SquaredDistanceTo(what = $)

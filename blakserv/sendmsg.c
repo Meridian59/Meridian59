@@ -156,6 +156,7 @@ void InitBkodInterpret(void)
 	ccall_table[ISLIST] = C_IsList;
 	ccall_table[SETFIRST] = C_SetFirst;
 	ccall_table[SETNTH] = C_SetNth;
+	ccall_table[SWAPLISTELEM] = C_SwapListElem;
 	ccall_table[DELLISTELEM] = C_DelListElem;
 	ccall_table[FINDLISTELEM] = C_FindListElem;
 	

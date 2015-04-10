@@ -2094,6 +2094,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case ISLIST : strcpy(c_name, "IsList"); break;
 		case SETFIRST : strcpy(c_name, "SetFirst"); break;
 		case SETNTH : strcpy(c_name, "SetNth"); break;
+		case SWAPLISTELEM : strcpy(c_name, "SwapListElem"); break;
 		case DELLISTELEM : strcpy(c_name, "DelListElem"); break;
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
@@ -2110,6 +2111,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case RECYCLEUSER : strcpy(c_name, "RecycleUser"); break;
 		case RANDOM : strcpy(c_name, "Random"); break;
 		case RECORDSTAT : strcpy(c_name, "RecordStat"); break;
+		case GETSESSIONIP : strcpy(c_name, "GetSessionIP"); break;
 		case SETCLASSVAR : strcpy(c_name, "SetClassVar"); break;
 			
 		default : 

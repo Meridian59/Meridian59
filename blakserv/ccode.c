@@ -1983,6 +1983,11 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+/*
+ * C_ConsEnd: takes a list and an item to be appended to the list, appends
+ *            the item to the end of the list. Returns the original list
+ *            with the item appended to the end.
+ */
 int C_ConsEnd(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],
          int num_name_parms,parm_node name_parm_array[])
@@ -2214,6 +2219,54 @@ int C_SetNth(int object_id,local_var_type *local_vars,
 		normal_parm_array[2].value);
 	
 	return SetNth(n_val.v.data,list_val.v.data,set_val);
+}
+
+/*
+ * C_SwapListElem: takes a list and two integers representing elements
+ *                 in the list, swaps the data in the two elements.
+ *                 Returns NIL.
+ */
+int C_SwapListElem(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, n_val, m_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_SwapListElem object %i can't set elem of non-list %i,%i\n",
+         object_id,list_val.v.tag,list_val.v.data);
+      return NIL;
+   }
+
+   n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (n_val.v.tag != TAG_INT)
+   {
+      bprintf("C_SwapListElem object %i can't take Nth with n = non-int %i,%i\n",
+         object_id,n_val.v.tag,n_val.v.data);
+      return NIL;
+   }
+
+   m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   if (m_val.v.tag != TAG_INT)
+   {
+      bprintf("C_SwapListElem object %i can't take Nth with n = non-int %i,%i\n",
+         object_id,m_val.v.tag,m_val.v.data);
+      return NIL;
+   }
+
+   if (n_val.v.data == 0 || m_val.v.data == 0)
+   {
+      bprintf("C_SwapListElem object %i given invalid list element, elements are %i,%i\n",
+         object_id,n_val.v.data,m_val.v.data);
+      return NIL;
+   }
+
+   return SwapListElem(list_val.v.data,n_val.v.data,m_val.v.data);
 }
 
 int C_DelListElem(int object_id,local_var_type *local_vars,

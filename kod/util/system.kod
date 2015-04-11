@@ -7559,27 +7559,6 @@ messages:
       
       return $;
    }
-   
-   AddToEndOfList(lList=$,oObject=$)
-   {
-      local lNewList, lCopyList, i, n;
-      
-      lCopyList = $;
-      lNewList = $;
-      
-      for i in lList
-      {
-         lCopyList = Cons(i,lCopyList);
-      }
-
-      lNewList = Cons(oObject,lNewList);
-      for i in lCopyList
-      {
-         lNewList = Cons(i,lNewList);
-      }
-
-      return lNewList;
-   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

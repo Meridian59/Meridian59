@@ -53,8 +53,7 @@ messages:
             sHonor = send(i,@GetHonorString);
             if StringContain(sHonor,damn_last_annoyed)
             {
-               ClearTempString();
-               send(i,@SetHonorString,#string=GetTempString());
+               send(i,@SetHonorString,#string=$);
             }
 
             continue;
@@ -67,8 +66,7 @@ messages:
             sHonor = send(i,@GetHonorString);
             if StringContain(sHonor,damn_last_annoyed)
             {
-               ClearTempString();
-               send(i,@SetHonorString,#string=GetTempString());
+               send(i,@SetHonorString,#string=$);
             }
 
             continue;

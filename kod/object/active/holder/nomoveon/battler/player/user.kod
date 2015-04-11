@@ -1152,10 +1152,19 @@ messages:
       {
          oWhat = Nth(client_msg,2);
          Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
-         
+
          return;
       }
-      
+
+      if liClient_cmd = BP_REQ_INVENTORY_MOVE
+      {
+         oWhat = Nth(client_msg,2);
+         oWhere = Nth(client_msg,3);
+         Send(self,@UserMoveInventoryItem,#what=oWhat,#where=oWhere);
+
+         return;
+      }
+
       if liClient_cmd = BP_REQ_PUT
       {
          oWhat = Nth(client_msg,2);
@@ -4202,15 +4211,60 @@ messages:
          AND Send(poOwner,@ReqNewHold,#what=what,#new_row=piRow,#new_col=piCol)
       {
          Send(poOwner,@NewHold,#what=what,#new_row=piRow,#new_col=piCol,
-              #fine_row=piFine_row,#fine_col=piFine_col);
-		 % shrunken head dropped by owner
-		 if isClass(what, &ShrunkenHead)
-		 {
-			Send(what,@Dropped,#by=self,#where=poOwner);
-	     }			  
-			  
+               #fine_row=piFine_row,#fine_col=piFine_col);
+
+         % Shrunken head dropped by owner
+         if IsClass(what, &ShrunkenHead)
+         {
+            Send(what,@Dropped,#by=self,#where=poOwner);
+         }
       }
-      
+
+      return;
+   }
+
+   UserMoveInventoryItem(what=$,where=$)
+   "User moved an item in their inventory. Assuming everything checks out, "
+   "we move it in the plPassive list also."
+   {
+      local iWhere, lSafeList;
+
+      if what = $
+         OR where = $
+         OR what = where
+         OR plPassive = $
+      {
+         return;
+      }
+
+      % Get list position for the drop location.
+      iWhere = FindListElem(plPassive,where);
+
+      % MUST reassign this to plPassive, in case we're deleting the first
+      % list node. Use a temp list to verify there were no issues.
+      lSafeList = DelListElem(plPassive,what);
+      if lSafeList <> $
+      {
+         plPassive = lSafeList;
+      }
+      else
+      {
+         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
+               "plPassive to $ when deleting a list element! ",plPassive,what);
+      }
+
+      % MUST reassign this to plPassive, in case we're creating the first list node.
+      lSafeList = AddListElem(plPassive,iWhere,what);
+      if lSafeList <> $
+      {
+         plPassive = lSafeList;
+      }
+      else
+      {
+         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
+               "plPassive to $ when adding a list element! ",plPassive,what,iWhere);
+      }
+
       return;
    }
 

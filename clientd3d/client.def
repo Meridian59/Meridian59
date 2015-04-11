@@ -141,10 +141,12 @@ EXPORTS
 	list_last_item
 	list_nth_item
 	list_find_item
+	list_get_position
 	list_delete
 	list_destroy
 	list_length
 	list_move_to_front
+	list_move_to_nth
 	list_add_sorted_item
 
 ; ID lists

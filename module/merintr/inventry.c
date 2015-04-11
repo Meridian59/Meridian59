@@ -121,6 +121,7 @@ static Bool InventoryItemVisible(int row, int col);
 static void InventoryCursorMove(int action);
 static Bool InventoryReleaseCapture(void);
 static Bool InventoryDropCurrentItem(room_contents_node *container);
+static Bool InventoryMoveCurrentItem(int x, int y);
 static void InventoryVScroll(HWND hwnd, HWND hwndCtl, UINT code, int pos);
 static void InventoryComputeRowsCols(void);
 
@@ -690,7 +691,14 @@ void InventoryLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 
    // See if mouse pointer is in main graphics area
    if (!MouseToRoom(&temp_x, &temp_y))
+   {
+      // Drop in inventory. Check if we're still in inventory first.
+      if (x < 0 || y < 0)
+         return;
+
+      InventoryMoveCurrentItem(x,y);
       return;
+   }
 
    // See if a container is under mouse pointer
    r = GetObjectByPosition(temp_x, temp_y, CLOSE_DISTANCE, OF_CONTAINER, 0);
@@ -1067,6 +1075,38 @@ Bool InventoryDropCurrentItem(room_contents_node *container)
    if (container == NULL)
       RequestDrop(item->obj);
    else RequestPut(item->obj, container->obj.id);
+   return True;
+}
+/************************************************************************/
+/*
+ * InventoryMoveCurrentItem:  Move the item with the inventory cursor, if any.
+ *   Return True iff item moved.
+ */
+Bool InventoryMoveCurrentItem(int x, int y)
+{
+   int row, col;
+   InvItem *item, *drop_position;
+
+   item = InventoryGetCurrentItem();
+   if (item == NULL)
+      return False;
+
+   // Find row and col in absolute coordinates
+   col = x / INVENTORY_BOX_WIDTH;
+   row = top_row + y / INVENTORY_BOX_HEIGHT;
+   
+   drop_position = (InvItem *) list_nth_item(items, row * cols + col);
+   if (drop_position == NULL)
+      return False;
+
+   if (item->obj->id == drop_position->obj->id)
+      return False;
+
+   items = list_move_to_nth(items,(void *)item->obj->id,(void *)drop_position->obj->id,InventoryCompareIdItem);
+   InventoryRedraw();
+
+   RequestInventoryMove(item->obj->id, drop_position->obj->id);
+
    return True;
 }
 /************************************************************************/

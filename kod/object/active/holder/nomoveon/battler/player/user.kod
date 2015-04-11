@@ -4621,9 +4621,7 @@ messages:
                   }
                
                   plClassOrderPreferences =
-                          Send(SYS,@AddToEndOfList,
-                                   #lList=plClassOrderPreferences,
-                                   #oObject=Nth(i,2));
+                          ConsEnd(Nth(i,2),plClassOrderPreferences);
                           
                   Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
                                          #parm1=Nth(i,1));
@@ -4636,9 +4634,7 @@ messages:
             if oTemplateItem <> $
             {
                plClassOrderPreferences =
-                       Send(SYS,@AddToEndOfList,
-                                #lList=plClassOrderPreferences,
-                                #oObject=GetClass(oTemplateItem));
+                      ConsEnd(GetClass(oTemplateItem),plClassOrderPreferences);
                Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
                                       #parm1=Send(oTemplateItem,@GetName));
                return;

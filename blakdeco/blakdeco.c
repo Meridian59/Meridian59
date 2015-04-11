@@ -553,6 +553,7 @@ const char * name_function(int fnum)
    case SETFIRST : return "SetFirst";
    case SETNTH : return "SetNth";
    case DELLISTELEM : return "DelListElem";
+   case ADDLISTELEM : return "AddListElem";
 
    case GETTIME : return "GetTime";
 

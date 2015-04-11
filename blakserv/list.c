@@ -255,20 +255,19 @@ int SetNth(int n,int list_id,val_type new_val)
 	return NIL;
 }
 
-int SwapListElem(int list_id,int n,int m)
+int SwapListElem(int list_id,int elem_one,int elem_two)
 {
-   int i;
-   list_node *l, *ln, *lm;
+   list_node *l, *list_node_one, *list_node_two;
    val_type temp;
 
    l = GetListNodeByID(list_id);
 
    // Set each of the list nodes to be swapped to the first list node initially.
-   lm = l;
-   ln = l;
+   list_node_one = l;
+   list_node_two = l;
 
    // Start i at 2, since n or m = 1 will be handled by the initialisation.
-   for (i=2; i<=n || i<=m; i++)
+   for (int i = 2; i <= elem_one || i <= elem_two; i++)
    {
       if (!l)
       {
@@ -285,19 +284,19 @@ int SwapListElem(int list_id,int n,int m)
 
       l = GetListNodeByID(l->rest.v.data);
 
-      if (i == n)
+      if (i == elem_one)
       {
-         ln = l;
+         list_node_one = l;
       }
-      if (i == m)
+      if (i == elem_two)
       {
-         lm = l;
+         list_node_two = l;
       }
    }
 
-   temp = lm->first;
-   lm->first = ln->first;
-   ln->first = temp;
+   temp = list_node_two->first;
+   list_node_two->first = list_node_one->first;
+   list_node_one->first = temp;
 
    return NIL;
 }
@@ -328,6 +327,66 @@ int FindListElem(val_type list_id,val_type list_elem)
 	}
 	
 	return NIL;
+}
+
+int AddListElem(int n,int list_id,val_type new_val)
+{
+   int new_list_id;
+   list_node *l, *prev, *new_node;
+
+   if (n  == 0)
+   {
+      bprintf("AddListElem given invalid list element %i, returning old list\n",
+         n);
+      return list_id;
+   }
+
+   l = GetListNodeByID(list_id);
+
+   // Start at i = 2, n = 1 handled already.
+   for (int i = 2; i <= n; i++)
+   {
+      if (!l)
+      {
+         bprintf("AddListElem found invalid list node somewhere in list %i\n",
+            list_id);
+         return list_id;
+      }
+      if (l->rest.v.tag != TAG_LIST)
+      {
+         // Add the new value to the end of the list.
+         return ConsEnd(new_val,list_id);
+      }
+      prev = l;
+      l = GetListNodeByID(l->rest.v.data);
+   }
+
+   if (!l || !prev)
+   {
+      bprintf("AddListElem found invalid list node somewhere in list %i\n",
+         list_id);
+      return list_id;
+   }
+
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+
+   if (!new_node)
+   {
+      bprintf("AddListElem couldn't allocate new node! %i\n",
+         new_list_id);
+      return list_id;
+   }
+
+   // This node is inserted in position of the existing one, so use its rest data.
+   // Points to the old node.
+   new_node->rest.v.data = prev->rest.v.data;
+   new_node->rest.v.tag = TAG_LIST;
+   new_node->first.int_val = new_val.int_val;
+   // Previous node points to this one.
+   prev->rest.v.data = new_list_id;
+
+   return list_id;
 }
 
 int DelListElem(val_type list_id,val_type list_elem)

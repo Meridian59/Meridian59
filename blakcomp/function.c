@@ -37,6 +37,7 @@ function_type Functions[] = {
 {"SetFirst",            SETFIRST,        AEXPRESSION,   AEXPRESSION,  ANONE},
 {"SetNth",              SETNTH,          AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"SwapListElem",        SWAPLISTELEM,    AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
+{"AddListElem",         ADDLISTELEM,     AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"DelListElem",         DELLISTELEM,     AEXPRESSION,   AEXPRESSION,  ANONE},
 {"FindListElem",        FINDLISTELEM,    AEXPRESSION,   AEXPRESSION,  ANONE},
 {"ConsEnd",             CONSEND,         AEXPRESSION,   AEXPRESSION,  ANONE},

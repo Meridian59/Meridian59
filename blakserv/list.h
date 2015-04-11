@@ -37,8 +37,9 @@ int Length(int list_id);
 int Nth(int n,int list_id);
 int SetFirst(int list_id,val_type new_val);
 int SetNth(int n,int list_id,val_type new_val);
-int SwapListElem(int list_id,int n, int m);
+int SwapListElem(int list_id,int elem_one,int elem_two);
 int FindListElem(val_type list_id,val_type list_elem);
+int AddListElem(int n,int list_id,val_type new_val);
 int DelListElem(val_type list_id,val_type list_elem);
 
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id));

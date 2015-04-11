@@ -2222,6 +2222,51 @@ int C_SetNth(int object_id,local_var_type *local_vars,
 }
 
 /*
+ * C_AddListElem:  takes a list, a list position and one piece of data, adds
+ *                 the data at the given position. If the list position is
+ *                 larger than the list, it is added to the end. If list
+ *                 position 0 is sent, just returns the initial list, otherwise
+ *                 returns the altered list.
+ */
+int C_AddListElem(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type n_val,list_val,set_val, ret_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_AddListElem object %i can't add elem to non-list %i,%i\n",
+         object_id,list_val.v.tag,list_val.v.data);
+      return NIL;
+   }
+   n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (n_val.v.tag != TAG_INT)
+   {
+      bprintf("C_AddListElem object %i can't take add elem with n = non-int %i,%i\n",
+         object_id,n_val.v.tag,n_val.v.data);
+      return NIL;
+   }
+
+   set_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+      normal_parm_array[2].value);
+
+   ret_val.v.tag = TAG_LIST;
+
+   // Handle the case where the new element should be in the first position.
+   // Should have called Cons to do this.
+   if (n_val.v.data == 1)
+      ret_val.v.data = Cons(set_val,list_val);
+   else
+      ret_val.v.data = AddListElem(n_val.v.data,list_val.v.data,set_val);
+
+   return ret_val.int_val;
+}
+
+/*
  * C_SwapListElem: takes a list and two integers representing elements
  *                 in the list, swaps the data in the two elements.
  *                 Returns NIL.

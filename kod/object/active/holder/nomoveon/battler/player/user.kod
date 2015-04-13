@@ -4619,17 +4619,9 @@ messages:
                                #message_rsc=inventory_already_in_list);
                      return;
                   }
-               
-                  if plClassOrderPreferences = $
-                  {
-                     plClassOrderPreferences =
-                          Cons(Nth(i,2),plClassOrderPreferences);
-                  }
-                  else
-                  {
-                     plClassOrderPreferences =
+                  
+                  plClassOrderPreferences =
                           ConsEnd(Nth(i,2),plClassOrderPreferences);
-                  }
                           
                   Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
                                          #parm1=Nth(i,1));
@@ -4641,16 +4633,8 @@ messages:
             
             if oTemplateItem <> $
             {
-               if plClassOrderPreferences = $
-               {
-                  plClassOrderPreferences =
-                       Cons(GetClass(oTemplateItem),plClassOrderPreferences);
-               }
-               else
-               {
-                  plClassOrderPreferences =
-                      ConsEnd(GetClass(oTemplateItem),plClassOrderPreferences);
-               }
+               plClassOrderPreferences =
+                   ConsEnd(GetClass(oTemplateItem),plClassOrderPreferences);
                Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
                                       #parm1=Send(oTemplateItem,@GetName));
                return;

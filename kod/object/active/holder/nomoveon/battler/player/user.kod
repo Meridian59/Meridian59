@@ -4644,7 +4644,7 @@ messages:
                if plClassOrderPreferences = $
                {
                   plClassOrderPreferences =
-                       Cons(Nth(i,2),plClassOrderPreferences);
+                       Cons(GetClass(oTemplateItem),plClassOrderPreferences);
                }
                else
                {

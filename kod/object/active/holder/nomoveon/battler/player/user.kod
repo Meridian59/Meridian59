@@ -4237,8 +4237,23 @@ messages:
          return;
       }
 
+      if FindListElem(plPassive,what) = 0
+      {
+         Debug("ALERT!  ",self,Send(self,@GetTrueName)," tried to move ",
+               "inventory item ",what,Send(what,@GetName)," they didn't have!");
+
+         return;
+      }
       % Get list position for the drop location.
       iWhere = FindListElem(plPassive,where);
+      if iWhere = 0
+      {
+         Debug("ALERT!  ",self,Send(self,@GetTrueName)," tried to move ",
+               "inventory item ",what,Send(what,@GetName)," to invalid location of ",
+               where,Send(where,@GetName));
+
+         return;
+      }
 
       % MUST reassign this to plPassive, in case we're deleting the first
       % list node. Use a temp list to verify there were no issues.
@@ -4249,19 +4264,20 @@ messages:
       }
       else
       {
-         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
-               "plPassive to $ when deleting a list element! ",plPassive,what);
+         Debug("ALERT!  ",self,Send(self,@GetTrueName)," tried to set ",
+               "plPassive to $ when deleting a list element! ",plPassive,
+               what,Send(what,@GetName));
       }
 
       % MUST reassign this to plPassive, in case we're creating the first list node.
-      lSafeList = AddListElem(plPassive,iWhere,what);
+      lSafeList = InsertListElem(plPassive,iWhere,what);
       if lSafeList <> $
       {
          plPassive = lSafeList;
       }
       else
       {
-         Debug("ALERT! Player ",self,Send(self,@GetTrueName)," tried to set ",
+         Debug("ALERT!  ",self,Send(self,@GetTrueName)," tried to set ",
                "plPassive to $ when adding a list element! ",plPassive,what,iWhere);
       }
 

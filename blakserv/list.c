@@ -124,14 +124,22 @@ int Rest(int list_id)
 	return (l? l->rest.int_val : NIL);
 }
 
-int ConsEnd(val_type source,int list_id)
+int ConsEnd(val_type source,val_type list_val)
 {
-   int new_list_id, n = 0;
+   int list_id, new_list_id, n = 0;
    list_node *l, *new_node;
+
+   list_id = list_val.v.data;
+
+   if (list_val.v.tag == TAG_NIL)
+      return Cons(source,list_val);
 
    l = GetListNodeByID(list_id);
    if (!l)
-      return NIL;
+   {
+      bprintf("C_ConsEnd couldn't find list node %i, returning list",list_id);
+      return list_id;
+   }
 
    while (l && l->rest.v.tag != TAG_NIL)
    {
@@ -145,7 +153,10 @@ int ConsEnd(val_type source,int list_id)
    new_list_id = AllocateListNode();
    new_node = GetListNodeByID(new_list_id);
    if (!new_node)
-      return NIL;
+   {
+      bprintf("C_ConsEnd couldn't create list node, returning list %i",list_id);
+      return list_id;
+   }
 
    new_node->rest.int_val = NIL;
    new_node->first.int_val = source.int_val;
@@ -157,19 +168,22 @@ int ConsEnd(val_type source,int list_id)
 
 int Cons(val_type source,val_type dest)
 {
-	int list_id;
-	list_node *new_node;
-	
-	/*   bprintf("Allocing list node #%i\n",num_nodes); */
-	
-	list_id = AllocateListNode();
-	new_node = GetListNodeByID(list_id);
-	if (!new_node)
-		return NIL;
-	
-	new_node->first.int_val = source.int_val;
-	new_node->rest.int_val = dest.int_val;
-	return list_id;
+   int list_id;
+   list_node *new_node;
+
+   /*   bprintf("Allocing list node #%i\n",num_nodes); */
+
+   list_id = AllocateListNode();
+   new_node = GetListNodeByID(list_id);
+   if (!new_node)
+   {
+      bprintf("C_Cons couldn't create new list node!");
+      return NIL;
+   }
+
+   new_node->first.int_val = source.int_val;
+   new_node->rest.int_val = dest.int_val;
+   return list_id;
 }
 
 int Length(int list_id)
@@ -355,7 +369,20 @@ int AddListElem(int n,int list_id,val_type new_val)
       if (l->rest.v.tag != TAG_LIST)
       {
          // Add the new value to the end of the list.
-         return ConsEnd(new_val,list_id);
+         new_list_id = AllocateListNode();
+         new_node = GetListNodeByID(new_list_id);
+         if (!new_node)
+         {
+            bprintf("AddListElem couldn't allocate new node! %i\n",
+               new_list_id);
+            return list_id;
+         }
+         new_node->rest.int_val = NIL;
+         new_node->first.int_val = new_val.int_val;
+         // Previous node points to this one.
+         l->rest.v.tag = TAG_LIST;
+         l->rest.v.data = new_list_id;
+         return list_id;
       }
       prev = l;
       l = GetListNodeByID(l->rest.v.data);

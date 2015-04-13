@@ -2001,28 +2001,43 @@ int C_ConsEnd(int object_id,local_var_type *local_vars,
 
    if (list_val.v.tag != TAG_LIST)
    {
-      bprintf("C_ConsEnd object %i can't add to non-list %i,%i\n",
-         object_id,list_val.v.tag,list_val.v.data);
-      return NIL;
+      if (list_val.v.tag != TAG_NIL)
+      {
+         bprintf("C_ConsEnd object %i can't add to non-list %i,%i\n",
+            object_id,list_val.v.tag,list_val.v.data);
+         return list_val.int_val;
+      }
    }
+
    ret_val.v.tag = TAG_LIST;
-   ret_val.v.data = ConsEnd(source_val,list_val.v.data);
+   ret_val.v.data = ConsEnd(source_val,list_val);
    return ret_val.int_val;
 }
 
 int C_Cons(int object_id,local_var_type *local_vars,
-		   int num_normal_parms,parm_node normal_parm_array[],
-		   int num_name_parms,parm_node name_parm_array[])
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
 {
-	val_type source_val,dest_val,ret_val;
-	
-	source_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	dest_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	ret_val.v.tag = TAG_LIST;
-	ret_val.v.data = Cons(source_val,dest_val);
-	return ret_val.int_val;
+   val_type source_val,dest_val,ret_val;
+
+   source_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   dest_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (dest_val.v.tag != TAG_LIST)
+   {
+      if (dest_val.v.tag != TAG_NIL)
+      {
+         bprintf("C_Cons object %i can't add to non-list %i,%i\n",
+            object_id,dest_val.v.tag,dest_val.v.data);
+         return dest_val.int_val;
+      }
+   }
+
+   ret_val.v.tag = TAG_LIST;
+   ret_val.v.data = Cons(source_val,dest_val);
+   return ret_val.int_val;
 }
 
 int C_First(int object_id,local_var_type *local_vars,
@@ -2238,17 +2253,20 @@ int C_AddListElem(int object_id,local_var_type *local_vars,
       normal_parm_array[0].value);
    if (list_val.v.tag != TAG_LIST)
    {
-      bprintf("C_AddListElem object %i can't add elem to non-list %i,%i\n",
-         object_id,list_val.v.tag,list_val.v.data);
-      return NIL;
+      if (list_val.v.tag != TAG_NIL)
+      {
+         bprintf("C_AddListElem object %i can't add elem to non-list %i,%i\n",
+            object_id,list_val.v.tag,list_val.v.data);
+         return list_val.int_val;
+      }
    }
    n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
       normal_parm_array[1].value);
    if (n_val.v.tag != TAG_INT)
    {
-      bprintf("C_AddListElem object %i can't take add elem with n = non-int %i,%i\n",
+      bprintf("C_AddListElem object %i can't take add elem with n = non-int %i, %i, returning list.\n",
          object_id,n_val.v.tag,n_val.v.data);
-      return NIL;
+      return list_val.int_val;
    }
 
    set_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
@@ -2257,8 +2275,8 @@ int C_AddListElem(int object_id,local_var_type *local_vars,
    ret_val.v.tag = TAG_LIST;
 
    // Handle the case where the new element should be in the first position.
-   // Should have called Cons to do this.
-   if (n_val.v.data == 1)
+   // Should have called Cons to do this. Cons also adds to $ lists.
+   if (n_val.v.data == 1 || list_val.v.tag == TAG_NIL)
       ret_val.v.data = Cons(set_val,list_val);
    else
       ret_val.v.data = AddListElem(n_val.v.data,list_val.v.data,set_val);

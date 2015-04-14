@@ -252,14 +252,14 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
-int AddListElem(int n,int list_id,val_type new_val)
+int InsertListElem(int n,int list_id,val_type new_val)
 {
    int new_list_id;
    list_node *l, *prev, *new_node;
 
    if (n  == 0)
    {
-      bprintf("AddListElem given invalid list element %i, returning old list\n",
+      bprintf("InsertListElem given invalid list element %i, returning old list\n",
          n);
       return list_id;
    }
@@ -271,14 +271,27 @@ int AddListElem(int n,int list_id,val_type new_val)
    {
       if (!l)
       {
-         bprintf("AddListElem found invalid list node somewhere in list %i\n",
+         bprintf("InsertListElem found invalid list node somewhere in list %i\n",
             list_id);
          return list_id;
       }
       if (l->rest.v.tag != TAG_LIST)
       {
          // Add the new value to the end of the list.
-         return ConsEnd(new_val,list_id);
+         new_list_id = AllocateListNode();
+         new_node = GetListNodeByID(new_list_id);
+         if (!new_node)
+         {
+            bprintf("InsertListElem couldn't allocate new node! %i\n",
+               new_list_id);
+            return list_id;
+         }
+         new_node->rest.int_val = NIL;
+         new_node->first.int_val = new_val.int_val;
+         // Previous node points to this one.
+         l->rest.v.tag = TAG_LIST;
+         l->rest.v.data = new_list_id;
+         return list_id;
       }
       prev = l;
       l = GetListNodeByID(l->rest.v.data);
@@ -286,7 +299,7 @@ int AddListElem(int n,int list_id,val_type new_val)
 
    if (!l || !prev)
    {
-      bprintf("AddListElem found invalid list node somewhere in list %i\n",
+      bprintf("InsertListElem found invalid list node somewhere in list %i\n",
          list_id);
       return list_id;
    }
@@ -296,7 +309,7 @@ int AddListElem(int n,int list_id,val_type new_val)
 
    if (!new_node)
    {
-      bprintf("AddListElem couldn't allocate new node! %i\n",
+      bprintf("InsertListElem couldn't allocate new node! %i\n",
          new_list_id);
       return list_id;
    }

@@ -742,6 +742,20 @@ messages:
       return $;
    }
 
+   GetDamageType()
+   {
+      local oWeapon;
+
+      oWeapon = Send(self,@GetWeapon);
+
+      if oWeapon <> $
+      {
+         return Send(oWeapon,@GetAttackType);
+      }
+
+      propagate;
+   }
+
    MonsterAttack(what = $)
    "Add in any attack animation calls."
    {

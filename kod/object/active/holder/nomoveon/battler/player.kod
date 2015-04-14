@@ -1021,6 +1021,7 @@ properties:
    ptAttackTimer = $
 
    psHonor = $
+   plHonor = $
 
    piMonsterChasers = 0
 
@@ -1792,11 +1793,7 @@ messages:
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
-         if psHonor <> $
-            AND StringEqual(psHonor,player_newbie_honor_string)
-         {
-            Send(self,@SetHonorString);
-         }
+         Send(self,@RemoveHonorString,#string=player_newbie_honor_string);
       }
 
       return age;
@@ -1830,6 +1827,139 @@ messages:
    GetHonorString()
    {
       return psHonor;
+   }
+
+   SetHonorStrings()
+   "Used to set plHonor for all players using whatever psHonor they have. "
+   "Remove this if psHonor is removed (after switching to plHonor)."
+   {
+      if psHonor <> $
+      {
+         if psHonor = GetTempString()
+            OR StringEqual(psHonor,"")
+         {
+            return;
+         }
+
+         Send(self,@AddHonorString,#string=psHonor);
+      }
+
+      return;
+   }
+
+   GetHonorStringList()
+   {
+      return plHonor;
+   }
+
+   HasHonorString(string = $)
+   "Checks the plHonor list for the given string."
+   {
+      local i;
+
+      if plHonor = $
+         or string = $
+      {
+         return FALSE;
+      }
+
+      % Convert temp string if we received it.
+      if string = GetTempString()
+      {
+         string = SetString($,string);
+      }
+
+      for i in plHonor
+      {
+         if StringContain(i,string)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   AppendHonorStrings()
+   "Appends all the honor strings to the temp string. Adds newline "
+   "between strings."
+   {
+      local i;
+
+      if plHonor <> $
+      {
+         for i in plHonor
+         {
+            AppendTempString(i);
+            AppendTempString("\n");
+         }
+      }
+
+      return;
+   }
+
+   AddHonorString(string=$,iPosition = 1)
+   "Adds string to plHonor list. iPosition allows string position "
+   "to be chosen."
+   {
+      if string = $
+      {
+         return;
+      }
+
+      % Convert temp string if we received it.
+      if string = GetTempString()
+      {
+         string = SetString($,string);
+      }
+
+      if plHonor = $
+      {
+         plHonor = [string];
+      }
+      else
+      {
+         plHonor = InsertListElem(plHonor,iPosition,string);
+      }
+
+      return;
+   }
+
+   RemoveHonorString(string=$)
+   "Removes the given string from plHonor. Searches the entire list, "
+   "so it will remove any duplicates."
+   {
+      local i;
+
+      if plHonor = $
+         OR string = $
+      {
+         return;
+      }
+
+      % Convert temp string if we received it.
+      if string = GetTempString()
+      {
+         string = SetString($,string);
+      }
+
+      for i in plHonor
+      {
+         if StringContain(i,string)
+         {
+            plHonor = DelListElem(plHonor,i);
+         }
+      }
+
+      return;
+   }
+
+   ClearHonorStrings()
+   "Removes all the honor strings."
+   {
+      plHonor = $;
+
+      return;
    }
 
    ShowExtraInfo()
@@ -2030,17 +2160,8 @@ messages:
 %         AppendTempString(player_nl);
 %      }
 
-      if psHonor <> $
-      {
-         if psHonor <> GetTempString()
-         {
-            AppendTempString(psHonor);
-         }
-         else
-         {
-            psHonor = $;
-         }
-      }
+      % Append all the honor strings to the temp string.
+      Send(self,@AppendHonorStrings);
 
       if plDonationYears <> $
       {
@@ -2558,7 +2679,7 @@ messages:
       {
          Send(self,@ReceiveNestedMail,#from=player_angel,
                #dest_list=[self],#nest_list=[4,player_first_mail]);
-         Send(self,@SetHonorString,#string=player_newbie_honor_string);
+         Send(self,@AddHonorString,#string=player_newbie_honor_string);
          Post(self,@MsgSendUser,#message_rsc=player_newbie_commands);
       }
 
@@ -9072,8 +9193,7 @@ messages:
       % Don't drop anything or take any penalties.
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
-        OR psHonor <> $
-           AND StringEqual(psHonor,player_newbie_honor_string)
+        OR Send(self,@HasHonorString,#string=player_newbie_honor_string)
       {
          bNo_drop_death = TRUE;
          piDeathCost = FALSE;
@@ -12275,10 +12395,7 @@ messages:
             % Once you've become killable, you no longer get tutorial messages
             % and bonuses.  You also lose your newbie string.
             Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
-            if psHonor <> $ AND StringEqual(psHonor,player_newbie_honor_string)
-            {
-               Send(self,@SetHonorString);
-            }
+            Send(self,@RemoveHonorString,#string=player_newbie_honor_string);
 
             Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
             if dbug = TRUE

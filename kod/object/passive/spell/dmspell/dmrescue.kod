@@ -39,7 +39,7 @@ messages:
 
    CastSpell(who=$,lTargets=$)
    {
-      local i, j, oRoom, oHell, sHonor;
+      local i, j, oRoom, oHell;
 
       % Unless the player is a 'SeniorGuide' or above, all they can
       % do with this spell is send players home from OoG.
@@ -67,13 +67,8 @@ messages:
             Send(SYS,@UtilGoToSquare,#what=j,#where=oRoom,
                  #row=Send(i,@GetSaveRow),#col=Send(i,@GetSaveCol));
 
-            sHonor = Send(i,@GetHonorString);
-            if sHonor <> $
-               AND StringContain(sHonor,damn_last_annoyed)
-            {
-               ClearTempString();
-               Send(i,@SetHonorString,#string=GetTempString());
-            }
+            % If they have the damned string, this will remove it.
+            Send(i,@RemoveHonorString,#string=damn_last_annoyed);
 
             continue;
          }
@@ -82,13 +77,8 @@ messages:
          {
             Send(i,@AdminGoToSafety);
 
-            sHonor = Send(i,@GetHonorString);
-            if sHonor <> $
-               AND StringContain(sHonor,damn_last_annoyed)
-            {
-               ClearTempString();
-               Send(i,@SetHonorString,#string=GetTempString());
-            }
+            % If they have the damned string, this will remove it.
+            Send(i,@RemoveHonorString,#string=damn_last_annoyed);
 
             continue;
          }

@@ -50,7 +50,7 @@ messages:
    {
       local i, j, oHell;
 
-      oHell = send(SYS,@FindRoomByNum,#num=RID_OUTOFGRACE);
+      oHell = Send(SYS,@FindRoomByNum,#num=RID_OUTOFGRACE);
 
       for j in lTargets
       {
@@ -58,24 +58,24 @@ messages:
 
          if isClass(i,&Battler)
          {
-            send(i,@MsgSendUser,#message_rsc=damn_msg_target,
+            Send(i,@MsgSendUser,#message_rsc=damn_msg_target,
                  #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetTrueName));
-            send(who,@MsgSendUser,#message_rsc=damn_msg_DM,
+            Send(who,@MsgSendUser,#message_rsc=damn_msg_DM,
                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetTrueName));
 
-            send(SYS,@UtilGoNearSquare,#what=i,#where=oHell,#new_row=4,#new_col=3);
+            Send(SYS,@UtilGoNearSquare,#what=i,#where=oHell,#new_row=4,#new_col=3);
 
             if isClass(i,&Player)
             {
                % (example)  She was sent to hell by GuidePixie.
 
                ClearTempString();
-               AppendTempString(send(i,@GetHeShe,#cap=TRUE));
+               AppendTempString(Send(i,@GetHeShe,#cap=TRUE));
                AppendTempString(damn_last_annoyed);
-               AppendTempString(send(who,@GetTrueName));
+               AppendTempString(Send(who,@GetTrueName));
                AppendTempString(damn_dot);
 
-               send(i,@SetHonorString,#string=GetTempString());
+               Send(i,@AddHonorString,#string=GetTempString());
             }
 
             continue;
@@ -85,20 +85,20 @@ messages:
          {
             Send(SYS,@UtilGoNearSquare,#what=i,#where=oHell,#new_row=4,#new_col=3);
 
-            i = send(i,@GetGhostedPlayer);
-            send(who,@MsgSendUser,#message_rsc=damn_msg_DM,
+            i = Send(i,@GetGhostedPlayer);
+            Send(who,@MsgSendUser,#message_rsc=damn_msg_DM,
                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetTrueName));
-            send(i,@SetSaveLocation,#rid=RID_OUTOFGRACE,#row=4,#col=3);
+            Send(i,@SetSaveLocation,#rid=RID_OUTOFGRACE,#row=4,#col=3);
 
             % (example)  She was sent to hell by GuidePixie.
 
             ClearTempString();
-            AppendTempString(send(self,@GetHeShe,#cap=TRUE));
+            AppendTempString(Send(self,@GetHeShe,#cap=TRUE));
             AppendTempString(damn_last_annoyed);
-            AppendTempString(send(who,@GetTrueName));
-	    AppendTempString(damn_dot);
+            AppendTempString(Send(who,@GetTrueName));
+            AppendTempString(damn_dot);
 
-            send(i,@SetHonorString,#string=GetTempString());
+            Send(i,@AddHonorString,#string=GetTempString());
 
             continue;
          }
@@ -110,7 +110,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

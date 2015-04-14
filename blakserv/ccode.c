@@ -1984,11 +1984,11 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 }
 
 /*
- * C_ConsEnd: takes a list and an item to be appended to the list, appends
- *            the item to the end of the list. Returns the original list
- *            with the item appended to the end.
+ * C_AppendListElem: takes a list and an item to be appended to the list,
+ *    appends the item to the end of the list. Returns the original list
+ *    with the item appended to the end.
  */
-int C_ConsEnd(int object_id,local_var_type *local_vars,
+int C_AppendListElem(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],
          int num_name_parms,parm_node name_parm_array[])
 {
@@ -2003,14 +2003,14 @@ int C_ConsEnd(int object_id,local_var_type *local_vars,
    {
       if (list_val.v.tag != TAG_NIL)
       {
-         bprintf("C_ConsEnd object %i can't add to non-list %i,%i\n",
+         bprintf("C_AppendListElem object %i can't add to non-list %i,%i\n",
             object_id,list_val.v.tag,list_val.v.data);
          return list_val.int_val;
       }
    }
 
    ret_val.v.tag = TAG_LIST;
-   ret_val.v.data = ConsEnd(source_val,list_val);
+   ret_val.v.data = AppendListElem(source_val,list_val);
    return ret_val.int_val;
 }
 
@@ -2237,13 +2237,12 @@ int C_SetNth(int object_id,local_var_type *local_vars,
 }
 
 /*
- * C_AddListElem:  takes a list, a list position and one piece of data, adds
- *                 the data at the given position. If the list position is
- *                 larger than the list, it is added to the end. If list
- *                 position 0 is sent, just returns the initial list, otherwise
- *                 returns the altered list.
+ * C_InsertListElem:  takes a list, a list position and one piece of data, adds
+ *    the data at the given position. If the list position is larger than the
+ *    list, it is added to the end. If list position 0 is sent, just returns
+ *    the initial list, otherwise returns the altered list.
  */
-int C_AddListElem(int object_id,local_var_type *local_vars,
+int C_InsertListElem(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],
          int num_name_parms,parm_node name_parm_array[])
 {
@@ -2255,7 +2254,7 @@ int C_AddListElem(int object_id,local_var_type *local_vars,
    {
       if (list_val.v.tag != TAG_NIL)
       {
-         bprintf("C_AddListElem object %i can't add elem to non-list %i,%i\n",
+         bprintf("C_InsertListElem object %i can't add elem to non-list %i,%i\n",
             object_id,list_val.v.tag,list_val.v.data);
          return list_val.int_val;
       }
@@ -2264,7 +2263,7 @@ int C_AddListElem(int object_id,local_var_type *local_vars,
       normal_parm_array[1].value);
    if (n_val.v.tag != TAG_INT)
    {
-      bprintf("C_AddListElem object %i can't take add elem with n = non-int %i, %i, returning list.\n",
+      bprintf("C_InsertListElem object %i can't add elem with n = non-int %i, %i, returning list.\n",
          object_id,n_val.v.tag,n_val.v.data);
       return list_val.int_val;
    }
@@ -2279,7 +2278,7 @@ int C_AddListElem(int object_id,local_var_type *local_vars,
    if (n_val.v.data == 1 || list_val.v.tag == TAG_NIL)
       ret_val.v.data = Cons(set_val,list_val);
    else
-      ret_val.v.data = AddListElem(n_val.v.data,list_val.v.data,set_val);
+      ret_val.v.data = InsertListElem(n_val.v.data,list_val.v.data,set_val);
 
    return ret_val.int_val;
 }

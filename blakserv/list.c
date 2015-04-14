@@ -124,7 +124,7 @@ int Rest(int list_id)
 	return (l? l->rest.int_val : NIL);
 }
 
-int ConsEnd(val_type source,val_type list_val)
+int AppendListElem(val_type source,val_type list_val)
 {
    int list_id, new_list_id, n = 0;
    list_node *l, *new_node;
@@ -137,7 +137,7 @@ int ConsEnd(val_type source,val_type list_val)
    l = GetListNodeByID(list_id);
    if (!l)
    {
-      bprintf("C_ConsEnd couldn't find list node %i, returning list",list_id);
+      bprintf("AppendListElem couldn't find list node %i, returning list",list_id);
       return list_id;
    }
 
@@ -148,13 +148,13 @@ int ConsEnd(val_type source,val_type list_val)
    }
 
    if (n > 500)
-      bprintf("Warning, C_ConsEnd adding to large list, length %i",n);
+      bprintf("Warning, AppendListElem adding to large list, length %i",n);
 
    new_list_id = AllocateListNode();
    new_node = GetListNodeByID(new_list_id);
    if (!new_node)
    {
-      bprintf("C_ConsEnd couldn't create list node, returning list %i",list_id);
+      bprintf("AppendListElem couldn't create list node, returning list %i",list_id);
       return list_id;
    }
 
@@ -177,7 +177,7 @@ int Cons(val_type source,val_type dest)
    new_node = GetListNodeByID(list_id);
    if (!new_node)
    {
-      bprintf("C_Cons couldn't create new list node!");
+      bprintf("Cons couldn't create new list node!");
       return NIL;
    }
 
@@ -343,14 +343,14 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
-int AddListElem(int n,int list_id,val_type new_val)
+int InsertListElem(int n,int list_id,val_type new_val)
 {
    int new_list_id;
    list_node *l, *prev, *new_node;
 
    if (n  == 0)
    {
-      bprintf("AddListElem given invalid list element %i, returning old list\n",
+      bprintf("InsertListElem given invalid list element %i, returning old list\n",
          n);
       return list_id;
    }
@@ -362,7 +362,7 @@ int AddListElem(int n,int list_id,val_type new_val)
    {
       if (!l)
       {
-         bprintf("AddListElem found invalid list node somewhere in list %i\n",
+         bprintf("InsertListElem found invalid list node somewhere in list %i\n",
             list_id);
          return list_id;
       }
@@ -373,7 +373,7 @@ int AddListElem(int n,int list_id,val_type new_val)
          new_node = GetListNodeByID(new_list_id);
          if (!new_node)
          {
-            bprintf("AddListElem couldn't allocate new node! %i\n",
+            bprintf("InsertListElem couldn't allocate new node! %i\n",
                new_list_id);
             return list_id;
          }
@@ -390,7 +390,7 @@ int AddListElem(int n,int list_id,val_type new_val)
 
    if (!l || !prev)
    {
-      bprintf("AddListElem found invalid list node somewhere in list %i\n",
+      bprintf("InsertListElem found invalid list node somewhere in list %i\n",
          list_id);
       return list_id;
    }
@@ -400,7 +400,7 @@ int AddListElem(int n,int list_id,val_type new_val)
 
    if (!new_node)
    {
-      bprintf("AddListElem couldn't allocate new node! %i\n",
+      bprintf("InsertListElem couldn't allocate new node! %i\n",
          new_list_id);
       return list_id;
    }

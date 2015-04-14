@@ -586,7 +586,7 @@ char * name_function(int fnum)
    case CANMOVEINROOMHIGHRES : return "CanMoveInRoomHighRes";
    case GETHEIGHT : return "GetHeight";
 
-   case CONSEND : return "ConsEnd";
+   case APPENDLISTELEM : return "AppendListElem";
    case CONS  : return "Cons";
    case FIRST  : return "First";
    case REST  : return "Rest";
@@ -598,7 +598,7 @@ char * name_function(int fnum)
    case SETNTH : return "SetNth";
    case SWAPLISTELEM : return "SwapListElem";
    case DELLISTELEM : return "DelListElem";
-   case ADDLISTELEM : return "AddListElem";
+   case INSERTLISTELEM : return "InsertListElem";
 
    case GETTIME : return "GetTime";
    case GETTICKCOUNT : return "GetTickCount";

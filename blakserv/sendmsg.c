@@ -146,7 +146,7 @@ void InitBkodInterpret(void)
 	ccall_table[CANMOVEINROOMHIGHRES] = C_CanMoveInRoomHighRes;
 	ccall_table[GETHEIGHT] = C_GetHeight;
 
-	ccall_table[CONSEND] = C_ConsEnd;
+	ccall_table[APPENDLISTELEM] = C_AppendListElem;
 	ccall_table[CONS] = C_Cons;
 	ccall_table[FIRST] = C_First;
 	ccall_table[REST] = C_Rest;
@@ -157,7 +157,7 @@ void InitBkodInterpret(void)
 	ccall_table[SETFIRST] = C_SetFirst;
 	ccall_table[SETNTH] = C_SetNth;
 	ccall_table[SWAPLISTELEM] = C_SwapListElem;
-	ccall_table[ADDLISTELEM] = C_AddListElem;
+	ccall_table[INSERTLISTELEM] = C_InsertListElem;
 	ccall_table[DELLISTELEM] = C_DelListElem;
 	ccall_table[FINDLISTELEM] = C_FindListElem;
 	

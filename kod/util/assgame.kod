@@ -760,6 +760,9 @@ messages:
    EnterAcceptMode()
    {
       local i, iValue;
+
+      % Clear combatants list.
+      plCombatants = $;
       
       % No daggers should exist right now - none have been given out.
       Send(&BlackDagger,@CleanUp);
@@ -804,8 +807,8 @@ messages:
 
          return FALSE;
       }
-      
-      if not Send(self,@IsViableGame)
+
+      if NOT Send(self,@IsViableGame)
       {
          Send(self,@EnterAcceptMode);
 
@@ -818,7 +821,7 @@ messages:
          DeleteTimer(ptGame);
          ptGame = $;
       }
-      
+
       pbAccept_mode = FALSE;
       pbGame_in_Session = TRUE;
 

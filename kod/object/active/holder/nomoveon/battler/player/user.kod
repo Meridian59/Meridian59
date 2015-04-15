@@ -4621,7 +4621,7 @@ messages:
                   }
                   
                   plClassOrderPreferences =
-                          ConsEnd(Nth(i,2),plClassOrderPreferences);
+                          AppendListElem(Nth(i,2),plClassOrderPreferences);
                           
                   Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
                                          #parm1=Nth(i,1));
@@ -4634,7 +4634,8 @@ messages:
             if oTemplateItem <> $
             {
                plClassOrderPreferences =
-                   ConsEnd(GetClass(oTemplateItem),plClassOrderPreferences);
+                   AppendListElem(GetClass(oTemplateItem),
+                                  plClassOrderPreferences);
                Send(self,@MsgSendUser,#message_rsc=inventory_class_added,
                                       #parm1=Send(oTemplateItem,@GetName));
                return;

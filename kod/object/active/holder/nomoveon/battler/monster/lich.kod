@@ -13,29 +13,32 @@ Lich is Monster
 constants:
 
    include blakston.khd
+
    LICH_ILLUSION_TIME = 5 * 60 * 1000  % five minutes
    MAGIC_RESIST = 60
-   
+
 resources:
 
    lich_pretty_name_rsc = "Queen Venya'cyr"
    lich_pretty_icon_rsc = licha.bgf
    lich_pretty_desc_rsc = \
-      "A noble woman of stunning beauty, Queen Venya'cyr carries herself with a "
-      "refined demeanor hardly still seen in this day and age.  You can't help "
-      "but marvel at how she has managed to keep her beautiful face so young and "
-      "vibrant through all of these centuries."
+      "A noble woman of stunning beauty, Queen Venya'cyr carries herself with "
+      "a refined demeanor hardly still seen in this day and age.  You can't "
+      "help but marvel at how she has managed to keep her beautiful face so "
+      "young and vibrant through all of these centuries."
    lich_name_rsc = "Queen Venya'cyr"
    lich_icon_rsc = lichb.bgf
    lich_desc_rsc = \
       "Through some dark pact made ages ago, Queen Venya'cyr's ghastly corpse "
-      "has been kept alive by dark magicks.  Sheer power emanates forcibly from her "
-      "eyes, an intense gaze which strikes fear into your heart.  "
+      "has been kept alive by dark magicks.  Sheer power emanates forcibly "
+      "from her eyes, an intense gaze which strikes fear into your heart.  "
       "The centuries have apparently taken their toll on her physical form, "
       "however, as her skin is a mess of rotting flesh writhing with worms.  "
-      
-   lich_dispel = "The foul lich queen's ghastly appearance is revealed for all to see!"
-   lich_respel = "The lich queen's ghastly appearance is once more cloaked in illusion."
+
+   lich_dispel = \
+      "The foul lich queen's ghastly appearance is revealed for all to see!"
+   lich_respel = \
+      "The lich queen's ghastly appearance is once more cloaked in illusion."
 
    lich_dead_icon_rsc = lichbx.bgf
    lich_dead_name_rsc = "The ghost of Queen Venya'cyr"
@@ -47,24 +50,37 @@ resources:
    lich_cast_spell = "The lich queen summons forth the darkness!!"
    lich_cast_sound = necro01.wav
 
-   lich_death_blow    = "Your final blow has banished the foul Queen Venya'cyr from this plane of reality!"
-   lich_single_killer = "You have personally banished the foul Queen Venya'cyr from this plane of reality!"
-   lich_double_killer = "The foul Lich Queen has been driven from this plane of reality, "
+   lich_death_blow = \
+      "Your final blow has banished the foul Queen Venya'cyr from this "
+      "plane of reality!"
+   lich_single_killer = \
+      "You have personally banished the foul Queen Venya'cyr from this "
+      "plane of reality!"
+   lich_double_killer = \
+      "The foul Lich Queen has been driven from this plane of reality, "
       "thanks to you and your comrade!"
-   lich_helper_killer = "The foul Lich Queen has been driven from this plane of reality, "
+   lich_helper_killer = \
+      "The foul Lich Queen has been driven from this plane of reality, "
       "thanks to you and your comrades!"
-   lich_no_truce      = "The Lich Queen's evil presence dispels your truce before you can even cast it."
+   lich_no_truce = \
+      "The Lich Queen's evil presence dispels your truce before you "
+      "can even cast it."
+
    lich_killed_world_saved_0 = "~B"
-   lich_killed_world_saved_1 = " has struck down the Dark Queen Venya'cyr, ridding Meridian of the evil Order "
-      "of Necromancers!\n"
+   lich_killed_world_saved_1 = \
+      " has struck down the Dark Queen Venya'cyr, ridding Meridian of "
+      "the evil Order of Necromancers!\n"
       "Thanks to "
    lich_comma = ", "
    lich_and = "and "
-   lich_killed_world_saved_2 = "the good citizens of Meridian can walk the land in safety once again, knowing "
-      "that "
-   lich_killed_world_saved_3 = " have perished along with their undead queen."
+   lich_killed_world_saved_2 = \
+      "the good citizens of Meridian can walk the land in safety once again, "
+      "knowing that "
+   lich_killed_world_saved_3 = \
+      " have perished along with their undead queen."
 
-   lich_killed_world_saved_nolich = " has struck down the last of the Order of Necromancers, "
+   lich_killed_world_saved_nolich = \
+      " has struck down the last of the Order of Necromancers, "
       "ridding Meridian of their evil!\n"
 
    lich_spit = lightnin.bgf
@@ -74,15 +90,26 @@ resources:
 
    Lich_starting_password = "deathmage"
 
-   lich_hunger_5 = "~rMy hunger is a burning coal within my breast!  Feed me at once!"
-   lich_hunger_4 = "~rI hunger very greatly!  The Order has been negligent in its duties to me.  Feed me at once!"
-   lich_hunger_3 = "~rI am very hungry.  Feed me, my minion."
-   lich_hunger_2 = "~rI am hungry.  I would like to feed soon."
-   lich_hunger_1 = "~rI am only slightly hungry at present."
-   lich_hunger_0 = "~rI am satisfied.  The Order serves me well."
+   lich_hunger_5 = \
+      "~rMy hunger is a burning coal within my breast!  Feed me at once!"
+   lich_hunger_4 = \
+      "~rI hunger very greatly!  The Order has been negligent in its duties "
+      "to me.  Feed me at once!"
+   lich_hunger_3 = \
+      "~rI am very hungry.  Feed me, my minion."
+   lich_hunger_2 = \
+      "~rI am hungry.  I would like to feed soon."
+   lich_hunger_1 = \
+      "~rI am only slightly hungry at present."
+   lich_hunger_0 = \
+      "~rI am satisfied.  The Order serves me well."
 
-   lich_not_powerful = "~kQueen Venya'cyr says, \"~rYour feeble mind is incapable of learning such powerful magics.\""
-   lich_not_order = "~kQueen Venya'cyr says, \"~rOnly my servants are granted this mighty boon.\""
+   lich_not_powerful = \
+      "~kQueen Venya'cyr says, \"~rYour feeble mind is incapable of learning "
+      "such powerful magics.\""
+   lich_not_order = \
+      "~kQueen Venya'cyr says, \"~rOnly my servants are granted this "
+      "mighty boon.\""
 
    lich_darkbolt = gob.bgf
 
@@ -109,7 +136,10 @@ classvars:
    % Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = -100
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT
+   viDefault_behavior = \
+      AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE \
+      | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT
+
    viAttributes = MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER
 
    vrSound_miss = lich_sound_miss
@@ -130,8 +160,8 @@ properties:
    pbIllusioned = TRUE
    ptGoIllusioned = $
 
-   piBlindAttackChance = 15       % Chance she'll attack with blind
-   piBlindCounterChance = 7       % Chance she'll counter a spell or arrow with blind
+   piBlindAttackChance = 15    % Chance she'll attack with blind
+   piBlindCounterChance = 7    % Chance she'll counter a spell or arrow with blind
    piBlindDurationMin = 20  % seconds
    piBlindDurationMax = 30  % seconds
 
@@ -143,10 +173,10 @@ messages:
    Constructed(oNecromancerGuild=$)
    {
       % Keep the scenario deactivated for now.
-      %send(send(SYS,@GetNecromancerBalance),@ActivateScenario);
+      %Send(Send(SYS,@GetNecromancerBalance),@ActivateScenario);
 
       pimax_Hit_Points = pimax_hit_Points * 2;
-      piHit_Points = pimax_hit_points*100;
+      piHit_Points = pimax_hit_points * 100;
 
       plResistances = [ [-ATCK_SPELL_ALL, 60],
                         [ATCK_WEAP_ALL, 60],
@@ -161,7 +191,7 @@ messages:
                         [-ATCK_SPELL_HOLY, -40 ],
                         [-ATCK_SPELL_HUNTERSWORD, -90 ]
                       ];
-                        
+
       if oNecromancerGuild <> $
       {
          poNecromancerGuild = oNecromancerGuild;
@@ -179,7 +209,7 @@ messages:
 
    CanDoTeach(who=$,sid=0)
    {
-      if NOT send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
+      if NOT Send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
       {
          return FALSE;
       }
@@ -188,14 +218,14 @@ messages:
    }
 
    CanAddSpell(who=$,num=0, report = FALSE)
-   "We require that a quest be done before one of the spells can be learned"
+   "We require that a quest be done before one of the spells can be learned."
    {
       if num = SID_DEATHS_DOOR
-         AND NOT send(who,@IsUsingA,#class=&NecromancerAmulet)
+         AND NOT Send(who,@IsUsingA,#class=&NecromancerAmulet)
       {
          if report
          {
-            send(who,@msgsenduser,#message_rsc=lich_not_order);
+            Send(who,@MsgSendUser,#message_rsc=lich_not_order);
          }
 
          return FALSE;
@@ -233,7 +263,7 @@ messages:
 
       return vrName2;
    }
-   
+
    ShowDesc()
    {
       if pbIllusioned
@@ -255,13 +285,15 @@ messages:
          return;
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#string=lich_dispel,#type=SAY_MESSAGE);
+      Post(poOwner,@SomeoneSaid,#what=self,#string=lich_dispel,
+            #type=SAY_MESSAGE);
 
       pbIllusioned = FALSE;
-      send(poOwner,@Somethingchanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self);
+
       if ptGoIllusioned <> $
       {
-         deleteTimer(ptGoIllusioned);
+         DeleteTimer(ptGoIllusioned);
          ptGoIllusioned = $;
       }
 
@@ -279,10 +311,11 @@ messages:
          return;
       }
 
-      Post(poOwner,@SomeoneSaid,#what=self,#string=lich_respel,#type=SAY_MESSAGE);
+      Post(poOwner,@SomeoneSaid,#what=self,#string=lich_respel,
+            #type=SAY_MESSAGE);
 
       pbIllusioned = TRUE;
-      send(poOwner,@Somethingchanged,#what=self);
+      Send(poOwner,@SomethingChanged,#what=self);
 
       return;
    }
@@ -293,27 +326,27 @@ messages:
 
       if poNecromancerGuild <> $
       {
-         send(self,@ClearNecromancerGuild);
+         Send(self,@ClearNecromancerGuild);
       }
 
       if ptGoIllusioned <> $
       {
-         deleteTimer(ptGoIllusioned);
+         DeleteTimer(ptGoIllusioned);
          ptGoIllusioned = $;
       }
 
       if ptDeathSequence <> $
       {
-         deleteTimer(ptDeathSequence);
+         DeleteTimer(ptDeathSequence);
          ptDeathSequence = $;
-         send(self,@DeathSequence2);
+         Send(self,@DeathSequence2);
       }
 
       propagate;
    }
-   
+
    AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
-   "This is called when something causes damage to us"
+   "This is called when something causes damage to us."
    {
       local i;
 
@@ -325,7 +358,18 @@ messages:
          }
       }
 
-      plAttackers = cons(what,plAttackers);
+      plAttackers = Cons(what,plAttackers);
+
+      propagate;
+   }
+
+   SomethingMoved()
+   "Delete walls around us."
+   {
+      if poOwner <> $
+      {
+         Send(poOwner,@DeleteWallsAroundBattler,#who=self);
+      }
 
       propagate;
    }
@@ -343,7 +387,7 @@ messages:
    {
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
-      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
       piAnimation = ANIM_NONE;
 
       return;
@@ -359,7 +403,7 @@ messages:
    {
       return 8;
    }
-   
+
    SendProjectileAnimation()
    {
       AddPacket(1,ANIMATE_TRANSLATION,1,PT_GRAY_TO_BLACK);
@@ -389,7 +433,6 @@ messages:
       return;
    }
 
-
    SendAnimation()
    {
       if piAnimation = ANIM_ATTACK
@@ -404,17 +447,18 @@ messages:
 
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
-      if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)
-      {  
-         Send(who,@MsgSendUser,#message_rsc=lich_no_truce);            
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_TRUCE)
+      {
+         Send(who,@MsgSendUser,#message_rsc=lich_no_truce);
 
          return FALSE; 
       }
 
-      if ((Random(1,piBlindCounterChance) = 1) OR (send(oSpell,@GetSchool)=SS_QOR))
-         AND send(self,@CanSee,#what=who)
+      if ((Random(1,piBlindCounterChance) = 1)
+            OR (Send(oSpell,@GetSchool) = SS_QOR))
+         AND Send(self,@CanSee,#what=who)
       {
-         send(self,@MonsterCastAttackSpell,#what=who);
+         Send(self,@MonsterCastAttackSpell,#what=who);
 
          return FALSE;
       }
@@ -428,10 +472,10 @@ messages:
       {
          if IsClass(use_weapon,&RangedWeapon)
             AND victim = self
-            AND send(self,@CanSee,#what=what)
-            AND random(1,piBlindCounterChance) = 1 
+            AND Send(self,@CanSee,#what=what)
+            AND Random(1,piBlindCounterChance) = 1 
          {
-            send(self,@MonsterCastAttackSpell,#What=what);
+            Send(self,@MonsterCastAttackSpell,#what=what);
 
             return FALSE;
          }
@@ -439,7 +483,6 @@ messages:
 
       propagate;
    }
-
 
    MonsterCastAttackSpell(what=$)
    {
@@ -454,7 +497,7 @@ messages:
          oTarget = what;
       }
 
-      if not send(self,@CanSee,#what=poTarget)
+      if NOT Send(self,@CanSee,#what=poTarget)
       {
          return;
       }
@@ -462,7 +505,8 @@ messages:
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLIND);
       iRandom = Random(piBlindDurationMin,piBlindDurationMax);
 
-      if NOT send(poowner,@ReqSomethingAttack,#what=self,#victim=poTarget,#use_weapon=self)
+      if NOT Send(poOwner,@ReqSomethingAttack,#what=self,
+                  #victim=poTarget,#use_weapon=self)
       {
          return;
       }
@@ -472,38 +516,39 @@ messages:
       Send(self,@DoCast);
       Send(oSpell,@DoBlind,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
 
-      return; 
+      return;
    }
 
    AttackTimer( timer = $ )
    "We were bashing on something before, and now its time to hit it again."
    {
       local oSpell, iRandom;
-      
+
       iRandom = Random(1,piBlindAttackChance);
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLIND);
       Send(self,@ClearBehavior,#timer=timer);
 
-      %%% sanity checks
+      % Sanity checks.
       if poOwner = $
       {
-         debug("Unreachable. Null Owner"); 
+         Debug("Unreachable. Null Owner");
          Send(self,@EnterStateLimbo);
 
          return;
       }
 
-      if poTarget=$
+      if poTarget = $
       {
-         debug("Unreachable. Null poTarget","monster",self); 
+         Debug("Unreachable. Null poTarget","monster",self); 
          Send(self,@EnterStateWait);
 
          return;
       }
 
       Send(self,@FindNewTarget);
-      if NOT Send(self,@CanReach,#what=poTarget) 
-         AND send(poTarget,@IsEnchanted,#what=oSpell)
+
+      if NOT Send(self,@CanReach,#what=poTarget)
+         AND Send(poTarget,@IsEnchanted,#what=oSpell)
       {
          Send(self,@EnterStateChase,#Target=poTarget);
 
@@ -511,7 +556,7 @@ messages:
       }
       else
       {
-         if NOT Send(self,@CanReach,#what=poTarget) 
+         if NOT Send(self,@CanReach,#what=poTarget)
          {
             Send(self,@MonsterCastAttackSpell);
             Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
@@ -519,15 +564,15 @@ messages:
             return;
          }
       }
- 
+
       if NOT Send(poTarget,@IsEnchanted,#what=oSpell)
          AND iRandom = 1
-      { 
-         Send(self,@MonsterCastAttackSpell); 
-      }
-      else 
       {
-         Send(self,@TryAttack,#what=poTarget); 
+         Send(self,@MonsterCastAttackSpell);
+      }
+      else
+      {
+         Send(self,@TryAttack,#what=poTarget);
       }
 
       Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
@@ -539,32 +584,32 @@ messages:
    {
       local oBlind, lActive, iRandom, iDistance, iBestDistance, i, each_obj;
 
-      % Only one in three people are considered eligable 
+      % Only one in three people are considered eligible
       % targets.  The closest is targeted.  Held people
-      % aren't considered - he deals with his current 
+      % aren't considered - she deals with her current
       % target first.  Only people in view are considered.
    
-      oBlind = send(SYS,@FindSpellByNum,#num=SID_BLIND);
-      lActive = send(poOwner,@getholderactive);
+      oBlind = Send(SYS,@FindSpellByNum,#num=SID_BLIND);
+      lActive = Send(poOwner,@GetHolderActive);
       iRandom = Random(1,30);
       iBestDistance = 10000;
 
-      if send(poTarget,@isenchanted,#what=oBlind)
+      if Send(poTarget,@IsEnchanted,#what=oBlind)
       {
          for i in lActive
          {
-            each_obj = send(poOwner,@HolderExtractObject,#data=i);
+            each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             iDistance = Send(self,@SquaredDistanceTo,#what=each_obj);
 
-            if isClass(each_obj,&User)
+            if IsClass(each_obj,&User)
                AND Send(self,@CanSee,#what=each_obj)
-               AND NOT send(each_obj,@isenchanted,#what=oBlind)
+               AND NOT Send(each_obj,@IsEnchanted,#what=oBlind)
                AND (iRandom < 10 OR iDistance < iBestDistance)
-               AND NOT send(self,@isAlly,#target=each_obj)
+               AND NOT Send(self,@isAlly,#target=each_obj)
             {
-               Debug("TargetChange:",each_obj);
+               Debug("Lich target change:",each_obj);
                iBestDistance = iDistance;
-               poTarget = each_obj;
+               Send(self,@TargetSwitch,#what=each_obj,#hatred=60);
 
                if iRandom < 5
                {
@@ -581,74 +626,85 @@ messages:
    {
       local oSpell, oRoom, NumAttackers, i, lichActivated;
 
-      NumAttackers = length(plAttackers);
- 
+      NumAttackers = Length(plAttackers);
+
       for i in plAttackers
       {
          if i = what
          {
-            Send(i,@MsgSendUser,#message_rsc=lich_death_blow );      
+            Send(i,@MsgSendUser,#message_rsc=lich_death_blow );
          }
 
-         if NumAttackers = 2 and i <> what
+         if NumAttackers = 2
+            AND i <> what
          {
             Send(i,@MsgSendUser,#message_rsc=lich_double_killer );
          }
 
-         if NumAttackers > 2 and i <> what
+         if NumAttackers > 2
+            AND i <> what
          {
             Send(i,@MsgSendUser,#message_rsc=lich_helper_killer );
          }
       }
 
       lichActivated = FALSE;
-      if (plAttackers <> $)
-         AND (poNecromancerGuild <> $)
-         AND (send(poNecromancerGuild,@GetMemberList) <> $)
+      if plAttackers <> $
+         AND poNecromancerGuild <> $
+         AND Send(poNecromancerGuild,@GetMemberList) <> $
       {
          lichActivated = TRUE;
       }
 
-      % disband the guild
-      if not guildDisbandDeath
+      % Disband the guild.
+      if NOT guildDisbandDeath
       {
-         send(self,@ClearNecromancerGuild);
+         Send(self,@ClearNecromancerGuild);
       }
 
-      send(send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
-      send(send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
 
-      if what <> $ AND IsClass(what,&Battler) AND NOT guildDisbandDeath
+      if what <> $
+         AND IsClass(what,&Battler)
+         AND NOT guildDisbandDeath
       {
-         post(self,@BroadcastLichDeathMessage,#what=what,#Attackers=plAttackers,#lichActivated=lichActivated,#resetScenario=resetScenario);
+         Post(self,@BroadcastLichDeathMessage,#what=what,#Attackers=plAttackers,
+               #lichActivated=lichActivated,#resetScenario=resetScenario);
       }
 
-      if resetScenario and (ptDeathSequence = $) and not guildDisbandDeath
+      if resetScenario
+         AND ptDeathSequence = $
+         AND NOT guildDisbandDeath
       {
-         ptDeathSequence = createTimer(self,@DeathSequence2,piDeathSequenceTimestep);
+         ptDeathSequence = CreateTimer(self,@DeathSequence2,piDeathSequenceTimestep);
       }
 
       propagate;
    }
 
-   BroadcastLichDeathMessage(what=$, Attackers=$, resetScenario=TRUE, lichActivated=TRUE)
+   BroadcastLichDeathMessage(what=$, Attackers=$, resetScenario=TRUE,
+                              lichActivated=TRUE)
    {
       local i, sKilledMessage, sRoster;
 
       if lichActivated
       {
-         % send a message to the world
-         sRoster = send(self,@GetNecromancerRoster);
+         % Send a message to the world.
+         sRoster = Send(self,@GetNecromancerRoster);
          ClearTempString();
          AppendTempString(lich_killed_world_saved_0);
-         AppendTempString(send(what,@GetTrueName));
+         AppendTempString(Send(what,@GetTrueName));
          AppendTempString(lich_killed_world_saved_1);
-         for i in Attackers {
-            if (length(Attackers) > 1) and (i = nth(Attackers,length(Attackers))) {
+         for i in Attackers
+         {
+            if Length(Attackers) > 1
+               AND i = Nth(Attackers,Length(Attackers))
+            {
                AppendTempString(lich_and);
             }
-            AppendTempString(send(i,@GetTrueName));
-            if (length(Attackers) > 2)
+            AppendTempString(Send(i,@GetTrueName));
+            if Length(Attackers) > 2
             {
                AppendTempString(lich_comma);
             }
@@ -661,30 +717,34 @@ messages:
          AppendTempString(lich_killed_world_saved_2);
          AppendTempString(sRoster);
          AppendTempString(lich_killed_world_saved_3);
-         sKilledMessage = createString();
-         setString(sKilledMessage,GetTempString());
-         send(SYS,@AdminSystemMessage,#string=sKilledMessage);
+
+         sKilledMessage = SetString($,GetTempString());
+
+         Send(SYS,@AdminSystemMessage,#string=sKilledMessage);
       }
       else
       {
-         % send a message to the world
+         % Send a message to the world.
          ClearTempString();
          AppendTempString(lich_killed_world_saved_0);
-         AppendTempString(send(what,@GetTrueName));
+         AppendTempString(Send(what,@GetTrueName));
          AppendTempString(lich_killed_world_saved_nolich);
-         sKilledMessage = createString();
-         setString(sKilledMessage,GetTempString());
-         send(SYS,@AdminSystemMessage,#string=sKilledMessage);
+
+         sKilledMessage = SetString($,GetTempString());
+
+         Send(SYS,@AdminSystemMessage,#string=sKilledMessage);
       }
-      return;   
+
+      return;
    }
 
    DeathSequence2()
    {
       ptDeathSequence = $;
-      ptDeathSequence = createTimer(self,@DeathSequence3,piDeathSequenceTimestep);
-      % tell all amulets and swords the bad/good news.
-      send(&NecromancerAmulet,@LichKilled);
+      ptDeathSequence = CreateTimer(self,@DeathSequence3,piDeathSequenceTimestep);
+
+      % Tell all amulets and swords the bad/good news.
+      Send(&NecromancerAmulet,@LichKilled);
 
       return;
    }
@@ -692,7 +752,7 @@ messages:
    DeathSequence3()
    {
       ptDeathSequence = $;
-      send(&HunterSword,@LichKilled,#oLich=self);
+      Send(&HunterSword,@LichKilled,#oLich=self);
 
       return;
    }
@@ -700,7 +760,7 @@ messages:
    CanMorphTo()
    {
       return FALSE;
-   }      
+   }
 
    SpellResist(oSpell=$,who=$,iSpellpower=$)
    {
@@ -710,23 +770,24 @@ messages:
       {
          return FALSE;
       }
- 
-      if (Send(oSpell,@IsHarmful))
+
+      if Send(oSpell,@IsHarmful)
       {
-         % Unaffected by qor spells.  Period.
-         if (Send(oSpell,@GetSchool) = SS_QOR)
+         % Unaffected by Qor spells.  Period.
+         if Send(oSpell,@GetSchool) = SS_QOR
          {
             return TRUE;
          }
-      
+
          iResistChance = MAGIC_RESIST;
          if IsClass(oSpell,&Dazzle)
          {
-            % extra 50% chance to resist.
-            iResistChance = (iResistChance * 150)/100;
+            % Extra 50% chance to resist.
+            iResistChance = (iResistChance * 150) / 100;
          }
 
-         if (iSpellPower < 30) or (random(0,100) < iResistChance)
+         if iSpellPower < 30
+            OR Random(0,100) < iResistChance
          {
             return TRUE;
          }
@@ -742,14 +803,31 @@ messages:
 
    EstablishNecromancerGuild(master=$)
    {
-      if master = $ { return; }
-      if send(master,@GetGuild) <> $ { DEBUG("Tried to establish necroguild with master already guilded."); return; }
-      if poNecromancerGuild <> $ { return; }
-      poNecromancerGuild = create(&NecromancerGuild,#master=master);
-      send(send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
-               @ClaimGuildHall,#oGuild=poNecromancerGuild,#rep=master,#password=Lich_starting_password);
-      send(send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
-      send(send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
+      if master = $
+      {
+         return;
+      }
+
+      if Send(master,@GetGuild) <> $
+      {
+         Debug("Tried to establish necroguild with master already guilded.");
+
+         return;
+      }
+
+      if poNecromancerGuild <> $
+      {
+         return;
+      }
+
+      poNecromancerGuild = Create(&NecromancerGuild,#master=master);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
+               @ClaimGuildHall,#oGuild=poNecromancerGuild,#rep=master,
+               #password=Lich_starting_password);
+
+               Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
+
       return;
    }
 
@@ -757,7 +835,7 @@ messages:
    {
       if poNecromancerGuild <> $
       {
-         send(poNecromancerGuild,@Delete);
+         Send(poNecromancerGuild,@Delete);
          poNecromancerGuild = $;
       }
 
@@ -767,78 +845,113 @@ messages:
    SomeoneSaid(what = $,type = $,string = $)
    {
       local oAmulet, iAmountDrained, iHunger, rHungerSpiel;
-      if isClass(what,&User) and (send(what,@GetGuild) <> $) and (send(what,@GetGuild) = poNecromancerGuild) {
-         if stringcontain(string,vrTributeTrigger) {
-            % tell the amulet to pay up, find out how much we sucked out
+
+      if IsClass(what,&User)
+         AND Send(what,@GetGuild) <> $
+         AND Send(what,@GetGuild) = poNecromancerGuild
+      {
+         if StringContain(string,vrTributeTrigger)
+         {
+            % Tell the amulet to pay up, find out how much we sucked out.
             oAmulet = $;
-            for oAmulet in send(what,@GetPlayerUsing) {
-               if isClass(oAmulet,&NecromancerAmulet) {
+            for oAmulet in Send(what,@GetPlayerUsing)
+            {
+               if IsClass(oAmulet,&NecromancerAmulet)
+               {
                   break;
                }
             }
-            if (oAmulet = $) or (not isClass(oAmulet, &NecromancerAmulet)) { propagate; }
-            iAmountDrained = send(oAmulet,@LichTributeDrain);
-            % tell the guild object how much was paid
-            if iAmountDrained = 0 { propagate; }
-            send(poNecromancerGuild,@PayRent,#amount=iAmountDrained*10000);
+
+            if oAmulet = $
+               OR (NOT IsClass(oAmulet,&NecromancerAmulet))
+            {
+               propagate;
+            }
+
+            iAmountDrained = Send(oAmulet,@LichTributeDrain);
+
+            % Tell the guild object how much was paid.
+            if iAmountDrained = 0
+            {
+               propagate;
+            }
+            Send(poNecromancerGuild,@PayRent,#amount=iAmountDrained*10000);
          }
-         if stringcontain(string,vrHungerTrigger) {
-            iHunger = send(poNecromancerGuild,@GetRentDue);
+
+         if StringContain(string,vrHungerTrigger)
+         {
+            iHunger = Send(poNecromancerGuild,@GetRentDue);
             rHungerSpiel = lich_hunger_0;
-            if iHunger > 4 {
+            if iHunger > 4
+            {
                rHungerSpiel = lich_hunger_5;
             }
-            if iHunger = 4 {
+            if iHunger = 4
+            {
                rHungerSpiel = lich_hunger_4;
             }
-            if iHunger = 3 {
+            if iHunger = 3
+            {
                rHungerSpiel = lich_hunger_3;
             }
-            if iHunger = 2 {
+            if iHunger = 2
+            {
                rHungerSpiel = lich_hunger_2;
             }
-            if iHunger = 1 {
+            if iHunger = 1
+            {
                rHungerSpiel = lich_hunger_1;
             }
-            Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=rHungerSpiel);
+            Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=rHungerSpiel);
          }
       }
+
       propagate;
    }
 
    GetNecromancerRoster()
    {
       local sRoster;
-      clearTempString();
-      send(&NecromancerAmulet,@NecromancerRosterRequest,#olich=self);
+
+      ClearTempString();
+      Send(&NecromancerAmulet,@NecromancerRosterRequest,#oLich=self);
+
       if StringContain(GetTempString(),lich_comma)
       {
-         appendTempString(lich_and);
+         AppendTempString(lich_and);
       }
-      appendTempString(psTempRosterString);
+      AppendTempString(psTempRosterString);
       psTempRosterString = $;
-      sRoster = createString();
-      setString(sRoster,GetTempString());
+
+      sRoster = SetString($,GetTempString());
+
       return sRoster;
    }
 
    NecromancerRosterReply(necroName = $)
    {
-      if psTempRosterString <> $ {
-         appendTempString(psTempRosterString);
-         appendTempString(lich_comma);
+      if psTempRosterString <> $
+      {
+         AppendTempString(psTempRosterString);
+         AppendTempString(lich_comma);
       }
       psTempRosterString = necroName;
+
       return;
    }
 
    IsAlly(target = $, regroup = FALSE)
    {
-      if isClass(target,&User)
+      if IsClass(target,&User)
       { 
-         if send(target,@IsUsingA,#class=&NecromancerAmulet) { return TRUE; }
+         if Send(target,@IsUsingA,#class=&NecromancerAmulet)
+         {
+            return TRUE;
+         }
       }
-      if isClass(target,&DM)
+
+      if IsClass(target,&DM)
       {
          return TRUE;
       }
@@ -849,35 +962,52 @@ messages:
    SpecialHatredBehavior(what=$)
    {
       local i;
-      %% She hates anyone with a hunter sword,
-      %%    and goody-goodies too.
-      %% But she REALLY hates backstabbers
-      if isClass(what,&User) {
-         if (send(what,@FindHoldingActive,#class=&HunterSword)<>$) {
-            if (poOwner <> $)
-            {  return 85;  }
+
+      % She hates anyone with a hunter sword, and goody-goodies too.
+      % But she REALLY hates backstabbers.
+      if IsClass(what,&User)
+      {
+         if Send(what,@FindHoldingActive,#class=&HunterSword) <> $
+         {
+            if poOwner <> $
+            {
+               return 85;
+            }
          }
-         if send(what,@GetKarma) > 30 {
-            return send(what,@GetKarma);
+
+         if Send(what,@GetKarma) > 30
+         {
+            return Send(what,@GetKarma);
          }
-         if send(what,@IsUsingA,#class=&NecromancerAmulet) {
-            for i in plAttackers {
-               if i = what { return 100; }
+
+         if Send(what,@IsUsingA,#class=&NecromancerAmulet)
+         {
+            for i in plAttackers
+            {
+               if i = what
+               {
+                  return 100;
+               }
             }
          }
       }
+
       return 0;
    }
 
    CreateDeadBody(killer=$)
    {
       local oBody, iQNTindex, oQE;
-      oBody = create(&DeadLich, #Attackers=plAttackers);
-      oQE = send(SYS,@GetQuestEngine);
-      send( oQE, @SetQuestScheduleChance, #index = QST_ID_ESTABLISH_NECROGUILD, #new_pct = 100 );
-      iQNTindex = first(nth(send( oQE, @GetQuestTemplate, #index = QST_ID_ESTABLISH_NECROGUILD ),QT_QUEST_NODES));
-      send( oQE, @SetQuestNodeNPCList, #index = iQNTindex, #new_NPC_list = [oBody] );
-            
+
+      oBody = Create(&DeadLich,#Attackers=plAttackers);
+      oQE = Send(SYS,@GetQuestEngine);
+
+      Send(oQE,@SetQuestScheduleChance,#index=QST_ID_ESTABLISH_NECROGUILD,
+            #new_pct = 100 );
+      iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD),
+                        QT_QUEST_NODES));
+      Send(oQE,@SetQuestNodeNPCList,#index=iQNTindex,#new_NPC_list=[oBody]);
+
       return oBody;
    }
 
@@ -894,35 +1024,42 @@ messages:
    NewOwner(what=$)
    {
       % This should never happen, but if it does...
-      if (what <> $) and not isClass(what,&GuildHall15)
+      if what <> $
+         AND NOT IsClass(what,&GuildHall15)
       {
-         DEBUG("Bad Lich!  Go to your room!");
-         post(self,@GoBackToGuildhall);
+         Debug("Bad Lich!  Go to your room!");
+         Post(self,@GoBackToGuildhall);
       }
-      
+
       propagate;
    }
 
    LastUserLeft(what = $)
    {
-      send(self,@GoBackToGuildhall);
+      Send(self,@GoBackToGuildhall);
+
       propagate;
    }
 
    GoBackToGuildhall()
    {
       local oGuildh15;
-      oGuildh15 = send(SYS,@FindRoomByNum,#num=RID_GUILDH15);
-      send(oGuildh15,@NewHold,#what=self,
-            #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
-      if (send(oGuildh15,@CountHoldingHowMany,#class=&Lich) > 1)
+
+      oGuildh15 = Send(SYS,@FindRoomByNum,#num=RID_GUILDH15);
+      Send(oGuildh15,@NewHold,#what=self,#new_row=13,#new_col=49,
+            #fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+
+      if Send(oGuildh15,@CountHoldingHowMany,#class=&Lich) > 1
       {
-         DEBUG("More than one lich in the guild hall!!");
+         Debug("More than one lich in the guild hall!!");
       }
-      if (send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 0) and (send(oGuildh15,@CountHoldingHowMany,#class=&Lich) > 0)
+
+      if Send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 0
+         AND Send(oGuildh15,@CountHoldingHowMany,#class=&Lich) > 0
       {
-         DEBUG("Both a lich and a dead lich in the guild hall!!");
+         Debug("Both a lich and a dead lich in the guild hall!!");
       }
+
       return;
    }
 

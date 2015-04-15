@@ -2712,7 +2712,15 @@ messages:
          }
       }
 
+      % Give masks a black dot.
+      if IsClass(what,&FaceMask)
+         AND IsClass(poOwner,&SurvivalRoom)
+      {
+         return MM_NPC;
+      }
+
       if poOwner <> $
+         AND IsClass(what,&Player)
       {
          if Send(poOwner,@AreGroupedHere,#who=self,#what=what)
          {

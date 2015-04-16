@@ -18,7 +18,7 @@ resources:
 
    OrcInvasion_start_msg = \
       "The orc invasion has begun."
-      
+
    OrcInvasion_end_msg = \
       "The orc invasion has ended."
 
@@ -42,7 +42,7 @@ messages:
    {
       propagate;
    }
-   
+
    StartEvent()
    {
       propagate;
@@ -55,4 +55,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

@@ -7,7 +7,7 @@
 % Meridian is a registered trademark.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RatInvasion is Invasion
 
 constants:
@@ -18,26 +18,26 @@ resources:
 
    RatInvasion_start_msg = \
       "~B~k[Event]~n ~B~v The reign of the Rat King has begun."
-      
+
    RatInvasion_end_msg = \
       "~B~k[Event]~n ~B~v The reign of the Rat King has ended."
 
    RatInvasion_phase2_msg = \
       "~B~k[Event]~n ~B~v The reign of the Rat King has entered phase two."
-      
+
    RatInvasion_phase3_msg = \
       "~B~k[Event]~n ~B~v The reign of the Rat King has entered phase three."
-      
+
    RatInvasion_finalphase_msg = \
       "~B~k[Event]~n ~B~v The reign of the Rat King has entered the final phase."
-      
+
 classvars:
 
    vrStartMessage = RatInvasion_start_msg
    vrEndMessage = RatInvasion_end_msg
 
    vbAnnounce = TRUE
-   
+
 properties:
 
    plEventRooms = $
@@ -47,7 +47,7 @@ properties:
    piRatSoldiers = 5
    piActiveRoom = RID_TOS
    piPhase = 0
-   
+
 messages:
 
    Constructor()
@@ -55,21 +55,18 @@ messages:
       plEventRooms = [ RID_TOS, RID_BAR_NORTH ];
       if piActiveRoom = RID_TOS
       {
-         plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]], [[54,29],[59,40]], [[14,16],[49,21]] ];
+         plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
+                          [[54,29],[59,40]], [[14,16],[49,21]] ];
       }
       else
       {
          if piActiveRoom = RID_BAR_NORTH
          {
-            plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]], [[54,29],[59,40]], [[14,16],[49,21]] ];
+            plSpawnRects = [ [[54,5],[61,13]], [[49,11],[62,27]],
+                             [[54,29],[59,40]], [[14,16],[49,21]] ];
          }
       }
 
-      propagate;
-   }
-   
-   Delete()
-   {
       propagate;
    }
 
@@ -82,6 +79,7 @@ messages:
             Send(self,@PhaseTwo);
          }
       }
+
       if piPhase = 2
       {
          if Send(self,@CountMonsters,#type=&GiantRat) = 0
@@ -90,6 +88,7 @@ messages:
             Send(self,@PhaseThree);
          }
       }
+
       if piPhase = 3
       {
          if Send(self,@CountMonsters,#type=&GiantRatSoldier) = 0
@@ -99,6 +98,7 @@ messages:
             Send(self,@FinalPhase);
          }
       }
+
       if piPhase = 4
       {
          if Send(self,@CountMonsters,#type=&GiantRatKing) = 0
@@ -106,133 +106,137 @@ messages:
             Send(self,@EndEvent);
          }
       }
-      
+
       propagate;
    }
-   
+
    StartEvent()
    {
       Send(self,@PhaseOne);
-      
+
       propagate;
    }
-   
+
    PhaseOne()
    {
       local i,lSpawnPoint;
-      
+
       piPhase = 1;
-      
+
       i = piSmallRats;
-      
-      while(i > 0)
+
+      while (i > 0)
       {
          lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=Create(&SmallRat),
-                                                          #new_row=Nth(lSpawnPoint,1),
-                                                          #new_col=Nth(lSpawnPoint,2));
-         i=i-1;
+         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+               @NewHold,#what=Create(&SmallRat),
+               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         i = i - 1;
       }
-      
+
       return;
    }
-   
+
    PhaseTwo()
    {
       local i,lSpawnPoint;
-      
+
       piPhase = 2;
-      
+
       if vbAnnounce
       {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=RatInvasion_phase2_msg);
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=RatInvasion_phase2_msg);
       }
-      
+
       i = piSmallRats;
-      
-      while(i > 0)
+
+      while (i > 0)
       {
          lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=Create(&SmallRat),
-                                                          #new_row=Nth(lSpawnPoint,1),
-                                                          #new_col=Nth(lSpawnPoint,2));
-         i=i-1;
+         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+               @NewHold,#what=Create(&SmallRat),
+               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         i = i - 1;
       }
-      
+
       i = piGiantRats;
-      
-      while(i > 0)
+
+      while (i > 0)
       {
          lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=Create(&GiantRat),
-                                                          #new_row=Nth(lSpawnPoint,1),
-                                                          #new_col=Nth(lSpawnPoint,2));
-         i=i-1;
+         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+               @NewHold,#what=Create(&GiantRat),
+               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         i = i - 1;
       }
-      
+
       return;
    }
-   
+
    PhaseThree()
    {
       local i,lSpawnPoint;
-      
+
       piPhase = 3;
-      
+
       if vbAnnounce
       {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=RatInvasion_phase3_msg);
-      }      
-      
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=RatInvasion_phase3_msg);
+      }
+
       i = piSmallRats;
-      
-      while(i > 0)
+
+      while (i > 0)
       {
          lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=Create(&SmallRat),
-                                                          #new_row=Nth(lSpawnPoint,1),
-                                                          #new_col=Nth(lSpawnPoint,2));
-         i=i-1;
+         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+               @NewHold,#what=Create(&SmallRat),
+               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         i = i - 1;
       }
-      
+
       i = piGiantRats;
-      
-      while(i > 0)
+
+      while (i > 0)
       {
          lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=Create(&GiantRat),
-                                                          #new_row=Nth(lSpawnPoint,1),
-                                                          #new_col=Nth(lSpawnPoint,2));
-         i=i-1;
+         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+               @NewHold,#what=Create(&GiantRat),
+               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         i = i - 1;
       }
-      
+
       i = piRatSoldiers;
       
-      while(i > 0)
+      while (i > 0)
       {
          lSpawnPoint = Send(self,@MakeSpawnPoint);
-         Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=Create(&GiantRatSoldier),
-                                                          #new_row=Nth(lSpawnPoint,1),
-                                                          #new_col=Nth(lSpawnPoint,2));
-         i=i-1;
+         Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+               @NewHold,#what=Create(&GiantRatSoldier),
+               #new_row=Nth(lSpawnPoint,1),#new_col=Nth(lSpawnPoint,2));
+         i = i - 1;
       }
-      
+
       return;
    }
-   
+
    FinalPhase()
    {
       local oKing;
-      
+
       piPhase = 4;
-      
+
       if vbAnnounce
       {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=RatInvasion_finalphase_msg);
-      }      
-      
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,
+               #string=RatInvasion_finalphase_msg);
+      }
+
       oKing = Create(&GiantRatKing);
-      Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@NewHold,#what=oKing,#new_row=51,#new_col=18);
+      Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),
+            @NewHold,#what=oKing,#new_row=51,#new_col=18);
 
       return;
    }
@@ -245,15 +249,15 @@ messages:
    CountMonsters(type=$)
    {
       local i,count,lActive;
-   
+
       if type = $
       {
          return;
       }
-   
+
       count = 0;
-      lActive = Send(Send(sys,@FindRoomByNum,#num=piActiveRoom),@GetPlActive);
-      
+      lActive = Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),@GetPlActive);
+
       for i in lActive
       {
          if IsClass(Nth(i,1),type)
@@ -261,22 +265,21 @@ messages:
             count = count + 1;
          }
       }
-      
+
       return count;
    }
-   
+
    MakeSpawnPoint()
    {
       local lCoords, spawnRect;
-      
+
       spawnRect = Nth(plSpawnRects,Random(1,Length(plSpawnRects)));
-      
+
       lCoords = [ Random(Nth(Nth(spawnRect,1),1),Nth(Nth(spawnRect,2),1)),
                   Random(Nth(Nth(spawnRect,1),2),Nth(Nth(spawnRect,2),2)) ];
-   
+
       return lCoords;
    }
-   
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

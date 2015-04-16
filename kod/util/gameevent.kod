@@ -7,7 +7,7 @@
 % Meridian is a registered trademark.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GameEvent is UtilityFunctions
 
 constants:
@@ -23,7 +23,7 @@ classvars:
 
    vrStartMessage = event_start_msg
    vrEndMessage = event_end_msg
-   
+
    vbAnnounce = FALSE
 
 properties:
@@ -34,7 +34,7 @@ messages:
    {
       return;
    }
-   
+
    Delete()
    {
       return;
@@ -44,33 +44,32 @@ messages:
    {
       return;
    }
-   
+
    NewMinute()
    {
       return;
    }
-   
+
    NewHour()
    {
-      
       return;
    }
-   
+
    NewDay()
    {
       return;
    }
-   
+
    NewMonth()
    {
       return;
    }
-   
+
    NewYear()
    {
       return;
    }
-   
+
    StartEvent()
    {
       if vbAnnounce
@@ -87,17 +86,16 @@ messages:
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrEndMessage);
       }
-      
-      Send(Send(SYS,@GetEventEngine),@EventEnd,#oEvent=self);
-   
+
+      Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
+
       return;
    }
-   
+
    AdvanceEvent()
    {
       return;
    }
-   
-end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

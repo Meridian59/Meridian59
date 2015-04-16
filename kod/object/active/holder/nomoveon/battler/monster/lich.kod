@@ -609,7 +609,7 @@ messages:
             {
                Debug("Lich target change:",each_obj);
                iBestDistance = iDistance;
-               Send(self,@TargetSwitch,#what=each_obj,#hatred=60);
+               Send(self,@TargetSwitch,#what=each_obj,#iHatred=60);
 
                if iRandom < 5
                {

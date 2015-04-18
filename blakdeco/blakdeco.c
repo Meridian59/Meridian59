@@ -574,7 +574,8 @@ char * name_function(int fnum)
    case STRINGEQUAL : return "StringEqual";
    case STRINGCONTAIN : return "StringContain";
    case SETRESOURCE : return "SetResource";
-//   case CREATESTRING : return "CreateString";
+   case CREATESTRING : return "CreateString";
+   case ISSTRING : return "IsString";
 
    case CREATETIMER : return "CreateTimer";
    case DELETETIMER : return "DeleteTimer";

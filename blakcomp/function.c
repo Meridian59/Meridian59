@@ -91,6 +91,7 @@ function_type Functions[] = {
 {"ClearTempString",     CLEARTEMPSTRING, ANONE},
 {"GetTempString",       GETTEMPSTRING,   ANONE},
 {"CreateString",        CREATESTRING,    ANONE},
+{"IsString",            ISSTRING,        AEXPRESSION,   ANONE},
 {"IsObject",            ISOBJECT,        AEXPRESSION,   ANONE},
 {"RecycleUser",         RECYCLEUSER,     AEXPRESSION,   ANONE},
 {"MinigameNumberToString", MINIGAMENUMBERTOSTRING,      AEXPRESSION,  AEXPRESSION, ANONE},

@@ -1836,7 +1836,11 @@ messages:
       if psHonor <> $
       {
          if psHonor = GetTempString()
-            OR StringEqual(psHonor,"")
+         {
+            return;
+         }
+
+         if StringEqual(psHonor,"")
          {
             return;
          }

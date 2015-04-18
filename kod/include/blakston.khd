@@ -3076,11 +3076,13 @@
 
    %%% Line of Sight (LOS) testing
 
-   % Determines which version of LOS we're using.
-   LOS_OLD = 0
-   LOS_NEW_MONSTER = 1
-   LOS_NEW_PLAYER = 2
-   LOS_NEW_BOTH = 3
+   % Values for dealing with some safespots in LoS.
+   %  These are basically "steps" on the high-res grid
+   %  which can be skipped at the dest end for still successful LoS.
+   %  Skipping the last step (LOS_SKIP_1) removes any safe-spot.
+   %  Skipping none of the tiny steps (LOS_SKIP_0) allows rare safe-spots at room edges/corners.
+   LOS_SKIP_0 = 0
+   LOS_SKIP_1 = 1
 
    % String limits
    MIN_CHAR_NAME_LEN = 3

@@ -47,6 +47,8 @@ typedef struct {
    External function declarations
  **************************************************************************/
 
+Bool DibInitCompression();
+Bool DibCloseCompression();
 Bool DibOpenFile(const char *szFile, Bitmaps *b);
 void DibFree(PDIB pdib);
 void BitmapsFree(Bitmaps *b);

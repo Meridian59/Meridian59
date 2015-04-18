@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{DE0219C9-BA72-42AB-BE41-E62BA0678FF4}</ProjectGuid>
+    <RootNamespace>roomedit</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>.\obj\vs\x86\debug\</IntDir>
+    <TargetName>roomedit_d</TargetName>
+    <OutDir>.\</OutDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>roomedit</TargetName>
+    <IntDir>.\obj\vs\x86\release\</IntDir>
+    <OutDir>.\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_OWLPCH;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;OWL5_COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>owl-6.34\include;include;res</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>owl-6.34-v12-x86-dt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>owl-6.34\lib\x86\</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_OWLALLPCH;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;OWL5_COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>owl-6.34\include;include;res</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>owl-6.34-v12-x86-t.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>owl-6.34\lib\x86\</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\aboutdlg.h" />
+    <ClInclude Include="include\bmp256ct.h" />
+    <ClInclude Include="include\bsp.h" />
+    <ClInclude Include="include\buildtim.h" />
+    <ClInclude Include="include\cnflddlg.h" />
+    <ClInclude Include="include\cnfsedlg.h" />
+    <ClInclude Include="include\cnfthdlg.h" />
+    <ClInclude Include="include\cnfvedlg.h" />
+    <ClInclude Include="include\common.h" />
+    <ClInclude Include="include\dibutil.h" />
+    <ClInclude Include="include\editcli.h" />
+    <ClInclude Include="include\editscro.h" />
+    <ClInclude Include="include\entrydlg.h" />
+    <ClInclude Include="include\episdlg.h" />
+    <ClInclude Include="include\fixed.h" />
+    <ClInclude Include="include\gfx.h" />
+    <ClInclude Include="include\infocont.h" />
+    <ClInclude Include="include\inpt2dlg.h" />
+    <ClInclude Include="include\levels.h" />
+    <ClInclude Include="include\lineedit.h" />
+    <ClInclude Include="include\lprogdlg.h" />
+    <ClInclude Include="include\maincli.h" />
+    <ClInclude Include="include\mainfram.h" />
+    <ClInclude Include="include\mapdc.h" />
+    <ClInclude Include="include\mastdlg.h" />
+    <ClInclude Include="include\memry.h" />
+    <ClInclude Include="include\names.h" />
+    <ClInclude Include="include\newers.h" />
+    <ClInclude Include="include\objects.h" />
+    <ClInclude Include="include\pal.h" />
+    <ClInclude Include="include\prefdlg.h" />
+    <ClInclude Include="include\seditdlg.h" />
+    <ClInclude Include="include\statdlg.h" />
+    <ClInclude Include="include\textures.h" />
+    <ClInclude Include="include\thingdlg.h" />
+    <ClInclude Include="include\things.h" />
+    <ClInclude Include="include\tooltip.h" />
+    <ClInclude Include="include\undo.h" />
+    <ClInclude Include="include\vertdlg.h" />
+    <ClInclude Include="include\viewbmp.h" />
+    <ClInclude Include="include\wadlidlg.h" />
+    <ClInclude Include="include\wads.h" />
+    <ClInclude Include="include\windeapp.h" />
+    <ClInclude Include="include\windeu.h" />
+    <ClInclude Include="include\windeuhl.h" />
+    <ClInclude Include="include\workdlg.h" />
+    <ClInclude Include="include\wstructs.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\aboutdlg.cpp" />
+    <ClCompile Include="source\bmp256ct.cpp" />
+    <ClCompile Include="source\bspmake.cpp" />
+    <ClCompile Include="source\buildtim.c" />
+    <ClCompile Include="source\cnflddlg.cpp" />
+    <ClCompile Include="source\cnfsedlg.cpp" />
+    <ClCompile Include="source\cnfthdlg.cpp" />
+    <ClCompile Include="source\cnfvedlg.cpp" />
+    <ClCompile Include="source\dibutil.cpp" />
+    <ClCompile Include="source\editcli.cpp" />
+    <ClCompile Include="source\editscro.cpp" />
+    <ClCompile Include="source\entrydlg.cpp" />
+    <ClCompile Include="source\episdlg.cpp" />
+    <ClCompile Include="source\gfx.cpp" />
+    <ClCompile Include="source\infocont.cpp" />
+    <ClCompile Include="source\inpt2dlg.cpp" />
+    <ClCompile Include="source\lineedit.cpp" />
+    <ClCompile Include="source\load.cpp" />
+    <ClCompile Include="source\lprogdlg.cpp" />
+    <ClCompile Include="source\maincli.cpp" />
+    <ClCompile Include="source\mainfram.cpp" />
+    <ClCompile Include="source\mapdc.cpp" />
+    <ClCompile Include="source\mastdlg.cpp" />
+    <ClCompile Include="source\memory.cpp" />
+    <ClCompile Include="source\move.cpp" />
+    <ClCompile Include="source\names.cpp" />
+    <ClCompile Include="source\newers.cpp" />
+    <ClCompile Include="source\objects.cpp" />
+    <ClCompile Include="source\pal.cpp" />
+    <ClCompile Include="source\prefdlg.cpp" />
+    <ClCompile Include="source\save.cpp" />
+    <ClCompile Include="source\seditdlg.cpp" />
+    <ClCompile Include="source\statdlg.cpp" />
+    <ClCompile Include="source\textures.cpp" />
+    <ClCompile Include="source\thingdlg.cpp" />
+    <ClCompile Include="source\things.cpp" />
+    <ClCompile Include="source\tooltip.cpp" />
+    <ClCompile Include="source\undo.cpp" />
+    <ClCompile Include="source\vertdlg.cpp" />
+    <ClCompile Include="source\viewbmp.cpp" />
+    <ClCompile Include="source\wadlidlg.cpp" />
+    <ClCompile Include="source\wads.cpp" />
+    <ClCompile Include="source\windeapp.cpp" />
+    <ClCompile Include="source\windeu.cpp" />
+    <ClCompile Include="source\workdlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bitmaps\CM_EDITOR_CREATELEVEL.bmp" />
+    <Image Include="res\bitmaps\CM_EDITOR_EDITLEVEL.bmp" />
+    <Image Include="res\bitmaps\CM_EDIT_ADDOBJ.bmp" />
+    <Image Include="res\bitmaps\CM_EDIT_COPYOBJ.bmp" />
+    <Image Include="res\bitmaps\CM_EDIT_DELETEOBJ.bmp" />
+    <Image Include="res\bitmaps\CM_EDIT_REDO.bmp" />
+    <Image Include="res\bitmaps\CM_EDIT_UNDO.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_BUILDMAIN.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_EXTRACTOBJ.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_GROUPPATCH.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_INSERTRAW.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_READPATCH.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_SAVE.bmp" />
+    <Image Include="res\bitmaps\CM_FILE_SAVEOBJECT.bmp" />
+    <Image Include="res\bitmaps\CM_HELP_CONTENTS.bmp" />
+    <Image Include="res\bitmaps\CM_HELP_TUTORIAL.bmp" />
+    <Image Include="res\bitmaps\CM_MODE_LINEDEFS.bmp" />
+    <Image Include="res\bitmaps\CM_MODE_SECTORS.bmp" />
+    <Image Include="res\bitmaps\CM_MODE_THINGS.bmp" />
+    <Image Include="res\bitmaps\CM_MODE_VERTEXES.bmp" />
+    <Image Include="res\bitmaps\CM_OBJECTS_POLYGON.bmp" />
+    <Image Include="res\bitmaps\CM_OBJECTS_RECTANGLE.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_GRIDNEXT.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_GRIDPREV.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_INFOBAR.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_INFOWIN.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_SHOWGRID.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_SNAPTOGRID.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_TOOLBAR.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_ZOOMIN.bmp" />
+    <Image Include="res\bitmaps\CM_WINDOW_ZOOMOUT.bmp" />
+    <Image Include="res\bitmaps\IDB_HSLIDERTHUMB.bmp" />
+    <Image Include="res\bitmaps\IDB_VSLIDERTHUMB.bmp" />
+    <Image Include="res\icons\applsdi.ico" />
+    <Image Include="res\icons\boss.ico" />
+    <Image Include="res\icons\caco.ico" />
+    <Image Include="res\icons\demon.ico" />
+    <Image Include="res\icons\doomfac1.ico" />
+    <Image Include="res\icons\gory5.ico" />
+    <Image Include="res\icons\helmet1.ico" />
+    <Image Include="res\icons\imp.ico" />
+    <Image Include="res\icons\invisbl.ico" />
+    <Image Include="res\icons\invul.ico" />
+    <Image Include="res\icons\noel1.ico" />
+    <Image Include="res\icons\noel2.ico" />
+    <Image Include="res\icons\player5.ico" />
+    <Image Include="res\icons\playr1.ico" />
+    <Image Include="res\icons\sarg.ico" />
+    <Image Include="res\icons\skull6.ico" />
+    <Image Include="res\icons\soul.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\ABOUTDLG.RH" />
+    <None Include="res\cnflddlg.rh" />
+    <None Include="res\CNFSEDLG.RH" />
+    <None Include="res\cnfthdlg.rh" />
+    <None Include="res\cnfvedlg.rh" />
+    <None Include="res\cursor.rh" />
+    <None Include="res\cursors\IDC_HAND.cur" />
+    <None Include="res\cursors\IDC_HELPCURSOR.cur" />
+    <None Include="res\cursors\IDC_INSERT.cur" />
+    <None Include="res\cursors\IDC_PASTE.cur" />
+    <None Include="res\editmenu.rh" />
+    <None Include="res\entrydlg.rh" />
+    <None Include="res\episdlg.rh" />
+    <None Include="res\funnydlg.rh" />
+    <None Include="res\inpt2dlg.rh" />
+    <None Include="res\LINEEDIT.RH" />
+    <None Include="res\lprogdlg.rh" />
+    <None Include="res\mainmenu.rh" />
+    <None Include="res\mastdlg.rh" />
+    <None Include="res\owldef.rh" />
+    <None Include="res\prefdlg.rh" />
+    <None Include="res\SEDITDLG.RH" />
+    <None Include="res\statdlg.rh" />
+    <None Include="res\thingdlg.rh" />
+    <None Include="res\usagedlg.rh" />
+    <None Include="res\versinfo.rh" />
+    <None Include="res\vertdlg.rh" />
+    <None Include="res\viewbmp.rh" />
+    <None Include="res\wadlidlg.rh" />
+    <None Include="res\windeapp.rh" />
+    <None Include="res\workdlg.rh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\WINDEAPP.RC" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

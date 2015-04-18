@@ -34,7 +34,7 @@
 	#include "statdlg.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 

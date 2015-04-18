@@ -34,15 +34,15 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_CONTROLB_H
+#ifndef OWL_CONTROLB_H
 	#include <owl\controlb.h>
 #endif
 
-#ifndef __OWL_STATUSBA_H
+#ifndef OWL_STATUSBA_H
 	#include <owl\statusba.h>
 #endif
 
-#ifndef __OWL_BUTTONGA_H
+#ifndef OWL_BUTTONGA_H
 	#include <owl\buttonga.h>
 #endif
 
@@ -62,9 +62,17 @@ public:
 
 protected:
 //{{TTipControlBarRSP_TBL_BEGIN}}
-	void 	EvMouseMove (UINT modKeys, TPoint& point);
-	void 	EvLButtonDown (UINT modKeys, TPoint& point);
-	void 	EvLButtonUp (UINT modKeys, TPoint& point);
+
+#if OWLVersion > OWLVERBC502
+	void 	EvMouseMove (UINT modKeys, const TPoint& point);
+	void 	EvLButtonDown (UINT modKeys, const TPoint& point);
+	void 	EvLButtonUp (UINT modKeys, const TPoint& point);
+#else
+	void 	EvMouseMove(UINT modKeys, TPoint& point);
+	void 	EvLButtonDown(UINT modKeys, TPoint& point);
+	void 	EvLButtonUp(UINT modKeys, TPoint& point);
+#endif
+
 	UINT    EvNCHitTest (TPoint& screenPt);
 //{{TTipControlBarRSP_TBL_END}}
 	DECLARE_RESPONSE_TABLE (TTipControlBar);
@@ -85,8 +93,13 @@ public:
 					TFont*                	font = new TGadgetWindowFont,
 					TModule*              	module = 0);
 
+#if OWLVersion > OWLVERBC502
+	void 			EvMouseMove (UINT modKeys, const TPoint& point);
+	void 			EvLButtonDown (UINT modKeys, const TPoint& point);
+#else
 	void 			EvMouseMove (UINT modKeys, TPoint& point);
-	void 			EvLButtonDown (UINT modKeys, TPoint& point);
+	void 			EvLButtonDown(UINT modKeys, TPoint& point);
+#endif
 
 	void 			SetHintText (const char *lpszText);
 	void            DrawHintText (const char *lpszText);
@@ -137,10 +150,10 @@ protected:
 	void	GetWindowClass (WNDCLASS &wc);
 	LPSTR	GetClassName ();
 
-	void 	Paint (TDC &dc, BOOL erase, TRect &rc);
+	void 	Paint (TDC &dc, bool erase, TRect &rc);
 	void	EvTimer (UINT uiTimerId);
 
-	void	SetCaption (const char far* title);
+	void	SetCaption (const char* title);
 
 public:
 	TToolTip (Tip::Style style = Tip::SquareBorder, TFont* font = new TToolTipFont);

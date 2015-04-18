@@ -33,19 +33,19 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	class _OWLCLASS TEdit;
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	class _OWLCLASS TStatic;
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 

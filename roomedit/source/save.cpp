@@ -319,7 +319,7 @@ void SaveSectors(FILE *file)
 void SaveServerInfo(FILE *file, BSPTree tree, int width, int height)
 {
    BYTE b;
-   int rows, cols, i, j;
+   int rows, cols, i, j, flags;
 
    rows = height / FINENESS;
    cols = width / FINENESS;
@@ -366,6 +366,26 @@ void SaveServerInfo(FILE *file, BSPTree tree, int width, int height)
      pProgressDialog->ShowRejectProgress(i * 100 / rows);
    }
    
+   /*********** NEW HIGH RESOLUTION GRID ********************/
+   
+   rows = height / FINENESSHIGHRESGRID;
+   cols = width / FINENESSHIGHRESGRID;
+
+   WriteBytes(file, &rows, 4);
+   WriteBytes(file, &cols, 4);
+
+   // Write inter-square movement grid for player
+   for (i=0; i < rows; i++)
+   {
+     for (j=0; j < cols; j++)
+     {
+       flags = ComputeHighResSquareFlags(tree, i, j, rows, cols, min_player_distance);
+       WriteBytes(file, &flags, 4);
+       //LogMessage("%2x ", b);
+     }
+     //LogMessage("\n");
+     pProgressDialog->ShowRejectProgress(i * 100 / rows);
+   }
 }
 /***************************************************************************/
 /*
@@ -381,12 +401,16 @@ void SaveRoomeditWalls(FILE *file)
    // Write out walls
    for (i=0; i < NumLineDefs; i++)
    {
-      LineDef CurLD = LineDefs[i];
-      if (CurLD.sidedef1 >= 0)
-	 SD1 = SideDefs[CurLD.sidedef1];
+	   LineDef CurLD = LineDefs[i];
+	   if (CurLD.sidedef1 >= 0)
+		   SD1 = SideDefs[CurLD.sidedef1];
+	   else
+		   CurLD.file_sidedef1 = 0;
 
-      if (CurLD.sidedef2 >= 0)
-	 SD2 = SideDefs[CurLD.sidedef2];
+	   if (CurLD.sidedef2 >= 0)
+		   SD2 = SideDefs[CurLD.sidedef2];
+	   else
+		   CurLD.file_sidedef2 = 0;
 
       // Write sidedef numbers
       WriteBytes(file, &CurLD.file_sidedef1, 2);

@@ -35,19 +35,19 @@
 
 #include <time.h>
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_INPUTDIA_H
+#ifndef OWL_INPUTDIA_H
 	#include <owl\inputdia.h>
 #endif
 
-#ifndef __OWL_TEXTGADG_H
+#ifndef OWL_TEXTGADG_H
 	#include <owl\textgadg.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
@@ -104,7 +104,6 @@ Bool Reminder = TRUE;		/* display a funny message when DEU starts */
 Bool AutoScroll = FALSE;	/* Auto scroll mode */
 char *MainWad = NULL;	/* name of the main wad file */
 char **PatchWads = NULL;	/* list of patch wad files */
-Bool Use3DControls = TRUE;	/* Enable CTL3DV2.DLL or CTL3D32.DLL? */
 Bool DrawLineDefsLen = FALSE;	/* Display length of moving LineDefs */
 int BuildPriority = 0;		/* Priority for the nodes builder */
 int RoomID = 0;
@@ -128,11 +127,11 @@ BOOL   GridShown  = FALSE;
 #define DEFAULT_LOWER_TEXTURE 	"-"
 #define DEFAULT_FLOOR_TEXTURE	"-"
 #define DEFAULT_CEILING_TEXTURE "-"
-#define DEFAULT_BITMAP_DIR      "e:\\blakston\\resource\\nt"
+#define DEFAULT_BITMAP_DIR      "..\\run\\localclient\\resource"
 #define DEFAULT_BITMAP_SPEC     "grd*.bgf"
-#define DEFAULT_KOD_DIR				"c:\\blakston\\kod\\"
-#define DEFAULT_SERVER_DIR      	"c:\\blakrun\\server\\"
-#define DEFAULT_ENTRANCE_FILE		"c:\\blakston\\roomedit\\entrance.dat"
+#define DEFAULT_KOD_DIR			"..\\kod\\"
+#define DEFAULT_SERVER_DIR      "..\\run\\server\\"
+#define DEFAULT_ENTRANCE_FILE	"entrance.dat"
 
 char *DefaultWallTexture;		/* default normal wall texture */
 char *DefaultUpperTexture;		/* default upper wall texture */
@@ -190,7 +189,6 @@ OptDesc options[] =
 	{ "s0", "select0",     OPT_BOOLEAN,    "Select 0 by default",		"No default selection",	&Select0          },
 	{ NULL, "reminder1",   OPT_BOOLEAN,	  	NULL,								NULL,			      		&Reminder         },
 	// New for Windows:
-	{ "3d", "3dcontrols",  	OPT_BOOLEAN,   NULL,								"3DControls disabled",	&Use3DControls	   },
 	{ "dl", "drawlength",  	OPT_BOOLEAN,   "LineDefs length enabled",	NULL,	  	               &DrawLineDefsLen	},
 	{ "bp", "buildpriority",OPT_INTEGER,	"Nodes builder priority",	NULL,                   &BuildPriority	   },
 	{ "mu", "maxundo",     	OPT_INTEGER,   "Maximum UNDO levels",		NULL,                   &MaxUndo			   },
@@ -220,6 +218,9 @@ void InitWindeu (int argc, char **argv, char *init_level)
 
 	// Initialize graphics data (GDI pen cache, ...)
 	// InitGfxData();
+
+	// Load zlib1.dll dynamically
+	DibInitCompression();
 
 	// Init. MainWad file name to default (DOOM.WAD)
 	MainWad = (char *)GetMemory (strlen(DEFAULT_MAIN_WAD)+1);
@@ -317,6 +318,9 @@ void CleanupWindeu ()
 
 	// that's all, folks!
 	CloseWadFiles();
+
+	// unload compression
+	DibCloseCompression();
 
   // Disabled 7/04 ARK
 //	UnloadKodObjects();
@@ -784,12 +788,10 @@ void ProgError( char *errstr, ...)
 		fprintf( logfile, " ***\n");
 	}
 	va_end( args);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "WinDEU error",
 				  MB_OK | MB_ICONSTOP | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	// clean up things
 	CleanupWindeu();
@@ -898,18 +900,31 @@ void LogError(char *logstr, ...)
 
 void WorkMessage (char *workstr, ...)
 {
-	va_list  args;
+	va_list		args;
 	static char msg[256];
+
+	if (!::Module)
+		return;
+
 	TMainFrame *mainFrame =
-		TYPESAFE_DOWNCAST(((TApplication *)::Module)->GetMainWindow(),
-						  TMainFrame);
+		TYPESAFE_DOWNCAST(((TApplication*)::Module)->GetMainWindow(), TMainFrame);
 
 	va_start( args, workstr);
 	vsprintf( msg, workstr, args);
 	va_end( args);
 
-	((TTextGadget *)((*mainFrame->GetStatusBar())[0]))->SetText( msg);
-	mainFrame->GetStatusBar()->UpdateWindow();
+	if (!mainFrame)
+		return;
+
+	TStatusBar* bar = mainFrame->GetStatusBar();
+
+	if (!bar)
+		return;
+
+	if (bar->GadgetCount() > 0)
+		((TTextGadget *)bar->FirstGadget())->SetText(msg);
+
+	bar->UpdateWindow();
 }
 
 
@@ -919,12 +934,17 @@ void WorkMessage (char *workstr, ...)
 
 void GetWorkMessage (char *buffer, size_t bufferSize)
 {
+	if (!::Module)
+		return;
+
 	TMainFrame *mainFrame =
-		TYPESAFE_DOWNCAST(((TApplication *)::Module)->GetMainWindow(),
-						  TMainFrame);
+		TYPESAFE_DOWNCAST(((TApplication *)::Module)->GetMainWindow(), TMainFrame);
+
+	if (!mainFrame || !mainFrame->GetStatusBar() || mainFrame->GetStatusBar()->GadgetCount() == 0)
+		return;
 
 	strncpy (buffer,
-			 ((TTextGadget *)((*mainFrame->GetStatusBar())[0]))->GetText (),
+			 ((TTextGadget *)mainFrame->GetStatusBar()->FirstGadget())->GetText(),
 			 bufferSize);
 	buffer[bufferSize-1] = '\0';
 }
@@ -943,12 +963,10 @@ BOOL Confirm(char *confstr, ...)
 	vsprintf( msg, confstr, args);
 	va_end( args);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	int ans = ::MessageBox (0,
 							msg,
 							"Confirmation",
 							MB_YESNO | MB_ICONQUESTION | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 
 	return ((ans == IDYES) ? TRUE : FALSE);
 }
@@ -967,12 +985,10 @@ void Notify(char *notstr, ...)
 	vsprintf( msg, notstr, args);
 	va_end( args);
 
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (TRUE);
 	::MessageBox (0,
 				  msg,
 				  "Notification message",
 				  MB_OK | MB_ICONINFORMATION | MB_TASKMODAL);
-	((TApplication *)::Module)->EnableCtl3dAutosubclass (FALSE);
 }
 
 

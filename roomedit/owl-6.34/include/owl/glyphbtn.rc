@@ -1,0 +1,49 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with GlyphButtons
+//----------------------------------------------------------------------------
+
+#include <owl/glyphbtn.rh>
+
+#if defined(RC_INVOKED)
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDB_GLYPHBTN) && !defined(__IDB_GLYPHBTN)
+#define __IDB_GLYPHBTN
+
+IDB_BORBTNII_OK BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_ok.bmp"
+
+IDB_BORBTNII_CANCEL BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_canc.bmp"
+
+IDB_BORBTNII_NO BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_no.bmp"
+
+IDB_BORBTNII_HELP BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_hlp.bmp"
+
+IDB_BORBTNII_ADD BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_plus.bmp"
+
+IDB_BORBTNII_DEL BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_min.bmp"
+
+IDB_BORBTNII_EDIT BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_edit.bmp"
+
+IDB_BORBTNII_KEY BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_key.bmp"
+
+IDB_BORBTNII_APPLY BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_appl.bmp"
+
+IDB_BORBTNII_REVERT BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_rev.bmp"
+
+IDB_BORBTNII_SETUP BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_setp.bmp"
+
+IDB_BORBTNII_BROWSE BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/btn_brws.bmp"
+
+
+#endif
+#endif  // defined(RC_INVOKED)

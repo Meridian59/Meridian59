@@ -33,11 +33,11 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	_OWLCLASS class TListBox;
 #endif
 
@@ -64,7 +64,13 @@ public:
 
 //{{TMasterDialogRSP_TBL_BEGIN}}
 protected:
-	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT far& drawInfo);
+
+#if OWLVersion > OWLVERBC502
+	void EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT& drawInfo);
+#else
+	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo);
+#endif
+
 //{{TMasterDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TMasterDialog);
 };    //{{TMasterDialog}}

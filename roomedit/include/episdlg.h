@@ -34,24 +34,24 @@
 	#include "common.h"
 #endif
 
-#ifndef __OWL_DIALOG_H
+#ifndef OWL_DIALOG_H
 	#include <owl\dialog.h>
 #endif
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	class _OWLCLASS TRadioButton;
 #endif
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	class _OWLCLASS TCheckBox;
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	class _OWLCLASS TStatic;
 #endif
 
-#ifndef __OWL_GROUPBOX_H
-	class _OWLCLASS TGroupBox;
+#ifndef OWL_GROUPBOX_H
+	#include <owl\groupbox.h>
 #endif
 
 #include "episdlg.rh"

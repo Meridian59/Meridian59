@@ -427,8 +427,7 @@ messages:
          return FALSE;
       }
 
-      if ((Random(1,piBlindCounterChance) = 1)
-            OR (Send(oSpell,@GetSchool) = SS_QOR))
+      if Random(1,piBlindCounterChance) = 1
          AND Send(self,@CanSee,#what=who)
       {
          Send(self,@MonsterCastAttackSpell,#what=who);

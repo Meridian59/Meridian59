@@ -103,7 +103,11 @@ messages:
       {
          if Send(self,@CountMonsters,#type=&GiantRatKing) = 0
          {
-            Send(self,@EndEvent);
+            % Call EventEnd to handle ending the event properly. This
+            % deletes the event in the GameEventEngine, which also calls
+            % the appropriate code in EndEvent, which handles the end of
+            % the specific event.
+            Send(self,@EventEnd);
          }
       }
 

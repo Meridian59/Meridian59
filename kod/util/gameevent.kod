@@ -80,14 +80,19 @@ messages:
       return;
    }
 
+   EventEnd()
+   {
+      Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
+
+      return;
+   }
+
    EndEvent()
    {
       if vbAnnounce
       {
          Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrEndMessage);
       }
-
-      Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
 
       return;
    }

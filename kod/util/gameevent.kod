@@ -28,6 +28,9 @@ classvars:
 
 properties:
 
+   plSpawnRects = $
+   piActiveRoom = $
+
 messages:
 
    Constructor()
@@ -100,6 +103,43 @@ messages:
    AdvanceEvent()
    {
       return;
+   }
+
+   CountMonsters(type=$)
+   "Returns a count of the given type of monster."
+   {
+      local i, count, lActive;
+
+      if type = $
+      {
+         return;
+      }
+
+      count = 0;
+      lActive = Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),@GetPlActive);
+
+      for i in lActive
+      {
+         if IsClass(Nth(i,1),type)
+         {
+            count = count + 1;
+         }
+      }
+
+      return count;
+   }
+
+   MakeSpawnPoint()
+   "Returns a spawn point inside a given rectangle."
+   {
+      local lCoords, spawnRect;
+
+      spawnRect = Nth(plSpawnRects,Random(1,Length(plSpawnRects)));
+
+      lCoords = [ Random(Nth(Nth(spawnRect,1),1),Nth(Nth(spawnRect,2),1)),
+                  Random(Nth(Nth(spawnRect,1),2),Nth(Nth(spawnRect,2),2)) ];
+
+      return lCoords;
    }
 
 end

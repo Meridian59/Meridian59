@@ -1,0 +1,52 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EasterEggHunt is GameEvent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   egghunt_start_msg = "Easter Egg Hunt Started."
+   egghunt_end_msg = "Easter Egg Hunt Ended."
+
+classvars:
+
+   vrStartMessage = egghunt_start_msg
+   vrEndMessage = egghunt_end_msg
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+
+   Delete()
+   {
+      propagate;
+   }
+
+   StartEvent()
+   {
+      propagate;
+   }
+
+   EndEvent()
+   {
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -81,7 +81,7 @@ resources:
 
    lich_killed_world_saved_nolich = \
       " has struck down the last of the Order of Necromancers, "
-      "ridding Meridian of their evil!\n"
+      "ridding Meridian of their evil!"
 
    lich_spit = lightnin.bgf
 
@@ -595,7 +595,7 @@ messages:
       return;
    }
 
-   Killed(what=$, resetScenario=FALSE, guildDisbandDeath=FALSE)
+   Killed(what=$, resetScenario=TRUE, guildDisbandDeath=FALSE)
    {
       local oSpell, oRoom, NumAttackers, i, lichActivated;
 
@@ -639,7 +639,6 @@ messages:
       Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
 
       if what <> $
-         AND IsClass(what,&Battler)
          AND NOT guildDisbandDeath
       {
          Post(self,@BroadcastLichDeathMessage,#what=what,#Attackers=plAttackers,
@@ -1009,7 +1008,7 @@ messages:
 
    LastUserLeft(what = $)
    {
-      Send(self,@GoBackToGuildhall);
+      Post(self,@GoBackToGuildhall);
 
       propagate;
    }

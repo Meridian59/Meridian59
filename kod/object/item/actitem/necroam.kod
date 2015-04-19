@@ -303,7 +303,8 @@ messages:
             % We killed them off... heh heh heh.
             if pbIn_Use
             {
-               Send(poOwner,@UnuseItem,#what=self);
+               % Unusing it kills the owner, we don't want to do that yet.
+               %Send(poOwner,@UnuseItem,#what=self);
             }
             Send(Send(poOwner,@GetOwner),@SomethingKilled,
                   #what=self,#victim=poOwner);
@@ -675,7 +676,8 @@ messages:
             % We killed someone off... heh heh heh.
             if pbIn_Use
             {
-               Send(poOwner,@UnuseItem,#what=self);
+               % Unusing it kills the owner, we don't want to do that yet.
+               %Send(poOwner,@UnuseItem,#what=self);
             }
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);
@@ -699,7 +701,8 @@ messages:
             % We killed someone off... heh heh heh.
             if pbIn_Use
             {
-               Send(poOwner,@UnuseItem,#what=self);
+               % Unusing it kills the owner, we don't want to do that yet.
+               %Send(poOwner,@UnuseItem,#what=self);
             }
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);
@@ -752,7 +755,7 @@ messages:
       }
 
       if (NOT IsClass(victim,&Monster))
-      AND (NOT IsClass(victim,&User))
+         AND (NOT IsClass(victim,&User))
       {
          Debug("SomethingKilled called with an invalid victim: ",
                Send(victim,@GetName));
@@ -907,7 +910,7 @@ messages:
       {
          Post(self,@TortureOwner);
 
-         return False;
+         return FALSE;
       }
 
       propagate;
@@ -920,7 +923,7 @@ messages:
       % if Send(poOwner,@PlayerIsImmortal) {return True;}
       Post(self,@TortureOwner);
 
-      return False;
+      return FALSE;
    }
 
    TortureOwner()
@@ -937,23 +940,22 @@ messages:
 
       Send(poOwner,@MsgSendUser,#message_rsc=necamulet_try_unuse_rsc);
       if Send(poOwner,@AssessDamage,#what=self,
-               #damage=Random(viDamage_min,viDamage_max),#report=False) = $
+               #damage=Random(viDamage_min,viDamage_max),#report=FALSE) = $
       {
          % We killed someone off... heh heh heh.
          if pbIn_Use
             AND Send(self,@DropOnDeath)
          {
-            Send(poOwner,@UnuseItem,#what=self);
+            % Unusing it kills the owner, we don't want to do that yet.
+            %Send(poOwner,@UnuseItem,#what=self);
+            
+            % Amulet goes back into circulation.
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
          }
 
          Send(Send(poOwner,@GetOwner),@SomethingKilled,
                #what=self,#victim=poOwner);
          Send(poOwner,@Killed,#what=self);
-
-         if Send(self,@DropOnDeath)
-         {
-            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
-         }
       }
 
       return;
@@ -971,17 +973,19 @@ messages:
       }
 
       Send(self,@ReplaceIllusions,#notify=FALSE);
-      Send(self,@RestoreStats, #who=what);
+      Send(self,@RestoreStats,#who=what);
 
-      if NOT Recalibrate
-      {
-         oGuild = Send(what,@GetGuild);
-         if oGuild <> $
-            AND IsClass(oGuild,&NecromancerGuild)
-         {
-            Send(oGuild,@MemberKilled,#victim=what,#killer=what);
-         }
-      }
+      % The player has to die to take this off - the death code handles
+      % sending info to the guild.
+      %if NOT Recalibrate
+      %{
+      %   oGuild = Send(what,@GetGuild);
+      %   if oGuild <> $
+      %      AND IsClass(oGuild,&NecromancerGuild)
+      %   {
+      %      Send(oGuild,@MemberKilled,#victim=what,#killer=what);
+      %   }
+      %}
 
       pbIn_use = FALSE;
       pbIllusioned = FALSE;
@@ -1181,7 +1185,7 @@ messages:
             }
 
             Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
-            Send(oGuild,@MemberKilled,#victim=poOwner,#killer=poOwner);
+            Send(oGuild,@MemberKilled,#victim=poOwner,#killer=self);
 
             if Send(poOwner,@GetOwner) <> $
             {
@@ -1240,7 +1244,7 @@ messages:
       }
 
       oGuild = Send(oMaster,@GetGuild);
-      Send(oGuild,@MemberKilled,#victim=oMaster,#killer=oMaster);
+      Send(oGuild,@MemberKilled,#victim=oMaster,#killer=self);
       if Send(oMaster,@GetOwner) <> $
       {
          Send(Send(oMaster,@GetOwner),@SomethingKilled,

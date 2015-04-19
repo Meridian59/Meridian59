@@ -744,7 +744,13 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
-      local iGain;
+      local iGain, oPlayerOwner;
+      
+      if poOwner = $
+      {
+         return;
+      }
+
       if (NOT IsClass(victim,&Monster))
       AND (NOT IsClass(victim,&User))
       {
@@ -754,10 +760,16 @@ messages:
          return;
       }
 
+      oPlayerOwner = Send(poOwner,@GetOwner);
+      if oPlayerOwner = $
+      {
+         return;
+      }
+
       % No reward for Arena deaths.  (This will also catch other 'safe'
       % areas should they be added.)
-      if Send(Send(poOwner,@GetOwner),@SafePlayerAttack)
-         AND Send(Send(poOwner,@GetOwner),@InPlay,#what=poOwner)
+      if Send(oPlayerOwner,@SafePlayerAttack)
+         AND Send(oPlayerOwner,@InPlay,#what=poOwner)
       {
          return;
       }
@@ -1116,6 +1128,7 @@ messages:
             {
                Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
             }
+         }
 
          for oTreasure in Send(oNecro,@GetHolderPassive)
          {

@@ -63,10 +63,9 @@ resources:
       "you, filling you with pleasure.  You cannot help but fantasize how "
       "wonderful it would feel to put the amulet on and channel its full power."
 
-   
    necamulet_warning = \
       "As you begin to place the amulet around your neck, you feel a strong "
-      "sense of foreboding;  this is not likely to be a reversible act."
+      "sense of foreboding...  this is not likely to be a reversible act."
    necamulet_used_unworthy = \
       "As you put the amulet on, a wave of power flows through your body, "
       "setting every nerve on fire with pleasure and pain.  The amount of "
@@ -1112,12 +1111,18 @@ messages:
 
          for oTreasure in Send(oNecro,@GetHolderActive)
          {
-            Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
-         }
+            if oTreasure <> self
+               AND Send(oTreasure,@DropOnDeath)
+            {
+               Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            }
 
          for oTreasure in Send(oNecro,@GetHolderPassive)
          {
-            Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            if Send(oTreasure,@DropOnDeath)
+            {
+               Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            }
          }
 
          Send(oNecBal,@StartPlacingNecromancerTreasure);

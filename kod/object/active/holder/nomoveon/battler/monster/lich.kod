@@ -202,36 +202,9 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = $; % [ $, $, [ SID_DEATHS_DOOR ], $ ];
+      plFor_sale = [ $, $, $, $ ];
 
       return;
-   }
-
-   CanDoTeach(who=$,sid=0)
-   {
-      if NOT Send(self,@CanAddSpell,#report=TRUE,#who=who,#num=sid)
-      {
-         return FALSE;
-      }
-
-      propagate;
-   }
-
-   CanAddSpell(who=$,num=0, report = FALSE)
-   "We require that a quest be done before one of the spells can be learned."
-   {
-      if num = SID_DEATHS_DOOR
-         AND NOT Send(who,@IsUsingA,#class=&NecromancerAmulet)
-      {
-         if report
-         {
-            Send(who,@MsgSendUser,#message_rsc=lich_not_order);
-         }
-
-         return FALSE;
-      }
-
-      propagate;
    }
 
    GetIcon()
@@ -451,7 +424,7 @@ messages:
       {
          Send(who,@MsgSendUser,#message_rsc=lich_no_truce);
 
-         return FALSE; 
+         return FALSE;
       }
 
       if ((Random(1,piBlindCounterChance) = 1)
@@ -825,7 +798,7 @@ messages:
                @ClaimGuildHall,#oGuild=poNecromancerGuild,#rep=master,
                #password=Lich_starting_password);
 
-               Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
       Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
 
       return;
@@ -835,7 +808,7 @@ messages:
    {
       if poNecromancerGuild <> $
       {
-         Send(poNecromancerGuild,@Delete);
+         Send(poNecromancerGuild,@Delete,#timerdelete=TRUE);
          poNecromancerGuild = $;
       }
 

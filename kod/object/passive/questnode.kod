@@ -1475,10 +1475,10 @@ messages:
          %     [ QN_PRIZETYPE_ESTABLISH_NECROGUILD ]
 
          oLich = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
-                      @FindHoldingActive,#class=&DeadLich);
+                        @FindHoldingActive,#class=&DeadLich);
          if oLich <> $
          {
-            Send(oLich,@EstablishNecromancerGuild,#master=First(recipients));
+            Post(oLich,@EstablishNecromancerGuild,#master=First(recipients));
          }
          else
          {

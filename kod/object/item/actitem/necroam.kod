@@ -1341,8 +1341,6 @@ messages:
 
       if oRoom = $
       {
-         Debug("DropOnDeath called on ",Send(self,@GetName)," with invalid owner ",
-               Send(poOwner,@GetName));
          return FALSE;
       }
 

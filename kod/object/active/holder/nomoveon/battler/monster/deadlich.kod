@@ -230,11 +230,13 @@ messages:
 
       if lichswapout
       {
-         for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
-                        ,QT_ACTIVE_QUESTS)
-         {
-            Send(oQ,@DeadlineExpired);
-         }
+         % Don't need to send this, quest cleans itself up. This may have been
+         % different ~16 years ago.
+         %for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
+         %               ,QT_ACTIVE_QUESTS)
+         %{
+         %   Send(oQ,@DeadlineExpired);
+         %}
 
          iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD),
                            QT_QUEST_NODES));

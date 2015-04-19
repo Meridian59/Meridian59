@@ -605,19 +605,19 @@ messages:
       {
          if i = what
          {
-            Send(i,@MsgSendUser,#message_rsc=lich_death_blow );
+            Send(i,@MsgSendUser,#message_rsc=lich_death_blow);
          }
 
          if NumAttackers = 2
             AND i <> what
          {
-            Send(i,@MsgSendUser,#message_rsc=lich_double_killer );
+            Send(i,@MsgSendUser,#message_rsc=lich_double_killer);
          }
 
          if NumAttackers > 2
             AND i <> what
          {
-            Send(i,@MsgSendUser,#message_rsc=lich_helper_killer );
+            Send(i,@MsgSendUser,#message_rsc=lich_helper_killer);
          }
       }
 

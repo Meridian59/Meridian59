@@ -1326,7 +1326,22 @@ messages:
    {
       local oRoom;
 
-      oRoom=Send(poOwner,@GetOwner);
+      if poOwner = $
+      {
+         Debug("DropOnDeath called on ",Send(self,@GetName)," with null owner!");
+
+         return FALSE;
+      }
+
+      oRoom = Send(poOwner,@GetOwner);
+
+      if oRoom = $
+      {
+         Debug("DropOnDeath called on ",Send(self,@GetName)," with invalid owner ",
+               Send(poOwner,@GetName));
+         return FALSE;
+      }
+
       if Send(poOwner,@PossessesA,#class=&Token)
          OR (Send(oRoom,@SafePlayerAttack)
             AND Send(oRoom,@inPlay,#what=poOwner))

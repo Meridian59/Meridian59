@@ -73,7 +73,9 @@ classvars:
    viInner_teleport_row = 13
    viInner_teleport_col = 42
    viSeconds_til_close = 24
-   
+
+   vbChestInFoyer = TRUE
+
    viTerrain_type = TERRAIN_GUILDHALL | TERRAIN_NECROPOLIS | TERRAIN_LAIR
 
 properties:
@@ -91,6 +93,9 @@ properties:
    plLevers = $
    ptReactivateLevers = $
 
+   plChestArea1 = $
+   plChestArea2 = $
+
 messages:
 
    Constructor()
@@ -101,6 +106,11 @@ messages:
       % This is a box containing the guild door, used
       % for removing players from it when it closes.
       plEntrance = [ 0, 3200, 3038, 3275 ];
+
+      % These two are the rectangles bounding the chest room and its
+      % entry way. Used if the necromancer guild is active.
+      plChestArea1 = [1951, 2240, 1371, 1501];
+      plChestArea2 = [2187, 2612, 1125, 1750];
 
       propagate;
    }
@@ -485,6 +495,43 @@ messages:
       }
 
       propagate;
+   }
+
+   ReqUseGuildChest(who=$)
+   {
+      local oOwner;
+
+      if who = $
+      {
+         return FALSE;
+      }
+      
+      oOwner = Send(who,@GetOwner);
+      
+      if oOwner <> self
+      {
+         Debug("ALERT!  ",Send(who,@GetTrueName),who,
+               "tried to use Guild Hall chest in GH ",
+               Send(self,@GetName)," player is in room ",
+               Send(oOwner,@GetName));
+
+         return FALSE;
+      }
+      
+      if Send(self,@IsUserInArea,#who=who,#lArea=plChestArea1)
+         OR Send(self,@IsUserInArea,#who=who,#lArea=plChestArea2)
+      {
+         return TRUE;
+      }
+
+      % If they fail the above check, they're probably too far away.
+      Debug("ALERT!  ",Send(who,@GetTrueName),who,
+            "tried to use Guild Hall chest in GH ",
+            Send(self,@GetName)," player coordinates ",
+            Send(who,@GetRow),Send(who,@GetCol),
+            Send(who,@GetFineRow),Send(who,@GetFineCol));
+
+      return FALSE;
    }
 
 end

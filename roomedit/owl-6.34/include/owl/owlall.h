@@ -1,0 +1,179 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+/// \file
+/// Super include for getting all of ObjectWindows. Works well with precompiled
+/// headers
+//----------------------------------------------------------------------------
+
+#if !defined(OWL_OWLALL_H)
+#define OWL_OWLALL_H
+
+#include <owl/private/defs.h>
+#if defined(BI_HAS_PRAGMA_ONCE)
+# pragma once
+#endif
+#if defined(BI_COMP_WATCOM)
+# pragma read_only_file
+#endif
+
+#include <owl/defs.h>
+#include <owl/animctrl.h>
+#include <owl/applicat.h>
+#include <owl/bardescr.h>
+#include <owl/bitmapga.h>
+#include <owl/bitset.h>
+#include <owl/btntextg.h>
+#include <owl/button.h>
+#include <owl/buttonga.h>
+#include <owl/celarray.h>
+#include <owl/checkbox.h>
+#include <owl/checklst.h>
+#include <owl/chooseco.h>
+#include <owl/choosefo.h>
+#include <owl/clipboar.h>
+#include <owl/clipview.h>
+#include <owl/colmnhdr.h>
+#include <owl/combobox.h>
+#include <owl/commdial.h>
+#include <owl/control.h>
+#include <owl/controlb.h>
+#include <owl/controlg.h>
+#include <owl/coolbar.h>
+#include <owl/date.h>
+#include <owl/datetime.h>
+#include <owl/dc.h>
+#include <owl/decframe.h>
+#include <owl/decmdifr.h>
+#include <owl/dialog.h>
+#include <owl/dibitmap.h>
+#include <owl/dispatch.h>
+#include <owl/docking.h>
+#include <owl/docmanag.h>
+#include <owl/doctpl.h>
+#include <owl/docview.h>
+#include <owl/draglist.h>
+#include <owl/drawitem.h>
+#include <owl/edit.h>
+#include <owl/editfile.h>
+#include <owl/editsear.h>
+#include <owl/editview.h>
+#include <owl/eventhan.h>
+#include <owl/except.h>
+#include <owl/file.h>
+#include <owl/filedoc.h>
+#include <owl/findrepl.h>
+#include <owl/fixedpnt.h>
+#include <owl/flatctrl.h>
+#include <owl/floatfra.h>
+#include <owl/framewin.h>
+#include <owl/fscroll.h>
+#include <owl/functor.h>
+#include <owl/gadget.h>
+#include <owl/gadgetwi.h>
+#include <owl/gauge.h>
+#include <owl/gdibase.h>
+#include <owl/gdiobjec.h>
+#include <owl/geometry.h>
+#include <owl/glyphbtn.h>
+#include <owl/groupbox.h>
+#include <owl/hlpmanag.h>
+#include <owl/hotkey.h>
+#include <owl/imagelst.h>
+#include <owl/inputdia.h>
+#include <owl/layoutco.h>
+#include <owl/layoutwi.h>
+#include <owl/lclstrng.h>
+#include <owl/listbox.h >
+#include <owl/listboxview.h>
+#include <owl/listviewctrl.h>
+#include <owl/mailer.h>
+#include <owl/mci.h>
+#include <owl/mdi.h>
+#include <owl/mdichild.h>
+#include <owl/memcbox.h>
+#include <owl/menu.h>
+#include <owl/menugadg.h>
+#include <owl/messageb.h>
+#include <owl/metafile.h>
+#include <owl/modegad.h>
+#include <owl/module.h>
+#include <owl/monthcal.h>
+#include <owl/msgthred.h>
+#include <owl/notetab.h>
+#include <owl/objstrm.h>
+#include <owl/opensave.h>
+#include <owl/pager.h>
+#include <owl/panespli.h>
+#include <owl/picker.h>
+#include <owl/picklist.h>
+#include <owl/pictwind.h>
+#include <owl/pointer.h>
+#include <owl/popupgad.h>
+#include <owl/preview.h>
+#include <owl/prevwin.h>
+#include <owl/printdia.h>
+#include <owl/printer.h>
+#include <owl/progressbar.h>
+#include <owl/property.h>
+#include <owl/propsht.h>
+#include <owl/psview.h>
+#include <owl/radiobut.h>
+#include <owl/rcntfile.h>
+#include <owl/registry.h>
+#include <owl/resource.h>
+#include <owl/richedit.h>
+#include <owl/richedpr.h>
+#include <owl/richedv.h>
+#include <owl/rolldial.h>
+#include <owl/scrollba.h>
+#include <owl/scroller.h>
+#include <owl/serialze.h>
+#include <owl/shddel.h>
+#include <owl/shellitm.h>
+#include <owl/shelwapi.h>
+#include <owl/signatur.h>
+#include <owl/slider.h>
+#include <owl/splashwi.h>
+#include <owl/splitter.h>
+#include <owl/static.h>
+#include <owl/statusba.h>
+#include <owl/streambl.h>
+#include <owl/string.h>
+#include <owl/system.h>
+#include <owl/tabbed.h>
+#include <owl/tabctrl.h>
+#include <owl/textgadg.h>
+#include <owl/theme.h>
+#include <owl/thread.h>
+#include <owl/time.h>
+#include <owl/timegadg.h>
+#include <owl/tinycapt.h>
+#include <owl/toolbox.h>
+#include <owl/tooltip.h>
+#include <owl/tracewnd.h>
+#include <owl/transferbuffer.h>
+#include <owl/trayicon.h>
+#include <owl/treeviewctrl.h>
+#include <owl/uihelper.h>
+#include <owl/uimetric.h>
+#include <owl/updown.h>
+#include <owl/urllink.h>
+#include <owl/validate.h>
+#include <owl/version.h>
+#include <owl/window.h>
+#include <owl/windowev.h>
+#include <owl/winsock.h>
+#include <owl/wskaddr.h>
+#include <owl/wskhostm.h>
+#include <owl/wskservm.h>
+#include <owl/wsksock.h>
+#include <owl/wsksockd.h>
+#include <owl/wsksockm.h>
+#include <owl/wsyscls.h>
+#include <owl/wsysinc.h>
+
+
+
+#endif  // OWL_OWLALL_H

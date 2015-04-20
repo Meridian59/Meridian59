@@ -1,0 +1,36 @@
+//
+/// \file all.rc
+/// Includes all the resources defined by OWLNext.
+//
+// Part of OWLNext - the next generation Object Windows Library 
+// Copyright (c) 2014 Vidar Hasfjord 
+//
+// For more information, including license details, see 
+// http://owlnext.sourceforge.net
+//
+
+#include "owl/colmnhdr.rc"
+#include "owl/docview.rc"
+#include "owl/editfile.rc"
+#include "owl/editsear.rc"
+#include "owl/editview.rc"
+#include "owl/except.rc"
+#include "owl/glyphbtn.rc"
+#include "owl/hlpmanag.rc"
+#include "owl/inputdia.rc"
+#include "owl/listboxview.rc"
+#include "owl/listview.rc"
+#include "owl/mdi.rc"
+#include "owl/owlapp.rc"
+#include "owl/panespli.rc"
+#include "owl/picklist.rc"
+#include "owl/prevwin.rc"
+#include "owl/printer.rc"
+#include "owl/propsht.rc"
+#include "owl/rcntfile.rc"
+#include "owl/richedv.rc"
+#include "owl/slider.rc"
+#include "owl/statusba.rc"
+#include "owl/urllink.rc"
+#include "owl/validate.rc"
+#include "owl/winsock.rc"

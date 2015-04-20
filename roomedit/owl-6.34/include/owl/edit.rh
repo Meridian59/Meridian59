@@ -1,0 +1,12 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Command IDs to use with edit.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_EDIT_RH)
+#define OWL_EDIT_RH
+
+#include <owl/window.rh>
+
+#endif  // OWL_EDIT_RH

@@ -1,0 +1,145 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Menu and accelerators for use with TListBoxView
+//----------------------------------------------------------------------------
+
+#include <owl/inputdia.rh>
+#include <owl/listboxview.rh>
+
+#if defined(RC_INVOKED)
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#define NO_IDM_EDITSEARCH
+#define NO_IDA_EDITSEARCH
+#include <owl/editsear.rc>      // Get the edit menu help strings
+#include <owl/inputdia.rc>      // Get the TInputDialog dialog resource
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#if !defined(NO_IDM_LISTVIEW) && !defined(__IDM_LISTVIEW)
+#define __IDM_LISTVIEW
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDM_LISTVIEW MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  POPUP "&Edit"
+  {
+    MENUITEM  "&Undo\aCtrl+Z",        CM_EDITUNDO
+    MENUITEM  SEPARATOR
+    MENUITEM  "Cu&t\aCtrl+X",         CM_EDITCUT
+    MENUITEM  "&Copy\aCtrl+C",        CM_EDITCOPY
+    MENUITEM  "&Paste\aCtrl+V",       CM_EDITPASTE
+    MENUITEM  "&Delete\aDel",         CM_EDITDELETE
+    MENUITEM  "&Add Item\aIns",       CM_EDITADD
+    MENUITEM  "&Edit Item\aEnter",    CM_EDITEDIT
+    MENUITEM  "C&lear All\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "&Help"
+  {
+    MENUITEM  "OWL ListView", 0, INACTIVE
+  }
+}
+#endif
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDM_LISTVIEW MENU LOADONCALL MOVEABLE PURE DISCARDABLE
+{
+  POPUP "編集(&E)"
+  {
+    MENUITEM  "元に戻す(&U)\aCtrl+Z",     CM_EDITUNDO
+    MENUITEM  SEPARATOR
+    MENUITEM  "切り取り(&T)\aCtrl+X",     CM_EDITCUT
+    MENUITEM  "ｺﾋﾟｰ(&C)\aCtrl+C",         CM_EDITCOPY
+    MENUITEM  "貼り付け(&P)\aCtrl+V",     CM_EDITPASTE
+    MENUITEM  "削除(&D)\aDel",            CM_EDITDELETE
+    MENUITEM  "項目の追加(&A)\aIns",      CM_EDITADD
+    MENUITEM  "項目の編集(&E)\aEnter",    CM_EDITEDIT
+    MENUITEM  "すべて削除(&L)\aCtrl+Del", CM_EDITCLEAR
+  }
+  POPUP "ﾍﾙﾌﾟ(&H)"
+  {
+    MENUITEM  "OWL ListView", 0, INACTIVE
+  }
+}
+#endif
+
+#endif
+
+#if !defined(VK_Z) 
+#define VK_Z 0x5A 
+#endif
+#if !defined(VK_X) 
+#define VK_X 0x58
+#endif
+#if !defined(VK_C) 
+#define VK_C 0x43 
+#endif
+#if !defined(VK_V) 
+#define VK_V 0x56 
+#endif
+
+#if !defined(NO_IDA_LISTVIEW) && !defined(__IDA_LISTVIEW)
+#define __IDA_LISTVIEW
+IDA_LISTVIEW ACCELERATORS
+{
+//JJH
+#if !defined(WINELIB)
+  "z",      CM_EDITUNDO, VIRTKEY, CONTROL
+  "x",      CM_EDITCUT, VIRTKEY, CONTROL
+  "c",      CM_EDITCOPY, VIRTKEY, CONTROL
+  "v",      CM_EDITPASTE, VIRTKEY, CONTROL
+#else
+  VK_Z,      CM_EDITUNDO, VIRTKEY, CONTROL
+  VK_X,      CM_EDITCUT, VIRTKEY, CONTROL
+  VK_C,      CM_EDITCOPY, VIRTKEY, CONTROL
+  VK_V,      CM_EDITPASTE, VIRTKEY, CONTROL
+#endif
+  VK_DELETE, CM_EDITDELETE, VIRTKEY
+  VK_DELETE, CM_EDITCLEAR, VIRTKEY, CONTROL
+  VK_INSERT, CM_EDITADD,   VIRTKEY
+  VK_RETURN, CM_EDITEDIT,  VIRTKEY
+}
+#endif
+
+#if !defined(NO_IDS_LISTVIEW) && !defined(__IDS_LISTVIEW)
+#define __IDS_LISTVIEW
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_LISTNUM,  "Line number %d"
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_LISTNUM,  "%d 行目"
+}
+#endif
+
+#endif
+
+#endif  // defined(RC_INVOKED)

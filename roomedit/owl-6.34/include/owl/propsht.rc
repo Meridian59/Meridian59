@@ -1,0 +1,68 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Resources used by TPropertySheet/TPropertyPage
+//----------------------------------------------------------------------------
+#if !defined(OWL_PROPSHT_RH)
+# include <owl/propsht.rh>
+#endif
+
+#if defined(RC_INVOKED)
+
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+//
+// String resource of property sheet button captions
+//
+#if !defined(NO_IDS_PROPSHT) && !defined(__IDS_PROPSHT)
+#define __IDS_PROPSHT
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_APPLY                "&Apply"
+  IDS_BACK                  "Back"
+  IDS_CANCEL                "Cancel"
+  IDS_CLOSE                 "Close"
+  IDS_FINISH                "Finish"
+  IDS_HELP                  "&Help"
+  IDS_NEXT                  "Next"
+  IDS_OK                    "OK"  
+}
+#endif
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_APPLY                 "çXêV(&A)"
+  IDS_BACK                  "ñﬂÇÈ"
+  IDS_CANCEL                "∑¨›æŸ"
+  IDS_CLOSE                 "ï¬Ç∂ÇÈ"
+  IDS_FINISH                "äÆóπ"
+  IDS_HELP                  "ÕŸÃﬂ(&H)"
+  IDS_NEXT                  "éüÇ÷"
+  IDS_OK                    "OK"
+}
+#endif
+
+#endif  // __IDS_PROPSHT
+#endif  //  defined(RC_INVOKED)
+

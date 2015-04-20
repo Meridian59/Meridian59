@@ -1,0 +1,71 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TRecentFileList
+//----------------------------------------------------------------------------
+
+#include <owl/rcntfile.rh>
+
+#if defined(RC_INVOKED)
+
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDS_RESENTFILE) && !defined(__IDS_RESENTFILE)
+#define __IDS_RESENTFILE
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE
+{
+  CM_MRU_FIRST+0, "Reopen this closed file."
+  CM_MRU_FIRST+1, "Reopen this closed file."
+  CM_MRU_FIRST+2, "Reopen this closed file."
+  CM_MRU_FIRST+3, "Reopen this closed file."
+  CM_MRU_FIRST+4, "Reopen this closed file."
+  CM_MRU_FIRST+5, "Reopen this closed file."
+  CM_MRU_FIRST+6, "Reopen this closed file."
+  CM_MRU_FIRST+7, "Reopen this closed file."
+  CM_MRU_FIRST+8, "Reopen this closed file."
+  CM_MRU_FIRST+9, "Reopen this closed file."
+}
+#endif // !defined(BI_MSG_LANGUAGE_JAPAN
+ 
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+  CM_MRU_FIRST+0, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+1, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+2, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+3, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+4, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+5, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+6, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+7, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+8, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+  CM_MRU_FIRST+9, "指定のﾄﾞｷｭﾒﾝﾄを開く"
+#endif   // BI_MSG_LANGUAGE_JAPAN
+
+#endif //__IDS_RESENTFILE
+#undef NO_IDS_RESENTFILE
+
+#endif  // defined(RC_INVOKED)

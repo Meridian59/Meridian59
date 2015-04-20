@@ -1,0 +1,29 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Menu and accelerator IDs for use with TListBoxView
+//----------------------------------------------------------------------------
+#if !defined(OWL_LISTBOXVIEW_RH)
+#define OWL_LISTBOXVIEW_RH
+
+#include <owl/window.rh>
+
+//
+// Many list view specific CMs are just backward compatible names for common
+// CMs
+//
+#define CM_LISTUNDO         CM_EDITUNDO
+#define CM_LISTCUT          CM_EDITCUT
+#define CM_LISTCOPY         CM_EDITCOPY
+#define CM_LISTPASTE        CM_EDITPASTE
+#define CM_LISTDELETE       CM_EDITPASTE
+#define CM_LISTCLEAR        CM_EDITCLEAR
+#define CM_LISTADD          CM_EDITADD
+#define CM_LISTEDIT         CM_EDITEDIT
+
+#define IDM_LISTVIEW        32582
+#define IDA_LISTVIEW        32583
+#define IDS_LISTNUM         32584
+
+#endif  // OWL_LISTBOXVIEW_RH

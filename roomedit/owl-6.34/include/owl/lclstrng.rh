@@ -1,0 +1,53 @@
+//----------------------------------------------------------------------------
+// Borland WinSys Library
+// Copyright (c) 1994, 1996 by Borland International, All Rights Reserved
+//
+// TLocaleString - localization resource file definitions - for RC file ONLY
+//----------------------------------------------------------------------------
+#if !defined(RC_INVOKED)
+#error This file is for use in MSW resources only
+#endif
+
+#define XLAT 201 {     // custom resource type for OLE 2.01 localization
+#define XEND "\0"}     // force null terminator on resource strings
+
+#define RCLANG(main, sub) ((main<<8) + sub + 1)   // Intel byte ordering
+
+#define NEUTRAL             // a no-op for backward compatibility
+#define ENGLISH             RCLANG(0x09, 0)    // 0x0009
+#define ENGLISH_US          RCLANG(0x09, 1)    // 0x0409
+#define ENGLISH_UK          RCLANG(0x09, 2)    // 0x0809
+#define ENGLISH_AUSTRALIA   RCLANG(0x09, 3)    // 0x0C09
+#define ENGLISH_CANADA      RCLANG(0x09, 4)    // 0x1009
+#define FRENCH              RCLANG(0x0C, 0)    // 0x000C
+#define FRENCH_FRANCE       RCLANG(0x0C, 1)    // 0x040C
+#define FRENCH_BELGIUM      RCLANG(0x0C, 2)    // 0x080C
+#define FRENCH_CANADA       RCLANG(0x0C, 3)    // 0x0C0C
+#define FRENCH_SWISS        RCLANG(0x0C, 4)    // 0x100C
+#define GERMAN              RCLANG(0x07, 0)    // 0x0007
+#define GERMAN_GERMANY      RCLANG(0x07, 1)    // 0x0407
+#define GERMAN_SWISS        RCLANG(0x07, 2)    // 0x0807
+#define GERMAN_AUSTRIA      RCLANG(0x07, 3)    // 0x0C07
+#define DUTCH               RCLANG(0x13, 0)    // 0x0013
+#define DUTCH_DENMARK       RCLANG(0x13, 1)    // 0x0413
+#define DUTCH_BELGIUM       RCLANG(0x13, 2)    // 0x0813
+#define ITALIAN             RCLANG(0x10, 0)    // 0x0010
+#define ITALIAN_ITALY       RCLANG(0x10, 1)    // 0x0410
+#define ITALIAN_SWISS       RCLANG(0x10, 2)    // 0x0810
+#define PORTUGUESE          RCLANG(0x16, 0)    // 0x0016
+#define PORTUGUESE_BRAZIL   RCLANG(0x16, 1)    // 0x0416
+#define PORTUGUESE_PORTUGAL RCLANG(0x16, 2)    // 0x0816
+#define SPANISH             RCLANG(0x0a, 0)    // 0x000A
+#define SPANISH_SPAIN       RCLANG(0x0a, 1)    // 0x040A
+#define SPANISH_MEXICO      RCLANG(0x0a, 2)    // 0x080A
+#define SPANISH_MODERN      RCLANG(0x0a, 3)    // 0x0C0A
+#define DANISH              RCLANG(0x06, 0)    // 0x0006
+#define FINNISH             RCLANG(0x0b, 0)    // 0x000B
+#define NORWEGIAN           RCLANG(0x14, 0)    // 0x0014
+#define SWEDISH             RCLANG(0x1d, 0)    // 0x001D
+#define HUNGARIAN           RCLANG(0x0e, 0)    // 0x000E
+#define CZECH               RCLANG(0x05, 0)    // 0x0005
+#define SLOVAK              RCLANG(0x1b, 0)    // 0x001B
+#define POLISH              RCLANG(0x15, 0)    // 0x0015
+
+//  more languages may be added using defines in OLENLS.H

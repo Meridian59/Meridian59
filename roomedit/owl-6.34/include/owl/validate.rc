@@ -1,0 +1,58 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TValidator & derived classes
+//----------------------------------------------------------------------------
+
+#include <owl/validate.rh>
+
+#if defined(RC_INVOKED)
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDS_VALIDATOR) && !defined(__IDS_VALIDATOR)
+#define __IDS_VALIDATOR
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_VALPXPCONFORM      "Input does not conform to picture:\n""%s"""
+  IDS_VALINVALIDCHAR     "Invalid character in input"
+  IDS_VALNOTINRANGE      "Value is not in the range %ld to %ld."
+  IDS_VALNOTINLIST       "Input is not in valid-list"
+}
+#endif // !BI_MSG_LANGUAGE_JAPAN
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_VALPXPCONFORM      "入力ﾃﾞｰﾀは書式に適合しません。\n""%s"""
+  IDS_VALINVALIDCHAR     "入力ﾃﾞｰﾀ中に不正な文字があります。"
+  IDS_VALNOTINRANGE      "入力された値は %ld から %ld の範囲内ではありません。"
+  IDS_VALNOTINLIST       "入力されたﾃﾞｰﾀは有効なﾘｽﾄ中のものではありません。"
+}
+#endif // BI_MSG_LANGUAGE_JAPAN
+
+#endif //__IDS_VALIDATOR
+#undef  NO_IDS_VALIDATOR
+
+#endif

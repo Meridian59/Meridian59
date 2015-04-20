@@ -1,0 +1,81 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1991, 1996 by Borland International, All Rights Reserved
+// Copyright (c) 1998-2009 by OWLNext Contributors, All Rights Reserved
+// Version resources for ObjectWindows DLLs
+//----------------------------------------------------------------------------
+
+#include <winver.h>
+#include <owl/version.h>
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif //APSTUDIO_INVOKED
+
+#if defined(OWL_PRERELEASE) && OWL_PRERELEASE == 1
+# define OWL_FF_PRERELEASE VS_FF_PRERELEASE
+#else
+# define OWL_FF_PRERELEASE 0
+#endif
+
+#if defined(__DEBUG) && __DEBUG > 0
+# define OWL_FF_DEBUG VS_FF_DEBUG
+#else
+# define OWL_FF_DEBUG 0
+#endif
+
+#if OWL_BUILD_MIXED != 0 || OWL_BUILD_DIRTY != 0
+# define OWL_FF_PRIVATEBUILD VS_FF_PRIVATEBUILD
+# if OWL_BUILD_MIXED && OWL_BUILD_DIRTY
+#   define OWL_PRIVATEBUILD VALUE "PrivateBuild", "Built from mixed revisions and dirty source code.\0"
+# elif OWL_BUILD_MIXED
+#   define OWL_PRIVATEBUILD VALUE "PrivateBuild", "Built from mixed revisions of the source code.\0"
+# else
+#   define OWL_PRIVATEBUILD VALUE "PrivateBuild", "Built from dirty source code.\0"
+# endif
+#else
+# define OWL_FF_PRIVATEBUILD 0
+# define OWL_PRIVATEBUILD 
+#endif
+
+#if defined(_BUILDOWLDLL)
+# define OWL_VFT VFT_DLL
+#else
+# define OWL_VFT VFT_STATIC_LIB
+#endif
+
+#ifndef WINELIB
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION     OWL_FILEVERSION
+  FILEFLAGS       OWL_FF_PRERELEASE | OWL_FF_DEBUG | OWL_FF_PRIVATEBUILD
+  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+  FILEOS          VOS__WINDOWS32
+  PRODUCTVERSION  OWL_PRODUCTVERSION
+  FILETYPE        OWL_VFT
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "OWLNext Project Community\0"
+      VALUE "URL", "http://owlnext.sourceforge.net\0"
+      VALUE "FileDescription", "OWLNext C++ Application Framework Library File\0"
+      VALUE "FileVersion", OWL_FILEVERSION_STRING "\0"
+      VALUE "InternalName", "OWL\0"
+      VALUE "LegalCopyright", "See OWLNext license.\0"
+      VALUE "ProductName", "OWLNext\0"
+      VALUE "ProductVersion", OWL_PRODUCTVERSION_STRING "\0"
+      OWL_PRIVATEBUILD
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN                               //  Language    |    Translation
+    VALUE "Translation", 0x409, 0x4E4 // U.S. English | Windows Multilingual
+  END
+END
+#endif //! WINELIB
+

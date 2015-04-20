@@ -1,0 +1,79 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1998 by Yura Bidus, All Rights Reserved
+//
+// Resource used by THelpManager
+//----------------------------------------------------------------------------
+#if !defined(OWL_HLPMANAG_RH)
+# include <owl/hlpmanag.rh>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+// Context sensitive help cursor.
+#if !defined(NO_IDC_HELPCURSOR) && !defined(__IDC_HELPCURSOR)
+#define __IDC_HELPCURSOR
+IDC_HELPCURSOR CURSOR "owl/res/help.cur"
+#endif
+
+// ----------------  MENU  -------------------------------------------------
+#if !defined(NO_IDM_WHAT_IS_THIS) && !defined(__IDM_WHAT_IS_THIS)
+#define __IDM_WHAT_IS_THIS
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDM_WHAT_IS_THIS  MENU
+{
+  MENUITEM "What's this?", CM_WHAT_IS_THIS
+}
+#endif  // !BI_MSG_LANGUAGE_JAPAN
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDM_WHAT_IS_THIS  MENU
+{
+  MENUITEM "What's this?", CM_WHAT_IS_THIS
+}
+#endif  // BI_MSG_LANGUAGE_JAPAN
+
+#endif  // __IDM_WHAT_IS_THIS
+
+// Table of help hints displayed in the status bar.
+//
+#if !defined(NO_IDS_HELPSTRING) && !defined(__IDS_HELPSTRING)
+#define __IDS_HELPSTRING
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE
+{
+  CM_CONTEXTHELP,  "\nWhat's This?"
+  CM_WHAT_IS_THIS, "Get help on specified item\nWhat's This?"
+}
+#endif  // !BI_MSG_LANGUAGE_JAPAN
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+//
+#endif  // BI_MSG_LANGUAGE_JAPAN
+
+#endif  // __IDS_HELPSTRING

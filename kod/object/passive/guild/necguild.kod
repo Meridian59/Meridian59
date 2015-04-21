@@ -14,12 +14,12 @@ constants:
 
    include blakston.khd
    include protocol.khd
-   
-   CANNOT_REJOIN_TIME = 30   %% 30 6-minute intervals = 3 hours
 
-   MAX_MEMBERS = 400         %% maximum number of people allowed in a guild.
+   CANNOT_REJOIN_TIME = 30   % 30 6-minute intervals = 3 hours
 
-   THREE_PERSON_LIMIT = 240    
+   MAX_MEMBERS = 400         % Maximum number of people allowed in a guild.
+
+   THREE_PERSON_LIMIT = 240
 
    MINIMUM_MEMBERS = 3
 
@@ -30,281 +30,267 @@ constants:
    RENT_PER_ALLY = -2
    RENT_PER_ENEMY = 5
 
-   RENT_MAX_OVERDUE = 480   %% this is in 6 minute periods.
+   RENT_MAX_OVERDUE = 480   % This is in 6 minute periods.
 
 resources:
 
-   NecromancerGuild_name_rsc = "Order of Necromancers"
-   NecromancerGuild_icon_rsc = idarknes.bgf
-   NecromancerGuild_desc_rsc = "An ancient order of evil mages who labor to bring darkness "
+   necguild_name_rsc = "Order of Necromancers"
+   necguild_icon_rsc = idarknes.bgf
+   necguild_desc_rsc = \
+      "An ancient order of evil mages who labor to bring darkness "
       "into the world."
 
-   NecromancerGuild_master = "Supreme Necromancer"
-   NecromancerGuild_mistress = "Supreme Necromancer"
-   NecromancerGuild_lieutenant_Male = "Deathmage"
-   NecromancerGuild_lieutenant_female = "Deathmage"
-   NecromancerGuild_lord = "Warlock"
-   NecromancerGuild_lady = "Witch"
-   NecromancerGuild_sir = "Initiate"
-   NecromancerGuild_madame = "Initiate"
-   NecromancerGuild_apprentice = "Fledgling"
-   NecromancerGuild_apprenticette = "Fledgling"
+   necguild_master = "Supreme Necromancer"
+   necguild_mistress = "Supreme Necromancer"
+   necguild_lieutenant_Male = "Deathmage"
+   necguild_lieutenant_female = "Deathmage"
+   necguild_lord = "Warlock"
+   necguild_lady = "Witch"
+   necguild_sir = "Initiate"
+   necguild_madame = "Initiate"
+   necguild_apprentice = "Fledgling"
+   necguild_apprenticette = "Fledgling"
 
-   NecromancerGuild_threeperson_failing = "The Order of the Necromancers has fewer than 3 members.  "
-         "If you do not get your membership up to three in the next %i %s, "
-         "my grip on this plane of reality will slip and you will all perish along with me!"
+   necguild_threeperson_failing = \
+      "The Order of the Necromancers has fewer than 3 members.  If you do "
+      "not get your membership up to three in the next %i %s, my grip on this "
+      "plane of reality will slip and you will all perish along with me!"
 
-   NecromancerGuild_threeperson_failed = "The Order of the Necromancers has been disbanded for lack of membership."
+   necguild_threeperson_failed = \
+      "The Order of the Necromancers has been disbanded for "
+      "lack of membership."
 
-   NecromancerGuild_welcome = "~BPlease welcome the newest member of %s%q, %s."
-   NecromancerGuild_induct_already_guilded = "You are already the member of a guild."
-   NecromancerGuild_induct_already_member = "You are already a member of this guild."
+   necguild_demotee = "~B%q has demoted you to the rank of %s!"
+   necguild_demoter = "~BYou demote %q to the the rank of %s!"
+   necguild_demoted = "~B%s has demoted %q to the rank of %s."
+   necguild_demotee_no_demoter = "~BYou have been demoted to the rank of %s!"
 
-   NecromancerGuild_lieut_cant_promote = "%ss cannot promote guild members above the rank of %s."
-   NecromancerGuild_cant_promote_lieut = "You cannot promote someone above %s because there may only be one %s."
-   NecromancerGuild_cant_promote_capt = "A guild may not have more than two members of rank %s."
-   NecromancerGuild_cant_promote_sire = "There are too many members of rank %s to promote another to that status."
+   necguild_descension = "~BYou have been ousted as %s of %s%q!"
+   necguild_ascension = "~BCongratulations!  You are the new %s of %s%q!"
 
-   NecromancerGuild_promotee = "~B%q has promoted you to the rank of %s!"
-   NecromancerGuild_promoter = "~BYou promote %q to the the rank of %s."
-   NecromancerGuild_promoted = "~B%s has promoted %q to the rank of %s."
-   NecromancerGuild_promotee_no_promoter = "~BYou have been promoted to the rank of %s!"
-   NecromancerGuild_promote_too_high = "You can't promote someone to a rank so high it doesn't exist!"
+   necguild_new_master = "~BCongratulate %q, the new %s of %s%q!"
+   necguild_abdicate = "~B%s has chosen to abdicate his position leading %s%q."
 
-   NecromancerGuild_demotee = "~B%q has demoted you to the rank of %s!"
-   NecromancerGuild_demoter = "~BYou demote %q to the the rank of %s!"
-   NecromancerGuild_demoted = "~B%s has demoted %q to the rank of %s."
-   NecromancerGuild_demotee_no_demoter = "~BYou have been demoted to the rank of %s!"
+   necguild_mature = \
+      "~B%s%q is now a mature guild, meaning it can now own "
+      "and conquer guild halls."
 
-   NecromancerGuild_demote_apprentice = "You can't demote someone of rank %s!  They can't go any lower!"
-   NecromancerGuild_demote_equal_higher = "You can't demote someone who is equal or better to you in rank!"
+   necguild_hour_rsc = "hour"
+   necguild_hours_rsc = "hours"
 
-   NecromancerGuild_cant_vote_outsider = "You can't vote for %q%s, who does not belong to %s%q!"
-   NecromancerGuild_cant_vote_nonuser = "%s%s thanks you for your support.  Really."
-
-   NecromancerGuild_descension = "~BYou have been ousted as %s of %s%q!"
-   NecromancerGuild_ascension = "~BCongratulations!  You are the new %s of %s%q!"
-
-   NecromancerGuild_reassure = "~B%s promises you continued political support."
-   NecromancerGuild_talking_to_self = "~BYou reassure yourself once again that you really do like yourself."
-   NecromancerGuild_support_withers = "~BYou can feel your political support wither."
-
-   NecromancerGuild_support_self = "~BYou decide to make your own bid to lead %s%q."
-   NecromancerGuild_support_other = "~BYou pledge your support to %q to lead %s%q."
-   NecromancerGuild_supported = "~B%s pledges to support you on your bid to lead %s%q."
-
-   NecromancerGuild_new_master = "~BCongratulate %q, the new %s of %s%q!"
-   NecromancerGuild_abdicate = "~B%s has chosen to abdicate his position leading %s%q."
-
-   NecromancerGuild_allies_defunct = "~BYour honorable ally, %s%q, has disbanded."
-   NecromancerGuild_enemies_defunct = "~BYour hated enemy, %s%q, has disbanded."
-
-   NecromancerGuild_cant_ally_enemy = "You cannot declare an alliance with %s%q!  They are your sworn enemies!"
-   NecromancerGuild_already_allies = "Your guild already has an alliance with %s%q!"
-   NecromancerGuild_not_member_currently = "You are not a member of %s%q and cannot form alliances on their behalf!"
-   NecromancerGuild_not_qualified = "You are not high enough in rank to forge alliances with other guilds!"
-   NecromancerGuild_cant_enemy_ally = "You cannot declare an allied guild an enemy without first ending the alliance!"
-   NecromancerGuild_already_enemies = "Members of %s%q are already hated enemies of %s%q!"
-
-   NecromancerGuild_new_allies = "~BToday marks the forging of an alliance between %s%q and %s%q."
-   NecromancerGuild_new_enemies = "~BBe it known that members of %s%q are sworn enemies of %s%q!"
-   NecromancerGuild_declared_enemies = "~BBe it known that %s%q have declared themselves the enemies of %s%q!"
-   NecromancerGuild_declared_allies = "~BBe it known that %s%q have declared themselves allies to your guild, %s%q!"
-
-   NecromancerGuild_end_alliance = "~BBe it known that the alliance twixt %s%q and %s%q has been shattered!"
-   NecromancerGuild_not_enemies = "~BBe it known that members of %s%q are no longer the enemies of %s%q."
-
-   NecromancerGuild_end_declared_alliance = "~BBe it known that %s%q have decided to end their alliance with %s%q."
-
-   NecromancerGuild_not_declared_enemies = "~BBe it known that members of %s%q have ceased their hostilities towards %s%q."
-
-   NecromancerGuild_mature = "~B%s%q is now a mature guild, meaning it can now own and conquer guild halls."
-
-   NecromancerGuild_hour_rsc = "hour"
-   NecromancerGuild_hours_rsc = "hours"
-
-   NecromancerGuild_rent_nonpayment = "~BYour dark queen has perished from starvation.  "
+   necguild_rent_nonpayment = \
+      "~BYour dark queen has perished from starvation.  "
       "Your amulet detonates, ripping your body to shreds."
-   NecromancerGuild_rent_due_5 = "~BQueen Venya'cyr tells you, \"~r~BOh, my negligent servants!  "
+   necguild_rent_due_5 = \
+      "~BQueen Venya'cyr tells you, \"~r~BOh, my negligent servants!  "
       "My hunger is a burning coal within my breast, and you have abandoned me!  "
       "If I do not feed suffienctly in the next %i %s, "
       "I will slip back into the darkness, and you shall all follow me!~n~B\""
-   NecromancerGuild_rent_due_4 = "~BQueen Venya'cyr tells you, \"~r~BI hunger very greatly, my minions.  "
+   necguild_rent_due_4 = \
+      "~BQueen Venya'cyr tells you, \"~r~BI hunger very greatly, my minions.  "
       "You have been grossly negligent in your duties to me.  "
       "My physical form is dissolving...  If I do not feed suffienctly in the next %i %s, "
       "I will slip back into the darkness, and you shall all follow me!~n~B\""
-   NecromancerGuild_rent_due_3 = "~BQueen Venya'cyr tells you, \"~r~BI hunger very greatly, my minions.  "
+   necguild_rent_due_3 = \
+      "~BQueen Venya'cyr tells you, \"~r~BI hunger very greatly, my minions.  "
       "My physical form is dissolving...  If I do not feed suffienctly in the next %i %s, "
       "I will slip back into the darkness, and you shall all follow me!~n~B\""
-   NecromancerGuild_rent_due_2 = "~BQueen Venya'cyr tells you, \"~r~BI hunger greatly, my minions.  "
+   necguild_rent_due_2 = \
+      "~BQueen Venya'cyr tells you, \"~r~BI hunger greatly, my minions.  "
       "My physical form is dissolving...  If I do not feed suffienctly in the next %i %s, "
       "I will slip back into the darkness, and you shall all follow me!~n~B\""
-   NecromancerGuild_rent_due_1 = "~BQueen Venya'cyr tells you, \"~r~BI hunger, my minions.  "
+   necguild_rent_due_1 = \
+      "~BQueen Venya'cyr tells you, \"~r~BI hunger, my minions.  "
       "My physical form is dissolving...  If I do not feed suffienctly in the next %i %s, "
       "I will slip back into the darkness, and you shall all follow me!~n~B\""
 
-   NecromancerGuild_new_hall = "~B%s is the new home of %s%q!"
-   NecromancerGuild_abandon_hall = "~B%s is no longer the home of %s%q!"
-   NecromancerGuild_hall_conquered = "~B%s, home of %s%q, has been conquered!"
-   NecromancerGuild_hall_betrayed = "~B%s, home of %s%q, was betrayed from within!"
+   necguild_new_hall = "~B%s is the new home of %s%q!"
+   necguild_hall_conquered = "~B%s, home of %s%q, has been conquered!"
+   necguild_hall_betrayed = "~B%s, home of %s%q, was betrayed from within!"
 
-   NecromancerGuild_ranks_full = "~BYou could not be accepted into %s%q because the ranks are already full."
-   NecromancerGuild_ranks_full_inductor = "~B%s%s could not be accepted into %s%q because the ranks are already full."
+   necguild_cannot_rejoin = \
+      "~BThis ex-member of the Order may not rejoin yet."
+   necguild_you_cannot_rejoin = "~BYou may not rejoin the Order yet."
 
-   NecromancerGuild_invitation_one = "You may only have one outstanding invitation at a time."
-   NecromancerGuild_invitation_one_inductee = "Someone in your guild has already issued %s%s an invitation."
+   necguild_new_password = "~B%s's password has been changed."
 
-   NecromancerGuild_cannot_rejoin = "~BThis ex-member of the Order may not rejoin yet."     
-   NecromancerGuild_you_cannot_rejoin = "~BYou may not rejoin the Order yet."     
+   necguild_lich = "Venya'cyr, Queen of Brax"
+   necguild_newly_formed = "~BThe Order of Necromancers has been reborn!"
+   necguild_creation_mail = \
+      "Subject: The Order of Necromancers has been reborn!\n"
+      "I congratulate you on the formation of The Order of Necromancers!  "
+      "However, there are some rules that you should know about.\n\n"
+      "MEMBERSHIP:  I leave you to determine the details of the Order's "
+      "membership, but if the Order does not have at least 3 members in it, "
+      "I will not be able to maintain my grasp on this plane.  Thus, your "
+      "first priority now should be to recruit more necromancers to the "
+      "Order.\n\n"
+      "INVITING NEW MEMBERS:  When you invite a potential member into the "
+      "fold, an invitation object is created in their inventory, which they "
+      "may then choose to accept or ignore.  An invitation will always be "
+      "created, even if someone may not join the Order for some reason.  A "
+      "necromancer must be of reasonably high power before he may join the "
+      "Order, and may not be a member of a mortal guild at the same time.\n\n"
+      "RANKS:  You may promote people to different ranks, thus giving them "
+      "more power as well as more responsibility.  You may also keep "
+      "necromancers at low ranks if you do not feel prepared to trust them.  "
+      "These are the ranks:\n"
+      "  +++ %s:  have no special abilities, other than to vote for the "
+      "leader of their choice.  They may not even open the doors to my inner "
+      "sanctum.\n"
+      "  +++ %s:  only have the ability to vote.\n"
+      "  +++ %s:  have the ability to vote and invite new members into "
+      "the guild.\n"
+      "  +++ %s:  may vote, invite new members in, kick unruly members out, "
+      "promote or demote people of lower ranks than themselves, and form or "
+      "shatter alliances.\n"
+      "  +++ %s:  has all powers associated with the Order.\n\n"
+      "TRIBUTE:  My continued presence on this plane of reality requires that "
+      "the Order provide me with a steady flow of life essence.  My hunger "
+      "grows at a regular rate, and the rate of increase is affected by many "
+      "factors, including the number of members in your guild and the number "
+      "of enemies and allies you have declared.  Remember, much of your power "
+      "originates from me - should you let me go hungry, the members of the "
+      "Order will all suffer greatly!\n\n"
+      "Anyone in the Order may supply me with a portion of the life essence "
+      "they have stored in their own bodies, by simply approaching me and "
+      "saying that they wish to pay tribute.  However, to avoid confusion, "
+      "it is recommended that you assign one person to decide whose turn it "
+      "is to slake my thirst.  To find out how urgent is my hunger, simply "
+      "ask me.\n\n"
+      "  -- Venya'cyr, Eternal Queen of Brax"
 
-   NecromancerGuild_new_password = "~B%s's password has been changed."
+   necguild_creation2_mail = \
+      "Subject: Defend my fortress well!\n"
+      "MY FORTRESS:  My fortress is now yours to inhabit and call your home.  "
+      "Though much of it was destroyed when Brax was swallowed by the earth, "
+      "some of my magicks have remained intact.  You may rest here in "
+      "relative safety from the outside world, and will heal from being close "
+      "to my center of power.  The newsglobe here allows members of the "
+      "Order to keep each other apprised of current news, and there is a "
+      "secret door outside with a password that you may set (until you choose "
+      "one, the password is \"deathmage\").  The door to my inner sanctum can "
+      "only be opened by necromancers of sufficient rank.\n"
+      "Beware those who wield the Sword of the Hunt, my pet!  This weapon is "
+      "truly to be feared, and must be guarded well - thanks to the accursed "
+      "mage Tendrath, it periodically appears here in my fortress.  Luckily, "
+      "the maze which I constructed to torment my prisoners is still "
+      "functional, and is the only route to gain access to my inner sanctum "
+      "or to the chambers where the Sword appears.  There are a number of "
+      "levers in the secret room beyond the password-protected door which "
+      "control the configuration of the maze.  Each lever, when pulled, will "
+      "raise or lower a few sections of the maze's walls.  I also enchanted "
+      "a number of crystal balls with which you may spy on the maze from a "
+      "four different vantage points, so that you may be able to spot "
+      "intruders and thwart their progress through the labyrinth.  You would "
+      "do well to master the manipulation of the maze, for it is vital that "
+      "you keep me safe from harm.  Your continued existence is now "
+      "inextricably intertwined with my own;  should a band of pesky mortals "
+      "break through to my inner sanctum and destroy my current physical "
+      "manifestation, all members of the Order shall perish along with me.\n\n"
+      "Serve me well and my power is yours to share, my dark minion!  "
+      "Together, we shall sow the seeds of destruction and devour the world!"
+      "  -- Venya'cyr, Eternal Queen of Brax"
 
-   NecromancerGuild_lich = "Venya'cyr, Queen of Brax"
-   NecromancerGuild_newly_formed = "~BThe Order of Necromancers has been reborn!"
-   NecromancerGuild_creation_mail ="Subject: The Order of Necromancers has been reborn!\n"
-                        "I congratulate you on the formation of The Order of Necromancers!  "
-                        "However, there are some rules that you should know about.\n\n"
-                        "MEMBERSHIP:  I leave you to determine the details of the Order's membership, "
-                        "but if the Order does not have at least 3 members in it, I will not be able to maintain "
-                        "my grasp on this plane.  Thus, your first priority now should be to recruit more "
-                        "necromancers to the Order.\n\n"
-                        "INVITING NEW MEMBERS:  When you invite a potential member into the fold, an "
-                        "invitation object is created in their inventory, which they may then choose "
-                        "to accept or ignore.  An invitation will always be created, even if someone may not join "
-                        "the Order for some reason.  A necromancer must be of reasonably high power before he "
-                        "may join the Order, and may not be a member of a mortal guild at the same time.\n\n"
-                        "RANKS:  You may promote people to different ranks, thus giving them more "
-                        "power as well as more responsibility.  You may also keep necromancers at low "
-                        "ranks if you do not feel prepared to trust them.  These are the ranks:\n"
-                        "  +++ %s:  have no special abilities, other than to "
-                        "vote for the leader of their choice.  They may not even open the doors to my inner "
-                        "sanctum.\n"
-                        "  +++ %s:  only have the ability to vote.\n"
-                        "  +++ %s:  have the ability to vote and invite new members into the guild.\n"
-                        "  +++ %s:  may vote, invite new members in, kick unruly members out, promote or demote "
-                        "people of lower ranks than themselves, and form or shatter alliances.\n"
-                        "  +++ %s:  has all powers associated with the Order.\n\n"
-                        "TRIBUTE:  My continued presence on this plane of reality requires that the Order provide "
-                        "me with a steady flow of life essence.  My hunger grows at a regular rate, and the rate of "
-                        "increase is affected by many factors, including the number of members in your "
-                        "guild and the number of enemies and allies you have declared.  Remember, much of your "
-                        "power originates from me - should you let me go hungry, the members of the Order will "
-                        "all suffer greatly!\n\n"
-                        "Anyone in the Order may supply me with a portion of the life essence they have stored in "
-                        "their "
-                        "own bodies, by simply approaching me and saying that they wish to pay tribute.  However, "
-                        "to avoid confusion, it is recommended that you assign one person to decide whose turn "
-                        "it is to slake my thirst.  To find out how urgent is my hunger, simply ask me.\n\n"
-                        "  -- Venya'cyr, Eternal Queen of Brax"
-   NecromancerGuild_creation2_mail ="Subject: Defend my fortress well!\n"
-                        "MY FORTRESS:  My fortress is now yours to inhabit and call your home.  Though much of it "
-                        "was destroyed when Brax was swallowed by the earth, some of my magicks have remained "
-                        "intact.  You may rest here in relative safety from the outside world, and will heal "
-                        "from being close to my center of power.  The newsglobe here allows members of the "
-                        "Order to keep each other apprised of current news, and there is a secret door outside "
-                        "with a password that you may set (until you choose one, the password "
-                        "is \"deathmage\").  The door to my inner sanctum can only "
-                        "be opened by necromancers of sufficient rank.\n"
-                        "Beware those who wield the Sword of the Hunt, my pet!  "
-                        "This weapon is truly to be feared, and must be guarded well - thanks to the accursed mage "
-                        "Tendrath, it periodically appears here in my fortress.  Luckily, "
-                        "the maze which I constructed to torment my prisoners is still functional, and is "
-                        "the only route to gain access to my inner sanctum or to the chambers where the Sword appears.  "
-                        "There are a number of levers in the secret room beyond the password-protected door "
-                        "which control the configuration of the maze.  Each lever, when pulled, will "
-                        "raise or lower a few sections of the maze's walls.  I also enchanted a number of crystal "
-                        "balls with which you may spy on the maze from a four different vantage points, so that "
-                        "you may be able to spot intruders and thwart their progress through the labyrinth.  "
-                        "You would do well to master the manipulation of the maze, for it is vital that you keep "
-                        "me safe from harm.  Your continued existence is now inextricably intertwined with my own;  "
-                        "should a band of pesky mortals break through to my inner sanctum and destroy my current "
-                        "physical manifestation, all members of the Order shall perish along with me.\n\n"
-                        "Serve me well and my power is yours to share, my dark minion!  Together, we shall sow "
-                        "the seeds of destruction and devour the world!"
-                        "  -- Venya'cyr, Eternal Queen of Brax"
+   necguild_disbanded_mail = \
+      "Subject: The Order is no more\n"
+      "The Order of the Necromancers has vanished into the night.  "
+      "I sleep once more, my pets."
+   necguild_deposed_mail = \
+      "Subject: Mutiny in the ranks\n"
+      "You were deposed as %s of %s%q while you were away.  "
+      "%q is the new %s.\n\n"
+   necguild_new_master_mail = \
+      "Subject: Mutiny in the ranks\n"
+      "There was a change in leadership while you were away.  "
+      "%q is the new %s of %s%q.\n\n"
+   necguild_new_hall_mail = \
+      "Subject: New guild hall\n"
+      "%s was declared the new home of %s%q while you were away.\n\n"
+   necguild_ascension_mail = \
+      "Subject: Congratulations!\n"
+      "You were chosen to be the new %s of %s%q!\n\n"
 
-   NecromancerGuild_disbanded_mail = "Subject: The Order is no more\n"
-                          "The Order of the Necromancers has vanished into the night.  "
-                          "I sleep once more, my pets."
-   NecromancerGuild_deposed_mail = "Subject: Mutiny in the ranks\n"
-                        "You were deposed as %s of %s%q while you were away.  "
-                        "%q is the new %s.\n\n"
-   NecromancerGuild_new_master_mail = "Subject: Mutiny in the ranks\n"
-                           "There was a change in leadership while you were away.  "
-                           "%q is the new %s of %s%q.\n\n"
-   NecromancerGuild_new_hall_mail = "Subject: New guild hall\n"
-                         "%s was declared the new home of %s%q while you were away.\n\n"
-   NecromancerGuild_ascension_mail = "Subject: Congratulations!\n"
-                         "You were chosen to be the new %s of %s%q!\n\n"
-
-   NecromancerGuild_default_password = "deathmage"
+   necguild_default_password = "deathmage"
 
 classvars:
 
-   vrIcon = NecromancerGuild_icon_rsc
-   vrDesc = NecromancerGuild_desc_rsc
+   vrIcon = necguild_icon_rsc
+   vrDesc = necguild_desc_rsc
+
+   vrCantRejoin = necguild_cannot_rejoin
+   vrYouCantRejoin = necguild_you_cannot_rejoin
 
 properties:
 
-   vrName = NecromancerGuild_name_rsc              %% settable by players
+   vrName = necguild_name_rsc  % Settable by players.
 
-   prMaster                             %% all hopefully settable by players.
+   prMaster  % All hopefully settable by players.
    prMistress
-   prLieutenant_Male 
+   prLieutenant_Male
    prLieutenant_Female
-   prLady 
-   prLord 
+   prLady
+   prLord
    prMadame
-   prSir 
+   prSir
    prApprentice_Male
    prApprentice_Female
 
    piMature = 0
 
-   plMembers   = $        %%% this is a list of three element lists.
-                          %%% first element:  a member's object ID
-                          %%% second element:  a member's rank
-                          %%% third element:  that member's current 'vote'.
-                          %%%           (ignored if guild is assassination)      
+   plMembers   = $        % this is a list of three element lists.
+                          % first element:  a member's object ID
+                          % second element:  a member's rank
+                          % third element:  that member's current 'vote'.
+                          % (ignored if guild is assassination)
 
    piGuild_Hall = $
 
-   piSuccession = GS_VOTING     %%% as of May 31, one form of succession: Voting
+   % One form of succession: Voting
+   piSuccession = GS_VOTING
 
-   pbSecret = TRUE             %%% secret societies do not advertise their
-                                %%% existence in who lists or look descs.
-                                %%% set upon creation
+   % Secret societies do not advertise their existence in
+   % who lists or look descs. Set upon creation.
+   pbSecret = TRUE             
 
    ptMaintenance = $
-   piThreePersonWarning = 0      %%%% If a player has less than three members
-                                 %%%% for 24 hours in a row, delete the guild.
 
-   plInvitations = $   %%%% These are stored only so that, if the guild goes
-                       %%%% while an invitation is extended, the invitation
-                       %%%% disappears.
+   % If the guild has less than three members for 24 hours in a row, delete it.
+   piThreePersonWarning = 0
 
-   plTreaties = $   %%%% These are only stored so that, if the guild is deleted,
-                    %%%% all treaties are deleted.
+   % These are stored only so that, if the guild goes while an
+   % invitation is extended, the invitation disappears.
+   plInvitations = $
 
-   plAllies = $     %%%% Keeps track of your allies.  Main benefit of being
-                    %%%% an ally:  you can share a guild hall.  Ally lists
-                    %%%% must always match.
+   % These are only stored so that, if the guild is deleted,
+   % all treaties are deleted.
+   plTreaties = $
 
-   plEnemies = $    %%%% Keeps track of your enemies.  Main benefit of being
-                    %%%% an enemy?  You get warned if one attacks your guild hall.
+   % Keeps track of your allies. Ally lists must always match.
+   plAllies = $
 
-   plEnemiesOf = $  %%%% list of guilds that has declared YOURS as an enemy
-   plAlliesOf = $   %%%% list of guilds that has declared YOURS as an ally
+   % Keeps track of your enemies.  Main benefit of being an enemy?
+   % You get warned if one attacks your guild hall.
+   plEnemies = $
 
-   plFormerMembers = $   %%%% ex-members cannot rejoin for two hours
+   % List of guilds that has declared YOURS as an enemy.
+   plEnemiesOf = $
+   % List of guilds that has declared YOURS as an ally.
+   plAlliesOf = $
 
-   piRent = 167               % two kills a day - units of piHunger*10000
-   piRentPerMember = 42       % plus half a kill per member
-   piRentPerAlly = 21         % plus a quarter kill per ally/enemy
+   % Ex-members cannot rejoin for two hours.
+   plFormerMembers = $   %%%
+
+   % Two kills a day - units of piHunger * 10000.
+   piRent = 167
+   % Plus half a kill per member.
+   piRentPerMember = 42
+   % Plus a quarter kill per ally/enemy.
+   piRentPerAlly = 21
    piRentDue = 0
    piRentCounter = 0
 
-   psPassword      
+   psPassword
 
    piColor1 = XLAT_TO_GRAY
    piColor2 = XLAT_TO_GRAY
@@ -312,57 +298,59 @@ properties:
 
 messages:
 
-   Constructor( master = $ )
-
+   Constructor(master = $)
    {
-     local sTemp;
-     ClearTempString();
-     AppendTempString(NecromancerGuild_name_rsc);
-     sTemp = createString();
-     setString(sTemp,GetTempString());
-     vrName = sTemp;
+      local sTemp;
 
-     prMaster = NecromancerGuild_master;
-     prMistress = NecromancerGuild_mistress;
-     prLieutenant_Male = NecromancerGuild_lieutenant_male;
-     prLieutenant_Female = NecromancerGuild_lieutenant_female;
-     prLady = NecromancerGuild_lady;
-     prLord = NecromancerGuild_lord;                            %% text names for guild ranks
-     prMadame = NecromancerGuild_madame;
-     prSir = NecromancerGuild_sir;
-     prApprentice_Male = NecromancerGuild_apprentice;
-     prApprentice_Female = NecromancerGuild_apprenticette;
+      ClearTempString();
+      AppendTempString(necguild_name_rsc);
 
-     pbSecret = TRUE;                      %% is the guild secret?
-     piMature = 0;
+      sTemp = SetString($,GetTempString());
+      vrName = sTemp;
 
-     piSuccession = GS_VOTING;              %% what path of succession
-                                             %% allows the leadership to
-                                             %% change hands?
+      % Text names for guild ranks.
+      prMaster = necguild_master;
+      prMistress = necguild_mistress;
+      prLieutenant_Male = necguild_lieutenant_male;
+      prLieutenant_Female = necguild_lieutenant_female;
+      prLady = necguild_lady;
+      prLord = necguild_lord;
+      prMadame = necguild_madame;
+      prSir = necguild_sir;
+      prApprentice_Male = necguild_apprentice;
+      prApprentice_Female = necguild_apprenticette;
 
-     plMembers = cons([master, RANK_MASTER, master], plMembers);
+      % Is the guild secret?
+      pbSecret = TRUE;
+      piMature = 0;
 
-     send(master,@setguild,#guild_obj=self);
-     send(self,@resetpowers,#who=master,#rank=RANK_MASTER);
+      % What path of succession allows the leadership to change hands?
+      piSuccession = GS_VOTING;
 
+      plMembers = Cons([master, RANK_MASTER, master], plMembers);
 
-     send(master,@msgsenduser,#message_rsc=NecromancerGuild_newly_formed);
-     send(master,@receivenestedmail,#from=NecromancerGuild_lich,
-        #dest_list=[master],#nest_list=[4,NecromancerGuild_creation_mail,
-                          4,prApprentice_Male,4,prSir,4,prLord,4,prLieutenant_male,4,prMaster]);
-     send(master,@receivenestedmail,#from=NecromancerGuild_lich,
-        #dest_list=[master],#nest_list=[4,NecromancerGuild_creation2_mail]);
+      Send(master,@SetGuild,#guild_obj=self);
+      Send(self,@ResetPowers,#who=master,#rank=RANK_MASTER);
 
-     ptMaintenance = createtimer(self,@MaintenanceTimer,send(sys,@GetMaintenanceDelay));
+      Send(master,@MsgSendUser,#message_rsc=necguild_newly_formed);
+      Send(master,@ReceiveNestedMail,#from=necguild_lich,
+            #dest_list=[master],#nest_list=[4,necguild_creation_mail,
+            4,prApprentice_Male,4,prSir,4,prLord,
+            4,prLieutenant_male,4,prMaster]);
+      Send(master,@ReceiveNestedMail,#from=necguild_lich,
+            #dest_list=[master],#nest_list=[4,necguild_creation2_mail]);
 
-     piThreePersonWarning = THREE_PERSON_LIMIT;
-     psPassword = NecromancerGuild_default_password;
+      ptMaintenance = CreateTimer(self,@MaintenanceTimer,
+                           Send(SYS,@GetMaintenanceDelay));
 
-     plFormerMembers = $;
+      piThreePersonWarning = THREE_PERSON_LIMIT;
+      psPassword = necguild_default_password;
 
-     send(SYS,@newguild,#what=self);
+      plFormerMembers = $;
 
-     propagate;
+      Send(SYS,@NewGuild,#what=self);
+
+      propagate;
    }
 
    IsMature()
@@ -372,94 +360,102 @@ messages:
 
    MaintenanceTimer()
    "Do five things here: "
-   "1) Check to be sure they have 3 members."
-   "% 2) Check for guild maturity."
-   "3) Check to ensure there is a guildmaster."
-   "4) Accrue rent."
-   "5) Check to see if former members of the guild can once more rejoin the guild."
+   "1) Check to be sure they have 3 members.  "
+   "2) Check for guild maturity.  "
+   "3) Check to ensure there is a guildmaster.  "
+   "4) Accrue rent.  "
+   "5) Check to see if former members of the guild can once more "
+   "rejoin the guild."
    {
-     local i, hourhours, timeleft, bPKServer;                    
+      local i, hourhours, timeleft, bPKServer;
 
-     if send(self,@getguildmaster) = $
-       {
-         %% this should never happen!  This is just in as a failsafe, since
-         %% some commands are guildmaster only!
-         DEBUG("Guild somehow ended up without a guildmaster!!!");
+      if Send(self,@GetGuildMaster) = $
+      {
+         % This should never happen!  This is just in as a failsafe, since
+         % some commands are guildmaster only!
+         Debug("Guild somehow ended up without a guildmaster!!!");
 
-         send(self,@countvotes);
+         % CountVotes will choose whoever has the most political support.
+         Send(self,@CountVotes);
+      }
 
-         %% countvotes will choose whoever has the most political support 
-       }
-     if length(plMembers) < MINIMUM_MEMBERS
-       {
+      if Length(plMembers) < MINIMUM_MEMBERS
+      {
          if piThreePersonWarning = 0
-           {
-              piThreePersonWarning = THREE_PERSON_LIMIT;
-           }
+         {
+            piThreePersonWarning = THREE_PERSON_LIMIT;
+         }
          else
-           {
-              piThreePersonWarning = piThreePersonWarning - 1;
-           }
+         {
+            piThreePersonWarning = piThreePersonWarning - 1;
+         }
          if piThreePersonWarning = 0
-           {
-             for i in plMembers
-               {
-                 post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_threeperson_failed);
-               }
-             send(&NecromancerAmulet,@OrderOfNecromancersDisbanded);
-             %send(self, @delete,#timerdelete=TRUE);
-             return;
-           }
-         else
-           {
-            if (piThreePersonWarning mod 40) = 0
-            or ((piThreePersonWarning mod 10) = 0 and piThreePersonWarning < 40)
-             {
-              if piThreePersonWarning = 10
-                {
-                   hourhours = NecromancerGuild_hour_rsc;
-                }
-              else
-                {
-                   hourhours = NecromancerGuild_hours_rsc;
-                }
-              for i in plMembers
-                {
-                  post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_threeperson_failing,
-                    #parm1=piThreePersonWarning/10,#parm2=hourhours);
-                }
-              }
-           }
-       }
-     else
-       {
-          piThreePersonWarning = 0;
-       }
-
-     send(self,@accrueRent);
-     for i in plFormerMembers
-        {
-           timeleft = Nth(i,2) - 1;
-           if timeleft < 1
-             {
-                plFormerMembers = DelListElem(plFormerMembers,i); 
-             }
-           else
-             {
-                setnth(i,2,timeleft);
-             }
-        }
-     if piGuild_hall <> $ and send(send(self,@getguildhall),@getguildowner) <> self
-       {
-          DEBUG("Guild points to a guild hall that does not point back to it!");
-          piGuild_hall = $;
-          for i in plMembers
+         {
+            for i in plMembers
             {
-              post(self,@resetpowers,#who=first(i),#rank=send(self,@getrank,#who=first(i)));
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_threeperson_failed);
             }
-       }
-     ptMaintenance = createtimer(self,@MaintenanceTimer,send(SYS,@getmaintenancedelay));
-     return;
+            Send(&NecromancerAmulet,@OrderOfNecromancersDisbanded);
+            %Send(self, @delete,#timerdelete=TRUE);
+
+            return;
+         }
+         else
+         {
+            if (piThreePersonWarning MOD 40) = 0
+               OR ((piThreePersonWarning MOD 10) = 0
+                  AND piThreePersonWarning < 40)
+            {
+               if piThreePersonWarning = 10
+               {
+                  hourhours = necguild_hour_rsc;
+               }
+               else
+               {
+                  hourhours = necguild_hours_rsc;
+               }
+
+               for i in plMembers
+               {
+                  Post(First(i),@MsgSendUser,#message_rsc=necguild_threeperson_failing,
+                        #parm1=piThreePersonWarning/10,#parm2=hourhours);
+               }
+            }
+         }
+      }
+      else
+      {
+         piThreePersonWarning = 0;
+      }
+
+      Send(self,@AccrueRent);
+      for i in plFormerMembers
+      {
+         timeleft = Nth(i,2) - 1;
+         if timeleft < 1
+         {
+            plFormerMembers = DelListElem(plFormerMembers,i); 
+         }
+         else
+         {
+            SetNth(i,2,timeleft);
+         }
+      }
+
+      if piGuild_hall <> $
+         AND Send(Send(self,@GetGuildHall),@GetGuildOwner) <> self
+      {
+         Debug("Guild points to a guild hall that does not point back to it!");
+         piGuild_hall = $;
+         for i in plMembers
+         {
+            Post(self,@ResetPowers,#who=First(i),
+                  #rank=Send(self,@GetRank,#who=First(i)));
+         }
+      }
+      ptMaintenance = CreateTimer(self,@MaintenanceTimer,Send(SYS,@GetMaintenanceDelay));
+
+      return;
    }
 
    AccrueRent()
@@ -475,9 +471,10 @@ messages:
       {
          for i in plMembers
          {
-            post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_rent_nonpayment);
+            Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_nonpayment);
          }
-         send(&NecromancerAmulet,@OrderOfNecromancersDisbanded);
+         Send(&NecromancerAmulet,@OrderOfNecromancersDisbanded);
+
          return;
       }
 
@@ -486,15 +483,18 @@ messages:
       {
          rent = rent + piRentPerMember;
       }
+
       for i in plAllies
       {
          rent = rent + piRentPerAlly;
       }
+
       for i in plEnemies
       {
-          rent = rent + piRentPerAlly;
+         rent = rent + piRentPerAlly;
       }
-      rent=bound(rent,2,$);
+
+      rent = Bound(rent,2,$);
 
       piRentDue = piRentDue+ rent;
       if piRentCOunter = 0
@@ -508,238 +508,106 @@ messages:
       {
          piRentCounter = piRentCounter - 1;
       }
-      if piRentCounter > 0 and
-            ((piRentCounter MOD 40) = 0 or
-            (piRentCounter < 40 and piRentCounter MOD 10 = 0))
+
+      if piRentCounter > 0
+         AND ((piRentCounter MOD 40) = 0
+            OR (piRentCounter < 40
+               AND piRentCounter MOD 10 = 0))
       {
-         hourhours = NecromancerGuild_hours_rsc;
+         hourhours = necguild_hours_rsc;
          if piRentCounter = 10
          {
-            hourhours = NecromancerGuild_hour_rsc;
+            hourhours = necguild_hour_rsc;
          }
-         if piRentDue > (rent*RENT_MAX_OVERDUE)
+
+         if piRentDue > (rent * RENT_MAX_OVERDUE)
          {
             for i in plMembers
             {
-               post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_rent_due_5,
-                   #parm1=piRentCounter/10,#parm2= hourhours);
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_5,
+                     #parm1=piRentCounter/10,#parm2=hourhours);
             }
+
             return;
          }
-         if piRentDue > (rent*RENT_MAX_OVERDUE)*4/5
+
+         if piRentDue > (rent * RENT_MAX_OVERDUE) * 4 / 5
          {
             for i in plMembers
             {
-               post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_rent_due_4,
-                   #parm1=piRentCounter/10,#parm2= hourhours);
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_4,
+                     #parm1=piRentCounter/10,#parm2=hourhours);
             }
+
             return;
          }
-         if piRentDue > (rent*RENT_MAX_OVERDUE)*3/5
+
+         if piRentDue > (rent * RENT_MAX_OVERDUE) * 3 / 5
          {
             for i in plMembers
             {
-               post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_rent_due_3,
-                   #parm1=piRentCounter/10,#parm2= hourhours);
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_3,
+                     #parm1=piRentCounter/10,#parm2=hourhours);
             }
+
             return;
          }
-         if piRentDue > (rent*RENT_MAX_OVERDUE)*2/5
+
+         if piRentDue > (rent * RENT_MAX_OVERDUE) * 2 / 5
          {
             for i in plMembers
             {
-               post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_rent_due_2,
-                   #parm1=piRentCounter/10,#parm2= hourhours);
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_2,
+                     #parm1=piRentCounter/10,#parm2=hourhours);
             }
+
             return;
          }
+
          for i in plMembers
          {
-            post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_rent_due_1,
-                #parm1=piRentCounter/10,#parm2= hourhours);
+            Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_1,
+                  #parm1=piRentCounter/10,#parm2=hourhours);
          }
+
          return;
       }
 
      return;
    }
 
-   PayRent(amount = $)
-   "This merely subtracts a number from the rentdue."
-   {
-      piRentDue = piRentDue - amount;
-      if piRentDue < 1
-        {
-          piRentCounter = 0;
-        }
-      return;
-   }
-
    GetRentDue()
    {
       local rent, i;
+
       rent = piRent;
       for i in plMembers
       {
          rent = rent + piRentPerMember;
       }
+
       for i in plAllies
       {
          rent = rent + piRentPerAlly;
       }
+
       for i in plEnemies
       {
           rent = rent + piRentPerAlly;
       }
-      rent=bound(rent,2,$);
-      return (piRentDue*5/(rent*RENT_MAX_OVERDUE));
-   }
 
-   AbandonGuildHall()
-   {
-      local i, j, members;
+      rent = Bound(rent,2,$);
 
-      if piGuild_hall = $
-        {
-          DEBUG("someone without a guild hall is being offered the ABANDON command!");
-          return FALSE;  
-        }
-
-      psPassword = $;
-      for i in plMembers
-        {
-           send(first(i),@msgsenduser,#message_rsc=NecromancerGuild_abandon_hall,
-             #parm1=send(send(self,@getguildhall),@getname),
-             #parm2=send(self,@getdef),#parm3=send(self,@getname));
-        }
-      for j in plAllies
-        {
-          members = send(j,@getmemberlist);
-          for i in Members
-           {
-              send(first(i),@msgsenduser,#message_rsc=NecromancerGuild_abandon_hall,
-                #parm1=send(send(self,@getguildhall),@getname),
-                #parm2=send(self,@getdef),#parm3=send(self,@getname));
-           }
-        }
-      send(send(self,@getguildhall),@ResetGuildHall);
-      piGuild_hall = $;
-      for i in plMembers
-        {
-           send(self,@resetpowers,#who=first(i),#rank=send(self,@getrank,#who=first(i)));
-        }
-      return;
+      return (piRentDue * 5 / (rent * RENT_MAX_OVERDUE));
    }
 
    GuildHallConquered(name=$, betrayed = $, oConquerer = $)
    {
-      DEBUG("shouldn't ever get here.");
+      Debug("Necromancer Guild Hall conquered! This shouldn't happen. ",
+            " Conquerer was ",oConquerer);
+
       return;
    }
-
-   InductNewMember(who=$,inductor=$)
-   {
-      local i;
-
-      if length(plMembers) >= MAX_MEMBERS
-        {
-           send(who,@msgsenduser,#message_rsc=NecromancerGuild_ranks_full,
-             #parm1=send(self,@getdef),#parm2=vrName);
-           if inductor <> $
-             {
-               send(inductor,@msgsenduser,#message_rsc=NecromancerGuild_ranks_full_inductor,
-                #parm1=send(who,@getcapdef),#parm2=send(who,@getname),#parm3=send(self,@getdef),
-                #parm4=vrName);
-             }
-           return FALSE;
-        }
-      for i in plMembers
-        {
-          if first(i) = who
-            {
-               send(who,@msgsenduser,#message_rsc = NecromancerGuild_induct_already_member);
-               return FALSE;
-            }
-        }
-      if send(who,@getguild) <> $
-         {
-            send(who,@msgsenduser,#message_rsc = NecromancerGuild_induct_already_guilded);
-            return FALSE;
-         }
-                                        %% cannot rejoin the guild if you
-                                        %% left in the last hour
-      if send(self,@CheckFormerMemberList,#who=who)
-      {
-         send(who,@msgsenduser,#message_rsc=NecromancerGuild_you_cannot_rejoin);
-         if inductor <> $
-         {
-            send(inductor,@msgsenduser,#message_rsc=NecromancerGuild_cannot_rejoin);
-         }
-         return FALSE;
-      }
-      if send(who,@HasLeftAGuildTooRecently)
-      {
-         ClearTempString();
-         AppendTempString(guild_left_another);
-         AppendTempString(send(self,@GetDef));
-         AppendTempString(send(self,@GetName));
-         AppendTempString(".");
-         send(who,@msgsenduser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=GetTempString(),#type1=STRING_RESOURCE);
-         if inductor <> $
-         {
-            ClearTempString();
-            AppendTempString(send(who,@GetName));
-            AppendTempString(guild_left_another_2);
-            send(inductor,@msgsenduser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=GetTempString(),#type1=STRING_RESOURCE);
-         }
-         return FALSE;
-      }
-
-      %% cleared checks.  go ahead and set the guild.
-
-      send(who,@setguild,#guild_obj=self);
-      plMembers = cons([who,RANK_APPRENTICE,send(self,@getguildmaster)], plMembers);
-      send(self,@resetpowers,#who=who,#rank=RANK_APPRENTICE);
-
-      if length(plMembers) >= MINIMUM_MEMBERS
-        {
-           piThreePersonWarning = 0;
-        }
-
-      for i in plMembers
-         {
-           send(first(i),@msgsenduser,#message_rsc=NecromancerGuild_welcome,
-             #parm1=send(self,@getdef),#parm2=send(self,@getname),#parm3=send(who,@gettruename));
-         }
-      return TRUE;
-   }
-
-   RemoveFromGuild(who=$)
-   {
-      local i, oFound;
-
-      for i in plMembers
-        {
-          if first(i) = who
-            {
-              send(who,@resetguildstuff);    %%% removes powers, resets poguild
-              send(who,@evaluatePKstatus);
-              send(who,@SetGuildRejoinTime,#delayMinutes=(CANNOT_REJOIN_TIME*6));
-              plFormerMembers =  cons([who,CANNOT_REJOIN_TIME],plFormerMembers);
-
-              plMembers = dellistelem(plMembers,i);
-              oFound = True;
-            }
-        }
-
-      if oFound = TRUE
-        {
-           return TRUE;
-        }
-      DEBUG("Was not a member of this guild!");
-      return FALSE;
-   }
-   
 
    NewGuildMaster(who=$, abdicate = FALSE)
    "Other than creating a guild, this is the only way to have someone's "
@@ -749,635 +617,110 @@ messages:
       local i, new_master, old_master;
 
       if who = $
-        {
-           DEBUG("Tried to promote -no one- to the rank of guildmaster!");
-           return;
-        }
-      if who = send(self,@getguildmaster)
-        {
-           DEBUG("Tried to promote existing guildmaster to guildmaster!  Should never happen!");
-           return;
-        }
+      {
+         Debug("Tried to promote -no one- to the rank of guildmaster!");
+
+         return;
+      }
+
+      if who = Send(self,@GetGuildMaster)
+      {
+         Debug("Tried to promote existing guildmaster to guildmaster!  Should never happen!");
+
+         return;
+      }
 
       old_master = $;
-      for i in plMembers                %% demote anyone at guildmaster rank
-        {                              
-           if nth(i,2) = RANK_MASTER
-           {
-              old_master = first(i);
-              setnth(i,2,RANK_SIR);
-              if abdicate = FALSE
-                {
-                  if not send(first(i),@isloggedon)
-                    {
-                      send(first(i),@receivenestedmail,#from=NecromancerGuild_lich,
-                      #dest_list=[first(i)],#nest_list=[4,NecromancerGuild_deposed_mail,
-                      STRING_RESOURCE,send(self,@getrankname, #sex=send(old_master,@getgender),
-                      #rank=RANK_MASTER),4, send(self,@getdef),STRING_RESOURCE,send(self,@getname),
-                      STRING_RESOURCE,send(who,@getname),STRING_RESOURCE,send(self,@getrankname,
-                      #sex=send(who,@getgender),#rank=RANK_MASTER)]);
-                     }
-                  else
-                     {
-                        send(first(i),@msgsenduser,#message_rsc=NecromancerGuild_descension,
-                           #parm2=send(self,@getdef), #parm3=send(self,@getname),
-                            #parm1=send(self,@getrankname, #sex=send(old_master,@getgender),
-                                               #rank=RANK_MASTER));
-                      }
-                }
-              send(self,@resetpowers,#who=first(i),#rank=RANK_SIR);
-           }
-
-           if first(i) = who
-           {
-              new_master = first(i);
-              setnth(i,2,RANK_MASTER);         %% promote to master.
-              if not send(first(i),@isloggedon)
-                {
-                  send(first(i),@receivenestedmail,#from=NecromancerGuild_lich,
-                  #dest_list=[first(i)],#nest_list=[4,NecromancerGuild_ascension_mail,
-                  4,send(self,@getrankname,#rank=RANK_MASTER,#sex=send(who,@getgender)),
-                  4,send(self,@getdef),4,send(self,@getname)]);
-                }
-              else
-                {
-                  post(first(i),@msgsenduser,#message_rsc=NecromancerGuild_ascension,
-                    #parm2=send(self,@getdef), #parm3=send(self,@getname),
-                    #parm1=send(self,@getrankname, #sex=send(new_master,@getgender),
-                                               #rank=RANK_MASTER));
-                }
-              send(self,@resetpowers,#who=first(i),#rank=RANK_MASTER);
-           }
-        }
-    for i in plMembers
-       {
-          if first(i) <> new_master
-          and (First(i) <> old_master or abdicate = FALSE)
-            {
-              if abdicate = TRUE
-                {
-                   post(first(i),@msgsenduser,#message_rsc = NecromancerGuild_abdicate,
-                      #parm1 = send(old_master,@getname),#parm2=send(self,@getdef),
-                      #parm3=send(self,@getname));
-                }
-             if not send(first(i),@isloggedon)
-               {
-                 if first(i) <> old_master
-                   {
-                     send(first(i),@receivenestedmail,#from=NecromancerGuild_lich,
-                       #dest_list=[first(i)],#nest_list=[4,NecromancerGuild_new_master_mail,
-                       STRING_RESOURCE,send(new_master,@getname),
-		       4,send(self,@getrankname,#rank=RANK_MASTER,
-                       #sex=send(new_master,@getgender)),4,send(self,@getdef), 4,send(self,@getname)]);
-                   }
-               }
-             else
-               {
-                  post(first(i), @msgsenduser, #message_rsc = NecromancerGuild_new_master,
-                    #parm1 = send(new_master,@gettruename), #type1=STRING_RESOURCE,
-		       #parm2=send(self,@getrankname,
-                      #sex=send(new_master,@getgender),#rank=RANK_MASTER),
-                    #parm3 = send(self,@getdef), #parm4 = send(self,@getname));
-               }
-            }
-          SetNth(i,3,$);
-       }
-     return;
-   }
-
-   NewLieutenantOkay()
-   {
-      local i, number;
-
-      number = 0;
       for i in plMembers
-        {
-           if nth(i,2) = RANK_LIEUTENANT
-             { number = number + 1;  }
-        }
-      if number >= 2
-        {
-          return FALSE;
-        }
-      return TRUE;
-   }
-
-   NewLordOkay()
-   "No limits as of july 24th."
-   {
-     return TRUE;
-   }
-
-   CheckChangeRank(who=$, promoter = $, newrank = $)
-   "Bumps the person up a rank, with some limitations: "
-   {
-      local who_rank, promoter_rank, i, count, bcount;
-
-      if who=$ or promoter = $ or NewRank = $
-        { return FALSE; }
-
-      promoter_rank= send(self,@getrank,#who=promoter);
-      if promoter_rank < RANK_LIEUTENANT
-        { return FALSE; }
-
-      who_rank = send(self,@getrank,#who=who);
-      if who_rank >= RANK_MASTER 
-        {
-          send(who,@msgsenduser,#message_rsc=NecromancerGuild_promote_too_high);
-          return FALSE;
-        }  
-
-      if newrank = RANK_LIEUTENANT
-        {
-          if send(self,@NewLieutenantOkay)
-            {
-              return TRUE;
-            }
-          else
-            {
-              send(promoter,@msgsenduser,#message_rsc=NecromancerGuild_cant_promote_capt,
-                 #parm1=send(self,@getrankname,#rank=RANK_LIEUTENANT,#sex=GENDER_MALE));
-              return FALSE;
-            }
-        }
-    if newrank = RANK_LORD
       {
-        if send(self,@NewLordOkay)
-          {
-             return TRUE;
-          }
-        else
-          {
-             send(promoter,@msgsenduser,#message_rsc=NecromancerGuild_cant_promote_sire,
-                #parm1=send(self,@getrankname,#rank=RANK_LORD,#sex=GENDER_MALE));
-             return FALSE;
-          }
-      }
-    return TRUE;      %%% every possible scenario should be 'if'ed out above.
-   }
-
-   ChangeRank(who=$,promoter=$, newrank= $)
-   "This promotes someone whether or not they pass CheckPromote or not."
-   "anything that calls promote, it is assumed, also passes checkpromote."
-   "One caveat.  No one may be promoted to Guildmaster or demoted below "
-   "apprentice with this mechanism."
-   {
-      local i, bPromotion, oldrank, j;
-
-      if newrank <> bound(newrank,1,4)
-      {
-	 return FALSE;
-      }
-      if send(who,@getguild) = self
-      {
-	 for i in plMembers
+         % Demote anyone at guildmaster rank.
+         if Nth(i,2) = RANK_MASTER
          {
-	    if first(i) = who
+            old_master = First(i);
+            SetNth(i,2,RANK_SIR);
+            if abdicate = FALSE
             {
-	       oldrank = nth(i,2);
-               if oldrank = newrank
-               { return FALSE; }
-               
-	       bPromotion = FALSE;               
-	       if oldrank < newrank
+               if NOT Send(First(i),@IsLoggedOn)
                {
-		  bPromotion = TRUE;
-	       }
-
-               setnth(i,2,newrank);
-               
-	       send(self,@resetpowers,#who=first(i),#rank=newrank);
-	       if bPromotion = TRUE
-               {
-		  if promoter <> $ 
-                  {
-		     send(who,@msgsenduser,#message_rsc=NecromancerGuild_promotee,
-			#parm1=send(promoter,@gettruename),#type1=STRING_RESOURCE,
-                        #parm2=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-                     send(promoter,@msgsenduser,#message_rsc=NecromancerGuild_promoter,
-			#parm1=send(who,@gettruename),#type1=STRING_RESOURCE,
-                        #parm2=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-                     for j in plMembers
-                     {
-			if first(j) <> promoter and first(j) <> who
-                        {
-			   send(first(j),@msgsenduser,#message_rsc=NecromancerGuild_promoted,
-			      #parm1=send(promoter,@gettruename),#type2=STRING_RESOURCE,
-			      #parm2=send(who,@gettruename),#parm3=
-			   send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-			}
-		     }
-		  }
-                  else
-                  {
-		     send(who,@msgsenduser,#message_rsc=NecromancerGuild_promotee_no_promoter,
-			#parm1=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-		  }
-	       }
+                  Send(First(i),@ReceiveNestedMail,#from=necguild_lich,
+                        #dest_list=[First(i)],#nest_list=[4,necguild_deposed_mail,
+                        STRING_RESOURCE,Send(self,@GetRankName,#sex=Send(old_master,@GetGender),
+                        #rank=RANK_MASTER),4, Send(self,@GetDef),STRING_RESOURCE,Send(self,@GetName),
+                        STRING_RESOURCE,Send(who,@GetName),STRING_RESOURCE,Send(self,@GetRankName,
+                        #sex=Send(who,@GetGender),#rank=RANK_MASTER)]);
+               }
                else
                {
-		  if promoter <> $
-                  {
-		     send(who,@msgsenduser,#message_rsc=NecromancerGuild_demotee,
-			#parm1=send(promoter,@gettruename),#type1=STRING_RESOURCE,
-                        #parm2=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-		     send(promoter,@msgsenduser,#message_rsc=NecromancerGuild_demoter,
-			#parm1=send(who,@gettruename),#type1=STRING_RESOURCE,
-                        #parm2=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-		     for j in plMembers
-                     {
-			if first(j) <> promoter and first(j) <> who
-                        {
-			   send(first(j),@msgsenduser,#message_rsc=NecromancerGuild_demoted,
-			      #parm1=send(promoter,@gettruename),#type2=STRING_RESOURCE,
-			      #parm2=send(who,@gettruename),
-			      #parm3=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-			}
-		     }
+                  Send(First(i),@MsgSendUser,#message_rsc=necguild_descension,
+                        #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
+                        #parm1=Send(self,@GetRankName,#sex=Send(old_master,@GetGender),
+                        #rank=RANK_MASTER));
+               }
+            }
+            Send(self,@ResetPowers,#who=First(i),#rank=RANK_SIR);
+         }
 
-		  }
-                  else
-                  {
-		     send(who,@msgsenduser,#message_rsc=NecromancerGuild_demotee_no_demoter,
-			#parm1=send(self,@getrankname,#rank=newrank,#sex=send(who,@getgender)));
-		  }
-	       }
-               return TRUE;
-	    }
-	 }
-      } 
-      else
-      {
-          DEBUG("guild member is not a member of this guild!");
-      }
-      return;
-   }
-
-
-   Vote(who=$,candidate=$)
-   {
-      local i, bFound, j, oldvote, newleader;
-
-       if not send(self,@ismember, #who=who)
-          {
-             DEBUG("Somehow, someone's voting in a guild that is not their own!");
-             return FALSE;
-          }
-
-       if not isClass(candidate,&user)
-          {
-             DEBUG("voted for an inanimate object of some sort!");
-             send(who,@msgsenduser,#message_rsc=NecromancerGuild_cant_vote_nonuser,
-                #parm1=send(candidate,@getcapdef), #parm2=send(candidate,@gettruename));
-
-          }
-       for i in plMembers
+         if First(i) = who
          {
-           if first(i) = candidate
-             {
-               for j in plMembers
-                {
-                 if first(j) = who
-                  {
-                    oldvote = nth(j,3);
-                    if oldvote = candidate
-                     {
-                      if who = candidate
-                        {         
-                       send(who,@msgsenduser,#message_rsc= NecromancerGuild_talking_to_self,
-                         #parm1=send(candidate,@getname));
-                       return;
-                        }
-                       send(candidate,@msgsenduser,#message_rsc= NecromancerGuild_reassure,
-                         #parm1=send(who,@gettruename));
-                       send(candidate,@msgsenduser,#message_rsc= NecromancerGuild_reassure,
-                         #parm1=send(who,@gettruename));
-                       return;
-                     }
+            % Promote to master.
+            new_master = First(i);
+            SetNth(i,2,RANK_MASTER);
+            if NOT Send(First(i),@IsLoggedOn)
+            {
+               Send(First(i),@ReceiveNestedMail,#from=necguild_lich,
+                     #dest_list=[First(i)],#nest_list=[4,necguild_ascension_mail,
+                     4,Send(self,@GetRankName,#rank=RANK_MASTER,#sex=Send(who,@GetGender)),
+                     4,Send(self,@GetDef),4,Send(self,@GetName)]);
+            }
+            else
+            {
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_ascension,
+                     #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
+                     #parm1=Send(self,@GetRankName,#sex=Send(new_master,@GetGender),
+                     #rank=RANK_MASTER));
+            }
+            Send(self,@ResetPowers,#who=First(i),#rank=RANK_MASTER);
+         }
+      }
 
-                     setnth(j,3,candidate);
-                     newleader = send(self,@countvotes);
-
-                     if candidate = who
-                       {
-                        send(who,@msgsenduser,#message_rsc= NecromancerGuild_support_self,
-                          #parm1=send(self,@getdef),#parm2=send(self,@getname));
-                        if oldvote <> $ and oldvote <> who and newleader = FALSE
-                           {
-                             send(oldvote,@msgsenduser,#message_rsc=NecromancerGuild_support_withers);
-                           }
-                        }
-                     else
-                       {
-                        send(who,@msgsenduser,#message_rsc= NecromancerGuild_support_other,
-                          #parm1=send(candidate,@gettruename),#type1=STRING_RESOURCE,
-                          #parm2=send(self,@getdef),#parm3=send(self,@getname));
-                        send(candidate,@msgsenduser,#message_rsc= NecromancerGuild_supported,
-                          #parm1=send(who,@gettruename),
-                          #parm2=send(self,@getdef),#parm3=send(self,@getname));
-                        if oldvote <> $ and oldvote <> who and newleader = FALSE
-                           {
-                             send(oldvote,@msgsenduser,#message_rsc=NecromancerGuild_support_withers);
-                           }
-                         }
-                        return;
-                      }
-                  }
-               }
-          }
-       DEBUG("Somehow, someone's voting for someone outside their guild!");
-       send(who,@msgsenduser,#message_rsc=NecromancerGuild_cant_vote_outsider,
-         #parm1=send(candidate,@getdef),#type2=STRING_RESOURCE,#parm2=send(candidate,@gettruename),
-         #parm3=send(self,@getdef),#parm4=send(self,@getname));
-       return FALSE;
-     }
-
-   CountVotes(disqualify=$)
-   "Note:  currently, all ties go to the oldest guild member."
-   {
-     local winner, i, j, count, mostvotes, guildmaster;
-
-     %% this code is convoluted and slow, so initially, just check to see
-     %% if current guildmaster still has the majority.
-
-     guildmaster = send(self,@getguildmaster);
-
-     if (guildmaster <> $) and (guildmaster <> disqualify)
-       {
-         count = 0;   
-         for i in plMembers
-           {
-             if nth(i,3) = guildmaster
+      for i in plMembers
+      {
+         if First(i) <> new_master
+            AND (First(i) <> old_master
+               OR abdicate = FALSE)
+         {
+            if abdicate = TRUE
+            {
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_abdicate,
+                     #parm1=Send(old_master,@GetName),#parm2=Send(self,@GetDef),
+                     #parm3=Send(self,@GetName));
+            }
+            if NOT Send(First(i),@IsLoggedOn)
+            {
+               if First(i) <> old_master
                {
-                  count = count+1;
+                  Send(First(i),@ReceiveNestedMail,#from=necguild_lich,
+                        #dest_list=[First(i)],
+                        #nest_list=[4,necguild_new_master_mail,
+                        STRING_RESOURCE,Send(new_master,@GetName),
+                        4,Send(self,@GetRankName,#rank=RANK_MASTER,
+                        #sex=Send(new_master,@GetGender)),4,Send(self,@GetDef),
+                        4,Send(self,@GetName)]);
                }
-           }
-         if count > (length(plMembers)/2)
-           {
-              return FALSE;
-           }
-        }
-
-     %% Guildmaster does not have the majority.  If guildmaster exists, he
-     %% still retains leadership as long as no one else has a majority.
-     %% Since there must always be a guildmaster, if there is no guildmaster,
-     %% person with most votes is chosen.
-
-     mostvotes = -1;
-     winner = $;
-     for i in plMembers
-       {
-         if first(i) = disqualify {continue;}
-         count = 0;
-         for j in plMembers
-           {
-              if nth(j,3) = first(i) 
-	      and first(j) <> disqualify
-                {
-                  count = count + 1;
-                }
-           }        
-         if count >= mostvotes
-           {
-              winner = first(i);
-              mostvotes = count;
-           }
-       }
-
-     if mostvotes > (length(plMembers)/2)
-       {
-         send(self,@newguildmaster,#who=winner);
-         return TRUE;
-       }
-     else
-       {
-          if (guildmaster = $) or (guildmaster = disqualify)
-            {
-              DEBUG("a new guildmaster was declared because there formerly was no old guildmaster!");  
-              send(self,@newguildmaster,#who=winner);
-              return TRUE;  
             }
-          else
+            else
             {
-               return FALSE;
+               Post(First(i),@MsgSendUser,#message_rsc=necguild_new_master,
+                     #parm1=Send(new_master,@GetTrueName),#type1=STRING_RESOURCE,
+                     #parm2=Send(self,@GetRankName,
+                     #sex=Send(new_master,@GetGender),#rank=RANK_MASTER),
+                     #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
             }
-       }
-     return FALSE;
-   }
+         }
+         SetNth(i,3,$);
+      }
 
-   DefunctGuild(what=$)
-   "Removes the guild from all ally and enemy lists."
-   {
-      local i, j;
-
-      for i in plAllies
-        {
-           if i = what
-             {
-               plAllies = dellistelem(plAllies, i);
-               for j in plMembers
-                 {
-                   send(first(j),@msgsenduser,#message_rsc=NecromancerGuild_allies_defunct,
-                      #parm1=send(what,@getdef), #parm2=send(what,@getname));
-                 }
-             }
-        }
-      for i in plEnemies
-        {
-           if i = what
-             {
-               plEnemies = dellistelem(plEnemies, i);
-               for j in plMembers
-                 {
-                   send(first(j),@msgsenduser,#message_rsc=NecromancerGuild_enemies_defunct,
-                      #parm1=send(what,@getdef), #parm2=send(what,@getname));
-                 }
-
-             }
-        }
-      for i in plEnemiesOf
-        {
-           if i = what
-             {
-               plEnemiesOf = dellistelem(plEnemiesOf, i);
-             }
-        }
-      for i in plAlliesOf
-        {
-           if i = what
-             {
-               plAlliesOf = dellistelem(plAlliesOf, i);
-             }
-        }
       return;
-   }
-
-   GetEnemyList()
-   {
-     return plEnemies;
-   }
-
-   GetAllyList()
-   {
-     return plAllies;
-   }
-
-   GetDeclaredEnemyList()
-   {
-     return plEnemiesOf;
-   }
-
-   GetDeclaredAllyList()
-   {
-     return plAlliesOf;
-   }
-
-   IsAlly(otherguild = $)
-   "returns TRUE if the guild in question is in the ally list."
-   {
-     local i;
-
-     for i in plAllies
-       {
-         if i = otherguild
-           { return TRUE; }
-       }
-     return FALSE;
-   }
-
-   IsEnemy(otherguild = $)
-   "returns TRUE if the guild in question is in the enemy list."
-   {
-     local i;
-
-     for i in plEnemies
-       {
-         if i = otherguild
-           { return TRUE; }
-       }
-     return FALSE;
-   }
-
-
-   CanAlly(otherguild = $, rep = $, otherrep = $)
-   "Can the guild ally itself with another guild?  Three checks:"
-   "1) Must not be on either ally or enemy list.  2) Rep must be a member."
-   "3) Rep must be at least a lieutenant."
-   {
-     local i;
-
-     if not send(self,@ismember,#who=rep)
-       {
-         send(rep,@msgsenduser,#message_rsc= NecromancerGuild_not_member_currently,
-            #parm1 = send(self,@getdef), #parm2 = send(self, @getname));
-         return FALSE;
-       }
-     if send(self,@getrank,#who=rep) < RANK_LIEUTENANT
-       {
-         send(rep,@msgsenduser,#message_rsc= NecromancerGuild_not_qualified);
-         return FALSE;
-       }
-     for i in plEnemies
-       {
-          if i = otherguild
-            {
-              send(rep,@msgsenduser,#message_rsc=NecromancerGuild_cant_ally_enemy,
-                 #parm1 = send(otherguild,@getdef),
-                 #parm2 = send(otherguild,@getname));
-              return FALSE;
-            }
-       }
-     for i in plAllies
-       {
-          if i = otherguild
-            {
-              send(rep,@msgsenduser,#message_rsc=NecromancerGuild_already_allies,
-                 #parm1 = send(otherguild,@getdef),
-                 #parm2 = send(otherguild,@getname));
-              return FALSE;
-            }
-       }
-     return TRUE;
-   }
-
-   NewAlly(otherguild = $)
-   "Put the guild in question in the ally list."
-   {
-      local i;
-
-      plAllies = cons(otherguild, plAllies);
-      for i in plMembers
-        {
-           send(first(i),@msgsenduser,#message_rsc=NecromancerGuild_new_allies,
-              #parm1 = send(self,@getdef), #parm2 = send(self,@getname),
-              #parm3 = send(otherguild,@getdef), #parm4 = send(otherguild,@getname));
-        }
-      send(otherguild,@declareally,#otherguild=self);
-      return;
-   }
-
-   DeclareAlly(otherguild = $)
-   {
-      local i;
-
-      plAlliesOf = cons(otherguild, plAlliesOf);
-      for i in plMembers
-        {
-           send(first(i),@msgsenduser,#message_rsc=NecromancerGuild_declared_allies,
-              #parm1 = send(otherguild,@getdef), #parm2 = send(otherguild,@getname),
-              #parm3 = send(self,@getdef), #parm4 = send(self,@getname));
-        }
-      return;
-   }
-
-   EndAlly(otherguild = $)
-   "Removes the guild in question from the ally list.  Tells the other guild "
-   "to end it's alliance with you."
-   {
-     local i, j;
-
-     for i in plAllies
-       {
-          if i = otherguild
-            {
-               plAllies = dellistelem(plAllies, i);
-               for j in plMembers
-                 {
-                    send(first(j),@msgsenduser,#message_rsc = NecromancerGuild_end_alliance,
-                      #parm1 = send(otherguild,@getdef), #parm2 = send(otherguild,@getname),
-                      #parm3 = send(self,@getdef), #parm4 = send(self,@getname));
-                 }
-               send(otherguild,@removedeclaredally,#otherguild=self);
-               return TRUE;
-            }
-       }
-     DEBUG("tried to end an alliance that didn't exist!");
-     return FALSE;
-   }
-
-   RemoveDeclaredAlly(otherguild = $)
-   "Removes the guild in question from the ally list.  Tells the other guild "
-   "to end it's alliance with you."
-   {
-     local i, j;
-
-     for i in plAlliesOf
-       {
-          if i = otherguild
-            {
-               plAlliesOf = dellistelem(plAlliesOf, i);
-               for j in plMembers
-                 {
-                    send(first(j),@msgsenduser,#message_rsc = NecromancerGuild_end_declared_alliance,
-                      #parm1 = send(otherguild,@getdef), #parm2 = send(otherguild,@getname),
-                      #parm3 = send(self,@getdef), #parm4 = send(self,@getname));
-                 }
-               send(otherguild,@removedeclaredally,#otherguild=self);
-               return TRUE;
-            }
-       }
-     DEBUG("tried to end an alliance that didn't exist!");
-     return FALSE;
    }
 
    Delete(timerdelete=FALSE)
@@ -1389,74 +732,89 @@ messages:
 
       for i in plMembers
       {
-        if not send(first(i),@isloggedon)
-          {
-            send(first(i),@receivenestedmail,#from=NecromancerGuild_lich,
-              #dest_list=[first(i)],#nest_list=[4,NecromancerGuild_disbanded_mail]);
-          }
+         if NOT Send(First(i),@IsLoggedOn)
+         {
+            Send(First(i),@ReceiveNestedMail,#from=necguild_lich,
+                  #dest_list=[First(i)],#nest_list=[4,necguild_disbanded_mail]);
+         }
       }
+
       propagate;
    }
 
    MemberKilled(victim=$,killer=$)
    {
       local IsMaster,oLich,i;
-      if not send(self,@IsMember,#who=victim)
+
+      if NOT Send(self,@IsMember,#who=victim)
       {
-         DEBUG("Tried to remove non-member ",send(victim,@GetName)," from the Order of Necromancers.");
+         Debug("Tried to remove non-member ",Send(victim,@GetName),
+               " from the Order of Necromancers.");
+
          return;
       }
+
       IsMaster = FALSE;
-      if send(self,@getrank,#who=victim) = RANK_MASTER
+      if Send(self,@GetRank,#who=victim) = RANK_MASTER
       {
          IsMaster = TRUE;
       }
 
-      if length(plMembers) = 1
+      if Length(plMembers) = 1
       {
-         if first(first(plMembers)) <> victim
+         if First(First(plMembers)) <> victim
          {
-            DEBUG("Tried to remove ",send(victim,@GetName)," from the Order of Necromancers but the last member is ",send(first(first(plMembers)),@GetName));
-            send(self,@Delete);
+            Debug("Tried to remove ",Send(victim,@GetName),
+                  " from the Order of Necromancers but the last member is ",
+                  Send(First(First(plMembers)),@GetName));
+            Send(self,@Delete);
+
             return;
          }
-         oLich = send(send(SYS,@FindRoomByNum,#num=RID_GUILDH15),@FindHoldingActive,#class=&Lich);
+
+         oLich = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
+                        @FindHoldingActive,#class=&Lich);
          if oLich <> $
          {
-            % lich will handle guild cleanup
-            if (piRentCounter = 1) or (piThreePersonWarning = 0)
+            % Lich will handle guild cleanup.
+            if piRentCounter = 1
+               OR piThreePersonWarning = 0
             {
-               % we got here through nonpayment of rent or insufficient membership.
-               post(oLich,@Killed,#what=self,#resetScenario=FALSE,#guildDisbandDeath=TRUE);
+               % We got here through nonpayment of rent or insufficient membership.
+               Post(oLich,@Killed,#what=self,#resetScenario=FALSE,
+                     #guildDisbandDeath=TRUE);
             }
             else
             {
-               post(oLich,@Killed,#what=killer);
+               Post(oLich,@Killed,#what=killer);
             }
          }
          else
          {
-            DEBUG("The Order of Necromancers somehow ended up without a lich.");
-            send(self,@Delete);
+            Debug("The Order of Necromancers somehow ended up without a lich.");
+            Send(self,@Delete);
          }
+
          return;
       }
 
-      % kick them out of the Order
-      send(self,@RemoveFromGuild,#who=victim);
-      % if master, find a new one
+      % Kick them out of the Order.
+      Send(self,@RemoveFromGuild,#who=victim);
+      % If master, find a new one.
       if IsMaster
       {
-         if send(self,@IsMember,#who=killer) and (killer <> victim)
+         if Send(self,@IsMember,#who=killer)
+            AND killer <> victim
          {
-            % shift everyone's support to the assassin
+            % Shift everyone's support to the assassin.
             for i in plMembers
             {
-               setnth(i,3,killer);
+               SetNth(i,3,killer);
             }
          }
-         send(self,@CountVotes);
+         Send(self,@CountVotes);
       }
+
       return;
    }
 

@@ -27,96 +27,123 @@ constants:
 
 resources:
 
-   NecromancerAmulet_name_rsc = "Amulet of the Three"
-   NecromancerAmulet_icon_rsc = necamlet.bgf
-   NecromancerAmulet_desc_rsc = \
-   "There is something deeply disturbing about this amulet.  When you look at it in the corner of your eye, "
-   "you can almost see the evil pouring forth from it."
+   necamulet_name_rsc = "Amulet of the Three"
+   necamulet_icon_rsc = necamlet.bgf
+   necamulet_desc_rsc = \
+      "There is something deeply disturbing about this amulet.  When you "
+      "look at it in the corner of your eye, you can almost see the evil "
+      "pouring forth from it."
 
-   NecromancerAmulet_newbie_pickup_good = "Your guardian angel says, \"That amulet is a thing of great "
-      "evil.  Even holding it in your possession would corrupt your soul, and eventually destroy you.\""
-   NecromancerAmulet_newbie_pickup_evil = "Your guardian angel says, \"That amulet holds far too much "
+   necamulet_newbie_pickup_good = \
+      "Your guardian angel says, \"That amulet is a thing of great "
+      "evil.  Even holding it in your possession would corrupt your soul, "
+      "and eventually destroy you.\""
+   necamulet_newbie_pickup_evil = \
+      "Your guardian angel says, \"That amulet holds far too much "
       "power for you to contain.  You must stay away from it, for now.\""
 
-   NecromancerAmulet_holding_damage_wearing = \
-   "The unholy energy streaming from the Amulet of the Three seeps into you, racking your body with pain as it "
-   "corrupts your soul.  You must do something before it destroys you!"
-   NecromancerAmulet_holding_damage = \
-   "The unholy energy streaming from the Amulet of the Three seeps into you, racking your body with pain as it "
-   "corrupts your soul."
-   NecromancerAmulet_holding_unworthy_wearing = \
-   "The unholy energy streaming from the Amulet of the Three seeps into you, filling you with pleasure even as it "
-   "racks you with pain.  You must somehow remove it before it destroys you!"
-   NecromancerAmulet_holding_unworthy = \
-   "The unholy energy streaming from the Amulet of the Three seeps into you, filling you with pleasure even as it "
-   "racks you with pain.  You feel a strong compulsion to put the amulet on and channel its full power, but you "
-   "know somehow that it would surely destroy you if you did."
-   NecromancerAmulet_holding_tempt = \
-   "The unholy energy streaming from the Amulet of the Three seeps into you, filling you with pleasure.  You "
-   "cannot help but fantasize how wonderful it would feel to put the amulet on and channel its full power."
+   necamulet_holding_damage_wearing = \
+      "The unholy energy streaming from the Amulet of the Three seeps into "
+      "you, racking your body with pain as it corrupts your soul.  You must "
+      "do something before it destroys you!"
+   necamulet_holding_damage = \
+      "The unholy energy streaming from the Amulet of the Three seeps into "
+      "you, racking your body with pain as it corrupts your soul."
+   necamulet_holding_unworthy_wearing = \
+      "The unholy energy streaming from the Amulet of the Three seeps into "
+      "you, filling you with pleasure even as it racks you with pain.  You "
+      "must somehow remove it before it destroys you!"
+   necamulet_holding_unworthy = \
+      "The unholy energy streaming from the Amulet of the Three seeps into "
+      "you, filling you with pleasure even as it racks you with pain.  You "
+      "feel a strong compulsion to put the amulet on and channel its full "
+      "power, but you know somehow that it would surely destroy you if you did."
+   necamulet_holding_tempt = \
+      "The unholy energy streaming from the Amulet of the Three seeps into "
+      "you, filling you with pleasure.  You cannot help but fantasize how "
+      "wonderful it would feel to put the amulet on and channel its full power."
 
-   
-   NecromancerAmulet_warning = \
-   "As you begin to place the amulet around your neck, you feel a strong sense of foreboding;  this is not likely "
-   "to be a reversible act."
-   NecromancerAmulet_used_unworthy = \
-   "As you put the amulet on, a wave of power flows through your body, setting every nerve on fire with pleasure "
-   "and pain.  The amount of energy flowing into your body is enormous, and growing with every passing second - "
-   "the coppery taste of fear fills your mouth as you realize you may not be able to contain it all."
-   NecromancerAmulet_used_rsc = \
-   "As you put the amulet on, a wave of power flows through your body, setting every nerve on fire with pleasure, "
-   "leaving every cell irrevocably changed in its wake.  Somewhere far inside your mind, underneath the feeling "
-   "of power, you can also feel something else, however - a kind of hunger gnawing at you, growing with every "
-   "passing second."
+   necamulet_warning = \
+      "As you begin to place the amulet around your neck, you feel a strong "
+      "sense of foreboding...  this is not likely to be a reversible act."
+   necamulet_used_unworthy = \
+      "As you put the amulet on, a wave of power flows through your body, "
+      "setting every nerve on fire with pleasure and pain.  The amount of "
+      "energy flowing into your body is enormous, and growing with every "
+      "passing second - the coppery taste of fear fills your mouth as you "
+      "realize you may not be able to contain it all."
+   necamulet_used_rsc = \
+      "As you put the amulet on, a wave of power flows through your body, "
+      "setting every nerve on fire with pleasure, leaving every cell "
+      "irrevocably changed in its wake.  Somewhere far inside your mind, "
+      "underneath the feeling of power, you can also feel something else, "
+      "however - a kind of hunger gnawing at you, growing with every "
+      "passing second."
 
-   NecromancerAmulet_try_unuse_rsc = \
-   "As you try to pull the amulet from your neck, you feel it tug painfully at your insides, as if it were "
-   "magically tethered to your innards, grafted permanently onto the blackest part of your soul."
+   necamulet_try_unuse_rsc = \
+      "As you try to pull the amulet from your neck, you feel it tug "
+      "painfully at your insides, as if it were magically tethered to your "
+      "innards, grafted permanently onto the blackest part of your soul."
 
-   NecromancerAmulet_unused_rsc = \
-   "As the Amulet of the Three leaves your body, you feel something else rip free inside you, turning your "
-   "internal organs to jelly."
+   necamulet_unused_rsc = \
+      "As the Amulet of the Three leaves your body, you feel something else "
+      "rip free inside you, turning your internal organs to jelly."
 
-   NecromancerAmulet_hunger_1 = "You're starting to feel a little hungry."
-   NecromancerAmulet_hunger_2 = "You're definitely hungry now."
-   NecromancerAmulet_hunger_3 = "You are very hungry now.  The hunger is a burning knot somewhere inside your "
-      "skull.  It is time to feed."
-   NecromancerAmulet_hunger_4 = "Your brain is on fire with but one impulse:  you must feed.  Every moment passes "
-      "like molasses, an eternity of suffering."
-   NecromancerAmulet_hunger_5 = "Your body is now in so much pain that you can feel yourself pulling away from it, "
-      "drifting out and away.  You jerk yourself back with great effort - you must feed soon, or you will surely "
-      "be lost."
+   necamulet_hunger_1 = "You're starting to feel a little hungry."
+   necamulet_hunger_2 = "You're definitely hungry now."
+   necamulet_hunger_3 = \
+      "You are very hungry now.  The hunger is a burning knot somewhere "
+      "inside your skull.  It is time to feed."
+   necamulet_hunger_4 = \
+      "Your brain is on fire with but one impulse:  you must feed.  Every "
+      "moment passes like molasses, an eternity of suffering."
+   necamulet_hunger_5 = \
+      "Your body is now in so much pain that you can feel yourself pulling "
+      "away from it, drifting out and away.  You jerk yourself back with "
+      "great effort - you must feed soon, or you will surely be lost."
 
-   NecromancerAmulet_illusion_slipped = "The illusion masking your true features slips, revealing your ghastly "
+   necamulet_illusion_slipped = \
+      "The illusion masking your true features slips, revealing your ghastly "
       "appearance in all its obscene glory!"
-   NecromancerAmulet_illusion_restored = "Your horrific appearance has once again been cloaked in illusion."
+   necamulet_illusion_restored = \
+      "Your horrific appearance has once again been cloaked in illusion."
 
-   NecromancerAmulet_hunger_assuaged = "You feel your amulet absorbing %s%s's life energy.  It washes through you "
-      "in waves, slaking your hunger and leaving you feeling strengthened."
+   necamulet_hunger_assuaged = \
+      "You feel your amulet absorbing %s%s's life energy.  It washes through "
+      "you in waves, slaking your hunger and leaving you feeling strengthened."
 
-   NecromancerAmulet_cant_eat = "You attempt to gag down %s%s, to no avail.  Mortal food will no longer assuage "
-      "the dark hunger that burns within your unholy body."
+   necamulet_cant_eat = \
+      "You attempt to gag down %s%s, to no avail.  Mortal food will no "
+      "longer assuage the dark hunger that burns within your unholy body."
 
-   NecromancerAmulet_cant_pay = "Your Dark Queen reaches out to grasp your amulet.  "
+   necamulet_cant_pay = \
+      "Your Dark Queen reaches out to grasp your amulet.  "
       "She holds it for a moment, then pushes you away in disgust.\n"
-      "~kQueen Venya'cyr tells you, \"~rWeak fool. Thou art too hungry thyself to satisfy mine own hunger.~k\""
-   NecromancerAmulet_pay_ouch = "Your Dark Queen reaches out to grasp your amulet.  "
-      "You gasp as she draws your life essence out of you into herself, leaving you drained and weak.\n"
-      "~kQueen Venya'cyr tells you, \"~rI thank thee, my loyal subject.  Thou had best go and feed thyself now.~k\""
-   NecromancerAmulet_pay = "Your Dark Queen reaches out to grasp your amulet.  "
+      "~kQueen Venya'cyr tells you, \"~rWeak fool. Thou art too hungry "
+      "thyself to satisfy mine own hunger.~k\""
+   necamulet_pay_ouch = \
+      "Your Dark Queen reaches out to grasp your amulet.  "
+      "You gasp as she draws your life essence out of you into herself, "
+      "leaving you drained and weak.\n"
+      "~kQueen Venya'cyr tells you, \"~rI thank thee, my loyal subject.  "
+      "Thou had best go and feed thyself now.~k\""
+   necamulet_pay = \
+      "Your Dark Queen reaches out to grasp your amulet.  "
       "You gasp as she draws your life essence out of you into herself.\n"
-      "~kQueen Venya'cyr tells you, \"~rAh, a truly refreshing soul thou hast.  Thou servest me well, dark one!~k\""
+      "~kQueen Venya'cyr tells you, \"~rAh, a truly refreshing soul thou "
+      "hast.  Thou servest me well, dark one!~k\""
 
-   NecromancerAmulet_drops = "As your essence dissolves away from this plane of existence, the amulet slips out "
-      "of your hands and drops to the ground."
+   necamulet_drops = \
+      "As your essence dissolves away from this plane of existence, the "
+      "amulet slips out of your hands and drops to the ground."
 
 classvars:
 
    viIndefinite = ARTICLE_AN
 
-   vrName = NecromancerAmulet_name_rsc
-   vrIcon = NecromancerAmulet_icon_rsc
-   vrDesc = NecromancerAmulet_desc_rsc
+   vrName = necamulet_name_rsc
+   vrIcon = necamulet_icon_rsc
+   vrDesc = necamulet_desc_rsc
 
    viValue_average = 100
 
@@ -127,7 +154,6 @@ classvars:
 
    viUse_Amount = 1
 
-
    viDamage_min = 10
    viDamage_max = 20
 
@@ -136,7 +162,7 @@ classvars:
 properties:
 
    plStatmods = $
-   
+
    pbIn_use = False
    pbWarned = False
    piHunger = 0
@@ -158,129 +184,176 @@ messages:
    Constructor()
    {
       pbCounted = TRUE;
-      send(send(SYS,@GetNecromancerBalance),@IncrementAmuletCount);
+      Send(Send(SYS,@GetNecromancerBalance),@IncrementAmuletCount);
+
       propagate;
    }
 
-   reqNewOwner(what = $)
+   ReqNewOwner(what = $)
    {
-      if isClass(what,&StorageBox) or isClass(what,&SafetyDepositBox)
-      { return FALSE; }
-      
-      %This is to prevent us from being dropped in a cheap death.
+      if IsClass(what,&StorageBox)
+         OR IsClass(what,&SafetyDepositBox)
+      {
+         return FALSE;
+      }
+
+      % This is to prevent us from being dropped in a cheap death.
       if pbIn_use
       {
-         if send(poOwner,@IsDead)
+         if Send(poOwner,@IsDead)
          {
-            if (pbOrderDisbanded)
+            if pbOrderDisbanded
             {
                return FALSE;
             }
          }
       }
 
-      if what = $ or not isclass(what,&User) {propagate;}
-      % don't let them pick it up if they're a newbie!
-      if not send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      if what = $
+         OR NOT IsClass(what,&User)
       {
-         if send(what,@GetKarma) < 0
+         propagate;
+      }
+      % Don't let them pick it up if they're a newbie!
+      if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         if Send(what,@GetKarma) < 0
          {
-            send(what, @MsgSendUser, #message_rsc = NecromancerAmulet_newbie_pickup_evil);
+            Send(what,@MsgSendUser,#message_rsc=necamulet_newbie_pickup_evil);
          }
          else
          {
-            send(what, @MsgSendUser, #message_rsc = NecromancerAmulet_newbie_pickup_good);
+            Send(what,@MsgSendUser,#message_rsc=necamulet_newbie_pickup_good);
          }
+
          return FALSE;
       }
+
       propagate;
    }
 
    NewOwner(what = $)
    {
-      pbWarned = False;
-      if ptHoldingDamage <> $ {
-         deleteTimer(ptHoldingDamage);
+      pbWarned = FALSE;
+
+      if ptHoldingDamage <> $
+      {
+         DeleteTimer(ptHoldingDamage);
          ptHoldingDamage = $;
       }
-      if what <> $ and isClass(what,&User) {
-         post(self,@HoldingDamageTrigger);
+
+      if what <> $
+         AND IsClass(what,&User)
+      {
+         Post(self,@HoldingDamageTrigger);
       }
+
       propagate;
    }
 
    HoldingDamageTrigger()
    {
       ptHoldingDamage = $;
-      if not isClass(poOwner,&User) {return;}
-      
-      if (send(poOwner,@GetKarma) < piKarmaWorthyThreshold) and
-               (send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold)
+      if NOT IsClass(poOwner,&User)
       {
-         if pbIn_Use { return; }
-         send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_holding_tempt);
-         ptHoldingDamage = createTimer(self,@HoldingDamageTrigger,piHoldingDamageInterval);
          return;
       }
-      else {
-         if (send(poOwner,@GetKarma) < piKarmaWorthyThreshold) {
-            if pbIn_Use {
-               send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_holding_unworthy_wearing);
-            }
-            else {
-               send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_holding_unworthy);
-            }
-         }
-         else {
-            if pbIn_Use {
-               send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_holding_damage_wearing);
-            }
-            else {
-               send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_holding_damage);
-            }
-            send(poOwner,@LoseKarma,#amount=(1 + (pbIn_Use*3)));
-         }
-         if Send(poOwner, @AssessDamage, #what=self,#damage=(Random(1, 3)+pbIn_Use*8), #report=False) = $
+      
+      if (Send(poOwner,@GetKarma) < piKarmaWorthyThreshold)
+         AND (Send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold)
+      {
+         if pbIn_Use
          {
-            % we killed them off... heh heh heh
+            return;
+         }
+
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_holding_tempt);
+         ptHoldingDamage = CreateTimer(self,@HoldingDamageTrigger,piHoldingDamageInterval);
+
+         return;
+      }
+      else
+      {
+         if (Send(poOwner,@GetKarma) < piKarmaWorthyThreshold)
+         {
             if pbIn_Use
             {
-               send(poOwner,@UnuseItem,#what=self);
+               Send(poOwner,@MsgSendUser,#message_rsc=necamulet_holding_unworthy_wearing);
             }
-            Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
-            Send(poOwner,@Killed,#what=self);
-            post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+            else
+            {
+               Send(poOwner,@MsgSendUser,#message_rsc=necamulet_holding_unworthy);
+            }
          }
          else
          {
-            ptHoldingDamage = createTimer(self,@HoldingDamageTrigger,piHoldingDamageInterval);
+            if pbIn_Use
+            {
+               Send(poOwner,@MsgSendUser,#message_rsc=necamulet_holding_damage_wearing);
+            }
+            else
+            {
+               Send(poOwner,@MsgSendUser,#message_rsc=necamulet_holding_damage);
+            }
+            Send(poOwner,@LoseKarma,#amount=(1 + (pbIn_Use*3)));
+         }
+         if Send(poOwner,@AssessDamage,#what=self,
+                  #damage=(Random(1,3)+pbIn_Use*8),#report=FALSE) = $
+         {
+            % We killed them off... heh heh heh.
+            if pbIn_Use
+            {
+               % Unusing it kills the owner, we don't want to do that yet.
+               %Send(poOwner,@UnuseItem,#what=self);
+            }
+            Send(Send(poOwner,@GetOwner),@SomethingKilled,
+                  #what=self,#victim=poOwner);
+            Send(poOwner,@Killed,#what=self);
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+         }
+         else
+         {
+            ptHoldingDamage = CreateTimer(self,@HoldingDamageTrigger,
+                                    piHoldingDamageInterval);
          }
       }
+
       return;
    }
 
    ReqSomethingUse(what = $,use_item = $)
    {
       local oWeaponUsed;
-      if use_item <> self { return TRUE; }
-      
-      if IsClass(what,&User) and what = poOwner
+
+      if use_item <> self
+      {
+         return TRUE;
+      }
+
+      if IsClass(what,&User)
+         AND what = poOwner
       {
          oWeaponUsed = Send(what,@LookupPlayerWeapon);
-         if (oWeaponUsed <> $) AND (send(what,@FindHoldingActive,#class=&HunterSword) <> $)
-            or (Send(oWeaponUsed,@GetAttributeData,#ItemAtt=WA_PUNISHER) <> $)
+         if oWeaponUsed <> $
+            AND (Send(what,@FindHoldingActive,#class=&HunterSword) <> $
+               OR Send(oWeaponUsed,@GetAttributeData,#ItemAtt=WA_PUNISHER) <> $)
          {
             return FALSE;
          }
+
          if pbWarned = FALSE
-           {
-             send(what,@msgsenduser,#message_rsc=NecromancerAmulet_warning);
-             pbWarned = TRUE;
-             return FALSE;
-           }         
-         return True;
+         {
+            Send(what,@MsgSendUser,#message_rsc=necamulet_warning);
+            pbWarned = TRUE;
+
+            return FALSE;
+         }
+
+        return True;
       }
-      DEBUG("Tried to put an amulet on a non-user: ",Send(what,@GetName));
+
+      Debug("Tried to put an amulet on a non-user: ",Send(what,@GetName));
+
       return False;
    }
 
@@ -290,116 +363,161 @@ messages:
       pbIn_use = TRUE;
       pbIllusioned = TRUE;
       plStatmods = [ 0, 0, 0, 0, 0, 0 ];
-      if (send(poOwner,@GetKarma) < piKarmaWorthyThreshold) and
-               (send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold)
+
+      if Send(poOwner,@GetKarma) < piKarmaWorthyThreshold
+         AND Send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold
       {
-         send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_used_rsc);
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_used_rsc);
       }
       else
       {
-         send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_used_unworthy);
+         Send(poOwner, @MsgSendUser, #message_rsc = necamulet_used_unworthy);
       }
-      send(self,@AdjustStats);
-      send(self,@AdjustColor);
-      ptHungerTimer = createTimer(self,@HungerTrigger,send(send(SYS,@GetNecromancerBalance),@GetHungerInterval));
+
+      Send(self,@AdjustStats);
+      Send(self,@AdjustColor);
+      ptHungerTimer = CreateTimer(self,@HungerTrigger,
+                           Send(Send(SYS,@GetNecromancerBalance),@GetHungerInterval));
+
       propagate;
    }
 
    AdjustStats()
    {
       local iKarmaFactor, iHungerFactor, iLichFactor, iModifier, iStatMod;
-      if poOwner = $ {DEBUG("tried to adjuststats with no owner!"); return;}
-      iKarmaFactor =  ( 100 * (send(poOwner,@GetKarma) - piKarmaWorthyThreshold) )/(-100 - piKarmaWorthyThreshold);
-      %iHungerFactor =( 100 * (piHunger                - HUNGER_5                ))/(-HUNGER_5 - HUNGER_5);
+
+      if poOwner = $
+      {
+         Debug("tried to adjuststats with no owner!");
+
+         return;
+      }
+
+      iKarmaFactor =  (100 * (Send(poOwner,@GetKarma) - piKarmaWorthyThreshold))
+                           / (-100 - piKarmaWorthyThreshold);
+
+      % iHungerFactor =( 100 * (piHunger- HUNGER_5))/(-HUNGER_5 - HUNGER_5);
       iHungerFactor = ( 100 * (piHunger - HUNGER_5 ))/(-2 * HUNGER_5);
+
       % iModifier goes from 0 to 100
-      %     100 is the max, but it can go below 0.
-      %     at piHunger = 0 and Karma = 65, iModifier = 50
+      % 100 is the max, but it can go below 0.
+      % At piHunger = 0 and Karma = 65, iModifier = 50
       iLichFactor = 0;
-      % Bonus for being allied with the lich, ranges from -10 to +15, depending on how paid-up you are on rent.
-      if send(poOwner,@GetGuild)<>$ and isClass(send(poOwner,@GetGuild),&NecromancerGuild) {
-         iLichFactor = 15 - (5*send(send(poOwner,@GetGuild),@GetRentDue));
-         iLichFactor = bound(iLichFactor,-10,15);
+      % Bonus for being allied with the lich, ranges from -10 to +15,
+      % depending on how paid-up you are on rent.
+      if Send(poOwner,@GetGuild) <> $
+         AND IsClass(Send(poOwner,@GetGuild),&NecromancerGuild)
+      {
+         iLichFactor = 15 - (5 * Send(Send(poOwner,@GetGuild),@GetRentDue));
+         iLichFactor = Bound(iLichFactor,-10,15);
       }
-      iModifier = (2*iHungerFactor + iKarmaFactor)/3 + iLichFactor;
+      iModifier = (2 * iHungerFactor + iKarmaFactor) / 3 + iLichFactor;
 
-      if plStatmods = $ { plStatmods = [0,0,0,0,0,0]; }
-      iStatMod = (105*iModifier/1000);
-      if (iStatMod -  nth(plStatmods,2)) <> 0
+      if plStatmods = $
       {
-         iStatMod = send( poOwner,@AddIntellect,#points=(iStatMod -  nth(plStatmods,2)) ) + nth(plStatmods,2);
-         SetNth(plStatmods, 2, iStatMod);
-      }
-      iStatMod = (105*iModifier/1000);
-      if (iStatMod -  nth(plStatmods,6)) <> 0
-      {
-         iStatMod = send( poOwner,@AddMysticism,#points=(iStatMod -  nth(plStatmods,6)) ) + nth(plStatmods,6);
-         SetNth(plStatmods, 6, iStatMod);
+         plStatmods = [0,0,0,0,0,0];
       }
 
-      iStatMod = (-35*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,1)) <> 0
+      iStatMod = (105 * iModifier / 1000);
+      if (iStatMod -  Nth(plStatmods,2)) <> 0
       {
-         iStatMod = send( poOwner,@AddMight,#points=(iStatMod -  nth(plStatmods,1)) ) + nth(plStatmods,1);
-         SetNth(plStatmods, 1, iStatMod);
-      }
-      iStatMod = (-35*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,4)) <> 0
-      {
-         iStatMod = send( poOwner,@AddAim,#points=(iStatMod -  nth(plStatmods,4)) ) + nth(plStatmods,4);
-         SetNth(plStatmods, 4, iStatMod);
+         iStatMod = Send(poOwner,@AddIntellect,#points=(iStatMod - Nth(plStatmods,2)))
+                           + Nth(plStatmods,2);
+         SetNth(plStatmods,2,iStatMod);
       }
 
-      iStatMod = ( 39*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,5)) <> 0
+      iStatMod = (105 * iModifier / 1000);
+      if (iStatMod - Nth(plStatmods,6)) <> 0
       {
-         iStatMod = send( poOwner,@AddStamina,#points=(iStatMod -  nth(plStatmods,5)) ) + nth(plStatmods,5);
-         SetNth(plStatmods, 5, iStatMod);
-      }
-      iStatMod = ( 39*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,3)) <> 0
-      {
-         iStatMod = send( poOwner,@AddAgility,#points=(iStatMod -  nth(plStatmods,3)) ) + nth(plStatmods,3);
-         SetNth(plStatmods, 3, iStatMod);
+         iStatMod = Send(poOwner,@AddMysticism,#points=(iStatMod - Nth(plStatmods,6)))
+                           + Nth(plStatmods,6);
+         SetNth(plStatmods,6,iStatMod);
       }
 
-      if not pbIllusioned {
-         if random(0, HUNGER_5) > piHunger {
-            send(self,@ReplaceIllusions);
+      iStatMod = (-35 * iModifier / 1000) - 2;
+      if (iStatMod -  Nth(plStatmods,1)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddMight,#points=(iStatMod - Nth(plStatmods,1)))
+                           + Nth(plStatmods,1);
+         SetNth(plStatmods,1,iStatMod);
+      }
+
+      iStatMod = (-35 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,4)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddAim,#points=(iStatMod - Nth(plStatmods,4)))
+                           + Nth(plStatmods,4);
+         SetNth(plStatmods,4,iStatMod);
+      }
+
+      iStatMod = (39 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,5)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddStamina,#points=(iStatMod - Nth(plStatmods,5)))
+                           + Nth(plStatmods,5);
+         SetNth(plStatmods,5,iStatMod);
+      }
+
+      iStatMod = (39 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,3)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddAgility,#points=(iStatMod - Nth(plStatmods,3)))
+                           + Nth(plStatmods,3);
+         SetNth(plStatmods,3,iStatMod);
+      }
+
+      if NOT pbIllusioned
+      {
+         if Random(0,HUNGER_5) > piHunger
+         {
+            Send(self,@ReplaceIllusions);
          }
       }
-      else {
-         if random(0, HUNGER_5) < piHunger {
-            send(self,@DispelIllusions);
+      else
+      {
+         if Random(0, HUNGER_5) < piHunger
+         {
+            Send(self,@DispelIllusions);
          }
       }
+
       return;
    }
 
    RestoreStats(who = $)
    {
-      if who = $ {
-         if poOwner <> $ {
+      if who = $
+      {
+         if poOwner <> $
+         {
             who = poOwner;
          }
-         else {
-            DEBUG("No one to restore stats on!!");
+         else
+         {
+            Debug("No one to restore stats on!!");
          }
       }
-      if plStatmods = $ { return; }
-      send( who,@AddIntellect,#points=(-nth(plStatmods,2)) );
-      send( who,@AddMysticism,#points=(-nth(plStatmods,6)) );
-      send( who,@AddMight,#points=(-nth(plStatmods,1)) );
-      send( who,@AddAim,#points=(-nth(plStatmods,4)) );
-      send( who,@AddStamina,#points=(-nth(plStatmods,5)) );
-      send( who,@AddAgility,#points=(-nth(plStatmods,3)) );
+
+      if plStatmods = $
+      {
+         return;
+      }
+
+      Send(who,@AddIntellect,#points=(-Nth(plStatmods,2)));
+      Send(who,@AddMysticism,#points=(-Nth(plStatmods,6)));
+      Send(who,@AddMight,#points=(-Nth(plStatmods,1)));
+      Send(who,@AddAim,#points=(-Nth(plStatmods,4)));
+      Send(who,@AddStamina,#points=(-Nth(plStatmods,5)));
+      Send(who,@AddAgility,#points=(-Nth(plStatmods,3)));
       plStatmods = $;
+
       return;
    }
 
    AdjustColor()
    {
       local Xlat;
+
       if piHunger > HUNGER_5
       {
          Xlat = PT_GRAY_TO_RED;
@@ -436,52 +554,69 @@ messages:
             }
          }
       }
-      send(self,@SetPaletteTranslation,#translation =XlAT);
-	   send(poOwner,@SomethingChanged,#what=self);
+      Send(self,@SetPaletteTranslation,#translation =XlAT);
+      Send(poOwner,@SomethingChanged,#what=self);
+
       return;
    }
 
    DispelIllusions()
    {
-      if not pbIn_Use { return; }
-      if not pbIllusioned { return; }
+      if NOT pbIn_Use
+      {
+         return;
+      }
 
-      send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_illusion_slipped);
-      %send(poOwner,@RemoveHair,#what=self);
+      if NOT pbIllusioned
+      {
+         return;
+      }
+
+      Send(poOwner,@MsgSendUser,#message_rsc=necamulet_illusion_slipped);
+      % Send(poOwner,@RemoveHair,#what=self);
       if piSavedSkinColor = $
       {
-         % save skin color
-         piSavedSkinColor = send(poOwner,@GetSkinColor);
-         % turn skin white, eyes red
-         send(poOwner,@SetSkinColor,#color=PT_BLUE_TO_ASHEN);
+         % Save skin color.
+         piSavedSkinColor = Send(poOwner,@GetSkinColor);
+         % Turn skin white, eyes red.
+         Send(poOwner,@SetSkinColor,#color=PT_BLUE_TO_ASHEN);
       }
       else
       {
-         DEBUG("Tried to DispelIllusions with a skin color already saved.");
+         Debug("Tried to DispelIllusions with a skin color already saved.");
       }
       pbIllusioned = FALSE;
 
       return;
    }
+
    ReplaceIllusions(notify=TRUE)
    {
-      if not pbIn_Use { return; }
-      if pbIllusioned { return; }
+      if NOT pbIn_Use
+      {
+         return;
+      }
+
+      if pbIllusioned
+      {
+         return;
+      }
 
       if notify
       {
-         send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_illusion_restored);
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_illusion_restored);
       }
-      %send(poOwner,@ResetHair);
+
+      % Send(poOwner,@ResetHair);
       if piSavedSkinColor <> $
       {
-         % restore skin color
-         send(poOwner,@SetSkinColor,#color=piSavedSkinColor);
+         % Restore skin color.
+         Send(poOwner,@SetSkinColor,#color=piSavedSkinColor);
          piSavedSkinColor = $;
       }
       else
       {
-         DEBUG("Tried to ReplaceIllusions with no saved skin color.");
+         Debug("Tried to ReplaceIllusions with no saved skin color.");
       }
       pbIllusioned = TRUE;
 
@@ -491,162 +626,240 @@ messages:
    HungerTrigger()
    {
       ptHungerTimer = $;
-      if (not pbIn_use) or (not isClass(poOwner,&User)) { return; }
-      ptHungerTimer = createTimer(self,@HungerTrigger,send(send(SYS,@GetNecromancerBalance),@GetHungerInterval));
-      
-      if not send(poOwner,@IsLoggedOn) { return; }
-      %don't accrue hunger or associated penalties if we're already being slammed with holding penalties.
-      if ptHoldingDamage <> $ { return; }
-      
-      %check that owner still satisfies amulet restrictions
-      if not ( (send(poOwner,@GetKarma) < piKarmaWorthyThreshold) and
-               (send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold) ) and
-             (ptHoldingDamage = $)
+      if NOT pbIn_use
+         OR NOT IsClass(poOwner,&User)
       {
-         send(self,@HoldingDamageTrigger);
+         return;
       }
+
+      ptHungerTimer = CreateTimer(self,@HungerTrigger,
+                           Send(Send(SYS,@GetNecromancerBalance),@GetHungerInterval));
       
+      if NOT Send(poOwner,@IsLoggedOn)
+      {
+         return;
+      }
+
+      % Don't accrue hunger or associated penalties if we're already
+      % being slammed with holding penalties.
+      if ptHoldingDamage <> $
+      {
+         return;
+      }
+
+      % Check that owner still satisfies amulet restrictions.
+      if NOT ((Send(poOwner,@GetKarma) < piKarmaWorthyThreshold)
+            AND (Send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold))
+         AND ptHoldingDamage = $
+      {
+         Send(self,@HoldingDamageTrigger);
+      }
+
       piFineHunger = piFineHunger + 1;
-      if piFineHunger = 60 {
+      if piFineHunger = 60
+      {
          piFineHunger = 0;
          piHunger = piHunger + 1;
       }
-      send(self,@AdjustStats);
-      send(self,@AdjustColor);
-      if piHunger > HUNGER_5 {
-         % start doing serious damage, losing vigor
-         send(poOwner, @AddExertion, #amount = 20000); % 2 vigor points
-         send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_hunger_5);
-         if Send(poOwner, @AssessDamage, #what=self,#damage=Random(5, 10),
-   	      #report=False) = $
+      Send(self,@AdjustStats);
+      Send(self,@AdjustColor);
+
+      if piHunger > HUNGER_5
+      {
+         % Start doing serious damage, losing vigor.
+         Send(poOwner,@AddExertion,#amount = 20000); % 2 vigor points
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_hunger_5);
+
+         if Send(poOwner,@AssessDamage,#what=self,#damage=Random(5,10),
+                  #report=FALSE) = $
          {
-            % we killed someone off... heh heh heh
+            % We killed someone off... heh heh heh.
             if pbIn_Use
             {
-               send(poOwner,@UnuseItem,#what=self);
+               % Unusing it kills the owner, we don't want to do that yet.
+               %Send(poOwner,@UnuseItem,#what=self);
             }
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);
-            post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
          }
+
          return;
       }
-      if piHunger > HUNGER_4 {
-         % start doing mild damage
-         if (piFineHunger mod 5) = 0 {
-            send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_hunger_4);
-         }
-         if Send(poOwner, @AssessDamage, #what=self,#damage=Random(1, 5),
-   	      #report=False) = $
+
+      if piHunger > HUNGER_4
+      {
+         % Start doing mild damage.
+         if (piFineHunger MOD 5) = 0
          {
-            % we killed someone off... heh heh heh
+            Send(poOwner,@MsgSendUser,#message_rsc=necamulet_hunger_4);
+         }
+
+         if Send(poOwner,@AssessDamage,#what=self,#damage=Random(1,5),
+                  #report=FALSE) = $
+         {
+            % We killed someone off... heh heh heh.
             if pbIn_Use
             {
-               send(poOwner,@UnuseItem,#what=self);
+               % Unusing it kills the owner, we don't want to do that yet.
+               %Send(poOwner,@UnuseItem,#what=self);
             }
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);
-            post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
          }
+
          return;
       }
-      if (piHunger > HUNGER_3) {
-         if (piFineHunger mod 15) = 0 {
-            send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_hunger_3);
+
+      if piHunger > HUNGER_3
+      {
+         if (piFineHunger MOD 15) = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=necamulet_hunger_3);
          }
+
          return;
       }
-      if (piHunger > HUNGER_2) {
-         if ((piFineHunger mod 30) = 0) {
-            send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_hunger_2);
+
+      if piHunger > HUNGER_2
+      {
+         if (piFineHunger MOD 30) = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=necamulet_hunger_2);
          }
+
          return;
       }
-      if (piHunger > HUNGER_1) {
-         if (piFineHunger = 0) {
-            send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_hunger_1);
+
+      if piHunger > HUNGER_1
+      {
+         if piFineHunger = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=necamulet_hunger_1);
          }
+
          return;
       }
-      
+
       return;
    }
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
-      local iGain;
-      if (not isClass(victim,&Monster)) and (not isClass(victim,&User)) {
-         DEBUG("SomethingKilled called with an invalid victim: ",send(victim,@GetName));
+      local iGain, oPlayerOwner;
+      
+      if poOwner = $
+      {
          return;
       }
 
-      %%No reward for Arena deaths.  (This will also catch other 'safe' areas should they be added.)
-      if send(send(poOwner,@GetOwner),@SafePlayerAttack) and send(send(poOwner,@GetOwner),@InPlay,#what=poOwner)
+      if (NOT IsClass(victim,&Monster))
+         AND (NOT IsClass(victim,&User))
+      {
+         Debug("SomethingKilled called with an invalid victim: ",
+               Send(victim,@GetName));
+
+         return;
+      }
+
+      oPlayerOwner = Send(poOwner,@GetOwner);
+      if oPlayerOwner = $
       {
          return;
       }
-      % assuage hunger according to a couple modifiers
-      %     greater gain if you're the killer (3:1)
-      %     greater gain if victim is a player (2:1)
-      %     greater gain if victim has good karma (karma 100:karma -100 = 2:1 - continuum of values)
-      %     greater gain for more powerful victims (difficulty 9:difficulty 1 = 9:1 - continuum of values)
-      %                                            (hp 100: hp 20 = 5:1 - continuum of values)
-      if pbIn_Use and (poOwner <> $) and isClass(poOwner,&User) and (victim <> poOwner)
+
+      % No reward for Arena deaths.  (This will also catch other 'safe'
+      % areas should they be added.)
+      if Send(oPlayerOwner,@SafePlayerAttack)
+         AND Send(oPlayerOwner,@InPlay,#what=poOwner)
       {
-         send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_hunger_assuaged,
-               #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName));
-         iGain = send(send(SYS,@GetNecromancerBalance),@CalculateAmuletHungerSatisfied,
-               #NecAm=self, #killer=what, #victim=victim);
-         send(self,@SatisfyHunger,#amount=iGain);
+         return;
       }
-      if pbIn_Use and victim = poOwner {
-         %post this so that we get through Player::killed(), activating a cheap death if necessary, before handling it here.
-         post(self,@OwnerKilled,#what=what,#necro=poOwner);
+
+      % Assuage hunger according to a couple modifiers:
+      %   greater gain if you're the killer (3:1)
+      %   greater gain if victim is a player (2:1)
+      %   greater gain if victim has good karma
+      %     (karma 100:karma -100 = 2:1 - continuum of values)
+      %   greater gain for more powerful victims
+      %     (difficulty 9:difficulty 1 = 9:1 - continuum of values)
+      %     (hp 100: hp 20 = 5:1 - continuum of values)
+      if pbIn_Use
+         AND poOwner <> $
+         AND IsClass(poOwner,&User)
+         AND victim <> poOwner
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_hunger_assuaged,
+               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+         iGain = Send(Send(SYS,@GetNecromancerBalance),@CalculateAmuletHungerSatisfied,
+                     #NecAm=self,#killer=what,#victim=victim);
+         Send(self,@SatisfyHunger,#amount=iGain);
       }
+
+      if pbIn_Use
+         AND victim = poOwner
+      {
+         % Post this so that we get through Player::killed(), activating
+         % a cheap death if necessary, before handling it here.
+         Post(self,@OwnerKilled,#what=what,#necro=poOwner);
+      }
+
       return;
    }
 
    ActivateCheapDeath()
    {
       pbOrderDisbanded = TRUE;
+
       return;
    }
-   
+
    OwnerKilled(what=$,necro=$)
    {
       local oGuild;
 
-      % if the Order disbanded (or any other cheap death), let them keep their amulet.
-      if pbOrderDisbanded {
+      % If the Order disbanded (or any other cheap death),
+      % let them keep their amulet.
+      if pbOrderDisbanded
+      {
          pbOrderDisbanded = FALSE;
       }
-      else {
-         oGuild = send(necro,@GetGuild);
-         if (oGuild <> $) and (isClass(oGuild,&NecromancerGuild)) {
-            send(oGuild,@MemberKilled,#victim=necro,#killer=what);
+      else
+      {
+         oGuild = Send(necro,@GetGuild);
+         if oGuild <> $
+            AND IsClass(oGuild,&NecromancerGuild)
+         {
+            Send(oGuild,@MemberKilled,#victim=necro,#killer=what);
          }
-         % instead of deleting the amulet, we put it back in circulation.
-         %post(self,@Delete);
-         post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+
+         % Instead of deleting the amulet, we put it back in circulation.
+         % Post(self,@Delete);
+         Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
       }
-      return;   
+
+      return;
    }
 
    SatisfyHunger(amount=0)
    {
-      % Gain vigor
-      send(poOwner, @AddExertion, #amount = -amount*10000); % regain (amount) vigor points
-      % satsify hunger
+      % Gain vigor.
+      Send(poOwner,@AddExertion,#amount=-amount*10000);
+
+      % Satsify hunger.
       piFineHunger = piFineHunger - amount;
-      while piFineHunger < 0 {
+      while piFineHunger < 0
+      {
          piHunger = piHunger - 1;
          piFineHunger = piFineHunger + 60;
       }
-      % can 'save up', but only to a point.
-      piHunger = bound(piHunger,-HUNGER_5,$);
-      send(self,@AdjustStats);
-      send(self,@AdjustColor);
-      
+
+      % Can 'save up', but only to a point.
+      piHunger = Bound(piHunger,-HUNGER_5,$);
+      Send(self,@AdjustStats);
+      Send(self,@AdjustColor);
+
       return;
    }
 
@@ -655,36 +868,51 @@ messages:
       if pbCounted
       {
          pbCounted = FALSE;
-         send(send(SYS,@GetNecromancerBalance),@DecrementAmuletCount);
+         Send(Send(SYS,@GetNecromancerBalance),@DecrementAmuletCount);
       }
-      if ptHungerTimer <> $ {
-         deleteTimer(ptHungerTimer);
+
+      if ptHungerTimer <> $
+      {
+         DeleteTimer(ptHungerTimer);
          ptHungerTimer = $;
       }
-      if ptHoldingDamage <> $ {
-         deleteTimer(ptHoldingDamage);
+      if ptHoldingDamage <> $
+      {
+         DeleteTimer(ptHoldingDamage);
          ptHoldingDamage = $;
       }
-      %have to post this so that in case the item gets deleted out of the blue while in use, it still has the stat mod data when delete() propagates down to unusing the item.
-      post(self,@postDelete);
+
+      % Have to post this so that in case the item gets deleted out of
+      % the blue while in use, it still has the stat mod data when
+      % delete() propagates down to unusing the item.
+      Post(self,@PostDelete);
+
       propagate;
    }
+
    PostDelete()
    {
       plStatmods = $;
+
       return;
    }
 
    ReqLeaveOwner()
-   "don't allow new owner while we're in use"
+   "Don't allow new owner while we're in use."
    {
-%      if not isClass(poOwner,&user) or Send(poOwner,@PlayerIsImmortal) {propagate;}
-      if not isClass(poOwner,&user) {propagate;}
-      if pbIn_use 
+      % if not IsClass(poOwner,&user) or Send(poOwner,@PlayerIsImmortal) {propagate;}
+      if NOT IsClass(poOwner,&User)
       {
-	 Post(self,@TortureOwner);
-	 return False;
+         propagate;
       }
+
+      if pbIn_use
+      {
+         Post(self,@TortureOwner);
+
+         return FALSE;
+      }
+
       propagate;
    }
 
@@ -692,305 +920,408 @@ messages:
    "When something tries to unuse the Amulet, it will not come off, and will"
    "teach the user a lesson in the process."
    {
-%      if Send(poOwner,@PlayerIsImmortal) {return True;}
+      % if Send(poOwner,@PlayerIsImmortal) {return True;}
       Post(self,@TortureOwner);
-      return False;
+
+      return FALSE;
    }
 
    TortureOwner()
    {
-      if (poOwner = $)
+      if poOwner = $
       {
          return;
       }
-      if not isClass(poOwner,&Player)
+
+      if NOT IsClass(poOwner,&Player)
       {
          return;
       }
-      send(poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_try_unuse_rsc);
-      if Send(poOwner, @AssessDamage, #what=self,#damage=Random(viDamage_min, viDamage_max),
-	      #report=False) = $
+
+      Send(poOwner,@MsgSendUser,#message_rsc=necamulet_try_unuse_rsc);
+      if Send(poOwner,@AssessDamage,#what=self,
+               #damage=Random(viDamage_min,viDamage_max),#report=FALSE) = $
       {
-         % we killed someone off... heh heh heh
-         if pbIn_Use and send(self,@DropOnDeath)
+         % We killed someone off... heh heh heh.
+         if pbIn_Use
+            AND Send(self,@DropOnDeath)
          {
-            send(poOwner,@UnuseItem,#what=self);
+            % Unusing it kills the owner, we don't want to do that yet.
+            %Send(poOwner,@UnuseItem,#what=self);
+            
+            % Amulet goes back into circulation.
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
          }
-         Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
+
+         Send(Send(poOwner,@GetOwner),@SomethingKilled,
+               #what=self,#victim=poOwner);
          Send(poOwner,@Killed,#what=self);
-         if send(self,@DropOnDeath)
-         {
-            post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
-         }
       }
+
       return;
    }
 
    NewUnused(what = $, Recalibrate = FALSE)
-   "When something that can break the curse unuses the item"
+   "When something that can break the curse unuses the item."
    {
       local oGuild;
-      if ptHungerTimer <> $ {
-         deleteTimer(ptHungerTimer);
+
+      if ptHungerTimer <> $
+      {
+         DeleteTimer(ptHungerTimer);
          ptHungerTimer = $;
       }
-      send(self,@ReplaceIllusions,#notify=FALSE);
-      send(self,@RestoreStats, #who=what);
-      if not Recalibrate
-      {
-         oGuild = send(what,@GetGuild);
-         if (oGuild <> $) and (isClass(oGuild,&NecromancerGuild))
-         {
-            send(oGuild,@MemberKilled,#victim=what,#killer=what);
-         }
-      }
+
+      Send(self,@ReplaceIllusions,#notify=FALSE);
+      Send(self,@RestoreStats,#who=what);
+
+      % The player has to die to take this off - the death code handles
+      % sending info to the guild.
+      %if NOT Recalibrate
+      %{
+      %   oGuild = Send(what,@GetGuild);
+      %   if oGuild <> $
+      %      AND IsClass(oGuild,&NecromancerGuild)
+      %   {
+      %      Send(oGuild,@MemberKilled,#victim=what,#killer=what);
+      %   }
+      %}
+
       pbIn_use = FALSE;
       pbIllusioned = FALSE;
+
       propagate;
    }
 
    SendAnimation()
    {
       AddPacket(1, ANIMATE_NONE, 2, 2);
+
       return;
    }
 
    SendInventoryAnimation()
    {
-      if pbIn_Use and ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      if pbIn_Use
+         AND (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
+
       AddPacket(1,ANIMATE_NONE,2,2);
+
       return;
    }
 
    SendLookAnimation()
    {
-      if pbIn_Use and ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      if pbIn_Use
+         AND (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
 
       AddPacket(1,ANIMATE_NONE,2,1);
+
       return;
    }
-   
+
    ReqUseSomething(what = $)
    {
-      if IsClass(what, &Necklace) or IsClass(what, &NecromancerAmulet)
+      if IsClass(what,&Necklace)
+         OR IsClass(what,&NecromancerAmulet)
       {
-         if Send(poOwner, @TryUnuseItem, #what = self)
+         if Send(poOwner,@TryUnuseItem,#what=self)
          {
             propagate;
          }
+
          return False;
       }
-      if IsClass(what, &Food) and not IsClass(what, &Spideye)
+
+      if IsClass(what,&Food)
+         AND IsClass(what,&Spideye)
       {
-         send( poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_cant_eat,
-               #parm1=send(what,@GetDef),#parm2=send(what,@GetName) );
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_cant_eat,
+               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+
          return FALSE;
       }
+
       propagate;
    }
 
    ReqUse(what=$)
    {
-      if not send(what,@CanAdvance)
+      if NOT Send(what,@CanAdvance)
       {
-         send(what,@DontInterfere);
+         Send(what,@DontInterfere);
+
          return FALSE;
       }
+
       propagate;
    }
 
    LichTributeDrain()
    {
       local iAmountDrained;
-      if piHunger >= HUNGER_4 {
-         send( poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_cant_pay);
-         return 0;
+
+      if piHunger >= HUNGER_4
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_cant_pay);
+
+         return FALSE;
       }
 
-      if piHunger > 0 {
-         send( poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_pay_ouch);
+      if piHunger > 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_pay_ouch);
          iAmountDrained = HUNGER_4 - piHunger;
          piHunger = HUNGER_4;
+
          return iAmountDrained;
       }
-      send( poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_pay);
+
+      Send(poOwner,@MsgSendUser,#message_rsc=necamulet_pay);
       iAmountDrained = HUNGER_3 - piHunger;
       piHunger = HUNGER_3;
-      send(self,@AdjustStats);
-      send(self,@AdjustColor);
+      Send(self,@AdjustStats);
+      Send(self,@AdjustColor);
+
       return iAmountDrained;
    }
 
    NecromancerRosterRequest(oLich = $)
    {
-      if pbIn_Use and poOwner <> $ and isClass(poOwner,&User) and oLich <> $ {
-         send(oLich,@NecromancerRosterReply,#necroName=send(poOwner,@GetTrueName));
+      if pbIn_Use
+         AND poOwner <> $
+         AND IsClass(poOwner,&User)
+         AND oLich <> $
+      {
+         Send(oLich,@NecromancerRosterReply,
+               #necroName=Send(poOwner,@GetTrueName));
       }
+
       return;
    }
 
    LichKilled()
    {
-      post(self,@PostLichKilled);
+      Post(self,@PostLichKilled);
+
       return;
    }
+
    PostLichKilled()
    {
-      local oNecro,iDropIndex,oGuildh15,iDropRow,iDropCol,oNecBal,oTreasure,iTeleportThresholdValue;
-      if pbIn_Use and poOwner <> $ and isClass(poOwner,&User)
+      local oNecro, iDropIndex, oGuildh15, iDropRow, iDropCol, oNecBal,
+            oTreasure, iTeleportThresholdValue;
+
+      if pbIn_Use
+         AND poOwner <> $
+         AND IsClass(poOwner,&User)
       {
          oNecro = poOwner;
-         oNecBal = send(SYS,@GetNecromancerBalance);
-         for oTreasure in send(oNecro,@GetHolderActive)
+         oNecBal = Send(SYS,@GetNecromancerBalance);
+
+         for oTreasure in Send(oNecro,@GetHolderActive)
          {
-            send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            if oTreasure <> self
+               AND Send(oTreasure,@DropOnDeath)
+            {
+               Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            }
          }
-         for oTreasure in send(oNecro,@GetHolderPassive)
+
+         for oTreasure in Send(oNecro,@GetHolderPassive)
          {
-            send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            if Send(oTreasure,@DropOnDeath)
+            {
+               Send(oNecBal,@PutObjectInNecromancerTreasure,#what=oTreasure);
+            }
          }
-         send(oNecBal,@StartPlacingNecromancerTreasure);
-         % now kill the necromancer
-         if send(oNecro,@GetOwner)<>$ {
-            Send(Send(oNecro,@GetOwner),@SomethingKilled,#what=self,#victim=oNecro);
+
+         Send(oNecBal,@StartPlacingNecromancerTreasure);
+
+         % Mow kill the necromancer.
+         if Send(oNecro,@GetOwner) <> $
+         {
+            Send(Send(oNecro,@GetOwner),@SomethingKilled,
+                  #what=self,#victim=oNecro);
          }
          Send(oNecro,@Killed,#what=self);
       }
-      send(self,@Delete);
+
+      Send(self,@Delete);
+
       return;
    }
 
    OrderOfNecromancersDisbanded()
    {
-      post(self,@PostOrderOfNecromancersDisbanded);
+      Post(self,@PostOrderOfNecromancersDisbanded);
+
       return;
    }
+
    PostOrderOfNecromancersDisbanded()
    {
       local oGuild,oMaster;
-      if pbIn_Use and poOwner <> $ and isClass(poOwner,&User)
+
+      if pbIn_Use
+         AND poOwner <> $
+         AND IsClass(poOwner,&User)
       {
-         oGuild = send(poOwner,@GetGuild);
-         if (oGuild <> $) and isClass(oGuild,&NecromancerGuild) {
-            if send(oGuild,@GetRank,#who=poOwner)=RANK_MASTER and (length(send(oGuild,@GetMemberList)) > 1)
+         oGuild = Send(poOwner,@GetGuild);
+         if oGuild <> $
+            AND IsClass(oGuild,&NecromancerGuild)
+         {
+            if Send(oGuild,@GetRank,#who=poOwner) = RANK_MASTER
+               AND Length(Send(oGuild,@GetMemberList)) > 1
             {
-               % kill the GM last.
+               % Kill the GM last.
                return;
             }
-            post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
-            send(oGuild,@MemberKilled,#victim=poOwner,#killer=poOwner);
-            if send(poOwner,@GetOwner)<>$ {
-               Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
-            }
-            Send(poOwner,@Killed,#what=self);
-            if length(send(oGuild,@GetMemberList)) = 1
+
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+            Send(oGuild,@MemberKilled,#victim=poOwner,#killer=self);
+
+            if Send(poOwner,@GetOwner) <> $
             {
-               % just the master left in the guild, kill him off!
-               oMaster = first(first(send(oGuild,@GetMemberList)));
-               post(self,@KillGM,#oMaster=oMaster);
+               Send(Send(poOwner,@GetOwner),@SomethingKilled,
+                     #what=self,#victim=poOwner);
+            }
+
+            Send(poOwner,@Killed,#what=self);
+
+            if Length(Send(oGuild,@GetMemberList)) = 1
+            {
+               % Just the master left in the guild, kill him off!
+               oMaster = First(First(Send(oGuild,@GetMemberList)));
+               Post(self,@KillGM,#oMaster=oMaster);
             }
          }
-         else {
+         else
+         {
             % they lose 2/3 of their HP.
-            Send(poOwner, @AssessDamage, #what=self,#damage=(send(poOwner,@GetHealth)*2/3), #report=False);
+            Send(poOwner,@AssessDamage,#what=self,
+                  #damage=(Send(poOwner,@GetHealth)*2/3),#report=FALSE);
          }
       }
+
       return;
    }
 
    KillGM(oMaster=$)
    {
       local oGuild,i,oAmulet;
+
       if oMaster = $
       {
-         DEBUG("BAD");
+         Debug("KillGM called with $ GM for necromancer guild!");
+
          return;
       }
+
       oAmulet = $;
-      if send(oMaster,@IsUsingA,#Class=&NecromancerAmulet)
+      if Send(oMaster,@IsUsingA,#Class=&NecromancerAmulet)
       {
-         for i in send(oMaster,@GetPlayerUsing)
+         for i in Send(oMaster,@GetPlayerUsing)
          {
-            if isClass(i,&NecromancerAmulet)
+            if IsClass(i,&NecromancerAmulet)
             {
                oAmulet = i;
+
                break;
             }
          }
-         post(send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=oAmulet);
+         Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=oAmulet);
       }
       else
       {
-         DEBUG("Order disbanded:  GM not wearing an amulet!");
+         Debug("Order disbanded:  GM not wearing an amulet!");
       }
-      oGuild = send(oMaster,@GetGuild);
-      send(oGuild,@MemberKilled,#victim=oMaster,#killer=oMaster);
-      if send(oMaster,@GetOwner)<>$
+
+      oGuild = Send(oMaster,@GetGuild);
+      Send(oGuild,@MemberKilled,#victim=oMaster,#killer=self);
+      if Send(oMaster,@GetOwner) <> $
       {
-         Send(Send(oMaster,@GetOwner),@SomethingKilled,#what=self,#victim=oMaster);
+         Send(Send(oMaster,@GetOwner),@SomethingKilled,
+               #what=self,#victim=oMaster);
       }
       Send(oMaster,@Killed,#what=self);
-      return;      
+
+      return;
    }
 
    UserLogoff()
    {
-      if not pbIn_Use {
-         send(poOwner, @msgsenduser, #message_rsc = NecromancerAmulet_drops);
-         Send(send(poOwner,@GetOwner), @NewHold, #what = self, #new_row=send(poOwner,@GetRow), #new_col=send(poOwner,@GetCol),
-                                                            #fine_row=send(poOwner,@GetFineRow), #fine_col=send(poOwner,@GetFineCol));
+      if NOT pbIn_Use
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=necamulet_drops);
+         Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
+               #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
+               #fine_row=Send(poOwner,@GetFineRow),
+               #fine_col=Send(poOwner,@GetFineCol));
       }
+
       propagate;
    }
 
    DestroyDisposable()
    {
       local oNecBal;
-      if random(1,15) = 1        % called every 2 minutes, so this means an average of 30 minutes.
+
+      % Called every 2 minutes, so this means an average of 30 minutes.
+      if Random(1,15) = 1
       {
-         oNecBal = send(SYS,@GetNecromancerBalance);
-         if not send(oNecBal,@AmuletIsAtSpawnPoint,#oAmulet=self)
+         oNecBal = Send(SYS,@GetNecromancerBalance);
+         if NOT Send(oNecBal,@AmuletIsAtSpawnPoint,#oAmulet=self)
          {
-            post(oNecBal,@PlaceAmulet,#what=self);
+            Post(oNecBal,@PlaceAmulet,#what=self);
          }
       }
+
       return;
    }
 
    CanWeaken()
    "Brittle will not work."
-   { return FALSE; }
+   {
+      return FALSE;
+   }
 
    CanSwap()
    "Swap will never yank this."
-   { return FALSE; }
+   {
+      return FALSE;
+   }
 
    CanShatter()
    "this will not shatter."
-   { return FALSE; }
+   {
+      return FALSE;
+   }
 
    CanEnchant()
-   {  return FALSE; }
-   
+   {
+      return FALSE;
+   }
+
    CanBeGivenToNPC()
    "NPCs will refuse to take this item if offered to them."
    {
       return FALSE;
    }
 
-   CanBeStoredInVault()   
+   CanBeStoredInVault()
    {
       return FALSE;
    }
 
    ReqDMDelete()
-   "Item will not be deleted by DM Clear Inventory command"
+   "Item will not be deleted by DM Clear Inventory command."
    {
       return FALSE;
    }
@@ -999,17 +1330,29 @@ messages:
    {
       local oRoom;
 
-      oRoom=send(poOwner,@GetOwner);
-      if send(poOwner,@PossessesA,#class=&Token) OR
-      (send(oRoom,@SafePlayerAttack) AND send(oRoom,@inPlay,#what=poOwner))
+      if poOwner = $
+      {
+         Debug("DropOnDeath called on ",Send(self,@GetName)," with null owner!");
+
+         return FALSE;
+      }
+
+      oRoom = Send(poOwner,@GetOwner);
+
+      if oRoom = $
       {
          return FALSE;
       }
+
+      if Send(poOwner,@PossessesA,#class=&Token)
+         OR (Send(oRoom,@SafePlayerAttack)
+            AND Send(oRoom,@inPlay,#what=poOwner))
+      {
+         return FALSE;
+      }
+
       return TRUE;
    }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-

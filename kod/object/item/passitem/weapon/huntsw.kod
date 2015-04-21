@@ -7,6 +7,7 @@
 % Meridian is a registered trademark.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 HunterSword is Weapon
 
 %%%%%
@@ -18,67 +19,75 @@ constants:
 
    include blakston.khd
 
-%   HUNGER_1 = 2   %one session (assuming 3-4 hours of play per day)
-%   HUNGER_2 = 4   %one to two sessions
-%   HUNGER_3 = 6   %two sessions
-%   HUNGER_4 = 8   %two to three sessions
-%   HUNGER_5 = 10  %three sessions
+%   HUNGER_1 = 2   % one session (assuming 3-4 hours of play per day)
+%   HUNGER_2 = 4   % one to two sessions
+%   HUNGER_3 = 6   % two sessions
+%   HUNGER_4 = 8   % two to three sessions
+%   HUNGER_5 = 10  % three sessions
 
-   %BASE_HUNGER_GAIN = 2 % in units of FineHunger
-   %                     % gain should be equivalent to one 60hp neutral player solo-kill per session-day (3-4 hrs)
-   %                     %     (i.e. iGain modifier = 108)
+   % BASE_HUNGER_GAIN = 2 in units of FineHunger.
+   % Gain should be equivalent to one 60hp neutral player solo-kill
+   % per session-day (3-4 hrs) (i.e. iGain modifier = 108)
 
 resources:
 
    HunterSword_name_rsc = "Sword of the Hunt"
    HunterSword_icon_rsc = huntswrd.bgf
    HunterSword_desc_rsc = \
-      "This weapon is truly a fine piece of workmanship.  Intricate organic carvings "
-      "intertwine along the hilt, enclosing an exquisitely beautiful gem, almost as "
-      "if it were an eye gazing calmly back at you.  Indeed, every now and then out "
-      "of the corner of your eye you almost catch it blinking."
+      "This weapon is truly a fine piece of workmanship.  Intricate organic "
+      "carvings intertwine along the hilt, enclosing an exquisitely beautiful "
+      "gem, almost as if it were an eye gazing calmly back at you.  Indeed, "
+      "every now and then out of the corner of your eye you almost catch "
+      "it blinking."
 
    HunterSword_window_overlay_rsc = povhunts.bgf
    HunterSword_player_overlay = huntswov.bgf
 
-
    HunterSword_holding_damage = \
-      "As you pick up the Sword of the Hunt, the carven tendrils on the hilt ~Ibite~I "
-      "your hand!  Taken aback, you fling it to the ground.  That sword does not like "
-      "you;  you'd best leave it alone."
+      "As you pick up the Sword of the Hunt, the carven tendrils on the "
+      "hilt ~Ibite~I your hand!  Taken aback, you fling it to the ground.  "
+      "That sword does not like you;  you'd best leave it alone."
    HunterSword_holding_damage_using = \
       "The Sword of the Hunt's roots writhe painfully inside your chest with "
       "displeasure.  You have done something to invoke the Sword's disapproval!"
    
    HunterSword_warning = \
-      "You prepare to pick up the mighty Sword of the Hunt, but it twitches and you "
-      "hesitate for a moment.  This sword appears to be alive, and it may not allow "
-      "you to part with it once you have claimed it as your own.  Are you truly "
-      "prepared for that commitment?"
+      "You prepare to pick up the mighty Sword of the Hunt, but it twitches "
+      "and you hesitate for a moment.  This sword appears to be alive, and "
+      "it may not allow you to part with it once you have claimed it as your "
+      "own.  Are you truly prepared for that commitment?"
    HunterSword_used_rsc = \
-      "You steel your nerve and bravely pick up the Sword of the Hunt.  The hilt "
-      "immediately comes alive, writhing against the palm of your hand.  You gasp "
-      "as you feel invisible roots snaking into your chest and wrapping themselves "
-      "around your heart.  Strangely, you feel no pain throughout this process, "
-      "only a greatly pleasurable feeling of power and a nagging sense of hunger."
+      "You steel your nerve and bravely pick up the Sword of the Hunt.  The "
+      "hilt immediately comes alive, writhing against the palm of your hand.  "
+      "You gasp as you feel invisible roots snaking into your chest and "
+      "wrapping themselves around your heart.  Strangely, you feel no pain "
+      "throughout this process, only a greatly pleasurable feeling of power "
+      "and a nagging sense of hunger."
 
    HunterSword_try_unuse_rsc = \
-      "As you try to drop the sword, you feel it tug painfully on the roots that have "
-      "snaked their way inside your body.  This is not likely to be a productive exercise."
+      "As you try to drop the sword, you feel it tug painfully on the roots "
+      "that have snaked their way inside your body.  This is not likely to "
+      "be a productive exercise."
 
    HunterSword_hunger_1 = "Your sword thirsts for the hunt."
    HunterSword_hunger_2 = "Your sword is growing impatient for a hunt."
-   HunterSword_hunger_3 = "Your sword hungers for impure blood.  It is time to hunt."
-   HunterSword_hunger_4 = "Your sword hungers for impure blood.  Its roots are beginning to draw sustenance "
-      "from your body to compensate."
-   HunterSword_hunger_5 = "Your sword hungers for impure blood.  Its roots twitch painfully inside your chest "
-      "as they suck at your life-essence."
+   HunterSword_hunger_3 = \
+      "Your sword hungers for impure blood.  It is time to hunt."
+   HunterSword_hunger_4 = \
+      "Your sword hungers for impure blood.  Its roots are beginning to "
+      "draw sustenance from your body to compensate."
+   HunterSword_hunger_5 = \
+      "Your sword hungers for impure blood.  Its roots twitch painfully "
+      "inside your chest as they suck at your life-essence."
 
-   HunterSword_hunger_assuaged = "Your sword drinks in %s%s's impure blood.  You can feel it course along its roots "
-      "into your body, filling you with energy."
+   HunterSword_hunger_assuaged = \
+      "Your sword drinks in %s%s's impure blood.  You can feel it course "
+      "along its roots into your body, filling you with energy."
 
-   HunterSword_lose_sword = "Your unworthiness has offended your sword of the hunt.  "
-      "Writhing violently in your hands for a few moments, the sword suddenly springs up and away out of sight."
+   HunterSword_lose_sword = \
+      "Your unworthiness has offended your sword of the hunt.  Writhing "
+      "violently in your hands for a few moments, the sword suddenly "
+      "springs up and away out of sight."
 
 classvars:
 
@@ -91,7 +100,7 @@ classvars:
    vrWeapon_window_overlay = HunterSword_window_overlay_rsc
    vrWeapon_overlay = HunterSword_player_overlay
 
-   % Hunter swords are high quality thrusting weapons
+   % Hunter swords are high quality thrusting weapons.
    viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_HIGH
 
@@ -105,7 +114,7 @@ classvars:
    viBulk = 50
    viWeight = 70
 
-   viDamage_min = 10    % the damage done to the user if unworthy
+   viDamage_min = 10    % Damage done to the user if unworthy.
    viDamage_max = 20
 
    viHits_init_min = 500
@@ -116,14 +125,14 @@ classvars:
 properties:
 
    plStatmods = $
-   
-   pbIn_use = False     % no longer used.
-   pbWarned = False
+
+   pbIn_use = FALSE     % No longer used.
+   pbWarned = FALSE
    piHunger = 0
    piFineHunger = 0
    ptHungerTimer = $
    ptHoldingDamage = $
-   piHoldingDamageInterval = 10 * 1000     % ten seconds
+   piHoldingDamageInterval = 10 * 1000     % Ten seconds.
    piHpWorthyThreshold = 60
    piKarmaWorthyThreshold = -30
 
@@ -138,74 +147,94 @@ messages:
    Constructor()
    {
       pbCounted = TRUE;
-      send(send(SYS,@GetNecromancerBalance),@IncrementSwordCount);
-      send(self,@AdjustColor);
+      Send(Send(SYS,@GetNecromancerBalance),@IncrementSwordCount);
+      Send(self,@AdjustColor);
+
       propagate;
    }
 
    NewOwner(what = $)
    {
-      pbWarned = False;
-      if ptHoldingDamage <> $ {
-         deleteTimer(ptHoldingDamage);
+      pbWarned = FALSE;
+
+      if ptHoldingDamage <> $
+      {
+         DeleteTimer(ptHoldingDamage);
          ptHoldingDamage = $;
       }
-      if ptHungerTimer <> $ {
-         deleteTimer(ptHungerTimer);
+      if ptHungerTimer <> $
+      {
+         DeleteTimer(ptHungerTimer);
          ptHungerTimer = $;
       }
-      % remember, 'what' is our future owner, we're not there yet.
-      if (what <> $) and isClass(what,&User)
+
+      % Remember, 'what' is our future owner, we're not there yet.
+      if what <> $
+         AND IsClass(what,&User)
       {
-         pbIn_use = True;
+         pbIn_use = TRUE;
          plStatmods = [ 0, 0, 0, 0, 0, 0 ];
-         send(what, @MsgSendUser, #message_rsc = HunterSword_used_rsc);
-         % post these so that they happen after 'what' actually becomes our owner
-         post(self,@AdjustStats);
-         post(self,@AdjustColor);
-         ptHungerTimer = createTimer(self,@HungerTrigger,send(send(SYS,@GetNecromancerBalance),@GetHungerInterval));
+         Send(what,@MsgSendUser,#message_rsc=HunterSword_used_rsc);
+
+         % Post these so that they happen after 'what' actually becomes our owner.
+         Post(self,@AdjustStats);
+         Post(self,@AdjustColor);
+
+         ptHungerTimer = CreateTimer(self,@HungerTrigger,Send(Send(SYS,@GetNecromancerBalance),
+                              @GetHungerInterval));
       }
-      % remember, poOwner is still our old owner until we propagate all the way to object
-      if poOwner<>$ and isClass(poOwner,&User) %and pbIn_Use
+      % Remember, poOwner is still our old owner until we
+      % propagate all the way to object.
+      if poOwner <> $ % AND pbIn_Use
+         AND IsClass(poOwner,&User)
       {
-         if ptHungerTimer <> $ {
-            deleteTimer(ptHungerTimer);
+         if ptHungerTimer <> $
+         {
+            DeleteTimer(ptHungerTimer);
             ptHungerTimer = $;
          }
-         pbIn_use = False;
-         % restore to original values - 1
-         send(self,@RestoreStats, #who=poOwner);
+         pbIn_use = FALSE;
+
+         % Restore to original values - 1.
+         Send(self,@RestoreStats,#who=poOwner);
       }
+
       propagate;
    }
 
-   reqNewOwner(what = $)
+   ReqNewOwner(what = $)
    {
       local iDamage;
 
-      if isClass(what,&StorageBox) or isClass(what,&SafetyDepositBox)
-      { return FALSE; }
-      
-      if what <> $ and isClass(what,&User)
+      if IsClass(what,&StorageBox)
+         OR IsClass(what,&SafetyDepositBox)
       {
-         if send(what,@FindHoldingActive,#class=&HunterSword) <> $
+         return FALSE;
+      }
+      
+      if what <> $
+         AND IsClass(what,&User)
+      {
+         if Send(what,@FindHoldingActive,#class=&HunterSword) <> $
          {
             return FALSE;
          }
-         if send(what,@IsUsingA,#class=&NecromancerAmulet)
+         if Send(what,@IsUsingA,#class=&NecromancerAmulet)
          {
             return FALSE;
          }
-         if not send(what,@CanAdvance)
+         if NOT Send(what,@CanAdvance)
          {
-            send(what,@DontInterfere);
+            Send(what,@DontInterfere);
+
             return FALSE;
          }
       }
-      %This is to prevent us from being dropped in a cheap death.
-      if poOwner<>$ and isClass(poOwner,&User)
+      % This is to prevent us from being dropped in a cheap death.
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
       {
-         if send(poOwner,@isDead)
+         if Send(poOwner,@isDead)
          {
             if pbCheapDeath
             {
@@ -219,157 +248,204 @@ messages:
          }
       }
 
-      if what = $ or not isclass(what,&User) {propagate;}
-      % don't let them pick it up unless they're worthy!
-      if (not ((send(what,@GetKarma) > piKarmaWorthyThreshold) and
-                  (send(what,@GetBaseMaxHealth) > piHpWorthyThreshold))) or
-               send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW) or
-               send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      if what = $
+         OR NOT IsClass(what,&User)
       {
-         send(what, @MsgSendUser, #message_rsc = HunterSword_holding_damage);
-         if send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         propagate;
+      }
+
+      % Don't let them pick it up unless they're worthy!
+      if (NOT ((Send(what,@GetKarma) > piKarmaWorthyThreshold)
+            AND (Send(what,@GetBaseMaxHealth) > piHpWorthyThreshold)))
+         OR Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         Send(what,@MsgSendUser,#message_rsc=HunterSword_holding_damage);
+
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          {
-            iDamage = random(1,2);
-            if send(what,@GetKarma) < 0
+            iDamage = Random(1,2);
+            if Send(what,@GetKarma) < 0
             {
-               iDamage = iDamage - (8*send(what,@GetKarma)/100);
+               iDamage = iDamage - (8*Send(what,@GetKarma)/100);
             }
-            if Send(what, @AssessDamage, #what=self,#damage=iDamage, #report=False) = $
+
+            if Send(what,@AssessDamage,#what=self,#damage=iDamage,#report=FALSE) = $
             {
-               % we killed someone off... heh heh heh
+               % We killed someone off... heh heh heh.
                Send(Send(what,@GetOwner),@SomethingKilled,#what=self,#victim=what);
                Send(what,@Killed,#what=self);
-               post(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+               Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
             }
          }
+
          return FALSE;
       }
+
       if pbWarned = FALSE
       {
-         send(what,@msgsenduser,#message_rsc=HunterSword_warning);
+         Send(what,@MsgSendUser,#message_rsc=HunterSword_warning);
          pbWarned = TRUE;
+
          return FALSE;
-      }         
+      }
+
       propagate;
    }
 
    SomethingChanged(what=$)
    {
-      if isClass(what,&User) and (what=poOwner)
+      if IsClass(what,&User)
+         AND what = poOwner
       {
-         
-         if (send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW) or
-               send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
             if ptHungerTimer <> $
             {
-               deleteTimer(ptHungerTimer);
+               DeleteTimer(ptHungerTimer);
                ptHungerTimer=$;
             }
             if ptHoldingDamage <> $
             {
-               deleteTimer(ptHoldingDamage);
+               DeleteTimer(ptHoldingDamage);
                ptHoldingDamage=$;
             }
-            ptHoldingDamage = createTimer(self,@HoldingDamageTrigger,10);
+            ptHoldingDamage = CreateTimer(self,@HoldingDamageTrigger,10);
          }
          else
          {
             if ptHungerTimer=$
             {
-               post(self,@HungerTrigger);
+               Post(self,@HungerTrigger);
             }
          }
       }
+
       propagate;
    }
 
    AdjustStats()
    {
-      local iKarmaFactor, iHungerFactor, iModifier, iStatMod;
+      local iKarma, iKarmaFactor, iHungerFactor, iModifier, iStatMod;
+
       % Karma mod is bilinear -  rises fast from  0 at -30 to  75 at +30
       %                          rises slow from 75 at +30 to 100 at 100
-      if (send(poOwner,@GetKarma) < (- piKarmaWorthyThreshold)) {
-         iKarmaFactor =  ( 75 * (send(poOwner,@GetKarma) - piKarmaWorthyThreshold) )/(-2 * piKarmaWorthyThreshold);
+      iKarma = Send(poOwner,@GetKarma);
+
+      if iKarma < (-piKarmaWorthyThreshold)
+      {
+         iKarmaFactor =  (75 * (iKarma - piKarmaWorthyThreshold))
+                              / (-2 * piKarmaWorthyThreshold);
       }
-      else {
-         iKarmaFactor =  75 + ( 25 * (send(poOwner,@GetKarma) + piKarmaWorthyThreshold) )/(100 - piKarmaWorthyThreshold);
+      else
+      {
+         iKarmaFactor =  75 + (25 * (iKarma + piKarmaWorthyThreshold))
+                              / (100 - piKarmaWorthyThreshold);
       }
+
       iHungerFactor = ( 100 * (piHunger - HUNGER_5 ))/(-2 * HUNGER_5);
-      % iModifier goes from 0 to 100
-      %     100 is the max, but it can go below 0.
-      %     at piHunger = 0 and Karma = 65, iModifier = 50
-      iModifier = (2*iHungerFactor + iKarmaFactor)/3;
-      if plStatmods = $ { plStatmods = [0,0,0,0,0,0]; }
-      iStatMod = (105*iModifier/1000);
-      if (iStatMod -  nth(plStatmods,1)) <> 0
+
+      % iModifier goes from 0 to 100.
+      % 100 is the max, but it can go below 0.
+      % At piHunger = 0 and Karma = 65, iModifier = 50.
+      iModifier = (2 * iHungerFactor + iKarmaFactor) / 3;
+
+      if plStatmods = $
       {
-         iStatMod = send( poOwner,@AddMight,#points=(iStatMod -  nth(plStatmods,1)) ) + nth(plStatmods,1);
-         SetNth(plStatmods, 1, iStatMod);
-      }
-      iStatMod = (105*iModifier/1000);
-      if (iStatMod -  nth(plStatmods,4)) <> 0
-      {
-         iStatMod = send( poOwner,@AddAim,#points=(iStatMod -  nth(plStatmods,4)) ) + nth(plStatmods,4);
-         SetNth(plStatmods, 4, iStatMod);
+         plStatmods = [0,0,0,0,0,0];
       }
 
-      iStatMod = (-35*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,2)) <> 0
+      iStatMod = (105 * iModifier / 1000);
+      if (iStatMod - Nth(plStatmods,1)) <> 0
       {
-         iStatMod = send( poOwner,@AddIntellect,#points=(iStatMod -  nth(plStatmods,2)) ) + nth(plStatmods,2);
-         SetNth(plStatmods, 2, iStatMod);
-      }
-      iStatMod = (-35*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,6)) <> 0
-      {
-         iStatMod = send( poOwner,@AddMysticism,#points=(iStatMod -  nth(plStatmods,6)) ) + nth(plStatmods,6);
-         SetNth(plStatmods, 6, iStatMod);
+         iStatMod = Send(poOwner,@AddMight,#points=(iStatMod - Nth(plStatmods,1)))
+                                                               + Nth(plStatmods,1);
+         SetNth(plStatmods,1,iStatMod);
       }
 
-      iStatMod = ( 39*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,5)) <> 0
+      iStatMod = (105 * iModifier / 1000);
+      if (iStatMod - Nth(plStatmods,4)) <> 0
       {
-         iStatMod = send( poOwner,@AddStamina,#points=(iStatMod -  nth(plStatmods,5)) ) + nth(plStatmods,5);
-         SetNth(plStatmods, 5, iStatMod);
+         iStatMod = Send(poOwner,@AddAim,#points=(iStatMod - Nth(plStatmods,4)))
+                                                            + Nth(plStatmods,4);
+         SetNth(plStatmods,4,iStatMod);
       }
-      iStatMod = ( 39*iModifier/1000) - 2;
-      if (iStatMod -  nth(plStatmods,3)) <> 0
+
+      iStatMod = (-35 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,2)) <> 0
       {
-         iStatMod = send( poOwner,@AddAgility,#points=(iStatMod -  nth(plStatmods,3)) ) + nth(plStatmods,3);
-         SetNth(plStatmods, 3, iStatMod);
+         iStatMod = Send(poOwner,@AddIntellect,#points=(iStatMod - Nth(plStatmods,2)))
+                                                                  + Nth(plStatmods,2);
+         SetNth(plStatmods,2,iStatMod);
       }
-      
-      % weapon condition varies from 25% to %100 of piHits_init, depending on hunger.
-      piHits = bound((100 - (piHunger+HUNGER_5)*70/(2*HUNGER_5)),25,100)*piHits_init/100;
-      
+
+      iStatMod = (-35 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,6)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddMysticism,#points=(iStatMod - Nth(plStatmods,6)))
+                                                                  + Nth(plStatmods,6);
+         SetNth(plStatmods,6,iStatMod);
+      }
+
+      iStatMod = (39 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,5)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddStamina,#points=(iStatMod - Nth(plStatmods,5)))
+                                                                  + Nth(plStatmods,5);
+         SetNth(plStatmods,5,iStatMod);
+      }
+
+      iStatMod = (39 * iModifier / 1000) - 2;
+      if (iStatMod - Nth(plStatmods,3)) <> 0
+      {
+         iStatMod = Send(poOwner,@AddAgility,#points=(iStatMod - Nth(plStatmods,3)))
+                                                                  + Nth(plStatmods,3);
+         SetNth(plStatmods,3,iStatMod);
+      }
+
+      % Weapon condition varies from 25% to 100% of piHits_init,
+      % depending on hunger.
+      piHits = Bound((100 - (piHunger + HUNGER_5) * 70 / (2 * HUNGER_5)),25,100)
+                  * piHits_init / 100;
+
       return;
    }
 
    RestoreStats(who = $)
    {
-      if who = $ {
-         if poOwner <> $ {
+      if who = $
+      {
+         if poOwner <> $
+         {
             who = poOwner;
          }
-         else {
-            DEBUG("No one to restore stats on!!");
+         else
+         {
+            Debug("No one to restore stats on!!");
          }
       }
-      if plStatmods = $ { return; }
-      send( who,@AddIntellect,#points=(-nth(plStatmods,2)) );
-      send( who,@AddMysticism,#points=(-nth(plStatmods,6)) );
-      send( who,@AddMight,#points=(-nth(plStatmods,1)) );
-      send( who,@AddAim,#points=(-nth(plStatmods,4)) );
-      send( who,@AddStamina,#points=(-nth(plStatmods,5)) );
-      send( who,@AddAgility,#points=(-nth(plStatmods,3)) );
+
+      if plStatmods = $
+      {
+         return;
+      }
+
+      Send(who,@AddIntellect,#points=(-Nth(plStatmods,2)));
+      Send(who,@AddMysticism,#points=(-Nth(plStatmods,6)));
+      Send(who,@AddMight,#points=(-Nth(plStatmods,1)));
+      Send(who,@AddAim,#points=(-Nth(plStatmods,4)));
+      Send(who,@AddStamina,#points=(-Nth(plStatmods,5)));
+      Send(who,@AddAgility,#points=(-Nth(plStatmods,3)));
       plStatmods = $;
+
       return;
    }
 
    AdjustColor()
    {
       local Xlat;
+
       if piHunger > HUNGER_5
       {
          Xlat = (XLAT_BASE_VALUE + XLAT_TO_RED);
@@ -406,144 +482,191 @@ messages:
             }
          }
       }
-      send(self,@SetPaletteTranslation,#translation =XlAT);
-      if poOwner<>$
+      Send(self,@SetPaletteTranslation,#translation=Xlat);
+
+      if poOwner <> $
       {
-	      send(poOwner,@SomethingChanged,#what=self);
-	   }
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
       return;
    }
 
    HungerTrigger()
    {
       local oSword;
+
       ptHungerTimer = $;
-      if poOwner = $ { return; }
-      if (not isClass(poOwner,&User)) { return; }
-      % temporary fix to get rid of beta users' extra swords.
-      oSword = send(poOwner,@FindHoldingActive,#class=GetClass(self));
-      if oSword <> self
+
+      if poOwner = $
+         OR NOT IsClass(poOwner,&User)
       {
-         send(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=oSword);
-      }
-      % temporary fix to get rid of sword/amulet combos.
-      if send(poOwner,@IsUsingA,#class=&NecromancerAmulet)
-      {
-         post(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+         return;
       }
 
-      if send(poOwner,@CheckPlayerFlag,#flag=PFLAG_OUTLAW) or
-               send(poOwner,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      % Temporary fix to get rid of beta users' extra swords.
+      oSword = Send(poOwner,@FindHoldingActive,#class=GetClass(self));
+      if oSword <> self
+      {
+         Send(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=oSword);
+      }
+
+      % Temporary fix to get rid of sword/amulet combos.
+      if Send(poOwner,@IsUsingA,#class=&NecromancerAmulet)
+      {
+         Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+      }
+
+      if Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         OR Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
          if ptHoldingDamage <> $
          {
-            deleteTimer(ptHoldingDamage);
+            DeleteTimer(ptHoldingDamage);
             ptHoldingDamage=$;
          }
-         send(self,@HoldingDamageTrigger);
+         Send(self,@HoldingDamageTrigger);
+
          return;
       }
-      
-      ptHungerTimer = createTimer(self,@HungerTrigger,send(send(SYS,@GetNecromancerBalance),@GetHungerInterval));
-      
-      if not send(poOwner,@IsLoggedOn) { return; }
-      
-      %check that owner still satisfies amulet restrictions
-      if not ( (send(poOwner,@GetKarma) > piKarmaWorthyThreshold) and
-               (send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold) ) and
-             (ptHoldingDamage = $)
+
+      ptHungerTimer = CreateTimer(self,@HungerTrigger,Send(Send(SYS,@GetNecromancerBalance),
+                           @GetHungerInterval));
+
+      if NOT Send(poOwner,@IsLoggedOn)
       {
-         send(self,@HoldingDamageTrigger);
+         return;
       }
-      
+
+      % Check that owner still satisfies sword restrictions.
+      if NOT ((Send(poOwner,@GetKarma) > piKarmaWorthyThreshold)
+            AND(Send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold))
+         AND ptHoldingDamage = $
+      {
+         Send(self,@HoldingDamageTrigger);
+      }
+
       piFineHunger = piFineHunger + 1;
-      if piFineHunger = 60 {
+      if piFineHunger = 60
+      {
          piFineHunger = 0;
          piHunger = piHunger + 1;
       }
-      send(self,@AdjustStats);
-      send(self,@AdjustColor);
+
+      Send(self,@AdjustStats);
+      Send(self,@AdjustColor);
+
       if piHunger > HUNGER_5 {
-         % start doing mild damage, losing vigor
-         send(poOwner, @AddExertion, #amount = 40000); % 4 vigor points
-         send(poOwner, @MsgSendUser, #message_rsc = HunterSword_hunger_5);
-         if Send(poOwner, @AssessDamage, #what=self,#damage=Random(1, 5),
-   	      #report=False) = $
+         % Start doing mild damage, losing vigor (4 each time).
+         Send(poOwner,@AddExertion,#amount=40000);
+         Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_5);
+
+         if Send(poOwner,@AssessDamage,#what=self,#damage=Random(1,5),
+                  #report=FALSE) = $
          {
-            % we killed someone off... heh heh heh
+            % We killed someone off... heh heh heh.
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);
-            post(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
          }
+
          return;
       }
-      if piHunger > HUNGER_4 {
-         % start losing vigor
-         send(poOwner, @AddExertion, #amount = 20000); % 2 vigor points
-         if (piFineHunger mod 5) = 0 {
-            send(poOwner, @MsgSendUser, #message_rsc = HunterSword_hunger_4);
+
+      if piHunger > HUNGER_4
+      {
+         % Start losing vigor (2 each time).
+         Send(poOwner,@AddExertion,#amount=20000);
+         if (piFineHunger MOD 5) = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_4);
          }
+
          return;
       }
-      if (piHunger > HUNGER_3) {
-         if (piFineHunger mod 15) = 0 {
-            send(poOwner, @MsgSendUser, #message_rsc = HunterSword_hunger_3);
+
+      if piHunger > HUNGER_3
+      {
+         if (piFineHunger MOD 15) = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_3);
          }
+
          return;
       }
-      if (piHunger > HUNGER_2) {
-         if ((piFineHunger mod 30) = 0) {
-            send(poOwner, @MsgSendUser, #message_rsc = HunterSword_hunger_2);
+
+      if piHunger > HUNGER_2
+      {
+         if ((piFineHunger MOD 30) = 0)
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_2);
          }
+
          return;
       }
-      if (piHunger > HUNGER_1) {
-         if (piFineHunger = 0) {
-            send(poOwner, @MsgSendUser, #message_rsc = HunterSword_hunger_1);
+
+      if piHunger > HUNGER_1
+      {
+         if piFineHunger = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_1);
          }
+
          return;
       }
-      
+
       return;
    }
-   
+
    HoldingDamageTrigger()
    {
       ptHoldingDamage = $;
-      if not isClass(poOwner,&User) {return;}
 
-      if (send(poOwner,@GetKarma) > piKarmaWorthyThreshold) and
-               (send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold) and
-               (not send(poOwner,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)) and
-               (not send(poOwner,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+      if NOT IsClass(poOwner,&User)
       {
          return;
       }
-      else {
-         if send(poOwner,@CheckPlayerFlag,#flag=PFLAG_OUTLAW) or send(poOwner,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+
+      if Send(poOwner,@GetKarma) > piKarmaWorthyThreshold
+         AND Send(poOwner,@GetBaseMaxHealth) > piHpWorthyThreshold
+         AND (NOT Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
+         AND (NOT Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+      {
+         return;
+      }
+      else
+      {
+         if Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+            OR Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
             if ptHungerTimer <> $
             {
-               deleteTimer(ptHungerTimer);
+               DeleteTimer(ptHungerTimer);
                ptHungerTimer=$;
             }
-            send(poOwner, @MsgSendUser, #message_rsc = HunterSword_lose_sword);
-            send(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+
+            Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_lose_sword);
+            Send(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+
             return;
          }
-         send(poOwner, @MsgSendUser, #message_rsc = HunterSword_holding_damage_using);
-         if Send(poOwner, @AssessDamage, #what=self,#damage=(Random(1, 3)), #report=False) = $
+
+         Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_holding_damage_using);
+
+         if Send(poOwner,@AssessDamage,#what=self,
+                  #damage=(Random(1,3)),#report=FALSE) = $
          {
-            % we killed them off... heh heh heh
+            % We killed them off... heh heh heh.
             Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
             Send(poOwner,@Killed,#what=self);
-            post(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
          }
          else
          {
-            ptHoldingDamage = createTimer(self,@HoldingDamageTrigger,piHoldingDamageInterval);
+            ptHoldingDamage = CreateTimer(self,@HoldingDamageTrigger,piHoldingDamageInterval);
          }
       }
+
       return;
    }
 
@@ -551,37 +674,53 @@ messages:
    {
       local iGain;
 
-      if NOT isClass(poOwner,&User)
-      { return; }
-
-      if (not isClass(victim,&Monster)) and (not isClass(victim,&User)) {
-         DEBUG("SomethingKilled called with an invalid victim: ",send(victim,@GetName));
-         return;
-      }
-      %%No reward for Arena deaths.  (This will also catch other 'safe' areas should they be added.)
-      if send(send(poOwner,@GetOwner),@SafePlayerAttack) AND send(send(poOwner,@GetOwner),@InPlay,#what=poOwner)
+      if poOwner = $
+         OR NOT IsClass(poOwner,&User)
       {
          return;
       }
-      % assuage hunger according to a couple modifiers
-      %     greater gain if you're the killer (3:1)
-      %     greater gain if victim is a player -   (base 2:1)
+
+      if NOT IsClass(victim,&Monster)
+         AND NOT IsClass(victim,&User)
+      {
+         Debug("SomethingKilled called with an invalid victim: ",
+               Send(victim,@GetName));
+
+         return;
+      }
+      % No reward for Arena deaths.  (This will also catch other 'safe'
+      % areas should they be added.)
+      if Send(Send(poOwner,@GetOwner),@SafePlayerAttack)
+         AND Send(Send(poOwner,@GetOwner),@InPlay,#what=poOwner)
+      {
+         return;
+      }
+
+      % Assuage hunger according to a couple modifiers:
+      %    greater gain if you're the killer (3:1)
+      %    greater gain if victim is a player -   (base 2:1)
       %                                            (base for outlaws is 3:1)
       %                                            (base for pkers is 4:1 up to 10:1 for repeat pkers)
-      %     greater gain if victim has good karma (karma 100:karma -100 = 2:1 - continuum of values)
-      %     greater gain for more powerful victims (difficulty 9:difficulty 1 = 9:1 - continuum of values)
+      %    greater gain if victim has good karma (karma 100:karma -100 = 2:1 - continuum of values)
+      %    greater gain for more powerful victims (difficulty 9:difficulty 1 = 9:1 - continuum of values)
       %                                            (hp 100: hp 20 = 5:1 - continuum of values)
-      if (poOwner <> $) and isClass(poOwner,&User) and (victim <> poOwner)
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+         AND victim <> poOwner
       {
-         send(poOwner, @MsgSendUser, #message_rsc = HunterSword_hunger_assuaged,
-               #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName));
-         iGain = send(send(SYS,@GetNecromancerBalance),@CalculateSwordHungerSatisfied,
-               #HuntSw=self, #killer=what, #victim=victim);
-         send(self,@SatisfyHunger,#amount=iGain);
+         Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_hunger_assuaged,
+               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+         iGain = Send(Send(SYS,@GetNecromancerBalance),@CalculateSwordHungerSatisfied,
+                     #HuntSw=self,#killer=what,#victim=victim);
+         Send(self,@SatisfyHunger,#amount=iGain);
       }
-      if (poOwner <> $ and isClass(poOwner,&User)) and victim = poOwner {
-         post(self,@OwnerKilled,#what=what);
+      if (poOwner <> $
+            AND IsClass(poOwner,&User))
+         AND victim = poOwner
+      {
+         Post(self,@OwnerKilled,#what=what);
       }
+
       return;
    }
 
@@ -593,125 +732,158 @@ messages:
       }
       else
       {
-         % instead of deleting the sword, we put it back in circulation.
-         %post(self,@Delete);
-         post(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+         % Instead of deleting the sword, we put it back in circulation.
+         %Post(self,@Delete);
+         Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
       }
+
       return;
    }
 
    ActivateCheapDeath()
    {
       pbCheapDeath = TRUE;
+
       return;
    }
-   
+
    SatisfyHunger(amount=0)
    {
-      % Gain vigor
-      send(poOwner, @AddExertion, #amount = -amount*10000); % regain (amount) vigor points
-      % satsify hunger
+      % Gain vigor.
+      Send(poOwner,@AddExertion,#amount=-amount*10000);
+
+      % Satsify hunger.
       piFineHunger = piFineHunger - amount;
-      while piFineHunger < 0 {
+      while piFineHunger < 0
+      {
          piHunger = piHunger - 1;
          piFineHunger = piFineHunger + 60;
       }
-      % can 'save up', but only to a point.
-      piHunger = bound(piHunger,-HUNGER_5,$);
-      send(self,@AdjustStats);
-      send(self,@AdjustColor);
-      
+
+      % Can 'save up', but only to a point.
+      piHunger = Bound(piHunger,-HUNGER_5,$);
+      Send(self,@AdjustStats);
+      Send(self,@AdjustColor);
+
       return;
    }
 
    Delete()
    {
-      send(self,@NewOwner,#what=$);
+      Send(self,@NewOwner,#what=$);
+
       if pbCounted
       {
          pbCounted = FALSE;
-         send(send(SYS,@GetNecromancerBalance),@DecrementSwordCount);
+         Send(Send(SYS,@GetNecromancerBalance),@DecrementSwordCount);
       }
-      if ptHungerTimer <> $ {
-         deleteTimer(ptHungerTimer);
+
+      if ptHungerTimer <> $
+      {
+         DeleteTimer(ptHungerTimer);
          ptHungerTimer = $;
       }
-      if ptHoldingDamage <> $ {
-         deleteTimer(ptHoldingDamage);
+
+      if ptHoldingDamage <> $
+      {
+         DeleteTimer(ptHoldingDamage);
          ptHoldingDamage = $;
       }
-      %have to post this so that in case the item gets deleted out of the blue while in use, it still has the stat mod data when delete() propagates down to unusing the item.
-      post(self,@postDelete);
+
+      % Have to post this so that in case the item gets deleted out of the
+      % blue while in use, it still has the stat mod data when delete()
+      % propagates down to unusing the item.
+      Post(self,@PostDelete);
+
       propagate;
    }
+
    PostDelete()
    {
       plStatmods = $;
+
       return;
    }
 
-
    ReqLeaveOwner()
-   "don't allow new owner while we're in use"
+   "Don't allow new owner while we're in use."
    {
-      if poOwner <> $ and isClass(poOwner,&User) 
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
       {
-         Send(self,@TortureOwner);
+         Post(self,@TortureOwner);
+
          return False;
       }
+
       propagate;
    }
 
    TortureOwner()
    {
-      send(poOwner, @MsgSendUser, #message_rsc = HunterSword_try_unuse_rsc);
-      if Send(poOwner, @AssessDamage, #what=self,#damage=Random(viDamage_min, viDamage_max),
-	      #report=False) = $
+      Send(poOwner,@MsgSendUser,#message_rsc=HunterSword_try_unuse_rsc);
+
+      if Send(poOwner,@AssessDamage,#what=self,
+               #damage=Random(viDamage_min,viDamage_max),#report=FALSE) = $
       {
-         % we killed someone off... heh heh heh
-         Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
-         Send(poOwner,@Killed,#what=self);
-         if send(self,@DropOnDeath)
+         % We killed someone off... heh heh heh.
+         if Send(self,@DropOnDeath)
          {
-            post(send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
-         }   
+            Post(Send(SYS,@GetNecromancerBalance),@PlaceSword,#what=self);
+         }
+
+         Send(Send(poOwner,@GetOwner),@SomethingKilled,
+               #what=self,#victim=poOwner);
+         Send(poOwner,@Killed,#what=self);
       }
+
       return;
    }
 
    SendAnimation()
    {
       local iXLAT;
-      if ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
-         % the artists made the gem red in the inv/dropped views (blue in the look view), so we have to juggle this a little (ugh).
-         iXLAT = send(SYS,@DecodeSecondaryColor,#xlat=(piItem_flags & ITEM_PALETTE_MASK));
-         iXLAT = send(SYS,@EncodeTwoColorXLAT,#color1=iXLAT);
+         % The artists made the gem red in the inv/dropped views
+         % (blue in the look view), so we have to juggle this a little (ugh).
+         iXLAT = Send(SYS,@DecodeSecondaryColor,#xlat=(piItem_flags & ITEM_PALETTE_MASK));
+         iXLAT = Send(SYS,@EncodeTwoColorXLAT,#color1=iXLAT);
          AddPacket(1,ANIMATE_TRANSLATION,1,iXLAT);
       }
+
       AddPacket(1,ANIMATE_NONE,2,viGround_group);
+
       return;
    }
+
    SendInventoryAnimation()
    {
       local iXLAT;
-      if ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
-         % the artists made the gem red in the inv/dropped views (blue in the look view), so we have to juggle this a little (ugh).
-         iXLAT = send(SYS,@DecodeSecondaryColor,#xlat=(piItem_flags & ITEM_PALETTE_MASK));
-         iXLAT = send(SYS,@EncodeTwoColorXLAT,#color1=iXLAT);
+         % The artists made the gem red in the inv/dropped views
+         % (blue in the look view), so we have to juggle this a little (ugh).
+         iXLAT = Send(SYS,@DecodeSecondaryColor,#xlat=(piItem_flags & ITEM_PALETTE_MASK));
+         iXLAT = Send(SYS,@EncodeTwoColorXLAT,#color1=iXLAT);
          AddPacket(1,ANIMATE_TRANSLATION,1,iXLAT);
       }
+
       AddPacket(1,ANIMATE_NONE,2,viInventory_group);
+
       return;
    }
+
    SendLookAnimation()
    {
-      if ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
+
       AddPacket(1,ANIMATE_NONE,2,3);
+
       return;
    }
 
@@ -731,11 +903,15 @@ messages:
 
    LichKilled()
    {
-      if poOwner <> $ and isClass(poOwner,&User)
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
       {
-         Send(poOwner, @AssessDamage, #what=self, #damage=(send(poOwner,@GetHealth)*2/3), #report=False);
+         Send(poOwner,@AssessDamage,#what=self,
+               #damage=(Send(poOwner,@GetHealth)*2/3),#report=FALSE);
       }
-      send(self,@Delete);
+
+      Send(self,@Delete);
+
       return;
    }
 
@@ -746,19 +922,19 @@ messages:
 
    WeaponHitTarget()
    {
-      %the hunter sword never takes damage normally
+      % The hunter sword never takes damage normally.
       return;
    }
 
    SetMaxHits(number = $)
    {
-      % this cannot be modified externally.
+      % This cannot be modified externally.
       return;	
    }
 
    SetHits(number = $)
    {
-      % this cannot be modified externally.
+      % This cannot be modified externally.
       return;
    }
 
@@ -769,19 +945,27 @@ messages:
 
    CanWeaken()
    "Brittle will not work."
-   { return FALSE; }
+   {
+      return FALSE;
+   }
 
    CanSwap()
    "Swap will never yank this."
-   { return FALSE; }
+   {
+      return FALSE;
+   }
 
    CanShatter()
    "this will not shatter."
-   { return FALSE; }
+   {
+      return FALSE;
+   }
 
    CanEnchant()
-   {  return FALSE; }
-   
+   {
+      return FALSE;
+   }
+
    CanBeGivenToNPC()
    "NPCs will refuse to take this item if offered to them."
    {
@@ -798,18 +982,17 @@ messages:
    {
       local oRoom;
 
-      oRoom=send(poOwner,@GetOwner);
-      if send(poOwner,@PossessesA,#class=&Token) OR
-      (send(oRoom,@SafePlayerAttack) AND send(oRoom,@inPlay,#what=poOwner))
+      oRoom = Send(poOwner,@GetOwner);
+
+      if Send(poOwner,@PossessesA,#class=&Token)
+         OR (Send(oRoom,@SafePlayerAttack)
+            AND Send(oRoom,@InPlay,#what=poOwner))
       {
          return FALSE;
       }
+
       return TRUE;
    }
-	
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-

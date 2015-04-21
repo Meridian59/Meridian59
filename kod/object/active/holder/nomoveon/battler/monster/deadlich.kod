@@ -13,27 +13,31 @@ DeadLich is Monster
 constants:
 
    include blakston.khd
+
    LICH_ILLUSION_TIME = 2 * 60 * 1000  % 2 minutes
-   
+
 resources:
 
    DeadLich_name_rsc = "ghostly remains of Queen Venya'cyr"
    DeadLich_icon_rsc = lichax.bgf
    DeadLich_desc_rsc = \
-      "A ghostly pile of ornate formal clothing seems to be all that remains of this "
-      "once-mighty queen."
-   DeadLich_name2_rsc = "ghostly remains of Queen Venya'cyr"
+      "A ghostly pile of ornate formal clothing seems to be all that "
+      "remains of this once-mighty queen."
+
+      DeadLich_name2_rsc = "ghostly remains of Queen Venya'cyr"
    DeadLich_icon2_rsc = lichbx.bgf
    DeadLich_desc2_rsc = \
-      "A ghostly pile of ornate formal clothing seems to be all that remains of this "
-      "once-mighty queen.  "
-      "When you look away, however, from the corner of your eye you catch a glimpse of "
-      "a thin, shimmering thread of darkness that seems to be bound to her earthly "
-      "remains, stretching away infinitely in a direction which doesn't seem "
-      "describable in normal geometric terms."
+      "A ghostly pile of ornate formal clothing seems to be all that remains "
+      "of this once-mighty queen.  When you look away, however, from the "
+      "corner of your eye you catch a glimpse of a thin, shimmering thread "
+      "of darkness that seems to be bound to her earthly remains, stretching "
+      "away infinitely in a direction which doesn't seem describable in "
+      "normal geometric terms."
 
-   deadlich_dispel = "The pile of ornate clothing mysteriously changes color!"
-   deadlich_respel = "The pile of ornate clothing changes back to its original color."
+   deadlich_dispel = \
+      "The pile of ornate clothing mysteriously changes color!"
+   deadlich_respel = \
+      "The pile of ornate clothing changes back to its original color."
 
 classvars:
    vrName = DeadLich_name_rsc
@@ -50,7 +54,8 @@ classvars:
    viDifficulty = 9
    viKarma = -100
    viDefault_behavior = AI_NOMOVE| AI_NOFIGHT| AI_NPC
-   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
+   viAttributes = \
+      MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
    viOccupation = MOB_ROLE_SCHOLAR
 
 properties:
@@ -66,79 +71,103 @@ messages:
 
    Constructor(Attackers=$)
    {
-      poLich = create(&Lich);
-      plKilledBy=Attackers;
-      %% only the killer can pick up things for the first 25 seconds.
+      poLich = Create(&Lich);
+      plKilledBy = Attackers;
+
+      % Only the killer can pick up things for the first 25 seconds.
       ptNoSteal = CreateTimer(self,@NoStealTimer,25000);
-      
+
       propagate;
    }
 
    GetIcon()
    {
-      if pbIllusioned { return vrIcon; }
+      if pbIllusioned
+      {
+         return vrIcon;
+      }
+
       return vrIcon2;
    }
 
    GetName()
    {
-      if pbIllusioned { return vrName; }
+      if pbIllusioned
+      {
+         return vrName;
+      }
+
       return vrName2;
    }
 
    GetApparentName()
    {
-      if pbIllusioned { return vrName; }
+      if pbIllusioned
+      {
+         return vrName;
+      }
+
       return vrName2;
    }
-   
+
    ShowDesc()
    {
-      if pbIllusioned {
+      if pbIllusioned
+      {
          AddPacket(4,vrDesc);
+
          return;
       }
+
       AddPacket(4,vrDesc2);
+
       return;
    }
 
    DispelIllusionEnchantments()
    {
-   if not pbIllusioned
-   { return; }
+      if NOT pbIllusioned
+      {
+         return;
+      }
 
-   Post(poOwner,@SomeoneSaid,#what=self,#string=deadlich_dispel, #type=SAY_MESSAGE);
+      Post(poOwner,@SomeoneSaid,#what=self,#string=deadlich_dispel,
+            #type=SAY_MESSAGE);
 
-   pbIllusioned = FALSE;
-   send(poOwner,@Somethingchanged,#what=self);
-   if ptGoIllusioned <> $
-   {
-      deleteTimer(ptGoIllusioned);
-      ptGoIllusioned = $;
-   }
-   ptGoIllusioned=createtimer(self,@ReplaceIllusions,LICH_ILLUSION_TIME);
+      pbIllusioned = FALSE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      if ptGoIllusioned <> $
+      {
+         DeleteTimer(ptGoIllusioned);
+         ptGoIllusioned = $;
+      }
+      ptGoIllusioned=CreateTimer(self,@ReplaceIllusions,LICH_ILLUSION_TIME);
 
-   return;
+      return;
    }
 
    ReplaceIllusions()
    {
-   ptGoIllusioned = $;
+      ptGoIllusioned = $;
 
-   if pbIllusioned
-   { return; }
+      if pbIllusioned
+      {
+         return;
+      }
 
-   Post(poOwner,@SomeoneSaid,#what=self,#string=lich_respel, #type=SAY_MESSAGE);
+      Post(poOwner,@SomeoneSaid,#what=self,#string=lich_respel,
+            #type=SAY_MESSAGE);
 
-   pbIllusioned = TRUE;
-   send(poOwner,@Somethingchanged,#what=self);
-   return;
+      pbIllusioned = TRUE;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
    }
-
 
    NoStealTimer()
    {
       ptNoSteal = $;
+
       return;
    }
 
@@ -149,110 +178,149 @@ messages:
          return TRUE;
       }
       
-      if plKilledBy <> $ AND FindListElem(plKilledBy,what) <> 0
+      if plKilledBy <> $
+         AND FindListElem(plKilledBy,what) <> 0
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
    SetForSale()
    {
-	plFor_sale = [$,$,
-	      [],
-%        [ SID_EVIL_TWIN, SID_SUMMON_POISON_FOG, SID_BLOOD_INHERITANCE ],
-       $ ]; 
-     return;
-   }
- 
-EstablishNecromancerGuild(master=$)
-{
-   if master = $ { return; }
-   if send(master,@GetGuild) <> $ { DEBUG("Tried to establish necroguild with master already guilded."); return; }
-   send(poOwner,@NewHold,#what=poLich,#new_row=piRow,#new_col=piCol,#fine_row=piFine_Row,#fine_col=piFine_Col);
-   send(poLich,@EstablishNecromancerGuild,#master=master);
-   send(self,@Delete,#lichswapout=TRUE);
-   return;
-}
+      plFor_sale = [$,$,
+         [],
+        %[ SID_EVIL_TWIN, SID_SUMMON_POISON_FOG, SID_BLOOD_INHERITANCE ],
+       $ ];
 
-Delete(lichswapout = FALSE)
-{
-   local iQNTindex, oQE, oQ;
-   oQE = send(SYS,@GetQuestEngine);
-   send( oQE, @SetQuestScheduleChance, #index = QST_ID_ESTABLISH_NECROGUILD, #new_pct = 0 );
-   if lichswapout {
-      for oQ in nth(send( oQE, @GetQuestTemplate, #index = QST_ID_ESTABLISH_NECROGUILD ),QT_ACTIVE_QUESTS)
+      return;
+   }
+
+   EstablishNecromancerGuild(master=$)
+   {
+      if master = $
       {
-         send(oQ,@DeadlineExpired);
+         return;
       }
-      iQNTindex = first(nth(send( oQE, @GetQuestTemplate, #index = QST_ID_ESTABLISH_NECROGUILD ),QT_QUEST_NODES));
-      send( oQE, @SetQuestNodeNPCList, #index = iQNTindex, #new_NPC_list = [poLich] );
-   }
-   else {
-      if (poLich <> $) {
-         send(poLich,@Delete);
-         poLich=$;
+
+      if Send(master,@GetGuild) <> $
+      {
+         Debug("Tried to establish necroguild with master already guilded.");
+
+         return;
       }
+
+      Send(poOwner,@NewHold,#what=poLich,#new_row=piRow,#new_col=piCol,
+            #fine_row=piFine_Row,#fine_col=piFine_Col);
+      Send(poLich,@EstablishNecromancerGuild,#master=master);
+      Send(self,@Delete,#lichswapout=TRUE);
+
+      return;
    }
-   if ptNoSteal <> $
+
+   Delete(lichswapout=FALSE)
    {
-      deleteTimer(ptNoSteal);
-      ptNoSteal=$;
+      local iQNTindex, oQE, oQ;
+
+      oQE = Send(SYS,@GetQuestEngine);
+
+      Send(oQE,@SetQuestScheduleChance,#index=QST_ID_ESTABLISH_NECROGUILD,
+            #new_pct=0);
+
+      if lichswapout
+      {
+         % Don't need to send this, quest cleans itself up. This may have been
+         % different ~16 years ago.
+         %for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
+         %               ,QT_ACTIVE_QUESTS)
+         %{
+         %   Send(oQ,@DeadlineExpired);
+         %}
+
+         iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD),
+                           QT_QUEST_NODES));
+         Send(oQE,@SetQuestNodeNPCList,#index=iQNTindex,#new_NPC_list=[poLich]);
+      }
+      else
+      {
+         if poLich <> $
+         {
+            Send(poLich,@Delete);
+            poLich=$;
+         }
+      }
+
+      if ptNoSteal <> $
+      {
+         DeleteTimer(ptNoSteal);
+         ptNoSteal=$;
+      }
+      if ptGoIllusioned <> $
+      {
+         DeleteTimer(ptGoIllusioned);
+         ptGoIllusioned = $;
+      }
+
+      propagate;
    }
-   if ptGoIllusioned <> $
+
+   GetNumAmulets()
    {
-      deleteTimer(ptGoIllusioned);
-      ptGoIllusioned = $;
+      if poLich = $
+      {
+         Debug("Dead lich points to no lich!");
+
+         return FALSE;
+      }
+
+      return Send(poLich,@GetNumAmulets);
    }
 
-   propagate;
-}
+   CanMorphTo()
+   {
+      return FALSE;
+   }
 
-GetNumAmulets()
-{
-   if poLich = $ {DEBUG("dead lich points to no lich!"); return 0;}
-   return send(poLich,@GetNumAmulets);
-}
+   DMCanArmageddon()
+   {
+      return FALSE;
+   }
 
-CanMorphTo()
-{
-   return FALSE;
-}
-
-DMCanArmageddon()
-{
-   return FALSE;
-}
-   
    NewOwner(what=$)
    {
       % This should never happen, but if it does...
-      if (what <> $) and not isClass(what,&GuildHall15)
+      if what <> $
+         AND NOT IsClass(what,&GuildHall15)
       {
-         DEBUG("Bad Dead Lich!  Go to your room!");
-         post(self,@GoBackToGuildhall);
+         Debug("Bad Dead Lich!  Go to your room!");
+         Post(self,@GoBackToGuildhall);
       }
-      
+
       propagate;
    }
 
    GoBackToGuildhall()
    {
       local oGuildh15;
-      oGuildh15 = send(SYS,@FindRoomByNum,#num=RID_GUILDH15);
-      send(oGuildh15,@NewHold,#what=self,
+
+      oGuildh15 = Send(SYS,@FindRoomByNum,#num=RID_GUILDH15);
+
+      Send(oGuildh15,@NewHold,#what=self,
             #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
-      if (send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 1)
+      if Send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 1
       {
-         DEBUG("More than one dead lich in the guild hall!!");
+         Debug("More than one dead lich in the guild hall!!");
       }
-      if (send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 0) and (send(oGuildh15,@CountHoldingHowMany,#class=&Lich) > 0)
+
+      if Send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 0
+         AND Send(oGuildh15,@CountHoldingHowMany,#class=&Lich) > 0
       {
-         DEBUG("Both a lich and a dead lich in the guild hall!!");
+         Debug("Both a lich and a dead lich in the guild hall!!");
       }
+
       return;
    }
- 
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -415,13 +415,16 @@ classvars:
    vrIcon = guild_icon_rsc
    vrDesc = guild_desc_rsc
 
+   vrCantRejoin = guild_cannot_rejoin
+   vrYouCantRejoin = guild_you_cannot_rejoin
+
 properties:
 
    % Settable by players
    vrName = guild_name_rsc
 
    % Titles settable by players.
-   prMaster                             
+   prMaster
    prMistress
    prLieutenant_Male 
    prLieutenant_Female
@@ -964,6 +967,8 @@ messages:
 
       if piGuild_hall = $
       {
+         Debug("Someone without a guild hall is being offered the ABANDON command!");
+
          return FALSE;
       }
 
@@ -1358,10 +1363,10 @@ messages:
       % Cannot rejoin the guild if you left recently
       if Send(self,@CheckFormerMemberList,#who=who)
       {
-         Send(who,@MsgSendUser,#message_rsc=guild_you_cannot_rejoin);
+         Send(who,@MsgSendUser,#message_rsc=vrYouCantRejoin);
          if inductor <> $
          {
-            Send(inductor,@MsgSendUser,#message_rsc=guild_cannot_rejoin);
+            Send(inductor,@MsgSendUser,#message_rsc=vrCantRejoin);
          }
 
          return FALSE;
@@ -1485,7 +1490,8 @@ messages:
          return;
       }
 
-      %% demote anyone at guildmaster rank
+      old_master = $;
+      % Demote anyone at guildmaster rank.
       for i in plMembers
       {
          if Nth(i,2) = RANK_MASTER
@@ -1520,7 +1526,7 @@ messages:
 
          if First(i) = who
          {
-            %% promote to master.
+            % Promote to master.
             new_master = First(i);
             SetNth(i,2,RANK_MASTER);
             
@@ -1895,7 +1901,7 @@ messages:
       local winner, i, j, count, mostvotes, guildmaster;
 
       % This code is convoluted and slow, so initially, just check to see
-      %  if current guildmaster still has the majority.
+      % if current guildmaster still has the majority.
 
       guildmaster = Send(self,@GetGuildmaster);
 
@@ -1917,9 +1923,9 @@ messages:
       }
 
       % Guildmaster does not have the majority.  If guildmaster exists, he
-      %  still retains leadership as long as no one else has a majority.
+      % still retains leadership as long as no one else has a majority.
       % Since there must always be a guildmaster, if there is no guildmaster,
-      %  person with most votes is chosen.
+      % person with most votes is chosen.
 
       mostvotes = -1;
       winner = $;
@@ -1940,7 +1946,8 @@ messages:
          }
       }
 
-      if (winner <> $) AND (mostvotes > (length(plMembers)/2))
+      if winner <> $
+         AND mostvotes > (Length(plMembers) / 2)
       {
          Send(self,@NewGuildMaster,#who=winner);
 
@@ -1948,7 +1955,8 @@ messages:
       }
       else
       {
-         if winner <> $ AND guildmaster = $
+         if winner <> $
+            AND guildmaster = $
          {
             Debug("New guildmaster was declared because there was no old guildmaster!");
             Send(self,@NewGuildMaster,#who=winner);
@@ -1960,7 +1968,7 @@ messages:
             return FALSE;
          }
       }
-      
+
       return FALSE;
    }
 
@@ -2022,26 +2030,26 @@ messages:
 
    GetEnemyList()
    {
-     return plEnemies;
+      return plEnemies;
    }
 
    GetAllyList()
    {
-     return plAllies;
+      return plAllies;
    }
 
    GetDeclaredEnemyList()
    {
-     return plEnemiesOf;
+      return plEnemiesOf;
    }
 
    GetDeclaredAllyList()
    {
-     return plAlliesOf;
+      return plAlliesOf;
    }
 
    IsAlly(otherguild = $)
-   "returns TRUE if the guild in question is in the ally list."
+   "Returns TRUE if the guild in question is in the ally list."
    {
       local i;
 
@@ -2051,13 +2059,13 @@ messages:
          {
             return TRUE;
          }
-     }
-     
-     return FALSE;
+      }
+
+      return FALSE;
    }
 
    IsEnemy(otherguild = $)
-   "returns TRUE if the guild in question is in the enemy list."
+   "Returns TRUE if the guild in question is in the enemy list."
    {
       local i;
 
@@ -2068,7 +2076,7 @@ messages:
             return TRUE;
          }
       }
-      
+
       return FALSE;
    }
 

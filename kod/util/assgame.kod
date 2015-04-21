@@ -32,8 +32,8 @@ constants:
    % One day
    GAME_DAY = 86400000
 
-   % Players must spend an average of 3 hours per day online. 
-   MINIMUM_TIME_ONLINE = 10800
+   % Players must spend an average of 1 hour per day online.
+   MINIMUM_TIME_ONLINE = 3600
 
 resources:
 
@@ -317,7 +317,7 @@ messages:
    "Removes the player from the combat proceedings.  Also, removes their "
    "dagger.  Also, lets others know that player is gone."
    {
-      local i, bFound, oOpponent;
+      local i, bFound, oOpponent, oDagger;
 
       if who = $
       {
@@ -356,8 +356,13 @@ messages:
 
             plCombatants = DelListElem(plCombatants,i);
             bFound = TRUE;
-            Send(Send(self,@GetDagger,#who=who),@delete);
-               
+
+            oDagger = Send(self,@GetDagger,#who=who);
+            if oDagger <> $
+            {
+               Send(oDagger,@Delete);
+            }
+
             if wincheck
             {
                Send(self,@CheckForWinner);
@@ -389,14 +394,14 @@ messages:
          return FALSE;
       }
 
-      if not isClass(who,&user)
+      if NOT isClass(who,&user)
       {
          Debug("Can't advertise to non-player!");
 
          return FALSE;
       }
 
-      if not Send(self,@IsAdvertised,#who=who)
+      if NOT Send(self,@IsAdvertised,#who=who)
       {
          plAdvertise = Cons(who,plAdvertise);
       }
@@ -438,10 +443,10 @@ messages:
       local i;
 
       % Remove from ad list
-      Send(self,@StopAdvertising,#who=who);        
+      Send(self,@StopAdvertising,#who=who);
 
       % Remove from combatant list
-      if Send(self,@IsCombatant,#who=who)          
+      if Send(self,@IsCombatant,#who=who)
       {
          Send(self,@QuitCombatant,#who=who);
       }
@@ -475,7 +480,7 @@ messages:
                if Length(plMost_kills) = 0
                {
                   piNum_kills = 0;
-               }   
+               }
             }
          }
         
@@ -519,7 +524,7 @@ messages:
          return FALSE;
       }
 
-      if not Send(self,@InSession)
+      if NOT Send(self,@InSession)
       {
          Debug("Player ",Send(attacker,@GetName)," attacked when a match "
                "wasn't in session!");
@@ -534,8 +539,8 @@ messages:
       }
 
       % Check for "safe zones".  Currently only the Underworld.
-      if not Send(Send(target,@GetOwner),@ReqAssassinGameAttack,#what=attacker)
-      {        
+      if NOT Send(Send(target,@GetOwner),@ReqAssassinGameAttack,#what=attacker)
+      {
          return FALSE;
       }
 
@@ -590,7 +595,7 @@ messages:
          for i in plCombatants
          {
             Send(i,@ReceiveNestedMail,#nest_list=[4,assgame_mail_reset],
-              #from=assgame_roq,#dest_list=[i]);
+               #from=assgame_roq,#dest_list=[i]);
          }
       }
       
@@ -603,11 +608,17 @@ messages:
       pbAccept_mode = FALSE;
       plMost_kills = $;
       piNum_kills = 0;
-      
+
       % Okay, at this point, the combatant list should be nil, and no black 
       %  daggers should exist anywhere.
       plCombatants = $;
-      Send(&BlackDagger,@CleanUp); 
+      Send(&BlackDagger,@CleanUp);
+
+      if ptMaintenance <> $
+      {
+         DeleteTimer(ptMaintenance);
+      }
+      ptMaintenance = $;
 
       % This will almost always be true.
       if ptGame <> $
@@ -617,7 +628,7 @@ messages:
 
       iValue = Bound(Random(piGame_Wait_Min,piGame_Wait_Max),1,MAX_INT);
       ptGame = CreateTimer(self,@GameTimer,iValue);
-      
+
       return;
    }
 
@@ -749,6 +760,9 @@ messages:
    EnterAcceptMode()
    {
       local i, iValue;
+
+      % Clear combatants list.
+      plCombatants = $;
       
       % No daggers should exist right now - none have been given out.
       Send(&BlackDagger,@CleanUp);
@@ -793,8 +807,8 @@ messages:
 
          return FALSE;
       }
-      
-      if not Send(self,@IsViableGame)
+
+      if NOT Send(self,@IsViableGame)
       {
          Send(self,@EnterAcceptMode);
 
@@ -807,7 +821,7 @@ messages:
          DeleteTimer(ptGame);
          ptGame = $;
       }
-      
+
       pbAccept_mode = FALSE;
       pbGame_in_Session = TRUE;
 
@@ -1164,7 +1178,5 @@ messages:
       return TRUE;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

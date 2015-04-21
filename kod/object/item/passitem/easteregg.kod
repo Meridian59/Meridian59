@@ -489,6 +489,11 @@ messages:
       return;
    }
 
+   IsBeverage()
+   {
+      return FALSE;
+   }
+
    DestroyDisposable()
    {
       % Don't destroy easter eggs.

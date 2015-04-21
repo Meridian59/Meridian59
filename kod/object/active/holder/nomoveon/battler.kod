@@ -528,6 +528,8 @@ messages:
       if IsClass(self,&Player)
          AND Send(self,@IsInCannotInteractMode)
       {
+         Send(self,@NewMana);
+
          return 0;
       }
 
@@ -555,6 +557,8 @@ messages:
       if IsClass(self,&Player)
          AND Send(self,@IsInCannotInteractMode)
       {
+         Send(self,@NewMana);
+
          return 0;
       }
 

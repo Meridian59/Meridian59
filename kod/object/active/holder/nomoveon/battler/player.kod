@@ -14547,7 +14547,7 @@ messages:
 
       % Add phase time to piTimeAttackedPlayer if it is currently
       % preventing the player from casting escape spells.
-      if Send(self,@GetLastPlayerAttackTime)
+      if piTimeAttackedPlayer
             + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
             > GetTime()
       {
@@ -14603,7 +14603,7 @@ messages:
 
       % If we added phase time to piTimeAttackedPlayer before,
       % remove what is remaining (restore to original time).
-      if Send(self,@GetLastPlayerAttackTime)
+      if piTimeAttackedPlayer
             + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
             > GetTime()
       {
@@ -14678,7 +14678,7 @@ messages:
       % Logoff ghosts call this when the player returns, so we remove
       % the phase time remaining from piTimeAttackedPlayer here if we
       % added it when the user logged off.
-      if Send(self,@GetLastPlayerAttackTime)
+      if piTimeAttackedPlayer
             + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
             > GetTime()
       {

@@ -1050,9 +1050,12 @@ messages:
          piState = (piState & VSTATE_VALIDITY_MASK);
       }
 
-      Send(poBrain,@SomethingMoved,#mob=self,#state=piState,
-           #what=what,#new_row=new_row,#new_col=new_col,
-           #fine_row=fine_row,#fine_col=fine_col);
+      if poBrain <> $
+      {
+         Send(poBrain,@SomethingMoved,#mob=self,#state=piState,
+               #what=what,#new_row=new_row,#new_col=new_col,
+               #fine_row=fine_row,#fine_col=fine_col);
+      }
 
       propagate;
    }
@@ -1062,8 +1065,11 @@ messages:
    "appropriateIf were already fighting this person, this doesnt interrupt "
    "our plans."
    {
-      Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
-           #what=what,#victim=victim,#use_weapon=use_weapon);
+      if poBrain <> $
+      {
+         Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
+               #what=what,#victim=victim,#use_weapon=use_weapon);
+      }
 
       propagate;
    }

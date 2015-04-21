@@ -31,21 +31,21 @@ resources:
       "Your weapon sears into your flesh, clinging to your hand as it burns."
    UniqueWeapon_logoff = \
       "Your weapon writhes free to seek a more blood thirsty owner."
-   
+
 classvars:
    vrName = UniqueWeapon_name_rsc
    vrIcon = UniqueWeapon_icon_rsc
    vrDesc = UniqueWeapon_desc_rsc
 
    % The Assassin's dagger is a low quality thrusting weapon, making it
-   %  shortsword like.
+   % shortsword like.
    viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_LOW
 
    viMin_damage = 8
    viMax_damage = 12
 
-   viProficiency_Needed = SKID_PROFICIENCY_SWORD
+   viProficiency_Needed = SKID_PROFICIENCY_SHORTSWORD
 
    viValue_average = 0
    viBulk = 35
@@ -64,6 +64,7 @@ properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC + ATCK_WEAP_PIERCE
    pbNewlyCreated = 0
+   piHitBonus = 75
 
 messages:
 
@@ -72,27 +73,21 @@ messages:
       pbNewlyCreated = 1;
       Send(&UniqueWeapon,@CheckNewlyCreated);
       pbNewlyCreated = 0;
-        
+
       propagate;
    }
 
    GetBaseDamage(who=$,target=$)
    {
-      return random(viMin_damage,viMax_damage);
-   }
-
-   ModifyHitRoll()
-   {
-      % Return a good bonus
-      return 20;
+      return Random(viMin_damage,viMax_damage);
    }
 
    CheckNewlyCreated()
    {
       if pbNewlyCreated = 0
       {
-         Post(self,@delete);
-         debug("Someone tried to make Multiple Unique Items.");
+         Post(self,@Delete);
+         Debug("Someone tried to make Multiple Unique Items.");
       }
 
       return;
@@ -104,9 +99,9 @@ messages:
       return FALSE;
    }
 
-   CanBeStoredInVault()   
+   CanBeStoredInVault()
    {
-      Send(poOwner,@msgSenduser,#message_rsc=UniqueWeapon_cant_vault);
+      Send(poOwner,@MsgSendUser,#message_rsc=UniqueWeapon_cant_vault);
 
       return FALSE;
    }
@@ -146,7 +141,7 @@ messages:
 
       oRoom = Send(SYS,@FindRoomByNum,#num=rid_DUKE4);
       % called every 2 minutes, so this means an average of 30 minutes.
-      if random(1,15) = 1        
+      if Random(1,15) = 1
       {
          Send(oRoom,@NewHold,#what=self,#new_row=20,#new_col=15);
       }
@@ -159,16 +154,16 @@ messages:
    {
       local iRandom;
 
-      iRandom = random(1,5);
+      iRandom = Random(1,5);
 
       % 20% chance to drop if you're not a DM+
       if iRandom = 1 AND NOT IsClass(poOwner,&DM)
       {
          Send(poOwner,@MsgSendUser,#message_rsc=UniqueWeapon_logoff);
          Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
-              #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
-              #fine_row=Send(poOwner,@GetFineRow),
-              #fine_col=Send(poOwner,@GetFineCol));
+               #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
+               #fine_row=Send(poOwner,@GetFineRow),
+               #fine_col=Send(poOwner,@GetFineCol));
       }
 
       propagate;
@@ -183,7 +178,6 @@ messages:
 
       return ((poOwner = $) OR Send(poOwner,@ReqLeaveHold,#what=self));
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

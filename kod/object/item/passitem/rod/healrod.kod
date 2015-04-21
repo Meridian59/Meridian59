@@ -18,10 +18,12 @@ resources:
 
    healWand_name_rsc = "rod of healing"
    healWand_icon_rsc = healwand.bgf
-   healWand_desc_rsc = "This rod is almost comically decorated by obviously fake gems.   "
-       "Still, the rod hums nearly inaudibly, and when you put your hand on it, it is "
-       "warm to the touch."
-   healWand_success_rsc = "The rod pulses once in your hand, restoring ~B~g%d~n health."
+   healWand_desc_rsc = \
+      "This rod is almost comically decorated by obviously fake gems. "
+      "Still, the rod hums nearly inaudibly, and when you put your hand on "
+      "it, it is warm to the touch."
+   healWand_success_rsc = \
+      "The rod pulses once in your hand, restoring ~B~g%d~n health."
 
 classvars:
 
@@ -32,12 +34,11 @@ classvars:
    viWeight = 25
    viValue_average = 200
    viInventory_group = 2
-   
+
+   vrGoodDesc = healWand_desc_rsc
    use_success_msg = healWand_success_rsc
 
 properties:
-   
-   vrDesc = healWand_desc_rsc
 
    piHeal_min = 4
    piHeal_max = 8
@@ -51,9 +52,12 @@ messages:
       
       amount = Random(piHeal_min*100, piHeal_max*100);
       
-      amount_healed = Send(poOwner,@GainHealthNormal,#amount=amount,#precision=TRUE);
-      Send(poOwner,@MsgSendUser,#message_rsc=healWand_success_rsc,#parm1=amount_healed/100);
-      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
+      amount_healed = Send(poOwner,@GainHealthNormal,#amount=amount,
+                           #precision=TRUE);
+      Send(poOwner,@MsgSendUser,#message_rsc=healWand_success_rsc,
+                           #parm1=amount_healed/100);
+      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,
+                           #wave_rsc=use_success_wav);
 
       return;
    }

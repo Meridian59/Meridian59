@@ -29,6 +29,9 @@ resources:
    Dazzle_off = "Your vision begins to clear."
 
    Dazzle_sound = sDazzle.wav
+   
+   dazzle_break_rod_active = \
+      "Darkening energies dissipate your spell before you even begin!"
 
 classvars:
 
@@ -108,6 +111,32 @@ messages:
          }
 
          return FALSE;
+      }
+      
+      if IsClass(target,&Player)
+      {
+         for i in Send(target,@GetHolderPassive)
+         {
+            if IsClass(i,&BreakRodBlind)
+               AND Send(i,@IsActive)
+            {
+               Send(who,@MsgSendUser,#message_rsc=dazzle_break_rod_active);
+               return FALSE;
+            }
+         }
+      }
+      
+      if IsClass(who,&Player)
+      {
+         for i in Send(who,@GetHolderPassive)
+         {
+            if IsClass(i,&BreakRodBlind)
+               AND Send(i,@IsSecondaryActive)
+            {
+               Send(who,@MsgSendUser,#message_rsc=dazzle_break_rod_active);
+               return FALSE;
+            }
+         }
       }
 
       propagate;

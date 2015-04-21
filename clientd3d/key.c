@@ -171,7 +171,7 @@ int TranslateKey(UINT vk_key, KeyTable table, void **data)
  * HandleKeys:  Check state of keyboard and perform actions that correspond
  *   to keys that are down.
  */
-void HandleKeys(void)
+void HandleKeys(Bool poll)
 {
    Bool norepeat;
    BYTE keys[NUM_KEYS];
@@ -217,7 +217,11 @@ void HandleKeys(void)
 	 action = TranslateKey(i, table, &action_data);
 	 if (action == A_NOACTION)
 	    continue;
-	 
+
+   // Don't constantly toggle tab or mouselook if key held down.
+   if ((IsTabAction(action) || IsMouseLookAction(action)) && poll)
+      continue;
+
 	 // Perform action at most once
 	 already_done = False;
 	 for (j=0; j < num_actions; j++)

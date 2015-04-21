@@ -613,6 +613,7 @@ namespace m59bind
                 returnString = keyPrompt;
                 capturing = true;
             }
+            configChanged = true;
 
             return returnString;
         }

@@ -53,7 +53,7 @@ M59EXPORT void KeyRemoveTable(int game_state, KeyTable table);
 
 M59EXPORT int  TranslateKey(UINT vk_key, KeyTable table, void **data);
 M59EXPORT void KeySetLastNorepeatTime(void);
-void HandleKeys(void);
+void HandleKeys(Bool poll);
 int  KeysDown(void);
 void KeyUpHack(int vk);
 

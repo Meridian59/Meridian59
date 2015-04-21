@@ -1578,6 +1578,7 @@ messages:
       piLastLoginTime = 0;
       psUrl = $;
       psHonor = $;
+      plHonor = $;
       piLogoffPenaltyCount = -1;
 
       if pbLogged_on

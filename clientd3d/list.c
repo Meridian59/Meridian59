@@ -237,6 +237,25 @@ void *list_find_item(list_type l, void *data, CompareProc compare)
    return NULL;
 }
 /************************************************************************/
+/*
+ * list_get_position: Find and return the position of an item in the given list.
+ *   The compare function is used to determine if two items are equal.
+ *   Returns NULL if item not found.
+ */
+int list_get_position(list_type l, void *data, CompareProc compare)
+{
+   int n = 0;
+
+   while (l != NULL)
+   {
+      if ( (*compare)(data, l->data))
+         return n;
+      l = l->next;
+      n++;
+   }
+   return NULL;
+}
+/************************************************************************/
 /* list_length: return length of given list.
  */
 int list_length(list_type l)
@@ -325,6 +344,85 @@ list_type list_move_to_front(list_type l, void *data, CompareProc compare)
       prev = temp;
       temp = temp->next;
    }
+   return l;
+}
+/************************************************************************/
+/*
+ * list_move_to_nth:  Find the given item in the given list, and
+ *   move it to the nth place.
+ *   Returns the list.
+ */
+list_type list_move_to_nth(list_type l, void *data1, void *data2, CompareProc compare)
+{
+   list_type list_data1, temp, prev;
+   Bool data1_found = False, data2_found = False;
+   int i;
+
+   if (l == NULL)
+      return NULL;
+
+   int pos_data1 = list_get_position(l, data1, compare);
+   int pos_data2 = list_get_position(l, data2, compare);
+
+   // Check first node.
+   if (pos_data2 == 0)
+      return list_move_to_front(l,data1,compare);
+   if (pos_data1 == 0)
+   {
+      l->next->last = l->last;
+      list_data1 = l;
+      l = l->next;
+   }
+
+   // If data1 == data2, return the same list.
+   if (pos_data1 == pos_data2)
+      return l;
+
+   prev = l;
+   temp = l->next;
+
+   // Remove data1 from the list.
+   for (i = 1; i <= pos_data1 && temp != NULL; i++)
+   { 
+      if (i == pos_data1)
+      {
+         list_data1 = temp;
+         prev->next = temp->next;
+         if (temp->next == NULL)
+            l->last = prev;
+      }
+      prev = temp;
+      temp = temp->next;
+   }
+
+   if (list_data1 == NULL)
+      return l;
+
+   prev = l;
+   temp = l->next;
+
+   // Check if we need to add to last position. Inventory is 0 based,
+   // list length is not.
+   if (list_length(l)-1 < pos_data2)
+   {
+      l->last->next = list_data1;
+      l->last = list_data1;
+      list_data1->next = NULL;
+      return l;
+   }
+
+   // Now add data1 back in at data2.
+   for (i = 1; i <= pos_data2; i++)
+   {
+      if (i == pos_data2)
+      {
+         prev->next = list_data1;
+         list_data1->next = temp;
+      }
+      prev = temp;
+      temp = temp->next;
+   }
+
    return l;
 }
 /************************************************************************/

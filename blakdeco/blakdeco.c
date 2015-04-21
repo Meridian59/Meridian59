@@ -574,7 +574,8 @@ char * name_function(int fnum)
    case STRINGEQUAL : return "StringEqual";
    case STRINGCONTAIN : return "StringContain";
    case SETRESOURCE : return "SetResource";
-//   case CREATESTRING : return "CreateString";
+   case CREATESTRING : return "CreateString";
+   case ISSTRING : return "IsString";
 
    case CREATETIMER : return "CreateTimer";
    case DELETETIMER : return "DeleteTimer";
@@ -586,6 +587,7 @@ char * name_function(int fnum)
    case CANMOVEINROOMHIGHRES : return "CanMoveInRoomHighRes";
    case GETHEIGHT : return "GetHeight";
 
+   case APPENDLISTELEM : return "AppendListElem";
    case CONS  : return "Cons";
    case FIRST  : return "First";
    case REST  : return "Rest";
@@ -595,7 +597,9 @@ char * name_function(int fnum)
    case ISLIST : return "IsList";
    case SETFIRST : return "SetFirst";
    case SETNTH : return "SetNth";
+   case SWAPLISTELEM : return "SwapListElem";
    case DELLISTELEM : return "DelListElem";
+   case INSERTLISTELEM : return "InsertListElem";
 
    case GETTIME : return "GetTime";
    case GETTICKCOUNT : return "GetTickCount";

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Diamond is NumberItem
+Sapphire is Reagent
 
 constants:
 
@@ -17,32 +17,33 @@ constants:
 resources:
 
 
-   diamond_name_rsc = "diamond"
-   diamond_icon_rsc = diamond.bgf
-   diamond_desc_rsc = \
-   "Mined in dark and dangerous caves far below Jasper, this "
-   "diamond is brilliant and valuable."
-
-   diamond_name_plural_rsc = "diamonds"
+   sapphire_name_rsc = "sapphire"
+   sapphire_icon_rsc = sapphire.bgf
+   sapphire_desc_rsc = \
+   "This large, heavy sapphire will fetch a decent price on the market.  It has a warm magical glow."
+   sapphire_name_plural_rsc = "sapphires"
 
 classvars:
 
-   vrName = diamond_name_rsc
-   vrName_plural = diamond_name_plural_rsc
-   vrIcon = diamond_icon_rsc
-   vrDesc = diamond_desc_rsc
+   vrName = sapphire_name_rsc
+   vrName_plural = sapphire_name_plural_rsc
+   vrIcon = sapphire_icon_rsc
+   vrDesc = sapphire_desc_rsc
 
    viBulk = 1
    viWeight = 1
-   viValue_average = 100
+
+   viValue_average = 60
 
    viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
 
    viGround_group = 2
+   viInventory_group = 2
 
 properties:
 
    piNumber = 2
+
 
 messages:
 

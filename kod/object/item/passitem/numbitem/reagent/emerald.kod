@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Sapphire is NumberItem
+Emerald is Reagent
 
 constants:
 
@@ -17,32 +17,33 @@ constants:
 resources:
 
 
-   sapphire_name_rsc = "sapphire"
-   sapphire_icon_rsc = sapphire.bgf
-   sapphire_desc_rsc = \
-   "This large, heavy sapphire will fetch a decent price on the market.  It has a warm magical glow."
-   sapphire_name_plural_rsc = "sapphires"
+   emerald_name_rsc = "emerald"
+   emerald_icon_rsc = emerald.bgf
+   emerald_desc_rsc = \
+   "This sparkling green \"Jasper emerald\" is beautiful, "
+   "although not exceptionally valuable.  It has a warm, "
+   "magical glow."
+
+   emerald_name_plural_rsc = "emeralds"
 
 classvars:
 
-   vrName = sapphire_name_rsc
-   vrName_plural = sapphire_name_plural_rsc
-   vrIcon = sapphire_icon_rsc
-   vrDesc = sapphire_desc_rsc
+   vrName = emerald_name_rsc
+   vrName_plural = emerald_name_plural_rsc
+   vrIcon = emerald_icon_rsc
+   vrDesc = emerald_desc_rsc
 
    viBulk = 1
    viWeight = 1
 
-   viValue_average = 60
-
+   viValue_average = 30
    viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
 
    viGround_group = 2
-   viInventory_group = 2
 
 properties:
 
-   piNumber = 2
+   piNumber = 3
 
 
 messages:

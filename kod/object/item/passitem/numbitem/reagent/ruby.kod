@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-OrcTooth is NumberItem
+Ruby is Reagent
 
 constants:
 
@@ -16,32 +16,33 @@ constants:
 
 resources:
 
-   orctooth_name_rsc = "orc tooth"
-   orctooth_icon_rsc = orctooth.bgf
-   orctooth_desc_rsc = \
-   "This yellowed fang is nearly four inches in length.  Bits of dried flesh cling to its base."
 
-   orctooth_name_plural_rsc = "orc teeth"
+   ruby_name_rsc = "ruby"
+   ruby_icon_rsc = ruby.bgf
+   ruby_desc_rsc =  \
+   "This fire ruby is larger than a man's fist and extremely valuable."
+   ruby_name_plural_rsc = "rubies"
 
 classvars:
 
-   vrName = orctooth_name_rsc
-   vrIcon = orctooth_icon_rsc
-   vrDesc = orctooth_desc_rsc
+   vrName = ruby_name_rsc
+   vrName_plural = ruby_name_plural_rsc
+   vrIcon = ruby_icon_rsc
+   vrDesc = ruby_desc_rsc
 
-   vrName_plural = orctooth_name_plural_rsc
+   viBulk = 1
+   viWeight = 1
 
-   viValue_average = 40
-   viWeight = 3
-   viBulk = 3
+   viValue_average = 200
+   viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
 
+   viGround_group = 2
 
 properties:
 
-   piNumber = 3
+   piNumber = 1
 
 messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

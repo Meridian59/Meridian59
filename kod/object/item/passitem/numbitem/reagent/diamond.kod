@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Emerald is NumberItem
+Diamond is Reagent
 
 constants:
 
@@ -17,34 +17,32 @@ constants:
 resources:
 
 
-   emerald_name_rsc = "emerald"
-   emerald_icon_rsc = emerald.bgf
-   emerald_desc_rsc = \
-   "This sparkling green \"Jasper emerald\" is beautiful, "
-   "although not exceptionally valuable.  It has a warm, "
-   "magical glow."
+   diamond_name_rsc = "diamond"
+   diamond_icon_rsc = diamond.bgf
+   diamond_desc_rsc = \
+   "Mined in dark and dangerous caves far below Jasper, this "
+   "diamond is brilliant and valuable."
 
-   emerald_name_plural_rsc = "emeralds"
+   diamond_name_plural_rsc = "diamonds"
 
 classvars:
 
-   vrName = emerald_name_rsc
-   vrName_plural = emerald_name_plural_rsc
-   vrIcon = emerald_icon_rsc
-   vrDesc = emerald_desc_rsc
+   vrName = diamond_name_rsc
+   vrName_plural = diamond_name_plural_rsc
+   vrIcon = diamond_icon_rsc
+   vrDesc = diamond_desc_rsc
 
    viBulk = 1
    viWeight = 1
+   viValue_average = 100
 
-   viValue_average = 30
    viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
 
    viGround_group = 2
 
 properties:
 
-   piNumber = 3
-
+   piNumber = 2
 
 messages:
 

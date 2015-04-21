@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-BlueMushroom is NumberItem
+CyanMushroom is Reagent
 
 constants:
 
@@ -16,34 +16,35 @@ constants:
 
 resources:
 
-   bluemushroom_name_rsc = "blue mushroom"
-   bluemushroom_icon_rsc = mushroom.bgf
-   bluemushroom_desc_rsc = \
-      "These magical mushrooms pulse with energy."
+   cyanmushroom_name_rsc = "cyan mushroom"
+   cyanmushroom_icon_rsc = mushroom.bgf
+   cyanmushroom_desc_rsc = \
+      "These magical mushrooms radiate a strange and uplifting power."
 
-   bluemushroom_name_plural_rsc = "blue mushrooms"
+   cyanmushroom_name_plural_rsc = "cyan mushrooms"
 
 classvars:
 
-   vrName = bluemushroom_name_rsc
-   vrIcon = bluemushroom_icon_rsc
-   vrDesc = bluemushroom_desc_rsc
+   vrName = cyanmushroom_name_rsc
+   vrIcon = cyanmushroom_icon_rsc
+   vrDesc = cyanmushroom_desc_rsc
 
-   vrName_plural = bluemushroom_name_plural_rsc
+   vrName_plural = cyanmushroom_name_plural_rsc
 
-   viValue_average = 50
+   viValue_average = 540
    viWeight = 2
    viBulk = 5
 
+
 properties:
 
-   piNumber = 2
+   piNumber = 1
 
 messages:
 
    Constructor()
    {
-      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE,#color2=XLAT_TO_BLUE);
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKY,#color2=XLAT_TO_SKY);
       
       propagate;
    }

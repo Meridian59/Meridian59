@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Mushroom is NumberItem
+GreenMushroom is Reagent
 
 constants:
 
@@ -16,34 +16,35 @@ constants:
 
 resources:
 
-   mushroom_name_rsc = "mushroom"
-   mushroom_icon_rsc = mushroom.bgf
-   mushroom_desc_rsc = \
-      "These mushrooms are a common magical reagent."
+   greenmushroom_name_rsc = "green mushroom"
+   greenmushroom_icon_rsc = mushroom.bgf
+   greenmushroom_desc_rsc = \
+      "These magical mushrooms smell oddly chalky."
 
-   mushroom_name_plural_rsc = "mushrooms"
+   greenmushroom_name_plural_rsc = "green mushrooms"
 
 classvars:
 
-   vrName = mushroom_name_rsc
-   vrIcon = mushroom_icon_rsc
-   vrDesc = mushroom_desc_rsc
+   vrName = greenmushroom_name_rsc
+   vrIcon = greenmushroom_icon_rsc
+   vrDesc = greenmushroom_desc_rsc
 
-   vrName_plural = mushroom_name_plural_rsc
+   vrName_plural = greenmushroom_name_plural_rsc
 
-   viValue_average = 10
+   viValue_average = 250
    viWeight = 2
    viBulk = 5
 
+
 properties:
 
-   piNumber = 4
+   piNumber = 1
 
 messages:
 
    Constructor()
    {
-      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4,#color2=XLAT_TO_SKIN4);
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_GREEN,#color2=XLAT_TO_GREEN);
       
       propagate;
    }

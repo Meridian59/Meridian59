@@ -314,6 +314,8 @@ properties:
    piDay = 0
    piYear = 0
 
+   poRealTime = $
+   
    % outdoor brightness level (0-100), updated hourly
    piBrightness
    % updated here and there
@@ -339,6 +341,9 @@ properties:
    
    % Singleton object that holds global game settings
    poSettings = $
+
+   % object that handles automated events
+   poEventEngine = $
 
    poWarEvent = $
    
@@ -463,6 +468,8 @@ messages:
    {
       % This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
+      
+      Send(self,@RecreateRealTime);
 
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -482,6 +489,7 @@ messages:
 
       Send(self,@RecreateAssassinGame);
       Send(self,@RecreateQuestEngine);
+      Send(self,@RecreateEventEngine);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
@@ -567,6 +575,8 @@ messages:
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
       
+      Send(self,@RecreateRealTime);
+      
       plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
       plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
 
@@ -590,8 +600,9 @@ messages:
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
       Send(self,@RecreateWarEvent);
-	  Send(self,@CreateAllSpellsIfNew);
-	  Send(self,@CreateAllRoomsIfNew);
+      Send(self,@CreateAllSpellsIfNew);
+      Send(self,@CreateAllRoomsIfNew);
+      Send(self,@RecreateEventEngine);
 
       if plSavedFlagStates <> $
       {
@@ -793,6 +804,20 @@ messages:
       }
 
       Send(room,@Delete);
+
+      return;
+   }
+   
+   RecreateRealTime()
+   {
+      if poRealTime <> $
+      {
+         Send(poRealTime,@Recreate);
+      }
+      else
+      {
+         poRealTime = Create(&RealTime);
+      }
 
       return;
    }
@@ -4711,6 +4736,20 @@ messages:
       return TRUE;
    }
 
+   RecreateEventEngine()
+   {
+      if poEventEngine <> $
+      {
+         Send(poEventEngine,@Recreate);
+      }
+      else
+      {
+         poEventEngine = Create(&GameEventEngine);
+      }
+
+      return TRUE;
+   }
+   
    GetNecromancerBalance()
    {
       return poNecromancerBalance;
@@ -4849,6 +4888,16 @@ messages:
       }
 
       return;
+   }
+   
+   GetRealTimeObject()
+   {
+      return poRealTime;
+   }
+   
+   GetEventEngine()
+   {
+      return poEventEngine;
    }
    
    GetQormas()

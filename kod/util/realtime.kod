@@ -1,0 +1,642 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RealTime is UtilityFunctions
+
+% The RealTime object provides functions for returning the real time in
+% seconds, minutes, hours, days, month and year. It also keeps a list of
+% messages to call back at a given time, in plCallBacks. Messages can be
+% registered in this list using RegisterCallBack (or variants of this
+% message) and passing in the time, object, message name to call and
+% up to 15 parameters in the form parm1-parm15.
+% A timer goes off every minute and if any callbacks are due to be called,
+% the stored message is sent to the stored object.
+
+constants:
+
+   include blakston.khd
+
+   % IMPORTANT!!!!
+   % Change this offset time whenever the server offset is
+   % changed due to the kod int overflow issue.
+   OFFSET_YEAR = 2014
+   OFFSET_MONTH = 1
+   OFFSET_DAY = 1
+   OFFSET_HOUR = 0
+   OFFSET_MINUTE = 0
+   OFFSET_SECOND = 0
+
+resources:
+
+classvars:
+
+properties:
+
+   % Time zone offset in seconds.
+   piTimeZoneOffset = -18000
+   ptTick = $
+
+   plCallbacks = $
+
+messages:
+
+   Constructor()
+   {
+      ptTick = CreateTimer(self,@TimeTick,60000);
+
+      return;
+   }
+
+   Recreate()
+   {
+      return;
+   }
+
+   TimeTick()
+   {
+      ptTick = CreateTimer(self,@TimeTick,60000);
+      Send(self,@NewMinute);
+
+      return;
+   }
+
+   Delete()
+   {
+      DeleteTimer(ptTick);
+
+      return;
+   }
+
+   RegisterCallback(iHour=0,iMinute=0,iSecond=0,iMonth=0,iDay=0,iYear=0,
+                    oObject=$,message=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                    parm5=$,parm6=$,parm7=$,parm8=$,parm9=$,parm10=$,parm11=$,
+                    parm12=$,parm13=$,parm14=$,parm15=$)
+   {
+      % First check if we have a valid message to call later on.
+      if message = $
+      {
+         return;
+      }
+
+      if NOT IsString(message)
+      {
+         message = SetString($,message);
+      }
+
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,iSecond],
+                        oObject,message,parm1,parm2,parm3,parm4,parm5,
+                        parm6,parm7,parm8,parm9,parm10,parm11,parm12,
+                        parm13,parm14,parm15],plCallbacks);
+
+      return;
+   }
+
+   RegisterCallbackInMinutes(minutes=$,oObject=$,message=$,parm1=$,parm2=$,
+                              parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,
+                              parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,
+                              parm14=$,parm15=$)
+   {
+      local iYear, iMonth, iDay, iHour, iMinute, iMonthDays;
+
+      if oObject = $
+         OR minutes = $
+         OR message = $
+      {
+         return;
+      }
+
+      % Check if the messages is in string format, if not, make it.
+      if NOT IsString(message)
+      {
+         message = SetString($,message);
+      }
+
+      iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+      iYear = Send(self,@GetYear);
+
+      if Send(self,@IsLeapYear,#iYear=iYear)
+      {
+         iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+      }
+
+      iMonth = Send(self,@GetMonth);
+      iDay = Send(self,@GetDay);
+      iHour = Send(self,@GetHour);
+      iMinute = Send(self,@GetMinute) + minutes;
+
+      % Fix any rollovers.
+      while iMinute >= 60
+      {
+         iMinute = iMinute - 60;
+         iHour = iHour + 1;
+
+         while iHour >= 24
+         {
+            iHour = iHour - 24;
+            iDay = iDay + 1;
+      
+            while iDay > Nth(iMonthDays,iMonth)
+            {
+               iDay = iDay - Nth(iMonthDays,iMonth);
+               iMonth = iMonth + 1;
+
+               while iMonth > 12
+               {
+                  iMonth = iMonth - 12;
+                  iYear = iYear + 1;
+                  if Send(self,@IsLeapYear,#iYear=iYear)
+                  {
+                     iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+                  }
+                  else
+                  {
+                     iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+                  }
+               }
+            }
+         }
+      }
+
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,0],
+                        oObject,message,parm1,parm2,parm3,parm4,parm5,
+                        parm6,parm7,parm8,parm9,parm10,parm11,parm12,
+                        parm13,parm14,parm15],plCallbacks);
+
+      return;
+   }
+
+   RegisterCallbackInHours(hours=$,oObject=$,message=$,parm1=$,parm2=$,
+                           parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,
+                           parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,
+                           parm14=$,parm15=$)
+   {
+      local iYear, iMonth, iDay, iHour, iMinute, iMonthDays;
+
+      if oObject = $
+         OR hours = $
+         OR message = $
+      {
+         return;
+      }
+
+      % Check if the messages is in string format, if not, make it.
+      if NOT IsString(message)
+      {
+         message = SetString($,message);
+      }
+
+      iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+      iYear = Send(self,@GetYear);
+
+      if Send(self,@IsLeapYear,#iYear=iYear)
+      {
+         iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+      }
+
+      iMonth = Send(self,@GetMonth);
+      iDay = Send(self,@GetDay);
+      iHour = Send(self,@GetHour) + hours;
+      iMinute = Send(self,@GetMinute);
+
+      % Fix any rollovers.
+      while iHour >= 24
+      {
+         iHour = iHour - 24;
+         iDay = iDay + 1;
+
+         while iDay > Nth(iMonthDays,iMonth)
+         {
+            iDay = iDay - Nth(iMonthDays,iMonth);
+            iMonth = iMonth + 1;
+
+            while iMonth > 12
+            {
+               iMonth = iMonth - 12;
+               iYear = iYear + 1;
+               if Send(self,@IsLeapYear,#iYear=iYear)
+               {
+                  iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+               }
+               else
+               {
+                  iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+               }
+            }
+         }
+      }
+
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,0],
+                        oObject,message,parm1,parm2,parm3,parm4,parm5,
+                        parm6,parm7,parm8,parm9,parm10,parm11,parm12,
+                        parm13,parm14,parm15],plCallbacks);
+
+      return;
+   }
+
+   RegisterCallbackInDays(days=$,oObject=$,message=$,parm1=$,parm2=$,
+                        parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,
+                        parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,
+                        parm14=$,parm15=$)
+   {
+      local iYear,iMonth,iDay,iHour,iMinute,iMonthDays;
+
+      if oObject = $
+         OR days = $
+         OR message = $
+      {
+         return;
+      }
+
+      % Check if the messages is in string format, if not, make it.
+      if NOT IsString(message)
+      {
+         message = SetString($,message);
+      }
+
+      iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+      iYear = Send(self,@GetYear);
+
+      if Send(self,@IsLeapYear,#iYear=iYear)
+      {
+         iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+      }
+
+      iMonth=Send(self,@GetMonth);
+      iDay=Send(self,@GetDay) + days;
+      iHour=Send(self,@GetHour); 
+      iMinute=Send(self,@GetMinute);
+
+      % Fix any rollovers.
+      while iDay > Nth(iMonthDays,iMonth)
+      {
+         iDay = iDay - Nth(iMonthDays,iMonth);
+         iMonth = iMonth + 1;
+
+         while iMonth > 12
+         {
+            iMonth = iMonth - 12;
+            iYear = iYear + 1;
+            if Send(self,@IsLeapYear,#iYear=iYear)
+            {
+               iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+            }
+            else
+            {
+               iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+            }
+         }
+      }
+
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,0],
+                        oObject,message,parm1,parm2,parm3,parm4,parm5,
+                        parm6,parm7,parm8,parm9,parm10,parm11,parm12,
+                        parm13,parm14,parm15],plCallbacks);
+
+      return;
+   }
+
+   RegisterCallbackInMonths(months=$,oObject=$,message=$,parm1=$,parm2=$,
+                           parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,
+                           parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,
+                           parm14=$,parm15=$)
+   {
+      local iYear, iMonth, iDay, iHour, iMinute, iMonthDays;
+
+      if oObject = $
+         OR months = $
+         OR message = $
+      {
+         return;
+      }
+
+      % Check if the messages is in string format, if not, make it.
+      if NOT IsString(message)
+      {
+         message = SetString($,message);
+      }
+
+      iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+      iYear = Send(self,@GetYear);
+
+      if Send(self,@IsLeapYear,#iYear=iYear)
+      {
+         iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+      }
+
+      iMonth = Send(self,@GetMonth) + months;
+      iDay = Send(self,@GetDay);
+      iHour = Send(self,@GetHour);
+      iMinute = Send(self,@GetMinute);
+
+      % Fix any rollovers.
+      while iMonth > 12
+      {
+         iMonth = iMonth - 12;
+         iYear = iYear + 1;
+         if Send(self,@IsLeapYear,#iYear=iYear)
+         {
+            iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+         }
+         else
+         {
+            iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+         }
+      }
+
+      % Second pass in case changing the month screwed up the day.
+      while iDay > Nth(iMonthDays,iMonth)
+      {
+         iDay = iDay - Nth(iMonthDays,iMonth);
+         iMonth = iMonth + 1;
+
+         while iMonth > 12
+         {
+            iMonth = iMonth - 12;
+            iYear = iYear + 1;
+            if Send(self,@IsLeapYear,#iYear=iYear)
+            {
+               iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+            }
+            else
+            {
+               iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+            }
+         }
+      }
+
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,0],
+                        oObject,message,parm1,parm2,parm3,parm4,parm5,
+                        parm6,parm7,parm8,parm9,parm10,parm11,parm12,
+                        parm13,parm14,parm15],plCallbacks);
+
+      return;
+   }
+
+   RegisterCallbackInYears(years=$,oObject=$,message=$,parm1=$,parm2=$,
+                           parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,
+                           parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,
+                           parm14=$,parm15=$)
+   {
+      local iYear, iMonth, iDay, iHour, iMinute, iMonthDays;
+
+      if oObject = $
+         OR years = $
+         OR message = $
+      {
+         return;
+      }
+
+      % Check if the messages is in string format, if not, make it.
+      if NOT IsString(message)
+      {
+         message = SetString($,message);
+      }
+
+      iYear = Send(self,@GetYear) + years;
+      iMonth = Send(self,@GetMonth);
+      iDay = Send(self,@GetDay);
+      iHour = Send(self,@GetHour);
+      iMinute = Send(self,@GetMinute);
+
+      % Check for a possible issue caused by a leap year.
+      if NOT Send(self,@IsLeapYear,#iYear=iYear)
+         AND iMonth = 2
+         AND iDay = 29
+      {
+         iDay = 28;
+      }
+
+      plCallbacks = Cons([[iMonth,iDay,iYear,iHour,iMinute,0],
+                        oObject,message,parm1,parm2,parm3,parm4,parm5,
+                        parm6,parm7,parm8,parm9,parm10,parm11,parm12,
+                        parm13,parm14,parm15],plCallbacks);
+
+      return;
+   }
+
+   ClearCallbacks()
+   {
+      plCallbacks = $;
+
+      return;
+   }
+
+   NewMinute()
+   {
+      local i, iYear, iMonth, iDay, iHour, iMinute;
+
+      Send(Send(SYS,@GetEventEngine),@NewMinute);
+
+      if plCallbacks <> $
+      {
+         iYear = Send(self,@GetYear);
+         iMonth = Send(self,@GetMonth);
+         iDay = Send(self,@GetDay);
+         iHour = Send(self,@GetHour);
+         iMinute = Send(self,@GetMinute);
+
+         % Debug("Executing NewMinute",iYear,iMonth,iDay,iHour,iMinute);
+
+         for i in plCallbacks
+         {
+            if Nth(Nth(i,1),3) <= iYear
+               AND Nth(Nth(i,1),1) <= iMonth
+               AND Nth(Nth(i,1),2) <= iDay
+               AND Nth(Nth(i,1),4) <= iHour
+            {
+               if Nth(Nth(i,1),5) = iMinute
+               {
+                  Send(Nth(i,2),Nth(i,3),
+                        #parm1=Nth(i,4),#parm2=Nth(i,5),#parm3=Nth(i,6),
+                        #parm4=Nth(i,7),#parm5=Nth(i,8),#parm6=Nth(i,9),
+                        #parm7=Nth(i,10),#parm8=Nth(i,11),#parm9=Nth(i,12),
+                        #parm10=Nth(i,13),#parm11=Nth(i,14),#parm12=Nth(i,15),
+                        #parm13=Nth(i,16),#parm14=Nth(i,17),#parm15=Nth(i,18));
+                  plCallbacks = DelListElem(plCallbacks,i);
+               }
+               else
+               {
+                  if Nth(Nth(i,1),5) < iMinute
+                  {
+                     Debug("Deleting expired event that would never have started! (event time is less than current time)");
+                     plCallbacks = DelListElem(plCallbacks,i);
+                  }
+               }
+            }
+         }
+      }
+   
+      return;
+   }
+   
+   NewHour()
+   {
+      Send(Send(SYS,@GetEventEngine),@NewHour);
+
+      return;
+   }
+
+   NewDay()
+   {
+      Send(Send(SYS,@GetEventEngine),@NewDay);
+
+      return;
+   }
+
+   NewMonth()
+   {
+      Send(Send(SYS,@GetEventEngine),@NewMonth);
+
+      return;
+   }
+
+   NewYear()
+   {
+      Send(Send(SYS,@GetEventEngine),@NewYear);
+
+      return;
+   }
+
+   GetYear()
+   {
+      local iTime,iYear;
+
+      iTime = GetTime() + piTimeZoneOffset;
+      iYear=(iTime / 31536000) + OFFSET_YEAR;
+
+      return iYear;
+   }
+
+   GetYearDay()
+   {
+      local iTime,iDay;
+
+      iTime = GetTime() + piTimeZoneOffset;
+      iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
+
+      return iDay;
+   }
+
+   GetMonth()
+   {
+      local i,iMonthDays,iMonth,iYearDays;
+
+      iYearDays = Send(self,@GetYearDay);
+
+      iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+      i = 1;
+      while i <= Length(iMonthDays)
+      {
+         if i = 2
+            AND Send(self,@IsLeapYear,#iYear=Send(self,@GetYear))
+         {
+            if iYearDays <= 29
+            {
+               return i;
+            }
+            else
+            {
+               iYearDays = iYearDays - 29;
+            }
+         }
+         else
+         {
+            if iYearDays <= Nth(iMonthDays,i)
+            {
+               return i;
+            }
+            else
+            {
+               iYearDays = iYearDays - Nth(iMonthDays,i);
+            }
+         }
+
+         i = i + 1;
+      }
+
+      return;
+   }
+
+   GetDay()
+   {
+      local i,iTime,iDay,iMonthDays;
+
+      if Send(self,@IsLeapYear,#iYear=Send(self,@GetYear))
+      {
+         iMonthDays = [31,29,31,30,31,30,31,31,30,31,30,31];
+      }
+      else
+      {
+         iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+      }
+
+      iTime = GetTime() + piTimeZoneOffset;
+      iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
+
+      for i in iMonthDays
+      {
+         if iDay > i
+         {
+            iDay = iDay - i;
+         }
+      }
+
+      return iDay;
+   }
+
+   GetHour()
+   {
+      local iTime,iHour;
+
+      iTime = GetTime() + piTimeZoneOffset;
+      iHour = (iTime MOD 86400) / 3600;
+
+      if (iHour < 0)
+      {
+         iHour = iHour + 24;
+      }
+
+      return iHour;
+   }
+   
+   GetMinute()
+   {
+      local iTime,iMinute;
+
+      iTime = GetTime() + piTimeZoneOffset;
+      iMinute = (iTime MOD 3600) / 60;
+
+      return iMinute;
+   }
+
+   GetSecond()
+   {
+      return GetTime() MOD 60;
+   }
+
+   IsLeapYear(iYear=1901)
+   {
+      if (iYear MOD 4 = 0
+            AND iYear MOD 100 <> 0)
+         OR iYear MOD 400 = 0
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

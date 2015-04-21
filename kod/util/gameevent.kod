@@ -1,0 +1,146 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GameEvent is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   event_start_msg = "Event Started."
+   event_end_msg = "Event Ended"
+
+classvars:
+
+   vrStartMessage = event_start_msg
+   vrEndMessage = event_end_msg
+
+   vbAnnounce = FALSE
+
+properties:
+
+   plSpawnRects = $
+   piActiveRoom = $
+
+messages:
+
+   Constructor()
+   {
+      return;
+   }
+
+   Delete()
+   {
+      return;
+   }
+
+   Update()
+   {
+      return;
+   }
+
+   NewMinute()
+   {
+      return;
+   }
+
+   NewHour()
+   {
+      return;
+   }
+
+   NewDay()
+   {
+      return;
+   }
+
+   NewMonth()
+   {
+      return;
+   }
+
+   NewYear()
+   {
+      return;
+   }
+
+   StartEvent()
+   {
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrStartMessage);
+      }
+
+      return;
+   }
+
+   EventEnd()
+   {
+      Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
+
+      return;
+   }
+
+   EndEvent()
+   {
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrEndMessage);
+      }
+
+      return;
+   }
+
+   AdvanceEvent()
+   {
+      return;
+   }
+
+   CountMonsters(type=$)
+   "Returns a count of the given type of monster."
+   {
+      local i, count, lActive;
+
+      if type = $
+      {
+         return;
+      }
+
+      count = 0;
+      lActive = Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),@GetPlActive);
+
+      for i in lActive
+      {
+         if IsClass(Nth(i,1),type)
+         {
+            count = count + 1;
+         }
+      }
+
+      return count;
+   }
+
+   MakeSpawnPoint()
+   "Returns a spawn point inside a given rectangle."
+   {
+      local lCoords, spawnRect;
+
+      spawnRect = Nth(plSpawnRects,Random(1,Length(plSpawnRects)));
+
+      lCoords = [ Random(Nth(Nth(spawnRect,1),1),Nth(Nth(spawnRect,2),1)),
+                  Random(Nth(Nth(spawnRect,1),2),Nth(Nth(spawnRect,2),2)) ];
+
+      return lCoords;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

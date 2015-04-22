@@ -67,6 +67,7 @@ classvars:
    viAttackRange = 192
    viAttributes = 0
    viKarma = -75
+   vbIsUndead = TRUE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE \
                         | AI_FIGHT_LASHOUT | AI_MOVE_FLEE_FRIGHTENERS
 
@@ -501,12 +502,6 @@ messages:
       AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
 
       return;
-   }
-
-   IsUndead()
-   {
-      % Let's see... walking pile o' body parts...
-      return TRUE;
    }
 
    Delete()

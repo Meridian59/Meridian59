@@ -46,6 +46,7 @@ classvars:
    viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
+   vbIsUndead = TRUE
    viDifficulty = 4
    viVisionDistance = 10
    viKarma = -45
@@ -131,11 +132,6 @@ messages:
       % if no body animation
 
       propagate;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
    SetMaster(oMaster=$,DurationSecs=1)

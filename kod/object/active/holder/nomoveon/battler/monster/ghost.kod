@@ -60,6 +60,7 @@ classvars:
    % Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = -100
+   vbIsUndead = TRUE
    viCashmin = 1000
    viCashmax = 5500
    vrSound_hit = ghost_sound_hit
@@ -190,11 +191,6 @@ messages:
       }
 
       propagate;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
    SendLightingInformation()

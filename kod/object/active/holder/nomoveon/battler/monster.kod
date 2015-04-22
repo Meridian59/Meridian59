@@ -253,6 +253,9 @@ classvars:
    viOccupation   = 0
    viKarma        = 0
 
+   % If the monster is undead, set this to TRUE.
+   vbIsUndead = FALSE
+
    % viLevel ranges from 25 to 200 (150 and above is for "boss" mobs)
    %  determines hit points.
    viLevel        = 25
@@ -1162,7 +1165,7 @@ messages:
                AND NOT (IsClass(self,&EvilTwin)
                   AND (NOT Send(self,@IsEnchanted,#byClass=&Seduce))))
                OR IsClass(self,&Reflection) % Flecs follow.
-               OR Send(self,@IsUndead) % So do undead (Animate).
+               OR vbIsUndead % So do undead (Animate).
             {
                Post(self,@GotoMaster);
             }
@@ -6467,13 +6470,13 @@ messages:
 
    IsFrightenedOf(target = $)
    {
-      if Send(self,@IsUndead)
+      if vbIsUndead
          AND (poHolySymbolCaster <> $)
          AND (poHolySymbolCaster = target)
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
@@ -6856,7 +6859,7 @@ messages:
 
    IsUndead()
    {
-      return FALSE;
+      return vbIsUndead;
    }
 
    TurnedBy(who = $)
@@ -6868,7 +6871,7 @@ messages:
          return;
       }
 
-      if not Send(self,@IsUndead)
+      if NOT vbIsUndead
       {
          Debug("Somehow turned a monster that isn't undead.");
 

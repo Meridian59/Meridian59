@@ -68,6 +68,18 @@ messages:
       return;
    }
 
+   NewYear()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@NewYear);
+      }
+
+      return;
+   }
+
    NewMinute()
    {
       local i;
@@ -110,19 +122,7 @@ messages:
 
       for i in plActiveEvents
       {
-         Send(i,@Update);
-      }
-
-      return;
-   }
-
-   NewYear()
-   {
-      local i;
-
-      for i in plActiveEvents
-      {
-         Send(i,@NewYear);
+         Send(i,@NewMonth);
       }
 
       return;

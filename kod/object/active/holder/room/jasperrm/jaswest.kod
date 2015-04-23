@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_JasperWest="West Jasper"
-   room_JasperWest = jas-west.roo
+   room_JasperWest = jaswest.roo
 
    jasper_factory_closed = "Since the mines dried up, this factory has been closed for good."
    jasper_yevitan_rsc = "Although severely vandalized, Yevitan's house refuses entry."

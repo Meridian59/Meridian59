@@ -2273,7 +2273,7 @@ messages:
 
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_GRAVEYARD,#class=&TosGraveYard);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_APOTH,#class=&TosApoth);
-      Send(self,@CreateOneRoomIfNew,#num=RID_EAST_TOS,#class=&EastTos);
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_EAST,#class=&EastTos);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_ARENA,#class=&TosArena);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_ARENA2,#class=&TosArena2);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_BANK,#class=&TosBank);

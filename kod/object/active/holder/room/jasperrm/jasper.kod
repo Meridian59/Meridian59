@@ -17,7 +17,7 @@ constants:
 resources:
 
    room_name_JasperEast = "East Jasper"
-   room_JasperEast = jas-east.roo
+   room_JasperEast = jaseast.roo
 
    jasper_Arsenal_rsc = "Tightly locked, the City Arsenal defies intruders."
    jasper_granary_rsc = "You don't have access to the granary."

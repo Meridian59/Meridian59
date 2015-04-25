@@ -838,11 +838,14 @@ messages:
 
             return FALSE;
          }
-      }
 
-      if NOT Send(who,@IsOkayAttackTime,#seconds=viPostCast_Time)
-      {
-         return FALSE;
+         % Don't check the attack time for itemcast spells. The items
+         % themselves will allow or disallow this - for instance a
+         % potion can be used during the cooldown, but a wand cannot.
+         if NOT Send(who,@IsOkayAttackTime,#seconds=viPostCast_Time)
+         {
+            return FALSE;
+         }
       }
 
       oRoom = Send(who,@GetOwner);

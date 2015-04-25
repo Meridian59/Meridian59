@@ -180,16 +180,16 @@ void BSPRoomFreeServer(room_type *room)
 
    if (room->monster_grid != NULL)
    {
-	   for (i=0; i < room->rows; i++)
-		   FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols);
-	   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
+      for (i=0; i < room->rows; i++)
+         FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols);
+      FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
    }
 
    if (room->highres_grid != NULL)
    {
-	   for (i=0; i < room->rowshighres; i++)
-		   FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
-	   FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
+      for (i=0; i < room->rowshighres; i++)
+         FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
+      FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
    }
 
    room->grid = NULL;
@@ -200,4 +200,5 @@ void BSPRoomFreeServer(room_type *room)
    room->rowshighres = 0;
    room->colshighres = 0;
    room->highres_grid = NULL;
+   room->resource_id = 0;
 }

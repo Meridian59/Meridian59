@@ -62,6 +62,7 @@ function_type Functions[] = {
 {"IsClass",             ISCLASS,         AEXPRESSION,   AEXPRESSION,  ANONE},
 {"RoomData",            ROOMDATA,        AEXPRESSION,   ANONE},
 {"LoadRoom",            CREATEROOMDATA,  AEXPRESSION,   ANONE},
+{"FreeRoom",            FREEROOM,        AEXPRESSION,   ANONE},
 {"GetClass",            GETCLASS,        AEXPRESSION,   ANONE},
 {"GetTime",             GETTIME,         ANONE},
 {"GetTickCount",        GETTICKCOUNT,    ANONE},

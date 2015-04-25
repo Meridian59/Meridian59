@@ -51,22 +51,26 @@ void InitResource(void)
 
 void ResetResource(void)
 {
-	resource_node *r,*temp;
-	int i;
+   resource_node *r,*temp;
+   int i;
 
-	for (i=0;i<resources_table_size;i++)
-	{
-		r = resources[i];
-		while (r != NULL)
-		{
-			temp = r->next;
+   for (i=0;i<resources_table_size;i++)
+   {
+      r = resources[i];
+      while (r != NULL)
+      {
+         temp = r->next;
 
-			FreeMemory(MALLOC_ID_RESOURCE,r,sizeof(resource_node));
+         if (r->resource_name)
+            FreeMemory(MALLOC_ID_KODBASE,r->resource_name,
+               strlen(r->resource_name)+1);
+         FreeMemory(MALLOC_ID_RESOURCE,r->resource_val,strlen(r->resource_val)+1);
+         FreeMemory(MALLOC_ID_RESOURCE,r,sizeof(resource_node));
 
-			r = temp;
-		}
-		resources[i] = NULL;
-	}
+         r = temp;
+      }
+      resources[i] = NULL;
+   }
 
 	FreeSIHash(resource_name_map);
 	resource_name_map = CreateSIHash(ConfigInt(MEMORY_SIZE_RESOURCE_NAME_HASH));

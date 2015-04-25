@@ -43,7 +43,8 @@ void ResetString()
    int i,old_strings;
 
    for (i=0;i<num_strings;i++)
-      FreeMemory(MALLOC_ID_STRING,strings[i].data,strings[i].len_data);
+      if (strings[i].data)
+         FreeMemory(MALLOC_ID_STRING,strings[i].data,strings[i].len_data+1);
 
    old_strings = max_strings;
    num_strings = 0;  

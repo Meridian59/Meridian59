@@ -1674,6 +1674,39 @@ int C_LoadRoom(int object_id,local_var_type *local_vars,
 	return LoadRoomData(room_val.v.data);
 }
 
+/*
+ * C_FreeRoom: Takes a room's room data (TAG_ROOM_DATA) and removes the
+ *             room from the server's list of rooms. Frees the memory
+ *             associated with the room.
+ */
+int C_FreeRoom(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   val_type room_val;
+   roomdata_node *room;
+
+   room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   if (room_val.v.tag != TAG_ROOM_DATA)
+   {
+      bprintf("C_FreeRoom can't operate on non-room %i,%i\n",
+         room_val.v.tag,room_val.v.data);
+      return NIL;
+   }
+
+   room = GetRoomDataByID(room_val.v.data);
+   if (room == NULL)
+   {
+      bprintf("C_FreeRoom can't find room id %i\n",room_val.v.data);
+      return NIL;
+   }
+
+   UnloadRoomData(room);
+
+   return NIL;
+}
+
 int C_RoomData(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])

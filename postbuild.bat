@@ -27,11 +27,11 @@ copy /y .\module\intro\release\intro.dll .\run\localclient\resource\
 copy /y .\module\dm\release\dm.dll .\run\localclient\resource\
 copy /y .\module\admin\release\admin.dll .\run\localclient\resource\
 echo Copying Official Graphics to client folder...
-copy /y "%userprofile%\AppData\Local\Meridian 59\resource\*.bgf" .\run\localclient\resource\
-copy /y "%userprofile%\AppData\Local\Meridian 59\resource\*.wav" .\run\localclient\resource\
-copy /y "%userprofile%\AppData\Local\Meridian 59\resource\*.xmi" .\run\localclient\resource\
-copy /y "%userprofile%\AppData\Local\Meridian 59\resource\*.mp3" .\run\localclient\resource\
-copy /y "%userprofile%\AppData\Local\Meridian 59\resource\*.bsf" .\run\localclient\resource\
-copy /y "%userprofile%\AppData\Local\Meridian 59\resource\*.mid" .\run\localclient\resource\
-echo Please remember to updade blakserv.cfg if server is being copied to production.
+copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.bgf" .\run\localclient\resource\
+copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.wav" .\run\localclient\resource\
+copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.xmi" .\run\localclient\resource\
+copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.mp3" .\run\localclient\resource\
+copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.bsf" .\run\localclient\resource\
+copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.mid" .\run\localclient\resource\
+echo Please remember to update blakserv.cfg if server is being copied to production.
 echo Post-Build Finished.

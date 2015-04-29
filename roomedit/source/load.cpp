@@ -336,23 +336,17 @@ BOOL LoadRoom(int infile)
       if (read(infile, &new_sd1->sector, 2) != 2) return FALSE;
       if (read(infile, &new_sd2->sector, 2) != 2) return FALSE;
 
-	  WORD payload; // 16 bit garbage after each 16 bit coordinate
-
-	  // Read endpoints
-	  if (read(infile, &temp, 2) != 2) return FALSE;
-	  if (read(infile, &payload, 2) != 2) return FALSE;
+	  // Read endpoints (32bit in roo, 16bit in editor)
+	  if (read(infile, &temp, 4) != 4) return FALSE;
 	  x0 = temp;
-	  if (read(infile, &temp, 2) != 2) return FALSE;
-	  if (read(infile, &payload, 2) != 2) return FALSE;
+	  if (read(infile, &temp, 4) != 4) return FALSE;
 	  y0 = temp;
-	  if (read(infile, &temp, 2) != 2) return FALSE;
-	  if (read(infile, &payload, 2) != 2) return FALSE;
+	  if (read(infile, &temp, 4) != 4) return FALSE;
 	  x1 = temp;
-	  if (read(infile, &temp, 2) != 2) return FALSE;
-	  if (read(infile, &payload, 2) != 2) return FALSE;
+	  if (read(infile, &temp, 4) != 4) return FALSE;
 	  y1 = temp;
-      LineDefs[i].start = AddVertex(x0, y0);
-      LineDefs[i].end   = AddVertex(x1, y1);
+	  LineDefs[i].start = AddVertex(x0, y0);
+	  LineDefs[i].end = AddVertex(x1, y1);
    }   
 
 

@@ -44,7 +44,7 @@
 
 #include "textures.h"
 
-#define ROO_VERSION 13
+#define ROO_VERSION 14
 
 #define FileCurPos(f)     ftell(f)
 #define FileGoto(f, pos)  fseek(f, pos, SEEK_SET)

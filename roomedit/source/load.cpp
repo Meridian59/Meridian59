@@ -257,9 +257,12 @@ void SetSideDefs(void)
  */
 BOOL LoadRoom(int infile)
 {
-   int i, j, temp;
+   int i, j, temp, xy_bytes;
 	BYTE byte;
    long node_pos, cwall_pos, rwall_pos, sector_pos, thing_pos, sidedef_pos;
+
+   // Have to use an integer for this to maintain compatibility with older rooms.
+   int temp_short;
 
    // Check magic number and version
    for (i = 0; i < 4; i++)
@@ -336,16 +339,21 @@ BOOL LoadRoom(int infile)
       if (read(infile, &new_sd1->sector, 2) != 2) return FALSE;
       if (read(infile, &new_sd2->sector, 2) != 2) return FALSE;
 
+      // ROO version 14 saves these as SHORTs, earlier versions save as integers.
+      if (room_version < 14)
+         xy_bytes = 4;
+      else
+         xy_bytes = 2;
 
       // Read endpoints
-      if (read(infile, &temp, 4) != 4) return FALSE;
-      x0 = temp;
-      if (read(infile, &temp, 4) != 4) return FALSE;
-      y0 = temp;
-      if (read(infile, &temp, 4) != 4) return FALSE;
-      x1 = temp;
-      if (read(infile, &temp, 4) != 4) return FALSE;
-      y1 = temp;
+      if (read(infile, &temp_short, xy_bytes) != xy_bytes) return FALSE;
+      x0 = temp_short;
+      if (read(infile, &temp_short, xy_bytes) != xy_bytes) return FALSE;
+      y0 = temp_short;
+      if (read(infile, &temp_short, xy_bytes) != xy_bytes) return FALSE;
+      x1 = temp_short;
+      if (read(infile, &temp_short, xy_bytes) != xy_bytes) return FALSE;
+      y1 = temp_short;
       LineDefs[i].start = AddVertex(x0, y0);
       LineDefs[i].end   = AddVertex(x1, y1);
    }   
@@ -545,14 +553,20 @@ void ForgetLevelData() /* SWAP! */
  */
 BOOL ReadSlopeInfo(int infile, SlopeInfo *info)
 {
-   int x, y;
+   int x, y, plane_bytes;
    int i;
    SHORT z;
 
-   if (!read(infile, &info->plane.a, 4)) return FALSE;
-   if (!read(infile, &info->plane.b, 4)) return FALSE;
-   if (!read(infile, &info->plane.c, 4)) return FALSE;
-   if (!read(infile, &info->plane.d, 4)) return FALSE;
+   // ROO version 14 saves plane data as doubles, previous versions as integers.
+   if (room_version < 14)
+      plane_bytes = 4;
+   else
+      plane_bytes = 8;
+
+   if (!read(infile, &info->plane.a, plane_bytes)) return FALSE;
+   if (!read(infile, &info->plane.b, plane_bytes)) return FALSE;
+   if (!read(infile, &info->plane.c, plane_bytes)) return FALSE;
+   if (!read(infile, &info->plane.d, plane_bytes)) return FALSE;
    if (!read(infile, &info->x, 4)) return FALSE;
    if (!read(infile, &info->y, 4)) return FALSE;
    if (!read(infile, &info->angle, 4)) return FALSE;

@@ -87,7 +87,7 @@ void NumberNodes(BSPTree tree)
  */
 void SaveNodes(FILE *file, BSPTree tree)
 {
-   int temp, i;
+   int i;
    WallData *wall;
    BYTE byte;
    BSPinternal *inode;
@@ -110,29 +110,30 @@ void SaveNodes(FILE *file, BSPTree tree)
 
       // Write parent, then left child, then right child
       
-      // Plane of node
-      WriteBytes(file, &inode->separator.a, 4);
-      WriteBytes(file, &inode->separator.b, 4);
-      WriteBytes(file, &inode->separator.c, 4);
+      // Plane of node - saved as doubles for more precision.
+      WriteBytes(file, &inode->separator.a, 8);
+      WriteBytes(file, &inode->separator.b, 8);
+      WriteBytes(file, &inode->separator.c, 8);
 
-      security += inode->separator.a + inode->separator.b + inode->separator.c;
+      // Don't include these in room security any more.
+      //security += inode->separator.a + inode->separator.b + inode->separator.c;
       
       // Node numbers of children
       word = 0;
       if (inode->pos_side != NULL)
-	 word = inode->pos_side->num;
+          word = inode->pos_side->num;
       WriteBytes(file, &word, 2);
 
       word = 0;
       if (inode->neg_side != NULL)
-	 word = inode->neg_side->num;
+          word = inode->neg_side->num;
       WriteBytes(file, &word, 2);
       
       // Number of first wall in list
       word = 0;
       wall = inode->walls_in_plane;
       if (wall != NULL)
-	 word = wall->num;
+          word = wall->num;
       WriteBytes(file, &word, 2);
       security += word;
       
@@ -157,12 +158,10 @@ void SaveNodes(FILE *file, BSPTree tree)
 
       for (i=0; i < num_points; i++)
       {
-	 temp = leaf->poly.p[i].x;
-	 WriteBytes(file, &temp, 4);
-	 security += temp;
-	 temp = leaf->poly.p[i].y;
-	 WriteBytes(file, &temp, 4);
-	 security += temp;
+         // Save these as doubles for more precision, but
+         // don't include in room security.
+         WriteBytes(file, &leaf->poly.p[i].x, 8);
+         WriteBytes(file, &leaf->poly.p[i].y, 8);
       }
       break;
    }
@@ -173,10 +172,11 @@ void SaveNodes(FILE *file, BSPTree tree)
  */
 void SaveBoundingBox(FILE *file, Box *box)
 {
-   WriteBytes(file, &box->x0, 4);
-   WriteBytes(file, &box->y0, 4);
-   WriteBytes(file, &box->x1, 4);
-   WriteBytes(file, &box->y1, 4);
+   // Save as doubles for higher precision.
+   WriteBytes(file, &box->x0, 8);
+   WriteBytes(file, &box->y0, 8);
+   WriteBytes(file, &box->x1, 8);
+   WriteBytes(file, &box->y1, 8);
 }
 /***************************************************************************/
 /*
@@ -188,7 +188,7 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       return;
    if (tree->type != BSPinternaltype)
       return;
-   
+
    BSPinternal *inode = &tree->u.internal;
    WallData *wall, *next_wall;
    WORD word;
@@ -201,7 +201,7 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       next_wall = wall->next;
       word = 0;
       if (next_wall != NULL)
-	 word = next_wall->num;
+         word = next_wall->num;
       WriteBytes(file, &word, 2);
 
       // Sidedef numbers
@@ -209,16 +209,13 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       WriteBytes(file, &wall->neg_sidedef, 2);
       security += wall->pos_sidedef + wall->neg_sidedef;
 
-      // Start and end of wall
-      WriteBytes(file, &wall->x0, 4);
-      WriteBytes(file, &wall->y0, 4);
-      WriteBytes(file, &wall->x1, 4);
-      WriteBytes(file, &wall->y1, 4);
-      security += wall->x0 + wall->y0 + wall->x1 + wall->y1;
-
-      // Length of wall
-      word = wall->length;
-      WriteBytes(file, &word, 2);
+      // Start and end of wall. Save as doubles for higher precision.
+      WriteBytes(file, &wall->x0, 8);
+      WriteBytes(file, &wall->y0, 8);
+      WriteBytes(file, &wall->x1, 8);
+      WriteBytes(file, &wall->y1, 8);
+      // Length of wall. Save as double for higher precision.
+      WriteBytes(file, &wall->length, 8);
 
       // Texture offsets
       word = wall->pos_xoffset;
@@ -450,10 +447,10 @@ void SaveRoomeditWalls(FILE *file)
 
       VStart = Vertexes[CurLD.start];
 		VEnd   = Vertexes[CurLD.end];
-		WriteBytes(file, &VStart.x, 4);
-		WriteBytes(file, &VStart.y, 4);
-		WriteBytes(file, &VEnd.x, 4);
-		WriteBytes(file, &VEnd.y, 4);
+		WriteBytes(file, &VStart.x, 2);
+		WriteBytes(file, &VStart.y, 2);
+		WriteBytes(file, &VEnd.x, 2);
+		WriteBytes(file, &VEnd.y, 2);
 	}
 }
 /***************************************************************************/
@@ -716,6 +713,8 @@ void SaveLevelData (char *outfile)
 		WriteBytes(file, &room_magic[i], 1);
    
 	temp = ROO_VERSION;
+   dprintf("Room version is %i\n", ROO_VERSION);
+
 	WriteBytes(file, &temp, 4);
    security += ROO_VERSION;
 
@@ -912,17 +911,18 @@ void SaveLevelData (char *outfile)
  */
 void ComputeSlopeInfo(SlopeInfo *info, int floor)
 {
-	int i;
-	Point3D p[3];
-	double u[3], v[3], uv[3], ucrossv;
+   int i;
+   Point3D p[3];
+   double u[3], v[3], uv[3], ucrossv;
 
-	// Convert to client coordinates
-	for (i=0; i < 3; i++)
-	{
-		assert_vnum(info->points[i].vertex);
-		p[i].x = (Vertexes[info->points[i].vertex].x - MapMinX) * BLAK_FACTOR;
-		p[i].y = (MapMaxY - Vertexes[info->points[i].vertex].y) * BLAK_FACTOR;
-		p[i].z = info->points[i].z * BLAK_FACTOR;
+   // Convert to client coordinates
+   for (i=0; i < 3; i++)
+   {
+      assert_vnum(info->points[i].vertex);
+      // This uses the proper vertex x, y coordinates, so can keep as integer.
+      p[i].x = (Vertexes[info->points[i].vertex].x - MapMinX) * BLAK_FACTOR;
+      p[i].y = (MapMaxY - Vertexes[info->points[i].vertex].y) * BLAK_FACTOR;
+      p[i].z = info->points[i].z * BLAK_FACTOR;
       dprintf("vertex %d (%d):  %d, %d, %d\n", i, info->points[i].vertex, p[i].x, p[i].y, p[i].z);
    }
 
@@ -944,29 +944,36 @@ void ComputeSlopeInfo(SlopeInfo *info, int floor)
 
    assert(ucrossv != 0.0);
 
-   info->plane.a = (int) (uv[0] * FINENESS / ucrossv);
-   info->plane.b = (int) (uv[1] * FINENESS / ucrossv);
-   info->plane.c = (int) (uv[2] * FINENESS / ucrossv);
-   info->plane.d = (int) - (info->plane.a * p[0].x + info->plane.b * p[0].y +
-			  info->plane.c * p[0].z);
+   info->plane.a = (uv[0] * FINENESS / ucrossv);
+   info->plane.b = (uv[1] * FINENESS / ucrossv);
+   info->plane.c = (uv[2] * FINENESS / ucrossv);
+   info->plane.d = -(info->plane.a * (double)p[0].x + info->plane.b * (double)p[0].y +
+      info->plane.c * (double)p[0].z);
 
-   if (floor != 0) { //floor
-       if (info->plane.c < 0) { // normals of floors must point up
-	   info->plane.a = -info->plane.a;
-	   info->plane.b = -info->plane.b;
-	   info->plane.c = -info->plane.c;
-	   info->plane.d = -info->plane.d;
+   if (floor != 0)
+   {
+      if (info->plane.c < 0)
+      {
+         // normals of floors must point up
+         info->plane.a = -info->plane.a;
+         info->plane.b = -info->plane.b;
+         info->plane.c = -info->plane.c;
+         info->plane.d = -info->plane.d;
        }
    }
-   else { // ceiling
-       if (info->plane.c > 0) { // normals of ceilings must point down
-	   info->plane.a = -info->plane.a;
-	   info->plane.b = -info->plane.b;
-	   info->plane.c = -info->plane.c;
-	   info->plane.d = -info->plane.d;
-       }
+   else
+   {
+      if (info->plane.c > 0)
+      {
+         // normals of ceilings must point down
+         info->plane.a = -info->plane.a;
+         info->plane.b = -info->plane.b;
+         info->plane.c = -info->plane.c;
+         info->plane.d = -info->plane.d;
+      }
    }
-   dprintf("plane equation: a = %d, b = %d, c = %d, d = %d\n", info->plane.a, info->plane.b, info->plane.c, info->plane.d);
+   dprintf("plane equation: a = %6.3f, b = %6.3f, c = %6.3f, d = %6.3f\n",
+      info->plane.a, info->plane.b, info->plane.c, info->plane.d);
 }
 /***************************************************************************/
 /*
@@ -980,10 +987,11 @@ void WriteSlopeInfo(FILE *file, SlopeInfo *info, int floor)
    ComputeSlopeInfo(info, floor); // compute slope needs to know whether its
                                   // a floor or a ceiling
    
-   WriteBytes(file, &info->plane.a, 4);
-   WriteBytes(file, &info->plane.b, 4);
-   WriteBytes(file, &info->plane.c, 4);
-   WriteBytes(file, &info->plane.d, 4);
+   // Write the plane data as doubles for higher precision.
+   WriteBytes(file, &info->plane.a, 8);
+   WriteBytes(file, &info->plane.b, 8);
+   WriteBytes(file, &info->plane.c, 8);
+   WriteBytes(file, &info->plane.d, 8);
    WriteBytes(file, &info->x, 4);
    WriteBytes(file, &info->y, 4);
    angle = info->angle * NUMDEGREES / 360;

@@ -386,7 +386,7 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	MadeChanges = FALSE;
 	MadeMapChanges = FALSE;
 	ScaleMax = 32.0;
-	ScaleMin = 1.0 / 20.0;
+	ScaleMin = 1.0f / 20.0f;
 	if (InitialScale < 1)
 		InitialScale = 1;
 	else if (InitialScale > 20)
@@ -1751,9 +1751,9 @@ void TEditorClient::EvChar (UINT key, UINT repeatCount, UINT flags)
 		else if (key == '-' )
 			DecScale();
 		else if (key == '0')
-			SetScale (0.1);
+			SetScale (0.1f);
 		else
-			SetScale (1.0 / (float)(key - '0'));
+			SetScale (1.0f / (float)(key - '0'));
 		OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
 		OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
 

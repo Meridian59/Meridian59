@@ -79,6 +79,7 @@
 
 #define ABS(x) ((x) > 0 ? (x) : (-(x)))
 #define SGN(x) ((x) == 0 ? 0 : ((x) > 0 ? 1 : -1))
+#define SGNDOUBLE(x) (((x) <= 0.001 && (x) >= -0.001) ? 0 : ((x) > 0.001 ? 1 : -1))
 
 #pragma warning( disable : 4201 )		// nonstandard extension used : nameless struct/union (a union in this case )
 

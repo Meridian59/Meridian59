@@ -167,28 +167,28 @@ void UserMovePlayer(int action)
    if (player.viewID)
    {
       if (player.viewFlags & REMOTE_VIEW_CONTROL)
-	 return;
+         return;
       if (!(player.viewFlags & REMOTE_VIEW_MOVE))
-	 return;
+         return;
    }
    // Find out how far to move based on time elapsed:  always move at a rate of 
    // constant rate per MOVE_DELAY milliseconds.
    switch (action)
    {
-	case A_FORWARDFAST:
-	case A_BACKWARDFAST:
-	case A_SLIDELEFTFAST:
-	case A_SLIDERIGHTFAST:
-	case A_SLIDELEFTFORWARDFAST:
-	case A_SLIDERIGHTFORWARDFAST:
-	case A_SLIDELEFTBACKWARDFAST:
-	case A_SLIDERIGHTBACKWARDFAST:
-		move_distance = 2 * MOVEUNITS;
-	break;
+   case A_FORWARDFAST:
+   case A_BACKWARDFAST:
+   case A_SLIDELEFTFAST:
+   case A_SLIDERIGHTFAST:
+   case A_SLIDELEFTFORWARDFAST:
+   case A_SLIDERIGHTFORWARDFAST:
+   case A_SLIDELEFTBACKWARDFAST:
+   case A_SLIDERIGHTBACKWARDFAST:
+      move_distance = 2 * MOVEUNITS;
+   break;
 
-	default:
-		move_distance = MOVEUNITS;
-	break;
+   default:
+      move_distance = MOVEUNITS;
+   break;
    }
 
    now = timeGetTime();
@@ -238,25 +238,25 @@ void UserMovePlayer(int action)
       angle = (player.angle + 3 * NUMDEGREES / 4) % NUMDEGREES;  /* angle + 3pi/2 */
       break;
    case A_SLIDERIGHT:
-	case A_SLIDERIGHTFAST:
+   case A_SLIDERIGHTFAST:
       angle = (player.angle + NUMDEGREES / 4) % NUMDEGREES;  /* angle + pi/2 */
       break;
-	case A_SLIDELEFTFORWARD:
-	case A_SLIDELEFTFORWARDFAST:
-		angle = (player.angle + 7 * NUMDEGREES / 8) % NUMDEGREES;
-		break;
-	case A_SLIDELEFTBACKWARD:
-	case A_SLIDELEFTBACKWARDFAST:
-		angle = (player.angle + 5 * NUMDEGREES / 8) % NUMDEGREES;
-		break;
-	case A_SLIDERIGHTFORWARD:
-	case A_SLIDERIGHTFORWARDFAST:
-		angle = (player.angle + 1 * NUMDEGREES / 8) % NUMDEGREES;
-		break;
-	case A_SLIDERIGHTBACKWARD:
-	case A_SLIDERIGHTBACKWARDFAST:
-		angle = (player.angle + 3 * NUMDEGREES / 8) % NUMDEGREES;
-		break;
+   case A_SLIDELEFTFORWARD:
+   case A_SLIDELEFTFORWARDFAST:
+      angle = (player.angle + 7 * NUMDEGREES / 8) % NUMDEGREES;
+      break;
+   case A_SLIDELEFTBACKWARD:
+   case A_SLIDELEFTBACKWARDFAST:
+      angle = (player.angle + 5 * NUMDEGREES / 8) % NUMDEGREES;
+      break;
+   case A_SLIDERIGHTFORWARD:
+   case A_SLIDERIGHTFORWARDFAST:
+      angle = (player.angle + 1 * NUMDEGREES / 8) % NUMDEGREES;
+      break;
+   case A_SLIDERIGHTBACKWARD:
+   case A_SLIDERIGHTBACKWARDFAST:
+      angle = (player.angle + 3 * NUMDEGREES / 8) % NUMDEGREES;
+      break;
    default:
       debug(("Bad action type in UserMovePlayer\n"));
       return;
@@ -294,66 +294,68 @@ void UserMovePlayer(int action)
       leaf = BSPFindLeafByPoint(current_room.tree, x, y);
       if (leaf == NULL || leaf->sector == NULL)
       {
-	 x = last_x;
-	 y = last_y;
-	 z = last_z;
-	 break;
+         x = last_x;
+         y = last_y;
+         z = last_z;
+         break;
       }
 
       if (lastBlockingNode)
       {
-	 lastBlockingWall = IntersectNode(lastBlockingNode,last_x,last_y,x,y,z);
-	 if (lastBlockingWall)
-	 {
-	    SlideAlongWall(lastBlockingWall,last_x,last_y,&x,&y);
-	 }
-	 else
-	    lastBlockingNode = NULL;
+         lastBlockingWall = IntersectNode(lastBlockingNode,last_x,last_y,x,y,z);
+         if (lastBlockingWall)
+         {
+            SlideAlongWall(lastBlockingWall,last_x,last_y,&x,&y);
+         }
+         else
+            lastBlockingNode = NULL;
       }
       else
       {
-	 lastBlockingNode = FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall);
-	 if (lastBlockingNode)
-	 {
-	    SlideAlongWall(lastBlockingWall,last_x,last_y,&x,&y);
-	 }
+         lastBlockingNode = FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall);
+         if (lastBlockingNode)
+         {
+            SlideAlongWall(lastBlockingWall,last_x,last_y,&x,&y);
+         }
       }
       if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
       {
-	 SlideAlongWall(lastBlockingWall,last_x,last_y,&x,&y);
-	 if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
-	 {
-	    FindOffsets(MIN_SIDE_MOVE, (angle + 3 * NUMDEGREES / 4) % NUMDEGREES, &dx, &dy);
-	    x = last_x + dx;
-	    y = last_y + dy;
-	    if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
-	    {
-	       FindOffsets(MIN_SIDE_MOVE, (angle + NUMDEGREES / 4) % NUMDEGREES, &dx, &dy);
-	       x = last_x + dx;
-	       y = last_y + dy;
-	       if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
-	       {
-		  x = last_x;
-		  y = last_y;
-		  z = last_z;
-		  break;
-	       }
-	    }
-	 }
+         SlideAlongWall(lastBlockingWall,last_x,last_y,&x,&y);
+         if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
+         {
+            FindOffsets(MIN_SIDE_MOVE, (angle + 3 * NUMDEGREES / 4) % NUMDEGREES, &dx, &dy);
+            x = last_x + dx;
+            y = last_y + dy;
+            if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
+            {
+               FindOffsets(MIN_SIDE_MOVE, (angle + NUMDEGREES / 4) % NUMDEGREES, &dx, &dy);
+               x = last_x + dx;
+               y = last_y + dy;
+               if (FindIntersection(current_room.tree,last_x,last_y,x,y,z,&lastBlockingWall))
+               {
+                  x = last_x;
+                  y = last_y;
+                  z = last_z;
+                  break;
+               }
+            }
+         }
       }
-      
+
       // Don't try to slide to current location
       if (x == last_x && y == last_y)
-		  x = x;
+         x = x;
 //	 break;
       
       // Get around integer divide yuckiness
       if (y < 0)
-	 row = -1;
-      else row = y / FINENESS;
+         row = -1;
+      else
+         row = y / FINENESS;
       if (x < 0)
-	 col = -1;
-      else col = x / FINENESS;
+         col = -1;
+      else
+         col = x / FINENESS;
 
       // See if trying to move off room.
       if (!IsInRoom(row, col, current_room))
@@ -385,17 +387,17 @@ void UserMovePlayer(int action)
 
       if (retval == MOVE_BLOCKED)
       {
-	 //	 debug(("Move blocked by object\n"));
-	 x = last_x;
-	 y = last_y;
-	 z = last_z;
-	 bounce = False;
-	 break;
+         // debug(("Move blocked by object\n"));
+         x = last_x;
+         y = last_y;
+         z = last_z;
+         bounce = False;
+         break;
       }
       else if (retval == MOVE_CHANGED)
       {
-	 // Stop at this modified move
-	 break;
+         // Stop at this modified move
+         break;
       }
 
       last_x = x;
@@ -428,11 +430,11 @@ void UserMovePlayer(int action)
       // Only set motion if not already moving that direction
       if (z > player_obj->motion.z && player_obj->motion.v_z <= 0)
       {
-	 player_obj->motion.v_z = CLIMB_VELOCITY_0;
+         player_obj->motion.v_z = CLIMB_VELOCITY_0;
       }
       else if (z < player_obj->motion.z && player_obj->motion.v_z >= 0)
       {
-	 player_obj->motion.v_z = FALL_VELOCITY_0;
+         player_obj->motion.v_z = FALL_VELOCITY_0;
       }
    }
    else player_obj->motion.z = z;
@@ -494,10 +496,10 @@ BSPnode *FindIntersection(BSPnode *node, int xOld, int yOld, int xNew, int yNew,
       BSPinternal *inode = &node->u.internal;
       BSPnode *nodeIntersect = FindIntersection(inode->pos_side, xOld, yOld, xNew, yNew, z, wallIntersect);
       if (nodeIntersect)
-	 return nodeIntersect;
+         return nodeIntersect;
       nodeIntersect = FindIntersection(inode->neg_side, xOld, yOld, xNew, yNew, z, wallIntersect);
       if (nodeIntersect)
-	 return nodeIntersect;
+         return nodeIntersect;
       return NULL;
    }
 }
@@ -506,8 +508,7 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 {
    BSPinternal *inode;
    WallData *wall;
-   int a, b, c, plane_distance, old_distance;
-   int newDistance;
+   float a, b, c, plane_distance, old_distance, newDistance;
 
    if (node == NULL || node->type == BSPleaftype)
       return NULL;
@@ -527,7 +528,7 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
    c = inode->separator.c;
    plane_distance = (a * new_x + b * new_y + c);
    old_distance = (a * old_x + b * old_y + c);
-   newDistance = ABS(plane_distance) >> LOG_FINENESS;
+   newDistance = ABS(plane_distance) / FINENESS;
    if ((newDistance > min_distance) || (ABS(plane_distance) > ABS(old_distance)))
       return NULL;
 
@@ -536,85 +537,86 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
    {
       Sidedef *sidedef;
       Sector *other_sector;
-      int below_height, d0, d1, dx, dy, lenWall2;
-      int minx = min(wall->x0, wall->x1) - min_distance;
-      int maxx = max(wall->x0, wall->x1) + min_distance;
-      int miny = min(wall->y0, wall->y1) - min_distance;
-      int maxy = max(wall->y0, wall->y1) + min_distance;
-	 
+      int below_height;
+      float d0, d1, dx, dy, lenWall2;
+      float minx = min(wall->x0, wall->x1) - min_distance;
+      float maxx = max(wall->x0, wall->x1) + min_distance;
+      float miny = min(wall->y0, wall->y1) - min_distance;
+      float maxy = max(wall->y0, wall->y1) + min_distance;
+
       // See if we are near the wall itself, and not just the wall's plane
       if ((new_x >= minx) && (new_x <= maxx) && (new_y >= miny) && (new_y <= maxy))
       {
-	 // Skip floor->ceiling wall if player can walk through it
-	 if (SGN(old_distance) > 0)
-	 {
-	    sidedef = wall->pos_sidedef;
-	    other_sector = wall->neg_sector;
-	 }
-	 else
-	 {
-	    sidedef = wall->neg_sidedef;
-	    other_sector = wall->pos_sector;
-	 }
-	 if (sidedef == NULL)
-	    continue;
+         // Skip floor->ceiling wall if player can walk through it
+         if (SGNDOUBLE(old_distance) > 0)
+         {
+            sidedef = wall->pos_sidedef;
+            other_sector = wall->neg_sector;
+         }
+         else
+         {
+            sidedef = wall->neg_sidedef;
+            other_sector = wall->pos_sector;
+         }
+         if (sidedef == NULL)
+            continue;
 
-	 // Check for wading on far side of wall; reduce effective height of wall if found
-	 below_height = 0;
-	 if (other_sector != NULL)
-	    below_height = sector_depths[SectorDepth(other_sector->flags)];
+         // Check for wading on far side of wall; reduce effective height of wall if found
+         below_height = 0;
+         if (other_sector != NULL)
+            below_height = sector_depths[SectorDepth(other_sector->flags)];
 
-	 // Can't step up too far; watch bumping your head; see if passable
-	 if ((sidedef->below_bmap == NULL || 
-		 (sidedef->below_bmap != NULL && 
-	       (wall->z1 - below_height - z) <= MAX_STEP_HEIGHT))
-		&&
-		(sidedef->above_bmap == NULL || 
-		 (sidedef->above_bmap != NULL && wall->z2 - z >= player.height)) 
-		&&
-		(sidedef->flags & WF_PASSABLE))
-	    continue;
+         // Can't step up too far; watch bumping your head; see if passable
+         if ((sidedef->below_bmap == NULL || 
+            (sidedef->below_bmap != NULL && 
+            (wall->z1 - below_height - z) <= MAX_STEP_HEIGHT))
+            &&
+            (sidedef->above_bmap == NULL || 
+            (sidedef->above_bmap != NULL && wall->z2 - z >= player.height)) 
+            &&
+            (sidedef->flags & WF_PASSABLE))
+            continue;
 
-	 // If distance to either vertex is > wall length, then destination of move is
-	 // past end of wall; use distance to closer vertex as distance to line
-	 dx = new_x - wall->x0;
-	 dy = new_y - wall->y0;
-	 d0 = dx * dx + dy * dy;
+         // If distance to either vertex is > wall length, then destination of move is
+         // past end of wall; use distance to closer vertex as distance to line
+         dx = new_x - wall->x0;
+         dy = new_y - wall->y0;
+         d0 = dx * dx + dy * dy;
 
-	 dx = new_x - wall->x1;
-	 dy = new_y - wall->y1;
-	 d1 = dx * dx + dy * dy;
+         dx = new_x - wall->x1;
+         dy = new_y - wall->y1;
+         d1 = dx * dx + dy * dy;
 
-	 // Recheck distance to wall based on distance to closest vertex
-	 //len = FinenessKodToClient(wall->length);
-	 //lenWall2 = len * len;
-	 dx = wall->x1 - wall->x0;
-	 dy = wall->y1 - wall->y0;
-	 lenWall2 = dx * dx + dy * dy;
-	 if (d0 > lenWall2) // d1 is closest vertex
-	 {
-	    int dx = old_x - wall->x1;
-	    int dy = old_y - wall->y1;
-	    int oldEndDist = dx * dx + dy * dy;
-	    if ((d1 < min_distance2) && (d1 <= oldEndDist))
-	    {
-	       return wall;
-	    }
-	 }
-	 else if (d1 > lenWall2) // d0 is closest vertex
-	 {
-	    int dx = old_x - wall->x0;
-	    int dy = old_y - wall->y0;
-	    int oldEndDist = dx * dx + dy * dy;
-	    if ((d0 < min_distance2) && (d0 <= oldEndDist))
-	    {
-	       return wall;
-	    }
-	 }
-	 else // within wall range!
-	 {
-	    return wall;
-	 }
+         // Recheck distance to wall based on distance to closest vertex
+         //len = FinenessKodToClient(wall->length);
+         //lenWall2 = len * len;
+         dx = wall->x1 - wall->x0;
+         dy = wall->y1 - wall->y0;
+         lenWall2 = dx * dx + dy * dy;
+         if (d0 > lenWall2) // d1 is closest vertex
+         {
+            float dx = old_x - wall->x1;
+            float dy = old_y - wall->y1;
+            float oldEndDist = dx * dx + dy * dy;
+            if ((d1 < min_distance2) && (d1 <= oldEndDist))
+            {
+               return wall;
+            }
+         }
+         else if (d1 > lenWall2) // d0 is closest vertex
+         {
+            float dx = old_x - wall->x0;
+            float dy = old_y - wall->y0;
+            float oldEndDist = dx * dx + dy * dy;
+            if ((d0 < min_distance2) && (d0 <= oldEndDist))
+            {
+               return wall;
+            }
+         }
+         else // within wall range!
+         {
+            return wall;
+         }
       }
    }
    return NULL;
@@ -937,19 +939,19 @@ void UserTurnPlayer(int action)
    if (player.viewID)
    {
       if (!(player.viewFlags & REMOTE_VIEW_TURN))
-	 return;
+         return;
       if (player.viewFlags & REMOTE_VIEW_CONTROL)
       {
-	 room_contents_node *viewObject = GetRoomObjectById(player.viewID);
-	 if (viewObject)
-	 {
-	    viewObject->angle += delta;
-	    if (viewObject->angle < 0)
-	       viewObject->angle += NUMDEGREES;
-	    viewObject->angle = viewObject->angle % NUMDEGREES;
-	    RedrawAll();
-	    return;
-	 }
+         room_contents_node *viewObject = GetRoomObjectById(player.viewID);
+         if (viewObject)
+         {
+            viewObject->angle += delta;
+            if (viewObject->angle < 0)
+               viewObject->angle += NUMDEGREES;
+            viewObject->angle = viewObject->angle % NUMDEGREES;
+            RedrawAll();
+            return;
+         }
       }
    }
 
@@ -973,19 +975,19 @@ void UserTurnPlayerMouse(int delta)
    if (player.viewID)
    {
       if (!(player.viewFlags & REMOTE_VIEW_TURN))
-	 return;
+         return;
       if (player.viewFlags & REMOTE_VIEW_CONTROL)
       {
-	 room_contents_node *viewObject = GetRoomObjectById(player.viewID);
-	 if (viewObject)
-	 {
-	    viewObject->angle += delta;
-	    if (viewObject->angle < 0)
-	       viewObject->angle += NUMDEGREES;
-	    viewObject->angle = viewObject->angle % NUMDEGREES;
-	    RedrawAll();
-	    return;
-	 }
+         room_contents_node *viewObject = GetRoomObjectById(player.viewID);
+         if (viewObject)
+         {
+            viewObject->angle += delta;
+            if (viewObject->angle < 0)
+               viewObject->angle += NUMDEGREES;
+            viewObject->angle = viewObject->angle % NUMDEGREES;
+            RedrawAll();
+            return;
+         }
       }
    }
 
@@ -1008,17 +1010,17 @@ void UserFlipPlayer(void)
    if (player.viewID)
    {
       if (!(player.viewFlags & REMOTE_VIEW_TURN))
-	 return;
+         return;
       if (player.viewFlags & REMOTE_VIEW_CONTROL)
       {
-	 room_contents_node *viewObject = GetRoomObjectById(player.viewID);
-	 if (viewObject)
-	 {
-	    viewObject->angle += NUMDEGREES / 2;
-	    viewObject->angle = viewObject->angle % NUMDEGREES;
-	    RedrawAll();
-	    return;
-	 }
+         room_contents_node *viewObject = GetRoomObjectById(player.viewID);
+         if (viewObject)
+         {
+            viewObject->angle += NUMDEGREES / 2;
+            viewObject->angle = viewObject->angle % NUMDEGREES;
+            RedrawAll();
+            return;
+         }
       }
    }
 
@@ -1028,7 +1030,6 @@ void UserFlipPlayer(void)
    MoveUpdateServer();
    RedrawAll();
 }
-
 
 // Move at most HEIGHT_INCREMENT per HEIGHT_DELAY milliseconds
 #define HEIGHT_INCREMENT (MAXY / 4)    
@@ -1050,7 +1051,8 @@ void BounceUser(int dt)
      bounce_time += ((float) dt) / MOVE_DELAY;  /* In radians */
      bounce_height = (long) (BOUNCE_HEIGHT * sin(bounce_time));
    }
-   else bounce_height = 0;
+   else
+      bounce_height = 0;
 }
 /************************************************************************/
 /*

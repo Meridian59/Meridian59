@@ -1825,11 +1825,22 @@ void TEditorClient::AdjustScroller ()
 	// Compute the max and min value for OrigX and OrigY
 	SHORT OrigXMin = MAP_MIN_X + (SHORT)(ScrCenterX * DIV_SCALE);
 	SHORT OrigXMax = MAP_MAX_X - (SHORT)(ScrCenterX * DIV_SCALE);
-	assert (OrigXMin <= OrigXMax);
+	if (OrigXMin > OrigXMax)
+	{
+		// If we go outside the valid map, center it back over
+		// the middle at the starting scale. This used to be
+		// checked using *assert*!
+		SetScale((float)(1.0 / 20.0));
+		CenterMapAroundCoords((MapMinX + MapMaxX) / 2, (MapMinY + MapMaxY) / 2);
+	}
 
 	SHORT OrigYMin = MAP_MIN_Y + (SHORT)(ScrCenterY * DIV_SCALE);
 	SHORT OrigYMax = MAP_MAX_Y - (SHORT)(ScrCenterY * DIV_SCALE);
-	assert (OrigYMin <= OrigYMax);
+	if (OrigYMin > OrigYMax)
+	{
+		SetScale((float)(1.0 / 20.0));
+		CenterMapAroundCoords((MapMinX + MapMaxX) / 2, (MapMinY + MapMaxY) / 2);
+	}
 
 	// Check that OrigX and OrigY are in their legal value
 	if ( OrigX < OrigXMin )     OrigX = OrigXMin ;

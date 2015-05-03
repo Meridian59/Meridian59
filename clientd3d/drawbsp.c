@@ -1488,13 +1488,13 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
  * lie. These values are use to interpolate the height(s) at each endpoint
  * of a wall that bounds a sloped sector.
  */
-int world_to_screen(double x0, double y0, double x1, double y1,
+int world_to_screen(float x0, float y0, float x1, float y1,
 		    long *t0, long *t1, /* special parameters for sloped walls */
-		    long *col0, double *d0, long *col1, double *d1)
+          long *col0, float *d0, long *col1, float *d1)
 {
-  double left0,right0,left1,right1;
-  double x,y;
-  long t,tleft,tright;
+   float left0, right0, left1, right1;
+   float x, y;
+    long t,tleft,tright;
   
   /* go to viewer-relative coords */
   x0 -= viewer_x;
@@ -1512,9 +1512,9 @@ int world_to_screen(double x0, double y0, double x1, double y1,
   /* make sure left and right are not both zero.  If they are,   */
   /* move them to a point that maps to the center of the screen. */
   if (right0 <= 0.001 && right0 >= -0.001)
-     right0 = 1.0;
+     right0 = 1.0f;
   if (right1 <= 0.001 && right1 >= -0.001)
-     right1 = 1.0;
+     right1 = 1.0f;
   
   if (left0 < 0)
   {
@@ -2017,7 +2017,7 @@ Bool Bbox_shadowed(long x0, long y0, long x1, long y1)
 static void WalkWall(WallData *wall, long side)
 {
    long col0,col1;
-   double d0,d1;
+   float d0,d1;
    ConeTreeNode *c, *next;
    long toprow0,toprow1,botrow0,botrow1;
    long a,b,d;
@@ -2387,11 +2387,11 @@ static void WalkLeaf(BSPleaf *leaf)
 {
    long i;
    long col0,col1;
-   double d0, d1;
+   float d0, d1;
    long row0,row1;
    DrawItem item_template;
    long a,b,d;
-   long x0,y0,x1,y1;
+   float x0,y0,x1,y1;
    long t0,t1,height,height0,height1;
    SlopeData *sloped_floor = leaf->sector->sloped_floor;  // only a tiny bit faster but much easier to read
    SlopeData *sloped_ceiling = leaf->sector->sloped_ceiling;
@@ -2842,17 +2842,17 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
    long clipstart,clipend;
    long textpos;
    long a,b;
-   double d0,d1;
+   float d0,d1;
    long xoffset, yoffset;
    WallData *BSPwall = wall->wall;
    PDIB bmap;
    BYTE *bits, light;
    int backwards, transparent, bitmap_height, bitmap_width;
-   double x0, y0, x1, y1;
+   float x0, y0, x1, y1;
    long  num_steps, total_steps;
-   double d,f;
-   double z0, z1;
-   double oldf = 0.0;
+   float d, f;
+   float z0, z1;
+   float oldf = 0.0;
    BOOL hasMipMaps = FALSE;
    grid_bitmap_type grid = NULL;
    Animate *pAnim = NULL;
@@ -3090,9 +3090,9 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       z1 = (a * x1 + b * y1) / FINENESS;
       
       if (z0 > 0)
-	 z0 = 0;
+	 z0 = 0.0f;
       if (z1 <= 0)
-	 z1 = 1;
+	 z1 = 1.0f;
 
       f = ((-z0) * (FINENESS * 4)) / (z1 - z0);
       if (f < oldf)
@@ -3102,7 +3102,7 @@ void doDrawWall(DrawWallStruct *wall, ViewCone *c)
       // Compute extent of wall on screen
       d = d0 + (((d1-d0)*f) / (FINENESS * 4));
       if (d <= 1.0)
-	d = 1.0;
+	d = 1.0f;
 
       rowstart = horizon + ((viewer_height - top) << LOG_VIEWER_DISTANCE) / d;
       rowend = horizon + ((viewer_height - bottom) << LOG_VIEWER_DISTANCE) / d;

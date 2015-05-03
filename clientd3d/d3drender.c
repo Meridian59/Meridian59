@@ -1472,7 +1472,7 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 {
 	long		side;
-	double	a, b;
+	float	a, b;
 
 	if (!tree)
 		return;
@@ -1614,7 +1614,7 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params)
 {
 	long		side;
-	double	a, b;
+	float	a, b;
 
 	if (!tree)
 		return;
@@ -5911,7 +5911,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 	if (pBGRA)
 	{
 		int	i;
-		double a, b;
+		float a, b;
 		int	distX, distY, distance;
 		long	lightScale;
 		long lo_end = FINENESS-shade_amount;
@@ -6019,16 +6019,16 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 		{
 			if (pSector->sloped_floor)
 			{
-				pXYZ[count].x = (float)pNode->u.leaf.poly.p[count].x;
-				pXYZ[count].y = (float)pNode->u.leaf.poly.p[count].y;
+				pXYZ[count].x = pNode->u.leaf.poly.p[count].x;
+				pXYZ[count].y = pNode->u.leaf.poly.p[count].y;
 				pXYZ[count].z = (-pSector->sloped_floor->plane.a * pXYZ[count].x -
 					pSector->sloped_floor->plane.b * pXYZ[count].y -
 					pSector->sloped_floor->plane.d) * oneOverC;
 			}
 			else
 			{
-				pXYZ[count].x = (float)pNode->u.leaf.poly.p[count].x;
-				pXYZ[count].y = (float)pNode->u.leaf.poly.p[count].y;
+				pXYZ[count].x = pNode->u.leaf.poly.p[count].x;
+				pXYZ[count].y = pNode->u.leaf.poly.p[count].y;
 				pXYZ[count].z = (float)pSector->floor_height;
 			}
 

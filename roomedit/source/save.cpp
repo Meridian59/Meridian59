@@ -1009,15 +1009,21 @@ void WriteSlopeInfo(FILE *file, SlopeInfo *info, int floor)
 {
    int i, angle;
    SHORT x, y, z, v;
+   float payload;
 
    ComputeSlopeInfo(info, floor); // compute slope needs to know whether its
                                   // a floor or a ceiling
    
    // Write the plane data as doubles for higher precision.
-   WriteBytes(file, &info->plane.a, 8);
-   WriteBytes(file, &info->plane.b, 8);
-   WriteBytes(file, &info->plane.c, 8);
-   WriteBytes(file, &info->plane.d, 8);
+   payload = (float)info->plane.a;
+   WriteBytes(file, &payload, 4);
+   payload = (float)info->plane.b;
+   WriteBytes(file, &payload, 4);
+   payload = (float)info->plane.c;
+   WriteBytes(file, &payload, 4);
+   payload = (float)info->plane.d;
+   WriteBytes(file, &payload, 4);
+
    WriteBytes(file, &info->x, 4);
    WriteBytes(file, &info->y, 4);
    angle = info->angle * NUMDEGREES / 360;

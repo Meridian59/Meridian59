@@ -88,6 +88,7 @@ void NumberNodes(BSPTree tree)
 void SaveNodes(FILE *file, BSPTree tree)
 {
    int i;
+   float payload;
    WallData *wall;
    BYTE byte;
    BSPinternal *inode;
@@ -110,10 +111,13 @@ void SaveNodes(FILE *file, BSPTree tree)
 
       // Write parent, then left child, then right child
       
-      // Plane of node - saved as doubles for more precision.
-      WriteBytes(file, &inode->separator.a, 8);
-      WriteBytes(file, &inode->separator.b, 8);
-      WriteBytes(file, &inode->separator.c, 8);
+      // Plane of node - saved as floats.
+      payload = inode->separator.a;
+      WriteBytes(file, &payload, 4);
+      payload = inode->separator.b;
+      WriteBytes(file, &payload, 4);
+      payload = inode->separator.c;
+      WriteBytes(file, &payload, 4);
 
       // Don't include these in room security any more.
       //security += inode->separator.a + inode->separator.b + inode->separator.c;
@@ -158,10 +162,11 @@ void SaveNodes(FILE *file, BSPTree tree)
 
       for (i=0; i < num_points; i++)
       {
-         // Save these as doubles for more precision, but
-         // don't include in room security.
-         WriteBytes(file, &leaf->poly.p[i].x, 8);
-         WriteBytes(file, &leaf->poly.p[i].y, 8);
+         // Save these as floats, but don't include in room security.
+         payload = leaf->poly.p[i].x;
+         WriteBytes(file, &payload, 4);
+         payload = leaf->poly.p[i].y;
+         WriteBytes(file, &payload, 4);
       }
       break;
    }
@@ -172,11 +177,17 @@ void SaveNodes(FILE *file, BSPTree tree)
  */
 void SaveBoundingBox(FILE *file, Box *box)
 {
-   // Save as doubles for higher precision.
-   WriteBytes(file, &box->x0, 8);
-   WriteBytes(file, &box->y0, 8);
-   WriteBytes(file, &box->x1, 8);
-   WriteBytes(file, &box->y1, 8);
+   float payload;
+
+   // Save as floats.
+   payload = box->x0;
+   WriteBytes(file, &payload, 4);
+   payload = box->y0;
+   WriteBytes(file, &payload, 4);
+   payload = box->x1;
+   WriteBytes(file, &payload, 4);
+   payload = box->y1;
+   WriteBytes(file, &payload, 4);
 }
 /***************************************************************************/
 /*
@@ -184,6 +195,8 @@ void SaveBoundingBox(FILE *file, Box *box)
  */
 void SaveClientWalls(FILE *file, BSPTree tree)
 {
+   float payload;
+
    if (tree == NULL)
       return;
    if (tree->type != BSPinternaltype)
@@ -210,12 +223,17 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       security += wall->pos_sidedef + wall->neg_sidedef;
 
       // Start and end of wall. Save as doubles for higher precision.
-      WriteBytes(file, &wall->x0, 8);
-      WriteBytes(file, &wall->y0, 8);
-      WriteBytes(file, &wall->x1, 8);
-      WriteBytes(file, &wall->y1, 8);
-      // Length of wall. Save as double for higher precision.
-      WriteBytes(file, &wall->length, 8);
+      payload = wall->x0;
+      WriteBytes(file, &payload, 4);
+      payload = wall->y0;
+      WriteBytes(file, &payload, 4);
+      payload = wall->x1;
+      WriteBytes(file, &payload, 4);
+      payload = wall->y1;
+      WriteBytes(file, &payload, 4);
+      // Length of wall. Save as float.
+      payload = wall->length;
+      WriteBytes(file, &payload, 4);
 
       // Texture offsets
       word = wall->pos_xoffset;
@@ -393,6 +411,7 @@ void SaveRoomeditWalls(FILE *file)
    int i;
    SideDef SD1, SD2;
    WORD word;
+   DWORD dword;
    Vertex VStart, VEnd;
 
    // Write out walls
@@ -447,10 +466,17 @@ void SaveRoomeditWalls(FILE *file)
 
       VStart = Vertexes[CurLD.start];
 		VEnd   = Vertexes[CurLD.end];
-		WriteBytes(file, &VStart.x, 2);
-		WriteBytes(file, &VStart.y, 2);
-		WriteBytes(file, &VEnd.x, 2);
-		WriteBytes(file, &VEnd.y, 2);
+
+      // coordinates are 16bit short
+      // but stored as 32bit int
+      dword = VStart.x;
+      WriteBytes(file, &dword, 4);
+      dword = VStart.y;
+      WriteBytes(file, &dword, 4);
+      dword = VEnd.x;
+      WriteBytes(file, &dword, 4);
+      dword = VEnd.y;
+      WriteBytes(file, &dword, 4);
 	}
 }
 /***************************************************************************/

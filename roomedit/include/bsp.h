@@ -134,9 +134,9 @@ typedef struct WallData
    int pos_sector;             /* Sector # on + side */
    int neg_sector;             /* Sector # on - side */
 
-   double x0, y0, x1, y1;         /* coordinates of wall start and end */
+   double x0, y0, x1, y1;      /* coordinates of wall start and end */
 
-   double length;                 /* length of wall; 1 grid square = 64 */
+   double length;              /* length of wall; 1 grid square = 64 */
    int z0;                     /* height of bottom of lower wall */
    int z1;                     /* height of top of lower wall / bottom of normal wall */
    int z2;                     /* height of top of normal wall / bottom of upper wall */

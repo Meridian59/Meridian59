@@ -112,11 +112,11 @@ void SaveNodes(FILE *file, BSPTree tree)
       // Write parent, then left child, then right child
       
       // Plane of node - saved as floats.
-      payload = inode->separator.a;
+      payload = (float)inode->separator.a;
       WriteBytes(file, &payload, 4);
-      payload = inode->separator.b;
+      payload = (float)inode->separator.b;
       WriteBytes(file, &payload, 4);
-      payload = inode->separator.c;
+      payload = (float)inode->separator.c;
       WriteBytes(file, &payload, 4);
 
       // Don't include these in room security any more.
@@ -163,9 +163,9 @@ void SaveNodes(FILE *file, BSPTree tree)
       for (i=0; i < num_points; i++)
       {
          // Save these as floats, but don't include in room security.
-         payload = leaf->poly.p[i].x;
+         payload = (float)leaf->poly.p[i].x;
          WriteBytes(file, &payload, 4);
-         payload = leaf->poly.p[i].y;
+         payload = (float)leaf->poly.p[i].y;
          WriteBytes(file, &payload, 4);
       }
       break;
@@ -180,13 +180,13 @@ void SaveBoundingBox(FILE *file, Box *box)
    float payload;
 
    // Save as floats.
-   payload = box->x0;
+   payload = (float)box->x0;
    WriteBytes(file, &payload, 4);
-   payload = box->y0;
+   payload = (float)box->y0;
    WriteBytes(file, &payload, 4);
-   payload = box->x1;
+   payload = (float)box->x1;
    WriteBytes(file, &payload, 4);
-   payload = box->y1;
+   payload = (float)box->y1;
    WriteBytes(file, &payload, 4);
 }
 /***************************************************************************/
@@ -223,16 +223,16 @@ void SaveClientWalls(FILE *file, BSPTree tree)
       security += wall->pos_sidedef + wall->neg_sidedef;
 
       // Start and end of wall. Save as doubles for higher precision.
-      payload = wall->x0;
+      payload = (float)wall->x0;
       WriteBytes(file, &payload, 4);
-      payload = wall->y0;
+      payload = (float)wall->y0;
       WriteBytes(file, &payload, 4);
-      payload = wall->x1;
+      payload = (float)wall->x1;
       WriteBytes(file, &payload, 4);
-      payload = wall->y1;
+      payload = (float)wall->y1;
       WriteBytes(file, &payload, 4);
       // Length of wall. Save as float.
-      payload = wall->length;
+      payload = (float)wall->length;
       WriteBytes(file, &payload, 4);
 
       // Texture offsets
@@ -312,7 +312,7 @@ void SaveSectors(FILE *file)
       word = CurSector.ceilh;
       WriteBytes(file, &word, 2);
       security += word;
-      byte = CurSector.light;
+      byte = (BYTE)CurSector.light;
       WriteBytes(file, &byte, 1);
       security += byte;
       WriteBytes(file, &CurSector.blak_flags, 4);
@@ -768,10 +768,10 @@ void SaveLevelData (char *outfile)
       true_maxx = (MapMaxX - room_subrect.left) * BLAK_FACTOR;
       true_maxy = (room_subrect.top - MapMinY) * BLAK_FACTOR;
 
-      MapMinX = room_subrect.left;
-      MapMinY = room_subrect.bottom;
-      MapMaxX = room_subrect.right;
-      MapMaxY = room_subrect.top;
+      MapMinX = (SHORT)room_subrect.left;
+      MapMinY = (SHORT)room_subrect.bottom;
+      MapMaxX = (SHORT)room_subrect.right;
+      MapMaxY = (SHORT)room_subrect.top;
    }
    else
 	{

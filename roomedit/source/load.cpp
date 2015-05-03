@@ -547,15 +547,31 @@ BOOL ReadSlopeInfo(int infile, SlopeInfo *info)
    int i;
    SHORT z;
 
-   float temp;
-   if (!read(infile, &temp, 4)) return FALSE;
-   info->plane.a = temp;
-   if (!read(infile, &temp, 4)) return FALSE;
-   info->plane.b = temp;
-   if (!read(infile, &temp, 4)) return FALSE;
-   info->plane.c = temp;
-   if (!read(infile, &temp, 4)) return FALSE;
-   info->plane.d = temp;
+   if (room_version < 14)
+   {
+      int temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.a = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.b = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.c = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.d = temp;
+   }
+   else
+   {
+      float temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.a = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.b = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.c = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.d = temp;
+   }
+
 
    if (!read(infile, &info->x, 4)) return FALSE;
    if (!read(infile, &info->y, 4)) return FALSE;

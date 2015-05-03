@@ -85,29 +85,29 @@
 /* plane defined by ax + by + c = 0. (x and y are in fineness units.) */
 typedef struct
 {
-   long a, b, c;
+   double a, b, c;
 } Plane,Plane2D;
 
 /* 3D plane defined by ax + by + cz + d */
 typedef struct
 {
-    FixedPoint a, b, c, d;
+    double a, b, c, d;
 } Plane3D;
 
 /* box defined by its top left and bottom right coordinates (in fineness) */
 typedef struct
 {
-   long x0,y0,x1,y1;
+   double x0,y0,x1,y1;
 } Box;
 
 typedef struct
 {
-   long x,y;
+   double x,y;
 } Pnt,Pnt2D,Vector2D;
 
 typedef struct
 {
-   FixedPoint x,y,z;
+   double x,y,z;
 } Pnt3D,Vector3D;
 
 typedef struct ObjectData
@@ -182,7 +182,7 @@ typedef struct WallData
 
    Plane separator;
    
-   int length;                 /* length of wall; 1 grid square = 64 */
+   double length;                 /* length of wall; 1 grid square = 64 */
    
    // Since I doubled the number of heights stored here, I'm changing
    // these heights to shorts to take up half the space. No room (except godroom)
@@ -218,7 +218,7 @@ typedef struct WallData
    long  zz0Neg;        /* height of bottom of lower wall */
    long  zz1Neg;        /* height of top of lower wall / bottom of normal wall */
 
-   int x0, y0, x1, y1;         /* coordinates of wall start and end */
+   double x0, y0, x1, y1;         /* coordinates of wall start and end */
 
    Bool seen;                  /* True iff part of this wall has been drawn */
 

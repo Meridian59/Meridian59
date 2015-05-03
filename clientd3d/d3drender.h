@@ -38,51 +38,34 @@ inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
 #define D3DRENDER_REDRAW_ALL	0x00000002
 
 #define D3DRENDER_SET_ALPHATEST_STATE(_pDevice, _enable, _refValue, _compareFunc)	\
-do	\
-{	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHATESTENABLE, _enable);	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAREF, _refValue);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, _compareFunc);	\
-} while (0)
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHAFUNC, _compareFunc);
 
 #define D3DRENDER_SET_ALPHABLEND_STATE(_pDevice, _enable, _srcBlend, _dstBlend)	\
-do	\
-{	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ALPHABLENDENABLE, _enable);	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_SRCBLEND, _srcBlend);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, _dstBlend);	\
-} while (0)
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_DESTBLEND, _dstBlend);
 
 #define D3DRENDER_SET_STENCIL_STATE(_pDevice, _enable, _stencilFunc, _refValue, _pass, _fail, _zfail)	\
-do	\
-{	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILENABLE, _enable);	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILFUNC, _stencilFunc);	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILREF, _refValue);	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILPASS, _pass);	\
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILFAIL, _fail);	\
-	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILZFAIL, _zfail);	\
-} while (0)
+	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_STENCILZFAIL, _zfail);
 
 #define D3DRENDER_SET_COLOR_STAGE(_pDevice, _stage, _opValue, _arg0Value, _arg1Value)	\
-do	\
-{	\
 	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLOROP,	_opValue);	\
 	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG1, _arg0Value);	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG2, _arg1Value);	\
-} while (0)
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_COLORARG2, _arg1Value);
 
 #define D3DRENDER_SET_ALPHA_STAGE(_pDevice, _stage, _opValue, _arg0Value, _arg1Value)	\
-do	\
-{	\
 	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAOP,	_opValue);	\
 	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG1, _arg0Value);	\
-	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG2, _arg1Value);	\
-} while (0)
+	IDirect3DDevice9_SetTextureStageState(_pDevice, _stage, D3DTSS_ALPHAARG2, _arg1Value);
 
 #define D3DRENDER_SET_STREAMS(_pDevice, _pCache, _numStages)	\
-do	\
-{	\
 	int	_i = 0;	\
 	int	_j;	\
 	IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
@@ -92,20 +75,16 @@ do	\
 	for (_j = 0; _j < _numStages; _j++)	\
 		IDirect3DDevice9_SetStreamSource(_pDevice, _i++,	\
 			(_pCache)->stBuffer[_j].pVBuffer, 0, sizeof(custom_st));	\
-	IDirect3DDevice9_SetIndices(_pDevice, (_pCache)->indexBuffer.pIBuffer);	\
-} while (0)
+	IDirect3DDevice9_SetIndices(_pDevice, (_pCache)->indexBuffer.pIBuffer);
 
 #define D3DRENDER_CLEAR_STREAMS(_pDevice, _numStages)	\
-do	\
-{	\
 	int	_i = 0;	\
 	int	_j;	\
 	IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
 	IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
 	for (_j = 0; _j < _numStages; _j++)	\
 		IDirect3DDevice9_SetStreamSource(_pDevice, _i++, NULL, 0, 0);	\
-	IDirect3DDevice9_SetIndices(_pDevice, NULL);	\
-} while (0)
+	IDirect3DDevice9_SetIndices(_pDevice, NULL);
 
 typedef struct d_light
 {

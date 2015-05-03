@@ -661,9 +661,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
 	D3DMATRIX	mat, rot, trans, view, proj, identity;
 	int			angleHeading, anglePitch;
-	int			curPacket = 0;
-	int			curIndex = 0;
-	long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox;
+	long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox, timeSkybox2, timeInit;
 	static ID	tempBkgnd = 0;
 	HRESULT		hr;
 	Bool		draw_sky = TRUE;
@@ -715,9 +713,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	gFrame++;
 
-	timeOverall = timeWorld = timeObjects = timeLMaps = timeSkybox = 0;
+	timeOverall = timeWorld = timeObjects = timeLMaps = timeSkybox = timeSkybox2 = timeInit = 0;
 
-	timeOverall = timeGetTime();
+	timeOverall = timeInit = timeGetTime();
 
 	gNumObjects = 0;
 	gNumVertices = 0;
@@ -796,9 +794,11 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	playerOldPos.y = params->viewer_y;
 	playerOldPos.z = params->viewer_height;
 
+	timeInit = timeGetTime() - timeInit;
 	// skybox
 	if (draw_sky)
 	{
+		timeSkybox = timeGetTime();
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_FALSE);
@@ -824,6 +824,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZENABLE, D3DZB_TRUE);
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+		timeSkybox = timeGetTime() - timeSkybox;
 	}
 
 	// restore the correct view matrix
@@ -835,12 +836,12 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	
 	if (draw_world)
 	{
+		timeWorld = timeGetTime();
 		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_CW);
 
-		timeWorld = timeGetTime();
 		gNumCalls = 0;
 
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
@@ -854,8 +855,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetTextureStageState(gpD3DDevice, 1, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		IDirect3DDevice9_SetTextureStageState(gpD3DDevice, 1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
-      // This is disabled as it seems to draw sky texture in-between wall
-      // textures on some maps. No errant effects noted from disabling this.
+		// This is disabled as it seems to draw sky texture in-between wall
+		// textures on some maps. No errant effects noted from disabling this.
 		// no look through/sky texture walls
 		if (0)
 		{
@@ -897,7 +898,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		// this pass is a gigantic hack used to cover up the cracks
 		// caused by all the t-junctions in the old geometry.  the entire world is drawn
 		// in wireframe, with zwrite disabled.  welcome to my hell
-		if (1)
+		if (0)
 		{
 			gWireframe = TRUE;
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
@@ -919,6 +920,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	// skybox again, drawing only where stencil = 1
 	if (draw_sky)
 	{
+		timeSkybox2 = timeGetTime();
 		IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
       
 		D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, FALSE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
@@ -949,6 +951,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		if (gD3DDriverProfile.bFogEnable)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+		timeSkybox2 = timeGetTime() - timeSkybox2;
 	}
 
 	IDirect3DDevice9_SetTransform(gpD3DDevice, D3DTS_VIEW, &view);
@@ -960,6 +963,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	
 	if (draw_world && config.bDynamicLighting)
 	{
+		timeLMaps = timeGetTime();
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MAGFILTER, gD3DDriverProfile.magFilter);
 		IDirect3DDevice9_SetSamplerState(gpD3DDevice, 1, D3DSAMP_MINFILTER, gD3DDriverProfile.minFilter);
 
@@ -982,6 +986,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		
 		if (gD3DDriverProfile.bFogEnable)
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_FOGENABLE, TRUE);
+
+		timeLMaps = timeGetTime() - timeLMaps;
 	}
 
 	IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_CULLMODE, D3DCULL_NONE);
@@ -1325,14 +1331,14 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		}
 	}
 	
-
+	timeOverall = timeGetTime() - timeOverall;
 //	debug(("number of objects = %d\n", gNumObjects));
 	if ((gFrame & 255) == 255)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices,
 		gNumDPCalls));
 
-//	debug(("overall = %dlightmaps = %dworld = %dobjects = %dskybox = %dnum vertices = %d\n",
-//			timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox, gNumVertices));
+	//debug(("all = %d lmaps = %d wrld = %d obj = %d sky = %d init = %d\n",
+		//timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox+timeSkybox2, timeInit));
 }
 
 void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)
@@ -1340,11 +1346,7 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 	int			count;
 	BSPnode		*pNode = NULL;
 	WallData	*pWall;
-	int			first = 1;
 	Bool		bDynamic;
-
-	long		curPacket = 0;
-	long		index = 0;
 
 	for (count = 0; count < room->num_nodes; count++)
 	{
@@ -1470,7 +1472,7 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 {
 	long		side;
-	long		a, b;
+	double	a, b;
 
 	if (!tree)
 		return;
@@ -1612,7 +1614,7 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params)
 {
 	long		side;
-	long		a, b;
+	double	a, b;
 
 	if (!tree)
 		return;
@@ -1739,7 +1741,6 @@ Bool D3DLMapCheck(d_light *dLight, room_contents_node *pRNode)
 void D3DLMapsStaticGet(room_type *room)
 {
 	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	list_type			list;
 	long				top, bottom;
 	int					sector_flags;
@@ -1938,11 +1939,6 @@ void D3DGeometryBuildNew(room_type *room, d3d_render_pool_new *pPool)
 	int			count;
 	BSPnode		*pNode = NULL;
 	WallData	*pWall;
-	int			first = 1;
-	Bool		bDone = FALSE;
-
-	long		curPacket = 0;
-	long		index = 0;
 
 	D3DCacheSystemReset(&gWorldCacheSystemStatic);
 	D3DCacheSystemReset(&gWallMaskCacheSystem);
@@ -2281,7 +2277,7 @@ void GeometryUpdate(d3d_render_pool_new *pPool, d3d_render_cache_system *pCacheS
 							b = -b;
 						}
 
-						lightScale = (a * sun_vect.x +
+						lightScale = (long)(a * sun_vect.x +
 										b * sun_vect.y) >> LOG_FINENESS;
 
 #if PERPENDICULAR_DARK
@@ -3415,7 +3411,6 @@ void D3DRenderNamesDraw3D(d3d_render_cache_system *pCacheSystem, d3d_render_pool
 	D3DMATRIX			mat, rot, xForm, trans;
 	int					angleHeading, anglePitch, strLen, sector_flags, offset;
 	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	list_type			list;
 	long				dx, dy, angle, top, bottom;
 	PDIB				pDib;
@@ -4138,7 +4133,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromResource(BYTE *ptr, int width, int 
 LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromPNG(char *pFilename)
 {
 	FILE	*pFile;
-	char	*filename = NULL;
 	png_structp	pPng = NULL;
 	png_infop	pInfo = NULL;
 	png_infop	pInfoEnd = NULL;
@@ -4146,7 +4140,6 @@ LPDIRECT3DTEXTURE9 D3DRenderTextureCreateFromPNG(char *pFilename)
 
 	D3DLOCKED_RECT		lockedRect;
 	LPDIRECT3DTEXTURE9	pTexture = NULL;
-	PALETTEENTRY		*pTemp = NULL;
 	unsigned char		*pBits = NULL;
 	unsigned int		w, h, b;
 	int					pitchHalf, bytePP, stride;
@@ -5917,7 +5910,8 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 
 	if (pBGRA)
 	{
-		int	i, a, b;
+		int	i;
+		double a, b;
 		int	distX, distY, distance;
 		long	lightScale;
 		long lo_end = FINENESS-shade_amount;
@@ -5940,7 +5934,7 @@ int D3DRenderWallExtract(WallData *pWall, PDIB pDib, unsigned int *flags, custom
 					b = -b;
 				}
 
-				lightScale = (a * sun_vect.x +
+				lightScale = (long)(a * sun_vect.x +
 								b * sun_vect.y) >> LOG_FINENESS;
 
 #if PERPENDICULAR_DARK
@@ -6215,7 +6209,7 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 					long lo_end = FINENESS-shade_amount;
 
 					// light scale is based on dot product of surface normal and sun vector
-					lightscale = (pNode->u.leaf.sector->sloped_floor->plane.a * sun_vect.x +
+					lightscale = (long)(pNode->u.leaf.sector->sloped_floor->plane.a * sun_vect.x +
 						pNode->u.leaf.sector->sloped_floor->plane.b * sun_vect.y +
 						pNode->u.leaf.sector->sloped_floor->plane.c * sun_vect.z)>>LOG_FINENESS;
 
@@ -6479,7 +6473,7 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 					long lo_end = FINENESS-shade_amount;
 
 					// light scale is based on dot product of surface normal and sun vector
-					lightscale = (pNode->u.leaf.sector->sloped_ceiling->plane.a * sun_vect.x +
+					lightscale = (long)(pNode->u.leaf.sector->sloped_ceiling->plane.a * sun_vect.x +
 						pNode->u.leaf.sector->sloped_ceiling->plane.b * sun_vect.y +
 						pNode->u.leaf.sector->sloped_ceiling->plane.a * sun_vect.z)>>LOG_FINENESS;
 
@@ -6527,8 +6521,6 @@ void D3DRenderBackgroundsLoad(char *pFilename, int index)
 	png_bytepp   rows;
 
 	D3DLOCKED_RECT		lockedRect;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
-	PALETTEENTRY		*pTemp = NULL;
 	unsigned char		*pBits = NULL;
 	unsigned int		w, h, b;
 	int					pitchHalf, bytePP;
@@ -6793,10 +6785,6 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 				if (pPacket->curChunk < (pPacket->size - 1))
 					return pPacket;
 			}
-			else
-			{
-				int	i = 0;
-			}
 		}
 	}
 
@@ -6822,7 +6810,6 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
 	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	long				dx, dy, angle;
 	PDIB				pDib;
 	custom_xyz			xyz[4];
@@ -7291,7 +7278,6 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
 	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	long				dx, dy, angle, top, bottom;
 	PDIB				pDib, pDibOv, pDibOv2;
 	Overlay				*pOverlay;
@@ -8017,7 +8003,6 @@ void D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Dr
 	int					angleHeading, anglePitch;
 	int					i;
 	Projectile			*pProjectile;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	list_type			list;
 	long				dx, dy, angle;
 	PDIB				pDib;
@@ -8127,7 +8112,6 @@ void D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Dr
 {
 	D3DMATRIX			mat;
 	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	PDIB				pDib;
 	custom_bgra			bgra;
 	AREA				objArea;
@@ -8346,7 +8330,6 @@ void D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type ov
 {
 	int					pass, depth;
 	room_contents_node	*pRNode;
-	LPDIRECT3DTEXTURE9	pTexture = NULL;
 	custom_xyz			xyz[4];
 	custom_bgra			bgra;
 	PDIB				pDibOv;

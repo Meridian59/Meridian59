@@ -120,7 +120,7 @@ TConfirmLineDefDialog::TConfirmLineDefDialog (TWindow* parent, TConfirmLineDefDi
 	pScrollCheck[0] = newTCheckBox(this, IDC_SCROLL1, 0);
 	pScrollCheck[1] = newTCheckBox(this, IDC_SCROLL2, 0);
 
-	SetTransferBuffer(pXFer);
+	SetTransferBuffer((void*)pXFer);
 }
 
 

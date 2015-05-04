@@ -76,7 +76,7 @@ TConfirmThingDialog::TConfirmThingDialog (TWindow* parent, TConfirmThingDialogXf
     pLevel45Check = newTCheckBox(this, IDC_CONF_LEVEL45_CHECK, 0);
     pMultiCheck   = newTCheckBox(this, IDC_CONF_MULTI_CHECK, 0);
 
-	SetTransferBuffer(&XFer);
+	SetTransferBuffer((void*)&XFer);
 //{{TConfirmThingDialogXFER_USE_END}}
 }
 

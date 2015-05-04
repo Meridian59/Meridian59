@@ -43,7 +43,7 @@ TConfirmVertexDialog::TConfirmVertexDialog (TWindow* parent, TConfirmVertexDialo
 	pXPosCheck = new TCheckBox(this, IDC_CONFVE_XPOS, 0);
 	pYPosCheck = new TCheckBox(this, IDC_CONFVE_YPOS, 0);
 
-	SetTransferBuffer(&Xfer);
+	SetTransferBuffer((void*)&Xfer);
 //{{TConfirmVertexDialogXFER_USE_END}}
 }
 

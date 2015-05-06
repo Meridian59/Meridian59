@@ -2877,8 +2877,8 @@ void TEditorClient::CmObjectsRectangle ()
 	static SHORT Height = 128;
 	char Title[80];
 	char Prompt[80];
-	TRangeValidator *pValid1 = new TRangeValidator(8, 2000);
-	TRangeValidator *pValid2 = new TRangeValidator(8, 2000);
+	TRangeValidator *pValid1 = new TRangeValidator(8, 14000);
+	TRangeValidator *pValid2 = new TRangeValidator(8, 14000);
 	char wBuf[7];
 	char hBuf[7];
 
@@ -2977,8 +2977,8 @@ void TEditorClient::CmObjectsPolygon ()
 	static SHORT Radius = 128;
 	char Title[80];
 	char Prompt[80];
-	TRangeValidator *pValid1 = new TRangeValidator(3, 32);
-	TRangeValidator *pValid2 = new TRangeValidator(8, 2000);
+	TRangeValidator *pValid1 = new TRangeValidator(3, 1024);
+	TRangeValidator *pValid2 = new TRangeValidator(8, 14000);
 	char nBuf[7];
 	char rBuf[7];
 

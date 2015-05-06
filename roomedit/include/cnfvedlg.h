@@ -49,8 +49,8 @@
 struct TConfirmVertexDialogXfer
 {
 //{{TConfirmVertexDialogXFER_DATA}}
-	BOOL    pXPosCheck;
-	BOOL    pYPosCheck;
+   uint16    pXPosCheck;
+   uint16    pYPosCheck;
 //{{TConfirmVertexDialogXFER_DATA_END}}
 };
 

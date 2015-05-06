@@ -218,8 +218,8 @@ void RotateAndScaleCoords (SHORT *x, SHORT *y, double angle, double scale)
 
    r = hypot( (double) *x, (double) *y);
    theta = atan2( (double) *y, (double) *x);
-   *x = (SHORT) (r * scale * cos( theta + angle) + 0.5);
-   *y = (SHORT) (r * scale * sin( theta + angle) + 0.5);
+   *x = (SHORT) round(r * scale * cos( theta + angle));
+   *y = (SHORT) round(r * scale * sin( theta + angle));
    /* Yes, I know... etc. */
 }
 

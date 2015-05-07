@@ -46,13 +46,15 @@ classvars:
    viCashmax = 200
    viChanceFemale = 60  % percentage chance to be female
 
-   % We use a colored guildshield
    viColorTranslate1 = XLAT_TO_GRAY     % Shirt
    viColorTranslate2 = XLAT_TO_BLACK   % Pants
-   viShieldColor1 = XLAT_TO_RED
-   viShieldColor2 = XLAT_TO_RED
-   viShieldShape = SHIELDSHAPE_HORIZ
-   viInsignia = INSIG_QOR
+
+   % Old guildshield info.
+   % viShieldColor1 = XLAT_TO_RED
+   % viShieldColor2 = XLAT_TO_RED
+   % viShieldShape = SHIELDSHAPE_HORIZ
+   % viInsignia = INSIG_QOR
+   vcShieldClass = &NecromancerShield
 
 properties:
 
@@ -85,14 +87,6 @@ messages:
    {
       viKarma = -40;
 
-      return;
-   }
-
-   % maybe put in a DoCast at some point
-   MonsterAttack(what = $)
-   {
-      % add in any attack animation calls
-      Send(self,@DoSlash);
       return;
    }
 

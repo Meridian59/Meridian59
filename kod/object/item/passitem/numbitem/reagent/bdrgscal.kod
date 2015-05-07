@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlueDragonScale is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   bluedragonscale_name_rsc = "blue dragon scale"
+   bluedragonscale_icon_rsc = bdrgscal.bgf
+   bluedragonscale_desc_rsc = \
+	"This scale is hard as Jasper rock and as thick as a man's finger.  They "
+	"seem to be the only remnants of the ancient Dragons that were thought to "
+	"have gone extinct centuries ago."
+
+   bluedragonscale_name_plural_rsc = "blue dragon scales"
+
+classvars:
+
+   vrName = bluedragonscale_name_rsc
+   vrIcon = bluedragonscale_icon_rsc
+   vrDesc = bluedragonscale_desc_rsc
+
+   vrName_plural = bluedragonscale_name_plural_rsc
+
+   viValue_average = 100
+   viWeight = 10
+   viBulk = 10
+
+
+properties:
+ 
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -142,8 +142,8 @@ properties:
    % Miscellaneous
    %
 
-   % Line of Sight (LOS) check.  What are we using?
-   piLOS = LOS_OLD
+   % Enables or disables some safe-spots, see blakston.khd comments.
+   piLOSSkip = LOS_SKIP_1
 
    % How many summoned objects can be in a room
    piPlayerSummonedObjectLimit = 18
@@ -433,9 +433,9 @@ messages:
    % Miscellaneous
    %
 
-   GetLOS()
+   GetLOSSkip()
    {
-      return piLOS;
+      return piLOSSkip;
    }
 
    GetPlayerSummonedObjectLimit()

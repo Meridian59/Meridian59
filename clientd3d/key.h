@@ -20,6 +20,7 @@
 #define VK_COMMA		0xBC
 #define VK_SLASH		0xBF
 #define VK_LBRACKET		0xDB
+#define VK_BACKSLASH 0xDC
 #define VK_RBRACKET		0xDD
 #define VK_BACKQUOTE	0xC0
 
@@ -52,7 +53,7 @@ M59EXPORT void KeyRemoveTable(int game_state, KeyTable table);
 
 M59EXPORT int  TranslateKey(UINT vk_key, KeyTable table, void **data);
 M59EXPORT void KeySetLastNorepeatTime(void);
-void HandleKeys(void);
+void HandleKeys(Bool poll);
 int  KeysDown(void);
 void KeyUpHack(int vk);
 

@@ -2310,7 +2310,7 @@ messages:
    
    LineOfSightInternal(obj1 = $, obj2 = $)
    {
-      local r, c, r2, c2, dr, dc, iRow, iCol, iAtan;
+      local r, c, r2, c2, dr, dc, iRow, iCol, iAtan, iSkip;
 
       % no LOS if not in same room
       if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)
@@ -2362,10 +2362,15 @@ messages:
       r2 = r;
       c2 = c;
 
-      % we don't care about the last step to eliminate safe-spots
-      % this might allow a creature to hit through a wall if
-      % its target is on an adjacent highres square (unlikely?)
-      while abs(dr) > 1 OR abs(dc) > 1
+      % get config setting for amount of steps to skip at the end
+      % of LoS line, this modifies safespots
+      iSkip = Send(Send(SYS, @GetSettings), @GetLOSSkip);
+
+      % step from the source to the target on the highres grid.
+      % depending on the skip amount, we either must reach
+      % the destination completely (rare safespots)
+      % or an adjacent/close square is enough (no safespots)
+      while abs(dr) > iSkip OR abs(dc) > iSkip
       {
          % Figure out which direction we need to move
          % our 2D ray next (=step N,NE,E,SE,S,...)

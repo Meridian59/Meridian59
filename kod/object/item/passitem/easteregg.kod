@@ -1,0 +1,504 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EasterEgg is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+   EGG_HEALTH = 1
+   EGG_MANA = 2
+   EGG_VIGOR = 3
+   EGG_SPELL = 4
+
+   % Egg spell not included here - not available via loot.
+   EGG_MAX_TYPES = 3
+
+resources:
+
+   ee_g_one_bgf = eegray1.bgf
+   ee_g_two_bgf = eegray2.bgf
+   ee_g_three_bgf = eegray3.bgf
+   ee_g_four_bgf = eegray4.bgf
+   ee_g_five_bgf = eegray5.bgf
+   ee_rb_one_bgf = eeredblue1.bgf
+   ee_rb_two_bgf = eeredblue2.bgf
+   ee_rb_three_bgf = eeredblue3.bgf
+   ee_rb_four_bgf = eeredblue4.bgf
+   ee_rb_five_bgf = eeredblue5.bgf
+   ee_rb_six_bgf = eeredblue6.bgf
+   ee_rb_seven_bgf = eeredblue7.bgf
+   ee_rb_eight_bgf = eeredblue8.bgf
+   ee_rb_nine_bgf  = eeredblue9.bgf
+
+   easteregg_name_rsc = "easter egg"
+   easteregg_desc_rsc = \
+      "Made from the finest dark chocolate from Barloque, this easter egg "
+      "seems to be quite warm but unmelted.  You wonder at what magic "
+      "keeps the egg in one piece."
+
+   easteregg_eat = \
+      "You unwrap the colored, waxy parchment from the egg and bite into "
+      "the tasty chocolate."
+
+   easteregg_eat_wav = eat.wav
+   easteregg_cant_use_on = "You can't feed %s%s"
+
+   easteregg_healed = "You feel revitalized as you regain ~B~g%d~n health!"
+   easteregg_gave_mana = "You feel re-energized as you regain ~b~B%i~B~n mana!"
+   easteregg_vigor = "Yum-yum good!"
+
+   easteregg_type_health = \
+      "\n\nEating this easter egg will return your health."
+   easteregg_type_mana = \
+      "\n\nEating this easter egg will return your magical power."
+   easteregg_type_vigor = \
+      "\n\nEating this easter egg will invigorate you."
+   easteregg_type_spell_one = \
+      "\n\nEating this easter egg will unleash the "
+   easteregg_type_spell_two = \
+      " spell."
+
+classvars:
+
+   viGround_group = 2
+   viInventory_group = 1
+
+   vrDesc = easteregg_desc_rsc
+   vrName = easteregg_name_rsc
+   vrCantUseOn = easteregg_cant_use_on
+   vrEat_wav = easteregg_eat_wav
+
+   viBulk = 4
+   viWeight = 4
+   viValue_average = 60
+
+   viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+
+   % Default amounts added.
+   viHealthAmount = 30
+   viManaAmount = 40
+   viVigorAmount = 80
+
+   viFilling = 5
+
+   % Spellpower for egg-cast spells. Default 99.
+   viSpellPower = 99
+
+properties:
+
+   vrIcon = ee_g_one_bgf
+
+   piEggType = EGG_HEALTH
+   piResourceAmount = 30
+
+   % For spell eggs.
+   viSpellEffect = SID_LIGHT
+   
+   % No nutrition unless vigor egg.
+   viNutrition = 0
+
+   % Spellpower for egg-cast spells. Default 99.
+   piSpellPower = 99
+
+messages:
+
+   Constructor(iType=$,iColor=0,rBGF=$)
+   "Create an easter egg with random resource return type and "
+   "random color."
+   {
+      Send(self,@SetEggType,#iEggType=iType);
+      Send(self,@SetEggBGF,#rEggBGF=rBGF);
+      Send(self,@SetColor,#iEggColor=iColor);
+
+      piSpellpower = viSpellPower;
+
+      propagate;
+   }
+
+   RandomizeLook(iBGF=TRUE)
+   "Uses a random BGF and color."
+   {
+      if iBGF
+      {
+         Send(self,@SetEggBGF);
+      }
+
+      Send(self,@SetColor,#iEggColor=0);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   SetColor(iEggColor=0,bGrayOverride=FALSE,bRBOverride=FALSE,
+            bOverrideAll=FALSE)
+   "Sets the colors of the egg depending on which BGF it uses."
+   {
+      % Set egg color to 0 initially, or whatever we were given.
+      piItem_flags = iEggColor;
+
+      % Use this to force an egg to color.
+      if bOverrideAll
+      {
+         return;
+      }
+
+      if vrIcon = ee_g_one_bgf
+         OR vrIcon = ee_g_two_bgf
+         OR vrIcon = ee_g_three_bgf
+         OR vrIcon = ee_g_four_bgf
+         OR vrIcon = ee_g_five_bgf
+         OR vrIcon = bGrayOverride
+      {
+         if piItem_flags = 0
+            OR piItem_flags < PT_GRAY_TO_ORANGE
+            OR piItem_flags > PT_GRAY_TO_PLATBLOND
+         {
+            piItem_flags = Random(PT_GRAY_TO_ORANGE,PT_GRAY_TO_PLATBLOND);
+         }
+      }
+      else
+      {
+         % Set up this way to make sure we don't try to use a color
+         % that does nothing to the item.
+         if vrIcon = ee_rb_one_bgf
+            OR vrIcon = ee_rb_two_bgf
+            OR vrIcon = ee_rb_three_bgf
+            OR vrIcon = ee_rb_four_bgf
+            OR vrIcon = ee_rb_five_bgf
+            OR vrIcon = ee_rb_six_bgf
+            OR vrIcon = ee_rb_seven_bgf
+            OR vrIcon = ee_rb_eight_bgf
+            OR vrIcon = ee_rb_nine_bgf
+            OR bRBOverride
+         {
+            % We only allow guild shield colors and the extra two-color
+            % translations here. To translate with other colors, use
+            % bOverrideAll.
+            if piItem_flags = 0
+               OR (piItem_flags < PT_REDTODGREEN1
+                  OR piItem_flags > ITEM_PALETTE_MASK)
+               OR (piItem_flags > PT_BLBLK_REDWHT
+                  AND piItem_flags < XLAT_BASE_VALUE)
+            {
+               % 12.5% chance of using the new two-color xlats.
+               if Random (1,8) = 1
+               {
+                  piItem_Flags = Random(PT_REDTODGREEN1,PT_BLBLK_REDWHT);
+               }
+               else
+               {
+                  % These are the two-tone colors available to guild shields.
+                  piItem_flags = Random(XLAT_BASE_VALUE,ITEM_PALETTE_MASK);
+               }
+            }
+         }
+      }
+
+      % This one is invalid. Use it to introduce a few more choices.
+      if piItem_flags = 0x01F
+      {
+         % These are the red/blue/green full palette translations.
+         % Will color any object.
+         piItem_flags = Random(PT_BLEND25RED,PT_BLEND25GREEN);
+      }
+
+      return;
+   }
+
+   SetEggType(iEggType=$)
+   {
+      if iEggType = $
+         OR iEggType < 0
+         OR iEggType > EGG_MAX_TYPES
+      {
+         piEggType = Random(1,EGG_MAX_TYPES);
+      }
+      else
+      {
+         piEggType = iEggType;
+      }
+
+      if piEggType = EGG_MANA
+      {
+         piResourceAmount = viManaAmount;
+      }
+      else
+      {
+         if piEggType = EGG_VIGOR
+         {
+            piResourceAmount = viVigorAmount;
+            viNutrition = viVigorAmount;
+         }
+         else
+         {
+            piResourceAmount = viHealthAmount;
+         }
+      }
+
+      return;
+   }
+
+   SetEggBGF(rEggBGF=$)
+   "Can accept a resource to set vrIcon to, otherwise chooses from a list."
+   {
+      local lBGFChoices;
+
+      % Make a list of valid egg types.
+      lBGFChoices = [ ee_g_one_bgf, ee_g_two_bgf, ee_g_three_bgf,
+                      ee_g_four_bgf, ee_g_five_bgf, ee_rb_one_bgf,
+                      ee_rb_two_bgf, ee_rb_three_bgf, ee_rb_four_bgf,
+                      ee_rb_five_bgf, ee_rb_six_bgf, ee_rb_seven_bgf,
+                      ee_rb_eight_bgf, ee_rb_nine_bgf ];
+
+      % Then, pick a type.
+      vrIcon = Nth(lBGFChoices,Random(1,Length(lBGFChoices)));
+
+      % Check we have a valid vrIcon, if not assign the grey one.
+      if vrIcon = $
+      {
+         vrIcon = ee_g_one_bgf;
+      }
+
+      return;
+   }
+
+   AppendDesc()
+   {
+      if piEggType = EGG_HEALTH
+      {
+         AppendTempString(easteregg_type_health);
+
+         propagate;
+      }
+      if piEggType = EGG_MANA
+      {
+         AppendTempString(easteregg_type_mana);
+
+         propagate;
+      }
+      if piEggType = EGG_VIGOR
+      {
+         AppendTempString(easteregg_type_vigor);
+
+         propagate;
+      }
+      if piEggType = EGG_SPELL
+      {
+         AppendTempString(easteregg_type_spell_one);
+         AppendTempString(Send(Send(SYS,@FindSpellByNum,
+               #num=viSpellEffect),@GetName));
+         AppendTempString(easteregg_type_spell_two);
+
+         propagate;
+      }
+
+      propagate;
+   }
+
+   GetFilling()
+   {
+      return viFilling;
+   }
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+      if NOT IsClass(apply_on,&User)
+      {
+         Send(what,@MsgSendUser,#message_rsc=vrCantUseOn,
+               #parm1=Send(apply_on,@GetIndef),
+               #parm2=Send(apply_on,@GetName));
+
+         return FALSE;
+      }
+
+      if NOT Send(apply_on,@ReqEatSomething,#filling=viFilling,#what=self)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=easteregg_eat);
+
+      return;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      Send(self,@SendTaste,#what=what,#apply_on=apply_on);
+      Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
+      Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
+      
+      % Vigor egg type handled by EatSomething.
+      if piEggType = EGG_VIGOR
+      {
+         Send(apply_on,@MsgSendUser,#message_rsc=easteregg_vigor);
+      }
+      else
+      {
+         Send(self,@ApplyEasterEggEffect,#who=apply_on);
+      }
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   ApplyEasterEggEffect(who=$)
+   "Apply the special effects of an easter egg.  We only handle "
+   "health and mana here, vigor is handled as per normal food."
+   {
+      local iResourceEffect;
+
+      if who = $
+      {
+         Debug("Easter egg eaten with $ apply_on!  Owner is ",poOwner);
+
+         return;
+      }
+
+      if piEggType = EGG_MANA
+      {
+         iResourceEffect = Send(who,@GainMana,#Amount=piResourceAmount,
+                                 #bCapped=TRUE);
+         if iResourceEffect > 0
+         {
+            Send(who,@MsgSendUser,#message_rsc=easteregg_gave_mana,
+                  #parm1=iResourceEffect);
+         }
+
+         return;
+      }
+
+      if piEggType = EGG_HEALTH
+      {
+         iResourceEffect = Send(who,@GainHealthNormal,#amount=piResourceAmount);
+         if iResourceeffect >= 100
+         {
+            Send(who,@MsgSendUser,#message_rsc=easteregg_healed,
+                  #parm1=iResourceEffect/100);
+         }
+
+         return;
+      }
+
+      if piEggType = EGG_SPELL
+      {
+         Send(self,@CastEggSpell,#who=who);
+
+         return;
+      }
+
+      % Shouldn't be able to get here, catch bad egg types.
+      Debug("Easter egg eaten with bad type!  Type is ",piEggType,
+            " and owner is ",Send(poOwner,@GetTrueName));
+
+      return;
+   }
+
+   CastEggSpell(who=$)
+   "Only casts spells with no target."
+   {
+      local oSpell, lTargets;
+
+      if who = $
+      {
+         return;
+      }
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+
+      if Send(oSpell,@GetNumSpellTargets) <> 0
+      {
+         Debug("Easter egg had a spell with more than 0 targets!  Spell is ",
+               Send(oSpell,@GetName)," and owner of egg is ",
+               Send(who,@GetTrueName));
+
+         return;
+      }
+
+      % No harmful spells.
+      if Send(oSpell,@IsHarmful)
+      {
+         Debug("Easter egg had a harmful spell!  Spell is ",
+               Send(oSpell,@GetName)," and owner of egg is ",
+               Send(who,@GetTrueName));
+
+         return FALSE;
+      }
+
+      lTargets = $;
+
+      if (Send(oSpell,@CanPayCosts,#who=poOwner,#lTargets=lTargets,
+           #iSpellPower=piSpellPower,#bItemCast=TRUE))
+         AND (Send(Send(who,@GetOwner),@ReqSpellCast,#who=who,#oSpell=oSpell))
+      {
+         % Deal with Elusion's odd spell structure, so we can have it
+         % as an item-castable spell.
+         if viSpellEffect = SID_ELUSION
+         {
+            Send(oSpell,@BeginCastingTrance,#who=poOwner,#lTargets=lTargets,
+                  #iSpellPower=piSpellPower);
+         }
+         else
+         {
+            Send(oSpell,@CastSpell,#who=poOwner,#lTargets=lTargets,
+                  #iSpellPower=piSpellPower,#bItemCast=TRUE);
+         }
+      }
+
+      return;
+   }
+
+   SetResourceAmount(iAmount=$,iType=$)
+   "Can use this to change one egg, or send it to class EasterEgg "
+   "to modify all eggs."
+   {
+      % Must specify a valid amount.
+      if iAmount = $
+      {
+         return;
+      }
+
+      % If we specify a type, change all eggs of this type only.
+      if iType <> $
+         AND iType <> piEggType
+      {
+         return;
+      }
+
+      piResourceAmount = iAmount;
+
+      return;
+   }
+
+   IsBeverage()
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      % Don't destroy easter eggs.
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

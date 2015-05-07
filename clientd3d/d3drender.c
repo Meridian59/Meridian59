@@ -854,8 +854,10 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		IDirect3DDevice9_SetTextureStageState(gpD3DDevice, 1, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		IDirect3DDevice9_SetTextureStageState(gpD3DDevice, 1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
+      // This is disabled as it seems to draw sky texture in-between wall
+      // textures on some maps. No errant effects noted from disabling this.
 		// no look through/sky texture walls
-		if (1)
+		if (0)
 		{
 			// for no look through and sky texture, we take all map and procedurally generated
 			// polys and render them, drawing only where there is no alpha.  for no look

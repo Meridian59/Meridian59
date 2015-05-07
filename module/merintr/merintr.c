@@ -209,10 +209,11 @@ keymap interface_key_table[] = {
 
 { VK_TAB,         KEY_NONE,             A_TABFWD,   (void *) IDC_MAIN },
 { VK_TAB,         KEY_SHIFT,            A_TABBACK,  (void *) IDC_MAIN },
-{ VK_ESCAPE,	  KEY_ANY,				A_TARGETCLEAR },			//	Does an A_GOTOMAIN as well.
+{ VK_ESCAPE,      KEY_ANY,              A_TARGETCLEAR }, // Does an A_GOTOMAIN as well.
 
-{ VK_LBRACKET,	  KEY_NONE,				A_TARGETPREVIOUS },			//	No idea why it's this value instead of '['. xxx
-{ VK_RBRACKET,	  KEY_NONE,				A_TARGETNEXT },				//	']'
+{ VK_LBRACKET,   KEY_NONE,              A_TARGETPREVIOUS }, // No idea why it's this value instead of '['. xxx
+{ VK_RBRACKET,   KEY_NONE,              A_TARGETNEXT },     // ']'
+{ VK_BACKSLASH,  KEY_NONE,              A_TARGETSELF },
 
 { 'A',            KEY_NONE,             A_TEXTINSERT, "a" },
 { 'B',            KEY_NONE,             A_TEXTINSERT, "b" },
@@ -434,6 +435,7 @@ static ascii_key	gAsciiKeyMap[] =
 	{"/",		VK_SLASH},
 	{"[",		VK_LBRACKET},
 	{"]",		VK_RBRACKET},
+	{"\\",		VK_BACKSLASH},
 	{"home",	VK_HOME},
 	{"end",		VK_END},
 	{"insert",	VK_INSERT},

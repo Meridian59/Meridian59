@@ -1021,6 +1021,7 @@ properties:
    ptAttackTimer = $
 
    psHonor = $
+   plHonor = $
 
    piMonsterChasers = 0
 
@@ -1792,11 +1793,7 @@ messages:
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
-         if psHonor <> $
-            AND StringEqual(psHonor,player_newbie_honor_string)
-         {
-            Send(self,@SetHonorString);
-         }
+         Send(self,@RemoveHonorString,#string=player_newbie_honor_string);
       }
 
       return age;
@@ -1830,6 +1827,143 @@ messages:
    GetHonorString()
    {
       return psHonor;
+   }
+
+   SetHonorStrings()
+   "Used to set plHonor for all players using whatever psHonor they have. "
+   "Remove this if psHonor is removed (after switching to plHonor)."
+   {
+      if psHonor <> $
+      {
+         if psHonor = GetTempString()
+         {
+            return;
+         }
+
+         if StringEqual(psHonor,"")
+         {
+            return;
+         }
+
+         Send(self,@AddHonorString,#string=psHonor);
+      }
+
+      return;
+   }
+
+   GetHonorStringList()
+   {
+      return plHonor;
+   }
+
+   HasHonorString(string = $)
+   "Checks the plHonor list for the given string."
+   {
+      local i;
+
+      if plHonor = $
+         or string = $
+      {
+         return FALSE;
+      }
+
+      % Convert temp string if we received it.
+      if string = GetTempString()
+      {
+         string = SetString($,string);
+      }
+
+      for i in plHonor
+      {
+         if StringContain(i,string)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   AppendHonorStrings()
+   "Appends all the honor strings to the temp string. Adds newline "
+   "between strings."
+   {
+      local i;
+
+      if plHonor <> $
+      {
+         for i in plHonor
+         {
+            AppendTempString(i);
+            AppendTempString("\n");
+         }
+      }
+
+      return;
+   }
+
+   AddHonorString(string=$,iPosition = 1)
+   "Adds string to plHonor list. iPosition allows string position "
+   "to be chosen."
+   {
+      if string = $
+      {
+         return;
+      }
+
+      % Convert temp string if we received it.
+      if string = GetTempString()
+      {
+         string = SetString($,string);
+      }
+
+      if plHonor = $
+      {
+         plHonor = [string];
+      }
+      else
+      {
+         plHonor = InsertListElem(plHonor,iPosition,string);
+      }
+
+      return;
+   }
+
+   RemoveHonorString(string=$)
+   "Removes the given string from plHonor. Searches the entire list, "
+   "so it will remove any duplicates."
+   {
+      local i;
+
+      if plHonor = $
+         OR string = $
+      {
+         return;
+      }
+
+      % Convert temp string if we received it.
+      if string = GetTempString()
+      {
+         string = SetString($,string);
+      }
+
+      for i in plHonor
+      {
+         if StringContain(i,string)
+         {
+            plHonor = DelListElem(plHonor,i);
+         }
+      }
+
+      return;
+   }
+
+   ClearHonorStrings()
+   "Removes all the honor strings."
+   {
+      plHonor = $;
+
+      return;
    }
 
    ShowExtraInfo()
@@ -2030,17 +2164,8 @@ messages:
 %         AppendTempString(player_nl);
 %      }
 
-      if psHonor <> $
-      {
-         if psHonor <> GetTempString()
-         {
-            AppendTempString(psHonor);
-         }
-         else
-         {
-            psHonor = $;
-         }
-      }
+      % Append all the honor strings to the temp string.
+      Send(self,@AppendHonorStrings);
 
       if plDonationYears <> $
       {
@@ -2558,7 +2683,7 @@ messages:
       {
          Send(self,@ReceiveNestedMail,#from=player_angel,
                #dest_list=[self],#nest_list=[4,player_first_mail]);
-         Send(self,@SetHonorString,#string=player_newbie_honor_string);
+         Send(self,@AddHonorString,#string=player_newbie_honor_string);
          Post(self,@MsgSendUser,#message_rsc=player_newbie_commands);
       }
 
@@ -5269,7 +5394,8 @@ messages:
       precision=FALSE)
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
-            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
+            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,
+            bAttackerEmpowered, bShielded, oRod;
 
       if NOT precision
       {
@@ -5407,8 +5533,6 @@ messages:
          }
       }
 
-      Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
-
       if IsClass(what,&Monster)
       {
          RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),
@@ -5432,6 +5556,51 @@ messages:
                player_no_weapon_string);
          }
       }
+
+      % Increase final damage by 35 percent if attacker damage rod is active
+      bAttackerEmpowered = FALSE;
+      if what <> $
+         AND IsClass(what,&Player)
+      {
+         for oRod in Send(what,@GetHolderPassive)
+         {
+            if IsClass(oRod,&DamageRod)
+               AND Send(oRod,@IsActive)
+            {
+               bAttackerEmpowered = TRUE;
+            }
+         }
+      }
+      
+      if bAttackerEmpowered
+      {
+         damage = damage * 135 / 100;
+      }
+
+      % Look for active shield rods in inventory, reduce final damage to 1 if any active
+      bShielded = FALSE;
+      for oRod in plPassive
+      {
+         if IsClass(oRod,&ShieldRod)
+            AND Send(oRod,@IsActive)
+         {
+            bShielded = TRUE;
+         }
+      }
+
+      if bShielded
+      {
+         if precision
+         {
+            damage = 100;
+         }
+         else
+         {
+            damage = 1;
+         }
+      }
+
+      Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
 
       if piHealth <= 0
       {
@@ -8469,7 +8638,7 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
-      local i, bGained, bGainedCharge, oSpellDeathLink;
+      local i, bGainedCharge, oSpellDeathLink;
 
       if NOT IsClass(victim,&Battler)
       {
@@ -8492,13 +8661,9 @@ messages:
          for i in plPassive
          {
             if IsClass(i,&Rod)
+               AND Send(i,@SomethingKilled,#what=what,#victim=victim)
             {
-               bGained = Send(i,@SomethingKilled,#what=what,#victim=victim);
-               
-               if bGained
-               {
-                  bGainedCharge = TRUE;
-               }
+               bGainedCharge = TRUE;
             }
          }
 
@@ -9016,6 +9181,7 @@ messages:
          iFine_Row = piFine_Row;
          iFine_Col = piFine_Col;
          iAngle = Send(self,@GetAngle);
+         iRoom = Send(poOwner,@GetRoomNum);
       }
       else
       {
@@ -9025,7 +9191,8 @@ messages:
                   Send(self,@GetName));
          }
 
-         oRoom = Send(SYS,@FindRoomByNum,#num=Send(self,@GetSaveRoom));
+         iRoom = Send(self,@GetSaveRoom);
+         oRoom = Send(SYS,@FindRoomByNum,#num=iRoom);
          iRow = Send(self,@GetSaveRow);
          iCol = Send(self,@GetSaveCol);
          iFine_Row = Send(self,@GetSaveFineRow);
@@ -9066,14 +9233,11 @@ messages:
       Send(self,@RemoveAllEnchantments,#report=FALSE);
       bNo_drop_death = FALSE;
 
-      iRoom = Send(poOwner,@GetRoomNum);
-
       % Reign of Blood Frenzy death?  Newbie death?
       % Don't drop anything or take any penalties.
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
-        OR psHonor <> $
-           AND StringEqual(psHonor,player_newbie_honor_string)
+        OR Send(self,@HasHonorString,#string=player_newbie_honor_string)
       {
          bNo_drop_death = TRUE;
          piDeathCost = FALSE;
@@ -9267,11 +9431,8 @@ messages:
          Send(self,@ToCliStats,#group=2);
          Send(self,@ToCliStats,#group=3);
          Send(self,@ToCliStats,#group=4);
-      }
 
-      % Wake up with red foggy hangover.
-      if pbLogged_on
-      {
+         % Wake up with red foggy hangover.
          Send(self,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=5000);
       }
 
@@ -12275,10 +12436,7 @@ messages:
             % Once you've become killable, you no longer get tutorial messages
             % and bonuses.  You also lose your newbie string.
             Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
-            if psHonor <> $ AND StringEqual(psHonor,player_newbie_honor_string)
-            {
-               Send(self,@SetHonorString);
-            }
+            Send(self,@RemoveHonorString,#string=player_newbie_honor_string);
 
             Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
             if dbug = TRUE
@@ -14264,18 +14422,14 @@ messages:
 
    RechargeAllRods()
    {
-      local i, bResult, bGainedCharges;
+      local i, bGainedCharges;
 
       bGainedCharges = FALSE;
-      bResult = FALSE;
-      for i in Send(self,@GetHolderPassive)
+
+      for i in plPassive
       {
          if IsClass(i,&Rod)
-         {
-            bResult = Send(i,@FullyRecharge);
-         }
-
-         if bResult
+            AND Send(i,@FullyRecharge)
          {
             bGainedCharges = TRUE;
          }
@@ -14429,7 +14583,7 @@ messages:
 
       % Add phase time to piTimeAttackedPlayer if it is currently
       % preventing the player from casting escape spells.
-      if Send(self,@GetLastPlayerAttackTime)
+      if piTimeAttackedPlayer
             + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
             > GetTime()
       {
@@ -14485,7 +14639,7 @@ messages:
 
       % If we added phase time to piTimeAttackedPlayer before,
       % remove what is remaining (restore to original time).
-      if Send(self,@GetLastPlayerAttackTime)
+      if piTimeAttackedPlayer
             + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
             > GetTime()
       {
@@ -14560,7 +14714,7 @@ messages:
       % Logoff ghosts call this when the player returns, so we remove
       % the phase time remaining from piTimeAttackedPlayer here if we
       % added it when the user logged off.
-      if Send(self,@GetLastPlayerAttackTime)
+      if piTimeAttackedPlayer
             + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
             > GetTime()
       {

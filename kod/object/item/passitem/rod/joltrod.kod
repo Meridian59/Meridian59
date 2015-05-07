@@ -21,6 +21,10 @@ resources:
    staffofjolting_desc_rsc = \
       "You look at this rather non-descript hunk of wood, and you can find no "
       "reason why anyone would be interested in such a dismal-looking device."
+   
+   staffofjolting_broken_desc_rsc = \
+      "This dismal-looking and non-descript hunk of wood seems to have no "
+      "particular magical use. Perhaps if it was charged..."
 
    staffofjolting_jolt = "You tap the staff on the ground three times."
    staffofjolting_used = "You tap the staff against the ground, but nothing happens."
@@ -39,14 +43,15 @@ classvars:
    
    viStartMaxHits = 3
    
+   vrGoodDesc = staffofjolting_desc_rsc
+   vrBrokenDesc = staffofjolting_broken_desc_rsc
+
    use_fail_wav = staffofjolting_sound
    use_fail_msg = staffofjolting_used
    use_success_msg = staffofjolting_jolt
    use_success_wav = staffofjolting_sound
 
 properties:
-   
-   vrDesc = staffofjolting_desc_rsc
    
    piSpellpower = 60
 

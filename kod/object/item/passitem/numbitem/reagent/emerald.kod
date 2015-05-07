@@ -1,0 +1,52 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Emerald is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+   emerald_name_rsc = "emerald"
+   emerald_icon_rsc = emerald.bgf
+   emerald_desc_rsc = \
+   "This sparkling green \"Jasper emerald\" is beautiful, "
+   "although not exceptionally valuable.  It has a warm, "
+   "magical glow."
+
+   emerald_name_plural_rsc = "emeralds"
+
+classvars:
+
+   vrName = emerald_name_rsc
+   vrName_plural = emerald_name_plural_rsc
+   vrIcon = emerald_icon_rsc
+   vrDesc = emerald_desc_rsc
+
+   viBulk = 1
+   viWeight = 1
+
+   viValue_average = 30
+   viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
+
+   viGround_group = 2
+
+properties:
+
+   piNumber = 3
+
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

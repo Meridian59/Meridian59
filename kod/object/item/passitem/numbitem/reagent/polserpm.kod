@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PolishedSeraphym is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   PolishedSeraphym_name_rsc = "polished seraphym"
+   PolishedSeraphym_icon_rsc = serappol.bgf
+   PolishedSeraphym_desc_rsc = \
+      "They say that a perfect seraphym gem can be used to capture "
+      "the souls of your beaten enemies, damning them to an eternal "
+      "hell of torture and agony. However, it should be noted that "
+      "\"they\" are complete idiots who know nothing about magic." 
+
+   PolishedSeraphym_name_plural_rsc = "polished seraphym"
+
+classvars:
+
+   vrName = PolishedSeraphym_name_rsc
+   vrIcon = PolishedSeraphym_icon_rsc
+   vrDesc = PolishedSeraphym_desc_rsc
+
+   vrName_plural = PolishedSeraphym_name_plural_rsc
+
+   viValue_average = 100
+   viWeight = 4
+   viBulk = 3
+
+properties:
+
+   piNumber = 1
+
+messages:
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,170,2,1,2,6);  % Frames 1 to 6, and back to 1
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,170,2,1,2,6);  % Frames 1 to 6, and back to 1
+
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,170,2,1,2,6);  % Frames 1 to 6, and back to 1
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

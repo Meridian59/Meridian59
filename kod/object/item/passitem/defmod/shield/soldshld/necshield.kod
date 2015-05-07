@@ -1,0 +1,140 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecromancerShield is SoldierShield
+
+% Currently uses Duke shield resources/stat changes. Change this if
+% we ever allow players to access this shield.
+% Stats affected: Intellect and Stamina
+% Special bonus: This shield gives a bonus 20 Spellpower to all spells.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   necshield_name_rsc = "shield of the Necromancer's army"
+
+   necshield_desc_rsc = \
+      "This shield identifies you as an elite soldier of Queen Venya'cyr army."
+
+   necshield_ArmyName = "the undead army"
+
+   necshield_emblem_over = gshnecov.bgf
+   necshield_emblem_drop = gshnec.bgf
+   necshield_emblem_back = gshnecbk.bgf
+
+   necshield_welcome_mail = "Subject: You are now an elite soldier.\n"
+
+classvars:
+
+   vrName = necshield_name_rsc
+   vrDesc = necshield_desc_rsc
+
+   prShield_emblem_held = necshield_emblem_over
+   prShield_emblem_drop = necshield_emblem_drop
+   prShield_emblem_back = necshield_emblem_back
+
+   viFaction = FACTION_DUKE
+   viColor = XLAT_REDTOBLACK
+
+   % Stuff for rank
+   vrArmyName = necshield_ArmyName
+
+   vrWelcomeMessage = necshield_welcome_mail
+
+properties:
+
+   piStaminaChange = 0
+   piAgilityChange = 0
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@SetPaletteTranslation,#translation=viColor);
+
+      propagate;
+   }
+
+   RemoveStats()
+   {
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         % Reset owner's stats
+         Send(poOwner,@AddStamina,#points=-piStaminaChange);
+         Send(poOwner,@AddAgility,#points=-piAgilityChange);
+         piStaminaChange = 0;
+         piAgilityChange = 0;
+      }
+
+      return;
+   }
+
+   UpdateRankPowers()
+   "Updates any rank powers.  Affects stats."
+   {
+      local iStatAdjustment, iNewAdjustment;
+
+      if poOwner = $
+         OR NOT IsClass(poOwner,&Player)
+      {
+         return;
+      }
+
+      if piFactionRank <= 2
+      {
+         iStatAdjustment = 0;
+      }
+      else
+      {
+         if piFactionRank <= 6
+         {
+            iStatAdjustment = 3;
+         }
+         else
+         {
+            iStatAdjustment = 5;
+         }
+      }
+
+      % In the following:
+      %  iNewAdjustment is how much the stat changed this time around.
+      %  pi(stat)Change is the cumulative change to that stat.
+      if iStatAdjustment <> piAgilityChange
+      {
+         iNewAdjustment = Send(poOwner,@AddAgility,
+                                 #points=(iStatAdjustment-piAgilityChange));
+         piAgilityChange = piAgilityChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piStaminaChange
+      {
+         iNewAdjustment = Send(poOwner,@AddStamina,
+                                 #points=(iStatAdjustment-piStaminaChange));
+         piStaminaChange = piStaminaChange + iNewAdjustment;
+      }
+
+      return;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      local iModifier;
+
+      iModifier = ((15 * piFactionRank) / 10);
+
+      return iModifier;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

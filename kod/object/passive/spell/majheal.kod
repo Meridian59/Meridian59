@@ -24,11 +24,14 @@ resources:
       "on evil souls will reduce your own karmic standing.  "
       "Requires herbs to cast."
 
-   majorheal_cast_rsc = "%s%s's spell floods you with pure healing energy, restoring ~g~B%i~B~n hitpoints."
-   majorheal_cast_self = "Shal'ille's holy magic floods you with pure healing energy, restoring ~g~B%i~B~n hitpoints."
+   majorheal_cast_rsc = \
+      "%s%s's spell floods you with pure healing energy, "
+      "restoring ~g~B%i~B~n hitpoints."
+   majorheal_cast_self = \
+      "Shal'ille's holy magic floods you with pure healing energy, "
+      "restoring ~g~B%i~B~n hitpoints."
    majorheal_cast_on_other = "You heal %s%s for ~g~B%i~B~n hitpoints."
    majorheal_unnecessary_rsc = "%s%s is perfectly healthy."
-
 
 classvars:
 
@@ -43,7 +46,7 @@ classvars:
    viMeditate_ratio = 50
 
    viFlash = FLASH_GOOD
-   
+
 properties:
 
 messages:
@@ -66,7 +69,7 @@ messages:
    CanPayCosts(who = $, lTargets = $)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -76,17 +79,18 @@ messages:
       target = First(lTargets);
       if NOT IsClass(target, &User)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
-              
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
+
          return FALSE;
       }
-      
+
       if Send(target,@GetHealth) >= Send(target,@GetMaxHealth)
       {
          Send(who,@MsgSendUser,#message_rsc=majorheal_unnecessary_rsc,
-              #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
-              
+               #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+
          return FALSE;
       }
 
@@ -98,34 +102,34 @@ messages:
       local iHeal, oTarget;
 
       oTarget = First(lTargets);
-      
-      iHeal  = random(700,1300) + iSpellPower*20 + Send(oTarget,@GetKarma)*20;
-      iheal = bound(iHeal,0,5000);
 
-      if who <> oTarget 
+      iHeal  = Random(700,1300) + iSpellPower*20 + Send(oTarget,@GetKarma)*20;
+      iHeal = Bound(iHeal,0,5000);
+
+      iHeal = Send(oTarget,@GainHealthNormal,#amount=iHeal,#precision=TRUE);
+      if who <> oTarget
       {
          Send(who,@MsgSendUser,#message_rsc=majorheal_cast_on_other,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal/100);
-              
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),
+               #parm3=iHeal/100);
+
          Send(oTarget,@MsgSendUser,#message_rsc=majorheal_cast_rsc,
-              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal/100);
+               #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+               #parm3=iHeal/100);
          
          % Nudge the karma of the caster towards that of the healed.
-         send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
-             #karma_doer=send(who,@GetKarma),#karma_act=send(oTarget,@GetKarma),
-             #Swing_factor=2));
-      }       
-
+         Send(who,@AddKarma,#amount=Send(who,@CalculateKarmaChangeFromAct,
+               #karma_doer=Send(who,@GetKarma),#karma_act=Send(oTarget,@GetKarma),
+               #Swing_factor=2));
+      }
       else
       {
-         Send(who,@MsgSendUser,#message_rsc=majorheal_cast_self,#parm1=iHeal/100);
+         Send(who,@MsgSendUser,#message_rsc=majorheal_cast_self,
+               #parm1=iHeal/100);
       }
-      
-      Send(oTarget,@GainHealthNormal,#amount=iHeal,#precision=TRUE);
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

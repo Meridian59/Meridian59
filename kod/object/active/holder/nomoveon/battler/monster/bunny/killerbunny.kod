@@ -1,0 +1,57 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KillerBunny is Bunny
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   killerbunny_koc_name_rsc = "haixleocbunny"
+   killerbunny_name_rsc = "killer bunny"
+   killerbunny_icon_rsc = bunnygrey.bgf
+   killerbunny_desc_rsc = \
+      "You marvel at the delightful color of this cute bunny's fur.  Surely "
+      "it can't be dangerous..."
+
+   killerbunny_dead_icon_rsc = bunnygreyx.bgf
+   killerbunny_dead_name_rsc = "dead killer bunny"
+
+classvars:
+
+   vrKocName = killerbunny_koc_name_rsc
+   vrName = killerbunny_name_rsc
+   vrIcon = killerbunny_icon_rsc
+   vrDesc = killerbunny_desc_rsc
+   vrDead_icon = killerbunny_dead_icon_rsc
+   vrDead_name = killerbunny_dead_name_rsc
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_type = ATCK_WEAP_SLASH
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER \
+      | AI_FIGHT_HYPERAGGRESSIVE
+
+   viDifficulty = 6
+   viVisionDistance = 20
+   viLevel = 80
+   viKarma = 0
+   viCashmin = 500
+   viCashmax = 1200
+
+properties:
+
+   viTreasure_type = TID_KILLER_BUNNY
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

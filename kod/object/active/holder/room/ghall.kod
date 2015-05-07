@@ -131,6 +131,10 @@ classvars:
    vrSecretdoor_open_sound = guildhall_entrancedoor_open_sound
    vrSecretdoor_close_sound = guildhall_entrancedoor_close_sound
 
+   % For guildhalls with the chest in the foyer, this will be TRUE.
+   % Default FALSE.
+   vbChestInFoyer = FALSE
+
 properties:
 
    ptEntrance = $
@@ -973,7 +977,7 @@ messages:
 
       if poGuild_owner <> $
          AND StringEqual(string,Send(poGuild_owner,@GetPassword))
-         AND NOT Send(self,@InFoyer,#who=what)
+         AND (Send(self,@InFoyer,#who=what) = vbChestInFoyer)
          AND NOT pbSecretDoorOpen
          AND type <> SAY_EMOTE
       {

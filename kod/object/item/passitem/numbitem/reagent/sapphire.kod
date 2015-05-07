@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sapphire is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+   sapphire_name_rsc = "sapphire"
+   sapphire_icon_rsc = sapphire.bgf
+   sapphire_desc_rsc = \
+   "This large, heavy sapphire will fetch a decent price on the market.  It has a warm magical glow."
+   sapphire_name_plural_rsc = "sapphires"
+
+classvars:
+
+   vrName = sapphire_name_rsc
+   vrName_plural = sapphire_name_plural_rsc
+   vrIcon = sapphire_icon_rsc
+   vrDesc = sapphire_desc_rsc
+
+   viBulk = 1
+   viWeight = 1
+
+   viValue_average = 60
+
+   viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
+
+   viGround_group = 2
+   viInventory_group = 2
+
+properties:
+
+   piNumber = 2
+
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

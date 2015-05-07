@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EasterInvasion is Invasion
+
+% Placeholder for an easter event.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   easterinvasion_start_msg = \
+      "The Easter Bunny invasion has begun."
+
+   easterinvasion_end_msg = \
+      "The Easter Bunny invasion has ended."
+
+classvars:
+
+   vrStartMessage = easterinvasion_start_msg
+   vrEndMessage = easterinvasion_end_msg
+
+   vbAnnounce = TRUE
+
+properties:
+
+   plEventRooms = $
+   piActiveRoom = RID_MARION
+   piPhase = 0
+
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+
+   Update()
+   {
+      propagate;
+   }
+
+   StartEvent()
+   {
+      propagate;
+   }
+
+   PhaseOne()
+   {
+      return;
+   }
+
+   PhaseTwo()
+   {
+      return;
+   }
+
+   PhaseThree()
+   {
+      return;
+   }
+
+   FinalPhase()
+   {
+      return;
+   }
+
+   EndEvent()
+   {
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RainbowFern is Reagent
+
+constants:
+
+   include blakston.khd
+
+   FERNCOLOR1 = 0x0A
+   FERNCOLOR2 = 0x0C
+   FERNCOLOR3 = 0x0F
+   FERNCOLOR4 = 0x11
+   FERNCOLOR5 = 0x12
+   FERNCOLOR6 = 0x15
+   FERNCOLOR7 = 0x17
+   FERNCOLOR8 = 0x1B
+
+resources:
+
+   rainbowfern_name_rsc = "rainbow fern"
+   rainbowfern_icon_rsc = fern.bgf
+   rainbowfern_desc_rsc = \
+   "This jungle plant was once as common as weeds throughout "
+   "the Koniman Jungle, until its strength as a spell reagent was "
+   "discovered. Now, amateur herbologists plunder the jungle in "
+   "search of its benefits. "
+
+   rainbowfern_name_plural_rsc = "rainbow ferns"
+
+classvars:
+
+   vrName = rainbowfern_name_rsc
+   vrIcon = rainbowfern_icon_rsc
+   vrDesc = rainbowfern_desc_rsc
+
+   vrName_plural = rainbowfern_name_plural_rsc
+
+   viValue_average = 20
+   viWeight = 2
+   viBulk = 4
+
+properties:
+
+   piNumber = 4
+
+messages:
+
+   Constructed()
+   {
+      piItem_flags = piItem_flags | FERNCOLOR1;
+
+      propagate;
+   }
+
+   ChangeColor(color=0,iHour=0)
+   {
+      local iRandom, iColor;
+
+      if poOwner = $
+      {
+         return;
+      }
+
+      iRandom = Random(1,5);
+
+      if color <> 0
+      {
+         iRandom = color;
+      }
+
+      if iHour < 12
+      {
+         if iRandom = 1
+         {  iColor = FERNCOLOR1; }
+         if iRandom = 2
+         {  iColor = FERNCOLOR2; }
+         if iRandom = 3
+         {  iColor = FERNCOLOR3; }
+         if iRandom = 4
+         {  iColor = FERNCOLOR5; }
+         if iRandom = 5
+         {  iColor = FERNCOLOR7; }
+      }
+      else
+      {
+         if iRandom = 1
+         {  iColor = FERNCOLOR4; }
+         if iRandom = 2
+         {  iColor = FERNCOLOR5; }
+         if iRandom = 3
+         {  iColor = FERNCOLOR6; }
+         if iRandom = 4
+         {  iColor = FERNCOLOR7; }
+         if iRandom = 5
+         {  iColor = FERNCOLOR8; }
+      }
+      piItem_flags = piItem_flags & ITEM_INVERSE_PALETTE_MASK;
+
+      piItem_flags = piItem_flags | iColor;
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

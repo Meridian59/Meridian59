@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EntrootBerry is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   entrootberry_name_rsc = "entroot berry"
+   entrootberry_icon_rsc = darkber.bgf
+   entrootberry_desc_rsc = \
+      "These 'berries' are not actually berries at all, but rather dark yet "
+      "colorful protrusions that sometimes grow from the roots of the living "
+      "trees.  Despite their name, they are bitter, chalky in texture, "
+      "and ultimately inedible."
+
+   entrootberry_name_plural_rsc = "entroot berries"
+
+classvars:
+
+   vrName = entrootberry_name_rsc
+   vrIcon = entrootberry_icon_rsc
+   vrDesc = entrootberry_desc_rsc
+
+   vrName_plural = entrootberry_name_plural_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viValue_average = 60
+   viBulk = 2
+   viWeight = 2
+
+properties:
+
+   piNumber = 2
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

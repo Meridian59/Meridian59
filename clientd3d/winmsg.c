@@ -214,10 +214,14 @@ void MainChar(HWND hwnd,char ch,int cRepeat)
 /****************************************************************************/
 void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
+	// Send it to HandleKeys first in case user set a keybind to one
+	// of the mouse buttons.
+	HandleKeys(0);
+
 	/* See if a module wants to handle mouse click */
 	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
 		return;
-	
+
 	switch (state)
 	{
 	case STATE_GAME:
@@ -228,10 +232,14 @@ void MainMouseLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 /****************************************************************************/
 void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
+	// Send it to HandleKeys first in case user set a keybind to one
+	// of the mouse buttons.
+	HandleKeys(0);
+
 	/* See if a module wants to handle mouse click */
 	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
 		return;
-	
+
 	switch (state)
 	{
 	case STATE_GAME:
@@ -242,10 +250,14 @@ void MainMouseMButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFl
 /****************************************************************************/
 void MainMouseRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
 {
+	// Send it to HandleKeys first in case user set a keybind to one
+	// of the mouse buttons.
+	HandleKeys(0);
+
 	/* See if a module wants to handle mouse click */
 	if (ModuleEvent(EVENT_MOUSECLICK, hwnd, fDoubleClick, x, y, keyFlags) == False)
 		return;
-	
+
 	switch (state)
 	{
 	case STATE_GAME:

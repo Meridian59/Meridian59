@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Herbs is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Herbs_name_rsc = "herb"
+   Herbs_desc_rsc = \
+   "These magical herbs are dark green in color.  The leaves "
+   "are oily and have a mint-like aroma."
+
+   Herbs_icon_rsc = herb.bgf
+
+   Herbs_name_plural_rsc = "herbs"
+
+classvars:
+
+   vrName = Herbs_name_rsc
+   vrIcon = Herbs_icon_rsc
+   vrDesc = Herbs_desc_rsc
+
+   vrName_plural = herbs_name_plural_rsc
+
+   viValue_average = 10
+   viWeight = 2
+   viBulk = 4
+
+properties:
+
+   piNumber = 4
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

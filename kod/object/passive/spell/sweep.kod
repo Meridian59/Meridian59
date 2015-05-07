@@ -103,7 +103,7 @@ messages:
          % Cull everything that isn't "get-able" out of the list.
          if IsClass(oObj,&Item)
             AND send(who,@ReqNewHold,#what=oObj)
-            AND NOT IsClass(oObj,&Totem)
+            AND Send(oObj,@CanSweep)
          {
             lGoodItems = cons(oObj,lGoodItems);
          }                 

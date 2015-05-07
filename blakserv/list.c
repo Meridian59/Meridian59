@@ -124,21 +124,66 @@ int Rest(int list_id)
 	return (l? l->rest.int_val : NIL);
 }
 
+int AppendListElem(val_type source,val_type list_val)
+{
+   int list_id, new_list_id, n = 0;
+   list_node *l, *new_node;
+
+   list_id = list_val.v.data;
+
+   if (list_val.v.tag == TAG_NIL)
+      return Cons(source,list_val);
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("AppendListElem couldn't find list node %i, returning list",list_id);
+      return list_id;
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      n++;
+   }
+
+   if (n > 500)
+      bprintf("Warning, AppendListElem adding to large list, length %i",n);
+
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+   if (!new_node)
+   {
+      bprintf("AppendListElem couldn't create list node, returning list %i",list_id);
+      return list_id;
+   }
+
+   new_node->rest.int_val = NIL;
+   new_node->first.int_val = source.int_val;
+   l->rest.v.data = new_list_id;
+   l->rest.v.tag = TAG_LIST;
+
+   return list_id;
+}
+
 int Cons(val_type source,val_type dest)
 {
-	int list_id;
-	list_node *new_node;
-	
-	/*   bprintf("Allocing list node #%i\n",num_nodes); */
-	
-	list_id = AllocateListNode();
-	new_node = GetListNodeByID(list_id);
-	if (!new_node)
-		return NIL;
-	
-	new_node->first.int_val = source.int_val;
-	new_node->rest.int_val = dest.int_val;
-	return list_id;
+   int list_id;
+   list_node *new_node;
+
+   /*   bprintf("Allocing list node #%i\n",num_nodes); */
+
+   list_id = AllocateListNode();
+   new_node = GetListNodeByID(list_id);
+   if (!new_node)
+   {
+      bprintf("Cons couldn't create new list node!");
+      return NIL;
+   }
+
+   new_node->first.int_val = source.int_val;
+   new_node->rest.int_val = dest.int_val;
+   return list_id;
 }
 
 int Length(int list_id)
@@ -224,6 +269,52 @@ int SetNth(int n,int list_id,val_type new_val)
 	return NIL;
 }
 
+int SwapListElem(int list_id,int elem_one,int elem_two)
+{
+   list_node *l, *list_node_one, *list_node_two;
+   val_type temp;
+
+   l = GetListNodeByID(list_id);
+
+   // Set each of the list nodes to be swapped to the first list node initially.
+   list_node_one = l;
+   list_node_two = l;
+
+   // Start i at 2, since n or m = 1 will be handled by the initialisation.
+   for (int i = 2; i <= elem_one || i <= elem_two; i++)
+   {
+      if (!l)
+      {
+         bprintf("SwapListElem found invalid list node somewhere in list %i\n",
+            list_id);
+         return NIL;
+      }
+      if (l->rest.v.tag != TAG_LIST)
+      {
+         bprintf("SwapListElem can't go past end of list %i,%i\n",
+            l->rest.v.tag,l->rest.v.data);
+         return NIL;
+      }
+
+      l = GetListNodeByID(l->rest.v.data);
+
+      if (i == elem_one)
+      {
+         list_node_one = l;
+      }
+      if (i == elem_two)
+      {
+         list_node_two = l;
+      }
+   }
+
+   temp = list_node_two->first;
+   list_node_two->first = list_node_one->first;
+   list_node_one->first = temp;
+
+   return NIL;
+}
+
 int FindListElem(val_type list_id,val_type list_elem)
 {
 	int i;
@@ -250,6 +341,79 @@ int FindListElem(val_type list_id,val_type list_elem)
 	}
 	
 	return NIL;
+}
+
+int InsertListElem(int n,int list_id,val_type new_val)
+{
+   int new_list_id;
+   list_node *l, *prev, *new_node;
+
+   if (n  == 0)
+   {
+      bprintf("InsertListElem given invalid list element %i, returning old list\n",
+         n);
+      return list_id;
+   }
+
+   l = GetListNodeByID(list_id);
+
+   // Start at i = 2, n = 1 handled already.
+   for (int i = 2; i <= n; i++)
+   {
+      if (!l)
+      {
+         bprintf("InsertListElem found invalid list node somewhere in list %i\n",
+            list_id);
+         return list_id;
+      }
+      if (l->rest.v.tag != TAG_LIST)
+      {
+         // Add the new value to the end of the list.
+         new_list_id = AllocateListNode();
+         new_node = GetListNodeByID(new_list_id);
+         if (!new_node)
+         {
+            bprintf("InsertListElem couldn't allocate new node! %i\n",
+               new_list_id);
+            return list_id;
+         }
+         new_node->rest.int_val = NIL;
+         new_node->first.int_val = new_val.int_val;
+         // Previous node points to this one.
+         l->rest.v.tag = TAG_LIST;
+         l->rest.v.data = new_list_id;
+         return list_id;
+      }
+      prev = l;
+      l = GetListNodeByID(l->rest.v.data);
+   }
+
+   if (!l || !prev)
+   {
+      bprintf("InsertListElem found invalid list node somewhere in list %i\n",
+         list_id);
+      return list_id;
+   }
+
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+
+   if (!new_node)
+   {
+      bprintf("InsertListElem couldn't allocate new node! %i\n",
+         new_list_id);
+      return list_id;
+   }
+
+   // This node is inserted in position of the existing one, so use its rest data.
+   // Points to the old node.
+   new_node->rest.v.data = prev->rest.v.data;
+   new_node->rest.v.tag = TAG_LIST;
+   new_node->first.int_val = new_val.int_val;
+   // Previous node points to this one.
+   prev->rest.v.data = new_list_id;
+
+   return list_id;
 }
 
 int DelListElem(val_type list_id,val_type list_elem)

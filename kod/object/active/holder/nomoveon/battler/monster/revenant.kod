@@ -299,6 +299,14 @@ messages:
    {
       if poHauntee = victim
       {
+         % Posting Delete so delete Place timer here.
+         if ptPlace <> $
+         {
+            DeleteTimer(ptPlace);
+         }
+
+         ptPlace = $;
+
          Post(self,@Delete);  % MUST post this
       }
 
@@ -315,6 +323,14 @@ messages:
    {
       if what = poHauntee
       {
+         % Posting Delete so delete Place timer here.
+         if ptPlace <> $
+         {
+            DeleteTimer(ptPlace);
+         }
+
+         ptPlace = $;
+
          Post(self,@Delete);
       }
 

@@ -174,7 +174,7 @@ Bool GameKey(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	 return True;
       else return False;
 
-   HandleKeys();    // Handle key right away; don't wait for idle processing to get it
+   HandleKeys(0);    // Handle key right away; don't wait for idle processing to get it
 
    /* 
     *  Special case for ALT key:  since the key is used for movement, it would
@@ -289,7 +289,7 @@ void GameIdle(void)
    MoveUpdateServer();       // Update our position on server, if necessary
 
    AnimationTimerProc(hMain, 0);
-   HandleKeys();
+   HandleKeys(1);
 
    // Are we the active foreground application?
    AnimationTimerAbort();

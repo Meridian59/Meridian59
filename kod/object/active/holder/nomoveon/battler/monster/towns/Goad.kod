@@ -562,6 +562,8 @@ messages:
    {
       local i;
 
+      Send(poOwner,@ClearFromOccupiedList,#who=who);
+
       if (died = FALSE)
          AND (Send(self,@FightInSession)
             OR ptCommence <> $)

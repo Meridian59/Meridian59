@@ -1321,11 +1321,12 @@ messages:
             if iBoonNum <> $
             {
                oBoon = Send(SYS,@FindSpellByNum,#num=iBoonNum);
-	       if oBoon = $
-	       {
-	       	       Debug("Can't find spell for boon",iBoonNum);
-		       return;
-	       }
+               if oBoon = $
+               {
+                  Debug("Can't find spell for boon",iBoonNum);
+
+                  return;
+               }
                SetNth(plDescs,2,Send(oBoon,@GetName));
                SetNth(plIndefDescs,2,Send(oBoon,@GetIndef));
                SetNth(plDefDescs,2,Send(oBoon,@GetDef));
@@ -1475,7 +1476,7 @@ messages:
          %     [ QN_PRIZETYPE_ESTABLISH_NECROGUILD ]
 
          oLich = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
-                      @FindHoldingActive,#class=&DeadLich);
+                        @FindHoldingActive,#class=&DeadLich);
          if oLich <> $
          {
             Send(oLich,@EstablishNecromancerGuild,#master=First(recipients));

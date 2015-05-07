@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ElderBerry is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Elderberry_name_rsc = "elderberry"
+   Elderberry_icon_rsc = shrubbry.bgf
+   Elderberry_desc_rsc = \
+   "These magical herbs are rich and succulent.  Bright red "
+   "berries cling to tender branches."
+
+   Elderberry_name_plural_rsc = "elderberries"
+
+classvars:
+
+   vrName = Elderberry_name_rsc
+   vrIcon = Elderberry_icon_rsc
+   vrDesc = Elderberry_desc_rsc
+
+   vrName_plural = Elderberry_name_plural_rsc
+
+   viValue_average = 20
+   viWeight = 3
+   viBulk = 3
+
+properties:
+
+   piNumber = 4
+
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

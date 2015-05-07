@@ -1,0 +1,176 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EasterBunny is Bunny
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   easterbunny_koc_name_rsc = "koixleocbunny"
+   easterbunny_name_rsc = "easter bunny"
+   easterbunny_icon_rsc = bunnyg.bgf
+   easterbunny_desc_rsc = \
+      "This oversized rabbit salivates as it looks in your direction.  Its "
+      "teeth and claws are razor sharp, and it looks hungry."
+
+   easterbunny_dead_icon_rsc = bunnygx.bgf
+   easterbunny_dead_name_rsc = "slain easter bunny"
+   
+   easterbunny_spawn_minion = \
+      "The easter bunny rears up on its hind legs, and a killer bunny "
+      "suddenly pops into existence!"
+
+classvars:
+
+   vrKocName = easterbunny_koc_name_rsc
+   vrName = easterbunny_name_rsc
+   vrIcon = easterbunny_icon_rsc
+   vrDesc = easterbunny_desc_rsc
+   vrDead_icon = easterbunny_dead_icon_rsc
+   vrDead_name = easterbunny_dead_name_rsc
+
+   vrSpawnBunny = easterbunny_spawn_minion
+
+   viSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_SLASH
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER \
+      | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
+
+   viDifficulty = 8
+   viVisionDistance = 20
+   viLevel = 250
+   viKarma = 0
+   viCashmin = 25000
+   viCashmax = 50000
+
+   viSpellChance = 3
+
+properties:
+
+   viTreasure_type = TID_EASTER_BUNNY
+
+   ptSpawnKillerBunny = $
+
+   piMax_mana = 30
+   piSpellPower = 40
+
+   % Spawns a new killer bunny every 30 sec by default.
+   piSpawnBunnyTime = 30000
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [-ATCK_SPELL_ALL, 20 ],
+                        [ATCK_WEAP_ALL, 20 ] ];
+
+      plSpellBook = [ [SID_DAZZLE, 5, 30], [SID_APPARITION, 5, 60],
+                      [SID_KILLING_FIELDS, 5, 90], [SID_VERTIGO, 5, 100] ];
+
+      ptSpawnKillerBunny = CreateTimer(self,@SpawnKillerBunny,piSpawnBunnyTime);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSpawnKillerBunny <> $
+      {
+         DeleteTimer(ptSpawnKillerBunny);
+      }
+      ptSpawnKillerBunny = $;
+
+      propagate;
+   }
+
+   SpawnKillerBunny()
+   "Try to spawn a killer bunny in the room."
+   {
+      local oBunny, oObject, i, bValid_location, iTries, iRow, iCol,
+            iRow_sign, iCol_sign;
+
+      ptSpawnKillerBunny = $;
+      
+      if poOwner <> $
+         AND Send(poOwner,@IsUserInRoom)
+      {
+         iTries = 0;
+         bValid_location = FALSE;
+
+         % Try 7 times to place the bunny.
+         while NOT bValid_location
+            AND iTries < 7
+         {
+            iTries = iTries + 1;
+            if Random(1,2) = 1
+            {
+               iRow_sign= -1;
+            }
+            else
+            {
+               iRow_sign= 1;
+            }
+
+            if Random(1,2) = 1
+            {
+               iCol_sign= -1;
+            }
+            else
+            {
+               iCol_sign= 1;
+            }
+
+            iRow = piRow + iRow_sign*Random(1,3);
+            iCol = piCol + iCol_sign*Random(1,3);
+
+            if iRow >= 1
+               AND iRow <= Send(poOwner,@GetRoomRows)
+               AND iCol >= 1
+               AND iCol <= Send(poOwner,@GetRoomCols)
+            {
+               bValid_location = TRUE;
+            }
+         }
+
+         if bValid_location
+         {
+            oBunny = Create(&KillerBunny);
+            Send(poOwner,@NewHold,#what=oBunny,#new_row=iRow,#new_col=iCol);
+            if poTarget <> $
+               AND IsClass(poTarget,&Player)
+            {
+               Post(oBunny,@TargetSwitch,#what=poTarget,#iHatred=100);
+               Post(oBunny,@EnterStateChase,#target=poTarget,#actnow=True);
+            }
+
+            % Do an attack animation.
+            Send(self,@MonsterAttack);
+
+            for i in Send(poOwner,@GetHolderActive)
+            {
+               oObject = Send(poOwner,@HolderExtractObject,#data=i);
+               if IsClass(oObject,&Player)
+               {
+                  Send(oObject,@MsgSendUser,#message_rsc=vrSpawnBunny);
+               }
+            }
+         }
+      }
+
+      ptSpawnKillerBunny = CreateTimer(self,@SpawnKillerBunny,piSpawnBunnyTime);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

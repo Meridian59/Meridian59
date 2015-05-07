@@ -1,0 +1,147 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Yrxlsap is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Yrxlsap_name_rsc = "yrxl sap"
+   Yrxlsap_icon_rsc = yrxlsap.bgf
+   Yrxlsap_desc_rsc = \
+   "There is but one known Yrx'l still known to civilization, "
+   "for mages have craved the blood of the eldritch tree, which "
+   "provided the lifeblood to their more powerful spells. Now that "
+   "all are extinct on Meridian's mainland and only one exists here, "
+   "it is an unspoken rule that one shall leave the tree alone, and "
+   "allow it to provide its life blood as it chooses. "
+
+   Yrxlsap_name_plural_rsc = "yrxl sap"
+   Yrxlsap_vial_name = "vial of yrxl sap"
+   Yrxlsap_vial_name_plural = "vials of yrxl sap"
+
+
+classvars:
+
+   vrName = Yrxlsap_name_rsc
+   vrIcon = Yrxlsap_icon_rsc
+   vrDesc = Yrxlsap_desc_rsc
+
+   vrName_plural = Yrxlsap_name_plural_rsc
+
+   viValue_average = 100
+   viWeight = 4
+   viBulk = 5
+
+properties:
+
+   piNumber = 1
+   pbGathered = TRUE
+
+messages:
+
+   Constructor(Gathered=TRUE)
+   {
+      pbGathered = Gathered;
+      propagate;
+   }
+
+
+   NewOwner(what = $)
+   {
+      if (poOwner <> $)
+         and (what <> $)
+         and Isclass(what,&Battler)
+      {
+         pbGathered = TRUE;
+      }
+      
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+   if not pbGathered
+      { return FALSE; }
+   propagate;
+   }
+
+
+   SendAnimation()
+   {
+      if pbGathered
+      {
+      AddPacket(1,ANIMATE_NONE,2,1);  % Bottled
+      }
+      else
+      {
+      AddPacket(1,ANIMATE_NONE,2,2);  % Ground
+      }
+      return;
+   }
+ 
+   SendLookAnimation()
+   {
+      if pbGathered
+      {
+      AddPacket(1,ANIMATE_NONE,2,1);  % Bottled
+      }
+      else
+      {
+      AddPacket(1,ANIMATE_NONE,2,2);  % Ground
+      }
+      return;
+   }
+ 
+   SendInventoryAnimation()
+   {
+      if pbGathered
+      {
+      AddPacket(1,ANIMATE_NONE,2,1);  % Bottled
+      }
+      else
+      {
+      AddPacket(1,ANIMATE_NONE,2,2);  % Ground
+      }
+      return;
+   }
+
+   getname()
+   {
+   if pbGathered
+      {
+      if piNumber = 1
+         {
+ 	 return Yrxlsap_vial_name;
+         }
+      else
+         {
+   	 return Yrxlsap_vial_name_plural;
+         }
+      }
+   else
+      {
+      if piNumber = 1
+         {
+	 return vrName;
+         }
+      else
+         {
+	 return vrName_plural;
+         }
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

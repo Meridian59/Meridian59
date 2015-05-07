@@ -471,85 +471,114 @@ int C_DumpStack(int object_id,local_var_type *local_vars,
 }
 
 int C_SendMessage(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
 {
-	val_type object_val,message_val;
-	
-	/* get the message to send first; that way other errors are more descriptive */
-	message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	if (message_val.v.tag != TAG_MESSAGE)
-	{
-		bprintf("C_SendMessage OBJECT %i can't send non-message %i,%i\n",
-			object_id,message_val.v.tag,message_val.v.data);
-		return NIL;
-	}
-	
-	/* get the object (or class or int 0) to which we are sending the message */
-	/* not to be confused with object_id, which is the 'self' object sending the message */
-	object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	
-	/* special:  sending to int 0 goes to system */
-	if (object_val.v.tag == TAG_INT && object_val.v.data == 0)
-	{
-		/* allowed to send to INT 0 rather than OBJECT 0 (obsolete but backwards compatible) */
-		object_val.v.data = GetSystemObjectID();
-	}
-	else if (object_val.v.tag == TAG_CLASS)
-	{
-		/* allowed to send to TAG_CLASS (below) */
-	}
-	else if (object_val.v.tag != TAG_OBJECT)
-	{
-		/* assumes object_id (the current 'self') is a valid object */
-		bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
-			object_id,
-			GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
-			GetNameByID(message_val.v.data), message_val.v.data,
-			object_val.v.tag,object_val.v.data);
-		return NIL;
-	}
-	
-	if (object_val.v.tag == TAG_CLASS)
-		return SendBlakodClassMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
-	else
-		return SendBlakodMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
+   val_type object_val,message_val;
+
+   /* Get the object (or class or int 0) to which we are sending the message */
+   /* Not to be confused with object_id, which is the 'self' object sending the message */
+   object_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   /* Handle the message to send first; that way other errors are more descriptive */
+   message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_SendMessage OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return NIL;
+         }
+      }
+      else
+      {
+         bprintf("C_SendMessage OBJECT %i can't send non-message %i,%i\n",
+               object_id, message_val.v.tag, message_val.v.data);
+         return NIL;
+      }
+   }
+
+   /* Special:  sending to int 0 goes to system */
+   if (object_val.v.tag == TAG_INT && object_val.v.data == 0)
+   {
+      /* Allowed to send to INT 0 rather than OBJECT 0 (obsolete but backwards compatible) */
+      object_val.v.data = GetSystemObjectID();
+   }
+   else if (object_val.v.tag == TAG_CLASS)
+   {
+      /* allowed to send to TAG_CLASS (below) */
+   }
+   else if (object_val.v.tag != TAG_OBJECT)
+   {
+      /* Assumes object_id (the current 'self') is a valid object */
+      bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+         object_id,
+         GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
+         GetNameByID(message_val.v.data), message_val.v.data,
+         object_val.v.tag,object_val.v.data);
+         return NIL;
+   }
+
+   if (object_val.v.tag == TAG_CLASS)
+      return SendBlakodClassMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
+   else
+      return SendBlakodMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
 }
 
 int C_PostMessage(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
 {
-	val_type object_val,message_val;
-	
-	/* get message to send first; later errors can be more descriptive */
-	message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	if (message_val.v.tag != TAG_MESSAGE)
-	{
-		bprintf("C_PostMessage OBJECT %i can't send non-messsage %i,%i\n",
-			object_id,message_val.v.tag,message_val.v.data);
-		return NIL;
-	}
-	
-	object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	if (object_val.v.tag != TAG_OBJECT)
-	{
-		/* assumes object_id (the current 'self') is a valid object */
-		bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
-			object_id,
-			GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
-			GetNameByID(message_val.v.data), message_val.v.data,
-			object_val.v.tag,object_val.v.data);
-		return NIL;
-	}
-	
-	PostBlakodMessage(object_val.v.data,message_val.v.data,
-		num_name_parms,name_parm_array);
-	return NIL;
+   val_type object_val,message_val;
+
+   object_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   /* Handle the message to send first; that way other errors are more descriptive */
+   message_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (message_val.v.tag != TAG_MESSAGE)
+   {
+      // Handle message names passed as strings.
+      if (message_val.v.tag == TAG_STRING)
+      {
+         message_val.v.data = GetIDByName(GetStringByID(message_val.v.data)->data);
+         if (message_val.v.data == INVALID_ID)
+         {
+            bprintf("C_PostMessage OBJECT %i can't use bad string message %i,\n",
+               object_id, message_val.v.tag);
+            return NIL;
+         }
+      }
+      else
+      {
+         bprintf("C_PostMessage OBJECT %i can't send non-messsage %i,%i\n",
+            object_id,message_val.v.tag,message_val.v.data);
+         return NIL;
+      }
+   }
+
+   if (object_val.v.tag != TAG_OBJECT)
+   {
+      /* Assumes object_id (the current 'self') is a valid object */
+      bprintf("C_PostMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+         object_id,
+         GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
+         GetNameByID(message_val.v.data), message_val.v.data,
+         object_val.v.tag,object_val.v.data);
+      return NIL;
+   }
+
+   PostBlakodMessage(object_val.v.data,message_val.v.data,
+      num_name_parms,name_parm_array);
+   return NIL;
 }
 
 int C_CreateObject(int object_id,local_var_type *local_vars,
@@ -1047,7 +1076,7 @@ int C_StringContain(int object_id,local_var_type *local_vars,
 //	first converting to uppercase and squashing tabs and spaces to a single space
 bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
 {
-	if (!s1 || !s2 || len_s1 <= 0 || len_s1 <= 0)
+	if (!s1 || !s2 || len_s1 <= 0 || len_s2 <= 0)
 		return false;
 	
 	FuzzyCollapseString(buf0, s1, len_s1);
@@ -1208,71 +1237,102 @@ int C_ParseString(int object_id,local_var_type *local_vars,
 }
 
 int C_SetString(int object_id,local_var_type *local_vars,
-				int num_normal_parms,parm_node normal_parm_array[],
-				int num_name_parms,parm_node name_parm_array[])
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
 {
-	val_type s1_val,s2_val;
-	string_node *snod,*snod2;
-	resource_node *r;
-	
-	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	
-	if (s1_val.v.tag != TAG_STRING)
-	{
-		bprintf("C_SetString can't set non-string %i,%i\n",
-			s1_val.v.tag,s1_val.v.data);
-		return NIL;
-	}
-	
-	snod = GetStringByID(s1_val.v.data);
-	if (snod == NULL)
-	{
-		bprintf("C_SetString can't set invalid string %i,%i\n",
-			s1_val.v.tag,s1_val.v.data);
-		return NIL;
-	}
-	
-	s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	switch (s2_val.v.tag)
-	{
-	case TAG_STRING :
-		snod2 = GetStringByID( s2_val.v.data);
-		if( snod2 == NULL )
-		{
-			bprintf( "C_SetString can't find string %i,%i\n",
-				s2_val.v.tag, s2_val.v.data );
-			return NIL;
-		}
-		//bprintf("SetString string%i<--string%i\n",s1_val.v.data,s2_val.v.data);
-		SetString(snod,snod2->data,snod2->len_data);
-		break;
-		
-	case TAG_TEMP_STRING :
-		snod2 = GetTempString();
-		//bprintf("SetString string%i<--tempstring\n",s1_val.v.data);
-		SetString(snod,snod2->data,snod2->len_data);
-		break;
-		
-	case TAG_RESOURCE :
-		r = GetResourceByID(s2_val.v.data);
-		if (r == NULL)
-		{
-			bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
-			return NIL;
-		}
-		//bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
-		SetString(snod,r->resource_val,strlen(r->resource_val));
-		break;
-		
-	default :
-		bprintf("C_SetString can't set from non-string thing %i,%i\n",
-			s2_val.v.tag,s2_val.v.data);
-		return NIL;
-	}
-	
-	return s1_val.int_val;
+   val_type s1_val,s2_val;
+   string_node *snod,*snod2;
+   resource_node *r;
+   const char *str;
+
+   s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   if (s1_val.v.tag != TAG_STRING)
+   {
+      /* If we're passed a NULL string, create one and use that. Allows
+       * us to create and set a string with one call.*/
+      if (s1_val.v.tag == TAG_NIL)
+      {
+         s1_val.v.tag = TAG_STRING;
+         s1_val.v.data = CreateString("");
+      }
+      else
+      {
+         bprintf("C_SetString can't set non-string %i,%i\n",
+            s1_val.v.tag,s1_val.v.data);
+         return NIL;
+      }
+   }
+
+   snod = GetStringByID(s1_val.v.data);
+   if (snod == NULL)
+   {
+      bprintf("C_SetString can't set invalid string %i,%i\n",
+         s1_val.v.tag,s1_val.v.data);
+      return NIL;
+   }
+
+   s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   switch (s2_val.v.tag)
+   {
+   case TAG_STRING :
+      snod2 = GetStringByID( s2_val.v.data);
+      if( snod2 == NULL )
+      {
+         bprintf( "C_SetString can't find string %i,%i\n",
+            s2_val.v.tag, s2_val.v.data );
+         return NIL;
+      }
+      //bprintf("SetString string%i<--string%i\n",s1_val.v.data,s2_val.v.data);
+      SetString(snod,snod2->data,snod2->len_data);
+      break;
+
+   case TAG_TEMP_STRING :
+      snod2 = GetTempString();
+      //bprintf("SetString string%i<--tempstring\n",s1_val.v.data);
+      SetString(snod,snod2->data,snod2->len_data);
+      break;
+
+   case TAG_RESOURCE :
+      r = GetResourceByID(s2_val.v.data);
+      if (r == NULL)
+      {
+         bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
+         return NIL;
+      }
+      //bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
+      SetString(snod,r->resource_val,strlen(r->resource_val));
+      break;
+
+   case TAG_MESSAGE :
+      str = GetNameByID(s2_val.v.data);
+      if (str == NULL)
+      {
+         bprintf("C_SetString can't set from invalid message %i\n",s2_val.v.data);
+         return NIL;
+      }
+      SetString(snod,GetNameByID(s2_val.v.data),strlen(GetNameByID(s2_val.v.data)));
+      break;
+
+   case TAG_DEBUGSTR :
+      str = GetClassDebugStr(GetClassByID(GetKodStats()->interpreting_class),s2_val.v.data);
+      if (str == NULL)
+      {
+         bprintf("C_SetString can't set from invalid debug string %i\n",s2_val.v.data);
+         return NIL;
+      }
+      SetString(snod,(char*)str,strlen(str));
+      break;
+
+   default :
+      bprintf("C_SetString can't set from non-string thing %i,%i\n",
+         s2_val.v.tag,s2_val.v.data);
+      return NIL;
+   }
+
+   return s1_val.int_val;
 }
 
 int C_ClearTempString(int object_id,local_var_type *local_vars,
@@ -1388,6 +1448,24 @@ int C_CreateString(int object_id,local_var_type *local_vars,
 	ret_val.v.data = CreateString("");
 	
 	return ret_val.int_val;
+}
+
+int C_IsString(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type var_check,ret_val;
+
+   var_check = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+            normal_parm_array[0].value);
+
+   ret_val.v.tag = TAG_INT;
+   if (var_check.v.tag == TAG_STRING)
+      ret_val.v.data = True;
+   else
+      ret_val.v.data = False;
+
+   return ret_val.int_val;
 }
 
 int C_StringLength(int object_id,local_var_type *local_vars,
@@ -1983,19 +2061,61 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_Cons(int object_id,local_var_type *local_vars,
-		   int num_normal_parms,parm_node normal_parm_array[],
-		   int num_name_parms,parm_node name_parm_array[])
+/*
+ * C_AppendListElem: takes a list and an item to be appended to the list,
+ *    appends the item to the end of the list. Returns the original list
+ *    with the item appended to the end.
+ */
+int C_AppendListElem(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
 {
-	val_type source_val,dest_val,ret_val;
-	
-	source_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	dest_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	ret_val.v.tag = TAG_LIST;
-	ret_val.v.data = Cons(source_val,dest_val);
-	return ret_val.int_val;
+   val_type source_val, list_val, ret_val;
+   
+   source_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      if (list_val.v.tag != TAG_NIL)
+      {
+         bprintf("C_AppendListElem object %i can't add to non-list %i,%i\n",
+            object_id,list_val.v.tag,list_val.v.data);
+         return list_val.int_val;
+      }
+   }
+
+   ret_val.v.tag = TAG_LIST;
+   ret_val.v.data = AppendListElem(source_val,list_val);
+   return ret_val.int_val;
+}
+
+int C_Cons(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type source_val,dest_val,ret_val;
+
+   source_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   dest_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (dest_val.v.tag != TAG_LIST)
+   {
+      if (dest_val.v.tag != TAG_NIL)
+      {
+         bprintf("C_Cons object %i can't add to non-list %i,%i\n",
+            object_id,dest_val.v.tag,dest_val.v.data);
+         return dest_val.int_val;
+      }
+   }
+
+   ret_val.v.tag = TAG_LIST;
+   ret_val.v.data = Cons(source_val,dest_val);
+   return ret_val.int_val;
 }
 
 int C_First(int object_id,local_var_type *local_vars,
@@ -2192,6 +2312,101 @@ int C_SetNth(int object_id,local_var_type *local_vars,
 		normal_parm_array[2].value);
 	
 	return SetNth(n_val.v.data,list_val.v.data,set_val);
+}
+
+/*
+ * C_InsertListElem:  takes a list, a list position and one piece of data, adds
+ *    the data at the given position. If the list position is larger than the
+ *    list, it is added to the end. If list position 0 is sent, just returns
+ *    the initial list, otherwise returns the altered list.
+ */
+int C_InsertListElem(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type n_val,list_val,set_val, ret_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   if (list_val.v.tag != TAG_LIST)
+   {
+      if (list_val.v.tag != TAG_NIL)
+      {
+         bprintf("C_InsertListElem object %i can't add elem to non-list %i,%i\n",
+            object_id,list_val.v.tag,list_val.v.data);
+         return list_val.int_val;
+      }
+   }
+   n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (n_val.v.tag != TAG_INT)
+   {
+      bprintf("C_InsertListElem object %i can't add elem with n = non-int %i, %i, returning list.\n",
+         object_id,n_val.v.tag,n_val.v.data);
+      return list_val.int_val;
+   }
+
+   set_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+      normal_parm_array[2].value);
+
+   ret_val.v.tag = TAG_LIST;
+
+   // Handle the case where the new element should be in the first position.
+   // Should have called Cons to do this. Cons also adds to $ lists.
+   if (n_val.v.data == 1 || list_val.v.tag == TAG_NIL)
+      ret_val.v.data = Cons(set_val,list_val);
+   else
+      ret_val.v.data = InsertListElem(n_val.v.data,list_val.v.data,set_val);
+
+   return ret_val.int_val;
+}
+
+/*
+ * C_SwapListElem: takes a list and two integers representing elements
+ *                 in the list, swaps the data in the two elements.
+ *                 Returns NIL.
+ */
+int C_SwapListElem(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, n_val, m_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_SwapListElem object %i can't set elem of non-list %i,%i\n",
+         object_id,list_val.v.tag,list_val.v.data);
+      return NIL;
+   }
+
+   n_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (n_val.v.tag != TAG_INT)
+   {
+      bprintf("C_SwapListElem object %i can't take Nth with n = non-int %i,%i\n",
+         object_id,n_val.v.tag,n_val.v.data);
+      return NIL;
+   }
+
+   m_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+      normal_parm_array[2].value);
+   if (m_val.v.tag != TAG_INT)
+   {
+      bprintf("C_SwapListElem object %i can't take Nth with n = non-int %i,%i\n",
+         object_id,m_val.v.tag,m_val.v.data);
+      return NIL;
+   }
+
+   if (n_val.v.data == 0 || m_val.v.data == 0)
+   {
+      bprintf("C_SwapListElem object %i given invalid list element, elements are %i,%i\n",
+         object_id,n_val.v.data,m_val.v.data);
+      return NIL;
+   }
+
+   return SwapListElem(list_val.v.data,n_val.v.data,m_val.v.data);
 }
 
 int C_DelListElem(int object_id,local_var_type *local_vars,

@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WebMoss is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WebMoss_name_rsc = "web moss"
+   WebMoss_icon_rsc = webmoss.bgf
+   WebMoss_desc_rsc = \
+   "One of the world's more ingenious carniverous plants, "
+   "web moss captures small insects much as a spider web does, "
+   "and then folds over on itself to devour it's prey. Harvesting "
+   "this substance is a dangerous and tedious process, but once "
+   "the moss has dried, it can be invaluable for the casting of "
+   "some spells. "
+
+   WebMoss_name_plural_rsc = "web moss"
+
+classvars:
+
+   vrName = WebMoss_name_rsc
+   vrIcon = WebMoss_icon_rsc
+   vrDesc = WebMoss_desc_rsc
+
+   vrName_plural = WebMoss_name_plural_rsc
+
+   viValue_average = 70
+   viWeight = 1
+   viBulk = 3
+
+properties:
+
+   piNumber = 3
+
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

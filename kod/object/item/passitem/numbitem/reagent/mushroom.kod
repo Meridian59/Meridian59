@@ -1,0 +1,53 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Mushroom is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   mushroom_name_rsc = "mushroom"
+   mushroom_icon_rsc = mushroom.bgf
+   mushroom_desc_rsc = \
+      "These mushrooms are a common magical reagent."
+
+   mushroom_name_plural_rsc = "mushrooms"
+
+classvars:
+
+   vrName = mushroom_name_rsc
+   vrIcon = mushroom_icon_rsc
+   vrDesc = mushroom_desc_rsc
+
+   vrName_plural = mushroom_name_plural_rsc
+
+   viValue_average = 10
+   viWeight = 2
+   viBulk = 5
+
+properties:
+
+   piNumber = 4
+
+messages:
+
+   Constructor()
+   {
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4,#color2=XLAT_TO_SKIN4);
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

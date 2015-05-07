@@ -14,7 +14,6 @@ constants:
 
    include blakston.khd
 
-
 resources:
 
    room_barapoth = barapoth.roo
@@ -45,7 +44,6 @@ properties:
 
 messages:
 
-
    CreateStandardExits()
    {
       plExits = $;
@@ -63,16 +61,8 @@ messages:
       Send(self,@NewHold,#what=Create(&BarloqueApothecary),
            #new_row=3,#new_col=6,#new_angle=ANGLE_SOUTH);
 
-      Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=9,#new_col=3);
-      Send(self,@NewHold,#what=Create(&Brazier),
-           #new_row=9,#new_col=9);
-%      Send(self,@NewHold,#what=Create(&Brazier),
-%           #new_row=3,#new_col=3,#fine_col=0,#fine_row=0);
-%      (no light circle for this brazier)
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

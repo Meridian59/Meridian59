@@ -1,0 +1,405 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GameEventEngine is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+properties:
+
+   plGameEvents = $
+   plActiveEvents = $
+   ptMaintenance = $
+   piMaintenanceInterval = 1000
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@Recreate);
+
+      return;
+   }
+
+   OnTimer()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@Update);
+      }
+
+      if plActiveEvents <> $
+      {
+         CreateTimer(self,@OnTimer,piMaintenanceInterval);
+      }
+
+      return;
+   }
+
+   Recreate()
+   {
+      plGameEvents = $;
+      plActiveEvents = $;
+
+      Debug("Creating Events");
+      plGameEvents = Cons(&RatInvasion,plGameEvents);
+      plGameEvents = Cons(&OrcInvasion,plGameEvents);
+
+      return;
+   }
+
+   Delete()
+   {
+      return;
+   }
+
+   NewYear()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@NewYear);
+      }
+
+      return;
+   }
+
+   NewMinute()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@NewMinute);
+      }
+
+      return;
+   }
+
+   NewHour()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@NewHour);
+      }
+
+      return;
+   }
+
+   NewDay()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@NewDay);
+      }
+
+      return;
+   }
+
+   NewMonth()
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@NewMonth);
+      }
+
+      return;
+   }
+
+   ScheduleEventInMinutes(iClass=$,minutes=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                           parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallbackInMinutes,
+                     #oObject=self,
+                     #minutes=minutes,
+                     #message=sMessage,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+      
+      return;
+   }
+
+   ScheduleEventInHours(iClass=$,hours=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                        parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallbackInHours,
+                     #oObject=self,
+                     #hours=hours,
+                     #message=sMessage,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+
+      return;
+   }
+
+   ScheduleEventInDays(iClass=$,days=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                        parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallbackInDays,
+                     #oObject=self,
+                     #days=days,
+                     #message=sMessage,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+
+      return;
+   }
+
+   ScheduleEventInWeeks(iClass=$,weeks=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                        parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallbackInDays,
+                     #oObject=self,
+                     #days=weeks * 7,
+                     #message=sMessage,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+
+      return;
+   }
+
+   ScheduleEventInMonths(iClass=$,months=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                        parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallbackInMonths,
+                     #oObject=self,
+                     #months=months,
+                     #message=sMessage,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+
+      return;
+   }
+
+   ScheduleEventInYears(iClass=$,years=$,parm1=$,parm2=$,parm3=$,parm4=$,
+                        parm5=$,parm6=$,parm7=$)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallbackInYears,
+                     #oObject=self,
+                     #years=years,
+                     #message=sMessage,
+                     #parm1=iClass,
+                     #parm2=parm2,
+                     #parm3=parm3,
+                     #parm4=parm4,
+                     #parm5=parm5,
+                     #parm6=parm6,
+                     #parm7=parm7);
+
+      return;
+   }
+
+   TestScheduleEvent(iHour=$,iMinute=$)
+   {
+      local iYear, iMonth, iDay;
+
+      iYear = Send(Send(SYS,@GetRealTimeObject),@GetYear);
+      iMonth = Send(Send(SYS,@GetRealTimeObject),@GetMonth);
+      iDay = Send(Send(SYS,@GetRealTimeObject),@GetDay);
+
+      if iHour = $
+      {
+         iHour=Send(Send(SYS,@GetRealTimeObject),@GetHour);
+      }
+
+      if iMinute = $
+      {
+         iMinute = Send(Send(SYS,@GetRealTimeObject),@GetMinute) + 2;
+         if iMinute >= 60
+         {
+            iMinute = iMinute - 60;
+         }
+      }
+
+      Send(self,@ScheduleStartEvent,#iClass=&RatInvasion,
+                                    #iYear=iYear,
+                                    #iMonth=iMonth,
+                                    #iDay=iDay,
+                                    #iHour=iHour,
+                                    #iMinute=iMinute);
+
+      return;
+   }
+
+   ScheduleStartEvent(iClass=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EventStart);
+
+      Send(oRealTime,@RegisterCallback,#oObject=self,
+            #message=sMessage,#iYear=iYear,#iMonth=iMonth,
+            #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=iClass);
+
+      return;
+   }
+
+   ScheduleEndEvent(oObject=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@EndEvent);
+
+      Send(oRealTime,@RegisterCallback,#oObject=self,
+            #message=sMessage,#iYear=iYear,#iMonth=iMonth,
+            #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=oObject);
+
+      return;
+   }
+
+   ScheduleAdvanceEvent(oObject=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
+   {
+      local oRealTime, sMessage;
+
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@AdvanceEvent);
+
+      Send(oRealTime,@RegisterCallback,#oObject=self,
+            #message=sMessage,#iYear=iYear,#iMonth=iMonth,
+            #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=oObject);
+
+      return;
+   }
+
+   EventStart(parm1=$)
+   "parm1 should be the class of an event."
+   {
+      local oEvent;
+
+      oEvent = $;
+
+      if parm1 <> $
+      {
+         oEvent = Create(parm1);
+         Send(oEvent,@StartEvent);
+      }
+
+      if oEvent <> $
+      {
+         plActiveEvents = Cons(oEvent,plActiveEvents);
+         if ptMaintenance = $
+         {
+            CreateTimer(self,@OnTimer,piMaintenanceInterval);
+         }
+      }
+      else
+      {
+         Debug("Error Starting Event!",parm1);
+      }
+
+      return;
+   }
+
+   EventEnd(parm1=$)
+   "parm1 should be an active event object."
+   {
+      if parm1 <> $
+      {
+         Send(parm1,@EndEvent);
+         plActiveEvents = DelListElem(plActiveEvents,parm1);
+      }
+
+      return;
+   }
+
+   AdvanceEvent(parm1=$)
+   "parm1 should be an active event object."
+   {
+      if parm1 <> $
+      {
+         Send(parm1,@AdvanceEvent);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

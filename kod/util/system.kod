@@ -272,6 +272,19 @@ resources:
    nerudite_damage_name = "nerudite"
    silver_damage_name = "silver"
    unknown_damage_name = "unknown"
+
+   inventory_weapon_class_name = "weapons"
+   inventory_armor_class_name = "armors"
+   inventory_shield_class_name = "shields"
+   inventory_helmet_class_name = "helmets"
+   inventory_food_class_name = "food"
+   inventory_ammo_class_name = "ammo"
+   inventory_reagent_class_name = "reagents"
+   inventory_rod_class_name = "rods"
+   inventory_potion_class_name = "potions"
+   inventory_wand_class_name = "wands"
+   inventory_scroll_class_name = "scrolls"
+   inventory_ring_class_name = "rings"
    
    system_message_sound = system.wav
    
@@ -314,6 +327,8 @@ properties:
    piDay = 0
    piYear = 0
 
+   poRealTime = $
+   
    % outdoor brightness level (0-100), updated hourly
    piBrightness
    % updated here and there
@@ -339,6 +354,9 @@ properties:
    
    % Singleton object that holds global game settings
    poSettings = $
+
+   % object that handles automated events
+   poEventEngine = $
 
    poWarEvent = $
    
@@ -463,6 +481,8 @@ messages:
    {
       % This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
+      
+      Send(self,@RecreateRealTime);
 
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -482,6 +502,7 @@ messages:
 
       Send(self,@RecreateAssassinGame);
       Send(self,@RecreateQuestEngine);
+      Send(self,@RecreateEventEngine);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
@@ -567,6 +588,8 @@ messages:
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
       
+      Send(self,@RecreateRealTime);
+      
       plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
       plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
 
@@ -590,8 +613,9 @@ messages:
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
       Send(self,@RecreateWarEvent);
-	  Send(self,@CreateAllSpellsIfNew);
-	  Send(self,@CreateAllRoomsIfNew);
+      Send(self,@CreateAllSpellsIfNew);
+      Send(self,@CreateAllRoomsIfNew);
+      Send(self,@RecreateEventEngine);
 
       if plSavedFlagStates <> $
       {
@@ -793,6 +817,20 @@ messages:
       }
 
       Send(room,@Delete);
+
+      return;
+   }
+   
+   RecreateRealTime()
+   {
+      if poRealTime <> $
+      {
+         Send(poRealTime,@Recreate);
+      }
+      else
+      {
+         poRealTime = Create(&RealTime);
+      }
 
       return;
    }
@@ -1673,7 +1711,7 @@ messages:
 
          if (Send(killer,@FindHoldingActive,#class=&HunterSword) <> $)
          {
-            Send(poNecromancerBalance,@IncremeNthKCounter);
+            Send(poNecromancerBalance,@IncrementHKCounter);
          }
       }
 
@@ -3757,7 +3795,10 @@ messages:
       Create(&FireElementalTreasure);
       Create(&IceElementalTreasure);
       Create(&NeruditeElementalTreasure);
-      
+
+      Create(&EasterBunnyTreasure);
+      Create(&KillerBunnyTreasure);
+
       return;
    }
 
@@ -4708,6 +4749,20 @@ messages:
       return TRUE;
    }
 
+   RecreateEventEngine()
+   {
+      if poEventEngine <> $
+      {
+         Send(poEventEngine,@Recreate);
+      }
+      else
+      {
+         poEventEngine = Create(&GameEventEngine);
+      }
+
+      return TRUE;
+   }
+   
    GetNecromancerBalance()
    {
       return poNecromancerBalance;
@@ -4846,6 +4901,16 @@ messages:
       }
 
       return;
+   }
+   
+   GetRealTimeObject()
+   {
+      return poRealTime;
+   }
+   
+   GetEventEngine()
+   {
+      return poEventEngine;
    }
    
    GetQormas()
@@ -5022,6 +5087,8 @@ messages:
       plMonsterTemplates = cons(create(&Kriipa),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Elephant),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Bunny),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&KillerBunny),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&EasterBunny),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Wolf),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Chupacabra),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Minotaur),plMonsterTemplates);
@@ -5353,6 +5420,8 @@ messages:
       plItemTemplates = cons(create(&Grapes),plItemTemplates);
       plItemTemplates = cons(create(&Apple),plItemTemplates);
 
+      plItemTemplates = cons(create(&EasterEgg),plItemTemplates);
+
       % Head
       plItemTemplates = cons(create(&Helm),plItemTemplates);
       plItemTemplates = cons(create(&SimpleHelm),plItemTemplates);
@@ -5412,6 +5481,12 @@ messages:
       plItemTemplates = cons(create(&Axe),plItemTemplates);
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
+
+      plItemTemplates = cons(create(&ShieldRod),plItemTemplates);
+      plItemTemplates = cons(create(&DamageRod),plItemTemplates);
+      plItemTemplates = cons(create(&BreakRodHold),plItemTemplates);
+      plItemTemplates = cons(create(&BreakRodBlind),plItemTemplates);
+      plItemTemplates = cons(create(&BreakRodPurge),plItemTemplates);
 
       return;
    }
@@ -7395,6 +7470,149 @@ messages:
       }
       
       return Length(lUserIPList);
+   }
+   
+   SortItemsByType(lItems = $, lClassOrder=$)
+   {
+      local lBaseList, lSortedItems, oItem, lSuperClass, cClass,
+            lTempClassOrder;
+      
+      if lItems = $
+      {
+         return $;
+      }
+      
+      if lClassOrder = $
+      {
+         lTempClassOrder = [&Weapon,
+                            &DefenseModifier,
+                            &Rod,
+                            &Ring,
+                            &NumberItem];
+      }
+      else
+      {
+         lTempClassOrder = lClassOrder;
+      }
+      
+      lBaseList = Send(self,@ListCopy,#source=lItems);
+      
+      lSortedItems = $;
+      for cClass in lTempClassOrder
+      {
+         for oItem in lBaseList
+         {
+            if IsClass(oItem,cClass)
+            {
+               lSortedItems = Cons(oItem,lSortedItems);
+               lBaseList = DelListElem(lBaseList,oItem);
+            }
+         }
+      }
+
+      % Anything left over
+      for oItem in lBaseList
+      {
+         lSortedItems = Cons(oItem,lSortedItems);
+         lBaseList = DelListElem(lBaseList,oItem);
+      }
+      
+      if lBaseList <> $
+      {
+         return lItems;
+         Debug("SortItemsByType attempted without handling all items.");
+      }
+      
+      return lSortedItems;
+   }
+   
+   GetSortInfo()
+   {
+      local lSortInfo;
+      
+      lSortInfo = [[inventory_weapon_class_name,&Weapon],
+                   [inventory_armor_class_name,&Armor],
+                   [inventory_shield_class_name,&Shield],
+                   [inventory_helmet_class_name,&Helmet],
+                   [inventory_food_class_name,&Food],
+                   [inventory_ammo_class_name,&Ammo],
+                   [inventory_reagent_class_name,&Reagent],
+                   [inventory_rod_class_name,&Rod],
+                   [inventory_potion_class_name,&Potion],
+                   [inventory_wand_class_name,&Wand],
+                   [inventory_scroll_class_name,&Scroll],
+                   [inventory_ring_class_name,&Ring]];
+      
+      return lSortInfo;
+   }
+   
+   FindItemClassByName(string=$)
+   {
+      local i;
+      
+      for i in plItemTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return GetClass(i);
+         }
+      }
+      
+      for i in plMoneyTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return GetClass(i);
+         }
+      }
+      
+      return $;
+   }
+   
+   FindTemplateItemByName(string=$)
+   {
+      local i;
+
+      for i in plItemTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return i;
+         }
+      }
+      
+      for i in plMoneyTemplates
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            return i;
+         }
+      }
+      
+      return $;
+   }
+   
+   FindTemplateItemByClass(cClass=$)
+   {
+      local i;
+
+      for i in plItemTemplates
+      {
+         if GetClass(i) = cClass
+         {
+            return i;
+         }
+      }
+      
+      for i in plMoneyTemplates
+      {
+         if GetClass(i) = cClass
+         {
+            return i;
+         }
+      }
+      
+      return $;
    }
 
 end

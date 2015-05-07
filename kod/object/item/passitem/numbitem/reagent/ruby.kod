@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ruby is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+   ruby_name_rsc = "ruby"
+   ruby_icon_rsc = ruby.bgf
+   ruby_desc_rsc =  \
+   "This fire ruby is larger than a man's fist and extremely valuable."
+   ruby_name_plural_rsc = "rubies"
+
+classvars:
+
+   vrName = ruby_name_rsc
+   vrName_plural = ruby_name_plural_rsc
+   vrIcon = ruby_icon_rsc
+   vrDesc = ruby_desc_rsc
+
+   viBulk = 1
+   viWeight = 1
+
+   viValue_average = 200
+   viItem_type = ITEMTYPE_GEM | ITEMTYPE_REAGENT
+
+   viGround_group = 2
+
+properties:
+
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

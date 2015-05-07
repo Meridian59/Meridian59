@@ -106,10 +106,11 @@ enum { A_NOACTION = 0,
 #define IsAttackAction(action) ( (action) == A_ATTACK || (action) == A_ATTACKCLOSEST)
 #define IsViewAction(action)   ( (action) == A_LOOKUP || (action) == A_LOOKDOWN)
 #define IsMapMoveAction(action)      ( (action) == A_MAPZOOMIN || (action) == A_MAPZOOMOUT)
-
+#define IsTabAction(action) ( (action) == A_TABFWD || (action) == A_TABBACK)
+#define IsMouseLookAction(action) ( (action) == A_MOUSELOOK)
 // True iff action should cause auto-repeat
 #define RepeatAction(a) (IsMoveAction(a) || IsTurnAction(a) || IsCursorAction(a) || \
-			 IsViewAction(a) || IsMapMoveAction(a))
+			 IsViewAction(a) || IsMapMoveAction(a) || IsTabAction(a) || IsMouseLookAction(a))
 
 #ifdef __cplusplus
 extern "C" {

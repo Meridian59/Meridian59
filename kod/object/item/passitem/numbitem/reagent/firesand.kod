@@ -1,0 +1,132 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FireSand is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FireSand_name_rsc = "firesand"
+   FireSand_icon_rsc = firesand.bgf
+   FireSand_desc_rsc = \
+      "Strangely warm and of unusual color, this sand "
+      "catches your eye amongst its ordinary counterparts."
+
+   FireSand_name_plural_rsc = "firesand"
+
+   FireSand_name_bag = "bag of firesand"
+   FireSand_name_bag_plural = "bags of firesand"
+
+classvars:
+
+   vrName = FireSand_name_rsc
+   vrIcon = FireSand_icon_rsc
+   vrDesc = FireSand_desc_rsc
+
+   vrName_plural = FireSand_name_plural_rsc
+
+   viValue_average = 30
+   viWeight = 7
+   viBulk = 4
+
+properties:
+
+   piNumber = 4
+   pbGathered = TRUE
+
+messages:
+
+   Constructor(Gathered=TRUE)
+   {
+      pbGathered = Gathered;
+      
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      if pbGathered
+      {
+         if poOwner <> $ AND IsClass(poOwner,&Player)
+         {
+            AddPacket(1,ANIMATE_NONE, 2,1);
+         }
+         else
+         {
+            AddPacket(1,ANIMATE_NONE, 2,2);
+         }
+      
+         return;
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,3);
+      }
+      
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE, 2,1);
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      return Send(self,@SendAnimation);
+   }
+
+   NewOwner(what = $)
+   {
+      if poOwner <> $
+         AND (what = $ OR IsClass(what,&Battler))
+      {
+         pbGathered = TRUE;
+      }
+      
+      propagate;
+   }
+
+   GetName()
+   {
+      if pbGathered
+      {
+         if piNumber = 1
+         {
+            return FireSand_name_bag;
+         }
+         else
+         {
+            return FireSand_name_bag_plural;
+         }
+      }
+      else
+      {
+         if piNumber = 1
+         {
+            return vrName;
+         }
+         else
+         {
+            return vrName_plural;
+         }
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KriipaClaw is Reagent
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KriipaClaw_name_rsc = "kriipa claw"
+   KriipaClaw_icon_rsc = kriclaw.bgf
+   KriipaClaw_desc_rsc = \
+   "The weapons of the dangerous Kriipa, Perfect Kriipa claws are "
+   "hard to come by, but handy to have about."
+
+   KriipaClaw_name_plural_rsc = "kriipa claws"
+
+classvars:
+
+   vrName = KriipaClaw_name_rsc
+   vrIcon = KriipaClaw_icon_rsc
+   vrDesc = KriipaClaw_desc_rsc
+
+   vrName_plural = KriipaClaw_name_plural_rsc
+
+   viValue_average = 60
+   viWeight = 4
+   viBulk = 2
+
+properties:
+
+   piNumber = 3
+
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

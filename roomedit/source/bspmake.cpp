@@ -58,6 +58,15 @@ void reduce(double *a, double *b)
      *b /= d;
   }
 }
+/*
+ * almost_equal: returns TRUE if the two doubles are essentially equal.
+ */
+Bool almost_equal(double a, double b)
+{
+   if (a - b <= 0.001 && a - b >= -0.001)
+      return TRUE;
+   return FALSE;
+}
 /*****************************************************************************/
 /*
  * BSPDumpWall
@@ -613,21 +622,16 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
          {
             /* we may need to reverse the wall */
             BSPGetLineEquationFromWall(wall, &a2, &b2, &c2);
-            long ra1, ra2, rb1, rb2;
-            ra1 = round(a);
-            ra2 = round(a2);
-            rb1 = round(b);
-            rb2 = round(b2);
-            if (ra1 == ra2 && rb1 == rb2)
+            if (almost_equal(a, a2) && almost_equal(b,b2))
                ;          /* we're OK */
-            else if (ra1 == -ra2 || rb1 == -rb2)
+            else if (almost_equal(a,-a2) || almost_equal(b,-b2))
                BSPFlipWall(wall);
             else
             {
                //LogError("something is wacky in BSPSplitWalls! "
                //"(a = %6.4f, a2 = %6.4f, b = %6.4f, b2= %6.4f\n", ra1, ra2, rb1, rb2);
                LogError("something is wacky in BSPSplitWalls! "
-                  "(a = %li, a2 = %li, b = %li, b2= %li\n", ra1, ra2, rb1, rb2);
+                  "(a = %6.4f, a2 = %6.4f, b = %6.4f, b2= %6.4f\n", a, a2, b, b2);
             }
 
             wall->next = *root_walls;

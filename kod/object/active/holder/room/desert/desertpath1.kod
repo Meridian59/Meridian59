@@ -43,7 +43,7 @@ messages:
    {
       plEdge_Exits = $;
       plEdge_Exits = Cons([ LEAVE_EAST, RID_WAYLAYOASIS, 20, 36, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTCLIFFACESS, 100, 50, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTCLIFFACCESS, 100, 50, ROTATE_NONE ],plEdge_Exits);
 
       propagate;
    }

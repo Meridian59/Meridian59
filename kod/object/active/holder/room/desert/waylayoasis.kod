@@ -34,7 +34,7 @@ properties:
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    prRoom = room_waylayoasis
-   piRoom_num = RID_WAYLAY_OASIS
+   piRoom_num = RID_WAYLAYOASIS
 
 messages:
 

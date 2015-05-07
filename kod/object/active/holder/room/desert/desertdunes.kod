@@ -23,8 +23,8 @@ classvars:
 
    vrName = room_name_desertdunes
 
-   viTeleport_row = 10
-   viTeleport_col = 10
+   viTeleport_row = 60
+   viTeleport_col = 102
 
 properties:
 
@@ -42,10 +42,10 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([ LEAVE_NORTH, RID_DESERTDUNES, 20, 36, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DESERTDUNES, 20, 36, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTDUNES, 20, 36, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTCLIFFACCESS, 100, 50, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_NORTH, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTCLIFFACCESS, 10, 39, ROTATE_NONE ],plEdge_Exits);
 
       propagate;
    }

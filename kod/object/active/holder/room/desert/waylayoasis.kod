@@ -23,8 +23,8 @@ classvars:
 
    vrName = room_name_waylayoasis
 
-   viTeleport_row = 10
-   viTeleport_col = 10
+   viTeleport_row = 58
+   viTeleport_col = 51
 
 properties:
 
@@ -42,8 +42,8 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTPATH1, 20, 36, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTDUNES, 100, 50, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTPATH1, 11, 58, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
 
       propagate;
    }

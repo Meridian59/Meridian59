@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DesertDunes is DesertRoom
+DesertShore2 is DesertRoom
 
 constants:
 
@@ -16,12 +16,12 @@ constants:
 
 resources:
 
-   room_desertdunes = desertdunes.roo
-   room_name_desertdunes = "The Black Desert"
+   room_desertshore2 = desertshore2.roo
+   room_name_desertshore2 = "Solitary Shoreline"
 
 classvars:
 
-   vrName = room_name_desertdunes
+   vrName = room_name_desertshore2
 
    viTeleport_row = 60
    viTeleport_col = 102
@@ -33,8 +33,8 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   prRoom = room_desertdunes
-   piRoom_num = RID_DESERTDUNES
+   prRoom = room_desertshore2
+   piRoom_num = RID_DESERTSHORE2
 
 messages:
 
@@ -42,10 +42,9 @@ messages:
    CreateStandardExits()
    {
       plEdge_Exits = $;
-      plEdge_Exits = Cons([ LEAVE_NORTH, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTSHORE1, 60, 102, ROTATE_NONE ],plEdge_Exits);
-      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTCLIFFACCESS, 10, 39, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_NORTH, RID_DESERTSHORE3, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DESERTSHORE1, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
 
       propagate;
    }

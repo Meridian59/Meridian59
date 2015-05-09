@@ -898,7 +898,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		// this pass is a gigantic hack used to cover up the cracks
 		// caused by all the t-junctions in the old geometry.  the entire world is drawn
 		// in wireframe, with zwrite disabled.  welcome to my hell
-		if (0)
+		if (1)
 		{
 			gWireframe = TRUE;
 			IDirect3DDevice9_SetRenderState(gpD3DDevice, D3DRS_ZWRITEENABLE, FALSE);
@@ -4741,8 +4741,8 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
 		invZScaleHalf = pDLightCache->dLights[numLights].invXYZScaleHalf.z;
 
 		unlit = 0;
-		lightRange = (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) *
-			(pDLightCache->dLights[numLights].xyzScale.x / 1.5f);// * 2.0f;
+		lightRange = (pDLightCache->dLights[numLights].xyzScale.x * 2.0f) *
+			(pDLightCache->dLights[numLights].xyzScale.x * 2.0f);// * 2.0f;
 
 //		continue;
 
@@ -4763,7 +4763,8 @@ void D3DRenderLMapPostFloorAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_lig
 
 		if (unlit < pNode->u.leaf.poly.npts)
 		{
-			if (1)
+			// Disabled, causes some polys not to be lit when they should be.
+         if (0)
 			{
 				custom_xyz	lightVec, normal;
 				float		cosAngle;
@@ -4913,8 +4914,8 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
 
 		unlit = 0;
 
-		lightRange = (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) *
-			(pDLightCache->dLights[numLights].xyzScale.x / 1.5f);// * 2.0f;
+		lightRange = (pDLightCache->dLights[numLights].xyzScale.x * 2.0f) *
+			(pDLightCache->dLights[numLights].xyzScale.x * 2.0f);// * 2.0f;
 
 //		continue;
 
@@ -4935,7 +4936,8 @@ void D3DRenderLMapPostCeilingAdd(BSPnode *pNode, d3d_render_pool_new *pPool, d_l
 
 		if (unlit < pNode->u.leaf.poly.npts)
 		{
-			if (1)
+         // Disabled, causes some polys not to be lit when they should be.
+         if (0)
 			{
 				custom_xyz	lightVec, normal;
 				float		cosAngle;
@@ -5151,8 +5153,8 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
 		invZScaleHalf = pDLightCache->dLights[numLights].invXYZScaleHalf.z;
 
 		unlit = 0;
-		lightRange = (pDLightCache->dLights[numLights].xyzScale.x / 1.5f) *
-			(pDLightCache->dLights[numLights].xyzScale.x / 1.5f);// * 2.0f;
+		lightRange = (pDLightCache->dLights[numLights].xyzScale.x * 2.0f) *
+			(pDLightCache->dLights[numLights].xyzScale.x * 2.0f);// * 2.0f;
 
 //		continue;
 
@@ -5190,7 +5192,9 @@ void D3DRenderLMapPostWallAdd(WallData *pWall, d3d_render_pool_new *pPool, unsig
 			// check to see if dot product is necessary
 //			if ((pDLightCache->dLights[numLights].xyz.z < xyz[0].z) &&
 //				(pDLightCache->dLights[numLights].xyz.z > xyz[1].z))
-			if (1)
+
+         // Disabled, causes some polys not to be lit when they should be.
+         if (0)
 			{
 				custom_xyz	lightVec;
 				float		cosAngle;

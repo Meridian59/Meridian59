@@ -15,6 +15,8 @@
 
 Effects effects;
 
+extern Bool gD3DRedrawAll;
+
 static void EffectFlash(int duration);
 /****************************************************************************/
 /*
@@ -88,6 +90,7 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
 
    case EFFECT_SEE:
       effects.blind = False;
+      gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
       RedrawAll();
       break;
 

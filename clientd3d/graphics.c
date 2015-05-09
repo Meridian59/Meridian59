@@ -362,7 +362,7 @@ void RedrawForce(void)
    timeEndPeriod(1);
 
    // Try to redraw new graphics
-   gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+   //gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 
    if (config.showFPS)
    {

@@ -34,7 +34,7 @@
 
 // inline utility macros
 #define SWAP(a,b,tmp) (tmp)=(a);(a)=(b);(b)=(tmp)
-#define LERP(a,b,t)   ((a) + ((((b)-(a)) * (t)) / FINENESS))
+#define LERP(a,b,t)   ((a) + ((((b)-(a)) * (t)) >> LOG_FINENESS))
 
 static ID   viewer_id;          /* Id of player's object */
 static long viewer_angle;       /* Angle of viewing in pseudo degrees */
@@ -151,7 +151,7 @@ BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
  */
 static Bool AddObject(BSPnode *tree, ObjectData *object)
 {
-   long side0, side1;
+   float side0, side1;
    BSPnode *pos, *neg;
    Bool res;
    
@@ -184,15 +184,15 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
 	 pos = tree->u.internal.pos_side;
 	 neg = tree->u.internal.neg_side;
 	 
-	 if (side0 == 0 && side1 == 0)
+    if ((side0 < 0.0001f && side0 > -0.0001f) && (side1 < 0.0001f && side1 > -0.0001f))
 	    tree = (pos != NULL) ? pos : neg;
-	 else if (side0 >= 0 && side1 >= 0)
+	 else if (side0 >= 0.0001f && side1 >= 0.0001f)
 	   tree = pos;
-	 else if (side0 <= 0 && side1 <= 0)
+	 else if (side0 <= -0.0001f && side1 <= -0.0001f)
 	   tree = neg;
 	 else
 	 {   /* object segment crosses separator! */
-	    double f = ((double)side0) / (side0 - side1);
+	    float f = side0 / (side0 - side1);
 	    long xmid = FloatToInt(object->x0 + f * (object->x1 - object->x0));
 	    long ymid = FloatToInt(object->y0 + f * (object->y1 - object->y0));
 	    ObjectData *copy;
@@ -234,7 +234,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
  *    (may want to inline)
  */
 
-long GetFloorHeight(long x, long y, Sector *sector) {
+inline long GetFloorHeight(long x, long y, Sector *sector) {
 
     if (sector->sloped_floor == (SlopeData *)NULL)
 	return sector->floor_height;
@@ -250,7 +250,7 @@ long GetFloorHeight(long x, long y, Sector *sector) {
  *    (may want to inline)
  */
 
-long GetCeilingHeight(long x, long y, Sector *sector) {
+inline long GetCeilingHeight(long x, long y, Sector *sector) {
 
     if (sector->sloped_ceiling == (SlopeData *)NULL)
 	return sector->ceiling_height;
@@ -507,8 +507,8 @@ static void AddObjects(room_type *room)
       d->ncones_ptr    = &d->ncones;
 
       /* set center field */
-      a = (left_a * dx + left_b * dy) / FINENESS;
-      b = (right_a * dx + right_b * dy) / FINENESS;
+      a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
+      b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (AddObjects) %ld\n",a+b));
@@ -595,8 +595,8 @@ static void AddObjects(room_type *room)
       d->draw.obj      = NULL;
 
       /* set center field */
-      a = (left_a * dx + left_b * dy) / FINENESS;
-      b = (right_a * dx + right_b * dy) / FINENESS;
+      a = (left_a * dx + left_b * dy) >> (FIX_DECIMAL - 6);
+      b = (right_a * dx + right_b * dy) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (AddObjects) %ld\n",a+b));
@@ -2296,8 +2296,8 @@ static void WalkObjects(ObjectData *objects)
       
       x = object->x0 - viewer_x;
       y = object->y0 - viewer_y;
-      a = (left_a * x + left_b * y) / FINENESS;
-      b = (right_a * x + right_b * y) / FINENESS;
+      a = (left_a * x + left_b * y) >> (FIX_DECIMAL - 6);
+      b = (right_a * x + right_b * y) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (WalkObjects(1)) %ld\n",a+b));
@@ -2307,8 +2307,8 @@ static void WalkObjects(ObjectData *objects)
       
       x = object->x1 - viewer_x;
       y = object->y1 - viewer_y;
-      a = (left_a * x + left_b * y) / FINENESS;
-      b = (right_a * x + right_b * y) / FINENESS;
+      a = (left_a * x + left_b * y) >> (FIX_DECIMAL - 6);
+      b = (right_a * x + right_b * y) >> (FIX_DECIMAL - 6);
       if (a + b <= 0)
       {
 	 debug(("a+b <= 0! (WalkObjects(2)) %ld\n",a+b));

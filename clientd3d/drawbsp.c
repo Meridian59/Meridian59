@@ -685,14 +685,6 @@ static void AddObjects(room_type *room)
  * contains cones with larger columns.  The tree is also threaded with
  * a doubly-linked list which connects the cones in order.
  */
-typedef struct ConeTreeNode
-{
-  ViewCone cone;
-  int height;           /* height of subtree rooted at node */
-  struct ConeTreeNode *parent;        /* up the cone tree   */
-  struct ConeTreeNode *left, *right;  /* down the cone tree */
-  struct ConeTreeNode *prev, *next;   /* pre-order walk     */
-} ConeTreeNode;
 
 /* pointer to root node of cone tree */
 static ConeTreeNode *cone_tree_root;
@@ -763,7 +755,7 @@ static void print_cone_tree(void)
 
 /* finds lowest-columned cone with some pixels >= column <col> */
 /* O(h) time */
-static ConeTreeNode *search_for_first(long col)
+ConeTreeNode *search_for_first(long col)
 {
   ConeTreeNode *root = cone_tree_root;
   ConeTreeNode *sofar = &end_anchor;  /* lowest-columned cone found so far */

@@ -99,4 +99,13 @@ void DrawMiniMap(room_type *room, Draw3DParams *params); /* in Draw3d.h */
 void EnterNewRoom3D(room_type *room);
 Bool GetRoomHeightRad(BSPnode *tree, long *ceiling, long *floor, int *flags, int x, int y, long r);
 
+typedef struct ConeTreeNode
+{
+   ViewCone cone;
+   int height;           /* height of subtree rooted at node */
+   struct ConeTreeNode *parent;        /* up the cone tree   */
+   struct ConeTreeNode *left, *right;  /* down the cone tree */
+   struct ConeTreeNode *prev, *next;   /* pre-order walk     */
+} ConeTreeNode;
+ConeTreeNode *search_for_first(long col);
 #endif /* #ifndef _DRAWBSP_H */

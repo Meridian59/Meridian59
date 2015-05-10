@@ -245,7 +245,7 @@ unsigned char gSkyboxBGRA[] =
 	192, 192, 192, 255,
 	192, 192, 192, 255,
 };
-
+bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1);
 void				D3DRenderBackgroundsLoad(char *pFilename, int index);
 LPDIRECT3DTEXTURE9	D3DRenderTextureCreateFromBGF(PDIB pDib, BYTE xLat0, BYTE xLat1,
 												  BYTE effect);
@@ -972,9 +972,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
       D3DCacheFlush(&gLMapCacheSystemStatic, &gLMapPoolStatic, 2, D3DPT_TRIANGLESTRIP);
 
 		D3DRenderPoolReset(&gLMapPool, &D3DMaterialLMapDynamicPool);
-
-		D3DRenderLMapsPostDraw(room->tree, params);
       //long timeDynamic = timeGetTime();
+		D3DRenderLMapsPostDraw(room->tree, params);
+
 		D3DRenderLMapsDynamicPostDraw(room->tree, params);
       //debug(("Dynamic light maps calculated in %d\n", timeGetTime() - timeDynamic));
       D3DCacheFill(&gLMapCacheSystem, &gLMapPool, 2);
@@ -1471,7 +1471,8 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 
 	if (!tree)
 		return;
-
+   if (IsHidden(params, round(tree->bbox.x0), round(tree->bbox.y0), round(tree->bbox.x1), round(tree->bbox.y1)) == 1)
+      return;
 	switch(tree->type)
 	{
 		case BSPleaftype:
@@ -1606,6 +1607,143 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params)
 	}
 }
 
+/*
+ * IsHidden: Checks the coordinates (bounding box) against the player's frustum. If
+ *           the box doesn't fall inside the player's view, returns TRUE. Doesn't
+ *           account for height or occlusion. Modified from Bbox_shadowed in drawbsp.c.
+ */
+bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1)
+{
+   long center_a, center_b, left_a, left_b, right_a, right_b;
+
+   center_a = COS(params->viewer_angle) >> 6;
+   center_b = SIN(params->viewer_angle) >> 6;
+
+   left_a = -center_b + ((center_a * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
+   left_b = center_a + ((center_b * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
+
+   right_a = center_b + ((center_a * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
+   right_b = -center_a + ((center_b * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
+
+   long d;
+
+   x0 -= params->viewer_x;
+   y0 -= params->viewer_y;
+   x1 -= params->viewer_x;
+   y1 -= params->viewer_y;
+
+   d = center_a * x0 + center_b * y0;
+   if (d < 0)
+   {
+      d = center_a * x0 + center_b * y1;
+      if (d < 0)
+      {
+         d = center_a * x1 + center_b * y0;
+         if (d < 0)
+         {
+            d = center_a * x1 + center_b * y1;
+            if (d < 0)
+            {
+               return True;                /* all behind viewer */
+            }
+         }
+      }
+   }
+
+   long l0, l1, l2, l3, r0, r1, r2, r3;
+
+   l0 = left_a * x0 + left_b * y0;
+   l1 = left_a * x0 + left_b * y1;
+   l2 = left_a * x1 + left_b * y1;
+   l3 = left_a * x1 + left_b * y0;
+
+   if (l0 < 0 && l1 < 0 && l2 < 0 && l3 < 0)
+   {
+      return True;                /* all in quadrants 1&3 */
+   }
+
+   r0 = right_a * x0 + right_b * y0;
+   r1 = right_a * x0 + right_b * y1;
+   r2 = right_a * x1 + right_b * y1;
+   r3 = right_a * x1 + right_b * y0;
+
+   if (r0 < 0 && r1 < 0 && r2 < 0 && r3 < 0)
+   {
+      return True;                /* all in quadrants 2&3 */
+   }
+
+   long offleftedge, offrightedge;
+   long col0, col1;
+
+   l0 >>= FIX_DECIMAL - 6;
+   l1 >>= FIX_DECIMAL - 6;
+   l2 >>= FIX_DECIMAL - 6;
+   l3 >>= FIX_DECIMAL - 6;
+   r0 >>= FIX_DECIMAL - 6;
+   r1 >>= FIX_DECIMAL - 6;
+   r2 >>= FIX_DECIMAL - 6;
+   r3 >>= FIX_DECIMAL - 6;
+
+   /* We will conservatively assume that any 1-2 lines are visible.  We could
+   * determine that some 1-2 lines are invisible here, and thus discard the box.
+   * However, I don't think this occurs often enough to warrant computing it.
+   */
+
+   if (l0 >= 0 && l1 >= 0 && l2 >= 0 && l3 >= 0)
+      offleftedge = 0;
+   else
+      offleftedge = 1;
+
+   if (r0 >= 0 && r1 >= 0 && r2 >= 0 && r3 >= 0)
+      offrightedge = 0;
+   else
+      offrightedge = 1;
+
+   /* if box crosses both edges of screen, there's a lot of possibilites: It's simpler to
+   * just let box be visible.
+   */
+   if (offleftedge && offrightedge)
+      return(0);
+
+   if (offleftedge)
+      col0 = 0;
+   else
+   {	/* find minimum column */
+      col0 = 452;
+      if (r0 > 0)
+         col0 = min(col0, (452 * l0 + 226) / (l0 + r0));
+      if (r1 > 0)
+         col0 = min(col0, (452 * l1 + 226) / (l1 + r1));
+      if (r2 > 0)
+         col0 = min(col0, (452 * l2 + 226) / (l2 + r2));
+      if (r3 > 0)
+         col0 = min(col0, (452 * l3 + 226) / (l3 + r3));
+   }
+
+   if (offrightedge)
+      col1 = 452;
+   else
+   {	/* find maximum column */
+      col1 = 0;
+      if (l0 > 0)
+         col1 = max(col1, (452 * l0 + 226) / (l0 + r0));
+      if (l1 > 0)
+         col1 = max(col1, (452 * l1 + 226) / (l1 + r1));
+      if (l2 > 0)
+         col1 = max(col1, (452 * l2 + 226) / (l2 + r2));
+      if (l3 > 0)
+         col1 = max(col1, (452 * l3 + 226) / (l3 + r3));
+   }
+
+   /* Note: we only use the left and right edges of the view cone because
+   * we have no way to determine how high a bounding box is.
+   */
+   if (search_for_first(col0)->cone.leftedge <= gScreenWidth)
+      return 0;
+
+   return(1);
+}
+
 void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params)
 {
 	long		side;
@@ -1613,10 +1751,11 @@ void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params)
 
 	if (!tree)
 		return;
-
+   if (IsHidden(params,round(tree->bbox.x0), round(tree->bbox.y0), round(tree->bbox.x1), round(tree->bbox.y1)) == 1)
+      return;
 	switch(tree->type)
 	{
-		case BSPleaftype:
+      case BSPleaftype:
 			D3DRenderLMapPostFloorAdd(tree, &gLMapPool, &gDLightCacheDynamic, TRUE);
 			D3DRenderLMapPostCeilingAdd(tree, &gLMapPool, &gDLightCacheDynamic, TRUE);
 

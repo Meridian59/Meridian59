@@ -7160,18 +7160,18 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 				) &&
 				D3DRENDER_CLIP(topLeft.z, 1.0f))
 			{
-				tempLeft   = (topLeft.x * w / 2) + (w / 2);
-				tempRight  = (bottomRight.x * w / 2) + (w / 2);
-				tempTop    = (topLeft.y * -h / 2) + (h / 2);
-				tempBottom = (bottomRight.y * -h / 2) + (h / 2);
+            tempLeft = (topLeft.x * w / 2) + (w >> 1);
+            tempRight = (bottomRight.x * w / 2) + (w >> 1);
+            tempTop = (topLeft.y * -h / 2) + (h >> 1);
+            tempBottom = (bottomRight.y * -h / 2) + (h >> 1);
 
-				if (config.large_area)
-				{
-					tempLeft /= 2;
-					tempRight /= 2;
-					tempTop /= 2;
-					tempBottom /= 2;
-				}
+            if (config.large_area)
+            {
+               tempLeft >>= 1;
+               tempRight >>= 1;
+               tempTop >>= 1;
+               tempBottom >>= 1;
+            }
 
 				distX = pRNode->motion.x - player.x;
 				distY = pRNode->motion.y - player.y;
@@ -7865,17 +7865,17 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 							) &&
 							D3DRENDER_CLIP(topLeft.z, 1.0f))
 						{
-							tempLeft   = (topLeft.x * w / 2) + (w / 2);
-							tempRight  = (bottomRight.x * w / 2) + (w / 2);
-							tempTop    = (topLeft.y * -h / 2) + (h / 2);
-							tempBottom = (bottomRight.y * -h / 2) + (h / 2);
+							tempLeft   = (topLeft.x * w / 2) + (w >> 1);
+							tempRight  = (bottomRight.x * w / 2) + (w >> 1);
+							tempTop    = (topLeft.y * -h / 2) + (h >> 1);
+							tempBottom = (bottomRight.y * -h / 2) + (h >> 1);
 
 							if (config.large_area)
 							{
-								tempLeft /= 2;
-								tempRight /= 2;
-								tempTop /= 2;
-								tempBottom /= 2;
+								tempLeft >>= 1;
+								tempRight >>= 1;
+								tempTop >>= 1;
+								tempBottom >>= 1;
 							}
 
 							distX = pRNode->motion.x - player.x;
@@ -10447,10 +10447,10 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 	// note: sectors with the no ambient flag attenuate twice as fast in the old client.
 	// bug or not, it needs to be emulated here...
 	if (pChunk->flags & D3DRENDER_NOAMBIENT)
-		end = (16384 + (light * FINENESS) + (p->viewer_light * 64));
+		end = (16384 + (light * FINENESS) + (p->viewer_light << 6));
 	else
-		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (p->viewer_light * 64) +
-		(current_room.ambient_light * FINENESS));
+		end = (32768 + (max(0, light - LIGHT_NEUTRAL) * FINENESS) + (p->viewer_light << 6) +
+		(current_room.ambient_light << LOG_FINENESS));
 
 	return end;
 }

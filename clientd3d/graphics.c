@@ -33,7 +33,7 @@ static Bool capture = False;  // True when graphics area has mouse capture
 static ID   drag_object;      // When capture = True, holds id of object being dragged
 static int fps;
 static int msDrawFrame;
-static long fpsDrawTime = 0;
+DWORD fpsDrawTime = 0;
 static int fpsCount = 0;
 static int msDrawFrameCount = 0;
 
@@ -352,8 +352,7 @@ void RedrawForce(void)
    if (1 > totalFrameTime)
 	   totalFrameTime = 1;
    fps = 1000 / (int)totalFrameTime;
-
-   if (timeGetTime() >= fpsDrawTime + 200)
+   if (timeGetTime() >= fpsDrawTime + 250)
    {
       fpsCount = fps;
       msDrawFrameCount = msDrawFrame;

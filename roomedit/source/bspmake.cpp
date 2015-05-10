@@ -63,7 +63,7 @@ void reduce(double *a, double *b)
  */
 Bool almost_equal(double a, double b)
 {
-   if (a - b <= 0.001 && a - b >= -0.001)
+   if (a - b <= 0.0001 && a - b >= -0.0001)
       return TRUE;
    return FALSE;
 }
@@ -343,23 +343,23 @@ IntersectionType BSPWallIntersection(WallData *wall1, WallData *wall2, double *x
    side0 = a*x0 + b*y0 + c;
    side1 = a*x1 + b*y1 + c;
 
-   if (side0 == 0 && side1 == 0)
+   if (almost_equal(side0,0.0) && almost_equal(side1,0.0))
       return Coincide;
-   if (side0 == 0)
+   if (almost_equal(side0, 0.0))
    {
       *x = x0; *y = y0;
       return FirstEndpoint;
    }
-   if (side1 == 0)
+   if (almost_equal(side1, 0.0))
    {
       *x = x1; *y = y1;
       return SecondEndpoint;
    }
 
-   if ((side0 > 0 && side1 > 0) || (side0 < 0 && side1 < 0))
+   if ((side0 > 0.0 && side1 > 0.0) || (side0 < 0.0 && side1 < 0.0))
       return NoIntersection;
 
-   if (side0 > 0)
+   if (side0 > 0.0)
    {
       num = side0;
       denom = side0 - side1;
@@ -405,7 +405,7 @@ WallData *BSPChooseRoot(WallDataList walls)
       // Check position of each wall with this root
       for (wall = walls; wall != NULL; wall = wall->next)
       {
-         long side0, side1;
+         double side0, side1;
 
          // Find out what side each endpoint is on
          side0 = SGNDOUBLE(a * wall->x0 + b * wall->y0 + c);
@@ -415,11 +415,11 @@ WallData *BSPChooseRoot(WallDataList walls)
          if (side0 * side1 >= 0)
          {
             // In plane of root?
-            if (side0 == 0 && side1 == 0)
+            if (almost_equal(side0, 0.0) && almost_equal(side1, 0.0))
                continue;
 
             // On + side of root?
-            if (side0 > 0 || side1 > 0)
+            if (side0 > 0.0 || side1 > 0.0)
             {
                pos++;
                continue;
@@ -461,20 +461,20 @@ void BSPUpdateSplit(WallData *wall1, WallData *wall2)
 
    /* Move texture offsets to account for split */
    if (wall1->flags & BF_POS_BACKWARDS)
-      wall1->pos_xoffset += round(wall2->length);
-   else wall2->pos_xoffset += round(wall1->length);
+      wall1->pos_xoffset += (int)round(wall2->length);
+   else wall2->pos_xoffset += (int)round(wall1->length);
 
 #if 0
    if (wall1->flags & BF_NEG_BACKWARDS)
-      wall1->neg_xoffset += wall2->length;
-   else wall2->neg_xoffset += wall1->length;
+      wall1->neg_xoffset += (int)round(wall2->length);
+   else wall2->neg_xoffset += (int)round(wall1->length);
 #endif
 
    // Do this backwards, because client exchanges vertices of negative walls
 
    if (wall1->flags & BF_NEG_BACKWARDS)
-      wall2->neg_xoffset += round(wall1->length);
-   else wall1->neg_xoffset += round(wall2->length);
+      wall2->neg_xoffset += (int)round(wall1->length);
+   else wall1->neg_xoffset += (int)round(wall2->length);
 }
 /*****************************************************************************/
 /*
@@ -587,7 +587,7 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
             WallDataList *pos_walls, WallDataList *neg_walls)
 {
    double x, y;
-   long side0, side1;
+   double side0, side1;
    double a, b, c;     // Coeffs in Ax + By + C = 0 for root
    double a2, b2, c2;
    WallData *wall, *cur_wall, *neg_wall;
@@ -615,10 +615,10 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
       side1 = SGNDOUBLE(a * wall->x1 + b * wall->y1 + c);
 
       // If both on same side, or one is on line, no split needed
-      if (side0 * side1 >= 0)
+      if (side0 * side1 >= 0.0)
       {
          // In plane of root?
-         if (side0 == 0 && side1 == 0)
+         if (almost_equal(side0, 0.0) && almost_equal(side1, 0.0))
          {
             /* we may need to reverse the wall */
             BSPGetLineEquationFromWall(wall, &a2, &b2, &c2);
@@ -640,7 +640,7 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
          }
 
          // On + side of root?
-         if (side0 > 0 || side1 > 0)
+         if (side0 > 0.0 || side1 > 0.0)
          {
             wall->next = *pos_walls;
             *pos_walls = wall;
@@ -671,7 +671,7 @@ void BSPSplitWalls(WallDataList walls, WallData *root, WallDataList *root_walls,
       neg_wall = BSPGetNewWall();
       memcpy(neg_wall, wall, sizeof(WallData));
 
-      if (side0 > 0)   // (x0, y0) on positive side
+      if (side0 > 0.0)   // (x0, y0) on positive side
       {
          wall->x1 = x;
          wall->y1 = y;
@@ -914,12 +914,12 @@ Bool BSPSplitPoly(Poly *poly, WallData *wall, Poly *pos_poly, Poly *neg_poly)
    neg_poly->npts = i;
 
    /* check to see if we need to switch polys */
-   side = 0;
+   side = 0.0;
    for(i=0; i<pos_poly->npts; i++)
    {
       side += a * pos_poly->p[i].x + b * pos_poly->p[i].y + c;
    }
-   if (side < 0)
+   if (side < 0.0)
    {
       memcpy(&tmp, pos_poly, sizeof(Poly));
       memcpy(pos_poly, neg_poly, sizeof(Poly));
@@ -933,13 +933,13 @@ Bool BSPSplitPoly(Poly *poly, WallData *wall, Poly *pos_poly, Poly *neg_poly)
    for(i=0; i<poly->npts; i++)
    {
       side = a * poly->p[i].x + b * poly->p[i].y + c;
-      if (side > 0)
+      if (side > 0.0)
       {
          memcpy(pos_poly, poly, sizeof(Poly));
          neg_poly->npts = 0;
          return True;
       }
-      else if (side < 0)
+      else if (side < 0.0)
       {
          memcpy(neg_poly, poly, sizeof(Poly));
          pos_poly->npts = 0;

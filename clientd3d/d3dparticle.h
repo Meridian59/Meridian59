@@ -71,6 +71,6 @@ void	D3DParticleEmitterInit(particle_system *pParticleSystem, float posX, float 
 void	D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float posZ);
 //void	D3DParticleSystemRoomInit(particle_system *pParticleSystem, room_type *room);
 void	D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
-							 d3d_render_cache_system *pCacheSystem);
+							 d3d_render_cache_system *pCacheSystem, Draw3DParams *params);
 
 #endif

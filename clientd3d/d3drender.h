@@ -166,6 +166,7 @@ Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool);
 Bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
 Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk);
 Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk);
+Bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1);
 
 // objects
 Bool D3DMaterialObjectPool(d3d_render_pool_new *pPool);

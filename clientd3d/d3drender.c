@@ -318,7 +318,7 @@ LPDIRECT3DTEXTURE9		D3DRenderFramebufferTextureCreate(LPDIRECT3DTEXTURE9	pTex0,
 void					*D3DRenderMalloc(unsigned int bytes);
 
 float					D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk);
-bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1);
+
 // externed stuff
 extern int			FindHotspotPdib(PDIB pdib, char hotspot, POINT *point);
 extern void			DrawItemsD3D();
@@ -652,7 +652,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 {
 	D3DMATRIX	mat, rot, trans, view, proj, identity;
 	int			angleHeading, anglePitch;
-	long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox, timeSkybox2, timeInit;
+   long		timeOverall, timeWorld, timeObjects, timeLMaps, timeSkybox;
+   long     timeSkybox2, timeInit, timeParticles;
 	static ID	tempBkgnd = 0;
 	HRESULT		hr;
 	Bool		draw_sky = TRUE;
@@ -704,7 +705,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	gFrame++;
 
-	timeOverall = timeWorld = timeObjects = timeLMaps = timeSkybox = timeSkybox2 = timeInit = 0;
+   timeOverall = timeWorld = timeObjects = timeLMaps = timeSkybox = timeSkybox2 = timeInit = timeParticles = 0;
 
 	timeOverall = timeInit = timeGetTime();
 
@@ -1001,7 +1002,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	
 	if (draw_particles)
 	{
-		list_type	list;
+      timeParticles = timeGetTime();
+      list_type	list;
 		emitter		*pEmitter;
 
 		for (list = gParticleSystemSand.emitterList; list != NULL; list = list->next)
@@ -1030,22 +1032,23 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem);
+			D3DParticleSystemUpdate(&gParticleSystemSand, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.raining && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem);
+			D3DParticleSystemUpdate(&gParticleSystemRain, &gParticlePool, &gParticleCacheSystem, params);
 		}
 		if (effects.snowing && config.weather)
 		{
 			IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
 			IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl0dc);
 
-			D3DParticleSystemUpdate(&gParticleSystemSnow, &gParticlePool, &gParticleCacheSystem);
+			D3DParticleSystemUpdate(&gParticleSystemSnow, &gParticlePool, &gParticleCacheSystem, params);
 		}
+      timeParticles = timeGetTime() - timeParticles;
 	}
 
 	/***************************************************************************/
@@ -1340,8 +1343,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices,
 		gNumDPCalls));
 
-	//debug(("all = %d lmaps = %d wrld = %d obj = %d sky = %d init = %d\n",
-		//timeOverall, timeLMaps, timeWorld, timeObjects, timeSkybox+timeSkybox2, timeInit));
+   //debug(("all = %d lmaps = %d wrld = %d obj = %d  particles = %d sky = %d init = %d\n",
+		//timeOverall, timeLMaps, timeWorld, timeObjects, timeParticles, timeSkybox+timeSkybox2, timeInit));
 }
 
 void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)
@@ -10246,7 +10249,7 @@ void SnowInit(void)
 
    D3DParticleSystemReset(&gParticleSystemSnow);
 
-   for (i=0; i < 8; i++)
+   for (i=0; i < 9; i++)
    {
       // Normal height.
       D3DParticleEmitterInit(&gParticleSystemSnow,
@@ -10345,7 +10348,7 @@ float D3DRenderFogEndCalc(d3d_render_chunk_new *pChunk)
 *           the box doesn't fall inside the player's view, returns TRUE. Doesn't
 *           account for height or occlusion. Modified from Bbox_shadowed in drawbsp.c.
 */
-bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1)
+Bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1)
 {
    long center_a, center_b, left_a, left_b, right_a, right_b;
 

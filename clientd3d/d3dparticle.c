@@ -72,7 +72,7 @@ void D3DParticleEmitterUpdate(emitter *pEmitter, float posX, float posY, float p
 }
 
 void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_new *pPool,
-							 d3d_render_cache_system *pCacheSystem)
+							 d3d_render_cache_system *pCacheSystem, Draw3DParams *params)
 {
 	int						curParticle;
 	list_type				list;
@@ -146,7 +146,8 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 					continue;
 				}
-
+            if (IsHidden(params, round(pParticle->pos.x), round(pParticle->pos.y), round(pParticle->pos.x), round(pParticle->pos.y)))
+               continue;
 				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
 				assert(pPacket);
 				pPacket->pMaterialFctn = &D3DMaterialParticlePacket;

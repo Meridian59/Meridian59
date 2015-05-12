@@ -146,7 +146,8 @@ void D3DParticleSystemUpdate(particle_system *pParticleSystem, d3d_render_pool_n
 
 					continue;
 				}
-            if (IsHidden(params, round(pParticle->pos.x), round(pParticle->pos.y), round(pParticle->pos.x), round(pParticle->pos.y)))
+            // If this particle is hidden from the player's view, don't let D3D try to draw it.
+            if (IsHidden(params, (long)pParticle->pos.x, (long)pParticle->pos.y, (long)pParticle->pos.x, (long)pParticle->pos.y))
                continue;
 				pPacket = D3DRenderPacketFindMatch(pPool, NULL, NULL, 0, 0, 0);
 				assert(pPacket);

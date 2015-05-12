@@ -83,6 +83,22 @@
 
 #pragma warning( disable : 4201 )		// nonstandard extension used : nameless struct/union (a union in this case )
 
+// D3D types
+typedef struct custom_xyz
+{
+   float	x, y, z;
+} custom_xyz;
+
+typedef struct custom_st
+{
+   float	s, t;
+} custom_st;
+
+typedef struct custom_bgra
+{
+   unsigned char	b, g, r, a;
+} custom_bgra;
+
 /* plane defined by ax + by + c = 0. (x and y are in fineness units.) */
 typedef struct
 {
@@ -169,6 +185,8 @@ typedef struct {
    RoomAnimate *animate;       /* Animation structure for wall */
 } Sidedef;
 
+#define MAX_NPTS 20
+
 typedef struct WallData
 {
    union {
@@ -220,6 +238,8 @@ typedef struct WallData
    long  zz1Neg;        /* height of top of lower wall / bottom of normal wall */
 
    float x0, y0, x1, y1;         /* coordinates of wall start and end */
+   /* (x0,y0) and (x1,y1) must satisfy separator plane equation */
+   /* positive side of wall must be on right when going from 0 to 1 */
 
    Bool seen;                  /* True iff part of this wall has been drawn */
 
@@ -247,9 +267,41 @@ typedef struct WallData
       Sidedef *neg_sidedef;     /* Sidedef on - side (NULL if none) */
       WORD     neg_sidedef_num; /* Sidedef number (used during loading) */
    };
-   
-   /* (x0,y0) and (x1,y1) must satisfy separator plane equation */
-   /* positive side of wall must be on right when going from 0 to 1 */
+
+   // The following data structres are used by D3D to calculate and store
+   // information about the walls, to prevent having to recalculate multiple
+   // times a frame.
+   custom_xyz pos_normal_xyz[4];
+   custom_xyz pos_below_xyz[4];
+   custom_xyz pos_above_xyz[4];
+
+   custom_st pos_normal_stBase[4];
+   custom_st pos_below_stBase[4];
+   custom_st pos_above_stBase[4];
+
+   custom_bgra pos_normal_bgra[4];
+   custom_bgra pos_below_bgra[4];
+   custom_bgra pos_above_bgra[4];
+
+   unsigned int pos_normal_d3dFlags;
+   unsigned int pos_below_d3dFlags;
+   unsigned int pos_above_d3dFlags;
+
+   custom_xyz neg_normal_xyz[4];
+   custom_xyz neg_below_xyz[4];
+   custom_xyz neg_above_xyz[4];
+
+   custom_st neg_normal_stBase[4];
+   custom_st neg_below_stBase[4];
+   custom_st neg_above_stBase[4];
+
+   custom_bgra neg_normal_bgra[4];
+   custom_bgra neg_below_bgra[4];
+   custom_bgra neg_above_bgra[4];
+
+   unsigned int neg_normal_d3dFlags;
+   unsigned int neg_below_d3dFlags;
+   unsigned int neg_above_d3dFlags;
 } WallData, *WallList, *WallDataList;
 
 typedef struct
@@ -268,8 +320,6 @@ typedef struct
       WORD neg_num;               /* number of node on + side (used during loading) */
    };
 } BSPinternal;
-
-#define MAX_NPTS 20
 
 typedef struct {
    int npts;                   /* # of points in polygon */
@@ -304,6 +354,19 @@ typedef struct BSPnode
       BSPinternal internal;
       BSPleaf leaf;
    } u;
+
+   // The following data structres are used by D3D to calculate and store
+   // information about the ceiling and floor, to prevent having to
+   // recalculate multiple times a frame.
+   custom_xyz ceiling_xyz[MAX_NPTS];
+   custom_st ceiling_stBase[MAX_NPTS];
+   custom_bgra ceiling_bgra[MAX_NPTS];
+   PDIB ceiling_pDib;
+   custom_xyz floor_xyz[MAX_NPTS];
+   custom_st floor_stBase[MAX_NPTS];
+   custom_bgra floor_bgra[MAX_NPTS];
+   PDIB floor_pDib;
+
 } BSPnode, *BSPTree;
 
 #pragma warning( default : 4201 )		// nonstandard extension used : nameless struct/union (a union in this case )

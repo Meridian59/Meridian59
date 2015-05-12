@@ -89,6 +89,9 @@ inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
 typedef struct d_light
 {
 	custom_xyz	xyz;
+   // Max and min x,y values for how far
+   // the light reaches.
+   float maxX, maxY, minX, minY;
 	custom_xyz	xyzScale;
 	custom_xyz	invXYZScale;
 	custom_xyz	invXYZScaleHalf;
@@ -166,7 +169,6 @@ Bool D3DMaterialLMapDynamicPool(d3d_render_pool_new *pPool);
 Bool D3DMaterialLMapDynamicPacket(d3d_render_packet_new *pPacket, d3d_render_cache_system *pCacheSystem);
 Bool D3DMaterialLMapDynamicChunk(d3d_render_chunk_new *pChunk);
 Bool D3DMaterialLMapStaticChunk(d3d_render_chunk_new *pChunk);
-Bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1);
 
 // objects
 Bool D3DMaterialObjectPool(d3d_render_pool_new *pPool);
@@ -196,5 +198,9 @@ Bool D3DMaterialParticleChunk(d3d_render_chunk_new *pChunk);
 void SandstormInit(void);
 void RainInit(void);
 void SnowInit(void);
+
+// Use this function to determine if the bounding box is out of the player's
+//view. Useful for not adding stuff to draw that the player can't see.
+Bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1);
 
 #endif	// __D3DRENDER_H__

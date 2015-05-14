@@ -242,6 +242,9 @@ typedef struct WallData
    /* positive side of wall must be on right when going from 0 to 1 */
 
    Bool seen;                  /* True iff part of this wall has been drawn */
+   Bool drawbelow;     // True if D3D renderer should draw this wall.
+   Bool drawabove;     // True if D3D renderer should draw this wall.
+   Bool drawnormal;    // True if D3D renderer should draw this wall.
 
    // for bowtie handling
    BYTE bowtie_bits;           /* flags set indicating a bowtie & it's orientation */
@@ -366,6 +369,9 @@ typedef struct BSPnode
    custom_st floor_stBase[MAX_NPTS];
    custom_bgra floor_bgra[MAX_NPTS];
    PDIB floor_pDib;
+
+   Bool drawfloor;   // True if D3D renderer should draw this floor.
+   Bool drawceiling; // True if D3D renderer should draw this ceiling.
 
 } BSPnode, *BSPTree;
 

@@ -737,7 +737,7 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
    // so we don't have to calculate them repeatedly each time we draw something.
    // Data is valid for the entire frame. D3DGeometryBuildNew also calls this
    // to build the static light maps (with the third parameter set to TRUE to
-   // fill the entire tree.
+   // fill the entire tree).
    D3DFillTreeDataTraverse(room->tree, params, FALSE);
    //D3DFillTreeData(room, params, FALSE);
 
@@ -1399,10 +1399,9 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 			case BSPinternaltype:
 				for (pWall = pNode->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
 				{
-					int	flags, wallFlags;
-
+					int	flags;
 					flags = 0;
-					wallFlags = 0;
+
 					bDynamic = FALSE;
 
 					if (pWall->pos_sidedef)
@@ -1443,8 +1442,6 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 
 					if (pWall->pos_sidedef)
 					{
-						wallFlags |= pWall->pos_sidedef->flags;
-
 						if (pWall->pos_sidedef->normal_bmap)
 							flags |= D3DRENDER_WALL_NORMAL;
 
@@ -1457,8 +1454,6 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 
 					if (pWall->neg_sidedef)
 					{
-						wallFlags |= pWall->neg_sidedef->flags;
-
 						if (pWall->neg_sidedef->normal_bmap)
 							flags |= D3DRENDER_WALL_NORMAL;
 
@@ -1473,21 +1468,33 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 					pWall->separator.b = pNode->u.internal.separator.b;
 					pWall->separator.c = pNode->u.internal.separator.c;
 
-					if ((flags & D3DRENDER_WALL_NORMAL) && (((short)pWall->z2 != (short)pWall->z1)
+               // D3DRenderWorldDraw now relies on checks done while constructing the list
+               // of viewable objects, walls etc. in DrawBSP() in drawbsp.c. Walls that can be seen
+               // have the respective boolean value set to TRUE, so all we need to do here is check
+               // that value to decide whether to render the wall.  Old code left commented out as 
+               // opposed to deleting in case any modification to drawbsp.c is performed which
+               // invalidates this method. NOTE: rendering the world doesn't actually take a lot of
+               // time, however the items drawn here need to match what was preloaded into the tree
+               // by the D3DFillTreeData/D3DFillTreeDataTraversal functions, and they won't add data
+               // if we don't need to draw it.
+               //if (pWall->drawnormal)
+               if ((flags & D3DRENDER_WALL_NORMAL) && (((short)pWall->z2 != (short)pWall->z1)
 						|| ((short)pWall->zz2 != (short)pWall->zz1)))
 					{
 						D3DRenderPacketWallAdd(pWall, &gWorldPool, D3DRENDER_WALL_NORMAL, 1, TRUE);
 						D3DRenderPacketWallAdd(pWall, &gWorldPool, D3DRENDER_WALL_NORMAL, -1, TRUE);
 					}
 
-					if ((flags & D3DRENDER_WALL_BELOW) && (((short)pWall->z1 != (short)pWall->z0)
+					//if (pWall->drawbelow)
+               if ((flags & D3DRENDER_WALL_BELOW) && (((short)pWall->z1 != (short)pWall->z0)
 						|| ((short)pWall->zz1 != (short)pWall->zz0)))
 					{
 						D3DRenderPacketWallAdd(pWall, &gWorldPool, D3DRENDER_WALL_BELOW, 1, TRUE);
 						D3DRenderPacketWallAdd(pWall, &gWorldPool, D3DRENDER_WALL_BELOW, -1, TRUE);
 					}
 
-					if ((flags & D3DRENDER_WALL_ABOVE) && (((short)pWall->z3 != (short)pWall->z2)
+					//if (pWall->drawabove)
+               if ((flags & D3DRENDER_WALL_ABOVE) && (((short)pWall->z3 != (short)pWall->z2)
 						|| ((short)pWall->zz3 != (short)pWall->zz2)))
 					{
 						D3DRenderPacketWallAdd(pWall, &gWorldPool, D3DRENDER_WALL_ABOVE, 1, TRUE);
@@ -1500,8 +1507,10 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
 			case BSPleaftype:
 				if (pNode->u.leaf.sector->flags & SF_HAS_ANIMATED)
 				{
-					D3DRenderPacketFloorAdd(pNode, &gWorldPool, TRUE);
-					D3DRenderPacketCeilingAdd(pNode, &gWorldPool, TRUE);
+               //if (pNode->drawfloor)
+               D3DRenderPacketFloorAdd(pNode, &gWorldPool, TRUE);
+               //if (pNode->drawceiling)
+               D3DRenderPacketCeilingAdd(pNode, &gWorldPool, TRUE);
 				}
 			break;
 
@@ -1516,14 +1525,15 @@ void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParam
  *                  the data to the BSPnode struct for walls and ceilings, and to
  *                  the WallData struct for walls. This is done to precalculate the
  *                  data once prior to drawing a frame, and removes the need to 
- *                  calculate it multiple times.
+ *                  calculate it multiple times. NOTE that without the full parameter
+ *                  set, this ONLY adds data for what the player can actually see.
  */
 void D3DFillTreeData(room_type *room, Draw3DParams *params, Bool full)
 {
    BSPnode		*pNode = NULL;
    WallData	*pWall;
    Sector		*pSector;
-
+   debug(("number of nodes is %i\n", room->num_nodes));
    for (int count = 0; count < room->num_nodes; count++)
    {
       pNode = &room->nodes[count];
@@ -1549,21 +1559,21 @@ void D3DFillTreeData(room_type *room, Draw3DParams *params, Bool full)
 
             if (pWall->pos_sidedef)
             {
-               if ((pWall->pos_sidedef->normal_bmap) && (((short)pWall->z2 != (short)pWall->z1)
+               if (pWall->pos_sidedef->normal_bmap && (((short)pWall->z2 != (short)pWall->z1)
                   || ((short)pWall->zz2 != (short)pWall->zz1)))
                {
                   D3DRenderWallExtract(pWall, pWall->pos_sidedef->normal_bmap, &pWall->pos_normal_d3dFlags,
                      pWall->pos_normal_xyz, pWall->pos_normal_stBase, pWall->pos_normal_bgra, D3DRENDER_WALL_NORMAL, 1);
                }
 
-               if ((pWall->pos_sidedef->below_bmap) && (((short)pWall->z1 != (short)pWall->z0)
+               if (pWall->pos_sidedef->below_bmap && (((short)pWall->z1 != (short)pWall->z0)
                   || ((short)pWall->zz1 != (short)pWall->zz0)))
                {
                   D3DRenderWallExtract(pWall, pWall->pos_sidedef->below_bmap, &pWall->pos_below_d3dFlags,
                      pWall->pos_below_xyz, pWall->pos_below_stBase, pWall->pos_below_bgra, D3DRENDER_WALL_BELOW, 1);
                }
 
-               if ((pWall->pos_sidedef->above_bmap) && (((short)pWall->z3 != (short)pWall->z2)
+               if (pWall->pos_sidedef->above_bmap && (((short)pWall->z3 != (short)pWall->z2)
                   || ((short)pWall->zz3 != (short)pWall->zz2)))
                {
                   D3DRenderWallExtract(pWall, pWall->pos_sidedef->above_bmap, &pWall->pos_above_d3dFlags,
@@ -1573,20 +1583,20 @@ void D3DFillTreeData(room_type *room, Draw3DParams *params, Bool full)
 
             if (pWall->neg_sidedef)
             {
-               if ((pWall->neg_sidedef->normal_bmap) && (((short)pWall->z2 != (short)pWall->z1)
+               if (pWall->neg_sidedef->normal_bmap && (((short)pWall->z2 != (short)pWall->z1)
                   || ((short)pWall->zz2 != (short)pWall->zz1)))
                {
                   D3DRenderWallExtract(pWall, pWall->neg_sidedef->normal_bmap, &pWall->neg_normal_d3dFlags,
                      pWall->neg_normal_xyz, pWall->neg_normal_stBase, pWall->neg_normal_bgra, D3DRENDER_WALL_NORMAL, -1);
                }
 
-               if ((pWall->neg_sidedef->below_bmap) && (((short)pWall->z1 != (short)pWall->z0)
+               if (pWall->neg_sidedef->below_bmap && (((short)pWall->z1 != (short)pWall->z0)
                   || ((short)pWall->zz1 != (short)pWall->zz0)))
                {
                   D3DRenderWallExtract(pWall, pWall->neg_sidedef->below_bmap, &pWall->neg_below_d3dFlags,
                      pWall->neg_below_xyz, pWall->neg_below_stBase, pWall->neg_below_bgra, D3DRENDER_WALL_BELOW, -1);
                }
-               if ((pWall->neg_sidedef->above_bmap) && (((short)pWall->z3 != (short)pWall->z2)
+               if (pWall->neg_sidedef->above_bmap && (((short)pWall->z3 != (short)pWall->z2)
                   || ((short)pWall->zz3 != (short)pWall->zz2)))
                {
                   D3DRenderWallExtract(pWall, pWall->neg_sidedef->above_bmap, &pWall->neg_above_d3dFlags,
@@ -1622,7 +1632,9 @@ void D3DFillTreeData(room_type *room, Draw3DParams *params, Bool full)
  *                          the appropriate structs (BSPnode and WallData).
  *                          Differs from D3DFillTreeData in that this is a tree
  *                          traversal via recursion versus iterating through the
- *                          nodes stored in the room_type struct.
+ *                          nodes stored in the room_type struct. NOTE that without
+ *                          the full parameter set, this ONLY adds data for what
+ *                          the player can actually see.
  */
 void D3DFillTreeDataTraverse(BSPnode *tree, Draw3DParams *params, Bool full)
 {
@@ -1682,21 +1694,21 @@ void D3DFillTreeDataTraverse(BSPnode *tree, Draw3DParams *params, Bool full)
 
             if (pWall->pos_sidedef)
             {
-               if ((pWall->pos_sidedef->normal_bmap) && (((short)pWall->z2 != (short)pWall->z1)
+               if (pWall->pos_sidedef->normal_bmap && (((short)pWall->z2 != (short)pWall->z1)
                   || ((short)pWall->zz2 != (short)pWall->zz1)))
                {
                   D3DRenderWallExtract(pWall, pWall->pos_sidedef->normal_bmap, &pWall->pos_normal_d3dFlags,
                      pWall->pos_normal_xyz, pWall->pos_normal_stBase, pWall->pos_normal_bgra, D3DRENDER_WALL_NORMAL, 1);
                }
 
-               if ((pWall->pos_sidedef->below_bmap) && (((short)pWall->z1 != (short)pWall->z0)
+               if (pWall->pos_sidedef->below_bmap && (((short)pWall->z1 != (short)pWall->z0)
                   || ((short)pWall->zz1 != (short)pWall->zz0)))
                {
                   D3DRenderWallExtract(pWall, pWall->pos_sidedef->below_bmap, &pWall->pos_below_d3dFlags,
                      pWall->pos_below_xyz, pWall->pos_below_stBase, pWall->pos_below_bgra, D3DRENDER_WALL_BELOW, 1);
                }
 
-               if ((pWall->pos_sidedef->above_bmap) && (((short)pWall->z3 != (short)pWall->z2)
+               if (pWall->pos_sidedef->above_bmap && (((short)pWall->z3 != (short)pWall->z2)
                   || ((short)pWall->zz3 != (short)pWall->zz2)))
                {
                   D3DRenderWallExtract(pWall, pWall->pos_sidedef->above_bmap, &pWall->pos_above_d3dFlags,
@@ -1706,20 +1718,20 @@ void D3DFillTreeDataTraverse(BSPnode *tree, Draw3DParams *params, Bool full)
 
             if (pWall->neg_sidedef)
             {
-               if ((pWall->neg_sidedef->normal_bmap) && (((short)pWall->z2 != (short)pWall->z1)
+               if (pWall->neg_sidedef->normal_bmap && (((short)pWall->z2 != (short)pWall->z1)
                   || ((short)pWall->zz2 != (short)pWall->zz1)))
                {
                   D3DRenderWallExtract(pWall, pWall->neg_sidedef->normal_bmap, &pWall->neg_normal_d3dFlags,
                      pWall->neg_normal_xyz, pWall->neg_normal_stBase, pWall->neg_normal_bgra, D3DRENDER_WALL_NORMAL, -1);
                }
 
-               if ((pWall->neg_sidedef->below_bmap) && (((short)pWall->z1 != (short)pWall->z0)
+               if (pWall->neg_sidedef->below_bmap && (((short)pWall->z1 != (short)pWall->z0)
                   || ((short)pWall->zz1 != (short)pWall->zz0)))
                {
                   D3DRenderWallExtract(pWall, pWall->neg_sidedef->below_bmap, &pWall->neg_below_d3dFlags,
                      pWall->neg_below_xyz, pWall->neg_below_stBase, pWall->neg_below_bgra, D3DRENDER_WALL_BELOW, -1);
                }
-               if ((pWall->neg_sidedef->above_bmap) && (((short)pWall->z3 != (short)pWall->z2)
+               if (pWall->neg_sidedef->above_bmap && (((short)pWall->z3 != (short)pWall->z2)
                   || ((short)pWall->zz3 != (short)pWall->zz2)))
                {
                   D3DRenderWallExtract(pWall, pWall->neg_sidedef->above_bmap, &pWall->neg_above_d3dFlags,
@@ -1766,8 +1778,10 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params, d_light *light)
 		case BSPleaftype:
 			if (tree->u.leaf.sector->flags & SF_HAS_ANIMATED)
 			{
-				D3DRenderLMapPostFloorAdd(tree, &gLMapPool, light, TRUE);
-				D3DRenderLMapPostCeilingAdd(tree, &gLMapPool, light, TRUE);
+            if (tree->drawfloor)
+               D3DRenderLMapPostFloorAdd(tree, &gLMapPool, light, TRUE);
+            if (tree->drawceiling)
+				   D3DRenderLMapPostCeilingAdd(tree, &gLMapPool, light, TRUE);
 			}
 			return;
 	      
@@ -1787,7 +1801,7 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params, d_light *light)
 			{
 				//WallList list;
 				WallData	*pWall;
-				int			flags;
+				//int			flags;
 
 				for (pWall = tree->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
 				{
@@ -1820,7 +1834,7 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params, d_light *light)
 					if (FALSE == bDynamic)
 						continue;
 
-               flags = 0;
+               /*flags = 0;
 					if (pWall->pos_sidedef)
 					{
 						if (pWall->pos_sidedef->normal_bmap)
@@ -1843,26 +1857,32 @@ void D3DRenderLMapsPostDraw(BSPnode *tree, Draw3DParams *params, d_light *light)
 
 						if (pWall->neg_sidedef->above_bmap)
 							flags |= D3DRENDER_WALL_ABOVE;
-					}
+					}*/
 
 					pWall->separator.a = tree->u.internal.separator.a;
 					pWall->separator.b = tree->u.internal.separator.b;
 					pWall->separator.c = tree->u.internal.separator.c;
 
-					if ((flags & D3DRENDER_WALL_NORMAL) && ((short)pWall->z2 != (short)pWall->z1)
-						|| (pWall->zz2 != pWall->zz1))
+               // D3DRenderLMapsPostDraw now relies on checks done while constructing the list
+               // of viewable objects, walls etc. in DrawBSP() in drawbsp.c. Walls that can be seen
+               // have the respective boolean value set to TRUE, so all we need to do here is check
+               // that value to decide whether to render light on the wall. Significantly speeds up
+               // rendering large amounts of lights. Old code left commented out as opposed to deleting
+               // in case any modification to drawbsp.c is performed which invalidates this method.
+					if (pWall->drawnormal) //((flags & D3DRENDER_WALL_NORMAL) && (((short)pWall->z2 != (short)pWall->z1)
+						//|| (pWall->zz2 != pWall->zz1)))
 					{
 						D3DRenderLMapPostWallAdd(pWall, &gLMapPool, D3DRENDER_WALL_NORMAL, side, light, TRUE);
 					}
 
-					if ((flags & D3DRENDER_WALL_BELOW) && ((short)pWall->z1 != (short)pWall->z0)
-						|| ((short)pWall->zz1 != (short)pWall->zz0))
+					if (pWall->drawbelow) //((flags & D3DRENDER_WALL_BELOW) && (((short)pWall->z1 != (short)pWall->z0)
+						//|| ((short)pWall->zz1 != (short)pWall->zz0)))
 					{
 						D3DRenderLMapPostWallAdd(pWall, &gLMapPool, D3DRENDER_WALL_BELOW, side, light, TRUE);
 					}
 
-					if ((flags & D3DRENDER_WALL_ABOVE) && ((short)pWall->z3 != (short)pWall->z2)
-						|| ((short)pWall->zz3 != (short)pWall->zz2))
+					if (pWall->drawabove) //((flags & D3DRENDER_WALL_ABOVE) && (((short)pWall->z3 != (short)pWall->z2)
+						//|| ((short)pWall->zz3 != (short)pWall->zz2)))
 					{
 						D3DRenderLMapPostWallAdd(pWall, &gLMapPool, D3DRENDER_WALL_ABOVE, side, light, TRUE);
 					}
@@ -1904,8 +1924,10 @@ void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params, d_light 
 	switch(tree->type)
 	{
       case BSPleaftype:
-			D3DRenderLMapPostFloorAdd(tree, &gLMapPool, light, TRUE);
-			D3DRenderLMapPostCeilingAdd(tree, &gLMapPool, light, TRUE);
+         if (tree->drawfloor)
+			   D3DRenderLMapPostFloorAdd(tree, &gLMapPool, light, TRUE);
+         if (tree->drawceiling)
+			   D3DRenderLMapPostCeilingAdd(tree, &gLMapPool, light, TRUE);
 
 			return;
 	      
@@ -1925,13 +1947,13 @@ void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params, d_light 
 			{
 				//WallList list;
 				WallData	*pWall;
-				int			flags;
+				//int			flags;
 
 				for (pWall = tree->u.internal.walls_in_plane; pWall != NULL; pWall = pWall->next)
 				{
-					flags = 0;
+					//flags = 0;
 
-					if (pWall->pos_sidedef)
+					/*if (pWall->pos_sidedef)
 					{
 
 						if (pWall->pos_sidedef->normal_bmap)
@@ -1954,26 +1976,32 @@ void D3DRenderLMapsDynamicPostDraw(BSPnode *tree, Draw3DParams *params, d_light 
 
 						if (pWall->neg_sidedef->above_bmap)
 							flags |= D3DRENDER_WALL_ABOVE;
-					}
+					}*/
 
 					pWall->separator.a = tree->u.internal.separator.a;
 					pWall->separator.b = tree->u.internal.separator.b;
 					pWall->separator.c = tree->u.internal.separator.c;
 
-					if ((flags & D3DRENDER_WALL_NORMAL) && ((short)pWall->z2 != (short)pWall->z1)
-						|| ((short)pWall->zz2 != (short)pWall->zz1))
+               // D3DRenderLMapsDynamicPostDraw now relies on checks done while constructing the list
+               // of viewable objects, walls etc. in DrawBSP() in drawbsp.c. Walls that can be seen
+               // have the respective boolean value set to TRUE, so all we need to do here is check
+               // that value to decide whether to render light on the wall. Significantly speeds up
+               // rendering large amounts of lights. Old code left commented out as opposed to deleting
+               // in case any modification to drawbsp.c is performed which invalidates this method.
+					if (pWall->drawnormal) //((flags & D3DRENDER_WALL_NORMAL) && (((short)pWall->z2 != (short)pWall->z1)
+						//|| ((short)pWall->zz2 != (short)pWall->zz1)))
 					{
 						D3DRenderLMapPostWallAdd(pWall, &gLMapPool, D3DRENDER_WALL_NORMAL, side, light, TRUE);
 					}
 
-					if ((flags & D3DRENDER_WALL_BELOW) && ((short)pWall->z1 != (short)pWall->z0)
-						|| ((short)pWall->zz1 != (short)pWall->zz0))
+               if (pWall->drawbelow) //((flags & D3DRENDER_WALL_BELOW) && (((short)pWall->z1 != (short)pWall->z0)
+						//|| ((short)pWall->zz1 != (short)pWall->zz0)))
 					{
 						D3DRenderLMapPostWallAdd(pWall, &gLMapPool, D3DRENDER_WALL_BELOW, side, light, TRUE);
 					}
 
-					if ((flags & D3DRENDER_WALL_ABOVE) && ((short)pWall->z3 != (short)pWall->z2)
-						|| ((short)pWall->zz3 != (short)pWall->zz2))
+               if (pWall->drawabove) //((flags & D3DRENDER_WALL_ABOVE) && (((short)pWall->z3 != (short)pWall->z2)
+						//|| ((short)pWall->zz3 != (short)pWall->zz2)))
 					{
 						D3DRenderLMapPostWallAdd(pWall, &gLMapPool, D3DRENDER_WALL_ABOVE, side, light, TRUE);
 					}
@@ -2249,7 +2277,9 @@ void D3DGeometryBuildNew(room_type *room, d3d_render_pool_new *pPool, Draw3DPara
    // in the structs. This means D3DFillTreeData *must* be called here with
    // full (3rd parameter) set to TRUE so we fill the entire tree before
    // attempting to use it.
+   //long timeFill = timeGetTime();
    D3DFillTreeData(room, params, TRUE);
+   //debug(("Time to calculate and fill BSP data is %d\n", timeGetTime() - timeFill));
 
    for (count = 0; count < room->num_nodes; count++)
 	{

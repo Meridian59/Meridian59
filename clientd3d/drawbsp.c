@@ -2021,6 +2021,13 @@ static void WalkWall(WallData *wall, long side)
    DrawItem *item;
    Sidedef *sidedef;
 
+   // These booleans are used in d3drender.c to decide whether to add the wall to
+   // the rendering pipeline. If these are modified or removed, d3drender.c needs
+   // to be modified also.
+   wall->drawbelow = FALSE;
+   wall->drawabove = FALSE;
+   wall->drawnormal = FALSE;
+
    /* Skip if nothing on this side */
    if (side > 0)
       sidedef = wall->pos_sidedef;
@@ -2107,7 +2114,9 @@ static void WalkWall(WallData *wall, long side)
       SWAP(z3,zz3,tmp);
    }
 
-   col1--;  /* fix overlap! */
+   // This pixel doesn't overlap in D3D.
+   if (!D3DRenderIsEnabled() || col1 == MAXX)
+      col1--;  /* fix overlap! */
    if (col1 < col0) return;
 
 #if 0
@@ -2144,13 +2153,15 @@ static void WalkWall(WallData *wall, long side)
 	  b = toprow1 - toprow0;
 	  d = a * toprow0 - b * col0;
 	}
-      
       item_template.type = DrawWallType;
       item_template.u.wall.wall = wall;
       item_template.u.wall.side = SGN(side);
       item_template.u.wall.wall_type = WALL_BELOW;
+      wall->drawbelow = TRUE;
       if (add_dn(&item_template, a, b, d, col0, col1))
-	wall->seen = True;
+      {
+         wall->seen = True;
+      }
    }
 
    // Look for above wall
@@ -2183,13 +2194,15 @@ static void WalkWall(WallData *wall, long side)
 	  b = botrow1 - botrow0;
 	  d = a * botrow0 - b * col0;
 	}
-      
       item_template.type = DrawWallType;
       item_template.u.wall.wall = wall;
       item_template.u.wall.side = SGN(side);
       item_template.u.wall.wall_type = WALL_ABOVE;
-      if(add_up(&item_template, a, b, d, col0, col1))
-	wall->seen = True;
+      wall->drawabove = TRUE;
+      if (add_up(&item_template, a, b, d, col0, col1))
+      {
+         wall->seen = True;
+      }
    }
    
    // Look for normal wall
@@ -2198,6 +2211,10 @@ static void WalkWall(WallData *wall, long side)
      /* wall completes a column, so we don't need to calculate
       * its vertical extent.
       */
+      // The following code is not accurate enough to calculate correctly
+      // whether we should draw the wall or not, so if we've got this far,
+      // flag it for drawing.
+      wall->drawnormal = TRUE;
      blakassert(col1 < MAXX);
      for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
      {
@@ -2375,7 +2392,7 @@ Bool EyeBelowCeiling(Sector *sector) {
 }
 
 /*****************************************************************************/
-static void WalkLeaf(BSPleaf *leaf)
+static void WalkLeaf(BSPnode *tree)
 {
    long i;
    long col0,col1;
@@ -2384,13 +2401,19 @@ static void WalkLeaf(BSPleaf *leaf)
    DrawItem item_template;
    long a,b,d;
    float x0,y0,x1,y1;
+   BSPleaf *leaf = &tree->u.leaf;
    long t0,t1,height,height0,height1;
    SlopeData *sloped_floor = leaf->sector->sloped_floor;  // only a tiny bit faster but much easier to read
    SlopeData *sloped_ceiling = leaf->sector->sloped_ceiling;
    Bool process_floor,process_ceiling;
    Vector3D surface_norm;
    long lightscale;
-   
+
+   // These booleans are used in d3drender.c to decide whether to add the floor
+   // or ceiling to the the rendering pipeline. If these are modified or removed,
+   // d3drender.c needs to be modified also.
+   tree->drawfloor = FALSE;
+   tree->drawceiling = FALSE;
 #if 0
    debug(("WalkLeaf"));
    for(i=0; i<leaf->poly.npts; i++)
@@ -2481,7 +2504,10 @@ static void WalkLeaf(BSPleaf *leaf)
 			   &t0,&t1,&col0, &d0, &col1, &d1))
 	 continue;
        
-       col1--;
+       // This probably needs looking at - why take one here? The other instance
+       // this was done caused lines in walls in D3D renderer.
+       //if (!D3DRenderIsEnabled())
+         col1--;
        if (col1 < col0)
 	 continue;
        
@@ -2542,7 +2568,8 @@ static void WalkLeaf(BSPleaf *leaf)
 	   else
 	     item_template.type = DrawBackgroundType;
 	   
-	   add_dn(&item_template, a, b, d, col0, col1);
+      add_dn(&item_template, a, b, d, col0, col1);
+      tree->drawfloor = TRUE;
 	 }
        
        if (process_ceiling)
@@ -2601,7 +2628,8 @@ static void WalkLeaf(BSPleaf *leaf)
 	   else
 	     item_template.type = DrawBackgroundType;
 	   
-	   add_up(&item_template, a, b, d, col0, col1);
+      add_up(&item_template, a, b, d, col0, col1);
+      tree->drawceiling = TRUE;
 	 }
      }
 }
@@ -2620,7 +2648,7 @@ static void WalkBSPtree(BSPnode *tree)
    
    if (!tree)
       return;
-   
+
    /* don't open box if not in view */
    if (Bbox_shadowed(tree->bbox.x0,tree->bbox.y0,tree->bbox.x1,tree->bbox.y1))
    {
@@ -2636,7 +2664,7 @@ static void WalkBSPtree(BSPnode *tree)
    switch(tree->type)
    {
    case BSPleaftype:
-      WalkLeaf(&tree->u.leaf);
+      WalkLeaf(tree);
       return;
       
    case BSPinternaltype:
@@ -4352,6 +4380,16 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
 
    right_a =  center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
    right_b = -center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
+
+   // If the D3D render is in use, we need to increase the frustum
+   if (D3DRenderIsEnabled())
+   {
+      left_a = -center_b + ((center_a * screen_width) >> LOG_VIEWER_DISTANCE);
+      left_b = center_a + ((center_b * screen_width) >> LOG_VIEWER_DISTANCE);
+
+      right_a = center_b + ((center_a * screen_width) >> LOG_VIEWER_DISTANCE);
+      right_b = -center_a + ((center_b * screen_width) >> LOG_VIEWER_DISTANCE);
+   }
 
    /* add moving objects to BSP tree */
    AddObjects(room);

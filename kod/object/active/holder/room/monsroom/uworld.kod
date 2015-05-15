@@ -46,12 +46,6 @@ resources:
       "You enter the portal, and find yourself lost, confusion starts to "
       "take over when you find yourself home."
 
-   try_light_unlit = \
-      "Waving your hand past the cold brazier, a warm flame ignites."
-   try_light_lit = \
-      "You wave your hand over the lit brazier, and flames lick "
-      "at your fingertips."
-
    burning_wading_sound = frying.wav
 
 classvars:
@@ -298,11 +292,11 @@ messages:
 
       if lit
       {
-         Send(who,@MsgSendUser,#message_rsc=try_light_lit);
+         Send(who,@MsgSendUser,#message_rsc=room_try_light_lit);
       }
       else
       {
-         Send(who,@MsgSendUser,#message_rsc=try_light_unlit);
+         Send(who,@MsgSendUser,#message_rsc=room_try_light_unlit);
       }
 
       if pbLitA AND pbLitB AND pbLitC AND pbLitD AND pbLitE

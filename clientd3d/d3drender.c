@@ -729,18 +729,6 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 	p = params;
 
-   // These two functions do the same thing, D3DFillTreeData uses the room's
-   // node list and D3DFillTreeDataTraverse traverses the tree to fill it.
-   // D3DFillTreeDataTraverse is slightly faster for drawing a partial room.
-   // This function is added here so the data for walls, ceilings and floors
-   // can be added to their structs (i.e. the data from the Extract functions)
-   // so we don't have to calculate them repeatedly each time we draw something.
-   // Data is valid for the entire frame. D3DGeometryBuildNew also calls this
-   // to build the static light maps (with the third parameter set to TRUE to
-   // fill the entire tree).
-   D3DFillTreeDataTraverse(room->tree, params, FALSE);
-   //D3DFillTreeData(room, params, FALSE);
-
 	gDLightCache.numLights = 0;
 	gDLightCacheDynamic.numLights = 0;
 	D3DLMapsStaticGet(room);
@@ -803,6 +791,18 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 	D3DCacheSystemReset(&gWorldCacheSystem);
 	
 	UpdateRoom3D(room, params);
+
+   // These two functions do the same thing, D3DFillTreeData uses the room's
+   // node list and D3DFillTreeDataTraverse traverses the tree to fill it.
+   // D3DFillTreeDataTraverse is slightly faster for drawing a partial room.
+   // This function is added here so the data for walls, ceilings and floors
+   // can be added to their structs (i.e. the data from the Extract functions)
+   // so we don't have to calculate them repeatedly each time we draw something.
+   // Data is valid for the entire frame. D3DGeometryBuildNew also calls this
+   // to build the static light maps (with the third parameter set to TRUE to
+   // fill the entire tree).
+   D3DFillTreeDataTraverse(room->tree, params, FALSE);
+   //D3DFillTreeData(room, params, FALSE);
 
 	playerDeltaPos.x = params->viewer_x - playerOldPos.x;
 	playerDeltaPos.y = params->viewer_y - playerOldPos.y;
@@ -1373,8 +1373,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices,
 		gNumDPCalls));
 
-   //debug(("all = %d lmaps = %d wrld = %d obj = %d  particles = %d sky = %d init = %d\n",
-		//timeOverall, timeLMaps, timeWorld, timeObjects, timeParticles, timeSkybox+timeSkybox2, timeInit));
+   debug(("all = %d lmaps = %d wrld = %d obj = %d  particles = %d sky = %d init = %d\n",
+		timeOverall, timeLMaps, timeWorld, timeObjects, timeParticles, timeSkybox+timeSkybox2, timeInit));
 }
 
 void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)

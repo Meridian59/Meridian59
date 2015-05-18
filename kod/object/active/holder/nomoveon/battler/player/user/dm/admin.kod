@@ -29,7 +29,7 @@ resources:
    admin_not_anonymous = "You are again known as %s."
    admin_black = "You are now shadowform."
 
-   admin_currently_in = "The ROO for `b%s`n is `k`B%s`n."
+   admin_currently_in = "The ROO for `b%s`n is `k`B%s`n.  The room number is %i."
 
    admin_create_itematt_command = "create item attribute"
    admin_anonymous_command = "anonymous"
@@ -327,7 +327,8 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=admin_currently_in,
                #parm1=send(poOwner,@GetName),
-               #parm2=send(poOwner,@GetRoomResource));
+               #parm2=send(poOwner,@GetRoomResource),
+               #parm3=Send(poOwner,@GetRoomNum));
 
          return;
       }

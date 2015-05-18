@@ -336,7 +336,6 @@ BOOL LoadRoom(int infile)
       if (read(infile, &new_sd1->sector, 2) != 2) return FALSE;
       if (read(infile, &new_sd2->sector, 2) != 2) return FALSE;
 
-
       // Read endpoints
       if (read(infile, &temp, 4) != 4) return FALSE;
       x0 = temp;
@@ -347,9 +346,8 @@ BOOL LoadRoom(int infile)
       if (read(infile, &temp, 4) != 4) return FALSE;
       y1 = temp;
       LineDefs[i].start = AddVertex(x0, y0);
-      LineDefs[i].end   = AddVertex(x1, y1);
-   }   
-
+      LineDefs[i].end = AddVertex(x1, y1);
+   }
 
    // *** Read file sidedefs
    lseek(infile, sidedef_pos, SEEK_SET);
@@ -549,10 +547,32 @@ BOOL ReadSlopeInfo(int infile, SlopeInfo *info)
    int i;
    SHORT z;
 
-   if (!read(infile, &info->plane.a, 4)) return FALSE;
-   if (!read(infile, &info->plane.b, 4)) return FALSE;
-   if (!read(infile, &info->plane.c, 4)) return FALSE;
-   if (!read(infile, &info->plane.d, 4)) return FALSE;
+   if (room_version < 14)
+   {
+      int temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.a = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.b = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.c = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.d = temp;
+   }
+   else
+   {
+      float temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.a = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.b = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.c = temp;
+      if (!read(infile, &temp, 4)) return FALSE;
+      info->plane.d = temp;
+   }
+
+
    if (!read(infile, &info->x, 4)) return FALSE;
    if (!read(infile, &info->y, 4)) return FALSE;
    if (!read(infile, &info->angle, 4)) return FALSE;

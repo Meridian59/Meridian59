@@ -82,7 +82,7 @@ TConfirmSectorDialog::TConfirmSectorDialog (TWindow* parent, TConfirmSectorDialo
 	pScrollCheck         = newTCheckBox(this, IDC_SCROLL, 0);
 	pSlopeCheck          = newTCheckBox(this, IDC_SLOPES, 0);
 
-	SetTransferBuffer(&Xfer);
+   SetTransferBuffer((void*)&Xfer);
 //{{TConfirmSectorDialogXFER_USE_END}}
 }
 

@@ -386,7 +386,7 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	MadeChanges = FALSE;
 	MadeMapChanges = FALSE;
 	ScaleMax = 32.0;
-	ScaleMin = 1.0 / 20.0;
+	ScaleMin = 1.0f / 20.0f;
 	if (InitialScale < 1)
 		InitialScale = 1;
 	else if (InitialScale > 20)
@@ -1751,9 +1751,9 @@ void TEditorClient::EvChar (UINT key, UINT repeatCount, UINT flags)
 		else if (key == '-' )
 			DecScale();
 		else if (key == '0')
-			SetScale (0.1);
+			SetScale (0.1f);
 		else
-			SetScale (1.0 / (float)(key - '0'));
+			SetScale (1.0f / (float)(key - '0'));
 		OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
 		OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
 
@@ -1825,11 +1825,22 @@ void TEditorClient::AdjustScroller ()
 	// Compute the max and min value for OrigX and OrigY
 	SHORT OrigXMin = MAP_MIN_X + (SHORT)(ScrCenterX * DIV_SCALE);
 	SHORT OrigXMax = MAP_MAX_X - (SHORT)(ScrCenterX * DIV_SCALE);
-	assert (OrigXMin <= OrigXMax);
+	if (OrigXMin > OrigXMax)
+	{
+		// If we go outside the valid map, center it back over
+		// the middle at the starting scale. This used to be
+		// checked using *assert*!
+		SetScale((float)(1.0 / 20.0));
+		CenterMapAroundCoords((MapMinX + MapMaxX) / 2, (MapMinY + MapMaxY) / 2);
+	}
 
 	SHORT OrigYMin = MAP_MIN_Y + (SHORT)(ScrCenterY * DIV_SCALE);
 	SHORT OrigYMax = MAP_MAX_Y - (SHORT)(ScrCenterY * DIV_SCALE);
-	assert (OrigYMin <= OrigYMax);
+	if (OrigYMin > OrigYMax)
+	{
+		SetScale((float)(1.0 / 20.0));
+		CenterMapAroundCoords((MapMinX + MapMaxX) / 2, (MapMinY + MapMaxY) / 2);
+	}
 
 	// Check that OrigX and OrigY are in their legal value
 	if ( OrigX < OrigXMin )     OrigX = OrigXMin ;
@@ -2866,8 +2877,8 @@ void TEditorClient::CmObjectsRectangle ()
 	static SHORT Height = 128;
 	char Title[80];
 	char Prompt[80];
-	TRangeValidator *pValid1 = new TRangeValidator(8, 2000);
-	TRangeValidator *pValid2 = new TRangeValidator(8, 2000);
+	TRangeValidator *pValid1 = new TRangeValidator(8, 14000);
+	TRangeValidator *pValid2 = new TRangeValidator(8, 14000);
 	char wBuf[7];
 	char hBuf[7];
 
@@ -2966,8 +2977,8 @@ void TEditorClient::CmObjectsPolygon ()
 	static SHORT Radius = 128;
 	char Title[80];
 	char Prompt[80];
-	TRangeValidator *pValid1 = new TRangeValidator(3, 32);
-	TRangeValidator *pValid2 = new TRangeValidator(8, 2000);
+	TRangeValidator *pValid1 = new TRangeValidator(3, 1024);
+	TRangeValidator *pValid2 = new TRangeValidator(8, 14000);
 	char nBuf[7];
 	char rBuf[7];
 

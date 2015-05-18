@@ -176,7 +176,8 @@ Bool MoveCheckBSPNode(BSPnode *node, int old_x, int old_y, int x, int y, int z,
 {
    BSPinternal *inode;
    WallData *wall;
-	int a, b, c, distance, temp, old_distance;
+   double temp, old_distance;
+   double a, b, c, distance;
    int below_height, sector_num;
    FileSideDef *sidedef;
 
@@ -204,65 +205,67 @@ Bool MoveCheckBSPNode(BSPnode *node, int old_x, int old_y, int x, int y, int z,
       // Check walls in this node
       for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
       {
-	 int minx, miny, maxx, maxy;
+         double minx, miny, maxx, maxy;
 
-	 minx = min(wall->x0, wall->x1);
-	 maxx = max(wall->x0, wall->x1);
-	 miny = min(wall->y0, wall->y1);
-	 maxy = max(wall->y0, wall->y1);
-	 
-	 // See if we are near the wall itself, and not just the wall's plane
-	 if ((minx - min_distance <= x && x <= maxx + min_distance) && 
-	     (miny - min_distance <= y && y <= maxy + min_distance))
-	 {
-	    // OK to move away from wall (prevents user from getting trapped),
-	    // but only if both old and new positions are within bounding box.
-	    old_distance = (a * old_x + b * old_y + c);
-	    if (ABS(distance) > ABS(old_distance) &&
-		(minx - min_distance <= old_x && old_x <= maxx + min_distance) &&
-		(miny - min_distance <= old_y && old_y <= maxy + min_distance))
-	       continue;
+         minx = min(wall->x0, wall->x1);
+         maxx = max(wall->x0, wall->x1);
+         miny = min(wall->y0, wall->y1);
+         maxy = max(wall->y0, wall->y1);
 
-	    if (old_distance > 0)
-	    {
-	       if (wall->pos_sidedef == 0)
-		  continue;
-	       sidedef = GetFileSideDef(wall->pos_sidedef);
-	       sector_num = wall->neg_sector;
-	    }
-	    else
-	    {
-	       if (wall->neg_sidedef == 0)
-		  continue;
-	       sidedef = GetFileSideDef(wall->neg_sidedef);
-	       sector_num = wall->pos_sector;
-	    }
+         // See if we are near the wall itself, and not just the wall's plane
+         if ((minx - min_distance <= x && x <= maxx + min_distance)
+            && (miny - min_distance <= y && y <= maxy + min_distance))
+         {
+            // OK to move away from wall (prevents user from getting trapped),
+            // but only if both old and new positions are within bounding box.
+            old_distance = (a * old_x + b * old_y + c);
+            if (ABS(distance) > ABS(old_distance)
+               && (minx - min_distance <= old_x && old_x <= maxx + min_distance)
+               && (miny - min_distance <= old_y && old_y <= maxy + min_distance))
+               continue;
 
-	    // Check for wading on far side of wall; reduce effective height of wall if found
-	    below_height = 0;
-	    if (sector_num != -1)
-	       below_height = sector_depths[SectorDepth(Sectors[sector_num].blak_flags)];
+            if (old_distance > 0)
+            {
+               if (wall->pos_sidedef == 0)
+                  continue;
+               sidedef = GetFileSideDef(wall->pos_sidedef);
+               sector_num = wall->neg_sector;
+            }
+            else
+            {
+               if (wall->neg_sidedef == 0)
+                  continue;
+               sidedef = GetFileSideDef(wall->neg_sidedef);
+               sector_num = wall->pos_sector;
+            }
 
-	    // Can't step up too far; watch bumping your head; see if pasasble
-	    if ((sidedef->type_below == 0 || 
-		 (sidedef->type_below != 0 && 
-		  (wall->z1 - z - below_height) <= MAX_STEP_HEIGHT))
-		&&
-		(sidedef->type_above == NULL || 
-		 (sidedef->type_above != NULL && wall->z2 - z >= OBJECT_HEIGHT)) 
-		&&
-		(sidedef->flags & WF_PASSABLE))
-	       continue;
+            // Check for wading on far side of wall;
+            // reduce effective height of wall if found
+            below_height = 0;
+            if (sector_num != -1)
+               below_height = sector_depths[SectorDepth(Sectors[sector_num].blak_flags)];
 
-//	    dprintf("Rejecting wall top = %d, bottom = %d, z = %d, flags = %x\n", wall->z2, wall->z1, z, sidedef->flags);
-	    return True;   // Move is illegal
-	 }
+            // Can't step up too far; watch bumping your head; see if pasasble
+            if ((sidedef->type_below == 0 || 
+               (sidedef->type_below != 0 && 
+               (wall->z1 - z - below_height) <= MAX_STEP_HEIGHT))
+               &&
+               (sidedef->type_above == NULL || 
+               (sidedef->type_above != NULL && wall->z2 - z >= OBJECT_HEIGHT)) 
+               &&
+               (sidedef->flags & WF_PASSABLE))
+               continue;
+
+            //dprintf("Rejecting wall top = %d, bottom = %d, z = %d, flags = %x\n",
+               //wall->z2, wall->z1, z, sidedef->flags);
+            return True;   // Move is illegal
+         }
       }
    }
 
-	// Check children
-	return MoveCheckBSPNode(inode->pos_side, old_x, old_y, x, y, z, min_distance) ||
-		MoveCheckBSPNode(inode->neg_side, old_x, old_y, x, y, z, min_distance);
+   // Check children
+   return MoveCheckBSPNode(inode->pos_side, old_x, old_y, x, y, z, min_distance) ||
+      MoveCheckBSPNode(inode->neg_side, old_x, old_y, x, y, z, min_distance);
 }
 /************************************************************************/
 /*
@@ -458,37 +461,37 @@ int ComputeHighResSquareFlags(BSPTree tree, int row, int col, int rows, int cols
  */
 BSPleaf *BSPFindLeafByPoint(BSPnode *tree, int x, int y)
 {
-   long side;
+   double side;
    BSPnode *pos, *neg;
    
    while (1)
    {
       if (tree == NULL)
-	 return NULL;
+         return NULL;
 
       switch(tree->type)
       {
       case BSPleaftype:
-	 return &tree->u.leaf;
+         return &tree->u.leaf;
 
       case BSPinternaltype:
-	 side = tree->u.internal.separator.a * x + 
-	    tree->u.internal.separator.b * y +
-	       tree->u.internal.separator.c;
-	 
-	 pos = tree->u.internal.pos_side;
-	 neg = tree->u.internal.neg_side;
-	 if (side == 0)
-	    tree = (pos != NULL) ? pos : neg;
-	 else if (side > 0)
-	    tree = pos;
-	 else
-	    tree = neg;
-	 break;
+         side = (tree->u.internal.separator.a) * x + 
+            (tree->u.internal.separator.b) * y +
+            (tree->u.internal.separator.c);
+
+         pos = tree->u.internal.pos_side;
+         neg = tree->u.internal.neg_side;
+         if (side <= 0.001 && side >= -0.001)
+            tree = (pos != NULL) ? pos : neg;
+         else if (side > 0.001)
+            tree = pos;
+         else
+         tree = neg;
+         break;
 
       default:
-	 dprintf("BSPFindLeafByPoint got illegal node type %d\n", tree->type);
-	 return NULL;
+         LogError("BSPFindLeafByPoint got illegal node type %d\n", tree->type);
+         return NULL;
       }
    }
 }

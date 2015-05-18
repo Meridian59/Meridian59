@@ -29,6 +29,8 @@
 	#include "common.h"
 #endif
 
+#include <math.h>
+
 /* Defines the extremal maps dimensions. Recommended values are
    -10000 to +10000 for both X and Y. It's dangerous to choose
    greater values. These values are used for setting the scroll bars
@@ -126,6 +128,7 @@ void SetScaleMin ();
 
 USHORT ComputeAngle (SHORT, SHORT);
 USHORT ComputeDist (SHORT, SHORT);
+double ComputeDistDouble (double, double);
 void InsertPolygonVertices (SHORT, SHORT, SHORT, SHORT);
 void RotateAndScaleCoords (SHORT *, SHORT *, double, double);
 

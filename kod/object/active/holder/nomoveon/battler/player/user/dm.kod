@@ -166,9 +166,9 @@ resources:
    dm_help_lights = \
       "Available lights for placing are:  brazier, brazierswitch (UW brazier), "
       "lamp, candleabra, candle, firepit, glowtree, kocatan brazier, kocatan lamp, "
-      "orc torch, skull brazier, table lamp, lantern and smoke (nice for firepits).  "
-      "You can also place a dynamic light (with no visible object) using "
-      "\" dm place dynamic light\"."
+      "orc torch, skull brazier, table lamp, lantern, jasper lantern, "
+      "jasper lantern1 and smoke (nice for firepits).  You can also place a dynamic light "
+      "(with no visible object) using \" dm place dynamic light\"."
    dm_help_scenery = \
       "Available scenery items for placing are:  tree, raza tree, dead tree, "
       "pine tree, elm tree, spider tree, fey tree, bush (low res), shrub, "
@@ -888,6 +888,16 @@ messages:
          if NOT bItemFound AND StringContain(string,"place lantern")
          {
             oObject = Create(&OrnamentalObject,#type=OO_LANTERN);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place jasper lantern1")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_JASPERLAMP1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place jasper lantern")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_JASPERLAMP);
             bItemFound = TRUE;
          }
          if NOT bItemFound AND StringContain(string,"place tree")

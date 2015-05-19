@@ -72,7 +72,7 @@ TextureInfo ** AddTextures (char *dir, char *filespec, SHORT *num)
 
       // Get texture size
       sprintf(path, "%s\\%s", dir, filename);
-      if (DibOpenFileSimple(path, &b, &shrink, &width, &height));
+      if (DibOpenFileSimple(path, &b, &shrink, &width, &height))
       {
 	 Textures[i]->Width  = width;
 	 Textures[i]->Height = height;

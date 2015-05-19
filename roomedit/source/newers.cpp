@@ -30,7 +30,7 @@
 #include "common.h"
 #pragma hdrstop
 
-#ifndef __OWL_EDIT_H
+#ifndef OWL_EDIT_H
 	#include <owl\edit.h>
 #endif
 
@@ -39,7 +39,7 @@ TEdit *newTEdit(TWindow* parent, int resourceID, UINT textLen, TModule* module)
 	return new TEdit(parent, resourceID, textLen, module);
 }
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 

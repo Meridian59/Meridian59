@@ -144,17 +144,3 @@ SUGGESTIONS
 If you have suggestions or bug reports, you can E-Mail me to:
 rpa@info.fundp.ac.be
 (Renaud Paquay)
-
-
-
-Meridian 59 build instructions
-------------------------------
-
-Building requires Borland C++ 4.5.
-
-Loading wall textures requires zlib.  To convert the Microsoft Visual C++
-import library to Borland (OMF) format, run
-
-coff2omf.exe ..\lib\zdll.lib ..\lib\zdll_omf.lib
-
-coff2omf is available in the free Borland C++ 5.5 distribution.

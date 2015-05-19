@@ -101,7 +101,7 @@ TInfoControl::TInfoControl (TWindow* parent, int id, unsigned _NumLines,
 	curColor = DEF_COLOR;
 	curAlign = DEF_ALIGN;
 
-	SetCursor (GetApplication(), IDC_HAND);
+	SetCursor(GetApplication(), IDC_HANDC);
 }
 
 

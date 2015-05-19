@@ -3510,7 +3510,7 @@ void TEditorClient::CmMiscLDDelete ()
 
 	// Check at least one object selected
 	if ( CheckSelection (1, -1) == FALSE )
-		return;
+		goto End;
 
 	// UNDO
 	StartUndoRecording("Delete LineDef");

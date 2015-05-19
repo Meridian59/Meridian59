@@ -369,11 +369,7 @@ void TViewBitmapListDialog::SetupWindow ()
 //
 int TViewBitmapListDialog::SetSelection (const char *str)
 {
-#if OWLVersion > OWLVERBC502
 	int SelIndex = pBitmapList->FindStringExact(str, -1);
-#else
-	int SelIndex = pBitmapList->FindExactString(str, -1);
-#endif
 
 	if ( SelIndex >= 0 )
 	{

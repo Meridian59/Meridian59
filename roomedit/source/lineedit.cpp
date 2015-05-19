@@ -1776,11 +1776,7 @@ void TLineDefEditDialog::TextureListDBLClick ()
 // TLineDefEditDialog
 // ------------------
 //
-#if OWLVersion > OWLVERBC502
 void TLineDefEditDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
-#else
-void TLineDefEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
-#endif
 {
    TDialog::EvLButtonDown(modKeys, point);
    
@@ -1806,11 +1802,7 @@ void TLineDefEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TLineDefEditDialog
 // ------------------
 //
-#if OWLVersion > OWLVERBC502
 void TLineDefEditDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
-#else
-void TLineDefEditDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
-#endif
 {
    TDialog::EvLButtonDblClk(modKeys, point);
    

@@ -687,7 +687,7 @@ void BuildNewMainWad (char *filename, BOOL patchonly)
 
 void ReadBytes (FILE *file, void *addr, long size)
 {
-	BYTE HUGE *ptr = (BYTE *)addr;
+	BYTE *ptr = (BYTE *)addr;
 
 	while (size > 0x8000)
 	{
@@ -709,7 +709,7 @@ void ReadBytes (FILE *file, void *addr, long size)
 
 void WriteBytes (FILE *file, void *addr, long size)
 {
-	BYTE HUGE *ptr = (BYTE *)addr;
+	BYTE *ptr = (BYTE *)addr;
 
 	if (! Registered)
 		return;

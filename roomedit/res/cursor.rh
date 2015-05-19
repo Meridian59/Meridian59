@@ -26,7 +26,7 @@
 #define __cursor_rh
 
 // Hand cursor
-#define IDC_HAND	5000
+#define IDC_HANDC	5000
 
 // Help cursor
 #define IDC_HELPCURSOR	24000

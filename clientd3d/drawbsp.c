@@ -4375,12 +4375,6 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
    center_a = COS(viewer_angle) >> 6;
    center_b = SIN(viewer_angle) >> 6;
 
-   left_a = -center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
-   left_b =  center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
-
-   right_a =  center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
-   right_b = -center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
-
    // If the D3D render is in use, we need to increase the frustum
    if (D3DRenderIsEnabled())
    {
@@ -4390,6 +4384,15 @@ void DrawBSP(room_type *room, Draw3DParams *params, long width, Bool draw)
       right_a = center_b + ((center_a * screen_width) >> LOG_VIEWER_DISTANCE);
       right_b = -center_a + ((center_b * screen_width) >> LOG_VIEWER_DISTANCE);
    }
+   else
+   {
+      left_a = -center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
+      left_b = center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
+
+      right_a = center_b + ((center_a * screen_width2) >> LOG_VIEWER_DISTANCE);
+      right_b = -center_a + ((center_b * screen_width2) >> LOG_VIEWER_DISTANCE);
+   }
+
 
    /* add moving objects to BSP tree */
    AddObjects(room);

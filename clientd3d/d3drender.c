@@ -10895,11 +10895,11 @@ Bool IsHidden(Draw3DParams *params, long x0, long y0, long x1, long y1)
    center_a = COS(params->viewer_angle) >> 6;
    center_b = SIN(params->viewer_angle) >> 6;
 
-   left_a = -center_b + ((center_a * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
-   left_b = center_a + ((center_b * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
+   left_a = -center_b + ((center_a * MAXX) >> LOG_VIEWER_DISTANCE);
+   left_b = center_a + ((center_b * MAXX) >> LOG_VIEWER_DISTANCE);
 
-   right_a = center_b + ((center_a * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
-   right_b = -center_a + ((center_b * gScreenWidth >> 1) >> LOG_VIEWER_DISTANCE);
+   right_a = center_b + ((center_a * MAXX) >> LOG_VIEWER_DISTANCE);
+   right_b = -center_a + ((center_b * MAXX) >> LOG_VIEWER_DISTANCE);
 
    x0 -= params->viewer_x;
    y0 -= params->viewer_y;

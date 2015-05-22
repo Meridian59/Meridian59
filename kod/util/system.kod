@@ -2566,6 +2566,8 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTSHORE1,#class=&DesertShore1);
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTSHORE2,#class=&DesertShore2);
       Send(self,@CreateOneRoomIfNew,#num=RID_DESERTSHORE3,#class=&DesertShore3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTRIVER1,#class=&DesertRiver1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTRIVER2,#class=&DesertRiver2);
 
 
       if poRentableRoomMaintenance <> $  % After a clean build, for example.

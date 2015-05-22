@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DesertRiver1 is DesertRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_desertriver1 = desertriver1.roo
+   room_name_desertriver1 = "Cliffbound River"
+
+classvars:
+
+   vrName = room_name_desertriver1
+
+   viTeleport_row = 5
+   viTeleport_col = 7
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_desertriver1
+   piRoom_num = RID_DESERTRIVER1
+
+messages:
+
+ 
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+
+      propagate;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if new_row < 2 and (new_col < 15)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_WAYLAYOASIS),
+              #new_row=96,#new_col=4,
+              #new_angle=ANGLE_NORTH);
+         return;
+      }
+
+      if new_row < 2 and (new_col > 20)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_WAYLAYOASIS),
+              #new_row=96,#new_col=73,
+              #new_angle=ANGLE_NORTH);
+              
+         return;
+      }
+
+      if new_row > Send(self,@GetRoomRows)-2 and (new_col < 10)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_DESERTRIVER2),
+              #new_row=2,#new_col=6,#fine_row=14,#fine_col=36,
+              #new_angle=ANGLE_SOUTH);
+              
+         return;
+      }
+
+      if new_row > Send(self,@GetRoomRows)-2 and (new_col > 10)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_DESERTRIVER2),
+              #new_row=4,#new_col=17,#fine_row=11,#fine_col=23,
+              #new_angle=ANGLE_SOUTH);
+              
+         return;
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

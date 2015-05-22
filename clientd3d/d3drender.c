@@ -286,9 +286,9 @@ d3d_render_packet_new	*D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 												PDIB pDib, BYTE xLat0, BYTE xLat1, BYTE effect);
 float					D3DRenderObjectLightGetNearest(room_contents_node *pRNode);
 void					D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
-							Draw3DParams *params, BYTE flags);
+							Draw3DParams *params, BYTE flags, Bool drawTransparent);
 void					D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params,
-							BOOL underlays, BYTE flags);
+							BOOL underlays, BYTE flags, Bool drawTransparent);
 void					D3DRenderProjectilesDrawNew(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params);
 void					D3DRenderPlayerOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params);
 void					D3DRenderPlayerOverlayOverlaysDraw(d3d_render_pool_new *pPool, list_type overlays,
@@ -1127,13 +1127,26 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
-		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, FALSE);
-		D3DRenderObjectsDraw(&gObjectPool, room, params, FALSE);
-		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, FALSE);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, FALSE, FALSE);
+		D3DRenderObjectsDraw(&gObjectPool, room, params, FALSE, FALSE);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, FALSE, FALSE);
 		D3DRenderProjectilesDrawNew(&gObjectPool, room, params);
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
-		
+
+      /********************** TRANSPARENT OBJECTS ****************************/
+
+      D3DRENDER_SET_ALPHATEST_STATE(gpD3DDevice, TRUE, TEMP_ALPHA_REF, D3DCMP_GREATEREQUAL);
+      D3DRENDER_SET_ALPHABLEND_STATE(gpD3DDevice, TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+
+      D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectPool);
+      D3DCacheSystemReset(&gObjectCacheSystem);
+      D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, FALSE, TRUE);
+      D3DRenderObjectsDraw(&gObjectPool, room, params, FALSE, TRUE);
+      D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, FALSE, TRUE);
+      D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 1);
+      D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
+
 		/******************** INVISIBLE OBJECTS *****************************/
 
 		D3DRenderFramebufferTextureCreate(gpBackBufferTexFull, gpBackBufferTex[0], 256, 256);
@@ -1147,9 +1160,9 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 
 		D3DRenderPoolReset(&gObjectPool, &D3DMaterialObjectInvisiblePool);
 		D3DCacheSystemReset(&gObjectCacheSystem);
-		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, DRAWFX_INVISIBLE);
-		D3DRenderObjectsDraw(&gObjectPool, room, params, DRAWFX_INVISIBLE);
-		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, DRAWFX_INVISIBLE);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 1, DRAWFX_INVISIBLE, FALSE);
+		D3DRenderObjectsDraw(&gObjectPool, room, params, DRAWFX_INVISIBLE, FALSE);
+		D3DRenderOverlaysDraw(&gObjectPool, room, params, 0, DRAWFX_INVISIBLE, FALSE);
 		D3DCacheFill(&gObjectCacheSystem, &gObjectPool, 2);
 		D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 2, D3DPT_TRIANGLESTRIP);
 
@@ -1182,9 +1195,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 			D3DCacheFlush(&gObjectCacheSystem, &gObjectPool, 1, D3DPT_TRIANGLESTRIP);
 		}
 
-		IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
-		IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
-
+      IDirect3DDevice9_SetVertexShader(gpD3DDevice, NULL);
+      IDirect3DDevice9_SetVertexDeclaration(gpD3DDevice, decl1dc);
 		timeObjects = timeGetTime() - timeObjects;
 	}
 
@@ -7250,7 +7262,7 @@ d3d_render_packet_new *D3DRenderPacketFindMatch(d3d_render_pool_new *pPool, LPDI
 }
 
 void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
-							 Draw3DParams *params, BYTE flags)
+							 Draw3DParams *params, BYTE flags, Bool drawTransparent)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -7298,7 +7310,15 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 		{
 			if (pRNode->obj.drawingtype == DRAWFX_INVISIBLE)
 				continue;
-		}
+
+         if (drawTransparent != ((pRNode->obj.drawingtype == DRAWFX_TRANSLUCENT25)
+            || (pRNode->obj.drawingtype == DRAWFX_TRANSLUCENT50)
+            || (pRNode->obj.drawingtype == DRAWFX_TRANSLUCENT75)
+            || (pRNode->obj.drawingtype == DRAWFX_DITHERTRANS)
+            || (pRNode->obj.drawingtype == DRAWFX_DITHERINVIS)
+            || (pRNode->obj.drawingtype == DRAWFX_DITHERGREY)))
+            continue;
+      }
 
 		dx = pRNode->motion.x - params->viewer_x;
 		dy = pRNode->motion.y - params->viewer_y;
@@ -7718,7 +7738,7 @@ void D3DRenderObjectsDraw(d3d_render_pool_new *pPool, room_type *room,
 }
 
 void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params,
-						   BOOL underlays, BYTE flags)
+						   BOOL underlays, BYTE flags, Bool drawTransparent)
 {
 	D3DMATRIX			mat, rot, trans;
 	int					angleHeading, anglePitch, i, curObject;
@@ -7769,7 +7789,15 @@ void D3DRenderOverlaysDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DPa
 		{
 			if (pRNode->obj.drawingtype == DRAWFX_INVISIBLE)
 				continue;
-		}
+
+         if (drawTransparent != ((pRNode->obj.drawingtype == DRAWFX_TRANSLUCENT25)
+            || (pRNode->obj.drawingtype == DRAWFX_TRANSLUCENT50)
+            || (pRNode->obj.drawingtype == DRAWFX_TRANSLUCENT75)
+            || (pRNode->obj.drawingtype == DRAWFX_DITHERTRANS)
+            || (pRNode->obj.drawingtype == DRAWFX_DITHERINVIS)
+            || (pRNode->obj.drawingtype == DRAWFX_DITHERGREY)))
+            continue;
+      }
 
 		if (NULL == *pRNode->obj.overlays)
 			continue;

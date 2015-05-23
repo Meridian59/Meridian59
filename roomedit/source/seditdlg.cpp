@@ -984,11 +984,7 @@ void TSectorEditDialog::TextureDblclick ()
 // TSectorEditDialog
 // -----------------
 //
-#if OWLVersion > OWLVERBC502
 void TSectorEditDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
-#else
-void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
-#endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
@@ -1013,11 +1009,7 @@ void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TSectorEditDialog
 // -----------------
 //
-#if OWLVersion > OWLVERBC502
 void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
-#else
-void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
-#endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 

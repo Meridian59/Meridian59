@@ -209,6 +209,7 @@
     <Image Include="res\bitmaps\CM_MODE_VERTEXES.bmp" />
     <Image Include="res\bitmaps\CM_OBJECTS_POLYGON.bmp" />
     <Image Include="res\bitmaps\CM_OBJECTS_RECTANGLE.bmp" />
+    <Image Include="res\bitmaps\CM_OBJECTS_TORCH.bmp" />
     <Image Include="res\bitmaps\CM_WINDOW_GRIDNEXT.bmp" />
     <Image Include="res\bitmaps\CM_WINDOW_GRIDPREV.bmp" />
     <Image Include="res\bitmaps\CM_WINDOW_INFOBAR.bmp" />

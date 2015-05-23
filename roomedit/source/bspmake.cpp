@@ -373,8 +373,8 @@ IntersectionType BSPWallIntersection(WallData *wall1, WallData *wall2, double *x
    dx = x1 - x0;
    dy = y1 - y0;
 
-   *x = (x0 + num * (dx / denom));;
-   *y = (y0 + num * (dy / denom));;
+   *x = (x0 + num * (dx / denom));
+   *y = (y0 + num * (dy / denom));
 
    return Middle;
 }

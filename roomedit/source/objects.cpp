@@ -823,7 +823,8 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 				int x = NewThing.xpos;
 				int y = NewThing.ypos;
 				int col,row;
-				GetServerCoords(&x,&y,&col,&row);
+				
+            GetServerCoords(&x,&y,&col,&row);
 				NewThing.xExitPos = col;
 				NewThing.yExitPos = row;
 				NewThing.id = RoomID;
@@ -852,8 +853,10 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 		}
 		else
 		{
-			NewVertex.x = xpos & ~7;
-			NewVertex.y = ypos & ~7;
+			//NewVertex.x = xpos & ~7;
+			//NewVertex.y = ypos & ~7;
+         NewVertex.x = xpos;
+         NewVertex.y = ypos;
 			if (NewVertex.x < MapMinX)	  MapMinX = NewVertex.x;
 			if (NewVertex.x > MapMaxX)    MapMaxX = NewVertex.x;
 			if (NewVertex.y < MapMinY)    MapMinY = NewVertex.y;
@@ -998,8 +1001,6 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 		Beep();
 	}
 }
-
-
 
 /*
    check if a (part of a) LineDef is inside a given block
@@ -3334,12 +3335,255 @@ void InsertPolygon (SHORT xpos, SHORT ypos, SHORT nsides, SHORT radius)
 	}
 }
 
+// Makes a torch at the given position.
+void InsertTorch(SHORT xpos, SHORT ypos, SHORT torchAngle)
+{
+   SHORT sector;
+
+   // Get the sector, if invalid we won't place the torch.
+   sector = GetCurObject(OBJ_SECTORS, xpos, ypos, xpos, ypos);
+   if (sector < 0)
+      return;
+
+   // Vertex positions for the rest of the torch.
+   SHORT secondVX, secondVY, thirdVX, thirdVY, fourthVX, fourthVY, fifthVX, fifthVY;
+
+   // Texture names for torch.
+   char tx1[33] = "Torch Attaches to wall";
+   char tx2[33] = "Torch Cross [The other part =)]";
+
+   // Place first vertex.
+   InsertObject(OBJ_VERTEXES, -1, xpos, ypos);
+   // This vertex can possibly be merged into the linedef it is placed near, so check for that.
+   // CheckVertexMerge will merge the vertex into a linedef if possible, and if successful we
+   // will branch the torch outwards from that linedef.
+   CheckAndMergeVertex(NumVertexes - 1, &xpos, &ypos);
+
+   // Currently we only place torches on the cardinal directions. Any other input
+   // gets changed to the nearest cardinal.
+   torchAngle /= 90;
+   if (torchAngle == 1)
+   {
+      secondVY = thirdVY = ypos;
+      secondVX = fourthVX = fifthVX = xpos + 12;
+      thirdVX = xpos + 18;
+      fourthVY = ypos + 8;
+      fifthVY = ypos - 8;
+   }
+   else if (torchAngle == 2)
+   {
+      secondVX = thirdVX = xpos;
+      secondVY = fourthVY = fifthVY = ypos - 12;
+      thirdVY = ypos - 18;
+      fourthVX = xpos + 8;
+      fifthVX = xpos - 8;
+   }
+   else if (torchAngle == 3)
+   {
+      secondVY = thirdVY = ypos;
+      secondVX = fourthVX = fifthVX = xpos - 12;
+      thirdVX = xpos - 18;
+      fourthVY = ypos - 8;
+      fifthVY = ypos + 8;
+   }
+   else
+   {
+      secondVX = thirdVX = xpos;
+      secondVY = fourthVY = fifthVY = ypos + 12;
+      thirdVY = ypos + 18;
+      fourthVX = xpos - 8;
+      fifthVX = xpos + 8;
+   }
+
+   // Second and third vertexes (the long part of the torch).
+   InsertObject(OBJ_VERTEXES, -1, secondVX, secondVY);
+   InsertObject(OBJ_VERTEXES, -1, thirdVX, thirdVY);
+
+   // Make the linedefs and sidedefs for the long arm.
+   for (int i = 2; i < 4; i++)
+   {
+      InsertObject(OBJ_LINEDEFS, -1, 0, 0);
+      LineDefs[NumLineDefs - 1].start = NumVertexes - i;
+      LineDefs[NumLineDefs - 1].end = NumVertexes - i + 1;
+
+      // First sidedef
+      InsertObject(OBJ_SIDEDEFS, -1, 0, 0);
+      LineDefs[NumLineDefs - 1].sidedef1 = NumSideDefs - 1;
+      LineDefs[NumLineDefs - 1].blak_flags = 786558;
+      SideDefs[NumSideDefs - 1].sector = sector;
+      SideDefs[NumSideDefs - 1].animate_speed = 90;
+      strcpy(SideDefs[NumSideDefs - 1].tex3, tx1);
+
+      // Top part has to be offset.
+      if (i == 2)
+      {
+         SideDefs[NumSideDefs - 1].xoff = 12;
+         SideDefs[NumSideDefs - 1].type3 = 8886;
+      }
+      else
+         SideDefs[NumSideDefs - 1].type3 = 8886;
+
+      // Second sidedef
+      InsertObject(OBJ_SIDEDEFS, -1, 0, 0);
+      LineDefs[NumLineDefs - 1].sidedef2 = NumSideDefs - 1;
+      SideDefs[NumSideDefs - 1].sector = sector;
+      SideDefs[NumSideDefs - 1].animate_speed = 90;
+      strcpy(SideDefs[NumSideDefs - 1].tex3, tx1);
+
+      // Top part has to be offset.
+      if (i == 2)
+      {
+         SideDefs[NumSideDefs - 1].xoff = 12;
+         SideDefs[NumSideDefs - 1].type3 = 8886;
+      }
+      else
+         SideDefs[NumSideDefs - 1].type3 = 8886;
+   }
+
+   // Vertexes and linedefs for the short arm.
+   InsertObject(OBJ_VERTEXES, -1, fourthVX, fourthVY);
+   InsertObject(OBJ_LINEDEFS, -1, 0, 0);
+   LineDefs[NumLineDefs - 1].start = NumVertexes - 3;
+   LineDefs[NumLineDefs - 1].end = NumVertexes - 1;
+   InsertObject(OBJ_VERTEXES, -1, fifthVX, fifthVY);
+   InsertObject(OBJ_LINEDEFS, -1, 0, 0);
+   LineDefs[NumLineDefs - 1].start = NumVertexes - 1;
+   LineDefs[NumLineDefs - 1].end =  NumVertexes - 4;
+
+   // Create the sidedefs for the short arm.
+   for (int i = 1; i < 3; i++)
+   {
+      // First sidedef
+      InsertObject(OBJ_SIDEDEFS, -1, 0, 0);
+      LineDefs[NumLineDefs - i].sidedef1 = NumSideDefs - 1;
+      LineDefs[NumLineDefs - i].blak_flags = 786558;
+      SideDefs[NumSideDefs - 1].sector = sector;
+      SideDefs[NumSideDefs - 1].animate_speed = 90;
+      strcpy(SideDefs[NumSideDefs - 1].tex3, tx2);
+
+      // Second arm has to be offset.
+      if (i == 2)
+      {
+         SideDefs[NumSideDefs - 1].type3 = 8887;
+         SideDefs[NumSideDefs - 1].xoff = 8;
+      }
+      else
+      {
+         SideDefs[NumSideDefs - 1].type3 = 8887;
+      }
+      // Second sidedef
+      InsertObject(OBJ_SIDEDEFS, -1, 0, 0);
+      LineDefs[NumLineDefs - i].sidedef2 = NumSideDefs - 1;
+      SideDefs[NumSideDefs - 1].sector = sector;
+      SideDefs[NumSideDefs - 1].animate_speed = 90;
+      strcpy(SideDefs[NumSideDefs - 1].tex3, tx2);
+
+      // Second arm has to be offset.
+      if (i == 2)
+      {
+         SideDefs[NumSideDefs - 1].type3 = 8886;
+         SideDefs[NumSideDefs - 1].xoff = 8;
+      }
+      else
+      {
+         SideDefs[NumSideDefs - 1].type3 = 8887;
+      }
+   }
+
+   int x, y, xoffset, yoffset;
+   x = Vertexes[NumVertexes - 4].x;
+   y = Vertexes[NumVertexes - 4].y;
+   GetServerCoords(&x, &y, &xoffset, &yoffset);
+   Notify("Position for dynamic light is row: %03d, col: %03d, finerow: %02d, finecol: %02d.", y, x, yoffset, xoffset);
+}
 
 /*
-   display a message, then ask if the check should continue
-   returns TRUE if user want to stop checking
-*/
+ * CheckAndMergeVertex: takes a vertex number, and checks if the vertex can be
+ *                      merged into a linedef. If possible, merges it.
+ */
+void CheckAndMergeVertex(SHORT vertexNum, SHORT *xpos, SHORT *ypos)
+{
+   SHORT sd, ld;
+   
+   // How close to the linedef do we check?
+   SHORT distance = 4;
+   SelPtr vertex = NULL;
 
+   for (ld = 0; ld < NumLineDefs; ld++)
+   {
+      LineDef *pCurLD = &LineDefs[ld];
+      LineDef *pNewLD;
+
+      if (IsLineDefInside(ld, Vertexes[vertexNum].x - distance, Vertexes[vertexNum].y - distance,
+         Vertexes[vertexNum].x + distance, Vertexes[vertexNum].y + distance))
+      {
+         // Select the vertex, necessary if we want to move it.
+         SelectObject(&vertex, vertexNum);
+         // Initialise MoveObjectsToCoords with the old coordinates.
+         MoveObjectsToCoords(OBJ_VERTEXES, NULL, *xpos, *ypos, FALSE);
+         // Get the closest point to the vertex on this linedef,
+         // modifying xpos and ypos to be on the line.
+         PutPointOnLineDef(pCurLD, xpos, ypos);
+         // See if we need to move the vertex onto the linedef.
+         MoveObjectsToCoords(OBJ_VERTEXES, vertex, *xpos, *ypos, FALSE);
+         // Unselect the vertex.
+         ForgetSelection(&vertex);
+
+         InsertObject(OBJ_LINEDEFS, ld, 0, 0);
+         pCurLD = &LineDefs[ld];
+         pNewLD = &LineDefs[NumLineDefs - 1];
+
+         pCurLD->end = vertexNum;
+         pNewLD->start = vertexNum;
+         sd = pCurLD->sidedef1;
+          if (sd >= 0)
+          {
+             InsertObject(OBJ_SIDEDEFS, sd, 0, 0);
+             pNewLD->sidedef1 = NumSideDefs - 1;
+          }
+          sd = pCurLD->sidedef2;
+          if (sd >= 0)
+          {
+             InsertObject(OBJ_SIDEDEFS, sd, 0, 0);
+             pNewLD->sidedef2 = NumSideDefs - 1;
+          }
+          MadeChanges = TRUE;
+          MadeMapChanges = TRUE;
+          break;
+          //return True;
+      }
+   }
+   //return False;
+}
+
+/*
+ * PutPointOnLineDef: modifies xpos and ypos to be on the linedef.
+ */
+void PutPointOnLineDef(LineDef *ld, SHORT *xpos, SHORT *ypos)
+{
+   SHORT v1, v2;
+   v1 = ld->start;
+   v2 = ld->end;
+
+   float A = (float)*xpos - Vertexes[v1].x;
+   float B = (float)*ypos - Vertexes[v1].y;
+   float C = (float)Vertexes[v2].x - Vertexes[v1].x;
+   float D = (float)Vertexes[v2].y - Vertexes[v1].y;
+   float dot = A * C + B * D;
+   float len_sq = C * C + D * D;
+   float t = dot / len_sq;
+   if (t < 0.0f)
+      t = 0.0f;
+   else if (t > 1.0f)
+      t = 1.0f;
+   *xpos = (SHORT)roundf(Vertexes[v1].x + C * t);
+   *ypos = (SHORT)roundf(Vertexes[v1].y + D * t);
+}
+
+/*
+ *CheckFailed: display a message, then ask if the check should continue
+ *             returns TRUE if user want to stop checking.
+ */
 BOOL CheckFailed (BOOL fatal, char *format, ...)
 {
 	int rc;

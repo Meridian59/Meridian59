@@ -223,9 +223,9 @@ void TLevelProgressDialog::ShowNodesProgress (int objtype)
 		//
 		if (NumSideDefs + NumVertexes - SavedNumVertexes > 0 )
 		{
-			pNodesGauge->SetValue (100.0 * ((float) NumSegs /
+			pNodesGauge->SetValue ((int)(100.0f * ((float) NumSegs /
 											(float) (NumSideDefs + NumVertexes -
-													 SavedNumVertexes)));
+													 SavedNumVertexes))));
 		}
 		else
 			pNodesGauge->SetValue (100);

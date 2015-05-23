@@ -1156,8 +1156,8 @@ void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
 		DrawMouseCoord (dc);
 	}
 
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// If Inserting object, don't do anything
 	if ( InsertingObject )
@@ -1323,8 +1323,8 @@ void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
 //
 void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
 {
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1412,8 +1412,8 @@ void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
 //
 void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
 {
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1539,8 +1539,8 @@ void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
 //
 void TEditorClient::EvLButtonDblClk (UINT modKeys, const TPoint& point)
 {
-	PointerX = point.x;
-	PointerY = point.y;
+	PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )

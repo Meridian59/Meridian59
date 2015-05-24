@@ -1291,7 +1291,7 @@ void CopyObjects (int objtype, SelPtr obj)
 		for (cur = obj; cur; cur = cur->next)
 		{
 			Vertex *pVertex = &Vertexes[cur->objnum];
-			InsertObject (OBJ_VERTEXES, cur->objnum, pVertex->x, pVertex->y);
+			InsertObject (OBJ_VERTEXES, cur->objnum, pVertex->x-30, pVertex->y-30);
 			cur->objnum = NumVertexes - 1;
 		}
 		MadeChanges = TRUE;
@@ -1304,10 +1304,28 @@ void CopyObjects (int objtype, SelPtr obj)
 		/* create the LineDefs */
 		for (cur = obj; cur; cur = cur->next)
 		{
-			InsertObject (OBJ_LINEDEFS, cur->objnum, 0, 0);
+         LineDef *pLineDef = &LineDefs[cur->objnum];
+         SHORT sd1 = pLineDef->sidedef1;
+         SHORT sd2 = pLineDef->sidedef2;
+
+         InsertObject (OBJ_LINEDEFS, cur->objnum, 0, 0);
 			cur->objnum = NumLineDefs - 1;
-			LineDef *pLineDef = &LineDefs[cur->objnum];
-			if (!IsSelected( list1, pLineDef->start))
+         /* Create the SideDefs info */
+         LineDef *pLineDef1 = &LineDefs[cur->objnum];
+         if (sd1 >= 0)
+         {
+            InsertObject(OBJ_SIDEDEFS, sd1, 0, 0);
+            sd1 = NumSideDefs - 1;
+            pLineDef1->sidedef1 = sd1;
+         }
+         if (sd2 >= 0)
+         {
+            InsertObject(OBJ_SIDEDEFS, sd2, 0, 0);
+            sd2 = NumSideDefs - 1;
+            pLineDef1->sidedef2 = sd2;
+         }
+
+         if (!IsSelected( list1, pLineDef->start))
 			{
 				SelectObject(&list1, pLineDef->start);
 				SelectObject(&list2, pLineDef->start);
@@ -1341,6 +1359,51 @@ void CopyObjects (int objtype, SelPtr obj)
 		ForgetSelection (&list2);
 		break;
 
+   // Copies linedefs and vertexes but not sidedefs.
+   case OBJ_LINEDEFSNOSIDEDEFS:
+      list1 = NULL;
+      list2 = NULL;
+      /* create the LineDefs */
+      for (cur = obj; cur; cur = cur->next)
+      {
+         LineDef *pLineDef = &LineDefs[cur->objnum];
+         InsertObject(OBJ_LINEDEFS, cur->objnum, 0, 0);
+         cur->objnum = NumLineDefs - 1;
+
+         if (!IsSelected(list1, pLineDef->start))
+         {
+            SelectObject(&list1, pLineDef->start);
+            SelectObject(&list2, pLineDef->start);
+         }
+         if (!IsSelected(list1, pLineDef->end))
+         {
+            SelectObject(&list1, pLineDef->end);
+            SelectObject(&list2, pLineDef->end);
+         }
+      }
+      /* create the Vertices */
+      CopyObjects(OBJ_VERTEXES, list2);
+
+      /* update the references to the Vertexes */
+      for (ref1 = list1, ref2 = list2;
+         ref1 != NULL &&    ref2 != NULL;
+         ref1 = ref1->next, ref2 = ref2->next)
+      {
+         for (cur = obj; cur; cur = cur->next)
+         {
+            LineDef *pLineDef = &LineDefs[cur->objnum];
+
+            if (ref1->objnum == pLineDef->start)
+               pLineDef->start = ref2->objnum;
+
+            if (ref1->objnum == pLineDef->end)
+               pLineDef->end = ref2->objnum;
+         }
+      }
+      ForgetSelection(&list1);
+      ForgetSelection(&list2);
+      break;
+
 	case OBJ_SECTORS:
 		list1 = NULL;
 		list2 = NULL;
@@ -1363,10 +1426,12 @@ void CopyObjects (int objtype, SelPtr obj)
 			}
 		}
 
-		// Create the LineDefs and vertices
-		CopyObjects (OBJ_LINEDEFS, list2);
+      // Create the LineDefs and vertices. Calling CopyObjects with
+      // this object type copies the linedefs and vertex positions but
+      // doesn't copy the sidedef info (we add that here).
+      CopyObjects(OBJ_LINEDEFSNOSIDEDEFS, list2);
 
-		/* Create the SideDefs info */
+		 //Create the SideDefs info */
 		for (ref1 = list1,      ref2 = list2;
 			 ref1 != NULL &&    ref2 != NULL;
 			 ref1 = ref1->next, ref2 = ref2->next)
@@ -1422,8 +1487,6 @@ void CopyObjects (int objtype, SelPtr obj)
 		break;
 	}
 }
-
-
 
 /*
    move a group of objects to a new position

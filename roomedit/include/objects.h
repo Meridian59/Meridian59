@@ -45,6 +45,11 @@
 #define OBJ_REJECT      9
 #define OBJ_BLOCKMAP        10
 
+// Object type used to copy the linedefs of sectors with no sidedef data.
+// Done because copying linedefs now copies the sidedefs also
+// (this was broken previously).
+#define OBJ_LINEDEFSNOSIDEDEFS 11
+
 
 /*
    the selection list is used when more than one object is selected

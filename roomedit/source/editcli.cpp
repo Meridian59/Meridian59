@@ -177,6 +177,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_SEARCH_PREVOBJ, CmSearchPrev),
 	EV_COMMAND(CM_SEARCH_NEXTOBJ, CmSearchNext),
 	EV_COMMAND(CM_SEARCH_JUMPOBJ, CmSearchJump),
+   EV_COMMAND(CM_OBJECTS_TORCH, CmObjectsTorch),
 	EV_COMMAND(CM_OBJECTS_RECTANGLE, CmObjectsRectangle),
 	EV_COMMAND(CM_OBJECTS_POLYGON, CmObjectsPolygon),
 	EV_COMMAND(CM_EDIT_DELETEOBJ, CmEditDelete),
@@ -1155,8 +1156,8 @@ void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
 		DrawMouseCoord (dc);
 	}
 
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// If Inserting object, don't do anything
 	if ( InsertingObject )
@@ -1322,8 +1323,8 @@ void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
 //
 void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
 {
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1411,8 +1412,8 @@ void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
 //
 void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
 {
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1538,8 +1539,8 @@ void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
 //
 void TEditorClient::EvLButtonDblClk (UINT modKeys, const TPoint& point)
 {
-	PointerX = point.x;
-	PointerY = point.y;
+	PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -3036,6 +3037,97 @@ void TEditorClient::CmObjectsPolygon ()
 	RESTORE_HELP_CONTEXT();
 }
 
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmObjectsTorch()
+{
+   // Ignore if "insert object" mode
+   if (InsertingObject)
+      return;
+   // Keep in memory between calls.
+   // 0 is north, 90 is east.
+   static SHORT torchAngle = 0;
+   char Title[80];
+   char Prompt[80];
+   char aBuf[7];
+   TRangeValidator *pValid1 = new TRangeValidator(0, 360);
+   
+   SET_HELP_CONTEXT(Insert_Torch);
+   wsprintf(Title, "New torch angle");
+   wsprintf(Prompt, "Enter the angle for the torch (0 = north, 90 = east):");
+   wsprintf(aBuf, "%d", torchAngle);
+
+   if (TInputDialog(this, Title, Prompt, aBuf, 7, 0, pValid1).Execute() == IDOK)
+   {
+      torchAngle = (SHORT)atoi(aBuf);
+
+      // Hide information windows
+      BOOL OldInfoWinShown = InfoWinShown;
+      InfoWinShown = FALSE;
+      if (OldInfoWinShown != InfoWinShown)
+      {
+         SetupInfoWindows();
+         UpdateWindow();
+      }
+
+      // Clip cursor movements to editor window and get mouse capture
+      TRect editRect;
+      GetWindowRect(editRect);
+      editRect.right++;
+      editRect.bottom++;
+      ClipCursor(&editRect);
+      SetCursor(GetApplication(), IDC_INSERT);
+      SetCapture();
+
+      // Begin insert mode
+      WorkMessage("Click left mouse button to insert torch...");
+      InsertingObject = TRUE;  // don't highlight when mouse move
+
+      // Stops when left button down
+      MSG  loopMsg;
+      loopMsg.message = 0;
+      while (loopMsg.message != WM_LBUTTONDOWN)
+      {
+         if (::PeekMessage(&loopMsg, 0, 0, 0, PM_REMOVE))
+         {
+            // Don't send the WM_LBUTTONDOWN, because we don't
+            // want to select an object!
+            if (loopMsg.message != WM_LBUTTONDOWN)
+            {
+               ::TranslateMessage(&loopMsg);
+               ::DispatchMessage(&loopMsg);
+            }
+         }
+
+         Scroller->AutoScroll();
+      }
+
+      // Restore window and cursor
+      InsertingObject = FALSE;
+      SetCursor(NULL, IDC_ARROW);
+      ReleaseCapture();
+      ClipCursor(NULL);
+      GetApplication()->ResumeThrow();
+
+      // UNDO
+      StartUndoRecording("Insert torch");
+
+      // Insert torch at cursor position
+      InsertTorch(MAPX(PointerX), MAPY(PointerY), torchAngle);
+
+      // UNDO
+      StopUndoRecording();
+
+      // Redraw map, status bar and info windows
+      InfoWinShown = OldInfoWinShown;
+      SetupInfoWindows();
+      DrawStatusBar();
+      Invalidate();
+   }
+   RESTORE_HELP_CONTEXT();
+}
 
 /////////////////////////////////////////////////////////////////////
 // TEditorClient

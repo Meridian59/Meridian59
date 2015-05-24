@@ -531,7 +531,7 @@ BOOL TSectorEditDialog::GetSector()
 
    pSpeedEdit->GetText (str, 6);
    if ( CurSector.animate_speed != (SHORT)atoi(str) )	ConfirmData.pSpeedCheck = TRUE;
-   CurSector.animate_speed = (SHORT)atoi (str);
+   CurSector.animate_speed = (BYTE)atoi (str);
 
    if (pDepth0Radio->GetCheck() == BF_CHECKED)
       flags |= SF_DEPTH0;

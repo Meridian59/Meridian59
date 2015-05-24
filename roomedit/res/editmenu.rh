@@ -88,6 +88,7 @@
 
 #define CM_OBJECTS_RECTANGLE    1300
 #define CM_OBJECTS_POLYGON      1301
+#define CM_OBJECTS_TORCH        1302
 
 #define CM_MODE_THINGS      1400
 #define CM_MODE_LINEDEFS    1401

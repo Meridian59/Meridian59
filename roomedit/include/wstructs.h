@@ -103,6 +103,7 @@ struct Vertex
 {
    SHORT x;         /* X coordinate */
    SHORT y;         /* Y coordinate */
+   SHORT copiedTo;  // Vertex number this vertex was copied to during copying.
 };
 typedef struct Vertex *VPtr;
 

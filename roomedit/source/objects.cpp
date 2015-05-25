@@ -853,7 +853,16 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 		}
 		else
 		{
-			//NewVertex.x = xpos & ~7;
+         // If this vertex is copied from another one, the old vertex needs
+         // to keep track of the new one in case it was part of a slope.
+         // The new slope (if this is part of a copied sector) will have to
+         // get the new vertex from the old one.
+         if (copyfrom >= 0)
+            Vertexes[copyfrom].copiedTo = last;
+
+         // These lines seems to just put the vertex in the wrong position,
+         // commented out for now and replaced with exact x/y pos.
+         //NewVertex.x = xpos & ~7;
 			//NewVertex.y = ypos & ~7;
          NewVertex.x = xpos;
          NewVertex.y = ypos;
@@ -863,6 +872,8 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 			if (NewVertex.y > MapMaxY)    MapMaxY = NewVertex.y;
 			MadeMapChanges = TRUE;
 		}
+
+      NewVertex.copiedTo = -1;
 		Vertexes[last] = NewVertex;
 		break;
 
@@ -967,6 +978,21 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 			NewSector.yoffset = SCopy.yoffset;
 			NewSector.blak_flags = SCopy.blak_flags;
 			NewSector.animate_speed = SCopy.animate_speed;
+
+         // Copy the slope data.
+         NewSector.ceiling_slope = SCopy.ceiling_slope;
+         NewSector.floor_slope = SCopy.floor_slope;
+         // Put proper vertexes in slopes, using the numbers of the new
+         // vertexes stored in the copied old ones.
+         for (int i = 0; i < 3; i++)
+         {
+            if (SCopy.blak_flags & SF_SLOPED_FLOOR)
+               if (Vertexes[NewSector.floor_slope.points[i].vertex].copiedTo >= 0)
+                  NewSector.floor_slope.points[i].vertex = Vertexes[NewSector.floor_slope.points[i].vertex].copiedTo;
+            if (SCopy.blak_flags & SF_SLOPED_CEILING)
+               if (Vertexes[NewSector.ceiling_slope.points[i].vertex].copiedTo >= 0)
+                  NewSector.ceiling_slope.points[i].vertex = Vertexes[NewSector.ceiling_slope.points[i].vertex].copiedTo;
+         }
 		}
 		else
 		{
@@ -991,9 +1017,10 @@ void InsertObject (int objtype, SHORT copyfrom, SHORT xpos, SHORT ypos)
 			   NewSector.ceiling_slope.points[i].z = -1;
 			}
 		}
+      // Don't need to do this anymore, slope data gets copied.
 		// Set slope information to OFF
-		NewSector.blak_flags &= ~SF_SLOPED_FLOOR;
-		NewSector.blak_flags &= ~SF_SLOPED_CEILING;
+		//NewSector.blak_flags &= ~SF_SLOPED_FLOOR;
+		//NewSector.blak_flags &= ~SF_SLOPED_CEILING;
 		Sectors[last] = NewSector;
 		break;
 

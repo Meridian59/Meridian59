@@ -361,7 +361,9 @@ void UserMovePlayer(int action)
          // Delay between consecutive attempts to move off room
          if (now - move_off_room_time >= MOVE_OFF_ROOM_INTERVAL) // current time 
          {
-            RequestMove(y, x, USER_RUNNING_SPEED, player.room_id);
+            // Need to send walking speed for room change, otherwise room
+            // changes by players with vigor < 10 will be blocked.
+            RequestMove(y, x, USER_WALKING_SPEED, player.room_id);
             move_off_room_time = now;
          }
          // Don't actually move player off room

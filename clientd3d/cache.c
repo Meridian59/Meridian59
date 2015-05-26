@@ -84,8 +84,8 @@ void CacheInitialize(void)
   statex.dwLength = sizeof statex;
   GlobalMemoryStatusEx (&statex);
   
-  // Set aside up to 1/4 of free memory for caches
-  mem_available = statex.ullAvailPhys / 4;
+  // Set aside up to 1/2 of free memory for caches
+  mem_available = statex.ullAvailPhys / 2;
   
   object_cache.max_size = max(mem_available / 2, config.ObjectCacheMin );
   grid_cache.max_size   = max(mem_available / 2, config.GridCacheMin );

@@ -22,9 +22,10 @@
 #define DIVUP(a,b) ((a)+(b)-1)/(b)
 
 /* Given a distance x, return palette index to use.  Must have x > 0 */
-/* "v" is strength of light source at viewer; "a" strength of ambient light */
+/* "v" is strength of light source at viewer; "a" strength of ambient light. */
+/* 4194304 is 4*FINENESS*FINENESS */
 #define LIGHT_INDEX(x, v, a) (min(MAX_LIGHT - 1, \
-				  (4*FINENESS*FINENESS) / (x) * (v) / KOD_LIGHT_LEVELS + (a)))
+				  (4194304) / (x) * (v) / KOD_LIGHT_LEVELS + (a)))
 
 #define LIGHT_NEUTRAL 192       // Light level of sector drawn at ambient light level
 

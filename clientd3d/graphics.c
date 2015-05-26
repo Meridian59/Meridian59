@@ -33,6 +33,9 @@ static Bool capture = False;  // True when graphics area has mouse capture
 static ID   drag_object;      // When capture = True, holds id of object being dragged
 static int fps;
 static int msDrawFrame;
+DWORD fpsDrawTime = 0;
+static int fpsCount = 0;
+static int msDrawFrameCount = 0;
 
 // XXX This isn't currently used at all
 // # of pieces to divide graphics area horizontally & vertically for determining what
@@ -348,8 +351,14 @@ void RedrawForce(void)
    // if totalFrameTime is less than one, clamp to 1 so we don't divide by 0 or get negative fps
    if (1 > totalFrameTime)
 	   totalFrameTime = 1;
-
    fps = 1000 / (int)totalFrameTime;
+   if (timeGetTime() >= fpsDrawTime + 250)
+   {
+      fpsCount = fps;
+      msDrawFrameCount = msDrawFrame;
+      fpsDrawTime = timeGetTime();
+   }
+
    if (config.maxFPS)
    {
       if (fps > config.maxFPS)
@@ -362,19 +371,19 @@ void RedrawForce(void)
    timeEndPeriod(1);
 
    // Try to redraw new graphics
-   gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
+   //gD3DRedrawAll |= D3DRENDER_REDRAW_ALL;
 
    if (config.showFPS)
    {
       RECT rc,lagBox;
-      wsprintf(buffer, "FPS=%d (%dms)        ", fps, msDrawFrame);
+      wsprintf(buffer, "FPS = %d (%dms)        ", fpsCount, msDrawFrameCount);
       ZeroMemory(&rc,sizeof(rc));
-      rc.bottom = DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE|DT_CALCRECT);
+      rc.bottom = DrawText(hdc, buffer, -1, &rc, DT_SINGLELINE | DT_CALCRECT | DT_NOCLIP);
       Lagbox_GetRect(&lagBox);
       OffsetRect(&rc,lagBox.right + TOOLBAR_SEPARATOR_WIDTH,lagBox.top);
       DrawWindowBackground(hdc, &rc, rc.left, rc.top);
       oldMode = SetBkMode(hdc,TRANSPARENT);
-      DrawText(hdc,buffer,-1,&rc,DT_SINGLELINE);
+      DrawText(hdc, buffer, -1, &rc, DT_SINGLELINE | DT_NOCLIP);
       SetBkMode(hdc,oldMode);
       GdiFlush();
    }

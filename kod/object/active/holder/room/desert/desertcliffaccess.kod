@@ -1,0 +1,55 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DesertCliffAccess is DesertRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_desertcliffaccess = desertcliffaccess.roo
+   room_name_desertcliffaccess = "Sandbreak Cliffs"
+
+classvars:
+
+   vrName = room_name_desertcliffaccess
+
+   viTeleport_row = 50
+   viTeleport_col = 40
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_desertcliffaccess
+   piRoom_num = RID_DESERTCLIFFACCESS
+
+messages:
+
+ 
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([ LEAVE_NORTH, RID_DESERTCLIFFNOACCESS1, 70, 30, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DESERTCLIFFNOACCESS3, 10, 30, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTPATH1, 10, 10, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

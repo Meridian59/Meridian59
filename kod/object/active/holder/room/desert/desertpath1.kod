@@ -1,0 +1,53 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DesertPath1 is DesertRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_desertpath1 = desertpath1.roo
+   room_name_desertpath1 = "A harrowing cleft"
+
+classvars:
+
+   vrName = room_name_desertpath1
+
+   viTeleport_row = 15
+   viTeleport_col = 35
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_desertpath1
+   piRoom_num = RID_DESERTPATH1
+
+messages:
+
+ 
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_WAYLAYOASIS, 8, 2, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTCLIFFACCESS, 58, 68, ROTATE_NONE ],plEdge_Exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -2555,6 +2555,19 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_MARION,#class=&OldMarion);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_BAR_NORTH,#class=&OldBarloqueNorth);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_BAR_SOUTH,#class=&OldBarloqueSouth);
+      
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTPATH1,#class=&DesertPath1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTCLIFFACCESS,#class=&DesertCliffAccess);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTCLIFFNOACCESS1,#class=&DesertCliffNoAccess1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTCLIFFNOACCESS2,#class=&DesertCliffNoAccess2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTCLIFFNOACCESS3,#class=&DesertCliffNoAccess3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTDUNES,#class=&DesertDunes);
+      Send(self,@CreateOneRoomIfNew,#num=RID_WAYLAYOASIS,#class=&WaylayOasis);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTSHORE1,#class=&DesertShore1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTSHORE2,#class=&DesertShore2);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTSHORE3,#class=&DesertShore3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTRIVER1,#class=&DesertRiver1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_DESERTRIVER2,#class=&DesertRiver2);
 
 
       if poRentableRoomMaintenance <> $  % After a clean build, for example.

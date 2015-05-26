@@ -673,6 +673,14 @@ resources:
       "light.  Only in Jasper would one find such a transformation of the mundane into a "
       "work of art."
 
+   oo_jasperlamp1_name = "lantern"
+   oo_jasperlamp1_icon = lampjas1.bgf
+   oo_jasperlamp1_desc = "This oil lamp is intricately crafted of wrought iron, "
+      "obviously the product of many days of work.  You can almost see the sweat "
+      "of its maker's labour worked into the metal, a fine sheen that catches the "
+      "light.  Only in Jasper would one find such a transformation of the mundane into a "
+      "work of art."
+
    oo_RRplant1_name = "jade plant"
    oo_RRplant1_icon = roompla1.bgf
    oo_RRplant1_desc = "A lush green plant."
@@ -1258,7 +1266,8 @@ messages:
 
       if type = OO_JASPERLAMP
       {  vrName = oo_jasperlamp_name;  vrIcon = oo_jasperlamp_icon;  vrDesc = oo_jasperlamp_desc;  pbFlicker = TRUE;  }
-
+      if type = OO_JASPERLAMP1
+      {  vrName = oo_jasperlamp1_name;  vrIcon = oo_jasperlamp1_icon;  vrDesc = oo_jasperlamp1_desc;  pbFlicker = TRUE;  }
       if type = OO_RR_PLANT1
       {  vrName = oo_RRplant1_name;  vrIcon = oo_RRplant1_icon;  vrDesc = oo_RRplant1_desc;  }
 

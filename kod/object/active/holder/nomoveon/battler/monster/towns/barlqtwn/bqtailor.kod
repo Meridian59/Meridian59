@@ -141,6 +141,8 @@ messages:
             Create(&Robe,#color=XLAT_TO_SKIN4),
             Create(&Robe,#color=XLAT_TO_DGREEN),
 
+            Create(&ShortSkirt,#color=XLAT_TO_GRAY),
+            Create(&Skirt,#color=XLAT_TO_GRAY),
             Create(&PantsC,#translation=PT_GRAY_TO_DGREEN),
             Create(&PantsC,#translation=PT_GRAY_TO_KBGREEN),
             Create(&PantsC,#translation=PT_GRAY_TO_LSKY),

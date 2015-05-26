@@ -159,7 +159,8 @@ messages:
    {
       if piRoofState = STATE_ONROOF
       {
-         if NOT Send(oStroke,@IsRangedAttack)
+         if oStroke = $
+            OR NOT Send(oStroke,@IsRangedAttack)
          {
             if IsClass(who,&User)
             {

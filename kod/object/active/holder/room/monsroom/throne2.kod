@@ -25,7 +25,7 @@ resources:
    throne2_music = castle2.mp3
 
    throne2_ghost_spawn = \
-      "~kA raspy voice moans, \"~r~IWitness my revenge, tresspasser!~I~k\""
+      "~kA raspy voice moans, \"~r~IWitness my revenge, trespasser!~I~k\""
    ghost_spawn_wav_rsc = ghost_respawn.wav
 
    no_walls_here = "Dark magics interfere with the casting of your wall spell."

@@ -52,6 +52,8 @@ resources:
    dm_getall = "get"
    dm_gettotem = "totem"
    dm_help_command = "help"
+   dm_help_lights_command = "help lights"
+   dm_help_scenery_command = "help scenery"
    dm_appeal_off_command = "appeal off"
    dm_appeal_on_command = "appeal on"
    dm_guest_appeal_off_command = "guest appeal off"
@@ -102,6 +104,7 @@ resources:
    dm_get_masks_command = "get masks"
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
+   dm_create_dynamic_light_command = "place dynamic light"
 
    dm_roomgive_command = "roomgive"
    dm_gave_to_number = "%s players received reward!"
@@ -136,7 +139,7 @@ resources:
       "DM APPEAL ON/OFF turns on and off appeals.\n"
       "DM GOOD, DM NEUTRAL, DM EVIL to shift your Karma appropriately.\n"
       "DM TOTEM to get the totem.\n"
-      "Cast Squelch for information on how to Squelch players.\n"
+      "Cast Squelch for information on how to Squelch players."
 
    dm_guide_help = \
       "You have limited powers. \n"
@@ -146,7 +149,7 @@ resources:
       "DM CLEAR INVENTORY will delete all your items.\n"
       "DM MONSTER <monster name> can be used to create monsters.\n"
       "Use `rgo #`n to teleport to a room number or room RID.\n"
-      "Cast Squelch for information on how to Squelch players.\n"
+      "Cast Squelch for information on how to Squelch players."
 
    dm_help = \
       "DM APPEAL ON/OFF, DM STEALTH ON/OFF, "
@@ -154,6 +157,25 @@ resources:
       "DM GET SPELLS, DM GET SKILLS, DM GET MONEY, DM BOOST STATS, DM GOOD, DM NEUTRAL, DM EVIL, "
       "DM TOTEM, DM RELIC <number/name>, DM MONSTER <monster name>, DM ITEM <item name>, "
       "DM GET <reagents/ food/ armor/ gems/ rings/ weapons/ necklaces/ potions/ sundries>"
+
+   dm_help_items = \
+      "You can place scenery and lights using the \"dm place \" command.\n"
+      "Type \"dm help lights\" and \"dm help scenery\" to get a list of "
+      "available objects to place."
+
+   dm_help_lights = \
+      "Available lights for placing are:  brazier, brazierswitch (UW brazier), "
+      "lamp, candleabra, candle, firepit, glowtree, kocatan brazier, kocatan lamp, "
+      "orc torch, skull brazier, table lamp, lantern, jasper lantern, "
+      "jasper lantern1 and smoke (nice for firepits).  You can also place a dynamic light "
+      "(with no visible object) using \" dm place dynamic light\"."
+   dm_help_scenery = \
+      "Available scenery items for placing are:  tree, raza tree, dead tree, "
+      "pine tree, elm tree, spider tree, fey tree, bush (low res), shrub, "
+      "raza shrub, vine tree, kichan tree, kriipa tree, oak tree, "
+      "spine vine (Brax tree), necro vine, rock1, rock2, rock3, rock4, rock5, "
+      "rock 6, stalagmite1, stalagmite2, stool, barstool and table."
+
    dm_dontinterfere = "~B~gYou should not try to interfere with the game."
 
    dm_moderator = "An official Moderator of the land."
@@ -652,7 +674,8 @@ messages:
 
    UserSay(string=$,type=$)
    {
-      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject, iGiven;
+      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard,
+            oObject, iGiven, bItemFound;
 
       if type <> SAY_DM
       {
@@ -670,6 +693,7 @@ messages:
          if prRank = dm_moderator
          {
             Send(self,@MsgSendUser,#message_rsc=dm_moderator_help);
+            Send(self,@MsgSendUser,#message_rsc=dm_help_items);
          
             return;
          }
@@ -677,12 +701,28 @@ messages:
          if prRank = dm_guide
          {
             Send(self,@MsgSendUser,#message_rsc=dm_guide_help);
+            Send(self,@MsgSendUser,#message_rsc=dm_help_items);
 
             return;
          }
 
          % If they're a higher rank, give them the whole help guide.
          Send(self,@MsgSendUser,#message_rsc=dm_help);
+         Send(self,@MsgSendUser,#message_rsc=dm_help_items);
+
+         return;
+      }
+
+      if StringEqual(string,dm_help_lights_command)
+      {
+         Send(self,@MsgSendUser,#message_rsc=dm_help_lights);
+
+         return;
+      }
+
+      if StringEqual(string,dm_help_scenery_command)
+      {
+         Send(self,@MsgSendUser,#message_rsc=dm_help_scenery);
 
          return;
       }
@@ -760,6 +800,256 @@ messages:
          Send(self,@NewHold,#what=Send(SYS,@GetTotem));
 
          return;
+      }
+
+      %
+      % Code for placing light items, all DMs can use.
+      %
+
+      % Test if we said "place" first, else we don't need to check
+      % every single one of these.
+
+      if StringContain(string,"place")
+      {
+         bItemFound = FALSE;
+         oObject = $;
+
+         if StringEqual(string,dm_create_dynamic_light_command)
+            OR StringEqual(string,"place dynamic light")
+         {
+            oObject = Create(&DynamicLight,#bVisible=TRUE);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place lamp")
+         {
+            oObject = Create(&Lamp);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place brazierswitch")
+         {
+            oObject = Create(&BrazierSwitch);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place brazier")
+         {
+            oObject = Create(&Brazier);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place candelabra")
+         {
+            oObject = Create(&Candelabra);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place candle")
+         {
+            oObject = Create(&Candle);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place firepit")
+         {
+            oObject = Create(&Firepit);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place glowtree")
+         {
+            oObject = Create(&GlowTree);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place kocatan brazier")
+         {
+            oObject = Create(&KocatanBrazier);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place kocatan lamp")
+         {
+            oObject = Create(&KocatanLamp);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place orc torch")
+         {
+            oObject = Create(&OrcTorch);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place skull brazier")
+         {
+            oObject = Create(&SkullBrazier);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place smoke")
+         {
+            oObject = Create(&SmokeColumn);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place table lamp")
+         {
+            oObject = Create(&TableLamp);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place lantern")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_LANTERN);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place jasper lantern1")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_JASPERLAMP1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place jasper lantern")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_JASPERLAMP);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place tree")
+         {
+            oObject = Create(&Tree);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place pine tree")
+         {
+            oObject = Create(&Tree,#bottom=TREE_PINE);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place elm tree")
+         {
+            oObject = Create(&Tree,#bottom=TREE_ELM);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place raza tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_RAZA_TREE1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place dead tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_DEADTREE);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place vine tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_TREE1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place kichan tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_TREE2);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place kriipa tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_TREE3);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place gnarlwood tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_NECTREE1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place oak tree")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_NECTREE2);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place spine vine")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_NECTREE4);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place raza shrub")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_RAZA_SHRUB);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place necro vine")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_NECVINE1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place spider tree")
+         {
+            oObject = Create(&SingleTree);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place fey tree")
+         {
+            oObject = Create(&FeyTree);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place bush")
+         {
+            oObject = Create(&TallBush);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place shrub")
+         {
+            oObject = Create(&Shrub);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place stool")
+         {
+            oObject = Create(&Stool);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place barstool")
+         {
+            oObject = Create(&BarStool);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place table")
+         {
+            oObject = Create(&Table);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place rock1")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_ROCK1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place rock2")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_ROCK2);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place rock3")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_ROCK3);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place rock4")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_ROCKB);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place rock5")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_ROCKC);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place rock6")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_NECROCK);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place stalagmite1")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_STALACTITE1);
+            bItemFound = TRUE;
+         }
+         if NOT bItemFound AND StringContain(string,"place stalagmite2")
+         {
+            oObject = Create(&OrnamentalObject,#type=OO_STALACTITE2);
+            bItemFound = TRUE;
+         }
+         if oObject <> $
+         {
+            Send(poOwner,@NewHold,#what=oObject,
+                  #new_row=Send(self,@GetRow),
+                  #new_col=Send(self,@GetCol),
+                  #fine_row=Send(self,@GetFineRow),
+                  #fine_col=Send(self,@GetFineCol));
+
+            return;
+         }
       }
 
       %

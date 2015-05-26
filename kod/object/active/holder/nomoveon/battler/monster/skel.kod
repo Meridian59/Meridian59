@@ -51,6 +51,7 @@ classvars:
    viDifficulty = 5
    viVisionDistance = 10
    viKarma = -50
+   vbIsUndead = TRUE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT \
                         | AI_MOVE_FLEE_FRIGHTENERS
 
@@ -188,11 +189,6 @@ messages:
       }
 
       return oBody;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
 end

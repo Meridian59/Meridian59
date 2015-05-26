@@ -51,6 +51,7 @@ classvars:
    % Larger distance since we want them to seek out the newbies.
    viVisionDistance = 16
    viKarma = 0
+   vbIsUndead = TRUE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 1
    viCashmax = 20
@@ -107,11 +108,6 @@ messages:
       }
 
       propagate;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
 end

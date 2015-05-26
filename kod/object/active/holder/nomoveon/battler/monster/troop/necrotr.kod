@@ -40,6 +40,7 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
+   vbIsUndead = TRUE
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
    viVisionDistance = 18
    viCashmin = 100
@@ -88,11 +89,6 @@ messages:
       viKarma = -40;
 
       return;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
 end

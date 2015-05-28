@@ -4372,7 +4372,7 @@ BOOL CheckTextures ()
 		}
 
 		// Check floor and ceiling difference in heights
-		if (pSector->ceilh - pSector->floorh > 1023)
+		if (pSector->ceilh - pSector->floorh > 4096)
 		{
 			CheckFailed (TRUE, "Error: Sector #%d has its ceiling too high.\n"
 							   "The maximum difference allowed is 1023 "

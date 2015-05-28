@@ -12,9 +12,9 @@ CFLAGS = $(CFLAGS) -I$(OUTDIR) -DBLAKCLIENT
 LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
 	 ws2_32.lib comctl32.lib advapi32.lib \
-	 winmm.lib archive.lib rscload.lib wininet.lib \
-	 ole32.lib waveplay.lib \
-	 d3d9.lib libpng.lib zdll.lib
+	 winmm.lib archive_static.lib rscload.lib wininet.lib \
+	 ole32.lib mss32.lib mss32midi.lib waveplay.lib \
+	 d3d9.lib libpng.lib zlib.lib
 
 DEFFILE  = $(SOURCEDIR)\client.def
 
@@ -135,7 +135,7 @@ $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<
-$(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS)
+$(OBJS) $(LIBS) -def:$(DEFFILE) $(OUTDIR)\client.res /MAP -OUT:$@ $(LINKWINDOWSFLAGS) /NODEFAULTLIB:libc
 <<
 	$(CP) $(OUTDIR)\meridian.lib $(BLAKLIBDIR)
 	$(CP) $@ $(CLIENTRUNDIR)

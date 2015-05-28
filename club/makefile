@@ -1,5 +1,4 @@
 TOPDIR=..
-DYNAMIC=1
 !include $(TOPDIR)\common.mak
 
 SOURCEDIR = $(TOPDIR)\club

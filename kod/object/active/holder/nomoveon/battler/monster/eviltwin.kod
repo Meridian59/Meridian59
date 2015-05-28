@@ -51,7 +51,7 @@ classvars:
    viAttributes = 0
    viLevel = 20
    viDifficulty = 8
-   viDamagePercent = 50
+   viDamagePercent = 75
 
    % Can't escape this monster's vision range.
    viVisionDistance = 100

@@ -1,0 +1,455 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{3d8b2e3d-d4ce-495d-8451-d502184d5a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util\Source Files">
+      <UniqueIdentifier>{0519e419-66de-4c2b-956f-ec3d76af087d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util\Header Files">
+      <UniqueIdentifier>{1b31803b-9afc-4986-9a8e-6b384f7d6c49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{b5d24678-b5d1-482d-bc92-177512c1ab2b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="term.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trysync.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="user.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="account.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="admin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="admincons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adminfn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apndfile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="async.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="blakres.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="blakserv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bof.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="btime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bufpool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="builtin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ccode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="chanbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="channel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="commcli.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dllist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="files.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamelock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="garbage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="intrlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="intstringhash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kodbase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loadacco.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loadall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loadgame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loadkod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loadrsc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loadstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maintenance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="motd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nameid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="parsecli.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resync.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="roofile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="roomdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveacco.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saveall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="savegame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="saversc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="savestr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sendmsg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="session.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sprocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stringinthash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="synched.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="systimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="account.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="admin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="admincons.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="adminfn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apndfile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="async.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="blakres.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="block.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bufpool.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="builtin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ccode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chanbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="channel.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="class.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="commcli.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="files.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gamelock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="garbage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="interface.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="intrlock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="intstringhash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="kodbase.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loadacco.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loadall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loadgame.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loadkod.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loadrsc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="loadstr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="maintenance.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="memory.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="message.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="motd.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nameid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="object.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parsecli.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="resync.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="roofile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="roomdata.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="saveacco.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="saveall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="savegame.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="saversc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="savestr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sendmsg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="session.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sprocket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="string.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stringinthash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="synched.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="system.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="systimer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="table.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="term.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="trysync.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="user.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\md5.c">
+      <Filter>util\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\rscload.c">
+      <Filter>util\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\crc.c">
+      <Filter>util\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="database.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="logo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="meridian.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BLAKSERV.HLP">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="blakserv.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

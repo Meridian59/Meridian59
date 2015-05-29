@@ -16,20 +16,41 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "makepal", "clientd3d\makepal.vcxproj", "{946D268A-F73B-4387-ACD4-BF6D21BC076D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "intro", "module\intro\intro.vcxproj", "{78665003-7B87-403E-89A4-9B5F95FA01BF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "merintr", "module\merintr\merintr.vcxproj", "{932BC11A-53D3-4A49-8D8F-196AE329B972}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mailnews", "module\mailnews\mailnews.vcxproj", "{BFFAB19A-0D34-4BF6-8BC6-A81D22274899}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{6AC523C8-83A7-4295-B450-11CDB9CD8E68}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "admin", "module\admin\admin.vcxproj", "{CFF6DD69-F2DC-40DA-9FA1-3F240AB9792D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "char", "module\char\char.vcxproj", "{1BEB02A4-506E-4CF0-B7CD-4746F991C3A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chess", "module\chess\chess.vcxproj", "{FC59B20A-6A53-4F04-ACC7-15C9925D8315}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm", "module\dm\dm.vcxproj", "{5225EE8E-8D8B-4EDC-9EA8-BB52DA2992A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "blakcomp", "blakcomp\blakcomp.vcxproj", "{29B8E041-0856-4A4C-9494-BA3D0CE0F63C}"
 EndProject
@@ -61,6 +82,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{74F98C8E-442E-42DE-9CAF-0C3301672810}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stats", "module\stats\stats.vcxproj", "{CA8060F5-61DF-43ED-90F6-91DF6DEA59F2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E237A90-C6F7-4C12-9E2E-4B852E859E70} = {4E237A90-C6F7-4C12-9E2E-4B852E859E70}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m59bind", "keybind\m59bind.csproj", "{A9CEC38C-11C3-4D9F-8A2A-9E6E2FA1EAAE}"
 EndProject

@@ -126,7 +126,7 @@ void MailNewMessage(int server_index, char *sender, int num_recipients,
 {
    int index, num_msgs, msgnum;
    char new_msg[MAXMAIL + 200 + MAX_SUBJECT + MAXUSERNAME * MAX_RECIPIENTS];
-   char *subject, *ptr, *subject_str;
+   char *subject = NULL, *ptr = NULL, *subject_str;
    int i, num;
    char filename[FILENAME_MAX + MAX_PATH];
    char date[MAXDATE];
@@ -312,7 +312,7 @@ Bool MailParseMessage(int msgnum, MailInfo *info)
    int num_fields = 5;  // Don't increase this without changing szLoadString (only 5 at a time)
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN,
                       IDS_FROM, IDS_TO, IDS_DATE};
-   char *fields[5], *ptr;
+   char *fields[5], *ptr = NULL;
    int i, index;
 
    if ((index = MailFindIndex(msgnum)) == -1)
@@ -408,7 +408,7 @@ Bool MailParseMessageHeader(int msgnum, char *filename, MailHeader *header)
    int field_ids[] = {IDS_SUBJECT_ENGLISH, IDS_SUBJECT_GERMAN,
                       IDS_FROM, IDS_TO, IDS_DATE};
    int i;
-   char *fields[5], *ptr;
+   char *fields[5], *ptr = NULL;
    char line[MAX_LINE];
 
    if ((infile = fopen(filename, "r")) == NULL)

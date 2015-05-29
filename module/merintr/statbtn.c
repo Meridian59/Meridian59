@@ -174,7 +174,7 @@ void StatsMoveButtons(void)
 	//	Buttons are now stretched to fit width of area.
 	for( i = 0; i < NUM_BUTTONS; i++ )
 	{
-		StatButton* button;
+		StatButton* button = NULL;
 		//	ajw Hard-coded changed order of buttons appearance.
 		switch( i )
 		{

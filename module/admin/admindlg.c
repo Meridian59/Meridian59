@@ -427,7 +427,7 @@ BOOL CALLBACK AdminMoveDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
    char row[MAXAMOUNT + 1], col[MAXAMOUNT + 1], fine_row[MAXAMOUNT + 1], fine_col[MAXAMOUNT + 1];
    static HWND hRow, hCol, hFineRow, hFineCol;
    static int old_angle;
-   int angle;
+   int angle = 0;
 
    switch (message)
    {

@@ -346,7 +346,7 @@ int FindListElem(val_type list_id,val_type list_elem)
 int InsertListElem(int n,int list_id,val_type new_val)
 {
    int new_list_id;
-   list_node *l, *prev, *new_node;
+   list_node *l, *prev = NULL, *new_node;
 
    if (n  == 0)
    {

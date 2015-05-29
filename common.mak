@@ -117,6 +117,7 @@ MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
 RC     = rc
+POSTLITE = $(TOPDIR)\postlite
 
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t

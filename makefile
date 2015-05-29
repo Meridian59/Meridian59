@@ -45,6 +45,7 @@ Bkod: Bdiff Bcompiler
 	cd $(KODDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
+	$(POSTLITE)
 
 Bdeco:
 	echo Making $(COMMAND) in $(DECODIR)

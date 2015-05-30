@@ -83,7 +83,9 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server</Command>
+      <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server
+copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
+copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -127,7 +129,9 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server</Command>
+      <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server
+copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
+copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>

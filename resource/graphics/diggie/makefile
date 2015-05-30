@@ -6,16 +6,12 @@ OUTDIR = .
 
 .SUFFIXES: .bbg
 
-BGFS = neeleme.bgf \
-       neelemeX.bgf \
+BGFS = neeleme.bgf neelemeX.bgf
 
-all: $(BGFS)
-	@-for %i in ($(BGFS)) do \
-      @echo copying %i to client & \
-   	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
 {$(SOURCEDIR)}.bbg.bgf:
 	$(MAKEBGF) -o $(OUTDIR)\$*.bgf @$*.bbg
-   
+
 clean:
 	

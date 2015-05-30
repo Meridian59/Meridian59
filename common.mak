@@ -117,10 +117,10 @@ MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
 RC     = rc
-POSTLITE = $(TOPDIR)\postlite
-
+RSCMERGE = $(TOPDIR)\bin\rscmerge.exe -o
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t
+XCP = xcopy /ydi
 CP = copy /Y
 RM = -del /Q
 RMDIR = -rmdir

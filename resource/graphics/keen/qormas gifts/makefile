@@ -5,14 +5,8 @@ TOPDIR=..\..\..\..
 
 SOURCEDIR = .
 
-BGFS = gift1.bgf \
-       gift2.bgf \
-       gift3.bgf \
-       gift4.bgf   
+BGFS = gift1.bgf gift2.bgf gift3.bgf gift4.bgf
 
-all: 
-	@-for %i in ($(BGFS)) do \
-   @echo copying %i to client & \
-	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
 !include $(TOPDIR)\rules.mak

@@ -20,11 +20,8 @@ BGFS = grd61001.bgf \
        grd61013.bgf \
        grd61014.bgf \
        grd61015.bgf \
-       grd61016.bgf \
+       grd61016.bgf
 
-all: 
-	@-for %i in ($(BGFS)) do \
-   @echo copying %i to client & \
-	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
 !include $(TOPDIR)\rules.mak

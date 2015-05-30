@@ -4,6 +4,7 @@ TOPDIR=..
 !include $(TOPDIR)\common.mak
 
 DIRS = graphics \
+       rooms
        #textures
 
 CLEANDIRS = graphics \
@@ -13,8 +14,9 @@ all:
 	@-for %i in ($(DIRS)) do \
 		@if EXIST %i (echo Building %i & \
 		cd %i & \
-	 	$(MAKE) /$(MAKEFLAGS) & \
+	 	$(MAKE) /$(MAKEFLAGS) $(COMMAND) &\
 		cd .. )
 
-clean :
-	@-for %i in ($(CLEANDIRS)) do @if EXIST %i (cd %i & $(MAKE) /$(MAKEFLAGS) clean & cd .. )
+clean:
+   @set COMMAND=clean
+	@-for %i in ($(CLEANDIRS)) do @if EXIST %i (cd %i & $(MAKE) /$(MAKEFLAGS) $(COMMAND) & cd .. )

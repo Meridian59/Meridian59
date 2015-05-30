@@ -5,21 +5,16 @@ SOURCEDIR = $(TOPDIR)\resource\graphics
 
 .SUFFIXES: .bbg
 
-BGFS = \
-	minotaur.bgf \
-   minotaurX.bgf \
+BGFS = minotaur.bgf minotaurX.bgf
 
-all: $(BGFS)
-	@-for %i in ($(BGFS)) do \
-      @echo copying %i to client & \
-   	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
 minotaur.bgf:
 	$(MAKEBGF) -o minotaur.bgf @minotaur.bbg
 
 clean:
 	$(RM) $(CLIENTRUNDIR)\resource\minotaur.bgf
-   $(RM) $(CLIENTRUNDIR)\resource\minotaurX.bgf
+	$(RM) $(CLIENTRUNDIR)\resource\minotaurX.bgf
 
 clean-frames:
 	$(RM) *.bmp

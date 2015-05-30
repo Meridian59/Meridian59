@@ -14,6 +14,9 @@
     <ClCompile Include="rscmerge.c" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\clientd3d\maketrig.vcxproj">
+      <Project>{cd5804a4-972e-4e67-a461-427a9725786f}</Project>
+    </ProjectReference>
     <ProjectReference Include="rscload.vcxproj">
       <Project>{ab4f2aae-51b1-4c8e-9d24-d85acc2a9840}</Project>
     </ProjectReference>

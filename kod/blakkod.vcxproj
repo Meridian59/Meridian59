@@ -10,6 +10,11 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\util\rscmerge.vcxproj">
+      <Project>{1a817dca-27ad-44e9-bf25-b70e59c40ec0}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <BaseIntermediateOutputPath>vsbuildfolder</BaseIntermediateOutputPath>
     <ProjectGuid>{9D5B560D-4DD2-4515-AFEA-C01103C948DE}</ProjectGuid>
@@ -41,16 +46,44 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)</OutDir>
     <TargetName>blakdiff</TargetName>
-    <NMakeBuildCommandLine>nmake all</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>nmake clean all</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>nmake all
+echo Copying kodbase.txt and kod include files
+xcopy /ydic $(ProjectDir)kodbase.txt $(SolutionDir)run\server\
+xcopy /ydic $(ProjectDir)include\*.khd $(SolutionDir)run\server\
+echo Copying .rsc and creating client .rsb file
+del /q $(SolutionDir)run\localclient\resource\*.rsc &gt;nul 2&gt;&amp;1
+del /q $(SolutionDir)run\localclient\resource\*.rsb
+$(SolutionDir)bin\rscmerge.exe -o $(SolutionDir)run\localclient\resource\rsc0000.rsb $(SolutionDir)run\server\rsc\*.rsc</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake clean all
+echo Copying kodbase.txt and kod include files
+xcopy /ydic $(ProjectDir)kodbase.txt $(SolutionDir)run\server\
+xcopy /ydic $(ProjectDir)include\*.khd $(SolutionDir)run\server\
+echo Copying .rsc and creating client .rsb file
+del /q $(SolutionDir)run\localclient\resource\*.rsc &gt;nul 2&gt;&amp;1
+del /q $(SolutionDir)run\localclient\resource\*.rsb
+$(SolutionDir)bin\rscmerge.exe -o $(SolutionDir)run\localclient\resource\rsc0000.rsb $(SolutionDir)run\server\rsc\*.rsc</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
     <IntDir>$(ProjectDir)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)</OutDir>
     <TargetName>blakdiff</TargetName>
-    <NMakeBuildCommandLine>nmake all</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>nmake clean all</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>nmake all
+echo Copying kodbase.txt and kod include files
+xcopy /ydic $(ProjectDir)kodbase.txt $(SolutionDir)run\server\
+xcopy /ydic $(ProjectDir)include\*.khd $(SolutionDir)run\server\
+echo Copying .rsc and creating client .rsb file
+del /q $(SolutionDir)run\localclient\resource\*.rsc &gt;nul 2&gt;&amp;1
+del /q $(SolutionDir)run\localclient\resource\*.rsb
+$(SolutionDir)bin\rscmerge.exe -o $(SolutionDir)run\localclient\resource\rsc0000.rsb $(SolutionDir)run\server\rsc\*.rsc</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake clean all
+echo Copying kodbase.txt and kod include files
+xcopy /ydic $(ProjectDir)kodbase.txt $(SolutionDir)run\server\
+xcopy /ydic $(ProjectDir)include\*.khd $(SolutionDir)run\server\
+echo Copying .rsc and creating client .rsb file
+del /q $(SolutionDir)run\localclient\resource\*.rsc &gt;nul 2&gt;&amp;1
+del /q $(SolutionDir)run\localclient\resource\*.rsb
+$(SolutionDir)bin\rscmerge.exe -o $(SolutionDir)run\localclient\resource\rsc0000.rsb $(SolutionDir)run\server\rsc\*.rsc</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>nmake clean</NMakeCleanCommandLine>
     <IntDir>$(ProjectDir)</IntDir>
   </PropertyGroup>

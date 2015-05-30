@@ -73,7 +73,7 @@
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
       <AdditionalIncludeDirectories>../include/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ShowIncludes>false</ShowIncludes>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
@@ -102,7 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
       <AdditionalIncludeDirectories>../include/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <ExceptionHandling>SyncCThrow</ExceptionHandling>

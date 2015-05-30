@@ -43,8 +43,7 @@
     <TargetName>blakserv</TargetName>
     <IntDir>$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
+    <CustomBuildAfterTargets>Clean</CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
@@ -53,8 +52,7 @@
     <TargetName>blakserv</TargetName>
     <IntDir>$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-    <CustomBuildAfterTargets>
-    </CustomBuildAfterTargets>
+    <CustomBuildAfterTargets>Clean</CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
@@ -88,13 +86,23 @@ copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
 copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>del /Q $(SolutionDir)run\server\rsc\*.rsc 2&gt;nul
+del /Q $(SolutionDir)run\server\loadkod\*.bof 2&gt;nul
+del /Q $(SolutionDir)run\server\memmap\*.bof 2&gt;nul
+del /Q $(SolutionDir)run\server\channel\*.txt 2&gt;nul</Command>
     </CustomBuildStep>
     <CustomBuildStep>
+      <Message>Remove server files on clean</Message>
+      <Outputs>Clean server files</Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
       <Message>
       </Message>
-    </CustomBuildStep>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -134,13 +142,23 @@ copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
 copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>
-      </Command>
+      <Command>del /Q $(SolutionDir)run\server\rsc\*.rsc 2&gt;nul
+del /Q $(SolutionDir)run\server\loadkod\*.bof 2&gt;nul
+del /Q $(SolutionDir)run\server\memmap\*.bof 2&gt;nul
+del /Q $(SolutionDir)run\server\channel\*.txt 2&gt;nul</Command>
     </CustomBuildStep>
     <CustomBuildStep>
+      <Message>Remove server files on clean</Message>
+      <Outputs>Clean server files</Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
       <Message>
       </Message>
-    </CustomBuildStep>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="account.h" />
@@ -291,6 +309,16 @@ copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="BLAKSERV.HLP" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\resource\resource.vcxproj">
+      <Project>{15142a8c-248c-402a-90bf-c4b5c14cd8dc}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

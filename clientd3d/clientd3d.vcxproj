@@ -82,7 +82,8 @@
       <Command>xcopy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
 xcopy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
 cd..
-$(SolutionDir)postbuild.bat</Command>
+$(SolutionDir)postbuild.bat
+</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -128,7 +129,8 @@ $(SolutionDir)postbuild.bat</Command>
       <Command>xcopy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
 xcopy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
 cd..
-$(SolutionDir)postbuild.bat</Command>
+$(SolutionDir)postbuild.bat
+</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>
@@ -344,6 +346,14 @@ $(SolutionDir)postbuild.bat</Command>
     <ResourceCompile Include="client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\resource\resource.vcxproj">
+      <Project>{15142a8c-248c-402a-90bf-c4b5c14cd8dc}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
     <ProjectReference Include="..\util\rscload.vcxproj">
       <Project>{ab4f2aae-51b1-4c8e-9d24-d85acc2a9840}</Project>
     </ProjectReference>

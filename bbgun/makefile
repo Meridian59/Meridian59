@@ -21,6 +21,7 @@ OBJS = \
 
 $(OUTDIR)\bbgun.exe: $(OBJS) $(OUTDIR)\bbgun.res
 	$(LINK) $** $(LIBS) -OUT:$@ $(LINKFLAGS) /SUBSYSTEM:WINDOWS",5.01"
+	$(CP) $(OUTDIR)\bbgun.exe $(TOPDIR)\resource\graphics\
 
 $(OUTDIR)\bbgun.res : $(SOURCEDIR)\bbgun.rc
         $(RC) /fo $@ /i$(SOURCEDIR) $**

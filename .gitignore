@@ -5,6 +5,7 @@
 *.rsc
 kodbase.txt
 run/*
+bbgun.exe
 palcomp.exe
 paldump.exe
 porttest.exe

@@ -63,7 +63,7 @@
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <ShowIncludes>false</ShowIncludes>
       <ExceptionHandling>SyncCThrow</ExceptionHandling>
-      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

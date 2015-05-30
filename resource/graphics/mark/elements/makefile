@@ -14,9 +14,3 @@ all:
 		@if EXIST %i (	cd %i & \
 	 	$(MAKE) /$(MAKEFLAGS) & \
 		cd .. )
-      
-clean: 
-	@-for %i in ($(DIRS)) do \
-		@if EXIST %i (	cd %i & \
-	 	$(MAKE) clean /$(MAKEFLAGS) & \
-		cd .. )

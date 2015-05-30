@@ -1,2 +1,0 @@
-# Ignore bgf, we build it from the .bbg file.
-*.bgf

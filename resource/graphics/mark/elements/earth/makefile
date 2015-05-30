@@ -16,7 +16,3 @@ all: $(BGFS)
 
 {$(SOURCEDIR)}.bbg.bgf:
 	$(MAKEBGF) -o $(OUTDIR)\$*.bgf @$*.bbg
-
-clean:
-	$(RM) $(OUTDIR)\earthele.bgf
-	$(RM) $(CLIENTRUNDIR)\resource\earthele.bgf

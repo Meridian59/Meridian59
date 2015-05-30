@@ -121,7 +121,7 @@ static int   DefaultRedialDelay   = 60;
 static char  DefaultHostname[]    = "cheater";
 static char  DefaultDomainFormat[] = "meridian%d.openmeridian.org"; // MUST have a %d in it somewhere.
 static char  DefaultSockPortFormat[] = "59%.2d";
-static int   DefaultServerNum     = -1;
+static int   DefaultServerNum     = 101;
 static int   DefaultTimeout       = 1440; // 1 day in minutes (60*24)
 
 /************************************************************************/
@@ -190,7 +190,7 @@ void ConfigLoad(void)
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
-   config.large_area    = GetConfigInt(misc_section, INIArea, False, ini_file);
+   config.large_area    = GetConfigInt(misc_section, INIArea, True, ini_file);
    gLargeArea = config.large_area;
    // Animation option removed 3/4/97 to fix movement bug
 #ifndef NODPRINTFS

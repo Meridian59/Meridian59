@@ -21,6 +21,10 @@ Bclient: Butil Bresource
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
+!if !DEFINED(NOCOPYFILES)
+# Postbuild handles its own echoes
+	$(POSTBUILD)
+!endif NOCOPYFILES
 
 Bmodules: Bclient
 	echo Making in $(MODULEDIR)

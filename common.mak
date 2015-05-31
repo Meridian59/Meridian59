@@ -118,6 +118,7 @@ LIBPRG = lib -nologo
 LINK   = link -nologo
 RC     = rc
 RSCMERGE = $(TOPDIR)\bin\rscmerge.exe -o
+POSTBUILD = $(TOPDIR)\postbuild.bat
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t
 XCP = xcopy /ydi

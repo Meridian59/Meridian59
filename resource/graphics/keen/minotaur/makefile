@@ -13,8 +13,8 @@ minotaur.bgf:
 	$(MAKEBGF) -o minotaur.bgf @minotaur.bbg
 
 clean:
-	$(RM) $(CLIENTRUNDIR)\resource\minotaur.bgf
-	$(RM) $(CLIENTRUNDIR)\resource\minotaurX.bgf
+	@$(RM) $(CLIENTRUNDIR)\resource\minotaur.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\minotaurX.bgf 2>nul
 
 clean-frames:
 	$(RM) *.bmp

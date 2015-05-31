@@ -13,4 +13,5 @@ all:
 	 	$(MAKE) /$(MAKEFLAGS) & \
 		cd .. )
 
-!include $(TOPDIR)\rules.mak
+clean:
+	

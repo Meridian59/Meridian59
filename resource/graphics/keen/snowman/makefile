@@ -5,8 +5,9 @@ TOPDIR=..\..\..\..
 
 SOURCEDIR = .
 
-BGFS = snowman.bgf \
+BGFS = snowman.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\snowman.bgf 2>nul

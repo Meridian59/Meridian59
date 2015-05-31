@@ -9,4 +9,6 @@ BGFS = ratsm.bgf ratsmX.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\ratsm.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\ratsmX.bgf 2>nul

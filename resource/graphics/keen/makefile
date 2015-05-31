@@ -35,4 +35,9 @@ all:
 	 	$(MAKE) /$(MAKEFLAGS) $(COMMAND) &\
 		cd .. )
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@-for %i in ($(DIRS)) do \
+		@echo Making clean in %i & \
+		@if EXIST %i ( cd %i & \
+	 	$(MAKE) /$(MAKEFLAGS) clean &\
+		cd .. )

@@ -10,8 +10,8 @@ BGFS = bunny2.bgf bunny2X.bgf
 !include $(RESOURCEDIR)\copy.mak
 
 clean:
-	$(RM) $(CLIENTRUNDIR)\resource\bunny2.bgf
-	$(RM) $(CLIENTRUNDIR)\resource\bunny2X.bgf
+	@$(RM) $(CLIENTRUNDIR)\resource\bunny2.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\bunny2X.bgf 2>nul
 
 clean-frames:
 	$(RM) *.bmp

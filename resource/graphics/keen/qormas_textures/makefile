@@ -24,4 +24,20 @@ BGFS = grd61001.bgf \
 
 !include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61001.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61002.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61003.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61004.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61005.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61006.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61007.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61008.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61009.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61010.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61011.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61012.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61013.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61014.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61015.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\grd61016.bgf 2>nul

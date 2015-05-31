@@ -9,4 +9,6 @@ BGFS = qormastree.bgf qormastreebig.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\qormastree.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\qormastreebig.bgf 2>nul

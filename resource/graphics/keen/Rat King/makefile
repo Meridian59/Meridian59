@@ -9,4 +9,6 @@ BGFS = ratking.bgf ratkingX.bgf
 
 !include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\ratking.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\ratkingX.bgf 2>nul

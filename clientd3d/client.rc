@@ -1589,7 +1589,7 @@ BEGIN
     IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Can't delete the file %s.\n\nTry again?"
     IDS_CANTWRITEFILE       "Can't write to file %s."
-    IDS_NOCONFIGMENUEXE     "Configuration menu not found!  Please uninstall and reinstall Meridian 59"
+    IDS_NOCONFIGMENUEXE     "Configuration menu not found!  Try restarting the client, patching to verify m59bind.exe is present or contact an administrator."
     IDS_CONNECTERROR        "Couldn't connect to server!"
     IDS_BADLOGIN            "Incorrect username or password."
     IDS_NOTIMERS            "All Windows timers are currently in use.\nClose some applications and try again."

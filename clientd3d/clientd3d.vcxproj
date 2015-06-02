@@ -58,7 +58,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\dx9;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\dx9;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996; 4390</DisableSpecificWarnings>
       <ShowIncludes>false</ShowIncludes>
@@ -79,8 +79,8 @@
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
-xcopy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
+      <Command>copy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
+copy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
 cd..
 $(SolutionDir)postbuild.bat
 </Command>
@@ -356,6 +356,12 @@ $(SolutionDir)postbuild.bat
     </ProjectReference>
     <ProjectReference Include="..\util\rscload.vcxproj">
       <Project>{ab4f2aae-51b1-4c8e-9d24-d85acc2a9840}</Project>
+    </ProjectReference>
+    <ProjectReference Include="makepal.vcxproj">
+      <Project>{946d268a-f73b-4387-acd4-bf6d21bc076d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="maketrig.vcxproj">
+      <Project>{cd5804a4-972e-4e67-a461-427a9725786f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

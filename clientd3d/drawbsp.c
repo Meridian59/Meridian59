@@ -159,7 +159,7 @@ static Bool AddObject(BSPnode *tree, ObjectData *object)
    {
       if (tree == NULL)
       {
-	 debug(("add_object got NULL tree for object %d!\n", object->draw.id));
+	 //debug(("add_object got NULL tree for object %d!\n", object->draw.id));
 	 object->parent = NULL;
 	 return False;
       }
@@ -1068,6 +1068,8 @@ static Bool add_up(DrawItem *item_template, long a, long b, long d, long col0, l
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
   blakassert(col1 < MAXX);
+  if (col1 >= MAXX)
+     col1 = MAXX - 1;
   for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
     {
       next = c->next;  /* get next pointer now, before we munge c */
@@ -1279,6 +1281,9 @@ static Bool add_dn(DrawItem *item_template, long a, long b, long d, long col0, l
   Bool additem = item_template->type != DrawBackgroundType || incremental_background;
   
   blakassert(col1 < MAXX);
+
+  if (col1 >= MAXX)
+     col1 = MAXX-1;
   for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
     {
       next = c->next;  /* get next pointer now, before we munge c */
@@ -1503,9 +1508,9 @@ int world_to_screen(float x0, float y0, float x1, float y1,
   
   /* make sure left and right are not both zero.  If they are,   */
   /* move them to a point that maps to the center of the screen. */
-  if (right0 <= 0.001 && right0 >= -0.001)
+  if (right0 < 1.0f && right0 >= -1.0f)
      right0 = 1.0f;
-  if (right1 <= 0.001 && right1 >= -0.001)
+  if (right1 < 1.0f && right1 >= -1.0f)
      right1 = 1.0f;
   
   if (left0 < 0)
@@ -2216,6 +2221,8 @@ static void WalkWall(WallData *wall, long side)
       // flag it for drawing.
       wall->drawnormal = TRUE;
      blakassert(col1 < MAXX);
+     if (col1 >= MAXX)
+        col1 = MAXX - 1;
      for(c = search_for_first(col0); c->cone.leftedge <= col1; c = next)
      {
 	    next = c->next;
@@ -3993,7 +4000,7 @@ static void doDrawBackground(ViewCone *c)
    long mincol,maxcol;
    long row,col;
    long width,height;
-   BYTE *bkgnd_bmap, *bkgnd_ptr;
+   BYTE *bkgnd_bmap = NULL, *bkgnd_ptr;
    long length;
    long xoffset;
    list_type l;

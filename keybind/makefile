@@ -17,7 +17,7 @@ m59Bind:
 	$(MSBUILD) /p:configuration=Release,platform=x86 /verbosity:quiet $(PROJECT)
 	$(CP) bin\x86\release\m59Bind.exe $(CLIENTRUNDIR)
 !endif
-   
+
 clean:
-	$(RMDIR) /S /Q obj
-	$(RMDIR) /S /Q bin
+	@$(RMDIR) /S /Q obj >nul 2>&1
+	@$(RMDIR) /S /Q bin >nul 2>&1

@@ -18,5 +18,5 @@ makedirs:
         $(RC) /fo $@ /i$(SOURCEDIR) $**
 
 clean :
-        @$(RM) $(OUTDIR)\*
-        @$(RMDIR) $(OUTDIR)
+        @$(RM) $(OUTDIR)\* >nul 2>&1
+        @$(RMDIR) $(OUTDIR) > nul 2>&1

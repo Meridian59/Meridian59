@@ -11,13 +11,13 @@ TOPDIR=.
 all: Bserver Bclient Bmodules Bkod Bdeco Bupdater Bbbgun Bkeybind Bresource
 
 Bserver: Bresource
-	echo Making in $(BLAKSERVDIR)
+	echo Making $(COMMAND) in $(BLAKSERVDIR)
 	cd $(BLAKSERVDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
 Bclient: Butil Bresource
-	echo Making in $(CLIENTDIR)
+	echo Making $(COMMAND) in $(CLIENTDIR)
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
@@ -27,7 +27,7 @@ Bclient: Butil Bresource
 !endif NOCOPYFILES
 
 Bmodules: Bclient
-	echo Making in $(MODULEDIR)
+	echo Making $(COMMAND) in $(MODULEDIR)
 	cd $(MODULEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
@@ -49,15 +49,6 @@ Bkod: Bdiff Bcompiler
 	cd $(KODDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
-!if !DEFINED(NOCOPYFILES)
-	echo Copying kodbase.txt and kod include files
-	-$(CP) $(KODDIR)\kodbase.txt $(BLAKSERVRUNDIR) >nul 2>&1
-	-$(CP) $(KODDIR)\include\*.khd $(BLAKSERVRUNDIR) >nul 2>&1
-	echo Copying .rsc and creating client .rsb file
-	@-$(RM) $(CLIENTRUNDIR)\resource\*.rsc >nul 2>&1
-	@-$(RM) $(CLIENTRUNDIR)\resource\*.rsb >nul 2>&1
-	-$(RSCMERGE) $(CLIENTRUNDIR)\resource\rsc0000.rsb $(BLAKSERVRUNDIR)\rsc\*.rsc >nul
-!endif NOCOPYFILES
 
 Bdeco:
 	echo Making $(COMMAND) in $(DECODIR)
@@ -65,7 +56,7 @@ Bdeco:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bresource: Bmakebgf
+Bresource: Bmakebgf Bbbgun
 	echo Making $(COMMAND) in $(RESOURCEDIR)
 	cd $(RESOURCEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
@@ -108,4 +99,4 @@ clean:
 		$(RM) $(BLAKSERVRUNDIR)\rsc\*.rsc >nul 2>&1
 		$(RM) $(BLAKSERVRUNDIR)\loadkod\*.bof >nul 2>&1
 		$(RM) $(BLAKSERVRUNDIR)\memmap\*.bof >nul 2>&1
-		$(RM) $(BLAKSERVDIR)\channel\*.txt
+		$(RM) $(BLAKSERVDIR)\channel\*.txt 2>nul

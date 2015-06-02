@@ -399,7 +399,8 @@ messages:
          if NOT Send(self,@CanReach,#what=poTarget) 
          {
             Send(self,@MonsterCastAttackSpell);
-            Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+            Send(self,@EnterStateChase,#Target=poTarget);
+            %Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
 
             return;
          }

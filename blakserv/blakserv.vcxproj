@@ -43,7 +43,9 @@
     <TargetName>blakserv</TargetName>
     <IntDir>$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-    <CustomBuildAfterTargets>Clean</CustomBuildAfterTargets>
+   
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
@@ -52,7 +54,9 @@
     <TargetName>blakserv</TargetName>
     <IntDir>$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-    <CustomBuildAfterTargets>Clean</CustomBuildAfterTargets>
+   
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
   </PropertyGroup>
@@ -86,14 +90,14 @@ copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
 copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>del /Q $(SolutionDir)run\server\rsc\*.rsc 2&gt;nul
-del /Q $(SolutionDir)run\server\loadkod\*.bof 2&gt;nul
-del /Q $(SolutionDir)run\server\memmap\*.bof 2&gt;nul
-del /Q $(SolutionDir)run\server\channel\*.txt 2&gt;nul</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>Remove server files on clean</Message>
-      <Outputs>Clean server files</Outputs>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <PreBuildEvent>
       <Command>
@@ -142,14 +146,14 @@ copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
 copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>del /Q $(SolutionDir)run\server\rsc\*.rsc 2&gt;nul
-del /Q $(SolutionDir)run\server\loadkod\*.bof 2&gt;nul
-del /Q $(SolutionDir)run\server\memmap\*.bof 2&gt;nul
-del /Q $(SolutionDir)run\server\channel\*.txt 2&gt;nul</Command>
+      <Command>
+      </Command>
     </CustomBuildStep>
     <CustomBuildStep>
-      <Message>Remove server files on clean</Message>
-      <Outputs>Clean server files</Outputs>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <PreBuildEvent>
       <Command>

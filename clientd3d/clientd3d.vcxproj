@@ -126,8 +126,8 @@ $(SolutionDir)postbuild.bat
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
-xcopy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
+      <Command>copy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
+copy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
 cd..
 $(SolutionDir)postbuild.bat
 </Command>

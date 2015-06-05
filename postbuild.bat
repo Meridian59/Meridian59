@@ -28,7 +28,7 @@ for /F "tokens=1-6 usebackq delims=:" %%a in ("%programfiles%\Open Meridian\sett
 )
 
 echo No graphics found, Please download the client (and graphics) using the patcher from openmeridian.org.
-exit /b 1
+exit /b 0
 
 :copying
 echo Copying live graphics from !m59path! to client folder.

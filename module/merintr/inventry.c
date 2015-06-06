@@ -196,6 +196,7 @@ void InventoryBoxCreate(HWND hParent)
 
    InventoryResetFont();
    InventoryChangeColor();
+   InventoryDisplayScrollbar();
 }
 /************************************************************************/
 /*

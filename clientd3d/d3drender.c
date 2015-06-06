@@ -15,7 +15,7 @@
 #define	TEX_CACHE_MAX_PARTICLE	1000000
 #define FOV_H					((gD3DRect.right - gD3DRect.left) / (float)(MAXX * stretchfactor) * (-PI / 3.6f))
 #define FOV_V					((gD3DRect.bottom - gD3DRect.top) / (float)(MAXY * stretchfactor) * (PI / 6.0f))
-#define Z_RANGE					(200000.0f)
+#define Z_RANGE					(400000.0f)
 
 d3d_render_packet_new	*gpPacket;
 

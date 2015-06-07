@@ -29,6 +29,7 @@ resources:
    WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."
    WeapAttSpellCaster_desc2 = " This weapon will cast the "
    WeapAttSpellCaster_desc3 = " spell on your target."
+   WeapAttSpellCaster_desc_invis = " spell on the wielder."
    WeapAttSpellCaster_dm = "spellcaster"
 
 classvars:
@@ -36,6 +37,7 @@ classvars:
    vrDesc = WeapAttSpellCaster_desc
    vrDesc2 = WeapAttSpellCaster_desc2
    vrDesc3 = WeapAttSpellCaster_desc3
+   vrDesc4 = WeapAttSpellCaster_desc_invis
 
    viItem_Att_Num = WA_SPELLCASTER
 
@@ -53,10 +55,11 @@ messages:
 
    Constructor()
    {
-      % Used to have swap and invisibility here.
-      plSpells = [ [SID_DEMENT, 17], [SID_ENFEEBLE, 16],
-                   [SID_VERTIGO, 16], [SID_FORGET, 16],
-                   [SID_EVIL_TWIN, 16], [SID_MARK_OF_DISHONOR, 17]
+      % Used to have swap here.
+      plSpells = [ [SID_DEMENT, 14], [SID_ENFEEBLE, 14],
+                   [SID_VERTIGO, 14], [SID_FORGET, 15],
+                   [SID_EVIL_TWIN, 14], [SID_MARK_OF_DISHONOR, 15],
+                   [SID_INVISIBILITY, 14]
                  ];
 
       propagate;
@@ -83,11 +86,25 @@ messages:
          AND Send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=Nth(lData,2));
-         if Send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],
-               #ispellpower=Nth(lData,3))
+
+         % Handle self-target spells separately.
+         if Nth(lData,2) = SID_INVISIBILITY
          {
-            Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],
-                  #ispellpower=Nth(lData,3),#bItemCast=TRUE);
+            if Send(oSpell,@CanPayCosts,#who=self,#lTargets=[wielder],
+                  #ispellpower=Nth(lData,3))
+            {
+               Send(oSpell,@CastSpell,#who=wielder,#lTargets=$,
+                     #ispellpower=Nth(lData,3),#bItemCast=TRUE);
+            }
+         }
+         else
+         {
+            if Send(oSpell,@CanPayCosts,#who=self,#lTargets=[target],
+                  #ispellpower=Nth(lData,3))
+            {
+               Send(oSpell,@CastSpell,#who=wielder,#lTargets=[target],
+                     #ispellpower=Nth(lData,3),#bItemCast=TRUE);
+            }
          }
       }
 
@@ -198,7 +215,16 @@ messages:
       AppendTempString(vrDesc);
       AppendTempString(vrDesc2);
       AppendTempString(Send(Send(SYS,@FindSpellByNum,#num=Nth(lData,2)),@GetName));
-      AppendTempString(vrDesc3);
+
+      % Special case for spell cast on self.
+      if Nth(lData,2) = SID_INVISIBILITY
+      {
+         AppendTempString(vrDesc4);
+      }
+      else
+      {
+         AppendTempString(vrDesc3);
+      }
 
       return;
    }

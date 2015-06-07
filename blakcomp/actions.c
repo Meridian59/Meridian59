@@ -42,7 +42,7 @@ void initialize_parser(void)
       id->type = I_FUNCTION;
       id->idnum = i;  /* For functions, idnum is just index in table, not a real id # */
       if (table_insert(st.globalvars, (void *) id, id_hash, id_compare) != 0)
-	 simple_error("Duplicate built-in function name %s", id->name);
+         simple_error("Duplicate built-in function name %s", id->name);
    }
 
    /* Add builtin identifiers to appropriate symbol tables */
@@ -50,18 +50,18 @@ void initialize_parser(void)
       switch (BuiltinIds[i].type)
       {
       case I_MISSING:
-	 if (table_insert(st.missingvars, (void *) &BuiltinIds[i], id_hash, id_compare) != 0)
-	    simple_error("Duplicate builtin identifier name %s", BuiltinIds[i].name);
-	 break;
+         if (table_insert(st.missingvars, (void *) &BuiltinIds[i], id_hash, id_compare) != 0)
+            simple_error("Duplicate builtin identifier name %s", BuiltinIds[i].name);
+         break;
 
       case I_PROPERTY:
-	 if (table_insert(st.globalvars, (void *) &BuiltinIds[i], id_hash, id_compare) != 0)
-	    simple_error("Duplicate builtin identifier name %s", BuiltinIds[i].name);
-	 break;
+         if (table_insert(st.globalvars, (void *) &BuiltinIds[i], id_hash, id_compare) != 0)
+            simple_error("Duplicate builtin identifier name %s", BuiltinIds[i].name);
+         break;
 
       default:
-	 simple_error("Bad type on builtin identifier %s", BuiltinIds[i].name);
-	 break;
+         simple_error("Bad type on builtin identifier %s", BuiltinIds[i].name);
+         break;
       }
 
    st.maxid = IDBASE; /* Base for user-defined ids; builtins have lower #s */
@@ -76,6 +76,7 @@ void initialize_parser(void)
    st.recompile_list = NULL;
    st.constants = NULL;
    st.num_strings = 0;
+   st.strings = NULL;
    st.override_classvars = NULL;
 }
 /************************************************************************/

@@ -901,12 +901,12 @@ void codegen(char *kod_fname, char *bof_fname)
       endpos = FileCurPos(outfile);
       FileGoto(outfile, debugpos); 
       if (debug_bof)
-	 OutputInt(outfile, endpos);
+         OutputInt(outfile, endpos);
       else OutputInt(outfile, 0);
 
       FileGotoEnd(outfile);
       if (debug_bof)
-	 codegen_debug_info();
+         codegen_debug_info();
 
       /* Backpatch location of kod filename */
       endpos = FileCurPos(outfile);

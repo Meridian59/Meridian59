@@ -27,12 +27,15 @@ constants:
 resources:
 
    WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."
+   WeapAttSpellCaster_desc2 = " This weapon will cast the "
+   WeapAttSpellCaster_desc3 = " spell on your target."
    WeapAttSpellCaster_dm = "spellcaster"
 
 classvars:
 
    vrDesc = WeapAttSpellCaster_desc
-   vrDesc2 = $
+   vrDesc2 = WeapAttSpellCaster_desc2
+   vrDesc3 = WeapAttSpellCaster_desc3
 
    viItem_Att_Num = WA_SPELLCASTER
 
@@ -48,17 +51,16 @@ properties:
 
 messages:
 
-Constructor()
-{
-   plSpells = [ [SID_DEMENT, 12], [SID_ENFEEBLE, 13],
-                [SID_VERTIGO, 13], [SID_SWAP, 12],
-                [SID_INVISIBILITY, 12], [SID_FORGET, 13],
-                [SID_EVIL_TWIN, 12], [SID_MARK_OF_DISHONOR, 13]
-              ];
-              
-   propagate;
-}
+   Constructor()
+   {
+      % Used to have swap and invisibility here.
+      plSpells = [ [SID_DEMENT, 17], [SID_ENFEEBLE, 16],
+                   [SID_VERTIGO, 16], [SID_FORGET, 16],
+                   [SID_EVIL_TWIN, 16], [SID_MARK_OF_DISHONOR, 17]
+                 ];
 
+      propagate;
+   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -80,7 +82,7 @@ Constructor()
       if (Random(1,100) <= ((100-Nth(lData,3))/10))
          AND Send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         oSpell = Nth(lData,2);
+         oSpell = Send(SYS,@FindSpellByNum,#num=Nth(lData,2));
          if Send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],
                #ispellpower=Nth(lData,3))
          {
@@ -118,9 +120,9 @@ Constructor()
       iSpell = 0;
       for i in plSpells
       {
-         if StringContain(string,Send(Send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
+         if StringContain(string,Send(Send(SYS,@FindSpellByNum,#num=First(i)),@GetName))
          {
-            iSpell = first(i);
+            iSpell = First(i);
          }
       }
 
@@ -133,8 +135,7 @@ Constructor()
       {
          Debug("Adding to item");
 
-         Send(self,@AddToItem,#oItem=oWeapon, #spellNum = iSpell,
-              #random_gen=TRUE);
+         Send(self,@AddToItem,#oItem=oWeapon,#spellNum=iSpell,#random_gen=TRUE);
 
          return TRUE;
       }
@@ -144,26 +145,28 @@ Constructor()
       return FALSE;
    }
 
-   AddToItem(oItem=$,spellNum=$,oPlayer=$,identified=false)
+   AddToItem(oItem=$,spellNum=$,oPlayer=$,identified=FALSE)
    {
       local lData, iValue, i;
 
       lData = $;
 
-      %spellpower
+      % Spellpower.
       lData = Cons(Random(30,60),lData);
 
-      %spell
+      % Spell.
       if spellNum = $
       {
          iValue = Random(1,100);
-         spellNum = first(first(plSpells));
+         spellNum = First(First(plSpells));
 
          for i in plSpells
          {
             if iValue <= Nth(i,2)
             {
                spellNum = Nth(i,1);
+
+               break;
             }
             else
             {
@@ -172,7 +175,9 @@ Constructor()
          }
       }
 
-      lData = Cons(Send(SYS,@FindSpellByNum,#num=spellNum),lData);
+      % Use SID for this, spell object might change. Specifically, RecreateAll
+      % makes new spell objects (this itematt keeps the old ones hanging around).
+      lData = Cons(spellNum,lData);
 
       iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
       lData = Cons(iValue,lData);
@@ -183,6 +188,18 @@ Constructor()
       }
 
       Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+
+      return;
+   }
+
+   % Add the spell name to the description.
+   AppendDesc(oItem=$,lData=$)
+   {
+      AppendTempString(vrDesc);
+      AppendTempString(vrDesc2);
+      AppendTempString(Send(Send(SYS,@FindSpellByNum,#num=Nth(lData,2)),@GetName));
+      AppendTempString(vrDesc3);
+
       return;
    }
 

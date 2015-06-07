@@ -142,6 +142,9 @@ properties:
    % Miscellaneous
    %
 
+   % Set map where players start in.
+   piInitialRoomID = RID_NEWB1
+
    % Enables or disables some safe-spots, see blakston.khd comments.
    piLOSSkip = LOS_SKIP_1
 
@@ -432,6 +435,11 @@ messages:
    %
    % Miscellaneous
    %
+
+   GetInitialRoomID()
+   {
+      return piInitialRoomID;
+   }
 
    GetLOSSkip()
    {

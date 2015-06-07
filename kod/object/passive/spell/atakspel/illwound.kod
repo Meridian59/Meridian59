@@ -153,7 +153,7 @@ messages:
       % for loot.
       if IsClass(oTarget,&Monster) AND NOT bItemCast
       {
-         Send(oTarget,@AddToSpellList,#spellobject=self);
+        Send(oTarget,@AddToSpellList,#spellnum=viSpell_num);
       }
 
       if NOT bItemCast

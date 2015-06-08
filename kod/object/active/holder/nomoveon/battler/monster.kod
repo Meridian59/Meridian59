@@ -176,6 +176,9 @@ resources:
    vaultman_deposit_thanks = \
       "Thank you for trusting me to quartermaster your gear."
    vaultman_thanks = "Here is your gear.  Thank you for your patronage."
+   vaultman_withdraw_failed = \
+      "I was unable to complete our transaction.  Please sort your inventory "
+      "and try again."
    vaultman_nowithdraw_cash = \
       "You currently cannot pay the exit fee to get your stuff out."
    vaultman_nodeposit_cash = \
@@ -3889,7 +3892,7 @@ messages:
    VaultWithdraw(what=$,lItems=$,number_list = $)
    {
       local i, j, iFee, iCash, lStored, oVault, iBulk, oMoney, bFound,
-            oSafeBox, lNumbers, iCount;
+            oSafeBox, lNumbers, iCount, bFailed;
 
       if what=$ OR lItems = $
       {
@@ -3991,6 +3994,7 @@ messages:
       
       % The next line added to handle player specified amounts
       lNumbers = number_list;
+      bFailed = FALSE;
 
       % At this point, we're pretty sure it's all legal.      
       for i in lItems
@@ -4005,6 +4009,7 @@ messages:
                if NOT Send(oVault,@WithdrawFromStorage,#what=i,#who=what,
                     #count=First(lNumbers))
                {
+                  bFailed = TRUE;
                   break;
                }
 
@@ -4014,6 +4019,7 @@ messages:
             {
                if NOT Send(oVault,@WithdrawFromStorage,#what=i,#who=what,#count=1)
                {
+                  bFailed = TRUE;
                   break;
                }
             }
@@ -4023,13 +4029,27 @@ messages:
 
       if iFee <> 0
       {
-         Send(oMoney,@SubtractNumber,#number=iFee);  
-         Send(self,@SayToOne,#message_rsc=vaultman_Thanks_amount,#target=what,
+         Send(oMoney,@SubtractNumber,#number=iFee);
+         if bFailed
+         {
+            Send(self,@SayToOne,#target=what,#message_rsc=vaultman_withdraw_failed);
+         }
+         else
+         {
+            Send(self,@SayToOne,#message_rsc=vaultman_Thanks_amount,#target=what,
               #parm1=iFee);
+         }
       }
       else
       {
-         Send(self,@SayToOne,#target=what,#message_rsc=vaultman_thanks);
+         if bFailed
+         {
+            Send(self,@SayToOne,#target=what,#message_rsc=vaultman_withdraw_failed);
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=what,#message_rsc=vaultman_thanks);
+         }
       }
 
       return;

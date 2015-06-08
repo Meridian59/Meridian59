@@ -3981,13 +3981,13 @@ messages:
          return;
       }         
 
-      if Send(what, @GetBulkMax) <> $ AND
-         (iBulk + Send(what,@GetBulkHold)) > Send(what,@GetBulkMax)
-      {
-         Send(self,@SayToOne,#target=what,#message_rsc=vaultman_no_room);
-
-         return;
-      }   
+      %if Send(what, @GetBulkMax) <> $ AND
+      %   (iBulk + Send(what,@GetBulkHold)) > Send(what,@GetBulkMax)
+      %{
+      %   Send(self,@SayToOne,#target=what,#message_rsc=vaultman_no_room);
+      %
+      %   return;
+      %}   
       
       % The next line added to handle player specified amounts
       lNumbers = number_list;
@@ -4002,13 +4002,20 @@ messages:
          {
             if IsClass(i,&NumberItem)
             {               
-               Send(oVault,@WithdrawFromStorage,#what=i,#who=what,
-                    #count=First(lNumbers));
+               if NOT Send(oVault,@WithdrawFromStorage,#what=i,#who=what,
+                    #count=First(lNumbers))
+               {
+                  break;
+               }
+
                lNumbers = Rest(lNumbers);
             }
             else
             {
-               Send(oVault,@WithdrawFromStorage,#what=i,#who=what,#count=1); 
+               if NOT Send(oVault,@WithdrawFromStorage,#what=i,#who=what,#count=1)
+               {
+                  break;
+               }
             }
             
          }

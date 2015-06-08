@@ -193,7 +193,7 @@ messages:
 
    WithdrawFromStorage(who=$,what=$,count=$)
    {
-      local i, j, oBox, oItem, cClass, currentAmount;
+      local i, j, oBox, oItem, cClass, currentAmount, iCanHold;
       
       if who=$ or what=$ 
       { DEBUG("Called with invalid data!"); return; }
@@ -217,6 +217,12 @@ messages:
 
       if isClass(what,&NumberItem) 
       {
+         iCanHold = Send(who,@GetNumberCanHold,#what=what);
+         if iCanHold < count
+         {
+            count = iCanHold;
+         }
+         
 	 currentAmount = send(what,@GetNumber);
 	 if (count > 0) AND (count <= currentAmount)
 	 {

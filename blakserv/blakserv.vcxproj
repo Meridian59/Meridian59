@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FA63A56D-3C89-447C-9409-676477E93AE9}</ProjectGuid>
+    <RootNamespace>BlakServ</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <TargetName>blakserv</TargetName>
+    <IntDir>$(Configuration)\</IntDir>
+    <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+   
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <TargetName>blakserv</TargetName>
+    <IntDir>$(Configuration)\</IntDir>
+    <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+   
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\mysql;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server
+copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
+copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\mysql;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(OutDir)$(TargetName).exe $(SolutionDir)run\server
+copy $(SolutionDir)lib\libmysql.dll $(SolutionDir)run\server
+copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
+    </CustomBuildStep>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="account.h" />
+    <ClInclude Include="admin.h" />
+    <ClInclude Include="admincons.h" />
+    <ClInclude Include="adminfn.h" />
+    <ClInclude Include="apndfile.h" />
+    <ClInclude Include="async.h" />
+    <ClInclude Include="blakres.h" />
+    <ClInclude Include="blakserv.h" />
+    <ClInclude Include="block.h" />
+    <ClInclude Include="bof.h" />
+    <ClInclude Include="bool.h" />
+    <ClInclude Include="bstring.h" />
+    <ClInclude Include="btime.h" />
+    <ClInclude Include="bufpool.h" />
+    <ClInclude Include="builtin.h" />
+    <ClInclude Include="ccode.h" />
+    <ClInclude Include="chanbuf.h" />
+    <ClInclude Include="channel.h" />
+    <ClInclude Include="class.h" />
+    <ClInclude Include="commcli.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="database.h" />
+    <ClInclude Include="debug.h" />
+    <ClInclude Include="dllist.h" />
+    <ClInclude Include="files.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="gamelock.h" />
+    <ClInclude Include="garbage.h" />
+    <ClInclude Include="interface.h" />
+    <ClInclude Include="intrlock.h" />
+    <ClInclude Include="intstringhash.h" />
+    <ClInclude Include="kodbase.h" />
+    <ClInclude Include="list.h" />
+    <ClInclude Include="loadacco.h" />
+    <ClInclude Include="loadall.h" />
+    <ClInclude Include="loadgame.h" />
+    <ClInclude Include="loadkod.h" />
+    <ClInclude Include="loadrsc.h" />
+    <ClInclude Include="loadstr.h" />
+    <ClInclude Include="maintenance.h" />
+    <ClInclude Include="memory.h" />
+    <ClInclude Include="message.h" />
+    <ClInclude Include="motd.h" />
+    <ClInclude Include="nameid.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="parsecli.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resync.h" />
+    <ClInclude Include="roofile.h" />
+    <ClInclude Include="roomdata.h" />
+    <ClInclude Include="saveacco.h" />
+    <ClInclude Include="saveall.h" />
+    <ClInclude Include="savegame.h" />
+    <ClInclude Include="saversc.h" />
+    <ClInclude Include="savestr.h" />
+    <ClInclude Include="sendmsg.h" />
+    <ClInclude Include="session.h" />
+    <ClInclude Include="sprocket.h" />
+    <ClInclude Include="stringinthash.h" />
+    <ClInclude Include="synched.h" />
+    <ClInclude Include="system.h" />
+    <ClInclude Include="systimer.h" />
+    <ClInclude Include="table.h" />
+    <ClInclude Include="term.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="trysync.h" />
+    <ClInclude Include="user.h" />
+    <ClInclude Include="version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\util\crc.c" />
+    <ClCompile Include="..\util\md5.c" />
+    <ClCompile Include="..\util\rscload.c" />
+    <ClCompile Include="account.c" />
+    <ClCompile Include="admin.c" />
+    <ClCompile Include="admincons.c" />
+    <ClCompile Include="adminfn.c" />
+    <ClCompile Include="apndfile.c" />
+    <ClCompile Include="async.c" />
+    <ClCompile Include="blakres.c" />
+    <ClCompile Include="block.c" />
+    <ClCompile Include="bufpool.c" />
+    <ClCompile Include="builtin.c" />
+    <ClCompile Include="ccode.c" />
+    <ClCompile Include="chanbuf.c" />
+    <ClCompile Include="channel.c" />
+    <ClCompile Include="class.c" />
+    <ClCompile Include="commcli.c" />
+    <ClCompile Include="config.c" />
+    <ClCompile Include="database.c" />
+    <ClCompile Include="debug.c" />
+    <ClCompile Include="dllist.c" />
+    <ClCompile Include="files.c" />
+    <ClCompile Include="game.c" />
+    <ClCompile Include="gamelock.c" />
+    <ClCompile Include="garbage.c" />
+    <ClCompile Include="interface.c" />
+    <ClCompile Include="intrlock.c" />
+    <ClCompile Include="intstringhash.c" />
+    <ClCompile Include="kodbase.c" />
+    <ClCompile Include="list.c" />
+    <ClCompile Include="loadacco.c" />
+    <ClCompile Include="loadall.c" />
+    <ClCompile Include="loadgame.c" />
+    <ClCompile Include="loadkod.c" />
+    <ClCompile Include="loadrsc.c" />
+    <ClCompile Include="loadstr.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="maintenance.c" />
+    <ClCompile Include="memory.c" />
+    <ClCompile Include="message.c" />
+    <ClCompile Include="motd.c" />
+    <ClCompile Include="nameid.c" />
+    <ClCompile Include="object.c" />
+    <ClCompile Include="parsecli.c" />
+    <ClCompile Include="resync.c" />
+    <ClCompile Include="roofile.c" />
+    <ClCompile Include="roomdata.c" />
+    <ClCompile Include="saveacco.c" />
+    <ClCompile Include="saveall.c" />
+    <ClCompile Include="savegame.c" />
+    <ClCompile Include="saversc.c" />
+    <ClCompile Include="savestr.c" />
+    <ClCompile Include="sendmsg.c" />
+    <ClCompile Include="session.c" />
+    <ClCompile Include="sprocket.c" />
+    <ClCompile Include="string.c" />
+    <ClCompile Include="stringinthash.c" />
+    <ClCompile Include="synched.c" />
+    <ClCompile Include="system.c" />
+    <ClCompile Include="systimer.c" />
+    <ClCompile Include="table.c" />
+    <ClCompile Include="term.c" />
+    <ClCompile Include="time.c" />
+    <ClCompile Include="timer.c" />
+    <ClCompile Include="trysync.c" />
+    <ClCompile Include="user.c" />
+    <ClCompile Include="version.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="blakserv.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="logo.ico" />
+    <Image Include="meridian.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BLAKSERV.HLP" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\resource\resource.vcxproj">
+      <Project>{15142a8c-248c-402a-90bf-c4b5c14cd8dc}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

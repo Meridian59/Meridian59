@@ -1,37 +1,63 @@
 @echo off
+setlocal EnableDelayedExpansion
+
+rem Create a shortcut that can connect to localhost.
+call :makeshortcut
+
 echo Post-Build started.
-echo Clearing client RSC files... 
-del .\run\localclient\resource\*.rsc 
-echo Clearing client RSB files... 
-del .\run\localclient\resource\*.rsb
-echo Copying kodbase to server
-copy /y .\kod\kodbase.txt .\run\server\kodbase.txt
-echo Copying rooms to server
-mkdir .\run\server\rooms\
-copy /y .\resource\rooms\*.roo .\run\server\rooms\
-echo Copying RSC files.... 
-for /R .\kod\ %%f in (*.rsc) do copy "%%f" .\run\server\rsc\ 
-echo Copying Constant files...
-copy /y .\kod\include\*.khd .\run\server\
-echo Building RSB file.... 
-.\bin\rscmerge.exe -o .\run\localclient\resource\rsc0000.rsb .\run\server\rsc\*.rsc 
-if "%errorlevel%"=="0" echo RSB Success! 
-echo Copying Room files to client folder.
-copy /y .\resource\rooms\*.roo .\run\localclient\resource\
-echo Copying .dll files to client folder.
-copy /y .\module\chess\release\chess.dll .\run\localclient\resource\
-copy /y .\module\mailnews\release\mailnews.dll .\run\localclient\resource\
-copy /y .\module\merintr\release\merintr.dll .\run\localclient\resource\
-copy /y .\module\char\release\char.dll .\run\localclient\resource\
-copy /y .\module\intro\release\intro.dll .\run\localclient\resource\
-copy /y .\module\dm\release\dm.dll .\run\localclient\resource\
-copy /y .\module\admin\release\admin.dll .\run\localclient\resource\
-echo Copying Official Graphics to client folder...
-copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.bgf" .\run\localclient\resource\
-copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.wav" .\run\localclient\resource\
-copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.xmi" .\run\localclient\resource\
-copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.mp3" .\run\localclient\resource\
-copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.bsf" .\run\localclient\resource\
-copy /y "%programfiles%\Open Meridian\Meridian 103\resource\*.mid" .\run\localclient\resource\
-echo Please remember to update blakserv.cfg if server is being copied to production.
+for /F "tokens=1-6 usebackq delims=:" %%a in ("%ProgramW6432%\Open Meridian\settings.txt") do (
+   set string=%%a
+   set string=!string: =!
+   if !string! == "ClientFolder" (
+      set m59path=%%b%%c%%d%%e%%f
+      set m59path=!m59path:\\=\!
+      set m59driveletter=!m59path:~2,1!
+      set m59path=!m59path:~1,-2!
+      set m59path=!m59path:~2,255!
+      set m59path=!m59driveletter!:!m59path!
+
+      rem These two filetypes are the important ones. We could check for the music,
+      rem but I've heard more than one user say they deleted it from their resource
+      rem folder for various reasons.
+      if EXIST "!m59path!\resource\*.bgf" if EXIST "!m59path!\resource\*.bsf" (
+         call :copying
+         if %ERRORLEVEL% LSS 8 goto found
+      )
+      echo Copy failed from !m59path!, trying next location...
+   )
+)
+
+echo No graphics found, Please download the client (and graphics) using the patcher from openmeridian.org.
+exit /b 0
+
+:copying
+echo Copying live graphics from !m59path! to client folder.
+rem The error check after this is currently redundant, but kept in case
+rem further copying code is added.
+robocopy "!m59path!\resource" ".\run\localclient\resource" *.bsf *.bgf *.wav *.mp3 /R:0 /MT /XO > postbuild.log
+if %ERRORLEVEL% GTR 7 goto:eof
+rem These extensions aren't used.
+rem robocopy "!m59path!\resource" ".\run\localclient\resource" *.mid *.xmi /R:0 /MT /XO > nul
+rem if %ERRORLEVEL% GTR 7 goto:eof
+goto:eof
+
+:found 
 echo Post-Build Finished.
+echo Please remember to update blakserv.cfg if server is being copied to production.
+goto:eof
+
+:makeshortcut
+echo Creating meridian.exe shortcut to connect to localhost.
+set CURPATH=%~dp0
+set cSctVBS=CreateShortcut.vbs
+(
+   echo Set oWS = WScript.CreateObject^("WScript.Shell"^) 
+   echo sLinkFile = oWS.ExpandEnvironmentStrings^("!CURPATH!run\localclient\meridian.exe - Shortcut.lnk"^)
+   echo Set oLink = oWS.CreateShortcut^(sLinkFile^)
+   echo oLink.Arguments = "/H:127.0.0.1 /P:5959"
+   echo oLink.TargetPath = oWS.ExpandEnvironmentStrings^("!CURPATH!run\localclient\meridian.exe"^)
+   echo oLink.WorkingDirectory = oWS.ExpandEnvironmentStrings^("!CURPATH!run\localclient"^)
+   echo oLink.Save
+)1>!cSctVBS!
+cscript //nologo .\!cSctVBS!
+DEL !cSctVBS! /f /q

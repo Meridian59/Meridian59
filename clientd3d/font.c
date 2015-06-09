@@ -20,10 +20,10 @@ static HFONT hDefaultFont;
 /* Default font information structures */
 static char fontinfo[][MAX_FONTNAME] = {
 { "-12,0,0,0,0,0,0,0,0,0,0,0,0,Times New Roman" },   /* FONT_LIST */
-{ "-30,0,0,0,0,0,0,0,0,0,0,0,0,Heidelbe-Normal"},    /* FONT_TITLES */
+{ "-30,0,0,0,0,0,0,0,0,0,0,0,0,Heidelberg-Normal"},    /* FONT_TITLES */
 { "-12,0,0,0,0,0,0,0,0,0,0,0,0,Times New Roman" },   /* FONT_EDIT */
 { "-12,0,0,0,0,0,0,0,0,0,0,0,0,Times New Roman" },   /* FONT_MAIL */
-{ "-16,0,0,0,400,0,0,0,0,3,2,1,2,Heidelbe-Normal" }, /* FONT_STATS */
+{ "-16,0,0,0,400,0,0,0,0,3,2,1,2,Heidelberg-Normal" }, /* FONT_STATS */
 { "-14,0,0,0,0,0,0,0,0,0,0,0,0,Times New Roman"},    /* FONT_INPUT */
 { "-14,0,0,0,0,0,0,0,0,0,0,0,0,Times New Roman"},    /* FONT_SYSMSG */
 //{ "-14,0,0,0,0,0,0,0,0,0,0,0,0,Times New Roman"},    /* FONT_LABELS */

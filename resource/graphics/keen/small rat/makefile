@@ -5,12 +5,10 @@ TOPDIR=..\..\..\..
 
 SOURCEDIR = .
 
-BGFS = ratsm.bgf \
-       ratsmX.bgf \
+BGFS = ratsm.bgf ratsmX.bgf
 
-all: 
-	@-for %i in ($(BGFS)) do \
-   @echo copying %i to client & \
-	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\ratsm.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\ratsmX.bgf 2>nul

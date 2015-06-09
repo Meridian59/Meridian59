@@ -340,11 +340,11 @@ void FreeRsc(void *entry)
 */
 void MissingResource(void)
 {
-	
+   /* Always display the box, to alert us something is missing.
 	// In release version, we are not doing updates, so don't show dialog.
 #ifdef NODPRINTFS
 	return;
-#else
+#else*/
 	/* Maximum of one of these dialogs at a time */
 	static Bool dialog_up = False;
 	
@@ -357,7 +357,7 @@ void MissingResource(void)
 	
 	RequestQuit();
 	dialog_up = False;
-#endif
+//#endif
 }
 /******************************************************************************/
 /*

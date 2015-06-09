@@ -5,6 +5,7 @@
 *.rsc
 kodbase.txt
 run/*
+bbgun.exe
 palcomp.exe
 paldump.exe
 porttest.exe
@@ -19,6 +20,14 @@ bmpdump.exe
 makebgf.exe
 makepal.exe
 maketrig.exe
+
+# blakcomp intermediate files
+*.tab.h
+*.tab.c
+lexyy.c
+
+# ini file
+meridian.ini
 
 #################
 ## Eclipse
@@ -83,6 +92,7 @@ local.properties
 *.vspscc
 .builds
 *.dotCover
+*.log
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
 #packages/
@@ -185,5 +195,7 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+
+# Roomedit stuff
 /roomedit/windeu32.log
-/roomedit/owl-6.40/lib
+/roomedit/owl-6.34/lib

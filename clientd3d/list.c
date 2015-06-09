@@ -354,7 +354,7 @@ list_type list_move_to_front(list_type l, void *data, CompareProc compare)
  */
 list_type list_move_to_nth(list_type l, void *data1, void *data2, CompareProc compare)
 {
-   list_type list_data1, temp, prev;
+   list_type list_data1 = NULL, temp, prev;
    Bool data1_found = False, data2_found = False;
    int i;
 

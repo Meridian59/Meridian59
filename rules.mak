@@ -3,7 +3,7 @@
 # to be included at the end of each makefile
 
 makedirs:
-        -@mkdir $(OUTDIR)
+        -@mkdir $(OUTDIR) >nul 2>&1
 
 {$(SOURCEDIR)}.c{$(OUTDIR)}.obj::
 	$(CC) $(CFLAGS) /FpCpch /Fd$(OUTDIR)\vc90.pdb /Fo$(OUTDIR)/ -c $< 
@@ -18,5 +18,5 @@ makedirs:
         $(RC) /fo $@ /i$(SOURCEDIR) $**
 
 clean :
-        @$(RM) $(OUTDIR)\*
-        @$(RMDIR) $(OUTDIR)
+        @$(RM) $(OUTDIR)\* >nul 2>&1
+        @$(RMDIR) $(OUTDIR) > nul 2>&1

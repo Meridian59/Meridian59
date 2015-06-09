@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4E237A90-C6F7-4C12-9E2E-4B852E859E70}</ProjectGuid>
+    <RootNamespace>ClientD3D</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>meridian</TargetName>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>meridian</TargetName>
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\dx9;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996; 4390</DisableSpecificWarnings>
+      <ShowIncludes>false</ShowIncludes>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;comctl32.lib;winmm.lib;archive.lib;wininet.lib;waveplay.lib;d3d9.lib;DxErr.lib;libpng.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>client.def</ModuleDefinitionFile>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <SubSystem>Windows</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
+copy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
+cd..
+$(SolutionDir)postbuild.bat
+</Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\dx9;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NODPRINTFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996; 4390</DisableSpecificWarnings>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <StringPooling>true</StringPooling>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ws2_32.lib;comctl32.lib;winmm.lib;archive.lib;wininet.lib;waveplay.lib;d3d9.lib;DxErr.lib;libpng.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>client.def</ModuleDefinitionFile>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <SubSystem>Windows</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy /y "$(OutDir)$(TargetName).exe" "$(SolutionDir)run\localclient"
+copy /y "$(OutDir)$(TargetName).lib" "$(SolutionDir)lib"
+cd..
+$(SolutionDir)postbuild.bat
+</Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="about.h" />
+    <ClInclude Include="animate.h" />
+    <ClInclude Include="annotate.h" />
+    <ClInclude Include="bitmap.h" />
+    <ClInclude Include="boverlay.h" />
+    <ClInclude Include="bsp.h" />
+    <ClInclude Include="bspload.h" />
+    <ClInclude Include="buy.h" />
+    <ClInclude Include="cache.h" />
+    <ClInclude Include="client.h" />
+    <ClInclude Include="client3d.h" />
+    <ClInclude Include="color.h" />
+    <ClInclude Include="com.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="cursor.h" />
+    <ClInclude Include="d3dcache.h" />
+    <ClInclude Include="d3ddriver.h" />
+    <ClInclude Include="d3dparticle.h" />
+    <ClInclude Include="d3drender.h" />
+    <ClInclude Include="d3dtypes.h" />
+    <ClInclude Include="dialog.h" />
+    <ClInclude Include="download.h" />
+    <ClInclude Include="draw.h" />
+    <ClInclude Include="draw3d.h" />
+    <ClInclude Include="drawbmp.h" />
+    <ClInclude Include="drawbsp.h" />
+    <ClInclude Include="drawdefs.h" />
+    <ClInclude Include="editbox.h" />
+    <ClInclude Include="effect.h" />
+    <ClInclude Include="extern.h" />
+    <ClInclude Include="fixed.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="gameuser.h" />
+    <ClInclude Include="graphctl.h" />
+    <ClInclude Include="graphics.h" />
+    <ClInclude Include="guest.h" />
+    <ClInclude Include="hook.h" />
+    <ClInclude Include="idlist.h" />
+    <ClInclude Include="intrface.h" />
+    <ClInclude Include="key.h" />
+    <ClInclude Include="lagbox.h" />
+    <ClInclude Include="list.h" />
+    <ClInclude Include="loadrsc.h" />
+    <ClInclude Include="login.h" />
+    <ClInclude Include="logoff.h" />
+    <ClInclude Include="maindlg.h" />
+    <ClInclude Include="map.h" />
+    <ClInclude Include="mapfile.h" />
+    <ClInclude Include="matrix.h" />
+    <ClInclude Include="memmap.h" />
+    <ClInclude Include="messages.h" />
+    <ClInclude Include="modules.h" />
+    <ClInclude Include="move.h" />
+    <ClInclude Include="moveobj.h" />
+    <ClInclude Include="msgbox.h" />
+    <ClInclude Include="msgfiltr.h" />
+    <ClInclude Include="music.h" />
+    <ClInclude Include="objdraw.h" />
+    <ClInclude Include="object.h" />
+    <ClInclude Include="object3d.h" />
+    <ClInclude Include="offer.h" />
+    <ClInclude Include="overlay.h" />
+    <ClInclude Include="ownerdrw.h" />
+    <ClInclude Include="palette.h" />
+    <ClInclude Include="parse.h" />
+    <ClInclude Include="ping.h" />
+    <ClInclude Include="profane.h" />
+    <ClInclude Include="project.h" />
+    <ClInclude Include="protocol.h" />
+    <ClInclude Include="regexpr.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="room.h" />
+    <ClInclude Include="roomanim.h" />
+    <ClInclude Include="rops.h" />
+    <ClInclude Include="say.h" />
+    <ClInclude Include="select.h" />
+    <ClInclude Include="server.h" />
+    <ClInclude Include="sound.h" />
+    <ClInclude Include="srvrstr.h" />
+    <ClInclude Include="startup.h" />
+    <ClInclude Include="statconn.h" />
+    <ClInclude Include="statgame.h" />
+    <ClInclude Include="statoffl.h" />
+    <ClInclude Include="statstrt.h" />
+    <ClInclude Include="statterm.h" />
+    <ClInclude Include="table.h" />
+    <ClInclude Include="textin.h" />
+    <ClInclude Include="toolbar.h" />
+    <ClInclude Include="tooltip.h" />
+    <ClInclude Include="transfer.h" />
+    <ClInclude Include="trig.h" />
+    <ClInclude Include="uselist.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="web.h" />
+    <ClInclude Include="winmenu.h" />
+    <ClInclude Include="winmsg.h" />
+    <ClInclude Include="winxblak.h" />
+    <ClInclude Include="xform.h" />
+    <ClInclude Include="xlat.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\util\crc.c" />
+    <ClCompile Include="..\util\md5.c" />
+    <ClCompile Include="about.c" />
+    <ClCompile Include="animate.c" />
+    <ClCompile Include="annotate.c" />
+    <ClCompile Include="bitmap.c" />
+    <ClCompile Include="boverlay.c" />
+    <ClCompile Include="bspload.c" />
+    <ClCompile Include="buy.c" />
+    <ClCompile Include="cache.c" />
+    <ClCompile Include="client.c" />
+    <ClCompile Include="client3d.c" />
+    <ClCompile Include="color.c" />
+    <ClCompile Include="com.c" />
+    <ClCompile Include="config.c" />
+    <ClCompile Include="cursor.c" />
+    <ClCompile Include="d3dcache.c" />
+    <ClCompile Include="d3ddriver.c" />
+    <ClCompile Include="d3dparticle.c" />
+    <ClCompile Include="d3drender.c" />
+    <ClCompile Include="dialog.c" />
+    <ClCompile Include="dibutil.c" />
+    <ClCompile Include="download.c" />
+    <ClCompile Include="draw.c" />
+    <ClCompile Include="draw3d.c" />
+    <ClCompile Include="drawbmp.c" />
+    <ClCompile Include="drawbsp.c" />
+    <ClCompile Include="editbox.c" />
+    <ClCompile Include="effect.c" />
+    <ClCompile Include="fastasm.c" />
+    <ClCompile Include="fixed.c" />
+    <ClCompile Include="font.c" />
+    <ClCompile Include="game.c" />
+    <ClCompile Include="gameuser.c" />
+    <ClCompile Include="graphctl.c" />
+    <ClCompile Include="graphics.c" />
+    <ClCompile Include="guest.c" />
+    <ClCompile Include="idlist.c" />
+    <ClCompile Include="intrface.c" />
+    <ClCompile Include="key.c" />
+    <ClCompile Include="keyhook.c" />
+    <ClCompile Include="lagbox.c" />
+    <ClCompile Include="list.c" />
+    <ClCompile Include="loadrsc.c" />
+    <ClCompile Include="login.c" />
+    <ClCompile Include="logoff.c" />
+    <ClCompile Include="lookdlg.c" />
+    <ClCompile Include="maindlg.c" />
+    <ClCompile Include="map.c" />
+    <ClCompile Include="mapfile.c" />
+    <ClCompile Include="matrix.c" />
+    <ClCompile Include="memmap.c" />
+    <ClCompile Include="modules.c" />
+    <ClCompile Include="move.c" />
+    <ClCompile Include="moveobj.c" />
+    <ClCompile Include="msgbox.c" />
+    <ClCompile Include="msgfiltr.c" />
+    <ClCompile Include="music.c" />
+    <ClCompile Include="objdraw.c" />
+    <ClCompile Include="object.c" />
+    <ClCompile Include="object3d.c" />
+    <ClCompile Include="offer.c" />
+    <ClCompile Include="overlay.c" />
+    <ClCompile Include="ownerdrw.c" />
+    <ClCompile Include="pal.c" />
+    <ClCompile Include="palette.c" />
+    <ClCompile Include="parse.c" />
+    <ClCompile Include="ping.c" />
+    <ClCompile Include="profane.c" />
+    <ClCompile Include="project.c" />
+    <ClCompile Include="protocol.c" />
+    <ClCompile Include="regexpr.c" />
+    <ClCompile Include="roomanim.c" />
+    <ClCompile Include="rops.c" />
+    <ClCompile Include="say.c" />
+    <ClCompile Include="select.c" />
+    <ClCompile Include="server.c" />
+    <ClCompile Include="sound.c" />
+    <ClCompile Include="srvrstr.c" />
+    <ClCompile Include="startup.c" />
+    <ClCompile Include="statconn.c" />
+    <ClCompile Include="statgame.c" />
+    <ClCompile Include="statoffl.c" />
+    <ClCompile Include="statstrt.c" />
+    <ClCompile Include="statterm.c" />
+    <ClCompile Include="table.c" />
+    <ClCompile Include="textin.c" />
+    <ClCompile Include="toolbar.c" />
+    <ClCompile Include="tooltip.c" />
+    <ClCompile Include="transfer.c" />
+    <ClCompile Include="trig.c" />
+    <ClCompile Include="uselist.c" />
+    <ClCompile Include="util.c" />
+    <ClCompile Include="web.c" />
+    <ClCompile Include="winmenu.c" />
+    <ClCompile Include="winmsg.c" />
+    <ClCompile Include="xform.c" />
+    <ClCompile Include="xlat.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="client.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="client.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\resource\resource.vcxproj">
+      <Project>{15142a8c-248c-402a-90bf-c4b5c14cd8dc}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="..\util\rscload.vcxproj">
+      <Project>{ab4f2aae-51b1-4c8e-9d24-d85acc2a9840}</Project>
+    </ProjectReference>
+    <ProjectReference Include="makepal.vcxproj">
+      <Project>{946d268a-f73b-4387-acd4-bf6d21bc076d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="maketrig.vcxproj">
+      <Project>{cd5804a4-972e-4e67-a461-427a9725786f}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

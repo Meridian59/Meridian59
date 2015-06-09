@@ -11,13 +11,13 @@ all: m59Bind
 
 m59Bind:
 !ifdef DEBUG
-	$(MSBUILD) /p:configuration=Debug /verbosity:quiet $(PROJECT)
-	$(CP) bin\debug\m59Bind.exe $(CLIENTRUNDIR)
+	$(MSBUILD) /p:configuration=Debug,platform=x86 /verbosity:quiet $(PROJECT)
+	$(CP) bin\x86\debug\m59Bind.exe $(CLIENTRUNDIR)
 !else
-	$(MSBUILD) /p:configuration=Release /verbosity:quiet $(PROJECT)
-	$(CP) bin\release\m59Bind.exe $(CLIENTRUNDIR)
+	$(MSBUILD) /p:configuration=Release,platform=x86 /verbosity:quiet $(PROJECT)
+	$(CP) bin\x86\release\m59Bind.exe $(CLIENTRUNDIR)
 !endif
-   
+
 clean:
-	$(RMDIR) /S /Q obj
-	$(RMDIR) /S /Q bin
+	@$(RMDIR) /S /Q obj >nul 2>&1
+	@$(RMDIR) /S /Q bin >nul 2>&1

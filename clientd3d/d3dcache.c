@@ -88,7 +88,7 @@ LPDIRECT3DTEXTURE9 D3DCacheTextureLookupSwizzled(d3d_texture_cache *pTextureCach
 			(pPacket->pDib->frame == pTexEntry->frame))
 		{
 			if ((pPacket->xLat0 == pTexEntry->xLat0) &&
-				(pPacket->xLat0 == pTexEntry->xLat0) &&
+				(pPacket->xLat1 == pTexEntry->xLat1) &&
 				(effect == pTexEntry->effects))
 			{
 				return pTexEntry->pTexture;
@@ -164,7 +164,7 @@ LPDIRECT3DTEXTURE9 D3DCacheTextureLookup(d3d_texture_cache *pTextureCache, d3d_r
 			(pPacket->pDib->frame == pTexEntry->frame))
 		{
 			if ((pPacket->xLat0 == pTexEntry->xLat0) &&
-				(pPacket->xLat0 == pTexEntry->xLat0) &&
+				(pPacket->xLat1 == pTexEntry->xLat1) &&
 				(effect == pTexEntry->effects))
 			{
 				return pTexEntry->pTexture;

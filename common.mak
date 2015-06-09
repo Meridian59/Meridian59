@@ -9,12 +9,12 @@
 
 !ifdef FINAL
 RELEASE = 1
-NODPRINTFS = 1
 !endif
 
 !ifdef RELEASE
 !undef DEBUG
 OUTDIR=release
+NODPRINTFS = 1
 !else
 DEBUG = 1
 OUTDIR=debug
@@ -70,15 +70,15 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
              -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
-             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
-			 -TP -WX -GR- -EHsc- /MP
+             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 /wd4390 \
+			 -TP -WX -GR- -EHsc- /MP -W3 /fp:fast
 
-CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
-CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -W3 -DBLAKDEBUG
-CNODEBUGFLAGS = $(CCOMMONFLAGS) -W2 -DBLAKDEBUG
-LINKNORMALFLAGS = -nologo /release /machine:ix86
-LINKDEBUGFLAGS = -nologo /debug /machine:ix86
-LINKNODEBUGFLAGS = -nologo /machine:ix86
+CNORMALFLAGS = $(CCOMMONFLAGS) /Ox /GL /GF
+CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -DBLAKDEBUG
+CNODEBUGFLAGS = $(CCOMMONFLAGS) -DBLAKDEBUG
+LINKNORMALFLAGS = -nologo /release /machine:ix86 /LTCG /LARGEADDRESSAWARE /OPT:REF /OPT:ICF
+LINKDEBUGFLAGS = -nologo /debug /machine:ix86 /LARGEADDRESSAWARE
+LINKNODEBUGFLAGS = -nologo /machine:ix86 /LARGEADDRESSAWARE
 
 !ifdef DEBUG
 
@@ -117,9 +117,11 @@ MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
 RC     = rc
-
+RSCMERGE = $(TOPDIR)\bin\rscmerge.exe -o
+POSTBUILD = $(TOPDIR)\postbuild.bat
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t
+XCP = xcopy /ydi
 CP = copy /Y
 RM = -del /Q
 RMDIR = -rmdir

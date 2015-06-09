@@ -8478,11 +8478,12 @@ messages:
 
    SetInitialHomeroom()
    {
-      piHomeroom = RID_NEWB1;
-      
+      % Get initial Homeroom from system settings.
+      piHomeroom = Send(Send(SYS,@GetSettings),@GetInitialRoomID);
+
       return;
    }
-   
+
    SetRandomHomeroom()
    "This sets one of the many hometowns to be the initial hometown."
    {
@@ -8704,9 +8705,10 @@ messages:
    TeleportToInitialLocation()
    "Assertion:  you are NOT logged on"
    {
-      local oRoom;
+      local iInitialRoomID, oRoom;
 
-      oRoom = Send(SYS,@FindRoomByNum,#num=Send(self,@GetInitialRoomID));
+      iInitialRoomID = Send(Send(SYS,@GetSettings),@GetInitialRoomID);
+      oRoom = Send(SYS,@FindRoomByNum,#num=iInitialRoomID);
 
       if oRoom = $
       {
@@ -8729,11 +8731,6 @@ messages:
       }
 
       return;
-   }
-
-   GetInitialRoomID()
-   {
-      return RID_NEWB1;
    }
 
    TeleportTo(RID = RID_TOS,foyer=TRUE,bAdminPort=TRUE)

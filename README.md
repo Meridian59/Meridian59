@@ -47,6 +47,13 @@ can also be found on our [wiki](http://wiki.openmeridian.org/index.php/Main_Page
 or greater.
 0. Download the source code, either with a git client or with the
 "Download ZIP" option from your chosen repository.
+
+### Visual Studio GUI build
+0. If you prefer the Visual Studio graphical interface, open
+Meridian59.sln from the root folder of the codebase. Click on the
+BUILD menu and select Build Solution (or press CTRL+SHIFT+B) to build.
+
+### Makefile build
 0. Locate your Visual Studio install folder, usually something like
 `"C:\Program Files (x86)\Microsoft Visual Studio 12.0"`.
 Navigate to the Common folder, and then the Tools folder. Example:
@@ -60,8 +67,6 @@ Visual Studio 12.0\Common7\Tools\vsvars32.bat"`
 that contains the meridian source code for ease of use.
 0. Open the Meridian Development Shell and navigate to the folder
 containing the source code, then enter `nmake debug=1` to compile.
-0. After compilation, run `postlite.bat` to perform post-build tasks
-(notably moving .rsc files to the client folder).
 
 Getting Started: Server
 --------------
@@ -79,27 +84,31 @@ account.
 
 Getting Started: Client
 --------------
-The first time you build the server and client, you will need to run
-the `postbuild.bat` batch file to move the graphics resources from a
-complete 103 client to your newly built one. You will need to edit
-`postbuild.bat` to point to your 103 client if it was not installed to
-the default location.
+You will need to obtain the client graphics before you can run the
+client locally. To do this, [download the patcher](http://openmeridian.org/patcher)
+and use that program to download a copy of the 103 or 112 client.
+When this is installed, building the client (via makefile or VS
+solution) will automatically copy the needed resources to the
+appropriate directory. If for some reason this isn't done, copy
+the files manually from the 103/112 client's resource directory to
+your repo's .\run\localclient\resource directory. Running postbuild.bat
+from the root directory of the repo will also perform the copy function.
+
 
 0. After compilation completes, the client is located at
 `.\run\localclient`.
 0. You can point your local client at your local server by running the
 client `meridian.exe` with command line flags, like this:
 `meridian.exe /U:username /W:password /H:localhost /P:5959`.
-0. You can simplify this by creating a shortcut to `meridian.exe`,
+0. Building the client will generate a shortcut to `meridian.exe`,
+with these flags, however if this shortcut isn't present in your
+client directory, you can create it by making the shortcut,
 right-clicking it and selecting Properties, and adding
 `/H:localhost /P:5959` after the existing link in the `Target:` box.
 
-Note that any time you recompile KOD code, if there are changes to any
-resources you will need to run `postlite.bat` to merge them into the
-resource file the client uses (`..\run\localclient\resource\rsc0000.rsb`).
-Any other compiled changes can be loaded into your local blakserv server
-by clicking the 'reload system' arrow icon, next to the 'save game' disk
-icon.
+Note that any time you recompile KOD code, changes need to be loaded
+into your local blakserv server by clicking the 'reload system' arrow
+icon, next to the 'save game' disk icon.
 
 Third-Party Code
 --------------

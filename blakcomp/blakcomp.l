@@ -525,13 +525,16 @@ int main(int argc, char **argv)
       
 
    for (current_file_ptr = file_list; current_file_ptr != NULL; 
-	current_file_ptr = current_file_ptr->next)
+      current_file_ptr = current_file_ptr->next)
    {
+      // Reset per-file counts
       include_depth = 0;
+      st.num_strings = 0;
+      st.strings = NULL;
 
       include_stack[0].file_ptr = open_file( (char *) current_file_ptr->data);
       include_stack[0].buffer = yy_create_buffer(include_stack[0].file_ptr, 
-						 YY_BUF_SIZE);
+                                                   YY_BUF_SIZE);
       include_stack[0].filename = current_fname;
       yy_switch_to_buffer(include_stack[0].buffer);
 /*
@@ -545,7 +548,7 @@ int main(int argc, char **argv)
 /*      yy_delete_buffer(include_stack[0].buffer); */
 
       if (generate_code) 
-	 codegen(current_fname, bof_fname); 
+         codegen(current_fname, bof_fname); 
       generate_code = True;
    }
 

@@ -1178,5 +1178,42 @@ messages:
       return TRUE;
    }
 
+   FixSpellItemAtts()
+   "Swaps spell objects in WA_SPELLCASTER weapons for the SID. "
+   "Essentially it just removes and readds the enchantment."
+   {
+      local i, oAttribute, oSpell;
+
+      if Send(self,@HasAttribute,#itematt=WA_SPELLCASTER)
+      {
+         oAttribute = Send(SYS,@FindItemAttByNum,#num=WA_SPELLCASTER);
+         oSpell = $;
+
+         for i in plItem_Attributes
+         {
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_SPELLCASTER
+            {
+               oSpell = Nth(i,2);
+               break;
+            }
+         }
+
+         if oSpell = $
+         {
+            Debug("$ spell found when fixing WA_SPELLCASTER itematts!",
+                  " object is ",self);
+
+            return;
+         }
+
+         Send(oAttribute,@RemoveFromItem,#oItem=self);
+         Send(oAttribute,@AddToItem,#oItem=self,
+               #spellNum=Send(oSpell,@GetSpellNum),#random_gen=TRUE);
+         Debug("readded enchantment to ",self);
+      }
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

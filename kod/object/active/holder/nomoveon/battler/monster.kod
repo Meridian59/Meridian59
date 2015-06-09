@@ -635,6 +635,9 @@ messages:
          Send(poMaster,@RemoveControlledMinion,#what=self);
       }
 
+      % Clear reagent return list.
+      plSpellList = $;
+
       % If this monster is an 'Evil Twin', tell the original it was deleted.
       if poEvilTwinOriginal <> $
       {
@@ -5937,7 +5940,7 @@ messages:
       % that was cast on the monster.
       for i in plSpellList
       {
-         for j in send(i,@GetReagents)
+         for j in Send(Send(SYS,@FindSpellByNum,#num=i),@GetReagents)
          {
             oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
             lTreasureItems = Cons(oReagent,lTreasureItems);
@@ -6962,19 +6965,19 @@ messages:
       return;
    }
 
-   AddToSpellList(spellobject=$)
+   AddToSpellList(spellNum=$)
    {
       local i;
 
       for i in plSpellList
       {
-         if i = spellobject
+         if i = spellNum
          {
             return;
          }
       }
 
-      plSpellList = Cons(spellobject,plSpellList);
+      plSpellList = Cons(spellNum,plSpellList);
 
       return;
    }

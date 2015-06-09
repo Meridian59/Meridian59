@@ -613,9 +613,18 @@ messages:
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
       Send(self,@RecreateWarEvent);
-      Send(self,@CreateAllSpellsIfNew);
-      Send(self,@CreateAllRoomsIfNew);
       Send(self,@RecreateEventEngine);
+
+      % These don't need to be done here.
+      % RecreateAllRooms calls CreateAllRoomsIfNew. Calling it again here
+      % duplicates every room (cleaned up on next system save).
+      % CreateAllSpellsIfNew is called by RecreateAllSpells in recreate phase 3,
+      % which was commented out. This was possibly because enchantments weren't
+      % being removed from players before deleting all the spells, though with
+      % so much change to the codebase since then it could have been some other
+      % bug we've since fixed.
+      %Send(self,@CreateAllSpellsIfNew);
+      %Send(self,@CreateAllRoomsIfNew);
 
       if plSavedFlagStates <> $
       {
@@ -679,7 +688,7 @@ messages:
       ptRecreateTimer = $;
       piRecreate_State = RECREATE_PHASE_THREE;
 
-      % Send(self,@RecreateAllSpells,#figure_totals=FALSE);
+      Send(self,@RecreateAllSpells,#figure_totals=FALSE);
 
       ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFour,2000);
       piRecreate_state = RECREATE_WAITING;
@@ -3635,9 +3644,15 @@ messages:
    "Admin supported\n"
    "Deletes all spells and then calls CreateAllSpellsIfNew."
    "Figure_totals decides whether or not to recount the number of spells for "
-   "the advacnement object.  If in doubt, call it."
+   "the advancement object.  If in doubt, call it."
    {
       local i;
+
+      for i in plUsers
+      {
+         Send(i,@RemoveAllEnchantments,#report=FALSE);
+         Send(i,@RemoveAllRadiusEnchantments,#report=FALSE);
+      }
 
       for i in plSpells
       {

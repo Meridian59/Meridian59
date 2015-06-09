@@ -5,7 +5,7 @@ rem Create a shortcut that can connect to localhost.
 call :makeshortcut
 
 echo Post-Build started.
-for /F "tokens=1-6 usebackq delims=:" %%a in ("%programfiles%\Open Meridian\settings.txt") do (
+for /F "tokens=1-6 usebackq delims=:" %%a in ("%ProgramW6432%\Open Meridian\settings.txt") do (
    set string=%%a
    set string=!string: =!
    if !string! == "ClientFolder" (

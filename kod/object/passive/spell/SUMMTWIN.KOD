@@ -71,7 +71,7 @@ messages:
 
    CanPayCosts(who=$,lTargets=$)
    {
-      local oTarget, oRoom;
+      local oTarget;
 
       oTarget = First(lTargets);
 
@@ -90,10 +90,12 @@ messages:
       {
          % Lich, lupogg king, evil twins, reflections and revenants 
          % all not valid targets
-
-         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
-               #parm1=Send(oTarget,@GetDef),
-               #parm2=Send(oTarget,@GetName));
+         if IsClass(who,&Player)
+         {
+            Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
+                  #parm1=Send(oTarget,@GetDef),
+                  #parm2=Send(oTarget,@GetName));
+         }
 
          return FALSE;
       }
@@ -101,8 +103,11 @@ messages:
       % Check for evil twin already following target.
       if Send(oTarget,@HasEvilTwin)
       {
-         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_only_one,
-              #parm1=Send(oTarget,@GetName));
+         if IsClass(who,&Player)
+         {
+            Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_only_one,
+                  #parm1=Send(oTarget,@GetName));
+         }
 
          return FALSE;
       }
@@ -112,8 +117,11 @@ messages:
          if Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          {
             % Morph protects against evil twin
-            Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
-                 #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+            if IsClass(who,&Player)
+            {
+               Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
+                     #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+            }
 
             return FALSE;
          }
@@ -124,15 +132,6 @@ messages:
          {
             return FALSE;
          }
-      }
-
-      oRoom = Send(SYS,@UtilGetRoom,#what=who);
-
-      if Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
-      {
-         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_failed_rsc);
-
-         return FALSE;
       }
 
       propagate;

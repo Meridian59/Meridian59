@@ -48,6 +48,7 @@ properties:
 
    piValue_modifier = 150   %% modify the object's price by 100%
    piValue_power_modifier = 10
+   piEffect_percent = 15
 
    plSpells = $
 
@@ -82,7 +83,7 @@ messages:
          return damage;
       }
 
-      if (Random(1,100) <= ((100-Nth(lData,3))/10))
+      if Random(1,100) <= piEffect_percent
          AND Send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=Nth(lData,2));

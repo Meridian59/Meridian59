@@ -1,0 +1,54 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DesertShore1 is DesertRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_desertshore1 = desertshore1.roo
+   room_name_desertshore1 = "Solitary Shoreline"
+
+classvars:
+
+   vrName = room_name_desertshore1
+
+   viTeleport_row = 60
+   viTeleport_col = 102
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_desertshore1
+   piRoom_num = RID_DESERTSHORE1
+
+messages:
+
+ 
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([ LEAVE_NORTH, RID_DESERTSHORE2, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_DESERTSHORE3, 60, 102, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTDUNES, 60, 102, ROTATE_NONE ],plEdge_Exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

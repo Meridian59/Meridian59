@@ -5,18 +5,13 @@ SOURCEDIR = $(TOPDIR)\resource\graphics
 
 .SUFFIXES: .bbg
 
-BGFS = \
-      bunny2.bgf \
-      bunny2X.bgf \
+BGFS = bunny2.bgf bunny2X.bgf
 
-all: $(BGFS)
-	@-for %i in ($(BGFS)) do \
-      @echo copying %i to client & \
-   	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
 clean:
-	$(RM) $(CLIENTRUNDIR)\resource\bunny2.bgf
-   $(RM) $(CLIENTRUNDIR)\resource\bunny2X.bgf
+	@$(RM) $(CLIENTRUNDIR)\resource\bunny2.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\bunny2X.bgf 2>nul
 
 clean-frames:
 	$(RM) *.bmp

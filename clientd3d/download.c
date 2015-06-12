@@ -12,6 +12,7 @@
 #include "client.h"
 #include "archive.h"
 #include "archive_entry.h"
+#include "shlobj.h"
 
 static DownloadInfo *info;  // Info on download
 
@@ -33,7 +34,10 @@ static char format[256];
 
 extern int  connection;        /* Type of connection (serial, etc.) */
 
-static char update_program[]  = "http://openmeridian.org/patcher";  // Program to run to update the client executable
+// URL to download the patcher if not installed.
+static char update_internet[]  = "http://openmeridian.org/patcher";
+// Program to run to update the client executable
+static char update_program[] = "\\OpenMeridian\\Open Meridian Patch and Client Management.appref-ms";
 static char update_filename[] = "blakston.arq"; // Name to call updated archive
 
 #define PING_DELAY 30000       // # of milliseconds between pings to server
@@ -728,32 +732,45 @@ void DownloadExit(void)
 
 /*****************************************************************************/
 /*
- * DownloadNewClient:  Send user to OpenMeridian.org webpage to download patcher
+ * DownloadNewClient:  Open patcher from the default location if installed,
+ *                     otherwise send user to OpenMeridian.org webpage to
+ *                     download it.
  */
 void DownloadNewClient(char *hostname, char *filename)
 {
-  SHELLEXECUTEINFO shExecInfo;
+   SHELLEXECUTEINFO shExecInfo;
+   TCHAR szPath[MAX_PATH];
 
-  if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
-  {
-    // No longer use club.exe to update the Meridian executable, instead
-    // we send the user to a web page to download the new patcher.
+   if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
+   {
+      // No longer use club.exe to update the Meridian executable, instead
+      // we run the patcher if installed, otherwise send the user to download it.
 
-    shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-    shExecInfo.fMask = 0;
-    shExecInfo.hwnd = NULL;
-    shExecInfo.lpVerb = TEXT("open");
-    shExecInfo.lpFile = TEXT(update_program);
-    shExecInfo.lpParameters = NULL;
+      if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROGRAMS, NULL, 0, szPath)))
+         strcat(szPath, TEXT(update_program));
 
-    shExecInfo.lpDirectory = NULL;
-    shExecInfo.nShow = SW_SHOW;
-    shExecInfo.hInstApp = NULL;
+      shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+      shExecInfo.fMask = 0;
+      shExecInfo.hwnd = NULL;
+      shExecInfo.lpVerb = TEXT("open");
 
-    if (!ShellExecuteEx(&shExecInfo))
-      ClientError(hInst, hMain, IDS_CANTUPDATE, update_program);
-  }
+      shExecInfo.lpFile = TEXT(szPath);
+      shExecInfo.lpParameters = NULL;
 
-  // Quit client
-  PostMessage(hMain, WM_DESTROY, 0, 0);
+      shExecInfo.lpDirectory = NULL;
+      shExecInfo.nShow = SW_SHOW;
+      shExecInfo.hInstApp = NULL;
+
+      if (!ShellExecuteEx(&shExecInfo))
+      {
+         // Running patcher failed, send them to the webpage. If that fails,
+         // throw an error (telling the user to contact us at the forums) and exit.
+         shExecInfo.lpFile = TEXT(update_internet);
+         if (!ShellExecuteEx(&shExecInfo))
+            ClientError(hInst, hMain, IDS_CANTUPDATE);
+      }
+   }
+
+   // Quit client
+   PostMessage(hMain, WM_DESTROY, 0, 0);
 }

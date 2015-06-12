@@ -56,12 +56,20 @@ properties:
    pbAbsolute = TRUE
 
    % This is the spell we are simulating.
-   poRandomSpell = $
+   piRandomSpell = $
 
    % This is the list of spells we can choose from.
    plRandomSpells = $
 
 messages:
+
+   Constructor()
+   {
+      plRandomSpells = [ SID_BLAST_OF_FIRE, SID_SHOCKING_FURY,
+                         SID_EXPLOSIVE_FROST, SID_SPLASH_OF_ACID ];
+
+      propagate;
+   }
 
    ResetReagents()
    {
@@ -74,38 +82,36 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE)
    {
-      local iDamage, iManaFocus, oRoom, oTarget, iDuration;
-
-      % Do this now when the spell is being cast.  If we do it in the Constructor,
-      %   these spells may not be available
-      if plRandomSpells = $
-      {
-         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_BLAST_OF_FIRE),plRandomSpells);
-         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_SHOCKING_FURY),plRandomSpells);
-         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_EXPLOSIVE_FROST),plRandomSpells);
-         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_SPLASH_OF_ACID),plRandomSpells);
-      }
+      local iDamage, iManaFocus, oRoom, oSpell, oTarget, iDuration;
 
       oTarget = First(lTargets);
 
       oRoom = Send(who,@GetOwner);
       Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets);
 
+      % Double check that we have a valid plRandomSpells list.
+      if plRandomSpells = $
+      {
+         plRandomSpells = [ SID_BLAST_OF_FIRE, SID_SHOCKING_FURY,
+                            SID_EXPLOSIVE_FROST, SID_SPLASH_OF_ACID ];
+      }
+
       % Only switch damage rarely so we get a clumpy effect
-      if random(1,100) < 50 OR poRandomSpell = $
+      if Random(1,100) < 50 OR piRandomSpell = $
       {
          % Okay, pick our damage type here.  Due to the miracles of single-threading,
          %  this will allow us to key the right damage type and spell name for
          %  illusionary wounds.
-         poRandomSpell = Nth(plRandomSpells,random(1,length(plRandomSpells)));
+         piRandomSpell = Nth(plRandomSpells,Random(1,Length(plRandomSpells)));
       }
 
-      Send(oRoom,@SomethingWaveRoom,#what=who,#wave_rsc=Send(poRandomSpell,@GetSpellSound));
+      oSpell = Send(SYS,@FindSpellByNum,#num=piRandomSpell);
+      Send(oRoom,@SomethingWaveRoom,#what=who,#wave_rsc=Send(oSpell,@GetSpellSound));
       Send(who,@MsgSendUser,#message_rsc=illusionarywounds_cast,
-           #parm1=Send(poRandomSpell,@GetName));
-      
+            #parm1=Send(oSpell,@GetName));
+
       iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower);
-      iDamage = Send(self,@GetHPLoss,#who=who,#victim=first(lTargets),#iSpellPower=iSpellPower);
+      iDamage = Send(self,@GetHPLoss,#who=who,#victim=First(lTargets),#iSpellPower=iSpellPower);
 
       if IsClass(who,&Player)
       {
@@ -135,8 +141,8 @@ messages:
       else
       {
          Send(oTarget,@StartEnchantment,#what=self,
-            #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
-            #lastcall=TRUE,#state=iDamage,#addicon=FALSE);
+               #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+               #lastcall=TRUE,#state=iDamage,#addicon=FALSE);
       }
 
       Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=self);
@@ -147,10 +153,10 @@ messages:
       % for loot.
       if IsClass(oTarget,&Monster) AND NOT bItemCast
       {
-         Send(oTarget,@AddToSpellList,#spellobject=self);
+        Send(oTarget,@AddToSpellList,#spellnum=viSpell_num);
       }
 
-      if not bItemCast
+      if NOT bItemCast
       {
          Send(self,@ImproveAbility,#who=who,#target=oTarget);
       }
@@ -161,30 +167,30 @@ messages:
 
    GetAttackSpell()
    {
-      if poRandomSpell = $
+      if piRandomSpell = $
       {
          return $;
       }
-      
-      return Send(poRandomSpell,@GetAttackSpell);
+
+      return Send(Send(SYS,@FindSpellByNum,#num=piRandomSpell),@GetAttackSpell);
    }
 
    % This is for the attack message infrastructure.
    GetAttackName()
    {
-      if poRandomSpell = $
+      if piRandomSpell = $
       {
          return vrName;
       }
-      
-      return Send(poRandomSpell,@GetAttackName);
+
+      return Send(Send(SYS,@FindSpellByNum,#num=piRandomSpell),@GetAttackName);
    }
 
    % iFactor is the factor to divide damage by.
    GetHPLoss(who=$,victim=$,iSpellPower=0,iFactor=1)
    {
       local iBaseDamage, iHPLoss, iMaxHPs;
-   
+
       if IsClass(victim,&Player)
       {
          iBaseDamage = 17 + (50 - Send(victim,@GetIntellect))/10;
@@ -192,7 +198,7 @@ messages:
       }
       else
       {
-         iBaseDamage = 30 - bound(Send(victim,@GetDifficulty)*2,1,20);
+         iBaseDamage = 30 - Bound(Send(victim,@GetDifficulty)*2,1,20);
          iMaxHPs = Send(victim,@ReturnMaxHitPoints);
       }
 
@@ -206,8 +212,8 @@ messages:
       iHPLoss = iBaseDamage * iSpellPower / SPELLPOWER_MAXIMUM;
 
       % Always leaves 1 HP behind, no more than 1/3 damage.
-      iHPLoss = bound(iHPLoss,0,(iMaxHps*33));
-      iHPLoss = bound(iHPLoss,0,Send(victim,@GetExactHealth)-1);
+      iHPLoss = Bound(iHPLoss,0,(iMaxHps*33));
+      iHPLoss = Bound(iHPLoss,0,Send(victim,@GetExactHealth)-1);
 
       if iFactor > 1
       {
@@ -223,7 +229,7 @@ messages:
 
       % Get int damage bonus.
       iIntellect = Send(who,@GetIntellect);
-      iDamage = ((100+bound(iIntellect-25,0,40))*damage)/100;
+      iDamage = ((100+Bound(iIntellect-25,0,40))*damage)/100;
 
       return iDamage;
    }
@@ -231,16 +237,16 @@ messages:
    GetDuration(iSpellPower = 0)
    {
       local iDuration;
-      
+
       iDuration = 20000 + (iSpellPower * 750); 
-      iDuration = bound(iDuration,20000,80000);
-      
-      return iDuration;      
+      iDuration = Bound(iDuration,20000,80000);
+
+      return iDuration;
    }
 
    EndEnchantment(who = $, state=$, report = TRUE)
    {
-      post(self,@EndEnchantmentEffects,#who=who,#state=state,#report=report);
+      Post(self,@EndEnchantmentEffects,#who=who,#state=state,#report=report);
 
       return;
    }
@@ -256,10 +262,9 @@ messages:
             Send(who,@MsgSendUser,#message_rsc=illusionarywounds_off);
          }
       }
-      
-      return;
-   } 
 
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

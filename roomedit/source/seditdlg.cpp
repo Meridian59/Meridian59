@@ -531,7 +531,7 @@ BOOL TSectorEditDialog::GetSector()
 
    pSpeedEdit->GetText (str, 6);
    if ( CurSector.animate_speed != (SHORT)atoi(str) )	ConfirmData.pSpeedCheck = TRUE;
-   CurSector.animate_speed = (SHORT)atoi (str);
+   CurSector.animate_speed = (BYTE)atoi (str);
 
    if (pDepth0Radio->GetCheck() == BF_CHECKED)
       flags |= SF_DEPTH0;
@@ -984,11 +984,7 @@ void TSectorEditDialog::TextureDblclick ()
 // TSectorEditDialog
 // -----------------
 //
-#if OWLVersion > OWLVERBC502
 void TSectorEditDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
-#else
-void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
-#endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
@@ -1013,11 +1009,7 @@ void TSectorEditDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TSectorEditDialog
 // -----------------
 //
-#if OWLVersion > OWLVERBC502
 void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
-#else
-void TSectorEditDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
-#endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 

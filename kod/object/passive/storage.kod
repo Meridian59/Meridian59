@@ -20,6 +20,9 @@ resources:
    msg_not_enough_items_on_deposit = "%s%s does not have that many on deposit."
    msg_does_not_have_item = "%s%s does not have that item on deposit for you."
    msg_has_no_deposit = "%s%s does not have any items on deposit for you."
+   
+   msg_reduced_tally = "You couldn't carry everything you requested."
+   msg_cannot_carry = "You were unable to withdraw %s%s."
 
 classvars:
 
@@ -193,7 +196,7 @@ messages:
 
    WithdrawFromStorage(who=$,what=$,count=$)
    {
-      local i, j, oBox, oItem, cClass, currentAmount;
+      local i, j, oBox, oItem, cClass, currentAmount, iCanHold;
       
       if who=$ or what=$ 
       { DEBUG("Called with invalid data!"); return; }
@@ -217,32 +220,56 @@ messages:
 
       if isClass(what,&NumberItem) 
       {
-	 currentAmount = send(what,@GetNumber);
-	 if (count > 0) AND (count <= currentAmount)
-	 {
-	    cClass = GetClass(what);
-	    oItem = Create(cClass,#number=count);
-	    send(what,@SubtractNumber,#number=count);
-	    send(who,@NewHold,#what=oItem);
-	 }
-	 else
-	 { % Send message to user that they don't have that many items on deposit
-	    DEBUG("Failed test for count >0 and count <= currentAmount");
-	    send(self,@MsgSendUser,#message_rsc=msg_not_enough_items_on_deposit,
-	         #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
-	    return False;
-	 }
+         iCanHold = Send(who,@GetNumberCanHold,#what=what);
+         if iCanHold < count
+         {
+            count = iCanHold;
+            if count > 0
+            {
+               Send(who,@MsgSendUser,#message_rsc=msg_reduced_tally);
+            }
+            if count = 0
+            {
+               return FALSE;
+            }
+         }
+
+         currentAmount = send(what,@GetNumber);
+         if (count > 0) AND (count <= currentAmount)
+         {
+            cClass = GetClass(what);
+            oItem = Create(cClass,#number=count);
+            send(what,@SubtractNumber,#number=count);
+            send(who,@NewHold,#what=oItem);
+         }
+         else
+         { % Send message to user that they don't have that many items on deposit
+            DEBUG("Failed test for count >0 and count <= currentAmount");
+            send(self,@MsgSendUser,#message_rsc=msg_not_enough_items_on_deposit,
+             #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+            return False;
+         }
       }
       else
       {
-         send(who,@newhold,#what=what);
+         if Send(who,@ReqNewHold,#what=what)
+         {
+            Send(who,@NewHold,#what=what);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=msg_cannot_carry,
+                                  #parm1=Send(what,@GetDef),
+                                  #parm2=Send(what,@GetName));
+            return FALSE;
+         }
       }
-      
+
       if send(oBox,@GetHolderPassive) = $  
       { 
-	 send(self,@DestroyPlayersVault,#who=who); 
+         send(self,@DestroyPlayersVault,#who=who); 
       }
-      return FALSE;
+      return TRUE;
    }
 
    DestroyPlayersVault(who=$)

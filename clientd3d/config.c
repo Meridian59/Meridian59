@@ -106,9 +106,9 @@ static char INIDebug[]        = "Debug";
 static char INISecurity[]     = "Security";
 static char INITechnical[]    = "Technical";
 
+static char INIShowFPS[] = "ShowFPS";
 #ifndef NODPRINTFS
 static char INIShowMapBlocking[]= "ShowMapBlocking";
-static char INIShowFPS[]     = "ShowFPS";
 static char INIShowUnseenWalls[] = "ShowUnseenWalls";
 static char INIShowUnseenMonsters[] = "ShowUnseenMonsters";
 static char INIAvoidDownloadAskDialog[] = "AvoidDownloadAskDialog";
@@ -121,7 +121,7 @@ static int   DefaultRedialDelay   = 60;
 static char  DefaultHostname[]    = "cheater";
 static char  DefaultDomainFormat[] = "meridian%d.openmeridian.org"; // MUST have a %d in it somewhere.
 static char  DefaultSockPortFormat[] = "59%.2d";
-static int   DefaultServerNum     = -1;
+static int   DefaultServerNum     = 101;
 static int   DefaultTimeout       = 1440; // 1 day in minutes (60*24)
 
 /************************************************************************/
@@ -190,7 +190,7 @@ void ConfigLoad(void)
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
-   config.large_area    = GetConfigInt(misc_section, INIArea, False, ini_file);
+   config.large_area    = GetConfigInt(misc_section, INIArea, True, ini_file);
    gLargeArea = config.large_area;
    // Animation option removed 3/4/97 to fix movement bug
 #ifndef NODPRINTFS
@@ -270,7 +270,6 @@ void ConfigLoad(void)
    config.debug    = False;
    config.security = True;
    config.showMapBlocking = FALSE;
-   config.showFPS = FALSE;
    config.showUnseenWalls = FALSE;
    config.showUnseenMonsters = FALSE;
    config.avoidDownloadAskDialog = FALSE;
@@ -280,7 +279,6 @@ void ConfigLoad(void)
    config.debug				= GetConfigInt(special_section, INIDebug, False, ini_file);
    config.security			= GetConfigInt(special_section, INISecurity, True, ini_file);
    config.showMapBlocking	= GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
-   config.showFPS			= GetConfigInt(special_section, INIShowFPS, 0, ini_file);
    config.showUnseenWalls	= GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
    config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
    config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
@@ -288,7 +286,7 @@ void ConfigLoad(void)
    config.clearCache		= GetConfigInt(special_section, INIClearCache, False, ini_file);
    //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
 #endif
-
+   config.showFPS = GetConfigInt(special_section, INIShowFPS, False, ini_file);
    config.timeout	= GetConfigInt(misc_section, INITimeout, DefaultTimeout, ini_file);
    config.technical = GetConfigInt(special_section, INITechnical, False, ini_file);
 
@@ -360,8 +358,8 @@ void ConfigSave(void)
    WriteConfigInt(misc_section, INIServerHigh, config.server_high, ini_file);
    WriteConfigInt(misc_section, INIServerGuest, config.server_guest, ini_file);
    WriteConfigInt(misc_section, INILastPass, config.lastPasswordChange, ini_file);
-
-   // "Special" section options NOT saved, so that they're not normally visible
+   WriteConfigInt(special_section, INIShowFPS, config.showFPS, ini_file);
+   // "Special" section options NOT saved, so that they're not normally visible (except FPS)
 
    WritePrivateProfileString(interface_section, INIOldProfane, NULL, ini_file); // remove old string
 }

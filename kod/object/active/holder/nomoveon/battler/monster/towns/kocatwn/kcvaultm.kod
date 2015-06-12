@@ -108,7 +108,7 @@ messages:
    GetVaultRetrievalFee(what=$)
    "Default cost no cost.  However, expensive places can charge more."
    {
-      return 1;
+      return 0;
    }
 
 end

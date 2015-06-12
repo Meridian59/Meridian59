@@ -22,7 +22,7 @@
 #include "client.h"
 #include "d3dcache.h"
 
-static const int ROO_VERSION = 10;
+static const int ROO_VERSION = 14;
 
 static BYTE room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
 
@@ -263,6 +263,7 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
       if (CliMappedFileRead(f, &type, 1) != 1) return False;
       node->type = (BSPnodetype) type;
 
+      // These are now loaded as floats.
       if (CliMappedFileRead(f, &node->bbox.x0, 4) != 4) return False;
       if (CliMappedFileRead(f, &node->bbox.y0, 4) != 4) return False;
       if (CliMappedFileRead(f, &node->bbox.x1, 4) != 4) return False;
@@ -275,16 +276,18 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
       case BSPinternaltype:
 	 inode = &node->u.internal;
 	 
+	 // Loaded as floats.
 	 if (CliMappedFileRead(f, &inode->separator.a, 4) != 4) return False;
 	 if (CliMappedFileRead(f, &inode->separator.b, 4) != 4) return False;
 	 if (CliMappedFileRead(f, &inode->separator.c, 4) != 4) return False;
 
+	 // Don't add these to room security (as of roo version 14).
+	 //security += inode->separator.a + inode->separator.b + inode->separator.c;
+
 	 if (CliMappedFileRead(f, &inode->pos_num, 2) != 2) return False;
 	 if (CliMappedFileRead(f, &inode->neg_num, 2) != 2) return False;
 	 if (CliMappedFileRead(f, &inode->wall_num, 2) != 2) return False;
-
-	 security += inode->separator.a + inode->separator.b + inode->separator.c + 
-	    inode->wall_num;
+	 security += inode->wall_num;
 
 	 break;
 
@@ -298,9 +301,11 @@ Bool LoadNodes(file_node *f, room_type *room, int num_nodes)
 	 leaf->poly.npts = num_points;
 	 for (j=0; j < num_points; j++)
 	 {
-	    if (CliMappedFileRead(f, &leaf->poly.p[j].x, 4) != 4) return False;
-	    if (CliMappedFileRead(f, &leaf->poly.p[j].y, 4) != 4) return False;
-	    security += leaf->poly.p[j].x + leaf->poly.p[j].y;
+		 // Loaded as floats.
+		if (CliMappedFileRead(f, &leaf->poly.p[j].x, 4) != 4) return False;
+		if (CliMappedFileRead(f, &leaf->poly.p[j].y, 4) != 4) return False;
+		// Don't add these to room security (as of roo version 14).
+		//security += leaf->poly.p[j].x + leaf->poly.p[j].y;
 	 }
 	 leaf->poly.p[num_points] = leaf->poly.p[0];	 
 	 break;
@@ -340,15 +345,16 @@ Bool LoadWalls(file_node *f, room_type *room, int num_walls)
       if (CliMappedFileRead(f, &wall->neg_sidedef_num, 2) != 2) return False;
       security += wall->pos_sidedef_num + wall->neg_sidedef_num;
 
+      // Loaded as floats.
       if (CliMappedFileRead(f, &wall->x0, 4) != 4) return False;
       if (CliMappedFileRead(f, &wall->y0, 4) != 4) return False;
       if (CliMappedFileRead(f, &wall->x1, 4) != 4) return False;
       if (CliMappedFileRead(f, &wall->y1, 4) != 4) return False;
-      security += wall->x0 + wall->y0 + wall->x1 + wall->y1;
+      // Don't add these to room security (as of roo version 14).
+      //security += wall->x0 + wall->y0 + wall->x1 + wall->y1;
       
-      // Get wall length
-      if (CliMappedFileRead(f, &word, 2) != 2) return False;
-      wall->length = word;
+      // Get wall length, loaded as float.
+      if (CliMappedFileRead(f, &wall->length, 4) != 4) return False;
       
       // Get texture offsets
       if (CliMappedFileRead(f, &wall->pos_xoffset, 2) != 2) return False;
@@ -495,14 +501,14 @@ SlopeData *LoadSlopeInfo(file_node *f) {
     size = sizeof(SlopeData);
     new_slope = (SlopeData *) SafeMalloc(size);
     memset(new_slope, 0, size);
-
-    // load coefficients of plane equation
+    // Load coefficients of plane equation as floats.
     if (CliMappedFileRead(f, &new_slope->plane.a, 4) != 4) return (SlopeData *)NULL;
     if (CliMappedFileRead(f, &new_slope->plane.b, 4) != 4) return (SlopeData *)NULL;
     if (CliMappedFileRead(f, &new_slope->plane.c, 4) != 4) return (SlopeData *)NULL;
     if (CliMappedFileRead(f, &new_slope->plane.d, 4) != 4) return (SlopeData *)NULL;
 
-//    dprintf("loaded equation a = %d, b = %d, c = %d, d = %d\n", new_slope->plane.a, new_slope->plane.b, new_slope->plane.c, new_slope->plane.d);
+    //dprintf("loaded equation a = %6.4f, b = %6.4f, c = %6.4f, d = %6.4f\n",
+    //  new_slope->plane.a, new_slope->plane.b, new_slope->plane.c, new_slope->plane.d);
     
     if (new_slope->plane.c == 0) {
 	debug(("Error: loaded plane equation equal to a vertical slope\n"));
@@ -513,9 +519,13 @@ SlopeData *LoadSlopeInfo(file_node *f) {
 	new_slope->plane.d = 0;
     }
     
-    // load x & y of texture origin
-    if (CliMappedFileRead(f, &new_slope->p0.x, 4) != 4) return (SlopeData *)NULL;
-    if (CliMappedFileRead(f, &new_slope->p0.y, 4) != 4) return (SlopeData *)NULL;
+    // Load x & y of texture origin. These are saved as integers, so load them
+    // into a temp variable first and them save them.
+    int payload;
+    if (CliMappedFileRead(f, &payload, 4) != 4) return (SlopeData *)NULL;
+    new_slope->p0.x = payload;
+    if (CliMappedFileRead(f, &payload, 4) != 4) return (SlopeData *)NULL;
+    new_slope->p0.y = payload;
     
     // calculate z of texture origin from x, y, and plane equation
     new_slope->p0.z = (-new_slope->plane.a*new_slope->p0.x - new_slope->plane.b*new_slope->p0.y - new_slope->plane.d)/new_slope->plane.c;
@@ -676,13 +686,13 @@ Bool LoadSectors(file_node *f, room_type *room, int num_sectors)
 #define OVERFLOWAMOUNT (MAXLONG>>(LOG_FINENESS*2))
 
 Bool RoomSwizzle(room_type *room, BSPTree tree, 
-		 int num_nodes, int num_walls, int num_sidedefs, int num_sectors)
+      int num_nodes, int num_walls, int num_sidedefs, int num_sectors)
 {
    BSPinternal *inode;
    BSPleaf *leaf;
    WallData *wall;
-   long   a,b,c,x0,y0,x1,y1,norm_size;
-   long   a2,b2;
+   float norm_size, a2, b2, a, b, c;
+   float x0, y0, x1, y1;
 
    if (tree == NULL)
       return True;
@@ -707,133 +717,144 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
       a2 = a*a; // get a bead on general scale of normal vector
       b2 = b*b;
 
-      if ((a2 > OVERFLOWAMOUNT) || (b2 > OVERFLOWAMOUNT) || (a2+b2 > OVERFLOWAMOUNT)) {
-	  a = inode->separator.a;
-	  b = inode->separator.b;
+      if ((a2 > OVERFLOWAMOUNT) || (b2 > OVERFLOWAMOUNT) || (a2+b2 > OVERFLOWAMOUNT))
+      {
+         a = inode->separator.a;
+         b = inode->separator.b;
 
-	  norm_size = (long)sqrt((float) a2 + b2);
-	  if ((a2 < 0) || (b2 < 0) || (norm_size <= 0)) {
-	      norm_size = 1;
-	      debug(("RoomSwizzle: still getting overflow in normalization math!\n"));
-	  }
-
+         norm_size = sqrt(a2 + b2);
+         if ((a2 < 0) || (b2 < 0) || (norm_size <= 0))
+         {
+            norm_size = 1;
+            debug(("RoomSwizzle: still getting overflow in normalization math!\n"));
+         }
       }
-      else {
-	  a <<= LOG_FINENESS;
-	  b <<= LOG_FINENESS;
-
-	  norm_size = (long)sqrt((float) a*a + b*b);
+      else
+      {
+         //a <<= LOG_FINENESS;
+         //b <<= LOG_FINENESS;
+         a *= FINENESS;
+         b *= FINENESS;
+         norm_size = sqrtl((long double)a*(long double)a + (long double)b*(long double)b);
       }
 
       // normalize a & b (w.round to closest int)
-      a = ((a << LOG_FINENESS)+(norm_size>>1))/norm_size;
-      b = ((b << LOG_FINENESS)+(norm_size>>1))/norm_size;
-      
+      //a = ((a * FINENESS) + (norm_size / 2)) / norm_size;
+      //b = ((b * FINENESS) + (norm_size / 2)) / norm_size;
+      a = (a * FINENESS) / norm_size;
+      b = (b * FINENESS) / norm_size;
       inode->separator.a = a;
       inode->separator.b = b;
 
       // re-calc c
       // take average over endpoints of wall (reduce error ?)
-      inode->separator.c = -((a*x1+b*y1)+(a*x0+b*y0))/2;
+      inode->separator.c = -((a*x1+b*y1)+(a*x0+b*y0))/2.0f;
+
+      //inode->separator.c = c;
 
       if (inode->pos_num == 0)
-	 inode->pos_side = NULL;
+         inode->pos_side = NULL;
+      else if (inode->pos_num < 0 || inode->pos_num > num_nodes)
+      {
+         debug(("RoomSwizzle got node #%d; max is %d\n", inode->pos_num, num_nodes));
+         inode->pos_side = NULL;
+      }
       else
-	 if (inode->pos_num < 0 || inode->pos_num > num_nodes)
-	 {
-	    debug(("RoomSwizzle got node #%d; max is %d\n", inode->pos_num, num_nodes));
-	    inode->pos_side = NULL;
-	 }
-	 else inode->pos_side = &room->nodes[inode->pos_num - 1];
+         inode->pos_side = &room->nodes[inode->pos_num - 1];
 
       if (inode->neg_num == 0)
-	 inode->neg_side = NULL;
+         inode->neg_side = NULL;
+      else if (inode->neg_num < 0 || inode->neg_num > num_nodes)
+      {
+         debug(("RoomSwizzle got node #%d; max is %d", inode->neg_num, num_nodes));
+         inode->neg_side = NULL;
+      }
       else
-	 if (inode->neg_num < 0 || inode->neg_num > num_nodes)
-	 {
-	    debug(("RoomSwizzle got node #%d; max is %d", inode->neg_num, num_nodes));
-	    inode->neg_side = NULL;
-	 }
-	 else inode->neg_side = &room->nodes[inode->neg_num - 1];
+         inode->neg_side = &room->nodes[inode->neg_num - 1];
 
       if (inode->wall_num == 0)
-	 inode->walls_in_plane = NULL;
+         inode->walls_in_plane = NULL;
+      else if (inode->wall_num < 0 || inode->wall_num > num_walls)
+      {
+         debug(("RoomSwizzle got wall #%d; max is %d\n", inode->wall_num, num_walls));
+         inode->walls_in_plane = NULL;
+      }
       else
-	 if (inode->wall_num < 0 || inode->wall_num > num_walls)
-	 {
-	    debug(("RoomSwizzle got wall #%d; max is %d\n", inode->wall_num, num_walls));
-	    inode->walls_in_plane = NULL;
-	 }
-	 else inode->walls_in_plane = &room->walls[inode->wall_num - 1];
+         inode->walls_in_plane = &room->walls[inode->wall_num - 1];
 
       // Swizzle wall list
       if (inode->walls_in_plane != NULL)
       {
-	 // Set next pointers to build up list
-	 for (wall = inode->walls_in_plane; wall->next_num != 0; wall = wall->next)
-	 {
-	    if (wall->next_num < 0 || wall->next_num > num_walls)
-	    {
-	       debug(("RoomSwizzle got wall #%d; max is %d\n", wall->next_num, num_walls));
-	       return False;
-	    }
-	    else wall->next = &room->walls[wall->next_num - 1];
-	 }
-	 wall->next = NULL;
+         // Set next pointers to build up list
+         for (wall = inode->walls_in_plane; wall->next_num != 0; wall = wall->next)
+         {
+            if (wall->next_num < 0 || wall->next_num > num_walls)
+            {
+               debug(("RoomSwizzle got wall #%d; max is %d\n", wall->next_num, num_walls));
+               return False;
+            }
+            else
+               wall->next = &room->walls[wall->next_num - 1];
+         }
+         wall->next = NULL;
 
-	 // Set sidedef and sector pointers
-	 for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
-	 {
-	    if (wall->pos_sidedef_num > num_sidedefs)
-	    {
-	       debug(("RoomSwizzle found wall referencing sidedef %d; max is %d\n", 
-		       wall->pos_sidedef_num, num_sidedefs));
-	       return False;
-	    }
-	    if (wall->pos_sidedef_num == 0)
-	       wall->pos_sidedef = NULL;
-	    else wall->pos_sidedef = &room->sidedefs[wall->pos_sidedef_num - 1];
+         // Set sidedef and sector pointers
+         for (wall = inode->walls_in_plane; wall != NULL; wall = wall->next)
+         {
+            if (wall->pos_sidedef_num > num_sidedefs)
+            {
+               debug(("RoomSwizzle found wall referencing sidedef %d; max is %d\n", 
+                  wall->pos_sidedef_num, num_sidedefs));
+               return False;
+            }
+            if (wall->pos_sidedef_num == 0)
+               wall->pos_sidedef = NULL;
+            else
+               wall->pos_sidedef = &room->sidedefs[wall->pos_sidedef_num - 1];
 
-	    if (wall->neg_sidedef_num > num_sidedefs)
-	    {
-	       debug(("RoomSwizzle found wall referencing sidedef %d; max is %d\n", 
-		       wall->neg_sidedef_num, num_sidedefs));
-	       return False;
-	    }
-	    if (wall->neg_sidedef_num == 0)
-	       wall->neg_sidedef = NULL;
-	    else wall->neg_sidedef = &room->sidedefs[wall->neg_sidedef_num - 1];
+            if (wall->neg_sidedef_num > num_sidedefs)
+            {
+               debug(("RoomSwizzle found wall referencing sidedef %d; max is %d\n", 
+                  wall->neg_sidedef_num, num_sidedefs));
+               return False;
+            }
+            if (wall->neg_sidedef_num == 0)
+               wall->neg_sidedef = NULL;
+            else
+               wall->neg_sidedef = &room->sidedefs[wall->neg_sidedef_num - 1];
 
-	    if (wall->pos_sector_num > num_sectors)
-	    {
-	       debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", 
-		       wall->pos_sector_num, num_sectors));
-	       return False;
-	    }
+            if (wall->pos_sector_num > num_sectors)
+            {
+               debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", 
+                  wall->pos_sector_num, num_sectors));
+               return False;
+            }
 
-	    if (wall->pos_sector_num == 0)
-	       wall->pos_sector = NULL;
-	    else wall->pos_sector = &room->sectors[wall->pos_sector_num - 1];
+            if (wall->pos_sector_num == 0)
+               wall->pos_sector = NULL;
+            else
+               wall->pos_sector = &room->sectors[wall->pos_sector_num - 1];
 
-	    if (wall->neg_sector_num > num_sectors)
-	    {
-	       debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", 
-		       wall->neg_sector_num, num_sectors));
-	       return False;
-	    }
+            if (wall->neg_sector_num > num_sectors)
+            {
+               debug(("RoomSwizzle found wall referencing sector %d; max is %d\n", 
+                  wall->neg_sector_num, num_sectors));
+               return False;
+            }
 
-	    if (wall->neg_sector_num == 0)
-	       wall->neg_sector = NULL;
-	    else wall->neg_sector = &room->sectors[wall->neg_sector_num - 1];
+            if (wall->neg_sector_num == 0)
+               wall->neg_sector = NULL;
+            else
+               wall->neg_sector = &room->sectors[wall->neg_sector_num - 1];
 
-	    SetWallHeights(wall);
-	 }
+            SetWallHeights(wall);
+         }
       }
 
       if (RoomSwizzle(room, inode->pos_side, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
-	 return False;
+         return False;
       if (RoomSwizzle(room, inode->neg_side, num_nodes, num_walls, num_sidedefs, num_sectors) == False)
-	 return False;
+         return False;
       break;
       
    case BSPleaftype:
@@ -841,19 +862,19 @@ Bool RoomSwizzle(room_type *room, BSPTree tree,
 
       if (leaf->sector_num > num_sectors)
       {
-	 debug(("RoomSwizzle found leaf referencing sector %d; max is %d\n", 
-		 leaf->sector, num_sectors));
-	 return False;
+         debug(("RoomSwizzle found leaf referencing sector %d; max is %d\n", 
+            leaf->sector, num_sectors));
+         return False;
       }
       if (leaf->sector_num == 0)
       {
-	 debug(("RoomSwizzle found leaf without sector reference\n"));
-	 return False;
+         debug(("RoomSwizzle found leaf without sector reference\n"));
+         return False;
       }
       leaf->sector = &room->sectors[leaf->sector_num - 1];
       break;
    }
-   
+
    return True;
 }
 
@@ -1134,7 +1155,7 @@ void RoomSetupFlickerAnimation(RoomAnimate *ra, BYTE original_light, WORD server
  *****************************************************************************/
 
 // Make sure wall height can be stored in two bytes. Used by SetWallHeights below.
-#define WALL_HEIGHT_CHECK(z) if ((z) > 65535) {debug(("SetWallHeights: got wall taller than 65535."));\
+#define WALL_HEIGHT_CHECK(z) if ((z) > 65535) {debug(("SetWallHeights: got wall taller than 65535. %li",z));\
     debug((" Shorten ceiling height or change\nshort to long in WallData struct in bsp.h\n"));\
     (z) = 65535;}
 

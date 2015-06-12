@@ -61,37 +61,39 @@ messages:
    Constructed()
    {
       plMonsters = [ [&CaveOrc, 70], [&OrcWizard, 30] ];
-      plGenerators = [[45,11],[39,08],[38,15],[34,05],[26,12],[13,17],[14,30],[23,47],
-	 [47,43],[38,63],[43,55],[55,41],[61,44],[64,33],[49,39],[29,47],
-	 [69,35],[63,25],[53,20],[37,24],[35,37],[28,32],[58,18]];
+      plGenerators = [ [23,47], [45,46], [35,69], [43,58], [61,58],
+                       [27,46], [30,56], [49,73], [53,58], [23,81],
+                       [42,97], [15,97], [06,74], [14,70], [13,64] ];
 
       propagate;
    }
 
    SomethingTryGo(What=$,Row=$,Col=$)
    {
-      if (Row = 5 and (Col = 61 or Col = 62 or Col = 63)) or
-	 (Row = 6 and (Col = 61 or Col = 62 or Col = 63)) or
-	 (Row = 7 and (Col = 61 or Col = 62 or Col = 63))
+      if (Row = 5 AND (Col = 61 OR Col = 62 OR Col = 63))
+         OR (Row = 6 and (Col = 61 or Col = 62 or Col = 63))
+         OR (Row = 7 and (Col = 61 or Col = 62 or Col = 63))
       {
-	 send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
-	    #height = DOOROPEN,#speed=50);
-	 Send(self,@SomethingWaveRoom,#wave_rsc=OrcCave6_door_up);
-	 ptDoor = createtimer(self,@CloseDoor,10000);
-	 return TRUE;
+         Send(self,@SetSector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=DOOROPEN,#speed=50);
+         Send(self,@SomethingWaveRoom,#wave_rsc=OrcCave6_door_up);
+         ptDoor = CreateTimer(self,@CloseDoor,10000);
+
+         return TRUE;
       }
+
       propagate;
    }
 
    CloseDoor()
    {
       ptDoor = $;
-      send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
-           #height = DOORCLOSED,#speed=50);
+      Send(self,@SetSector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=DOORCLOSED,#speed=50);
       Send(self,@SomethingWaveRoom,#wave_rsc=OrcCave6_door_down);
+
       return;
    }
-
 
    Delete()
    {
@@ -100,9 +102,9 @@ messages:
          DeleteTimer(ptDoor);
          ptDoor = $;
       }
+
       propagate;
    }
-
 
    CreateStandardExits()
    {
@@ -119,13 +121,15 @@ messages:
    CreateStandardObjects()
    {
       include oc06.ktm;
-      Send(self,@NewHold,#what=Create(&Kocatanbrazier),#new_row=4,#new_col=58,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&Kocatanbrazier),#new_row=9,#new_col=58,#fine_row=0);
-      Send(self,@NewHold,#what=Create(&KocatanSentry),#new_row=4,#new_col=61,#fine_row=32,#fine_col=0);
-   
+      Send(self,@NewHold,#what=Create(&KocatanBrazier),
+            #new_row=4,#new_col=58,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&KocatanBrazier),
+            #new_row=9,#new_col=58,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&KocatanSentry),
+            #new_row=4,#new_col=61,#fine_row=32,#fine_col=0);
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

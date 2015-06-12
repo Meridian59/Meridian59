@@ -22,6 +22,15 @@ constants:
    
 resources:
 
+   room_try_light_unlit = \
+      "Waving your hand past the cold brazier, a warm flame ignites."
+   room_try_light_lit = \
+      "You wave your hand over the lit brazier, and flames lick "
+      "at your fingertips."
+   room_brazier_turn_off = \
+      "You wave your hand over the lit brazier, and with a final puff "
+      "of smoke the brazier extinguishes itself."
+
    room_name_rsc = "Room"
 
    room_door_is_locked = "This door is locked."
@@ -1564,6 +1573,22 @@ messages:
       }
 
       return Send(oSun,@GetBackgroundOverlayAngle);
+   }
+
+   BrazierLit(brazier_obj=$,who=$,bIsLit=FALSE)
+   {
+      if bIsLit
+      {
+         Send(who,@MsgSendUser,#message_rsc=room_brazier_turn_off);
+         Send(brazier_obj,@SetFlame,#has_flame=FALSE);
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=room_try_light_unlit);
+         Send(brazier_obj,@SetFlame,#has_flame=TRUE);
+      }
+
+      return;
    }
 
    DisposeTimer()

@@ -311,6 +311,7 @@ messages:
             Create(&PantsC,#translation=PT_GRAY_TO_LRED),
             Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
 
+            Create(&Tanktop,#color=XLAT_TO_GRAY),
             Create(&Tanktop,#color=XLAT_TO_ORANGE),
             Create(&Tanktop,#color=XLAT_TO_RED),
             Create(&Tanktop,#color=XLAT_TO_SKY),

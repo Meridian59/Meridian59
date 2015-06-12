@@ -10,8 +10,9 @@ OUTDIR = $(TOPDIR)\resource\graphics
 
 DIRS = keen\
 		 mark \
-		 diggie
-       
+		 diggie \
+		 delerium
+
 BGFS = \
 	$(OUTDIR)\arrowfir.bgf \
 	$(OUTDIR)\arrowsil.bgf \
@@ -20,21 +21,21 @@ BGFS = \
 	$(OUTDIR)\mystswd.bgf \
 	$(OUTDIR)\mystwdov.bgf \
 	$(OUTDIR)\ring3.bgf \
-	$(OUTDIR)\povmystsw.bgf \
+	$(OUTDIR)\povmystsw.bgf
 
-all: $(BGFS)
+all:
 	@-for %i in ($(DIRS)) do \
 		@if EXIST %i ( cd %i & \
-	 	$(MAKE) /$(MAKEFLAGS) & \
+	 	$(MAKE) /$(MAKEFLAGS) $(COMMAND) &\
 		cd .. )
-      
+
 clean:
 	@-for %i in ($(DIRS)) do \
-      @echo Making clean in %i & \
+		@echo Making clean in %i & \
 		@if EXIST %i ( cd %i & \
-	 	$(MAKE) /$(MAKEFLAGS) clean & \
+	 	$(MAKE) /$(MAKEFLAGS) clean &\
 		cd .. )
-      
+
 {$(SOURCEDIR)}.bbg.bgf:
 	$(MAKEBGF) -o $@ @$<
 

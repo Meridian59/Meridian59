@@ -454,6 +454,9 @@
     <Image Include="res\bitmaps\IDB_VSLIDERTHUMB.bmp">
       <Filter>Resource Files\Bitmaps</Filter>
     </Image>
+    <Image Include="res\bitmaps\CM_OBJECTS_TORCH.bmp">
+      <Filter>Resource Files\Bitmaps</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\cursors\IDC_HAND.cur">

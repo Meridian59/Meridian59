@@ -103,6 +103,7 @@ struct Vertex
 {
    SHORT x;         /* X coordinate */
    SHORT y;         /* Y coordinate */
+   SHORT copiedTo;  // Vertex number this vertex was copied to during copying.
 };
 typedef struct Vertex *VPtr;
 
@@ -144,8 +145,8 @@ struct SSector
 typedef struct Node *NPtr;
 struct Node
 {
-   SHORT x, y;                      // starting point
-   SHORT dx, dy;                    // offset to ending point
+   double x, y;                      // starting point
+   double dx, dy;                    // offset to ending point
    SHORT miny1, maxy1, minx1, maxx1;// bounding rectangle 1
    SHORT miny2, maxy2, minx2, maxx2;// bounding rectangle 2
    SHORT child1, child2;            // Node or SSector (if high bit is set)
@@ -157,7 +158,7 @@ struct Node
 
 /* 3D plane defined by ax + by + cz + d */
 typedef struct {
-   FixedPoint a, b, c, d;
+   double a, b, c, d;
 } Plane3D;
 
 typedef struct {

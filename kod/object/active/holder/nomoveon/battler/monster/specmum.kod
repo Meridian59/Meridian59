@@ -51,7 +51,8 @@ classvars:
    viLevel = 40
    viDifficulty = 5
    viVisionDistance = 8
-   viKarma = -35
+   viKarma = 0
+   vbIsUndead = TRUE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
    viCashmin = 120
    viCashmax = 320
@@ -112,11 +113,6 @@ messages:
       }
 
       propagate;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
    SendLightingInformation()

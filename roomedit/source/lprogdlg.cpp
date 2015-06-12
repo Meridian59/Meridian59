@@ -223,9 +223,9 @@ void TLevelProgressDialog::ShowNodesProgress (int objtype)
 		//
 		if (NumSideDefs + NumVertexes - SavedNumVertexes > 0 )
 		{
-			pNodesGauge->SetValue (100.0 * ((float) NumSegs /
+			pNodesGauge->SetValue ((int)(100.0f * ((float) NumSegs /
 											(float) (NumSideDefs + NumVertexes -
-													 SavedNumVertexes)));
+													 SavedNumVertexes))));
 		}
 		else
 			pNodesGauge->SetValue (100);
@@ -311,11 +311,7 @@ void TLevelProgressDialog::ShowBlockmapProgress (int value)
 // TLevelProgressDialog
 // --------------------
 //
-#if OWLVersion > OWLVERBC502
 void TLevelProgressDialog::EvSize (UINT sizeType, const TSize& size)
-#else
-void TLevelProgressDialog::EvSize (UINT sizeType, TSize& size)
-#endif
 {
 	if ( sizeType == SIZE_MINIMIZED )
 	{

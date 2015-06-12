@@ -273,7 +273,7 @@ spell *FindSpellByID(ID id)
 spell *FindSpellByName(char *name)
 {
    list_type l;
-   spell *sp, *best_spell;
+   spell *sp, *best_spell = NULL;
    int match, max_match;
    Bool tied;            // True if a different spell matches as well as best_spell
    char *ptr, *spell_name;
@@ -328,7 +328,7 @@ spell *FindSpellByName(char *name)
 /********************************************************************/
 void UserCastSpell(void)
 {
-   spell *sp, *temp;
+   spell *sp = NULL, *temp;
    list_type sel_list, l;
 
    if (GetPlayer()->viewID && (GetPlayer()->viewID != GetPlayer()->id))
@@ -549,7 +549,7 @@ void MenuSpellChosen(int id)
    int len, num=0, index=0, i;
    char item_name[MAXRSCSTRING + 1];
    spell *sp;
-   HMENU submenu;
+   HMENU submenu = NULL;
 
    if (spell_menu == NULL)
       return;

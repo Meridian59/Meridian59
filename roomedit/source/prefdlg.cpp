@@ -552,11 +552,7 @@ void TPreferencesDialog::WTextureDblClk ()
 // TPreferencesDialog
 // ------------------
 //
-#if OWLVersion > OWLVERBC502
 void TPreferencesDialog::EvLButtonDown (UINT modKeys, const TPoint& point)
-#else
-void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
-#endif
 {
 	TDialog::EvLButtonDown(modKeys, point);
 
@@ -592,11 +588,7 @@ void TPreferencesDialog::EvLButtonDown (UINT modKeys, TPoint& point)
 // TPreferencesDialog
 // ------------------
 //
-#if OWLVersion > OWLVERBC502
 void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, const TPoint& point)
-#else
-void TPreferencesDialog::EvLButtonDblClk (UINT modKeys, TPoint& point)
-#endif
 {
 	TDialog::EvLButtonDblClk(modKeys, point);
 

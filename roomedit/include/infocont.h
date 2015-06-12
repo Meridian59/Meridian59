@@ -94,13 +94,7 @@ public:
 
 //{{TInfoControlRSP_TBL_BEGIN}}
 protected:
-
-#if OWLVersion > OWLVERBC502
 	UINT EvNCHitTest (const TPoint& point);
-#else
-	UINT EvNCHitTest (TPoint& point);
-#endif
-
 	bool EvSetCursor (HWND hWndCursor, UINT hitTest, UINT mouseMsg);
 //{{TInfoControlRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TInfoControl);

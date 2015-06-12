@@ -57,7 +57,7 @@ messages:
       viStart_frame = random(2,3);
       viEnd_frame = random(5,6);
 
-      return;   
+      return;
    }
 
    ShowDesc()
@@ -80,12 +80,12 @@ messages:
       if abs(send(who,@GetRow)-send(self,@GetRow)) > USE_RANGE
          OR abs(send(who,@GetCol)-send(self,@GetCol)) > USE_RANGE
       {
-         Send(who,@MsgSendUser,#message_rsc=brazierswitch_not_in_range);          
+         Send(who,@MsgSendUser,#message_rsc=brazierswitch_not_in_range);
 
          return TRUE;
-      }                                                                     
+      }
 
-      send(poOwner,@BrazierLit,#brazier_obj=self,#who=who);      
+      Send(poOwner,@BrazierLit,#brazier_obj=self,#who=who,#bIsLit=pbIsLit);
 
       return TRUE;
    }
@@ -108,7 +108,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

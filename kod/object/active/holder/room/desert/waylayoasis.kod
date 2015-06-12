@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WaylayOasis is DesertRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_waylayoasis = waylayoasis.roo
+   room_name_waylayoasis = "Waylay Oasis"
+
+classvars:
+
+   vrName = room_name_waylayoasis
+
+   viTeleport_row = 58
+   viTeleport_col = 51
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_waylayoasis
+   piRoom_num = RID_WAYLAYOASIS
+
+messages:
+
+ 
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_DESERTPATH1, 11, 58, ROTATE_NONE ],plEdge_Exits);
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_DESERTBRIDGE, 4, 5, ANGLE_EAST ],plEdge_Exits);
+
+      propagate;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if new_row > (Send(self,@GetRoomRows)-1) and (new_col < 30)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_DESERTRIVER1),
+              #new_row=5,#new_col=7,#new_angle=ANGLE_SOUTH_EAST);
+         return;
+      }
+
+      if new_row > (Send(self,@GetRoomRows)-1) and (new_col > 50)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_DESERTRIVER1),
+              #new_row=3,#new_col=33,#fine_col=44,#new_angle=ANGLE_SOUTH);
+              
+         return;
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

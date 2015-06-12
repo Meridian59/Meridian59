@@ -582,6 +582,7 @@ char * name_function(int fnum)
    case ISTIMER : return "IsTimer";
 
    case CREATEROOMDATA : return "LoadRoom";
+   case FREEROOM : return "FreeRoom";
    case ROOMDATA : return "RoomData";
    case CANMOVEINROOM : return "CanMoveInRoom";
    case CANMOVEINROOMHIGHRES : return "CanMoveInRoomHighRes";

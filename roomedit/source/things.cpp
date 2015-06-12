@@ -49,7 +49,7 @@ typedef struct
   SHORT  damage;  /* Number of damage points, 0 = no damage */ /*! Explain */
   char  *sprite;  /* Sprite to display - (4 chars for name + 2/4 for frame) */
   char  *name;    /* Name of the Thing (18 chars max) */
-  SHORT props;    /* Properties (flags), see TP_* defines */
+  USHORT props;    /* Properties (flags), see TP_* defines */
 } ThingDesc;
 
 

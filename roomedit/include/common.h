@@ -107,13 +107,8 @@ typedef unsigned char BYTE;
 
 #define DEU_VERSION "5.23"  /* the version number */
 
-/* 1312 is shipped with BC 5.02 */
-#define OWLVERBC502 1312
-
 /* include ::owl namespace for OWLNext/VS */
-#if OWLVersion > OWLVERBC502
-	using namespace owl;
-#endif
+using namespace owl;
 
 
 /*

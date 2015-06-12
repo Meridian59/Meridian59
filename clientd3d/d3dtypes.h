@@ -66,25 +66,12 @@
 #define D3DRENDER_SCREEN_TO_CLIP_X(_x, _scale)	(((_x) - (_scale) / 2.0f) / ((_scale) / 2.0f))
 #define D3DRENDER_SCREEN_TO_CLIP_Y(_y, _scale)	(((_y) - (_scale) / 2.0f) / (-(_scale) / 2.0f))
 
-typedef struct custom_xyz
-{
-	float	x, y, z;
-} custom_xyz;
 
 typedef struct custom_xyzw
 {
 	float	x, y, z, w;
 } custom_xyzw;
 
-typedef struct custom_st
-{
-	float	s, t;
-} custom_st;
-
-typedef struct custom_bgra
-{
-	unsigned char	b, g, r, a;
-} custom_bgra;
 
 typedef short custom_index;
 

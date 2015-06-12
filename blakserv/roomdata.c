@@ -23,6 +23,7 @@ int num_roomdata;
 
 /* local function prototypes */
 Bool LoadRoomFile(char *fname,room_type *file_info);
+void FreeRoom(roomdata_node *r);
 
 #define signum(a) ((a)<0 ? -1 : ((a) > 0 ? 1 : 0))
 
@@ -74,6 +75,22 @@ int LoadRoomData(int resource_id)
       return NIL;
    }
 
+   ret_val.v.tag = TAG_ROOM_DATA;
+   room = roomdata;
+
+   // Check if we have already allocated this room and are looking to make
+   // a duplicate of it. Save memory/cycles by using the identical room data.
+   while (room != NULL)
+   {
+      if (room->file_info.resource_id == resource_id)
+      {
+         ret_val.v.data = room->roomdata_id;
+
+         return ret_val.int_val;
+      }
+      room = room->next;
+   }
+
    if (!LoadRoomFile(r->resource_val,&file_info))
    {
       bprintf("LoadRoomData couldn't open %s!!!\n",r->resource_val);
@@ -83,20 +100,81 @@ int LoadRoomData(int resource_id)
    room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM,sizeof(roomdata_node));
    room->roomdata_id = num_roomdata++;
    room->file_info = file_info;
+   room->file_info.resource_id = resource_id;
 
    room->next = roomdata;
    roomdata = room;
 
 /*
    dprintf("LoadRoomData read room %i [%i,%i]\n",
-	   room->roomdata_id,room->file_info.rows,room->file_info.cols);
+      room->roomdata_id,room->file_info.rows,room->file_info.cols);
 */
 
-   ret_val.v.tag = TAG_ROOM_DATA;
    ret_val.v.data = room->roomdata_id;
    return ret_val.int_val;
 }
-      
+
+/*
+ * UnloadRoomData: Removes the roomdata_node from the roomdata list.
+ *                 Calls FreeRoom to free the memory.
+ */
+void UnloadRoomData(roomdata_node *r)
+{
+   roomdata_node *room, *prev;
+
+   if (r == NULL)
+   {
+      bprintf("UnloadRoomData called with NULL room!");
+
+      return;
+   }
+
+   room = roomdata;
+
+   // Check if we're unloading the first room in list.
+   if (room->roomdata_id == r->roomdata_id)
+   {
+      roomdata = roomdata->next;
+      FreeRoom(r);
+
+      return;
+   }
+
+   prev = roomdata;
+   room = roomdata->next;
+
+   while (room != NULL)
+   {
+      if (room->roomdata_id == r->roomdata_id)
+      {
+         prev->next = room->next;
+         // This function makes the calls to free the memory.
+         FreeRoom(r);
+
+         return;
+      }
+      prev = room;
+      room = room->next;
+   }
+
+   // If we get to this point, we didn't find the room we wanted to unload.
+   bprintf("Room %i not freed in UnloadRoomData!",r->roomdata_id);
+
+   return;
+}
+
+/*
+ * FreeRoom: Frees the memory associated with a room. Assumes
+ *           node already removed from roomdata list.
+ */
+void FreeRoom(roomdata_node *r)
+{
+   BSPRoomFreeServer(&(r->file_info));
+   FreeMemory(MALLOC_ID_ROOM,r,sizeof(roomdata_node));
+
+   return;
+}
+
 roomdata_node * GetRoomDataByID(int id)
 {
    roomdata_node *room;

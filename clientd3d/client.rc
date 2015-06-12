@@ -375,6 +375,7 @@ BEGIN
     GROUPBOX        "Oberfläche",IDC_STATIC,5,196,245,64,WS_GROUP
     CONTROL         "Toolbar anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,209,70,9
     CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,209,100,9
+    CONTROL         "FPS anzeigen",1211,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,189,209,56,9
     CONTROL         "Tooltips anzeigen",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,220,65,9
     CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,220,79,10
     CONTROL         "Kartenanmerkungen",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,220,80,9
@@ -942,7 +943,7 @@ BEGIN
     LISTBOX         IDC_QUANLIST,143,118,22,20,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_WANTKEYBOARDINPUT | NOT WS_VISIBLE | WS_TABSTOP
 END
 
-IDD_SETTINGS DIALOGEX 0, 0, 257, 295
+IDD_SETTINGS DIALOGEX 0, 0, 263, 295
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Preferences"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -952,42 +953,43 @@ BEGIN
     CONTROL         "Red Highlight",IDC_TARGETHALO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,16,37,70,10
     CONTROL         "Blue Highlight",IDC_TARGETHALO2,"Button",BS_AUTORADIOBUTTON,16,48,70,10
     CONTROL         "Green Highlight",IDC_TARGETHALO3,"Button",BS_AUTORADIOBUTTON,16,59,70,10
-    GROUPBOX        "Special Effects",IDC_STATIC,104,6,147,70,WS_GROUP
-    CONTROL         """Bounce"" as you walk",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
-    CONTROL         "Show your pain when you get hurt",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
+    GROUPBOX        "Special Effects",IDC_STATIC,110,6,147,70,WS_GROUP
+    CONTROL         """Bounce"" as you walk",IDC_BOUNCE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,118,17,132,9
+    CONTROL         "Show your pain when you get hurt",IDC_PAIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,118,28,132,9
     CONTROL         "Draw player names over their heads",IDC_DRAWNAMES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
-    CONTROL         "Show amounts for inventory items",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,50,132,9
-    CONTROL         "Show weather effects",IDC_WEATHER,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,111,61,132,9
-    GROUPBOX        "Game Options",IDC_STATIC,6,79,245,28,WS_GROUP
-    CONTROL         "Receive temporary angel on death",IDC_TEMPSAFE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,91,130,9
-    CONTROL         "Join building groups",IDC_GROUPING,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,150,91,100,9
-    GROUPBOX        "Audio Effects",IDC_STATIC,6,109,245,66,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,118,39,132,9
+    CONTROL         "Show amounts for inventory items",IDC_INVNUM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,118,50,132,9
+    CONTROL         "Show weather effects",IDC_WEATHER,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,118,61,132,9
+    GROUPBOX        "Game Options",IDC_STATIC,6,79,251,28,WS_GROUP
+    CONTROL         "Receive temporary angel on death",IDC_TEMPSAFE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,91,123,9
+    CONTROL         "Join building groups",IDC_GROUPING,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,150,91,75,9
+    GROUPBOX        "Audio Effects",IDC_STATIC,6,109,251,66,WS_GROUP
     CONTROL         "Music",IDC_MUSIC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,122,35,9
     CONTROL         "Sounds",IDC_SOUNDFX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,122,44,9
     CONTROL         "Steady Sounds",IDC_LOOPSOUNDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,122,64,9
-    CONTROL         "Atmospheric Sounds",IDC_RANDSOUNDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,165,122,80,9
+    CONTROL         "Atmospheric Sounds",IDC_RANDSOUNDS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,167,122,80,9
     LTEXT           "Sound volume",IDC_STATIC,13,139,50,10
-    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,136,173,15
+    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,136,178,15
     LTEXT           "Music volume",IDC_STATIC,13,156,53,10
-    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,154,173,15
+    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,154,178,15
     GROUPBOX        "Interface Features",IDC_STATIC,5,178,245,59,WS_GROUP
     CONTROL         "Show toolbar",IDC_TOOLBAR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,189,62,9
     CONTROL         "Show tooltips",IDC_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,200,62,9
     CONTROL         "Lock text window in place when scrolling back",IDC_SCROLLLOCK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,211,163,9
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,211,159,9
     CONTROL         "Filter text profanity",IDC_PROFANE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,223,77,9
     CONTROL         "Show latency meter",IDS_LATENCY0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,189,77,9
     CONTROL         "Show dynamic map",IDC_DRAWMAP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,200,79,10
-    CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,189,72,10
-    CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,200,72,10
+    CONTROL         "Show colored text",IDC_COLORCODES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,189,69,10
+    CONTROL         "Map annotations",IDC_MAP_ANNOTATIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,200,72,10
+    CONTROL         "Show FPS",IDC_SHOWFPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,211,50,9
     PUSHBUTTON      "&Profanity Options and Policy...",IDC_PROFANESETTINGS,101,221,142,12
-    GROUPBOX        "Web Browser",IDC_STATIC,6,238,245,31,WS_GROUP
+    GROUPBOX        "Web Browser",IDC_STATIC,6,238,251,31,WS_GROUP
     LTEXT           "Application:",IDC_STATIC,13,251,45,8
     EDITTEXT        IDC_BROWSER,59,249,136,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "&Search...",IDC_FIND,197,249,49,12
+    PUSHBUTTON      "&Search...",IDC_FIND,200,248,49,14
     DEFPUSHBUTTON   "OK",IDOK,145,277,50,12,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,201,277,50,12,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,207,277,50,12,WS_GROUP
 END
 
 IDD_COLOR DIALOG 0, 0, 201, 92
@@ -1349,7 +1351,7 @@ BEGIN
     IDD_SETTINGS, DIALOG
     BEGIN
         LEFTMARGIN, 6
-        RIGHTMARGIN, 251
+        RIGHTMARGIN, 257
         TOPMARGIN, 6
         BOTTOMMARGIN, 259
     END
@@ -1587,7 +1589,7 @@ BEGIN
     IDS_CONFIGMENUEXE       "m59bind.exe"
     IDS_CANTDELETEFILE      "Can't delete the file %s.\n\nTry again?"
     IDS_CANTWRITEFILE       "Can't write to file %s."
-    IDS_NOCONFIGMENUEXE     "Configuration menu not found!  Please uninstall and reinstall Meridian 59"
+    IDS_NOCONFIGMENUEXE     "Configuration menu not found!  Try restarting the client, patching to verify m59bind.exe is present or contact an administrator."
     IDS_CONNECTERROR        "Couldn't connect to server!"
     IDS_BADLOGIN            "Incorrect username or password."
     IDS_NOTIMERS            "All Windows timers are currently in use.\nClose some applications and try again."
@@ -1673,7 +1675,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_CANTUPDATE          "Unable to run %s, the program that updates your copy of Meridian 59.\nPlease report the problem to a system administrator."
+    IDS_CANTUPDATE          "Unable to run the patcher to update Meridian 59.\nPlease contact the admins at http://openmeridian.org/forums."
     IDS_NEEDNEWVERSION      "You need to get an updated version of Meridian 59.\nDo you want to retrieve it automatically now?"
     IDS_CANTMOVE            "Can't move the downloaded file %s to %s.\n\nTry again?"
     IDS_LONGCMDLINE         "The automatic update program will fail because its command line is too long.\nPlease report the following command line:\n\n%s"

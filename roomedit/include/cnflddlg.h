@@ -43,47 +43,45 @@
 
 #include "cnflddlg.rh"
 
-
 //{{TDialog = TConfirmLineDefDialog}}
 struct TConfirmLineDefDialogXfer {
-	BOOL    pTypeCheck;
-	BOOL    pFlagsCheck;
-	BOOL    pSectorCheck;
-	BOOL    pVertex1Check;
-	BOOL    pVertex2Check;
-	BOOL    pSDCheck[2];
+	uint16    pTypeCheck;
+   uint16    pFlagsCheck;
+   uint16    pSectorCheck;
+   uint16    pVertex1Check;
+   uint16    pVertex2Check;
+   uint16    pSDCheck[2];
 
-	BOOL    pPassPosCheck;
-	BOOL    pPassNegCheck;
-	BOOL    pTransPosCheck;
-	BOOL    pTransNegCheck;
-	BOOL    pFlipPosCheck;
-	BOOL    pFlipNegCheck;
-	BOOL    pNoMapCheck;
-	BOOL    pMapStartCheck;
-	BOOL    pNoLookThroughPosCheck;
-	BOOL    pNoLookThroughNegCheck;
-	BOOL    pAbovePosCheck;
-	BOOL    pAboveNegCheck;
-	BOOL    pNormalPosCheck;
-	BOOL    pNormalNegCheck;
-	BOOL    pBelowPosCheck;
-	BOOL    pBelowNegCheck;
-	BOOL    pNoVTilePosCheck;
-	BOOL    pNoVTileNegCheck;
+   uint16    pPassPosCheck;
+   uint16    pPassNegCheck;
+   uint16    pTransPosCheck;
+   uint16    pTransNegCheck;
+   uint16    pFlipPosCheck;
+   uint16    pFlipNegCheck;
+   uint16    pNoMapCheck;
+   uint16    pMapStartCheck;
+   uint16    pNoLookThroughPosCheck;
+   uint16    pNoLookThroughNegCheck;
+   uint16    pAbovePosCheck;
+   uint16    pAboveNegCheck;
+   uint16    pNormalPosCheck;
+   uint16    pNormalNegCheck;
+   uint16    pBelowPosCheck;
+   uint16    pBelowNegCheck;
+   uint16    pNoVTilePosCheck;
+   uint16    pNoVTileNegCheck;
 
-	BOOL    pSDAboveCheck[2];
-	BOOL    pSDBelowCheck[2];
-	BOOL    pSDNormalCheck[2];
-	BOOL    pSDSectorCheck[2];
-	BOOL    pSDXOfsCheck[2];
-	BOOL    pSDYOfsCheck[2];
-	BOOL    pIDNumCheck[2];
-	BOOL    pSpeedCheck[2];
+   uint16    pSDAboveCheck[2];
+   uint16    pSDBelowCheck[2];
+   uint16    pSDNormalCheck[2];
+   uint16    pSDSectorCheck[2];
+   uint16    pSDXOfsCheck[2];
+   uint16    pSDYOfsCheck[2];
+   uint16    pIDNumCheck[2];
+   uint16    pSpeedCheck[2];
 
-        BOOL    pScrollCheck[2];
+   uint16    pScrollCheck[2];
 };
-
 
 class TConfirmLineDefDialog : public TDialog
 {

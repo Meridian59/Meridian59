@@ -177,6 +177,7 @@ DEFINE_RESPONSE_TABLE1(TEditorClient, TWindow)
 	EV_COMMAND(CM_SEARCH_PREVOBJ, CmSearchPrev),
 	EV_COMMAND(CM_SEARCH_NEXTOBJ, CmSearchNext),
 	EV_COMMAND(CM_SEARCH_JUMPOBJ, CmSearchJump),
+   EV_COMMAND(CM_OBJECTS_TORCH, CmObjectsTorch),
 	EV_COMMAND(CM_OBJECTS_RECTANGLE, CmObjectsRectangle),
 	EV_COMMAND(CM_OBJECTS_POLYGON, CmObjectsPolygon),
 	EV_COMMAND(CM_EDIT_DELETEOBJ, CmEditDelete),
@@ -386,7 +387,7 @@ TEditorClient::TEditorClient (TWindow* parent, char *_levelName,
 	MadeChanges = FALSE;
 	MadeMapChanges = FALSE;
 	ScaleMax = 32.0;
-	ScaleMin = 1.0 / 20.0;
+	ScaleMin = 1.0f / 20.0f;
 	if (InitialScale < 1)
 		InitialScale = 1;
 	else if (InitialScale > 20)
@@ -1098,11 +1099,7 @@ void TEditorClient::DrawMouseCoord (TDC &dc)
 // TEditorClient
 // -------------
 //
-#if OWLVersion > OWLVERBC502
 void TEditorClient::EvSize (UINT sizeType, const TSize& size)
-#else
-void TEditorClient::EvSize (UINT sizeType, TSize& size)
-#endif
 {
 	TRect clientRect = GetClientRect ();
 
@@ -1148,11 +1145,7 @@ void TEditorClient::EvSize (UINT sizeType, TSize& size)
 //       OR Highlight pointed object (and set it to new current object), only
 //          if CTRL key not pressed
 //
-#if OWLVersion > OWLVERBC502
 void TEditorClient::EvMouseMove (UINT modKeys, const TPoint& point)
-#else
-void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
-#endif
 {
 	TLayoutWindow::EvMouseMove(modKeys, point);
 
@@ -1163,8 +1156,8 @@ void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
 		DrawMouseCoord (dc);
 	}
 
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// If Inserting object, don't do anything
 	if ( InsertingObject )
@@ -1328,14 +1321,10 @@ void TEditorClient::EvMouseMove (UINT modKeys, TPoint& point)
 //     won't realy take effect until the mouse is moved, and will
 //     stop when Left mouse button is released.
 //
-#if OWLVersion > OWLVERBC502
 void TEditorClient::EvLButtonDown (UINT modKeys, const TPoint& point)
-#else
-void TEditorClient::EvLButtonDown (UINT modKeys, TPoint& point)
-#endif
 {
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1421,14 +1410,10 @@ void TEditorClient::EvLButtonDown (UINT modKeys, TPoint& point)
 //	Left mouse button UP:
 //		- Stop Drag mode or Stretch selection box mode.
 //
-#if OWLVersion > OWLVERBC502
 void TEditorClient::EvLButtonUp (UINT modKeys, const TPoint& point)
-#else
-void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
-#endif
 {
-	PointerX = point.x;
-	PointerY = point.y;
+   PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1552,14 +1537,10 @@ void TEditorClient::EvLButtonUp (UINT modKeys, TPoint& point)
 // TEditorClient
 // -------------
 //
-#if OWLVersion > OWLVERBC502
 void TEditorClient::EvLButtonDblClk (UINT modKeys, const TPoint& point)
-#else
-void TEditorClient::EvLButtonDblClk (UINT modKeys, TPoint& point)
-#endif
 {
-	PointerX = point.x;
-	PointerY = point.y;
+	PointerX = (SHORT)point.x;
+   PointerY = (SHORT)point.y;
 
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1581,11 +1562,7 @@ void TEditorClient::EvLButtonDblClk (UINT modKeys, TPoint& point)
 // TEditorClient
 // -------------
 //
-#if OWLVersion > OWLVERBC502
 void TEditorClient::EvRButtonDown (UINT modKeys, const TPoint& point)
-#else
-void TEditorClient::EvRButtonDown (UINT modKeys, TPoint& point)
-#endif
 {
 	// Ignore if "insert object" mode
 	if ( InsertingObject )
@@ -1751,9 +1728,9 @@ void TEditorClient::EvChar (UINT key, UINT repeatCount, UINT flags)
 		else if (key == '-' )
 			DecScale();
 		else if (key == '0')
-			SetScale (0.1);
+			SetScale (0.1f);
 		else
-			SetScale (1.0 / (float)(key - '0'));
+			SetScale (1.0f / (float)(key - '0'));
 		OrigX -= (SHORT) ((PointerX - ScrCenterX) * DIV_SCALE);
 		OrigY -= (SHORT) ((ScrCenterY - PointerY) * DIV_SCALE);
 
@@ -1825,11 +1802,22 @@ void TEditorClient::AdjustScroller ()
 	// Compute the max and min value for OrigX and OrigY
 	SHORT OrigXMin = MAP_MIN_X + (SHORT)(ScrCenterX * DIV_SCALE);
 	SHORT OrigXMax = MAP_MAX_X - (SHORT)(ScrCenterX * DIV_SCALE);
-	assert (OrigXMin <= OrigXMax);
+	if (OrigXMin > OrigXMax)
+	{
+		// If we go outside the valid map, center it back over
+		// the middle at the starting scale. This used to be
+		// checked using *assert*!
+		SetScale((float)(1.0 / 20.0));
+		CenterMapAroundCoords((MapMinX + MapMaxX) / 2, (MapMinY + MapMaxY) / 2);
+	}
 
 	SHORT OrigYMin = MAP_MIN_Y + (SHORT)(ScrCenterY * DIV_SCALE);
 	SHORT OrigYMax = MAP_MAX_Y - (SHORT)(ScrCenterY * DIV_SCALE);
-	assert (OrigYMin <= OrigYMax);
+	if (OrigYMin > OrigYMax)
+	{
+		SetScale((float)(1.0 / 20.0));
+		CenterMapAroundCoords((MapMinX + MapMaxX) / 2, (MapMinY + MapMaxY) / 2);
+	}
 
 	// Check that OrigX and OrigY are in their legal value
 	if ( OrigX < OrigXMin )     OrigX = OrigXMin ;
@@ -2714,9 +2702,10 @@ BOOL TEditorClient::SaveLevel ()
 	SaveLevelData(filename);
 	strcpy(LevelName, filename);
 
+   // Don't delete this data on saving.
 	// Forget all UNDO datas
-	CleanupUndo();
-	InitUndo();
+	//CleanupUndo();
+	//InitUndo();
 
 	return TRUE;
 }
@@ -2866,8 +2855,8 @@ void TEditorClient::CmObjectsRectangle ()
 	static SHORT Height = 128;
 	char Title[80];
 	char Prompt[80];
-	TRangeValidator *pValid1 = new TRangeValidator(8, 2000);
-	TRangeValidator *pValid2 = new TRangeValidator(8, 2000);
+	TRangeValidator *pValid1 = new TRangeValidator(8, 14000);
+	TRangeValidator *pValid2 = new TRangeValidator(8, 14000);
 	char wBuf[7];
 	char hBuf[7];
 
@@ -2966,8 +2955,8 @@ void TEditorClient::CmObjectsPolygon ()
 	static SHORT Radius = 128;
 	char Title[80];
 	char Prompt[80];
-	TRangeValidator *pValid1 = new TRangeValidator(3, 32);
-	TRangeValidator *pValid2 = new TRangeValidator(8, 2000);
+	TRangeValidator *pValid1 = new TRangeValidator(3, 1024);
+	TRangeValidator *pValid2 = new TRangeValidator(8, 14000);
 	char nBuf[7];
 	char rBuf[7];
 
@@ -3049,6 +3038,97 @@ void TEditorClient::CmObjectsPolygon ()
 	RESTORE_HELP_CONTEXT();
 }
 
+/////////////////////////////////////////////////////////////////////
+// TEditorClient
+// -------------
+//
+void TEditorClient::CmObjectsTorch()
+{
+   // Ignore if "insert object" mode
+   if (InsertingObject)
+      return;
+   // Keep in memory between calls.
+   // 0 is north, 90 is east.
+   static SHORT torchAngle = 0;
+   char Title[80];
+   char Prompt[80];
+   char aBuf[7];
+   TRangeValidator *pValid1 = new TRangeValidator(0, 360);
+   
+   SET_HELP_CONTEXT(Insert_Torch);
+   wsprintf(Title, "New torch angle");
+   wsprintf(Prompt, "Enter the angle for the torch (0 = north, 90 = east):");
+   wsprintf(aBuf, "%d", torchAngle);
+
+   if (TInputDialog(this, Title, Prompt, aBuf, 7, 0, pValid1).Execute() == IDOK)
+   {
+      torchAngle = (SHORT)atoi(aBuf);
+
+      // Hide information windows
+      BOOL OldInfoWinShown = InfoWinShown;
+      InfoWinShown = FALSE;
+      if (OldInfoWinShown != InfoWinShown)
+      {
+         SetupInfoWindows();
+         UpdateWindow();
+      }
+
+      // Clip cursor movements to editor window and get mouse capture
+      TRect editRect;
+      GetWindowRect(editRect);
+      editRect.right++;
+      editRect.bottom++;
+      ClipCursor(&editRect);
+      SetCursor(GetApplication(), IDC_INSERT);
+      SetCapture();
+
+      // Begin insert mode
+      WorkMessage("Click left mouse button to insert torch...");
+      InsertingObject = TRUE;  // don't highlight when mouse move
+
+      // Stops when left button down
+      MSG  loopMsg;
+      loopMsg.message = 0;
+      while (loopMsg.message != WM_LBUTTONDOWN)
+      {
+         if (::PeekMessage(&loopMsg, 0, 0, 0, PM_REMOVE))
+         {
+            // Don't send the WM_LBUTTONDOWN, because we don't
+            // want to select an object!
+            if (loopMsg.message != WM_LBUTTONDOWN)
+            {
+               ::TranslateMessage(&loopMsg);
+               ::DispatchMessage(&loopMsg);
+            }
+         }
+
+         Scroller->AutoScroll();
+      }
+
+      // Restore window and cursor
+      InsertingObject = FALSE;
+      SetCursor(NULL, IDC_ARROW);
+      ReleaseCapture();
+      ClipCursor(NULL);
+      GetApplication()->ResumeThrow();
+
+      // UNDO
+      StartUndoRecording("Insert torch");
+
+      // Insert torch at cursor position
+      InsertTorch(MAPX(PointerX), MAPY(PointerY), torchAngle);
+
+      // UNDO
+      StopUndoRecording();
+
+      // Redraw map, status bar and info windows
+      InfoWinShown = OldInfoWinShown;
+      SetupInfoWindows();
+      DrawStatusBar();
+      Invalidate();
+   }
+   RESTORE_HELP_CONTEXT();
+}
 
 /////////////////////////////////////////////////////////////////////
 // TEditorClient
@@ -3523,7 +3603,7 @@ void TEditorClient::CmMiscLDDelete ()
 
 	// Check at least one object selected
 	if ( CheckSelection (1, -1) == FALSE )
-		return;
+		goto End;
 
 	// UNDO
 	StartUndoRecording("Delete LineDef");
@@ -3901,9 +3981,11 @@ void TEditorClient::CmFileSave ()
 	}
 	SET_HELP_CONTEXT(EDITOR_Save);
 	SaveLevelData(LevelName);
-	// Forget all UNDO datas
-	CleanupUndo();
-	InitUndo();
+	
+   // Don't delete this data on saving.
+   // Forget all UNDO datas
+	//CleanupUndo();
+	//InitUndo();
 
 	DrawStatusBar();
 	RESTORE_HELP_CONTEXT();

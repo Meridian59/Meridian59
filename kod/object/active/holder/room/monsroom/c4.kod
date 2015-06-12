@@ -54,9 +54,9 @@ messages:
    {
       plMonsters = [ [&SpiderBaby, 60], [&Ent, 40] ];
 
-      plGenerators = [ [37, 14], [26, 33], [6, 50], [15, 51], [19, 45],
-		      [24, 45], [16, 36], [20, 25], [23, 25], [29, 24],
-		      [29, 17], [33, 20], [41, 27], [36, 42], [39, 40] ];
+      plGenerators = [ [38, 14], [26, 33], [6, 50], [15, 51], [19, 45],
+            [24, 45], [16, 36], [20, 25], [23, 25], [29, 24],
+            [29, 17], [33, 20], [41, 27], [36, 42], [39, 40] ];
       propagate;
    }
 
@@ -71,23 +71,25 @@ messages:
 
       if (new_row > 35) and (new_col < 9) 
       {
-	 Send(SYS,@UtilGoNearSquare,#what=what,
-              #where=Send(SYS,@FindRoomByNum,#num=RID_MARION),
-              #new_row=30,#new_col = 66 , #fine_row = 0,
-	      #new_angle=Send(what,@GetAngle));
-	 return;
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_MARION),
+               #new_row=30,#new_col = 66 , #fine_row = 0,
+               #new_angle=Send(what,@GetAngle));
+
+         return;
       }
 
       if (new_row < 18) and (new_col < 13)
       {
-	 Send(SYS,@UtilGoNearSquare,#what=what,
-              #where=Send(SYS,@FindRoomByNum,#num=RID_TEMPLE),
-              #new_row=9,#new_col = 31,
-	      #new_angle=ANGLE_SOUTH_WEST);
-	 return;
+         Send(SYS,@UtilGoNearSquare,#what=what,
+               #where=Send(SYS,@FindRoomByNum,#num=RID_TEMPLE),
+               #new_row=9,#new_col = 31,
+               #new_angle=ANGLE_SOUTH_WEST);
+
+         return;
       }
 
-   propagate;
+      propagate;
    }
 
 
@@ -98,7 +100,7 @@ messages:
       plEdge_Exits = Cons([LEAVE_NORTH, RID_C3, 40, 13, ROTATE_NONE], plEdge_exits);
 
       return;
-   }         
+   }
 
    CreateStandardObjects()
    {

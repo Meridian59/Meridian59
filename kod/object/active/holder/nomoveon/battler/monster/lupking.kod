@@ -399,7 +399,8 @@ messages:
          if NOT Send(self,@CanReach,#what=poTarget) 
          {
             Send(self,@MonsterCastAttackSpell);
-            Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+            Send(self,@EnterStateChase,#Target=poTarget);
+            %Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
 
             return;
          }
@@ -408,14 +409,17 @@ messages:
       if NOT Send(poTarget,@IsEnchanted,#what=oSpell)
          AND iRandom = 1
       {
-         Send(self,@MonsterCastAttackSpell); 
+         Send(self,@MonsterCastAttackSpell);
       }
       else
       {
-         Send(self,@TryAttack,#what=poTarget); 
+         Send(self,@TryAttack,#what=poTarget);
       }
 
-      Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      if poBrain <> $
+      {
+         Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      }
 
       return;
    }
@@ -445,7 +449,7 @@ messages:
          iRow = Send(what,@GetRow);
          iCol = Send(what,@GetCol);
 
-         if iRow > 18 and iCol > 43
+         if iRow > 18 OR iCol > 43 OR iCol < 24
          {
             return FALSE;
          }

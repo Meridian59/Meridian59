@@ -129,10 +129,20 @@ messages:
            #fine_row=0,#fine_col=32,#new_angle=ANGLE_SOUTH_WEST);
 
       % Lighting
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
-           #new_row=30,#new_col=8,#fine_row=0,#fine_col=48);
-      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
-           #new_row=25,#new_col=8,#fine_row=50,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=30,#new_col=9,#fine_row=16,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=25,#new_col=6,#fine_row=44,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=25,#new_col=8,#fine_row=44,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=31,#new_col=11,#fine_row=24,#fine_col=12);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=31,#new_col=13,#fine_row=4,#fine_col=24);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=35,#new_col=17,#fine_row=4,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=60),
+           #new_row=28,#new_col=21,#fine_row=44,#fine_col=40);
 
       propagate;
    }

@@ -179,11 +179,7 @@ void TViewEntryDialog::EntrySelChange ()
 // EvDrawItem
 // ----------
 //
-#if OWLVersion > OWLVERBC502
 void TViewEntryDialog::EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT& drawInfo)
-#else
-void TViewEntryDialog::EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo)
-#endif
 {
 	char Buf[128];
 

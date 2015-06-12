@@ -64,12 +64,7 @@ public:
 
 //{{TMasterDialogRSP_TBL_BEGIN}}
 protected:
-
-#if OWLVersion > OWLVERBC502
 	void EvDrawItem (UINT ctrlId, const DRAWITEMSTRUCT& drawInfo);
-#else
-	void EvDrawItem (UINT ctrlId, DRAWITEMSTRUCT& drawInfo);
-#endif
 
 //{{TMasterDialogRSP_TBL_END}}
 DECLARE_RESPONSE_TABLE(TMasterDialog);

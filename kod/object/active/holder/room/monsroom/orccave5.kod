@@ -54,12 +54,10 @@ messages:
    Constructed()
    {
       plMonsters = [ [&CaveOrc, 75], [&OrcWizard, 25] ];
-      plGenerators = [ [20,74], [20,58], [30,66], [14,58], [12,50], [34,58], [23,53],
-	                    [41,71], [58,56], [69,57], [71,40], [57,24], [48,08], [49,23],
-	                    [56,33], [56,45], [63,39], [49,39], [42,48], [40,55], [38,17],
-	                    [42,28], [34,37], [34,42], [33,07], [33,25], [19,38], [19,42],
-	                    [23,19], [21,11], [21,15], [14,13], [09,40]
-	                  ];
+      plGenerators = [ [14,58], [11,51], [35,58], [58,56], [69,55], [57,24],
+                       [49,23], [56,33], [54,45], [64,38], [47,38], [40,47],
+                       [40,55], [34,38], [30,07], [19,35], [20,46], [23,23],
+                       [09,40], [72,23], [55,06] ];
 
       propagate;
    }
@@ -141,7 +139,7 @@ messages:
       if isClass(what,&Item)
       {
          % Have to post this to handle numberitems and SYS can't handle posts.
-         post(self,@PostShrineCheckItem,#what=what);  
+         Post(self,@PostShrineCheckItem,#what=what);
       }
 
       propagate;
@@ -149,11 +147,10 @@ messages:
 
    PostShrineCheckItem(what=$)
    {
-      send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
+      Send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

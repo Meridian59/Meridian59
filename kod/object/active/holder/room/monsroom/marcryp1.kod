@@ -232,6 +232,12 @@ messages:
          return;
       }
 
+      % Don't cast it if no users present.
+      if NOT pbUser_in_room
+      {
+         return;
+      }
+
       oMartyr = send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
       
       if Send(self,@IsEnchanted,#what=oMartyr)

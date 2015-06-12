@@ -581,5 +581,12 @@ messages:
       return [[SID,mana,100]];
    }
 
+   TryLook()
+   "Placeholder in case client sends a wrong object ID in UserLook. "
+   "May accidentally use the object number for a UtilityFunction."
+   {
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

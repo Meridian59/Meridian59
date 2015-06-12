@@ -101,7 +101,7 @@ TInfoControl::TInfoControl (TWindow* parent, int id, unsigned _NumLines,
 	curColor = DEF_COLOR;
 	curAlign = DEF_ALIGN;
 
-	SetCursor (GetApplication(), IDC_HAND);
+	SetCursor(GetApplication(), IDC_HANDC);
 }
 
 
@@ -242,11 +242,7 @@ void TInfoControl::Paint (TDC& dc, bool erase, TRect& rect)
 // TInfoControl
 // ------------
 //
-#if OWLVersion > OWLVERBC502
 UINT TInfoControl::EvNCHitTest (const TPoint& /*point*/)
-#else
-UINT TInfoControl::EvNCHitTest (TPoint& /*point*/)
-#endif
 {
 	return HTCAPTION;
 }

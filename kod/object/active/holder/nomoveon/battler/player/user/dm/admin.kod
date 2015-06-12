@@ -29,7 +29,7 @@ resources:
    admin_not_anonymous = "You are again known as %s."
    admin_black = "You are now shadowform."
 
-   admin_currently_in = "The ROO for `b%s`n is `k`B%s`n."
+   admin_currently_in = "The ROO for `b%s`n is `k`B%s`n.  The room number is %i."
 
    admin_create_itematt_command = "create item attribute"
    admin_anonymous_command = "anonymous"
@@ -39,7 +39,6 @@ resources:
    admin_end_tour_command = "end tour"
    admin_mortal_command = "mortal"
    admin_immortal_command = "immortal"
-   admin_create_dynamic_light_command = "place dynamic light"
    admin_logoffghost_on_command = "logoffghost on"
    admin_logoffghost_off_command = "logoffghost off"
    admin_logoffghost_temp_off_command = "logoffghost temp off"
@@ -328,78 +327,8 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=admin_currently_in,
                #parm1=send(poOwner,@GetName),
-               #parm2=send(poOwner,@GetRoomResource));
-
-         return;
-      }
-
-      %%% Code for placing light items.
-
-      if StringEqual(string,admin_create_dynamic_light_command)
-         OR StringEqual(string,"place dynamic light")
-      {
-         oObject = Create(&DynamicLight,#bVisible=TRUE);
-
-         Send(poOwner,@NewHold,#what=oObject,
-               #new_row=Send(self,@GetRow),
-               #new_col=Send(self,@GetCol),
-               #fine_row=Send(self,@GetFineRow),
-               #fine_col=Send(self,@GetFineCol));
-
-         return;
-      }
-
-      if StringContain(string,"place lamp")
-      {
-         oObject = Create(&Lamp);
-
-         Send(poOwner,@NewHold,#what=oObject,
-               #new_row=Send(self,@GetRow),
-               #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place brazier")
-      {
-         oObject = Create(&Brazier);
-
-         Send(poOwner,@NewHold,#what=oObject,
-               #new_row=Send(self,@GetRow),
-               #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candelabra")
-      {
-         oObject = Create(&Candelabra);
-
-         Send(poOwner,@NewHold,#what=oObject,
-               #new_row=Send(self,@GetRow),
-               #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place candle")
-      {
-         oObject = Create(&Candle);
-
-         Send(poOwner,@NewHold,#what=oObject,
-               #new_row=Send(self,@GetRow),
-               #new_col=Send(self,@GetCol));
-
-         return;
-      }
-
-      if StringContain(string,"place firepit")
-      {
-         oObject = Create(&Firepit);
-
-         Send(poOwner,@NewHold,#what=oObject,
-               #new_row=Send(self,@GetRow),
-               #new_col=Send(self,@GetCol));
+               #parm2=send(poOwner,@GetRoomResource),
+               #parm3=Send(poOwner,@GetRoomNum));
 
          return;
       }

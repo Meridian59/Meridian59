@@ -10,20 +10,24 @@ TOPDIR=.
 # make ignores targets if they match directory names
 all: Bserver Bclient Bmodules Bkod Bdeco Bupdater Bbbgun Bkeybind Bresource
 
-Bserver:
-	echo Making in $(BLAKSERVDIR)
+Bserver: Bresource
+	echo Making $(COMMAND) in $(BLAKSERVDIR)
 	cd $(BLAKSERVDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bclient: Butil
-	echo Making in $(CLIENTDIR)
+Bclient: Butil Bresource
+	echo Making $(COMMAND) in $(CLIENTDIR)
 	cd $(CLIENTDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
+!if !DEFINED(NOCOPYFILES)
+# Postbuild handles its own echoes
+	$(POSTBUILD)
+!endif NOCOPYFILES
 
 Bmodules: Bclient
-	echo Making in $(MODULEDIR)
+	echo Making $(COMMAND) in $(MODULEDIR)
 	cd $(MODULEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
@@ -52,7 +56,7 @@ Bdeco:
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 
-Bresource: Bmakebgf
+Bresource: Bmakebgf Bbbgun
 	echo Making $(COMMAND) in $(RESOURCEDIR)
 	cd $(RESOURCEDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
@@ -89,8 +93,11 @@ Bkeybind:
 	cd ..
 
 clean:
+        set NOCOPYFILES=1
         set COMMAND=clean
         $(MAKE) /$(MAKEFLAGS)
-		$(RM) $(BLAKSERVRUNDIR)\rsc\*.rsc
-		$(RM) $(BLAKSERVRUNDIR)\loadkod\*.bof
-		$(RM) $(BLAKSERVRUNDIR)\memmap\*.bof
+		$(RM) $(TOPDIR)\postbuild.log >nul 2>&1
+		$(RM) $(BLAKSERVRUNDIR)\rsc\*.rsc >nul 2>&1
+		$(RM) $(BLAKSERVRUNDIR)\loadkod\*.bof >nul 2>&1
+		$(RM) $(BLAKSERVRUNDIR)\memmap\*.bof >nul 2>&1
+		$(RM) $(BLAKSERVDIR)\channel\*.txt 2>nul

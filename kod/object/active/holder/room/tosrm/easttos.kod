@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   room_EastTos = easttos.roo
+   room_EastTos = toseast.roo
    name_EastTos = "East Ende"
 
    EastTos_music = tos.mp3
@@ -35,7 +35,7 @@ classvars:
 properties:
 
    prRoom = room_EastTos
-   piRoom_num = RID_EAST_TOS
+   piRoom_num = RID_TOS_EAST
 
    prMusic = EastTos_music
 

@@ -72,7 +72,7 @@ TextureInfo ** AddTextures (char *dir, char *filespec, SHORT *num)
 
       // Get texture size
       sprintf(path, "%s\\%s", dir, filename);
-      if (DibOpenFileSimple(path, &b, &shrink, &width, &height));
+      if (DibOpenFileSimple(path, &b, &shrink, &width, &height))
       {
 	 Textures[i]->Width  = width;
 	 Textures[i]->Height = height;
@@ -212,7 +212,7 @@ TextureInfo *FindTextureByName(char *name)
       if (!strcmp(WTexture[ti]->Name, name))
 	 return WTexture[ti];
    }
-   Notify ("Couldn't find Wall texture info: \"%s\" (BUG)!", name);
+   //Notify ("Couldn't find Wall texture info: \"%s\" (BUG)!", name);
    return NULL;
 }
 /***************************************************************************/
@@ -232,7 +232,7 @@ TextureInfo *FindTextureByNumber(int num)
       if (WTexture[ti]->number == num)
 	 return WTexture[ti];
    }
-   Notify ("Couldn't find Wall texture info: \"%d\" (BUG)!", num);
+   //Notify ("Couldn't find Wall texture info: \"%d\" (BUG)!", num);
    return NULL;
 }
 
@@ -256,7 +256,7 @@ void GetWallTextureSize (SHORT *xsize_r, SHORT *ysize_r, int texnum)
       }
    }
    
-   Notify ("Couldn't find Wall texture info: \"%d\" (BUG)!", texnum);
+   //Notify ("Couldn't find Wall texture info: \"%d\" (BUG)!", texnum);
 }
 
 /***************************************************************************/

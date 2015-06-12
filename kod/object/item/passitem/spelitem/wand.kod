@@ -29,6 +29,8 @@ resources:
       "You carefully aim your wand at %s%s, but you suddenly "
       "realize your target is gone."
    Wand_fails = "You point your wand but nothing happens."
+   wand_cannot_use_yet = \
+      "You cannot use that item yet."
 
 classvars:
 
@@ -59,6 +61,20 @@ properties:
    piGoBadTime = -1
 
 messages:
+
+   ReqNewApply(what=$,apply_on=$)
+   {
+      % Wands can be used as attacks - check the attack timer.
+      if IsClass(what,&Player)
+         AND NOT Send(what,@CheckAttackTimer)
+      {
+         Send(what,@MsgSendUser,#message_rsc=wand_cannot_use_yet);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
 
    CastSpell(what=$,apply_on=$)
    {

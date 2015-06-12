@@ -5,12 +5,10 @@ TOPDIR=..\..\..\..
 
 SOURCEDIR = .
 
-BGFS = qormastree.bgf \
-       qormastreebig.bgf \
+BGFS = qormastree.bgf qormastreebig.bgf
 
-all: 
-	@-for %i in ($(BGFS)) do \
-   @echo copying %i to client & \
-	$(CP) %i $(CLIENTRUNDIR)\resource
+!include $(RESOURCEDIR)\copy.mak
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@$(RM) $(CLIENTRUNDIR)\resource\qormastree.bgf 2>nul
+	@$(RM) $(CLIENTRUNDIR)\resource\qormastreebig.bgf 2>nul

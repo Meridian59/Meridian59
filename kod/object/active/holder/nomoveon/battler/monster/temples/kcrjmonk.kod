@@ -150,7 +150,7 @@ messages:
 
       pbIllusioned = FALSE;
       piDrawfx = DRAWFX_NONE;
-      piDrawEffectFlag = ~OF_BOUNCING;
+      piDrawEffectFlag = piDrawEffectFlag & ~OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
 
       if ptGoIllusioned <> $
@@ -177,7 +177,7 @@ messages:
             #type=SAY_RESOURCE);
 
       pbIllusioned = TRUE;
-      piDrawEffectFlag = OF_BOUNCING;
+      piDrawEffectFlag = piDrawEffectFlag | OF_BOUNCING;
       Send(poOwner,@SomethingChanged,#what=self);
 
       return;

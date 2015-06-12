@@ -714,7 +714,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				char *command)
 {
 	int mode_type,i,index,num_parms,num,num_blak_parm;
-	char *parm_str,*prev_tok;
+	char *parm_str = NULL,*prev_tok;
 	admin_parm_type admin_parm[MAX_ADMIN_PARM];
 	parm_node blak_parm[MAX_ADMIN_BLAK_PARM];
 	val_type blak_val;
@@ -2078,6 +2078,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETTIMEREMAINING : strcpy(c_name, "GetTimeRemaining"); break;
 		case ISTIMER : strcpy(c_name, "IsTimer"); break;
 		case CREATEROOMDATA : strcpy(c_name, "CreateRoomData"); break;
+		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
 		case CANMOVEINROOM : strcpy(c_name, "CanMoveInRoom"); break;
 		case CANMOVEINROOMFINE : strcpy(c_name, "CanMoveInRoomFine"); break;

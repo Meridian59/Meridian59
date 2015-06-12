@@ -6024,51 +6024,61 @@ messages:
 
       return TRUE;
    }
-   
+
    ReqOffer(what = $,item_list = $)
    {
-      local i;
+      local i, whatOwner;
 
-      if Send(what,@GetOwner) <> poOwner
+      whatOwner = Send(what,@GetOwner);
+      if whatOwner = $
       {
+         return FALSE;
+      }
+
+      % If we're offline now, or in the process of going offline,
+      % let the offering player know.
+      if poOwner = $
+         OR NOT pbLogged_on
+      {
+         Send(what,@MsgSendUser,#message_rsc=user_offer_not_online,
+               #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+
+         return FALSE;
+      }
+
+      % Different screens, let the offering player know.
+      if whatOwner <> poOwner
+      {
+         Send(what,@MsgSendUser,#message_rsc=user_offer_not_here,
+               #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
+               #parm3=Send(self,@GetHeShe));
+
+         % Perhaps we've just left the room as the offer is being made, in
+         % which case this is a spurious log. The RIDs will determine whether
+         % this is adjacent screens or an impossible offer.
          Debug("ALERT! ",Send(what,@GetTrueName),what," in RID ",
                Send(poOwner,@GetRoomNum)," offered items to ",
                Send(self,@GetTrueName),self," in distant RID ",
                Send(Send(what,@GetOwner),@GetRoomNum));
-         
-         return FALSE;
-      }     
 
+         return FALSE;
+      }
+
+      % Only one offer at a time.
       if poOffer_who <> $
       {
          Send(what,@MsgSendUser,#message_rsc=user_offer_busy,
               #parm1=Send(self,@GetCapDef),#parm1=Send(self,@GetName));
-              
+
          return FALSE;
       }
 
-      if not pbLogged_on
-      {
-         Send(what,@MsgSendUser,#message_rsc=user_offer_not_online,
-              #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
-              
-         return FALSE;
-      }
-
-      if poOwner <> Send(what,@getOwner)
-      {
-         Send(what,@MsgSendUser,#message_rsc=user_offer_not_here,
-              #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
-              #parm3=Send(self,@GetHeShe));
-              
-         return FALSE;
-      }
-      
+      % Check if we can receive the items.
       for i in item_list
-      {         
-         if not Send(i,@ReqNewOwnerAttributes,#who=self,#type=1)
-         {                     
-            return FALSE; 
+      {
+         if NOT Send(i,@ReqNewOwnerAttributes,#who=self,#type=1)
+         {
+            return FALSE;
          }
       }
 
@@ -8468,11 +8478,12 @@ messages:
 
    SetInitialHomeroom()
    {
-      piHomeroom = RID_NEWB1;
-      
+      % Get initial Homeroom from system settings.
+      piHomeroom = Send(Send(SYS,@GetSettings),@GetInitialRoomID);
+
       return;
    }
-   
+
    SetRandomHomeroom()
    "This sets one of the many hometowns to be the initial hometown."
    {
@@ -8694,9 +8705,10 @@ messages:
    TeleportToInitialLocation()
    "Assertion:  you are NOT logged on"
    {
-      local oRoom;
+      local iInitialRoomID, oRoom;
 
-      oRoom = Send(SYS,@FindRoomByNum,#num=Send(self,@GetInitialRoomID));
+      iInitialRoomID = Send(Send(SYS,@GetSettings),@GetInitialRoomID);
+      oRoom = Send(SYS,@FindRoomByNum,#num=iInitialRoomID);
 
       if oRoom = $
       {
@@ -8719,11 +8731,6 @@ messages:
       }
 
       return;
-   }
-
-   GetInitialRoomID()
-   {
-      return RID_NEWB1;
    }
 
    TeleportTo(RID = RID_TOS,foyer=TRUE,bAdminPort=TRUE)

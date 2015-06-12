@@ -402,6 +402,7 @@
 #define IDC_WEATHER                     1208
 #define IDC_TEMPSAFE                    1209
 #define IDC_GROUPING                    1210
+#define IDC_SHOWFPS                     1211
 #define ID_GAME_EXIT                    3002
 #define ID_FONT_MAIL                    3014
 #define ID_FONT_LIST                    3015
@@ -465,7 +466,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        191
 #define _APS_NEXT_COMMAND_VALUE         3517
-#define _APS_NEXT_CONTROL_VALUE         1211
+#define _APS_NEXT_CONTROL_VALUE         1212
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif

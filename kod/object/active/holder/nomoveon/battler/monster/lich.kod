@@ -136,6 +136,7 @@ classvars:
    % Attack range of 192, or 3 row/col.
    viAttackRange = 192
    viKarma = -100
+   vbIsUndead = TRUE
    viDefault_behavior = \
       AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE \
       | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT
@@ -980,11 +981,6 @@ messages:
       Send(oQE,@SetQuestNodeNPCList,#index=iQNTindex,#new_NPC_list=[oBody]);
 
       return oBody;
-   }
-
-   IsUndead()
-   {
-      return TRUE;
    }
 
    DMCanArmageddon()

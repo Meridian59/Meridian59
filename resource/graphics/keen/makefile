@@ -24,16 +24,20 @@ DIRS = \
    bunny \
    wolf \
    elephant \
-   chupacabra \
-   
-all: 
+   chupacabra
+
+all:
 	@-for %i in ($(BGFS)) do \
-      @echo copying %i to client & \
-   	$(CP) %i $(CLIENTRUNDIR)\resource
+   	@$(CP) %i $(CLIENTRUNDIR)\resource >nul
 	@-for %i in ($(DIRS)) do \
 		@if EXIST %i (	cd %i & \
       @echo Make in %i & \
-	 	$(MAKE) /$(MAKEFLAGS) & \
+	 	$(MAKE) /$(MAKEFLAGS) $(COMMAND) &\
 		cd .. )
 
-!include $(TOPDIR)\rules.mak
+clean:
+	@-for %i in ($(DIRS)) do \
+		@echo Making clean in %i & \
+		@if EXIST %i ( cd %i & \
+	 	$(MAKE) /$(MAKEFLAGS) clean &\
+		cd .. )

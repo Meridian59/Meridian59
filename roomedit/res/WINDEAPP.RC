@@ -115,6 +115,7 @@ MENU_EDITOR MENU
   {
    MENUITEM "&Rectangle...", CM_OBJECTS_RECTANGLE
    MENUITEM "&Polygon (N sides)...", CM_OBJECTS_POLYGON
+   MENUITEM "&Torch at x/y", CM_OBJECTS_TORCH
   }
 
   MENUITEM "Delete object(s)\tDelete", CM_EDIT_DELETEOBJ
@@ -283,6 +284,7 @@ MENU_THINGS MENU
   {
    MENUITEM "Rectangle...", CM_OBJECTS_RECTANGLE
    MENUITEM "Polygon (N sides)...", CM_OBJECTS_POLYGON
+   MENUITEM "&Torch at x/y", CM_OBJECTS_TORCH
   }
 
   POPUP "Modes"
@@ -335,6 +337,7 @@ MENU_LINEDEFS MENU
   {
    MENUITEM "Rectangle...", CM_OBJECTS_RECTANGLE
    MENUITEM "Polygon (N sides)...", CM_OBJECTS_POLYGON
+   MENUITEM "&Torch at x/y", CM_OBJECTS_TORCH
   }
 
   POPUP "Modes"
@@ -374,6 +377,7 @@ MENU_VERTEXES MENU
   {
    MENUITEM "Rectangle...", CM_OBJECTS_RECTANGLE
    MENUITEM "Polygon (N sides)...", CM_OBJECTS_POLYGON
+   MENUITEM "&Torch at x/y", CM_OBJECTS_TORCH
   }
 
   POPUP "Modes"
@@ -414,6 +418,7 @@ MENU_SECTORS MENU
   {
    MENUITEM "Rectangle...", CM_OBJECTS_RECTANGLE
    MENUITEM "Polygon (N sides)...", CM_OBJECTS_POLYGON
+   MENUITEM "&Torch at x/y", CM_OBJECTS_TORCH
   }
 
   POPUP "Modes"
@@ -446,6 +451,7 @@ MENU_OBJECTS MENU
   {
    MENUITEM "Rectangle...", CM_OBJECTS_RECTANGLE
    MENUITEM "Polygon (N sides)...", CM_OBJECTS_POLYGON
+   MENUITEM "&Torch at x/y", CM_OBJECTS_TORCH
   }
 
   POPUP "Edit mode"
@@ -558,6 +564,7 @@ STRINGTABLE
  CM_SEARCH_NEXTOBJ, "Go to next object"
  CM_SEARCH_PREVOBJ, "Go to previous object"
  CM_SEARCH_JUMPOBJ, "Go to a object given its number"
+ CM_OBJECTS_TORCH, "Insert a torch\nInsert torch"
  CM_OBJECTS_RECTANGLE, "Insert a rectangle\nInsert rectangle"
  CM_OBJECTS_POLYGON, "Insert a polygon given its number of sides\nInsert polygon"
  CM_MODE_THINGS, "Switch to the 'things' editing mode\nThings mode"
@@ -731,6 +738,7 @@ CM_HELP_CONTENTS BITMAP "bitmaps\\CM_HELP_CONTENTS.bmp"
 CM_HELP_TUTORIAL BITMAP "bitmaps\\CM_HELP_TUTORIAL.bmp"
 CM_OBJECTS_RECTANGLE BITMAP "bitmaps\\CM_OBJECTS_RECTANGLE.bmp"
 CM_OBJECTS_POLYGON BITMAP "bitmaps\\CM_OBJECTS_POLYGON.bmp"
+CM_OBJECTS_TORCH BITMAP "bitmaps\\CM_OBJECTS_TORCH.bmp"
 CM_WINDOW_SHOWGRID BITMAP "bitmaps\\CM_WINDOW_SHOWGRID.bmp"
 CM_WINDOW_SNAPTOGRID BITMAP "bitmaps\\CM_WINDOW_SNAPTOGRID.bmp"
 CM_WINDOW_ZOOMOUT BITMAP "bitmaps\\CM_WINDOW_ZOOMOUT.bmp"
@@ -756,7 +764,7 @@ IDB_VSLIDERTHUMB BITMAP "bitmaps\\IDB_VSLIDERTHUMB.bmp"
 IDC_PASTE CURSOR "cursors\\IDC_PASTE.cur"
 IDC_INSERT CURSOR "cursors\\IDC_INSERT.cur"
 IDC_HELPCURSOR CURSOR "cursors\\IDC_HELPCURSOR.cur"
-IDC_HAND CURSOR "cursors\\IDC_HAND.cur"
+IDC_HANDC CURSOR "cursors\\IDC_HAND.cur"
 
 
 // About box.

@@ -103,6 +103,7 @@
 #define Default_Info_bar_option 103
 #define Default_Additive_selection_box_option 104
 #define Default_Select_0_option 105
+#define Insert_Torch 106
 #define Default_Draw_LineDef_length_option 107
 #define Default_Maximum_undo 108
 #define Search 109

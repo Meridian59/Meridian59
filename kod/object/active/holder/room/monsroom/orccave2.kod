@@ -52,9 +52,10 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Orc, 70], [&OrcWizard, 30] ];
-      plGenerators = [[44,33],[40,40],[34,46],[17,11],[30,15],[11,17],
-	 [19,50],[27,50],[25,44],[25,34],[30,30],[27,21],[009,30],[009,35]];
+      plMonsters = [ [&Orc, 20], [&OrcWizard, 50], [&CaveOrc, 30] ];
+      plGenerators = [[41,33], [40,42], [32,45], [15,14], [34,13],
+                      [13,17], [19,48], [27,50], [23,33], [31,31],
+                      [11,31], [12,46], [20,65], [28,66], [35,60] ];
       
       propagate;
    }
@@ -68,7 +69,7 @@ messages:
 
       propagate;
    }
-   
+
    CreateStandardObjects()
    {
       include oc02.ktm;

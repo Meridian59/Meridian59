@@ -207,6 +207,9 @@ messages:
 
       Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
 
+      % Add the magic flag to the item (colored name in lists).
+      Send(oItem,@AddMagicFlag);
+
       return;
    }
 
@@ -214,6 +217,15 @@ messages:
    AppendDesc(oItem=$,lData=$)
    {
       AppendTempString(vrDesc);
+
+      % Check if we have a valid lData list. If we don't, don't try to
+      % append the spell name to the description. This happens with
+      % artificed items.
+      if lData = $
+      {
+         return;
+      }
+
       AppendTempString(vrDesc2);
       AppendTempString(Send(Send(SYS,@FindSpellByNum,#num=Nth(lData,2)),@GetName));
 

@@ -40,7 +40,7 @@ properties:
    
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piGen_time = 150000
+   piGen_time = 20000
    piGen_percent = 80
    
    piRoom_Karma = 50                %%% Room Karma is the karma of the Faerie Forest

@@ -48,13 +48,13 @@ properties:
 
    pbSnowGroundTexture = TRUE
 
-   piGen_time = 180000
-   piGen_percent = 60
+   piGen_time = 20000
+   piGen_percent = 90
 
    piInit_count_min = 1
    piInit_count_max = 3
 
-   piMonster_count_max = 5
+   piMonster_count_max = 8
 
 messages:
 

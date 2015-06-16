@@ -46,7 +46,7 @@ properties:
 
    prMusic = kocsew1_music
 
-   piGen_time = 80000
+   piGen_time = 40000
    piGen_percent = 20
 
    piInit_count_min = 0

@@ -60,7 +60,7 @@ properties:
 
    ptDoorway = $
 
-   piGen_time = 70000
+   piGen_time = 25000
    piGen_percent = 85
 
    piInit_count_min = 9

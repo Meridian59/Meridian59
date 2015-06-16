@@ -45,7 +45,7 @@ properties:
    piInit_count_min = 7
    piInit_count_max = 13
 
-   piMonster_count_max = 13
+   piMonster_count_max = 15
 
    pbSnowGroundTexture = TRUE
 

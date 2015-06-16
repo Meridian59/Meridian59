@@ -70,7 +70,7 @@ properties:
 
    prMusic = Orcpit1_music
 
-   piGen_time = 50000
+   piGen_time = 25000
    piGen_percent = 80
 
    piInit_count_min = 7

@@ -1036,8 +1036,8 @@ resource_type make_resource(id_type id, const_type c, int la_id)
 {
    id_type old_id;
    list_type l;
-   class_type cl;
-   resource_type r;
+   class_type cl = NULL;
+   resource_type r = NULL;
 
    id->ownernum = st.curclass;
 

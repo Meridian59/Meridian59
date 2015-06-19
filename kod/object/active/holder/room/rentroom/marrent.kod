@@ -43,6 +43,7 @@ classvars:
 properties:
 
    prRoom = MarionRentableRoom_roo
+   piWallpaper = 50057 % WALLPAPER_B, default in marrent.roo.
 
 messages:
 

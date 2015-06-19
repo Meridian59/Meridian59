@@ -323,7 +323,10 @@ messages:
 
       if sector = $
       {
-         sector = random(viBedSectorMin,viBedSectorMax);
+         % Set the current bed sector to $, we might choose it in the random
+         % choice and still need to do the initial set up for it.
+         piBedSector = $;
+         sector = Random(viBedSectorMin,viBedSectorMax);
       }
 
       if piBedSector = sector

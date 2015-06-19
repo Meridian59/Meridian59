@@ -41,6 +41,7 @@ classvars:
 properties:
 
    prRoom = BarloqueRentableRoom_roo
+   piWallpaper = 50069 % WALLPAPER_D, the default in barrent.roo.
 
 messages:
 

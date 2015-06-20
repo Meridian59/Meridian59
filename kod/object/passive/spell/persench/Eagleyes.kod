@@ -67,7 +67,10 @@ classvars:
 
 properties:
 
-
+   % This controls how effective EE is at reducing CC duration.
+   % Higher value makes EE less effective.
+   % 200 = 50% reduction, 300 = 33% reduction.
+   piReductionFactor = 200 % Recommended value 300.
 messages:
 
    ResetReagents()
@@ -150,7 +153,8 @@ messages:
       }
 
       % Duration reduced 0-50%, depending on spellpower.
-      iNewDuration = iDuration - (iDuration * oEagleEyesStrength)/200;
+      iNewDuration = iDuration - (iDuration * oEagleEyesStrength)
+                        / piReductionFactor;
       Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
       
       if IsClass(oCaster,&Player)

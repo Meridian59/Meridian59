@@ -300,35 +300,36 @@ messages:
    "Returns whether the holder can accept the additional weight and bulk specified."
    {
       if Send(self,@GetWeightMax) <> $
-         AND (((Send(self,@GetWeightHold) + weight) > send(self,@GetWeightMax))
-				  AND weight <> 0)
+         AND (((Send(self,@GetWeightHold) + weight) > Send(self,@GetWeightMax))
+            AND weight <> 0)
       {
          return FALSE;
       }
 
       if Send(self,@GetBulkMax) <> $
-         AND (((Send(self,@GetBulkHold) + bulk) > send(self,@GetBulkMax)
+         AND (((Send(self,@GetBulkHold) + bulk) > Send(self,@GetBulkMax)
               AND bulk <> 0))
       {
          return FALSE;
       }
-      
+
       return TRUE;
    }
 
    GetNumberCanHold(what = $)
    {
       local iBulk_can_hold, iWeight_can_hold, iUnit_bulk, iUnit_weight;
-      
+
       if NOT IsClass(what,&NumberItem)
          OR send(self,@GetBulkMax) = $
          OR send(self,@GetWeightMax) = $
       {
          return $;
       }
+
       return Send(what,@GetNumberCanHold,
-                  #weight=send(self,@GetWeightMax)-Send(self,@GetWeightHold),
-                  #bulk=send(self,@GetBulkMax)-Send(self,@GetBulkHold));
+                  #weight=Bound(Send(self,@GetWeightMax)-Send(self,@GetWeightHold),0,$),
+                  #bulk=Bound(Send(self,@GetBulkMax)-Send(self,@GetBulkHold),0,$));
    }
 
    NewHold(what = $)

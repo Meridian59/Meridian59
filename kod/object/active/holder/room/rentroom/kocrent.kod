@@ -7,8 +7,8 @@
 % Meridian is a registered trademark.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MarionRentableRoom is RentableRoom
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanRentableRoom is RentableRoom
 
 constants:
 
@@ -16,35 +16,34 @@ constants:
 
 resources:
 
-   MarionRentableRoom_name = "A comfortable room"
-   MarionRentableRoom_roo = marrent.roo
+   KocatanRentableRoom_name = "A comfortable room"
+   KocatanRentableRoom_roo = kocrent.roo
 
-   MarionRentableRoom_landlord = "Morrigan"
+   KocatanRentableRoom_landlord = "Moxal ix'Hanak"
 
 classvars:
 
-   vrName = MarionRentableRoom_name
+   vrName = KocatanRentableRoom_name
 
    viTeleport_row = 10
    viTeleport_col = 10
 
-   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
-
    viBedSectorMin = 1
    viBedSectorMax = 5
-   viPictureLocationMax = 5
+   viPictureLocationMax = 6
 
-   vrLandlord = MarionRentableRoom_landlord
-   viLocation = RID_MAR_INN
+   vrLandlord = KocatanRentableRoom_landlord
+   viLocation = RID_KOC_INN
 
    viDecorator_row = 9
    viDecorator_col = 10
 
 properties:
 
-   prRoom = MarionRentableRoom_roo
-   piWallpaper = 50057 % WALLPAPER_B, default in marrent.roo.
-   piCarpet = 50050 % CARPET_A, default in barrent.roo.
+   prRoom = KocatanRentableRoom_roo
+
+   piCarpet = 08961    % CARPET_G
+   piWallpaper = 50078 % WALLPAPER_G
 
 messages:
 
@@ -63,11 +62,12 @@ messages:
       % Format for plPictureCoords: coordinates nearest picture, followed by
       % the next nearest coordinates.
       % Each top-level list (one per line) is one picture position
-      plPictureCoords = [ [ [8,11], [8,10], [8,12] ],
-                          [ [9,9], [8,9], [9,10] ],
-                          [ [11,9], [10,9], [12,9] ],
-                          [ [12,10], [12,11], [11,10] ],
-                          [ [10,11], [11,11], [10,10], [9,11] ]
+      plPictureCoords = [ [ [8,9], [8,10] ],
+                          [ [9,9] ],
+                          [ [10,9] ],
+                          [ [11,9] ],
+                          [ [12,9] ],
+                          [ [12,10], [12,11] ]
                         ];
 
       propagate;
@@ -75,20 +75,20 @@ messages:
 
    SomethingTryGo(what = $,row = $,col = $)
    {
-      if row = 8 AND col = 12
+      if row = 10 AND col = 13
       {
          Send(what,@MsgSendUser,#message_rsc=RentableRoom_teleport);
          Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
                #duration=750);
-         Send(Send(SYS,@FindRoomByNum,#num=RID_MAR_INN),@NewHold,#what=what,
-               #new_row=6,#new_col=9,#new_angle=ANGLE_WEST);
+         Send(Send(SYS,@FindRoomByNum,#num=RID_KOC_INN),@NewHold,#what=what,
+               #new_row=8,#new_col=8,#new_angle=ANGLE_NORTH);
 
          return TRUE;
       }
 
       propagate;
    }
-   
+
    CreateStandardObjects()
    {
       Send(self,@NewHold,#what=Create(&Bell),
@@ -99,11 +99,11 @@ messages:
 
    Enter(who=$)
    {
-      Send(self,@NewHold,#what=who,#new_row=8,#new_col=11,
+      Send(self,@NewHold,#what=who,#new_row=10,#new_col=13,
             #new_angle=ANGLE_WEST);
 
       return;
    }
 
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -21,7 +21,7 @@ resources:
    Flash_desc_rsc = \
       "Causes a bright flash, likely to interrupt the concentration of any "
       "spellcasters in the area or confuse monsters temporarily.  "
-      "Requires the eyes of a dragonfly to cast."
+      "Requires a set of eyes from a dragonfly to cast."
 
    flash_sound = rflash.wav
 
@@ -46,7 +46,7 @@ classvars:
    viNoNewbieOffense = TRUE
 
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -69,13 +69,13 @@ messages:
 
       lFinalTargets = $;
 
-      oRoom = send(who,@GetOwner);
-      for i in send(oRoom,@GetHolderActive)
+      oRoom = Send(who,@GetOwner);
+      for i in Send(oRoom,@GetHolderActive)
       {
-         each_obj = send(oRoom,@HolderExtractObject,#data=i);
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Battler)
          {
-            lFinalTargets = cons(each_obj,lFinalTargets);
+            lFinalTargets = Cons(each_obj,lFinalTargets);
          }
       }
 
@@ -86,13 +86,13 @@ messages:
    {
       local oRoom, i, iChance, oHold;
       
-      oRoom = send(who,@GetOwner);
+      oRoom = Send(who,@GetOwner);
 
       % What's our chance to affect the target?
       iChance = 33 + ((2 * iSpellPower) / 3);
 
       % Find the hold spell to temporarily hold monsters
-      oHold = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      oHold = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
 
       if IsClass(who,&Player)
       {
@@ -101,30 +101,30 @@ messages:
 
       for i in lTargets
       {
-         if random(1,100) > iChance
+         if Random(1,100) > iChance
          {
             continue;
          }
-         
+
          if IsClass(i,&Player) 
          {
-            if send(i,@CheckPlayerFlag,#flag=PFLAG_TRANCE)
-            { 
-               send(i,@BreakTrance,#event=EVENT_DISRUPT); 
- 	         }
- 	         
+            if Send(i,@CheckPlayerFlag,#flag=PFLAG_TRANCE)
+            {
+               Send(i,@BreakTrance,#event=EVENT_DISRUPT); 
+            }
+
             Send(i,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
          }
          else
          {
             % Is a monster, stun it.
-            send(oHold,@DoHold,#what=who,#otarget=i,#iDurationSecs=1,#bAllowFreeAction=FALSE);
+            Send(oHold,@DoSpell,#what=who,#oTarget=i,#iDuration=1000,
+                  #report=FALSE,#bAllowFreeAction=FALSE);
          }
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

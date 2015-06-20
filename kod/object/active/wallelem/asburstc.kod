@@ -14,8 +14,8 @@ constants:
 
    include blakston.khd
 
-   % What's the base duration for the hold effect?
-   BASE_HOLD_DURATION = 5 
+   % What's the base duration for the hold effect in milliseconds?
+   BASE_HOLD_DURATION = 5000
 
 resources:
 
@@ -50,7 +50,7 @@ properties:
    piDrawFx = DRAWFX_TRANSLUCENT_50
 
    piRangeSquared = 1
-   piBonus = 1
+   piBonus = 1000 % Milliseconds.
 
 messages:
 
@@ -59,7 +59,7 @@ messages:
       if range <> $
       {
          piRange = range;
-         piBonus = range;
+         piBonus = range * 1000;
       }
 
       propagate;
@@ -71,8 +71,8 @@ messages:
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
 
-      Send(oSpell,@DoHold,#what=self,#otarget=what,
-            #iDurationSecs=BASE_HOLD_DURATION+piBonus);
+      Send(oSpell,@DoSpell,#what=self,#otarget=what,
+            #iDuration=BASE_HOLD_DURATION + piBonus);
       Send(poOwner,@SomethingAttacked,#what=poCaster,#victim=what,
             #use_weapon=self,#stroke_obj=self);
 

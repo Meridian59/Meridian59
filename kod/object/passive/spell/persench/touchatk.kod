@@ -112,17 +112,6 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $,iSpellPower=0,lTargets=$)
-   {
-      % Remove other touch attack spells.  Won't remove self, because
-      %  we've checked for re-enchantment in CanPayCosts.
-      Send(who,@RemoveEnchantmentClass,#class=&TouchAttackSpell);
-      
-      Send(who,@GainLight,#amount=viEnchantmentLight);
-      
-      propagate;
-   }
-
    EndEnchantment(who = $, report = TRUE, state = 0)
    {
       Send(who,@LoseLight,#amount=viEnchantmentLight);
@@ -446,11 +435,16 @@ messages:
 
       % Min 2 minutes
       return Bound(iDuration,120000,$);
-   }  
+   }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(iSpellpower=$,target=$)
    {
-      Return iSpellpower;
+      % Remove other touch attack spells.  Won't remove self, because
+      % we've checked for re-enchantment in CanPayCosts.
+      Send(target,@RemoveEnchantmentClass,#class=&TouchAttackSpell);
+      Send(target,@GainLight,#amount=viEnchantmentLight);
+
+      return iSpellpower;
    }
 
    SuccessChance(who=$)

@@ -754,7 +754,7 @@ messages:
       {
          if First(i) = timer
          {
-            if Length(i) > 2
+            if Length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                Send(Nth(i,2),@EndEnchantment,#who=self,#state=Nth(i,3));
             }
@@ -774,11 +774,11 @@ messages:
       return;
    }
 
-   StartEnchantment(what = $,time = $,state=$)
+   StartEnchantment(what = $,time = $,state=$, iSpellPower = 0)
    "Adds <what> to our enchantments, and creates a timer that will cause it "
    "to end."
    {
-      local oTimer,lNew_enchantment;
+      local oTimer, lNew_enchantment;
 
       if time = $ or time = SPELL_INDEFINITE_DURATION 
       {
@@ -791,11 +791,11 @@ messages:
 
       if state <> $
       {
-         lNew_enchantment = [ oTimer, what, state ];
+         lNew_enchantment = [ oTimer, what, state, iSpellPower ];
       }
       else
       {
-         lNew_enchantment = [ oTimer, what ];
+         lNew_enchantment = [ oTimer, what, iSpellPower ];
       }
 
       plEnchantments = Cons(lNew_enchantment,plEnchantments);
@@ -826,7 +826,7 @@ messages:
    RemoveEnchantment(what = $)
    "If have a current enchantment set by <what>, end it."
    {
-      local i,state;
+      local i, state;
 
       state = $;
 
@@ -843,7 +843,7 @@ messages:
             }
             SetNth(i,1,$);
 
-            if Length(i) > 2
+            if Length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,
                     #state=Nth(i,3));

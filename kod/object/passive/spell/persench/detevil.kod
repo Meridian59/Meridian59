@@ -71,14 +71,6 @@ messages:
       return;
    }
 
-   CastSpell(who=$,iSpellPower=0)
-   {
-      % Post this so it's after the flag being applied.
-      Post(who,@ToCliRoomContents);
-
-      propagate;
-   }
-
    SetSpellPlayerFlag(who=$)
    {
       Send(who,@SetPlayerFlag,#flag=PFLAG2_DETECT_EVIL,#flagset=2,#value=TRUE);
@@ -86,9 +78,12 @@ messages:
       return;
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(iSpellpower=$,who=$,target=$)
    {
-      return iSpellPower;
+      % Post this so it's after the flag being applied.
+      Post(target,@ToCliRoomContents);
+
+      return iSpellpower;
    }
 
    GetDuration(iSpellpower=0)

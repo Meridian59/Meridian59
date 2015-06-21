@@ -104,10 +104,10 @@ messages:
            #parm1=Send(oIllusion,@GetIndef),#parm2=Send(oIllusion,@GetName));
 
       iTime = 1000*(90 + 2*iSpellPower); 
-      iTime = random(iTime/2,iTime);
+      iTime = Random(iTime/2,iTime);
 
       Send(victim,@StartEnchantment,#what=self,#time=iTime,
-           #state=iIllusion_type);
+            #state=iIllusion_type,#iSpellPower=iSpellPower);
       Send(victim,@SetPlayerIllusion,#what=self);
       
       return;

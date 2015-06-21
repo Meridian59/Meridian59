@@ -175,12 +175,14 @@ messages:
       iTime = iTime * 1000;
 
       Send(oRoom,@SomethingWaveRoom,#what=victim,#wave_rsc=morph_scream_wav);
-      Send(victim,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=MORPH_PAIN_TIME);
+      Send(victim,@EffectSendUserDuration,#effect=EFFECT_PAIN,
+            #duration=MORPH_PAIN_TIME);
 
-      Send(victim,@StartEnchantment,#what=self,#time=iTime,#state=[iIllusion_type,changeHP]);
+      Send(victim,@StartEnchantment,#what=self,#time=iTime,
+            #state=[iIllusion_type,changeHP],#iSpellPower=iSpellPower);
 
       Send(victim,@SetPlayerIllusion,#what=self);
-      
+
       return;
    }
 

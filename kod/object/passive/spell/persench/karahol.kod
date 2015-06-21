@@ -81,15 +81,10 @@ messages:
       return;
    }
 
-   CastSpell(who=$,iSpellPower=0,lTargets=$)
+   GetStateValue(iSpellpower=$,target=$)
    {
-      Send(who,@AddAttackModifier,#what=self);
+      Send(target,@AddAttackModifier,#what=self);
 
-      propagate;
-   }
-
-   GetStateValue(iSpellpower=$)
-   {
       return iSpellpower;
    }
 

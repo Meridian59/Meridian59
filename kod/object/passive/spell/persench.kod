@@ -198,7 +198,7 @@ messages:
             #state=Send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,
             #target=oTarget),#time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
             #lastcall=Send(self,@GetLastCall),#addicon=Send(self,@GetAddicon),
-            #who=who,#ltype=lType,#bItemCast=bItemCast);
+            #who=who,#ltype=lType,#bItemCast=bItemCast,#iSpellpower=iSpellpower);
 
       % GetStateValue is sometimes (eg used for pre-enchantment behaviors,
       % who is the caster, target is the target (sometimes the same as who).

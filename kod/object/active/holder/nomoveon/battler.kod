@@ -297,7 +297,7 @@ messages:
       {
          for oEnchantment in Send(self,@GetEnchantmentList)
          {
-            if Length(oEnchantment) > 2
+            if Length(oEnchantment) > ENCHANTMENT_LIST_NO_STATE
             {
                plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances,#iState=Nth(oEnchantment,3));
             }
@@ -438,6 +438,7 @@ messages:
       for i in plEnchantments
       {
          if Nth(i,2) = what
+            AND Length(i) > ENCHANTMENT_LIST_NO_STATE
          {
             return Nth(i,3);
          }
@@ -447,7 +448,7 @@ messages:
    }
 
    GetEnchantmentsByClass(enchClass=&Spell)
-   "returns a subset of plEnchantments whose elements are of the given class"
+   "Returns a subset of plEnchantments whose elements are of the given class."
    {
       local i, returnList;
       returnList = $;
@@ -479,7 +480,7 @@ messages:
       {
          if Nth(i,2) = what
          {
-            if Length(i) > 3
+            if Length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                iCastPower = Nth(i,4);
             }

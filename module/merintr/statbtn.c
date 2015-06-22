@@ -31,12 +31,13 @@ typedef struct {
   int  name;            // Resource identifier for tooltip name string (0 if none)
 } StatButton;
 
-#define NUM_BUTTONS 4
+#define NUM_BUTTONS 5
 
 static StatButton buttons[NUM_BUTTONS] = {
   { IDB_SBUTTON1_LEFT, IDB_SBUTTON1_MID, IDB_SBUTTON1_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_STATS },
   { IDB_SBUTTON2_LEFT, IDB_SBUTTON2_MID, IDB_SBUTTON2_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_SPELLS },
   { IDB_SBUTTON3_LEFT, IDB_SBUTTON3_MID, IDB_SBUTTON3_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_SKILLS },
+  { IDB_SBUTTON5_LEFT, IDB_SBUTTON4_MID, IDB_SBUTTON4_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_QUEST },
   { IDB_SBUTTON4_LEFT, IDB_SBUTTON4_MID, IDB_SBUTTON4_RIGHT, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0, 0, IDS_TT_INVENTORY },
 };
 
@@ -179,7 +180,7 @@ void StatsMoveButtons(void)
 		switch( i )
 		{
 		case 0:
-			button = &buttons[3];		//	Inventory
+			button = &buttons[4];		//	Inventory
 			break;
 		case 1:
 			button = &buttons[1];		//	Spells
@@ -190,6 +191,9 @@ void StatsMoveButtons(void)
 		case 3:
 			button = &buttons[0];		//	Stats
 			break;
+      case 4:
+         button = &buttons[3];		//	Quests
+         break;
 		}
 		if( button->hwnd == NULL )
 			continue;
@@ -427,6 +431,7 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			ShowInventory( False );
 //			StatsShowGroup( True );
 		}
+
 		if( group == STATS_INVENTORY )
 		{
 			//	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.

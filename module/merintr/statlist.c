@@ -45,14 +45,25 @@ void StatsListCreate(list_type stats)
 {
    list_type l;
 
-   hList = CreateWindow("listbox", NULL, 
-			WS_CHILD | 
-			LBS_HASSTRINGS | LBS_SORT | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
-			0, 0, 0, 0, hStats, (HMENU) IDC_STATLIST, hInst, NULL);
+   if (StatsGetCurrentGroup() == STATS_QUESTS)
+   {
+      hList = CreateWindow("listbox", NULL,
+         WS_CHILD |
+         LBS_HASSTRINGS | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
+         0, 0, 0, 0, hStats, (HMENU)IDC_STATLIST, hInst, NULL);
+   }
+   else
+   {
+      hList = CreateWindow("listbox", NULL,
+         WS_CHILD |
+         LBS_HASSTRINGS | LBS_SORT | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
+         0, 0, 0, 0, hStats, (HMENU)IDC_STATLIST, hInst, NULL);
+   }
+
    lpfnDefStatListProc = SubclassWindow(hList, StatsListProc);
 
    SetWindowFont(hList, GetFont(FONT_STATS), FALSE);
-   
+
    for (l = stats; l != NULL; l = l->next)
    {
       int index;
@@ -263,12 +274,31 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    if (s == NULL)
       return;
 
-   sprintf(str, "%s %d%%", LookupNameRsc(s->name_res), s->list.value);
+   if (StatsGetCurrentGroup() == STATS_QUESTS)
+   {
+      if (s->list.value == 0)
+         sprintf(str, "%s", LookupNameRsc(s->name_res));
+      else
+         sprintf(str, "%d: %s", s->list.value, LookupNameRsc(s->name_res));
+   }
+   else
+      sprintf(str, "%s %d%%", LookupNameRsc(s->name_res), s->list.value);
 
    SetBkMode(lpdis->hDC, TRANSPARENT);
 
    memcpy(&r, &lpdis->rcItem, sizeof(RECT));
-   r.left += ENCHANT_SIZE + 2;
+   if (StatsGetCurrentGroup() == STATS_QUESTS && s->list.value == 0)
+   {
+      r.left += 2;
+   }
+   else if (StatsGetCurrentGroup() == STATS_QUESTS)
+   {
+      r.left += 8;
+   }
+   else
+   {
+      r.left += ENCHANT_SIZE + 2;
+   }
    // Draw text with drop shadow
    SetTextColor(lpdis->hDC, GetColor(COLOR_STATSBGD));
    //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
@@ -353,16 +383,16 @@ void StatsListLButtonDblClk(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT key
    {
       if( StatsGetCurrentGroup() == STATS_SPELLS )
       {
-	 strcpy( pszCommand, "cast " );
+         strcpy( pszCommand, "cast " );
       }
       else if (StatsGetCurrentGroup() == STATS_SKILLS)
       {
-	 strcpy( pszCommand, "perform " );
-	 return; // not implimented yet
+         strcpy( pszCommand, "perform " );
+         return; // not implimented yet
       }
       else
       {
-	 return;  // not going to do anything for non skills/stats
+         return;  // not going to do anything for non skills/stats
       }
       strcat( pszCommand, pszLabel );
       PerformAction( A_GOTOMAIN, NULL );	//	For targeting icon to appear, focus must be on main view window.
@@ -390,7 +420,10 @@ void StatsListRButton(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
    s = (Statistic *) ListBox_GetItemData(hwnd, index);
    if (s == NULL)
       return;
- 
+
+   if (StatsGetCurrentGroup() == STATS_QUESTS && s->list.value == 0)
+      return;
+
    SetDescParams(cinfo->hMain, DESC_NONE);
    RequestLook(s->list.id);
 }

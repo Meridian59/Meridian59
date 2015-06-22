@@ -983,9 +983,9 @@ messages:
       return;
    }
 
-   DeadlineExpired()
+   DeadlineExpired(bRecreate=FALSE)
    {
-      local oQE, oNPC, bDebug;
+      local i, oQE, oNPC, bDebug;
 
       oQE = Send(SYS, @GetQuestEngine);
       bDebug = Send(oQE,@GetDebugStatus);
@@ -1019,6 +1019,14 @@ messages:
          % Debug("Quest::DeadlineExpired: possible double-expiry going on...");
       }
 
+      if bRecreate
+      {
+         for i in plQuesters
+         {
+            Send(i,@RemoveCurrentQuest,#index=piQuestTemplateIndex);
+         }
+      }
+
       Send(self,@Delete);
 
       return;
@@ -1034,9 +1042,9 @@ messages:
       return piQuestTemplateIndex;
    }
 
-   Cancel()
+   Cancel(bRecreate=FALSE)
    {
-      Send(self,@DeadlineExpired);
+      Send(self,@DeadlineExpired,#bRecreate=bRecreate);
       poQuestNode = $;
 
       return;

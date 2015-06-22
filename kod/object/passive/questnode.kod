@@ -617,6 +617,13 @@ messages:
       piDeadline = GetTime() + Send(oQuestEngine,@GetQuestNodeTimeLimit,
                                     #index=piQuestNodeTemplateIndex );
 
+      % Give the player(s) the quest and questnode to keep track of.
+      for oQuester in Send(poQuest,@GetQuesters)
+      {
+         Send(oQuester,@AddCurrentQuest,#node=self,
+               #template=Send(poQuest,@GetQuestTemplateIndex));
+      }
+
       return TRUE;
    }
 
@@ -887,7 +894,7 @@ messages:
          Send(self,@DeadlineExpired);
 
          return;
-      }   
+      }
 
       piStatus = QN_STATUS_COMPLETED;
       if NOT Send(poQuest,@QuestHasMoreNodes)
@@ -897,7 +904,7 @@ messages:
             Send(oQuester,@AddQuestHistory,
                  #index=Send(poQuest,@GetQuestTemplateIndex),
                  #success=TRUE);
-         }      
+         }
       }
 
       Post(poQuest,@AssignNextNode,#current_NPC=poDestNPC);

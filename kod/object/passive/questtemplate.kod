@@ -1,0 +1,290 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+QuestTemplate is PassiveObject
+
+% The QuestTemplate classes store data for that particular QST_ID to allow
+% quest descriptions to be put together based on which quest node is active
+% for the given player. We could eventually store other data here such as
+% quest initialisation, quest resources and timers to make the quest system
+% more efficient.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Same icon as the book item.
+   questtemplate_icon_rsc = book1.bgf
+   questtemplate_name_rsc = "default quest"
+   questtemplate_desc_rsc = "Initial default quest description."
+
+   % Resources for making the timer part of description.
+   questtemplate_outoftime_rsc = \
+      "\n\nYou are almost out of time!"
+   questtemplate_time_sec_rsc = \
+      "\n\nYou have %i second remaining to complete this quest."
+   questtemplate_time_secs_rsc = \
+      "\n\nYou have %i seconds remaining to complete this quest."
+   questtemplate_time_min_rsc = \
+      "\n\nYou have %i minute remaining to complete this quest."
+   questtemplate_time_mins_rsc = \
+      "\n\nYou have %i minutes remaining to complete this quest."
+   questtemplate_time_hour_min_rsc = \
+      "\n\nYou have %i hour and %i minute remaining to complete this quest."
+   questtemplate_time_hour_mins_rsc = \
+      "\n\nYou have %i hour and %i minutes remaining to complete this quest."
+   questtemplate_time_hours_min_rsc = \
+      "\n\nYou have %i hours and %i minutes remaining to complete this quest."
+   questtemplate_time_hours_mins_rsc = \
+      "\n\nYou have %i hours and %i minutes remaining to complete this quest."
+   questtemplate_time_hour_rsc = \
+      "\n\nYou have %i hour remaining to complete this quest."
+   questtemplate_time_hours_rsc = \
+      "\n\nYou have %i hours remaining to complete this quest."
+
+   questtemplate_master_time_rsc = "%r%r"
+
+classvars:
+
+   vrIcon = questtemplate_icon_rsc
+   vrName = questtemplate_name_rsc
+   vrDesc = questtemplate_desc_rsc
+   vrCompleted = questtemplate_desc_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_NONE
+
+properties:
+
+   piNumPlayers = 0
+   piQuestType = $
+   piPlayerRestrict = $
+   plSpecialRestrict = $
+   plQuestNodes = $
+   piMaxPlayers = 30
+   piSchedulePct = 0
+
+   % List of quest node indexes and matching resources to give
+   % to the user for the quest log.
+   plQuestNodeDesc = $
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@SendQuestTemplate);
+
+      propagate;
+   }
+
+   SendQuestTemplate()
+   {
+      local oQE;
+
+      oQE = Send(SYS,@GetQuestEngine);
+
+      Send(oQE,@AddQuestTemplate,#num_players=piNumPlayers,
+            #quest_type=piQuestType,#player_restrict=piPlayerRestrict,
+            #player_restrict2=plSpecialRestrict,#nodes=plQuestNodes,
+            #max_active=piMaxPlayers,#schedule_pct=piSchedulePct,
+            #quest_index=viQuestID,#quest_object=self);
+
+      return;
+   }
+
+   Delete()
+   {
+      piNumPlayers = $;
+      piQuestType = $;
+      piPlayerRestrict = $;
+      plSpecialRestrict = $;
+      plQuestNodes = $;
+      piMaxPlayers = $;
+      piSchedulePct = $;
+
+      plQuestNodeDesc = $;
+
+      propagate;
+   }
+
+   GetQuestID()
+   {
+      return viQuestID;
+   }
+
+   ShowDesc(who=$)
+   {
+      local i, iDeadLine, iQNIndex, iTimeLeft, oQuestNode, rTime;
+
+      if who = $
+         OR plQuestNodeDesc = $
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
+
+      % Find out which quest node the player is on.
+      oQuestNode = Send(who,@GetActiveQuestNode,#index=viQuestID);
+
+      if oQuestNode = $
+      {
+         AddPacket(4,vrCompleted);
+
+         return;
+      }
+
+      iQNIndex = Send(oQuestNode,@GetQuestNodeTemplateIndex);
+
+      for i in plQuestNodeDesc
+      {
+         if First(i) = iQNIndex
+         {
+            % Get time remaining.
+            iDeadLine = Send(oQuestNode,@GetDeadline);
+            if iDeadLine <> $
+            {
+               iTimeLeft = iDeadLine - GetTime();
+               AddPacket(4,questtemplate_master_time_rsc, 4,Nth(i,2));
+               % Quests might want to add extra parameters here.
+               Send(self,@ExtraDesc,#index=iQNIndex,#oQuestNode=oQuestNode);
+               % Add time.
+               Send(self,@SendTimeRemaining,#iTime=iTimeLeft);
+            }
+            else
+            {
+               AddPacket(4,Nth(i,2));
+               % Quests might want to add extra parameters here.
+               Send(self,@ExtraDesc,#index=iQNIndex,#oQuestNode=oQuestNode);
+            }
+
+            return;
+         }
+      }
+
+      % If we get this far and didn't get a description, we aren't
+      % going to show anything. Log a debug message for it.
+      Debug("User ",Send(who,@GetTrueName)," got no description for quest ",
+            vrName);
+
+      return;
+   }
+
+   ExtraDesc()
+   "Quests can customise this to send individual resources for quest nodes, "
+   "add NPC, prize and penalty resources and any other data."
+   {
+      return;
+   }
+
+   SendTimeRemaining(iTime=0)
+   {
+      local iMinutes, iHours;
+
+      % Grammatically correct time, multiple cases.
+
+      if iTime < 1
+      {
+         AddPacket(4,questtemplate_outoftime_rsc);
+
+         return;
+      }
+
+      if iTime = 1
+      {
+         AddPacket(4,questtemplate_time_sec_rsc, 4,iTime);
+
+         return;
+      }
+
+      if iTime <= 60
+      {
+         AddPacket(4,questtemplate_time_secs_rsc, 4,iTime);
+
+         return;
+      }
+
+      % Switch to minutes.
+      iTime = iTime / 60;
+
+      if iTime < 2
+      {
+         AddPacket(4,questtemplate_time_min_rsc, 4,iTime);
+
+         return;
+      }
+
+      if iTime < 60
+      {
+         AddPacket(4,questtemplate_time_mins_rsc, 4,iTime);
+
+         return;
+      }
+
+      % Add hours.
+      iHours = iTime / 60;
+      iMinutes = iTime MOD 60;
+
+      if iTime = 60
+      {
+         AddPacket(4,questtemplate_time_hour_rsc, 4,iHours);
+
+         return;
+      }
+
+      if iTime = 61
+      {
+         AddPacket(4,questtemplate_time_hour_min_rsc, 4,iHours, 4,iMinutes);
+
+         return;
+      }
+
+      if iHours = 1
+      {
+         AddPacket(4,questtemplate_time_hour_mins_rsc, 4,iHours, 4,iMinutes);
+
+         return;
+      }
+
+      if iMinutes = 0
+      {
+         AddPacket(4,questtemplate_time_hours_rsc, 4,iHours);
+
+         return;
+      }
+
+      if iMinutes = 1
+      {
+         AddPacket(4,questtemplate_time_hours_min_rsc, 4,iHours, 4,iMinutes);
+
+         return;
+      }
+
+      AddPacket(4,questtemplate_time_hours_mins_rsc, 4,iHours, 4,iMinutes);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

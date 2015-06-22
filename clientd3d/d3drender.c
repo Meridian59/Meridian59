@@ -1385,8 +1385,8 @@ void D3DRenderBegin(room_type *room, Draw3DParams *params)
 		debug(("number of vertices = %d\nnumber of dp calls = %d\n", gNumVertices,
 		gNumDPCalls));
 
-   debug(("all = %d lmaps = %d wrld = %d obj = %d  particles = %d sky = %d init = %d\n",
-		timeOverall, timeLMaps, timeWorld, timeObjects, timeParticles, timeSkybox+timeSkybox2, timeInit));
+   //debug(("all = %d lmaps = %d wrld = %d obj = %d  particles = %d sky = %d init = %d\n",
+		//timeOverall, timeLMaps, timeWorld, timeObjects, timeParticles, timeSkybox+timeSkybox2, timeInit));
 }
 
 void D3DRenderWorldDraw(d3d_render_pool_new *pPool, room_type *room, Draw3DParams *params)

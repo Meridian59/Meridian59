@@ -22,6 +22,14 @@ enum {
    STYLE_RESET     = 3,
 };
 
+#define MAXQPARAMS 25  /* Maximum # of %q parameters in a server message when fully expanded */
+
+typedef struct {
+   int fieldPos[MAXQPARAMS];
+   int size[MAXQPARAMS];
+   int bytePos[MAXQPARAMS];
+} PosArray;
+
 M59EXPORT Bool CheckServerMessage(char** message, char **params, long len, ID fmt_id);
 M59EXPORT void DisplayServerMessage(char *message, COLORREF start_color, BYTE start_style);
 M59EXPORT void DisplayMessage(char *message, COLORREF start_color, BYTE start_style);

@@ -2831,17 +2831,36 @@
 
    %%% NEW Quests
 
+   QUEST_MAX_NUM_PLAYERS = 5
+   QUEST_MAX_MAX_ACTIVE = 100
+
    % Field names for a QuestTemplate
-   QT_NUM_PLAYERS       = 1
-   QT_QUEST_TYPE        = 2
-   QT_PLAYER_RESTRICT   = 3
-   QT_QUEST_NODES       = 4
-   QT_MAX_NUM_ACTIVE    = 5
-   QT_ACTIVE_QUESTS     = 6
-   QT_SCHEDULE_CHANCE   = 7
-   QT_PLAYER_RESTRICT2  = 8
+   QT_QST_ID            = 1
+   QT_QUEST_OBJECT      = 2
+   QT_NUM_PLAYERS       = 3
+   QT_QUEST_TYPE        = 4
+   QT_PLAYER_RESTRICT   = 5
+   QT_QUEST_NODES       = 6
+   QT_MAX_NUM_ACTIVE    = 7
+   QT_ACTIVE_QUESTS     = 8
+   QT_SCHEDULE_CHANCE   = 9
+   QT_PLAYER_RESTRICT2  = 10
+
+   % Field names for a QuestNodeTemplate
+   QNT_NPC_LIST      = 1
+   QNT_NPC_MODIFIER  = 2
+   QNT_TYPE          = 3
+   QNT_CARGO_LIST    = 4
+   QNT_MONSTER_LIST  = 5
+   QNT_PRIZE_LIST    = 6
+   QNT_PENALTY_LIST  = 7
+   QNT_ASSIGN_HINT   = 8
+   QNT_SUCCESS_HINT  = 9
+   QNT_FAILURE_HINT  = 10
+   QNT_TIME_LIMIT    = 11
 
    % Quest ID flags
+   QST_ID_NONE                   = 0
    QST_ID_SHALILLE_DISCIPLE      = 1
    QST_ID_KRAANAN_DISCIPLE       = 2
    QST_ID_FAREN_DISCIPLE         = 3

@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShalDiscQuest is QuestTemplate
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   shalquest_name_rsc = "Shal'ille disciple quest"
+   shalquest_desc_rsc = \
+      "Priestess Xiana has asked you to go to %s and speak "
+      "the words: \"The ways of violence and destruction have hardened our "
+      "people.  It is time to move towards gentleness and peace.  I will "
+      "begin this process by granting forgiveness for your deeds.  Please "
+      "accept my blessing.\".  Return when you have completed this task."
+
+   shalquest_node_three_rsc = \
+      "Return to Priestess Xiana and let her know the task has been "
+      "completed."
+
+   shalquest_completed = \
+      "You have completed the Shal'ille disciple quest.  You are a faithful "
+      "disciple of Shal'ille, and Priestess Xiana will now teach you more "
+      "powerful spells."
+
+classvars:
+
+   vrName = shalquest_name_rsc
+   vrDesc = shalquest_desc_rsc
+
+   vrNodeTwo = shalquest_desc_rsc
+   vrNodeThree = shalquest_node_three_rsc
+   vrCompleted = shalquest_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_SHALILLE_DISCIPLE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTSUCCEEDED | Q_PLAYER_NOTFAILED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [12, 13, 14];
+
+      % Quest nodes with matching descriptions for the player.
+      % No description needed for quest node 12.
+      plQuestNodeDesc = [ [13,vrNodeTwo], [14,vrNodeThree] ];
+
+      propagate;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      % Quest node 13 dialog needs the NPC name.
+      if index = 13
+      {
+         AddPacket(4,Send(Send(oQuestNode,@GetDestNPC),@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

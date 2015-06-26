@@ -2847,17 +2847,18 @@
    QT_PLAYER_RESTRICT2  = 10
 
    % Field names for a QuestNodeTemplate
-   QNT_NPC_LIST      = 1
-   QNT_NPC_MODIFIER  = 2
-   QNT_TYPE          = 3
-   QNT_CARGO_LIST    = 4
-   QNT_MONSTER_LIST  = 5
-   QNT_PRIZE_LIST    = 6
-   QNT_PENALTY_LIST  = 7
-   QNT_ASSIGN_HINT   = 8
-   QNT_SUCCESS_HINT  = 9
-   QNT_FAILURE_HINT  = 10
-   QNT_TIME_LIMIT    = 11
+   QNT_QNT_ID         = 1
+   QNT_NPC_LIST      = 2
+   QNT_NPC_MODIFIER  = 3
+   QNT_TYPE          = 4
+   QNT_CARGO_LIST    = 5
+   QNT_MONSTER_LIST  = 6
+   QNT_PRIZE_LIST    = 7
+   QNT_PENALTY_LIST  = 8
+   QNT_ASSIGN_HINT   = 9
+   QNT_SUCCESS_HINT  = 10
+   QNT_FAILURE_HINT  = 11
+   QNT_TIME_LIMIT    = 12
 
    % Quest ID flags
    QST_ID_NONE                   = 0

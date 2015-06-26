@@ -9,6 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ShalDiscQuest is QuestTemplate
+% Quest nodes 12, 13, 14.
 
 % QuestTemplate is
 % [ quest template index
@@ -28,6 +29,7 @@ constants:
 
 resources:
 
+   % Quest description.
    shalquest_name_rsc = "Shal'ille disciple quest"
    shalquest_desc_rsc = \
       "Priestess Xiana has asked you to go to %s and speak "
@@ -44,6 +46,27 @@ resources:
       "You have completed the Shal'ille disciple quest.  You are a faithful "
       "disciple of Shal'ille, and Priestess Xiana will now teach you more "
       "powerful spells."
+
+   % Quest resources.
+   shalilledisciple_trigger = "granting forgiveness for your deeds"
+   shalilledisciple_assign = \
+      "`bYou wish to learn more of the gentle, healing ways of our good Lady.  "
+      "You must brave the temple of %NPC, and proclaim your willingness to "
+      "forgive their violence and brutality. Heal them if you can.  Say, \"The "
+      "ways of violence and destruction have hardened our people.  It is time "
+      "to move towards gentleness and peace.  I will begin this process by "
+      "granting forgiveness for your deeds.  Please accept my blessing.\"  "
+      "Then, return and tell me that you have done as I asked."
+   shalilledisciple_success = \
+      "`bBlessed be this day. Today there is the birth of another soul "
+      "filling with the light of Shal'ille.  Seek me when you are ready to "
+      "learn more of the Blessed Mother's knowledge and spells.  "
+      "You are worthy."
+   shalilledisciple_failure = \
+      "Subject: Keep heart, child of Shal'ille\n"
+         "Failure is part of life.  Search your heart and find the blemish.  "
+         "Please return to me and then we will begin our journey down the "
+         "road to harmony once again."
 
 classvars:
 
@@ -77,6 +100,70 @@ messages:
       plQuestNodeDesc = [ [13,vrNodeTwo], [14,vrNodeThree] ];
 
       propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #12 is shal'ille disciple quest kickoff, "disciple"
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[disciple_trigger],#quest_node_index=12)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=12,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+               #cNPC_class=&ShalillePriestess));
+      }
+      else
+      {
+         Debug( "Error building QN #12" );
+      }
+
+      % Template #13 is shal'ille disciple quest, deliver message
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[shalilledisciple_trigger],#timelimit=piTimeLimit,
+               #quest_node_index=13)
+      {
+         lNPCs = $;
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&QorPriestess)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KraananPriestess)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&FarenPriestess)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&DukeLiege)),lNPCs);
+         Send(oQE,@SetQuestNodeNPCList,#index=13,#new_NPC_list = lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=13,
+               #new_hint=shalilledisciple_assign);
+         Send(oQE,@SetQuestNodeFailureHint,#index=13,
+               #new_hint=shalilledisciple_failure);
+      }
+      else
+      {
+         Debug( "Error building QN #13" );
+      }
+
+      % Template #14 is shal'ille disciple quest, come back
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #timelimit=piTimeLimit,#quest_node_index=14)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=14,
+               #new_mod=QN_NPCMOD_PREVIOUS);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=14,
+               #new_hint=shalilledisciple_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=14,
+               #new_hint=shalilledisciple_failure);
+      }
+      else
+      {
+         Debug( "Error building QN #14" );
+      }
+
+      return;
    }
 
    ExtraDesc(index=$,oQuestNode=$)

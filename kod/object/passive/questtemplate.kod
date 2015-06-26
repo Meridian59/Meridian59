@@ -65,6 +65,9 @@ resources:
 
    questtemplate_master_time_rsc = "%r%r"
 
+   % General quest resources, used by multiple quests.
+   disciple_trigger = "disciple"
+
 classvars:
 
    vrIcon = questtemplate_icon_rsc
@@ -89,11 +92,14 @@ properties:
    % to the user for the quest log.
    plQuestNodeDesc = $
 
+   piTimeLimit = 3 * 3600 % 3 hour default timelimit.
+
 messages:
 
    Constructor()
    {
       Send(self,@SendQuestTemplate);
+      Send(self,@SendQuestNodeTemplates);
 
       propagate;
    }
@@ -110,6 +116,11 @@ messages:
             #max_active=piMaxPlayers,#schedule_pct=piSchedulePct,
             #quest_index=viQuestID,#quest_object=self);
 
+      return;
+   }
+
+   SendQuestNodeTemplates()
+   {
       return;
    }
 

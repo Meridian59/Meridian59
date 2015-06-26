@@ -990,10 +990,10 @@ messages:
       oQE = Send(SYS, @GetQuestEngine);
       bDebug = Send(oQE,@GetDebugStatus);
 
-      if bDebug
-      {
-         Debug("Quest expiring.");
-      }
+      %if bDebug
+      %{
+      %   Debug("Quest expiring.");
+      %}
 
       if poQuestNode <> $
       {

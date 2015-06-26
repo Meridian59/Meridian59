@@ -1,0 +1,138 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MadScientistDflyQuest is QuestTemplate
+% Quest template QST_ID_MAD_SCIENTIST = 18.
+% Quest nodes 33, 34.
+% QNT_ID_MAD_SCI_DFLY_ONE, QNT_ID_MAD_SCI_DFLY_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   madscientistdflyquest_name_rsc = "mad scientist dragonfly quest"
+   madscientistdflyquest_desc_rsc = \
+      "Bahal zax'Ot would like you to bring him a live dragonfly queen "
+      "to experiment on.  In return, he has something interesting for you.  "
+      "Locate a wild dragonfly queen and find some way to entice it to "
+      "follow you."
+
+   madscientistdflyquest_completed_rsc = \
+      "You have delivered a dragonfly queen to Bahal zax'Ot, and received "
+      "a Riija sword shard in return."
+
+   % Quest resources.
+   madscientistquest_trigger_1 = "kohuzotz"
+   madscientistquest_assign_2 = \
+      "I am always eager to experiment on my pets.  If you bring me a "
+      "live specimen, I might have something interesting to give you "
+      "in return."
+   madscientistquest_success_2 = "Excellent.  Good work, fair apprentice."
+   madscientistquest_failure_2 = \
+      "Subject: kohuzotz specimen\n"
+      "You have taken so long to bring me a specimen that I have obtained "
+      "one through other means.  I shall be busy with my fresh subject "
+      "for a while, so don't bother bringing me another."
+
+classvars:
+
+   vrName = madscientistdflyquest_name_rsc
+   vrDesc = madscientistdflyquest_desc_rsc
+
+   vrCompleted = madscientistdflyquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_MAD_SCIENTIST
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 10
+   piTimeLimit = 10800 % 3 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_MAD_SCI_DFLY_ONE,
+                      QNT_ID_MAD_SCI_DFLY_TWO];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #33 is mad scientist quest kickoff
+      % QNT_ID_MAD_SCI_DFLY_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+            #cargolist=[madscientistquest_trigger_1],
+            #quest_node_index=QNT_ID_MAD_SCI_DFLY_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MAD_SCI_DFLY_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KocatanMadScientist));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MAD_SCI_DFLY_ONE");
+      }
+
+      % Template #34 is mad scientist quest
+      % QNT_ID_MAD_SCI_DFLY_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER_BRING,
+            #monsterlist=[ &DragonFlyQueen ],
+            #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &SwordShardB, 1 ] ],
+            #quest_node_index=QNT_ID_MAD_SCI_DFLY_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_MAD_SCI_DFLY_TWO,
+               #new_mod=QN_NPCMOD_SAME);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MAD_SCI_DFLY_TWO,
+               #new_hint=madscientistquest_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_MAD_SCI_DFLY_TWO,
+               #new_hint=madscientistquest_success_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MAD_SCI_DFLY_TWO,
+               #new_hint=madscientistquest_failure_2);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_MAD_SCI_DFLY_TWO,
+               #new_limit=10800);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MAD_SCI_DFLY_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

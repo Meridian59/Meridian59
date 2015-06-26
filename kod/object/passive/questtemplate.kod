@@ -66,7 +66,19 @@ resources:
    questtemplate_master_time_rsc = "%r%r"
 
    % General quest resources, used by multiple quests.
+   duke_standard1_trigger = "loyalty"
+   duke_join1_trigger = "join"
    disciple_trigger = "disciple"
+   disciple_learn_success = "~ISo, you wish to become my disciple?~I"
+   disciple_assign = \
+      "~IYou must prove yourself before your learning may progress.  "
+      "Bring me %CARGO.~I"
+   disciple_success = \
+      "~IYou have proven yourself, my disciple.  Your learning "
+      "may now progress.~I"
+   disciple_failure = \
+      "It appears you need more experience before you are ready to be my "
+      "disciple.  You may try again another day."
 
 classvars:
 
@@ -77,6 +89,9 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_NONE
+
+   % FALSE if we don't display the completed quest to the user.
+   vbShowCompleted = TRUE
 
 properties:
 
@@ -144,12 +159,51 @@ messages:
       return viQuestID;
    }
 
-   ShowDesc(who=$)
+   ShowCompletedQuest(who=$,lHistory=$)
    {
-      local i, iDeadLine, iQNIndex, iTimeLeft, oQuestNode, rTime;
+      local iRecentTime, iTimeLoggedIn, oQE;
+
+      if NOT vbShowCompleted
+      {
+         return FALSE;
+      }
+
+      % These are "complete once" quests, so always show.
+      if piPlayerRestrict & Q_PLAYER_NOTSUCCEEDED
+      {
+         return TRUE;
+      }
+
+      % If we don't have the history or user, don't show quest.
+      if lHistory = $
+         OR who = $
+      {
+         return FALSE;
+      }
+
+      oQE = Send(SYS,@GetQuestEngine);
+      iRecentTime = Send(oQE,@GetQuestHistoryRecentTime);
+      iTimeLoggedIn = Send(who,@GetTimeLoggedIn);
+
+      % Show it if the player succeeded recently.
+      if First(lHistory) & QUEST_HISTORY_SUCCESS
+         AND (Nth(lHistory,2) <= iTimeLoggedIn
+            AND Nth(lHistory,2) + iRecentTime > iTimeLoggedIn)
+      {
+         return TRUE;
+      }
+
+      % Don't show failed quests or quests not completed recently.
+      return FALSE;
+   }
+
+   ShowDesc(who=$)
+   "Does error checking, calls the other description messages and "
+   "handles the time remaining resource."
+   {
+      local iDeadLine, iQNIndex, iTimeLeft, oQuestNode;
 
       if who = $
-         OR plQuestNodeDesc = $
       {
          AddPacket(4,vrDesc);
 
@@ -167,28 +221,41 @@ messages:
       }
 
       iQNIndex = Send(oQuestNode,@GetQuestNodeTemplateIndex);
+      iDeadLine = Send(oQuestNode,@GetDeadline);
+      if iDeadLine <> $
+      {
+         AddPacket(4,questtemplate_master_time_rsc);
+      }
+
+      Send(self,@MainDesc,#who=who,#index=iQNIndex,#oQuestNode=oQuestNode);
+      Send(self,@ExtraDesc,#index=iQNIndex,#oQuestNode=oQuestNode);
+      if iDeadLine <> $
+      {
+         iTimeLeft = iDeadLine - GetTime();
+         % Add time.
+         Send(self,@SendTimeRemaining,#iTime=iTimeLeft);
+      }
+
+      return;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   "Handles the main description, i.e. what the quester should do."
+   {
+      local i;
+
+      if plQuestNodeDesc = $
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
 
       for i in plQuestNodeDesc
       {
-         if First(i) = iQNIndex
+         if First(i) = index
          {
-            % Get time remaining.
-            iDeadLine = Send(oQuestNode,@GetDeadline);
-            if iDeadLine <> $
-            {
-               iTimeLeft = iDeadLine - GetTime();
-               AddPacket(4,questtemplate_master_time_rsc, 4,Nth(i,2));
-               % Quests might want to add extra parameters here.
-               Send(self,@ExtraDesc,#index=iQNIndex,#oQuestNode=oQuestNode);
-               % Add time.
-               Send(self,@SendTimeRemaining,#iTime=iTimeLeft);
-            }
-            else
-            {
-               AddPacket(4,Nth(i,2));
-               % Quests might want to add extra parameters here.
-               Send(self,@ExtraDesc,#index=iQNIndex,#oQuestNode=oQuestNode);
-            }
+            AddPacket(4,Nth(i,2));
 
             return;
          }

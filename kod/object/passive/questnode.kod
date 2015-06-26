@@ -1523,6 +1523,16 @@ messages:
       return;
    }
 
+   GetCargo()
+   {
+      return pCargo;
+   }
+
+   GetQuestMonster()
+   {
+      return poMonster;
+   }
+
    GetDestNPC()
    {
       return poDestNPC;

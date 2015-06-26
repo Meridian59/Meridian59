@@ -1,0 +1,143 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BowmakerGoodQuest is BowmakerQuestTemplate
+% Quest template QST_ID_BOW_MAKER_GOOD = 21.
+% Quest nodes 38, 39, 40.
+% QNT_ID_BOWMAKER_KICKOFF, QNT_ID_BOWMAKER_GOOD_ONE, QNT_ID_BOWMAKER_GOOD_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   bowmakergoodquest_desc_rsc = \
+      "Hanla zax'Ta has asked you to obtain the tailfeather of an "
+      "avar shaman for her.  Locate an avar magician and see if they "
+      "are willing to trade a tailfeather for something they find "
+      "precious.  Return when you have obtained the tailfeather."
+
+   bowmakergoodquest_nodetwo_rsc = \
+      "Hanla zax'Ta has asked you to obtain the tailfeather of an "
+      "avar shaman for her.  Locate an avar magician and see if they "
+      "are willing to trade a tailfeather for something they find precious."
+   bowmakergoodquest_nodethree_rsc = \
+      "Return to Hanla zax'Ta with the avar shaman tailfeather."
+
+   % Quest resources.
+   bowmaker_assign_2 = \
+      "I use special materials to make my best arrows.  The tailfeathers "
+      "of an avar magician are reputed to offer magical properties to any "
+      "arrow they fletch.  Go, see if you can find an avar willing to "
+      "trade a tailfeather for something they find precious."
+   bowmaker_success_2 = "Nyuk nyuk uk ak a-ak!"
+   bowmaker_failure_2 = \
+      "Subject: Avar feather\n"
+      "Clearly, you were unable to find an avar feather for me.  "
+      "Ah, well.  I shall look elsewhere."
+
+classvars:
+
+   vrDesc = bowmakergoodquest_desc_rsc
+
+   vrNodeTwo = bowmakergoodquest_nodetwo_rsc
+   vrNodeThree = bowmakergoodquest_nodethree_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_BOW_MAKER_GOOD
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_KARMA_GOOD
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_BOWMAKER_KICKOFF, QNT_ID_BOWMAKER_GOOD_ONE,
+                      QNT_ID_BOWMAKER_GOOD_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_BOWMAKER_GOOD_ONE, vrNodeTwo],
+                          [QNT_ID_BOWMAKER_GOOD_TWO, vrNodeThree] ];
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #39 is bow maker quest (good)
+      % QNT_ID_BOWMAKER_GOOD_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &NeruditeOreChunk, 1 ] ],
+               #quest_node_index=QNT_ID_BOWMAKER_GOOD_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BOWMAKER_GOOD_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KocatanBonePriestess));
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BOWMAKER_GOOD_ONE,
+               #new_hint=bowmaker_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_BOWMAKER_GOOD_ONE,
+               #new_hint=bowmaker_success_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BOWMAKER_GOOD_ONE,
+               #new_hint=bowmaker_failure_2);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_BOWMAKER_GOOD_ONE,
+               #new_limit=10800);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BOWMAKER_GOOD_ONE");
+      }
+
+      % Template #40 is bow maker quest (good)
+      % QNT_ID_BOWMAKER_GOOD_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &AvarShamanFeather, 1 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &SwordShardD, 1 ] ],
+               #quest_node_index=QNT_ID_BOWMAKER_GOOD_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_BOWMAKER_GOOD_TWO,
+               #new_mod=QN_NPCMOD_PREVIOUS);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_BOWMAKER_GOOD_TWO,
+               #new_hint=bowmaker_success_3);
+         %Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BOWMAKER_GOOD_TWO,
+         %     #new_hint=bowmaker_failure_3);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_BOWMAKER_GOOD_TWO,
+               #new_limit=10800);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BOWMAKER_GOOD_TWO");
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SoldierQuestTemplate is QuestTemplate
+% Parent class for the three soldier quests, due to similarity.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   soldierqt_kill_rsc = \
+      "%s will admit you to the ranks of %s soldiers, but first you "
+      "must slay %s%s at one of the flagpoles placed around the world.  "
+      "Complete this task and return to %s."
+
+   soldierqt_return_rsc = \
+      "Return to %s and inform %s that you have completed your task."
+
+   % Quest resources.
+   faction_soldier_trigger = "soldier"
+
+classvars:
+
+   vrKill = soldierqt_kill_rsc
+   vrReturn = soldierqt_return_rsc
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piNumPlayers = 1
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+   piTimeLimit = 3 * 3600 % 3 hours.
+
+messages:
+
+   Constructor()
+   {
+      plSpecialRestrict = [ [ Q_R2_HAS_HEALTH_LEVEL, 75 ],
+                            [ Q_R2_DOES_NOT_HAVE_ITEM, &SoldierShield ] ];
+
+      propagate;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   {
+      local oMob;
+
+      oMob = Send(oQuestNode,@GetQuestMonster);
+      if oMob = $
+      {
+         AddPacket(4,vrReturn);
+      }
+      else
+      {
+         AddPacket(4,vrKill);
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oMob, oNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      % Second and third quest node.
+      if index = Nth(plQuestNodes,2)
+         OR index = Nth(plQuestNodes,3)
+      {
+         oNPC = Send(oQuestNode,@GetSourceNPC);
+         if oNPC = $
+         {
+            return;
+         }
+
+         oMob = Send(oQuestNode,@GetQuestMonster);
+
+         if oMob <> $
+         {
+            AddPacket(4,Send(oNPC,@GetName), 4,Send(oNPC,@GetHisHer),
+                      4,Send(oMob,@GetIndef), 4,Send(oMob,@GetName),
+                      4,Send(oNPC,@GetName));
+
+         }
+         else
+         {
+            AddPacket(4,Send(oNPC,@GetName), 4,Send(oNPC,@GetHimHer));
+         }
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

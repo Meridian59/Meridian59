@@ -1,0 +1,167 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DukeJoinQuest is QuestTemplate
+% Quest template QST_ID_DUKE_JOIN = 11.
+% Quest nodes 1, 2.
+% QNT_ID_DUKE_JOIN_ONE, QNT_ID_DUKE_JOIN_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   dukejoin_name_rsc = "Duke join faction quest"
+   dukejoin_desc_rsc = \
+      "Duke Akardius has asked you to bring him an item, to prove yourself "
+      "worthy of his trust."
+
+   dukejoin_deliver_rsc = \
+      "Duke Akardius has asked you to bring him %s%s, to prove yourself "
+      "worthy of his trust."
+
+   dukejoin_completed = \
+      "You have earnt the trust of Duke Akardius, and are now a member "
+      "of his faction."
+
+   % Quest resources.
+   duke_join2_assign = \
+      "So, you wish to prove yourself worthy of my trust?  "
+      "You can begin by bringing me %INDEF_CARGO%CARGO."
+   duke_join2_success = \
+      "Ah, good work.  Your service to our cause will not go unnoticed."
+   duke_join2_failure = \
+      "Subject: You may not join our ranks, knave!\n"
+      "Hah!  You are not faithful enough to serve our cause!"
+
+classvars:
+
+   vrName = dukejoin_name_rsc
+   vrDesc = dukejoin_desc_rsc
+
+   vrNodeTwo = dukejoin_deliver_rsc
+
+   vrCompleted = dukejoin_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_DUKE_JOIN
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_INTRIGUING | Q_PLAYER_FACTION_NEUTRAL \
+                      | Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+   piTimeLimit = 3600 % 1 hour.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_DUKE_JOIN_ONE, QNT_ID_DUKE_JOIN_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_DUKE_JOIN_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #1 is 1st Duke Join node, say "join" to Duke
+      % QNT_ID_DUKE_JOIN_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[duke_join1_trigger],
+               #quest_node_index=QNT_ID_DUKE_JOIN_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_DUKE_JOIN_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                        #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&DukeLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DUKE_JOIN_ONE");
+      }
+
+      % Template #2 is 2nd Duke Join node, bring an item to me
+      % QNT_ID_DUKE_JOIN_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,\
+               #questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Sapphire, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Ruby, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &Emerald, 1 ],\
+                            [ QN_PRIZETYPE_ITEMCLASS, &Diamond, 1 ] ],\
+               #prizelist=[ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_DUKE ] ],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_DUKE_JOIN_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_DUKE_JOIN_TWO,
+               #new_hint=duke_join2_assign);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_DUKE_JOIN_TWO,
+               #new_hint=duke_join2_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_DUKE_JOIN_TWO,
+               #new_hint=duke_join2_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DUKE_JOIN_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      % Quest node QNT_ID_DUKE_JOIN_TWO dialog needs
+      % cargo indef article and name.
+      if index = QNT_ID_DUKE_JOIN_TWO
+      {
+         oCargo = Send(oQuestNode,@GetCargo);
+
+         AddPacket(4,Send(oCargo,@GetIndef), 4,Send(oCargo,@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

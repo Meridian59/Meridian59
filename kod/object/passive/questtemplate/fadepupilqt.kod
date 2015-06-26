@@ -1,0 +1,267 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FadePupilQuest is QuestTemplate
+% Quest nodes 88, 89, 90, 91.
+% QNT_ID_FADE_PUPIL_ONE, QNT_ID_FADE_PUPIL_TWO,
+% QNT_ID_FADE_PUPIL_THREE, QNT_ID_FADE_PUPIL_FOUR
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   fadepupilquest_name_rsc = "fade pupil quest"
+   fadepupilquest_desc_rsc = \
+      "Joguer would like you to retrieve a formula for him, and in return "
+      "he will teach you the fade spell."
+
+   fadepupilquest_nodetwo_rsc = \
+      "Joguer has asked you to retrieve his formula from %s.  In return, "
+      "he will teach you the fade spell.  Ask %s about the formula, obtain "
+      "it and bring it back to Joguer."
+   fadepupilquest_nodethree_rsc = \
+      "%s will give you the formula, but first you must slay %s%s. Do that "
+      "and return to %s."
+   fadepupilquest_return_rsc = \
+      "Return to Joguer with the formula."
+
+   fadepupilquest_completed = \
+      "You have completed the fade pupil quest.  Joguer will now "
+      "teach you the fade spell."
+
+   % Quest resources.
+   fadelearn_trigger = "pupil"
+   fadelearn_assign_2 = \
+      "I am glad thou art here;  I am willing to make a trade.  I stumbled "
+      "across a formula for speeding the growing process of certain plants, "
+      "but it has fallen into the hands of the scoundrel %NPC.  I will teach "
+      "thee the small magicks I know if thou wilt but retrieve this formula "
+      "for me.  Do not let %HIMHER_NPC deceive thee, %NPC wishes nothing "
+      "more than to selfishly delay my harvest."
+   fadelearn_trigger_2 = "formula"
+   fadelearn_failure_2 = \
+      "Subject: Plant growth formula\n"
+      "The plants will now not be ready to harvest for one more month.  Thou "
+      "hast failed me and cost the land a valuable antidote;  A pox on thee."
+   fadelearn_assign_3 = \
+      "I have the formula of which you speak.  I am reluctant to give it to "
+      "you, however, as I believe that Joguer's motives are not as noble as "
+      "he claims.  If you prove to me your strength of purpose by slaying a "
+      "%MONSTER, however, I will defer to your judgement.  Hurry now, else "
+      "Joguer's lovely harvest of poison will be delayed!"
+   fadelearn_failure_3 = \
+      "Subject:  You have chosen wisely\n"
+      "I see you trust my judgement of Joguer.  I thought that your task "
+      "might slow you up enough to force you to think the matter through.  "
+      "Now we have prevented Joguer's premature harvest, and can rest "
+      "knowing there will be no new poison in the land, at least for now."
+   fadelearn_assign_4 = \
+      "Very well, here is the formula.  I am not happy to be giving you "
+      "this.  I believe that you have disrupted an important course of "
+      "events. But, that is not your concern really is it.  You just want "
+      "to get your spell and be off.  Well, I suggest that you do just that."
+   fadelearn_success_4 = \
+      "Ah, at last.  Thou hast done a great service not only to thyself but "
+      "also to the entire realm.  These plants may change the course of "
+      "history.  They are an antidote to a terrible disease that is beginning "
+      "to spread through the land.  Come to me when thou would learn from "
+      "me, friend."
+   fadelearn_failure_4 = \
+      "Subject:  Plant growth formula\n"
+      "Thy dalliance hath cost not only to yourself the possibility of "
+      "learning my magicks, but also to the entire realm a chance to resist "
+      "a new disease that is slowly spreading.  I hope thou dost not catch "
+      "it thyself.  That would be a fine bit of justice, eh?  Trouble me "
+      "no further, knave."
+
+classvars:
+
+   vrName = fadepupilquest_name_rsc
+   vrDesc = fadepupilquest_desc_rsc
+
+   vrNodeTwo = fadepupilquest_nodetwo_rsc
+   vrNodeThree = fadepupilquest_nodethree_rsc
+   vrNodeFour = fadepupilquest_return_rsc
+   vrCompleted = fadepupilquest_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_FADE_SPELL
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTSUCCEEDED | Q_PLAYER_NOTFAILED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_FADE_PUPIL_ONE, QNT_ID_FADE_PUPIL_TWO,
+                      QNT_ID_FADE_PUPIL_THREE, QNT_ID_FADE_PUPIL_FOUR];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_FADE_PUPIL_TWO, vrNodeTwo],
+                          [QNT_ID_FADE_PUPIL_THREE, vrNodeThree],
+                          [QNT_ID_FADE_PUPIL_FOUR, vrNodeFour] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #88 is fade learn quest kickoff
+      % QNT_ID_FADE_PUPIL_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[fadelearn_trigger],
+               #quest_node_index=QNT_ID_FADE_PUPIL_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_FADE_PUPIL_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_FADE_PUPIL_ONE");
+      }
+
+      % Template #89 is fade learn quest, ask about formula
+      % QNT_ID_FADE_PUPIL_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ fadelearn_trigger_2 ],
+               #timelimit=3 * 3600,#quest_node_index=QNT_ID_FADE_PUPIL_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Heretic)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_FADE_PUPIL_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_FADE_PUPIL_TWO,
+               #new_hint=fadelearn_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_FADE_PUPIL_TWO,
+               #new_hint=fadelearn_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_FADE_PUPIL_TWO");
+      }
+
+      % Template #90 is fade learn quest, prove resolve by killing monster
+      % QNT_ID_FADE_PUPIL_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
+               #NPC_modifier=QN_NPCMOD_SAME,#monsterlist=[&CaveOrc, &Troll],
+               #timelimit=3600,#quest_node_index=QNT_ID_FADE_PUPIL_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_FADE_PUPIL_THREE,
+               #new_hint=fadelearn_assign_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_FADE_PUPIL_THREE,
+               #new_hint=fadelearn_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_FADE_PUPIL_THREE");
+      }
+
+      % Template #91 is fade learn quest, return formula
+      % QNT_ID_FADE_PUPIL_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+            #NPC_modifier=QN_NPCMOD_PREVIOUS,
+            #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &FormulaScroll, 1 ] ],
+            #timelimit=3600,#quest_node_index=QNT_ID_FADE_PUPIL_FOUR)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_FADE_PUPIL_FOUR,
+               #new_hint=fadelearn_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_FADE_PUPIL_FOUR,
+               #new_hint=fadelearn_success_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_FADE_PUPIL_FOUR,
+               #new_hint=fadelearn_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_FADE_PUPIL_FOUR");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oNPC, oMob;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_FADE_PUPIL_TWO
+      {
+         AddPacket(4,Send(oNPC,@GetName), 4,Send(oNPC,@GetName));
+
+         return;
+      }
+
+      if index = QNT_ID_FADE_PUPIL_THREE
+      {
+         oMob = Send(oQuestNode,@GetQuestMonster);
+         AddPacket(4,Send(oNPC,@GetName), 4,Send(oMob,@GetIndef),
+                   4,Send(oMob,@GetName), 4,Send(oNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,221 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DementPupilQuest is QuestTemplate
+% Quest nodes 92, 93, 94.
+% QNT_ID_DEMENT_PUPIL_ONE, QNT_ID_DEMENT_PUPIL_TWO, QNT_ID_DEMENT_PUPIL_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   dementpupilquest_name_rsc = "dement pupil quest"
+   dementpupilquest_desc_rsc = \
+      "Afiera D'xor has asked you to deliver some cargo.  Do so, and return "
+      "to him when you are done."
+
+   dementpupilquest_nodetwo_rsc = \
+      "Afiera D'xor has asked you to deliver %s%s to %s."
+   dementpupilquest_return_rsc = \
+      "Return to Afiera D'xor and let him know the task has been "
+      "completed."
+
+   dementpupilquest_completed = \
+      "You have completed the dement pupil quest.  Afiera D'xor will now "
+      "teach you how to cast the dement spell."
+
+   % Quest resources.
+   dementlearn_trigger = "pupil"
+   dementlearn_assign_2 = \
+      "I can teach you the little I know of the mystical arts, but I need "
+      "a favor.  I urgently need to get this %CARGO to %NPC, but am "
+      "reluctant to approach %HIMHER_NPC.  You see, %NPC is of late afflicted "
+      "by some unwholesome force which seems to feed off human energy.  I "
+      "know no more than to be in %NPC's presence is likely to have some "
+      "terrible effect on you.  Make your meeting brief and perhaps you "
+      "can avoid these effects."
+   dementlearn_success_2 = \
+      "Thank you, %NAME.  I hope that this %CARGO will help me dispel the "
+      "force of which you were warned.  Go now, unless you wish to be so "
+      "afflicted as well."
+   dementlearn_failure_2 = \
+      "Subject:  Delivery of the %CARGO\n"
+      "I understand your apprehension and fear of approaching %NPC.  "
+      "Nonetheless, you have failed and our deal is hereby nullified."
+   dementlearn_success_3 = \
+      "Ah, you have returned from your errand, %NAME.  You have done well.  "
+      "I hope you have not suffered too greatly from your contact with "
+      "%SOURCE_NPC.  I understand the effects are only temporary.  "
+      "Nevertheless, you have proved yourself worthy of my teachings.  "
+      "Come back when you want to learn the \"dement\" spell."
+   dementlearn_failure_3 = \
+      "Subject:  Dement spell\n"
+      "I haven't heard back from you in a while, so I assume you are no "
+      "longer interested in learning it.  Come back later if you change "
+      "your mind, friend."
+
+classvars:
+
+   vrName = dementpupilquest_name_rsc
+   vrDesc = dementpupilquest_desc_rsc
+
+   vrNodeTwo = dementpupilquest_nodetwo_rsc
+   vrNodeThree = dementpupilquest_return_rsc
+   vrCompleted = dementpupilquest_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_DEMENTIA_SPELL
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTSUCCEEDED | Q_PLAYER_NOTFAILED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_DEMENT_PUPIL_ONE,QNT_ID_DEMENT_PUPIL_TWO,
+                      QNT_ID_DEMENT_PUPIL_THREE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_DEMENT_PUPIL_TWO, vrNodeTwo],
+                          [QNT_ID_DEMENT_PUPIL_THREE, vrNodeThree] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #92 is dement learn quest kickoff
+      % QNT_ID_DEMENT_PUPIL_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[dementlearn_trigger],
+               #quest_node_index=QNT_ID_DEMENT_PUPIL_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_DEMENT_PUPIL_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DEMENT_PUPIL_ONE");
+      }
+
+      % Template #93 is dement learn quest, deliver item
+      % QNT_ID_DEMENT_PUPIL_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Book, 1  ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Scroll, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &CureDiseasePotion, 1  ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Sacchaqua, 1  ] ],
+               #prizelist=[ [ QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -5, 2 ] ],
+               #timelimit=4 * 3600,#quest_node_index=QNT_ID_DEMENT_PUPIL_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_DEMENT_PUPIL_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_DEMENT_PUPIL_TWO,
+               #new_hint=dementlearn_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_DEMENT_PUPIL_TWO,
+               #new_hint=dementlearn_success_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_DEMENT_PUPIL_TWO,
+               #new_hint=dementlearn_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DEMENT_PUPIL_TWO");
+      }
+
+      % Template #94 is dement learn quest, come back
+      % QNT_ID_DEMENT_PUPIL_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,#timelimit=24 * 3600,
+               #quest_node_index=QNT_ID_DEMENT_PUPIL_THREE)
+      {
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_DEMENT_PUPIL_THREE,
+               #new_hint=dementlearn_success_3 );
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_DEMENT_PUPIL_THREE,
+               #new_hint=dementlearn_failure_3 );
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DEMENT_PUPIL_THREE");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_DEMENT_PUPIL_TWO
+      {
+         oCargo = Send(oQuestNode,@GetCargo);
+         AddPacket(4,Send(oCargo,@GetIndef), 4,Send(oCargo,@GetName),
+                   4,Send(Send(oQuestNode,@GetDestNPC),@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

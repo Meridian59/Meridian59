@@ -1,0 +1,190 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildShieldQuest is QuestTemplate
+% QST_ID_GUILDSHIELD = 12
+% Quest nodes 18, 19.
+% QNT_ID_GSHIELD_ONE, QNT_ID_GSHIELD_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   guildshieldquest_name_rsc = "mining expedition quest"
+   guildshieldquest_desc_rsc = \
+      "The blacksmith has asked you to obtain some ore from the orc caves "
+      "for him.  In return, he will make you a herald shield with your "
+      "guild's crest and colors."
+
+   guildshieldquest_deliver_rsc = \
+      "%s has asked you to obtain some ore from the orc caves for %s.  "
+      "In return, %s will make you a herald shield with your guild's "
+      "crest and colors.  Find %s%s and bring it back to %s."
+
+   guildshieldquest_completed_rsc = \
+      "You have completed the mining expedition quest, and received "
+      "a herald shield with your guilds coat of arms."
+
+   % Quest resources.
+   guildshield_initial_trigger = "mining expedition"
+   guildshield_assign = \
+      "Aye, someone eager to do this favor for me.  Undoubtedly you've "
+      "heard that the orc mines have reopened.  Well, them orcs mine a "
+      "strain of iron ore that's of a much higher grade than what we "
+      "can get out of the stripped out Jasper mines.  I want to get my "
+      "hands on some more of it before the Princess or Duke or whoever's "
+      "running the show now closes them caves back up.  Bring me some ore, "
+      "and I'll use the last of what I have now to make you a coat of arms."
+   guildshield_success = \
+      "Ah, this will make for some fine weapons and armor!  Thank you "
+      "greatly, %NAME.  In your absence, I have fashioned a shield "
+      "which displays your guild's crest and colors.  Wear it forth "
+      "proudly, you have done well for your guild this day."
+   guildshield_failure = \
+      "Subject: Ore from the orc mines\n"
+      "Never mind about the ore;  I've made other, more reliable, arrangements."
+
+classvars:
+
+   vrName = guildshieldquest_name_rsc
+   vrDesc = guildshieldquest_desc_rsc
+
+   vrNodeTwo = guildshieldquest_deliver_rsc
+
+   vrCompleted = guildshieldquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_GUILDSHIELD
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = 0
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+   piTimeLimit = 2 * 3600 % 2 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_GSHIELD_ONE, QNT_ID_GSHIELD_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_GSHIELD_TWO, vrNodeTwo] ];
+
+      plSpecialRestrict = [ [ Q_R2_QN_ASSIGNABLE, FALSE ],
+                            [ Q_R2_IS_GUILD_MEMBER_OF, $ ] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #18 is guild shield quest kickoff, "mining expedition"
+      % QNT_ID_GSHIELD_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ guildshield_initial_trigger ],
+               #quest_node_index=QNT_ID_GSHIELD_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_GSHIELD_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                     #iJob=MOB_ROLE_BLACKSMITH,#onIsland=FALSE));
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_GSHIELD_ONE,
+               #new_hint=guildshield_assign);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_GSHIELD_ONE");
+      }
+
+      % Template #19 is guild shield quest finale, return ore to same blacksmith
+      % QNT_ID_GSHIELD_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &OreChunk, 1 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &GuildShield, 1 ] ],
+               #quest_node_index=QNT_ID_GSHIELD_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_GSHIELD_TWO,
+               #new_mod=QN_NPCMOD_SAME);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_GSHIELD_TWO,
+               #new_hint=guildshield_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_GSHIELD_TWO,
+               #new_hint=guildshield_failure);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_GSHIELD_TWO,
+               #new_limit=piTimeLimit);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_GSHIELD_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oCargo, oNPC, rName;
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_GSHIELD_TWO
+      {
+         oNPC = Send(oQuestNode,@GetSourceNPC);
+         if oNPC = $
+         {
+            return;
+         }
+
+         oCargo = Send(oQuestNode,@GetCargo);
+         if oCargo = $
+         {
+            return;
+         }
+
+         rName = Send(oNPC,@GetName);
+
+         AddPacket(4,rName, 4,Send(oNPC,@GetHimHer), 4,Send(oNPC,@GetHeShe),
+                   4,Send(oCargo,@GetIndef), 4,Send(oCargo,@GetName), 4,rName);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,133 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BonePriestessQuest is QuestTemplate
+% Quest template QST_ID_BONE_PRIESTESS = 17.
+% Quest nodes 31, 32
+% QNT_ID_BONE_PRIESTESS_OPB_ONE, QNT_ID_BONE_PRIESTESS_OPB_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   bonepriestessquest_name_rsc = "bone priestess orc pit boss quest"
+   bonepriestessquest_desc_rsc = \
+      "You're a little rusty in the language of the Avars, but you "
+      "think the bone priestess would like an orc pit boss head."
+
+   bonepriestessquest_completed_rsc = \
+      "You have delivered an orc pit boss head to the bone priestess, "
+      "and received a Riija sword shard in return."
+
+   % Quest resources.
+   bonepriestessquest_trigger_1 = "riija"
+   bonepriestessquest_assign_2 = \
+      "Wak-wak!  Hedd of Pit Boss!  Wak wak wa-ak!"
+   bonepriestessquest_success_2 = \
+      "Chp chp chp chp chp chp chp!"
+   bonepriestessquest_failure_2 = \
+      "Subject:  Ik ik ak\n"
+      "Wak wak riija no ak!  Chp Chp kp ip!"
+
+classvars:
+
+   vrName = bonepriestessquest_name_rsc
+   vrDesc = bonepriestessquest_desc_rsc
+
+   vrCompleted = bonepriestessquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_BONE_PRIESTESS
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 10
+   piTimeLimit = 10800 % 3 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_BONE_PRIESTESS_OPB_ONE,
+                      QNT_ID_BONE_PRIESTESS_OPB_TWO];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #31 is bone priestess quest kickoff
+      % QNT_ID_BONE_PRIESTESS_OPB_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[bonepriestessquest_trigger_1],
+               #quest_node_index=QNT_ID_BONE_PRIESTESS_OPB_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BONE_PRIESTESS_OPB_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KocatanBonePriestess));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BONE_PRIESTESS_OPB_ONE");
+      }
+
+      % Template #32 is bone priestess quest
+      % QNT_ID_BONE_PRIESTESS_OPB_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &OrcPitBossHead, 1  ] ],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &SwordShardA, 1 ] ],
+               #quest_node_index=QNT_ID_BONE_PRIESTESS_OPB_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_BONE_PRIESTESS_OPB_TWO,
+               #new_mod=QN_NPCMOD_SAME);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BONE_PRIESTESS_OPB_TWO,
+               #new_hint=bonepriestessquest_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_BONE_PRIESTESS_OPB_TWO,
+               #new_hint=bonepriestessquest_success_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BONE_PRIESTESS_OPB_TWO,
+               #new_hint=bonepriestessquest_failure_2);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_BONE_PRIESTESS_OPB_TWO,
+               #new_limit=piTimeLimit);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BONE_PRIESTESS_OPB_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

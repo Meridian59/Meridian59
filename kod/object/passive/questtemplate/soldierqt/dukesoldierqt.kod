@@ -1,0 +1,147 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DukeSoldierQuest is SoldierQuestTemplate
+% Quest nodes 208, 209, 210.
+% QNT_ID_DUKE_SOLDIER_ONE, QNT_ID_DUKE_SOLDIER_TWO, QNT_ID_DUKE_SOLDIER_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   dukesoldier_name_rsc = "Duke soldier shield quest"
+   dukesoldier_desc_rsc = \
+      "Duke Akardius will allow you to join the Ducal army, but first "
+      "you must prove your loyalty by slaying his enemies."
+
+   dukesoldier_completed_rsc = \
+      "You have proven your worth, and are now a soldier in the Ducal army."
+
+   % Quest resources.
+   duke_faction_soldier_assign_1 = \
+      "Yes, perhaps you'll do.  Prove your loyalty by murdering "
+      "%INDEF_MONSTER%MONSTER.  You can usually find some guarding a "
+      "flagpole.  Come back afterwards to tell of your deeds."
+   duke_faction_soldier_assign_2 = \
+      "Excellent.  Now, show your contempt for my enemies by murdering "
+      "%INDEF_MONSTER%MONSTER.  Return to me when you are done to let "
+      "me know the deed is done."
+   duke_faction_soldier_success = \
+      "You have done well, my soldier.  Join the ranks of the elite and "
+      "bring my influence and power to those in this land!"
+   duke_faction_soldier_failure = \
+      "Lost your nerve?  How do you think you could ever survive on "
+      "the field of combat if you have no stomach for killing?"
+
+classvars:
+
+   vrName = dukesoldier_name_rsc
+   vrDesc = dukesoldier_desc_rsc
+
+   vrCompleted = dukesoldier_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_DUKE_SOLDIER
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_FACTION_DUKE | Q_PLAYER_NOTTRIED_RECENTLY
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_DUKE_SOLDIER_ONE, QNT_ID_DUKE_SOLDIER_TWO,
+                      QNT_ID_DUKE_SOLDIER_THREE];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #208 is 1st Duke Soldier Shield quest, say "soldier"
+      % QNT_ID_DUKE_SOLDIER_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[faction_soldier_trigger],
+               #quest_node_index=QNT_ID_DUKE_SOLDIER_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_DUKE_SOLDIER_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                        #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&DukeLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DUKE_SOLDIER_ONE");
+      }
+
+      % Template #209 is 2nd Duke Soldier Shield quest, kill first faction soldier
+      % QNT_ID_DUKE_SOLDIER_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_MONSTER,#monsterlist=[&RebelTroop],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_DUKE_SOLDIER_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_DUKE_SOLDIER_TWO,
+               #new_hint=duke_faction_soldier_assign_1);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_DUKE_SOLDIER_TWO,
+               #new_hint=duke_faction_soldier_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DUKE_SOLDIER_TWO");
+      }
+
+      % Template #210 is 3rd Duke Soldier Shield quest, kill second faction soldier
+      % QNT_ID_DUKE_SOLDIER_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_MONSTER,#monsterlist=[&PrincessTroop],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DukeShield, 1 ] ],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_DUKE_SOLDIER_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_DUKE_SOLDIER_THREE,
+               #new_hint=duke_faction_soldier_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_DUKE_SOLDIER_THREE,
+               #new_hint=duke_faction_soldier_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_DUKE_SOLDIER_THREE,
+               #new_hint=duke_faction_soldier_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_DUKE_SOLDIER_THREE");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

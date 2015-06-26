@@ -10,6 +10,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ShalDiscQuest is QuestTemplate
 % Quest nodes 12, 13, 14.
+% QNT_ID_SHAL_DISCIPLE_ONE, QNT_ID_SHAL_DISCIPLE_TWO, QNT_ID_SHAL_DISCIPLE_THREE
 
 % QuestTemplate is
 % [ quest template index
@@ -87,17 +88,20 @@ properties:
    plSpecialRestrict = $
    piMaxPlayers = 30
    piSchedulePct = 100
+   piTimeLimit = 3 * 3600 % 3 hours.
 
 messages:
 
    Constructor()
    {
       % Quest node list to send to QuestEngine.
-      plQuestNodes = [12, 13, 14];
+      plQuestNodes = [QNT_ID_SHAL_DISCIPLE_ONE, QNT_ID_SHAL_DISCIPLE_TWO,
+                      QNT_ID_SHAL_DISCIPLE_THREE];
 
       % Quest nodes with matching descriptions for the player.
-      % No description needed for quest node 12.
-      plQuestNodeDesc = [ [13,vrNodeTwo], [14,vrNodeThree] ];
+      % No description needed for quest node QNT_ID_SHAL_DISCIPLE_ONE.
+      plQuestNodeDesc = [ [QNT_ID_SHAL_DISCIPLE_TWO, vrNodeTwo],
+                          [QNT_ID_SHAL_DISCIPLE_THREE, vrNodeThree] ];
 
       propagate;
    }
@@ -110,22 +114,25 @@ messages:
       oLib = Send(SYS,@GetLibrary);
 
       % Template #12 is shal'ille disciple quest kickoff, "disciple"
+      % QNT_ID_SHAL_DISCIPLE_ONE
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
-               #cargolist=[disciple_trigger],#quest_node_index=12)
+               #cargolist=[disciple_trigger],
+               #quest_node_index=QNT_ID_SHAL_DISCIPLE_ONE)
       {
-         Send(oQE,@SetQuestNodeNPCList,#index=12,
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SHAL_DISCIPLE_ONE,
                #new_NPC_list=Send(oLib,@GetOccupationList,
-               #cNPC_class=&ShalillePriestess));
+                                    #cNPC_class=&ShalillePriestess));
       }
       else
       {
-         Debug( "Error building QN #12" );
+         Debug("Error building QN: QNT_ID_SHAL_DISCIPLE_ONE");
       }
 
       % Template #13 is shal'ille disciple quest, deliver message
+      % QNT_ID_SHAL_DISCIPLE_TWO
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
                #cargolist=[shalilledisciple_trigger],#timelimit=piTimeLimit,
-               #quest_node_index=13)
+               #quest_node_index=QNT_ID_SHAL_DISCIPLE_TWO)
       {
          lNPCs = $;
          lNPCs = Cons(First(Send(oLib,@GetOccupationList,
@@ -136,31 +143,34 @@ messages:
                                  #cNPC_class=&FarenPriestess)),lNPCs);
          lNPCs = Cons(First(Send(oLib,@GetOccupationList,
                                  #cNPC_class=&DukeLiege)),lNPCs);
-         Send(oQE,@SetQuestNodeNPCList,#index=13,#new_NPC_list = lNPCs);
-         Send(oQE,@SetQuestNodeAssignHint,#index=13,
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SHAL_DISCIPLE_TWO,
+               #new_NPC_list = lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SHAL_DISCIPLE_TWO,
                #new_hint=shalilledisciple_assign);
-         Send(oQE,@SetQuestNodeFailureHint,#index=13,
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SHAL_DISCIPLE_TWO,
                #new_hint=shalilledisciple_failure);
       }
       else
       {
-         Debug( "Error building QN #13" );
+         Debug("Error building QN: QNT_ID_SHAL_DISCIPLE_TWO");
       }
 
       % Template #14 is shal'ille disciple quest, come back
+      % QNT_ID_SHAL_DISCIPLE_THREE
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
-               #timelimit=piTimeLimit,#quest_node_index=14)
+               #timelimit=piTimeLimit,
+               #quest_node_index=QNT_ID_SHAL_DISCIPLE_THREE)
       {
-         Send(oQE,@SetQuestNodeNPCModifier,#index=14,
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_SHAL_DISCIPLE_THREE,
                #new_mod=QN_NPCMOD_PREVIOUS);
-         Send(oQE,@SetQuestNodeSuccessHint,#index=14,
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_SHAL_DISCIPLE_THREE,
                #new_hint=shalilledisciple_success);
-         Send(oQE,@SetQuestNodeFailureHint,#index=14,
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SHAL_DISCIPLE_THREE,
                #new_hint=shalilledisciple_failure);
       }
       else
       {
-         Debug( "Error building QN #14" );
+         Debug("Error building QN: QNT_ID_SHAL_DISCIPLE_THREE");
       }
 
       return;
@@ -174,8 +184,8 @@ messages:
          return;
       }
 
-      % Quest node 13 dialog needs the NPC name.
-      if index = 13
+      % Quest node QNT_ID_SHAL_DISCIPLE_TWO dialog needs the NPC name.
+      if index = QNT_ID_SHAL_DISCIPLE_TWO
       {
          AddPacket(4,Send(Send(oQuestNode,@GetDestNPC),@GetName));
       }

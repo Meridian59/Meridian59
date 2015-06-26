@@ -1,0 +1,130 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TruthEndBranchQuest is QuestTemplate
+% QST_ID_TRUTH_SPELL_ENDBRANCH = 15
+% Quest nodes 30. Also contains 29.
+% QNT_ID_TRUTH_ENDBRANCH_ONE, QNT_ID_TRUTH_ENDBRANCH_TWO,
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   truthendbranch_name_rsc = "lying to Parrin"
+   truthendbranch_desc_rsc = \
+      "Tell Parrin how your performance really went."
+
+   truthendbranch_completed = \
+      "You have completed Parrin's pupil quest.  Parrin will now "
+      "teach you the songs of Jala."
+
+   % Quest resources.
+   truthquest_trigger_5 = "good"
+   truthquest_success_5 = \
+      "That would be a remarkable thing indeed, for a fledgling bard "
+      "like yourself.  Are you being entirely honest with yourself, %NAME?"
+
+classvars:
+
+   vrName = truthendbranch_name_rsc
+   vrDesc = truthendbranch_desc_rsc
+
+   vrCompleted = truthendbranch_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_TRUTH_SPELL_ENDBRANCH
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = 0
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_TRUTH_ENDBRANCH_TWO];
+
+      plSpecialRestrict = [ [ Q_R2_QN_ASSIGNABLE, FALSE ],
+                            [ Q_R2_IS_PLAYER, $ ] ] ;
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #29 is truth song quest, 'good' branch kickoff
+      % QNT_ID_TRUTH_ENDBRANCH_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_TRUTH_ENDBRANCH_ONE)
+      {
+         %Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_TRUTH_ENDBRANCH_ONE,
+         %     #new_mod=QN_NPCMOD_PASSED);
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_TRUTH_ENDBRANCH_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                     #cNPC_class=&Minstrel));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_TRUTH_ENDBRANCH_ONE");
+      }
+
+      % Template #30 is truth song quest, 'good' branch
+      % QNT_ID_TRUTH_ENDBRANCH_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[truthquest_trigger_5],
+               #quest_node_index=QNT_ID_TRUTH_ENDBRANCH_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_TRUTH_ENDBRANCH_TWO,
+               #new_NPC_list=Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel));
+         %Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_TRUTH_ENDBRANCH_TWO,
+         %     #new_mod=QN_NPCMOD_SAME);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_TRUTH_ENDBRANCH_TWO,
+               #new_hint=truthquest_success_5);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_TRUTH_ENDBRANCH_TWO,
+               #new_limit=60);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_TRUTH_ENDBRANCH_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

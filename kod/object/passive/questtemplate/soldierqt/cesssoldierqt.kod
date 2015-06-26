@@ -1,0 +1,150 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PrincessSoldierQuest is SoldierQuestTemplate
+% Quest nodes 211, 212, 213.
+% QNT_ID_CESS_SOLDIER_ONE, QNT_ID_CESS_SOLDIER_TWO, QNT_ID_CESS_SOLDIER_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   princesssoldier_name_rsc = "Princess soldier shield quest"
+   princesssoldier_desc_rsc = \
+     "Princess Kateriina will allow you to join the Royal, but first "
+      "you must prove your loyalty by slaying her enemies."
+
+   princesssoldier_completed_rsc = \
+      "You have proven your worth, and are now a soldier in the Royal army."
+
+   % Quest resources.
+   princess_faction_soldier_assign_1 =\
+      "I am in need of allies.  Please, prove your loyalty by fighting "
+      "%INDEF_MONSTER%MONSTER.  You should find one guarding a flagpole "
+      "nearby.  Come back and let me know you are done."
+   princess_faction_soldier_assign_2 =\
+      "I am glad to see you have returned.  Please fight "
+      "%INDEF_MONSTER%MONSTER.  Tell me when you are done and you will "
+      "be made a soldier."
+   princess_faction_soldier_success =\
+      "It is good that we can count you as an ally.  Take this as "
+      "a symbol of your commitment to the battle."
+   princess_faction_soldier_failure =\
+      "Yes, this war is ugly and frightful and there is no shame for "
+      "turning aside from the grisly task asked of you.  However, I "
+      "need soldiers that will defend the royal right to the throne "
+      "on the battlefield.  Visit later if you should gain enough "
+      "nerve to fight our enemy."
+
+classvars:
+
+   vrName = princesssoldier_name_rsc
+   vrDesc = princesssoldier_desc_rsc
+
+   vrCompleted = princesssoldier_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_PRINCESS_SOLDIER
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_FACTION_PRINCESS | Q_PLAYER_NOTTRIED_RECENTLY
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_CESS_SOLDIER_ONE, QNT_ID_CESS_SOLDIER_TWO,
+                      QNT_ID_CESS_SOLDIER_THREE];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #211 is 1st Princess Soldier Shield quest, say "soldier"
+      % QNT_ID_CESS_SOLDIER_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+            #cargolist=[ faction_soldier_trigger ],
+            #quest_node_index=QNT_ID_CESS_SOLDIER_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_CESS_SOLDIER_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                        #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&PrincessLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CESS_SOLDIER_ONE");
+      }
+
+      % Template #212 is 2nd Princess Soldier Shield quest, kill first faction soldier
+      % QNT_ID_CESS_SOLDIER_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_MONSTER,#monsterlist=[&DukeTroop],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_CESS_SOLDIER_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_CESS_SOLDIER_TWO,
+               #new_hint=princess_faction_soldier_assign_1);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_CESS_SOLDIER_TWO,
+               #new_hint=princess_faction_soldier_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CESS_SOLDIER_TWO");
+      }
+
+      % Template #213 is 3rd Princess Soldier Shield quest, kill second faction soldier
+      % QNT_ID_CESS_SOLDIER_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_MONSTER,#monsterlist=[&RebelTroop],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &PrincessShield, 1 ] ],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_CESS_SOLDIER_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_CESS_SOLDIER_THREE,
+               #new_hint=princess_faction_soldier_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_CESS_SOLDIER_THREE,
+               #new_hint=princess_faction_soldier_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_CESS_SOLDIER_THREE,
+               #new_hint=princess_faction_soldier_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CESS_SOLDIER_THREE");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

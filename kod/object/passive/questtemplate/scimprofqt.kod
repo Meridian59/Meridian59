@@ -1,0 +1,217 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ScimProfQuest is QuestTemplate
+% Quest nodes 45, 46, 47, 48
+% QNT_ID_SCIMITAR_PUPIL_ONE, QNT_ID_SCIMITAR_PUPIL_TWO,
+% QNT_ID_SCIMITAR_PUPIL_THREE, QNT_ID_SCIMITAR_PUPIL_FOUR
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   scimprofquest_name_rsc = "scimitar wielding pupil quest"
+
+   % This description is used if there is an error preventing the others
+   % from being displayed.
+   scimprofquest_desc_rsc = \
+      "Quintor has sent you to slay a monster, so that he will teach you "
+      "scimitar wielding."
+
+   scimprofquest_kill_rsc = \
+      "Quintor will teach you how to use a scimitar, but first you must "
+      "slay a %s. Complete this task and report back to him."
+
+   scimprofquest_return_rsc = \
+      "Return to Quintor and let him know the task has been "
+      "completed."
+
+   scimprofquest_completed = \
+      "You have completed Quintor's scimitar pupil quest.  Quintor will now "
+      "be willing to train you in the art of scimitar wielding."
+
+   % Quest resources.
+   scimitarlearn_trigger = "pupil"
+   scimitarlearn_assign_2 = \
+      "So you are a warrior? Ha! Don't look like much of a warrior to me.  "
+      "Before I will spend my time teaching you the valuable ways of the "
+      "scimitar, you must prove yourself by slaying %INDEF_MONSTER%MONSTER.  "
+      "Do this and return to me. "
+   scimitarlearn_failure_2 = \
+      "Subject: Learning to wield the scimitar\n"
+      "Failure is part of learning.  Failure is crucial for a warrior.  "
+      "You tried and that is important, but do not think for a second that "
+      "I will teach you anything.  Now I must return to my work."
+   scimitarlearn_assign_3 = \
+      "That took long enough.  I do not like to be kept waiting so long.  "
+      "With this extra time I have decided that you must slay "
+      "%INDEF_MONSTER%MONSTER now.  This time do not waste so many strokes "
+      "with that...weapon.  Go now."
+   scimitarlearn_failure_3 = \
+      "Subject: Learning to wield the scimitar\n"
+      "Ah, well perhaps I have asked too much for one with little "
+      "experience.  I have no time to tutor you in the basics of weaponry.  "
+      "Come back when you have some more skill under your belt."
+   scimitarlearn_assign_4 = \
+      "You again!  I thought the underworld had taken you.  What was it that "
+      "I asked of you?  Oh yes, you were to slay %INDEF_MONSTER%MONSTER.  Go "
+      "do that and I will teach you.  No arguing now.  Go now or we shall "
+      "both grow old and die before you can learn the majesty of the "
+      "scimitar.  Slay another %MONSTER."
+   scimitarlearn_success_4 = \
+      "Finally.  The first thing I must teach you is to snap to it.  Come "
+      "to me and we shall begin to learn how to effectively use the greatest "
+      "weapon in the land: the scimitar."
+   scimitarlearn_failure_4 = \
+      "Subject: Learning to wield the scimitar\n"
+      "Your lack of skill and sheer sloth has cost you the opportunity to "
+      "study with me.  A shame, you were so close.  Perhaps you were too "
+      "long at your mother's breast.  Practice, novice, that is what you need."
+
+classvars:
+
+   vrName = scimprofquest_name_rsc
+   vrDesc = scimprofquest_desc_rsc
+
+   vrKill = scimprofquest_kill_rsc
+   vrReturn = scimprofquest_return_rsc
+   vrCompleted = scimprofquest_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_SCIMITAR_PROF
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTSUCCEEDED | Q_PLAYER_NOTFAILED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+   piTimeLimit = 12 * 3600 % 12 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_SCIMITAR_PUPIL_ONE, QNT_ID_SCIMITAR_PUPIL_TWO,
+                      QNT_ID_SCIMITAR_PUPIL_THREE, QNT_ID_SCIMITAR_PUPIL_FOUR];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #45 is scimitar learn quest kickoff, "scimitar"
+      % QNT_ID_SCIMITAR_PUPIL_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[scimitarlearn_trigger],
+               #quest_node_index=QNT_ID_SCIMITAR_PUPIL_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SCIMITAR_PUPIL_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&JasperBlacksmith));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SCIMITAR_PUPIL_ONE");
+      }
+
+      % Template #46 is scimitar learn quest, kill cave orc
+      % QNT_ID_SCIMITAR_PUPIL_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
+               #NPC_modifier=QN_NPCMOD_SAME,#monsterlist=[&CaveOrc],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_SCIMITAR_PUPIL_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SCIMITAR_PUPIL_TWO,
+               #new_hint=scimitarlearn_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SCIMITAR_PUPIL_TWO,
+               #new_hint=scimitarlearn_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SCIMITAR_PUPIL_TWO");
+      }
+      % Template #47 is scimitar learn quest, kill Yeti
+      % QNT_ID_SCIMITAR_PUPIL_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
+               #NPC_modifier=QN_NPCMOD_SAME,#monsterlist=[&Yeti],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_SCIMITAR_PUPIL_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SCIMITAR_PUPIL_THREE,
+               #new_hint=scimitarlearn_assign_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SCIMITAR_PUPIL_THREE,
+               #new_hint=scimitarlearn_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SCIMITAR_PUPIL_THREE");
+      }
+
+      % Template #48 is scimitar learn quest, kill Yeti... again.
+      % QNT_ID_SCIMITAR_PUPIL_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
+               #NPC_modifier=QN_NPCMOD_SAME,#monsterlist=[&Yeti],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_SCIMITAR_PUPIL_FOUR)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SCIMITAR_PUPIL_FOUR,
+               #new_hint=scimitarlearn_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_SCIMITAR_PUPIL_FOUR,
+               #new_hint=scimitarlearn_success_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SCIMITAR_PUPIL_FOUR,
+               #new_hint=scimitarlearn_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SCIMITAR_PUPIL_FOUR");
+      }
+
+      return;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   {
+      local oMob;
+
+      oMob = Send(oQuestNode,@GetQuestMonster);
+      if oMob = $
+      {
+         AddPacket(4,vrReturn);
+      }
+      else
+      {
+         AddPacket(4,vrKill,4,Send(oMob,@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

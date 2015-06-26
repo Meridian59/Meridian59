@@ -1150,7 +1150,7 @@ BOOL CALLBACK InterfaceDialogTabPage(HWND hwnd,UINT message,UINT wParam,LONG lPa
 
 void InterfaceTabPageCommand(HWND hwnd,int id, HWND hwndCtl, UINT codeNotify)
 {
-	char s[400];
+	char s[4096];
 	
 	switch (codeNotify)
 	{

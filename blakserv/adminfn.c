@@ -571,7 +571,7 @@ void AdminBufferSend(char *buf,int len_buf)
 void AdminSendBufferList(void)
 {
 	session_node *s;
-	buffer_node *bn;
+	buffer_node *bn = NULL;
 	unsigned short len;
 	
 	s = GetSessionByID(admin_session_id);
@@ -831,7 +831,12 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			break;
 		case R :
 			/* remember how strtok works to see why this works */
-			admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
+			admin_parm[i] = (admin_parm_type)strtok(NULL, " \t\n");
+			if (!admin_parm[i])
+			{
+				aprintf("Missing text parameter.\n");
+				return;
+			}
 			/* now make sure no more params */
 			prev_tok = NULL;
 			break;
@@ -1227,16 +1232,16 @@ void AdminWhoEachSession(session_node *s)
 void AdminLock(int session_id,admin_parm_type parms[],
                int num_blak_parm,parm_node blak_parm[])               
 {
-	char *ptr;
+	char *ptr = NULL;
 	char *lockstr;
 	
-	char *text;
+	char *text = NULL;
 	text = (char *)parms[0];
 	
 	lockstr = ConfigStr(LOCK_DEFAULT);
 	
 	ptr = text;
-	while (*ptr != 0)
+	while (ptr && *ptr != 0)
 	{
 		if (*ptr != ' ' && *ptr != '\n' && *ptr != '\t')
 		{
@@ -1746,6 +1751,11 @@ void AdminShowAccount(int session_id,admin_parm_type parms[],
 	is_account_number = True;
 	
 	ptr = account_str;
+	if (!ptr)
+	{
+		aprintf("Missing account string.\n");
+		return;
+	}
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
@@ -3925,6 +3935,8 @@ void AdminSendUsers(int session_id,admin_parm_type parms[],
 	char *text;
 	text = (char *)parms[0];
 	
+	if (!text)
+		return;
 	SetTempString(text,strlen(text));
 	str_val.v.tag = TAG_TEMP_STRING;
 	str_val.v.data = 0;		/* doesn't matter for TAG_TEMP_STRING */

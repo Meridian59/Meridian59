@@ -19,9 +19,9 @@ resources:
    uncutseraphym_name_rsc = "uncut seraphym"
    uncutseraphym_icon_rsc = serapunc.bgf
    uncutseraphym_desc_rsc = \
-   "There must be something remarkable about this ugly lump of "
-   "stone, for the wizards of the orc clans certainly seem fond of "
-   "them. A vein in the rock pulses occasionally, like a heartbeat." 
+      "There must be something remarkable about this ugly lump of "
+      "stone, for the wizards of the orc clans certainly seem fond of "
+      "them.  A vein in the rock pulses occasionally, like a heartbeat." 
    uncutseraphym_name_plural_rsc = "uncut seraphym"
 
 classvars:
@@ -31,6 +31,8 @@ classvars:
    vrDesc = uncutseraphym_desc_rsc
 
    vrName_plural = uncutseraphym_name_plural_rsc
+
+   viIndefinite = ARTICLE_AN
 
    viValue_average = 30
    viWeight = 6
@@ -43,25 +45,26 @@ properties:
 
 messages:
 
-SendAnimation()
-{
-AddPacket(1,ANIMATE_CYCLE,4,180,2,1,2,6);  % Frames 1 to 6, and back to 1
-return;
-}
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,180,2,1,2,6);  % Frames 1 to 6, and back to 1
 
-SendLookAnimation()
-{
-AddPacket(1,ANIMATE_CYCLE,4,180,2,1,2,6);  % Frames 1 to 6, and back to 1
-return;
-}
+      return;
+   }
 
-SendInventoryAnimation()
-{
-AddPacket(1,ANIMATE_CYCLE,4,180,2,1,2,6);  % Frames 1 to 6, and back to 1
-return;
-}
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,180,2,1,2,6);  % Frames 1 to 6, and back to 1
 
+      return;
+   }
 
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,180,2,1,2,6);  % Frames 1 to 6, and back to 1
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

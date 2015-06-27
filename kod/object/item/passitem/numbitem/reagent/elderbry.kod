@@ -32,6 +32,8 @@ classvars:
 
    vrName_plural = Elderberry_name_plural_rsc
 
+   viIndefinite = ARTICLE_AN
+
    viValue_average = 20
    viWeight = 3
    viBulk = 3

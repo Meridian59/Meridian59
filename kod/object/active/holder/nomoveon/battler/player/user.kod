@@ -9666,9 +9666,9 @@ messages:
    "Processes a stat change request from the client"
    {
       local i,lSpellLevels,lSkillLevels,lSpellLevels_new,lSkillLevels_new,
-      totalLevels,totalSchools,totalLvlOnes,iPrimaryStat,
-      oSpell,iSpellAbility,iSpellNum,
-      oSkill,iSkillAbility,iSkillNum;
+            totalLevels,totalSchools,totalLvlOnes,iPrimaryStat,
+            oSpell,iSpellAbility,iSpellNum,
+            oSkill,iSkillAbility,iSkillNum;
 
       % if stats reset is turned off, ignore the request
       if NOT Send(Send(SYS,@GetSettings),@GetStatsResetEnabled)
@@ -9676,7 +9676,7 @@ messages:
          return;
       }
       
-      if Send(self,@FindHolding,#what=&StatsResetToken) = $
+      if Send(self,@FindHolding,#class=&StatsResetToken) = $
          AND (piBase_Max_Health > Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap))
       {
          return;

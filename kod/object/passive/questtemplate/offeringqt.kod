@@ -1,0 +1,84 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OfferingQuestTemplate is QuestTemplate
+% Parent class for the Priestess/Monk chants.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   offeringquest_accept_rsc = \
+      "%s%s has invited you to chant with %s, do you accept?"
+
+   offeringquest_chant_rsc = \
+      "Speak the following words aloud: \"%s\"."
+
+   offering_trigger_2 = "yes"
+
+classvars:
+
+   vrAccept = offeringquest_accept_rsc
+   vrChant = offeringquest_chant_rsc
+
+properties:
+
+   piNumPlayers = 1
+   piMaxPlayers = 1
+   piSchedulePct = 10
+   piTimeLimit = 60 % 60 seconds.
+
+messages:
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oSourceNPC, oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = First(First(plQuestNodeDesc))
+      {
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oSourceNPC,@GetHimHer));
+
+         return;
+      }
+
+      if index <> First(First(plQuestNodeDesc))
+      {
+         oCargo = Send(oQuestNode,@GetCargo);
+         AddPacket(4,oCargo);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

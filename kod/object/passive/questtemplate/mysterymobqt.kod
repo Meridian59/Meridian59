@@ -1,0 +1,286 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MysteryMonsterQuest is QuestTemplate
+% Quest template QST_ID_MYSTERY_MONSTER = 36
+% Quest nodes 110, 111, 112, 113.
+% QNT_ID_MYSTERY_MONSTER_ONE, QNT_ID_MYSTERY_MONSTER_TWO,
+% QNT_ID_MYSTERY_MONSTER_THREE, QNT_ID_MYSTERY_MONSTER_FOUR
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   mysterymobquest_name_rsc = "mystery monster quest"
+   mysterymobquest_desc_rsc = \
+      "The tailor has been having insect trouble lately.  She found a large "
+      "insect of some sort nesting in her storage area and while she was able "
+      "to chase it away with fire and smoke, it made off with one of her "
+      "special dress patterns.  Find the insect, slay it and retrieve the "
+      "pattern."
+
+   mysterymobquest_node_two_rsc = \
+      "%s%s mentioned that %s has been having \"insect\" troubles,  "
+      "and that %s will reward you if you can help %s."
+   mysterymobquest_node_three_rsc = \
+      "%s%s found a large insect of some sort nesting in %s "
+      "storage area.  %s was able to chase it away with fire and smoke, "
+      "but when the smoke cleared %s noticed one of %s \"dress patterns\" "
+      "was missing."
+   mysterymobquest_kill_rsc = \
+      "%s%s has asked you to get %s missing dress pattern back.  "
+      "It is likely still stuck to the insect's carapace, but %s didn't "
+      "see what type of insect it was.  Slay insects in the surrounding "
+      "area and see if any of them have the dress pattern."
+   mysterymobquest_return_rsc = \
+      "You have found the missing dress pattern.  Return it "
+      "to %s%s for a reward."
+
+   mysterymobquest_completed_rsc = \
+      "You have slain the mystery monster and returned the dress pattern. "
+      "In return you have received a disciple robe, which will add "
+      "power to spells that you cast.  Disciple robes bear the insignia "
+      "of a specific school, and provide extra spellpower to spells of that "
+      "school."
+
+   % Quest resources.
+   mysterymonster_assign_2 = \
+      "Wouldst thou do something for me?  I will reward thee.  I have "
+      "insect troubles, it is so, indeed."
+   mysterymonster_trigger_2 = "insect"
+   mysterymonster_assign_3 = \
+      "Verily, some large insect was nesting in my storage area for a "
+      "while.  I managed to force it out by building a small fire and "
+      "blowing smoke inside.  When the smoke cleared I sought out my "
+      "special stash of dress patterns, and one was missing!"
+   mysterymonster_trigger_3 = "pattern"
+   mysterymonster_assign_4 = \
+      "I ~Ineed~I that pattern back, and I'll wager it is still stuck to "
+      "that insect's carapace.  Could thou get it back for me?  The problem "
+      "is, with all that smoke I could see not when it ran off quite what "
+      "kind of bug it was.  It can not be too far away, though."
+   mysterymonster_success_4 = \
+      "Bless thee, child!  Here, this robe is from one of my other "
+      "special patterns.  It has a very ancient design indeed.  Wear it "
+      "well, friend."
+   mysterymonster_failure_4 = \
+      "Subject: Missing dress pattern\n"
+      "I found another copy of the missing dress pattern, so nevermind "
+      "about the one I lost.  I thank thee for trying, though."
+
+classvars:
+
+   vrName = mysterymobquest_name_rsc
+   vrDesc = mysterymobquest_desc_rsc
+
+   vrNodeTwo = mysterymobquest_node_two_rsc
+   vrNodeThree = mysterymobquest_node_three_rsc
+   vrKill = mysterymobquest_kill_rsc
+   vrReturn = mysterymobquest_return_rsc
+
+   vrCompleted = mysterymobquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_MYSTERY_MONSTER
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_NEWBIE
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+   piTimeLimit = 2 * 3600 % 2 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_MYSTERY_MONSTER_ONE, QNT_ID_MYSTERY_MONSTER_TWO,
+                      QNT_ID_MYSTERY_MONSTER_THREE, QNT_ID_MYSTERY_MONSTER_FOUR];
+
+      % Quest nodes with matching descriptions for the player.
+      % Handle 4th node separately.
+      plQuestNodeDesc = [ [QNT_ID_MYSTERY_MONSTER_TWO, vrNodeTwo],
+                          [QNT_ID_MYSTERY_MONSTER_THREE, vrNodeThree] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #110 is mystery monster quest
+      % QNT_ID_MYSTERY_MONSTER_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_MYSTERY_MONSTER_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_TAILOR,
+                           #onIsland=FALSE)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MYSTERY_MONSTER_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MYSTERY_MONSTER_ONE");
+      }
+
+      % Template #111 is mystery monster quest
+      % QNT_ID_MYSTERY_MONSTER_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_SAME,#cargolist=[mysterymonster_trigger_2],
+               #timelimit=300,#quest_node_index=QNT_ID_MYSTERY_MONSTER_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MYSTERY_MONSTER_TWO ,
+               #new_hint=mysterymonster_assign_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MYSTERY_MONSTER_TWO");
+      }
+
+      % Template #112 is mystery monster quest
+      % QNT_ID_MYSTERY_MONSTER_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_SAME,#cargolist=[mysterymonster_trigger_3],
+               #timelimit=300,#quest_node_index=QNT_ID_MYSTERY_MONSTER_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MYSTERY_MONSTER_THREE,
+               #new_hint=mysterymonster_assign_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MYSTERY_MONSTER_THREE");
+      }
+
+      % Template #113 is mystery monster quest
+      % QNT_ID_MYSTERY_MONSTER_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER_ITEMCLASS,
+               #NPC_modifier=QN_NPCMOD_SAME,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &DressPattern, 1 ] ],
+               #monsterlist=[ &SpiderBaby, &SpiderBaby, &Centipede, &Centipede, 
+                              &Centipede, &Spider, &Ant ],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &DiscipleRobe, 1 ] ],
+               #timelimit=2 * 24 * 3600,#quest_node_index=QNT_ID_MYSTERY_MONSTER_FOUR)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MYSTERY_MONSTER_FOUR,
+               #new_hint=mysterymonster_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_MYSTERY_MONSTER_FOUR,
+               #new_hint=mysterymonster_success_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MYSTERY_MONSTER_FOUR,
+               #new_hint=mysterymonster_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MYSTERY_MONSTER_FOUR");
+      }
+
+      return;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   {
+      local oMob;
+
+      if index = QNT_ID_MYSTERY_MONSTER_FOUR
+      {
+         oMob = Send(oQuestNode,@GetQuestMonster);
+         if oMob = $
+         {
+            AddPacket(4,vrReturn);
+         }
+         else
+         {
+            AddPacket(4,vrKill);
+         }
+      }
+
+      propagate;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oNPC, oMob;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if oNPC = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_MYSTERY_MONSTER_TWO
+      {
+
+         AddPacket(4,Send(oNPC,@GetCapDef), 4,Send(oNPC,@GetName),
+                   4,Send(oNPC,@GetHeShe), 4,Send(oNPC,@GetHeShe),
+                   4,Send(oNPC,@GetHimHer));
+
+         return;
+      }
+
+      if index = QNT_ID_MYSTERY_MONSTER_THREE
+      {
+         AddPacket(4,Send(oNPC,@GetCapDef), 4,Send(oNPC,@GetName),
+                   4,Send(oNPC,@GetHisHer), 4,Send(oNPC,@GetHeShe,#cap=TRUE),
+                   4,Send(oNPC,@GetHeShe), 4,Send(oNPC,@GetHisHer));
+
+         return;
+      }
+
+      if index = QNT_ID_MYSTERY_MONSTER_FOUR
+      {
+         oMob = Send(oQuestNode,@GetQuestMonster);
+         if oMob = $
+         {
+            AddPacket(4,Send(oNPC,@GetCapDef), 4,Send(oNPC,@GetName));
+         }
+         else
+         {
+            AddPacket(4,Send(oNPC,@GetCapDef), 4,Send(oNPC,@GetName),
+                      4,Send(oNPC,@GetHisHer), 4,Send(oNPC,@GetHeShe));
+         }
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

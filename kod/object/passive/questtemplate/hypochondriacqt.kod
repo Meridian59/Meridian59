@@ -1,0 +1,287 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HypochondriacQuest is QuestTemplate
+% Quest template QST_ID_HYPOCHONDRIAC = 25
+% Quest nodes 59, 60, 61, 62.
+% QNT_ID_SACCHAQUA_ONE, QNT_ID_SACCHAQUA_TWO, QNT_ID_SACCHAQUA_THREE,
+% QNT_ID_SACCHAQUA_FOUR
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   hypochondriacquest_name_rsc = "hypochondriac quest"
+   hypochondriacquest_desc_rsc = \
+      "Frisconar is \"sick\" once again, and requires your assistance "
+      "in obtaining a remedy for his illness."
+
+   hypochondriacquest_nodetwo_rsc = \
+      "Frisconar is \"sick\" once again, this time with %s.  Go to "
+      "%s and ask %s about a cure for %s."
+
+   hypochondriacquest_nodethree_rsc = \
+      "Go to %s and ask %s about the Sacchaqua potion."
+
+   hypochondriacquest_nodefour_rsc = \
+      "Return to Frisconar and give him the Sacchaqua potion, to save him "
+      "from certain demise."
+
+   hypochondriacquest_completed_rsc = \
+      "You have helped poor Frisconar stave off death for another day, "
+      "and have been rewarded for it.  Perhaps he will need your help "
+      "in the future."
+
+   % Quest resources.
+   hypochondriac_assign_2 = \
+      "Thank god you’re here!  I think I’m dying!  I’ve got %CARGO!  "
+      "Go to %NPC and ask %HIMHER_NPC about a cure for it!"
+   hypochondriac_trigger_2a = "paragolisys"
+   hypochondriac_trigger_2b = "miriatetosis"
+   hypochondriac_trigger_2c = "pelagalosilis"
+   hypochondriac_trigger_2d = "the great fungus disease"
+   hypochondriac_failure_2 = \
+      "Subject: %CARGO\n"
+      "It's a good thing someone else came by and saved me from my ailment!  "
+      "Surely you would have left me to slowly waste away into a painful, "
+      "lingering death."
+   hypochondriac_trigger_3 = "sacchaqua"
+   hypochondriac_assign_3 = \
+      "Ah, he’s dying, eh?  Well, why don’t you go to %NPC and say "
+      "that Frisconar needs another Sacchaqua potion."
+   hypochondriac_failure_3 = \
+      "Subject: Frisconar's unending ailments\n"
+      "Guess you gave up on old Frisconar.  I don't blame you, I don't "
+      "have much patience for his fussing either."
+   hypochondriac_assign_4 = \
+      "How very amusing.  You would think an accomplished Apothecary "
+      "like Frisconar would know that this is nothing more than sugar "
+      "water.  Well, take this to him."
+   hypochondriac_success_4 = \
+      "Oh, thank the gods!  I ... I was seeing stars!  The light at the "
+      "end of the tunnel!  I’m alive!  Here, take this %PRIZE - I owe it "
+      "to you for saving my life!"
+   hypochondriac_failure_4 = \
+      "Subject: O woe is me!\n"
+      "Where have you been?!  I am finished now, for sure.  As I write this, "
+      "my sight dims until I can barely see the paper before me.  My breath "
+      "is short and causes me great pain.  My search for a cure to my illness "
+      "must continue, though you have failed me.  I must pin my frail and "
+      "tattered hopes to another, and hope that they will not let me down "
+      "as you have.  Farewell, perhaps forever."
+
+classvars:
+
+   vrName = hypochondriacquest_name_rsc
+   vrDesc = hypochondriacquest_desc_rsc
+
+   vrNodeTwo = hypochondriacquest_nodetwo_rsc
+   vrNodeThree = hypochondriacquest_nodethree_rsc
+   vrNodeFour = hypochondriacquest_nodefour_rsc
+
+   vrCompleted = hypochondriacquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_HYPOCHONDRIAC
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   piMaxPlayers = 5
+   piSchedulePct = 10
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_SACCHAQUA_ONE, QNT_ID_SACCHAQUA_TWO,
+                      QNT_ID_SACCHAQUA_THREE, QNT_ID_SACCHAQUA_FOUR];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_SACCHAQUA_TWO, vrNodeTwo],
+                          [QNT_ID_SACCHAQUA_THREE, vrNodeThree],
+                          [QNT_ID_SACCHAQUA_FOUR, vrNodeFour] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #59 is hypochondriac quest kickoff
+      % QNT_ID_SACCHAQUA_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_SACCHAQUA_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SACCHAQUA_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&TosApothecary));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SACCHAQUA_ONE");
+      }
+
+      % Template #60 is hypochondriac quest, say disease name to npc
+      % QNT_ID_SACCHAQUA_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ hypochondriac_trigger_2a, hypochondriac_trigger_2b,
+                            hypochondriac_trigger_2c, hypochondriac_trigger_2d ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_SACCHAQUA_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperTown)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SACCHAQUA_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SACCHAQUA_TWO,
+               #new_hint=hypochondriac_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SACCHAQUA_TWO,
+               #new_hint=hypochondriac_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SACCHAQUA_TWO");
+      }
+
+      % Template #61 is hypochondriac quest, say "sacchaqua" to npc
+      % QNT_ID_SACCHAQUA_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ hypochondriac_trigger_3 ],
+               #timelimit=3600,#quest_node_index=QNT_ID_SACCHAQUA_THREE)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_SACCHAQUA_THREE,
+               #new_mod=QN_NPCMOD_DIFFERENT);
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SACCHAQUA_THREE,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SACCHAQUA_THREE,
+               #new_hint=hypochondriac_assign_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SACCHAQUA_THREE,
+               #new_hint=hypochondriac_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SACCHAQUA_THREE");
+      }
+
+      % Template #62 is hypochondriac quest, bring the cure back to frisconar
+      % QNT_ID_SACCHAQUA_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #cargolist=[ [ QN_PRIZETYPE_ITEM, &Sacchaqua, 1 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &ScaleArmor, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &FineLute, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Rose, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &BerserkerRing, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &EnfeebleWand, 1 ] ] ],
+               #timelimit=3600,#quest_node_index=QNT_ID_SACCHAQUA_FOUR)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_SACCHAQUA_FOUR,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_SACCHAQUA_FOUR,
+               #new_hint=hypochondriac_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_SACCHAQUA_FOUR,
+               #new_hint=hypochondriac_success_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_SACCHAQUA_FOUR,
+               #new_hint=hypochondriac_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_SACCHAQUA_FOUR");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_SACCHAQUA_TWO
+      {
+         % oCargo is a resource.
+         oCargo = Send(oQuestNode,@GetCargo);
+
+         AddPacket(4,oCargo, 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer), 4,oCargo);
+
+         return;
+      }
+
+      if index = QNT_ID_SACCHAQUA_THREE
+      {
+         AddPacket(4,Send(oDestNPC,@GetName), 4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

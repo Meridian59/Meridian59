@@ -1528,7 +1528,7 @@ Bool HandleLookPlayer(char *ptr, long len)
    len -= (ptr - start);
 
    /* Remove format string id # & other ids from length */
-   if (!CheckServerMessage(&desc, &ptr, len, resource_id))
+   if (!CheckServerMessage(&desc, &ptr, &len, resource_id))
       return False;
 
    // Get fixed string (extra info)

@@ -909,9 +909,9 @@ Bool HandleStringMessage(char *ptr,long len)
       return False;
    
    Extract(&ptr, &resource_id, SIZE_ID);
-
+   len -= SIZE_ID;
    /* Remove format string id # from length */
-   if (!CheckServerMessage(&msg, &ptr, len - SIZE_ID, resource_id))
+   if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
 
    GameMessage(msg);
@@ -942,7 +942,7 @@ Bool HandleSaid(char *ptr,long len)
 
    len -= 2 * SIZE_ID + SIZE_SAY_INFO;
 
-   if (!CheckServerMessage(&msg, &ptr, len, resource_id))
+   if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
 
    MessageSaid(sender_id, sender_name, say_type, msg);
@@ -997,7 +997,7 @@ Bool HandleLook(char *ptr, long len)
    // Remove format string id # & other ids from length
    Extract(&ptr, &resource_id, SIZE_ID);
    len -= (ptr - start);
-   if (!CheckServerMessage(&msg, &ptr, len, resource_id))
+   if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
 
    // Get inscription string
@@ -1006,8 +1006,9 @@ Bool HandleLook(char *ptr, long len)
    if (pane)
    {
       Extract(&ptr, &resource_id, SIZE_ID);
-      if (!CheckServerMessage(&inscr, &ptr, len, resource_id))
-	 return False;
+      len -= SIZE_ID;
+      if (!CheckServerMessage(&inscr, &ptr, &len, resource_id))
+         return False;
    }
 
    DisplayDescription(&obj, flags, (pane? inscr : NULL), msg, NULL);

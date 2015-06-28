@@ -28,7 +28,7 @@
  *   %r          specifies that the next resource in the message should be concatenated
  *               into the place of this format character (calls CheckServerMessage)
  */
-Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
+Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 {
    char *fmt, *next_ptr; /* next_ptr points into format string fmt */
    char tempfmt[MAXMESSAGE], format[MAXMESSAGE], *param_ptr = *params;
@@ -75,9 +75,9 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    // Can have up to 25 of these.
    rsc = fmt;
    // TODO: not sure if allocating memory is the best way to do this.
-   new_param_ptr = (char*)SafeMalloc(len);
+   new_param_ptr = (char*)SafeMalloc(*len);
    // Copy the parameter pointer into the new memory.
-   memcpy(new_param_ptr, param_ptr, len);
+   memcpy(new_param_ptr, param_ptr, *len);
    // Used to keep track of the previous character while walking the rsc.
    walkrsc = rsc;
    // Iterate over the resource.
@@ -232,10 +232,15 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
             *message++ = '%';
             break;
          case 'r':
+            if (*len < SIZE_ID)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return False;
+            }
             // Get the next resource in the server message, increment param_ptr.
             memcpy(&field, param_ptr, SIZE_ID);
             param_ptr += SIZE_ID;
-            len -= SIZE_ID;
+            *len -= SIZE_ID;
 
             // Process the next resource as if it were a complete message.
             if (!CheckServerMessage(&msg2, &param_ptr, len, field))
@@ -257,13 +262,13 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
          case 'i':
          case 's':
             /* See if there are enough bytes left */
-            if (len < SIZE_ID)
+            if (*len < SIZE_ID)
                return False;
 
             /* Interpret next field as an integer */
             memcpy(&field, param_ptr, SIZE_ID);
             param_ptr += SIZE_ID;
-            len -= SIZE_ID;
+            *len -= SIZE_ID;
 
             /* Look up resource strings; use integers immediately */
             if (type_char == 's')
@@ -293,7 +298,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
             break;
          case 'q':     /* Literal string from server */
             /* Store location; we will perform replacement later */	    
-            if (len < SIZE_STRING_LEN)
+            if (*len < SIZE_STRING_LEN)
                return False;
 
             /* We can only hold a certain # of qparams */
@@ -304,8 +309,8 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
             }
             memcpy(&string_len, param_ptr, SIZE_STRING_LEN);
             param_ptr += SIZE_STRING_LEN;
-            len -= SIZE_STRING_LEN;
-            if (len < string_len)
+            *len -= SIZE_STRING_LEN;
+            if (*len < string_len)
                return False;
 
             /* Mark this position with qparam # */
@@ -321,7 +326,7 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
 
             /* Skip string */
             param_ptr += string_len;
-            len -= string_len;
+            *len -= string_len;
 
             // Get rid of any numbered parameter formatters.
             if (*next_ptr == '$')

@@ -2458,12 +2458,12 @@
    INTRIGUE_ENABLE_HP = 50
    INTRIGUE_ENABLE_SPELL = 40 
 
-   % Four hours, in seconds.
-   FACTION_MIN_REVISIT_TIME   = 14400
-   % 24 hours, in seconds.
-   FACTION_RESIGN_TIME        = 86400
-   % 20 hours, in seconds.
-   FACTION_WARN_TIME          = 72000
+   % One hour, in seconds.
+   FACTION_MIN_REVISIT_TIME   = 3600
+   % 48 hours, in seconds.
+   FACTION_RESIGN_TIME        = 172800
+   % 44 hours, in seconds.
+   FACTION_WARN_TIME          = 158400
    % 20 min, in milleseconds.
    FACTION_UPDATE_TIME        = 1200000
 

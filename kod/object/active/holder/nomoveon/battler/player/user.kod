@@ -37,7 +37,9 @@ constants:
    NEWS_POSTING_LIMIT = 2
    % how long can news messages be
    NEWS_POSTING_MAX_LENGTH = 4096
-   
+   % Max subject length client can handle.
+   NEWS_POSTING_MAX_SUBJECT_LENGTH = 50
+
    % how long a mail message may be (the client currently can;t handle > 4096)
    MAIL_MESSAGE_MAX_LENGTH = 4096
    
@@ -349,6 +351,8 @@ resources:
       "Your news posting privileges have been revoked."
    user_news_toobig = \
       "WHOA BUDDY!  Take a breath, that message was WAY too big!"
+   user_news_subject_toobig = \
+      "Your newsglobe subject length was too long."
 
    user_guild_rsc = "guild"
    user_guildofficer_rsc = "guildofficer"
@@ -6769,14 +6773,24 @@ messages:
       % Can't post if squelched
       if piFlags2 & PFLAG2_SQUELCHED_POSTS
       {
-         Send(self, @MsgSendUser, #message_rsc=user_news_squelched);
+         Send(self,@MsgSendUser,#message_rsc=user_news_squelched);
+
          return;
       }
-      
-      % there has to be SOME kind of length limit
+
+      % There has to be SOME kind of length limit.
       if StringLength(body) > NEWS_POSTING_MAX_LENGTH
       {
-         Send(self, @MsgSendUser, #message_rsc=user_news_toobig);
+         Send(self,@MsgSendUser,#message_rsc=user_news_toobig);
+
+         return;
+      }
+
+      % Check subject length.
+      if StringLength(title) > NEWS_POSTING_MAX_SUBJECT_LENGTH
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_news_subject_toobig);
+
          return;
       }
 
@@ -6789,10 +6803,11 @@ messages:
       }
 
       % Need to be in same room as news globe
-      if (NOT Send(poOwner, @ContainsNewsID, #nid = Send(oNews, @GetNewsNum)))
+      if (NOT Send(poOwner,@ContainsNewsID,#nid=Send(oNews,@GetNewsNum)))
       {
          Debug("Client request for posting news from another room, user = ",
                Send(self,@GetName));
+
          return;
       }
 
@@ -6805,7 +6820,7 @@ messages:
 
             return;
          }
-         
+
          piNumberOfNewsPosts = piNumberOfNewsPosts + 1;
       }
       else

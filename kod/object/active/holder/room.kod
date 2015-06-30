@@ -206,6 +206,9 @@ properties:
 
    piSecurity
 
+   % List of 2 elem lists with row & col to make monsters
+   plGenerators = $
+
    prMusic = $
 
    % Ambient light level
@@ -4661,12 +4664,85 @@ messages:
       return;
    }
 
-   GenerateMonster()
-   "Just a stub function here."
+   GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE, bRandom=FALSE)
+   "Pulled outside the function to be callable outside of the function. "
+   "Can generate a monster at a specific location, or you can let it be "
+   "put at a gen point.  This is now in Room, as all rooms can use it for "
+   "placing either a monster or a random item."
    {
-      % Do nothing.  To handle monsters going off the edge of the map
-      %  without a nasty IsClass check.
-      return;
+      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount;
+
+      iMRow = iRow;
+      iMCol = iCol;
+
+      if oMonster = $
+      {
+         return FALSE;
+      }
+
+      oOldOwner = Send(oMonster,@GetOwner);
+      if oOldOwner <> $
+      {
+         % Remove it from it's previous location.  This also stops the
+         % "warping" effect if we try to "respawn" a monster in the same room.
+         if Send(oOldOwner,@ReqLeaveHold,#what=oMonster)
+         {
+            Send(oOldOwner,@LeaveHold,#what=oMonster);
+         }
+         else
+         {
+            % Won't go?  Can't do anything, then.
+            return FALSE;
+         }
+      }
+
+      if (iMRow=0 and iMCol=0)
+      {
+         if plGenerators = $
+            OR bRandom
+         {
+            iCount = 0;
+            iMRow = Random(1,piRows);
+            iMCol = Random(1,piCols);
+            while ((NOT Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol))
+                  AND iCount < 15)
+            {
+               iMRow = Random(1,piRows);
+               iMCol = Random(1,piCols);
+               iCount = iCount + 1;
+            }
+            if iCount = 15
+            {
+               Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
+                     " in room ",self,Send(self,@GetName));
+            }
+         }
+         else
+         {
+            iRoll = Random(1,Length(plGenerators));
+            lPos = Nth(plGenerators,iRoll);
+            iMRow = First(lPos);
+            iMCol = Nth(lPos,2);
+         }
+      }
+      
+      if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
+         AND (Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol)
+            OR bStack)
+      {
+         Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
+               #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+      }
+      else
+      {
+         Send(oMonster,@Delete);
+
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    CanHavePlayerPortal()

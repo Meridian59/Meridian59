@@ -276,6 +276,11 @@ resources:
       "You can't kill yourself now, not when you're the sacred guardian of a "
       "Meridian token!"
 
+   user_cant_suicide_hp = \
+      "You've accomplished much so far in your time here, and you can't quite "
+      "stomach the thought of ending your journey now.  If you have a good "
+      "reason for suiciding, perhaps one of the Gods will assist you."
+
    user_cant_suicide_OOG = \
       "Somehow, even though you deserve it, you are unable to bear the "
       "thought of killing yourself now."
@@ -1662,21 +1667,28 @@ messages:
          {
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_OOG);
             
-            return;            
+            return;
          }
          
-         if getTime() < piLast_restart_time + SUICIDE_REPEAT_TIME
+         if GetTime() < piLast_restart_time + SUICIDE_REPEAT_TIME
          {
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_yet);
             
-            return;            
+            return;
          }
 
          if Send(self,@FindHolding,#class=&Token)
          {
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_token);
             
-            return;                 
+            return;
+         }
+
+         if Send(Send(SYS,@GetSettings),@GetMaxSuicideHP) <= piBase_Max_health
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_hp);
+
+            return;
          }
 
          % Successful SUICIDE.

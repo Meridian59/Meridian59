@@ -89,6 +89,11 @@ properties:
    % The default time for building group membership.
    piDefaultGroupTime = 60000
 
+   % The maximum HP a player can suicide their character at, without admin
+   % help. Prevents people making mistakes in a fit of rage, or suiciding
+   % hacked accounts.
+   piMaxSuicideHP =  60
+
    %
    % Spell settings
    %
@@ -383,6 +388,11 @@ messages:
    GetDefaultGroupTime()
    {
       return piDefaultGroupTime;
+   }
+
+   GetMaxSuicideHP()
+   {
+      return piMaxSuicideHP;
    }
 
    %

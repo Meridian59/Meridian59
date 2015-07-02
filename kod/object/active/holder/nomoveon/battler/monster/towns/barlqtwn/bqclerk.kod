@@ -101,6 +101,36 @@ resources:
       "According to the Royal Paperwork Reduction Act, ballots are no "
       "longer used in this office."
 
+   % Name changing.
+   barloque_clerk_trigger_change = "change"
+   barloque_clerk_trigger_name = "name"
+   barloque_clerk_change_name = \
+      "Yes, I can change your legal name by deed poll.  Simply fill out your "
+      "new name on this scroll and return it. If it is available and not "
+      "obscene, it shall be yours.  I must warn you, there is a fee of %i "
+      "shillings for providing this service, which will be deducted from "
+      "your bank account."
+   barloque_clerk_cant_hold = \
+      "I can change your legal name by deed poll, but you have no room in "
+      "your inventory to hold the scroll you would need to fill out."
+   barloque_clerk_warning_cost = \
+      "I must warn you again before I complete this process, that you will be "
+      "charged %i shillings for this service.  If you are positive you wish "
+      "to pay the fee, I will accept your scroll."
+   barloque_clerk_not_enough = \
+      "You do not have enough money in your bank account for this service."
+   barloque_clerk_bad_name = \
+      "Sorry, that username is not valid."
+   barloque_clerk_name_changed = \
+      "Your name has been changed."
+
+   barloque_clerk_name_post_1 = "'s name has been changed"
+   barloque_clerk_name_post_2 = "Let it be known that "
+   barloque_clerk_name_post_3 = \
+      "'s name has been changed by deed poll to "
+   barloque_clerk_name_post_4 = \
+      ". So it has been spoken, so shall it be done. \n\n-- Caramo"
+
 classvars:
 
    vrName = barloque_clerk_name_rsc
@@ -120,21 +150,37 @@ properties:
 
    piCommand = COMMAND_NONE
 
+   % A list containing players who have received the name change cost
+   % warning, to avoid players obtaining a ballot and giving it to
+   % Caramo "accidentally".
+   plNameChangeWarn = $
+
 messages:
 
    Constructor()
    {
-      plWantedItems = [ &BallotItem, &Money ];
+      plWantedItems = [ &NameChangeScroll, &BallotItem, &Money ];
       Send(SYS,@SetCaramo,#oCaramo=self);
 
       piJusticar_State = STATE_NO_ELECTIONS;
+
+      plNameChangeWarn = $;
 
       propagate;
    }
 
    GotWantedItem(obj=$,who=$)
    {
-      if IsClass(obj, &BallotItem)
+      if IsClass(obj,&NameChangeScroll)
+      {
+         % Deed poll can be used to change a player's name.
+         % Returns TRUE if successful, otherwise give the scroll back.
+         Send(self,@TryChangePlayerName,#who=who,#oItem=obj);
+
+         return;
+      }
+
+      if IsClass(obj,&BallotItem)
       {
          Post(poOwner,@SomeoneSaid,#what=self,#string=no_more_ballots,
                #type=SAY_RESOURCE);
@@ -148,6 +194,87 @@ messages:
       }
 
       propagate;
+   }
+
+   TryChangePlayerName(who=$,oItem=$)
+   "Attempts to change a player's name. If they've been warned, and they can "
+   "pay the fee, will check with System to see if the name is valid. If it "
+   "is, name will be changed."
+   {
+      local i, iAmount, oBank;
+
+      if who = $
+         OR oItem = $
+      {
+         return;
+      }
+
+      iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
+
+      % No existing list, add player and warn, give ballot back.
+      if plNameChangeWarn = $
+      {
+         plNameChangeWarn = [who];
+         Send(self,@SayToOne,#message_rsc=barloque_clerk_warning_cost,
+               #target=who,#parm1=iAmount);
+         Send(who,@NewHold,#what=oItem);
+
+         return;
+      }
+
+      for i in plNameChangeWarn
+      {
+         if i = who
+         {
+            % Check if name is valid.
+            if NOT Send(SYS,@ValidateUserName,#oUser=who,
+                        #sName=Send(oItem,@GetInscription))
+            {
+               Send(self,@SayToOne,#target=who,
+                     #message_rsc=barloque_clerk_bad_name);
+
+               return;
+            }
+
+            % Get player's bank account.
+            oBank = Send(SYS,@FindBankByNum,#num=BID_TOS);
+            if Send(oBank,@GetAccount,#what=who) >= iAmount
+            {
+               % Player has enough money, change their name and take the
+               % money.
+               Send(oBank,@WithdrawAccount,#what=who,#amount=iAmount);
+               Send(self,@SayToOne,#target=who,
+                     #message_rsc=barloque_clerk_name_changed);
+               % Record the name change in the Book of Jala.
+               Send(self,@RecordNameChangeBook,#parm1=Send(who,@GetTrueName),
+                     #parm2=Send(oItem,@GetInscription));
+               % System will handle changing the name.
+               Send(SYS,@ChangeUserName,#oUser=who,
+                     #sName=Send(oItem,@GetInscription));
+               Send(oItem,@Delete);
+               plNameChangeWarn = DelListElem(plNameChangeWarn,i);
+
+               return;
+            }
+            else
+            {
+               % Not enough money, return scroll.
+               Send(self,@SayToOne,#target=who,
+                     #message_rsc=barloque_clerk_not_enough);
+               Send(who,@NewHold,#what=oItem);
+
+               return;
+            }
+         }
+      }
+
+      % Player wasn't in list, add them and give ballot back.
+      plNameChangeWarn = Cons(who,plNameChangeWarn);
+      Send(self,@SayToOne,#message_rsc=barloque_clerk_warning_cost,
+            #target=who,#parm1=iAmount);
+      Send(who,@NewHold,#what=oItem);
+
+      return;
    }
 
    CheckForIndulgence(who=$,obj=0)
@@ -236,11 +363,35 @@ messages:
       return;
    }
 
+   RecordNameChangeBook(parm1=$, parm2=$)
+   "parm1=oldname,parm2=newname"
+   {
+      local sString, sString2, oBook;
+
+      ClearTempString();
+      AppendTempString(parm1);
+      AppendTempString(barloque_clerk_name_post_1);
+      sString = SetString($,GetTempString());
+
+      ClearTempString();
+      AppendTempString(barloque_clerk_name_post_2);
+      AppendTempString(parm1);
+      AppendTempString(barloque_clerk_name_post_3);
+      AppendTempString(parm2);
+      AppendTempString(barloque_clerk_name_post_4);
+      sString2 = SetString($,GetTempString());
+
+      oBook = Send(poOwner,@GetBook);
+      Send(oBook,@PostNews,#what=self,#title=sString,#body=sString2);
+
+      return;
+   }
+
    %%% Handling citizen commands.
 
    SomeoneSaid(what=$,type=$,string=$)
    {
-      local iRow, iCol, oTarget;
+      local iRow, iCol, oTarget, iAmount, oScroll;
 
       if what = $ OR NOT IsClass(what,&Player)
       {
@@ -257,6 +408,27 @@ messages:
 
             return;
          }
+      }
+
+      if StringContain(string,barloque_clerk_trigger_change)
+         AND StringContain(string,barloque_clerk_trigger_change)
+      {
+         iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
+         oScroll = Create(&NameChangeScroll);
+
+         if Send(what,@ReqNewHold,#what=oScroll)
+         {
+            Send(self,@SayToOne,#target=what,
+                  #message_rsc=barloque_clerk_change_name,#parm1=iAmount);
+            Send(what,@NewHold,#what=oScroll);
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=what,
+                  #message_rsc=barloque_clerk_cant_hold);
+         }
+
+         return;
       }
 
       propagate;
@@ -314,6 +486,8 @@ messages:
 
    Delete()
    {
+      plNameChangeWarn = $;
+
       Send(SYS,@DeleteCaramo);
 
       propagate;

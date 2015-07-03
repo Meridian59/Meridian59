@@ -45,6 +45,9 @@ resources:
       "You combine the %s with your current stock, for a total "
       "of %d uses with %d power."
 
+   spellitem_cannot_use_yet = \
+      "You cannot use that item yet."
+
 classvars:
 
    vrLabelName = Spellitem_label_name_rsc
@@ -198,14 +201,33 @@ messages:
 
    ReqNewApply(what=$,apply_on=$)
    {
+      local iPostCastDelay, oSpell;
+
       % Prevent use if you can't fight.
-      if (IsClass(what,&Player))
-         AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT))
-         OR pbDisabled
-         OR (IsClass(apply_on,&Player)
-             AND Send(apply_on,@IsInCannotInteractMode))
+      if IsClass(what,&Player)
       {
-         return FALSE;
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT)
+            OR pbDisabled
+            OR (IsClass(apply_on,&Player)
+               AND Send(apply_on,@IsInCannotInteractMode))
+         {
+            return FALSE;
+         }
+
+         oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+         iPostCastDelay = Send(oSpell,@GetPostCastDelay);
+
+         % Bind this at reasonable levels
+         iPostCastDelay = Bound(iPostCastDelay,1,10);
+
+         % Check the attack timer, and start a new one if we use the item.
+         % Only allow one use per second.
+         if NOT Send(what,@IsOkayAttackTime,#seconds=iPostCastDelay)
+         {
+            Send(what,@MsgSendUser,#message_rsc=spellitem_cannot_use_yet);
+
+            return FALSE;
+         }
       }
 
       return TRUE;

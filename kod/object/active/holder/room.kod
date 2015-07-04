@@ -4823,28 +4823,32 @@ messages:
          AND IsClass(victim,&Monster)
       {
          % Tusked Skeletons are our base case.
-         % With level 100 and difficulty 6, they are the last mob that dies quickly.
-         % We'll give them and everything below 60 second group times.
-         % Everything above them needs drastically more time as players progress.
-         % Special case made for Thrashers, due to the extreme nature of their room.
-         
-         piGroupTime = 60000;
-         
+         % With level 100 and difficulty 6, they are the last mob that
+         % dies quickly. We'll give them and everything below 60 second
+         % group times (default). Everything above them needs drastically
+         % more time as players progress. Special case made for Thrashers,
+         % due to the extreme nature of their room.
+
+         piGroupTime = Send(Send(SYS,@GetSettings),@GetDefaultGroupTime);
+
          % 2 additional seconds per mob level point above 100
          % Max +100 seconds for 150 hp mobs
-         piGroupTime = piGroupTime + bound(((Send(victim,@GetLevel)-100) * 1000 * 2),0,$);
-         
+         piGroupTime = piGroupTime
+                        + Bound(((Send(victim,@GetLevel)-100) * 1000 * 2),0,$);
+
          % 10 additional seconds per difficulty point above 6
          % Max +30 seconds for difficulty 9 mobs
-         piGroupTime = piGroupTime + bound(((Send(victim,@GetDifficulty)-6) * 1000 * 10),0,$);
-         
-         % Special cases
-         % Extra 2 minutes for thrashers (for 4 minutes 50 seconds total - nobody is muling thrashers)
-         If IsClass(victim,&Thrasher)
+         piGroupTime = piGroupTime
+                        + Bound(((Send(victim,@GetDifficulty)-6) * 1000 * 10),0,$);
+
+         % Special case: Extra 2 minutes for thrashers for 4 minutes
+         % 50 seconds total - nobody is muling thrashers)
+         if IsClass(victim,&Thrasher)
          {
-            piGroupTime = piGroupTime + bound((60 * 1000 * 2),0,$);
+            piGroupTime = piGroupTime + Bound((60 * 1000 * 2),0,$);
          }
       }
+
       return;
    }
    

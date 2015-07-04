@@ -83,6 +83,11 @@ properties:
    %  specific information on what this number means.
    piMaxLearnPoints = 16
 
+   % Do building group member kills allow tougher rolls?
+   pbGroupToughers = FALSE
+
+   % The default time for building group membership.
+   piDefaultGroupTime = 60000
 
    %
    % Spell settings
@@ -368,6 +373,16 @@ messages:
    GetMaxLearnPoints()
    {
       return piMaxLearnPoints;
+   }
+
+   GetGroupTougherSetting()
+   {
+      return pbGroupToughers;
+   }
+
+   GetDefaultGroupTime()
+   {
+      return piDefaultGroupTime;
    }
 
    %

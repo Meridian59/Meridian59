@@ -3664,6 +3664,7 @@ messages:
          if oBody <> $
          {
             Send(poOwner,@NewHold,#what=oBody,#new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col,
                   #new_angle=Send(self,@GetAngle));
          }
 
@@ -5961,11 +5962,10 @@ messages:
       {
          if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol)
-            AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,
-                     #new_col=piCol)
          {
-            Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,
-                 #new_col=piCol);
+            Send(poOwner,@NewHold,#what=oTreasure,
+                  #new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
             
             if NOT IsClass(oTreasure,&Money)
             {

@@ -2922,9 +2922,10 @@ messages:
    }
 
    DropItem(droppedItem=$, targetGhost=$, dropRoom=$, dropRow=0, dropCol=0,
-            index=$, merge=TRUE)
+            dropFineRow=32,dropFineCol=32,index=$, merge=TRUE)
    {
-      local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
+      local oItem, oDropRoom, iDropRow, iDropCol, iDropFineRow, iDropFineCol,
+            oItemAtt;
 
       if droppedItem <> $
       {
@@ -2947,12 +2948,16 @@ messages:
             oDropRoom = poOwner;
             iDropRow = piRow;
             iDropCol = piCol;
+            iDropFineRow = piFine_row;
+            iDropFineCol = piFine_col;
          }
          else
          {
             oDropRoom = dropRoom;
             iDropRow = dropRow;
             iDropCol = dropCol;
+            iDropFineRow = dropFineRow;
+            iDropFineCol = dropFineCol;
          }
       }
       else
@@ -2961,32 +2966,31 @@ messages:
          oDropRoom = Send(targetGhost,@GetOwner);
          iDropRow = Send(targetGhost,@GetRow);
          iDropCol = Send(targetGhost,@GetCol);
+         iDropFineRow = Send(targetGhost,@GetFineRow);
+         iDropFineCol = Send(targetGhost,@GetFineCol);
       }
 
       if Send(oItem,@ReqNewOwner,#what=oDropRoom)
          AND Send(oDropRoom,@ReqNewHold,#what=oItem,
                   #new_row=iDropRow,#new_col=iDropCol)
       {
-         if Send(oDropRoom,@ReqSomethingMoved,#what=oItem,
-                  #new_row=iDropRow,#new_col=iDropCol)
+         if Send(oItem,@DropOnDeath)
          {
-            if Send(oItem,@DropOnDeath)
+            if targetGhost <> $
             {
-               if targetGhost <> $
-               {
-                  % Put the PK pointer attribute on the item to prevent
-                  % mules from grabbing penalty drops from ghosts.
-                  oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
-                  Send(oItemAtt,@AddToItem,#oItem=oItem,
-                        #timer_duration=PKPOINTER_TIME,
-                        #state1=self);
-               }
-
-               Send(oDropRoom,@NewHold,#what=oItem,#new_row=iDropRow,
-                     #new_col=iDropCol,#merge=merge);
-
-               return TRUE;
+               % Put the PK pointer attribute on the item to prevent
+               % mules from grabbing penalty drops from ghosts.
+               oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
+               Send(oItemAtt,@AddToItem,#oItem=oItem,
+                     #timer_duration=PKPOINTER_TIME,
+                     #state1=self);
             }
+
+            Send(oDropRoom,@NewHold,#what=oItem,#merge=merge,
+                  #new_row=iDropRow,#new_col=iDropCol,
+                  #fine_row=iDropFineRow,#fine_col=iDropFineCol);
+
+            return TRUE;
          }
       }
 
@@ -9279,7 +9283,7 @@ messages:
       % Create the corpse.
       oBody = Send(self,@CreateCorpse);
       Send(oRoom,@NewHold,#what=oBody,#new_row=iRow,#new_col=iCol,
-            #fine_row=16,#fine_col=16,#new_angle=iAngle);
+            #fine_row=iFine_Row,#fine_col=iFine_Col,#new_angle=iAngle);
 
       % Start losing stuff if applicable.
       if NOT bNo_drop_death
@@ -9324,7 +9328,6 @@ messages:
             for i in lItems
             {
                if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
-                  AND Send(oRoom,@ReqSomethingMoved,#what=i,#new_row=iRow,#new_col=iCol)
                   AND Send(i,@DropOnDeath)
                {
                   if oItemAtt <> $
@@ -9336,8 +9339,9 @@ messages:
                            #state1=self);
                   }
 
-                  Send(oRoom,@NewHold,#what=i,
-                        #new_row=iRow,#new_col=iCol,#merge=FALSE);
+                  Send(oRoom,@NewHold,#what=i,#merge=FALSE,
+                        #new_row=iRow,#new_col=iCol,
+                        #fine_row=iFine_row,#fine_col=iFine_col);
                }
             }
          }
@@ -13095,7 +13099,8 @@ messages:
          }
          else
          {
-            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol);
+            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
                   #string=player_token_reward_heavy,#parm1=Send(tobj,@GetDef),
                   #parm2=Send(tobj,@GetName));

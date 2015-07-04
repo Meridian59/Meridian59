@@ -385,12 +385,11 @@ messages:
       iNumber = Random(25,45);
       Send(oTreasure,@AddNumber,#number=iNumber);
 
-      if Send(poOwner,@ReqNewHold,#what=oTreasure,
-               #new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
-                  #new_row=piRow,#new_col=piCol)
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
       {
-         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+         Send(poOwner,@NewHold,#what=oTreasure,
+               #new_row=piRow,#new_col=piCol,
+               #fine_row=piFine_row,#fine_col=piFine_col);
       }
       else
       {

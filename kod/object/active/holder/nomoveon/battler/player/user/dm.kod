@@ -1870,7 +1870,7 @@ messages:
 
             for i in lTemplate
             {
-               if StringContain(string,Send(i,@GetName))
+               if StringContain(string,Send(i,@GetTrueName))
                   AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
                {
                   iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
@@ -1897,7 +1897,7 @@ messages:
 
             for i in lTemplate
             {
-               if StringContain(string,Send(i,@GetName))
+               if StringContain(string,Send(i,@GetTrueName))
                   AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
                {
                   Send(self,@NewHold,#what=create(GetClass(i)));
@@ -1906,7 +1906,7 @@ messages:
                      Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
                            #string=dm_void,#parm1=vrName,
                            #parm2=Send(i,@GetIndef),
-                           #parm3=Send(i,@GetName));
+                           #parm3=Send(i,@GetTrueName));
                   }
 
                   bFound = TRUE;

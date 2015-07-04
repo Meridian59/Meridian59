@@ -133,6 +133,19 @@ messages:
    {
       local iBulk_can_hold, iWeight_can_hold;
 
+      % Sanity checks, if these can be less than 0 there's a chance
+      % they can be -1 (INFINITE_COUNT). This could allow players to
+      % carry more than their max bulk/weight limit.
+      if bulk < 0
+      {
+         bulk = 0;
+      }
+
+      if weight < 0
+      {
+         weight = 0;
+      }
+
       if viBulk = 0
       {
          iBulk_can_hold = INFINITE_COUNT;

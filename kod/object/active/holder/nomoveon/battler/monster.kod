@@ -3897,10 +3897,8 @@ messages:
       local i, j, iFee, iCash, lStored, oVault, iBulk, oMoney, bFound,
             oSafeBox, lNumbers, iCount, bFailed;
 
-      if what=$ OR lItems = $
+      if what = $ OR lItems = $
       {
-         Debug("Invalid data got here");
-
          return;
       }
 
@@ -4336,6 +4334,12 @@ messages:
             % If the item is an item (not a skill)
             if IsClass(i,&NumberItem)
             {
+               % Check if we have a valid number list. Check is done here
+               % as we don't need a number list for non-number items.
+               if lNumbers = $
+               {
+                  continue;
+               }
                % See how many the player wants.
                iAmount = First(lNumbers);
 

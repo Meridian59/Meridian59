@@ -61,7 +61,7 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   AddToItem(oItem=$,oPlayer=$,identified=false)   
+   AddToItem(oItem=$,oPlayer=$,identified=FALSE)
    {
       local lData, iValue;
 
@@ -73,6 +73,10 @@ messages:
       lData = Cons(iValue,lData);
 
       Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+
+      % Add the magic flag to the item (colored name in lists).
+      Send(oItem,@AddMagicFlag);
+
       return;
    }
 

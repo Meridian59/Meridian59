@@ -322,7 +322,8 @@ messages:
          lData = Cons(iValue,lData);
       }
 
-      iValue = Send(self,@SetCompound,#random_gen=random_gen,#oItem=oItem,#iPower=iPower);
+      iValue = Send(self,@SetCompound,#random_gen=random_gen,
+                     #oItem=oItem,#iPower=iPower);
       lData = Cons(iValue,lData);
 
       Send(self,@AddEffects,#oItem=oItem,#lData=lData,#state1=state1);
@@ -330,9 +331,10 @@ messages:
 
       %% Add magic item flag for item attributes that add an effect
       if Send(self,@IsMagicalEffect)
-         {
-            Send(oItem,@AddMagicFlag);
-         }
+      {
+         Send(oItem,@AddMagicFlag);
+      }
+
       return;
    }
 

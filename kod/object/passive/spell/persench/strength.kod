@@ -96,6 +96,14 @@ messages:
 
    EndEnchantment(who=$,state=0,report=TRUE)
    {
+      % Handle transition from 3-element enchantment list elements to
+      % 4-element ones.
+      if state = 0
+         OR state = $
+      {
+         state = Send(who,@GetRawState,#what=self);
+      }
+
       Send(who,@AddMight,#points=-state);
 
       propagate;

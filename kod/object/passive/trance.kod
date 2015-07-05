@@ -93,10 +93,16 @@ messages:
       return;
    }
 
-   BreakTrance(state = $, event = 1)
+   BreakTrance(who = $, state = $, event = 1)
    {
       local oSpell, oCaster;
-      
+
+      if state = $
+         AND who <> $
+      {
+         state = Send(who,@GetRawState,#what=self);
+      }
+
       oSpell = First(state);
       oCaster = Nth(state,2);
       Send(oCaster,@ClearTranceFlag);

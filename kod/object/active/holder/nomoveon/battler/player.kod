@@ -3120,6 +3120,7 @@ messages:
          if First(i) = timer
          {
             if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
             {
                Send(Nth(i,2),@EndEnchantment,#who=self,#state=Nth(i,3));
             }
@@ -3511,6 +3512,7 @@ messages:
                }
             }
             if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(what,&Boon)
             {
                state = Nth(i,3);
             }
@@ -3565,6 +3567,7 @@ messages:
             }
 
             if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
             {
                state = Nth(i,3);
             }

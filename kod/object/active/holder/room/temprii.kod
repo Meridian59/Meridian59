@@ -434,8 +434,10 @@ messages:
          Send(SYS,@UtilGotoSquare,#what=what,
               #where=Send(SYS,@FindRoomByNum,#num=RID_KOC_INN),
               #new_row=8,#new_col=6,#new_angle=ANGLE_NORTH);
-         Send(what,@Losehealth,#amount=(Send(what,@GetHealth)-1));
-         Send(Send(sys,@FindSpellByNum,#num=SID_HOLD),@DoHold,#oTarget=what,#iDurationSecs=30,#report=FALSE);
+         Send(what,@LoseHealth,#amount=(Send(what,@GetHealth)-1));
+         Send(Send(SYS,@FindSpellByNum,#num=SID_HOLD),@DoSpell,
+               #what=self,#oTarget=what,#iDuration=10000,#report=FALSE,
+               #bAllowFreeAction=FALSE);
          
          ptDeathMessageTimer = createtimer(self,@TimerMessage1,5000); 
       }

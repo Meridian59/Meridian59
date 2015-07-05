@@ -333,11 +333,19 @@ messages:
       debug("Shouldn't get here!");
 
       return $;
-   }      
+   }
 
    EndEnchantment(who = $, state=$,report = TRUE)
    {
-      local changeHP,oIllusion,iIllusion_type;
+      local changeHP, oIllusion, iIllusion_type;
+
+      % Handle transition from 3-element enchantment list elements to
+      % 4-element ones.
+      if state = 0
+         OR state = $
+      {
+         state = Send(who,@GetRawState,#what=self);
+      }
 
       changeHP = Nth(state,2);
       Send(who,@GainMaxHealth,#amount=(-changeHP));

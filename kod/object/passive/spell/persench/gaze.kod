@@ -85,9 +85,9 @@ messages:
 
       % Duration for Gaze is simply the spellpower it was cast at.
       % One second per spellpower, bound 1-99 here just in case.
-      iSpellPower = Bound(iSpellPower,1,99);
+      iDuration = Bound(iSpellPower,1,99);
 
-      return iSpellpower * 1000;
+      return iDuration * 1000;
    }
 
    GetStateValue(who=$,iSpellPower=0)

@@ -250,6 +250,13 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             if (strlen(*msg) + strlen(msg2) >= MAXMESSAGE)
                return False;
 
+            // This block of code adds the current message 'part' into message,
+            // but we have to remove the 'r' and add %s as %r isn't a valid
+            // sprintf formatter, while %s is.
+            // Copy the part before the %r modifier into message.
+            num_chars = sprintf(message, tempfmt);
+            // Increment message, but remove the 'r' character.
+            message += (num_chars - 1);
             // Copy the msg2 string into message.
             num_chars = sprintf(message, "%s", msg2);
             message += num_chars;

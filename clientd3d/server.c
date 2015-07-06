@@ -910,6 +910,10 @@ Bool HandleStringMessage(char *ptr,long len)
    
    Extract(&ptr, &resource_id, SIZE_ID);
    len -= SIZE_ID;
+
+   // See if we need to reorder the message.
+   if (CheckMessageOrder(&ptr, &len, resource_id) < 0)
+      return False;
    /* Remove format string id # from length */
    if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
@@ -997,6 +1001,9 @@ Bool HandleLook(char *ptr, long len)
    // Remove format string id # & other ids from length
    Extract(&ptr, &resource_id, SIZE_ID);
    len -= (ptr - start);
+   // See if we need to reorder the message.
+   if (CheckMessageOrder(&ptr, &len, resource_id) < 0)
+      return False;
    if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
 

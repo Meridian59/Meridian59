@@ -1527,6 +1527,9 @@ Bool HandleLookPlayer(char *ptr, long len)
 
    len -= (ptr - start);
 
+   // See if we need to reorder the message.
+   if (CheckMessageOrder(&ptr, &len, resource_id) < 0)
+      return False;
    /* Remove format string id # & other ids from length */
    if (!CheckServerMessage(&desc, &ptr, &len, resource_id))
       return False;

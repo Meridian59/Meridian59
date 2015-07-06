@@ -32,18 +32,13 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 {
    char *fmt, *next_ptr; /* next_ptr points into format string fmt */
    char tempfmt[MAXMESSAGE], format[MAXMESSAGE], *param_ptr = *params;
-   char *new_param_ptr;
    char* message;
    char message2[MAXMESSAGE];
    char* msg2 = message2; /* Pointer to message2 */
-   char *rsc, type_char, *orig_message, *walkrsc;
+   char *rsc, type_char, *orig_message;
    DWORD field, num_chars;
    WORD string_len;
    Bool done = False;
-   int fieldPos = 0, currentPos = 0;
-   char digit[1];
-   PosArray posArray;
-   memset(&posArray, 0, sizeof posArray);
 
    /* qparams are %q parameters; we need to save their positions and replace them last, 
     * even after %s (in case replacement %q string contains a literal %s) */
@@ -69,103 +64,6 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
    fmt = LookupRsc(fmt_id);
    if (fmt == NULL)
       return False;
-
-   // This section reorders the parameters if the resource uses the
-   // $1, $2 etc formatters in conjunction with the string formatters.
-   // Can have up to 25 of these.
-   rsc = fmt;
-   // TODO: not sure if allocating memory is the best way to do this.
-   new_param_ptr = (char*)SafeMalloc(*len);
-   // Copy the parameter pointer into the new memory.
-   memcpy(new_param_ptr, param_ptr, *len);
-   // Used to keep track of the previous character while walking the rsc.
-   walkrsc = rsc;
-   // Iterate over the resource.
-   while (*rsc)
-   {
-      if (rsc[0] == '%')
-      {
-         if (rsc[1] != '%')
-         {
-            // Keep track of the string formatter character.
-            walkrsc = rsc;
-         }
-      }
-
-      if (rsc[0] == '$' && rsc[1] != '$')
-      {
-         // Get the numbers for field position.
-         if (rsc[1] >= '0' && rsc[1] <= '9')
-         digit[0] = rsc[1];
-         if (rsc[2] >= '0' && rsc[2] <= '9')
-            digit[1] = rsc[2];
-         // Take one, because arrays are 0-indexed.
-         fieldPos = atoi(digit) - 1;
-         if (walkrsc[0] == '%')
-         {
-            switch (walkrsc[1])
-            {
-               case 'r':
-                  // Can't use numbered parameters with the 'r' string formatter.
-                  SafeFree(new_param_ptr);
-                  return False;
-               case 'i':
-               case 's':
-               case 'd':
-                  // Increment new_param_ptr to the next field.
-                  new_param_ptr += SIZE_ID;
-                  // Store the new position for this formatter.
-                  posArray.fieldPos[currentPos] = fieldPos;
-                  // Store the size of the current field.
-                  posArray.size[currentPos] = SIZE_ID;
-                  // Keep track of the running size total for each position.
-                  // Offset by 1 position (because pos2 starts at end of pos1, etc).
-                  for (int i = currentPos + 1; i < MAXQPARAMS; i++)
-                     posArray.bytePos[i] += SIZE_ID;
-                  break;
-               case 'q':
-                  // Get the length of the string.
-                  memcpy(&string_len, new_param_ptr, SIZE_STRING_LEN);
-                  // Increment new_param_ptr to the next field.
-                  new_param_ptr += string_len + SIZE_STRING_LEN;
-                  // Store the new position for this formatter.
-                  posArray.fieldPos[currentPos] = fieldPos;
-                  // Store the size of the current field.
-                  posArray.size[currentPos] = string_len + SIZE_STRING_LEN;
-                  // Keep track of the running size total for each position.
-                  for (int i = currentPos; i < MAXQPARAMS; i++)
-                     posArray.bytePos[i] += string_len + SIZE_STRING_LEN;
-                  break;
-               default:
-                  break;
-            }
-            currentPos++;
-         }
-         rsc++;
-      }
-      else if (rsc[0] == '$' && rsc[1] == '$')
-      {
-         rsc+= 2;
-      }
-      else
-      {
-         rsc++;
-      }
-   }
-   if (currentPos > 0)
-   {
-      // Decrement new_param_ptr back to the start.
-      new_param_ptr -= posArray.bytePos[currentPos];
-      for (int i = 0; i < currentPos; i++)
-      {
-         // Copy the data at the current position to the requested field position,
-         // using the byte position stored at that field position. Use two ptrs
-         // here because there's no guarantee that fields are all the same size.
-         memcpy(param_ptr + posArray.bytePos[posArray.fieldPos[i]], new_param_ptr, posArray.size[i]);
-         new_param_ptr += posArray.size[i];
-      }
-   }
-   SafeFree(new_param_ptr);
 
    /* Is there anything to format at all?
     * Or can we return the "format" resource as-is?
@@ -264,6 +162,16 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             // Reset message2 and msg2.
             message2[MAXMESSAGE];
             msg2 = message2;
+
+            // Get rid of any numbered parameter formatters.
+            if (*next_ptr == '$')
+            {
+               next_ptr++;
+               if (*next_ptr != '$')
+               {
+                  next_ptr++;
+               }
+            }
             break;
          case 'd':
          case 'i':
@@ -415,7 +323,174 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
    return True;
 }
 /************************************************************************/
+/*
+ * CheckMessageOrder:  Loops through the resource specified by fmt_id, and
+ *                     checks for "numbered parameters", indicated by a
+ *                     $ and a number present after a string formatter such
+ *                     as %s, %i, %q or %r (e.g. %s$2 %i$1). The message
+ *                     sent by the server is reordered so that these numbers
+ *                     are in order, and the parameters attached to them are
+ *                     reordered accordingly. This function recurses if it
+ *                     encounters a %r formatter, and reorders that resource
+ *                     if needed. CheckMessageOrder should be called before
+ *                     CheckServerMessage if the message could possibly
+ *                     contain $number formatters. Maximum 25 formatters.
+ *                     Returns the length of any fields referenced by the
+ *                     resource if successful, -1 if the resource wasn't found.
+ */
+int CheckMessageOrder(char **params, long *len, ID fmt_id)
+{
+   char *new_param_ptr, *param_ptr = *params, *rsc;
+   WORD string_len;
+   DWORD field;
+   int fieldPos = 0, currentPos = 0, tempLen = 0;
+   char digit[1];
+   PosArray posArray;
 
+   // If there's nothing to reorder (i.e. no $ modifiers) don't perform
+   // unnecessary work at the end.
+   Bool reorder = False;
+
+   /* Get format string from resource */
+   rsc = LookupRsc(fmt_id);
+   if (rsc == NULL)
+   {
+      PostMessage(hMain, BK_NORESOURCE, 0, 0);
+      return -1;
+   }
+
+   // Zero the position array.
+   memset(&posArray, 0, sizeof posArray);
+
+   // TODO: not sure if allocating memory is the best way to do this.
+   new_param_ptr = (char*)SafeMalloc(*len);
+   // Copy the parameter pointer into the new memory.
+   memcpy(new_param_ptr, param_ptr, *len);
+
+   // Iterate over the resource.
+   while (*rsc)
+   {
+      if (rsc[0] == '%')
+      {
+         if (rsc[1] != '\0' && rsc[2] == '$' && rsc[3] != '\0' && rsc[3] != '$')
+         {
+            // At least one reordering necessary, so set reorder to true.
+            reorder = True;
+            // Get the numbers for field position.
+            if (rsc[3] >= '0' && rsc[3] <= '9')
+               digit[0] = rsc[3];
+            // Check for a second number.
+            if (rsc[4] != '\0' && rsc[4] >= '0' && rsc[4] <= '9')
+               digit[1] = rsc[4];
+            // Take one, because arrays are 0-indexed.
+            fieldPos = atoi(digit) - 1;
+         }
+         else
+         {
+            // No $ modifier. Use currentPos (i.e. don't move the field) in case
+            // some fields do have them.
+            fieldPos = currentPos;
+         }
+
+         // Don't allow defining two fields in the same place. This would
+         // have unintended consequences - it isn't clear whether we should
+         // swap the parameter positions or shift everything forward one place.
+         for (int i = 0; i < currentPos; i++)
+         {
+            if (i != currentPos && posArray.fieldPos[i] == fieldPos)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return -1;
+            }
+         }
+
+         switch (rsc[1])
+         {
+         case 'r':
+            // Get the next resource in the server message, increment
+            // new_param_ptr past the resource..
+            memcpy(&field, new_param_ptr, SIZE_ID);
+            new_param_ptr += SIZE_ID;
+            // By calling CheckMessageOrder again, we get the length of
+            // anything referenced by string formatters in the next resource.
+            // This section of new_param_ptr is reordered if necessary.
+            tempLen = CheckMessageOrder(&new_param_ptr, len, field);
+            // If we got less than 0 bytes, return -1 (fail).
+            if (tempLen < 0)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return -1;
+            }
+            // Increment new_param_ptr past this section.
+            new_param_ptr += tempLen;
+            // Add the size of the resource itself to tempLen before using it.
+            tempLen += SIZE_ID;
+            /* This is the new location of the field, not the old one.
+               Offset by 1 position (because pos2 starts at end of pos1, etc). */
+            for (int i = fieldPos + 1; i < MAXQPARAMS; i++)
+               posArray.bytePos[i] += tempLen;
+            posArray.fieldPos[currentPos] = fieldPos;
+            posArray.size[currentPos] = tempLen;
+            break;
+         case 'i':
+         case 's':
+         case 'd':
+            // Increment new_param_ptr to the next field.
+            new_param_ptr += SIZE_ID;
+            // Store the new position for this formatter.
+            posArray.fieldPos[currentPos] = fieldPos;
+            // Store the size of the current field.
+            posArray.size[currentPos] = SIZE_ID;
+            /* This is the new location of the field, not the old one.
+               Offset by 1 position (because pos2 starts at end of pos1, etc). */
+            for (int i = fieldPos + 1; i < MAXQPARAMS; i++)
+               posArray.bytePos[i] += SIZE_ID;
+            break;
+         case 'q':
+            // Get the length of the string.
+            memcpy(&string_len, new_param_ptr, SIZE_STRING_LEN);
+            // Increment new_param_ptr to the next field.
+            new_param_ptr += string_len + SIZE_STRING_LEN;
+            // Store the new position for this formatter.
+            posArray.fieldPos[currentPos] = fieldPos;
+            // Store the size of the current field.
+            posArray.size[currentPos] = string_len + SIZE_STRING_LEN;
+            /* This is the new location of the field, not the old one.
+               Offset by 1 position (because pos2 starts at end of pos1, etc). */
+            for (int i = fieldPos + 1; i < MAXQPARAMS; i++)
+               posArray.bytePos[i] += string_len + SIZE_STRING_LEN;
+            break;
+         case '%':
+            // To skip both %, increment rsc here.
+            rsc++;
+         default:
+            break;
+         }
+         currentPos++;
+      }
+      rsc++;
+   }
+
+   if (reorder && currentPos > 0)
+   {
+      // Decrement new_param_ptr back to the start before copying to param_ptr.
+      new_param_ptr -= posArray.bytePos[currentPos];
+      for (int i = 0; i < currentPos; i++)
+      {
+         // Copy the data at the current position to the requested field position,
+         // using the byte position stored at that field position. Use two ptrs
+         // here because there's no guarantee that fields are all the same size.
+         memcpy(param_ptr + posArray.bytePos[posArray.fieldPos[i]], new_param_ptr, posArray.size[i]);
+         new_param_ptr += posArray.size[i];
+      }
+   }
+   // Decrement new_param_ptr back to the start before clearing memory.
+   new_param_ptr -= posArray.bytePos[currentPos];
+   SafeFree(new_param_ptr);
+
+   return posArray.bytePos[currentPos];
+}
+/************************************************************************/
 static char *format_chars = "`~"; // Characters that start a format code
 
 // FormatCode types

@@ -114,7 +114,7 @@ resources:
       "I can change your legal name by deed poll, but you have no room in "
       "your inventory to hold the scroll you would need to fill out."
    barloque_clerk_warning_cost = \
-      "I must warn you again before I complete this process, that you will be "
+      "~BI must warn you again before I complete this process, that you will be "
       "charged %i shillings for this service.  If you are positive you wish "
       "to pay the fee, I will accept your scroll."
    barloque_clerk_not_enough = \
@@ -157,9 +157,21 @@ properties:
 
 messages:
 
+   Recreate()
+   "Delete outstanding scrolls, verify wanted items and clear warn list."
+   {
+      Send(self,@SetWantedItems);
+
+      % Clear the name change warning list and delete outstanding scrolls.
+      Send(&NameChangeScroll,@Delete);
+      plNameChangeWarn = $;
+
+      return;
+   }
+
    Constructor()
    {
-      plWantedItems = [ &NameChangeScroll, &BallotItem, &Money ];
+      Send(self,@SetWantedItems);
       Send(SYS,@SetCaramo,#oCaramo=self);
 
       piJusticar_State = STATE_NO_ELECTIONS;
@@ -167,6 +179,13 @@ messages:
       plNameChangeWarn = $;
 
       propagate;
+   }
+
+   SetWantedItems()
+   {
+      plWantedItems = [ &NameChangeScroll, &BallotItem, &Money ];
+
+      return;
    }
 
    GotWantedItem(obj=$,who=$)
@@ -211,13 +230,12 @@ messages:
 
       iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
 
-      % No existing list, add player and warn, give ballot back.
+      % No existing list, add player and warn.
       if plNameChangeWarn = $
       {
          plNameChangeWarn = [who];
          Send(self,@SayToOne,#message_rsc=barloque_clerk_warning_cost,
                #target=who,#parm1=iAmount);
-         Send(who,@NewHold,#what=oItem);
 
          return;
       }
@@ -251,28 +269,47 @@ messages:
                % System will handle changing the name.
                Send(SYS,@ChangeUserName,#oUser=who,
                      #sName=Send(oItem,@GetInscription));
+               % Scroll handles removing player from plNameChangeWarn list.
                Send(oItem,@Delete);
-               plNameChangeWarn = DelListElem(plNameChangeWarn,i);
 
                return;
             }
             else
             {
-               % Not enough money, return scroll.
+               % Not enough money.
                Send(self,@SayToOne,#target=who,
                      #message_rsc=barloque_clerk_not_enough);
-               Send(who,@NewHold,#what=oItem);
 
                return;
             }
          }
       }
 
-      % Player wasn't in list, add them and give ballot back.
+      % Player wasn't in list, add them.
       plNameChangeWarn = Cons(who,plNameChangeWarn);
       Send(self,@SayToOne,#message_rsc=barloque_clerk_warning_cost,
             #target=who,#parm1=iAmount);
-      Send(who,@NewHold,#what=oItem);
+
+      return;
+   }
+
+   RemoveFromWarnList(who=$)
+   {
+      local i;
+
+      if who = $
+         OR plNameChangeWarn = $
+      {
+         return;
+      }
+
+      for i in plNameChangeWarn
+      {
+         if i = who
+         {
+            plNameChangeWarn = DelListElem(plNameChangeWarn,who);
+         }
+      }
 
       return;
    }
@@ -406,12 +443,18 @@ messages:
          {
             Send(self,@CitizenRequestsPlayerRecord,#citizen=what,#who=oTarget);
 
-            return;
+            % Unlikely, but check if the player's name would interfere with
+            % the name change system.
+            if NOT (StringContain(string,barloque_clerk_trigger_change)
+               AND StringContain(string,barloque_clerk_trigger_name))
+            {
+               return;
+            }
          }
       }
 
       if StringContain(string,barloque_clerk_trigger_change)
-         AND StringContain(string,barloque_clerk_trigger_change)
+            AND StringContain(string,barloque_clerk_trigger_name)
       {
          iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
          oScroll = Create(&NameChangeScroll);
@@ -420,12 +463,22 @@ messages:
          {
             Send(self,@SayToOne,#target=what,
                   #message_rsc=barloque_clerk_change_name,#parm1=iAmount);
-            Send(what,@NewHold,#what=oScroll);
+
+            % Don't give out multiple scrolls.
+            if Send(what,@FindHolding,#class=&NameChangeScroll) = $
+            {
+               Send(what,@NewHold,#what=oScroll);
+            }
+            else
+            {
+               Send(oScroll,@Delete);
+            }
          }
          else
          {
             Send(self,@SayToOne,#target=what,
                   #message_rsc=barloque_clerk_cant_hold);
+            Send(oScroll,@Delete);
          }
 
          return;

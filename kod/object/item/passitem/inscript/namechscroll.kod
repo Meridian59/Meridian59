@@ -14,6 +14,8 @@ constants:
 
    include blakston.khd
 
+   DEED_POLL_DESTROY_TIME = 3600000
+
 resources:
 
    deedpoll_name_rsc = "deed poll"
@@ -26,6 +28,10 @@ resources:
       "your proposed name is valid, it shall be yours.\n"
       "\n"
       "    =[C]=   Caramo, Assistant to the Royal Justicar"
+   deedpoll_cant_drop_rsc = \
+      "You find yourself unable to get rid of the deed poll."
+   deedpoll_destroyed_rsc = \
+      "Your deed poll suddenly crumbles into dust!"
 
 classvars:
 
@@ -37,13 +43,84 @@ classvars:
 
 properties:
 
+   ptDestroy = $
+
 messages:
+
+   NewOwner(what=$)
+   {
+      if ptDestroy <> $
+      {
+         DeleteTimer(ptDestroy);
+         ptDestroy = $;
+      }
+
+      if IsClass(what,&Player)
+      {
+         ptDestroy = CreateTimer(self,@Destroy,DEED_POLL_DESTROY_TIME);
+      }
+
+      propagate;
+   }
+
+   Destroy()
+   {
+      ptDestroy = $;
+
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=deedpoll_destroyed_rsc);
+      }
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptDestroy <> $
+      {
+         DeleteTimer(ptDestroy);
+         ptDestroy = $;
+      }
+
+      if poOwner <> $
+      {
+         % Take user off Caramo's name change warn list.
+         Send(Send(SYS,@GetCaramo),@RemoveFromWarnList,#who=poOwner);
+      }
+
+      propagate;
+   }
 
    ShowDesc()
    {
       AddPacket(4, deedpoll_desc_rsc);
 
       return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      if poOwner = $
+         OR what = $
+      {
+         return TRUE;
+      }
+
+      if IsClass(what,&BarloqueClerk)
+      {
+         return TRUE;
+      }
+
+      if IsClass(poOwner,&User)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=deedpoll_cant_drop_rsc);
+      }
+
+      return FALSE;
    }
 
    CanSwap()
@@ -56,6 +133,11 @@ messages:
    {
       % No drop so that people can't load up on these and avoid real penalties
       return FALSE;
+   }
+
+   CanBeStoredInVault()
+   {
+       return FALSE;
    }
 
 end

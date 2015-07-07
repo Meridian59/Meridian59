@@ -184,8 +184,8 @@ resources:
    vaultman_nodeposit_cash = \
       "Storing these items would cost %i shillings - which I see you do not "
       "have."
-   vaultman_cant_part = "\
-      Wow... I couldn't feel responsible if your %s were to disappear - I "
+   vaultman_cant_part = \
+      "Wow... I couldn't feel responsible if your %s were to disappear - I "
       "cannot store it."
    vaultman_noaccount = "I do not seem to be storing any of your gear."
    vaultman_not_enough = "You don't have that many %s stored in your name!"

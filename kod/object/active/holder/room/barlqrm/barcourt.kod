@@ -18,7 +18,7 @@ resources:
 
    room_name_barloque_court = "Office of the Justicar"
    room_barloque_court = barcourt.roo
-   
+
    news_justicar = "Book of Jala"
    news_justicar_desc = \
       "Chronicling the history of the office of the Justicar."
@@ -72,7 +72,7 @@ messages:
 
    % The gallery is separated from the official courtroom by a wall.
    % Only those who are in the courtroom area are subject to Justicar
-   %  commands.  This allows others to watch a trial and not be abused.
+   % commands.  This allows others to watch a trial and not be abused.
 
    ReqInSpecialArea(row = $, col = $, obj = $)
    {
@@ -101,15 +101,19 @@ messages:
    {
       local oSign;
 
-      % The clerk     
+      % The clerk
       poCaramo = Send(SYS,@GetCaramo);
       if poCaramo = $
       {
          poCaramo = Create(&BarloqueClerk);
       }
-      
+      else
+      {
+         Send(poCaramo,@Recreate);
+      }
+
       Send(self,@NewHold,#what=poCaramo,
-           #new_row=12,#new_col=12,#fine_row=28,#fine_col=28,
+           #new_row=12,#new_col=12,#fine_row=32,#fine_col=36,
            #new_angle=ANGLE_WEST);
 
       % A guard
@@ -124,7 +128,7 @@ messages:
          poBookOfJala = Create(&NewsJusticar,#nid=NID_JUSTICAR,
                                #name=news_justicar,#desc=news_justicar_desc);
       }
-      
+
       Send(self,@NewHold,#what=poBookOfJala,
            #new_row=2,#new_col=11,#fine_row=44,#fine_col=44,
            #new_angle=ANGLE_SOUTH_WEST);
@@ -147,8 +151,8 @@ messages:
            #fine_row=28,#fine_col=28);
 
       % Candelabra
-      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=12,#new_col=11,
-           #fine_row=60,#fine_col=52);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=13,#new_col=12,
+           #fine_row=00,#fine_col=00);
 
       propagate;
    }
@@ -177,7 +181,7 @@ messages:
    {
       return poBookOfJala;
    }
-   
+
    Delete()
    {
       if poCaramo <> $
@@ -185,12 +189,11 @@ messages:
          Send(poCaramo,@NewOwner,#what=$);
          poCaramo = $;
       }
-      
+
       poBookofJala = $;
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -106,7 +106,7 @@ properties:
 
 messages:
 
-   Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,
+   Constructor(labelled=TRUE,model=$,iSpellpower=$,gobadtime=$,
                maker=$,Ability=$)
    {
       local oItemAtt;

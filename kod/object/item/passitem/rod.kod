@@ -13,7 +13,7 @@ Rod is PassiveItem
 constants:
 
    include blakston.khd
-   
+
    ROD_HOLD_MAX = 5
 
 resources:
@@ -34,12 +34,16 @@ resources:
 
    rod_success_wav_default_rsc = healwand.wav
    rod_fail_wav_default_rsc = spelfail.wav
-   
-   rod_cannot_hold_more_rsc = "If you held another rod, their competing magics would all conflict and explode!"
+
+   rod_cannot_hold_more_rsc = \
+      "If you held another rod, their competing magics would all "
+      "conflict and explode!"
    rod_default_expire_msg = \
       "Your rod effect has expired."
    rod_default_secondary_expire_msg = \
       "Your rod's secondary effect has expired."
+
+   rod_cant_use_yet = "You cannot use that item yet."
 
 classvars:
 
@@ -59,22 +63,26 @@ classvars:
    use_success_wav = rod_success_wav_default_rsc
    duration_expire_msg = rod_default_expire_msg
    secondary_duration_expire_msg = rod_default_secondary_expire_msg
-   
+
    vbDurationEffect = FALSE
    viEffectDuration = 0
    vbSecondaryDurationEffect = FALSE
    viSecondaryEffectDuration = 0
 
+   viRodUseDelay = 1000 % Milliseconds
+
 properties:
 
    vrDesc = Rod_desc_rsc
-   
+
    % For rods with durations
    ptActiveTimer = $
    pbActive = FALSE
-   
+
    ptSecondaryActiveTimer = $
    pbSecondaryActive = FALSE
+
+   piRodUseDelay = 1000 % Milliseconds
 
 messages:
 
@@ -83,9 +91,11 @@ messages:
       Send(self,@SetHits,#number=viStartHits);
       Send(self,@SetMaxHits,#number=viStartMaxHits);
 
+      piRodUseDelay = viRodUseDelay;
+
       propagate;
    }
-   
+
    NewOwner()
    {
       Send(self,@SetHits,#number=0);
@@ -107,9 +117,11 @@ messages:
                iRodCount = iRodCount + 1;
             }
          }
+
          if iRodCount >= ROD_HOLD_MAX
          {
             Send(what,@MsgSendUser,#message_rsc=rod_cannot_hold_more_rsc);
+
             return FALSE;
          }
       }
@@ -124,15 +136,23 @@ messages:
 
    ReqNewApply(what = $, apply_on = $)
    {
-      If NOT IsClass(poOwner,&User)
+      if NOT IsClass(poOwner,&User)
       {
          return FALSE;
       }
 
-      If Send(self,@GetHits) < viConsumesHits
+      if Send(self,@GetHits) < viConsumesHits
       {
          Send(poOwner,@MsgSendUser,#message_rsc=use_fail_msg);
          Send(poOwner,@WaveSendUser,#wave_rsc=use_fail_wav);
+
+         return FALSE;
+      }
+      
+      if NOT Send(what,@IsOkayAttackTime,#time=piRodUseDelay)
+      {
+         Send(what,@MsgSendUser,#message_rsc=rod_cant_use_yet);
+
          return FALSE;
       }
 
@@ -147,10 +167,10 @@ messages:
       if Send(self,@GetHits) <= 0
       {
          Send(poOwner,@MsgSendUser,#message_rsc=Rod_broken,
-           #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+               #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
          vrDesc = vrBrokenDesc;
       }
-      
+
       return;
    }
 
@@ -167,7 +187,7 @@ messages:
          pbActive = TRUE;
          ptActiveTimer = CreateTimer(self,@DurationEffectExpire,viEffectDuration);
       }
-      
+
       if vbSecondaryDurationEffect
       {
          if ptSecondaryActiveTimer <> $
@@ -182,10 +202,12 @@ messages:
       }
 
       Send(poOwner,@MsgSendUser,#message_rsc=use_success_msg);
-      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
+      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,
+            #wave_rsc=use_success_wav);
+
       return;
    }
-   
+
    SomethingKilled(what = $, victim = $)
    {
       % Gain a charge upon our owner killing a monster.
@@ -194,20 +216,22 @@ messages:
          AND Send(self,@GetHits) < Send(self,@GetMaxHits)
       {
          Send(self,@SetHits,#number=Send(self,@GetHits)+1);
+
          return TRUE;
       }
 
       return FALSE;
    }
-   
+
    FullyRecharge()
    {
       if Send(self,@GetHits) < Send(self,@GetMaxHits)
       {
          Send(self,@SetHits,#number=Send(self,@GetMaxHits));
+
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
@@ -217,7 +241,7 @@ messages:
       {
          return;
       }
-      
+
       if number = 0
       {
          vrDesc = vrBrokenDesc;
@@ -233,7 +257,24 @@ messages:
 
       propagate;
    }
-   
+
+   SetRodDelay(iTime=0)
+   "If no parameter is sent, sets the rod back to default (1000ms) delay. "
+   "If iTime is greater than 0, will set the rod use delay to that many "
+   "milliseconds."
+   {
+      if iTime < 1
+      {
+         piRodUseDelay = viRodUseDelay;
+      }
+      else
+      {
+         piRodUseDelay = iTime;
+      }
+
+      return;
+   }
+
    AppendDesc()
    {
       if viConsumesHits <> 1
@@ -243,7 +284,7 @@ messages:
          AppendTempString(rod_consumes_charges_b_rsc);
       }
 
-      AppendTempString("\n\n");   
+      AppendTempString("\n\n");
       AppendTempString(rod_charges_left_a_rsc);
       Send(SYS,@AppendCardinalToTempString,#number=piHits);
       AppendTempString(rod_charges_left_b_rsc);
@@ -252,12 +293,12 @@ messages:
 
       return;
    }
-   
+
    DurationEffectExpire()
    {
       ptActiveTimer = $;
       pbActive = FALSE;
-      
+
       if poOwner <> $
          AND IsClass(poOwner,&User)
          AND Send(poOwner,@IsLoggedOn)
@@ -272,7 +313,7 @@ messages:
    {
       ptSecondaryActiveTimer = $;
       pbSecondaryActive = FALSE;
-      
+
       if poOwner <> $
          AND IsClass(poOwner,&User)
          AND Send(poOwner,@IsLoggedOn)
@@ -282,25 +323,25 @@ messages:
 
       return;
    }
-   
+
    IsActive()
    {
       return pbActive;
    }
-   
+
    IsSecondaryActive()
    {
       return pbSecondaryActive;
    }
-   
+
    Delete()
    {
-      If ptActiveTimer <> $
+      if ptActiveTimer <> $
       {
          DeleteTimer(ptActiveTimer);
          ptActiveTimer = $;
       }
-      
+
       if ptSecondaryActiveTimer <> $
       {
          DeleteTimer(ptSecondaryActiveTimer);
@@ -311,5 +352,4 @@ messages:
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

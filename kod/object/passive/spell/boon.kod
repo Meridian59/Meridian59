@@ -25,6 +25,7 @@ constants:
 
 resources:
 
+   boon_look_rsc = "%s\n%r"
    boon_caster_msg = "You cast %s on %s%s."
 
 classvars:
@@ -119,14 +120,6 @@ messages:
       return;
    }
 
-   ShowDesc()
-   "Adds a warning line to the look description."
-   {
-      AddPacket(4,vrDesc);
-
-      return;
-   }
-
    IsPersonalEnchantment()
    {
       return FALSE;
@@ -217,7 +210,7 @@ messages:
       if (state / 100 = 0)
       {
          state = state * 1;
-         send(self,@UndoSpellEffect,#who=who,#amount=state);      
+         send(self,@UndoSpellEffect,#who=who,#amount=state);
       }
       else
       {
@@ -242,6 +235,71 @@ messages:
       return TRUE;
    }
 
+   ShowDesc(who=$)
+   "Adds a warning line to the look description."
+   {
+      if who = $
+         OR (IsClass(who,&User)
+            AND NOT Send(who,@IsEnchanted,#what=self))
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
+
+      AddPacket(4, boon_look_rsc, 4,vrDesc);
+      Send(self,@ExtraDesc,#who=who);
+
+      return;
+   }
+
+   ExtraDesc(who=$)
+   {
+      local i, iHours, iDuration, iNewDuration, oList;
+
+      oList = Send(who,@GetEnchantmentList);
+
+      iDuration = 0;
+      iHours = 0;
+
+      for i in oList
+      {
+         if Nth(i,2) = self
+         {
+            if IsTimer(Nth(i,1))
+            {
+               iNewDuration = GetTimeRemaining(Nth(i,1));
+            }
+            else
+            {
+               % Should be an integer
+               iNewDuration = Nth(i,1);
+            }
+            iHours = Abs(Nth(i,3)) / 100;
+            iNewDuration = iNewDuration / 1000 + iHours * 3600;
+            % We can have multiple copies of the same boon, so
+            % use the lowest duration one.
+            if iDuration = 0
+               OR iNewDuration < iDuration
+            {
+               iDuration = iNewDuration;
+            }
+         }
+      }
+
+      % If we somehow ended up with $, set iDuration to 0. This isn't
+      % likely to happen, but check anyway.
+      if iDuration = $
+      {
+         iDuration = 0;
+      }
+
+      % This message picks the appropriate resources for the duration given,
+      % and sends them to the user.
+      Send(self,@SendTimeRemaining,#iTime=iDuration);
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -40,28 +40,10 @@ resources:
    questtemplate_desc_rsc = "Initial default quest description."
 
    % Resources for making the timer part of description.
+   questtemplate_time_header = \
+      "\n\nYou have %r%r%r%r%r%r%r remaining to complete this quest."
    questtemplate_outoftime_rsc = \
       "\n\nYou are almost out of time!"
-   questtemplate_time_sec_rsc = \
-      "\n\nYou have %i second remaining to complete this quest."
-   questtemplate_time_secs_rsc = \
-      "\n\nYou have %i seconds remaining to complete this quest."
-   questtemplate_time_min_rsc = \
-      "\n\nYou have %i minute remaining to complete this quest."
-   questtemplate_time_mins_rsc = \
-      "\n\nYou have %i minutes remaining to complete this quest."
-   questtemplate_time_hour_min_rsc = \
-      "\n\nYou have %i hour and %i minute remaining to complete this quest."
-   questtemplate_time_hour_mins_rsc = \
-      "\n\nYou have %i hour and %i minutes remaining to complete this quest."
-   questtemplate_time_hours_min_rsc = \
-      "\n\nYou have %i hours and %i minutes remaining to complete this quest."
-   questtemplate_time_hours_mins_rsc = \
-      "\n\nYou have %i hours and %i minutes remaining to complete this quest."
-   questtemplate_time_hour_rsc = \
-      "\n\nYou have %i hour remaining to complete this quest."
-   questtemplate_time_hours_rsc = \
-      "\n\nYou have %i hours remaining to complete this quest."
 
    questtemplate_master_time_rsc = "%r%r"
 
@@ -276,12 +258,18 @@ messages:
       return;
    }
 
-   SendTimeRemaining(iTime=0)
+   SendTimeRemainingHeader()
+   "Send the header resource for the time remaining part of description."
    {
-      local iMinutes, iHours;
+      AddPacket(4,questtemplate_time_header);
 
-      % Grammatically correct time, multiple cases.
+      return;
+   }
 
+   SendTimeRemaining(iTime=0)
+   "Overrides Object.SendTimeRemaining() because the quest can have "
+   "less than 0 time left due to QuestEngine controlling the timer."
+   {
       if iTime < 1
       {
          AddPacket(4,questtemplate_outoftime_rsc);
@@ -289,79 +277,7 @@ messages:
          return;
       }
 
-      if iTime = 1
-      {
-         AddPacket(4,questtemplate_time_sec_rsc, 4,iTime);
-
-         return;
-      }
-
-      if iTime <= 60
-      {
-         AddPacket(4,questtemplate_time_secs_rsc, 4,iTime);
-
-         return;
-      }
-
-      % Switch to minutes.
-      iTime = iTime / 60;
-
-      if iTime < 2
-      {
-         AddPacket(4,questtemplate_time_min_rsc, 4,iTime);
-
-         return;
-      }
-
-      if iTime < 60
-      {
-         AddPacket(4,questtemplate_time_mins_rsc, 4,iTime);
-
-         return;
-      }
-
-      % Add hours.
-      iHours = iTime / 60;
-      iMinutes = iTime MOD 60;
-
-      if iTime = 60
-      {
-         AddPacket(4,questtemplate_time_hour_rsc, 4,iHours);
-
-         return;
-      }
-
-      if iTime = 61
-      {
-         AddPacket(4,questtemplate_time_hour_min_rsc, 4,iHours, 4,iMinutes);
-
-         return;
-      }
-
-      if iHours = 1
-      {
-         AddPacket(4,questtemplate_time_hour_mins_rsc, 4,iHours, 4,iMinutes);
-
-         return;
-      }
-
-      if iMinutes = 0
-      {
-         AddPacket(4,questtemplate_time_hours_rsc, 4,iHours);
-
-         return;
-      }
-
-      if iMinutes = 1
-      {
-         AddPacket(4,questtemplate_time_hours_min_rsc, 4,iHours, 4,iMinutes);
-
-         return;
-      }
-
-      AddPacket(4,questtemplate_time_hours_mins_rsc, 4,iHours, 4,iMinutes);
-
-      return;
+      propagate;
    }
 
 end

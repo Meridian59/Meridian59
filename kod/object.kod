@@ -59,6 +59,22 @@ resources:
    object_cap_lord = "Lord"
    object_cap_lady = "Lady"
 
+   % Resources for displaying time remaining. Used in descriptions.
+   % The default is for an enchantment (spell or skill).
+   object_time_header_rsc = \
+      "\n\nYour current %s enchantment will last for %r%r%r%r%r%r%r."
+   object_time_sec_rsc = "1 second"
+   object_time_secs_rsc = "%i seconds"
+   object_time_min_rsc = "1 minute"
+   object_time_mins_rsc = "%i minutes"
+   object_time_hour_rsc = "1 hour"
+   object_time_hours_rsc = "%i hours"
+   object_time_day_rsc = "1 day"
+   object_time_days_rsc = "%i days"
+   object_time_and_rsc = " and "
+   object_time_comma_rsc = ", "
+   object_time_blank_rsc = ""
+
 classvars:
    vrName = object_name_rsc
    vrIcon = object_icon_rsc
@@ -149,6 +165,156 @@ messages:
    GetDesc()
    {
       return vrDesc;
+   }
+
+   SendTimeRemainingHeader()
+   "Sends the time remaining header to the user. Classes override this "
+   "to send the 'master' resource for the time remaining (e.g. for an "
+   "enchantment or quest) and any extra resources.  Called only by "
+   "SendTimeRemaining, which appends the actual time information."
+   {
+      AddPacket(4,object_time_header_rsc, 4,Send(self,@GetName));
+
+      return;
+   }
+
+   SendTimeRemaining(iTime=0)
+   "Takes iTime (in seconds) and uses it to pick which time resource to "
+   "display to the user. Adds the appropriate packets via AddPacket, so "
+   "call this message at the correct time."
+   {
+      local iSeconds, iMinutes, iHours, iDays;
+
+      % iTime is in seconds.
+      iDays = iTime / DAY;
+      iHours = (iTime MOD DAY) / HOUR;
+      iMinutes = (iTime MOD HOUR) / MINUTE;
+      iSeconds = iTime MOD MINUTE;
+
+      if iTime > 0
+      {
+         Send(self,@SendTimeRemainingHeader);
+      }
+      else
+      {
+         AddPacket(4,object_time_blank_rsc);
+
+         return;
+      }
+
+      if iDays > 0
+      {
+         if iDays = 1
+         {
+            AddPacket(4,object_time_day_rsc);
+         }
+         else
+         {
+            AddPacket(4,object_time_days_rsc, 4,iDays);
+         }
+
+         % If two or more remaining fields greater than 0, use a comma.
+         if (iHours > 0 AND iMinutes > 0)
+            OR (iHours > 0 AND iSeconds > 0)
+            OR (iMinutes > 0 AND iSeconds > 0)
+         {
+            AddPacket(4,object_time_comma_rsc);
+         }
+         else
+         {
+            % If one remaining field greater than 0, use and.
+            if iHours > 0
+               OR iMinutes > 0
+               OR iSeconds > 0
+            {
+               AddPacket(4,object_time_and_rsc);
+            }
+            else
+            {
+               AddPacket(4,object_time_blank_rsc);
+            }
+         }
+      }
+      else
+      {
+         AddPacket(4,object_time_blank_rsc, 4,object_time_blank_rsc);
+      }
+
+      if iHours > 0
+      {
+         if iHours = 1
+         {
+            AddPacket(4,object_time_hour_rsc);
+         }
+         else
+         {
+            AddPacket(4,object_time_hours_rsc, 4,iHours);
+         }
+
+         if (iMinutes > 0 AND iSeconds > 0)
+         {
+            AddPacket(4,object_time_comma_rsc);
+         }
+         else
+         {
+            if iMinutes > 0
+               OR iSeconds > 0
+            {
+               AddPacket(4,object_time_and_rsc);
+            }
+            else
+            {
+               AddPacket(4,object_time_blank_rsc);
+            }
+         }
+      }
+      else
+      {
+         AddPacket(4,object_time_blank_rsc, 4,object_time_blank_rsc);
+      }
+
+      if iMinutes > 0
+      {
+         if iMinutes = 1
+         {
+            AddPacket(4,object_time_min_rsc);
+         }
+         else
+         {
+            AddPacket(4,object_time_mins_rsc, 4,iMinutes);
+         }
+
+         if iSeconds > 0
+         {
+            AddPacket(4,object_time_and_rsc);
+         }
+         else
+         {
+            AddPacket(4,object_time_blank_rsc);
+         }
+      }
+      else
+      {
+         AddPacket(4,object_time_blank_rsc, 4,object_time_blank_rsc);
+      }
+
+      if iSeconds > 0
+      {
+         if iSeconds = 1
+         {
+            AddPacket(4,object_time_sec_rsc);
+         }
+         else
+         {
+            AddPacket(4,object_time_secs_rsc, 4,iSeconds);
+         }
+      }
+      else
+      {
+         AddPacket(4,object_time_blank_rsc);
+      }
+
+      return;
    }
 
    GetBulk()

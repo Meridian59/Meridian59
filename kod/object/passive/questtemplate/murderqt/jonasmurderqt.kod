@@ -1,0 +1,121 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JonasMurderQuestTemplate is MurderQuestTemplate
+% Parent class for Jonas murder mystery quests.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   % Quest description.
+   jonasmurderqt_name_rsc = "Jonas murder mystery quest"
+   jonasmurderqt_desc_rsc = \
+      "Jonas D'Accor would like you to question people regarding the "
+      "death of Duke Kalior."
+
+   jonasmurderqt_completed_rsc = \
+      "You have completed a Jonas murder mystery quest."
+
+   % Quest resources.
+   murder_jonas_assign = \
+      "As there doesn't seem to be much investigation of the former Duke's "
+      "murder going on, I have taken it upon myself to uncover the killer.  "
+      "Whoever committed the act must still be at large, and may strike "
+      "again.  Ask %NPC about the murder and repeat any useful information "
+      "back to me."
+   murder_jonas_success = \
+      "Hmm, perhaps this is the information I have been looking for.  "
+      "Thank you for your help in this matter.  Take this with my thanks."
+
+classvars:
+
+   vrName = jonasmurderqt_name_rsc
+   vrDesc = jonasmurderqt_desc_rsc
+
+   vrCompleted = jonasmurderqt_completed_rsc
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_FACTION_REBEL
+
+messages:
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #192 is Jonas's Murder Mystery quest kickoff, "murder"
+      % QNT_ID_JONAS_MURDER_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ murder_trigger ],#bDuplicate=TRUE,
+               #quest_node_index=QNT_ID_JONAS_MURDER_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JONAS_MURDER_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JONAS_MURDER_ONE");
+      }
+
+      % Template #193 is Jonas's Murder Mystery quest, "deliver" the trigger.
+      % QNT_ID_JONAS_MURDER_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ murder_trigger ],#timelimit=6 * 3600,
+               #bDuplicate=TRUE,#quest_node_index=QNT_ID_JONAS_MURDER_TWO)
+      {
+         lNPCs = $;
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueVaultMan)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&JasperBlacksmith)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&MarionInnkeeper)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&TosInnkeeper)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BasicInnKeeper)),lNPCs);
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JONAS_MURDER_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JONAS_MURDER_TWO,
+               #new_hint=murder_jonas_assign);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JONAS_MURDER_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

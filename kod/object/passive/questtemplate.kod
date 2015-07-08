@@ -48,6 +48,8 @@ resources:
    questtemplate_master_time_rsc = "%r%r"
 
    % General quest resources, used by multiple quests.
+   letter_trigger = "need a courier"
+   chess_trigger = "yes"
    duke_standard1_trigger = "loyalty"
    duke_join1_trigger = "join"
    disciple_trigger = "disciple"
@@ -96,7 +98,9 @@ messages:
    Constructor()
    {
       Send(self,@SendQuestTemplate);
-      Send(self,@SendQuestNodeTemplates);
+
+      % RecreateQuestNodes in QuestEngine will now ask for this data.
+      %Send(self,@SendQuestNodeTemplates);
 
       propagate;
    }

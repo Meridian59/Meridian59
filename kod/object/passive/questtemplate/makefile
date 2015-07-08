@@ -13,7 +13,12 @@ BOFS = shaldiscqt.bof krandiscqt.bof farendiscqt.bof qordiscqt.bof \
        madscidflyqt.bof tradingpostqt.bof bowmakerqt.bof chickensoupqt.bof \
        stunteddwarfqt.bof hypochondriacqt.bof offeringqt.bof seraphymqt.bof \
        priestessinsigniaqt.bof monkinsigniaqt.bof factioninsigniaqt.bof \
-       mysterymobqt.bof moxalscamoneqt.bof moxalscamtwoqt.bof
+       mysterymobqt.bof moxalscamoneqt.bof moxalscamtwoqt.bof oreqt.bof \
+       councilletterqt.bof chessqt.bof loveletterqt.bof necroguildqt.bof \
+       aphrodisiacqt.bof necrowarnevilqt.bof necrowarngoodqt.bof taxqt.bof \
+       barrestockqt.bof cateringqt.bof apothecaryqt.bof kocweaponqt.bof \
+       kocaleqt.bof warletterqt.bof idpotionqt.bof idwandqt.bof \
+       jalanecklaceqt.bof murderqt.bof
       
 
 !include $(KODDIR)\kod.mak

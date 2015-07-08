@@ -91,7 +91,7 @@ messages:
       % Template #35 is trading post quest kickoff
       % QNT_ID_TRADINGPOST_KICKOFF
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
-               #cargolist=[tradingpost_trigger_1],
+               #cargolist=[tradingpost_trigger_1],#bDuplicate=TRUE,
                #quest_node_index=QNT_ID_TRADINGPOST_KICKOFF)
       {
          Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_TRADINGPOST_KICKOFF,

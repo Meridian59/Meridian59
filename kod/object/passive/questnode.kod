@@ -1148,7 +1148,7 @@ messages:
    {
       local i, iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iDays,
             oBoon, iBoonNum, iPrizeBoon, iPrizeFaction, oQuestEngine, oQuester,
-            oLich;
+            oLich, oNewLich;
 
       if prize = $
       {
@@ -1486,6 +1486,17 @@ messages:
                         @FindHoldingActive,#class=&DeadLich);
          if oLich <> $
          {
+            % Swap destination NPC to the actual Lich. This changes the
+            % origin of the success message, since the raised Lich should
+            % be saying it.
+            oNewLich = Send(oLich,@GetLich);
+            if oNewLich <> $
+            {
+               Send(poDestNPC,@RemoveQuestNodeFromActiveList,#node=self);
+               poDestNPC = oNewLich;
+               Send(poDestNPC,@AddQuestNodeToActiveList,#node=self);
+            }
+
             Send(oLich,@EstablishNecromancerGuild,#master=First(recipients));
          }
          else

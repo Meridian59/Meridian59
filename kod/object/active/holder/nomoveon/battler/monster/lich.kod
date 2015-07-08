@@ -874,7 +874,7 @@ messages:
             {
                rHungerSpiel = lich_hunger_1;
             }
-            Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            Post(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=rHungerSpiel);
          }
       }

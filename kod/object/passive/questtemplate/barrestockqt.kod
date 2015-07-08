@@ -1,0 +1,248 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarRestockQuest is QuestTemplate
+% Quest template QST_ID_BAR_RESTOCK = 47.
+% Quest nodes 149, 150, 151.
+% QNT_ID_BAR_RESTOCK_ONE, QNT_ID_BAR_RESTOCK_TWO, QNT_ID_BAR_RESTOCK_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   barrestockqt_name_rsc = "bar restock quest"
+   barrestockqt_desc_rsc = \
+      "A bartender is running low on supplies, and would like your assistance."
+
+   barrestockqt_nodetwo_rsc = \
+      "%s%s is running low on supplies for %s bar. %s would like your help "
+      "to restock - go to %s%s and ask %s about the \"shipment\"."
+   barrestockqt_nodethree_rsc = \
+      "Bring %i %s back to %s%s, and don't take any for yourself lest you "
+      "be punished for your thievery!"
+
+   barrestockqt_completed_rsc = \
+      "You have completed the bar restock quest."
+
+   % Quest resources.
+   barrestock_assign_2 = \
+      "Yes, I'm running very low on supplies.  %NPC knows what I need and "
+      "it's already paid for.  Just ask %HIMHER_NPC about the shipment, and "
+      "make haste!"
+   barrestock_trigger_2 = "shipment"
+   barrestock_failure_2 = \
+      "Subject: my shipment of supplies\n"
+      "Nevermind about the shipment.  I shall find another courier."
+   barrestock_assign_3 = \
+      "Ah yes, the shipment is ready for delivery.  Make haste with these "
+      "%INDEF_CARGO%CARGO back to %NPC, and no dishonesty now, or I shall "
+      "have to report you to the justicar as an outlaw."
+   barrestock_assign_3_h = \
+      "Ah yes, the shipment is ready for delivery.  Make haste with these "
+      "%INDEF_CARGO%CARGO back to %NPC, and no dishonesty now, or your "
+      "misdeeds shall surely haunt you."
+   barrestock_success_3 = \
+      "Thank you, %NAME, you have done me a great service this day.  Take "
+      "this small token of my thanks."
+   barrestock_failure_3 = \
+      "Subject: Thief!\n"
+      "I have reported your theft of %CARGO to the justicar, and henceforth "
+      "you are to be considered an outlaw."
+   barrestock_failure_3_h = \
+      "Subject: Thief!\n"
+      "I have reported your theft of %CARGO to a wizard friend of mine, and "
+      "he has ensured that you will suffer for your dishonesty."
+
+classvars:
+
+   vrName = barrestockqt_name_rsc
+   vrDesc = barrestockqt_desc_rsc
+
+   vrNodeTwo = barrestockqt_nodetwo_rsc
+   vrNodeThree = barrestockqt_nodethree_rsc
+
+   vrCompleted = barrestockqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_BAR_RESTOCK
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = \
+      Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_NOTNEWBIE | Q_PLAYER_LAWFUL
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_BAR_RESTOCK_ONE,QNT_ID_BAR_RESTOCK_TWO,
+                      QNT_ID_BAR_RESTOCK_THREE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_BAR_RESTOCK_TWO, vrNodeTwo],
+                          [QNT_ID_BAR_RESTOCK_THREE, vrNodeThree] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #149 is bar restock quest
+      % QNT_ID_BAR_RESTOCK_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #quest_node_index=QNT_ID_BAR_RESTOCK_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BAR_RESTOCK_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BAR_RESTOCK_ONE");
+      }
+
+      % Template #150 is bar restock quest
+      % QNT_ID_BAR_RESTOCK_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,#cargolist=[barrestock_trigger_2],
+               #timelimit=3600,#quest_node_index=QNT_ID_BAR_RESTOCK_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BAR_RESTOCK_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BAR_RESTOCK_TWO,
+               #new_hint=barrestock_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BAR_RESTOCK_TWO,
+               #new_hint=barrestock_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BAR_RESTOCK_TWO");
+      }
+
+      % Template #151 is bar restock quest
+      % QNT_ID_BAR_RESTOCK_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMCLASS,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,
+               #cargolist= [ [  QN_PRIZETYPE_ITEMCLASS, &StoutGoblet, 50 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Goblet, 50 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &WineGoblet, 40 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 1300 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1400 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1500 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1700 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1800 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1900 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 2000 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 25 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 35 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 25 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 35 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &ShadowformPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &KaraholsCursePotion, 1 ] ] ],
+               #penaltylist=[ [ QN_PRIZETYPE_OUTLAW ] ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_BAR_RESTOCK_THREE)
+      {
+         % Happy land subs.
+         if NOT Send(SYS,@IsPKAllowed)
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BAR_RESTOCK_THREE,
+                  #new_hint=barrestock_assign_3_h);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BAR_RESTOCK_THREE,
+                  #new_hint=barrestock_failure_3_h);
+         }
+         else
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BAR_RESTOCK_THREE,
+                  #new_hint=barrestock_assign_3);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BAR_RESTOCK_THREE,
+                  #new_hint=barrestock_failure_3);
+         }
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_BAR_RESTOCK_THREE,
+               #new_hint=barrestock_success_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BAR_RESTOCK_THREE");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local iNum, oCargo, oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = QNT_ID_BAR_RESTOCK_TWO
+      {
+
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oSourceNPC,@GetHisHer), 4,Send(oSourceNPC,@GetHeShe,#cap=TRUE),
+                   4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      oCargo = Send(oQuestNode,@GetCargo);
+
+      if index = QNT_ID_BAR_RESTOCK_THREE
+      {
+         iNum = Send(oCargo,@GetNumber);
+         AddPacket(4,iNum, 4,Send(oCargo,@GetName), 4,Send(oDestNPC,@GetDef),
+                   4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

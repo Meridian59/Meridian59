@@ -2847,7 +2847,7 @@
    QT_PLAYER_RESTRICT2  = 10
 
    % Field names for a QuestNodeTemplate
-   QNT_QNT_ID         = 1
+   QNT_QNT_ID        = 1
    QNT_NPC_LIST      = 2
    QNT_NPC_MODIFIER  = 3
    QNT_TYPE          = 4
@@ -2906,7 +2906,7 @@
    QST_ID_LOVE_LETTER_1          = 42
    QST_ID_LOVE_LETTER_2          = 43
    QST_ID_ESTABLISH_NECROGUILD   = 44
-   QST_ID_APHRODESIAC            = 45
+   QST_ID_APHRODISIAC            = 45
    QST_ID_NECRO_WARNING          = 46
    QST_ID_BAR_RESTOCK            = 47
    QST_ID_PARTY                  = 48
@@ -3121,10 +3121,10 @@
    QNT_ID_NECROGUILD_TWO         = 140
    QNT_ID_NECROGUILD_THREE       = 141
    
-   QNT_ID_APHRODESIAC_ONE        = 142
-   QNT_ID_APHRODESIAC_TWO        = 143
-   QNT_ID_APHRODESIAC_THREE      = 144
-   QNT_ID_APHRODESIAC_FOUR       = 145
+   QNT_ID_APHRODISIAC_ONE        = 142
+   QNT_ID_APHRODISIAC_TWO        = 143
+   QNT_ID_APHRODISIAC_THREE      = 144
+   QNT_ID_APHRODISIAC_FOUR       = 145
    
    QNT_ID_NECRO_WARN_EVIL_ONE    = 146
    QNT_ID_NECRO_WARN_EVIL_TWO    = 147

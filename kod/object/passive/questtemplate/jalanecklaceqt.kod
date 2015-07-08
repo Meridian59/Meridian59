@@ -1,0 +1,396 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JalaNecklaceQuest is QuestTemplate
+% Quest template QST_ID_JALA_NECKLACE = 71.
+% Quest nodes 201, 202, 203, 204, 205, 206, 207.
+% QNT_ID_JALA_NECKLACE_ONE, QNT_ID_JALA_NECKLACE_TWO, QNT_ID_JALA_NECKLACE_THREE
+% QNT_ID_JALA_NECKLACE_FOUR, QNT_ID_JALA_NECKLACE_FIVE, QNT_ID_JALA_NECKLACE_SIX
+% QNT_ID_JALA_NECKLACE_SEVEN
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   jalanecklaceqt_name_rsc = "Jala necklace quest"
+   jalanecklaceqt_desc_rsc = \
+      "Help an NPC identify a potion."
+
+   jalanecklaceqt_nodetwo_rsc = \
+      "Go and ask Moxal ix'Hanak about the \"necklace\"."
+   jalanecklaceqt_nodethree_rsc = \
+      "Moxal ix'Hanak will give you the necklace, but first he wants to make "
+      "some profit from you.  Go to %s%s and ask %s if some \"entertainment\" "
+      "would please %s."
+   jalanecklaceqt_nodefour_rsc = \
+      "%s%s does not trust Moxal.  Go and ask %s%s about Moxal's \"proposal\"."
+   jalanecklaceqt_nodefive_rsc = \
+      "%s%s says to tell %s%s to just let you \"sing\" for %s."
+   jalanecklaceqt_nodesix_rsc = \
+      "%s%s wants you to play a song, and then give %s your lute."
+   jalanecklaceqt_nodeseven_rsc = \
+      "Go back to Moxal ix'Hanak and let him know you were successful."
+   jalanecklaceqt_completed_rsc = \
+      "You have completed the Jala neckace quest."
+
+   % Quest resources.
+   jala_necklace_trigger = "necklace"
+   jala_necklace_assign_1 =\
+      "A necklace of Jala?  I have heard about such lovely things, although "
+      "I do not have one myself.  Rumor is that %NPC has been bragging about "
+      "that lately.  Perhaps you should go ask %HIMHER_NPC about the necklace?"
+   jala_necklace_assign_2 =\
+      "Why, YES!  I am glad to see you friend.  You see, I had the best idea "
+      "in the world!  You sing, right?  Why don't you go ask %NPC if some "
+      "~Ientertainment~I would please %HIMHER_NPC?  I'll act as your agent "
+      "and we can split the profits fairly.  Oh, and I'll give you that "
+      "necklace you want, too."
+   jala_necklace_trigger_2 = "entertainment"
+   jala_necklace_assign_3 =\
+      "You sing here?  HA!  There is NO way I am trusting that idiot Moxal.  "
+      "Go talk to %NPC and ask %HIMHER_NPC about this ~Iproposal~I of Moxal's."
+   jala_necklace_trigger_3 = "proposal"
+   jala_necklace_assign_4 =\
+      "Why did %NPC send you here?  Tell %HIMHER_NPC to quit being so silly "
+      "and to let you ~Ising~I."
+   jala_necklace_trigger_4 = "sing"
+   jala_necklace_assign_5 =\
+      "Fine.  Go fetch your %CARGO and play a song, then give the %CARGO to me."
+   jala_necklace_assign_6 =\
+      "Excellent!  After that performance, people will pay me good money for "
+      "the lute of such a famous Bard.  Go tell %NPC that you have done well."
+   jala_necklace_success = \
+      "Finally done?  The payment was smaller than I expected, so I will "
+      "have to keep it all to cover my expenses.  But, here is the necklace "
+      "I promised you.  Come back soon!"
+   jala_necklace_failure_1 =\
+      "Did you get lost?  Don't you know that %NPC lives on the island?"
+   jala_necklace_failure_2 =\
+      "Oh, my!  You did not arrive in time for the show!  %NPC told me that "
+      "other entertainment was arranged."
+   jala_necklace_failure_3 =\
+      "I knew this was another of Moxal's scams.  Do not get mixed up with "
+      "him next time, my friend."
+   jala_necklace_failure_4 =\
+      "Did you lose your nerve?  You just need to stand up to %NPC next time!"
+   jala_necklace_failure_5 =\
+      "Not interested?  Fine, I will find someone else who is."
+   jala_necklace_failure_6 =\
+      "You didn't visit Moxal?  I heard he was laughing about what a sucker "
+      "he found.  Expect him to want to exploit you again!"
+
+classvars:
+
+   vrName = jalanecklaceqt_name_rsc
+   vrDesc = jalanecklaceqt_desc_rsc
+
+   vrNodeTwo = jalanecklaceqt_nodetwo_rsc
+   vrNodeThree = jalanecklaceqt_nodethree_rsc
+   vrNodeFour = jalanecklaceqt_nodefour_rsc
+   vrNodeFive = jalanecklaceqt_nodefive_rsc
+   vrNodeSix = jalanecklaceqt_nodesix_rsc
+   vrNodeSeven = jalanecklaceqt_nodeseven_rsc
+
+   vrCompleted = jalanecklaceqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_JALA_NECKLACE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 5
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_JALA_NECKLACE_ONE, QNT_ID_JALA_NECKLACE_TWO,
+                      QNT_ID_JALA_NECKLACE_THREE, QNT_ID_JALA_NECKLACE_FOUR,
+                      QNT_ID_JALA_NECKLACE_FIVE, QNT_ID_JALA_NECKLACE_SIX,
+                      QNT_ID_JALA_NECKLACE_SEVEN];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_JALA_NECKLACE_TWO, vrNodeTwo],
+                          [QNT_ID_JALA_NECKLACE_THREE, vrNodeThree],
+                          [QNT_ID_JALA_NECKLACE_FOUR, vrNodeFour],
+                          [QNT_ID_JALA_NECKLACE_FIVE, vrNodeFive],
+                          [QNT_ID_JALA_NECKLACE_SIX, vrNodeSix],
+                          [QNT_ID_JALA_NECKLACE_SEVEN, vrNodeSeven] ];
+
+      plSpecialRestrict = [ [ Q_R2_HAS_SPELL_SCHOOL, SS_JALA, 11 ],
+                            [ Q_R2_DOES_NOT_HAVE_ITEM, &JalaNecklace ] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #201 is Jala necklack kickoff
+      % QNT_ID_JALA_NECKLACE_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ jala_necklace_trigger ],
+               #quest_node_index=QNT_ID_JALA_NECKLACE_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JALA_NECKLACE_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_ONE");
+      }
+
+      % Template #202 is visiting Moxal
+      % QNT_ID_JALA_NECKLACE_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ jala_necklace_trigger ],
+               #timelimit=6 * 3600,#quest_node_index=QNT_ID_JALA_NECKLACE_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JALA_NECKLACE_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JALA_NECKLACE_TWO,
+               #new_hint=jala_necklace_assign_1);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_JALA_NECKLACE_TWO,
+               #new_hint=jala_necklace_failure_1);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_TWO");
+      }
+
+      % Template #203 is visiting an Innkeeper or Barkeep
+      % QNT_ID_JALA_NECKLACE_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ jala_necklace_trigger_2 ],
+               #timelimit=6 * 3600,#quest_node_index=QNT_ID_JALA_NECKLACE_THREE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JALA_NECKLACE_THREE,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JALA_NECKLACE_THREE,
+               #new_hint=jala_necklace_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_JALA_NECKLACE_THREE,
+               #new_hint=jala_necklace_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_THREE");
+      }
+
+      % Template #204 is visiting an Elder/Wiseman for backup.
+      % QNT_ID_JALA_NECKLACE_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ jala_necklace_trigger_3 ],
+               #timelimit=6 * 3600,#quest_node_index=QNT_ID_JALA_NECKLACE_FOUR)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanWeaponsMaster)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBowMaker)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JALA_NECKLACE_FOUR,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JALA_NECKLACE_FOUR,
+               #new_hint=jala_necklace_assign_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_JALA_NECKLACE_FOUR,
+               #new_hint=jala_necklace_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_FOUR");
+      }
+
+      % Template #205 is heading back to the Innkeeper or Barkeep.
+      % QNT_ID_JALA_NECKLACE_FIVE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ jala_necklace_trigger_4 ],
+               #timelimit=6 * 3600,#quest_node_index=QNT_ID_JALA_NECKLACE_FIVE)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_JALA_NECKLACE_FIVE,
+               #new_mod=QN_NPCMOD_PREVIOUS);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JALA_NECKLACE_FIVE,
+               #new_hint=jala_necklace_assign_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_JALA_NECKLACE_FIVE,
+               #new_hint=jala_necklace_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_FIVE");
+      }
+
+      % Template #206 is bringing in the Lute.
+      % QNT_ID_JALA_NECKLACE_SIX
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Lute, 1 ] ],
+               #timelimit=6 * 3600,#quest_node_index=QNT_ID_JALA_NECKLACE_SIX)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_JALA_NECKLACE_SIX,
+               #new_mod=QN_NPCMOD_SAME);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JALA_NECKLACE_SIX,
+               #new_hint=jala_necklace_assign_5);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_JALA_NECKLACE_SIX,
+               #new_hint=jala_necklace_failure_5);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_SIX");
+      }
+
+      % Template #207 is heading to Moxal and getting our final reward.
+      % QNT_ID_JALA_NECKLACE_SEVEN
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &JalaNecklace, 1 ] ],
+               #timelimit=6 * 3600,#quest_node_index=QNT_ID_JALA_NECKLACE_SEVEN)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_JALA_NECKLACE_SEVEN,
+               #new_NPC_list=lNPCs);
+
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JALA_NECKLACE_SEVEN,
+               #new_hint=jala_necklace_assign_6);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_JALA_NECKLACE_SEVEN,
+               #new_hint=jala_necklace_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_JALA_NECKLACE_SEVEN,
+               #new_hint=jala_necklace_failure_6);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JALA_NECKLACE_SEVEN");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_JALA_NECKLACE_THREE
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer), 4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = QNT_ID_JALA_NECKLACE_FOUR
+      {
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      if index = QNT_ID_JALA_NECKLACE_FIVE
+      {
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      if index = QNT_ID_JALA_NECKLACE_SIX
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

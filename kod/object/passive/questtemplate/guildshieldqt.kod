@@ -157,6 +157,7 @@ messages:
    ExtraDesc(index=$,oQuestNode=$)
    {
       local oCargo, oNPC, rName;
+
       if oQuestNode = $
          OR index = $
       {

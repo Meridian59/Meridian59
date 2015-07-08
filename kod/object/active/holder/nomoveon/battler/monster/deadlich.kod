@@ -199,6 +199,8 @@ messages:
 
    EstablishNecromancerGuild(master=$)
    {
+      local oQE;
+
       if master = $
       {
          return;
@@ -212,8 +214,13 @@ messages:
       }
 
       Send(poOwner,@NewHold,#what=poLich,#new_row=piRow,#new_col=piCol,
-            #fine_row=piFine_Row,#fine_col=piFine_Col);
+            #fine_row=piFine_Row,#fine_col=piFine_Col,#new_angle=ANGLE_WEST);
       Send(poLich,@EstablishNecromancerGuild,#master=master);
+
+      oQE = Send(SYS,@GetQuestEngine);
+      Send(oQE,@SetQuestScheduleChance,#index=QST_ID_ESTABLISH_NECROGUILD,
+            #new_pct=0);
+
       Send(self,@Delete,#lichswapout=TRUE);
 
       return;
@@ -223,13 +230,10 @@ messages:
    {
       local iQNTindex, oQE, oQ;
 
-      oQE = Send(SYS,@GetQuestEngine);
-
-      Send(oQE,@SetQuestScheduleChance,#index=QST_ID_ESTABLISH_NECROGUILD,
-            #new_pct=0);
-
       if lichswapout
       {
+         oQE = Send(SYS,@GetQuestEngine);
+
          % Don't need to send this, quest cleans itself up. This may have been
          % different ~16 years ago.
          %for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
@@ -238,8 +242,11 @@ messages:
          %   Send(oQ,@DeadlineExpired);
          %}
 
-         iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD),
-                           QT_QUEST_NODES));
+         % Swap the quest NPC to the new Lich, so that this dead Lich gets
+         % cleaned up by garbage collection. If the new Lich dies, the quest
+         % NPC is set back to the new dead Lich.
+         iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,
+                           #index=QST_ID_ESTABLISH_NECROGUILD),QT_QUEST_NODES));
          Send(oQE,@SetQuestNodeNPCList,#index=iQNTindex,#new_NPC_list=[poLich]);
       }
       else
@@ -247,14 +254,14 @@ messages:
          if poLich <> $
          {
             Send(poLich,@Delete);
-            poLich=$;
+            poLich = $;
          }
       }
 
       if ptNoSteal <> $
       {
          DeleteTimer(ptNoSteal);
-         ptNoSteal=$;
+         ptNoSteal = $;
       }
       if ptGoIllusioned <> $
       {
@@ -285,6 +292,11 @@ messages:
    DMCanArmageddon()
    {
       return FALSE;
+   }
+
+   GetLich()
+   {
+      return poLich;
    }
 
    NewOwner(what=$)

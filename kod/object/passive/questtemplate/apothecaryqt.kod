@@ -1,0 +1,220 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ApothecaryQuest is QuestTemplate
+% Quest template QST_ID_APOTHECARY = 50.
+% Quest nodes 157, 158.
+% QNT_ID_APOTHECARY_ONE, QNT_ID_APOTHECARY_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   apothecaryqt_name_rsc = "apothecary quest"
+   apothecaryqt_desc_rsc = \
+      "An apothecary has run out of stock; deliver some to them."
+
+   apothecaryqt_deliver_rsc = \
+      "%s%s has need of %i %s, so %s%s has asked you to deliver them to %s.  "
+      "Do not be tempted to keep them for yourself, lest you be punished "
+      "for your thievery!"
+
+   apothecaryqt_completed_rsc = \
+      "You have completed the apothecary quest."
+
+   % Quest resources.
+   apothecary_assign_2 = \
+      "%NPC has need of these %INDEF_CARGO%CARGO, please take them "
+      "to %HIMHER_NPC.  Thievery of any of the items will result in your "
+      "being labelled an outlaw.  I have made arrangements for %NPC to pay "
+      "you for your time.  You have one Meridian day in which to deliver "
+      "these items."
+   apothecary_assign_2_h = \
+      "%NPC has need of these %INDEF_CARGO%CARGO, please take them to "
+      "%HIMHER_NPC.  Thievery of any of the items will result in grave "
+      "misfortune.  I have made arrangements for %NPC to pay you for "
+      "your time.  You have one Meridian day in which to deliver these items."
+   apothecary_success_2 = \
+      "Thank you for your prompt delivery.  Business has been booming "
+      "lately!  I wonder why?  Oh well, here is your pay.  Perhaps stop back "
+      "later if you are interested in performing this service again.  You "
+      "have helped relations between myself and %SOURCE_NPC."
+   apothecary_failure_2 = \
+      "Subject: Thief!\n"
+      "Your thievery of %INDEF_CARGO%CARGO has labelled you an outlaw."
+   apothecary_failure_2_h = \
+      "Subject: Thief!\n"
+      "Your thievery of %INDEF_CARGO%CARGO has forced me to have a curse "
+      "placed upon you.  Wear it well."
+
+classvars:
+
+   vrName = apothecaryqt_name_rsc
+   vrDesc = apothecaryqt_desc_rsc
+
+   vrNodeTwo = apothecaryqt_deliver_rsc
+
+   vrCompleted = apothecaryqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_APOTHECARY
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTNEWBIE | Q_PLAYER_LAWFUL \
+                      | Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_APOTHECARY_ONE, QNT_ID_APOTHECARY_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_APOTHECARY_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #157 is apothecary quest
+      % QNT_ID_APOTHECARY_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #quest_node_index=QNT_ID_APOTHECARY_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_APOTHECARY_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_APOTHECARY_ONE");
+      }
+
+      % Template #158 is apothecary quest
+      % QNT_ID_APOTHECARY_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMCLASS,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &PolishedSeraphym, 2 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &UncutSeraphym, 5 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DarkAngelFeather, 5 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &PurpleMushroom, 10 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &BlueDragonScale, 5 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &OrcTooth, 10 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mushroom, 20 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &KriipaClaw, 5 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DragonflyEye, 5 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 500 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 650 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 650 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 750 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 700 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 750 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 800 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DetectInvisibilityPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NightVisionPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &VampireWand, 1 ] ] ],
+               #penaltylist=[ [ QN_PRIZETYPE_OUTLAW ] ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_APOTHECARY_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_APOTHECARY_TWO,
+               #new_NPC_list=lNPCs);
+
+         % Happy land subs.
+         if NOT Send(SYS,@IsPKAllowed)
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_APOTHECARY_TWO,
+                  #new_hint=apothecary_assign_2_h);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_APOTHECARY_TWO,
+                  #new_hint=apothecary_failure_2_h);
+         }
+         else
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_APOTHECARY_TWO,
+                  #new_hint=apothecary_assign_2);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_APOTHECARY_TWO,
+                  #new_hint=apothecary_failure_2);
+         }
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_APOTHECARY_TWO,
+               #new_hint=apothecary_success_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_APOTHECARY_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local iNum, oCargo, oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_APOTHECARY_TWO
+      {
+         oDestNPC = Send(oQuestNode,@GetDestNPC);
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+         oCargo = Send(oQuestNode,@GetCargo);
+         iNum = Send(oCargo,@GetNumber);
+
+         AddPacket(4,Send(oDestNPC,@GetCapDef), 4,Send(oDestNPC,@GetName),
+                   4, iNum, 4,Send(oCargo,@GetName), 4,Send(oSourceNPC,@GetDef),
+                   4,Send(oSourceNPC,@GetName), 4,Send(oDestNPC,@GetHimHer));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

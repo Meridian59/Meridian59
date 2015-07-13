@@ -64,11 +64,17 @@ resources:
 
    monster_level = "level"
    monster_one = "one"
+   monster_num_one = "1"
    monster_two = "two"
+   monster_num_two = "2"
    monster_three = "three"
+   monster_num_three = "3"
    monster_four = "four"
+   monster_num_four = "4"
    monster_five = "five"
+   monster_num_five = "5"
    monster_six = "six"
+   monster_num_six = "6"
 
    monster_sch_weaponcraft = "Weaponcraft"
    monster_sch_kraanan = "Kraanan magic"
@@ -3216,36 +3222,42 @@ messages:
       }
 
       if StringContain(string,monster_one)
+         OR StringContain(string,monster_num_one)
       {
          iLevel = 1;
       }
       else
       {
          if StringContain(string,monster_two)
+            OR StringContain(string,monster_num_two)
          {
             iLevel = 2;
          }
          else
          {
             if StringContain(string,monster_three)
+               OR StringContain(string,monster_num_three)
             {
                iLevel = 3;
             }
             else
             {
                if StringContain(string,monster_four)
+                  OR StringContain(string,monster_num_four)
                {
                   iLevel = 4;
                }
                else
                {
                   if StringContain(string,monster_five)
+                     OR StringContain(string,monster_num_five)
                   {
                      iLevel = 5;
                   }
                   else
                   {
                      if StringContain(string,monster_six)
+                        OR StringContain(string,monster_num_six)
                      {
                         iLevel = 6;
                      }

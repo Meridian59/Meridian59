@@ -32,7 +32,8 @@ resources:
       "Requires two fairy wings and an orc tooth to cast."
 
    unholyweapon_spell_intro = \
-      "Qor Lv. 2: Dedicates your weapon to Qor, enhancing its effectiveness against the holy."
+      "Qor Lv. 2: Dedicates your weapon to Qor, enhancing its "
+      "effectiveness against the holy."
 
    unholyweapon_label_rsc = "supplicant of Qor."
 
@@ -71,6 +72,12 @@ messages:
    CanPayCosts(who=$,lTargets=$,iSpellPower=0)
    {
       local oWeapon;
+
+      if lTargets = $
+      {
+         return;
+      }
+
       oWeapon = First(lTargets);
 
       if oWeapon = $

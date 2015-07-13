@@ -2325,8 +2325,13 @@ messages:
    {
       Send(self,@CancelIfOffer);
 
+      % Break trance for all spells except multicast and radius enchantment.
+      % Other spells could possibly fail due to system save, this way the
+      % user will at least get a fail message.
+      Send(self,@BreakTrance,#event=EVENT_SYSTEMSAVE);
+
       Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting);
-      Send(self, @WaveSendUser, #what = self, #wave_rsc = user_saving_wav_rsc);
+      Send(self,@WaveSendUser,#what=self,#wave_rsc=user_saving_wav_rsc);
 
       AddPacket(1,BP_WAIT);
       SendPacket(poSession);
@@ -5641,6 +5646,15 @@ messages:
    UserCast(oSpell=$,lTargets=$)
    {
       local i, bFound, iSpell, iSpellNum, iSpellPower, lFinalTargets;
+
+      % Check for valid spell first. This is mainly an issue during
+      % system saves where a user might cast something with the wrong
+      % object ID.
+      if oSpell = $
+         OR NOT IsClass(oSpell,&Spell)
+      {
+         return;
+      }
 
       % Command minions to aid in combat
       if lTargets <> $

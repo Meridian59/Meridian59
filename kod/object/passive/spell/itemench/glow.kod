@@ -76,6 +76,11 @@ messages:
    {
       local oLute, oWeapon, oTarget, oGlow, iCurrentGlow;
 
+      if lTargets = $
+      {
+         return;
+      }
+
       oTarget = First(lTargets);
 
       if NOT (IsClass(oTarget,&Weapon)

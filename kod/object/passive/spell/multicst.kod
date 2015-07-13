@@ -104,12 +104,19 @@ messages:
       return 0;
    }
 
-   BreakTrance(who = $, state = $)
+   BreakTrance(who = $, state = $, event = 0)
    {
-      % If caster runs out of mana or loses trance, spell ends.
-      if IsClass(first(state),&prism)
+      % Don't break on system saves.
+      if event <> $
+         AND event = EVENT_SYSTEMSAVE
       {
-         Send(first(state),@CasterBrokeTrance,#who=who);
+         return FALSE;
+      }
+
+      % If caster runs out of mana or loses trance, spell ends.
+      if IsClass(First(state),&Prism)
+      {
+         Send(First(state),@CasterBrokeTrance,#who=who);
          Send(who,@RemoveEnchantment,#what=self,#state=state);
 
          propagate;

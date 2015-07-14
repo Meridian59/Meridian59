@@ -1,5 +1,4 @@
 perl dialogconvert.pl brax.tab
-perl dialogconvert.pl disciplequest.tab
 perl dialogconvert.pl kalior_murder.tab
 perl dialogconvert.pl konima.tab
 perl dialogconvert.pl necromancers.tab

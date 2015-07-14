@@ -70,6 +70,15 @@ resources:
       "Faren does not see those without the fire of desire within them. "
       "You must return when you have found this inside yourself, not sooner."
 
+   farendisc_marbar_resp = "~kTova sighs, \"Here we go again.\""
+   farendisc_jasbar_bad_resp = \
+      "~kPietro says, \"Oh, for the love of Shal'ille, go someplace "
+      "else, %s! I'm sick of you fanatics.\""
+   farendisc_jasbar_resp = \
+      "~kPietro yells, \"Would somebody get that tree-hugger out of here.\""
+   farendisc_barlbar_resp = \
+      "~kMeidei says, \"I'll consider that, now buy a drink or leave!\""
+
 classvars:
 
    vrName = farenquest_name_rsc
@@ -133,6 +142,7 @@ messages:
       % QNT_ID_FAREN_DISCIPLE_TWO
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
                #cargolist=[farendisciple_trigger],#timelimit=piTimeLimit,
+               #prizelist=[ [ QN_PRIZETYPE_NPC_RESPONSE ] ],
                #quest_node_index=QNT_ID_FAREN_DISCIPLE_TWO)
       {
          lNPCs = Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER,
@@ -182,6 +192,53 @@ messages:
       if index = QNT_ID_FAREN_DISCIPLE_TWO
       {
          AddPacket(4,Send(Send(oQuestNode,@GetDestNPC),@GetName));
+      }
+
+      return;
+   }
+
+   SendQuestResponse(recipients=$, index=$, oNPC=$)
+   "Send different responses depending on the NPC."
+   {
+      local iMood, oQuester;
+
+      iMood = Send(oNPC,@GetMoodFlags);
+      oQuester = First(recipients);
+
+      if index = QNT_ID_FAREN_DISCIPLE_TWO
+      {
+         if IsClass(oNPC,&MarionBartender)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,#type=SAY_MESSAGE,
+                  #string=farendisc_marbar_resp);
+
+            return;
+         }
+
+         if IsClass(oNPC,&JasperBartender)
+         {
+            if iMood = LIBRES_MOOD_BAD
+            {
+               Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                     #type=SAY_MESSAGE,#string=farendisc_jasbar_bad_resp,
+                     #parm1=Send(oQuester,@GetName));
+            }
+            else
+            {
+               Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                     #type=SAY_MESSAGE,#string=farendisc_jasbar_resp);
+            }
+
+            return;
+         }
+
+         if IsClass(oNPC,&BarloqueBartender)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,#type=SAY_MESSAGE,
+                  #string=farendisc_barlbar_resp);
+
+            return;
+         }
       }
 
       return;

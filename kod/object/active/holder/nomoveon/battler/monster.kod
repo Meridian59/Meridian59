@@ -3120,16 +3120,14 @@ messages:
       }
 
       % Quest engine hook: if there are active quest nodes, notify them   -AJM
-      % Keep going however so we can get any necessary response from
-      % the speech library.
-      if( plActiveQuestNodes <> $ )
+      if plActiveQuestNodes <> $
       {
          for oQuestNode in plActiveQuestNodes
          {
             if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
                     #message=string)
             {
-               break;
+               return;
             }
          }
       }

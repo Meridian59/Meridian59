@@ -145,6 +145,13 @@ messages:
       return viQuestID;
    }
 
+   SendQuestResponse(recipients=$, index=$, oNPC=$)
+   "Send different responses depending on the NPC.  Used with the "
+   "QN_PRIZETYPE_NPC_RESPONSE prize."
+   {
+      return;
+   }
+
    ShowCompletedQuest(who=$,lHistory=$)
    {
       local iRecentTime, iTimeLoggedIn, oQE;

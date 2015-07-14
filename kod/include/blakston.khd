@@ -3333,6 +3333,7 @@
    QN_PRIZETYPE_SCHEDULE_QUEST            = 0x10      % Schedule a quest of this type
    QN_PRIZETYPE_ESTABLISH_NECROGUILD      = 0x11      % Form the Order of Necromancers
    QN_PRIZETYPE_OUTLAW                    = 0x12      % Make the player an outlaw
+   QN_PRIZETYPE_NPC_RESPONSE              = 0x13      % Let the QuestTemplate give different responses for each NPC.
 
    % Quest node prize statistic types
    QN_PRIZE_STAT_MIGHT    = 0x0

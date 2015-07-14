@@ -247,48 +247,6 @@ send o 0 speechlibquote who class Izzio quote q ~kIzzio almost stops smiling, "W
 send o 0 speechlibtrigger who class Izzio trigger q Venya'Cyr
 send o 0 speechlibquote who class Izzio quote q ~kIzzio says, "You might want to ask Miriana."
 
-send o 0 speechlibtrigger who class MarionBartender trigger q defiled the land with your ways
-send o 0 speechlibquote who class MarionBartender quote q ~kTova sighs, "Here we go again."
-
-send o 0 speechlibtrigger who class JasperBartender trigger q defiled the land with your ways mood int LIBRES_MOOD_BAD
-send o 0 speechlibquote who class JasperBartender quote q ~kPietro says, "Oh, for the love of Shal'ille, go someplace else, %NAME! I'm sick of you fanatics."
-
-send o 0 speechlibtrigger who class JasperBartender trigger q defiled the land with your ways
-send o 0 speechlibquote who class JasperBartender quote q ~kPietro yells, "Would somebody get that tree-hugger out of here."
-
-send o 0 speechlibtrigger who class BarloqueBartender trigger q defiled the land with your ways
-send o 0 speechlibquote who class BarloqueBartender quote q ~kMeidei says, "I'll consider that, now buy a drink or leave!"
-
-send o 0 speechlibtrigger who class QorPriestess trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IYes, I suppose it is time for Qor to seek redemption.  You are the key to her salvation.  Join our fold and together we can begin the path towards malumnea.~I~k"
-
-send o 0 speechlibtrigger who class QorPriestess trigger q malumnea
-send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IMalumnea is the perfect state of unity where Qor accepts the other gods with open arms, such that they may become a part of her. Then she will bring the universe together in dark harmony.~I~k"
-
-send o 0 speechlibtrigger who class DukeLiege trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class DukeLiege quote q ~kDuke Akardius laughs and says, "~B~bSurely you cannot be serious?  I do not need forgiveness.  Crawl back to your temple, your deed is done.~B~k"
-
-send o 0 speechlibtrigger who class FarenPriestess trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class FarenPriestess quote q ~kPriestess Tenuv'vyal says, "~B~gHow dare you presume to forgive of Lord Faren. Leave!~B~k"
-
-send o 0 speechlibtrigger who class KraananPriestess trigger q granting forgiveness for your deeds
-send o 0 speechlibquote who class KraananPriestess quote q ~kPriestess Qerti'nya says, "~B~bLittle Xiana seeks to train another student. Very well, you have delivered your message. You may now return to her.~B~k"
-
-send o 0 speechlibtrigger who class ShalillePriestess trigger q darkness all shall be bound
-send o 0 speechlibquote who class ShalillePriestess quote q ~kPriestess Xiana says, "~bReconsider your actions, Shal'ille will grant you forgiveness when you are ready to receive it.~k"
-
-send o 0 speechlibtrigger who class MarionHealer trigger q darkness all shall be bound
-send o 0 speechlibquote who class MarionHealer quote q ~kLady Aftyn says, "Shal'ille's compassion will brush aside the darkness."
-
-send o 0 speechlibtrigger who class BarloqueBlacksmith trigger q darkness all shall be bound
-send o 0 speechlibquote who class BarloqueBlacksmith quote q ~kFehr'loi Qan says, "I'm gettin' mad now.  You better leave before I give you a good punch."
-
-send o 0 speechlibtrigger who class TosApothecary trigger q darkness all shall be bound
-send o 0 speechlibquote who class TosApothecary quote q ~kFrisconar says, "Did you just put a curse on me?  Please, get out!"
-
-send o 0 speechlibtrigger who class JasperInnKeeper trigger q darkness all shall be bound
-send o 0 speechlibquote who class JasperInnKeeper quote q ~kThe Widow Qesino says, "You are evil, you must leave at once."
-
 send o 0 speechlibtrigger who class BarloqueApothecary trigger q barloque
 send o 0 speechlibquote who class BarloqueApothecary quote q ~kJoguer says, "Such a fine city is our fair capital Barloque. The other cities can offer not the wonders of hither shop keepers."
 
@@ -6999,6 +6957,9 @@ send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, 
 
 send o 0 speechlibtrigger who class QorPriestess trigger q tos
 send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IDreary Tos becomes more corrupt each day. Soon they will not be able to hold back the army of dead in the graveyard.~I~k"
+
+send o 0 speechlibtrigger who class QorPriestess trigger q malumnea
+send o 0 speechlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~IMalumnea is the perfect state of unity where Qor accepts the other gods with open arms, such that they may become a part of her. Then she will bring the universe together in dark harmony.~I~k"
 
 send o 0 randomlibquote who class QorPriestess quote q ~kPriestess Zuxana says, "~r~ITenuv'vyal fears little Miriana because the young girl will one day replace her. How delicious, a Faren Master afraid of a little girl.~I~k"
 

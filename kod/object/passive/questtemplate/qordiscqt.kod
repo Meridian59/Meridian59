@@ -66,6 +66,20 @@ resources:
       "If you come back here, perhaps I will allow you another chance to join "
       "the ranks of the elite."
 
+   qordisc_shalpr_resp = \
+      "~kPriestess Xiana says, \"~bReconsider your actions, Shal'ille will "
+      "grant you forgiveness when you are ready to receive it.~k\""
+   qordisc_marheal_resp = \
+      "~kLady Aftyn says, \"Shal'ille's compassion will brush aside "
+      "the darkness.\""
+   qordisc_barsmith_resp = \
+      "~kFehr'loi Qan says, \"I'm gettin' mad now.  You better leave before "
+      "I give you a good punch.\""
+   qordisc_tosapoth_resp = \
+      "~kFrisconar says, \"Did you just put a curse on me?  Please, get out!\""
+   qordisc_jasinn_resp = \
+      "~kThe Widow Qesino says, \"You are evil, you must leave at once.\""
+
 classvars:
 
    vrName = qorquest_name_rsc
@@ -130,6 +144,7 @@ messages:
       % QNT_ID_QOR_DISCIPLE_TWO
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
                #cargolist=[qordisciple_trigger],#timelimit=piTimeLimit,
+               #prizelist=[ [ QN_PRIZETYPE_NPC_RESPONSE ] ],
                #quest_node_index=QNT_ID_QOR_DISCIPLE_TWO)
       {
          lNPCs = $;
@@ -182,6 +197,55 @@ messages:
       if index = QNT_ID_QOR_DISCIPLE_TWO
       {
          AddPacket(4,Send(Send(oQuestNode,@GetDestNPC),@GetName));
+      }
+
+      return;
+   }
+
+   SendQuestResponse(recipients=$, index=$, oNPC=$)
+   "Send different responses depending on the NPC."
+   {
+      if index = QNT_ID_QOR_DISCIPLE_TWO
+      {
+         if IsClass(oNPC,&ShalillePriestess)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                  #type=SAY_MESSAGE,#string=qordisc_shalpr_resp);
+
+            return;
+         }
+
+         if IsClass(oNPC,&MarionHealer)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                  #type=SAY_MESSAGE,#string=qordisc_marheal_resp);
+
+            return;
+         }
+
+         if IsClass(oNPC,&BarloqueBlacksmith)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                  #type=SAY_MESSAGE,#string=qordisc_barsmith_resp);
+
+            return;
+         }
+
+         if IsClass(oNPC,&TosApothecary)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                  #type=SAY_MESSAGE,#string=qordisc_tosapoth_resp);
+
+            return;
+         }
+
+         if IsClass(oNPC,&JasperInnKeeper)
+         {
+            Post(Send(oNPC,@GetOwner),@SomeoneSaid,#what=oNPC,
+                  #type=SAY_MESSAGE,#string=qordisc_jasinn_resp);
+
+            return;
+         }
       }
 
       return;

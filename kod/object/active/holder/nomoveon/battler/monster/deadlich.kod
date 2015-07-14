@@ -24,7 +24,7 @@ resources:
       "A ghostly pile of ornate formal clothing seems to be all that "
       "remains of this once-mighty queen."
 
-      DeadLich_name2_rsc = "ghostly remains of Queen Venya'cyr"
+   DeadLich_name2_rsc = "ghostly remains of Queen Venya'cyr"
    DeadLich_icon2_rsc = lichbx.bgf
    DeadLich_desc2_rsc = \
       "A ghostly pile of ornate formal clothing seems to be all that remains "
@@ -199,8 +199,6 @@ messages:
 
    EstablishNecromancerGuild(master=$)
    {
-      local oQE;
-
       if master = $
       {
          return;
@@ -215,11 +213,8 @@ messages:
 
       Send(poOwner,@NewHold,#what=poLich,#new_row=piRow,#new_col=piCol,
             #fine_row=piFine_Row,#fine_col=piFine_Col,#new_angle=ANGLE_WEST);
-      Send(poLich,@EstablishNecromancerGuild,#master=master);
-
-      oQE = Send(SYS,@GetQuestEngine);
-      Send(oQE,@SetQuestScheduleChance,#index=QST_ID_ESTABLISH_NECROGUILD,
-            #new_pct=0);
+      Send(Send(SYS,@GetNecromancerBalance),@EstablishNecromancerGuild,
+            #master=master);
 
       Send(self,@Delete,#lichswapout=TRUE);
 
@@ -312,14 +307,36 @@ messages:
       propagate;
    }
 
+   LastUserLeft(what = $)
+   {
+      Post(self,@GoBackToGuildhall);
+
+      propagate;
+   }
+
    GoBackToGuildhall()
    {
       local oGuildh15;
 
+      if poOwner = $
+      {
+         return;
+      }
+
       oGuildh15 = Send(SYS,@FindRoomByNum,#num=RID_GUILDH15);
 
-      Send(oGuildh15,@NewHold,#what=self,
-            #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+      if poOwner = oGuildh15
+      {
+         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+              #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,
+              #new_angle=ANGLE_WEST);
+
+         return;
+      }
+
+      Send(oGuildh15,@NewHold,#what=self,#new_row=13,#new_col=49,
+            #fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+
       if Send(oGuildh15,@CountHoldingHowMany,#class=&DeadLich) > 1
       {
          Debug("More than one dead lich in the guild hall!!");

@@ -444,7 +444,7 @@ properties:
 
 messages:
 
-   Constructor(color=0, piSurvivalLevel=0)
+   Constructor(template=FALSE, color=0, piSurvivalLevel=0)
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
       local iStatPoints, iMin, iMax;
@@ -474,7 +474,10 @@ messages:
       }
 
       if viOccupation <> 0
+         AND NOT template
       {
+         % template set to TRUE means this monster is in the System
+         % monster template list, so we shouldn't add it.
          Send(Send(SYS,@GetLibrary),@AddToOccupationList,#who=self);
       }
 

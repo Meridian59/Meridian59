@@ -3288,6 +3288,7 @@
    Q_R2_NUM_AMULETS              = 8   % [Q_R2_, minNumAmulets]
    Q_R2_HAS_HEALTH_LEVEL         = 9   % [Q_R2_, minHPs]             (calls GetMaxHealth)
    Q_R2_DOES_NOT_HAVE_ITEM       = 10  % [Q_R2_, itemclass]
+   Q_R2_NECRO_GUILD_ACTIVE       = 11  % [Q_R2_, boolean]            (is necromancer guild active?)
 
    QUEST_HISTORY_MASK           = 0x0FFFFFF           % bits used in player quest history compound to indicate quest index
    QUEST_HISTORY_SUCCESS           = 0x1000000

@@ -97,7 +97,8 @@ messages:
    {
       local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester,
             iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail, iRecentTime,
-            iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon;
+            iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon,
+            oNecroGuild;
 
       oQuestEngine = Send( SYS, @GetQuestEngine );
       iPlayerRestrict = Send(oQuestEngine,@GetQuestPlayerRestrictions,
@@ -731,6 +732,23 @@ messages:
             %   if bDebug { Debug("failed Q_R2_NUM_AMULETS."); }
             %   return FALSE;
             %}
+         }
+
+         if First(iR2) = Q_R2_NECRO_GUILD_ACTIVE
+         {
+            oNecroGuild = Send(Send(SYS,@GetNecromancerBalance),@GetNecroGuild);
+            if (oNecroGuild = $
+                  AND Nth(iR2,2) > 0)
+               OR (oNecroGuild <> $
+                  AND Nth(iR2,2) < 1)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_NECRO_GUILD_ACTIVE.");
+               }
+
+               return FALSE;
+            }
          }
       }
 

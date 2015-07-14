@@ -979,10 +979,6 @@ messages:
          }
       }
 
-      if new_NPC_list = $
-      {
-         return 0;
-      }
       SetNth(Send(self,@GetQuestNodeTemplate,#index=index),QNT_NPC_LIST, new_NPC_list);
 
       return 1;

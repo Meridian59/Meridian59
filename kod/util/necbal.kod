@@ -18,6 +18,10 @@ constants:
 
    include blakston.khd
 
+resources:
+
+   necbal_starting_password = "deathmage"
+
 properties:
 
    pbScenarioActivated = FALSE
@@ -109,6 +113,8 @@ properties:
    ptPlaceNecromancerTreasure = $
    piGuildh15ContentsLimit = 180
 
+   poNecromancerGuild = $
+
 messages:
 
    Constructor()
@@ -123,11 +129,12 @@ messages:
       plArchivedHKCounts = [ 8 ];
       plArchivedPkPercents = [ 80 ];
       plNecromancerTreasure = $;
+
       return;
-   }  
+   }
 
    Recreate()
-   {  
+   {
       %% called only by recreateall in updates.
       if plArchivedPKCounts = $ { plArchivedPKCounts = [ 20 ]; }
       if plArchivedNKCounts = $ { plArchivedNKCounts = [ 8 ]; }
@@ -138,6 +145,15 @@ messages:
                            [RID_NECROAREA2,19,08,32,32], [RID_G8,34,37,32,32]];
       plSwordLocations = [[RID_LICH_MAZE,24,19,62,20],[RID_LICH_MAZE,28,42,07,06],[RID_LICH_MAZE,17,42,12,10]];
       plNecromancerTreasure = $;
+
+      % Check if we have an active necro guild that isn't being tracked here.
+      % If the hall does have an owner, it will recreate the correct lich.
+      if poNecromancerGuild = $
+      {
+         poNecromancerGuild = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
+                                    @GetGuildOwner);
+      }
+
       return;
    }
 
@@ -192,6 +208,59 @@ messages:
       }
 
       return;
+   }
+
+   EstablishNecromancerGuild(master=$)
+   {
+      if master = $
+      {
+         return;
+      }
+
+      if Send(master,@GetGuild) <> $
+      {
+         Debug("Tried to establish necroguild with master already guilded.");
+
+         return;
+      }
+
+      if poNecromancerGuild <> $
+      {
+         return;
+      }
+
+      poNecromancerGuild = Create(&NecromancerGuild,#master=master);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
+               @ClaimGuildHall,#oGuild=poNecromancerGuild,#rep=master,
+               #password=necbal_starting_password);
+
+      Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
+
+      return;
+   }
+
+   ClearNecromancerGuild(bDeleted=FALSE)
+   {
+      if poNecromancerGuild <> $
+      {
+         Send(poNecromancerGuild,@Delete,#timerdelete=TRUE);
+         poNecromancerGuild = $;
+      }
+
+      return;
+   }
+
+   SetNecroGuild(oGuild=$)
+   {
+      poNecromancerGuild = oGuild;
+
+      return;
+   }
+
+   GetNecroGuild()
+   {
+      return poNecromancerGuild;
    }
 
    TriggerAmuletGeneration()
@@ -502,6 +571,8 @@ messages:
 
    Delete()
    {
+      Send(self,@ClearNecromancerGuild);
+
       if ptTriggerAmuletGeneration <> $
       {
          DeleteTimer(ptTriggerAmuletGeneration);

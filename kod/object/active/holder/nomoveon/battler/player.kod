@@ -1382,6 +1382,7 @@ messages:
    {
       if piVigor < SECONDWIND_THRESHOLD
          AND ptSecondWind = $
+         AND pbLogged_on
          AND Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
          AND Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
                   @DoSkill,#who=self)

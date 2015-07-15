@@ -98,9 +98,9 @@ messages:
       local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester,
             iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail, iRecentTime,
             iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon,
-            oNecroGuild;
+            oNecroGuild, oQuestTemplate;
 
-      oQuestEngine = Send( SYS, @GetQuestEngine );
+      oQuestEngine = Send(SYS,@GetQuestEngine);
       iPlayerRestrict = Send(oQuestEngine,@GetQuestPlayerRestrictions,
                               #index=piQuestTemplateIndex);
       oCurrentNPC = Send(poQuestNode,@GetDestNPC);
@@ -427,6 +427,9 @@ messages:
          }
       }
 
+      oQuestTemplate = Send(oQuestEngine,@GetQuestTemplateObject,
+                              #index=piQuestTemplateIndex);
+
       % Are there quest history restrictions?
       if (iPlayerRestrict & Q_PLAYER_QUEST_MASK)
       {
@@ -435,7 +438,7 @@ messages:
             Debug("checking quest history restrictions.");
          }
 
-         iRecentTime = Send(oQuestEngine,@GetQuestHistoryRecentTime);
+         iRecentTime = Send(oQuestTemplate,@GetQuestHistoryRecentTime);
          iTime = Send(quester_wannabe,@GetTimeLoggedIn);
          iRestrict = (iPlayerRestrict & Q_PLAYER_QUEST_MASK);
          lHistory = Send(quester_wannabe,@GetQuestHistory,

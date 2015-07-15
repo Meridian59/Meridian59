@@ -180,8 +180,6 @@ properties:
    piQuestTimerDelay = 5 * 60 * 1000
    % Goes off once a minute.
    piQuestDeadlineTimerDelay = 60 * 1000
-   % 1 hr - defines what 'recently' means in history restrictions.
-   piQuestHistoryRecentTime = 3600
 
    % Set to TRUE to output quest debug information.
    piDebug = FALSE
@@ -1643,11 +1641,6 @@ messages:
    GetDebugStatus()
    {
       return piDebug;
-   }
-
-   GetQuestHistoryRecentTime()
-   {
-      return piQuestHistoryRecentTime;
    }
 
    GetRandomChessMove()

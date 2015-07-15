@@ -167,7 +167,7 @@ messages:
       return vrDesc;
    }
 
-   SendTimeRemainingHeader()
+   SendTimeRemainingHeader(parm1=$)
    "Sends the time remaining header to the user. Classes override this "
    "to send the 'master' resource for the time remaining (e.g. for an "
    "enchantment or quest) and any extra resources.  Called only by "
@@ -178,7 +178,7 @@ messages:
       return;
    }
 
-   SendTimeRemaining(iTime=0)
+   SendTimeRemaining(iTime=0, parm1=$)
    "Takes iTime (in seconds) and uses it to pick which time resource to "
    "display to the user. Adds the appropriate packets via AddPacket, so "
    "call this message at the correct time."
@@ -193,7 +193,7 @@ messages:
 
       if iTime > 0
       {
-         Send(self,@SendTimeRemainingHeader);
+         Send(self,@SendTimeRemainingHeader,#parm1=parm1);
       }
       else
       {

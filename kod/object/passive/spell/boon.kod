@@ -248,12 +248,12 @@ messages:
       }
 
       AddPacket(4, boon_look_rsc, 4,vrDesc);
-      Send(self,@ExtraDesc,#who=who);
+      Send(self,@SendTimeDesc,#who=who);
 
       return;
    }
 
-   ExtraDesc(who=$)
+   SendTimeDesc(who=$)
    {
       local i, iHours, iDuration, iNewDuration, oList;
 

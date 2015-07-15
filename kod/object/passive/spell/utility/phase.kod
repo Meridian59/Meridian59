@@ -21,46 +21,65 @@ resources:
    Phase_name_rsc = "phase"
    Phase_icon_rsc = iboonint.bgf
    Phase_desc_rsc = \
-     "By phasing partially out of existence, one may become "
-     "temporarily immune to danger... but, adventurers be warned: "
-     "staying out of phase too long will result in physical and mental damage, "
-     "as well as potential loss of carried items. Time spent phased out is "
-     "cumulative until you reach a safe place in which to recover."
+      "By phasing partially out of existence, one may become temporarily "
+      "immune to danger... but, adventurers be warned: staying out of phase "
+      "too long will result in physical and mental damage, as well as "
+      "potential loss of carried items. Time spent phased out is "
+      "cumulative until you reach a safe place in which to recover."
 
    Phase_no_danger = "The protective magics here prevent phasing out."
    
-   Phase_penned = "Your tenuous grip on reality snaps, and you are thrust violently along the magical currents until you find "
-                  "a safe place to re-enter the world!"
-   Phase_penned_others = "%s's grip on reality snaps, hurling %s violently away on magical currents!"
-   Phase_penned_others_item = "The violent currents seemed to have torn %s%s from %s's inventory."
+   Phase_penned = \
+      "Your tenuous grip on reality snaps, and you are thrust violently along "
+      "the magical currents until you find a safe place to re-enter the world!"
+   Phase_penned_others = \
+      "%s's grip on reality snaps, hurling %s violently away "
+      "on magical currents!"
+   Phase_penned_others_item = \
+      "The violent currents seemed to have torn %s%s from %s's inventory."
    
    Phase_penned_wav_rsc = logoffghost_poof.wav
    
-   Phase_lost_one_item = "You lost %s skill points, %s spell points, and %s%s."
-   Phase_lost_two_items = "You lost %s skill points, %s spell points, %s%s, and %s%s."
+   Phase_lost_one_item = \
+      "You lost %s skill points, %s spell points, and %s%s."
+   Phase_lost_two_items = \
+      "You lost %s skill points, %s spell points, %s%s, and %s%s."
    
    Phase_phased_out_high_health = "%s phases out while completely unharmed."
-   Phase_phased_out_medium_health = "Sensing the battle turning unfavorably, %s phases out."
+   Phase_phased_out_medium_health = \
+      "Sensing the battle turning unfavorably, %s phases out."
    Phase_phased_out_low_health = "Moments before death, %s phases out!"
    Phase_phased_out_one_health = "%s phases out a split second before death!"
    
-   Phase_caster_out = "You phase out of existence, confident that you can hold onto reality for another %d seconds."
-   Phase_caster_in = "Only %d seconds away from losing your grip on reality, you phase back into existence."
+   Phase_caster_out = \
+      "You phase out of existence, confident that you can hold onto "
+      "reality for another %d seconds."
+   Phase_caster_in = \
+      "Only %d seconds away from losing your grip on reality, you phase "
+      "back into existence."
    
    Phase_in = "%s phases back into existence!"
 
-   penalties_inflicted_one_item = "The torturous experience has cost you one item, %d spell points, and %d skill points."
-   penalties_inflicted_plural = "The torturous experience has cost you %d items, %d spell points, and %d skill points."
-   
-   no_phasing_in_safe_place_msg = "This place of safety is anchored and calm, and you cannot phase out here."
-   no_phasing_in_guildhall_msg = "The magical defenses here keep you grounded in reality."
-   no_phasing_in_arena_msg = "The unique combat magics in play here prevent you from phasing out."
+   penalties_inflicted_one_item = \
+      "The torturous experience has cost you one item, %d spell "
+      "points, and %d skill points."
+   penalties_inflicted_plural = \
+      "The torturous experience has cost you %d items, %d spell "
+      "points, and %d skill points."
+
+   no_phasing_in_safe_place_msg = \
+      "This place of safety is anchored and calm, and you cannot "
+      "phase out here."
+   no_phasing_in_guildhall_msg = \
+      "The magical defenses here keep you grounded in reality."
+   no_phasing_in_arena_msg = \
+      "The unique combat magics in play here prevent you from phasing out."
    no_phasing_while_specator_msg = \
       "If you tried to phase while you're already phased, you might explode!"
-   
+
    phase_time_low = "You feel your hold slipping..."
    phase_time_gone = "You're losing your grip on reality!"
-   
+
    no_phasing_here_override_msg = \
       "A mysterious force prevents you from phasing out here."
 
@@ -97,42 +116,54 @@ messages:
    {
       return 0;
    }
-   
+
    CanPayCosts(who = $)
    {
+      local oRoom;
+
       if who = $
-         OR Send(who,@GetOwner) = $
       {
          return FALSE;
       }
 
-      if Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      oRoom = Send(who,@GetOwner);
+      if oRoom = $
+      {
+         return FALSE;
+      }
+
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_in_safe_place_msg);
+
          return FALSE;
       }
 
-      if IsClass(Send(who,@GetOwner),&GuildHall)
+      if IsClass(oRoom,&GuildHall)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_in_guildhall_msg);
+
          return FALSE;
       }
 
-      if Send(Send(who,@GetOwner),@IsArena)
+      if Send(oRoom,@IsArena)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_in_arena_msg);
+
          return FALSE;
       }
 
-      if Send(Send(who,@GetOwner),@OverridesDeathFunction)
+      if Send(oRoom,@OverridesDeathFunction)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_here_override_msg);
+
          return FALSE;
       }
-      
+
       if Send(who,@IsInSpectatorMode)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_while_specator_msg);
+
          return FALSE;
       }
       
@@ -143,42 +174,47 @@ messages:
 
       return TRUE;
    }
-   
+
    AdjustVisualEffectBasedOnTimeRemaining(who = $)
    {
       local iTimeLeft, iBrightnessLevel;
-      
+
       iTimeLeft = Send(who,@GetRemainingPhaseTime) / 1000;
       iBrightnessLevel = 0;
-      
-      if iTimeLeft < 60
-      {
-         iBrightnessLevel = 1;
-      }
-      if iTimeLeft < 45
-      {
-         iBrightnessLevel = 2;
-      }
-      if iTimeLeft < 35
-      {
-         iBrightnessLevel = 3;
-      }
-      if iTimeLeft < 25
-      {
-         iBrightnessLevel = 4;
-      }
+
       if iTimeLeft < 10
       {
          iBrightnessLevel = 5;
-      }
-      
-      if iBrightnessLevel = 4
-      {
-         Send(who,@MsgSendUser,#message_rsc=phase_time_low);
-      }
-      if iBrightnessLevel = 5
-      {
          Send(who,@MsgSendUser,#message_rsc=phase_time_gone);
+      }
+      else
+      {
+         if iTimeLeft < 25
+         {
+            iBrightnessLevel = 4;
+            Send(who,@MsgSendUser,#message_rsc=phase_time_low);
+         }
+         else
+         {
+            if iTimeLeft < 35
+            {
+               iBrightnessLevel = 3;
+            }
+            else
+            {
+               if iTimeLeft < 45
+               {
+                  iBrightnessLevel = 2;
+               }
+               else
+               {
+                  if iTimeLeft < 60
+                  {
+                     iBrightnessLevel = 1;
+                  }
+               }
+            }
+         }
       }
 
       Send(who,@EffectSendUserXlat,#xlat=(PHASE_OUT_XLAT + iBrightnessLevel));
@@ -210,101 +246,134 @@ messages:
 
       propagate;
    }
-   
+
    NotifyRoomPhaseOut(who=$)
    {
-      local oRoom, i, each_obj;
-      if who <> $
+      local oRoom, i, each_obj, iHealth, iMaxHealth;
+
+      if who = $
       {
-         oRoom = Send(who,@GetOwner);
-         for i in Send(oRoom,@GetPlActive)
-         {
-            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-            if IsClass(each_obj,&User)
-            {
-               if each_obj = who
-               {
-                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_caster_out,#parm1=(Send(each_obj,@GetRemainingPhaseTime)/1000));
-               }
-               else
-               {
-                  if Send(who,@GetHealth) = 1
-                  {
-                     Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_one_health,#parm1=Send(who,@GetName));
-                     continue;
-                  }
-                  if Send(who,@GetHealth) < Send(who,@GetMaxHealth) / 3
-                  {
-                     Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_low_health,#parm1=Send(who,@GetName));
-                     continue;
-                  }
-                  if Send(who,@GetHealth) = Send(who,@GetMaxHealth)
-                  {
-                     Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_high_health,#parm1=Send(who,@GetName));
-                     continue;
-                  }
-                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_medium_health,#parm1=Send(who,@GetName));
-               }
-            }
-         }
+         return;
       }
+
+      oRoom = Send(who,@GetOwner);
+      if oRoom = $
+      {
+         return;
+      }
+
+      iHealth = Send(who,@GetHealth);
+      iMaxHealth = Send(who,@GetMaxHealth);
+
+      for i in Send(oRoom,@GetplActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+
+         if each_obj = who
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=Phase_caster_out,
+                  #parm1=(Send(each_obj,@GetRemainingPhaseTime)/1000));
+
+            continue;
+         }
+
+         if NOT IsClass(each_obj,&User)
+         {
+            continue;
+         }
+
+         if iHealth = 1
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_one_health,
+                  #parm1=Send(who,@GetName));
+
+            continue;
+         }
+
+         if iHealth < iMaxHealth / 3
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_low_health,
+                  #parm1=Send(who,@GetName));
+
+            continue;
+         }
+
+         if iHealth = iMaxHealth
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_high_health,
+                  #parm1=Send(who,@GetName));
+
+            continue;
+         }
+
+         Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_medium_health,
+               #parm1=Send(who,@GetName));
+      }
+
       return;
    }
 
    NotifyRoomPhaseIn(who=$)
    {
       local oRoom, i, each_obj;
-      if who <> $
+
+      if who = $
       {
-         oRoom = Send(who,@GetOwner);
-         for i in Send(oRoom,@GetPlActive)
+         return;
+      }
+
+      oRoom = Send(who,@GetOwner);
+      for i in Send(oRoom,@GetplActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
          {
-            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-            if IsClass(each_obj,&User)
+            if each_obj = who
             {
-               if each_obj = who
-               {
-                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_caster_in,#parm1=(Send(each_obj,@GetRemainingPhaseTime)/1000));
-               }
-               else
-               {
-                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_in,#parm1=Send(who,@GetName));
-               }
+               Send(each_obj,@MsgSendUser,#message_rsc=Phase_caster_in,
+                     #parm1=(Send(each_obj,@GetRemainingPhaseTime)/1000));
+            }
+            else
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=Phase_in,
+                     #parm1=Send(who,@GetName));
             }
          }
       }
+
       return;
    }
 
    RestartEnchantmentEffect(who = $, state = $)
    {
       Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
-      
+
       return;
-   } 
-   
+   }
+
    SetSpellPlayerFlag(who = $)
    {
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
-      
+
       Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_DITHERINVIS);
-      
+
       return;
    }
-   
-   EndEnchantment(who = $,report = TRUE,state=$)
+
+   EndEnchantment(who = $,report = TRUE,state = $)
    {
       Send(who,@EffectSendUserXlat,#xlat=0);
       Send(who,@FreezePhaseTimer);
 
-      % Don't override Hold
-      If NOT Send(who,@IsEnchanted,#byClass=&Hold)
+      % Don't override Hold.
+      if NOT Send(who,@IsEnchanted,#byClass=&Hold)
          AND NOT Send(who,@IsEnchanted,#byClass=&DMHold)
       {
          Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
       }
+
       Send(who,@ReactivateAllEnchantments);
 
       return;
@@ -313,30 +382,37 @@ messages:
    NotifyRoomPenalty(who=$)
    {
       local oRoom, i, each_obj;
-      if who <> $
+
+      if who = $
       {
-         oRoom = Send(who,@GetOwner);
-         for i in Send(oRoom,@GetPlActive)
+         return;
+      }
+
+      oRoom = Send(who,@GetOwner);
+      if oRoom = $
+      {
+         return;
+      }
+
+      for i in Send(oRoom,@GetplActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
          {
-            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
-            if IsClass(each_obj,&User)
+            if each_obj = who
             {
-               if each_obj = who
-               {
-                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_penned);
-               }
-               else
-               {
-                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_penned_others,#parm1=Send(who,@GetName),#parm2=Send(who,@GetHimHer));
-               }
+               Send(each_obj,@MsgSendUser,#message_rsc=Phase_penned);
+            }
+            else
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=Phase_penned_others,
+                     #parm1=Send(who,@GetName),#parm2=Send(who,@GetHimHer));
             }
          }
-
-         if Send(who,@GetOwner) <> $ 
-         {
-            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=Phase_penned_wav_rsc);
-         }
       }
+
+      Send(oRoom,@SomethingWaveRoom,#what=who,#wave_rsc=Phase_penned_wav_rsc);
+
       return;
    }
 
@@ -357,18 +433,19 @@ messages:
       }
 
       if IsClass(poGhostedPlayer,&Player)
-            AND (NOT Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-                 OR Send(poGhostedPlayer,@PlayerIsImmortal))
+         AND (NOT Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            OR Send(poGhostedPlayer,@PlayerIsImmortal))
       {
          Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
+
          return;
-      }  
+      }
 
       numItemsLost = 0;
       numSpellPointsLost = 0;
       numSkillPointsLost = 0;
 
-      % drop items
+      % Drop items.
       numItemsLost = Send(poGhostedPlayer,@GetNumItemsInInventory);
 
       if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
@@ -383,14 +460,15 @@ messages:
       iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
       if LossCounter > iNumItemsInventory
       {
-         % just drop everything
+         % Just drop everything.
          i = 1;
          while i <= iNumItemsInventory
          {
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=poGhostedPlayer)
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,
+                        #targetGhost=poGhostedPlayer)
             {
                % Don't need to increment unless the item stayed in the
-               %  inventory.
+               % inventory.
                i = i + 1;
             }
          }
@@ -402,13 +480,15 @@ messages:
             % try to drop a Random item
             iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
             i = Random(1,iNumItemsInventory);
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=poGhostedPlayer)
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,
+                        #targetGhost=poGhostedPlayer)
             {
                % If the Random drop fails, scan through and drop the first one
                %  we can.
                i = 1;
                while i <= iNumItemsInventory
-                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=poGhostedPlayer)
+                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,
+                                 #targetGhost=poGhostedPlayer)
                {
                   i = i + 1;
                }
@@ -426,7 +506,7 @@ messages:
       }
 
       % Correct the number of items lost by subtracting out the items left in
-      %  inventory.  (Is this right? Yes.)
+      % inventory.  (Is this right? Yes.)
       iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
       numItemsLost = numItemsLost - iNumItemsInventory;
 
@@ -532,26 +612,24 @@ messages:
             }
 
             iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
-                               #compound=Nth(lSkills,i));
+                                 #compound=Nth(lSkills,i));
             Send(poGhostedPlayer,@ChangeSkillAbility,
-                 #skill_num=iAbilityNum,#amount=BaseLossAmount);
+                  #skill_num=iAbilityNum,#amount=BaseLossAmount);
             numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
             LossCounter = LossCounter - 1;
          }
       }
-      
+
       if numItemsLost = 1
       {
          Send(poGhostedPlayer,@MsgSendUser,#message_rsc=penalties_inflicted_one_item,
-                                           #parm1=numSpellPointsLost,
-                                           #parm2=numSkillPointsLost);
+               #parm1=numSpellPointsLost,#parm2=numSkillPointsLost);
       }
       else
       {
          Send(poGhostedPlayer,@MsgSendUser,#message_rsc=penalties_inflicted_plural,
-                                           #parm1=numItemsLost,
-                                           #parm2=numSpellPointsLost,
-                                           #parm3=numSkillPointsLost);
+               #parm1=numItemsLost,#parm2=numSpellPointsLost,
+               #parm3=numSkillPointsLost);
       }
 
       % Reset the time to avoid any funny business like potential double
@@ -560,7 +638,7 @@ messages:
 
       return;
    }
-   
+
    SuccessChance()
    {
       return TRUE;

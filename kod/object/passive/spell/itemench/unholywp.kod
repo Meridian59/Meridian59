@@ -75,7 +75,7 @@ messages:
 
       if lTargets = $
       {
-         return;
+         return FALSE;
       }
 
       oWeapon = First(lTargets);

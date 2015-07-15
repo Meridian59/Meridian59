@@ -74,7 +74,7 @@ messages:
 
       if lTargets = $
       {
-         return;
+         return FALSE;
       }
 
       oWeapon = First(lTargets);
@@ -85,7 +85,7 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=enchantweapon_no_can,
                #parm1=Send(oWeapon,@GetDef),#parm2=Send(oWeapon,@GetName));
 
-         return False;
+         return FALSE;
       }
 
       if Send(oWeapon,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC) <> 0
@@ -95,7 +95,7 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=enchantweapon_already_done,
                #parm1=Send(oWeapon,@GetName));
 
-         return False;
+         return FALSE;
       }
 
       propagate;   % Check other things higher up

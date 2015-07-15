@@ -163,8 +163,17 @@ resources:
    player_join_faction = \
       "~IYour name is entered on the roll of membership for %s%s's political "
       "faction."
-   player_lost_token = \
+   player_lost_token_hall = \
       "The token refuses to enter the guild hall and writhes in your hands.  "
+      "You cannot hold it."
+   player_lost_token_arena = \
+      "The token refuses to enter the arena and writhes in your hands.  "
+      "You cannot hold it."
+   player_lost_token_survival = \
+      "You suddenly lose your grasp on the token as you are pulled "
+      "across dimensions."
+   player_lost_token_generic = \
+      "The token refuses to enter this room and writhes in your hands.  "
       "You cannot hold it."
    player_intrigue_shut = "~IThe Royal Court no longer needs your services."
    player_lost_intriguing = \
@@ -13034,28 +13043,56 @@ messages:
    }
 
    CheckTokenInNewRoom(what=$)
-   "If we are carrying a token, lets drop it"
+   "If we are carrying a token, lets drop it."
    {
-      local i;
+      local i, bFound;
 
       if what = $
-         OR NOT ((IsClass(poOwner,&GuildHall)
-                  OR IsClass(poOwner,&OutofGrace)
-                  OR Send(poOwner,@IsArena)))
+         OR poOwner = $
+         OR Send(poOwner,@CanTokenEnterRoom)
       {
          return;
       }
+
+      bFound = FALSE;
 
       for i in plPassive
       {
          if IsClass(i,&Token)
          {
-            Send(self,@MsgSendUser,#message_rsc=player_lost_token);
-            Send(i,@NewUnused,#where=what); 
+            bFound = TRUE;
+            Send(i,@NewUnused,#where=what);
          }
       }
 
-      return TRUE;
+      if bFound
+      {
+         % Give a different message depending on the room.
+         if IsClass(poOwner,&GuildHall)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_lost_token_hall);
+
+            return;
+         }
+
+         if Send(poOwner,@IsArena)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_lost_token_arena);
+
+            return;
+         }
+
+         if IsClass(poOwner,&SurvivalRoom)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_lost_token_survival);
+
+            return;
+         }
+
+         Send(self,@MsgSendUser,#message_rsc=player_lost_token_generic);
+      }
+
+      return;
    }
 
    GetFactionService()

@@ -75,7 +75,7 @@ messages:
 
       if lTargets = $
       {
-         return;
+         return FALSE;
       }
 
       oTarget = First(lTargets);

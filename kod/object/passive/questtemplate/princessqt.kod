@@ -40,9 +40,6 @@ resources:
 
 classvars:
 
-   % Don't need to show this quest to the user once completed.
-   vbShowCompleted = FALSE
-
 properties:
 
    piNumPlayers = 1

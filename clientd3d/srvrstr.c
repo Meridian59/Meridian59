@@ -146,7 +146,10 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 
             // Check if we're going to write outside the bounds of msg.
             if (strlen(*msg) + strlen(msg2) >= MAXMESSAGE)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
                return False;
+            }
 
             // This block of code adds the current message 'part' into message,
             // but we have to remove the 'r' and add %s as %r isn't a valid
@@ -238,6 +241,9 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             /* Copy this section of format string */
             strncpy(message, tempfmt, (next_ptr - fmt));
             message += (next_ptr - fmt);
+            // Add a null terminator here so we can check length of string
+            // if there is an %r formatter next.
+            *message = '\0';
 
             /* Skip string */
             param_ptr += string_len;

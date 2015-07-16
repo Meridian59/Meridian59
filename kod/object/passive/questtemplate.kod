@@ -39,7 +39,7 @@ constants:
 resources:
 
    % Same icon as the book item.
-   questtemplate_icon_rsc = book1.bgf
+   questtemplate_icon_rsc = kolanico.bgf
    questtemplate_name_rsc = "default quest"
    questtemplate_desc_rsc = "Initial default quest description."
 
@@ -82,6 +82,13 @@ classvars:
 
    % FALSE if we don't display the completed quest to the user.
    vbShowCompleted = TRUE
+
+   % Determine which icon to display in the description,
+   % and whether there is an animation. If no animation,
+   % the viIcon_Animation_start group is displayed.
+   viAnimationSpeed = 0
+   viIcon_Animation_start = 2
+   viIcon_Animation_end = 0
 
 properties:
 
@@ -227,6 +234,7 @@ messages:
       {
          % Add time remaining until quest can be redone, if applicable.
          if piPlayerRestrict & Q_PLAYER_NOTTRIED_RECENTLY
+            AND NOT piPlayerRestrict & Q_PLAYER_NOTSUCCEEDED
          {
             lHistory = Send(who,@GetQuestHistory,#index=viQuestID);
             iTimeLeft = Nth(lHistory,2) + piQuestHistoryRecentTime
@@ -323,6 +331,22 @@ messages:
       }
 
       propagate;
+   }
+
+   SendLookAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed,
+                   2,viIcon_Animation_start, 2,viIcon_Animation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viIcon_Animation_start);
+      }
+
+      return;
    }
 
 end

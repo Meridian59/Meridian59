@@ -69,9 +69,6 @@ classvars:
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_REBEL_SERVICE
 
-   % Don't need to show this quest to the user once completed.
-   vbShowCompleted = FALSE
-
 properties:
 
    piNumPlayers = 1

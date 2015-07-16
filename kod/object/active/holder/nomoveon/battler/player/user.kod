@@ -3159,7 +3159,7 @@ messages:
 
          % List index, quest name, statistic type, quest object, value (%), icon.
          AddPacket(1,iCount, 4,rQuestName, 1,STAT_LIST,
-                   4,oQObj, 4,iQTemplate, 4,0);
+                   4,oQObj, 4,iQTemplate, 4,Send(oQObj,@GetIcon));
          iCount = iCount + 1;
       }
 
@@ -3202,7 +3202,7 @@ messages:
 
          % List index, quest name, statistic type, quest object, value (%), icon.
          AddPacket(1,iCount, 4,rQuestName, 1,STAT_LIST,
-                   4,oQObj, 4,iQTemplate, 4,0);
+                   4,oQObj, 4,iQTemplate, 4,Send(oQObj,@GetIcon));
          iCount = iCount + 1;
       }
 
@@ -9476,23 +9476,23 @@ messages:
    "successtime, failtime.  "
    "Returns TRUE on success, FALSE if illegal parameters provided."
    {
-      local lQH, iLength, iTime;
-      
-      if index = $ 
+      local lQH, iLength, iTime, templQH;
+
+      if index = $
       {
          return FALSE;
       }
-      
+
       if (index & ~QUEST_HISTORY_MASK) <> 0
       {
          return FALSE;
       }
-      
+
       if success = $
       {
          return FALSE;
       }
-      
+
       Send(self,@RemoveCurrentQuest,#index=index);
 
       iTime = Send( self, @GetTimeLoggedIn );
@@ -9504,16 +9504,18 @@ messages:
             {
                SetNth(lQH,1,(First(lQH)|QUEST_HISTORY_SUCCESS));
                SetNth(lQH,2,iTime);
-               
-               return TRUE;
             }
             else
             {
                SetNth(lQH,1,(First(lQH)|QUEST_HISTORY_FAILURE));
                SetNth(lQH,3,iTime);
-               
-               return TRUE;
             }
+            % Move quest to front of list.
+            templQH = lQH;
+            plQuestHistory = DelListElem(plQuestHistory, lQH);
+            plQuestHistory = Cons(lQH, plQuestHistory);
+
+            return TRUE;
          }
       }
 
@@ -9526,11 +9528,11 @@ messages:
       {
          lQH = [(index | QUEST_HISTORY_FAILURE), 0, iTime];
       }
-      
-      plQuestHistory = cons(lQH, plQuestHistory);
-      
+
+      plQuestHistory = Cons(lQH, plQuestHistory);
+
       return TRUE;
-   }   
+   }
 
    ClearQuestHistory(index=$, allBelow=FALSE, allAbove=FALSE)
    "Admin supported."

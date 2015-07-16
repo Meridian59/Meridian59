@@ -275,12 +275,7 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
       return;
 
    if (StatsGetCurrentGroup() == STATS_QUESTS)
-   {
-      if (s->list.value == 0)
-         sprintf(str, "%s", LookupNameRsc(s->name_res));
-      else
-         sprintf(str, "%d: %s", s->list.value, LookupNameRsc(s->name_res));
-   }
+      sprintf(str, "%s", LookupNameRsc(s->name_res));
    else
       sprintf(str, "%s %d%%", LookupNameRsc(s->name_res), s->list.value);
 
@@ -291,10 +286,10 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    {
       r.left += 2;
    }
-   else if (StatsGetCurrentGroup() == STATS_QUESTS)
-   {
-      r.left += 8;
-   }
+   //else if (StatsGetCurrentGroup() == STATS_QUESTS)
+   //{
+   //   r.left += 8;
+   //}
    else
    {
       r.left += ENCHANT_SIZE + 2;
@@ -315,6 +310,7 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    AREA areaIcon;
    case STATS_SPELLS:
    case STATS_SKILLS:
+   case STATS_QUESTS:
       areaIcon.x = lpdis->rcItem.left;
       areaIcon.y = lpdis->rcItem.top;
       areaIcon.cx = ENCHANT_SIZE;		//xxx

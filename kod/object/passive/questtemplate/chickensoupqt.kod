@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   chickensoupquest_icon_rsc = soupbowl.bgf
    chickensoupquest_name_rsc = "chicken soup quest"
    chickensoupquest_desc_rsc = \
       "Go to Widow Qesino and ask for some warm chicken soup for NPC."
@@ -70,6 +71,7 @@ resources:
 
 classvars:
 
+   vrIcon = chickensoupquest_icon_rsc
    vrName = chickensoupquest_name_rsc
    vrDesc = chickensoupquest_desc_rsc
 
@@ -79,6 +81,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_CHICKEN_SOUP
+
+   viIcon_Animation_start = 1
 
 properties:
 

@@ -6821,6 +6821,14 @@ messages:
    {
       local iOldhealth;
 
+      if amount = $
+      {
+         Debug("Player ",Send(self,@GetTrueName)," had GainHealthNormal called",
+               " with amount = $! Precision was ",precision);
+
+         return;
+      }
+
       if NOT precision
       {
          amount = amount*100;
@@ -12921,7 +12929,8 @@ messages:
          return;
       }
 
-      if Send(Self,@PlayerIsIntriguing) AND (piFaction<>FACTION_NEUTRAL)
+      if Send(Self,@PlayerIsIntriguing)
+         AND piFaction <> FACTION_NEUTRAL
       {
          Send(self,@MsgSendUser,#message_rsc=player_unfactioned);
       }

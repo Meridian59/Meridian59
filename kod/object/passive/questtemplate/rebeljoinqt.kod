@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   rebeljoin_icon_rsc = wngenera.bgf
    rebeljoin_name_rsc = "rebel join faction quest"
    rebeljoin_desc_rsc = \
       "Before Jonas D'Accor will let you join his ranks, he must be convinced "
@@ -61,6 +62,7 @@ resources:
 
 classvars:
 
+   vrIcon = rebeljoin_icon_rsc
    vrName = rebeljoin_name_rsc
    vrDesc = rebeljoin_desc_rsc
 
@@ -70,6 +72,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_REBEL_JOIN
+
+   viIcon_Animation_start = 1
 
 properties:
 

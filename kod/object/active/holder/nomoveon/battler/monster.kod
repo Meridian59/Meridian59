@@ -4552,6 +4552,11 @@ messages:
    GainHealthNormal(amount = $, precision = FALSE)
    "for when holy touch is cast on a good monster"
    {
+      if amount = $
+      {
+         return;
+      }
+
       if NOT precision
       {
          amount = amount * 100;

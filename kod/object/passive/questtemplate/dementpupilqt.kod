@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   dementpupilquest_icon_rsc = idement.bgf
    dementpupilquest_name_rsc = "dement pupil quest"
    dementpupilquest_desc_rsc = \
       "Afiera D'xor has asked you to deliver some cargo.  Do so, and return "
@@ -78,6 +79,7 @@ resources:
 
 classvars:
 
+   vrIcon = dementpupilquest_icon_rsc
    vrName = dementpupilquest_name_rsc
    vrDesc = dementpupilquest_desc_rsc
 

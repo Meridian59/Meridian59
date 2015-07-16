@@ -9426,6 +9426,34 @@ messages:
       return $;
    }
 
+   ResignFaction()
+   "Cancel any active loyalty or faction quests."
+   {
+      local i, iQID;
+
+      if plActiveQuests = $
+      {
+         propagate;
+      }
+
+      for i in plActiveQuests
+      {
+         iQID = First(i);
+         if iQID = QST_ID_PRINCESS_SERVICE
+            OR iQID = QST_ID_DUKE_SERVICE
+            OR iQID = QST_ID_REBEL_SERVICE
+            OR iQID = QST_ID_PRINCESS_SOLDIER
+            OR iQID = QST_ID_DUKE_SOLDIER
+            OR iQID = QST_ID_REBEL_SOLDIER
+         {
+            % Post this, because it will edit the plActiveQuests list.
+            Post(Nth(i,2),@DeadlineExpired);
+         }
+      }
+
+      propagate;
+   }
+
    % plQuestHistory is list of lists of the format
    %  [ compound, last_success_time, last_failure_time ]
    % compound is:

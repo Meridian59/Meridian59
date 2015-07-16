@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   seraphymquest_icon_rsc = serappol.bgf
    seraphymquest_name_rsc = "polished seraphym quest"
    seraphymquest_desc_rsc = \
       "You have been asked if you have any uncut seraphym to spare, "
@@ -61,6 +62,7 @@ resources:
 
 classvars:
 
+   vrIcon = seraphymquest_icon_rsc
    vrName = seraphymquest_name_rsc
    vrDesc = seraphymquest_desc_rsc
 

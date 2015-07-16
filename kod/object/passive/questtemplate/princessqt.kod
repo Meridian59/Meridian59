@@ -30,6 +30,9 @@ constants:
 
 resources:
 
+   % Quest description.
+   princessqt_icon_rsc = princess.bgf
+
    % Quest resources.
    princess_standard2_success = \
       "A letter from her highness?!  Excellent.  Thank you, %NAME."
@@ -39,6 +42,10 @@ resources:
       "service in the future."
 
 classvars:
+
+   vrIcon = princessqt_icon_rsc
+
+   viIcon_Animation_start = 1
 
 properties:
 

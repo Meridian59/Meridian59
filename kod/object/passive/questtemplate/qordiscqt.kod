@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   qorquest_icon_rsc = ikarahol.bgf
    qorquest_name_rsc = "Qor disciple quest"
    qorquest_desc_rsc = \
       "Priestess Zuxana has asked you to go to %s and speak "
@@ -82,6 +83,7 @@ resources:
 
 classvars:
 
+   vrIcon = qorquest_icon_rsc
    vrName = qorquest_name_rsc
    vrDesc = qorquest_desc_rsc
 

@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   necroguildquest_icon_rsc = necamlet.bgf
    necroguildquest_name_rsc = "raise Queen Venya'cyr quest"
    necroguildquest_desc_rsc = \
       "The ghostly remains of Queen Venya'cyr have whispered to you, and "
@@ -66,6 +67,7 @@ resources:
 
 classvars:
 
+   vrIcon = necroguildquest_icon_rsc
    vrName = necroguildquest_name_rsc
    vrDesc = necroguildquest_desc_rsc
 
@@ -75,6 +77,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_ESTABLISH_NECROGUILD
+
+   viIcon_Animation_start = 1
 
 properties:
 

@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   scimprofquest_icon_rsc = scimico.bgf
    scimprofquest_name_rsc = "scimitar wielding pupil quest"
 
    % This description is used if there is an error preventing the others
@@ -92,6 +93,7 @@ resources:
 
 classvars:
 
+   vrIcon = scimprofquest_icon_rsc
    vrName = scimprofquest_name_rsc
    vrDesc = scimprofquest_desc_rsc
 

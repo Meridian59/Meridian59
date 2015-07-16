@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   guildshieldquest_icon_rsc = gsha.bgf
    guildshieldquest_name_rsc = "mining expedition quest"
    guildshieldquest_desc_rsc = \
       "The blacksmith has asked you to obtain some ore from the orc caves "
@@ -68,6 +69,7 @@ resources:
 
 classvars:
 
+   vrIcon = guildshieldquest_icon_rsc
    vrName = guildshieldquest_name_rsc
    vrDesc = guildshieldquest_desc_rsc
 
@@ -77,6 +79,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_GUILDSHIELD
+
+   viIcon_Animation_start = 1
 
    % Don't need to show this quest to the user once completed.
    vbShowCompleted = FALSE

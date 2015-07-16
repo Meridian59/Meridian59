@@ -286,10 +286,6 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    {
       r.left += 2;
    }
-   //else if (StatsGetCurrentGroup() == STATS_QUESTS)
-   //{
-   //   r.left += 8;
-   //}
    else
    {
       r.left += ENCHANT_SIZE + 2;
@@ -299,7 +295,14 @@ void StatsListDrawStat(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool bShowSpe
    //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
    DrawText( lpdis->hDC, str, strlen(str), &r, DT_LEFT );
    OffsetRect(&r, 1, 1);
-   SetTextColor(lpdis->hDC, selected ? GetColor(COLOR_HIGHLITE) : GetColor(COLOR_STATSFGD));
+   if (StatsGetCurrentGroup() == STATS_QUESTS && s->list.value == 0)
+   {
+      SetTextColor(lpdis->hDC, GetColor(COLOR_QUEST_HEADER));
+   }
+   else
+   {
+      SetTextColor(lpdis->hDC, selected ? GetColor(COLOR_HIGHLITE) : GetColor(COLOR_STATSFGD));
+   }
    //DrawText(lpdis->hDC, str, strlen(str), &r,  DT_CENTER);
    DrawText( lpdis->hDC, str, strlen(str), &r, DT_LEFT );
 

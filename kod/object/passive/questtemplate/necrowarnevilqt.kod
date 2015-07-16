@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   necrowarnevilqt_icon_rsc = necscrol.bgf
    necrowarnevilqt_name_rsc = "necromancer warning quest"
    necrowarnevilqt_desc_rsc = \
       "Maleval has information about a dark power coming to these lands.  "
@@ -76,6 +77,7 @@ resources:
 
 classvars:
 
+   vrIcon = necrowarnevilqt_icon_rsc
    vrName = necrowarnevilqt_name_rsc
    vrDesc = necrowarnevilqt_desc_rsc
 
@@ -86,6 +88,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_NECRO_WARNING
+
+   viIcon_Animation_start = 1
 
 properties:
 

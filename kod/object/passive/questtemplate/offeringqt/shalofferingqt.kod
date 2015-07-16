@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   shalofferingqt_icon_rsc = tear.bgf
    shalofferingqt_name_rsc = "Shal'ille offering quest"
    shalofferingqt_desc_rsc = \
       "Priestess Xiana has invited you to chant with her, to give strength "
@@ -68,6 +69,7 @@ resources:
 
 classvars:
 
+   vrIcon = shalofferingqt_icon_rsc
    vrName = shalofferingqt_name_rsc
    vrDesc = shalofferingqt_desc_rsc
 
@@ -75,6 +77,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_SHALILLE_OFFERING
+
+   viIcon_Animation_start = 1
 
 properties:
 

@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   mysterymobquest_icon_rsc = scr10.bgf
    mysterymobquest_name_rsc = "mystery monster quest"
    mysterymobquest_desc_rsc = \
       "The tailor has been having insect trouble lately.  She found a large "
@@ -92,6 +93,7 @@ resources:
 
 classvars:
 
+   vrIcon = mysterymobquest_icon_rsc
    vrName = mysterymobquest_name_rsc
    vrDesc = mysterymobquest_desc_rsc
 

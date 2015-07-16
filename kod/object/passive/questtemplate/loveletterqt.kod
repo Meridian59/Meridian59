@@ -30,6 +30,7 @@ constants:
 resources:
 
    % Quest description.
+   loveletterqt_icon_rsc = scr01.bgf
 
    % Quest resources.
    love_letter_failure = \
@@ -39,6 +40,8 @@ resources:
       "choose a more reliable courier!"
 
 classvars:
+
+   vrIcon = loveletterqt_icon_rsc
 
 properties:
 

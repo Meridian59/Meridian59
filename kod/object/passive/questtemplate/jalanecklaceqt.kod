@@ -34,6 +34,7 @@ constants:
 resources:
 
    % Quest description.
+   jalanecklaceqt_icon_rsc = jalaneck.bgf
    jalanecklaceqt_name_rsc = "Jala necklace quest"
    jalanecklaceqt_desc_rsc = \
       "Help an NPC identify a potion."
@@ -103,6 +104,7 @@ resources:
 
 classvars:
 
+   vrIcon = jalanecklaceqt_icon_rsc
    vrName = jalanecklaceqt_name_rsc
    vrDesc = jalanecklaceqt_desc_rsc
 
@@ -117,6 +119,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_JALA_NECKLACE
+
+   viIcon_Animation_start = 1
 
 properties:
 

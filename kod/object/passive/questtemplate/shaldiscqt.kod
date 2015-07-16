@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   shalquest_icon_rsc = rescuico.bgf
    shalquest_name_rsc = "Shal'ille disciple quest"
    shalquest_desc_rsc = \
       "Priestess Xiana has asked you to go to %s and speak "
@@ -87,6 +88,7 @@ resources:
 
 classvars:
 
+   vrIcon = shalquest_icon_rsc
    vrName = shalquest_name_rsc
    vrDesc = shalquest_desc_rsc
 

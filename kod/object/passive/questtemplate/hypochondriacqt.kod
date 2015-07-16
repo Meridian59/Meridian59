@@ -33,17 +33,18 @@ constants:
 resources:
 
    % Quest description.
+   hypochondriacquest_icon_rsc = solagh.bgf
    hypochondriacquest_name_rsc = "hypochondriac quest"
    hypochondriacquest_desc_rsc = \
       "Frisconar is \"sick\" once again, and requires your assistance "
       "in obtaining a remedy for his illness."
 
    hypochondriacquest_nodetwo_rsc = \
-      "Frisconar is \"sick\" once again, this time with %s.  Go to "
-      "%s and ask %s about a cure for %s."
+      "Frisconar is sick once again, this time with %s.  Go to "
+      "%s and ask %s about a cure for \"%s\"."
 
    hypochondriacquest_nodethree_rsc = \
-      "Go to %s and ask %s about the Sacchaqua potion."
+      "Go to %s and ask %s about the \"Sacchaqua\" potion."
 
    hypochondriacquest_nodefour_rsc = \
       "Return to Frisconar and give him the Sacchaqua potion, to save him "
@@ -94,6 +95,7 @@ resources:
 
 classvars:
 
+   vrIcon = hypochondriacquest_icon_rsc
    vrName = hypochondriacquest_name_rsc
    vrDesc = hypochondriacquest_desc_rsc
 
@@ -105,6 +107,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_HYPOCHONDRIAC
+
+   viIcon_Animation_start = 1
 
 properties:
 

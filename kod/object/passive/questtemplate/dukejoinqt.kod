@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   dukejoin_icon_rsc = dukeneph.bgf
    dukejoin_name_rsc = "Duke join faction quest"
    dukejoin_desc_rsc = \
       "Duke Akardius has asked you to bring him an item, to prove yourself "
@@ -57,6 +58,7 @@ resources:
 
 classvars:
 
+   vrIcon = dukejoin_icon_rsc
    vrName = dukejoin_name_rsc
    vrDesc = dukejoin_desc_rsc
 
@@ -66,6 +68,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_DUKE_JOIN
+
+   viIcon_Animation_start = 1
 
 properties:
 

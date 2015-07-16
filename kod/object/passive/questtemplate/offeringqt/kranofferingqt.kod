@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   kranofferingqt_icon_rsc = sweat.bgf
    kranofferingqt_name_rsc = "Kraanan offering quest"
    kranofferingqt_desc_rsc = \
       "Priestess Qerti'nya has invited you to chant with her, to give "
@@ -69,6 +70,7 @@ resources:
 
 classvars:
 
+   vrIcon = kranofferingqt_icon_rsc
    vrName = kranofferingqt_name_rsc
    vrDesc = kranofferingqt_desc_rsc
 
@@ -76,6 +78,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_KRAANAN_OFFERING
+
+   viIcon_Animation_start = 1
 
 properties:
 

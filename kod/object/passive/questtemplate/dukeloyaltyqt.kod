@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   dukeloyalty_icon_rsc = dukeneph.bgf
    dukeloyalty_name_rsc = "Duke loyalty quest"
    dukeloyalty_desc_rsc = \
       "Duke Akardius has commanded you to collect taxes for him.  Return "
@@ -65,6 +66,7 @@ resources:
 
 classvars:
 
+   vrIcon = dukeloyalty_icon_rsc
    vrName = dukeloyalty_name_rsc
    vrDesc = dukeloyalty_desc_rsc
 
@@ -75,6 +77,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_DUKE_SERVICE
+
+   viIcon_Animation_start = 1
 
 properties:
 

@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   princesssoldier_icon_rsc = flagpinv.bgf
    princesssoldier_name_rsc = "Princess soldier shield quest"
    princesssoldier_desc_rsc = \
      "Princess Kateriina will allow you to join the Royal, but first "
@@ -60,6 +61,7 @@ resources:
 
 classvars:
 
+   vrIcon = princesssoldier_icon_rsc
    vrName = princesssoldier_name_rsc
    vrDesc = princesssoldier_desc_rsc
 
@@ -67,9 +69,6 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_PRINCESS_SOLDIER
-
-   % Don't need to show this quest to the user once completed.
-   vbShowCompleted = FALSE
 
 properties:
 

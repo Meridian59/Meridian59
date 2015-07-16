@@ -64,7 +64,7 @@ properties:
    piNumPlayers = 1
    piPlayerRestrict = 0
    plSpecialRestrict = $
-   piMaxPlayers = 30
+   piMaxPlayers = 40
    piSchedulePct = 100
 
 messages:

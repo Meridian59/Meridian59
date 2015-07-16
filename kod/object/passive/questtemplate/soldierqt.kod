@@ -46,8 +46,7 @@ classvars:
    vrKill = soldierqt_kill_rsc
    vrReturn = soldierqt_return_rsc
 
-   % Don't need to show this quest to the user once completed.
-   vbShowCompleted = FALSE
+   viIcon_Animation_start = 1
 
 properties:
 

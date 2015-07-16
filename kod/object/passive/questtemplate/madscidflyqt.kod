@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   madscientistdflyquest_icon_rsc = dflo.bgf
    madscientistdflyquest_name_rsc = "mad scientist dragonfly quest"
    madscientistdflyquest_desc_rsc = \
       "Bahal zax'Ot would like you to bring him a live dragonfly queen "
@@ -58,6 +59,7 @@ resources:
 
 classvars:
 
+   vrIcon = madscientistdflyquest_icon_rsc
    vrName = madscientistdflyquest_name_rsc
    vrDesc = madscientistdflyquest_desc_rsc
 
@@ -65,6 +67,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_MAD_SCIENTIST
+
+   viIcon_Animation_start = 1
 
 properties:
 

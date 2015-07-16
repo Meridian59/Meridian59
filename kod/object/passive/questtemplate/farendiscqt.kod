@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   farenquest_icon_rsc = lightnin.bgf
    farenquest_name_rsc = "Faren disciple quest"
    farenquest_desc_rsc = \
       "Priestess Tenuv'vyal has asked you to go to %s and speak "
@@ -81,6 +82,7 @@ resources:
 
 classvars:
 
+   vrIcon = farenquest_icon_rsc
    vrName = farenquest_name_rsc
    vrDesc = farenquest_desc_rsc
 

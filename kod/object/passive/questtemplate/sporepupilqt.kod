@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   sporepupilquest_icon_rsc = isporecl.bgf
    sporepupilquest_name_rsc = "sporeburst pupil quest"
    sporepupilquest_desc_rsc = \
       "Maleval has offered to teach you a powerful new spell, but has "
@@ -103,6 +104,7 @@ resources:
 
 classvars:
 
+   vrIcon = sporepupilquest_icon_rsc
    vrName = sporepupilquest_name_rsc
    vrDesc = sporepupilquest_desc_rsc
 

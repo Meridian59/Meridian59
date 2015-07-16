@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   aphrodisiacqt_icon_rsc = solagh.bgf
    aphrodisiacqt_name_rsc = "aphrodisiac potion quest"
    aphrodisiacqt_desc_rsc = \
       "Obtain an aphrodisiac potion and help the NPC."
@@ -80,6 +81,7 @@ resources:
 
 classvars:
 
+   vrIcon = aphrodisiacqt_icon_rsc
    vrName = aphrodisiacqt_name_rsc
    vrDesc = aphrodisiacqt_desc_rsc
 
@@ -91,6 +93,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_APHRODISIAC
+
+   viIcon_Animation_start = 1
 
 properties:
 

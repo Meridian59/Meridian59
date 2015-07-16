@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   bowmakergoodquest_icon_rsc = neruore.bgf
    bowmakergoodquest_desc_rsc = \
       "Hanla zax'Ta has asked you to obtain the tailfeather of an "
       "avar shaman for her.  Locate an avar magician and see if they "
@@ -59,6 +60,7 @@ resources:
 
 classvars:
 
+   vrIcon = bowmakergoodquest_icon_rsc
    vrDesc = bowmakergoodquest_desc_rsc
 
    vrNodeTwo = bowmakergoodquest_nodetwo_rsc
@@ -66,6 +68,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_BOW_MAKER_GOOD
+
+   viIcon_Animation_start = 1
 
 properties:
 

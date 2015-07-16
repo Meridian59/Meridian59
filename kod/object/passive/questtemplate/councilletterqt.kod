@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   councilletterquest_icon_rsc = scr04.bgf
    councilletterquest_name_rsc = "council letter quest"
    councilletterquest_desc_rsc = \
       "Deliver an official letter to a councillor.  You will be paid "
@@ -57,6 +58,7 @@ resources:
 
 classvars:
 
+   vrIcon = councilletterquest_icon_rsc
    vrName = councilletterquest_name_rsc
    vrDesc = councilletterquest_desc_rsc
 

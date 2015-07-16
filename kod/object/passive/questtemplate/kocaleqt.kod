@@ -33,9 +33,10 @@ constants:
 resources:
 
    % Quest description.
+   kocaleqt_icon_rsc = mug.bgf
    kocaleqt_name_rsc = "Ko'catan ale trade quest"
    kocaleqt_desc_rsc = \
-      "An apothecary has run out of stock; deliver some to them."
+      "Make an alcohol delivery to the Island."
 
    kocaleqt_nodetwo_rsc = \
       "%s%s needs a guaranteed delivery made to the island.  Failure to "
@@ -90,6 +91,7 @@ resources:
 
 classvars:
 
+   vrIcon = kocaleqt_icon_rsc
    vrName = kocaleqt_name_rsc
    vrDesc = kocaleqt_desc_rsc
 
@@ -100,6 +102,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_KOC_ALE_TRADE
+
+   viIcon_Animation_start = 1
 
 properties:
 

@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   oreqt_icon_rsc = ore.bgf
    oreqt_name_rsc = "blacksmith ore quest"
    oreqt_desc_rsc = \
       "A blacksmith has run out of ore; deliver some to them."
@@ -68,6 +69,7 @@ resources:
 
 classvars:
 
+   vrIcon = oreqt_icon_rsc
    vrName = oreqt_name_rsc
    vrDesc = oreqt_desc_rsc
 
@@ -77,6 +79,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_ORE
+
+   viIcon_Animation_start = 1
 
 properties:
 

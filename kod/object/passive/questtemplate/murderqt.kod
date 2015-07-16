@@ -30,6 +30,7 @@ constants:
 resources:
 
    % Quest description.
+   murderqt_icon_rsc = bkswd.bgf
    murderqt_nodetwo_rsc = \
       "%s%s would like to learn more about Duke Kalior's murder, and "
       "%s has requested that you ask %s%s about it."
@@ -474,8 +475,12 @@ resources:
 
 classvars:
 
+   vrIcon = murderqt_icon_rsc
+
    vrNodeTwo = murderqt_nodetwo_rsc
    vrNodeThree = murderqt_nodethree_rsc
+
+   viIcon_Animation_start = 1
 
 properties:
 

@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   fadepupilquest_icon_rsc = ifade.bgf
    fadepupilquest_name_rsc = "fade pupil quest"
    fadepupilquest_desc_rsc = \
       "Joguer would like you to retrieve a formula for him, and in return "
@@ -98,6 +99,7 @@ resources:
 
 classvars:
 
+   vrIcon = fadepupilquest_icon_rsc
    vrName = fadepupilquest_name_rsc
    vrDesc = fadepupilquest_desc_rsc
 

@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   factioninsigniaquest_icon_rsc = gsha.bgf
    factioninsigniaquest_name_rsc = "herald shield insignia quest"
    factioninsigniaquest_desc_rsc = \
       "Your liege will place its insignia on your shield, provided "
@@ -105,6 +106,7 @@ resources:
 
 classvars:
 
+   vrIcon = factioninsigniaquest_icon_rsc
    vrName = factioninsigniaquest_name_rsc
    vrDesc = factioninsigniaquest_desc_rsc
 
@@ -116,6 +118,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_FACTION_INSIGNIA
+
+   viIcon_Animation_start = 1
 
 properties:
 

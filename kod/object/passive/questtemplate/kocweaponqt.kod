@@ -33,9 +33,10 @@ constants:
 resources:
 
    % Quest description.
+   kocweaponqt_icon_rsc = arrowqt.bgf
    kocweaponqt_name_rsc = "Ko'catan weapon trade quest"
    kocweaponqt_desc_rsc = \
-      "An apothecary has run out of stock; deliver some to them."
+      "Make a delivery of arrows to the mainland."
 
    kocweaponqt_nodetwo_rsc = \
       "%s%s needs a guaranteed delivery made to the mainland.  This is "
@@ -90,6 +91,7 @@ resources:
 
 classvars:
 
+   vrIcon = kocweaponqt_icon_rsc
    vrName = kocweaponqt_name_rsc
    vrDesc = kocweaponqt_desc_rsc
 
@@ -100,6 +102,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_KOC_WEAPON_TRADE
+
+   viIcon_Animation_start = 1
 
 properties:
 

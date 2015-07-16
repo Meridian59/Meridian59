@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   rebelloyalty_icon_rsc = wngenera.bgf
    rebelloyalty_name_rsc = "rebel loyalty quest"
    rebelloyalty_desc_rsc = \
       "Jonas D'Accor's troops need equipment, and he has requested that "
@@ -59,6 +60,7 @@ resources:
 
 classvars:
 
+   vrIcon = rebelloyalty_icon_rsc
    vrName = rebelloyalty_name_rsc
    vrDesc = rebelloyalty_desc_rsc
 
@@ -68,6 +70,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_REBEL_SERVICE
+
+   viIcon_Animation_start = 1
 
 properties:
 

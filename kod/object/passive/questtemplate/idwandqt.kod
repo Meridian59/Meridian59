@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   idwandqt_icon_rsc = joltstaf.bgf
    idwandqt_name_rsc = "wand identification quest"
    idwandqt_desc_rsc = \
       "Help an NPC identify a wand."
@@ -76,6 +77,7 @@ resources:
 
 classvars:
 
+   vrIcon = idwandqt_icon_rsc
    vrName = idwandqt_name_rsc
    vrDesc = idwandqt_desc_rsc
 

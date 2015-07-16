@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   apothecaryqt_icon_rsc = shrubbry.bgf
    apothecaryqt_name_rsc = "apothecary quest"
    apothecaryqt_desc_rsc = \
       "An apothecary has run out of stock; deliver some to them."
@@ -71,6 +72,7 @@ resources:
 
 classvars:
 
+   vrIcon = apothecaryqt_icon_rsc
    vrName = apothecaryqt_name_rsc
    vrDesc = apothecaryqt_desc_rsc
 
@@ -80,6 +82,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_APOTHECARY
+
+   viIcon_Animation_start = 1
 
 properties:
 

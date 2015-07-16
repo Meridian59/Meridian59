@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   necrowarngoodqt_icon_rsc = necscrol.bgf
    necrowarngoodqt_name_rsc = "necromancer warning quest"
    necrowarngoodqt_desc_rsc = \
       "Parrin Aragone says he has urgent information regarding necromancers "
@@ -74,6 +75,7 @@ resources:
 
 classvars:
 
+   vrIcon = necrowarngoodqt_icon_rsc
    vrName = necrowarngoodqt_name_rsc
    vrDesc = necrowarngoodqt_desc_rsc
 
@@ -84,6 +86,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_NECRO_WARNING_2
+
+   viIcon_Animation_start = 1
 
 properties:
 

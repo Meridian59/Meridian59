@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   idpotionqt_icon_rsc = potion01.bgf
    idpotionqt_name_rsc = "potion identification quest"
    idpotionqt_desc_rsc = \
       "Help an NPC identify a potion."
@@ -76,6 +77,7 @@ resources:
 
 classvars:
 
+   vrIcon = idpotionqt_icon_rsc
    vrName = idpotionqt_name_rsc
    vrDesc = idpotionqt_desc_rsc
 
@@ -86,6 +88,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_POTION_ID
+
+   viIcon_Animation_start = 1
 
 properties:
 

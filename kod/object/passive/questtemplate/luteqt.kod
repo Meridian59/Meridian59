@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   lutequest_icon_rsc = music.bgf
    lutequest_name_rsc = "instrument quest"
    lutequest_desc_rsc = \
       "Parrin knows someone who can get you an instrument, so he "
@@ -91,6 +92,7 @@ resources:
 
 classvars:
 
+   vrIcon = lutequest_icon_rsc
    vrName = lutequest_name_rsc
    vrDesc = lutequest_desc_rsc
 
@@ -102,6 +104,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_LUTE
+
+   viIcon_Animation_start = 1
 
 properties:
 

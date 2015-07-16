@@ -34,6 +34,7 @@ constants:
 resources:
 
    % Quest description.
+   stunteddwarfquest_icon_rsc = mug.bgf
    stunteddwarfquest_name_rsc = "stunted dwarf quest"
    stunteddwarfquest_desc_rsc = \
       "You overheard the bartender mention something about a stunted dwarf.  "
@@ -98,6 +99,7 @@ resources:
 
 classvars:
 
+   vrIcon = stunteddwarfquest_icon_rsc
    vrName = stunteddwarfquest_name_rsc
    vrDesc = stunteddwarfquest_desc_rsc
 
@@ -113,6 +115,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_STUNTED_DWARF
+
+   viIcon_Animation_start = 1
 
 properties:
 

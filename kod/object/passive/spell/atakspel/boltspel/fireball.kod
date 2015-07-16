@@ -78,7 +78,7 @@ messages:
 
    SendLookAnimation()
    {
-      AddPacket(1,ANIMATE_NONE, 2,1);
+      AddPacket(1,ANIMATE_NONE, 2,2);
 
       return;
    }

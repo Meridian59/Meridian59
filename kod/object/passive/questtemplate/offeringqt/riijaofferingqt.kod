@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   riijaofferingqt_icon_rsc = lies.bgf
    riijaofferingqt_name_rsc = "Riija offering quest"
    riijaofferingqt_desc_rsc = \
       "The Riija Monk has invited you to chant with him, to give strength "
@@ -64,6 +65,7 @@ resources:
 
 classvars:
 
+   vrIcon = riijaofferingqt_icon_rsc
    vrName = riijaofferingqt_name_rsc
    vrDesc = riijaofferingqt_desc_rsc
 
@@ -71,6 +73,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_RIIJA_OFFERING
+
+   viIcon_Animation_start = 1
 
 properties:
 

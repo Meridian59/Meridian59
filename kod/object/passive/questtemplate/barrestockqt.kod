@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   barrestockqt_icon_rsc = pitcher.bgf
    barrestockqt_name_rsc = "bar restock quest"
    barrestockqt_desc_rsc = \
       "A bartender is running low on supplies, and would like your assistance."
@@ -77,6 +78,7 @@ resources:
 
 classvars:
 
+   vrIcon = barrestockqt_icon_rsc
    vrName = barrestockqt_name_rsc
    vrDesc = barrestockqt_desc_rsc
 
@@ -87,6 +89,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_BAR_RESTOCK
+
+   viIcon_Animation_start = 1
 
 properties:
 

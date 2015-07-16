@@ -31,6 +31,7 @@ constants:
 resources:
 
    % Quest description.
+   dukesoldier_icon_rsc = flagdinv.bgf
    dukesoldier_name_rsc = "Duke soldier shield quest"
    dukesoldier_desc_rsc = \
       "Duke Akardius will allow you to join the Ducal army, but first "
@@ -57,6 +58,7 @@ resources:
 
 classvars:
 
+   vrIcon = dukesoldier_icon_rsc
    vrName = dukesoldier_name_rsc
    vrDesc = dukesoldier_desc_rsc
 
@@ -64,9 +66,6 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_DUKE_SOLDIER
-
-   % Don't need to show this quest to the user once completed.
-   vbShowCompleted = FALSE
 
 properties:
 

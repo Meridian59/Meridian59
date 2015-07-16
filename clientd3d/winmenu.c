@@ -222,6 +222,9 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       break;
    case ID_COLOR_SYSMSG:
       UserSelectColor(COLOR_SYSMSGFGD);
+   case ID_COLOR_QUESTHEADER:
+      UserSelectColor(COLOR_QUEST_HEADER);
+      break;
       break;
    case ID_COLOR_STATS:
       UserSelectColors(COLOR_STATSFGD, COLOR_STATSBGD);

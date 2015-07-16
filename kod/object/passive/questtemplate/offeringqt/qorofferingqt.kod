@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   qorofferingqt_icon_rsc = bloodinn.bgf
    qorofferingqt_name_rsc = "Qor offering quest"
    qorofferingqt_desc_rsc = \
       "Priestess Zuxana has invited you to chant with her, to give strength "
@@ -68,6 +69,7 @@ resources:
 
 classvars:
 
+   vrIcon = qorofferingqt_icon_rsc
    vrName = qorofferingqt_name_rsc
    vrDesc = qorofferingqt_desc_rsc
 
@@ -75,6 +77,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_QOR_OFFERING
+
+   viIcon_Animation_start = 1
 
 properties:
 

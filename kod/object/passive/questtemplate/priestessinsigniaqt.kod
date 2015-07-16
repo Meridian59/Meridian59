@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   priestessinsigniaquest_icon_rsc = gsha.bgf
    priestessinsigniaquest_name_rsc = "herald shield insignia quest"
    priestessinsigniaquest_desc_rsc = \
       "The priestess will place their insignia on your shield, provided "
@@ -70,6 +71,7 @@ resources:
 
 classvars:
 
+   vrIcon = priestessinsigniaquest_icon_rsc
    vrName = priestessinsigniaquest_name_rsc
    vrDesc = priestessinsigniaquest_desc_rsc
 
@@ -80,6 +82,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_PRIESTESS_INSIGNIA
+
+   viIcon_Animation_start = 1
 
 properties:
 

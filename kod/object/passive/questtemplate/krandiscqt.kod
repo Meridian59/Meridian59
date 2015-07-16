@@ -30,6 +30,7 @@ constants:
 resources:
 
    % Quest description.
+   kranquest_icon_rsc = iglow.bgf
    kranquest_name_rsc = "Kraanan disciple quest"
    kranquest_desc_rsc = \
       "Priestess Qerti'nya has asked you to slay %s%s. Return when you "
@@ -60,6 +61,7 @@ resources:
 
 classvars:
 
+   vrIcon = kranquest_icon_rsc
    vrName = kranquest_name_rsc
    vrDesc = kranquest_desc_rsc
 

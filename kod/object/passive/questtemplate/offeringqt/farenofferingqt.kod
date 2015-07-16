@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   farenofferingqt_icon_rsc = burnwate.bgf
    farenofferingqt_name_rsc = "Faren offering quest"
    farenofferingqt_desc_rsc = \
       "Priestess Tenuv'vyal has invited you to chant with her, to "
@@ -69,6 +70,7 @@ resources:
 
 classvars:
 
+   vrIcon = farenofferingqt_icon_rsc
    vrName = farenofferingqt_name_rsc
    vrDesc = farenofferingqt_desc_rsc
 
@@ -76,6 +78,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_FAREN_OFFERING
+
+   viIcon_Animation_start = 1
 
 properties:
 

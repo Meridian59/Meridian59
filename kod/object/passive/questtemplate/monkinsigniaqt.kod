@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   monkinsigniaquest_icon_rsc = gsha.bgf
    monkinsigniaquest_name_rsc = "herald shield insignia quest"
    monkinsigniaquest_desc_rsc = \
       "The Riija Monk will place its insignia on your shield, provided "
@@ -75,6 +76,7 @@ resources:
 
 classvars:
 
+   vrIcon = monkinsigniaquest_icon_rsc
    vrName = monkinsigniaquest_name_rsc
    vrDesc = monkinsigniaquest_desc_rsc
 
@@ -85,6 +87,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_MONK_INSIGNIA
+
+   viIcon_Animation_start = 1
 
 properties:
 

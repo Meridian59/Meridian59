@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   bonepriestessquest_icon_rsc = orcpitb.bgf
    bonepriestessquest_name_rsc = "bone priestess orc pit boss quest"
    bonepriestessquest_desc_rsc = \
       "You're a little rusty in the language of the Avars, but you "
@@ -53,6 +54,7 @@ resources:
 
 classvars:
 
+   vrIcon = bonepriestessquest_icon_rsc
    vrName = bonepriestessquest_name_rsc
    vrDesc = bonepriestessquest_desc_rsc
 
@@ -60,6 +62,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_BONE_PRIESTESS
+
+   viIcon_Animation_start = 1
 
 properties:
 

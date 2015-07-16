@@ -30,6 +30,7 @@ constants:
 resources:
 
    % Quest description.
+   taxqt_icon_rsc = coin.bgf
    taxqt_deliver_rsc = \
       "%s%s has asked you to take %i %s to %s%s. Do not be tempted to keep it "
       "for yourself; any thievery will be punished!"
@@ -47,6 +48,8 @@ resources:
       "will suffer for your dishonesty."
 
 classvars:
+
+   vrIcon = taxqt_icon_rsc
 
    vrNodeTwo = taxqt_deliver_rsc
 

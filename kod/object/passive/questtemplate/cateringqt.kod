@@ -32,6 +32,7 @@ constants:
 resources:
 
    % Quest description.
+   cateringqt_icon_rsc = drumspla.bgf
    cateringqt_name_rsc = "catering quest"
    cateringqt_desc_rsc = \
       "An NPC is looking for help delivering food for a party."
@@ -86,6 +87,7 @@ resources:
 
 classvars:
 
+   vrIcon = cateringqt_icon_rsc
    vrName = cateringqt_name_rsc
    vrDesc = cateringqt_desc_rsc
 
@@ -96,6 +98,8 @@ classvars:
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_PARTY
+
+   viIcon_Animation_start = 1
 
 properties:
 

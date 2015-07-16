@@ -30,6 +30,7 @@ constants:
 resources:
 
    % Quest description.
+   tradingpostquest_icon_rsc = openches.bgf
    tradingpostquest_name_rsc = "trading post inventory quest"
    tradingpostquest_desc_rsc = \
       "Wulfgang zax'Ak has asked you to obtain some items for him so that "
@@ -63,6 +64,7 @@ resources:
 
 classvars:
 
+   vrIcon = tradingpostquest_icon_rsc
    vrName = tradingpostquest_name_rsc
    vrDesc = tradingpostquest_desc_rsc
 
@@ -70,6 +72,8 @@ classvars:
    vrDeliverNumber = tradingpostquest_deliver_number_rsc
 
    vrCompleted = tradingpostquest_completed_rsc
+
+   viIcon_Animation_start = 1
 
 properties:
 

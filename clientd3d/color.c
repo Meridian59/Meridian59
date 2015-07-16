@@ -28,35 +28,36 @@ static COLORREF CustColors[16];  /* User's custom colors for Choose Color dialog
 /* Default color information structures */
 // default colors changed for grey background in new client - mistery
 static char colorinfo[][15] = {
-	{ "0,0,0"},         /* COLOR_BGD */
-	{ "255,255,255"},   /* COLOR_FGD */
-	{ "255,255,255"},   /* COLOR_LISTSELBGD */
-	{ "0,0,0"},         /* COLOR_LISTSELFGD */
-	{ "255,255,255"},   /* COLOR_MAILBGD */
-	{ "0,0,0"},         /* COLOR_MAILFGD */
-//	{ "252,128,0"},     /* COLOR_HIGHLITE */
-	{ "240,208,25"},     /* COLOR_HIGHLITE */
-	{ "0,0,0"},         /* COLOR_EDITFGD */
-	{ "255,255,255"},   /* COLOR_EDITBGD */
-	{ "128,0,128"},     /* COLOR_SYSMSGFGD */
-//	{ "0,0,0"},         /* COLOR_MAINEDITFGD */
-	{ "255,255,255"},         /* COLOR_MAINEDITFGD */
-//	{ "188,152,108"},   /* COLOR_MAINEDITBGD */
-	{ "120,120,120"},   /* COLOR_MAINEDITBGD */
-	{ "255,255,255"},   /* COLOR_LISTFGD */
-	{ "0,0,0"},         /* COLOR_LISTBGD */
-	{ "128,0,0"},       /* COLOR_RMMSGFGD */
-	{ "0,0,0"},         /* COLOR_RMMSGBGD */
-//	{ "248,208,96"},    /* COLOR_STATSGFGD */
-	{ "231,231,231"},    /* COLOR_STATSGFGD */
-	{ "48,0,0"},        /* COLOR_STATSGBGD */
-	{ "0,128,0"},       /* COLOR_BAR1 */
-	{ "128,0,0"},       /* COLOR_BAR2 */
-	{ "48,0,0"},        /* COLOR_BAR3 */
-	{ "255,255,255"},   /* COLOR_BAR4 */
-	{ "192,192,192"},   /* COLOR_INVNUMFGD */
-	{ "0,0,0"},         /* COLOR_INVNUMBGD */
-	{ "255,80,0"}       /* COLOR_ITEM_MAGIC_FG */
+   {"0,0,0"},         /* COLOR_BGD */
+   {"255,255,255"},   /* COLOR_FGD */
+   {"255,255,255"},   /* COLOR_LISTSELBGD */
+   {"0,0,0"},         /* COLOR_LISTSELFGD */
+   {"255,255,255"},   /* COLOR_MAILBGD */
+   {"0,0,0"},         /* COLOR_MAILFGD */
+// {"252,128,0"},     /* COLOR_HIGHLITE */
+   {"240,208,25"},    /* COLOR_HIGHLITE */
+   {"0,0,0"},         /* COLOR_EDITFGD */
+   {"255,255,255"},   /* COLOR_EDITBGD */
+   {"128,0,128"},     /* COLOR_SYSMSGFGD */
+// {"0,0,0"},         /* COLOR_MAINEDITFGD */
+   {"255,255,255"},   /* COLOR_MAINEDITFGD */
+// {"188,152,108"},   /* COLOR_MAINEDITBGD */
+   {"120,120,120"},   /* COLOR_MAINEDITBGD */
+   {"255,255,255"},   /* COLOR_LISTFGD */
+   {"0,0,0"},         /* COLOR_LISTBGD */
+   {"128,0,0"},       /* COLOR_RMMSGFGD */
+   {"0,0,0"},         /* COLOR_RMMSGBGD */
+// {"248,208,96"},    /* COLOR_STATSGFGD */
+   {"231,231,231"},   /* COLOR_STATSGFGD */
+   {"48,0,0"},        /* COLOR_STATSGBGD */
+   {"0,128,0"},       /* COLOR_BAR1 */
+   {"128,0,0"},       /* COLOR_BAR2 */
+   {"48,0,0"},        /* COLOR_BAR3 */
+   {"255,255,255"},   /* COLOR_BAR4 */
+   {"192,192,192"},   /* COLOR_INVNUMFGD */
+   {"0,0,0" },        /* COLOR_INVNUMBGD */
+   {"255,80,0"},      /* COLOR_ITEM_MAGIC_FG */
+   {"0,196,50"}       /* COLOR_QUEST_HEADER */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */

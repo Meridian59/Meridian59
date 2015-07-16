@@ -59,6 +59,7 @@ BEGIN
                 MENUITEM "&Gewählte Zauber",            3030
                 MENUITEM "&Zahlen im Inventar",         3050
                 MENUITEM "&Eigenschaften",              3047
+                MENUITEM "&Quest Übersicht",            3517
                 MENUITEM "System &Nachrichten",         3504
                 MENUITEM "&Textfeld",                   3032
             END
@@ -831,6 +832,7 @@ BEGIN
                 MENUITEM "&Highlighted spells",         ID_COLOR_HIGHLIGHT
                 MENUITEM "&Inventory numbers",          ID_COLOR_INVNUM
                 MENUITEM "&Statistics",                 ID_COLOR_STATS
+                MENUITEM "&Quest tab headings",         ID_COLOR_QUESTHEADER
                 MENUITEM "System &messages",            ID_COLOR_SYSMSG
                 MENUITEM "&Text area",                  ID_COLOR_TEXT
             END

@@ -30,6 +30,7 @@ constants:
 resources:
 
    % Quest description.
+   chessqt_icon_rsc = chesclos.bgf
    chessqt_desc_rsc = \
       "You have been asked to courier a chess move."
 
@@ -58,11 +59,14 @@ resources:
 
 classvars:
 
+   vrIcon = chessqt_icon_rsc
    vrDesc = chessqt_desc_rsc
 
    vrNodeTwo = chessqt_nodetwo_rsc
    vrNodeThree = chessqt_nodethree_rsc
    vrNodeFour = chessqt_nodefour_rsc
+
+   viIcon_Animation_start =  1
 
 properties:
 

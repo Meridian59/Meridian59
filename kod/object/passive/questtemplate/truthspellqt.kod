@@ -33,6 +33,7 @@ constants:
 resources:
 
    % Quest description.
+   truthspellquest_icon_rsc = idisharm.bgf
    truthspellquest_name_rsc = "Jala pupil quest"
    truthspellquest_desc_rsc = \
       "Parrin Aragone will teach you the songs of Jala, but first you "
@@ -86,6 +87,7 @@ resources:
 
 classvars:
 
+   vrIcon = truthspellquest_icon_rsc
    vrName = truthspellquest_name_rsc
    vrDesc = truthspellquest_desc_rsc
 

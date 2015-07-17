@@ -546,6 +546,21 @@ messages:
          % Monster is immobile.
          return;
       }
+      
+      if (Send(mob,@HasTargetLocation))
+      {
+         Send(mob,@MoveTowardsCoords,
+            #iRow=Send(mob,@GetTargetLocationRow),
+            #iCol=Send(mob,@GetTargetLocationCol));
+            
+         if (Send(mob,@GetRow) = Send(mob,@GetTargetLocationRow)
+            AND (Send(mob,@GetCol) = Send(mob,@GetTargetLocationCol)))
+         {
+            Send(mob,@ReachedTargetLocation);
+         }
+         
+         return;
+      }
 
       % Example, monster is blind. Forced randomness has precedence
       % over everything else.

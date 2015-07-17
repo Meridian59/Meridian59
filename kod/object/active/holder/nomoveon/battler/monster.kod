@@ -374,6 +374,9 @@ properties:
    % These should be modified only by the EnterStateX routines
    % Who to chase or attack
    poTarget = $
+   pbHasTargetLocation = False
+   piTargetLocationRow
+   piTargetLocationCol
    % Bitvector of personality and mutable behavior
    piState = 0
    % Either chasing, moving, or attacking
@@ -2734,7 +2737,54 @@ messages:
 
       return;
    }
-    
+
+   MoveTowardsCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0,
+      face_target=FALSE, face_away=FALSE, to_master=FALSE)
+   {
+      local drow, dcol;
+      
+     % calculate square delta in highres-grid
+      drow = ((iRow * FINENESS) + iFineRow) / 16;
+      dcol = ((iCol * FINENESS) + iFineCol) / 16;
+      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
+      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+
+      return Send(self,@MoveInDirection,#row_diff=drow,#col_diff=dcol,
+                  #face_target=face_target,#face_away=face_away,
+                  #to_master=to_master);
+   }
+   
+   GotoCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0)
+   {
+      piTargetLocationRow = iRow;
+      piTargetLocationCol = iCol;
+      pbHasTargetLocation = True;
+   
+      return;
+   }
+   
+   HasTargetLocation()
+   {
+      return pbHasTargetLocation;
+   }
+   
+   GetTargetLocationRow()
+   {
+      return piTargetLocationRow;
+   }
+   
+   GetTargetLocationCol()
+   {
+      return piTargetLocationCol;
+   }
+   
+   ReachedTargetLocation()
+   {
+      pbHasTargetLocation = False;
+      
+      return;
+   }
+   
    %%% Spasming messages
 
    SpasmMonsterTimer()

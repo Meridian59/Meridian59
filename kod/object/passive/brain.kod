@@ -551,8 +551,12 @@ messages:
       {
          Send(mob,@MoveTowardsCoords,
             #iRow=Send(mob,@GetTargetLocationRow),
-            #iCol=Send(mob,@GetTargetLocationCol));
+            #iCol=Send(mob,@GetTargetLocationCol),
+            #iRow=Send(mob,@GetTargetLocationFineRow),
+            #iCol=Send(mob,@GetTargetLocationFineCol));
             
+         % for now just reaching the row and col is good enough
+         % fineness is ignored
          if (Send(mob,@GetRow) = Send(mob,@GetTargetLocationRow)
             AND (Send(mob,@GetCol) = Send(mob,@GetTargetLocationCol)))
          {

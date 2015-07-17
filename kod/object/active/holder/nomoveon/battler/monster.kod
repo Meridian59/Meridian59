@@ -369,14 +369,18 @@ properties:
 
    poBrain = $
 
+   pbHasTargetLocation = False
+   piTargetLocationRow
+   piTargetLocationCol
+   piTargetLocationFineRow = 0
+   piTargetLocationFineCol = 0
+   plPatrolPath = $
+
    %%% The Monster State Meta-Object
 
    % These should be modified only by the EnterStateX routines
    % Who to chase or attack
    poTarget = $
-   pbHasTargetLocation = False
-   piTargetLocationRow
-   piTargetLocationCol
    % Bitvector of personality and mutable behavior
    piState = 0
    % Either chasing, moving, or attacking
@@ -2743,7 +2747,12 @@ messages:
    {
       local drow, dcol;
       
-     % calculate square delta in highres-grid
+      if (iRow = $ or iCol = $)
+      {
+         return;
+      }
+      
+      % calculate square delta in highres-grid
       drow = ((iRow * FINENESS) + iFineRow) / 16;
       dcol = ((iCol * FINENESS) + iFineCol) / 16;
       drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
@@ -2755,9 +2764,19 @@ messages:
    }
    
    GotoCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0)
+   "Move to a specific row and column. warning! fineness really"
+   "isn't accurate as the monster will stop when it reaches the destination"
+   "row and column"
    {
+      if (iRow = $ OR iCol = $)
+      {
+         return;
+      }
+   
       piTargetLocationRow = iRow;
       piTargetLocationCol = iCol;
+      piTargetLocationFineRow = iFineRow;
+      piTargetLocationFineCol = iFineCol;
       pbHasTargetLocation = True;
    
       return;
@@ -2776,6 +2795,16 @@ messages:
    GetTargetLocationCol()
    {
       return piTargetLocationCol;
+   }
+   
+   GetTargetLocationFineRow()
+   {
+      return piTargetLocationFineRow;
+   }
+   
+   GetTargetLocationFineCol()
+   {
+      return piTargetLocationFineCol;
    }
    
    ReachedTargetLocation()

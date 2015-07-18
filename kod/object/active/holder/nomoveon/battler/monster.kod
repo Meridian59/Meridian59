@@ -375,6 +375,8 @@ properties:
    piTargetLocationFineRow = 0
    piTargetLocationFineCol = 0
    plPatrolPath = $
+   piPatrolNode = 0
+   piChanceToPatrol = 5
 
    %%% The Monster State Meta-Object
 
@@ -553,6 +555,16 @@ messages:
       propagate;
    }
 
+   SetPatrolPath(lPath = $)
+   {
+      if(lPath <> $)
+      {
+         plPatrolPath = lPath;
+      }
+      
+      return;
+   }
+   
    GetKocName()
    {
       return vrKocName;
@@ -1271,7 +1283,39 @@ messages:
    {
       return poCustomer;
    }
+   
+   CanPatrol()
+   {
+      if (plPatrolPath <> $)
+      {
+         return True;
+      }
+      
+      return False;
+   }
 
+   GetChanceToPatrol()
+   {
+      return piChanceToPatrol;
+   }
+   
+   GetNextPatrolNode()
+   {
+      if (plPatrolPath = $)
+      {
+         return;
+      }
+   
+      piPatrolNode = piPatrolNode + 1;
+      
+      if (piPatrolNode > Length(plPatrolPath))
+      {
+         piPatrolNode = 1;
+      }
+   
+      return Nth(plPatrolPath, piPatrolNode);
+   }
+   
    %%%  Action Routines
 
    AttackTimer(timer = $)

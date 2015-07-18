@@ -532,7 +532,7 @@ messages:
    "4. If you have a master, go to his side."
    "5. Otherwise, wander aimlessly."
    {
-      local oMaster, oOwner, oMasterRoom, oFrightener;
+      local oMaster, oOwner, oMasterRoom, oFrightener, lPatrolNode;
 
       if mob = $
       {
@@ -564,6 +564,19 @@ messages:
          }
          
          return;
+      }
+      
+      if (Send(mob,@CanPatrol))
+      {
+         if (Random(1,100) < Send(mob,@GetChanceToPatrol))
+         {
+            lPatrolNode = Send(mob,@GetNextPatrolNode);
+            
+            if (lPatrolNode <> $)
+            {
+               Send(mob,@GotoCoords,#iRow=Nth(lPatrolNode,1),#iCol=Nth(lPatrolNode,2));
+            }
+         }
       }
 
       % Example, monster is blind. Forced randomness has precedence

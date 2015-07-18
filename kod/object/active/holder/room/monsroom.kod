@@ -56,6 +56,13 @@ properties:
    % List of monsters we spawn, if for: [monster class, chance to spawn]
    plMonsters = $
 
+   % List of patrol paths for monsters. Note, these should be paired with
+   % a position in the plGenerators list, so the 1st plGenerator will
+   % get the first patrol path, etc.  Monsters without a patrol path
+   % can have a $ path in the list, and rooms with no patrol paths
+   % do not need a list
+   plPatrolPaths = $
+   
    % Should we generate monsters?
    pbGenerateMonsters = TRUE
 

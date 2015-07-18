@@ -5612,6 +5612,7 @@ messages:
       }
 
       if index <> $
+         AND plNew_mail <> $
       {
          if Length(plNew_mail) < index
          {

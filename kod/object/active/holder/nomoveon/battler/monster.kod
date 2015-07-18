@@ -374,9 +374,11 @@ properties:
    piTargetLocationCol
    piTargetLocationFineRow = 0
    piTargetLocationFineCol = 0
+   piPatrolAttempts = 0
    plPatrolPath = $
    piPatrolNode = 0
-   piChanceToPatrol = 5
+   % chance to move to next patrol node (1 to 10000)
+   piChanceToPatrol = 125
 
    %%% The Monster State Meta-Object
 
@@ -1316,6 +1318,25 @@ messages:
       return Nth(plPatrolPath, piPatrolNode);
    }
    
+   IncrementPatrolAttempts()
+   {
+      piPatrolAttempts = piPatrolAttempts + 1;
+      
+      return;
+   }
+   
+   GetPatrolAttempts()
+   {
+      return piPatrolAttempts;
+   }
+   
+   ClearPatrolAttempts()
+   {
+      piPatrolAttempts = 0;
+      
+      return;
+   }
+   
    %%%  Action Routines
 
    AttackTimer(timer = $)
@@ -1776,6 +1797,50 @@ messages:
       return;
    }
 
+   DoGoTowardsLocation()
+   {
+         piPatrolAttempts = piPatrolAttempts + 1;
+      
+         Send(self,@MoveTowardsCoords,
+            #iRow=piTargetLocationRow,
+            #iCol=piTargetLocationCol,
+            #iFineRow=piTargetLocationFineRow,
+            #iFineCol=piTargetLocationFineCol);
+            
+         % for now just reaching the row and col is good enough
+         % fineness is ignored
+         if ((piRow = piTargetLocationRow)
+            AND (piCol = piTargetLocationCol))
+         {
+            pbHasTargetLocation = False;
+            piPatrolAttempts = 0;
+         }
+         
+         % after a while just give up
+         if (piPatrolAttempts >= 500)
+         {
+            Debug("monster had too many attempts trying to reach a location, giving up.");
+            pbHasTargetLocation = False;
+            piPatrolAttempts = 0;
+         }
+   
+      return;
+   }
+   
+   StartNextPatrolLeg()
+   {
+      local lPatrolNode;
+   
+      lPatrolNode = Send(self,@GetNextPatrolNode);
+            
+      if (lPatrolNode <> $)
+      {
+         Send(self,@GotoCoords,#iRow=Nth(lPatrolNode,1),#iCol=Nth(lPatrolNode,2));
+      }
+   
+      return;
+   }
+   
    %%% Combat messages
 
    TryAttack(what=$,stroke_obj=$)
@@ -2849,13 +2914,6 @@ messages:
    GetTargetLocationFineCol()
    {
       return piTargetLocationFineCol;
-   }
-   
-   ReachedTargetLocation()
-   {
-      pbHasTargetLocation = False;
-      
-      return;
    }
    
    %%% Spasming messages

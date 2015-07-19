@@ -2988,7 +2988,7 @@ messages:
          Send(self,@SendStatVigor);
          Send(self,@SendStatHPChance);
          SendPacket(poSession);
-         
+
          return;
       }
 

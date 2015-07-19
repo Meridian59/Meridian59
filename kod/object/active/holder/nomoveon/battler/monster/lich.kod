@@ -921,10 +921,18 @@ messages:
 
    CreateDeadBody(killer=$)
    {
-      local oBody, iQNTindex, oQE;
+      local oBody, iQNTindex, oQE, oQ;
 
       oBody = Create(&DeadLich,#Attackers=plAttackers);
       oQE = Send(SYS,@GetQuestEngine);
+
+      % Get rid of any active quests so any new ones get scheduled with the
+      % body instead.
+      for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
+                     ,QT_ACTIVE_QUESTS)
+      {
+         Send(oQ,@DeadlineExpired);
+      }
 
       iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD),
                         QT_QUEST_NODES));

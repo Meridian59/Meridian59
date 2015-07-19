@@ -92,6 +92,10 @@ classvars:
 
 properties:
 
+   % This disables the quest by preventing the quest template being
+   % sent to QuestEngine.
+   pbDisabled = FALSE
+
    piNumPlayers = 0
    piQuestType = $
    piPlayerRestrict = $
@@ -113,7 +117,10 @@ messages:
 
    Constructor()
    {
-      Send(self,@SendQuestTemplate);
+      if NOT pbDisabled
+      {
+         Send(self,@SendQuestTemplate);
+      }
 
       % RecreateQuestNodes in QuestEngine will now ask for this data.
       %Send(self,@SendQuestNodeTemplates);
@@ -198,7 +205,7 @@ messages:
       iTimeLoggedIn = Send(who,@GetTimeLoggedIn);
 
       % Show it if the player succeeded recently.
-      if First(lHistory) & QUEST_HISTORY_SUCCESS
+      if (First(lHistory) & QUEST_HISTORY_SUCCESS)
          AND (Nth(lHistory,2) <= iTimeLoggedIn
             AND Nth(lHistory,2) + piQuestHistoryRecentTime > iTimeLoggedIn)
       {
@@ -233,8 +240,8 @@ messages:
       if oQuestNode = $
       {
          % Add time remaining until quest can be redone, if applicable.
-         if piPlayerRestrict & Q_PLAYER_NOTTRIED_RECENTLY
-            AND NOT piPlayerRestrict & Q_PLAYER_NOTSUCCEEDED
+         if (piPlayerRestrict & Q_PLAYER_NOTTRIED_RECENTLY)
+            AND NOT (piPlayerRestrict & Q_PLAYER_NOTSUCCEEDED)
          {
             lHistory = Send(who,@GetQuestHistory,#index=viQuestID);
             iTimeLeft = Nth(lHistory,2) + piQuestHistoryRecentTime

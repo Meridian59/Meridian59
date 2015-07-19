@@ -227,16 +227,19 @@ resources:
    
    player_training_inform = "You now have ~B%i~B training points!"
    player_reached_maxtraining = \
-      "You now have ~B1000~B training points and can not "
-      "advance any further!  Meditate to use them!"
+      "You now have ~B1000~B training points and can not gain any more!  "
+      "Cast the Meditate spell and say the name of a spell or skill out loud "
+      "to use your points to train it."
    player_gained_training = "You have gained ~B%i~B training points!"
    player_spent_training = "You have spent ~B%i~B training points!"
    player_logon_bonus = \
       "You have received your daily training bonus of ~B%i~B points!  "
       "Come back tomorrow for more!"
+   player_experience_gained = "You have gained ~B%i~B experience points!"
+   player_experience_lost = "You have lost ~B~r%i~B experience points!"
 
    player_health_gain_maxed = "Your health cannot increase any further."
-   
+
    player_cant_hit_newbie = \
       "You are not yet experienced enough to fight other players."
    player_cant_hit_newbie_minion = \
@@ -9071,11 +9074,23 @@ messages:
    AddGainChance(iAmount=$)
    {
       if iAmount <> $
+         AND iAmount <> 0
       {
          piGain_chance = piGain_chance + iAmount;
 
          if pbLogged_on
          {
+            if iAmount > 0
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_experience_gained,
+                  #parm1=iAmount);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_experience_lost,
+                  #parm1=iAmount);
+            }
+
             Post(self,@DrawHPChance);
          }
       }

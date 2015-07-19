@@ -294,7 +294,7 @@ messages:
          }
       }
 
-      Send(self,@ScheduleStartEvent,#iClass=&RatInvasion,
+      Send(self,@ScheduleStartEvent,#iClass=&OrcInvasion,
                                     #iYear=iYear,
                                     #iMonth=iMonth,
                                     #iDay=iDay,

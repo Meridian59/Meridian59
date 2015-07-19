@@ -47,7 +47,7 @@ resources:
 
    moxalscamonequest_completed_rsc = \
       "You have completed Moxal ix'Hanak's get rich quick scheme.  You don't "
-      "feel very rich."
+      "feel very rich, but you do feel slightly wiser."
 
    % Quest resources.
    moxalscam1_assign_2 = \
@@ -225,7 +225,8 @@ messages:
                               [ QN_PRIZETYPE_ITEMCLASS, &ShortSword, 1 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],
                               [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],
-                              [ QN_PRIZETYPE_ITEMCLASS, &Key, 1 ] ] ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Key, 1 ] ],
+                              [ QN_PRIZETYPE_TRAINING_POINTS, 100 ] ],
                #timelimit=2 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMONE_FIVE)
       {
          Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMONE_FIVE,

@@ -56,8 +56,9 @@ resources:
       "definitely \"not interested\"."
 
    moxalscamtwoquest_completed_rsc = \
-      "You have completed Moxal ix'Hanak's investment scheme, but "
-      "his mark wasn't convinced."
+      "You have completed Moxal ix'Hanak's investment scheme, however "
+      "his mark wasn't convinced.  You weren't rewarded, but you have "
+      "gained a little experience from this annoyingly tedious quest."
 
    % Quest resources.
    moxalscam2_assign_2 = \
@@ -211,6 +212,7 @@ messages:
       % QNT_ID_MOXAL_SCAMTWO_FIVE
       if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
                #NPC_modifier=QN_NPCMOD_PREVIOUS,#cargolist=[moxalscam2_trigger_3],
+               #prizelist=[ [ QN_PRIZETYPE_EXPERIENCE_POINTS, 10 ] ],
                #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMTWO_FIVE)
       {
          Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMTWO_FIVE,

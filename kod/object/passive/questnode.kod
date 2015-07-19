@@ -1286,6 +1286,33 @@ messages:
          return;
       }
 
+      if iPrizeType = QN_PRIZETYPE_TRAINING_POINTS
+      {
+         % Format for a prize entry of this type:
+         % [ QN_PRIZETYPE_TRAINING_POINTS, amount ]
+
+         for oQuester in recipients
+         {
+            Post(oQuester,@AddTrainingPoints,#points=Nth(prize,2));
+         }
+
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_EXPERIENCE_POINTS
+      {
+         % Format for a prize entry of this type:
+         % [ QN_PRIZETYPE_EXPERIENCE_POINTS, amount ]
+
+         for oQuester in recipients
+         {
+            Send(oQuester,@AddGainChance,#iAmount=Nth(prize,2));
+            Post(oQuester,@RollForTougher,#iLevel=Send(oQuester,@GetBaseMaxHealth));
+         }
+
+         return;
+      }
+
       if iPrizeType = QN_PRIZETYPE_BOON
       {
          for oQuester in recipients
@@ -1565,7 +1592,7 @@ messages:
                               QN_PRIZE_BOON_STAMINA,
                               QN_PRIZE_BOON_AGILITY,
                               QN_PRIZE_BOON_MYSTICISM,
-                              QN_PRIZE_BOON_STRENGTH ],random(1,6));
+                              QN_PRIZE_BOON_STRENGTH ],Random(1,6));
             iAmount = -3;
             iDays = 2;
             Send(self,@AwardPrizeOrPenalty,#recipients=recipients,

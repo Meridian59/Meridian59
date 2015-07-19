@@ -3335,6 +3335,8 @@
    QN_PRIZETYPE_ESTABLISH_NECROGUILD      = 0x11      % Form the Order of Necromancers
    QN_PRIZETYPE_OUTLAW                    = 0x12      % Make the player an outlaw
    QN_PRIZETYPE_NPC_RESPONSE              = 0x13      % Let the QuestTemplate give different responses for each NPC.
+   QN_PRIZETYPE_TRAINING_POINTS           = 0x014      % Award training points.
+   QN_PRIZETYPE_EXPERIENCE_POINTS         = 0x015      % Award "experience points" (gain chance).
 
    % Quest node prize statistic types
    QN_PRIZE_STAT_MIGHT    = 0x0

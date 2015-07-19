@@ -30,6 +30,9 @@ resources:
    admin_black = "You are now shadowform."
 
    admin_currently_in = "The ROO for `b%s`n is `k`B%s`n.  The room number is %i."
+   admin_currently_at = \
+      "Your Location is: `bRow: `k`B%i`n `bCol: `k`B%i`n `bfRow: `k`B%i`n "
+      "`bfCol: `k`B%i`n."
 
    admin_create_itematt_command = "create item attribute"
    admin_anonymous_command = "anonymous"
@@ -329,6 +332,17 @@ messages:
                #parm1=send(poOwner,@GetName),
                #parm2=send(poOwner,@GetRoomResource),
                #parm3=Send(poOwner,@GetRoomNum));
+
+         return;
+      }
+
+      if StringEqual(string,"get coords")
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_currently_at,
+               #parm1=piRow,
+               #parm2=piCol,
+               #parm3=piFineRow,
+               #parm4=piFineCol);
 
          return;
       }

@@ -1319,9 +1319,9 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[])
 {
 	kod_statistics *kstat;
-	object_node *o;
-	class_node *c;
-	char *m;
+	object_node *o = NULL;
+	class_node *c = NULL;
+	char *m = NULL;
 	int now = GetTime();
 	
 	aprintf("System Status -----------------------------\n");
@@ -1347,11 +1347,11 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	aprintf("Most instructions on one top level message is %i instructions\n",kstat->num_interpreted_highest);
 	aprintf("Number of top level messages over 1000 milliseconds is %i\n",kstat->interpreting_time_over_second);
 	aprintf("Longest time on one top level message is %i milliseconds\n",kstat->interpreting_time_highest);
-	
 	if (kstat->interpreting_time_object_id != INVALID_ID)
 	{
 		o = GetObjectByID(kstat->interpreting_time_object_id);
-		c = o? GetClassByID(o->class_id) : NULL;
+		c = o ? GetClassByID(o->class_id) : NULL;
+	}
 		m = GetNameByID(kstat->interpreting_time_message_id);
 		aprintf("Most recent slow top level message is OBJECT %i CLASS %s MESSAGE %s\n",
 			kstat->interpreting_time_object_id,
@@ -1359,7 +1359,6 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 			(char*)(m? m : "(unknown)"));
 		aprintf("Most recent slow top level message includes %i posted followups\n",
 			kstat->interpreting_time_posts);
-	}
 	
 	aprintf("----\n");
 	aprintf("Active accounts: %i\n",GetActiveAccountCount());
@@ -2179,6 +2178,7 @@ void AdminShowMessage(int session_id,admin_parm_type parms[],
 	if (c != found_class)
 		aprintf(" (handled by CLASS %s)",found_class->class_name);
 	aprintf("\n");
+	aprintf("Called count: %i\n", m->called_count);
 	aprintf("--------------------------------------------------------------\n");
 	aprintf("  Parameters:\n");
 	/* we need to read the first few bytes from the bkod to get the parms */

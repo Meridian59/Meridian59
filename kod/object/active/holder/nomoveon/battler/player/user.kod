@@ -2596,8 +2596,6 @@ messages:
       {
          Send(what,@SendInventoryAnimation);
          Send(what,@SendInventoryOverlays);
-         Post(self,@DrawCapacity);
-         Post(self,@DrawBulk);
       }
 
       if show_type = SHOW_NORMAL
@@ -7728,6 +7726,8 @@ messages:
          {
             % if in inventory
             Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
+            Post(self,@DrawCapacity);
+            Post(self,@DrawBulk);
          }
          else
          {

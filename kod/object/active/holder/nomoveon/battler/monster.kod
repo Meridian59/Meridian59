@@ -3933,27 +3933,35 @@ messages:
       for i in lItems
       {
          for j in Send(oSafeBox,@GetHolderPassive)
-         {  
-            if i = j 
-            { 
-               bFound = TRUE;
-            } 
-
-            if isClass(i,&NumberItem) AND GetClass(i) = GetClass(j)
+         {
+            if i = j
             {
-               iCount = iCount + 1; 
-               if nth(number_list,iCount) > Send(j,@GetNumber)
+               bFound = TRUE;
+            }
+
+            if IsClass(i,&NumberItem)
+               AND GetClass(i) = GetClass(j)
+            {
+               % Check if we have a valid number list. Check is done here
+               % as we don't need a number list for non-number items.
+               if number_list = $
+               {
+                  return;
+               }
+
+               iCount = iCount + 1;
+               if Nth(number_list,iCount) > Send(j,@GetNumber)
                {
                   Send(self,@SayToOne,#target=what,
-                       #message_rsc=vaultman_not_enough,
-                       #parm1=Send(i,@GetName));
+                        #message_rsc=vaultman_not_enough,
+                        #parm1=Send(i,@GetName));
 
                   return;
                }
 
                bFound = TRUE;
             }
-         }         
+         }
 
          if NOT bFound
          {

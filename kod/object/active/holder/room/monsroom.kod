@@ -14,16 +14,19 @@ constants:
 
    include blakston.khd
 
+   DEFAULT_GEN_TIME = 15000
+   DEFAULT_GEN_PERCENT = 100
+   
 resources:
 
 classvars:
 
    % If true, reduce monster spawn rate when there are few players in the room
    vbScaleSpawnRateWithPlayers = FALSE
-
+   
 properties:
 
-   piGen_Time = 15000
+   piGen_Time = DEFAULT_GEN_TIME
    ptGen = $
 
    ptOkay_To_Load = $
@@ -45,7 +48,7 @@ properties:
    piInit_count_max = 5
 
    % percentage chance that you'll get a new monster when timer expires
-   piGen_percent = 100
+   piGen_percent = DEFAULT_GEN_PERCENT
 
    % maximum number of total monsters a room can hold       
    piMonster_count_max = 10
@@ -56,13 +59,6 @@ properties:
    % List of monsters we spawn, if for: [monster class, chance to spawn]
    plMonsters = $
 
-   % List of patrol paths for monsters. Note, these should be paired with
-   % a position in the plGenerators list, so the 1st plGenerator will
-   % get the first patrol path, etc.  Monsters without a patrol path
-   % can have a $ path in the list, and rooms with no patrol paths
-   % do not need a list
-   plPatrolPaths = $
-   
    % Should we generate monsters?
    pbGenerateMonsters = TRUE
 
@@ -144,6 +140,11 @@ messages:
       pbGenerateMonsters = bValue;
 
       return;
+   }
+   
+   CanMonsterGenerate()
+   {
+      return pbGenerateMonsters;
    }
 
    TryCreateMonster(initroom = FALSE,loadfirst = FALSE)
@@ -383,6 +384,57 @@ messages:
    GetGenerators()
    {
       return plGenerators;
+   }
+   
+   SetGenerators(generators = $)
+   {
+      if (generators = $)
+      {
+         return;
+      }
+      
+      plGenerators = generators;
+      return;
+   
+   }
+   
+   GetPatrolPaths()
+   {
+      return plPatrolPaths;
+   }
+   
+   SetPatrolPaths(patrolPaths = $)
+   {
+      if (patrolPaths = $)
+      {
+         return;
+      }
+      
+      plPatrolPaths = patrolPaths;
+      return;
+   
+   }
+   
+   GetGenTime()
+   {
+      return piGen_Time;
+   }
+   
+   SetGenTIme(time = DEFAULT_GEN_TIME)
+   {
+      piGen_Time = time;
+      return;
+   }
+   
+   GetGenPercent()
+   {
+      return piGen_Percent;
+   }
+   
+   SetGenPercent(percent = DEFAULT_GEN_PERCENT)
+   {
+      piGen_Percent = percent;
+      return;
    }
 
 end

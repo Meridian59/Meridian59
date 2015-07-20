@@ -385,6 +385,7 @@ messages:
       {
          Send(parm1,@EndEvent);
          plActiveEvents = DelListElem(plActiveEvents,parm1);
+         Send(parm1,@Delete);
       }
 
       return;

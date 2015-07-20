@@ -210,6 +210,13 @@ properties:
 
    % List of 2 elem lists with row & col to make monsters
    plGenerators = $
+   
+   % List of patrol paths for monsters. Note, these should be paired with
+   % a position in the plGenerators list, so the 1st plGenerator will
+   % get the first patrol path, etc.  Monsters without a patrol path
+   % can have a $ path in the list, and rooms with no patrol paths
+   % do not need a list
+   plPatrolPaths = $
 
    prMusic = $
 
@@ -4539,11 +4546,13 @@ messages:
    "put at a gen point.  This is now in Room, as all rooms can use it for "
    "placing either a monster or a random item."
    {
-      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount;
+      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount, lPatrolPath;
 
       iMRow = iRow;
       iMCol = iCol;
 
+      lPatrolPath = $;
+      
       if oMonster = $
       {
          return FALSE;
@@ -4593,6 +4602,17 @@ messages:
             lPos = Nth(plGenerators,iRoll);
             iMRow = First(lPos);
             iMCol = Nth(lPos,2);
+            
+            if (plPatrolPaths <> $)
+            {
+               if (Length(plPatrolPaths) >= iRoll)
+               {
+                  if (Nth(plPatrolPaths,iRoll) <> $)
+                  {
+                     lPatrolPath = Nth(plPatrolPaths,iRoll);
+                  }
+               }
+            }
          }
       }
       
@@ -4603,6 +4623,11 @@ messages:
       {
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
                #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+               
+         if (lPatrolPath <> $)
+         {
+            Send(oMonster,@SetPatrolPath,#lPath=lPatrolPath);
+         }
       }
       else
       {

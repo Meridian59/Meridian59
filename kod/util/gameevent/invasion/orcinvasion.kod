@@ -33,19 +33,26 @@ classvars:
 
 properties:
    plBattlePlans = $
+   plCurrentBattlePlan = $
+   plRoomList = $
+   plRoomSaveState = $
+   poTargetRoom = $
+   piPhase = 0
 
+   pbClearRooms = True
+   
 messages:
 
    Constructor()
    {
       plBattlePlans = [ [[RID_I8,[[7,4], [17,10], [20,18], [10,18], [3,18]]],
                          [RID_I7,[[50,32], [31,32], [22,28], [23,12], [25,7], 
-                           [22,7], [10,10], [6,1]],
+                           [22,7], [10,10], [6,1]]],
                          [RID_H7,[[48,67], [36,57], [28,54], [28,36], [21,38],
                            [18,55], [11,67]]],
                          [RID_H6,[[47,2], [28,26], [27,41]]],
                          [RID_TOS,[[58,3], [53,13], [51,23], [46,22]]],
-                         [RID_TOS_INN],[[3,1], [5,6]]],
+                         [RID_TOS_INN,[[3,1], [5,6]]]],
                         [[RID_F3,[[17,32], [23,61], [28,67], [28,76]]],
                          [RID_H3,[[26,1], [26,4], [32,9], [32,16], [34,26],
                            [32,34], [46,33]]],
@@ -61,18 +68,159 @@ messages:
 
    Delete()
    {
+      plBattlePlans = $;
+      plCurrentBattlePlan = $;
+      plRoomList = $;
+      plRoomSaveState = $;
+      poTargetRoom = $;
+   
       propagate;
    }
 
    StartEvent()
    {
+      plCurrentBattlePlan = Nth(plBattlePlans ,Random (1,Length(plBattlePlans)));
+      Send(self,@SaveRoomStates);
+      Send(self,@PrepareRooms);
+      Send(self,@PhaseOne);
+   
       propagate;
+   }
+
+   Update()
+   {
+      if (piPhase = 1)
+      {
+         Send(self,@PhaseTwo);
+      }
+      if (piPhase = 2)
+      {
+         Send(self,@PhaseThree);
+      }
+      if (piPhase = 3)
+      {
+         Send(self,@FinalPhase);
+      }
+      if (piPhase = 4)
+      {
+         Send(self,@EventEnd);
+      }
+      propagate;
+   }
+
+   PhaseOne()
+   {
+      piPhase = 1;
+      return;
+   }
+
+   PhaseTwo()
+   {
+      piPhase = 2;
+      return;
+   }
+
+   PhaseThree()
+   {
+      piPhase = 3;
+      return;
+   }
+
+   FinalPhase()
+   {
+      piPhase = 4;
+      return;
    }
 
    EndEvent()
    {
+      Send(self,@RestoreRoomStates);
+      
       propagate;
    }
    
+   SaveRoomStates()
+   {
+      local i, oRoom, lRoomProps;
+
+      for i in (plCurrentBattlePlan)
+      {
+         oRoom = Send(SYS,@FindRoomByNum,#num=Nth(i,1));
+         plRoomList = AppendListElem(oRoom,plRoomList);
+         lRoomProps = $;
+         
+         if IsClass(oRoom,&MonsterRoom)
+         {
+            lRoomProps = AppendListElem(oRoom,lRoomProps);
+            lRoomProps = AppendListElem(Send(oRoom,@CanMonsterGenerate),lRoomProps);
+            lRoomProps = AppendListElem(Send(oRoom,@GetGenerators),lRoomProps);
+            lRoomProps = AppendListElem(Send(oRoom,@GetGenTime),lRoomProps);
+            lRoomProps = AppendListElem(Send(oRoom,@GetGenPercent),lRoomProps);
+            lRoomProps = AppendListElem(Send(oRoom,@GetPatrolPaths),lRoomProps);
+         }
+         else
+         {
+            lRoomProps = [oRoom,$,$,$,$];
+         }
+         plRoomSaveState = AppendListElem(lRoomProps,plRoomSaveState);
+      }
+
+      return;
+   }
+   
+   PrepareRooms()
+   {
+      local i, j, lActive;
+      
+      lActive = $;
+      
+      if (pbClearRooms)
+      {
+         if (plRoomList <> $)
+         {
+            for i in plRoomList
+            {
+               lActive = Send(i,@GetPlActive);
+               if (lActive <> $)
+               {
+                  for j in lActive
+                  {
+                     if ((IsClass(Nth(j,1),&Monster)) AND NOT (Send(Nth(j,1),@IsOwnedByPlayer)))
+                     {
+                        Send(Nth(j,1),@Delete);
+                     }
+                  }
+               }
+            }
+         }
+      }
+   
+      return;
+   }
+   
+   %SPAWNMONSTER
+   %Send(oRoom,@GenerateMonster,#oMonster=your_monster,#iRow=your_row,#iCol=your_col,#bStack=TRUE)
+   
+   RestoreRoomStates()
+   {
+      local i, oRoom;
+      
+      for i in plRoomSaveState
+      {
+         oRoom = Nth(i,1);
+         
+         if (IsClass(oRoom, &MonsterRoom))
+         {
+            Send(oRoom,@SetMonsterGeneration,#bValue=Nth(i,2));
+            Send(oRoom,@SetGenerators,#generators=Nth(i,3));
+            Send(oRoom,@SetGenTime,#time=Nth(i,4));
+            Send(oRoom,@SetGenPercent,#percent=Nth(i,5));
+            Send(oRoom,@SetPatrolPaths,#patrolPaths=Nth(i,6));
+         }
+      }
+   
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

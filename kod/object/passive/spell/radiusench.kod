@@ -646,6 +646,7 @@ messages:
          OR event = EVENT_DISRUPT
          OR event = EVENT_CAST
          OR event = EVENT_USE
+         OR event = EVENT_SYSTEMSAVE
          OR piOldAreaEnchStyle
       {
          return FALSE;

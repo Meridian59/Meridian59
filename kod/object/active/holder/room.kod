@@ -3967,6 +3967,16 @@ messages:
       return FALSE;
    }
 
+   CanTokenEnterRoom()
+   {
+      if Send(self,@IsArena)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
    IsValidTarget(who=$)
    "Used for Arenas to see if something is a valid target.  Non-arenas just "
    "return FALSE."

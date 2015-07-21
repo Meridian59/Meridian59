@@ -73,6 +73,11 @@ messages:
    {
       local oTarget;
 
+      if lTargets = $
+      {
+         return FALSE;
+      }
+
       oTarget = First(lTargets);
 
       % Check that target is a weapon or armor

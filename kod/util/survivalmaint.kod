@@ -76,7 +76,7 @@ messages:
    }
    
    CreateRoom(who=$,guild_survival=FALSE,iPublic=FALSE,sString=$,
-              lSurvivalOptions=$,poForceBaseRoom=$)
+              lSurvivalOptions=$,oForceBaseRoom=$)
    {
       local poRoom, poBaseRoom, plAllRooms, iRID, i, plPlayersLoggedOn, z,
             plExcludedRoomsObjs, iNatural, iPvP, o;
@@ -126,7 +126,7 @@ messages:
          {
             if StringContain(sString,Send(i,@GetName))
             {
-               poForceBaseRoom = i;
+               oForceBaseRoom = i;
 
                break;
             }
@@ -144,10 +144,10 @@ messages:
       % rooms.  Set poBaseRoom to the chosen room so it can be checked
       % in the following code.
       if NOT IsClass(who,&DM)
-         AND poForceBaseRoom <> $
+         AND oForceBaseRoom <> $
       {
-         poBaseRoom = poForceBaseRoom;
-         poForceBaseRoom = $;
+         poBaseRoom = oForceBaseRoom;
+         oForceBaseRoom = $;
       }
       else
       {
@@ -179,9 +179,9 @@ messages:
 
       % If we still have a forced base room, it was given by a DM.
       % Set the base room to the forced one.
-      if poForceBaseRoom <> $
+      if oForceBaseRoom <> $
       {
-         poBaseRoom = poForceBaseRoom;
+         poBaseRoom = oForceBaseRoom;
       }
 
       iRID = Send(self,@GetNextAvailableRID);

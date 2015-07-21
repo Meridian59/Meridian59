@@ -71,6 +71,11 @@ messages:
    {
       local oWeapon;
 
+      if lTargets = $
+      {
+         return FALSE;
+      }
+
       oWeapon = First(lTargets);
 
       if oWeapon = $

@@ -584,6 +584,7 @@ messages:
    SendOverlays()
    {
       if prShield_emblem_held <> $
+         AND prShield_emblem_drop <> $
       {
          AddPacket(1,1);
          AddPacket(4,prShield_emblem_drop,1,1,1,ANIMATE_NONE,2,2);
@@ -618,6 +619,7 @@ messages:
    SendLookOverlays()
    {
       if prShield_emblem_held <> $
+         AND prShield_emblem_drop <> $
       {
          AddPacket(1,1);
          AddPacket(4,prShield_emblem_drop,1,1,1,ANIMATE_NONE,2,1);

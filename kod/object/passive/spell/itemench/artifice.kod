@@ -63,6 +63,11 @@ messages:
    {
       local oWeapon;
 
+      if lTargets = $
+      {
+         return FALSE;
+      }
+
       oWeapon = First(lTargets);
 
       % Check that target is enchantable, and is a weapon

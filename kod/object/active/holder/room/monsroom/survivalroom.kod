@@ -1728,10 +1728,16 @@ messages:
    LastUserLeft()
    {
       Post(self,@Delete);
+
       propagate;
    }
 
    CanHavePlayerPortal(who = $)
+   {
+      return FALSE;
+   }
+
+   CanTokenEnterRoom()
    {
       return FALSE;
    }

@@ -47,12 +47,14 @@ BEGIN
     LTEXT           "Genauigkeit",-1,20,123,39,8
     CONTROL         "",1026,"BlakGraph",WS_TABSTOP | 0xb,65,120,102,14
     GROUPBOX        "Hilfe für Einsteiger",-1,24,139,269,68
-    PUSHBUTTON      "&Magier",1010,43,154,34,12
-    LTEXT           "Konzentriere dich auf Zauberschulen.",-1,87,156,119,8
-    PUSHBUTTON      "&Krieger",1011,43,171,34,12
-    LTEXT           "Konzentriere dich auf Waffenfertigkeiten und Kraanan.",-1,87,173,172,8
-    PUSHBUTTON      "&Hybrid",1012,43,188,34,12
-    LTEXT           "Wende Magie und Waffenfertigkeiten an.",-1,87,190,161,8
+    PUSHBUTTON      "&Magier",1010,43,150,50,11
+    LTEXT           "Konzentriere dich auf Zauberschulen.",-1,98,150,190,8
+    PUSHBUTTON      "&Krieger",1011,43,164,50,11
+    LTEXT           "Konzentriere dich auf Waffenfertigkeiten und Kraanan.",-1,98,164,190,8
+    PUSHBUTTON      "&Hybrid",1012,43,178,50,11
+    LTEXT           "Lerne Magie und Waffenfertigkeiten.",-1,98,178,190,8
+    PUSHBUTTON      "Hybrid &2",1027,43,192,50,11
+    LTEXT           "Lerne Waffenfertigkeiten, Riija und eine andere Zauberschule.",-1,98,192,190,8
     LTEXT           "Eigenschaftspunkte übrig:",-1,8,215,83,8
     CONTROL         "",1028,"BlakGraph",0x8,95,214,98,11
     PUSHBUTTON      "&<< Zurück",1008,219,214,41,12
@@ -360,12 +362,14 @@ BEGIN
     LTEXT           "Aim",IDC_STATIC,26,122,12,8
     CONTROL         "",IDC_CHAR_GRAPH6,"BlakGraph",WS_TABSTOP | 0xb,42,120,102,14
     GROUPBOX        "Suggestions for newcomers",IDC_STATIC,24,139,269,68
-    PUSHBUTTON      "&Mage",IDC_MAGE,43,154,34,12
-    LTEXT           "Learn spells from many schools -- with sufficent study",IDC_STATIC,87,156,168,8
-    PUSHBUTTON      "&Warrior",IDC_WARRIOR,43,171,34,12
-    LTEXT           "Master weaponcraft and ranged combat",IDC_STATIC,87,173,167,8
-    PUSHBUTTON      "&Hybrid",IDC_HYBRID,43,188,34,12
-    LTEXT           "A flexible generalist",IDC_STATIC,87,190,161,8
+    PUSHBUTTON      "&Mage",IDC_MAGE,43,150,50,11
+    LTEXT           "Learn spells from many schools -- with sufficent study",IDC_STATIC,98,150,168,8
+    PUSHBUTTON      "&Warrior",IDC_WARRIOR,43,164,50,11
+    LTEXT           "Master weaponcraft and ranged combat",IDC_STATIC,98,164,167,8
+    PUSHBUTTON      "Hybrid &1",IDC_HYBRID,43,178,50,11
+    LTEXT           "Learn weaponcraft and two schools of magic",IDC_STATIC,98,178,161,8
+    PUSHBUTTON      "Hybrid &2",IDC_RIIJA,43,192,50,11
+    LTEXT           "Learn weaponcraft, Riija and another magic school",IDC_STATIC,98,192,161,8
     LTEXT           "Stat points left",IDC_STATIC,24,215,46,8
     CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,87,214,98,11
     PUSHBUTTON      "&<< Prev",IDC_PREVIOUS_PAGE,231,214,34,12

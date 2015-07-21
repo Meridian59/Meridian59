@@ -161,8 +161,8 @@ properties:
 
    piBlindAttackChance = 15    % Chance she'll attack with blind
    piBlindCounterChance = 7    % Chance she'll counter a spell or arrow with blind
-   piBlindDurationMin = 20  % seconds
-   piBlindDurationMax = 30  % seconds
+   piBlindDurationMin = 20000  % Milliseconds.
+   piBlindDurationMax = 30000  % Milliseconds.
 
    ptDeathSequence = $
    piDeathSequenceTimestep = 200  % milliseconds
@@ -475,7 +475,7 @@ messages:
       Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=lich_cast_sound);
       Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=lich_cast_spell,#what=self);
       Send(self,@DoCast);
-      Send(oSpell,@DoBlind,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
+      Send(oSpell,@DoSpell,#what=self,#oTarget=oTarget,#iDuration=iRandom);
 
       return;
    }

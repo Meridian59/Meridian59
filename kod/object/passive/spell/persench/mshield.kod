@@ -67,13 +67,6 @@ messages:
       return;
    }
 
-   CastSpell(who=$,lTargets=$)
-   {
-      Send(first(lTargets),@AddDefenseModifier,#what=self);
-
-      propagate;
-   }
-
    GetDuration(iSpellPower=$)
    {
       local iDuration;
@@ -86,8 +79,10 @@ messages:
       return iDuration;
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(iSpellpower=$,target=$)
    {
+      Send(target,@AddDefenseModifier,#what=self);
+
       return iSpellpower;
    }
 

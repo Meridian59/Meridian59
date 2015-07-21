@@ -297,7 +297,7 @@ messages:
       {
          for oEnchantment in Send(self,@GetEnchantmentList)
          {
-            if Length(oEnchantment) > 2
+            if Length(oEnchantment) > ENCHANTMENT_LIST_NO_STATE
             {
                plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances,#iState=Nth(oEnchantment,3));
             }
@@ -429,6 +429,28 @@ messages:
       return FALSE;
    }
 
+   GetRawState(what=$)
+   "This message is needed to smoothly handle the transition from 3-element "
+   "enchantment list elements to 4-element ones.  When EndEnchantment is "
+   "called during RecreateAll, spells that modify stats (and are cast with "
+   "the old system) need to be able to obtain the correct state.  This is the "
+   "safest way to ensure the stats are reset correctly, and should be removed "
+   "after the transition."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+            AND Length(i) > 2
+         {
+            return Nth(i,3);
+         }
+      }
+
+      return $;
+   }
+
    GetEnchantedState(what=$)
    "If enchanted by <what>, returns the state data (which MUST exist, or it's an error.  "
    "In other words, the caller must know that <what> adds state data).  Returns $ otherwise."
@@ -438,6 +460,7 @@ messages:
       for i in plEnchantments
       {
          if Nth(i,2) = what
+            AND Length(i) > ENCHANTMENT_LIST_NO_STATE
          {
             return Nth(i,3);
          }
@@ -447,7 +470,7 @@ messages:
    }
 
    GetEnchantmentsByClass(enchClass=&Spell)
-   "returns a subset of plEnchantments whose elements are of the given class"
+   "Returns a subset of plEnchantments whose elements are of the given class."
    {
       local i, returnList;
       returnList = $;
@@ -479,7 +502,7 @@ messages:
       {
          if Nth(i,2) = what
          {
-            if Length(i) > 3
+            if Length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                iCastPower = Nth(i,4);
             }

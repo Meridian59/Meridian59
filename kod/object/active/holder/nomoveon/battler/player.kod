@@ -1749,7 +1749,7 @@ messages:
          if Nth(i,2) = oSpell
          {
             state = Nth(i,3);
-            if not IsClass(first(state),&Prism)
+            if NOT IsClass(First(state),&Prism)
             {
                for j in state
                {
@@ -3132,7 +3132,8 @@ messages:
       {
          if First(i) = timer
          {
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
             {
                Send(Nth(i,2),@EndEnchantment,#who=self,#state=Nth(i,3));
             }
@@ -3196,7 +3197,7 @@ messages:
          {
             plEnchantments = DelListElem(plEnchantments,i);
 
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
             {
                Send(Nth(i,2),@StartPeriodicEnchantment,
                      #who=self,#state=Nth(i,3));
@@ -3216,7 +3217,7 @@ messages:
    }
 
    StartEnchantment(what=$,who=$,time=$,state=$,lastcall=TRUE,
-                     addicon=TRUE,ltype=$,bItemCast=FALSE)
+                     addicon=TRUE,ltype=$,bItemCast=FALSE,iSpellPower=0)
    "Adds <what> to our enchantments, and creates a timer that will cause it "
    "to end."
    {
@@ -3240,11 +3241,11 @@ messages:
 
       if state = $
       {
-         lNew_enchantment = [oTimer, what];
+         lNew_enchantment = [oTimer, what, iSpellPower];
       }
       else
       {
-         lNew_enchantment = [oTimer, what, state];
+         lNew_enchantment = [oTimer, what, state, iSpellPower];
       }
 
       plEnchantments = Cons(lNew_enchantment,plEnchantments);
@@ -3358,7 +3359,7 @@ messages:
       {
          if First(i) <> $
          {
-            if IsClass(Nth(i,2),&Boon)=FALSE
+            if IsClass(Nth(i,2),&Boon) = FALSE
             {
 
                % Convert timer to integer if we have a timer,
@@ -3409,10 +3410,10 @@ messages:
             continue;
          }
 
-         if IsClass(Nth(i,2),&Boon)=FALSE
+         if IsClass(Nth(i,2),&Boon) = FALSE
          {
             state = $;
-            if length(i) > 2
+            if length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                state = Nth(i,3);
             }
@@ -3426,8 +3427,8 @@ messages:
                % Give them a short timer, and log this for debugging purposes.
                % We include timers since we're not supposed to have one here.
                Debug("Trying to make an invalid timer ",iTime," for ",
-                  Send(Nth(i,2),@GetTrueName)," on player ",
-                  self,Send(self,@GetTrueName));
+                     Send(Nth(i,2),@GetTrueName)," on player ",
+                     self,Send(self,@GetTrueName));
                if Send(Nth(i,2),@IsHarmful)
                {
                   iTime = 5000;
@@ -3523,7 +3524,8 @@ messages:
                   SetNth(i,1,$);
                }
             }
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(what,&Boon)
             {
                state = Nth(i,3);
             }
@@ -3577,7 +3579,8 @@ messages:
                DeleteTimer(First(i));
             }
 
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
             {
                state = Nth(i,3);
             }
@@ -11613,7 +11616,7 @@ messages:
          if IsClass(oEnch,&Spell) OR IsClass(oEnch,&Trance)
          {
             state = $;
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
             {
                state = Nth(i,3);
             }

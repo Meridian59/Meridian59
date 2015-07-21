@@ -42,8 +42,8 @@ classvars:
    viSpell_num = SID_GAZE_OF_THE_BASILISK
    viSchool = SS_QOR
    viMana = 15
-   viCast_Time = 5000
-   viSpell_Exetion = 15
+   viCast_Time = 4000
+   viSpell_Exertion = 15
    viSpell_level = 6
 
    viChance_To_Increase = 10
@@ -83,10 +83,11 @@ messages:
    {
       local iDuration;
 
-      % Duration in seconds, from 1-33.
-      iDuration = Bound(iSpellPower/3,1,33);
-      
-      return iSpellpower * 1000;
+      % Duration for Gaze is simply the spellpower it was cast at.
+      % One second per spellpower, bound 1-99 here just in case.
+      iDuration = Bound(iSpellPower,1,99);
+
+      return iDuration * 1000;
    }
 
    GetStateValue(who=$,iSpellPower=0)
@@ -104,14 +105,14 @@ messages:
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
          iSpellpower = Send(who,@GetEnchantedState,#what=self);
-         iDuration = iSpellpower * random(20,25);
-         iDuration = bound(iDuration,500,2500);
+         iDuration = iSpellpower * Random(20,25);
+         iDuration = Bound(iDuration,500,2500);
 
          % TODO: Make chance to paralyze based on if caster is facing opponent?
 
          if IsClass(what,&Revenant)
          {
-            Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul, 
+            Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul,
                   #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          }
          else
@@ -123,7 +124,7 @@ messages:
                % Ranged weapons don't always trigger the effect.
                if oWeapon <> $
                   AND IsClass(oWeapon,&RangedWeapon)
-                  AND random(1,100) < 50
+                  AND Random(1,100) < 50
                {
                   % No effect.
                   return defense_power;
@@ -136,7 +137,8 @@ messages:
             Send(who,@MsgSendUser,#message_rsc=paralyze_caster,
                   #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
 
-            Send(oSpell,@DoHold,#what=who,#oTarget=what,#iDuration=iDuration);
+            Send(oSpell,@DoSpell,#what=who,#oTarget=what,#iDuration=iDuration,
+                  #report=FALSE);
          }
       }
 

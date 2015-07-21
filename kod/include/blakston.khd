@@ -2176,6 +2176,12 @@
    ENCHANTMENT_SHOW_PLAYER = 2
    ENCHANTMENT_SHOW_ALL = 3
 
+   % Enchantment list lengths for PEs.
+   % Enchantments are stored as a list, and there are two types of enchantment:
+   % [oTimer, what, iSpellPower] and [oTimer, what, state, iSpellPower]
+   ENCHANTMENT_LIST_NO_STATE = 3
+   ENCHANTMENT_LIST_STATE = 4
+
    % Learning constants
    LEARN_FAILED_ALREADY_HAS = -4
    % This can be anything - but the NPC should know what it is.

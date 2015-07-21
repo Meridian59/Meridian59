@@ -81,15 +81,10 @@ messages:
       return;
    }
 
-   CastSpell(who=$,iSpellPower=0,lTargets=$)
+   GetStateValue(iSpellpower=$,target=$)
    {
-      Send(who,@AddAttackModifier,#what=self);
+      Send(target,@AddAttackModifier,#what=self);
 
-      propagate;
-   }
-
-   GetStateValue(iSpellpower=$)
-   {
       return iSpellpower;
    }
 
@@ -97,7 +92,7 @@ messages:
    {
       local iDuration;
 
-      iDuration = (40+iSpellPower/2) * 1000;
+      iDuration = (40 + iSpellPower / 2) * 1000;
 
       return iDuration;
    }
@@ -115,10 +110,9 @@ messages:
          Send(who,@RemoveEnchantment,#what=oHoldSpell,#report=FALSE);
       }
 
-      % Hold duration is measured in seconds, not milliseconds.
       % Lasts 1/6 the time of the bonus.
-      iDuration = (Send(self,@GetDuration,#iSpellPower=state))/6;
-      Send(oHoldSpell,@DoHold,#what=self,#oTarget=who,#iDuration=iDuration,
+      iDuration = (Send(self,@GetDuration,#iSpellPower=state)) / 6;
+      Send(oHoldSpell,@DoSpell,#what=self,#oTarget=who,#iDuration=iDuration,
             #report=TRUE,#bAllowFreeAction=FALSE);
 
       propagate;
@@ -127,12 +121,12 @@ messages:
    % Stuff we handle to be an attack modifier
    ModifyHitRoll(who=$,what=$,hit_roll=$)
    {
-      return hit_roll + 100 + (Send(who,@GetEnchantedState,#what=self)*2);
+      return hit_roll + 100 + (Send(who,@GetEnchantedState,#what=self) * 2);
    }
    
    ModifyDamage(who=$,what=$,damage=$)
    {
-      return (damage + 1 + Random(0,Send(who,@GetEnchantedState,#what=self)/20));
+      return (damage + 1 + Random(0,Send(who,@GetEnchantedState,#what=self) / 20));
    }
 
    GetPotionClass()
@@ -148,10 +142,10 @@ messages:
       AppendTempString(" enchantment adds ");
       AppendTempString(100 + (Send(who,@GetEnchantedState,#what=self) * 2));
       AppendTempString(" offense and 1-");
-      AppendTempString(1 + (Send(who,@GetEnchantedState,#what=self)/20));
+      AppendTempString(1 + (Send(who,@GetEnchantedState,#what=self) / 20));
       AppendTempString(" attack damage. When it expires, it will paralyze you for ");
-      AppendTempString(((40+(Send(who,@GetEnchantedState,#what=self)/2)) * 1000)/6);
-      AppendTempString(" milliseconds.");
+      AppendTempString((40 + (Send(who,@GetEnchantedState,#what=self) / 2)) / 6);
+      AppendTempString(" seconds.");
 
       propagate;
    }

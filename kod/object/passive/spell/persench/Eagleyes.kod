@@ -14,10 +14,6 @@ constants:
 
    include blakston.khd
 
-   % What percent of spellpower should we take in order to give the player a chance
-   % to completely resist a blinding spell?
-   SPELL_RESIST_PERCENT = 5
-
 resources:
 
    EagleEyes_name_rsc = "eagle eyes"
@@ -67,6 +63,14 @@ classvars:
 
 properties:
 
+   % This controls how effective EE is at reducing CC duration.
+   % Higher value makes EE less effective.
+   % 200 = 50% reduction, 300 = 33% reduction.
+   piReductionFactor = 200 % Recommended value 300.
+
+   % What percent of spellpower should we take in order to
+   % give the player a chance to completely resist a blinding spell?
+   piResistPercent = 5
 
 messages:
 
@@ -137,7 +141,7 @@ messages:
 
       % Check if they repel the blinding spell outright 1-10% base chance,
       % modified by factor.
-      iChance = (oEagleEyesStrength * (SPELL_RESIST_PERCENT * iFactor)) / 100;
+      iChance = (oEagleEyesStrength * (piResistPercent * iFactor)) / 100;
       if Random(0,100) <= iChance
       {
          Send(oTarget,@MsgSendUser,#message_rsc=EagleEyes_evade);
@@ -150,7 +154,8 @@ messages:
       }
 
       % Duration reduced 0-50%, depending on spellpower.
-      iNewDuration = iDuration - (iDuration * oEagleEyesStrength)/200;
+      iNewDuration = iDuration - (iDuration * oEagleEyesStrength)
+                        / piReductionFactor;
       Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
       
       if IsClass(oCaster,&Player)
@@ -202,7 +207,12 @@ messages:
       AppendTempString(Send(self,@GetName));
       AppendTempString(" enchantment adds ");
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString(" offense and 1 damage to your ranged attacks.");
+      AppendTempString(" offense and 1 damage to your ranged attacks.  ");
+      AppendTempString("It will completely resist an attempt to render you sightless " );
+      AppendTempString(Send(who,@GetEnchantedState,#what=self) * piResistPercent / 100);
+      AppendTempString("\% of the time.  Successful attempts to remove your sight will be reduced by ");
+      AppendTempString(100 * Send(who,@GetEnchantedState,#what=self) / piReductionFactor);
+      AppendTempString("\%.");
 
       propagate;
    }

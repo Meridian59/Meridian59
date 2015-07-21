@@ -175,12 +175,14 @@ messages:
       iTime = iTime * 1000;
 
       Send(oRoom,@SomethingWaveRoom,#what=victim,#wave_rsc=morph_scream_wav);
-      Send(victim,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=MORPH_PAIN_TIME);
+      Send(victim,@EffectSendUserDuration,#effect=EFFECT_PAIN,
+            #duration=MORPH_PAIN_TIME);
 
-      Send(victim,@StartEnchantment,#what=self,#time=iTime,#state=[iIllusion_type,changeHP]);
+      Send(victim,@StartEnchantment,#what=self,#time=iTime,
+            #state=[iIllusion_type,changeHP],#iSpellPower=iSpellPower);
 
       Send(victim,@SetPlayerIllusion,#what=self);
-      
+
       return;
    }
 
@@ -331,11 +333,19 @@ messages:
       debug("Shouldn't get here!");
 
       return $;
-   }      
+   }
 
    EndEnchantment(who = $, state=$,report = TRUE)
    {
-      local changeHP,oIllusion,iIllusion_type;
+      local changeHP, oIllusion, iIllusion_type;
+
+      % Handle transition from 3-element enchantment list elements to
+      % 4-element ones.
+      if state = 0
+         OR state = $
+      {
+         state = Send(who,@GetRawState,#what=self);
+      }
 
       changeHP = Nth(state,2);
       Send(who,@GainMaxHealth,#amount=(-changeHP));

@@ -82,9 +82,14 @@ messages:
          lTargets = Cons(who,lTargets);
       }
 
-      Send(First(lTargets),@AddAttackModifier,#what=self);
-
       propagate;
+   }
+
+   GetStateValue(iSpellpower=$,target=$,who=$)
+   {
+      Send(target,@AddAttackModifier,#what=self);
+
+      return iSpellpower;
    }
 
    GiveKilledBenefits(caster=$,victim=$)

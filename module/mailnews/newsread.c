@@ -306,8 +306,13 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
    case WM_DESTROY:
       hReadNewsDialog = NULL;
       KillTimer(hDlg, 1);
+
+      // Set these back to -1 so we don't ask for nonexistent messages next time.
+      article_index = -1;
+      lastRequestedIndex = -1;
+
       if (exiting)
-	 PostMessage(cinfo->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
+         PostMessage(cinfo->hMain, BK_MODULEUNLOAD, 0, MODULE_ID);
       return TRUE;
 
    case WM_COMMAND:

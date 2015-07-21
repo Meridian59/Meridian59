@@ -1408,28 +1408,29 @@ messages:
             {
                Send(oQuester,@UpdateFactionService,#full=TRUE);
             }
-
+            % Post these prize types, because the player will cancel any
+            % faction quests they have open in ResignFaction
             if iPrizeFaction = QN_PRIZE_FACTION_DUKE
             {
-               Send(oQuester,@ResignFaction);
-               Send(oQuester,@JoinFaction,#new_faction=FACTION_DUKE);
+               Post(oQuester,@ResignFaction);
+               Post(oQuester,@JoinFaction,#new_faction=FACTION_DUKE);
             }
 
             if iPrizeFaction = QN_PRIZE_FACTION_PRINCESS
             {
-               Send(oQuester,@ResignFaction);
-               Send(oQuester,@JoinFaction,#new_faction=FACTION_PRINCESS);
+               Post(oQuester,@ResignFaction);
+               Post(oQuester,@JoinFaction,#new_faction=FACTION_PRINCESS);
             }
 
             if iPrizeFaction = QN_PRIZE_FACTION_REBEL
             {
-               Send(oQuester,@ResignFaction);
-               Send(oQuester,@JoinFaction,#new_faction=FACTION_REBEL);
+               Post(oQuester,@ResignFaction);
+               Post(oQuester,@JoinFaction,#new_faction=FACTION_REBEL);
             }
 
             if iPrizeFaction = QN_PRIZE_FACTION_NEUTRAL
             {
-               Send(oQuester,@ResignLoyaltyFailed);
+               Post(oQuester,@ResignLoyaltyFailed);
             }
          }
 

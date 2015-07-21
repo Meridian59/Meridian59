@@ -9,6 +9,10 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 EasterEggHunt is GameEvent
+% Creates easter eggs in multiple rooms and keeps track of them.
+% Sends system messages letting players know how many are left.
+% Could be generalised to "ItemHunt", but most items would be
+% disposed by the room, easter eggs are exempt from this system.
 
 constants:
 
@@ -16,36 +20,375 @@ constants:
 
 resources:
 
-   egghunt_start_msg = "Easter Egg Hunt Started."
-   egghunt_end_msg = "Easter Egg Hunt Ended."
+   egghunt_start_msg = \
+      "~B~k[Event]~n ~B~vThe Easter Egg Hunt has started!  %i Easter Eggs "
+      "have been hidden around the world, find as many as you can!"
+
+   egghunt_end_msg = \
+      "~B~k[Event]~n ~B~vThe Easter Egg hunt has been completed.  Time to "
+      "enjoy all that chocolate!"
+
+   egghunt_continues_msg = \
+      "~B~k[Event]~n ~B~vThere are still %i Easter Eggs remaining to be found!"
+
+   egghunt_oneleft_msg = \
+      "~B~k[Event]~n ~B~vThere is only one Easter Egg left to be found!"
+
+   egghunt_allfound_msg = \
+      "~B~k[Event]~n ~B~vAll the Easter Eggs have been found!"
+
+   egghunt_scores_msg = \
+      "~B~k[Event]~n ~B~vThe tally of eggs found is as follows:"
+   egghunt_score_eggs_msg = \
+   "~B~k[Event]~n ~B~y%q found %i eggs!"
+   egghunt_score_egg_msg = \
+   "~B~k[Event]~n ~B~y%q found %i egg!"
 
 classvars:
 
    vrStartMessage = egghunt_start_msg
    vrEndMessage = egghunt_end_msg
+   vrManyLeft = egghunt_continues_msg
+   vrOneLeft = egghunt_oneleft_msg
+   vrAllFound = egghunt_allfound_msg
+
+   vrScores = egghunt_scores_msg
+   vrScoreEggs = egghunt_score_eggs_msg
+   vrScoreOneEgg = egghunt_score_egg_msg
 
 properties:
+
+   % This event can fail in the start-up procedure if no eggs
+   % were able to be hidden. vbAnnounce starts of FALSE, and is
+   % set to TRUE if start-up succeeds.
+   vbAnnounce = FALSE
+
+   % A list of all the valid rooms for placing eggs.
+   % Mainland + Ko'catan, no guild halls.
+   plEventRooms = $
+
+   % A list of all the eggs currently associated with this event.
+   % Eggs are added on placement in room, and removed in Update()
+   % if they are no longer in the room.
+   plEggs = $
+
+   % Running total of how many eggs remain.
+   piEggsLeft = 0
+
+   % Total number of eggs to spawn. If available, we use the
+   % number of users logged on * 3, but if that call fails this
+   % is the backup.
+   piTotalEggs = 40
+
+   % Hard min/max num eggs.
+   piMinEggs = 20
+   piMaxEggs = 80
+
+   % This event informs the online users of how many eggs remain
+   % every piInformIntervalSec seconds (or immediately if the number
+   % of eggs changes).
+   piLastInformTime = 0
+   piInformIntervalSec = 120
+
+   % Keep a list of how many eggs each participating user has picked up.
+   % Display the scores at the end.
+   plScores = $
 
 messages:
 
    Constructor()
    {
+      local lUsers;
+
+      lUsers = Send(SYS,@GetUsersLoggedOn);
+      if lUsers = $
+      {
+         propagate;
+      }
+
+      Send(self,@SetRooms);
+
+      piTotalEggs = Length(lUsers) * 3;
+      piTotalEggs = Bound(piTotalEggs,piMinEggs,piMaxEggs);
+
       propagate;
+   }
+
+   SetRooms()
+   "Sets the available rooms for placing eggs.  Can be called by admin."
+   {
+      local i, iRegion, lRooms;
+
+      plEventRooms = $;
+
+      % Just hide on the mainland.
+      lRooms = Send(SYS,@GetRooms);
+      for i in lRooms
+      {
+         iRegion = Send(i,@GetRegion);
+         % Only want mainland and Ko'catan, and no guild halls or
+         % non-accessible rooms. Ko'catan forest has a lot of areas
+         % inaccessible to the player also, so disallow that area too.
+         if (iRegion = RID_DEFAULT
+               OR (iRegion = RID_KOCATAN
+                  AND NOT IsClass(i,&KCForest)))
+            AND Send(i,@CanHavePlayerPortal)
+         {
+            plEventRooms = Cons(i,plEventRooms);
+         }
+      }
+
+      return;
+   }
+
+   PlaceEggInRoom(oRoom=$)
+   "Calls GenerateMonster in Room to place an egg in a random spot.  "
+   "If GenerateMonster can't place it (returns FALSE), handle error "
+   "messages here."
+   {
+      local iRows, iCols, oEgg;
+
+      if oRoom = $
+         OR NOT IsClass(oRoom,&Room)
+      {
+         Debug("Bad room passed to PlaceEggInRoom ",oRoom);
+
+         return FALSE;
+      }
+
+      oEgg = Create(&EasterEgg);
+
+      if NOT Send(oRoom,@GenerateMonster,#oMonster=oEgg,#bRandom=TRUE)
+      {
+         % Room will delete the egg.
+         Debug("No egg placed in ",Send(oRoom,@GetName));
+
+         return FALSE;
+      }
+
+      % If we got here, we placed an egg. Add it to our egg list.
+      plEggs = Cons(oEgg,plEggs);
+
+      return TRUE;
    }
 
    Delete()
    {
+      plEggs = $;
+      plEventRooms = $;
+
       propagate;
    }
 
-   StartEvent()
+   HideEggs(bReset=FALSE)
+   "Iterate through the rooms list and call PlaceEggInRoom. "
+   "Can be called on a running event to reset the eggs. If bReset is "
+   "TRUE, delete current eggs, otherwise just add more."
    {
-      propagate;
+      local i, iNumRooms;
+
+      if bReset
+         AND plEggs <> $
+      {
+         Send(self,@CleanupEggs);
+      }
+
+      iNumRooms = Length(plEventRooms);
+
+      for i in plEventRooms
+      {
+         % Try to distribute the eggs equally around the world.
+         if Random(1,100) < piTotalEggs * 120 / iNumRooms
+         {
+            Send(self,@PlaceEggInRoom,#oRoom=i);
+         }
+
+         % Once we hit the total we want, stop placing.
+         if plEggs <> $
+            AND Length(plEggs) >= piTotalEggs
+         {
+            break;
+         }
+      }
+
+      return;
+   }
+
+   StartEvent(parm1=$)
+   {
+      % StartEvent can accept a parameter to set the total number
+      % of eggs to spawn. This overrides the number set when the
+      % event object was created.
+      if parm1 <> $
+      {
+         piTotalEggs = parm1;
+      }
+
+      % Hide all the eggs. Eggs are added to plEggs when created,
+      % so if plEggs = $ then no eggs were made and hidden.
+      Send(self,@HideEggs);
+
+      if plEggs = $
+      {
+         % Event didn't start.
+         Debug("Easter Egg hunt event failed to start.");
+
+         return;
+      }
+      else
+      {
+         % Event successful, announce messages.
+         vbAnnounce = TRUE;
+      }
+
+      piEggsLeft = Length(plEggs);
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrStartMessage,
+               #parm1=Length(plEggs));
+         piLastInformTime = GetTime();
+      }
+
+      return;
+   }
+
+   Update()
+   {
+      local i, oEggOwner, iLength;
+
+      for i in plEggs
+      {
+         oEggOwner = Send(i,@GetOwner);
+
+         if oEggOwner <> $
+            AND NOT IsClass(oEggOwner,&Room)
+         {
+            % Egg has been found and possibly eaten. Add its new owner
+            % to the scoreboard. Update() is called once a second, rare
+            % chance we don't catch the owner if they eat the egg
+            % immediately but unlikely.
+            if IsClass(oEggOwner,&Player)
+            {
+               plScores = Send(self,@AddPointsToScoreboard,#who=oEggOwner,
+                                 #lList=plScores);
+            }
+            plEggs = DelListElem(plEggs,i);
+         }
+      }
+
+      if plEggs = $
+      {
+         Send(self,@EventEnd);
+
+         return;
+      }
+
+      iLength = Length(plEggs);
+
+      % If no change in how many eggs remain, only announce
+      % every piInformIntervalSec seconds.
+      if piEggsLeft = iLength
+         AND piLastInformTime + piInformIntervalSec > GetTime()
+      {
+         return;
+      }
+
+      piEggsLeft = iLength;
+
+      if iLength = 1
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrOneLeft);
+         piLastInformTime = GetTime();
+      }
+      else
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrManyLeft,
+               #parm1=iLength);
+         piLastInformTime = GetTime();
+      }
+
+      return;
    }
 
    EndEvent()
    {
+      local i;
+
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrAllFound);
+         % Print out the scores. Score readout is framed by the previous
+         % end message and the one in the parent class.
+         Send(self,@PrintScores);
+      }
+
+      plEggs = $;
+      plEventRooms = $;
+      plScores = $;
+
       propagate;
+   }
+
+   CleanupEggs()
+   "Deletes all the eggs in plEggs.  Can be used by admin to finish "
+   "the event early.  Update() will clean up the event on next call."
+   {
+      local i;
+
+      for i in plEggs
+      {
+         if IsClass(i,&EasterEgg)
+         {
+            Send(i,@Delete);
+         }
+         else
+         {
+            Debug("CleanupEggs in EasterEggHunt had a non-easter egg in plEggs!");
+         }
+      }
+
+      plEggs = $;
+
+      return;
+   }
+
+   PrintScores()
+   "Prints out the names of each participating player and how many "
+   "eggs they've picked up."
+   {
+      local i, iScore, sName;
+
+      sName = $;
+
+      if plScores = $
+      {
+         return;
+      }
+
+      % Score header.
+      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrScores);
+
+      for i in plScores
+      {
+         % Have to make a string, if the player logged off
+         % other players might not have their dynamic resource.
+         sName = SetString(sName,Send(First(i),@GetTrueName));
+         iScore = Nth(i,2);
+
+         if iScore = 1
+         {
+            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrScoreOneEgg,
+                  #parm1=sName,#parm2=iScore);
+         }
+         else
+         {
+            Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrScoreEggs,
+                  #parm1=sName,#parm2=iScore);
+         }
+      }
+
+      return;
    }
 
 end

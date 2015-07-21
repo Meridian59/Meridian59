@@ -233,6 +233,10 @@ messages:
       return FALSE;
    }
 
+   GetRegion()
+   {
+      return RID_HISTORIC;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

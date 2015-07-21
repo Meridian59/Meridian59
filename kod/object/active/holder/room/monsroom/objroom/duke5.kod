@@ -477,6 +477,10 @@ messages:
       return;
    }
 
+   CanHavePlayerPortal()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

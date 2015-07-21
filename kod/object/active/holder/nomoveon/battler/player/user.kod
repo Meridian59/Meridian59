@@ -1637,6 +1637,8 @@ messages:
    "appropriate. This function will force a suicide and clean up anything, "
    "ignoring game rules."
    {
+      local sName;
+
       Send(self,@CancelIfOffer);
 
       if poGuild <> $
@@ -1655,11 +1657,18 @@ messages:
 
       if pbLogged_on
       {
-         addPacket(1,BP_USERCOMMAND,1,UC_SEND_QUIT);
+         AddPacket(1,BP_USERCOMMAND,1,UC_SEND_QUIT);
          SendPacket(poSession);
       }
 
+      % Change the name to a unique placeholder one.
+      ClearTempString();
+      AppendTempString("Suicide");
+      AppendTempString(GetTime());
+      AppendTempString(GetTickCount() MOD 1000);
+      sName = SetString($,GetTempString());
       Debug("Character",Send(self,@GetTrueName),self,"was suicided.");
+      Send(SYS,@ChangeUserName,#oUser=self,#sName=sName);
 
       Send(self,@ResetCharacter);
 

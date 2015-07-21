@@ -177,7 +177,6 @@ messages:
    Delete()
    {
       plEggs = $;
-      plEventRooms = $;
 
       propagate;
    }
@@ -281,7 +280,7 @@ messages:
 
       if plEggs = $
       {
-         Send(self,@EventEnd);
+         Send(self,@NotifyEngineEndEvent);
 
          return;
       }

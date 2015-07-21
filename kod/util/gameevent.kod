@@ -31,7 +31,10 @@ classvars:
 properties:
 
    plSpawnRects = $
-   piActiveRoom = $
+   poActiveRoom = $
+   plEventRooms = $
+   plRoomSaveState = $
+   pbClearRooms = False
 
 messages:
 
@@ -42,6 +45,11 @@ messages:
 
    Delete()
    {
+      plSpawnRects = $;
+      poActiveRoom = $;
+      plEventRooms = $;
+      plRoomSaveState = $;
+   
       return;
    }
 
@@ -85,7 +93,7 @@ messages:
       return;
    }
 
-   EventEnd()
+   NotifyEngineEndEvent()
    {
       Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
 
@@ -106,6 +114,94 @@ messages:
    {
       return;
    }
+   
+   PrepareRooms()
+   {
+      if pbClearRooms
+      {
+         Send(self,@ClearRooms);
+      }
+      
+      return;
+   }
+   
+   ClearRooms()
+   {
+      local i, j, lActive;
+      
+      lActive = $;
+      
+      if (pbClearRooms)
+      {
+         if (plEventRooms <> $)
+         {
+            for i in plEventRooms
+            {
+               lActive = Send(i,@GetPlActive);
+               if (lActive <> $)
+               {
+                  for j in lActive
+                  {
+                     if ((IsClass(Nth(j,1),&Monster)) AND NOT (Send(Nth(j,1),@IsOwnedByPlayer)))
+                     {
+                        Send(Nth(j,1),@Delete);
+                     }
+                  }
+               }
+            }
+         }
+      }
+   
+      return;
+   }
+   
+   SaveRoomStates()
+   {
+      local i, lRoomProps;
+
+      for i in plEventRooms
+      {
+         lRoomProps = $;
+         
+         if IsClass(i,&MonsterRoom)
+         {
+            lRoomProps = AppendListElem(i,lRoomProps);
+            lRoomProps = AppendListElem(Send(i,@CanMonsterGenerate),lRoomProps);
+            lRoomProps = AppendListElem(Send(i,@GetGenerators),lRoomProps);
+            lRoomProps = AppendListElem(Send(i,@GetGenTime),lRoomProps);
+            lRoomProps = AppendListElem(Send(i,@GetGenPercent),lRoomProps);
+            lRoomProps = AppendListElem(Send(i,@GetPatrolPaths),lRoomProps);
+         }
+         else
+         {
+            lRoomProps = [i,$,$,$,$];
+         }
+         plRoomSaveState = AppendListElem(lRoomProps,plRoomSaveState);
+      }
+
+      return;
+   }
+   
+   RestoreRoomStates()
+   {
+      local i, oRoom;
+      
+      for i in plRoomSaveState
+      {
+         oRoom = Nth(i,1);
+         
+         if (IsClass(oRoom, &MonsterRoom))
+         {
+            Send(oRoom,@SetMonsterGeneration,#bValue=Nth(i,2));
+            Send(oRoom,@SetGenerators,#generators=Nth(i,3));
+            Send(oRoom,@SetGenTime,#time=Nth(i,4));
+            Send(oRoom,@SetGenPercent,#percent=Nth(i,5));
+            Send(oRoom,@SetPatrolPaths,#patrolPaths=Nth(i,6));
+         }
+      }
+   
+      return;
+   }   
 
    CountMonsters(type=$)
    "Returns a count of the given type of monster."
@@ -118,7 +214,7 @@ messages:
       }
 
       count = 0;
-      lActive = Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),@GetPlActive);
+      lActive = Send(Send(SYS,@FindRoomByNum,#num=poActiveRoom),@GetPlActive);
 
       foreach i in lActive
       {

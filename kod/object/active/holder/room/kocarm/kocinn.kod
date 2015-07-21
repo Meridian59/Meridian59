@@ -26,6 +26,11 @@ resources:
    kocinn_katalin_locked = "Room katalin is locked."
    kocinn_katalinwaz_locked = "Room katalinwaz is locked."
 
+   kocinn_rentableroom_door = \
+      "The door won't budge.  Strangely, it doesn't look like it opens "
+      "at all.  There is a small keyhole in the door, however.  Perhaps if "
+      "you used a key in it, something interesting might happen."
+
    kocnews_god_name = "Designers' News"
    kocnews_god_desc = \
       "Check here for information from the game administrators."
@@ -64,24 +69,24 @@ messages:
       % To Kocatan tavern.
       plExits = Cons([ 12, 8, RID_KOC_TAVERN, 16, 17, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 5, 2, ROOM_LOCKED_DOOR, kocinn_waz_locked],plExits);
-      plExits = Cons([ 6, 2, ROOM_LOCKED_DOOR, kocinn_waz_locked],plExits);
-      plExits = Cons([ 5, 3, ROOM_LOCKED_DOOR, kocinn_waz_locked],plExits);
-      plExits = Cons([ 6, 3, ROOM_LOCKED_DOOR, kocinn_waz_locked],plExits);
+      plExits = Cons([ 5, 2, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
+      plExits = Cons([ 6, 2, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
+      plExits = Cons([ 5, 3, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
+      plExits = Cons([ 6, 3, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
 
-      plExits = Cons([ 10, 3, ROOM_LOCKED_DOOR, kocinn_wazwaz_locked],plExits);
-      plExits = Cons([ 10, 4, ROOM_LOCKED_DOOR, kocinn_wazwaz_locked],plExits);
+      plExits = Cons([ 10, 3, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
+      plExits = Cons([ 10, 4, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
 
-      plExits = Cons([ 10, 6, ROOM_LOCKED_DOOR, kocinn_zik_locked],plExits);
+      plExits = Cons([ 10, 6, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
       %% 10,7 finecol is less than 32 has to be hardcoded
 
-      plExits = Cons([ 10, 8, ROOM_LOCKED_DOOR, kocinn_katalinwaz_locked],plExits);
+      plExits = Cons([ 10, 8, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
       %% 11,8 finerow is less than 32 has to be hardcoded
 
-      plExits = Cons([ 7, 6, ROOM_LOCKED_DOOR, kocinn_zikzik_locked],plExits);
+      plExits = Cons([ 7, 6, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
       %% 7, 5 finecol is greater than 32 has to be hardcoded
 
-      plExits = Cons([ 8, 6, ROOM_LOCKED_DOOR, kocinn_katalin_locked],plExits);
+      plExits = Cons([ 8, 6, ROOM_LOCKED_DOOR, kocinn_rentableroom_door],plExits);
       %% 9, 6 finerow less than 32 has to be hardcoded
 
       propagate;
@@ -91,28 +96,28 @@ messages:
    {
       if (row=10) AND (col=7) AND (fine_col < 32)
       {
-         Send(what,@MsgSendUser,#message_rsc=kocinn_zik_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocinn_rentableroom_door);
 
          return TRUE;
       }
 
       if (row=11) AND (col=8) AND (fine_row < 32)
       {
-         Send(what,@MsgSendUser,#message_rsc=kocinn_katalinwaz_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocinn_rentableroom_door);
 
          return TRUE;
       }
 
       if (row=7) AND (col=5) AND (fine_col > 32)
       {
-         Send(what,@MsgSendUser,#message_rsc=kocinn_zikzik_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocinn_rentableroom_door);
 
          return TRUE;
       }
 
       if (row=9) AND (col=6) AND (fine_row < 32)
       {
-         Send(what,@MsgSendUser,#message_rsc=kocinn_katalin_locked);
+         Send(what,@MsgSendUser,#message_rsc=kocinn_rentableroom_door);
 
          return TRUE;
       }
@@ -139,6 +144,40 @@ messages:
             #new_angle=ANGLE_EAST);
 
       propagate;
+   }
+
+   EnterRentableRoom(who=$)
+   "Sees if we are in the proper location to enter a rentable room in this inn."
+   {
+      local iRow, iCol;
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+      
+      % coords: [5,3],[7,5],[9,6],[10,4],[10,7],[11,8]
+      if (iRow = 10
+            AND (iCol = 3
+               OR iCol = 4
+               OR iCol = 6
+               OR iCol = 7
+               OR iCol = 8))
+         OR ((iRow = 5
+               OR iRow = 6)
+            AND (iCol = 2
+               OR iCol = 3))
+         OR (iRow = 7
+              AND (iCol = 5
+                  OR iCol = 6))
+         OR ((iRow = 8
+               OR iRow = 9)
+            AND (iCol = 6))
+         OR (iRow = 11
+              AND (iCol = 8))
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

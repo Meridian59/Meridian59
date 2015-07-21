@@ -32,15 +32,12 @@ resources:
       "Here ya go then.  Hope you enjoy your stay, if you have any problems "
       "Tova will be glad to help you."
 
-   MarionInnkeeper_cost1 = \
-      "Oh, good, you should rest.  Let me see....  I charge "
-   MarionInnkeeper_cost2 = \
-      " shillings to ~Irent~n a nice ~Iroom~n here for 85 days.  If you wish "
-      "to stay longer, I charge "
-   MarionInnkeeper_cost3 = \
-      " per day if you pre-pay.  Key copies, uh, key copies....  Oh, they cost "
-   MarionInnkeeper_cost4 = \
-      " shillings to make.  I know you'll like your room."
+   MarionInnkeeper_cost = \
+      "Oh, good, you should rest.  Let me see....  I charge %i shillings to "
+      "~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay "
+      "longer, I charge %i per day if you pre-pay.  Key copies, uh, key "
+      "copies....  Oh, they cost %i shillings to make.  I know you'll "
+      "like your room."
 
    MarionInnkeeper_days_left = \
       "You like it here, I see.  There are %q days until you should "
@@ -137,18 +134,10 @@ messages:
             OR (StringContain(string,"room")
                AND StringContain(string,"cost"))
          {
-            ClearTempString();
-            AppendTempString(MarionInnkeeper_cost1);
-            AppendTempString(piInitialRoomCost);
-            AppendTempString(MarionInnkeeper_cost2);
-            AppendTempString(piPerDayCost);
-            AppendTempString(MarionInnkeeper_cost3);
-            AppendTempString(piKeyCopyCosts);
-            AppendTempString(MarionInnkeeper_cost4);
-            
             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-                  #string=Send(SYS,@GetPercentQRsc),
-                  #parm1=GetTempString(),#type1=0);
+                  #string=MarionInnkeeper_cost,#type1=0,
+                  #parm1=piInitialRoomCost,#parm2=piPerDayCost,
+                  #parm3=piKeyCopyCosts);
 
             return;
          }

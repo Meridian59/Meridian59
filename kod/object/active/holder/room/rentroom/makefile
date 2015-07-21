@@ -6,6 +6,6 @@
 
 DEPEND = ..\rentroom.bof
 
-BOFS =  barrent.bof marrent.bof
+BOFS =  barrent.bof kocrent.bof marrent.bof
 
 !include $(KODDIR)\kod.mak

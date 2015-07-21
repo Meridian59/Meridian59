@@ -199,3 +199,4 @@ pip-log.txt
 # Roomedit stuff
 /roomedit/windeu32.log
 /roomedit/owl-6.34/lib
+*.roo~

@@ -48,13 +48,13 @@ properties:
    piBaseLight = LIGHT_NICE
    piOutside_factor = 8
 
-   piGen_time = 25000
+   piGen_time = 20000
    piGen_percent = 100
 
    piInit_count_min = 6
    piInit_count_max = 8
 
-   piMonster_count_max = 13
+   piMonster_count_max = 20
 
    ptYeti_gen = $
    ptManaDoor_Timer = $

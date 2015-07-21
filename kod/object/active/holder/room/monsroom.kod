@@ -101,7 +101,7 @@ messages:
       % GetSpawnRate =  1
       % iWaitTime = (20000 * (300 / 100));
       % iWaitTime = 200
-      iWaitTime = (piGen_Time * Send(Send(SYS,@GetSettings),@GetSpawnRate)) / 200;
+      iWaitTime = (piGen_Time * Send(Send(SYS,@GetSettings),@GetSpawnRate)) / 100;
 
       % Reduce spawn time for up to 5 people.
       iNumberOfPlayers = Send(self,@CountHoldingHowMany,#class=&Player);

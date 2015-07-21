@@ -44,13 +44,13 @@ properties:
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
-   piGen_time = 90000
+   piGen_time = 35000
    piGen_percent = 70
 
    piInit_count_min = 5
    piInit_count_max = 9
 
-   piMonster_count_max = 12
+   piMonster_count_max = 15
 
 messages:
 

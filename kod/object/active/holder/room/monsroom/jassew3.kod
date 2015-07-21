@@ -44,7 +44,7 @@ properties:
 
    prMusic = jassew3_music
 
-   piGen_time = 35000
+   piGen_time = 30000
    piGen_percent = 80
 
    piInit_count_min = 5

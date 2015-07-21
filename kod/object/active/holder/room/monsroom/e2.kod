@@ -50,7 +50,7 @@ properties:
 
    pbSnowGroundTexture = TRUE
 
-   piGen_time = 45000
+   piGen_time = 20000
    piGen_percent = 70
 
    piInit_count_min = 2

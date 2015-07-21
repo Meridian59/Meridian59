@@ -45,7 +45,7 @@ properties:
 
    prMusic = barsew2_music
 
-   piGen_time = 70000
+   piGen_time = 30000
    piGen_percent = 80
 
    piInit_count_min = 4

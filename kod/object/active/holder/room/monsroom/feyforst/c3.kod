@@ -36,7 +36,7 @@ properties:
    prMusic = OutdoorsC3_music
    piRoom_num = RID_C3
   
-   piGen_time = 150000  
+   piGen_time = 25000
 
 messages:
 

@@ -191,6 +191,12 @@ resources:
    user_group_stats = "Stats"
    user_group_spells = "Spells"
    user_group_skills = "Skills"
+   user_group_quests = "Quests"
+
+   user_active_quests_header = "Active Quests: "
+   user_no_active_quests_header = "No Active Quests"
+   user_completed_quests_header = "Completed Quests: "
+   user_no_completed_quests_header = "No Completed Quests"
 
    user_got_offer = "You have a trade offer from %s%s."
    user_cant_offer = "You can't offer to %s%s."
@@ -497,6 +503,7 @@ properties:
    psURL = $
 
    plQuestHistory = $
+   plActiveQuests = $
 
    piLogoffPenaltyCount = 0
 
@@ -2654,8 +2661,6 @@ messages:
       {
          Send(what,@SendInventoryAnimation);
          Send(what,@SendInventoryOverlays);
-         Post(self,@DrawCapacity);
-         Post(self,@DrawBulk);
       }
 
       if show_type = SHOW_NORMAL
@@ -3031,9 +3036,9 @@ messages:
 
    ToCliStats(group = $)
    {
-      local i,oSpell,oSkill,iCount,lCurrentResistances;
+      local i, oSpell, oSkill, iCount, lCurrentResistances, iQLength;
 
-      if not pbLogged_on
+      if NOT pbLogged_on
       {
          return;
       }
@@ -3044,9 +3049,9 @@ messages:
          Send(self,@SendStatHealth);
          Send(self,@SendStatMana);
          Send(self,@SendStatVigor);
-		 Send(self,@SendStatHPChance);
+         Send(self,@SendStatHPChance);
          SendPacket(poSession);
-         
+
          return;
       }
 
@@ -3112,20 +3117,172 @@ messages:
          return;
       }
 
+      if group = 5
+      {
+         % Used for determining index in displayed quests.
+         iCount = 1;
+         % Need to know how many completed quests in quest history.
+         iQLength = Send(self,@GetCompletedQuestLength);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,Length(plActiveQuests) + iQLength + 2);
+
+         % Send active quests.
+         if plActiveQuests <> $
+         {
+            % Send the "Active Quests" header.
+            AddPacket(1,0, 4,user_active_quests_header,
+                      1,STAT_LIST, 4,0, 4,0, 4,0);
+            % Followed by all the active quests.
+            iCount = Send(self,@SendActiveQuestData,#iCount=iCount);
+         }
+         else
+         {
+            % Send the "No Active Quests" header.
+            AddPacket(1,0, 4,user_no_active_quests_header,
+                      1,STAT_LIST, 4,0, 4,0, 4,0);
+         }
+
+         % Increment count past any active quests.
+         iCount = iCount + 1;
+         % Send completed quests.
+         if plQuestHistory <> $
+         {
+            % Send the "Completed Quests" header.
+            AddPacket(1,iCount, 4,user_completed_quests_header,
+                      1,STAT_LIST, 4,0, 4,0, 4,0);
+            % Followed by completed quests.
+            Send(self,@SendCompletedQuestData,#iCount=iCount);
+         }
+         else
+         {
+            % Send the "No Completed Quests" header.
+            AddPacket(1,iCount, 4,user_no_completed_quests_header,
+                      1,STAT_LIST, 4,0, 4,0, 4,0);
+         }
+
+         SendPacket(poSession);
+
+         return;
+      }
+
       Debug("Invalid stat group number",group,"sent by client");
 
       return;
    }
 
+   GetCompletedQuestLength()
+   {
+      local i, iCount, iQTemplate, oQObj, oQE;
+
+      iCount = 0;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      for i in plQuestHistory
+      {
+         if First(i) & QUEST_HISTORY_SUCCESS
+         {
+            iQTemplate = (First(i) & QUEST_HISTORY_MASK);
+            oQObj = Send(oQE,@GetQuestTemplateObject,#index=iQTemplate);
+
+            if oQObj = $
+            {
+               continue;
+            }
+
+            if Send(oQObj,@ShowCompletedQuest,#who=self,#lHistory=i)
+            {
+               iCount = iCount + 1;
+            }
+         }
+      }
+
+      return iCount;
+   }
+
+   SendActiveQuestData(iCount=1)
+   "Returns the current index count."
+   {
+      local i, iQTemplate, oQE, oQObj, rQuestName;
+
+      oQE = Send(SYS,@GetQuestEngine);
+
+      for i in plActiveQuests
+      {
+         iQTemplate = First(i);
+         oQObj = Send(oQE,@GetQuestTemplateObject,#index=iQTemplate);
+
+         if oQObj = $
+         {
+            Debug("User ",Send(self,@GetTrueName),"couldn't get quest object for ",
+                  "quest template ",iQTemplate," quest is active.");
+
+            continue;
+         }
+
+         rQuestName = Send(oQObj,@GetName);
+
+         % List index, quest name, statistic type, quest object, value (%), icon.
+         AddPacket(1,iCount, 4,rQuestName, 1,STAT_LIST,
+                   4,oQObj, 4,iQTemplate, 4,Send(oQObj,@GetIcon));
+         iCount = iCount + 1;
+      }
+
+      % Need to return the current count.
+      return iCount;
+   }
+
+   SendCompletedQuestData(iCount=1)
+   "Returns the current index count."
+   {
+      local i, iQTemplate, oQE, oQObj, rQuestName;
+
+      oQE = Send(SYS,@GetQuestEngine);
+
+      for i in plQuestHistory
+      {
+         % Only send successfully completed quests for now.
+         if NOT (First(i) & QUEST_HISTORY_SUCCESS)
+         {
+            continue;
+         }
+
+         iQTemplate = (First(i) & QUEST_HISTORY_MASK);
+         oQObj = Send(oQE,@GetQuestTemplateObject,#index=iQTemplate);
+
+         if oQObj = $
+         {
+            Debug("User ",Send(self,@GetTrueName),"couldn't get quest object for ",
+                  "quest template ",iQTemplate," quest is completed.");
+
+            continue;
+         }
+
+         if NOT Send(oQObj,@ShowCompletedQuest,#who=self,#lHistory=i)
+         {
+            continue;
+         }
+
+         rQuestName = Send(oQObj,@GetName);
+
+         % List index, quest name, statistic type, quest object, value (%), icon.
+         AddPacket(1,iCount, 4,rQuestName, 1,STAT_LIST,
+                   4,oQObj, 4,iQTemplate, 4,Send(oQObj,@GetIcon));
+         iCount = iCount + 1;
+      }
+
+      % Don't currently use the returned count, but we might one day.
+      return iCount;
+   }
+
    ToCliStatGroups()
    {
       AddPacket(1,BP_STAT_GROUPS);
-      % 4 stat groups
-      AddPacket(1,4); 
+      % 5 stat groups
+      AddPacket(1,5);
       AddPacket(4,user_group_condition);
       AddPacket(4,user_group_stats);
       AddPacket(4,user_group_spells);
       AddPacket(4,user_group_skills);
+      AddPacket(4,user_group_quests);
       SendPacket(poSession);
 
       return;
@@ -5280,6 +5437,7 @@ messages:
          AddPacket(1, byInscription);
 
          Send(what,@ShowDesc,#bShowAll = bShow_All,#who=self);
+
          if (byInscription)
          {
             Send(what,@ShowInscription);
@@ -7738,6 +7896,8 @@ messages:
          {
             % if in inventory
             Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
+            Post(self,@DrawCapacity);
+            Post(self,@DrawBulk);
          }
          else
          {
@@ -9343,6 +9503,127 @@ messages:
       return TRUE;
    }
 
+   AddCurrentQuest(node = $, template = $)
+   "Adds a quest to the user's plActiveQuests list.  Each element in "
+   "this list is a quest template ID followed by the current active "
+   "quest node.  Quests are removed from this list by AddQuestHistory "
+   "when the quest finishes."
+   {
+      local i;
+
+      % Only add the quest if we have a valid quest template and quest node.
+      if node = $
+         OR template = $
+      {
+         return;
+      }
+
+      % See if we need to change the quest node.
+      % QuestEngine prevents duplicate quests.
+      for i in plActiveQuests
+      {
+         if First(i) = template
+         {
+            SetNth(i,2,node);
+
+            return;
+         }
+      }
+
+      % Add to the end, so quests are displayed in the order given.
+      plActiveQuests = AppendListElem([template,node],plActiveQuests);
+
+      % Update the user's quest log.
+      Send(self,@ToCliStats,#group=5);
+
+      return;
+   }
+
+   RemoveCurrentQuest(index=$)
+   "Deletes a quest from the user's plActiveQuests."
+   {
+      local i;
+
+      if index = $
+      {
+         return;
+      }
+
+      for i in plActiveQuests
+      {
+         if First(i) = index
+         {
+            plActiveQuests = DelListElem(plActiveQuests,i);
+         }
+      }
+
+      % Post this, so plQuestHistory can update first.
+      Post(self,@ToCliStats,#group=5);
+
+      return;
+   }
+
+   GetActiveQuestNode(index=$)
+   "Uses the quest template index to get the quest node the "
+   "user is currently on."
+   {
+      local i;
+
+      if index = QST_ID_NONE
+      {
+         return $;
+      }
+
+      % Try active quests first.
+      for i in plActiveQuests
+      {
+         if First(i) = index
+         {
+            return Nth(i,2);
+         }
+      }
+
+      % Check completed list.
+      for i in plQuestHistory
+      {
+         if (First(i) & QUEST_HISTORY_MASK) = index
+            AND (First(i) & QUEST_HISTORY_SUCCESS)
+         {
+            return $;
+         }
+      }
+
+      return $;
+   }
+
+   ResignFaction()
+   "Cancel any active loyalty or faction quests."
+   {
+      local i, iQID;
+
+      if plActiveQuests = $
+      {
+         propagate;
+      }
+
+      for i in plActiveQuests
+      {
+         iQID = First(i);
+         if iQID = QST_ID_PRINCESS_SERVICE
+            OR iQID = QST_ID_DUKE_SERVICE
+            OR iQID = QST_ID_REBEL_SERVICE
+            OR iQID = QST_ID_PRINCESS_SOLDIER
+            OR iQID = QST_ID_DUKE_SOLDIER
+            OR iQID = QST_ID_REBEL_SOLDIER
+         {
+            % Post this, because it will edit the plActiveQuests list.
+            Post(Nth(i,2),@DeadlineExpired);
+         }
+      }
+
+      propagate;
+   }
+
    % plQuestHistory is list of lists of the format
    %  [ compound, last_success_time, last_failure_time ]
    % compound is:
@@ -9393,23 +9674,25 @@ messages:
    "successtime, failtime.  "
    "Returns TRUE on success, FALSE if illegal parameters provided."
    {
-      local lQH, i, iLength, iTime;
-      
-      if index = $ 
+      local lQH, iLength, iTime, templQH;
+
+      if index = $
       {
          return FALSE;
       }
-      
+
       if (index & ~QUEST_HISTORY_MASK) <> 0
       {
          return FALSE;
       }
-      
+
       if success = $
       {
          return FALSE;
       }
-      
+
+      Send(self,@RemoveCurrentQuest,#index=index);
+
       iTime = Send( self, @GetTimeLoggedIn );
       for lQH in plQuestHistory
       {
@@ -9419,16 +9702,18 @@ messages:
             {
                SetNth(lQH,1,(First(lQH)|QUEST_HISTORY_SUCCESS));
                SetNth(lQH,2,iTime);
-               
-               return TRUE;
             }
             else
             {
                SetNth(lQH,1,(First(lQH)|QUEST_HISTORY_FAILURE));
                SetNth(lQH,3,iTime);
-               
-               return TRUE;
             }
+            % Move quest to front of list.
+            templQH = lQH;
+            plQuestHistory = DelListElem(plQuestHistory, lQH);
+            plQuestHistory = Cons(lQH, plQuestHistory);
+
+            return TRUE;
          }
       }
 
@@ -9441,11 +9726,11 @@ messages:
       {
          lQH = [(index | QUEST_HISTORY_FAILURE), 0, iTime];
       }
-      
-      plQuestHistory = cons(lQH, plQuestHistory);
-      
+
+      plQuestHistory = Cons(lQH, plQuestHistory);
+
       return TRUE;
-   }   
+   }
 
    ClearQuestHistory(index=$, allBelow=FALSE, allAbove=FALSE)
    "Admin supported."
@@ -9454,12 +9739,19 @@ messages:
    "Called with no args at suicide."
    {
       local oQuestEngine, step;
-      if (index = $) or (allBelow and allAbove)
+
+      if index = $
+         OR (allBelow AND allAbove)
       {
          plQuestHistory = $;
+         if pbLogged_on
+         {
+            Send(self,@ToCliStats,#group=5);
+         }
+
          return;
       }
-      
+
       oQuestEngine = Send(SYS,@GetQuestEngine);
       step = 0;
       
@@ -9502,6 +9794,11 @@ messages:
          {
             plQuestHistory = DelListElem(plQuestHistory, lQH);
             
+            if pbLogged_on
+            {
+               Send(self,@ToCliStats,#group=5);
+            }
+
             return TRUE;
          }
       }

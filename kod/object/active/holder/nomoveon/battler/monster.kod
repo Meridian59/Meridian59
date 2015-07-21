@@ -450,7 +450,7 @@ properties:
 
 messages:
 
-   Constructor(color=0, piSurvivalLevel=0)
+   Constructor(template=FALSE, color=0, piSurvivalLevel=0)
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
       local iStatPoints, iMin, iMax;
@@ -480,7 +480,10 @@ messages:
       }
 
       if viOccupation <> 0
+         AND NOT template
       {
+         % template set to TRUE means this monster is in the System
+         % monster template list, so we shouldn't add it.
          Send(Send(SYS,@GetLibrary),@AddToOccupationList,#who=self);
       }
 
@@ -3126,16 +3129,14 @@ messages:
       }
 
       % Quest engine hook: if there are active quest nodes, notify them   -AJM
-      % Keep going however so we can get any necessary response from
-      % the speech library.
-      if( plActiveQuestNodes <> $ )
+      if plActiveQuestNodes <> $
       {
          for oQuestNode in plActiveQuestNodes
          {
             if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
                     #message=string)
             {
-               break;
+               return;
             }
          }
       }
@@ -3944,27 +3945,35 @@ messages:
       for i in lItems
       {
          for j in Send(oSafeBox,@GetHolderPassive)
-         {  
-            if i = j 
-            { 
-               bFound = TRUE;
-            } 
-
-            if isClass(i,&NumberItem) AND GetClass(i) = GetClass(j)
+         {
+            if i = j
             {
-               iCount = iCount + 1; 
-               if nth(number_list,iCount) > Send(j,@GetNumber)
+               bFound = TRUE;
+            }
+
+            if IsClass(i,&NumberItem)
+               AND GetClass(i) = GetClass(j)
+            {
+               % Check if we have a valid number list. Check is done here
+               % as we don't need a number list for non-number items.
+               if number_list = $
+               {
+                  return;
+               }
+
+               iCount = iCount + 1;
+               if Nth(number_list,iCount) > Send(j,@GetNumber)
                {
                   Send(self,@SayToOne,#target=what,
-                       #message_rsc=vaultman_not_enough,
-                       #parm1=Send(i,@GetName));
+                        #message_rsc=vaultman_not_enough,
+                        #parm1=Send(i,@GetName));
 
                   return;
                }
 
                bFound = TRUE;
             }
-         }         
+         }
 
          if NOT bFound
          {
@@ -4563,6 +4572,11 @@ messages:
    GainHealthNormal(amount = $, precision = FALSE)
    "for when holy touch is cast on a good monster"
    {
+      if amount = $
+      {
+         return;
+      }
+
       if NOT precision
       {
          amount = amount * 100;

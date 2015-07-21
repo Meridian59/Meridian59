@@ -84,7 +84,7 @@ void StatsMainReceive(list_type stats)
       SendMessage(cinfo->hToolTips, TTM_ADDTOOL, 0, (LPARAM) &ti);
       count++;
    }
-
+   StatsMainRedraw();
    StatsMainMove();
 }
 /************************************************************************/

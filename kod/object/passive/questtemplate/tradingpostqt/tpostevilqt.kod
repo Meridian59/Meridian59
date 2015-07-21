@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TradingPostEvilQuest is TradingPostQuestTemplate
+% Quest template QST_ID_TRADING_POST_EVIL = 20
+% Quest nodes 35, 37.
+% QNT_ID_TRADINGPOST_KICKOFF, QNT_ID_TRADINGPOST_EVIL
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_TRADING_POST_EVIL
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_KARMA_EVIL
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_TRADINGPOST_KICKOFF, QNT_ID_TRADINGPOST_EVIL];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #37 is trading post quest (evil)
+      % QNT_ID_TRADINGPOST_EVIL
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &StoutGoblet, 100 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &NeruditeOreChunk, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &WineGoblet, 70 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &SpiderEgg, 1 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &SwordShardC, 1 ] ],
+               #quest_node_index=QNT_ID_TRADINGPOST_EVIL)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_TRADINGPOST_EVIL,
+               #new_mod=QN_NPCMOD_SAME);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_TRADINGPOST_EVIL,
+               #new_hint=tradingpost_assign_2);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_TRADINGPOST_EVIL,
+               #new_hint=tradingpost_success_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_TRADINGPOST_EVIL,
+               #new_hint=tradingpost_failure_2);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_TRADINGPOST_EVIL,
+               #new_limit=10800);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_TRADINGPOST_EVIL");
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

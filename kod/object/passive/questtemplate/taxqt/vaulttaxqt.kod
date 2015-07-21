@@ -1,0 +1,198 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+VaultTaxQuest is TaxQuestTemplate
+% Quest template QST_ID_VAULT_TAX = 51.
+% Quest nodes 159, 160.
+% QNT_ID_VAULT_TAX_ONE, QNT_ID_VAULT_TAX_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   vaulttaxqt_name_rsc = "vault tax quest"
+   vaulttaxqt_desc_rsc = \
+      "Courier some shillings for an NPC."
+
+   vaulttaxqt_completed_rsc = \
+      "You have completed the vault tax quest."
+
+   % Quest resources.
+   vaulttax_assign_2 = \
+      "Yes, I have need of a courier.  %NPC is due a certain percentage of "
+      "profits from my business.  Please take this tithe of %INDEF_CARGO%CARGO "
+      "to %HIMHER_NPC quickly.  I am too busy to do it myself.  Be warned "
+      "that any thievery will be reported and you will be labeled an outlaw.  "
+      "Perhaps worse, I hear that %NPC now keeps company with a wizard.  I "
+      "have arranged for %NPC to pay you for your troubles."
+
+   vaulttax_success_2 = \
+      "Ah, I see %SOURCE_NPC is on time this week.  Thank you for your "
+      "swiftness and honor.  %SOURCE_NPC could use you around more often."
+   vaulttax_failure_2 = \
+      "Subject: Thief!\n"
+      "Your thievery of %CARGO has made you an outlaw by decree of %NPC."
+
+classvars:
+
+   vrName = vaulttaxqt_name_rsc
+   vrDesc = vaulttaxqt_desc_rsc
+
+   vrCompleted = vaulttaxqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_VAULT_TAX
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_VAULT_TAX_ONE, QNT_ID_VAULT_TAX_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_VAULT_TAX_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #159 is vault tax quest
+      % QNT_ID_VAULT_TAX_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #quest_node_index=QNT_ID_VAULT_TAX_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueVaultman)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBanker)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosBanker)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_VAULT_TAX_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_VAULT_TAX_ONE");
+      }
+
+      % Template #160 is vault tax quest
+      % QNT_ID_VAULT_TAX_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMCLASS,
+            #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Money, 1302 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1133 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1576 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1230 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1614 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1735 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1431 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1638 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 1037 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &Money, 2209 ] ],
+            #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &InkyCap, 7 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &EntrootBerry, 20 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &OrcTooth, 20 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &DetectInvisibilityPotion, 1 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &DetectGoodPotion, 1 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &DetectEvilPotion, 1 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &IllusionaryFormPotion, 1 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 30 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 30 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &NodeBurstPotion, 1 ] ] ],
+            #penaltylist=[ [ QN_PRIZETYPE_OUTLAW ] ],
+            #timelimit=2 * 3600,#quest_node_index=QNT_ID_VAULT_TAX_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_VAULT_TAX_TWO,
+               #new_NPC_list=lNPCs);
+
+         % Happy land subs.
+         if NOT Send(SYS,@IsPKAllowed)
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_VAULT_TAX_TWO,
+                  #new_hint=vaulttax_assign_2_h);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_VAULT_TAX_TWO,
+                  #new_hint=vaulttax_failure_2_h);
+         }
+         else
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_VAULT_TAX_TWO,
+                  #new_hint=vaulttax_assign_2);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_VAULT_TAX_TWO,
+                  #new_hint=vaulttax_failure_2);
+         }
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_VAULT_TAX_TWO,
+               #new_hint=vaulttax_success_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_VAULT_TAX_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

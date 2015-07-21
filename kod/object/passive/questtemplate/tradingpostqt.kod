@@ -1,0 +1,159 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TradingPostQuestTemplate is QuestTemplate
+% Parent for the good and evil trading post quests.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   tradingpostquest_icon_rsc = openches.bgf
+   tradingpostquest_name_rsc = "trading post inventory quest"
+   tradingpostquest_desc_rsc = \
+      "Wulfgang zax'Ak has asked you to obtain some items for him so that "
+      "he may replenish his inventory.  He is willing to make it worth "
+      "your trip."
+
+   tradingpostquest_deliver_rsc = \
+      "Wulfgang zax'Ak has asked you to obtain %s%s for him so that "
+      "he may replenish his inventory.  He is willing to make it worth "
+      "your trip."
+
+   tradingpostquest_deliver_number_rsc = \
+      "Wulfgang zax'Ak has asked you to obtain %i %s for him so that "
+      "he may replenish his inventory.  He is willing to make it worth "
+      "your trip."
+
+   tradingpostquest_completed_rsc = \
+      "You have helped Wulfgang zax'Ak replenish his supplies, and in return "
+      "have obtained a Riija sword shard."
+
+   % Quest resources.
+   tradingpost_trigger_1 = "inventory"
+   tradingpost_assign_2 = \
+      "I'm always looking for people to help replenish my inventory.  "
+      "If you'd be willing to bring me %INDEF_CARGO%CARGO, I can make "
+      "it well worth your trip."
+   tradingpost_success_2 = "Splendid.  Here, I don't need this."
+   tradingpost_failure_2 = \
+      "Subject: Shipment of %CARGO\n"
+      "Never mind, I've found another supplier."
+
+classvars:
+
+   vrIcon = tradingpostquest_icon_rsc
+   vrName = tradingpostquest_name_rsc
+   vrDesc = tradingpostquest_desc_rsc
+
+   vrDeliver = tradingpostquest_deliver_rsc
+   vrDeliverNumber = tradingpostquest_deliver_number_rsc
+
+   vrCompleted = tradingpostquest_completed_rsc
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 10
+   piTimeLimit = 3600 % 1 hour.
+
+messages:
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #35 is trading post quest kickoff
+      % QNT_ID_TRADINGPOST_KICKOFF
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[tradingpost_trigger_1],#bDuplicate=TRUE,
+               #quest_node_index=QNT_ID_TRADINGPOST_KICKOFF)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_TRADINGPOST_KICKOFF,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KocatanTradeMaster));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_TRADINGPOST_KICKOFF");
+      }
+
+      return;
+   }
+
+   MainDesc(index=$,oQuestNode=$)
+   {
+      local iNum, oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
+
+      if index = Nth(plQuestNodes,2)
+      {
+         oCargo = Send(oQuestNode,@GetCargo);
+         if oCargo = $
+         {
+            AddPacket(4,vrDesc);
+
+            return;
+         }
+
+
+         if IsClass(oCargo,&NumberItem)
+         {
+            iNum = Send(oCargo,@GetNumber);
+            AddPacket(4,vrDeliverNumber, 4,iNum, 4,Send(oCargo,@GetName));
+
+            return;
+         }
+         else
+         {
+            AddPacket(4,vrDeliver, 4,Send(oCargo,@GetIndef),
+                      4,Send(oCargo,@GetName));
+
+            return;
+         }
+      }
+
+      % If we got this far, just show the backup description.
+      AddPacket(4,vrDesc);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

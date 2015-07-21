@@ -1,0 +1,227 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LateTaxQuest is TaxQuestTemplate
+% Quest template QST_ID_LATE_TAX = 53.
+% Quest nodes 163, 164.
+% QNT_ID_LATE_TAX_ONE, QNT_ID_LATE_TAX_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   latetaxqt_name_rsc = "late tax quest"
+   latetaxqt_desc_rsc = \
+      "An NPC is late in paying their taxes; courier a letter from the Duke "
+      "to inform them of their tardiness."
+
+   latetaxqt_deliver_rsc = \
+      "%s%s is late in paying %s taxes; courier a letter from the Duke "
+      "to inform %s%s of %s tardiness."
+
+   latetaxqt_completed_rsc = \
+      "You have completed the late tax quest."
+
+   % Quest resources.
+   latetax_assign_2 = \
+      "A matter of urgency has been brought to my attention.  Certain "
+      "property and business owners in the community have been remiss in "
+      "their financial obligations to me.  Will you please take this letter "
+      "to %NPC immediately.  Be warned that this letter is the property of "
+      "the realm and failure to deliver it in a timely fashion will brand you "
+      "an outlaw.  Here is something for your troubles.  Now make haste."
+   latetax_assign_2_h = \
+      "A matter of urgency has been brought to my attention.  Certain "
+      "property and business owners in the community have been remiss in "
+      "their financial obligations to me.  Will you please take this letter "
+      "to %NPC immediately.  Be warned that this letter is the property of "
+      "the realm and failure to deliver it in a timely fashion will most "
+      "certainly result in much suffering for you.  Here is something for "
+      "your troubles.  Now make haste."
+   latetax_success_2 = \
+      "What's this?  You know, it is strange how strict %SOURCE_NPC has "
+      "become about collecting taxes.  I suspect there is more to this than "
+      "meets the eye.  I have my suspicions but they are of no concern to you."
+   latetax_failure_2 = \
+      "Subject: You are now an outlaw\n"
+      "You have been branded an outlaw for failure to deliver a government "
+      "issued letter to %NPC."
+   latetax_failure_2_h = \
+      "Subject: You will now suffer, thief\n"
+      "I have spoken to a wizard friend of mine, and he has ensured that you "
+      "will suffer for your dishonesty."
+
+classvars:
+
+   vrName = latetaxqt_name_rsc
+   vrDesc = latetaxqt_desc_rsc
+
+   vrNodeTwo = latetaxqt_deliver_rsc
+
+   vrCompleted = latetaxqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_LATE_TAX
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_LATE_TAX_ONE, QNT_ID_LATE_TAX_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_LATE_TAX_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #163 is late tax quest
+      % QNT_ID_LATE_TAX_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 800 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1000 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1200 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1400 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 20 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DetectGoodPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DetectEvilPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DetectInvisibilityPotion, 1 ] ] ],
+               #quest_node_index=QNT_ID_LATE_TAX_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_LATE_TAX_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_LATE_TAX_ONE");
+      }
+
+      % Template #164 is late tax quest
+      % QNT_ID_LATE_TAX_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_NONE,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &TaxLetter, 1 ] ],
+               #penaltylist=[ [ QN_PRIZETYPE_OUTLAW ] ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_LATE_TAX_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperMerchant)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CornothGrocer)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_LATE_TAX_TWO,
+               #new_NPC_list=lNPCs);
+
+         % Happy land subs.
+         if NOT Send(SYS,@IsPKAllowed)
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_LATE_TAX_TWO,
+                  #new_hint=latetax_assign_2_h);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_LATE_TAX_TWO,
+                  #new_hint=latetax_failure_2_h);
+         }
+         else
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_LATE_TAX_TWO,
+                  #new_hint=latetax_assign_2);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_LATE_TAX_TWO,
+                  #new_hint=latetax_failure_2);
+         }
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_LATE_TAX_TWO,
+               #new_hint=latetax_success_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_LATE_TAX_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_LATE_TAX_TWO
+      {
+         oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+         AddPacket(4,Send(oDestNPC,@GetCapDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHisHer), 4,Send(oDestNPC,@GetDef),
+                   4,Send(oDestNPC,@GetName), 4,Send(oDestNPC,@GetHisHer));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

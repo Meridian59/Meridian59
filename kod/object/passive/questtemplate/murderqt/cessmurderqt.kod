@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CessMurderQuestTemplate is MurderQuestTemplate
+% Parent class for Princess murder mystery quests.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   cessmurderqt_name_rsc = "Princess murder mystery quest"
+   cessmurderqt_desc_rsc = \
+      "The Princess would like you to question people regarding the "
+      "death of Duke Kalior."
+
+   cessmurderqt_completed_rsc = \
+      "You have completed a Princess murder mystery quest."
+
+   % Quest resources.
+   murder_princess_assign = \
+      "Like the rest of the people in my fair lands, I am curious to learn "
+      "who killed the former Duke.  Though he and I were often rivals, it "
+      "saddened me to see him pass so violently.  If you will, aid my search "
+      "by asking %NPC for any information about the murder, and please "
+      "report it back to me." 
+   murder_princess_success = \
+      "I don't know if we can trust these rumors.  I thank you for "
+      "your help;  the more we investigate, the closer we will come to "
+      "the truth.  Please take this as a token of appreciation."
+
+classvars:
+
+   vrName = cessmurderqt_name_rsc
+   vrDesc = cessmurderqt_desc_rsc
+
+   vrCompleted = cessmurderqt_completed_rsc
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_FACTION_PRINCESS
+
+messages:
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #182 is Princess's Murder Mystery quest kickoff, "murder"
+      % QNT_ID_CESS_MURDER_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ murder_trigger ],#bDuplicate=TRUE,
+               #quest_node_index=QNT_ID_CESS_MURDER_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_CESS_MURDER_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CESS_MURDER_ONE");
+      }
+
+      % Template #183 is Princess's Murder Mystery quest, "deliver" the trigger.
+      % QNT_ID_CESS_MURDER_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ murder_trigger ],#timelimit=6 * 3600,
+               #bDuplicate=TRUE,#quest_node_index=QNT_ID_CESS_MURDER_TWO)
+      {
+         lNPCs = $;
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBartender)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueVaultMan)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTailor)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&CorNothSergeant)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&JasperBlacksmith)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&MarionInnkeeper)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&TosInnkeeper)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BasicInnKeeper)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)),lNPCs);
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)),lNPCs);
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_CESS_MURDER_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_CESS_MURDER_TWO,
+               #new_hint=murder_princess_assign);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CESS_MURDER_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

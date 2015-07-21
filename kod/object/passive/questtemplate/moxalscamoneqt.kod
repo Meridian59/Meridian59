@@ -1,0 +1,283 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MoxalScamOneQuest is QuestTemplate
+% Quest template QST_ID_MOXAL_SCAM_1 = 37
+% Quest nodes 114, 115, 116, 117, 117, 118.
+% QNT_ID_MOXAL_SCAMONE_ONE, QNT_ID_MOXAL_SCAMONE_TWO, QNT_ID_MOXAL_SCAMONE_THREE,
+% QNT_ID_MOXAL_SCAMONE_FOUR, QNT_ID_MOXAL_SCAMONE_FIVE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   moxalscamonequest_name_rsc = "Moxal's get rich quick quest"
+   moxalscamonequest_desc_rsc = \
+      "Moxal ix'Hanak says he found the perfect \"opportunity\" for you both to "
+      "make some shillings. Do you trust him?"
+
+   moxalscamonequest_nodethree_rsc = \
+      "Moxal ix'Hanak has asked you to take a letter to %s%s.  He claims you "
+      "will both soon be rolling in cash!"
+
+   moxalscamonequest_nodefour_rsc = \
+      "%s%s says that to get rich, you need to pass the letter on to %s%s."
+
+   moxalscamonequest_completed_rsc = \
+      "You have completed Moxal ix'Hanak's get rich quick scheme.  You don't "
+      "feel very rich, but you do feel slightly wiser."
+
+   % Quest resources.
+   moxalscam1_assign_2 = \
+      "Ah, friend and fellow dreamer!  I think I have found the perfect "
+      "opportunity for us!  It can’t fail!  Surely you want to hear more "
+      "about this golden opportunity!"
+   moxalscam1_trigger_2 = "opportunity"
+   moxalscam1_assign_3 = \
+      "Simple!  Just take this letter to %NPC.  Before you know it, "
+      "the cash will start rolling in!"
+   moxalscam1_failure_3 = \
+      "Subject: My wayward partner!\n"
+      "I guess you're not serious about making money...  That's too bad.  "
+      "Come back when you really feel, deep in your heart, that it's "
+      "time to be rich!"
+   moxalscam1_assign_4 = \
+      "Hmmm...  According to this, we're supposed to pass the letter on "
+      "to someone else, then we both get rich.  Ok, why don't you take "
+      "it to %NPC."
+   moxalscam1_failure_4 = \
+      "Subject: Where's my money?!?!\n"
+      "You promised me shillings, and lots of them!  Where are they?  You "
+      "kept them for yourself, didn't you?  I won't forget your treachery...  "
+      "Watch your back, thief."
+   moxalscam1_success_5 = \
+      "Hmmm...  Apparently, this person thinks I’m a complete idiot.  "
+      "I’m somewhat surprised that YOU fell for it.  Ah well, since you "
+      "went to all this trouble, let me give you a little something.  Here."
+
+classvars:
+
+   vrName = moxalscamonequest_name_rsc
+   vrDesc = moxalscamonequest_desc_rsc
+
+   vrNodeTwo = moxalscamonequest_desc_rsc
+   vrNodeThree = moxalscamonequest_nodethree_rsc
+   vrNodeFour = moxalscamonequest_nodefour_rsc
+   vrNodeFive = moxalscamonequest_nodefour_rsc
+
+   vrCompleted = moxalscamonequest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_MOXAL_SCAM_1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   piMaxPlayers = 30
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_MOXAL_SCAMONE_ONE, QNT_ID_MOXAL_SCAMONE_TWO,
+                      QNT_ID_MOXAL_SCAMONE_THREE, QNT_ID_MOXAL_SCAMONE_FOUR,
+                      QNT_ID_MOXAL_SCAMONE_FIVE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_MOXAL_SCAMONE_TWO, vrNodeTwo],
+                          [QNT_ID_MOXAL_SCAMONE_THREE, vrNodeThree],
+                          [QNT_ID_MOXAL_SCAMONE_FOUR, vrNodeFour],
+                          [QNT_ID_MOXAL_SCAMONE_FIVE, vrNodeFive] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #114 is Moxal scam quest #1
+      % QNT_ID_MOXAL_SCAMONE_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_MOXAL_SCAMONE_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMONE_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMONE_ONE");
+      }
+
+      % Template #115 is Moxal scam quest #1
+      % QNT_ID_MOXAL_SCAMONE_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_SAME,#cargolist=[moxalscam1_trigger_2],
+               #timelimit=2 * 60,#quest_node_index=QNT_ID_MOXAL_SCAMONE_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMONE_TWO,
+               #new_hint=moxalscam1_assign_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMONE_TWO");
+      }
+
+      % Template #116 is Moxal scam quest #1
+      % QNT_ID_MOXAL_SCAMONE_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &ScamScroll, 1 ] ],
+               #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMONE_THREE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
+         {
+            if NOT IsClass(oNPC,&KocatanBonePriestess)
+               AND NOT IsClass(oNPC,&KocatanSentry)
+               AND NOT IsClass(oNPC,&KocatanInnkeeper)
+            {
+               lNPCs = Cons(oNPC, lNPCs);
+            }
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMONE_THREE,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMONE_THREE,
+               #new_hint=moxalscam1_assign_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MOXAL_SCAMONE_THREE,
+               #new_hint=moxalscam1_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMONE_THREE");
+      }
+
+      % Template #117 is Moxal scam quest #1
+      % QNT_ID_MOXAL_SCAMONE_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &ScamScroll, 1 ] ],
+               #timelimit=3 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMONE_FOUR)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMONE_FOUR,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMONE_FOUR,
+               #new_hint=moxalscam1_assign_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MOXAL_SCAMONE_FOUR,
+               #new_hint=moxalscam1_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMONE_FOUR");
+      }
+
+      % Template #118 is Moxal scam quest #1
+      % QNT_ID_MOXAL_SCAMONE_FIVE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &ScamScroll, 1 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Mace, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &BlindWand, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &ShortSword, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &ShortSword, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &ShortSword, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Key, 1 ] ],
+                              [ QN_PRIZETYPE_TRAINING_POINTS, 100 ] ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMONE_FIVE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMONE_FIVE,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMONE_FIVE,
+               #new_hint=moxalscam1_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_MOXAL_SCAMONE_FIVE,
+               #new_hint=moxalscam1_success_5);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MOXAL_SCAMONE_FIVE,
+               #new_hint=moxalscam1_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMONE_FIVE");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_MOXAL_SCAMONE_THREE
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = QNT_ID_MOXAL_SCAMONE_FOUR
+         OR index = QNT_ID_MOXAL_SCAMONE_FIVE
+      {
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

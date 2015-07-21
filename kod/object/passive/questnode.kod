@@ -16,14 +16,30 @@ constants:
    include protocol.khd
    
 % Field names for a QuestTemplate
-%   QT_NUM_PLAYERS       = 1
-%   QT_QUEST_TYPE        = 2
-%   QT_PLAYER_RESTRICT   = 3
-%   QT_QUEST_NODES       = 4
-%   QT_MAX_NUM_ACTIVE    = 5
-%   QT_ACTIVE_QUESTS     = 6
-%   QT_SCHEDULE_CHANCE   = 7
-%   QT_PLAYER_RESTRICT2  = 8
+%   QT_QST_ID            = 1
+%   QT_QUEST_OBJECT      = 2
+%   QT_NUM_PLAYERS       = 3
+%   QT_QUEST_TYPE        = 4
+%   QT_PLAYER_RESTRICT   = 5
+%   QT_QUEST_NODES       = 6
+%   QT_MAX_NUM_ACTIVE    = 7
+%   QT_ACTIVE_QUESTS     = 8
+%   QT_SCHEDULE_CHANCE   = 9
+%   QT_PLAYER_RESTRICT2  = 10
+
+% Field names for a QuestNodeTemplate
+%   QNT_QNT_ID        = 1
+%   QNT_NPC_LIST      = 2
+%   QNT_NPC_MODIFIER  = 3
+%   QNT_TYPE          = 4
+%   QNT_CARGO_LIST    = 5
+%   QNT_MONSTER_LIST  = 6
+%   QNT_PRIZE_LIST    = 7
+%   QNT_PENALTY_LIST  = 8
+%   QNT_ASSIGN_HINT   = 9
+%   QNT_SUCCESS_HINT  = 10
+%   QNT_FAILURE_HINT  = 11
+%   QNT_TIME_LIMIT    = 12
 
 resources:
 
@@ -617,6 +633,13 @@ messages:
       piDeadline = GetTime() + Send(oQuestEngine,@GetQuestNodeTimeLimit,
                                     #index=piQuestNodeTemplateIndex );
 
+      % Give the player(s) the quest and questnode to keep track of.
+      for oQuester in Send(poQuest,@GetQuesters)
+      {
+         Send(oQuester,@AddCurrentQuest,#node=self,
+               #template=Send(poQuest,@GetQuestTemplateIndex));
+      }
+
       return TRUE;
    }
 
@@ -887,7 +910,7 @@ messages:
          Send(self,@DeadlineExpired);
 
          return;
-      }   
+      }
 
       piStatus = QN_STATUS_COMPLETED;
       if NOT Send(poQuest,@QuestHasMoreNodes)
@@ -897,7 +920,7 @@ messages:
             Send(oQuester,@AddQuestHistory,
                  #index=Send(poQuest,@GetQuestTemplateIndex),
                  #success=TRUE);
-         }      
+         }
       }
 
       Post(poQuest,@AssignNextNode,#current_NPC=poDestNPC);
@@ -1141,7 +1164,7 @@ messages:
    {
       local i, iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iDays,
             oBoon, iBoonNum, iPrizeBoon, iPrizeFaction, oQuestEngine, oQuester,
-            oLich;
+            oLich, oNewLich, oQuestTemplate;
 
       if prize = $
       {
@@ -1258,6 +1281,33 @@ messages:
             {
                Send(oQuester,@GainKarma,#amount=iAmount);
             }
+         }
+
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_TRAINING_POINTS
+      {
+         % Format for a prize entry of this type:
+         % [ QN_PRIZETYPE_TRAINING_POINTS, amount ]
+
+         for oQuester in recipients
+         {
+            Post(oQuester,@AddTrainingPoints,#points=Nth(prize,2));
+         }
+
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_EXPERIENCE_POINTS
+      {
+         % Format for a prize entry of this type:
+         % [ QN_PRIZETYPE_EXPERIENCE_POINTS, amount ]
+
+         for oQuester in recipients
+         {
+            Send(oQuester,@AddGainChance,#iAmount=Nth(prize,2));
+            Post(oQuester,@RollForTougher,#iLevel=Send(oQuester,@GetBaseMaxHealth));
          }
 
          return;
@@ -1469,7 +1519,37 @@ messages:
 
          return;
       }
-   
+
+      % The QuestTemplate will pick a response to give on success based on
+      % the questnode index and the NPC class. QuestTemplate handles this
+      % rather than the NPCs to keep the responses in one location.
+      if iPrizeType = QN_PRIZETYPE_NPC_RESPONSE
+      {
+         % Format for a prize entry of this type:
+         %     [ QN_PRIZETYPE_NPC_RESPONSE ]
+
+         if poDestNPC = $
+         {
+            Debug("QN_PRIZETYPE_NPC_RESPONSE: no destination NPC!");
+
+            return;
+         }
+
+         oQuestTemplate = Send(oQuestEngine,@GetQuestTemplateObject,
+                              #index=Send(poQuest,@GetQuestTemplateIndex));
+         if oQuestTemplate = $
+         {
+            Debug("QN_PRIZETYPE_NPC_RESPONSE: couldn't find QuestTemplate!");
+
+            return;
+         }
+
+         Send(oQuestTemplate,@SendQuestResponse,#recipients=recipients,
+               #index=piQuestNodeTemplateIndex,#oNPC=poDestNPC);
+
+         return;
+      }
+
       if iPrizeType = QN_PRIZETYPE_ESTABLISH_NECROGUILD
       {
          % format for a prize entry of this type:
@@ -1479,6 +1559,17 @@ messages:
                         @FindHoldingActive,#class=&DeadLich);
          if oLich <> $
          {
+            % Swap destination NPC to the actual Lich. This changes the
+            % origin of the success message, since the raised Lich should
+            % be saying it.
+            oNewLich = Send(oLich,@GetLich);
+            if oNewLich <> $
+            {
+               Send(poDestNPC,@RemoveQuestNodeFromActiveList,#node=self);
+               poDestNPC = oNewLich;
+               Send(poDestNPC,@AddQuestNodeToActiveList,#node=self);
+            }
+
             Send(oLich,@EstablishNecromancerGuild,#master=First(recipients));
          }
          else
@@ -1501,7 +1592,7 @@ messages:
                               QN_PRIZE_BOON_STAMINA,
                               QN_PRIZE_BOON_AGILITY,
                               QN_PRIZE_BOON_MYSTICISM,
-                              QN_PRIZE_BOON_STRENGTH ],random(1,6));
+                              QN_PRIZE_BOON_STRENGTH ],Random(1,6));
             iAmount = -3;
             iDays = 2;
             Send(self,@AwardPrizeOrPenalty,#recipients=recipients,
@@ -1514,6 +1605,16 @@ messages:
       Debug("AwardPrizesOrPenalties got unknown prize type",iPrizeType);
 
       return;
+   }
+
+   GetCargo()
+   {
+      return pCargo;
+   }
+
+   GetQuestMonster()
+   {
+      return poMonster;
    }
 
    GetDestNPC()

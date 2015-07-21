@@ -26,9 +26,11 @@
 #define STATS_MAIN 1
 
 //	ajw added constants to refer to other stats "groups". Equate with value returned from StatsGetCurrentGroup().
-#define	STATS_SPELLS		3
-#define	STATS_SKILLS		4
-#define	STATS_INVENTORY		5
+#define	STATS_SPELLS    3
+#define	STATS_SKILLS    4
+#define	STATS_QUESTS    5
+#define	STATS_INVENTORY 6
+
 
 /* game statistics */
 typedef struct {

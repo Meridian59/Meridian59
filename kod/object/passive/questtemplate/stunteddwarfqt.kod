@@ -1,0 +1,377 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StuntedDwarfQuest is QuestTemplate
+% Quest template QST_ID_STUNTED_DWARF = 24
+% Quest nodes 52, 53, 54, 55, 56, 57, 58.
+% QNT_ID_STUNTED_DWARF_ONE, QNT_ID_STUNTED_DWARF_TWO, QNT_ID_STUNTED_DWARF_THREE,
+% QNT_ID_STUNTED_DWARF_FOUR, QNT_ID_STUNTED_DWARF_FIVE, QNT_ID_STUNTED_DWARF_SIX,
+% QNT_ID_STUNTED_DWARF_SEVEN
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   stunteddwarfquest_icon_rsc = mug.bgf
+   stunteddwarfquest_name_rsc = "stunted dwarf quest"
+   stunteddwarfquest_desc_rsc = \
+      "You overheard the bartender mention something about a stunted dwarf.  "
+      "See if you can find out more about this."
+
+   stunteddwarfquest_nodetwo_rsc = \
+      "%s mentioned something about a stunted dwarf.  This sounds "
+      "interesting - you should find out more."
+
+   stunteddwarfquest_nodethree_rsc = \
+      "%s said that %s knows about the stunted dwarf recipe.  Go to "
+      "%s and ask %s about it."
+
+   stunteddwarfquest_nodefour_rsc = \
+      "%s told you that the stunted dwarf recipe is just a myth.  "
+      "Return to %s and see if %s has anything to say about it."
+
+   stunteddwarfquest_nodefive_rsc = \
+      "Ask around and see if anyone knows more about this \"stunted dwarf\"."
+
+   stunteddwarfquest_nodesix_kill_rsc = \
+      "%s will give you a recipe for the stunted dwarf drink, but first "
+      "you must kill a kriipa to prove you can handle it.  Kill a kriipa "
+      "and then return to %s."
+
+   stunteddwarfquest_nodesix_return_rsc = \
+      "Return to %s and let them know you have succeeded in "
+      "killing the kriipa."
+
+   stunteddwarfquest_nodeseven_rsc = \
+      "You have the recipe!  Return to %s and give it to %s."
+
+   stunteddwarfquest_completed_rsc = \
+      "You have completed the stunted dwarf quest."
+
+   % Quest resources.
+   stunteddwarf_trigger = "stunted dwarf"
+   stunteddwarf_assign_2 = \
+      "Hot day, eh.  Sure would be a great day for a stunted dwarf."
+   stunteddwarf_assign_3 = \
+      "Ah, an ancient drink.  Actually, the recipe has been lost in time, "
+      "although I hear that %NPC might know of it."
+   stunteddwarf_trigger_4 = "myth"
+   stunteddwarf_assign_4 = \
+      "Stunted dwarf?  Ha!  That’s just a myth, and you tell "
+      "%HIMHER_NPC I said that!"
+   stunteddwarf_success_4 = \
+      "Ah, well.  If you ever hear anyone mention a stunted dwarf, "
+      "you be sure to find out what you can."
+   stunteddwarf_assign_6 = \
+      "Ah, you need a recipe for your garden variety stunted dwarf, eh?  "
+      "Tell you what.  Prove to me you’re hero enough to drink one, and "
+      "I’ll give you the recipe.  Go kill a kriipa for me."
+   stunteddwarf_success_6 = "Fine job, %NAME.  Take this recipe."
+   stunteddwarf_failure_6 = \
+      "Subject: Stunted Dwarf\n"
+      "I see you have wisely forgotten about having a stunted dwarf.  It "
+      "is, after all, not a drink for the faint of heart or weak of stomach."
+   stunteddwarf_success_7 = \
+      "How remarkable!  You must be a persistent one, %NAME.  I must "
+      "give you something equally rare in return."
+
+classvars:
+
+   vrIcon = stunteddwarfquest_icon_rsc
+   vrName = stunteddwarfquest_name_rsc
+   vrDesc = stunteddwarfquest_desc_rsc
+
+   vrNodeTwo = stunteddwarfquest_nodetwo_rsc
+   vrNodeThree = stunteddwarfquest_nodethree_rsc
+   vrNodeFour = stunteddwarfquest_nodefour_rsc
+   vrNodeFive = stunteddwarfquest_nodefive_rsc
+   vrNodeSixKill = stunteddwarfquest_nodesix_kill_rsc
+   vrNodeSixReturn = stunteddwarfquest_nodesix_return_rsc
+   vrNodeSeven = stunteddwarfquest_nodeseven_rsc
+
+   vrCompleted = stunteddwarfquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_STUNTED_DWARF
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTSUCCEEDED
+   piMaxPlayers = 20
+   piSchedulePct = 2
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_STUNTED_DWARF_ONE, QNT_ID_STUNTED_DWARF_TWO,
+                      QNT_ID_STUNTED_DWARF_THREE, QNT_ID_STUNTED_DWARF_FOUR,
+                      QNT_ID_STUNTED_DWARF_FIVE, QNT_ID_STUNTED_DWARF_SIX,
+                      QNT_ID_STUNTED_DWARF_SEVEN];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_STUNTED_DWARF_TWO, vrNodeTwo],
+                          [QNT_ID_STUNTED_DWARF_THREE, vrNodeThree],
+                          [QNT_ID_STUNTED_DWARF_FOUR, vrNodeFour],
+                          [QNT_ID_STUNTED_DWARF_FIVE, vrNodeFive],
+                          [QNT_ID_STUNTED_DWARF_SEVEN, vrNodeSeven] ];
+
+      plSpecialRestrict = [ [ Q_R2_HAS_SKILL, SKID_BRAWLING, 50 ],
+                            [ Q_R2_HAS_SKILL, SKID_PROFICIENCY_SCIMITAR, 25 ] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #52 is stunted dwarf quest kickoff
+      % QNT_ID_STUNTED_DWARF_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_STUNTED_DWARF_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_STUNTED_DWARF_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_ONE");
+      }
+
+      % Template #53 is stunted dwarf quest, say "stunted dwarf"
+      % QNT_ID_STUNTED_DWARF_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_SAME,#cargolist=[ stunteddwarf_trigger ],
+               #timelimit=5 * 60,#quest_node_index=QNT_ID_STUNTED_DWARF_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_STUNTED_DWARF_TWO,
+               #new_hint=stunteddwarf_assign_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_TWO");
+      }
+
+      % Template #54 is stunted dwarf quest, say "stunted dwarf"
+      % QNT_ID_STUNTED_DWARF_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,#cargolist=[stunteddwarf_trigger],
+               #timelimit=24 * 3600,#quest_node_index=QNT_ID_STUNTED_DWARF_THREE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_STUNTED_DWARF_THREE,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_STUNTED_DWARF_THREE,
+               #new_hint=stunteddwarf_assign_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_THREE");
+      }
+
+      % Template #55 is stunted dwarf quest, say "myth"
+      % QNT_ID_STUNTED_DWARF_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,#cargolist=[stunteddwarf_trigger_4],
+               #timelimit=24 * 3600,#quest_node_index=QNT_ID_STUNTED_DWARF_FOUR)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_STUNTED_DWARF_FOUR,
+               #new_hint=stunteddwarf_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_STUNTED_DWARF_FOUR,
+               #new_hint=stunteddwarf_success_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_FOUR");
+      }
+
+      % Template #56 is stunted dwarf quest, say "stunted dwarf" to island npc
+      % QNT_ID_STUNTED_DWARF_FIVE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ stunteddwarf_trigger ],
+               #timelimit=7 * 24 * 3600,
+               #quest_node_index=QNT_ID_STUNTED_DWARF_FIVE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_STUNTED_DWARF_FIVE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_FIVE");
+      }
+
+      % Template #57 is stunted dwarf quest, go kill a kriipa
+      % QNT_ID_STUNTED_DWARF_SIX
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
+               #NPC_modifier=QN_NPCMOD_SAME,#monsterlist=[ &Kriipa ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_STUNTED_DWARF_SIX)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_STUNTED_DWARF_SIX,
+               #new_hint=stunteddwarf_assign_6);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_STUNTED_DWARF_SIX,
+               #new_hint=stunteddwarf_success_6);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_STUNTED_DWARF_SIX,
+               #new_hint=stunteddwarf_failure_6);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_SIX");
+      }
+
+      % Template #58 is stunted dwarf quest, give recipe to original npc
+      % QNT_ID_STUNTED_DWARF_SEVEN
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEM, &RecipeScroll, 1 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &OfferingShalille, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &OfferingRiija, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &OfferingQor, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &OfferingFaren, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &OfferingKraanan, 1 ] ] ],
+               #timelimit=4 * 24 * 3600,
+               #quest_node_index=QNT_ID_STUNTED_DWARF_SEVEN)
+      {
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_STUNTED_DWARF_SEVEN,
+               #new_hint=stunteddwarf_success_7);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_STUNTED_DWARF_SEVEN");
+      }
+
+      return;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   {
+      local oMob, oNPC;
+
+      if plQuestNodeDesc = $
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
+
+      if index = QNT_ID_STUNTED_DWARF_SIX
+      {
+         oMob = Send(oQuestNode,@GetQuestMonster);
+         oNPC = Send(oQuestNode,@GetSourceNPC);
+
+         if oMob = $
+         {
+            AddPacket(4,vrNodeSixReturn, 4,Send(oNPC,@GetName));
+         }
+         else
+         {
+            AddPacket(4,vrNodeSixKill, 4,Send(oNPC,@GetName),
+                      4,Send(oNPC,@GetName));
+         }
+
+         return;
+      }
+
+      propagate;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oSourceNPC, oDestNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      % Handled QNT_ID_STUNTED_DWARF_SIX already.
+      % QNT_ID_STUNTED_DWARF_FIVE has no extra resources.
+      if index = QNT_ID_STUNTED_DWARF_SIX
+         OR index = QNT_ID_STUNTED_DWARF_FIVE
+      {
+         return;
+      }
+
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = QNT_ID_STUNTED_DWARF_TWO
+      {
+         AddPacket(4,Send(oSourceNPC,@GetName));
+
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_STUNTED_DWARF_THREE
+      {
+         AddPacket(4,Send(oSourceNPC,@GetName), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetName), 4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      if index = QNT_ID_STUNTED_DWARF_FOUR
+      {
+         AddPacket(4,Send(oSourceNPC,@GetName), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHeShe));
+
+         return;
+      }
+
+      if index = QNT_ID_STUNTED_DWARF_SEVEN
+      {
+         AddPacket(4,Send(oDestNPC,@GetName), 4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

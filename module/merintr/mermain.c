@@ -51,9 +51,10 @@ void InterfaceInit(void)
       default_buttons[i].hModule = hInst;
       ToolbarAddButton(&default_buttons[i]);
    }
-
+   RequestStatGroups();
    RequestSkills();
    RequestSpells();
+
    SpellsInit();
    ActionsInit();
    InventoryBoxCreate(cinfo->hMain);
@@ -191,9 +192,10 @@ void InterfaceResetData(void)
    else
       SendTempSafe(0);
 
+   RequestStatGroups();
    RequestSpells();
    RequestSkills();
-   RequestStatGroups();
+
    InventoryResetData();
    EnchantmentsResetData();
    GuildResetData();

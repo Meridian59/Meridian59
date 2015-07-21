@@ -1160,14 +1160,7 @@ messages:
 
    OrderOfNecromancersDisbanded()
    {
-      Post(self,@PostOrderOfNecromancersDisbanded);
-
-      return;
-   }
-
-   PostOrderOfNecromancersDisbanded()
-   {
-      local oGuild,oMaster;
+      local oOwner, oGuild, oMaster;
 
       if pbIn_Use
          AND poOwner <> $
@@ -1193,13 +1186,18 @@ messages:
                      #what=self,#victim=poOwner);
             }
 
+            oOwner = poOwner;
+
             Send(poOwner,@Killed,#what=self);
 
             if Length(Send(oGuild,@GetMemberList)) = 1
             {
                % Just the master left in the guild, kill him off!
                oMaster = First(First(Send(oGuild,@GetMemberList)));
-               Post(self,@KillGM,#oMaster=oMaster);
+               if oMaster <> oOwner
+               {
+                  Send(&NecromancerAmulet,@KillGM,#oMaster=oMaster);
+               }
             }
          }
          else
@@ -1221,6 +1219,11 @@ messages:
       {
          Debug("KillGM called with $ GM for necromancer guild!");
 
+         return;
+      }
+
+      if poOwner <> oMaster
+      {
          return;
       }
 

@@ -11,8 +11,6 @@
 
 #include "client.h"
 
-#define MAXQPARAMS 25  /* Maximum # of %q parameters in a server message when fully expanded */
-
 /************************************************************************/
 /*
  * CheckServerMessage:  Assemble a set of printf-style strings into a resultant
@@ -27,12 +25,16 @@
  *   %s          an integer which specifies a string resource.  This resource may
  *               contain other format characters.  If so, they are matched with 
  *               parameters from params AFTER the initial string's parameters.
+ *   %r          specifies that the next resource in the message should be concatenated
+ *               into the place of this format character (calls CheckServerMessage)
  */
-Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
+Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 {
    char *fmt, *next_ptr; /* next_ptr points into format string fmt */
    char tempfmt[MAXMESSAGE], format[MAXMESSAGE], *param_ptr = *params;
    char* message;
+   char message2[MAXMESSAGE];
+   char* msg2 = message2; /* Pointer to message2 */
    char *rsc, type_char, *orig_message;
    DWORD field, num_chars;
    WORD string_len;
@@ -51,6 +53,11 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
     */
    if (!msg || !*msg)
       return False;
+
+   // Set the first character of msg to null terminator, so we can check
+   // the length of msg.
+   *msg[0] = '\0';
+
    message = *msg;
 
    /* Get format string from resources */
@@ -66,16 +73,19 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    {
       if (rsc[0] == '%')
       {
-	 if (rsc[1] == '%')
-	    rsc++;
-	 else
-	    break;
+         if (rsc[1] == '%')
+            rsc++;
+         else
+            break;
       }
+
       rsc++;
    }
+
    if (!*rsc)
    {
       *msg = fmt;
+
       return True;
    }
 
@@ -93,98 +103,169 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
       /* Invariant:  len is # of bytes remaining in params */
       while (next_ptr != NULL)
       {
-	 next_ptr++;  /* Move to type character */
-	 
-	 type_char = *next_ptr;
-	 /* If string ends with %, done */
-	 if (type_char == '\0')
-	    break;
+         next_ptr++;  /* Move to type character */
 
-	 /* Skip marked %q parameters */
-	 if (type_char <= MAXQPARAMS)
-	 {
-	    next_ptr = strchr(next_ptr, '%');      	 
-	    continue;
-	 }
+         type_char = *next_ptr;
+         /* If string ends with %, done */
+         if (type_char == '\0')
+            break;
 
-	 next_ptr++;  /* Move past field specification char */
+         /* Skip marked %q parameters */
+         if (type_char <= MAXQPARAMS)
+         {
+            next_ptr = strchr(next_ptr, '%');
 
-	 /* Make temporary buffer for this section of format string */
-	 strncpy(tempfmt, fmt, next_ptr - fmt);
-	 tempfmt[next_ptr - fmt] = '\0';
-	 
-	 switch (type_char)
-	 {
-	 case '%':              /* %% ==> % */
-	    *message++ = '%';
-	    break;
-	    
-	 case 'd':
-	 case 'i':
-	 case 's':
-	    /* See if there are enough bytes left */
-	    if (len < SIZE_ID)
-	       return False;
-	    
-	    /* Interpret next field as an integer */
-	    memcpy(&field, param_ptr, SIZE_ID);
-	    param_ptr += SIZE_ID;
-	    len -= SIZE_ID;
-	    
-	    /* Look up resource strings; use integers immediately */
-	    if (type_char == 's')
-	    {
-	       done = False;
-	       if ((rsc = LookupRsc(field)) == NULL)
-		  return False;
+            continue;
+         }
 
-	       num_chars = sprintf(message, tempfmt, rsc);
-	    }	 
-	    else
-	    {
-	       num_chars = sprintf(message, tempfmt, field);
-	    }
-	    
-	    message += num_chars;  /* Overwrite null char next time */
-	    break;
-	    
-	 case 'q':     /* Literal string from server */
-	    /* Store location; we will perform replacement later */	    
-	    if (len < SIZE_STRING_LEN)
-	       return False;
-	    
-	    /* We can only hold a certain # of qparams */
-	    if (num_qparams <= MAXQPARAMS)
-	       /* Save current location in parameters */
-	       qparams[num_qparams] = param_ptr;
+         next_ptr++;  /* Move past field specification char */
 
-	    memcpy(&string_len, param_ptr, SIZE_STRING_LEN);
-	    param_ptr += SIZE_STRING_LEN;
-	    len -= SIZE_STRING_LEN;
-	    if (len < string_len)
-	       return False;
-	    
-	    /* Mark this position with qparam # */
-	    if (num_qparams <= MAXQPARAMS)
-	    {
-	       tempfmt[(next_ptr - fmt) - 1] = (char) num_qparams;
-	       num_qparams++;
-	    }
-	    
-	    /* Copy this section of format string */
-	    strncpy(message, tempfmt, (next_ptr - fmt));
-	    message += (next_ptr - fmt);
-	    
-	    /* Skip string */
-	    param_ptr += string_len;
-	    len -= string_len;	    
-	    break;
-	 }
-	 
-	 /* Find next format field */
-	 fmt = next_ptr;
-	 next_ptr = strchr(fmt, '%');      
+         /* Make temporary buffer for this section of format string */
+         strncpy(tempfmt, fmt, next_ptr - fmt);
+         tempfmt[next_ptr - fmt] = '\0';
+
+         switch (type_char)
+         {
+         case '%':              /* %% ==> % */
+            *message++ = '%';
+            break;
+         case 'r':
+            if (*len < SIZE_ID)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return False;
+            }
+            // Get the next resource in the server message, increment param_ptr.
+            memcpy(&field, param_ptr, SIZE_ID);
+            param_ptr += SIZE_ID;
+            *len -= SIZE_ID;
+
+            // Process the next resource as if it were a complete message.
+            if (!CheckServerMessage(&msg2, &param_ptr, len, field))
+               return False;
+
+            // Check if we're going to write outside the bounds of msg.
+            if (strlen(*msg) + strlen(msg2) >= MAXMESSAGE)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return False;
+            }
+
+            // This block of code adds the current message 'part' into message,
+            // but we have to remove the 'r' and add %s as %r isn't a valid
+            // sprintf formatter, while %s is.
+            // Copy the part before the %r modifier into message.
+            num_chars = sprintf(message, tempfmt);
+            // Increment message, but remove the 'r' character.
+            message += (num_chars - 1);
+            // Copy the msg2 string into message.
+            num_chars = sprintf(message, "%s", msg2);
+            message += num_chars;
+
+            // Reset message2 and msg2.
+            message2[MAXMESSAGE];
+            msg2 = message2;
+
+            // Get rid of any numbered parameter formatters.
+            if (*next_ptr == '$')
+            {
+               next_ptr++;
+               if (*next_ptr != '$')
+               {
+                  next_ptr++;
+               }
+            }
+            break;
+         case 'd':
+         case 'i':
+         case 's':
+            /* See if there are enough bytes left */
+            if (*len < SIZE_ID)
+               return False;
+
+            /* Interpret next field as an integer */
+            memcpy(&field, param_ptr, SIZE_ID);
+            param_ptr += SIZE_ID;
+            *len -= SIZE_ID;
+
+            /* Look up resource strings; use integers immediately */
+            if (type_char == 's')
+            {
+               done = False;
+               if ((rsc = LookupRsc(field)) == NULL)
+                  return False;
+
+               num_chars = sprintf(message, tempfmt, rsc);
+            }
+            else
+            {
+               num_chars = sprintf(message, tempfmt, field);
+            }
+
+            // Get rid of any numbered parameter formatters.
+            if (*next_ptr == '$')
+            {
+               next_ptr++;
+               if (*next_ptr != '$')
+               {
+                  next_ptr++;
+               }
+            }
+
+            message += num_chars;  /* Overwrite null char next time */
+            break;
+         case 'q':     /* Literal string from server */
+            /* Store location; we will perform replacement later */	    
+            if (*len < SIZE_STRING_LEN)
+               return False;
+
+            /* We can only hold a certain # of qparams */
+            if (num_qparams <= MAXQPARAMS)
+            {
+               /* Save current location in parameters */
+               qparams[num_qparams] = param_ptr;
+            }
+            memcpy(&string_len, param_ptr, SIZE_STRING_LEN);
+            param_ptr += SIZE_STRING_LEN;
+            *len -= SIZE_STRING_LEN;
+            if (*len < string_len)
+               return False;
+
+            /* Mark this position with qparam # */
+            if (num_qparams <= MAXQPARAMS)
+            {
+               tempfmt[(next_ptr - fmt) - 1] = (char) num_qparams;
+               num_qparams++;
+            }
+
+            /* Copy this section of format string */
+            strncpy(message, tempfmt, (next_ptr - fmt));
+            message += (next_ptr - fmt);
+            // Add a null terminator here so we can check length of string
+            // if there is an %r formatter next.
+            *message = '\0';
+
+            /* Skip string */
+            param_ptr += string_len;
+            *len -= string_len;
+
+            // Get rid of any numbered parameter formatters.
+            if (*next_ptr == '$')
+            {
+               next_ptr++;
+               if (*next_ptr != '$')
+               {
+                  next_ptr++;
+               }
+            }
+            break;
+         }
+
+         /* Find next format field */
+         fmt = next_ptr;
+         next_ptr = strchr(fmt, '%');
       }
+      
       /* Copy over last part of string */
       strcpy(message, fmt);
 
@@ -201,23 +282,24 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    fmt = format;
    next_ptr = strchr(format, '%');
    while (next_ptr != NULL)
-   {      
+   {
       next_ptr++;  /* Move to type character */
-      
+
       type_char = *next_ptr;
       /* If string ends with %, done */
       if (type_char == '\0')
-	 break;
+         break;
 
       /* See if this is a marked %q field */
       if (type_char > MAXQPARAMS)
       {
-	 next_ptr = strchr(next_ptr, '%');
-	 continue;
+         next_ptr = strchr(next_ptr, '%');
+
+         continue;
       }
 
       next_ptr++;  /* Move past field specification char */
-      
+
       /* Make temporary buffer for this section of format string */
       strncpy(tempfmt, fmt, next_ptr - fmt);
       tempfmt[next_ptr - fmt] = '\0';
@@ -226,10 +308,10 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
       param_ptr = qparams[type_char];
       memcpy(&string_len, param_ptr, SIZE_STRING_LEN);
       param_ptr += SIZE_STRING_LEN;
-      
+
       /* Hack off %q from format string */
       tempfmt[(next_ptr - fmt) - 2] = '\0';
-      
+
       /* Add tempfmt and then literal string to end of message */
       strcpy(message, tempfmt);
       message += strlen(tempfmt);
@@ -247,7 +329,174 @@ Bool CheckServerMessage(char** msg, char **params, long len, ID fmt_id)
    return True;
 }
 /************************************************************************/
+/*
+ * CheckMessageOrder:  Loops through the resource specified by fmt_id, and
+ *                     checks for "numbered parameters", indicated by a
+ *                     $ and a number present after a string formatter such
+ *                     as %s, %i, %q or %r (e.g. %s$2 %i$1). The message
+ *                     sent by the server is reordered so that these numbers
+ *                     are in order, and the parameters attached to them are
+ *                     reordered accordingly. This function recurses if it
+ *                     encounters a %r formatter, and reorders that resource
+ *                     if needed. CheckMessageOrder should be called before
+ *                     CheckServerMessage if the message could possibly
+ *                     contain $number formatters. Maximum 25 formatters.
+ *                     Returns the length of any fields referenced by the
+ *                     resource if successful, -1 if the resource wasn't found.
+ */
+int CheckMessageOrder(char **params, long *len, ID fmt_id)
+{
+   char *new_param_ptr, *param_ptr = *params, *rsc;
+   WORD string_len;
+   DWORD field;
+   int fieldPos = 0, currentPos = 0, tempLen = 0;
+   char digit[1];
+   PosArray posArray;
 
+   // If there's nothing to reorder (i.e. no $ modifiers) don't perform
+   // unnecessary work at the end.
+   Bool reorder = False;
+
+   /* Get format string from resource */
+   rsc = LookupRsc(fmt_id);
+   if (rsc == NULL)
+   {
+      PostMessage(hMain, BK_NORESOURCE, 0, 0);
+      return -1;
+   }
+
+   // Zero the position array.
+   memset(&posArray, 0, sizeof posArray);
+
+   // TODO: not sure if allocating memory is the best way to do this.
+   new_param_ptr = (char*)SafeMalloc(*len);
+   // Copy the parameter pointer into the new memory.
+   memcpy(new_param_ptr, param_ptr, *len);
+
+   // Iterate over the resource.
+   while (*rsc)
+   {
+      if (rsc[0] == '%')
+      {
+         if (rsc[1] != '\0' && rsc[2] == '$' && rsc[3] != '\0' && rsc[3] != '$')
+         {
+            // At least one reordering necessary, so set reorder to true.
+            reorder = True;
+            // Get the numbers for field position.
+            if (rsc[3] >= '0' && rsc[3] <= '9')
+               digit[0] = rsc[3];
+            // Check for a second number.
+            if (rsc[4] != '\0' && rsc[4] >= '0' && rsc[4] <= '9')
+               digit[1] = rsc[4];
+            // Take one, because arrays are 0-indexed.
+            fieldPos = atoi(digit) - 1;
+         }
+         else
+         {
+            // No $ modifier. Use currentPos (i.e. don't move the field) in case
+            // some fields do have them.
+            fieldPos = currentPos;
+         }
+
+         // Don't allow defining two fields in the same place. This would
+         // have unintended consequences - it isn't clear whether we should
+         // swap the parameter positions or shift everything forward one place.
+         for (int i = 0; i < currentPos; i++)
+         {
+            if (i != currentPos && posArray.fieldPos[i] == fieldPos)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return -1;
+            }
+         }
+
+         switch (rsc[1])
+         {
+         case 'r':
+            // Get the next resource in the server message, increment
+            // new_param_ptr past the resource..
+            memcpy(&field, new_param_ptr, SIZE_ID);
+            new_param_ptr += SIZE_ID;
+            // By calling CheckMessageOrder again, we get the length of
+            // anything referenced by string formatters in the next resource.
+            // This section of new_param_ptr is reordered if necessary.
+            tempLen = CheckMessageOrder(&new_param_ptr, len, field);
+            // If we got less than 0 bytes, return -1 (fail).
+            if (tempLen < 0)
+            {
+               PostMessage(hMain, BK_NORESOURCE, 0, 0);
+               return -1;
+            }
+            // Increment new_param_ptr past this section.
+            new_param_ptr += tempLen;
+            // Add the size of the resource itself to tempLen before using it.
+            tempLen += SIZE_ID;
+            /* This is the new location of the field, not the old one.
+               Offset by 1 position (because pos2 starts at end of pos1, etc). */
+            for (int i = fieldPos + 1; i < MAXQPARAMS; i++)
+               posArray.bytePos[i] += tempLen;
+            posArray.fieldPos[currentPos] = fieldPos;
+            posArray.size[currentPos] = tempLen;
+            break;
+         case 'i':
+         case 's':
+         case 'd':
+            // Increment new_param_ptr to the next field.
+            new_param_ptr += SIZE_ID;
+            // Store the new position for this formatter.
+            posArray.fieldPos[currentPos] = fieldPos;
+            // Store the size of the current field.
+            posArray.size[currentPos] = SIZE_ID;
+            /* This is the new location of the field, not the old one.
+               Offset by 1 position (because pos2 starts at end of pos1, etc). */
+            for (int i = fieldPos + 1; i < MAXQPARAMS; i++)
+               posArray.bytePos[i] += SIZE_ID;
+            break;
+         case 'q':
+            // Get the length of the string.
+            memcpy(&string_len, new_param_ptr, SIZE_STRING_LEN);
+            // Increment new_param_ptr to the next field.
+            new_param_ptr += string_len + SIZE_STRING_LEN;
+            // Store the new position for this formatter.
+            posArray.fieldPos[currentPos] = fieldPos;
+            // Store the size of the current field.
+            posArray.size[currentPos] = string_len + SIZE_STRING_LEN;
+            /* This is the new location of the field, not the old one.
+               Offset by 1 position (because pos2 starts at end of pos1, etc). */
+            for (int i = fieldPos + 1; i < MAXQPARAMS; i++)
+               posArray.bytePos[i] += string_len + SIZE_STRING_LEN;
+            break;
+         case '%':
+            // To skip both %, increment rsc here.
+            rsc++;
+         default:
+            break;
+         }
+         currentPos++;
+      }
+      rsc++;
+   }
+
+   if (reorder && currentPos > 0)
+   {
+      // Decrement new_param_ptr back to the start before copying to param_ptr.
+      new_param_ptr -= posArray.bytePos[currentPos];
+      for (int i = 0; i < currentPos; i++)
+      {
+         // Copy the data at the current position to the requested field position,
+         // using the byte position stored at that field position. Use two ptrs
+         // here because there's no guarantee that fields are all the same size.
+         memcpy(param_ptr + posArray.bytePos[posArray.fieldPos[i]], new_param_ptr, posArray.size[i]);
+         new_param_ptr += posArray.size[i];
+      }
+   }
+   // Decrement new_param_ptr back to the start before clearing memory.
+   new_param_ptr -= posArray.bytePos[currentPos];
+   SafeFree(new_param_ptr);
+
+   return posArray.bytePos[currentPos];
+}
+/************************************************************************/
 static char *format_chars = "`~"; // Characters that start a format code
 
 // FormatCode types

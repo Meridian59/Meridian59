@@ -1,0 +1,117 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ChessQuestTemplate is QuestTemplate
+% Parent class for chess quests.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   chessqt_icon_rsc = chesclos.bgf
+   chessqt_desc_rsc = \
+      "You have been asked to courier a chess move."
+
+   chessqt_nodetwo_rsc = \
+      "%s%s is playing a game of chess with a friend, and would be grateful "
+      "if you could courier %s next move to %s opponent.  Do you accept?"
+
+   chessqt_nodethree_rsc = \
+      "Go to %s%s and tell %s that the next move in the chess game is \"%q\"."
+
+   chessqt_nodefour_rsc = \
+      "Go back to %s%s and tell %s that the next move in the "
+      "chess game is \"%q\"."
+
+   % Quest resources.
+   chess_assign_2 = \
+      "I'm playing a game of chess with a friend, would you be willing "
+      "to courier my next move to my opponent?"
+   chess_assign_3 = "Wonderful!  Please tell %NPC that my next move is %CARGO."
+   chess_assign_4 = \
+      "An interesting ploy, but easily countered.  Tell %NPC that my move "
+      "is %CARGO."
+   chess_failure = \
+      "Subject:  My chess move\n"
+      "Never mind about delivering my move;  I've found another courier."
+
+classvars:
+
+   vrIcon = chessqt_icon_rsc
+   vrDesc = chessqt_desc_rsc
+
+   vrNodeTwo = chessqt_nodetwo_rsc
+   vrNodeThree = chessqt_nodethree_rsc
+   vrNodeFour = chessqt_nodefour_rsc
+
+   viIcon_Animation_start =  1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_NEWBIE
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oSourceNPC, oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = First(First(plQuestNodeDesc))
+      {
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oSourceNPC,@GetHisHer), 4,Send(oSourceNPC,@GetHisHer));
+
+         return;
+      }
+
+      oCargo = Send(oQuestNode,@GetCargo);
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = First(Nth(plQuestNodeDesc,2))
+         OR index = First(Nth(plQuestNodeDesc,3))
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer), 4,oCargo);
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -97,9 +97,10 @@ messages:
    {
       local iPlayerRestrict, oCurrentNPC, oQuestEngine, oQuest, oQuester,
             iRestrict, iKarma, lHistory, iHistory, iSucceed, iFail, iRecentTime,
-            iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon;
+            iFaction, iPower, iTime, iR2, bDebug, oLich, i, bHasNegativeBoon,
+            oNecroGuild, oQuestTemplate;
 
-      oQuestEngine = Send( SYS, @GetQuestEngine );
+      oQuestEngine = Send(SYS,@GetQuestEngine);
       iPlayerRestrict = Send(oQuestEngine,@GetQuestPlayerRestrictions,
                               #index=piQuestTemplateIndex);
       oCurrentNPC = Send(poQuestNode,@GetDestNPC);
@@ -426,6 +427,9 @@ messages:
          }
       }
 
+      oQuestTemplate = Send(oQuestEngine,@GetQuestTemplateObject,
+                              #index=piQuestTemplateIndex);
+
       % Are there quest history restrictions?
       if (iPlayerRestrict & Q_PLAYER_QUEST_MASK)
       {
@@ -434,7 +438,7 @@ messages:
             Debug("checking quest history restrictions.");
          }
 
-         iRecentTime = Send(oQuestEngine,@GetQuestHistoryRecentTime);
+         iRecentTime = Send(oQuestTemplate,@GetQuestHistoryRecentTime);
          iTime = Send(quester_wannabe,@GetTimeLoggedIn);
          iRestrict = (iPlayerRestrict & Q_PLAYER_QUEST_MASK);
          lHistory = Send(quester_wannabe,@GetQuestHistory,
@@ -732,6 +736,23 @@ messages:
             %   return FALSE;
             %}
          }
+
+         if First(iR2) = Q_R2_NECRO_GUILD_ACTIVE
+         {
+            oNecroGuild = Send(Send(SYS,@GetNecromancerBalance),@GetNecroGuild);
+            if (oNecroGuild = $
+                  AND Nth(iR2,2) > 0)
+               OR (oNecroGuild <> $
+                  AND Nth(iR2,2) < 1)
+            {
+               if bDebug
+               {
+                  Debug("failed Q_R2_NECRO_GUILD_ACTIVE.");
+               }
+
+               return FALSE;
+            }
+         }
       }
 
       if bDebug
@@ -983,17 +1004,17 @@ messages:
       return;
    }
 
-   DeadlineExpired()
+   DeadlineExpired(bRecreate=FALSE)
    {
-      local oQE, oNPC, bDebug;
+      local i, oQE, oNPC, bDebug;
 
       oQE = Send(SYS, @GetQuestEngine);
       bDebug = Send(oQE,@GetDebugStatus);
 
-      if bDebug
-      {
-         Debug("Quest expiring.");
-      }
+      %if bDebug
+      %{
+      %   Debug("Quest expiring.");
+      %}
 
       if poQuestNode <> $
       {
@@ -1019,6 +1040,14 @@ messages:
          % Debug("Quest::DeadlineExpired: possible double-expiry going on...");
       }
 
+      if bRecreate
+      {
+         for i in plQuesters
+         {
+            Send(i,@RemoveCurrentQuest,#index=piQuestTemplateIndex);
+         }
+      }
+
       Send(self,@Delete);
 
       return;
@@ -1034,9 +1063,9 @@ messages:
       return piQuestTemplateIndex;
    }
 
-   Cancel()
+   Cancel(bRecreate=FALSE)
    {
-      Send(self,@DeadlineExpired);
+      Send(self,@DeadlineExpired,#bRecreate=bRecreate);
       poQuestNode = $;
 
       return;

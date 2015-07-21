@@ -1,0 +1,267 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AphrodisiacQuest is QuestTemplate
+% Quest template QST_ID_APHRODISIAC = 45.
+% Quest nodes 142, 143, 144, 145.
+% QNT_ID_APHRODISIAC_ONE, QNT_ID_APHRODISIAC_TWO, QNT_ID_APHRODISIAC_THREE,
+% QNT_ID_APHRODISIAC_FOUR
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   aphrodisiacqt_icon_rsc = solagh.bgf
+   aphrodisiacqt_name_rsc = "aphrodisiac potion quest"
+   aphrodisiacqt_desc_rsc = \
+      "Obtain an aphrodisiac potion and help the NPC."
+
+   aphrodisiacqt_nodetwo_rsc = \
+      "%s%s is having some... personal issues and has been told that %s%s "
+      "knows of a powerful aphrodisiac that could help.  Go to %s%s and ask "
+      "%s about the \"aphrodisiac\"."
+   aphrodisiacqt_nodethree_rsc = \
+      "Fetch the egg of a queen spider and bring it to %s%s."
+   aphrodisiacqt_nodefour_rsc = \
+      "Take the aphrodisiac potion back to %s%s."
+
+   aphrodisiacqt_completed_rsc = \
+      "You have completed the aphrodisiac potion quest."
+
+   % Quest resources.
+   aphrodisiac_assign_2 = \
+      "Yes, I desperately need a courier!  I will try to put this delicately.  "
+      "I am having... uh... problems with... well, man problems.  I am told "
+      "that %NPC knows of a powerful aphrodisiac.  Please, make haste and "
+      "ask %HIMHER_NPC of it."
+   aphrodisiac_failure_2 = "Subject: Your errand\n"
+      "I suppose you have forsaken me.  I shall seek another to fulfill "
+      "my quest."
+   aphrodisiac_trigger_2 = "aphrodisiac"
+   aphrodisiac_assign_3 = \
+      "Yes, I know of a powerful aphrodisiac:  the egg of a queen spider.  "
+      "Fetch me one, and I shall prepare a potion for her."
+   aphrodisiac_failure_3 = \
+      "Subject: The spider egg\n"
+      "I suppose you were unable to find a spider egg.  Very well, I shall "
+      "find one myself and deliver the potion.  Do not trouble yourself "
+      "about it."
+   aphrodisiac_assign_4 = \
+      "A fine specimen!  Deliver this potion to %NPC.  I am sure she will "
+      "be pleased with the results."
+   aphrodisiac_failure_4 = \
+      "Subject: The aphrodisiac potion\n"
+      "I suppose you decided to use that potion for your own purposes.  "
+      "May it serve you well."
+   aphrodisiac_success_4 = \
+      "You are my savior, %NAME.  Bless you.  Here, take this as "
+      "a token of my thanks."
+
+classvars:
+
+   vrIcon = aphrodisiacqt_icon_rsc
+   vrName = aphrodisiacqt_name_rsc
+   vrDesc = aphrodisiacqt_desc_rsc
+
+   vrNodeTwo = aphrodisiacqt_nodetwo_rsc
+   vrNodeThree = aphrodisiacqt_nodethree_rsc
+   vrNodeFour = aphrodisiacqt_nodefour_rsc
+
+   vrCompleted = aphrodisiacqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_APHRODISIAC
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_APHRODISIAC_ONE,QNT_ID_APHRODISIAC_TWO,
+                      QNT_ID_APHRODISIAC_THREE,QNT_ID_APHRODISIAC_FOUR];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_APHRODISIAC_TWO, vrNodeTwo],
+                          [QNT_ID_APHRODISIAC_THREE, vrNodeThree],
+                          [QNT_ID_APHRODISIAC_FOUR, vrNodeFour] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #142 is aphrodisiac quest
+      % QNT_ID_APHRODISIAC_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #quest_node_index=QNT_ID_APHRODISIAC_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KraananPriestess)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTailor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_APHRODISIAC_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_APHRODISIAC_ONE");
+      }
+
+      % Template #143 is aphrodisiac quest
+      % QNT_ID_APHRODISIAC_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ aphrodisiac_trigger_2 ],
+               #timelimit=3600,#quest_node_index=QNT_ID_APHRODISIAC_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Heretic)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_APHRODISIAC_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_APHRODISIAC_TWO,
+               #new_hint=aphrodisiac_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_APHRODISIAC_TWO,
+               #new_hint=aphrodisiac_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_APHRODISIAC_TWO");
+      }
+
+      % Template #144 is aphrodisiac quest
+      % QNT_ID_APHRODISIAC_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #NPC_modifier=QN_NPCMOD_SAME,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &SpiderEgg, 1 ] ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_APHRODISIAC_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_APHRODISIAC_THREE,
+               #new_hint=aphrodisiac_assign_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_APHRODISIAC_THREE,
+               #new_hint=aphrodisiac_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_APHRODISIAC_THREE");
+      }
+
+      % Template #145 is aphrodisiac quest
+      % QNT_ID_APHRODISIAC_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &AphrodesiacPotion, 1 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 1400 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1800 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 2000 ] ] ],
+               #timelimit=3600,#quest_node_index=QNT_ID_APHRODISIAC_FOUR)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_APHRODISIAC_FOUR,
+               #new_hint=aphrodisiac_assign_4);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_APHRODISIAC_FOUR,
+               #new_hint=aphrodisiac_success_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_APHRODISIAC_FOUR,
+               #new_hint=aphrodisiac_failure_4);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_APHRODISIAC_FOUR");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_APHRODISIAC_TWO
+      {
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      if index = QNT_ID_APHRODISIAC_THREE
+         OR index = QNT_ID_APHRODISIAC_FOUR
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

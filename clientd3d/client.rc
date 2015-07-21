@@ -59,6 +59,7 @@ BEGIN
                 MENUITEM "&Gewählte Zauber",            3030
                 MENUITEM "&Zahlen im Inventar",         3050
                 MENUITEM "&Eigenschaften",              3047
+                MENUITEM "&Quest Übersicht",            3517
                 MENUITEM "System &Nachrichten",         3504
                 MENUITEM "&Textfeld",                   3032
             END
@@ -831,6 +832,7 @@ BEGIN
                 MENUITEM "&Highlighted spells",         ID_COLOR_HIGHLIGHT
                 MENUITEM "&Inventory numbers",          ID_COLOR_INVNUM
                 MENUITEM "&Statistics",                 ID_COLOR_STATS
+                MENUITEM "&Quest tab headings",         ID_COLOR_QUESTHEADER
                 MENUITEM "System &messages",            ID_COLOR_SYSMSG
                 MENUITEM "&Text area",                  ID_COLOR_TEXT
             END
@@ -1575,7 +1577,7 @@ BEGIN
     IDS_COMERROR            "Communications error"
     IDS_MESSAGETOOLONG      "Message from the server is too long!"
     IDS_READOVERFLOW        "The read buffer has overflown!"
-    IDS_MISSINGRESOURCE     "The game has changed since you logged in.\nSelecting ""Yes"" will automatically download the changed files.\nSelecting ""No"" will continue the game with your outdated files.\n\nAutomatically download new game files?"
+    IDS_MISSINGRESOURCE     "The game has changed since you logged in.\nSelecting ""Yes"" will automatically download the changed files.\nSelecting ""No"" will continue the game with your outdated files.\n\nAutomatically download new game files?\n\nIf you continue to receive this message, contact an administrator.\n\n"
     IDS_NOROOMFILE          "There is a problem with your file %s.  Please contact a system administrator to get the correct version."
     IDS_DUPRESOURCE         "Duplicate resource #%d in file %s."
     IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at http://openmeridian.org/ ."

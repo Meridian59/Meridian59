@@ -1,0 +1,232 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MonkInsigniaQuest is QuestTemplate
+% Quest template QST_ID_MONK_INSIGNIA = 34.
+% Quest nodes 103, 104, 105
+% QNT_ID_MONK_INSIGNIA_ONE, QNT_ID_MONK_INSIGNIA_TWO,
+% QNT_ID_MONK_INSIGNIA_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   monkinsigniaquest_icon_rsc = gsha.bgf
+   monkinsigniaquest_name_rsc = "herald shield insignia quest"
+   monkinsigniaquest_desc_rsc = \
+      "The Riija Monk will place its insignia on your shield, provided "
+      "you offer it a \"tithe\"."
+
+   monkinsigniaquest_nodetwo_rsc = \
+      "%s%s will place %s insignia on your herald shield, provided you "
+      "offer %s a \"tithe\"."
+
+   monkinsigniaquest_nodethree_rsc = \
+      "%s%s is interested in magical reagents from the mainland - if you bring "
+      "%s %i %s, %s will place an insignia on your herald shield.  You "
+      "should equip the shield you would like the insignia on, if you have "
+      "more than one in your inventory."
+
+   monkinsigniaquest_completed_rsc = \
+      "You have received an insignia on your herald shield, which adds "
+      "more power to your spells when worn."
+
+   % Quest resources.
+   monkinsignia_trigger = "insignia"
+   monkinsignia_assign_2 = \
+      "~gI ~rsee ~byou have ~ran ~gun~bmarked ~kshield.  ~rI am more "
+      "~bthan ~gwilling ~bto ~goffer ~bmy ~rinsignia to a brave "
+      "~gt~br~ki~bc~rk~ks~gt~be~kr,~r provided they offer "
+      "~b~Bme~B~r a tithe.~k"
+   monkinsignia_trigger_2 = "tithe"
+   monkinsignia_assign_3 = \
+      "~II have heard about a `gpassage `kto another world opening up.  "
+      "`bI `kam interested in the magical `rreagents `kfrom that land - "
+      "perhaps `gtheir emergence `kwill result in the `rstrengthening`g "
+      "of`b magic `kfor faithmages like you and I.  ~rGo and find ~bme %CARGO."
+   monkinsignia_success_3 = \
+      "~B~bEx~rcell~gent.  ~kThe Trickster ~rthanks~k you "
+      "for your benevolence.~B"
+   monkinsignia_failure_3 = \
+      "Subject: Insignia\n"
+      "I had thought so much better of you.  Oh, well.  I shall "
+      "watch for a better fool in the future."
+
+classvars:
+
+   vrIcon = monkinsigniaquest_icon_rsc
+   vrName = monkinsigniaquest_name_rsc
+   vrDesc = monkinsigniaquest_desc_rsc
+
+   vrNodeTwo = monkinsigniaquest_nodetwo_rsc
+   vrNodeThree = monkinsigniaquest_nodethree_rsc
+
+   vrCompleted = monkinsigniaquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_MONK_INSIGNIA
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   piMaxPlayers = 20
+   piSchedulePct = 100
+   piTimeLimit = 12 * 3600 % 12 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_MONK_INSIGNIA_ONE,
+                      QNT_ID_MONK_INSIGNIA_TWO,
+                      QNT_ID_MONK_INSIGNIA_THREE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_MONK_INSIGNIA_TWO, vrNodeTwo],
+                          [QNT_ID_MONK_INSIGNIA_THREE, vrNodeThree] ];
+
+      plSpecialRestrict = [ [ Q_R2_HAS_ITEM, &GuildShield ] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #103 is monk insignia quest
+      % QNT_ID_MONK_INSIGNIA_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ monkinsignia_trigger ],
+               #quest_node_index=QNT_ID_MONK_INSIGNIA_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
+                           #onIsland=TRUE)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MONK_INSIGNIA_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MONK_INSIGNIA_ONE");
+      }
+
+      % Template #104 is monk insignia quest
+      % QNT_ID_MONK_INSIGNIA_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_SAME,#cargolist=[monkinsignia_trigger_2],
+               #timelimit=60,#quest_node_index=QNT_ID_MONK_INSIGNIA_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MONK_INSIGNIA_TWO,
+               #new_hint=monkinsignia_assign_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MONK_INSIGNIA_TWO");
+      }
+
+      % Template #105 is monk insignia quest
+      % QNT_ID_MONK_INSIGNIA_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #NPC_modifier=QN_NPCMOD_SAME,#timelimit=piTimeLimit,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &DarkAngelFeather, 20 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &PurpleMushroom, 40 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &BlueDragonScale, 20 ],
+                           [ QN_PRIZETYPE_ITEMCLASS, &OrcTooth, 40 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_INSIGNIA ] ],
+               #quest_node_index=QNT_ID_MONK_INSIGNIA_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MONK_INSIGNIA_THREE,
+               #new_hint=monkinsignia_assign_3);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_MONK_INSIGNIA_THREE,
+               #new_hint=monkinsignia_success_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MONK_INSIGNIA_THREE,
+               #new_hint=monkinsignia_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MONK_INSIGNIA_THREE");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local iNum, oCargo, oNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if oNPC = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_MONK_INSIGNIA_TWO
+      {
+         AddPacket(4,Send(oNPC,@GetCapDef), 4,Send(oNPC,@GetName),
+                   4,Send(oNPC,@GetHisHer),4,Send(oNPC,@GetHimHer));
+
+         return;
+      }
+
+      oCargo = Send(oQuestNode,@GetCargo);
+      if oCargo = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_MONK_INSIGNIA_THREE
+      {
+         iNum = Send(oCargo,@GetNumber);
+
+         AddPacket(4,Send(oNPC,@GetCapDef), 4,Send(oNPC,@GetName),
+                   4,Send(oNPC,@GetHimHer), 4,iNum, 4,Send(oCargo,@GetName),
+                   4,Send(oNPC,@GetHeShe));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

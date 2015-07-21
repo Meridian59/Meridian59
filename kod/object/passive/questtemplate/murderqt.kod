@@ -1,0 +1,532 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MurderQuestTemplate is QuestTemplate
+% Parent class for the murder mystery quests.
+
+% QuestTemplate is
+% [ quest template index,
+%   quest template object,
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing),
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   murderqt_icon_rsc = bkswd.bgf
+   murderqt_nodetwo_rsc = \
+      "%s%s would like to learn more about Duke Kalior's murder, and "
+      "%s has requested that you ask %s%s about it."
+   murderqt_nodethree_rsc = \
+      "When asked about the murder, %s%s said \"%s\".  Return to %s%s "
+      "and pass on this information."
+
+   % Quest resources.
+   murder_trigger = "murder"
+   murder_say = "%CARGO"
+
+   murder_princess_w_1 = \
+      "Well, if you ask me, it seems like the Princess has quite "
+      "a few armed troops.  Why is she mobilizing them unless she "
+      "has something to hide?"
+   murder_princess_w_2 = \
+      "I honestly have no idea.  The duke was killed by a weapon "
+      "and not magic, right?"
+   murder_princess_w_3 = \
+      "The murder of the Duke is a tragedy.  I think that no one is "
+      "really above suspicion, even the fair Princess.  But, what kind "
+      "of weapon would she use?"
+   murder_princess_w_4 = \
+      "I have heard that the Princess was trained in the arts of both "
+      "weaponcraft and magic.  Although she hasn't used one in ages, I "
+      "have also heard she is still an expert with the sword."
+   murder_princess_w_5 = \
+      "Oh, I doubt that the person that killed the Duke did the deed "
+      "alone.  I am sure anyone, even the Princess, could have hired "
+      "some shady character to murder in cold blood."
+   murder_princess_m_1 = \
+      "The Duke's death was obviously motivated by power.  There is no "
+      "doubt that someone influential, like the Princess, wanted him out "
+      "of the picture to increase her own power."
+   murder_princess_m_2 = \
+      "What other motive can there be but money?  With the shocking news "
+      "of the death of the Duke, those in power could raid his holdings "
+      "and gain some money.  Look at the faction troops roaming the lands.  "
+      "They aren't cheap, you know."
+   murder_princess_m_3 = \
+      "It is unfortunate, but I'm sure that the driving force behind the "
+      "Duke's unfortunate end is related to taxes.  Perhaps someone was "
+      "tired of paying the high taxes, or perhaps another party wanted the "
+      "tax money for themselves?"
+   murder_princess_m_4 = \
+      "People say that the intense feelings of dislike the Duke had for the "
+      "poor Princess might have played a role in that dark night.  I doubt "
+      "that this is the case.  While such feelings can drive one to rash "
+      "actions, I don't think the young Princess struck out at him."
+   murder_princess_m_5 = \
+      "The competition between the Duke and the Princess plays a large part "
+      "in the murder plot, I fear.  The Princess might have rationalized "
+      "that it would be easier to play innocent, bide her time, then strike "
+      "when the time was right."
+   murder_princess_c_1 = \
+      "Well, I certainly think it is strange that the Meridian Council had "
+      "been meeting quite frequently at night the week before the poor Duke's "
+      "bloody demise."
+   murder_princess_c_2 = \
+      "Only the blind would not notice how the Princess was conspicuously "
+      "absent the night of the murder.  Can we trust her stories?"
+   murder_princess_c_3 = \
+      "I am suspicious of anyone with too strong of an alibi.  Like the "
+      "Princess, isn't it suspicious that almost the whole Council swears "
+      "they were probably in a meeting at that time?"
+   murder_princess_c_4 = \
+      "Isn't it strange that the Duke was murdered so violently, but no one "
+      "saw or heard anything?  Perhaps there was some strange magic "
+      "at work that night."
+   murder_princess_c_5 = \
+      "I thought I heard a priestess say that there were strange magical "
+      "forces at work that night.  I wonder if the Princess knows anything "
+      "about that?"
+   murder_jonas_w_1 = \
+      "I've heard that Jonas never cleans his sword in public like he "
+      "sometimes did before the Duke's murder.  What is he trying to hide?"
+   murder_jonas_w_2= \
+      "Well, Jonas is a master of a variety of weapons, as he often reminds "
+      "us.  I'm sure he's a master of whatever type of weapon was used in "
+      "the murder of the Duke."
+   murder_jonas_w_3 = \
+      "I've heard someone say to a friend of mine that Jonas can't wield a "
+      "real weapon to save his life, and that those war stories he tells are "
+      "all a lie."
+   murder_jonas_w_4 = \
+      "Ran er'Hoth said the other day that the murder was done with a spoon.  "
+      "Didn't Jonas say that he defended himself with a spoon one time when "
+      "he was attacked in an inn?"
+   murder_jonas_w_5 = \
+      "Someone told me that there's a slight bloodstain on Jonas's scabbard.  "
+      "Did he kill the Duke with his very own sword?"
+   murder_jonas_m_1 = \
+      "Have you heard the rumors about Jonas talking about the oppression "
+      "of people by the nobility?  I think that's significant."
+   murder_jonas_m_2 = \
+      "I heard somewhere that Jonas has been talking about how he could "
+      "guide the people better than the Duke could.  Perhaps he hoped to "
+      "replace the old Duke."
+   murder_jonas_m_3 = \
+      "Hey, doesn't Jonas give very generously to the Temple of Kraanan "
+      "the Fist?  I wonder if his personal wealth is in trouble."
+   murder_jonas_m_4 = \
+      "Jonas told someone that he was going to raise an army of his own.  "
+      "That could get expensive.  I wonder where he plans to get the money "
+      "from."
+   murder_jonas_m_5 = \
+      "Someone said that the Princess and Jonas have been becoming quite "
+      "good friends lately.  Maybe she hired him to kill the Duke?  He is"
+      "always looking to prove his fighting ability."
+   murder_jonas_c_1 = \
+      "I find it strange that you can never seem to find Jonas when you "
+      "want to.  He seems like the slippery type that could make a quick "
+      "getaway."
+   murder_jonas_c_2 = \
+      "Jonas claims he was in the Temple of Kraanan when the Duke was "
+      "brutally murdered, but the Priestess Qerti'nya says she doesn't "
+      "remember if he was there or not."
+   murder_jonas_c_3 = \
+      "I thought I heard that Jonas was blaming Rook for the murder.  Isn't "
+      "it funny that he would try to get Rook in trouble, especially when "
+      "you consider their history together?"
+   murder_jonas_c_4 = \
+      "I heard that Jonas intimidated the Princess into striking out against "
+      "the Duke.  With all he has to gain, I think this is quite possible."
+   murder_jonas_c_5 = \
+      "I thought I saw Jonas at the Temple of Kraanan about the time of the "
+      "Duke's murder, but I can't be certain."
+   murder_miriana_w_1 = \
+      "Well, travellers have told me that they see Miriana dancing in the "
+      "woods with a knife.  Where did she get a weapon?"
+   murder_miriana_w_2 = \
+      "Somone said that Miriana once cut a spider in half with some strange "
+      "magic.  The wound looked more like a weapon stroke than typical "
+      "magical damage, they said."
+   murder_miriana_w_3 = \
+      "I overheard a conversation where one person told another that they "
+      "heard Miriana running through the woods screaming something about "
+      "Faren and wanting her weapon back.  What could that mean?"
+   murder_miriana_w_4 = \
+      "Somone said that Miriana knew the true power of the spell called "
+      "'Nodeburst'.  I wonder what she does with all that power?"
+   murder_miriana_w_5 = \
+      "I once heard that the living trees used to cast their lightning "
+      "bolts at Miriana, and that she would cast them back at the trees "
+      "at a greater strength.  Could she have used that power against "
+      "the Duke?"
+   murder_miriana_m_1 = \
+      "I overheard a guard say that he went with a small band of guards "
+      "into the forest looking for Miriana.  He said that when they found "
+      "her, they tried to give her a message from the Duke, but that she "
+      "grew angry and left.  Did she hate the Duke?"
+   murder_miriana_m_2 = \
+      "A mage once told me that the Princess secretly supports Miriana "
+      "because she knows how to tap the raw power of magic.  Could they "
+      "have plotted against the Duke together?"
+   murder_miriana_m_3 = \
+      "I remember a story about how the Duke told a joke about how "
+      "Miriana kept animal friends because they were the only ones that "
+      "could stand her.  After that, there was a loud stroke of thunder "
+      "outside the walls of the Keep.  Could there be any truth in that "
+      "old story?"
+   murder_miriana_m_4 = \
+      "People have said that Miriana has held a grudge against the Duke's "
+      "family for several generations.  Could she be that old?"
+   murder_miriana_m_5 = \
+      "A few years ago, I heard a story about how Miriana once visited the "
+      "Duke, and warned him of some danger.  After the event she predicted "
+      "happened, the Duke accused her of trying to kill him.  I wonder if "
+      "she came back and finished the job?"
+   murder_miriana_c_1 = \
+      "A friend of a friend told me that Miriana was in the forest one day, "
+      "and for no reason, she cried out, 'I did it, my lady.  He is dead.'  "
+      "I wonder if she meant the Duke?"
+   murder_miriana_c_2 = \
+      "I don't know anything about what happened that night at the Duke's "
+      "Keep.  I was in the forest, trying to find mushrooms while avoiding "
+      "that Miriana."
+   murder_miriana_c_3 = \
+      "I saw a strange figure in the forest near Tos the night of the Duke's "
+      "death.  It was a small person, perhaps about the size of a young girl."
+   murder_miriana_c_4 = \
+      "I recently went to the woods to find some herbs, and I overheard an "
+      "adventurer talking to Miriana.  When he mentioned the Duke, she got "
+      "very angry and refused to teach him the spells he requested."
+   murder_miriana_c_5 = \
+      "I've heard people claim that Miriana is behind the murder of the "
+      "Duke.  I find the idea of a little girl being behind a murder like "
+      "that to be laughable."
+   murder_lich_c_1 =\
+      "Well, I heard that one of the innkeepers was delivering some ale to "
+      "the Duke's castle, to get ready for the big banquet.  Apparently there "
+      "was a curious woman hanging around the delivery carts when they were "
+      "going in.  He said she had very pale skin and was wearing a strange "
+      "amulet."
+   murder_lich_c_2 = \
+      "I heard from a travelling merchant that there were all sorts of "
+      "flashing lights and strange noises coming from the mountains over "
+      "Brax on the night the Duke died."
+   murder_lich_c_3 = \
+      "I've heard people suggest that the Lich Queen might have killed the "
+      "Duke, but if you think about it, the Duke hadn't really done much to "
+      "get in her way.  Now if he had sent an army to Brax, like some people "
+      "wanted him to, it might be a different story."
+   murder_lich_c_4 =\
+      "Well, I'm sure I don't know anything about that.  I was visiting my "
+      "mother; she's not well you know.  But if you think about it, it seems "
+      "like the necromancers have been awfully quiet lately, maybe too quiet."
+   murder_lich_c_5 = \
+      "Well, I can't be certain mind you, but I did hear that a large group "
+      "of necromancers had been seen coming up through the mountains towards "
+      "Tos about a week before the murder."
+   murder_lich_w_1 =\
+      "I don't know if I should tell you this or not, but a friend of mine "
+      "works as a guard for the Duke and he says that there is a big cover up "
+      "going on.  Seems the Duke wasn't murdered at all!  He killed himself "
+      "trying to take off an Amulet of the Three!" 
+   murder_lich_w_2 =\
+      "I don't know anything about a weapon, but I do know that the feast "
+      "hall was locked, no way in or out.  So whoever killed him must have "
+      "had some way of teleporting out of there.  The only people I know of "
+      "with magic like that are the necromancers."
+   murder_lich_w_3 =\
+      "I've heard that right before they found the body, some of the Duke's "
+      "guards were attacked by horned skeletons!" 
+   murder_lich_w_4 =\
+      "A friend of mine who works for the Princess says that she was "
+      "convinced that the Duke had become a Necromancer."
+   murder_lich_w_5 =\
+      "I've heard that one of the Duke's guards saw someone who looked "
+      "exactly like the Duke walking out of the castle after the Duke had "
+      "died.  He ran up to investigate, but whoever it was just disappeared, "
+      "leaving only a puddle of slimy goo."
+   murder_lich_m_1 =\
+      "I've heard that the Duke was having the banquet to announce a big "
+      "offensive against Brax to wipe out the Lich Queen and her "
+      "necromancers.  Maybe she beat him to it."
+   murder_lich_m_2 =\
+      "Hmmm... well it's certainly no secret that the necromancers and Queen "
+      "Venya'cyr would stop at nothing to disrupt and weaken us."
+   murder_lich_m_3 =\
+      "Well, the old Duke did just fine holding his own until Queen Venya'cyr "
+      "reared her ugly head.  So if you ask me she's probably responsible."
+   murder_lich_m_4 =\
+      "Some people say that it must have been the lich queen who killed the "
+      "Duke, but we all know that she hasn't left Brax in millennia."
+   murder_lich_m_5 =\
+      "Didn't Queen Venya'cyr vow to kill both the Duke and the Princess?  "
+      "Kateriina should look out, she could be next!"
+   murder_akardius_c_1=\
+      "Well, don't tell Duke Akardius I said this, but its hard to think of "
+      "anyone else who had access to the feast hall, now isn't it?"
+   murder_akardius_c_2=\
+      "All I know is that the new Duke moved pretty fast after his uncle "
+      "died.  Almost like he had it all planned out ahead of time..."
+   murder_akardius_c_3=\
+      "Anyone who saw the look on that poor boy's face when he saw his "
+      "uncle's body would know that he certainly couldn't have "
+      "been responsible."
+   murder_akardius_c_4=\
+      "They say that the Duke was holding the banquet in honor of his "
+      "Nephew.  It was to be his big welcome back to the mainland, and the "
+      "Duke was going to name him as his heir."
+   murder_akardius_c_5=\
+      "There is more to Duke Akardius then meets the eye;  ever wonder where "
+      "he's been all these years?  The Island, studying at the Temple of "
+      "Riija, that's where!  I tell you, anyone who has spent that much time "
+      "with the God of Trickery isn't to be trusted."
+   murder_akardius_w_1=\
+      "From what I've heard the Duke wasn't killed with a weapon or by "
+      "magic.  It was poison.  Isn't poison the way the royals have always "
+      "killed members of their own family?"
+   murder_akardius_w_2=\
+      "They say that the day after the Duke was killed Akardius got a new "
+      "sword from the armory.  I wonder why he didn't want to carry his old "
+      "one anymore..."
+   murder_akardius_w_3=\
+      "I've heard that Duke Akardius studied at the Temple of Riija while he "
+      "was away.  I wonder if they teach more than simple illusions to "
+      "advanced students.  After all, Riija is the trickster god and some "
+      "tricks can be deadly."
+   murder_akardius_w_4=\
+      "I know they checked all the guards' weapons as soon as the Duke was "
+      "killed, and I've heard that Duke Akardius volunteered to go first to "
+      "set an example for his men."
+   murder_akardius_w_5=\
+      "They say that Duke Akardius was an accomplished swordsman.  Not that "
+      "he'd have to be all that tough to get the jump on his uncle.  I mean "
+      "after all he was a bit, um... big boned."
+   murder_akardius_m_1=\
+      "You know what they say: look toward the one who prospered the most."
+   murder_akardius_m_2=\
+      "I've heard that Duke Akardius didn't want to go to the Island, but that "
+      "his uncle sent him away when he was young.  Maybe he hated his uncle "
+      "for that."
+   murder_akardius_m_3=\
+      "I heard that the Duke had been praising Jonas's military skill and "
+      "saying that he would make a worthy heir.  Perhaps Akardius got jealous."
+   murder_akardius_m_4=\
+      "Madelia told me that she went on a picnic with Akardius and that "
+      "afterward he got very upset and ran off, crying, \"Oh how could I have "
+      "done this to poor Princess Kateriina?\"  Could they be in love?  "
+      "The Old Duke certainly wouldn't have approved of that!"
+   murder_akardius_m_5=\
+      "Everyone knows that the Duke was planning on making Akardius his heir "
+      "anyway.  I don't see why he would have wanted to harm the uncle who "
+      "had been so good to him."
+   murder_maleval_c_1 =\
+      "hmm... well the first thing that comes to mind is that Maleval "
+      "certainly had free access to the Duke.  Don't know how Kalior could "
+      "stand him.  He gives me the creeps."
+   murder_maleval_c_2 =\
+      "One of the Duke's guards told me that Maleval is always showing up in "
+      "rooms that are supposed to be locked.  Maybe he has his own set of keys."
+   murder_maleval_c_3 =\
+      "My cousin's wife's brother is certain that Maleval was at the Qor "
+      "temple the night of the Duke's murder... um... I mean, not that she "
+      "would ever go there.  Nobody in my family follows Qor.  Certainly not!"
+   murder_maleval_c_4 =\
+      "One of the Duke's caterers told me that Kalior was holding the feast "
+      "to announce that Akardius would be his new advisor.  I bet Maleval "
+      "didn't like that one bit!"
+   murder_maleval_c_5 =\
+      "I've got a friend who tends the castle gardens and while he was "
+      "trimming the hedges under the Duke's window he heard Maleval say, "
+      "\"Tread carefully Kalior.  You would not want to try my patience.\"  "
+      "He says he thinks they were arguing earlier about a planned offensive "
+      "against Brax."
+   murder_maleval_w_1 =\
+      "Well who can say?  But if it turns out that magic was involved I'd be "
+      "suspicious of Maleval.  He certainly has the means."
+   murder_maleval_w_2 =\
+      "The other day I heard Ran er'Hoth say, \"Melt, melt, melt, melt... "
+      "That's how Dukie-wookie felt.\"  Could that mean Kalior was killed "
+      "with acid touch?"
+   murder_maleval_w_3 =\
+      "Well I certainly wouldn't know, although I would think you'd need "
+      "pretty powerful magic for a job like that."
+   murder_maleval_w_4 =\
+      "I have it from a very authoritative source that Kalior was beaten to "
+      "death, but I don't believe it for a second.  I'm certain Maleval did "
+      "it and a beating just isn't his style."
+   murder_maleval_w_5 =\
+      "A friend says poor Kalior was asphyxiated, but he didn't get a close "
+      "look at the body because he couldn't stop sneezing."
+   murder_maleval_m_1 =\
+      "I always had the feeling that Maleval was the real power behind the "
+      "throne.  Perhaps he grew tired of his puppet."
+   murder_maleval_m_2 =\
+      "Maleval certainly seems to like young Akardius.  He seems almost "
+      "protective.  I suppose it's only natural after what happened to Kalior."
+   murder_maleval_m_3 =\
+      "Well, despite what some might say, I think we can rule out Maleval.  "
+      "He had Kalior in his pocket anyway, so why would he want him dead?  "
+      "Surely a disciple of the Trickster will be harder to control!" 
+   murder_maleval_m_4=\
+      "There have been whispers about the dark wizard Maleval...  I think "
+      "people are just frightened of him because he's so mysterious."
+   murder_maleval_m_5=\
+      "Supposedly Maleval thought Duke Kalior didn't have enough respect for "
+      "magic.  Maybe he put together a little demonstration."
+   murder_roq_m_1 = \
+      "Isn't there a professional assassin who lives in the sewers of "
+      "Barloque?  He seems like a pretty clear suspect.  I'm surprised he "
+      "hasn't already been arrested!"
+   murder_roq_m_2 = \
+      "I've heard mutterings around Barloque about sending troops into the "
+      "sewers to 'clean them out', but it sounds like a witch hunt to me.  "
+      "Everyone knows Roq retired years ago."
+   murder_roq_m_3 = \
+      "Why do you think Roq hides out in the sewers?  Rumor has it that he "
+      "killed Queen Katria all those years ago, and he's still in hiding.  "
+      "Of course, my aunt used to say it was Kalior himself who put him up "
+      "to it, so perhaps justice has been served."
+   murder_roq_m_4 = \
+      "You know, there was a time when Roq was a frequent guest at Blackstone "
+      "Keep.  Many people even thought he was manipulating Kalior.  I wonder "
+      "how he felt about no longer being Kalior's most trusted advisor?"
+   murder_roq_m_5 = \
+      "Logically speaking, it seems the easiest way to kill someone would be "
+      "to hire an assassin.  That shifts blame away from you.  But then I've "
+      "never planned a murder, so how would I know?"
+   murder_roq_w_1 = \
+      "I've heard that the Duke was killed by what appeared to be the thrust "
+      "of a small blade between his shoulder blades."
+   murder_roq_w_2 = \
+      "From what I've heard the Duke's actual wound wasn't that bad, but it "
+      "festered and ate into him in a matter of minutes.  Did the wound come "
+      "from some magically cursed weapon?"
+   murder_roq_w_3 = \
+      "One of the Duke's guards says that Kalior and Akardius were playing a "
+      "game of assassin before the banquet.  What if somebody switched out "
+      "Akardius's black dagger?"
+   murder_roq_w_4 = \
+      "Someone told me that they saw Roq the day after the Duke's murder "
+      "carrying only one blade.  Doesn't he usually have two?"
+   murder_roq_w_5 = \
+      "A friend says she heard the Duke scream exactly four times.  Does "
+      "that mean he was stabbed multiply?"
+   murder_roq_c_1 = \
+      "I heard somebody say that Roq had been buying a bunch of new weapons "
+      "lately.  I wonder where he got the money?"
+   % Tie-in to weapon selling NPC.
+
+   murder_roq_c_2 = \
+      "I've heard people say that Roq must have killed the Duke, just because "
+      "he's an assassin.  I think that's silly.  And anyway, Roq couldn't "
+      "have done it because I bought a dagger from him around the time of the "
+      "murder.  That is, a friend told me he bought one.  A small one."
+   murder_roq_c_3 = \
+      "A friend says he saw a shadowy figure moving quickly through the "
+      "Twisted Woods on the night of the murder.  He called out a greeting "
+      "and it looked up at him with glowing red eyes, then disappeared."
+   murder_roq_c_4 = \
+      "Someone told me they saw Roq make a large deposit in Obert's vault "
+      "shortly after the murder.  It was wrapped in cloth, but was apparently "
+      "very heavy and made a clanking sound."
+      % Obert, when asked, will say that he must honor the privacy of his 
+      % customers - but later in the mystery, players will be given a search
+      % warrant and will be able to retrieve the deposit.
+
+   murder_roq_c_5 = \
+      "One of the Duke's guards told me that Roq paid a visit to Blackstone "
+      "Keep earlier that evening.  Maleval encountered him on the steps and "
+      "the two had harsh words, ending with the dark wizard storming off "
+      "into the night."
+      % Any of the guards questioned will refuse to speak about that night.
+
+   murder_random_w_1 = \
+      "Bah!  This whole thing is ridiculous.  The fact is the Duke just "
+      "couldn't wait to start the feast and Akardius is too embarrassed to "
+      "admit that his uncle ate himself to death."
+   murder_random_c_1 = \
+      "I heard that Akardius took the Duke's body to a healer, even though "
+      "he was dead.  I guess he was really desperate to save him."
+      % Tie-in to Lady Aftyn dialogue.
+
+   murder_random_m_1 = \
+      "Well, there have been a lot of rumors flying around about Maleval or "
+      "the Princess or you name it.  Some fool probably even suspects me.  "
+      "But I wouldn't be surprised if the Duke had some secret lover; "
+      "looks like a crime of passion to me."
+
+classvars:
+
+   vrIcon = murderqt_icon_rsc
+
+   vrNodeTwo = murderqt_nodetwo_rsc
+   vrNodeThree = murderqt_nodethree_rsc
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   pbDisabled = TRUE
+
+   piNumPlayers = 1
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+
+messages:
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local rCargo, oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = First(First(plQuestNodeDesc))
+      {
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oSourceNPC,@GetHeShe), 4,Send(oDestNPC,@GetDef),
+                   4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      if index = First(Nth(plQuestNodeDesc,2))
+      {
+         % Cargo is a resource.
+         rCargo = Send(oQuestNode,@GetCargo);
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,rCargo, 4,Send(oDestNPC,@GetDef),
+                   4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

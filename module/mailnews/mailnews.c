@@ -201,7 +201,7 @@ Bool HandleMail(char *ptr, long len)
    len -= SIZE_ID;
    
    /* Remove format string id # & other ids from length */
-   if (!CheckServerMessage(&msg, &ptr, len, resource_id))
+   if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
 
    MailNewMessage(index, sender, num_recipients, recipients, msg, msg_time);
@@ -293,9 +293,9 @@ Bool HandleLookNewsgroup(char *ptr, long len)
 
    ExtractObject(&ptr, &obj);
    Extract(&ptr, &resource_id, SIZE_ID);
-
+   len -= temp_len;
    /* Remove format string id # & other ids from length */
-   if (!CheckServerMessage(&msg, &ptr, len - temp_len, resource_id))
+   if (!CheckServerMessage(&msg, &ptr, &len, resource_id))
       return False;
 
    UserReadNews(&obj, msg, newsgroup, permission);

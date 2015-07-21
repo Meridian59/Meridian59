@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JonasMurderOneQuest is JonasMurderQuestTemplate
+% Quest template QST_ID_MURDER_JONAS_1 = 66.
+% Quest nodes 192, 193, 194.
+% QNT_ID_JONAS_MURDER_ONE, QNT_ID_JONAS_MURDER_TWO, QNT_ID_JONAS_MURDER_ONE_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+
+   % Quest resources.
+
+classvars:
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_MURDER_JONAS_1
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_JONAS_MURDER_ONE, QNT_ID_JONAS_MURDER_TWO,
+                      QNT_ID_JONAS_MURDER_ONE_THREE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_JONAS_MURDER_TWO, vrNodeTwo],
+                          [QNT_ID_JONAS_MURDER_ONE_THREE, vrNodeThree] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local i, lCargo, lCargo2, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      lCargo  = [ murder_princess_w_1, murder_princess_w_2, murder_princess_w_3,
+                  murder_princess_w_4, murder_princess_w_5, murder_princess_m_1,
+                  murder_princess_m_2, murder_princess_m_3, murder_princess_m_4,
+                  murder_princess_m_5, murder_princess_c_1, murder_princess_c_2,
+                  murder_princess_c_3, murder_princess_c_4, murder_princess_c_5,
+                  murder_akardius_w_1, murder_akardius_w_2, murder_akardius_w_3,
+                  murder_akardius_w_4, murder_akardius_w_5, murder_akardius_m_1,
+                  murder_akardius_m_2, murder_akardius_m_3, murder_akardius_m_4,
+                  murder_akardius_m_5 ];
+      lCargo2 = [ murder_akardius_c_1, murder_akardius_c_2, murder_akardius_c_3,
+                  murder_akardius_c_4, murder_akardius_c_5, murder_random_w_1,
+                  murder_random_m_1, murder_random_c_1 ];
+      for i in lCargo2
+      {
+         lCargo = Cons(i, lCargo);
+      }
+
+      % Template #194 is Jonas's Murder Mystery quest, come back and give the info
+      % QNT_ID_JONAS_MURDER_ONE_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=lCargo,#timelimit=3 * 3600,
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &Money, 400 ] ],
+               #quest_node_index=QNT_ID_JONAS_MURDER_ONE_THREE)
+      {
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_JONAS_MURDER_ONE_THREE,
+               #new_mod=QN_NPCMOD_PREVIOUS);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_JONAS_MURDER_ONE_THREE,
+               #new_hint=murder_say);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_JONAS_MURDER_ONE_THREE,
+               #new_hint=murder_jonas_success);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_JONAS_MURDER_ONE_THREE");
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

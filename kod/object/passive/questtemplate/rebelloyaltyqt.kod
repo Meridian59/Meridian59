@@ -1,0 +1,173 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RebelLoyaltyQuest is QuestTemplate
+% Quest nodes 197, 198
+% QNT_ID_REBEL_LOYALTY_ONE, QNT_ID_REBEL_LOYALTY_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   rebelloyalty_icon_rsc = wngenera.bgf
+   rebelloyalty_name_rsc = "rebel loyalty quest"
+   rebelloyalty_desc_rsc = \
+      "Jonas D'Accor's troops need equipment, and he has requested that "
+      "you help the cause by bringing him some."
+
+   rebelloyalty_deliver_rsc = \
+      "Jonas D'Accor's troops need equipment, and he has requested that "
+      "you help the cause by bringing him %s%s to remain in favor."
+
+   rebelloyalty_completed = \
+      "You have completed the rebel loyalty quest and shown your "
+      "dedication for the cause."
+
+   % Quest resources.
+   rebel_standard2_assign = \
+      "Ah, %NAME, my fellow freedom fighter.  My troops have need of more "
+      "equipment.  This war costs us much, and I do not have the luxury of a "
+      "large treasury like the other leaders do.  Bring me %INDEF_CARGO%CARGO "
+      "and I will not forget your loyalty."
+   rebel_standard2_success = \
+      "Ah, excellent.  I will definitely put this to good use."
+   rebel_standard2_failure = \
+      "Subject: You are not a true rebel\n"
+      "You have failed me when I needed you most.  Go crawling to one of the "
+      "other lieges, for I have no more use of one such as you."
+
+classvars:
+
+   vrIcon = rebelloyalty_icon_rsc
+   vrName = rebelloyalty_name_rsc
+   vrDesc = rebelloyalty_desc_rsc
+
+   vrNodeTwo = rebelloyalty_deliver_rsc
+
+   vrCompleted = rebelloyalty_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_REBEL_SERVICE
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_FACTION_REBEL | Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 1
+   piSchedulePct = 0
+   piTimeLimit = 3600 % 1 hour.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_REBEL_LOYALTY_ONE, QNT_ID_REBEL_LOYALTY_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_REBEL_LOYALTY_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #197 is 1st Rebel loyalty node, say "loyalty" to Jonas
+      % QNT_ID_REBEL_LOYALTY_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[duke_standard1_trigger],
+               #quest_node_index=QNT_ID_REBEL_LOYALTY_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_REBEL_LOYALTY_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                        #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&RebelLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_REBEL_LOYALTY_ONE");
+      }
+
+      % Template # 198 is 2nd Rebel Loyalty node, bring an item to Jonas
+      % QNT_ID_REBEL_LOYALTY_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#NPC_modifier=QN_NPCMOD_SAME,
+               #questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &SimpleHelm, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Knightshield, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &LongSword, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Scimitar, 1 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &NeruditeSword, 1 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_UPDATE ],
+                            [ QN_PRIZETYPE_SCHEDULE_QUEST, QST_ID_REBEL_SERVICE ] ],
+               #penaltylist=[[[QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_NEUTRAL]]],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_REBEL_LOYALTY_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_REBEL_LOYALTY_TWO,
+               #new_hint=rebel_standard2_assign);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_REBEL_LOYALTY_TWO,
+               #new_hint=rebel_standard2_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_REBEL_LOYALTY_TWO,
+               #new_hint=rebel_standard2_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_REBEL_LOYALTY_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oCargo;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      % Quest node QNT_ID_REBEL_LOYALTY_TWO dialog needs
+      % cargo indef article and name.
+      if index = QNT_ID_REBEL_LOYALTY_TWO
+      {
+         oCargo = Send(oQuestNode,@GetCargo);
+         AddPacket(4,Send(oCargo,@GetIndef), 4,Send(oCargo,@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

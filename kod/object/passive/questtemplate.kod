@@ -1,0 +1,360 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+QuestTemplate is PassiveObject
+
+% The QuestTemplate classes store data for that particular QST_ID to allow
+% quest descriptions to be put together based on which quest node is active
+% for the given player. We could eventually store other data here such as
+% quest initialisation, quest resources and timers to make the quest system
+% more efficient.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+   % Constants to determine which time resource header to use.
+   TIME_RSC_HEADER_INCOMPLETE = 0
+   TIME_RSC_HEADER_COMPLETE   = 1
+
+resources:
+
+   % Same icon as the book item.
+   questtemplate_icon_rsc = kolanico.bgf
+   questtemplate_name_rsc = "default quest"
+   questtemplate_desc_rsc = "Initial default quest description."
+
+   % Resources for making the timer part of description.
+   questtemplate_time_header = \
+      "\n\nYou have %r%r%r%r%r%r%r remaining to complete this quest."
+   questtemplate_time_header_complete = \
+      "\n\nYou can complete this quest again in %r%r%r%r%r%r%r."
+   questtemplate_outoftime_rsc = \
+      "\n\nYou are almost out of time!"
+
+   questtemplate_master_time_rsc = "%r%r"
+
+   % General quest resources, used by multiple quests.
+   letter_trigger = "need a courier"
+   chess_trigger = "yes"
+   duke_standard1_trigger = "loyalty"
+   duke_join1_trigger = "join"
+   disciple_trigger = "disciple"
+   disciple_learn_success = "~ISo, you wish to become my disciple?~I"
+   disciple_assign = \
+      "~IYou must prove yourself before your learning may progress.  "
+      "Bring me %CARGO.~I"
+   disciple_success = \
+      "~IYou have proven yourself, my disciple.  Your learning "
+      "may now progress.~I"
+   disciple_failure = \
+      "It appears you need more experience before you are ready to be my "
+      "disciple.  You may try again another day."
+
+classvars:
+
+   vrIcon = questtemplate_icon_rsc
+   vrName = questtemplate_name_rsc
+   vrDesc = questtemplate_desc_rsc
+   vrCompleted = questtemplate_desc_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_NONE
+
+   % FALSE if we don't display the completed quest to the user.
+   vbShowCompleted = TRUE
+
+   % Determine which icon to display in the description,
+   % and whether there is an animation. If no animation,
+   % the viIcon_Animation_start group is displayed.
+   viAnimationSpeed = 0
+   viIcon_Animation_start = 2
+   viIcon_Animation_end = 0
+
+properties:
+
+   % This disables the quest by preventing the quest template being
+   % sent to QuestEngine.
+   pbDisabled = FALSE
+
+   piNumPlayers = 0
+   piQuestType = $
+   piPlayerRestrict = $
+   plSpecialRestrict = $
+   plQuestNodes = $
+   piMaxPlayers = 30
+   piSchedulePct = 0
+
+   % List of quest node indexes and matching resources to give
+   % to the user for the quest log.
+   plQuestNodeDesc = $
+
+   % 1 hr - defines what 'recently' means in history restrictions.
+   piQuestHistoryRecentTime = 3600
+
+   piTimeLimit = 3 * 3600 % 3 hour default timelimit.
+
+messages:
+
+   Constructor()
+   {
+      if NOT pbDisabled
+      {
+         Send(self,@SendQuestTemplate);
+      }
+
+      % RecreateQuestNodes in QuestEngine will now ask for this data.
+      %Send(self,@SendQuestNodeTemplates);
+
+      propagate;
+   }
+
+   SendQuestTemplate()
+   {
+      local oQE;
+
+      oQE = Send(SYS,@GetQuestEngine);
+
+      Send(oQE,@AddQuestTemplate,#num_players=piNumPlayers,
+            #quest_type=piQuestType,#player_restrict=piPlayerRestrict,
+            #player_restrict2=plSpecialRestrict,#nodes=plQuestNodes,
+            #max_active=piMaxPlayers,#schedule_pct=piSchedulePct,
+            #quest_index=viQuestID,#quest_object=self);
+
+      return;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      return;
+   }
+
+   Delete()
+   {
+      piNumPlayers = $;
+      piQuestType = $;
+      piPlayerRestrict = $;
+      plSpecialRestrict = $;
+      plQuestNodes = $;
+      piMaxPlayers = $;
+      piSchedulePct = $;
+
+      plQuestNodeDesc = $;
+
+      propagate;
+   }
+
+   GetQuestID()
+   {
+      return viQuestID;
+   }
+
+   GetQuestHistoryRecentTime()
+   {
+      return piQuestHistoryRecentTime;
+   }
+
+   SendQuestResponse(recipients=$, index=$, oNPC=$)
+   "Send different responses depending on the NPC.  Used with the "
+   "QN_PRIZETYPE_NPC_RESPONSE prize."
+   {
+      return;
+   }
+
+   ShowCompletedQuest(who=$,lHistory=$)
+   {
+      local iTimeLoggedIn;
+
+      if NOT vbShowCompleted
+      {
+         return FALSE;
+      }
+
+      % These are "complete once" quests, so always show.
+      if piPlayerRestrict & Q_PLAYER_NOTSUCCEEDED
+      {
+         return TRUE;
+      }
+
+      % If we don't have the history or user, don't show quest.
+      if lHistory = $
+         OR who = $
+      {
+         return FALSE;
+      }
+
+      iTimeLoggedIn = Send(who,@GetTimeLoggedIn);
+
+      % Show it if the player succeeded recently.
+      if (First(lHistory) & QUEST_HISTORY_SUCCESS)
+         AND (Nth(lHistory,2) <= iTimeLoggedIn
+            AND Nth(lHistory,2) + piQuestHistoryRecentTime > iTimeLoggedIn)
+      {
+         return TRUE;
+      }
+
+      % Don't show failed quests or quests not completed recently.
+      return FALSE;
+   }
+
+   ShowDesc(who=$)
+   "Does error checking, calls the other description messages and "
+   "handles the time remaining resource."
+   {
+      local iDeadLine, iQNIndex, iTimeLeft, oQuestNode, lHistory,
+            bComplete;
+
+      if who = $
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
+
+      iTimeLeft = 0;
+
+      % Find out which quest node the player is on.
+      oQuestNode = Send(who,@GetActiveQuestNode,#index=viQuestID);
+
+      AddPacket(4,questtemplate_master_time_rsc);
+
+      if oQuestNode = $
+      {
+         % Add time remaining until quest can be redone, if applicable.
+         if (piPlayerRestrict & Q_PLAYER_NOTTRIED_RECENTLY)
+            AND NOT (piPlayerRestrict & Q_PLAYER_NOTSUCCEEDED)
+         {
+            lHistory = Send(who,@GetQuestHistory,#index=viQuestID);
+            iTimeLeft = Nth(lHistory,2) + piQuestHistoryRecentTime
+                           - Send(who,@GetTimeLoggedIn);
+         }
+         bComplete = TRUE;
+         AddPacket(4,vrCompleted);
+      }
+      else
+      {
+         iQNIndex = Send(oQuestNode,@GetQuestNodeTemplateIndex);
+         iDeadLine = Send(oQuestNode,@GetDeadline);
+         if iDeadLine = $
+         {
+            iDeadLine = 0;
+         }
+
+         Send(self,@MainDesc,#who=who,#index=iQNIndex,#oQuestNode=oQuestNode);
+         Send(self,@ExtraDesc,#index=iQNIndex,#oQuestNode=oQuestNode);
+         bComplete = FALSE;
+         iTimeLeft = iDeadLine - GetTime();
+      }
+
+      % Add time.
+      Send(self,@SendTimeRemaining,#iTime=iTimeLeft,#parm1=bComplete);
+
+      return;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   "Handles the main description, i.e. what the quester should do."
+   {
+      local i;
+
+      if plQuestNodeDesc = $
+      {
+         AddPacket(4,vrDesc);
+
+         return;
+      }
+
+      for i in plQuestNodeDesc
+      {
+         if First(i) = index
+         {
+            AddPacket(4,Nth(i,2));
+
+            return;
+         }
+      }
+
+      % If we get this far and didn't get a description, we aren't
+      % going to show anything. Log a debug message for it.
+      Debug("User ",Send(who,@GetTrueName)," got no description for quest ",
+            vrName);
+
+      return;
+   }
+
+   ExtraDesc()
+   "Quests can customise this to send individual resources for quest nodes, "
+   "add NPC, prize and penalty resources and any other data."
+   {
+      return;
+   }
+
+   SendTimeRemainingHeader(parm1=$)
+   "Send the header resource for the time remaining part of description."
+   {
+      if parm1 <> $
+         AND parm1 = TIME_RSC_HEADER_COMPLETE
+      {
+         AddPacket(4,questtemplate_time_header_complete);
+
+         return;
+      }
+
+      AddPacket(4,questtemplate_time_header);
+
+      return;
+   }
+
+   SendTimeRemaining(iTime=0, iParm=$)
+   "Overrides Object.SendTimeRemaining() because the quest can have "
+   "less than 0 time left due to QuestEngine controlling the timer."
+   {
+      if iTime < 1
+         AND iParm <> $
+         AND iParm = TIME_RSC_HEADER_INCOMPLETE
+      {
+         AddPacket(4,questtemplate_outoftime_rsc);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   SendLookAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed,
+                   2,viIcon_Animation_start, 2,viIcon_Animation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viIcon_Animation_start);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

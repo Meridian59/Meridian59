@@ -2066,6 +2066,11 @@ messages:
       return (viCast_time*iPercent)/100;
    }
 
+   GetPostCastDelay()
+   {
+      return viPostCast_Time;
+   }
+
    DoPreTranceEffects(who=$,lTargets=$,iSpellpower=$)
    {
       return;

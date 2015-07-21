@@ -45,6 +45,9 @@ resources:
       "You combine the %s with your current stock, for a total "
       "of %d uses with %d power."
 
+   spellitem_cannot_use_yet = "You cannot use that item yet."
+   spellitem_disabled = "This item is currently disabled."
+
 classvars:
 
    vrLabelName = Spellitem_label_name_rsc
@@ -77,6 +80,8 @@ classvars:
    viHits_init_min = 1
    viHits_init_max = 1
 
+   vbDisabled = FALSE
+
 properties:
 
    vrName = Spellitem_name_rsc
@@ -93,7 +98,6 @@ properties:
    poMaker = $
    piSkill = $
    piLabelColor = 0
-   pbDisabled = FALSE
 
    % If true, user has to pass spell's karma check.  Otherwise, can always cast.
    pbCheckKarma = TRUE
@@ -103,7 +107,7 @@ properties:
 
 messages:
 
-   Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,
+   Constructor(labelled=TRUE,model=$,iSpellpower=$,gobadtime=$,
                maker=$,Ability=$)
    {
       local oItemAtt;
@@ -198,14 +202,49 @@ messages:
 
    ReqNewApply(what=$,apply_on=$)
    {
-      % Prevent use if you can't fight.
-      if (IsClass(what,&Player))
-         AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT))
-         OR pbDisabled
-         OR (IsClass(apply_on,&Player)
-             AND Send(apply_on,@IsInCannotInteractMode))
+      local iPostCastDelay, oSpell;
+
+      if vbDisabled
       {
+         Send(what,@MsgSendUser,#message_rsc=spellitem_disabled);
+
          return FALSE;
+      }
+
+      % Prevent use if you can't fight.
+      if IsClass(what,&Player)
+      {
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT)
+            OR (IsClass(apply_on,&Player)
+               AND Send(apply_on,@IsInCannotInteractMode))
+         {
+            return FALSE;
+         }
+
+         oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+
+         % If we don't have a spell, the item might have been disabled
+         % or just not implemented correctly.
+         if oSpell = $
+         {
+            Send(what,@MsgSendUser,#message_rsc=spellitem_disabled);
+
+            return FALSE;
+         }
+
+         iPostCastDelay = Send(oSpell,@GetPostCastDelay);
+
+         % Bind this at reasonable levels
+         iPostCastDelay = Bound(iPostCastDelay,1,10);
+
+         % Check the attack timer, and start a new one if we use the item.
+         % Only allow one use per second.
+         if NOT Send(what,@IsOkayAttackTime,#seconds=iPostCastDelay)
+         {
+            Send(what,@MsgSendUser,#message_rsc=spellitem_cannot_use_yet);
+
+            return FALSE;
+         }
       }
 
       return TRUE;

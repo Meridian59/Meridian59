@@ -2396,11 +2396,6 @@ messages:
    {
       Send(self,@CancelIfOffer);
 
-      % Break trance for all spells except multicast and radius enchantment.
-      % Other spells could possibly fail due to system save, this way the
-      % user will at least get a fail message.
-      Send(self,@BreakTrance,#event=EVENT_SYSTEMSAVE);
-
       Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting);
       Send(self,@WaveSendUser,#what=self,#wave_rsc=user_saving_wav_rsc);
 

@@ -953,19 +953,19 @@ messages:
    {
       local i;
 
-      phUsers = $;
-      phRooms = $;
-      phSpells = $;
-      phItemAtts = $;
-
       Send(self,@CleanReflectionList);
 
       for i in plUsers_logged_on
       {
          Send(i,@GarbageCollecting);
       }
-	  
-	  Send(poStatistics,@GarbageCollecting);
+
+      phUsers = $;
+      phRooms = $;
+      phSpells = $;
+      phItemAtts = $;
+
+      Send(poStatistics,@GarbageCollecting);
 
       return;
    }

@@ -104,15 +104,8 @@ messages:
       return 0;
    }
 
-   BreakTrance(who = $, state = $, event = 0)
+   BreakTrance(who = $, state = $)
    {
-      % Don't break on system saves.
-      if event <> $
-         AND event = EVENT_SYSTEMSAVE
-      {
-         return FALSE;
-      }
-
       % If caster runs out of mana or loses trance, spell ends.
       if IsClass(First(state),&Prism)
       {

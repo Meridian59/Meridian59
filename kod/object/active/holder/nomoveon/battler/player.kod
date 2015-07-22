@@ -8747,10 +8747,11 @@ messages:
    "stamina, all the way down to half for those with high staminas."
    {
       local i, dodgeskill, oSkill, monster_level, gain, gainmult, roll,
-            oWeapon, lBuilderGroup;
+            oWeapon, lBuilderGroup, bGainedHP;
 
       gain = 0;
       roll = FALSE;
+      bGainedHP = FALSE;
 
       % Some things just never allow advancement.
       % Can advance in arena if realdeath is on in an arena.
@@ -8967,13 +8968,16 @@ messages:
          % TRUE if player gains a HP, FALSE if they don't.
          if roll
          {
-            return Send(self,@RollForTougher,#iLevel=monster_level);
+            bGainedHP = Send(self,@RollForTougher,#iLevel=monster_level);
          }
       }
 
       % Draw the tougher chance bar. Send this here because RollForTougher
       % will also draw it, no need to do so twice.
-      Post(self,@DrawHPChance);
+      if NOT roll
+      {
+         Post(self,@DrawHPChance);
+      }
 
       if (piFlags & PFLAG_DODGED)
          AND NOT group_member_kill
@@ -9004,7 +9008,8 @@ messages:
          }
       }
 
-      return FALSE;
+      % If RollForTougher returned TRUE, we gained a hitpoint.
+      return bGainedHP;
    }
 
    RollForTougher(iLevel=0)

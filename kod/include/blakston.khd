@@ -1566,7 +1566,9 @@
    AI_FIGHT_SWITCHALOT        = 0x0800000
    % monster may strike through walls (revenants)
    AI_FIGHT_THROUGH_WALLS     = 0x1000000
-
+   % monster will continue moving even if the room has no users
+   AI_MOVE_WHEN_ALONE         = 0x2000000
+   
    % Monster movement speeds
    SPEED_NONE          = 0
    SPEED_VERY_SLOW     = 4

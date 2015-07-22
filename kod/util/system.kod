@@ -1220,6 +1220,11 @@ messages:
          Send(poQormas, @UserLogon, #who = what);
       }
 
+      if (poEventEngine <> $)
+      {
+         Send(poEventEngine,@UserLogon,#who=what);
+      }
+
       return;
    }
 
@@ -1282,6 +1287,11 @@ messages:
       if (poQormas <> $)
       {
          Send(poQormas,@UserLogoff,#who=what);
+      }
+
+      if (poEventEngine <> $)
+      {
+         Send(poEventEngine,@UserLogoff,#who=what);
       }
 
       return;

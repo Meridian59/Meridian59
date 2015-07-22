@@ -376,6 +376,7 @@ properties:
    piTargetLocationFineCol = 0
    piPatrolAttempts = 0
    plPatrolPath = $
+   pbLoopingPatrol = True
    piPatrolNode = 0
    % chance to move to next patrol node (1 to 10000)
    piChanceToPatrol = 125
@@ -1301,6 +1302,19 @@ messages:
       return piChanceToPatrol;
    }
    
+   SetChanceToPatrol(chance=125)
+   {
+      piChanceToPatrol = chance;
+      
+      return;
+   }
+   
+   SetLoopingPatrol(looping=True)
+   {
+      pbLoopingPatrol = looping;
+      return;
+   }
+   
    GetNextPatrolNode()
    {
       if (plPatrolPath = $)
@@ -1312,10 +1326,23 @@ messages:
       
       if (piPatrolNode > Length(plPatrolPath))
       {
-         piPatrolNode = 1;
+         if (pbLoopingPatrol)
+         {
+            piPatrolNode = 1;
+         }
+         else 
+         {
+            piPatrolNode = Length(plPatrolPath);
+         }
       }
    
       return Nth(plPatrolPath, piPatrolNode);
+   }
+   
+   SetPatrolNode(node=1)
+   {
+      piPatrolNode = node;
+      return;
    }
    
    IncrementPatrolAttempts()
@@ -1333,6 +1360,17 @@ messages:
    ClearPatrolAttempts()
    {
       piPatrolAttempts = 0;
+      
+      return;
+   }
+   
+   ClearPatrolLocation()
+   {
+      pbHasTargetLocation = False;
+      piTargetLocationRow  = 0;
+      piTargetLocationCol  = 0;
+      piTargetLocationFineRow = 0;
+      piTargetLocationFineCol = 0;
       
       return;
    }
@@ -1819,7 +1857,7 @@ messages:
          % after a while just give up
          if (piPatrolAttempts >= 500)
          {
-            Debug("monster had too many attempts trying to reach a location, giving up.");
+            %Debug("monster had too many attempts trying to reach a location, giving up.");
             pbHasTargetLocation = False;
             piPatrolAttempts = 0;
          }
@@ -3882,6 +3920,9 @@ messages:
             % Notify the quest engine, to check if a quest is affected -AJM
             Send(Send(SYS,@GetQuestEngine),@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
+                  
+            Send(Send(SYS,@GetEventEngine),@MonsterKilled,#dead_monster=self,
+                  #killing_player=what,#corpse=oBody);                  
 
             Send(self,@CreateTreasure,#who=what,#corpse=oBody);
          }

@@ -16,17 +16,32 @@ constants:
 
 resources:
 
+   event_success_rsc = "Success."
+   event_failure_rsc = "Failure."
+
 classvars:
 
 properties:
 
-   plGameEvents = $
+   plRandomEvents = $
    plActiveEvents = $
    ptMaintenance = $
    piMaintenanceInterval = 1000
 
 messages:
 
+   go()
+   {
+      Send(self,@EventStart,#parm1=&OrcInvasion);
+      return;
+   }
+
+   stop()
+   {
+      Send(self,@EventEnd,#parm1=Nth(plActiveEvents,1));
+      return;
+   }
+   
    Constructor()
    {
       Send(self,@Recreate);
@@ -53,18 +68,55 @@ messages:
 
    Recreate()
    {
-      plGameEvents = $;
+      plRandomEvents = $;
       plActiveEvents = $;
 
       Debug("Creating Events");
-      plGameEvents = Cons(&RatInvasion,plGameEvents);
-      plGameEvents = Cons(&OrcInvasion,plGameEvents);
+      plRandomEvents = Cons(&RatInvasion,plRandomEvents);
+      plRandomEvents = Cons(&OrcInvasion,plRandomEvents);
 
       return;
    }
 
    Delete()
    {
+      return;
+   }
+
+   UserLogon(who=$)
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@UserLogon,#who=who);
+      }
+      return;
+   }
+
+   UserLogoff(who=$)
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@UserLogoff,#who=who);
+      }
+      return;
+   }
+
+   MonsterKilled(dead_monster=$,killing_player=$,corpse=$)
+   {
+      local i;
+
+      for i in plActiveEvents
+      {
+         Send(i,@MonsterKilled,
+            #dead_monster=dead_monster,
+            #killing_player=killing_player,
+            #corpse=corpse);
+      }
+   
       return;
    }
 
@@ -373,9 +425,10 @@ messages:
       else
       {
          Debug("Error Starting Event!",parm1);
+         return system_failure_rsc;
       }
 
-      return;
+      return system_success_rsc;
    }
 
    EventEnd(parm1=$)

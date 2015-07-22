@@ -138,7 +138,11 @@ messages:
          Debug("Unreachable. In state LIMBO.");
       }
 
-      Send(mob,@EnterStateLimbo);
+      % don't force a monster in limbo if it has persistant timers
+      if (NOT Send(mob,@GetBehavior) & AI_MOVE_WHEN_ALONE)
+      {
+         Send(mob,@EnterStateLimbo);
+      }
 
       return;
    }

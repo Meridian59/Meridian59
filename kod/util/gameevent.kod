@@ -58,6 +58,21 @@ messages:
       return;
    }
 
+   UserLogon(who=$)
+   {
+      return;
+   }
+
+   UserLogoff(who=$)
+   {
+      return;
+   }
+
+   MonsterKilled(dead_monster=$,killing_player=$,corpse=$)
+   {
+      return;
+   }
+   
    NewMinute()
    {
       return;
@@ -142,7 +157,10 @@ messages:
                {
                   for j in lActive
                   {
-                     if ((IsClass(Nth(j,1),&Monster)) AND NOT (Send(Nth(j,1),@IsOwnedByPlayer)))
+                     if ((IsClass(Nth(j,1),&Monster)) 
+                        AND NOT (Send(Nth(j,1),@IsOwnedByPlayer))
+                        AND NOT (IsClass(Nth(j,1),&Towns))
+                        AND NOT (IsClass(Nth(j,1),&Council)))
                      {
                         Send(Nth(j,1),@Delete);
                      }
@@ -202,30 +220,6 @@ messages:
    
       return;
    }   
-
-   CountMonsters(type=$)
-   "Returns a count of the given type of monster."
-   {
-      local i, count, lActive;
-
-      if type = $
-      {
-         return;
-      }
-
-      count = 0;
-      lActive = Send(Send(SYS,@FindRoomByNum,#num=poActiveRoom),@GetPlActive);
-
-      foreach i in lActive
-      {
-         if IsClass(Nth(i,1),type)
-         {
-            count = count + 1;
-         }
-      }
-
-      return count;
-   }
 
    MakeSpawnPoint()
    "Returns a spawn point inside a given rectangle."

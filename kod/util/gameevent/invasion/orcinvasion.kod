@@ -19,10 +19,22 @@ resources:
    include orcinvasion.lkod
 
    OrcInvasion_start_msg = \
-      "The orc invasion has begun."
+      "~B~k[Event]~n ~B~vThe orc invasion has begun."
+
+   OrcInvasion_phase_two_msg = \
+      "~B~k[Event]~n ~B~vThe orcs have launched a second wave of attacks!"
+      
+   OrcInvasion_phase_three_msg = \
+      "~B~k[Event]~n ~B~vA third wave of orcs begins to advance!"
+      
+   OrcInvasion_phase_four_msg = \
+      "~B~k[Event]~n ~B~vThe orcs have launched their final assault!"
 
    OrcInvasion_end_msg = \
-      "The orc invasion has ended."
+      "~B~k[Event]~n ~B~vThe orc invasion has ended."
+
+   OrcInvasion_fail_msg = \
+      "~B~k[Event]~n ~B~vYou have failed to defend XXXXX, the orcs are victorious."
 
 classvars:
 
@@ -34,18 +46,27 @@ classvars:
 properties:
    plBattlePlans = $
    plCurrentBattlePlan = $
+   plInvaders = $
+   piMaxInvaders = 60
+   piInvadersMaxInTargetRoom = 10
+   piInvaderGenTime = 1
+   piTicks = 0
    piPhase = 0
+   poTargetRoom = $
+   plSpawnList = $
+   piInvaderScore = 0
+   piDefenderScore = 0
 
 messages:
 
    Constructor()
    {
       plBattlePlans = [ [[RID_I8,[[7,4], [17,10], [20,18], [10,18], [3,18]]],
-                         [RID_I7,[[50,32], [31,32], [22,28], [23,12], [25,7], 
+                         [RID_I7,[[50,32], [31,32], [22,28], [22,16], [23,12], [25,7], 
                            [22,7], [10,10], [6,1]]],
-                         [RID_H7,[[48,67], [36,57], [28,54], [28,36], [21,38],
-                           [18,55], [11,67]]],
-                         [RID_H6,[[47,2], [28,26], [27,41]]],
+                         [RID_H7,[[48,67], [45,64], [37,58], [36,54], [35,57], [28,54], [28,36],
+                            [21,38], [18,55], [11,67]]],
+                         [RID_H6,[[47,2], [42,20], [28,26], [27,41]]],
                          [RID_TOS,[[58,3], [53,13], [51,23], [46,22]]],
                          [RID_TOS_INN,[[3,1], [5,6]]]],
                         [[RID_F3,[[17,32], [23,61], [28,67], [28,76]]],
@@ -59,7 +80,7 @@ messages:
                          [RID_TOS_INN,[[3,1], [5,6]]]] ];
    
       pbClearRooms = True;
-   
+      
       propagate;
    }
 
@@ -67,6 +88,9 @@ messages:
    {
       plBattlePlans = $;
       plCurrentBattlePlan = $;
+      plInvaders = $;
+      poTargetRoom = $;
+      plSpawnList = $;
    
       propagate;
    }
@@ -81,12 +105,16 @@ messages:
          plEventRooms = AppendListElem(oRoom,plEventRooms);
       }
 
+      poTargetRoom = Nth(plEventRooms,Length(plEventRooms));
+      
       return;
    }
    
    StartEvent()
    {
       plCurrentBattlePlan = Nth(plBattlePlans ,Random (1,Length(plBattlePlans)));
+      %plCurrentBattlePlan = Nth(plBattlePlans,2);
+      Send(self,@BuildRoomList);
       Send(self,@SaveRoomStates);
       Send(self,@PrepareRooms);
       Send(self,@PhaseOne);
@@ -94,56 +122,360 @@ messages:
       propagate;
    }
 
+   PrepareRooms()
+   {
+      local i;
+      
+      for i in plEventRooms
+      {
+         if IsClass(i,&MonsterRoom)
+         {
+            Send(i,@SetMonsterGeneration,#bValue=False);
+         }
+      }
+      
+      propagate;
+   }
+   
    Update()
    {
+      piTicks = piTicks + 1;
+   
+      Send(self,@InvaderMaintenance);
+   
       if (piPhase = 1)
       {
-         Send(self,@PhaseTwo);
+         if (piDefenderScore >= (Send(SYS,@GetUniqueIPs)*15))
+         {
+            Send(self,@PhaseTwo);
+         }
+      
+         if (piInvaderScore >= 25)
+         {
+            Send(self,@EventFailed);
+            Send(self,@NotifyEngineEndEvent);
+         }
+         Send(self,@TrySpawnMonster);
       }
       if (piPhase = 2)
       {
-         Send(self,@PhaseThree);
+         if (piDefenderScore >= (Send(SYS,@GetUniqueIPs)*15))
+         {
+            Send(self,@PhaseThree);
+         }
+         
+         if (piInvaderScore >= 25)
+         {
+            Send(self,@EventFailed);
+            Send(self,@NotifyEngineEndEvent);
+         }
+         Send(self,@TrySpawnMonster);
       }
       if (piPhase = 3)
       {
-         Send(self,@FinalPhase);
+         if (piDefenderScore >= (Send(SYS,@GetUniqueIPs)*15))
+         {
+            Send(self,@FinalPhase);
+         }
+         
+         if (piInvaderScore >= 25)
+         {
+            Send(self,@EventFailed);
+            Send(self,@NotifyEngineEndEvent);
+         }
+         Send(self,@TrySpawnMonster);
       }
       if (piPhase = 4)
       {
-         Send(self,@NotifyEngineEndEvent);
+         if (piDefenderScore >= (Send(SYS,@GetUniqueIPs)*15))
+         {
+            Send(self,@NotifyEngineEndEvent);
+         }
+         
+         if (piInvaderScore >= 25)
+         {
+            Send(self,@EventFailed);
+            Send(self,@NotifyEngineEndEvent);
+         }
+         Send(self,@TrySpawnMonster);
       }
+      
       propagate;
    }
 
    PhaseOne()
    {
+      piInvaderScore = 0;
+      piDefenderScore = 0;
       piPhase = 1;
+      plSpawnList = [[&Orc,25]];
       return;
    }
 
    PhaseTwo()
    {
+      local i;
+      
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=OrcInvasion_phase_two_msg);
+      }
+      
+      piInvaderScore = 0;
+      piDefenderScore = 0;
       piPhase = 2;
+      plSpawnList = [[&Orc,50],[&CaveOrc,50]];
+      for i in plInvaders
+      {
+         Send(i,@Delete);
+      }
+      plInvaders = $;
       return;
    }
 
    PhaseThree()
    {
+      local i;
+      
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=OrcInvasion_phase_three_msg);
+      }
+   
+      piInvaderScore = 0;
+      piDefenderScore = 0;
       piPhase = 3;
+      plSpawnList = [[&Orc,34],[&CaveOrc,33],[&OrcWizard,33]];
+      for i in plInvaders
+      {
+         Send(i,@Delete);
+      }
+      plInvaders = $;
       return;
    }
 
    FinalPhase()
    {
+      local i;
+   
+      if vbAnnounce
+      {
+         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=OrcInvasion_phase_four_msg);
+      }
+   
+      piInvaderScore = 0;
+      piDefenderScore = 0;
       piPhase = 4;
+      plSpawnList = [[&Orc,30],[&CaveOrc,30],[&OrcWizard,30],[&OrcPitBoss,10]];
+      for i in plInvaders
+      {
+         Send(i,@Delete);
+      }
+      plInvaders = $;
+      return;
+   }
+
+   EventFailed()
+   {
+      Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=OrcInvasion_fail_msg);
       return;
    }
 
    EndEvent()
    {
+      local i;
+      
+      for i in plInvaders
+      {
+         Send(i,@Delete);
+      }
+   
       Send(self,@RestoreRoomStates);
       
       propagate;
+   }
+   
+   MonsterKilled(dead_monster=$,killing_player=$,corpse=$)
+   {
+      local i;
+      
+      if (dead_monster = $)
+      {
+         return;
+      }
+      
+      for i in plInvaders
+      {
+         if (i = dead_monster)
+         {
+            piDefenderScore = piDefenderScore + 1;
+            break;
+         }
+      }
+      
+      propagate;
+   }
+   
+   CountAllInvaders()
+   {
+      local i, iCount;
+      
+      iCount = 0;
+      
+      for i in plEventRooms
+      {
+         iCount = iCount + Send(i,@CountMonsters,#class=&Orc);
+         iCount = iCount + Send(i,@CountMonsters,#class=&CaveOrc);
+         iCount = iCount + Send(i,@CountMonsters,#class=&OrcWizard);
+         iCount = iCount + Send(i,@CountMonsters,#class=&OrcPitBoss);
+      }
+      
+      return iCount;
+   }
+   
+   SelectMonster()
+   {
+      local iTotal, lMonster_info, iRoll, bChosen, loops, cMonster;
+   
+      loops = 0;
+      bChosen = False;
+      iTotal = 0;
+      
+      while ((loops < 5) AND NOT bChosen)
+      {
+         for lMonster_info in plSpawnList
+         {
+            iRoll = Random(1,100);
+            iTotal = iTotal + Nth(lMonster_info,2);
+
+            if iRoll <= iTotal
+            {
+               cMonster = First(lMonster_info);
+               bChosen = True;
+               break;
+            }
+         }
+         loops = loops + 1;
+      }
+      
+      return cMonster;
+   }
+   
+   TrySpawnMonster()
+   {
+      local oRoom, oMonster, iGenRow, iGenCol;
+   
+      iGenRow = Nth(First(Nth(Nth(plCurrentBattlePlan,1),2)),1);
+      iGenCol = Nth(First(Nth(Nth(plCurrentBattlePlan,1),2)),2);
+      
+      %Send(self,@PhaseTwo);
+      if (piTicks MOD piInvaderGenTime = 0)
+      {
+         %currently spawning from first room only
+         oRoom = First(plEventRooms);
+         if (Send(self,@CountAllInvaders) < piMaxInvaders)
+         {
+            oMonster = Create(Send(self,@SelectMonster));
+            plInvaders = Cons(oMonster,plInvaders);
+            Send(oMonster,@SetDontDispose);
+            Send(oMonster,@SetPatrolPath,#lPath=Nth(Nth(plCurrentBattlePlan,1),2));
+            Send(oMonster,@SetChanceToPatrol,#chance=4000);
+            Send(oMonster,@SetLoopingPatrol,#looping=False);
+            Send(oMonster,@SetBehaviorFlag,#flag=AI_MOVE_WHEN_ALONE,
+               #value=True);
+            Send(oRoom,@GenerateMonster,#oMonster=oMonster,#iRow=iGenRow,#iCol=iGenCol);
+         }
+      }
+   
+      return;
+   }
+   
+   InvaderMaintenance()
+   {
+      local iCount, i, j, iRow, iCol, iTrigRow, iTrigCol, iNewRow, iNewCol,
+            oCurrentRoom, oNextRoom, bNextRoomFound, lCurrentPath, lNextPath;
+
+      for i in plInvaders
+      {
+         if (Send(i,@GetOwner) = $)
+         {
+            plInvaders = DelListElem(plInvaders,i);
+         }
+      }
+
+      for i in plInvaders
+      {
+         oCurrentRoom = Send(i,@GetOwner);
+         iCount = 1;
+         bNextRoomFound = False;
+         while ((iCount < Length(plCurrentBattlePlan)) 
+            AND NOT bNextRoomFound)
+         {
+            if (oCurrentRoom = Send(SYS,@FindRoomByNum,
+               #num=Nth(Nth(plCurrentBattlePlan,iCount),1)))
+            {
+               lCurrentPath = Nth(Nth(plCurrentBattlePlan,iCount),2);
+               if (iCount <> Length(plCurrentBattlePlan))
+               % invader has at least 1 more toom to go
+               {
+                  bNextRoomFound = True;
+                  oNextRoom = Send(SYS,@FindRoomByNum,
+                     #num=Nth(Nth(plCurrentBattlePlan,iCount+1),1));
+                  lNextPath = Nth(Nth(plCurrentBattlePlan,iCount+1),2);
+               }
+               else
+               % invader is in the final room
+               {
+                  oNextRoom = $;
+                  lNextPath = $;
+               }
+            }
+         
+            iCount = iCount + 1;
+         }
+
+         if (bNextRoomFound)
+         {
+            if (oNextRoom <> $)
+            {
+               iRow = Send(i,@GetRow);
+               iCol = Send(i,@GetCol);
+               
+               iTrigRow = Nth(Nth(lCurrentPath,Length(lCurrentPath)),1);
+               iTrigCol = Nth(Nth(lCurrentPath,Length(lCurrentPath)),2);
+               
+               if (iRow = iTrigRow) AND (iCol = iTrigCol)
+               {
+                  iNewRow = Nth(First(lNextPath),1);
+                  iNewCol = Nth(First(lNextPath),2);
+               
+                  Send(i,@ClearPatrolLocation);
+                  Send(oNextRoom,@NewHold,#what=i,#new_row=iNewRow,#new_col=iNewCol);
+                  Send(i,@SetPatrolPath,#lPath=lNextPath);
+                  Send(i,@SetPatrolNode,#node=1);
+                  
+                  if (oNextRoom = poTargetRoom)
+                  {
+                     piInvaderScore = piInvaderScore + 1;
+                  }
+               }
+            }
+         }
+         
+         if ( oCurrentRoom = poTargetRoom 
+            AND ((Send(poTargetRoom,@CountMonsters,#class=&Orc) +
+                  Send(poTargetRoom,@CountMonsters,#class=&CaveOrc) +
+                  Send(poTargetRoom,@CountMonsters,#class=&OrcWizard) +
+                  Send(poTargetRoom,@CountMonsters,#class=&OrcPitBoss))
+                     > piInvadersMaxInTargetRoom))
+         {
+            plInvaders = DelListElem(plInvaders,i);
+            send(i,@Delete);
+         }
+         
+      }
+      
+      return;
    }
    
 end

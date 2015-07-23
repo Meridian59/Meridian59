@@ -229,6 +229,32 @@ int Nth(int n,int list_id)
 	return (l? l->first.int_val : NIL);
 }
 
+int Last(int list_id)
+{
+   list_node *l;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("Last given invalid list ID %i\n", list_id);
+      return NIL;
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+   }
+
+   if (!l)
+   {
+      bprintf("Last found invalid list node somewhere in list %i\n",
+         list_id);
+      return NIL;
+   }
+
+   return l->first.int_val;
+}
+
 int SetFirst(int list_id,val_type new_val)
 {
 	list_node *l;

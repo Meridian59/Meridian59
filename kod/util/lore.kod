@@ -362,7 +362,7 @@ messages:
       %  the last one.  If we're greater than or equal to that, replace it. 
 
       % Get the last element of the list
-      lNode = Nth(llist,length(lList));
+      lNode = Last(lList);
 
       if score >= Nth(lNode,2)
       {

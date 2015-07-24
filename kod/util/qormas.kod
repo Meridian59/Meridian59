@@ -997,11 +997,13 @@ messages:
 
    OnLogonTimer()
    {
+      local oPlayer;
+
       if plLogonQueue <> $
       {
-         Send(self,@ProcessLogon,#who=Nth(plLogonQueue,Length(plLogonQueue)));
-         plLogonQueue = DelListElem(plLogonQueue,
-                              Nth(plLogonQueue,Length(plLogonQueue)));
+         oPlayer = Last(plLogonQueue);
+         Send(self,@ProcessLogon,#who=oPlayer);
+         plLogonQueue = DelListElem(plLogonQueue,oPlayer);
       }
 
       return;

@@ -510,28 +510,28 @@ messages:
          piPKcountPerDay = 0;
          if Length(plArchivedPKCounts) > 12
          {
-            plArchivedPKCounts = DelListElem(plArchivedPKCounts,Nth(plArchivedPKCounts,
-                                       Length(plArchivedPKCounts)));
+            plArchivedPKCounts = DelListElem(plArchivedPKCounts,
+                                       Last(plArchivedPKCounts));
          }
          plArchivedNKCounts = Cons(piNKcountPerDay,plArchivedNKCounts);
          piNKcountPerDay = 0;
          if Length(plArchivedNKCounts) > 12
          {
-            plArchivedNKCounts = DelListElem(plArchivedNKCounts,Nth(plArchivedNKCounts,
-                                       Length(plArchivedNKCounts)));
+            plArchivedNKCounts = DelListElem(plArchivedNKCounts,
+                                       Last(plArchivedNKCounts));
          }
          plArchivedHKCounts = Cons(piHKcountPerDay,plArchivedHKCounts);
          piHKcountPerDay = 0;
          if Length(plArchivedHKCounts) > 12
          {
-            plArchivedHKCounts = DelListElem(plArchivedHKCounts,Nth(plArchivedHKCounts,
-                                       Length(plArchivedHKCounts)));
+            plArchivedHKCounts = DelListElem(plArchivedHKCounts,
+                                       Last(plArchivedHKCounts));
          }
          plArchivedPkPercents = Cons(piPkPercentDueToScenario,plArchivedPkPercents);
          if Length(plArchivedPkPercents) > 12
          {
-            plArchivedPkPercents = DelListElem(plArchivedPkPercents,Nth(plArchivedPkPercents,
-                                       Length(plArchivedPkPercents)));
+            plArchivedPkPercents = DelListElem(plArchivedPkPercents,
+                                          Last(plArchivedPkPercents));
          }
       }
 
@@ -783,7 +783,7 @@ messages:
       oTreasure = $;
       if plNecromancerTreasure <> $
       {
-         oTreasure = Nth(plNecromancerTreasure,Length(plNecromancerTreasure));
+         oTreasure = Last(plNecromancerTreasure);
          if NOT IsClass(oTreasure,&NecromancerAmulet)
             AND NOT IsClass(oTreasure,&HunterSword)
          {
@@ -806,9 +806,7 @@ messages:
                }
             }
          }
-         plNecromancerTreasure = DelListElem(plNecromancerTreasure,
-                                       Nth(plNecromancerTreasure,
-                                       Length(plNecromancerTreasure)));
+         plNecromancerTreasure = DelListElem(plNecromancerTreasure,oTreasure);
 
          return;
       }

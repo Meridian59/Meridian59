@@ -4375,10 +4375,9 @@ messages:
       if who <> $
       {
          plSignetNewbies = Cons(who,plSignetNewbies);
-         while Length(plSignetNewbies)>Send(self,@GetMaxSignetNewbies)
+         while Length(plSignetNewbies) > Send(self,@GetMaxSignetNewbies)
          {
-            plSignetNewbies = DelListElem(plSignetNewbies,
-                                  Nth(plSignetNewbies,Length(plSignetNewbies)));
+            plSignetNewbies = DelListElem(plSignetNewbies,Last(plSignetNewbies));
          }
       }
 
@@ -4431,9 +4430,9 @@ messages:
 
       plSignetRings=Cons(newring,plSignetRings);
 
-      while Length(plSignetRings)>Send(self,@GetMaxSignets)
+      while Length(plSignetRings) > Send(self,@GetMaxSignets)
       {
-         oldring = Nth(plSignetRings,Length(plSignetRings));
+         oldring = Last(plSignetRings);
          plSignetRings = DelListElem(plSignetRings,oldring);
          oRingOwner=Send(oldRing,@GetOwner);
          if oRingOwner <> $
@@ -4457,8 +4456,7 @@ messages:
 
       while Length(plSignetNewbies) > Send(self,@GetMaxSignetNewbies)
       {
-         plSignetNewbies = DelListElem(plSignetNewbies,
-                               Nth(plSignetNewbies,Length(plSignetNewbies)));
+         plSignetNewbies = DelListElem(plSignetNewbies,Last(plSignetNewbies));
       }
 
       return;

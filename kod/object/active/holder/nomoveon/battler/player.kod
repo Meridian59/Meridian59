@@ -999,11 +999,11 @@ properties:
    prRight_arm = player_rightarm_a_rsc
    prLeft_arm = player_leftarm_a_rsc
 
-   prHead = $
-   prEyes = $
-   prMouth = $
-   prNose = $
-   prToupee = $
+   prHead = charinfo_head_ax_icon
+   prEyes = charinfo_eyes_ax_icon
+   prMouth = charinfo_nose_ax_icon
+   prNose = charinfo_mouth_ax_icon
+   prToupee = charinfo_hair_cd_icon
 
    % Animation type.  If none, then use piAction
    % piAnimation should be PANM_NONE in between KOD calls.

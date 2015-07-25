@@ -601,6 +601,7 @@ char * name_function(int fnum)
    case SWAPLISTELEM : return "SwapListElem";
    case DELLISTELEM : return "DelListElem";
    case INSERTLISTELEM : return "InsertListElem";
+   case LAST : return "Last";
 
    case GETTIME : return "GetTime";
    case GETTICKCOUNT : return "GetTickCount";

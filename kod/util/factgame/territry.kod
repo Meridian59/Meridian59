@@ -637,7 +637,7 @@ messages:
       }
 
       AppendTempString("and ");
-      AppendTempString(send(send(SYS,@FindRoomByNum,#num=nth(town,length(town))),@GetName));
+      AppendTempString(send(send(SYS,@FindRoomByNum,#num=Last(town)),@GetName));
       setString(sTowns,GetTempString());
 
       if faction <> FACTION_NEUTRAL

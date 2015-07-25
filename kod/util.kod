@@ -645,20 +645,17 @@ messages:
          }
       }
 
-      iCount = 0;
+      iCount = 1;
       % User wasn't on scoreboard. Get the position in list of
       % where we need to add them.
       for lEntry in lList
       {
-         iCount = iCount + 1;
-         if Nth(lEntry,2) > iPoints
-         {
-            continue;
-         }
-         else
+         if Nth(lEntry,2) < iPoints
          {
             break;
          }
+
+         iCount = iCount + 1;
       }
 
       % User's score should be less than iCount - 1 but more than

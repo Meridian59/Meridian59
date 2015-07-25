@@ -3512,8 +3512,9 @@ messages:
       {
          if Nth(i,2) = what
          {
-            if Send(self,@IsLoggedOn)
+            if pbLogged_On
                OR IsClass(what,&Phase)
+               OR IsClass(what,&Boon)
             {
                if First(i) <> $
                {
@@ -14310,7 +14311,7 @@ messages:
    {
       if poOwner = $
          OR piBound_Room = $
-         OR NOT Send(self,@IsLoggedOn)
+         OR NOT pbLogged_on
       {
          return;
       }
@@ -14398,8 +14399,8 @@ messages:
          AND Send(self,@GetDeathRiftProtection) = TRUE
       {
          Send(self,@AdminGoToSafety);
-         
-         if Send(self,@IsLoggedOn)
+
+         if pbLogged_on
          {
             Send(self,@MsgSendUser,#message_rsc=death_rift_stayed_too_long);
          }

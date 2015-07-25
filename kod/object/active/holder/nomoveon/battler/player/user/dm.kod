@@ -1042,11 +1042,8 @@ messages:
          }
          if oObject <> $
          {
-            Send(poOwner,@NewHold,#what=oObject,
-                  #new_row=Send(self,@GetRow),
-                  #new_col=Send(self,@GetCol),
-                  #fine_row=Send(self,@GetFineRow),
-                  #fine_col=Send(self,@GetFineCol));
+            Send(poOwner,@NewHold,#what=oObject,#new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
 
             return;
          }
@@ -1225,9 +1222,8 @@ messages:
          {
             oObject = Create(&EventSign);
 
-            Send(poOwner,@NewHold,#what=oObject,
-                  #new_row=Send(self,@GetRow),
-                  #new_col=Send(self,@GetCol));
+            Send(poOwner,@NewHold,#what=oObject,#new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
 
             return;
          }
@@ -1418,7 +1414,8 @@ messages:
                   % Also makes the monster not affect Karma when killed.
                   Send(oObject,@SetDontDispose);
 
-                  Send(poOwner,@NewHold,#what=oObject,#new_row=piRow,#new_col=piCol);
+                  Send(poOwner,@NewHold,#what=oObject,#new_row=piRow,
+                        #new_col=piCol,#fine_row=piFine_row,#fine_col=piFine_col);
 
                   if NOT pbStealth
                   {
@@ -1796,7 +1793,8 @@ messages:
          if StringEqual(string,"call tester")
          {
             Send(poOwner,@NewHold,#what=Create(&GraphicTester),
-                 #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
+                  #new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
 
             return;
          }

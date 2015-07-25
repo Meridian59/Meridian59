@@ -2376,8 +2376,6 @@
    EVENT_DISRUPT = 9
    % Player is moving to a new room but has not yet
    EVENT_REQNEWOWNER = 10
-   % Break trance for system save.
-   EVENT_SYSTEMSAVE = 11
 
    %%% Hot spot definitions
 

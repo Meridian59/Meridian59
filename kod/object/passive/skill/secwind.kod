@@ -149,7 +149,7 @@ messages:
       iTimer = Send(who,@GetSecondWindTimer);
       if iTimer = $
       {
-         return;
+         propagate;
       }
 
       if IsTimer(iTimer)

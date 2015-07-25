@@ -3514,6 +3514,7 @@ messages:
          {
             if pbLogged_On
                OR IsClass(what,&Phase)
+               OR IsClass(what,&Boon)
             {
                if First(i) <> $
                {

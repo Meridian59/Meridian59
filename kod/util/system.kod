@@ -4121,7 +4121,8 @@ messages:
          Send(self,@ChangeUserName,#oUser=oUser,#sName=sName);
 
          Send(oUser,@SetLastRestartTime,#time=i);
-
+         % Set the last login time to now so the player can log in.
+         Send(oUser,@FirstLogon);
          lCharinfo = Rest(Rest(Rest(Rest(Rest(client_msg)))));
          Send(oUser,@PlayerNewCharInfo,#desc=sDesc,#charinfo=lCharinfo,
               #gender=iGender);

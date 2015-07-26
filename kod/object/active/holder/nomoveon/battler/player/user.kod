@@ -767,19 +767,28 @@ messages:
       
       return;
    }
-   
+
+   FirstLogon()
+   "Sets the last login time and sends an appeal "
+   "when a new character is created."
+   {
+      if piLastLoginTime = 0 AND piLast_Restart_Time = 0
+      {
+         Debug("Sending first time appeal");
+         Send(self,@SendFirstTimeAppeal);
+      }
+
+      piLastLoginTime = GetTime();
+
+      return;
+   }
+
    UserLogon(session_id = $)
    {
       local i;
       
       poSession = session_id;
       pbLogged_on = TRUE;
-
-      if piLastLoginTime = 0 AND piLast_Restart_Time = 0
-      {
-         Debug("Sending first time appeal");
-         Send(self,@SendFirstTimeAppeal);
-      }
 
       piLastLoginTime = GetTime();
       % Gotta load interface early!

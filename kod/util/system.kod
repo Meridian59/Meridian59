@@ -6895,6 +6895,38 @@ messages:
       return iList;
    }
 
+   FixSpellLevelChange(iSID=0)
+   "Removes a spell from one level and adds it to another for all players "
+   "who have the spell, and also have the second level."
+   {
+      local i, oSpell, iPercent, iTP;
+
+      oSpell = Send(self,@FindSpellByNum,#num=iSID);
+
+      foreach i in plUsers
+      {
+         if Send(i,@HasSpell,#num=iSID)
+         {
+            iPercent = Send(i,@GetSpellAbility,#spell_num=iSID);
+            Send(i,@RemoveSpell,#num=iSID);
+            if Send(i,@PlayerCanLearn,#spell_num=iSID) = PLAYER_LEARN_SUCCESS
+            {
+               Send(i,@AddSpell,#num=iSID,#iability=iPercent);
+               Debug("Readded spell ",Send(oSpell,@GetName)," to ",
+                     Send(i,@GetTrueName));
+            }
+            else
+            {
+               iTP = Send(oSpell,@GetMeditateRatio);
+               Send(i,@AddTrainingPoints,#points=iTP * iPercent,#bCap=FALSE);
+               Debug("Added ",iTP * iPercent," TP to ",Send(i,@GetTrueName));
+            }
+         }
+      }
+
+      return;
+   }
+
    AdminListPlayersOverHP(hp=$)
    {
       local i;

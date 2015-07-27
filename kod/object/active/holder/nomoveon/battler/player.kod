@@ -238,7 +238,7 @@ resources:
    
    player_training_inform = "You now have ~B%i~B training points!"
    player_reached_maxtraining = \
-      "You now have ~B1000~B training points and can not gain any more!  "
+      "You now have ~B%i~B training points and can not gain any more!  "
       "Cast the Meditate spell and say the name of a spell or skill out loud "
       "to use your points to train it."
    player_gained_training = "You have gained ~B%i~B training points!"
@@ -2328,7 +2328,7 @@ messages:
 
       if iTimespan > 16*60*60
       {
-         if piTraining_points = 1000
+         if piTraining_points >= 1000
          {
             return;
          }
@@ -8962,6 +8962,7 @@ messages:
          % and also got the killing blow (no double points from single mobs).
          if gain > 0
             AND killing_blow
+            AND piTraining_points < 1000
          {
             piTraining_points = piTraining_points + 1
                + (Send(what,@GetBoostedLevel)
@@ -8994,14 +8995,14 @@ messages:
          {
             if piInform
             {
-               Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining);
+               Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,
+                  #parm1=piTraining_points);
                piInform = FALSE;
             }
-            piTraining_points = 1000;
          }
          else
          {
-            if piTraining_points mod 100 = 0
+            if piTraining_points MOD 100 = 0
                AND piTraining_points <> 0
                AND piInform
             {
@@ -9169,14 +9170,27 @@ messages:
       return piTraining_points;
    }
 
-   AddTrainingPoints(points=0,report=TRUE)
+   AddTrainingPoints(points=0,report=TRUE,bCap=TRUE)
    {
       if points = 0
       {
          return;
       }
 
-      points = bound(points,-piTraining_points,1000 - piTraining_points);
+      if bCap
+      {
+         if piTraining_points <= 1000
+         {
+            points = bound(points,-piTraining_points,1000 - piTraining_points);
+         }
+         else if points > 0
+         {
+               % We're respecting the 1000 point cap, have more than 1000
+               % points and are trying to add more. Don't add the points,
+               % return out.
+               return;
+         }
+      }
 
       if report AND points > 0
       {
@@ -9193,12 +9207,14 @@ messages:
       piTraining_points = piTraining_points + points;
 
       if piTraining_points < 1000
+         OR NOT bCap
       {
          piInform = TRUE;
       }
       else
       {
-         Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining);
+         Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining,
+               #parm1=piTraining_points);
          piInform = FALSE;
       }
 
@@ -9213,7 +9229,7 @@ messages:
 
       ptReward_timer = CreateTimer(self,@GetDailyTrainingReward,24*60*60*1000);
 
-      if piTraining_points = 1000
+      if piTraining_points >= 1000
       {
          return;
       }

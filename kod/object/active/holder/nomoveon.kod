@@ -471,8 +471,8 @@ messages:
       % Deltas.
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
-      iHeight_diff = (Send(self,@GetHeightAtObject)
-                           - Send(what,@GetHeightAtObject)) * 16;
+      iHeight_diff = Send(self,@GetHeightFloorAtObjectBSP)
+                          - Send(what,@GetHeightFloorAtObjectBSP);
 
       iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
                   + iHeight_diff * iHeight_diff;
@@ -499,9 +499,9 @@ messages:
       % Deltas.
       iRow_diff = iRow - iWhatRow;
       iCol_diff = iCol - iWhatCol;
-      iHeight_diff = (Send(self,@GetHeightAtObject)
-                           - GetHeight(Send(poOwner,@GetRoomData),row,col,
-                                    fine_row,fine_col)) * 16;
+      iHeight_diff = Send(self,@GetHeightFloorAtObjectBSP)
+                           - GetHeightFloorBSP(Send(poOwner,@GetRoomData),row,col,
+                                    fine_row,fine_col);
 
       iResult = iRow_diff * iRow_diff + iCol_diff * iCol_diff
                   + iHeight_diff * iHeight_diff;

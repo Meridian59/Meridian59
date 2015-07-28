@@ -4740,6 +4740,13 @@ messages:
          return FALSE;
       }
 
+      % Deny attack if no line of sight
+      if NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_attack_not_in_view);
+         return FALSE;
+      }
+
       % Send to the STROKE to get the range; unarmed attacks have ranges too
       iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
 
@@ -4864,13 +4871,7 @@ messages:
             #use_weapon=use_weapon,#stroke_obj=stroke_obj);
 
       % Record the swing for potential advancement.
-      % Only recorded if the player can advance on the monster, and if they
-      % are within line of sight of the target. (If they aren't in line of
-      % sight, then only advance 1 out of 5 swings. Allow the random, since
-      % sometimes not being in line of sight is an accident.
-      if Send(what,@CanPlayerAdvanceOnMe)
-         AND (Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
-            OR Random(1,25) = 1)
+      if Send(what,@CanPlayerAdvanceOnMe)         
       {
          % We got another swing in, so increment that.
          Send(self,@SwingWeapon,#times=1);
@@ -6460,6 +6461,12 @@ messages:
          }
       }
 
+      return;
+   }
+
+   SendNoLineOfSightMessage()
+   {
+      Send(self,@MsgSendUser,#message_rsc=player_attack_not_in_view);
       return;
    }
 

@@ -147,6 +147,11 @@ void InitBkodInterpret(void)
 	ccall_table[CANMOVEINROOMFINE] = C_CanMoveInRoomFine;
 	ccall_table[CANMOVEINROOMHIGHRES] = C_CanMoveInRoomHighRes;
 	ccall_table[GETHEIGHT] = C_GetHeight;
+	ccall_table[GETHEIGHTFLOORBSP] = C_GetHeightFloorBSP;
+	ccall_table[GETHEIGHTCEILINGBSP] = C_GetHeightCeilingBSP;
+	ccall_table[LINEOFSIGHTBSP] = C_LineOfSightBSP;
+	ccall_table[CHANGETEXTUREBSP] = C_ChangeTextureBSP;
+	ccall_table[MOVESECTORBSP] = C_MoveSectorBSP;
 
 	ccall_table[APPENDLISTELEM] = C_AppendListElem;
 	ccall_table[CONS] = C_Cons;

@@ -665,3 +665,66 @@ int GetHeight(roomdata_node *r,int row,int col,int finerow,int finecol)
 	// return height from upper 23 bit
 	return (r->file_info.highres_grid[highresrow][highrescol] >> 9);
 }
+
+
+int GetHeightFloorBSP(roomdata_node *r, int row, int col, int finerow, int finecol)
+{
+   if (!r || r->file_info.TreeNodesCount == 0)
+      return 0;
+
+   V2 p;
+   p.X = FINENESSKODTOROO((float)col * 64.0f + (float)finecol);
+   p.Y = FINENESSKODTOROO((float)row * 64.0f + (float)finerow);
+
+   // get floor height without depth modifier (height of floor texture)
+   float height = FINENESSROOTOKOD(BSPGetHeight(&r->file_info, &p, true, false));
+
+   // box value into min/max kod integer
+   return FLOATTOKODINT(height);
+}
+
+int GetHeightCeilingBSP(roomdata_node *r, int row, int col, int finerow, int finecol)
+{
+   if (!r || r->file_info.TreeNodesCount == 0)
+      return 0;
+
+   V2 p;
+   p.X = FINENESSKODTOROO((float)col * 64.0f + (float)finecol);
+   p.Y = FINENESSKODTOROO((float)row * 64.0f + (float)finerow);
+
+   float height = FINENESSROOTOKOD(BSPGetHeight(&r->file_info, &p, false, false));
+
+   // box value into min/max kod integer
+   return FLOATTOKODINT(height);
+}
+
+Bool LineOfSightBSP(roomdata_node *r, int from_row, int from_col, int from_finerow, int from_finecol,
+                    int to_row, int to_col, int to_finerow, int to_finecol)
+{
+   if (!r || r->file_info.TreeNodesCount == 0)
+      return false;
+
+   V3 s;
+   s.X = FINENESSKODTOROO((float)from_col * 64.0f + (float)from_finecol);
+   s.Y = FINENESSKODTOROO((float)from_row * 64.0f + (float)from_finerow);
+	
+   // get floor height with depth modifier
+   V2 s2d = { s.X, s.Y };
+   s.Z = BSPGetHeight(&r->file_info, &s2d, true, true) + OBJECTHEIGHTROO;
+	
+   V3 e;
+   e.X = FINENESSKODTOROO((float)to_col * 64.0f + (float)to_finecol);
+   e.Y = FINENESSKODTOROO((float)to_row * 64.0f + (float)to_finerow);
+
+   // get floor height with depth modifier
+   V2 e2d = { e.X, e.Y };
+   e.Z = BSPGetHeight(&r->file_info, &e2d, true, true) + OBJECTHEIGHTROO;
+
+   bool los = BSPLineOfSight(&r->file_info, &s, &e);
+
+#if DEBUGLOS
+   dprintf("LOS:%i S:(%1.2f/%1.2f/%1.2f) E:(%1.2f/%1.2f/%1.2f)", los, s.X, s.Y, s.Z, e.X, e.Y, e.Z);
+#endif
+
+   return los;
+}

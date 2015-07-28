@@ -2086,6 +2086,8 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case DELETETIMER : strcpy(c_name, "DeleteTimer"); break;
 		case GETTIMEREMAINING : strcpy(c_name, "GetTimeRemaining"); break;
 		case ISTIMER : strcpy(c_name, "IsTimer"); break;
+		case MOVESECTORBSP: strcpy(c_name, "MoveSectorBSP"); break;
+		case CHANGETEXTUREBSP: strcpy(c_name, "ChangeTextureBSP"); break;
 		case CREATEROOMDATA : strcpy(c_name, "CreateRoomData"); break;
 		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
@@ -2093,6 +2095,9 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CANMOVEINROOMFINE : strcpy(c_name, "CanMoveInRoomFine"); break;
 		case CANMOVEINROOMHIGHRES : strcpy(c_name, "CanMoveInRoomHighRes"); break;
 		case GETHEIGHT : strcpy(c_name, "GetHeight"); break;
+		case GETHEIGHTFLOORBSP: strcpy(c_name, "GetHeightFloorBSP"); break;
+		case GETHEIGHTCEILINGBSP: strcpy(c_name, "GetHeightCeilingBSP"); break;
+		case LINEOFSIGHTBSP: strcpy(c_name, "LineOfSightBSP"); break;
 		case MINIGAMENUMBERTOSTRING : strcpy(c_name, "MinigameNumberToString"); break;
 		case MINIGAMESTRINGTONUMBER : strcpy(c_name, "MinigameStringToNumber"); break;
 		case APPENDLISTELEM : strcpy(c_name, "AppendListElem"); break;

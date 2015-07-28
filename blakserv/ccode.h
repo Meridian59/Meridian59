@@ -161,9 +161,29 @@ int C_GetHeight(int object_id,local_var_type *local_vars,
 		    int num_normal_parms,parm_node normal_parm_array[],
 		    int num_name_parms,parm_node name_parm_array[]);
 
+int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[]);
+
+int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[]);
+
+int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
+		int num_normal_parms, parm_node normal_parm_array[],
+		int num_name_parms, parm_node name_parm_array[]);
+
 int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 		    int num_normal_parms,parm_node normal_parm_array[],
 		    int num_name_parms,parm_node name_parm_array[]);
+
+int C_ChangeTextureBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[]);
+
+int C_MoveSectorBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[]);
 
 int C_AppendListElem(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],

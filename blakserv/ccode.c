@@ -2031,6 +2031,259 @@ int C_GetHeight(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val;
+	val_type row, col, finerow, finecol;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_GetHeightFloorBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightFloorBSP row can't use non int %i,%i\n",
+			row.v.tag, row.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightFloorBSP col can't use non int %i,%i\n",
+			col.v.tag, col.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightFloorBSP finerow can't use non int %i,%i\n",
+			finerow.v.tag, finerow.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightFloorBSP finecol can't use non int %i,%i\n",
+			finecol.v.tag, finecol.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_GetHeightFloorBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	/* remember that kod uses 1-based arrays, and of course we don't */
+	ret_val.v.data = GetHeightFloorBSP(r,
+		row.v.data - 1, col.v.data - 1, finerow.v.data, finecol.v.data);
+
+	return ret_val.int_val;
+}
+
+
+int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val;
+	val_type row, col, finerow, finecol;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_GetHeightCeilingBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightCeilingBSP row can't use non int %i,%i\n",
+			row.v.tag, row.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightCeilingBSP col can't use non int %i,%i\n",
+			col.v.tag, col.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightCeilingBSP finerow can't use non int %i,%i\n",
+			finerow.v.tag, finerow.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol.v.tag != TAG_INT)
+	{
+		bprintf("C_GetHeightCeilingBSP finecol can't use non int %i,%i\n",
+			finecol.v.tag, finecol.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_GetHeightCeilingBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	/* remember that kod uses 1-based arrays, and of course we don't */
+	ret_val.v.data = GetHeightCeilingBSP(r,
+		row.v.data - 1, col.v.data - 1, finerow.v.data, finecol.v.data);
+
+	return ret_val.int_val;
+}
+
+int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val;
+	val_type row_source, col_source, finerow_source, finecol_source;
+	val_type row_dest, col_dest, finerow_dest, finecol_dest;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row_source = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col_source = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow_source = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol_source = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+
+	row_dest = RetrieveValue(object_id, local_vars, normal_parm_array[5].type,
+		normal_parm_array[5].value);
+	col_dest = RetrieveValue(object_id, local_vars, normal_parm_array[6].type,
+		normal_parm_array[6].value);
+	finerow_dest = RetrieveValue(object_id, local_vars, normal_parm_array[7].type,
+		normal_parm_array[7].value);
+	finecol_dest = RetrieveValue(object_id, local_vars, normal_parm_array[8].type,
+		normal_parm_array[8].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_LineOfSightBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row_source.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP row source can't use non int %i,%i\n",
+			row_source.v.tag, row_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col_source.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP col source can't use non int %i,%i\n",
+			col_source.v.tag, col_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow_source.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP finerow source can't use non int %i,%i\n",
+			finerow_source.v.tag, finerow_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol_source.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP finecol source can't use non int %i,%i\n",
+			finecol_source.v.tag, finecol_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP row dest can't use non int %i,%i\n",
+			row_dest.v.tag, row_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP col dest can't use non int %i,%i\n",
+			col_dest.v.tag, col_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP finerow dest can't use non int %i,%i\n",
+			finerow_dest.v.tag, finerow_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_LineOfSightBSP finecol dest can't use non int %i,%i\n",
+			finecol_dest.v.tag, finecol_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_LineOfSightBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	/* remember that kod uses 1-based arrays, and of course we don't */
+	ret_val.v.data = LineOfSightBSP(r,
+		row_source.v.data - 1, col_source.v.data - 1, finerow_source.v.data, finecol_source.v.data,
+		row_dest.v.data - 1, col_dest.v.data - 1, finerow_dest.v.data, finecol_dest.v.data);
+
+	return ret_val.int_val;
+}
+
 int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 						   int num_normal_parms,parm_node normal_parm_array[],
 						   int num_name_parms,parm_node name_parm_array[])
@@ -2102,6 +2355,138 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
 	ret_val.v.data = CanMoveInRoomFine(r,row_source.v.data-1,col_source.v.data-1,
 		row_dest.v.data-1,col_dest.v.data-1);
 	
+	return ret_val.int_val;
+}
+
+int C_ChangeTextureBSP(int object_id, local_var_type *local_vars,
+    int num_normal_parms, parm_node normal_parm_array[],
+    int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val, server_id, new_texnum, flags;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	server_id = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	new_texnum = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	flags = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_ChangeTextureBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (server_id.v.tag != TAG_INT)
+	{
+		bprintf("C_ChangeTextureBSP serverid can't use non int %i,%i\n",
+			server_id.v.tag, server_id.v.data);
+		return ret_val.int_val;
+	}
+
+	if (new_texnum.v.tag != TAG_INT)
+	{
+		bprintf("C_ChangeTextureBSP new_texnum can't use non int %i,%i\n",
+			new_texnum.v.tag, new_texnum.v.data);
+		return ret_val.int_val;
+	}
+
+	if (flags.v.tag != TAG_INT)
+	{
+		bprintf("C_ChangeTextureBSP flags can't use non int %i,%i\n",
+			flags.v.tag, flags.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_ChangeTextureBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	BSPChangeTexture(&r->file_info, (unsigned short)server_id.v.data, 
+		(unsigned short)new_texnum.v.data, flags.v.data);
+
+	return ret_val.int_val;
+}
+
+int C_MoveSectorBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val, server_id, animation, height, speed;
+	roomdata_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	server_id = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	animation = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	height = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	speed = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_MoveSectorBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (server_id.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveSectorBSP serverid can't use non int %i,%i\n",
+			server_id.v.tag, server_id.v.data);
+		return ret_val.int_val;
+	}
+
+	if (animation.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveSectorBSP animation can't use non int %i,%i\n",
+			animation.v.tag, animation.v.data);
+		return ret_val.int_val;
+	}
+
+	if (height.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveSectorBSP height can't use non int %i,%i\n",
+			height.v.tag, height.v.data);
+		return ret_val.int_val;
+	}
+
+	if (speed.v.tag != TAG_INT)
+	{
+		bprintf("C_MoveSectorBSP speed can't use non int %i,%i\n",
+			speed.v.tag, speed.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_MoveSectorBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	bool is_floor = (animation.v.data == ANIMATE_FLOOR_LIFT);
+	float fheight = FINENESSKODTOROO((float)height.v.data);
+	float fspeed = 0.0f; // todo, but always instant anyways atm
+
+	BSPMoveSector(&r->file_info, (unsigned int)server_id.v.data, is_floor, fheight, fspeed);
+
 	return ret_val.int_val;
 }
 

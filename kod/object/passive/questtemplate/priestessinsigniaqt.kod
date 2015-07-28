@@ -132,6 +132,10 @@ messages:
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
          Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_PRIESTESS_INSIGNIA_ONE,
                #new_NPC_list=lNPCs);
       }

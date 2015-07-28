@@ -228,6 +228,8 @@ messages:
          {
             AddPacket(4,vrKill);
          }
+
+         return;
       }
 
       propagate;

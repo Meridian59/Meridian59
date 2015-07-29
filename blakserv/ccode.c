@@ -764,40 +764,136 @@ int C_StringEqual(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
-	val_type s1_val,s2_val,ret_val;
-	const char *s1,*s2;
-	int len1,len2;
-	
-	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-   if (!LookupString(s1_val, "C_StringEqual", &s1, &len1))
-      return NIL;
-	
-	s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-   if (!LookupString(s2_val, "C_StringEqual", &s2, &len2))
-      return NIL;
+   val_type s1_val, s2_val, ret_val;
+   const char *s1 = NULL, *s2 = NULL;
+   int len1, len2;
+   resource_node *r1 = NULL, *r2 = NULL;
+   Bool s1_resource = False, s2_resource = False;
 
-	/*
-	{
-	int i;
-	dprintf("-----------\n");
-	for (i=0;i<len1;i++)
-	dprintf("%c",s1[i]);
-	dprintf("-----------\n");
-	for (i=0;i<len2;i++)
-	dprintf("%c",s2[i]);
-	dprintf("-----------\n");
-	}
-	*/
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = FuzzyBufferEqual(s1,len1,s2,len2);
-	/*
-	dprintf("return %i\n-----\n",ret_val.v.data);
-	*/
-	
-	return ret_val.int_val;
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = False;
+
+   s1_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   s2_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (s1_val.v.tag == TAG_RESOURCE)
+   {
+      r1 = GetResourceByID(s1_val.v.data);
+      if (r1 == NULL)
+      {
+         bprintf("C_StringEqual can't use invalid resource %i as string\n",
+            s1_val.v.data);
+         return ret_val.int_val;
+      }
+      s1_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s1_val, "C_StringEqual", &s1, &len1))
+         return NIL;
+   }
+
+   if (s2_val.v.tag == TAG_RESOURCE)
+   {
+      r2 = GetResourceByID(s2_val.v.data);
+      if (r2 == NULL)
+      {
+         bprintf("C_StringEqual can't use invalid resource %i as string\n",
+            s2_val.v.data);
+         return ret_val.int_val;
+      }
+      s2_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s2_val, "C_StringEqual", &s2, &len2))
+         return NIL;
+   }
+
+   // If both are resources, just compare the English string (first array position).
+   if (s1_resource && s2_resource)
+   {
+      s1 = r1->resource_val[0];
+      if (s1 == NULL)
+      {
+         bprintf("C_StringEqual got NULL string resource 1");
+         return ret_val.int_val;
+      }
+      s2 = r2->resource_val[0];
+      if (s2 == NULL)
+      {
+         bprintf("C_StringEqual got NULL string resource 2");
+         return ret_val.int_val;
+      }
+
+      len1 = strlen(s1);
+      len2 = strlen(s2);
+      ret_val.v.data = FuzzyBufferEqual(s1, len1, s2, len2);
+
+      return ret_val.int_val;
+   }
+
+   // First string is resource, second isn't.
+   if (s1_resource)
+   {
+      len2 = strlen(s2);
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s1 = r1->resource_val[i];
+         if (s1 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringEqual got NULL string resource 1");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len1 = strlen(s1);
+         if (FuzzyBufferEqual(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Second string is resource, first isn't.
+   if (s2_resource)
+   {
+      len1 = strlen(s1);
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s2 = r2->resource_val[i];
+         if (s2 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringEqual got NULL string resource 2");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len2 = strlen(s2);
+         if (FuzzyBufferEqual(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Neither strings are resources.
+   len1 = strlen(s1);
+   len2 = strlen(s2);
+   ret_val.v.data = FuzzyBufferEqual(s1, len1, s2, len2);
+   return ret_val.int_val;
 }
 
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
@@ -1027,43 +1123,141 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 }
 
 int C_StringContain(int object_id,local_var_type *local_vars,
-					int num_normal_parms,parm_node normal_parm_array[],
-					int num_name_parms,parm_node name_parm_array[])
+               int num_normal_parms,parm_node normal_parm_array[],
+               int num_name_parms,parm_node name_parm_array[])
 {
-	val_type s1_val,s2_val,ret_val;
-	const char *s1,*s2;
-	int len1,len2;
-	
-	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-   if (!LookupString(s1_val, "C_StringContain", &s1, &len1))
-      return NIL;
-	
-	s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-   if (!LookupString(s2_val, "C_StringContain", &s2, &len2))
-      return NIL;
+   val_type s1_val, s2_val, ret_val;
+   const char *s1 = NULL,*s2 = NULL;
+   int len1, len2;
+   resource_node *r1 = NULL, *r2 = NULL;
+   Bool s1_resource = False, s2_resource = False;
+   
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = False;
 
-	/*
-	{
-	int i;
-	dprintf("-----------\n");
-	for (i=0;i<len1;i++)
-	dprintf("%c",s1[i]);
-	dprintf("-----------\n");
-	for (i=0;i<len2;i++)
-	dprintf("%c",s2[i]);
-	dprintf("-----------\n");
-	}
-	*/
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = FuzzyBufferContain(s1,len1,s2,len2);
-	/*
-	dprintf("return %i\n-----\n",ret_val.v.data);
-	*/
-	
-	return ret_val.int_val;
+   s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (s1_val.v.tag == TAG_RESOURCE)
+   {
+      r1 = GetResourceByID(s1_val.v.data);
+      if (r1 == NULL)
+      {
+         bprintf("C_StringContain can't use invalid resource %i as string\n",
+            s1_val.v.data);
+         return ret_val.int_val;
+      }
+      s1_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s1_val, "C_StringContain", &s1, &len1))
+         return NIL;
+   }
+
+   if (s2_val.v.tag == TAG_RESOURCE)
+   {
+      r2 = GetResourceByID(s2_val.v.data);
+      if (r2 == NULL)
+      {
+         bprintf("C_StringContain can't use invalid resource %i as string\n",
+            s2_val.v.data);
+         return ret_val.int_val;
+      }
+      s2_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s2_val, "C_StringContain", &s2, &len2))
+         return NIL;
+   }
+
+   // If both are resources, just compare the English string (first array position).
+   if (s1_resource && s2_resource)
+   {
+      s1 = r1->resource_val[0];
+      if (s1 == NULL)
+      {
+         bprintf("C_StringContain got NULL string resource 1");
+         return ret_val.int_val;
+      }
+      s2 = r2->resource_val[0];
+      if (s2 == NULL)
+      {
+         bprintf("C_StringContain got NULL string resource 2");
+         return ret_val.int_val;
+      }
+
+      len1 = strlen(s1);
+      len2 = strlen(s2);
+      ret_val.v.data = FuzzyBufferContain(s1, len1, s2, len2);
+
+      return ret_val.int_val;
+   }
+
+   // First string is resource, second isn't.
+   if (s1_resource)
+   {
+      len2 = strlen(s2);
+      ret_val.v.tag = TAG_INT;
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s1 = r1->resource_val[i];
+         if (s1 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringContain got NULL string resource 1");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len1 = strlen(s1);
+         if (FuzzyBufferContain(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Second string is resource, first isn't.
+   if (s2_resource)
+   {
+      len1 = strlen(s1);
+      ret_val.v.tag = TAG_INT;
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s2 = r2->resource_val[i];
+         if (s2 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringContain got NULL string resource 2");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len2 = strlen(s2);
+         if (FuzzyBufferContain(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Neither strings are resources.
+   len1 = strlen(s1);
+   len2 = strlen(s2);
+   ret_val.v.data = FuzzyBufferContain(s1, len1, s2, len2);
+   return ret_val.int_val;
 }
 
 /*

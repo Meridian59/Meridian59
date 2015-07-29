@@ -1,0 +1,42 @@
+GuildCreator_name_rsc = de "Frular"
+GuildCreator_desc_rsc = de \
+   "Vor dir steht der erhabene Verwalter der Gildenhallen. Frular hat große "
+   "Gewinne mit dem Verkauf offizieller Gildentitel, der Verwaltung ihrer "
+   "Freibriefe und dem Verpachten von Gildenhallen gemacht."
+GuildCreator_mailname_rsc = de "Frular, der Gildenmeister"
+GuildCreator_not_master = de "Nur Gildenmeister können Gildenhallen mieten."
+GuildCreator_not_mature_yet = de \
+   "Du kannst keine Gildenhalle kaufen, solange deine Gilde nicht einige "
+   "Zeit aktiv ist."
+GuildCreator_have_guild = de "Du hast bereits eine Gilde und eine Gildenhalle"
+GuildCreator_no_halls = de "Alle Gildenhallen sind bereits vermietet."
+GuildCreator_no_rent = de \
+   "Warum bietest du mir das an? Du schuldest mir keine Gebühren."
+GuildCreator_not_enough_money = de \
+   "Du hast keine %i Schillinge die du mir geben kannst!"
+GuildCreator_thanks = de "Ich danke dir für deine Zahlung."
+GuildCreator_player_active = de \
+   "Meine Noitzen sagen mir, dass dieser Spieler einige Zeit aktiv war."
+GuildCreator_player_inactive = de \
+   "Bedauerlicherweise sagen mir meine Notizen, dass der Spieler inaktiv "
+   "ist."
+gcreator_no_guild = de \
+   "Du gehörst keiner Gilde an, somit schuldest du mir auch kein Geld."
+gCreator_no_rent = de "Du schuldest mir mometan nichts."
+gcreator_rent_due = de "%s%q schuldet mir derzeit %i Schillinge an Rente."
+gcreator_hours_til_rent = de \
+   "Die Gildenmitglieder haben %i um die Schulden zu bezahlen, ansonsten "
+   "wird die Gilde aufgelöst."
+gcreator_lesshour_til_rent = de \
+   "Die Gildenmitglieder haben weniger als eine Stunde um die Schulden zu "
+   "bezahlen, ansonsten wird die Gilde aufgelöst."
+gcreator_hour_til_rent = de \
+   "Die Gildemmitglieder haben eine Stunde um die Schulden zu bezahlen,  "
+   "ansonsten wird die Gilde aufgelöst."
+gcreator_positive_balance = de \
+   "%s%q eine ein positives Konto von %i Schillinge.  Ich danke dir für deine "
+   "pünktliche Zahlung."
+gcreator_low_level = de "Du bist noch nicht bereit für eine Gilde."
+gcreator_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Du kannst deine Schulden nur in Schillingen bezahlen!~n~k\""
+GuildCreator_rent_command = de "mieten"

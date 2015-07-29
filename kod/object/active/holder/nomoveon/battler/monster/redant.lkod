@@ -1,0 +1,6 @@
+redant_koc_name_rsc = de "kawilkinich"
+redant_name_rsc = de "Die rote Ameise"
+redant_desc_rsc = de \
+   "Der Panzer der roten Ameise ist dick und hart und ihre Klauen sind scharf "
+   "und tödlich. Sie ist stärker und tödlicher als ihre dunkelhäutigen Verwandten."
+redant_dead_name_rsc = de "tote rote Ameise"

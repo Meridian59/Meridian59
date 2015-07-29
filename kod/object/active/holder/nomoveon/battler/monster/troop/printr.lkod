@@ -1,0 +1,4 @@
+PrincessTroop_name_rsc = de "Ein Soldat der Armee der Prinzessin"
+PrincessTroop_desc_rsc = de \
+   "Dieser Soldat trägt mit Stolz die Farben der Prinzessin."
+PrincessTroop_dead_name_rsc = de "Ein toter Soldat"

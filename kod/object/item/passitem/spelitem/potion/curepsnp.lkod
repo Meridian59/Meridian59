@@ -1,0 +1,17 @@
+CurePoisonPotion_name_rsc = de "Trank der Giftheilung"
+CurePoisonPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht frisch, "
+   "sauber und erfrischend."
+CurePoisonPotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."
+CurePoisonPotion_drink = de \
+   "Fast umgehend spürst Du die lindernde Kraft Sha-Lills, die, ausgehend "
+   "von Deinem Magen, alle Verunreinigungen aus Deinem Blut entfernt."
+CurePoisonPotion_worked = de \
+   "Fast umgehend spürst Du die lindernde Kraft Sha-Lills, die, ausgehend "
+   "von Deinem Magen, alle Verunreinigungen aus Deinem Blut entfernt."
+CurePoisonPotion_bad_drink = de \
+   "Du stürzt den faulig schmeckenden Inhalt der Phiole herunter und bemerkst "
+   "sofort, dass das eine ziemlich schlechte Idee war. Mit der Zeit ist er "
+   "sauer geworden."

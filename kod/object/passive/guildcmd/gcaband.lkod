@@ -1,0 +1,11 @@
+guildabandon_name_rsc = de "Gildenhalle aufgeben"
+guildabandon_desc_text_rsc = de \
+   "Benutze diesen Befehl um die Gilde zu verlassen.  Du hast sie eh nie "
+   "gemocht.  Gildemmeister müssen den Rang erst abtreten, bevor Sie den "
+   "Befehl nutzen können."
+guildabandon_necro_nak = de \
+   "~BDu hast einen Bluteid mit der dunklen Königin geschworen.  Du kannst "
+   "nicht einfach ihre Festung aufgeben."
+guildabandon_not_while_under_attack = de \
+   "Du kannst deine Gildenhalle nicht aufgeben solange sie angegriffen wird.  "
+   "Geh und verteidige sie!"

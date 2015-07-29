@@ -1,0 +1,5 @@
+sapphire_name_rsc = de "Der Saphir"
+sapphire_desc_rsc = de \
+   "Dieser groﬂe, schwere Saphir wird am Markt einen guten Preis erzielen. "
+   "Er strahlt in einem warmen, magischen Licht."
+sapphire_name_plural_rsc = de "Saphire"

@@ -1,0 +1,12 @@
+Nodeburst_name_rsc = de "Magisches Opfer"
+Nodeburst_desc_rsc = de \
+   "Du bündelst alle Deiner Mananodes zu einer unglaublichen Stärke und Gesundheit, "
+   "zerstörst dabei aber Deine Manaverbindungen. Kann nur einmal pro Tag "
+   "gezaubert werden. Benötigt Feenflügel und Wurzelknollen und ist sehr "
+   "anstrengend."
+Nodeburst_fail = de \
+   "Du hast keine Verbindungen zu einer Mana Node die du opern kannst."
+Nodeburst_success = de \
+   "Du opferst alle deine Mana Nodes und erreichst das maximale an Mana."
+Nodeburst_not_today = de \
+   "Du kannst ein Magisches Opfer nur einmal am Tag machen."

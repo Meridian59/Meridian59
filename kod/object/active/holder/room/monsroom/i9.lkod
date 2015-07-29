@@ -1,0 +1,6 @@
+room_name_i9 = de "Ukgot, heiliges Land der Trolle"
+i9_qor = de "Qor die Niederträchtige"
+i9_node_name = de "Das Herz von Zjiria"
+i9_node_desc = de \
+   "Dich beschleicht die Gewissheit, eine der seltensten magischen Energiequellen "
+   "gefunden zu haben, benannt nach Qors treuestem Leutnant.%s"

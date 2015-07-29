@@ -1,0 +1,17 @@
+summonEvilTwin_name_rsc = de "Böser Zwilling"
+summonEvilTwin_desc_rsc = de \
+   "Beschwört die dunkle Seite eines Abenteurers um diesen anzugreifen. Du "
+   "bist übrigens verantwortlich für jede Aktion Deiner bösen Zwillinge - "
+   "normalerweise sind sie unheimlich schwer zu kontrollieren. Benötigt Phiolen "
+   "mit Solagh und Moosnetze zum Zaubern."
+summonEvilTwin_cast_rsc = de \
+   "Ein böser Zwilling erscheint auf mystische Weise neben dir."
+summonEvilTwin_failed_rsc = de \
+   "Es ist hier kein Platz für einen Bösen Zwilling."
+summonEvilTwin_bad_target = de \
+   "Du kannst Böser Zwilling nicht auf %s%s zaubern."
+summonEvilTwin_no_self = de \
+   "Du entscheidet dich, dass du nicht wirklich einen Bösen Zwilling auf "
+   "dich selber zaubern willst."
+summonEvilTwin_only_one = de \
+   "%s wird bereits von einem Bösen Zwilling verfolgt."

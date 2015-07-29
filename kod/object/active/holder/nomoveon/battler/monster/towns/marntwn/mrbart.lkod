@@ -1,0 +1,20 @@
+MarionBartender_name_rsc = de "Tova"
+MarionBartender_desc_rsc = de \
+   "Hier gibt es keinen über alles hinwegsehenden Tova, keinen brüllenden "
+   "und lärmenden Mann, der das Leben genauso nimmt wie es durch die Tür "
+   "der Lahmen Kröte kommt. Er ist der Besitzer hier, der Drinks serviert "
+   "und von seinem selbstgebauten Podium aus für Unterhaltung sorgt."
+Tova_entrootberry_sale = de \
+   "Hmmm.  Aber ja, ich glaube ich habe einige Wurzelknollen... da es von "
+   "meinem persönlichem Vorrat ist, muss ich dafür natürlich mehr zu Verlangen...."
+Tova_cheers1 = de "Vielen Dank, m'%s. . . Heyja!!"
+Tova_cheers2 = de "Vielen Dank, ich werde, m'%s. Nur einen, einen für mich. . ."
+Tova_cheers3 = de "Zum Wohl, %s!"
+Tova_cheers4 = de "Aye, Cheers!"
+tova_unwanted_keep = de \
+   "~w%s%s sagt zu Dir, \"Nun, wie nett von Dir. Ein Geschenk.~n~w\""
+tova_unwanted_pay = de \
+   "~w%s%s sagt zu Dir, \"Was für ein interessantes Ding!~n~w\""
+tova_unwanted_give = de \
+   "~w%s%s sagt zu Dir, \"Haha, Du willst mich wohl auf den Arm nehmen, Fremder! "
+   "Dies ist eine Taverne und nicht das Zelt irgendwelcher fahrender Leute!~n~w\""

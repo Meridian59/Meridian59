@@ -1,0 +1,13 @@
+room_name_guildh12 = de "Westturm-Gildenhalle von Ko'catan"
+guildh12_sealed1 = de \
+   "Diese Tür wurde auf Befehl des Hauptmanns der Wache verschlossen."
+guildh12_sealed2 = de \
+   "Diese Tür zum Innenteil der Stadtmauer ist für nicht-militärisches Personal "
+   "verschlossen zu halten."
+guildh12_sealed3 = de "Die Tür zu den oberen Schlafräumen ist verschlossen."
+guildh12_sealed4 = de \
+   "Zutritt zum oberen Teil der Mauer  für nicht-militärisches Personal verbotenl."
+guildh12_sealed5 = de \
+   "Der Zugang zu den oberen Stockwerken des Westturms wird von einem Eisentor "
+   "blockiert. Es wäre nicht sehr klug, unerlaubt in das Gebiet der Armee "
+   "von Ko'catan einzudringen."

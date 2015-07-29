@@ -1,0 +1,6 @@
+ManaCrystal_name_rsc = de "Ein Manakristall"
+ManaCrystal_desc_rsc = de \
+   "Dies ist eine kristalline Form von purem Mana, der Energie für Magie. "
+   "Benutze ihn um das Mana, welches in ihm gespeichert ist wiederzugewinnen. "
+   "Da er auf Dich abgestimmt ist, kannst Du den Kristall weder wegwerfen "
+   "noch jemand anderem geben."

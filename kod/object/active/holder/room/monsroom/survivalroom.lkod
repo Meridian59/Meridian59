@@ -1,0 +1,47 @@
+SurvivalRoom_name = de "Die Survival Arena"
+welcome_message = de \
+   "Als Du den Raum betrittst, merkst Du, dass mächtige Energien vorhanden "
+   "sind, undes sehr gefährlich sein kann sich hier aufzuhalten. Du spürst, "
+   "dass du aus der Realitätgerissen wurdest und es hier keine Unterwelt "
+   "gibt."
+beginning_in_sixty = de "~BDer Angriff beginnt in 60 Sekunden."
+next_level_in_seconds = de \
+   "~BDie %i. Welle wurde besiegt. Die nächste beginnt in %i Sekunden."
+begin_level = de "~BWelle %i der gegnerischen Macht ist eingetroffen."
+you_died_to_monster = de "%s steht triumphierend über deinem toten Körper."
+player_died_to_monster = de "~B%s wurde durch %s%s getötet!"
+you_were_booted = de \
+   "Die Energie des Kampes verlässt dich und du kehrst zurück heim."
+player_was_booted = de "%s wurde aus der Realität gezaubert."
+lives_remain_update = de \
+   "Du spürst, dass der Tot um %i weitere Male betrogen werden kann."
+one_life_remains = de \
+   "~BEs ist nur noch ein einziges Mal möglich dem Tot zu entgehen."
+no_lives_remain = de \
+   "Von jetzt an wird dich der tot von hier in die Realität verbannen."
+survival_no_cast_rsc = de "Du kannst hier nicht %s zaubern."
+goals_header = de "Um diese gegnerische Welle zu besiegen müsst ihr:"
+kill_goal_msg = de "%i Gegner töten."
+boss_goal_msg = de "Einen Boss töten."
+minibosses_goal_msg = de "%i Minibosse töten."
+boss_slain_goal_msg = de "~BEin Boss wurde getötet!"
+minibosses_slain_goal_msg = de "~BZwei Minibosse wurden getötet!"
+kills_remaining = de \
+   "Es sind noch %i kills nötig um die nächste Welle zu erreichen."
+extralife_header = de "Um ein extra Leben zu bekommen müsst ihr:"
+kill_friendly_msg = de "Einen befreundeten Mitstreiter töten."
+player_murdered_player_no_goal = de "~B%s wurde von %s getötet!"
+player_murdered_player_goal = de "~B%s wurde durch %s geopfert!"
+gain_a_life_msg = de \
+   "~BDu hast es geschafft ein extra Leben zu bekommen! Du hast nun %i Leben."
+wall_blitz_activated = de "~BEine Welle von Energie überkommt die Gruppe!"
+fixed_reward_msg = de \
+   "Es scheint als ob eine der getöteten Gegner %s auf dem Schlachtfeld fallengelassen "
+   "hat!"
+your_lives_remain = de "Du hast %i ausstehende Leben."
+spectator_only_msg = de \
+   "Der Kampf hat bereits begonnen. Du kannst Zuschauen bis alle Teilnehmer "
+   "gestorben sind."
+player_was_spectated = de "%s hat den physischen Zustand der Realität verloren."
+you_were_spectated = de \
+   "Du hast deine physische Verbindung zu diesem Ort verlassen!"

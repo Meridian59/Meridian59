@@ -1,0 +1,6 @@
+spirithammer_name_rsc = de "Heiliger Hammer"
+spirithammer_desc_rsc = de \
+   "Dieser Hammer, dem ein heiliger Segen innewohnt, ist mächtiger als die "
+   "Standardausgabe."
+spirithammer_expires = de \
+   "Dein heiliger Hammer verschwindet in einer Rauchwolke!"

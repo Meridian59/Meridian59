@@ -1,0 +1,7 @@
+dodge_name_rsc = de "Ausweichen"
+dodge_desc_rsc = de \
+   "Das Ausweichen ist eine grundlegende Fähigkeit, die es Personen erlaubt "
+   "Treffern im Gefecht auszuweichen.."
+dodge_skill_intro = de \
+   "Waffenfertigkeiten Level 2: Das Ausweichen ist eine grundlegende Fähigkeit, "
+   "die es Personen erlaubt Treffern im Gefecht auszuweichen.."

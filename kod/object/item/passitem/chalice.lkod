@@ -1,0 +1,11 @@
+chalice_name_rsc = de "Der Kelch des Regens"
+chalice_desc_rsc = de \
+   "Dieser reich verzierte Kelch ist mit Sha-Lills heiligen Zeichen versehen. "
+   "Eine Inschrift lautet \"Um ihre Tränen aufzufangen.\""
+chalice_cant_get = de \
+   "Du versuchst, den Kelch aufzunehmen, aber eine magische Kraft bindet "
+   "ihn an den steinernen Altar."
+chalice_use = de "Du nippst ein wenig vom Wasser im Kelch des Regens."
+chalice_empty = de "Du nippst das letzte Wasser aus dem Kelch des Regens."
+chalice_combine = de "Du schüttest das Wasser von einem Kelch in den anderen."
+chalice_cant_use_pkill = de "Nur Unschuldige können diesen Kelch benutzen."

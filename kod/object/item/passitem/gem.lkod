@@ -1,0 +1,4 @@
+gem_name_rsc = de "Der Mystische Edelstein"
+gem_desc = de \
+   "This strange gem seems to gravitate powerfully towards your armor."
+gem_attach_no_sockets = de "The %s has no sockets for attaching a gem!"

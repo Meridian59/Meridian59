@@ -1,0 +1,7 @@
+JasperBlacksmith_name_rsc = de "Quintor"
+JasperBlacksmith_desc_rsc = de \
+   "Quintor ist weithin als der beste Waffenschmied im Land bekannt. Man "
+   "kennt ihn auch als stillen, grüblerischen Mann, der meist für sich allein "
+   "bleibt. Nimm es wie du willst."
+JsBla_entry_welcome = de "Hallo %s%s, und willkommen."
+JsBla_island_items = de "Ich handel nicht mit Nerudite Müll."

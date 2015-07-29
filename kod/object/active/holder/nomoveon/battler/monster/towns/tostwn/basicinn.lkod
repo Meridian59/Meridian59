@@ -1,0 +1,13 @@
+basicinnkeeper_name_rsc = de "Rulker"
+basicinnkeeper_desc_rsc = de \
+   "Paddocks Bruder ist nach Tos zurückgekehrt, um nach der Familientradition "
+   "Gastwirt zu werden."
+basicIK_entry_welcome = de "Du bist in Ordnung."
+basicinnkeeper_fee_rsc = de \
+   "Du hast nicht genug Geld, um die Kosten für das Seidenpapier zu decken."
+basicinnkeeper_type_rsc = de "Ich werde nichts der art entwickeln."
+basicinnkeeper_wrap_rsc = de \
+   "~kRulker verwendet einige tote Schleime und farbige Bettwäsche und entwickelt "
+   "eine Geschenk.Mit geübten Händen pflechtet er ein glitzerndes Band zu "
+   "einem perfekten Bogen.Er gibt es Dir, nachdem er etwas schönes darauf "
+   "geschrieben hat"

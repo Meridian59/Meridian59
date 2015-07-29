@@ -1,0 +1,8 @@
+Bait_name_rsc = de "Köder"
+Bait_desc_rsc = de \
+   "Macht Dich äußerst appetitlich für Monster. Je mächtiger Du bist, desto "
+   "eher ist es wahrscheinlich, das Du die Aufmerksamkeit des Monsters auf "
+   "Dich ziehst. Für den Zauberspruch braucht man Feuersand und Moosnetze."
+Bait_success = de \
+   "Der Duft von etwas leckerem liegt in der Luft Dein Mund füllt sich mit "
+   "Wasser für einen Moment, bis du merkst, dass der Duft von dir kommt!"

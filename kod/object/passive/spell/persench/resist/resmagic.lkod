@@ -1,0 +1,8 @@
+resistmagic_name_rsc = de "Magie Widerstehen"
+resistmagic_desc_rsc = de \
+   "Der Kriegsgott festigt Dich gegen magische Angriffe. Der Zauber benötigt "
+   "Drachenschuppen.."
+resistmagic_already_enchanted = de "Du hast bereits Magie Widerstehen."
+resistmagic_success = de "Kraanan stärkt %s%s gegen magische Angriffe."
+resistmagic_on = de "Kraanan stärkt Dich gegen magische Angriffe."
+resistmagic_off = de "Kraanans Schutz vor magischen Angriffen verlässt Dich."

@@ -1,0 +1,9 @@
+createfood_name_rsc = de "Essen erschaffen"
+createfood_desc_rsc = de \
+   "Die reine Kraft Kraanans wird angerufen,  um verschiedene Nahrungsmittel "
+   "zu erschaffen. Der Zauber benötigt Kräuter und Holunderbeeren."
+createfood_spell_intro = de "Kraanan Level 1: Erschafft essen"
+createfood_cast_rsc = de "%s%s erscheint."
+createfood_inv_full_rsc = de \
+   "%s%s erscheint in der Luft. Du kannst es jedoch nicht festhalten und "
+   "es verpufft in der Luft."

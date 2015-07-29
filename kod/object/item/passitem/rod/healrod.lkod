@@ -1,0 +1,9 @@
+healWand_name_rsc = de "Der Stab der Heilung"
+healWand_desc_rsc = de \
+   "Dieser Zauberstab ist fast l채cherlich mit offensichtlich k체nstlichen "
+   "Edelsteinen verziert. Der Zauberstab summt fast unh�"
+   "�"
+   "rbar, und als Du Deine Hand auf ihn legst, sp체rst Du seine W채rme."
+healWand_success_rsc = de \
+   "Der Zauberstab pulsiert einmal in Deiner Hand und  regneriert ~B~g%d~n "
+   "Lebenspunkte."

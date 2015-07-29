@@ -1,0 +1,6 @@
+agilboon_name_rsc = de "Gewandheits Bonus"
+agilboon_desc_rsc = de "Deine physische Gewandheit ist nicht natürlich."
+agilboon_intro_rsc = de \
+   "Die physischer Gewandheit von deinem Ziel steigt temporär."
+agilboon_inc = de "Du fühlst Dich plötzlich schneller!"
+agilboon_dec = de "Du fühlst Dich plötzlich langsamer"

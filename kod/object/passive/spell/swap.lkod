@@ -1,0 +1,14 @@
+swap_name_rsc = de "Austausch"
+swap_desc_rsc = de \
+   "Ein Gegenstand Deines Inventars wird per Zufall mit einem Gegenstand "
+   "aus dem Inventar der Zielperson vertauscht. Der Zauber benötigt die Feder "
+   "eines schwarzen Engels, Yrxl-Harze und Lila Pilze. Die Anwendung dieses "
+   "Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+swap_cast_rsc = de "Deine %s %s mit %s%s ausgetauscht worden."
+swap_failed_caster = de \
+   "Du zeigst auf %s%s, aber es scheint nichts zu passieren."
+swap_failed_victim = de \
+   "%s%s zeigt auf dich, aber es scheint nichts zu passieren."
+swap_no_target = de "Dein Ziel ist aus deiner Sichtweite."
+swap_be_sing_pres = de "ist"
+swap_be_plur_pres = de "sind"

@@ -1,0 +1,5 @@
+strboon_name_rsc = de "Stärke Effekt"
+strboon_desc_rsc = de "Deine Stärke steigt unnatürlich."
+strboon_intro_rsc = de "The strength of the victim is boosted temporarily."
+strboon_inc = de "Du fühlst dich stärker!"
+strboon_dec = de "Du fühlst Dich schwächer."

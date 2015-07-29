@@ -1,0 +1,7 @@
+curedisease_name_rsc = de "Krankheiten Heilen"
+curedisease_desc_rsc = de \
+   "Pure, heilende Energie neutralisiert Krankheit des Zieles. Der Zauber "
+   "benötigt Kräuter und Holunderbeeren."
+curedisease_on = de \
+   "Die Kraft Shal'ills brennt die Krankheiten aus deinem Körper."
+curedisease_abates = de "Du merkst, dass die Heilung nachlässt."

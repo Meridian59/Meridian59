@@ -1,0 +1,28 @@
+RebelLiege_name_rsc = de "Jonas D'Accor"
+RebelLiege_desc_rsc = de \
+   "Zeit und Wut haben aus Jonas D´Accor einen harten Mann gemacht. Er stehtunerschütterlich, "
+   "die Zukunft seines Landes erwägend. Die Handlungen deranderen Ligen zwangen "
+   "ihn, einen Versuch zu unternehmen, die Krone an sichzu reißen. Er ist "
+   "überzeugt, dass die anderen Ligen nicht stark genug sind,um zu regieren, "
+   "auch wenn sie ein rechtmäßiges Anrecht auf die Krone besitzen.Seine Rebellen "
+   "organisierend hofft er, Unterstützung bei seinem Streben zuerhalten, "
+   "die Krone zu übernehmen und dem Land wieder Frieden und Ordnung zu bringen."
+RebelLiege_token_delivered_rsc = de \
+   "Die Rückgabe dieses Artefakts wird dem Rat zeigen, dass meineMacht nicht "
+   "ignoriert werden darf. %s"
+RebelLiege_rebel_delivered_rsc = de \
+   "Du bist sehr loyal unserer Sache gegenüber. Ich danke Dir."
+RebelLiege_neutral_delivered_rsc = de \
+   "Ist Dir die Tyrannei der derzeitigen Thronanwärter ebenso zuwider?Tritt "
+   "mir bei!"
+RebelLiege_other_delivered_rsc = de \
+   "Wirst Du von Deiner derzeitigen Liga so stark unterjocht, dass Dumir "
+   "solche Geschenke bringst? Hilf uns auf unserem Weg zu einer starken Krone."
+RebelLiege_toopowered_rsc = de \
+   "Derzeit kann ich leider niemand mehr in meinen Reihen aufnehmen.Ich fürchte, "
+   "ansonsten wachsen wir so stark, dass ich die Kontrolle verliere."
+RebelLiege_already_have_spell = de \
+   "Ich glaube, Du kennst bereits den %s Zauberspruch."
+RebelLiege_no_murderer = de \
+   "Ich bin ein Diener des Gesetzes, und als ein Solcher lässt mein Gewissennicht "
+   "zu, dass ich Dir helfe. Bitte mach Dich wieder auf den Weg."

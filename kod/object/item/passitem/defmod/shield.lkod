@@ -1,0 +1,12 @@
+shield_condition_exc = de " leuchtet vor glatter Vollkommenheit."
+shield_condition_exc_mended = de \
+   " leuchtet vor glatter Vollkommenheit, wurde allerdings bereits repariert"
+shield_condition_good = de \
+   " ist durch ein tiefe, lange Delle beschädigt, doch ansonsten in gutem "
+   "Zustand."
+shield_condition_med = de \
+   " hat vom Kampf tiefe Narben davongetragen, ist ansonsten aber noch funktionstüchtig."
+shield_condition_poor = de \
+   " ist an mehreren Stellen angebrochen und wird nicht mehr lange halten."
+shield_condition_broken = de \
+   " ist durch einen mächtigen Hieb zerbrochen und dadurch unbrauchbar geworden."

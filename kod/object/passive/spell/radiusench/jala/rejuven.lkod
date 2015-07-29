@@ -1,0 +1,13 @@
+Rejuvenate_name_rsc = de "Regenerieren"
+Rejuvenate_desc_rsc = de \
+   "Dieses Lied ermöglicht es den Zuhörern schneller ihr Mana zurückzugewinnen. "
+   "Man benötigt einen Diamanten und einen rohen, ungebrochenen Seraphen."
+Rejuvenate_cast = de "Du fängst an, einen motivierenden Song zu spielen."
+Rejuvenate_starts = de "%s beginnt einen motivierenden Song zu spielen."
+Rejuvenate_ends = de "Der motivierende Song, gespielt von %s fades verstummt."
+Rejuvenate_caster_ends = de "Dein motivierender Song verstummt."
+Rejuvenate_caster_enter = de "Du spürst die Müdigkeit zurückkehren."
+Rejuvenate_enter = de \
+   "%ss motivierender Song, lässt dich, deine Müdigkeit vergessen."
+Rejuvenate_leave = de \
+   "Du kannst den motivierenden Song, gespielt von %s's nicht mehr hören."

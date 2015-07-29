@@ -1,0 +1,9 @@
+treaty_name_rsc = de "Der Vertrag"
+treaty_desc_rsc = de \
+   "Dieser Vertrag besiegelt ein Bündnis zwischen %s%s und %s%s."
+treaty_cant_ditch = de "Diesen Vertrag kannst Du nicht lösen."
+treaty_expires = de "Dein Vertrag mit %s%s ist abgelaufen."
+treaty_vanishes = de "Der Vertrag mit %s%s löst sich schlagartig in Rauch auf!"
+treaty_fell_apart = de \
+   "Deine Anstrengungen, eine Allianz mit %s%s einzugehen, erweisen sich "
+   "als wirkungslos."

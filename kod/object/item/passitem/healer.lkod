@@ -1,0 +1,3 @@
+healer_desc_rsc = de "%sDamit wirst Du Dich besser fühlen.%s"
+healer_use = de "Du fühlst Dich besser."
+healer_cant_use_on = de "Du kannst %s%s nicht heilen."

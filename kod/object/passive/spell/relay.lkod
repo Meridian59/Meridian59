@@ -1,0 +1,14 @@
+Relay_cast_rsc = de \
+   "Du spürst wie sich deine Ausdauer durch jemand anderes füllt."
+Relay_caster_msg_rsc = de "Du gibst einen teil deiner Ausdauer an %s%s."
+Relay_name_rsc = de "Auffrischen"
+Relay_desc_rsc = de \
+   "Die Macht Kraanans erlaubt es Dir, einen Teil Deiner Ausdauer an eine "
+   "andere Person zu übertragen. Der Zauber benötigt genießbare Pilze."
+Relay_unnecessary_rsc = de \
+   "%s%s kann nicht mehr Ausdauer durch diesen Zauber annehmen."
+Relay_toolow_rsc = de \
+   "Du hast nicht genug Ausdauer um es auf andere zu übertragen!"
+Relay_notonself_rsc = de "Du kannst Auffrischen nicht auf dich selber zaubern."
+Relay_spell_intro = de \
+   "Kraanan Level 1: Gibt einen Teil deiner Ausdauer an jemand anderes."

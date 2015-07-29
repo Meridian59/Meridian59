@@ -1,0 +1,14 @@
+blind_name_rsc = de "Blenden"
+blind_desc_rsc = de \
+   "Die magische Kraft von Qor brennt sich mit Hilfe von Wurzelknollen und "
+   "lila Pilzen in die Augen des Zieles und nimmt ihm für eine kurze Zeit "
+   "das Augenlicht. Die Anwendung dieses Zaubers kann dazu führen, dass Du "
+   "zum Gesetzlosen erklärt wirst."
+blind_caster = de "%s%s ist jetzt geblendet."
+blind_already_enchanted = de "%s%s ist bereits geblendet."
+blind_on = de \
+   "Etwas brennt in Deinen Augen und Du kannst um dich herum nichts mehr "
+   "sehen. "
+blind_off = de "Deine Augen sind wieder in der Lage alles normal zu sehen."
+blind_break_rod_active = de \
+   "Leuchtende Energien verhindern deinen Zauberspruch!"

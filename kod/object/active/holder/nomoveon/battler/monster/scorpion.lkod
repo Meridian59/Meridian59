@@ -1,0 +1,8 @@
+scorpion_koc_name_rsc = de "kinkauikinich"
+scorpion_name_rsc = de "Der Skorpion"
+scorpion_desc_rsc = de \
+   "Hoch ragt der tödliche Stachel des Skorpions in die Luft, und sein harter "
+   "Panzer schützt ihn bis auf die stärksten Schläge vor allen Attacken."
+scorpion_illusion_poisoned = de \
+   "%s%s reels as poison from your attack courses through %s veins."
+scorpion_dead_name_rsc = de "toter Skorpion"

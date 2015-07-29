@@ -1,0 +1,13 @@
+Hazar_Bartender_name_rsc = de "Erik d'Jorn"
+Hazar_Bartender_desc_rsc = de \
+   "Ein grinsender, bedächtiger Mann steht hinter dem Tresen."
+HzBar_entry_welcome = de \
+   "Interessierst du dich für einen schönen starken Drink?  Das spezial Hausgetränk "
+   "wird dich umhauen!"
+HazarBart_enough = de \
+   "Mmmh! Lecker, handgepflückte Pilze - Fantastisch!  hier, lass mich dich "
+   "belohnen..."
+HazarBart_not_enough = de \
+   "Ich brauche ein paar essbare Pilze. Aber bringe mir genug für meine Suppe, "
+   "ansonsten sind sie nutzlose für mich - sagen wir, mindestens zehn! Ich "
+   "werde dich belohnen dafür!"

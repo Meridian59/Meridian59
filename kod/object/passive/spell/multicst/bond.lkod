@@ -1,0 +1,19 @@
+Bond_name_rsc = de "Bund"
+Bond_desc_rsc = de \
+   "Erfüllt einen Gegenstand mit einem weichen weißen Licht. Der Zauber braucht "
+   "aber so viel Mana, dass einem schlecht werden könnte. Ein Herzstein, "
+   "Dutzende geschliffene Seraphs und Diamanten müssen zerstoßen werden, "
+   "um die magische Kraft des Zauberers zu verstärken. Diese muss durch ein "
+   "Prisma gebündelt und auf den Gegenstand gerichtet werden. Wenn der Spruch "
+   "erfolgreich war, bleibt der Gegenstand sogar bis in die Unterwelt an "
+   "Deiner Seite.."
+bond_bad_target = de "Du kannst nur Gegenstände an Spieler binden."
+bond_no_prism = de \
+   "Die magische Energie des Prismas erlaubt es nicht es zu binden."
+bond_failed = de "Es hat leider nicht geklappt den Gegenstand zu binden."
+bond_already_bonded = de "Dieser Gegenstand ist bereits gebunden."
+bond_successful_casters = de "Du fühlst die Verbindung zwischen %s%s und %s."
+bond_successful_bondee = de \
+   "Du fühlst einen magischen Bund zwischen Dir und %s."
+bond_report_room = de "Irgendwie spürst Du, dass Deine %s in %s ist."
+bond_report_user = de "Irgendwie spürst Du, dass Deine %s in %q's Besitz ist."

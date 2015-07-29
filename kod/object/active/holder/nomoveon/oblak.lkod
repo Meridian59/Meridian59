@@ -1,0 +1,18 @@
+oblak_name_rsc = de "Oblak"
+oblak_desc_rsc = de \
+   "Dies ist ein Oblak, der Deine kaputten Gegenstände reparieren kann."
+oblak_busy = de \
+   "Ich kann mich immer nur um eine Person und einen Gegenstand zur gleichen "
+   "Zeit kümmern!"
+oblak_cant_fix = de "Ich kann das da nicht reparieren %s, tut mir leid"
+oblak_cost = de "%s zu reparieren wird Dich, äh, ungefähr %i Schillinge kosten"
+oblak_cant_return = de \
+   "Du kannst %s nicht nehmen, deshalb werde ich ihn für Dich auf den Boden "
+   "legen"
+oblak_too_good = de \
+   "Ich kann %s nicht reparieren, besser könnte ich es auch nicht machen."
+oblak_only_money = de "Tut mir leid, ich nehme nur Schillinge"
+oblak_more_money = de \
+   "Das ist nicht genug. Es wird mich %i Schillinge kosten, den %s zu reparieren"
+oblak_change = de "Hier ist Dein Wechselgeld"
+oblak_success = de "Danke für den Auftrag, hier ist Dein %s"

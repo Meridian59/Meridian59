@@ -1,0 +1,12 @@
+Web_name_rsc = de "Netz"
+Web_desc_rsc = de "Das Netz sieht wirklich sehr klebrig aus."
+web_stick0 = de "Du umgehst die Netze, ohne an ihnen festzukleben."
+web_stick1 = de "Du stellst fest, dass Du kurzzeitig am Netz klebst."
+web_stick2 = de \
+   "Es zieht Dir fast die Stiefel aus, als diese am Netz kleben bleiben."
+web_stick3 = de \
+   "Hängen Deine Füße irgendwo fest, oder steckst Du in IHNEN fest?"
+web_stick5 = de "Du findest Dich hilflos im Spinnennetz klebend wieder!"
+web_dissipates = de "Ein Stück des Netzes altert und vergeht vor Deinen Augen."
+web_stuck = de \
+   "%s%s scheint in einem klebrigen Teil des Spinnennetzes steckengeblieben."

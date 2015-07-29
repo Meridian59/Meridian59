@@ -1,0 +1,7 @@
+GroundWormLarva_koc_name_rsc = de "imixslithic"
+GroundWormLarva_name_rsc = de "Grundwurm Larve"
+GroundWormLarva_desc_rsc = de \
+   "Als jüngere Entwicklungsform ist die Larve ein wenig schwächer als andereGrundwürmer. "
+   "Sie ist bekannt dafür, unsichtbar versteckt im Untergrund zulauern und "
+   "plötzlich ihr Opfer anzugreifen."
+GroundWormLarva_dead_name_rsc = de "erschlagene Grundwurm Larve"

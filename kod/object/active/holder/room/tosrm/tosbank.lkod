@@ -1,0 +1,4 @@
+room_name_tosbank = de "Königliche Bank von Tos"
+tosbank_sign = de \
+   "Benutze die Befehle EINZAHLEN [BETRAG], ABHEBEN [BETRAG] und KONTOSTAND, "
+   "um auf Dein Konto zuzugreifen."

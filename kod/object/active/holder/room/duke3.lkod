@@ -1,0 +1,8 @@
+room_name_Duke3_old = de "Die Gemächer von Herzog Kalior"
+room_name_Duke3 = de "The Chambers of Duke Akardius"
+duke3_West_Door = de \
+   "Der Herzog schreit Dich zornig an, als Du versuchst, die Tür zu öffnen. "
+   "Du läßt das wohl besser!"
+duke3_East_Door = de \
+   "Der Herzog fordert Deinen Kopf, wenn Du seine Räume betrittst. Du beschließt, "
+   "ihn lieber zu behalten und hältst Dich von der Tür fern."

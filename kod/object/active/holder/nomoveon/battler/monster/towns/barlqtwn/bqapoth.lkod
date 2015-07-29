@@ -1,0 +1,12 @@
+barloque_apothecary_name_rsc = de "Koldor"
+barloque_apothecary_desc_rsc = de \
+   "Eine alberne Melodie vor sich hinpfeifend kümmert sich Koldor ganz der "
+   "Pflege seines Gartens mit magischen Kräutern und Pilzen. Viele sagen, "
+   "er sei der größte Kräuterkundige im Land."
+BqApo_entry_welcome = de \
+   "Glückwunsch! Du hast den besten Laden in der Welt gefunden."
+BqApo_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Ich fürchte, dass ich keine Verwendung für dein "
+   "Angebot habe.  Vielleicht findest du einen anderen Laden den es interessiert.~n~k\""
+BqApo_firesand_sale = de \
+   "Du suchst nach %s%s?  Ich habe einige importiert von der Insel  Ko'catan."

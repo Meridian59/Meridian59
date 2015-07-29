@@ -1,0 +1,23 @@
+avarchief_koc_name_rsc = de "koavar"
+avarchief_default_name = de "Der Avar-Häuptling"
+avarchief_name_rsc = de "Der Avar-Häuptling der Pi-Piep"
+avarchief_desc_rsc = de \
+   "Bekannt für seine edle Anmut, kontrolliert der Pi-Piep-Stamm sehr wirkungsvoll "
+   "die Südostküste der Insel. Dieser Clan-Führer ist ob seiner hohen Treffsicherheit "
+   "mit dem Bogen und seiner tödlichen Peitsche gefürchtet."
+avarchief_nomagic_name = de "Der Avar-Häuptling der Ki-Ki-Krii"
+avarchief_nomagic_desc = de \
+   "Bekannt für seine brutalen Instinkte, herrscht der Ki-Ki-Krii-Stamm erbarmungslos "
+   "über die Nordwestküste der Insel. Dieser Clan-Führer ob seiner hohen "
+   "Treffsicherheit mit dem Bogen und seiner tödlichen Peitsche gefürchtet."
+avarchief_bone_name = de "Der Avar-Häuptling der Knochengruppe"
+avarchief_bone_desc = de \
+   "Während er sich den alten Lehren der Knochengruppe verschrieben hat, "
+   "ist dieser Clan-Führer ob seiner hohen Treffsicherheit mit dem Bogen "
+   "und seiner tödlichen Peitsche gefürchtet."
+avarchief_dead_name_rsc = de "Der tote Avar-Häuptling"
+avarchief_fire_misses = de \
+   "Der Avar-Häuptling spannt den Bogen und schießt, wobei er Dich knapp "
+   "verfehlt."
+avarchief_fire_hits = de \
+   "Der gut gezielte Pfeil des Häuptlings trifft Dich genau!"

@@ -1,0 +1,21 @@
+Foresight_name_rsc = de "Einblick"
+Foresight_desc_rsc = de \
+   "Enttarnt das Wissen des Betroffenen und informiert Dich über dessen Fähigkeiten. "
+   "Man braucht ungeschliffene Seraphyme."
+Foresight_caster = de "Du schaust auf %s%s um die Gedanken zu lesen."
+Foresight_info = de "%s%s %s"
+Foresight_abil_name = de "%s %s, %s"
+Foresight_last_abil_name = de "and %s %s."
+Foresight_nothing = de \
+   "%s%ss Kopf scheint so leer, dass wenn Du ihn an dein Ohr hälst, du das "
+   "Meer hören könntest."
+Foresight_one = de "%s %s."
+Foresight_notplayer = de \
+   "Hmmm...du bist dir nicht sicher WAS du denken sollst was %s%s denkt."
+Foresight_KnowsOf = de "weiß über"
+Foresight_AdequateAt = de "ist angemessen in"
+Foresight_MediocreAt = de "ist mittelmäßig in"
+Foresight_GoodAt = de "ist gut bei"
+Foresight_PractitionerOf = de "ist ein Praktikant in"
+Foresight_GreatAt = de "ist großartig bei"
+Foresight_MasterOf = de "ist ein Meister von"

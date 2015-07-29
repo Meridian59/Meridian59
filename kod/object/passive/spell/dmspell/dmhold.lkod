@@ -1,0 +1,8 @@
+DMHold_name_rsc = de "Superlähmung"
+DMHold_desc_rsc = de \
+   "Lähmt Dein Oper 10 Minuten lang. Kann nur gelöst werden wenn man noch "
+   "einmal zaubert."
+DMHold_already_enchanted = de "%s%s wird von Deinem Griff gehalten."
+DMHold_caster = de "%s%s wird nun gehalten durch eine magische Kraft."
+DMHold_on = de "Du wurdest gelähmt."
+DMHold_off = de "Die Lähmung lässt nach."

@@ -1,0 +1,14 @@
+DeathSpider_koc_name_rsc = de "na'arkinich"
+DeathSpider_name_rsc = de "Die schwarze Spinne"
+DeathSpider_desc_rsc = de \
+   "Einstmals dachte man, diese Kreatur sei eine Geschichte, um Kinder zu "
+   "ängstigen. Die schwarze Spinne soll ein Produkt böser Magie sein, eine "
+   "unheilige Verschmelzung von Mensch und Insekt. Ihre Herkunft, wie dem "
+   "auch sei, ist je nach Geschichte verschieden. In manchen ist es das Schicksal "
+   "einer armen Seele, die die Wege eines bösen Zauberers kreuzte. In anderen "
+   "erzählt man sich, dass sie ein böser Zauberer ist, der sich für ein langes "
+   "Leben transformierte. Alle alten Geschichten haben aber eines gemeinsam: "
+   "Sie warnen Wanderer vor den besonders giftigen Bissen dieser Kreaturen."
+dspider_illusion_poisoned = de \
+   "%s%s taumelt als Gift in den Adern von %s fließt."
+DeathSpider_dead_name_rsc = de "dead spider"

@@ -1,0 +1,12 @@
+goblet_name_rsc = de "Bierkelch"
+goblet_desc_rsc = de \
+   "Bier aus den Privatfässern des Herzogs, gebraut nach seinen exakten Vorgaben."
+goblet_name_plural_rsc = de "Bierkelche"
+goblet_disp_name = de "Bierkrug"
+goblet_disp_desc = de \
+   "Ein schwerer Metallkrug, bis zum Rand mit frischem Bier aus dem Keller "
+   "des Herzogs gefüllt und bei Zimmertemperatur serviert, damit sich seine "
+   "volle Kraft entfaltet."
+goblet_got_one = de "Du füllst Deinen Kelch mit schäumendem Bier aus dem Krug."
+goblet_use = de \
+   "Dieses verwässerte und armselige Bier ist dünn und nichtssagend."

@@ -1,0 +1,12 @@
+Scroll_name_rsc = de "Die Schriftrolle"
+Scroll_label_name_rsc = de "Allgemeine Schriftrolle"
+Scroll_desc_rsc = de \
+   "Diese Schriftrolle ist mit einer unleserlichen, krakeligen, mystischen "
+   "Schrift bedeckt"
+Scroll_Broken = de \
+   "Die Schriftrolle entzündet sich in Deinen Händen und zerfällt zu Asche."
+Scroll_fails = de \
+   "Du hast den Text der Spruchrolle zu Ende gelesen aber nichts passiert."
+Scroll_Sense_Failure = de \
+   "Du spürst, dass Dir irgendetwas fehlt, und brichst den Zauber der Schriftrolle "
+   "ab, bevor sie nutzlos verpufft."

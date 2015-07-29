@@ -1,0 +1,33 @@
+Barloque_Innkeep_name_rsc = de "Pritchett"
+Barloque_Innkeep_desc_rsc = de \
+   "Von allen in Barloque ist der frühere Seemann und jetzige Kneipenwirt "
+   "Prichet der am wenigsten hochmütige. Vielleicht ist das so, weil er nicht "
+   "aus der königlichen Stadt stammt und erst vor kurzem nach Nord-Barloque "
+   "gezogen ist, um einen Titel zu kaufen."
+BqInn_entry_welcome = de "Ich bin froh dich zu sehen, Kumpel."
+BqInn_mace_sale = de \
+   "Ja, du könntest einen gebrauchen, wenn du unsere kultivierte Stadt verlassen "
+   "willst,Ich habe ein paar und könnte sie dir verkaufen."
+BqInn_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Wozu bietest du mir das an?~n~k\""
+BarloqueInnkeeper_room_rented = de \
+   "Hier ist der Schlüssel zu deinem Zimmer.  Ich denke du wirst unsere Zimmer "
+   "gut ausgestattet finden.  Genieße deine Zeit hier!"
+BarloqueInnkeeper_cost1 = de "Die Zimmer hier sind die besten.  Ich benötige "
+BarloqueInnkeeper_cost2 = de \
+   " Schillinge wenn du ~Iein Zimmer~nhier ~Imietest~n für 85 Tage.  Nach "
+   "dieser Zeit brauche ich es wieder "
+BarloqueInnkeeper_cost3 = de " pro Tag von.  Eine Kopie kostet "
+BarloqueInnkeeper_cost4 = de \
+   " Schillinge, wenn du dein Zimmer mit jemanden besonderes teilen möchtest."
+BarloqueInnkeeper_days_left = de \
+   "Ich danke dir.  Du hast %q verbleibende Tage hier zu verweilen."
+BarloqueInnkeeper_too_long = de \
+   "Es gefällt mir, dass dir dein Zimmer gefällt aber du hast bereits genug "
+   "gezahlt und ich kann derzeit nicht mehr von dir verlangen."
+BarloqueInnkeeper_destroy_key_copy = de \
+   "~kPritchett teilt dir mit, \"Ich werde den Schlüssel für dich vernichten.\""
+BqInn_room_command = de "Zimmer"
+BqInn_rent_command = de "Mieten"
+BqInn_cost_command = de "Kosten"
+BqInn_copy_key_command = de "Schlüssel Kopie"

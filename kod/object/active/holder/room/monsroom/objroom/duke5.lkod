@@ -1,0 +1,4 @@
+room_name_duke5 = de "Der Herzögliche Ballsaal"
+duke5_party_on_command = de "Party an"
+duke5_party_off_command = de "Party aus"
+duke5_party_random_command = de "Party zufällig"

@@ -1,0 +1,11 @@
+KocatanLanguageMaster_name_rsc = de "Quetzal"
+KocatanLanguageMaster_desc_rsc = de \
+   "Brillant, doch vom größten Teil der Insel um seines Alters beneidet, "
+   "entwickelte sich dieser junge Spund von einem lästigen Bücherwurm zu "
+   "einem der meist gesuchten Leute, da er so gut über Sprachen Bescheid "
+   "weiß. Er betrachtet die meisten Erwachsenen um sich herum als intellektuell "
+   "Minderwertige, die nicht in der Lage sind, seinen Verstand zu würdigen."
+KLangMaster_entry_welcome = de \
+   "Sei Gegrüßt. Bist du gekommen um nach mehr Wissen zu suchen?"
+KocatanLanguageMaster_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Sehr interessant, aber ich benötige das nicht.~n~k\""

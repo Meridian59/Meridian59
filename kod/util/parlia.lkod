@@ -1,0 +1,84 @@
+parliament_price_up = de \
+   "~IDurch die Beziehung zu %s bekommst Du den bestmöglichsten Preis."
+parliament_dam_up = de \
+   "~IErlente Techniken von %s helfen Dir mehr Schaden zu verursachen."
+parliament_hit_up = de "~IErlernte Techniken von %s hilft Dir bei der Attacke."
+parliament_learn_up = de \
+   "~IInspiriert durch %s, nimmst du Dir einen Moment Zeit um zu überlegen "
+   "wie du Dich verbessern kannst."
+parliament_spell_up = de \
+   "~IErlernte Techniken von %s gibt Deinem Zauber mehr Kraft."
+parliament_defense_up = de \
+   "~I%s's Techniken helfen Dir Dich vor Schaden besser zu schützen."
+parliament_regen_up = de \
+   "~I%s's Führung hilft dir, Dich schneller zu regenerieren."
+parliament_vigor_up = de "~I%s's Führung hilft dir, Dich schneller zu erholen."
+parliament_price_down = de \
+   "~IVielleicht, wenn %s beliebter wäre, würdest Du bei den Händlern bessere "
+   "Preise bekommen."
+parliament_dam_down = de \
+   "~IVielleicht, wenn %s belieber wäre, würde es möglich sein das Du mehr "
+   "Schaden verursachst.."
+parliament_hit_down = de \
+   "~IWenn %s beliebter wäre, würdest Du die Möglichkeit haben besser zu "
+   "treffen.."
+parliament_learn_down = de \
+   "~IVielleicht, wenn %s beliebter wäre, würdest Du schneller lernen."
+parliament_spell_down = de \
+   "~IWenn %s beliebter wäre, würden Deine Zauber stärker sein."
+parliament_defense_down = de \
+   "~IWenn %s beliebter wäre, würdest du Dich besser verteidigen können."
+parliament_regen_down = de \
+   "~IVielleicht, wenn %s beliebter wäre, würdest du Dich schneller regenerieren."
+parliament_vigor_down = de \
+   "~IVielleicht, wenn %s beliebter wäre, würdest Du langsamer Ausdauer verlieren."
+parliament_Duke_name = de "Herzog Akardius"
+parliament_Princess_name = de "Prinzessin Kateriina"
+parliament_Rebel_name = de "Jonas D'Accor"
+parliament_nodukeprice_down = de \
+   "~IVielleicht, wenn Du %s dienen würdest, würdest Du bessere Preise bekommen."
+parliament_nodukedam_down = de \
+   "~IWenn Du %s dienen würdest, würdest Du vielleicht Tricks gezeigt bekommen "
+   "um mehr Schaden zu machen."
+parliament_noprinhit_down = de \
+   "~IWenn Du Prinzessin Kateriina folgen würdest, würde man Dir Tricks zeigen "
+   "um öfter zu treffen."
+parliament_noprinlearn_down = de \
+   "~IWenn Du Prinzessin Kateriina folgen würdest, würdest Du vielleicht "
+   "schneller lernen."
+neutral_faction_preface = de "Zur Zeit im Gericht, der fraktionslose %s."
+duke_faction_preface = de \
+   "Ich habe gehört, dass der Herzog und seine Knechte jetzt %s."
+princess_faction_preface = de \
+   "Hast Du gehört, dass Prinzessin Kateriina und ihre Anhänger vor kurzem "
+   "%s?"
+rebel_faction_preface = de "Das Gerücht über Jonas sagt, dass seine Rebellen %s"
+strongly_in_suffix = de \
+   "besitzt unübertrefflichen Einfluss auf den Rat von Meridian"
+in_power_suffix = de \
+   "zeigt erheblichen Einfluss auf die Entscheidung des Rats von Meridian"
+normal_suffix = de \
+   "ist wieder auf einem normalen Niveau in Ihrem Einfluss auf den Rat Meridians."
+out_power_suffix = de \
+   "scheint einfach keinen großen Einfluss auf den Rat Meridians zu besitzen."
+strongly_out_suffix = de "fehlt der Einfluss Rat von Meridian gänzlich."
+parliament_rumor_number = de "Ah, Anhänger von %s sind %s"
+parliament_liege_number = de "meiner"
+parliament_few_number = de "wenige, aber mit direkten Anweisungen."
+parliament_small_number = de "klein, aber mit wachsender Macht."
+parliament_average_number = de \
+   "eine mittelgroße Gruppe, welche viele Vorteile bekommt."
+parliament_large_number = de \
+   "eine große Anzahl aber bekommen nur wenig individuelle Aufmerksamkeit."
+parliament_huge_number = de "eine unglaublich große und widerspenstige Gruppe"
+faction_power_shift = de \
+   "~IMan spürt eine Verschiebung der Machtverhältnisse im königlichem Rat."
+parliament_scandalous_behavior = de \
+   "Es gibt Gerüchte, dass ein Mitglied aus dem Rat von Meridian Gefallen "
+   "annimmt im Austausch für seine Stimme. Oh! Skandal!"
+parliament_name = de "Parlament Bericht"
+parliament_info_mail = de \
+   "Report:\nAnhänger der Prinzessin: %i\nAnhänger des Herzogs: %i\nAnhänger "
+   "der Rebellen: %i\nFraktionslose Anhänger: %i\nIntriganten Gesamt: %i\n\nMacht "
+   "der Prinzessin: %i\nMacht des Herzogs: %i\nMacht der Rebellen: %i\nMacht "
+   "der Fraktionslosen: %i\n-----"

@@ -1,0 +1,26 @@
+DeathsDoor_name_rsc = de "Schattenriss"
+DeathsDoor_desc_rsc = de \
+   "Beschwört die Mächte des Bösen und beugt das Raumgefüge. Der Zauber knüpft "
+   "eine Verbindung zwischen dem Prisma und dem Gebiet, in dem er gesprochen "
+   "wurde. Erneute Beschwörungen des Prismas schaffen ein magisches Tor. "
+   "Jeder es durchschreitet, gelangt an eben jenen Ort, an den das Prisma "
+   "gebunden wurde. Der Zauber benötigt Schamanenblut und ein Prisma.. "
+DeathsDoor_already = de \
+   "Eine Wole aus magischer Kraft beginngt sich zu vereinigen, aber dann "
+   "wieder zerstört, durch die Anwesenheit von einem weiteren Portal in der "
+   "nähe."
+DeathsDoor_no_lich = de \
+   "Eine Wolke aus magischer Kraft beginnt sich zu vereinigen, dann wird "
+   "sie aber durch eine mysteriöse Weise abgeleitet. Vielleicht fehlt etwas "
+   "entscheidendes."
+DeathsDoor_room_loop = de \
+   "Das Prisma zischt schwach. Es muss aus dem Gebiet raus and dem es gebunden "
+   "ist."
+DeathsDoor_target_has_portal = de \
+   "Das Prisma wird kurz klar. Durch das Prisma siehst Du das Ziel Gebiet "
+   "welches bereits ein Portal hat."
+DeathsDoor_succeeded = de "Ein schimmerndes Portal wird ins Leben gerufen!"
+DeathsDoor_succeeded2 = de "Das Prisma brummt und erschaudert."
+deathsDoor_necros_only = de \
+   "Ohne ein Amulett um die Macht der Drei zu rufen, kann man hoffen einen "
+   "Schattenriss zu beschwören."

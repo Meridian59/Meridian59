@@ -1,0 +1,15 @@
+threeCouncilor_name_rsc = de "Cylill"
+threeCouncilor_desc_rsc = de \
+   "Ein Veteran der Kriege mit Ukgoth. Er beherrscht jede Art des Kampfes.Bekleidet "
+   "mit einer leichten Rüstung und den formellen militärischenInsignien sitzt "
+   "er untätig in seiner Hütte wie ein General, derFriedenszeiten verabscheut. "
+   "Zylill hat lange bei den Streitkräften desHerzogs gedient und in dieser "
+   "Zeit die Welt vor den Trollen geschützt.Er hat viele Geschichten zu erzählen."
+threecon_true_ideal_rsc = de \
+   "Es ist beeindruckend, jemand anderen zu treffen, der ebensoviel überKampftechniken "
+   "weiß."
+threecon_half_ideal_rsc = de \
+   "Wenn ich mir Deine erbärmlichen Fähigkeiten ansehe,bin ich sicherlich "
+   "nicht übermäßig beeindruckt."
+threecon_unwanted_give = de \
+   "~k%s%s sagt Dir, \"Das brauche ich nicht, Bursche.~n~k\""

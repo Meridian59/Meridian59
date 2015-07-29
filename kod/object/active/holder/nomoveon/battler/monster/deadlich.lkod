@@ -1,0 +1,18 @@
+DeadLich_name_rsc = de "Die geisterhaften Überreste der Königin Venya'cyr"
+DeadLich_desc_rsc = de \
+   "Ein geisterhafter Haufen reichgeschmückter, formeller Kleider scheint "
+   "alles zu sein, was von der einst so mächtigen Königin übriggeblieben "
+   "ist."
+DeadLich_name2_rsc = de "Die geisterhaften Überreste der Königin Venya'cyr"
+DeadLich_desc2_rsc = de \
+   "Ein geisterhafter Haufen reichgeschmückter, formeller Kleider scheint "
+   "alles zu sein, was von der einst so mächtigen Königin übriggeblieben "
+   "ist.Wie dem auch sei, immer, wenn Du wegsiehst, bekommst Du aus den Augenwinkeln "
+   "heraus flüchtig einen dünnen, schimmernden Faden von Dunkelheit zu sehen, "
+   "der an ihre sterblichen Überreste gebunden scheint. Er erstreckt sich "
+   "unendlich weit in eine Richtung, die mit normalen geometrischen Regeln "
+   "nicht beschreibbar ist."
+deadlich_dispel = de \
+   "Der Haufen reichverzierter Kleider wechselt auf mystische Art die Farbe!"
+deadlich_respel = de \
+   "Der Haufen reichverzierter Kleider wechselt zurück zu seiner Originalfarbe."

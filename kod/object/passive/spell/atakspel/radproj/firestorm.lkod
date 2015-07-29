@@ -1,0 +1,15 @@
+firestorm_name_rsc = de "Feuersturm"
+firestorm_desc_rsc = de \
+   "Call upon the magic of Faren and propel forth a devastating barrage of "
+   "fireballs, searing the flesh of those around you.  Requires two orc teeth, "
+   "two red mushrooms and a green mushroom."
+firestorm_first_rsc = de \
+   "You channel the power of Faren and unleash a barrage of fire!"
+firestorm_third_rsc = de \
+   "%s%s channels the power of Faren and unleashes a barrage of fire!"
+firestorm_killed_someone = de "The ice shards fatally wound %s%s."
+firestorm_cast_rsc = de \
+   "You let out a cry of pain as flames sear your flesh, causing ~r~B%i~n "
+   "damage."
+firestorm_hit_rsc = de \
+   "%s%s lets out a cry of pain as flames sear %s flesh for ~k~B%i~n damage."

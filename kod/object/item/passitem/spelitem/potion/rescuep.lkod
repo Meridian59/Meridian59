@@ -1,0 +1,5 @@
+RescuePotion_name_rsc = de "potion of deliverance"
+RescuePotion_desc_rsc = de "Trank der Befreiung"
+RescuePotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

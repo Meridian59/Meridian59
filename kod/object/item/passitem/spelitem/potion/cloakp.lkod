@@ -1,0 +1,8 @@
+CloakPotion_name_rsc = de "Elixir der Verhüllung"
+CloakPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Der Geruch scheint "
+   "Dir bekannt zu sein, aber da ist irgendetwas merkwürdig, was Du jedoch "
+   "nicht benennen kannst."
+CloakPotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

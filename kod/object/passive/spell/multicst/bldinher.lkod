@@ -1,0 +1,13 @@
+BloodInheritance_name_rsc = de "Bluterbe"
+BloodInheritance_desc_rsc = de \
+   "Erfüllt eine Waffe mit der boshaften Macht von Qor. Es ist unmöglich "
+   "genau vorherzusagen, welche Form dieses dunkle Gebet annehmen wird, aber "
+   "es wird immer fürchterlich sein. Benötigt Blut von Schamanen, Wurzelknollen "
+   "und Orkzähne."
+BloodInheritance_bad_target = de "Du musst eine Handwaffe als Ziel nutzen."
+BloodInheritance_bad_target2 = de \
+   "Du kannst Qors Geschenk nicht an eine Waffe geben, welche schon gesegnet "
+   "ist."
+BloodInheritance_succeeded = de \
+   "Die böse Macht des Zaubers geht raus aus %s%s, die ihr Qor's Macht gegeben "
+   "hat."

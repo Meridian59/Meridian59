@@ -1,0 +1,18 @@
+kocatanShopkeeper_name_rsc = de "Pacal ix'Anoak"
+kocatanShopkeeper_desc_rsc = de \
+   "Dieser etwas zerstreute Mann führt einen sehr unordentlichen Laden in "
+   "einem verlassenen Lager. Obwohl er offensichtlich kein Organisationstalent "
+   "hat, besitzt Pacal einen bemerkenswerten Überblick darüber, was er in "
+   "seinem Lager hat und wo es liegt."
+kocatanShopkeeper_entry_welcome = de \
+   "Ich habe möglicherweise das, nachdem du gesucht hast.... irgendwo...."
+JunkMan_AlreadyHaveOne_rsc = de \
+   "Ich habe bereits einen davon zum entladen bekommen. Noch einen benötige "
+   "ich nicht."
+JunkMan_NumberItem_rsc = de \
+   "Sorry, mein Freund, Schmuckstücke wie diese sind Dinge `Bdie ich nicht "
+   "nehme."
+JunkMan_Full_rsc = de \
+   "Ich wünschte, ich könnte das aus deiner Hand nehme aber meine sind auch "
+   "alle voll!"
+JunkMan_Not_Interested = de "Ich danke dir, aber ich bin nicht interessiert."

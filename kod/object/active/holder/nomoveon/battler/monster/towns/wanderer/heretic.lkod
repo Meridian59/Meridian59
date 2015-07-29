@@ -1,0 +1,10 @@
+Heretic_name_rsc = de "Miriana"
+Heretic_desc_rsc = de \
+   "Ausgestoßen von der religiösen Gemeinde wegen Ihrer blasphemischen Ansichten "
+   "über die Götter, tanzt Miriana alleine, weit weg von aller Zivilisation. "
+   "Einige nennen sie eine Ketzerin, andere ein Kind, dennoch, etwas scheint "
+   "sehr gefährlich an diesem seltsamen Mädchen."
+heretic_inexperienced = de \
+   "Ich werde diese Künste niemanden lehren, der so schwach ist."
+Heretic_already_have_spell = de \
+   "Dummerchen! Du beherrschst den %s-Spruch bereits."

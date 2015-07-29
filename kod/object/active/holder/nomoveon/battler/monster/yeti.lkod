@@ -1,0 +1,10 @@
+yeti_name_rsc = de "Der Yeti"
+yeti_koc_name_rsc = de "tezatzmoch"
+yeti_desc_rsc = de \
+   "Diese wundersame weiße Kreatur überragt mit ihrer Gestalt alle anderen "
+   "Wesen. Yetis sind extrem gefährlich, besonders wenn sie in Eishöhlen, "
+   "ihren Ruheplätzen, angegriffen werden. Nur jemand, der sehr gut vorbereitet "
+   "ist würde es wagen, einen Yeti alleine angreifen."
+yeti_dead_name_rsc = de "Ein toter Yeti"
+yeti_cast_spell = de \
+   "Dieser Yeti fühlt sich durch die menschliche Magie gestört."

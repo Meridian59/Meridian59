@@ -1,0 +1,7 @@
+mummy_koc_name_rsc = de "napleoc"
+mummy_name_rsc = de "Die Mumie"
+mummy_desc_rsc = de \
+   "Diese üble Kreatur wurde durch schwarze Magie unbekannter Herkunft ins "
+   "Leben gerufen.Ihr Fleisch ist faulig und weich, und ihre Augen bitten "
+   "um Ruhe von diesem verfluchten Unleben."
+mummy_dead_name_rsc = de "tote Mumie"

@@ -1,0 +1,8 @@
+SummonCow_name_rsc = de "Erschaffe Kuh"
+SummonCow_desc_rsc = de \
+   "Beschwört eine Zwerg-Kuh, um alle Anwesenden zu erfreuen.Erfordert perfekt "
+   "polierte Seraphyme und die magischen Energien des Zauberers müssen durch "
+   "ein Prisma gebündelt werden.."
+summoncow_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in dem Raum um eine Kuh ins Leben zu "
+   "bringen."

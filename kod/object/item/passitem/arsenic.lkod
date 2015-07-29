@@ -1,0 +1,6 @@
+arsenic_use = de "Zu spät erkennst Du Deinen törichten Fehler."
+arsenic_cant_use_on = de "Du kannst %s%s nicht dienen"
+arsenic_name_rsc = de "Die Flasche"
+arsenic_desc_rsc = de \
+   "Die stechend riechende Flüssigkeit in der Flasche enthält Spuren einer "
+   "eigenartigen Substanz."

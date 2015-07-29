@@ -1,0 +1,6 @@
+reagentbag_name_rsc = de "Reagenzien Beutel"
+reagentbag_desc_rsc = de \
+   "Dieser lumpige Beutel, kann eine große Menge an Reagenzien für dich aufnehmenEr "
+   "hat aber keinen Effekt auf das Gewicht, das du tragen kannst."
+stash_in_bag = de "Du verstaust %d %s in deinen Reagenzien Beutel."
+get_from_bag = de "Du holst %d %s aus deinem Reagenzien Beutel."

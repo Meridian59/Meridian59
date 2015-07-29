@@ -1,0 +1,7 @@
+blink_name_rsc = de "Blink"
+blink_desc_rsc = de \
+   "Teleportiert Dich zu einem zentralen Platz im Raum. Benötigt nichts anders "
+   "als den Willen zum Blinken."
+blink_spell_intro = de \
+   "Riija Level 1: Teleportiert Dich zu einem zentralen Platz im Raum. Benötigt "
+   "nichts anders als den Willen zum Blinken."

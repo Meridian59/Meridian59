@@ -1,0 +1,24 @@
+DeathRift_name_rsc = de "Todesriss"
+DeathRift_desc_rsc = de \
+   "By calling upon a pact with the most ancient of dark forces, the truest "
+   "disciples of Qor may traverse the fiery pits of the Underworld while "
+   "still retaining life. The interdimensional pathways can lead Qor's favored "
+   "to many locations, including one dedicated destination of their choosing.Requires "
+   "a large number of dark angel feathers to cast."
+DeathRift_no_angeled = de \
+   "You cannot call upon such an evil pact while your guardian angel watches "
+   "over you."
+DeathRift_bind = de \
+   "You leave a smattering of blood at the ground beneath your feet, binding "
+   "a small part of your soul to this location."
+DeathRift_travel = de \
+   "A vast passage of flames opens, and you find yourself pulled to the Underworld!"
+DeathRift_travel_notify = de \
+   "A fiery portal flares open briefly, dragging %s to the Underworld!"
+DeathRift_travel_notify_with_dest = de \
+   "A fiery portal flares open briefly, dragging %s through the Underworld "
+   "and toward %s!"
+DeathRift_generic_fail = de \
+   "The evil pact's magic fails. Something seems amiss."
+DeathRift_warning = de \
+   "~BYou sense a nearby connection forming between dimensions!"

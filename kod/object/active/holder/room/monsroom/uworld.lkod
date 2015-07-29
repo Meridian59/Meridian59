@@ -1,0 +1,22 @@
+room_name_underworld = de "Die Unterwelt"
+underworld_assgame = de "Irgendetwas befiehlt Dir, stillzuhalten."
+portal_tos = de \
+   "Mit einem Blick durch das Portal erkennst Du das fröhliche Treiben in "
+   "der Brunnenkneipe."
+portal_marion = de \
+   "Durch das Portal erkennst Du die entspannte Atmosphäre in der 'Lahmen "
+   "Kröte'."
+portal_jasper = de \
+   "Hinter diesem Portal liegt die Kneipe 'Zum Zwergenhammer' in Jasper."
+portal_cornoth = de \
+   "Dieses Portal führt Dich zu einer gemütlichen Kneipe in der Nähe eines "
+   "ausgetrockneten Flußbetts."
+portal_barloque = de \
+   "Der Blick durch das Portal zeigt Dir eine teure Gaststätte in einer sehr "
+   "belebten Stadt."
+zap_to_corpse = de \
+   "Beim Betreten des Portals streifst Du die Unterwelt, wirst aber plötzlich "
+   "herausgezogen..."
+zap_to_home = de \
+   "Du durchschreitest das Portal und verlierst jegliche Orientierung. Als "
+   "Du Dich plötzlich zuhause wiederfindest, steigt Deine Verwirrung."

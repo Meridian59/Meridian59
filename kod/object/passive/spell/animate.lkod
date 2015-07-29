@@ -1,0 +1,15 @@
+Animate_name_rsc = de "Untoten erwecken"
+Animate_desc_rsc = de \
+   "elebt die Leiche eines anderen Menschen,auf dass er Deinem Befehl Folge "
+   "leiste. Der Zauber benötigt Schamanenblut."
+Animate_bad_target = de "Du kannst Untoten erwecken nicht auf %s%s zaubern!"
+Animate_human_cast_rsc = de "%ss Leiche steht von alleine vom Boden auf."
+Animate_human_failed_rsc = de "%ss Leiche bleibt unbelebt auf dem Boden liegen."
+Animate_mob_failed_rsc = de "Die Überreste von %s bleiben leblos liegen."
+Animate_mob_cast_rsc = de \
+   "Die Überreste von %s erwachen zum Leben und erheben sich vom Boden."
+Animate_failed_rsc = de "Die Überreste sind nicht in der lage belebt zu werden."
+Animate_too_many_rsc = de \
+   "Du bist nicht in der lage einen Diener von jemandem anderen zu kontrollieren."
+Animate_failed_full_rsc = de \
+   "Hier sind zu viele Monster im Raum, darum kannst du keinen erwecken."

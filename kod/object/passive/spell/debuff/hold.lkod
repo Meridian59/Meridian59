@@ -1,0 +1,12 @@
+hold_name_rsc = de "Lähmen"
+hold_desc_rsc = de \
+   "Umgibt die Zielperson mit magischer Energie und lähmt sie für einige "
+   "Sekunden. Der Zauber benötigt Lila Pilze. Die Anwendung dieses Zaubers "
+   "kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+hold_already_enchanted = de "%s%s ist bereits gelähmt."
+hold_caster = de "%s%s wird nun festgehalten von einer magischen Energie."
+hold_on = de \
+   "Ein magisches Kribbeln durchströmt Deinen Körper. Du bist nicht in der "
+   "Lage dich zu bewegen."
+hold_off = de "Du kannst Dich wieder normal bewegen."
+hold_break_rod_active = de "Fließende Energien verhinden deinen Zauberspruch!"

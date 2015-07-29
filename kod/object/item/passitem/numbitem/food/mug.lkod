@@ -1,0 +1,14 @@
+mug_name_rsc = de "Der Becher mit Stout"
+mug_desc_rsc = de \
+   "Ein dunkles, haselnußfarbenes Stout mit einer dicken Schaumkrone."
+mug_name_plural_rsc = de "Becher mit Stout"
+mug_disp_name = de "Der Krug mit Stout"
+mug_disp_desc = de \
+   "Ein schwerer Messingkrug, der bis zum Rand mit dunklem, schmackhaftem "
+   "Stout gefüllt ist. Man muss es langsam einschenken, damit die perfekte "
+   "Schaumkrone erhalten bleibt."
+mug_got_one = de \
+   "Du schenkst langsam Deinen Becher mit schaumigem Stout aus dem Krug voll."
+mug_use = de \
+   "Stark und absolut köstlich! Der rauchige Geschmack wird noch eine Weile "
+   "in Deinem Mund bleiben."

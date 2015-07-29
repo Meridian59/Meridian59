@@ -1,0 +1,8 @@
+Block_name_rsc = de "Abwehren"
+Block_desc_rsc = de \
+   "Abwehren ist die grundlegende Fähigkeit, einen Schild gegen die Hiebe "
+   "Anderer einzusetzen.Ein erfolgreich abgewehrter Schlag wirkt sich schädigend "
+   "auf die angreifende Waffe und den abwehrenden Schild aus."
+Block_skill_intro = de \
+   "Waffenfertigkeiten Level 1: Abwehren ist die grundlegende Fähigkeit, "
+   "einen Schild gegen die Hiebe Anderer einzusetzen."

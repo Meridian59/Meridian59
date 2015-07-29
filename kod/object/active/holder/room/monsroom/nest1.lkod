@@ -1,0 +1,6 @@
+room_name_nest1 = de "Das Spinnennest"
+Nest_to_Cave_1 = de \
+   "~r~B>Autsch<~n Du fällst durch ein Loch im Boden und landest unsanft "
+   "auf Deinem Hinterteil."
+Nest_to_Cave_2 = de \
+   "Du springst durch ein Loch im Boden in eine unterirdische Höhle."

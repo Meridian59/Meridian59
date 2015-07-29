@@ -1,0 +1,5 @@
+redmushroom_name_rsc = de "Der Rote Pilz"
+redmushroom_desc_rsc = de \
+   "Diese magischen Pilze füllen Deine Nase mit einem merkwürdigen, beißenden "
+   "Geruch."
+redmushroom_name_plural_rsc = de "Rote Pilze"

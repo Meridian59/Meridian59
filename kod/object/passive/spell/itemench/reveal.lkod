@@ -1,0 +1,9 @@
+reveal_name_rsc = de "Offenbaren"
+reveal_desc_rsc = de \
+   "Streift jegliche Tarnung von einem Gegenstand ab, so dass jeder die besonderen "
+   "Fähigkeiten erkennen kann. Man braucht makellose Orkzähne."
+reveal_cant = de "Du kannst Dich nicht auf %s%s fokussieren."
+reveal_working = de \
+   "Du konzentriest Dich auf %s%s, und nach ein paar Momenten kommen alle "
+   "Geheimnisse zum Vorschein!"
+reveal_strip_misdir = de "Deine Magie nimmt alle Illusionen von %s%s!"

@@ -1,0 +1,8 @@
+inscript_name_rsc = de "Der Pergamentbogen"
+inscript_desc_blank_rsc = de \
+   "Ein frischer Pergamentbogen ohne ein Zeichen darauf."
+inscript_desc_written_rsc = de \
+   "Ein kleines Stück Pergamentpapier, auf das etwas gekritzelt ist."
+inscript_emote_write_third_rsc = de "%s schreibt etwas auf %s%s."
+inscript_blank_rsc = de " "
+inscript_q = de "%q"

@@ -1,0 +1,6 @@
+fireball_name_rsc = de "Feuerball"
+fireball_desc_rsc = de \
+   "Schleudert einen Feuerball auf das Ziel. Der Zauber benötigt Rote Pilze "
+   "und die Zähne eines Orks. Die Anwendung dieses Zaubers kann dazu führen, "
+   "dass Du zum Gesetzlosen erklärt wirst."
+fireball_hit_rsc = de "Ein Feuerball trifft %s%s!"

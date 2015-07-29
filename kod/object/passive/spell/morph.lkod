@@ -1,0 +1,13 @@
+morph_name_rsc = de "Gestaltwandlung"
+morph_desc_rsc = de \
+   "Der Kontakt mit Riija verwandelt Dich in eine Bestie! Erforderlich dazu "
+   "sind Drachenfliegenaugen und Moosnetze."
+morph_already_enchanted = de "Du bist bereits betroffen von %s%s."
+morph_already_affected = de "Du bist bereits Verwandelt."
+morph_on = de "Du wirst schmerzhaft verwandelt in %s%s."
+morph_off = de \
+   "Deine Alternativform verlässt dich und du bleibst wieder als du selbst "
+   "zurück."
+Morph_attackable = de \
+   "\nHINWEIS: Während du dich in der Form eines Monsters befindest bleibst "
+   "du angreifbar."

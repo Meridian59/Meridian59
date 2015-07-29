@@ -1,0 +1,12 @@
+Invigorate_name_rsc = de "Stärkung"
+Invigorate_desc_rsc = de \
+   "Dieses Lied erlaubt es allen Zuhörern, schneller wieder zu Kräften zu "
+   "kommen. Der Zauber benötigt Diamanten und essbare Pilze."
+Invigorate_cast = de "Du beginnst, einen belebenden Song zu spielen."
+Invigorate_starts = de "%s beginnt einen belebenden Song zu spielen."
+Invigorate_ends = de "Der belebende Song der von %s gespielt wird verstummt."
+Invigorate_caster_ends = de "Dein belebender Song verstummt."
+Invigorate_caster_enter = de "Du spürst, wie sich deine Müdigkeit verringert."
+Invigorate_enter = de "%ss belebender Song erwirkt, das Du weniger müde bist."
+Invigorate_leave = de \
+   "Du kannst die belebenden Worte von %ss Song nicht mehr hören."

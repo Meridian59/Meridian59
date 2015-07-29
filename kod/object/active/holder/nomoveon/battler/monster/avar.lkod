@@ -1,0 +1,19 @@
+avar_default_name = de "Avar"
+avar_koc_name_rsc = de "avar"
+avar_name_rsc = de "Der Avar-Krieger vom Stamme der Pi-Piep"
+avar_desc_rsc = de \
+   "Als wilde Krieger verlangen diese flügellosen Vogelmenschen Deine Vorsicht, "
+   "wenn Du Dich näherst. Das Gefieder zeigt eindeutig, dass diese Avar zum "
+   "edlen Pi-Piep-Stamm gehören."
+avar_bone_name = de "Der Krieger des Tschi-Tschilp-Stammes"
+avar_bone_desc = de \
+   "Diesen flügellosen, wilden Kriegern sollte man sich besser mit aller "
+   "Vorsicht nähern. Das Gefieder zeigt eindeutig, dass diese Avare zum gefürchteten "
+   "Tschi-Tschilp-Stamm gehören, die sich mit der Knochengruppe verbündet "
+   "haben."
+avar_nomagic_name = de "Der Avar-Krieger vom Stamme der Ki-Ki-Krii"
+avar_nomagic_desc = de \
+   "Als wilde Krieger verlangen diese flügellosen Vogelmenschen Deine Vorsicht, "
+   "wenn Du Dich näherst. Das Gefieder zeigt eindeutig, dass diese Avar zum "
+   "wilden Ki-Ki-Krii-Stamm gehören."
+avar_dead_name_rsc = de "Der tote Avar"

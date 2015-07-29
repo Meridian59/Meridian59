@@ -1,0 +1,6 @@
+identify_name_rsc = de "Identifizieren"
+identify_desc_rsc = de \
+   "Enttarnt die besonderen Eigenschaften eines Gegenstandes. Dafür braucht "
+   "man Orkzähne.."
+identify_cant = de "Du kannst keinen Fokus auf %s%s richten."
+identify_working = de "du konzentrierst Dich auf %s%s und siehst..."

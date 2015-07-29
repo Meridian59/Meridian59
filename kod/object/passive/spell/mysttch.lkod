@@ -1,0 +1,17 @@
+MysticTouch_name_rsc = de "Mystische Berührung"
+MysticTouch_desc_rsc = de \
+   "Ruft die Magie Farens herbei, um magische Energie vom Zaubernden zum "
+   "Ziel zu übertragen. Der Zauber benötigt Pilze."
+MysticTouch_cast_rsc = de \
+   "Du fühlst, wie sich dein Körper mit magischer Energie von jemanden anderes "
+   "füllt."
+MysticTouch_caster_msg_rsc = de \
+   "Du gibst einen Teil deiner magischen Energie an %s%s."
+MysticTouch_unnecessary_rsc = de \
+   "%s%s kann nicht noch zusätzliche Energie von dir aufnehmen."
+MysticTouch_nomana_rsc = de \
+   "Du hast nicht genug Energie um es auf andere zu transferieren!"
+MysticTouch_notonself_rsc = de \
+   "Du kannst Mystische Berührung nicht auf dich selber zaubern."
+MysticTouch_spell_intro = de \
+   "Faren Level 1: Transferiert Mana von dir auf andere."

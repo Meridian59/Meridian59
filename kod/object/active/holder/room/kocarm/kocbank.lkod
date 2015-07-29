@@ -1,0 +1,5 @@
+room_name_kocbank = de "Der hungrige Geldspeicher"
+kocbank_locked1 = de "~wDie Wache kläfft, \"Was glaubst Du, wohin Du gehst?\""
+kocbank_locked2 = de \
+   "~wHuital ko'Nosak sagt, \"Kunden ist der Zutritt zu unseren Gewölben nicht "
+   "erlaubt. Aus Sicherheitsgründen, Du verstehst.\""

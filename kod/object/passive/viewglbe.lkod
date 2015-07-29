@@ -1,0 +1,13 @@
+ViewPointGlobe_name = de "Beobachtungskugel"
+ViewPointGlobe_desc = de \
+   "In diese Kugel zu starren, erlaubt Dir, durch diejenige Kugel zu sehen, "
+   "mit der sie magisch verbunden ist. Während Dein Blickfeld magisch transferiert "
+   "ist, kannst Du keine Zauber sprechen oder angreifen. Wenn Du nicht mehr "
+   "in die Kugel starren möchtest, drücke die ESC-Taste und Dein Blickfeld "
+   "wird wieder normal."
+ViewPointGlobe_not_in_range = de \
+   "Du bist nicht nahe genug an der Kugel, um in sie hineinzusehen."
+ViewPointGlobe_used = de \
+   "Du starrst tief in die Kugel und stellst fest, dass Du durch sie zu einem "
+   "fernen Ort blicken kannst!\n[Drücke ESC, wenn Du bereit bist, in die normale "
+   "Welt zurückzukehren.]"

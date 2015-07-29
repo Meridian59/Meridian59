@@ -1,0 +1,12 @@
+HunterGhost_name_rsc = de "Tendrath"
+HunterGhost_desc_rsc = de \
+   "Dieser vergessene Magier macht einen so stillen und friedlichen Eindruck, "
+   "dass Du Dich wunderst, warum sein geisterhafter Schatten immer noch auf "
+   "dieser Ebene verweilt."
+huntghost_hunt_only = de \
+   "~wIch kann diese Kunst nur demjenigen lehren, der das Schwert eines Jägers "
+   "führt."
+huntghost_not_powerful = de \
+   "~wTendrath sagt, \"Du bist viel zu unerfahren, um derart kraftvolle Zauber "
+   "anzuwenden.\""
+huntghost_said_resource_str = de "%s%s sagt, \"%s~n\""

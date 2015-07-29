@@ -1,0 +1,15 @@
+brittle_name_rsc = de "Spröde"
+brittle_desc_rsc = de \
+   "Lässt die Waffe des Zieles um Jahre altern und macht sie zerbrechlich "
+   "und alt. Für diesen Zauber benötigst Du Pilze und Lila Pilze. Die Anwendung "
+   "dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+brittle_nothing = de \
+   "Bei all deiner mystischen Konzentration, scheint nichts zu passieren."
+brittle_no_weapon = de "%s%s hat nichts bei sich, was Du zerstören könntest."
+brittle_hunter_sword = de "%s%ss Jagdschwert widersteht deinem Zauber."
+brittle_cast_rsc = de \
+   "%s%ss Augen richten sich wie gebannt auf Deine Waffe. %s in Deinem Besitz "
+   "wird durch Farens Magie geschwächt."
+brittle_succeed = de \
+   "Deine Augen richten sich gebannt auf %s%s. %s wird durch Farens Magie "
+   "schwächer."

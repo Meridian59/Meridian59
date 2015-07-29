@@ -1,0 +1,11 @@
+rescue_name_rsc = de "Retten"
+rescue_desc_rsc = de \
+   "Ruft Sha-Lill an, um Dich zurück in Sicherheit zu bringen. Der Zauber "
+   "benötigt Smaragde."
+Rescue_Start = de "Du startest deine Vorbereitungen zum Retten."
+Rescue_Success = de \
+   "Du fühlst, dass eine heilige Kraft dich aus deiner Situation geholt hat."
+Rescue_Already_Cast = de "Du wurdest bereits gerettet."
+Rescue_Token_Cancel = de \
+   "Du kannst nicht retten, während Du ein Artefakt hälst."
+Rescue_depart_to_destination = de "%s verschwindet in einer Wolke aus Licht!"

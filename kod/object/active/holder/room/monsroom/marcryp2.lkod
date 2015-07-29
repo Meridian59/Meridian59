@@ -1,0 +1,10 @@
+room_name_MarionCrypt2 = de "Die Ruhestätte der Ahnen Marions"
+MarionCrypt2_boss_message = de \
+   "~wDu hörst das Echo einer unheimlichen Stimme, \"~IDu darfst noch nicht "
+   "vorbei!~I\""
+MarionCrypt2_warning_sign_name = de "Achtung!!"
+MarionCrypt2_warning_sign = de \
+   "Auf Erlass von König Far'Nohl ist es niemandem erlaubt, sich jenseits "
+   "dieses Punktes zu wagen. Dieser Ort ist bar jeglicher Zivilisation, und "
+   "diejenigen die ihn betreten sind des Todes. Denjenigen, die sich über "
+   "diese Order hinwegsetzen möge keine Gnade zuteil werden."

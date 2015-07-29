@@ -1,0 +1,20 @@
+IcyFingers_name_rsc = de "Eisiger Griff"
+IcyFingers_desc_rsc = de \
+   "Gefriert einen Teil des Fleisches des Ziels und zerstört dabei die äußere "
+   "Gewebeschicht auf schmerzvolle Weise. Der Zauber benötigt rote Pilze."
+IcyFingers_already_enchanted_rsc = de \
+   "Deine Hände sind bereits von Frost umhüllt."
+IcyFingers_On_rsc = de "Ein fröstige Kälte überzieht deine Hände."
+IcyFingers_Off_rsc = de "Deine Hönde sind nicht länger überzogen mit Frost."
+IcyFingers_player_was_hit = de \
+   "%s%s berührt dich und dein Fleisch beginnt zu gefrieren und hinterlässt "
+   "ein Stück schwarzes, lebloses Gewebe."
+IcyFingers_player_hit_something = de \
+   "%sDein Eisiger Griff friert ein Stück von %s%ss Fleisch, und hinterlässt "
+   "es schwarz und leblos."
+IcyFingers_player_killed_something = de \
+   "%s%s findet einen kalten unübertroffenen Tod."
+IcyFingers_player_was_killed = de \
+   "Beim Eisigen Griff von %s%s zitterst du und fällst in einen kalten Tod."
+IcyFingers_spell_intro = de \
+   "Faren Level 2: Gefriert einen Teil des Fleisches des Ziels und zerstört."

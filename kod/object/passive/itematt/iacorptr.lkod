@@ -1,0 +1,3 @@
+corpsepointer_no_loot = de \
+   "Du greifst nach %s%s, aber Du kommst nicht an %s vorbei um die Beute "
+   "aufzunehmen."

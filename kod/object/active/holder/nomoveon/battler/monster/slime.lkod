@@ -1,0 +1,7 @@
+slime_koc_name_rsc = de "kinachot"
+slime_name_rsc = de "Der Schleim"
+slime_desc_rsc = de \
+   "Als ein Haufen schwabbelnder Masse kriecht der Schleim vorwärts und hinterläßt "
+   "eine ekelerregende Spur. Die Reste seines letzten Opfers sind durch die "
+   "transparenten Innereien zu sehen."
+slime_dead_name_rsc = de "toter Schleim"

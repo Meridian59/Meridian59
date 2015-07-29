@@ -1,0 +1,5 @@
+thrasher_koc_name_rsc = de "teotixleoc"
+thrasher_name_rsc = de "Der Zerstörer"
+thrasher_desc_rsc = de "Ein mächter Zerstörer...."
+thrasher_dead_name_rsc = de "toter Zerstörer"
+thrasher_spin_message = de "~bDer Zerstörer verhaut dich mit seinem Angriff."

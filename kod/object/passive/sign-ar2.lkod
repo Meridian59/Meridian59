@@ -1,0 +1,8 @@
+newarenasign_name_rsc = de "Kraanans Stolz"
+newarenasign_desc_rsc = de "Längste Siegesserie (%s): %s %s %s %s %s"
+newarenasign_dummy_line = de "    %s  (%i %s)\n"
+newarenasign_line = de "    %q  (%i %s)\n"
+newarenasign_blank_rsc = de " "
+newarenasign_win = de "Sieg"
+newarenasign_wins = de "Siege"
+newarenasign_dummy_name = de "Noimad Trebuhcs"

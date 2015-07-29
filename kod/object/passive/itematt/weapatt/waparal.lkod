@@ -1,0 +1,6 @@
+weapattParalyzer_desc = de \
+   " Ein Glühen, der nur als Zjiiria beschrieben werden kann, umgibt die "
+   "Waffe."
+Paralyzer_dm = de "Lähmen"
+paralyzer_fail_use = de "Du bist nicht bereit um %s%s zu nutzen."
+holder_worked = de "%s%s scheint auf dem Boden festgewurzelt zu sein"

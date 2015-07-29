@@ -1,0 +1,6 @@
+lightning_name_rsc = de "Blitzschlag"
+lightning_hit_rsc = de "Blitzschlag trifft %s%s!"
+lightning_desc_rsc = de \
+   "Schleudert einen Blitz auf das Ziel. Der Zauber benötigt Blaue Pilze "
+   "und Orkzähne. Die Anwendung dieses Zaubers kann dazu führen, dass Du "
+   "zum Gesetzlosen erklärt wirst."

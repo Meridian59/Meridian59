@@ -1,0 +1,20 @@
+Evaluate_name_rsc = de "Auswerten"
+allinroom_Evaluate_msg1 = de "~b%s%s deeply plunges into the soul of %s%s."
+allinroom_Evaluate_msg2 = de \
+   "~bYou tingle as %s%s stares deep into the soul of %s%s."
+caster_Evaluate_msg = de "~bYou stare deeply at %s%s."
+Evaluated_Evaluate_msg = de "~b%s%s looks deeply into your eyes."
+Evaluate_desc_rsc = de \
+   "This gazes deep into a person's eyes, and judges their odds of gaining "
+   "another health point."
+Evaluate_message_nochance = de \
+   "%s has no chance of gaining a hit point, but will in about %i kills."
+Evaluate_Message = de \
+   "%s has a %i out of %i chance (%i percent) of gaining a health point with "
+   "each kill."
+evaluate_monster = de \
+   "%s should concentrate on killing monsters at about %s ability level, "
+   "such as %ss and %ss."
+Evaluate_combat = de \
+   "~BCombat stats: ~B%s has an Offense of %i, Defense of %i, and can do "
+   "around %i points of type %i (physical) and %i (spell) damage."

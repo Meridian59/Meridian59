@@ -1,0 +1,7 @@
+KaraholsCursePotion_name_rsc = de "Karahol's verzaubertes Elixier"
+KaraholsCursePotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht wie "
+   "eine Mischung aus Likör und Muskat. "
+KaraholsCursePotion_bad_desc_rsc = de \
+   "Dies ist eine Phiole mit einer dunklen, milchigen Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

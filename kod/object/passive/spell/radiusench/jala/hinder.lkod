@@ -1,0 +1,9 @@
+hinder_cast = de "Du beginnst eine unstimmige Melodie zu spielen."
+hinder_starts = de "%s beginnt eine unstimmige Melodie zu spielen!"
+hinder_ends = de "Die unstimmige Melodie von %s erlischt."
+hinder_caster_ends = de "Deine unstimmige Melodie erlischt."
+hinder_caster_enter = de \
+   "Du fühlst, dass sich die Worte der Melodie mit einer anderen Magie stören."
+hinder_enter = de \
+   "Ein unstimmiges Lied gesungen von %s erfüllt deinen Gedanken."
+hinder_leave = de "Du kannst die unstimmige Meldie von %s nicht mehr hören."

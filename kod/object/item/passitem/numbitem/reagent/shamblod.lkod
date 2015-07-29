@@ -1,0 +1,8 @@
+ShamanBlood_name_rsc = de "Schamanenblut"
+ShamanBlood_desc_rsc = de \
+   "Die Zauberer der vogelgleichen Avar lernen ihre F‰higkeiten nicht. Das "
+   "Gegenteil ist vielmehr der Fall - die Magie flieﬂt durch ihre Adern. "
+   "Das bedeutet, dass es sich um Magie handelt, die ausgeliehen werden kann."
+ShamanBlood_name_plural_rsc = de "Schamanenblut"
+ShamanBlood_vial_name_plural_rsc = de "Phiolen mit Schamanenblut"
+ShamanBlood_vial_name_rsc = de "Phiole mit Schamanenblut"

@@ -1,0 +1,7 @@
+ResistFirePotion_name_rsc = de "Tank der guten Beruhigung"
+ResistFirePotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht frisch, "
+   "sauber und erfrischend."
+ResistFirePotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

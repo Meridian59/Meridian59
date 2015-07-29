@@ -1,0 +1,11 @@
+grapes_name_rsc = de "Die Traubenstaude"
+grapes_desc_rsc = de \
+   "Pietro verwendet für seine geheimen Rezepte meist geschmackvolle Trauben "
+   "aus dem Westen. Diese speziellen Trauben sind besonders fleischig und "
+   "saftig."
+grapes_name_plural_rsc = de "Traubenstauden"
+grapes_disp_name = de "Die Platte mit Trauben"
+grapes_disp_desc = de \
+   "Diese saftigen Trauben stammen aus dem Weinberg von Marion und sind für "
+   "ihren bewundernswerten Geschmack berühmt. Ihr Geschmack ist so einzigartig, "
+   "dass nur wenige schlußendlich für Wein verwendet werden."

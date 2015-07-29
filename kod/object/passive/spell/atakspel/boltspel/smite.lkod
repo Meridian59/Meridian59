@@ -1,0 +1,6 @@
+smite_name_rsc = de "Töten"
+smite_desc_rsc = de \
+   "Dieser Gottbefehl wird benutzt, um widerspenstige und erbärmliche Sterbliche "
+   "niederzustrecken. Dieser Spruch kann nur von Göttern ausgeführt werden."
+smite_hit_rsc = de \
+   "%s%s bekommt einen großen nassen Knutscher und ist völlig hingerissen!"

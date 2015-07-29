@@ -1,0 +1,6 @@
+page_name_rsc = de "Wecken"
+page_desc_rsc = de \
+   "Schickt Deinem Ziel ein kleines, lustiges Geräusch, um sie aufmerksam "
+   "zu machen. Dieser Zauber kann nur von Göttern und Barden ausgeführt werden.."
+page_msg_DM = de "Du weckst %s%s."
+page_msg_target = de "Du wurdest von %s%s geweckt."

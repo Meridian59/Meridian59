@@ -1,0 +1,7 @@
+room_name_OutdoorsC2 = de "Das Tal der Trauer"
+c2_elhai_win = de \
+   "~IDie siegreichen guten Feen laden alle Abenteurer reinen Herzens ein, "
+   "sich an ihrer magischen Energiequelle zu laben."
+c2_dirhai_win = de \
+   "~INach ihrem großen Triumph laden die bösen Feen alle Gleichgesinnten "
+   "ein, mit ihrer magischen Energiequelle zu verschmelzen."

@@ -1,0 +1,6 @@
+bread_name_rsc = de "Der Brotlaib"
+bread_desc_rsc = de \
+   "Dieses süßlich riechende Brot ist eine Spezialität von Tos. Es läßt sich "
+   "aber auch im ganzen Land finden. Man sagt, der Bäcker fülle den Teig "
+   "mit magischen Holunderbeeren. Ganz sicher ist sich jedoch keiner."
+bread_name_plural_rsc = de "Brotlaibe"

@@ -1,0 +1,5 @@
+slash_name_rsc = de "Zuschlagen"
+slash_desc_rsc = de "Das Zuschlagen ist der gewöhnlichste Waffenhieb."
+slash_skill_intro = de \
+   "Waffenfertigkeiten Zirkel 1: Die gewöhnlichste Fertigkeit für den Umgang "
+   "mit Waffen aller Art. Ein Muss für jeden Kämpfer."

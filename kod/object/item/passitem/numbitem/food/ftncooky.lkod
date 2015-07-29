@@ -1,0 +1,13 @@
+fortunecookie_name_rsc = de "Der Glückskeks"
+fortunecookie_desc_rsc = de \
+   "Der Wunsch nach einer glücklichen Zukunft geht einher mit dem Wunsch "
+   "nach einem süßen Keks. Solange Du den Glückskeks nicht aufbrichst und "
+   "Deine Nachricht liest, werden beide Wünsche unerfüllt bleiben."
+fortunecookie_name_plural_rsc = de "Glückskekse"
+fortunecookie_disp_name = de "Ein Korb voller Glückskekse"
+fortunecookie_disp_desc = de \
+   "Wähle Dein Schicksal an der Seite Deiner Freunde und Du wirst mit Sicherheit "
+   "erfolgreich sein. Jeder Glückskeks weist den Weg zum Erfolg, doch Dein "
+   "Handeln bestimmt ihn."
+fortunecookie_got_one = de "Du nimmst wahllos einen Keks."
+fortunecookie_format = de "Du liest Deine Zukunft: \"~w%s~n\""

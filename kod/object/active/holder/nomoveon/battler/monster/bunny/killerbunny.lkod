@@ -1,0 +1,6 @@
+killerbunny_koc_name_rsc = de "haixleocbunny"
+killerbunny_name_rsc = de "Der Killerhase"
+killerbunny_desc_rsc = de \
+   "Du bist entzückt von der süßen Farbe des kleinen Hasen. Sicherlich wird "
+   "er niemals böse sein...."
+killerbunny_dead_name_rsc = de "toter Killerhase"

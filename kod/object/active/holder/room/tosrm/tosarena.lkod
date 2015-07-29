@@ -1,0 +1,65 @@
+name_TosArena = de "Die Arena von Kraanan"
+TosArena_no_offer = de \
+   "Der Meister der Arena sagt, \"Zuschauer und Teilnehmer dürfen während "
+   "der Kämpfe keine Gegenstände austauschen.\""
+TosArena_no_attack = de \
+   "Du darfst hier nicht kämpfen, wenn Du kein Teilnehmer bist."
+TosArena_no_spell = de \
+   "Nur teilnehmende Kämpfer dürfen hier Zaubersprüche aussprechen."
+TosArena_no_rescue = de "Du kannst Dich nicht in Sicherheit bringen."
+TosArena_no_target = de "Das ist sehr unverschämt von Dir!"
+TosArena_between_bouts = de "Kein Unfug zwischen den Kampfrunden!"
+TosArena_cant_go = de \
+   "Der Meister der Arena sagt, \"Ihr könnt nicht gehen! Ihr seid einer der "
+   "Kämpfer!\""
+TosArena_traditional = de "Traditionell"
+TosArena_traditional_rules = de \
+   "In traditionellen Kämpfen gibt es nur zwei Teilnehmer, einen Champion "
+   "und einen Herausforderer. Wenn es keinen Champion gibt, sage CHAMPION, "
+   "um den Titel für Dich zu beanspruchen. Ein weiterer Krieger sagt dann "
+   "HERAUSFORDERN, um Dich herauszufordern. Der Champion kann die Herausforderung "
+   "AKZEPTIEREN oder seinen Titel AUFGEBEN."
+TosArena_lastman = de "Kampf bis zum letzten Mann"
+TosArena_lastman_rules = de \
+   "Kämpfe bis auf den letzten Mann haben bis zu 25 Teilnehmer. Zunächst "
+   "muss ein CHAMPION ausgerufen werden. Sobald es einen Herausforderer gibt, "
+   "haben die anderen 30 Sekunden Zeit, um ebenfalls herauszufordern. Nachdem "
+   "der Meister der Arena die Schlacht eröffnet hat, ist jeder auf sich allein "
+   "gestellt. Der letzte Gladiator im Ring erntet den Ruhm Kraanans."
+TosArena_guildvguild = de "Gilde gegen Gilde"
+TosArena_guildvguild_rules = de \
+   "Zwei Gilden können sich gegenseitig herausfordern. Ein Repräsentant der "
+   "einen Gilde erklärt seine Gruppe zum CHAMPION. Anschließend kann ein "
+   "Mitglied der anderen Gilde mit HERAUSFORDERN am Kampf teilnehmen. Zu "
+   "diesem Zeitpunkt können weitere Gildenmitglieder innerhalb von 30 Sekunden "
+   "einsteigen - allerdings insgesamt nicht mehr als 10 Teilnehmer pro Gilde."
+TosArena_battleRoyale = de "Königlicher Kampf"
+TosArena_battleRoyale_rules = de \
+   "Eine Mischung aus Kampf bis zum letzten Mann und Gilde gegen Gilde, bei "
+   "der zunächst ein CHAMPION bestimmt wird. Anschließend können Mitglieder "
+   "anderer Gilden mit HERAUSFORDERN am Kampf teilnehmen. Die Anzahl der "
+   "teilnehmenden Gilden ist nicht beschränkt, aber pro Gilde dürfen nur "
+   "5 Mitglieder teilnehmen und insgesamt nicht mehr als 25 Kämpfer."
+TosArena_rules = de "Regeln"
+TosArena_rules_rules = de \
+   "* Zwischen den Kämpfen kann jeder Teilnehmer den Kampfstil durch Eingabe "
+   "eines neuen Stils ändern. Allerdings müssen alle Kämpfe entschieden sein "
+   "und alle amtierenden Champions müssen ihre Titel AUFGEBEN. * Die Anwendung "
+   "von Magie und Kampf ist nur den Teilnehmern erlaubt. Zuschauer auf den "
+   "Tribünen können von versprengten Teilnehmern nicht verletzt werden.* "
+   "Der Meister der Arena hat das Recht, den Kampf etwas ...interessanter... "
+   "zu gestalten, wenn er dies wünscht.* Die Kämpfe werden bis zum Tod gefochten. "
+   "Allerdings erleiden die Teilnehmer keinen dauerhaften Schaden aus einem "
+   "Tod innerhalb der Arena."
+TosArena_start_tournament = de \
+   "Die Banner werden gehißt und die Hörner erklingen, um das Königliche "
+   "Turnier zu eröffnen!"
+TosArena_end_tournament = de "Das Königliche Turnier ist beendet."
+TosArena_doors_locked = de \
+   "Du verschließt die Pforten der Arena von Kraanan. Spieler können jetzt "
+   "nur eintreten, wenn ein Wächter sie geleitet."
+TosArena_doors_unlocked = de \
+   "Du entriegelst die Pforten der Arena. Der Weg ist jetzt für alle Spieler "
+   "frei."
+TosArena_booth_command = de "booth"
+TosArena_lock_command = de "lock"

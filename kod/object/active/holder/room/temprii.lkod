@@ -1,0 +1,32 @@
+room_name_RiijaTemple = de "Der Riija Tempel"
+riijatemple_door1 = de \
+   "~wDer Mönch von Riija sagt, \"~BKeiner ~rsoll ~B~bmein ~IAdyton ~wbetreten "
+   "~g~B!~n~w\""
+riijatemple_door2 = de \
+   "~wDer Mönch von Riija sagt, \"~BVorsicht! ~I~bDu würdest ~rverrückt werden, "
+   "~gwenn Du es ~B~wwagtest, ~B~bdie Bibliothek des ~I~rschrecklichen ~BMalstromes "
+   "zu betreten.\""
+riijatemple_door3 = de \
+   "~wDer Mönch von Riija sagt, \"Der innere Klosterbereich ~I~rdarf nicht "
+   "~gvon Dir ~bbetreten ~Bwerden~n~w.\""
+riijatemple_door4 = de \
+   "~wDer Mönch von Riija sagt, \"~b~BEs ist Dir verboten ~r~Bin die ~gbodenlosen "
+   "~I~wKatakomben ~n~gunter dem ~BTempel hinabzusteigen~n~w.\""
+riijatemple_door5 = de \
+   "~wDer Mönch von Riija sagt, \"~rEs ist wohl besser, ~b`Idu meidest`I~r "
+   "diese Tür...~n~w.\""
+riijatemple_door6 = de \
+   "~wDer Mönch von Riija sagt, \"~B~rDiese Tür ~gführt ins ~bNirgendwo. Nicht, "
+   "dass ~gich damit einen ~wleeren Raum oder eine ~rkahle Wand meine. ~bNirgendwo "
+   "~gist ein gewaltiges Fegefeuer, das jeden ~rverschlingt ~wder sich ~IZutritt "
+   "~nverschafft~w.~n~w\""
+riijadeadmessage0a = de \
+   "Autsch, die letzte Stufe war kaputt. Du erwachst, etwas benommen, an "
+   "einem Ort, der eine Kneipe zu sein scheint."
+riijadeadmessage0b = de "Autsch, die letzte Stufe war kaputt."
+riijadeadmessage1 = de "Bist Du tot?"
+riijadeadmessage2 = de "Nein, so fühlt sich der Tod nicht an..."
+riijadeadmessage3 = de "er tut nicht gar so weh."
+riijadeadmessage4 = de \
+   "Nein, nicht ganz. Du weißt zwar nicht, was geschehen ist, aber ..."
+riijadeadmessage5 = de "Du hattest wahrscheinlich ganz schön Glück."

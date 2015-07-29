@@ -1,0 +1,14 @@
+JealousGeneral_name_rsc = de "Jonas D'Accor"
+JealousGeneral_desc_rsc = de \
+   "Als Frontschwein und später als weiser General hat Jonas D'Accor jede "
+   "Form des Bösen bekämpft, das die Städte Meridians belagert hat. Trotz "
+   "alledem hat er die Position des Waffenmeisters an Roluk und den angesehenen "
+   "Sitz im Rat von Meridian an Zylill verloren. Er sieht sich selbst weit "
+   "über beiden, besonders wenn es um Strategie und Taktik geht, und sieht "
+   "beide Männer als simple Streithammel. In Wirklichkeit sind seine Schwertkünste "
+   "gerade einmal hinreichend, seine Taktik ist allerdings brilliant."
+JealousGeneral_already_have_spell = de \
+   "Ich glaube, Du kennst bereits den %s Zauberspruch, m'%s"
+JealousGeneral_no_murderer = de \
+   "Ich bin ein Diener des Gesetzes, m'%s, und deshalb erlaubt es mir mein "
+   "Gewissen nicht, Dir zu helfen. Bitte geh weiter."

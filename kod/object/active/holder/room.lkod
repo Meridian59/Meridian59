@@ -1,0 +1,29 @@
+room_try_light_unlit = de \
+   "Du streichst über das kalte Kohlebecken und zündest damit eine warme "
+   "Flamme an."
+room_try_light_lit = de \
+   "Du streichst über das beleuchtete Kohlebecken und die Flammen loddern "
+   "wie auf Knopfdruck."
+room_brazier_turn_off = de \
+   "Du streichst über das Kohlebecken und die Flamme verpufft und es wird "
+   "kalt."
+room_name_rsc = de "Raum"
+room_door_is_locked = de "Diese Tür ist verschlossen."
+room_move_req_no = de "Du kannst den Raum nicht betreten."
+room_no_attack = de "Du kannst hier nicht kämpfen."
+room_no_harmful = de \
+   "Du kannst hier keine Schadenszauber sprechen, solange jemand anwesend "
+   "ist."
+room_no_pk_allowed = de "Du kannst hier keine anderen Spieler angreifen."
+room_guild_combat = de "Nur Gildenmitglieder können hier gegeneinander kämpfen."
+room_no_mob_attack = de "You cannot attack monsters here."
+room_no_magic_allowed = de "Hier kann nicht gezaubert werden."
+room_no_spell = de "Hier kann nicht gezaubert werden."
+room_no_combat_magic = de \
+   "Du kannst hier keine Angriffszauber sprechen, solange jemand anwesend "
+   "ist."
+room_no_teleport = de "Du kannst hier nicht teleportieren."
+room_door_was_opened = de "Du öffnest die Tür und gehst hindurch."
+room_silenced_rsc = de \
+   "Deine Worte bleiben Dir im Halse stecken. Du kannst nicht sprechen."
+no_use_jig = de "Du kannst das nicht tragen - Es würde Deinen Rhythmus stören!"

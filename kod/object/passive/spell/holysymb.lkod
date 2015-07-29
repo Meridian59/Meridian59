@@ -1,0 +1,11 @@
+HolySymbol_name_rsc = de "Heiliges Symbol"
+HolySymbol_desc_rsc = de \
+   "Dieser Spruch erfordert es, dass sich Deine Hände in einer heiligen Art "
+   "bewegen, die unheiligen Wesen in Deiner Nähe Furcht einflößen. Der Spruch "
+   "benötigt Holunderbeeren die auf der Haut verrieben werden um sie rituell "
+   "zu reinigen."
+HolySymbol_success = de \
+   "Deine Hände bewegen sich in einer heiligen Art, und flößt unheilige Wesen "
+   "in deiner Nähe Frucht ein."
+holysymbol_intro = de \
+   "Shal'ille Level 1: Flößt unheilige Wesen in deiner Nähe Frucht ein."

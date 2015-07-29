@@ -1,0 +1,10 @@
+room_name_marinn = de "Kneipe zur Lahmen Kröte"
+news_marinn_name = de "Neues aus Marion"
+news_marinn_desc = de "Erfahre, was die Leute über Marion erzählen."
+marnews_god_name = de "Designer Nachrichten"
+marnews_god_desc = de "Erfahre hier Neues von den Administratoren"
+marinn_rentableroom_door = de \
+   "Die Tür bewegt sich nicht. Seltsamerweise sieht es so aus, als ob sie "
+   "sich gar nicht öffnen würde. Aber es ist ein kleines Schlüsselloch in "
+   "der Tür. Vielleicht würde irgendetwas Interessantes passieren, wenn man "
+   "einen Schlüssel hineinstecken würde."

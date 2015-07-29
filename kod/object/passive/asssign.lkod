@@ -1,0 +1,19 @@
+AssassinSign_name_rsc = de "Der Kreis der Meuchelmörder"
+asssign_insession = de \
+   "Der Kreis der Meuchelmörder ist gerade in einer Runde.  Es sind  %i verbleibende "
+   "Kämpfer.\n\n%s"
+asssign_accepting = de \
+   "Ein Meuchelmmörder Spiel wird relativ kurz vor dem Start bekanntgegeben  "
+   "Ich akzeptiere momentan Möchtegern-Attentäter.\n\n%s"
+asssign_not_accepting = de \
+   "Es wird einige Zeit dauern, bis ein neues Meuchelmörder Spiel im Gange "
+   "ist.\n\n%s"
+asssign_lastwinner = de "Amtierender Champion: %q||\n--%s"
+asssign_darkblade = de \
+   "Amtierender Champion: %q \nDunkelste Klinge, %i Morde: %q\n"
+asssign_darkblades = de \
+   "Amtierender Champion: %q \nDunkelste Klingen, with %i Morden: \n%s"
+asssign_darkblade_format = de "%q\n%s"
+asssign_last_darkblade_format = de "%q\n"
+asssign_blank_winner = de "Verhöhner"
+asssign_noone = de ""

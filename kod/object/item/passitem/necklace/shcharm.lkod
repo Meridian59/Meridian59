@@ -1,0 +1,7 @@
+ShalilleCharm_name_rsc = de "Das Diamantenhalsband"
+ShalilleCharm_desc_rsc = de \
+   "Dieses Halsband, bestehend aus sorgsam geschliffenen Diamanten, eingebettet "
+   "in kunstvoll gearbeitetes Kupfer, ist sehr kostbar."
+ShalilleCharm_whisper = de \
+   "Eine Stimme flüstert, \"~I...Ruhe gewinnt nur die Oberhand, wenn sie aus "
+   "ihren Qualen lernt...\""

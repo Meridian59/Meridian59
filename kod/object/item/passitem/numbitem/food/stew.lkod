@@ -1,0 +1,8 @@
+Stew_name_rsc = de "Schüssel mit Stew"
+stew_desc_rsc = de \
+   "Von einigen ist das Faroni-Stew der Witwe Qesino als vegetarischer Klassiker "
+   "gefeiert worden. Voll riesiger Happen toter Pilztiere und lebender Baumrinde "
+   "kannst Du nur annehmen, dass es sich hierbei um einen Geschmack handelt, "
+   "den man von Kindheit an gewohnt sein muss."
+stew_name_plural_rsc = de "Schüsseln mit Stew"
+stew_use = de "Wäh! So, wie es schmeckt, sollte es wenigstens gesund sein!"

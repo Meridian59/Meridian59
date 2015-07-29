@@ -1,0 +1,10 @@
+ModelNode_name_rsc = de "Miniatur Mana Node"
+ModelNode_desc_rsc = de \
+   "A plaque below the model reads:\nFound at various places around Meridian, "
+   "these gatherings of mystic energy provide strength to spellcasters who "
+   "can meld with them.  The origin of these nodes is a mystery even to the "
+   "most devoted scholars, such as Councillor Esseldi.  Some mages believe "
+   "that they have something to do with the Nexus which inexplicably shattered "
+   "hundreds of years ago, severing contact from Meridian59 to the other "
+   "worlds of the Nexus.  The mana nodes of Meridian may, therefore, be remnants "
+   "of that cataclysmic magical upheaval, though none can say for certain."

@@ -1,0 +1,19 @@
+heal_name_rsc = de "Kleinere Heilung"
+heal_desc_rsc = de \
+   "Die mitfühlende Kraft Sha-Lills heilt Wunden bei dem Anwender selbst "
+   "oder bei einem anderen Spieler. Wirkt besonders auf die, die noch von "
+   "ihrem Schuzengels begleitet werden. Sha Lill gibt dem Magier, der eine "
+   "andere gute Seele heilt eine kleine Belohnung zu seinem Karma. Benötigt "
+   "Kräuter zum Zaubern."
+heal_cast_rsc = de \
+   "%s%ss Zauber heilt einige deiner kleinen Verletzungen, und stellt ~g~B%i~B~n "
+   "Lebenspunkte wieder her."
+heal_cast_self = de \
+   "Shal'ills heilige Magie heilt einige deiner kleinen Wunden, und stellt "
+   "~g~B%i~B~n Lebenspunkte wieder her."
+heal_cast_on_other = de \
+   "Du heilst %s%s und stellst ~g~B%i~B~n Lebenspunkte wieder her."
+heal_unnecessary_rsc = de "%s%s ist bei bester Gesundheit."
+heal_spell_intro = de \
+   "Shal'ill Level 1: Die mitfühlende Kraft Sha-Lills heilt Wunden bei dem "
+   "Anwender selbst oder bei einem anderen Spieler."

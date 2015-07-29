@@ -1,0 +1,9 @@
+OrcWizard_koc_name_rsc = de "utomya"
+OrcWizard_name_rsc = de "Der Ork-Zauberer"
+OrcWizard_desc_rsc = de \
+   "Sich die dunklen Kräfte aus den Tiefen nutzbar machend, erzwingen die "
+   "Ork-Zauberer von ihren Häuptlingen zum Beispiel die Tötung der feindlichen "
+   "Schattenbestien. Wie die Orks zu den Mächten der Magie kamen, ist unbekannt, "
+   "doch der Gedanke, dass der größte Feind mit arkanen Kräfte ausgestattet "
+   "ist, reicht aus, dass jeder Krieger sich unwohl fühlt."
+OrcWizard_dead_name_rsc = de "toter Ork-Zauberer"

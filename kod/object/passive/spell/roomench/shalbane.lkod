@@ -1,0 +1,18 @@
+ShalilleBane_name_rsc = de "Qors Aura"
+ShalilleBane_desc_rsc = de \
+   "Durchdringt ein Gebiet mit der unheiligen Essenz von Qor, wodurch jeder "
+   "Schaden nimmt, der die heilige Macht der Sha-Lill anruft. Für dieses "
+   "Ritual werden Yrxl-Harz und Feenflügel benötigt. Die Anwendung dieses "
+   "Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+ShalilleBane_unnecessary = de \
+   "Diese Gegend ist bereits gegen Shal'ill polarisiert."
+ShalilleBane_on = de \
+   "Eine magische Kraft mit beißendem Geruch ist in dieser Gegend."
+ShalilleBane_off = de "Die dunkle Kraft verschwindet."
+ShalilleBane_new_entrant = de \
+   "Du weißt, dass Du hier lieber nicht Shal'ill zaubern solltest."
+ShalilleBane_HurtCaster = de \
+   "Du zauberst Shal'ill und wirst dadurch verletzt durch die Macht Qors."
+ShalilleBane_kills_you = de \
+   "Durch die dunkle Macht Qors wirst Du getötet, da du Shal'ill in einer "
+   "dunklen Gegend gezaubert hast."

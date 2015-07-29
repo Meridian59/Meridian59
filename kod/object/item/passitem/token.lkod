@@ -1,0 +1,27 @@
+token_name_rsc = de "Das Artefakt"
+token_desc_rsc = de "Ein Artefakt des königlichen Hofs."
+token_used_desc_rsc = de \
+   "Das Artefakt ist unglaublich schwer. Du spürst Deine Ausdauer sinken, "
+   "während Du es mit zitternden Händen hältst."
+token_use_rsc = de "Vom Herumtragen des Artefakts fühlst Du Dich ersch..."
+token_unuse_rsc = de \
+   "Nachdem Du vom Artefakt abgelassen hast, verspürst Du sofortige Linderung. "
+   "Deine Ausdauer kehrt allmählich zurück."
+token_cantuse_rsc = de \
+   "So viele Dinge kannst Du nicht auf einmal in den Händen halten. Das Artefakt "
+   "gleitet zu Boden."
+token_noteligible_rsc = de \
+   "Das Artefakt spürt, dass Du nicht in der Gunst des königlichen Hofes "
+   "stehst, und entwindet sich Deinen Händen."
+token_realized_rsc = de \
+   "~IIn der Beute Deines letzten Gegners findest Du ein Artefakt: %s%s.~n"
+token_was_realized_rsc = de \
+   "~IPlötzlich weißt Du, dass %s%s ein Artefakt gefunden hat: %s%s! %s%s "
+   "musste dafür das Leben lassen.~n"
+token_was_delivered_rsc = de \
+   "~IAlle sollen %s%s preisen. %s%s wurde zum Rat von Meridian zurückgebracht!~n"
+tok_faction_too_strong = de \
+   "Ich bin untröstlich - aber meine derzeitige Gefolgschaft unterstützt "
+   "mich bereits zu vollster Zufriedenheit. Vielleicht kannst Du mir etwas "
+   "später einen Gefallen tun."
+token_drops = de "%s%s entwindet sich Deinen Händen und fällt zu Boden!"

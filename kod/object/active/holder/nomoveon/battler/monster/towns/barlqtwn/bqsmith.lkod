@@ -1,0 +1,13 @@
+BarloqueBlacksmith_name_rsc = de "Ferloi Qan"
+BarloqueBlacksmith_desc_rsc = de \
+   "Obwohl er im ganzen Land für seine außergewöhnlichen Fertigkeiten als "
+   "Meister des Waffenschmiedens berühmt ist, kann man Ferloi Qan selbst "
+   "nicht gerade als etwas Besonderes bezeichnen. Die langsame Rede des großen "
+   "Mannes mag nicht recht ins hochmütige Barloque passen. Man bekommt den "
+   "Eindruck, daß er sich in Gesellschaft von Fremden nicht wohl fühlt, aber "
+   "seine Größe und offensichtliche Hingabe zu Kraanan läßt ihn niemanden "
+   "fürchten."
+BQsmith_entry_welcome = de "Hallo %s%s, und herzlich willkommen."
+BQSm_mace_sale = de \
+   "All diese schönen Waffen und du willst %s%s.  Du ...!  Ich denke, ich "
+   "habe einfach keine andere Wahl als ihn dir zu verkaufen."

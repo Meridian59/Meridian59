@@ -1,0 +1,6 @@
+StoutGoblet_name_rsc = de "Der Bierkrug"
+StoutGoblet_desc_rsc = de \
+   "Der Krug aus Holz und Zinn ist grob geformt. Auf dem in die silberne "
+   "Tülle eingravierten Logo steht \"Pietros teuflisches Gebräu.\""
+StoutGoblet_name_plural_rsc = de "Bierkrüge"
+StoutGoblet_use = de "Erfrischend und belebend! <Hicks>"

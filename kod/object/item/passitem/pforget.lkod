@@ -1,0 +1,27 @@
+forgetpotion_use = de \
+   "Genüßlich schlürfst Du den Trank, aber nichts passiert. Plötzlich überkommt "
+   "Dich ein Schwindelanfall..."
+forgetpotion_cant_use_on = de "Du kannst einem %s%s nicht dienen."
+forgetpotion_cant_drop = de \
+   "Du wirfst den Trank auf den Boden und die Flasche zerspringt in tausend "
+   "Stücke."
+forgetpotion_warning = de \
+   "Als Du Dir den Trank an die Lippen führst, bemerkst Du ein kleines Warnschild: "
+   "~I'Zu diesem Mittel sind starke Risiken und Nebenwirkungen bekannt! Das "
+   "ist kein Witz, sondern eine überaus ernste Angelegenheit!'"
+forgetpotion_nothing_happens = de \
+   "Deine Verwirrung läßt nach. Nichts scheint passiert zu sein."
+forgetpotion_name_rsc = de "Der Trank des Vergessens"
+forgetpotion_desc_rsc = de \
+   "Dieser Trank wird Deine Kenntnisse in einer Schule restlos auslöschen.Bevor "
+   "Du den Trank zu Dir nimmst, solltest Du Dir absolut sicher sein, dass "
+   "Du das auch wirklich möchtest!"
+forgetpotion_forget_spell = de "'%s' wird von Dir vergessen!"
+forgetpotion_forget_wrong = de \
+   "'%s' wird von Dir komplett vergessen, weil Du diese verfluchte Flasche "
+   "getrunken hast."
+forgetpotion_lose_intellect = de \
+   "Du fühlst Dich plötzlich ein bisschen...dümmer..."
+forgetpotion_lose_links = de \
+   "Das scheußliche Elixier beraubt Dich aller Deiner Verbindungen zu magischen "
+   "Energiequellen!"

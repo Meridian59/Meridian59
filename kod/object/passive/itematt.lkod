@@ -1,0 +1,3 @@
+attribute_desc_default = de \
+   "  Dieser Gegenstand sieht irgendwie verzaubert aus."
+attribute_name_default = de "Spezial %s"

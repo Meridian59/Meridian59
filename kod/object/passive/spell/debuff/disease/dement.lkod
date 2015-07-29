@@ -1,0 +1,10 @@
+dement_name_rsc = de "Verblöden"
+dement_desc_rsc = de \
+   "Verwirrt die Gedanken der Zielperson, so dass Zaubern für mehrere Minuten "
+   "erschwert wird. Der Zauber benötigt ungeschliffene Seraphyme und Phiolen "
+   "mit Solagh. Die Anwendung dieses Zaubers kann dazu führen, dass Du zum "
+   "Gesetzlosen erklärt wirst."
+dement_cast_rsc = de "Du fühlst eine abstoßende Anwesenheit."
+dement_already_enchanted = de "Diese arme Seele ist schon verlödet."
+dementia_start = de "Irgendwie fühlst Du dich dümmer als zuvor."
+dementia_stop = de "Deine Intelligenz kehrt zurück."

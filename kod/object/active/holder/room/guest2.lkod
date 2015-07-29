@@ -1,0 +1,22 @@
+room_name_guest2 = de "Hazar"
+guest2_signname = de "Eine Übersicht"
+guest2_sign = de \
+   "Nun, da Du draußen bist, kannst Du Dich im Herumlaufen üben. 'Immer laufen' "
+   "ist standardmäßig aktiviert. Du kannst dich etwas langsamer fortbewegen "
+   "indem Du die SHIFT-Taste drückst während du gehst. Ausserdem kannst du "
+   "die A und D Tasten benutzen, um seitwärts zu gehen. Mit der ENDE-Taste "
+   "kannst Du Dich schnell um 180 Grad drehen.\nJetzt wäre auch ein guter "
+   "Zeitpunkt, um den Umgang mit der Karte zu lernen. Wenn Du mit der rechten "
+   "Maustaste auf die Karte klickst, kannst Du dort Kommentare als Erinnerungshilfen "
+   "vermerken.\n------------------\nNachdem Du etwas herumexperimentiert hast, "
+   "solltest Du Dich zum Schmied begeben, der den Nordflügel des Steinhauses "
+   "am Westufer des Teichs bewohnt."
+guest2_locked_farm = de \
+   "Die Tür des Bauernhauses ist fest von innen verriegelt."
+guest2_locked_stable = de "Die Tür der kleinen Hütte ist abgeschlossen."
+guest2_locked_clock = de \
+   "Die Türen des Tempels bleiben für alle Zeiten geschlossen, ausgenommen "
+   "während Trauerfeiern."
+guest2_locked_townhall = de \
+   "Die Türen der Stadthalle sind fest von innen verriegelt."
+guest2_locked_tavern = de "Die Tür zu Eric D'Jorns Wohnung ist verschlossen."

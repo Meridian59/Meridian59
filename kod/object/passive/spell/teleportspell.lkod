@@ -1,0 +1,12 @@
+TeleportationSpell_name_rsc = de "Teleportieren"
+TeleportationSpell_desc_rsc = de \
+   "Transportiert einen Spieler von einem Ort zu einem Anderen."
+Teleport_Default_Start = de "Du beginnst zu teleportieren."
+Teleport_Default_Already_Cast = de "Du bist bereits teleportiert."
+Teleport_Token_Cancel = de \
+   "Du kannst nicht teleportieren wenn ein Artefakt in der Hand ist."
+Teleport_Attacked_Recently = de \
+   "Du wirst noch angegriffen, so dass du dich nicht teleportieren kannst."
+Teleport_Generic_Fail = de \
+   "Irgendetwas in diesem Gebiet hindert dich daran dich zu teleportieren..."
+Teleport_Fail_Enemies_Nearby = de "Feind in der Nähe, kann nicht teleportieren!"

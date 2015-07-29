@@ -1,0 +1,5 @@
+room_name_outofgrace = de "Der Schuldturm"
+room_no_sound = de \
+   "Du öffnest Deine Lippen zum Sprechen, doch zu Deinem Schrecken dringt "
+   "kein Wort aus Deinem Mund."
+oog_casting_message = de "~B%s hat versucht versucht %s zu zaubern."

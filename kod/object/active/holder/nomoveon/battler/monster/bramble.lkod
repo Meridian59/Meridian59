@@ -1,0 +1,18 @@
+brambles_name_rsc = de "Die Brombeerranken"
+brambles_desc_rsc = de \
+   "Diese Brombeerranken ragen drohend auf, hoffend, Dir die Haut zu zerkratzen, "
+   "wenn Du vorbeiläufst."
+Brambles_damage0 = de "Du läufst ohne Zwischenfall durch die Brombeerranken."
+Brambles_damage2 = de \
+   "Als Du durch die Brombeerranken läufst, kratzen sie Dich an einer Stelle, "
+   "wo Du Dich schlecht kratzen kannst."
+Brambles_damage3 = de \
+   "Das ist okay, Du hast dieses Stück Haut eh nicht gebraucht."
+Brambles_damage4 = de \
+   "Du bist knapp davor, Deine Hosen zu verlieren, als die Brombeerranken "
+   "danach greifen."
+Brambles_damage5 = de "Ow ow ow ow ow ow ow..."
+brambles_dead_name_rsc = de "Die Überreste einiger Brombeeren"
+brambles_monster_healing = de \
+   "Die Brombeerranken rascheln, als sie ein wenig zurückwachsen."
+bramble_dissipates = de "Die Brombeerranken wanken und sterben."

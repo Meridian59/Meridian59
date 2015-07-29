@@ -1,0 +1,10 @@
+Hazar_innkeep_name_rsc = de "Markus"
+Hazar_innkeep_desc_rsc = de \
+   "Ein Veteran der Ork-Kriege. Markus scheint aber ein wenig ruhiger geworden "
+   "zu sein und führt nun eine idyllische Kneipe."
+HazarInnkeeper_nothing_for_sale = de \
+   "Ich haben nichts zu verkaufen, aber frag mal rum hier sind bestimmt andere, "
+   "die dir sicherlich was anbieten können."
+HazarInnkeeper_welcome = de \
+   "Hallo, %s, und willkommen zu Meridian 59!  Lies das Schild um mit dem "
+   "Tutorial zu beginnen."

@@ -1,0 +1,8 @@
+FactionFlag_name_rsc = de "Die Fahne"
+FactionFlag_desc_rsc = de \
+   "Dies ist die Flagge der Neutralität, ehemals bekannt als die Flagge von "
+   "Aphasia."
+FactionFlag_drops = de "%s%s entwindet sich Deinen Händen und fällt zu Boden!"
+FactionFlag_not_soldier = de \
+   "Die Flagge kann nur von offiziell anerkannten Soldaten dieser Fraktion "
+   "benutzt werden!"

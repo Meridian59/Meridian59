@@ -1,0 +1,8 @@
+Listener_enters = de "Jemand betritt das Gebiet in einiger Entfernung."
+Listener_leaves = de "Jemand verläßt das Gebiet in einiger Entfernung."
+Listener_say_rsc = de "In einiger Entfernung sagt jemand, "
+Listener_emote_rsc = de "Jemand %q in einiger Entfernung."
+Listener_name_enters = de "In der Ferne: %s%s betritt die Gegend."
+Listener_name_leaves = de "In der Ferne: %s%s verläßt die Gegend."
+Listener_name_say_rsc = de "In der Ferne: %s%s sagt, "
+Listener_name_emote_rsc = de "In der Ferne: %s%s %q"

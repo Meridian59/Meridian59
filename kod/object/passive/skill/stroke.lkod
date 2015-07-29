@@ -1,0 +1,7 @@
+stroke_name_rsc = de "Waffen Schlag"
+stroke_desc_rsc = de "Dies ist ein Waffen Schlag."
+stroke_need_weapon_rsc = de "Du benötigst eine Waffe um zu schlagen!"
+stroke_miss_attacker = de "%sDein %s verfehlt %s%s."
+stroke_miss_defender = de "%s%s verfehlt Dich."
+stroke_hit_attacker = de "%sDein %s trifft %s%s."
+stroke_hit_defender = de "%s%s trifft Dich."

@@ -1,0 +1,6 @@
+weapattpurger_desc = de \
+   " Das Zeichen von Psychochild ist in die Waffe eingraviert."
+purger_fail_use = de "Du bist nicht bereit um %s%s zu nutzen."
+purger_worked_user = de "Deine Waffe reißt an der magischen Umgebung von %s%s."
+purger_worked_target = de "%s%ss Waffe reißt an der magischen Umgebung!"
+purger_dm = de "Beseitigen"

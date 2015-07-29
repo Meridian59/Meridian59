@@ -1,0 +1,11 @@
+Mint_name_rsc = de "Minzschokolade"
+Mint_desc_rsc = de \
+   "Diese kleine Tafel importierter Kocatani-Schokolade mit einem Kern aus "
+   "leckerer Minze, die nur in den Wäldern von Faronath wächst, hat einen "
+   "unbestritten feinen Geschmack. Diese Delikatesse soll außerdem gewisse "
+   "magische Eigenschaften haben."
+Mint_name_plural_rsc = de "Tafeln Minzschokolade"
+Mint_use = de \
+   "Die zarte Schokolade zergeht auf Deiner Zunge und vermischt sich langsam "
+   "zu einer minzig-süßen Creme, die eine Welle der Ekstase durch Deinen "
+   "Körper strömen läßt."

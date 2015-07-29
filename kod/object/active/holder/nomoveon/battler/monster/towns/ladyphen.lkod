@@ -1,0 +1,30 @@
+ladypheonix_name_rsc = de "LadyPhoenix"
+ladypheonix_desc_rsc = de \
+   "Ein seltsames Gefühl überkommt Dich, als Du erkennst, dass da eine Macht "
+   "ist, tief in dieser Statue. Eine sanfte, singende Stimme erfüllt Deine "
+   "Sinne. Ihre Augen scheinen Dir zu folgen, sorgsam Notiz nehmend von Deinen "
+   "Taten. Ein Gefühl von Wohlsein und Sicherheit überkommt Dich und Du weißt, "
+   "dass Du Dich ihrer Führung anvertrauen kannst. "
+ladypheonix_Directions_rsc = de "`kLadyPhoenix flüstert,\"Mache nun %q\""
+ladypheonix_not_in_range = de \
+   "`kLadyPhoenix flüstert etwas, aber Du bist zu weit weg, um es zu hören."
+ladypheonix_whispers = de "~wLadyPhoenix flüstert, \"Die \""
+ladypheonix_row_6 = de "nördlichste Wolke "
+ladypheonix_row_7 = de "zweite Wolke von Norden "
+ladypheonix_row_8 = de "dritte Wolke von Norden "
+ladypheonix_row_9 = de "mittlere Wolke "
+ladypheonix_row_10 = de "dritte Wolke von Süden "
+ladypheonix_row_11 = de "zweite Wolke von Süden "
+ladypheonix_row_12 = de "südlichste Wolke "
+ladyphoenix_no_further = de \
+   "wird Dir nichts tun, aber gehe nicht ohne meine Führung weiter!"
+ladypheonix_step = de "Schritt "
+ladypheonix_steps = de "Schritte "
+ladypheonix_south = de "nach Süden "
+ladypheonix_north = de "nach Norden "
+ladypheonix_step_forward = de "dann mache einen Schritt nach vorne."
+ladypheonix_protect_command = de "schütze"
+ladypheonix_wlll_protect = de \
+   "~wLadyPhoenix flüstert, \"Ich werde Dich schützen.\""
+ladypheonix_already_protecting = de \
+   "~wLadyPhoenix flüstert, \"Ich schütze gerade jemand anders.\""

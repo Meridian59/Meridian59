@@ -1,0 +1,11 @@
+staffofjolting_name_rsc = de "Das Wurzelholz"
+staffofjolting_desc_rsc = de \
+   "Du schaust auf dieses - lieber nicht näher zu beschreibende - Stück Holz "
+   "und siehst keinen Grund, wieso jemand an diesem kläglichen Gegenstand "
+   "Interesse haben sollte."
+staffofjolting_broken_desc_rsc = de \
+   "Du klopfst mit dem Wurzelholz auf den Boden, aber nichts passiert. Vielleicht, "
+   "wenn er aufgeladen wäre..."
+staffofjolting_jolt = de "Du klopfst mit dem Wurzelholz dreimal auf den Boden."
+staffofjolting_used = de \
+   "Du klopfst mit dem Wurzelholz auf den Boden, aber nichts passiert."

@@ -1,0 +1,20 @@
+ShatterLock_name_rsc = de "Schloß Knacken"
+ShatterLock_desc_rsc = de \
+   "Durchdringt die Schlösser einer Gildenhalle (aber er wird keine anderen "
+   "Türen öffnen). Erfordert Kriipa Klauen und die magischen Energien der "
+   "Zauberer müssen durch ein Prisma gebündelt werden. Die Anwendung dieses "
+   "Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst.."
+Shatterlock_safety = de \
+   "Du darfst keinen Schutzengel haben und deine Sicherheit muss deaktiviert "
+   "sein.Beachte, dass die Ausführung dieses Zaubers dazu führen kann, dass "
+   "Du zu einem Gesetzeslosen wirst. "
+Shatterlock_outlaw = de \
+   "HINWEIS: Du wirst zu einem Gesetzeslosen, wenn Du diesen Zauber ausführst, "
+   "egal, ob Du dabei erfolgreich bist oder nicht. Daher muss Du deine Sicherheit "
+   "deaktivieren bevor Du den Zauber ausüben kannst."
+ShatterLock_cast_complete = de \
+   "Als Du deine Beschwörung abgeschlossen hast, öffnet sich plötlich die "
+   "Tür der Gildenhalle!"
+ShatterLock_guildwarning = de \
+   "Du hast ein seltsames Gefühl, dass die Abwehr deiner Gildenhalle manipuliert "
+   "wird."

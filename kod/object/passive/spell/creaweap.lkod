@@ -1,0 +1,8 @@
+createweapon_cast_rsc = de "%s%s erscheint."
+createweapon_inv_full_rsc = de \
+   "%s%s erscheint, aber bevor Du es festhalten kannst fällt es zu Boden."
+createweapon_name_rsc = de "Waffe erschaffen"
+createweapon_desc_rsc = de \
+   "Erschafft eine Waffe. Benötigt nichts als deinen starken Willen."
+createweapon_spell_intro = de \
+   "Kraanan Lv. 1: Erschafft eine Auswahl an Waffen um deine Feinde zu töten."

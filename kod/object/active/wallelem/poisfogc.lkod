@@ -1,0 +1,8 @@
+PoisonFogCloud_name_rsc = de "Dichter Nebel"
+PoisonFogCloud_desc_rsc = de \
+   "Du würgst, als Du nur auf den dichten fauligen Nebel blickst."
+PoisonFogCloud_poisoned = de "Ein Teil des Giftes läßt nach, verschwindet ganz."
+PoisonFog_dissipates = de \
+   "Ein wenig von dem Giftnebel löst sich auf und vers..."
+PoisonFog_unaffected = de \
+   "Du hälst Deinen Atem an und die schädliche Wolke tut Dir nichts."

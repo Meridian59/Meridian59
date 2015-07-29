@@ -1,0 +1,12 @@
+WallofFire_name_rsc = de "Feuerwand"
+WallofFire_desc_rsc = de \
+   "Die Feuerwand flackert gefährlich und droht jedem, der hindurchgeht, "
+   "einen schlechten Tag zu bereiten."
+firewall_damage0 = de "Du widerstehst dem Feuer unversehrt."
+firewall_damage5 = de "Du fühlst Dich ein wenig von den Flammen gegrillt."
+firewall_damage10 = de \
+   "Irgendetwas riecht wie verbrannte Haare. Hey! Das bist Du!"
+firewall_damage15 = de "Du brennst! Lösche es!"
+firewall_damage20 = de "Autsch, das brennt wirklich!"
+firewall_dissipates = de \
+   "Ein kleiner Teil der Feuerwand verwandelt sich in Kälte."

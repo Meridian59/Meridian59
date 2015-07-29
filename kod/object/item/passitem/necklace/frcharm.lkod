@@ -1,0 +1,8 @@
+FarenCharm_name_rsc = de "Ein Medaillon aus Bronze"
+FarenCharm_desc_rsc = de \
+   "Diese Halskette besteht aus mehreren aneinander geschmiedeten, bronzenen "
+   "Medallions.In das größte der Medaillons wurde sorgfältig das Bild eines "
+   "Sturms eingraviert."
+FarenCharm_whisper = de \
+   "Eine Stimme flüstert, \"~I...der Meister des Windes muss seinem stärksten "
+   "Feind wiederstehen ... sich selbst...\""

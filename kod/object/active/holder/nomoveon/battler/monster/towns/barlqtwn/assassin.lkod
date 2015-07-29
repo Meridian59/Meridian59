@@ -1,0 +1,53 @@
+assassin_name_rsc = de "Roq"
+assassin_mailname_rsc = de "Roq die Dunkelklinge"
+assassin_desc_rsc = de \
+   "Diesen Mann umgibt eine mißgünstige, ins Jenseits gerichtete Aura. Er "
+   "hängt an den Schatten dieses schändlichen Ortes, ein Diener irgendeiner "
+   "dunklen Macht.."
+assassin_help = de \
+   "Sag 'Klinge' um eine Waffe für das nächste Spiel zu bekommen.  Sag 'Aufgabe' "
+   "um deine Klinge zurück zu geben.  Sag 'Ankündigung' um eine Mitteilung "
+   "zu bekommen wenn das Spiel beginnt.  Sag 'keine Ankündigung' wenn du "
+   "nicht mehr über die derzeitige Spielentwicklung informiert werden willst."
+assassin_in_session = de \
+   "~IDu kannst nicht beitreten, solange ein Spiel läuft.  %s."
+assassin_is_advertised = de \
+   "Wie auch immer, ich werde dich informieren, wenn ein neues Spiel startet"
+assassin_is_not_advertised = de \
+   "Sag 'Ankündigung' wenn du informiert werden willst, wann ein Spiel startet"
+assassin_already_combatant = de "~IDu bist bereits markiert."
+assassin_not_ready = de "~IDu bist nicht bereit."
+assassin_new_combatant = de "~IHier ist deine Klinge."
+assassin_not_combatant = de \
+   "~IDu kannst nicht aufgeben, wenn du nicht teilgenommen hast."
+assassin_quit_combatant = de \
+   "~IErlaube mir, deine Klinge zu nehmen, wenn deine Feigheit dich daran "
+   "hindert zu gewinnen."
+assassin_not_yet = de \
+   "~IIch bin zur Zeit nicht bereit Kämpfer aufzunehmen.  Sag 'Ankündigung' "
+   "wenn du informiert werden willst, wenn ich welche aufnehme."
+assassin_advert = de "~IIch werde es dich wissen lassen, wenn es losgeht."
+assassin_already_advert = de "~IDu weißt das bereits. Nerv mich nicht weiter."
+assassin_stop_advert = de "~IIch werde dich nicht weiter nerven."
+assassin_not_advert = de \
+   "~IIch habe dich in letzter Zeit nicht genervt.  Ich weiß nicht wovon "
+   "du redest."
+assassin_no_game = de \
+   "~IEs ist derzeit kein Spiel im Gange.  DM ACCEPT MODE um Kämpfer zu akzeptieren."
+assassin_already_game = de \
+   "~IEs ist bereits ein Spiel im Gange.  DM RESET GAME wird es beenden."
+assassin_not_viable = de \
+   "~IEs sind nicht genug Kämpfer im Spiel.  DM ACCEPT MODE um mehr Kämpfer "
+   "beitreten zu lassen."
+assassin_in_accept = de \
+   "~IDas Spiel ist derzeit im accept mode.  Lass Spieler 'Klinge' sagen "
+   "zu Roq um sie dem Spiel beitreten zu lassen."
+assassin_help_word = de "Hilfe"
+assassin_blade = de "Klinge"
+assassin_quit = de "Aufgabe"
+assassin_advertise = de "Ankündigung"
+assassin_no_advertise = de "kein Ankündigung"
+assassin_goodbye_angel = de "Auf Wiedersehen Engel"
+assassin_reset_game = de "reset game"
+assassin_start_game = de "start game"
+assassin_accept_mode = de "accept mode"

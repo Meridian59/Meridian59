@@ -1,0 +1,9 @@
+GroundWorm_name_rsc = de "Der Grundwurm"
+GroundWorm_koc_name_rsc = de "slithic"
+GroundWorm_desc_rsc = de \
+   "Der Grundwurm, eine furchterregende und starke Kreatur, ist bekannt dafür, "
+   "unsichtbar versteckt im Untergrund zu warten, hervorzuspringen und plötzlich "
+   "sein unglückliches Opfer zu verschlingen."
+GroundWorm_dead_name_rsc = de "Erschlagener Grundwurm"
+groundworm_cannot_hit = de \
+   "Du bist nicht in der Lage, den Grundwurm zu erreichen."

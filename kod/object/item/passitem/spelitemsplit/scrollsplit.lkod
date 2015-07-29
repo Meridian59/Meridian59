@@ -1,0 +1,6 @@
+ScrollSplitter_name_rsc = de "leere Schriftrolle"
+ScrollSplitter_desc_rsc = de \
+   "Diese leere Schriftrolle sieht aus als ob sie hungrig nach Magie wäre."
+scroll_split_spell_item_rsc = de \
+   "Words flow from the %s, transferring runes. Your blank scroll gains %d "
+   "recitations of %d spellpower."

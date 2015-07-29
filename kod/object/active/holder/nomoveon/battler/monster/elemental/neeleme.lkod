@@ -1,0 +1,7 @@
+neruelemental_name_rsc = de "Der Neruditgolem"
+neruelemental_desc_rsc = de \
+   "Die imposante Statur dieser Kreatur spricht von Stäke und Kraft.  Sein "
+   "Körper glänzt in einem grünen Metall.  Ein Geräusch wie klirrendes Metall "
+   "erklingt bei jeder Bewegung."
+neruelemental_koc_name_rsc = de "atzmochner"
+neruelemental_dead_name_rsc = de "toter Neruditgolem"

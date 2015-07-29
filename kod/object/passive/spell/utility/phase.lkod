@@ -1,0 +1,54 @@
+Phase_name_rsc = de "Ausstieg"
+Phase_desc_rsc = de \
+   "Mit dem Ausstieg aus deiner realen Existenz, machst du dich vorrübergehend "
+   "immun gegen Gefahr... aber, sei gewarnt Abenteurer: bleibst du zu lange "
+   "aus der Realität ausgestiegen, führt der Ausstieg zu körperlichen und "
+   "geistigen Schäden sowie einem möglichen Verlust von mitgeführten Gegenständen. "
+   "Die Zeit wird so lange mitgerechnet, bis du an einem sicheren Ort betrittst."
+Phase_no_danger = de "Der magische Schutz verhindert deinen Ausstieg."
+Phase_penned = de \
+   "Dein Bezug zur Realität reißt ab und du wirst mit Gewalt an einen sicheren "
+   "Ort gebracht um von dem sicheren Ort wieder in die reale Welt zu gehen!"
+Phase_penned_others = de \
+   "%ss Bezug zur Realität reißt %s wird mit Gewalt an einen anderen Ort "
+   "gebracht!"
+Phase_penned_others_item = de \
+   "Der gewalttätige Ausstieg hat dafür gesorgt, dass %s%s aus dem Inventar "
+   "von %s gerissen wurde."
+Phase_lost_one_item = de \
+   "Du hast %s Skill Punkte, %s Zauber Punkte, und %s%s verloren."
+Phase_lost_two_items = de \
+   "Du hast %s Skill Punkte, %s Zauber Punkte, %s%s, und %s%s verloren."
+Phase_phased_out_high_health = de \
+   "%s steigt aus, obowohl er völlig unverletzt ist."
+Phase_phased_out_medium_health = de \
+   "Sicher, das es ungünstig für ihn im Kampf steht, steigt %s aus der Realität "
+   "aus."
+Phase_phased_out_low_health = de \
+   "Kurz vor seinem Tot steigt %s aus der Realität aus!"
+Phase_phased_out_one_health = de \
+   "%s steigt nicht mal eine sekunde vor seinem Tot aus der Realität aus!"
+Phase_caster_out = de \
+   "Du steigst aus deiner Existenz aus, zuversichtlich, dass Du das für weiter "
+   "%d Sekunden kannst."
+Phase_caster_in = de \
+   "Nur %d Sekunden vor dem Verlust deiner Existenz bist du aus deinem Ausstieg "
+   "zurückgekehrt."
+Phase_in = de "%s kehrt aus seinem Ausstieg aus der Realität zurück!"
+penalties_inflicted_one_item = de \
+   "Du hast %s Skill Punkte, %s Zauber Punkte, und %s%s verloren."
+penalties_inflicted_plural = de \
+   "Du hast %s Skill Punkt, %s Zauber Punkt, und %s%s verloren"
+no_phasing_in_safe_place_msg = de \
+   "Dieser Ort ist sicher und ruhig. Du kannst hier nicht aussteigen."
+no_phasing_in_guildhall_msg = de \
+   "Die magische Abwehr lässt dich hier nicht aussteigen."
+no_phasing_in_arena_msg = de \
+   "Die einzigartigen Kampfbedingungen lassen dich hier nicht aussteigen."
+no_phasing_while_specator_msg = de \
+   "Wenn du versuchst auszusteigen, während du schon ausgestiegen bist, wirst "
+   "du explodieren!"
+phase_time_low = de "Du hast das Gefühl du verlierst deinen halt..."
+phase_time_gone = de "Du verlierst deinen Bezug zur realen Existenz!"
+no_phasing_here_override_msg = de \
+   "Eine mystische Präsenz hinder dich daran hier auszusteigen."

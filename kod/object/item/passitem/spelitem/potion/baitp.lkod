@@ -1,0 +1,7 @@
+BaitPotion_name_rsc = de "Die geheime Sauce der Witwe Qesinos"
+BaitPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Es riecht so "
+   "lecker, dass Dir das Wasser im Mund zusammenläuft!"
+BaitPotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Sie riecht "
+   "irgendwie schwer und süß."

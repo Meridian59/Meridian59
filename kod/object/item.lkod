@@ -1,0 +1,25 @@
+item_this = de "Dies "
+item_blank_template = de "%q"
+item_desc_template = de "%s%s"
+resource_blank = de ""
+item_try_use_cursed_rsc = de \
+   "Als Du diesen Gegenstand aufhebst, fühlst du Dich größer als du bist.Nicht "
+   "ganz bei dir selbst, versuchst du es anzulegen!"
+item_broken_battle = de "Dein %s zerbricht in der Hitze des Gefechts!"
+item_broken_battle_plural = de "Deine %s zerbrechen in der Hitze des Gefechts!"
+item_broken_battle_clothing = de "Dein %s fällt in nutzlose Fetzen zusammen!"
+item_broken_battle_clothing_plural = de \
+   "Deine %s fällt in nutzlose Fetzen zusammen!"
+itematt_generic = de \
+   " Auf dem ersten Blick scheint es ganz gewöhnlich zu sein, aber es ist "
+   "etwas seltsames und du kannst deine Finger nicht darauf legen."
+item_condition_exc = de " ist in einem einwandfreiem Zustand."
+item_condition_exc_mended = de \
+   " ist in einem sehr gutem Zustand, wurde abere bereits repariert."
+item_condition_good = de " ist verschmiert und etwas abgenutzt."
+item_condition_med = de " hat ein paar unschöne Risse."
+item_condition_poor = de " ist zerfetzt und wird kaum noch zusammengehalten."
+item_condition_broken = de \
+   " ist mit Schmutz bedeckt nach dem Gebrauch zerstört."
+special_properties_header = de \
+   "\n\nDieser Gegenstand hat die folgenden Eigenschaften:\n"

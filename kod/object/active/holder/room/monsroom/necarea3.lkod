@@ -1,0 +1,8 @@
+room_name_Necropolis3 = de "Die verfallende Stadt von Brax"
+Necropolis3_locked_gate = de \
+   "Es ist keine Möglichkeit ersichtlich, durch die sich das Tor öffnen ließe, "
+   "und die Spitzen oben verhindern, dass jemand darüber klettert."
+Necropolis3_locked_door = de \
+   "Die massiven Tore aus Stein lassen sich nicht bewegen, egal wie sehr "
+   "Du Dich bemühst."
+Necropolis3_no_rift = de "Hier Schattenriss zu zaubern würde nutzlos sein."

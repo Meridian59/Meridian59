@@ -1,0 +1,4 @@
+room_name_OutdoorsE5 = de "Der Waldschrein"
+e5_second_runner = de \
+   "Eine mysteriöse Kraft hindert Dich am betreten des Gasfeldes."
+e5_death = de "Der Säuredampf ätzt Dir das Fleisch von den Knochen."

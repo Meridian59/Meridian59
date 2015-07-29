@@ -1,0 +1,11 @@
+RemoveCurse_name_rsc = de "Fluch bannen"
+RemoveCurse_desc_rsc = de \
+   "Zerbricht das magische Band, das Dich an einen verfluchten Gegenstand "
+   "bindet. Der Zauber benötigt Smaragde."
+RemoveCurse_on = de \
+   "Shal'ill nimmt dir alle verfluchten Gegenstände aus der Hand."
+RemoveCurse_bad_target = de \
+   "Shal'ill sieht keine verfluchten Gegenstände in deiner Hand."
+RemoveCurse_spell_intro = de \
+   "Shal'ille Level 2: Zerbricht das magische Band, das Dich an einen verfluchten "
+   "Gegenstand bindet."

@@ -1,0 +1,7 @@
+qorcharm_name_rsc = de "Das Monokel"
+qorcharm_desc_rsc = de \
+   "In Deiner Hand liegt eine kupferfarbene Linse. Das Glas fühlt sich unnatürlich "
+   "kalt an."
+qorcharm_whisper = de \
+   "Eine Stimme flüstert, \"~I...der Böse muss genau treffen, denn Meuchelmörder "
+   "bekommen nur selten eine zweite Chance...\""

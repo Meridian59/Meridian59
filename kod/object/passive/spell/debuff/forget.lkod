@@ -1,0 +1,17 @@
+forgetspell_name_rsc = de "Vergessen"
+forgetspell_desc_rsc = de \
+   "Dieser Zauberspruch verursacht bei einem Betroffenen eine solche Schwäche, "
+   "das er kaum noch stehen kann, geschweige denn kämpfen. Man benötigt Augen "
+   "der Drachenfliege und Phiolen mit Solagh. Die Anwendung dieses Zaubers "
+   "kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+forgetspell_already_enchanted = de \
+   "Es scheint als könntest Du %s%s nicht noch vergesslicher machen."
+forgetspell_on = de \
+   "Du findest in Deinem Gedächtnis keinen Hinweis mehr, wie %s einzusetzen "
+   "ist."
+forgetspell_off = de \
+   "Du kannst dich plötzlich wieder an all das Vergessene erinnern."
+forgetspell_caster = de \
+   "Du zauberst auf %s%s und der scheint plötzlich vergesslicher."
+forgetspell_cast_self = de "Du kannst Vergessen nicht auf Dich selber zaubern."
+forgetspell_caster_failed = de "%s%s ist so dumm, dümmer geht gar nicht!"

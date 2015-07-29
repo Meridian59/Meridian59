@@ -1,0 +1,19 @@
+FinalRites_name_rsc = de "Letztes Sakrament"
+FinalRites_desc_rsc = de \
+   "Diese langatmige, offizielle Zeremonie wird auf Beerdigungen abgehalten "
+   "um die Seelen der Verstorbenen möglichst sanft in die Unterwelt zu geleiten. "
+   "Sie wird auch angewendet, um Untote in der Nähe in die Gräber zurückzutreiben, "
+   "wo sie hingehören. Der Zauber benötigt Smaragde und Holunderbeeren, welche "
+   "während der Zeremonie symbolisch zu Staub zermalmt und in der Luft verteilt "
+   "werden. Die Anwendung dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen "
+   "erklärt wirst."
+FinalRites_success = de \
+   "Du zerkleinerst die Reagenzien zu feinem Pulver und mit einem Murmeln "
+   "wirst Du eine Handvoll Staub in den Himmel"
+FinalRites_success_others = de \
+   "Murmelnd wirft %s%s ein feines Pudder in den Himmel."
+FinalRites_hurt = de \
+   "%s%s kreischt vor Schmerz, als ein Sand herabfällt wie ein heiliger Regen."
+FinalRites_hurt_necro = de \
+   "%s%s wirft eine handvoll Staub in die Luft und es fällt auf dich hinab "
+   "und verbrüht dich wie heißer Regen"

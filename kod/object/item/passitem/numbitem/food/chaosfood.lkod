@@ -1,0 +1,6 @@
+chaosfd_name_rsc = de "Frenzy Food"
+chaosfd_name_plural_rsc = de "Frenzy Food"
+chaosfd_desc_rsc = de \
+   "At first glance, these mushrooms appear common, but look at the psychedelic "
+   "colors!  This is actually Frenzy Food! No Stomach No Problem!"
+chaosfd_no_eat = de "You can't eat this potion when it is not a frenzy."

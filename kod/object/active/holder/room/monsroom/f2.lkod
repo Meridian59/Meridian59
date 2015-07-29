@@ -1,0 +1,13 @@
+room_name_OutdoorsF2 = de "Der Sandstrand am großen Meer"
+F2_oceanwalk = de \
+   "Du stehst bis zu den Knöcheln im Salzwasser und beschließt, dass das "
+   "tief genug ist."
+F2_icewalk = de \
+   "Das Eis sieht irgendwie zu dünn aus, als ob Du dich traust weiter raus "
+   "zu gehen"
+ocean_soundF2 = de "ocean.wav"
+wavecrash1_soundF2 = de "wave1.wav"
+wavecrash2_soundF2 = de "wave2.wav"
+wavecrash3_soundF2 = de "wave3.wav"
+wavecrash4_soundF2 = de "wave4.wav"
+seagull_soundF2 = de "gulls.wav"

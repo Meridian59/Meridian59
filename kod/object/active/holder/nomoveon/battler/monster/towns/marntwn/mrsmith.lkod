@@ -1,0 +1,13 @@
+MarionBlacksmith_name_rsc = de "Kolhorr"
+MarionBlacksmith_desc_rsc = de \
+   "Kolhorr, dem die Ohren vom jahrelangen Hämmern auf den Amboß klingen, "
+   "ist ein Wahrzeichen in Marion. Der größte Teil seiner Arbeit besteht "
+   "in der Herstellung und Reparatur von landwirtschaftlichen Geräten und "
+   "Maschinen für die ansässigen Bauern."
+MrBS_entry_welcome = de "Huh? Wer ist da?"
+MarionBlacksmith_unwanted_keep = de \
+   "~k%s%s teilt dir mit, \"Hmmm, ok, denke ich.~n~k\""
+MarionBlacksmith_unwanted_pay = de \
+   "~k%s%s teilt dir mit, \"Nun, es sieht auf jeden Fall wertvoll aus!~n~k\""
+MarionBlacksmith_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Verschwende nicht meine Zeit damit.~n~k\""

@@ -1,0 +1,9 @@
+DamageRod_name_rsc = de "Der Stab der Kraft"
+DamageRod_desc_rsc = de \
+   "Runen beschreiben, dass die Nutzung dieses Stabes die Kraft der eigenen "
+   "Zauber für 5 Sekunden verbessert wird"
+DamageRod_success_rsc = de \
+   "Der Stab lodert in deiner Hand, und du bemerkst wie dich eine Kraft durchringt.!"
+DamageRod_drop_rsc = de \
+   "Die Kraft des Stabs schwächt sich ab, und lässt deine Zauber wieder zur "
+   "normalen Kraft zurückkehren."

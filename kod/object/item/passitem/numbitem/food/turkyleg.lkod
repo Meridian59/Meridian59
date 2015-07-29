@@ -1,0 +1,7 @@
+TurkeyLeg_name_rsc = de "Die Truthahnkeule"
+TurkeyLeg_desc_rsc = de \
+   "Dies ist eine fabelhaft gebratene Truthahnkeule. Der Truthahn ist in "
+   "den Dschungeln von Ko'catan heimisch und wird von Händlern aufs Festland "
+   "importiert. Manche Leute glauben, dass die Avare Handelskaravanen angreifen, "
+   "um gefangene Vögel zu befreien."
+TurkeyLeg_name_plural_rsc = de "Truthahnkeulen"

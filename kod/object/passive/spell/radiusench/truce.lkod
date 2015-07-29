@@ -1,0 +1,31 @@
+truce_name_rsc = de "Waffenruhe"
+truce_desc_rsc = de \
+   "Der Geist von Sha-Lill legt sich auf die Umgebung, beruhigt alle anwesenden "
+   "Gemüter und verhindert so für mehrere Minuten den Kampf. Der Zauber benötigt "
+   "Smaragde und ein Yrxl Harz."
+truce_unnecessary = de "Kampf mit Monstern ist hier schon unmöglich."
+truce_on = de \
+   "Eine betäubende Ruhe setzt sich in denen Geist. Du findest dich nicht "
+   "in der Lage eine Waffe zu nutzen."
+truce_off = de \
+   "Die Ruhe in deinem Geist verschwindet und Du bist wieder bereit für den "
+   "Kampf."
+Truce_cast = de \
+   "Eine betäubende Ruhe setzt sich in denen Geist. Du findest dich nicht "
+   "in der Lage eine Waffe zu nutzen."
+Truce_starts = de "%s ruft Shal'ill um Frieden in dieses Gebiet zu bringen."
+Truce_ends = de \
+   "Die Ruhe in deinem Geist verschwindet und Du bist wieder bereit für den "
+   "Kampf."
+Truce_caster_ends = de \
+   "Die Ruhe in deinem Geist verschwindet und Du bist wieder bereit für den "
+   "Kampf."
+Truce_caster_enter = de \
+   "Eine betäubende Ruhe setzt sich in denen Geist. Du findest dich nicht "
+   "in der Lage eine Waffe zu nutzen."
+Truce_enter = de \
+   "Eine betäubende Ruhe setzt sich in denen Geist. Du findest dich nicht "
+   "in der Lage eine Waffe zu nutzen."
+Truce_leave = de \
+   "Die Ruhe in deinem Geist verschwindet und Du bist wieder bereit für den "
+   "Kampf."

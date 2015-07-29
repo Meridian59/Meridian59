@@ -1,0 +1,8 @@
+room_name_Duke2 = de "Burg Schwarzstein"
+Duke2_West_Wing_Door = de \
+   "Der Westflügel der Burg ist auf Befehl des Herzogs geschlossen."
+Duke2_East_Wing_Door = de \
+   "Der Ostflügel der Burg ist auf Befehl des Herzogs geschlossen."
+Duke2_West_Wing_Door_Open = de "Die herzögliche Festhalle ist nun geöffnet."
+Duke2_East_Wing_Door_Open = de \
+   "Die Zeremonien-Halle des Herzogs ist nun geöffnet."

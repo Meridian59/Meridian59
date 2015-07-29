@@ -1,0 +1,14 @@
+spideye_name_rsc = de "Das Spinnenauge"
+spideye_desc_rsc = de \
+   "Zweimal so groß wie eine Olive und mehrfach so lecker. Das Auge einer "
+   "Riesenspinne ist als Delikatesse bekannt, vor allem unter den älteren "
+   "Bewohnern von Marion."
+spideye_name_plural_rsc = de "Spinnenaugen"
+spideye_disp_name = de "Die Platte mit rohen Spinnenaugen"
+spideye_disp_desc = de \
+   "Die Riesenspinne wird gemeinhin gefürchtet sowohl von Edelleuten als "
+   "auch von Abenteurern. Die Augen der Spinne sind eine seltene, aber begehrte "
+   "Delikatesse, vor allem aufgrund der Schwierigkeit, sie aus der lebenden "
+   "Spinne herauszuschneiden."
+spideye_use = de \
+   "Der Augapfel stößt gegen Deine Zunge, mit einem Schwall süßer Flüssigkeit."

@@ -1,0 +1,6 @@
+good_fairy_koc_name_rsc = de "kinimixlal"
+good_fairy_name_rsc = de "Der Fey Elhai"
+good_fairy_desc_rsc = de \
+   "Als eine der noblen Feenrassen der Wälder sind die Fey Elhai bekannt "
+   "für ihren Haß auf ihre dunklen Brüder, die Fey Dirhai."
+fairy_dead_name_rsc = de "toter Fey"

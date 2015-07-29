@@ -1,0 +1,24 @@
+TosBanker_name_rsc = de "Skivlat"
+TosBanker_desc_rsc = de \
+   "Skivlat verbringt seine ganze Zeit in der Gesellschaft von Geld und das "
+   "sieht man. Seine Hand streichelt liebevoll das Gold, während sich ein "
+   "großes vernarrtes Lächeln auf seinem Gesicht bildet. Hin und wieder schüttelt "
+   "er den Beutel, um einfach nur das melodische Klingeln der Schillinge "
+   "zu hören."
+TBank_gems_not_quality = de \
+   "Diese Steine sind von schlechter Qualität. Laß mich diese wertlosen %s "
+   "für Dich wegschaffen."
+TBank_cant_give_gems = de \
+   "Wenn diese %s wirklich echt sind, könntest Du ihren Wert in Schillingen "
+   "nicht tragen.."
+TBank_gems_traded = de \
+   "Ich habe nie eine hübschere Sammlung von %s gesehen. Es macht Spaß mit "
+   "~IGuh~I Dir Geschäfte zu machen."
+TBank_not_gem_group = de \
+   "Entschuldige bitte, aber ich bin ein Großhändler. Wenn Du kleinere Mengen "
+   "verkaufen möchtest, solltest Du nach Barloque gehen."
+TBank_not_enough_gems = de \
+   "Hmmm. Du scheinst das, was Du bei mir versetzen willst, nicht zu haben."
+TBank_unwanted_give = de \
+   "~w%s%s sagt zu Dir, \"Ich habe keinen Platz, um das zu verstauen. Wenn "
+   "es ein paar Schillinge wären...~n~w\""

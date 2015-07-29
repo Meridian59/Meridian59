@@ -1,0 +1,9 @@
+easterbunny_koc_name_rsc = de "koixleocbunny"
+easterbunny_name_rsc = de "Der Osterhase"
+easterbunny_desc_rsc = de \
+   "Dieser übergroße Hase schaut dich sturr an. Seine Zähne sind mächtig "
+   "und scharf."
+easterbunny_dead_name_rsc = de "toter Osterhase"
+easterbunny_spawn_minion = de \
+   "Der Osterhase stellt sich auf seine Hinterläufe und plötzlich erscheint "
+   "ein Killerhase vor Dir!"

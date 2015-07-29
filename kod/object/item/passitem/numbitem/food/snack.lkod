@@ -1,0 +1,6 @@
+snack_name_rsc = de "Der Genießbare Pilz"
+snack_desc_rsc = de \
+   "Diese großen, braunen Pilze stellen einen essbaren Verwandten der magischen "
+   "Varianten dar. Sie bieten einen gewissen Nährwert, dieser jedoch bleibt "
+   "mehr als fragwürdig."
+snack_name_plural_rsc = de "genießbare Pilze"

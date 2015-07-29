@@ -1,0 +1,9 @@
+AcidRing_name_rsc = de "Ring des Säurewiderstands"
+AcidRing_desc_rsc = de \
+   "Dieser Ring fühlt sich ungewöhnlich an. Magische Runen  zieren seine "
+   "innere Oberfläche."
+AcidRing_use_rsc = de \
+   "Du spürst die Kraft des Rings. Deine Haut fühlt sich trocken und gipsartig "
+   "an."
+AcidRing_dead_rsc = de \
+   "Der Ring beginnt zu brutzeln und löst sich von Deinem Finger."

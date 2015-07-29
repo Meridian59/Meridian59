@@ -1,0 +1,14 @@
+denial_name_rsc = de "Wunden ignorieren"
+denial_desc_rsc = de \
+   "Lässt die Wunden bei jenem, der den Zauberspruch sagt, oberflächlich "
+   "verschwinden, doch Du merkst, das dies nur vordergründig ist, weil die "
+   "Wunden noch genauso tief sind! Benötigt Phiolen mit Solagh und Feuersand."
+denial_on_rsc = de "Deine Wunden scheinen plötzlich zu verschwinden."
+denial_failed_rsc = de \
+   "Hmmm, du kannst dich nicht selber überzeugen zu können, dass du bei voller "
+   "Gesundheit bist."
+denial_already_enchanted_rsc = de \
+   "Du kannst dich nicht zweimal selbst zum Narren halten, indem du noch "
+   "einmal versucht auf dich zu zaubern."
+denial_off_rsc = de \
+   "Ouch - Du wirst daran erinnert wie Müde du eigentlich bist."

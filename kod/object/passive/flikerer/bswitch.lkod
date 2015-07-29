@@ -1,0 +1,6 @@
+brazierswitch_name_rsc = de "Grill"
+brazierswitch_desc_on = de \
+   "Die Flamme brennt hell und bietet ein schönes Licht für die Umgebung."
+brazierswitch_desc_off = de "Der kalte Grill gibt kein Licht."
+brazierswitch_not_in_range = de \
+   "Du bist nicht nah genug am Grill, um ihn anzuzünden."

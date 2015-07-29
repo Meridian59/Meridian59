@@ -1,0 +1,7 @@
+BreakRodPurge_name_rsc = de "Der Stab der Versieglung"
+BreakRodPurge_desc_rsc = de \
+   "Dieser Stab verhindert den Reinigungszauber auf dich für 10 Sekunden"
+BreakRodPurge_success_rsc = de "Der Stab umgibt dich mit einer Versieglung."
+BreakRodPurge_drop_rsc = de "Die Versieglung des Stabes verschwindet."
+BreakRodPurge_secondary_drop_msg = de \
+   "Du bemerkst, dass deine Fähigkeit des Reinigens zurückkehrt."

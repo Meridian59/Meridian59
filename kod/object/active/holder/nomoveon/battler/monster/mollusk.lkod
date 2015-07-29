@@ -1,0 +1,9 @@
+MolluskMonster_koc_name_rsc = de "kolisith"
+MolluskMonster_name_rsc = de "Der Panzermolch"
+MolluskMonster_desc_rsc = de \
+   "Als ein recht später Ankömmling in diesen Landen ist diese Kreatur eher "
+   "friedlich. Diese friedliche Kreatur durchstreift die Gegend auf der Suche "
+   "nach Nahrung. Von Natur aus friedfertig, reagiert sie nur aggressiv, "
+   "wenn sie selbst angegriffen wird. Aber sei auf der Hut, ihr dicker Panzer "
+   "und die mächtigen Klauen machen sie zu einem furchterregenden Gegner."
+MolluskMonster_dead_name_rsc = de "Der erschlagene Panzermolch"

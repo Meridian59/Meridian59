@@ -1,0 +1,8 @@
+illusionaryform_name_rsc = de "Illusionsform"
+illusionaryform_desc_rsc = de \
+   "Der Hauch des Riija ändert Dein Aussehen in irgendein anderes. Man braucht "
+   "dazu Moosnetze und Regenbogenfarne."
+illusionaryform_already_affected = de "Dein Aussehen ist bereits verändert."
+illusionaryform_on = de "Du nimmst die Gestallt von %s%s an."
+illusionaryform_off = de \
+   "Die Illusionsform verschwindet und du siehst wieder aus wie du selbst."

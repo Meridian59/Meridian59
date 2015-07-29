@@ -1,0 +1,7 @@
+silver_arrow_name_rsc = de "Die Silberpfeile"
+silver_arrow_desc_rsc = de \
+   "Die scharfen, glatten Kanten der Pfeilspitzen sorgen für tiefe Wunden. "
+   "Einige Bogenschützen haben herausgefunden, dass sie besonders wirkungsvoll "
+   "im Kampf gegen Untote sind."
+silver_arrow_burns_you = de \
+   "Der Silberpfeil bohrt sich in Dein untotes Fleisch!"

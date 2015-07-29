@@ -1,0 +1,6 @@
+troll_name_rsc = de "Der Troll"
+troll_desc_rsc = de \
+   "Der Troll ist ein scheinbar nur aus Muskeln bestehendes Monster, das "
+   "mächtige Arme und rasiermesserscharfe Klauen besitzt."
+troll_koc_name_rsc = de "humoch"
+troll_dead_name_rsc = de "toter Troll"

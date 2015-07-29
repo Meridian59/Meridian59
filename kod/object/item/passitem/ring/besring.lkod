@@ -1,0 +1,13 @@
+berserkerring_name_rsc = de "Der Berserker-Ring"
+berserkerring_desc_rsc = de \
+   "Dieser Ring scheint ein warmes, rotes Licht auszustrahlen. Er trägt eine "
+   "einfache Inschrift, \"Wollüstige Schläge sind stark, aber nicht immer "
+   "richtig.\""
+berserkerring_use_rsc = de \
+   "Die Lust nach Kampf steigt in Dir hoch. Du sehnst Dich danach, Deine "
+   "Feinde niederzustrecken... Du willst nur noch ~B~rTÖTEN~n!"
+berserkerring_unuse_rsc = de \
+   "Die Kampfeslust des Berserker-Rings verlässt Dich."
+berserkerring_break_rsc = de \
+   "Der Beserker-Ring verschwindet einfach, nachdem sein Kampfesdurst gestillt "
+   "wurde."

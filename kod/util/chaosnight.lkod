@@ -1,0 +1,25 @@
+chaos_night_rsc = de \
+   "### ~B~rDIE SCHLACHT DES BLUTES~n: Die Realität scheint erschüttert, "
+   "als eine unglaublich böse Macht versucht, Meridian in ihre Gewaltherrschaft "
+   "zu zwingen. Die Diener Qors beginnen, fanatisch zu tanzen und zu singen. "
+   "Du bemerkst, dass Dir nicht einmal mehr ein Schutzengel helfen kann, "
+   "solange der Himmel blutrot gefärbt ist.[Dein Charakter wurde gesichert "
+   "und wird nach der Schlacht wiederhergestellt.]"
+chaos_night_admin_rsc = de \
+   "### ~B~bADMINISTRATOR~n: Um die Schlacht des Blutes zu beenden. Du solltest "
+   "jetzt eine Kopie der LASTSAVE.TXT (liegt auf dem Server-Rechner) anfertigen.Wenn "
+   "die Schlacht des Blutes vorbei ist, fahre den Server herunter und stelle "
+   "die LASTSAVE.TXT wieder her."
+end_chaos_night_rsc = de \
+   "### ~B~gDIE SCHLACHT DES BLUTES~n: Das Spiel wurde nicht korrekt wiederhergestellt! "
+   "Die Schlacht des Blutes ~bmuss~n mit der Wiederherstellung von LASTSAVE.TXT "
+   "auf dem Server beendet werden. Die Spielerdaten sind sonst durch die "
+   "Schlacht des Blutes völlig verändert."
+chaos_night_npcs_rsc = de \
+   "~B~U~k[###]~n ~B~rThe Innkeepers in each city have been preparing for "
+   "this day, and have stockpiled massive quantities of items useful for "
+   "defending their homes!  To outfit yourself for the coming battles, go "
+   "to your nearest Innkeeper and check what they have for sale.  For a price, "
+   "they may part with some much needed supplies."
+chaos_gift = de \
+   "~B~U~k[###]~n ~B~vQor gewährt Dir %s%s um Deine Feinde zu töten!"

@@ -1,0 +1,7 @@
+NeruditeBow_name_rsc = de "Der Nerudit Bogen"
+NeruditeBow_desc_rsc = de \
+   "Und es gibt sie DOCH! Dieser Bogen wurde aus dem spröden Nerudit geformt, "
+   "anstatt ihn aus Holz zu schnitzen. Der Bogen sieht nicht sehr flexibel "
+   "aus."
+NeruditeBow_shatters = de \
+   "Der Nerudit Bogen zerbirst in einem Hagel aus Splittern!"

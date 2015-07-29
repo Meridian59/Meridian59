@@ -1,0 +1,11 @@
+KocatanWeaponsMaster_name_rsc = de "Kochtal ko'Tulca"
+KocatanWeaponsMaster_desc_rsc = de \
+   "Ein älterer Mann, der offensichtlich auf beiden Augen blind ist. Mit "
+   "jeder seiner sicher ausgeführten Bewegungen und jedem seiner bedächtigen "
+   "Worte ist dieser ehemalige Krieger das Abbild der ruhigen Anmut eines "
+   "erfahrenen Jägers. Bekannt für sein scharfes Gehör, sagen einige, daß "
+   "er sogar Dinge hören kann, die kein Geräusch machen wie zum Beispiel "
+   "ein Stirnrunzeln oder ein zweifelnder Gedanke."
+KocatanWeaponsMaster_orcteeth_sale = de \
+   "Du willst %s%s?  Ja, ja, ich habe einige alte Trophäen, die du von mir "
+   "kaufen kannst."

@@ -1,0 +1,5 @@
+orctooth_name_rsc = de "Der Orkzahn"
+orctooth_desc_rsc = de \
+   "Dieser gelbliche Zahn ist fast drei Zentimeter lang. Kleine Stückchen "
+   "Fleisch hängen an seiner Wurzel."
+orctooth_name_plural_rsc = de "Orkzähne"

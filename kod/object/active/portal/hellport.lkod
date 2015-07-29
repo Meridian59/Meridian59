@@ -1,0 +1,12 @@
+hellportal_name_rsc = de "Ein Dimensionstor"
+hellportal_desc_rsc = de \
+   "Als Du durch das Portal schaust, kannst Du auf der anderen Seite %s."
+hellportal_move_req_no = de \
+   "Aus irgendeinem Grund kannst Du das Dimensionstor nicht betreten."
+hellportal_tos = de "die belebte Brunnenkneipe ausmachen."
+hellportal_marion = de "die abgelegene Kneipe zur lahmen Kröte ausmachen."
+hellportal_jasper = de "die urige Kneipe zum Zwergenhammer ausmachen."
+hellportal_cornoth = de \
+   "die gemütliche Gesellschaft in der Kneipe zum Bach ausmachen."
+hellportal_barloque = de "luxuriöse Kneipe zum Bernstein im belebten Barloqu..."
+hellportal_kocatan = de "eine standhafte Inselfestung von Ko'Catan"

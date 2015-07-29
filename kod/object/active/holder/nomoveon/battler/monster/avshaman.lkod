@@ -1,0 +1,22 @@
+avarshaman_koc_name_rsc = de "avarya"
+avarshaman_default_name = de "avar shaman"
+avarshaman_name_rsc = de "Der Avar-Schamane"
+avarshaman_desc_rsc = de \
+   "Die ist ein Schamane des Stammes der Pi-Piep. Der Legende nach blenden "
+   "die Avar-Schamanen sich selbst, um ihr drittes, 'magisches' Auge zum "
+   "Wachstum zu zwingen. Nur ein Narr w‰re willens, diese furchterregenden "
+   "Krieger herauszufordern."
+avarshaman_bone_name = de "Der Schamane der Knochengruppe"
+avarshaman_bone_desc = de \
+   "Dies ist ein m‰chtiger Schamane der  mystischen Knochengruppe. Der Legende "
+   "nach blenden die Avar-Schamanen sich selbst, um ihr drittes, 'magisches' "
+   "Auge zum Wachstum zu zwingen. Nur ein Narr w‰re willens, diese furchterregenden "
+   "Krieger herauszufordern."
+avarshaman_nomagic_name = de "Der Avar-Schamane des Stammes der Ki-Ki-Krii"
+avarshaman_nomagic_desc = de \
+   "Dies ist ein leibeigener Schamane des Stammes der Ki-Ki-Krii. Der Legende "
+   "nach blenden die Avar-Schamanen sich selbst, um ihr drittes, 'magisches' "
+   "Auge zum Wachstum zu zwingen. Nur ein Narr w‰re willens, diese furchterregenden "
+   "Krieger herauszufordern."
+avarshaman_dead_name_rsc = de "Der tote Avar-Schamane"
+shaman_cast_spell = de "Der Schamane ruft die groﬂen Geister an, ihm zu he..."

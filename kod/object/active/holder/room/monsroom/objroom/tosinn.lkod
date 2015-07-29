@@ -1,0 +1,10 @@
+tosnews_god_name = de "Designer Nachrichten"
+tosnews_god_desc = de "Nachrichten von den Administratoren"
+room_name_tosinn = de "Brunnenkneipe"
+tosinn_no_rooms = de \
+   "~wPaddock sagt, \"Es tut mir leid, zur Zeit habe ich keine freien Zimmer.\""
+tosinn_locked_basement = de "Die Kellertür ist verschlossen."
+tosinn_locked_cabinet = de \
+   "~wPaddock sagt, \"Hey, bleib aus meiner Vorratskammer!\""
+tosinn_locked_confused = de \
+   "~wPaddock murmelt, \"Hey, was meinst Du, wo Du da hingehst?\""

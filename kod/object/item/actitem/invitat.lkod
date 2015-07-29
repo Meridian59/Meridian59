@@ -1,0 +1,31 @@
+invitation_name_rsc = de "Einladung"
+invitation_desc_rsc = de \
+   "Wenn Du diese Einladung \"benutzt\", wirst Du Dich %s%q anschlie√üen.Diese "
+   "Einladung wird sich innerhalb der n√§chsten zwei Minuten aufl√"
+   "∂"
+   "sen, solltest Du sie unangetastet lassen."
+invitation_desc_cant_rsc = de \
+   "Wenn Du diese Einladung \"benutzt\", wirst Du Dich %s%q anschlie√üen. Du "
+   "kannst jedoch nicht beitreten, ohne vorher Deine Verbindungen mit %s%q "
+   "aufzul√"
+   "∂"
+   "sen.Diese Einladung wird sich innerhalb der n√§chsten zwei Minuten aufl√"
+   "∂"
+   "sen, solltest Du sie unangetastet lassen."
+invitation_desc_toolow_rsc = de \
+   "Wenn Du diese Einladung \"benutzt\", wirst Du Dich %s%q anschlie√üen. Du "
+   "kannst Dich jedoch erst ab einer h√"
+   "∂"
+   "heren Ebene anschlie√üen.Diese Einladung wird sich zwei Minuten nach "
+   "dem Erhalt von selbst aufl√"
+   "∂"
+   "sen."
+invitation_cant_ditch = de \
+   "Als Du versuchst, die Einladung fallenzulassen, bemerkst Du, dass sie "
+   "wie Pech an Deinen Fingern klebt."
+invitation_cant_join = de \
+   "Bevor Du einer neuen Gilde beitrittst, musst Du Deine alte Gilde verlassen."
+invitation_cant_join_toolow = de \
+   "Du kannst keiner Gilde beitreten, bevor Du mehr Erfahrung gesammelt hast."
+invitation_expires = de "Deine Einladung zu %s ist abgelaufen."
+invitation_vanishes = de "%s%ss Einladung verschwindet in einer Rauchwolke!"

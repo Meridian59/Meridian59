@@ -1,0 +1,13 @@
+Jasper_Bartender_name_rsc = de "Pietro"
+Jasper_Bartender_desc_rsc = de \
+   "Ein übellauniger und mürrischer Mensch bedient an der Bar. Das ist Pietro, "
+   "der hitzige Säufer."
+JsBar_entry_welcome = de "Würdest du bitte die Tür schließen!"
+JasperBartender_unwanted_keep = de \
+   "~k%s%s wirft den Gegenstand in den Müll und spottet, \"Ist verloren gegangen.~n~k\""
+JasperBartender_unwanted_pay = de \
+   "~k%s%s teilt dir mit, \"Ich werde dir ein paar Schillinge dafür geben, "
+   "denn der Geburtstag meiner Mutter ist bald.~n~k\""
+JasperBartender_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Sehe ich so aus wie ein dämlicher Müllkäufer?  "
+   "Es gibt hier nichts zu Bitten, also verlasse meine Kneipe, Fremder.~n~k\""

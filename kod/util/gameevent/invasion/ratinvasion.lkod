@@ -1,0 +1,10 @@
+RatInvasion_start_msg = de \
+   "~B~k[Event]~n ~B~v The reign of the Rat King has begun."
+RatInvasion_end_msg = de \
+   "~B~k[Event]~n ~B~v The reign of the Rat King has ended."
+RatInvasion_phase2_msg = de \
+   "~B~k[Event]~n ~B~v The reign of the Rat King has entered phase two."
+RatInvasion_phase3_msg = de \
+   "~B~k[Event]~n ~B~v The reign of the Rat King has entered phase three."
+RatInvasion_finalphase_msg = de \
+   "~B~k[Event]~n ~B~v The reign of the Rat King has entered the final phase."

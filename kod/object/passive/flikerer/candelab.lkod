@@ -1,0 +1,7 @@
+candelabra_name_rsc = de "Kronleuchter"
+candelabra_desc_on = de \
+   "Ein reich verzierter Kerzenständer mit fünf Kerzen. Die Kerzen flackern "
+   "sanft."
+candelabra_desc_off = de \
+   "Ein reich verzierter Kerzenständer mit fünf Kerzen. Die Kerzen sind erloschen."
+candelabra_not_in_range = de "Du bist nicht nah genug um die Kerzen anzuzünden."

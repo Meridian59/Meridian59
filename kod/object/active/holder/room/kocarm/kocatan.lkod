@@ -1,0 +1,4 @@
+room_name_kocatan = de "Ko'catan, die Insel-Siedlung"
+kocatan_military = de \
+   "Kein Zutritt zur Wachkaserne für nicht-militärisches Personal!"
+kocatan_locked = de "Diese Tür ist fest verschlossen."

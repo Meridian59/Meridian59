@@ -1,0 +1,8 @@
+room_name_barlbar1 = de "Zum fröhlichen Mönch"
+bar_leave_w1 = de \
+   "~wMeidei fährt Dich an, \"Hab ich Dir etwa erlaubt, dort hinauf zu gehen?\""
+bar_leave_w2 = de \
+   "~wMeidei teilt Dir mit, \"Ich bitte Dich mein Freund, geh nicht dort hinauf.\""
+bar_leave_w3 = de \
+   "~wMeidei hält die einen langen Vortrag, wie unhöflich es doch ist, seine "
+   "Privatgemächer unerlaubt zu betreten."

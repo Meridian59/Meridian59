@@ -1,0 +1,5 @@
+emerald_name_rsc = de "Der Smaragd"
+emerald_desc_rsc = de \
+   "Dieser glitzernde, grüne \"Jasper-Smaragd\" ist wunderschön und besonders "
+   "wertvoll. Er ist von einem warmen, magischen Leuchten umgeben."
+emerald_name_plural_rsc = de "Smaragde"

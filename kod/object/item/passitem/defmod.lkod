@@ -1,0 +1,3 @@
+defmod_broken = de "%s fällt in Stücke"
+defmod_broken_plural = de "%s zerfällt in Stücke"
+defmod_broken_plural_clothes = de "%s fällt zu untragbaren Fetzen auseinander."

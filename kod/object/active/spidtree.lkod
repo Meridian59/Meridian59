@@ -1,0 +1,5 @@
+SpiderTree_name_rsc = de "Spinnweben überziehen diesen Baum."
+SpiderTree_desc_rsc = de "Spinnweben überziehen diesen Baum."
+SpiderTree_move_req_no = de \
+   "Aus irgendeinem Grund schaffst Du es nicht, die Höhle zu betreten."
+Spidertree_enter = de "Du stolperst durch das Loch im Baum in die Tiefe."

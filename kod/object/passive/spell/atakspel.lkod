@@ -1,0 +1,6 @@
+attack_spell_hit_rsc = de "Du triffst %s%s."
+attack_spell_no_self_rsc = de "Du kannst %s nicht auf dich selber zaubern."
+attack_spell_out_of_range = de "%s%s ist zu weit entfernt um mit %s zu treffen."
+attack_spell_killed_self = de "Du hast dich selbst getötet."
+attack_spell_killed_someone = de "Du hast %s%s%s getötet."
+attack_spell_cast_rsc = de "Du zauberst den Zauber."

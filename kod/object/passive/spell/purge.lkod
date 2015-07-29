@@ -1,0 +1,13 @@
+Purge_name_rsc = de "Beseitigen"
+Purge_desc_rsc = de \
+   "Streift hilfreiche persönliche Verzauberungen vom Ziel ab. Benötigt Smaragde "
+   "und lila Pilze. Die Anwendung dieses Zaubers kann dazu führen, dass Du "
+   "zum Gesetzlosen erklärt wirst."
+Purge_on = de \
+   "Ein breites Licht versucht all deine Personenzauber zu beseitigen"
+Purge_not_enchanted = de "%s%s ist nicht mit Personenzaubern belegt"
+Purge_spell_intro = de \
+   "Shal'ill Level 5: Streift hilfreiche persönliche Verzauberungen vom Ziel "
+   "ab"
+purge_break_rod_active = de \
+   "Dein Zauberspruch wird durch eine Energie verhindert!"

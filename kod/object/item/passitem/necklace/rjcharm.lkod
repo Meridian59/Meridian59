@@ -1,0 +1,7 @@
+RiijaCharm_name_rsc = de "Der gefederte Kriegsschmuck"
+RiijaCharm_desc_rsc = de \
+   "Dieser ungewöhnliche Kriegsschmuck ist hübsch anzusehen, wahrscheinlich "
+   "jedoch nicht sehr angenehm zu tragen."
+RiijaCharm_whisper = de \
+   "Eine Stimme flüstert, \"~I...der Schlüssel zum Unheilstiften ist, schlau "
+   "genug zu sein, um den Folgen auszuweichen...\""

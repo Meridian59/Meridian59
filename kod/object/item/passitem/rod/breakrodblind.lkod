@@ -1,0 +1,7 @@
+BreakRodBlind_name_rsc = de "Der Stab der Sicht"
+BreakRodBlind_desc_rsc = de "Dieser Stab verhindert für 5 Sekunden Blendzauber"
+BreakRodBlind_success_rsc = de "Der Stab schießt Energien durch dich!"
+BreakRodBlind_drop_rsc = de \
+   "Die leuchtenden Energien durch den Stab verschwinden wieder."
+BreakRodBlind_secondary_drop_msg = de \
+   "Du bemerkst, dass die Fähigkeit des Blendens zurückkehrt."

@@ -1,0 +1,12 @@
+Kocatanbanker_name_rsc = de "Huital ko'Nosak"
+kocatanbanker_desc_rsc = de \
+   "Hoch geschätzt als der Meister aller Geldtransaktionen auf der Insel, "
+   "verfolgt Huital sehr genau alle Geschäfte und deren Auswirkungen auf "
+   "den Finanzmarkt. Vor jeder Transaktion mit Münzen, wäscht er sich schnell "
+   "die Hände in einer Schale mit frischem Wasser."
+kocatanbanker_entry_welcome = de \
+   "Sei Gegrüßt. Wir hoffen, dir gute Dienste zu leisten, denn ihre Wertsachen "
+   "sind bei uns sicher."
+kocatanbanker_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Du verwechskst mich, mit mein Bruder.  Er wird "
+   "deine Gegenstände verstauen.~n~k\""

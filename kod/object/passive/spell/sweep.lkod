@@ -1,0 +1,22 @@
+Sweep_name_rsc = de "Fegen"
+Sweep_desc_rsc = de \
+   "Die ungebändigten Winde von Faren fegen durch das Gebiet und tragen weggeworfene "
+   "Gegenstände davon. Der Zauber benötigt Pilze."
+Sweep_room_cast = de \
+   "%s%s schwingt einen magischen Besen, so dass manche Gegenstände in %s "
+   "Hände landen."
+Sweep_Something = de "Du richtest die Dinge etwas."
+Sweep_Nothing = de "Der Boden scheint nicht wirklich sauberer zu sein."
+Sweep_Pissed_rant = de \
+   "~kRan er'Hoth schreit, \"~r%s%s, du kleine stingende Schnecke, ICH habe "
+   "diesen Zauber benutzt.~k\""
+Sweep_Grateful_rant = de \
+   "~kRan er'Hoth kriecht und stöhnt, \"Oh, danke o du %s%s, danke, danke.  "
+   "ich hatte solche Angst, solche Angst bis du es weggefegt hast.\""
+Sweep_Freaked_rant = de \
+   "~kRan er'Hoth schreit, \"ACK! ERK! URK! ORK! Wo ist es hin?  Was hast "
+   "du damit getan, %s%s? Bitte tu es nicht mit MIR!\""
+Sweep_no_reward = de \
+   "Hey, dass war nett von dir . . . meinen Laden aufzuräumen."
+Sweep_spell_intro_rsc = de \
+   "Faren Level 1: Boden fegen und Gegenstände landen in deinem Inventar."

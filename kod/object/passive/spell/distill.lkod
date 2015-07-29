@@ -1,0 +1,18 @@
+Distill_name_rsc = de "Tränke mixen"
+Distill_desc_rsc = de \
+   "Ermöglicht dem Zauberer, sein Wissen über einen anderen Zauberspruch "
+   "in flüssige Form zu bringen. Man benötigt dazu Rubine und die Zutaten "
+   "für den Trank. Auch vergesse man nicht, den Namen des Zaubers anzugeben, "
+   "welchen man verflüssigen möchte."
+Distill_no_message = de \
+   "Ohne einen Zauber für den Trank fällt er in sich zusammen und verdirbt."
+Distill_bad_spell = de "Du kannst keinen Trank mit diesem Zauber herstellen."
+Distill_do = de \
+   "Durch eine sorgfältige Vorbereitung der Zutaten, erstellst Du %s%s."
+Distill_inv_full_rsc = de \
+   "Da du zu viel mit Dir trägst, verlierst Du %s%s, und er fällt zu deinen "
+   "Füßen."
+Distill_Dont_have_target = de "Du hast kein Wissen über %s."
+Distill_no_ingredient = de "Du hast nicht alle Zutaten die du benötigst."
+Distill_Fail_Target = de \
+   "Dein Wissen über %s ist unvollständig, und du weißt nicht wie es weitergeht."

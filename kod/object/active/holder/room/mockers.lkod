@@ -1,0 +1,4 @@
+room_name_mockers = de "Kammer der Diebe"
+mockers_lockdoor = de \
+   "Du verschließt die Tür, um andere Spieler am Eintreten zu hindern."
+mockers_unlockdoor = de "Du schließt die Tür auf."

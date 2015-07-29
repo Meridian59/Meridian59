@@ -1,0 +1,14 @@
+resistgood_name_rsc = de "Unheilige Lösung"
+resistgood_desc_rsc = de \
+   "Ruft die niederträchtige Kraft von Qor an, um den Zaubernden für mehrere "
+   "Minuten gegen das Gute zu schützen. Der Zauber benötigt Feenflügel und "
+   "Phiolen mit Solagh.."
+resistgood_spell_intro = de \
+   "Qor Level 1: Ruft die niederträchtige Kraft von Qor an."
+resistgood_already_enchanted = de "Du hast die Unheilige Lösung bereits."
+resistgood_success = de \
+   "Die Macht Qors betritt den Körper von %s%s's , und beschützt ihn vor "
+   "dem Guten."
+resistgood_on = de \
+   "Die macht Qors betritt Deinen Körper und beschützt ihn vor dem Guten."
+resistgood_off = de "Du hast keinen Schutz mehr vor dem Guten."

@@ -1,0 +1,12 @@
+helmet_condition_exc = de " ist in tadellosem Zustand."
+helmet_condition_exc_mended = de \
+   " ist in tadellosem Zustand, wurde allerdings bereits repariert"
+helmet_condition_good = de \
+   " ist mit Blut befleckt, doch ansonsten in gutem Zustand."
+helmet_condition_med = de \
+   " hat Kampfnarben davongetragen, versieht aber noch seinen Dienst."
+helmet_condition_poor = de \
+   " ist so verbeult und abgetragen, dass er fast auseinanderfällt."
+helmet_condition_broken = de \
+   " ist unbrauchbar, nachdem er durch einen mächtigen Hieb in zwei Teile "
+   "gespalten worden ist."

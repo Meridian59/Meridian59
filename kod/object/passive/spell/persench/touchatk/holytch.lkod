@@ -1,0 +1,21 @@
+HolyTouch_name_rsc = de "Heilige Hand"
+HolyTouch_desc_rsc = de \
+   "Pure Energie von Sha-Lill verbrennt böse Ziele und heilt die guten. Man "
+   "benötigt für diesen Zauber Smaragde."
+HolyTouch_already_enchanted_rsc = de \
+   "Deine Hände sind bereits in Shal'ills Liebe gebadet."
+HolyTouch_On_rsc = de "Deine Hände sind in Shal'ills Liebe gebadet."
+HolyTouch_Off_rsc = de \
+   "Deine Hände sind nicht weiter in Shal'ills Liebe gebadet."
+HolyTouch_player_was_hit = de \
+   "%s%s verbürht dich mit der reinen Kraft Shal'ills!"
+HolyTouch_player_hit_something = de \
+   "%s%s%s schrumpt, von der reinen Energie Shal'ills."
+HolyTouch_player_killed_something = de \
+   "%s%s erliegt schließlich, der Suche nach Frieden durch Shal'ills Reinigungsenergie."
+HolyTouch_player_was_killed = de \
+   "Die Berührung von %s%s trennt Körper und Seele und schickt dich in die "
+   "Unterwelt."
+holytouch_spell_intro = de \
+   "Shal'ill Level 2: Pure Energie von Sha-Lill verbrennt böse Ziele und "
+   "heilt die guten."

@@ -1,0 +1,16 @@
+Mirth_name_rsc = de "Frohsinn"
+Mirth_desc_rsc = de \
+   "Dieses Lied macht die Leute fröhlich!Es ist eine lebendige Melodei, bei "
+   "der sich die Menschen wie neugeboren fühlen. Das Lied bringt die Leute "
+   "zum Lächeln, was oft eine bessere Stimmung zur Folge hat. Eine bessere "
+   "Stimmung hilft anderen, effektiver gegen böse Mächte zu Kämpfen. Es benötigt "
+   "einen Saphir."
+Mirth_on = de "%s%ss fröhlicher Song lässt dich eine gute Stimmung bekommen."
+Mirth_cast = de "Du beginnst einen fröhlichen Song zu spielen."
+Mirth_starts = de "%s beginnt einen fröhlichen Song zu spielen."
+Mirth_ends = de "Der fröhliche Song, gespielt von %s verstummt."
+Mirth_caster_ends = de "Dein fröhlicher Song verstummt."
+Mirth_caster_enter = de "Deine Laune wird ein wenig besser."
+Mirth_enter = de "%ss fröhlicher Song, verbesser deine Laune etwas."
+Mirth_leave = de \
+   "Du kannst den fröhlichen Song, gesungen von %s nicht mehr hören."

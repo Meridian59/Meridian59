@@ -1,0 +1,11 @@
+ReagentRing_name_rsc = de "ring of Far'nohl"
+ReagentRing_desc_rsc = de \
+   "A replica of the powerful ring once worn by the powerful King Far'nohl, "
+   "this ring will let the bearer cast spells even while lacking the necessary "
+   "reagents.  Sadly, since it is a mere copy of the original, it will only "
+   "gift you with limited usage."
+ReagentRing_chargeslefta_rsc = de "There are "
+ReagentRing_chargesleftb_rsc = de " charges left in this ring."
+ReagentRing_disappear_rsc = de \
+   "As the last charge is consumed, the ring of Far'nohl disappears in a "
+   "puff of dust."

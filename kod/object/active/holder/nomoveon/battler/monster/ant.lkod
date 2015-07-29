@@ -1,0 +1,7 @@
+ant_koc_name_rsc = de "yokinich"
+ant_name_rsc = de "Die Riesenameise"
+ant_desc_rsc = de \
+   "Zuschnappende Zangen, noch blutig vom letzten Mahl der Ameise, greifen "
+   "nach Dir. Obwohl langsam und fast blind, haben Ameisen einen feinen Geruchssinn "
+   "für Menschenfleisch."
+ant_dead_name_rsc = de "tote Riesenameise"

@@ -1,0 +1,6 @@
+EvilTwin_name_rsc = de "Der Böse Zwilling"
+EvilTwin_dead_name_rsc = de "toter Böser Zwilling"
+EvilTwin_delete = de "%s%s verschwindet in einer Rauchwolke."
+EvilTwin_trouble = de \
+   "Du bemerkst, dass ein böser Zwilling, den Du beschworen hast, Dich in "
+   "Schwierigkeiten gebracht hat..."

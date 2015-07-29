@@ -1,0 +1,6 @@
+vampireRod_name_rsc = de "Der Stab des vampirischen Schocks"
+vampireRod_desc_rsc = de \
+   "Diester altertümliche Stab ist kalt in der Hand. Du bemerkst, dass der "
+   "Stab nicht in einem sicheren Raum wieder aufgefüllt werden kann, sondern "
+   "nur von guten Seelen im Kampf"
+vampireRod_success_rsc = de "Muuuuhahahaha, das tut gut!!"

@@ -1,0 +1,7 @@
+skeleton_koc_name_rsc = de "chaleoc"
+skeleton_name_rsc = de "Das Skelett"
+skeleton_desc_rsc = de \
+   "Nur wenige Brocken aus fauligem Fleisch haften an dieser Sammlung von "
+   "Knochen. Das Skelett, normalerweise leblos, ist von dunkler Magie mit "
+   "Leben erfüllt."
+skeleton_dead_name_rsc = de "Der Knochenhaufen"

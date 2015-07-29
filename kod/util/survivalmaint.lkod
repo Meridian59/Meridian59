@@ -1,0 +1,5 @@
+public_survival_started = de \
+   "%s hat eine öffentliche Arena gestartet (Co-op Arena). Sie wird in 5 "
+   "Minuten beginnen."
+public_ended = de \
+   "Die öffentliche Arena (Co-op Arena) wurde beendet bei dem Level %i."

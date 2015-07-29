@@ -1,0 +1,7 @@
+illusionarywounds_name_rsc = de "Illusionsfeuerwand"
+illusionarywounds_desc_rsc = de \
+   "Erzeugt einen vorgetäuschten Wall aus Feuer.Dazu braucht man Solagh und "
+   "Feuerand."
+illusionarywounds_cast = de "Deine Illusion bekommt die Form von %s."
+illusionarywounds_off = de \
+   "Hey!  Manche dieser Wunden scheinen nicht echt zu sein!"

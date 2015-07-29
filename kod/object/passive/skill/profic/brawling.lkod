@@ -1,0 +1,6 @@
+BrawlingProficiency_name_rsc = de "Ringen"
+BrawlingProficiency_desc_rsc = de \
+   "Dies erlaubt es dem Kämpfer, unbewaffnet besser zu kämpfen.."
+Brawl_skill_intro = de \
+   "Waffenfertigkeiten Level 2: Dies erlaubt es dem Kämpfer, unbewaffnet "
+   "besser zu kämpfen.."

@@ -1,0 +1,15 @@
+DarkWizard_name_rsc = de "Maleval"
+DarkWizard_desc_rsc = de \
+   "Du kannst förmlich die Präsenz eines mächtigen Hexers fühlen. Eine gigantische "
+   "Aura der Magie umgibt den wandernden Zauberer. Sein Wissen über das Erlernen "
+   "und Sprechen von Zaubersprüchen ist unerreicht. Wegen seiner öffentlichen "
+   "Missachtung der Tempel wurde er vom königlichen Hof ausgestoßen."
+DarkWizard_already_have_spell = de \
+   "Du kennst bereits den %s Zauberspruch. Du verschwendest meine Zeit, Narr."
+DarkWizard_not_ready = de \
+   "Du beleidigst mich mit Deinen kläglichen Bitten um Macht, die Deiner "
+   "nicht wert ist. Geh und zeige Deine armseligen Salontricks woanders. "
+   "Belästige mich nicht eher wieder, als bis Du bereit bist."
+DarkWizard_teach_quest_needed = de \
+   "Ich lehre meine Kunst nicht irgendeinem hergelaufenen Salonzauberer. "
+   "Ich werde es Dich wissen lassen, wenn Du bereit bist. Verschwinde."

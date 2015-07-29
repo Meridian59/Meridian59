@@ -1,0 +1,14 @@
+NodeBurstPotion_name_rsc = de "Stechender Trank"
+NodeBurstPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie hat einen "
+   "extrem beißenden Geruch; ein einziger Schnupperer reicht, um Dich schwindlig "
+   "zu machen. Nicht gerade überraschend, dass ein großes Warnetikett aufgeklebt "
+   "ist. Es scheint, dass dieses Elixier die Kraft hat, alle Deine Verbindungen "
+   "zu den Zauberquellen auf einmal zu öffnen und Dich auf einen Schlag mit "
+   "zusätzlichen Zauberenergien zu füllen. Dies hat allerdings zur Folge, "
+   "dass danach die Verbindung zu einer Quelle gelöst werden."
+NodeBurstPotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Sie hat "
+   "einen extrem beißenden Geruch; ein einziger Schnupperer reicht, um Dich "
+   "würgen zu lassen. Du tust gut daran, dass Warnschild zu beachten und "
+   "es zu vermeiden, aus der Flasche zu trinken."

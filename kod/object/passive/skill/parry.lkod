@@ -1,0 +1,4 @@
+parry_name_rsc = de "Parrieren"
+parry_desc_rsc = de \
+   "Das Parieren ermöglicht es Personen mit einer Waffe einen Schlag abzuwehren, "
+   "um nicht getroffen zu werden.."

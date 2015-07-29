@@ -1,0 +1,11 @@
+engrave_name_rsc = de "Gravieren"
+engrave_desc_rsc = de \
+   "Graviert ein Objekt mit einer Nachricht.  Nur ein DM Zauber, im Moment.  "
+   ""
+engrave_already_engraved = de "%s%s hat bereits eine Gravur."
+engrave_cant_engrave = de "Du kannst keine Gravur auf %s%s machen."
+engrave_no_message = de \
+   "Ohne Nachricht fällt die Gravur in sich zusammen und alles bleibt wie "
+   "gehabt."
+engrave_do = de \
+   "Du schaust fasziniert als die Worte '%q' sich selber auf %s%s schreiben."

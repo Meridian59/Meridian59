@@ -1,0 +1,13 @@
+DetectEvil_name_rsc = de "Böses erkennen"
+DetectEvil_desc_rsc = de \
+   "Ermöglicht Dir, bis in die tiefsten Abgründe zu blicken. Man braucht "
+   "dazu Feenflügel."
+DetectEvil_on_rsc = de \
+   "Du fühlst dich nun besser bei der ganzen Dunkelheit um dich herum."
+DetectEvil_off_rsc = de "Dein Augenlicht kehrt zur normalen Sichtweise zurück."
+DetectEvil_already_enchanted_rsc = de \
+   "Du kannst das Abscheuliche bereits sehen."
+DetectEvil_Success_rsc = de \
+   "Du sorgst dafür, dass %s%s die Abscheulichkeit auch sehen kann."
+DetectEvil_spell_intro = de \
+   "Shal'ill Level 1: Ermöglicht Dir, bis in die tiefsten Abgründe zu blicken"

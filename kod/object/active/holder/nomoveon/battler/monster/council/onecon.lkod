@@ -1,0 +1,19 @@
+oneCouncilor_name_rsc = de "Alzahakar"
+oneCouncilor_desc_rsc = de \
+   "Bekannt als der mächtigste Zauberer des Königreiches steht Alzahakarstolz "
+   "vor dir. Du kannst den Widerstreit der vier verschiedenen Gottheitenin "
+   "ihm spüren. Als einer der ältesten Freunde von König Zarkos V.berät er "
+   "die Prinzessin seit ihrer Geburt."
+onecon_true_ideal_rsc = de \
+   "Ich habe großen Respekt vor Deinem magischen Wissen. Dass Dumir mein "
+   "Artefakt zurück gebracht hast, hat mich tief beeindruckt."
+onecon_half_ideal_rsc = de \
+   "Ich wäre beeindruckter, würdest Du mehr Zaubersprüche kennen.Dennoch, "
+   "Du hast Potential."
+onecon_not_ready = de \
+   "Du bist noch nicht bereit, die verlorenen Künste zu lernen."
+onecon_already_has = de \
+   "Du weißt bereits von den verlorenen Geheimnissen von Riija."
+onecon_unwanted_give = de \
+   "~k%s%s sagt Dir, \"Welch möglichen Nutzen sollte ein Zauberer meiner Klasse "
+   "davon haben?~n~k\""

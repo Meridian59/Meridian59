@@ -1,0 +1,8 @@
+guildroster_name_rsc = de "Mitgliederliste"
+guildroster_desc_text_rsc = de "Zeigt eine Liste von Mitgliedern deiner Gilde."
+roster_message_rsc = de \
+   "~rDie folgenden Leute sind Mitglieder von %s%s: \n~k%s%s%s"
+roster_comma = de "~n~k, %s%s%s"
+roster_gm = de "~B~r"
+roster_not_gm = de "~n~k"
+roster_period = de "."

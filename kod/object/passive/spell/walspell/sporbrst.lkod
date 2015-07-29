@@ -1,0 +1,11 @@
+SporeBurst_name_rsc = de "Sporenwolke"
+SporeBurst_desc_rsc = de \
+   "Lähmt vorübergehend jedem im Raum, einschließlich den Beschwörer selbst. "
+   "Man braucht polierten Seraphym und einige unbekannte Reagenzien. Die "
+   "Anwendung dieses Zaubers kann dazu führen, daß Du zum Gesetzlosen erklärt "
+   "wirst."
+SporeBurst_cast_rsc = de \
+   "Nach einem lauten Knall, ist das Zimmer mit einer Sporenwolke gefüllt."
+SporeBurst_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in diesem Raum. Du kannst diesen Zauber "
+   "nicht ausführen."

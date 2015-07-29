@@ -1,0 +1,10 @@
+room_name_OutdoorsKA0 = de "Eine dunkle, feuchte Höhle"
+new_item_appears_rsc = de \
+   "Die Luft flimmert und ein geisterhaftes Bild erscheint."
+Drop_correct_item_rsc = de \
+   "Magische Energie strömt knisternd durch die Luft und %s verschwindet "
+   "plötzlich."
+Drop_incorrect_item_rsc = de "Du lässt %s fallen, und nichts passiert."
+Shrine_appears = de \
+   "Ein Strom von Kraft durchflutet den Raum und ein mysteriöser Schrein "
+   "materialisiert vor Dir."

@@ -1,0 +1,8 @@
+wineGoblet_name_rsc = de "Der Weinkelch"
+wineGoblet_desc_rsc = de \
+   "Ein guter und außergewöhnlicher Tropfen. Nur das einfache Volk wird ihn "
+   "nicht mögen."
+wineGoblet_name_plural_rsc = de "Weinkelche"
+wineGoblet_use_rich = de \
+   "Ein Tropfen mit einem vollen Aroma, ganz offensichtlich ein guter Jahrgang."
+wineGoblet_use_poor = de "Pfui! Was ist das denn für ein Gesöff?"

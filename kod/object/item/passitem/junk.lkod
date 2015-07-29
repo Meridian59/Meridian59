@@ -1,0 +1,57 @@
+junk_name_rsc1 = de "zerbrochener Streitkolben"
+junk_desc_rsc1 = de \
+   "Dieser Streitkolben sieht aus, als ob man ihn nicht mehr gebrauchen kann."
+junk_name_rsc2 = de "nicht zu entzifferndes Buch"
+junk_desc_rsc2 = de "nicht zu entzifferndes Buch"
+junk_name_rsc3 = de "nachgemachter Kelch"
+junk_desc_rsc3 = de \
+   "Dies ist eine armselige Imitation des berühmten Regenkelchs."
+junk_name_rsc4 = de "Schmuckstück aus Glas"
+junk_desc_rsc4 = de \
+   "Jede Lady wäre beleidigt, wenn ihr Mann ihr solch billigen Tand schenken "
+   "würde!"
+junk_name_rsc5 = de "überzähliger Legionshelm"
+junk_desc_rsc5 = de \
+   "Dieser überzählige Helm, der von den A'ach Kici'ca nach vielen Jahren "
+   "starken Gebrauchs verkauft wurde, hat schon bessere Zeiten gesehen. Du "
+   "kannst erkennen, warum die Ko'catani-Legionen ihn nicht länger haben "
+   "wollten."
+junk_name_rsc6 = de "gegerbtes Kriipa-Leder"
+junk_desc_rsc6 = de \
+   "Dieses Leder stammt von einem tapferen Kriipa und ist außergewöhnlich "
+   "schön gegerbt. Damit hast Du wirklich ein paar nützliche Lederstreifen; "
+   "vielleicht reichen sie sogar, um daraus ein Geschirrhandtuch zu machen, "
+   "wenn Du einen Schneider findest, der bereit ist, all diese kleinen Stücke "
+   "zusammenzunähen."
+junk_name_rsc7 = de "Metallspäne"
+junk_desc_rsc7 = de \
+   "Dies ist ein Haufen Metallteile. Sie sind ein bisschen rostig."
+junk_name_rsc8 = de "Knochen von Konimas eigener Kriegsfeier"
+junk_desc_rsc8 = de \
+   "Diese menschlichen Knochen sehen ziemlich alt aus, aber Du bist Dir nicht "
+   "sicher, ob sie es wirklich sind. Du hast das Gefühl, dass schon mal jemand "
+   "hier gewesen ist."
+junk_name_rsc9 = de "Ketchikan-Reifen"
+junk_desc_rsc9 = de \
+   "Man findet diesen verzierten Reifen in fast allen Ko'catani-Küchen. Dieser "
+   "weitverbreitete Krimskrams ist anscheinend ein Glücksbringer oder so "
+   "was ähnliches."
+junk_name_rsc10 = de "Pamyan-Stoff"
+junk_desc_rsc10 = de \
+   "Dieses Stück Stoff ist das traditionelle Geschenk für eine junge Braut "
+   "in Ko'catan. Es versinnbildlicht einen Schutzschild vor Armut und Krankheit."
+junk_name_rsc11 = de "Ameisenmaske"
+junk_desc_rsc11 = de \
+   "Während der Ko'catani-Ferientage von Tom'tillium werden diese Masken "
+   "von Kindern getragen während sie herumtollen und ihre Onkels und Tanten "
+   "mit Wasser bespritzen und auf Umacha-Bohnen herumstampfen. Für einen "
+   "Erwachsenen ist diese Maske jedoch zu klein."
+junk_name_rsc12 = de "rostige Rüstung"
+junk_desc_rsc12 = de \
+   "Diese Rüstung ist rostig und alt und offensichtlich nicht mehr für Kämpfe "
+   "zu gebrauchen. Sie stellt jedoch ein nettes Souvenir dar."
+junk_name_rsc13 = de "Wünschelrute"
+junk_desc_rsc13 = de \
+   "Der Ko'catani-Legende nach kann ein mächtiger Wakilamacheopitik oder "
+   "Wassersucher dieses Gerät benutzen, um damit fast überall frisches Wasser "
+   "zu finden. Doch diese Kunst ist heute in Vergessenheit geraten."

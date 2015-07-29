@@ -1,0 +1,10 @@
+OrcShield_name_rsc = de "Der Ork-Schild"
+OrcShield_desc_rsc = de \
+   "Der Schädel, der dieses Schild ziert, sorgt zu einem großen Teil dafür, "
+   "eventuellen Gegnern Angst einzujagen, scheint jedoch mehr dekorativ denn "
+   "nützlich zu sein. Doch da gibt es eine dunklere Seite an dem Schild, "
+   "die sich nicht genau benennen läßt, und man fragt sich unwillkürlich, "
+   "ob diesem Teil noch versteckte Eigenschaften innewohnen."
+orcshield_cant = de \
+   "Du versuchst, nach dem Griff des Schildes zu greifen, doch er schlüpft "
+   "Dir immer wieder aus den Fingern."

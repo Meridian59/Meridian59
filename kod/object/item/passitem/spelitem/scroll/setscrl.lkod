@@ -1,0 +1,5 @@
+SetScroll_label_name_rsc = de "scroll of set"
+SetScroll_desc_rsc = de \
+   "This scroll will register your inventory preferences with Frular's office, "
+   "allowing you to use scrolls of loadout to re-equip yourself from your "
+   "guild hall chests at a distance."

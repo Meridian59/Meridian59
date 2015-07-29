@@ -1,0 +1,6 @@
+weapattguildhalldesc = de " Der Kamm von "
+weapattguildhalldesc2 = de \
+   " ist auf dem Griff der Waffe eingeschrieben, was einen "
+weapattguildhalldesc3 = de " Bonus in der Verteidigung der Halle verspricht."
+weapattdefender_name = de "%s des Verteidigers"
+defender_dm = de "Gildenhallenverteidiger"

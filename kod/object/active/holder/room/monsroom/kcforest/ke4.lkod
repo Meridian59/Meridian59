@@ -1,0 +1,17 @@
+room_name_OutdoorsKE4 = de "Avar-Dorf"
+KE4_good = de \
+   "~IDie Erde bebt und die Luft scheint ein wenig süßer. Du hast die Götter "
+   "der Avar erfreut."
+KE4_evil = de \
+   "~IDie Erde bebt und die Luft scheint ein wenig bitterer. Du hast die "
+   "Götter der Avar erzürnt."
+KE4_good_final = de \
+   "~wEine tiefe Stimme dröhnt, \"~B~bDein Angebot wurde angenommen. Habt "
+   "an meiner Kraft teil, verwandte Seelen.~n~w\""
+KE4_evil_final = de \
+   "~wEine tiefe Stimme brüllt, \"~B~rZerstörer! Ihr tötet meine Leute und "
+   "stehlt meine Kraft. Aber, ich werde mich noch an euch rächen!~n~w\""
+ke4_drown1 = de "Du Idiot wirst noch ertrinken! Hör auf, sofort!"
+ke4_drown2 = de \
+   "Das Meer erscheint grenzenlos und die Strömungen sind stark - Du wagst "
+   "es nicht, noch weiter zu schwimmen."

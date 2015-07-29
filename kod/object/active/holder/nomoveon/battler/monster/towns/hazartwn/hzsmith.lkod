@@ -1,0 +1,12 @@
+HazarBlacksmith_name_rsc = de "Thomas"
+HazarBlacksmith_desc_rsc = de \
+   "Thomas fertigt zwar keine besonderen, aber zuverlässige Waffen an. Er "
+   "ist bekannt für faire Preise."
+HzBla_entry_welcome = de \
+   "Hallo %s%s, und willkommen.  Bist du gekommen um mit Klingen zu handeln?  "
+   "Oder vielleicht wegen deiner Fähigkeiten?"
+Smith_potion_skills = de \
+   "Ich kann dir %s%s verkaufen, damit du alles über die Waffenfertigkeiten "
+   "vergisst. Mach Dir keinen Kopf um die Nebenwirkungen, es gibt keine. "
+   "Also willst du einen kaufen?"
+potion_skills = de "Waffenfertigkeiten"

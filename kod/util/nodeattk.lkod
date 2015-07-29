@@ -1,0 +1,32 @@
+NodeAttack_initial_attack_rsc = de \
+   "~IDu hast das ungute Gefühl, dass eine Deiner Mana Nodes angegriffen "
+   "wird."
+NodeAttack_location_attack_rsc = de "~BDie Node %s wird angegriffen!"
+NodeAttack_killed_rsc = de "ein Xeochicatl Angriff"
+NodeAttack_room_message_rsc = de \
+   "~IDas Gebiet wackelt stark als einige Xeochicatl erheben sich aus dem "
+   "Boden um die Node anzugreifen!"
+NodeAttack_success_rsc = de \
+   "~BDie Xeochicatl weichen von %s zurück.  Die Node wurde beschützt!"
+NodeAttack_failure_rsc = de \
+   "~BDie Node %s wurde ausgelöscht durch den Angriff der Xeochicatl!"
+NodeAttack_loss_rsc = de \
+   "~IDu bekommst Kopfschmerzen als Du den Verlust der Mana Node spürst."
+NodeAttack_severed_rsc = de \
+   "~IDein Kopf brüllt vor Schmerz als die Verbindung zur Mana Node getrennt "
+   "wird!"
+NodeAttack_loss_mail_rsc = de \
+   "Betreff: Der Verlust der Mana Node\nMit schwerem Herzen muss ich berichten, "
+   "dass Xeochicatl %s angegriffen und leergesaugt haben.  Unsere Kräfte "
+   "waren nicht stark genug der Attacke stand zu halten.  Als Resultat hast "
+   "Du die Kraft dieser Mana Node verloren und kannst sie momentan nicht "
+   "nutzen.\n\nIch hoffe in der Zukunft findest Du einen Weg solchen Attacken "
+   "stand zu halten.  Wir müssen vorbereitet sein auf den nächsten Angriff."
+NodeAttack_severed_mail_rsc = de \
+   "Betreff: Die Trennung zur Mana Node\nMit schwerem Herzen muss ich berichten, "
+   "dass Xeochicatl %s angegriffen und leergesaugt haben.  Unsere Kräfte "
+   "waren nicht stark genug der Attacke stand zu halten.  Als Resultat hast "
+   "Du die Kraft dieser Mana Node verloren und kannst sie momentan nicht "
+   "nutzen.\n\nIch hoffe in der Zukunft findest Du einen Weg solchen Attacken "
+   "stand zu halten.  Wir müssen vorbereitet sein auf den nächsten Angriff."
+NodeAttack_keeper = de "Alzahakar"

@@ -1,0 +1,5 @@
+stamboon_name_rsc = de "Ausdauer Effekt"
+stamboon_desc_rsc = de "Deine Audauer steigt plötzlich unnatürlich."
+stamboon_intro_rsc = de "The stamina of the victim is boosted temporarily."
+stamboon_inc = de "Du fühlst dich mehr ausdauernt!"
+stamboon_dec = de "Die zusätzliche Ausdauer verlässt Dich."

@@ -1,0 +1,10 @@
+barloque_merch_name_rsc = de "Herbut"
+barloque_merch_desc_rsc = de \
+   "Sich für einen Kenner der feinen Lebensart haltend ist Herbut doch nicht "
+   "mehr als ein Snob alter Schule. Er verachtet fast alles bis auf das Königliche. "
+   "Ihm wird niemals der Gesprächsstoff über die negativen Seiten der anderen "
+   "Städte und das einfache Leben der Reisenden zwischen ihnen ausgehen."
+Bqmerch_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Warum willst du mir solche Dinge anbieten? Ich "
+   "habe Diener die für mich zum Markt gehen um solche Dinge für mich zu "
+   "kaufen.~n~k\""

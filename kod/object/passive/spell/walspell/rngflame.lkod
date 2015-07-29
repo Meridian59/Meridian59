@@ -1,0 +1,12 @@
+RingOfFlames_name_rsc = de "Flammenring"
+RingOfFlames_desc_rsc = de \
+   "Erschafft einen Ring aus Flammen um den Zaubernden. Benötigt rote Pilze, "
+   "Feuersand und ungeschliffenen Seraph. Die Anwendung dieses Zaubers kann "
+   "dazu führen, daß Du zum Gesetzlosen erklärt wirst."
+RingOfFlames_caster = de \
+   "Ein glühend heißer Ring aus Flammen erscheint vor %s%q."
+RingOfFlames_target = de \
+   "Ein glühend heißer Ring aus Flammen erscheint vor dir!"
+RingOfFlames_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in diesem Raum. Du kannst nicht noch "
+   "weitere Wände erschaffen."

@@ -1,0 +1,23 @@
+Hunt_name_rsc = de "Verfolgung"
+Hunt_desc_rsc = de \
+   "Erlaubt den Zaubernden, ein Prisma zu benutzen, um sich auf die Fährte "
+   "eines Spielers zu begeben und ihn für eine begrenzte Zeit zu jagen. Die "
+   "Namen der verfolgten Spieler müssen während der beginnenden Trance ausgesprochen "
+   "werden. Sobald sich die Verzauberung ergibt, erhalten die Jäger für die "
+   "Dauer des Zaubers stets wiederkehrende Benachrichtigungen über den Aufenthaltsort "
+   "des Spielers. Erfordert alle Klauen einer Kriipa-Tatze und die magischen "
+   "Energien des Zauberers müssen durch ein Prisma gebündelt werden."
+hunt_cold_trail = de "Dein Spur zu %s%s scheint kalt geworden zu sein."
+hunt_no_target = de \
+   "Du versuchst eine Spur zu finden, jedoch ohne jemand genaues kannst Du "
+   "nichts finden."
+hunt_target_is_dm = de \
+   "~IUnsterbliche hinterlassen keine Spur die hiermit verfolgt werden kann.  "
+   "Versuche ein anderes Ziel."
+hunt_is_on = de "~BDie Jagd ist eröffnet!"
+hunt_lost_trackers = de \
+   "Du scheinst es geschafft zu haben, die Spur zu verlieren!"
+hunt_gain_trackers = de "Du spürst, dass jemand weiß, wo Du bist..."
+hunt_must_be_murderer = de \
+   "Du spürst, dass das Ziel nicht gesetzeslos ist, und der Zauber schlägt "
+   "fehl."

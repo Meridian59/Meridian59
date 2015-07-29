@@ -1,0 +1,6 @@
+CaveOrc_Koc_name_rsc = de "utom"
+CaveOrc_name_rsc = de "Der Höhlenork"
+CaveOrc_desc_rsc = de \
+   "Dieser dreckige Ork-Soldat streift hungrig durch die Höhlen auf der Suche "
+   "nach Edelsteinen und Nahrung."
+CaveOrc_dead_name_rsc = de "toter Höhlenork"

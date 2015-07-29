@@ -1,0 +1,13 @@
+summonreflection_cast_rsc = de "Ein Spiegelbild von dir selbst erscheint."
+summonreflection_name_rsc = de "Spiegelbild"
+summonreflection_desc_rsc = de \
+   "Ruft eine Kreatur herbei, die ein Ebenbild Deiner selbst ist. Beachte, "
+   "dass Du für alle Taten Deiner Reflektion verantwortlich bist und dass "
+   "diese ausgesprochen schwer zu kontrollieren ist. Nimm Feuersand, Regenbogenfarne "
+   "und ungeschliffene Seraphyme dafür."
+summonreflection_failed_rsc = de \
+   "Es gibt schon zu viele Beschwörungszauber in diesem Raum."
+summonreflection_limit_rsc = de \
+   "Du hast bereits die maximale Anzahl an Spiegelbildern."
+reflection_cannot_cast_here = de \
+   "Es ist nicht erlaubt hier ein Spiegelbild zu zaubern."

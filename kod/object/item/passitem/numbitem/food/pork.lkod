@@ -1,0 +1,13 @@
+pork_name_rsc = de "Das Stück Schweinefleisch"
+pork_desc_rsc = de \
+   "Ein saftiges Stück Fleisch, langsam geröstet und mit etwas Apfelglasur "
+   "bestrichen."
+pork_name_plural_rsc = de "Schweinelendchen"
+pork_disp_name = de "Das gegrillte Schweinefilet"
+pork_disp_desc = de \
+   "Man sieht nicht mehr viele Wildschweine rund um Tos, wahrscheinlich seit "
+   "sie wissen, dass die Lieblingsspeise des Herzogs eine gute Portion goldbraun "
+   "gerösteten Schweinefleischs mit Apfelglasur ist."
+pork_got_one = de \
+   "Du schneidest Dir eine gute Portion vom apfelglasierten Schweinefleisch "
+   "ab."

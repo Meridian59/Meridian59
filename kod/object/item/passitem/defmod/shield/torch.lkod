@@ -1,0 +1,6 @@
+torch_name_rsc = de "Die Fackel"
+torch_desc_rsc = de \
+   "Ein Stück unverarbeitetes Holz mit einem öligen Lappen am oberen Ende. "
+   "Wenn die Fackel benutzt wird, spendet sie eine geringe Menge Licht."
+torch_dead_rsc = de \
+   "Die Fackel ist rußgeschwärzt und hat ihre beste Zeit lange hinter sich."

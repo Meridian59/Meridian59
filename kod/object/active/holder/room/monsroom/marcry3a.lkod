@@ -1,0 +1,5 @@
+room_name_mar_crypt3a = de "Die Bestätigung der Verlassenen"
+marcrypt3a_cant_pass = de "Deine Bemühungen bleiben ohne Erfolg."
+marcrypt3a_no_earthquake = de \
+   "Dieser Ort scheint zu instabil zu sein um ein Erdbeben zu verursachen."
+marcrypt3a_illegal_door = de "Böser Spieler. Keine Plätzchen für Dich!!!"

@@ -1,0 +1,28 @@
+% Quest description.
+kranquest_name_rsc = de "Kraanan disciple quest"
+kranquest_desc_rsc = de \
+   "Priestess Qerti'nya has asked you to slay %s%s. Return when you "
+   "have completed this task."
+
+kranquest_node_two_rsc = de \
+   "Return to Priestess Qerti'nya and let her know the task has been "
+   "completed."
+
+kranquest_completed = de \
+   "You have completed the Kraanan disciple quest.  You are a faithful "
+   "disciple of Kraanan, and Priestess Qerti'nya will now teach you more "
+   "powerful spells."
+
+% Quest resources.
+kraanandisciple_assign = de \
+   "`B`bDu hast zwei Stunden, um %MONSTER zu töten.  Geh jetzt!  Komme wieder "
+   "und gebe Bescheid wenn es erledigt wurde."
+kraanandisciple_success = de \
+   "`B`bDas hast Du gut gemacht. Du bist ein würdiger Anhänger.  Vielleicht "
+   "bist du es, der tden Stein von Kraanans Seele knackt.  Suche mich auf, "
+   "wenn Du mehr von seinen Wegen und Zaubern lernen willst."
+kraanandisciple_failure = de \
+   "Betreff: Die Schwäche Deines Herzens\nMir fehlt der Glaube in Deiner Fähigkeiten "
+   "um Kraanan zu dienen. Wir brauchen Menschen mit Entschlossenheit, Konzentration "
+   "und Geschicklichkeit.  Kehre zurück zu mir, wenn Du diese Dinge in Dir "
+   "trägst."

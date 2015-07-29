@@ -1,0 +1,27 @@
+% Quest description.
+chessqt_desc_rsc = de \
+   "You have been asked to courier a chess move."
+
+chessqt_nodetwo_rsc = de \
+   "%s%s is playing a game of chess with a friend, and would be grateful "
+   "if you could courier %s next move to %s opponent.  Do you accept?"
+
+chessqt_nodethree_rsc = de \
+   "Go to %s%s and tell %s that the next move in the chess game is \"%q\"."
+
+chessqt_nodefour_rsc = de \
+   "Go back to %s%s and tell %s that the next move in the "
+   "chess game is \"%q\"."
+
+% Quest resources.
+chess_assign_2 = de \
+   "Ich spiele eine Runde Schach mit einem Freund. Wärst Du bereit meinen "
+   "nächsten Zug meinem Gegner mitzuteilen?"
+chess_assign_3 = de \
+   "Wunderbar! Bitte sag %NPC mein nächster Zug lautet: %CARGO."
+chess_assign_4 = de \
+   "Ein interessanter Trick, aber leicht zu kontern.  Sag %NPC mein nächster "
+   "Zug ist %CARGO."
+chess_failure = de \
+   "Betreff:  Mein Schachzug\nDu kannst es vergessen meinen nächsten Zug weiterzugeben. "
+   "Ich habe schon einen anderen Kurier gefunden."

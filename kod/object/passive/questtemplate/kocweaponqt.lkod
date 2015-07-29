@@ -1,0 +1,55 @@
+% Quest description.
+kocweaponqt_name_rsc = de "Ko'catan weapon trade quest"
+kocweaponqt_desc_rsc = de \
+   "Make a delivery of arrows to the mainland."
+
+kocweaponqt_nodetwo_rsc = de \
+   "%s%s needs a guaranteed delivery made to the mainland.  This is "
+   "government business, so failure to deliver would be punished.  Will "
+   "you accept these terms?"
+
+kocweaponqt_nodethree_rsc = de \
+   "Deliver %i %s to %s%s, to supply %s faction troops.  Do not be tempted "
+   "to keep the supplies for yourself; thievery will be punished."
+
+kocweaponqt_completed_rsc = de \
+   "You have completed the Ko'catan weapon trade quest."
+
+% Quest resources.
+kocweapon_assign_2 = de \
+   "Ich brauche eine garantierte Zustellung zum Festland.  Es ist eine Regierungssache, "
+   "also würde ein Versagen dazu führen, dass Du ein Gesetzesloser wirst.  "
+   "Bist Du bereit diesen Bedingungen zu folgen?"
+kocweapon_assign_2_h = de \
+   "Ich brauche eine garantierte Zustellung zum Festland.  Es ist eine Regierungssache, "
+   "also würde ein Versagen zu einem Unglück führen.  Bist Du bereit diesen "
+   "Bedingungen zu folgen?"
+kocweapon_failure_2 = de \
+   "Betreff: Ich werde mir einen anderen Kurier suchen\nIch verstehe deine "
+   "Zurückhaltung, Dich auf so eine lange Reise zu begeben. Danke trotzdem."
+kocweapon_assign_3 = de \
+   "%NPC hat meine Dienste eingefordert für %HIMHER_NPC um die Fraktionstruppen "
+   "zu versorgen, aber bedauerlicherweise habe ich niemanden der die Lieferungen "
+   "an %HIMHER_NPC liefern kann. Hier sind die %INDEF_CARGO%CARGO die geliefert "
+   "werden müssen;  Ich bin mir sicher, dass %NPC Dich für Deine Mühen bezahlen "
+   "wird.  Denke daran, dass Du gesetzlich verpflichtet bist die Lieferung "
+   "zu liefern, und  Versagen führt dazu, dass du als Gesetzesloser deklariert "
+   "wirst.  Obowhl, aus irgendeinem Grund vertraue ich Dir."
+kocweapon_assign_3_h = de \
+   "%NPC hat meine Dienste eingefordert für %HIMHER_NPC um die Fraktionstruppen "
+   "zu versorgen, aber bedauerlicherweise habe ich niemanden der die Lieferungen "
+   "an %HIMHER_NPC liefern kann. Hier sind die %INDEF_CARGO%CARGO die geliefert "
+   "werden müssen;  Ich bin mir sicher, dass %NPC Dich für Deine Mühen bezahlen "
+   "wird.  Denke daran, dass Du gesetzlich verpflichtet bist die Lieferung "
+   "zu liefern, und  Versagen führt zu einem Unglück.  Obowhl, aus irgendeinem "
+   "Grund vertraue ich Dir."
+kocweapon_failure_3 = de \
+   "Betreff: Dieb!\nDein Diebstall macht Dich zu einem Gesetzeslosen durch "
+   "einen Erlass von %NPC."
+kocweapon_failure_3_h = de \
+   "Betreff: Dieb!\nDas Unglück durch Deine böse Tat wird Dich nun überall "
+   "hin verflogen."
+kocweapon_success_3 = de \
+   "Vielen Dank.  Dies ist aber nur die erste Lieferung von vielen.  Es könnte "
+   "zu einer guten Handelsbeziehung führen für die nächsten Jahre. Hier, "
+   "bitte %INDEF_CARGO%CARGO."

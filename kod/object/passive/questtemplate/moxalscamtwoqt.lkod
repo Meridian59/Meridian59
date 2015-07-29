@@ -1,0 +1,55 @@
+% Quest description.
+moxalscamtwoquest_name_rsc = de "Moxal's investment quest"
+moxalscamtwoquest_desc_rsc = de \
+   "Moxal ix'Hanak says he has a great idea, and has been trying to "
+   "convince people to fund it.  If you help him find a financier, he "
+   "will split the returns with both of you 50/50/50."
+
+moxalscamtwoquest_nodetwo_rsc = de \
+   "Moxal ix'Hanak says he has a great idea, and has been trying to "
+   "convince %s%s to fund it.  If you can convince %s, Moxal will split "
+   "the returns with both of you 50/50/50."
+
+moxalscamtwoquest_nodethree_rsc = de \
+   "%s%s says to tell Moxal %s is \"not interested\" in his idea."
+
+moxalscamtwoquest_nodefour_rsc = de \
+   "Moxal wants you to try again - let %s%s know just how lucrative "
+   "this investment will be!"
+
+moxalscamtwoquest_nodefive_rsc = de \
+   "%s%s seems pretty angry now, you should let Moxal know %s is "
+   "definitely \"not interested\"."
+
+moxalscamtwoquest_completed_rsc = de \
+   "You have completed Moxal ix'Hanak's investment scheme, however "
+   "his mark wasn't convinced.  You weren't rewarded, but you have "
+   "gained a little experience from this annoyingly tedious quest."
+
+% Quest resources.
+moxalscam2_assign_2 = de \
+   "Anfang letzter Woche hatte ich eine tolle Idee, und ich habe versucht "
+   "%NPC zu überzeugen mir zu helfen es zu finanzieren.  Schaum wenn Du %HIMHER_NPC "
+   "überzeugst, werde ich die Renditen mit euch beiden teilen 50/50/50."
+moxalscam2_failure = de \
+   "Betreff: Mein unberechenbarer Partner!\nMeine Güte!  Du musst mir nicht "
+   "helfen, aber Du hast mir gesagt Du würdest...  Ich meine, niemand hat "
+   "Dir dafür den Arm verdreht, oder?  Nun, komm wieder, wenn Dein Bauch "
+   "Dir sagt, dass es Zeit ist ernsthaft Schillinge zu machen."
+moxalscam2_assign_3 = de \
+   "Oh, Riija, lass mich raten.  Moxal hat Dich geschickt.  Nun, sag ihm "
+   "NOCHEINMAL, das interessiert mich nicht."
+moxalscam2_trigger_3 = de "nicht interessiert"
+moxalscam2_assign_4 = de \
+   "Jetzt, jetzt, jetzt. Vielleicht hast Du es nicht hart genug versucht.  "
+   "Versuch es noch einmal und erinnere %HIMHER_NPC an das Zehnfache - nein, "
+   "das Hundertfache - komm wieder."
+moxalscam2_assign_5 = de \
+   "MEINE GÜTE, WAS IST MIT EUCH LEUTEN LOS?  Schau, entweder Moxal ist ein "
+   "Dummkopf oder aber ein totaler Dieb. Ich habe noch nicht herausgefunden "
+   "was er ist, aber wer ihm Geld gibt ist ein absoluter Idiot.  Sag ihm, "
+   "ich bin NICHT INTERESSIERT."
+moxalscam2_success_5 = de \
+   "*-Seufz-*  Ah, nun, %SOURCE_NPC's Bauchgefühl war nicht stark genug, "
+   "denke ich.  Ich denke nicht, dass DU 100,000 Schillinge in ein geringfügig "
+   "Risikoreiches Geschäft investieren willst?"

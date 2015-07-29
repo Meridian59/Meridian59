@@ -1,0 +1,70 @@
+% Quest description.
+factioninsigniaquest_name_rsc = de "herald shield insignia quest"
+factioninsigniaquest_desc_rsc = de \
+   "Your liege will place its insignia on your shield, provided "
+   "you complete a \"mission\" for them."
+
+factioninsigniaquest_nodetwo_rsc = de \
+   "%s%s will place %s insignia on your herald shield, provided you "
+   "complete a \"mission\" for %s."
+
+factioninsigniaquest_nodethree_rsc = de \
+   "%s%s has asked you to go to %s and ask them about %s.  Return to "
+   "%s when you are done, and let %s know what %s has said to you."
+
+factioninsigniaquest_nodefour_rsc = de \
+   "When questioned, %s said \"%s\".  Return to %s and inform %s of "
+   "what was told to you."
+
+factioninsigniaquest_completed_rsc = de \
+   "You have received an insignia on your herald shield, which adds "
+   "more power to your spells when worn."
+
+% Quest resources.
+factioninsignia_trigger = de "Abzeichen"
+factioninsignia_assign_2 = de \
+   "Ich sehe, Du hast ein Schild mit Farben aber ohne Insignien.  Wenn du "
+   "Dich darum bemühst meine zu erhalten, habe ich einen Auftrag für Dich."
+factioninsignia_trigger_2 = de "Auftrag"
+factioninsignia_assign_3 = de \
+   "Mitten in diesem politischen Chaos, sind alle gegen mich.  Glücklicherweise "
+   "habe ich Spione an Ort und Stelle, die ein Auge auf Ihre Intrigen haben.  "
+   "Angeblich hat %NPC sich mit %CARGO beraten, und ich bin von Natus aus "
+   "ziemlich interessiert, von was auch immer dort gesprochen wurde.  Tu "
+   "mir einen Gefallen, erwähne den Namen zu unserem Freun %NPC, und wiederhole "
+   "für mich Wort für Wort was er Dir gesagt hat."
+factioninsignia_trigger_3a = de "Esseldi"
+factioninsignia_trigger_3b = de "Drex"
+factioninsignia_trigger_3c = de "Bei Naq"
+factioninsignia_trigger_3d = de "Zylill"
+factioninsignia_trigger_3e = de "Alzahakar"
+factioninsignia_trigger_3f = de "Priesterin Qertina"
+factioninsignia_trigger_3g = de "Priesterin Xiana"
+factioninsignia_trigger_3h = de "Jonas d’Accor"
+factioninsignia_failure_3 = de \
+   "Betreff: Insignien Mission\nMeine Enttäuschung ist groß.  Ich habe gedacht, "
+   "dass Du zuverlässiger bist als die Schläger und die unzuverlässigen Schweine.  "
+   "Offenbar bist Du sogar unter Ihnen."
+factioninsignia_assign_4 = de "%CARGO."
+factioninsignia_trigger_4a = de \
+   "Uh..... ich weiß wirklich nicht, von was Du redest."
+factioninsignia_trigger_4b = de \
+   "Ein herausragender Bürger, unser letztes gutes Gespräch ist eine Weile "
+   "her."
+factioninsignia_trigger_4c = de \
+   "Ah, ja!  Wir haben uns gerade darüber unterhalten welch gute Arbeit die "
+   "Prinzessin macht."
+factioninsignia_trigger_4d = de \
+   "Ah, ja!  Wir haben uns gerade darüber unterhalten welch gute Arbeit der "
+   "Herzog macht."
+factioninsignia_trigger_4e = de \
+   "Der Trottel hat alles genommen, was ich im Spiel von Zoxila besessen "
+   "habe."
+factioninsignia_trigger_4f = de "Wer? Der Name ist mir nicht bekannt."
+factioninsignia_success_4 = de \
+   "Hmmm, faszinierend. Ich werde meine Spione weiter um Hellsicht bitten "
+   "aber, Deine  Informationen haben Einblick in das gegeben was ich wollte.  "
+   "Hier, bitte akzeptiere meine Insignien als Zeichen meiner Wertschätzung."
+factioninsignia_failure_4 = de \
+   "Betreff: Insignien Mission\nIch fürchte, dass Du hast in dem kleinen Test "
+   "versagt. Wie wir erwartet haben ist Deine Loyalität fraglich."

@@ -1,0 +1,42 @@
+% Quest description.
+necrowarnevilqt_name_rsc = de "necromancer warning quest"
+necrowarnevilqt_desc_rsc = de \
+   "Maleval has information about a dark power coming to these lands.  "
+   "Help him spread the word of the coming darkness."
+
+necrowarnevilqt_nodetwo_rsc = de \
+   "Maleval has information about a dark power coming to these lands.  "
+   "Help him spread the word of the coming darkness by delivering a letter "
+   "to %s%s for him.  If you fail to deliver the letter, Maleval promises "
+   "to make you suffer."
+necrowarnevilqt_nodethree_rsc = de \
+   "%s%s thought nothing of the warning.  Return to Maleval and let him "
+   "know you have delivered the letter."
+
+necrowarnevilqt_completed_rsc = de \
+   "You have completed the necromancer warning quest."
+
+% Quest resources.
+necrowarning_assign_2 = de \
+   "Ja, ich habe Bedarf an einem Boten.  Es scheint eine neue Macht im Land "
+   "zu sein, oder eher eine sehr alte Macht, voller Dunkelheit.  Vielleicht "
+   "bekommen diese Dummköpfe in den Tempeln endlich, was sie für Ihre Arroganz "
+   "verdienen.  Wie können sie denken, dass ihre Götter die einzigen Götter "
+   "sind?  Ich hoffe, dieser Brief beschleunigt, das Unvermeidliche.  Bringe "
+   "ihn zu %NPC und komme zurück zu mir für... Deine Belohnung.  Versage "
+   "und Du wirst leiden."
+necrowarning_success_2 = de \
+   "Du warst ein Werkzeug für ein verdorbene Person.  Ich habe es von ihm "
+   "erwartet, aber es gibt keine Entschuldigung für Deine Verdorbenheit.  "
+   "Kannst Du nicht einen besseren Sponsor für deinen Enthusiasmus finden?  "
+   "Nun, scheinbar nicht."
+necrowarning_failure_2 = de \
+   "Betreff: Mein Brief\nSo, Du würdest mit mir spielen.  Deine Frechheit "
+   "ist entweder die Handlung eines Narren oder eines Feiglings.  So oder "
+   "so, Du solltest hoffen, dass wir uns nie wieder treffen.  Bitte akzeptiere "
+   "diesen Fluch als ein Zeichen meiner Missgunst."
+necrowarning_success_3 = de \
+   "Ich nehme an, Du bist zurückgekehrt um Deine Belohnung einzufordern.  "
+   "In Wirklichkeit, ist Dein Lohn das Wissen, dass Du die Nachricht abgeliefert "
+   "hast, aber... Ich verstehe, dass ihr Leute es wünscht eine er matierielle "
+   "Belohnung zu erhalten. Also, hier ist sie."

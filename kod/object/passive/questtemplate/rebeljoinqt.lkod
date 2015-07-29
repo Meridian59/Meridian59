@@ -1,0 +1,26 @@
+% Quest description.
+rebeljoin_name_rsc = de "rebel join faction quest"
+rebeljoin_desc_rsc = de \
+   "Before Jonas D'Accor will let you join his ranks, he must be convinced "
+   "you are not a spy. Bring him an item, and you will gain his trust."
+
+rebeljoin_deliver_rsc = de \
+   "Before Jonas D'Accor will let you join his ranks, he must be convinced "
+   "you are not a spy. Bring him %s%s, and you will gain his trust."
+
+rebeljoin_completed = de \
+   "You have earnt the trust of Jonas D'Accor, and are now a member "
+   "of his faction."
+
+% Quest resources.
+rebel_join2_assign = de \
+   "Du willst Dich unserem Kampf für die Freiheit anschließen?  Ich kann "
+   "Dir nicht vertrauen, denn Du könntest ein Spion sein. Beweise Deinen "
+   "Wert und bringe mir %INDEF_CARGO%CARGO."
+rebel_join2_success = de \
+   "Ausgezeichnete Arbeit! Das wird den Truppen im Kampf helfen.  Beachte, "
+   "dass Du auch einer der Freiheitskämpfer bist."
+rebel_join2_failure = de \
+   "Betreff: Deine fehlenden Taten.\nDeine fehlenden Taten mögen meine Ängste "
+   "bestätigen, dass Du ein Spion bist. Störe mich nicht noch einmal, mit "
+   "deinen falschen Ansichten für den Kampf der Freiheit."

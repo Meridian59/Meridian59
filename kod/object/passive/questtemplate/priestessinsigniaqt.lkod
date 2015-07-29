@@ -1,0 +1,35 @@
+% Quest description.
+priestessinsigniaquest_name_rsc = de "herald shield insignia quest"
+priestessinsigniaquest_desc_rsc = de \
+   "The priestess will place their insignia on your shield, provided "
+   "you offer them a \"tithe\"."
+
+priestessinsigniaquest_nodetwo_rsc = de \
+   "%s%s will place %s insignia on your herald shield, provided you "
+   "offer %s a \"tithe\"."
+priestessinsigniaquest_nodethree_rsc = de \
+   "%s%s is interested in magical reagents from Ko'catan - if you bring "
+   "%s %i %s, %s will place an insignia on your herald shield.  You "
+   "should equip the shield you would like the insignia on, if you have "
+   "more than one in your inventory."
+
+priestessinsigniaquest_completed_rsc = de \
+   "You have received an insignia on your herald shield, which adds "
+   "more power to your spells when worn."
+
+% Quest resources.
+priestessinsignia_trigger = de "Abzeichen"
+priestessinsignia_assign_2 = de \
+   "~IIch sehe Du hast ein unsigniertes Schild.  Ich wäre gerne dazu bereit, "
+   "meine Insignien an einen mutigen Magier anzubieten, wenn Du mir dafür "
+   "Zehnter zahlst.~I"
+priestessinsignia_trigger_2 = de "Zehnter"
+priestessinsignia_assign_3 = de \
+   "~IIch habe von einen Weg in einer andere Welt gehört.  Ich bin interessiert "
+   "an den magischen Reagenzien des Landes - Vielleicht entstehen sie durch "
+   "Magie. Geh und finde %CARGO.~I"
+priestessinsignia_success_3 = de \
+   "~IWunderbar.  Mein ewiger Dank für Ihre Mühen.~I"
+priestessinsignia_failure_3 = de \
+   "Betreff: Insignien\nIch habe viel besser über Dich gedacht. Ich werde "
+   "in der Zukunft nach einem besseren Kreuzfahrer ausschau halten."

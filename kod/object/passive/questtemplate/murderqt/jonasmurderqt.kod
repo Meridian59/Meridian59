@@ -32,7 +32,6 @@ resources:
    include jonasmurderqt.lkod
 
    % Quest description.
-   % Quest description.
    jonasmurderqt_name_rsc = "Jonas murder mystery quest"
    jonasmurderqt_desc_rsc = \
       "Jonas D'Accor would like you to question people regarding the "

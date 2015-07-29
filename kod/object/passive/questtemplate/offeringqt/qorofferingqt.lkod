@@ -1,0 +1,33 @@
+% Quest description.
+qorofferingqt_name_rsc = de "Qor offering quest"
+qorofferingqt_desc_rsc = de \
+   "Priestess Zuxana has invited you to chant with her, to give strength "
+   "to your Mistress."
+
+qorofferingqt_completed = de \
+   "You have given part of your life essence in order to strengthen "
+   "your Mistress.  In return, you have received a powerful magical "
+   "item.  When placed at one of the Shrines located around the "
+   "world, the Shrine will be dedicated to Qor and her spells "
+   "will have more power."
+
+% Quest resources.
+qoroffering_assign_2 = de \
+   "`r%NAME, dunkler Anhänger unserer Herrin. Wirst du Dich selber aufgeben, "
+   "damit unsere Herrin stärker werden kann?"
+qoroffering_assign_3 = de \
+   "`rDann bete mit mir.  Zusammen werden wir unsere eigene Lebenskraft aufgeben, "
+   "als Symbol für die Kraft unserer Herrin.  Selten stehen die Sterne so "
+   "günstig wie heute, um das dunkle Ritual auszuüben. Also lass uns schnell "
+   "sprechen. Spreche diese Worte mit mir: %CARGO"
+qoroffering_trigger_3 = de \
+   "Beim Licht eines blutigen Mondes, rufe ich Euch, Qor, Meisterin der Dunkelheit"
+qoroffering_failure_3 = de \
+   "Betreff: Narr!\nDas Zeitfenster ist abgelaufen. Nun werden wir beide leiden "
+   "für Dein Zögern.  Das Ritual hatte begonnen und wurde nicht beendet. "
+   "Dadurch wurde uns ein Teil unserer Macht entzogen.  ich bin nicht zufrieden "
+   "mit Dir, Wurm."
+qoroffering_assign_4 = de "`r%CARGO!"
+qoroffering_success_5 = de \
+   "`rAh, das ist ein großer Tag für Qor!  Geh nun und trage die Kraft unserer "
+   "Herrin mit in die ganze Welt!"

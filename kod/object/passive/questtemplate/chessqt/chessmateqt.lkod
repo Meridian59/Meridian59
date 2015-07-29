@@ -1,0 +1,20 @@
+% Quest description.
+chessmatequest_name_rsc = de "chess move courier quest"
+
+chessmatequest_nodefive_rsc = de \
+   "%s%s has fallen into %s%s's trap!  Go and tell %s that %s%s's next "
+   "move is \"%q\"."
+
+chessmatequest_completed_rsc = de \
+   "You have completed a chess move courier quest, and helped the "
+   "players finish a game!"
+
+% Quest resources.
+chess_checkmate_assign_5 = de \
+   "Ha!  %NPC ist mir direkt in die Falle gelaufen!  Sag %HIMHER_NPC mein "
+   "nächster Zug ist %CARGO.  Oh, uns sag %HIMHER_NPC das er Schachmatt ist."
+chess_checkmate_success_5 = de \
+   "Oh.  Ja, das hätte ich sehen können.  Ah, gut. Danke, dass Du uns als "
+   "Kurier geholfen hast.  Laut Vereinbarung mit %SOURCE_NPC, muss ich die "
+   "Gebühren für den Kurier bezahlen. Bitte nimm dies als Belohnung für deine "
+   "Mühen."

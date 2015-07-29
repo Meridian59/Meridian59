@@ -1,0 +1,31 @@
+% Quest description.
+dukeloyalty_name_rsc = de "Duke loyalty quest"
+dukeloyalty_desc_rsc = de \
+   "Duke Akardius has commanded you to collect taxes for him.  Return "
+   "quickly with the full amount."
+
+dukeloyalty_collect_rsc = de \
+   "Duke Akardius has commanded you to collect taxes from %s.  Return "
+   "quickly with the full amount."
+
+dukeloyalty_return_rsc = de \
+   "Return to Duke Akardius and give him the %i shillings in taxes."
+
+dukeloyalty_completed = de \
+   "You have carried out the Duke's task, and remain in his favor."
+
+% Quest resources.
+duke_standard2_assign = de \
+   "Ah, %NAME, mein treuer Diener.  Ich brauche Dich um alle Steuern von "
+   "%NPC einzutreiben.  Kehre zurück innerhalb einer Stunde."
+duke_standard2_failure = de \
+   "Betreff: Steuereintreibung\nIch konnte nicht länger auf Dich warten und "
+   "habe jemand anderes geschickt."
+duke_standard2_trigger = de "Steuer"
+duke_standard3_assign = de \
+   "Oh ja, meine Steuergelder für den Herzog...  Hier sind sie, %INDEF_CARGO%CARGO."
+duke_standard3_success = de "das hast Du gut gemacht."
+duke_standard3_failure = de \
+   "Betreff: Deine Mitgliedschaft in meiner Fraktion wurde widerrufen\nDu "
+   "hast versagt.  Ich werde in der nächsten Zeit nicht noch einmal so doof "
+   "sein und auf Dich vertrauen."

@@ -1,0 +1,19 @@
+% Quest description.
+princessjoin_name_rsc = de "Princess join faction quest"
+princessjoin_desc_rsc = de \
+   "Princess Kateriina has asked you to deliver a letter for her, to prove "
+   "yourself worthy of her trust."
+
+princessjoin_deliver_rsc = de \
+   "Princess Kateriina has requested that you deliver a letter to %s, to "
+   "prove yourself worthy of her trust."
+
+princessjoin_completed = de \
+   "You have proven your loyalty to the crown, and are now a trusted "
+   "servant of Princess Kateriina."
+
+% Quest resources.
+princess_join2_assign = de \
+   "Also, Du willst Dich beweisen um mein Vertrauen zu erlangen?  Würdest "
+   "Du so freundlich sein und diesen offiziellen Brief zu %NPC bringen?  "
+   "Ich wäre Dir sehr dankbar."

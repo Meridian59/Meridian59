@@ -1,0 +1,22 @@
+% Quest description.
+dukejoin_name_rsc = de "Duke join faction quest"
+dukejoin_desc_rsc = de \
+   "Duke Akardius has asked you to bring him an item, to prove yourself "
+   "worthy of his trust."
+
+dukejoin_deliver_rsc = de \
+   "Duke Akardius has asked you to bring him %s%s, to prove yourself "
+   "worthy of his trust."
+
+dukejoin_completed = de \
+   "You have earnt the trust of Duke Akardius, and are now a member "
+
+% Quest resources.
+duke_join2_assign = de \
+   "So, Du möchtest gerne beweisen, dass Du mein Vertrauen wert bist? Du "
+   "kannst damit anfangen, indem Du mir folgendes bringst: %INDEF_CARGO%CARGO."
+duke_join2_success = de \
+   "Ah, gute Arbeit. Deine Dienste für die Sache wird nicht unbemerkt bleiben."
+duke_join2_failure = de \
+   "Betreff: Es ist Dir nicht gestattet uns beizutreten, Knecht!\nHah!  Du "
+   "bist nicht treu genug um Dich uns anzuschließen!"

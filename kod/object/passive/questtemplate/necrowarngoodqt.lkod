@@ -1,0 +1,38 @@
+% Quest description.
+necrowarngoodqt_name_rsc = de "necromancer warning quest"
+necrowarngoodqt_desc_rsc = de \
+   "Parrin Aragone says he has urgent information regarding necromancers "
+   "coming to the lands."
+
+necrowarngoodqt_nodetwo_rsc = de \
+   "Parrin Aragone says he has urgent information regarding necromancers "
+   "coming to the lands.  Help him warn others by delivering a letter "
+   "to %s%s."
+necrowarngoodqt_nodethree_rsc = de \
+   "%s%s thought nothing of the warning.  Return to Parrin Aragone and "
+   "let him know you have delivered the letter."
+
+necrowarngoodqt_completed_rsc = de \
+   "You have completed the necromancer warning quest."
+
+% Quest resources.
+necrowarning2_assign_2 = de \
+   "Ich habe Nachrichten von größter Wichtigkeit.  Meine Reisen haben mich "
+   "an viele Orte geführt, und ich habe viele merkwürdige Dinge gesehen aber "
+   "nichts ist so gefährlich wie die abscheulichen Nekromanten.  Bitte bringe "
+   "diesen Brief schnell zu %NPC.  Meiner Meinung nach, bedrohen diese Kreaturen "
+   "alle in Meridian Sie kommen aus einer Kraft, die älter ist als unsere "
+   "Götter, obwohl die Mächte miteinander verknüpft sein mögen"
+necrowarning2_success_2 = de \
+   "Du bringst mir die Flüche einer armen Seele mit verdorbenem Gehirn?  "
+   "Ich habe wichtigere Anliegen im Moment.  Geh mir aus den Augen, da habe "
+   "ich nichts zu sagen."
+necrowarning2_failure_2 = de \
+   "Betreff: Mein Brief\nDu hast versagt, Deinen Freunden und den Menschen "
+   "von Meridian ein langes Leben zu schenken.  Sie sind verdammt,  wegen "
+   "der nahenden Existenz von schrecklicher Bosheit. Und Du wolltest sie "
+   "nicht mal warnen?  Dein Versagen wird wird Leben kosten. Ich hoffe Du "
+   "kannst damit leben."
+necrowarning2_success_3 = de \
+   "Sie hört nicht, aber egal.  Sie wurde gewarnt.  Danke Dir, treue Seele.  "
+   "Nimm dies als Belohung für den Dienst für die Menschen von Meridian."

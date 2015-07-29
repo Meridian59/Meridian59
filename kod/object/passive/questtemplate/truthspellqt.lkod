@@ -1,0 +1,52 @@
+% Quest description.
+truthspellquest_name_rsc = de "Jala pupil quest"
+truthspellquest_desc_rsc = de \
+   "Parrin Aragone will teach you the songs of Jala, but first you "
+   "must prove your devotion to the arts. He has sent you to sing a "
+   "song, to try out your voice."
+
+truthspellquest_nodetwo_rsc = de \
+   "Parrin Aragone will teach you the songs of Jala, but first you "
+   "must prove your devotion to the arts. You must sing a song for "
+   "%s, which you can do using the \"emote\" command."
+truthspellquest_nodethree_rsc = de \
+   "Return to Parrin and let him know how your performance went."
+truthspellquest_nodefour_rsc = de \
+   "Tell Parrin how your performance went."
+
+truthspellquest_completed = de \
+   "You have completed Parrin's pupil quest.  Parrin will now "
+   "teach you the songs of Jala."
+
+% Quest resources.
+truthquest_trigger_1 = de "Schüler"
+truthquest_trigger_2 = de "singt"
+truthquest_assign_2 = de \
+   "Bist Du wirklich bereit die Magie der Lieder von Jala zu lernen?  Du "
+   "musst dich erst Deine Hingabe für die Künste beweisen.  Ich möchte, dass "
+   "Du Deine Stimme versuchst.  Gehe zu %NPC und ~Ising~I ein Lied.  Such "
+   "Dir einfach ein Lied aus.  Danach komm zurück zu mir und berichte wie "
+   "was gelaufen ist."
+truthquest_success_2 = de \
+   "Oh mein Gott, das ist schrecklich.  Hat Parrin Dich geschickt?  Sag ihm "
+   "er soll Deine Stimme trainieren, %NAME"
+truthquest_failure_2 = de \
+   "Betreff: Dein Vorsingen\nWenn Du zu schüchtern bist, ein einfaches Lied "
+   "zu singen, dann fürchte ich wirst Du nie ein guter Musiker werden.  Ich "
+   "fürchte, ich kann Dir den Zauber von Jala derzeit nicht beibringen..\n\n-Parrin "
+   "Aragone"
+truthquest_failure_3 = de \
+   "Betreff: Dein Vorsingen\nWo warst Du?  Ich konnte nicht noch länger auf "
+   "Dich warten.  Ich habe daher einen anderen Schüler genommen.  Vielleicht "
+   "werde ich Dich zu einem späteren Zeitpunkt unterrichten.\n\n-Parrin Aragone"
+truthquest_trigger_4 = de "schlecht schrecklich"
+truthquest_assign_4 = de \
+   "Ah, Du bist zurückgekehrt.  Was haben sie über Deine Lied gesagt?  Gut "
+   "oder schlecht?"
+truthquest_success_4 = de \
+   "Naja, wir werden daran arbeiten.  Nun öffne Deinen Verstand für die Wege "
+   "Jalas;  Ich sollte Deine Stimme trainieren, wenn Du bereit dazu bist."
+truthquest_failure_4 = de \
+   "Betreff: Dein Vorsingen\nDu musst ehrlicher zu Dir selbst sein um Deine "
+   "Fähigkeiten einzuschätzen, wenn ich Dir die Lehren Jalas unterrichten "
+   "soll."

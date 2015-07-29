@@ -1,0 +1,63 @@
+% Quest description.
+stunteddwarfquest_name_rsc = de "stunted dwarf quest"
+stunteddwarfquest_desc_rsc = de \
+   "You overheard the bartender mention something about a stunted dwarf.  "
+   "See if you can find out more about this."
+
+stunteddwarfquest_nodetwo_rsc = de \
+   "%s mentioned something about a stunted dwarf.  This sounds "
+   "interesting - you should find out more."
+
+stunteddwarfquest_nodethree_rsc = de \
+   "%s said that %s knows about the stunted dwarf recipe.  Go to "
+   "%s and ask %s about it."
+
+stunteddwarfquest_nodefour_rsc = de \
+   "%s told you that the stunted dwarf recipe is just a myth.  "
+   "Return to %s and see if %s has anything to say about it."
+
+stunteddwarfquest_nodefive_rsc = de \
+   "Ask around and see if anyone knows more about this \"stunted dwarf\"."
+
+stunteddwarfquest_nodesix_kill_rsc = de \
+   "%s will give you a recipe for the stunted dwarf drink, but first "
+   "you must kill a kriipa to prove you can handle it.  Kill a kriipa "
+   "and then return to %s."
+
+stunteddwarfquest_nodesix_return_rsc = de \
+   "Return to %s and let them know you have succeeded in "
+   "killing the kriipa."
+
+stunteddwarfquest_nodeseven_rsc = de \
+   "You have the recipe!  Return to %s and give it to %s."
+
+stunteddwarfquest_completed_rsc = de \
+   "You have completed the stunted dwarf quest."
+
+% Quest resources.
+stunteddwarf_trigger = de "Verkümmerter Zwerg"
+stunteddwarf_assign_2 = de \
+   "Heißer Tag heute, mh? Sicher, es wäre ein großartiger Tag für einen verkümmerter "
+   "Zwerg."
+stunteddwarf_assign_3 = de \
+   "Ah, ein altes Getränk. Eigentlich ist das Rezept verloren gegangen, obwohl "
+   "ich hörte, dass %NPC davon wissen könnte."
+stunteddwarf_trigger_4 = de "Mythos"
+stunteddwarf_assign_4 = de \
+   "Verkümmerter Zwerg?  Ha!  Das ist nur ein Mythos, sag %HIMHER_NPC, dass "
+   "ich das gesagt habe!"
+stunteddwarf_success_4 = de \
+   "Ah, gut. Wenn Du jemals jemanden über einen verkümmerter Zwerg sprechen "
+   "hörst, versuche herauszufinden, was Du kannst."
+stunteddwarf_assign_6 = de \
+   "Ah, Du brauchst ein Rezept, für Deine Gartenausstellung der Zwerge, mh?  "
+   "Ich sag Dir mal was.  Beweise mir, dass Du mutig genug bist einen zu "
+   "trinken. Geh und töte eine Kriipa."
+stunteddwarf_success_6 = de "Guter Job, %NAME.  Nimm dieses Rezept."
+stunteddwarf_failure_6 = de \
+   "Betreff: Verkümmerter Zwerg\nWie ich sehe, hast Du klugerweise vergessen "
+   "einen verkümmerter Zwerg haben zu wollen.  Es ist, nach all dem, kein "
+   "Getränk für schwache Nerven und schwache Mägen."
+stunteddwarf_success_7 = de \
+   "Bemerkenswert! Du musst ein dauerhafter sein, %NAME.  Ich muss Dir etwas "
+   "geben,  als Gegenleistung."

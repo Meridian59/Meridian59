@@ -1,0 +1,75 @@
+% Quest description.
+jalanecklaceqt_name_rsc = de "Jala necklace quest"
+jalanecklaceqt_desc_rsc = de \
+   "Help an NPC identify a potion."
+
+jalanecklaceqt_nodetwo_rsc = de \
+   "Go and ask Moxal ix'Hanak about the \"necklace\"."
+jalanecklaceqt_nodethree_rsc = de \
+   "Moxal ix'Hanak will give you the necklace, but first he wants to make "
+   "some profit from you.  Go to %s%s and ask %s if some \"entertainment\" "
+   "would please %s."
+jalanecklaceqt_nodefour_rsc = de \
+   "%s%s does not trust Moxal.  Go and ask %s%s about Moxal's \"proposal\"."
+jalanecklaceqt_nodefive_rsc = de \
+   "%s%s says to tell %s%s to just let you \"sing\" for %s."
+jalanecklaceqt_nodesix_rsc = de \
+   "%s%s wants you to play a song, and then give %s your lute."
+jalanecklaceqt_nodeseven_rsc = de \
+   "Go back to Moxal ix'Hanak and let him know you were successful."
+jalanecklaceqt_completed_rsc = de \
+   "You have completed the Jala neckace quest."
+
+% Quest resources.
+jala_necklace_trigger = de "Kette"
+jala_necklace_assign_1 = de \
+   "Eine Kette von Jala?  Ich habe über so ein schönes Teil gehört, obwohl "
+   "ich leider keine davon besitze.  Gerücht ist das %NPC in letzter Zeit "
+   "damit geprahlt hat.  Vielleicht solltest Du zu %HIMHER_NPC gehen und "
+   "ihn nach der Kette fragen?"
+jala_necklace_assign_2 = de \
+   "Ja! ICh bin froh Dich zu sehen, mein Freund. Siehst Du, ich habe die "
+   "beste Welt! Du singst, richtig?  Wieso fragst Du nicht %NPC ob ihm ein "
+   "wenig ~IUnterhaltung~I gefällt %HIMHER_NPC?  Ich würde als Dein Agent "
+   "handeln und wir können die Gewinne fair teilen.  Oh, und ich würde Dir "
+   "auch die gewünschte Kette geben."
+jala_necklace_trigger_2 = de "Unterhaltung"
+jala_necklace_assign_3 = de \
+   "Du singst hier?  HA!  Es gibt keinen Grund dem Idioten Moxal zu trauen.  "
+   "Geh und sprich mit %NPC und frag %HIMHER_NPC über den ~IVorschlag~I von "
+   "Moxal."
+jala_necklace_trigger_3 = de "Vorschlag"
+jala_necklace_assign_4 = de \
+   "Warum hat %NPC Dich hier her geschickt?  Sag %HIMHER_NPC aufzuhören dumm "
+   "zu sein und Dich ~Isingen~I zu lassen."
+jala_necklace_trigger_4 = de "singen"
+jala_necklace_assign_5 = de \
+   "Fein.  Geh und hol Dir Dein %CARGO und spiel ein Lied, dann gib mir das "
+   "%CARGO."
+jala_necklace_assign_6 = de \
+   "Fantastisch!  Nach dieser Leistung werden die Leute mir gutes Geld bezahlen, "
+   "für eine Laute von solch einem berühmten Barden.  Geh und sag %NPC, das "
+   "Du es gut gemacht hast."
+jala_necklace_success = de \
+   "Endlich fertig?  Die Zahlung war geringer als ich erwartet habe. Somit "
+   "muss ich es komplett behalten um meine Ausgaben zu decken.  Aber hier "
+   "ist die Kette, die ich Dir versprochen habe. Komm bald wieder!"
+jala_necklace_failure_1 = de \
+   "Bist Du verloren gegangen?  Ich wusste nicht, dass %NPC auf der Insel "
+   "lebt?"
+jala_necklace_failure_2 = de \
+   "Oh, man!  Du bist nicht rechtzeitig zur Show hier gewesen!  %NPC sagte "
+   "mir, dass eine andere Unterhaltung angeordnet wurde."
+jala_necklace_failure_3 = de \
+   "Ich wusste, das es eine weitere Betrügerei von Moxal war. Lass Dich nicht "
+   "mit ihm ein das nächste mal."
+jala_necklace_failure_4 = de \
+   "Hast du Deine Nerven verloren?  Du musst nur aufstehen zu %NPC das nächste "
+   "mal!"
+jala_necklace_failure_5 = de \
+   "Nicht interessiert?  Fein, ich werde jemanden anderes finden, der interessiert "
+   "ist."
+jala_necklace_failure_6 = de \
+   "Du hast Moxal nicht besucht?  Ich hörte, er hat gelacht darüber, was "
+   "für einen Lutscher er gefunden hatte.  Erwarte, dass er Dich beim nächsten "
+   "mal wieder vereppeln will!"

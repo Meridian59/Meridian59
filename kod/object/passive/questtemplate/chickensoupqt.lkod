@@ -1,0 +1,36 @@
+% Quest description.
+chickensoupquest_name_rsc = de "chicken soup quest"
+chickensoupquest_desc_rsc = de \
+   "Go to Widow Qesino and ask for some warm chicken soup for NPC."
+
+chickensoupquest_nodetwo_rsc = de \
+   "%s is feeling sick, and has asked if you could go to Widow Qesino "
+   "and ask for a bowl of her special chicken soup."
+
+chickensoupquest_return_rsc = de \
+   "Return to %s and give %s the chicken soup."
+
+chickensoupquest_completed = de \
+   "You have completed the chicken soup quest, and received a reward "
+   "for your generosity."
+
+% Quest resources.
+chickensoupquest_trigger_2 = de "Hühnersuppe"
+chickensoupquest_assign_2 = de \
+   "Ich fühle mich ein wenig krank.  Ich gehe nicht davon aus, dass Du Witwe "
+   "Qesino für mich aufsuchen würdest, und sie fragst ob sie eine Schüssel "
+   "Ihrer speziellen Hühnersuppe für mich hat?  Ich wäre Dir sehr dankbar."
+chickensoupquest_failure_2 = de \
+   "Betreff: Hühnersuppe\nOh, gut... ich denke, Du hast besseres zu tun als "
+   "mir zu helfen.  Ist schon okay, ich werde meine  Erkältung auch so los."
+chickensoupquest_assign_3 = de \
+   "Oh, natürlich! Hier ist eine Schüssel mit meiner speziellen Hühnersuppe "
+   "für %NPC.  Wünsche %HIMHER_NPC gute Besserung von mir."
+chickensoupquest_success_3 = de \
+   "Vielen Dank, ich fühle mich schon viel besser, alleine bei dem Geruch "
+   "dieser köstlichen Suppe!  Hier, nimm dies %PRIZE als ein Zeichen meiner "
+   "Wertschätzung."
+chickensoupquest_failure_3 = de \
+   "Betreff: %NPC's Erkältung\nDu hast die Schüssel mit der Hühnersuppe selber "
+   "gegessen, oder?  Schande über Dich, %NAME!  %NPC ist weiterhin krank, "
+   "armer Wicht."

@@ -1,0 +1,27 @@
+questtemplate_name_rsc = de "default quest"
+questtemplate_desc_rsc = de "Initial default quest description."
+
+% Resources for making the timer part of description.
+questtemplate_time_header = de \
+   "\n\nYou have %r%r%r%r%r%r%r remaining to complete this quest."
+questtemplate_time_header_complete = de \
+   "\n\nYou can complete this quest again in %r%r%r%r%r%r%r."
+questtemplate_outoftime_rsc = de \
+   "\n\nYou are almost out of time!"
+
+questtemplate_master_time_rsc = de "%r%r"
+
+letter_trigger = de "Kurier"
+chess_trigger = de "Ja"
+duke_join1_trigger = de "beitreten"
+duke_standard1_trigger = de "Loyalität"
+disciple_trigger = de "Anhänger"
+disciple_learn_success = de "~ISo, Du möchtest also bei mir studieren?~I"
+disciple_assign = de \
+   "~IDu musst Dich erst beweisen, bevor Du weiter Fortschritte machen kannst.  "
+   "Bringe mir %CARGO.~I"
+disciple_success = de \
+   "~IDu hast Dich bewährt, mein Zögling. Du kannst jetzt weiter lernen.~I"
+disciple_failure = de \
+   "Wie es scheint, brauchst Du noch mehr Erfahrung, bevor ich Dich als Schüler "
+   "akzeptieren kann. Du solltest es demnächst mal wieder versuchen."

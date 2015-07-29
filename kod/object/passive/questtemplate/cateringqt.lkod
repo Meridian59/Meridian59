@@ -1,0 +1,53 @@
+% Quest description.
+cateringqt_name_rsc = de "catering quest"
+cateringqt_desc_rsc = de \
+   "An NPC is looking for help delivering food for a party."
+
+cateringqt_nodetwo_rsc = de \
+   "%s%s is having a private party and %s errand boy is ill.  %s would "
+   "like you to help %s out by delivering the food.  %s%s is catering the "
+   "party, go to %s and ask about the \"catering assignment\".  You will "
+   "be rewarded on delivery."
+cateringqt_nodethree_rsc = de \
+   "Bring %i %s to %s%s, who is responsible for setting up the party.  "
+   "Don't be tempted to take any for yourself, lest you be punished "
+   "for your thievery!"
+
+cateringqt_completed_rsc = de \
+   "You have completed the catering quest."
+
+% Quest resources.
+catering_assign_2 = de \
+   "Vielleicht kannst Du mir helfen. Ich habe eine private Party und mein "
+   "Laufbursche ist krank geworden.  Würdest Du mir helfen die Lebensmittel "
+   "zu anzuliefern?  %NPC veranstelte die Party, und weiß wo das Essen hingehen "
+   "muss, frag einfach, %HIMHER_NPC nach den Details.  Du wirst reichlich "
+   "belohnt, wenn die Anlieferung abgeschlossen ist. Bitte beeile Dich."
+catering_failure_2 = de \
+   "Betreff: Catering\nIch habe einen anderen Laufburschen gefunden."
+catering_trigger_2 = de "Catering"
+catering_assign_3 = de \
+   "Ja, die Party!  Ich war schon besorgt, dass niemand auftauchen würde!  "
+   "Hier ist das Essen, %INDEF_CARGO%CARGO.  Bitte bringe es zu %NPC, die "
+   "Vorbereitung für die Party wird gemacht von %HIMHER_NPC.  Bitte verliere "
+   "nicht den Überblick über das Essen. Dieser Job ist sehr wichtig für mich.  "
+   "Sollte die Lieferung %NPC nicht erreichen, bin ich gezwungen dem Gericht "
+   "den Diebstahl mitzuteilen.  Ich bin mir sicher, das wird nicht nötig "
+   "sein."
+catering_assign_3_h = de \
+   "Ja, die Party!  Ich war schon besorgt, dass niemand auftauchen würde!  "
+   "Hier ist das Essen,  %INDEF_CARGO%CARGO.  Bitte bringe es zu %NPC, die "
+   "Vorbereitung für die Party wird gemacht von %HIMHER_NPC.  Bitte verliere "
+   "nicht den Überblick über das Essen. Dieser Job ist sehr wichtig für mich.  "
+   "Sollte die Lieferung %NPC nicht erreichen, werde ich mit einem befreundeten "
+   "Zauberer sprechen.  Ich bin mir sicher, das wird nicht nötig sein."
+catering_failure_3 = de \
+   "Betreff: Du hast das Essen für meine Party gestohlen!\nIch habe Dich bei "
+   "Gericht gemeldet, und hiermit wirst Du nun als Gesetzesloser deklaiert."
+catering_failure_3_h = de \
+   "Betreff: Du hast das Essen für meine Party gestohlen!\nIch habe mit meinem "
+   "befreundeten Zauberer gesprochen, und er hat dafür gesorgt, dass Du für "
+   "Deine Unehrlichkeit leiden wirst."
+catering_success_3 = de \
+   "Ach, was für ein leckerer Aufstrich!  Hier ist Deine Provision, ich danke "
+   "Dir für Deine Schnelligkeit."

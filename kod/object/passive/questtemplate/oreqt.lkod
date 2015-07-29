@@ -1,0 +1,35 @@
+% Quest description.
+oreqt_icon_rsc = de ore.bgf
+oreqt_name_rsc = de "blacksmith ore quest"
+oreqt_desc_rsc = de \
+   "A blacksmith has run out of ore; deliver some to them."
+
+oreqt_deliver_rsc = de \
+   "%s%s has run out of ore, so %s%s has asked you to deliver some to %s.  "
+   "Do not be tempted to keep it for yourself, lest you be punished "
+   "for your thievery!"
+
+oreqt_completed_rsc = de \
+   "You have completed the blacksmith ore quest."
+
+% Quest resources.
+ore_assign_2 = de \
+   "%NPC hat kein Erz mehr.  Bringe dieses Erz zu %HIMHER_NPC.  Es wäre unklug "
+   "mich zu betrügen.  Diebstahl wird gemeldet und führt dazu das Du als "
+   "Gesetzesloser angesehen wirst.  Bitte beeile Dich.  %NPC wird Dich für "
+   "Deine Mühen bezahlen."
+ore_assign_2_h = de \
+   "%NPC hat kein Erz mehr.  Bringe dieses Erz zu %HIMHER_NPC.  Es wäre unklug "
+   "mich zu betrügen.  Diebstahl wäre für uns beide ein Unglück.  Bitte beeile "
+   "Dich.  %NPC wird Dich für Deine Mühen bezahlen."
+ore_success_2 = de \
+   "Danke für das Erz.  Hier ist Deine Belohnung.  Vielleicht können wird "
+   "noch einmal ins Geschäft kommen."
+ore_failure_2 = de \
+   "Betreff: Dieb!\nDein Diebstahl von dem Erz wurde gemeldet.  Du wurdest "
+   "als Gesetzesloser deklariert und musst Dich bei Gericht melden, um dieses "
+   "Problem aus dem Weg zu schaffen."
+ore_failure_2_h = de \
+   "Betreff: Dieb!\nDein Diebstahl von dem Erz wurde gemeldet.  ich habe mit "
+   "einem befreundeten Zauberer gesprochen, und er hat dafür gesorgt, dass "
+   "Du für Deine Unehrlichkeit Leiden wirst."

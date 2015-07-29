@@ -1,0 +1,50 @@
+% Quest description.
+farenquest_name_rsc = de "Faren disciple quest"
+farenquest_desc_rsc = de \
+   "Priestess Tenuv'vyal has asked you to go to %s and speak "
+   "the words: \"You have defiled the land with your ways.  The land gives "
+   "life, yet you treat it as the enemy to be conquered.  You are fools, "
+   "all, if you continue on this sacrilegious path.  Embrace nature, do "
+   "not spurn it like a forgotten lover.  Repent your ways.  Follow the "
+   "words of Faren.  Live for nature, not in opposition to it.\".  "
+   "Return when you have completed this task."
+
+farenquest_node_three_rsc = de \
+   "Return to Priestess Tenuv'vyal and let her know the task has been "
+   "completed."
+
+farenquest_completed = de \
+   "You have completed the Faren disciple quest.  You are a faithful "
+   "disciple of Faren, and Priestess Tenuv'vyal will now teach you "
+   "more powerful spells."
+
+% Quest resources.
+farendisciple_trigger = de \
+   "Ihr habt das Land mit Eurem Verhalten geschändet. Das Land schenkt Leben, "
+   "doch Ihr behandelt es wie einen zu erobernden Feind. Ihr seid Narren, "
+   "alle, wenn ihr weiterhin diesen frevelhaften Pfad beschreitet. Umarmt "
+   "die Natur und behandelt sie nicht wie einen vergessenen Liebhaber. Überdenkt "
+   "euer Handeln. Folgt dem Wort Farens. Lebt für die Natur und fordert sie "
+   "nicht heraus."
+farendisciple_assign = de \
+   "~B~gDu erbittest den Segen für das Land durch unseren Herrn Faren. Du "
+   "musst beweisen, dass Du seinen Segen wert bist.Bring diese Nachricht "
+   "zu %NPC: \"%CARGO\"Kehre danach schnell zurück, um mir über den Erfolg "
+   "zu berichten. Faren wird Dich dann vielleicht mit Macht begünstigen."
+farendisciple_success = de \
+   "`B`gDer Blick Farens ist auf Dich gerichtet. Das hast Du gut gemacht.  "
+   "Suche mich auf, wenn Du mehr über Farens Wege und Zauber lernen willst. "
+farendisciple_failure = de \
+   "Betreff: Schau hinein und brenne, Kind\nFaren sieht diejenigen ohne das "
+   "Feuer der Begierde nicht. Du musst wiederkommen, wenn Du es in Dir gefunden "
+   "hast, nicht eher."
+
+% NPC responses.
+farendisc_marbar_resp = de "~kTova sighs, \"Here we go again.\""
+farendisc_jasbar_bad_resp = de \
+   "~kPietro says, \"Oh, for the love of Shal'ille, go someplace "
+   "else, %s! I'm sick of you fanatics.\""
+farendisc_jasbar_resp = de \
+   "~kPietro yells, \"Would somebody get that tree-hugger out of here.\""
+farendisc_barlbar_resp = de \
+   "~kMeidei says, \"I'll consider that, now buy a drink or leave!\""

@@ -1,0 +1,58 @@
+% Quest description.
+hypochondriacquest_name_rsc = de "hypochondriac quest"
+hypochondriacquest_desc_rsc = de \
+   "Frisconar is \"sick\" once again, and requires your assistance "
+   "in obtaining a remedy for his illness."
+
+hypochondriacquest_nodetwo_rsc = de \
+   "Frisconar is sick once again, this time with %s.  Go to "
+   "%s and ask %s about a cure for \"%s\"."
+
+hypochondriacquest_nodethree_rsc = de \
+   "Go to %s and ask %s about the \"Sacchaqua\" potion."
+
+hypochondriacquest_nodefour_rsc = de \
+   "Return to Frisconar and give him the Sacchaqua potion, to save him "
+   "from certain demise."
+
+hypochondriacquest_completed_rsc = de \
+   "You have helped poor Frisconar stave off death for another day, "
+   "and have been rewarded for it.  Perhaps he will need your help "
+   "in the future."
+
+% Quest resources.
+hypochondriac_assign_2 = de \
+   "Gott sei Dank bist Du hier!  Ich sterbe!  Ich habe %CARGO!  Gehe zu %NPC "
+   "und frag %HIMHER_NPC nach einer Heilung dafür!"
+hypochondriac_trigger_2a = de "Paragolisysie"
+hypochondriac_trigger_2b = de "Miriatetosie"
+hypochondriac_trigger_2c = de "Pelagalosilie"
+hypochondriac_trigger_2d = de "die schwere Pilzkrankheit"
+hypochondriac_failure_2 = de \
+   "Betreff: %CARGO\nEs ist gut, dass jemand anderes kam um mich von meinem "
+   "Leiden zu erlösen!  Sicherlich hättest Du mich vergessen und ich wäre "
+   "langsam verkümmert und einem schmerzhaften langsamen Tod gestorben."
+hypochondriac_trigger_3 = de "Sacchaqua"
+hypochondriac_assign_3 = de \
+   "Ah, er stirbt, mh?  Nun, warum gehst du nicht zu %NPC und sagst das Frisconar "
+   "einen weiteren Sacchaqua Trank benötigt."
+hypochondriac_failure_3 = de \
+   "Betreff: Frisconar's unendliche Leiden\nIch schätze Du hast Frisconar "
+   "aufgegeben. Ich mache Dir keine Vorwürfe, ich habe auch nicht viel Geduld "
+   "für sein Getue."
+hypochondriac_assign_4 = de \
+   "Wie amüsant. Man sollte denken ein gestandener Apotheker wie Frisconar "
+   "würde wissen, dass es nichts anderes ist als einfaches Zuckerwasser. "
+   "Naja, bring dies zu ihm."
+hypochondriac_success_4 = de \
+   "Oh, danke den Göttern!  Ich ... Ich habe Sterne gesehen!  Das Licht am "
+   "Ende vom Tunnel!  Ich lebe!  Hier, nimm dieses %PRIZE - Ich schulde es "
+   "Dir, weil Du mir mein Leben gerettet hast!"
+hypochondriac_failure_4 = de \
+   "Betreff: Oh mein Leiden!\nWo hast Du gesteckt?!  ich bin jetzt sicherlich "
+   "erledigt.  Während ich dies hier schreibe, flackern meine Augen, und "
+   "ich sehe das Papier vor meinen Augen kaum.  Mein Atem ist kurz und schmerzt "
+   "sehr.  Meine Suche nach einer Heilung für für meine Krankheit muss weitergehen, "
+   "auch wenn Du gescheitert bist.  Ich muss meine letzte Hoffnung auf jemand "
+   "anderen übertragen und hoffe das ich nicht wieder enttäuscht werde. Leb "
+   "wohl, vielleicht für immer."

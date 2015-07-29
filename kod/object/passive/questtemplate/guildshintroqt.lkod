@@ -1,0 +1,16 @@
+% Quest description. No description is actually displayed for this
+% quest, its purpose is to activate another quest which isn't given
+% to the player directly.
+guildshintroquest_name_rsc = de "blacksmith ore quest"
+guildshintroquest_desc_rsc = de \
+   "The bartender has told you of a blacksmith looking for ore."
+
+guildshintroquest_completed_rsc = de \
+   "The bartender has told you of a blacksmith looking for ore."
+
+% Quest resources.
+guildshield_intro = de \
+   "Ich habe gehört, dass %QBNPC möchte jemanden auf eine Bergwerksexpedition "
+   "schicken für %QBHIMHER_NPC, und das es von besonderem Interesse für Deine "
+   "Gildenmitglieder ist.  Du kannst jemanden von Ihnen schicken um %QBHIMHER_NPC "
+   "danach zu fragen."

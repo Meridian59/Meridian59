@@ -1,0 +1,17 @@
+% Quest description.
+bonepriestessquest_name_rsc = de "bone priestess orc pit boss quest"
+bonepriestessquest_desc_rsc = de \
+   "You're a little rusty in the language of the Avars, but you "
+   "think the bone priestess would like an orc pit boss head."
+
+bonepriestessquest_completed_rsc = de \
+   "You have delivered an orc pit boss head to the bone priestess, "
+   "and received a Riija sword shard in return."
+
+% Quest resources.
+bonepriestessquest_trigger_1 = de "Riija"
+bonepriestessquest_assign_2 = de \
+   "Wak-wak! Kopp von Höhlenscheff! Wak wak wa-ak!"
+bonepriestessquest_success_2 = de "Chp chp chp chp chp chp chp!"
+bonepriestessquest_failure_2 = de \
+   "Subject:  Ik ik ak\nWak wak Riija nicht ak!  Chp Chp kp ip!"

@@ -1,0 +1,23 @@
+% Quest description.
+councilletterquest_name_rsc = de "council letter quest"
+councilletterquest_desc_rsc = de \
+   "Deliver an official letter to a councillor.  You will be paid "
+   "on delivery of the letter."
+
+councilletterquest_deliver_rsc = de \
+   "%s%s has asked you to deliver an official letter to Councillor "
+   "%s.  You will be paid upon delivery of the letter."
+
+councilletterquest_completed_rsc = de \
+   "You have completed the council letter delivery quest."
+
+% Quest resources.
+council_letter_assign = de \
+   "Ja, ich brauche einen Kurier. Bring dieses Schreiben so schnell wie möglich "
+   "an das Ratsmitglied %NPC.  Er wird für diesen Dienst bezahlen."
+council_letter_success = de \
+   "Ich habe diesen Brief erwartet.  Dank Dir, %NAME.  Hier ist Deine Gebühr."
+council_letter_failure = de \
+   "Betreff:  Der Brief, den ich Dir anvertraut habe\n%NPC hat meinen Brief "
+   "nicht in der gewünschten Zeit bekommen.  Ich werde wohl in der Zukunft "
+   "einen anderen Kurier suchen."

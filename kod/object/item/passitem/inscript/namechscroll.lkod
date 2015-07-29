@@ -1,0 +1,13 @@
+deedpoll_name_rsc = de "deed poll"
+deedpoll_desc_rsc = de \
+   "This is an official document of the Office of the Justicar.\n"
+   "The Royal Justicar's office is responsible for organizing legal "
+   "name changes.  Fill out your requested name and return this scroll "
+   "to Caramo in the Office of the Justicar in North Barloque, and if "
+   "your proposed name is valid, it shall be yours.\n"
+   "\n"
+   "    =[C]=   Caramo, Assistant to the Royal Justicar"
+deedpoll_cant_drop_rsc = de \
+   "You find yourself unable to get rid of the deed poll."
+deedpoll_destroyed_rsc = de \
+   "Your deed poll suddenly crumbles into dust!"

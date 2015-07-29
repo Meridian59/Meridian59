@@ -8,3 +8,8 @@ kocinn_katalinwaz_locked = de "Raum katalinwaz ist verschlossen."
 kocnews_god_name = de "Designer Nachrichten"
 kocnews_god_desc = de \
    "Schaue hier hinein um Nachrichten der Administratoren zu lesen"
+kocinn_rentableroom_door = de \
+   "Die Tür bewegt sich nicht. Seltsamerweise sieht es so aus, als ob sie "
+   "sich gar nicht öffnen würde. Aber es ist ein kleines Schlüsselloch in "
+   "der Tür. Vielleicht würde irgendetwas Interessantes passieren, wenn man "
+   "einen Schlüssel hineinstecken würde."

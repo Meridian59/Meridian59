@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include kcinnk.lkod
+
    Kocataninnkeeper_name_rsc = "Moxal ix'Hanak"
    kocataninnkeeper_icon_rsc = kcinnk.bgf
    kocataninnkeeper_desc_rsc =  \

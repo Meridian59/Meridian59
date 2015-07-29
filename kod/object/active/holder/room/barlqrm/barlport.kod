@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barlport.lkod
+
    room_name_barloqueport = "The Ports of Barloque"
    room_barloqueport = barlport.roo
    barloqueport_music = corloth.mp3

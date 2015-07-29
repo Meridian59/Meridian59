@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include evntsign.lkod
+
    EventSign_name_rsc = "Join an event!"
    EventSign_icon_rsc = newbsign.bgf
 

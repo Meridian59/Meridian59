@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include windscrl.lkod
+
    WindScroll_label_name_rsc = "scroll of winds"
    WindScroll_icon_rsc = scr08.bgf
    WindScroll_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bqmerch.lkod
+
    barloque_merch_name_rsc = "Herbutte"
    barloque_merch_icon_rsc = bqmerch.bgf
    barloque_merch_desc_rsc = \

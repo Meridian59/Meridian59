@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include batrskel.lkod
+
    BatteredSkeleton_koc_name_rsc = "cha'oleoc"
    BatteredSkeleton_name_rsc = "battered skeleton"
    BatteredSkeleton_icon_rsc = skelbody.bgf

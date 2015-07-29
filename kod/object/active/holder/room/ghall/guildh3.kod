@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include guildh3.lkod
+
    room_name_guildhall3 = "The Den of Shadows"
    room_guildhall3 = guildh3.roo
 

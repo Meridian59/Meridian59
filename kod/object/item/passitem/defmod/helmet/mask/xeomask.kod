@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include xeomask.lkod
+
    XeoMask_name_rsc = "xeochicatl mask"
    XeoMask_icon_male_rsc = res0002m.bgf
    XeoMask_icon_female_rsc = res0002n.bgf

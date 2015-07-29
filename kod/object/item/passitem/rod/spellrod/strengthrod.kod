@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include strengthrod.lkod
+
    SuperStrengthRod_name_rsc = "rod of super strength"
    SuperStrengthRod_icon_rsc = wand2.bgf
 

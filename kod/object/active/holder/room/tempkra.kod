@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include tempkra.lkod
+
    room_name_templekra = "The Temple of Kraanan"
    room_templekra = tempkra.roo
    templekra_music = temple.mp3

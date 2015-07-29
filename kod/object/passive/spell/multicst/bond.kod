@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include bond.lkod
+
    Bond_name_rsc = "bond"
    Bond_icon_rsc = ibond.bgf
    Bond_desc_rsc = \

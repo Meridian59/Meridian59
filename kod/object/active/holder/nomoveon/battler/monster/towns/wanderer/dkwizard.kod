@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dkwizard.lkod
+
    DarkWizard_name_rsc = "Maleval"
    DarkWizard_icon_rsc = wndarkwi.bgf
    DarkWizard_desc_rsc =  \

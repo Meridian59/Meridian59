@@ -22,6 +22,8 @@ constants:
    
 resources:
 
+   include room.lkod
+
    room_try_light_unlit = \
       "Waving your hand past the cold brazier, a warm flame ignites."
    room_try_light_lit = \

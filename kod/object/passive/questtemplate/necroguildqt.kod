@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include necroguildqt.lkod
+
    % Quest description.
    necroguildquest_icon_rsc = necamlet.bgf
    necroguildquest_name_rsc = "raise Queen Venya'cyr quest"

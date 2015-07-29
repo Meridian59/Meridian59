@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include moxalscamoneqt.lkod
+
    % Quest description.
    moxalscamonequest_name_rsc = "Moxal's get rich quick quest"
    moxalscamonequest_desc_rsc = \

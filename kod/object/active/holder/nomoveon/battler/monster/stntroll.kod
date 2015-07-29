@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include stntroll.lkod
+
    StoneTroll_name_rsc = "Guardian of Zjiria"
    stonetroll_realname_rsc = "stone troll"
    StoneTroll_icon_rsc = Troll.bgf

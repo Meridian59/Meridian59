@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include vamprod.lkod
+
    vampireRod_name_rsc = "rod of vampiric shock"
    vampireRod_icon_rsc = wand3.bgf
    vampireRod_desc_rsc = \

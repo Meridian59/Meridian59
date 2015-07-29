@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dangfeth.lkod
+
    darkangelfeather_name_rsc = "dark angel feather"
    darkangelfeather_icon_rsc = dangfeth.bgf
    darkangelfeather_desc_rsc = \

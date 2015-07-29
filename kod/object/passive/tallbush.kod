@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tallbush.lkod
+
    tallbush_icon_rsc = tallbush.bgf
    tallbush_name_rsc = "bush"
    tallbush_desc_rsc = "A fresh scent hangs in the air around this tall bush."

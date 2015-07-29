@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include corpport.lkod
+
    corpseportal_name_rsc = "rip in space"
    corpseportal_icon_rsc = teleport.bgf
    corpseportal_desc_rsc = \

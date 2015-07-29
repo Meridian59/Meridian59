@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include testswrd.lkod
+
    testsword_name_rsc = "test sword"
    testsword_icon_rsc = huntswrd.bgf
 

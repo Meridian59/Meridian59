@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb3.lkod
+
    room_name_newb3 = "Raza Blacksmith"
    fire_sound_newb3 = fireplac.wav
 

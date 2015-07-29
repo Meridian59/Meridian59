@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include morph.lkod
+
    morph_scream_wav = pdeath.wav
 
    morph_name_rsc = "morph"

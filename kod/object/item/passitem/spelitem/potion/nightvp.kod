@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nightvp.lkod
+
    NightVisionPotion_name_rsc = "feline vitreous humour"
    %NightVisionPotion_icon_rsc = potion01.bgf
    NightVisionPotion_desc_rsc = "This is a glass vial of colored liquid.  "

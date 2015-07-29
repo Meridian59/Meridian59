@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include watwist.lkod
+
    weapatt_twister_desc = \
       "  A swirling green 'GMT' is stamped into the pommel."
    twister_dm = "twister"

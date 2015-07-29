@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kripclaw.lkod
+
    KriipaClaw_name_rsc = "kriipa claw"
    KriipaClaw_icon_rsc = kriclaw.bgf
    KriipaClaw_desc_rsc = \

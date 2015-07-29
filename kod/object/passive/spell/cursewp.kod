@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cursewp.lkod
+
    curseweapon_cast_rsc = "%s%s gains an eerie, red glow."
    
    curseweapon_fails = "%s%s is strangely unaffected by the spell."

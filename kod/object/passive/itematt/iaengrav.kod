@@ -28,6 +28,8 @@ constants:
 
 resources:
 
+   include iaengrav.lkod
+
     ItemAtt_Engraved_desc_1 = "  The words '"
     ItemAtt_Engraved_desc_2 = "' are delicately engraved on the edge."
 

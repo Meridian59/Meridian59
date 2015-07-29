@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include scry.lkod
+
    scry_name_rsc = "scry"
    scry_icon_rsc = lightnin.bgf
 

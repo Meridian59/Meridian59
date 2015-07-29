@@ -54,6 +54,8 @@ constants:
 
 resources:
 
+   include guild.lkod
+
    guild_name_rsc = "guild"
    guild_icon_rsc = light.bgf
    guild_desc_rsc = "An organization of individuals with similar purposes."

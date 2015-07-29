@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include focus.lkod
+
    manafocus_name_rsc = "mana focus"
    manafocus_icon_rsc = imanafoc.bgf
    manafocus_desc_rsc = \

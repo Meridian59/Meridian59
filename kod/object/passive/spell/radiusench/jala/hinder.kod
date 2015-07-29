@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hinder.lkod
+
    hinder_cast = "You begin playing a discordant tune."
    hinder_starts = "%s begins playing a discordant tune!"
    hinder_ends = "The discordant tune maintained by %s fades."

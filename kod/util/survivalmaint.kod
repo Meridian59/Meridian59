@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include survivalmaint.lkod
+
    public_survival_started = \
       "%s has started a public co-op survival arena. It will begin in "
       "three minutes."

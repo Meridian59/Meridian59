@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include scorpion.lkod
+
    scorpion_koc_name_rsc = "kinkauikinich"
    scorpion_name_rsc = "giant scorpion"
    scorpion_icon_rsc = scorp.bgf

@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include thrasher.lkod
+
    thrasher_koc_name_rsc = "teotixleoc"
    thrasher_name_rsc = "thrasher"
    thrasher_icon_rsc = res0001a.bgf

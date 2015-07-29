@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcrjmonk.lkod
+
    RiijaMonk_name_rsc = "Monk of Riija"
    RiijaMonk_icon_rsc = kcrjmonk.bgf
    RiijaMonk_desc_rsc = \

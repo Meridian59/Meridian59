@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include aimboon.lkod
+
    aimboon_name_rsc = "aim effect"
    aimboon_icon_rsc = iboonaim.bgf
    aimboon_desc_rsc = "Your sense of aim seems to be affected unnaturally."

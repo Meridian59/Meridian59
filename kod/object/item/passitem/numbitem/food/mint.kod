@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mint.lkod
+
    Mint_name_rsc = "chocolate mint"
    Mint_icon_rsc = roommint.bgf
    Mint_desc_rsc = \

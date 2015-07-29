@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include battler.lkod
+
    % KNOWN BUG: placing a comment on the same line as a resource definition
    %  will comment out the next line.
 

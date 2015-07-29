@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include minstrel.lkod
+
    Minstrel_name_rsc = "Parrin Aragone"
    Minstrel_icon_rsc = wnminstr.bgf
    Minstrel_desc_rsc =  \

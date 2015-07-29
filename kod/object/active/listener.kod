@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include listener.lkod
+
    Listener_enters = "In the distance, someone enters the area."
    Listener_leaves = "In the distance, someone leaves the area."
    Listener_say_rsc = "In the distance, someone says, \"%q\""

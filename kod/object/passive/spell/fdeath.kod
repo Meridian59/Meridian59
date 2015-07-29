@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fdeath.lkod
+
    feigndeath_name_rsc = "feign death"
    feigndeath_icon_rsc = ifeignde.bgf
    feigndeath_desc_rsc = \

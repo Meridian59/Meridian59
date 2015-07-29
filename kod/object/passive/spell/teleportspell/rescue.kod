@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rescue.lkod
+
    rescue_name_rsc = "rescue"
    rescue_icon_rsc = rescuico.bgf
    rescue_desc_rsc = \

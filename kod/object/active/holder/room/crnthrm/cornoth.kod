@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include cornoth.lkod
+
    room_CorNoth = CorNoth.roo
    room_name_CorNoth ="Cor Noth"
 

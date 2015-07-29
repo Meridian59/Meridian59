@@ -51,6 +51,8 @@ constants:
 
 resources:
 
+   include questengine.lkod
+
    % Chess piece names
    pawn = "Knave"
    pawn1 = "Queen's Keep's Knave"

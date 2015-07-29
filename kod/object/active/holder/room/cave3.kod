@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include cave3.lkod
+
    room_name_cave3 = "The Underground Lake"
    room_cave3 = cave3.roo
    cave3_music = ksong.mp3

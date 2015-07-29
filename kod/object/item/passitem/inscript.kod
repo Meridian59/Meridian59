@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include inscript.lkod
+
    inscript_name_rsc = "slip of parchment"
    inscript_icon_rsc = scroll.bgf
    inscript_desc_blank_rsc = "A fresh bit of parchment paper, without a mark on it."

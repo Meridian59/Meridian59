@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shrnkmsk.lkod
+
    ShrunkenHeadMask_name_rsc = "shrunken head mask"
    ShrunkenHeadMask_icon_male_rsc = res0002a.bgf
    ShrunkenHeadMask_icon_female_rsc = res0002b.bgf

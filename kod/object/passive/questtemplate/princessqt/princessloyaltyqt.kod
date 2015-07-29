@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include princessloyaltyqt.lkod
+
    % Quest description.
    princessloyalty_name_rsc = "Princess loyalty quest"
    princessloyalty_desc_rsc = \

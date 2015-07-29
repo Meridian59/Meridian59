@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include offerqor.lkod
+
    OfferingQor_name_rsc = "blood of the innocent"
    OfferingQor_icon_rsc = bloodinn.bgf
    OfferingQor_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."

@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include reprslot.lkod
+
    repairslot_name_rsc = "repair slot"
 
 classvars:

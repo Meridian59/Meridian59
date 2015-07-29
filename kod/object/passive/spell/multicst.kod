@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include multicst.lkod
+
    multicast_no_prism = "You can't find a prism nearby to focus your energies on."
 
 classvars:

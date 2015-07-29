@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemslashres.lkod
+
    gem_slash_resist_name_rsc = "glimmering moonstone"
    gem_slash_resist_icon_rsc = serappol.bgf
    gem_slash_resist_desc_rsc = \

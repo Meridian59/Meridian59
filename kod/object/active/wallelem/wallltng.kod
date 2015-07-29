@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wallltng.lkod
+
    WallofLightning_name_rsc = "wall of lightning"
    WallofLightning_icon_rsc = wolightn.bgf
    WallofLightning_desc_rsc = \

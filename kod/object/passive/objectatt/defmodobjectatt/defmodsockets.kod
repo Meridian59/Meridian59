@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include defmodsockets.lkod
+
    not_while_equipped = \
       "You can't attach the %s while you're wearing the %s."
    not_enough_sockets = \

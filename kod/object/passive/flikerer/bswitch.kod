@@ -18,6 +18,8 @@ constants:
    
 resources:
 
+   include bswitch.lkod
+
    brazierswitch_name_rsc = "brazier"
    brazierswitch_icon_rsc = brazier.bgf
    brazierswitch_desc_on = \

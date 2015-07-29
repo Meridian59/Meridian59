@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include walspell.lkod
+
    WallSpell_outlaw = \
       "\nNOTE: If your safety is ON, this spell will not affect innocents.  "
       "If your safety is OFF, you can become an outlaw for harming other players."

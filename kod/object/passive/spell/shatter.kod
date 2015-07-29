@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shatter.lkod
+
    shatter_name_rsc = "shatter"
    shatter_icon_rsc = ishatter.bgf
    shatter_desc_rsc = \

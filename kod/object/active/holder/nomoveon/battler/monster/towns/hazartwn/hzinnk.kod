@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include hzinnk.lkod
+
    Hazar_innkeep_name_rsc = "Marcus"
    Hazar_innkeep_icon_rsc = jsmerch.bgf
    Hazar_innkeep_desc_rsc = \

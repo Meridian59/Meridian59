@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include polserpm.lkod
+
    PolishedSeraphym_name_rsc = "polished seraphym"
    PolishedSeraphym_icon_rsc = serappol.bgf
    PolishedSeraphym_desc_rsc = \

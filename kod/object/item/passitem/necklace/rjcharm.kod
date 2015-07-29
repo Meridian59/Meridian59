@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include rjcharm.lkod
+
    RiijaCharm_name_rsc = "feathered choker"
    RiijaCharm_icon_rsc = rjcharm.bgf
    RiijaCharm_desc_rsc = \

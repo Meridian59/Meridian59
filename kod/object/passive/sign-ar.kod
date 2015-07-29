@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sign-ar.lkod
+
    oldarenasign_name_rsc = "sign"
    oldarenasign_icon_rsc = sign.bgf
    oldarenasign_desc_rsc = "The sign reads:\n\n%s "

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include chickensoupqt.lkod
+
    % Quest description.
    chickensoupquest_icon_rsc = soupbowl.bgf
    chickensoupquest_name_rsc = "chicken soup quest"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemresist.lkod
+
    gem_resist_name_rsc = "star ruby"
    gem_resist_icon_rsc = ruby.bgf
    gem_resist_desc_rsc = \

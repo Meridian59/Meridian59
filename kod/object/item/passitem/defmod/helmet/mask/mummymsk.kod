@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mummymsk.lkod
+
    MummyMask_name_rsc = "mummy mask"
    MummyMask_icon_male_rsc = res0002k.bgf
    MummyMask_icon_female_rsc = res0002l.bgf

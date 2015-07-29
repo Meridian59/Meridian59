@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include reflectn.lkod
+
    reflection_name_rsc = "reflection"
 
    reflection_male_icon_rsc = btg.bgf

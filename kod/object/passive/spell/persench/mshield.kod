@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mshield.lkod
+
    magicshield_name_rsc = "magic shield"
    magicshield_icon_rsc = armorico.bgf
    magicshield_desc_rsc = \

@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include maillist.lkod
+
    MailingList_name_rsc = "mailing list"
    MailingList_icon_rsc = light.bgf
    MailingList_desc_rsc = "A mailing list."

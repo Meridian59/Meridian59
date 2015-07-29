@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include farywing.lkod
+
    fairywing_name_rsc = "fairy wing"
    fairywing_icon_rsc = farywing.bgf
    fairywing_desc_rsc = \

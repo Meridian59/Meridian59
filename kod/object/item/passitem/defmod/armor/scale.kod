@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include scale.lkod
+
    scalearmor_name_rsc = "scale armor"
    scalearmor_icon_rsc = scaleamr.bgf
    scalearmor_desc_rsc = \

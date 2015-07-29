@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tablamp.lkod
+
    tablamp_name = "black stone lamp"
    tablamp_desc = "This lamp offers a subdued, flickering glow."
    tablamp_icon = tablamp.bgf

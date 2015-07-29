@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spdreggX.lkod
+
    spidereggshell_name_rsc = "egg shell"
    spidereggshell_icon_rsc = spdreggX.bgf
    spidereggshell_desc_rsc = \

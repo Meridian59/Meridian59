@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include reblshld.lkod
+
    RebelShield_name_rsc = "shield of the rebel militia"
 
    RebelShield_desc_rsc = \

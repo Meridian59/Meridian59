@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcsetrnk.lkod
+
    guildsetrank_name_rsc = "set rank"
    guildsetrank_icon_rsc = light.bgf
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bardnote.lkod
+
    bardletter_name_rsc = "slip of parchment"
    bardletter_icon_rsc = scroll.bgf
    bardletter_desc_written_rsc = \

@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include iabonded.lkod
+
 ItemAttBonded_desc = ""
 
 classvars:

@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include kocweaponqt.lkod
+
    % Quest description.
    kocweaponqt_icon_rsc = arrowqt.bgf
    kocweaponqt_name_rsc = "Ko'catan weapon trade quest"

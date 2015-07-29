@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include qormas.lkod
+
    Qormas_start_message = \
       "~B~kMerry Qormas!\n"
       "~kThe citizens of Meridian have decorated in celebration of the "

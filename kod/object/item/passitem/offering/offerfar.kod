@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include offerfar.lkod
+
    OfferingFaren_name_rsc = "burning water"
    OfferingFaren_icon_rsc = burnwate.bgf
    OfferingFaren_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."

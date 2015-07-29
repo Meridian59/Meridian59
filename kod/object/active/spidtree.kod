@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spidtree.lkod
+
    SpiderTree_name_rsc = "Web Covered Tree"
    SpiderTree_icon_rsc = spdrtree.bgf
    SpiderTree_desc_rsc = "Elegant and sinister-looking webbing smothers what was once a proud and ancient oak.  There is a foreboding hole carved into the base of the tree, large enough to enter."

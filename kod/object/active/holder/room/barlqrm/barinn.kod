@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include barinn.lkod
+
    barnews_god_name = "Designers' News"
    barnews_god_desc = "Check here for information from the game administrators."
 

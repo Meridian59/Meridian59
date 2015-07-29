@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orecheap.lkod
+
    CheapOreChunk_icon_rsc = Ore.bgf
    CheapOreChunk_name_rsc = "chunk of ore"
    CheapOreChunk_desc_rsc = "This is a huge, unwieldy hunk of rock, with a few thin veins "

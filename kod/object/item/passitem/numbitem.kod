@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include numbitem.lkod
+
    NumberItem_desc_rsc = "\n\nYou are looking at "
    NumberItem_got_one = "Hungrily, you yank %s%s from %s%s."
 

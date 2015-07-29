@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wandsplit.lkod
+
    WandSplitter_name_rsc = "uncharged wand"
    WandSplitter_icon_rsc = wand6.bgf
    WandSplitter_desc_rsc = \

@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include monster.lkod
+
    monster_percent_q = "%q"
    monster_color_blue_rsc = "~b"
 

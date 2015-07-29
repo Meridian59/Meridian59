@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include snack.lkod
+
    snack_name_rsc = "edible mushroom"
    snack_icon_rsc = mushroom.bgf
    snack_desc_rsc = \

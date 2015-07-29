@@ -44,6 +44,8 @@ constants:
 
 resources:
 
+   include survivalroom.lkod
+
    SurvivalRoom_name = "Survival Arena"
    
    welcome_message = \

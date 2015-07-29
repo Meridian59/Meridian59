@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include slitherw.lkod
+
    SlitherWand_label_name_rsc = "wand of striking"
    SlitherWand_icon_rsc = wand6.bgf
    SlitherWand_desc_rsc = "Magical energy crackles about this slender wand."

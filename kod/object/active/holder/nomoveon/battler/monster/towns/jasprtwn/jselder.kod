@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jselder.lkod
+
    JasperElder_name_rsc = "Afiera D'xor"
    JasperElder_icon_rsc = jselder.bgf
    JasperElder_desc_rsc = \

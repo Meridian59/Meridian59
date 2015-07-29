@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include kocaleqt.lkod
+
    % Quest description.
    kocaleqt_icon_rsc = mug.bgf
    kocaleqt_name_rsc = "Ko'catan ale trade quest"

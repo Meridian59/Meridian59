@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include tuskskel.lkod
+
    TuskedSkeleton_koc_name_rsc = "ha'chaleoc"
    TuskedSkeleton_name_rsc = "tusked skeleton"
    TuskedSkeleton_icon_rsc = skelbody.bgf

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dispensr.lkod
+
    FoodDispenser_no_can_hold = "You can't hold anything more!"
    FoodDispenser_none_left = "There is nary %s%s left!"
 

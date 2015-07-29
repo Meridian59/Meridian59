@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orcshld.lkod
+
    OrcShield_name_rsc = "orc shield"
    OrcShield_icon_rsc = osh.bgf
    OrcShield_desc_rsc = \

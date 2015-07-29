@@ -58,6 +58,8 @@ constants:
 
 resources:
 
+   include rentroom.lkod
+
    RentableRoom_name = "A tastefully appointed room"
    RentableRoom_roo = barrent.roo
 

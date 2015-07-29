@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include weaponspellproc.lkod
+
    weapon_proc = "The %s worn by %s gives off a magical flare, casting %s on %s!"
    weapon_proc_you = "Your %s gives off a magical flare, casting %s on you!"
    weapon_proc_them = "Your %s gives off a magical flare, casting %s on %s!"

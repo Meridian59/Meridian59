@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jastavrn.lkod
+
    room_jasperTavern = jastavrn.roo
    room_name_JasperTavern = "Pietro's Wicked Brews"
 

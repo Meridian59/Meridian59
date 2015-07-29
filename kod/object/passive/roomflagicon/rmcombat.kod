@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include rmcombat.lkod
+
    rmcombat_name_rsc = "PvP Combat Allowed"
    rmcombat_icon_rsc = rmcombat.bgf
    rmcombat_desc_rsc = "All types of combat are allowed here."

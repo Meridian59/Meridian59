@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include slvarrow.lkod
+
    silver_arrow_name_rsc = "silver arrows"
    silver_arrow_icon_rsc = arrowsil.bgf
    silver_arrow_desc_rsc = \

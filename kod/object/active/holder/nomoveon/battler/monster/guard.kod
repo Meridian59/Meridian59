@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include guard.lkod
+
    guard_name_rsc = "guard cow"
    guard_koc_name_rsc = "tanahyijoa"
    guard_icon_rsc = cow.bgf

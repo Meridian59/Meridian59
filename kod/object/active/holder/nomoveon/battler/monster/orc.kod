@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orc.lkod
+
    orc_koc_name_rsc = "utomca"
    orc_name_rsc = "orc"
    orc_icon_rsc = orc.bgf

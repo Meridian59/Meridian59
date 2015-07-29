@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ringwedd.lkod
+
    ringwedding_name_rsc = "wedding ring"
    ringwedding_icon_rsc = ring1.bgf
    ringwedding_desc_rsc = "This is an elegant gold band demonstrating the bond between two people."

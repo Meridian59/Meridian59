@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include kcshopk.lkod
+
    kocatanShopkeeper_name_rsc = "Pacal ix'Anoak"
    kocatanShopkeeper_icon_rsc = kcshopk.bgf
    kocatanShopkeeper_desc_rsc =  \

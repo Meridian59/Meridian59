@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include avarfeth.lkod
+
    AvarShamanFeather_name_rsc = "feather of an avar shaman"
    AvarShamanFeather_icon_rsc = avfeathr.bgf
    AvarShamanFeather_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include flask.lkod
+
    flask_name_rsc = "flask"
    flask_icon_rsc = flask.bgf
    flask_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include anonp.lkod
+
    AnonymityPotion_name_rsc = "anonymity potion"
    %AnonymityPotion_icon_rsc = potion01.bgf
    AnonymityPotion_desc_rsc = "This is a glass vial of colored liquid.  "

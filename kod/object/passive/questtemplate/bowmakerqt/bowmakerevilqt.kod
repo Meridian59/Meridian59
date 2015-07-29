@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include bowmakerevilqt.lkod
+
    % Quest description.
    bowmakerevilquest_icon_rsc = avfeathr.bgf
    bowmakerevilquest_desc_rsc = \

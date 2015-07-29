@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include helmet.lkod
+
    helmet_condition_exc = " is in flawless condition."
    helmet_condition_exc_mended = " is in great condition, but has been patched before."
    helmet_condition_good = " is stained with blood but otherwise in good condition."

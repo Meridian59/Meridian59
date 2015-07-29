@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include admin.lkod
+
    admin_login = "Welcome to the game, Administrator %s."
    admin_admin_module = admin.dll
 

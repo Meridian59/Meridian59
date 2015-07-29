@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include orcwiza.lkod
+
    OrcWizard_koc_name_rsc = "utomya"
    OrcWizard_name_rsc = "orc wizard"
    OrcWizard_icon_rsc = orcwiza.bgf

@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include easteregg.lkod
+
    ee_g_one_bgf = eegray1.bgf
    ee_g_two_bgf = eegray2.bgf
    ee_g_three_bgf = eegray3.bgf

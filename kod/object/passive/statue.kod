@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include statue.lkod
+
    Statue_name_rsc = "statue"
    Statue_desc_rsc = "This is a statue of %q, a great adventurer."
 

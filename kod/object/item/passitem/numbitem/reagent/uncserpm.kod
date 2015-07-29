@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include uncserpm.lkod
+
    uncutseraphym_name_rsc = "uncut seraphym"
    uncutseraphym_icon_rsc = serapunc.bgf
    uncutseraphym_desc_rsc = \

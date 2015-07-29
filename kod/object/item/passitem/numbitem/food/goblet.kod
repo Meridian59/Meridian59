@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include goblet.lkod
+
    goblet_name_rsc = "goblet of ale"
    goblet_icon_rsc = goblet.bgf
    goblet_desc_rsc = \

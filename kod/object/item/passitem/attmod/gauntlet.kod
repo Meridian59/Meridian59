@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gauntlet.lkod
+
   
    gauntlet_name_rsc = "gauntlets"
    gauntlet_icon_rsc = gauntlet.bgf

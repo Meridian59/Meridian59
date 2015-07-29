@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include tswatch.lkod
+
    TosWatcher_name_rsc = "Watcher"
    TosWatcher_icon_rsc = tswatch.bgf
    TosWatcher_desc_rsc = \

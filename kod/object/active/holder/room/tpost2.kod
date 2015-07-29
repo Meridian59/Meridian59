@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include tpost2.lkod
   
    room_TradingPostCellar = tpost2.roo
    room_name_TradingPostCellar = "The Cellar Rooms"

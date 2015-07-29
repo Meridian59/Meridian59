@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forgetfr.lkod
+
    forgetpotionfaren_desc_rsc = "This deceptively refreshing-looking liquid will strike all memory of Faren's magiks from your memory.\n\nMay have very serious side effects."
 
 classvars:

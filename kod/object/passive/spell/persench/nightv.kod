@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nightv.lkod
+
    nightvision_name_rsc = "night vision"
    nightvision_icon_rsc = nitvsico.bgf
    nightvision_desc_rsc = \

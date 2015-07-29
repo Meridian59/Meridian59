@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include battlbow.lkod
+
    BattleBow_name_rsc = "battle bow"
    BattleBow_desc_rsc = \
       "Expertly carved for power, this bow gives you the envious advantage of "

@@ -85,6 +85,8 @@ constants:
 
 resources:
 
+   include weapon.lkod
+
    weapon_already_broken = "%s%s is broken; you can't use it!"
    weapon_broken = "%s%s shatters into pieces."
 

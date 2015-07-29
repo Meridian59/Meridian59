@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include e5.lkod
+
    room_OutdoorsE5 = E5.roo
    room_name_OutdoorsE5 ="The Forest Shrine"
    OutdoorsE5_music = walk5.mp3

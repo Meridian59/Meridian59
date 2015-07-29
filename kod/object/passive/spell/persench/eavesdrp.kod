@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include eavesdrp.lkod
+
    Eavesdrop_name_rsc = "eavesdrop"
    Eavesdrop_icon_rsc = ieavesdr.bgf
    Eavesdrop_desc_rsc = \

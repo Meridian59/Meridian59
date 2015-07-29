@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include srsttkn.lkod
+
    StatsResetToken_name_rsc = "ancient trinket"
    StatsResetToken_icon_rsc = srtoken.bgf
    StatsResetToken_desc_rsc = \

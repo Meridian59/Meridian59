@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include forsight.lkod
+
    Foresight_name_rsc = "foresight"
    Foresight_icon_rsc = iforesig.bgf
    Foresight_desc_rsc = \

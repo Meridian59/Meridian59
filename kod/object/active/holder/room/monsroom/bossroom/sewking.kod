@@ -67,6 +67,8 @@ constants:
 
 resources:
 
+   include sewking.lkod
+
    room_SewerKingLair = sewking.roo
    room_name_SewerKingLair = "The Ancient Smuggler's Crossing"
 

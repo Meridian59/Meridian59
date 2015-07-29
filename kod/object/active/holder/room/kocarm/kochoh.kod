@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kochoh.lkod
+
    room_Kocatanhall = Kochoh.roo
    room_name_Kocatanhall = "The Hall of Heroes"
 

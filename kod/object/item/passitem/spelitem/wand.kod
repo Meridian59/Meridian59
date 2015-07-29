@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wand.lkod
+
    Wand_name_rsc = "wand"
    Wand_label_name_rsc = "generic wand"
    Wand_icon_rsc = wand6.bgf

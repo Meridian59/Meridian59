@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include giaratsm.lkod
+
    smallratkoc_name_rsc = "imixnapyij"
    smallratname_rsc = "small rat"
    smallraticon_rsc = ratsm.bgf

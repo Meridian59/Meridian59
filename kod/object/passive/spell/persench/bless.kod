@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bless.lkod
+
    bless_name_rsc = "bless"
    bless_icon_rsc = blessico.bgf
    bless_desc_rsc = \

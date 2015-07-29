@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include blackmum.lkod
+
    blackmummy_koc_name_rsc = "teotnapleoc"
    blackmummy_name_rsc = "shadow mummy"
    blackmummy_desc_rsc = \

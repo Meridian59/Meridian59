@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb1.lkod
+
    room_name_newb1 = "Raza Inn"
 
    Newbie1_god_name = "Designers' News"

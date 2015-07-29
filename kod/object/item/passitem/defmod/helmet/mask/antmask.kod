@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include antmask.lkod
+
    AntMask_name_rsc = "ant mask"
    AntMask_icon_male_rsc = mmant.bgf
    AntMask_icon_female_rsc = mfant.bgf

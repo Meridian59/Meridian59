@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include weapatt.lkod
+
    weapatt_slight = "a slight"
    weapatt_small = "a small"
    weapatt_swift = "a swift"

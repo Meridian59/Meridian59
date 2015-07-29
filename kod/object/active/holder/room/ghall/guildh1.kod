@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include guildh1.lkod
+
    room_name_guildh1 = "Mercenary Alley"
    room_guildh1 = guildh1.roo
 

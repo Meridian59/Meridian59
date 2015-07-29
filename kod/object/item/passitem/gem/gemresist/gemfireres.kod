@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemfireres.lkod
+
    gem_fire_resist_name_rsc = "star ruby"
    gem_fire_resist_icon_rsc = ruby.bgf
    gem_fire_resist_desc_rsc = \

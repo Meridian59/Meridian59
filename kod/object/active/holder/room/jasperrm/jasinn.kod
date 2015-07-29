@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jasinn.lkod
+
    room_name_JasperInn = "Yonder Inn of Jasper"
    room_jasperInn = jasinn.roo
    jasinn_music = bar2.mp3

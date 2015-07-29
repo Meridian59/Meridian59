@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include e7.lkod
+
    room_OutdoorsE7 = E7.roo
    room_name_OutdoorsE7 ="The Sweet Grass Prairies"
    OutdoorsE7_music = walk5.mp3

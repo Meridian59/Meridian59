@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include necbal.lkod
+
    necbal_starting_password = "deathmage"
 
 properties:

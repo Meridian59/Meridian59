@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include necare3b.lkod
+
    room_Necropolis3b = nec3b.roo
    room_name_Necropolis3b = "Ancient Building"
 

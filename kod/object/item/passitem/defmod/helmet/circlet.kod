@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include circlet.lkod
+
    circlet_name_rsc = "circlet"
    circlet_icon_rsc = invcirc.bgf
    circlet_desc_rsc = \

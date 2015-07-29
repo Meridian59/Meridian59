@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include bqclerk.lkod
+
    barloque_clerk_name_rsc = "Caramo"
    barloque_clerk_icon_rsc = bqclerk.bgf
    barloque_clerk_desc_rsc = \

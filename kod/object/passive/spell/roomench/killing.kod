@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include killing.lkod
+
    killingfields_name_rsc = "killing fields"
    killingfields_icon_rsc = ikillfel.bgf
    killingfields_desc_rsc = \

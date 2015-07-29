@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include pforget.lkod
+
    forgetpotion_use = "You quaff the potion. Nothing happens at first, then dizziness strikes...."
    forgetpotion_cant_use_on = "You can't serve a %s%s."
 

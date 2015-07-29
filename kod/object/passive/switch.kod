@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include switch.lkod
+
    switch_name_rsc = "switch"
    switch_icon_rsc = switch.bgf
    switch_desc_rsc = \

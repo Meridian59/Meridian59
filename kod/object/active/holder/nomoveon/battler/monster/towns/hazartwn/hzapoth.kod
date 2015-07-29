@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hzapoth.lkod
+
    HazarApothecary_name_rsc = "Ravi"
    HazarApothecary_icon_rsc = kcshopk.bgf
    HazarApothecary_desc_rsc = \

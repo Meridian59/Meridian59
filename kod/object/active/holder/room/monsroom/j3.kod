@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include j3.lkod
+
    room_OutdoorsJ3 = J3.roo
    room_name_OutdoorsJ3 ="The Queen's Way"
 

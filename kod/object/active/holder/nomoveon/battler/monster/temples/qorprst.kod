@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include qorprst.lkod
+
    qorpriestess_name_rsc = "Priestess Zuxana"
    qorpriestess_icon_rsc = qorprst.bgf
    qorpriestess_desc_rsc = \

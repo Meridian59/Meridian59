@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include manabomb.lkod
+
    manabomb_name_rsc = "mana bomb"
    manabomb_icon_rsc = imanabom.bgf
    manabomb_desc_rsc = \

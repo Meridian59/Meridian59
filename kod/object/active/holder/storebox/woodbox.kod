@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include woodbox.lkod
+
    WoodenBox_name_rsc = "wooden box"
    WoodenBox_icon_rsc = box1.bgf
 

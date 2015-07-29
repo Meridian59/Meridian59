@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include waghall.lkod
+
    weapattguildhalldesc= " The crest of "
    weapattguildhalldesc2 = \
       " is inscribed on the hilt of the weapon, suggesting "

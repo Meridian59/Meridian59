@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include corhall.lkod
+
    room_name_corhall = "The Adventurer's Hall of Cor Noth"
    room_corhall = corhall.roo
    corhall_music = main.mp3

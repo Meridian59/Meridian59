@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shadrift.lkod
+
 
    DeathsDoor_name_rsc = "shadow rift"
    DeathsDoor_icon_rsc = ideadoor.bgf

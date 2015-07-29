@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include icenova.lkod
+
    icenova_name_rsc = "ice nova"
    icenova_icon_rsc = iicenova.bgf
    icenova_projectile_rsc = icebolt.bgf

@@ -36,6 +36,8 @@ constants:
 
 resources:
 
+   include iadurabl.lkod
+
    itematt_durable_name = "well-crafted %s"
    durable_dm = "durable"
    itematt_durable_desc_1 = " The craftsmanship of this "

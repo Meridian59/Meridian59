@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include martyrs.lkod
+
    martyrsbg_name_rsc = "martyr's battleground"
    martyrsbg_icon_rsc = imartyrs.bgf
 

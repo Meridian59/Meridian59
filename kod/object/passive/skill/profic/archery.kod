@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include archery.lkod
+
    Archery_name_rsc = "archery"
    Archery_icon_rsc = archrico.bgf
    Archery_desc_rsc = "Those with this skill find themselves better able to handle any standard bow.  "

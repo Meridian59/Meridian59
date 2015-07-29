@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mushb.lkod
+
    bluemushroom_name_rsc = "blue mushroom"
    bluemushroom_icon_rsc = mushroom.bgf
    bluemushroom_desc_rsc = \

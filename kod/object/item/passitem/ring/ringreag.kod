@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ringreag.lkod
+
    ReagentRing_name_rsc = "ring of Far'nohl"
    ReagentRing_icon_rsc = ring01.bgf
    ReagentRing_desc_rsc = "A replica of the powerful ring once worn by the "

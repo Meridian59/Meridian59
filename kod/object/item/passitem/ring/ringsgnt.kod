@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include ringsgnt.lkod
+
    ringsignet_name_rsc = "signet ring"
    ringsignet_icon_rsc = signet.bgf
    ringsignet_desc_rsc = "This ring is worn and dirty, but you make out the family crest of "

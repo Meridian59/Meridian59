@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include stamboon.lkod
+
    stamboon_name_rsc = "stamina effect"
    stamboon_icon_rsc = iboonsta.bgf
    stamboon_desc_rsc = "Your stamina seems abnormally affected."

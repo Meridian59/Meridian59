@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barstool.lkod
+
    barstool_icon_rsc = barstool.bgf
    barstool_name_rsc = "bar stool"
    barstool_desc_rsc = "This is a bar stool in pretty good shape."

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include firepit.lkod
+
    firepit_name_rsc = "fire"
    firepit_icon_rsc = firepit.bgf
    firepit_desc_rsc = "This small fire offers both light and warmth to the surrounding area."

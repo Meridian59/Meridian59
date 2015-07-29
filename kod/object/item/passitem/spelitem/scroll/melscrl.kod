@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include melscrl.lkod
+
    MelancholyScroll_label_name_rsc = "scroll of Melancholy"
    MelancholyScroll_icon_rsc = scr10.bgf
    MelancholyScroll_desc_rsc = \

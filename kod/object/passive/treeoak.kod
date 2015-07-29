@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include treeoak.lkod
+
    treeoak_name_rsc = "tree"
    treeoak_desc_rsc = "A fine specimen of Oak."
    treeoak_icon_rsc = treeoak.bgf

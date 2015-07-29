@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include waparal.lkod
+
    weapattParalyzer_desc = \
       " A glow that can only be described as Zjiriaesqe surrounds the weapon."
    Paralyzer_dm = "Paralyzer"

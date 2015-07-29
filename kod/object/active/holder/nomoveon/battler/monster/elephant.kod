@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include elephant.lkod
+
    elephant_name_rsc = "elephant"
    elephant_icon_rsc = elephant.bgf
    elephant_desc_rsc = \

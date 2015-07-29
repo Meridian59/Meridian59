@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include object.lkod
+
    object_name_rsc = "something"
    object_icon_rsc = somethin.bgf
    object_desc_rsc = "You are looking at an object"

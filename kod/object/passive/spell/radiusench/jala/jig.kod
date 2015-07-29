@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jig.lkod
+
    jig_name_rsc = "jig"
    jig_icon_rsc = ijig.bgf
    jig_desc_rsc = \

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gmhall.lkod
+
    room_GM_Hall = gmhall.roo
    room_name_GM_Hall = "The Guildmaster's Hall"
 

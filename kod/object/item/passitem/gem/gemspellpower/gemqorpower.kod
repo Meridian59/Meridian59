@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemqorpower.lkod
+
    gem_qorpower_name_rsc = "bloodstone agate"
    gem_qorpower_icon_rsc = serapunc.bgf
    gem_qorpower_desc_rsc = \

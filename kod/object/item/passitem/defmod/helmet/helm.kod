@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include helm.lkod
+
    helm_name_rsc = "magic spirit helmet"
    helm_icon_male_rsc   = ornhelma.bgf
    helm_icon_female_rsc = ornhelmb.bgf

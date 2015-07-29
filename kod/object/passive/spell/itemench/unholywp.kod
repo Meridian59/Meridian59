@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include unholywp.lkod
+
    unholyweapon_cast_rsc = "Your %s is now dedicated to Qor."
    unholyweapon_no_can = "You cannot dedicate %s%s to Qor."
    unholyweapon_fails = "The %s is strangely unaffected by the spell."

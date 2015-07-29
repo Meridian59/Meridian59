@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resevil.lkod
+
    resistevil_name_rsc = "holy resolve"
    resistevil_icon_rsc = iholyres.bgf
    resistevil_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rngflame.lkod
+
    RingOfFlames_name_rsc = "ring of flames"
    RingOfFlames_icon_rsc = iringfir.bgf
    RingOfFlames_desc_rsc = \

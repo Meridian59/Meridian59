@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include g6.lkod
+
    room_name_OutdoorsG6 ="The King's Way"
    room_OutdoorsG6 = G6.roo
    OutdoorsG6_music = forest.mp3

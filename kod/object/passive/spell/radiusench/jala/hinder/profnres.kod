@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profnres.lkod
+
    ProfaneResonance_name_rsc = "profane resonance"
    ProfaneResonance_icon_rsc = iprofres.bgf
    ProfaneResonance_desc_rsc = \

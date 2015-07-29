@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include purge.lkod
+
    Purge_name_rsc = "purge"
    Purge_icon_rsc = ipurge.bgf
    Purge_desc_rsc = \

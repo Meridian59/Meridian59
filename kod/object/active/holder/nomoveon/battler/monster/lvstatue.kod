@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include lvstatue.lkod
+
    LivingStatue_name_rsc = "statue"
    LivingStatue_active_name_rsc = "living statue"
 

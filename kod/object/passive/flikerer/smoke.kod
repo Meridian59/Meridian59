@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include smoke.lkod
+
    SmokeColumn_name = "smoke column"
    SmokeColumn_desc = \
       "This is a column of smoke, reaching like a finger for the sky. "

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include brawling.lkod
+
    BrawlingProficiency_name_rsc = "brawling"
    BrawlingProficiency_icon_rsc = brawlico.bgf
    BrawlingProficiency_desc_rsc = "This allows the combatant to fight better unarmed."

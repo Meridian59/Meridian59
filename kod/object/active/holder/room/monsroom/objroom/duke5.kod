@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include duke5.lkod
+
    room_name_duke5 = "The Duke's Grand Ballroom"
    room_duke5 = duke5.roo
 

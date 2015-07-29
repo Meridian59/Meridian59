@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include holysymb.lkod
+
    HolySymbol_name_rsc = "holy symbol"
    HolySymbol_icon_rsc = iholysym.bgf
    HolySymbol_desc_rsc = \

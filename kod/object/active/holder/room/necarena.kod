@@ -46,6 +46,8 @@ constants:
    TELEPORT_DELAY = 5000
 
 resources: 
+   include necarena.lkod
+
 
    name_NecArena = "Goad's Grinder"
    room_NecArena = necarena.roo

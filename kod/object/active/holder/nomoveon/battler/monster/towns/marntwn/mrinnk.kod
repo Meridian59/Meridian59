@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include mrinnk.lkod
+
    MarionInnkeep_name_rsc = "Morrigan"
    MarionInnkeep_icon_rsc = mrinnk.bgf
    MarionInnkeep_desc_rsc = \

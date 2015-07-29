@@ -138,6 +138,8 @@ constants:
 
 resources:
 
+   include marcry3a.lkod
+
    room_name_mar_crypt3a = "Affirmation of the Forsaken"
    room_mar_crypt3a = mardun03.roo
    music_mar_crypt3a = song10.mp3

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include rebeljoinqt.lkod
+
    % Quest description.
    rebeljoin_icon_rsc = wngenera.bgf
    rebeljoin_name_rsc = "rebel join faction quest"

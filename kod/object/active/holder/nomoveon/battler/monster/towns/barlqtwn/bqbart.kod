@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include bqbart.lkod
+
    BarloqueBartender_name_rsc = "Meidei"
    BarloqueBartender_icon_rsc = bqbart.bgf
    BarloqueBartender_desc_rsc = \

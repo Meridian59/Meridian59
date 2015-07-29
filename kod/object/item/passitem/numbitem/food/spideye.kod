@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spideye.lkod
+
    spideye_name_rsc = "spider eye"
    spideye_icon_rsc = spideye.bgf
    spideye_desc_rsc = \

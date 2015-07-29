@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include touchatk.lkod
+
    TouchAttackSpell_name_rsc = "Touch Spell"
    TouchAttackSpell_icon_rsc = light.bgf
    TouchAttackSpell_desc_rsc = "This is a touch spell that does damage."

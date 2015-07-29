@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include qormasgift.lkod
+
    QormasGift_icon_rsc = gift1.bgf
    QormasGift_icon_rsc1 = gift1.bgf
    QormasGift_icon_rsc2 = gift2.bgf

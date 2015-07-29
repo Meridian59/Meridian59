@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include defmodspellproc.lkod
+
    defmod_proc = "The %s worn by %s gives off a magical flare, casting %s on %s!"
    defmod_proc_you = "Your %s gives off a magical flare, casting %s on you!"
    defmod_proc_them = "Your %s gives off a magical flare, casting %s on %s!"

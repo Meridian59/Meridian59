@@ -41,6 +41,8 @@ constants:
 
 resources:
 
+   include orcpit1.lkod
+
    room_name_Orcpit1 = "Lair of the Orc Pit Boss"
    room_Orcpit1 = ocp1.roo
    Orcpit1_music = orcpit.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sngltree.lkod
+
    singletree_name_rsc = "tree"
    singletree_desc_rsc = "A tree, covered by spider webs."
    singletree_icon_rsc = spdrtree.bgf

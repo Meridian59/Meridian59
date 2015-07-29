@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include logghost.lkod
+
    logoffghost_name_rsc = "logoff ghost"
    logoffghost_desc_rsc = \
       "This is the ghosted body of %q, whose consciousness has travelled to "

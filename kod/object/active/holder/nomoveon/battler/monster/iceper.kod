@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include iceper.lkod
+
    iceperson_koc_name_rsc = "atzmoch"
    iceperson_name_rsc = "ice creature"
    iceperson_icon_rsc = iceperT.bgf

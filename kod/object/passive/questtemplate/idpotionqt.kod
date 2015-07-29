@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include idpotionqt.lkod
+
    % Quest description.
    idpotionqt_icon_rsc = potion01.bgf
    idpotionqt_name_rsc = "potion identification quest"

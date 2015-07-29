@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcmerch.lkod
+
    kocatanTradeMaster_name_rsc = "Wulfgang zax'Ak"
    kocatanTradeMaster_icon_rsc = kcmerch.bgf
    kocatanTradeMaster_desc_rsc =  \

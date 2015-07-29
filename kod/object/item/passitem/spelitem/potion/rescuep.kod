@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rescuep.lkod
+
    RescuePotion_name_rsc = "potion of deliverance"
    RescuePotion_desc_rsc = "This is a glass vial of colored liquid.  "
                         "It smells crisp, clean and refreshing."

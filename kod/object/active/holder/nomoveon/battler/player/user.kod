@@ -66,6 +66,8 @@ constants:
 
 resources:
 
+   include user.lkod
+
    user_name_rsc = "user name"
 
    user_garbage_collecting = "System is saving; please wait."

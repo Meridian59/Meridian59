@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gort.lkod
+
    ArmorOfGort_name_rsc = "armor of Gort"
    ArmorOfGort_icon_rsc = igort.bgf
    ArmorOfGort_desc_rsc = \

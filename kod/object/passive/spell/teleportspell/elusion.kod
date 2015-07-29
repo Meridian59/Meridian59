@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include elusion.lkod
+
    Elusion_name_rsc = "elusion"
    Elusion_icon_rsc = ielusion.bgf
    Elusion_desc_rsc = \

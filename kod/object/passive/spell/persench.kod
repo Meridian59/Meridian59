@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include persench.lkod
+
    PersonalEnchantment_name_rsc = "personal enchantment"
    PersonalEnchantment_icon_rsc = iheat.bgf
    PersonalEnchantment_desc_rsc = \

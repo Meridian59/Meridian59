@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include shadowam.lkod
+
    shadowAmulet_name_rsc = "Amulet of Shadows"
    shadowamulet_icon_rsc = amulet.bgf
    shadowAmulet_desc_rsc = \

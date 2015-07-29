@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cave2.lkod
+
    room_cave2 = cave2.roo
    room_name_cave2 = "A Deep, Dark, Spooky, Icky Cave"
 

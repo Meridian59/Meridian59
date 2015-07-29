@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include hzsmith.lkod
+
    HazarBlacksmith_name_rsc = "Tomas"
    HazarBlacksmith_icon_rsc = bqsmith.bgf
    HazarBlacksmith_desc_rsc = \

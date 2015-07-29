@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include riijaswd.lkod
+
    RiijaSword_name_rsc = "sword of Riija"
    RiijaSword_icon_rsc = quswrd.bgf
    RiijaSword_desc_rsc = \

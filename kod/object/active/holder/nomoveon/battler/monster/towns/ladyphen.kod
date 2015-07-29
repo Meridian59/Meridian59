@@ -35,6 +35,8 @@ constants:
 
 
 resources:
+
+   include ladyphen.lkod
  
    ladypheonix_name_rsc = "LadyPhoenix"
    ladypheonix_desc_rsc = \

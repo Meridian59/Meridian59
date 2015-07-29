@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include zombie.lkod
+
    zombie_koc_name_rsc = "ixleoc"
    zombie_name_rsc = "zombie"
    zombie_icon_rsc = zombie.bgf

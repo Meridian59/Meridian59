@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcvaultm.lkod
+
    Kocatanvaultman_name_rsc = "Itzal cha'Nosak"
    kocatanvaultman_icon_rsc = kcvault.bgf
    kocatanvaultman_desc_rsc =  \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spelbane.lkod
+
    Spellbane_name_rsc = "spellbane"
    Spellbane_icon_rsc = ispebane.bgf
    Spellbane_desc_rsc = \

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include coruniv.lkod
+
    room_coruniv = coruniv.roo
    room_name_coruniv = "The Hall of Genealogy"
 

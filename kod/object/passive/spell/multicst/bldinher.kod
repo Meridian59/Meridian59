@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bldinher.lkod
+
 
    BloodInheritance_name_rsc = "blood inheritance"
    BloodInheritance_icon_rsc = ibloodin.bgf

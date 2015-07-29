@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hstonbrn.lkod
+
    BrownHeartStone_name_rsc = "brown heartstone"
    BrownHeartStone_desc_rsc = \
       "This is called a 'heartstone'.  It is a huge brown gem taken from "

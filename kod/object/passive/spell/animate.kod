@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include animate.lkod
+
    Animate_name_rsc = "animate"
    Animate_icon_rsc = ianimate.bgf
    Animate_desc_rsc = \

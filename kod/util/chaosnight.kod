@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include chaosnight.lkod
+
    chaos_night_rsc = \
       "~B~U~k[###]~n ~B~rTHE REIGN OF BLOOD FRENZY~n:  The fabric of reality shakes as "
       "an evil presence attempts to penetrate the Meridian.  The servants of "

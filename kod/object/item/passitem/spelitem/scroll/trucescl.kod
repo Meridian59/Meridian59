@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include trucescl.lkod
+
    TruceScroll_label_name_rsc = "scroll of truce"
    TruceScroll_icon_rsc = scr07.bgf
    TruceScroll_desc_rsc = \

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include shokring.lkod
+
    ShockRing_name_rsc = "ring of shock resistance"
    ShockRing_desc_rsc = \
       "This ring is smooth to the touch.  Magical runes are inscribed on its inner surface."

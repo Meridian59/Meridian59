@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ifirewal.lkod
+
    IllusionaryFireWall_name_rsc = "illusionary firewall"
    IllusionaryFireWall_icon_rsc = iwallill.bgf
    IllusionaryFireWall_desc_rsc = \

@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include rntmaint.lkod
+
    RoomMaintenance_room_already = "You already have a room here."
    RoomMaintenance_no_rental_fee = "You have no money to rent a room."
 

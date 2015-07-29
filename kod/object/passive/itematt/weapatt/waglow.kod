@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include waglow.lkod
+
    weapattglowing_desc = " It glows softly like a torch."
    weapattglowing_name = "glowing %s"
 

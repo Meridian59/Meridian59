@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bqtailor.lkod
+
    Barloquetailor_name_rsc = "Madelia"
    Barloquetailor_icon_rsc = bqtailor.bgf
    Barloquetailor_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gcreator.lkod
+
    GuildCreator_name_rsc = "Frular"
    GuildCreator_icon_rsc = gcreator.bgf
    GuildCreator_desc_rsc = \

@@ -40,6 +40,8 @@ constants:
 
 resources:
 
+   include guest6.lkod
+
    room_name_guest6 = "Mausoleum"
    room_guest6 = guest6.roo
    guest6_music = nec03.mp3

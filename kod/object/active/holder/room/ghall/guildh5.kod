@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include guildh5.lkod
+
    room_name_guildhall5 ="Konima's Abandoned Dwelling"
    room_guildhall5 = guildh5.roo
 

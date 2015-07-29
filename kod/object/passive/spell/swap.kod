@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include swap.lkod
+
    swap_name_rsc = "swap"
    swap_icon_rsc = iswap.bgf
    swap_desc_rsc = \

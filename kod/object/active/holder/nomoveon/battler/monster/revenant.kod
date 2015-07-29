@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include revenant.lkod
+
    revenant_name_rsc = "revenant"
    revenant_icon_rsc = zombie.bgf
    revenant_desc_rsc = \

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include corgroc.lkod
+
    room_corgroc = corgroc.roo
    room_name_corgroc = "Solomon's Edibles"
 

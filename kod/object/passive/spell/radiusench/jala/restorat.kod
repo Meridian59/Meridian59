@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include restorat.lkod
+
    Restorate_name_rsc = "restorate"
    Restorate_icon_rsc = irestor.bgf
    Restorate_desc_rsc = \

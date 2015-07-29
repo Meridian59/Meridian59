@@ -37,6 +37,8 @@ constants:
    include protocol.khd
 
 resources:
+
+   include iamisdir.lkod
  
    itematt_misdirection_desc = \
       " An illusion has been cast on this item, hiding it's true abilities."

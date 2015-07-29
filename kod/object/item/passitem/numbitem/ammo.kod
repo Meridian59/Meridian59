@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ammo.lkod
+
    ammo_name_rsc = "ammunition"
    % Generic default image.  Something strange so it is visually obvious if
    %  we didn't set something.

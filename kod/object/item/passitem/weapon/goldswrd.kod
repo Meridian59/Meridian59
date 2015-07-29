@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include goldswrd.lkod
+
    goldsword_name_rsc = "gold sword"
    goldsword_icon_rsc = gsword.bgf
    goldsword_desc_rsc = \

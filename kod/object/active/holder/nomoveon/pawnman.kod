@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include pawnman.lkod
+
    pawnman_name_rsc = "Pawn man"
    pawnman_icon_rsc = pawnman.bgf
    pawnman_desc_rsc = "This is a pawn broker."

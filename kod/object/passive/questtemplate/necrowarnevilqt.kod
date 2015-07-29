@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include necrowarnevilqt.lkod
+
    % Quest description.
    necrowarnevilqt_icon_rsc = necscrol.bgf
    necrowarnevilqt_name_rsc = "necromancer warning quest"

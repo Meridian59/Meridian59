@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bdrgscal.lkod
+
    bluedragonscale_name_rsc = "blue dragon scale"
    bluedragonscale_icon_rsc = bdrgscal.bgf
    bluedragonscale_desc_rsc = \

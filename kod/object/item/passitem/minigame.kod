@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include minigame.lkod
+
    minigame_name_rsc = "game board"
    minigame_icon_rsc = marblplr.bgf
    minigame_desc_rsc = "A game."

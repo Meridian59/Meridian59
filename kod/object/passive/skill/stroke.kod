@@ -17,6 +17,8 @@ constants:
    HITVALUE_MAX = 100
 
 resources:
+
+   include stroke.lkod
    stroke_name_rsc = "Weapon stroke"
    stroke_icon_rsc = light.bgf
    stroke_desc_rsc = "This is a weapon stroke."

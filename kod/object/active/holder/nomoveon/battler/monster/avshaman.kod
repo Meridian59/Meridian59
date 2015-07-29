@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include avshaman.lkod
+
    avarshaman_koc_name_rsc = "avarya"
    avarshaman_default_name = "avar shaman"
 

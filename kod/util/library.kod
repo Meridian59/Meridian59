@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include library.lkod
+
    % for the extended speech and random libs -AJM
    quote_substring = "%q"
    quote_uninitialized = "I'm tryin' to think, but nothin' happens!"

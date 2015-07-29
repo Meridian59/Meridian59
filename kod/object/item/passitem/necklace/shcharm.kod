@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include shcharm.lkod
+
    ShalilleCharm_name_rsc = "diamond pendant"
    ShalilleCharm_icon_rsc = shcharm.bgf
    ShalilleCharm_desc_rsc = \

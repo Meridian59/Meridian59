@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include jsurchin.lkod
+
    jasper_urchin_name_rsc = "urchin"
    jasper_urchin_icon_rsc = urchin.bgf
    jasper_urchin_desc_rsc = \

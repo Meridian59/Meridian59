@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include herbs.lkod
+
    Herbs_name_rsc = "herb"
    Herbs_desc_rsc = \
    "These magical herbs are dark green in color.  The leaves "

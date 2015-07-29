@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spdregg.lkod
+
    spideregg_name_rsc = "egg"
    spideregg_icon_rsc = spdregg.bgf
    spideregg_desc_rsc = \

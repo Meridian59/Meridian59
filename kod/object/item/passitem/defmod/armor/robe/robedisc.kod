@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include robedisc.lkod
+
    RobeInsignia_name_rsc = "robes of the disciple"
    RobeInsignia_icon_rsc = Robe.bgf
    RobeInsignia_desc_rsc = \

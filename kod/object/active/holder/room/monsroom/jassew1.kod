@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jassew1.lkod
+
    room_name_jassew1 = "The Sewers of Jasper"
    room_jassew1 = jassew1.roo
    jassew1_music = cave.mp3

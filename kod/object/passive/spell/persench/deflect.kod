@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include deflect.lkod
+
    Deflect_name_rsc = "deflect"
    Deflect_icon_rsc = imirror.bgf
    Deflect_desc_rsc = \

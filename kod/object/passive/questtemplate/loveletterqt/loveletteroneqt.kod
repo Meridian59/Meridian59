@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include loveletteroneqt.lkod
+
    % Quest description.
    loveletteronequest_name_rsc = "love letter quest"
    loveletteronequest_desc_rsc = \

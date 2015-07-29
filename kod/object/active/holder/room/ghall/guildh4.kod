@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include guildh4.lkod
+
    room_name_guildh4 = "The Wryn's Keep"
    room_guildh4 = guildh4.roo
 

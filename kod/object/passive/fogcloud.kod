@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fogcloud.lkod
+
    fogcloud_name_rsc = "thick fog"
    fogcloud_icon_rsc = poisoncl.bgf
    fogcloud_desc_rsc = "You choke just looking at the thick putrid fog."

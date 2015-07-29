@@ -28,6 +28,8 @@ constants:
 
 resources:
 
+   include feynode.lkod
+
    feynode_name_good = "kii'elhai"
    feynode_name_evil = "kii'dirhai"
 

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcally.lkod
+
    guildforgealliance_name_rsc = "Forge Alliance"
    guildforgealliance_icon_rsc = light.bgf
    guildforgealliance_desc_text_rsc = "Used to team up with other guilds.  Primary benefits of being in an alliance - sharing guild halls."

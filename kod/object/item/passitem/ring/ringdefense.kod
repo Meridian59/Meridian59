@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ringdefense.lkod
+
    ringdefense_name_rsc = "ring of defense"
    ringdefense_icon_rsc = ring1.bgf
    ringdefense_desc_rsc = "This is an elegant gold band imbued with protective magics."

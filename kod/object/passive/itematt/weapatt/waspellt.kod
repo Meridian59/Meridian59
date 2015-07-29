@@ -38,6 +38,8 @@ constants:
 
 resources:
 
+   include waspellt.lkod
+
    iaSpelltype_gone = "Your %s suddenly seems a little more... ordinary."
 
    iaSpelltype_holy = " The weapon glows with a pure, white light."

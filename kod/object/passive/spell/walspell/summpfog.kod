@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include summpfog.lkod
+
    SummonPoisonFog_name_rsc = "poison fog"
    SummonPoisonFog_icon_rsc = ipoiscld.bgf
    SummonPoisonFog_desc_rsc = \

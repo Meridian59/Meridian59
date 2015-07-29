@@ -37,6 +37,8 @@ constants:
 
 resources:
 
+   include assgame.lkod
+
    assgame_impact = "~IThe black dagger shatters upon impact!"
    assgame_blade_shivers = "~IThe black dagger shivers ominously in your hand."
 

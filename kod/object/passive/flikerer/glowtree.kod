@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include glowtree.lkod
+
    GlowTree_name = "soulsap willow tree"
    GlowTree_desc = \
       "A luminescent sap hangs from the branches of this bizarre tree.  Rather "

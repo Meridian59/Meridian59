@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include smallbox.lkod
+
    SmallBox_name_rsc = "personal chest"
    SmallBox_icon_rsc = smwbox.bgf
 

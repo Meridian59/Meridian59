@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include shttrlck.lkod
+
    ShatterLock_name_rsc = "shatterlock"
    ShatterLock_icon_rsc = ishatlok.bgf
    ShatterLock_desc_rsc = \

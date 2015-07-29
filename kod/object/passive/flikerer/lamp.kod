@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include lamp.lkod
+
    lamp_name_rsc = "lamp"
    lamp_icon_rsc = lamp.bgf
    lamp_desc_off_rsc = "These lamps stand like silent sentinels."

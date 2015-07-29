@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include teleportspell.lkod
+
    TeleportationSpell_name_rsc = "teleportation spell"
    TeleportationSpell_icon_rsc = ielusion.bgf
    TeleportationSpell_desc_rsc = \

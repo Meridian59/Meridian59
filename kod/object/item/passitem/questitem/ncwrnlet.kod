@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ncwrnlet.lkod
+
    NecromancerWarningLetter_name_rsc = "letter"
    NecromancerWarningLetter_icon_rsc = scr08.bgf
    NecromancerWarningLetter_desc_rsc = \

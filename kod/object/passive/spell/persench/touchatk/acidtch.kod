@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include acidtch.lkod
+
    AcidTouch_name_rsc = "acid touch"
    AcidTouch_icon_rsc = iacidtou.bgf
    AcidTouch_desc_rsc = \

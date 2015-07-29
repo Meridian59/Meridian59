@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include chaosfood.lkod
+
    chaosfd_name_rsc = "Frenzy Food"
    chaosfd_name_plural_rsc = "Frenzy Food"
    chaosfd_icon_rsc = mushroom.bgf

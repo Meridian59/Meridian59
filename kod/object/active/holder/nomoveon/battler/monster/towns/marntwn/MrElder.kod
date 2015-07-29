@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mrelder.lkod
+
    MarionElder_name_rsc = "Ran er'Hoth"
    MarionElder_icon_rsc = mrelder.bgf
    MarionElder_desc_rsc = \

@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include soldshld.lkod
+
    SoldierShield_name_rsc = "soldier's shield"
 
    SoldierShield_desc_rsc = \

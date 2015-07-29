@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include earthscl.lkod
+
    EarthquakeScroll_label_name_rsc = "scroll of earthquake"
    EarthquakeScroll_icon_rsc = scr08.bgf
    EarthquakeScroll_desc_rsc = \

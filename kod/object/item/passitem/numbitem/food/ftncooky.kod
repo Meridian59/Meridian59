@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ftncooky.lkod
+
    fortunecookie_name_rsc = "fortune cookie"
    fortunecookie_icon_rsc = ftncooky.bgf
    fortunecookie_desc_rsc = \

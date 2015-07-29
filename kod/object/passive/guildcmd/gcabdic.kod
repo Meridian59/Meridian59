@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcabdic.lkod
+
    GuildAbdicate_name_rsc = "abdicate"
    GuildAbdicate_icon_rsc = light.bgf
    GuildAbdicate_desc_Rsc = \

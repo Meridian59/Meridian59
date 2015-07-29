@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include loadscrl.lkod
+
    LoadoutScroll_label_name_rsc = "scroll of loadout"
    LoadoutScroll_icon_rsc = scr03.bgf
    LoadoutScroll_desc_rsc = \

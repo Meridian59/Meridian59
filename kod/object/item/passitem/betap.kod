@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include betap.lkod
+
    BetaPotion_icon_rsc = potion01.bgf
 
    BetaPotion_name_rsc = "The infamous BETA POTION!"

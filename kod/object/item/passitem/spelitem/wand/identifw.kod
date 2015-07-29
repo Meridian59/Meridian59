@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include identifw.lkod
+
    IdentifyWand_label_name_rsc = "wand of identification"
    IdentifyWand_icon_rsc = wand6.bgf
    IdentifyWand_desc_rsc = "Magical energy crackles about this slender wand."

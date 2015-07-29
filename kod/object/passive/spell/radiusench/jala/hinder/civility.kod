@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include civility.lkod
+
    Civility_name_rsc = "civility"
    Civility_icon_rsc = icivilty.bgf
    Civility_desc_rsc = \

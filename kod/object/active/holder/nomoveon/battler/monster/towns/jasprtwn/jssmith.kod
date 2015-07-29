@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jssmith.lkod
+
    JasperBlacksmith_name_rsc = "Quintor"
    JasperBlacksmith_icon_rsc = jssmith.bgf
    JasperBlacksmith_desc_rsc = \

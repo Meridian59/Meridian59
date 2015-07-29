@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rejuven.lkod
+
    Rejuvenate_name_rsc = "rejuvenate"
    Rejuvenate_icon_rsc = irejuven.bgf
    Rejuvenate_desc_rsc = \

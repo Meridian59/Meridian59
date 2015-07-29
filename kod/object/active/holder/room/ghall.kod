@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include ghall.lkod
+
    guildhall_hotplate_firstpass = "Player passed first check."
    guildhall_hotplate = "Player just hit hotplate #%i."
    guildhall_entered_legally = "Guild hall just entered legally."

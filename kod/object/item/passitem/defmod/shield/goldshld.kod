@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include goldshld.lkod
+
    goldshield_name_rsc = "gold round shield"
    goldshield_icon_rsc = rshield.bgf
    goldshield_desc_rsc = \

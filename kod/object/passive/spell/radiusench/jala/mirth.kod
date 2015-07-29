@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mirth.lkod
+
    Mirth_name_rsc = "mirth"
    Mirth_icon_rsc = imirth.bgf
    Mirth_desc_rsc = \

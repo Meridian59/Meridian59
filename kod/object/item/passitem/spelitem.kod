@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include spelitem.lkod
+
    Spellitem_name_rsc = "spellitem"
    Spellitem_label_name_rsc = "generic spellitem"
    Spellitem_icon_rsc = scr07.bgf

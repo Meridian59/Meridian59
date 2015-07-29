@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include totem2.lkod
+
    TotemTwo_name_rsc = "Gold Urn"
    TotemTwo_icon_rsc = qo02.bgf
    TotemTwo_desc_rsc = "Excavated during the construction of the palace of the dark Princess Venya'cyr, the Urn "

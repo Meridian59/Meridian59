@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include potion.lkod
+
    Potion_name_rsc = "potion"
    Potion_label_name_rsc = "generic potion"
    Potion_icon_rsc = potion01.bgf

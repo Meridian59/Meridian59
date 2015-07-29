@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include bqinnk.lkod
+
    Barloque_Innkeep_name_rsc = "Pritchett"
    Barloque_Innkeep_icon_rsc = bqinnk.bgf
    Barloque_Innkeep_desc_rsc = \

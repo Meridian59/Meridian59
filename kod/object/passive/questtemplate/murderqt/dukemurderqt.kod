@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include dukemurderqt.lkod
+
    % Quest description.
    dukemurderqt_name_rsc = "Duke murder mystery quest"
    dukemurderqt_desc_rsc = \

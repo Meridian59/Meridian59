@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bunny.lkod
+
    bunny_koc_name_rsc = "ixleocbunny"
    bunny_name_rsc = "bunny"
    bunny_icon_rsc = bunny2.bgf

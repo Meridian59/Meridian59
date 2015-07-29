@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include shaldiscqt.lkod
+
    % Quest description.
    shalquest_icon_rsc = rescuico.bgf
    shalquest_name_rsc = "Shal'ille disciple quest"

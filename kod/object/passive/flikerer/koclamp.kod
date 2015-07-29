@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include koclamp.lkod
+
    lamp_name = "blue iron brazier"
    lamp_desc = \
       "Scented oil burns in this brazier, providing light and giving the room a musky air."

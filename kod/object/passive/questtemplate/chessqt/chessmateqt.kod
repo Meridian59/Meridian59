@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include chessmateqt.lkod
+
    % Quest description.
    chessmatequest_name_rsc = "chess move courier quest"
 

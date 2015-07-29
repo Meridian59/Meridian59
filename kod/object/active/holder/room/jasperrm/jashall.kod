@@ -16,6 +16,8 @@ constants:
   
 resources:
 
+   include jashall.lkod
+
    room_jasperhall = jashall.roo
    room_name_Jasperhall = "Adventurer's Hall of Jasper"
 

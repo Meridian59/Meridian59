@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include freeact.lkod
+
    FreeAction_name_rsc = "free action"
    FreeAction_icon_rsc = ifreeact.bgf
    FreeAction_desc_rsc = \

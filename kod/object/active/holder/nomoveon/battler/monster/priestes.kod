@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include priestes.lkod
+
    priestess_name_rsc = "priestess"
    priestess_icon_rsc = priestes.bgf
    priestess_desc_rsc = \

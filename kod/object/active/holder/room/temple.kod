@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include temple.lkod
+
    room_temple = temple.roo
    room_name_temple = "The Temple of Shal'ille"
 

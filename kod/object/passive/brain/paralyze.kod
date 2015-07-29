@@ -17,6 +17,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include paralyze.lkod
    paralyzebrain_stub = ""
 
 classvars:

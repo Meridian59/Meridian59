@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include minotaur.lkod
+
    minotaur_koc_name_rsc = "minotaur"
    minotaur_name_rsc = "minotaur"
    minotaur_icon_rsc = minotaur.bgf

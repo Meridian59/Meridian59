@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include seance.lkod
+
    Seance_cast_rsc = SID_SEANCE
 
    Seance_name_rsc = "seance"

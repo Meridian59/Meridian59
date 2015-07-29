@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include parlia.lkod
+
    parliament_price_up = "~IYour association with %s gets you the best possible price."
    parliament_dam_up = "~ITechniques learned from %s help your attack do more damage."
    parliament_hit_up = "~ITechniques learned from %s help guide your attack."

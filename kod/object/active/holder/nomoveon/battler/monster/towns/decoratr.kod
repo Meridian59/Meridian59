@@ -39,6 +39,8 @@ constants:
 
 resources:
 
+   include decoratr.lkod
+
    Decorator_name_rsc = "interior design consultant"
    Decorator_icon_rsc = faerie-g.bgf
    Decorator_desc_rsc = \

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include nodeattk.lkod
+
    NodeAttack_initial_attack_rsc = \
       "~IYou have an uneasy feeling that one of your nodes is being "
       "threatened."

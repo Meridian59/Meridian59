@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ruby.lkod
+
 
    ruby_name_rsc = "ruby"
    ruby_icon_rsc = ruby.bgf

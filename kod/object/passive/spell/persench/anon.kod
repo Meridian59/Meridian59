@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include anon.lkod
+
    anonymity_start = "Your features fade, and you begin to feel indistinct."
    anonymity_stop  = "You suddenly feel more like yourself again."
    anonymity_already_enchanted = "You already have %s%s."

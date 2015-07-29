@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include moon.lkod
+
    moon_icon_rsc = moon.bgf
    moon_name_rsc = "moon"
    moon_desc_rsc = \

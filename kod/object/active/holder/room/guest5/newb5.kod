@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb5.lkod
+
    room_name_newb5 = "Raza Hut"
 
    newb5_sign = \

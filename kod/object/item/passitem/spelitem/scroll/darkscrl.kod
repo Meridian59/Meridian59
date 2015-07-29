@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include darkscrl.lkod
+
    DarknessScroll_label_name_rsc = "scroll of darkness"
    DarknessScroll_icon_rsc = scr06.bgf
    DarknessScroll_desc_rsc = \

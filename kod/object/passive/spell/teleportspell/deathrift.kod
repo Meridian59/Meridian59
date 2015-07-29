@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include deathrift.lkod
+
    DeathRift_name_rsc = "death rift"
    DeathRift_icon_rsc = ideadoor.bgf
    DeathRift_desc_rsc = \

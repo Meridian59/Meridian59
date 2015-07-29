@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include wapunish.lkod
+
    weapattpunisher_desc = \
       " The emblem of a fist holding an ankh rests in the pommel of "
       "this weapon, promising "

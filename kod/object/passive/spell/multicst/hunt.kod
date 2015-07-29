@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include hunt.lkod
+
    Hunt_name_rsc = "hunt"
    Hunt_icon_rsc = ihunt.bgf
    Hunt_desc_rsc = \

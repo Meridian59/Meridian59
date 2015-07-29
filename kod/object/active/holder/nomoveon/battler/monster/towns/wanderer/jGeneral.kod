@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jgeneral.lkod
+
    JealousGeneral_name_rsc = "Jonas D'Accor"
    JealousGeneral_icon_rsc = wngenera.bgf
    JealousGeneral_desc_rsc =  \

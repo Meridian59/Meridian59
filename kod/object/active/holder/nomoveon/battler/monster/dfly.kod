@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include dfly.lkod
+
    DragonFly_koc_name_rsc = "huzotz"
    DragonFly_name_rsc = "dragonfly"
    DragonFly_icon_rsc = dfly.bgf

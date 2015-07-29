@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include web.lkod
+
    Web_name_rsc = "web"
    Web_icon_rsc = webspell.bgf
    Web_desc_rsc = "The web looks very sticky indeed."

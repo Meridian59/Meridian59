@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include dice.lkod
+
    dice_name = "pair of dice"
    dice_desc = "Two six sided dice which can be used in numerous games of chance.  Eyeing the dice, you begin to wonder if you are feeling lucky tonight."
    dice_icon = dice.bgf

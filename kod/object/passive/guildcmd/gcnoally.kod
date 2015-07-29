@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gcnoally.lkod
+
    guildendalliance_name_rsc = "end alliance"
    guildendalliance_icon_rsc = light.bgf
    guildendalliance_desc_Rsc = "Use this to shatter the alliance that your guild has with another guild.  Must target a member of the offending guild."

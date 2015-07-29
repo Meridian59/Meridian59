@@ -27,6 +27,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include wacerem.lkod
    weapattcerem_desc = " Beautiful and ornate, this weapon is obviously "
       "unsuitable for blood combat, though it might provide "
    weapattcerem_desc2 = " edge in games and tourneys."

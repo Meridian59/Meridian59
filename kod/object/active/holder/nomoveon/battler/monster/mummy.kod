@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mummy.lkod
+
    mummy_koc_name_rsc = "napleoc"
    mummy_name_rsc = "mummy"
    mummy_icon_rsc = mummy.bgf

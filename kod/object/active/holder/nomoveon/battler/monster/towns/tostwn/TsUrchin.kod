@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include tsurchin.lkod
+
    tos_urchin_name_rsc = "urchin"
    tos_urchin_icon_rsc = urchin.bgf
    tos_urchin_desc_rsc = \

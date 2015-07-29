@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include barrestockqt.lkod
+
    % Quest description.
    barrestockqt_icon_rsc = pitcher.bgf
    barrestockqt_name_rsc = "bar restock quest"

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include sign-ar2.lkod
+
    newarenasign_name_rsc = "Kraanan's Pride"
    newarenasign_icon1_rsc = artrop01.bgf
    newarenasign_icon2_rsc = artrop02.bgf

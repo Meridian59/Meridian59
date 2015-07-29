@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include earthqua.lkod
+
    earthquake_name_rsc = "earthquake"
    earthquake_icon_rsc = irthquak.bgf
    earthquake_desc_rsc = \

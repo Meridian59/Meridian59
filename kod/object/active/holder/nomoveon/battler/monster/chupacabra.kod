@@ -18,6 +18,8 @@ constants:
    
 resources:
 
+   include chupacabra.lkod
+
    chupacabra_koc_name_rsc = "ixleocchupacabra"
    chupacabra_name_rsc = "chupacabra"
    chupacabra_icon_rsc = chupa.bgf

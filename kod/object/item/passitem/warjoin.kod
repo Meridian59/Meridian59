@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include warjoin.lkod
+
    WarJoinPendant_icon_rsc = factpend.bgf
    WarJoinPendant_name_rsc = "war pendant"
    WarJoinPendant_desc_before_rsc = \

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include bqurchin.lkod
+
    barloque_urchin_name_rsc = "urchin"
    barloque_urchin_icon_rsc = urchin.bgf
    barloque_urchin_desc_rsc = \

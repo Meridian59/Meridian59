@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orctorch.lkod
+
    orctorch_name = "orc torch"
    orctorch_desc = "This offers an ominous, eerie glow."
    orctorch_icon = orcfire.bgf

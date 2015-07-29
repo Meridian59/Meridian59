@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pillufrm.lkod
+
    illusionaryformpotion_already_enchanted = \
    "You are already of another form, and the potion has no effect."
 

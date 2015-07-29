@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include kcbonepr.lkod
+
    KocatanBonePriestess_name_rsc = "The Bone Priestess"
    KocatanBonePriestess_icon_rsc = kcbonepr.bgf
    KocatanBonePriestess_desc_rsc = \

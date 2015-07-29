@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kranprst.lkod
+
    kranpriestess_name_rsc = "Priestess Qerti'nya"
    kranpriestess_icon_rsc = kranprst.bgf
    kranpriestess_desc_rsc = \

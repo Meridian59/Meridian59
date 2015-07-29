@@ -32,6 +32,8 @@ constants:
    include blakston.khd   
 
 resources:
+
+   include iapkptr.lkod
  
    PKpointer_no_loot = \
       "You reach for %s%s, but you are mystically barred from grasping it."

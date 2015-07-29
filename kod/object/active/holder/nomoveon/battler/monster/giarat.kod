@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include giarat.lkod
+
    giantrat_koc_name_rsc = "napyijoa"
    giantrat_name_rsc = "giant rat"
    giantrat_icon_rsc = rat.bgf

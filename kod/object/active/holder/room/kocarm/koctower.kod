@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include koctower.lkod
+
    room_koctower = koctower.roo
    room_name_koctower = "The East Tower"
    koctower_music = song12.mp3

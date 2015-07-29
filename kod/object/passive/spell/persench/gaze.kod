@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include gaze.lkod
+
    paralyze_name_rsc = "gaze of the basilisk"
    paralyze_icon_rsc = iparalyz.bgf
    paralyze_desc_rsc = \

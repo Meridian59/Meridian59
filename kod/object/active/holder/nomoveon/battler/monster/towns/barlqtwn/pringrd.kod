@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pringrd.lkod
+
    princess_guard_name_rsc = "Keep Guard"
    princess_guard_icon_rsc = pringard.bgf
    princess_guard_desc_rsc = \

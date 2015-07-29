@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ghostitm.lkod
+
    ghostItem_name_rsc = "illusionary item"
    ghostItem_icon_rsc = music.bgf
    ghostItem_desc_rsc = \

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include kc5.lkod
+
    room_name_OutdoorsKC5 = "Outside the Mad Scientist's Hut"
    room_OutdoorsKC5 = KC5.roo
    OutdoorsKC5_music = madsci.mp3

@@ -19,6 +19,8 @@ constants:
    
 resources:
 
+   include item.lkod
+
    item_this = "This "
    item_blank_template = "%q"
    item_desc_template = "%s%s"

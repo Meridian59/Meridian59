@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include defile.lkod
+
    defile_name_rsc = "defile"
    defile_icon_rsc = idefile.bgf
    defile_desc_rsc = \

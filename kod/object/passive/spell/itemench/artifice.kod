@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include artifice.lkod
+
    artifice_cast_rsc = "The shape of %s%s begins to shift."
    
    artifice_fails = "%s%s is strangely unaffected by the spell."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spdrbaby.lkod
+
    spiderbaby_koc_name_rsc = "imixkinich"
    spiderbaby_name_rsc = "baby spider"
    spiderbaby_icon_rsc = spdrby.bgf

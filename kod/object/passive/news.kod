@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include news.lkod
+
    news_name_rsc = "Newscroll"
    news_icon_rsc = news.bgf
    news_desc_rsc = "You are looking at a public posting device."

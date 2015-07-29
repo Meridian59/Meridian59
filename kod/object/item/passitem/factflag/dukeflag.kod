@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dukeflag.lkod
+
    DukeFlag_icon_rsc = flagdinv.bgf
    DukeFlag_name_rsc = "flag of the Duke"
    DukeFlag_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include skull.lkod
+
    skull_name_rsc = "skull"
    skull_icon_rsc = skull.bgf
    skull_desc_rsc = \

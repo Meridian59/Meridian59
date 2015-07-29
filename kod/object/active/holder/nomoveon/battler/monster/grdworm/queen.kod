@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include queen.lkod
+
    GroundWormQueen_name_rsc = "groundworm queen"
    GroundWormQueen_koc_name_rsc = "koslithic"
    GroundWormQueen_icon_rsc = worml.bgf

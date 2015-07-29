@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include tsinnk.lkod
+
    tosinnkeeper_name_rsc = "Paddock"
    tosinnkeeper_icon_rsc = tsinnk.bgf
    tosinnkeeper_desc_rsc = \

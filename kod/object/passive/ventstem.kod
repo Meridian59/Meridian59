@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ventstem.lkod
+
    VentCloud_name_rsc = "thick steam"
    VentCloud_icon_rsc = poisoncl.bgf
    VentCloud_desc_rsc = "Thick steam billows from the vent."

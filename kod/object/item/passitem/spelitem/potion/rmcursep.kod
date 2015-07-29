@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rmcursep.lkod
+
    RemoveCursePotion_name_rsc = "remove curse potion"
    %RemoveCursePotion_icon_rsc = potion01.bgf
    RemoveCursePotion_desc_rsc = "This is a glass vial of colored liquid.  "

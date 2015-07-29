@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include castle2a.lkod
+
    room_name_castle2a = "Banquet Hall of the Bourgeois Castle"
    room_castle2a = castle2a.roo
    castle2a_music = castle.mp3

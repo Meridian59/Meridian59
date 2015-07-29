@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include darkness.lkod
+
    darkness_name_rsc = "darkness"
    darkness_icon_rsc = idarknes.bgf
    darkness_desc_rsc = \

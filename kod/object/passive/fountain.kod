@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fountain.lkod
+
    fountain_name_rsc = "fountain"
    fountain_icon_rsc = fountain.bgf
    fountain_frozen_icon_rsc = fountfrozen.bgf

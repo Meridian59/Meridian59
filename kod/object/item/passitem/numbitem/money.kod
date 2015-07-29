@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include money.lkod
+
    money_name_one_rsc = "shilling"
    money_name_many_rsc = "shillings"
    

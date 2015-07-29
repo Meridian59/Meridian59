@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shrinfog.lkod
+
    shrinefog_name_rsc = "acidic fog"
    shrinefog_icon_rsc = poisoncl.bgf
    shrinefog_desc_rsc = \

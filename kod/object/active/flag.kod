@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include flag.lkod
+
    flag_name_rsc = "flagpole"
    flag_desc_rsc = \
       "This flagpole lies empty, unclaimed in the struggle between "

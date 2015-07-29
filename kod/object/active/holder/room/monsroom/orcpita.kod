@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include orcpita.lkod
+
    room_OrcPitA = ocpa.roo
    room_name_OrcPitA = "Grog's Antechamber"
 

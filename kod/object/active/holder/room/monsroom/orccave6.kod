@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include orccave6.lkod
+
    room_orccave6 = oc06.roo
    room_name_orccave6 = "Konima's Ascension"
 

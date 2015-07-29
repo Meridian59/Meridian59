@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include portal.lkod
+
    portal_name_rsc = "portal"
    portal_icon_rsc = portal.bgf
    portal_desc_rsc = "The portal flickers coldly, eerily inviting you to some unknown locale."

@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include lich.lkod
+
    lich_pretty_name_rsc = "Queen Venya'cyr"
    lich_pretty_icon_rsc = licha.bgf
    lich_pretty_desc_rsc = \

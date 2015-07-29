@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include manacrys.lkod
+
    ManaCrystal_name_rsc = "mana crystal"
    ManaCrystal_icon_rsc = manacrys.bgf
    ManaCrystal_desc_rsc = \

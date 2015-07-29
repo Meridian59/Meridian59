@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemspellpower.lkod
+
    gem_spellpower_name_rsc = "magma crystal"
    gem_spellpower_icon_rsc = ruby.bgf
    gem_spellpower_desc_rsc = \

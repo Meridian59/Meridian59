@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include hypochondriacqt.lkod
+
    % Quest description.
    hypochondriacquest_icon_rsc = solagh.bgf
    hypochondriacquest_name_rsc = "hypochondriac quest"

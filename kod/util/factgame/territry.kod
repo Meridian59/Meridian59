@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include territry.lkod
+
    TerritoryGame_duke = "Duke Akardius"
    TerritoryGame_princess = "Princess Kateriina"
    TerritoryGame_rebel = "the rebel Jonas"

@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include monkinsigniaqt.lkod
+
    % Quest description.
    monkinsigniaquest_icon_rsc = gsha.bgf
    monkinsigniaquest_name_rsc = "herald shield insignia quest"

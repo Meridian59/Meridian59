@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include guest1.lkod
+
    room_name_guest1 = "The Inn of Hazar"
    room_guest1 = guest1.roo
    guest1_music = login.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb8.lkod
+
    room_name_Newb8 = "The Grand Museum of Raza"
 
    Newbie8_signname = "into the realm"

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include merchanttaxqt.lkod
+
    % Quest description.
    merchanttaxqt_name_rsc = "merchant tax quest"
    merchanttaxqt_desc_rsc = \

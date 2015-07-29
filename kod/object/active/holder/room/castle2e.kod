@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include castle2e.lkod
+
    room_castle2E = castle2E.roo
    room_name_castle2E = "Madelia's Fine Peacockeries"
 

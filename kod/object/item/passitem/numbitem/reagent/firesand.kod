@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include firesand.lkod
+
    FireSand_name_rsc = "firesand"
    FireSand_icon_rsc = firesand.bgf
    FireSand_desc_rsc = \

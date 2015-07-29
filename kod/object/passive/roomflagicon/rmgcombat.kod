@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include rmgcombat.lkod
+
    rmgcombat_name_rsc = "Murderer, Guild and Faction Combat Only"
    rmgcombat_icon_rsc = rmgcombat.bgf
    rmgcombat_desc_rsc = \

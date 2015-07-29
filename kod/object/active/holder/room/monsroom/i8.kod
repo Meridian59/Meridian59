@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include i8.lkod
+
    room_OutdoorsI8 = I8.roo
    room_name_OutdoorsI8 ="The Cragged Mountains"
    OutdoorsI8_music = walk4.mp3

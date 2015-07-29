@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include scrollsplit.lkod
+
    ScrollSplitter_name_rsc = "blank scroll"
    ScrollSplitter_icon_rsc = scr01.bgf
    ScrollSplitter_desc_rsc = \

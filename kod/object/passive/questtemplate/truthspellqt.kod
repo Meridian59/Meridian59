@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include truthspellqt.lkod
+
    % Quest description.
    truthspellquest_icon_rsc = idisharm.bgf
    truthspellquest_name_rsc = "Jala pupil quest"

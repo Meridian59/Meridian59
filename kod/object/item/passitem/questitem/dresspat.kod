@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dresspat.lkod
+
    DressPattern_name_rsc = "dress pattern"
    DressPattern_icon_rsc = scr10.bgf
    DressPattern_desc_rsc = \

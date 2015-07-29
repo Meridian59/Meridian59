@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include relay.lkod
+
    Relay_cast_rsc = "You feel the vigor of another filling your body."
    Relay_caster_msg_rsc = "You give part of your vigor to %s%s."
 

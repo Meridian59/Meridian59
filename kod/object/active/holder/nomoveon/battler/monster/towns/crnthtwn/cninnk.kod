@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include cninnk.lkod
+
    CornothInnkeep_name_rsc = "D'Franco"
    CornothInnkeep_icon_rsc = cninnk.bgf
    CornothInnkeep_desc_rsc = \

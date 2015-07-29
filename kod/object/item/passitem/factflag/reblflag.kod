@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include reblflag.lkod
+
    RebelFlag_icon_rsc = flagjinv.bgf
    RebelFlag_name_rsc = "rebel flag"
    RebelFlag_desc_rsc = \

@@ -43,6 +43,8 @@ constants:
 
 resources:
 
+   include questnode.lkod
+
    default_cargo_desc = "whatchamacallit"
    default_monster_desc = "monster"
    default_message_desc = "message"

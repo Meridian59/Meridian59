@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dazzle.lkod
+
    Dazzle_name_rsc = "dazzle"
    Dazzle_icon_rsc = idazzle.bgf
    Dazzle_desc_rsc = \

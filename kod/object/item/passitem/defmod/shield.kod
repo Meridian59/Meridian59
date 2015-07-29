@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include shield.lkod
+
    shield_condition_exc = " shines with smooth perfection."
    shield_condition_exc_mended = " is in great condition, but has been patched before."
    shield_condition_good = " is marred by a deep gouge but otherwise is in fine condition."

@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include ka0.lkod
+
    room_name_OutdoorsKA0 = "A dark, humid cavern"
    room_OutdoorsKA0 = KA0.roo
    OutdoorsKA0_music = drgnfly.mp3

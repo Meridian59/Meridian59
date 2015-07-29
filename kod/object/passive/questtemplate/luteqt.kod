@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include luteqt.lkod
+
    % Quest description.
    lutequest_icon_rsc = music.bgf
    lutequest_name_rsc = "instrument quest"

@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include wallelem.lkod
+
    ActiveWallElement_name_rsc = "wall element"
    ActiveWallElement_icon_rsc = poisoncl.bgf
    ActiveWallElement_desc_rsc = "This is a wall spell element."

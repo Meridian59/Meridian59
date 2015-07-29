@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shieldrod.lkod
+
    ShieldRod_name_rsc = "rod of shielding"
    ShieldRod_icon_rsc = wand1.bgf
    ShieldRod_desc_rsc = \

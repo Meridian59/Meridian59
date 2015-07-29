@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include heretic.lkod
+
    Heretic_name_rsc = "Miriana"
    Heretic_icon_rsc = wnhereti.bgf
    Heretic_possessed_icon_rsc = wnheret2.bgf

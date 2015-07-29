@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include boon.lkod
+
    boon_look_rsc = "%s\n%r"
    boon_caster_msg = "You cast %s on %s%s."
 

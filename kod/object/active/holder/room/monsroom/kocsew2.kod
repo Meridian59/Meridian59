@@ -18,6 +18,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include kocsew2.lkod
   
    room_name_kocsew2 = "Up Chuk Creek without a paddle"
    room_kocsew2 = kocsew2.roo

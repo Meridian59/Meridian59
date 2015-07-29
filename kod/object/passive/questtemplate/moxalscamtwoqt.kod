@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include moxalscamtwoqt.lkod
+
    % Quest description.
    moxalscamtwoquest_name_rsc = "Moxal's investment quest"
    moxalscamtwoquest_desc_rsc = \

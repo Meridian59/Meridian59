@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include spell.lkod
+
    spell_name_rsc = "spell"
    spell_icon_rsc = light.bgf
    spell_desc_text_rsc = "This is a spell."

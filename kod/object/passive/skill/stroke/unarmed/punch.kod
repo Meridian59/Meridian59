@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include punch.lkod
    punch_name_rsc = "punch"
    punch_icon_rsc = punchico.bgf
    punch_desc_rsc = "This is the most basic hand-to-hand combat move.  Can be very strong for a powerful warrior, but is extremely tiring."

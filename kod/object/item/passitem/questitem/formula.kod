@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include formula.lkod
+
    FormulaScroll_name_rsc = "alchemical formula"
    FormulaScroll_icon_rsc = scr08.bgf
    FormulaScroll_desc_rsc = \

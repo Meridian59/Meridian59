@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cncllttr.lkod
+
    CouncilLetter_name_rsc = "letter"
    CouncilLetter_icon_rsc = scr04.bgf
    CouncilLetter_desc_rsc = \

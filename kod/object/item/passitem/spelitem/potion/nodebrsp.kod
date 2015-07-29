@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nodebrsp.lkod
+
    NodeBurstPotion_name_rsc = "pungent elixir"
    %NodeBurstPotion_icon_rsc = potion01.bgf
    NodeBurstPotion_desc_rsc = "This is a glass vial of colored liquid.  "

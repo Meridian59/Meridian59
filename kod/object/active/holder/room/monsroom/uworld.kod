@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include uworld.lkod
+
    room_name_underworld = "The Underworld"
    room_underworld = uworld.roo
    underworld_music = undrwrld.mp3

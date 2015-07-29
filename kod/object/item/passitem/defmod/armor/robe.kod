@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include robe.lkod
+
    robe_name_rsc = "robes"
    robe_icon_rsc = robe.bgf
    robe_desc_rsc = \

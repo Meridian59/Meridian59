@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include mysttch.lkod
+
    MysticTouch_name_rsc = "mystic touch"
    MysticTouch_icon_rsc = imysticc.bgf
    MysticTouch_desc_rsc = \

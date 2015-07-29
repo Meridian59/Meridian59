@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jsbart.lkod
+
    Jasper_Bartender_name_rsc = "Pietro"
    Jasper_Bartender_icon_rsc = jsbart.bgf
    Jasper_Bartender_desc_rsc = \

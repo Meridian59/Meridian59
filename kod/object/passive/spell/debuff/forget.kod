@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forget.lkod
+
    forgetspell_name_rsc = "forget"
    forgetspell_icon_rsc = iforget.bgf
    forgetspell_desc_rsc = \

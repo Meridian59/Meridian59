@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include princess.lkod
+
    princess_name_rsc = "Princess Kateriina"
    princess_icon_rsc = princess.bgf
    princess_desc_rsc = \

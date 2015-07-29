@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include flashscl.lkod
+
    FlashScroll_label_name_rsc = "scroll of flash"
    FlashScroll_icon_rsc = scr09.bgf
    FlashScroll_desc_rsc = \

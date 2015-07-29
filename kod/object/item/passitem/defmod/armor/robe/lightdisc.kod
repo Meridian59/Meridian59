@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include lightdisc.lkod
+
    LightRobeDiscipleInsignia_name_rsc = "light robes of the disciple"
    LightRobeDiscipleInsignia_icon_rsc = ltrobe.bgf
    LightRobeDiscipleInsignia_desc_rsc = \

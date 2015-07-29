@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gem.lkod
+
    gem_name_rsc = "mystical gem"
    gem_icon_rsc = emerald.bgf
    gem_desc = "This strange gem seems to gravitate powerfully towards your armor."

@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include arrow.lkod
+
    arrow_name_rsc = "arrows"
    arrow_icon_rsc = arrow.bgf           %NEEDS A PICTURE
    arrow_desc_rsc = \

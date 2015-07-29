@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include phase.lkod
+
    Phase_name_rsc = "phase"
    Phase_icon_rsc = iboonint.bgf
    Phase_desc_rsc = \

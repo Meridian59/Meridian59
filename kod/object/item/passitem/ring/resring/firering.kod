@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include firering.lkod
+
    FireRing_name_rsc = "ring of fire resistance"
    FireRing_desc_rsc = \
       "This ring is cold to the touch.  Magical runes are inscribed on its inner surface."

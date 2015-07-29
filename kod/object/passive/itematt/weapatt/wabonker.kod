@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include wabonker.lkod
+
    weapattbonker_desc = \
       " Mocker's signature flamboyantly emblazons the pommel."
    bonker_dm = "bonker"

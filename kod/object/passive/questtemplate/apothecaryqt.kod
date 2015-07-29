@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include apothecaryqt.lkod
+
    % Quest description.
    apothecaryqt_icon_rsc = shrubbry.bgf
    apothecaryqt_name_rsc = "apothecary quest"

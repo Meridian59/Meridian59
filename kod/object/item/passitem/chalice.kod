@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include chalice.lkod
+
    chalice_name_rsc = "Chalice of the Rain"
    chalice_icon_rsc = chalice.bgf
    chalice_desc_rsc = \

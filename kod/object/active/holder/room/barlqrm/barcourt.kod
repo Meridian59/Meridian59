@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barcourt.lkod
+
    room_name_barloque_court = "Office of the Justicar"
    room_barloque_court = barcourt.roo
 

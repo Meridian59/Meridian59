@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include eviltwin.lkod
+
    EvilTwin_name_rsc = "evil twin"
 
    EvilTwin_male_icon_rsc = btg.bgf

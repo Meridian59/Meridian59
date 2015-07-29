@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include token1.lkod
+
    OneToken_name_rsc = "runed coffer token"
    OneToken_desc_rsc = \
       "Covered in mysterious runes said to explain the workings of spells, the "

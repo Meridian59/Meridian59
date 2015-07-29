@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sign.lkod
+
    sign_name_rsc = "sign"
    sign_icon_rsc = sign.bgf
    sign_icon_newbie_rsc = razsign1.bgf

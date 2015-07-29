@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mystswrd.lkod
+
    mysticsword_name_rsc = "mystic sword"
    mysticsword_icon_rsc = mystswd.bgf
    mysticsword_desc_rsc = \

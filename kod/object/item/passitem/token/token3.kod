@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include token3.lkod
+
    ThreeToken_name_rsc = "jade cat token"
    ThreeToken_desc_rsc = \
       "Like a living cat is known for its dexterity and mastery of skills, this "

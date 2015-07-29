@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include invigor.lkod
+
    Invigorate_name_rsc = "invigorate"
    Invigorate_icon_rsc = iinvigor.bgf
    Invigorate_desc_rsc = \

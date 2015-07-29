@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include toslover.lkod
+
    room_name_TosForgottenLovers = "Forgotten Lover's Tryst"
    room_TosForgottenLovers = tosforgt.roo
    TosForgottenLovers_music = goodfor.mp3

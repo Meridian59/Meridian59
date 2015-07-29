@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include brittlew.lkod
+
    BrittleWand_label_name_rsc = "wand of weapon weakening"
    BrittleWand_icon_rsc = wand6.bgf
    BrittleWand_desc_rsc = "Magical energy crackles about this slender wand."

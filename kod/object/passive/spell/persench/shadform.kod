@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shadform.lkod
+
    shadowform_name_rsc = "shadow form"
    shadowform_icon_rsc = ishadfrm.bgf
    shadowform_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include kocatwn.lkod
+
    kocatan_may_pass = "You may pass."
    kocatan_no_alcohol = "No smuggling alcohol to the natives!"
    kocatan_no_nerudite = \

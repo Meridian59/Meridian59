@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hstonsky.lkod
+
    SkyHeartStone_name_rsc = "sky heartstone"
    SkyHeartStone_desc_rsc = \
       "This is called a 'heartstone'.  It is a huge sky blue gem taken from "

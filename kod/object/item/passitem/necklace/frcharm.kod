@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include frcharm.lkod
+
    FarenCharm_name_rsc = "brass medallion"
    FarenCharm_icon_rsc = frcharm.bgf
    FarenCharm_desc_rsc = \

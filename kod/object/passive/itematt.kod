@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include itematt.lkod
+
    attribute_desc_default = "  This item appears enchanted in some way."
    attribute_name_default = "special %s"
 

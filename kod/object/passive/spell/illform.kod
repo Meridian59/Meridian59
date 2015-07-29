@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include illform.lkod
+
    illusionaryform_name_rsc = "illusionary form"
    illusionaryform_icon_rsc = iillufrm.bgf
    illusionaryform_desc_rsc = \

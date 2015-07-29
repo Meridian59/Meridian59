@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kc3.lkod
+
    room_name_OutdoorsKC3 = "Ruins of the Riija Temple"
    room_OutdoorsKC3 = KC3.roo
    OutdoorsKC3_music = orcbeg.mp3

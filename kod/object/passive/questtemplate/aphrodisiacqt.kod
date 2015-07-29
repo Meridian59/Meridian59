@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include aphrodisiacqt.lkod
+
    % Quest description.
    aphrodisiacqt_icon_rsc = solagh.bgf
    aphrodisiacqt_name_rsc = "aphrodisiac potion quest"

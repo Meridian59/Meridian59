@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include shrine.lkod
+
    Shrine_name_rsc = "shrine"
    Shrine_icon_rsc = shrine.bgf
    Shrine_desc_rsc = \

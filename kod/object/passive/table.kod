@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include table.lkod
+
    table_icon_rsc = table.bgf
    table_name_rsc = "table"
    table_desc_rsc = "This is a wooden table, weathered from years of use and abuse."

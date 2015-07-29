@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shadowp.lkod
+
    ShadowFormPotion_name_rsc = "shadow form potion"
    %ShadowFormPotion_icon_rsc = potion01.bgf
    ShadowFormPotion_desc_rsc = "This is a glass vial of colored liquid.  "

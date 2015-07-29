@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertcliffaccess.lkod
+
    room_desertcliffaccess = desertcliffaccess.roo
    room_name_desertcliffaccess = "Sandbreak Cliffs"
 

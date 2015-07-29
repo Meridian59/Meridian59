@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include cateringqt.lkod
+
    % Quest description.
    cateringqt_icon_rsc = drumspla.bgf
    cateringqt_name_rsc = "catering quest"

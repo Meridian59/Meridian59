@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jassmith.lkod
+
    room_jasperSmith = jassmith.roo
    room_name_JasperSmith = "Quintor's Smithy"
 

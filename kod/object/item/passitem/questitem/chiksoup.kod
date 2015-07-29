@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include chiksoup.lkod
+
    ChickenSoup_name_rsc = "The Widow Qesino's famous chicken soup"
    ChickenSoup_icon_rsc = soupbowl.bgf
    ChickenSoup_desc_rsc = \

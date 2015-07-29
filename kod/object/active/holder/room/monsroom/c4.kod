@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include c4.lkod
+
    room_OutdoorsC4 = C4.roo
    room_name_OutdoorsC4 ="Deep Woods of Ileria"
    OutdoorsC4_music = walk7.mp3

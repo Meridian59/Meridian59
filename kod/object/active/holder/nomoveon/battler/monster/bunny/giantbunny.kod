@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include giantbunny.lkod
+
    easterbunny_koc_name_rsc = "koixleocbunny"
    easterbunny_name_rsc = "easter bunny"
    easterbunny_icon_rsc = bunnyg.bgf

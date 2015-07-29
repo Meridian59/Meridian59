@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include lichmaze.lkod
+
    LichMaze_room_name = "The Dungeon of Castle Brax"
    LichMaze_room = lichmaze.roo
    LichMaze_music = nec03.mp3

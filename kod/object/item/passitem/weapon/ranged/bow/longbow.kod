@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include longbow.lkod
+
    Longbow_name_rsc = "long bow"
    Longbow_desc_rsc = \
       "Expertly carved for flexibility and range, this bow gives you the "

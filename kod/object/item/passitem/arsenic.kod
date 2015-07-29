@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include arsenic.lkod
+
    arsenic_use = "You realize too late that you have made a serious mistake."
    arsenic_cant_use_on = "You can't serve %s%s"
 

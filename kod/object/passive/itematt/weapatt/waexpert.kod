@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include waexpert.lkod
+
    weapattexpert_desc = \
       " Colhorr's signature is engraved on the handle of this weapon. This "
       "weapon looks to provide "

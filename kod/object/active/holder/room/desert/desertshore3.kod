@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertshore3.lkod
+
    room_desertshore3 = desertshore3.roo
    room_name_desertshore3 = "Solitary Shoreline"
 

@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include manaboon.lkod
+
    manaboon_name_rsc = "mana effect"
    manaboon_icon_rsc = iboonman.bgf
    manaboon_desc_rsc = "Something is affecting your natural mana levels."

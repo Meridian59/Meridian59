@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include asshq.lkod
+
    room_name_asshq = "A shadowy corner"
    room_asshq = asshq.roo
    asshq_music = cave.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mvsector.lkod
+
    MovingSector_name_rsc = "moving sector"
    MovingSector_icon_rsc = light.bgf
    MovingSector_desc_rsc = "A sector whose floor/ceiling moves up and down."

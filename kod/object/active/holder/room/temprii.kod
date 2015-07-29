@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include temprii.lkod
+
    room_name_RiijaTemple = "The Temple of Riija"
    room_RiijaTemple = ke1.roo
    riijatemple_music = bridge.mp3

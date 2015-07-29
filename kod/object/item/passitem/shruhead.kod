@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include shruhead.lkod
+
    ShrunkenHead_pickup = "Congratulations on adopting a Shrunken Head. This head will monitor your building activities and track your progress - most certainly a positive building accessory. Try using the following commands: 'Shrunken head, status report!' and 'Shrunken head, reset!."  
      
    ShrunkenHead_icon_rsc = shruhead.bgf

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include truth.lkod
+
    truth_name_rsc = "truth"
    truth_icon_rsc = itruth.bgf
    truth_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tester.lkod
+
    name_test1 = "test1.bgf"
    name_test2 = "test2.bgf"
    name_test3 = "test3.bgf"

@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include rebelloyaltyqt.lkod
+
    % Quest description.
    rebelloyalty_icon_rsc = wngenera.bgf
    rebelloyalty_name_rsc = "rebel loyalty quest"

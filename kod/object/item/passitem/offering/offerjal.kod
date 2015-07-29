@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include offerjal.lkod
+
    OfferingJala_name_rsc = "mystic perfume"
    OfferingJala_icon_rsc = solagh.bgf
    OfferingJala_desc_rsc = \

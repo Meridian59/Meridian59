@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include hzelder.lkod
+
    HazarElder_name_rsc = "Rodric d'Stane"
    HazarElder_icon_rsc = mrelder.bgf
    HazarElder_desc_rsc = \

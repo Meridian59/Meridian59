@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include blind.lkod
+
    blind_name_rsc = "blind"
    blind_icon_rsc = iblind.bgf
    blind_desc_rsc = \

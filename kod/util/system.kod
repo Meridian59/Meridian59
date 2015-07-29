@@ -43,6 +43,8 @@ constants:
 
 resources:
 
+   include system.lkod
+
    system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
    system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."
    system_user_killed_pker = \

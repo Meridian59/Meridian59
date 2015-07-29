@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include finlrite.lkod
+
    FinalRites_name_rsc = "final rites"
    FinalRites_icon_rsc = ifinrite.bgf
    FinalRites_desc_rsc = \

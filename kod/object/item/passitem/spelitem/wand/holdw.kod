@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include holdw.lkod
+
    HoldWand_label_name_rsc = "wand of immobilization"
    HoldWand_icon_rsc = wand6.bgf
    HoldWand_desc_rsc = "Magical energy crackles about this slender wand."

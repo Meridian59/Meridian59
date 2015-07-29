@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wrmtrail.lkod
+
    GroundWormTrailClump_name_rsc = "Loose soil"
    GroundWormTrailClump_icon_rsc = dirtpile.bgf
    GroundWormTrailClump_small_icon_rsc = dirtplsm.bgf

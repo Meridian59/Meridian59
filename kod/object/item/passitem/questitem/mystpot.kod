@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mystpot.lkod
+
    MysteryPotion_name_rsc = "mysterious potion"
    MysteryPotion_icon_rsc = potion01.bgf
    MysteryPotion_desc_rsc = \

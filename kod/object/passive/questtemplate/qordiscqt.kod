@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include qordiscqt.lkod
+
    % Quest description.
    qorquest_icon_rsc = ikarahol.bgf
    qorquest_name_rsc = "Qor disciple quest"

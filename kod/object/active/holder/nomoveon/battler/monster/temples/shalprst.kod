@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shalprst.lkod
+
    shalpriestess_name_rsc = "Priestess Xiana"
    shalpriestess_icon_rsc = shalprst.bgf
    shalpriestess_desc_rsc = \

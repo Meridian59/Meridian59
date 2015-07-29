@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include larva.lkod
+
    GroundWormLarva_koc_name_rsc = "imixslithic"
    GroundWormLarva_name_rsc = "groundworm larva"
    GroundWormLarva_icon_rsc = worms.bgf

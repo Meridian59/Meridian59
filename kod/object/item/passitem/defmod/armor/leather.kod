@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include leather.lkod
+
    leatherarmor_name_rsc = "leather armor"
    leatherarmor_icon_rsc = leathamr.bgf
    leatherarmor_desc_rsc = \

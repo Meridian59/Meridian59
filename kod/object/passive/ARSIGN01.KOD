@@ -7,6 +7,8 @@ constants:
 
 resources:
 
+   include arsign01.lkod
+
    arenasign_name_rsc = "Arena Tapestry.. don't use"
    arenasign_icon1_rsc = arsign01.bgf
    arenasign_desc1_rsc = "This is an informational sign."

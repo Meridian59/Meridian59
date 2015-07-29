@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include daemmask.lkod
+
    DaemonMask_name_rsc = "daemon skeleton mask"
    DaemonMask_icon_male_rsc = res0002e.bgf
    DaemonMask_icon_female_rsc = res0002f.bgf

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include namechscroll.lkod
+
    deedpoll_name_rsc = "deed poll"
    deedpoll_icon_rsc = scr02.bgf
    deedpoll_desc_rsc = \

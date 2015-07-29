@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include firestorm.lkod
+
    firestorm_name_rsc = "fire storm"
    firestorm_icon_rsc = ifirebal.bgf
    firestorm_projectile_rsc = fireball.bgf

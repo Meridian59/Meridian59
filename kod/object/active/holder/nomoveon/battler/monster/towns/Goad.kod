@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include goad.lkod
+
    Goad_name_rsc = "The Goad"
    Goad_icon_rsc = GoadX.bgf
    Goad_desc_rsc = \

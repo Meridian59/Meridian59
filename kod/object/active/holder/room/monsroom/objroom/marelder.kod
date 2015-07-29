@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include marelder.lkod
+
    room_MarionElderHut = marelder.roo
    room_name_MarionElderHut = "The home of the elder"
 

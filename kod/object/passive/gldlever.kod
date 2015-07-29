@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include gldlever.lkod
+
    guildlever_name_rsc = "mystical shield deactivator"
    guildlever_icon_rsc = guildlvr.bgf
    guildlever_desc_rsc = \

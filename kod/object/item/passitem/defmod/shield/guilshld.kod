@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include guilshld.lkod
+
    guildshield_name_rsc = "herald shield"
 
    guildshield_base_sash = gshA.bgf

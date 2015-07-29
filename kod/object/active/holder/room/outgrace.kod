@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include outgrace.lkod
+
    room_outofgrace = outgrace.roo
    room_name_outofgrace = "Out of Grace with the Higher Powers"
 

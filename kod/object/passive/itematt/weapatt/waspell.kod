@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include waspell.lkod
+
    WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."
    WeapAttSpellCaster_desc2 = " This weapon will cast the "
    WeapAttSpellCaster_desc3 = " spell on your target."

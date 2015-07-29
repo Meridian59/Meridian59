@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bread.lkod
+
    bread_name_rsc = "loaf of bread"
    bread_icon_rsc = bread.bgf
    bread_desc_rsc = \

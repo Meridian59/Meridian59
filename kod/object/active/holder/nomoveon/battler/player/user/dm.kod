@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include dm.lkod
+
    dm_module = dm.dll
 
    dm_login = "Welcome to the game, DM %s."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include heatshimmer.lkod
+
    heatshimmer_name_rsc = "shimmer"
    heatshimmer_icon_rsc = grd02101.bgf
    heatshimmer_desc_rsc = "This wall shimmers elusively."

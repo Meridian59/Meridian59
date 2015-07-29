@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcsmith.lkod
+
    KocatanBlacksmith_name_rsc = "Ixla cha'Totlak"
    KocatanBlacksmith_icon_rsc = kcsmith.bgf
    KocatanBlacksmith_desc_rsc = \

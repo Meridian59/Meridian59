@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resacid.lkod
+
    ResistAcid_name_rsc = "resist acid"
    ResistAcid_icon_rsc = iresacid.bgf
    ResistAcid_desc_rsc = \

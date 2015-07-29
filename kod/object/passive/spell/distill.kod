@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include distill.lkod
+
    Distill_name_rsc = "distill"
    Distill_icon_rsc = idistill.bgf
    Distill_desc_rsc = \

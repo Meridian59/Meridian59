@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barrent.lkod
+
    BarloqueRentableRoom_name = "A tastefully appointed room"
    BarloqueRentableRoom_roo = barrent.roo
 

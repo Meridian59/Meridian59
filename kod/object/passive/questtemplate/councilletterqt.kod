@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include councilletterqt.lkod
+
    % Quest description.
    councilletterquest_icon_rsc = scr04.bgf
    councilletterquest_name_rsc = "council letter quest"

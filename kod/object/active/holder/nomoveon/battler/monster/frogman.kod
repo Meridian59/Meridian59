@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include frogman.lkod
+
    frogman_koc_name_rsc = "yozotz"
    frogman_name_rsc = "frogman"
    frogman_icon_rsc = frogman.bgf

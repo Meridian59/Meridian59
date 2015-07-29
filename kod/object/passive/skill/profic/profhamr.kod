@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profhamr.lkod
+
    hammerproficiency_name_rsc = "hammer wielding"
    hammerproficiency_icon_rsc = hammrico.bgf
    hammerproficiency_desc_rsc = "This allows the user to use all manner of hammers more proficiently."

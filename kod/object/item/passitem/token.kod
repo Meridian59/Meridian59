@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include token.lkod
+
    token_name_rsc = "Token"
    token_icon_rsc = rat.bgf
    token_desc_rsc = "A Token of the Meridian Council"

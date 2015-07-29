@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemthrustres.lkod
+
    gem_thrust_resist_name_rsc = "sunstone"
    gem_thrust_resist_icon_rsc = ruby.bgf
    gem_thrust_resist_desc_rsc = \

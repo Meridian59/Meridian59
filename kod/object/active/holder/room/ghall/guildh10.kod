@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include guildh10.lkod
+
    room_name_guildhall10 = "Jaarba's Abode"
    room_guildhall10 = guildh10.roo
 

@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include spdrquen.lkod
+
    spiderqueen_name_rsc = "queen spider"
    spiderqueen_koc_name_rsc = "kokinich"
    spiderqueen_icon_rsc = spdrqu.bgf

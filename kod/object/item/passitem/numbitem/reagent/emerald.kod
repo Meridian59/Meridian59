@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include emerald.lkod
+
 
    emerald_name_rsc = "emerald"
    emerald_icon_rsc = emerald.bgf

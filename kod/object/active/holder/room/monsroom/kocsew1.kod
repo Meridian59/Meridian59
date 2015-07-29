@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kocsew1.lkod
+
    room_name_kocsew1 = "A foul place to wander"
    room_kocsew1 = kocsew1.roo
 

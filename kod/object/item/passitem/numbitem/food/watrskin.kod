@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include watrskin.lkod
+
    waterskin_name_rsc = "water skin"
    waterskin_icon_rsc = watrskin.bgf
    waterskin_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include marhall.lkod
+
    room_marhall = marhall.roo
    room_name_marhall = "The Adventurer's Hall of Marion"
 

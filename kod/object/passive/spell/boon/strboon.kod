@@ -19,6 +19,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include strboon.lkod
    
 
    strboon_name_rsc = "strength effect"

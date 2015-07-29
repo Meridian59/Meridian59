@@ -57,6 +57,8 @@ constants:
 
 resources:
 
+   include guildh14.lkod
+
    room_name_guildh14 = "The Bookmaker's Guild House"
    room_guildh14 = guildh14.roo
 

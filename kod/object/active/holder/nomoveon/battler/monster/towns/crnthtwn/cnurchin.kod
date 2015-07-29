@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include cnurchin.lkod
+
    cornoth_urchin_name_rsc = "urchin"
    cornoth_urchin_icon_rsc = urchin.bgf
    cornoth_urchin_desc_rsc = \

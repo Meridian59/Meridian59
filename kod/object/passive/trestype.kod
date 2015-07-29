@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include trestype.lkod
+
    trinket_found_rsc = \
       "You notice something of interest on the corpse of %s%s!"
 

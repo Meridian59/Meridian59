@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include kocbraz.lkod
+
    kocatanbrazier_name_rsc = "settlement lamp"
    kocatanbrazier_icon_rsc = koclamp.bgf
    kocatanbrazier_desc_rsc = \

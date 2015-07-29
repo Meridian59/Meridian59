@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include seraphymqt.lkod
+
    % Quest description.
    seraphymquest_icon_rsc = serappol.bgf
    seraphymquest_name_rsc = "polished seraphym quest"

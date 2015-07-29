@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include reagentbag.lkod
+
    reagentbag_name_rsc = "reagent bag"
    reagentbag_icon_rsc = baghold.bgf
 

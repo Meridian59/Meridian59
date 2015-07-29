@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include lghtrobe.lkod
+
    lightrobe_name_rsc = "light robes"
    lightrobe_icon_rsc = ltrobe.bgf
    lightrobe_desc_rsc = \

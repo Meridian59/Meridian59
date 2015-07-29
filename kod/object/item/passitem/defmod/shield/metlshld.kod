@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include metlshld.lkod
+
    metalshield_name_rsc = "small round shield"
    metalshield_icon_rsc = metlshld.bgf
    metalshield_desc_rsc = \

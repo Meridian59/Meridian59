@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include lethring.lkod
+
    ringoflethargy_name_rsc = "ring of lethargy"
    ringoflethargy_icon_rsc = ring3.bgf
 

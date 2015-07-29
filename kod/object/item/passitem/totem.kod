@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include totem.lkod
+
    totem_name_rsc = "totem"
    totem_icon_rsc = totem.bgf
    totem_desc_rsc = \

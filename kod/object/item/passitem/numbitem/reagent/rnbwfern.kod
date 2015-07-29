@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include rnbwfern.lkod
+
    rainbowfern_name_rsc = "rainbow fern"
    rainbowfern_icon_rsc = fern.bgf
    rainbowfern_desc_rsc = \

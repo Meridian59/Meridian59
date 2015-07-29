@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include discord.lkod
+
    discordance_name_rsc = "discordance"
    discordance_icon_rsc = idiscord.bgf
    discordance_desc_rsc = \

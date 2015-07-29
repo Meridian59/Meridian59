@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include disilscl.lkod
+
    DispellIllusionScroll_label_name_rsc = "scroll of dispelling"
    DispellIllusionScroll_icon_rsc = scr05.bgf
    DispellIllusionScroll_desc_rsc = \

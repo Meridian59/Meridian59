@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forgetrj.lkod
+
    forgetpotionRiija_desc_rsc = "Quaffing this potion will allow your mind to elude the teachings of the trickster god.  Warning, may have very very serious side effects."
 
 classvars:

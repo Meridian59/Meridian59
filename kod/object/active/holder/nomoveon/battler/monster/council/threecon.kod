@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include threecon.lkod
+
    threeCouncilor_name_rsc = "Cylill"
    threeCouncilor_icon_rsc = threecon.bgf
    threeCouncilor_desc_rsc = \

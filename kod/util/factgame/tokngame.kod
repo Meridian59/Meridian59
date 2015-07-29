@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include tokngame.lkod
+
    parl_councilor_report= "%s%s is suspected to be a %s believer in %s."
    parl_factioned_nSelf = "the foolishness of factions"
    parl_factioned_neutral = "Shal'ille's guidance instead of our ideas"

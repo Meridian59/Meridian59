@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include tosarena.lkod
+
    room_TosArena = tosarena.roo
    name_TosArena = "The Arena of Kraanan"
 

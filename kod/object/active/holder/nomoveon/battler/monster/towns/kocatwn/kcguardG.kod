@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcguardG.lkod
+
    KocatanCaptainGood_name_rsc = "Cital ko'Manca"
    KocatanCaptainGood_icon_rsc = kcguardG.bgf
 

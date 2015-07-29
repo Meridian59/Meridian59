@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include stool.lkod
+
    stool_icon_rsc = stool.bgf
    stool_name_rsc = "stool"
    stool_desc_rsc = "This stool is wobbly and heavily marred from years of use."

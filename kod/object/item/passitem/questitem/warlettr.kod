@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include warlettr.lkod
+
    WarLetter_name_rsc = "personal letter"
    WarLetter_icon_rsc = scr01.bgf
    WarLetter_desc_closed_rsc = \

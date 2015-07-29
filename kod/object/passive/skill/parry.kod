@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include parry.lkod
+
    parry_name_rsc = "parry"
    parry_icon_rsc = parryico.bgf
    parry_desc_rsc = "Parrying allows people with a weapon to turn aside a blow, thus avoiding being hit."

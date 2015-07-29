@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include waylayoasis.lkod
+
    room_waylayoasis = waylayoasis.roo
    room_name_waylayoasis = "Waylay Oasis"
 

@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include necroam.lkod
+
    necamulet_name_rsc = "Amulet of the Three"
    necamulet_icon_rsc = necamlet.bgf
    necamulet_desc_rsc = \

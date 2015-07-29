@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertdunes.lkod
+
    room_desertdunes = desertdunes.roo
    room_name_desertdunes = "The Black Desert"
 

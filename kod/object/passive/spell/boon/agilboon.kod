@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include agilboon.lkod
+
    agilboon_name_rsc = "agility effect"
    agilboon_icon_rsc = iboonagi.bgf
    agilboon_desc_rsc = "Your physical agility is not natural."

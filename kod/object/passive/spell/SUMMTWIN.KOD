@@ -7,6 +7,8 @@ constants:
 
 resources:
 
+   include summtwin.lkod
+
    summonEvilTwin_name_rsc = "evil twin"
    summonEvilTwin_icon_rsc = ievltwin.bgf
    summonEvilTwin_desc_rsc = \

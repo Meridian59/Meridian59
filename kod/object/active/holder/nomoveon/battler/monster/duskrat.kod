@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include duskrat.lkod
+
    duskrat_koc_name_rsc = "teotnapyijoa"
    duskrat_name_rsc = "dusk rat"
    duskrat_icon_rsc = duskrat.bgf

@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include wafactn.lkod
+
    weapatt_faction_princess = \
       " The princess' sigil is embossed on the weapon, promising "
    weapatt_faction_princess2 = " advantage in the defense of her honor."

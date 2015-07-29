@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include winds.lkod
+
    winds_name_rsc = "winds"
    winds_icon_rsc = iwinds.bgf
    winds_desc_rsc = \

@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include guildh8.lkod
+
    room_name_guildh8 = "The Sewer Hideout"
    room_guildh8 = guildh8.roo
 

@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include ringinv.lkod
+
    ringinvisibility_name_rsc = "ring of invisibility"   
    ringinvisibility_icon_rsc = ring1.bgf
    ringinvisibility_desc_rsc = "This ring bears strange markings and seems to shimmer, making it difficult to see clearly."

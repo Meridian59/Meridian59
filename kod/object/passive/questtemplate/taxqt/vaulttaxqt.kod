@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include vaulttaxqt.lkod
+
    % Quest description.
    vaulttaxqt_name_rsc = "vault tax quest"
    vaulttaxqt_desc_rsc = \

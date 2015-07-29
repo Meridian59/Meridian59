@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include bowmakergoodqt.lkod
+
    % Quest description.
    bowmakergoodquest_icon_rsc = neruore.bgf
    bowmakergoodquest_desc_rsc = \

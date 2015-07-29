@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include nrthlwrm.lkod
+
    NarthylWorm_koc_name_rsc = "tepna'arthyl"
    NarthylWorm_name_rsc = "narthyl worm"
    NarthylWorm_icon_rsc = darkbeas.bgf

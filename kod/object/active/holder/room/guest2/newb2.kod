@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb2.lkod
+
    room_name_newb2 = "Raza"
 
 classvars:

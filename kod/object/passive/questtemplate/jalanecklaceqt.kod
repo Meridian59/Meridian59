@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include jalanecklaceqt.lkod
+
    % Quest description.
    jalanecklaceqt_icon_rsc = jalaneck.bgf
    jalanecklaceqt_name_rsc = "Jala necklace quest"

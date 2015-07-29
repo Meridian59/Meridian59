@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include karahol.lkod
+
    KaraholsCurse_name_rsc = "Kara'hol's curse"
    KaraholsCurse_icon_rsc = ikarahol.bgf
    KaraholsCurse_desc_rsc = \

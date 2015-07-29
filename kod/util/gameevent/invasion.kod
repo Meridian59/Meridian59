@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include invasion.lkod
+
    invasion_start_msg = "Invasion Started."
    invasion_end_msg = "Invasion Ended."
 

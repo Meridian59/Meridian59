@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include summweb.lkod
+
    SummonWeb_name_rsc = "spider web"
    SummonWeb_icon_rsc = iweb.bgf
    SummonWeb_overlay = webov.bgf

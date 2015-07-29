@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sacrdres.lkod
+
    SacredResonance_name_rsc = "sacred resonance"
    SacredResonance_icon_rsc = isacrres.bgf
    SacredResonance_desc_rsc = \

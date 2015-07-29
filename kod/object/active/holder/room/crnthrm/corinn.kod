@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include corinn.lkod
+
    room_name_corinn = "Cibilo Creek Inn"
    room_corinn = corinn.roo
    corinn_music = bar2.mp3

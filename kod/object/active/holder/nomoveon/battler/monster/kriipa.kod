@@ -36,6 +36,8 @@ constants:
 
 resources:
 
+   include kriipa.lkod
+
    Kriipa_name_rsc = "kriipa"
    Kriipa_icon_rsc = kriipa.bgf
    Kriipa_desc_rsc = \

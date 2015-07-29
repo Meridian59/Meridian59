@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include guildcmd.lkod
+
    guildcommand_name_rsc = "guild command"
    guildcommand_icon_rsc = light.bgf
    guildcommand_desc_text_rsc = "This is a guild command, used to administer a guild."

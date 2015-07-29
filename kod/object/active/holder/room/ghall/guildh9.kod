@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include guildh9.lkod
+
    room_name_guildh9 = "The Abandoned Warehouse"
    room_guildh9 = guildh9.roo
 

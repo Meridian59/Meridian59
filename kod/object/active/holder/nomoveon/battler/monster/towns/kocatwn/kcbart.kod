@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcbart.lkod
+
    KocatanBartender_name_rsc = "Oxal ix'Tokak"
    kocatanBartender_icon_rsc = kcbart.bgf
    kocatanBartender_desc_rsc = \

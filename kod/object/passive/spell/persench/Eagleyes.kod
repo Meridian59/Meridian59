@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include eagleyes.lkod
+
    EagleEyes_name_rsc = "eagle eyes"
    EagleEyes_icon_rsc = ieagleye.bgf
    EagleEyes_desc_rsc = \

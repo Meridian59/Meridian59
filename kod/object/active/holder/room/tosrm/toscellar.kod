@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include toscellar.lkod
+
    room_name_TosInnCellar = "The Cellar"
    room_TosInnCellar = toscellar.roo
    TosInnCellar_music = bar.mp3

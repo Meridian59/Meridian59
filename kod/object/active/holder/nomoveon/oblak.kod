@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include oblak.lkod
+
    oblak_name_rsc = "oblak"
    oblak_icon_rsc = bsmith.bgf
    oblak_desc_rsc = "This is an oblak, who can repair your broken items."

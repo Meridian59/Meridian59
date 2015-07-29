@@ -7,6 +7,8 @@ constants:
 
 resources:
 
+   include basicinn.lkod
+
    basicinnkeeper_name_rsc = "Rycksher"
    basicinnkeeper_icon_rsc = basicinn.bgf
    basicinnkeeper_desc_rsc = \

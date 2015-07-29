@@ -39,6 +39,8 @@ constants:
 
 resources:
 
+   include radiusench.lkod
+
    radius_ench_default_cast = "A circle of magic expands outward from you."
    radius_ench_default_starts = "A circle of magic expands outward from %s."
    radius_ench_default_ends = "The circle of magic maintained by %s collapses."

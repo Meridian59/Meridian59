@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include dukeshld.lkod
+
    DukeShield_name_rsc = "shield of the Duke's army"
 
    DukeShield_desc_rsc = \

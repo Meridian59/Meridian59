@@ -28,6 +28,8 @@ constants:
 
 resources:
 
+   include qrcharm.lkod
+
    qorcharm_name_rsc = "monocle"
    qorcharm_icon_rsc = qrcharm.bgf
    qorcharm_desc_rsc = \

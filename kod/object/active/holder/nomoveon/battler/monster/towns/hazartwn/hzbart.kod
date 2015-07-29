@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include hzbart.lkod
+
    Hazar_Bartender_name_rsc = "Eric d'Jorn"
    Hazar_Bartender_icon_rsc = tsinnk.bgf
    Hazar_Bartender_desc_rsc = \

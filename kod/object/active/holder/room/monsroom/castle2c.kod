@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include castle2c.lkod
+
    room_castle2c = castle2c.roo
    room_name_castle2c = "The Assembly Chamber"
 

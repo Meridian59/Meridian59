@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include invis.lkod
+
    invisibility_name_rsc = "invisibility"
    invisibility_icon_rsc = iinvisib.bgf
    invisibility_desc_rsc = \

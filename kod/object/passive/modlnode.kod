@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include modlnode.lkod
+
    ModelNode_name_rsc = "miniature mana node"
    ModelNode_icon_rsc = modnode.bgf
    ModelNode_desc_rsc = \

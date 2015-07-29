@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kocapoth.lkod
+
    room_name_kocapoth = "Two Lizards Magic Shop"
    room_kocapoth = kocapoth.roo
    kocapoth_music = song12.mp3

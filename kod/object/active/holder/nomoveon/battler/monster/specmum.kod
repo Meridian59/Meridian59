@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include specmum.lkod
+
    SpectralMummy_koc_name_rsc = "kosnapleoc"
    SpectralMummy_name_rsc = "spectral mummy"
    SpectralMummy_icon_rsc = mummy.bgf

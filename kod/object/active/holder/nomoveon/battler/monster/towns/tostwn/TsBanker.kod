@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tsbanker.lkod
+
    TosBanker_name_rsc = "Skivlat"
    TosBanker_icon_rsc = tsbanker.bgf
    TosBanker_desc_rsc = \

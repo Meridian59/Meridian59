@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profshsw.lkod
+
    Shortswordproficiency_name_rsc = "short sword fighting"
    Shortswordproficiency_icon_rsc = shswdico.bgf
    Shortswordproficiency_desc_rsc = "Allows added proficiency with short swords."

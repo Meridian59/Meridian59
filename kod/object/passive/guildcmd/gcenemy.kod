@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gcenemy.lkod
+
    guildDeclareEnemy_name_rsc = "declare enemy"
    guildDeclareEnemy_icon_rsc = light.bgf
    guildDeclareEnemy_desc_Rsc = "Use this declare an opposing guild an enemy."

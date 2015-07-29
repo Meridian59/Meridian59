@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include roomench.lkod
+
    RoomEnchantment_name_rsc = "room enchantment"
    RoomEnchantment_icon_rsc = iheat.bgf
    RoomEnchantment_desc_rsc = \

@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include kocbank.lkod
   
    room_name_kocbank = "The Hungry Vaults"
    room_kocbank = kocbank.roo

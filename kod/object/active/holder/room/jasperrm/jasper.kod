@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jasper.lkod
+
    room_name_JasperEast = "East Jasper"
    room_JasperEast = jaseast.roo
 

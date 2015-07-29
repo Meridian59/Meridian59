@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include h9.lkod
+
    room_OutdoorsH9 = H9.roo
    room_name_OutdoorsH9 ="Under the shadow of the Sentinel"
    OutdoorsH9_music = walk4.mp3

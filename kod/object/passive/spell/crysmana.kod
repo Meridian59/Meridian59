@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include crysmana.lkod
+
    CrystalizeMana_name_rsc = "crystalize mana"
    CrystalizeMana_icon_rsc = icrysman.bgf
    CrystalizeMana_desc_rsc = \

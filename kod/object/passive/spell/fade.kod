@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include fade.lkod
+
    fade_name_rsc = "fade"
    fade_icon_rsc = ifade.bgf
    fade_desc_rsc = \

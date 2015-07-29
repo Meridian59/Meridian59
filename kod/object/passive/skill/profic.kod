@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profic.lkod
+
    proficiency_name_rsc = "Weapon proficiency"
    proficiency_icon_rsc = light.bgf
    proficiency_desc_rsc = "This is a weapon proficiency"

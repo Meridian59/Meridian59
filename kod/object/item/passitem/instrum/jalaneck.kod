@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include jalaneck.lkod
+
    JalaNecklace_name_rsc = "necklace of Jala"
    JalaNecklace_icon_rsc = jalaneck.bgf
    JalaNecklace_desc_rsc = \

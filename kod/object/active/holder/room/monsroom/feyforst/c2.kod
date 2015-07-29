@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include c2.lkod
+
    room_name_OutdoorsC2 = "The Vale of Sorrows"
    room_OutdoorsC2 = C2.roo
    OutdoorsC2_music = walk7.mp3

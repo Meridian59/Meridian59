@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mrhealer.lkod
+
    MarionHealer_name_rsc = "Lady Aftyn"
    MarionHealer_icon_rsc = mrhealer.bgf
    MarionHealer_desc_rsc = \

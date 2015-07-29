@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include dukesoldierqt.lkod
+
    % Quest description.
    dukesoldier_icon_rsc = flagdinv.bgf
    dukesoldier_name_rsc = "Duke soldier shield quest"

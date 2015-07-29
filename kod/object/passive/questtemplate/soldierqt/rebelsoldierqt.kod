@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include rebelsoldierqt.lkod
+
    % Quest description.
    rebelsoldier_icon_rsc = flagjinv.bgf
    rebelsoldier_name_rsc = "rebel soldier shield quest"

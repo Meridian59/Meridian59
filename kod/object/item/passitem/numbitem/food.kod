@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include food.lkod
+
    food_desc_rsc = "%s\n\nThis will cure the munchies.%s"
 
    food_use = "Yum-yum good!"

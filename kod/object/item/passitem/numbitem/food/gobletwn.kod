@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gobletwn.lkod
+
    wineGoblet_name_rsc = "goblet of wine"
    wineGoblet_icon_rsc = Goblet.bgf
    wineGoblet_desc_rsc = \

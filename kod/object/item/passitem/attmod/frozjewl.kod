@@ -20,6 +20,8 @@ resources:
 
    include frozjewl.lkod
 
+   include frozjewl.lkod
+
    frozjewel_name_rsc = "Jewel of Froz"
    frozjewel_icon_rsc = frozjewl.bgf
    frozjewel_desc_rsc = \

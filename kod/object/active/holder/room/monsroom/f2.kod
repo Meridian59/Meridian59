@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include f2.lkod
+
    room_OutdoorsF2 = F2.roo
    room_name_OutdoorsF2 ="The sandy shores of the Great Ocean"
    waterfall_soundF2 = wfall2.wav

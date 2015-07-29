@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include respois.lkod
+
    ResistPoison_name_rsc = "resist poison"
    ResistPoison_icon_rsc = irespois.bgf
    ResistPoison_desc_rsc = \

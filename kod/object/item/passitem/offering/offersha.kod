@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include offersha.lkod
+
    OfferingShalille_name_rsc = "tears of a newborn"
    OfferingShalille_icon_rsc = tear.bgf
    OfferingShalille_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."

@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include bqsmith.lkod
+
    BarloqueBlacksmith_name_rsc = "Fehr'loi Qan"
    BarloqueBlacksmith_icon_rsc = bqsmith.bgf
    BarloqueBlacksmith_desc_rsc = \

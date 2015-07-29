@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sapphire.lkod
+
 
    sapphire_name_rsc = "sapphire"
    sapphire_icon_rsc = sapphire.bgf

@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include purify.lkod
+
    purify_name_rsc = "purify"
    purify_icon_rsc = ipurify.bgf
    purify_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sun.lkod
+
    sun_icon_rsc = sun.bgf
    sun_name_rsc = "sun"
    sun_desc_rsc = \

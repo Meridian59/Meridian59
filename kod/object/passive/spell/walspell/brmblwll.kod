@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include brmblwll.lkod
+
    BrambleWall_name_rsc = "bramble wall"
    BrambleWall_icon_rsc = iwalltho.bgf
    BrambleWall_desc_rsc = \

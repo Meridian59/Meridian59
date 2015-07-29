@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forgetsh.lkod
+
    forgetpotionShalille_desc_rsc = "Quaffing this elixir will remove all of Shal'ille's powers from your spellbook.\n\nMay have very serious side effects."
 
 classvars:

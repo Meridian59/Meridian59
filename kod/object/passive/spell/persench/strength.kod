@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include strength.lkod
+
    superstrength_on_rsc = \
       "Your blood tingles with the force of Kraanan.  You are ready for "
       "battle!"

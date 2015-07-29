@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include field1.lkod
+
    room_name_field1 = "The Fields"
    room_field1 = field1.roo
    field1_music = pk_fm.mp3

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include tombston.lkod
+
    tombstone_name_rsc = "tombstone"
    tombstone_icon_normal_rsc = tombston.bgf
    tombstone_icon_cross_rsc = tombcros.bgf

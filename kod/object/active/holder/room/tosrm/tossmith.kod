@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tossmith.lkod
+
    room_name_tossmith = "The Freelance Merchant and Menders Shop"
    room_tossmith = tossmith.roo
    tossmith_music = smithy.mp3

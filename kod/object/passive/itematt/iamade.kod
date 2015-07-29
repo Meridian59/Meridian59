@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include iamade.lkod
+
    itematt_made_desc = "  It shimmers insubstantially."
    iaMade_gone = "Your %s disappears in a puff of smoke."
 

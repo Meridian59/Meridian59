@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ant.lkod
+
    ant_koc_name_rsc = "yokinich"
    ant_name_rsc = "ant"
    ant_icon_rsc = ant.bgf

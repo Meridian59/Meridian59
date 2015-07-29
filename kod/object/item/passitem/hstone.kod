@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include hstone.lkod
+
    HeartStone_icon_rsc = xeogem.bgf
    HeartStone_name_rsc = "heartstone"
    HeartStone_desc_rsc = \

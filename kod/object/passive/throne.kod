@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include throne.lkod
+
    throne_name_rsc = "throne"
    throne_icon_rsc = throne.bgf
    throne_desc_rsc = \

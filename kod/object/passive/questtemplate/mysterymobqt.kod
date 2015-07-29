@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include mysterymobqt.lkod
+
    % Quest description.
    mysterymobquest_icon_rsc = scr10.bgf
    mysterymobquest_name_rsc = "mystery monster quest"

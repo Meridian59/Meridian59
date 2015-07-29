@@ -34,6 +34,8 @@ constants:
 
 resources:
 
+   include necguild.lkod
+
    necguild_name_rsc = "Order of Necromancers"
    necguild_icon_rsc = idarknes.bgf
    necguild_desc_rsc = \

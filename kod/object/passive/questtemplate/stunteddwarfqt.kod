@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include stunteddwarfqt.lkod
+
    % Quest description.
    stunteddwarfquest_icon_rsc = mug.bgf
    stunteddwarfquest_name_rsc = "stunted dwarf quest"

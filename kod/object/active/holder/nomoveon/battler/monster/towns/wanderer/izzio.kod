@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include izzio.lkod
+
    izzio_name_rsc = "Izzio"
    izzio_icon_rsc = wnizzio.bgf
    izzio_desc_rsc = \

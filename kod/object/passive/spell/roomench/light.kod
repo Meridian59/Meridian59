@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include light.lkod
+
    light_name_rsc = "light"
    light_icon_rsc = isunlite.bgf
    light_desc_rsc = \

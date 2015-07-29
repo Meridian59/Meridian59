@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include asssign.lkod
+
    AssassinSign_name_rsc = "the Assassin's Circle"
    Assassinsign_icon_rsc = newbsign.bgf
    

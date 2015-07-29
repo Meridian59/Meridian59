@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include debuff.lkod
+
    debuff_name_rsc = "debuff"
    debuff_icon_rsc = iheat.bgf
    debuff_desc_rsc = \

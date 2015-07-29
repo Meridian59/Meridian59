@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include yeti.lkod
+
    yeti_name_rsc = "yeti"
    yeti_koc_name_rsc = "tezatzmoch"
    yeti_icon_rsc = yeti.bgf

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccav5x.lkod
+
    room_OrcCave5Ext  = oc5b.roo
    room_name_OrcCave5Ext =  "A spring of vitality"
 

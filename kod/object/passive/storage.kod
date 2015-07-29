@@ -17,6 +17,8 @@ constants:
    VAULT_ITEMS_MAX = 600
 
 resources:
+
+   include storage.lkod
    msg_not_enough_items_on_deposit = "%s%s does not have that many on deposit."
    msg_does_not_have_item = "%s%s does not have that item on deposit for you."
    msg_has_no_deposit = "%s%s does not have any items on deposit for you."

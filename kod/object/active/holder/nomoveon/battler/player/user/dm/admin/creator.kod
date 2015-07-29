@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include creator.lkod
+
    creator_armor = "You are now armor."
    creator_icon_armor = aarmor.bgf
 

@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include dethspid.lkod
+
    DeathSpider_koc_name_rsc = "na'arkinich"
    DeathSpider_name_rsc = "black spider"
    DeathSpider_icon_rsc = spidmagc.bgf

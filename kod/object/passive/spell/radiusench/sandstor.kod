@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include sandstor.lkod
+
    sandstorm_name_rsc = "sandstorm"
    sandstorm_icon_rsc = isandsto.bgf
    sandstorm_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jasbank.lkod
+
    room_name_jasbank = "The Royal Bank of Jasper"
    room_jasbank = jasbank.roo
    jasbank_music = bank.mp3

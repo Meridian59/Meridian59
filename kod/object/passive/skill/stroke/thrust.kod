@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include thrust.lkod
    Thrust_name_rsc = "thrust"
    Thrust_icon_rsc = light.bgf
    Thrust_desc_rsc = "Thrust is a high damage, low-hit chance stroke."

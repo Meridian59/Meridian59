@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include poison.lkod
+
    poison_start = "Fresh poison courses through your veins like fire."
    poison_stop  = "The poison abates somewhat."
    poison_icon = iposoned.bgf

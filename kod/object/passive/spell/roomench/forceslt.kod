@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forceslt.lkod
+
    forcesoflight_name_rsc = "forces of light"
    forcesoflight_icon_rsc = ifrclite.bgf
    forcesoflight_desc_rsc = \

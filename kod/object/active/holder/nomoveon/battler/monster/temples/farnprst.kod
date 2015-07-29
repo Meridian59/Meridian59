@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include farnprst.lkod
+
    farenpriestess_name_rsc = "Priestess Tenuv'vyal"
    farenpriestess_icon_rsc = farnprst.bgf
    farenpriestess_desc_rsc = \

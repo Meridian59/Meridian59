@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ratinvasion.lkod
+
    RatInvasion_start_msg = \
       "~B~k[Event]~n ~B~v The reign of the Rat King has begun."
 

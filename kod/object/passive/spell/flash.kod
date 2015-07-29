@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include flash.lkod
+
    Flash_name_rsc = "flash"
    Flash_icon_rsc = iflash.bgf
    Flash_desc_rsc = \

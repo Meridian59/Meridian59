@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include evilent.lkod
+
    EvilEnt_koc_name_rsc = "teotezmecya"
    EvilEnt_name_rsc = "diseased tree"
    EvilEnt_icon_rsc = res0003a.bgf

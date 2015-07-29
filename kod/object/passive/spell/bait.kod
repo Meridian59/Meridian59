@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bait.lkod
+
    Bait_name_rsc = "bait"
    Bait_icon_rsc = idistrac.bgf
    Bait_desc_rsc = \

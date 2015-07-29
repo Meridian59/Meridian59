@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gift.lkod
+
    gift_name_rsc = "gift"
    gift_icon_rsc = package.bgf
    gift_desc_rsc = \

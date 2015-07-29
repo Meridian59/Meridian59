@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include forgetsk.lkod
+
    forgetpotionskills_desc_rsc = \
       "Drinking this potion causes one to forget all skills that he or she "
       "possesses.\n\nMay have very serious side effects."

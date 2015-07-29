@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include xeoearth.lkod
+
    XeoEarth_name_rsc = "te'xeochicatl"
    XeoEarth_koc_name_rsc = "te'xeo'chicatl"
    XeoEarth_icon_rsc = Xeo.bgf

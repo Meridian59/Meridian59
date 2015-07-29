@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include guildh15.lkod
+
    room_name_guildh15 = "Inner Sanctum of Queen Venya'cyr"
    room_guildh15 = guildh15.roo
 

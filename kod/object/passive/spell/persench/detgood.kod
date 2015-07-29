@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include detgood.lkod
+
    DetectGood_name_rsc = "detect good"
    DetectGood_icon_rsc = iDetGood.bgf
    DetectGood_desc_rsc = \

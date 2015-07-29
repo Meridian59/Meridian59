@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include neeleme.lkod
    
    neruelemental_name_rsc = "nerudite golem"
    neruelemental_icon_rsc = neeleme.bgf

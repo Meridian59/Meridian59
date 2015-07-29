@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include hellport.lkod
+
    hellportal_name_rsc = "rip in space"
    hellportal_icon_rsc = teleport.bgf
    hellportal_desc_rsc = "Gazing through the anomaly, you can see %s."

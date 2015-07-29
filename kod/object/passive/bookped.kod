@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bookped.lkod
+
    bookped_name_rsc = "book on a pedestal"
    bookped_icon_rsc = jbook.bgf
    bookped_desc_rsc = "A hefty book resting on a sturdy pedestal."

@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include wamanasiphon.lkod
+
    weapattSiphon_desc = \
       "  A mystical force seems to draw energy from the air around the weapon."
    Siphon_dm = "Siphon"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nerubow.lkod
+
    NeruditeBow_name_rsc = "nerudite bow"
    NeruditeBow_desc_rsc = \
       "They DO exist!  This bow was forged from the notoriously brittle nerudite "

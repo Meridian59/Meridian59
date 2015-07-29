@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include brthlife.lkod
+
    breathoflife_cast_rsc = "You feel %s%s's life force filling your body. You gain ~g~B%i~B~n health."
    breathoflife_caster_msg_rsc = "You give part of your life force to %s%s, sacrificing ~r~B%i~B~n health."
 

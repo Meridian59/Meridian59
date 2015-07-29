@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sweep.lkod
+
    Sweep_name_rsc = "sweep"
    Sweep_icon_rsc = isweep.bgf
    Sweep_desc_rsc = \

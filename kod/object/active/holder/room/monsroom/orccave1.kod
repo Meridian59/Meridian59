@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccave1.lkod
+
    room_orccave1 = oc01.roo
    room_name_orccave1 = "Ugol's Warren Entrance"
 

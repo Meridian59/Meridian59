@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include bolt.lkod
+
    bolt_name_rsc = "bolts"
    bolt_icon_rsc = sphere.bgf           %NEEDS A PICTURE
    bolt_desc_rsc = "These are fired from your typical crossbow."

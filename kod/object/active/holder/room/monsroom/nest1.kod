@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include nest1.lkod
+
    room_name_nest1 = "The Spider Nest"
    room_nest1 = nest1.roo
 

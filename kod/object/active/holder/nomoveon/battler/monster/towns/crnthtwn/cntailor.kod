@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include cntailor.lkod
+
    CornothTailor_name_rsc = "Hester Gilk"
    CornothTailor_icon_rsc = cntailor.bgf
    CornothTailor_desc_rsc = \

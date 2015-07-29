@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include potaphro.lkod
+
    AphrodesiacPotion_name_rsc = "vial of perfume"
    AphrodesiacPotion_name_plural_rsc = "vials of perfume"
    AphrodesiacPotion_icon_rsc = solagh.bgf

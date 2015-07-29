@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include guest4.lkod
+
    room_name_guest4 = "Ravi's Magicks of Hazar's Crossing"
    room_guest4 = guest4.roo
    guest4_music = login.mp3

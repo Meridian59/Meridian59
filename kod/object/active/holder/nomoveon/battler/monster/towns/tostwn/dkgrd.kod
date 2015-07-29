@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include dkgrd.lkod
+
    duke_guard_name_rsc = "Keep Guard"
    duke_guard_icon_rsc = dukegard.bgf
    duke_guard_desc_rsc = \

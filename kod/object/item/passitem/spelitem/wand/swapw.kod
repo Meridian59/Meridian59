@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include swapw.lkod
+
    SwapWand_label_name_rsc = "wand of filching"
    SwapWand_icon_rsc = wand6.bgf
    SwapWand_desc_rsc = "Magical energy crackles about this slender wand."

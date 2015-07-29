@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include haste.lkod
+
    Haste_name_rsc = "haste"
    Haste_icon_rsc = ihaste.bgf
    Haste_desc_rsc = \

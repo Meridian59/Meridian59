@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include elderbry.lkod
+
    Elderberry_name_rsc = "elderberry"
    Elderberry_icon_rsc = shrubbry.bgf
    Elderberry_desc_rsc = \

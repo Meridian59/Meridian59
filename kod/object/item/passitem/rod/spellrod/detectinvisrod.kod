@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include detectinvisrod.lkod
+
    DetectInvisibleRod_name_rsc = "rod of detect invisible"
    DetectInvisibleRod_icon_rsc = wand5.bgf
 

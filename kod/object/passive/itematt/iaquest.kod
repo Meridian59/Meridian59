@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include iaquest.lkod
+
    ItemAttQuestCargo_desc_rsc = \
       "\n\nThis was given by %sourceNPC to %player, to be delivered to %destNPC."
    ItemAttQuestCargo_sub_sourceNPC = "%sourceNPC"

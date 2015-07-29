@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include avarnode.lkod
+
    AvarNode_rejected = "The node rejects your attempt to meld with it."
 
 classvars:

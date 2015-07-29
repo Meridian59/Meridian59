@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include apparitn.lkod
+
    summonapparition_name_rsc = "apparition"
    summonapparition_icon_rsc = iapparit.bgf
    summonapparition_desc_rsc = \

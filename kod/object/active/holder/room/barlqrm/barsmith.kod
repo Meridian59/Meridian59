@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barsmith.lkod
+
    room_barloquesmith = barsmith.roo
    room_name_barloquesmith = "The Royal Blacksmith of Barloque"
 

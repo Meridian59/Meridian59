@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemremove.lkod
+
    gem_remove_name_rsc = "jeweller's chisel"
    gem_remove_icon_rsc = wand6.bgf
    gem_remove_desc_rsc = \

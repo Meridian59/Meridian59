@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forest5.lkod
+
    room_forest5 = forest5.roo
    name_forest5 = "The Deep Dark Woods of Marion"
 

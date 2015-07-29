@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include murderqt.lkod
+
    % Quest description.
    murderqt_icon_rsc = bkswd.bgf
    murderqt_nodetwo_rsc = \

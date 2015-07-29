@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include idwandqt.lkod
+
    % Quest description.
    idwandqt_icon_rsc = joltstaf.bgf
    idwandqt_name_rsc = "wand identification quest"

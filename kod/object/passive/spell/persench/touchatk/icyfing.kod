@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include icyfing.lkod
+
    IcyFingers_name_rsc = "icy fingers"
    IcyFingers_icon_rsc = iicyfing.bgf
    IcyFingers_desc_rsc = \

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include flytrap.lkod
+
    flytrap_name_rsc = "Man-eating Plant"
    flytrap_icon_rsc = ent.bgf
    flytrap_desc_rsc = "A ferocious plant that likes the taste of human flesh."

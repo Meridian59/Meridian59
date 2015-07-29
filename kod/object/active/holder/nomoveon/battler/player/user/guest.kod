@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include guest.lkod
+
    guest_cant_broadcast = "Only regular players may broadcast messages."
 
    guest_cant_send_non_guest = "Only regular players may send messages to the real world."

@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include guildh13.lkod
+
    room_name_guildh13 = "The Hall of the Slaughtered Command"
    room_guildh13 = guildh13.roo
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include council.lkod
+
    Councilor_name_rsc = "Councilor"
    Councilor_icon_rsc = hermit.bgf
    Councilor_desc_rsc = ""

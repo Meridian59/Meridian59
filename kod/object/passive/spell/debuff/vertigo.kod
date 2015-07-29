@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include vertigo.lkod
+
    Vertigo_name_rsc = "vertigo"
    Vertigo_icon_rsc = ivertigo.bgf
    Vertigo_desc_rsc = \

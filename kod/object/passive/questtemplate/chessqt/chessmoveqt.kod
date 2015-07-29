@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include chessmoveqt.lkod
+
    % Quest description.
    chessmovequest_name_rsc = "chess move courier quest"
 

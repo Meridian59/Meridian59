@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include necport.lkod
+
    NecropolisPortal_icon_rsc = teleport.bgf
 
    NecropolisPortal_closing = "The portal flickers and begins to draw imperceptibly in on itself."

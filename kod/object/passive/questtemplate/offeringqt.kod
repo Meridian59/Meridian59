@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include offeringqt.lkod
+
    % Quest description.
    offeringquest_accept_rsc = \
       "%s%s has invited you to chant with %s, do you accept?"

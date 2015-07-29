@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include canyon2.lkod
+
    room_name_canyons2 = "Martyr's Battleground"
    room_canyons2 = canyons2.roo
    canyon2_music = walk1.mp3

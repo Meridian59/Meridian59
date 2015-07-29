@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include lupking.lkod
+
    lupoggking_name_rsc = "lupogg king"
    lupoggking_icon_rsc = lupking.bgf
    lupoggking_desc_rsc = \

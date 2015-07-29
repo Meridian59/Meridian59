@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include book.lkod
+
    book_name_rsc = "book"
    book_icon_rsc = book1.bgf
    book_desc_rsc = \

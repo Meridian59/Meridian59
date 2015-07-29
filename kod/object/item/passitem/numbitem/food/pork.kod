@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pork.lkod
+
    pork_name_rsc = "slice of pork"
    pork_icon_rsc = pork.bgf
    pork_desc_rsc = \

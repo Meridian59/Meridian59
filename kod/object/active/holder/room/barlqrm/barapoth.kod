@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barapoth.lkod
+
    room_barapoth = barapoth.roo
    room_name_barapoth = "Joguer's Herbs and Roots"
 

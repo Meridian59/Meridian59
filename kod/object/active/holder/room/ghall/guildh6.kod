@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include guildh6.lkod
+
    room_name_guildh6 = "The Ivory Chapel"
    room_guildh6 = guildh6.roo
 

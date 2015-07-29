@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include roomkeyc.lkod
+
    RoomKeyCopy_name_rsc = "silver room key"
    RoomKeyCopy_icon_rsc = roomkeyc.bgf
    RoomKeyCopy_desc_rsc = "This solid silver key bears an inscription which reads:\n"

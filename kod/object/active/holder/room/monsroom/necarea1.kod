@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include necarea1.lkod
+
    room_Necropolis1 = necarea1.roo
    room_name_Necropolis1 = "Winding Caverns"
 

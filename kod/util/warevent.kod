@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include warevent.lkod
+
    WarEvent_Duke_name = "The Army of Duke Akardius"
    WarEvent_Princess_name = "The Honor Guard of Princess Kateriina"
    WarEvent_Rebel_name = "The Militia of the Rebel Jonas"

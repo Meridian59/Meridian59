@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include mananode.lkod
+
    ManaNode_name_rsc = "mana node"
    ManaNode_icon_rsc = node.bgf
 

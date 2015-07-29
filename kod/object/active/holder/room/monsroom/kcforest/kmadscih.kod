@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include kmadscih.lkod
    room_name_MadScientistHut = "Hut of the Mad Scientist"
    room_MadScientistHut = KC5a.roo
    MadScientistHut_music = madsci.mp3

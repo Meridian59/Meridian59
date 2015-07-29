@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include candle.lkod
+
    candle_name = "candle"
    candle_desc = "A beeswax candle burns brightly."
    candle_icon = candle.bgf

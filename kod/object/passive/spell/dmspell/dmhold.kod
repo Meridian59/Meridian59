@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include dmhold.lkod
+
    DMHold_name_rsc = "superior hold"
    DMHold_icon_rsc = ihold.bgf
    DMHold_desc_rsc = \

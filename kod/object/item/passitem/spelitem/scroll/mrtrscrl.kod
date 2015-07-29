@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mrtrscrl.lkod
+
    MartyrScroll_label_name_rsc = "scroll of Martyrs Battleground"
    MartyrScroll_icon_rsc = scr05.bgf
    MartyrScroll_desc_rsc = \

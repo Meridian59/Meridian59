@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include necrowarngoodqt.lkod
+
    % Quest description.
    necrowarngoodqt_icon_rsc = necscrol.bgf
    necrowarngoodqt_name_rsc = "necromancer warning quest"

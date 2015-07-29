@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcaband.lkod
+
    guildabandon_name_rsc = "abandon guild hall"
    guildabandon_icon_rsc = light.bgf
    guildabandon_desc_text_rsc = "Use this command to quit your guild.  You never liked them anyway.  Guildmasters must transfer their title before using this command."

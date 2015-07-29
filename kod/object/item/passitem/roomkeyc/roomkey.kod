@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include roomkey.lkod
+
    RoomKey_name_rsc = "gold room key"
    RoomKey_icon_rsc = roomkey.bgf
    RoomKey_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cngrocer.lkod
+
    Cornoth_grocer_name_rsc = "Solomon"
    Cornoth_grocer_icon_rsc = cngrocer.bgf
    Cornoth_grocer_desc_rsc = \

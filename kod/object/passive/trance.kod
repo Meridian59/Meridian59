@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include trance.lkod
+
    trance_begin = "You focus your whole will on casting %s."
    trance_break = "Your concentration is broken and the %s spell fizzles."
    trance_break_sound = spelfail.wav

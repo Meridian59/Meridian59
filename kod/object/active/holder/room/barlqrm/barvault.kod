@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barvault.lkod
+
    room_name_barvault = "Office of the Barloque Vaultman"
    room_barvault = barvault.roo
    BarVault_music = smithy.mp3

@@ -127,6 +127,8 @@ constants:
    
 resources:
 
+   include player.lkod
+
    player_cant_broadcast = \
       "You can't broadcast a message--you don't have enough mana."
    player_squelched = "You are prevented from communicating for now."

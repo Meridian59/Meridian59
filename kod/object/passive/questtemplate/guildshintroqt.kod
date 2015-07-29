@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include guildshintroqt.lkod
+
    % Quest description. No description is actually displayed for this
    % quest, its purpose is to activate another quest which isn't given
    % to the player directly.

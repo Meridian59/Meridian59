@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include resshock.lkod
+
    resistshock_name_rsc = "resist shock"
    resistshock_icon_rsc = iresshok.bgf
    resistshock_desc_rsc = \

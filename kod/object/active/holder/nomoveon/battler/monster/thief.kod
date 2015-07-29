@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include thief.lkod
+
    thief_name_rsc = "Thief"
    thief_icon_rsc = thiefT.bgf
    thief_desc_rsc = "This is a thief template."

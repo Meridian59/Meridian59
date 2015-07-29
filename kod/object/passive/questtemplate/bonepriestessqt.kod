@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include bonepriestessqt.lkod
+
    % Quest description.
    bonepriestessquest_icon_rsc = orcpitb.bgf
    bonepriestessquest_name_rsc = "bone priestess orc pit boss quest"

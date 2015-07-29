@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gameevent.lkod
+
    event_start_msg = "Event Started."
    event_end_msg = "Event Ended"
 

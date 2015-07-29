@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include jsinnk.lkod
+
    jasper_innkeep_name_rsc = "Widow Qesino"
    jasper_innkeep_icon_rsc = jsinnk.bgf
    jasper_innkeep_desc_rsc = \

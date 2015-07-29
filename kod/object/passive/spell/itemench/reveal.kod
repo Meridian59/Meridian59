@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include reveal.lkod
+
    reveal_name_rsc = "reveal"
    reveal_icon_rsc = ireveal.bgf
    reveal_desc_rsc = \

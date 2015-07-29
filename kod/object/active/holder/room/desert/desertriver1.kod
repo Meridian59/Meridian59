@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertriver1.lkod
+
    room_desertriver1 = desertriver1.roo
    room_name_desertriver1 = "Cliffbound River"
 

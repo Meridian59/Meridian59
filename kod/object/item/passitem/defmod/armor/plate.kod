@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include plate.lkod
+
    platearmor_name_rsc = "plate armor"
    platearmor_icon_rsc = plateamr.bgf
    platearmor_desc_rsc = \

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include newsadv.lkod
+
    newsadventure_name = "Tales of Adventure"
    newsadventure_desc = "Stories from the people of Meridian, collected by Bards"
    newsadventure_icon = jbook.bgf

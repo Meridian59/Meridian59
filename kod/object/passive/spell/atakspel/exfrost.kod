@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include exfrost.lkod
+
    ExplosiveFrost_name_rsc = "explosive frost"
 
    ExplosiveFrost_icon_rsc = iexfrost.bgf

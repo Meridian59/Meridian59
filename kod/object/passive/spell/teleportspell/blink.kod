@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include blink.lkod
+
    blink_name_rsc = "blink"
    blink_icon_rsc = iblink.bgf
    blink_desc_rsc = \

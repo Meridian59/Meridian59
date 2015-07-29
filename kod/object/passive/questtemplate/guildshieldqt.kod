@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include guildshieldqt.lkod
+
    % Quest description.
    guildshieldquest_icon_rsc = gsha.bgf
    guildshieldquest_name_rsc = "mining expedition quest"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hold.lkod
+
    hold_name_rsc = "hold"
    hold_icon_rsc = ihold.bgf
    hold_desc_rsc = \

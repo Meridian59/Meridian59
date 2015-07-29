@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include defmod.lkod
+
    defmod_broken = "Your %s falls to pieces."   
    defmod_broken_plural = "Your %s fall to pieces."   
    defmod_broken_plural_clothes = "Your %s collapse into unwearable tatters."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include lupogg.lkod
+
    lupogg_koc_name_rsc = "tez"
    lupogg_name_rsc = "lupogg"
    lupogg_icon_rsc = lupogg.bgf

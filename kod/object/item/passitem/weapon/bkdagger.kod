@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include bkdagger.lkod
+
    BlackDagger_name_rsc = "black dagger"
    BlackDagger_icon_rsc = bkswd.bgf
    BlackDagger_desc_rsc = \

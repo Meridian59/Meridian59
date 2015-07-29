@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mrbart.lkod
+
    MarionBartender_name_rsc = "Tova"
    MarionBartender_icon_rsc = mrbart.bgf
    MarionBartender_desc_rsc = \

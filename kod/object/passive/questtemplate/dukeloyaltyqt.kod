@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include dukeloyaltyqt.lkod
+
    % Quest description.
    dukeloyalty_icon_rsc = dukeneph.bgf
    dukeloyalty_name_rsc = "Duke loyalty quest"

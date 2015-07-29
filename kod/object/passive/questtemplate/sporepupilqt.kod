@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include sporepupilqt.lkod
+
    % Quest description.
    sporepupilquest_icon_rsc = isporecl.bgf
    sporepupilquest_name_rsc = "sporeburst pupil quest"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include marinn.lkod
+
    room_name_marinn = "The Limping Toad Inn and Tavern"
    room_marinn = marinn.roo
 

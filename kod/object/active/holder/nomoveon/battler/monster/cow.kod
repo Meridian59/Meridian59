@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include cow.lkod
+
    cow_koc_name_rsc = "nahyijoa"
    cow_name_rsc = "cow"
    cow_icon_rsc = cow.bgf

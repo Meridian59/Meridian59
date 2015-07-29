@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resgood.lkod
+
    resistgood_name_rsc = "unholy resolve"
    resistgood_icon_rsc = iresgood.bgf
    resistgood_desc_rsc = \

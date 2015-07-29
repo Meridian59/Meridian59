@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resmagcp.lkod
+
    ResistMagicPotion_name_rsc = "elixir of magic resistance"
    %ResistMagicPotion_icon_rsc = potion01.bgf
    ResistMagicPotion_desc_rsc = "This is a glass vial of colored liquid.  "

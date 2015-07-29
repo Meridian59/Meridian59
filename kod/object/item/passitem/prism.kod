@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include prism.lkod
+
    prism_name_rsc = "prism"
 
    prism_3_icon_rsc = prism3.bgf

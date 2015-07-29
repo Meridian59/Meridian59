@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include madscidflyqt.lkod
+
    % Quest description.
    madscientistdflyquest_icon_rsc = dflo.bgf
    madscientistdflyquest_name_rsc = "mad scientist dragonfly quest"

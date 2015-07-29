@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include tree.lkod
+
    tree_name_rsc = "tree"
    tree_desc_rsc = "These trees offer cool shade and beautiful scenery."
 

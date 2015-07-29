@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include priestessinsigniaqt.lkod
+
    % Quest description.
    priestessinsigniaquest_icon_rsc = gsha.bgf
    priestessinsigniaquest_name_rsc = "herald shield insignia quest"

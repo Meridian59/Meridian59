@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include mystboon.lkod
+
    mystboon_name_rsc = "mysticism effect"
    mystboon_icon_rsc = iboonmys.bgf
    mystboon_desc_rsc = "You feel a change in your natural mysticism."

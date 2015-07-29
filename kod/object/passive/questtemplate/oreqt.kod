@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include oreqt.lkod
+
    % Quest description.
    oreqt_icon_rsc = ore.bgf
    oreqt_name_rsc = "blacksmith ore quest"

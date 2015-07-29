@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cloak.lkod
+
    Cloak_name_rsc = "cloak"
    Cloak_icon_rsc = icloak.bgf
    Cloak_desc_rsc = \

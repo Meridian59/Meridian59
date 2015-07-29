@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include resring.lkod
+
    resistring_icon_rsc = ring3.bgf
   
    resistring_use_rsc = "You put the ring on."

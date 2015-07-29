@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profswrd.lkod
+
    Swordproficiency_name_rsc = "fencing"
    Swordproficiency_icon_rsc = fenceico.bgf
    Swordproficiency_desc_rsc = "This skill offers added expertise in swords with long blades, magical or not."

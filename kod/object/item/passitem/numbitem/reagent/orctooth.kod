@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orctooth.lkod
+
    orctooth_name_rsc = "orc tooth"
    orctooth_icon_rsc = orctooth.bgf
    orctooth_desc_rsc = \

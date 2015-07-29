@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include warletterqt.lkod
+
    % Quest description.
    warletterqt_icon_rsc = scr01.bgf
    warletterqt_name_rsc = "war letter quest"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ratmask.lkod
+
    RatMask_name_rsc = "rat mask"
    RatMask_icon_male_rsc = mmrat.bgf
    RatMask_icon_female_rsc = mfrat.bgf

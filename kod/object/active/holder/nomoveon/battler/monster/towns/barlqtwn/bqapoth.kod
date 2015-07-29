@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include bqapoth.lkod
+
    barloque_apothecary_name_rsc = "Joguer"
    barloque_apothecary_icon_rsc = bqapoth.bgf
    barloque_apothecary_desc_rsc = \

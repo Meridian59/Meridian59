@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include villify.lkod
+
    villify_name_rsc = "vilify"
    villify_icon_rsc = light.bgf
    villify_desc_rsc = "Accuses someone of being an outlaw or murderer."

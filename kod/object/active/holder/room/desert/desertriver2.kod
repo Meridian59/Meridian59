@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertriver2.lkod
+
    room_desertriver2 = desertriver2.roo
    room_name_desertriver2 = "Abyssal Bore"
 

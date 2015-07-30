@@ -1095,12 +1095,14 @@ resource_type make_resource(id_type id, const_type c, int la_id)
       r = (resource_type)SafeMalloc(sizeof(resource_struct));
       r->lhs = id;
       for (int i = 0; i < MAX_LANGUAGE_ID; i++)
-      if (i == la_id)
-         r->resource[i] = c;
-      else
       {
-         r->resource[i] = (const_type) SafeMalloc(sizeof(const_struct));
-         r->resource[i] = NULL;
+         if (i == la_id)
+            r->resource[i] = c;
+         else
+         {
+            //r->resource[i] = (const_type) SafeMalloc(sizeof(const_struct));
+            r->resource[i] = NULL;
+         }
       }
       cl->resources = list_add_item(cl->resources, r);
    }

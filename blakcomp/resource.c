@@ -66,14 +66,20 @@ void write_resources(char *fname)
    {
       cl = (class_type) c->data;
       if (cl->is_new)
+      {
          for (l = cl->resources; l != NULL; l = l->next)
          {
-            r = (resource_type) (l->data);
+            r = (resource_type)(l->data);
 
             for (int j = 0; j < MAX_LANGUAGE_ID; j++)
+            {
                if (r->resource[j])
+               {
                   num_resources++;
+               }
+            }
          }
+      }
    }
    /* If no resources, do nothing */
    if (num_resources == 0)
@@ -105,14 +111,14 @@ void write_resources(char *fname)
 
             // For each language string present,
             // write out language data and string.
-            for (int j = 0; j < sizeof(r->resource) / sizeof(r->resource[0]); j++)
+            for (int j = 0; j < MAX_LANGUAGE_ID; j++)
             {
                if (r->resource[j])
                {
                   // Write out id #
                   fwrite(&r->lhs->idnum, 4, 1, f);
 
-                  fwrite(&j,sizeof(j),1,f);
+                  fwrite(&j, 4, 1, f);
                   str = GetStringFromResource(r, j);
                   fwrite(str, strlen(str) + 1, 1, f);
                }

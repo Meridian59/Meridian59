@@ -304,6 +304,22 @@ char *LookupNameRsc(ID idnum)
 }
 /******************************************************************************/
 /*
+* LookupRscRedbook: Return the string associated with the given resource id #, or
+*   "<Unknown>" if it's not in the table.
+*/
+char *LookupRscRedbook(ID idnum)
+{
+   resource_type r;
+   r = (resource_type)table_lookup(t, &idnum, IdHash, IdResourceCompare);
+   if (r == NULL)
+   {
+      debug(("Missing resource %d\n", idnum));
+      return GetString(hInst, IDS_UNKNOWN);
+   }
+   return r->resource[0];
+}
+/******************************************************************************/
+/*
 * LookupRscNoError: Return the string associated with the given resource id #, or 
 *   "<Unknown>" if it's not in the table.
 */
@@ -316,6 +332,10 @@ char *LookupRscNoError(ID idnum)
 		debug(("Missing resource %d\n", idnum));
 		return GetString(hInst, IDS_UNKNOWN);
 	}
+   // Default to English.
+   if (r->resource[config.language] == NULL)
+      return r->resource[0];
+
    return r->resource[config.language];
 }
 /******************************************************************************/

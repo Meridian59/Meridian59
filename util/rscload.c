@@ -71,7 +71,7 @@ bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback)
             return false;
          
          // Reached end of string?
-         if (str[pos] == 0)
+         if (str[pos] == '\0')
             break;
          pos++;
       }

@@ -31,7 +31,10 @@ void *SafeMalloc(unsigned int bytes)
 {
    void *temp = (void *) malloc(bytes);
    if (temp == NULL)
+   {
       Error("Out of memory!\n");
+      exit(1);
+   }
 
    return temp;
 }
@@ -82,7 +85,11 @@ bool SaveRscFile(char *filename)
    num_resources = 0;
    for (r = resources; r != NULL; r = r->next)
    {
-      num_resources++;
+      for (int j = 0; j < MAX_LANGUAGE_ID; j++)
+      {
+         if (r->string[j])
+            num_resources++;
+      }
    }
 
    /* If no resources, do nothing */
@@ -114,7 +121,7 @@ bool SaveRscFile(char *filename)
             fwrite(&r->number, 4, 1, f);
 
             // Write language id.
-            fwrite(&j,sizeof(j),1,f);
+            fwrite(&j,4,1,f);
 
             // Write string.
             fwrite(r->string[j], strlen(r->string[j]) + 1, 1, f);

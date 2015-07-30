@@ -69,6 +69,7 @@ void SetClassNumMessages(int class_id,int num_messages)
       c->messages[i].dstr_id = INVALID_DSTR;
       c->messages[i].trace_session_id = INVALID_ID;
       c->messages[i].called_count = 0;
+      c->messages[i].total_call_time = 0.0;
       c->messages[i].propagate_message = NULL;
       c->messages[i].propagate_class = NULL;
    }  
@@ -92,6 +93,7 @@ void AddMessage(int class_id,int count,int message_id,char *offset,int dstr_id)
    c->messages[count].dstr_id = dstr_id;
    c->messages[count].trace_session_id = INVALID_ID;
    c->messages[count].called_count = 0;
+   c->messages[count].total_call_time = 0.0;
 }
 
 /* SetMessagesPropagate

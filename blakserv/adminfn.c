@@ -1407,6 +1407,7 @@ void AdminShowMemory(int session_id,admin_parm_type parms[],
 static int show_messages_ignore_count;
 static int show_messages_ignore_id;
 static int show_messages_count;
+static double show_messages_time;
 static int show_messages_message_id;
 static class_node * show_messages_class;
 void AdminShowCalled(int session_id,admin_parm_type parms[],
@@ -1420,7 +1421,7 @@ void AdminShowCalled(int session_id,admin_parm_type parms[],
 	num_show = std::max(1,num_show);
 	num_show = std::min(500,num_show);
 	
-	aprintf("%4s %-22s %-22s %s\n","Rank","Class","Message","Count");
+   aprintf("%4s %-20s %-30s %s %s\n", "Rank", "Class", "Message", "Count", "Average Time (microsec.)");
 	
 	show_messages_ignore_count = -1;
 	show_messages_ignore_id = -1;
@@ -1430,9 +1431,9 @@ void AdminShowCalled(int session_id,admin_parm_type parms[],
 		ForEachClass(AdminShowCalledClass);
 		if (show_messages_count <= 0)
 			break;
-		aprintf("%3i. %-22s %-22s %i\n",i+1,
+		aprintf("%3i. %-20s %-30s %i %8.3f\n",i+1,
 			(show_messages_class == NULL)?("Unknown"):show_messages_class->class_name,
-			GetNameByID(show_messages_message_id),show_messages_count);
+			GetNameByID(show_messages_message_id),show_messages_count,show_messages_time);
 		show_messages_ignore_count = show_messages_count;
 		show_messages_ignore_id = show_messages_message_id;
 	}
@@ -1453,6 +1454,10 @@ void AdminShowCalledClass(class_node *c)
 				c->messages[i].message_id < show_messages_message_id))
 			{
 				show_messages_count = c->messages[i].called_count;
+            if (show_messages_count)
+               show_messages_time = c->messages[i].total_call_time / (double)c->messages[i].called_count;
+            else
+               show_messages_time = 0.0;
 				show_messages_message_id = c->messages[i].message_id;
 				show_messages_class = c;
 			}      
@@ -2036,7 +2041,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 	
 	kstat = GetKodStats();
 	
-	aprintf("%4s %-15s %s\n","Rank","Function","Count");
+	aprintf("%4s %-23s %-12s %s\n","Rank","Function","Count","Average Time (microsec.)");
 	
 	ignore_val = -1;
 	for (count=0;count<num_show;count++)
@@ -2131,8 +2136,10 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 			sprintf(c_name,"Unknown (%i)",max_index);
 			break;
 		}
-		
-		aprintf("%3i. %-15s %i\n",count+1,c_name,kstat->c_count[max_index]);
+      double avgTime = 0.0;
+      if (kstat->c_count[max_index] > 0)
+         avgTime = kstat->ccall_total_time[max_index] / (double)kstat->c_count[max_index];
+      aprintf("%3i. %-23s %-12i %4.3f\n", count + 1, c_name, kstat->c_count[max_index], avgTime);
 	}
 }
 
@@ -2180,6 +2187,8 @@ void AdminShowMessage(int session_id,admin_parm_type parms[],
 		aprintf(" (handled by CLASS %s)",found_class->class_name);
 	aprintf("\n");
 	aprintf("Called count: %i\n", m->called_count);
+   if (m->called_count > 0)
+      aprintf("Average running time: %8.3f\n", m->total_call_time / (double)m->called_count);
 	aprintf("--------------------------------------------------------------\n");
 	aprintf("  Parameters:\n");
 	/* we need to read the first few bytes from the bkod to get the parms */

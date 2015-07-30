@@ -57,7 +57,8 @@ typedef struct
    int interpreting_class;
 
    int debugging;
-
+   double frequency;
+   double ccall_total_time[MAX_C_FUNCTION];
    /* the number of calls to each C function */
    int c_count[MAX_C_FUNCTION];
 } kod_statistics;

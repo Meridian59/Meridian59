@@ -22,6 +22,7 @@ typedef struct message_struct
    int called_count;
    struct message_struct *propagate_message;
    struct class_struct *propagate_class;
+   double total_call_time;
 } message_node;
 
 void InitMessage(void);

@@ -66,6 +66,7 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode);
 void InitProfiling(void)
 {
 	int i;
+   LARGE_INTEGER freq;
 	
 	if (done)
 		return;
@@ -85,10 +86,13 @@ void InitProfiling(void)
 	kod_stat.message_depth_highest = 0;
 	kod_stat.interpreting_class = INVALID_CLASS;
 	kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
-	
-	for (i=0;i<MAX_C_FUNCTION;i++)
+
+   QueryPerformanceFrequency(&freq);
+   kod_stat.frequency = (double)freq.QuadPart / 1000000.0;
+	for (i = 0; i < MAX_C_FUNCTION; i++)
 		kod_stat.c_count[i] = 0;
-	
+   for (i = 0; i < MAX_C_FUNCTION; i++)
+      kod_stat.ccall_total_time[i] = 0;
 	message_depth = 0;
 	
 	done = 1;
@@ -544,11 +548,13 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	local_var_type local_vars;
 	int parm_id;
 	val_type parm_init_value;
-	
 	int i,j;
 	char *inst_start;
 	Bool found_parm;
 	
+   LARGE_INTEGER startTime, endTime;
+   QueryPerformanceCounter(&startTime);
+
 	num_locals = get_byte();
 	num_parms = get_byte();
 	
@@ -659,7 +665,10 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 			case CALL : 
 				InterpretCall(object_id,&local_vars,opcode);
 				continue;
-			case RETURN : 
+			case RETURN :
+            QueryPerformanceCounter(&endTime);
+            if (kod_stat.frequency > 0)
+               m->total_call_time += ((double)(endTime.QuadPart - startTime.QuadPart) / kod_stat.frequency);
 				if (opcode.dest == PROPAGATE)
 					return RETURN_PROPAGATE;
 				else
@@ -1101,11 +1110,14 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode)
 	
 	/* increment count of the c function, for profiling info */
 	kod_stat.c_count[info]++;
-	
+   LARGE_INTEGER startTime, endTime;
+   QueryPerformanceCounter(&startTime);
 	call_return.int_val = ccall_table[info](object_id,local_vars,num_normal_parms,
 					   normal_parm_array,num_name_parms,
 					   name_parm_array);
-	
+   QueryPerformanceCounter(&endTime);
+   if (kod_stat.frequency > 0)
+      kod_stat.ccall_total_time[info] += ((double)(endTime.QuadPart - startTime.QuadPart) / kod_stat.frequency);
 	switch(opcode.source1)
 	{
 		case CALL_NO_ASSIGN :

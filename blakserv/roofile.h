@@ -25,7 +25,7 @@
 #define FINENESSROOTOKOD(x) ((x) * 0.0625f)
 
 #define FLOATTOKODINT(x) \
-   (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)MIN_KOD_INT) ? MIN_KOD_INT : (int)x))
+   (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)-MIN_KOD_INT) ? -MIN_KOD_INT : (int)x))
 
 float BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth);
 bool BSPLineOfSight(room_type* Room, V3* S, V3* E);

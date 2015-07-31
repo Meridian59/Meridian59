@@ -318,14 +318,14 @@ bool BSPLineOfSightTree(BspNode* Node, V3* S, V3* E)
             continue;
          }
 
-         // get some flags from the side we're coming from
-         // these are applied only to the 'main' = 'middle' texture
-         bool isNoLookThrough = ((side->Flags & WF_NOLOOKTHROUGH) == WF_NOLOOKTHROUGH);
-         bool isTransparent = ((side->Flags & WF_TRANSPARENT) == WF_TRANSPARENT);
-
          // ray intersects middle wall texture
          if (rayheight <= h2 && rayheight >= h1 && side->TextureMiddle > 0)
          {
+            // get some flags from the side we're coming from
+            // these are applied only to the 'main' = 'middle' texture
+            bool isNoLookThrough = ((side->Flags & WF_NOLOOKTHROUGH) == WF_NOLOOKTHROUGH);
+            bool isTransparent   = ((side->Flags & WF_TRANSPARENT) == WF_TRANSPARENT);
+
             // 'transparent' middle textures block only
             // if they are set so by 'no-look-through'
             if (!isTransparent || (isTransparent && isNoLookThrough))

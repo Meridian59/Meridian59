@@ -108,6 +108,8 @@ include         { return INCLUDE; }
 ">"	{ yylval.int_val = GT_OP; return REL_OP; }
 "<="	{ yylval.int_val = LEQ_OP; return REL_OP; }
 ">="	{ yylval.int_val = GEQ_OP; return REL_OP; }
+"--"	{ yylval.int_val = DEC_OP; return DEC_OP; }
+"++"	{ yylval.int_val = INC_OP; return INC_OP; }
 
 
 [-+*/,:#&@()={}\$\[\]\|~]	{ return yytext[0]; }	/* return character itself */

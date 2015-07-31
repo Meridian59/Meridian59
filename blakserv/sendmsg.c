@@ -829,7 +829,52 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 		}
 		source_data.v.data = ~source_data.v.data;
 		break;
-		
+	case POST_INCREMENT:
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't post-increment non-int %i,%i\n",
+				source_data.v.tag,source_data.v.data);
+			break;
+		}
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, dest, source_data);
+		++source_data.v.data;
+		StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		return;
+	case PRE_INCREMENT:
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't pre-increment non-int %i,%i\n",
+				source_data.v.tag, source_data.v.data);
+			break;
+		}
+		++source_data.v.data;
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		break;
+	case POST_DECREMENT :
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't post-decrement non-int %i,%i\n",
+				source_data.v.tag,source_data.v.data);
+			break;
+		}
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, dest, source_data);
+		--source_data.v.data;
+		StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		return;
+	case PRE_DECREMENT:
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't pre-decrement non-int %i,%i\n",
+				source_data.v.tag, source_data.v.data);
+			break;
+		}
+		--source_data.v.data;
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		break;
 	default :
 		bprintf("InterpretUnaryAssign can't perform unary op %i\n",info);
 		break;

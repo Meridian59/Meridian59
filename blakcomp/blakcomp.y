@@ -54,7 +54,7 @@
 
 %type <stmt_val> 	call if_stmt assign_stmt for_stmt while_stmt
 
-%token <int_val>  	NUMBER REL_OP
+%token <int_val>  	NUMBER REL_OP INC_DEC_OP
 %token <string_val> 	STRING_CONSTANT FILENAME
 %token <idname>		IDENTIFIER
 
@@ -70,7 +70,7 @@
 %left REL_OP '='
 %left '+' '-'
 %left '*' '/' MOD
-%nonassoc UMINUS NOT '~'
+%nonassoc INC_OP DEC_OP UMINUS NOT '~'
 %%
 
 Start:
@@ -258,8 +258,11 @@ if_stmt:
 	;
 
 assign_stmt:
-		id '=' expression SEP
-		{ $$ = make_assign_stmt($1, $3); }
+		id '=' expression SEP { $$ = make_assign_stmt($1, $3); }
+	|	id INC_OP SEP			{ $$ = make_assign_stmt($1, make_un_op(POST_INC_OP, make_expr_from_id($1))); }
+	|	DEC_OP id SEP			{ $$ = make_assign_stmt($2, make_un_op(PRE_DEC_OP, make_expr_from_id($2))); }
+	|	id DEC_OP SEP			{ $$ = make_assign_stmt($1, make_un_op(POST_DEC_OP, make_expr_from_id($1))); }
+	|	INC_OP id SEP			{ $$ = make_assign_stmt($2, make_un_op(PRE_INC_OP, make_expr_from_id($2))); }
 	;
 
 for_stmt:
@@ -318,7 +321,11 @@ expression:
 	|	expression '|' expression	{ $$ = make_bin_op($1, BITOR_OP, $3); }
 	|	'-' expression %prec UMINUS	{ $$ = make_un_op(NEG_OP, $2); }
 	|	NOT expression			{ $$ = make_un_op(NOT_OP, $2); }
-	|	'~' expression                  { $$ = make_un_op(BITNOT_OP, $2); }
+	|	'~' expression			{ $$ = make_un_op(BITNOT_OP, $2); }
+	|	id INC_OP			{ $$ = make_un_op(POST_INC_OP, make_expr_from_id($1)); }
+	|	INC_OP id			{ $$ = make_un_op(PRE_INC_OP, make_expr_from_id($2)); }
+	|	id DEC_OP			{ $$ = make_un_op(POST_DEC_OP, make_expr_from_id($1)); }
+	|	DEC_OP id			{ $$ = make_un_op(PRE_DEC_OP, make_expr_from_id($2)); }
 	|	constant			{ $$ = make_expr_from_constant($1); }
 	|	literal				{ $$ = make_expr_from_constant($1); }
 	|	call				{ $$ = make_expr_from_call($1); }

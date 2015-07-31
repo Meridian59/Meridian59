@@ -38,6 +38,10 @@ enum
    NEGATE = 1,
    NONE = 2,
    BITWISE_NOT = 3,
+   POST_INCREMENT = 4,
+   POST_DECREMENT = 5,
+   PRE_INCREMENT = 6,
+   PRE_DECREMENT = 7,
 };
 
 /* info byte for binary assign */

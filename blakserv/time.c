@@ -156,3 +156,33 @@ UINT64 GetMilliCount()
 #endif
 }
 
+double GetMicroCountDouble()
+{
+#ifdef BLAK_PLATFORM_WINDOWS
+
+   static LARGE_INTEGER microFrequency;
+   LARGE_INTEGER now;
+
+   if (microFrequency.QuadPart == 0)
+      QueryPerformanceFrequency(&microFrequency);
+
+   if (microFrequency.QuadPart == 0)
+   {
+      eprintf("GetMicroCount can't get frequency\n");
+      return 0;
+   }
+
+   QueryPerformanceCounter(&now);
+   return ((double)now.QuadPart * 1000000.0) / (double)microFrequency.QuadPart;
+
+#else
+
+   struct timeval tv;
+   gettimeofday(&tv, NULL);
+
+   double time_in_us = tv.tv_sec * 1000000.0 + tv.tv_usec;
+
+   return time_in_us;
+
+#endif
+}

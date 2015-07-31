@@ -203,6 +203,7 @@ config_table_type config_table[] =
 { DEBUG_INITPROPERTIES,   T, "InitProperties",CONFIG_BOOL,  "No" },
 { DEBUG_INITLOCALS,       T, "InitLocals",    CONFIG_BOOL,  "No" },
 { DEBUG_UNINITIALIZED,    T, "Uninitialized", CONFIG_BOOL,  "No" },
+{ DEBUG_TIME_CALLS,       T, "TimeCalls",     CONFIG_BOOL,  "No" },
 
 { SECURITY_GROUP,         F, "[Security]",    CONFIG_GROUP, "" },
 { SECURITY_LOG_SPOOFS,    T, "LogSpoofs",     CONFIG_BOOL,  "Yes" }, 
@@ -225,7 +226,6 @@ config_table_type config_table[] =
 { MYSQL_DB,               F, "Database",      CONFIG_STR,   "meridian" },
 
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
-{ BLAKOD_MAX_STATEMENTS,  T, "MaxStatements", CONFIG_INT,   "20000000" },
 
 };
 

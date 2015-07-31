@@ -264,7 +264,7 @@ void LanguageExit(void)
 void MenuAddLanguage(int lang_id)
 {
    int num, index, len;
-   char item_name[MAXRSCSTRING + 1], *name;
+   char item_name[MAXRSCSTRING + 1], *name = NULL;
 
    if (lang_id > MAX_LANGUAGE_ID)
       return;

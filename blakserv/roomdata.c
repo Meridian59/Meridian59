@@ -676,11 +676,14 @@ int GetHeightFloorBSP(roomdata_node *r, int row, int col, int finerow, int finec
    p.X = FINENESSKODTOROO((float)col * 64.0f + (float)finecol);
    p.Y = FINENESSKODTOROO((float)row * 64.0f + (float)finerow);
 
-   // get floor height without depth modifier (height of floor texture)
-   float height = FINENESSROOTOKOD(BSPGetHeight(&r->file_info, &p, true, false));
+   // get floor height (1:1024) with depth modifier
+   // (=height of 'object's feet' in water - BELOW water texture)
+   float height = BSPGetHeight(&r->file_info, &p, true, true);
 
-   // box value into min/max kod integer
-   return FLOATTOKODINT(height);
+   // height of -MIN_KOD_INT indicates a location outside of the map
+   // leave this value untouched, otherwise scale from ROO FINENESS to KOD
+   // and box value into min/max kod integer
+   return (height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 }
 
 int GetHeightCeilingBSP(roomdata_node *r, int row, int col, int finerow, int finecol)
@@ -692,10 +695,13 @@ int GetHeightCeilingBSP(roomdata_node *r, int row, int col, int finerow, int fin
    p.X = FINENESSKODTOROO((float)col * 64.0f + (float)finecol);
    p.Y = FINENESSKODTOROO((float)row * 64.0f + (float)finerow);
 
-   float height = FINENESSROOTOKOD(BSPGetHeight(&r->file_info, &p, false, false));
+   // get ceiling height (1:1024)
+   float height = BSPGetHeight(&r->file_info, &p, false, false);
 
-   // box value into min/max kod integer
-   return FLOATTOKODINT(height);
+   // height of -MIN_KOD_INT indicates a location outside of the map
+   // leave this value untouched, otherwise scale from ROO FINENESS to KOD
+   // and box value into min/max kod integer
+   return (height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 }
 
 Bool LineOfSightBSP(roomdata_node *r, int from_row, int from_col, int from_finerow, int from_finecol,

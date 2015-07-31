@@ -79,12 +79,13 @@ __inline float GetSectorHeightFloorWithDepth(Sector* Sector, V2* P)
 
 /*********************************************************************************************/
 /*
-* BSPGetHeightTree:  Returns the floor or ceiling height of a given location
+* BSPGetHeightTree:  Returns the floor or ceiling height of a given location.
+                     Returns -MIN_KOD_INT (-134217728) for a location outside of the map.
 */
 float BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth)
 {
    if (!Node)
-      return 0.0f;
+      return (float)-MIN_KOD_INT;
 
    // reached a leaf, return its floor or ceiling height
    if (Node->Type == BspLeafType && Node->u.leaf.Sector)
@@ -106,12 +107,13 @@ float BSPGetHeightTree(BspNode* Node, V2* P, bool Floor, bool WithDepth)
          BSPGetHeightTree(Node->u.internal.LeftChild, P, Floor, WithDepth);
    }
 
-   return 0.0f;
+   return (float)-MIN_KOD_INT;
 }
 
 /*********************************************************************************************/
 /*
-* BSPGetHeight:  Returns the floor or ceiling height in a room for a given location
+* BSPGetHeight:  Returns the floor or ceiling height in a room for a given location.
+                 Returns -MIN_KOD_INT (-134217728) for a location outside of the map.
 */
 float BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth)
 {

@@ -3467,10 +3467,11 @@ messages:
       iAngle = Send(self,@GetAngle);
 
       %
-      % 2. Do not allow any moves if player is marked as not allowed to move
+      % 2. Do not allow any moves if player is marked as not allowed to move or 
+      %    if destination is outside of the map. (return of MIN_KOD_INT = outside) 
       %
-
-      if (piFlags & PFLAG_NO_MOVE)
+      if (piFlags & PFLAG_NO_MOVE) OR
+          MIN_KOD_INT = GetHeightFloorBSP(Send(poOwner,@GetRoomData),new_row,new_col,fine_row,fine_col)
       {
          % Reset position
          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
@@ -3506,7 +3507,7 @@ messages:
       %   USER_RUNNING_SPEED is defined as # of big squares per 10000ms
       %   The unit here is fine upscaled by another *16 (same is done below in 4.5)
       %
-      iMaxMoveRun = (Bound(speed,0,50) * FINENESS * 16 * iDelta) / 10000;
+      iMaxMoveRun = (Bound(speed,0,USER_RUNNING_SPEED) * FINENESS * 16 * iDelta) / 10000;
       iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
 
       %

@@ -32,9 +32,18 @@ player_regain_angel = de \
    "Wegen Deiner neuerlichen Schwäche kehrt Dein Schutzengel zu Dir zurück."
 player_no_angel = de "Plötzlich fühlst Du Dich viel verwundbarer!"
 player_join_faction = de "~IDu zählst von nun an zur Anhängerschaft von %s%s!"
-player_lost_token = de \
+player_lost_token_hall = de \
    "Das Artefakt lässt sich nicht mit in die Gildenhalle nehmen. Es entwindet "
    "sich Deinen Händen."
+player_lost_token_arena = de \
+   "The token refuses to enter the arena and writhes in your hands.  "
+   "You cannot hold it."
+player_lost_token_survival = de \
+   "You suddenly lose your grasp on the token as you are pulled "
+   "across dimensions."
+player_lost_token_generic = de \
+   "The token refuses to enter this room and writhes in your hands.  "
+   "You cannot hold it."
 player_intrigue_shut = de \
    "~IDer königliche Hof benötigt Deine Dienste nicht mehr."
 player_lost_intriguing = de \

@@ -9,4 +9,3 @@ Wand_target_gone = de \
    "Du zielst mit Deinem Zauberstab sorgfältig auf %s%s, aber plötzlich merkst "
    "Du, dass Dein Ziel verschwunden ist."
 Wand_fails = de "Du deutest mit Deinen Zauberstab aber nichts passiert. "
-wand_cannot_use_yet = de "Du kannst diesen Gegenstand noch nicht benutzen."

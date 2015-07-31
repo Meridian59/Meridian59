@@ -65,8 +65,7 @@ spell_too_soon_since_attacking = de \
 spell_resists = de "%s%s widersteht Deinem Zauber!"
 spell_silenced_rsc = de \
    "Die Worte bleiben Dir im Halse stecken und Du kannst nicht sprechen."
-spell_desc_no_train_rsc = de "SCHULE : %s         LEVEL : %i \n\n%s%s%s%q"
-spell_desc_rsc = de "SCHULE : %s         LEVEL : %i \n\n%s%s%s%q%s%i%s"
+spell_desc_rsc = de "SCHULE : %s         LEVEL : %i \n\n%s%s%s%q%r"
 spell_school_riija = de "Riija"
 spell_school_shalille = de "Shal'ill"
 spell_school_qor = de "Qor"
@@ -100,9 +99,8 @@ spell_disabled = de \
    "Du sie ganz aussprechen kannst."
 spell_display_spellpower = de "Zauberkraft für ~k~B%s~n ist ~k~B%i~n."
 no_line_of_sight = de "Deine schlechte Sicht macht es noch schwerer zu Zaubern"
-Spell_meditate_ratio_one_rsc = de "\n\nEs kostet dich "
-Spell_meditate_ratio_two_rsc = de \
-   " Trainings Punkte um diesen Zauber zu verbessern."
+spell_meditate_ratio_rsc = de \
+   "\n\nEs kostet dich %i Trainings Punkte um diesen Zauber zu verbessern."
 Spell_made_rsc = de " Verzaubert von "
 Spell_novice_rsc = de ", Novize "
 Spell_apprentice_rsc = de ", Schüler "

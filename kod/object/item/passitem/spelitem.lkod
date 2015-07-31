@@ -20,3 +20,4 @@ SpellItem_master_rsc = de ", meisterlicher"
 combine_spell_item_rsc = de \
    "Du kombinierst den %s mit deinen bereits vorhandenen. Nun hast Du insgesamt "
    "%d mit einer Kraft von %d."
+spellitem_cannot_use_yet = de "Du kannst diesen Gegenstand noch nicht benutzen."

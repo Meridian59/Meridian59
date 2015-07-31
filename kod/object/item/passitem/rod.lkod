@@ -20,3 +20,4 @@ rod_cannot_hold_more_rsc = de \
 rod_default_expire_msg = de "Der Effekt des Zauberstabs verschwindet."
 rod_default_secondary_expire_msg = de \
    "Der zweite Effekt des Zauberstabs verschwindet."
+rod_cant_use_yet = de "Du kannst diesen Gegenstand noch nicht benutzen."

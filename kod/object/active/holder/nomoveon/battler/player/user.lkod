@@ -248,13 +248,15 @@ user_news_toobig = de \
 user_guild_rsc = de "Gilde"
 user_guildofficer_rsc = de "guildofficer"
 user_default_url = de "http://www.openmeridian.de/"
-guild_motd_command = de "set motd "
-guild_clear_motd_command = de "clear motd"
 autocombine_off_msg = de \
    "Du entscheidest dich, die Gegenstände nicht mehr zu kombinieren."
 autocombine_on_msg = de "Du entscheidest dich, die Gegenstände zu kombinieren."
+user_say_autoloot_on = de "autoloot an"
+user_say_autoloot_off = de "autoloot aus"
 autoloot_on_msg = de "Autoloot ist an."
 autoloot_off_msg = de "Autoloot ist aus."
+user_say_reagentbag_on = de "reagentbag an"
+user_say_reagentbag_off = de "reagentbag aus"
 guild_survival_too_late = de \
    "Deine Gilde hat bereits eine Arena gestartet. Du musst warten."
 public_survival_too_late = de \

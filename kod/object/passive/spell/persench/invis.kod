@@ -79,9 +79,6 @@ messages:
          lTargets = Cons(who, lTargets);
       }
 
-      Send(First(lTargets),@ResetPlayerFlagList);
-      Send(First(lTargets),@AddDefenseModifier,#what=self);
-
       propagate;
    }
 
@@ -103,8 +100,11 @@ messages:
       return iDuration;
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(iSpellpower=$,target=$)
    {
+      Send(target,@ResetPlayerFlagList);
+      Send(target,@AddDefenseModifier,#what=self);
+
       return iSpellpower;
    }
 

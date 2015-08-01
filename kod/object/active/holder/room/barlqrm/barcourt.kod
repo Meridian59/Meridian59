@@ -18,7 +18,7 @@ resources:
 
    room_name_barloque_court = "Office of the Justicar"
    room_barloque_court = barcourt.roo
-   
+
    news_justicar = "Book of Jala"
    news_justicar_desc = \
       "Chronicling the history of the office of the Justicar."
@@ -28,12 +28,12 @@ resources:
 
    BarloqueCourt_sign_desc = \
       "Etched into the sign is the following text:\n\n"
-      "By decree of the Council and Princess Kateriina, the position of "
-      "the Justicar has been eliminated due to a long history of excessive corruption. "
+      "By decree of the Council and Princess Kateriina, the position of the "
+      "Justicar has been eliminated due to a long history of excessive corruption. "
       "\n\n"
       "However, the office of the Justicar will continue to adjudicate legal "
-      "matters throughout the land, serving the citizens of Meridian in a variety "
-      "of capacities."
+      "matters throughout the land, serving the citizens of Meridian in a "
+      "variety of capacities."
       "\n\n"
       "Any citizen may now request another citizen's legal record by "
       "stating the person's name aloud."
@@ -41,7 +41,11 @@ resources:
       "Also, given the curious and temporary nature of death in our world, "
       "pardons will now be issued as reward for generous indulgences to the "
       "state. Any murderer seeking reduction to outlaw status need only make "
-      "a generous donation, and immediate reprieve shall be theirs."
+      "a generous donation directly to Caramo and immediate reprieve shall "
+      "be theirs."
+      "\n\n"
+      "Citizens can also ask for a legal \"name change\" by deed poll, for "
+      "a high cost.  Caramo will provide more information if asked.\n"
 
 classvars:
 
@@ -68,7 +72,7 @@ messages:
 
    % The gallery is separated from the official courtroom by a wall.
    % Only those who are in the courtroom area are subject to Justicar
-   %  commands.  This allows others to watch a trial and not be abused.
+   % commands.  This allows others to watch a trial and not be abused.
 
    ReqInSpecialArea(row = $, col = $, obj = $)
    {
@@ -97,15 +101,19 @@ messages:
    {
       local oSign;
 
-      % The clerk     
+      % The clerk
       poCaramo = Send(SYS,@GetCaramo);
       if poCaramo = $
       {
          poCaramo = Create(&BarloqueClerk);
       }
-      
+      else
+      {
+         Send(poCaramo,@Recreate);
+      }
+
       Send(self,@NewHold,#what=poCaramo,
-           #new_row=12,#new_col=12,#fine_row=28,#fine_col=28,
+           #new_row=12,#new_col=12,#fine_row=32,#fine_col=36,
            #new_angle=ANGLE_WEST);
 
       % A guard
@@ -120,7 +128,7 @@ messages:
          poBookOfJala = Create(&NewsJusticar,#nid=NID_JUSTICAR,
                                #name=news_justicar,#desc=news_justicar_desc);
       }
-      
+
       Send(self,@NewHold,#what=poBookOfJala,
            #new_row=2,#new_col=11,#fine_row=44,#fine_col=44,
            #new_angle=ANGLE_SOUTH_WEST);
@@ -143,8 +151,8 @@ messages:
            #fine_row=28,#fine_col=28);
 
       % Candelabra
-      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=12,#new_col=11,
-           #fine_row=60,#fine_col=52);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=13,#new_col=12,
+           #fine_row=00,#fine_col=00);
 
       propagate;
    }
@@ -173,7 +181,7 @@ messages:
    {
       return poBookOfJala;
    }
-   
+
    Delete()
    {
       if poCaramo <> $
@@ -181,12 +189,11 @@ messages:
          Send(poCaramo,@NewOwner,#what=$);
          poCaramo = $;
       }
-      
+
       poBookofJala = $;
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

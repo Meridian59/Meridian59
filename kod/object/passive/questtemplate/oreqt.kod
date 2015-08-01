@@ -1,0 +1,221 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OreQuest is QuestTemplate
+% Quest template QST_ID_ORE = 49.
+% Quest nodes 155, 156.
+% QNT_ID_BLACKSMITH_ORE_ONE, QNT_ID_BLACKSMITH_ORE_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   oreqt_icon_rsc = ore.bgf
+   oreqt_name_rsc = "blacksmith ore quest"
+   oreqt_desc_rsc = \
+      "A blacksmith has run out of ore; deliver some to them."
+
+   oreqt_deliver_rsc = \
+      "%s%s has run out of ore, so %s%s has asked you to deliver some to %s.  "
+      "Do not be tempted to keep it for yourself, lest you be punished "
+      "for your thievery!"
+
+   oreqt_completed_rsc = \
+      "You have completed the blacksmith ore quest."
+
+   % Quest resources.
+   ore_assign_2 = \
+      "%NPC has run out of ore.  Take this ore to %HIMHER_NPC, and quickly.  "
+      "It would be unwise to betray me.  Theft will be reported and you will "
+      "thenceforth be deemed an outlaw.  Please hurry.  %NPC will pay you "
+      "for your troubles."
+   ore_assign_2_h = \
+      "%NPC has run out of ore.  Take this ore to %HIMHER_NPC, and quickly.  "
+      "It would be unwise to betray me.  Theft will result in misfortune "
+      "for us both.  Please hurry.  %NPC will pay you for your troubles."
+   ore_success_2 = \
+      "Thank you for the ore.  Here is your reward.  Perhaps we can do "
+      "business again."
+   ore_failure_2 = \
+      "Subject: Thief!\n"
+      "Your theft of the ore has been reported.  You have been deemed an "
+      "outlaw and will need to contact the authorities to rectify this matter."
+   ore_failure_2_h = "Subject: Thief!\n"
+      "Your theft of the ore has been reported.  I have spoken to a wizard "
+      "friend of mine, and he has ensured that you will suffer for "
+      "your dishonesty."
+
+classvars:
+
+   vrIcon = oreqt_icon_rsc
+   vrName = oreqt_name_rsc
+   vrDesc = oreqt_desc_rsc
+
+   vrNodeTwo = oreqt_deliver_rsc
+
+   vrCompleted = oreqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_ORE
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTNEWBIE | Q_PLAYER_LAWFUL \
+                      | Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_BLACKSMITH_ORE_ONE, QNT_ID_BLACKSMITH_ORE_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_BLACKSMITH_ORE_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #155 is smithy ore quest
+      % QNT_ID_BLACKSMITH_ORE_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #quest_node_index=QNT_ID_BLACKSMITH_ORE_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBlacksmith)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBlacksmith)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBlacksmith)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BLACKSMITH_ORE_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BLACKSMITH_ORE_ONE");
+      }
+
+      % Template #156 is smithy ore quest
+      % QNT_ID_BLACKSMITH_ORE_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &CheapOreChunk, 1 ] ],
+               #prizelist=[ [ [ QN_PRIZETYPE_ITEMCLASS, &Money, 500 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 300 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 400 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 450 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 650 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 750 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 550 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 25 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 35 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 25 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 30 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 35 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Axe, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Flask, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &StrengthPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &HastePotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &MagicShieldPotion, 1 ] ] ],
+               #penaltylist=[ [ QN_PRIZETYPE_OUTLAW ] ],
+               #timelimit=2 * 3600,#quest_node_index=QNT_ID_BLACKSMITH_ORE_TWO)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BLACKSMITH_ORE_TWO,
+               #new_NPC_list=lNPCs);
+
+         % Happy land subs.
+         if NOT Send(SYS,@IsPKAllowed)
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BLACKSMITH_ORE_TWO,
+                  #new_hint=ore_assign_2_h);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BLACKSMITH_ORE_TWO,
+                  #new_hint=ore_failure_2_h);
+         }
+         else
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_BLACKSMITH_ORE_TWO,
+                  #new_hint=ore_assign_2);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_BLACKSMITH_ORE_TWO,
+                  #new_hint=ore_failure_2);
+         }
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_BLACKSMITH_ORE_TWO,
+               #new_hint=ore_success_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BLACKSMITH_ORE_TWO");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = QNT_ID_BLACKSMITH_ORE_TWO
+      {
+         oDestNPC = Send(oQuestNode,@GetDestNPC);
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+         AddPacket(4,Send(oDestNPC,@GetCapDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oSourceNPC,@GetDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

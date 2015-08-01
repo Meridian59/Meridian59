@@ -1,0 +1,323 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CateringQuest is QuestTemplate
+% Quest template QST_ID_PARTY = 48.
+% Quest nodes 152, 153, 154.
+% QNT_ID_CATERING_ONE, QNT_ID_CATERING_TWO, QNT_ID_CATERING_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   cateringqt_icon_rsc = drumspla.bgf
+   cateringqt_name_rsc = "catering quest"
+   cateringqt_desc_rsc = \
+      "An NPC is looking for help delivering food for a party."
+
+   cateringqt_nodetwo_rsc = \
+      "%s%s is having a private party and %s errand boy is ill.  %s would "
+      "like you to help %s out by delivering the food.  %s%s is catering the "
+      "party, go to %s and ask about the \"catering assignment\".  You will "
+      "be rewarded on delivery."
+   cateringqt_nodethree_rsc = \
+      "Bring %i %s to %s%s, who is responsible for setting up the party.  "
+      "Don't be tempted to take any for yourself, lest you be punished "
+      "for your thievery!"
+
+   cateringqt_completed_rsc = \
+      "You have completed the catering quest."
+
+   % Quest resources.
+   catering_assign_2 = \
+      "Perhaps you can help me.  I am having a private party and my errand "
+      "boy has become ill.  Will you help me by delivering the food?  %NPC is "
+      "catering the party and knows where the food needs to go, just ask "
+      "%HIMHER_NPC about the catering assignment.  You will be amply "
+      "rewarded when you have completed the delivery.  Please hurry."
+   catering_failure_2 = "Subject: Catering\nI have found another errand boy."
+   catering_trigger_2 = "catering"
+   catering_assign_3 = \
+      "Yes, the party!  I was worried no one would show up!  Here is the "
+      "food, %INDEF_CARGO%CARGO.  Please take it to %NPC, setting up the "
+      "party preparations is up to %HIMHER_NPC.  Please don't lose track "
+      "of the food, this business is very important to me.  Should the "
+      "delivery never reach %NPC, I will be forced to inform the justicar "
+      "of your theft.  I'm sure this won't be necessary, though."
+   catering_assign_3_h = \
+      "Yes, the party!  I was worried no one would show up!  Here is the "
+      "food, %INDEF_CARGO%CARGO.  Please take it to %NPC, setting up the "
+      "party preparations is up to %HIMHER_NPC.  Please don't lose track "
+      "of the food, this business is very important to me.  Should the "
+      "delivery never reach %NPC, I will be forced to speak to a wizard "
+      "friend of mine.  I'm sure this won't be necessary, though."
+   catering_failure_3 = \
+      "Subject: you stole the food for the party!\n"
+      "I have reported you to the justicar, and henceforth you are to "
+      "be considered an outlaw."
+   catering_failure_3_h = \
+      "Subject: you stole the food for the party!\n"
+      "I have spoken to a wizard friend of mine, and he has ensured that "
+      "you will suffer for your dishonesty."
+   catering_success_3 = \
+      "Ah, what a mouthwatering spread!  Here is your commission, I "
+      "thank you for your speed."
+
+classvars:
+
+   vrIcon = cateringqt_icon_rsc
+   vrName = cateringqt_name_rsc
+   vrDesc = cateringqt_desc_rsc
+
+   vrNodeTwo = cateringqt_nodetwo_rsc
+   vrNodeThree = cateringqt_nodethree_rsc
+
+   vrCompleted = cateringqt_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_PARTY
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = \
+      Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_NOTNEWBIE | Q_PLAYER_LAWFUL
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_CATERING_ONE,QNT_ID_CATERING_TWO,
+                      QNT_ID_CATERING_THREE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_CATERING_TWO, vrNodeTwo],
+                          [QNT_ID_CATERING_THREE, vrNodeThree] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #152 is catering quest
+      % QNT_ID_CATERING_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ letter_trigger ],
+               #quest_node_index=QNT_ID_CATERING_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ThreeCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FourCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_CATERING_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CATERING_ONE");
+      }
+
+      % Template #153 is catering quest
+      % QNT_ID_CATERING_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_NONE,#cargolist=[ catering_trigger_2 ],
+               #timelimit=3600,#quest_node_index=QNT_ID_CATERING_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_INNKEEPER)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_CATERING_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_CATERING_TWO,
+               #new_hint=catering_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_CATERING_TWO,
+               #new_hint=catering_failure_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CATERING_TWO");
+      }
+
+      % Template #154 is catering quest
+      % QNT_ID_CATERING_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMCLASS,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &SpidEye, 50 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Grapes, 50 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Goblet, 50 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Soup, 50 ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Drumstick, 50 ] ],
+               #prizelist=[[[ QN_PRIZETYPE_ITEMCLASS, &Money, 1300 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1400 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1500 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1600 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1700 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1800 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 1900 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &Money, 2000 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 25 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 30 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &BaitPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DetectGoodPotion, 1 ],
+                              [ QN_PRIZETYPE_ITEMCLASS, &DetectEvilPotion, 1 ] ] ],
+               #penaltylist=[ [ QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -2, 2 ] ],
+            #timelimit=3600,#quest_node_index=QNT_ID_CATERING_THREE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ThreeCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&fourCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_CATERING_THREE,
+               #new_NPC_list=lNPCs);
+
+         % Happy land subs.
+         if NOT Send(SYS,@IsPKAllowed)
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_CATERING_THREE,
+                  #new_hint=catering_assign_3_h);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_CATERING_THREE,
+                  #new_hint=catering_failure_3_h);
+         }
+         else
+         {
+            Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_CATERING_THREE,
+                  #new_hint=catering_assign_3);
+            Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_CATERING_THREE,
+                  #new_hint=catering_failure_3);
+         }
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_CATERING_THREE,
+               #new_hint=catering_success_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_CATERING_THREE");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local iNum, oCargo, oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = QNT_ID_CATERING_TWO
+      {
+
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oSourceNPC,@GetHisHer), 4,Send(oSourceNPC,@GetHeShe,#cap=TRUE),
+                   4,Send(oSourceNPC,@GetHimHer), 4,Send(oDestNPC,@GetCapDef),
+                   4,Send(oDestNPC,@GetName), 4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      oCargo = Send(oQuestNode,@GetCargo);
+
+      if index = QNT_ID_CATERING_THREE
+      {
+         iNum = Send(oCargo,@GetNumber);
+         AddPacket(4,iNum, 4,Send(oCargo,@GetName), 4,Send(oDestNPC,@GetDef),
+                   4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

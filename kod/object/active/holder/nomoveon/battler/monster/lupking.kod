@@ -93,8 +93,8 @@ classvars:
    vrSound_aware = lupoggking_sound_aware
    vrSound_death = lupoggking_sound_death
 
-   viHoldDurationMax = 25  % seconds
-   viHoldDurationMin = 15  % seconds
+   viHoldDurationMax = 25000  % Milliseconds.
+   viHoldDurationMin = 15000  % Milliseconds.
 
 properties:
 
@@ -103,8 +103,8 @@ properties:
 
    piHoldAttackChance = 12 % Chance he'll attack with a hold
    piHoldCounterChance = 5 % Chance he'll counter a spell or arrow with a hold
-   piHoldDurationMax = 25  % seconds
-   piHoldDurationMin = 15  % seconds
+   piHoldDurationMax = 25000  % Milliseconds.
+   piHoldDurationMin = 15000  % Milliseconds.
 
 messages:
 
@@ -346,7 +346,7 @@ messages:
       Send(poOwner,@SomethingWaveRoom,#what=self,
             #wave_rsc=lupoggking_cast_sound);
       Send(self,@DoCast);
-      Send(oSpell,@DoHold,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
+      Send(oSpell,@DoSpell,#what=self,#oTarget=oTarget,#iDuration=iRandom);
       if IsClass(oTarget,&User)
       {
          Send(oTarget,@MsgSendUser,#message_rsc=lupoggking_cast_spell);
@@ -544,10 +544,10 @@ messages:
       Send(oTreasure,@AddNumber,#number=iNumber);
 
       if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
-                  #new_row=piRow,#new_col=piCol)
       {
-         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+         Send(poOwner,@NewHold,#what=oTreasure,
+               #new_row=piRow,#new_col=piCol,
+               #fine_row=piFine_row,#fine_col=piFine_col);
       }
       else
       {

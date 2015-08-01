@@ -444,7 +444,7 @@ void ForEachClass(void (*callback_func)(class_node *c))
 
 const char * GetClassDebugStr(class_node *c,int dstr_id)
 {
-	if (dstr_id > c->dstrs->num_strings)
+	if (dstr_id > c->dstrs->num_strings || dstr_id < 0)
 	{
 		eprintf("GetClassDebugStr got invalid dstr id, %i %i\n",c->class_id,dstr_id);
 		return "Invalid DStr";

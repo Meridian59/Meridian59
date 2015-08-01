@@ -61,13 +61,11 @@ properties:
 
    pbSnowGroundTexture = TRUE
 
-   piGen_time = 60000
+   piGen_time = 20000
    piGen_percent = 60
 
    piInit_count_min = 1
    piInit_count_max = 3
-
-   piMonster_count_max = 5
 
    pbDoor_open = FALSE
    ptDoor = $

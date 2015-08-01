@@ -147,6 +147,14 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
       }
 
+      % Handle transition from 3-element enchantment list elements to
+      % 4-element ones.
+      if state = $
+         OR state = 0
+      {
+         state = Send(who,@GetRawState,#what=self);
+      }
+
       if IsClass(who,&Player)
       {
          Send(who,@AddAgility,#points=Nth(state,1));

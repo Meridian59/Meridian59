@@ -369,6 +369,8 @@ messages:
    {
       local i, hourhours, timeleft, bPKServer;
 
+      ptMaintenance = $;
+
       if Send(self,@GetGuildMaster) = $
       {
          % This should never happen!  This is just in as a failsafe, since
@@ -396,7 +398,7 @@ messages:
                Post(First(i),@MsgSendUser,#message_rsc=necguild_threeperson_failed);
             }
             Send(&NecromancerAmulet,@OrderOfNecromancersDisbanded);
-            %Send(self, @delete,#timerdelete=TRUE);
+            Send(self,@Delete);
 
             return;
          }
@@ -738,6 +740,9 @@ messages:
                   #dest_list=[First(i)],#nest_list=[4,necguild_disbanded_mail]);
          }
       }
+
+      % NecromancerBalance has to set the guild to $ if it hasn't already.
+      Send(Send(SYS,@GetNecromancerBalance),@SetNecroGuild);
 
       propagate;
    }

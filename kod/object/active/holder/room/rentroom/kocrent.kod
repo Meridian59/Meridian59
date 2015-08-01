@@ -1,0 +1,109 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanRentableRoom is RentableRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanRentableRoom_name = "A comfortable room"
+   KocatanRentableRoom_roo = kocrent.roo
+
+   KocatanRentableRoom_landlord = "Moxal ix'Hanak"
+
+classvars:
+
+   vrName = KocatanRentableRoom_name
+
+   viTeleport_row = 10
+   viTeleport_col = 10
+
+   viBedSectorMin = 1
+   viBedSectorMax = 5
+   viPictureLocationMax = 6
+
+   vrLandlord = KocatanRentableRoom_landlord
+   viLocation = RID_KOC_INN
+
+   viDecorator_row = 9
+   viDecorator_col = 10
+
+properties:
+
+   prRoom = KocatanRentableRoom_roo
+
+   piCarpet = 08961    % CARPET_G
+   piWallpaper = 50078 % WALLPAPER_G
+
+messages:
+
+   Constructor(iRID=RID_RENTABLE_START)
+   {
+      % Format for plBedCoords: pillow coord, non-pillow coord, pillow1 finecoord,
+      %                         pillow2 finecoord, pillow angle
+      % Each top-level list (one per line) is one bed position.
+      plBedCoords = [ [ [8,9], [9,9], [16,16], [16,48], ANGLE_WEST ],
+                      [ [10,9], [10,10], [16,16], [48,16], ANGLE_SOUTH ],
+                      [ [11,9], [11,10], [16,16], [48,16], ANGLE_SOUTH ],
+                      [ [12,9], [12,10], [16,16], [48,16], ANGLE_SOUTH ],
+                      [ [12,11], [11,11], [48,16], [48,48], ANGLE_EAST ]
+                    ];
+
+      % Format for plPictureCoords: coordinates nearest picture, followed by
+      % the next nearest coordinates.
+      % Each top-level list (one per line) is one picture position
+      plPictureCoords = [ [ [8,9], [8,10] ],
+                          [ [9,9] ],
+                          [ [10,9] ],
+                          [ [11,9] ],
+                          [ [12,9] ],
+                          [ [12,10], [12,11] ]
+                        ];
+
+      propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      if row = 10 AND col = 13
+      {
+         Send(what,@MsgSendUser,#message_rsc=RentableRoom_teleport);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
+               #duration=750);
+         Send(Send(SYS,@FindRoomByNum,#num=RID_KOC_INN),@NewHold,#what=what,
+               #new_row=8,#new_col=8,#new_angle=ANGLE_NORTH);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Bell),
+            #new_row=8,#new_col=10,#fine_row=23);
+
+      propagate;
+   }
+
+   Enter(who=$)
+   {
+      Send(self,@NewHold,#what=who,#new_row=10,#new_col=13,
+            #new_angle=ANGLE_WEST);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

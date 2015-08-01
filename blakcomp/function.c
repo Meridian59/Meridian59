@@ -41,6 +41,7 @@ function_type Functions[] = {
 {"DelListElem",         DELLISTELEM,     AEXPRESSION,   AEXPRESSION,  ANONE},
 {"FindListElem",        FINDLISTELEM,    AEXPRESSION,   AEXPRESSION,  ANONE},
 {"AppendListElem",      APPENDLISTELEM,  AEXPRESSION,   AEXPRESSION,  ANONE},
+{"Last",                LAST,            AEXPRESSION,   ANONE},
 {"Random",              RANDOM,          AEXPRESSION,   AEXPRESSION,  ANONE},
 {"AddPacket",           ADDPACKET,       AEXPRESSIONS,  ANONE},
 {"SendPacket",          SENDPACKET,      AEXPRESSION,   ANONE},

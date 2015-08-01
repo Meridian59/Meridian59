@@ -33,6 +33,8 @@ classvars:
    vrIcon = emerald_icon_rsc
    vrDesc = emerald_desc_rsc
 
+   viIndefinite = ARTICLE_AN
+
    viBulk = 1
    viWeight = 1
 

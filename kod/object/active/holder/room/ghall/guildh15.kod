@@ -303,7 +303,7 @@ messages:
       }
       else
       {
-         Send(self,@NewHold,#what=Create(&Lich,#oNecromancerGuild=poGuild_owner),
+         Send(self,@NewHold,#what=Create(&Lich),
                #new_row=13,#new_col=49,
                #fine_row=16,#fine_col=00,
                #new_angle=ANGLE_WEST);

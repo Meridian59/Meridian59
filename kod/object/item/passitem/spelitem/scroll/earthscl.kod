@@ -28,10 +28,11 @@ classvars:
    viSpellEffect = SID_EARTHQUAKE
    viColor = XLAT_TO_ORANGE
 
+   vbDisabled = TRUE
+
 properties:
 
    vrDesc = EarthquakeScroll_desc_rsc
-   pbDisabled = TRUE
 
 messages:
 

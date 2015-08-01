@@ -1,0 +1,320 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LuteQuest is QuestTemplate
+% QST_ID_LUTE = 14
+% Quest nodes 21, 22, 23, 24.
+% QNT_ID_LUTEQUEST_ONE, QNT_ID_LUTEQUEST_TWO,
+% QNT_ID_LUTEQUEST_THREE, QNT_ID_LUTEQUEST_FOUR
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   lutequest_icon_rsc = music.bgf
+   lutequest_name_rsc = "instrument quest"
+   lutequest_desc_rsc = \
+      "Parrin knows someone who can get you an instrument, so he "
+      "can teach you how to play."
+
+   lutequest_nodetwo_rsc = \
+      "Parrin will help you get an instrument.  Go to %s and say \"%s\"."
+
+   lutequest_nodethree_rsc = \
+      "%s will give you a lute, but first you need to do something for "
+      "%s.  Deliver %s%s to %s, then return to %s."
+      
+   lutequest_nodefour_rsc = \
+      "Return to %s to receive the lute."
+
+   lutequest_completed_rsc = \
+      "You have completed the instrument quest, and have received a lute."
+
+   % Quest resources.
+   lutequest_trigger_1 = "instrument"
+   lutequest_assign_2 = \
+      "Of course you'll need an instrument to play.  I'll even help you get "
+      "one.  Here's what you do:  %NPC can set you up with one, go to "
+      "%HIMHER_NPC and say \"%CARGO\"."
+   lutequest_trigger_2a = "Parrin sent me"
+   lutequest_trigger_2b = "I need an instrument"
+   lutequest_trigger_2c = "Parrin told me to see you about a lute"
+   lutequest_trigger_2d = "Could I get that lute you are holding for Parrin"
+   lutequest_trigger_2e = "Parrin says you have a lute for him"
+   lutequest_failure_2 = \
+      "Subject: That lute you wanted\n"
+      "It's too late, %NPC gave the lute to someone else.  If you're "
+      "serious about learning to play, come back later and I might know "
+      "where you can find another one."
+   lutequest_assign_3 = \
+      "You are going to learn to play from Parrin?!  Good luck!  By the "
+      "way, Parrin owes me a favor.  If you do something for me, I'll give "
+      "you the lute;  I need this %CARGO rushed to %NPC.  It needs to be "
+      "delivered within twenty minutes or I won't give you the instrument.  "
+      "When you've done that, come back."
+   lutequest_success_3 = \
+      "Ah, %NAME, I've been anxiously awaiting this %CARGO's arrival!  "
+      "Thank you for your swift delivery."
+   lutequest_failure_3 = \
+      "Subject: You missed your deadline\n"
+      "You wasted too much time getting to %NPC.  Don't bother coming back "
+      "for the lute.  Next time, I'll get a quicker messenger."
+   lutequest_success_4 = \
+      "Thank you, here is the lute.  Please learn to play it well."
+   lutequest_failure_4 = \
+      "Subject: You forgot to pick up your lute!\n"
+      "%NPC tells me you were supposed to go back there to pick up your "
+      "lute.  I think %NPC has already found someone else to whom to give "
+      "the lute by now though.  Sorry for all the trouble you went to, but "
+      "thanks again for making the delivery."
+
+classvars:
+
+   vrIcon = lutequest_icon_rsc
+   vrName = lutequest_name_rsc
+   vrDesc = lutequest_desc_rsc
+
+   vrNodeTwo = lutequest_nodetwo_rsc
+   vrNodeThree = lutequest_nodethree_rsc
+   vrNodeFour = lutequest_nodefour_rsc
+
+   vrCompleted = lutequest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_LUTE
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_NOTNEWBIE
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 4
+   piTimeLimit = 2 * 3600 % 2 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_LUTEQUEST_ONE, QNT_ID_LUTEQUEST_TWO,
+                      QNT_ID_LUTEQUEST_THREE, QNT_ID_LUTEQUEST_FOUR];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_LUTEQUEST_TWO, vrNodeTwo],
+                          [QNT_ID_LUTEQUEST_THREE, vrNodeThree],
+                          [QNT_ID_LUTEQUEST_FOUR, vrNodeFour] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oNPC, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #21 is lute quest, show up to be told who to go to, what to say
+      % QNT_ID_LUTEQUEST_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[lutequest_trigger_1],
+               #quest_node_index=QNT_ID_LUTEQUEST_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_LUTEQUEST_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&Minstrel));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_LUTEQUEST_ONE");
+      }
+
+      % Template #22 is lute quest, say what parrin told you to
+      % QNT_ID_LUTEQUEST_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ lutequest_trigger_2a, lutequest_trigger_2b,
+                         lutequest_trigger_2c, lutequest_trigger_2d,
+                         lutequest_trigger_2e ],
+               #quest_node_index=QNT_ID_LUTEQUEST_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperMerchant)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_LUTEQUEST_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_LUTEQUEST_TWO,
+               #new_hint=lutequest_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_LUTEQUEST_TWO,
+               #new_hint=lutequest_failure_2);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_LUTEQUEST_TWO,
+               #new_limit=60 * 60); % one hour
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_LUTEQUEST_TWO");
+      }
+
+      % Template #23 is lute quest, deliver the priority item.
+      % QNT_ID_LUTEQUEST_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Book, 1  ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Scroll, 1  ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &CurePoisonPotion, 1  ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Sacchaqua, 1  ],
+                            [ QN_PRIZETYPE_ITEMCLASS, &Rose, 1  ] ],
+               #quest_node_index=QNT_ID_LUTEQUEST_THREE)
+      {
+         % lNPCs was set in the previous node
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_LUTEQUEST_THREE,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_LUTEQUEST_THREE,
+               #new_mod=QN_NPCMOD_DIFFERENT);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_LUTEQUEST_THREE,
+               #new_hint=lutequest_assign_3);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_LUTEQUEST_THREE,
+               #new_hint=lutequest_success_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_LUTEQUEST_THREE,
+               #new_hint=lutequest_failure_3);
+         Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_LUTEQUEST_THREE,
+               #new_limit=20 * 60);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_LUTEQUEST_THREE");
+      }
+
+      % Template #24 is lute quest, come back to get your prize.
+      % QNT_ID_LUTEQUEST_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #prizelist=[ [ QN_PRIZETYPE_ITEMCLASS, &Lute, 1 ] ],
+               #quest_node_index=QNT_ID_LUTEQUEST_FOUR)
+      {
+         %Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_LUTEQUEST_FOUR,
+         %      #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeNPCModifier,#index=QNT_ID_LUTEQUEST_FOUR,
+               #new_mod=QN_NPCMOD_PREVIOUS);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_LUTEQUEST_FOUR,
+               #new_hint=lutequest_success_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_LUTEQUEST_FOUR,
+               #new_hint=lutequest_failure_4);
+         %Send(oQE,@SetQuestNodeTimeLimit,#index=QNT_ID_LUTEQUEST_FOUR,
+         %      #new_limit=20 * 60);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_LUTEQUEST_FOUR");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oCargo, oSourceNPC, oDestNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+
+      if index = QNT_ID_LUTEQUEST_FOUR
+      {
+         if oDestNPC = $
+         {
+            return;
+         }
+
+         AddPacket(4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      oCargo = Send(oQuestNode,@GetCargo);
+
+      if index = QNT_ID_LUTEQUEST_TWO
+      {
+         if oDestNPC = $
+            OR oCargo = $
+         {
+            return;
+         }
+
+         % Cargo is a resource here.
+         AddPacket(4,Send(oDestNPC,@GetName), 4,oCargo);
+
+         return;
+      }
+
+      if index = QNT_ID_LUTEQUEST_THREE
+      {
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+         if oDestNPC = $
+            OR oCargo = $
+            OR oSourceNPC = $
+         {
+            return;
+         }
+         
+         AddPacket(4,Send(oSourceNPC,@GetName), 4,Send(oSourceNPC,@GetHimHer),
+                   4,Send(oCargo,@GetDef), 4,Send(oCargo,@GetName),
+                   4,Send(oDestNPC,@GetName), 4,Send(oSourceNPC,@GetName));
+         
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

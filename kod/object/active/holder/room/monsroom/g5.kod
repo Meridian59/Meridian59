@@ -40,8 +40,8 @@ properties:
 
    piBaseLight = LIGHT_NICE
    piOutside_factor = 8
-   piGen_time = 50000
-   piGen_percent = 40
+   piGen_time = 20000
+   piGen_percent = 70
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
@@ -50,7 +50,7 @@ properties:
    piInit_count_min = 1
    piInit_count_max = 3
 
-   piMonster_count_max = 7
+   piMonster_count_max = 15
 
 messages:
 

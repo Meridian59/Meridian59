@@ -270,7 +270,8 @@ messages:
    RecalculateActiveEnchantments()
    {
       local i, source, iDrain, iPeriodic, lEnchanted, iPower, iRange, iDuration,
-      iDistance, oObject, oRoom, oActive, oPassive, oCrystalizeMana, iCrystalizeManaAbility;
+      iDistance, oObject, oRoom, oActive, oPassive, oCrystalizeMana,
+      iCrystalizeManaAbility, lSqDist;
 
       if ptRecalculationTimer <> $
       {
@@ -308,15 +309,16 @@ messages:
          {
             oObject = Send(oRoom,@HolderExtractObject,#data=oActive);
 
+            lSqDist = Send(source,@SquaredDistanceTo,#what=oObject);
+
             if (lEnchanted = $ OR FindListElem(lEnchanted,oObject) = 0)
-               AND ((Send(source,@SquaredDistanceTo,#what=oObject) <> $
-                          AND Send(source,@SquaredDistanceTo,#what=oObject) <= (iRange * iRange))
-                    OR piOldAreaEnchStyle)
+               AND ((lSqDist <> $ AND lSqDist <= (iRange * iRange))
+                  OR piOldAreaEnchStyle)
             {
                if Send(self,@TargetIsValid,#target=oObject,#source=source)
                {
                   Send(self,@EnterRadius,#what=oObject,#iPower=iPower,#source=source);
-                  lEnchanted = cons(oObject,lEnchanted);
+                  lEnchanted = Cons(oObject,lEnchanted);
                }
             }
          }
@@ -328,15 +330,16 @@ messages:
             {
                oObject = Send(oRoom,@HolderExtractObject,#data=oPassive);
 
+               lSqDist = Send(source,@SquaredDistanceTo,#what=oObject);
+
                if (lEnchanted = $ OR FindListElem(lEnchanted,oObject) = 0)
-                  AND ((Send(source,@SquaredDistanceTo,#what=oObject) <> $
-                       AND Send(source,@SquaredDistanceTo,#what=oObject) <= (iRange * iRange))
-                  OR piOldAreaEnchStyle)
+                  AND ((lSqDist <> $ AND lSqDist <= (iRange * iRange))
+                     OR piOldAreaEnchStyle)
                {
                   if Send(self,@TargetIsValid,#target=oObject,#source=source)
                   {
                      Send(self,@EnterRadius,#what=oObject,#iPower=iPower,#source=source);
-                     lEnchanted = cons(oObject,lEnchanted);
+                     lEnchanted = Cons(oObject,lEnchanted);
                   }
                }
             }
@@ -433,7 +436,7 @@ messages:
 
    TargetIsValid(target=$,source=$)
    {
-      local oRoom, oWatcher;
+      local oRoom, oWatcher, oTargetGuild, oSourceGuild;
 
       if target = $
          OR source = $
@@ -447,17 +450,14 @@ messages:
          return FALSE;
       }
 
-      If IsClass(target,&Player)
+      if IsClass(target,&Player)
          AND Send(target,@IsInCannotInteractMode)
       {
          return FALSE;
       }
 
       % Arena checks.
-      if IsClass(target,&Battler)
-      {
-         oRoom = Send(target,@GetOwner);
-      }
+      oRoom = Send(SYS,@UtilGetRoomRecurse,#what=target);
 
       if oRoom <> $
       {
@@ -516,23 +516,26 @@ messages:
          }
       }
 
-      if viAffectsGuildmates
-         AND IsClass(target,&User)
+      if IsClass(target,&User)
          AND IsClass(source,&User)
-         AND Send(target,@GetGuild) <> $
-         AND Send(target,@GetGuild) = Send(source,@GetGuild)
       {
-         return TRUE;
-      }
+         oSourceGuild = Send(source,@GetGuild);
+         oTargetGuild = Send(target,@GetGuild);
 
-      if viAffectsAllies
-         AND IsClass(target,&User)
-         AND IsClass(source,&User)
-         AND Send(target,@GetGuild) <> $
-         AND Send(Send(target,@GetGuild),@IsAlly,
-                  #otherguild=Send(source,@GetGuild))
-      {
-         return TRUE;
+         if oTargetGuild <> $
+         {
+            if viAffectsGuildmates
+               AND oTargetGuild = oSourceGuild
+            {
+               return TRUE;
+            }
+
+            if viAffectsAllies
+               AND Send(oTargetGuild,@IsAlly,#otherguild=oSourceGuild)
+            {
+               return TRUE;
+            }
+         }
       }
 
       if viAffectsEnemies

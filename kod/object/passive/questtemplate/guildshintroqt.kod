@@ -1,0 +1,115 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildShieldIntroQuest is QuestTemplate
+% QST_ID_GUILDSHIELD_INTRO = 13
+% Quest nodes 20.
+% QNT_ID_GSHIELD_INTRO_ONE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description. No description is actually displayed for this
+   % quest, its purpose is to activate another quest which isn't given
+   % to the player directly.
+   guildshintroquest_name_rsc = "blacksmith ore quest"
+   guildshintroquest_desc_rsc = \
+      "The bartender has told you of a blacksmith looking for ore."
+
+   guildshintroquest_completed_rsc = \
+      "The bartender has told you of a blacksmith looking for ore."
+
+   % Quest resources.
+   guildshield_intro = \
+      "I heard that %QBNPC wants someone to go on a mining expedition for "
+      "%QBHIMHER_NPC, and that it may be of particular interest to your "
+      "guild members.  You may want to send one of them to ask "
+      "%QBHIMHER_NPC about it."
+
+classvars:
+
+   vrName = guildshintroquest_name_rsc
+   vrDesc = guildshintroquest_desc_rsc
+
+   vrCompleted = guildshintroquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_GUILDSHIELD_INTRO
+
+   % Don't need to show this quest to the user once completed.
+   vbShowCompleted = FALSE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_GUILDMASTER
+   plSpecialRestrict = $
+   piMaxPlayers = 15
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_GSHIELD_INTRO_ONE];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #20 is guild shield intro quest, guildmaster shows up
+      % to be told which blacksmith to go to.
+      % QNT_ID_GSHIELD_INTRO_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #prizelist=[ [ QN_PRIZETYPE_SCHEDULE_QUEST, QST_ID_GUILDSHIELD ], 
+                            [ QN_PRIZETYPE_ACTIVATE_QUEST, QST_ID_GUILDSHIELD ],
+                            [ QN_PRIZETYPE_PASS_QUEST_RESTRICT2, Q_R2_IS_GUILD_MEMBER_OF, 1] ],
+               #quest_node_index=QNT_ID_GSHIELD_INTRO_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_GSHIELD_INTRO_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                     #iJob=MOB_ROLE_BARTENDER,#onIsland=FALSE));
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_GSHIELD_INTRO_ONE,
+               #new_hint=guildshield_intro);
+         % Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_GSHIELD_INTRO_ONE,
+         %      #new_hint=guildshield_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_GSHIELD_INTRO_ONE");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

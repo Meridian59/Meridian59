@@ -40,7 +40,7 @@ properties:
 
    piBaseLight = LIGHT_NICE
    piOutside_factor = 8
-   piGen_time = 100000
+
    piGen_percent = 80
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS

@@ -1302,5 +1302,10 @@ messages:
       return FALSE;
    }
 
+   CanTokenEnterRoom()
+   {
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

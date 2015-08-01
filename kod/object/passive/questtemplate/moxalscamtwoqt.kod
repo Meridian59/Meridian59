@@ -1,0 +1,272 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MoxalScamTwoQuest is QuestTemplate
+% Quest template QST_ID_MOXAL_SCAM_2 = 38
+% Quest nodes 119, 120, 121, 122, 123.
+% QNT_ID_MOXAL_SCAMTWO_ONE, QNT_ID_MOXAL_SCAMTWO_TWO, QNT_ID_MOXAL_SCAMTWO_THREE,
+% QNT_ID_MOXAL_SCAMTWO_FOUR, QNT_ID_MOXAL_SCAMTWO_FIVE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   moxalscamtwoquest_name_rsc = "Moxal's investment quest"
+   moxalscamtwoquest_desc_rsc = \
+      "Moxal ix'Hanak says he has a great idea, and has been trying to "
+      "convince people to fund it.  If you help him find a financier, he "
+      "will split the returns with both of you 50/50/50."
+
+   moxalscamtwoquest_nodetwo_rsc = \
+      "Moxal ix'Hanak says he has a great idea, and has been trying to "
+      "convince %s%s to fund it.  If you can convince %s, Moxal will split "
+      "the returns with both of you 50/50/50."
+
+   moxalscamtwoquest_nodethree_rsc = \
+      "%s%s says to tell Moxal %s is \"not interested\" in his idea."
+
+   moxalscamtwoquest_nodefour_rsc = \
+      "Moxal wants you to try again - let %s%s know just how lucrative "
+      "this investment will be!"
+
+   moxalscamtwoquest_nodefive_rsc = \
+      "%s%s seems pretty angry now, you should let Moxal know %s is "
+      "definitely \"not interested\"."
+
+   moxalscamtwoquest_completed_rsc = \
+      "You have completed Moxal ix'Hanak's investment scheme, however "
+      "his mark wasn't convinced.  You weren't rewarded, but you have "
+      "gained a little experience from this annoyingly tedious quest."
+
+   % Quest resources.
+   moxalscam2_assign_2 = \
+      "Early last week I had a great idea, and I’ve been trying to convince "
+      "%NPC to help me finance it.  Look, if you convince %HIMHER_NPC, I’ll "
+      "split the returns with both of you 50/50/50."
+   moxalscam2_failure = \
+      "Subject: My wayward partner!\n"
+      "Well, sheesh!  You didn't have to help me, but you said you would...  "
+      "I mean no one was twisting your arm, right?  Well, come back when your "
+      "gut tells you it's time to make some serious shillings."
+   moxalscam2_assign_3 = "Oh, Riija, let me guess.  Moxal sent you.  "
+      "Well, tell him, AGAIN, that I’m not interested."
+   moxalscam2_trigger_3 = "not interested"
+   moxalscam2_assign_4 = \
+      "Now, now, now.  Maybe you didn’t try hard enough.  Try again, and "
+      "be sure to remind %HIMHER_NPC about the tenfold - no, HUNDREDFOLD - "
+      "return."
+   moxalscam2_assign_5 = \
+      "SHEESH, WHAT IS IT WITH YOU PEOPLE?  Look, Moxal is either a pie-eyed "
+      "fool or a total thief, I haven’t figured out which, but only a total "
+      "idiot would give him money.  Tell him I’m NOT INTERESTED."
+   moxalscam2_success_5 = \
+      "*-sigh-*  Ah, well, %SOURCE_NPC was not of strong enough stomach, "
+      "I guess.  I don’t suppose YOU have 100,000 shillings to invest in "
+      "a moderately risky venture?"
+
+classvars:
+
+   vrName = moxalscamtwoquest_name_rsc
+   vrDesc = moxalscamtwoquest_desc_rsc
+
+   vrNodeTwo = moxalscamtwoquest_nodetwo_rsc
+   vrNodeThree = moxalscamtwoquest_nodethree_rsc
+   vrNodeFour = moxalscamtwoquest_nodefour_rsc
+   vrNodeFive = moxalscamtwoquest_nodefive_rsc
+
+   vrCompleted = moxalscamtwoquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_MOXAL_SCAM_2
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY
+   piMaxPlayers = 30
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_MOXAL_SCAMTWO_ONE, QNT_ID_MOXAL_SCAMTWO_TWO,
+                      QNT_ID_MOXAL_SCAMTWO_THREE, QNT_ID_MOXAL_SCAMTWO_FOUR,
+                      QNT_ID_MOXAL_SCAMTWO_FIVE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_MOXAL_SCAMTWO_TWO, vrNodeTwo],
+                          [QNT_ID_MOXAL_SCAMTWO_THREE, vrNodeThree],
+                          [QNT_ID_MOXAL_SCAMTWO_FOUR, vrNodeFour],
+                          [QNT_ID_MOXAL_SCAMTWO_FIVE, vrNodeFive] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #119 is Moxal scam quest #2
+      % QNT_ID_MOXAL_SCAMTWO_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_MOXAL_SCAMTWO_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMTWO_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMTWO_ONE");
+      }
+
+      % Template #120 is Moxal scam quest #2
+      % QNT_ID_MOXAL_SCAMTWO_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #NPC_modifier=QN_NPCMOD_DIFFERENT,
+               #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMTWO_TWO)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
+         {
+            if NOT IsClass(oNPC, &KocatanBonePriestess)
+               AND NOT IsClass(oNPC, &KocatanSentry)
+            {
+               lNPCs = Cons(oNPC, lNPCs);
+            }
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_MOXAL_SCAMTWO_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMTWO_TWO,
+               #new_hint=moxalscam2_assign_2);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MOXAL_SCAMTWO_TWO,
+               #new_hint=moxalscam2_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMTWO_TWO");
+      }
+
+      % Template #121 is Moxal scam quest #2
+      % QNT_ID_MOXAL_SCAMTWO_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,#cargolist=[moxalscam2_trigger_3],
+               #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMTWO_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMTWO_THREE,
+               #new_hint=moxalscam2_assign_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMTWO_THREE");
+      }
+
+      % Template #122 is Moxal scam quest #2
+      % QNT_ID_MOXAL_SCAMTWO_FOUR
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,
+               #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMTWO_FOUR)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMTWO_FOUR,
+               #new_hint=moxalscam2_assign_4);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_MOXAL_SCAMTWO_FOUR,
+               #new_hint=moxalscam2_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMTWO_FOUR");
+      }
+
+      % Template #123 is Moxal scam quest #2
+      % QNT_ID_MOXAL_SCAMTWO_FIVE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_PREVIOUS,#cargolist=[moxalscam2_trigger_3],
+               #prizelist=[ [ QN_PRIZETYPE_EXPERIENCE_POINTS, 10 ] ],
+               #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMTWO_FIVE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_MOXAL_SCAMTWO_FIVE,
+               #new_hint=moxalscam2_assign_5);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_MOXAL_SCAMTWO_FIVE,
+               #new_hint=moxalscam2_success_5);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_MOXAL_SCAMTWO_FIVE");
+      }
+
+      return;
+   }
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      oDestNPC = Send(oQuestNode,@GetDestNPC);
+      oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+
+      if index = QNT_ID_MOXAL_SCAMTWO_TWO
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName),
+                   4,Send(oDestNPC,@GetHimHer));
+
+         return;
+      }
+
+      if index = QNT_ID_MOXAL_SCAMTWO_THREE
+         OR index = QNT_ID_MOXAL_SCAMTWO_FIVE
+      {
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4,Send(oSourceNPC,@GetHeShe));
+
+         return;
+      }
+
+      if index = QNT_ID_MOXAL_SCAMTWO_FOUR
+      {
+         AddPacket(4,Send(oDestNPC,@GetDef), 4,Send(oDestNPC,@GetName));
+
+         return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

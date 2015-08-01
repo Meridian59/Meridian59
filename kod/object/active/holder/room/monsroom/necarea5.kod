@@ -45,7 +45,7 @@ properties:
    piBaseLight = LIGHT_MIN
    piOutside_factor = 0
 
-   piGen_time = 40000
+   piGen_time = 25000
    piGen_percent = 80
 
    piInit_count_min = 7

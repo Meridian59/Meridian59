@@ -48,7 +48,6 @@ classvars:
    viChance_To_Increase = 15
    viMeditate_ratio = 20
 
-
 properties:
 
 messages:
@@ -60,12 +59,12 @@ messages:
       return;
    }
 
-   CastSpell(who=$,iSpellPower=0)
+   GetStateValue(iSpellpower=$,target=$)
    {
-      %% Post this so it's after the flag being applied.
-      Post(who,@ToCliRoomContents);
+      % Post this so it's after the flag being applied.
+      Post(target,@ToCliRoomContents);
 
-      propagate;
+      return iSpellpower;
    }
 
    SetSpellPlayerFlag(who=$)

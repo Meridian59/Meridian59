@@ -1134,6 +1134,17 @@ int C_SetResource(int object_id,local_var_type *local_vars,
 			new_str = r->resource_val;
 			break;
 		}
+	case TAG_STRING :
+		snod = GetStringByID(str_val.v.data);
+		if (snod == NULL)
+		{
+			bprintf( "C_SetResource can't set from bad string %i\n",
+				str_val.v.data);
+			return NIL;
+		}
+		new_len = snod->len_data;
+		new_str = snod->data;
+		break;
 	default :
 		bprintf("C_SetResource can't set from non temp string %i,%i\n",
 			str_val.v.tag,str_val.v.data);
@@ -2222,6 +2233,25 @@ int C_Length(int object_id,local_var_type *local_vars,
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = Length(list_val.v.data);
 	return ret_val.int_val;
+}
+
+int C_Last(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                            normal_parm_array[0].value);
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_Last object %i can't get last element of a non-list %i,%i\n",
+         object_id,list_val.v.tag,list_val.v.data);
+      return NIL;
+   }
+
+   return Last(list_val.v.data);
 }
 
 int C_Nth(int object_id,local_var_type *local_vars,

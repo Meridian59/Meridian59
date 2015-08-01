@@ -45,7 +45,7 @@ properties:
    prMusic = OutdoorsC2_music
    piRoom_num = RID_C2
    
-   piGen_time = 50000
+   piGen_time = 25000
    
    plFey_Forest = $
 

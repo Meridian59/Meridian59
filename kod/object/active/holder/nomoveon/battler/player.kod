@@ -163,8 +163,17 @@ resources:
    player_join_faction = \
       "~IYour name is entered on the roll of membership for %s%s's political "
       "faction."
-   player_lost_token = \
+   player_lost_token_hall = \
       "The token refuses to enter the guild hall and writhes in your hands.  "
+      "You cannot hold it."
+   player_lost_token_arena = \
+      "The token refuses to enter the arena and writhes in your hands.  "
+      "You cannot hold it."
+   player_lost_token_survival = \
+      "You suddenly lose your grasp on the token as you are pulled "
+      "across dimensions."
+   player_lost_token_generic = \
+      "The token refuses to enter this room and writhes in your hands.  "
       "You cannot hold it."
    player_intrigue_shut = "~IThe Royal Court no longer needs your services."
    player_lost_intriguing = \
@@ -227,16 +236,19 @@ resources:
    
    player_training_inform = "You now have ~B%i~B training points!"
    player_reached_maxtraining = \
-      "You now have ~B1000~B training points and can not "
-      "advance any further!  Meditate to use them!"
+      "You now have ~B1000~B training points and can not gain any more!  "
+      "Cast the Meditate spell and say the name of a spell or skill out loud "
+      "to use your points to train it."
    player_gained_training = "You have gained ~B%i~B training points!"
    player_spent_training = "You have spent ~B%i~B training points!"
    player_logon_bonus = \
       "You have received your daily training bonus of ~B%i~B points!  "
       "Come back tomorrow for more!"
+   player_experience_gained = "You have gained ~B%i~B experience points!"
+   player_experience_lost = "You have lost ~B~r%i~B experience points!"
 
    player_health_gain_maxed = "Your health cannot increase any further."
-   
+
    player_cant_hit_newbie = \
       "You are not yet experienced enough to fight other players."
    player_cant_hit_newbie_minion = \
@@ -987,11 +999,11 @@ properties:
    prRight_arm = player_rightarm_a_rsc
    prLeft_arm = player_leftarm_a_rsc
 
-   prHead = $
-   prEyes = $
-   prMouth = $
-   prNose = $
-   prToupee = $
+   prHead = charinfo_head_ax_icon
+   prEyes = charinfo_eyes_ax_icon
+   prMouth = charinfo_nose_ax_icon
+   prNose = charinfo_mouth_ax_icon
+   prToupee = charinfo_hair_cd_icon
 
    % Animation type.  If none, then use piAction
    % piAnimation should be PANM_NONE in between KOD calls.
@@ -1382,6 +1394,7 @@ messages:
    {
       if piVigor < SECONDWIND_THRESHOLD
          AND ptSecondWind = $
+         AND pbLogged_on
          AND Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) > 0
          AND Send(Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
                   @DoSkill,#who=self)
@@ -1736,7 +1749,7 @@ messages:
          if Nth(i,2) = oSpell
          {
             state = Nth(i,3);
-            if not IsClass(first(state),&Prism)
+            if NOT IsClass(First(state),&Prism)
             {
                for j in state
                {
@@ -2922,9 +2935,10 @@ messages:
    }
 
    DropItem(droppedItem=$, targetGhost=$, dropRoom=$, dropRow=0, dropCol=0,
-            index=$, merge=TRUE)
+            dropFineRow=32,dropFineCol=32,index=$, merge=TRUE)
    {
-      local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
+      local oItem, oDropRoom, iDropRow, iDropCol, iDropFineRow, iDropFineCol,
+            oItemAtt;
 
       if droppedItem <> $
       {
@@ -2947,12 +2961,16 @@ messages:
             oDropRoom = poOwner;
             iDropRow = piRow;
             iDropCol = piCol;
+            iDropFineRow = piFine_row;
+            iDropFineCol = piFine_col;
          }
          else
          {
             oDropRoom = dropRoom;
             iDropRow = dropRow;
             iDropCol = dropCol;
+            iDropFineRow = dropFineRow;
+            iDropFineCol = dropFineCol;
          }
       }
       else
@@ -2961,32 +2979,31 @@ messages:
          oDropRoom = Send(targetGhost,@GetOwner);
          iDropRow = Send(targetGhost,@GetRow);
          iDropCol = Send(targetGhost,@GetCol);
+         iDropFineRow = Send(targetGhost,@GetFineRow);
+         iDropFineCol = Send(targetGhost,@GetFineCol);
       }
 
       if Send(oItem,@ReqNewOwner,#what=oDropRoom)
          AND Send(oDropRoom,@ReqNewHold,#what=oItem,
                   #new_row=iDropRow,#new_col=iDropCol)
       {
-         if Send(oDropRoom,@ReqSomethingMoved,#what=oItem,
-                  #new_row=iDropRow,#new_col=iDropCol)
+         if Send(oItem,@DropOnDeath)
          {
-            if Send(oItem,@DropOnDeath)
+            if targetGhost <> $
             {
-               if targetGhost <> $
-               {
-                  % Put the PK pointer attribute on the item to prevent
-                  % mules from grabbing penalty drops from ghosts.
-                  oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
-                  Send(oItemAtt,@AddToItem,#oItem=oItem,
-                        #timer_duration=PKPOINTER_TIME,
-                        #state1=self);
-               }
-
-               Send(oDropRoom,@NewHold,#what=oItem,#new_row=iDropRow,
-                     #new_col=iDropCol,#merge=merge);
-
-               return TRUE;
+               % Put the PK pointer attribute on the item to prevent
+               % mules from grabbing penalty drops from ghosts.
+               oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
+               Send(oItemAtt,@AddToItem,#oItem=oItem,
+                     #timer_duration=PKPOINTER_TIME,
+                     #state1=self);
             }
+
+            Send(oDropRoom,@NewHold,#what=oItem,#merge=merge,
+                  #new_row=iDropRow,#new_col=iDropCol,
+                  #fine_row=iDropFineRow,#fine_col=iDropFineCol);
+
+            return TRUE;
          }
       }
 
@@ -3115,7 +3132,8 @@ messages:
       {
          if First(i) = timer
          {
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
             {
                Send(Nth(i,2),@EndEnchantment,#who=self,#state=Nth(i,3));
             }
@@ -3179,7 +3197,7 @@ messages:
          {
             plEnchantments = DelListElem(plEnchantments,i);
 
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
             {
                Send(Nth(i,2),@StartPeriodicEnchantment,
                      #who=self,#state=Nth(i,3));
@@ -3199,7 +3217,7 @@ messages:
    }
 
    StartEnchantment(what=$,who=$,time=$,state=$,lastcall=TRUE,
-                     addicon=TRUE,ltype=$,bItemCast=FALSE)
+                     addicon=TRUE,ltype=$,bItemCast=FALSE,iSpellPower=0)
    "Adds <what> to our enchantments, and creates a timer that will cause it "
    "to end."
    {
@@ -3223,11 +3241,11 @@ messages:
 
       if state = $
       {
-         lNew_enchantment = [oTimer, what];
+         lNew_enchantment = [oTimer, what, iSpellPower];
       }
       else
       {
-         lNew_enchantment = [oTimer, what, state];
+         lNew_enchantment = [oTimer, what, state, iSpellPower];
       }
 
       plEnchantments = Cons(lNew_enchantment,plEnchantments);
@@ -3341,7 +3359,7 @@ messages:
       {
          if First(i) <> $
          {
-            if IsClass(Nth(i,2),&Boon)=FALSE
+            if IsClass(Nth(i,2),&Boon) = FALSE
             {
 
                % Convert timer to integer if we have a timer,
@@ -3392,10 +3410,10 @@ messages:
             continue;
          }
 
-         if IsClass(Nth(i,2),&Boon)=FALSE
+         if IsClass(Nth(i,2),&Boon) = FALSE
          {
             state = $;
-            if length(i) > 2
+            if length(i) > ENCHANTMENT_LIST_NO_STATE
             {
                state = Nth(i,3);
             }
@@ -3409,8 +3427,8 @@ messages:
                % Give them a short timer, and log this for debugging purposes.
                % We include timers since we're not supposed to have one here.
                Debug("Trying to make an invalid timer ",iTime," for ",
-                  Send(Nth(i,2),@GetTrueName)," on player ",
-                  self,Send(self,@GetTrueName));
+                     Send(Nth(i,2),@GetTrueName)," on player ",
+                     self,Send(self,@GetTrueName));
                if Send(Nth(i,2),@IsHarmful)
                {
                   iTime = 5000;
@@ -3494,8 +3512,9 @@ messages:
       {
          if Nth(i,2) = what
          {
-            if Send(self,@IsLoggedOn)
+            if pbLogged_On
                OR IsClass(what,&Phase)
+               OR IsClass(what,&Boon)
             {
                if First(i) <> $
                {
@@ -3506,7 +3525,8 @@ messages:
                   SetNth(i,1,$);
                }
             }
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(what,&Boon)
             {
                state = Nth(i,3);
             }
@@ -3560,7 +3580,8 @@ messages:
                DeleteTimer(First(i));
             }
 
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
             {
                state = Nth(i,3);
             }
@@ -6816,6 +6837,14 @@ messages:
    {
       local iOldhealth;
 
+      if amount = $
+      {
+         Debug("Player ",Send(self,@GetTrueName)," had GainHealthNormal called",
+               " with amount = $! Precision was ",precision);
+
+         return;
+      }
+
       if NOT precision
       {
          amount = amount*100;
@@ -8687,7 +8716,6 @@ messages:
                   #killing_blow=FALSE,#group_member=what);
          }
 
-         poKill_target=$;
          Send(self,@ResetGainFlags);
       }
       else
@@ -8714,17 +8742,17 @@ messages:
       return;
    }
 
-
    AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE,group_member=$)
    "A player will need, on average, to kill a number of monsters equal to"
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local i, highmark, rand, dodgeskill, oSkill, monster_level, gain,
-            gainmult, roll, iNumber, oWeapon, shrunken, lBuilderGroup;
+      local i, dodgeskill, oSkill, monster_level, gain, gainmult, roll,
+            oWeapon, lBuilderGroup, bGainedHP;
 
       gain = 0;
       roll = FALSE;
+      bGainedHP = FALSE;
 
       % Some things just never allow advancement.
       % Can advance in arena if realdeath is on in an arena.
@@ -8734,8 +8762,6 @@ messages:
       {
          return FALSE;
       }
-
-      Post(self,@DrawHPChance);
 
       if IsClass(what,&User)
       {
@@ -8782,12 +8808,12 @@ messages:
                
                gain = 1;
 
-               % No roll for kills by others. This puts tension on group size.
-               % As group sizes increase, getting kills oneself becomes 
-               % difficult. Groups that are too large create their own 
-               % advancement problems organically. Also, this keeps advancement
-               % based on the player himself. His own kill rate matters the most.
+               % We still roll for a tougher if we killed the monster but
+               % didn't take damage or dodge, if we helped kill the monster,
+               % or if it was a group member kill and the setting for group
+               % member toughers is set to TRUE.
                if NOT group_member_kill
+                  OR Send(Send(SYS,@GetSettings),@GetGroupTougherSetting)
                {
                   roll = TRUE;
                }
@@ -8939,59 +8965,19 @@ messages:
          % Draw the training points bar.
          Post(self,@DrawTraining);
 
+         % RollForTougher handles the actual tougher check. Will return
+         % TRUE if player gains a HP, FALSE if they don't.
          if roll
          {
-            highmark = Send(self,@GetHighMark);
-            rand = Random(1,highmark);
-            iNumber = Send(self,@GetGainChance) +
-                        Bound((monster_level-piBase_Max_health)/5,0,10);
-
-            if rand < iNumber
-               AND piBase_Max_health < (101 + Send(self,@GetStamina))
-            {
-               Send(self,@GainBaseMaxHealth,#amount = 1);
-               if Send(self,@CheckLog)
-               {
-                  Debug("LOG:  ",vrName," gained a health point: ",
-                        piMax_health,pibase_max_health);
-               }
-
-               Send(self,@evaluatepkstatus);
-
-               Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
-               Send(self,@WaveSendUser,#what=self,
-                     #wave_rsc=player_tougher_wav_rsc);
-               Send(self,@MsgSendUser,
-                     #message_rsc=player_improve_health_invigorate);
-               piHealth = piMax_Health*100;
-               Send(self,@DrawHealth);
-               Send(self,@EatSomething,#nutrition=200);
-               Post(self,@DrawOffense);
-               Post(self,@DrawDefense);
-
-               % report to shrunken head
-               shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-               if shrunken <> $
-               {
-                  Send(shrunken,@Tougher,#hp=pibase_max_health);
-               }
-
-               piGain_chance = -(piBase_Max_health/2);
-
-               if piBase_max_health > 30
-               {
-                 %stam = 50
-                 %pigain = pigain - ((50-50)/2) =  pigain - 0
-                 %stam = 25 
-                 %pigain = pigain - ((50-25)/2) = pigain - 12.5
-                 % So, after 30 hps, any stamina less than 50
-                 % penalizes you by about 0.5 piGain points
-                  piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
-               }
-
-               return TRUE;
-            }
+            bGainedHP = Send(self,@RollForTougher,#iLevel=monster_level);
          }
+      }
+
+      % Draw the tougher chance bar. Send this here because RollForTougher
+      % will also draw it, no need to do so twice.
+      if NOT roll
+      {
+         Post(self,@DrawHPChance);
       }
 
       if (piFlags & PFLAG_DODGED)
@@ -9023,12 +9009,111 @@ messages:
          }
       }
 
+      % If RollForTougher returned TRUE, we gained a hitpoint.
+      return bGainedHP;
+   }
+
+   RollForTougher(iLevel=0)
+   "Handles the roll for tougher based on the player's gain chance plus "
+   "the iLevel parameter.  Returns TRUE if the player gaints a hit point, "
+   "FALSE otherwise.  The iLevel parameter has the player's base max HP "
+   "taken from it, then divided by 5 before being bound between 1 and 10."
+   {
+      local iRandom, iNumber, oShrunken;
+
+      if iLevel = $
+      {
+         iLevel = 0;
+      }
+
+      iRandom = Random(1,Send(self,@GetHighMark));
+      iNumber = piGain_chance + Bound((iLevel-piBase_Max_health)/5,0,10);
+
+      % Draw tougher chance bar.
+      Post(self,@DrawHPChance);
+
+      if iRandom < iNumber
+         AND piBase_Max_health < (101 + Send(self,@GetStamina))
+      {
+         Send(self,@GainBaseMaxHealth,#amount=1);
+         if Send(self,@CheckLog)
+         {
+            Debug("LOG:  ",vrName," gained a health point: ",
+                  piMax_health,pibase_max_health);
+         }
+
+         Send(self,@EvaluatePKStatus);
+
+         if pbLogged_on
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
+            Send(self,@WaveSendUser,#what=self,#wave_rsc=player_tougher_wav_rsc);
+
+            % Boost the player to max health, and give them 200 vigor.
+            Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+            piHealth = piMax_Health * 100;
+            Send(self,@DrawHealth);
+            Send(self,@EatSomething,#nutrition=200);
+            Post(self,@DrawOffense);
+            Post(self,@DrawDefense);
+
+            % Report to shrunken head, if they have one.
+            oShrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+            if oShrunken <> $
+            {
+               Send(oShrunken,@Tougher,#hp=pibase_max_health);
+            }
+         }
+
+         piGain_chance = -(piBase_Max_health / 2);
+
+         if piBase_max_health > 30
+         {
+            %stam = 50
+            %pigain = pigain - ((50-50)/2) =  pigain - 0
+            %stam = 25 
+            %pigain = pigain - ((50-25)/2) = pigain - 12.5
+            % So, after 30 hps, any stamina less than 50
+            % penalizes you by about 0.5 piGain points
+            piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
+         }
+
+         return TRUE;
+      }
+
       return FALSE;
    }
 
    GetGainChance()
    {
       return piGain_chance;
+   }
+
+   AddGainChance(iAmount=$)
+   {
+      if iAmount <> $
+         AND iAmount <> 0
+      {
+         piGain_chance = piGain_chance + iAmount;
+
+         if pbLogged_on
+         {
+            if iAmount > 0
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_experience_gained,
+                  #parm1=iAmount);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_experience_lost,
+                  #parm1=iAmount);
+            }
+
+            Post(self,@DrawHPChance);
+         }
+      }
+
+      return;
    }
 
    GetTrainingPoints()
@@ -9279,7 +9364,7 @@ messages:
       % Create the corpse.
       oBody = Send(self,@CreateCorpse);
       Send(oRoom,@NewHold,#what=oBody,#new_row=iRow,#new_col=iCol,
-            #fine_row=16,#fine_col=16,#new_angle=iAngle);
+            #fine_row=iFine_Row,#fine_col=iFine_Col,#new_angle=iAngle);
 
       % Start losing stuff if applicable.
       if NOT bNo_drop_death
@@ -9324,7 +9409,6 @@ messages:
             for i in lItems
             {
                if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
-                  AND Send(oRoom,@ReqSomethingMoved,#what=i,#new_row=iRow,#new_col=iCol)
                   AND Send(i,@DropOnDeath)
                {
                   if oItemAtt <> $
@@ -9336,8 +9420,9 @@ messages:
                            #state1=self);
                   }
 
-                  Send(oRoom,@NewHold,#what=i,
-                        #new_row=iRow,#new_col=iCol,#merge=FALSE);
+                  Send(oRoom,@NewHold,#what=i,#merge=FALSE,
+                        #new_row=iRow,#new_col=iCol,
+                        #fine_row=iFine_row,#fine_col=iFine_col);
                }
             }
          }
@@ -11537,7 +11622,7 @@ messages:
          if IsClass(oEnch,&Spell) OR IsClass(oEnch,&Trance)
          {
             state = $;
-            if Length(i) >= 3
+            if Length(i) >= ENCHANTMENT_LIST_STATE
             {
                state = Nth(i,3);
             }
@@ -12916,7 +13001,8 @@ messages:
          return;
       }
 
-      if Send(Self,@PlayerIsIntriguing) AND (piFaction<>FACTION_NEUTRAL)
+      if Send(Self,@PlayerIsIntriguing)
+         AND piFaction <> FACTION_NEUTRAL
       {
          Send(self,@MsgSendUser,#message_rsc=player_unfactioned);
       }
@@ -13030,28 +13116,56 @@ messages:
    }
 
    CheckTokenInNewRoom(what=$)
-   "If we are carrying a token, lets drop it"
+   "If we are carrying a token, lets drop it."
    {
-      local i;
+      local i, bFound;
 
       if what = $
-         OR NOT ((IsClass(poOwner,&GuildHall)
-                  OR IsClass(poOwner,&OutofGrace)
-                  OR Send(poOwner,@IsArena)))
+         OR poOwner = $
+         OR Send(poOwner,@CanTokenEnterRoom)
       {
          return;
       }
+
+      bFound = FALSE;
 
       for i in plPassive
       {
          if IsClass(i,&Token)
          {
-            Send(self,@MsgSendUser,#message_rsc=player_lost_token);
-            Send(i,@NewUnused,#where=what); 
+            bFound = TRUE;
+            Send(i,@NewUnused,#where=what);
          }
       }
 
-      return TRUE;
+      if bFound
+      {
+         % Give a different message depending on the room.
+         if IsClass(poOwner,&GuildHall)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_lost_token_hall);
+
+            return;
+         }
+
+         if Send(poOwner,@IsArena)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_lost_token_arena);
+
+            return;
+         }
+
+         if IsClass(poOwner,&SurvivalRoom)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_lost_token_survival);
+
+            return;
+         }
+
+         Send(self,@MsgSendUser,#message_rsc=player_lost_token_generic);
+      }
+
+      return;
    }
 
    GetFactionService()
@@ -13095,7 +13209,8 @@ messages:
          }
          else
          {
-            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol);
+            Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
                   #string=player_token_reward_heavy,#parm1=Send(tobj,@GetDef),
                   #parm2=Send(tobj,@GetName));
@@ -14196,7 +14311,7 @@ messages:
    {
       if poOwner = $
          OR piBound_Room = $
-         OR NOT Send(self,@IsLoggedOn)
+         OR NOT pbLogged_on
       {
          return;
       }
@@ -14284,8 +14399,8 @@ messages:
          AND Send(self,@GetDeathRiftProtection) = TRUE
       {
          Send(self,@AdminGoToSafety);
-         
-         if Send(self,@IsLoggedOn)
+
+         if pbLogged_on
          {
             Send(self,@MsgSendUser,#message_rsc=death_rift_stayed_too_long);
          }

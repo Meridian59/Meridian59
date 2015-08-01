@@ -571,7 +571,7 @@ void AdminBufferSend(char *buf,int len_buf)
 void AdminSendBufferList(void)
 {
 	session_node *s;
-	buffer_node *bn;
+	buffer_node *bn = NULL;
 	unsigned short len;
 	
 	s = GetSessionByID(admin_session_id);
@@ -831,7 +831,12 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			break;
 		case R :
 			/* remember how strtok works to see why this works */
-			admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
+			admin_parm[i] = (admin_parm_type)strtok(NULL, " \t\n");
+			if (!admin_parm[i])
+			{
+				aprintf("Missing text parameter.\n");
+				return;
+			}
 			/* now make sure no more params */
 			prev_tok = NULL;
 			break;
@@ -1227,16 +1232,16 @@ void AdminWhoEachSession(session_node *s)
 void AdminLock(int session_id,admin_parm_type parms[],
                int num_blak_parm,parm_node blak_parm[])               
 {
-	char *ptr;
+	char *ptr = NULL;
 	char *lockstr;
 	
-	char *text;
+	char *text = NULL;
 	text = (char *)parms[0];
 	
 	lockstr = ConfigStr(LOCK_DEFAULT);
 	
 	ptr = text;
-	while (*ptr != 0)
+	while (ptr && *ptr != 0)
 	{
 		if (*ptr != ' ' && *ptr != '\n' && *ptr != '\t')
 		{
@@ -1314,9 +1319,9 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[])
 {
 	kod_statistics *kstat;
-	object_node *o;
-	class_node *c;
-	char *m;
+	object_node *o = NULL;
+	class_node *c = NULL;
+	char *m = NULL;
 	int now = GetTime();
 	
 	aprintf("System Status -----------------------------\n");
@@ -1342,11 +1347,11 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	aprintf("Most instructions on one top level message is %i instructions\n",kstat->num_interpreted_highest);
 	aprintf("Number of top level messages over 1000 milliseconds is %i\n",kstat->interpreting_time_over_second);
 	aprintf("Longest time on one top level message is %i milliseconds\n",kstat->interpreting_time_highest);
-	
 	if (kstat->interpreting_time_object_id != INVALID_ID)
 	{
 		o = GetObjectByID(kstat->interpreting_time_object_id);
-		c = o? GetClassByID(o->class_id) : NULL;
+		c = o ? GetClassByID(o->class_id) : NULL;
+	}
 		m = GetNameByID(kstat->interpreting_time_message_id);
 		aprintf("Most recent slow top level message is OBJECT %i CLASS %s MESSAGE %s\n",
 			kstat->interpreting_time_object_id,
@@ -1354,7 +1359,6 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 			(char*)(m? m : "(unknown)"));
 		aprintf("Most recent slow top level message includes %i posted followups\n",
 			kstat->interpreting_time_posts);
-	}
 	
 	aprintf("----\n");
 	aprintf("Active accounts: %i\n",GetActiveAccountCount());
@@ -1746,6 +1750,11 @@ void AdminShowAccount(int session_id,admin_parm_type parms[],
 	is_account_number = True;
 	
 	ptr = account_str;
+	if (!ptr)
+	{
+		aprintf("Missing account string.\n");
+		return;
+	}
 	while (*ptr != 0)
 	{
 		if (*ptr < '0' || *ptr > '9')
@@ -2091,6 +2100,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case FIRST : strcpy(c_name, "First"); break;
 		case REST : strcpy(c_name, "Rest"); break;
 		case LENGTH : strcpy(c_name, "Length"); break;
+		case LAST : strcpy(c_name, "Last"); break;
 		case NTH : strcpy(c_name, "Nth"); break;
 		case MLIST : strcpy(c_name, "List"); break;
 		case ISLIST : strcpy(c_name, "IsList"); break;
@@ -2169,6 +2179,7 @@ void AdminShowMessage(int session_id,admin_parm_type parms[],
 	if (c != found_class)
 		aprintf(" (handled by CLASS %s)",found_class->class_name);
 	aprintf("\n");
+	aprintf("Called count: %i\n", m->called_count);
 	aprintf("--------------------------------------------------------------\n");
 	aprintf("  Parameters:\n");
 	/* we need to read the first few bytes from the bkod to get the parms */
@@ -3925,6 +3936,8 @@ void AdminSendUsers(int session_id,admin_parm_type parms[],
 	char *text;
 	text = (char *)parms[0];
 	
+	if (!text)
+		return;
 	SetTempString(text,strlen(text));
 	str_val.v.tag = TAG_TEMP_STRING;
 	str_val.v.data = 0;		/* doesn't matter for TAG_TEMP_STRING */

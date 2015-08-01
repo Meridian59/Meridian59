@@ -1232,10 +1232,11 @@ messages:
             if (oItemAtt <> $) AND Send(oItemAtt,@ReqAddToItem,#oItem=oUsedItem)
             {
                Send(oItemAtt,@AddToItem,#oItem=oUsedItem,#state1=corpse);
-            }       
+            }
 
-            Send(poOwner,@NewHold,#what=oUsedItem,#new_row=piRow,#new_col=piCol,
-                 #new_angle=Send(self,@GetAngle));
+            Send(poOwner,@NewHold,#what=oUsedItem,
+                  #new_row=piRow,#new_col=piCol,
+                  #fine_row=piFine_row,#fine_col=piFine_col);
          }
          else
          {

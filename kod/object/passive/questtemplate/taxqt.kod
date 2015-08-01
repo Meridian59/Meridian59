@@ -1,0 +1,93 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TaxQuestTemplate is QuestTemplate
+% Parent class for tax quests.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   taxqt_icon_rsc = coin.bgf
+   taxqt_deliver_rsc = \
+      "%s%s has asked you to take %i %s to %s%s. Do not be tempted to keep it "
+      "for yourself; any thievery will be punished!"
+
+   % Quest resources.
+   vaulttax_assign_2_h = \
+      "Yes, I have need of a courier.  %NPC is due a certain percentage of "
+      "profits from my business.  Please take this tithe of %INDEF_CARGO%CARGO "
+      "to %HIMHER_NPC quickly.  I am too busy to do it myself.  Be warned that "
+      "any thievery will be reported and I hear that %NPC now keeps company "
+      "with a wizard.  I have arranged for %NPC to pay you for your troubles."
+   vaulttax_failure_2_h = \
+      "Subject: Thief!\n"
+      "I have spoken to a wizard friend of mine, and he has ensured that you "
+      "will suffer for your dishonesty."
+
+classvars:
+
+   vrIcon = taxqt_icon_rsc
+
+   vrNodeTwo = taxqt_deliver_rsc
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTNEWBIE | Q_PLAYER_LAWFUL \
+                      | Q_PLAYER_NOTTRIED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 100
+
+messages:
+
+   ExtraDesc(index=$,oQuestNode=$)
+   {
+      local iNum, oCargo, oDestNPC, oSourceNPC;
+
+      if oQuestNode = $
+         OR index = $
+      {
+         return;
+      }
+
+      if index = First(First(plQuestNodeDesc))
+      {
+         oDestNPC = Send(oQuestNode,@GetDestNPC);
+         oSourceNPC = Send(oQuestNode,@GetSourceNPC);
+         oCargo = Send(oQuestNode,@GetCargo);
+         iNum = Send(oCargo,@GetNumber);
+
+         AddPacket(4,Send(oSourceNPC,@GetCapDef), 4,Send(oSourceNPC,@GetName),
+                   4, iNum, 4,Send(oCargo,@GetName), 4,Send(oDestNPC,@GetDef),
+                   4,Send(oDestNPC,@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -39,22 +39,35 @@ classvars:
    vrIcon = Dazzle_icon_rsc
    vrDesc = Dazzle_desc_rsc
 
+   vrAlreadyEnchanted = Dazzle_already_enchanted
+   vrEnchantment_On = Dazzle_on
+   vrEnchantment_Off = Dazzle_off
+   vrSuccess = Dazzle_caster
+
    viSpell_num = SID_DAZZLE
    viSchool = SS_SHALILLE
    viSpell_level = 4
    viMana = 12
    viChance_To_Increase = 15
-   viMeditate_ratio = 30
+   viMeditate_ratio = 40
 
    viSpellExertion = 3
-
-   viOutlaw = TRUE
-   viHarmful = TRUE
-   viNoNewbieOffense = TRUE
 
    vrSucceed_wav = Dazzle_sound
 
 properties:
+
+   piSpellPowerMultiplier = 70 % Recommended value 40.
+   piKarmaPowerMultiplier = 50 % Recommended value 10.
+   piBaseDuration = 1000 % Recommended value 3000.
+   piDeviation = 0 % Recommended value 10%.
+
+   % Min and max values for Dazzle duration.
+   piMinDazzle = 3000
+   piMaxDazzle = 15000
+
+   % Duration of the red pain effect after spell wears off.
+   piPainDuration = 8000 % Recommended value 1000
 
 messages:
 
@@ -71,48 +84,16 @@ messages:
    {
       local target, i;
 
-      % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
          return FALSE;
       }
 
       target = First(lTargets);
-      if NOT IsClass(target,&Battler) OR IsClass(target,&Revenant)
-      {
-         if not bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
-                 #parm1=vrName,#parm2=Send(target,@GetDef),
-                 #parm3=Send(target,@GetName));
-         }
 
-         return FALSE;
-      }
-
-      if target = who
-      {
-         if NOT bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,
-                 #parm1=vrName);
-         }
-
-         return FALSE;
-      }
-
-      % Check for enchantment already applied
-      if Send(target,@IsEnchanted,#what=self)
-      {
-         if not bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=Dazzle_already_enchanted,
-                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
-         }
-
-         return FALSE;
-      }
-      
+      % TODO: this is not an ideal implementation of blind/hold resistance.
+      % These should be enchantments themselves, rather than requiring
+      % multiple checks of every item in the target's inventory.
       if IsClass(target,&Player)
       {
          for i in Send(target,@GetHolderPassive)
@@ -121,6 +102,7 @@ messages:
                AND Send(i,@IsActive)
             {
                Send(who,@MsgSendUser,#message_rsc=dazzle_break_rod_active);
+
                return FALSE;
             }
          }
@@ -134,6 +116,7 @@ messages:
                AND Send(i,@IsSecondaryActive)
             {
                Send(who,@MsgSendUser,#message_rsc=dazzle_break_rod_active);
+
                return FALSE;
             }
          }
@@ -150,16 +133,14 @@ messages:
       iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower,
                         #caster=who,#target=oTarget);
 
-      Send(self,@DoDazzle,#what=who,#oTarget=oTarget,#iDurationSecs=iDuration);
+      Send(self,@DoSpell,#what=who,#oTarget=oTarget,#iDuration=iDuration);
 
       propagate;
    }
 
-   DoDazzle(what=$,oTarget=$,iDurationSecs=0)
+   DoSpell(what=$,oTarget=$,iDuration=0)
    {
-      local oSpell, iDuration;
-
-      iDuration = iDurationSecs;
+      local oSpell;
 
       oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
       if Send(oTarget,@IsEnchanted,#what=oSpell)
@@ -173,15 +154,14 @@ messages:
          }
       }
 
-      % Convert duration to milliseconds
-      iDuration = bound(iDuration,3,15);
-      iDuration = iDuration * 1000;
+      % Re-check the bound on duration.
+      iDuration = Bound(iDuration,piMinDazzle,piMaxDazzle);
 
       if IsClass(oTarget,&Player)
       {
-         Send(oTarget,@MsgSendUser,#message_rsc=Dazzle_on);
+         Send(oTarget,@MsgSendUser,#message_rsc=vrEnchantment_On);
          Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
-              #duration=iDuration);
+               #duration=iDuration);
       }
       else
       {
@@ -189,19 +169,20 @@ messages:
          Post(oTarget,@ResetBehaviorFlags);
       }
 
-      Send(what,@MsgSendUser,#message_rsc=Dazzle_caster,
+      Send(what,@MsgSendUser,#message_rsc=vrSuccess,
             #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
       Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
 
-      return;
+      propagate;
    }
 
    GetDuration(iSpellPower=0,caster=$,target=$)
    {
-      local iDuration,iKarmaDif,iKarma;
+      local iDuration, iKarmaDif, iKarma, iTargetKarma;
 
-      % 1-8 seconds based on spellpower.
-      iDuration = (iSpellPower/12);
+      % 1-8 seconds based on spellpower. Recommended 3-7.
+      iDuration = piBaseDuration + iSpellPower * piSpellPowerMultiplier;
+
       if IsClass(caster,&Battler)
       {
          iKarma = Send(caster,@GetKarma);
@@ -209,12 +190,19 @@ messages:
       else
       {
          % Non battlers, like the sun
-         iKarma = random(30,90);
+         iKarma = Random(30,90);
       }
 
-       % 1-10 seconds based on Karma difference.
-      iKarmaDif = (iKarma - Send(target,@GetKarma,#detect=TRUE))/20;
-      iDuration = bound(iDuration + iKarmaDif,3,15);  
+      iTargetKarma = Send(target,@GetKarma,#detect=TRUE);
+
+      iKarmaDif = iKarma - iTargetKarma;
+
+      % Add 1-10 seconds based on karma difference.
+      iDuration = Bound(iDuration + (iKarmaDif * piKarmaPowerMultiplier),
+                        piMinDazzle,piMaxDazzle);
+
+      % Add any random duration.
+      iDuration = Random(iDuration * (100 - piDeviation) / 100,iDuration);
 
       return iDuration;
    }
@@ -225,17 +213,17 @@ messages:
       {
          if report
          {
-            Send(who,@MsgSendUser,#message_rsc=Dazzle_off);
+            Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
          }
 
-         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=8000);
+         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=piPainDuration);
          Send(who,@EffectSendUserXLat,#xlat=0);
       }
       else
       {
          % Class is monster
          % Post this so it's done AFTER the enchantment is gone from the
-         %  monster's ench list
+         % monster's ench list
          Post(who,@ResetBehaviorFlags);
       }
 
@@ -250,14 +238,24 @@ messages:
       return;
    }
 
-   SendEffectData()
-   {
-      return;
-   }
-
    RestartEnchantmentEffect(who=$,state=$)
    {
-      Send(who,@MsgSendUser,#message_rsc=Dazzle_on);
+      local i, iDuration, oList;
+
+      Send(who,@MsgSendUser,#message_rsc=vrEnchantment_On);
+
+      oList = Send(who,@GetEnchantmentList);
+
+      for i in oList
+      {
+         if Nth(i,2) = self
+         {
+            iDuration = GetTimeRemaining(Nth(i,1));
+         }
+      }
+
+      Send(who,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
+            #duration=iDuration);
 
       return;
    }

@@ -200,6 +200,10 @@ messages:
       propagate;
    }
 
+   CanHavePlayerPortal()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

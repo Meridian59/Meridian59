@@ -83,8 +83,9 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ 
+      plFor_sale = [
          [
+            Create(&RemoveCursePotion,#labelled=TRUE),
             Create(&Torch),
             Create(&BlueMushroom,#number=4),
             Create(&RedMushroom,#number=4),
@@ -96,7 +97,7 @@ messages:
          $,
          [
             SID_HOSPICE
-         ], 
+         ],
       $];
 
       return;

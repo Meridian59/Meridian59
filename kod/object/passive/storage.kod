@@ -13,14 +13,14 @@ Storage is PassiveObject
 constants:
 
    include blakston.khd
-   
+
    VAULT_ITEMS_MAX = 600
 
 resources:
    msg_not_enough_items_on_deposit = "%s%s does not have that many on deposit."
    msg_does_not_have_item = "%s%s does not have that item on deposit for you."
    msg_has_no_deposit = "%s%s does not have any items on deposit for you."
-   
+
    msg_reduced_tally = "You couldn't carry everything you requested."
    msg_cannot_carry = "You were unable to withdraw %s%s."
 
@@ -28,46 +28,56 @@ classvars:
 
 properties:
 
-   piVault_num			% vault ID (VID)
+   piVault_num   % vault ID (VID)
 
-   % each element of this list is a list, containing
+   % Each element of this list is a list, containing
    % the player, and a list of all of his stuff.
    plStored = $
+
    piCapacity = 3000
 
 messages:
 
-   constructor(vid = $, capacity = $)
+   Constructor(vid = $, capacity = $)
    {
       if vid = $
       {
-	      debug("Vault created with no vault id",self);
-	      propagate;
+         Debug("Vault created with no vault id",self);
+
+         propagate;
       }
-      if capacity <> $ { piCapacity = capacity; }
+
+      if capacity <> $
+      {
+         piCapacity = capacity;
+      }
+
       piVault_num = vid;
 
-      propagate;      
+      propagate;
    }
 
    Delete()
    "Deletes this bank and removes from system's list of banks."
    {
       local i, j;
+
       for i in plStored
       {
-	      send(i,@Delete);
-	      plStored = DelListElem(plStored,i);
+         Send(i,@Delete);
+         plStored = DelListElem(plStored,i);
       }
-      if plStored <> $  
+
+      if plStored <> $
       { 
-         Debug("Delete() didn't clear out vault completely!"); 
-         plStored = $; 
-         return; 
+         Debug("Delete() didn't clear out vault completely!");
+         plStored = $;
+
+         return;
       }
-      
+
       Send(SYS,@DeleteVault,#what=self);
-      
+
       propagate;
    }
 
@@ -90,14 +100,25 @@ messages:
    {
       local plItemsStored;
 
-      if who = $     { debug("CanDepositItems passed with who=$!"); return FALSE; }
-      if lItems = $  { debug("Cannot deposit a null set!"); return FALSE; }
-      
+      if who = $
+      {
+         Debug("CanDepositItems passed with who=$!");
+
+         return FALSE;
+      }
+
+      if lItems = $
+      {
+         Debug("Cannot deposit a null set!");
+
+         return FALSE;
+      }
+
       plItemsStored = Send(self,@GetItemsStored,#who=who);
       if plItemsStored <> $
          AND (Length(plItemsStored) + Length(lItems)) > VAULT_ITEMS_MAX
          AND NOT (Length(lItems) = 1
-                  AND IsClass(First(lItems),&NumberItem))
+            AND IsClass(First(lItems),&NumberItem))
       {
          return FALSE;
       }
@@ -106,62 +127,67 @@ messages:
    }
 
    DepositItems(lItems = $, who = $)
-   "This procedure assumes that CanDepositItems has already been called and passed."
-   "It actually puts items into that player's storage lockers, and creates a new one "
-   "if none exists."
+   "This procedure assumes that CanDepositItems has already been called "
+   "and passed.  It actually puts items into that player's storage lockers, "
+   "and creates a new one if none exists."
    {
       local oIndexBox, oPlayerBox, oItem, oNewItem;
-      
+
       oPlayerBox = $;
       for oIndexBox in plStored
       {
-	 %% does the player have an account already?
-	 if send(oIndexBox,@GetSafeBoxOwner) = who
-	 {
-	    oPlayerBox = oIndexBox;
-	    break;
-	 }
-      }      
+         %% does the player have an account already?
+         if Send(oIndexBox,@GetSafeBoxOwner) = who
+         {
+            oPlayerBox = oIndexBox;
+
+            break;
+         }
+      }
+
       if oPlayerBox = $
       {
-	 %% player has no account yet.  make a new one.	 
-	 oPlayerBox = Create(&SafetyDepositBox,#who=who,#vid=piVault_num);
-	 plStored= cons(oPlayerBox,plStored);
+         % Player has no account yet, make a new one.
+         oPlayerBox = Create(&SafetyDepositBox,#who=who,#vid=piVault_num);
+         plStored = Cons(oPlayerBox,plStored);
       }
 
-      %% take the items, put them in storage.  Assume reqnewhold has already 
-      %% been passed.  Remove number items from that player's possession.
+      % Take the items, put them in storage.  Assume ReqNewHold has already
+      % been passed.  Remove number items from that player's possession.
       for oItem in lItems
       {
-	 if isClass(oItem,&NumberItem)
-	 {  
-	    %% the number item will be deleted at the end of the ReqGive Call
-	    %% (in CleanUpCancelOffer).  Make a copy of the item and give that
-	    %% to the mob.
-
-	    oNewItem = Create(GetClass(oItem),#number=send(oItem,@GetNumber));
-	    send(oPlayerBox,@newhold,#what=oNewItem);
-	    send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=oNewItem);  	    
-	 }		     
-	 else
-      	 {  send(oPlayerBox,@newhold,#what=oItem);  }
-
+         if IsClass(oItem,&NumberItem)
+         {
+            % The number item will be deleted at the end of the ReqGive Call
+            % (in CleanUpCancelOffer).  Make a copy of the item and give that
+            % to the mob.
+            oNewItem = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
+            Send(oPlayerBox,@newhold,#what=oNewItem);
+            Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=oNewItem);
+         }
+         else
+         {
+            Send(oPlayerBox,@newhold,#what=oItem);
+         }
       }
+
       return;
    }
 
    GetCurrentBulkStored(who=$)
    {
-      local i,j, iBulk;
+      local i, j, iBulk;
 
       iBulk = 0;
+
       for i in plStored
       {
-	 if send(i,@GetSafeBoxOwner) = who
-	 {
-	    return send(i,@GetBulkHold);
-	 }
+         if Send(i,@GetSafeBoxOwner) = who
+         {
+            return Send(i,@GetBulkHold);
+         }
       }
+
       return 0;
    }
 
@@ -172,55 +198,81 @@ messages:
 
       for i in plStored
       {
-	 if send(i,@GetSafeBoxOwner) = who
-	 {
-	    return send(i,@GetHolderPassive);
-	 }
+         if Send(i,@GetSafeBoxOwner) = who
+         {
+            return Send(i,@GetHolderPassive);
+         }
       }
+
       return $;
    }
-      
+
    GetPlayerSafeBox(who=$)
    {
       local i;
-   
+
       for i in plStored
       {
-	 if send(i,@GetSafeBoxOwner) = who
-	 {
-	    return i;
-	 }
+         if Send(i,@GetSafeBoxOwner) = who
+         {
+            return i;
+         }
       }
-      return $;      
+
+      return $;
    }
 
    WithdrawFromStorage(who=$,what=$,count=$)
    {
       local i, j, oBox, oItem, cClass, currentAmount, iCanHold;
       
-      if who=$ or what=$ 
-      { DEBUG("Called with invalid data!"); return; }
+      if who = $
+         OR what = $
+      {
+         Debug("Called with invalid data!");
 
-      oBox = send(self,@GetPlayerSafeBox,#who=who);
-      if oBox = $ 
-      { % Player does not have a deposit box
-	 DEBUG("Player does not have a deposit box");
-	 send(self,@MsgSendUser,#message_rsc=msg_has_no_deposit,
-	      #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
-	 return FALSE; 
-      }
-      
-      if send(what,@GetOwner) <> oBox 
-      { % This item is NOT in the deposit box
-	 DEBUG("Item is NOT in the deposit box"); 
-	 send(self,@MsgSendUser,#message_rsc=msg_does_not_have_item,
-	      #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
-	 return FALSE; 
+         return;
       }
 
-      if isClass(what,&NumberItem) 
+      oBox = Send(self,@GetPlayerSafeBox,#who=who);
+      if oBox = $
+      {
+         % Player does not have a deposit box
+         Debug("Player does not have a deposit box");
+         Send(self,@MsgSendUser,#message_rsc=msg_has_no_deposit,
+               #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+
+         return FALSE; 
+      }
+
+      if Send(what,@GetOwner) <> oBox
+      {
+         % This item is NOT in the deposit box
+         Debug("Item is NOT in the deposit box");
+         Send(self,@MsgSendUser,#message_rsc=msg_does_not_have_item,
+               #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+
+         return FALSE;
+      }
+
+      if IsClass(what,&NumberItem)
       {
          iCanHold = Send(who,@GetNumberCanHold,#what=what);
+
+         % Check for DMs with $ bulk/weight max.
+         if iCanHold = $
+            AND IsClass(who,&DM)
+            AND Send(who,@PlayerIsImmortal)
+         {
+            iCanHold = count;
+         }
+
+         % Check for GetNumberCanHold returning less than 0.
+         if iCanHold < 0
+         {
+            iCanHold = 0;
+         }
+
          if iCanHold < count
          {
             count = iCanHold;
@@ -234,20 +286,26 @@ messages:
             }
          }
 
-         currentAmount = send(what,@GetNumber);
-         if (count > 0) AND (count <= currentAmount)
+         currentAmount = Send(what,@GetNumber);
+
+         if (count > 0)
+            AND (count <= currentAmount)
          {
             cClass = GetClass(what);
             oItem = Create(cClass,#number=count);
-            send(what,@SubtractNumber,#number=count);
-            send(who,@NewHold,#what=oItem);
+            Send(what,@SubtractNumber,#number=count);
+            Send(who,@NewHold,#what=oItem);
          }
          else
-         { % Send message to user that they don't have that many items on deposit
-            DEBUG("Failed test for count >0 and count <= currentAmount");
-            send(self,@MsgSendUser,#message_rsc=msg_not_enough_items_on_deposit,
-             #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
-            return False;
+         {
+            % Send message to user that they don't have that many items on deposit
+            Debug("Failed test for count > 0 and count <= currentAmount ",
+                  "user is ",Send(who,@GetTrueName)," count is ",count,
+                  " currentAmount is ",currentAmount,"item is ",what);
+            Send(self,@MsgSendUser,#message_rsc=msg_not_enough_items_on_deposit,
+                  #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+
+            return FALSE;
          }
       }
       else
@@ -259,16 +317,17 @@ messages:
          else
          {
             Send(who,@MsgSendUser,#message_rsc=msg_cannot_carry,
-                                  #parm1=Send(what,@GetDef),
-                                  #parm2=Send(what,@GetName));
-            return FALSE;
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+
+             return FALSE;
          }
       }
 
-      if send(oBox,@GetHolderPassive) = $  
+      if Send(oBox,@GetHolderPassive) = $
       { 
-         send(self,@DestroyPlayersVault,#who=who); 
+         Send(self,@DestroyPlayersVault,#who=who);
       }
+
       return TRUE;
    }
 
@@ -281,15 +340,17 @@ messages:
 
       for i in plStored
       {
-	 if send(i,@GetSafeBoxOwner) = who
-	 {	  
-	    send(i,@delete);	     
-	    plStored = DelListElem(plStored,i);
-	    return;	    
-	 }
+         if Send(i,@GetSafeBoxOwner) = who
+         {
+            Send(i,@Delete);
+            plStored = DelListElem(plStored,i);
+
+            return;
+         }
       }
+
       return;
    }
-       
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

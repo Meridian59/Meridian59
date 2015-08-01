@@ -1,0 +1,143 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PrincessLoyaltyQuest is PrincessQuest
+% Quest nodes 8, 9.
+% QNT_ID_PRINCESS_LOYALTY_ONE, QNT_ID_PRINCESS_LOYALTY_TWO
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   princessloyalty_name_rsc = "Princess loyalty quest"
+   princessloyalty_desc_rsc = \
+      "Princess Kateriina has asked you to deliver a letter for her, to prove "
+      "your loyalty to the crown."
+
+   princessloyalty_deliver_rsc = \
+      "Princess Kateriina has requested that you deliver a letter to %s, to "
+      "prove your continuing loyalty to the crown."
+
+   princessloyalty_completed = \
+      "You have proven your loyalty to the crown, and remain a trusted "
+      "servant of Princess Kateriina."
+
+   % Quest resources.
+   princess_standard2_assign = \
+      "Ah, %NAME, my loyal servant.  Wouldst thou be so kind as to deliver "
+      "an official letter to %NPC?  I would be most grateful."
+
+classvars:
+
+   vrName = princessloyalty_name_rsc
+   vrDesc = princessloyalty_desc_rsc
+
+   vrNodeTwo = princessloyalty_deliver_rsc
+
+   vrCompleted = princessloyalty_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_PRINCESS_SERVICE
+
+properties:
+
+   piPlayerRestrict = Q_PLAYER_FACTION_PRINCESS | Q_PLAYER_NOTTRIED_RECENTLY
+   piMaxPlayers = 1
+   piSchedulePct = 0
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_PRINCESS_LOYALTY_ONE, QNT_ID_PRINCESS_LOYALTY_TWO];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_PRINCESS_LOYALTY_TWO, vrNodeTwo] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #8 is 1st Princess Standard node, say "loyalty" to Princess
+      % QNT_ID_PRINCESS_LOYALTY_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[ duke_standard1_trigger ],
+               #quest_node_index=QNT_ID_PRINCESS_LOYALTY_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_PRINCESS_LOYALTY_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                      #iJob=MOB_ROLE_ROYALTY,#cNPC_class=&PrincessLiege));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_PRINCESS_LOYALTY_ONE");
+      }
+
+      % Template #9 is 2nd princess Standard node, deliver letter for her
+      % QNT_ID_PRINCESS_LOYALTY_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEM,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &Letter, 1 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_UPDATE ],
+                            [ QN_PRIZETYPE_SCHEDULE_QUEST, QST_ID_PRINCESS_SERVICE ] ],
+               #penaltylist=[ [ [ QN_PRIZETYPE_FACTION, QN_PRIZE_FACTION_NEUTRAL ] ] ],
+               #timelimit=piTimeLimit,#quest_node_index=QNT_ID_PRINCESS_LOYALTY_TWO)
+      {
+         lNPCs = $;
+         % Xiana
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&ShalillePriestess)),lNPCs);
+         % Alzahakar
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)),lNPCs);
+         % Lady Aftyn
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)),lNPCs);
+         % Herbutte
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)),lNPCs);
+         % Esseldi
+         lNPCs = Cons(First(Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)),lNPCs);
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_PRINCESS_LOYALTY_TWO,
+               #new_NPC_list=lNPCs);
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_PRINCESS_LOYALTY_TWO,
+               #new_hint=princess_standard2_assign);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_PRINCESS_LOYALTY_TWO,
+               #new_hint=princess_standard2_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_PRINCESS_LOYALTY_TWO,
+               #new_hint=princess_standard2_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_PRINCESS_LOYALTY_TWO");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,85 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BowmakerQuestTemplate is QuestTemplate
+% Parent class for bow maker good and evil quests.
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   bowmakerquest_name_rsc = "avar shaman tailfeather quest"
+
+   bowmakerquest_completed_rsc = \
+      "You have obtained an avar shaman tailfeather for Hanla zax'Ta "
+      "and received a Riija sword shard in return."
+
+   % Quest resources.
+   bowmaker_trigger_1 = "arrows"
+   bowmaker_success_3 = \
+      "Thanks.  Here, take this scrap of metal as your reward."
+
+classvars:
+
+   vrName = bowmakerquest_name_rsc
+
+   vrCompleted = bowmakerquest_completed_rsc
+
+properties:
+
+   piNumPlayers = 1
+   plSpecialRestrict = $
+   piMaxPlayers = 20
+   piSchedulePct = 10
+
+messages:
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #38 is bow maker quest kickoff
+      % QNT_ID_BOWMAKER_KICKOFF
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[bowmaker_trigger_1],#bDuplicate=TRUE,
+               #quest_node_index=QNT_ID_BOWMAKER_KICKOFF)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_BOWMAKER_KICKOFF,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KocatanBowMaker));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_BOWMAKER_KICKOFF");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

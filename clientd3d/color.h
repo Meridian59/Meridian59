@@ -39,6 +39,7 @@ enum {
    COLOR_INVNUMFGD,       /* Inventory number foreground */
    COLOR_INVNUMBGD,       /* Inventory number background */
    COLOR_ITEM_MAGIC_FG,   /* Color for magic weapons in lists*/
+   COLOR_QUEST_HEADER,    /* Color for active/completed quest headers.*/
    MAXCOLORS,
 };
 

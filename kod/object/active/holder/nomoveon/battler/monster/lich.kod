@@ -88,8 +88,6 @@ resources:
    lich_tribute_trigger = "tribute"
    lich_hunger_trigger = "hunger"
 
-   Lich_starting_password = "deathmage"
-
    lich_hunger_5 = \
       "~rMy hunger is a burning coal within my breast!  Feed me at once!"
    lich_hunger_4 = \
@@ -142,6 +140,7 @@ classvars:
       | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT
 
    viAttributes = MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_SCHOLAR
 
    vrSound_miss = lich_sound_miss
    vrSound_aware = lich_sound_aware
@@ -155,7 +154,6 @@ properties:
    piAnimation = ANIM_NONE
    plAttackers = $  % [player,player....]
 
-   poNecromancerGuild = $
    psTempRosterString = $
    
    pbIllusioned = TRUE
@@ -163,15 +161,15 @@ properties:
 
    piBlindAttackChance = 15    % Chance she'll attack with blind
    piBlindCounterChance = 7    % Chance she'll counter a spell or arrow with blind
-   piBlindDurationMin = 20  % seconds
-   piBlindDurationMax = 30  % seconds
+   piBlindDurationMin = 20000  % Milliseconds.
+   piBlindDurationMax = 30000  % Milliseconds.
 
    ptDeathSequence = $
    piDeathSequenceTimestep = 200  % milliseconds
 
 messages:
 
-   Constructed(oNecromancerGuild=$)
+   Constructed()
    {
       % Keep the scenario deactivated for now.
       %Send(Send(SYS,@GetNecromancerBalance),@ActivateScenario);
@@ -192,11 +190,6 @@ messages:
                         [-ATCK_SPELL_HOLY, -40 ],
                         [-ATCK_SPELL_HUNTERSWORD, -90 ]
                       ];
-
-      if oNecromancerGuild <> $
-      {
-         poNecromancerGuild = oNecromancerGuild;
-      }
 
       propagate;
    }
@@ -297,11 +290,6 @@ messages:
    Delete()
    {
       plAttackers = $;
-
-      if poNecromancerGuild <> $
-      {
-         Send(self,@ClearNecromancerGuild);
-      }
 
       if ptGoIllusioned <> $
       {
@@ -487,7 +475,7 @@ messages:
       Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=lich_cast_sound);
       Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=lich_cast_spell,#what=self);
       Send(self,@DoCast);
-      Send(oSpell,@DoBlind,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
+      Send(oSpell,@DoSpell,#what=self,#oTarget=oTarget,#iDuration=iRandom);
 
       return;
    }
@@ -597,7 +585,10 @@ messages:
 
    Killed(what=$, resetScenario=TRUE, guildDisbandDeath=FALSE)
    {
-      local oSpell, oRoom, NumAttackers, i, lichActivated;
+      local oSpell, oRoom, NumAttackers, i, lichActivated, oNecBal, oNecGuild;
+
+      oNecBal = Send(SYS,@GetNecromancerBalance);
+      oNecGuild = Send(oNecBal,@GetNecroGuild);
 
       NumAttackers = Length(plAttackers);
 
@@ -623,8 +614,8 @@ messages:
 
       lichActivated = FALSE;
       if plAttackers <> $
-         AND poNecromancerGuild <> $
-         AND Send(poNecromancerGuild,@GetMemberList) <> $
+         AND oNecGuild <> $
+         AND Send(oNecGuild,@GetMemberList) <> $
       {
          lichActivated = TRUE;
       }
@@ -632,7 +623,7 @@ messages:
       % Disband the guild.
       if NOT guildDisbandDeath
       {
-         Send(self,@ClearNecromancerGuild);
+         Send(oNecBal,@ClearNecromancerGuild);
       }
 
       Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
@@ -773,54 +764,15 @@ messages:
 %%%%%%%%%%%%%%%%
 %
 
-   EstablishNecromancerGuild(master=$)
-   {
-      if master = $
-      {
-         return;
-      }
-
-      if Send(master,@GetGuild) <> $
-      {
-         Debug("Tried to establish necroguild with master already guilded.");
-
-         return;
-      }
-
-      if poNecromancerGuild <> $
-      {
-         return;
-      }
-
-      poNecromancerGuild = Create(&NecromancerGuild,#master=master);
-      Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
-               @ClaimGuildHall,#oGuild=poNecromancerGuild,#rep=master,
-               #password=Lich_starting_password);
-
-      Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@RandomizeLeverEffects);
-      Send(Send(SYS,@FindRoomByNum,#num=RID_G9),@RandomizeLeverEffects);
-
-      return;
-   }
-
-   ClearNecromancerGuild()
-   {
-      if poNecromancerGuild <> $
-      {
-         Send(poNecromancerGuild,@Delete,#timerdelete=TRUE);
-         poNecromancerGuild = $;
-      }
-
-      return;
-   }
-
    SomeoneSaid(what = $,type = $,string = $)
    {
-      local oAmulet, iAmountDrained, iHunger, rHungerSpiel;
+      local oAmulet, iAmountDrained, iHunger, rHungerSpiel, oNecGuild;
+
+      oNecGuild = Send(Send(SYS,@GetNecromancerBalance),@GetNecroGuild);
 
       if IsClass(what,&User)
          AND Send(what,@GetGuild) <> $
-         AND Send(what,@GetGuild) = poNecromancerGuild
+         AND Send(what,@GetGuild) = oNecGuild
       {
          if StringContain(string,vrTributeTrigger)
          {
@@ -847,12 +799,12 @@ messages:
             {
                propagate;
             }
-            Send(poNecromancerGuild,@PayRent,#amount=iAmountDrained*10000);
+            Send(oNecGuild,@PayRent,#amount=iAmountDrained*10000);
          }
 
          if StringContain(string,vrHungerTrigger)
          {
-            iHunger = Send(poNecromancerGuild,@GetRentDue);
+            iHunger = Send(oNecGuild,@GetRentDue);
             rHungerSpiel = lich_hunger_0;
             if iHunger > 4
             {
@@ -874,7 +826,7 @@ messages:
             {
                rHungerSpiel = lich_hunger_1;
             }
-            Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            Post(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=rHungerSpiel);
          }
       }
@@ -969,13 +921,19 @@ messages:
 
    CreateDeadBody(killer=$)
    {
-      local oBody, iQNTindex, oQE;
+      local oBody, iQNTindex, oQE, oQ;
 
       oBody = Create(&DeadLich,#Attackers=plAttackers);
       oQE = Send(SYS,@GetQuestEngine);
 
-      Send(oQE,@SetQuestScheduleChance,#index=QST_ID_ESTABLISH_NECROGUILD,
-            #new_pct = 100 );
+      % Get rid of any active quests so any new ones get scheduled with the
+      % body instead.
+      for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
+                     ,QT_ACTIVE_QUESTS)
+      {
+         Send(oQ,@DeadlineExpired);
+      }
+
       iQNTindex = First(Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD),
                         QT_QUEST_NODES));
       Send(oQE,@SetQuestNodeNPCList,#index=iQNTindex,#new_NPC_list=[oBody]);
@@ -1012,7 +970,22 @@ messages:
    {
       local oGuildh15;
 
+      if poOwner = $
+      {
+         return;
+      }
+
       oGuildh15 = Send(SYS,@FindRoomByNum,#num=RID_GUILDH15);
+
+      if poOwner = oGuildh15
+      {
+         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+               #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,
+               #new_angle=ANGLE_WEST);
+
+         return;
+      }
+
       Send(oGuildh15,@NewHold,#what=self,#new_row=13,#new_col=49,
             #fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
 

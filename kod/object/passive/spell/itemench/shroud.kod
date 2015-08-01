@@ -62,6 +62,11 @@ messages:
    {
       local oWeapon, oTarget;
 
+      if lTargets = $
+      {
+         return FALSE;
+      }
+
       oTarget = First(lTargets);
 
       % Check that target is an item

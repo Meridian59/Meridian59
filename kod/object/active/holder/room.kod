@@ -206,6 +206,9 @@ properties:
 
    piSecurity
 
+   % List of 2 elem lists with row & col to make monsters
+   plGenerators = $
+
    prMusic = $
 
    % Ambient light level
@@ -3967,6 +3970,16 @@ messages:
       return FALSE;
    }
 
+   CanTokenEnterRoom()
+   {
+      if Send(self,@IsArena)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
    IsValidTarget(who=$)
    "Used for Arenas to see if something is a valid target.  Non-arenas just "
    "return FALSE."
@@ -4661,12 +4674,85 @@ messages:
       return;
    }
 
-   GenerateMonster()
-   "Just a stub function here."
+   GenerateMonster(oMonster=$, iRow=0, iCol=0, bStack=FALSE, bRandom=FALSE)
+   "Pulled outside the function to be callable outside of the function. "
+   "Can generate a monster at a specific location, or you can let it be "
+   "put at a gen point.  This is now in Room, as all rooms can use it for "
+   "placing either a monster or a random item."
    {
-      % Do nothing.  To handle monsters going off the edge of the map
-      %  without a nasty IsClass check.
-      return;
+      local oOldOwner, iMRow, iMCol, lPos, iRoll, iCount;
+
+      iMRow = iRow;
+      iMCol = iCol;
+
+      if oMonster = $
+      {
+         return FALSE;
+      }
+
+      oOldOwner = Send(oMonster,@GetOwner);
+      if oOldOwner <> $
+      {
+         % Remove it from it's previous location.  This also stops the
+         % "warping" effect if we try to "respawn" a monster in the same room.
+         if Send(oOldOwner,@ReqLeaveHold,#what=oMonster)
+         {
+            Send(oOldOwner,@LeaveHold,#what=oMonster);
+         }
+         else
+         {
+            % Won't go?  Can't do anything, then.
+            return FALSE;
+         }
+      }
+
+      if (iMRow=0 and iMCol=0)
+      {
+         if plGenerators = $
+            OR bRandom
+         {
+            iCount = 0;
+            iMRow = Random(1,piRows);
+            iMCol = Random(1,piCols);
+            while ((NOT Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol))
+                  AND iCount < 15)
+            {
+               iMRow = Random(1,piRows);
+               iMCol = Random(1,piCols);
+               iCount = iCount + 1;
+            }
+            if iCount = 15
+            {
+               Debug("failed to place monster ",oMonster,Send(oMonster,@GetName),
+                     " in room ",self,Send(self,@GetName));
+            }
+         }
+         else
+         {
+            iRoll = Random(1,Length(plGenerators));
+            lPos = Nth(plGenerators,iRoll);
+            iMRow = First(lPos);
+            iMCol = Nth(lPos,2);
+         }
+      }
+      
+      if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
+         AND (Send(self,@ReqSomethingMoved,#what=oMonster,
+                     #new_row=iMRow,#new_col=iMCol)
+            OR bStack)
+      {
+         Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
+               #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+      }
+      else
+      {
+         Send(oMonster,@Delete);
+
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    CanHavePlayerPortal()
@@ -4823,28 +4909,32 @@ messages:
          AND IsClass(victim,&Monster)
       {
          % Tusked Skeletons are our base case.
-         % With level 100 and difficulty 6, they are the last mob that dies quickly.
-         % We'll give them and everything below 60 second group times.
-         % Everything above them needs drastically more time as players progress.
-         % Special case made for Thrashers, due to the extreme nature of their room.
-         
-         piGroupTime = 60000;
-         
+         % With level 100 and difficulty 6, they are the last mob that
+         % dies quickly. We'll give them and everything below 60 second
+         % group times (default). Everything above them needs drastically
+         % more time as players progress. Special case made for Thrashers,
+         % due to the extreme nature of their room.
+
+         piGroupTime = Send(Send(SYS,@GetSettings),@GetDefaultGroupTime);
+
          % 2 additional seconds per mob level point above 100
          % Max +100 seconds for 150 hp mobs
-         piGroupTime = piGroupTime + bound(((Send(victim,@GetLevel)-100) * 1000 * 2),0,$);
-         
+         piGroupTime = piGroupTime
+                        + Bound(((Send(victim,@GetLevel)-100) * 1000 * 2),0,$);
+
          % 10 additional seconds per difficulty point above 6
          % Max +30 seconds for difficulty 9 mobs
-         piGroupTime = piGroupTime + bound(((Send(victim,@GetDifficulty)-6) * 1000 * 10),0,$);
-         
-         % Special cases
-         % Extra 2 minutes for thrashers (for 4 minutes 50 seconds total - nobody is muling thrashers)
-         If IsClass(victim,&Thrasher)
+         piGroupTime = piGroupTime
+                        + Bound(((Send(victim,@GetDifficulty)-6) * 1000 * 10),0,$);
+
+         % Special case: Extra 2 minutes for thrashers for 4 minutes
+         % 50 seconds total - nobody is muling thrashers)
+         if IsClass(victim,&Thrasher)
          {
-            piGroupTime = piGroupTime + bound((60 * 1000 * 2),0,$);
+            piGroupTime = piGroupTime + Bound((60 * 1000 * 2),0,$);
          }
       }
+
       return;
    }
    

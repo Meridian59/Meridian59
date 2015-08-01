@@ -72,16 +72,11 @@ messages:
       return;
    }
 
-   CastSpell(who=$,iSpellPower=0)
+   GetStateValue(iSpellpower=$,who=$,target=$)
    {
       % Post this so it's after the flag being applied.
-      Post(who,@ToCliRoomContents);
+      Post(target,@ToCliRoomContents);
 
-      propagate;
-   }
-
-   GetStateValue(iSpellpower=$)
-   {
       return iSpellpower;
    }
 

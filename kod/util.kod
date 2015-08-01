@@ -588,5 +588,103 @@ messages:
       return;
    }
 
+   AddPointsToScoreboard(who=$, lList=$, iPoints=1)
+   "This message takes an object (who), a list (lList) and a number (iPoints) "
+   "and adds [who,iPoints] to lList in the appropriate place.  lList is "
+   "sorted by ascending points.  Returns the sorted list. If passed $, returns "
+   "a list with [who,iPoints] in it.  If passed $ who, returns the original "
+   "list.  Default iPoints is 1, iPoints can be positive or negative."
+   {
+      local lEntry, iScore, iCount;
+
+      if who = $
+      {
+         return lList;
+      }
+
+      if lList = $
+      {
+         lList = [ [who,iPoints] ];
+
+         return lList;
+      }
+
+      iCount = 0;
+
+      for lEntry in lList
+      {
+         iCount = iCount + 1;
+         if who = First(lEntry)
+         {
+            SetNth(lEntry,2,Nth(lEntry,2) + iPoints);
+
+            iScore = Nth(lEntry,2);
+
+            if Nth(Nth(lList,iCount - 1),2) < iScore
+            {
+               % Check previous scores, see if we need to swap.
+               while iCount > 1
+                  AND Nth(Nth(lList,iCount - 1),2) < iScore
+               {
+                  SwapListElem(lList,iCount - 1,iCount);
+                  iCount = iCount - 1;
+               }
+            }
+            else
+            {
+               % Check next score, perhaps we received negative points.
+               while iCount + 1 <= Length(lList)
+                  AND Nth(Nth(lList,iCount + 1),2) > iScore
+               {
+                  SwapListElem(lList,iCount + 1,iCount);
+                  iCount = iCount + 1;
+               }
+            }
+
+            return lList;
+         }
+      }
+
+      iCount = 1;
+      % User wasn't on scoreboard. Get the position in list of
+      % where we need to add them.
+      for lEntry in lList
+      {
+         if Nth(lEntry,2) < iPoints
+         {
+            break;
+         }
+
+         iCount = iCount + 1;
+      }
+
+      % User's score should be less than iCount - 1 but more than
+      % iCount, so insert them at iCount and push that user back.
+      lList = InsertListElem(lList, iCount, [who,iPoints]);
+
+      return lList;
+   }
+
+   RemoveUserFromScoreboard(who=$,lList=$)
+   {
+      local i;
+
+      if who = $
+         OR lList = $
+      {
+         return lList;
+      }
+
+      for i in lList
+      {
+         if First(i) = who
+         {
+            lList = DelListElem(lList,i);
+         }
+      }
+
+      return lList;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,181 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecroGuildQuest is QuestTemplate
+% Quest template QST_ID_ESTABLISH_NECROGUILD = 44
+% Quest nodes 139, 140, 141.
+% QNT_ID_NECROGUILD_ONE, QNT_ID_NECROGUILD_TWO, QNT_ID_NECROGUILD_THREE
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   necroguildquest_icon_rsc = necamlet.bgf
+   necroguildquest_name_rsc = "raise Queen Venya'cyr quest"
+   necroguildquest_desc_rsc = \
+      "The ghostly remains of Queen Venya'cyr have whispered to you, and "
+      "told you of her desire to return to this plane of existence.  Will "
+      "you assist her?"
+
+   necroguildquest_nodethree_rsc = \
+      "To assist in Queen Venya'cyr's return to this plane of existence, "
+      "you must obtain the \"blood of the innocent\".  Find this item and "
+      "offer it to the ghostly remains."
+
+   necroguildquest_completed_rsc = \
+      "You have successfully raised Queen Venya'cyr from the dead, and are "
+      "now her loyal undead servant."
+
+   % Quest resources.
+   necroguild_assign_2 = \
+      "I crave to return to your plane of existence, my dark child.  Wilt "
+      "thou help me to rise again?"
+   necroguild_trigger_2 = "yes"
+   necroguild_assign_3 = \
+      "Excellent.  My soul craves the blood of the innocent.  Bring me this, "
+      "that I might rule Meridian once again!"
+   necroguild_failure_3 = \
+      "Subject: you have failed.\n"
+      "You have failed me.  I shall seek another to bring me back "
+      "into this world."
+   necroguild_success_3 = \
+      "Ah!  LIFE!!  I, along with my dark Order of Necromancers, have "
+      "been reborn!  For your faithful service to me, I appoint you "
+      "Master of the Order."
+
+classvars:
+
+   vrIcon = necroguildquest_icon_rsc
+   vrName = necroguildquest_name_rsc
+   vrDesc = necroguildquest_desc_rsc
+
+   vrNodeThree = necroguildquest_nodethree_rsc
+
+   vrCompleted = necroguildquest_completed_rsc
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_ESTABLISH_NECROGUILD
+
+   viIcon_Animation_start = 1
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTTRIED_RECENTLY | Q_PLAYER_NOTNEWBIE
+   piMaxPlayers = 1
+   piSchedulePct = 100
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_NECROGUILD_ONE, QNT_ID_NECROGUILD_TWO,
+                      QNT_ID_NECROGUILD_THREE];
+
+      % Quest nodes with matching descriptions for the player.
+      plQuestNodeDesc = [ [QNT_ID_NECROGUILD_TWO, vrDesc],
+                          [QNT_ID_NECROGUILD_THREE, vrNodeThree] ];
+
+      plSpecialRestrict = [ [ Q_R2_USING_ITEM, &NecromancerAmulet ],
+                            [ Q_R2_NECRO_GUILD_ACTIVE, 0 ],
+                            [ Q_R2_NUM_AMULETS, 5 ] ];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local lNPCs, oQE, oLib, oNPC;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #139 is necroguild quest
+      % QNT_ID_NECROGUILD_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_SHOWUP,
+               #quest_node_index=QNT_ID_NECROGUILD_ONE)
+      {
+         lNPCs = $;
+         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DeadLich)
+         {
+            lNPCs = Cons(oNPC, lNPCs);
+         }
+         % If the Lich is active and not the dead Lich, use her instead.
+         if lNPCs = $
+         {
+            for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Lich)
+            {
+               lNPCs = Cons(oNPC, lNPCs);
+            }
+         }
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_NECROGUILD_ONE,
+               #new_NPC_list=lNPCs);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_NECROGUILD_ONE");
+      }
+
+      % Template #140 is necromancer guild quest
+      % QNT_ID_NECROGUILD_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #NPC_modifier=QN_NPCMOD_SAME,#cargolist=[ necroguild_trigger_2 ],
+               #timelimit=120,#quest_node_index=QNT_ID_NECROGUILD_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_NECROGUILD_TWO,
+               #new_hint=necroguild_assign_2);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_NECROGUILD_TWO");
+      }
+
+      % Template #141 is necromancer guild quest
+      % QNT_ID_NECROGUILD_THREE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_ITEMFINDCLASS,
+               #NPC_modifier=QN_NPCMOD_SAME,
+               #cargolist=[ [ QN_PRIZETYPE_ITEMCLASS, &OfferingQor, 1 ] ],
+               #prizelist=[ [ QN_PRIZETYPE_ESTABLISH_NECROGUILD ] ],
+               #penaltylist=[ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -3, 2 ] ],
+               #timelimit=3 * 24 * 3600,#quest_node_index=QNT_ID_NECROGUILD_THREE)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_NECROGUILD_THREE,
+               #new_hint=necroguild_assign_3);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_NECROGUILD_THREE,
+               #new_hint=necroguild_success_3);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_NECROGUILD_THREE,
+               #new_hint=necroguild_failure_3);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_NECROGUILD_THREE");
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

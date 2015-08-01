@@ -86,13 +86,15 @@ messages:
 
       propagate;
    }
-   
+
    SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
                parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
    {
       if StringEqual(string,HzEl_stat_window_trigger)
       {
-         if Send(what,@GetBaseMaxHealth) <= Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap)
+         if Send(what,@FindHolding,#class=&StatsResetToken) <> $
+            OR (Send(what,@GetBaseMaxHealth)
+               <= Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap))
          {
             Send(what,@SendStatChange);
          }
@@ -171,22 +173,23 @@ messages:
 
       return;
    }
-   
+
    CanAcceptOffer()
    {
       return TRUE;
    }
-   
-   GotWantedItem(who=$, obj = 0)
-   {
-      local oPlayerObj, i;
 
+   CheckWhyWanted(obj=$,who=$)
+   {
       if IsClass(obj,&StatsResetToken)
       {
          Send(who,@SendStatChange);
+
+         % We don't destroy the item, so return FALSE.
+         return FALSE;
       }
 
-      return FALSE;
+      propagate;
    }
 
 end

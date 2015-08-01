@@ -107,9 +107,9 @@ messages:
    BreakTrance(who = $, state = $)
    {
       % If caster runs out of mana or loses trance, spell ends.
-      if IsClass(first(state),&prism)
+      if IsClass(First(state),&Prism)
       {
-         Send(first(state),@CasterBrokeTrance,#who=who);
+         Send(First(state),@CasterBrokeTrance,#who=who);
          Send(who,@RemoveEnchantment,#what=self,#state=state);
 
          propagate;

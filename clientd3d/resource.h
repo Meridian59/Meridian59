@@ -459,13 +459,14 @@
 #define ID_FORUM                        3514
 #define ID_WIKI                         3515
 #define ID_HOMEPAGE                     3516
+#define ID_COLOR_QUESTHEADER            3517
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        191
-#define _APS_NEXT_COMMAND_VALUE         3517
+#define _APS_NEXT_COMMAND_VALUE         3518
 #define _APS_NEXT_CONTROL_VALUE         1212
 #define _APS_NEXT_SYMED_VALUE           105
 #endif

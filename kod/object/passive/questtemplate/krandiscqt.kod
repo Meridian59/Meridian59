@@ -1,0 +1,155 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KranDiscQuest is QuestTemplate
+% Quest nodes 10, 11 (QNT_ID_KRAN_DISCIPLE_ONE, QNT_ID_KRAN_DISCIPLE_TWO)
+
+% QuestTemplate is
+% [ quest template index
+%   quest template object
+%   number of players,
+%   type of quest,
+%   eligible player restrictions,
+%   quest nodes,
+%   max number active,
+%   currently active quests,
+%   percent chance of scheduling (on timer firing)
+%   special restrictions ]
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   % Quest description.
+   kranquest_icon_rsc = iglow.bgf
+   kranquest_name_rsc = "Kraanan disciple quest"
+   kranquest_desc_rsc = \
+      "Priestess Qerti'nya has asked you to slay %s%s. Return when you "
+      "have completed this task."
+
+   kranquest_node_two_rsc = \
+      "Return to Priestess Qerti'nya and let her know the task has been "
+      "completed."
+
+   kranquest_completed = \
+      "You have completed the Kraanan disciple quest.  You are a faithful "
+      "disciple of Kraanan, and Priestess Qerti'nya will now teach you more "
+      "powerful spells."
+
+   % Quest resources.
+   kraanandisciple_assign = \
+      "`B`bYou have two hours in which to kill a %MONSTER.  Go immediately.  "
+      "Return and tell me when you are done."
+   kraanandisciple_success = \
+      "`B`bYou have done well. You are a worthy follower.  Perhaps it is "
+      "you who will crack the stone around Kraanan's soul.  Seek me when "
+      "you wish to learn more of his ways and his spells."
+   kraanandisciple_failure = \
+      "Subject: Your weakness of heart\n"
+      "I lack faith in your ability to serve Kraanan.  We need those with "
+      "determination, focus and skill.  Return here only when these "
+      "things are within you."
+
+classvars:
+
+   vrIcon = kranquest_icon_rsc
+   vrName = kranquest_name_rsc
+   vrDesc = kranquest_desc_rsc
+
+   vrNodeTwo = kranquest_node_two_rsc
+   vrCompleted = kranquest_completed
+
+   % The QST_ID constant for this quest.
+   viQuestID = QST_ID_KRAANAN_DISCIPLE
+
+properties:
+
+   piNumPlayers = 1
+   piPlayerRestrict = Q_PLAYER_NOTSUCCEEDED | Q_PLAYER_NOTFAILED_RECENTLY
+   plSpecialRestrict = $
+   piMaxPlayers = 30
+   piSchedulePct = 100
+   piTimeLimit = 2 * 3600 % 2 hours.
+
+messages:
+
+   Constructor()
+   {
+      % Quest node list to send to QuestEngine.
+      plQuestNodes = [QNT_ID_KRAN_DISCIPLE_ONE, QNT_ID_KRAN_DISCIPLE_TWO];
+
+      propagate;
+   }
+
+   SendQuestNodeTemplates()
+   {
+      local oQE, oLib;
+
+      oQE = Send(SYS,@GetQuestEngine);
+      oLib = Send(SYS,@GetLibrary);
+
+      % Template #10 is kraanan disciple quest kickoff, "favor"
+      % QNT_ID_KRAN_DISCIPLE_ONE
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MESSAGE,
+               #cargolist=[disciple_trigger],
+               #quest_node_index=QNT_ID_KRAN_DISCIPLE_ONE)
+      {
+         Send(oQE,@SetQuestNodeNPCList,#index=QNT_ID_KRAN_DISCIPLE_ONE,
+               #new_NPC_list=Send(oLib,@GetOccupationList,
+                                 #cNPC_class=&KraananPriestess));
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_KRAN_DISCIPLE_ONE");
+      }
+
+      % Template #11 is kraanan disciple quest, kill monster
+      % QNT_ID_KRAN_DISCIPLE_TWO
+      if Send(oQE,@AddQuestNodeTemplate,#questnode_type=QN_TYPE_MONSTER,
+               #NPC_modifier=QN_NPCMOD_SAME,#timelimit=piTimeLimit,
+               #monsterlist=[&FungusBeast, &RedAnt, &Skeleton],
+               #quest_node_index=QNT_ID_KRAN_DISCIPLE_TWO)
+      {
+         Send(oQE,@SetQuestNodeAssignHint,#index=QNT_ID_KRAN_DISCIPLE_TWO,
+               #new_hint=kraanandisciple_assign);
+         Send(oQE,@SetQuestNodeSuccessHint,#index=QNT_ID_KRAN_DISCIPLE_TWO,
+               #new_hint=kraanandisciple_success);
+         Send(oQE,@SetQuestNodeFailureHint,#index=QNT_ID_KRAN_DISCIPLE_TWO,
+               #new_hint=kraanandisciple_failure);
+      }
+      else
+      {
+         Debug("Error building QN: QNT_ID_KRAN_DISCIPLE_TWO");
+      }
+
+      return;
+   }
+
+   MainDesc(who=$,index=$,oQuestNode=$)
+   {
+      local oMob;
+
+      oMob = Send(oQuestNode,@GetQuestMonster);
+      if oMob = $
+      {
+         AddPacket(4,vrNodeTwo);
+      }
+      else
+      {
+         AddPacket(4,vrDesc, 4,Send(oMob,@GetIndef), 4,Send(oMob,@GetName));
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

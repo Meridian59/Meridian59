@@ -33,6 +33,18 @@ resources:
       "Ohhh, thank you! Here, have some of my old training swords! They "
       "won't last much longer, but maybe you can fix them up?"
 
+   CnSer_Alcohol_toomuch = \
+      "I couldn't possibly accept this much alcohol, do you think I have "
+      "a drinking problem?"
+
+   CnSer_inv_full_one = \
+      "You're carrying too many items already, I'll place the training sword "
+      "by your feet."
+
+   CnSer_inv_full_many = \
+      "You're carrying too many items already, I'll place the training swords "
+      "by your feet."
+
 classvars:
 
    vrName = cornothsergeant_name_rsc
@@ -47,7 +59,7 @@ classvars:
    viOccupation = MOB_ROLE_SERGEANT
 
 properties:
-   
+
 messages:
 
    Constructed()
@@ -75,14 +87,14 @@ messages:
    SetForSale()
    {
       plFor_sale = [
-         [ 
+         [
             Create(&RingDefense),
             Create(&LeatherArmor),
             Create(&LongSword),
             Create(&ShortSword),
             Create(&Mace)
          ],
-         [ 
+         [
             SKID_DODGE,
             SKID_PUNCH,
             SKID_SLASH,
@@ -111,16 +123,28 @@ messages:
       return;
    }
 
-   GotWantedItem(obj=$,who=$)
+   CheckWhyWanted(obj=$,who=$)
    {
-      local oWeapon, iAmount, iHits;
+      local oWeapon, iAmount, iHits, iIsFull;
 
       if IsClass(obj,&Food)
          AND Send(obj,@IsBeverage)
       {
          iAmount = Send(obj,@GetNumber);
+
+         % Avoid potential issues with players giving him 1000s of items.
+         if iAmount > 20
+         {
+            Send(self,@SayToOne,#target=who,#message_rsc=CnSer_Alcohol_toomuch);
+
+            return FALSE;
+         }
+
          Send(self,@SayToOne,#target=who,#message_rsc=CnSer_Alcohol_taken);
-         Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
+
+         % Increment this if player can't carry a sword, will be used
+         % to choose which carry-fail message to display.
+         iIsFull = 0;
 
          while (iAmount > 0)
          {
@@ -132,11 +156,32 @@ messages:
             {
                Send(who,@NewHold,#what=oWeapon);
             }
+            else
+            {
+               iIsFull = iIsFull + 1;
+               Send(poOwner,@NewHold,#what=oWeapon,#new_row=piRow,#new_col=piCol,
+                     #fine_row=piFine_row + 16,#fine_col=piFine_col);
+            }
 
             iAmount = iAmount - 1;
          }
 
-         return;
+         % If the player couldn't carry any of the swords, give them a message.
+         if iIsFull
+            AND oWeapon <> $
+         {
+            if iIsFull = 1
+            {
+               Send(self,@SayToOne,#target=who,#message_rsc=CnSer_inv_full_one);
+            }
+            else
+            {
+               Send(self,@SayToOne,#target=who,#message_rsc=CnSer_inv_full_many);
+            }
+         }
+
+         % Returning TRUE means GotWantedItem will delete the alcohol.
+         return TRUE;
       }
 
       propagate;

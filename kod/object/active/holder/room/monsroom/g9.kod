@@ -58,7 +58,7 @@ constants:
    LIGHTNING_TOUCHEDTIMELIMIT = 1000 * 60 * 5
 
    % 2 seconds
-   LEVER_REACTIVATE_DELAY = 1000 * 2      
+   LEVER_REACTIVATE_DELAY = 1000 * 1      
 
 resources:
 

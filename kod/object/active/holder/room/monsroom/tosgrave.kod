@@ -107,7 +107,7 @@ messages:
       }
 
       % Move tombstone at end of list to the beginning.
-      oTombstone = Nth(plTombstones,Length(plTombstones));
+      oTombstone = Last(plTombstones);
       plTombstones = DelListElem(plTombstones,oTombstone);
       plTombstones = Cons(oTombstone,plTombstones);
 

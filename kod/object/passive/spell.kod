@@ -695,7 +695,7 @@ messages:
       }
 
       % Check reagents
-      for lReagent in plReagents
+      foreach lReagent in plReagents
       {
          cReagentClass = First(lReagent);
          iNumNeeded = Nth(lReagent,2);
@@ -705,10 +705,10 @@ messages:
          lLists = [Send(who,@GetHolderActive),Send(who,@GetHolderPassive),
                      Send(who,@GetReagentBagContents)];
 
-         for lItems in lLists
+         foreach lItems in lLists
          {
             % Count # of reagent that user has; complain if not enough
-            for oUserObject in lItems
+            foreach oUserObject in lItems
             {
                if IsClass(oUserObject,cReagentClass)
                {
@@ -864,7 +864,7 @@ messages:
       if NOT bItemCast
       {
          piCast_attempts = piCast_attempts + 1;
-         for i in lTargets
+         foreach i in lTargets
          {
             if IsClass(i,&Player)
             {
@@ -906,7 +906,7 @@ messages:
       }
 
       % Out of range?
-      for i in lTargets
+      foreach i in lTargets
       {
          if NOT Send(self,@IsTargetInRange,#who=who,#target=i)
          {
@@ -924,7 +924,7 @@ messages:
          {
             if viNoNewbieOffense
             {
-               for i in Send(oRoom,@GetHolderActive)
+               foreach i in Send(oRoom,@GetHolderActive)
                {
                   if IsClass(First(i),&Player) AND First(i) <> who
                   {
@@ -1076,7 +1076,7 @@ messages:
          {
             % Targets everyone in the room, and cannot target any less.
             oRoom = Send(who,@GetOwner);
-            for i in Send(oRoom,@GetHolderActive)
+            foreach i in Send(oRoom,@GetHolderActive)
             {
                i = Send(oRoom,@HolderExtractObject,#data=i);
                if i = who
@@ -1130,7 +1130,7 @@ messages:
       % If lTargets is $, then we're casting an room-effect spell, let it go.
       if lTargets <> $
       {
-         for oObject in lTargets
+         foreach oObject in lTargets
          {
             % If we're in the arena, we can cast it.
             if IsClass(oObject,&Battler)
@@ -1193,7 +1193,7 @@ messages:
 
       oWhoRoom = Send(who,@GetOwner);
 
-      for i in lFinalTargets
+      foreach i in lFinalTargets
       {
          % Remove an element from the list if:
          % - We've targetted ourself with a spell that's not single-target
@@ -1294,7 +1294,7 @@ messages:
       % Hinder spell effects stack.
       if Send(who,@IsAffectedByRadiusEnchantment,#byClass=&HinderSpell)
       {
-         for i in Send(who,@GetRadiusEnchantments)
+         foreach i in Send(who,@GetRadiusEnchantments)
          {
             num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#lRadiusState=i);
          }
@@ -1379,7 +1379,7 @@ messages:
          % Use up reagents, provided reagent use is turned on
          if NOT Send(oRoom, @NoReagents)
          {
-            for lReagent in plReagents
+            foreach lReagent in plReagents
             {
                cReagentClass = First(lReagent);
                iNumNeeded = Nth(lReagent, 2);
@@ -1402,7 +1402,7 @@ messages:
                   }
 
                   % Since spell is cast, we can be cavalier about deleting things
-                  for oUserObject in lItems
+                  foreach oUserObject in lItems
                   {
                      if IsClass(oUserObject,cReagentClass)
                      {
@@ -1481,7 +1481,7 @@ messages:
 
       if lTargets <> $
       {
-         for oTarget in lTargets
+         foreach oTarget in lTargets
          {
             % Most spells have no flash.  Damage spells of course flash red.
             if IsClass(oTarget,&User)
@@ -1604,7 +1604,7 @@ messages:
                AND NOT IsClass(self,&DMSpell)
                AND NOT (Send(Send(who,@GetOwner),@IsArena))
             {
-               for oTarget in lTargets
+               foreach oTarget in lTargets
                {
                   % Ignore: Non-Players, ourself, and Players that aren't
                   %  outlaws or murderers.
@@ -1994,7 +1994,7 @@ messages:
       iCastTime = Send(self,@GetTranceTime,#iSpellpower=iSpellpower,#who=who);
 
       % Give casting message to people nearby.
-      for i in Send(oOwner,@GetHolderActive)
+      foreach i in Send(oOwner,@GetHolderActive)
       {
          oObject = Send(oOwner,@HolderExtractObject,#data=i);
          if IsClass(oObject,&Player) 
@@ -2278,7 +2278,7 @@ messages:
       % Check the player's in use items to see if they affect anything.
       % Note that this also checks itematts.
       iItemModifier = 0;
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          iItemModifier = iItemModifier + Send(i,@GetSpellModifier,
                                               #oSpell=self);
@@ -2330,7 +2330,7 @@ messages:
       {
          % Riija's bonuses are a bit random seeming.
          % Riija strength determined by moon position - range is -16 to 30
-         for i in Send(SYS,@GetBackgroundObjects)
+         foreach i in Send(SYS,@GetBackgroundObjects)
          {
             if IsClass(i,&Moon)  
             {
@@ -2514,7 +2514,7 @@ messages:
       
       if Send(self,@AffectsSpellPower)
       {
-         for iEnch in Send(where,@GetEnchantmentList)
+         foreach iEnch in Send(where,@GetEnchantmentList)
          {
             if Send(Nth(iEnch,2),@AffectsSpellPower) AND Nth(iEnch,2) <> self
             {

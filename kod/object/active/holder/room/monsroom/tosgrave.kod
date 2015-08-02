@@ -83,7 +83,7 @@ messages:
    {
       local i;
 
-      for i in plTombstones
+      foreach i in plTombstones
       {
          if i = what
          {

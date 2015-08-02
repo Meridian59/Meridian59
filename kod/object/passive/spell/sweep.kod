@@ -96,7 +96,7 @@ messages:
 
       lGoodItems = $;
 
-      for lPassive in lPassiveItems
+      foreach lPassive in lPassiveItems
       {
          oObj = Send(oRoom,@HolderExtractObject,#data=lPassive);
 
@@ -166,7 +166,7 @@ messages:
 
       lActiveItems = Send(oRoom,@GetplActive);
 
-      for j in lActiveItems
+      foreach j in lActiveItems
       {
          oEachObj = Send(oRoom,@HolderExtractObject,#data=j); 
          if isClass(oEachObj,&Monster)

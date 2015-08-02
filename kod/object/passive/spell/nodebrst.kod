@@ -89,7 +89,7 @@ messages:
 	      return FALSE;
       }
 
-      for oCaster in plRecentCasters
+      foreach oCaster in plRecentCasters
       {
          if who = oCaster
          {

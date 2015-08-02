@@ -119,7 +119,7 @@ messages:
          Send(oTarget,@Bonked);
       }
       
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if (IsClass(each_obj,&Player)

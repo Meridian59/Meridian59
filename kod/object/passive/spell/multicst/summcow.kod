@@ -80,7 +80,7 @@ messages:
          ((send(oRoom,@CountHoldingSummoned)) > 
            Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
       {
-         for who in lCasters
+         foreach who in lCasters
          {
             send(who,@MsgSendUser,#message_rsc=summoncow_failed_rsc);
          }

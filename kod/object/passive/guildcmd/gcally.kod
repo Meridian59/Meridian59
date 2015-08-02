@@ -72,7 +72,7 @@ messages:
            send(who,@msgsenduser,#message_rsc = guildforgealliance_already_your_guild);
            return FALSE;
         }
-      for i in send(ownguild,@getenemylist)
+      foreach i in send(ownguild,@getenemylist)
         {
            if i = oGuild
              {
@@ -81,7 +81,7 @@ messages:
                 return FALSE;
              }
         }
-      for i in send(ownGuild,@getallylist)
+      foreach i in send(ownGuild,@getallylist)
         {
            if i = oguild
              {

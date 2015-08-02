@@ -168,7 +168,7 @@ messages:
          return;
       }
 
-      for lLocation in plStatueLocations
+      foreach lLocation in plStatueLocations
       {
          oStatue = Create(&LivingStatue);
 

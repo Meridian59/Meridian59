@@ -81,7 +81,7 @@ messages:
 
       iFlys = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          oObj = Send(self,@HolderExtractObject,#Data=i);
          if IsClass(oObj,&DragonFlyQueen)

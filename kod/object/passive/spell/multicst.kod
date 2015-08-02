@@ -154,7 +154,7 @@ messages:
       cPrism = $;
       cDist = 100000;
 
-      for i in Send(oRoom,@GetHolderPassive)
+      foreach i in Send(oRoom,@GetHolderPassive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Prism)

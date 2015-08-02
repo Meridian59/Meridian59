@@ -45,7 +45,7 @@ messages:
       bAlcohol = FALSE;
       bNerudite = FALSE;
 
-      for i in Send(what,@GetHolderPassive)
+      foreach i in Send(what,@GetHolderPassive)
       {
          % Don't include the assassin's weapon as a real weapon.
          if IsClass(i,&Weapon) AND NOT IsClass(i,&BlackDagger)

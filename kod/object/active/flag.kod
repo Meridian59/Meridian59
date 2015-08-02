@@ -162,7 +162,7 @@ messages:
                                  Send(oTerritoryGame,@GetClaimRetry)*60000);
 
       % System message:  Aphasia stakes a claim to The Twisted Woods in the name of the rebels!
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if (NOT Send(i,@PlayerIsIntriguing))
          {
@@ -180,7 +180,7 @@ messages:
       piTroopCap = Send(oTerritoryGame,@GetClaimTroopCap);
 
       % Make the existing troops hate the claimer.
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          if IsClass(First(i),&FactionTroop)
             AND (Send(First(i),@GetFaction) <> Send(poClaimer,@GetFaction))
@@ -274,7 +274,7 @@ messages:
       }
       else
       {
-         for i in Send(poOwner,@GetYellZone)
+         foreach i in Send(poOwner,@GetYellZone)
          {
             oFlagpole = Send(Send(SYS,@FindRoomByNum,#num=i),
                               @FindHoldingActive,#class=&Flagpole);
@@ -322,7 +322,7 @@ messages:
       }
 
       iCountFactionAllies = 0;
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          if IsClass(First(i),&User)
             AND (Send(First(i),@GetFaction)=iClaimerFaction)
@@ -416,7 +416,7 @@ messages:
       }
 
       % System message: Aphasia successfully claims The Twisted Woods in the name of the rebels!
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if NOT Send(i,@PlayerIsIntriguing)
          {
@@ -471,7 +471,7 @@ messages:
       local i, oVoter, iCount;
 
       iCount = 0;
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          oVoter = First(i);
          if IsClass(oVoter,&Player)
@@ -536,7 +536,7 @@ messages:
       {
          rFailMessage = flag_claim_attempt_failed_generic;
          bClaimerInRoom = FALSE;
-         for j in Send(poOwner,@GetHolderActive)
+         foreach j in Send(poOwner,@GetHolderActive)
          {
             if First(j) = poClaimer
             {
@@ -562,7 +562,7 @@ messages:
             rFailMessage = flag_claim_attempt_failed_flee;
          }
 
-         for i in Send(SYS,@GetUsersLoggedOn)
+         foreach i in Send(SYS,@GetUsersLoggedOn)
          {
             if NOT Send(i,@PlayerIsIntriguing)
             {
@@ -578,7 +578,7 @@ messages:
       }
       else
       {
-         for i in Send(SYS,@GetUsersLoggedOn)
+         foreach i in Send(SYS,@GetUsersLoggedOn)
          {
             if NOT Send(i,@PlayerIsIntriguing)
             {
@@ -776,7 +776,7 @@ messages:
    }
 
    SetFaction(faction=FACTION_NEUTRAL)
-   "For admin use."
+   "for admin use."
    {
       piFaction = faction;
       if poOwner <> $

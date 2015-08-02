@@ -121,7 +121,7 @@ messages:
       TotalBankMoney = 0;
       plBanks = Send(SYS,@GetBanks);
 
-      for i in plBanks
+      foreach i in plBanks
       {
          TotalBankMoney = TotalBankMoney + Send(i,@GetPlayerMoneyTotal);
       }
@@ -136,7 +136,7 @@ messages:
       plUsers = Send(SYS,@GetUsers);
       TotalPlayerMoney = 0;
 
-      for u in plUsers
+      foreach u in plUsers
       {
          oPlayerMoney = Send(u,@GetMoneyObject);
 
@@ -155,7 +155,7 @@ messages:
 
       % Set up spell counts
       lSpells = Send(SYS,@GetSpells);
-      for oSpell in lSpells
+      foreach oSpell in lSpells
       {
          plSpell_cast_counts = Cons([Send(oSpell,@GetSpellNum), 0, 0],
                                     plSpell_cast_counts);
@@ -163,7 +163,7 @@ messages:
 
       % Set up room counts
       lRooms = Send(SYS,@GetRooms);
-      for oRoom in lRooms
+      foreach oRoom in lRooms
       {
          plRoom_entered_counts = Cons([Send(oRoom,@GetRoomNum), 0],
                                       plRoom_entered_counts);
@@ -206,7 +206,7 @@ messages:
          AND NOT IsClass(oSpell,&Phase)
       {
          iNum = Send(oSpell, @GetSpellNum);
-         for lItem in plSpell_cast_counts
+         foreach lItem in plSpell_cast_counts
          {
             if First(lItem) = iNum
             {
@@ -227,7 +227,7 @@ messages:
    {
       local lItem;
 
-      for lItem in plRoom_entered_counts
+      foreach lItem in plRoom_entered_counts
       {
          if First(lItem) = iNum
          {
@@ -250,7 +250,7 @@ messages:
       if (oRoom <> $)
       {
          iNum = Send(oRoom,@GetRoomNum);
-         for lItem in plRoom_entered_counts
+         foreach lItem in plRoom_entered_counts
          {
             if First(lItem) = iNum
             {
@@ -270,7 +270,7 @@ messages:
    {
       local oSpell, lItem, iNum;
 
-      for lItem in plSpell_cast_counts
+      foreach lItem in plSpell_cast_counts
       {
          iNum = Nth(lItem, 1);
          oSpell = Send(SYS,@FindSpellByNum,#num=iNum);
@@ -292,7 +292,7 @@ messages:
    {
       local oRoom, lItem, iNum;
 
-      for lItem in plRoom_entered_counts
+      foreach lItem in plRoom_entered_counts
       {
          iNum = Nth(lItem, 1);
          oRoom = Send(SYS,@FindRoomByNum,#num=iNum);
@@ -349,7 +349,7 @@ messages:
       lFactionCounts = $;
       lFactionBins = [FACTION_NEUTRAL, FACTION_DUKE, FACTION_PRINCESS, FACTION_REBEL];
 
-      for oUser in lUsers
+      foreach oUser in lUsers
       {
          % Attempt to deal with the Blakod timer value wraparound, but
          % this doesn't really work.  We don't have a foolproof way to
@@ -459,7 +459,7 @@ messages:
       % Initialize new list with 0 values?
       if counts = $
       {
-         for bin in bins
+         foreach bin in bins
          {
             counts = Cons(0, counts);
          }
@@ -469,7 +469,7 @@ messages:
 
       % Find the right bin
       i = 1;
-      for bin in bins
+      foreach bin in bins
       {
          if value <= bin
          {
@@ -492,7 +492,7 @@ messages:
       Debug(name);
 
       i = 1;
-      for bin in bins
+      foreach bin in bins
       {
          Debug(bin, Nth(counts, i));
          i = i + 1;

@@ -93,7 +93,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -126,7 +126,7 @@ messages:
 
       if IsClass(poOwner,&User)
       {
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -164,7 +164,7 @@ messages:
       
       iWeapHit = hit_roll;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oWeapAtt = send(SYS,@FindItemAttByNum,
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
@@ -192,7 +192,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -240,7 +240,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -273,7 +273,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -306,7 +306,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -349,7 +349,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -392,7 +392,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -441,7 +441,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -491,7 +491,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
@@ -530,7 +530,7 @@ messages:
       if IsClass(poOwner,&User)
       {
          ammotype = send(self,@GetAmmoType);
-         for i in send(poOwner,@GetPlayerUsing)
+         foreach i in send(poOwner,@GetPlayerUsing)
          {
             if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {

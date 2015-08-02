@@ -198,7 +198,7 @@ messages:
       if Send(what,@PlayerIsIntriguing)
          AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
       {
-         for i in Send(what,@GetPlayerUsing)
+         foreach i in Send(what,@GetPlayerUsing)
          {
             if i = self
             {
@@ -213,7 +213,7 @@ messages:
       }
       else
       {
-         for i in Send(what,@GetPlayerUsing)
+         foreach i in Send(what,@GetPlayerUsing)
          {
             if i = self
             {
@@ -452,7 +452,7 @@ messages:
    {
       local i;
 
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if NOT Send(i,@PlayerIsIntriguing)
          {
@@ -514,7 +514,7 @@ messages:
    {
       local i;
 
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if (NOT Send(i,@PlayerIsIntriguing))
          {

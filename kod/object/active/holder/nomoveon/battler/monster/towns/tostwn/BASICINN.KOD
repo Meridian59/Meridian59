@@ -94,7 +94,7 @@ messages:
       CostObj = $;
       if pcCostToWrap <> $ AND piNumberToWrap <> $ AND piNumberToWrap <> 0
       {
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if getClass(i) <> pcCostToWrap
             {
@@ -133,7 +133,7 @@ messages:
       if IsClass(obj,&NumberItem)
       {
          TargetObj = $;
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if GetClass(i) = GetClass(obj)
             {

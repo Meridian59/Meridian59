@@ -131,7 +131,7 @@ messages:
          poOwner = $;
       }
       
-      for i in plObject_attributes
+      foreach i in plObject_attributes
       {
          Send(i,@Delete);
       }

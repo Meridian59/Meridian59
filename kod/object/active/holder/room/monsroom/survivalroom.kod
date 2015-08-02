@@ -514,7 +514,7 @@ messages:
       Send(self,@SpawnMiniboss);
       Send(self,@SpawnMiniboss);
       
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
          {
@@ -548,7 +548,7 @@ messages:
    {
       local i, n;
    
-      for i in plActive
+      foreach i in plActive
       {
          if NOT IsClass(First(i),&User)
          {
@@ -556,7 +556,7 @@ messages:
          }
 
          Send(First(i),@MsgSendUser,#message_rsc=goals_header);
-         for n in plLevelGoals
+         foreach n in plLevelGoals
          {
             if Nth(n,1) = GOAL_KILLS
             {
@@ -578,7 +578,7 @@ messages:
          {
             Send(First(i),@MsgSendUser,#message_rsc=extralife_header);
          }
-         for n in plExtraLifeGoals
+         foreach n in plExtraLifeGoals
          {
             if Nth(n,1) = GOAL_BOSS
             {
@@ -604,7 +604,7 @@ messages:
       
       ptWallBlitzTimer = $;
       
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Monster)
@@ -647,7 +647,7 @@ messages:
       pbSpawnWaves = FALSE;
       piSpawnedBossThisRound = FALSE;
       
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Monster)
@@ -673,12 +673,12 @@ messages:
          ptRespawnMiniBossTimer = $;
       }
 
-      for lFixedReward in plFixedRewards
+      foreach lFixedReward in plFixedRewards
       {
          if Nth(lFixedReward,2) = piLevel
          {
             oReward = Create(Nth(lFixedReward,1));
-            for i in plActive
+            foreach i in plActive
             {
                if IsClass(First(i),&User)
                {
@@ -708,7 +708,7 @@ messages:
       ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,
                               piRegroupTime + iRewardTime);
       
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
          {
@@ -738,7 +738,7 @@ messages:
       local iRand,plBosses,iNumAdmins,i,iTotalParticipants;
       
       iNumAdmins = 0;
-      for i in plParticipants
+      foreach i in plParticipants
       {
          if IsClass(i,&DM)
          {
@@ -847,7 +847,7 @@ messages:
 
          cDeadClass = GetClass(victim);
          
-         for respawnCheck in plMinibosses
+         foreach respawnCheck in plMinibosses
          {
             if respawnCheck = cDeadClass
                AND ptRespawnMiniBossTimer = $
@@ -857,13 +857,13 @@ messages:
             }
          }
          
-         for i in plLevelGoals
+         foreach i in plLevelGoals
          {
             if Nth(i,1) = GOAL_KILLS
             {
                SetNth(i,2,Nth(i,2)-1);
                
-               for p in plActive
+               foreach p in plActive
                {
                   if IsClass(First(p),&User)
                   {
@@ -875,7 +875,7 @@ messages:
             
             if Nth(i,1) = GOAL_BOSS
             {
-               for n in plBosses
+               foreach n in plBosses
                {
                   if n = cDeadClass
                   {
@@ -886,7 +886,7 @@ messages:
             
             if Nth(i,1) = GOAL_MINIBOSSES
             {
-               for n in plMinibosses
+               foreach n in plMinibosses
                {
                   if n = cDeadClass
                   {
@@ -896,11 +896,11 @@ messages:
             }
          }
          
-         for i in plExtraLifeGoals
+         foreach i in plExtraLifeGoals
          {
             if Nth(i,1) = GOAL_BOSS
             {
-               for n in plBosses
+               foreach n in plBosses
                {
                   if n = cDeadClass
                   {
@@ -911,7 +911,7 @@ messages:
             
             if Nth(i,1) = GOAL_MINIBOSSES
             {
-               for n in plMinibosses
+               foreach n in plMinibosses
                {
                   if n = cDeadClass
                   {
@@ -922,7 +922,7 @@ messages:
          }
       }
       
-      for i in plLevelGoals
+      foreach i in plLevelGoals
       {
          if Nth(i,2) <= 0
          {
@@ -932,7 +932,7 @@ messages:
             }
             if Nth(i,1) = GOAL_BOSS
             {
-               for n in plActive
+               foreach n in plActive
                {
                   if IsClass(First(n),&User)
                   {
@@ -943,7 +943,7 @@ messages:
             }
             if Nth(i,1) = GOAL_MINIBOSSES
             {
-               for n in plActive
+               foreach n in plActive
                {
                   if IsClass(First(n),&User)
                   {
@@ -963,7 +963,7 @@ messages:
             % Finish it up if only one guy remains in a public room.
             if piPublic
             {
-               for mob in plActive
+               foreach mob in plActive
                {
                   oMonster = First(mob);
                   if IsClass(oMonster,&Monster)
@@ -991,7 +991,7 @@ messages:
          }
       }
       
-      for i in plExtraLifeGoals
+      foreach i in plExtraLifeGoals
       {
          if Nth(i,2) <= 0
          {
@@ -1022,7 +1022,7 @@ messages:
          return;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
 
@@ -1032,7 +1032,7 @@ messages:
             continue;
          }
 
-         for n in plBosses
+         foreach n in plBosses
          {
             if GetClass(each_obj) = n
             {
@@ -1062,7 +1062,7 @@ messages:
             }
          }
          
-         for n in plMinibosses
+         foreach n in plMinibosses
          {
             if GetClass(each_obj) = n
             {
@@ -1103,7 +1103,7 @@ messages:
       
       if IsClass(what,&User)
       {
-         for i in plCrashProtection
+         foreach i in plCrashProtection
          {
             if what = Nth(i,1)
             {
@@ -1225,7 +1225,7 @@ messages:
 
       iCount = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          oMonster = First(i);
          if IsClass(oMonster,&Monster)
@@ -1266,7 +1266,7 @@ messages:
 
       iCount = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&Monster)
             AND (NOT Send(First(i),@IsOwnedByPlayer))
@@ -1347,7 +1347,7 @@ messages:
       
       if piPublic
       {
-         for p in plLivesPerPlayer
+         foreach p in plLivesPerPlayer
          {
             SetNth(p,2,Nth(p,2)+1);
             Send(Nth(p,1),@MsgSendUser,#message_rsc=gain_a_life_msg,#parm1=Nth(p,2));
@@ -1359,7 +1359,7 @@ messages:
          piLives = piLives + 1;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
          {
@@ -1377,7 +1377,7 @@ messages:
       Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
 
       bFoundGoal = FALSE;
-      for iCheckForFriendlyKillGoal in plExtraLifeGoals
+      foreach iCheckForFriendlyKillGoal in plExtraLifeGoals
       {
          if Nth(iCheckForFriendlyKillGoal,1) = GOAL_KILL_FRIENDLY
             AND IsClass(what,&User)
@@ -1386,7 +1386,7 @@ messages:
          {
             Send(self,@GainALife);
             
-            for i in plActive
+            foreach i in plActive
             {
                if IsClass(First(i),&User)
                {
@@ -1409,7 +1409,7 @@ messages:
          AND who <> what
          AND NOT bFoundGoal
       {
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&User)
             {
@@ -1420,7 +1420,7 @@ messages:
          return;
       }
       
-      for i in plActive
+      foreach i in plActive
       {
          if First(i) = who
          {
@@ -1444,7 +1444,7 @@ messages:
       
       if piPublic
       {
-         for p in plLivesPerPlayer
+         foreach p in plLivesPerPlayer
          {
             if who = Nth(p,1)
             {
@@ -1484,7 +1484,7 @@ messages:
          Send(who,@GainMana,#amount=Send(who,@GetMaxMana),#bCapped=TRUE);
          Send(self,@Teleport,#what=who);
          
-         for i in plActive
+         foreach i in plActive
          {
             if NOT IsClass(First(i),&User)
             {
@@ -1529,7 +1529,7 @@ messages:
       
       if piPublic
       {
-         for p in plLivesPerPlayer
+         foreach p in plLivesPerPlayer
          {
             if Nth(p,1) = who
             {
@@ -1544,7 +1544,7 @@ messages:
 
       if inform
       {
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&User)
             {
@@ -1580,7 +1580,7 @@ messages:
    {
       local crashprot, ingrate;
 
-      for crashprot in plCrashProtection
+      foreach crashprot in plCrashProtection
       {
          if timer = Nth(crashprot,2)
          {
@@ -1601,7 +1601,7 @@ messages:
       local i, p, crashprot;
 
       % Take this person out of the crash protection list if they're there.
-      for crashprot in plCrashProtection
+      foreach crashprot in plCrashProtection
       {
          if who = Nth(crashprot,1)
          {
@@ -1619,7 +1619,7 @@ messages:
       
       if piPublic
       {
-         for p in plLivesPerPlayer
+         foreach p in plLivesPerPlayer
          {
             if Nth(p,1) = who
             {
@@ -1646,7 +1646,7 @@ messages:
 
       if inform
       {
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&User)
             {
@@ -1672,13 +1672,13 @@ messages:
       local i, logged_player;
       
       % Boot all participants
-      for i in plParticipants
+      foreach i in plParticipants
       {
          Send(self,@BootUser,#who=i,#inform=FALSE,#booting_all=TRUE);
       }
       
       % Boot all crash protection players
-      for i in plCrashProtection
+      foreach i in plCrashProtection
       {
          DeleteTimer(Nth(i,2));
          SetNth(i,2,$);
@@ -1690,7 +1690,7 @@ messages:
       }
       
       % Boot everyone who remains (spectators)
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
          {
@@ -1714,7 +1714,7 @@ messages:
 
       ptNextLevelTimer = CreateTimer(self,@InitiateNextLevel,DEFLT_START_TIME);
       
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
          {
@@ -1864,7 +1864,7 @@ messages:
       if what <> $
       {
          cMob = GetClass(what);
-         for i in plBosses
+         foreach i in plBosses
          {
             if cMob = i
             {
@@ -1883,7 +1883,7 @@ messages:
       if what <> $
       {
          cMob = GetClass(what);
-         for i in plMiniBosses
+         foreach i in plMiniBosses
          {
             if cMob = i
             {

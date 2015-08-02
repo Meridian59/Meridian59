@@ -134,7 +134,7 @@ messages:
 
       % Check that target(s) are in range
       oOwner = Send(who, @GetOwner);
-      for i in lTargets
+      foreach i in lTargets
       {
 	 if oOwner <> Send(i, @GetOwner)
 	 {

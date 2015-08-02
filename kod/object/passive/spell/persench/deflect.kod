@@ -117,7 +117,7 @@ messages:
          AND IsClass(oSpell,&AttackSpell)
       {
          % Give players a decent chance to improve the spell!
-         for i in Send(victim,@GetPassiveImprovementList)
+         foreach i in Send(victim,@GetPassiveImprovementList)
          {
             if First(i) = self AND Random(1,3) = 3
             {

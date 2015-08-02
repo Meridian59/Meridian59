@@ -54,7 +54,7 @@ messages:
    ApplyPotionEffects(apply_on = $)
    {
       local i;
-      for i in send(apply_on,@GetEnchantmentList) {
+      foreach i in send(apply_on,@GetEnchantmentList) {
 	     if Send(Nth(i,2),@IsPersonalEnchantment) {
             Send(apply_on,@MsgSendUser,#message_rsc=PurifyPotion_worked);
             Send(apply_on,@RemoveAllPersonalEnchantments);

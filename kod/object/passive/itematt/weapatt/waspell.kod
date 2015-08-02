@@ -136,7 +136,7 @@ messages:
       }
 
       iSpell = 0;
-      for i in plSpells
+      foreach i in plSpells
       {
          if StringContain(string,Send(Send(SYS,@FindSpellByNum,#num=First(i)),@GetName))
          {
@@ -178,7 +178,7 @@ messages:
          iValue = Random(1,100);
          spellNum = First(First(plSpells));
 
-         for i in plSpells
+         foreach i in plSpells
          {
             if iValue <= Nth(i,2)
             {

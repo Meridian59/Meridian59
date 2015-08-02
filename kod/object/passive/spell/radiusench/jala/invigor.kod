@@ -87,7 +87,7 @@ messages:
    {
       local oUser, lState;
       
-      for oUser in lEnchanted
+      foreach oUser in lEnchanted
       {
          if IsClass(oUser,&User)
          {

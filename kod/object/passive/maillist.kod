@@ -60,7 +60,7 @@ messages:
             thePerson = [thePerson];
          }
 
-         for aPerson in thePerson
+         foreach aPerson in thePerson
          {
             plPeople = Cons(aPerson,plPeople);
          }
@@ -75,7 +75,7 @@ messages:
    {
       local lPeopleInfo;
       
-      for lPeopleInfo in plPeople
+      foreach lPeopleInfo in plPeople
       {
          % First element is the guild object.
          Send(lPeopleInfo,@ReceiveMail,#from=from,#dest_list=dest_list,

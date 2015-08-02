@@ -294,7 +294,7 @@ messages:
       local oStatue, i, iRandom;
 
       %% delete any existing statues
-      for i in plPassive
+      foreach i in plPassive
       {
          oStatue = send(self,@HolderExtractObject,#data=i);
 

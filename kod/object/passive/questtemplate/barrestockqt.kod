@@ -130,7 +130,7 @@ messages:
                #quest_node_index=QNT_ID_BAR_RESTOCK_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

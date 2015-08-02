@@ -283,7 +283,7 @@ messages:
          return;
       }
 
-      for i in plQuestNodeDesc
+      foreach i in plQuestNodeDesc
       {
          if First(i) = index
          {

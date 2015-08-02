@@ -83,7 +83,7 @@ messages:
       if Send(who,@IsEnchanted,#what=oSpell)
       {
          % Give players a decent chance to improve the spell!
-         for i in Send(who,@GetPassiveImprovementList)
+         foreach i in Send(who,@GetPassiveImprovementList)
          {
             if First(i) = oSpell
             {

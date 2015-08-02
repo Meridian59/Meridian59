@@ -105,7 +105,7 @@ messages:
    {
       local iDamageReduce, oAttribute;
 
-      for oAttribute in plObject_attributes
+      foreach oAttribute in plObject_attributes
       {
          damage = Send(oAttribute,@ModifyDefenseDamage,#who=who,#what=what,#damage=damage,#atype=atype,#aspell=aspell);
       }
@@ -154,7 +154,7 @@ messages:
    {   
       local i, oItemAtt;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oItemAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
          

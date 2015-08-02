@@ -163,7 +163,7 @@ messages:
          return;
       }
 
-      for i in send(poOwner,@GetSpellList)
+      foreach i in send(poOwner,@GetSpellList)
       {         
          oSpell = send(SYS,@FindSpellByNum,#num = send(poOwner,@DecodespellNum,#compound=i));
          if piSchool = send(oSpell,@GetSchool)
@@ -248,7 +248,7 @@ messages:
       local i, oItemAtt;
           
       % Check to be sure nothing in ItemAtts disallows this.
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oItemAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
          if not send(oItemAtt,@ItemReqUse,#oItem=self,#oPlayer=poOwner)

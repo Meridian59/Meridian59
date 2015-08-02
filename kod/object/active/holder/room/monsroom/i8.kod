@@ -87,7 +87,7 @@ messages:
 
       send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
                 #height = 284, #speed = 8);
-      for i in plYell_zone
+      foreach i in plYell_zone
       {
 	 if i = RID_TEMPLE_QOR
 	 {

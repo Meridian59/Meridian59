@@ -103,7 +103,7 @@ messages:
 %   EnableIllusions()
 %   {
 %   local i, each_obj;
-%   for i in plActive
+%   foreach i in plActive
 %   {
 %      each_obj = send(self,@HolderExtractObject,#Data=i);
 %      if isclass(each_obj,&portal)

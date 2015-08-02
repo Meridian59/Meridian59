@@ -303,7 +303,7 @@ messages:
             AND who <> $
             AND NOT Send(who,@IsEnchanted,#what=poSpell)
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                If IsClass(each_obj,&Player)
@@ -332,7 +332,7 @@ messages:
             AND what <> $
             AND IsClass(what,&Player)
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                If IsClass(each_obj,&Player)
@@ -360,7 +360,7 @@ messages:
             AND who <> $
             AND NOT (aspell & ATCK_SPELL_QUAKE)
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                If IsClass(each_obj,&Player)

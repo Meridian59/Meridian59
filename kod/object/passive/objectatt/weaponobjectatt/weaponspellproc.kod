@@ -179,7 +179,7 @@ messages:
             AND who <> $
             AND NOT Send(who,@IsEnchanted,#what=poSpell)
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                If IsClass(each_obj,&Player)
@@ -207,7 +207,7 @@ messages:
          if piType = DEFENDER_CAST_TYPE
             AND what <> $
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                If IsClass(each_obj,&Player)
@@ -234,7 +234,7 @@ messages:
          if piType = NO_TARGET_CAST_TYPE
             AND who <> $
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                If IsClass(each_obj,&Player)

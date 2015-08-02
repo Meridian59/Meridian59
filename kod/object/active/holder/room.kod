@@ -441,7 +441,7 @@ messages:
 
       lUsers = $;
       cClass = GetClass(self);
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(first(i),&User)
          {
@@ -451,7 +451,7 @@ messages:
 
       Send(self,@Delete);
       Send(SYS,@CreateOneRoomIfNew,#num=piRoom_num,#class=cClass);
-      for i in lUsers
+      foreach i in lUsers
       {
          oNewRoom = Send(SYS,@FindRoomByNum,#num=piRoom_num);
          Send(oNewRoom,@Teleport,#what=i);
@@ -477,7 +477,7 @@ messages:
                          room_badmount_sound3, room_badmount_sound4
                        ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -508,7 +508,7 @@ messages:
                          room_jungle_sound25
                        ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -523,7 +523,7 @@ messages:
                           room_beach_sound7
                         ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -548,7 +548,7 @@ messages:
                           room_necropolis_sound9
                         ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -559,7 +559,7 @@ messages:
          % We're only adding one sound, don't reduce piPeriodic_sounds.
          lTempSounds = [ room_cave_sound1 ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -575,7 +575,7 @@ messages:
                          room_forest_sound7
                        ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -588,7 +588,7 @@ messages:
                           room_sewer_sound3, room_sewer_sound4
                         ];
 
-         for rSound in lTempSounds
+         foreach rSound in lTempSounds
          {
             plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
          }
@@ -634,7 +634,7 @@ messages:
             iSoundY = Random(0,piRows);
          }
 
-         for i in plActive
+         foreach i in plActive
          {
             Send(First(i),@WaveSendUser,#wave_rsc=rSound,#flags=iFlags,
                  #row=iSoundY,#col=iSoundX);
@@ -662,7 +662,7 @@ messages:
 
       if who <> $
       {
-         for lLoopSound in plLooping_sounds
+         foreach lLoopSound in plLooping_sounds
          {
             iRadius = 0;
             iMaxVol = 0;
@@ -707,7 +707,7 @@ messages:
             iMaxVol = Nth(lSoundData,5);
          }
 
-         for oObject in plActive
+         foreach oObject in plActive
          {
             if IsClass(first(oObject),&User)
             {
@@ -727,7 +727,7 @@ messages:
    {
       local lSoundData;
 
-      for lSoundData in plLooping_sounds
+      foreach lSoundData in plLooping_sounds
       {
          if length(lSoundData) > 5
             AND Nth(lSoundData,6) = what
@@ -817,7 +817,7 @@ messages:
          return;
       }
 
-      for lElement in lObjList
+      foreach lElement in lObjList
       {
          if length(lElement) = 3
          {
@@ -859,7 +859,7 @@ messages:
          return;
       }
 
-      for lElement in lObjList
+      foreach lElement in lObjList
       {
          if length(lElement) = 2
          {
@@ -985,7 +985,7 @@ messages:
    {
       local i, j, bFound, iRID;
 
-      for i in plExits
+      foreach i in plExits
       {
          iRID = Nth(i,3);
 
@@ -993,7 +993,7 @@ messages:
          if iRID > 0
          {
             bFound = FALSE;
-            for j in plYell_Zone
+            foreach j in plYell_Zone
             {
                if j = iRID
                {
@@ -1009,11 +1009,11 @@ messages:
          }
       }
 
-      for i in plEdge_Exits
+      foreach i in plEdge_Exits
       {
          iRID = Nth(i,2);
          bFound = FALSE;
-         for j in plYell_Zone
+         foreach j in plYell_Zone
          {
             if j = iRID
             {
@@ -1041,7 +1041,7 @@ messages:
          return;
       }
 
-      for lPassiveObject in plPassive
+      foreach lPassiveObject in plPassive
       {
          Send(first(lPassiveObject),@Delete);
       }
@@ -1053,7 +1053,7 @@ messages:
    {
       local i;
 
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(first(i),&StorageBox)
          {
@@ -1084,7 +1084,7 @@ messages:
    {
       local oNewRoom, i, oUser;
       oNewRoom = Send(SYS,@FindRoomByNum,#num=new_rid);
-      for i in plActive
+      foreach i in plActive
       {
          oUser = Send(self,@HolderExtractObject,#data=i);
          if isClass(oUser,&User)
@@ -1260,7 +1260,7 @@ messages:
 
       n = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if isClass(each_obj, class)
@@ -1604,7 +1604,7 @@ messages:
       iTime = piDispose_delay + Random(-5000,5000);
       ptDispose = CreateTimer(self,@DisposeTimer,iTime);
 
-      for i in plPassive
+      foreach i in plPassive
       {
          % If there is a player's corpse anywhere, don't clear it.
          %  player's corpse has own delete timer.  Monster corpses
@@ -1636,7 +1636,7 @@ messages:
 
          if iLen > 15
          {
-            for i in plPassive
+            foreach i in plPassive
             {
                % If the passive object is actually an item, add it to dispose list
                if IsClass(First(i),&Item)
@@ -1662,7 +1662,7 @@ messages:
 
                count = 0;
 
-               for j in lDisposeItems
+               foreach j in lDisposeItems
                {
                   count = count + 1;
                   if count <= delete_index
@@ -1830,7 +1830,7 @@ messages:
 
       if type = SAY_YELL
       {
-         for i in plYell_Zone
+         foreach i in plYell_Zone
          {
             oRoom = Send(SYS,@FindRoomByNum,#num=i);
             if oRoom <> self
@@ -1852,7 +1852,7 @@ messages:
    {
       local i,each_obj,square_type;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@ReqSomethingEntered,#what=what)
@@ -1887,7 +1887,7 @@ messages:
 
       if merge AND isClass(what,&NumberItem)
       {
-         for i in plPassive
+         foreach i in plPassive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
 
@@ -1947,7 +1947,7 @@ messages:
       if IsClass(what,&User)
       {
          % NPCs might need to do or say something.
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&Monster)
             {
@@ -1965,7 +1965,7 @@ messages:
          Send(what,@SendRoomMusic,#music_rsc=prMusic);
 
          % add room enchantment effects
-         for i in plEnchantments
+         foreach i in plEnchantments
          {
             % User will request to get enchantment icons, so don't need to send
             %  here.
@@ -1992,7 +1992,7 @@ messages:
 
       lRoomIcons = Send(SYS,@GetRoomIcons,#flags=piRoom_Flags);
 
-      for i in lRoomIcons
+      foreach i in lRoomIcons
       {
          Send(what,@ShowAddEnchantment,#what=i,#type=ENCHANTMENT_ROOM);
       }
@@ -2009,7 +2009,7 @@ messages:
       % first send room icons
       Send(self,@SendRoomIcons,#what=what);
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          each_obj = Nth(i,2);
          Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
@@ -2017,7 +2017,7 @@ messages:
       
       if IsClass(what,&User)
       {
-         for i in Send(what,@GetRadiusEnchantments)
+         foreach i in Send(what,@GetRadiusEnchantments)
          {
             each_obj = Nth(i,1);
             Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
@@ -2034,7 +2034,7 @@ messages:
 
       % it's a user, so send sector changes (with infinite speed)
 
-      for i in plSector_changes
+      foreach i in plSector_changes
       {
          Send(who,@SectorSendUser,#sector=First(i),#animation=Nth(i,2),
               #height=Nth(i,3),#speed=0);
@@ -2050,7 +2050,7 @@ messages:
 
       % It's a user, so send sector changes.
 
-      for i in plSector_flag_changes
+      foreach i in plSector_flag_changes
       {
          Send(who,@SectorChangeSendUser,#sector=First(i),#depth=Nth(i,2),
               #scrollSpeed=Nth(i,3));
@@ -2065,7 +2065,7 @@ messages:
       local i;
 
       % it's a user, so send light changes
-      for i in plSector_light_changes
+      foreach i in plSector_light_changes
       {
          Send(who,@SectorLightSendUser,#sector=First(i),
               #light_effect=Nth(i,2));
@@ -2081,7 +2081,7 @@ messages:
 
       % it's a user, so send wall changes
 
-      for i in plWall_changes
+      foreach i in plWall_changes
       {
          Send(who,@WallSendUser,#wall=First(i),#animation=Nth(i,2),
               #first_group=Nth(i,3),#second_group=Nth(i,4),#speed=Nth(i,5),
@@ -2097,7 +2097,7 @@ messages:
       local i;
 
       % it's a user, so send texture changes
-      for i in plTexture_changes
+      foreach i in plTexture_changes
       {
          Send(who,@TextureSendUser,#id=First(i),#new_texture=Nth(i,2),
               #flags=Nth(i,3));
@@ -2134,12 +2134,12 @@ messages:
       Send(what,@LeaveBuilderGroup);
 
       % unenchant this one occupant
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          Send(Nth(i,2),@EndRoomEnchantment,#who=what,#state=Nth(i,3));
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);   % optimized for room
          if IsClass(each_obj,&User) AND each_obj <> what
@@ -2157,7 +2157,7 @@ messages:
    {
       local i;
 
-      for i in plActive
+      foreach i in plActive
       {
          if First(i) = what
          {
@@ -2166,7 +2166,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if First(i) = what
          {
@@ -2182,7 +2182,7 @@ messages:
    {
       local i;
 
-      for i in plActive
+      foreach i in plActive
       {
          if First(i) = what
          {
@@ -2190,7 +2190,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if First(i) = what
          {
@@ -2563,7 +2563,7 @@ messages:
 
       bFound = FALSE;
 
-      for i in plActive
+      foreach i in plActive
       {
          if First(i) = what
          {
@@ -2577,7 +2577,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if First(i) = what
          {
@@ -2672,7 +2672,7 @@ messages:
 
       bFound = FALSE;
 
-      for i in plActive
+      foreach i in plActive
       {
          if First(i) = what
          {
@@ -2682,7 +2682,7 @@ messages:
             break;
          }
       }
-      for i in plPassive
+      foreach i in plPassive
       {
          if First(i) = what
          {
@@ -2839,7 +2839,7 @@ messages:
 
       % Cycle through each battler in plActive and send them
       % to RemoveUserFromArea if they are inside the given area.
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
 
@@ -2883,7 +2883,7 @@ messages:
 
       % Tell everyone in the room at the moment about the change
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          Send(each_obj,@SectorSendUser,#animation=animation,#sector=sector,
@@ -2892,7 +2892,7 @@ messages:
 
       % And store so that new people in room will get the change
 
-      for i in plSector_changes
+      foreach i in plSector_changes
       {
          if First(i) = sector and Nth(i,2) = animation
          {
@@ -2920,7 +2920,7 @@ messages:
 
       % Tell everyone in the room at the moment about the change
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          Send(each_obj,@SectorChangeSendUser,#sector=sector,#depth=depth,
@@ -2934,7 +2934,7 @@ messages:
 
       % And store so that new people in room will get the change
 
-      for i in plSector_flag_changes
+      foreach i in plSector_flag_changes
       {
          if First(i) = sector
          {
@@ -2964,7 +2964,7 @@ messages:
          return;
       }
 
-      for i in plSector_flag_changes
+      foreach i in plSector_flag_changes
       {
          if (id <> $ AND Nth(i,1) = id)
          {
@@ -2972,7 +2972,7 @@ messages:
          }
       }
       % Tell everyone in the room at the moment about the change.
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -2992,7 +2992,7 @@ messages:
 
       % if this is being set to the same light effect it currently has,
       % it must NOT send anything to client, because client will choke
-      for i in plSector_light_changes
+      foreach i in plSector_light_changes
       {
          if First(i) = sector AND Nth(i,2) = light_effect
          {
@@ -3001,7 +3001,7 @@ messages:
       }
 
       % tell everyone in the room at the moment about the change
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          Send(each_obj,@SectorLightSendUser,#sector=sector,
@@ -3009,7 +3009,7 @@ messages:
       }
 
       % store so that new people in room will get the change
-      for i in plSector_light_changes
+      foreach i in plSector_light_changes
       {
          if First(i) = sector
          {
@@ -3032,7 +3032,7 @@ messages:
       local i,each_obj;
 
       % tell everyone in the room at the moment about the change
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          Send(each_obj,@WallSendUser,#wall=wall,#animation=animation,
@@ -3049,7 +3049,7 @@ messages:
          first_group = end_group;
       }
 
-      for i in plWall_changes
+      foreach i in plWall_changes
       {
          if First(i) = wall
          {
@@ -3081,7 +3081,7 @@ messages:
          return;
       }
 
-      for i in plWall_changes
+      foreach i in plWall_changes
       {
          if (wall <> $ AND Nth(i,1) = wall)
          {
@@ -3089,7 +3089,7 @@ messages:
          }
       }
       % Tell everyone in the room at the moment about the change.
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -3107,7 +3107,7 @@ messages:
       local i,each_obj;
 
       % tell everyone in the room at the moment about the change
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -3118,7 +3118,7 @@ messages:
       }
 
       % and store so that new people in room will get the change
-      for i in plTexture_changes
+      foreach i in plTexture_changes
       {
          if first(i) = id AND Nth(i,3) = flags
          {
@@ -3147,7 +3147,7 @@ messages:
          return;
       }
 
-      for i in plTexture_changes
+      foreach i in plTexture_changes
       {
          if (id <> $ AND Nth(i,1) = id)
             OR (flags <> 0 AND Nth(i,3) = flags)
@@ -3156,7 +3156,7 @@ messages:
          }
       }
       % Tell everyone in the room at the moment about the change.
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -3182,7 +3182,7 @@ messages:
       iRow = 0;
       iCol = 0;
 
-      for i in plEdge_exits
+      foreach i in plEdge_exits
       {
          if dir = First(i)
          {
@@ -3304,7 +3304,7 @@ messages:
    {
       local i, iAngle;
 
-      for i in plExits
+      foreach i in plExits
       {
          if (row = First(i)) and (col = Nth(i,2))
          {
@@ -3362,7 +3362,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what);
       }
@@ -3374,7 +3374,7 @@ messages:
    {
       local i,oEnchanter;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if First(i) = timer
          {
@@ -3403,7 +3403,7 @@ messages:
    {
       local i,oEnchanter;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if First(i) = timer
          {
@@ -3430,7 +3430,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Player)
@@ -3447,7 +3447,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Player)
@@ -3470,7 +3470,7 @@ messages:
       iRange_squared = range * range ;
       iRowCenter = Send(center,@GetRow);
       iColCenter = Send(center,@GetCol);
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj, &Player)
@@ -3541,7 +3541,7 @@ messages:
          }
       }
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
          {
@@ -3557,7 +3557,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
          {
@@ -3580,7 +3580,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          Send(self,@RemoveEnchantment,#what=Nth(i,2));
       }
@@ -3593,7 +3593,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
          {
@@ -3620,7 +3620,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -3636,7 +3636,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -3653,13 +3653,13 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@DestroyDisposable);
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@DestroyDisposable);
@@ -3672,7 +3672,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@AmbientLightChanged);
@@ -3680,7 +3680,7 @@ messages:
 
       if piRoom_flags & ROOM_LAMPS
       {
-         for i in plPassive
+         foreach i in plPassive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             Send(each_obj,@AmbientLightChanged);
@@ -3694,7 +3694,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
@@ -3710,7 +3710,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@BackgroundChanged);
@@ -3718,7 +3718,7 @@ messages:
 
       if piRoom_flags & ROOM_LAMPS
       {
-         for i in plPassive
+         foreach i in plPassive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             Send(each_obj,@BackgroundChanged);
@@ -3732,7 +3732,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
@@ -3907,7 +3907,7 @@ messages:
       {
          Send(self,@SetRoomFlag,#flag=ROOM_SANDSTORM,#value=FALSE);
 
-         for i in plActive
+         foreach i in plActive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
@@ -3997,12 +3997,12 @@ messages:
    {
       local i;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          Send(First(i),@ObjectCorpseFading,#corpse=corpse);
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          Send(First(i),@ObjectCorpseFading,#corpse=corpse);
       }
@@ -4066,7 +4066,7 @@ messages:
 
       bRetVal = FALSE;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oEnch = Nth(i,2);
          if IsClass(oEnch,&Jala)
@@ -4099,7 +4099,7 @@ messages:
    {
       local i,pSpell,each_obj,oSpell;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = school
@@ -4110,7 +4110,7 @@ messages:
 
       if IsClass(self,&Room)
       {
-         for i in plActive
+         foreach i in plActive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&Battler)
@@ -4128,7 +4128,7 @@ messages:
    {
       local i,pSpell,each_obj,oSpell;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@IsIllusion)
@@ -4138,7 +4138,7 @@ messages:
          }
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Battler)
@@ -4165,7 +4165,7 @@ messages:
          return;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(each_obj,@IsIllusion)
@@ -4190,7 +4190,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(each_obj,@IsIllusion)
@@ -4221,7 +4221,7 @@ messages:
    {
       local i,oSpell;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = SS_JALA
@@ -4381,7 +4381,7 @@ messages:
          iBonus = iBonus +  5;
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if Send(First(i),@IsFire)
          {
@@ -4398,7 +4398,7 @@ messages:
    {
       local i, oMonster;
 
-      for i in plActive
+      foreach i in plActive
       {
          oMonster = First(i);
          if IsClass(oMonster,&Monster)
@@ -4438,7 +4438,7 @@ messages:
       iHate5 = 0;
       oBrain = $;
 
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(first(i),&monster)
          {
@@ -4556,7 +4556,7 @@ messages:
          return;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          oMonster = First(i);
          if isClass(oMonster,&Monster)
@@ -4579,7 +4579,7 @@ messages:
          return;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          oMonster = First(i);
          if isClass(oMonster,&Monster)
@@ -4599,7 +4599,7 @@ messages:
       % A chance each person might lose any active trance.
 
       oTrance = Send(SYS,@FindSpellByNum,#num=SID_TRANCE);
-      for i in plActive
+      foreach i in plActive
       {
          oActive = first(i);
          if isClass(oActive,&Player)
@@ -4623,7 +4623,7 @@ messages:
    {
       local i, oObject;
 
-      for i in plExits
+      foreach i in plExits
       {
          oObject = Create(&Apple);
          Send(self,@NewHold,#what=oObject,#new_row=Nth(i,1),#new_col=Nth(i,2));
@@ -4812,7 +4812,7 @@ messages:
       }
 
       % Check each active element, tell the object to delete if it is a wall and too close
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if (IsClass(each_obj,&ActiveWallElement)
@@ -4828,7 +4828,7 @@ messages:
       }
       
       % Separate check through plPassive for passive wall elements
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&PassiveWallofFire)
@@ -4945,7 +4945,7 @@ messages:
       % Ditch aggros on fresh spectators
       if IsClass(who,&Player)
       {
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&Monster)
             {

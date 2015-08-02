@@ -148,7 +148,7 @@ messages:
       iForm = -1;
       iCount = 1;
 
-      for i in Send(SYS,@GetMonsterTemplates)
+      foreach i in Send(SYS,@GetMonsterTemplates)
       {
          bDM = IsClass(who,&DM);
 
@@ -198,7 +198,7 @@ messages:
             
       iMax = 0;      
       iSpellPower = (iSpellpower * 130)/100;
-      for i in Send(SYS,@GetMonsterTemplates)
+      foreach i in Send(SYS,@GetMonsterTemplates)
       {
          iLevel = Send(i,@getLevel);
          if Send(i,@CanMorphTo)
@@ -225,7 +225,7 @@ messages:
       }
 
       iIndex = random(0,iMax); iCount = 1;      
-      for i in Send(SYS,@GetMonsterTemplates)
+      foreach i in Send(SYS,@GetMonsterTemplates)
       {
          iLevel = Send(i,@getLevel);
          if Send(i,@CanMorphTo)

@@ -115,7 +115,7 @@ messages:
       local i, index, jindex, random_x, oItem;
 
       index = 0;
-      for i in plItems_to_Attribute
+      foreach i in plItems_to_Attribute
       {
          index = index + nth(i,2);
       }
@@ -126,7 +126,7 @@ messages:
       random_x = random(jindex + 1,index);
 
       %% Okay, now we have a random number, see what it corresponds to.
-      for i in plItems_to_Attribute
+      foreach i in plItems_to_Attribute
       {
          random_x = random_x - nth(i,2);
          if random_x < 1         %% we have a winner!

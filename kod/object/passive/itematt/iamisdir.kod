@@ -80,7 +80,7 @@ messages:
       local i;
 
       plFake_Att_Choices = $;
-      for i in Send(SYS,@GetItemAttributes)
+      foreach i in Send(SYS,@GetItemAttributes)
       {
          if Send(i,@CanBeSpoofed)
          {

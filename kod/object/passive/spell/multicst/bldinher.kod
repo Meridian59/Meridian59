@@ -97,14 +97,14 @@ messages:
       % Can't have any other enchantments.
       if Send(first(lTargets),@HasAnyAttribute)
       {
-         for oCaster in lCasters
+         foreach oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_bad_target2);
          }
          return;
       }
 
-      for oCaster in lCasters
+      foreach oCaster in lCasters
       {
          Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,
                   #parm1=send(first(lTargets),@GetIndef),

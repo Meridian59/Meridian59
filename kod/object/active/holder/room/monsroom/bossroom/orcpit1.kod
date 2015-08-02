@@ -185,7 +185,7 @@ messages:
       piDoor3Position = DOOR_DOWN;
 
       % Delete any boss bodies that may be lying around...
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(First(i),&OrcPitBossBody)
          {

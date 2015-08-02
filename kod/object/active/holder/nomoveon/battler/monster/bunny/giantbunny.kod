@@ -156,7 +156,7 @@ messages:
             % Do an attack animation.
             Send(self,@MonsterAttack);
 
-            for i in Send(poOwner,@GetHolderActive)
+            foreach i in Send(poOwner,@GetHolderActive)
             {
                oObject = Send(poOwner,@HolderExtractObject,#data=i);
                if IsClass(oObject,&Player)

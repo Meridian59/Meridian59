@@ -363,7 +363,7 @@ messages:
       Send(self,@ChangeTexture,#id=piBedSector,#new_texture=(piBedSpread+1),
             #flags=CTF_BELOWWALL);
 
-      for i in Send(self,@GetHolderPassive)
+      foreach i in Send(self,@GetHolderPassive)
       {
          if IsClass(First(i),&Pillow)
          {
@@ -539,7 +539,7 @@ messages:
          iBedSector = Send(self,@GetBedSectorNear,#who=who);
          if iBedSector <> $
          {
-            for i in Send(self,@GetHolderPassive)
+            foreach i in Send(self,@GetHolderPassive)
             {
                if Send(self,@GetBedSectorNear,#who=First(i))=iBedSector
                {
@@ -827,7 +827,7 @@ messages:
       while iLoop < length(plObjects)
       {
          iLoop = iLoop + 1;
-         for oObj in Nth(plObjects,iLoop)
+         foreach oObj in Nth(plObjects,iLoop)
          {
             if Send(oObj,@GetName) = Send(oItem,@GetName)
             {
@@ -843,9 +843,9 @@ messages:
    {
       local i, j;
 
-      for i in plObjects
+      foreach i in plObjects
       {
-         for j in i
+         foreach j in i
          {
             if StringContain(string,Send(j,@GetName))
             {
@@ -873,7 +873,7 @@ messages:
          i = i + 1;
          if Send(self,@CanAccessObject,#category=i,#who=who)
          {
-            for j in Nth(plObjects,i)
+            foreach j in Nth(plObjects,i)
             {
                if oPreviousObject <> $
                {
@@ -930,7 +930,7 @@ messages:
          iSnapFineCol = Send(self,@GetSnappedFineCoord,
                              #unsnappedCoord=Send(who,@GetFineCol));
 
-         for i in Send(self,@GetHolderPassive)
+         foreach i in Send(self,@GetHolderPassive)
          {
             if (Send(First(i),@GetRow)=Send(who,@GetRow))
                AND (Send(First(i),@GetCol)=Send(who,@GetCol))
@@ -1008,7 +1008,7 @@ messages:
          lInventory = Send(self,@GetHolderPassive);
       }
       
-      for i in lInventory
+      foreach i in lInventory
       {
          if IsClass(First(i),GetClass(template))
             AND StringEqual(Send(First(i),@GetName),Send(template,@GetName))

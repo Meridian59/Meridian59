@@ -484,7 +484,7 @@ messages:
       lPlayers = $;
       lNearby = send(oRoom,@GetHolderActive);
 
-      for i in lNearby
+      foreach i in lNearby
       {
          if isClass(first(i),&Player)
             AND NOT send(first(i),@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
@@ -520,7 +520,7 @@ messages:
       n = length(things);
 
       m = 1;
-      for i in things
+      foreach i in things
       {
          % list grammar
 
@@ -585,7 +585,7 @@ messages:
 
       rsc = send(SYS,@GetPercentQRsc);
       lHear = send(oRoom,@GetHolderActive);
-      for i in lHear
+      foreach i in lHear
       {
          if isClass(first(i),&User)
          {

@@ -49,7 +49,7 @@ messages:
       {
          iAdjust = 0;
 
-         for lItem in plTreasure
+         foreach lItem in plTreasure
          {
             iAdjust = iAdjust + Nth(lItem,2);
          }
@@ -62,7 +62,7 @@ messages:
          iTotal = 0;
 
          % Normalize total to approx. 100.
-         for lItem in plTreasure
+         foreach lItem in plTreasure
          {
             iValue = (Nth(lItem,2)*100)/iAdjust;
             SetNth(lItem,2,iValue);
@@ -146,7 +146,7 @@ messages:
 
       index = 0;
 
-      for i in lOptions
+      foreach i in lOptions
       {
          index = index + Nth(i,2);
       }
@@ -155,7 +155,7 @@ messages:
 
       iChoice = $;
 
-      for i in lOptions
+      foreach i in lOptions
       {
          random_x = random_x - Nth(i,2);
          if random_x <= 0
@@ -315,7 +315,7 @@ messages:
 
       iCount=0;
       iRnd = Random(0,100);
-      for lItem_info in plTreasure
+      foreach lItem_info in plTreasure
       {
          iCount = iCount+Nth(lItem_info,2);
          if iRnd <=iCount

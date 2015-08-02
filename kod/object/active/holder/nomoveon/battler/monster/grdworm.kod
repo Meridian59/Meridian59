@@ -314,7 +314,7 @@ messages:
          piLastCol = piCol;
       }
 
-      for i in plTrail
+      foreach i in plTrail
       {
          Send(i,@Delete);
       }
@@ -339,7 +339,7 @@ messages:
          piLastCol = piCol;
          bAddTrailClump = TRUE;
 
-         for i in plTrail
+         foreach i in plTrail
          {
             if Send(i,@GetOwner) = $
             {
@@ -430,7 +430,7 @@ messages:
    {
       local i;
 
-      for i in plTrail
+      foreach i in plTrail
       {
          Send(i,@Delete);
       }

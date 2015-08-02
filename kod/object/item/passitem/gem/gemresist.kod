@@ -91,7 +91,7 @@ messages:
    {
       local oResist;
       
-      for oResist in resistance_list
+      foreach oResist in resistance_list
       {
          if Nth(oResist,1) = piResistType
          {

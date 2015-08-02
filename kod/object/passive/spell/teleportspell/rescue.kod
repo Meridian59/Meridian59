@@ -170,7 +170,7 @@ messages:
       % Default: Go to our home room.
       Post(who,@AdminGoToSafety);
 
-      for i in Send(Send(who,@GetOwner),@GetHolderActive)
+      foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
       {
          each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)

@@ -110,7 +110,7 @@ messages:
       iRodCount = 0;
       if IsClass(what,&User)
       {
-         for i in Send(what,@GetHolderPassive)
+         foreach i in Send(what,@GetHolderPassive)
          {
             if IsClass(i,&Rod)
             {

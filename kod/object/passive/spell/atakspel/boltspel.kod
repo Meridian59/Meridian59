@@ -52,7 +52,7 @@ messages:
       oOwner = Send(who,@GetOwner);
 
       % Show bolt flying through the air.
-      for i in lTargets
+      foreach i in lTargets
       {
          Send(oOwner,@SomethingShot,#who=who,#target=i,#projectile=self,
                #flags=viProjectileFlag);

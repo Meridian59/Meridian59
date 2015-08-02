@@ -270,7 +270,7 @@ messages:
 
       lActive = Send(oRoom,@GetplActive);
 
-      for i in lActive
+      foreach i in lActive
       {
 
          oObject = Send(oRoom,@HolderExtractObject,#data=i);

@@ -95,7 +95,7 @@ messages:
    {
       local i;
       
-      for i in plCopies
+      foreach i in plCopies
       {
          Send(i,@OriginalDeleted);
       }

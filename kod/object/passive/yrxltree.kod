@@ -52,7 +52,7 @@ messages:
    local oRoom, each_obj, i;
 
    oRoom = send(self,@getowner);
-   for i in Send(oRoom,@GetHolderActive)
+   foreach i in Send(oRoom,@GetHolderActive)
       {
       each_obj = Send(oRoom,@HolderExtractObject,#data=i);
       if isclass(each_obj,&player)

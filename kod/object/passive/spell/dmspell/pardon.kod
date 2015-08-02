@@ -57,7 +57,7 @@ messages:
    {
       local i;
       
-      for i in lTargets
+      foreach i in lTargets
       {
 	 if send(i,@checkplayerflag,#flag=PFLAG_MURDERER)
          or send(i,@checkplayerflag,#flag=PFLAG_OUTLAW)

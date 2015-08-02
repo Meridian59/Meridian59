@@ -79,7 +79,7 @@ messages:
       Send(who,@MsgSendUser,#message_rsc=HolySymbol_success);
       oRoom = Send(who,@GetOwner);
 
-      for oObject in Send(oRoom,@GetHolderActive)
+      foreach oObject in Send(oRoom,@GetHolderActive)
       {
          oMonster = Send(oRoom,@HolderExtractObject,#data=oObject);
 

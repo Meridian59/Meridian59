@@ -82,7 +82,7 @@ messages:
 
       if pbDebug
       {
-         for atcker in plAttackers
+         foreach atcker in plAttackers
          {
             Debug("plAttackers: ",atcker);
          }
@@ -98,18 +98,18 @@ messages:
       lInventoryContents = [plActive,plPassive];
       
       % Autogive loot to all players in plAttackers that are present
-      for oAttacker in plAttackers
+      foreach oAttacker in plAttackers
       {
          if Send(self,@GetOwner) = Send(oAttacker,@GetOwner)
          {
-            for lTreasure in lInventoryContents
+            foreach lTreasure in lInventoryContents
             {
                if pbDebug
                {
                   Debug("treasure list",lTreasure);
                }
                %Send(oAttacker,@NewHold,#what=lTreasure);
-               for oTreasure in lTreasure
+               foreach oTreasure in lTreasure
                {
                   if pbDebug
                   {
@@ -135,9 +135,9 @@ messages:
          }
       }
       
-      for lTreasure in lInventoryContents
+      foreach lTreasure in lInventoryContents
       {
-         for oTreasure in lTreasure
+         foreach oTreasure in lTreasure
          {
             if Send(oTreasure,@DropOnDeath)
             {
@@ -145,14 +145,14 @@ messages:
             }
          }
       }
-      for oTreasure in plActive
+      foreach oTreasure in plActive
       {
          if Send(oTreasure,@DropOnDeath)
             {
                Send(oTreasure,@Delete);
             }
       }
-      for oTreasure in plPassive
+      foreach oTreasure in plPassive
       {
          if Send(oTreasure,@DropOnDeath)
             {
@@ -161,7 +161,7 @@ messages:
       }
 
       % Delete all elements in plAttackers.
-      for oAttacker in plAttackers
+      foreach oAttacker in plAttackers
       {
          plAttackers = DelListElem(plAttackers,oAttacker);
       }

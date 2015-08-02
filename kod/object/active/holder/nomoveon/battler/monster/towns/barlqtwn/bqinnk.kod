@@ -251,7 +251,7 @@ messages:
          return FALSE;
       }
 
-      for i in item_list
+      foreach i in item_list
       {
          if NOT IsClass(i,&Money)
          {
@@ -270,7 +270,7 @@ messages:
       }
 
       iMoney = 0;
-      for i in item_list
+      foreach i in item_list
       {
          iMoney = iMoney + Send(i,@GetValue);
       }

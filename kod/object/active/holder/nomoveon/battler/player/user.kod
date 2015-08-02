@@ -806,7 +806,7 @@ messages:
       else
       {
          % We don't want to be seen, except by admins
-         for i in Send(SYS,@GetUsersLoggedOn)
+         foreach i in Send(SYS,@GetUsersLoggedOn)
          {
             % Only do this for admins
             if IsClass(i,&Admin)
@@ -959,7 +959,7 @@ messages:
       }
 
       % Check for phase out
-      for j in plEnchantments
+      foreach j in plEnchantments
       {
          if IsClass(Nth(j,2),&Phase)
          {
@@ -983,7 +983,7 @@ messages:
       else
       {
          % We've already faked our own logoff.  Don't advertise to non-admins.
-         for i in Send(SYS,@GetUsersLoggedOn)
+         foreach i in Send(SYS,@GetUsersLoggedOn)
          {
             % Only do this for admins
             if IsClass(i,&Admin)
@@ -1610,7 +1610,7 @@ messages:
             return;
          }
       
-         for i in client_msg
+         foreach i in client_msg
          {
             if i = $
             {
@@ -2239,7 +2239,7 @@ messages:
       AddPacket(4,poGuild);
 
       lRank_names = Send(poGuild,@GetRankNames);
-      for i in lRank_names
+      foreach i in lRank_names
       {
          AddPacket(STRING_RESOURCE,i);
       }
@@ -2248,7 +2248,7 @@ messages:
       lMembers = Send(poGuild,@GetMemberList);
 
       % Need to find ourself in here to get our vote
-      for i in lMembers
+      foreach i in lMembers
       {
          if First(i) = self
          {
@@ -2265,7 +2265,7 @@ messages:
       }
 
       AddPacket(2,Length(lMembers));
-      for i in lMembers
+      foreach i in lMembers
       {
          AddPacket(4,First(i));
          AddPacket(STRING_RESOURCE,Send(First(i),@GetTrueName));
@@ -2288,35 +2288,35 @@ messages:
          
          lGuilds = Send(SYS,@GetGuilds);
          AddPacket(2,Length(lGuilds));
-         for i in lGuilds
+         foreach i in lGuilds
          {
             AddPacket(4,i,6,Send(i,@GetName));
          }
          
          lGuilds = Send(poGuild,@GetAllyList);
          AddPacket(2,Length(lGuilds));
-         for i in lGuilds
+         foreach i in lGuilds
          {
             AddPacket(4,i);
          }
          
          lGuilds = Send(poGuild,@GetEnemyList);
          AddPacket(2,Length(lGuilds));
-         for i in lGuilds
+         foreach i in lGuilds
          {
             AddPacket(4,i);
          }
          
          lGuilds = Send(poGuild,@GetDeclaredAllyList);
          AddPacket(2,Length(lGuilds));
-         for i in lGuilds
+         foreach i in lGuilds
          {
             AddPacket(4,i);
          }
 
          lGuilds = Send(poGuild,@GetDeclaredEnemyList);
          AddPacket(2,Length(lGuilds));
-         for i in lGuilds
+         foreach i in lGuilds
          {
             AddPacket(4,i);
          }
@@ -2340,7 +2340,7 @@ messages:
 
             lSamples = Send(SYS,@GetGuildShieldSamples);
             AddPacket(2,length(lSamples));
-            for i in lSamples
+            foreach i in lSamples
             {
                AddPacket(4,i);
             }
@@ -2475,7 +2475,7 @@ messages:
    {
       local i;
       
-      for i in Send(SYS,@GetBackgroundObjects)
+      foreach i in Send(SYS,@GetBackgroundObjects)
       {
          Send(i,@AddBackgroundObject,#who=self);
       }
@@ -2905,7 +2905,7 @@ messages:
 
       lUsers = $;
 
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if IsClass(self,&Admin)
             OR NOT (IsClass(i,&DM)
@@ -2916,7 +2916,7 @@ messages:
       }
 
       AddPacket(1,BP_PLAYERS,2,Length(lUsers));
-      for i in lUsers
+      foreach i in lUsers
       {
          rName = Send(i,@GetTrueName);
 
@@ -2946,7 +2946,7 @@ messages:
       objs = Length(Send(poOwner,@GetHolderPassive));
 
       % We might not include all passive.
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          oThing = Send(poOwner,@HolderExtractObject,#data=i);
 
@@ -2963,7 +2963,7 @@ messages:
 
       AddPacket(1,BP_ROOM_CONTENTS, 4,poOwner, 2,objs);
       
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          oThing = Send(poOwner,@HolderExtractObject,#data=i);
 
@@ -2982,7 +2982,7 @@ messages:
          Send(oThing,@SendMoveOverlays);
       }
       
-      for i in Send(poOwner,@GetHolderPassive)
+      foreach i in Send(poOwner,@GetHolderPassive)
       {
          oThing = Send(poOwner,@HolderExtractObject,#data=i);
          Send(self,@ToCliObject,#what=oThing);
@@ -3008,7 +3008,7 @@ messages:
 
       AddPacket(1,BP_INVENTORY, 2,Length(plActive)+Length(plPassive));
 
-      for i in plActive
+      foreach i in plActive
       {
         Send(self,@ToCliObject,#what=i,#show_type=SHOW_INVENTORY);
       }
@@ -3032,7 +3032,7 @@ messages:
 
       AddPacket(1,BP_USE_LIST, 2,Length(plUsing));
 
-      for i in plUsing
+      foreach i in plUsing
       {
          AddPacket(4,i);
       }
@@ -3099,7 +3099,7 @@ messages:
       {
          AddPacket(1,BP_STAT_GROUP, 1,group,1, Length(plSpells));
          iCount = 1;
-         for i in plSpells
+         foreach i in plSpells
          {
             Send(self,@SendStatSpell,#index=iCount);
             iCount = iCount + 1;
@@ -3114,7 +3114,7 @@ messages:
       {
          AddPacket(1,BP_STAT_GROUP, 1,group, 1,Length(plSkills));
          iCount = 1;
-         for i in plSkills
+         foreach i in plSkills
          {
             Send(self,@SendStatSkill,#index=iCount);
             iCount = iCount + 1;
@@ -3184,7 +3184,7 @@ messages:
       iCount = 0;
 
       oQE = Send(SYS,@GetQuestEngine);
-      for i in plQuestHistory
+      foreach i in plQuestHistory
       {
          if First(i) & QUEST_HISTORY_SUCCESS
          {
@@ -3213,7 +3213,7 @@ messages:
 
       oQE = Send(SYS,@GetQuestEngine);
 
-      for i in plActiveQuests
+      foreach i in plActiveQuests
       {
          iQTemplate = First(i);
          oQObj = Send(oQE,@GetQuestTemplateObject,#index=iQTemplate);
@@ -3245,7 +3245,7 @@ messages:
 
       oQE = Send(SYS,@GetQuestEngine);
 
-      for i in plQuestHistory
+      foreach i in plQuestHistory
       {
          % Only send successfully completed quests for now.
          if NOT (First(i) & QUEST_HISTORY_SUCCESS)
@@ -3331,7 +3331,7 @@ messages:
 
       AddPacket(1,BP_SPELLS, 2,Length(plSpells));
 
-      for i in plSpells
+      foreach i in plSpells
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
                                                      #compound=i));
@@ -3351,7 +3351,7 @@ messages:
       local i,oSkill;
 
       AddPacket(1, BP_SKILLS,2,Length(plSkills));
-      for i in plSkills
+      foreach i in plSkills
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
                                                      #compound=i));
@@ -3785,7 +3785,7 @@ messages:
       local i, lUsers;
 
       lUsers = Send(SYS,@GetUsersLoggedOn);
-      for i in lUsers
+      foreach i in lUsers
       {
          if IsClass(i,&DM) AND Send(i,@IsAppealOn)
          {
@@ -4687,14 +4687,14 @@ messages:
       iObjs = Length(lHolding1) + Length(lHolding2);
       AddPacket(1,BP_OBJECT_CONTENTS,4,what,2,iObjs);
 
-      for i in lHolding1
+      foreach i in lHolding1
       {
          oThing = Send(what,@HolderExtractObject,#data=i);
          Send(self,@ToCliObject,#what=oThing);
       }
       
       % passive are in lholding2
-      for i in lHolding2
+      foreach i in lHolding2
       {
          oThing = Send(what,@HolderExtractObject,#data=i);
          Send(self,@ToCliObject,#what=oThing);
@@ -4808,7 +4808,7 @@ messages:
 
             bTranceBlocksSay = FALSE;
             
-            for i in plEnchantments
+            foreach i in plEnchantments
             {
                if IsClass(nth(i,2),&Trance)
                {
@@ -4946,10 +4946,10 @@ messages:
 
          lSortInfo = Send(SYS,@GetSortInfo);
 
-         for i in plClassOrderPreferences
+         foreach i in plClassOrderPreferences
          {
             bFound = FALSE;
-            for n in lSortInfo
+            foreach n in lSortInfo
             {
                if Nth(n,2) = i
                {
@@ -4984,7 +4984,7 @@ messages:
 
          lSortInfo = Send(SYS,@GetSortInfo);
 
-         for i in lSortInfo
+         foreach i in lSortInfo
          {
             if StringEqual(string,First(i))
             {
@@ -5305,7 +5305,7 @@ messages:
       }
 
       lUsers = $;
-      for i in Send(poGuild,@GetMemberList)
+      foreach i in Send(poGuild,@GetMemberList)
       {
          each_obj = First(i);
          if each_obj <> self and Send(each_obj,@IsLoggedOn)
@@ -5375,7 +5375,7 @@ messages:
             return;
          }
 
-         for i in users
+         foreach i in users
          {
             Send(i,@SomeoneSaid,#what=self,#type=type,#string=string);
          }
@@ -5720,7 +5720,7 @@ messages:
       
       Send(self,@MsgSendUser,#message_rsc=user_mail_to);
 
-      for i in dest_list
+      foreach i in dest_list
       {
          Send(i,@ReceiveMail,#from=Send(self,@GetTrueName),
               #dest_list=dest_list,#perm_string=string);
@@ -5755,7 +5755,7 @@ messages:
 
          AddPacket(1,BP_MAIL, 4,iIndex, STRING_RESOURCE,First(lNew_mail),
                    4,Nth(lNew_mail,2), 2,Length(Nth(lNew_mail,3)));
-         for j in Nth(lNew_mail,3)
+         foreach j in Nth(lNew_mail,3)
          {
             AddPacket(STRING_RESOURCE,Send(j,@GetTrueName));
          }
@@ -6009,7 +6009,7 @@ messages:
       iSpellNum = Send(oSpell,@GetSpellNum);
 
       bFound = FALSE;
-      for i in plSpells
+      foreach i in plSpells
       {
          iSpell = Send(self,@DecodeSpellNum,#compound=i);
          if iSpellNum = iSpell
@@ -6154,7 +6154,7 @@ messages:
 
       % Must be holding things you're offering, and have no dupes.
       lObjects = $;
-      for i in item_list
+      foreach i in item_list
       {
          if lObjects <> $
             AND FindListElem(lObjects,i) <> 0
@@ -6174,7 +6174,7 @@ messages:
       }
 
       % Check quantities; must be positive
-      for i in number_list
+      foreach i in number_list
       {
         if i < 1
         {
@@ -6202,7 +6202,7 @@ messages:
       plOffer_items = $;
 
       lNumbers = number_list;
-      for i in item_list
+      foreach i in item_list
       {
          if IsClass(i,&NumberItem)
          {
@@ -6225,7 +6225,7 @@ messages:
       }
 
       AddPacket(1,BP_OFFERED,2,Length(plOffer_items));
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(self,@ToCliObject,#what=i);
       }
@@ -6248,7 +6248,7 @@ messages:
       }
 
       % Check quantities; must be positive
-      for i in number_list
+      foreach i in number_list
       {
         if i < 1
         {
@@ -6258,7 +6258,7 @@ messages:
       }
 
       % must be holding things you're offering
-      for i in item_list
+      foreach i in item_list
       {
          if Send(i,@GetOwner) <> self
          {
@@ -6281,7 +6281,7 @@ messages:
       plOffer_items = $;
 
       lNumbers = number_list;
-      for i in item_list
+      foreach i in item_list
       {
          if IsClass(i,&NumberItem)
          {
@@ -6304,7 +6304,7 @@ messages:
       }
 
       AddPacket(1,BP_OFFERED,2,Length(plOffer_items));
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(self,@ToCliObject,#what=i);
       }
@@ -6323,7 +6323,7 @@ messages:
       local i, how_many;
 
       how_many = Send(ToBeRemoved,@GetNumber);
-      for i in plPassive
+      foreach i in plPassive
       {
          if GetClass(i) = GetClass(ToBeRemoved)
          {
@@ -6410,7 +6410,7 @@ messages:
       }
 
       % Check if we can receive the items.
-      for i in item_list
+      foreach i in item_list
       {
          if NOT Send(i,@ReqNewOwnerAttributes,#who=self,#type=1)
          {
@@ -6442,7 +6442,7 @@ messages:
       Send(self,@ToCliObject,#what=what);
       AddPacket(2,Length(item_list));
 
-      for i in item_list
+      foreach i in item_list
       {
          Send(self,@ToCliObject,#what=i);
       }
@@ -6473,7 +6473,7 @@ messages:
       local i;
 
       poOffer_who = $;
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          if IsClass(i,&NumberItem)
          {
@@ -6533,7 +6533,7 @@ messages:
       }
 
       % Check quantities; must be positive
-      for i in number_list
+      foreach i in number_list
       {
         if i < 1
         {
@@ -6545,7 +6545,7 @@ messages:
       plOffer_items = $;
       lNumbers = number_list;
       lObjects = $;
-      for i in item_list
+      foreach i in item_list
       {
          if lObjects <> $
             AND FindListElem(lObjects,i) <> 0
@@ -6587,7 +6587,7 @@ messages:
       }
 
       AddPacket(1,BP_COUNTEROFFERED, 2,Length(plOffer_items));
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(self,@ToCliObject,#what=i);
       }
@@ -6616,7 +6616,7 @@ messages:
       }
 
       AddPacket(1,BP_COUNTEROFFER,2,Length(item_list));
-      for i in item_list
+      foreach i in item_list
       {
          Send(self,@ToCliObject,#what=i);
       }
@@ -6635,7 +6635,7 @@ messages:
       iWeight = 0;
       iBulk = 0;
 
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          if NOT Send(i,@ReqNewOwner,#what=poOffer_who)
          {
@@ -6659,7 +6659,7 @@ messages:
          if IsClass(i,&NumberItem)
          {
             bFound = FALSE;
-            for j in plPassive
+            foreach j in plPassive
             {
                if GetClass(j) = GetClass(i)
                {
@@ -6731,11 +6731,11 @@ messages:
    {
       local i,j,bFound;
 
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          if IsClass(i,&NumberItem)
          {
-            for j in plPassive
+            foreach j in plPassive
             {
                if GetClass(j) = GetClass(i)
                {
@@ -6787,7 +6787,7 @@ messages:
       Send(poOffer_who,@OfferSubtractNumberItems);
       
       oHolder = Send(SYS,@GetSystemHolder1);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
       }
@@ -6809,7 +6809,7 @@ messages:
             lTake_items = Send(oHolder,@GetHolderPassive);
          }
 
-         for i in lTake_items
+         foreach i in lTake_items
          {
             if Send(self,@ReqNewHold,#what=i)
             {
@@ -6843,7 +6843,7 @@ messages:
       % drop the stuff
 
       oHolder = Send(SYS,@GetSystemHolder2);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
       }
@@ -6864,7 +6864,7 @@ messages:
             lTake_items = Send(oHolder,@GetHolderPassive);
          }
 
-         for i in lTake_items
+         foreach i in lTake_items
          {
             if Send(self,@ReqNewHold,#what=i)
             {
@@ -6949,7 +6949,7 @@ messages:
 
       if Send(what,@MobIsVaultman)
       {
-         for i in lSaleItems
+         foreach i in lSaleItems
          {
             Send(self,@ToCliObject,#what=i);
             AddPacket(4,Send(what,@GetVaultRetrievalFee,#what=i,#who=self));
@@ -6957,7 +6957,7 @@ messages:
       }
       else
       {
-         for i in lSaleItems
+         foreach i in lSaleItems
          {
             Send(self,@ToCliObject,#what=i);
             AddPacket(4,Send(what,@GetPrice,#what=i,#who=self));
@@ -6986,7 +6986,7 @@ messages:
 
          Send(self,@ToCliObject,#what=what);
          AddPacket(2,Length(lSaleItems));
-         for i in lSaleItems
+         foreach i in lSaleItems
          {
             Send(self,@ToCliObject,#what=i);
             AddPacket(4,Send(what,@GetVaultRetrievalFee,#what=i,#who=self));
@@ -7006,7 +7006,7 @@ messages:
       {
          lHalls = Send(SYS,@GetGuildHalls);
          iAvailable = 0;
-         for i in lHalls
+         foreach i in lHalls
          {
             if Send(i,@GetPurchaseValue,#who=self) <> -1
             {
@@ -7016,7 +7016,7 @@ messages:
 
          AddPacket(1,BP_USERCOMMAND, 1,UC_GUILD_HALLS);
          AddPacket(2,iAvailable);
-         for i in lHalls
+         foreach i in lHalls
          {
             if Send(i,@GetPurchaseValue,#who=self) <> -1
             {
@@ -7049,7 +7049,7 @@ messages:
    {
       local i;
       % Check quantities; must be positive
-      for i in number_list
+      foreach i in number_list
       {
         if i < 1
         {
@@ -7067,7 +7067,7 @@ messages:
    {
       local i;
       % Check quantities; must be positive
-      for i in number_list
+      foreach i in number_list
       {
         if i < 1
         {
@@ -7290,7 +7290,7 @@ messages:
       {
          oLastSpellItem = $;
 
-         for i in plPassive
+         foreach i in plPassive
          {
             if GetClass(i) = GetClass(what)
                AND i <> what
@@ -8370,7 +8370,7 @@ messages:
       
       if num = 1
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = ATCK_WEAP_ALL
             {
@@ -8385,7 +8385,7 @@ messages:
       }
       if num = 2
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = ATCK_WEAP_THRUST
             {
@@ -8400,7 +8400,7 @@ messages:
       }
       if num = 3
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = ATCK_WEAP_BLUDGEON
             {
@@ -8415,7 +8415,7 @@ messages:
       }
       if num = 4
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = ATCK_WEAP_SLASH
             {
@@ -8430,7 +8430,7 @@ messages:
       }
       if num = 5
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = ATCK_WEAP_PIERCE
             {
@@ -8445,7 +8445,7 @@ messages:
       }
       if num = 6
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_ALL
             {
@@ -8460,7 +8460,7 @@ messages:
       }
       if num = 7
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_FIRE
             {
@@ -8475,7 +8475,7 @@ messages:
       }
       if num = 8
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_SHOCK
             {
@@ -8490,7 +8490,7 @@ messages:
       }
       if num = 9
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_COLD
             {
@@ -8505,7 +8505,7 @@ messages:
       }
       if num = 10
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_ACID
             {
@@ -8520,7 +8520,7 @@ messages:
       }
       if num = 11
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_HOLY
             {
@@ -8535,7 +8535,7 @@ messages:
       }
       if num = 12
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_UNHOLY
             {
@@ -8550,7 +8550,7 @@ messages:
       }
       if num = 13
       {
-         for i in lCurrentResistances
+         foreach i in lCurrentResistances
          {
             if Nth(i,1) = -ATCK_SPELL_QUAKE
             {
@@ -9022,7 +9022,7 @@ messages:
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=RID_OOG);
          oSaveRoom = Send(SYS,@FindRoomByNum,#num=piSave_Room);
-         for i in Send(oSaveRoom,@GetHolderActive)
+         foreach i in Send(oSaveRoom,@GetHolderActive)
          {
             oGhost = Send(oSaveRoom,@HolderExtractObject,#data=i);
             if IsClass(oGhost,&LogoffGhost)
@@ -9411,7 +9411,7 @@ messages:
    {
       local i;
       
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@AdjustsMaxHealth)
          {
@@ -9539,7 +9539,7 @@ messages:
 
       % See if we need to change the quest node.
       % QuestEngine prevents duplicate quests.
-      for i in plActiveQuests
+      foreach i in plActiveQuests
       {
          if First(i) = template
          {
@@ -9568,7 +9568,7 @@ messages:
          return;
       }
 
-      for i in plActiveQuests
+      foreach i in plActiveQuests
       {
          if First(i) = index
          {
@@ -9594,7 +9594,7 @@ messages:
       }
 
       % Try active quests first.
-      for i in plActiveQuests
+      foreach i in plActiveQuests
       {
          if First(i) = index
          {
@@ -9603,7 +9603,7 @@ messages:
       }
 
       % Check completed list.
-      for i in plQuestHistory
+      foreach i in plQuestHistory
       {
          if (First(i) & QUEST_HISTORY_MASK) = index
             AND (First(i) & QUEST_HISTORY_SUCCESS)
@@ -9625,7 +9625,7 @@ messages:
          propagate;
       }
 
-      for i in plActiveQuests
+      foreach i in plActiveQuests
       {
          iQID = First(i);
          if iQID = QST_ID_PRINCESS_SERVICE
@@ -9676,7 +9676,7 @@ messages:
          return $;
       }
       
-      for lQH in plQuestHistory
+      foreach lQH in plQuestHistory
       {
          if (first(lQH) & QUEST_HISTORY_MASK) = index
          {
@@ -9713,7 +9713,7 @@ messages:
       Send(self,@RemoveCurrentQuest,#index=index);
 
       iTime = Send( self, @GetTimeLoggedIn );
-      for lQH in plQuestHistory
+      foreach lQH in plQuestHistory
       {
          if (first(lQH) & QUEST_HISTORY_MASK) = index
          {
@@ -9807,7 +9807,7 @@ messages:
    {
       local lQH;
 
-      for lQH in plQuestHistory
+      foreach lQH in plQuestHistory
       {
          if (first(lQH) & QUEST_HISTORY_MASK) = index
          {
@@ -9997,7 +9997,7 @@ messages:
       iCutoff_time =  GetTime() - 30*DAY;
       lRecent_mail = $;
       iRemoved = 0;
-      for lNew_mail in plNew_mail
+      foreach lNew_mail in plNew_mail
       {
          % This is a list of [ from, time, list of to, other ]
          iTime = Nth(lNew_mail,2);
@@ -10023,7 +10023,7 @@ messages:
       local lNew_mail,stuff,i,j;
       
       i = 1;
-      for lNew_mail in plNew_mail
+      foreach lNew_mail in plNew_mail
       {
          % This is a list of [ from, time, list of to, list of stuff ]
 	 stuff = Nth(lNew_mail,4);
@@ -10314,7 +10314,7 @@ messages:
       Debug("Skill Schools Stripped");
       
       % Now iterate through the player's spells and strip 2% per stat loss
-      for i in plSpells
+      foreach i in plSpells
       {
          iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
          oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
@@ -10358,7 +10358,7 @@ messages:
       }
       Debug("Spell % Recalculated");
       
-      for i in plSkills
+      foreach i in plSkills
       {
          iSkillNum = Send(self,@DecodeSkillNum,#compound=i);
          oSkill = Send(SYS,@FindSkillByNum,#num=iSkillNum);

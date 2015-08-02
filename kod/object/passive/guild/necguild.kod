@@ -393,7 +393,7 @@ messages:
          }
          if piThreePersonWarning = 0
          {
-            for i in plMembers
+            foreach i in plMembers
             {
                Post(First(i),@MsgSendUser,#message_rsc=necguild_threeperson_failed);
             }
@@ -417,7 +417,7 @@ messages:
                   hourhours = necguild_hours_rsc;
                }
 
-               for i in plMembers
+               foreach i in plMembers
                {
                   Post(First(i),@MsgSendUser,#message_rsc=necguild_threeperson_failing,
                         #parm1=piThreePersonWarning/10,#parm2=hourhours);
@@ -431,7 +431,7 @@ messages:
       }
 
       Send(self,@AccrueRent);
-      for i in plFormerMembers
+      foreach i in plFormerMembers
       {
          timeleft = Nth(i,2) - 1;
          if timeleft < 1
@@ -449,7 +449,7 @@ messages:
       {
          Debug("Guild points to a guild hall that does not point back to it!");
          piGuild_hall = $;
-         for i in plMembers
+         foreach i in plMembers
          {
             Post(self,@ResetPowers,#who=First(i),
                   #rank=Send(self,@GetRank,#who=First(i)));
@@ -471,7 +471,7 @@ messages:
 
       if piRentCounter = 1
       {
-         for i in plMembers
+         foreach i in plMembers
          {
             Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_nonpayment);
          }
@@ -481,17 +481,17 @@ messages:
       }
 
       rent = piRent;
-      for i in plMembers
+      foreach i in plMembers
       {
          rent = rent + piRentPerMember;
       }
 
-      for i in plAllies
+      foreach i in plAllies
       {
          rent = rent + piRentPerAlly;
       }
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
          rent = rent + piRentPerAlly;
       }
@@ -524,7 +524,7 @@ messages:
 
          if piRentDue > (rent * RENT_MAX_OVERDUE)
          {
-            for i in plMembers
+            foreach i in plMembers
             {
                Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_5,
                      #parm1=piRentCounter/10,#parm2=hourhours);
@@ -535,7 +535,7 @@ messages:
 
          if piRentDue > (rent * RENT_MAX_OVERDUE) * 4 / 5
          {
-            for i in plMembers
+            foreach i in plMembers
             {
                Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_4,
                      #parm1=piRentCounter/10,#parm2=hourhours);
@@ -546,7 +546,7 @@ messages:
 
          if piRentDue > (rent * RENT_MAX_OVERDUE) * 3 / 5
          {
-            for i in plMembers
+            foreach i in plMembers
             {
                Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_3,
                      #parm1=piRentCounter/10,#parm2=hourhours);
@@ -557,7 +557,7 @@ messages:
 
          if piRentDue > (rent * RENT_MAX_OVERDUE) * 2 / 5
          {
-            for i in plMembers
+            foreach i in plMembers
             {
                Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_2,
                      #parm1=piRentCounter/10,#parm2=hourhours);
@@ -566,7 +566,7 @@ messages:
             return;
          }
 
-         for i in plMembers
+         foreach i in plMembers
          {
             Post(First(i),@MsgSendUser,#message_rsc=necguild_rent_due_1,
                   #parm1=piRentCounter/10,#parm2=hourhours);
@@ -583,17 +583,17 @@ messages:
       local rent, i;
 
       rent = piRent;
-      for i in plMembers
+      foreach i in plMembers
       {
          rent = rent + piRentPerMember;
       }
 
-      for i in plAllies
+      foreach i in plAllies
       {
          rent = rent + piRentPerAlly;
       }
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
           rent = rent + piRentPerAlly;
       }
@@ -633,7 +633,7 @@ messages:
       }
 
       old_master = $;
-      for i in plMembers
+      foreach i in plMembers
       {
          % Demote anyone at guildmaster rank.
          if Nth(i,2) = RANK_MASTER
@@ -685,7 +685,7 @@ messages:
          }
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) <> new_master
             AND (First(i) <> old_master
@@ -732,7 +732,7 @@ messages:
    {
       local i;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if NOT Send(First(i),@IsLoggedOn)
          {
@@ -812,7 +812,7 @@ messages:
             AND killer <> victim
          {
             % Shift everyone's support to the assassin.
-            for i in plMembers
+            foreach i in plMembers
             {
                SetNth(i,3,killer);
             }

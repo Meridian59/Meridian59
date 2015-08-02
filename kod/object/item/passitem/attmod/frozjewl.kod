@@ -112,7 +112,7 @@ messages:
       {
          iJewelNumber = 0;
 
-         for i in Send(poOwner,@GetPlayerUsing)
+         foreach i in Send(poOwner,@GetPlayerUsing)
          {
             if IsClass(i,&JewelOfFroz)
                OR IsClass(i,&Book)
@@ -187,7 +187,7 @@ messages:
          iMana = 0;
          if pbDoubleManaCost
          {
-            for i in Send(who,@GetPlayerUsing)
+            foreach i in Send(who,@GetPlayerUsing)
             {
                if IsClass(i,&JewelOfFroz)
                {

@@ -131,7 +131,7 @@ messages:
       oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
 
       % Give players a decent chance to improve the spell!
-      for i in Send(oTarget,@GetPassiveImprovementList)
+      foreach i in Send(oTarget,@GetPassiveImprovementList)
       {
          if First(i) = self AND random(1,3) = 3
          {

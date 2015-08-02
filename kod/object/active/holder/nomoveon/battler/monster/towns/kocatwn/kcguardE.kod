@@ -76,7 +76,7 @@ messages:
    {
       local i;
 
-      for i in plBribes
+      foreach i in plBribes
       {
          if i = what
          {

@@ -183,7 +183,7 @@ messages:
 
       if plObject_attributes <> $
       {
-         for i in plObject_attributes
+         foreach i in plObject_attributes
          {
             if IsClass(i,&WeaponSpellProc)
             {
@@ -285,7 +285,7 @@ messages:
          iBaseHit = iBaseHit + WEAPON_NERUDITE_HITMOD;
       }
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oWeapAtt = Send(SYS,@FindItemAttByNum,#num=Send(self,@GetNumFromCompound,#compound=First(i)));
          if IsClass(oWeapAtt,&WeaponAttribute)
@@ -512,7 +512,7 @@ messages:
 
       % Then check weapon attributes
       %  Weapon Attributes in general should only + or - damage - no multipliers!
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oWeapAtt = Send(SYS,@FindItemAttByNum,#num=Send(self,@GetNumFromCompound,#compound=First(i)));
          if IsClass(oWeapAtt,&WeaponAttribute)
@@ -764,7 +764,7 @@ messages:
 
       % Remove itematts from us, since we're not gonna use 'em anymore.
       % This also lets cursed items finally remove themselves from us.
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oItemAtt = Send(SYS,@FindItemAttByNum,
                          #num=Send(self,@GetNumFromCompound,#compound=First(i)));
@@ -1073,7 +1073,7 @@ messages:
    {
       local i, oItemAtt;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oItemAtt = Send(SYS,@FindItemAttByNum,
                          #num=Send(self,@GetNumFromCompound,#compound=First(i)));
@@ -1153,7 +1153,7 @@ messages:
          }
       }
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oItemAtt = Send(SYS,@FindItemAttByNum,
                          #num=Send(self,@GetNumFromCompound,#compound=First(i)));
@@ -1189,7 +1189,7 @@ messages:
          oAttribute = Send(SYS,@FindItemAttByNum,#num=WA_SPELLCASTER);
          oSpell = $;
 
-         for i in plItem_Attributes
+         foreach i in plItem_Attributes
          {
             if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_SPELLCASTER
             {

@@ -100,7 +100,7 @@ messages:
       {
          poOriginal = oTarget;
          poTarget = oTarget;
-         for i in Send(oRoom,@GetHolderActive)
+         foreach i in Send(oRoom,@GetHolderActive)
          {
             each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 
@@ -616,7 +616,7 @@ messages:
          {
             piAnimation = PANM_BOW_FIRE;
 
-            for i in Send(poOriginal,@GetPlayerUsing)
+            foreach i in Send(poOriginal,@GetPlayerUsing)
             {
                if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
                {

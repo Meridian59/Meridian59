@@ -55,7 +55,7 @@ messages:
          }
       }
 
-      for j in lTargets
+      foreach j in lTargets
       {
          i = j;
 

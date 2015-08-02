@@ -81,7 +81,7 @@ messages:
 
       local i;
 
-      for i in Send(SYS,@GetRooms)
+      foreach i in Send(SYS,@GetRooms)
       {
          % Sets all rooms to no reagent use.
          Send(i,@TurnReagentsOff);
@@ -104,7 +104,7 @@ messages:
       }
 
       % Tell the users online what's going on.
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          Send(i,@MsgSendUser,#message_rsc=chaos_night_rsc);
          Send(i,@WaveSendUser,#wave_rsc=chaos_wav);
@@ -135,7 +135,7 @@ messages:
 
       % Tell the rooms to change their flags back to normal, and to
       % redraw the correct background.
-      for i in Send(SYS, @GetRooms)
+      foreach i in Send(SYS, @GetRooms)
       {
          % Sets all rooms to use reagents.
          Send(i,@TurnReagentsOn);
@@ -148,7 +148,7 @@ messages:
 
       % Only Send this message to DMs and up, since this message should
       % never be seen.
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if IsClass(i,&DM)
          {
@@ -247,9 +247,9 @@ messages:
 
       lGivelist = Send(SYS,@GetUsersLoggedOn);
 
-      for oPlayer in lGiveList
+      foreach oPlayer in lGiveList
       {
-         for oItem in plChaosNightLoot
+         foreach oItem in plChaosNightLoot
          {
             if IsClass(oItem,&NumberItem)
             {
@@ -300,7 +300,7 @@ messages:
 
       lGivelist = Send(SYS,@GetUsersLoggedOn);
 
-      for oPlayer in lGiveList
+      foreach oPlayer in lGiveList
       {
          oMoney = Create(&Money,#number=piFrenzyMoneyAmount);
 

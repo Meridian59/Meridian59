@@ -112,7 +112,7 @@ messages:
    {
       local oBramble, lLocation;
 
-      for lLocation in plDeadBrambles
+      foreach lLocation in plDeadBrambles
       {
          Send(self,@CreateBramble,#lLocation=lLocation);
       }

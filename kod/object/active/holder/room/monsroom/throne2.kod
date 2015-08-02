@@ -118,7 +118,7 @@ messages:
          ptGhost = CreateTimer(self,@GhostTimer,iTime);
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(Send(self,@HolderExtractObject,#data=i),&Ghost)
          {

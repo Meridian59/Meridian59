@@ -198,7 +198,7 @@ messages:
          plCasters = cons(who,plCasters);
          piSpellPowerNeeded = send(what,@GetTotalSpellPower,#oPrism=self);
 
-         for i in send(poOwner,@GetHolderActive)
+         foreach i in send(poOwner,@GetHolderActive)
          {
             each_obj = send(poOwner,@HolderExtractObject,#data=i);
             if isclass(each_obj,&Player)
@@ -224,7 +224,7 @@ messages:
          return FALSE;
       }
 
-      for i in send(poOwner,@GetHolderActive)
+      foreach i in send(poOwner,@GetHolderActive)
       {
          each_obj = send(poOwner,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Player)
@@ -313,7 +313,7 @@ messages:
    {
       local i;
 
-      for i in plCasters
+      foreach i in plCasters
       {
          Send(i,@ClearTranceFlag);
          Send(i,@RemoveEnchantment,#what=poSpell);

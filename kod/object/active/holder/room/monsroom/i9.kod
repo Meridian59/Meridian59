@@ -169,12 +169,12 @@ messages:
       if StringEqual(string,i9_qor)
       {
          lPassive = Send(what,@GetHolderPassive);
-         for i in lPassive
+         foreach i in lPassive
          {
             each_obj = Send(what,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&Scepter)
             {
-               for i in plActive
+               foreach i in plActive
                {
                   Send(First(i),@WaveSendUser,#wave_rsc=i9_sound_rsc);
                }
@@ -247,7 +247,7 @@ messages:
          Send(poNode,@NodeAppear,#where=self,#row=27,#col=61,
                #fine_row=48,#fine_col=40);
 
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&StoneTroll)
             {
@@ -308,7 +308,7 @@ messages:
          bFour = FALSE;
          bFive = FALSE;
 
-         for i in plPassive
+         foreach i in plPassive
          {
             if IsClass(First(i),&OneToken)
                AND Send(self,@IsInStoneHenge,#what=First(i))
@@ -381,7 +381,7 @@ messages:
    {
       local i, oPortal, oRoom;
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&Portal)
          {
@@ -392,7 +392,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if First(i) <> $ AND IsClass(First(i),&token)
          {
@@ -416,7 +416,7 @@ messages:
    {
       local i, oRoom;
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&Portal)
          {

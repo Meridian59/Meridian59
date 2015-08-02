@@ -99,7 +99,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
 
@@ -165,7 +165,7 @@ messages:
          AND ((col = 41) OR (col = 40)))
          OR ((row = 3) AND (col = 41))
       {
-         for i in plActive
+         foreach i in plActive
          {
             if (IsClass(First(i),&KocatanCaptainGood)
                OR IsClass(First(i),&KocatanCaptainEvil))

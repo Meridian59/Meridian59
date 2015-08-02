@@ -132,7 +132,7 @@ messages:
       }
 
       bFound = FALSE;
-      for i in Send(SYS,@GetUsers)
+      foreach i in Send(SYS,@GetUsers)
       {
          if StringEqual(string,Send(i,@GetTrueName))
          {

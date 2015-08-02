@@ -152,7 +152,7 @@ messages:
       local rItem_condition, iHit_percent, i, bFoundProperties, oSpell, iHigh_level, n,
                              iFarenPower, iRiijaPower, iKraananPower, iJalaPower, iShalPower, iQorPower, iInstrumentPower;
 
-      for i in plObject_attributes
+      foreach i in plObject_attributes
       {
          Send(i,@AttributeDesc);
       }
@@ -419,7 +419,7 @@ messages:
             AppendTempString(special_properties_header);
          }
          
-         for i in Send(self,@GetCurrentResistances)
+         foreach i in Send(self,@GetCurrentResistances)
          {
             AppendTempString(Nth(i,2));
             AppendTempString("\% ");
@@ -436,7 +436,7 @@ messages:
             AppendTempString(special_properties_header);
          }
          
-         for i in Send(SYS,@GetAttackTypeList)
+         foreach i in Send(SYS,@GetAttackTypeList)
          {
             if (Send(self,@GetAttackType) & i)
             {
@@ -457,7 +457,7 @@ messages:
             AppendTempString(special_properties_header);
          }
          
-         for i in Send(SYS,@GetSpellTypeList)
+         foreach i in Send(SYS,@GetSpellTypeList)
          {
             if (Send(self,@GetAttackSpell) & i)
             {
@@ -473,7 +473,7 @@ messages:
       
       if Send(self,@GetAttributes) <> $
       {
-         for i in Send(self,@GetAttributes)
+         foreach i in Send(self,@GetAttributes)
          {
             if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER
                AND Send(self,@GetIDStatusFromCompound,#compound=First(i)) 
@@ -735,7 +735,7 @@ messages:
       }
       else
       {
-         for i in plItem_Attributes
+         foreach i in plItem_Attributes
          {
             iNum = Send(self,@GetNumFromCompound,#compound=First(i));
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -842,7 +842,7 @@ messages:
       iFinal = (iValue * iPercent)/100;
       iFinal = bound(iFinal,10,iValue);      
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -953,7 +953,7 @@ messages:
       local i, oItemAtt, iNum;
           
       %% check to be sure nothing in ItemAtts disallows this
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -972,7 +972,7 @@ messages:
       local i, oItemAtt, iNum;
           
       % Check to be sure nothing in ItemAtts disallows this
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1001,7 +1001,7 @@ messages:
    {
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1024,7 +1024,7 @@ messages:
       % Type 0 is get
       % Type 1 is offer
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1125,7 +1125,7 @@ messages:
       local i, oItemAtt, iNum;
                 
       % Check to be sure nothing in ItemAtts disallows this
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1166,7 +1166,7 @@ messages:
 
       % Remove itematts from us, since we're not gonna use 'em anymore.
       % This also lets cursed items finally remove themselves from us.
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1257,7 +1257,7 @@ messages:
    {
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1283,7 +1283,7 @@ messages:
    { 
       local i, oItemAtt, iNum;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1309,7 +1309,7 @@ messages:
    {  
       local i, oItemAtt, iNum;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1333,7 +1333,7 @@ messages:
    {  
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1381,7 +1381,7 @@ messages:
       AND (IsClass(self,&Weapon)
          OR IsClass(self,&DefenseModifier))
       {
-         for i in plItem_Attributes
+         foreach i in plItem_Attributes
          {
             iNum = Send(self,@GetNumFromCompound,#compound=First(i));
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1412,7 +1412,7 @@ messages:
       local i, oItemAtt, iNum;
       
       % Check ItemAtts to be sure nothing funky is there
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1431,7 +1431,7 @@ messages:
    {
       local i;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          % KLUDGE: We specifically prevent made items from being given to NPCs.
          %  Should be more general.
@@ -1490,7 +1490,7 @@ messages:
          return FALSE;
       }
 
-      for i in Send(oRoom,@GetHolderActive)
+      foreach i in Send(oRoom,@GetHolderActive)
       {
          oPlayer = Send(oRoom,@HolderExtractObject,#data=i);
          if NOT IsClass(oPlayer,&Player)
@@ -1578,7 +1578,7 @@ messages:
    {
       local i;
 
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       { 
          if Send(self,@GetNumFromCompound,#compound=First(i)) = ItemAtt  
          {
@@ -1604,7 +1604,7 @@ messages:
       local i, n;
 
       n = 0;
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       { 
          if Send(self,@GetNumFromCompound,#compound=First(i)) = ItemAtt
          {
@@ -1651,7 +1651,7 @@ messages:
       local i, bDone;
 
       bDone = FALSE;
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
          {
@@ -1745,7 +1745,7 @@ messages:
          return;
       }
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if Length(i) >= 2 AND Nth(i,2) = timer
          {  
@@ -1769,7 +1769,7 @@ messages:
    {
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1803,7 +1803,7 @@ messages:
       }
       
       iHigh_index = 0;  oHigh_obj = $;
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
          {
@@ -1859,7 +1859,7 @@ messages:
       local oItemAtt, iModifier, i, iNum, oObjectAttribute;
 
       iModifier = Send(self,@GetBaseSpellModifier,#oSpell=oSpell);
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1867,7 +1867,7 @@ messages:
                                       #oSpell=oSpell,#oCaster=poOwner);
       }
       
-      for oObjectAttribute in plObject_attributes
+      foreach oObjectAttribute in plObject_attributes
       {
          iModifier = Send(oObjectAttribute,@ModifySpellPower,#iModifier=iModifier,#oSpell=oSpell,#oCaster=poOwner);
       }
@@ -1898,7 +1898,7 @@ messages:
 
       if Send(self,@OverrideArmsForGauntlets)
       {
-         for i in Send(who,@GetPlayerUsing)
+         foreach i in Send(who,@GetPlayerUsing)
          {
             if Send(i,@OverRideArms)
             {
@@ -1941,7 +1941,7 @@ messages:
 
       if Send(self,@OverrideArmsForGauntlets)
       {
-         for i in Send(who,@GetPlayerUsing)
+         foreach i in Send(who,@GetPlayerUsing)
          {
             if Send(i,@OverRideArms)
             {
@@ -1962,7 +1962,7 @@ messages:
    {
       local i;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if Send(i,@OverRideArms)
          {
@@ -1982,7 +1982,7 @@ messages:
    {
       local i;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if Send(i,@OverRideArms)
          {
@@ -2220,7 +2220,7 @@ messages:
       
       lCurrentResistances = Send(self,@GetResistanceModifiers);
       
-      for oObjectAttribute in plObject_attributes
+      foreach oObjectAttribute in plObject_attributes
       {
          lCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=lCurrentResistances);
       }
@@ -2234,7 +2234,7 @@ messages:
       
       lCurrentResistances = Send(self,@GetCurrentResistances);
       
-      for oResist in lCurrentResistances
+      foreach oResist in lCurrentResistances
       {
          resistance_list = Send(SYS,@AddResistance,#what=Nth(oResist,1),#value=Nth(oResist,2),#resistance_list=resistance_list);
       }
@@ -2246,7 +2246,7 @@ messages:
    {
       local i;
       
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
@@ -2276,7 +2276,7 @@ messages:
       local i, bFound;
 
       bFound = FALSE ;
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
@@ -2318,7 +2318,7 @@ messages:
 
       if what = $
       {
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             if IsClass(Nth(i,1),byClass)
             {
@@ -2338,7 +2338,7 @@ messages:
       }
       else
       {
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             if Nth(i,1) = what
             {
@@ -2366,7 +2366,7 @@ messages:
    
       oHighest = $;
    
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if IsClass(Nth(i,1), byClass)
          {
@@ -2458,7 +2458,7 @@ messages:
    {
       local i, iNum, oItemAtt;
       
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);

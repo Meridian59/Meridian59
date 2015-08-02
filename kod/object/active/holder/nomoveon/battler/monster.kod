@@ -596,7 +596,7 @@ messages:
       % Save original Length for validation
       iLength = Length( plActiveQuestNodes );
 
-      for oActiveNode in plActiveQuestNodes
+      foreach oActiveNode in plActiveQuestNodes
       {
          if oActiveNode = node
          {
@@ -704,11 +704,11 @@ messages:
 
       Send(Send(SYS,@GetLibrary),@DeleteFromOccupationList,#who=self);
 
-      for i in plWantedItems
+      foreach i in plWantedItems
       {
          if i = &SignetRing
          {
-            for j in Send(Send(SYS,@GetLibrary),@GetSignetRings)
+            foreach j in Send(Send(SYS,@GetLibrary),@GetSignetRings)
             {
                if Send(j,@GetRingOwner) = self
                  {
@@ -759,7 +759,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if First(i) = timer
          {
@@ -817,12 +817,12 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          Send(self,@RemoveEnchantment,#what=Nth(i,2));
       }
       
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          Send(self,@RemoveRadiusEnchantment,#what=Nth(i,1),#iPower=Nth(i,2),#caster=Nth(i,3));
       }
@@ -839,7 +839,7 @@ messages:
 
       state = $;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
          {
@@ -1047,7 +1047,7 @@ messages:
 
       if Send(self,@MobIsCondSeller)
       {
-         for i in Nth(plFor_sale,4)
+         foreach i in Nth(plFor_sale,4)
          {
             Send(self,@RemoveFromConditionalList,#obj=First(i));
          }
@@ -1152,7 +1152,7 @@ messages:
          % make sure it's a player who entered
          if IsClass(what,&Player)
          {
-            for oQuestNode in plActiveQuestNodes
+            foreach oQuestNode in plActiveQuestNodes
             {
                if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what)
                {
@@ -1461,7 +1461,7 @@ messages:
          Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_SINGLEMINDED);
       }
             
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          Send(nth(i,2),@ModifyMonsterBehavior,#mob=self);
       }
@@ -1949,7 +1949,7 @@ messages:
       if what <> $
          AND IsClass(what,&Player)
       {
-         for oRod in Send(what,@GetHolderPassive)
+         foreach oRod in Send(what,@GetHolderPassive)
          {
             if IsClass(oRod,&DamageRod)
                AND Send(oRod,@IsActive)
@@ -2002,7 +2002,7 @@ messages:
       
       if piHit_points <= 0 
       {
-         for i in Send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
             each_obj=Send(poOwner,@HolderExtractObject,#data=i);
             if isClass(each_obj,&User)
@@ -2041,7 +2041,7 @@ messages:
    {
       local iDamageReduce, oAttribute;
 
-      for oAttribute in plObject_attributes
+      foreach oAttribute in plObject_attributes
       {
          damage = Send(oAttribute,@ModifyDefenseDamage,#who=self,#what=what,
             #damage=damage,#atype=atype,#aspell=aspell);
@@ -2779,7 +2779,7 @@ messages:
       }     
 
       % If there are active quest nodes, notify them   -AJM
-      for i in item_list
+      foreach i in item_list
       {
          %% first, let's be sure the item CAN be given away.
          if NOT Send(i,@CanBeGivenToNPC)
@@ -2800,7 +2800,7 @@ messages:
 
          if plActiveQuestNodes <> $
          {
-            for oQuestNode in plActiveQuestNodes
+            foreach oQuestNode in plActiveQuestNodes
             {
                if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
                        #item_offered=i)
@@ -2843,7 +2843,7 @@ messages:
 
          iValueOffered = 0;
 
-         for i in item_list
+         foreach i in item_list
          {
             if NOT Send(what,@ReqLeaveHold,#what=i)
             {
@@ -2889,7 +2889,7 @@ messages:
 
       bAllWanted = TRUE;
 
-      for i in item_list
+      foreach i in item_list
       {
          if NOT Send(what,@ReqLeaveHold,#what=i)
          {
@@ -2902,7 +2902,7 @@ messages:
          % If there are active quest nodes, notify them   -AJM
          if plActiveQuestNodes <> $
          {
-            for oQuestNode in plActiveQuestNodes
+            foreach oQuestNode in plActiveQuestNodes
             {
                if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
                        #item_offered=i)
@@ -2914,7 +2914,7 @@ messages:
 
          bWanted = FALSE;
          bAllWanted = FALSE;
-         for j in plWantedItems 
+         foreach j in plWantedItems 
          {
             if IsClass(i,j)
             {
@@ -3040,7 +3040,7 @@ messages:
       % Perhaps the item was meant for an earlier quest,but is now too late.
       % If so, lets return the item to the player.
 
-      for i in Send(oLibrary,@GetOldClasses,#mob=self)
+      foreach i in Send(oLibrary,@GetOldClasses,#mob=self)
       {
          if IsClass(obj,i)
          {
@@ -3131,7 +3131,7 @@ messages:
       % Quest engine hook: if there are active quest nodes, notify them   -AJM
       if plActiveQuestNodes <> $
       {
-         for oQuestNode in plActiveQuestNodes
+         foreach oQuestNode in plActiveQuestNodes
          {
             if Send(oQuestNode,@CheckCompletionCriteria,#who_tried=what,
                     #message=string)
@@ -3161,7 +3161,7 @@ messages:
       }
 
       % If it wasnt a current quest, maybe it was an old quest.
-      for i in Send(oLibrary,@GetOldPhrases,#mob=self)
+      foreach i in Send(oLibrary,@GetOldPhrases,#mob=self)
       {
          if Send(oLibrary,@IsQuestStringMatch,
                  #string=string,#goal=i,#who=what,#mob=self)
@@ -3286,7 +3286,7 @@ messages:
 
       rAbility_name = $;
       iNum = 0;
-      for i in nth(plFor_Sale,2)
+      foreach i in nth(plFor_Sale,2)
       {         
          oAbility = Send(SYS,@FindSkillByNum,#num=i);
          if iLevel = Send(oAbility,@GetLevel) and Send(oAbility,@IsAccessible)
@@ -3310,7 +3310,7 @@ messages:
          }
       }
 
-      for i in nth(plFor_Sale,3)
+      foreach i in nth(plFor_Sale,3)
       {         
          oAbility = Send(SYS,@FindSpellByNum,#num=i);
          if iLevel = Send(oAbility,@GetLevel) and Send(oAbility,@IsAccessible)
@@ -3401,7 +3401,7 @@ messages:
 
       % plSpamlist is [ [mob_class, key_num],...]
       % List should be small, so we'll just do a linear search.
-      for lSpeechItem in plSpamList
+      foreach lSpeechItem in plSpamList
       {
          if First(lSpeechItem) = mob_class AND Nth(lSpeechItem,2) = key_num
          {
@@ -3451,7 +3451,7 @@ messages:
          % we found an applicable random trigger, find a random user.
          iNum = 0;
          oTarget = $;
-         for i in Send(Send(self,@GetOwner),@GetHolderActive)
+         foreach i in Send(Send(self,@GetOwner),@GetHolderActive)
          {
             if isClass(Send(poOwner,@HolderExtractObject,#data=i),&User)
             {
@@ -3721,7 +3721,7 @@ messages:
       %  than the new price.  This has been taken out.
 
       iValue_offered = 0;
-      for i in item_list
+      foreach i in item_list
       {
          x = Send(i,@GetValue) * (100 - 10*viMerchant_markup) / 100;
          iAdd = Bound(x,1,$);
@@ -3774,7 +3774,7 @@ messages:
 
       % set the stuff where the user can get to it
       oHolder = Send(SYS,@GetSystemHolder2);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
          if IsClass(i,&Money)
@@ -3785,10 +3785,10 @@ messages:
 
       % take stuff the user put there
       oHolder = Send(SYS,@GetSystemHolder1);
-      for lTake_items in [ Send(oHolder,@GetHolderActive),
+      foreach lTake_items in [ Send(oHolder,@GetHolderActive),
                            Send(oHolder,@GetHolderPassive) ]
       {
-         for i in lTake_items
+         foreach i in lTake_items
          {
             Send(self,@NewHold,#what=i);
          }
@@ -3818,7 +3818,7 @@ messages:
       }
 
       iFee = 0;
-      for i in lItems
+      foreach i in lItems
       {
          % Can't store anything without any bulk, such as gold
          if Send(i,@GetBulk) <= 0 
@@ -3942,9 +3942,9 @@ messages:
       iCount = 0;
 
       % Make sure the player really has this item in storage.
-      for i in lItems
+      foreach i in lItems
       {
-         for j in Send(oSafeBox,@GetHolderPassive)
+         foreach j in Send(oSafeBox,@GetHolderPassive)
          {
             if i = j
             {
@@ -4020,7 +4020,7 @@ messages:
       bFailed = FALSE;
 
       % At this point, we're pretty sure it's all legal.      
-      for i in lItems
+      foreach i in lItems
       {
          % Don't bother calling ReqMewHold.  It just checks weight,
          % which you already know is legal.
@@ -4140,7 +4140,7 @@ messages:
       else
       {
          lTops = Send(oBank,@FindTopAccounts,#number=number);
-         for who in lTops
+         foreach who in lTops
          {
             Send(oSnoop,@MsgSendUser,#message_rsc=monster_report_balance,
                #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName),
@@ -4340,7 +4340,7 @@ messages:
 
       % Walk the objects the user selected as wanting to purchase from
       % our Sale list
-      for i in item_list
+      foreach i in item_list
       {
          % Find the dude's money.  Do this each time in case we exactly use it
          % up.
@@ -4405,7 +4405,7 @@ messages:
 
          % Make sure the item is really for sale from this mob.
          bFound = FALSE;
-         for j in Send(self,@GetForSale,#who=what)
+         foreach j in Send(self,@GetForSale,#who=what)
          {
             if i = j
             {
@@ -4658,7 +4658,7 @@ messages:
          % that corresponds to the random number picked. This is used
          % to give a % chance for each spell to be picked.
          iRandom = Random(1,100);
-         for i in plSpellBook
+         foreach i in plSpellBook
          {
             if iRandom <= Nth(i,3)
             {
@@ -4753,7 +4753,7 @@ messages:
          }
       }
 
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj=Send(poOwner,@HolderExtractObject,#data=i);
          if isClass(each_obj,&User) AND Send(each_obj,@GetKillTarget) = self
@@ -4780,7 +4780,7 @@ messages:
       piHit_points = piHit_points+100;
       if iPercentClass <> (piHit_points/(piMax_Hit_points*20))
       {
-         for i in Send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
             each_obj=Send(poOwner,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
@@ -5217,7 +5217,7 @@ messages:
          return;
       }
 
-      for i in plWantedItems
+      foreach i in plWantedItems
       {
          if i = class
          {
@@ -5254,24 +5254,24 @@ messages:
          return;
       }
 
-      for i in Nth(plFor_sale,2)
+      foreach i in Nth(plFor_sale,2)
       {
          i = $;
       }
 
-      for i in Nth(plFor_sale,3)
+      foreach i in Nth(plFor_sale,3)
       {
          i = $;
       }
 
-      for i in First(plFor_sale)
+      foreach i in First(plFor_sale)
       {
          Send(i,@Delete);
       }
 
       if Length(plFor_sale) = 4
       {
-         for i in Nth(plFor_sale,4)
+         foreach i in Nth(plFor_sale,4)
          {
             Send(i,@Delete);
          }
@@ -5587,7 +5587,7 @@ messages:
          return;
       }
 
-      for i in Nth(plFor_sale,4)
+      foreach i in Nth(plFor_sale,4)
       {
          if First(i) = obj
          {
@@ -5609,7 +5609,7 @@ messages:
          return;
       }
 
-      for i in Nth(plFor_sale,4)
+      foreach i in Nth(plFor_sale,4)
       {
          if GetClass(First(i)) = class
          {
@@ -5629,7 +5629,7 @@ messages:
          return;
       }
 
-      for i in Nth(plFor_sale,4)
+      foreach i in Nth(plFor_sale,4)
       {
          if First(i)=obj
          {
@@ -5746,14 +5746,14 @@ messages:
       % first do conditional items
       if Length(plFor_sale) = 4
       {
-         for i in Nth(plFor_sale,4)
+         foreach i in Nth(plFor_sale,4)
          {
             lForSale = cons(First(i),lForSale);
          }
       }
 
       % now do spells
-      for i in Nth(plFor_sale,3)
+      foreach i in Nth(plFor_sale,3)
       {
          if Send(self,@CanAddSpell,#who=who,#num=i)
             AND (Send(who,@GetSpellAbility,#spell_num=i) = 0)
@@ -5763,7 +5763,7 @@ messages:
       }
 
       % now do skills
-      for i in Nth(plFor_sale,2)
+      foreach i in Nth(plFor_sale,2)
       {
          if Send(self,@CanAddSkill,#who=who,#num=i)
             AND (Send(who,@GetSkillAbility,#skill_num=i) = 0)
@@ -5773,7 +5773,7 @@ messages:
       }
 
       % now do the items
-      for i in First(plFor_sale)
+      foreach i in First(plFor_sale)
       {
          lForSale = cons(i,lForSale);
       }
@@ -5795,7 +5795,7 @@ messages:
 
       if plFor_sale <> $ AND Length(plFor_sale) = 4
       {
-         for i in Nth(plFor_sale,4)
+         foreach i in Nth(plFor_sale,4)
          {
             if what=First(i)
             {
@@ -5937,12 +5937,12 @@ messages:
       }
 
       % Add in our inventory
-      for i in plActive
+      foreach i in plActive
       {
          lTreasureItems = cons(i,lTreasureItems);
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          lTreasureItems = cons(i,lTreasureItems);
       }
@@ -5969,9 +5969,9 @@ messages:
 
       % Add one set of spell reagents to the treasure for each type of spell 
       % that was cast on the monster.
-      for i in plSpellList
+      foreach i in plSpellList
       {
-         for j in Send(Send(SYS,@FindSpellByNum,#num=i),@GetReagents)
+         foreach j in Send(Send(SYS,@FindSpellByNum,#num=i),@GetReagents)
          {
             oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
             lTreasureItems = Cons(oReagent,lTreasureItems);
@@ -5984,7 +5984,7 @@ messages:
       bRangeFailure = FALSE;
       
       % Now drop all the treasure.
-      for oTreasure in lTreasureItems
+      foreach oTreasure in lTreasureItems
       {
          if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol)
@@ -6385,7 +6385,7 @@ messages:
       }
 
 
-      for oActive in plControlledMinions
+      foreach oActive in plControlledMinions
       {
          if IsClass(oActive,&Monster)
             AND Send(oActive,@GetMaster) = self
@@ -6438,7 +6438,7 @@ messages:
    {
       local i, oSpell, each_obj;
 
-      for i in plEnchantments 
+      foreach i in plEnchantments 
       {                       
          oSpell = Nth(i,2);
          if Send(oSpell,@IsIllusion)
@@ -6455,7 +6455,7 @@ messages:
    {
       local i, oSpell, each_obj;
 
-      for i in plEnchantments 
+      foreach i in plEnchantments 
       {                       
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = school
@@ -6482,7 +6482,7 @@ messages:
       oTarget = $;
 
       lActive = Send(poOwner,@GetHolderActive);
-      for i in lActive
+      foreach i in lActive
       {
          oObject = Send(poOwner,@HolderExtractObject,#data=i);
 
@@ -6555,7 +6555,7 @@ messages:
       iRangeSquared = piVisionDistance * piVisionDistance;
 
       lActive = Send(poOwner,@GetHolderActive);
-      for i in lActive
+      foreach i in lActive
       {
          oObject = Send(poOwner,@HolderExtractObject,#data=i);
 
@@ -6881,7 +6881,7 @@ messages:
 
       lDialogue = $;
 
-      for sid in nth(plFor_sale,2)
+      foreach sid in nth(plFor_sale,2)
       {
          % skills first
          oAbility = Send(SYS,@FindSkillByNum,#num=sid);
@@ -6893,7 +6893,7 @@ messages:
          lDialogue = cons([[oName],0,[LIBACT_LEARN, sid, TRUE]],lDialogue);
       }
       
-      for sid in nth(plFor_sale,3)
+      foreach sid in nth(plFor_sale,3)
       {
          % spells next
          oAbility = Send(SYS,@FindSpellByNum,#num=sid);
@@ -6999,7 +6999,7 @@ messages:
    {
       local i;
 
-      for i in plSpellList
+      foreach i in plSpellList
       {
          if i = spellNum
          {

@@ -412,13 +412,13 @@ messages:
 
       if IsClass(what,&Lever)
       {
-         for oLever in plLevers
+         foreach oLever in plLevers
          {
             if what = oLever
             {
                Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@LeverPulled,
                      #num=FindListElem(plLevers,oLever));
-               for i in plLevers
+               foreach i in plLevers
                {
                   Send(i,@SetStuck,#newStuck=TRUE);
                }
@@ -436,7 +436,7 @@ messages:
       local i;
       ptReactivateLevers = $;
 
-      for i in plLevers
+      foreach i in plLevers
       {
          Send(i,@SetStuck,#newStuck=FALSE);
       }

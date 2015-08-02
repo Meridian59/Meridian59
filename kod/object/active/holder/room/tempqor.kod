@@ -115,7 +115,7 @@ messages:
       
       piCurrentExit = oChosenExit;
       
-      for i in plExitPossibilities
+      foreach i in plExitPossibilities
       {
          if i = piCurrentExit
          {

@@ -851,7 +851,7 @@ messages:
          return FALSE;
       }
 
-      for i in plAmuletLocations
+      foreach i in plAmuletLocations
       {
          if Send(oOwner,@GetRoomNum) = First(i)
          {

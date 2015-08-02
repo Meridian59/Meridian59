@@ -313,7 +313,7 @@ messages:
       }
 
       oPlayerObj = $;
-      for i in Send(who,@GetHolderPassive)
+      foreach i in Send(who,@GetHolderPassive)
       {
          if IsClass(i,GetClass(obj))
          {

@@ -50,7 +50,7 @@ messages:
       }
 
       iValue_offered = 0;
-      for i in item_list
+      foreach i in item_list
       {
 	 iValue_offered = iValue_offered + Send(i,@GetValue);
       }
@@ -75,7 +75,7 @@ messages:
       }
 
       iValue_offered = 0;
-      for i in item_list
+      foreach i in item_list
       {
 	 iValue_offered = iValue_offered + Send(i,@GetValue);
       }
@@ -110,7 +110,7 @@ messages:
       % drop the stuff
 
       oHolder = Send(SYS,@GetSystemHolder2);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
 	 Send(oHolder,@NewHold,#what=i);
       }
@@ -130,7 +130,7 @@ messages:
 	    lTake_items = Send(oHolder,@GetHolderPassive);
 	 }
 
-	 for i in lTake_items
+	 foreach i in lTake_items
 	 {
 	    if Send(self,@ReqNewHold,#what=i)
 	    {

@@ -117,7 +117,7 @@ messages:
       }
       
       oUsing = Send(poOwner,@GetPlayerUsing);
-      for i in oUsing
+      foreach i in oUsing
       {
          if IsClass(i,&weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
          {

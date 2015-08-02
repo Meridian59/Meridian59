@@ -136,7 +136,7 @@ messages:
                      RID_B6, RID_C6, RID_D6, RID_E6, RID_F6, RID_G6, RID_H6, RID_I6
                    ];
                   
-      for i in [ RID_C7, RID_D7, RID_E7, RID_F7, RID_H7, RID_I7,
+      foreach i in [ RID_C7, RID_D7, RID_E7, RID_F7, RID_H7, RID_I7,
                  RID_F8, RID_TOS, RID_MARION, RID_JASWEST, RID_CORNOTH, RID_BAR_NORTH ]
       {
          plFlagRIDs = cons(i,plFlagRIDs);
@@ -234,17 +234,17 @@ messages:
       % placing the other flags yet.  So we do this in two passes:
       % 1) Create and place all flags
       % 2) Set flags' factions
-      for lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
       {
-         for iRID in lRIDs
+         foreach iRID in lRIDs
          {
             Send(self, @CreateOneFlagpole, #room_id = iRID);
          }
       }
 
-      for lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
       {
-         for iRID in lRIDs
+         foreach iRID in lRIDs
          {
             oFlagRoom = send(SYS,@FindRoomByNum,#num=iRID);
             oFlag = Send(oFlagRoom,@FindHoldingActive,#Class=&Flagpole);
@@ -297,12 +297,12 @@ messages:
       % placing the other flags yet.  So we do this in two passes:
       % 1) Create and place all flags
       % 2) Set flags' factions
-      for iRID in plFlagRIDs
+      foreach iRID in plFlagRIDs
       {
          Send(self, @CreateOneFlagpole, #room_id = iRID);
       }
 
-      for iRID in plFlagRIDs
+      foreach iRID in plFlagRIDs
       {
          oFlagRoom = Send(SYS,@FindRoomByNum,#num=iRID);
          oFlag = Send(oFlagRoom,@FindHoldingActive,#Class=&Flagpole);
@@ -375,7 +375,7 @@ messages:
    {
       local iRID, oFlagRoom, iCapout;
 
-      for iRID in plFlagRIDs
+      foreach iRID in plFlagRIDs
       {
          oFlagRoom = send(SYS,@FindRoomByNum,#num=iRID);
          iCapout = 0;
@@ -539,7 +539,7 @@ messages:
       % next, count all flags and update counters.
       lFlagCounts = [0, 0, 0, 0];
 
-      for iRID in plFlagRIDs
+      foreach iRID in plFlagRIDs
       {
          oRoom = send(SYS,@FindRoomByNum,#num=iRID);
          oFlagpole = send(oRoom,@FindHoldingActive,#class=&FlagPole);
@@ -581,10 +581,10 @@ messages:
    {
       local lRIDs, iRID, oRoom, oFlagpole, lFlagCounts, iFaction;
 
-      for lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
       {
          lFlagCounts = [0, 0, 0, 0];
-         for iRID in lRIDs
+         foreach iRID in lRIDs
          {
             oRoom = send(SYS,@FindRoomByNum,#num=iRID);
             oFlagpole = send(oRoom,@FindHoldingActive,#class=&FlagPole);
@@ -672,7 +672,7 @@ messages:
          rCity = TerritoryGame_Marion;
       }
 
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if (not send(i,@PlayerIsIntriguing))
          {
@@ -834,9 +834,9 @@ messages:
       % Next, distribute the flags accordingly
 
       %  First, clear all to neutral
-      for lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
       {
-         for iRID in lRIDs
+         foreach iRID in lRIDs
          {
             if iRID = first(lRIDs) { continue; }
             oRoom = send(SYS,@FindRoomByNum,#num=iRID);
@@ -846,9 +846,9 @@ messages:
       }
 
       %  Then place duke flags
-      for lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
+      foreach lRIDs in [plTosRIDs, plMarionRIDs, plJasperRIDs, plCorNothRIDs, plBarloqueRIDs]
       {
-         for iRID in lRIDs
+         foreach iRID in lRIDs
          {
             if iDukeFlags > 0
             {
@@ -862,9 +862,9 @@ messages:
       }
 
       %  And finally princess flags
-      for lRIDs in [plBarloqueRIDs, plCorNothRIDs, plJasperRIDs, plMarionRIDs, plTosRIDs]
+      foreach lRIDs in [plBarloqueRIDs, plCorNothRIDs, plJasperRIDs, plMarionRIDs, plTosRIDs]
       {
-         for iRID in lRIDs
+         foreach iRID in lRIDs
          {
             if iPrincessFlags > 0
             {
@@ -891,7 +891,7 @@ messages:
       iFlagTotal = 0;
       iFactionTotal = 0;
 
-      for iCount in plFlagCounts
+      foreach iCount in plFlagCounts
       {
          iFlagTotal = iFlagTotal + iCount;
       }

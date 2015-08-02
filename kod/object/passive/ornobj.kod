@@ -825,7 +825,7 @@ messages:
       }
 
       lPassive = send(poOwner,@GetHolderPassive);
-      for i in lPassive
+      foreach i in lPassive
       {
          oPassive = first(i);
          if isClass(oPassive,&OrnamentalObject)

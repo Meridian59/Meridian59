@@ -65,7 +65,7 @@ messages:
       }
 
       % Tell people the guild is going away
-      for i in Send(oGuild,@GetMemberList)
+      foreach i in Send(oGuild,@GetMemberList)
       {
          oUser = First(i);
          if oUser = who

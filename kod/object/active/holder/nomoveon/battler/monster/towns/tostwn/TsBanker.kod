@@ -146,7 +146,7 @@ messages:
     
          % Be sure they actually have this many gems.
          bFound = FALSE;
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if GetClass(i) = GetClass(obj)
             {

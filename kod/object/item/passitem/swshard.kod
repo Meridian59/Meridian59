@@ -80,7 +80,7 @@ messages:
       bShardC = FALSE;
       bShardD = FALSE;
 
-      for i in send(poOwner,@GetHolderPassive)
+      foreach i in send(poOwner,@GetHolderPassive)
       {
          if isClass(i,&SwordShardA) 
          {

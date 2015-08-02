@@ -76,7 +76,7 @@ messages:
    {
       local i;
 
-      for i in lTargets
+      foreach i in lTargets
       {
          % already a murderer
          if send(i,@checkplayerflag,#flag=PFLAG_MURDERER)

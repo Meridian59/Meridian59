@@ -161,7 +161,7 @@ messages:
                #quest_node_index=QNT_ID_STUNTED_DWARF_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -194,7 +194,7 @@ messages:
                #timelimit=24 * 3600,#quest_node_index=QNT_ID_STUNTED_DWARF_THREE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -232,7 +232,7 @@ messages:
                #quest_node_index=QNT_ID_STUNTED_DWARF_FIVE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

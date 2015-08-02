@@ -52,7 +52,7 @@ messages:
 
       oHell = Send(SYS,@FindRoomByNum,#num=RID_OUTOFGRACE);
 
-      for j in lTargets
+      foreach j in lTargets
       {
          i = j;
 

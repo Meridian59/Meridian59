@@ -142,7 +142,7 @@ messages:
 
       bExhaustedMultiple = 1;
       
-      for oBattler in lEnchanted
+      foreach oBattler in lEnchanted
       {
          if IsClass(Send(oBattler,@GetOwner),&GuildHall)
             AND NOT Send(Send(oBattler,@GetOwner),@InFoyer,#who=oBattler)

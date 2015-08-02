@@ -183,7 +183,7 @@ messages:
          }
       }
 
-      for oRoom in lAllTargets
+      foreach oRoom in lAllTargets
       {
          sRoomName = Send(oRoom,@GetName);
          if StringContain(string,sRoomName)
@@ -191,7 +191,7 @@ messages:
             bFound = TRUE;
             Post(oRoom,@Teleport,#what=who);
 
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                if IsClass(each_obj,&User)
@@ -266,7 +266,7 @@ messages:
 
       iNumRooms = length(lLocations);
 
-      for i in lLocations
+      foreach i in lLocations
       {
          iCounter = iCounter + 1;
 

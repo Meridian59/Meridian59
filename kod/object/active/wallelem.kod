@@ -203,7 +203,7 @@ messages:
 
       if vbPeriodic
       {
-         for i in Send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
             oObject = Send(poOwner,@HolderExtractobject,#data=i);
             if IsClass(oObject,&Battler)

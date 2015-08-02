@@ -189,7 +189,7 @@ messages:
       eCount = 0;
       oldKarma = send(self,@GetKarma);
       
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(first(i),&Fairy) OR isClass(first(i),&EvilFairy)
          {
@@ -250,7 +250,7 @@ messages:
 
       prMusic = rMusic;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&User)
@@ -259,7 +259,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = First(i);
          if IsClass(each_obj,&FeyTree)
@@ -372,7 +372,7 @@ messages:
       if iValue <> -1
       {
          oCenter = send(SYS,@FindRoomByNum,#num=RID_C2);
-         for i in send(oCenter,@GetFeyForest)
+         foreach i in send(oCenter,@GetFeyForest)
          {
             oRoom = send(SYS,@FindRoomByNum,#num=i);
             if oRoom = $
@@ -393,7 +393,7 @@ messages:
       
       piRoom_karma = value;
 
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(first(i),&Monster)
          {

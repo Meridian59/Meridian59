@@ -164,7 +164,7 @@ messages:
          return FALSE;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj=Send(self,@holderExtractObject,#data=i);
          if isClass(each_obj,&orc)

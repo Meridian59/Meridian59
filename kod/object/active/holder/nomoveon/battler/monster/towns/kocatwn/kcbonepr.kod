@@ -183,7 +183,7 @@ messages:
       lDialogue = $;
       lTriggers = $;
 
-      for sid in Nth(plFor_sale,3)
+      foreach sid in Nth(plFor_sale,3)
       {
          %% spells next
          oAbility = Send(SYS,@FindSpellByNum,#num=sid);
@@ -246,7 +246,7 @@ messages:
 
       if (IsClass(what,&User)) AND (type = SAY_NORMAL)
       {
-         for i in plSquawks
+         foreach i in plSquawks
          {
             if (StringContain(string, i))
             {

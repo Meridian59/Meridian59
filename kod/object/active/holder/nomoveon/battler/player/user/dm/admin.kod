@@ -156,7 +156,7 @@ messages:
             return;
          }
 
-         for i in Send(SYS,@GetItemAtts)
+         foreach i in Send(SYS,@GetItemAtts)
          {
             if Send(i,@DMCreateItemAtt,#who=self,#string=string,
                     #oWeapon=oWeapon)

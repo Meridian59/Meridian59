@@ -237,7 +237,7 @@ messages:
          pbPrivate = FALSE;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)

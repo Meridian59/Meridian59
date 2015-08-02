@@ -94,7 +94,7 @@ messages:
    {
       local i, each_obj;
       
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = send(self,@HolderExtractObject,#data=i);
          

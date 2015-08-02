@@ -78,7 +78,7 @@ messages:
             #parm2=Send(who,@GetName),
             #parm3=Send(who,@GetHisHer));
 
-      for i in lActive
+      foreach i in lActive
       {
          each_obji = Send(oRoom,@HolderExtractObject,#data=i);
 

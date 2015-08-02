@@ -129,7 +129,7 @@ messages:
       Spells = send(poApply_target,@GetSpellList);
       piCount = 0;
       
-      for i in Spells
+      foreach i in Spells
       {
          iSpellNum = send(poApply_target,@DecodeSpellNum,#compound=i);
          oSpell = send(SYS,@FindSpellByNum,#num=iSpellNum);

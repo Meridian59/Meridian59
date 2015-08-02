@@ -59,7 +59,7 @@ messages:
    {
       local i;
 
-      for i in plReagents
+      foreach i in plReagents
       {
          Send(i,@Delete);
       }
@@ -81,7 +81,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plReagents
+      foreach i in plReagents
       {
          if what = i
          {
@@ -98,7 +98,7 @@ messages:
 
       iSum = 0;
 
-      for i in plReagents
+      foreach i in plReagents
       {
          iSum = iSum + Send(i,@GetBulk);
       }
@@ -112,7 +112,7 @@ messages:
 
       iSum = 0;
 
-      for i in plReagents
+      foreach i in plReagents
       {
          iSum = iSum + Send(i,@GetWeight);
       }
@@ -162,7 +162,7 @@ messages:
 
       if IsClass(what,&NumberItem)
       {
-         for i in plReagents
+         foreach i in plReagents
          {
             if i <> what
             {
@@ -212,7 +212,7 @@ messages:
    {
       local i;
 
-      for i in plReagents
+      foreach i in plReagents
       {
          if i = what
          {

@@ -309,7 +309,7 @@ messages:
       }
       if lPlayers <> $
       {
-         for i in lPlayers
+         foreach i in lPlayers
          {
             Send(self,@Teleport,#what=i,#foyer=TRUE);
          }

@@ -66,7 +66,7 @@ messages:
       
       if IsClass(poOwner,&Player)
       {
-         for i in Send(poOwner,@GetPlayerUsing)
+         foreach i in Send(poOwner,@GetPlayerUsing)
          {
             if IsClass(i,&DefenseModifier)
                AND Send(i,@GetItemUseType) & ITEM_USE_HEAD

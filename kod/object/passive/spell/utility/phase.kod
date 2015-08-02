@@ -265,7 +265,7 @@ messages:
       iHealth = Send(who,@GetHealth);
       iMaxHealth = Send(who,@GetMaxHealth);
 
-      for i in Send(oRoom,@GetplActive)
+      foreach i in Send(oRoom,@GetplActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 
@@ -323,7 +323,7 @@ messages:
       }
 
       oRoom = Send(who,@GetOwner);
-      for i in Send(oRoom,@GetplActive)
+      foreach i in Send(oRoom,@GetplActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
@@ -394,7 +394,7 @@ messages:
          return;
       }
 
-      for i in Send(oRoom,@GetplActive)
+      foreach i in Send(oRoom,@GetplActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)

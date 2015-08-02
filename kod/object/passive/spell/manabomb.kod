@@ -122,7 +122,7 @@ messages:
       iMana = iMana / 2;
       iMana = iMana + (iMana * iSpellPower)/100;
 
-      for i in lTargets
+      foreach i in lTargets
       {
          % Mana loss.
          iManaLost = Send(i,@LoseMana,#amount=iMana);

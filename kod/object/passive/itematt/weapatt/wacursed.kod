@@ -116,7 +116,7 @@ messages:
       oOwner = Send(oItem,@GetOwner);
       if IsClass(oOwner,&player)
       {
-         for i in Send(oOwner,@getplayerusing)
+         foreach i in Send(oOwner,@getplayerusing)
          {
             if i = oItem
             {

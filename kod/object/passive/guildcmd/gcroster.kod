@@ -61,7 +61,7 @@ messages:
          Addpacket(1,BP_MESSAGE,4,roster_message_rsc);
          Addpacket(4,send(oGuild,@getdef),4,send(oGuild,@getname));
          firstone = TRUE;
-         for i in Members
+         foreach i in Members
            {
               if not firstone
                 { Addpacket(4,roster_comma); }

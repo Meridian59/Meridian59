@@ -51,7 +51,7 @@ messages:
       
       If IsClass(what,&Player)
       {
-         for i in Send(what,@GetPlayerUsing)
+         foreach i in Send(what,@GetPlayerUsing)
          {
             if apply_on = i
             {
@@ -61,7 +61,7 @@ messages:
          }
       }
       
-      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+      foreach oObjectAtt in Send(apply_on,@GetObjectAttributes)
       {
          If IsClass(oObjectAtt,&DefModSockets)
             AND Send(oObjectAtt,@GetSocketed) <> $
@@ -77,7 +77,7 @@ messages:
    {
       local oObjectAtt;
       
-      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+      foreach oObjectAtt in Send(apply_on,@GetObjectAttributes)
       {
          if IsClass(oObjectAtt,&DefModSockets)
          {

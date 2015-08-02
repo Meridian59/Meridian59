@@ -160,7 +160,7 @@ messages:
 
       bOkay = FALSE;
       lSpells = Send(who,@GetSpellList);
-      for i in lSpells
+      foreach i in lSpells
       {
          oSpell = Send(SYS,@FindSpellByNum,
                         #num=Send(who,@DecodeSpellNum,#compound=i));

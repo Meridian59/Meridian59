@@ -92,7 +92,7 @@ messages:
 
       lMembers = send(oGuild,@getmemberlist);
 
-      for i in lMembers
+      foreach i in lMembers
          {
              post(first(i),@msgsenduser,#message_rsc=renounce_ties_others,
                 #parm1=send(who,@getdef),

@@ -167,7 +167,7 @@ messages:
       }
 
       iTotal = 0;
-      for lMonster_info in plMonsters
+      foreach lMonster_info in plMonsters
       {
          iTotal = iTotal + Nth(lMonster_info,2);
 
@@ -244,7 +244,7 @@ messages:
       % in the room.  Sometimes this becomes inaccurate.
       bFound = FALSE;
       piMonster_Count = 0;
-      for i in plActive
+      foreach i in plActive
       {
          oMonster = Send(self,@HolderExtractObject,#data=i);
          % Count monsters, but not NPCs.

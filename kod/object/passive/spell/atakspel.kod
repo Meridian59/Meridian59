@@ -211,7 +211,7 @@ messages:
 
       % After figuring damage, do an AssessDamage.  This will handle the necessary
       %  attack messages.
-      for i in lTargets
+      foreach i in lTargets
       {
          if IsClass(who,&Player)
          {

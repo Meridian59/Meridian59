@@ -168,7 +168,7 @@ messages:
       lPieces = [&SwordShardA,&SwordShardB,&SwordShardC,&SwordShardD];
       cBadPiece = Nth(lPieces,random(1,4));
 
-      for cPiece in lPieces
+      foreach cPiece in lPieces
       {
          if cPiece = cBadPiece
          {

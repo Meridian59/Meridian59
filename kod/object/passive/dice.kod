@@ -154,7 +154,7 @@ messages:
       if oRoom = $ or not isClass(oRoom, &Room)
       {  return FALSE;  }
 
-      for i in send(oRoom,@GetHolderActive)
+      foreach i in send(oRoom,@GetHolderActive)
       {
 	 if not isClass(first(i),&Player)
 	 {

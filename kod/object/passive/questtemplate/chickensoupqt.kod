@@ -120,19 +120,19 @@ messages:
                #quest_node_index=QNT_ID_CHICKEN_SOUP_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

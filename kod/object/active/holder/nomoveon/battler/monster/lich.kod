@@ -312,7 +312,7 @@ messages:
    {
       local i;
 
-      for i in plAttackers
+      foreach i in plAttackers
       {
          if i = what
          {
@@ -557,7 +557,7 @@ messages:
 
       if Send(poTarget,@IsEnchanted,#what=oBlind)
       {
-         for i in lActive
+         foreach i in lActive
          {
             each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             iDistance = Send(self,@SquaredDistanceTo,#what=each_obj);
@@ -592,7 +592,7 @@ messages:
 
       NumAttackers = Length(plAttackers);
 
-      for i in plAttackers
+      foreach i in plAttackers
       {
          if i = what
          {
@@ -659,7 +659,7 @@ messages:
          AppendTempString(lich_killed_world_saved_0);
          AppendTempString(Send(what,@GetTrueName));
          AppendTempString(lich_killed_world_saved_1);
-         for i in Attackers
+         foreach i in Attackers
          {
             if Length(Attackers) > 1
                AND i = Nth(Attackers,Length(Attackers))
@@ -778,7 +778,7 @@ messages:
          {
             % Tell the amulet to pay up, find out how much we sucked out.
             oAmulet = $;
-            for oAmulet in Send(what,@GetPlayerUsing)
+            foreach oAmulet in Send(what,@GetPlayerUsing)
             {
                if IsClass(oAmulet,&NecromancerAmulet)
                {
@@ -906,7 +906,7 @@ messages:
 
          if Send(what,@IsUsingA,#class=&NecromancerAmulet)
          {
-            for i in plAttackers
+            foreach i in plAttackers
             {
                if i = what
                {
@@ -928,7 +928,7 @@ messages:
 
       % Get rid of any active quests so any new ones get scheduled with the
       % body instead.
-      for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
+      foreach oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
                      ,QT_ACTIVE_QUESTS)
       {
          Send(oQ,@DeadlineExpired);

@@ -110,7 +110,7 @@ messages:
          if (row=15) and (col=9)
          {
             lPassive=Send(what,@GetHolderPassive);
-            for i in lPassive
+            foreach i in lPassive
             {
                each_obj = Send(what,@HolderExtractObject,#data=i);
                if IsClass(each_obj,&SanctuaryKey)

@@ -815,10 +815,10 @@ messages:
       SetString( First( plScratchString ), append_string );
 
       %Figure out who our condsellers are...
-      for i in plMobLib
+      foreach i in plMobLib
       {
          repeat = FALSE;
-         for j in lSellers
+         foreach j in lSellers
          {
             if i = j
             {
@@ -833,7 +833,7 @@ messages:
       }
 
       % Reset the quester list to be just the raw ones.
-      for i in plOnQuestList
+      foreach i in plOnQuestList
       {
          plQuesterList=Cons(i,plQuesterList);
       }
@@ -844,7 +844,7 @@ messages:
       piNextQuestID= QST_START_NUM;
 
       %Get our perma questers...
-      for i in plQuesterList
+      foreach i in plQuesterList
       {
          if Send(i,@MobIsPermQuester)
          {
@@ -852,7 +852,7 @@ messages:
          }
       }
 
-      for i in plQuestOfferObjects
+      foreach i in plQuestOfferObjects
       {
          plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
          Send(i,@Delete);
@@ -868,8 +868,8 @@ messages:
       Send(self,@CreateQuestRewards);
 
       %Add in the cond sellers to the mob lib, and permquesters too.
-      For i in lSellers { Send(i,@InitCondSale); }
-      For i in lPermQs { Send(i,@InitPermQuest); }
+      foreach i in lSellers { Send(i,@InitCondSale); }
+      foreach i in lPermQs { Send(i,@InitPermQuest); }
 
       return;
    }
@@ -896,7 +896,7 @@ messages:
          plOldQuestPhrases = $;
          plOldQuestClasses = $;
 
-         for i in plQuestOfferObjects
+         foreach i in plQuestOfferObjects
          {
             plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
             Send(i,@Delete);
@@ -944,7 +944,7 @@ messages:
       plFortunes = $;
       plCommonFortunes = $;
 
-      for i in plQuestOfferObjects
+      foreach i in plQuestOfferObjects
       {
          plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
          Send(i,@Delete);
@@ -1014,12 +1014,12 @@ messages:
          return;
       }
 
-      for lOccBranch in plOccupations
+      foreach lOccBranch in plOccupations
       {
          if First(lOccBranch) = iOccupation
          {
             % Make sure npc isn't already in list (shouldn't be).
-            for oNPC in Nth(lOccBranch,2)
+            foreach oNPC in Nth(lOccBranch,2)
             {
                if oNPC = who
                {
@@ -1060,11 +1060,11 @@ messages:
          return;
       }
 
-      for lOccBranch in plOccupations
+      foreach lOccBranch in plOccupations
       {
          if First(lOccBranch) = iOccupation
          {
-            for oNPC in Nth(lOccBranch,2)
+            foreach oNPC in Nth(lOccBranch,2)
             {
                if oNPC = who
                {
@@ -1111,11 +1111,11 @@ messages:
       }
 
       % Single job type specified, with filter.
-      for lOccBranch in plOccupations
+      foreach lOccBranch in plOccupations
       {
          if iJob = 0 OR iJob = First(lOccBranch)
          {
-            for j in Nth(lOccBranch,2)
+            foreach j in Nth(lOccBranch,2)
             {
                if cNPC_class = $ OR IsClass(j,cNPC_class)
                {
@@ -1594,7 +1594,7 @@ messages:
       lMonsters = [ [[LT_sir], 0, [LIBACT_MOOD, 5], 1],
                     [[LT_princess], 0, [LIBACT_MOOD, -5], 2] ];
                     
-      for oMonster in Send(SYS,@GetMonsterTemplates)
+      foreach oMonster in Send(SYS,@GetMonsterTemplates)
       {
          if NOT FindListElem(lDontInclude,GetClass(oMonster))
          {
@@ -2025,7 +2025,7 @@ messages:
    {
       local i;
  
-      for i in plMobLib
+      foreach i in plMobLib
       {
          if First(i) = mob
          {
@@ -2047,14 +2047,14 @@ messages:
       local i,j,k,lTmp,iCount;
 
       iCount=0;
-      for i in plMobLib
+      foreach i in plMobLib
       {
          iCount=iCount+1;
          if First(i) = mob
          {
             % Found entries for the mob, delete the relevant ones.
             lTmp=Nth(i,2);
-            for j in lTmp
+            foreach j in lTmp
             {
                % we are marching through the mobs events, hoping for id matches
                if Nth(j,4) = id OR id = -1
@@ -2133,15 +2133,15 @@ messages:
       ktriggered = $;
       iCount = count;
       %bFound = FALSE;
-      for i in plMobLib
+      foreach i in plMobLib
       {
          if (First(i) = mob)
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                if (string <> $) 
                {
-                  for k in Nth(j,2)
+                  foreach k in Nth(j,2)
                   {
                      % We have a speech trigger, check for keyword matches
                      if (StringContain(string,k))
@@ -2213,11 +2213,11 @@ messages:
    {
       local i,j,lAct;
 
-      for i in plSpeechLib
+      foreach i in plSpeechLib
       {
          if IsClass(mob,First(i))
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                lAct = Nth(j,3);
                if( First(lAct) = LIBACT_QUOTE )
@@ -2255,19 +2255,19 @@ messages:
       ktriggered = $;      % saves the current speech trigger corresponding to lActionList
       iCount = 0;
 %      Debug( "SL: looking for class",GetClass(mob) );
-      for i in plSpeechLib
+      foreach i in plSpeechLib
       {
          if IsClass(mob,First(i)) 
          {
 %           Debug( "SL: found class",First(i) );
             if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0 AND (First(i) <> GetClass(mob)) 
                { continue; }
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                if not Send(self,@PersonalityClash,#mob=mob,#libvec=Nth(j,2))
                {
 %                 Debug("SL:checking",string); 
-                  for k in Nth(j,1)
+                  foreach k in Nth(j,1)
                   {
                      % We have a suitable action for the class, check triggers
                      if (StringContain(string,k))
@@ -2343,11 +2343,11 @@ messages:
    DebugRandomLib(mob = $)
    {
       local i,j,lAct;
-      for i in plRandomLib
+      foreach i in plRandomLib
       {
          if IsClass(mob,First(i))
     {
-       for j in Nth(i,2)
+       foreach j in Nth(i,2)
             {
           lAct = Nth(j,3);
           if( First(lAct) = LIBACT_QUOTE )
@@ -2403,11 +2403,11 @@ messages:
       }
             
       iHighKey = 0;
-      for lClassBranch in plRandomLib
+      foreach lClassBranch in plRandomLib
       {
     if( npc_class = First( lClassBranch ) )
     {
-       for lSpeechBranch in Nth( lClassBranch, 2 )
+       foreach lSpeechBranch in Nth( lClassBranch, 2 )
        {
           if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
           {
@@ -2556,11 +2556,11 @@ messages:
       }
 
       iHighKey = 0;
-      for lClassBranch in plSpeechLib
+      foreach lClassBranch in plSpeechLib
       {
          if( npc_class = First( lClassBranch ) )
          {
-            for lSpeechBranch in Nth( lClassBranch, 2 )
+            foreach lSpeechBranch in Nth( lClassBranch, 2 )
             {
                if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
                {
@@ -2680,11 +2680,11 @@ messages:
       }
 
       iHighKey = 0;
-      for lClassBranch in plSpeechLib
+      foreach lClassBranch in plSpeechLib
       {
          if( npc_class = First( lClassBranch ) )
          {
-            for lSpeechBranch in Nth( lClassBranch, 2 )
+            foreach lSpeechBranch in Nth( lClassBranch, 2 )
             {
                if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
                {
@@ -2760,7 +2760,7 @@ messages:
       local i,j,iCount,lAction,lActionList;
       lAction = $;
       iCount = 0;
-      for i in plRandomLib
+      foreach i in plRandomLib
       {
          if IsClass(mob,First(i))
          {
@@ -2770,7 +2770,7 @@ messages:
                continue;
             }
 
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                if (First(j)>=percent) AND (not Send(self,@PersonalityClash,
                                            #mob=mob, #libvec=Nth(j,2)))
@@ -3321,7 +3321,7 @@ messages:
    MoveQuesterOn(who = $)
    {
       local i;
-      for i in plQuesterList
+      foreach i in plQuesterList
       {
          if i = who
          {
@@ -3335,7 +3335,7 @@ messages:
    MoveQuesterOff(who = $)
    {
       local i;
-      for i in plOnQuestList
+      foreach i in plOnQuestList
       {
          if i = who
          {
@@ -3351,7 +3351,7 @@ messages:
    "I.E. if the quester doesnt have the id as its questid, the quest is junked."
    {
       local i; 
-      for i in plQuests
+      foreach i in plQuests
       {
       if Send(Self,@GetQuestID,#who=Nth(i,2))<>First(i)
       {
@@ -3365,7 +3365,7 @@ messages:
    DeleteFromQuesterList(who = $)
    {
       local i;
-      for i in plOnQuestList
+      foreach i in plOnQuestList
       {
           if i = who 
           {
@@ -3373,7 +3373,7 @@ messages:
              break;
           }
       }
-      for i in plQuesterList
+      foreach i in plQuesterList
       {
           if i = who
           {
@@ -3394,12 +3394,12 @@ messages:
    DeleteFromHinterList(who = $)
    {
       local i;
-      for i in plHinterList
+      foreach i in plHinterList
       {
          if i = who
          {
             %We may have lost an active hinter.. so replace it..
-            for i in plQuests
+            foreach i in plQuests
             {
                if who = Nth(i,3)
                {
@@ -3440,13 +3440,13 @@ messages:
       if id = 0 { return; }
       iCount=0;
 
-      for i in plQuestUsers
+      foreach i in plQuestUsers
       {
          iCount= iCount+1;
          oWho=Nth(i,1);
          lPerm=Nth(i,2);
          lTemp=Nth(i,3);
-         for j in lTemp
+         foreach j in lTemp
          {
             if j=id
             { 
@@ -3466,15 +3466,15 @@ messages:
 
       if id = 0 OR who = $ {return;}
       iCount=0;
-      for i in plQuestUsers
+      foreach i in plQuestUsers
       {
          iCount= iCount+1;
          if First(i) = who
          {
             lPerm=Nth(i,2);
             lTemp=Nth(i,3);
-            for j in lPerm {if j=id OR id=(-1) {lPerm=DelListElem(lPerm,j);}}
-            for j in lTemp {if j=id OR id=(-1) {lTemp=DelListElem(lTemp,j);}}
+            foreach j in lPerm {if j=id OR id=(-1) {lPerm=DelListElem(lPerm,j);}}
+            foreach j in lTemp {if j=id OR id=(-1) {lTemp=DelListElem(lTemp,j);}}
             if lPerm=$ AND lTemp=$ {plQuestUsers=DelListElem(plQuestUsers,i);}
 %            else { SetNth(plQuestUsers,iCount,[who,lPerm,lTemp]);} % (DISABLED -- AJM)
             return;
@@ -3490,14 +3490,14 @@ messages:
 %      local i,j,lTemp;
 %     if (who=$) OR (not IsClass(who,&User)) OR (questID=0) or (type=0)
 %         { return; }
-%      for i in plQuestUsers
+%      foreach i in plQuestUsers
 %      {
 %         if First(i) = who
 %         {
 %            if (type = QST_PERM_OBJECT) OR (type = QST_PERM_PHRASE)
 %            {
 %               lTemp = Nth(i,2);
-%               for j in lTemp { if j = questID { return; } }
+%               foreach j in lTemp { if j = questID { return; } }
 %               lTemp = Cons(questID,lTemp);
 %               SetNth(i,2,lTemp);
 %               return;
@@ -3505,7 +3505,7 @@ messages:
 %            else
 %            {
 %               lTemp = Nth(i,3);
-%               for j in lTemp { if j = questID { return; } }
+%               foreach j in lTemp { if j = questID { return; } }
 %               lTemp = Cons(questID,lTemp);
 %               SetNth(i,3,lTemp);
 %               return;
@@ -3526,12 +3526,12 @@ messages:
    {
       local i,j;
       if questID = 0  OR who = $ OR (not IsClass(who,&User)) { return FALSE;}
-      for i in plQuestUsers
+      foreach i in plQuestUsers
       {
          if First(i) = who
          {
-            for j in Nth(i,2) { if j = questID { return TRUE; } }
-            for j in Nth(i,3) { if j = questID { return TRUE; } }
+            foreach j in Nth(i,2) { if j = questID { return TRUE; } }
+            foreach j in Nth(i,3) { if j = questID { return TRUE; } }
             return FALSE;
          }
       }
@@ -3572,7 +3572,7 @@ messages:
          Send(self,@StripTempQuests,#id=iId);
          Send(self,@StripTempQuests,#id=-iId);
          Send(Self,@RemoveQuestTriggers,#id=iId);
-         for i in plQuests
+         foreach i in plQuests
          {
          if iId = Nth(i,1)
        {
@@ -3619,17 +3619,17 @@ messages:
       if goal=$ { lGoal = Send(self,@GetQuestGoal,#id=id); bOld=False; }
       else {lGoal = goal; bOld=True;}
     
-      for i in lGoal { if not StringContain(string,i) {return FALSE;} }
+      foreach i in lGoal { if not StringContain(string,i) {return FALSE;} }
 
       %The player said all the keywords, make sure they werent guessing all
       
-      for i in plQuestDictionary
+      foreach i in plQuestDictionary
       {
          bTest=False;
          if StringContain(string,i)
          % this better be in the goal, otherwise they cheated :)
          {
-            for j in lGoal
+            foreach j in lGoal
             {
                if i = j {bTest=True;break;} 
             }
@@ -3732,11 +3732,11 @@ messages:
        Send(oTmp,@AddNumber,#number=Bound(SERVICE_GOLD_REWARD-iServ,1,$));
     }
 
-   for i in Send(Send(SYS,@GetParliament),@GetFactionList)
+   foreach i in Send(Send(SYS,@GetParliament),@GetFactionList)
    {
       if First(i)=Send(oQuester,@GetFaction)
       {
-         for j in Nth(i,2)
+         foreach j in Nth(i,2)
          {
        if j=who {continue;}
        if Send(self,@HasDoneQuestID,#who=j,#questid=(-id))
@@ -3788,7 +3788,7 @@ messages:
       {
     Post(Send(oQuester,@GetOwner),@SomeoneSaid,
           #what=oQuester,#type=SAY_RESOURCE,#string=QM_item_congrats);
-    for i in Nth(lReward,2)
+    foreach i in Nth(lReward,2)
     {
        oTmp = Create(i);
        if Send(who,@ReqNewHold,#what=oTmp)
@@ -3826,7 +3826,7 @@ messages:
       {
     Send(self,@KeepOldQuestClass,#mob=oQuester,#class=GetClass(oGoal));
     %take the goal object out of the game
-    for i in plQuestOfferObjects
+    foreach i in plQuestOfferObjects
     {
        if i = oGoal
        {
@@ -3874,7 +3874,7 @@ messages:
       if iType = QST_PERM_OBJECT OR iType = QST_TEMP_OBJECT
       {   
     oGoal = Send(self,@GetQuestGoal,#id=id);
-    for i in plQuestOfferObjects
+    foreach i in plQuestOfferObjects
     {
        if i = oGoal
        {
@@ -3889,7 +3889,7 @@ messages:
       if clean=False
       { Send(Self,@MoveQuesterOff,#who=Send(Self,@GetQuester,#id=id));}
 
-      for i in plQuests
+      foreach i in plQuests
       {
     if id = Nth(i,1)
     {
@@ -3910,7 +3910,7 @@ messages:
 %         return;
 %      }
 %      %if the quest already exists, delete it.
-%      for i in plQuests
+%      foreach i in plQuests
 %      {
 %         if id = Nth(i,1)
 %         {
@@ -3946,7 +3946,7 @@ messages:
    {
       local i,j,iType;
 
-      for i in [Send(self,@GetQuester,#id=id),Send(self,@GetHinter,#id=id)]
+      foreach i in [Send(self,@GetQuester,#id=id),Send(self,@GetHinter,#id=id)]
       {
          Send(self,@DeleteFromMobLib,#mob=i,#id=id);
       }
@@ -4005,7 +4005,7 @@ messages:
       bAlready = False;
       if type = QST_PERM_OBJECT OR type = QST_TEMP_OBJECT
       {
-         for i in plQuestOfferClasses
+         foreach i in plQuestOfferClasses
          {
             if Random(0,iCount) = 0
             {
@@ -4016,7 +4016,7 @@ messages:
          }
 
          % If cgoal is already on the quest list, then lets do a reroll.
-         for i in plQuestOfferObjects
+         foreach i in plQuestOfferObjects
          {
             if IsClass(i,cgoal)
             {
@@ -4027,7 +4027,7 @@ messages:
 
          if bAlready=True
          {
-            for i in plQuestOfferClasses
+            foreach i in plQuestOfferClasses
             {
                if Random(0,iCount) = 0
                {
@@ -4043,7 +4043,7 @@ messages:
       else
       {
          iCount=0;
-         for i in plQuestDictionary
+         foreach i in plQuestDictionary
          {
             if Random(0,iCount) = 0
             {
@@ -4055,7 +4055,7 @@ messages:
          Goal = Cons(tmp,Goal);
          iCount = 0;
 
-         for i in plQuestDictionary
+         foreach i in plQuestDictionary
          {
             if tmp <> i
             {
@@ -4070,7 +4070,7 @@ messages:
          Goal = Cons(tmp2,Goal);
          iCount = 0;
 
-         for i in plQuestDictionary
+         foreach i in plQuestDictionary
          {
             if tmp <> i AND tmp2 <> i
             {
@@ -4122,7 +4122,7 @@ messages:
       oMob=$;
       iCount=0;
 
-      for i in plQuesterList
+      foreach i in plQuesterList
       {
          if Random(0,iCount) = 0
          {
@@ -4141,7 +4141,7 @@ messages:
       oMob=$;
       iCount=0;
 
-      for i in plHinterList
+      foreach i in plHinterList
       {
          if Random(0,iCount) = 0
          {
@@ -4162,7 +4162,7 @@ messages:
    {
       local i;
 
-      for i in plQuests
+      foreach i in plQuests
       {
          if who = Nth(i,2)
          {
@@ -4177,7 +4177,7 @@ messages:
    {
       local i;
 
-      for i in plQuests
+      foreach i in plQuests
       {
          if First(i) = id
          {
@@ -4192,7 +4192,7 @@ messages:
    {
       local i;
 
-      for i in plQuests
+      foreach i in plQuests
       {
          if First(i) = id
          {
@@ -4207,7 +4207,7 @@ messages:
    {
       local i;
 
-      for i in plQuests
+      foreach i in plQuests
       {
          if First(i) = id
          {
@@ -4222,7 +4222,7 @@ messages:
    {
       local i;
 
-      for i in plQuests
+      foreach i in plQuests
       {
          if First(i) = id
          {
@@ -4237,7 +4237,7 @@ messages:
    {
       local i;
 
-      for i in plQuests
+      foreach i in plQuests
       {
          if First(i) = id
          {
@@ -4259,7 +4259,7 @@ messages:
    {
       local i;
 
-      for i in plOldQuestPhrases
+      foreach i in plOldQuestPhrases
       {
          if First(i) = mob
          {
@@ -4274,7 +4274,7 @@ messages:
    {
       local i;
 
-      for i in plOldQuestClasses
+      foreach i in plOldQuestClasses
       {
          if First(i) = mob
          {
@@ -4289,7 +4289,7 @@ messages:
    {
       local i,lElem;
 
-      for i in plOldQuestClasses
+      foreach i in plOldQuestClasses
       {
          if First(i) = mob
          {
@@ -4314,7 +4314,7 @@ messages:
    {
       local i,lElem;
 
-      for i in plOldQuestPhrases
+      foreach i in plOldQuestPhrases
       {
          if First(i) = mob
          {
@@ -4350,7 +4350,7 @@ messages:
          return FALSE;
       }
 
-      for i in plSignetNewbies
+      foreach i in plSignetNewbies
       {
          if i = who
          {
@@ -4389,7 +4389,7 @@ messages:
       iCnt = 0;
       mob = $;
 
-      for i in plHinterList
+      foreach i in plHinterList
       {
          if ((Send(i,@GetAttributes) & MOB_RECEIVE) <> 0)
             AND ((Send(i,@GetAttributes) & MOB_NOQUEST) = 0)
@@ -4472,7 +4472,7 @@ messages:
       }
 
       % Safety measure, only delete the ring if it's in the list.
-      for i in plSignetRings
+      foreach i in plSignetRings
       {
          if i = newring
          {
@@ -4494,7 +4494,7 @@ messages:
    {
       local i;
 
-      for i in plSignetRings
+      foreach i in plSignetRings
       {
          Send(i,@Delete);
       }

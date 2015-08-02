@@ -120,10 +120,10 @@ messages:
                " isn't already on a quest of type ",piQuestTemplateIndex);
       }
 
-      for oQuest in Nth(Send(oQuestEngine,@GetQuestTemplate,
+      foreach oQuest in Nth(Send(oQuestEngine,@GetQuestTemplate,
                               #index=piQuestTemplateIndex),QT_ACTIVE_QUESTS)
       {
-         for oQuester in Send(oQuest,@GetQuesters)
+         foreach oQuester in Send(oQuest,@GetQuesters)
          {
             %if bDebug
             %{
@@ -401,7 +401,7 @@ messages:
                if Send(quester_wannabe,@IsEnchanted,#byClass=&Boon)
                {
                   bHasNegativeBoon = FALSE;
-                  for i in Send(quester_wannabe,@GetEnchantmentList)
+                  foreach i in Send(quester_wannabe,@GetEnchantmentList)
                   {
                      if IsClass(Nth(i,2),&Boon)
                      {
@@ -569,7 +569,7 @@ messages:
          Debug("Checking plPlayerRestrict2 restrictions.");
       }
 
-      for iR2 in plPlayerRestrict2
+      foreach iR2 in plPlayerRestrict2
       {
          if First(iR2) = Q_R2_QN_ASSIGNABLE
          {
@@ -869,7 +869,7 @@ messages:
    {
       local i;
 
-      for i in plPlayerRestrict2
+      foreach i in plPlayerRestrict2
       {
          if (First(i) = Q_R2_QN_ASSIGNABLE)
             AND (Nth(i,2) = FALSE)
@@ -1042,7 +1042,7 @@ messages:
 
       if bRecreate
       {
-         for i in plQuesters
+         foreach i in plQuesters
          {
             Send(i,@RemoveCurrentQuest,#index=piQuestTemplateIndex);
          }

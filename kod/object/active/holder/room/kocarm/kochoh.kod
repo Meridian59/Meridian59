@@ -237,7 +237,7 @@ messages:
       }
 
       % Delete statues, clear out "best" lists in lore, then recreate statues.
-      for i in plStatues
+      foreach i in plStatues
       {	 
          Send(i, @Delete);
       }
@@ -267,7 +267,7 @@ messages:
       }
 
       index = 0;
-      for i in plStatues
+      foreach i in plStatues
       {
          index = index + 1;
          if Nth(lData,index) <> $

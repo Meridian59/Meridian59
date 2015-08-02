@@ -587,7 +587,7 @@ messages:
             {
                piAnimation = PANM_BOW_FIRE;
 
-               for i in Send(poOriginal,@GetPlayerUsing)
+               foreach i in Send(poOriginal,@GetPlayerUsing)
                {
                   if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
                   {

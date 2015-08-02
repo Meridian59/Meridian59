@@ -147,7 +147,7 @@ messages:
    {
       local i;
 
-      for i in plMessages
+      foreach i in plMessages
       {
          if First(i) = num
          {
@@ -201,7 +201,7 @@ messages:
    {
       local i;
       
-      for i in plMessages
+      foreach i in plMessages
       {
          if First(i) = number
          {
@@ -218,7 +218,7 @@ messages:
    {
       local i;
 
-      for i in plMessages
+      foreach i in plMessages
       {
          if First(i) = number
          {
@@ -255,7 +255,7 @@ messages:
       }
 
       list = $;
-      for i in plMessages
+      foreach i in plMessages
       {
          if (poster <> $) AND (Nth(i, 2) = poster)
          {

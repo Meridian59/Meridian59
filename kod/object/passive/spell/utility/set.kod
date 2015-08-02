@@ -56,7 +56,7 @@ messages:
       plLocal_list = $;
       plPassive = Send(who,@GetHolderPassive);
       
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(who,@HolderExtractObject,#data=i);
 

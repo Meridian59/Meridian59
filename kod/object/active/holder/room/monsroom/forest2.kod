@@ -88,7 +88,7 @@ messages:
       ptNoise = CreateTimer(self,@NoiseTimer,
 			    NOISE_DELAY + Random(-NOISE_VARIATION,NOISE_VARIATION));
       
-      for i in plActive
+      foreach i in plActive
       {
 	 Send(First(i),@WaveSendUser,#wave_rsc=forest2_noise);
       }

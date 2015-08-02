@@ -130,7 +130,7 @@ messages:
                #quest_node_index=QNT_ID_MONK_INSIGNIA_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
                            #onIsland=TRUE)
          {
             lNPCs = Cons(oNPC, lNPCs);

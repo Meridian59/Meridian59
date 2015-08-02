@@ -139,7 +139,7 @@ messages:
          return;
       }
 
-      for i in plActive 
+      foreach i in plActive 
       {
          if IsClass(first(i), &MarionInnkeeper)
          {

@@ -181,7 +181,7 @@ messages:
       local i, count;
 
       count = 0;
-      for i in plGuild_doors
+      foreach i in plGuild_doors
       {
          if row = First(i) AND col = Nth(i,2)
          {

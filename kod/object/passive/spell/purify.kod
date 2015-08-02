@@ -111,7 +111,7 @@ messages:
 
       if lEnchantment <> $
       {
-         for i in lEnchantment
+         foreach i in lEnchantment
          {
             oSpell = Nth(i,2);
             if Send(oSpell,@IsPersonalEnchantment)
@@ -208,7 +208,7 @@ messages:
       lEnchantments = $;
       lList = send(who,@GetEnchantmentList);
 
-      for oEnchantment in lList
+      foreach oEnchantment in lList
       {
          oSpell = Nth(oEnchantment,2);
 
@@ -234,7 +234,7 @@ messages:
          bRemovedSomething = TRUE;
       }
 
-      for oEnchantment in lEnchantments
+      foreach oEnchantment in lEnchantments
       {
          iModifiedChance = iChance;
 

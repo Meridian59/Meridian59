@@ -54,7 +54,7 @@ messages:
 
       plHoldingDuringRecreate = $;
 
-      for i in plRoomsRented
+      foreach i in plRoomsRented
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=i);
          plHoldingDuringRecreate = cons(oRoom,plHoldingDuringRecreate);
@@ -68,7 +68,7 @@ messages:
    {
       local i;
 
-      for i in plHoldingDuringRecreate
+      foreach i in plHoldingDuringRecreate
       {
          Send(SYS,@ReattachRoom,#oRoom=i);
       }
@@ -127,7 +127,7 @@ messages:
       bFound = FALSE;
       lPassive = Send(who,@GetHolderPassive);
 
-      for oObject in lPassive
+      foreach oObject in lPassive
       {
          oKey = Send(who,@HolderExtractObject,#data=oObject);
 
@@ -235,7 +235,7 @@ messages:
       oRoom = $;
       bRented = FALSE;
 
-      for iRID in plRoomsRented
+      foreach iRID in plRoomsRented
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=iRID);
          if Send(oRoom,@GetRenter) = who
@@ -294,7 +294,7 @@ messages:
    {
       local i;
 
-      for i in plRoomsRented
+      foreach i in plRoomsRented
       {
          Send(Send(SYS,@FindRoomByNum,#num=i),@DecrementDaysLeft);
       }

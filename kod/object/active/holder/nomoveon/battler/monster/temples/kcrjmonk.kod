@@ -218,7 +218,7 @@ messages:
 
       bWorthy = FALSE;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if IsClass(i,&RiijaSword) AND Send(i,@GetQuester) = who
          {

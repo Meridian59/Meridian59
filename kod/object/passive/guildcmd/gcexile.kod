@@ -114,7 +114,7 @@ messages:
 		 #parm2=send(myguild,@getdef),
          #parm3=send(myguild,@gettruename));
 
-      for i in send(myGuild,@getmemberlist)
+      foreach i in send(myGuild,@getmemberlist)
         {
           send(first(i),@msgsenduser,#message_rsc=exile_to_others,
             #parm1=send(who,@gettruename),#type2=STRING_RESOURCE,#parm3=send(myguild,@getdef),

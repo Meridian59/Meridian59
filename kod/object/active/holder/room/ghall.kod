@@ -189,7 +189,7 @@ messages:
 
       % Must prevent a recreated guild hall from forgetting it's guild owner.
       lGuilds = Send(SYS,@GetGuilds);
-      for i in lGuilds
+      foreach i in lGuilds
       {
          if Send(i,@GetGuildhallNum) = piRoom_num
          {
@@ -388,7 +388,7 @@ messages:
       Send(oGuild,@SetGuildHall,#RID=piRoom_num,#name=vrName,
            #password=password);
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(First(i),&News)
          {
@@ -396,7 +396,7 @@ messages:
          }
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&Player)
          {
@@ -427,7 +427,7 @@ messages:
 
       Send(self,@DefensesDown);
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(First(i),&News)
          {
@@ -605,7 +605,7 @@ messages:
 
          Send(self,@DefensesDown);
 
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&Player)
             {
@@ -636,7 +636,7 @@ messages:
             }
 
             members = Send(poGuild_owner,@GetMemberList);
-            for i in members
+            foreach i in members
             {
                Send(First(i),@MsgSendUser,#message_rsc=conq_rsc,
                      #parm1=vrName,
@@ -647,10 +647,10 @@ messages:
             }
 
             allies = Send(poGuild_owner,@GetAllyList);
-            for j in allies
+            foreach j in allies
             {
                members = Send(j,@GetMemberList);
-               for i in members
+               foreach i in members
                {
                   Send(First(i),@MsgSendUser,#message_rsc=conq_rsc,
                         #parm1=vrName,
@@ -675,7 +675,7 @@ messages:
       {
          % Someone is rescuing the guild hall!
 
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&Player)
             {
@@ -746,7 +746,7 @@ messages:
             {
                Send(poConquerer,@SetLastGuildhallRaid);
                members = Send(poConquerer,@GetMemberList);
-               for i in members
+               foreach i in members
                {
                   Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquerer,
                         #parm1=vrName,
@@ -766,7 +766,7 @@ messages:
                   #parm4=Send(poConquerer,@GetDef),
                   #parm5=Send(poConquerer,@GetName));
          }
-         for i in plActive
+         foreach i in plActive
          {
             if IsClass(First(i),&Player)
             {
@@ -782,7 +782,7 @@ messages:
                }
             }
          }
-         for i in plPassive
+         foreach i in plPassive
          {
             if IsClass(First(i),&News)
             {
@@ -853,7 +853,7 @@ messages:
       ptWarning = $;
 
       members = Send(poGuild_owner,@GetMemberList);
-      for i in members
+      foreach i in members
       {
          if Send(First(i),@GetOwner) <> self
          {
@@ -955,7 +955,7 @@ messages:
          propagate;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
 
@@ -997,7 +997,7 @@ messages:
    {
       local i;
 
-      for i in plGuild_doors
+      foreach i in plGuild_doors
       {
          if row = First(i) AND col = Nth(i,2)
          {
@@ -1048,7 +1048,7 @@ messages:
 
       if lFound <> $
       {
-         for i in lFound
+         foreach i in lFound
          {
             Send(self,@Teleport,#what=i,#foyer=TRUE);
          }

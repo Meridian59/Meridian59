@@ -112,7 +112,7 @@ messages:
                 }
 
 	 	Addpacket(4,send(oGame,@getNumKills));
-		for i in lDarkBlade
+		foreach i in lDarkBlade
 		{
 		  if count > 1
 		     {

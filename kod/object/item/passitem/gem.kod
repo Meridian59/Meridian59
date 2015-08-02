@@ -63,7 +63,7 @@ messages:
    {
       local oObjectAtt;
       
-      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+      foreach oObjectAtt in Send(apply_on,@GetObjectAttributes)
       {
          if IsClass(oObjectAtt,&DefModSockets)
          {

@@ -124,7 +124,7 @@ messages:
    {
       local i;
 
-      for i in Send(SYS,@GetReflectionsList)
+      foreach i in Send(SYS,@GetReflectionsList)
       {
          if first(i) = who
          {

@@ -466,7 +466,90 @@ int codegen_while(while_stmt_type s, int numlocals)
 }
 /************************************************************************/
 /*
- * codegen_for: Generate code for a for loop statement.
+* codegen_for: Generate code for a for loop statement.
+*   numlocals should be # of local variables for message excluding temps.
+*   Returns highest # local variable used in code for statement.
+*   Step 1: Assign variables from initassign list.
+*   Step 2: Evaluate condition.
+*   Step 3: Carry out loop.
+*   Step 4: Execute statements from assign list.
+*/
+int codegen_for(for_stmt_type s, int numlocals)
+{
+   opcode_type opcode;
+   int our_maxlocal = numlocals, numtemps = 0, sourceval;
+   long toppos;
+   list_type p;
+   stmt_type assign_stmt;
+
+   /* Step #1: Assign variables from initassign list. */
+   /* For loop can have no assignments, list will be NULL. */
+   for (p = s->initassign; p != NULL; p = p->next)
+   {
+      assign_stmt = (stmt_type)p->data;
+      numtemps = codegen_statement(assign_stmt, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+   }
+
+   toppos = FileCurPos(outfile);
+   codegen_enter_loop();
+
+   /* Step 2: Evaluate condition. */
+   /* If no condition is listed, it will be a positive constant. */
+   /* First generate code for condition */
+   our_maxlocal = simplify_expr(s->condition, numlocals);
+
+   /* Jump over body if condition is false */
+   memset(&opcode, 0, sizeof(opcode));  /* Set opcode to all zeros */
+   opcode.command = GOTO;
+   opcode.dest = GOTO_IF_FALSE;
+   sourceval = set_source_id(&opcode, SOURCE1, s->condition);
+   OutputOpcode(outfile, opcode);
+
+   /* Make believe goto is a break statement & leave space for backpatching */
+   current_loop->break_list =
+      list_add_item(current_loop->break_list, (void *)FileCurPos(outfile));
+   OutputInt(outfile, 0);
+   OutputInt(outfile, sourceval);
+
+   /* Step 3: Carry out loop. */
+   /* Write code for loop body */
+   for (p = s->body; p != NULL; p = p->next)
+   {
+      numtemps = codegen_statement((stmt_type)p->data, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+   }
+
+   /* Backpatch continue statements in loop body */
+   for (p = current_loop->for_continue_list; p != NULL; p = p->next)
+      BackpatchGoto(outfile, (int)p->data, FileCurPos(outfile));
+
+   /* Step 4: Execute statements from assign list (iterators) */
+   /* If no iteration, list will be NULL. */
+   for (p = s->assign; p != NULL; p = p->next)
+   {
+      assign_stmt = (stmt_type)p->data;
+      numtemps = codegen_statement(assign_stmt, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+   }
+
+   /* Goto top of loop is last statement of for loop */
+   opcode.source1 = 0;
+   opcode.source2 = GOTO_UNCONDITIONAL;
+   opcode.dest = 0;
+   OutputOpcode(outfile, opcode);
+   OutputGotoOffset(outfile, FileCurPos(outfile), toppos);
+
+   codegen_exit_loop();  /* Takes care of break statements */
+
+   return our_maxlocal;
+}
+/************************************************************************/
+/*
+ * codegen_foreach: Generate code for a for loop statement.
  *    numlocals should be # of local variables for message excluding temps.
  *   Returns highest # local variable used in code for statement.
  * Here is how code is generated for a FOR statement:
@@ -480,7 +563,7 @@ int codegen_while(while_stmt_type s, int numlocals)
  *
  * Note that continue statements need to jump to statement 4.
  */
-int codegen_for(for_stmt_type s, int numlocals)
+int codegen_foreach(foreach_stmt_type s, int numlocals)
 {
    opcode_type opcode;
    int our_maxlocal, numtemps;
@@ -634,6 +717,10 @@ int codegen_statement(stmt_type s, int numlocals)
       our_maxtemp = codegen_if(s->value.if_stmt_val, numlocals);
       break;
 
+   case S_FOREACH:
+      our_maxtemp = codegen_foreach(s->value.foreach_stmt_val, numlocals);
+      break;
+
    case S_FOR:
       our_maxtemp = codegen_for(s->value.for_stmt_val, numlocals);
       break;
@@ -665,7 +752,7 @@ int codegen_statement(stmt_type s, int numlocals)
       /* In for loops, continue statements actually jump forward, but in while loops
        * they jump backward.  Save address of goto for backpatching; if we are
        * in a for loop, the offset written out below will be written over during
-       * backpatching in codegen_for().
+       * backpatching in codegen_foreach().
        */
       current_loop->for_continue_list = 
 	 list_add_item(current_loop->for_continue_list, (void *) FileCurPos(outfile));

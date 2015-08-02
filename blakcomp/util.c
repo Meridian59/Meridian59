@@ -288,6 +288,9 @@ int get_statement_line(stmt_type s, int curline)
    case S_IF:
       return s->value.if_stmt_val->condition->lineno - 1;
 
+   case S_FOREACH:
+      return s->value.foreach_stmt_val->condition->lineno - 1;
+
    case S_FOR:
       return s->value.for_stmt_val->condition->lineno - 1;
 

@@ -140,7 +140,7 @@ typedef struct {
    const_type rhs;
 } *param_type, param_struct;
 
-enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOR, S_WHILE, S_PROP, S_RETURN, S_BREAK, S_CONTINUE };
+enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOREACH, S_WHILE, S_PROP, S_RETURN, S_BREAK, S_CONTINUE, S_FOR };
 
 typedef struct {
    int function;    /* Opcode of function to call */
@@ -163,12 +163,19 @@ typedef struct {
    id_type id;
    expr_type condition;
    list_type body;
-} *for_stmt_type, for_stmt_struct;
+} *foreach_stmt_type, foreach_stmt_struct;
 
 typedef struct {
    expr_type condition;
    list_type body;
 } *while_stmt_type, while_stmt_struct;
+
+typedef struct {
+   list_type initassign;
+   expr_type condition;
+   list_type assign;
+   list_type body;
+} *for_stmt_type, for_stmt_struct;
 
 typedef struct {
    int type;
@@ -177,8 +184,9 @@ typedef struct {
       call_stmt_type    call_stmt_val; 
       if_stmt_type      if_stmt_val; 
       assign_stmt_type  assign_stmt_val; 
-      for_stmt_type     for_stmt_val; 
-      while_stmt_type   while_stmt_val; 
+      foreach_stmt_type foreach_stmt_val; 
+      while_stmt_type   while_stmt_val;
+      for_stmt_type     for_stmt_val;
       expr_type         return_stmt_val; 
    } value;
 } *stmt_type, stmt_struct;
@@ -296,8 +304,9 @@ void check_continue(void);
 stmt_type make_prop_stmt(void);
 stmt_type make_if_stmt(expr_type, list_type, list_type, stmt_type);
 stmt_type make_assign_stmt(id_type, expr_type);
-stmt_type make_for_stmt(id_type, expr_type, list_type);
+stmt_type make_foreach_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);
+stmt_type make_for_stmt(list_type, expr_type, list_type, list_type);
 stmt_type make_call(id_type, list_type);
 stmt_type make_list_call(list_type);
 stmt_type allocate_statement(void);

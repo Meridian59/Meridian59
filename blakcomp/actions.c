@@ -1175,10 +1175,10 @@ stmt_type make_assign_stmt(id_type id, expr_type expr)
    return stmt;
 }
 /************************************************************************/
-stmt_type make_for_stmt(id_type id, expr_type expr, list_type stmts)
+stmt_type make_foreach_stmt(id_type id, expr_type expr, list_type stmts)
 {
    stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
-   for_stmt_type s = (for_stmt_type) SafeMalloc(sizeof(for_stmt_struct));
+   foreach_stmt_type s = (foreach_stmt_type) SafeMalloc(sizeof(foreach_stmt_struct));
 
    /* Loop variable must be a local, property or parameter */
    lookup_id(id);
@@ -1192,8 +1192,8 @@ stmt_type make_for_stmt(id_type id, expr_type expr, list_type stmts)
    s->condition = expr;
    s->body = stmts;
 
-   stmt->type = S_FOR;
-   stmt->value.for_stmt_val = s;
+   stmt->type = S_FOREACH;
+   stmt->value.foreach_stmt_val = s;
    return stmt;
 }
 /************************************************************************/
@@ -1207,6 +1207,21 @@ stmt_type make_while_stmt(expr_type condition, list_type stmts)
 
    stmt->type = S_WHILE;
    stmt->value.while_stmt_val = s;
+   return stmt;
+}
+/************************************************************************/
+stmt_type make_for_stmt(list_type init_assign, expr_type condition, list_type assign, list_type stmts)
+{
+   stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
+   for_stmt_type s = (for_stmt_type) SafeMalloc(sizeof(for_stmt_struct));
+
+   s->condition = condition;
+   s->body = stmts;
+   s->initassign = init_assign;
+   s->assign = assign;
+
+   stmt->type = S_FOR;
+   stmt->value.for_stmt_val = s;
    return stmt;
 }
 /************************************************************************/

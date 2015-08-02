@@ -1135,7 +1135,7 @@ void check_continue(void)
       action_error("Continue statement must appear inside a loop");
 }
 /************************************************************************/
-stmt_type make_if_stmt(expr_type condition, list_type then_stmts, list_type else_stmts)
+stmt_type make_if_stmt(expr_type condition, list_type then_stmts, list_type else_stmts, stmt_type elseif_stmts)
 {
    stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
    if_stmt_type s = (if_stmt_type) SafeMalloc(sizeof(if_stmt_struct));
@@ -1143,6 +1143,7 @@ stmt_type make_if_stmt(expr_type condition, list_type then_stmts, list_type else
    s->condition = condition;
    s->then_clause = then_stmts;
    s->else_clause = else_stmts;
+   s->elseif_clause = (void *) elseif_stmts;
 
    stmt->type = S_IF;
    stmt->value.if_stmt_val = s;

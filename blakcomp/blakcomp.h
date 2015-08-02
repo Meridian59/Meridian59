@@ -151,6 +151,7 @@ typedef struct {
    expr_type condition;
    list_type then_clause;
    list_type else_clause;
+   void *elseif_clause;
 } *if_stmt_type, if_stmt_struct;
 
 typedef struct {
@@ -293,7 +294,7 @@ int make_language_id(char *);
 void check_break(void);
 void check_continue(void);
 stmt_type make_prop_stmt(void);
-stmt_type make_if_stmt(expr_type, list_type, list_type);
+stmt_type make_if_stmt(expr_type, list_type, list_type, stmt_type);
 stmt_type make_assign_stmt(id_type, expr_type);
 stmt_type make_for_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);

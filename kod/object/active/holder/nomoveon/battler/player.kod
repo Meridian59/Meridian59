@@ -5254,18 +5254,15 @@ messages:
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
             }
+            else if IsClass(oWeapon,&Weapon)
+            {
+               oStroke=Send(SYS,@FindSkillByNum,
+                     #num=Send(oWeapon,@GetDefaultStrokeNumber));
+            }
             else
             {
-               if IsClass(oWeapon,&Weapon)
-               {
-                  oStroke=Send(SYS,@FindSkillByNum,
-                        #num=Send(oWeapon,@GetDefaultStrokeNumber));
-               }
-               else
-               {
-                  % It's a spell, use it as the stroke object.
-                  oStroke = oWeapon;
-               }
+               % It's a spell, use it as the stroke object.
+               oStroke = oWeapon;
             }
          }
 

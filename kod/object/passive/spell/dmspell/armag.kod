@@ -153,44 +153,29 @@ messages:
       {
          iColor = LIGHT_WHITE;
       }
+      else if iNumber = 2
+      {
+         iColor = LIGHT_RED;
+      }
+      else if iNumber = 3
+      {
+         iColor = LIGHT_ORANGE;
+      }
+      else if iNumber = 4
+      {
+         iColor = LIGHT_YELLOW;
+      }
+      else if iNumber = 5
+      {
+         iColor = LIGHT_GREEN;
+      }
+      else if iNumber = 6
+      {
+         iColor = LIGHT_BLUE;
+      }
       else
       {
-         if iNumber = 2
-         {
-            iColor = LIGHT_RED;
-         }
-         else
-         {
-            if iNumber = 3
-            {
-               iColor = LIGHT_ORANGE;
-            }
-            else
-            {
-               if iNumber = 4
-               {
-                  iColor = LIGHT_YELLOW;
-               }
-               else
-               {
-                  if iNumber = 5
-                  {
-                     iColor = LIGHT_GREEN;
-                  }
-                  else
-                  {
-                     if iNumber = 6
-                     {
-                        iColor = LIGHT_BLUE;
-                     }
-                     else
-                     {
-                        iColor = LIGHT_PURPLE;
-                     }
-                  }
-               }
-            }
-         }
+         iColor = LIGHT_PURPLE;
       }
 
       % Color is actually random!

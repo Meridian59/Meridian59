@@ -250,11 +250,9 @@ statement:
 	;
 
 if_stmt:
-		IF expression '{' statement_list '}'
-		{ $$ = make_if_stmt($2, $4, NULL); }
-	|	IF expression '{' statement_list '}'  
-                  ELSE '{' statement_list '}' 
-		{ $$ = make_if_stmt($2, $4, $8); }
+		IF expression '{' statement_list '}'		{ $$ = make_if_stmt($2, $4, NULL, NULL); }
+	|	IF expression '{' statement_list '}' ELSE '{' statement_list '}' 		{ $$ = make_if_stmt($2, $4, $8, NULL); }
+	|	IF expression '{' statement_list '}' ELSE if_stmt	{ $$ = make_if_stmt($2, $4, NULL, $7); }
 	;
 
 assign_stmt:

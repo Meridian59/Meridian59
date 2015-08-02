@@ -335,7 +335,7 @@ int codegen_if(if_stmt_type s, int numlocals)
    }
 
    /* If there is an else clause, jump over it */
-   if (s->else_clause != NULL)
+   if (s->else_clause != NULL || s->elseif_clause != NULL)
    {
       opcode.source1 = 0;
       opcode.source2 = GOTO_UNCONDITIONAL;
@@ -360,6 +360,15 @@ int codegen_if(if_stmt_type s, int numlocals)
 	    our_maxlocal = numtemps;
       }
       /* Go back and fill in destination address for end of then clause */
+      BackpatchGoto(outfile, thenpos, FileCurPos(outfile));
+   }
+   else if (s->elseif_clause != NULL)
+   {
+      stmt_type elseif;
+      elseif = (stmt_type)s->elseif_clause;
+      numtemps = codegen_if(elseif->value.if_stmt_val, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
       BackpatchGoto(outfile, thenpos, FileCurPos(outfile));
    }
    return our_maxlocal;

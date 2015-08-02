@@ -87,6 +87,7 @@ constants	{ return CONSTANTS; }
 else            { return ELSE;}
 end		{ BEGIN INITIAL; cur_state = STATE_INITIAL; return END; } 
 for		{ return FOR; }
+foreach	{ return FOREACH; }
 if		{ return IF; }
 in		{ return IN; }
 is		{ return IS; }

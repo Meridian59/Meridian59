@@ -60,7 +60,7 @@
 
 %token AND BREAK CLASSVARS CONSTANTS CONTINUE ELSE FOR IF IN IS LOCAL MESSAGES 
 %token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE
-%token END EOL SEP INCLUDE
+%token END EOL SEP INCLUDE FOREACH
 
 /* precedence of operators, lowest precedence first */
 %left OR
@@ -264,7 +264,7 @@ assign_stmt:
 	;
 
 for_stmt:
-		FOR id IN expression '{' start_loop statement_list '}' end_loop
+		FOREACH id IN expression '{' start_loop statement_list '}' end_loop
 		{ $$ = make_for_stmt($2, $4, $7); }
 	;
 

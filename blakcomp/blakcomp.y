@@ -59,7 +59,7 @@
 %token <idname>		IDENTIFIER
 
 %token AND BREAK CLASSVARS CONSTANTS CONTINUE ELSE FOR IF IN IS LOCAL MESSAGES 
-%token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE
+%token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE DO
 %token END EOL SEP INCLUDE FOREACH
 
 /* precedence of operators, lowest precedence first */
@@ -298,6 +298,8 @@ for_stmt:
 while_stmt:
 		WHILE expression '{' start_loop statement_list '}' end_loop
 		{ $$ = make_while_stmt($2, $5); }
+	|	DO '{' start_loop statement_list '}' WHILE expression SEP end_loop
+		{ $$ = make_do_while_stmt($7, $4); }
 	;
 
 start_loop:	/* empty*/	{ enter_loop(); }

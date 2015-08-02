@@ -295,6 +295,7 @@ int get_statement_line(stmt_type s, int curline)
       return s->value.for_stmt_val->condition->lineno - 1;
 
    case S_WHILE:
+   case S_DOWHILE:
       return s->value.while_stmt_val->condition->lineno - 1;
 
    default:

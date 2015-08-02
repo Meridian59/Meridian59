@@ -1210,6 +1210,19 @@ stmt_type make_while_stmt(expr_type condition, list_type stmts)
    return stmt;
 }
 /************************************************************************/
+stmt_type make_do_while_stmt(expr_type condition, list_type stmts)
+{
+   stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
+   while_stmt_type s = (while_stmt_type) SafeMalloc(sizeof(while_stmt_struct));
+
+   s->condition = condition;
+   s->body = stmts;
+
+   stmt->type = S_DOWHILE;
+   stmt->value.while_stmt_val = s;
+   return stmt;
+}
+/************************************************************************/
 stmt_type make_for_stmt(list_type init_assign, expr_type condition, list_type assign, list_type stmts)
 {
    stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));

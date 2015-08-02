@@ -466,6 +466,61 @@ int codegen_while(while_stmt_type s, int numlocals)
 }
 /************************************************************************/
 /*
+ * codegen_dowhile: Generate code for a do-while loop statement.
+ *   numlocals should be # of local variables for message excluding temps.
+ *   Returns highest # local variable used in code for statement.
+ */
+int codegen_dowhile(while_stmt_type s, int numlocals)
+{
+   opcode_type opcode;
+   int our_maxlocal = numlocals, numtemps, sourceval;
+   long toppos;
+   list_type p;
+
+   toppos = FileCurPos(outfile);
+   codegen_enter_loop();
+
+   /* Write code for loop body */
+   for (p = s->body; p != NULL; p = p->next)
+   {
+      numtemps = codegen_statement( (stmt_type) p->data, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+   }
+   
+   /* Backpatch continue statements in loop body */
+   for (p = current_loop->for_continue_list; p != NULL; p = p->next)
+      BackpatchGoto(outfile, (int)p->data, FileCurPos(outfile));
+
+   /* First generate code for condition */
+   our_maxlocal = simplify_expr(s->condition, numlocals);
+
+   /* Jump over body if condition is false */
+   memset(&opcode, 0, sizeof(opcode));  /* Set opcode to all zeros */
+   opcode.command = GOTO;
+   opcode.dest = GOTO_IF_FALSE;
+   sourceval = set_source_id(&opcode, SOURCE1, s->condition);
+   OutputOpcode(outfile, opcode);
+
+   /* Make believe goto is a break statement & leave space for backpatching */
+   current_loop->break_list =
+      list_add_item(current_loop->break_list, (void *)FileCurPos(outfile));
+   OutputInt(outfile, 0);
+   OutputInt(outfile, sourceval);
+
+   /* Goto top of loop is last statement of while loop */
+   opcode.source1 = 0;
+   opcode.source2 = GOTO_UNCONDITIONAL;
+   opcode.dest = 0;
+   OutputOpcode(outfile, opcode);
+   OutputGotoOffset(outfile, FileCurPos(outfile), toppos);
+
+   codegen_exit_loop();  /* Takes care of break statements */
+
+   return our_maxlocal;
+}
+/************************************************************************/
+/*
 * codegen_for: Generate code for a for loop statement.
 *   numlocals should be # of local variables for message excluding temps.
 *   Returns highest # local variable used in code for statement.
@@ -727,6 +782,10 @@ int codegen_statement(stmt_type s, int numlocals)
 
    case S_WHILE:
       our_maxtemp = codegen_while(s->value.while_stmt_val, numlocals);
+      break;
+
+   case S_DOWHILE:
+      our_maxtemp = codegen_dowhile(s->value.while_stmt_val, numlocals);
       break;
 
    case S_BREAK:

@@ -102,6 +102,7 @@ resources	{ return RESOURCES; }
 return	        { return RETURN; }
 while		{ return WHILE; }
 include         { return INCLUDE; }
+do { return DO; }
 
 	/* punctuation */
 "<>"	{ yylval.int_val = NEQ_OP; return REL_OP; }

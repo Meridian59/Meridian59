@@ -140,7 +140,8 @@ typedef struct {
    const_type rhs;
 } *param_type, param_struct;
 
-enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOREACH, S_WHILE, S_PROP, S_RETURN, S_BREAK, S_CONTINUE, S_FOR };
+enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOREACH, S_WHILE, S_PROP, S_RETURN,
+      S_BREAK, S_CONTINUE, S_FOR, S_DOWHILE };
 
 typedef struct {
    int function;    /* Opcode of function to call */
@@ -306,6 +307,7 @@ stmt_type make_if_stmt(expr_type, list_type, list_type, stmt_type);
 stmt_type make_assign_stmt(id_type, expr_type);
 stmt_type make_foreach_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);
+stmt_type make_do_while_stmt(expr_type, list_type);
 stmt_type make_for_stmt(list_type, expr_type, list_type, list_type);
 stmt_type make_call(id_type, list_type);
 stmt_type make_list_call(list_type);

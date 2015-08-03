@@ -28,11 +28,13 @@
 	foreach_stmt_type foreach_stmt_val; /* Iterate through KOD lists */
 	while_stmt_type   while_stmt_val; /* While loop */
 	for_stmt_type     for_stmt_val; /* For loop */
+	switch_stmt_type  switch_stmt_val; /* Switch-case statement */
+	case_stmt_type    case_stmt_val; /* Switch-case statement */
 }
 
 %type <int_val>		Classes
 %type <stmt_val> 	statement
-%type <list_val> 	statement_list parameter_list argument_list vars
+%type <list_val> 	statement_list parameter_list argument_list vars case_list
 %type <list_val>	locals classvar_list property_list resource_list expression_list 
 %type <list_val>	message_handler_list arg_list2 param_list2 assign_list
 %type <list_val>	Messages_Block Classvars_Block Properties_Block Resources_Block
@@ -53,14 +55,15 @@
 %type <class_val>	Class Class_Signature
 
 %type <stmt_val> 	call if_stmt assign_stmt foreach_stmt while_stmt for_stmt assign
+%type <stmt_val> case_stmt switch_stmt
 
 %token <int_val>  	NUMBER REL_OP INC_DEC_OP
 %token <string_val> 	STRING_CONSTANT FILENAME
 %token <idname>		IDENTIFIER
 
 %token AND BREAK CLASSVARS CONSTANTS CONTINUE ELSE FOR IF IN IS LOCAL MESSAGES 
-%token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE DO
-%token END EOL SEP INCLUDE FOREACH
+%token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE DO SWITCH CASE
+%token END EOL SEP INCLUDE FOREACH DEFAULT
 
 /* precedence of operators, lowest precedence first */
 %left OR
@@ -230,6 +233,7 @@ statement:
 	|	foreach_stmt	{ $$ = $1; }
 	| 	while_stmt	{ $$ = $1; }
 	| 	for_stmt	{ $$ = $1; }
+	| 	switch_stmt	{ $$ = $1; }
 	|	PROPAGATE SEP	{ $$ = make_prop_stmt(); }
 	|	RETURN expression SEP
 				{ $$ = allocate_statement();
@@ -300,6 +304,22 @@ while_stmt:
 		{ $$ = make_while_stmt($2, $5); }
 	|	DO '{' start_loop statement_list '}' WHILE expression SEP end_loop
 		{ $$ = make_do_while_stmt($7, $4); }
+	;
+
+switch_stmt:
+		SWITCH '(' expression ')' '{' start_loop case_list '}' end_loop
+		{ $$ = make_switch_stmt($3, $7); }
+	;
+
+case_list:
+		case_stmt { $$ = list_add_item(NULL, $1); }
+	|	case_list case_stmt { $$ = list_add_item($1, $2); }
+	;
+
+case_stmt:
+		CASE expression ':' statement_list { $$ = make_case_stmt($2, $4, 0); }
+	|	DEFAULT ':' statement_list
+		{ $$ = make_case_stmt(make_expr_from_constant(make_numeric_constant(1)), $3, 1); }
 	;
 
 start_loop:	/* empty*/	{ enter_loop(); }

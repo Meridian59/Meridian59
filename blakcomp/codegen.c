@@ -375,6 +375,199 @@ int codegen_if(if_stmt_type s, int numlocals)
 }
 /************************************************************************/
 /*
+ * codegen_switch: Generate code for an switch-case statement.
+ *   numlocals should be # of local variables for message excluding temps.
+ *   Returns highest # local variable used in code for statement.
+ */
+int codegen_switch(switch_stmt_type s, int numlocals)
+{
+   opcode_type opcode;
+   int our_maxlocal = numlocals, numtemps, sourceval;
+   long toppos, endpos, casepos[1024], defaultpos; // Keep track of file positions.
+   list_type case_list, case_list2; // List of cases for the switch.
+   list_type q; // The code statements in each case.
+   list_type p; // Used when backpacking continue statements.
+   stmt_type case_stmt = NULL, case_stmt2 = NULL, default_stmt = NULL;
+   int numCase = 0; // Keep track of number of cases.
+   expr_type temp_expr; // Used for comparison of the switch condition with each case.
+
+   id_type temp_id; // Temp ID for non-ID switch condition expressions.
+   expr_type switch_condition; // Switch condition expression.
+   stmt_type temp_stmt; // Temp assign statement for non-ID switch conditions.
+   assign_stmt_type assign_stmt; // Temp assign statement for non-ID switch conditions. 
+
+   // First iterate through case list and check that none are duplicate constants or IDs.
+   for (case_list = s->body; case_list != NULL; case_list = case_list->next)
+   {
+      case_stmt = (stmt_type)case_list->data;
+      if (case_stmt->type == S_DEFAULTCASE)
+         continue;
+      for (case_list2 = s->body; case_list2 != NULL; case_list2 = case_list2->next)
+      {
+         case_stmt2 = (stmt_type)case_list2->data;
+         if (case_stmt2 == case_stmt || case_stmt2->type == S_DEFAULTCASE)
+            continue;
+         if (case_stmt->value.case_stmt_val->condition->type
+            == case_stmt2->value.case_stmt_val->condition->type)
+         {
+            if (case_stmt->value.case_stmt_val->condition->type == E_CONSTANT
+               && case_stmt->value.case_stmt_val->condition->value.constval->value.numval
+               == case_stmt2->value.case_stmt_val->condition->value.constval->value.numval)
+            {
+               codegen_error("Duplicate constant %i in switch statement",
+                  case_stmt->value.case_stmt_val->condition->value.constval->value.numval);
+            }
+            if (case_stmt->value.case_stmt_val->condition->type == E_IDENTIFIER
+               && case_stmt->value.case_stmt_val->condition->value.idval->idnum
+               == case_stmt->value.case_stmt_val->condition->value.idval->idnum)
+            {
+               codegen_error("Duplicate ID %i in switch statement",
+                  case_stmt->value.case_stmt_val->condition->value.idval->idnum);
+            }
+         }
+      }
+   }
+
+   if (s->condition->type == E_IDENTIFIER || s->condition->type == E_CONSTANT)
+      switch_condition = s->condition;
+   else
+   {
+      // Make a temp ID for switch condition expression, assign the expr to it.
+      temp_id = make_temp_var(numlocals + 1);
+
+      // Assign the expression to the ID
+      assign_stmt = (assign_stmt_type)SafeMalloc(sizeof(assign_stmt_struct));
+      assign_stmt->lhs = temp_id;
+      assign_stmt->rhs = s->condition;
+      
+      temp_stmt = (stmt_type)SafeMalloc(sizeof(stmt_struct));
+      temp_stmt->type = S_ASSIGN;
+      temp_stmt->value.assign_stmt_val = assign_stmt;
+      temp_stmt->lineno = 0;
+      numtemps = codegen_statement(temp_stmt, numlocals);
+
+      /* Reserve variable "temp" through entire loop by incrementing numlocals */
+      our_maxlocal = ++numlocals;
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+
+      // Make the completed ID into an expression.
+      switch_condition = (expr_type)SafeMalloc(sizeof(expr_struct));
+      switch_condition->type = E_IDENTIFIER;
+      switch_condition->value.idval = temp_id;
+      switch_condition->lineno = 0;
+   }
+
+   /* Generate code for conditions */
+   numtemps = simplify_expr(switch_condition, numlocals);
+   if (numtemps > our_maxlocal)
+      our_maxlocal = numtemps;
+
+   // Loop through cases, generate goto statements for each.
+   for (case_list = s->body; case_list != NULL; case_list = case_list->next)
+   {
+      case_stmt = (stmt_type) case_list->data;
+      if (case_stmt->type == S_DEFAULTCASE)
+      {
+         // If we already have a default case, this means we have two in
+         // the same switch statement. Give codegen error.
+         if (default_stmt)
+            codegen_error("Two defaults defined in switch statement!");
+
+         // Save default for last.
+         default_stmt = case_stmt;
+         continue;
+      }
+
+      numtemps = simplify_expr(case_stmt->value.case_stmt_val->condition, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+      // Make an equality check expression from switch condition and current case condition.
+      temp_expr = make_bin_op(switch_condition, EQ_OP, case_stmt->value.case_stmt_val->condition);
+      numtemps = simplify_expr(temp_expr, numlocals);
+      if (numtemps > our_maxlocal)
+         our_maxlocal = numtemps;
+
+      /* Jump to clause if condition is true */
+      memset(&opcode, 0, sizeof(opcode));
+      opcode.command = GOTO;
+      opcode.dest = GOTO_IF_TRUE;
+      sourceval = set_source_id(&opcode, SOURCE1, temp_expr);
+      OutputOpcode(outfile, opcode);
+
+      /* Leave space for destination address */
+      casepos[numCase] = FileCurPos(outfile);
+      numCase++;
+      OutputInt(outfile, 0);
+      OutputInt(outfile, sourceval);
+   }
+
+   // Put the goto statement for the default case last.
+   if (default_stmt)
+   {
+      opcode.source1 = 0;
+      opcode.source2 = GOTO_UNCONDITIONAL;
+      opcode.dest = 0;
+      OutputOpcode(outfile, opcode);
+      /* Leave space for destination address */
+      defaultpos = FileCurPos(outfile);
+      OutputInt(outfile, 0);
+   }
+   else
+   {
+      // No default case, goto end of switch.
+      opcode.source1 = 0;
+      opcode.source2 = GOTO_UNCONDITIONAL;
+      opcode.dest = 0;
+      OutputOpcode(outfile, opcode);
+      /* Leave space for destination address */
+      endpos = FileCurPos(outfile);
+      OutputInt(outfile, 0);
+   }
+
+   toppos = FileCurPos(outfile);
+   codegen_enter_loop();
+   numCase = 0;
+   case_list = NULL;
+   q = NULL;
+
+   // Loop through cases again and write out code.
+   for (case_list = s->body; case_list != NULL; case_list = case_list->next)
+   {
+      case_stmt = (stmt_type) case_list->data;
+      // Default case location is at defaultpos.
+      if (case_stmt->type == S_DEFAULTCASE)
+      {
+         BackpatchGoto(outfile, defaultpos, FileCurPos(outfile));
+      }
+      else
+      {
+         BackpatchGoto(outfile, casepos[numCase], FileCurPos(outfile));
+         numCase++;
+      }
+      // Write code for statements.
+      for (q = case_stmt->value.case_stmt_val->body; q != NULL; q = q->next)
+      {
+         numtemps = codegen_statement((stmt_type)q->data, numlocals);
+         if (numtemps > our_maxlocal)
+            our_maxlocal = numtemps;
+      }
+   }
+
+   /* Backpatch continue statements in loop body */
+   for (p = current_loop->for_continue_list; p != NULL; p = p->next)
+      BackpatchGoto(outfile, (int)p->data, FileCurPos(outfile));
+
+   /* Go back and fill in destination address for conditional goto */
+   if (!default_stmt)
+      BackpatchGoto(outfile, endpos, FileCurPos(outfile));
+
+   codegen_exit_loop();
+
+   return our_maxlocal;
+}
+/************************************************************************/
+/*
  * codegen_enter_loop:  Fix up loop stack when a loop is entered.  The top of the
  *   loop is set to the current position in the file.
  */
@@ -778,6 +971,10 @@ int codegen_statement(stmt_type s, int numlocals)
 
    case S_FOR:
       our_maxtemp = codegen_for(s->value.for_stmt_val, numlocals);
+      break;
+
+   case S_SWITCH:
+      our_maxtemp = codegen_switch(s->value.switch_stmt_val, numlocals);
       break;
 
    case S_WHILE:

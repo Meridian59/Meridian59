@@ -141,7 +141,7 @@ typedef struct {
 } *param_type, param_struct;
 
 enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOREACH, S_WHILE, S_PROP, S_RETURN,
-      S_BREAK, S_CONTINUE, S_FOR, S_DOWHILE };
+      S_BREAK, S_CONTINUE, S_FOR, S_DOWHILE, S_CASE, S_DEFAULTCASE, S_SWITCH };
 
 typedef struct {
    int function;    /* Opcode of function to call */
@@ -179,6 +179,16 @@ typedef struct {
 } *for_stmt_type, for_stmt_struct;
 
 typedef struct {
+   expr_type condition;
+   list_type body;
+} *case_stmt_type, case_stmt_struct;
+
+typedef struct {
+   expr_type condition;
+   list_type body;
+} *switch_stmt_type, switch_stmt_struct;
+
+typedef struct {
    int type;
    int lineno;  /* Line # of statement for debugging information */
    union {
@@ -188,6 +198,8 @@ typedef struct {
       foreach_stmt_type foreach_stmt_val; 
       while_stmt_type   while_stmt_val;
       for_stmt_type     for_stmt_val;
+      switch_stmt_type  switch_stmt_val;
+      case_stmt_type    case_stmt_val;
       expr_type         return_stmt_val; 
    } value;
 } *stmt_type, stmt_struct;
@@ -309,6 +321,8 @@ stmt_type make_foreach_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);
 stmt_type make_do_while_stmt(expr_type, list_type);
 stmt_type make_for_stmt(list_type, expr_type, list_type, list_type);
+stmt_type make_case_stmt(expr_type, list_type, bool);
+stmt_type make_switch_stmt(expr_type, list_type);
 stmt_type make_call(id_type, list_type);
 stmt_type make_list_call(list_type);
 stmt_type allocate_statement(void);

@@ -1223,6 +1223,40 @@ stmt_type make_do_while_stmt(expr_type condition, list_type stmts)
    return stmt;
 }
 /************************************************************************/
+stmt_type make_case_stmt(expr_type condition, list_type stmts, bool defaultcase)
+{
+   stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
+   case_stmt_type s = (case_stmt_type) SafeMalloc(sizeof(case_stmt_struct));
+
+   s->body = stmts;
+
+   if (defaultcase)
+   {
+      stmt->type = S_DEFAULTCASE;
+      s->condition = condition;
+   }
+   else
+   {
+      stmt->type = S_CASE;
+      s->condition = condition;
+   }
+   stmt->value.case_stmt_val = s;
+   return stmt;
+}
+/************************************************************************/
+stmt_type make_switch_stmt(expr_type condition, list_type stmts)
+{
+   stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
+   switch_stmt_type s = (switch_stmt_type) SafeMalloc(sizeof(switch_stmt_struct));
+
+   s->condition = condition;
+   s->body = stmts;
+
+   stmt->type = S_SWITCH;
+   stmt->value.switch_stmt_val = s;
+   return stmt;
+}
+/************************************************************************/
 stmt_type make_for_stmt(list_type init_assign, expr_type condition, list_type assign, list_type stmts)
 {
    stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));

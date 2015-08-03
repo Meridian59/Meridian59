@@ -103,6 +103,9 @@ return	        { return RETURN; }
 while		{ return WHILE; }
 include         { return INCLUDE; }
 do { return DO; }
+case { return CASE; }
+switch { return SWITCH; }
+default { return DEFAULT; }
 
 	/* punctuation */
 "<>"	{ yylval.int_val = NEQ_OP; return REL_OP; }

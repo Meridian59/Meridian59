@@ -3898,10 +3898,27 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 	if (data)
 		message_name = data;
 	
-		/* Send the message and handle any posted messages spawned, also.
-    */
-	blak_val.int_val = SendTopLevelBlakodMessage(object_id,message_id,num_blak_parm,blak_parm);
-	
+   // Time the message if running on Windows.
+#ifdef BLAK_PLATFORM_WINDOWS
+   LARGE_INTEGER startTime, endTime, frequency;
+   double freq;
+   QueryPerformanceFrequency(&frequency);
+   freq = frequency.QuadPart / 1000000.0;
+   QueryPerformanceCounter(&startTime);
+#endif
+
+   // Send the message and handle any posted messages spawned, also.
+   blak_val.int_val = SendTopLevelBlakodMessage(object_id, message_id, num_blak_parm, blak_parm);
+
+#ifdef BLAK_PLATFORM_WINDOWS
+   QueryPerformanceCounter(&endTime);
+   if (freq > 0.0)
+   {
+      aprintf("Message %s completed in %.3f microseconds.\n", message_name,
+         ((double)(endTime.QuadPart - startTime.QuadPart) / freq));
+   }
+#endif
+
 	/* Note that o may be invalid from here if we needed to resize our object array
     * mid-message.  Messages that could create a ton of objects could do that, such
 	* as Meridian's RecreateAll() message.

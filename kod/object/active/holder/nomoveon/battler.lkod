@@ -1,6 +1,6 @@
 battler_blue_text = de "~b"
 battler_plain_text = de "~n"
-battler_attacker_hit = de "%s%s verwundet %s und verursacht ~k~B%i~B%s Schaden."
+battler_attacker_hit = de "%s%s%s verwundet %s%s und verursacht ~k~B%i~B%s Schaden."
 battler_attacker_slay = de "%s%s tötet %s%s%s."
 battler_attacker_miss = de "%sDer Angriff auf %s verfehlt deinen Gegner."
 battler_attacker_fail = de \

@@ -362,31 +362,31 @@ messages:
       % 5 different lights, Intensity at highest, (255)
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BBLUE,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=5,#new_col=21,
            #fine_row=48,#fine_col=16);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BRED,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=14,#new_col=21,
            #fine_row=16,#fine_col=16);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BGREEN,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=14,#new_col=8,
            #fine_row=16,#fine_col=48);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BORANGE,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=5,#new_col=8,
            #fine_row=48,#fine_col=48);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BPURPLE,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=22,#new_col=7,
            #fine_row=0,#fine_col=16);
@@ -415,7 +415,7 @@ messages:
          % Make sure each light is off.
          foreach oLight in plLights
          {
-            Send(oLight,@SetSwitch,#switch=OFF);
+            Send(oLight,@SetSwitch,#bSwitch=OFF);
          }
       }
       else
@@ -431,7 +431,7 @@ messages:
             foreach oLight in plLights
             {
                Send(oLight,@SetLight,#iColor=Nth(lColors,iIndex));
-               Send(oLight,@SetSwitch,#switch=ON);
+               Send(oLight,@SetSwitch,#bSwitch=ON);
                iIndex = iIndex + 1;
             }
          }
@@ -452,13 +452,13 @@ messages:
                if iIndex = -1
                {
                   % Switch the light off
-                  Send(oLight,@SetSwitch,#switch=OFF);
+                  Send(oLight,@SetSwitch,#bSwitch=OFF);
                }
                else
                {
                   % Switch the light on with a random color
                   Send(oLight,@SetLight,#iColor=iIndex);
-                  Send(oLight,@SetSwitch,#switch=ON);
+                  Send(oLight,@SetSwitch,#bSwitch=ON);
                }
             }
 

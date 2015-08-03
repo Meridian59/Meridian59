@@ -91,7 +91,7 @@ messages:
       {
          if send(send(self,@GetOwner),@GetOutsideFactor) = OUTDOORS_NONE
          {
-            Send(self,@SetSwitch,#switch=ON);
+            Send(self,@SetSwitch,#bSwitch=ON);
 
             return;
          }
@@ -101,19 +101,19 @@ messages:
 
       if (iHour >= 11) AND (iHour <= 17)
       {
-         Send(self,@SetSwitch,#switch=OFF);
+         Send(self,@SetSwitch,#bSwitch=OFF);
       }
       else
       {
-         Send(self,@SetSwitch,#switch=ON);
+         Send(self,@SetSwitch,#bSwitch=ON);
       }
 
       return;
    }
 
-   SetSwitch(switch = ON)
+   SetSwitch(bSwitch = ON)
    {
-      if switch = ON
+      if bSwitch = ON
       {
          pbIsLit = TRUE;
          vrDesc = lamp_desc_on_rsc;

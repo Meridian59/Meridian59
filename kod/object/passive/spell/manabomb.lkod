@@ -11,8 +11,8 @@ manabomb_hit_some = de \
 manabomb_hit_all = de \
    "All dein Mana verschwindet in einer magischen Kettenreaktion!"
 manabomb_took_some = de \
-   "%s%s weint, als dine magische bombe %s Geist, und verliert ~b~B%i~B~n "
+   "%s%s weint, als dine magische bombe%s$0 Geist, und verliert ~b~B%i~B~n "
    "Mana!"
 manabomb_took_all = de \
-   "%s%s weint, als dine magische bombe %s Geist, und hinterlässt %s ohne "
-   "jegliches Mana!"
+   "%s%s weint, als dine magische bombe %s Geist, und hinterlässt ohne "
+   "jegliches Mana!%s"

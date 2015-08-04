@@ -111,6 +111,18 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
          if (type_char == '\0')
             break;
 
+         // If we had a % in the resulting message created from %% and we loop
+         // back through it due to an %s formatter on the end, we have to skip
+         // it here. Any potential characters that could come after the % should
+         // be checked here to skip to next formatter (if any).
+         if (type_char == ' ' || type_char == '.' || type_char == ','
+            || type_char == '!' || type_char == '?')
+         {
+            next_ptr = strchr(next_ptr, '%');
+
+            continue;
+         }
+
          /* Skip marked %q parameters */
          if (type_char <= MAXQPARAMS)
          {
@@ -142,7 +154,9 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
          switch (type_char)
          {
          case '%':              /* %% ==> % */
-            *message++ = '%';
+            // Add what we have so far to the message (including one of the %s).
+            num_chars = sprintf(message, tempfmt);
+            message += num_chars;
             break;
          case 'r':
             if (*len < SIZE_ID)
@@ -158,7 +172,9 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             // Process the next resource as if it were a complete message.
             if (!CheckServerMessage(&msg2, &param_ptr, len, field))
                return False;
-
+            // Put a null terminator on the end of message, so we can check the
+            // length.
+            *message = '\0';
             // Check if we're going to write outside the bounds of msg.
             if (strlen(*msg) + strlen(msg2) >= MAXMESSAGE)
             {
@@ -462,6 +478,7 @@ int CheckMessageOrder(char **params, long *len, ID fmt_id)
             // anything referenced by string formatters in the next resource.
             // This section of new_param_ptr is reordered if necessary.
             tempLen = CheckMessageOrder(&new_param_ptr, len, field);
+            reorder = True;
             // If we got less than 0 bytes, return -1 (fail).
             if (tempLen < 0)
             {

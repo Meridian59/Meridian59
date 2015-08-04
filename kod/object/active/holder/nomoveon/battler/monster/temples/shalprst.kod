@@ -51,7 +51,9 @@ resources:
       "ancient hymn that is said to be able to hinder the spells that come "
       "from the darkness.  I am willing to teach it to those that are "
       "able to learn it."
-   shalillepriestess_teach = "The benevolence of Shal'ille offers "
+   shalillepriestess_teach = \
+      "The benevolence of Shal'ille offers %s%s%s%s%s%s%s%s%s%s%s%s at that "
+      "level."
 
 classvars:
 

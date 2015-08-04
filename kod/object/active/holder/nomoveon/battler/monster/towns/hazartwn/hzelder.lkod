@@ -21,3 +21,6 @@ potion_kraanan = de "Kraanan"
 potion_qor = de "Qor"
 potion_shalille = de "Shal'ill"
 HzEl_stat_window_trigger = de "Werte ändern"
+hazar_elder_teach_rsc = de \
+   "Ich unterrichte %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"
+   "%s%s%s%s%s%s%s%s%s%s%s%s%s%s ab diesem Zirkel."

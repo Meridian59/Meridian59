@@ -9,4 +9,5 @@ Faren_forget_potion_sale = de \
    "~B~gDu hast dich dazu entschlossen Lord Faren zu vergessen? So soll es "
    "sein, %s%s ist deins wenn du eins kaufen möchtest.  Beachte jedoch, die "
    "die Kraft der Amnesie ist permanent.~n~k"
-faren_teach = de "Von Farens Feuer kannst du lernen "
+faren_teach = de "Von Farens Feuer kannst du lernen %s%s%s%s%s%s%s%s%s%s%s%s "
+   "ab diesem Zirkel."

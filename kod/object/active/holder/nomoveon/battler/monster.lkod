@@ -25,7 +25,7 @@ monster_teach_nobase = de \
 monster_teach_impossible = de \
    "Fürwahr, Du hast bereits so viel gelernt! Eine gute Fähigkeit. Du hast "
    "es nicht ... ähhhmmm... nötig ... mehr in dieser Schule zu lernen."
-monster_teach_and = de " and "
+monster_said_resource_str = de "%s%s sagt, \"%s~n\""
 monster_level = de "Zirkel"
 monster_one = de "Eins"
 monster_two = de "Zwei"
@@ -33,6 +33,7 @@ monster_three = de "Drei"
 monster_four = de "Vier"
 monster_five = de "Fünf"
 monster_six = de "Sechs"
+monster_teach_and = de "und "
 monster_sch_weaponcraft = de "Waffenfertigkeiten"
 monster_sch_kraanan = de "Kraanan-Magie"
 monster_sch_shalille = de "Shal'ill-Magie"
@@ -85,14 +86,14 @@ Lm_party_killed_monster = de \
    "~r~B%s%s hat das Monster erschlagen. %s%s ist tot!"
 Lm_monster_healing = de \
    "~g%s%s weicht zurück, um für einen Moment neue Kraft zu schöpfen."
-Lm_condition_healthy = de "%s\n\n%q"
+Lm_condition_healthy = de "%s\n\n%r"
 Lm_condition_good = de \
-   "%s\n\n%q\n\n%s%s ist verletzt, aber immer noch ziemlich stark."
+   "%s\n\n%r\n\n%s%s ist verletzt, aber immer noch ziemlich stark."
 Lm_condition_fair = de \
-   "%s\n\n%q\n\n%s%s ist verwundet, doch immer noch relativ stark."
-Lm_condition_poor = de "%s\n\n%q\n\n%s%s leidet an schweren Verletzungen."
+   "%s\n\n%r\n\n%s%s ist verwundet, doch immer noch relativ stark."
+Lm_condition_poor = de "%s\n\n%r\n\n%s%s leidet an schweren Verletzungen."
 Lm_condition_bad = de \
-   "%s\n\n%q\n\n%s%s ist schon sehr schwach und wird vermutlich nicht mehr lange "
+   "%s\n\n%r\n\n%s%s ist schon sehr schwach und wird vermutlich nicht mehr lange "
    "leben."
 Lm_cant_remove_item = de "%s%s kannst Du nicht abgeben."
 Lm_mrcnt_not_selling = de \
@@ -159,8 +160,8 @@ vaultman_noaccount = de "Ich scheine nichts von Deiner Ausrüstung zu verwahren."
 vaultman_not_enough = de \
    "Du hast nicht so viele %s unter Deinem Namen in Verwahrung gegeben!"
 monster_say_to_one = de "~w%s%s sagt zu Dir, \"%s~n~w\""
-monster_iteach = de "Ich unterrichte "
-monster_atthatlevel = de " ab diesem Zirkel."
+monster_iteach = de \
+   "Ich unterrichte %s%s%s%s%s%s%s%s%s%s%s%s ab diesem Zirkel."
 monster_teachnothing = de "Ich lehre keine Fertigkeiten ab diesem Zirkel."
 monster_koc_name = de "Der Moch"
 monster_report_balance = de \

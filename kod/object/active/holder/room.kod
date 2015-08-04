@@ -1845,6 +1845,30 @@ messages:
       return;
    }
 
+   SendCopyPacketAllInRoom()
+   "Sends the current packet to each user in the room.  Useful for sending "
+   "a collection of resources to all users to avoid building it again."
+   {
+      local i, each_obj, oSession;
+
+      foreach i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+         {
+            oSession = Send(each_obj,@GetSession);
+            if oSession <> $
+            {
+               SendCopyPacket(oSession);
+            }
+         }
+      }
+
+      ClearPacket();
+
+      return;
+   }
+
    GetYellZone()  % Includes THIS ROOM in list!!
    {
       return plYell_Zone;

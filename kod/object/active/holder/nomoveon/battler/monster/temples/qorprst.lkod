@@ -21,4 +21,6 @@ qorpriestess_teach_song = de \
 qorpriestess_not_powerful = de \
    "~bKomm wieder, wenn du dich von diesem erbärmlichen Schutzengel befreit "
    "hast und du bereit bist, andere zu töten, für die Dunklen Herrin  ~n~k"
-qorpriestess_teach = de "Durch die Dunkelheit Qors, lernst du "
+qorpriestess_teach = de \
+   "Durch die Dunkelheit Qors, lernst du %s%s%s%s%s%s%s%s%s%s%s%s "
+   "ab diesem Zirkel."

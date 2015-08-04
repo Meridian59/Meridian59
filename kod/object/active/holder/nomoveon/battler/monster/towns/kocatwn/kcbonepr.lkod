@@ -4,8 +4,6 @@ KocatanBonePriestess_desc_rsc = de \
    "weil sie verbotenerweise Magie praktizierte. Zumindest ist das das, was "
    "allgemein angenommen wird, denn es ist schwierig zu entscheiden, ob diese "
    "Geschöpfe überhaupt vernunftbegabt sind."
-KocatanBonePriestess_iteach = de "ik QUAWK ak "
-KocatanBonePriestess_atthatlevel = de " nyuk KAW-KAW uk uk!"
 KocatanBonePriestess_unwanted_keep = de \
    "~k%s%s tells you, \"ik CHEEE-UP nak ik nyuk AK-AK!!~n~k\""
 KocatanBonePriestess_unwanted_pay = de \

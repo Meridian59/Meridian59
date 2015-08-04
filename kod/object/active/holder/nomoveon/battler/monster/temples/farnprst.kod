@@ -30,7 +30,9 @@ resources:
       "~B~gYou chose to abandon Lord Faren? So be it, %s%s is yours if you "
       "wish to buy one.  Beware though, the powers of the amnesiac are "
       "permanent.~n~k"
-   faren_teach = "From Faren's fire, you can learn "
+   faren_teach = \
+      "From Faren's fire, you can learn %s%s%s%s%s%s%s%s%s%s%s%s "
+      "at that level."
 
 classvars:
 

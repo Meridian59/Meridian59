@@ -62,7 +62,6 @@ resources:
    monster_teach_impossible = \
       "Indeed, you have learned so much already! A fine accomplishment.  You "
       "have no... need... to learn further in this school."
-   monster_teach_and = " and "
 
    monster_level = "level"
    monster_one = "one"
@@ -77,6 +76,11 @@ resources:
    monster_num_five = "5"
    monster_six = "six"
    monster_num_six = "6"
+   monster_said_resource_str = "%s%s says, \"%s~n\""
+
+   monster_teach_comma = ", "
+   monster_teach_and = "and "
+   monster_teach_blank = ""
 
    monster_sch_weaponcraft = "Weaponcraft"
    monster_sch_kraanan = "Kraanan magic"
@@ -131,15 +135,16 @@ resources:
 
    Lm_monster_healing = \
       "%s%s falls back to recover for a moment, then returns to the fight."
-
-   Lm_condition_healthy = "%s\n\n%q"
+   
+   monster_desc_level = "This monster will take you to %i hitpoints."
+   Lm_condition_healthy = "%s\n\n%r"
    Lm_condition_good = \
-      "%s\n\n%q\n\n%s%s is injured, but is still relatively strong."
+      "%s\n\n%r\n\n%s%s is injured, but is still relatively strong."
    Lm_condition_fair = \
-      "%s\n\n%q\n\n%s%s is wounded, but is still relatively strong."
-   Lm_condition_poor = "%s\n\n%q\n\n%s%s is suffering from deep wounds."
+      "%s\n\n%r\n\n%s%s is wounded, but is still relatively strong."
+   Lm_condition_poor = "%s\n\n%r\n\n%s%s is suffering from deep wounds."
    Lm_condition_bad = \
-      "%s\n\n%q\n\n%s%s is weak and seems unlikely to survive much longer."
+      "%s\n\n%r\n\n%s%s is weak and seems unlikely to survive much longer."
 
    Lm_cant_remove_item = "You can't give %s%s away right now."
    Lm_mrcnt_not_selling = "You tried to buy something that is not being sold."
@@ -200,8 +205,7 @@ resources:
 
    monster_say_to_one = "~k%s%s tells you, \"%s~n~k\""
 
-   monster_iteach = "I teach "
-   monster_atthatlevel = " at that level."
+   monster_iteach = "I teach %s%s%s%s%s%s%s%s%s%s%s%s at that level."
    monster_teachnothing = "I teach no abilities at that level."
 
    monster_koc_name = "moch"
@@ -315,7 +319,6 @@ classvars:
    vrParty_killed_monster = Lm_party_killed_monster
 
    vrTeach_message = monster_iteach
-   vrTeach_message2 = monster_atthatlevel
    vrTeach_nothing = monster_teachnothing
    vrUnwanted_keep = LS_unwanted_keep
    vrUnwanted_pay = LS_unwanted_pay
@@ -3216,7 +3219,7 @@ messages:
 
    SomeoneSaidLevel(what = $,type = $,string = $)
    {
-      local iLevel, oAbility, iNum, rAbility_name;
+      local iLevel;
 
       if (Nth(plFor_Sale,2) = $ AND Nth(plFor_Sale,3) = $)
          OR NOT StringContain(string,monster_level)
@@ -3229,52 +3232,37 @@ messages:
       {
          iLevel = 1;
       }
-      else
-      {
-         if StringContain(string,monster_two)
+      else if StringContain(string,monster_two)
             OR StringContain(string,monster_num_two)
-         {
-            iLevel = 2;
-         }
-         else
-         {
-            if StringContain(string,monster_three)
+      {
+         iLevel = 2;
+      }
+      else if StringContain(string,monster_three)
                OR StringContain(string,monster_num_three)
-            {
-               iLevel = 3;
-            }
-            else
-            {
-               if StringContain(string,monster_four)
-                  OR StringContain(string,monster_num_four)
-               {
-                  iLevel = 4;
-               }
-               else
-               {
-                  if StringContain(string,monster_five)
-                     OR StringContain(string,monster_num_five)
-                  {
-                     iLevel = 5;
-                  }
-                  else
-                  {
-                     if StringContain(string,monster_six)
-                        OR StringContain(string,monster_num_six)
-                     {
-                        iLevel = 6;
-                     }
-                  }
-               }
-            }
-         }
+      {
+         iLevel = 3;
+      }
+      else if StringContain(string,monster_four)
+               OR StringContain(string,monster_num_four)
+      {
+         iLevel = 4;
+      }
+      else if StringContain(string,monster_five)
+               OR StringContain(string,monster_num_five)
+      {
+         iLevel = 5;
+      }
+      else if StringContain(string,monster_six)
+               OR StringContain(string,monster_num_six)
+      {
+         iLevel = 6;
       }
 
       if iLevel = $
       {
          return FALSE;
-      }            
-    
+      }
+
       Post(self,@ReportLevel,#iLevel=iLevel);
 
       return TRUE;
@@ -3282,96 +3270,110 @@ messages:
 
    ReportLevel(iLevel=0)
    {
-      local i, oAbility, iNum, rAbility_name;
+      local i, oAbility, iNum, lAvailable;
 
-      ClearTempString();
+      lAvailable = $;
 
-      rAbility_name = $;
       iNum = 0;
       foreach i in nth(plFor_Sale,2)
       {         
          oAbility = Send(SYS,@FindSkillByNum,#num=i);
-         if iLevel = Send(oAbility,@GetLevel) and Send(oAbility,@IsAccessible)
+         if iLevel = Send(oAbility,@GetLevel)
+            AND Send(oAbility,@IsAccessible)
          {
-            if rAbility_name <> $  
-            {  
-               if iNum > 1
-               {
-                  AppendTempString(", ");
-               }
-               
-               AppendTempString(rAbility_name);  
-            }
-            else
+            if oAbility <> $
             {
-               AppendTempString(Send(self,@GetTeachMessage,#level=iLevel));
+               lAvailable = Cons(oAbility,lAvailable);
             }
-
-            rAbility_Name = Send(oAbility,@GetName);
-            iNum = iNum+1;
          }
       }
 
       foreach i in nth(plFor_Sale,3)
       {         
          oAbility = Send(SYS,@FindSpellByNum,#num=i);
-         if iLevel = Send(oAbility,@GetLevel) and Send(oAbility,@IsAccessible)
+         if iLevel = Send(oAbility,@GetLevel)
+            AND Send(oAbility,@IsAccessible)
          {
-            if rAbility_name <> $  
-            {  
-               if iNum > 1
-               {
-                  AppendTempString(", ");
-               }               
+            if oAbility <> $
+            {
+               lAvailable = Cons(oAbility,lAvailable);
+            }
+         }
+      }
 
-               AppendTempString(rAbility_name);  
+      if poOwner = $
+      {
+         return;
+      }
+
+      Send(self,@SendReportLevel,#lAvailable=lAvailable);
+
+      return;
+   }
+
+   SendReportLevel(lAvailable=$)
+   {
+      local i, iNumAbilities, iNumRsc, iCounter;
+
+      AddPacket(1,BP_SAID, 4,self, 4,Send(self,@GetName), 1,SAY_RESOURCE,
+                4,monster_said_resource_str, 4,Send(self,@GetCapDef),
+                4,Send(self,@GetName));
+                
+      if lAvailable = $
+      {
+         AddPacket(4, vrTeach_nothing);
+         Send(poOwner,@SendCopyPacketAllInRoom);
+
+         return;
+      }
+
+      % Add master rsc.
+      AddPacket(4,vrTeach_message);
+
+      iCounter = 0;
+      iNumRsc = 0;
+
+      iNumAbilities = Length(lAvailable);
+
+      foreach i in lAvailable
+      {
+         iCounter++;
+
+         if iNumAbilities > 1
+         {
+            if iCounter = iNumAbilities
+            {
+               iNumRsc = iNumRsc + 2;
+               if IsClass(self,&KocatanBonePriestess)
+               {
+                  AddPacket(4,Send(self,@GetRandomSquawkRsc),4,Send(i,@GetName));
+               }
+               else
+               {
+                  AddPacket(4,monster_teach_and, 4,Send(i,@GetName));
+               }
             }
             else
             {
-               AppendTempString(Send(self,@GetTeachMessage,#level=iLevel));
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,Send(i,@GetName), 4,monster_teach_comma);
             }
-
-            rAbility_Name = Send(oAbility,@GetName);
-            iNum = iNum + 1;
-         }
-      }
-
-      if iNum = 0 
-      {  
-         if NOT isClass(self,&Temples) AND NOT isClass(self,&CorNothSergeant)
-         {  
-            return;
-         }
-
-         AppendTempString(vrTeach_nothing);  
-      }
-
-      else
-      {
-         if iNum = 1
-         {
-            AppendTempString(rAbility_name);
-            AppendTempString(Send(self,@GetTeachMessage2));
          }
          else
          {
-            if NOT IsClass(self,&KocatanBonePriestess)
-            {
-               AppendTempString(monster_teach_and);
-            }
-            else
-            {
-               AppendTempString(" ");
-               Send(self,@AppendRandomSquawkToTempString);
-               AppendTempString(" ");
-            }
-
-            AppendTempString(rAbility_name);  
-            AppendTempString(Send(self,@GetTeachMessage2)); 
+            iNumRsc++;
+            AddPacket(4,Send(i,@GetName));
          }
-      }      
+      }
 
-      Send(self,@Say,#message_rsc=monster_percent_q,#parm1=GetTempString());
+      % If we didn't add enough location resources, make up for it
+      % with blank ones.
+      while iNumRsc++ < 12
+      {
+         AddPacket(4,monster_teach_blank);
+      }
+
+      Send(poOwner,@SendCopyPacketAllInRoom);
 
       return;
    }
@@ -3379,11 +3381,6 @@ messages:
    GetTeachMessage(level=$)
    {
       return vrTeach_message;
-   }
-
-   GetTeachMessage2(level=$)
-   {
-      return vrTeach_message2;
    }
 
    OnSpamList(mob_class = $, key_num = 0)
@@ -4838,20 +4835,7 @@ messages:
    ShowDesc(iHitPoint_Percent = $)
    "Adds max HP that can be gained from monster, followed by its condition."
    {
-      local iHit_Percent, rHitPoints, rMonster_condition;
-
-      ClearTempString();
-      if piBehavior & AI_NPC
-      {
-         AppendTempString(monster_nothing);
-      }
-      else
-      {
-         AppendTempString("This monster will take you to ");
-         AppendTempString(viLevel);
-         AppendTempString(" hitpoints.");
-      }
-      rHitPoints = GetTempString();
+      local iHit_Percent, rMonster_condition;
 
       if iHitPoint_Percent = $
       {
@@ -4864,39 +4848,46 @@ messages:
 
       if iHit_Percent > 80
       {
-         rMonster_condition = vrCondition_healthy;
-         AddPacket(4,vrCondition_healthy,4,vrDesc,4,rHitPoints);
-
-         return;
-      }
-      else
-      {
-         if iHit_Percent > 60
+         if piBehavior & AI_NPC
          {
-            rMonster_condition = vrCondition_good;
+            AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_nothing);
          }
          else
          {
-            if iHit_Percent > 40
-            {
-               rMonster_condition = vrCondition_fair;
-            }
-            else
-            {
-               if iHit_Percent > 20
-               {
-                  rMonster_condition = vrCondition_poor;
-               }
-               else
-               {
-                  rMonster_condition = vrCondition_bad;
-               }
-            }
+            AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_desc_level,
+                      4,Bound(viLevel,20,150));
          }
+
+         return;
+      }
+      else if iHit_Percent > 60
+      {
+         rMonster_condition = vrCondition_good;
+      }
+      else if iHit_Percent > 40
+      {
+         rMonster_condition = vrCondition_fair;
+      }
+      else if iHit_Percent > 20
+      {
+         rMonster_condition = vrCondition_poor;
+      }
+      else
+      {
+         rMonster_condition = vrCondition_bad;
       }
 
-      AddPacket(4,rMonster_Condition, 4,vrDesc, 4,rHitPoints,
-            4,Send(self,@GetCapDef), 4,Send(self,@GetName));
+      if piBehavior & AI_NPC
+      {
+         AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_nothing,
+                   4,Send(self,@GetCapDef), 4,Send(self,@GetName));
+      }
+      else
+      {
+         AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_desc_level,
+                   4,Bound(viLevel,20,150), 4,Send(self,@GetCapDef),
+                   4,Send(self,@GetName));
+      }
 
       return;
    }

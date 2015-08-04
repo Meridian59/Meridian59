@@ -99,38 +99,29 @@ messages:
          StringSubstitute(string,Squelch_broadcast," ");
          rSquelchType = Squelch_broadcasts_message;
       }
+      else if StringContain(string,Squelch_tells)
+      {
+         iFlag = PFLAG2_SQUELCHED_TELLS;
+         StringSubstitute(string,Squelch_tells," ");
+         rSquelchType = Squelch_tells_message;
+      }
+      else if StringContain(string,Squelch_globes)
+      {
+         iFlag = PFLAG2_SQUELCHED_POSTS;
+         StringSubstitute(string,Squelch_globes," ");
+         rSquelchType = Squelch_globes_message;
+      }
+      else if StringContain(string,Squelch_says)
+      {
+         iFlag = PFLAG2_SQUELCHED_SAYS;
+         StringSubstitute(string,Squelch_says," ");
+         rSquelchType = Squelch_says_message;
+      }
       else
       {
-         if StringContain(string,Squelch_tells)
-         {
-            iFlag = PFLAG2_SQUELCHED_TELLS;
-            StringSubstitute(string,Squelch_tells," ");
-            rSquelchType = Squelch_tells_message;
-         }
-         else
-         {
-            if StringContain(string,Squelch_globes)
-            {
-               iFlag = PFLAG2_SQUELCHED_POSTS;
-               StringSubstitute(string,Squelch_globes," ");
-               rSquelchType = Squelch_globes_message;
-            }
-            else
-            {
-               if StringContain(string,Squelch_says)
-               {
-                  iFlag = PFLAG2_SQUELCHED_SAYS;
-                  StringSubstitute(string,Squelch_says," ");
-                  rSquelchType = Squelch_says_message;
-               }
-               else
-               {
-                  % Squelch everything.
-                  iFlag = PFLAG2_SQUELCHED_ALL;
-                  rSquelchType = Squelch_all_message;
-               }
-            }
-         }
+         % Squelch everything.
+         iFlag = PFLAG2_SQUELCHED_ALL;
+         rSquelchType = Squelch_all_message;
       }
 
       bFound = FALSE;

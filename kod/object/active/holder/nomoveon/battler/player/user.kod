@@ -3816,6 +3816,28 @@ messages:
       return;
    }
 
+   MsgSendUserCallback(what=$, sCallback=$, parm1=$, parm2=$, parm3=$, parm4=$)
+   "Adds a BP_MESSAGE packet, calls the message in sCallback, then sends the "
+   "packet to the user.  Used so other objects don't need to add the protocol "
+   "message, or obtain the user's session.  sCallback is a string containing "
+   "the message name to be called, 'what' is the calling object."
+   {
+      if sCallback <> $
+         AND IsString(sCallback)
+         AND what <> $
+         AND pbLogged_on
+      {
+         AddPacket(1,BP_MESSAGE);
+
+         Send(what,sCallBack,#parm1=parm1,#parm2=parm2,
+               #parm3=parm3,#parm4=parm4);
+
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+
    MsgSendUser(message_rsc = $,
                parm1 = $,parm2 = $,parm3 = $,parm4 = $,
                parm5 = $,parm6 = $,parm7 = $,parm8 = $,

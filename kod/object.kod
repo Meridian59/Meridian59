@@ -723,6 +723,11 @@ messages:
       return;
    }
 
+   MsgSendUserCallback()
+   {
+      return;
+   }
+
    SysMsgSendUser()
    {
       return;

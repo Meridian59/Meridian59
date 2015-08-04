@@ -20,3 +20,6 @@ Deflect_success_to_caster = de \
 Deflect_failure_to_victim = de \
    "Dein Reflektionszauber versucht %ss Zauber zurück springen zu lassen, "
    "aber er ist nicht stark genug."
+deflect_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber reflektiert gegnerische Angriffe um "
+   "%i%% der Zeit."

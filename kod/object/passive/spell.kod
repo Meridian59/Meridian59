@@ -40,6 +40,7 @@ resources:
       "You have been labeled an outlaw for casting an antisocial spell!"
    spell_outlaw = " Casting this spell can cause you to be labeled an outlaw."
    spell_nothing = " "
+   spell_blank = ""
 
    spell_no_rest = "You can't cast spells while resting!"
    spell_bad_location = "You can't cast %s here."
@@ -88,7 +89,7 @@ resources:
    spell_silenced_rsc = "Your words catch in your throat and you cannot speak."
 
    spell_fail_wav = spelfail.wav
-   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%q%r"
+   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%r%r%r"
    spell_school_riija = "Riija"
    spell_school_shalille = "Shal'ille"
    spell_school_qor = "Qor"
@@ -319,7 +320,7 @@ messages:
 
    ShowDesc(who=$)
    {
-      local rSchool, rOutlaw, rExtra, rStats;
+      local rSchool, rOutlaw, rExtra;
 
       if viSchool <> SS_DM_COMMAND
       {
@@ -332,17 +333,12 @@ messages:
          }
 
          rExtra = Send(self,@GetExtraDesc);
-         
-         rStats = Send(self,@GetStatsDesc,#who=who);
-         
-         if rStats = $
-         {
-            rStats = CreateString();
-            SetString(rStats,spell_nothing);
-         }
 
          AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,
-                   4,rOutlaw, 4,rExtra, 4,rStats);
+                   4,rOutlaw, 4,rExtra);
+
+         Send(self,@SendStatsDesc,#who=who);
+         Send(self,@SendTimeDesc,#who=who);
 
          if piMeditate_ratio = 0
          {
@@ -359,17 +355,24 @@ messages:
       propagate;
    }
 
+   SendTimeDesc()
+   {
+      % Adds a blank time resource.
+      Send(self,@SendTimeRemaining,#iTime=0,#parm1=self);
+
+      return;
+   }
+
    GetExtraDesc()
    {
       return spell_nothing;
    }
 
-   GetStatsDesc()
+   SendStatsDesc()
    {
-      local sString;
-      sString = CreateString();
-      SetString(sString,spell_nothing);
-      return sString;
+      AddPacket(4, spell_blank);
+
+      return;
    }
 
    Delete()

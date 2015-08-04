@@ -11,3 +11,5 @@ darkness_off = de "Der Vorhang der Dunkelheit löst sich auf."
 darkness_new_entrant = de "Dieser Gegend wurde in Dunkelheit getaucht."
 darkness_spell_intro = de \
    "Qor Level 1: Legt einen Vorhang aus Dunkelheit über einen Raum."
+darkness_enchantment_rsc = de \
+   "\n\nDer %s Zauber reduziert um %i das Lichtlevel in diesem Gebiet."

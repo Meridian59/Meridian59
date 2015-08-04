@@ -42,32 +42,6 @@ properties:
 
 messages:
 
-   EffectDesc(who=$)
-   {
-      return;
-   }
-
-   CreateStatsDesc(who=$)
-   {
-      ClearTempString();
-
-      if who <> $
-         AND IsClass(who,&User)
-         AND Send(Send(who,@GetOwner),@IsEnchanted,#what=self)
-      {
-         Send(self,@EffectDesc,#who=who);
-      }
-
-      return;
-   }
-
-   GetStatsDesc(who=$)
-   {
-      Send(self,@CreateStatsDesc,#who=who);
-
-      return GetTempString();
-   }
-
    ShowEnchantmentIcon(type = $)
    {
       return viShow_enchantment_icon & 0x02;

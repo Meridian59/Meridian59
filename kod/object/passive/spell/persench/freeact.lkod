@@ -16,3 +16,6 @@ FreeAction_resist_caster = de \
    "Du spürst eine Kraft, die gegen deinen Zauber kämpft, und widersteht."
 FreeAction_evade_caster = de \
    "Kraanans Magie verhindert, dass du im Kampf gestört wirst."
+freeaction_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber wideresteht komplett einem Lähmenzauber "
+   "für %i%% der Zeit.  Erfolgreiche Lähmversuche werden um %i%% verringert."

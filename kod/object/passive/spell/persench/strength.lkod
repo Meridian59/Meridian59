@@ -13,3 +13,5 @@ superstrength_desc_rsc = de \
 superstrength_spell_intro = de \
    "Kraanan Level 2: Dein Körper füllt sich mit übermenschlicher Stärke. "
    ""
+ss_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Stärke hinzu."

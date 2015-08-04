@@ -9,3 +9,6 @@ bless_success_rsc = de "Kraanan erfüllt %s%s mit einem Kampfgefühl."
 bless_spell_intro = de \
    "Kraanan Level 2: Erfleht den Segen von Kraanan, der die Treffsicherheit "
    "und die Zerstörungskraft von Attacken verbessert"
+bless_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Offensivschaden und 0-%i "
+   "Angriffsschaden hinzu."

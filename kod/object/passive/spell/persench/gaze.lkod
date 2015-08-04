@@ -14,3 +14,7 @@ paralyze_target_on = de \
    "ein und Du bist gelähmt."
 paralyze_no_soul = de \
    "Du kannst keine Seele in %s%s erkennen und sie in Stein verwandeln!"
+gaze_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber lähmt Gegner die dich angreifen für %i-%i "
+   "Millisekunden.  Gegner mit Fernwaffen haben eine 50%% Chance dem Lähmen "
+   "zu widerstehen."

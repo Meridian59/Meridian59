@@ -7,3 +7,6 @@ Cloak_on_rsc = de \
 Cloak_off_rsc = de "Du fühlst dich nun wieder auffälliger."
 Cloak_already_enchanted_rsc = de "Du bist bereits verhüllt."
 Cloak_Succeed_rsc = de "Du wickelst einen magischen Umhang über %s%s."
+cloak_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber hält dich vor Feinden versteckt für "
+   "%i%% der Zeit."

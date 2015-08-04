@@ -8,3 +8,5 @@ magicshield_already_enchanted_rsc = de \
 magicshield_on_rsc = de "Ein schützendes Schild erschafft sich vor Dir."
 magicshield_off_rsc = de "Das magische Schild verschwindet."
 magicshield_success_rsc = de "Ein magisches Schild formt sich vor %s%s."
+mshield_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Verteidigung hinzu."

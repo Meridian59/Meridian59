@@ -6,3 +6,5 @@ manafocus_desc_rsc = de \
 manafocus_on = de "Deine gerade ausgerichtete Energie tobt durch deinen Körper."
 manafocus_break_trance = de "Du hast deine Konzentration verloren."
 manafocus_already_enchanted = de "Du hast bereits %s%s."
+manafocus_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber wurde mir Zauberkraft %i gezaubert."

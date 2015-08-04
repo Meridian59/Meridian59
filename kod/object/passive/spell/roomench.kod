@@ -63,28 +63,21 @@ messages:
 
    EffectDesc(who=$)
    {
-      return;
+      propagate;
    }
 
-   CreateStatsDesc(who=$)
+   SendStatsDesc(who=$)
    {
-      ClearTempString();
-      
       if who <> $
          AND IsClass(who,&User)
          AND Send(Send(who,@GetOwner),@IsEnchanted,#what=self)
       {
          Send(self,@EffectDesc,#who=who);
-      }
-      
-      return;
-   }
-   
-   GetStatsDesc(who=$)
-   {
-      Send(self,@CreateStatsDesc,#who=who);      
 
-      return GetTempString();
+         return;
+      }
+
+      propagate;
    }
 
 end

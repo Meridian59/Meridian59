@@ -7,3 +7,5 @@ light_on = de "Ein magisches Glühen durchflutet die Gegend."
 light_off = de "Der Licht Zauber lässt nach."
 light_new_entrant = de "Dieser Ort ist erleuchtet durch ein magisches Licht."
 light_spell_intro = de "Faren Level 1:  Magisches Licht erleuchtet das Gebiet."
+light_enchantment_rsc = de \
+   "\n\nDer %s Zauber fügt dem Raum %i Lichtlevel hinzu."

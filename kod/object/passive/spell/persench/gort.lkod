@@ -16,3 +16,8 @@ gort_reduction_partial_magic_rsc = de \
    "%s%ss Gorts Panzer erhört den Schutz gegen sämtliche Angriffe."
 gort_reduction_fully_magic_rsc = de \
    "%s%ss Gorts Panzer erhört den Schutz gegen sämtliche Angriffe."
+gort_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt 1-%i Rüstung gegen nicht magische "
+   "Angriffe 15, partieller magischer Widerstand um 20, und kompletter "
+   "magischer Widerstand um 25 hinzu. Nur der bessere der beiden "
+   "Eigenschaften greift."

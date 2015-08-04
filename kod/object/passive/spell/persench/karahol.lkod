@@ -13,3 +13,6 @@ KaraholsCurse_off = de \
 KaraholsCurse_already_enchanted_rsc = de \
    "Dein Blut kocht bereits vor Kara'hols Geist!"
 Karahols_spell_intro = de "Qor Levelv 2: Gibt dir temporär große Kraft."
+karahol_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Offensiv und 1-%i Angriffsschaden "
+   "hinzu. Wenn der Zauber nachlässt lähmt er dich für %i Sekunden."

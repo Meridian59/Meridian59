@@ -11,3 +11,5 @@ Haste_already_enchanted_rsc = de \
 Haste_success_rsc = de "%s%s ist nun mit deiner magischen Energie aufgeladen."
 Haste_spell_intro = de \
    "Kraanan Level 2: Sorgt dafür, dass Du nicht so schnell ermüdest."
+haste_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber reduziert dein Ausdauerverlust um %i%%."

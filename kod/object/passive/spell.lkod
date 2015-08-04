@@ -65,7 +65,7 @@ spell_too_soon_since_attacking = de \
 spell_resists = de "%s%s widersteht Deinem Zauber!"
 spell_silenced_rsc = de \
    "Die Worte bleiben Dir im Halse stecken und Du kannst nicht sprechen."
-spell_desc_rsc = de "SCHULE : %s         LEVEL : %i \n\n%s%s%s%q%r"
+spell_desc_rsc = de "SCHULE : %s         LEVEL : %i \n\n%s%s%s%r%r%r"
 spell_school_riija = de "Riija"
 spell_school_shalille = de "Shal'ill"
 spell_school_qor = de "Qor"

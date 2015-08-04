@@ -100,10 +100,5 @@ messages:
       return &DetectInvisibilityPotion;
    }
 
-   EffectDesc()
-   {
-      propagate;
-   }
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

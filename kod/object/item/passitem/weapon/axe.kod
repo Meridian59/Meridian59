@@ -50,7 +50,7 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
-   viRange = 3
+   viRange = 3 * FINENESS
 
 properties:
 

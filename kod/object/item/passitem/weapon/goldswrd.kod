@@ -51,7 +51,7 @@ classvars:
    viMin_damage = 2
    viMax_damage = 5
 
-   viRange = 3
+   viRange = 3 * FINENESS
 
 properties:
 

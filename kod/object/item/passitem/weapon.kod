@@ -143,6 +143,8 @@ classvars:
    vrCondition_poor = weapon_condition_poor 
    vrCondition_broken = weapon_condition_broken
 
+   viRange = 2 * FINENESS
+
 properties:
 
    piAttack_type = 0
@@ -530,43 +532,10 @@ messages:
       return iDamage;
    }
 
-   GetRange()
+   GetRange(weapon_used = $)
+   "This returns the range of the weapon.  Usually, this hovers around 2-3."
    {
-      local iRange;
-
-      % Weapon type
-      if viWeaponType = WEAPON_TYPE_BLUDGEON
-      {
-         iRange = WEAPON_RANGE_LOW;
-      }
-
-      if viWeaponType = WEAPON_TYPE_THRUST
-      {
-         iRange = WEAPON_RANGE_HIGH;
-      }
-
-      if viWeaponType = WEAPON_TYPE_SLASH
-      {
-         iRange = WEAPON_RANGE_MID;
-      }
-
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
-      {
-         iRange = iRange + WEAPON_LOW_QUALITY_RANGE;
-      }
-
-      if viWeaponQuality = WEAPON_QUALITY_HIGH
-      {
-         iRange = iRange + WEAPON_HIGH_QUALITY_RANGE;
-      }
-
-      if viWeaponQuality = WEAPON_NERUDITE
-      {
-         iRange = iRange + WEAPON_NERUDITE_RANGE;
-      }
-
-      return iRange;
+      return viRange;
    }
 
    GetDisarmBonus()

@@ -36,7 +36,7 @@ classvars:
    viWeaponDamage = 3
    viRange = 20 * FINENESS
    viHit_roll_modifier = 0
-   
+
    viValue_average = 3500
    viBulk = 100
    viWeight = 100
@@ -51,7 +51,7 @@ classvars:
    viBaseXLAT = XLAT_TO_GREEN
 
 properties:
-   
+
    piAttack_Type = ATCK_WEAP_NERUDITE+ATCK_WEAP_PIERCE
 
 messages:

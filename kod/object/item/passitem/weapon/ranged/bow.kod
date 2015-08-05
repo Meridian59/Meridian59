@@ -20,7 +20,7 @@ constants:
 resources:
 
    bow_name_rsc = "bow"
-   bow_icon_rsc = bow.bgf          
+   bow_icon_rsc = bow.bgf
 
    bow_desc_rsc = \
       "This bow offers the advantage of long ranged attacks." 
@@ -84,17 +84,17 @@ messages:
    "Called by ReqWeaponAttack when the weapon is actually used in an attack."
    {
       piUsed = ATTACKING;
-      
+
       if vrWeapon_window_overlay <> $
       {
          Send(poOwner,@ChangeWindowOverlay,#what=self);
       }
-      
+
       if vrWeapon_overlay <> $
       {
          Send(poOwner,@DoBowFire);
       }
-      
+
       piUsed = USED;
 
       return;
@@ -117,14 +117,14 @@ messages:
             return FALSE;
          }
       }
-      
+
       propagate;
    }
 
    NewUsed()
    {
       local oSoldierShield, iFaction, iTranslation;
-      
+
       if poOwner <> $
          AND IsClass(poOwner,&User)
       {
@@ -197,37 +197,37 @@ messages:
       {
          AddPacket(4,prBowTop);
          AddPacket(1,HS_TOP_BOW);
-         Send(self,@SendSecondaryOverlayAnimation,#iAnimation=iAnimation);       
-      
+         Send(self,@SendSecondaryOverlayAnimation,#iAnimation=iAnimation);
+
          AddPacket(4,prBowBottom);
          AddPacket(1,HS_BOTTOM_BOW);
-         Send(self,@SendOverlayAnimation,#iAnimation=iAnimation);      
+         Send(self,@SendOverlayAnimation,#iAnimation=iAnimation);
       }
       else
       {
          propagate;
       }
-      
+
       return;
    }
-      
+
    SendSecondaryOverlayAnimation(iAnimation = $)
    {
       if (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
-      
+
       if piUsed = ATTACKING and iAnimation <> $
       {
          AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);
-         
-         return;	 
+
+         return;
       }
       else
-      { 
+      {
          AddPacket(1,ANIMATE_NONE,2,2);
-         
+
          return;
       }
 
@@ -240,16 +240,16 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
       }
-      
+
       if  piUsed = ATTACKING and iAnimation <> $
       {
-         AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);	 
+         AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);
       }
       else
-      { 
+      {
          AddPacket(1,ANIMATE_NONE,2,2);
       }
-      
+
       return;
    }
 
@@ -258,20 +258,20 @@ messages:
       %% most overlay items only offer one overlay.  weapons and bows may offer two.
       if piUsed = ATTACKING
          AND iAnimation <> $
-      {  
-         return 2;  
+      {
+         return 2;
       }
-      
+
       propagate;
    }
-   
+
    GetWindowOverlayHotspot()
    {
       % turns off the window overlay
       if piUsed = UNUSED
       {
          return 0;
-      } 
+      }
 
       return HS_SW;
    }

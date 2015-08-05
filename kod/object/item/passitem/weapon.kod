@@ -126,7 +126,7 @@ classvars:
    viBroken_group = $
    % Message when the weapon breaks.
    vrWeaponBroke = weapon_broken
-   
+
    viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_NORMAL
 
@@ -386,7 +386,7 @@ messages:
 
       return iDamage;
    }
-  
+
    GetMinDamage()
    {
       local iDamage, oSkill;

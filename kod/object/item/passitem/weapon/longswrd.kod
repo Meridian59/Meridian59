@@ -49,6 +49,8 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
+   viRange = 3
+
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST

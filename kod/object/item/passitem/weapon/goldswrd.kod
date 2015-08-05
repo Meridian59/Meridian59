@@ -51,6 +51,8 @@ classvars:
    viMin_damage = 2
    viMax_damage = 5
 
+   viRange = 3
+
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
@@ -71,33 +73,33 @@ messages:
 
       return iDamage;
    }
-   
+
    GetMinDamage()
    {
       return viMin_damage + piDamageBonus;
    }
-   
+
    GetMaxDamage()
    {
       return viMax_damage + piDamageBonus;
    }
-   
+
    GetMinSpecialDamage()
    {
       return viMin_damage + 7 + piDamageBonus;
    }
-   
+
    GetMaxSpecialDamage()
    {
       return viMax_damage + 7 + piDamageBonus;
    }
-  
+
    GetMinSpecialDamageWithOwnerStats()
    {
       local iDamage, oSkill;
-      
+
       iDamage = Send(self,@GetMinSpecialDamage)*100;
-      
+
       if IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -107,16 +109,16 @@ messages:
       {
          return 0;
       }
-      
+
       return iDamage;
    }
-   
+
    GetMaxSpecialDamageWithOwnerStats()
    {
       local iDamage, oSkill;
-      
+
       iDamage = Send(self,@GetMaxSpecialDamage)*100;
-      
+
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -126,7 +128,7 @@ messages:
       {
          return 0;
       }
-      
+
       return iDamage;
    }
 

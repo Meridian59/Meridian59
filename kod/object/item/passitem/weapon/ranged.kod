@@ -12,7 +12,7 @@
 % then a target icon comes up a la apply() with which you choose your victim.
 % Well, at least ideally.  At this point there is no good way to code that,
 % so ranged weapons are like normal weapons with a range of 13 (the max range
-% for weapons).  
+% for weapons).
 % Ranged weapons do not break as often as melee weapons (not as much wear and
 % tear).
 %
@@ -53,7 +53,7 @@ classvars:
    viRange = 100 * FINENESS
 
 properties:
-   
+
    piAttack_Type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_PIERCE
 
 messages:
@@ -100,13 +100,13 @@ messages:
                if send(i,@GetAmmoType) = ammotype
                { 
                  iAttackType = send(i,@GetAttackType);
-               
+
                   break;
                }
             }
          }
       }
-      
+
       iAttackType = iAttackType |  piAttack_Type;
 
       return iAttackType;
@@ -133,13 +133,13 @@ messages:
                if (send(i,@GetAmmoType) = ammotype)
                { 
                   iAttackType = send(i,@GetAttackSpell);
-               
+
                   break;
                }
             }
          }
       }
-      
+
       iAttackType = iAttackType | piAttack_Spell;
 
       return iAttackType;
@@ -161,7 +161,7 @@ messages:
       {
          hit_roll = hit_roll + ((viHit_roll_modifier*piHits)/piHits_Init);
       }
-      
+
       iWeapHit = hit_roll;
 
       for i in plItem_Attributes
@@ -173,8 +173,8 @@ messages:
             hit_roll = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
                             #target=target,#lData=i);
          }
-      }     
-      
+      }
+
       return hit_roll;
    }
 
@@ -204,28 +204,23 @@ messages:
             }
          }
       }
-	  
-	  iDamage = iDamage + viWeaponDamage;
-	  
+
+      iDamage = iDamage + viWeaponDamage;
+
       return iDamage;
    }
-
-   GetRange()
-   {
-      return viRange;
-   }   
 
    % This returns the weapon's attack name.  For ranged weapons, return the ammo name.
    GetAttackName()
    {
-      return ranged_ammo_name;      
+      return ranged_ammo_name;
    }
-     
+
    GetHitBonus()
    {
       return viHit_roll_modifier + piHitBonus;
    }
-   
+
    GetMinDamage()
    {
       local iDamage, ammotype, i;
@@ -257,7 +252,7 @@ messages:
 
       return iDamage;
    }
-   
+
    GetMaxDamage()
    {
       local iDamage, ammotype, i;
@@ -290,7 +285,7 @@ messages:
 
       return iDamage;
    }
-   
+
    GetMinDamageWithOwnerStats()
    {
       local iDamage, ammotype, i, oSkill;
@@ -320,7 +315,7 @@ messages:
       }
 
       iDamage = (iDamage + viWeaponDamage)*100;
-      
+
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -363,7 +358,7 @@ messages:
       }
 
       iDamage = (iDamage + viWeaponDamage)*100;
-      
+
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -376,7 +371,7 @@ messages:
 
       return iDamage;
    }
-   
+
    GetMinSpecialDamageWithOwnerStats()
    {
       local iDamage, ammotype, i, oSkill;
@@ -404,7 +399,7 @@ messages:
             }
          }
       }
-      
+
       % No special ammo properties
       if iDamage = 0
       {
@@ -412,7 +407,7 @@ messages:
       }
 
       iDamage = (iDamage + viWeaponDamage)*100;
-      
+
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -425,7 +420,7 @@ messages:
 
       return iDamage;
    }
-   
+
    GetMaxSpecialDamageWithOwnerStats()
    {
       local iDamage, ammotype, i, oSkill;
@@ -453,7 +448,7 @@ messages:
             }
          }
       }
-      
+
       % No special ammo properties
       if iDamage = 0
       {
@@ -461,7 +456,7 @@ messages:
       }
 
       iDamage = (iDamage + viWeaponDamage)*100;
-      
+
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -474,7 +469,7 @@ messages:
 
       return iDamage;
    }
-   
+
    % Some weapons and spells have special conditions, like nerudite arrows that can shatter
    GetMinSpecialDamage()
    {
@@ -503,7 +498,7 @@ messages:
             }
          }
       }
-      
+
       % No special ammo properties
       if iDamage = 0
       {
@@ -514,7 +509,7 @@ messages:
 
       return iDamage;
    }
-   
+
    GetMaxSpecialDamage()
    {
       local iDamage, ammotype, i;
@@ -542,7 +537,7 @@ messages:
             }
          }
       }
-      
+
       % No special ammo properties
       if iDamage = 0
       {
@@ -553,7 +548,7 @@ messages:
 
       return iDamage;
    }
-   
+
    GetBaseSpellModifier()
    {
       return viSpell_modifier;
@@ -561,10 +556,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-

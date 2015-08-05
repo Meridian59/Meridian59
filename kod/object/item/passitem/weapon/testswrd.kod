@@ -57,6 +57,8 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
+   viRange = 3
+
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
@@ -65,7 +67,7 @@ properties:
    piDisarmBonus = 0
    piSpellModifier = 0
    viProficiency_Needed = SKID_PROFICIENCY_SWORD
-   
+
 messages:
 
    GetBaseDamage(who=$,target=$)
@@ -100,11 +102,6 @@ messages:
       return iDamage;
    }
 
-   GetRange()
-   {
-      return piRange;
-   }
-   
    GetDisarmBonus()
    {
       return piDisarmBonus;
@@ -114,18 +111,19 @@ messages:
    {
       return piSpellModifier;
    }
-   
+
    GetWeaponSkill()
    {
       return viProficiency_Needed;
    }
-   
+
    ChangeWeaponSkill(what=SKID_PROFICIENCY_SWORD)
    {
       % Defaults to fencing
       
       viProficiency_Needed = what;
-	  return viProficiency_Needed;
+
+      return viProficiency_Needed;
    }
 
    SetWeaponDamageType(what=$)
@@ -156,10 +154,10 @@ messages:
       {
          piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_THRUST;
       }
-	  
+
       return piAttack_type;
    }
-  
+
    GetMinDamage()
    {
       return Send(self,@GetDamage);
@@ -169,7 +167,7 @@ messages:
    {
       return Send(self,@GetDamage);
    }
-   
+
    GetMinDamageWithOwnerStats()
    {
       local iDamage, oSkill;
@@ -185,16 +183,16 @@ messages:
       {
          return 0;
       }
-      
+
       return iDamage;
    }
-   
+
    GetMaxDamageWithOwnerStats()
    {
       local iDamage, oSkill;
-      
+
       iDamage = Send(self,@GetMaxDamage)*100;
-      
+
       If IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
@@ -204,15 +202,15 @@ messages:
       {
          return 0;
       }
-      
+
       return iDamage;
    }
-   
+
    GetAttackType()
    {
       return piAttack_type;
    }
-	  
-	  
+
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

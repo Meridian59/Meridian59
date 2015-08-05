@@ -28,7 +28,7 @@ resources:
    BlackDagger_desc_rsc = \
       "This elegant blade looks like it would fit snugly between "
       "a pair of shoulder blades. \n\n%s%s%s"
-   
+
    BlackDagger_gamestart_glow = \
       "~IYour dagger gains an unearthly glow about it."
 
@@ -155,7 +155,7 @@ messages:
          AddPacket(4,BlackDagger_4_gems);
          AddPacket(4,BlackDagger_no_notches);
          AddPacket(4,BlackDagger_runes);
-         
+
          return;
       }
 
@@ -273,7 +273,7 @@ messages:
       if target = $
       {
          Debug("Reached AssassinHit with Target equal NIL!");
-         
+
          return;
       }
 
@@ -310,7 +310,7 @@ messages:
       if target = $
       {
          Debug("Reached AssassinHit with Target equal NIL!");
-         
+
          return;
       }
 

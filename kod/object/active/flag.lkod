@@ -1,21 +1,17 @@
 flag_name_rsc = de "Flaggenmast"
 flag_desc_rsc = de \
-   "Dieser Flaggenmast ist leer und nicht erobert im Kampf um die Gebietsansprüche.%s%s%s%s%s%s"
+   "Dieser Flaggenmast ist leer und nicht erobert im Kampf um die "
+   "Gebietsansprüche.  %r"
 flag_duke_desc_rsc = de \
    "Auf diesem Flaggenmast wehen die königlichen Farben von Herzog Arkadius, "
-   "Beschützer von Tos.%s%s%s%s%s%s"
+   "Beschützer von Tos.  %r"
 flag_princess_desc_rsc = de \
    "An diesem Flaggenmast wehen die königlichen Farben von Prinzessin Kateriina, "
-   "Hoheit von Barloque.%s%s%s%s%s%s"
+   "Hoheit von Barloque.  %r"
 flag_rebel_desc_rsc = de \
-   "Auf diesem Flaggenmast wehen die Farben der Rebellenarmee aus Jasper.%s%s%s%s%s%s"
+   "Auf diesem Flaggenmast wehen die Farben der Rebellenarmee aus Jasper.  %r"
 flag_append_desc = de \
-   " %s%s erhebt bereits Anspruch auf dieses Gebiet im Namen von %s."
-flag_append_desc_empty = de ""
-flag_append_desc2a = de "  "
-flag_append_desc2b = de \
-   "  versucht gerade, dieses Gebiet in Besitz zu nehmen im Namen "
-flag_append_desc2c = de "."
+   "%s%s erhebt bereits Anspruch auf dieses Gebiet im Namen von %s."
 flag_claim_attempt = de "~I%s%s erhebt Anspruch auf %s%s im Namen %s!"
 flag_claim_plugin_duke = de "Herzog Akardius"
 flag_claim_plugin_princess = de "Prinzessin Kateriina"

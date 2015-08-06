@@ -86,6 +86,8 @@ Lm_party_killed_monster = de \
    "~r~B%s%s hat das Monster erschlagen. %s%s ist tot!"
 Lm_monster_healing = de \
    "~g%s%s weicht zurück, um für einen Moment neue Kraft zu schöpfen."
+monster_desc_level = de \
+   "Dieses Monster bringt Dich bis zu %i Lebenspunkten."
 Lm_condition_healthy = de "%s\n\n%r"
 Lm_condition_good = de \
    "%s\n\n%r\n\n%s%s ist verletzt, aber immer noch ziemlich stark."

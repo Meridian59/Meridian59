@@ -87,6 +87,11 @@ messages:
       return viAvar_clan;
    }
 
+   GetRegion()
+   {
+      return RID_KOCATAN;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

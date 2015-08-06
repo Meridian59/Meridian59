@@ -104,12 +104,12 @@ guild_cant_enemy_mature = de \
    "Du kannst keine Feinde erklären solange Deine Gilde nicht reifer geworden "
    "ist."
 guild_cant_enemy_funds = de \
-   "Du benötigst %q Schillinge an Guthaben auf Deinem Gildenkonto um einen "
+   "Du benötigst %i Schillinge an Guthaben auf Deinem Gildenkonto um einen "
    "Feind zu erklären und einen Krieg zu finanzieren."
 guild_end_enemy_loser = de \
-   "~BDeine Gilde hat %q Schillinge wegen eurer feigen Niederlage verloren."
+   "~BDeine Gilde hat %i Schillinge wegen eurer feigen Niederlage verloren."
 guild_end_enemy_winner = de \
-   "~BDeine Gilde hat für den Sieg über euren feigen Feind %q Schillinge "
+   "~BDeine Gilde hat für den Sieg über euren feigen Feind %i Schillinge "
    "gutgeschrieben bekommen."
 guild_end_alliance = de \
    "~BHiermit wird bekanntgegeben, dass das Bündnis zwischen den Gilden %s%q "
@@ -277,9 +277,9 @@ guild_ascension_mail = de \
    "Frular, Verwalter aller Gilden"
 guild_left_another = de \
    "Du hast eine andere Gilde erst kürzlich verlassen und kannst folgender "
-   "Gilde z. Z. nicht beitreten: "
+   "Gilde %s%q nicht beitreten."
 guild_left_another_2 = de \
-   " hat eine andere Gilde erst kürzlich verlassen und kann derzeit Deiner "
+   "%s hat eine andere Gilde erst kürzlich verlassen und kann derzeit Deiner "
    "Gilde noch nicht beitreten."
 guild_war_title = de " erklärt Krieg."
 guild_war_body1 = de "Hiermit wird bekanntgegeben, dass vom heutigen tag "

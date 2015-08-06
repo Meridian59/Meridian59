@@ -1101,8 +1101,7 @@ messages:
          AND IsClass(poOwner,&User)
          AND oLich <> $
       {
-         Send(oLich,@NecromancerRosterReply,
-               #necroName=Send(poOwner,@GetTrueName));
+         Send(oLich,@NecromancerRosterReply,#oNecro=poOwner);
       }
 
       return;

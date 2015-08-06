@@ -35,19 +35,15 @@ lich_helper_killer = de \
 lich_no_truce = de \
    "Die verdorbene Gegenwart der Lichkönigin zerstört Deine Waffenruhe, bevor "
    "Du sie auch nur zaubern kannst."
-lich_killed_world_saved_0 = de "~B"
-lich_killed_world_saved_1 = de \
-   " hat die dunkle Königin Venya'cyr getötet und Meridian von der bösen "
-   "Herrschaft der Nekromanten befreit!Danke an "
-lich_comma = de ", "
-lich_and = de "und "
-lich_killed_world_saved_2 = de \
-   ". Die guten Bewohner Meridians können nun wieder in Sicherheit leben, "
-   "wissend, dass "
-lich_killed_world_saved_3 = de "mit der untoten Königin vergangen sind."
+lich_killed_world_saved = de \
+   "~B%s hat die dunkle Königin Venya'cyr getötet und Meridian von der bösen "
+   "Herrschaft der Nekromanten befreit!\nDanke an %q%s%q.  Die guten "
+   "Bewohner Meridians können nun wieder in Sicherheit leben, wissend, "
+   "dass %q%s%q mit der untoten Königin vergangen sind.%s$0"
 lich_killed_world_saved_nolich = de \
-   "hat den letzen des Ordens der Nekromanten erschlagen und befreit somit "
-   "Meridian von ihrer Bosheit!"
+   "~B%s hat den letzen des Ordens der Nekromanten erschlagen und befreit "
+   "somit Meridian von ihrer Bosheit!"
+lich_and = de " und "
 lich_tribute_trigger = de "Anerkennung"
 lich_hunger_trigger = de "Hunger"
 Lich_starting_password = de "Todesmagier"

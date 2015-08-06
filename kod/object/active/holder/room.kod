@@ -890,11 +890,6 @@ messages:
 
    GetRegion()
    {
-      % identifies congruous world regions of rooms
-      % mortals cannot be teleported between different regions
-      % exceptions are carefully made:  dm spells damn/deliverance,
-      %  newbie portal, etc.
-
       % region ids are simply key room ids:
       %    rid_default for most of the mainland
       %    rid_guest1 for all guest rooms
@@ -921,11 +916,6 @@ messages:
          return RID_KOCATAN;
       }
 
-      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13)
-      {
-         return RID_KOCATAN;
-      }
-
       if (piRoom_num >= RID_ORC_CAVE1) and (piRoom_num <= RID_ORC_CAVE_END)
       {
          return RID_ORC_CAVE1;
@@ -934,16 +924,6 @@ messages:
       if (piRoom_num >= RID_BRAX_START) and (piRoom_num <= RID_BRAX_END)
       {
          return RID_BRAX;
-      }
-
-      if piRoom_num = RID_GUILDH15
-      {
-         return RID_BRAX;
-      }
-
-      if piRoom_num = RID_OUTOFGRACE
-      {
-         return RID_OUTOFGRACE;
       }
 
       return RID_DEFAULT;
@@ -1684,92 +1664,69 @@ messages:
       return;
    }
 
-   RecalcKocatanSkyGraphic(iWeather=0)
-   {
-      prBackground = background_stars;
-
-      if iWeather = WEATHER_DAY
-      {
-         prBackground = background_kocatan_afternoon_sky;
-      }
-
-      if iWeather = WEATHER_DAY_STORMY
-      {
-         prBackground = background_kocatan_afternoon_sky;
-      }
-
-      if iWeather = WEATHER_DUSK
-      {
-         prBackground = background_kocatan_evening_sky;
-      }
-
-      if iWeather = WEATHER_DUSK_STORMY
-      {
-         prBackground = background_kocatan_evening_sky;
-      }
-
-      if iWeather = WEATHER_DAWN
-      {
-         prBackground = background_kocatan_morning_sky;
-      }
-
-      if iWeather = WEATHER_DAWN_STORMY
-      {
-         prBackground = background_kocatan_morning_sky;
-      }
-
-      if iWeather = WEATHER_NIGHT
-      {
-         prBackground = background_kocatan_night_sky;
-      }
-
-      return;
-   }
-
    RecalcBackgroundSkyGraphic(iWeather=0)
    "Doing this this way allows us to have some zones, such as Ko'catan, have "
    "different skies."
    {
-      prBackground = background_night_sky;
       if Send(self,@GetRegion) = RID_KOCATAN
       {
-         Send(self,@RecalcKocatanSkyGraphic,#iWeather=iWeather);
+         switch(iWeather)
+         {
+            case WEATHER_DAY:
+               prBackground = background_kocatan_afternoon_sky;
+               break;
+            case WEATHER_DAY_STORMY:
+               prBackground = background_kocatan_afternoon_sky;
+               break;
+            case WEATHER_DUSK:
+               prBackground = background_kocatan_evening_sky;
+               break;
+            case WEATHER_DUSK_STORMY:
+               prBackground = background_kocatan_evening_sky;
+               break;
+            case WEATHER_DAWN:
+               prBackground = background_kocatan_morning_sky;
+               break;
+            case WEATHER_DAWN_STORMY:
+               prBackground = background_kocatan_morning_sky;
+               break;
+            case WEATHER_NIGHT:
+               prBackground = background_kocatan_night_sky;
+               break;
+            default:
+               prBackground = background_stars;
+               break;
+         }
+
          return;
       }
 
-      if iWeather = WEATHER_DAY
+      switch(iWeather)
       {
-         prBackground = background_light_sky;
-      }
-
-      if iWeather = WEATHER_DAY_STORMY
-      {
-         prBackground = background_afternoon_sky;
-      }
-
-      if iWeather = WEATHER_DUSK
-      {
-         prBackground = background_dusk_sky;
-      }
-
-      if iWeather = WEATHER_DUSK_STORMY
-      {
-         prBackground = background_evening_sky;
-      }
-
-      if iWeather = WEATHER_DAWN
-      {
-         prBackground = background_dusk_sky;
-      }
-
-      if iWeather = WEATHER_DAWN_STORMY
-      {
-         prBackground = background_morning_sky;
-      }
-
-      if iWeather = WEATHER_NIGHT
-      {
-         prBackground = background_night_sky;
+         case WEATHER_DAY:
+            prBackground = background_light_sky;
+            break;
+         case WEATHER_DAY_STORMY:
+            prBackground = background_afternoon_sky;
+            break;
+         case WEATHER_DUSK:
+            prBackground = background_dusk_sky;
+            break;
+         case WEATHER_DUSK_STORMY:
+            prBackground = background_evening_sky;
+            break;
+         case WEATHER_DAWN:
+            prBackground = background_dusk_sky;
+            break;
+         case WEATHER_DAWN_STORMY:
+            prBackground = background_morning_sky;
+            break;
+         case WEATHER_NIGHT:
+            prBackground = background_night_sky;
+            break;
+         default:
+            prBackground = background_night_sky;
+            break;
       }
 
       return;
@@ -3774,27 +3731,23 @@ messages:
    {
       local effect;
 
-      effect = EFFECT_CLEARWEATHER;
-
       % Snow takes precedence over rain.
       if piRoom_flags & ROOM_SNOWING
       {
          effect =  EFFECT_SNOWING;
       }
-      else
+      else if piRoom_flags & ROOM_RAINING
       {
          % Rain takes precedence over sandstorm.
-         if piRoom_flags & ROOM_RAINING
-         {
-            effect = EFFECT_RAINING;
-         }
-         else
-         {
-            if piRoom_flags & ROOM_SANDSTORM
-            {
-               effect = EFFECT_SAND;
-            }
-         }
+         effect = EFFECT_RAINING;
+      }
+      else if piRoom_flags & ROOM_SANDSTORM
+      {
+         effect = EFFECT_SAND;
+      }
+      else
+      {
+         effect = EFFECT_CLEARWEATHER;
       }
 
       return effect;

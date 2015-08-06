@@ -161,11 +161,11 @@ resources:
    guild_cant_enemy_mature = \
       "You cannot declare enemies until your guild is more mature."
    guild_cant_enemy_funds = \
-      "You need %q shillings prepaid rent to declare an enemy and fund a war."
+      "You need %i shillings prepaid rent to declare an enemy and fund a war."
    guild_end_enemy_loser = \
-      "~BYour guild has lost %q shillings in rent for your cowardly loss."
+      "~BYour guild has lost %i shillings in rent for your cowardly loss."
    guild_end_enemy_winner = \
-      "~BYour guild is awarded %q shillings in rent for conquering your "
+      "~BYour guild is awarded %i shillings in rent for conquering your "
       "cowardly enemy."
 
    guild_end_alliance = \
@@ -386,9 +386,9 @@ resources:
    guild_ascension_mail = "Subject: Congratulations!\n"
       "You were chosen to be the new %q of %s%q!\n\n"
       "  -- Frular, the Guild Administrator"
-   guild_left_another = "You have left another guild too recently to join "
+   guild_left_another = "You have left another guild too recently to join %s%q"
    guild_left_another_2 = \
-      " has left another guild too recently to join your guild."
+      "%s has left another guild too recently to join your guild."
    
    guild_war_title = " declares war."
    guild_war_body1 = "Let it be known that on this day "
@@ -1376,22 +1376,14 @@ messages:
 
       if Send(who,@HasLeftAGuildTooRecently)
       {
-         ClearTempString();
-         AppendTempString(guild_left_another);
-         AppendTempString(Send(self,@GetDef));
-         AppendTempString(Send(self,@GetName));
-         AppendTempString(".");
-
-         Send(who,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-               #parm1=GetTempString(),#type1=STRING_RESOURCE);
+         Send(who,@MsgSendUser,#message_rsc=guild_left_another,
+               #parm1=Send(self,@GetDef),#type2=STRING_RESOURCE,
+               #parm2=Send(self,@GetName));
          
          if inductor <> $
          {
-            ClearTempString();
-            AppendTempString(Send(who,@GetName));
-            AppendTempString(guild_left_another_2);
-            Send(inductor,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-                  #parm1=GetTempString(),#type1=STRING_RESOURCE);
+            Send(inductor,@MsgSendUser,#message_rsc=guild_left_another_2,
+                  #parm1=Send(who,@GetName));
          }
 
          return FALSE;
@@ -2325,10 +2317,8 @@ messages:
       % Gotta have enough cash to declare a war, in case of losing.
       if Send(self,@GetRentDue) > -WAR_LOSS_PENALTY
       {
-         ClearTempString();
-         AppendTempString(WAR_LOSS_PENALTY);
          Send(rep,@MsgSendUser,#message_rsc=guild_cant_enemy_funds,
-              #parm1=GetTempString());
+              #parm1=WAR_LOSS_PENALTY);
 
          return FALSE;
       }
@@ -2493,10 +2483,6 @@ messages:
          return TRUE;
       }
 
-      % Set up temp string for message below.
-      ClearTempString();
-      AppendTempString(WAR_LOSS_PENALTY);
-
       Send(self,@AccrueRent,#amount=WAR_LOSS_PENALTY);
 
       % Give our enemy spoils equal to 60% of the positive rent lost.
@@ -2516,7 +2502,7 @@ messages:
                     #parm4=Send(otherguild,@GetName));
 
                Send(First(j),@MsgSendUser,#message_rsc=guild_end_enemy_loser,
-                    #parm1=GetTempString());
+                    #parm1=WAR_LOSS_PENALTY);
             }
             
             Send(otherguild,@NotifyOtherEndEnemy,#otherguild=self,
@@ -2547,10 +2533,6 @@ messages:
       if spoils > 0
       {
          Send(self,@PayRent,#amount=spoils);
-
-         % Setup temp string for message below.
-         ClearTempString();
-         AppendTempString(spoils);
       }
 
       foreach j in plMembers
@@ -2562,7 +2544,7 @@ messages:
          if spoils > 0
          {
             Send(First(j),@MsgSendUser,#message_rsc=guild_end_enemy_winner,
-               #parm1=GetTempString());
+               #parm1=spoils);
          }
       }
 

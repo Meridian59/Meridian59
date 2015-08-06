@@ -123,5 +123,10 @@ messages:
       return FALSE;
    }
 
+   GetRegion()
+   {
+      return RID_OUTOFGRACE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

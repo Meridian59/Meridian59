@@ -1042,6 +1042,26 @@ messages:
       return;
    }
 
+   SystemSendCopyPacketAll()
+   {
+      local i, oSession;
+
+      foreach i in plUsers_logged_on
+      {
+         oSession = Send(i,@GetSession);
+         if oSession <> $
+         {
+            SendCopyPacket(oSession);
+            % Post so it doesn't interfere with the current packet.
+            Post(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
+         }
+      }
+
+      ClearPacket();
+
+      return;
+   }
+
    AdminSystemMessage(string = $)
    {
       local i;

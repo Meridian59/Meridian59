@@ -313,6 +313,13 @@ messages:
          }
       }
 
+      % Lore Books
+      if (Random(1,5) = 1)
+      {
+         oObj = Create(&LoreTosApoth,#random_book=true);
+         return oObj;
+      }
+
       iCount=0;
       iRnd = Random(0,100);
       for lItem_info in plTreasure
@@ -340,6 +347,7 @@ messages:
             return oObj;
          }
       }
+
       Debug("Create treasure didn't get an object");
 
       return $;

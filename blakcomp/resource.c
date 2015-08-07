@@ -10,7 +10,7 @@
  */
 #include "blakcomp.h"
 
-static const int RSC_VERSION = 4;
+static const int RSC_VERSION = 5;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
 char *GetStringFromResource(resource_type r, int j);

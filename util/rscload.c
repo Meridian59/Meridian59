@@ -6,7 +6,7 @@
 
 #include "rscload.h"
 
-static const int RSC_VERSION = 4;
+static const int RSC_VERSION = 5;
 static const int MAX_RSC_LEN = 20000;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 

@@ -180,13 +180,13 @@ resources:
 
    dm_dontinterfere = "~B~gYou should not try to interfere with the game."
 
-   dm_moderator = "An official Moderator of the land."
-   dm_guide = "An official Guide of the land."
-   dm_sr_guide = "An official Senior Guide of the land."
-   dm_bard = "An official Bard of the land."
-   dm_sr_bard = "An official Senior Bard of the land."
-   dm_guardian = "An official Guardian of the land."
-   dm_designer = "One of the Designers of Meridian."
+   dm_moderator = "An official Moderator of the land.\n"
+   dm_guide = "An official Guide of the land.\n"
+   dm_sr_guide = "An official Senior Guide of the land.\n"
+   dm_bard = "An official Bard of the land.\n"
+   dm_sr_bard = "An official Senior Bard of the land.\n"
+   dm_guardian = "An official Guardian of the land.\n"
+   dm_designer = "One of the Designers of Meridian.\n"
 
    dm_budget_none_remain = "You have no remaining monster budget with which to create a %s."
    dm_budget_not_authorized = "You are not authorized to create a %s."

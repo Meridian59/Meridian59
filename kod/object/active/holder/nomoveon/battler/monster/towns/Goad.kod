@@ -66,7 +66,7 @@ resources:
       "challenge and kill %s%s.  Would you dare to challenge %s?"
 
    Goad_challenge_offered = \
-      "%s%s has challenged you.  Will you crush %s's like the bug %s is?"
+      "%s%s has challenged you.  Will you crush %s like the bug %s is?"
    Goad_must_accept = \
       "Hurry fool!! You only have %i seconds left to accept %s%s's challenge."
 
@@ -418,12 +418,9 @@ messages:
 
       if piCombat_style = STYLE_ONE_ON_ONE
       {
-         %%KLUDGE - REMOVE THIS
-         %Send(self,@Say,#message_rsc=Goad_challenge_offered,
-            %#parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
-            %#parm3=Send(who,@GetHimHer),#parm4=Send(who,@GetHimHer));
-         Send(self,@KludgeMessage,#who=who);
-         %%END KLUDGE
+         Post(self,@Say,#message_rsc=Goad_challenge_offered,
+               #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+               #parm3=Send(who,@GetHimHer),#parm4=Send(who,@GetHeShe));
 
          pbAccept = FALSE;
          ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
@@ -1555,21 +1552,6 @@ messages:
       }
 
       propagate;
-   }
-
-   KludgeMessage(who=$)
-   {
-      ClearTempString();
-      AppendTempString(Send(who,@GetName));
-      AppendTempString(" has challenged you.  Will you crush ");
-      AppendTempString(Send(who,@GetHimHer));
-      AppendTempString(" like the bug ");
-      AppendTempString(Send(who,@GetHeShe));
-      AppendTempString(" is?");
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-            #string=Send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
-
-      return;
    }
 
 end

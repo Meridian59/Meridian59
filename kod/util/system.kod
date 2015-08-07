@@ -69,6 +69,22 @@ resources:
    guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
+   system_blank_resource = ""
+   system_space_resource = " "
+
+   % Templates for sending lots of description parts.
+   system_rsc_template_one = "%r"
+   system_rsc_template_two = "%r%r"
+   system_rsc_template_three = "%r%r%r"
+   system_rsc_template_four = "%r%r%r%r"
+   system_rsc_template_five = "%r%r%r%r%r"
+   system_rsc_template_six = "%r%r%r%r%r%r"
+   system_rsc_template_seven = "%r%r%r%r%r%r%r"
+   system_rsc_template_eight = "%r%r%r%r%r%r%r%r"
+   system_rsc_template_nine = "%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_ten = "%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_eleven = "%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_twelve = "%r%r%r%r%r%r%r%r%r%r%r%r"
 
    system_char_module = char.dll
 
@@ -7216,19 +7232,21 @@ messages:
       return retVal;
    }
 
-   RemoveOldMails(max=10000)
+   RemoveOldMails(max=10000, iDays=180)
    {
-      local i,iCount;
+      local i, iCount;
+
       iCount = 0;
 
       foreach i in plUsers
       {
-         iCount = iCount + Send(i,@RemoveOldMail);
+         iCount = iCount + Send(i,@RemoveOldMail,#iDays=iDays);
          if (iCount > max)
          {
             break;
          }
       }
+
       return iCount;
    }
 

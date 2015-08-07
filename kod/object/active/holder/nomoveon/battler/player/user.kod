@@ -10014,63 +10014,68 @@ messages:
       return piSave_Angle;
    }
 
-   RemoveOldMail()
+   RemoveOldMail(iDays=180)
    {
-      local iCutoff_time,lRecent_mail,lNew_mail,iTime,iRemoved;
-      
-      iCutoff_time =  GetTime() - 30*DAY;
+      local iCutoff_time, lRecent_mail, lNew_mail, iTime, iRemoved;
+
+      iCutoff_time =  GetTime() - (iDays * DAY);
       lRecent_mail = $;
       iRemoved = 0;
+
       foreach lNew_mail in plNew_mail
       {
          % This is a list of [ from, time, list of to, other ]
          iTime = Nth(lNew_mail,2);
          if (iTime > iCutoff_time)
+            AND iTime < GetTime()
          {
             lRecent_mail = Cons(lNew_mail,lRecent_mail);
          }
          else
          {
-            iRemoved = iRemoved + 1;
+            ++iRemoved;
          }
       }
       if Length(plNew_mail) <> Length(lRecent_mail)
       {
-         Debug("for user",self,vrName,"had",Length(plNew_mail),"now",Length(lRecent_mail));
+         Debug("User",self,vrName,"had",Length(plNew_mail),"now",
+               Length(lRecent_mail));
       }
       plNew_mail = lRecent_mail;
+
       return iRemoved;
    }
 
    CleanBadMail()
    {
-      local lNew_mail,stuff,i,j;
-      
+      local lNew_mail, stuff, i, j;
+
       i = 1;
       foreach lNew_mail in plNew_mail
       {
          % This is a list of [ from, time, list of to, list of stuff ]
-	 stuff = Nth(lNew_mail,4);
-	 if (Length(stuff) > 1)
-	 {
+         stuff = Nth(lNew_mail,4);
+         if (Length(stuff) > 1)
+         {
             j = 1;
             while j <= Length(stuff)
             {
                if (Nth(stuff,j+1) = $)
-	       {
-	          Debug("found bad mail",self);
-		  plNew_mail = DelListElem(plNew_mail, lNew_mail);
-		  return 1;
-	       }
+               {
+                  Debug("found bad mail",self);
+                  plNew_mail = DelListElem(plNew_mail, lNew_mail);
+
+                  return 1;
+               }
                j = j + 2;
             }
-
-	 }
-	 i = i + 1;
+         }
+         ++i;
       }
+
       return 0;
    }
-   
+
    SetAutoloot(value=TRUE)
    {
       pbAutoloot = value;
@@ -10468,6 +10473,6 @@ messages:
 
       return;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

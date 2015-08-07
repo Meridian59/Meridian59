@@ -33,8 +33,8 @@ Goad_already_have_champion = de \
    "Du willst Champion sein? Nichts leichter als das! Vernichte %s%s! Bist "
    "Du mutig genug für die Herausforderung?"
 Goad_challenge_offered = de \
-   "%s%s hat Dich herausgefordert. Willst Du Deinen Gegner wie einen Wurm "
-   "zerquetschen?%s%s"
+   "%s%s hat Dich herausgefordert.  Willst Du Deinen Gegner wie einen Wurm "
+   "zerquetschen?%s$0%s$0"
 Goad_must_accept = de \
    "Worauf wartest Du Narr? Du hast nur noch %i Sekunden, um die Herausforderung "
    "von %s%s anzunehmen!"

@@ -315,9 +315,9 @@ resources:
    % These are now old resources..... here in case we want to de-hack...
    player_desc_guild = "%q of %s%q."
    player_no_guild = "No known guild affiliation."
-   player_faction_duke = "A staunch servant of Duke Akardius."
-   player_faction_princess = "Firmly loyal to Princess Kateriina."
-   player_faction_rebel = "A freedom fighter supporting Jonas."
+   player_faction_duke = "A staunch servant of Duke Akardius.\n"
+   player_faction_princess = "Firmly loyal to Princess Kateriina.\n"
+   player_faction_rebel = "A freedom fighter supporting Jonas.\n"
    player_faction_neutral = \
       "Not a court vassal, yet affected by the Meridian Council."
    player_not_intriguing = "Not yet concerned with affairs at the Royal Court."
@@ -325,6 +325,12 @@ resources:
    player_nl = "\n"
    player_sp = " "
    player_dot = "."
+
+   % Master fixed info resource.
+   player_fixed_info = "%r%r%s%r%s%q%r"
+
+   % Hometown strings.
+   player_hometown_rsc = "%s%s%s%q%s\n"
    player_citizen_barloque = " has been a Barloquan"
    player_citizen_tos = " has been a citizen of Tos"
    player_citizen_cornoth = " hailed from Cor Noth"
@@ -340,10 +346,12 @@ resources:
    player_year = " year."
    player_under_one_year = " less than a year."
 
+   player_guild_rsc = "%q%s%s%q.\n"
+   player_is_holding = "%s is holding %s%s.\n"
+   player_is_wearing = "%s is wearing %s%s.\n"
+   player_donation_title = "Noble benefactor of Meridian in %q."
+   player_donation_separator = ", "
    player_is_justicar = "Elected Royal Justicar of the Meridian."
-
-   player_is_holding = " is holding "
-   player_is_wearing = " is wearing "
 
    player_known_for_mastery = "Known far and wide for mastery of "
    player_and = " and "
@@ -371,9 +379,6 @@ resources:
    player_no_guild_not_intriguing = \
       "No known guild affiliation. Not yet concerned with affairs at the "
       "Royal Court."
-
-   player_donation_title = "Noble benefactor of Meridian in "
-   player_donation_separator = ", "
 
    player_dagger_shatters = "Your black dagger crumbles into dust."
 
@@ -1823,49 +1828,6 @@ messages:
       return age;
    }
 
-   SetHonorString(string = $)
-   "Admin supported."
-   {
-      if (string = GetTempString())
-      {
-         psHonor = CreateString();
-         SetString(psHonor, string);
-      }
-      else
-      {
-         psHonor = string;
-      }
-
-      return psHonor;
-   }
-
-   GetHonorString()
-   {
-      return psHonor;
-   }
-
-   SetHonorStrings()
-   "Used to set plHonor for all players using whatever psHonor they have. "
-   "Remove this if psHonor is removed (after switching to plHonor)."
-   {
-      if psHonor <> $
-      {
-         if psHonor = GetTempString()
-         {
-            return;
-         }
-
-         if StringEqual(psHonor,"")
-         {
-            return;
-         }
-
-         Send(self,@AddHonorString,#string=psHonor);
-      }
-
-      return;
-   }
-
    GetHonorStringList()
    {
       return plHonor;
@@ -1909,8 +1871,12 @@ messages:
       {
          foreach i in plHonor
          {
-            AppendTempString(i);
-            AppendTempString("\n");
+            % Add newbie tag separately so it gets translated.
+            if i <> player_newbie_honor_string
+            {
+               AppendTempString(i);
+               AppendTempString("\n");
+            }
          }
       }
 
@@ -1983,79 +1949,70 @@ messages:
 
    ShowExtraInfo()
    {
-      local i, j, obj, year;
+      local i, j, obj, year, rCargoNum;
 
-      ClearTempString();
+      % Master fixed info resource.
+      AddPacket(4,player_fixed_info);
 
+      %
+      % Add hometown and age, or DM rank.
+      %
       if NOT IsClass(self,&DM)
       {
-         % (example) She has called Jasper home for eight years.
-
-         AppendTempString(Send(self,@GetHeShe,#cap=TRUE));
-         i = Send(self,@GetHomeRoom);
-         j = player_citizen_unknown;
-
-         if (i = RID_NEWB1)
+         switch(Send(self,@GetHomeRoom))
          {
-            j = player_citizen_raza;
+            case RID_NEWB1:
+               j = player_citizen_raza;
+               break;
+            case RID_GUEST1:
+               j = player_citizen_hazar;
+               break;
+            case RID_BAR_INN:
+               j = player_citizen_barloque;
+               break;
+            case RID_COR_INN:
+               j = player_citizen_cornoth;
+               break;
+            case RID_MAR_INN:
+               j = player_citizen_marion;
+               break;
+            case RID_JAS_INN:
+               j = player_citizen_jasper;
+               break;
+            case RID_TOS_INN:
+               j = player_citizen_tos;
+               break;
+            case RID_KOC_INN:
+               j = player_citizen_kocatan;
+               break;
+            default:
+               j = player_citizen_unknown;
+               break;
          }
 
-         if (i = RID_GUEST1)
-         {
-            j = player_citizen_hazar;
-         }
-
-         if (i = RID_BAR_INN)
-         {
-            j = player_citizen_barloque;
-         }
-
-         if (i = RID_COR_INN)
-         {
-            j = player_citizen_cornoth;
-         }
-
-         if (i = RID_MAR_INN)
-         {
-            j = player_citizen_marion;
-         }
-
-         if (i = RID_JAS_INN)
-         {
-            j = player_citizen_jasper;
-         }
-
-         if (i = RID_TOS_INN)
-         {
-            j = player_citizen_tos;
-         }
-
-         if (i = RID_KOC_INN)
-         {
-            j = player_citizen_kocatan;
-         }
-
-         AppendTempString(j);
-
+         AddPacket(4,player_hometown_rsc,4,Send(self,@GetHeShe,#cap=TRUE),4,j);
+         ClearTempString();
          i = Send(self,@GetAge);
          if (i < 1)
          {
-            AppendTempString(player_under_one_year);
+            AddPacket(4,system_blank_resource,4,GetTempString(),
+                      4,player_under_one_year);
          }
          else
          {
-            AppendTempString(player_for);
+            AddPacket(4,player_for);
+
             Send(SYS,@AppendCardinalToTempString,#number=i);
+            AddPacket(4,GetTempString());
             if i = 1
             {
-               AppendTempString(player_year);
+               AddPacket(4,player_year);
             }
             else
             {
-               AppendTempString(player_years);
+               AddPacket(4,player_years);
             }
          }
-         AppendTempString(player_nl);
       }
       else
       {
@@ -2063,73 +2020,121 @@ messages:
          i = Send(self,@GetRankRsc);
          if i <> $
          {
-            AppendTempString(i);
-            AppendTempString(player_nl);
+            AddPacket(4,i);
+         }
+         else
+         {
+            AddPacket(4,system_blank_resource);
          }
       }
 
-      if poGuild <> $ AND NOT Send(poGuild,@isSecret)
+      %
+      % Add guild affiliation.
+      %
+      if poGuild <> $ AND NOT Send(poGuild,@IsSecret)
       {
-         % (example) Squire of the BootLickers.
          i = Send(poGuild,@GetRank,#who=self);
-         AppendTempString(Send(poGuild,@GetRankName,#rank=i,#sex=piGender));
-         AppendTempString(player_of);
-         AppendTempString(Send(poGuild,@GetDef));
-         AppendTempString(Send(poGuild,@GetName));
-         AppendTempString(player_dot);
-         AppendTempString(player_nl);
+         % (example) Squire of the BootLickers.
+         AddPacket(4,player_guild_rsc, 4,Send(poGuild,@GetRankName,#rank=i,#sex=piGender),
+                   4,player_of, 4,Send(poGuild,@GetDef),4,Send(poGuild,@GetName));
+      }
+      else
+      {
+        AddPacket(4,system_blank_resource);
       }
 
+      %
+      % Add faction affiliation.
+      %
       i = Send(self,@GetFaction);
-      if (i <> FACTION_NEUTRAL)
+      if (i = FACTION_DUKE)
       {
-         % (example) A staunch servant of Duke Akardius.
-         if (i = FACTION_DUKE)
-         {
-            AppendTempString(player_faction_duke);
-         }
-         
-         if (i = FACTION_PRINCESS)
-         {
-            AppendTempString(player_faction_princess);
-         }
-         
-         if (i = FACTION_REBEL)
-         {
-            AppendTempString(player_faction_rebel);
-         }
-         
-         AppendTempString(player_nl);
+         AddPacket(4,player_faction_duke);
+      }
+      else if (i = FACTION_PRINCESS)
+      {
+         AddPacket(4,player_faction_princess);
+      }
+      else if (i = FACTION_REBEL)
+      {
+         AddPacket(4,player_faction_rebel);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
       }
 
+      %
+      % Add visible cargo types. The number of these doesn't really change,
+      % but this section has error checking anyway just in case we change it.
+      %
       j = Send(SYS,@GetVisibleCargoTypes);
-      foreach i in j
+      if j = $
       {
-         % (example) He is holding a purple pickle princess figurine.
-
-         obj = Send(self,@FindHolding,#class=i);
-         if obj <> $
+         AddPacket(4,system_blank_resource);
+      }
+      else
+      {
+         switch(Length(j))
          {
-            AppendTempString(Send(self,@GetHeShe,#cap=True));
-            
-            if IsClass(obj,&Ring)
+            case 5:
+               rCargoNum = system_rsc_template_five;
+               break;
+            case 1:
+               rCargoNum = system_rsc_template_one;
+               break;
+            case 2:
+               rCargoNum = system_rsc_template_two;
+               break;
+            case 3:
+               rCargoNum = system_rsc_template_three;
+               break;
+            case 4:
+               rCargoNum = system_rsc_template_four;
+               break;
+            case 6:
+               rCargoNum = system_rsc_template_six;
+               break;
+            case 7:
+               rCargoNum = system_rsc_template_seven;
+               break;
+            default:
+               rCargoNum = system_rsc_template_one;
+               break;
+         }
+
+         AddPacket(4,rCargoNum);
+
+         foreach i in j
+         {
+            % (example) He is holding a purple pickle princess figurine.
+            obj = Send(self,@FindHolding,#class=i);
+            if obj <> $
             {
-               AppendTempString(player_is_wearing);
+               AppendTempString(Send(self,@GetHeShe,#cap=True));
+               
+               if IsClass(obj,&Ring)
+               {
+                  AddPacket(4,player_is_wearing, 4,Send(self,@GetHeShe,#cap=True),
+                            4,Send(obj,@GetIndef), 4,Send(obj,@GetName));
+               }
+               else
+               {
+                  AddPacket(4,player_is_holding, 4,Send(self,@GetHeShe,#cap=True),
+                            4,Send(obj,@GetIndef), 4,Send(obj,@GetName));
+               }
             }
             else
             {
-               AppendTempString(player_is_holding);
+              AddPacket(4,system_blank_resource);
             }
-
-            AppendTempString(Send(obj,@GetIndef));
-            AppendTempString(Send(obj,@GetName));
-            AppendTempString(player_dot);
-            AppendTempString(player_nl);
          }
       }
 
-%%% option turned off for review
-%      if not Send(self,@PlayerIsImmortal)
+%%% Option turned off for review.
+% Works with %q placed in the master fixed description resource.
+%      ClearTempString();
+%      if NOT Send(self,@PlayerIsImmortal)
 %      {
 %         % (example) Known far and wide for mastery of Jala and Kraanan magics 
 %         % and weaponcraft skills.
@@ -2142,7 +2147,7 @@ messages:
 %         {
 %            if Send(self,@CountKnownAtLevel,#school=i,#level=6) >= 1
 %            {
-%               if not j
+%               if NOT j
 %               {
 %                  AppendTempString(player_known_for_mastery);
 %                  j = TRUE;
@@ -2163,7 +2168,7 @@ messages:
 %         % weaponcraft
 %         if Send(self,@CountKnownAtLevel,#school=SKS_FENCING,#level=5) >= 1
 %         {
-%            if not j
+%            if NOT j
 %            {
 %               AppendTempString(player_known_for_mastery);
 %               j = TRUE;
@@ -2178,14 +2183,33 @@ messages:
 %         AppendTempString(player_dot);
 %         AppendTempString(player_nl);
 %      }
+%      AddPacket(4,GetTempString());
 
-      % Append all the honor strings to the temp string.
+      %
+      % Add newbie tag resource ID, so client can translate it.
+      %
+      if Send(self,@HasHonorString,#string=player_newbie_honor_string)
+      {
+         AddPacket(4,player_newbie_honor_string);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      %
+      % Append all honor strings (except newbie tag) to the temp string.
+      %
+      ClearTempString();
       Send(self,@AppendHonorStrings);
+      AddPacket(4,GetTempString());
 
+      %
+      % Add donation years.
+      %
+      ClearTempString();
       if plDonationYears <> $
       {
-         % Example: Benefactor of Meridian in 2010, 2011
-         AppendTempString(player_donation_title);
          i = 0;
          foreach year in plDonationYears
          {
@@ -2194,12 +2218,14 @@ messages:
                AppendTempString(player_donation_separator);
             }
             AppendTempString(year);
-            i = i + 1;
+            ++i;
          }
-         AppendTempString(player_dot);
+         AddPacket(4,player_donation_title,4,GetTempString());
       }
-
-      AddPacket(0,GetTempString());
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
 
       return;
    }

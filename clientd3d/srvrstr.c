@@ -73,12 +73,7 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
    while (*rsc)
    {
       if (rsc[0] == '%')
-      {
-         if (rsc[1] == '%')
-            rsc++;
-         else
-            break;
-      }
+         break;
 
       rsc++;
    }

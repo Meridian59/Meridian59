@@ -2,7 +2,5 @@ RobeInsignia_name_rsc = de "Die Schülerroben"
 RobeInsignia_desc_rsc = de \
    "Schwer und warm, wie sie sind, verraten Schülerroben, dass sich ihre "
    "Träger leidenschaftlich (einige sagen gar krankhaft) der einen oder anderen "
-   "Schule widmen."
-RobeInsignia_school_info1 = de " Diese Roben tragen das Zeichen von "
-RobeInsignia_school_info2 = de \
-   " und gibt einen Bonus auf Sprüche dieser Schule."
+   "Schule widmen.  Diese Roben tragen das Zeichen von %s und gibt einen "
+   "Bonus auf Sprüche dieser Schule."

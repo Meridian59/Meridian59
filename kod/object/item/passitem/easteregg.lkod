@@ -2,7 +2,7 @@ easteregg_name_rsc = de "Das Osterei"
 easteregg_desc_rsc = de \
    "Gemacht aus der besten Schokolade aus Barloque, scheint dieses Osterei "
    "warm zu sein aber ist dennoch nicht geschmolzen. Du wunderst dich, welche "
-   "Magie dieses Ei zusammenhält"
+   "Magie dieses Ei zusammenhält."
 easteregg_eat = de \
    "Du reißt die farbig und wachsige Verpackung vom Ei ab und beißt in die "
    "lecker schmeckende Schokolade"
@@ -18,5 +18,5 @@ easteregg_type_mana = de \
    "\n\nWenn du dieses Ei isst, erhälst Du einen Teil deiner Zauberkraft zurück."
 easteregg_type_vigor = de \
    "\n\nWenn du dieses Ei isst, erhälst Du Ausdauer dazu."
-easteregg_type_spell_one = de "\n\nWenn du dieses Ei isst, erhälst Du einen "
-easteregg_type_spell_two = de " Zauber."
+easteregg_type_spell = de \
+   "\n\nWenn du dieses Ei isst, erhälst Du einen %s Zauber."

@@ -9,4 +9,4 @@ enchantweapon_desc_rsc = de \
 enchantweapon_resists = de \
    "%s%s widersteht dem Versuch Kraanan gesegnet zu werden."
 enchantweapon_spell_intro = de "Kraanan Level 2: Weiht Deine Waffe Kraanan."
-enchantweapon_label_rsc = de "Blutbrief."
+enchantweapon_label_rsc = de "Blutbrief"

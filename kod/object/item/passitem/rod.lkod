@@ -8,12 +8,11 @@ Rod_desc_broken_rsc = de \
    "Dieser einst so prächtige Stab ist jetzt nur noch ein wertloses Stück "
    "Holz."
 Rod_success_msg = de "Der Zauberstab pulsiert in deiner Hand"
-rod_consumes_charges_a_rsc = de \
-   " Entfesselung der Energie im Inneren verbraucht "
-rod_consumes_charges_b_rsc = de " Ladungen."
-rod_charges_left_a_rsc = de "Dieser Zauberstab hat "
-rod_charges_left_b_rsc = de " übrige Ladungen, und kann maximal "
-rod_charges_left_c_rsc = de " Ladungen aufnehmen."
+rod_consumes_charges_rsc = de \
+   "  Entfesselung der Energie im Inneren verbraucht %i Ladungen."
+rod_charges_left_rsc = de \
+   "\n\nDieser Zauberstab hat %i übrige Ladungen, und kann maximal %i "
+   "Ladungen aufnehmen."
 rod_cannot_hold_more_rsc = de \
    "Wenn Du einen anderen Zauberstab halten würdest, würden sich die Zauber "
    "gegenseitig bekämpfen."

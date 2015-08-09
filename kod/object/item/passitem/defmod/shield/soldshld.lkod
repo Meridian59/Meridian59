@@ -1,9 +1,7 @@
 SoldierShield_name_rsc = de "Der Fraktionsschild"
 SoldierShield_desc_rsc = de \
    "Schilde dieses Stils zeigen die Treue zu einer bestimmten Fraktion."
-SoldierShield_rank_desc1 = de "\n\nDein Rank in "
-SoldierShield_rank_desc2 = de " ist: "
-SoldierShield_rank_desc3 = de "."
+SoldierShield_rank_desc = de "\n\nDein Rank in %s ist: %s."
 SoldierShield_ArmyName = de "den Kräften der Neutralität"
 SoldierShield_rank_name1 = de "ein niedriger Bote"
 SoldierShield_rank_name2 = de "ein durchschnittlicher Soldat"

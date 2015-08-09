@@ -1610,6 +1610,11 @@ messages:
       return;
    }
 
+   GetQuesters()
+   {
+      return Send(poQuest,@GetQuesters);
+   }
+
    GetCargo()
    {
       return pCargo;
@@ -1737,6 +1742,10 @@ messages:
             Debug("Item didn't have quest attribute for ",self);
          }
 
+         if IsClass(pCargo,&QuestItem)
+         {
+            Send(pCargo,@Delete);
+         }
          pCargo = $;
       }
 

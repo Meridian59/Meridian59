@@ -6,4 +6,4 @@ default_lever_desc_rsc = de \
 lever_not_in_range = de "Dieser Hebel ist nicht nah genug um ihn zu betätigen."
 lever_stuck = de \
    "Der Hebel scheint wie angeklebt zu sein,  als du versuchst ihn zu bewegen."
-lever_changed = de "You switch the lever."
+lever_changed = de "Du betätigst den Hebel."

@@ -32,6 +32,12 @@ resources:
    attribute_desc_default = "  This item appears enchanted in some way."
    attribute_name_default = "special %s"
 
+   itematt_made_rsc = "  Enchanted by %q, %s %s."
+   itematt_novice_rsc = "Novice"
+   itematt_apprentice_rsc = "Apprentice"
+   itematt_journeyman_rsc = "Journeyman"
+   itematt_master_rsc = "Master"
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -500,27 +506,58 @@ messages:
    {
       local sMakerInfo;
 
-      AppendTempString(vrDesc);
-
-      if ldata = $ OR NOT IsList(ldata)  
+      if lData = $ OR NOT IsList(lData)
       {
+         AddPacket(4,vrDesc);
+
          return;
       }
 
-      if length(ldata) <> 5
+      if Length(lData) <> 5
       {
+         AddPacket(4,vrDesc);
+
          return;
       }
 
-      sMakerInfo = nth(lData,5);
+      sMakerInfo = Nth(lData,5);
 
       if sMakerInfo <> $
-      %%Then we add information about the maker to the desc.
       {
-         AppendTempString(sMakerInfo);
+         % Add information about the maker to the desc.
+         AddPacket(4,system_rsc_template_2, 4,vrDesc,
+                   4,itematt_made_rsc, 6,Send(First(sMakerInfo),@GetName),
+                   4,Send(self,@GetTitle,#iAbility=Nth(sMakerInfo,3)),
+                   4,Send(Nth(sMakerInfo,2),@GetEnchantmentType));
+      }
+      else
+      {
+         AddPacket(4,vrDesc);
       }
 
       return;
+   }
+
+   GetTitle(iAbility=0)
+   {
+      iAbility = Bound(iAbility,1,4);
+
+      if iAbility = 2
+      {
+         return itematt_apprentice_rsc;
+      }
+
+      if iAbility = 3
+      {
+         return itematt_journeyman_rsc;
+      }
+
+      if iAbility = 4
+      {
+         return itematt_master_rsc;
+      }
+
+      return itematt_novice_rsc;
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

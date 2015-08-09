@@ -41,7 +41,6 @@ resources:
 classvars:
 
    vrDesc = weapattVamper_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_Vamper
 

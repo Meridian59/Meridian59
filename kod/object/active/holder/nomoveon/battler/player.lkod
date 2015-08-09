@@ -226,7 +226,9 @@ player_token_death = de \
 player_dance = de \
    "Du schluckst Deinen Stolz herunter und kehrst zu dem Liedchen in Deinem "
    "Kopf zurück."
-player_cant_dance = de "player_cant_dance"
+player_cant_dance = de \
+   "Du kannst nicht tanzen, da das ganze Zeug in deinen Händen deinen Style "
+   "verkrampfen lassen!"
 player_cant_dance_resting = de \
    "Du sitzt jetzt. Nimm diesen ganzen Kram mit dem 'zurückkehren' nicht "
    "zu wörtlich, ok?"

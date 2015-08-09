@@ -1842,30 +1842,11 @@ messages:
 
       %% Add the rest of the fortunes here.
       plFortunes = $;
-      plFortunes = Cons(FC_10, plFortunes);
-      plFortunes = Cons(FC_11, plFortunes);
-      plFortunes = Cons(FC_12, plFortunes);
-      plFortunes = Cons(FC_13, plFortunes);
-      plFortunes = Cons(FC_14, plFortunes);
-      plFortunes = Cons(FC_15, plFortunes);
-      plFortunes = Cons(FC_16, plFortunes);
-      plFortunes = Cons(FC_17, plFortunes);
-      plFortunes = Cons(FC_18, plFortunes);
-      plFortunes = Cons(FC_19, plFortunes);
-      plFortunes = Cons(FC_20, plFortunes);
-      plFortunes = Cons(FC_21, plFortunes);
-      plFortunes = Cons(FC_22, plFortunes);
-      plFortunes = Cons(FC_23, plFortunes);
-      plFortunes = Cons(FC_24, plFortunes);
-      plFortunes = Cons(FC_25, plFortunes);
-      plFortunes = Cons(FC_26, plFortunes);
-      plFortunes = Cons(FC_27, plFortunes);
-      plFortunes = Cons(FC_28, plFortunes);
-      plFortunes = Cons(FC_29, plFortunes);
-      plFortunes = Cons(FC_30, plFortunes);
-      plFortunes = Cons(FC_31, plFortunes);
-      plFortunes = Cons(FC_32, plFortunes);
-      plFortunes = Cons(FC_33, plFortunes);
+      plFortunes = [FC_10, FC_11, FC_12, FC_13, FC_14, FC_15, FC_16, FC_17,
+                    FC_18, FC_19, FC_20, FC_21, FC_22, FC_23, FC_24, FC_25,
+                    FC_26, FC_27, FC_28, FC_29, FC_30, FC_31, FC_32, FC_33,
+                    FC_34, FC_35, FC_36, FC_37, FC_38, FC_39, FC_40, FC_41];
+
       plFortunes = Cons(FC_34, plFortunes);
       plFortunes = Cons(FC_35, plFortunes);
       plFortunes = Cons(FC_36, plFortunes);
@@ -2252,91 +2233,126 @@ messages:
    %% They are always processed immediately and added to spam list,
    %% then search continues for a "real" action
    {
-      local i,j,k,iCount,lActionList, iKey, bFound, ktriggered, bKtContainK, bKContainKt;
+      local i, j, k, iCount, lActionList, iKey, bFound, ktriggered,
+            bKtContainK, bKContainKt;
+
       lActionList = $;
-      ktriggered = $;      % saves the current speech trigger corresponding to lActionList
+      ktriggered = $;  % saves the current speech trigger corresponding to lActionList
       iCount = 0;
-%      Debug( "SL: looking for class",GetClass(mob) );
+
+      %Debug( "SL: looking for class",GetClass(mob) );
+
       foreach i in plSpeechLib
       {
-         if IsClass(mob,First(i)) 
+         if NOT IsClass(mob,First(i))
          {
-%           Debug( "SL: found class",First(i) );
-            if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0 AND (First(i) <> GetClass(mob)) 
-               { continue; }
-            foreach j in Nth(i,2)
-            {
-               if not Send(self,@PersonalityClash,#mob=mob,#libvec=Nth(j,2))
-               {
-%                 Debug("SL:checking",string); 
-                  foreach k in Nth(j,1)
-                  {
-                     % We have a suitable action for the class, check triggers
-                     if (StringContain(string,k))
-                     {
-%                       Debug("SL: passed stringcontain",k);
-                        % Spam filter:
-                        % Check action key against list of keys triggered since last randomtimer firing
-                        % Only check items with keys (4th in list)
-                        % Don't repeat it if it's on the list
-                        if( Length(j) > 3 )
-                        {
-                           if Send( mob, @OnSpamList, #mob_class = First(i), #key_num = Nth(j,4) )
-                              { continue; }
-                        }
-%                       Debug("SL: passed spamlist",k);
-
-         if( First(Nth(j,3)) = LIBACT_MOOD )
+            continue;
+         }
+         %Debug( "SL: found class",First(i) );
+         if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0
+            AND (First(i) <> GetClass(mob))
          {
-            % it's a mood change action, so process it immediately
-            Post( self, @ParseAction, #action=Nth(j,3), #mob=mob );
-
-            % now add it to the spam list
-            Send( mob, @AddToSpamList, #mob_class=First(i), #key_num=Nth(j,4) );
-
-            % keep searching for a "real" action       
             continue;
          }
 
-                        if ktriggered <> $ {
-                           bKtContainK = StringContain(ktriggered,k);
-                           bKContainKt = StringContain(k,ktriggered);
+         foreach j in Nth(i,2)
+         {
+            if Send(self,@PersonalityClash,#mob=mob,#libvec=Nth(j,2))
+            {
+               continue;
+            }
+            %Debug("SL:checking",string); 
+            foreach k in Nth(j,1)
+            {
+               % We have a suitable action for the class, check triggers
+               if NOT StringContain(string,k)
+               {
+                  continue;
+               }
+               %Debug("SL: passed stringcontain",k);
+               % Spam filter:
+               % Check action key against list of keys triggered since last
+               % randomtimer firing. Only check items with keys (4th in list)
+               % Don't repeat it if it's on the list
+               if Length(j) > 3
+               {
+                  if Send(mob,@OnSpamList,#mob_class=First(i),#key_num=Nth(j,4))
+                  {
+                     continue;
+                  }
+               }
+               %Debug("SL: passed spamlist",k);
+
+               if First(Nth(j,3)) = LIBACT_MOOD
+               {
+                  % it's a mood change action, so process it immediately
+                  Post(self,@ParseAction,#action=Nth(j,3),#mob=mob);
+
+                  % now add it to the spam list
+                  Send(mob,@AddToSpamList,#mob_class=First(i),
+                        #key_num=Nth(j,4));
+
+                  % keep searching for a "real" action
+                  continue;
+               }
+
+               if ktriggered <> $
+               {
+                  bKtContainK = StringContain(ktriggered,k);
+                  bKContainKt = StringContain(k,ktriggered);
+               }
+               else
+               {
+                  bKtContainK = FALSE;
+                  bKContainKt = TRUE;
+               }
+               if bKContainKt
+               {
+                  % old trigger is a subset of the new one, so the new one
+                  % takes precedence (ex. "mutant ant" always supercedes "ant")
+                  iKey = 0;
+                  if Length(j) > 3
+                  {
+                     iKey = Nth(j,4);
+                  }
+                  lActionList = [Nth(j,3), First(i), iKey];
+                  ktriggered = k;
+                  % Reset the counter, since we've superceded the whole set 
+                  % of options we were picking randomly amongst
+                  iCount = 0;
+                  % Don't need to search additional triggers for the
+                  % same response, nor do we want them all to be counted
+                  break;
+               }
+               else
+               {
+                  if ((bKtContainK AND bKContainKt)             % (triggers are equal) or 
+                        OR NOT (bKtContainK OR bKContainKt))    % (triggers are unrelated),
+                  {
+                     if (Random(0,iCount) = 0)                  % so pick one randomly
+                     {
+                        iKey = 0;
+                        if( length(j) > 3 )
+                        {
+                           iKey = Nth(j,4);
                         }
-                        else {
-                           bKtContainK = false;
-                           bKContainKt = true;
-                        }
-                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supercedes "ant")
-                           iKey = 0;
-                           if( length(j) > 3 )
-                              { iKey = Nth(j,4); }
-                           lActionList = [Nth(j,3), First(i), iKey];
-                           ktriggered = k;
-                           iCount = 0;             % reset the counter, since we've superceded the whole set of options we were picking randomly amongst
-                           break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
-                        }
-                        else {
-                           if ((bKtContainK and bKContainKt) or            % (triggers are equal) or 
-                                    not (bKtContainK or bKContainKt)) {    % (triggers are unrelated),
-                              if (Random(0,iCount) = 0) {                  % so pick one randomly
-                                 iKey = 0;
-                                 if( length(j) > 3 )
-                                    { iKey = Nth(j,4); }
-                                 lActionList = [Nth(j,3), First(i), iKey];
-                                 ktriggered = k;
-                              }
-                              iCount = iCount + 1;    % keep track of how many equally viable triggers we've gone through (whether we picked them or not)
-                              break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
-                           }
-                        }
+                        lActionList = [Nth(j,3), First(i), iKey];
+                        ktriggered = k;
                      }
+                     % Keep track of how many equally viable triggers we've
+                     % gone through (whether we picked them or not)
+                     ++iCount;
+                     % Don't need to search additional triggers for the same
+                     % response, nor do we want them all to be counted
+                     break;
                   }
                }
             }
          }
       }
+
       return Send(self,@SearchMobLib,#mob=mob, #percent=0, #string=string, 
-                 #count=iCount, #action_list=lActionList);
+                  #count=iCount, #action_list=lActionList);
    }
 
    % extended speech and random lib stuff   -AJM

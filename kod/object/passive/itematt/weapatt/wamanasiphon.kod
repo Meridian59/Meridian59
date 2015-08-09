@@ -37,7 +37,6 @@ resources:
 classvars:
 
    vrDesc = weapattSiphon_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_SIPHON
 

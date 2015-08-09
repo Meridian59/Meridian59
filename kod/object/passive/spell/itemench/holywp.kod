@@ -34,7 +34,7 @@ resources:
    holyweapon_spell_intro = \
       "Shal'ille Lv. 2: Dedicates your weapon to Shal'ille, enhancing its effectiveness against the unholy."
 
-   holyweapon_label_rsc = "sanctifier."
+   holyweapon_label_rsc = "sanctifier"
 
 classvars:
 

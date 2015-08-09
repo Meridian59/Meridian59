@@ -1,6 +1,6 @@
 RoomKeyCopy_name_rsc = de "Ein silberner Zimmerschlüssel"
-RoomKeyCopy_desc_rsc = de "Dieser silberne Schlüssel trägt die Inschrift:\n"
-RoomKeyCopy_desc2_rsc = de "s Zimmer in der "
+RoomKeyCopy_desc_rsc = de \
+   "Dieser silberne Schlüssel trägt die Inschrift:\n%q's Zimmer in der %s."
 RoomKeyCopy_vanishes = de \
    "Dein silberner Zimmerschlüssel schmilzt zu einer seltsam silbrigen Flüssigkeit, "
    "und verdampft wenig später in einer blauen Dunstwolke."

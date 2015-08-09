@@ -13,4 +13,4 @@ Potion_bad_drink = de \
 Potion_sell_info = de \
    "Nimm diesen Trank bald, Schätzchen, denn er wird schnell schlecht."
 Potion_has_karma_requirement = de \
-   "Dein Karma ist nicht geeignet für diesen Trank."
+   "\n\nDein Karma ist nicht geeignet für diesen Trank."

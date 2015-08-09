@@ -28,7 +28,7 @@ resources:
 
    include iatransc.lkod
 
-   itematttranscendant_desc = " It glows with a soft, white light."
+   itematttranscendant_desc = "  It glows with a soft, white light."
    itematttranscendant_name = "transcendant %s"
 
    transcendant_DM = "transcendant"

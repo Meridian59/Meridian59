@@ -1,7 +1,2 @@
 ItemAttQuestCargo_desc_rsc = de \
-   "\n\nDies wurde vergeben von %sourceNPC an %player, um es an %destNPC zu "
-   "liefern."
-ItemAttQuestCargo_sub_sourceNPC = de "%sourceNPC"
-ItemAttQuestCargo_sub_player = de "%player"
-ItemAttQuestCargo_sub_destNPC = de "%destNPC"
-ItemAttQuestCargo_desc = de ""
+   "\n\nDies wurde vergeben von %s an %q, um es an %s zu liefern."

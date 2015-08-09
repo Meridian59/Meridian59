@@ -1,8 +1,8 @@
 QormasGift_name_rsc = de "Qormas Geschenk"
 QormasGift_desc_rsc = de \
    "Dieses Geschenk ist in dem besten Geschenkpapier dieser Welt eingehüllt."
-QormasGift_desc_append1 = de " Die Schleife zeigt:\n\nFür: "
-QormasGift_desc_append2 = de "\nVon: Qor die Mächtige"
+QormasGift_desc_append = de \
+   "  Die Schleife zeigt:\n\nFür: %q\nVon: Qor die Mächtige"
 Qormas_gift_msg = de "Du reißt das Papier vom Geschenk und blickst auf %s"
 Qormas_gift1_msg = de "eine Rose!"
 Qormas_gift2_msg = de "zwanzig Streifenpilze!"

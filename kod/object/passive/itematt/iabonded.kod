@@ -122,7 +122,6 @@ messages:
 
    AppendDesc(oItem=$)
    {
-      %AppendTempString(vrDesc);
       return;
    }
 

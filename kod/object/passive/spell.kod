@@ -138,12 +138,7 @@ resources:
    spell_meditate_ratio_rsc = \
       "\n\nIt will cost you %i training points to improve in this spell."
 
-   Spell_made_rsc = "  Enchanted by "
-   Spell_novice_rsc = ", Novice "
-   Spell_apprentice_rsc = ", Apprentice "
-   Spell_journeyman_rsc = ", Journeyman "
-   Spell_master_rsc = ", Master "
-   spell_Enchantment_type_default_rsc = "enchanter."
+   spell_Enchantment_type_default_rsc = "enchanter"
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
 
@@ -282,37 +277,35 @@ messages:
    GetSchoolStr(iSchool=-1)
    {
       local rSchool;
-      
+
       if iSchool = -1
       {
          iSchool = viSchool;
       }
 
-      rSchool = spell_school_shalille;
-      
       if iSchool = SS_RIIJA
       {
          rSchool = spell_school_riija;
       }
-      
-      if iSchool = SS_QOR
+      else if iSchool = SS_QOR
       {
          rSchool = spell_school_qor;
       }
-      
-      if iSchool = SS_KRAANAN
+      else if iSchool = SS_KRAANAN
       {
          rSchool = spell_school_kraanan;
       }
-      
-      if iSchool = SS_FAREN
+      else if iSchool = SS_FAREN
       {
          rSchool = spell_school_faren;
       }
-      
-      if iSchool = SS_JALA
+      else if iSchool = SS_JALA
       {
          rSchool = spell_school_jala;
+      }
+      else
+      {
+         rSchool = spell_school_shalille;
       }
 
       return rSchool;
@@ -2567,53 +2560,16 @@ messages:
    %%%  Enchanted Item Labeling stuff.
 
    % When a player enchants an item information about them
-   %  is added to the item's desc.  The string is built here.
+   % is added to the item's desc.
    GetMakerInfo(who=$)
    {
-      local sTitle, sInfo;
-
-      sTitle = Send(self,@GetTitle,#who=who);
-
-      ClearTempString();
-
-      AppendTempString(Spell_made_rsc);
-      AppendTempString(Send(who,@GetTrueName));
-      AppendTempString(sTitle);
-      AppendTempString(vrEnchantment_type);
- 
-      sInfo = CreateString();
-      SetString(sInfo,GetTempString() );
-
-      return sInfo;
+      return [who,self,Send(who,@GetSpellAbility,#spell_num=viSpell_Num)];
    }
 
-   GetTitle(who=$)
+   GetEnchantmentType()
+   "Used for flavor text on player-enchanted items."
    {
-      local stitle,iAbility;
-
-      iAbility = bound(((Send(who,@GetSpellAbility,#spell_num=viSpell_Num)/25)+1),1,4);
-
-      if iAbility = 1
-      {
-         stitle = Spell_novice_rsc;
-      }
-
-      if iAbility = 2
-      {
-         sTitle = Spell_apprentice_rsc;
-      }
-
-      if iAbility = 3
-      {
-         sTitle = Spell_journeyman_rsc;
-      }
-
-      if iAbility = 4
-      {
-         sTitle = Spell_master_rsc;
-      }
-
-      return sTitle;
+      return vrEnchantment_type;
    }
 
    GetRingCharges()

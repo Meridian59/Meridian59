@@ -1,8 +1,0 @@
-gem_remove_name_rsc = de "jeweller's chisel"
-gem_remove_desc_rsc = de \
-   "This wand has a rather mundane use - rather than casting a spell, its "
-   "sturdy construction and anti-magic properties will help you physically "
-   "pry gems from the armor to which they are attached."
-gem_remove_not_while_wearing = de \
-   "You can't pry gems from your armor while you're wearing it!"
-gem_remove_work_complete = de "The chisel shatters as the final gem pops free."

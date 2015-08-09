@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\robe.bof
-BOFS = robedisc.bof lghtrobe.bof
+DEPEND = ..\robedisc.bof
+BOFS = lightdisc.bof
 
 !include $(KODDIR)\kod.mak

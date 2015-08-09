@@ -1,15 +1,12 @@
 weapatt_faction_princess = de \
    " Das Siegel der Prinzessin ist in der Waffe eingraviert und verspricht "
-   "einen  "
-weapatt_faction_princess2 = de " Vorteil bei der Verteidigung der Ehre."
+   "einen %s Vorteil bei der Verteidigung der Ehre."
 weapatt_faction_duke = de \
-   " Des Herzogs Wappen ist in der Waffe eingeprägt und verspricht einen "
-   ""
-weapatt_faction_duke2 = de " Vorteil bei seiner Suche nach dem Thron."
+   " Des Herzogs Wappen ist in der Waffe eingeprägt und verspricht einen %s "
+   "Vorteil bei seiner Suche nach dem Thron."
 weapatt_faction_rebel = de \
-   " Die Rebellen Fahne ist in die Waffe eingeprägt und verspricht einen "
-   ""
-weapatt_faction_rebel2 = de " Vorteil für die Rebellion."
+   " Die Rebellen Fahne ist in die Waffe eingeprägt und verspricht einen %s "
+   "Vorteil für die Rebellion."
 weapatt_faction_duke_name = de "%s des Herzogs"
 weapatt_faction_princess_name = de "der Prinzessin %s"
 weapatt_faction_rebel_name = de "der Rebell %s"

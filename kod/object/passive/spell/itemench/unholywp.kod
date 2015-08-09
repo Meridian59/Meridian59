@@ -37,7 +37,7 @@ resources:
       "Qor Lv. 2: Dedicates your weapon to Qor, enhancing its "
       "effectiveness against the holy."
 
-   unholyweapon_label_rsc = "supplicant of Qor."
+   unholyweapon_label_rsc = "supplicant of Qor"
 
 classvars:
 

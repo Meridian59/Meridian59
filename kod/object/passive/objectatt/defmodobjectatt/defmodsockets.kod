@@ -24,6 +24,10 @@ resources:
    gem_attach_successful = "You carefully attach the %s to the %s."
    remove_no_gems = "The %s has no gems to remove!"
    gem_remove_successful = "You cautiously pry each gem out of the %s."
+   defsockets_attribute_rsc = \
+      "\n\nThis %s has %i %s."
+   defmod_sockets_sing = "socket"
+   defmod_sockets_plur = "sockets"
 
 classvars:
 
@@ -33,7 +37,7 @@ properties:
    plSocketed = $
 
 messages:
-   
+
    Constructor(num_sockets = 1)
    {
       piSockets = num_sockets;
@@ -119,32 +123,26 @@ messages:
    {
       local oGem;
 
-      if who <> $
+      if who = $
       {
-         if plSocketed <> $
+         return;
+      }
+
+      if plSocketed <> $
+      {
+         foreach oGem in plSocketed
          {
-            foreach oGem in plSocketed
-            {
-               Send(who,@NewHold,#what=oGem);
-               Send(oGem,@SetSocketedObject);
-               plSocketed = DelListElem(plSocketed,oGem);
-            }
-            if who <> $
-               AND IsClass(who,&User)
-            {
-               Send(who,@MsgSendUser,#message_rsc=gem_remove_successful,
-                     #parm1=Send(poHostObject,@GetName));
-            }
+            Send(who,@NewHold,#what=oGem);
+            Send(oGem,@SetSocketedObject);
+            plSocketed = DelListElem(plSocketed,oGem);
          }
-         else
-         {
-            if who <> $
-               AND IsClass(who,&User)
-            {
-               Send(who,@MsgSendUser,#message_rsc=remove_no_gems,
-                     #parm1=Send(poHostObject,@GetName));
-            }
-         }
+         Send(who,@MsgSendUser,#message_rsc=gem_remove_successful,
+               #parm1=Send(poHostObject,@GetName));
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=remove_no_gems,
+               #parm1=Send(poHostObject,@GetName));
       }
 
       return;
@@ -183,21 +181,57 @@ messages:
    {
       local oGem;
 
-      AppendTempString("\n\n");
-      AppendTempString("This ");
-      AppendTempString(Send(poHostObject,@GetName));
-      AppendTempString(" has ");
-      Send(SYS,@AppendCardinalToTempString,#number=piSockets);
+      % Support for displaying up to 12 gems.
+      switch(Length(plSocketed))
+      {
+         case 1:
+            break;
+         case 2:
+            AddPacket(4,system_rsc_template_2);
+            break;
+         case 3:
+            AddPacket(4,system_rsc_template_3);
+            break;
+         case 4:
+            AddPacket(4,system_rsc_template_4);
+            break;
+         case 5:
+            AddPacket(4,system_rsc_template_5);
+            break;
+         case 6:
+            AddPacket(4,system_rsc_template_6);
+            break;
+         case 7:
+            AddPacket(4,system_rsc_template_7);
+            break;
+         case 8:
+            AddPacket(4,system_rsc_template_8);
+            break;
+         case 9:
+            AddPacket(4,system_rsc_template_9);
+            break;
+         case 10:
+            AddPacket(4,system_rsc_template_10);
+            break;
+         case 11:
+            AddPacket(4,system_rsc_template_11);
+            break;
+         case 12:
+            AddPacket(4,system_rsc_template_12);
+            break;
+      }
 
       if piSockets = 1
       {
-         AppendTempString(" socket. ");
+         AddPacket(4,defsockets_attribute_rsc, 4,Send(poHostObject,@GetName),
+                   4,piSockets, 4,defmod_sockets_sing);
       }
       else
       {
-         AppendTempString(" sockets. ");
+         AddPacket(4,defsockets_attribute_rsc, 4,Send(poHostObject,@GetName),
+                   4,piSockets, 4,defmod_sockets_plur);
       }
-      
+
       foreach oGem in plSocketed
       {
          Send(oGem,@AttributeDesc);

@@ -23,7 +23,7 @@ WeapAttParalyzer is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -38,7 +38,6 @@ resources:
 classvars:
 
    vrDesc = weapattParalyzer_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_Paralyzer
 

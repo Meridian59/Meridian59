@@ -28,10 +28,12 @@ constants:
 
 resources:
 
+   iaappend_desc = "%q"
+
 classvars:
 
    viItem_Att_Num = IA_APPEND_DESCRIPTION
-   vrDesc = attribute_desc_default
+   vrDesc = iaappend_desc
 
 properties:
 
@@ -74,8 +76,9 @@ messages:
 
    AppendDesc(oItem=$)
    {
-      AppendTempString(Nth(Send(oItem,@GetAttributeData,
+      AddPacket(4,vrDesc,4,Nth(Send(oItem,@GetAttributeData,
             #ItemAtt=IA_APPEND_DESCRIPTION),3));
+
       return;
    }
 

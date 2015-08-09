@@ -11,7 +11,7 @@ prism_desc_rsc = de \
    "muss die ganze Zeit zaubern, um die Energie im Prisma zu bewahren. Der "
    "Zauber wird wirken, wenn sich genügend magische Energie im Prisma angesammelt "
    "hat und wenn je ein Magier für jede Seite des Prismas vorhanden ist. "
-   "Dieses Prisma hat "
+   "Dieses Prisma hat %i%s"
 prism_desc2_rsc = de " Seiten."
 prism_desc2a_rsc = de " Seiten und glimmt schwach von innen heraus."
 prism_desc2b_rsc = de \
@@ -32,5 +32,5 @@ prism_chant_over = de \
    "Das Prisma verdunkelt sich und ein Schleier der Ruhe legt sich über Dich, "
    "der Sprechgesang verstummt."
 prism_desc_location_rsc = de \
-   "Wenn Du genauer hinschaust, erkennst Du eine Miniaturlandschaft im Prisma. "
-   "Es sieht aus wie "
+   "\n\nWenn Du genauer hinschaust, erkennst Du eine Miniaturlandschaft im Prisma. "
+   "Es sieht aus wie %s%s."

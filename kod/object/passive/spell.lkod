@@ -101,12 +101,7 @@ spell_display_spellpower = de "Zauberkraft für ~k~B%s~n ist ~k~B%i~n."
 no_line_of_sight = de "Deine schlechte Sicht macht es noch schwerer zu Zaubern"
 spell_meditate_ratio_rsc = de \
    "\n\nEs kostet dich %i Trainings Punkte um diesen Zauber zu verbessern."
-Spell_made_rsc = de " Verzaubert von "
-Spell_novice_rsc = de ", Novize "
-Spell_apprentice_rsc = de ", Schüler "
-Spell_journeyman_rsc = de ", Gelehrter "
-Spell_master_rsc = de ", Meister "
-spell_Enchantment_type_default_rsc = de ", Erzmagier "
+spell_Enchantment_type_default_rsc = de "Erzmagier"
 Spell_too_few_hp_rsc = de \
    "Du bist nicht stark genug um diesen Zauber zu benutzen."
 cannot_cast_on_phased_out = de \

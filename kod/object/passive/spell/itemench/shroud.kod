@@ -27,7 +27,7 @@ resources:
       "Used to protect a warrior's tools against polluting magics.  "
       "Requires two mushrooms and two elderberries to cast."
 
-   shroud_label_rsc = "Shrouder."
+   shroud_label_rsc = "Shrouder"
 
 classvars:
 

@@ -1,10 +1,9 @@
 swordshard_name_rsc = de "Der Schwertsplitter"
 swordshard_desc_rsc = de \
    "Dies ist ein Teil von einem aufwendig bearbeitet aussehenden Schwert. "
-   ""
 swordshard_possessive = de \
-   "s Name ist in einer merkwürdig scheinenden, fremden Schrift in das Metall "
-   "des Splitters eingraviert."
+   "%qs Name ist in einer merkwürdig scheinenden, fremden Schrift in das "
+   "Metall des Splitters eingraviert."
 SwordShard_bind = de \
    "Verblüfft siehst Du zu, wie sich die Schwertsplitter wieder zu einem "
    "Ganzen verbinden."

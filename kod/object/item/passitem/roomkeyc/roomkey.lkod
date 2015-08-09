@@ -1,6 +1,7 @@
 RoomKey_name_rsc = de "Ein goldener Zimmerschlüssel."
 RoomKey_desc_rsc = de \
-   "Dieser solide, goldene Schlüssel trägt die Beschriftung:\n"
+   "Dieser solide, goldene Schlüssel trägt die Beschriftung:\n%q's Zimmer "
+   "in der %s."
 RoomKey_vanishes = de \
    "Dein goldener Zimmerschlüssel schmilzt zu einer seltsam gelben Flüssigkeit "
    "und verdampft wenig später in einer grünen Dunstwolke."

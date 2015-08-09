@@ -2078,28 +2078,28 @@ messages:
          switch(Length(j))
          {
             case 5:
-               rCargoNum = system_rsc_template_five;
+               rCargoNum = system_rsc_template_5;
                break;
             case 1:
-               rCargoNum = system_rsc_template_one;
+               rCargoNum = system_rsc_template_1;
                break;
             case 2:
-               rCargoNum = system_rsc_template_two;
+               rCargoNum = system_rsc_template_2;
                break;
             case 3:
-               rCargoNum = system_rsc_template_three;
+               rCargoNum = system_rsc_template_3;
                break;
             case 4:
-               rCargoNum = system_rsc_template_four;
+               rCargoNum = system_rsc_template_4;
                break;
             case 6:
-               rCargoNum = system_rsc_template_six;
+               rCargoNum = system_rsc_template_6;
                break;
             case 7:
-               rCargoNum = system_rsc_template_seven;
+               rCargoNum = system_rsc_template_7;
                break;
             default:
-               rCargoNum = system_rsc_template_one;
+               rCargoNum = system_rsc_template_1;
                break;
          }
 
@@ -7371,7 +7371,7 @@ messages:
                #num=Send(self,@DecodeSpellNum,#compound=i));
          if school = Send(oSpell,@GetSchool)
          {
-            num = num + 1;
+            ++num;
          }
       }
 
@@ -7754,12 +7754,12 @@ messages:
 
    DecodeSpellNum(compound = 0)
    {
-      return abs(compound) / 100;
+      return Abs(compound) / 100;
    }
 
    DecodeSpellAbility(compound = 0)
    {
-      return abs(compound) MOD 100;
+      return Abs(compound) MOD 100;
    }
 
    GetSpellAbility(spell_num = 0)
@@ -7768,9 +7768,9 @@ messages:
 
       foreach i in plSpells
       {
-         if Send(self,@DecodeSpellNum,#compound=i) = spell_num
+         if Abs(i) / 100 = spell_num
          {
-            return Send(self,@DecodeSpellAbility,#compound=i);
+            return Abs(i) MOD 100;
          }
       }
 
@@ -7800,7 +7800,7 @@ messages:
       % This also finds the spell/ability pair and puts it in 'i' for later use.
       foreach i in plSpells
       {
-         elemNum = elemNum + 1;
+         ++elemNum;
          if spell_num = Send(self,@DecodeSpellNum,#compound=i)
          {
             bFound = TRUE;
@@ -8209,6 +8209,12 @@ messages:
    {
       local i, elemnum, spellnum;
 
+      % This system is usually off.
+      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      {
+         return;
+      }
+
       elemnum = 0;
       foreach i in plSpells
       {
@@ -8308,9 +8314,9 @@ messages:
 
       foreach i in plSkills
       {
-         if Send(self,@DecodeSkillNum,#compound=i) = Skill_num
+         if Abs(i) / 100 = Skill_num
          {
-            return Send(self,@DecodeSkillAbility,#compound=i);
+            return Abs(i) MOD 100;
          }
       }
 
@@ -8589,6 +8595,12 @@ messages:
    {
       local i, elemnum, Skillnum;
 
+      % This system is usually off.
+      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      {
+         return;
+      }
+
       elemnum = 0;
       foreach i in plSkills
       {
@@ -8650,6 +8662,12 @@ messages:
    "Meaning they have a chance to atrophy when ptAdvancement goes off."
    {
       local i, elemnum;
+
+      % This system is usually off.
+      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      {
+         return;
+      }
 
       elemnum = 0;
       foreach i in plSpells
@@ -13554,54 +13572,39 @@ messages:
                   kraanan_level = iLevel;
                }
             }
-            else
+            else if (iSchool = SS_SHALILLE)
             {
-               if (iSchool = SS_SHALILLE)
+               if (iLevel > shalille_level)
                {
-                  if (iLevel > shalille_level)
-                  {
-                     shalille_level = iLevel;
-                  }
+                  shalille_level = iLevel;
                }
-               else
+            }
+            else if (iSchool = SS_QOR)
+            {
+               if (iLevel > qor_level)
                {
-                  if (iSchool = SS_QOR)
-                  {
-                     if (iLevel > qor_level)
-                     {
-                        qor_level = iLevel;
-                     }
-                  }
-                  else
-                  {
-                     if (iSchool = SS_FAREN)
-                     {
-                        if (iLevel > faren_level)
-                        {
-                           faren_level = iLevel;
-                        }
-                     }
-                     else
-                     {
-                        if (iSchool = SS_RIIJA)
-                        {
-                           if (iLevel > riija_level)
-                           {
-                              riija_level = iLevel;
-                           }
-                        }
-                        else
-                        {
-                           if (iSchool = SS_JALA)
-                           {
-                              if (iLevel > jala_level)
-                              {
-                                 jala_level = iLevel;
-                              }
-                           }
-                        }
-                     }
-                  }
+                  qor_level = iLevel;
+               }
+            }
+            else if (iSchool = SS_FAREN)
+            {
+               if (iLevel > faren_level)
+               {
+                  faren_level = iLevel;
+               }
+            }
+            else if (iSchool = SS_RIIJA)
+            {
+               if (iLevel > riija_level)
+               {
+                  riija_level = iLevel;
+               }
+            }
+            else if (iSchool = SS_JALA)
+            {
+               if (iLevel > jala_level)
+               {
+                  jala_level = iLevel;
                }
             }
          }
@@ -13627,9 +13630,9 @@ messages:
             while (k < NUM_SPELL_LEVELS)
             {
                Send(self, @StripSpellsOfSchoolByLevel, #school=j, #level=k);
-               k = k +1;
+               ++k;
             }
-            j = j + 1;
+            ++j;
          }
       }
       else
@@ -13638,7 +13641,7 @@ messages:
          while (k < NUM_SPELL_LEVELS)
          {
             Send(self, @StripSpellsOfSchoolByLevel, #school=school, #level=k);
-            k = k + 1;
+            ++k;
          }
       }
 

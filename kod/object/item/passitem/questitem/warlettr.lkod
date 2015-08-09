@@ -4,7 +4,7 @@ WarLetter_desc_closed_rsc = de \
    "verschlossen, welcher leicht zu entfernen zu sein scheint."
 WarLetter_desc_opened_rsc = de \
    "Dies ist ein ziemlich einfacher Brief in einer leicht zu lesenden Handschrift."
-WarLetter_intro_rsc = de "\n\nIn dem Brief ist folgendes zu lesen:\n\n"
+WarLetter_intro_rsc = de "\n\nIn dem Brief ist folgendes zu lesen:\n\n%r"
 WarLetter_open_rsc = de \
    "Vorsichtig entfernst Du den Faden und öffnest den Brief."
 WarLetter_close_rsc = de \
@@ -31,7 +31,7 @@ Warletter_text1_rsc = de \
    "werden. Ich bin sicher, dass wir in der Lage sind, dem gestürzten Herzog "
    "Gerechtigkeit zu verschaffen.\n\nHochachtungsvoll,\n%s"
 Warletter_text2_rsc = de \
-   "%s,Ich beantworte Deinen letzten Brief aus Höflichkeit. Solche Äußerungen "
+   "%s, Ich beantworte Deinen letzten Brief aus Höflichkeit. Solche Äußerungen "
    "sorgen in meinen Augen nicht dafür, Dich oder Deinen Standpunkt hervorzuheben.\n\nErst "
    "einmal sollte man die Taten eines Mörders nicht verteidigen. Ich weiß, "
    "dass Du diese Anschuldigung zurückweisen wirst, aber der Ton Deines vorausgegangenen "
@@ -52,7 +52,7 @@ Warletter_text2_rsc = de \
    "und jegliches Gerede von Aufruhr muss verbannt werden. Unsere Länder "
    "müssen in Frieden vereinigt undnicht im Krieg gespalten werden.\n\n%s"
 Warletter_text3_rsc = de \
-   "Lieber %s,Wenn ich Dich nicht so gut kennen würde, würde ich mir Sorgen "
+   "Lieber %s, Wenn ich Dich nicht so gut kennen würde, würde ich mir Sorgen "
    "machen, dass Du vermutest, dass ich in einen diabolischen Plan verwickelt "
    "bin, den im Moment alle im Kopf haben. Ich bin mir jedenfalls sicher, "
    "dass dies nicht der Fall ist.\n\nWie ich Dir bereits gesagt habe, weiß "
@@ -67,12 +67,12 @@ Warletter_text3_rsc = de \
    "geht Dir gut. Gib auf Dich Acht. Hoffentlich sehen wir uns bald.\n\nDein "
    "Freund,\n%s"
 Warletter_text4_rsc = de \
-   "%s,Schicke mir nie wieder eine solche Art von Brief auf so öffentlichen "
+   "%s, Schicke mir nie wieder eine solche Art von Brief auf so öffentlichen "
    "Wegen. Wir müssen uns vergewissern, dass wir nur auf Leute zurückgreifen, "
    "denen wir vertrauen, um unsere Ideen zu übermitteln. Denk' daran! Ehre "
    "sei dem Dritten!\n\n%s"
 Warletter_text5_rsc = de \
-   "Lieber %s,Ich könnte nicht mehr mit Deinem letzten Brief übereinstimmen. "
+   "Lieber %s, Ich könnte nicht mehr mit Deinem letzten Brief übereinstimmen. "
    "Es ist fast so, als ob Du meine Gedanken gelesen hättest, als Du ihn "
    "verfasst hast.\n\nWer sonst ausser dem Neffen könnte so viel gewußt haben "
    "und so sehr von dem Mord profitiert haben? Niemand, sage ich. Ich verstehe, "
@@ -83,13 +83,13 @@ Warletter_text5_rsc = de \
    "kümmern. Ich werde diesen Brief mit einem Kurier schicken, sobald ich "
    "einen ausfindig mache. Ich erwarte Deine schnelle Antwort.\n\nHochachtungsvoll,\n%s"
 Warletter_text6_rsc = de \
-   "%s,Bitte schreibe mir nicht mehr, denn Deine irrationalen und bedrückenden "
+   "%s, Bitte schreibe mir nicht mehr, denn Deine irrationalen und bedrückenden "
    "Ansichten über eine Rebellion können in unserer gegenwärtigen Lage nicht "
    "toleriert werden. Wenn Du so blind bist, dass Du nicht siehst, wie unsere "
    "Ideen nur die Leute verletzen werden, die in der Nähe des Meridian leben, "
    "dann bist Du verrückter, als ich für möglich gehalten habe.\n\n%s"
 Warletter_text7_rsc = de \
-   "Mein Freund, %sErlaube mir, mich für meinen letzten Brief zu entschuldigen. "
+   "Mein Freund, %s Erlaube mir, mich für meinen letzten Brief zu entschuldigen. "
    "Ich weiß nicht, welcher Wahnsinn meine Gedanken ergriffen und mich davon "
    "abgehalten hat, rational zu denken. Alles, was ich sagen kann, ist, dass "
    "Deine Antwort meinen Verstand geradegerückt hat.\n\nIch wünschte, alle "
@@ -99,7 +99,7 @@ Warletter_text7_rsc = de \
    "verkehre.\n\nIch werde Maßnahmen ergreifen, um mich in Zukunft gegen solche "
    "Gedanken zu  wappnen.\n\nNochmals meine aufrichtigste Entschuldigung,\n%s"
 Warletter_text8_rsc = de \
-   "Lieber %s,Möglicherweise ist Rebellion die Antwort. Ich verabscheue es, "
+   "Lieber %s, Möglicherweise ist Rebellion die Antwort. Ich verabscheue es, "
    "an das Leid zu denken, das sie verursachen könnte, aber manchmal ist "
    "es besser, für ein Prinzip einzustehen, an das wir glauben, als die anderen "
    "schrecklichen Ereignisse zuzulassen. Ich bin sicher, dass diese Worte "
@@ -148,7 +148,7 @@ Warletter_text9_rsc = de \
    "werden, der keinen Blutdurst in ihren oder seinen Augen hat. Leider scheint "
    "dieser Typ selten und unerreichbar zu sein. Im Namen der Götter, Dein\n\n%s"
 Warletter_text10_rsc = de \
-   "%s,Obwohl es etwas beängstigend ist, finde ich, dass die momentane Situation "
+   "%s, Obwohl es etwas beängstigend ist, finde ich, dass die momentane Situation "
    "aufregend ist. Der Tod des Herzogs? obwohl bedauernswert? hat jede Art "
    "von Gesprächen über Gerechtigkeit und Rebellion angeregt. Einige Leute "
    "sind sehr eifrig bestrebt, den Killer zu finden und der Gerechtigkeit "
@@ -165,9 +165,9 @@ Warletter_text10_rsc = de \
    "teuflisch und ich bin immer noch dabei, meinen Gegenzug zu planen. Vielleicht "
    "finde ich einen anderen Kurier, um den Zug mündlich zu Dir zu schicken.\n\nIm "
    "Namen der fünf Götter, Dein\n%s"
-Warletter_text11_rsc = de "%s,ergot lumbago francolin zeitgeist rigatoni%s"
+Warletter_text11_rsc = de "%s, ergot lumbago francolin zeitgeist rigatoni %s"
 Warletter_text12_rsc = de \
-   "An %s,Du wirst nicht glauben, welchen Aufstand ein paar wohlgesetzte "
+   "An %s, Du wirst nicht glauben, welchen Aufstand ein paar wohlgesetzte "
    "Worte entfachen können. Es scheint, als ob manche Leute nur nach irgendeinem "
    "Grund suchen, um Gewalt auszuüben. Ich weiß nicht, ob das gut oder schlecht "
    "ist, wenn man den gegenwärtigen Stand der Dinge betrachtet.\n\nIch habe "
@@ -185,9 +185,9 @@ Warletter_text12_rsc = de \
    "des Herzogs gewesen wäre. Aber braucht Gewalt Gewalt, um den Wahnsinn "
    "zu beenden?\n\nNun, ich werde Dich nicht weiter mit meinen Gedanken langweilen. "
    "Ich hoffe, dass es für uns in Zukunft strahlendere Tage gibt. Leider "
-   "ist alles, was man zur Zeit sehen kann, die Finsternis.\n\nDein Freund,%s"
+   "ist alles, was man zur Zeit sehen kann, die Finsternis.\n\nDein Freund, %s"
 Warletter_text13_rsc = de \
-   "Lieber %s,Der Ärger scheint Dir zu folgen, wo immer Du auch hingehst! "
+   "Lieber %s, Der Ärger scheint Dir zu folgen, wo immer Du auch hingehst! "
    "Nach Deinem letzten Brief waren einige Wächter hier, um nach Dir zu fragen. "
    "Natürlich habe ich abgestritten, irgendetwas über Deine Vorhaben zu wissen. "
    "Ich schätze, Du kannst Dich später bedanken.\n\nNun gut, wie geht es Dir? "
@@ -201,9 +201,9 @@ Warletter_text13_rsc = de \
    "umbringen, ist unser Leben ruhig und friedlich.\n\nIch sollte heute etwas "
    "Produktives tun. Vielleicht werde ich einen Tempel besuchen und eine "
    "Priesterin treffen. Ich habe das schon lange nicht mehr gemacht. Schreibe, "
-   "wenn Du kannst!\n\nHochachtungsvoll,%s"
+   "wenn Du kannst!\n\nHochachtungsvoll, %s"
 Warletter_text14_rsc = de \
-   "%s,Wie kannst Du nur behaupten, dass gerade ein Aufstand die gegenwärtige "
+   "%s, Wie kannst Du nur behaupten, dass gerade ein Aufstand die gegenwärtige "
    "Situation ändern wird. Hast Du gesehen, dass der Herzog und die Prinzessin "
    "Truppen ausheben, als ob sie für einen Krieg rüsten würden. Hast Du gesehen, "
    "dass sie ihre Aufmerksamkeit von den Leuten abgewandt haben, um zu versuchen, "
@@ -220,7 +220,7 @@ Warletter_text14_rsc = de \
    "dass meine Worte klüger sind, als Du zuerst dachtest.\n\nIm Geist und mit "
    "Glauben,\n%s"
 Warletter_text15_rsc = de \
-   "An %s,Ich konnte nur lachen, als ich Deinen letzten Brief gelesen habe. "
+   "An %s, Ich konnte nur lachen, als ich Deinen letzten Brief gelesen habe. "
    "Du hast einfach nicht verstanden, was für eine wundervolle Gelegenheit "
    "uns die momentane Situation bietet.\n\nDu hast mich oft zur Schenke begleitet "
    "und mit mir darüber geredet, wie sich unsere Gesellschaft verändern muss. "

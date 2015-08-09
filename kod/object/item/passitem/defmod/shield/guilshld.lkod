@@ -1,8 +1,11 @@
 guildshield_name_rsc = de "Der Gildenschild"
 guildshield_desc_rsc = de \
    "Heavy metal shields of this style are decorated in the standards of its "
-   "owner guild. "
-guildshield_heraldry_prefix = de "The pattern on this shield is "
+   "owner guild.  "
+guildshield_herald_guild_master = de \
+   "The pattern on this shield is %s%s%s. Das Wappen der Gilde %q.  %s"
+guildshield_herald_noguild_master = de \
+   "The pattern on this shield is %s%s%s.  %s"
 guildshield_red = de "rot"
 guildshield_skin1 = de "beige"
 guildshield_skin2 = de "bronze"
@@ -20,10 +23,8 @@ guildshield_darkgreen = de "dunkelgrün"
 guildshield_unknown = de "einfarbig"
 guildshield_slash = de " und versetzt mit "
 guildshield_half = de " geteilt durch "
-guildshield_horiz = de "dreigeteilt durch"
-guildshield_checker = de "gevierteilt durch "
-guildshield_heraldry_known = de ". Das Wappen der Gilde "
-guildshield_heraldry_postfix = de ". "
+guildshield_horiz = de " dreigeteilt durch "
+guildshield_checker = de " gevierteilt durch "
 guildshield_insig_riija = de "Das starre Auge Riijas blickt aus der Mitte. "
 guildshield_insig_qor = de \
    "Das Schädelabzeichen von Qor befindet sich darüber. "

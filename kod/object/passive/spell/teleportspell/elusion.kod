@@ -269,7 +269,7 @@ messages:
 
       if parm1 = $
       {
-         return;
+         return FALSE;
       }
 
       % Add master resource.
@@ -312,7 +312,7 @@ messages:
          AddPacket(4,elusion_loc_list_blank);
       }
 
-      return;
+      return TRUE;
    }
 
    DoubleCheckAfterTrance(who=$,lTargets=$)

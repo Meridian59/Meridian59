@@ -524,7 +524,7 @@ messages:
             bFoundProperties = TRUE;
          }
 
-         Send(self,@AddResourceTemplate,
+         Send(SYS,@AddResourceTemplate,
                #iNum=Length(Send(self,@GetCurrentResistances)));
 
          foreach i in Send(self,@GetCurrentResistances)
@@ -547,7 +547,7 @@ messages:
             bFoundProperties = TRUE;
          }
 
-         Send(self,@AddResourceTemplate,
+         Send(SYS,@AddResourceTemplate,
                #iNum=Length(Send(SYS,@GetAttackTypeList)));
 
          foreach i in Send(SYS,@GetAttackTypeList)
@@ -577,7 +577,7 @@ messages:
             bFoundProperties = TRUE;
          }
 
-         Send(self,@AddResourceTemplate,
+         Send(SYS,@AddResourceTemplate,
                #iNum=Length(Send(SYS,@GetSpellTypeList)));
 
          foreach i in Send(SYS,@GetSpellTypeList)
@@ -602,8 +602,7 @@ messages:
       {
          if Length(plItem_attributes) > 1
          {
-            Send(self,@AddResourceTemplate,
-                  #iNum=Length(plItem_attributes));
+            Send(SYS,@AddResourceTemplate,#iNum=Length(plItem_attributes));
          }
 
          % TODO: Item attributes should handle this.
@@ -813,7 +812,7 @@ messages:
          % Support for displaying up to 12 itematts.
          if Length(plItem_Attributes) > 1
          {
-            Send(self,@AddResourceTemplate,#iNum=Length(plItem_Attributes));
+            Send(SYS,@AddResourceTemplate,#iNum=Length(plItem_Attributes));
          }
 
          foreach i in plItem_Attributes
@@ -855,7 +854,7 @@ messages:
          % Support for displaying up to 12 objectatts.
          if Length(plObject_attributes) > 1
          {
-            Send(self,@AddResourceTemplate,#iNum=Length(plObject_attributes));
+            Send(SYS,@AddResourceTemplate,#iNum=Length(plObject_attributes));
          }
 
          foreach i in plObject_attributes
@@ -924,51 +923,6 @@ messages:
       else
       {
          AddPacket(4,system_blank_resource);
-      }
-
-      return;
-   }
-
-   AddResourceTemplate(iNum=1)
-   {
-      switch(iNum)
-      {
-         case 1:
-            AddPacket(4,system_rsc_template_1);
-            break;
-         case 2:
-            AddPacket(4,system_rsc_template_2);
-            break;
-         case 3:
-            AddPacket(4,system_rsc_template_3);
-            break;
-         case 4:
-            AddPacket(4,system_rsc_template_4);
-            break;
-         case 5:
-            AddPacket(4,system_rsc_template_5);
-            break;
-         case 6:
-            AddPacket(4,system_rsc_template_6);
-            break;
-         case 7:
-            AddPacket(4,system_rsc_template_7);
-            break;
-         case 8:
-            AddPacket(4,system_rsc_template_8);
-            break;
-         case 9:
-            AddPacket(4,system_rsc_template_9);
-            break;
-         case 10:
-            AddPacket(4,system_rsc_template_10);
-            break;
-         case 11:
-            AddPacket(4,system_rsc_template_11);
-            break;
-         case 12:
-            AddPacket(4,system_rsc_template_12);
-            break;
       }
 
       return;

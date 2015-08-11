@@ -1,4 +1,6 @@
 quote_substring = de "%q"
+lib_said_resource_str = de "%s%s sagt, \"%s~n\""
+lib_add_and = de "und "
 quote_uninitialized = de "Ich versuche zu denken aber nichts passiert!"
 test_quote = de "Ich kann sagen was ich will."
 append_string = de "@*$#!.........."
@@ -150,7 +152,7 @@ LM_haz_eric = de \
    "Der bester Barkeeper auf dieser Seite von Barloque! Ich habe gehört er "
    "sucht etwas..."
 LM_no_mana_nodes = de "Du bist noch mit keiner Mana Node verbunden."
-LM_mana_nodes = de "Dein Geist ist mit den folgenden Mana Nodes verbunden: %q."
+LM_mana_nodes = de "Dein Geist ist mit den folgenden Mana Nodes verbunden: %r."
 QM_missed_middle = de \
    "Was ist das? Das macht keinen Sinn für mich. Bist Du sicher, dass Du "
    "losgegangen bist um %s%s zu sehen und hast die ~Itatsächliche~n Nachricht "

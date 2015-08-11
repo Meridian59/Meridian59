@@ -30,6 +30,7 @@ Library is UtilityFunctions
 constants:
    
    include blakston.khd
+   include protocol.khd
 
 resources:
 
@@ -37,6 +38,10 @@ resources:
 
    % for the extended speech and random libs -AJM
    quote_substring = "%q"
+   lib_said_resource_str = "%s%s says, \"%s~n\""
+   lib_add_rsc = "%s%s"
+   lib_add_comma = ", "
+   lib_add_and = "and "
    quote_uninitialized = "I'm tryin' to think, but nothin' happens!"
    test_quote = "I can say what I want now, y'know."
    append_string = "@*$#!.........."
@@ -111,8 +116,7 @@ resources:
    LM_haz_eric = "The finest barman this side of Barloque!  I've heard he seeks something..."
 
    LM_no_mana_nodes = "You have not yet bonded with any mana nodes."
-   LM_mana_nodes = "Your aura is connected with these mana nodes: %q."
-   
+   LM_mana_nodes = "Your aura is connected with these mana nodes: %r."
 
    QM_missed_middle = "What's that?  That doesn't make any sense to me.  Are you sure you went to see %s%s and get the ~Iactual~n message for me?"
    QM_never_sent = "Perhaps you are trying to deceive me?  I don't believe you ever asked to do a favor for me."  
@@ -4593,26 +4597,32 @@ messages:
    PlayerManaNodeList(mob = $, person = $)
    "Tell the player the list of mana nodes they have bonded with."
    {
-      local iNodeList, index, oNode, count;
+      local iNodeList, index, oNode, iCount, lNodes, i, oMobOwner, iLength;
 
-      if mob = $ OR person = $ OR NOT IsClass(person, &User)
+      if mob = $ OR person = $ OR NOT IsClass(person,&User)
       {
          return;
       }
 
-      iNodeList = Send(person, @GetNodeList);
+      oMobOwner = Send(mob,@GetOwner);
+      if oMobOwner = $
+      {
+         return;
+      }
+
+      iNodeList = Send(person,@GetNodeList);
 
       if iNodeList = 0
       {
          Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-               #string = LM_no_mana_nodes);
+               #string=LM_no_mana_nodes);
 
          return;
       }
 
       index = 1;
-      count = 0;
-      ClearTempString();
+      lNodes = $;
+
       while index <= NODE_MAX_VALUE
       {
          if iNodelist & index
@@ -4620,20 +4630,39 @@ messages:
             oNode = Send(SYS, @FindNodeByNum, #num = index);
             if oNode <> $
             {
-               if count <> 0
-               {
-                  AppendTempString(", ");
-               }
-
-               AppendTempString(Send(oNode, @GetLocationName));
-               count = count + 1;
+               lNodes = Cons(oNode,lNodes);
             }
          }
          index = 2 * index;
       }
       
-      Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
-            #string = LM_mana_nodes,#parm1 = GetTempString());
+      iLength = Length(lNodes);
+      if iLength <= 0
+      {
+         return;
+      }
+
+      % Add protocol packet and headers.
+      AddPacket(1,BP_SAID, 4,mob, 4,Send(mob,@GetName), 1,SAY_RESOURCE,
+                4,lib_said_resource_str, 4,Send(mob,@GetCapDef),
+                4,Send(mob,@GetName),4,LM_mana_nodes);
+                
+      AddPacket(4,Send(SYS,@AddResourceTemplate,#iNum=iLength));
+
+      iCount = 1;
+      foreach i in lNodes
+      {
+         if iCount++ = iLength
+         {
+            break;
+         }
+
+         AddPacket(4,lib_add_rsc, 4,Send(i,@GetLocationName), 4,lib_add_comma);
+      }
+      AddPacket(4,lib_add_rsc, 4,lib_add_and,
+                4,Send(Last(lNodes),@GetLocationName));
+      
+      Send(oMobOwner,@SendCopyPacketAllInRoom);
 
       return;
    }

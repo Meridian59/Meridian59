@@ -58,7 +58,7 @@ Decorator_option_unavailable = de \
 Decorator_graceful_exit = de \
    "Ah, ich verstehe. Wenn Du irgendetwas benötigst, klingle bitte."
 Decorator_list_objects = de \
-   "Du kannst aus folgenden Dekorationsobjekten wählen: %q."
+   "Du kannst aus folgenden Dekorationsobjekten wählen: %r%r."
 Decorator_takes_heartstones = de \
    "Weißt Du, aus Herzsteinen können so manch interessante Dinge erschaffen "
    "werden."
@@ -94,3 +94,4 @@ Decorator_command_painting = de "Gemälde"
 Decorator_command_picture = de "Bild"
 Decorator_command_lighten = de "heller"
 Decorator_command_darken = de "dunkler"
+decorator_and = de "und "

@@ -2560,17 +2560,20 @@ messages:
          }
       }
 
-      foreach i in plPassive
+      if NOT bFound
       {
-         if First(i) = what
+         foreach i in plPassive
          {
-            SetNth(i,3,new_row);
-            SetNth(i,4,new_col);
-            SetNth(i,5,fine_row);
-            SetNth(i,6,fine_col);
-            bFound = TRUE;
+            if First(i) = what
+            {
+               SetNth(i,3,new_row);
+               SetNth(i,4,new_col);
+               SetNth(i,5,fine_row);
+               SetNth(i,6,fine_col);
+               bFound = TRUE;
 
-            break;
+               break;
+            }
          }
       }
 

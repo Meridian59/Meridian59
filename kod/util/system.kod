@@ -93,6 +93,10 @@ resources:
    system_rsc_template_18 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
    system_rsc_template_19 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
    system_rsc_template_20 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_21 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_22 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_23 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_24 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
 
    system_char_module = char.dll
 
@@ -217,22 +221,25 @@ resources:
    system_cardinal_80 = "eighty"
    system_cardinal_90 = "ninety"
    system_cardinal_100 = "a hundred"
-   system_fuzzy_cardinal_10000 = "countless"
-   system_fuzzy_cardinal_1000 = "thousands of"
-   system_fuzzy_cardinal_200 = "hundreds of"
-   system_fuzzy_cardinal_100 = "a hundred or more"
-   system_fuzzy_cardinal_75 = "a large number of"
-   system_fuzzy_cardinal_50 = "at least fifty"
-   system_fuzzy_cardinal_36 = "a few dozen"
-   system_fuzzy_cardinal_20 = "over twenty"
-   system_fuzzy_cardinal_12 = "at least a dozen"
-   system_fuzzy_cardinal_5 = "a handful of"
-   system_fuzzy_cardinal_4 = "several"
-   system_fuzzy_cardinal_3 = "a few"
-   system_fuzzy_cardinal_2 = "a couple of"
-   system_fuzzy_cardinal_1 = "one"
-   system_fuzzy_cardinal_0 = "no"
-   system_fuzzy_cardinal_deficit = "a deficit of"
+
+   % These resources have a space on the end, so they can be used in place of
+   % indefinite articles.
+   system_fuzzy_cardinal_10000 = "countless "
+   system_fuzzy_cardinal_1000 = "thousands of "
+   system_fuzzy_cardinal_200 = "hundreds of "
+   system_fuzzy_cardinal_100 = "a hundred or more "
+   system_fuzzy_cardinal_75 = "a large number of "
+   system_fuzzy_cardinal_50 = "at least fifty "
+   system_fuzzy_cardinal_36 = "a few dozen "
+   system_fuzzy_cardinal_20 = "over twenty "
+   system_fuzzy_cardinal_12 = "at least a dozen "
+   system_fuzzy_cardinal_5 = "a handful of "
+   system_fuzzy_cardinal_4 = "several "
+   system_fuzzy_cardinal_3 = "a few "
+   system_fuzzy_cardinal_2 = "a couple of "
+   system_fuzzy_cardinal_1 = "one "
+   system_fuzzy_cardinal_0 = "no "
+   system_fuzzy_cardinal_deficit = "a deficit of "
 
    system_new_hour = "It is now %i:00 Meridian time."
 
@@ -6427,28 +6434,26 @@ messages:
       return getTempString();
    }
 
-   AppendFuzzyCardinalToTempString(number = 0)
-   "Appends one, a couple, ..., several, ..., at least a dozen, etc. to the TempString."
+   GetFuzzyCardinalResource(number = 0)
+   "Returns the fuzzy cardinal resource directly."
    {
-      if (number >= 10000) { AppendTempString(system_fuzzy_cardinal_10000); return; }
-      if (number >= 1000) { AppendTempString(system_fuzzy_cardinal_1000); return; }
-      if (number >= 200) { AppendTempString(system_fuzzy_cardinal_200); return; }
-      if (number >= 100) { AppendTempString(system_fuzzy_cardinal_100); return; }
-      if (number >= 75) { AppendTempString(system_fuzzy_cardinal_75); return; }
-      if (number >= 50) { AppendTempString(system_fuzzy_cardinal_50 ); return; }
-      if (number >= 36) { AppendTempString(system_fuzzy_cardinal_36); return; }
-      if (number >= 20) { AppendTempString(system_fuzzy_cardinal_20); return; }
-      if (number >= 12) { AppendTempString(system_fuzzy_cardinal_12); return; }
-      if (number >= 5) { AppendTempString(system_fuzzy_cardinal_5); return; }
-      if (number = 4) { AppendTempString(system_fuzzy_cardinal_4); return; }
-      if (number = 3) { AppendTempString(system_fuzzy_cardinal_3); return; }
-      if (number = 2) { AppendTempString(system_fuzzy_cardinal_2); return; }
-      if (number = 1) { AppendTempString(system_fuzzy_cardinal_1); return; }
-      if (number = 0) { AppendTempString(system_fuzzy_cardinal_0); return; }
+      if (number >= 10000) { return system_fuzzy_cardinal_10000; }
+      if (number >= 1000) { return system_fuzzy_cardinal_1000; }
+      if (number >= 200) { return system_fuzzy_cardinal_200; }
+      if (number >= 100) { return system_fuzzy_cardinal_100; }
+      if (number >= 75) { return system_fuzzy_cardinal_75; }
+      if (number >= 50) { return system_fuzzy_cardinal_50; }
+      if (number >= 36) { return system_fuzzy_cardinal_36; }
+      if (number >= 20) { return system_fuzzy_cardinal_20; }
+      if (number >= 12) { return system_fuzzy_cardinal_12; }
+      if (number >= 5) { return system_fuzzy_cardinal_5; }
+      if (number = 4) { return system_fuzzy_cardinal_4; }
+      if (number = 3) { return system_fuzzy_cardinal_3; }
+      if (number = 2) { return system_fuzzy_cardinal_2; }
+      if (number = 1) { return system_fuzzy_cardinal_1; }
+      if (number = 0) { return system_fuzzy_cardinal_0; }
 
-      AppendTempString(system_fuzzy_cardinal_deficit);
-
-      return getTempString();
+      return system_fuzzy_cardinal_deficit;
    }
 
    GetNumberFromString(string = $)
@@ -6921,6 +6926,41 @@ messages:
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AddResourceTemplate(iNum=1)
+   {
+      switch(iNum)
+      {
+         case 1: return system_rsc_template_1;
+         case 2: return system_rsc_template_2;
+         case 3: return system_rsc_template_3;
+         case 4: return system_rsc_template_4;
+         case 5: return system_rsc_template_5;
+         case 6: return system_rsc_template_6;
+         case 7: return system_rsc_template_7;
+         case 8: return system_rsc_template_8;
+         case 9: return system_rsc_template_9;
+         case 10: return system_rsc_template_10;
+         case 11: return system_rsc_template_11;
+         case 12: return system_rsc_template_12;
+         case 13: return system_rsc_template_13;
+         case 14: return system_rsc_template_14;
+         case 15: return system_rsc_template_15;
+         case 16: return system_rsc_template_16;
+         case 17: return system_rsc_template_17;
+         case 18: return system_rsc_template_18;
+         case 19: return system_rsc_template_19;
+         case 20: return system_rsc_template_20;
+         case 21: return system_rsc_template_21;
+         case 22: return system_rsc_template_22;
+         case 23: return system_rsc_template_23;
+         case 24: return system_rsc_template_24;
+      }
+
+      Debug("AddResourceTemplate couldn't find template for ",iNum);
+
+      return;
+   }
 
    GetPercentQRsc()
    {

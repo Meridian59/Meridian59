@@ -20,7 +20,6 @@ RentableRoom_picture_options = de \
    "ein Stilleben einer Blumenvase, die Reproduktion eines antiken Wandteppichs, "
    "der eine Kampfszene darstellt, oder ein Portrait in Kohle. Alternativ "
    "könntest Du Dich auch dafür entscheiden, gar nichts an die Wand zu hängen. "
-   ""
 RentableRoom_expiry_warning = de \
    "Betreff: Erinnerung zum Zimmer verlassenDiese höfliche Notiz erinnert "
    "Dich daran, dass die Zimmermiete in %q Tagen ausläuft. Bitte versichere "
@@ -45,8 +44,6 @@ RentableRoom_heartstone_brown = de \
 RentableRoom_heartstone_all = de \
    "Ich bin sehr beeindruckt, dass Du alle Herzsteine hast. Ich kann einige "
    "seltene Dinge aus ihnen machen."
-RentableRoom_comma = de ", "
-RentableRoom_and = de "und "
 RentableRoom_command_here = de "hier"
 RentableRoom_command_blue = de "blau"
 RentableRoom_command_red = de "rot"

@@ -3829,10 +3829,17 @@ messages:
       {
          AddPacket(1,BP_MESSAGE);
 
-         Send(what,sCallBack,#parm1=parm1,#parm2=parm2,
-               #parm3=parm3,#parm4=parm4);
-
-         SendPacket(poSession);
+         % The called message should return TRUE to let us know building the
+         % packet was successful, otherwise we clear the packet.
+         if Send(what,sCallBack,#parm1=parm1,#parm2=parm2,
+                  #parm3=parm3,#parm4=parm4)
+         {
+            SendPacket(poSession);
+         }
+         else
+         {
+            ClearPacket();
+         }
       }
 
       return;
@@ -5070,6 +5077,12 @@ messages:
    UserSaySurvival(string = $)
    {
       local lSurvivalOptions, oForceBaseRoom;
+
+      if IsClass(poOwner,&SurvivalRoom)
+      {
+         % Can't start an arena from an existing one.
+         return FALSE;
+      }
 
       if StringContain(string,user_say_start_solo_survival)
       {

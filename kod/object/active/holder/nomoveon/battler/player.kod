@@ -2111,8 +2111,6 @@ messages:
             obj = Send(self,@FindHolding,#class=i);
             if obj <> $
             {
-               AppendTempString(Send(self,@GetHeShe,#cap=True));
-               
                if IsClass(obj,&Ring)
                {
                   AddPacket(4,player_is_wearing, 4,Send(self,@GetHeShe,#cap=True),

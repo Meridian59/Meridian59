@@ -1734,7 +1734,7 @@ messages:
 
    RecalcLightAndWeather()
    {
-      local i,each_obj,iWeather, iRand;
+      local i, each_obj, iWeather, iRand, oSun;
 
       % Change weather for background if outdoors and tell everyone the
       %  background changed
@@ -1749,14 +1749,44 @@ messages:
       }
 
       Send(self,@RecalcBackgroundSkyGraphic,#iWeather=iWeather);
-      Send(self,@RecalculateDirectionalLight);
 
-      Send(self,@AmbientLightChanged);
-      Send(self,@BackgroundChanged);
-      Send(self,@DirectionalLightChanged);
+      % Reproduce the following calls here, ~40% faster.
+      % Send(self,@RecalculateDirectionalLight);
+      oSun = Send(SYS,@GetSun);
+      if oSun <> $
+      {
+         piDirectional_light = piDirectional_percent
+                               * Send(oSun,@GetBackgroundOverlayHeight)
+                               / 420 * 64 / 100;
+         piDirectional_light = Bound(piDirectional_light,0,64);
+      }
 
+      %Send(self,@AmbientLightChanged);
+      %Send(self,@BackgroundChanged);
+      %Send(self,@DirectionalLightChanged);
       % This sends weather effects (i.e. rain, snow) to clients.
-      Send(self,@WeatherChanged);
+      %Send(self,@WeatherChanged);
+      foreach i in plActive
+      {
+         each_obj = First(i);
+         Send(each_obj,@AmbientLightChanged);
+         Send(each_obj,@BackgroundChanged);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ToCliShading);
+            Send(each_obj,@WeatherChanged);
+         }
+      }
+
+      if piRoom_flags & ROOM_LAMPS
+      {
+         foreach i in plPassive
+         {
+            each_obj = First(i);
+            Send(each_obj,@AmbientLightChanged);
+            Send(each_obj,@BackgroundChanged);
+         }
+      }
 
       return;
    }

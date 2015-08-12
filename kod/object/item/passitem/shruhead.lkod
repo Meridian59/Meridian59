@@ -56,4 +56,8 @@ ShrunkenHead_tougher1 = de "Waaaaaaaaaaaaaaaaaaaaaas!!!%s"
 ShrunkenHead_tougher2 = de "Der Meister ist soooo stark!!!%s"
 ShrunkenHead_tougher3 = de "Oh Meister!!! Glückwunsch!!!!%s"
 ShrunkenHead_check = de "Statusbericht"
+ShrunkenHead_status_report = de \
+   "Getötete Seelen des Meisters %i Feinde, verbessert %i mal und %i "
+   "mal stärler geworden! Der Meister hat auch mit gehandelt %i und mit "
+   "%i Schaden verletzt."
 ShrunkenHead_reset = de "Schrumpfkopf, Reset"

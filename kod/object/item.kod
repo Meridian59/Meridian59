@@ -524,8 +524,11 @@ messages:
             bFoundProperties = TRUE;
          }
 
-         Send(SYS,@AddResourceTemplate,
-               #iNum=Length(Send(self,@GetCurrentResistances)));
+         if Length(Send(self,@GetCurrentResistances)) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                           #iNum=Length(Send(self,@GetCurrentResistances))));
+         }
 
          foreach i in Send(self,@GetCurrentResistances)
          {
@@ -547,8 +550,11 @@ messages:
             bFoundProperties = TRUE;
          }
 
-         Send(SYS,@AddResourceTemplate,
-               #iNum=Length(Send(SYS,@GetAttackTypeList)));
+         if Length(Send(SYS,@GetAttackTypeList)) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                           #iNum=Length(Send(SYS,@GetAttackTypeList))));
+         }
 
          foreach i in Send(SYS,@GetAttackTypeList)
          {
@@ -577,8 +583,11 @@ messages:
             bFoundProperties = TRUE;
          }
 
-         Send(SYS,@AddResourceTemplate,
-               #iNum=Length(Send(SYS,@GetSpellTypeList)));
+         if Length(Send(SYS,@GetSpellTypeList)) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                        #iNum=Length(Send(SYS,@GetSpellTypeList))));
+         }
 
          foreach i in Send(SYS,@GetSpellTypeList)
          {
@@ -602,7 +611,8 @@ messages:
       {
          if Length(plItem_attributes) > 1
          {
-            Send(SYS,@AddResourceTemplate,#iNum=Length(plItem_attributes));
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                           #iNum=Length(plItem_attributes)));
          }
 
          % TODO: Item attributes should handle this.
@@ -812,7 +822,8 @@ messages:
          % Support for displaying up to 12 itematts.
          if Length(plItem_Attributes) > 1
          {
-            Send(SYS,@AddResourceTemplate,#iNum=Length(plItem_Attributes));
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                              #iNum=Length(plItem_Attributes)));
          }
 
          foreach i in plItem_Attributes
@@ -854,7 +865,8 @@ messages:
          % Support for displaying up to 12 objectatts.
          if Length(plObject_attributes) > 1
          {
-            Send(SYS,@AddResourceTemplate,#iNum=Length(plObject_attributes));
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                              #iNum=Length(plObject_attributes)));
          }
 
          foreach i in plObject_attributes

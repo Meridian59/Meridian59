@@ -10,7 +10,7 @@ battler_defender_hit = de \
 battler_defender_slay = de "%s%s hat dich getötet."
 battler_defender_miss = de "%s%sDer Angriff von %s%s."
 battler_defender_fail = de \
-   "%s%s%s greift dich mit %s an, aber verbreitet damit nicht wirklich viel "
+   "%s%s%s greift dich mit %s %s an, aber verbreitet damit nicht wirklich viel "
    "Angst."
 battler_punch = de "Das Boxen"
 battler_attack = de "Die Attacke"

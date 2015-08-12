@@ -1304,7 +1304,8 @@ messages:
          }
 
 
-         if IsClass(what,&Player) AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         if IsClass(what,&Player)
+            AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          {
             rColor = battler_plain_text;
          }
@@ -1318,31 +1319,29 @@ messages:
             if damage = $
             {
                Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
-               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+                     #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                     #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+            }
+            else if damage > 99
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                     #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                     #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                     #parm6=damage/100,#parm7=rColor);
             }
             else
             {
-               if damage > 99
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-                  #parm6=damage/100,#parm7=rColor);
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_fail,
-                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
-               }
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_fail,
+                     #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                     #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
             }
          }
       }
 
       if IsClass(what,&Player)
       {
-         if IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         if IsClass(self,&Player)
+            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
          {
             rColor = battler_plain_text;
          }
@@ -1350,30 +1349,27 @@ messages:
          {
             rColor = battler_blue_text;
          }
-      
+
          if damage = $
-         {   
+         {
             Send(what,@MsgSendUser,#message_rsc=battler_defender_slay,
-              #parm1=rColor,#parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),#parm4=rWeaponName,
-              #parm5=rDamageDesc);
+                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                  #parm5=rDamageDesc);
+         }
+         else if damage > 99
+         {
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                  #parm5=rDamageDesc,#parm6=damage/100,#parm7=rColor);
          }
          else
          {
-            if damage > 99
-            {
-               Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
-                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
-                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
-                 #parm5=rDamageDesc,#parm6=damage/100,#parm7=rColor);
-            }
-            else
-            {
-               Send(what,@MsgSendUser,#message_rsc=battler_defender_fail,
-                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
-                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
-                 #parm5=rDamageDesc);
-            }
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_fail,
+                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                  #parm5=rDamageDesc);
          }
       }
 
@@ -1410,7 +1406,8 @@ messages:
 
       if IsClass(what,&Player)
       {
-         if IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         if IsClass(self,&Player)
+            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          {
             rColor = battler_plain_text;
          }
@@ -1420,12 +1417,11 @@ messages:
          }
       
          Send(what,@MsgSendUser,#message_rsc=battler_defender_miss,
-              #parm1=rColor,
-              #parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),
-              #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
+               #parm1=rColor,#parm2=Send(self,@GetCapDef),
+               #parm3=Send(self,@GetName),
+               #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
          % Flag them as "dodging", so they can potentially improve.
-         Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
+         Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);
       }
 
       return;

@@ -27,7 +27,8 @@ typedef struct {
 
 void SpellsInit(void);
 void SpellsExit(void);
-
+void MenuRemoveAllSpells(void);
+void MenuAddAllSpells(void);
 void SpellsGotSchools(BYTE num, ID *schools);
 void SetSpells(list_type new_spells);
 void FreeSpells(void);

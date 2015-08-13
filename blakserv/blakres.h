@@ -31,6 +31,7 @@ void ChangeDynamicResource(resource_node *r,char *data,int len_data);
 int GetNumDynamicRscFiles(void);
 int SetNumDynamicRscFiles(int num_files);
 resource_node * GetResourceByID(int id);
+char * GetResourceStrByLanguageID(int id, int lang_id);
 Bool IsResourceByID(int id);
 resource_node * GetResourceByName(const char *resource_name);
 void ForEachResource(void (*callback_func)(resource_node *r));

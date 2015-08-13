@@ -209,6 +209,30 @@ resource_node * GetResourceByID(int id)
 	return NULL;
 }
 
+// Returns language string 'lang_id' of resource 'id'.
+char * GetResourceStrByLanguageID(int id, int lang_id)
+{
+   resource_node *r;
+
+   if (lang_id < 0 || lang_id > MAX_LANGUAGE_ID)
+   {
+      eprintf("GetResourceStrByLanguageID received invalid language ID %i for resource %i\n",
+         lang_id, id);
+      return NULL;
+   }
+
+   r = resources[id % resources_table_size];
+   while (r != NULL)
+   {
+      if (r->resource_id == id)
+         return r->resource_val[lang_id] ? r->resource_val[lang_id] : r->resource_val[0];
+         
+      r = r->next;
+   }
+
+   return NULL;
+}
+
 Bool IsResourceByID(int id)
 {
 	resource_node *r = GetResourceByID(id);

@@ -135,6 +135,7 @@ config_table_type config_table[] =
 
 { RESOURCE_GROUP,         F, "[Resource]",    CONFIG_GROUP, "" },
 { RESOURCE_RSC_SPEC,      F, "RscSpec",       CONFIG_STR,   "*.rsc" },
+{ RESOURCE_LANGUAGE,      T, "Language",      CONFIG_INT,   "0" },
 
 { MEMORY_GROUP,           F, "[Memory]",      CONFIG_GROUP, "" },
 { MEMORY_SIZE_CLASS_HASH, F, "SizeClassHash", CONFIG_INT,   "99971" },

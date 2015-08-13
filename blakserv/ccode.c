@@ -961,7 +961,6 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	char *s0, *copyspot;
    const char *s1, *s2, *subspot;
 	int len1, len2, new_len;
-	resource_node *r;
 	
 	s0 = buf0;
 	s1 = buf1;
@@ -1012,14 +1011,13 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		break;
 		
 	case TAG_RESOURCE :
-		r = GetResourceByID( s1_val.v.data );
-		if( r == NULL )
+      s1 = GetResourceStrByLanguageID(s1_val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (s1 == NULL)
 		{
 			bprintf( "C_StringSub can't sub for invalid resource %i\n", s1_val.v.data );
 			return NIL;
 		}
-		s1 = r->resource_val[0];
-		len1 = strlen( r->resource_val[0] );
+		len1 = strlen(s1);
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -1447,7 +1445,6 @@ int C_SetString(int object_id,local_var_type *local_vars,
 {
    val_type s1_val,s2_val;
    string_node *snod,*snod2;
-   resource_node *r;
    const char *str;
 
    s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -1501,14 +1498,14 @@ int C_SetString(int object_id,local_var_type *local_vars,
       break;
 
    case TAG_RESOURCE :
-      r = GetResourceByID(s2_val.v.data);
-      if (r == NULL)
+      str = GetResourceStrByLanguageID(s2_val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (str == NULL)
       {
          bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
          return NIL;
       }
       //bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
-      SetString(snod,r->resource_val[0],strlen(r->resource_val[0]));
+      SetString(snod, (char*)str, strlen(str));
       break;
 
    case TAG_MESSAGE :
@@ -1570,7 +1567,6 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 {
 	val_type s_val;
 	string_node *snod;
-	resource_node *r;
 	
 	s_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
@@ -1595,16 +1591,18 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 		bprintf("C_AppendTempString attempting to append temp string to itself!\n");
 		return NIL;
 		
-	case TAG_RESOURCE :
-		r = GetResourceByID(s_val.v.data);
-		if (r == NULL)
-		{
-			bprintf("C_AppendTempString can't set from invalid resource %i\n",s_val.v.data);
-			return NIL;
-		}
-		AppendTempString(r->resource_val[0],strlen(r->resource_val[0]));
-		break;
-		
+   case TAG_RESOURCE:
+   {
+      const char *pStrConst;
+      pStrConst = GetResourceStrByLanguageID(s_val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (pStrConst == NULL)
+      {
+         bprintf("C_AppendTempString can't set from invalid resource %i\n", s_val.v.data);
+         return NIL;
+      }
+      AppendTempString(pStrConst, strlen(pStrConst));
+   }
+      break;
 	case TAG_DEBUGSTR :
 		{
 			kod_statistics *kstat = GetKodStats();

@@ -321,6 +321,13 @@ messages:
       plDefaultPrizeList = [];
       plDefaultPenaltyList = [];
 
+      Post(self,@RecreateQuestTemplates);
+
+      return;
+   }
+
+   RecreateQuestTemplates()
+   {
       % Permanent quests, index is determined by constants from old quest setup
       % Quest templates are now objects, they will send the appropriate data
       % back to QuestEngine to set up their quest template. RecreateQuestNodes

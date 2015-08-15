@@ -15,6 +15,7 @@ EXPORTS
 	LookupRsc
 	LookupNameRsc
 	LookupRscNoError
+	LookupRscRedbook
 	dprintf
 	MouseToRoom
 	ParseCommand

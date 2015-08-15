@@ -320,6 +320,7 @@ BEGIN
     13                      "Ausdauer"
     14                      "Lächeln"
     15                      "Grimmig"
+    245                     "zaubern "
 END
 
 STRINGTABLE 
@@ -995,6 +996,7 @@ BEGIN
     IDS_TOUGHER             "Tougher Chance"
     IDS_TBSMILE             "Smile"
     IDS_TBFROWN             "Frown"
+    IDS_DOCAST              "cast "
 END
 
 STRINGTABLE 

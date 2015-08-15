@@ -415,7 +415,9 @@ Bool InterfaceAction(int action, void *action_data)
 Bool CheckForAlwaysActiveSpells(spelltemp *sp)
 {
    char *name;
-   name = LookupNameRsc(sp->obj.name_res);
+
+   // Use the redbook rsc function, always returns English string.
+   name = LookupRscRedbook(sp->obj.name_res);
 
    if (stricmp(name, "phase") == 0)
    {

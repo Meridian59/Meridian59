@@ -57,8 +57,6 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
-   viRange = 3 * FINENESS
-
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
@@ -100,6 +98,11 @@ messages:
       %      #string=weapon_do_damage,#parm1=iDamage,#parm2=baseDamage);
 
       return iDamage;
+   }
+
+   GetRange()
+   {
+      return piRange;
    }
 
    GetDisarmBonus()

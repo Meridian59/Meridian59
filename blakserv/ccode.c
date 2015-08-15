@@ -714,14 +714,13 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
 		break;
 		
 	case TAG_RESOURCE :
-		r = GetResourceByID(val.v.data);
-		if( r == NULL )
+      *str = GetResourceStrByLanguageID(val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (*str == NULL)
 		{
 			bprintf( "%s can't use invalid resource %i as string\n",
                   function_name, val.v.data );
 			return false;
 		}
-		*str = r->resource_val[0];
 		break;
 		
 	case TAG_DEBUGSTR :

@@ -511,13 +511,13 @@ void InventoryRedraw(void)
    offset = top_row * cols;
    l = items;
    for (i=0; i < offset; i++)
-     if (l != NULL)
-       l = l->next;
+      if (l != NULL)
+         l = l->next;
 
    for (i = 0; i + offset < num_items; i++)
    {
       if (l == NULL)
-	 break;
+         break;
 
       item = (InvItem *) (l->data);
 
@@ -525,10 +525,10 @@ void InventoryRedraw(void)
       col = i % cols;
 
       if (row >= rows)
-	 return;
+         break;
 
       InventoryDrawSingleItem(item, i / cols, i % cols);
-      
+
       l = l->next;
    }
 
@@ -540,27 +540,36 @@ void InventoryRedraw(void)
       r.top    = (i / cols) * INVENTORY_BOX_HEIGHT;
       r.right  = r.left + INVENTORY_BOX_WIDTH;
       r.bottom = r.top + INVENTORY_BOX_WIDTH;
-      DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &r, r.left + inventory_area.x, r.top + inventory_area.y,
-				-1);
+      DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &r, r.left + inventory_area.x,
+         r.top + inventory_area.y, -1);
    }
 
-     r.left = cols * INVENTORY_BOX_WIDTH;
-     r.right = inventory_area.cx;
-     r.top = 0;
-     r.bottom = inventory_area.cy;
-     if (has_scrollbar)
-       r.right -= inventory_scrollbar_width;
-     DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &r, r.left + inventory_area.x, r.top + inventory_area.y,
-			       -1);
-     
-     r.left = 0;
-     r.right = inventory_area.cx;
-     if (has_scrollbar)
-       r.right -= inventory_scrollbar_width;
-     r.top = rows * INVENTORY_BOX_HEIGHT;
-     r.bottom = inventory_area.cy;
-     DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &r, r.left + inventory_area.x, r.top + inventory_area.y,
-			       -1);
+   r.left = cols * INVENTORY_BOX_WIDTH;
+   r.right = inventory_area.cx;
+   r.top = 0;
+   r.bottom = inventory_area.cy;
+   if (has_scrollbar)
+      r.right -= inventory_scrollbar_width;
+   DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &r, r.left + inventory_area.x,
+      r.top + inventory_area.y, -1);
+
+   r.left = 0;
+   r.right = inventory_area.cx;
+   if (has_scrollbar)
+      r.right -= inventory_scrollbar_width;
+   r.top = rows * INVENTORY_BOX_HEIGHT;
+   r.bottom = inventory_area.cy;
+   DrawWindowBackgroundColor(&inventory_bkgnd, hdc, &r, r.left + inventory_area.x,
+      r.top + inventory_area.y, -1);
+
+   // Redraw the scrollbar in the correct position.
+   if (has_scrollbar)
+   {
+      InventoryScrollRange();
+      SetScrollPos(hwndInvScroll, SB_CTL, top_row, TRUE);
+      ShowWindow(hwndInvDialog, SW_SHOWNORMAL);
+      ShowWindow(hwndInvScroll, has_scrollbar ? SW_SHOWNORMAL : SW_HIDE);
+   }
 
    ReleaseDC(hwndInv, hdc);
 }

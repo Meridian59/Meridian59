@@ -1842,6 +1842,33 @@ messages:
       return;
    }
 
+   RemoveItemAttIfPresent(iNum=0)
+   "Attempts to removes a specific item attribute if present.  Used to "
+   "remove an attribute from all items without generating debug messages "
+   "if the item does not have that attribute."
+   {
+      local oItemAtt;
+
+      if iNum = 0
+      {
+         return;
+      }
+
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+
+      if oItemAtt = $
+      {
+         return;
+      }
+
+      if Send(self,@HasAttribute,#ItemAtt=iNum)
+      {
+         Send(oItemAtt,@RemoveFromItem,#oItem=self);
+      }
+
+      return;
+   }
+
    RemoveAttribute(ItemAtt=$)
    "All this does is calls the itematt.kod version of the same thing. "
    "This function is largely unnecessary, and is here only for convenience."

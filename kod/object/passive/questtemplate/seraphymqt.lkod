@@ -17,8 +17,8 @@ seraphymquest_completed_rsc = de \
 
 % Quest resources.
 polishquest_assign = de \
-   "Entschuldige,  ich habe meine Fähigkeiten verbesserd und frage mich ob "
-   "Du vielleicht  ungeschliffene Edelsteine jeglicher Art dabei hast.  Wenn "
+   "Entschuldige, ich habe meine Fähigkeiten verbesserd und frage mich ob "
+   "Du vielleicht ungeschliffene Edelsteine jeglicher Art dabei hast.  Wenn "
    "ja, wäre ich froh sie zu polieren und gebe Dir einen als Resultat."
 polishquest_success = de "Ah, vielen Dank. Erlaube mir Dich zu belohnen."
 polishquest_failure = de \

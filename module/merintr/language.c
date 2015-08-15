@@ -312,14 +312,16 @@ void MenuLanguageChosen(int id)
    {
       // Uncheck the currently selected language.
       CheckMenuItem(language_menu, cinfo->config->language + ID_LANGUAGE, MF_UNCHECKED);
+      // Remove all spells from the client menu.
       MenuRemoveAllSpells();
       // Write language ID to config
       cinfo->config->language = lang_id;
+      // Add the spells back (in the new language).
       MenuAddAllSpells();
       // Check the one we just selected (using the Windows menu ID).
       CheckMenuItem(language_menu, id, MF_CHECKED);
+      // Get the room, player and inventory data again. Currently not much
+      // of this data is affected by the language settings, but this may change.
       ResetUserData();
    }
-
-   // Eventually send this choice to the server also.
 }

@@ -86,7 +86,7 @@ resources:
       "A mysterious force prevents you from phasing out here."
 
    phase_time_header = \
-      "\n\nYou have %r$8%r$1%r$2%r$3%r$4%r$5%r$6 of %r$7 time remaining."
+      "\n\nYou have %r%r%r%r%r%r%r of %s time remaining."
 
 classvars:
 
@@ -682,7 +682,14 @@ messages:
 
    SendTimeRemainingHeader(parm1=$)
    {
-      AddPacket(4,phase_time_header, 4,Send(self,@GetName));
+      AddPacket(4,phase_time_header);
+
+      return;
+   }
+
+   SendTimeRemainingExtra()
+   {
+      AddPacket(4,Send(self,@GetName));
 
       return;
    }

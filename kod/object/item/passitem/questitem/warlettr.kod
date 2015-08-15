@@ -35,7 +35,7 @@ resources:
    WarLetter_open_rsc = "You carefully remove the string and open the letter."
    WarLetter_close_rsc = "You carefully replace the string, closing the letter."
 
-   Warletter_text_default = "The letter is blank."
+   Warletter_text_default = "  The letter is blank."
 
    Warletter_text1_rsc = \
       "Dear %s,\n"
@@ -353,6 +353,13 @@ messages:
       if piState = WARLETTER_OPEN
       {
          lQuestInfo = Send(self,@GetAttributeData,#ItemAtt=IA_QUEST_CARGO);
+         if lQuestInfo = $
+         {
+            AddPacket(4,Warletter_text_default);
+
+            return;
+         }
+
          AddPacket(4,WarLetter_intro_rsc, 4,vrDescOpen,
                    4,Send(Send(Nth(lQuestInfo,2),@GetDestNPC),@GetName),
                    4,Send(Send(Nth(lQuestInfo,2),@GetSourceNPC),@GetName));

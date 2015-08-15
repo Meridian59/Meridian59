@@ -1742,10 +1742,6 @@ messages:
             Debug("Item didn't have quest attribute for ",self);
          }
 
-         if IsClass(pCargo,&QuestItem)
-         {
-            Send(pCargo,@Delete);
-         }
          pCargo = $;
       }
 

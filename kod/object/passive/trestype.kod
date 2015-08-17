@@ -314,7 +314,7 @@ messages:
       }
 
       % Lore Books
-      if (Random(1,5) = 1)
+      if (Random(1,Send(Send(SYS,@GetSettings),@GetLoreBookDropFactor)) = 1)
       {
          oObj = Create(&LoreTosApoth,#random_book=true);
          return oObj;

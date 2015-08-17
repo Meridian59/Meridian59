@@ -2878,7 +2878,7 @@ messages:
       Send(poOwner,@SendSectorLightChanges,#who=self);
       Send(poOwner,@SendWallChanges,#who=self);
       Send(poOwner,@SendTextureChanges,#who=self);
-
+      Send(self,@SendUserAllWindowOverlays);
       % Check weather here also.
       Send(self,@WeatherChanged);
 

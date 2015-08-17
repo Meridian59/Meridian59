@@ -693,7 +693,6 @@ int C_GetClass(int object_id,local_var_type *local_vars,
 bool LookupString(val_type val, const char *function_name, const char **str, int *len)
 {
 	string_node *snod;
-	resource_node *r;
 
 	switch(val.v.tag)
 	{

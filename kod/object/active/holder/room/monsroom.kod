@@ -306,9 +306,10 @@ messages:
          DeleteTimer(ptGen);
          ptGen = $;
       }
-      else
+      else if pbGenerateMonsters
       {
-         Debug("Monster room got lastuserleft when apparently that wasn't true");
+         Debug("Monster room had $ ptGen timer in LastUserLeft, room ",
+               Send(self,@GetName));
       }
 
       if (ptOkay_To_Load = $) AND (piMonster_count = 0)

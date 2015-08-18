@@ -38,7 +38,7 @@ classvars:
    viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_AXE
-   
+
    viValue_average = 600
    viWeight = 90
    viBulk = 90
@@ -49,6 +49,8 @@ classvars:
    viGround_group = 1
    viInventory_group = 3
    viBroken_group = 2
+
+   viRange = 3 * FINENESS
 
 properties:
 

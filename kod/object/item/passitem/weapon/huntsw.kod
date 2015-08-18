@@ -50,7 +50,7 @@ resources:
    HunterSword_holding_damage_using = \
       "The Sword of the Hunt's roots writhe painfully inside your chest with "
       "displeasure.  You have done something to invoke the Sword's disapproval!"
-   
+
    HunterSword_warning = \
       "You prepare to pick up the mighty Sword of the Hunt, but it twitches "
       "and you hesitate for a moment.  This sword appears to be alive, and "
@@ -121,6 +121,8 @@ classvars:
    viHits_init_max = 500
 
    viItem_type = ITEMTYPE_WEAPON | ITEMTYPE_SPECIAL
+
+   viRange = 3 * FINENESS
 
 properties:
 
@@ -211,7 +213,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       if what <> $
          AND IsClass(what,&User)
       {

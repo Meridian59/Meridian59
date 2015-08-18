@@ -2190,11 +2190,15 @@ messages:
 
    ValidAttack(who=$)
    {
+      local iRange;
+
+      iRange = Send(self,@GetAttackRange);
+
       if who = poTarget
       {
          % Range in FINENESS units.
          if Send(self,@SquaredFineDistanceTo3D,#what=who)
-               > (piAttackRange*piAttackRange)
+               > (iRange * iRange)
          {
             return;
          }
@@ -2209,6 +2213,8 @@ messages:
    CanReach( what = $ )
    {
       local iRange;
+      
+      iRange = Send(self,@GetAttackRange);
 
       if poOwner <> Send(what,@GetOwner)
       {
@@ -2217,7 +2223,7 @@ messages:
 
       % Check range first, for speed (in FINENESS units).
       if Send(self,@SquaredFineDistanceTo3D,#what=what)
-            > (piAttackRange*piAttackRange)
+            > (iRange * iRange)
       {
          if what = poTarget
          {
@@ -2273,9 +2279,13 @@ messages:
 
    CanReachLocation(row=$,col=$,fine_row=$,fine_col=$)
    {
+      local iRange;
+
+      iRange = Send(self,@GetAttackRange);
+
       if Send(self,@SquaredFineDistanceToLocation3D,#row=row,#col=col,
             #fine_row=fine_row,#fine_col=fine_col)
-         <= (piAttackRange*piAttackRange)
+         <= (iRange * iRange)
       {
          return TRUE;
       }

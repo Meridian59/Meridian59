@@ -421,6 +421,11 @@ messages:
       return Send(poOriginal,@GetClientObjectType);
    }
 
+   GetOptimalRange()
+   {
+      return Send(self,@GetAttackRange);
+   }
+
    GetAttackRange()
    {
       local iWeapon;

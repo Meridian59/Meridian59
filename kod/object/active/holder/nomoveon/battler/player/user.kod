@@ -2705,7 +2705,8 @@ messages:
          OR IsClass(what,&EvilTwin)
       {
          what = Send(what,@GetMaster);
-         if what = self
+         if what = $
+            OR what = self
          {
             return MM_PLAYER;
          }

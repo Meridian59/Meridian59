@@ -186,7 +186,8 @@ char *GetLastErrorStr(void)
 void CenterWindow(HWND hwnd, HWND hwndParent)
 {
    RECT rcDlg, rcParent;
-   int screen_width, screen_height, x, y;
+   int x, y;
+   //int screen_width, screen_height;
 
    /* If dialog has no parent, then its parent is really the desktop */
    if (hwndParent == NULL)
@@ -201,13 +202,13 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
    x = rcParent.left + (rcParent.right - rcParent.left)/2 - rcDlg.right/2;
    y = rcParent.top + (rcParent.bottom - rcParent.top)/2 - rcDlg.bottom/2;
 
-
+   // Disabled checking for compatibility with multi-monitor setups, since
+   // the values for x and y can be negative (non-primary monitor on left).
    // Make sure that child window is completely on the screen
-   screen_width  = GetSystemMetrics(SM_CXSCREEN);
-   screen_height = GetSystemMetrics(SM_CYSCREEN);
-
-   x = max(0, min(x, screen_width  - rcDlg.right));
-   y = max(0, min(y, screen_height - rcDlg.bottom));
+   //screen_width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+   //screen_height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+   //x = max(0, min(x, screen_width  - rcDlg.right));
+   //y = max(0, min(y, screen_height - rcDlg.bottom));
 
    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }

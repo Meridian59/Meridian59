@@ -99,7 +99,7 @@ messages:
    {
       local i, oRoom, lRoomProps;
 
-      for i in (plCurrentBattlePlan)
+      foreach i in (plCurrentBattlePlan)
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=Nth(i,1));
          plEventRooms = AppendListElem(oRoom,plEventRooms);
@@ -126,7 +126,7 @@ messages:
    {
       local i;
       
-      for i in plEventRooms
+      foreach i in plEventRooms
       {
          if IsClass(i,&MonsterRoom)
          {
@@ -225,7 +225,7 @@ messages:
       piDefenderScore = 0;
       piPhase = 2;
       plSpawnList = [[&Orc,50],[&CaveOrc,50]];
-      for i in plInvaders
+      foreach i in plInvaders
       {
          Send(i,@Delete);
       }
@@ -246,7 +246,7 @@ messages:
       piDefenderScore = 0;
       piPhase = 3;
       plSpawnList = [[&Orc,34],[&CaveOrc,33],[&OrcWizard,33]];
-      for i in plInvaders
+      foreach i in plInvaders
       {
          Send(i,@Delete);
       }
@@ -267,7 +267,7 @@ messages:
       piDefenderScore = 0;
       piPhase = 4;
       plSpawnList = [[&Orc,30],[&CaveOrc,30],[&OrcWizard,30],[&OrcPitBoss,10]];
-      for i in plInvaders
+      foreach i in plInvaders
       {
          Send(i,@Delete);
       }
@@ -285,7 +285,7 @@ messages:
    {
       local i;
       
-      for i in plInvaders
+      foreach i in plInvaders
       {
          Send(i,@Delete);
       }
@@ -304,7 +304,7 @@ messages:
          return;
       }
       
-      for i in plInvaders
+      foreach i in plInvaders
       {
          if (i = dead_monster)
          {
@@ -322,7 +322,7 @@ messages:
       
       iCount = 0;
       
-      for i in plEventRooms
+      foreach i in plEventRooms
       {
          iCount = iCount + Send(i,@CountMonsters,#class=&Orc);
          iCount = iCount + Send(i,@CountMonsters,#class=&CaveOrc);
@@ -343,7 +343,7 @@ messages:
       
       while ((loops < 5) AND NOT bChosen)
       {
-         for lMonster_info in plSpawnList
+         foreach lMonster_info in plSpawnList
          {
             iRoll = Random(1,100);
             iTotal = iTotal + Nth(lMonster_info,2);
@@ -395,7 +395,7 @@ messages:
       local iCount, i, j, iRow, iCol, iTrigRow, iTrigCol, iNewRow, iNewCol,
             oCurrentRoom, oNextRoom, bNextRoomFound, lCurrentPath, lNextPath;
 
-      for i in plInvaders
+      foreach i in plInvaders
       {
          if (Send(i,@GetOwner) = $)
          {
@@ -403,7 +403,7 @@ messages:
          }
       }
 
-      for i in plInvaders
+      foreach i in plInvaders
       {
          oCurrentRoom = Send(i,@GetOwner);
          iCount = 1;

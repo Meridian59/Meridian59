@@ -87,7 +87,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@UserLogon,#who=who);
       }
@@ -98,7 +98,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@UserLogoff,#who=who);
       }
@@ -109,7 +109,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@MonsterKilled,
             #dead_monster=dead_monster,
@@ -117,6 +117,20 @@ messages:
             #corpse=corpse);
       }
    
+      return;
+   }
+
+   UserKilled(who=$,killer=$)
+   {
+      local i;
+
+      foreach i in plActiveEvents
+      {
+         Send(i,@UserKilled,
+            #who=who,
+            #killer=killer);
+      }
+
       return;
    }
 

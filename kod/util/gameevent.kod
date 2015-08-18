@@ -72,6 +72,11 @@ messages:
    {
       return;
    }
+
+   UserKilled(who=$,killer=$)
+   {
+      return;
+   }
    
    NewMinute()
    {
@@ -150,12 +155,12 @@ messages:
       {
          if (plEventRooms <> $)
          {
-            for i in plEventRooms
+            foreach i in plEventRooms
             {
                lActive = Send(i,@GetPlActive);
                if (lActive <> $)
                {
-                  for j in lActive
+                  foreach j in lActive
                   {
                      if ((IsClass(Nth(j,1),&Monster)) 
                         AND NOT (Send(Nth(j,1),@IsOwnedByPlayer))
@@ -177,7 +182,7 @@ messages:
    {
       local i, lRoomProps;
 
-      for i in plEventRooms
+      foreach i in plEventRooms
       {
          lRoomProps = $;
          
@@ -204,7 +209,7 @@ messages:
    {
       local i, oRoom;
       
-      for i in plRoomSaveState
+      foreach i in plRoomSaveState
       {
          oRoom = Nth(i,1);
          

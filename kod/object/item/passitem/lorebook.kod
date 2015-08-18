@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LoreBook is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   lore_book_icon_rsc = book1.bgf
+
+   lore_book_name_rsc = "lore book"
+   lore_book_desc_rsc = "lore book"
+   lore_book_text_rsc = ""
+
+classvars:
+
+   vrIcon = lore_book_icon_rsc
+   viTotalBooks = 0
+   viMoveOn_type = MOVEON_NO
+   viValue_average = 1500
+   viWeight = 5
+   viBulk = 5
+
+properties:
+
+   piBookNum = 0
+   vrName = lore_book_name_rsc
+   vrDesc = lore_book_desc_rsc
+   prText = lore_book_text_rsc
+
+messages:
+
+   Constructor(Num=$,random_book=FALSE)
+   {
+      if (random_book)
+      {
+         if (viTotalBooks > 1)
+         {
+            piBookNum = Random(1,viTotalBooks);
+            Send(self,@SetBookContents);
+         }
+      }
+      if Num <> $
+      {
+         piBookNum = Num;
+         Send(self,@SetBookContents);
+      }
+
+      propagate;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1, ANIMATE_NONE, 2, 2);
+      return;
+   }
+
+   CanEditInscription()
+   {
+      return FALSE;
+   }
+
+   HasInscription()
+   {
+      return TRUE;
+   }
+
+   GetInscription()
+   {
+      return prText;
+   }
+
+   ShowInscription()
+   {
+      AddPacket(4, prText);
+      return;
+   }
+   
+   SetBookContents()
+   {
+      return;
+   }
+
+   TryLook(what = $)
+   {
+      Send(self,@SetBookContents);
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      AddPacket(4, vrDesc);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

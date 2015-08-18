@@ -5252,6 +5252,7 @@ messages:
       plItemTemplates = cons(create(&ShrunkenHead),plItemTemplates);
       plItemTemplates = cons(create(&Rose),plItemTemplates);
       plItemTemplates = cons(create(&Book),plItemTemplates);
+      plItemTemplates = cons(create(&LoreTosApoth),plItemTemplates);
       
       plItemTemplates = cons(create(&JalaNecklace),plItemTemplates);
       plItemTemplates = cons(create(&NecromancerAmulet),plItemTemplates);

@@ -63,6 +63,9 @@ properties:
    % chance to drop, with monster_level bound between 50 and 150.
    piStatResetTokenDropFactor = 500000
 
+   % Lore book drop facter, 1 in piLoreBookDropFactor per loot roll
+   piLoreBookDropFactor = 500
+
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
    %  percents.
@@ -331,6 +334,11 @@ messages:
    GetStatResetTokenDropFactor()
    {
       return piStatResetTokenDropFactor;
+   }
+
+   GetLoreBookDropFactor()
+   {
+      return piLoreBookDropFactor;
    }
 
    CleanNewbieInventoryOnEnteringRealWorld()

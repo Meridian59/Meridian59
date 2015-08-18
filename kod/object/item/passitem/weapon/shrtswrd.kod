@@ -50,6 +50,8 @@ classvars:
    vrWeapon_window_overlay = shortsword_window_overlay_rsc
    vrWeapon_overlay = shortsword_player_overlay
 
+   viRange = 3 * FINENESS
+
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST

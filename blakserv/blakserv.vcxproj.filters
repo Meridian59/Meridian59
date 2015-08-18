@@ -227,6 +227,9 @@
     <ClInclude Include="database.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="account.c">

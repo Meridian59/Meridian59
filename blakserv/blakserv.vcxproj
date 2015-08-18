@@ -232,6 +232,7 @@ copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
     <ClInclude Include="timer.h" />
     <ClInclude Include="trysync.h" />
     <ClInclude Include="user.h" />
+    <ClInclude Include="geometry.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>

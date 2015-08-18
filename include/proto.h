@@ -511,6 +511,7 @@ enum {
    CTF_BELOWWALL       = 0x04,      // Change below wall texture
    CTF_FLOOR           = 0x08,      // Change floor texture
    CTF_CEILING         = 0x10,      // Change ceiling texture
+   CTF_RESET           = 0x20,      // Reset to original ROO values
 };
 
 /* Types of sector lighting animation (BP_SECTOR_LIGHT) */

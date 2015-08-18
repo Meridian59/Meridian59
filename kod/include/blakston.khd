@@ -25,6 +25,10 @@
    %  Truncated a bit for fudge factor room.  Useful for timer bounds.
    MAX_INT = 134217000
 
+   % these are the REAL maximums and minimums (see bkod.h)
+   MAX_KOD_INT = 134217727
+   MIN_KOD_INT = -134217728
+
    %%% Time constants of the world
 
    % MS_PER_DAY = 24 * 3600 * 1000
@@ -1203,7 +1207,8 @@
    CTF_BELOWWALL       = 0x04
    CTF_FLOOR           = 0x08
    CTF_CEILING         = 0x10
-
+   CTF_RESET           = 0x20
+   
    % Constants for sector depth (i.e. water sectors).
    % Same names as those used in client.
    SF_DEPTH0 = 0x00000000      % Sector has default (0) depth

@@ -1448,6 +1448,8 @@ messages:
 
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
+      local target;
+
       if (piRoom_flags & ROOM_NO_MAGIC)
       {
          Send(who,@MsgSendUser,#message_rsc=room_no_magic_allowed);
@@ -1470,6 +1472,26 @@ messages:
          return FALSE;
       }
 
+      % Must have Line of Sight if target is set
+      if Length(lItems) = 1
+      {
+         target = Nth(lItems,1);
+
+         if target <> $ AND who <> $ AND target <> who AND
+            Send(self,@IsHolding,#what=target) AND
+            Send(self,@IsHolding,#what=who) AND
+            NOT Send(self,@LineOfSight,#obj1=who,#obj2=target)
+         {
+            % tell player about blocked LoS
+            if IsClass(who, &Player)
+            {
+               Send(who,@SendNoLineOfSightMessage);
+            }
+
+            return FALSE;
+         }
+      }
+      
       propagate;
    }
 
@@ -2315,207 +2337,23 @@ messages:
    LineOfSight(obj1 = $, obj2 = $)
    "Returns TRUE if there is a line of sight between obj1 and obj2"
    {
-     local r;
-     
-     % First check if obj1 can walk on a direct path to obj2.
-     % If we can't move there, we assume vision through this
-     % location is blocked as well.  This assumption is violated
-     % by, for example, fences and altitude changes in the floor.
+      local start_row, start_col, start_finerow, start_finecol,
+            end_row, end_col, end_finerow, end_finecol, los;
 
-     r = Send(self,@LineOfSightInternal,#obj1=obj1,#obj2=obj2);
+      % get coordinates of source (obj1) and target (obj2)
+      start_row = Send(obj1, @GetRow);
+      start_col = Send(obj1, @GetCol);
+      start_finerow = Send(obj1, @GetFineRow);
+      start_finecol = Send(obj1, @GetFineCol);
+      end_row = Send(obj2, @GetRow);
+      end_col = Send(obj2, @GetCol);
+      end_finerow = Send(obj2, @GetFineRow);
+      end_finecol = Send(obj2, @GetFineCol);
 
-     % we also possibly check the other way around,
-     % because if obj2 somehow DOES have LoS with obj1,
-     % obj1 also must have LoS with obj2.
-     % This makes sure LoS is handled equally (fair) for both.
-     if r = FALSE
-     {
-       r = Send(self,@LineOfSightInternal,#obj1=obj2,#obj2=obj1);
-     }
-
-     return r;
-   }
-   
-   LineOfSightInternal(obj1 = $, obj2 = $)
-   {
-      local r, c, r2, c2, dr, dc, iRow, iCol, iAtan, iSkip;
-
-      % no LOS if not in same room
-      if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)
-      {
-         return FALSE;
-      }
-
-      % try get obj1 big coordinates (source)
-      r = Send(obj1,@GetRow);
-      c = Send(obj1,@GetCol);
- 
-      % no coordinates (big row/col can be $)
-      if r = $ OR c = $
-      {
-         Debug("Can't get row or column for",obj1,Send(obj1,@GetTrueName),"in",Send(self,@GetName));
-
-         return FALSE;
-      }
-      else
-      {
-         % get fine values and scale to highres
-         r = ((r * FINENESS) + Send(obj1,@GetFineRow)) / 16;
-         c = ((c * FINENESS) + Send(obj1,@GetFineCol)) / 16;
-      }
-
-      % try get obj2 coordinates (destination)
-      iRow = Send(obj2,@GetRow);
-      iCol = Send(obj2,@GetCol);
-
-      % no coordinates (big row/col can be $)
-      if iRow = $ OR iCol = $
-      {
-         Debug("Can't get row or column for",obj2,Send(obj2,@GetTrueName),"in",Send(self,@GetName));
-
-         return FALSE;
-      }
-      else
-      {
-         % get fine values and scale to highres
-         iRow = ((iRow * FINENESS) + Send(obj2,@GetFineRow)) / 16;
-         iCol = ((iCol * FINENESS) + Send(obj2,@GetFineCol)) / 16;    
-      }
-
-      % get deltas in highres
-      dr = iRow - r;
-      dc = iCol - c;
-
-      % prepare first loop
-      r2 = r;
-      c2 = c;
-
-      % get config setting for amount of steps to skip at the end
-      % of LoS line, this modifies safespots
-      iSkip = Send(Send(SYS, @GetSettings), @GetLOSSkip);
-
-      % step from the source to the target on the highres grid.
-      % depending on the skip amount, we either must reach
-      % the destination completely (rare safespots)
-      % or an adjacent/close square is enough (no safespots)
-      while abs(dr) > iSkip OR abs(dc) > iSkip
-      {
-         % Figure out which direction we need to move
-         % our 2D ray next (=step N,NE,E,SE,S,...)
-         % We pick the best approximation of the 8 possible 
-
-         % Only north or south are special cases.
-         if dc = 0
-         {
-            if dr < 0 %N
-            {
-               r2 = r2 - 1;
-            }
-            else %S
-            {
-               r2 = r2 + 1;
-            }
-         }
-         else
-         {
-            iAtan = 1000 * dr / dc;
-         }
-
-         % right half-plane
-         if dc > 0 
-         {
-            if iAtan >= 2414 %S
-            {
-               r2 = r2 + 1;
-            }
-            else
-            {
-               if iAtan >= 414 %SE
-               {
-                  r2 = r2 + 1;
-                  c2 = c2 + 1;
-               }
-               else
-               {
-                  if iAtan >= -414 %E
-                  {
-                     c2 = c2 + 1;
-                  }
-                  else
-                  {
-                     if iAtan >= -2414 %NE
-                     {
-                        r2 = r2 - 1;
-                        c2 = c2 + 1;
-                     }
-                     else %N
-                     {
-                        r2 = r2 - 1;
-                     }
-                  }
-               }
-            }
-         }
-
-         % left half-plane
-         if dc < 0 
-         {
-            if iAtan >= 2414 %N
-            {
-               r2 = r2 - 1;
-            }
-            else
-            {
-               if iAtan >= 414 %NW
-               {
-			      r2 = r2 - 1;
-                  c2 = c2 - 1;                  
-               }
-               else
-               {
-                  if iAtan >= -414 %W
-                  {
-                     c2 = c2 - 1;
-                  }
-                  else
-                  {
-                     if iAtan >= -2414 %SW
-                     {
-			            r2 = r2 + 1;
-                        c2 = c2 - 1;                        
-                     }
-                     else %S
-                     {
-                        r2 = r2 + 1;
-                     }
-                  }
-               }
-            }
-         }
-
-         % DEBUG - Puts item on LOS line
-         % Send(SYS,@PutInRoom,#what=Create(&PlateArmor),#rid=piRoom_num,
-         %    #row=(r/4),#col=(c/4),#fine_row=((r MOD 4)*16),#fine_col=((c MOD 4)*16));
-		 
-         % these calculations turn the highres values back into row/finerow
-         % remember: 4 highres rows give a row, and a highres row has 16 finerows 
-         if NOT CanMoveInRoomHighRes(prmRoom,
-                    (r / 4), (c / 4), ((r MOD 4) * 16), ((c MOD 4) * 16),
-                    (r2 / 4) , (c2 / 4), ((r2 MOD 4) * 16), ((c2 MOD 4) * 16))
-         {
-           return FALSE;
-         }
-
-		 % set new position as old
-         r = r2;
-         c = c2;
-
-         % get deltas in highres
-         dr = iRow - r;
-         dc = iCol - c;
-      }
-
-      return TRUE;
+      % call BSP LoS in C code  
+      return LineOfSightBSP(prmRoom,
+         start_row, start_col, start_finerow, start_finecol,
+         end_row, end_col, end_finerow, end_finecol);
    }
 
    SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS/2,
@@ -2881,6 +2719,9 @@ messages:
    {
       local i,each_obj;
 
+      % Update BSP room data
+      MoveSectorBSP(prmRoom, sector, animation, height, speed);
+
       % Tell everyone in the room at the moment about the change
 
       for i in plActive
@@ -3106,6 +2947,9 @@ messages:
    {
       local i,each_obj;
 
+      % update BSP room data
+      ChangeTextureBSP(prmRoom, id, new_texture, flags);
+
       % tell everyone in the room at the moment about the change
       for i in plActive
       {
@@ -3152,6 +2996,9 @@ messages:
          if (id <> $ AND Nth(i,1) = id)
             OR (flags <> 0 AND Nth(i,3) = flags)
          {
+            % reset this texture-change in BSP room data
+            ChangeTextureBSP(prmRoom, Nth(i,1), Nth(i,2), Nth(i,3) | CTF_RESET);
+	  
             plTexture_changes = DelListElem(plTexture_changes,i);
          }
       }

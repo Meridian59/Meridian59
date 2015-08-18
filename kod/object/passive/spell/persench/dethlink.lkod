@@ -1,0 +1,10 @@
+deathlink_name_rsc = de "Todesbündnis"
+deathlink_desc_rsc = de \
+   "Dieser geheimnisvolle Spruch sorgt dafür, dass Du Dich von den Seelen "
+   "der armen Kreaturen ernähren kannst, die sich in Deiner Nähe befinden. "
+   "Dafür benötigt man Schamanenblut und polierte Seraphyme."
+deathlink_already_enchanted_rsc = de "Du bist bereits mit dem Tode verbunden."
+deathlink_on_rsc = de \
+   "Du bereitest dich darauf vor, die Dunkelheit selbst zu ernähren."
+deathlink_off_rsc = de "Dein Todesbündnis verschwindet."
+deathlink_feed_rsc = de "Du ernährst dich von der Lebenskraft der Gefallenen."

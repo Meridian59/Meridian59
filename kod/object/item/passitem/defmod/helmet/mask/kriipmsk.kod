@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kriipmsk.lkod
+
    KriipaMask_name_rsc = "kriipa mask"
    KriipaMask_icon_male_rsc = mmkrp.bgf
    KriipaMask_icon_female_rsc = mfkrp.bgf

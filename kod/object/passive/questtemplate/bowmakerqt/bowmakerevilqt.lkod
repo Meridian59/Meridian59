@@ -1,0 +1,26 @@
+% Quest description.
+bowmakerevilquest_desc_rsc = de \
+   "Hanla zax'Ta has asked you to obtain the tailfeather of an "
+   "avar shaman for her. Seek out and kill avar shamans until you "
+   "find an undamaged tailfeather on the corpse.  Return to her "
+   "when you are successful in finding one."
+
+bowmakerevilquest_kill_rsc = de \
+   "Hanla zax'Ta has asked you to obtain the tailfeather of an "
+   "avar shaman for her. Seek out and kill avar shamans until you"
+   "find an undamaged tailfeather on the corpse."
+bowmakerevilquest_return_rsc = de \
+   "Return to Hanla zax'Ta with the avar shaman tailfeather."
+
+% Quest resources.
+bowmaker_assign_4 = de \
+   "Ich nutze spezielle Materialien um meine besten Pfeile herzustellen.  "
+   "Die Schwanzfeder eines Avar Zauberer haben den Ruf, dem Pfeil der sie "
+   "benutzt magische Eigenschaften zu geben.  Geh, und schau ob Du einen "
+   "Avar Schamanen findest, der bereit ist seine Schwanzfeder im Austausch "
+   "für etwas wertvolles herzugeben."
+bowmaker_failure_4 = de \
+   "Subject: Avar Feder\nOffensichtlich warst Du nicht in der Lage eine Avar "
+   "Feder für mich zu finden, na ja.  Ich verstehe, dass Avar Schamanen  "
+   "schwierige Gegner sind.  Wenn Du möchtest, kannst Du später zurückkehren. "
+   "Vielleicht benötige ich dann mehr."

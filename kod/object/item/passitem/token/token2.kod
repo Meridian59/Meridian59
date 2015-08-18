@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include token2.lkod
+
    TwoToken_name_rsc = "jeweled egg token"
    TwoToken_desc_rsc = \
       "Encrusted with every gemstone known, this ancient token is rumored to "

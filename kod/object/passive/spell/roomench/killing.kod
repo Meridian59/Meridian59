@@ -19,17 +19,25 @@ constants:
 
 resources:
 
+   include killing.lkod
+
    killingfields_name_rsc = "killing fields"
    killingfields_icon_rsc = ikillfel.bgf
    killingfields_desc_rsc = \
-      "Induces magical blood-lust, increasing the damage of all attacks in the area.  "
-	   "Requires elderberries and orc teeth to cast."
+      "Induces magical blood-lust, increasing the damage of all attacks in "
+      "the area.  Requires elderberries and orc teeth to cast."
    
    killingfields_already_enchanted = "This place is already a killing field."
-
-   killingfields_on = "Kraanan smiles and battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   killingfields_enchantment_rsc = \
+      "\n\nThe %s enchantment currently adds 2-5 damage to all attacks "
+      "in the area."
+   killingfields_on = \
+      "Kraanan smiles and battle fury fills your heart.  The very earth "
+      "thirsts for freshly shed blood."
    killingfields_off = "The spirit of Kraanan departs from this place."
-   killingfields_on_new_entrant = "Battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   killingfields_on_new_entrant = \
+      "Battle fury fills your heart.  The very earth thirsts for freshly "
+      "shed blood."
 
 classvars:
 
@@ -156,16 +164,10 @@ messages:
 
    EffectDesc(who=$)
    {
-      local i, iState;
+      AddPacket(4,killingfields_enchantment_rsc, 4,Send(self,@GetName));
 
-      AppendTempString("\n\n");
-      AppendTempString("The ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment currently adds 2-5 damage to all attacks in the area.");
-      
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include offerrii.lkod
+
    offeringRiija_name_rsc = "bottle of lies"
    offeringRiija_icon_rsc = lies.bgf
    offeringRiija_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."

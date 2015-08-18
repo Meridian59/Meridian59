@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include xeowater.lkod
+
    XeoWater_name_rsc = "ma'xeochicatl"
    XeoWater_koc_name_rsc = "ma'xeo'chicatl"
    XeoWater_icon_rsc = Xeo.bgf

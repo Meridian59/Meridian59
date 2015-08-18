@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include icenova.lkod
+
    icenova_name_rsc = "ice nova"
    icenova_icon_rsc = iicenova.bgf
    icenova_projectile_rsc = icebolt.bgf
@@ -126,7 +128,7 @@ messages:
       lActive = Send(oRoom,@GetHolderActive);
 
       % Send a message to all in room of spellcasters actions
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 

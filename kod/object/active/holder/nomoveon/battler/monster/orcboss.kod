@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include orcboss.lkod
+
    OrcPitBoss_koc_name_rsc = "koutom"
    OrcPitBoss_name_rsc = "orc pit boss"
    OrcPitBoss_icon_rsc = OrcPitB.bgf

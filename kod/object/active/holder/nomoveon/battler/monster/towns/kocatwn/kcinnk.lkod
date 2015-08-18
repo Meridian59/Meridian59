@@ -1,0 +1,16 @@
+Kocataninnkeeper_name_rsc = de "Moxal ix'Hanak"
+kocataninnkeeper_desc_rsc = de \
+   "Von Natur aus unternehmerisch ist Moxal ix'Hanak stets auf der Such nach "
+   "neuen, hoch riskanten Investitionen. Er grüßt Dich mit einem vertrauten "
+   "Lächeln und einem verstohlenen Ausdruck in seinen Augen."
+kinnkeeper_entry_welcome = de \
+   "Willkommen, guter Patron.  Ich hoffe das dein Besuch ein Guter wird."
+kocinn_winknudge = de \
+   "Danke!  Ich werde sie sicher informieren wie es so gelaufen ist!"
+kocataninnkeeper_unwanted_keep = de \
+   "~k%s%s teilt dir mit, \"Danke dir.  Du wirst es nicht bereuen, mir das "
+   "geliehen zu haben.~n~k\""
+KocatanInkeeper_purplemushroom_sale = de \
+   "Ah!  Du möchtest %s%s.  Ja, ich importierte diese wunderbaren Schönheiten "
+   "direkt vom Festpland. Es soll garantiert sein, dass wenn man 3000 von "
+   "ihnen isst stäker werden soll!"

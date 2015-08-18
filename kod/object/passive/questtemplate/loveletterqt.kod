@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include loveletterqt.lkod
+
    % Quest description.
    loveletterqt_icon_rsc = scr01.bgf
 

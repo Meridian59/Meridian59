@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include vampdrn.lkod
+
    VampiricDrain_name_rsc = "vampiric drain"
    VampiricDrain_icon_rsc = ivamptou.bgf
    VampiricDrain_desc_rsc = \

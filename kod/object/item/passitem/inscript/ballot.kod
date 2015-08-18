@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ballot.lkod
+
    ballot_name_rsc = "Royal Ballot"
    ballot_icon_rsc = scr02.bgf
    ballot_desc_rsc = \

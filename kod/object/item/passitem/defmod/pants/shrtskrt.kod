@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shrtskrt.lkod
+
    ShortSkirt_icon_rsc = Skirt.bgf
 
    ShortSkirt_male_player_rsc = bfg.bgf

@@ -1,0 +1,9 @@
+soup_name_rsc = de "Der Suppenteller"
+soup_desc_rsc = de \
+   "Ein dampfender Teller mit Suppe aus großen Pilzstücken und fein abgeschmeckt "
+   "mit Kräutern."
+soup_name_plural_rsc = de "Suppenteller"
+soup_disp_name = de "Der Suppentopf"
+soup_disp_desc = de \
+   "Genügend heiße Suppe, um eine ganze Armee von Abenteurern satt zu kriegen."
+soup_got_one = de "Du schöpfst Dir eine Schüssel dampfender Suppe."

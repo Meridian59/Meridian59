@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include temprii.lkod
+
    room_name_RiijaTemple = "The Temple of Riija"
    room_RiijaTemple = ke1.roo
    riijatemple_music = bridge.mp3
@@ -258,7 +260,7 @@ messages:
    
       ptIllusionResetTimer = $;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          
@@ -358,7 +360,7 @@ messages:
             return;
          }
                   
-         for i in Send(what,@GetPlayerUsing)
+         foreach i in Send(what,@GetPlayerUsing)
          {
             %% checking item to see if it's a riija sword.
             if isClass(i,&RiijaSword) AND (Send(i,@GetQuester) = what)
@@ -384,7 +386,7 @@ messages:
       debug(Send(what,@GetName),"Hurled self off cliffs");
       
       dropped = FALSE;
-      for i in Send(what,@GetPlayerUsing)
+      foreach i in Send(what,@GetPlayerUsing)
       {
          if Send(i,@ReqLeaveOwner)
             AND random(1,3) = 1
@@ -398,7 +400,7 @@ messages:
       
       if NOT dropped
       {
-         for i in Send(what,@GetHolderPassive)
+         foreach i in Send(what,@GetHolderPassive)
          {
             if Send(i,@ReqLeaveOwner)
             AND random(1,3) = 1
@@ -654,6 +656,11 @@ messages:
       }
 
       return;
+   }
+
+   GetRegion()
+   {
+      return RID_KOCATAN;
    }
 
 end

@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include vigboon.lkod
+
    vigorboon_name_rsc = "vigor effect"
    vigorboon_icon_rsc = iboonvig.bgf
    vigorboon_desc_rsc = "Your vigor seems unnaturally affected."

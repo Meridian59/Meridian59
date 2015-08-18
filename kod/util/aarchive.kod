@@ -82,9 +82,9 @@ messages:
             [ archive_EventNPC6, "npc6", "cat demon", "muscle man", "flesh golem" ]
     ];
     
-      for i in l
+      foreach i in l
       {
-         for j in i
+         foreach j in i
          {
             if stringEqual(string,j)
             {

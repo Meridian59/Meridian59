@@ -1,0 +1,7 @@
+DaemonSkeleton_koc_name_rsc = de "kochaleoc"
+DaemonSkeleton_name_rsc = de "Das Dämonenskelett"
+DaemonSkeleton_desc_rsc = de \
+   "Allein der Anblick dieser Abnormalität der Natur ist oft genug umeinen "
+   "Menschen erstarren zu lassen. Du schauderst, als Du daran denkst,was "
+   "für ein dunkles Ritual diese Abnormalität zum Leben erweckt hat."
+DaemonSkeleton_dead_name_rsc = de "Ein Knochenhaufen"

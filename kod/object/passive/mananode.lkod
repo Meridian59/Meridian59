@@ -1,0 +1,20 @@
+ManaNode_name_rsc = de "Mana Node"
+ManaNode_desc_rsc = de \
+   "Eine Ansammlung von mystischer Energie, in einem Fluss aus rohem Mana.Sie "
+   "gibt Kraft auf die Zauberer ab, wenn diese sich mit ihr verschmelzen"
+ManaNode_Dead_desc_rsc = de \
+   "Eine Ansammlung von mystischer Energie, in einem Fluss aus rohem Mana "
+   "Es sieht so aus, als sei diese Mana Node leer ist."
+mananode_already_melded = de "Du bist bereits mit dieser Mana Node verbunden."
+mananode_not_in_range = de \
+   "Die Mana Node ist nicht nah genug um dich mit ihr zu verbinden."
+mananode_meld = de \
+   "Du schließt deine Augen, begibst dich in einen tranceartigen Zustand "
+   "um zu erreichen, das du dich mit dieser Mana Node verbinden kannst. Die "
+   "Realität verschwimmt und nach einiger Zeit erwachst du aus deiner Trance "
+   "und spürst frische Magie in deinem Blut."
+mananode_failed_meld = de \
+   "Du schließt deine Augen, begibst dich in einen tranceartigen Zustand "
+   "um zu erreichen, das du dich mit dieser Mana Node verbinden kannst.Du "
+   "wachst auf und bist enttäuscht, denn nichts ist geschehen."
+node_somewhere = de "irgendwo unbekannt"

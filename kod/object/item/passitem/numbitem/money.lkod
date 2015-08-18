@@ -1,0 +1,5 @@
+money_name_one_rsc = de "Der Schilling"
+money_name_many_rsc = de "Schillinge"
+money_desc_rsc = de \
+   "Die Währung von Meridian. Das Bild einer antiken Prinzessin schmückt "
+   "die Vorderseite, die Rückseite ziert das Wappen eines Apothekers."

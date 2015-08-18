@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shokfury.lkod
+
    ShockingFury_name_rsc = "shocking fury"
 
    ShockingFury_icon_rsc = ishkfury.bgf

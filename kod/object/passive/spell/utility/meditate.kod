@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include meditate.lkod
+
    Meditate_name_rsc = "meditate"
    Meditate_icon_rsc = imanafoc.bgf
    Meditate_desc_rsc = \
@@ -119,7 +121,7 @@ messages:
 
       iPoints = Send(who,@GetTrainingPoints);
 
-      for i in Send(who,@GetSpellList)
+      foreach i in Send(who,@GetSpellList)
       {
          iNum = Send(who,@DecodeSpellNum,#compound=i);
          oSpell = Send(SYS,@FindSpellByNum,#num=iNum);
@@ -178,7 +180,7 @@ messages:
          }
       }
 
-      for i in Send(who,@GetSkillList)
+      foreach i in Send(who,@GetSkillList)
       {
          iNum = Send(who,@DecodeSkillNum,#compound=i);
          oSkill = Send(SYS,@FindSkillByNum,#num=iNum);

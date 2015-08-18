@@ -1,0 +1,11 @@
+enfeeble_cast_rsc = de \
+   "Du bemerkst, wie eine seltsame Kraft die Muskeln Deines Opfers erschlaffen "
+   "läßt."
+enfeeble_already_enchanted = de "Die arme Seele ist bereits geschwächt."
+palsy_start = de "Deine Muskeln erschlaffen."
+palsy_stop = de "Du fühlst deine alte Stärke zurückkehren."
+enfeeble_name_rsc = de "Schwächen"
+enfeeble_desc_rsc = de \
+   "Entzieht dem Ziel physische Stärke. Der Effekt dauert für einige Minuten "
+   "an. Der Zauber benötigt Zähne eines Orks. Die Anwendung dieses Zaubers "
+   "kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."

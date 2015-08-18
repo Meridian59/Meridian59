@@ -58,7 +58,7 @@ messages:
       local i;
 
       % if already have account, add to it.
-      for i in plAccounts
+      foreach i in plAccounts
       {
          if First(i) = what
          {
@@ -79,7 +79,7 @@ messages:
       local i,iCurrent;
 
       % if already have account, subtract from it.
-      for i in plAccounts
+      foreach i in plAccounts
       {
          if First(i) = what
          {
@@ -104,7 +104,7 @@ messages:
    {
       local i;
 
-      for i in plAccounts
+      foreach i in plAccounts
       {
          if First(i) = what
          {
@@ -119,7 +119,7 @@ messages:
    {
       local i,new_num;
 
-      for i in plAccounts
+      foreach i in plAccounts
       {
          new_num = Nth(i,2);
          new_num = Bound(new_num,0,amount);
@@ -154,7 +154,7 @@ messages:
 
       % Find the highest account that isn't listed in except.
 
-      for i in plAccounts
+      foreach i in plAccounts
       {
          if Nth(i,2) >= max
          {
@@ -180,7 +180,7 @@ messages:
 	  
 	  PlayerMoneyTotal = 0;
 	  
-      for i in plAccounts
+      foreach i in plAccounts
 	  {
 		 l2 = Nth(i,2);
 	     PlayerMoneyTotal = PlayerMoneyTotal + l2;

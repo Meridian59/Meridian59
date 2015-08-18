@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include godroom.lkod
+
    room_Godroom = Zndramas.roo
    room_name_Godroom ="The meeting place of the Gods"
    godroom_music = main.mp3

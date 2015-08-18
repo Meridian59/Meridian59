@@ -1,0 +1,14 @@
+ringoflethargy_name_rsc = de "Der Ring aus exotischem Metall"
+ringoflethargy_desc_rsc = de \
+   "Dieser goldene Ring pulsiert voll magischer Kraft."
+ringoflethargy_desc_used_rsc = de \
+   "Der Ring scheint an Deinem Finger zu pulsieren -- fast als würde er ernährt."
+ringoflethargy_use_rsc = de \
+   "Als Du den Ring anziehst, fühlst Du Dich niedergeschlagen und atemlos."
+ringoflethargy_try_unuse_rsc = de \
+   "Als Du den Ring abziehst, fühlst Du plötzlich all Deine Kraft aus Deinem "
+   "Körper entweichen! Unfreiwillig ziehst Du den Ring wieder an - Du bist "
+   "mit ihm verbunden und benötigst besondere Hilfe, um ihn zu entfernen."
+ringoflethargy_unuse_rsc = de \
+   "Der Ring springt mit eigener Kraft von Deinem Finger. Luft füllt Deine "
+   "Lungen! Endlich kannst Du wieder frei atmen!"

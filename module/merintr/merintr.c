@@ -1527,19 +1527,30 @@ Bool HandleLookPlayer(char *ptr, long len)
 
    len -= (ptr - start);
 
-   // See if we need to reorder the message.
-   if (CheckMessageOrder(&ptr, &len, resource_id) < 0)
-      return False;
+   // Player bio desc (editable section).
    /* Remove format string id # & other ids from length */
    if (!CheckServerMessage(&desc, &ptr, &len, resource_id))
       return False;
 
-   // Get fixed string (extra info)
-   ExtractString(&ptr, len, fixed, MAXMESSAGE);
-   debug(("got \"%s\" for fixed\n", fixed));
+   // Get fixed string (extra info). This used to be sent as one string,
+   // now we handle it as resources.
+   //ExtractString(&ptr, len, fixed, MAXMESSAGE);
+   //debug(("got \"%s\" for fixed\n", fixed));
+   Extract(&ptr, &resource_id, SIZE_ID);
+   len -= SIZE_ID;
+
+   // See if we need to reorder the message.
+   if (CheckMessageOrder(&ptr, &len, resource_id) < 0)
+      return False;
+   /* Remove format string id # & other ids from length */
+   if (!CheckServerMessage(&fixed, &ptr, &len, resource_id))
+      return False;
 
    // Get URL
    ExtractString(&ptr, len, url, MAX_URL);
+   len -= (SIZE_STRING_LEN + strlen(url));
+   if (len != 0)
+      return False;
 
    DisplayDescription(&obj, flags, desc, fixed, url);
    ObjectDestroy(&obj);
@@ -1654,6 +1665,13 @@ Bool WINAPI EventMenuItem(int id)
    {
       MenuActionChosen(id);
       return False;  // Don't pass this menu item on
+   }
+
+   // Check for language menu items
+   if (id >= ID_LANGUAGE && id < ID_LANGUAGE + MAX_LANGUAGE_ID)
+   {
+      MenuLanguageChosen(id);
+      return False;
    }
 
    return True;

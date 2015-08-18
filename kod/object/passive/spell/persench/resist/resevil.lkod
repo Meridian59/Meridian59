@@ -1,0 +1,13 @@
+resistevil_name_rsc = de "Heilige Lösung"
+resistevil_desc_rsc = de \
+   "Sha-Lill ist angerufen, Deine Seele gegen böse Angriffe zu festigen. "
+   "Der Zauber benötigt Phiolen mit Solagh und Feenflügel.."
+resistevil_spell_intro = de \
+   "Shal'ill Level 1: Sha-Lill ist angerufen, Deine Seele gegen böse Angriffe "
+   "zu festigen."
+resistevil_success = de "Du bist gestärkt %s%s gegen das böse."
+resistevil_already_enchanted = de "Du hast bereits die Heilige Lösung."
+resistevil_on = de \
+   "Du fühlst die warme präsenz die Dich vor der Dunkelheit schützt."
+resistevil_off = de \
+   "Die warme präsenz verschwindet und Du bist wieder anfällig für das Böse."

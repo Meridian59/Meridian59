@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include token5.lkod
+
    FiveToken_name_rsc = "crystal sphere token"
    FiveToken_desc_rsc = \
       "Swirling with mystical patterns, this ancient token is some relative of "

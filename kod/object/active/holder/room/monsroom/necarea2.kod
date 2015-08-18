@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include necarea2.lkod
+
    room_name_Necropolis2 = "Ancient Graveyard of Brax"
    room_Necropolis2 = necarea2.roo
    Necropolis2_music = nec01.mp3

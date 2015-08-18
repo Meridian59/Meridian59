@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include holywp.lkod
+
    holyweapon_cast_rsc = "Your %s is now dedicated to Shal'ille."
    holyweapon_no_can = "You cannot dedicate %s%s to Shal'ille."
    holyweapon_fails = "The %s is strangely unaffected by the spell."
@@ -32,7 +34,7 @@ resources:
    holyweapon_spell_intro = \
       "Shal'ille Lv. 2: Dedicates your weapon to Shal'ille, enhancing its effectiveness against the unholy."
 
-   holyweapon_label_rsc = "sanctifier."
+   holyweapon_label_rsc = "sanctifier"
 
 classvars:
 

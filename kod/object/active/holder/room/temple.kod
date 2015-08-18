@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include temple.lkod
+
    room_temple = temple.roo
    room_name_temple = "The Temple of Shal'ille"
 
@@ -94,7 +96,7 @@ messages:
    {
       local i, each_obj;
       
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = send(self,@HolderExtractObject,#data=i);
          

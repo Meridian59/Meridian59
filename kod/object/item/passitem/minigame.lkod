@@ -1,0 +1,7 @@
+minigame_name_rsc = de "Das Schachbrett"
+minigame_desc_rsc = de "Das Spiel"
+minigame_not_playing = de "Du bist an diesem Spiel nicht beteiligt!"
+minigame_game_full = de "Das Spiel ist bereits voll. Du bist nur Zuschauer."
+minigame_cant_pickup = de \
+   "Nur Spieler können in ein laufendes Spiel eingreifen."
+minigame_default_state = de ""

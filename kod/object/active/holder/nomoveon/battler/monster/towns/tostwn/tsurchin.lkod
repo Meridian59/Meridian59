@@ -1,0 +1,5 @@
+tos_urchin_name_rsc = de "Der Urlan"
+tos_urchin_desc_rsc = de \
+   "Dies ist ein junger, dreckiger Urlan, der auf der Straße lebt, aber bis "
+   "jetzt noch keinen Ärger macht."
+tos_urchin_dead_name_rsc = de "Ein toter Urlan"

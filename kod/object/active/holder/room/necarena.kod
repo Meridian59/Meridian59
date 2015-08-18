@@ -46,6 +46,8 @@ constants:
    TELEPORT_DELAY = 5000
 
 resources: 
+   include necarena.lkod
+
 
    name_NecArena = "Goad's Grinder"
    room_NecArena = necarena.roo
@@ -518,13 +520,13 @@ messages:
       }
 
       % Remove radius enchantments
-      for i in Send(self,@GetHolderActive)
+      foreach i in Send(self,@GetHolderActive)
       {
          j = Send(self,@HolderExtractObject,#data=i);
          if IsClass(j,&Player)
             OR (IsClass(j,&Monster) AND NOT ((Send(j,@GetBehavior) & AI_NPC)))
          {
-            for k in Send(j,@GetRadiusEnchantments)
+            foreach k in Send(j,@GetRadiusEnchantments)
             {
                Send(Nth(k,1),@CancelRadiusEnchantment,#source=Nth(k,3));
             }
@@ -603,7 +605,7 @@ messages:
       if plGoToShrine <> $
       {
          pbShrineInUse = TRUE;
-         for i in plGoToShrine
+         foreach i in plGoToShrine
          {
             if IsClass(Send(i,@GetOwner),&NecArena)
             {
@@ -655,7 +657,7 @@ messages:
       }
       else
       {
-         for iCntr in plGoToShrine
+         foreach iCntr in plGoToShrine
          {
             Send(self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
          }
@@ -678,7 +680,7 @@ messages:
    {
       local iCntr;
 
-      for iCntr in plGoToShrine
+      foreach iCntr in plGoToShrine
       {
          Send(self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
       }
@@ -695,7 +697,7 @@ messages:
    {
       local i, oVictim, iRow, iCol, ifine_row, ifine_col, bInStands;
 
-      For i in plActive
+      foreach i in plActive
       {
          if (IsClass(First(i),&Battler)
                AND NOT IsClass(First(i),&Goad))

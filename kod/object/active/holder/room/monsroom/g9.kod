@@ -62,6 +62,8 @@ constants:
 
 resources:
 
+   include g9.lkod
+
    room_name_OutdoorsG9 ="An ancient place, its origin forgotten"
    room_OutdoorsG9 = G9.roo
    OutdoorsG9_music = walk4.mp3
@@ -363,7 +365,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#Data=i);
          if IsClass(each_obj,&portal)
@@ -616,7 +618,7 @@ messages:
       Send(poLedgeN,@MoveDown);
 	  % South ledge no longer moves, as levers activated here - players need time to jump
 	  
-	  for i in plNec_Area
+	  foreach i in plNec_Area
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=i);
 
@@ -826,7 +828,7 @@ messages:
             Send(self,@Touched);
          }
 
-         for oLever in plOuterLevers1
+         foreach oLever in plOuterLevers1
          {
             if what = oLever
             {
@@ -868,7 +870,7 @@ messages:
             }
          }
 
-         for oLever in plOuterLevers2
+         foreach oLever in plOuterLevers2
          {
             if what = oLever
             {
@@ -934,11 +936,11 @@ messages:
       ptReactivateLevers = $;
 
       Send(poCenterLever,@SetStuck,#newStuck=FALSE);
-      for i in plOuterLevers1
+      foreach i in plOuterLevers1
       {
          Send(i,@SetStuck,#newStuck=FALSE);
       }
-      for i in plOuterLevers2
+      foreach i in plOuterLevers2
       {
          Send(i,@SetStuck,#newStuck=FALSE);
       }
@@ -958,12 +960,12 @@ messages:
 
       Send(poCenterLever,@SetStuck,#newStuck=TRUE);
 
-      for i in plOuterLevers1
+      foreach i in plOuterLevers1
       {
          Send(i,@SetStuck,#newStuck=TRUE);
       }
 
-      for i in plOuterLevers2
+      foreach i in plOuterLevers2
       {
          Send(i,@SetStuck,#newStuck=TRUE);
       }

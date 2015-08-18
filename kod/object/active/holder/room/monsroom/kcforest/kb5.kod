@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kb5.lkod
+
    room_name_OutdoorsKB5 = "Into the Jungle"
    room_OutdoorsKB5 = KB5.roo
    OutdoorsKB5_music = orcbeg.mp3

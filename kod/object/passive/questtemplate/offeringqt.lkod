@@ -1,0 +1,8 @@
+% Quest description.
+offeringquest_accept_rsc = de \
+   "%s%s has invited you to chant with %s, do you accept?"
+
+offeringquest_chant_rsc = de \
+   "Speak the following words aloud: \"%s\"."
+
+qoroffering_trigger_2 = de "Ja"

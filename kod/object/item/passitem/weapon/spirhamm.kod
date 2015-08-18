@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spirhamm.lkod
+
    spirithammer_name_rsc = "spiritual hammer"
    spirithammer_icon_rsc = hammer.bgf
    spirithammer_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mend.lkod
+
    mend_name_rsc = "mend"
    mend_icon_rsc = imend.bgf
    mend_desc_rsc = \

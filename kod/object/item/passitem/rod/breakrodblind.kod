@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include breakrodblind.lkod
+
    BreakRodBlind_name_rsc = "rod of sight"
    BreakRodBlind_icon_rsc = wand5.bgf
    BreakRodBlind_desc_rsc = \

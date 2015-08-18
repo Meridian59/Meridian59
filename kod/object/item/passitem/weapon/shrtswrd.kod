@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shrtswrd.lkod
+
    shortsword_name_rsc = "short sword"
    shortsword_icon_rsc = shswd.bgf
    shortsword_desc_rsc = \

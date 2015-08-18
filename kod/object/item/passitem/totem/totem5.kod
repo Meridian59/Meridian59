@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include totem5.lkod
+
    TotemFive_name_rsc = "The Emperor's Chalice"
    TotemFive_icon_rsc = qo01.bgf
    TotemFive_desc_rsc = "Fabricated in the 5th century, this one of a kind heirloom was meant to be delivered as "

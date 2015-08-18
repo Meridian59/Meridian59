@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include healrod.lkod
+
    healWand_name_rsc = "rod of healing"
    healWand_icon_rsc = healwand.bgf
    healWand_desc_rsc = \

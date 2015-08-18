@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include marcryp2.lkod
+
    room_name_MarionCrypt2 = "Resting place of Marion's ancestors"
    room_MarionCrypt2 = MarDun02.roo
    MarionCrypt2_music = Song.mp3
@@ -168,7 +170,7 @@ messages:
          return;
       }
 
-      for lLocation in plStatueLocations
+      foreach lLocation in plStatueLocations
       {
          oStatue = Create(&LivingStatue);
 

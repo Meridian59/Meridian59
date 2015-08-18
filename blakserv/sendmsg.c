@@ -65,33 +65,61 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode);
 
 void InitProfiling(void)
 {
-	int i;
-	
-	if (done)
-		return;
-	
-	kod_stat.num_interpreted = 0;
-	kod_stat.num_interpreted_highest = 0;
-	kod_stat.billions_interpreted = 0;
-	kod_stat.num_messages = 0;
-	kod_stat.num_top_level_messages = 0;
-	kod_stat.system_start_time = GetTime();
-	kod_stat.interpreting_time = 0;
-	kod_stat.interpreting_time_highest = 0;
-	kod_stat.interpreting_time_over_second = 0;
-	kod_stat.interpreting_time_message_id = INVALID_ID;
-	kod_stat.interpreting_time_object_id = INVALID_ID;
-	kod_stat.interpreting_time_posts = 0;
-	kod_stat.message_depth_highest = 0;
-	kod_stat.interpreting_class = INVALID_CLASS;
-	kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
-	
-	for (i=0;i<MAX_C_FUNCTION;i++)
-		kod_stat.c_count[i] = 0;
-	
-	message_depth = 0;
-	
-	done = 1;
+   int i;
+
+   if (done)
+      return;
+
+   kod_stat.num_interpreted = 0;
+   kod_stat.num_interpreted_highest = 0;
+   kod_stat.billions_interpreted = 0;
+   kod_stat.num_messages = 0;
+   kod_stat.num_top_level_messages = 0;
+   kod_stat.system_start_time = GetTime();
+   kod_stat.interpreting_time = 0.0;
+   kod_stat.interpreting_time_highest = 0;
+   kod_stat.interpreting_time_over_second = 0;
+   kod_stat.interpreting_time_message_id = INVALID_ID;
+   kod_stat.interpreting_time_object_id = INVALID_ID;
+   kod_stat.interpreting_time_posts = 0;
+   kod_stat.message_depth_highest = 0;
+   kod_stat.interpreting_class = INVALID_CLASS;
+   kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
+
+   for (i = 0; i < MAX_C_FUNCTION; i++)
+      kod_stat.c_count_untimed[i] = 0;
+   for (i = 0; i < MAX_C_FUNCTION; i++)
+      kod_stat.c_count_timed[i] = 0;
+   for (i = 0; i < MAX_C_FUNCTION; i++)
+      kod_stat.ccall_total_time[i] = 0;
+
+   message_depth = 0;
+
+#ifdef BLAK_PLATFORM_WINDOWS
+   if (ConfigBool(DEBUG_TIME_CALLS))
+      InitTimeProfiling();
+   else
+      kod_stat.frequency = 0.0;
+#else
+   kod_stat.frequency = 0.0;
+#endif
+
+   done = 1;
+}
+
+void InitTimeProfiling(void)
+{
+#ifdef BLAK_PLATFORM_WINDOWS
+   LARGE_INTEGER freq;
+
+   QueryPerformanceFrequency(&freq);
+   kod_stat.frequency = (double)freq.QuadPart / 1000000.0;
+#endif
+}
+
+void EndTimeProfiling(void)
+{
+   kod_stat.frequency = 0.0;
 }
 
 void InitBkodInterpret(void)
@@ -262,8 +290,8 @@ void PostBlakodMessage(int object_id,int message_id,int num_parms,parm_node parm
 int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms[])
 {
 	int ret_val = 0;
-	UINT64 start_time = 0;
-	int interp_time = 0;
+	double start_time = 0;
+	double interp_time = 0;
 	int posts = 0;
 	int accumulated_num_interpreted = 0;
 	
@@ -274,7 +302,7 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 	
 	kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
 	
-	start_time = GetMilliCount();
+   start_time = GetMicroCountDouble();
 	kod_stat.num_top_level_messages++;
 	trace_session_id = INVALID_ID;
 	num_interpreted = 0;
@@ -288,7 +316,7 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 		accumulated_num_interpreted += num_interpreted;
 		num_interpreted = 0;
 		
-		if (accumulated_num_interpreted > 10*ConfigInt(BLAKOD_MAX_STATEMENTS))
+		if (accumulated_num_interpreted > 10 * MAX_BLAKOD_STATEMENTS)
 		{
 			bprintf("SendTopLevelBlakodMessage too many instructions in posted followups\n");
 			
@@ -308,16 +336,16 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 		post_q.last = (post_q.last + 1) % MAX_POST_QUEUE;
 	}
 	
-	interp_time = (int)(GetMilliCount() - start_time);
+   interp_time = GetMicroCountDouble() - start_time;
 	kod_stat.interpreting_time += interp_time;
 	if (interp_time > kod_stat.interpreting_time_highest)
 	{
-		kod_stat.interpreting_time_highest = interp_time;
+		kod_stat.interpreting_time_highest = (int)interp_time;
 		kod_stat.interpreting_time_message_id = message_id;
 		kod_stat.interpreting_time_object_id = object_id;
 		kod_stat.interpreting_time_posts = posts;
 	}
-	if (interp_time > 1000)
+	if (interp_time > 1000000.0)
 	{
 		kod_stat.interpreting_time_over_second++;
 		kod_stat.interpreting_time_message_id = message_id;
@@ -419,7 +447,6 @@ int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms
 		return NIL;
 	}
 	
-	m->called_count++;
 	
 	kod_stat.num_messages++;
 	stack[message_depth].class_id = c->class_id;
@@ -489,7 +516,6 @@ int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms
 		
 		c = propagate_class;
 		
-		m->called_count++;
 		
 		if (m->trace_session_id != INVALID_ID)
 		{
@@ -514,7 +540,6 @@ int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms
 		propagate_depth++;
 
 		bkod = m->handler;
-
 	}
 	
 	message_depth -= propagate_depth;
@@ -549,15 +574,23 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 	local_var_type local_vars;
 	int parm_id;
 	val_type parm_init_value;
-	
 	int i,j;
 	char *inst_start;
 	Bool found_parm;
-	
+
+#ifdef BLAK_PLATFORM_WINDOWS
+	LARGE_INTEGER startTime, endTime;
+
+	if (kod_stat.frequency > 0.2)
+	{
+		QueryPerformanceCounter(&startTime);
+	}
+#endif
+
 	num_locals = get_byte();
 	num_parms = get_byte();
 	
-	local_vars.num_locals = num_locals+num_parms;
+	local_vars.num_locals = num_locals + num_parms;
 	if (local_vars.num_locals > MAX_LOCALS)
 	{
 		dprintf("InterpretAtMessage found too many locals and parms for OBJECT %i CLASS %s MESSAGE %s (%s) aborting and returning NIL\n",
@@ -569,7 +602,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		return RETURN_NO_PROPAGATE;
 	}
 	
-	if (ConfigBool(DEBUG_INITLOCALS))
+	/*if (ConfigBool(DEBUG_INITLOCALS))
 	{
 		parm_init_value.v.tag = TAG_INVALID;
 		parm_init_value.v.data = 1;
@@ -578,7 +611,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		{
 			local_vars.locals[i] = parm_init_value;
 		}
-	}
+	}*/
 	
 	/* both table and call parms are sorted */
 	
@@ -614,7 +647,7 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		num_interpreted++;
 		
 		/* infinite loop check */
-		if (num_interpreted > ConfigInt(BLAKOD_MAX_STATEMENTS))
+		if (num_interpreted > MAX_BLAKOD_STATEMENTS)
 		{
 			bprintf("InterpretAtMessage interpreted too many instructions--infinite loop?\n");
 			
@@ -642,8 +675,8 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 		
 		//memcpy(&opcode,&opcode_char,1);
 		{
-			char *ch=(char*)&opcode;
-			*ch = opcode_char ;
+			char *ch = (char*)&opcode;
+			*ch = opcode_char;
 		}
 		
 		/* use continues instead of breaks here since there is nothing
@@ -664,7 +697,21 @@ int InterpretAtMessage(int object_id,class_node* c,message_node* m,
 			case CALL : 
 				InterpretCall(object_id,&local_vars,opcode);
 				continue;
-			case RETURN : 
+			case RETURN :
+#ifdef BLAK_PLATFORM_WINDOWS
+				if (kod_stat.frequency > 0.2)
+				{
+					QueryPerformanceCounter(&endTime);
+					m->total_call_time += ((double)(endTime.QuadPart - startTime.QuadPart) / kod_stat.frequency);
+					m->timed_call_count++;
+				}
+				else
+				{
+					m->untimed_call_count++;
+				}
+#else
+            m->untimed_call_count++;
+#endif
 				if (opcode.dest == PROPAGATE)
 					return RETURN_PROPAGATE;
 				else
@@ -787,7 +834,52 @@ void InterpretUnaryAssign(int object_id,local_var_type *local_vars,opcode_type o
 		}
 		source_data.v.data = ~source_data.v.data;
 		break;
-		
+	case POST_INCREMENT:
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't post-increment non-int %i,%i\n",
+				source_data.v.tag,source_data.v.data);
+			break;
+		}
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, dest, source_data);
+		++source_data.v.data;
+		StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		return;
+	case PRE_INCREMENT:
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't pre-increment non-int %i,%i\n",
+				source_data.v.tag, source_data.v.data);
+			break;
+		}
+		++source_data.v.data;
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		break;
+	case POST_DECREMENT :
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't post-decrement non-int %i,%i\n",
+				source_data.v.tag,source_data.v.data);
+			break;
+		}
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, dest, source_data);
+		--source_data.v.data;
+		StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		return;
+	case PRE_DECREMENT:
+		if (source_data.v.tag != TAG_INT)
+		{
+			bprintf("InterpretUnaryAssign can't pre-decrement non-int %i,%i\n",
+				source_data.v.tag, source_data.v.data);
+			break;
+		}
+		--source_data.v.data;
+		if (source != dest)
+			StoreValue(object_id, local_vars, opcode.dest, source, source_data);
+		break;
 	default :
 		bprintf("InterpretUnaryAssign can't perform unary op %i\n",info);
 		break;
@@ -1103,14 +1195,36 @@ void InterpretCall(int object_id,local_var_type *local_vars,opcode_type opcode)
 		
 		name_parm_array[i].value = name_val.int_val;
 	}
-	
-	/* increment count of the c function, for profiling info */
-	kod_stat.c_count[info]++;
-	
-	call_return.int_val = ccall_table[info](object_id,local_vars,num_normal_parms,
-					   normal_parm_array,num_name_parms,
-					   name_parm_array);
-	
+
+#ifdef BLAK_PLATFORM_WINDOWS
+	LARGE_INTEGER startTime, endTime;
+	if (kod_stat.frequency > 0.2)
+	{
+		/* increment timed count of the c function, for profiling info */
+		kod_stat.c_count_timed[info]++;
+		QueryPerformanceCounter(&startTime);
+		call_return.int_val = ccall_table[info](object_id, local_vars, num_normal_parms,
+			normal_parm_array, num_name_parms,
+			name_parm_array);
+		QueryPerformanceCounter(&endTime);
+		kod_stat.ccall_total_time[info] += ((double)(endTime.QuadPart - startTime.QuadPart) / kod_stat.frequency);
+	}
+	else
+	{
+		/* increment untimed count of the c function, for profiling info */
+		kod_stat.c_count_untimed[info]++;
+		call_return.int_val = ccall_table[info](object_id, local_vars, num_normal_parms,
+			normal_parm_array, num_name_parms,
+			name_parm_array);
+	}
+#else
+   /* increment untimed count of the c function, for profiling info */
+   kod_stat.c_count_untimed[info]++;
+   call_return.int_val = ccall_table[info](object_id, local_vars, num_normal_parms,
+      normal_parm_array, num_name_parms,
+      name_parm_array);
+#endif
+
 	switch(opcode.source1)
 	{
 		case CALL_NO_ASSIGN :

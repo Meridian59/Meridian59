@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include hzelder.lkod
+
    HazarElder_name_rsc = "Rodric d'Stane"
    HazarElder_icon_rsc = mrelder.bgf
    HazarElder_desc_rsc = \
@@ -58,6 +60,10 @@ resources:
    
    HzEl_stat_window_trigger = "change stats"
 
+   hazar_elder_teach_rsc = \
+      "I teach %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"
+      "%s%s%s%s%s%s%s%s%s%s%s%s at that level."
+
 classvars:
 
    viDefinite = ARTICLE_NONE
@@ -69,6 +75,8 @@ classvars:
       MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT \
       | MOB_NOMOVE | MOB_NOQUEST | MOB_TEACHER | MOB_COND_SELLER
    viOccupation = MOB_ROLE_ELDER
+
+   vrTeach_message = hazar_elder_teach_rsc
 
 messages:
 
@@ -190,6 +198,62 @@ messages:
       }
 
       propagate;
+   }
+
+   SendReportLevel(parm1=$)
+   {
+      local i, iNumAbilities, iNumRsc, iCounter;
+
+      AddPacket(4,self, 4,Send(self,@GetName),1,5, 4,monster_said_resource_str,
+                4,Send(self,@GetCapDef), 4,Send(self,@GetName));
+                
+      if parm1 = $
+      {
+         AddPacket(4, vrTeach_nothing);
+
+         return;
+      }
+
+      % Add master rsc.
+      AddPacket(4,vrTeach_message);
+
+      iCounter = 0;
+      iNumRsc = 0;
+
+      iNumAbilities = Length(parm1);
+
+      foreach i in parm1
+      {
+         iCounter++;
+
+         if iNumAbilities > 1
+         {
+            if iCounter = iNumAbilities
+            {
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,monster_teach_and, 4,Send(i,@GetName));
+            }
+            else
+            {
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,Send(i,@GetName), 4,monster_teach_comma);
+            }
+         }
+         else
+         {
+            iNumRsc++;
+            AddPacket(4,Send(i,@GetName));
+         }
+      }
+
+      % If we didn't add enough location resources, make up for it
+      % with blank ones. This teacher sells a lot of spells.
+      while iNumRsc++ < 42
+      {
+         AddPacket(4,monster_teach_blank);
+      }
+
+      return;
    }
 
 end

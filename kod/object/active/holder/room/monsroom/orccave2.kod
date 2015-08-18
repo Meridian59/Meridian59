@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccave2.lkod
+
    room_orccave2 = oc02.roo
    room_name_orccave2 = "An Enigmatic Chamber"
 

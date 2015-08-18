@@ -1,0 +1,25 @@
+% Quest description.
+vaulttaxqt_name_rsc = de "vault tax quest"
+vaulttaxqt_desc_rsc = de \
+   "Courier some shillings for an NPC."
+
+vaulttaxqt_completed_rsc = de \
+   "You have completed the vault tax quest."
+
+% Quest resources.
+vaulttax_assign_2 = de \
+   "Ja, ich benötige einen Kurier.  %NPC bekommt einen bestimmten Prozentsatz "
+   "der Gewinne von meinem Geschäften.  Bitte nimm diese Zinsen von %INDEF_CARGO%CARGO "
+   "und bring es schnell zu %HIMHER_NPC.  Ich bin zu beschäftigt um es selber "
+   "zu machen.  Sei gewarnt, jeglicher Diebstahl wird dazu führen, dass Du "
+   "als Gesetzesloser deklariert wirst.  Vielleicht noch schlimmer, ich hörte, "
+   "das %NPC tätigt auch Geschäfte mit einem Zauberer.  Ich habe eine Vereinbarung "
+   "mit %NPC getroffen, so dass er Deine Mühen bezahlen wird."
+
+vaulttax_success_2 = de \
+   "Ah, ich sehe %SOURCE_NPC ist pünktlich diese Woche.  Danke für Deine "
+   "Schnelligkeit und Ehrlichkeit.   %SOURCE_NPC, ich könnte Dich eventuell "
+   "öfter gebrauchen."
+vaulttax_failure_2 = de \
+   "Betreff: Dieb!\nDein Diebstahl von %CARGO hat Dich zu einem Gesetzeslosen "
+   "gemacht, durch einen Erlass von %NPC."

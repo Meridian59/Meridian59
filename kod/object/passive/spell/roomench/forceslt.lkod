@@ -1,0 +1,14 @@
+forcesoflight_name_rsc = de "Kraft des Lichts"
+forcesoflight_desc_rsc = de \
+   "Ruft Sha-Lill herbei, um ihre Kraft allen guten Spielern im Raum zu verleihen, "
+   "auf dass ihre Attacken besser treffen und ihre Zauber kraftvoller werden. "
+   "Dieser Zauber benötigt Holunderbeeren und Smaragde."
+forcesoflight_already_enchanted = de \
+   "Dieser Raum ist bereits mit dem Geist Shal'ills gesegnet."
+forcesoflight_enchantment_rsc = de \
+   "\n\nDer %s Zauber fügt %i Offensivbonus aller guten Spieler hinzu und "
+   "%i Zauberkraft aller Shal'lill Zauber in diesem Gebiet."
+forcesoflight_on = de "Dieser Ort ist gesegnet mit dem Geist von Shal'ill."
+forcesoflight_off = de "Der Geist von Shal'ill verlässt diesen Ort."
+forcesoflight_player_on = de "Du bist mit dem Geist Shal'ills erfüllt."
+forcesoflight_player_off = de "Der Geist von Shal'ill verlässt dich."

@@ -1,0 +1,21 @@
+% Quest description.
+loveletteronequest_name_rsc = de "love letter quest"
+loveletteronequest_desc_rsc = de \
+   "Deliver a love letter."
+
+loveletteronequest_deliver_rsc = de \
+   "%s%s has asked you to deliver %s%s to %s%s."
+
+loveletteronequest_completed_rsc = de \
+   "You have completed a love letter quest."
+
+% Quest resources.
+love_letter_1_assign = de \
+   "Ja, tatsächlich, ich habe %INDEF_CARGO%CARGO für mein Liebling %NPC.  "
+   "Bitte nimm dies mit zur ihr, und bringe ihr meine Liebe.  Sage ihr, dass "
+   "ich sie vermisse, ja?  Und ich sehne mich nach dem Moment unseres nächsten "
+   "Treffens.  Schnell, geh jetzt, damit sie nicht denkt, meine Liebe zu "
+   "ihr ist vergänglich und unbeständig."
+love_letter_1_success = de \
+   "Ah, ein weiterer Brief von %SOURCE_NPC.  Wie schön.  Bitte nimm dies "
+   "als Belohnung für Deine Mühen."

@@ -1,0 +1,12 @@
+Vertigo_name_rsc = de "Vertigo"
+Vertigo_desc_rsc = de \
+   "Dieser Zauberspruch verursacht bei einem Betroffenen eine solche Schwäche, "
+   "das er kaum noch stehen kann, geschweige denn kämpfen. Man benötigt Augen "
+   "der Drachenfliege und Phiolen mit Solagh. Die Anwendung dieses Zaubers "
+   "kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+Vertigo_caster = de "%s%s sieht seltsam benommen und verwirrt aus...."
+Vertigo_already_enchanted = de "%s%s scheint schon völlig außer sich zu sein."
+Vertigo_on = de \
+   "Dein Magen springT dir in den Hals und du hast das Gefühl als ob Dir "
+   "jemand mit dem Hammer auf den Kopf haut"
+Vertigo_off = de "Du erholst Dich von dem schlimmen Gefühl."

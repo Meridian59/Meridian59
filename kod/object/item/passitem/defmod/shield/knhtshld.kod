@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include knhtshld.lkod
+
    knightshield_name_rsc = "knight's shield"
    knightshield_icon_rsc = mtlshld.bgf
    knightshield_desc_rsc = \

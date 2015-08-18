@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include potionsplit.lkod
+
    PotionSplitter_name_rsc = "empty bottle"
    PotionSplitter_icon_rsc = potion01.bgf
    PotionSplitter_desc_rsc = \

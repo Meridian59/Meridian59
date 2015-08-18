@@ -1,0 +1,10 @@
+VampiricDrain_name_rsc = de "Vampirischer Griff"
+VampiricDrain_desc_rsc = de \
+   "Zieht die Lebenskraft aus dem Opfer und verwandelt sie in Lebensenergie "
+   "für den Zaubernden. Die Zutaten sind unbekannt. Die Anwendung dieses "
+   "Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+VampiricDrain_death = de \
+   "Du nimmst Dir das letzte bißchen Lebensessenz von %s%s."
+VampiricDrain_health_gain = de \
+   "Du saugst die Lebenskraft Deines Opfers um ~g~B%i~B~n Lebenspunkte aus, "
+   "und fühlst Dich stärker."

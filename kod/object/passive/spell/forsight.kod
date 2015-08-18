@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include forsight.lkod
+
    Foresight_name_rsc = "foresight"
    Foresight_icon_rsc = iforesig.bgf
    Foresight_desc_rsc = \
@@ -126,14 +128,14 @@ messages:
       iFrog = 0;
       lAbilities = $;
 
-      for i in Send(oTarget,@GetSpellList)
+      foreach i in Send(oTarget,@GetSpellList)
       {
 	      iAbilityNum = Send(oTarget,@DecodeSpellNum,#compound=i);
          oAbility = Send(SYS,@findspellbynum,#num=iAbilityNum);
 	      lAbilities = cons([oAbility,i],lAbilities);
       }
 
-      for i in Send(oTarget,@GetSkillList)
+      foreach i in Send(oTarget,@GetSkillList)
       {
          iAbilityNum = Send(oTarget,@DecodeSkillNum,#compound=i);
          oAbility = Send(SYS,@findskillbynum,#num=iAbilityNum);

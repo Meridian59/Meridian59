@@ -1,0 +1,8 @@
+resistshock_name_rsc = de "Schock Widerstehen"
+resistshock_desc_rsc = de \
+   "Der grauhaarige Gott der Natur gibt dem Ziel etwas Schutz vor Schockattacken. "
+   "Der Zauber benötigt gewöhnliche und blaue Pilze.."
+resistshock_already_enchanted = de "Du hast bereits Schick Widerstehen."
+resistshock_success = de "Faren stärkt %s%s gegen Schockangriffe."
+resistshock_on = de "Faren stärkt Dich gegen Schockangriffe."
+resistshock_off = de "Farens Magie gegen Schockangriffe verlässt Dich."

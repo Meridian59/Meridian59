@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include holytch.lkod
+
    HolyTouch_name_rsc = "holy touch"
    HolyTouch_icon_rsc = iholyt.bgf
    HolyTouch_desc_rsc = \

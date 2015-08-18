@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cpoison.lkod
+
    curepoison_name_rsc = "cure poison"
    curepoison_icon_rsc = icurpoi.bgf
    curepoison_desc_rsc = \

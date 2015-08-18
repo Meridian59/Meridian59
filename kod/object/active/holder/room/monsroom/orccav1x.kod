@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccav1x.lkod
+
    room_OrcCave1Ext  = oc1a.roo
    room_name_OrcCave1Ext = "A Tranquil Place"
 

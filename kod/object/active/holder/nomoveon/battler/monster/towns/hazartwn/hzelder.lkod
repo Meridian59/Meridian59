@@ -1,0 +1,26 @@
+HazarElder_name_rsc = de "Rodrik"
+HazarElder_desc_rsc = de \
+   "Der alte Mann schaut durch Dich hindurch. Seine Augen haben schon unglaubliche "
+   "Dinge gesehen."
+HzEl_entry_welcome = de \
+   "Willkommen mein Sohn, bist du gekommen um Zaubern zu lernen?"
+Elder_potion_faren = de \
+   "Ich kann dir %s%s verkaufen, um alles was du von Faren weiﬂt zu verkaufenEs "
+   "gibt keinerlei Nebenwirkungen oder Gefahren.Also, willst du einen kaufen?"
+Elder_potion_kraanan = de \
+   "Ich kann dir %s%s verkaufen, um alles was du von Kraanan weiﬂt zu verkaufenEs "
+   "gibt keinerlei Nebenwirkungen oder Gefahren.Also, willst du einen kaufen?"
+Elder_potion_qor = de \
+   "Ich kann dir %s%s verkaufen, um alles was du von Qor weiﬂt zu verkaufenEs "
+   "gibt keinerlei Nebenwirkungen oder Gefahren.Also, willst du einen kaufen?"
+Elder_potion_shalille = de \
+   "Ich kann dir %s%s verkaufen, um alles was du von Shal'ill weiﬂt zu verkaufenEs "
+   "gibt keinerlei Nebenwirkungen oder Gefahren.Also, willst du einen kaufen?"
+potion_faren = de "Faren"
+potion_kraanan = de "Kraanan"
+potion_qor = de "Qor"
+potion_shalille = de "Shal'ill"
+HzEl_stat_window_trigger = de "Werte ‰ndern"
+hazar_elder_teach_rsc = de \
+   "Ich unterrichte %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s"
+   "%s%s%s%s%s%s%s%s%s%s%s%s%s%s ab diesem Zirkel."

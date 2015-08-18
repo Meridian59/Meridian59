@@ -1,0 +1,15 @@
+room_name_kocinn = de "Das Gästehaus"
+kocinn_waz_locked = de "Raum waz ist verschlossen."
+kocinn_wazwaz_locked = de "Raum wazwaz ist verschlossen."
+kocinn_zik_locked = de "Raum zik ist verschlossen."
+kocinn_zikzik_locked = de "Raum zikzik ist verschlossen."
+kocinn_katalin_locked = de "Raum katalin ist verschlossen."
+kocinn_katalinwaz_locked = de "Raum katalinwaz ist verschlossen."
+kocnews_god_name = de "Designer Nachrichten"
+kocnews_god_desc = de \
+   "Schaue hier hinein um Nachrichten der Administratoren zu lesen"
+kocinn_rentableroom_door = de \
+   "Die Tür bewegt sich nicht. Seltsamerweise sieht es so aus, als ob sie "
+   "sich gar nicht öffnen würde. Aber es ist ein kleines Schlüsselloch in "
+   "der Tür. Vielleicht würde irgendetwas Interessantes passieren, wenn man "
+   "einen Schlüssel hineinstecken würde."

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include nodeattk.lkod
+
    NodeAttack_initial_attack_rsc = \
       "~IYou have an uneasy feeling that one of your nodes is being "
       "threatened."
@@ -174,7 +176,7 @@ messages:
       ptAttack = $;
 
       % Reset all nodes to be active.
-      for iNode in plAttackableNodes
+      foreach iNode in plAttackableNodes
       {
          Send(Send(SYS,@FindNodeByNum,#num=iNode),@Activate);
       }
@@ -240,7 +242,7 @@ messages:
       % We take care of logged on users here.  Other users will be adjusted
       % when they log on.
       lAllItems = Send(SYS,@GetUsersLoggedOn);
-      for oPlayer in lAllItems
+      foreach oPlayer in lAllItems
       {
          Send(oPlayer,@ComputeMaxMana);
       }
@@ -322,7 +324,7 @@ messages:
       Send(oRoom,@SetMonsterGeneration,#bValue=FALSE);
       Send(oRoom,@Rumble,#duration=1000);
       lAllItems = Send(oRoom,@GetHolderActive);
-      for Active in lAllItems
+      foreach Active in lAllItems
       {
          oItem = Send(oRoom,@HolderExtractObject,#data=Active);
 
@@ -340,7 +342,7 @@ messages:
       % Spawn Xeos around node, then in room.
       iNumberXeos = 0;
       lAllItems = Nth(plMonsterGen,iIndex);
-      for oItem in lAllItems
+      foreach oItem in lAllItems
       {
          % For each spawn point, create 1/5 the total Xeochicatl.
          iNumber=piAttackIntensity/5;
@@ -366,7 +368,7 @@ messages:
       %  holders. Convert minutes to milliseconds.
       ptAttack = CreateTimer(self,@WarnAllTimer,(piAttackDuration*60000)/3);
       lAllItems = Send(SYS,@GetUsersLoggedOn);
-      for oItem in lAllItems
+      foreach oItem in lAllItems
       {
          if Send(oItem,@GetNodeList) & Nth(plAttackableNodes,iIndex)
          {
@@ -453,7 +455,7 @@ messages:
          {
             iNumber = 1;
             lAllItems = Send(oRoom,@GetHolderPassive);
-            for Passive in lAllItems
+            foreach Passive in lAllItems
             {
                oHeartStone = Send(oRoom,@HolderExtractObject,#data=Passive);
                if IsClass(oHeartStone,&HeartStone)
@@ -491,7 +493,7 @@ messages:
       % Get the room name from where the node thinks it is.  Useful for nodes
       %  that disappear under certain conditions.
       rName = Send(poAttackedNode,@GetLocationName);
-      for oItem in lAllItems
+      foreach oItem in lAllItems
       {
          Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_location_attack_rsc,
               #parm1=rName);
@@ -535,7 +537,7 @@ messages:
 
       % Kill the Xeo's flags about being part of a node attack
       lAllItems = Send(oRoom,@GetHolderActive);
-      for Active in lAllItems
+      foreach Active in lAllItems
       {
          oItem = Send(oRoom,@HolderExtractObject,#data=Active);
          if IsClass(oItem,&Xeochicatl)
@@ -562,7 +564,7 @@ messages:
          % Run through all people melded with node, checked for severed, then
          %  give them message or mail.
          lAllItems = Send(SYS,@GetUsers);
-         for oItem in lAllItems
+         foreach oItem in lAllItems
          {
             % Tell everyone they blew it.
             if Send(oItem,@IsLoggedOn)
@@ -624,7 +626,7 @@ messages:
       else
       {
          % Not a failure, players succeeded!
-         for oItem in lAllItems
+         foreach oItem in lAllItems
          {
             Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_success_rsc,
                  #parm1=Send(oRoom,@GetName));

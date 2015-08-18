@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemkraananpower.lkod
+
    gem_kraananpower_name_rsc = "warrior's jewel"
    gem_kraananpower_icon_rsc = diamond.bgf
    gem_kraananpower_desc_rsc = \

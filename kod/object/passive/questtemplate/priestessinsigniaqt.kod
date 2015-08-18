@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include priestessinsigniaqt.lkod
+
    % Quest description.
    priestessinsigniaquest_icon_rsc = gsha.bgf
    priestessinsigniaquest_name_rsc = "herald shield insignia quest"
@@ -125,7 +127,7 @@ messages:
                #quest_node_index=QNT_ID_PRIESTESS_INSIGNIA_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
                            #onIsland=FALSE)
          {
             lNPCs = Cons(oNPC, lNPCs);

@@ -16,12 +16,14 @@ constants:
 
 resources:
 
+   include warjoin.lkod
+
    WarJoinPendant_icon_rsc = factpend.bgf
    WarJoinPendant_name_rsc = "war pendant"
    WarJoinPendant_desc_before_rsc = \
-      "This will allow you to join the war on the side of:\n"
+      "This will allow you to join the war on the side of:\n%s."
    WarJoinPendant_desc_after_rsc = \
-      "This pendant shows your allegiance to:\n"
+      "This pendant shows your allegiance to:\n%s."
 
 classvars:
 
@@ -110,9 +112,9 @@ messages:
       return;
    }
 
-   AppendDesc()
+   DoBaseDesc()
    {
-      AppendTempString(Send(Send(SYS,@GetWarEvent),@GetSideName,#side=piSide));
+      AddPacket(4,vrDesc, 4,Send(Send(SYS,@GetWarEvent),@GetSideName,#side=piSide));
 
       return;
    }

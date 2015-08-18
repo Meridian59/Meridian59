@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include silence.lkod
+
    Silence_name_rsc = "silence"
    Silence_icon_rsc = isilence.bgf
    Silence_desc_rsc = \

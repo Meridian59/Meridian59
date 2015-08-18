@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include monkinsigniaqt.lkod
+
    % Quest description.
    monkinsigniaquest_icon_rsc = gsha.bgf
    monkinsigniaquest_name_rsc = "herald shield insignia quest"
@@ -130,7 +132,7 @@ messages:
                #quest_node_index=QNT_ID_MONK_INSIGNIA_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Temples,
                            #onIsland=TRUE)
          {
             lNPCs = Cons(oNPC, lNPCs);

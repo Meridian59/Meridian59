@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barlbar1.lkod
+
    room_barlbar1 = barlbar1.roo
    room_name_barlbar1 = "The Bhrama & Falcon"
 

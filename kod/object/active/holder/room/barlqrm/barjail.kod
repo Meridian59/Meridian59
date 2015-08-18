@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include barjail.lkod
+
    room_barloque_jail = barjail.roo
    room_name_barloque_jail = "Old Jailhouse"
 

@@ -1,0 +1,7 @@
+ShadowFormPotion_name_rsc = de "Trank der Schattenform"
+ShadowFormPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht wie "
+   "eine Mischung aus Likör und Muskat. "
+ShadowFormPotion_bad_desc_rsc = de \
+   "Dies ist eine Phiole mit einer dunklen, milchigen Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

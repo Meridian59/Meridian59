@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include breakrodpurge.lkod
+
    BreakRodPurge_name_rsc = "rod of sealing"
    BreakRodPurge_icon_rsc = wand5.bgf
    BreakRodPurge_desc_rsc = \

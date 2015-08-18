@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemshalillepower.lkod
+
    gem_shalpower_name_rsc = "celestial beryl"
    gem_shalpower_icon_rsc = emerald.bgf
    gem_shalpower_desc_rsc = \

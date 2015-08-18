@@ -16,13 +16,19 @@ constants:
 
 resources:
 
+   include gort.lkod
+
    ArmorOfGort_name_rsc = "armor of Gort"
    ArmorOfGort_icon_rsc = igort.bgf
    ArmorOfGort_desc_rsc = \
       "Surrounds the caster with a powerful field which deflects "
       "damage from extreme blows.  "
       "Requires two blue dragon scales to cast."
-   
+   gort_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds 1-%i armor or reduces non-magical "
+      "damage to 15, partially magical damage to 20, and fully magical damage "
+      "to 25.  Only the better of these two effects applies.  Armor of Gort "
+      "modifies damage received before any other armor or spells."
    ArmorOfGort_already_enchanted_rsc = "You already have the Armor of Gort."
 
    ArmorOfGort_on_rsc = \
@@ -34,9 +40,15 @@ resources:
    ArmorOfGort_spell_intro = \
       "Kraanan Level 5: Magical armor that protects the caster."
 
-   gort_reduction_physical_rsc = "%s%s's armor of Gort hardens, protecting %s from much of the force of your attack."
-   gort_reduction_partial_magic_rsc = "%s%s's armor of Gort tightens, mitigating some of your partially magical attack."
-   gort_reduction_fully_magic_rsc = "%s%s's armor of Gort glimmers, offering a slight protection against your magical attack."
+   gort_phys_red_rsc = \
+      "%s%s's armor of Gort hardens, protecting %s from much of the force "
+      "of your attack."
+   gort_part_mag_red_rsc = \
+      "%s%s's armor of Gort tightens, mitigating some of your partially "
+      "magical attack."
+   gort_mag_red_rsc = \
+      "%s%s's armor of Gort glimmers, offering a slight protection "
+      "against your magical attack."
 
 classvars:
 
@@ -123,26 +135,28 @@ messages:
       iFinalDamage = Bound(damage-iAbsorbed,1,iMax);
       iFinalAbsorbed = damage - iFinalDamage;
       
-      If IsClass(what,&User)
+      if IsClass(what,&User)
          AND iFinalAbsorbed > 0
       {
          if aspell <> 0
          {
             if atype <> 0
             {
-               Send(what,@MsgSendUser,#message_rsc=gort_reduction_partial_magic_rsc,#parm1=Send(who,@GetDef),
-                                      #parm2=Send(who,@GetName));
+               Send(what,@MsgSendUser,#message_rsc=gort_part_mag_red_rsc,
+                     #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
             }
             else
             {
-               Send(what,@MsgSendUser,#message_rsc=gort_reduction_fully_magic_rsc,#parm1=Send(who,@GetDef),
-                                      #parm2=Send(who,@GetName),#parm3=Send(who,@GetHimHer));
+               Send(what,@MsgSendUser,#message_rsc=gort_mag_red_rsc,
+                     #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+                     #parm3=Send(who,@GetHimHer));
             }
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=gort_reduction_physical_rsc,#parm1=Send(who,@GetDef),
-                                   #parm2=Send(who,@GetName),#parm3=Send(who,@GetHimHer));
+            Send(what,@MsgSendUser,#message_rsc=gort_phys_red_rsc,
+                  #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+                  #parm3=Send(who,@GetHimHer));
          }
       }
 
@@ -163,15 +177,10 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds 1-");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self)/25);
-      AppendTempString(" armor or reduces non-magical damage to 15, partially magical damage to 20, and fully magical damage to 25. ");
-      AppendTempString(" Only the better of these two effects applies. Armor of Gort modifies damage received before any other armor or spells.");
+      AddPacket(4,gort_enchantment_rsc, 4,Send(self,@GetName),
+                4,Send(who,@GetEnchantedState,#what=self) / 25);
 
-      propagate;
+      return;
    }
 
 end

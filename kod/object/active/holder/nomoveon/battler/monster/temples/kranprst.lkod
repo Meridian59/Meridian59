@@ -1,0 +1,14 @@
+kranpriestess_name_rsc = de "Priesterin Qertina"
+kranpriestess_desc_rsc = de \
+   "Qertina beurteilt die Stärke derjenigen, die zu ihr kommen, sehr streng. "
+   "Blut und Höllenfeuer sind die Werkzeuge dieser Priesterin, denn nur die "
+   "starken und guten verdienen es zu leben. Sie ist schnell bei der Hand "
+   "mit Anschuldigungen und Feststellungen. Obwohl sie mächtige Reden hält, "
+   "ist es ihr doch zuzutrauen, hinterher mit den Männern einen Trinken zu "
+   "gehen."
+Kran_forget_potion_sale = de \
+   "~B~bIch verkaufe %s%s, und es ist sehr wirksam.  Du wirst dich an keiner "
+   "deiner Kampffähigkeiten mehr erinnern, wenn du es benutzt.~n~k"
+kraananpriestess_teach = de \
+   "Durch rigerose Disziplin, kann ich dir beibringen %s%s%s%s%s%s%s%s%s%s%s%s "
+   "ab diesem Zirkel."

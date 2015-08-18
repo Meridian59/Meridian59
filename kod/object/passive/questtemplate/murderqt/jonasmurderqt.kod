@@ -29,7 +29,8 @@ constants:
 
 resources:
 
-   % Quest description.
+   include jonasmurderqt.lkod
+
    % Quest description.
    jonasmurderqt_name_rsc = "Jonas murder mystery quest"
    jonasmurderqt_desc_rsc = \
@@ -77,7 +78,7 @@ messages:
                #quest_node_index=QNT_ID_JONAS_MURDER_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

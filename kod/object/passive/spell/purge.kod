@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include purge.lkod
+
    Purge_name_rsc = "purge"
    Purge_icon_rsc = ipurge.bgf
    Purge_desc_rsc = \
@@ -110,7 +112,7 @@ messages:
 
       if lEnchantment <> $
       {
-         for i in lEnchantment
+         foreach i in lEnchantment
          {
             oSpell = Nth(i,2);
             if Send(oSpell,@IsPersonalEnchantment)
@@ -134,7 +136,7 @@ messages:
       
       if IsClass(target,&Player)
       {
-         for i in Send(target,@GetHolderPassive)
+         foreach i in Send(target,@GetHolderPassive)
          {
             if IsClass(i,&BreakRodPurge)
                AND Send(i,@IsActive)
@@ -147,7 +149,7 @@ messages:
       
       if IsClass(who,&Player)
       {
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if IsClass(i,&BreakRodPurge)
                AND Send(i,@IsSecondaryActive)
@@ -236,7 +238,7 @@ messages:
       lEnchantments = $;
       lList = Send(who,@GetEnchantmentList);
 
-      for oEnchantment in lList
+      foreach oEnchantment in lList
       {
          oSpell = Nth(oEnchantment,2);
 
@@ -265,7 +267,7 @@ messages:
 
       iModifiedChance = iChance;
 
-      for oEnchantment in lEnchantments
+      foreach oEnchantment in lEnchantments
       {
          if iChance = $ OR iModifiedChance > random(1,100)
          {

@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include factioninsigniaqt.lkod
+
    % Quest description.
    factioninsigniaquest_icon_rsc = gsha.bgf
    factioninsigniaquest_name_rsc = "herald shield insignia quest"
@@ -163,7 +165,7 @@ messages:
                #quest_node_index=QNT_ID_FACTION_INSIGNIA_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Factions,
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Factions,
                            #onIsland=FALSE)
          {
             lNPCs = Cons(oNPC, lNPCs);
@@ -203,23 +205,23 @@ messages:
                #timelimit=2 * 3600,#quest_node_index=QNT_ID_FACTION_INSIGNIA_THREE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

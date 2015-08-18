@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include nest1.lkod
+
    room_name_nest1 = "The Spider Nest"
    room_nest1 = nest1.roo
 
@@ -90,7 +92,7 @@ messages:
       ptQueen_gen = $;
 
       bFound = FALSE;
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&SpiderQueen)

@@ -1,0 +1,6 @@
+ice_arrow_name_rsc = de "ice arrows"
+ice_arrow_desc_rsc = de \
+   "These arrows are colder then Qor's heart, some say if held too long they "
+   "may freeze your hand."
+ice_arrow_freezes = de \
+   "The ice arrowhead explodes into a flurry of razor-sharp shards!"

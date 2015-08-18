@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shalprst.lkod
+
    shalpriestess_name_rsc = "Priestess Xiana"
    shalpriestess_icon_rsc = shalprst.bgf
    shalpriestess_desc_rsc = \
@@ -49,7 +51,9 @@ resources:
       "ancient hymn that is said to be able to hinder the spells that come "
       "from the darkness.  I am willing to teach it to those that are "
       "able to learn it."
-   shalillepriestess_teach = "The benevolence of Shal'ille offers "
+   shalillepriestess_teach = \
+      "The benevolence of Shal'ille offers %s%s%s%s%s%s%s%s%s%s%s%s at that "
+      "level."
 
 classvars:
 
@@ -182,7 +186,7 @@ messages:
       if num = SID_SPIRITUAL_HAMMER
       {
          bFound = FALSE;
-         for i in Send(who,@GetSpellList)
+         foreach i in Send(who,@GetSpellList)
          {
             oSpell = Send(SYS,@FindSpellByNum,
                            #num=Send(who,@DecodeSpellNum,#compound=i));

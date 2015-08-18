@@ -1,0 +1,6 @@
+WarJoinPendant_name_rsc = de "Ein Kriegsanhänger"
+WarJoinPendant_desc_before_rsc = de \
+   "Dieser wird es Dir erlauben, Dich für den Krieg folgender Seite "
+   "anzuschließen:\n%s."
+WarJoinPendant_desc_after_rsc = de \
+   "Dieser Anhänger zeigt Deine Zugehörigkeit zu:\n%s."

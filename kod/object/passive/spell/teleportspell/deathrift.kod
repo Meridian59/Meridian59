@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include deathrift.lkod
+
    DeathRift_name_rsc = "death rift"
    DeathRift_icon_rsc = ideadoor.bgf
    DeathRift_desc_rsc = \
@@ -124,7 +126,7 @@ messages:
          oTargetRoom = Send(SYS,@FindRoomByNum,#num=Send(who,@GetBoundLocationRoomNum));
          if oTargetRoom <> $
          {
-            for i in Send(oTargetRoom,@GetHolderActive)
+            foreach i in Send(oTargetRoom,@GetHolderActive)
             {
                each_active = Send(oTargetRoom,@HolderExtractObject,#data=i);
                if IsClass(each_active,&User)
@@ -136,7 +138,7 @@ messages:
             }
          }
          
-         for i in Send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
             each_active = Send(poOwner,@HolderExtractObject,#data=i);
             If IsClass(each_active,&User)

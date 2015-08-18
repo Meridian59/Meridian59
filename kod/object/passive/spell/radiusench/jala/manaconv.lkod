@@ -1,0 +1,19 @@
+ManaConvergence_name_rsc = de "Zaubereffizienz"
+ManaConvergence_desc_rsc = de \
+   "Die Worte dieses Liedes bilden einen Zauber, der die Wirksamkeit aller "
+   "Zaubersprüche steigert. Man benötigt erstklassig polierte Seraphyme."
+ManaConvergence_on = de \
+   "Der Fluss der Magie ist plötzlich stärker an diesem Ort."
+ManaConvergence_new_occupant = de \
+   "Du kannst einen starken Magiefluss an diesem Ort spüren."
+Mana_Convergence_cast = de \
+   "Du fängst an, einen starken Song von Macht zu spielen."
+Mana_Convergence_starts = de \
+   "%s beginnt einen starken Song der Macht zu spielen."
+Mana_Convergence_ends = de "Der stärkende Song von %s verstummt."
+Mana_Convergence_caster_ends = de "Dein Song der Stärkung verstummt."
+Mana_Convergence_caster_enter = de \
+   "Der Fluss der Magie wird an diesem Ort plötzlich stärker."
+Mana_Convergence_enter = de \
+   "TDer Fluss der Magie wird an diesem Ort plötzlich stärker."
+Mana_Convergence_leave = de "Der Song der Stärkung verstummt"

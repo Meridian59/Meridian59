@@ -1,0 +1,35 @@
+% Quest description.
+farenofferingqt_name_rsc = de "Faren offering quest"
+farenofferingqt_desc_rsc = de \
+   "Priestess Tenuv'vyal has invited you to chant with her, to "
+   "give some of your strength to Faren."
+
+farenofferingqt_completed = de \
+   "You have given part of your life essence in order to strengthen "
+   "Faren.  In return, you have received a powerful magical "
+   "item.  When placed at one of the Shrines located around the "
+   "world, the Shrine will be dedicated to Faren and his spells "
+   "will have more power."
+
+% Quest resources.
+farenoffering_assign_2 = de \
+   "`B`g%NAME, Kind unserer Herrin der Wildnis. Gibst du Dich selber dafür "
+   "auf, so das Deine Mutter stärker sein kann?"
+farenoffering_trigger_2 = de "ja"
+farenoffering_assign_3 = de \
+   "`B`gDann bete mit mir.  Zusammen werden wir unsere eigene Lebenskraft "
+   "aufgeben, als Symbol für die Kraft der Natur.  Selten stehen die Sterne "
+   "so günstig wie heute, um das Ritual auszüben. Also lass uns schnell sprechen: "
+   "Spreche diese Worte mit mir: %CARGO"
+farenoffering_trigger_3 = de \
+   "Bei der Erde, dem Wind, die Meere und dem inneren Feuer, beschwöre ich "
+   "Faren, Herrin der Wildnis"
+farenoffering_failure_3 = de \
+   "Betreff: Die Sterne waren dunkel\nIch habe mich bei der Positionierung "
+   "der Kräfte verrechnet. Die Zeit war noch nicht reif um die Macht Farens "
+   "zu manifestieren.  Vielleicht ein anderes Mal, wenn die Himmelsuhr sich "
+   "noch einmal gedreht hat."
+farenoffering_assign_4 = de "`B`g%CARGO!"
+farenoffering_success_5 = de \
+   "`B`gSiehe, die Turbulenzen der Natur manifestieren sich!  Geh jetz, und "
+   "trage die Kraft der Herrin weiter in die ganze Wel!"

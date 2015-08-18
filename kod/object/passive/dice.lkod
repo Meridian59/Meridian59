@@ -1,0 +1,18 @@
+dice_name = de "ein Paar Würfel"
+dice_desc = de \
+   "Zwei sechsseitige Würfel, die in zahlreichen Glücksspielen verwendet "
+   "werden können."
+die_name = de "Würfel"
+die_desc = de \
+   "Ein einzelner sechsseitiger Würfel sitzt hier. und wratet auf seine Chance "
+   "ergriffen zu werden."
+dice_not_in_range = de \
+   "Du bist nicht nah genug an den Würfeln um sie zu benutzen!"
+dice_one = de "eine Eins"
+dice_two = de "eine Zwei"
+dice_three = de "eine Drei"
+dice_four = de "eine Vier"
+dice_five = de "eine Fünf"
+dice_six = de "eine Sechs"
+dieroll_rsc = de "%s%s rollt %s%s und wird %s!"
+diceroll_rsc = de "%s%s rollen %s%s und werden %s und %s! "

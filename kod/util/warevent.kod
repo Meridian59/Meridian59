@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include warevent.lkod
+
    WarEvent_Duke_name = "The Army of Duke Akardius"
    WarEvent_Princess_name = "The Honor Guard of Princess Kateriina"
    WarEvent_Rebel_name = "The Militia of the Rebel Jonas"
@@ -166,7 +168,7 @@ messages:
       % Give out joining objects.
       lGiveList = Send(SYS,@GetUsers);
 
-      for oPlayer in lGiveList
+      foreach oPlayer in lGiveList
       {
          % Give out global message.
          Send(oPlayer,@MsgSendUser,#message_rsc=WarEvent_start_message);
@@ -174,7 +176,7 @@ messages:
          if NOT pbRestricted
          {
             % Give out one pendant for everyone.
-            for iSide in plSides
+            foreach iSide in plSides
             {
                Send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
             }
@@ -376,7 +378,7 @@ messages:
          iNumSoldiers = Length(Nth(plSoldiers,iSidePosition));
          if iNumSoldiers >= 6
          {
-            for lSoldiers in plSoldiers
+            foreach lSoldiers in plSoldiers
             {
                % Allow them to join if other groups have at least 80%
                % of the desired side's population. This prevents one
@@ -450,7 +452,7 @@ messages:
       }
       else
       {
-         for i in plKillsByName
+         foreach i in plKillsByName
          {
             if First(i) = who
             {
@@ -475,7 +477,7 @@ messages:
       }
       else
       {
-         for i in plDeathsByName
+         foreach i in plDeathsByName
          {
             if First(i) = victim
             {
@@ -502,7 +504,7 @@ messages:
 
       iSide = 0;
 
-      for lSoldiers in plSoldiers
+      foreach lSoldiers in plSoldiers
       {
          iSide = iSide + 1;
 
@@ -537,7 +539,7 @@ messages:
       iSide1 = $;
       iSide2 = $;
 
-      for lSoldiers in plSoldiers
+      foreach lSoldiers in plSoldiers
       {
          iSide = iSide + 1;
 
@@ -573,7 +575,7 @@ messages:
    {
       local lSideInfo;
 
-      for lSideInfo in plSideInfo
+      foreach lSideInfo in plSideInfo
       {
          if First(lSideInfo) = side
          {
@@ -595,7 +597,7 @@ messages:
          return viNeutralColor;
       }
 
-      for lSideInfo in plSideInfo
+      foreach lSideInfo in plSideInfo
       {
          if First(lSideInfo) = side
          {
@@ -661,7 +663,7 @@ messages:
       if plKillsByName <> $
       {
          AppendTempString("\n\n~B~kList of kills:~n\n");
-         for i in plKillsByName
+         foreach i in plKillsByName
          {
             AppendTempString("[");
             AppendTempString(Send(self,@GetSideName,
@@ -677,7 +679,7 @@ messages:
       if plDeathsByName <> $
       {
          AppendTempString("\n~B~kList of deaths:~n\n");
-         for i in plDeathsByName
+         foreach i in plDeathsByName
          {
             AppendTempString("[");
             AppendTempString(Send(self,@GetSideName,

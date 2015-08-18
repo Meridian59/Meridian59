@@ -1,0 +1,13 @@
+StoneTroll_name_rsc = de "Der Wächter von Zjiria"
+stonetroll_realname_rsc = de "Der Steintroll"
+StoneTroll_desc_rsc = de \
+   "Mit der ominösen Aufgabe betraut, das Herz von Zjiria zu bewachen, beäugt "
+   "dieser Steintroll alle Vorbeigehenden mißtrauisch. Du hast das Gefühl, "
+   "dass es besser wäre, wegzulaufen."
+StoneTroll_desc2_rsc = de \
+   "Dieser Steintroll ist der grauhäutige Bruder seines etwas weiter verbreiteten "
+   "Verwandten. Steintrolle wurden schon vor Jahren in die Berge getrieben, "
+   "und man glaubte, sie seien ausgestorben. Doch vor kurzem sind sie wieder "
+   "in kleinen räuberischen Gruppen aus den Bergen hervorgebrochen."
+StoneTroll_koc_name_rsc = de "ha'humoch"
+StoneTroll_dead_name_rsc = de "toter Steintroll"

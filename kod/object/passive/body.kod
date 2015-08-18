@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include body.lkod
+
    deadbody_desc_rsc = "This is a dead, decomposing %s, slain by %q."
 
    deadbody_named_mob_rsc = "The dead body of %s, slain by %q."

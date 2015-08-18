@@ -1,0 +1,14 @@
+bless_name_rsc = de "Segen"
+bless_desc_rsc = de \
+   "Erfleht den Segen von Kraanan, der die Treffsicherheit und die Zerstörungskraft "
+   "von Attacken verbessert. Der Zauber benötigt Pilze und Saphire."
+bless_already_enchanted_rsc = de "Du bist bereits gesegneet."
+bless_on_rsc = de "Kraanan erfüllt dich mit dem Gefühl des Kampfes."
+bless_off_rsc = de "Das Kampfgefühl verlässt dich."
+bless_success_rsc = de "Kraanan erfüllt %s%s mit einem Kampfgefühl."
+bless_spell_intro = de \
+   "Kraanan Level 2: Erfleht den Segen von Kraanan, der die Treffsicherheit "
+   "und die Zerstörungskraft von Attacken verbessert"
+bless_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Offensivschaden und 0-%i "
+   "Angriffsschaden hinzu."

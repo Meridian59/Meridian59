@@ -16,30 +16,26 @@ constants:
 
 resources:
 
+   include betap.lkod
+
    BetaPotion_icon_rsc = potion01.bgf
 
    BetaPotion_name_rsc = "The infamous BETA POTION!"
    BetaPotion_desc_rsc = "This potion is to facilitate beta testing by allowing "
        "the testers to test the more advanced parts of the game.\n\n"
-
-   BetaPotion_Append_rsc = "This potion will give you a boost of " 
-   
-   BetaPotion_Append2_rsc = " hit points (but will not raise your health above "
-   BetaPotion_Append3_rsc = ").  "
-       "The size of the boost is directly related to how much time your "
-       "character has spent online.  Thus, beta testers who have devoted "
-       "more to the game have been rewarded greater.  "
-       "It will also give you all the spells up to level "
-   BetaPotion_Append4_rsc = " in the "
-   BetaPotion_Append5_rsc = " school of magic, limited by your Intellect.\n\n"
-       "If you lose the potion in any way, shape or form (including if you give "
-       "it to a friend and s/he quaffs it, or you step through the portal in "
-       "Raza, or your little sister suicides your character just to spite you), "
-       "or you didn't get a potion in the school you wanted and threw it away, "
-       "you will NOT get another potion.  So don't ask.\n\n"
-         
+   BetaPotion_append_rsc = \
+      "This potion will give you a boost of %i hit points (but will not "
+      "raise your health above %i).  The size of the boost is directly "
+      "related to how much time your character has spent online.  Thus, "
+      "beta testers who have devoted more to the game have been rewarded "
+      "greater.  It will also give you all the spells up to level %i "
+      "in the %s school of magic, limited by your Intellect.\n\n"
+      "If you lose the potion in any way, shape or form (including if you give "
+      "it to a friend and s/he quaffs it, or you step through the portal in "
+      "Raza, or your little sister suicides your character just to spite you), "
+      "or you didn't get a potion in the school you wanted and threw it away, "
+      "you will NOT get another potion.  So don't ask.\n\n"
    BetaPotion_gulp_sound = drkptn.wav
-
    BetaPotion_drink = "You quaff the contents of the vial in a single gulp."
    BetaPotion_worked = "You suddenly feel a little taller."
    BetaPotion_bad_drink = \
@@ -47,16 +43,13 @@ resources:
       "immediately that this was a pretty bad idea. Time has caused it to sour."
 
 classvars:
-   
-   vrDesc = BetaPotion_desc_rsc
 
+   vrDesc = BetaPotion_desc_rsc
    viBulk = 20
    viWeight = 20
    viValue_average = 60
-
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
-
    viPoisonPercent = 0
    viGoBadDamage = 0
 
@@ -64,10 +57,8 @@ properties:
 
    vrName = BetaPotion_name_rsc
    vrIcon = BetaPotion_icon_rsc
-   
    piGoBadTime = 0
    piItem_flags = PT_GRAY_TO_RED
-
    piSchool = 0
    piLevel = 0
    piHealth = 0
@@ -76,7 +67,8 @@ properties:
 
 messages:
 
-   Constructor(school=SS_FAREN, level = 0, health = 0, giveHealth = FALSE, healthCap = 100)
+   Constructor(school=SS_FAREN, level = 0, health = 0, giveHealth = FALSE,
+               healthCap = 100)
    {
       piSchool = school;
       piLevel = level;
@@ -91,23 +83,6 @@ messages:
    {
       local oSpellOrSkill;
 
-      AppendTempString(BetaPotion_Append_rsc);
-
-      if pbGiveHealth
-      {
-         AppendTempString(piHealth);
-      }
-      else
-      {
-         AppendTempString(0);
-      }
-      
-      AppendTempString(BetaPotion_Append2_rsc);
-      AppendTempString(piHealthCap);
-      AppendTempString(BetaPotion_Append3_rsc);
-      AppendTempString(piLevel);
-      AppendTempString(BetaPotion_Append4_rsc);
-      
       if piSchool >= SKS_FENCING
       {
          % Any skill will do.
@@ -118,10 +93,10 @@ messages:
          % Any spell will do.
          oSpellOrSkill = Send(SYS,@FindSpellByNum,#num=SID_BONK); 
       }
-      
-      AppendTempString(Send(oSpellOrSkill,@GetSchoolStr,#iSchool=piSchool));
-      AppendTempString(BetaPotion_Append5_rsc);
-      
+
+      AddPacket(4,BetaPotion_append_rsc, 4,piHealth, 4,piHealthCap, 4,piLevel,
+                4,Send(oSpellOrSkill,@GetSchoolStr,#iSchool=piSchool));
+
       return;
    }
 
@@ -143,13 +118,13 @@ messages:
             Send(apply_on,@GainBaseMaxHealth,#amount=HealthBoost);
 
             % Don't use iBaseMaxHealth, because it changed.
-            if (Send(apply_on,@GetBaseMaxHealth) >= Send(Send(SYS, @GetSettings), @GetPKillEnableHP))
+            if (Send(apply_on,@GetBaseMaxHealth) >= Send(Send(SYS,@GetSettings),@GetPKillEnableHP))
                AND (NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
             {
                Send(apply_on,@PkillEnable);
             }
          }
-         
+
          if piLevel <> 0
          {
             if piSchool >= SKS_FENCING
@@ -164,7 +139,7 @@ messages:
             }
          }
       }
-      
+
       return;
    }
 
@@ -176,10 +151,10 @@ messages:
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
-   
+
    NewApplied(what = $,apply_on = $)
    {
       local oSpell;
@@ -210,7 +185,6 @@ messages:
    {
       return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,7 @@
+iceelemental_name_rsc = de "Der Eisgolem"
+iceelemental_desc_rsc = de \
+   "Eine durchdringende Kälte kommt über dich, die Kälte dieser Kreatur geht "
+   "bis auf die Knochen. Frost bedeckt den Boden bei jedem seiner Schritte, "
+   "und die Luft um ihm herum scheint ein Eis Nebel zu sein."
+iceelemental_koc_name_rsc = de "atzmochyal"
+iceelemental_dead_name_rsc = de "dead ice golem"

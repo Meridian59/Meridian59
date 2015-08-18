@@ -1,0 +1,9 @@
+RoomMaintenance_room_already = de "Du hast hier bereits einen Raum gemietet."
+RoomMaintenance_no_rental_fee = de \
+   "Du hast nicht genug Geld um einen Raum zu mieten."
+RoomMaintenance_key_copied = de "Hier ist eine Kopie Deines Schlüssels."
+RoomMaintenance_no_key = de "Wo ist der Schlüssel dieser Bar zum Kopieren?"
+RoomMaintenance_no_copy_copy = de \
+   "Du kannst keine Kopie einer Kopie von einem Schlüssel herstellen."
+RoomMaintenance_copy_no_money = de \
+   "Du kannst Dir eine Kopie vom Schlüssen nicht leisten."

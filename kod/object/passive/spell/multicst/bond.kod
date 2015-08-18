@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include bond.lkod
+
    Bond_name_rsc = "bond"
    Bond_icon_rsc = ibond.bgf
    Bond_desc_rsc = \
@@ -144,7 +146,7 @@ messages:
       Send(Send(SYS,@FindItemAttByNum,#Num=IA_TRANSCENDANT),@AddToItem,
            #oItem=First(lTargets));
 
-      for oCaster in lCasters
+      foreach oCaster in lCasters
       {
          Send(oCaster,@MsgSendUser,#message_rsc=bond_successful_bondee,
               #parm1=Send(First(lTargets),@GetName));

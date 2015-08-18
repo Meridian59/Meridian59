@@ -20,14 +20,14 @@ constants:
 
 resources:
 
+   include robedisc.lkod
+
    RobeInsignia_name_rsc = "robes of the disciple"
    RobeInsignia_icon_rsc = Robe.bgf
    RobeInsignia_desc_rsc = \
-   	"Heavy and warm, disciple robes typically denote a fervent (and some would say "
-      "unhealthy) dedication to one school or another."
-
-   RobeInsignia_school_info1 = "  These robes bear the insignia of "
-   RobeInsignia_school_info2 = " and will give bonuses to spells in that school."
+      "Heavy and warm, disciple robes typically denote a fervent (and some "
+      "would say unhealthy) dedication to one school or another.   These robes "
+      "bear the insignia of %s and will give bonuses to spells in that school."
 
    disciplerobe_riija_female = emblm-rf.bgf
    disciplerobe_riija_male = emblm-rm.bgf
@@ -47,39 +47,33 @@ classvars:
    vrName = RobeInsignia_name_rsc
    vrIcon = RobeInsignia_icon_rsc
    vrDesc = RobeInsignia_desc_rsc
-
    viGround_group = 1
    viInventory_group = 2
    viBroken_group = 3
-
    viSpell_modifier = 10
    viBulk = 160
    viWeight = 130
    viValue_average = 2000
 
-properties:   
+properties:
 
    viXLAT_immortal =  XLAT_TO_SKY
-
    viXLAT_no_knowledge =  XLAT_TO_YELLOW
    viXLAT_level_one = XLAT_TO_SKIN1
    viXLAT_level_two = XLAT_TO_SKIN2
    viXLAT_level_three = XLAT_TO_ORANGE 
    viXLAT_level_four = XLAT_TO_SKIN4
-   
    viXLAT_qor_master = XLAT_TO_BLACK
    viXLAT_shalille_master = XLAT_TO_GRAY
    viXLAT_faren_master = XLAT_TO_RED
    viXLAT_kraanan_master = XLAT_TO_BLUE
    viXLAT_riija_master = XLAT_TO_PURPLE
    viXLAT_jala_master = XLAT_TO_GREEN
-
    piSchool = SS_RIIJA
    piLevel = 0
    prInsignia_male =  disciplerobe_riija_male
    prInsignia_female = disciplerobe_riija_female
    piDefense_bonus = 5
-
    pbImmortalColor = TRUE
 
 messages:
@@ -87,21 +81,21 @@ messages:
    Constructor(school = -1)
    {
       if school = -1
-      {  
-         school = random(1,6); 
+      {
+         school = Random(1,6);
       }
-      
-      send(self,@SetSchool,#school=school);
-      send(self,@SetXLATTranslation,#translation=viXLAT_no_knowledge);
-      
+
+      Send(self,@SetSchool,#school=school);
+      Send(self,@SetXLATTranslation,#translation=viXLAT_no_knowledge);
+
       propagate;
    }
 
    GetBaseSpellModifier(oSpell=$)
    {
-      if send(oSpell,@GetSchool) = piSchool
+      if Send(oSpell,@GetSchool) = piSchool
       {
-         return bound(4*piLevel,0,20);
+         return Bound(4 * piLevel,5,20);
       }
 
       return 5;
@@ -113,64 +107,63 @@ messages:
 
       if poOwner <> $
       {
-         skin_color = send(poOwner,@GetSkinColor);      
-         skin_color = send(poOwner,@ConvertSkinColorToXLAT,#skin_color=skin_color);
+         skin_color = Send(poOwner,@GetSkinColor);
+         skin_color = Send(poOwner,@ConvertSkinColorToXLAT,#skin_color=skin_color);
       }
       else
       {
          skin_color = XLAT_TO_SKIN2;
       }
-      
-      XLAT = send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=skin_color);
-      send(self,@SetPaletteTranslation,#translation=XLAT);
+      XLAT = Send(SYS,@EncodeTwoColorXLAT,#color1=translation,#color2=skin_color);
+      Send(self,@SetPaletteTranslation,#translation=XLAT);
 
       if poOwner <> $
       {
-         if isClass(poOwner,&room)
+         if IsClass(poOwner,&Room)
          {
-            send(send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
+            Send(Send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
          }
-         
-         if isClass(poOwner,&user)
+
+         if IsClass(poOwner,&User)
          {
-            send(poOwner,@SomethingChanged,#what=self);
-            send(self,@DoPlayerArt);
+            Send(poOwner,@SomethingChanged,#what=self);
+            Send(self,@DoPlayerArt);
          }
       }
 
       return;
    }
-    
+
    ResetColors()
    {
       local i, oWarEvent, iSide, oSpell, iHigh_level, skin_color, bFound;
-      
+
       iHigh_level = 0;
 
-      oWarEvent = send(SYS,@GetWarEvent);
-      if send(oWarEvent,@IsActive)
+      oWarEvent = Send(SYS,@GetWarEvent);
+      if Send(oWarEvent,@IsActive)
       {
-         iSide = send(oWarEvent,@GetPlayerSide,#who=poOwner);
-         send(self,@SetXLATTranslation,#translation=send(oWarEvent,@GetSideColor,#side=iSide));
-
-         return;
-      }      
-
-      if (isClass(poOwner,&DM) and pbImmortalColor)
-      {
-         send(self,@SetXLATTranslation,#translation=viXLAT_immortal);
+         iSide = Send(oWarEvent,@GetPlayerSide,#who=poOwner);
+         Send(self,@SetXLATTranslation,#translation=Send(oWarEvent,@GetSideColor,#side=iSide));
 
          return;
       }
 
-      for i in send(poOwner,@GetSpellList)
-      {         
-         oSpell = send(SYS,@FindSpellByNum,#num = send(poOwner,@DecodespellNum,#compound=i));
-         if piSchool = send(oSpell,@GetSchool)
+      if (IsClass(poOwner,&DM) AND pbImmortalColor)
+      {
+         Send(self,@SetXLATTranslation,#translation=viXLAT_immortal);
+
+         return;
+      }
+
+      foreach i in Send(poOwner,@GetSpellList)
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=Send(poOwner,@DecodespellNum,#compound=i));
+         if piSchool = Send(oSpell,@GetSchool)
          {
-            if send(oSpell,@GetLevel) > iHigh_level
+            if Send(oSpell,@GetLevel) > iHigh_level
             {
-               iHigh_Level = send(oSpell,@GetLevel);
+               iHigh_Level = Send(oSpell,@GetLevel);
             }
          }
       }
@@ -178,31 +171,27 @@ messages:
       piLevel = iHigh_level;
 
       bFound = FALSE;
-      
+
       %% Okay, decipher the high level.
       if iHigh_level = 0
       {
-         send(self,@SetXLATTranslation,#translation=viXLAT_no_knowledge);         
+         Send(self,@SetXLATTranslation,#translation=viXLAT_no_knowledge);
       }
-
-      if iHigh_level = 1
+      else if iHigh_level = 1
       {
-         send(self,@SetXLATTranslation,#translation=viXLAT_level_one);         
+         Send(self,@SetXLATTranslation,#translation=viXLAT_level_one);
       }
-
-      if iHigh_level = 2
+      else if iHigh_level = 2
       {
-         send(self,@SetXLATTranslation,#translation=viXLAT_level_two);         
+         Send(self,@SetXLATTranslation,#translation=viXLAT_level_two);
       }
-
-      if iHigh_level = 3
+      else if iHigh_level = 3
       {
-         send(self,@SetXLATTranslation,#translation=viXLAT_level_three);         
+         Send(self,@SetXLATTranslation,#translation=viXLAT_level_three);
       }
-
-      if iHigh_level = 4
+      else if iHigh_level = 4
       {
-         send(self,@SetXLATTranslation,#translation=viXLAT_level_four);         
+         Send(self,@SetXLATTranslation,#translation=viXLAT_level_four);
       }
 
       % Okay, it's above level four.  Let's be school specific, shall we?
@@ -210,35 +199,30 @@ messages:
       {
          if piSchool = SS_JALA
          {
-            send(self,@SetXLATTranslation,#translation=viXLAT_jala_master);         
+            Send(self,@SetXLATTranslation,#translation=viXLAT_jala_master);
          }
-         
-         if piSchool = SS_FAREN
+         else if piSchool = SS_FAREN
          {
-            send(self,@SetXLATTranslation,#translation=viXLAT_faren_master);            
+            Send(self,@SetXLATTranslation,#translation=viXLAT_faren_master);
          }
-         
-         if piSchool = SS_KRAANAN
+         else if piSchool = SS_KRAANAN
          {
-            send(self,@SetXLATTranslation,#translation=viXLAT_kraanan_master);
+            Send(self,@SetXLATTranslation,#translation=viXLAT_kraanan_master);
          }
-         
-         if piSchool = SS_SHALILLE
+         else if piSchool = SS_SHALILLE
          {
-            send(self,@SetXLATTranslation,#translation=viXLAT_shalille_master);
+            Send(self,@SetXLATTranslation,#translation=viXLAT_shalille_master);
          }
-         
-         if piSchool = SS_QOR
+         else if piSchool = SS_QOR
          {
-            send(self,@SetXLATTranslation,#translation=viXLAT_qor_master);            
+            Send(self,@SetXLATTranslation,#translation=viXLAT_qor_master);
          }
-         
-         if piSchool = SS_RIIJA
+         else if piSchool = SS_RIIJA
          {
-            send(self,@SetXLATTranslation,#translation=viXLAT_riija_master);         
+            Send(self,@SetXLATTranslation,#translation=viXLAT_riija_master);
          }
       }
-      
+
       return;
    }
 
@@ -246,34 +230,35 @@ messages:
    "Called when the player tries to use the item"
    {
       local i, oItemAtt;
-          
+
       % Check to be sure nothing in ItemAtts disallows this.
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if not send(oItemAtt,@ItemReqUse,#oItem=self,#oPlayer=poOwner)
+         oItemAtt = Send(SYS,@FindItemAttByNum,
+                        #num=Send(self,@GetNumFromCompound,#compound=First(i)));
+         if NOT Send(oItemAtt,@ItemReqUse,#oItem=self,#oPlayer=poOwner)
          {
             return FALSE;
          }
       }
-      
+
       return TRUE;
    }
 
    NewUsed()
-   {      
+   {
       if prInsignia_male <> $
       {
          Send(poOwner,@SetOverlay,#what=self);
       }
 
-      send(self,@ResetColors);
+      Send(self,@ResetColors);
 
       propagate;
    }
   
    NewUnused()
-   {    
+   {
       if prInsignia_male <> $
       {
          Send(poOwner,@RemoveOverlay,#what=self);
@@ -292,12 +277,12 @@ messages:
 
    GetOverlay()
    {
-      if send(poOwner,@GetGender) = GENDER_MALE
+      if Send(poOwner,@GetGender) = GENDER_MALE
       {
          return prInsignia_male;
       }
 
-      return prInsignia_female;       
+      return prInsignia_female;
    }
 
    GetOverlayHotspot()
@@ -306,7 +291,7 @@ messages:
    }
 
    SendOverlayAnimation(iAnimation = $)
-   {      
+   {
       if (piItem_flags & ITEM_PALETTE_MASK) <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
@@ -345,51 +330,53 @@ messages:
       return;
    }
 
-   SetSchool(school=SS_RIIJA)
+   SetSchool(school=SS_RIIJA,bRefresh=FALSE)
    {
-      piSchool = School;
-      
+      if bRefresh
+      {
+         School = piSchool;
+      }
+      else
+      {
+         piSchool = School;
+      }
+
       if school = SS_RIIJA
       {
          prInsignia_male =  disciplerobe_riija_male;
          prInsignia_female = disciplerobe_riija_female;
       }
-      
-      if school = SS_JALA
+      else if school = SS_JALA
       {
          prInsignia_male =  disciplerobe_jala_male;
          prInsignia_female = disciplerobe_jala_female;
       }
-      
-      if school = SS_FAREN
+      else if school = SS_FAREN
       {
          prInsignia_male =  disciplerobe_faren_male;
          prInsignia_female = disciplerobe_faren_female;
       }
-      
-      if school = SS_QOR
+      else if school = SS_QOR
       {
          prInsignia_male =  disciplerobe_qor_male;
          prInsignia_female = disciplerobe_qor_female;
       }
-      
-      if school = SS_SHALILLE
+      else if school = SS_SHALILLE
       {
          prInsignia_male =  disciplerobe_shalille_male;
-         prInsignia_female = disciplerobe_shalille_female;         
+         prInsignia_female = disciplerobe_shalille_female;
       }
-      
-      if school = SS_KRAANAN
+      else if school = SS_KRAANAN
       {
          prInsignia_male =  disciplerobe_kraanan_male;
-         prInsignia_female = disciplerobe_kraanan_female;         
+         prInsignia_female = disciplerobe_kraanan_female;
       }
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-      
+
       return;
    }
 
@@ -398,29 +385,26 @@ messages:
       AddPacket(4,Send(self,@GetOverlay));
       AddPacket(1,Send(self,@GetOverlayHotspot));
       Send(self,@SendOverlayAnimation,#iAnimation=iAnimation);
-      
+
       return;
    }
 
-   AppendDesc()
+   DoBaseDesc()
    {
       local oSpell;
 
-      % Find a spell, any spell, so we can get the string out of it for which school we are.
-      oSpell = send(SYS,@FindSpellByNum,#num=SID_BLINK);
-   
-      AppendTempString(RobeInsignia_school_info1);
-      AppendTempString(Send(oSpell,@GetSchoolStr,#iSchool=piSchool));
-      AppendTempString(RobeInsignia_school_info2);
-   
-      propagate;
+      % Find a spell, any spell, so we can get the string out of it
+      % for which school we are.
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLINK);
+      AddPacket(4,vrDesc,4,Send(oSpell,@GetSchoolStr,#iSchool=piSchool));
+
+      return;
    }
 
    GetSchool()
    {
       return piSchool;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include goad.lkod
+
    Goad_name_rsc = "The Goad"
    Goad_icon_rsc = GoadX.bgf
    Goad_desc_rsc = \
@@ -64,7 +66,7 @@ resources:
       "challenge and kill %s%s.  Would you dare to challenge %s?"
 
    Goad_challenge_offered = \
-      "%s%s has challenged you.  Will you crush %s's like the bug %s is?"
+      "%s%s has challenged you.  Will you crush %s like the bug %s is?"
    Goad_must_accept = \
       "Hurry fool!! You only have %i seconds left to accept %s%s's challenge."
 
@@ -416,12 +418,9 @@ messages:
 
       if piCombat_style = STYLE_ONE_ON_ONE
       {
-         %%KLUDGE - REMOVE THIS
-         %Send(self,@Say,#message_rsc=Goad_challenge_offered,
-            %#parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
-            %#parm3=Send(who,@GetHimHer),#parm4=Send(who,@GetHimHer));
-         Send(self,@KludgeMessage,#who=who);
-         %%END KLUDGE
+         Post(self,@Say,#message_rsc=Goad_challenge_offered,
+               #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+               #parm3=Send(who,@GetHimHer),#parm4=Send(who,@GetHeShe));
 
          pbAccept = FALSE;
          ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
@@ -498,7 +497,7 @@ messages:
       ptCommence = CreateTimer(self,@CommenceTimer,
             Random(COMMENCE_DELAY_MIN,COMMENCE_DELAY_MAX));
 
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj = Send(poOwner,@HolderExtractObject,#data=i);
          if Send(self,@IsCombatant,#who=each_obj)
@@ -545,7 +544,7 @@ messages:
    {
       local i;
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if NOT Send(i,@IsLoggedOn)
          {
@@ -584,7 +583,7 @@ messages:
          return;
       }
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if i = who
          {
@@ -720,7 +719,7 @@ messages:
             Send(self,@RewardWinner);
             if Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
             {
-               for i in Send(poOwner,@GetHolderActive)
+               foreach i in Send(poOwner,@GetHolderActive)
                {
                   j = First(i);
                   if IsClass(j,&monster)
@@ -775,7 +774,7 @@ messages:
 
       %% Assume that everyone left in plCombatant is a winner.
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if NOT IsClass(i,&Monster)
          {
@@ -868,7 +867,7 @@ messages:
       if pbWarned = TRUE
       {
          %% message:  EVERYBODY DIES!!!!!
-         for i in plCombatants
+         foreach i in plCombatants
          {
             Send(SYS,@utilGoNearSquare,#what=i,#where=poOwner,
                   #new_row=9,#new_col=14,#new_angle=ANGLE_EAST);
@@ -891,7 +890,7 @@ messages:
          {
             pbWarned = TRUE;
             Send(self,@Say,#message_rsc=Goad_speed_up);
-            for i in plCombatants
+            foreach i in plCombatants
             {
                Send(poOwner,@SomethingShot,#who=self,#target=i,
                      #projectile=Send(SYS,@FindSpellByNum,#num=SID_FIREBALL));
@@ -1174,7 +1173,7 @@ messages:
       local i, count;
 
       count = 1;
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if i = who
          {
@@ -1217,7 +1216,7 @@ messages:
             OR Send(self,@IsCombatant,#who=what)
          {
             bInList = FALSE;
-            for i in plUserStats
+            foreach i in plUserStats
             {
                if First(i) = what
                {
@@ -1247,7 +1246,7 @@ messages:
          }
          else
          {
-            for i in plUserStats
+            foreach i in plUserStats
             {
                if First(i) = what
                {
@@ -1271,7 +1270,7 @@ messages:
    {
       local i, j;
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
             Send(self,@Teleport,#what=i,#outofplay=TRUE);
       }
@@ -1282,7 +1281,7 @@ messages:
       pbAccept = FALSE;
       if Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
       {
-         for i in Send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
             j = First(i);
             if IsClass(j,&monster)
@@ -1446,7 +1445,7 @@ messages:
       %% If the caster's single target is not a combatant, don't let him cast.
       if Length(lItems) = 1
       {
-         for i in lItems
+         foreach i in lItems
          {
             if NOT Send(self,@IsCombatant,#who=i)
                AND IsClass(i,&Player)
@@ -1515,7 +1514,7 @@ messages:
    {
       local i;
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if what = i
             AND ptReconnectTime <> $
@@ -1553,21 +1552,6 @@ messages:
       }
 
       propagate;
-   }
-
-   KludgeMessage(who=$)
-   {
-      ClearTempString();
-      AppendTempString(Send(who,@GetName));
-      AppendTempString(" has challenged you.  Will you crush ");
-      AppendTempString(Send(who,@GetHimHer));
-      AppendTempString(" like the bug ");
-      AppendTempString(Send(who,@GetHeShe));
-      AppendTempString(" is?");
-      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-            #string=Send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
-
-      return;
    }
 
 end

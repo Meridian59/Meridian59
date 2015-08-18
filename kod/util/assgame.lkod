@@ -1,0 +1,31 @@
+assgame_impact = de "~IDer schwarze Dolch zersplittert beim Aufprall!"
+assgame_blade_shivers = de \
+   "~IDer schwarze Dolch fröstelt beunruhigt in der Hand."
+assgame_Mail_reset = de \
+   "Es stellt sich heraus das der Mann den Du als Roq kennst, ein Betrüger "
+   "ist.  Natürlich wurde der Heuchler ermordet.  Eine neue Partie wird bald "
+   "erneut gestartet.\n\n-- Roq, die Dunkelklinge"
+assgame_winner = de \
+   "~B~U~k[###]~n ~B~v%s hat die Herausforderung der dunklen Klinge gewonnen"
+assgame_prize = de \
+   "~BDu wurdest für den Sieg des Meuchelmörder Spiels belohnt %s%s."
+assgame_go = de "~IDein Dolch umgibt ein unheimliches glühen.."
+assgame_urge = de "~IDu hast diesen Drang Roq besuchen zu wollen."
+assgame_mail_not_enough = de \
+   "Betreff: Du wurdes verstoßen\nDu wurdest vom Kreis der Meuchelmörder verstoßen, "
+   "da Du zu feige warst um Zeit aufzuwenden um teilzuhaben an dem Handlungsablauf.\n\n-- "
+   "Roq, die Dunkelklinge"
+assgame_mail_no_kills = de \
+   "Betreff: Ich erwarte mehr Action.\nZwei Tage sind vergangen ohne einen "
+   "Mord im Meuchelmörderspiel.  Sollte ein Dritter folgen, werde ich meine "
+   "Verachtung zeigen und das Spiel ohne einen Gewinner beenden.\n\n-- Roq, "
+   "die Dunkelklinge"
+AssGame_mail_disgrace = de \
+   "Betreff: Das Spiel endete mit einer Blamage.\nDie Schande steht Dir ins "
+   "Gesicht geschrieben.  Wegen mangelhafter Beteiligung, habe ich das Meuchelmörderspiel "
+   "beendet.  Niemand trägt den Mantel der Assassin Supreme.\n\n-- Roq, die "
+   "Dunkelklinge"
+AssGame_mail_winner = de \
+   "Betreff: Einer ragt vor allen Anderen heraus.\n%q hat die Herausforderung "
+   "der dunklen Klinge gewonnen.\n\n-- Roq, die Dunkelklinge"
+AssGame_roq = de "Roq, die Dunkelklinge"

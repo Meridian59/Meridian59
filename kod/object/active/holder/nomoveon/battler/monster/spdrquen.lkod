@@ -1,0 +1,8 @@
+spiderqueen_name_rsc = de "Die Spinnenkönigin"
+spiderqueen_koc_name_rsc = de "kokinich"
+spiderqueen_desc_rsc = de \
+   "Der große Eiersack der Spinnenkönigin macht sie langsam und schwerfällig, "
+   "aber in ihren vielen roten Augen glänzt dunkle Intelligenz. "
+qspider_illusion_poisoned = de \
+   "%s%s taumelt als Gift in den Adern von %s fließt."
+spiderqueen_dead_name_rsc = de "tote Spinnenkönigin"

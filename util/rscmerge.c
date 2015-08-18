@@ -11,13 +11,13 @@
 
 typedef struct _Resource {
    int   number;
-   char *name;
+   char *string[MAX_LANGUAGE_ID];
    struct _Resource *next;
 } Resource;
 
 static Resource *resources;
 
-static const int RSC_VERSION = 4;
+static const int RSC_VERSION = 5;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
 static void Error(char *fmt, ...);
@@ -31,7 +31,10 @@ void *SafeMalloc(unsigned int bytes)
 {
    void *temp = (void *) malloc(bytes);
    if (temp == NULL)
+   {
       Error("Out of memory!\n");
+      exit(1);
+   }
 
    return temp;
 }
@@ -82,7 +85,11 @@ bool SaveRscFile(char *filename)
    num_resources = 0;
    for (r = resources; r != NULL; r = r->next)
    {
-      num_resources++;
+      for (int j = 0; j < MAX_LANGUAGE_ID; j++)
+      {
+         if (r->string[j])
+            num_resources++;
+      }
    }
 
    /* If no resources, do nothing */
@@ -104,11 +111,22 @@ bool SaveRscFile(char *filename)
    /* Loop through classes in this source file, and then their resources */
    for (r = resources; r != NULL; r = r->next)
    {
-      // Write out id #
-      fwrite(&r->number, 4, 1, f);
+      // For each language string present,
+      // write out language data and string.
+      for (int j = 0; j < MAX_LANGUAGE_ID; j++)
+      {
+         if (r->string[j])
+         {
+            // Write out id #
+            fwrite(&r->number, 4, 1, f);
 
-      // Write string
-      fwrite(r->name, strlen(r->name) + 1, 1, f);
+            // Write language id.
+            fwrite(&j,4,1,f);
+
+            // Write string.
+            fwrite(r->string[j], strlen(r->string[j]) + 1, 1, f);
+         }
+      }
    }
 
    fclose(f);
@@ -118,15 +136,33 @@ bool SaveRscFile(char *filename)
 /*
  * EachRscCallback:  Called for each resource that's loaded.
  */
-bool EachRscCallback(char *filename, int rsc, char *name)
+bool EachRscCallback(char *filename, int rsc, int lang_id, char *string)
 {
    Resource *r;
 
+   // See if we've added this resource already.
+   for (r = resources; r != NULL; r = r->next)
+   {
+      if (r->number == rsc)
+      {
+         r->string[lang_id] = strdup(string);
+
+         return true;
+      }
+   }
+
    r = (Resource *) SafeMalloc(sizeof(Resource));
    r->number = rsc;
-   r->name = strdup(name);
+
+   for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      if (i == lang_id)
+         r->string[i] = strdup(string);
+      else
+         r->string[i] = NULL;
+
    r->next = resources;
    resources = r;
+
    return true;
 }
 /***************************************************************************/
@@ -197,5 +233,5 @@ int main(int argc, char **argv)
       Error("Unable to load rsc files.");
 
    if (!SaveRscFile(output_filename))
-      Error("Unable to save rsc file.");      
+      Error("Unable to save rsc file.");
 }

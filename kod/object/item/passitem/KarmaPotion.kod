@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include karmapotion.lkod
+
    KarmaPotion_icon_rsc = potion01.bgf
    
    KarmaPotion_name_rsc = "Karma Potion"

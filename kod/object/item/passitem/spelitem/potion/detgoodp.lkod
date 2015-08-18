@@ -1,0 +1,7 @@
+DetectGoodPotion_name_rsc = de "Trank der Entdeckung des Guten."
+DetectGoodPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht frisch, "
+   "sauber und erfrischend."
+DetectGoodPotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

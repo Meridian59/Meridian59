@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include tosaren2.lkod
+
    room_TosArena2 = tosaren2.roo
    name_TosArena2 = "The Arena of Kraanan"
 
@@ -110,7 +112,7 @@ messages:
   {
      local i;
 
-     for i in plExits
+     foreach i in plExits
      {
         if (row = first(i) and col = nth(i,2)) and nth(i,3) = RID_TOS_ARENA
         {

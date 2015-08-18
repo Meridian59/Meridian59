@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertbridge.lkod
+
    room_desertbridge = desertbridge.roo
    room_name_desertbridge = "Collapsed Causeway"
 

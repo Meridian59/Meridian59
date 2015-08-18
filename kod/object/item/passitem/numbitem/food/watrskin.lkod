@@ -1,0 +1,6 @@
+waterskin_name_rsc = de "Der Wasserschlauch"
+waterskin_desc_rsc = de \
+   "In diesem Lederschlauch befindet sich kaltes, erfrischendes Wasser aus "
+   "dem Oberlauf des Flusses Ille."
+waterskin_desc_amount_singular = de "\n\nEs gibt %i restliches Getränk."
+waterskin_desc_amount_plural = de "\n\nEr ergibt %i restliche Getränke."

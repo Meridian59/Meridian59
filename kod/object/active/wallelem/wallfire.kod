@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wallfire.lkod
+
    WallofFire_name_rsc = "wall of fire"
    WallofFire_icon_rsc = woflame.bgf
    WallofFire_desc_rsc = \

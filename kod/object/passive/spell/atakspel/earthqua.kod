@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include earthqua.lkod
+
    earthquake_name_rsc = "earthquake"
    earthquake_icon_rsc = irthquak.bgf
    earthquake_desc_rsc = \
@@ -124,7 +126,7 @@ messages:
          oRoom = Send(who,@GetOwner);
       }
 
-      for i in Send(oRoom,@GetHolderActive)
+      foreach i in Send(oRoom,@GetHolderActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 
@@ -188,7 +190,7 @@ messages:
       Post(oRoom,@Rumble,#duration=3000,#disruption=100);
 
       % Send a message to all in room of spellcasters actions
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          

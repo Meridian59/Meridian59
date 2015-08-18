@@ -1,0 +1,15 @@
+tosapothecary_name_rsc = de "Frisconar"
+tosapothecary_desc_rsc = de \
+   "Dieser kranke Mann starrt dich aus trüben Augen über den Tresen hinweg "
+   "an. Sein Atem wirkt gequält und Schweiß steht auf seiner Stirn. Frisconar "
+   "ist fast ebenso für sein lebhaftes Interesse an magischen Reagenzien "
+   "wie für seinen mürrischen Blick aufs Leben bekannt"
+TsAp_entry_welcome = de "Schließ die Tür."
+TsAp_Solagh_sale = de \
+   "Ehrlich gesagt habe ich %s%s und ich bin bereit mich von ihnen zu trennen.  "
+   "Normalerweise würde ich sie für meinen eigenen Gebrauch behalten, aber "
+   "ich  habe vor kurzem einige von einem Zauberer erhalten, der auf Durchreise "
+   "war. Ich glaube er macht sie selber."
+TsAp_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Was ist das?  Ich benötige das nicht!  Es ist "
+   "möglicherweise verflucht.~n~k\""

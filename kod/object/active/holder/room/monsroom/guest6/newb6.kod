@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb6.lkod
+
    room_name_newb6 = "Mausoleum"
    newb6_signname = "looking around"
    newb6_signtext = "If a monster isn't chasing you, now's a good time "

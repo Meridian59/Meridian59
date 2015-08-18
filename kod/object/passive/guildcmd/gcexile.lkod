@@ -1,0 +1,21 @@
+guildexile_name_rsc = de "Verbannen"
+guildexile_desc_Rsc = de \
+   "Benutze diesen Befehl, um jemanden aus deiner Gilde zu werfen.  Wirkt "
+   "sich nicht auf andere Gilden aus oder Mitglieder mit höherem Rang."
+exile_non_user = de \
+   "%s%s scheint sich überhaupt nicht über deine kaltherzige Ablehnung zu "
+   "sorgen."
+exile_not_member = de "%s%s ist kein Mitglied von %s%q!"
+exile_cant_self = de \
+   "Du kannst dich nicht selbst verbannen - verwende stattdessen den Befehl "
+   "- Abdanken."
+exile_cant_self_gm = de \
+   "Ein %s muss zuerst Abdanken, bevor er die Gilde verlassen kann."
+exile_cant_too_high = de \
+   "Du bist nicht berechtigt, jemanden zu verbannen, wenn derjenige nicht "
+   "einen niedrigeren Rang als Du hat."
+exile_to_exiled = de "~B%s hat Dich aus den Reihen von %s%q verbannt!"
+exile_to_others = de "~B%s hat %q verbannt aus den Reihen von %s%q!"
+guildexile_necro_nak = de \
+   "~BJedes Mitglied des Ordens hat den Blutschwur geschworen.  Der einzige "
+   "Weg raus ist der Tod."

@@ -1,0 +1,14 @@
+pants_name_rsc = de "Die Hose"
+pants_desc_rsc = de \
+   "Diese Hose ist ein attraktives Kleidungsstück, schützt Dich aber kaum "
+   "bei Angriffen."
+pants_condition_exc = de " ist in makellosem Zustand."
+pants_condition_exc_mended = de \
+   " ist in makellosem Zustand, wurde allerdings bereits repariert."
+pants_condition_good = de " ist leicht abgetragen."
+pants_condition_med = de " hat ein paar Risse."
+pants_condition_poor = de \
+   " besteht nur noch aus Fetzen und hält kaum noch zusammen."
+pants_condition_broken = de \
+   " ist mit Dreck bedeckt und zerrissen, so dass man sie nicht mehr benutzen "
+   "kann."

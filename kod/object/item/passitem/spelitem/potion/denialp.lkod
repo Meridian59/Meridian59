@@ -1,0 +1,9 @@
+DenialPotion_fake_name_rsc = de "Die Flasche"
+DenialPotion_name_rsc = de "potion of denial"
+DenialPotion_desc_rsc = de \
+   "Diese kleine Phiole ist aus Kristallglas gefertigt und mit einem Korken "
+   "verschlosssen. Sie enthält einer blaue, zähflüssige Masse. Es scheint "
+   "erfrischend zu sein, aber irgendetwas ist seltsam."
+DenialPotion_bad_desc_rsc = de \
+   "This flask, formed from clear glass and topped by a cork, contains a "
+   "thick, red fluid.  A slight whiff of it is enough to turn your stomach."

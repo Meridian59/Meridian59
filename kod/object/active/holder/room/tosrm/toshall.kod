@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include toshall.lkod
+
    room_name_toshall = "The Adventurer's Hall of Tos"
    room_toshall = toshall.roo
    toshall_music = main.mp3

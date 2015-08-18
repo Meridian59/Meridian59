@@ -50,6 +50,8 @@ constants:
 
 resources:
 
+   include ke4.lkod
+
    room_name_OutdoorsKE4 = "Avar Village"
    room_OutdoorsKE4 = KE4.roo
    OutdoorsKE4_music = avarwar.mp3

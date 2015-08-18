@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccave3.lkod
+
    room_orccave3 = oc03.roo
    room_name_orccave3 = "The Archaic Hollows"
 

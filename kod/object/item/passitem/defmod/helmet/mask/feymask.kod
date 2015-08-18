@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include feymask.lkod
+
    FeyMask_name_rsc = "fey mask"
    FeyMask_good_icon_male_rsc = res0002g.bgf
    FeyMask_evil_icon_male_rsc = res0002h.bgf

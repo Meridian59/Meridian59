@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gauntlet.lkod
+
   
    gauntlet_name_rsc = "gauntlets"
    gauntlet_icon_rsc = gauntlet.bgf
@@ -111,7 +113,7 @@ messages:
       local i, oFound, iPriority;
 
       oFound=$;
-      for i in Send(what,@GetPlayerUsing)
+      foreach i in Send(what,@GetPlayerUsing)
       {
          iPriority = Send(i,@ItemChangesArms);
          if iPriority <> 0
@@ -150,7 +152,7 @@ messages:
       local i, oFound, iPriority;
 
       oFound=$;
-      for i in Send(what,@GetPlayerUsing)
+      foreach i in Send(what,@GetPlayerUsing)
       {
          iPriority = Send(i,@ItemChangesArms);
          if iPriority <> 0
@@ -203,7 +205,7 @@ messages:
       local i, bFound;
 
       bFound = FALSE;
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if IsClass(i,&TankTop)
          {
@@ -236,7 +238,7 @@ messages:
       local i, bFound;
 
       bFound = FALSE;
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if IsClass(i,&TankTop)
          {
@@ -313,7 +315,7 @@ messages:
    {
       local i, oItemAtt;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oItemAtt = Send(SYS,@FindItemAttByNum,
                          #num=Send(self,@GetNumFromCompound,#compound=First(i)));

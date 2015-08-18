@@ -18,23 +18,25 @@
 	classvar_type classvar_val;	/* A class variable */
 	property_type prop_val;	/* A property */
 	resource_type resource_val;	/* A resource */
-
 	message_handler_type handler_val;	/* A message handler */
 	message_header_type header_val;		/* A message header */
 	class_type class_val;
 
-	call_stmt_type 		call_stmt_val;	/* A function call */
-	if_stmt_type 		if_stmt_val;		/* etc. */
-	assign_stmt_type 	assign_stmt_val;	
-	for_stmt_type 		for_stmt_val;	
-	while_stmt_type 	while_stmt_val;	
+	call_stmt_type    call_stmt_val;	/* A function call */
+	if_stmt_type      if_stmt_val;		/* etc. */
+	assign_stmt_type  assign_stmt_val; /* A "standalone" assignment with separator */ 
+	foreach_stmt_type foreach_stmt_val; /* Iterate through KOD lists */
+	while_stmt_type   while_stmt_val; /* While loop */
+	for_stmt_type     for_stmt_val; /* For loop */
+	switch_stmt_type  switch_stmt_val; /* Switch-case statement */
+	case_stmt_type    case_stmt_val; /* Switch-case statement */
 }
 
 %type <int_val>		Classes
 %type <stmt_val> 	statement
-%type <list_val> 	statement_list parameter_list argument_list vars
+%type <list_val> 	statement_list parameter_list argument_list vars case_list
 %type <list_val>	locals classvar_list property_list resource_list expression_list 
-%type <list_val>	message_handler_list arg_list2 param_list2
+%type <list_val>	message_handler_list arg_list2 param_list2 assign_list
 %type <list_val>	Messages_Block Classvars_Block Properties_Block Resources_Block
 %type <int_val>         Constants_Block constants_list constant_assign
 
@@ -43,7 +45,7 @@
 %type <string_val>	fname
 %type <expr_val>	expression
 %type <arg_val>	        argument
-
+%type <int_val> language_const
 %type <param_val>	parameter
 %type <classvar_val>	classvar
 %type <prop_val>	property
@@ -52,15 +54,16 @@
 %type <header_val>   	message_header
 %type <class_val>	Class Class_Signature
 
-%type <stmt_val> 	call if_stmt assign_stmt for_stmt while_stmt
+%type <stmt_val> 	call if_stmt assign_stmt foreach_stmt while_stmt for_stmt assign
+%type <stmt_val> case_stmt switch_stmt
 
-%token <int_val>  	NUMBER REL_OP
+%token <int_val>  	NUMBER REL_OP INC_DEC_OP
 %token <string_val> 	STRING_CONSTANT FILENAME
 %token <idname>		IDENTIFIER
 
 %token AND BREAK CLASSVARS CONSTANTS CONTINUE ELSE FOR IF IN IS LOCAL MESSAGES 
-%token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE
-%token END EOL SEP INCLUDE
+%token MOD NOT OR PROPAGATE PROPERTIES RESOURCES RETURN WHILE DO SWITCH CASE
+%token END EOL SEP INCLUDE FOREACH DEFAULT
 
 /* precedence of operators, lowest precedence first */
 %left OR
@@ -70,7 +73,7 @@
 %left REL_OP '='
 %left '+' '-'
 %left '*' '/' MOD
-%nonassoc UMINUS NOT '~'
+%nonassoc INC_OP DEC_OP UMINUS NOT '~'
 %%
 
 Start:
@@ -133,13 +136,19 @@ constant_assign:
 
 resource_list:
 		/* empty */		{ $$ = NULL; }
-	|	resource_list resource  { $$ = list_add_item($1, $2); }
+	|	resource_list resource  { if ($2 != NULL) $$ = list_add_item($1, $2); }
 	;
 
 resource:
-		id '=' resource_const EOL	{ $$ = make_resource($1, $3); }
-	|	error EOL			{ $$ = NULL; } 
+		id '=' resource_const EOL{ $$ = make_resource($1, $3, 0); }
+	|	id '=' language_const resource_const EOL{ $$ = make_resource($1, $4, $3); }
+	|	INCLUDE fname EOL { include_file($2); $$ = NULL; }
+	|	error EOL			{ $$ = NULL; }
 	;
+
+language_const:
+		IDENTIFIER { $$ = make_language_id($1); }
+;
 
 resource_const:
 		STRING_CONSTANT { $$ = make_string_resource($1); }
@@ -221,8 +230,10 @@ statement:
 		call SEP	{ $$ = $1; }
 	|	if_stmt		{ $$ = $1; }
 	|	assign_stmt	{ $$ = $1; }
-	|	for_stmt	{ $$ = $1; }
+	|	foreach_stmt	{ $$ = $1; }
 	| 	while_stmt	{ $$ = $1; }
+	| 	for_stmt	{ $$ = $1; }
+	| 	switch_stmt	{ $$ = $1; }
 	|	PROPAGATE SEP	{ $$ = make_prop_stmt(); }
 	|	RETURN expression SEP
 				{ $$ = allocate_statement();
@@ -244,26 +255,71 @@ statement:
 	;
 
 if_stmt:
-		IF expression '{' statement_list '}'
-		{ $$ = make_if_stmt($2, $4, NULL); }
-	|	IF expression '{' statement_list '}'  
-                  ELSE '{' statement_list '}' 
-		{ $$ = make_if_stmt($2, $4, $8); }
+		IF expression '{' statement_list '}'		{ $$ = make_if_stmt($2, $4, NULL, NULL); }
+	|	IF expression '{' statement_list '}' ELSE '{' statement_list '}' 		{ $$ = make_if_stmt($2, $4, $8, NULL); }
+	|	IF expression '{' statement_list '}' ELSE if_stmt	{ $$ = make_if_stmt($2, $4, NULL, $7); }
 	;
 
+// List of assignments with no separators.
+assign_list:
+		/* empty */	{ $$ = NULL; }
+	|	assign			{ if ($1 != NULL) $$ = add_statement(NULL, $1); }
+	|	assign_list ',' assign	{ if ($3 != NULL) $$ = add_statement($1, $3); }
+	;
+
+// Assignments with separators.
 assign_stmt:
-		id '=' expression SEP
-		{ $$ = make_assign_stmt($1, $3); }
+		id '=' expression SEP { $$ = make_assign_stmt($1, $3); }
+	|	id INC_OP SEP			{ $$ = make_assign_stmt($1, make_un_op(POST_INC_OP, make_expr_from_id($1))); }
+	|	DEC_OP id SEP			{ $$ = make_assign_stmt($2, make_un_op(PRE_DEC_OP, make_expr_from_id($2))); }
+	|	id DEC_OP SEP			{ $$ = make_assign_stmt($1, make_un_op(POST_DEC_OP, make_expr_from_id($1))); }
+	|	INC_OP id SEP			{ $$ = make_assign_stmt($2, make_un_op(PRE_INC_OP, make_expr_from_id($2))); }
 	;
 
+// Assignments without separators.
+assign:
+		id '=' expression { $$ = make_assign_stmt($1, $3); }
+	|	id INC_OP			{ $$ = make_assign_stmt($1, make_un_op(POST_INC_OP, make_expr_from_id($1))); }
+	|	DEC_OP id			{ $$ = make_assign_stmt($2, make_un_op(PRE_DEC_OP, make_expr_from_id($2))); }
+	|	id DEC_OP			{ $$ = make_assign_stmt($1, make_un_op(POST_DEC_OP, make_expr_from_id($1))); }
+	|	INC_OP id			{ $$ = make_assign_stmt($2, make_un_op(PRE_INC_OP, make_expr_from_id($2))); }
+	;
+
+// Iterate through KOD list.
+foreach_stmt:
+		FOREACH id IN expression '{' start_loop statement_list '}' end_loop
+		{ $$ = make_foreach_stmt($2, $4, $7); }
+	;
+
+// For loop, e.g. for(i=0,i<10,i++).
 for_stmt:
-		FOR id IN expression '{' start_loop statement_list '}' end_loop
-		{ $$ = make_for_stmt($2, $4, $7); }
+		FOR '(' assign_list SEP expression SEP assign_list ')' '{' start_loop statement_list '}' end_loop
+		{ $$ = make_for_stmt($3, $5, $7, $11); }
+	|	FOR '(' assign_list SEP SEP assign_list ')' '{' start_loop statement_list '}' end_loop
+		{ $$ = make_for_stmt($3, make_expr_from_constant(make_numeric_constant(1)), $6, $10); }
 	;
 
 while_stmt:
 		WHILE expression '{' start_loop statement_list '}' end_loop
 		{ $$ = make_while_stmt($2, $5); }
+	|	DO '{' start_loop statement_list '}' WHILE expression SEP end_loop
+		{ $$ = make_do_while_stmt($7, $4); }
+	;
+
+switch_stmt:
+		SWITCH '(' expression ')' '{' start_loop case_list '}' end_loop
+		{ $$ = make_switch_stmt($3, $7); }
+	;
+
+case_list:
+		case_stmt { $$ = list_add_item(NULL, $1); }
+	|	case_list case_stmt { $$ = list_add_item($1, $2); }
+	;
+
+case_stmt:
+		CASE expression ':' statement_list { $$ = make_case_stmt($2, $4, 0); }
+	|	DEFAULT ':' statement_list
+		{ $$ = make_case_stmt(make_expr_from_constant(make_numeric_constant(1)), $3, 1); }
 	;
 
 start_loop:	/* empty*/	{ enter_loop(); }
@@ -312,7 +368,11 @@ expression:
 	|	expression '|' expression	{ $$ = make_bin_op($1, BITOR_OP, $3); }
 	|	'-' expression %prec UMINUS	{ $$ = make_un_op(NEG_OP, $2); }
 	|	NOT expression			{ $$ = make_un_op(NOT_OP, $2); }
-	|	'~' expression                  { $$ = make_un_op(BITNOT_OP, $2); }
+	|	'~' expression			{ $$ = make_un_op(BITNOT_OP, $2); }
+	|	id INC_OP			{ $$ = make_un_op(POST_INC_OP, make_expr_from_id($1)); }
+	|	INC_OP id			{ $$ = make_un_op(PRE_INC_OP, make_expr_from_id($2)); }
+	|	id DEC_OP			{ $$ = make_un_op(POST_DEC_OP, make_expr_from_id($1)); }
+	|	DEC_OP id			{ $$ = make_un_op(PRE_DEC_OP, make_expr_from_id($2)); }
 	|	constant			{ $$ = make_expr_from_constant($1); }
 	|	literal				{ $$ = make_expr_from_constant($1); }
 	|	call				{ $$ = make_expr_from_call($1); }

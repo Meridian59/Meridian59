@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include killerbunny.lkod
+
    killerbunny_koc_name_rsc = "haixleocbunny"
    killerbunny_name_rsc = "killer bunny"
    killerbunny_icon_rsc = bunnygrey.bgf

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccave1.lkod
+
    room_orccave1 = oc01.roo
    room_name_orccave1 = "Ugol's Warren Entrance"
 
@@ -103,7 +105,7 @@ messages:
 %   EnableIllusions()
 %   {
 %   local i, each_obj;
-%   for i in plActive
+%   foreach i in plActive
 %   {
 %      each_obj = send(self,@HolderExtractObject,#Data=i);
 %      if isclass(each_obj,&portal)

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include freeactp.lkod
+
    FreeActionPotion_name_rsc = "alembic of free action"
    %FreeActionPotion_icon_rsc = potion01.bgf
    FreeActionPotion_desc_rsc = "This is a glass vial of colored liquid.  "

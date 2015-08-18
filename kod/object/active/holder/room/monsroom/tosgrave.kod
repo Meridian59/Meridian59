@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tosgrave.lkod
+
    room_TosGraveyard = tosgrave.roo
    room_name_TosGraveyard = "The Graveyard of Tos"
 
@@ -83,7 +85,7 @@ messages:
    {
       local i;
 
-      for i in plTombstones
+      foreach i in plTombstones
       {
          if i = what
          {

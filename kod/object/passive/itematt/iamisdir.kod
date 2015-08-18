@@ -37,7 +37,9 @@ constants:
    include protocol.khd
 
 resources:
- 
+
+   include iamisdir.lkod
+
    itematt_misdirection_desc = \
       " An illusion has been cast on this item, hiding it's true abilities."
    iaMisdirection_gone = \
@@ -80,7 +82,7 @@ messages:
       local i;
 
       plFake_Att_Choices = $;
-      for i in Send(SYS,@GetItemAttributes)
+      foreach i in Send(SYS,@GetItemAttributes)
       {
          if Send(i,@CanBeSpoofed)
          {
@@ -105,7 +107,8 @@ messages:
       }
 
       Send(oItemAtt,@AppendDesc,#oItem=oItem,#iFakeData=iFakeData,
-            #iFakePower=Send(self,@TranslatePowerFromCompound,#iCompound=first(lData)));
+            #iFakePower=Send(self,@TranslatePowerFromCompound,
+                              #iCompound=First(lData)));
 
       return;
    }

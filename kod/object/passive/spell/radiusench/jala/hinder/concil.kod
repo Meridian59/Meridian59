@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include concil.lkod
+
    Conciliation_name_rsc = "conciliation"
    Conciliation_icon_rsc = iconcil.bgf
    Conciliation_desc_rsc = \

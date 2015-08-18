@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include solagh.lkod
+
    Solagh_name_rsc = "vial of solagh"
    Solagh_icon_rsc = solagh.bgf
    Solagh_desc_rsc = \

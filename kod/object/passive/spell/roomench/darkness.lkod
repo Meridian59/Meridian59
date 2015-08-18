@@ -1,0 +1,15 @@
+darkness_name_rsc = de "Dunkelheit"
+darkness_desc_rsc = de \
+   "Legt einen Vorhang aus Dunkelheit über einen Raum, um ihn zugänglicher "
+   "für das Gefolge des Bösen zu machen. Der Zauber benötigt Feenflügel und "
+   "Wurzelknollen."
+darkness_unnecessary = de "Diese Gegend hat bereits einen Dunkelheiten Zauber."
+darkness_on = de \
+   "Der Vorhang der Dunkelheit wird auf die Gegend gelegt um auf Qors Diener "
+   "zu schauen."
+darkness_off = de "Der Vorhang der Dunkelheit löst sich auf."
+darkness_new_entrant = de "Dieser Gegend wurde in Dunkelheit getaucht."
+darkness_spell_intro = de \
+   "Qor Level 1: Legt einen Vorhang aus Dunkelheit über einen Raum."
+darkness_enchantment_rsc = de \
+   "\n\nDer %s Zauber reduziert um %i das Lichtlevel in diesem Gebiet."

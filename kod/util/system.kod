@@ -43,6 +43,8 @@ constants:
 
 resources:
 
+   include system.lkod
+
    system_user_killed = "~B~U~k[###]~n ~B~v%q was just killed by %s%q."
    system_user_killed_by_pker = "~B~U~k[###]~n ~B~v%q has been murdered in cold blood."
    system_user_killed_pker = \
@@ -67,6 +69,34 @@ resources:
    guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
+   system_blank_resource = ""
+   system_space_resource = " "
+
+   % Templates for sending lots of description parts.
+   system_rsc_template_1 = "%r"
+   system_rsc_template_2 = "%r%r"
+   system_rsc_template_3 = "%r%r%r"
+   system_rsc_template_4 = "%r%r%r%r"
+   system_rsc_template_5 = "%r%r%r%r%r"
+   system_rsc_template_6 = "%r%r%r%r%r%r"
+   system_rsc_template_7 = "%r%r%r%r%r%r%r"
+   system_rsc_template_8 = "%r%r%r%r%r%r%r%r"
+   system_rsc_template_9 = "%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_10 = "%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_11 = "%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_12 = "%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_13 = "%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_14 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_15 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_16 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_17 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_18 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_19 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_20 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_21 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_22 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_23 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
+   system_rsc_template_24 = "%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r%r"
 
    system_char_module = char.dll
 
@@ -191,22 +221,25 @@ resources:
    system_cardinal_80 = "eighty"
    system_cardinal_90 = "ninety"
    system_cardinal_100 = "a hundred"
-   system_fuzzy_cardinal_10000 = "countless"
-   system_fuzzy_cardinal_1000 = "thousands of"
-   system_fuzzy_cardinal_200 = "hundreds of"
-   system_fuzzy_cardinal_100 = "a hundred or more"
-   system_fuzzy_cardinal_75 = "a large number of"
-   system_fuzzy_cardinal_50 = "at least fifty"
-   system_fuzzy_cardinal_36 = "a few dozen"
-   system_fuzzy_cardinal_20 = "over twenty"
-   system_fuzzy_cardinal_12 = "at least a dozen"
-   system_fuzzy_cardinal_5 = "a handful of"
-   system_fuzzy_cardinal_4 = "several"
-   system_fuzzy_cardinal_3 = "a few"
-   system_fuzzy_cardinal_2 = "a couple of"
-   system_fuzzy_cardinal_1 = "one"
-   system_fuzzy_cardinal_0 = "no"
-   system_fuzzy_cardinal_deficit = "a deficit of"
+
+   % These resources have a space on the end, so they can be used in place of
+   % indefinite articles.
+   system_fuzzy_cardinal_10000 = "countless "
+   system_fuzzy_cardinal_1000 = "thousands of "
+   system_fuzzy_cardinal_200 = "hundreds of "
+   system_fuzzy_cardinal_100 = "a hundred or more "
+   system_fuzzy_cardinal_75 = "a large number of "
+   system_fuzzy_cardinal_50 = "at least fifty "
+   system_fuzzy_cardinal_36 = "a few dozen "
+   system_fuzzy_cardinal_20 = "over twenty "
+   system_fuzzy_cardinal_12 = "at least a dozen "
+   system_fuzzy_cardinal_5 = "a handful of "
+   system_fuzzy_cardinal_4 = "several "
+   system_fuzzy_cardinal_3 = "a few "
+   system_fuzzy_cardinal_2 = "a couple of "
+   system_fuzzy_cardinal_1 = "one "
+   system_fuzzy_cardinal_0 = "no "
+   system_fuzzy_cardinal_deficit = "a deficit of "
 
    system_new_hour = "It is now %i:00 Meridian time."
 
@@ -368,6 +401,8 @@ properties:
    phRooms
    % Hash table for spells.
    phSpells
+   % Hash table for skills.
+   phSkills
    % Hash table for item attributes.
    phItemAtts
 
@@ -493,6 +528,7 @@ messages:
       Send(self,@CreateUserTable);
       Send(self,@CreateRoomTable);
       Send(self,@CreateSpellTable);
+      Send(self,@CreateSkillTable);
 
       Send(self,@RecreateAllBrains);
       Send(self,@RecreateLibrary);
@@ -849,7 +885,7 @@ messages:
       local i, r;
 
       r = system_success_rsc;
-      for i in plUsers
+      foreach i in plUsers
       {
          if GetTableEntry(phUsers,Send(i,@GetUserName)) <> i
          {
@@ -867,7 +903,7 @@ messages:
 
       phUsers = CreateTable();
 
-      for i in plUsers
+      foreach i in plUsers
       {
          AddTableEntry(phUsers,Send(i,@GetUserName),i);
       }
@@ -881,7 +917,7 @@ messages:
 
       phRooms = CreateTable();
 
-      for i in plRooms
+      foreach i in plRooms
       {
          AddTableEntry(phRooms,Send(i,@GetRoomNum),i);
       }
@@ -895,12 +931,12 @@ messages:
 
       phSpells = CreateTable();
 
-      for i in plSpells
+      foreach i in plSpells
       {
          AddTableEntry(phSpells,Send(i,@GetSpellNum),i);
       }
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if GetTableEntry(phSpells,Send(i,@GetSpellNum)) <> i
          {
@@ -908,11 +944,41 @@ messages:
          }
       }
 
-      for i in [self,-20,$]
+      foreach i in [self,-20,$]
       {
          if GetTableEntry(phSpells,i) <> $
          {
             Debug("Hash error for spell",i);
+         }
+      }
+
+      return;
+   }
+
+   CreateSkillTable()
+   {
+      local i;
+
+      phSkills = CreateTable();
+
+      foreach i in plSkills
+      {
+         AddTableEntry(phSkills,Send(i,@GetSkillNum),i);
+      }
+
+      foreach i in plSkills
+      {
+         if GetTableEntry(phSkills,Send(i,@GetSkillNum)) <> i
+         {
+            Debug("Hash error for skill",i);
+         }
+      }
+
+      foreach i in [self,-20,$]
+      {
+         if GetTableEntry(phSkills,i) <> $
+         {
+            Debug("Hash error for skill",i);
          }
       }
 
@@ -925,12 +991,12 @@ messages:
 
       phItemAtts = CreateTable();
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          AddTableEntry(phItemAtts,Send(i,@GetItemAttNumber),i);
       }
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if GetTableEntry(phItemAtts,Send(i,@GetItemAttNumber)) <> i
          {
@@ -938,7 +1004,7 @@ messages:
          }
       }
 
-      for i in [self,-20,$]
+      foreach i in [self,-20,$]
       {
          if GetTableEntry(phItemAtts,i) <> $
          {
@@ -955,7 +1021,7 @@ messages:
 
       Send(self,@CleanReflectionList);
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@GarbageCollecting);
       }
@@ -963,6 +1029,7 @@ messages:
       phUsers = $;
       phRooms = $;
       phSpells = $;
+      phSkills = $;
       phItemAtts = $;
 
       Send(poStatistics,@GarbageCollecting);
@@ -976,7 +1043,7 @@ messages:
 
       if type = SYSEVENT_RELOAD_SYSTEM
       {
-         for i in plRooms
+         foreach i in plRooms
          {
             Send(i,@LoadRoomData);
          }
@@ -985,9 +1052,10 @@ messages:
       Send(self,@CreateUserTable);
       Send(self,@CreateRoomTable);
       Send(self,@CreateSpellTable);
+      Send(self,@CreateSkillTable);
       Send(self,@CreateItemAttTable);
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@GarbageCollectingDone);
       }
@@ -1001,7 +1069,7 @@ messages:
 
       % Player maintenance.
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@DisconnectSession);
       }
@@ -1013,7 +1081,7 @@ messages:
 
       % Room maintenance.
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send(i,@LoadRoomData);
       }
@@ -1035,7 +1103,28 @@ messages:
       Send(self,@CreateUserTable);
       Send(self,@CreateRoomTable);
       Send(self,@CreateSpellTable);
+      Send(self,@CreateSkillTable);
       Send(self,@CreateItemAttTable);
+
+      return;
+   }
+
+   SystemSendCopyPacketAll()
+   {
+      local i, oSession;
+
+      foreach i in plUsers_logged_on
+      {
+         oSession = Send(i,@GetSession);
+         if oSession <> $
+         {
+            SendCopyPacket(oSession);
+            % Post so it doesn't interfere with the current packet.
+            Post(i,@WaveSendUser,#wave_rsc=system_message_sound,#what=self);
+         }
+      }
+
+      ClearPacket();
 
       return;
    }
@@ -1044,7 +1133,7 @@ messages:
    {
       local i;
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@SysMsgSendUser,#message_rsc=system_admin_message,
               #parm1=string);
@@ -1069,7 +1158,7 @@ messages:
 
       DeleteTableEntry(phUsers,Send(what,@GetTrueName));
 
-      for i in plUsers
+      foreach i in plUsers
       {
          if what = i
          {
@@ -1088,10 +1177,10 @@ messages:
    {
       local oCheck, oDoubleCheck, iThisPlayerCount;
       
-      for oCheck in plUsers_logged_on
+      foreach oCheck in plUsers_logged_on
       {
          iThisPlayerCount = 0;
-         for oDoubleCheck in plUsers_logged_on
+         foreach oDoubleCheck in plUsers_logged_on
          {
             if oCheck = oDoubleCheck
             {
@@ -1111,7 +1200,7 @@ messages:
    {
       local oDoubleCheck;
       
-      for oDoubleCheck in plUsers_logged_on
+      foreach oDoubleCheck in plUsers_logged_on
       {
          if oDoubleCheck = what
          {
@@ -1138,7 +1227,7 @@ messages:
    {
       local i;
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@SomeoneLogon,#what=what,#bTrue=bTrue);
       }
@@ -1150,7 +1239,7 @@ messages:
    {
       local i;
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@SomeoneLogoff,#what=what,#bTrue=bTrue);
       }
@@ -1162,7 +1251,7 @@ messages:
    {
       local i, j, oNew_room, oDoubleCheck;
       
-      for oDoubleCheck in plUsers_logged_on
+      foreach oDoubleCheck in plUsers_logged_on
       {
          if oDoubleCheck = what
          {
@@ -1173,11 +1262,11 @@ messages:
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
 
-      for i in plReflections
+      foreach i in plReflections
       {
          if First(i) = what
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                Post(j,@Delete);
             }
@@ -1205,11 +1294,11 @@ messages:
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
 
-      for i in plReflections
+      foreach i in plReflections
       {
          if First(i) = who
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                Post(j,@Delete);
             }
@@ -1228,7 +1317,7 @@ messages:
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
 
-      for i in plReflections
+      foreach i in plReflections
       {
          if First(i) = who
          {
@@ -1250,9 +1339,9 @@ messages:
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
 
-      for i in plReflections
+      foreach i in plReflections
       {
-         for j in Nth(i,2)
+         foreach j in Nth(i,2)
          {
             if j = oReflection
             {
@@ -1284,13 +1373,13 @@ messages:
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
 
-      for i in plReflections
+      foreach i in plReflections
       {
          if First(i) = $
             OR (IsClass(First(i),&Player)
                AND (NOT Send(First(i),@IsLoggedOn)))
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                Send(j,@Delete);
             }
@@ -1346,7 +1435,7 @@ messages:
       if pbDecay_counter >=3
       {
          pbDecay_counter = 0;
-         for i in plUsers
+         foreach i in plUsers
          {
             Send(i,@decayPKillCount);
          }
@@ -1355,7 +1444,7 @@ messages:
       if piLogoffPenaltyDecayCounter >= piLogoffPenaltyDecayTime
       {
          piLogoffPenaltyDecayCounter = 0;
-         for i in plUsers
+         foreach i in plUsers
          {
             Send(i,@DecayLogoffPenaltyCount);
          }
@@ -1388,7 +1477,7 @@ messages:
       piYear = piYear + 1;
 
       % Determine if anyone needs to lose their newbie tag.
-      for i in plUsers
+      foreach i in plUsers
       {
          % Exclude 'users' who haven't created a character yet.
          if Send(i,@GetLastLoginTime) <> 0
@@ -1411,7 +1500,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@SomeoneSaid,#what=what,#type=type,#string=string,
               #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
@@ -1428,7 +1517,7 @@ messages:
 
       nid = Send(what,@GetNewsNum);
 
-      for i in plNewsgroups
+      foreach i in plNewsgroups
       {
          if Send(i,@GetNewsNum) = nid
          {
@@ -1447,7 +1536,7 @@ messages:
 
       tid = Send(what,@GetTreasureTypeNum);
 
-      for i in plTreasure_types
+      foreach i in plTreasure_types
       {
          if Send(i,@GetTreasureTypeNum) = tid
          {
@@ -1466,7 +1555,7 @@ messages:
    {
       local i;
 
-      for i in plNewsgroups
+      foreach i in plNewsgroups
       {
          if Send(i,@GetNewsNum) = num
          {
@@ -1501,7 +1590,7 @@ messages:
    {
       local i;
 
-      for i in plBrains
+      foreach i in plBrains
       {
          if Send(i,@GetBrainNum) = num
          {
@@ -1514,24 +1603,14 @@ messages:
 
    FindSkillByNum(num = 0)
    {
-      local i;
-
-      for i in plSkills
-      {
-         if Send(i,@GetSkillNum) = num
-         {
-            return i;
-         }
-      }
-
-      return $;
+      return GetTableEntry(phSkills,num);
    }
 
    FindNodeByNum(num = 0)
    {
       local i;
 
-      for i in plNodes
+      foreach i in plNodes
       {
          if Send(i,@GetNodeNum) = num
          {
@@ -1546,7 +1625,7 @@ messages:
    {
       local i;
 
-      for i in plShrines
+      foreach i in plShrines
       {
          if Send(i,@GetShrineNum) = num
          {
@@ -1561,7 +1640,7 @@ messages:
    {
       local i;
 
-      for i in plGuild_Commands
+      foreach i in plGuild_Commands
       {
          if Send(i,@GetGuildCommandNum) = num
          {
@@ -1576,7 +1655,7 @@ messages:
    {
       local i;
 
-      for i in plBanks
+      foreach i in plBanks
       {
          if Send(i,@GetBankNum) = num
          {
@@ -1591,7 +1670,7 @@ messages:
    {
       local i;
 
-      for i in plVaults
+      foreach i in plVaults
       {
          if Send(i,@GetVaultNum) = num
          {
@@ -1606,7 +1685,7 @@ messages:
    {
       local i;
 
-      for i in plTreasure_types
+      foreach i in plTreasure_types
       {
          if Send(i,@GetTreasureTypeNum) = num
          {
@@ -1651,7 +1730,7 @@ messages:
    {
       local i;
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          if StringEqual(Send(i,@GetTrueName),string)
          {
@@ -1666,7 +1745,7 @@ messages:
    {
       local i;
 
-      for i in plMonsterTemplates
+      foreach i in plMonsterTemplates
       {
          if StringEqual(Send(i,@GetTrueName),string)
          {
@@ -1683,7 +1762,7 @@ messages:
 
       lNPCs = Send(Send(SYS,@GetLibrary),@GetNPCs);
 
-      for i in lNPCs
+      foreach i in lNPCs
       {
          if StringEqual(Send(i,@GetTrueName),string)
          {
@@ -1880,7 +1959,7 @@ messages:
       }
 
       % Send the proper message to all logged on, if we get a message.
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@MsgSendUser,#message_rsc=rMessage,#parm1=Send(what,@GetTrueName),#type1=STRING_RESOURCE,
               #parm2=param2,#parm3=param3,#parm4=param4,#parm5=param5,#parm6=param6,
@@ -1935,11 +2014,11 @@ messages:
          return FALSE;
       }
 
-      for i in plAbility_totals
+      foreach i in plAbility_totals
       {
          if first(i) = school
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                if first(j) = level
                {
@@ -1964,11 +2043,11 @@ messages:
 
       if school = SS_DM_COMMAND  { return FALSE; }   % no need to store this.
 
-      for i in plAbility_totals
+      foreach i in plAbility_totals
       {
          if first(i) = school
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {   
                if first(j) = level
                {
@@ -1999,7 +2078,7 @@ messages:
       % on a school by school basis.  Used for advancement.
 
       plAbility_Totals = $;
-      for i in plSpells
+      foreach i in plSpells
       {
          % Don't want diseases and poison, don't want to figure in pk spells on happyland
          if isClass(i,&Spell)
@@ -2010,7 +2089,7 @@ messages:
          }
       }
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if Send(i,@IsAccessible)
          {
@@ -2097,7 +2176,7 @@ messages:
    {
       local i;
       AddPacket(4, Length(lIcons));
-      for i in lIcons
+      foreach i in lIcons
       {
          AddPacket(4, i);
       }
@@ -2144,7 +2223,7 @@ messages:
 
       %%% Spells
       count=0;
-      for i in plSpells
+      foreach i in plSpells
       {
          % Don't Send non-spells (poison, diseases).
          % Only offer 4 main spell schools to chars
@@ -2156,7 +2235,7 @@ messages:
       }
 
       AddPacket(4,count);
-      for i in plSpells
+      foreach i in plSpells
       {
          if (NOT IsClass(i,&Spell))
             OR NOT Send(i,@OfferToNewCharacters)
@@ -2182,7 +2261,7 @@ messages:
       }
 
       count=0;
-      for i in plSkills
+      foreach i in plSkills
       {
          if Send(i,@GetLevel) <= 2
          {
@@ -2193,7 +2272,7 @@ messages:
       %%%%% Skills
       AddPacket(4,count);
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if Send(i,@GetLevel) > 2
          {
@@ -2615,7 +2694,7 @@ messages:
       
       % Save shrine powers.
       plShrine_Allegiances = $;
-      for n in plShrines
+      foreach n in plShrines
       {
          plShrine_Allegiances = Cons(Send(n,@GetAllegiance),plShrine_Allegiances);
       }
@@ -2626,7 +2705,7 @@ messages:
          Send(poRentableRoomMaintenance,@HoldRoomsDuringRecreate);
       }
 
-      for i in plRooms
+      foreach i in plRooms
       {
          if IsClass(i,&RentableRoom)
          {
@@ -2668,7 +2747,7 @@ messages:
    {
       local i;
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send(i,@RecreateExits);
       }
@@ -2688,7 +2767,7 @@ messages:
 
       if poParliament<>$ {Send(poParliament,@SetDeleting,#value=True);}
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send(i,@Delete);
       }
@@ -2715,7 +2794,7 @@ messages:
          Send(poParliament,@SetDeleting,#value=True);
       }
 
-      for i in plRooms
+      foreach i in plRooms
       {
          if not Send(i,@IsUserInRoom)
          {
@@ -2743,7 +2822,7 @@ messages:
    {
       local i;
 
-      for i in plRooms
+      foreach i in plRooms
       {
          if what = i
          {
@@ -2777,7 +2856,7 @@ messages:
    {
       local i;
 
-      for i in plRoomIcons
+      foreach i in plRoomIcons
       {
          if (i <> $)
          {
@@ -2833,7 +2912,7 @@ messages:
    {
       local i;
 
-      for i in plBanks
+      foreach i in plBanks
       {
          if what = i
          {
@@ -2872,7 +2951,7 @@ messages:
    {
       local i;
 
-      for i in plBanks
+      foreach i in plBanks
       {
          Send(i,@Delete);
       }
@@ -2893,7 +2972,7 @@ messages:
    {
       local i;
 
-      for i in plVaults
+      foreach i in plVaults
       {
          if what = i
          {
@@ -2935,7 +3014,7 @@ messages:
    {
       local i;
 
-      for i in plVaults
+      foreach i in plVaults
       {
          Send(i,@Delete);
       }
@@ -3006,7 +3085,7 @@ messages:
       }
 
       bFound = FALSE;
-      for i in plShrines
+      foreach i in plShrines
       {
          if i = oShrine
          {
@@ -3072,7 +3151,7 @@ messages:
          }
       }
       
-      for i in plShrines
+      foreach i in plShrines
       {
          allegiance = Send(i,@GetAllegiance);
          if allegiance = bound(allegiance,SS_SHALILLE,SS_JALA)
@@ -3095,7 +3174,7 @@ messages:
       {
          n = 5;
 
-         for i in plShrines
+         foreach i in plShrines
          {
             Send(i,@SetAllegiance,#allegiance=(Nth(plShrine_Allegiances,n)));
             n = n - 1;
@@ -3457,7 +3536,7 @@ messages:
    {
       local i;
 
-      for i in plGuild_Commands
+      foreach i in plGuild_Commands
       {
          Send(i,@Delete);
       }
@@ -3470,12 +3549,12 @@ messages:
 
       Send(self,@CreateAllGuildCommandsIfNew);
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          Send(i,@resetallguildcommands);
       }
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@InvalidateData);
       }
@@ -3489,12 +3568,12 @@ messages:
    {
       local i, j;
 
-      for i in plGuild_Commands
+      foreach i in plGuild_Commands
       {
          if what = i
          {
             % Remove it from the player's arsenal first.
-            for j in plUsers
+            foreach j in plUsers
             {
                Send(j,@RemoveGuildCommand,#command_num=Send(what,@GetGuildCommandNum));
             }
@@ -3515,7 +3594,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RemoveAllGuildCommands);
       }
@@ -3535,10 +3614,21 @@ messages:
 
    CreateOneSkillIfNew(num = $,class = $)
    {
+      local oSkill;
+
       if Send(self,@FindSkillByNum,#num=num) = $
       {
-         plSkills = Cons(Create(class),plSkills);
+         oSkill = Create(class);
+         if oSkill = $
+         {
+            Debug("Bad skill num!");
+
+            return;
+         }
+         AddTableEntry(phSkills,Send(oSkill,@GetSkillNum),oSkill);
+         plSkills = Cons(oSkill,plSkills);
       }
+
       return;
    }
 
@@ -3579,7 +3669,7 @@ messages:
    {
       local i;
 
-      for i in plSkills
+      foreach i in plSkills
       {
          Send(i,@Delete);
       }
@@ -3590,9 +3680,11 @@ messages:
          plSkills = $;
       }
 
+      Send(self,@CreateSkillTable);
+
       Send(self,@CreateAllSkillsIfNew);
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@InvalidateData);
       }
@@ -3613,12 +3705,12 @@ messages:
       % any time a skill is deleted, clear its enchantment on all logged in users
       % just in case they have this skill
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RemoveEnchantment,#what=what);
       }
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if (what = i)
          {
@@ -3648,13 +3740,13 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RemoveAllEnchantments,#report=FALSE);
          Send(i,@RemoveAllRadiusEnchantments,#report=FALSE);
       }
 
-      for i in plSpells
+      foreach i in plSpells
       {
          Send(i,@Delete);
       }
@@ -3668,7 +3760,7 @@ messages:
 
       Send(self,@CreateAllSpellsIfNew);
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@InvalidateData);
       }
@@ -3690,12 +3782,12 @@ messages:
       % just in case they have an enchantment of this spell
 
 % Temporarily removed to prevent "infinite loop" triggering.
-%      for i in plUsers
+%      foreach i in plUsers
 %      {
 %         Send(i,@RemoveEnchantment,#what=what);
 %      }
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if what = i
          {
@@ -3720,7 +3812,7 @@ messages:
 
       Send(self,@InitializeItemAttTreasureTable);
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          Send(i,@delete);
       }   
@@ -3749,7 +3841,7 @@ messages:
       Send(self,@RemoveFromItemAttTreasureTable,
            #iItemAtt=Send(oItemAtt,@GetItemAttNumber));
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if (oItematt = i)
          {
@@ -3835,7 +3927,7 @@ messages:
    {
       local i;
 
-      for i in plBackground_objects
+      foreach i in plBackground_objects
       {
          Send(i,@Delete);
       }
@@ -3857,7 +3949,7 @@ messages:
    {
       local i;
 
-      for i in plBackground_objects
+      foreach i in plBackground_objects
       {
          if IsClass(i,&Sun)
          {
@@ -3970,12 +4062,12 @@ messages:
       }
 
 
-      for i in plBackground_objects
+      foreach i in plBackground_objects
       {
          Send(i,@NewGameHour);
       }
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send(i,@RecalcLightAndWeather);
       }
@@ -4001,7 +4093,7 @@ messages:
    {
       local i;
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(i,@MsgSendUser,#message_rsc=system_new_hour,#parm1=piHour);
       }
@@ -4181,7 +4273,7 @@ messages:
       }
 
       % Check for people who put "a" or "an" in front of a monster name.
-      for i in plMonsterTemplates
+      foreach i in plMonsterTemplates
       {
          if StringContain(sName,Send(i,@GetTrueName))
          {
@@ -4218,7 +4310,7 @@ messages:
                      "You", system_hidden_admin
                    ];
 
-      for i in lBadNameContain
+      foreach i in lBadNameContain
       {
          if StringContain(sName,i)
          {
@@ -4226,7 +4318,7 @@ messages:
          }
       }
 
-      for i in lBadNameIs
+      foreach i in lBadNameIs
       {
          if StringEqual(sName, i)
          {
@@ -4278,11 +4370,11 @@ messages:
 
       Send(what,@EraseAllMail);
 
-      for i in plBanks
+      foreach i in plBanks
       {
          Send(i,@WithdrawAccount,#what=what,#amount=$);
       }
-      for i in plVaults
+      foreach i in plVaults
       {
          Send(i,@DestroyPlayersVault,#who=what);
       }
@@ -4320,7 +4412,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@SetLoginTime);
       }
@@ -4333,7 +4425,7 @@ messages:
    {
       local i,oRoom;
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          oRoom = Nth(plRooms,Random(1,Length(plRooms)));
          Send(oRoom,@Teleport,#what=i);
@@ -4349,7 +4441,7 @@ messages:
 
       oRoom = Send(SYS,@FindRoomByNum,#num=iRID);
 
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          Send(oRoom,@Teleport,#what=i);
       }
@@ -4362,7 +4454,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RemoveAllSpells);
       }
@@ -4375,7 +4467,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RemoveAllSkills);
       }
@@ -4387,7 +4479,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@ClearLoginTime);
       }
@@ -4399,7 +4491,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RecalcBulkAndWeight);
       }
@@ -4411,7 +4503,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RecalcLight);
       }
@@ -4423,7 +4515,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RecalibratePlayer);
       }
@@ -4435,7 +4527,7 @@ messages:
    {
       local i;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if IsClass(i,&Spell)
          {
@@ -4450,7 +4542,7 @@ messages:
    {
       local i;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if IsClass(i,&Spell)
          {
@@ -4466,7 +4558,7 @@ messages:
    {
       local i;
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          if i = what
          {
@@ -4487,12 +4579,12 @@ messages:
    {
       local i;
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          Send(i,@Delete);
       }
 
-      for i in plGuild_Halls
+      foreach i in plGuild_Halls
       {
          Send(i,@Delete);
       }
@@ -4510,7 +4602,7 @@ messages:
 
       found_elem = $;
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          if i <> what
          {
@@ -4531,7 +4623,7 @@ messages:
          Debug("Defuncted a guild that didn't exist!");
       }
 
-      for i in plGuild_halls
+      foreach i in plGuild_halls
       {
          Send(i,@defunctguild,#what=what);
       }
@@ -4548,7 +4640,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@SetSafety);
       }
@@ -4574,7 +4666,7 @@ messages:
    {
       local i;
 
-      for i in plGuild_halls
+      foreach i in plGuild_halls
       {
          if i = hall
          {
@@ -4613,7 +4705,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@InitialSetBaseMaxHealth);
       }
@@ -4625,7 +4717,7 @@ messages:
    {
       local i;
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@EraseAllMail);
       }
@@ -4644,7 +4736,7 @@ messages:
    {
       local i;
 
-      for i in plBanks
+      foreach i in plBanks
       {
          Send(i,@FixMoney,#amount=amount);
       }
@@ -4952,7 +5044,7 @@ messages:
    {
       local i;
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          Send(i,@ChangeRentDue,#amount=amount);
       }
@@ -5048,7 +5140,7 @@ messages:
 
       pbRoomIllusionsEnabled = TRUE;
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send(i,@EnableIllusions);
       }
@@ -5068,7 +5160,7 @@ messages:
 
       pbRoomIllusionsEnabled = FALSE;
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send(i,@DisableIllusions);
       }
@@ -5093,7 +5185,7 @@ messages:
    "Monster Template does not include revenants!"
    {
       local i;
-      for i in plMonsterTemplates
+      foreach i in plMonsterTemplates
       {
          Send(i,@Delete);
       }
@@ -5202,7 +5294,7 @@ messages:
    {
       local i;
 
-      for i in plItemTemplates
+      foreach i in plItemTemplates
       {
          Send(i,@Delete);
       }
@@ -5569,7 +5661,7 @@ messages:
          return;
       }
 
-      for i in plItemTemplates
+      foreach i in plItemTemplates
       {
          if NOT IsClass(i,&Money)
          {
@@ -5601,7 +5693,7 @@ messages:
          return;
       }
 
-      for i in plUsers
+      foreach i in plUsers
       {
          if (node_num & Send(i,@GetNodeList)) = node_num
          {
@@ -5649,7 +5741,7 @@ messages:
             lGivelist = plUsers;
          }
 
-         for i in lGiveList
+         foreach i in lGiveList
          {
             if number <> -1
             {
@@ -5709,7 +5801,7 @@ messages:
 
          lGiveList = Send(oRoom,@GetHolderActive);
 
-         for i in lGiveList
+         foreach i in lGiveList
          {
             each_obj = send(oRoom,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
@@ -5759,7 +5851,7 @@ messages:
    {
       local iRoom, oRoom, iRow, iCol, iFineRow, iFineCol, oChest, i, j;
 
-      for i in plChests
+      foreach i in plChests
       {
          oChest = first(i);
          iRoom = Nth(i,2);
@@ -5775,7 +5867,7 @@ messages:
          }
          else
          {
-            for j in Send(oRoom,@GetHolderActive)
+            foreach j in Send(oRoom,@GetHolderActive)
             {
                if GetClass(first(j)) = GetClass(oChest)
                   AND iRow = Send(first(j),@GetRow)
@@ -5805,7 +5897,7 @@ messages:
          return FALSE;
       }
 
-      for i in plChests
+      foreach i in plChests
       {
          if first(i) = oChest
          {
@@ -5871,7 +5963,7 @@ messages:
    {
       local i;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if isClass(i,&Spell)
          {
@@ -5884,14 +5976,14 @@ messages:
           Send(self,@recreateallItemAttributes);
       }
 
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       {
          Send(i,@CheckItemAttForValidity,#iserver=server_type);
       }
 
       Send(self,@RefigureAllAbilityTotals);
 
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@RemoveInaccessibleSpells);
       }
@@ -5947,14 +6039,14 @@ messages:
          return;
       }
 
-      for i in plItemAttTreasure
+      foreach i in plItemAttTreasure
       {         
          if first(i) = diff
          {            
             lData = Nth(i,2);
             
             % Quickly check to be sure it's already there
-            for j in lData
+            foreach j in lData
             {
                if first(j) = iItemAtt
                {
@@ -5980,9 +6072,9 @@ messages:
    {
       local i, j;
 
-      for i in plItemAttTreasure
+      foreach i in plItemAttTreasure
       {
-         for j in Nth(i,2)
+         foreach j in Nth(i,2)
          {
             if first(j) = iItemAtt
             {
@@ -5997,7 +6089,7 @@ messages:
    {
       local i;
    
-      for i in plItemAttTreasure
+      foreach i in plItemAttTreasure
       {
          if first(i) = diff_seed
          {
@@ -6017,7 +6109,7 @@ messages:
    "Admin supported.  Clear all players' spell lists."
    {
       local i;
-      for i in plUsers
+      foreach i in plUsers
       {
          Send(i,@ClearSpellList);
       }
@@ -6052,7 +6144,7 @@ messages:
          return self;
       }
 
-      for i in plGuilds
+      foreach i in plGuilds
       {
          if color1 = Send(i,@GetPrimaryGuildColor)
             AND color2 = Send(i,@GetSecondaryGuildColor)
@@ -6248,7 +6340,7 @@ messages:
    {
       local rBadWord, bContinue;
 
-      for rBadWord in plNaughtyWords
+      foreach rBadWord in plNaughtyWords
       {
          bContinue = TRUE;
          while bContinue
@@ -6343,28 +6435,26 @@ messages:
       return getTempString();
    }
 
-   AppendFuzzyCardinalToTempString(number = 0)
-   "Appends one, a couple, ..., several, ..., at least a dozen, etc. to the TempString."
+   GetFuzzyCardinalResource(number = 0)
+   "Returns the fuzzy cardinal resource directly."
    {
-      if (number >= 10000) { AppendTempString(system_fuzzy_cardinal_10000); return; }
-      if (number >= 1000) { AppendTempString(system_fuzzy_cardinal_1000); return; }
-      if (number >= 200) { AppendTempString(system_fuzzy_cardinal_200); return; }
-      if (number >= 100) { AppendTempString(system_fuzzy_cardinal_100); return; }
-      if (number >= 75) { AppendTempString(system_fuzzy_cardinal_75); return; }
-      if (number >= 50) { AppendTempString(system_fuzzy_cardinal_50 ); return; }
-      if (number >= 36) { AppendTempString(system_fuzzy_cardinal_36); return; }
-      if (number >= 20) { AppendTempString(system_fuzzy_cardinal_20); return; }
-      if (number >= 12) { AppendTempString(system_fuzzy_cardinal_12); return; }
-      if (number >= 5) { AppendTempString(system_fuzzy_cardinal_5); return; }
-      if (number = 4) { AppendTempString(system_fuzzy_cardinal_4); return; }
-      if (number = 3) { AppendTempString(system_fuzzy_cardinal_3); return; }
-      if (number = 2) { AppendTempString(system_fuzzy_cardinal_2); return; }
-      if (number = 1) { AppendTempString(system_fuzzy_cardinal_1); return; }
-      if (number = 0) { AppendTempString(system_fuzzy_cardinal_0); return; }
+      if (number >= 10000) { return system_fuzzy_cardinal_10000; }
+      if (number >= 1000) { return system_fuzzy_cardinal_1000; }
+      if (number >= 200) { return system_fuzzy_cardinal_200; }
+      if (number >= 100) { return system_fuzzy_cardinal_100; }
+      if (number >= 75) { return system_fuzzy_cardinal_75; }
+      if (number >= 50) { return system_fuzzy_cardinal_50; }
+      if (number >= 36) { return system_fuzzy_cardinal_36; }
+      if (number >= 20) { return system_fuzzy_cardinal_20; }
+      if (number >= 12) { return system_fuzzy_cardinal_12; }
+      if (number >= 5) { return system_fuzzy_cardinal_5; }
+      if (number = 4) { return system_fuzzy_cardinal_4; }
+      if (number = 3) { return system_fuzzy_cardinal_3; }
+      if (number = 2) { return system_fuzzy_cardinal_2; }
+      if (number = 1) { return system_fuzzy_cardinal_1; }
+      if (number = 0) { return system_fuzzy_cardinal_0; }
 
-      AppendTempString(system_fuzzy_cardinal_deficit);
-
-      return getTempString();
+      return system_fuzzy_cardinal_deficit;
    }
 
    GetNumberFromString(string = $)
@@ -6484,7 +6574,7 @@ messages:
          return;
       }
 
-      for i in plRooms
+      foreach i in plRooms
       {
          Send( i, @FactionChanged, #new_fact = new_faction );
       }
@@ -6697,7 +6787,7 @@ messages:
    {
       local i,iCount;
       iCount = 0;
-      for i in plUsers
+      foreach i in plUsers
       {
          if includeDMs OR NOT isClass(i,&DM)
          {
@@ -6715,7 +6805,7 @@ messages:
    {
       local i,lPlayers;
       lPlayers = $;
-      for i in plUsers
+      foreach i in plUsers
       {
          if includeDMs OR NOT isClass(i,&DM)
          {
@@ -6735,7 +6825,7 @@ messages:
 
       lPlayers = $;
       ClearTempString();
-      for i in plUsers
+      foreach i in plUsers
       {
          if includeDMs or not isClass(i,&DM)
          {
@@ -6759,7 +6849,7 @@ messages:
             lSpells, lSkills;
 
       iList = $;
-      for i in plUsers
+      foreach i in plUsers
       {
          if Send(i,@GetSpellList) = $
             OR IsClass(i,&DM)
@@ -6789,7 +6879,7 @@ messages:
          return $;
       }
 
-      for i in iList
+      foreach i in iList
       {
          lSkills = Send(i,@GetSkillSchoolLevels);
          lSpells = Send(i,@GetSpellSchoolLevels);
@@ -6815,7 +6905,7 @@ messages:
       }
 
       Debug("Players with more than ",hp," base max health:");
-      for i in plUsers
+      foreach i in plUsers
       {
          if Send(i,@GetBaseMaxHealth) > hp
          {
@@ -6837,6 +6927,41 @@ messages:
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AddResourceTemplate(iNum=1)
+   {
+      switch(iNum)
+      {
+         case 1: return system_rsc_template_1;
+         case 2: return system_rsc_template_2;
+         case 3: return system_rsc_template_3;
+         case 4: return system_rsc_template_4;
+         case 5: return system_rsc_template_5;
+         case 6: return system_rsc_template_6;
+         case 7: return system_rsc_template_7;
+         case 8: return system_rsc_template_8;
+         case 9: return system_rsc_template_9;
+         case 10: return system_rsc_template_10;
+         case 11: return system_rsc_template_11;
+         case 12: return system_rsc_template_12;
+         case 13: return system_rsc_template_13;
+         case 14: return system_rsc_template_14;
+         case 15: return system_rsc_template_15;
+         case 16: return system_rsc_template_16;
+         case 17: return system_rsc_template_17;
+         case 18: return system_rsc_template_18;
+         case 19: return system_rsc_template_19;
+         case 20: return system_rsc_template_20;
+         case 21: return system_rsc_template_21;
+         case 22: return system_rsc_template_22;
+         case 23: return system_rsc_template_23;
+         case 24: return system_rsc_template_24;
+      }
+
+      Debug("AddResourceTemplate couldn't find template for ",iNum);
+
+      return;
+   }
 
    GetPercentQRsc()
    {
@@ -6905,7 +7030,7 @@ messages:
       iLevel = 0;
       iNumPotions = 1;
 
-      for i in lFinal
+      foreach i in lFinal
       {
          iPosition = (iCount*100)/length(lFinal);
 
@@ -6924,58 +7049,43 @@ messages:
             iLevel = maxLevel;
             iNumPotions = 1;
          }
+         else if iPosition > (100 - iCutoff)
+         {
+            iHP = maxHP;
+            iLevel = maxLevel;
+            iNumPotions = MaxPotionsPerPlayer;
+         }
+         else if iPosition > (100 - (2 * iCutoff))
+         {
+            iHP = (maxHP*4/5);
+            iLevel = bound(maxLevel-1,1,$);
+            iNumPotions = bound(MaxPotionsPerPlayer-1,1,$);
+         }
+         else if iPosition > (100 - (3 * iCutoff))
+         {
+            iHP = (maxHP*3/5);
+            iLevel = bound(maxLevel-1,1,$);
+            iNumPotions = bound(MaxPotionsPerPlayer-2,1,$);
+         }
+         else if iPosition > (100 - (4 * iCutoff))
+         {
+            iHP = (maxHP*2/5);
+            iLevel = bound(maxLevel-2,1,$);
+            iNumPotions = bound(MaxPotionsPerPlayer-3,1,$);
+         }
+         else if iPosition > deadwood
+         {
+            iHP = (maxHP*1/5);
+            iLevel = bound(maxLevel-2,1,$);
+            iNumPotions = bound(MaxPotionsPerPlayer-4,1,$);
+         }
          else
          {
-            if iPosition > (100 - iCutoff)
-            {
-               iHP = maxHP;
-               iLevel = maxLevel;
-               iNumPotions = MaxPotionsPerPlayer;
-            }
-            else
-            {
-               if iPosition > (100 - (2 * iCutoff))
-               {
-                  iHP = (maxHP*4/5);
-                  iLevel = bound(maxLevel-1,1,$);
-                  iNumPotions = bound(MaxPotionsPerPlayer-1,1,$);
-               }
-               else
-               {
-                  if iPosition > (100 - (3 * iCutoff))
-                  {
-                     iHP = (maxHP*3/5);
-                     iLevel = bound(maxLevel-1,1,$);
-                     iNumPotions = bound(MaxPotionsPerPlayer-2,1,$);
-                  }
-                  else
-                  {
-                     if iPosition > (100 - (4 * iCutoff))
-                     {
-                        iHP = (maxHP*2/5);
-                        iLevel = bound(maxLevel-2,1,$);
-                        iNumPotions = bound(MaxPotionsPerPlayer-3,1,$);
-                     }
-                     else
-                     {
-                        if iPosition > deadwood
-                        {
-                           iHP = (maxHP*1/5);
-                           iLevel = bound(maxLevel-2,1,$);
-                           iNumPotions = bound(MaxPotionsPerPlayer-4,1,$);
-                        }
-                        else
-                        {
-                           % Deadwood!  No potion for you!
-                           iHP = 0;
-                        }
-                     }
-                  }
-               }
-            }
-
-            iCount = iCount + 1;
+            % Deadwood!  No potion for you!
+            iHP = 0;
          }
+
+         iCount++;
 
          temp = [ SS_QOR,SS_RIIJA,SS_KRAANAN,SS_SHALILLE,SS_FAREN,SS_JALA,SKS_FENCING ];
 
@@ -7011,12 +7121,20 @@ messages:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   UpdateFixes(pocket=$,balance=$)
+   UpdateFixes(pocket=$,balance=$,bAreYouSure=FALSE)
    "Performs changes necessary to update the game due to patches.  Also caps "
    "the money supply.  'pocket' limits the amount of money carried on each "
    "player, where 'balance' caps the amount of money in banks.  Leave nil if "
    "there is to be no money adjustment."
    {
+      if NOT bAreYouSure
+      {
+         Debug("This is an OLD update fix message, do NOT run it unless you ",
+            "are absolutely sure you know what you are doing!");
+
+         return system_failure_rsc;
+      }
+
       Send(self,@RecreateAllTreasureTypes);
       Send(self,@RecreateItemTemplates);
 
@@ -7195,19 +7313,21 @@ messages:
       return retVal;
    }
 
-   RemoveOldMails(max=10000)
+   RemoveOldMails(max=10000, iDays=180)
    {
-      local i,iCount;
+      local i, iCount;
+
       iCount = 0;
 
-      for i in plUsers
+      foreach i in plUsers
       {
-         iCount = iCount + Send(i,@RemoveOldMail);
+         iCount = iCount + Send(i,@RemoveOldMail,#iDays=iDays);
          if (iCount > max)
          {
             break;
          }
       }
+
       return iCount;
    }
 
@@ -7215,7 +7335,7 @@ messages:
    {
       local i,total;
       total = 0;
-      for i in plUsers
+      foreach i in plUsers
       {
          total = total + Send(i,@CleanBadMail);
       }
@@ -7253,7 +7373,7 @@ messages:
     {
        local i;
  
-       for i in plSpellTotems
+       foreach i in plSpellTotems
        {
           Send(i,@Delete);
        }
@@ -7459,7 +7579,7 @@ messages:
    {
       local i;
 
-      for i in resistance_list
+      foreach i in resistance_list
       {
          if Nth(i,1) = what
          {
@@ -7484,7 +7604,7 @@ messages:
    {
       local i;
 
-      for i in resistance_list
+      foreach i in resistance_list
       {
          resistance_list = Send(self,@RemoveResistance,#what=Nth(i,1),#value=Nth(i,2),#resistance_list=resistance_list);
       }
@@ -7506,13 +7626,13 @@ messages:
       
       lUserIPList = $;
       
-      for i in plUsers_logged_on
+      foreach i in plUsers_logged_on
       {
          bFound = FALSE;
       
          lIP = send(i,@GetIP);
          
-         for j in lUserIPList
+         foreach j in lUserIPList
          {
             if Nth(lIP,1) = Nth(j,1)
                AND Nth(lIP,2) = Nth(j,2)
@@ -7557,9 +7677,9 @@ messages:
       lBaseList = Send(self,@ListCopy,#source=lItems);
       
       lSortedItems = $;
-      for cClass in lTempClassOrder
+      foreach cClass in lTempClassOrder
       {
-         for oItem in lBaseList
+         foreach oItem in lBaseList
          {
             if IsClass(oItem,cClass)
             {
@@ -7570,7 +7690,7 @@ messages:
       }
 
       % Anything left over
-      for oItem in lBaseList
+      foreach oItem in lBaseList
       {
          lSortedItems = Cons(oItem,lSortedItems);
          lBaseList = DelListElem(lBaseList,oItem);
@@ -7609,7 +7729,7 @@ messages:
    {
       local i;
       
-      for i in plItemTemplates
+      foreach i in plItemTemplates
       {
          if StringEqual(string,Send(i,@GetName))
          {
@@ -7617,7 +7737,7 @@ messages:
          }
       }
       
-      for i in plMoneyTemplates
+      foreach i in plMoneyTemplates
       {
          if StringEqual(string,Send(i,@GetName))
          {
@@ -7632,7 +7752,7 @@ messages:
    {
       local i;
 
-      for i in plItemTemplates
+      foreach i in plItemTemplates
       {
          if StringEqual(string,Send(i,@GetName))
          {
@@ -7640,7 +7760,7 @@ messages:
          }
       }
       
-      for i in plMoneyTemplates
+      foreach i in plMoneyTemplates
       {
          if StringEqual(string,Send(i,@GetName))
          {
@@ -7655,7 +7775,7 @@ messages:
    {
       local i;
 
-      for i in plItemTemplates
+      foreach i in plItemTemplates
       {
          if GetClass(i) = cClass
          {
@@ -7663,7 +7783,7 @@ messages:
          }
       }
       
-      for i in plMoneyTemplates
+      foreach i in plMoneyTemplates
       {
          if GetClass(i) = cClass
          {

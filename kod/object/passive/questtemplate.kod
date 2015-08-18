@@ -38,6 +38,8 @@ constants:
 
 resources:
 
+   include questtemplate.lkod
+
    % Same icon as the book item.
    questtemplate_icon_rsc = kolanico.bgf
    questtemplate_name_rsc = "default quest"
@@ -283,7 +285,7 @@ messages:
          return;
       }
 
-      for i in plQuestNodeDesc
+      foreach i in plQuestNodeDesc
       {
          if First(i) = index
          {

@@ -1,0 +1,14 @@
+Disarm_name_rsc = de "Entwaffnen"
+Disarm_desc_rsc = de \
+   "Eine Technik, die es einem Krieger erlaubt, die Waffe seines Gegners "
+   "zu treffen. Oft erfolgreich angewendet, kann es den Gegner in einen Nachteil "
+   "bringen und gelegentlich dazu führen, dass der Gegner seine Waffe verliert."
+Disarm_skill_intro = de \
+   "Waffenfertigkeiten Level 6: Eine Technik, die es einem Krieger erlaubt, "
+   "die Waffe seines Gegners zu treffen."
+Disarm_unwield = de "Du hast %s%s entwaffnet."
+Disarm_opp_unwield = de \
+   "%s%s's Schlag führt dazu, dass Du deine Waffe aus der Hand verlierst."
+Disarm_dropped = de "Du hast %s%s entwaffnet!"
+Disarm_opp_dropped = de \
+   "%s%s's Schlag führt dazu, dass Du deine Waffe aus der Hand verlierst!"

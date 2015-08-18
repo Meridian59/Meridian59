@@ -45,6 +45,8 @@
 
 #define TABLESIZE       1023    /* Size of symbol tables */
 
+#define MAX_LANGUAGE_ID 184
+
 typedef int Bool;
 enum {False = 0, True = 1};
 
@@ -52,7 +54,8 @@ enum { C_NUMBER, C_STRING, C_NIL, C_FNAME, C_RESOURCE, C_CLASS, C_MESSAGE, C_OVE
 
 /* Types of operators */
 enum { AND_OP, OR_OP, PLUS_OP, MINUS_OP, MULT_OP, DIV_OP, MOD_OP, NOT_OP, NEG_OP,
-       NEQ_OP, EQ_OP, LT_OP, GT_OP, LEQ_OP, GEQ_OP, BITAND_OP, BITOR_OP, BITNOT_OP};
+       NEQ_OP, EQ_OP, LT_OP, GT_OP, LEQ_OP, GEQ_OP, BITAND_OP, BITOR_OP, BITNOT_OP,
+       PRE_INC_OP, PRE_DEC_OP, POST_INC_OP, POST_DEC_OP };
 
 typedef struct {
    int type;
@@ -93,7 +96,7 @@ typedef struct {
 
 typedef struct {
    id_type lhs;
-   const_type rhs;
+   const_type resource[MAX_LANGUAGE_ID];
 } *resource_type, resource_struct;
 
 enum { E_BINARY_OP, E_UNARY_OP, E_IDENTIFIER, E_CONSTANT, E_CALL, };
@@ -137,7 +140,8 @@ typedef struct {
    const_type rhs;
 } *param_type, param_struct;
 
-enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOR, S_WHILE, S_PROP, S_RETURN, S_BREAK, S_CONTINUE };
+enum {S_IF = 1, S_ASSIGN, S_CALL, S_FOREACH, S_WHILE, S_PROP, S_RETURN,
+      S_BREAK, S_CONTINUE, S_FOR, S_DOWHILE, S_CASE, S_DEFAULTCASE, S_SWITCH };
 
 typedef struct {
    int function;    /* Opcode of function to call */
@@ -148,6 +152,7 @@ typedef struct {
    expr_type condition;
    list_type then_clause;
    list_type else_clause;
+   void *elseif_clause;
 } *if_stmt_type, if_stmt_struct;
 
 typedef struct {
@@ -159,12 +164,29 @@ typedef struct {
    id_type id;
    expr_type condition;
    list_type body;
-} *for_stmt_type, for_stmt_struct;
+} *foreach_stmt_type, foreach_stmt_struct;
 
 typedef struct {
    expr_type condition;
    list_type body;
 } *while_stmt_type, while_stmt_struct;
+
+typedef struct {
+   list_type initassign;
+   expr_type condition;
+   list_type assign;
+   list_type body;
+} *for_stmt_type, for_stmt_struct;
+
+typedef struct {
+   expr_type condition;
+   list_type body;
+} *case_stmt_type, case_stmt_struct;
+
+typedef struct {
+   expr_type condition;
+   list_type body;
+} *switch_stmt_type, switch_stmt_struct;
 
 typedef struct {
    int type;
@@ -173,8 +195,11 @@ typedef struct {
       call_stmt_type    call_stmt_val; 
       if_stmt_type      if_stmt_val; 
       assign_stmt_type  assign_stmt_val; 
-      for_stmt_type     for_stmt_val; 
-      while_stmt_type   while_stmt_val; 
+      foreach_stmt_type foreach_stmt_val; 
+      while_stmt_type   while_stmt_val;
+      for_stmt_type     for_stmt_val;
+      switch_stmt_type  switch_stmt_val;
+      case_stmt_type    case_stmt_val;
       expr_type         return_stmt_val; 
    } value;
 } *stmt_type, stmt_struct;
@@ -284,15 +309,20 @@ id_type make_constant_id(id_type, expr_type);
 param_type make_parameter(id_type, expr_type);
 classvar_type make_classvar(id_type, expr_type);
 property_type make_property(id_type, expr_type);
-resource_type make_resource(id_type, const_type);
+resource_type make_resource(id_type, const_type, int);
+int make_language_id(char *);
 
 void check_break(void);
 void check_continue(void);
 stmt_type make_prop_stmt(void);
-stmt_type make_if_stmt(expr_type, list_type, list_type);
+stmt_type make_if_stmt(expr_type, list_type, list_type, stmt_type);
 stmt_type make_assign_stmt(id_type, expr_type);
-stmt_type make_for_stmt(id_type, expr_type, list_type);
+stmt_type make_foreach_stmt(id_type, expr_type, list_type);
 stmt_type make_while_stmt(expr_type, list_type);
+stmt_type make_do_while_stmt(expr_type, list_type);
+stmt_type make_for_stmt(list_type, expr_type, list_type, list_type);
+stmt_type make_case_stmt(expr_type, list_type, bool);
+stmt_type make_switch_stmt(expr_type, list_type);
 stmt_type make_call(id_type, list_type);
 stmt_type make_list_call(list_type);
 stmt_type allocate_statement(void);

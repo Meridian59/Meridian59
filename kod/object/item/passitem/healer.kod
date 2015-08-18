@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include healer.lkod
+
    healer_desc_rsc = "%s\n\nThis will help you feel better.%s"
 
    healer_use = "You feel better."

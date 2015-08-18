@@ -1,0 +1,12 @@
+corpsenode_name_rsc = de "Ein Dimensionstor"
+corpsenode_desc_rsc = de \
+   "Du kannst nicht ausmachen, wohin das Dimensionstor führt, da die Realität "
+   "durch das Portal verzerrt wird."
+corpsenode_already_melded = de \
+   "Du ziehst bereits Zauberkraft aus dieser magischen Quelle."
+corpsenode_nothing = de "Es scheint nichts zu passieren."
+corpsenode_meld = de \
+   "Du berührst mit Deinem Geist die Energiequelle und plötzlich scheint "
+   "das Universum in sich zusammenzufallen! Höhenangst überkommt Dich und "
+   "Du fällst auf die Knie. Als Du den Schock überwunden hast, fühlst Du "
+   "neue magische Energien durch Deinen Körper strömen."

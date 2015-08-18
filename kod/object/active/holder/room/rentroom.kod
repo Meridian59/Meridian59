@@ -58,6 +58,8 @@ constants:
 
 resources:
 
+   include rentroom.lkod
+
    RentableRoom_name = "A tastefully appointed room"
    RentableRoom_roo = barrent.roo
 
@@ -114,9 +116,6 @@ resources:
    RentableRoom_heartstone_all = \
       "I am also impressed that you have all the heartstones.  I can make "
       "some rare objects that require them all."
-
-   RentableRoom_comma = ", "
-   RentableRoom_and = "and "
 
    % Rentable Room commands:
    RentableRoom_command_here = "here"
@@ -363,7 +362,7 @@ messages:
       Send(self,@ChangeTexture,#id=piBedSector,#new_texture=(piBedSpread+1),
             #flags=CTF_BELOWWALL);
 
-      for i in Send(self,@GetHolderPassive)
+      foreach i in Send(self,@GetHolderPassive)
       {
          if IsClass(First(i),&Pillow)
          {
@@ -539,7 +538,7 @@ messages:
          iBedSector = Send(self,@GetBedSectorNear,#who=who);
          if iBedSector <> $
          {
-            for i in Send(self,@GetHolderPassive)
+            foreach i in Send(self,@GetHolderPassive)
             {
                if Send(self,@GetBedSectorNear,#who=First(i))=iBedSector
                {
@@ -827,7 +826,7 @@ messages:
       while iLoop < length(plObjects)
       {
          iLoop = iLoop + 1;
-         for oObj in Nth(plObjects,iLoop)
+         foreach oObj in Nth(plObjects,iLoop)
          {
             if Send(oObj,@GetName) = Send(oItem,@GetName)
             {
@@ -843,9 +842,9 @@ messages:
    {
       local i, j;
 
-      for i in plObjects
+      foreach i in plObjects
       {
-         for j in i
+         foreach j in i
          {
             if StringContain(string,Send(j,@GetName))
             {
@@ -858,46 +857,27 @@ messages:
    }
 
    GetObjectList(who=$,oDecorator=$)
+   "Returns a list of the available objects."
    {
-      local i, j, oPreviousObject, sObjectList;
+      local i, j, lObjectList;
 
       % Note: we get away with a simple algorithm here
       % because we know there are at least 4 objects at all times.
 
-      ClearTempString();
-      oPreviousObject = $;
-
       i = 0;
-      while i < length(plObjects)
+      lObjectList = $;
+      while i++ < Length(plObjects)
       {
-         i = i + 1;
          if Send(self,@CanAccessObject,#category=i,#who=who)
          {
-            for j in Nth(plObjects,i)
+            foreach j in Nth(plObjects,i)
             {
-               if oPreviousObject <> $
-               {
-                  AppendTempString(Send(oPreviousObject,@GetIndef));
-                  AppendTempString(Send(oPreviousObject,@GetName));
-                  AppendTempString(RentableRoom_comma);
-               }
-
-               oPreviousObject = j;
+               lObjectList = Cons(j,lObjectList);
             }
          }
       }
 
-      if oPreviousObject <> $
-      {
-         AppendTempString(RentableRoom_and);
-         AppendTempString(Send(oPreviousObject,@GetIndef));
-         AppendTempString(Send(oPreviousObject,@GetName));
-      }
-
-      sObjectList = CreateString();
-      SetString(sObjectList,GetTempString());
-
-      return sObjectList;
+      return lObjectList;
    }
 
    TryPlaceObject(who=$, string=$, template=$, oDecorator=$)
@@ -930,7 +910,7 @@ messages:
          iSnapFineCol = Send(self,@GetSnappedFineCoord,
                              #unsnappedCoord=Send(who,@GetFineCol));
 
-         for i in Send(self,@GetHolderPassive)
+         foreach i in Send(self,@GetHolderPassive)
          {
             if (Send(First(i),@GetRow)=Send(who,@GetRow))
                AND (Send(First(i),@GetCol)=Send(who,@GetCol))
@@ -1008,7 +988,7 @@ messages:
          lInventory = Send(self,@GetHolderPassive);
       }
       
-      for i in lInventory
+      foreach i in lInventory
       {
          if IsClass(First(i),GetClass(template))
             AND StringEqual(Send(First(i),@GetName),Send(template,@GetName))

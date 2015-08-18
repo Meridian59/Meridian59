@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spellrod.lkod
+
    SpellWand_name_rsc = "spell rod"
    SpellWand_icon_rsc = wand1.bgf
    SpellWand_desc_rsc = \

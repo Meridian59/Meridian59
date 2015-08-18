@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include detinvip.lkod
+
    DetectInvisibilityPotion_name_rsc = "potion of invisibility detection"
    %DetectInvisibilityPotion_icon_rsc = potion01.bgf
    DetectInvisibilityPotion_desc_rsc = "This is a glass vial of colored liquid.  "

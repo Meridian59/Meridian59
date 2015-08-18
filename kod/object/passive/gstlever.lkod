@@ -1,0 +1,7 @@
+guestlever_name_rsc = de "Hebel"
+guestlever_desc_rsc = de \
+   "Dieser Hebel sieht alt aus und scheint irgendeine Funktion zu haben."
+guestlever_not_in_range = de \
+   "Der Hebel ist nicht nah genug um ihn zu betätigen."
+guestlever_changed = de "Du betätigst den Hebel."
+guestlever_stuck = de "Der Hebel verbleibt in seiner aktuellen Position."

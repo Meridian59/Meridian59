@@ -16,13 +16,18 @@ constants:
 
 resources:
 
+   include freeact.lkod
+
    FreeAction_name_rsc = "free action"
    FreeAction_icon_rsc = ifreeact.bgf
    FreeAction_desc_rsc = \
       "Kraanan's love of battle helps repel magic which might hinder "
       "your movements, and thus the liberal dispensation of lusty blows.  "
       "Requires one red mushroom and one purple mushroom to cast."
-
+   freeaction_enchantment_rsc = \
+      "\n\nYour current %s enchantment will completely resist an attempt to "
+      "paralyze you %i%% of the time.  Successful attempts to paralyze you "
+      "will be reduced by %i%%."
    FreeAction_on_rsc = \
       "You feel a rush of energy and fluid motion throughout your body."
    FreeAction_off_rsc= "Your strange feeling of freedom subsides."
@@ -110,7 +115,7 @@ messages:
       oFreeActionStrength = Send(oTarget,@GetEnchantedState,#what=self);
 
       % Give players a decent chance to improve the spell!
-      for i in Send(oTarget,@GetPassiveImprovementList)
+      foreach i in Send(oTarget,@GetPassiveImprovementList)
       {
          if First(i) = self
             AND Random(1,3) = 3
@@ -155,16 +160,15 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment will completely resist an attempt to paralyze you ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self) * piResistPercent / 100);
-      AppendTempString("\% of the time. Successful attempts to paralyze you will be reduced by ");
-      AppendTempString(100 * Send(who,@GetEnchantedState,#what=self) / piReductionFactor);
-      AppendTempString("\%.");
+      local iState;
 
-      propagate;
+      iState = Send(who,@GetEnchantedState,#what=self);
+
+      AddPacket(4,freeaction_enchantment_rsc, 4,Send(self,@GetName),
+                4,iState * piResistPercent / 100,
+                4,100 * iState / piReductionFactor);
+
+      return;
    }
 
 end

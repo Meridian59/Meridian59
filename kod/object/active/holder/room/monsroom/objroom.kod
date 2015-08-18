@@ -86,7 +86,7 @@ messages:
    {
       local lObjectInfo, oObject, row, col, finerow, finecol;
             
-      for lObjectInfo in plObject_gen
+      foreach lObjectInfo in plObject_gen
       {	 
 	 %% create apples so we know that it's not naturally created or dropped
 	 if bApple   { oObject = create(&Apple); }
@@ -129,7 +129,7 @@ messages:
       if Nth(lObject_info,2) = GEN_ONE
       {
 	 % check to make sure no other object with same class in this square
-	 for i in plPassive
+	 foreach i in plPassive
 	 {
 	    % get row and col from the list 
 	    if Nth(i,3) = iRow and Nth(i,4) = iCol and 

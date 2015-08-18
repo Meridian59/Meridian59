@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include respoisp.lkod
+
    ResistPoisonPotion_name_rsc = "potion of poison resistance"
    %ResistPoisonPotion_icon_rsc = potion01.bgf
    ResistPoisonPotion_desc_rsc = "This is a glass vial of colored liquid.  "

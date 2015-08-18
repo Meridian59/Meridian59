@@ -1,0 +1,19 @@
+% Quest description.
+jonasmurderqt_name_rsc = de "Jonas murder mystery quest"
+jonasmurderqt_desc_rsc = de \
+   "Jonas D'Accor would like you to question people regarding the "
+   "death of Duke Kalior."
+
+jonasmurderqt_completed_rsc = de \
+   "You have completed a Jonas murder mystery quest."
+
+% Quest resources.
+murder_jonas_assign = de \
+   "Wie es scheint, gibt es nicht viele Untersuchungen danach, was dem ehemaligen "
+   "Herzog passiert ist. Ich habe es mir vorgenommen, den Mörder zu finden.  "
+   "Wer auch immer diese Tat begangen hat, ist immer noch auf freiem Fuss "
+   "und könnte wieder zuschlagen.  Frag %NPC über den Mörder und wiederhole "
+   "alle nützlichen Informationen wenn Du zurück bist."
+murder_jonas_success = de \
+   "Hmmm, das ist vielleicht die Information, nach der ich gesucht habe.  "
+   "Danke für Deine Hilfe in dieser Angelegenheit.  Nimm dies als mein Dank."

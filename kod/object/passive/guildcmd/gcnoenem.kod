@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gcnoenem.lkod
+
    guildpeace_name_rsc = "end alliance"
    guildpeace_icon_rsc = light.bgf
    guildpeace_desc_Rsc = "Use this to declare that an enemy guild is no longer an enemy.  Note that you will still not be allied with that guild."

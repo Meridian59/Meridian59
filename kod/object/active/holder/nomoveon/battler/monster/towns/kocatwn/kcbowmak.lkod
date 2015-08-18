@@ -1,0 +1,13 @@
+KocatanBowMaker_name_rsc = de "Hanla zax'Ta"
+KocatanBowMaker_desc_rsc = de \
+   "Diese schickliche, junge Frau erscheint neuen Gesichtern kalt und schroff. "
+   "Nichtsdestotrotz ist es offensichtlich, daß ihre wahre Leidenschaft der "
+   "Herstellung schöner Bogen gilt."
+KocatanBowMaker_KriipaClaw_sale = de \
+   "Ich habe Kriipa Krallen von Kriipas, die ich im Jungle getötet habe. "
+   "Die Kriipa ist eine wirklich furchterregende Bestie, und du weißt, dass "
+   "ein Jäger mit seinem BLut im Kampf für ihre Krallen bezahlen muss. Du "
+   "wirst daher verstehen, das mein Preis für die Krallen sehr hoch ist"
+KocatanBowMaker_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Ich habe genug vom dem Zeug, dass es uns durch "
+   "den Sommer bringt.~n~k\""

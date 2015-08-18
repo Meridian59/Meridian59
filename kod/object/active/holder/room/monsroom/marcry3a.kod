@@ -138,6 +138,8 @@ constants:
 
 resources:
 
+   include marcry3a.lkod
+
    room_name_mar_crypt3a = "Affirmation of the Forsaken"
    room_mar_crypt3a = mardun03.roo
    music_mar_crypt3a = song10.mp3
@@ -275,7 +277,7 @@ messages:
          {
             % Killer is an apparition or evil twin... so we need to find 
             % a user in the correct trap.
-            for i in plActive
+            foreach i in plActive
             {
                if IsClass(First(i),&User)
                {
@@ -597,7 +599,7 @@ messages:
       lTrapList = $;
       lFinalTrapList = $;
 
-      for i in Send(self,@GetHolderActive)
+      foreach i in Send(self,@GetHolderActive)
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
  
@@ -608,7 +610,7 @@ messages:
             {
                lTrapList = cons(each_obj,lTrapList);
 
-               for i in lTrapList
+               foreach i in lTrapList
                {
                   if trap = 1
                   {
@@ -648,7 +650,7 @@ messages:
             {
                lTrapList = cons(each_obj,lTrapList);
 
-               for i in lTrapList
+               foreach i in lTrapList
                {
                   if trap = 1
                   {
@@ -697,7 +699,7 @@ messages:
 
    Teleport(what=$)
    "Admin supported."
-   "For traps - if you're in the trap, use secondary blink coordinates."
+   "for traps - if you're in the trap, use secondary blink coordinates."
    {
       local iRow, iCol;
 

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include corpnode.lkod
+
    corpsenode_name_rsc = "rip in space"
    corpsenode_icon_rsc = teleport.bgf
    corpsenode_desc_rsc = \

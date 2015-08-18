@@ -18,14 +18,12 @@ constants:
 
 resources:
 
+   include resring.lkod
+
    resistring_icon_rsc = ring3.bgf
-  
    resistring_use_rsc = "You put the ring on."
    resistring_dead_rsc = "The ring crumbles!"
-
-   resistring_chargeslefta_rsc = "There are "
-   resistring_chargesleftb_rsc = " charges left in this ring."
-   
+   resistring_chargesleft_rsc = "\n\nThere are %i charges left in this ring."
    resistring_working_rsc = \
       "Your resistance ring offers a surge of elemental protection!"
    resistring_attacker_rsc = \
@@ -34,16 +32,12 @@ resources:
 classvars:
 
    vrIcon = resistring_icon_rsc
-
    vrUseMessage = resistring_use_rsc
    vrDeadMessage = resistring_dead_rsc
-
    viHits_init_min = 8
    viHits_init_max = 12
-
    viBulk = 5
    viWeight = 10
-   
    viValue_average = 280
 
    % Resistance rings hide their color until revealed or worn
@@ -58,15 +52,16 @@ messages:
 
    AppendDesc()
    {
-      if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability) = TRUE
+      if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability)
       {
-         AppendTempString("\n\n");   
-         AppendTempString(resistring_chargeslefta_rsc);      
-         Send(SYS,@AppendCardinalToTempString,#number=piHits);
-         AppendTempString(resistring_chargesleftb_rsc);
+         AddPacket(4,resistring_chargesleft_rsc,4,piHits);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
       }
 
-      propagate;
+      return;
    }
 
    NewUsed(what = $)

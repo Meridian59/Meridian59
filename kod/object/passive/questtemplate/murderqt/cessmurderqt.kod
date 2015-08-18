@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include cessmurderqt.lkod
+
    % Quest description.
    cessmurderqt_name_rsc = "Princess murder mystery quest"
    cessmurderqt_desc_rsc = \
@@ -77,7 +79,7 @@ messages:
                #quest_node_index=QNT_ID_CESS_MURDER_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

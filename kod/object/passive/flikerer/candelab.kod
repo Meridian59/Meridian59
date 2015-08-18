@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include candelab.lkod
+
    candelabra_name_rsc = "candelabra"
    candelabra_icon_rsc = candelab.bgf
    candelabra_desc_on = \

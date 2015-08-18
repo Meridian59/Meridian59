@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include heat.lkod
+
    heat_name_rsc = "heat"
    heat_icon_rsc = iheat.bgf
    heat_desc_rsc = \

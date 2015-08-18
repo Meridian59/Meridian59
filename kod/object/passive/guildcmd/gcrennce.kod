@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcrennce.lkod
+
    guildrenounce_name_rsc = "renounce guild"
    guildrenounce_icon_rsc = light.bgf
    guildrenounce_desc_text_rsc = "Use this command to quit your guild.  You never liked them anyway.  Guildmasters must transfer their title before using this command."
@@ -92,7 +94,7 @@ messages:
 
       lMembers = send(oGuild,@getmemberlist);
 
-      for i in lMembers
+      foreach i in lMembers
          {
              post(first(i),@msgsenduser,#message_rsc=renounce_ties_others,
                 #parm1=send(who,@getdef),

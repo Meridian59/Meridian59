@@ -1,0 +1,12 @@
+Cloak_name_rsc = de "Verhüllen"
+Cloak_desc_rsc = de \
+   "Qor hüllt Deinen Astralkörper in Schatten, und schützt Dich vor magischer "
+   "Verfolgung. Der Zauber benötigt Wurzelknollen."
+Cloak_on_rsc = de \
+   "Es fühlt sich an, als ob dein Geist irgendwie undeutlich geworden ist."
+Cloak_off_rsc = de "Du fühlst dich nun wieder auffälliger."
+Cloak_already_enchanted_rsc = de "Du bist bereits verhüllt."
+Cloak_Succeed_rsc = de "Du wickelst einen magischen Umhang über %s%s."
+cloak_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber hält dich vor Feinden versteckt für "
+   "%i%% der Zeit."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include chain.lkod
+
    chainarmor_name_rsc = "chain armor"
    chainarmor_icon_rsc = chainamr.bgf
    chainarmor_desc_rsc = \

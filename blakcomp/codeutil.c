@@ -369,9 +369,13 @@ int flatten_expr(expr_type e, id_type destvar, int maxlocal)
       /* Write out operation type */
       switch(e->value.unary_opval.op)
       {
-      case NEG_OP:     OutputByte(outfile,  (BYTE) NEGATE);      break;
-      case NOT_OP:     OutputByte(outfile,  (BYTE) NOT);  	 break;
-      case BITNOT_OP:  OutputByte(outfile,  (BYTE) BITWISE_NOT); break;
+      case NEG_OP:      OutputByte(outfile,  (BYTE) NEGATE);         break;
+      case NOT_OP:      OutputByte(outfile,  (BYTE) NOT);            break;
+      case BITNOT_OP:   OutputByte(outfile,  (BYTE) BITWISE_NOT);    break;
+      case PRE_INC_OP:  OutputByte(outfile,  (BYTE) PRE_INCREMENT);  break;
+      case PRE_DEC_OP:  OutputByte(outfile,  (BYTE) PRE_DECREMENT);  break;
+      case POST_INC_OP: OutputByte(outfile,  (BYTE) POST_INCREMENT); break;
+      case POST_DEC_OP: OutputByte(outfile,  (BYTE) POST_DECREMENT); break;
 
       default:
 	 codegen_error("Unknown unary operator type (%d) encountered", 

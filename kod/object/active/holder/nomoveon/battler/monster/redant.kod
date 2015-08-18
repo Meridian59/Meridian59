@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include redant.lkod
+
    redant_koc_name_rsc = "kawilkinich"
    redant_name_rsc = "mutant ant"
    redant_icon_rsc = antr.bgf

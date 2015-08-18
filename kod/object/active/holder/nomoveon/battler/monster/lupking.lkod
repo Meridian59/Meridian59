@@ -1,0 +1,27 @@
+lupoggking_name_rsc = de "Der Lupogg-König"
+lupoggking_desc_rsc = de \
+   "Der alte König der Lupoggs herrscht über diese dunklen Höhlen, wohl wissend, "
+   "dass kein anderes Geschöpf es mit ihm aufnehmen kann. Die Felswände zittern "
+   "und beben jedesmal, wenn dieses Monstrum in Wehklagen ausbricht. Du hast "
+   "das Gefühl, als ob Du bereits die meisten Leute, die auf den Lupogg-König "
+   "getroffen sind, überlebt hast, doch dieser Gedanke beruhigt Dich kein "
+   "bißchen."
+lupoggking_dead_name_rsc = de "toter Lupogg-König"
+lupoggking_cast_spell = de \
+   "Der Luppog-König bedeckt Dich mit einem fauligen, lähmendem Schleim!"
+lupoggking_death_blow = de \
+   "Dein letzter Angriff beendet die Herrschaft des Lupogg-Königs!"
+lupoggking_single_killer = de \
+   "Du hast den mächtigen Lupogg-König ganz allein getötet!"
+lupoggking_double_killer = de \
+   "Der Lupogg-König ist dank Dir und Deinem Kameraden..."
+lupoggking_helper_killer = de \
+   "Der Lupogg-König ist dank Dir und Deiner Kameraden tot!"
+lupoggking_no_truce = de \
+   "Das Böse an diesem Ort schließt die Möglichkeit einer Waffenruhe aus."
+lupoggking_no_illusion = de \
+   "Deine Illusionen haben keinen Einfluss auf den mächtigen Luppogg König!"
+lupoggking_no_firewall = de "Du kannst hier keine Feuerwand zaubern."
+lupoggking_no_lwall = de "Du kannst hier keine Blitzwand zaubern."
+angered_by_wall_element_msg = de \
+   "Aufgebracht durch %s%s, stampt der Luppogg König feste auf dem Boden!"

@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include farendiscqt.lkod
+
    % Quest description.
    farenquest_icon_rsc = lightnin.bgf
    farenquest_name_rsc = "Faren disciple quest"

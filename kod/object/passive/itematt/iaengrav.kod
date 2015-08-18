@@ -28,13 +28,15 @@ constants:
 
 resources:
 
-    ItemAtt_Engraved_desc_1 = "  The words '"
-    ItemAtt_Engraved_desc_2 = "' are delicately engraved on the edge."
+   include iaengrav.lkod
+
+    ItemAtt_Engraved_desc = \
+      "  The words '%q' are delicately engraved on the edge."
 
 classvars:
 
    viItem_Att_Num = IA_ENGRAVED
-
+   vrDesc = ItemAtt_Engraved_desc
    viDifficulty = 2
 
 properties:
@@ -43,14 +45,12 @@ properties:
 
 messages:
 
-   AppendDesc(oItem =$)
+   AppendDesc(oItem=$)
    {
       local lData, oRoom;
 
       lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
-      AppendTempString(ItemAtt_Engraved_desc_1);
-      AppendTempString(Nth(lData,3));
-      AppendTempString(ItemAtt_Engraved_desc_2);
+      AddPacket(4,vrDesc, 4,Nth(lData,3));
 
       return;
    }

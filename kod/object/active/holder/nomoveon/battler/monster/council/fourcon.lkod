@@ -1,0 +1,17 @@
+fourCouncilor_name_rsc = de "Drechx"
+fourCouncilor_desc_rsc = de \
+   "Ein weiser Arzt, über den das Gerücht geht, er hätte dieHeilungsfähigkeiten "
+   "seines Körpers vervollkommnet. Sein Körper istalt und verwittert, doch "
+   "immer noch vollkommen gesund. Er glaubtwahrhaftig daran, dass die Stimme "
+   "des Volkes bestimmen sollte, wer sieführt, und schwankt in seiner Bündnistreue "
+   "zwischen den beiden Ligen."
+fourcon_true_ideal_rsc = de \
+   "Du hast einen sehr gesunden Körper, solch ein Training beeindruckt mich."
+fourcon_half_ideal_rsc = de \
+   "Wie die meisten Leute, die ich treffe, siehst Du kränklich aus.Du schenkst "
+   "Deiner Gesundheit zu wenig Beachtung."
+fourcon_unwanted_give = de \
+   "~k%s%s sagt Dir, \"Ich habe keine Verwendung für weltliche Besitztümer.~n~k\""
+fourCouncilor_not_ready = de \
+   "Oh, Du bist noch nicht tüchtig genug um zu lernen, wie Du denzweiten "
+   "Atem richtig einsetzen kannst."

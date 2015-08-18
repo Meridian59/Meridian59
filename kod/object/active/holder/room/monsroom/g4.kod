@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include g4.lkod
+
    room_name_OutdoorsG4 ="Main gate to Cor Noth"
    room_OutdoorsG4 = G4.roo
    OutdoorsG4_music = walk1.mp3

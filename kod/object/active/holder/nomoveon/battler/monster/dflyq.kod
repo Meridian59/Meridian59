@@ -34,6 +34,8 @@ constants:
 
 resources:
 
+   include dflyq.lkod
+
    DragonFlyQueen_koc_name_rsc = "kohuzotz"
    DragonFlyQueen_name_rsc = "dragonfly queen"
    DragonFlyQueen_icon_rsc = dflo.bgf
@@ -313,7 +315,7 @@ messages:
       }
 
       oPlayerObj = $;
-      for i in Send(who,@GetHolderPassive)
+      foreach i in Send(who,@GetHolderPassive)
       {
          if IsClass(i,GetClass(obj))
          {

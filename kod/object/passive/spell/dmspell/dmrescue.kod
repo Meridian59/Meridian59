@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dmrescue.lkod
+
    dmrescue_name_rsc = "deliverance"
    dmrescue_icon_rsc = light.bgf
    dmrescue_only_oog = \
@@ -55,7 +57,7 @@ messages:
          }
       }
 
-      for j in lTargets
+      foreach j in lTargets
       {
          i = j;
 

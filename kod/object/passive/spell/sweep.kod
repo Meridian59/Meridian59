@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sweep.lkod
+
    Sweep_name_rsc = "sweep"
    Sweep_icon_rsc = isweep.bgf
    Sweep_desc_rsc = \
@@ -96,7 +98,7 @@ messages:
 
       lGoodItems = $;
 
-      for lPassive in lPassiveItems
+      foreach lPassive in lPassiveItems
       {
          oObj = Send(oRoom,@HolderExtractObject,#data=lPassive);
 
@@ -166,7 +168,7 @@ messages:
 
       lActiveItems = Send(oRoom,@GetplActive);
 
-      for j in lActiveItems
+      foreach j in lActiveItems
       {
          oEachObj = Send(oRoom,@HolderExtractObject,#data=j); 
          if isClass(oEachObj,&Monster)

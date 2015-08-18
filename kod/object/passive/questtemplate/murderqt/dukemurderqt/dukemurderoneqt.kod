@@ -76,7 +76,7 @@ messages:
       lCargo2 = [ murder_princess_c_1, murder_princess_c_2, murder_princess_c_3,
                   murder_princess_c_4, murder_princess_c_5, murder_random_w_1,
                   murder_random_m_1, murder_random_c_1 ];
-      for i in lCargo2
+      foreach i in lCargo2
       {
          lCargo = Cons(i, lCargo);
       }

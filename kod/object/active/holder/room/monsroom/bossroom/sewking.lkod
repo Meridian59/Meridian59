@@ -1,0 +1,7 @@
+room_name_SewerKingLair = de "Die uralte Schmuggler-Kreuzung"
+SewerKingLair_lever_desc = de \
+   "Dieser Hebel ist mit Rost und Schleim bedeckt und seit Jahren nicht abgewischt "
+   "worden."
+SewerKingLair_drowning = de \
+   "Du ringst in den letzten Millimetern Luft nahe der Decke nach Atem und "
+   "saugst dabei ebenso viel Wasser wie Luft in Deine Lungen."

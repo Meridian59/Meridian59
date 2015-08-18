@@ -1,0 +1,445 @@
+% Quest description.
+murderqt_nodetwo_rsc = de \
+   "%s%s would like to learn more about Duke Kalior's murder, and "
+   "%s has requested that you ask %s%s about it."
+murderqt_nodethree_rsc = de \
+   "When asked about the murder, %s%s said \"%s\".  Return to %s%s "
+   "and pass on this information."
+
+% Quest resources.
+murder_trigger = de "Mörder"
+murder_say = de "%CARGO"
+
+murder_princess_w_1 = de \
+   "Nun, wenn Du mich fragst, die Prinzessin hat einige bewaffnete Truppen. "
+   "Warum mobilisiert sie die Truppen, wenn Sie  nichts zu verbergen hat?"
+murder_princess_w_2 = de \
+   "Ich hab ehrlich keine Ahnung.  Der Herzog war durch eine Waffe getötet "
+   "worden nicht durch einen Zauber, richtig?"
+murder_princess_w_3 = de \
+   "Die Ermordung des Herzogs ist eine Tragödie.  Ich denke, dass niemand "
+   "wirklich über den Verdacht erhaben ist, auch nicht die Prinzessin.  Aber, "
+   "welche Art von Waffe würde sie benutzen?"
+murder_princess_w_4 = de \
+   "Ich habe gehört, dass die Prinzessin beide Arten von Kampf gelernt hat, "
+   "Waffenfertigkeiten und Magie.  Obowhl sie in den letzten Jahren nichts "
+   "davon benutzt hat. Ich habe ebenfalls gehört, dass sie immernoch eine "
+   "Expertin mit dem Schwert ist."
+murder_princess_w_5 = de \
+   "Oh, ich bezweifle, dass die Person, die den Herzog getötet hat alleine "
+   "gearbeitet hat.  Ich bin sicher, dass jeder, auch die Prinzessin jemanden  "
+   "angehäuert haben kann, der diesen kaltblütigen Mord unterstützt hat."
+murder_princess_m_1 = de \
+   "Der Tod des Herzogs war offensichtlich motiviert durch Macht.  Da ist "
+   "kein Zweifel, dass jemand einflussreiches, wie die Prinzessin, ihn von "
+   "der Bühne verschwinden lassen wollte um die eigene Macht zu vergrößern."
+murder_princess_m_2 = de \
+   "Welches andere Motiv kann es sonst sein außer Geld?  Mit dieser schockierenden "
+   "Nachricht, über den Tod des Herzogs könnten die Machthaber eine Menge "
+   "Geld machen.  Schau Dir die Fraktionstruppen, die durchs Land wandern.  "
+   "Sie sind nicht billig, wie Du weißt."
+murder_princess_m_3 = de \
+   "Es ist bedauerlich, aber ich bin sicher, dass die treibende Kraft hinter "
+   "dem Mord des Herzogs die Steuern sind. Vielleicht war jemand es satt "
+   "so hohe Steuern zu zahlen oder vielleicht hat eine andere Fraktion die "
+   "Steuergelder für sich selbst haben wollen?"
+murder_princess_m_4 = de \
+   "Die Leute sagen, dass die Abneigung die der Herzog für die arme Prinzessin "
+   "hatte eine Rolle gespielt haben könnte in der dunklen Nacht.  Ich wette, "
+   "das ist der Fall.  Denn diese Gefühle, kann zu solchen Handlungen führe. "
+   "Ich glaube nicht, dass die junge Prinzessin nach ihm schlug."
+murder_princess_m_5 = de \
+   "Ich fürchte, dass der Wettbewerb zwischen dem Herzog und der Prinzessin "
+   "in diesem Mordkomplott eine große Rolle gespielt hat. Die Prinzessin "
+   "könnte gedacht haben, das es leichter ist unschuldig zu spielen und dann "
+   "wenn die Zeit reif ist schlägt sie eiskalt zu."
+murder_princess_c_1 = de \
+   "Well, I certainly think it is strange that the Meridian Council had been "
+   "meeting quite frequently at night the week before the poor Duke's bloody "
+   "demise."
+murder_princess_c_2 = de \
+   "Nur die Blinden haben nicht bemerkt, dass die Prinzessin auffällig abwesend "
+   "war in der Nacht der Ermordung.  Können wir ihrer Geschichte glauben?"
+murder_princess_c_3 = de \
+   "Ich bin misstrauisch bei jedem mit einem zu starken Alibi.  Wie die Prinzessin "
+   "nicht verdächtig ist, weil der gesamte Rat schwört das sie zu der Zeit "
+   "möglicherweise in einer Sitzung waren?"
+murder_princess_c_4 = de \
+   "Ist es nicht seltsam, dass der Herzog so brutal ermordet wurde, und niemand "
+   "hat irgendwas gehört oder gesehen?  Vielleicht war eine seltsame Magie "
+   "am Werke in dieser Nacht."
+murder_princess_c_5 = de \
+   "Ich dachte ich hörte eine Priestern sagen, dass dort seltsame magische "
+   "Mächte in der Nacht im Gange waren.  Ich frage mich, ob die Prinzessin "
+   "irgendetwas darüber weiß?"
+murder_jonas_w_1 = de \
+   "Ich habe gehört, dass Jonas nicht mehr sein Schwert in der Öffentlichkeit "
+   "säubert, so wie er es früher immer gemacht hat bevor der Herzog ermordet "
+   "wurde.  Was versucht er zur verstecken?"
+murder_jonas_w_2 = de \
+   "Nun, Jonas ist ein Meister vieler Waffen, woran er uns desöfteren erinnert. "
+   "Ich bin mir sicher, dass Jonas ein Meister ist, von welcher Waffe auch "
+   "immer bei dem Mordan den Herzog verwendet wurde ."
+murder_jonas_w_3 = de \
+   "Ich habe jemanden zu einem Freund von mir sagen hören, dass Jonas keine "
+   "echte Waffe benutzen kann, um sein Leben zu retten und das seine ganzen "
+   "Kriegsgeschichten reine Lügen sind."
+murder_jonas_w_4 = de \
+   "Ran er'Hoth sagte neulich, dass der Mord mit einem Löffel geschah.  Hatte "
+   "Jonas nicht gesagt, dass er sich einmal in einer Kneipe verteidigt hat,  "
+   "und dabei einen Löffel benutzt hat?"
+murder_jonas_w_5 = de \
+   "Jemand hat mir gesagt, dass da ein kleiner Blutfleck auf dem Schwert "
+   "von Jonas.  Hat er den Herzog wirklich mit seinem eigenen Schwert getötet?"
+murder_jonas_m_1 = de \
+   "Habt ihr die Gerüchte gehört, dass Jonas über die Unterdrückung der Leute "
+   "durch den Adel geredet hat?  ich denke, das ist wichtig."
+murder_jonas_m_2 = de \
+   "Ich habe irgendwo gehört, dass Jonas gesagt hat, er könne die Menschen "
+   "besser führen als es der Herzog konnte.  Vielleicht hat er gehofft den "
+   "alten Herzog zu ersetzen."
+murder_jonas_m_3 = de \
+   "Hey, geht Jonas nicht regelmäßig zum Tempel von Kraanan die Faust? Ich "
+   "frage mich, ob sein persönlicher Reichtum in Gefahr ist."
+murder_jonas_m_4 = de \
+   "Jonas sagte zu jemandem, dass er dabei ist seine eigene Armee zu vergrößern.  "
+   "Das könnte teuer sein.  Ich frage mich was er geplant hat um an das Geld "
+   "dafür zu kommen."
+murder_jonas_m_5 = de \
+   "Jemand sagte, dass die Prinzessin und Jonas in letzter Zeit, ziemlich "
+   "gute Freunde geworden sind.  Vielleicht hat sie ihn angeheuert den Herzog "
+   "zu töten?Er ist immer auf der Suche um seine Kampffähigkeiten unter Beweis "
+   "zu stellen."
+murder_jonas_c_1 = de \
+   "Ich finde es seltsam, dass wenn Du Jonas suchst, dass Du ihn niemals "
+   "findenkannst.  Er mag die schlüpfrige Art was ihm einen schnellen Abgang "
+   "ermöglicht."
+murder_jonas_c_2 = de \
+   "Jonas behauptet, er war in dem Tempel von Kraanan, als der Herzog brutal "
+   "ermordet wurde, aber Prinzessin Qerti'nya sagt sie kann sich nicht erinnern "
+   "ob das so war oder nicht."
+murder_jonas_c_3 = de \
+   "Ich dachte, ich habe gehört wie Jonas Rook bschuldigt hat der Mörder "
+   "zu sein.  Ist es nicht lustig, dass er das versucht, Rook in Schwierigkeiten "
+   "zu bringen, vor allem, wenn Du deren beider gemeinsamer Geschichte betrachtest?"
+murder_jonas_c_4 = de \
+   "Ich habe gehört, dass Jonas die Prinzessin eingeschüchtert hat, den Herzog "
+   "zu schlagen.  Bei allem, was er erhalten kann, kann ich mir das durchaus "
+   "vorstellen."
+murder_jonas_c_5 = de \
+   "Ich dachte, ich sah Jonas im Tempel von Kraanan in der Zeit als der Herzog "
+   "ermordet wurde, aber ich kann es nicht mit Sicherheit sagen."
+murder_miriana_w_1 = de \
+   "Nun, Reisende haben berichtet, dass Sie Miriana gesehen haben, wie sie "
+   "tanzend mit einem Messer im Wald war. Wie ist sie an die Waffe gekommen?"
+murder_miriana_w_2 = de \
+   "Jemand hat mal gesagt, dass Miriana einst eine Spinne in zwei Teile geschnitten "
+   "hat mit seltsamer Magie.  Die Wunde sah eher nach einem Schlag mit einer "
+   "Waffe aus, als  einem typischen Magieschaden, sagten sie."
+murder_miriana_w_3 = de \
+   "Ich hörte ein Gespräch in dem eine Person sagte, dass sie Miriana gehört "
+   "haben als sie durch den Wald lief und dabei etwas über Faren und sie "
+   "will die Waffe zurück schrie. Was könnte das bedeuten? "
+murder_miriana_w_4 = de \
+   "Jemand sagte, dass Miriana die wahre Macht des Zaubers Magisches Opfer "
+   "'kannte. Ich frage mich, was sie mit all der Macht tut?"
+murder_miriana_w_5 = de \
+   "Ich habe einmal gehört, dass die lebenden Bäume Blitze auf Miriana gezaubert "
+   "haben und Miriana hat sie zurückgeworfen mit einer viel größeren Stärke.  "
+   "Kann Sie vielleicht diesen Zauber gegen den Herzog verwendet haben?"
+murder_miriana_m_1 = de \
+   "Ich hörte einen Wachmann sagen, dass er mit einer kleinen Gruppe von "
+   "Wachen in den Wald gegangen sind um nach Miriana zu suchen.  Er sagte, "
+   "als sie  sie gefunden haben, wollten Sie ihr einen Brief vom Herzog geben, "
+   "aber sie wurde sauer und ging weg. Hat sie den Herzog gehasst?  "
+murder_miriana_m_2 = de \
+   "Ein Magier hat mir erzählt, dass die Prinzessin heimlich Miriana unterstützt, "
+   "weil sie weiß wie man die Kraft der Magie einsetzt.  Könnten sie den "
+   "Herzog zusammen erledigt haben?"
+murder_miriana_m_3 = de \
+   "Ich kann mich daran erinnern, wie der Herzog mal einen Witz erzählt hat,  "
+   "dass Miriana Tiere als Freunde gehalten hat, weil sie die einzigen waren, "
+   "die sie ertragen konnten.  Danach gab es einen lauten Donner außerhalb "
+   "der Mauern der Festung.  Könnte da etwas Wahres dran sein? "
+murder_miriana_m_4 = de \
+   "Die Leute haben gesagt, dass Miriana einen Groll gegen die Familie des "
+   "Herzogs gehegt hat, und das über Generationen.  Könnte sie so alt sein?"
+murder_miriana_m_5 = de \
+   "Vor ein paar Jahren hörte ich eine Geschichte darüber, wie Miriana einmal "
+   "den Herzog besucht hat, um ihn vor Gefahr zu warnen. Nachdem der Vorfall "
+   "geschehen war, war der Herzog ihr vor, ihn töten zu wollen. Ich frage "
+   "mich, ob sie zurück kam um die Arbeit zu beenden?"
+murder_miriana_c_1 = de \
+   "Ein Freund eines Freundes erzählte mir, dass Miriana mal im Wald war, "
+   "und eines Tages auf einmal ohne Grund schrie. Sie rief: Ich war es, meine "
+   "Herrin,'  er ist tot. Ich frage mich ob sie den Herzog gemeint hat?"
+murder_miriana_c_2 = de \
+   "Ich weiß nichts, was in der Nacht in der Festung vom Herzog passiert "
+   "ist, ich war im Wald und habe versucht Pilze zu finden ohne dabei auf "
+   "Miriana zu treffen."
+murder_miriana_c_3 = de \
+   "Ich sah eine seltsame Gestalt im Wald in der Nähe von Tos, in der Nacht  "
+   "als der Herzog starb. Es war eine kleine Person, vielleicht so groß wie "
+   "ein kleines Mädchen."
+murder_miriana_c_4 = de \
+   "Ich war vor kurzem im Wald um ein paar Kräuter zu finden, und ich hörte "
+   "ein Abenteurer zu Miriana sprechen. Als er den Herzog erwähnte wurde "
+   "sie sehr wütend und hat sich geweigert ihm den Zauber nachdem er fragte "
+   "beizubringen."
+murder_miriana_c_5 = de \
+   "Ich habe Leute gehört, die behaupten, Miriana steckt hinter dem Mord "
+   "an de, Herzog. Ich finde es lächerlich, dass ein kleines Mädchen hinter "
+   "solch einem Mord stecken soll."
+murder_lich_c_1 = de \
+   " Nun, ich hörte, dass einer der Gastwirte Bier zur Burg des Herzogs geliefert "
+   "hat um sich bereit zu machen für das große Bankett. Offenbar war da eine "
+   "merkwürdige Frau, die bei den Lieferkarren rumstand, als sie ankamen. "
+   "Er sagte, sie hatte eine sehr blasse Haut und trug ein seltsames Amulett."
+murder_lich_c_2 = de \
+   "Ich härte einen reisenden Händler, dass alle Arten von Lichtern und merkwürdigen "
+   "Geräuschen aus den Bergen über Brax kamen, in der Nacht als der Herzog "
+   "starb."
+murder_lich_c_3 = de \
+   "Ich habe gehört, dass Menschen denken, dass die Königin der Nekromanten "
+   "den Herzog getötet, haben könnte. Aber, der Herzog hat nicht wirklich "
+   "viel getan, dass er ihr in den Weg gekommen wäre.  Nun, wenn er eine "
+   "Armee nach Brax geschickt hätte, wie einige Wollten, wäre es etwas anderes."
+murder_lich_c_4 = de \
+   "Nun, ich bin sicher, dass ich nichts davon weiß. Ich habe meine Mutter "
+   "besucht, ihr geht es nicht so gut.  Aber, wenn man darüber nachdenkt, "
+   "die Nekromanten waren sehr ruhig in letzter Zeit, vielleicht zu ruhig."
+murder_lich_c_5 = de \
+   "Naja, ich bin mir nicht sicher, aber ich habe gehört, dass eine große "
+   "Gruppe von Nekromanten eine Woche vor dem Mord an dem Herzog gesehen "
+   "wurde, wie sie durch die Berge in Richtung Tos gingen."
+murder_lich_w_1 = de \
+   "Ich weiß nicht, ob ich es Dir sagen soll oder nicht, aber ein Freund "
+   "arbeitet als Wache für den Herzog. Er sagt, dass es dort eine große Menge "
+   "Wachen gibt. Es scheint, als wäre der Herzog nicht ermordert worden!  "
+   "Er hat sich selbst umgebracht als er versuchte ein Amulett der Drei abzulegen."
+murder_lich_w_2 = de \
+   "Ich weiß nichts über eine Waffe, aber ich weiß, dass die Festhalle verschlossen "
+   "war. Also, wer auch immer ihn getötet hat, muss eine Möglichkeit gehabt "
+   "haben, von dort aus raus zu teleportieren.  Die einzigen Leute, die ich "
+   "kenne mit solch einer Magie, sind die Nekromanten."
+murder_lich_w_3 = de \
+   "Ich habe gehört, dass bevor sie die Leiche gefunden haben, wurden einige "
+   "der Wachen des Herzogs von Skeletten angegriffen!"
+murder_lich_w_4 = de \
+   "Ein Freund von mir, der für die Prinzessin arbeitet, ist davon überzeugt, "
+   "dass der Herzog ein Nekrommant geworden ist."
+murder_lich_w_5 = de \
+   "Ich habe gehört, dass einer der Wachen des Herzogs jemanden, der genau "
+   "so aussah wie der Herzog zu Fuß aus dem Schloss kam, nachdem der Herzog "
+   "gestorben war. Er lief hin um es zu untersuchen,doch wer immer es war, "
+   "war bereits weg und hinterliess nur eine Pfütze von schleimigen Glibber."
+murder_lich_m_1 = de \
+   "Ich habe gehört, dass der Herzog ein Bankett hatte, während dem er bekannt "
+   "geben wollte, dass er eine große Offensive gegen Brax starten wollte, "
+   "um die Lich Königin und die Nekromanten auszurotten."
+murder_lich_m_2 = de \
+   "Hmmm... naja, es ist sicherlich kein Geheimnis das die Nekromanten und "
+   "Königin Venya'cyr nicht aufhören würden um uns zu stören und zu schwächen."
+murder_lich_m_3 = de \
+   "Nun, der alte Herzog tat gut, Königin Venya'cyr fernzuhalten, also wenn "
+   "Du mich fragst, ist sie.  sicherlich verantwortlich."
+murder_lich_m_4 = de \
+   "Manche Leute sagen, es muss die Lich Königin gewesen sein, die den Herzog "
+   "getötet hat, aber wir alle wissen, dass sie Brax seit einem Jahrtausend "
+   "nicht verlassen hat."
+murder_lich_m_5 = de \
+   "Hat Königin Venya'cyr nicht ein Gelübte abgelegt, dass Sie beide, den "
+   "Herzog und die Prinzessin töten will. Kateriina sollte aufpassen, sie "
+   "könnte die nächste sein!"
+murder_akardius_c_1 = de \
+   "Sag es nicht dem Herzog, aber ist es nicht schwierig an jemanden anders "
+   "zu denken, wenn niemand Zugang zur Festhalle hatte?"
+murder_akardius_c_2 = de \
+   "Sag es nicht dem Herzog, aber ist es nicht schwierig an jemanden anders "
+   "zu denken, wenn niemand Zugang zur Festhalle hatte?"
+murder_akardius_c_3 = de \
+   "Jeder, der den Blick im Gesicht des armen Jungen gesehen hat, als er "
+   "die Leiche seines Onkels sah, weiß, dass er sicher nicht dafür verantwortlich "
+   "sein kann."
+murder_akardius_c_4 = de \
+   "Sie sagten, dass der Herzog das Bankett zu Ehren seines Neffen gehalten "
+   "hat.  Es sollte ein großes Willkommen zurück sein, und der Herzog wollte "
+   "ihn als seinen Erben benennen."
+murder_akardius_c_5 = de \
+   "Es gibt mehr über Herzog Arkadius als man sieht;  Hast du Dich jemals "
+   "gefragt, wo er all die Jahre war?  Auf der Insel, im Tempel von Riija "
+   "studieren, dass ist es!  Ich sag Dir was, jeder, der so viel Zeit mit "
+   "dem Gott der Gaunerei verbracht hat, dem ist nicht zu vertrauen."
+murder_akardius_w_1 = de \
+   "Das was ich gehört habe, ist, dass der Herzog nicht durch eine Waffe "
+   "oder Magie getötet wurde.  Es war ein  Zaubertrank. Ist Gift nicht die "
+   "Waffe mit der die Adligen Ihre Familienmitglieder immer umgebracht habe?"
+murder_akardius_w_2 = de \
+   "Sie sagen, dass an dem Tag als der Herzog getötet wurde, hat Arkadius "
+   "ein neues Schwert aus der Waffenkammer bekommen.  Ich frage mich, warum "
+   "wollte er nicht mehr sein altes tragen..."
+murder_akardius_w_3 = de \
+   "Ich habe gehört, dass Herzog Arkadius im Tempel von Riija studiert hat, "
+   "während er weg war.  ich frage mich, ob sie ihn mehr als nur die einfachen "
+   "Illusionen zu fortgeschrittene lehrten. Schließlich ist Riija der Gaunergott "
+   "und manche Tricks können tödlich sein."
+murder_akardius_w_4 = de \
+   "Ich weiß, dass sie alle Waffen der Wächter überprüft haben, direkt nachdem "
+   "der Herzog getötet wurde, und Herzog Arkadius war der erste der ging "
+   "um ein gutes Beispiel für seine Leute abzugeben."
+murder_akardius_w_5 = de \
+   "Sie sagen, dass Herzog Arkadis ein vollendeter Schwertkämpfer war. Nicht "
+   "das er so hart hätte sein müssen um auf seinen Onkel zu treffen.  ich "
+   "meine, schließlich war er ein bisschen, äh ... kräftig gebaut."
+murder_akardius_m_1 = de \
+   "Du weißt, dass man sagt: Blick in Richtung der einen, die am meisten "
+   "Wohlstand besitzen."
+murder_akardius_m_2 = de \
+   "Ich habe gehört, dass Herzog Arkadius nicht auf die Insel gehen wollte, "
+   "aber sein Onkel ihn gesandt hat, als er klein war.  Vielleicht hat er "
+   "seinen Onkel dafür gehasst."
+murder_akardius_m_3 = de \
+   "Ich hörte, dass der Herzog Jonas militärischen Fähigkeiten lobte und, "
+   "dass er ein würdiger Erbe wäre.  Vielleicht war Arkadius eifersüchtig."
+murder_akardius_m_4 = de \
+   "Madelia sagte mir, dass sie mal mit Arkadius zu einem Picknick war, und "
+   "nachher wurde er nervös und lief weinend weg, \"Oh wie konnte ich Prinzessin "
+   "Kateriina das nur antun?\"   Könnten sie sich geliebt haben?  Der alte "
+   "Herzog hätte das, sicher nicht genehmigt!"
+murder_akardius_m_5 = de \
+   "Jeder weiß, dass der Herzog geplant hat Arkadius als sein Erbe zu ernennen.  "
+   "Ich sehe nicht ein, warum hätte er seinem Onkel schaden wollen, wo er "
+   "doch so gut zu ihm war."
+murder_maleval_c_1 = de \
+   "Hmm... das erste was mir in den Kopf kommt ist, dass Maleval freien Zugang "
+   "zum Herzog hatte.  Ich weiß nicht wie Kalior zu ihm stand.  Er ist mir "
+   "unheimlich."
+murder_maleval_c_2 = de \
+   "Einer der Wachen des Herzogs erzählte mir, dass Maleval sich immer in "
+   "den Räumen zeigt, die  eigentlich geschlossen sein sollten. Vielleicht "
+   "hat er seine eigenen Schlüssel."
+murder_maleval_c_3 = de \
+   "Von meiner Frau, der Bruder, seine Cousine ist sich sicher, dass Maleval "
+   "in der Nacht des Mordes in Qors Tempel war. Ähm.... ich meine nicht, "
+   "das SIE jemals dorthin gehen würde.  Niemand in meiner Familie  folgt "
+   "Qor. Sicher nicht!"
+murder_maleval_c_4 = de \
+   "Einer von den Lieferanten des Herzogs erzählte, dass Kalior ein Fest "
+   "halten wollte um zu zu verkünden, dass Arkadius sein neuer Berater ist. "
+   "Ich wette das hat Maleval nicht geschmeckt!"
+murder_maleval_c_5 = de \
+   "Ich habe einen Freund, der im Garten des Herzogs arbeitet, und einmal "
+   "stand er da um eine Hecke zu trimmen und er hörte Maleval sagen, \"Geh "
+   "vorsichtig vor Kalior. Du willst nicht meine Geduld ausreizen.\"  Er sagt, "
+   "er glaubt, dass sie über eine geplante Offensive gegen Brax gestritten "
+   "haben."
+murder_maleval_w_1 = de \
+   "Nun, wer kann das sagen?  Aber, wenn sich herausstellt, dass Magie im "
+   "Spiel war wäre ich misstrauisch Maleval gegenüber.  Er hat auf jeden "
+   "Fall die Mittel."
+murder_maleval_w_2 = de \
+   "Neulich habe ich gehört wie Ran er'Hoth sagte, \"Schmilz, schmilz, schmilz... "
+   "So wird der kleine Herzogi fallen.\"  Könnte das bedeuten, dass Kalior "
+   "durch einen Säuregriff umgebracht wurde?"
+murder_maleval_w_3 = de \
+   "Nun, das würde ich sicherlich wissen, und ich denke, dass man ziemlich "
+   "mächtige Magie besitzen muss für soetwas."
+murder_maleval_w_4 = de \
+   "Ich habe von einer zuverlässigen Quelle erfahren, dass Kalior zu Tode "
+   "geschlagen wurde, aber ich glaube das nicht. Ich bin mir sicher Maleval "
+   "hat es getan und eine Prügelei ist nicht sein Stil."
+murder_maleval_w_5 = de \
+   "Ein Freund sagte, Kalior wurde erstickt. Er konnte aber keinen genauen "
+   "Blick auf ihn werfen, da er nicht aufhören konnte zu Niesen."
+murder_maleval_m_1 = de \
+   "Ich hatte immer das Gefühl, dass Maleval die eigentliche Macht hinter "
+   "dem Thron hatte.  Vielleicht wurde er müde von seiner Marionette."
+murder_maleval_m_2 = de \
+   "Maleval scheint den jungen Arkadius zweifelsfrei zu mögen.  Er scheint "
+   "ihn fast zu schützen.  Ich nehme an,  es ist natürlich, nachdem was geschehen "
+   "ist."
+murder_maleval_m_3 = de \
+   "Nun, trotz allem, was gesagt wird, glaube ich können wir Maleval ausschließen.  "
+   "Er hatte Kalior bereits in der Tasche, also warum sollte er seinen Tod "
+   "wollen?  Sicher, ein Schüler des Gauners ist schwerer zu kontrollieren!"
+murder_maleval_m_4 = de \
+   "Es gab Tuscheleien über den dunklen Zauberer Maleval...  Ich denke, die "
+   "Leute sind einfach voller Angst weil er so geheimnisvoll ist."
+murder_maleval_m_5 = de \
+   "Angeblich hat Maleval gedacht, Herzog Kalior hat nicht genug Respekt "
+   "für die Magie.  Vielleicht hat er eine kleine Demonstration veranstaltet."
+murder_roq_m_1 = de \
+   "Ist dort nicht ein professioneller Meuchelmörder in der Kanalistation "
+   "von Barloque?  Er scheint ziemlich verdächtig zu sein.  Ich bin überrascht, "
+   "dass er nicht bereits festgenommen wurde!"
+murder_roq_m_2 = de \
+   "Ich habe ein Gemurmel um Barloque gehört, dass Truppen zum Säubern in "
+   "die Kanalisation geschickt wurden. Für mich klingt das nach eine Hexenjagd.  "
+   "Jeder weiß, Roq ist seit Jahren im Ruhestand."
+murder_roq_m_3 = de \
+   "Warum denkst Du, versteckt sich Roq in der Kanalistation?  Man munkelt, "
+   "dass er er vor Jahren Königin Katria getötet hat und sich deshalb immernoch "
+   "versteckt.  Meine Tante sagt immer, es war Kalior selbst, der ihn zu "
+   "dem gemacht hat was er ist."
+murder_roq_m_4 = de \
+   "Weißt Du, dass es eine Zeit gab, in der Roq ein häufiger Gast war auf "
+   "Schloß Schwarzstein.  Viele Leute denken sogar er hätte Kalior manipuliert.  "
+   "Ich frage mich, wie er sich gefühlt hat, als er nicht mehr sein Berater "
+   "war?"
+murder_roq_m_5 = de \
+   "Logisch gesehen, scheint es der einfachste Weg zu sein, jemanden zu töten, "
+   "in dem man sich einen Mörder mietet.  Das nimmt die Schuld von Dir.  "
+   "Aber, ich habe noch nie einen Mord geplant, also wieso sollte ich das "
+   "wissen?"
+murder_roq_w_1 = de \
+   "Ich habe gehört, dass es eine kleine Klinge zwischen den Schultern des "
+   "Herzogs der Grund für seinen Tod war."
+murder_roq_w_2 = de \
+   "Von dem, was ich gehört habe, war die Wunde des Herzogs gar nicht so "
+   "schlimm, es eiterte und aß ihn innerhalb von Minuten.  Kam die Wunde "
+   "von einer magisch verfluchten Waffe?"
+murder_roq_w_3 = de \
+   "Einer der Wachen des Herzogs sagt, Kalior und Arkadius spielten eine "
+   "Runde das Meuchelmörderspiel vor dem Bankett.  Was, wenn jemand den schwarzen "
+   "Dolch von Arkadius ausgetauscht hat?"
+murder_roq_w_4 = de \
+   "Jemand hat mir gesagt, dass Roq am Tag der Ermordung des Herzogs mit "
+   "nur einem Messer gesehen wurde.  Hat er nicht für gewöhnlich zwei?"
+murder_roq_w_5 = de \
+   "Eine Freundin sagte mir, dass der Herzog genau vier Mal geschrien hat.  "
+   "Heißt das, dass er mehrfach erstochen wurde?"
+murder_roq_c_1 = de \
+   "Ich hörte jemanden sagen, das Roq vor kurzem ein paar neue Waffen gekauft "
+   "hat.  Ich frage mich woher er das Geld hat?"
+murder_roq_c_2 = de \
+   "Ich habe gehört, dass Roq den Herzog getötet haben muss, einfach weil "
+   "er ein Meuchelmörder ist.  Ich denke, dass ist dumm.  Und überhaupt, "
+   "Roq kann es nicht gewesen sein, denn zu der Zeit habe ich einen Dolch "
+   "bei ihm gekauft.   Und das ist, wie mir ein Freund sagte.  Ein kleiner."
+murder_roq_c_3 = de \
+   "Ein Freund sagt, das eine schattenhafte Gestallt sich schnell durch die "
+   "Twisted Woods bewegt hat in der Nacht des Mordes.  Er grüßte ihn und "
+   "in dem Moment als er ihm in die rotglühenden Augen sah ist er verschwunden."
+murder_roq_c_4 = de \
+   "Jemand sagte mir, dass Roq gesehen hat wie er eine große Lieferung in "
+   "sein Lager bei Oberts Gewölbe gebracht hat.  Es war in ein Tuch eingewickelt "
+   "aber es schien offenbar schwer zu sein und machte einen klirrenden Klang."
+murder_roq_c_5 = de \
+   "Eine der Wachen des Herzogs erzählte mir, dass Roq das Schloss Schwarzstein "
+   "besucht hat an diesem Abend.  Maleval und er traffen sich auf den Stufen "
+   "und stritten miteinander und es endete damit, dass der dunkle  Zauberer "
+   "raus in die Nacht eilte"
+murder_random_w_1 = de \
+   "Pah!  Das ganze Ding ist lächerlich.  Tatsache ist, dass der Herzog nicht "
+   "warten konnte um das Fest zu beginnen und das war Arkadius peinlich, "
+   "denn sein Onkel hat sich zu Tode gefressen."
+murder_random_c_1 = de \
+   "Ich habe gehört, dass Arkadius die Leiche des Herzogs zu einem Heiler "
+   "brachte, als er bereits tot war.  Ich glaube er hat verzweifelt versucht "
+   "ihn zu retten."
+murder_random_m_1 = de \
+   "Nun, da scheinen viele Gerüchte über Maleval, der Prinzessin oder wem "
+   "auch immer herumzuschwirren..  Einige Narren verdächtigen vermutlich "
+   "sogar mich.  Aber, ich wäre nicht überrascht, wenn der Herzog nicht eine "
+   "heimliche Geliebte hatte; Für mich sieht es nach einem Verbrechen aus "
+   "Leidenschaft aus."

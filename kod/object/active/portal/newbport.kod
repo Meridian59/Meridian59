@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include newbport.lkod
+
    newbportal_desc_rsc = \
       "Entering this portal strips you of your training gear and brings "
       "you into the mainland of Meridian 59, never to return."

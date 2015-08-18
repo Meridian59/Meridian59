@@ -1,0 +1,49 @@
+barloque_clerk_name_rsc = de "Caramo"
+barloque_clerk_desc_rsc = de \
+   "Nicht gerade das, was Du Dir unter einer typischen königlichen Bürokratin "
+   "vorstellst. Sie ist attraktiv, charmant und nach allem, was man hört, "
+   "ehrenhaft. Caramo hat Jahre damit verbracht, das Geld des Herzogs zu "
+   "zählen, die Steuerunterlagen der früheren Königin zu ordnen und seit "
+   "kurzem als Schreiberin im Büro des Justiziars zu dienen."
+barloque_clerk_pardon = de "Begnadigen"
+barloque_clerk_pardons = de "Begnadigungen"
+barloque_clerk_anoutlaw = de "Gesetzlose(r)"
+barloque_clerk_outlaws = de "Gesetzlosen"
+barloque_clerk_amurderer = de "Mörder(in)"
+barloque_clerk_murderers = de "Mörder(innen)"
+barloque_clerk_alawful = de "gesetzestreue(r) Bürger(in)"
+barloque_clerk_lawfuls = de "gesetzestreue Bürger(innen)"
+barloque_clerk_aperson = de "eine Person"
+barloque_clerk_person = de "Person"
+barloque_clerk_people = de "Leute"
+barloque_clerk_pardons_served1 = de \
+   "In dieser Amtszeit hat Justiziar %q %i %s erlassen."
+barloque_clerk_pardons_served2 = de "Davon: %i %s von %s und %i von %s."
+barloque_clerk_no_justicar = de \
+   "In der Tat gibt es zur Zeit keinen amtierenden Justiziar."
+barloque_clerk_summary_lawful = de \
+   "Euer Ehren, nach den Aufzeichnungen ist %q gesetzestreu und hält sich "
+   "an die königlichen Vorgaben."
+barloque_clerk_summary_outlaw = de \
+   "Euer Ehren, nach den Aufzeichnungen ist %q gesetzlos und hat gesetzestreue "
+   "Bürger verletzt oder andere Gesetzes des Landes gebrochen."
+barloque_clerk_summary_murderer1 = de \
+   "Euer Ehren, nach den Aufzeichnungen ist %q des Mordes schuldig und hat "
+   "bereits %i %s getötet."
+barloque_clerk_summary_murderer2 = de \
+   "Davon sind %i %s und %i %s vor dem Gesetz entschuldbar."
+barloque_clerk_was = de "war"
+barloque_clerk_were = de "waren"
+indulgence_not_enough_money = de \
+   "Du denkst das Gesetz wird dir vergeben? Bezahl den vollen Betrag oder "
+   "gehmir aus den Augen."
+indulgence_success = de \
+   "Vielen Dank für die Zahlung ihrer Schuld an die Gesellschaft. Du wirst "
+   "nicht weiter als Mörder verfolgt."
+indulgence_not_a_murderer = de "Nur Mörder können Ablässe kaufen."
+barloque_clerk_indulgence_1 = de "Es sei bekannt, dass "
+barloque_clerk_indulgence_2 = de \
+   " ist begnadigt worden.  So wurde es gesprochen und so ist es rechtskräftig.\n\n-- "
+   "Caramo"
+barloque_clerk_indulgence_3 = de " Begnadigung gewährt"
+no_more_ballots = de "Keine Wahlgänge möglich."

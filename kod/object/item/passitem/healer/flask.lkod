@@ -1,0 +1,5 @@
+flask_name_rsc = de "Die Flasche"
+flask_desc_rsc = de \
+   "Diese kleine Phiole ist aus Kristallglas gefertigt und mit einem Korken "
+   "verschlossen. Sie enthält ein dickflüssiges, blaues Gebräu. Es sieht "
+   "erfrischend aus."

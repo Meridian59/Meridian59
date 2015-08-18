@@ -1,0 +1,15 @@
+robe_name_rsc = de "Die Robe"
+robe_desc_rsc = de \
+   "Schwer und warm, wie sie sind, verraten diese langen Roben im allgemeinen, "
+   "dass sich ihre Träger der hohen Kunst des Wissens, der Zauberei oder "
+   "der Religion widmen."
+robe_condition_exc = de " ist in makellosem Zustand."
+robe_condition_exc_mended = de \
+   " sind in einem perfektem Zustand, wurden aber bereits repariert"
+robe_condition_good = de " ist leicht abgetragen."
+robe_condition_med = de " hat ein paar Risse."
+robe_condition_poor = de \
+   " besteht nur noch aus Fetzen und hält kaum noch zusammen."
+robe_condition_broken = de \
+   " ist mit Dreck bedeckt und zerrissen, so dass man sie nicht mehr benutzen "
+   "kann."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include chest.lkod
+
    chest_name_rsc = "chest"
    chest_icon_rsc = box2.bgf
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jasab4.lkod
+
    room_jasperAB4 = jasab4.roo
    room_name_JasperAB4 = "Deserted Eating House"
 

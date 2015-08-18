@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcweapon.lkod
+
    KocatanWeaponsMaster_name_rsc = "Kochtal ko'Tulca"
    KocatanWeaponsMaster_icon_rsc = kcweapon.bgf
    KocatanWeaponsMaster_desc_rsc = \

@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include sandstor.lkod
+
    sandstorm_name_rsc = "sandstorm"
    sandstorm_icon_rsc = isandsto.bgf
    sandstorm_desc_rsc = \
@@ -142,7 +144,7 @@ messages:
 
       bExhaustedMultiple = 1;
       
-      for oBattler in lEnchanted
+      foreach oBattler in lEnchanted
       {
          if IsClass(Send(oBattler,@GetOwner),&GuildHall)
             AND NOT Send(Send(oBattler,@GetOwner),@InFoyer,#who=oBattler)

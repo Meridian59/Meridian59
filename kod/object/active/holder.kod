@@ -40,7 +40,7 @@ messages:
       local i, each_obj;
 
       % As a safety precaution, don't delete users
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj, &User)
@@ -53,7 +53,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@Delete);
@@ -66,7 +66,7 @@ messages:
    {
       local i,each_obj;
       
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if isclass(each_obj,class)
@@ -85,7 +85,7 @@ messages:
 
       iFound = sequence;
       
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if isclass(each_obj,class)
@@ -111,7 +111,7 @@ messages:
       
       iFound = sequence;
       
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if isclass(each_obj,class)
@@ -134,7 +134,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if what = each_obj
@@ -143,7 +143,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if what = each_obj
@@ -167,7 +167,7 @@ messages:
 
       n = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if isClass(each_obj, class)
@@ -176,7 +176,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if isClass(each_obj, class)
@@ -194,7 +194,7 @@ messages:
 
       n = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if send(each_obj,@IsSummoned)
@@ -203,7 +203,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if send(each_obj,@IsSummoned)
@@ -231,13 +231,13 @@ messages:
 
       iSum = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          iSum = iSum + Send(each_obj,@GetBulk);
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          iSum = iSum + Send(each_obj,@GetBulk);
@@ -252,13 +252,13 @@ messages:
 
       iSum = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          iSum = iSum + Send(each_obj,@GetWeight);
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          iSum = iSum + Send(each_obj,@GetWeight);
@@ -284,7 +284,7 @@ messages:
          return FALSE;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@ReqSomethingEntered,#where=self,#what=what)
@@ -338,7 +338,7 @@ messages:
 
       if IsClass(what,&NumberItem)
       {
-         for i in plPassive
+         foreach i in plPassive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             
@@ -385,7 +385,7 @@ messages:
          return FALSE;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if not Send(each_obj,@ReqSomethingLeft,#where=self,#what=what)
@@ -402,7 +402,7 @@ messages:
       local i,each_obj, iRow, iCol;
       iRow = 0; iCol = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if each_obj = what
@@ -419,7 +419,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if each_obj = what
@@ -436,7 +436,7 @@ messages:
          }
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingLeft,#where=self,#what=what,#iRow=iRow,#iCol=iCol);
@@ -449,7 +449,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if not Send(each_obj,@ReqSomethingEntered,#where=where,#what=what)
@@ -465,7 +465,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingEntered,#where=where,#what=what);
@@ -478,7 +478,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if not Send(each_obj,@ReqSomethingLeft,#where=where,#what=what)
@@ -494,7 +494,7 @@ messages:
    {      
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingLeft,#where=where,#what=what);
@@ -509,7 +509,7 @@ messages:
 
       %%% This MUST propagate to set owners properly
       
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@OwnerChangedOwner,#what=self,#where=$);
@@ -522,7 +522,7 @@ messages:
    {
       local i, each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@OwnerChangedOwner,#what=what,#where=$)
@@ -538,7 +538,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
 
@@ -562,7 +562,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if what = each_obj or not non_monsters_only or not IsClass(each_obj,&Monster)
@@ -579,7 +579,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@ReqSomethingDeleted,#what=what)
@@ -596,7 +596,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj,#type=type)
@@ -647,7 +647,7 @@ messages:
          use_weapon = stroke_obj;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if not Send(each_obj,@ReqSomethingAttack,#what=what,#victim=victim,#use_weapon=use_weapon)
@@ -668,7 +668,7 @@ messages:
          use_weapon = stroke_obj;
       }
       
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingAttacked,#what=what,#victim=victim,#use_weapon=use_weapon);
@@ -681,7 +681,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingKilled,#what=what,#victim=victim);
@@ -694,7 +694,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@ReqSomethingUse,#what=what,#use_item=use_item)
@@ -710,7 +710,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingUsed,#what=what,#use_item=use_item);
@@ -723,7 +723,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@ReqSomethingApply,#what=what,#use_item=use_item,#apply_on=apply_on)
@@ -739,7 +739,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingApplied,#what=what,#use_item=use_item,#apply_on=apply_on);
@@ -752,7 +752,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if NOT Send(each_obj,@ReqSpellCast,#who=who, #oSpell=oSpell, #lItems=lItems)
@@ -768,7 +768,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SpellCast,#who=who,#oSpell=oSpell,#lItems=lItems);
@@ -781,7 +781,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingChanged,#what=what);
@@ -794,7 +794,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(each_obj,@SomethingTryGo,#what=what,#row=row,#col=col)
@@ -813,7 +813,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingShot,#who=who,#target=target, 
@@ -828,7 +828,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingShotRadius,#who=who,#number=number,
@@ -843,7 +843,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@SomethingDidAction,#what=what,#action=action);
@@ -856,7 +856,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(each_obj,@SomeoneTryUserCommand,#who=who,#command=command,#data=data)
@@ -872,7 +872,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@FirstUserEntered,#what=what,#new_row=new_row,#new_col=new_col);
@@ -885,7 +885,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plActive
+      foreach i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
          Send(each_obj,@LastUserLeft,#what=what);
@@ -919,7 +919,7 @@ messages:
       {
          plActive = Cons(node,plActive);
          Send(oThing,@NewOwner,#what=self);
-         for i in Rest(plActive)
+         foreach i in Rest(plActive)
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             Send(each_obj,@SomethingEntered,#where=self,#what=oThing);
@@ -932,7 +932,7 @@ messages:
       {
          plPassive = Cons(node,plPassive);
          Send(oThing,@NewOwner,#what=self);
-         for i in plActive
+         foreach i in plActive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             Send(each_obj,@SomethingEntered,#where=self,#what=oThing);
@@ -951,7 +951,7 @@ messages:
       local i, j, each_obj;
 
       j = 0;
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Item)
@@ -960,7 +960,7 @@ messages:
          }
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Item)
@@ -985,7 +985,7 @@ messages:
       iGet = Random(1,iN_items);
       
       j = 0;
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Item)
@@ -998,7 +998,7 @@ messages:
          }
       }
       
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Item)

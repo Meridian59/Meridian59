@@ -1,0 +1,17 @@
+fire_name_rsc = de "Zielen"
+fire_desc_rsc = de \
+   "Zielen ist die grundlegendste Technik, um eine Schusswaffe abzufeuern. "
+   "Es ist nicht sehr schwer zu lernen, doch nur die, die es ernsthaft betreiben, "
+   "werden diese Fertigkeit meistern."
+fire_only_missile_weapon = de \
+   "Du kannst Schießen nur in Verbindung mit einer Fernwaffe anwenden."
+fire_need_weapon = de \
+   "Du musst eine Fernwaffe in Händen halten, um damit auf jemanden zu schießen."
+fire_wrong_ammo = de "%s%s ben�"
+   "�"
+   "tigt noch die passende Munition."
+fire_new_ammo = de \
+   "Du greifst nach einem Deiner Pfeile und spannst Deinen Bogen."
+fire_skill_intro = de \
+   "Waffenfertigkeit Zirkel 3: Der Schlüssel, um alle Fernwaffen zu beherrschen."
+fire_no_ammo = de "Du hast keine Munition für diese Waffe!"

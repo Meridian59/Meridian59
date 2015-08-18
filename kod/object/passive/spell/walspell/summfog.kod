@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include summfog.lkod
+
    SummonFog_name_rsc = "fog"
    SummonFog_icon_rsc = ifog.bgf
    SummonFog_desc_rsc = \

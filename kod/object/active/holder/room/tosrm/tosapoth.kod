@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tosapoth.lkod
+
    room_name_tosapoth = "Frisconar's Mysticals"
    room_tosapoth = tosapoth.roo
    tosapoth_music = song02.mp3

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcally.lkod
+
    guildforgealliance_name_rsc = "Forge Alliance"
    guildforgealliance_icon_rsc = light.bgf
    guildforgealliance_desc_text_rsc = "Used to team up with other guilds.  Primary benefits of being in an alliance - sharing guild halls."
@@ -72,7 +74,7 @@ messages:
            send(who,@msgsenduser,#message_rsc = guildforgealliance_already_your_guild);
            return FALSE;
         }
-      for i in send(ownguild,@getenemylist)
+      foreach i in send(ownguild,@getenemylist)
         {
            if i = oGuild
              {
@@ -81,7 +83,7 @@ messages:
                 return FALSE;
              }
         }
-      for i in send(ownGuild,@getallylist)
+      foreach i in send(ownGuild,@getallylist)
         {
            if i = oguild
              {

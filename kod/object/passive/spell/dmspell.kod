@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dmspell.lkod
+
    DMSpell_desc_rsc = "%s\n\nThis is a DM only command."
 
 classvars:

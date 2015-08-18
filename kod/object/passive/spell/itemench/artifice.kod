@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include artifice.lkod
+
    artifice_cast_rsc = "The shape of %s%s begins to shift."
    
    artifice_fails = "%s%s is strangely unaffected by the spell."
@@ -119,8 +121,8 @@ messages:
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
 
       % Don't set parameter iFakeAttNum, let it choose a "fake" itematt on its own.
-      Send(oItemAtt,@AddMisdirectionToItem,
-            #oItem=oItem,#timer_duration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+      Send(oItemAtt,@AddMisdirectionToItem,#oItem=oItem,
+            #timer_duration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 
       Send(who,@MsgSendUser,#message_rsc=artifice_cast_rsc,
             #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include restorat.lkod
+
    Restorate_name_rsc = "restorate"
    Restorate_icon_rsc = irestor.bgf
    Restorate_desc_rsc = \
@@ -87,7 +89,7 @@ messages:
    {
       local oUser, lState;
       
-      for oUser in lEnchanted
+      foreach oUser in lEnchanted
       {
          if IsClass(oUser,&User)
          {

@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include kcbonepr.lkod
+
    KocatanBonePriestess_name_rsc = "The Bone Priestess"
    KocatanBonePriestess_icon_rsc = kcbonepr.bgf
    KocatanBonePriestess_desc_rsc = \
@@ -24,8 +26,8 @@ resources:
       "strange creature."
 
    %KocatanBonePriestess_entry_welcome = ""
-   KocatanBonePriestess_iteach = "ik QUAWK ak "
-   KocatanBonePriestess_atthatlevel = " nyuk KAW-KAW uk uk!"
+   KocatanBonePriestess_iteach = \
+      "ik QUAWK ak %s%s%s%s%s%s%s%s%s%s%s%s nyuk KAW-KAW uk uk!"
    KocatanBonePriestess_unwanted_keep = \
       "~k%s%s tells you, \"ik CHEEE-UP nak ik nyuk AK-AK!!~n~k\""
    KocatanBonePriestess_unwanted_pay = \
@@ -39,50 +41,50 @@ resources:
    KocatanBonePriestess_mrcnt_too_costly = \
       "AAAK TIC-TIC NYUK IK NYUK-TAK!!"
 
-   KocatanBonePriestess_squawk_1 = "ak ak ak"
-   KocatanBonePriestess_squawk_2 = "wak-wak"
-   KocatanBonePriestess_squawk_3 = "ik ik"
-   KocatanBonePriestess_squawk_4 = "ak nyuk"
-   KocatanBonePriestess_squawk_5 = "kaw kaw"
-   KocatanBonePriestess_squawk_6 = "tic tic"
-   KocatanBonePriestess_squawk_7 = "chk chkaa"
-   KocatanBonePriestess_squawk_8 = "nyuk nyuk nyuk"
-   KocatanBonePriestess_squawk_9 = "ak ik ik"
-   KocatanBonePriestess_squawk_10 = "chp chp"
-   KocatanBonePriestess_squawk_11 = "cheee-up"
-   KocatanBonePriestess_squawk_12 = "ki-cla ka"
-   KocatanBonePriestess_squawk_13 = "chk reee-up"
-   KocatanBonePriestess_squawk_14 = "wik wyaak"
-   KocatanBonePriestess_squawk_15 = "queeep queeep"
-   KocatanBonePriestess_squawk_16 = "AK AK AK"
-   KocatanBonePriestess_squawk_17 = "WAK-WAK"
-   KocatanBonePriestess_squawk_18 = "IK IK"
-   KocatanBonePriestess_squawk_19 = "AK NYUK"
-   KocatanBonePriestess_squawk_20 = "KAW KAW"
-   KocatanBonePriestess_squawk_21 = "TIC TIC"
-   KocatanBonePriestess_squawk_22 = "CHK CHKAA"
-   KocatanBonePriestess_squawk_23 = "NYUK NYUK NYUK"
-   KocatanBonePriestess_squawk_24 = "AK IK IK"
-   KocatanBonePriestess_squawk_25 = "CHP CHP"
-   KocatanBonePriestess_squawk_26 = "CHEEE-UP"
-   KocatanBonePriestess_squawk_27 = "KI-CLA KA"
-   KocatanBonePriestess_squawk_28 = "CHK REEE-UP"
-   KocatanBonePriestess_squawk_29 = "WIK WYAAK"
-   KocatanBonePriestess_squawk_30 = "QUEEEP QUEEEP"
-   KocatanBonePriestess_squawk_31 = "ka-ak aak"
-   KocatanBonePriestess_squawk_32 = "KA-AK AAK"
-   KocatanBonePriestess_squawk_33 = "nak-nak"
-   KocatanBonePriestess_squawk_34 = "NAK-NAK"
-   KocatanBonePriestess_squawk_35 = "tak tak"
-   KocatanBonePriestess_squawk_36 = "TAK TAK"
-   KocatanBonePriestess_squawk_37 = "Ka-ak"
-   KocatanBonePriestess_squawk_38 = "KA-AK"
-   KocatanBonePriestess_squawk_39 = "queeep-quip"
-   KocatanBonePriestess_squawk_40 = "QUEEEP-QUIP"
-   KocatanBonePriestess_squawk_41 = "Ticataca"
-   KocatanBonePriestess_squawk_42 = "TICATACA"
-   KocatanBonePriestess_squawk_43 = "ki ki"
-   KocatanBonePriestess_squawk_44 = "KI KI"
+   KocatanBonePriestess_squawk_1 = "ak ak ak "
+   KocatanBonePriestess_squawk_2 = "wak-wak "
+   KocatanBonePriestess_squawk_3 = "ik ik "
+   KocatanBonePriestess_squawk_4 = "ak nyuk "
+   KocatanBonePriestess_squawk_5 = "kaw kaw "
+   KocatanBonePriestess_squawk_6 = "tic tic "
+   KocatanBonePriestess_squawk_7 = "chk chkaa "
+   KocatanBonePriestess_squawk_8 = "nyuk nyuk nyuk "
+   KocatanBonePriestess_squawk_9 = "ak ik ik "
+   KocatanBonePriestess_squawk_10 = "chp chp "
+   KocatanBonePriestess_squawk_11 = "cheee-up "
+   KocatanBonePriestess_squawk_12 = "ki-cla ka "
+   KocatanBonePriestess_squawk_13 = "chk reee-up "
+   KocatanBonePriestess_squawk_14 = "wik wyaak "
+   KocatanBonePriestess_squawk_15 = "queeep queeep "
+   KocatanBonePriestess_squawk_16 = "AK AK AK "
+   KocatanBonePriestess_squawk_17 = "WAK-WAK "
+   KocatanBonePriestess_squawk_18 = "IK IK "
+   KocatanBonePriestess_squawk_19 = "AK NYUK "
+   KocatanBonePriestess_squawk_20 = "KAW KAW "
+   KocatanBonePriestess_squawk_21 = "TIC TIC "
+   KocatanBonePriestess_squawk_22 = "CHK CHKAA "
+   KocatanBonePriestess_squawk_23 = "NYUK NYUK NYUK "
+   KocatanBonePriestess_squawk_24 = "AK IK IK "
+   KocatanBonePriestess_squawk_25 = "CHP CHP "
+   KocatanBonePriestess_squawk_26 = "CHEEE-UP "
+   KocatanBonePriestess_squawk_27 = "KI-CLA KA "
+   KocatanBonePriestess_squawk_28 = "CHK REEE-UP "
+   KocatanBonePriestess_squawk_29 = "WIK WYAAK "
+   KocatanBonePriestess_squawk_30 = "QUEEEP QUEEEP "
+   KocatanBonePriestess_squawk_31 = "ka-ak aak "
+   KocatanBonePriestess_squawk_32 = "KA-AK AAK "
+   KocatanBonePriestess_squawk_33 = "nak-nak "
+   KocatanBonePriestess_squawk_34 = "NAK-NAK "
+   KocatanBonePriestess_squawk_35 = "tak tak "
+   KocatanBonePriestess_squawk_36 = "TAK TAK "
+   KocatanBonePriestess_squawk_37 = "Ka-ak "
+   KocatanBonePriestess_squawk_38 = "KA-AK "
+   KocatanBonePriestess_squawk_39 = "queeep-quip "
+   KocatanBonePriestess_squawk_40 = "QUEEEP-QUIP "
+   KocatanBonePriestess_squawk_41 = "Ticataca "
+   KocatanBonePriestess_squawk_42 = "TICATACA "
+   KocatanBonePriestess_squawk_43 = "ki ki "
+   KocatanBonePriestess_squawk_44 = "KI KI "
 
    bonepr_spellsquawk1 = "TAK TAK rijj rijj qornak"
    bonepr_spellsquawk2 = "Ka-ak AKK AKK queeep-quip."
@@ -104,7 +106,7 @@ classvars:
    viGender = GENDER_FEMALE
 
    vrTeach_message = KocatanBonePriestess_iteach
-   vrTeach_message2 = KocatanBonePriestess_atthatlevel
+   vrTeach_nothing = KocatanBonePriestess_nothing_for_sale
    vrUnwanted_keep = KocatanBonePriestess_unwanted_keep
    vrUnwanted_pay = KocatanBonePriestess_unwanted_pay
    vrUnwanted_give = KocatanBonePriestess_unwanted_give
@@ -183,7 +185,7 @@ messages:
       lDialogue = $;
       lTriggers = $;
 
-      for sid in Nth(plFor_sale,3)
+      foreach sid in Nth(plFor_sale,3)
       {
          %% spells next
          oAbility = Send(SYS,@FindSpellByNum,#num=sid);
@@ -205,6 +207,11 @@ messages:
       Send(Send(SYS,@GetLibrary),@AppendSpeechLibrary,#lDialogue=lFinal);
 
       return;
+   }
+
+   GetRandomSquawkRsc()
+   {
+      return Nth(plSquawks,Random(1,Length(plSquawks)));
    }
 
    GetRandomSquawking(squawkLength = 1)
@@ -246,7 +253,7 @@ messages:
 
       if (IsClass(what,&User)) AND (type = SAY_NORMAL)
       {
-         for i in plSquawks
+         foreach i in plSquawks
          {
             if (StringContain(string, i))
             {

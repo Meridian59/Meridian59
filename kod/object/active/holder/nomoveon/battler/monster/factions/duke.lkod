@@ -1,0 +1,29 @@
+duke_name_rsc = de "Duke Akardius"
+duke_desc_rsc = de \
+   "Ungeachtet seines jugendlichen Alters von nur 16 Jahren brachte sichHerzog "
+   "Akardius erfolgreich in Position, um die Nachfolgers seinesermordeten "
+   "Onkel antreten. Der junge Herzog strahlt einfach Vertrauenund Kraft aus. "
+   "Gerüchten zufolge ist er ein überzeugter Anhänger vonRiija und sein durchtriebenes "
+   "Lächeln ähnelt der manipulativen undhinterlistigen Erscheinung dieser "
+   "trickreichen Gottheit. Trotz derübertriebenen Zurschaustellung seiner "
+   "Trauer um seinen Onkel gibt eseinige, die die Aufrichtigkeit seines Kummers "
+   "anzweifeln."
+duke_murder_desc_rsc = de \
+   "Das Antlitz des jungen Neffens von Herzog Arkadius ist erfüllt mit Trauer.Tränenüberströmt "
+   "schaut er auf die Leiche seines Onkels. Trotz seinesSchmerzes erkennt "
+   "man seinen eisernen Willen, der mehr Stärke und Gerissenheitausstrahlt "
+   "als man es jemals bei einem Jungen von nur 16 Jahren gesehen hat."
+duke_token_delivered_rsc = de \
+   "Ahhh.  Ich werde dafür Sorge tragen, dass dies seinem rechtmäßigen Besitzerim "
+   "Rat zurück gegeben wird. Dafür ist er mir natürlich etwas schuldig. %s"
+duke_duke_delivered_rsc = de "Du bist wahrlich ein würdiger Diener."
+duke_neutral_delivered_rsc = de \
+   "Da Du und ich das selbe Ziel verfolgen, solltest Du einfach meiner Seite "
+   "beitreten.Unterschreibe den Vertrag hier..."
+duke_other_delivered_rsc = de \
+   "Nun, Du solltest meine Autorität gegenüber den anderen Ligen vorziehen!Lass "
+   "mich Dich überzeugen, meinem Lager beizutreten."
+duke_toopowered_rsc = de \
+   "Wären wir nicht bereits eine sehr mächtige Fraktion, so hätte ich Dirjetzt "
+   "angeboten, uns beizutreten."
+duke_dead_name_rsc = de "Der Leichnam von Herzog Kalior!"

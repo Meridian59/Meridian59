@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include kclangua.lkod
+
    KocatanLanguageMaster_name_rsc = "Quetzal"
    KocatanLanguageMaster_icon_rsc = kclangua.bgf
    KocatanLanguageMaster_desc_rsc = \

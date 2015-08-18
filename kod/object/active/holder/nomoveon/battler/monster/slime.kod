@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include slime.lkod
+
    slime_koc_name_rsc = "kinachot"
    slime_name_rsc = "slime"
    slime_icon_rsc = amoeba.bgf

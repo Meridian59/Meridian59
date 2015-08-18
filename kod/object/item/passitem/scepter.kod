@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include scepter.lkod
+
    scepter_name_rsc = "relic of Qor"
    scepter_icon_rsc = scepter.bgf
    scepter_desc_rsc = \

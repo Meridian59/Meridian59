@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include xeofire.lkod
+
    XeoFire_name_rsc = "ro'xeochicatl"
    XeoFire_koc_name_rsc = "ro'xeo'chicatl"
    XeoFire_icon_rsc = Xeo.bgf

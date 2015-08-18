@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include morph.lkod
+
    morph_scream_wav = pdeath.wav
 
    morph_name_rsc = "morph"
@@ -129,7 +131,7 @@ messages:
 
       lPlayerUsed = Send(victim,@GetPlayerUsing);
 
-      for i in lPlayerUsed
+      foreach i in lPlayerUsed
       {
          if NOT IsClass(i,&SoldierShield)
          {
@@ -225,7 +227,7 @@ messages:
       iForm = -1;
       iCount = 1;
       
-      for i in Send(SYS,@GetMonsterTemplates)
+      foreach i in Send(SYS,@GetMonsterTemplates)
       {
          bDM = FALSE;
 
@@ -289,7 +291,7 @@ messages:
       %        level 75     1     
 
       iMax = 0;      
-      for i in Send(SYS,@GetMonsterTemplates)
+      foreach i in Send(SYS,@GetMonsterTemplates)
       {
          iLevel = Send(i,@GetLevel);
          if Send(i,@CanMorphTo)
@@ -307,7 +309,7 @@ messages:
       
       iIndex = random(0,iMax);
       iCount = 1;
-      for i in Send(SYS,@GetMonsterTemplates)
+      foreach i in Send(SYS,@GetMonsterTemplates)
       {
          iLevel = Send(i,@GetLevel);
          if Send(i,@CanMorphTo)

@@ -1,0 +1,6 @@
+spiderbaby_koc_name_rsc = de "imixkinich"
+spiderbaby_name_rsc = de "Die Spinne"
+spiderbaby_desc_rsc = de \
+   "Obwohl sie kleiner und schwächer als ihre großen Artgenossen sind, bleiben "
+   "die Spinnen tödlich. Ihr weicher Bauch ist vom letzten Fressen aufgebläht."
+spiderbaby_dead_name_rsc = de "tote Spinne"

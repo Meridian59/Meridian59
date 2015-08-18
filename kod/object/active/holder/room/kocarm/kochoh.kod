@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kochoh.lkod
+
    room_Kocatanhall = Kochoh.roo
    room_name_Kocatanhall = "The Hall of Heroes"
 
@@ -133,91 +135,91 @@ messages:
       plStatues = $;
 
       % Qor/Kraanan/Faren
-      oStatue = Create(&Statue,#default=TRUE);
+      oStatue = Create(&Statue,#bDefault=TRUE);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
             #new_row=5,#new_col=1,#fine_row=16,#fine_col=24);
 
       % Shalille/Kraanan/Faren
-      oStatue = Create(&Statue,#default=TRUE);
+      oStatue = Create(&Statue,#bDefault=TRUE);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
             #new_row=5,#new_col=13,#fine_row=16,#fine_col=40);
 
       % Qor/Kraanan
-      oStatue = Create(&Statue,#default=TRUE);
+      oStatue = Create(&Statue,#bDefault=TRUE);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
             #new_row=7,#new_col=1,#fine_row=48,#fine_col=24);
 
       % Shalille/Kraanan
-      oStatue = Create(&Statue,#default=TRUE);
+      oStatue = Create(&Statue,#bDefault=TRUE);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
             #new_row=7,#new_col=13,#fine_row=48,#fine_col=40);
 
       % Qor/Faren
-      oStatue = Create(&Statue,#default=TRUE);
+      oStatue = Create(&Statue,#bDefault=TRUE);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
             #new_row=10,#new_col=1,#fine_row=16,#fine_col=24);
 
       % Shalille/Faren
-      oStatue = Create(&Statue,#default=TRUE);
+      oStatue = Create(&Statue,#bDefault=TRUE);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
             #new_row=10,#new_col=13,#fine_row=16,#fine_col=40);
 
       % Jala
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_jala);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_jala);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
             #new_row=9,#new_col=11,#fine_row=40,#fine_col=0);
 
       % Qor
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_qor);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_qor);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
             #new_row=9,#new_col=4,#fine_row=40,#fine_col=0);
 
       % Shal'ille
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_shalille);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_shalille);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
             #new_row=7,#new_col=11,#fine_row=24,#fine_col=0);
 
       % Kraanan
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_kraanan);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_kraanan);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
             #new_row=7,#new_col=4,#fine_row=24,#fine_col=0);
 
       % Faren
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_faren);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_faren);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
             #new_row=5,#new_col=11,#fine_row=8,#fine_col=0);
 
       % Riija
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_riija);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_riija);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
             #new_row=5,#new_col=4,#fine_row=8,#fine_col=0);
 
       % Wizard
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_wizard);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_wizard);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH_EAST,
             #new_row=2,#new_col=4,#fine_row=24,#fine_col=56);
 
       % Warrior (skills)
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_warrior);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_warrior);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH_WEST,
             #new_row=2,#new_col=10,#fine_row=24,#fine_col=8);
 
       % Adventurer (overall)
-      oStatue = Create(&Statue,#default=TRUE,#desc=hoh_best_adventurer);
+      oStatue = Create(&Statue,#bDefault=TRUE,#desc=hoh_best_adventurer);
       plStatues = Cons(oStatue,plStatues);
       Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH,
             #new_row=1,#new_col=7,#fine_row=32,#fine_col=32);
@@ -237,7 +239,7 @@ messages:
       }
 
       % Delete statues, clear out "best" lists in lore, then recreate statues.
-      for i in plStatues
+      foreach i in plStatues
       {	 
          Send(i, @Delete);
       }
@@ -267,7 +269,7 @@ messages:
       }
 
       index = 0;
-      for i in plStatues
+      foreach i in plStatues
       {
          index = index + 1;
          if Nth(lData,index) <> $

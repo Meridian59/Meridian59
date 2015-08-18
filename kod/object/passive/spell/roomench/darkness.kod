@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include darkness.lkod
+
    darkness_name_rsc = "darkness"
    darkness_icon_rsc = idarknes.bgf
    darkness_desc_rsc = \
@@ -25,11 +27,16 @@ resources:
    
    darkness_unnecessary = "This area already has a darkness enchantment."
 
-   darkness_on = "A curtain of darkness is drawn across the room, stirring the servants of Qor."
+   darkness_on = \
+      "A curtain of darkness is drawn across the room, stirring the "
+      "servants of Qor."
    darkness_off = "The curtain of darkness is lifted."
    darkness_new_entrant = "This place is under a darkness enchantment."
-
-   darkness_spell_intro = "Qor Lv. 1: Draws a curtain of darkness over the room, stirring the servants of Qor."
+   darkness_enchantment_rsc = \
+      "\n\nThe %s enchantment currently subtracts %i light level from the area."
+   darkness_spell_intro = \
+      "Qor Lv. 1: Draws a curtain of darkness over the room, stirring "
+      "the servants of Qor."
 
    darkness_sound = qinvis.wav
 
@@ -129,18 +136,9 @@ messages:
 
    EffectDesc(who=$)
    {
-      local i, iState;
+      AddPacket(4, darkness_enchantment_rsc, 4, Send(self,@GetName),
+                4, -Send(Send(who,@GetOwner),@GetEnchantedState,#what=self));
 
-      AppendTempString("\n\n");
-      AppendTempString("The ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment currently subtracts ");
-      
-      iState = Send(Send(who,@GetOwner),@GetEnchantedState,#what=self);
-      
-      AppendTempString(-1 * iState);
-      AppendTempString(" light level from the area.");
-      
       return;
    }
 

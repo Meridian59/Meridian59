@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include krcharm.lkod
+
    KraananCharm_name_rsc = "steel torc"
    KraananCharm_icon_rsc = krcharm.bgf
    KraananCharm_desc_rsc = \

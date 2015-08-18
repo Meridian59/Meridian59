@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include necrowarnevilqt.lkod
+
    % Quest description.
    necrowarnevilqt_icon_rsc = necscrol.bgf
    necrowarnevilqt_name_rsc = "necromancer warning quest"
@@ -129,7 +131,7 @@ messages:
                #quest_node_index=QNT_ID_NECRO_WARN_EVIL_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -150,19 +152,19 @@ messages:
                #timelimit=2 * 3600,#quest_node_index=QNT_ID_NECRO_WARN_EVIL_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KraananPriestess)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KraananPriestess)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FarenPriestess)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FarenPriestess)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ShalillePriestess)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ShalillePriestess)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&QorPriestess)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&QorPriestess)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

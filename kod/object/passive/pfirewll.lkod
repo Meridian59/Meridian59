@@ -1,0 +1,5 @@
+PassiveWallofFire_name_rsc = de "Die Wand aus Feuer"
+PassiveWallofFire_desc_rsc = de "Diese Wand aus Feuer lodert vor sich hin."
+PassiveWallofFire_Cold = de \
+   "Diese Wand aus Feuer lodert vor sich hin aber du bemerkst das die Flammen "
+   "kalt sind."

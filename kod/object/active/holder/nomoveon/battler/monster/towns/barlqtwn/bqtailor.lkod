@@ -1,0 +1,13 @@
+Barloquetailor_name_rsc = de "Madelia"
+Barloquetailor_desc_rsc = de \
+   "Daran gewöhnt für den raffinierten Geschmack des Adels zu arbeiten, führt "
+   "Madelia ihr Handwerk mit großer Sorgfalt aus. Trotzdem wünscht sie sich, "
+   "daß sie mehr Zeit einem einzigen Kleidungsstück eines mächtigeren und "
+   "geschätzten Mitglied des Hofes widmen könnte. Madelias anderes Hobby "
+   "ist es, mit den Herzen der Männer zu spielen, und zur Zeit behält sie "
+   "mehrere Beziehungen am Kochen."
+Batail_entry_welcome = de \
+   "Hail %s%s.  Was ist das für eine schreckliche Kleidung, die du da trägst?"
+Batail_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Du solltest einne anderen Händler finden der das "
+   "von dir kauft.~n~k\""

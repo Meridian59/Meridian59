@@ -1,0 +1,26 @@
+% Quest description.
+rebelloyalty_name_rsc = de "rebel loyalty quest"
+rebelloyalty_desc_rsc = de \
+   "Jonas D'Accor's troops need equipment, and he has requested that "
+   "you help the cause by bringing him some."
+
+rebelloyalty_deliver_rsc = de \
+   "Jonas D'Accor's troops need equipment, and he has requested that "
+   "you help the cause by bringing him %s%s to remain in favor."
+
+rebelloyalty_completed = de \
+   "You have completed the rebel loyalty quest and shown your "
+   "dedication for the cause."
+
+% Quest resources.
+rebel_standard2_assign = de \
+   "Ah, %NAME, mein Freiheitskämpfer. Meine Truppen benötigen mehr Ausrüstung.Dieser "
+   "Krieg kostet eine Menge und ich habe nicht das Geld für eine große Truhe, "
+   "so wie die Anderen haben. Bringe mir %INDEF_CARGO%CARGO und ich werde "
+   "Deine Loyalität nicht vergessen."
+rebel_standard2_success = de \
+   "Ah, wunderbar.  Ich werde dies auf jeden Fall für einen guten Zweck benutzen."
+rebel_standard2_failure = de \
+   "Betreff: Du bist kein wahrer Rebell\nDu hast versagt, als ich Dich gebraucht "
+   "habe.  Geh und verzieh Dich zu den Anderen, ich habe keinen Nutzen mehr "
+   "an Dir."

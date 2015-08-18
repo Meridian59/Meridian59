@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include kocweaponqt.lkod
+
    % Quest description.
    kocweaponqt_icon_rsc = arrowqt.bgf
    kocweaponqt_name_rsc = "Ko'catan weapon trade quest"
@@ -143,7 +145,7 @@ messages:
                #quest_node_index=QNT_ID_KOC_WEAP_TRADE_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBowMaker)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBowMaker)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -199,11 +201,11 @@ messages:
                #timelimit=4 * 3600,#quest_node_index=QNT_ID_KOC_WEAP_TRADE_THREE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

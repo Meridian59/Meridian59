@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include tssmith.lkod
+
    TosBlacksmith_name_rsc = "Fehr'loi Qan"
    TosBlacksmith_icon_rsc = bsmith.bgf
    TosBlacksmith_desc_rsc = \

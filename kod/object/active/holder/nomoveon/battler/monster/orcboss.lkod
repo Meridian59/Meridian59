@@ -1,0 +1,8 @@
+OrcPitBoss_koc_name_rsc = de "koutom"
+OrcPitBoss_name_rsc = de "Der Orkhäuptling"
+OrcPitBoss_desc_rsc = de \
+   "Um den ominösen Titel und Rang eines Orkhäuptling zu erlangen, musste "
+   "dieser Ork mehr als einhundert andere seiner Art bekämpfen und töten. "
+   "In den Höhlen gibt es keinen furchterregenderen Krieger, entschlosseneren "
+   "Führer oder grässlicheren Gegner als den entsetzlichen Orkhäuptling."
+OrcPitBoss_dead_name_rsc = de "toter Orkhäuptling"

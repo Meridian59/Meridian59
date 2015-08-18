@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include desertpath1.lkod
+
    room_desertpath1 = desertpath1.roo
    room_name_desertpath1 = "A harrowing cleft"
 

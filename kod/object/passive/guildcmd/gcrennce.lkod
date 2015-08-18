@@ -1,0 +1,12 @@
+guildrenounce_name_rsc = de "Gilde verlassen"
+guildrenounce_desc_text_rsc = de \
+   "Benutze diesen Befehl um die Gilde zu verlassen.  Du konntest Sie eh "
+   "nie leiden. Gildenmeister müssen erst Abdanken"
+renounce_no_gms = de \
+   "Gildenmeister können erst austreten, wenn Sie einen Nachfolger bestimmt "
+   "haben."
+renounce_ties_renouncer = de "~BDu beendest deine Mitgliedschaft von %s%q."
+renounce_ties_others = de "~B%s%s beendet die Mitgliedschaft von %s%q!"
+guildrenounce_necro_nak = de \
+   "~BDu hast den Blutschwur zu dem Orden der Nekromanten geschworen.  Tod "
+   "ist der einzige Ausweg."

@@ -13,9 +13,11 @@ Gift is PassiveItem
 constants:
 
    include blakston.khd
-   include protocol.khd     
+   include protocol.khd
 
 resources:
+
+   include gift.lkod
 
    gift_name_rsc = "gift"
    gift_icon_rsc = package.bgf
@@ -25,12 +27,12 @@ resources:
 
    gift_open = "With unbridled delight, you open the gift to find %s%s inside!"
 
-   gift_desc_1 = "This is a neatly wrapped present.  A tag attached to the bow reads, 'From "
-   gift_desc_2 = " with love'."
-   gift_bonded_wrapped_1 = "You sense that your "
-   gift_bonded_wrapped_2 = " has been giftwrapped."
-   gift_bonded_unwrapped_1 = "You sense that your gift has been unwrapped to reveal a "
-   gift_bonded_unwrapped_2 = "."
+   gift_desc_name = \
+      "This is a neatly wrapped present.  A tag attached to the bow reads, "
+      "'From %q with love'."
+   gift_bonded_wrapped = "You sense that your %s has been giftwrapped."
+   gift_bonded_unwrapped = \
+      "You sense that your gift has been unwrapped to reveal %s%s."
 
 classvars:
 
@@ -56,30 +58,29 @@ messages:
    Constructor(contents = $, giver = $)
    {
       local oBondee;
+
       if contents <> $
       {
-         if send(contents,@HasAttribute,#ItemAtt=IA_BONDED)
+         if Send(contents,@HasAttribute,#ItemAtt=IA_BONDED)
          {
-            oBondee = nth(send(contents,@GetAttributeData,#ItemAtt=IA_BONDED),2);
-            send(oBondee,@ClearBondedItem);
-            send(oBondee,@BondItem,#what=self);
-            if send(contents,@GetOwner) <> oBondee
+            oBondee = Nth(Send(contents,@GetAttributeData,#ItemAtt=IA_BONDED),2);
+            Send(oBondee,@ClearBondedItem);
+            Send(oBondee,@BondItem,#what=self);
+            if Send(contents,@GetOwner) <> oBondee
             {
-               ClearTempString();
-               AppendTempString(gift_bonded_wrapped_1);
-               AppendTempString(send(contents,@GetName));
-               AppendTempString(gift_bonded_wrapped_2);
-               send(oBondee,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=GetTempString(),#type1=STRING_RESOURCE);
+               Send(oBondee,@MsgSendUser,#message_rsc=gift_bonded_wrapped,
+                     #parm1=Send(contents,@GetName));
             }
          }
-         if send(contents,@GetOwner) <> $
+         if Send(contents,@GetOwner) <> $
          {
-            send(send(contents,@GetOwner),@LeaveHold,#what=contents);
-            send(contents,@NewOwner,#what=$);
+            Send(Send(contents,@GetOwner),@LeaveHold,#what=contents);
+            Send(contents,@NewOwner,#what=$);
          }
       }
       poGiftGiver = giver;
       poContents = contents;
+
       propagate;
    }
 
@@ -87,7 +88,7 @@ messages:
    {
       if poContents <> $
       {
-         return send(poContents,@GetBulk)+1;
+         return Send(poContents,@GetBulk) + 1;
       }
 
       propagate;
@@ -97,7 +98,7 @@ messages:
    {
       if poContents <> $
       {
-         return send(poContents,@GetWeight)+1;
+         return Send(poContents,@GetWeight) + 1;
       }
 
       propagate;
@@ -105,7 +106,7 @@ messages:
 
    GetValue()
    {
-      % can't really tell the value of an item in a box
+      % Can't really tell the value of an item in a box.
       return 10;
    }
 
@@ -113,15 +114,13 @@ messages:
    {
       if poGiftGiver = $
       {
-         AppendTempString(gift_desc_rsc);
+         AddPacket(4, gift_desc_rsc);
 
          return;
       }
 
-      AppendTempString(gift_desc_1);
-      AppendTempSTring(send(poGiftGiver,@GetTrueName));
-      AppendTempString(gift_desc_2);
-      
+      AddPacket(4,gift_desc_name, 6,Send(poGiftGiver,@GetTrueName));
+
       return;
    }
 
@@ -135,7 +134,7 @@ messages:
       local rand, bAny, oBondee, oldOwner;
 
       bAny = FALSE;
-      if length(send(what,@GetSpellList)) < 5
+      if Length(Send(what,@GetSpellList)) < 5
       {
          bAny = TRUE;
       }
@@ -143,28 +142,28 @@ messages:
       while poContents = $
       {
          % Give one of the five amulets.
-         rand = random(1,9);
+         rand = Random(1,9);
 
          if rand <= 2
-            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_QOR) > 1)
+            AND (bAny OR Send(what,@GetNumSpellsInSchool,#school=SS_QOR) > 1)
          {
             poContents = Create(&QorCharm);
          }
 
          if (rand = 3 OR rand = 4)
-            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_KRAANAN) > 1)
+            AND (bAny OR Send(what,@GetNumSpellsInSchool,#school=SS_KRAANAN) > 1)
          {
             poContents = Create(&KraananCharm);
          }
 
          if (rand = 5 or rand = 6)
-            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_FAREN) > 1)
+            AND (bAny OR Send(what,@GetNumSpellsInSchool,#school=SS_FAREN) > 1)
          {
             poContents = Create(&FarenCharm);
          }
 
          if (rand = 7 or rand = 8)
-            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_SHALILLE) > 1)
+            AND (bAny OR Send(what,@GetNumSpellsInSchool,#school=SS_SHALILLE) > 1)
          {
             poContents = Create(&ShalilleCharm);
          }
@@ -175,36 +174,33 @@ messages:
          }
       }
 
-      send(poOwner,@MsgSendUser,#message_rsc=gift_open,
-           #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
+      Send(poOwner,@MsgSendUser,#message_rsc=gift_open,
+            #parm1=Send(poContents,@GetIndef),#parm2=Send(poContents,@GetName));
 
       oldOwner = poOwner;
-      send(poOwner,@LeaveHold,#what=self);
-      send(self,@NewOwner,#what=$);
-      send(oldOwner,@NewHold,#what=poContents);
+      Send(poOwner,@LeaveHold,#what=self);
+      Send(self,@NewOwner,#what=$);
+      Send(oldOwner,@NewHold,#what=poContents);
 
       % Note that this RecalcBulkAndWeight is entirely superfluous,
-      %  but we'll leave it here as a safeguard against future wierdness.
-      send(oldOwner,@RecalcBulkAndWeight);
-      if send(self,@HasAttribute,#ItemAtt=IA_BONDED)
+      % but we'll leave it here as a safeguard against future wierdness.
+      Send(oldOwner,@RecalcBulkAndWeight);
+      if Send(self,@HasAttribute,#ItemAtt=IA_BONDED)
       {
-         oBondee = nth(send(self,@GetAttributeData,#ItemAtt=IA_BONDED),2);
-         send(oBondee,@ClearBondedItem);
-         send(oBondee,@BondItem,#what=poContents);
+         oBondee = nth(Send(self,@GetAttributeData,#ItemAtt=IA_BONDED),2);
+         Send(oBondee,@ClearBondedItem);
+         Send(oBondee,@BondItem,#what=poContents);
          if oldOwner <> oBondee
          {
-            ClearTempString();
-            AppendTempString(gift_bonded_unwrapped_1);
-            AppendTempString(send(poContents,@GetName));
-            AppendTempString(gift_bonded_unwrapped_2);
-            send(oBondee,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),
-                 #parm1=GetTempString(),#type1=STRING_RESOURCE);
+            Send(oBondee,@MsgSendUser,#message_rsc=gift_bonded_unwrapped,
+                  #parm1=Send(poContents,@GetIndef),
+                  #parm2=Send(poContents,@GetName));
          }
       }
 
       poContents = $;
 
-      send(self,@Delete);
+      Send(self,@Delete);
 
       return;
    }
@@ -213,7 +209,7 @@ messages:
    {
       if poContents <> $
       {
-         send(poContents,@Delete);
+         Send(poContents,@Delete);
       }
 
       poContents = $;
@@ -222,7 +218,5 @@ messages:
       propagate;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcinvite.lkod
+
    guildInvite_name_rsc = "Invite"
    guildInvite_icon_rsc = light.bgf
    guildinvite_desc_text_rsc = "Used to invite prospective members into the guild.  Invited person has 1 minute to accept the invitation."

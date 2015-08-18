@@ -1,0 +1,10 @@
+LightningWall_name_rsc = de "Blitzwand"
+LightningWall_desc_rsc = de \
+   "Erschafft eine Wand aus Elektrizität. Jeder, der dieses Feld betritt, "
+   "wird mehr als nur Donner spüren.Benötigt Yxrl-Saft und Kräuter, um zu "
+   "zaubern. Die Anwendung dieses Zaubers kann dazu führen, daß Du zum Gesetzlosen "
+   "erklärt wirst."
+LightningWall_cast_rsc = de "Eine Blitzwand erscheint vor dir!"
+LightningWall_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in diesem Raum. Du kannst nicht noch "
+   "weitere Wände erschaffen."

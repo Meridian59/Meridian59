@@ -1,0 +1,13 @@
+UniqueWeapon_name_rsc = de "Die dunkle Klinge Roqs"
+UniqueWeapon_desc_rsc = de \
+   "Dies ist der persönliche Dolch von Roq, dem Meuchelmörder. Diese Klinge "
+   "scheint identisch mit dem Meuchelmörderdolch zu sein, den Roq für das "
+   "Meuchelmörderspiel aushändigt. Aber das getrocknete Blut von Herzog Kalior "
+   "an der Schneide zeigt, das dies eine viel gefährlichere Waffe ist. Sie "
+   "knistert fast vor böser Energie."
+UniqueWeapon_cant_vault = de \
+   "Deine Waffe schmort sich in Dein Fleisch, während sie an Deiner Hand "
+   "kleben bleibt als sie brennt."
+UniqueWeapon_logoff = de \
+   "Deine Waffe windet sich aus Deinen Händen und macht sich auf die Suche "
+   "nach einem blutdürstigeren Besitzer."

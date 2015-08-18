@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pfogscrl.lkod
+
    summonpoisonfogscroll_label_name_rsc = "scroll of poison fog"
    summonpoisonfogScroll_icon_rsc = scr06.bgf
    summonpoisonfogScroll_desc_rsc = \

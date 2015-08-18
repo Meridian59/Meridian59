@@ -16,13 +16,18 @@ constants:
 
 resources:
 
+   include bless.lkod
+
    bless_name_rsc = "bless"
    bless_icon_rsc = blessico.bgf
    bless_desc_rsc = \
       "Invokes Kraanan's blessing, increasing the accuracy "
       "and damage of attacks.  "
       "Requires two mushrooms and two sapphires to cast."
-   
+
+   bless_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i offense and 0-%i attack damage."
+
    bless_already_enchanted_rsc = "You are already blessed."
    bless_on_rsc = "Kraanan fills you with the spirit of battle."
    bless_off_rsc = "The spirit of battle has left you."
@@ -112,16 +117,14 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString(" offense and 0-");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self)/33);
-      AppendTempString(" attack damage.");
+      local iState;
 
-      propagate;
+      iState = Send(who,@GetEnchantedState,#what=self);
+
+      AddPacket(4,bless_enchantment_rsc, 4,Send(self,@GetName),
+                4,iState, 4,iState/33);
+
+      return;
    }
 
 end

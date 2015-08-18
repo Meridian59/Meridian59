@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shatterw.lkod
+
    ShatterWand_label_name_rsc = "wand of destruction"
    ShatterWand_icon_rsc = wand6.bgf
    ShatterWand_desc_rsc = "Magical energy crackles about this slender wand."

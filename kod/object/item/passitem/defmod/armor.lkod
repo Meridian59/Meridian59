@@ -1,0 +1,9 @@
+armor_condition_exc = de " ist ohne einen Fehler oder Makel."
+armor_condition_exc_mended = de \
+   " ist ohne einen Fehler oder Makel, wurde allerdings bereits repariert"
+armor_condition_good = de " hat ein oder zwei Dellen."
+armor_condition_med = de " hat Risse und Dellen vom Kampf."
+armor_condition_poor = de \
+   " ist durch viele Angriffe aufgerissen und hält nicht mehr lange."
+armor_condition_broken = de \
+   " ist in Stücke zerfallen und bietet keinerlei Schutz mehr."

@@ -1,0 +1,16 @@
+JasperElder_name_rsc = de "Afiera Xor"
+JasperElder_desc_rsc = de \
+   "Afiera Xor verbrachte viele, viele Jahre in Einsamkeit in diesen Bergen "
+   "und weiht sein Leben jetzt seiner Kunst. Seine Holzschnitzereien sind "
+   "komplizierte Muster von mathematischer Vollkommenheit. Doch er wird sich "
+   "die Zeit nehmen, die Reisenden zu unterhalten, die an seiner Weisheit "
+   "teilhaben wollen, die er sich im Verlaufe eines Lebens, das der stillen "
+   "Meditation gewidmet war, angeeignet hat."
+JasperElder_entry_welcome = de "Sei Gegrüßt, mögest du lang leben."
+JasperElder_unwanted_keep = de \
+   "~k%s%s teilt dir mit, \"Vielleicht finde ich einen Nutzen hierfür.~n~k\""
+JasperElder_unwanted_pay = de "~k%s%s teilt dir mit, \"wie praktisch.~n~k\""
+JasperElder_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Die meisten materiellen Güter sind von geringer "
+   "Bedeutung, für einen alten Mann wie mich.~n~k\""
+JsEl_stat_window_trigger = de "Werte ändern"

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include scimprofqt.lkod
+
    % Quest description.
    scimprofquest_icon_rsc = scimico.bgf
    scimprofquest_name_rsc = "scimitar wielding pupil quest"

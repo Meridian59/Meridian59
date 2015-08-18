@@ -81,6 +81,9 @@
     <ClInclude Include="userarea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="language.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="actions.c">
@@ -162,6 +165,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="userarea.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="language.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

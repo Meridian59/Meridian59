@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include duke5.lkod
+
    room_name_duke5 = "The Duke's Grand Ballroom"
    room_duke5 = duke5.roo
 
@@ -255,7 +257,7 @@ messages:
       if rMusic <> $ AND prMusic <> rMusic
       {
          prMusic = rMusic;
-         for i in plActive
+         foreach i in plActive
          {
    	      each_obj = First(i);
             if IsClass(each_obj,&User)
@@ -360,31 +362,31 @@ messages:
       % 5 different lights, Intensity at highest, (255)
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BBLUE,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=5,#new_col=21,
            #fine_row=48,#fine_col=16);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BRED,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=14,#new_col=21,
            #fine_row=16,#fine_col=16);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BGREEN,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=14,#new_col=8,
            #fine_row=16,#fine_col=48);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BORANGE,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=5,#new_col=8,
            #fine_row=48,#fine_col=48);
 
       oLight = Create(&DynamicLight,#iColor=LIGHT_BPURPLE,#iIntensity=255);
-      Send(oLight,@SetSwitch,#switch=OFF);
+      Send(oLight,@SetSwitch,#bSwitch=OFF);
       plLights = cons(oLight,plLights);
       Send(self,@NewHold,#what=oLight,#new_row=22,#new_col=7,
            #fine_row=0,#fine_col=16);
@@ -411,9 +413,9 @@ messages:
       if piPartySetting = PARTY_OFF
       {
          % Make sure each light is off.
-         for oLight in plLights
+         foreach oLight in plLights
          {
-            Send(oLight,@SetSwitch,#switch=OFF);
+            Send(oLight,@SetSwitch,#bSwitch=OFF);
          }
       }
       else
@@ -426,10 +428,10 @@ messages:
             % Make sure each light is on and set to the original color
             iIndex = 1;
 
-            for oLight in plLights
+            foreach oLight in plLights
             {
                Send(oLight,@SetLight,#iColor=Nth(lColors,iIndex));
-               Send(oLight,@SetSwitch,#switch=ON);
+               Send(oLight,@SetSwitch,#bSwitch=ON);
                iIndex = iIndex + 1;
             }
          }
@@ -442,7 +444,7 @@ messages:
             % Add in an "off" option to the colors list.
             lColors = Cons(-1,lColors);
 
-            for oLight in plLights
+            foreach oLight in plLights
             {
                iIndex = Nth(lColors,random(1,length(lColors)));
                lColors = DelListElem(lColors,iIndex);
@@ -450,13 +452,13 @@ messages:
                if iIndex = -1
                {
                   % Switch the light off
-                  Send(oLight,@SetSwitch,#switch=OFF);
+                  Send(oLight,@SetSwitch,#bSwitch=OFF);
                }
                else
                {
                   % Switch the light on with a random color
                   Send(oLight,@SetLight,#iColor=iIndex);
-                  Send(oLight,@SetSwitch,#switch=ON);
+                  Send(oLight,@SetSwitch,#bSwitch=ON);
                }
             }
 

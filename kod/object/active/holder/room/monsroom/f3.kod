@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include f3.lkod
+
    room_OutdoorsF3 = F3.roo
    room_name_OutdoorsF3 ="Source of the River Ille"
    OutdoorsF3_music = walk5.mp3

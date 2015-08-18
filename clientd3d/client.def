@@ -15,6 +15,7 @@ EXPORTS
 	LookupRsc
 	LookupNameRsc
 	LookupRscNoError
+	LookupRscRedbook
 	dprintf
 	MouseToRoom
 	ParseCommand
@@ -27,6 +28,7 @@ EXPORTS
 	WebLaunchBrowser
 	InitMenuPopupHandler
 	GetHBitmapFromResource
+	GetAvailableLanguages
 
 ; Keyboard handling
 	KeyAddTable

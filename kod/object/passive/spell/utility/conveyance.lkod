@@ -1,0 +1,15 @@
+Conveyance_name_rsc = de "Transport"
+Conveyance_desc_rsc = de \
+   "Sendet eine Menge von deinen Gegenständen in dein nähestes Lager.\nBenötigt "
+   "nur ein paar Schillinge als Gebühr."
+Conveyance_cant = de "Du kannst Transport nicht auf %s%s zaubern."
+Conveyance_not_enough_cash = de \
+   "Du hast nicht genügend Schillinge um %s%s in dein Lager zu transportieren."
+Conveyance_not_enough_space = de \
+   "Es ist nicht genügend Platz in deinem Lager vorhanden!"
+Conveyance_not_holding = de \
+   "Du kannst Transport nicht auf einen Gegenstand zaubern, den du in der "
+   "Hand hälst!"
+Conveyance_cast = de \
+   "Plötzlich erscheint ein kleines Portal und transportiert %s%s in dein "
+   "Lager."

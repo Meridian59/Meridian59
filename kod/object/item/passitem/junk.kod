@@ -91,6 +91,8 @@ constants:
 
 resources:
 
+   include junk.lkod
+
    junk_icon_rsc1 = mace.bgf
    junk_name_rsc1 = "broken mace"
    junk_desc_rsc1 = "This mace looks to be functionally useless."

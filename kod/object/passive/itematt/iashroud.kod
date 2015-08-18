@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include iashroud.lkod
+
    itematt_shroud_desc = " A cloak of magic surrounds it."
    iashroud_gone = "The mystical cloak slips away from your %s."
    iashroud_name = "shrouded %s"

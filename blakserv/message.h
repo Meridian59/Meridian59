@@ -19,9 +19,11 @@ typedef struct message_struct
    char *handler;
    int dstr_id;
    int trace_session_id;
-   int called_count;
+   int untimed_call_count;
+   int timed_call_count;
    struct message_struct *propagate_message;
    struct class_struct *propagate_class;
+   double total_call_time;
 } message_node;
 
 void InitMessage(void);

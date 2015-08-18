@@ -1,0 +1,12 @@
+Restorate_name_rsc = de "Wiederherstellen"
+Restorate_desc_rsc = de \
+   "Dieses Lied ermöglicht es den Zuhörern, ihre Gesundheit schneller zurückzugewinnen. "
+   "Benötigt Diamanten und Kräuter."
+Restorate_cast = de "Du fängst an ein berhuigendes Lied zu spielen."
+Restorate_starts = de "%s beginnt ein beruhigendes Lied zu spielen."
+Restorate_ends = de "Das beruhigende Lied, gespielt von %s verstummt."
+Restorate_caster_ends = de "Dein beruhigendes Lied verstummt."
+Restorate_caster_enter = de "Du fühlst den Schmerz deiner Wunden verringert."
+Restorate_enter = de \
+   "%ss beruhigendes Lied, lässt dich deine Wunden weniger spüren."
+Restorate_leave = de "Du kannst das beruhigende Lied von %s's nicht mehr hören."

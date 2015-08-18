@@ -1,0 +1,12 @@
+Eavesdrop_name_rsc = de "Lauschen"
+Eavesdrop_desc_rsc = de \
+   "Riija gewährt Dir die Möglichkeit ferne Gespräche zu belauschen und auf "
+   "diese Weise andere auszuspionieren. Dieser Zauber benötigt Drachenfliegenaugen."
+Eavesdrop_on_rsc = de \
+   "Die Geräusche aus einem nahen Raum erfüllt deine Gedanken."
+Eavesdrop_off_rsc = de \
+   "Du scheinst die entfernten Geräusche nicht mehr zu hören."
+Eavesdrop_already_enchanted_rsc = de "Du lauscht bereits einem Raum."
+Eavesdrop_no_rooms = de \
+   "Es scheint kein Raum in der Nähe zu sein den du belauschen kannst."
+Eavesdrop_Success_rsc = de "Du gibst %s%s die Möglichkeit zu lauschen."

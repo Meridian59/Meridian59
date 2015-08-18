@@ -1,0 +1,22 @@
+SoldierShield_name_rsc = de "Der Fraktionsschild"
+SoldierShield_desc_rsc = de \
+   "Schilde dieses Stils zeigen die Treue zu einer bestimmten Fraktion."
+SoldierShield_rank_desc = de "\n\nDein Rank in %s ist: %s."
+SoldierShield_ArmyName = de "den Kräften der Neutralität"
+SoldierShield_rank_name1 = de "ein niedriger Bote"
+SoldierShield_rank_name2 = de "ein durchschnittlicher Soldat"
+SoldierShield_rank_name3 = de "ein bedeutender Kämpfer"
+SoldierShield_rank_name4 = de "ein großer Krieger"
+SoldierShield_rank_name5 = de "ein erhabener Held"
+SoldierShield_welcome_mail = de "Betreff: Willkommen. Du bist nun ein Soldat."
+SoldierShield_lost_status = de \
+   "Dein Lehnsherr widerruft Deinen Status als Soldat!"
+SoldierShield_lost_status_nonfaction = de \
+   "Du bist nicht würdig einen Fraktionsschild zu tragen!"
+SoldierShield_booted_mail = de \
+   "Betreff: Dein Status als Soldat wurde aufgehoben.Ich habe Dich aus meiner "
+   "Armee von Soldaten entfernt. Ich habe für jemand so feigen wie Dich keine "
+   "Verwendung."
+SoldierShield_sling_on_back = de "Du schnallst Deinen Schild auf den Rücken."
+SoldierShield_remove_from_back = de \
+   "Du entfernst Deinen Schild von Deinem Rücken."

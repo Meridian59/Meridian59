@@ -1,0 +1,17 @@
+summonapparition_name_rsc = de "Illusionsgeschöpf"
+summonapparition_desc_rsc = de \
+   "Ruft ein illusionistisches Geschöpf, Deine Feinde anzugreifen. Das Geschöpf "
+   "fügt großen Schaden zu, kann jedoch leicht vertrieben werden. Für diesen "
+   "Zauberspruch werden Moosnetze und Regenbogenfarne benötigt. Die Anwendung "
+   "dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+summonapparition_cast_rsc = de \
+   "Du grinst als %s%s sich vom Boden erhebt, gleich neben %s%s!"
+summonapparition_failed_rsc = de \
+   "Es gibt schon zu viel Beschwörungsmagie in diesem Raum, so dass Du diesen "
+   "Zauber nicht ausführen kannst"
+summonapp_toomany_rsc = de \
+   "Es gibt hier zu viele Monster, damit ist das Riskio zu hoch ein weiteres "
+   "zu beschwören."
+summonapparition_failed_inanimate = de \
+   "%s%s hat keinen Sinn, mit deiner Magie gebastelt zu werden."
+apparition_fizzle = de "Dein Illusionsgeschöpf verpufft!"

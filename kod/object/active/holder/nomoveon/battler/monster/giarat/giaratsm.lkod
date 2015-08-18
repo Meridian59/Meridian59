@@ -1,0 +1,6 @@
+smallratkoc_name_rsc = de "imixnapyij"
+smallratname_rsc = de "Die Kleine Ratte"
+smallratdesc_rsc = de \
+   "Diese Riesenratte entblößt herausfordernd ihre Gelben Zähne.Der Gestank "
+   "von Fäulnis entströmt ihrem schmutzigem Fell."
+smallratdead_name_rsc = de "Die tote Ratte"

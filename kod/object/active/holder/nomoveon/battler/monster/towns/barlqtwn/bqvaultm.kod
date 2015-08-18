@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bqvaultm.lkod
+
    barloquevaultman_name_rsc = "Obert Cair'bre"
    barloquevaultman_icon_rsc = bqvaultm.bgf
    barloquevaultman_desc_rsc =  \

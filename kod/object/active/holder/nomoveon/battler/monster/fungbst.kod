@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include fungbst.lkod
+
    fungusbeast_koc_name_rsc = "puucmecmoch"
    fungusbeast_name_rsc = "fungus beast"
    fungusbeast_icon_rsc = fungbst.bgf

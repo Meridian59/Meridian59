@@ -41,6 +41,8 @@ constants:
 
 resources:
 
+   include orcpit1.lkod
+
    room_name_Orcpit1 = "Lair of the Orc Pit Boss"
    room_Orcpit1 = ocp1.roo
    Orcpit1_music = orcpit.mp3
@@ -185,7 +187,7 @@ messages:
       piDoor3Position = DOOR_DOWN;
 
       % Delete any boss bodies that may be lying around...
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(First(i),&OrcPitBossBody)
          {

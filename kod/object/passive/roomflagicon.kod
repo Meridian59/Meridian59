@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include roomflagicon.lkod
+
    RoomFlag_name_rsc = "room flag"
    RoomFlag_icon_rsc = iheat.bgf
    RoomFlag_desc_rsc = \
@@ -39,32 +41,6 @@ classvars:
 properties:
 
 messages:
-
-   EffectDesc(who=$)
-   {
-      return;
-   }
-
-   CreateStatsDesc(who=$)
-   {
-      ClearTempString();
-
-      if who <> $
-         AND IsClass(who,&User)
-         AND Send(Send(who,@GetOwner),@IsEnchanted,#what=self)
-      {
-         Send(self,@EffectDesc,#who=who);
-      }
-
-      return;
-   }
-
-   GetStatsDesc(who=$)
-   {
-      Send(self,@CreateStatsDesc,#who=who);
-
-      return GetTempString();
-   }
 
    ShowEnchantmentIcon(type = $)
    {

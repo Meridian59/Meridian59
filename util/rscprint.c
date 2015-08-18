@@ -19,9 +19,10 @@ void Usage(void)
 /*
  * test_callback:  Just print out rscs.
  */
-bool test_callback(char *filename, int rsc, char *name)
+bool test_callback(char *filename, int rsc, int lang_id, char *str)
 {
-   printf("rsc # = %d, string = %s\n", rsc, name);
+   printf("rsc # = %d, language id = %d, string = %s\n", rsc,lang_id,str);
+   
    num++;
    return true;
 }

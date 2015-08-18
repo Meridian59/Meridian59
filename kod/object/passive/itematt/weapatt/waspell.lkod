@@ -1,0 +1,8 @@
+WeapAttSpellCaster_desc = de "  Mystische Energie umgibt diese Waffe."
+WeapAttSpellCaster_desc_target = de \
+   "  Mystische Energie umgibt diese Waffe.  Diese Waffe wird den %s Zauber "
+   "auf dein Ziel zaubern."
+WeapAttSpellCaster_desc_self = de \
+   "  Mystische Energie umgibt diese Waffe.  Diese Waffe wird den %s Zauber "
+   "auf den Besitzer ausüben."
+WeapAttSpellCaster_dm = de "Zauber"

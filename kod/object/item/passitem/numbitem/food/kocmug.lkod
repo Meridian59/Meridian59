@@ -1,0 +1,9 @@
+kocatanmug_name_rsc = de "Der Kupferne Pekonch-Becher"
+kocatanmug_desc_rsc = de \
+   "Wein, der dick genug ist, um einen Dolch in ihm stecken zu lassen."
+kocatanmug_name_plural_rsc = de "Pekonch-Becher"
+kocatanmug_disp_name = de "Der Pekonch-Krug"
+kocatanmug_disp_desc = de "Dies ist ein schwerer Krug voll mit dunklem Pekonch."
+kocatanmug_got_one = de \
+   "Du füllst einen Becher mit dunklem Pekonch aus dem Krug."
+kocatanmug_use = de "Wow, da hast Du auch morgen noch was davon!"

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include i8.lkod
+
    room_OutdoorsI8 = I8.roo
    room_name_OutdoorsI8 ="The Cragged Mountains"
    OutdoorsI8_music = walk4.mp3
@@ -87,7 +89,7 @@ messages:
 
       send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
                 #height = 284, #speed = 8);
-      for i in plYell_zone
+      foreach i in plYell_zone
       {
 	 if i = RID_TEMPLE_QOR
 	 {

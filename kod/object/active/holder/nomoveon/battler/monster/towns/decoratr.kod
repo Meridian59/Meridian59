@@ -39,6 +39,8 @@ constants:
 
 resources:
 
+   include decoratr.lkod
+
    Decorator_name_rsc = "interior design consultant"
    Decorator_icon_rsc = faerie-g.bgf
    Decorator_desc_rsc = \
@@ -108,7 +110,7 @@ resources:
       "Ah, I understand.  If you need anything else, please ring the bell."
 
    Decorator_list_objects = \
-      "You may choose from the following decorative objects: %q."
+      "You may choose from the following decorative objects: %r%r."
 
    Decorator_takes_heartstones = \
       "You know, heartstones can be made into some interesting items."
@@ -147,6 +149,10 @@ resources:
    Decorator_command_picture = "picture"
    Decorator_command_lighten = "lighten"
    Decorator_command_darken = "darken"
+
+   decorator_comma = ", "
+   decorator_and = "and "
+   decorator_add_item = "%s%s%s"
 
 classvars:
 
@@ -705,10 +711,120 @@ messages:
 
    DecoratorSayObjects(what=$)
    {
-      Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,
-            #string=Decorator_list_objects,
-            #parm1=Send(poOwner,@GetObjectList,#who=what,#oDecorator=self),
-            #type1=STRING_RESOURCE);
+      local iLength, lList, l1, l2, i, iCount, oObj, iLengthl1, iLengthl2;
+
+      lList = Send(poOwner,@GetObjectList,#who=what,#oDecorator=self);
+
+      l1 = $;
+      l2 = $;
+
+      % Split list into two halves, might be too big.
+      iLength = Length(lList);
+      if iLength MOD 2 = 1
+      {
+         iCount = 2;
+         l1 = Cons(First(lList),l1);
+      }
+      else
+      {
+         iCount = 1;
+      }
+
+      while iCount < iLength
+      {
+         l1 = Cons(Nth(lList,iCount),l1);
+         ++iCount;
+         l2 = Cons(Nth(lList,iCount),l2);
+         ++iCount;
+      }
+
+      if l1 = $
+         AND l2 = $
+      {
+         Debug("DecoratorSayObjects got no objects to say for ",what,
+            Send(what,@GetTrueName));
+
+         return;
+      }
+
+      % Add protocol packet and headers.
+      AddPacket(1,BP_SAID, 4,self, 4,Send(self,@GetName), 1,SAY_RESOURCE,
+                4,monster_said_resource_str, 4,Send(self,@GetCapDef),
+                4,Send(self,@GetName),4,Decorator_list_objects);
+
+      iLengthl1 = Length(l1);
+      iLengthl2 = Length(l2);
+
+      if l1 <> $
+      {
+         if iLengthl1 > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,#iNum=iLengthl1));
+         }
+
+         iCount = 1;
+
+         % Add first list, except for last element.
+         foreach i in l1
+         {
+            if iCount++ = iLengthl1
+            {
+               break;
+            }
+
+            AddPacket(4,decorator_add_item, 4,Send(i,@GetIndef),
+                      4,Send(i,@GetName), 4,decorator_comma);
+         }
+
+         oObj = Last(l1);
+
+         if l2 = $
+         {
+            AddPacket(4,decorator_add_item, 4,decorator_and,
+                      4,Send(oObj,@GetIndef), 4,Send(oObj,@GetName));
+         }
+         else
+         {
+            AddPacket(4,decorator_add_item, 4,Send(oObj,@GetIndef),
+                      4,Send(oObj,@GetName), 4,decorator_comma);
+         }
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      if l2 <> $
+      {
+         if iLengthl2 > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,#iNum=iLengthl2));
+         }
+
+         iCount = 1;
+         % Add second list, except for last element.
+         foreach i in l2
+         {
+            if iCount++ = iLengthl2
+            {
+               break;
+            }
+
+            AddPacket(4,decorator_add_item, 4,Send(i,@GetIndef),
+                      4,Send(i,@GetName), 4,decorator_comma);
+         }
+
+         oObj = Last(l2);
+
+         AddPacket(4,decorator_add_item, 4,decorator_and,
+                   4,Send(oObj,@GetIndef), 4,Send(oObj,@GetName));
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      Send(poOwner,@SendCopyPacketAllInRoom);
 
       return;
    }
@@ -931,7 +1047,7 @@ messages:
       }
 
       oPlayerObj = $;
-      for i in Send(who,@GetHolderPassive)
+      foreach i in Send(who,@GetHolderPassive)
       {
          if IsClass(i,GetClass(obj))
          {

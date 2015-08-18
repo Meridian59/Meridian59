@@ -1,0 +1,7 @@
+guildvote_name_rsc = de "Wählen"
+guildvote_desc_text_rsc = de \
+   "Mit diesem Befehl kannst Du deine Unterstützung für die Führung für eine "
+   "Person angeben."
+vote_no_gms = de "Gidelmeister können nicht für sich selber wählen."
+vote_ties_renouncer = de "Du dankst ab bei %s%s."
+vote_ties_others = de "%s dankt ab bei %s%s!"

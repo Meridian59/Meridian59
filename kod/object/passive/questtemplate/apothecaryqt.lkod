@@ -1,0 +1,36 @@
+% Quest description.
+apothecaryqt_name_rsc = de "apothecary quest"
+apothecaryqt_desc_rsc = de \
+   "An apothecary has run out of stock; deliver some to them."
+
+apothecaryqt_deliver_rsc = de \
+   "%s%s has need of %i %s, so %s%s has asked you to deliver them to %s.  "
+   "Do not be tempted to keep them for yourself, lest you be punished "
+   "for your thievery!"
+
+apothecaryqt_completed_rsc = de \
+   "You have completed the apothecary quest."
+
+% Quest resources.
+apothecary_assign_2 = de \
+   "%NPC benötigt diese %INDEF_CARGO%CARGO, bitte bringe sie zu %HIMHER_NPC.  "
+   "Diebstahl in jeglicher Form wird dazu führen, dass Du als Gesetzesloser "
+   "deklariert wirst.  Ich habe mit %NPC eine Vereinbarung getroffen, dass "
+   "er Dich für deine Zeit bezahlt.  Du hast einen Meridian Tag um die Waren "
+   "anzuliefern."
+apothecary_assign_2_h = de \
+   "%NPC benötigt diese %INDEF_CARGO%CARGO, bitte bringe sie zu %HIMHER_NPC.  "
+   "Diesbstahl einer der Waren wird zu einem großen Unglück führen  Ich habe "
+   "mit %NPC eine Vereinbarung getroffen. dass er Dich für deine Zeit bezahlt.  "
+   "Du hast einen Meridian Tag um die Waren anzuliefern."
+apothecary_success_2 = de \
+   "Vielen dank, für Deine schnelle Lieferung.  Das Geschäft boomt in letzter "
+   "Zeit!  Ich wundere mich warum?  Na ja, hier ist deine Bezahlung.  Vielleicht "
+   "kommst Du später mal wieder um diesen Dienst noch einmal durchzuführen.  "
+   "Du hast mir in der meiner Beziehung zu %SOURCE_NPC geholfen."
+apothecary_failure_2 = de \
+   "Betreff: Dieb!\nDein Diebstahl von %INDEF_CARGO%CARGO hat Dich als Gesetzesloser "
+   "deklariert."
+apothecary_failure_2_h = de \
+   "Betreff: Dieb!\nDein Diebstahl von %INDEF_CARGO%CARGO hat mich dazu gebracht, "
+   "einen Fluch auf Dich zu legen. Gut gemacht!."

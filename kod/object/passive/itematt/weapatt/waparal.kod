@@ -23,9 +23,11 @@ WeapAttParalyzer is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
+
+   include waparal.lkod
 
    weapattParalyzer_desc = \
       " A glow that can only be described as Zjiriaesqe surrounds the weapon."
@@ -36,7 +38,6 @@ resources:
 classvars:
 
    vrDesc = weapattParalyzer_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_Paralyzer
 

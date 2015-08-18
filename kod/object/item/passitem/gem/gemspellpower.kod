@@ -19,114 +19,112 @@ resources:
    gem_spellpower_name_rsc = "magma crystal"
    gem_spellpower_icon_rsc = ruby.bgf
    gem_spellpower_desc_rsc = \
-	"This shard of gemstone mysteriously retains some of the living heat"
-    " from its earthen birth."
-	
+      "This shard of gemstone mysteriously retains some of the living heat "
+      "from its earthen birth."
+   gem_sp_effect_desc_rsc = \
+      "  When attached to armor, it will offer %i %s spellpower."
+   gem_sp_attached_rsc = "\nAn attached %s adds %i %s spellpower."
+
 classvars:
-   
+
    vrName = gem_spellpower_name_rsc
    vrIcon = gem_spellpower_icon_rsc
    vrDesc = gem_spellpower_desc_rsc
-
    viValue_average = 15000
    viWeight = 0
    viBulk = 0
-
    viSchool = SS_FAREN
 
 properties:
 
    piPowerStrength = 1
-   
+
 messages:
 
    Constructor()
    {
       local iRandomRoll;
-      
+
       iRandomRoll = Random(1,1000);
-      
+
       if iRandomRoll < 333
       {
          piPowerStrength = 1;
+
          propagate;
       }
-      
+
       if iRandomRoll < 666
       {
          piPowerStrength = 2;
+
          propagate;
       }
-      
+
       if iRandomRoll < 950
       {
          piPowerStrength = 3;
+
          propagate;
       }
-      
+
       if iRandomRoll < 1000
       {
          piPowerStrength = 4;
+
          propagate;
       }
-      
+
       if iRandomRoll = 1000
       {
          piPowerStrength = 5;
+
          propagate;
       }
-      
+
       propagate;
    }
-   
+
    GetSchool()
    {
       return viSchool;
    }
-   
+
    GetStrength()
    {
       return piPowerStrength;
    }
-   
+
    ModifySpellPower(iModifier=0,oSpell=$,oCaster=$)
    {
       if oSpell = $
       {
          return iModifier;
       }
-      
+
       if Send(oSpell,@GetSchool) = Send(self,@GetSchool)
       {
          return iModifier + Send(self,@GetStrength);
       }
-      
+
       return iModifier;
    }
-   
+
    AppendDesc()
    {
-      AppendTempString(" When attached to armor, it will offer ");
-      AppendTempString(piPowerStrength);
-      AppendTempString(" ");
-      AppendTempString(Send(Send(SYS,@FindSpellByNum,#num=SID_BLINK),
+      AddPacket(4,gem_sp_effect_desc_rsc, 4,piPowerStrength,
+                4,Send(Send(SYS,@FindSpellByNum,#num=SID_BLINK),
                           @GetSchoolStr,#iSchool=viSchool));
-      AppendTempString(" spellpower. ");
-      
-      propagate;
+
+      return;
    }
-   
+
    AttributeDesc()
    {
-      AppendTempString("An attached ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" adds ");
-      AppendTempString(piPowerStrength);
-      AppendTempString(" ");
-      AppendTempString(Send(Send(SYS,@FindSpellByNum,#num=SID_BLINK),
-                          @GetSchoolStr,#iSchool=viSchool));
-      AppendTempString(" spellpower. ");
-      
+      AddPacket(4,gem_sp_attached_rsc, 4,Send(self,@GetName),4,piPowerStrength,
+                4,Send(Send(SYS,@FindSpellByNum,#num=SID_BLINK),
+                        @GetSchoolStr,#iSchool=viSchool));
+
       return;
    }
 

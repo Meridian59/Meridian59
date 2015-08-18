@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include kocaleqt.lkod
+
    % Quest description.
    kocaleqt_icon_rsc = mug.bgf
    kocaleqt_name_rsc = "Ko'catan ale trade quest"
@@ -143,23 +145,23 @@ messages:
                #quest_node_index=QNT_ID_KOC_ALE_TRADE_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnKeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnKeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -222,7 +224,7 @@ messages:
                #timelimit=4 * 3600,#quest_node_index=QNT_ID_KOC_ALE_TRADE_THREE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

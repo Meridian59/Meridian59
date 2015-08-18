@@ -127,6 +127,8 @@ constants:
    
 resources:
 
+   include player.lkod
+
    player_cant_broadcast = \
       "You can't broadcast a message--you don't have enough mana."
    player_squelched = "You are prevented from communicating for now."
@@ -313,9 +315,9 @@ resources:
    % These are now old resources..... here in case we want to de-hack...
    player_desc_guild = "%q of %s%q."
    player_no_guild = "No known guild affiliation."
-   player_faction_duke = "A staunch servant of Duke Akardius."
-   player_faction_princess = "Firmly loyal to Princess Kateriina."
-   player_faction_rebel = "A freedom fighter supporting Jonas."
+   player_faction_duke = "A staunch servant of Duke Akardius.\n"
+   player_faction_princess = "Firmly loyal to Princess Kateriina.\n"
+   player_faction_rebel = "A freedom fighter supporting Jonas.\n"
    player_faction_neutral = \
       "Not a court vassal, yet affected by the Meridian Council."
    player_not_intriguing = "Not yet concerned with affairs at the Royal Court."
@@ -323,6 +325,12 @@ resources:
    player_nl = "\n"
    player_sp = " "
    player_dot = "."
+
+   % Master fixed info resource.
+   player_fixed_info = "%r%r%s%r%s%q%r"
+
+   % Hometown strings.
+   player_hometown_rsc = "%s%s%s%q%s\n"
    player_citizen_barloque = " has been a Barloquan"
    player_citizen_tos = " has been a citizen of Tos"
    player_citizen_cornoth = " hailed from Cor Noth"
@@ -338,10 +346,12 @@ resources:
    player_year = " year."
    player_under_one_year = " less than a year."
 
+   player_guild_rsc = "%q%s%s%q.\n"
+   player_is_holding = "%s is holding %s%s.\n"
+   player_is_wearing = "%s is wearing %s%s.\n"
+   player_donation_title = "Noble benefactor of Meridian in %q."
+   player_donation_separator = ", "
    player_is_justicar = "Elected Royal Justicar of the Meridian."
-
-   player_is_holding = " is holding "
-   player_is_wearing = " is wearing "
 
    player_known_for_mastery = "Known far and wide for mastery of "
    player_and = " and "
@@ -369,9 +379,6 @@ resources:
    player_no_guild_not_intriguing = \
       "No known guild affiliation. Not yet concerned with affairs at the "
       "Royal Court."
-
-   player_donation_title = "Noble benefactor of Meridian in "
-   player_donation_separator = ", "
 
    player_dagger_shatters = "Your black dagger crumbles into dust."
 
@@ -1119,7 +1126,7 @@ messages:
       local i;
 
       Send(self,@QuitGuild);
-      for i in Send(SYS,@GetGuilds)
+      foreach i in Send(SYS,@GetGuilds)
       {
          Send(i,@RemoveFromFormerMemberList,#who=self);
       }
@@ -1336,19 +1343,19 @@ messages:
          piFlags = piFlags | PFLAG_NO_MAGIC;
       }
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          Send(Nth(i,2),@SetSpellPlayerFlag,#who=self);
       }
 
-      for i in plUsing
+      foreach i in plUsing
       {
          Send(i,@SetItemPlayerFlag,#who=self);
       }
 
       if poOwner <> $
       {
-         for i in Send(poOwner,@GetEnchantmentList)
+         foreach i in Send(poOwner,@GetEnchantmentList)
          {
             Send(Nth(i,2),@SetSpellPlayerFlag,#who=self,#state=Nth(i,3));
          }
@@ -1744,14 +1751,14 @@ messages:
          rLocation = Send(oRoom,@GetName);
       }
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = oSpell
          {
             state = Nth(i,3);
             if NOT IsClass(First(state),&Prism)
             {
-               for j in state
+               foreach j in state
                {
                   Send(j,@MsgSendUser,#message_rsc=player_to_hunters,
                         #parm1=Send(self,@GetDef),
@@ -1821,49 +1828,6 @@ messages:
       return age;
    }
 
-   SetHonorString(string = $)
-   "Admin supported."
-   {
-      if (string = GetTempString())
-      {
-         psHonor = CreateString();
-         SetString(psHonor, string);
-      }
-      else
-      {
-         psHonor = string;
-      }
-
-      return psHonor;
-   }
-
-   GetHonorString()
-   {
-      return psHonor;
-   }
-
-   SetHonorStrings()
-   "Used to set plHonor for all players using whatever psHonor they have. "
-   "Remove this if psHonor is removed (after switching to plHonor)."
-   {
-      if psHonor <> $
-      {
-         if psHonor = GetTempString()
-         {
-            return;
-         }
-
-         if StringEqual(psHonor,"")
-         {
-            return;
-         }
-
-         Send(self,@AddHonorString,#string=psHonor);
-      }
-
-      return;
-   }
-
    GetHonorStringList()
    {
       return plHonor;
@@ -1886,7 +1850,7 @@ messages:
          string = SetString($,string);
       }
 
-      for i in plHonor
+      foreach i in plHonor
       {
          if StringContain(i,string)
          {
@@ -1905,10 +1869,14 @@ messages:
 
       if plHonor <> $
       {
-         for i in plHonor
+         foreach i in plHonor
          {
-            AppendTempString(i);
-            AppendTempString("\n");
+            % Add newbie tag separately so it gets translated.
+            if i <> player_newbie_honor_string
+            {
+               AppendTempString(i);
+               AppendTempString("\n");
+            }
          }
       }
 
@@ -1960,7 +1928,7 @@ messages:
          string = SetString($,string);
       }
 
-      for i in plHonor
+      foreach i in plHonor
       {
          if StringContain(i,string)
          {
@@ -1981,79 +1949,70 @@ messages:
 
    ShowExtraInfo()
    {
-      local i, j, obj, year;
+      local i, j, obj, year, rCargoNum;
 
-      ClearTempString();
+      % Master fixed info resource.
+      AddPacket(4,player_fixed_info);
 
+      %
+      % Add hometown and age, or DM rank.
+      %
       if NOT IsClass(self,&DM)
       {
-         % (example) She has called Jasper home for eight years.
-
-         AppendTempString(Send(self,@GetHeShe,#cap=TRUE));
-         i = Send(self,@GetHomeRoom);
-         j = player_citizen_unknown;
-
-         if (i = RID_NEWB1)
+         switch(Send(self,@GetHomeRoom))
          {
-            j = player_citizen_raza;
+            case RID_NEWB1:
+               j = player_citizen_raza;
+               break;
+            case RID_GUEST1:
+               j = player_citizen_hazar;
+               break;
+            case RID_BAR_INN:
+               j = player_citizen_barloque;
+               break;
+            case RID_COR_INN:
+               j = player_citizen_cornoth;
+               break;
+            case RID_MAR_INN:
+               j = player_citizen_marion;
+               break;
+            case RID_JAS_INN:
+               j = player_citizen_jasper;
+               break;
+            case RID_TOS_INN:
+               j = player_citizen_tos;
+               break;
+            case RID_KOC_INN:
+               j = player_citizen_kocatan;
+               break;
+            default:
+               j = player_citizen_unknown;
+               break;
          }
 
-         if (i = RID_GUEST1)
-         {
-            j = player_citizen_hazar;
-         }
-
-         if (i = RID_BAR_INN)
-         {
-            j = player_citizen_barloque;
-         }
-
-         if (i = RID_COR_INN)
-         {
-            j = player_citizen_cornoth;
-         }
-
-         if (i = RID_MAR_INN)
-         {
-            j = player_citizen_marion;
-         }
-
-         if (i = RID_JAS_INN)
-         {
-            j = player_citizen_jasper;
-         }
-
-         if (i = RID_TOS_INN)
-         {
-            j = player_citizen_tos;
-         }
-
-         if (i = RID_KOC_INN)
-         {
-            j = player_citizen_kocatan;
-         }
-
-         AppendTempString(j);
-
+         AddPacket(4,player_hometown_rsc,4,Send(self,@GetHeShe,#cap=TRUE),4,j);
+         ClearTempString();
          i = Send(self,@GetAge);
          if (i < 1)
          {
-            AppendTempString(player_under_one_year);
+            AddPacket(4,system_blank_resource,4,GetTempString(),
+                      4,player_under_one_year);
          }
          else
          {
-            AppendTempString(player_for);
+            AddPacket(4,player_for);
+
             Send(SYS,@AppendCardinalToTempString,#number=i);
+            AddPacket(4,GetTempString());
             if i = 1
             {
-               AppendTempString(player_year);
+               AddPacket(4,player_year);
             }
             else
             {
-               AppendTempString(player_years);
+               AddPacket(4,player_years);
             }
          }
-         AppendTempString(player_nl);
       }
       else
       {
@@ -2061,73 +2020,119 @@ messages:
          i = Send(self,@GetRankRsc);
          if i <> $
          {
-            AppendTempString(i);
-            AppendTempString(player_nl);
+            AddPacket(4,i);
+         }
+         else
+         {
+            AddPacket(4,system_blank_resource);
          }
       }
 
-      if poGuild <> $ AND NOT Send(poGuild,@isSecret)
+      %
+      % Add guild affiliation.
+      %
+      if poGuild <> $ AND NOT Send(poGuild,@IsSecret)
       {
-         % (example) Squire of the BootLickers.
          i = Send(poGuild,@GetRank,#who=self);
-         AppendTempString(Send(poGuild,@GetRankName,#rank=i,#sex=piGender));
-         AppendTempString(player_of);
-         AppendTempString(Send(poGuild,@GetDef));
-         AppendTempString(Send(poGuild,@GetName));
-         AppendTempString(player_dot);
-         AppendTempString(player_nl);
+         % (example) Squire of the BootLickers.
+         AddPacket(4,player_guild_rsc, 4,Send(poGuild,@GetRankName,#rank=i,#sex=piGender),
+                   4,player_of, 4,Send(poGuild,@GetDef),4,Send(poGuild,@GetName));
+      }
+      else
+      {
+        AddPacket(4,system_blank_resource);
       }
 
+      %
+      % Add faction affiliation.
+      %
       i = Send(self,@GetFaction);
-      if (i <> FACTION_NEUTRAL)
+      if (i = FACTION_DUKE)
       {
-         % (example) A staunch servant of Duke Akardius.
-         if (i = FACTION_DUKE)
-         {
-            AppendTempString(player_faction_duke);
-         }
-         
-         if (i = FACTION_PRINCESS)
-         {
-            AppendTempString(player_faction_princess);
-         }
-         
-         if (i = FACTION_REBEL)
-         {
-            AppendTempString(player_faction_rebel);
-         }
-         
-         AppendTempString(player_nl);
+         AddPacket(4,player_faction_duke);
+      }
+      else if (i = FACTION_PRINCESS)
+      {
+         AddPacket(4,player_faction_princess);
+      }
+      else if (i = FACTION_REBEL)
+      {
+         AddPacket(4,player_faction_rebel);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
       }
 
+      %
+      % Add visible cargo types. The number of these doesn't really change,
+      % but this section has error checking anyway just in case we change it.
+      %
       j = Send(SYS,@GetVisibleCargoTypes);
-      for i in j
+      if j = $
       {
-         % (example) He is holding a purple pickle princess figurine.
-
-         obj = Send(self,@FindHolding,#class=i);
-         if obj <> $
+         AddPacket(4,system_blank_resource);
+      }
+      else
+      {
+         switch(Length(j))
          {
-            AppendTempString(Send(self,@GetHeShe,#cap=True));
-            
-            if IsClass(obj,&Ring)
+            case 5:
+               rCargoNum = system_rsc_template_5;
+               break;
+            case 1:
+               rCargoNum = system_rsc_template_1;
+               break;
+            case 2:
+               rCargoNum = system_rsc_template_2;
+               break;
+            case 3:
+               rCargoNum = system_rsc_template_3;
+               break;
+            case 4:
+               rCargoNum = system_rsc_template_4;
+               break;
+            case 6:
+               rCargoNum = system_rsc_template_6;
+               break;
+            case 7:
+               rCargoNum = system_rsc_template_7;
+               break;
+            default:
+               rCargoNum = system_rsc_template_1;
+               break;
+         }
+
+         AddPacket(4,rCargoNum);
+
+         foreach i in j
+         {
+            % (example) He is holding a purple pickle princess figurine.
+            obj = Send(self,@FindHolding,#class=i);
+            if obj <> $
             {
-               AppendTempString(player_is_wearing);
+               if IsClass(obj,&Ring)
+               {
+                  AddPacket(4,player_is_wearing, 4,Send(self,@GetHeShe,#cap=True),
+                            4,Send(obj,@GetIndef), 4,Send(obj,@GetName));
+               }
+               else
+               {
+                  AddPacket(4,player_is_holding, 4,Send(self,@GetHeShe,#cap=True),
+                            4,Send(obj,@GetIndef), 4,Send(obj,@GetName));
+               }
             }
             else
             {
-               AppendTempString(player_is_holding);
+              AddPacket(4,system_blank_resource);
             }
-
-            AppendTempString(Send(obj,@GetIndef));
-            AppendTempString(Send(obj,@GetName));
-            AppendTempString(player_dot);
-            AppendTempString(player_nl);
          }
       }
 
-%%% option turned off for review
-%      if not Send(self,@PlayerIsImmortal)
+%%% Option turned off for review.
+% Works with %q placed in the master fixed description resource.
+%      ClearTempString();
+%      if NOT Send(self,@PlayerIsImmortal)
 %      {
 %         % (example) Known far and wide for mastery of Jala and Kraanan magics 
 %         % and weaponcraft skills.
@@ -2136,11 +2141,11 @@ messages:
 %
 %         % magic school masteries first
 %         obj = Send(SYS,@FindSpellByNum,#num=SID_BONK); % any real spell will do
-%         for i in [SS_JALA,SS_RIIJA,SS_QOR,SS_SHALILLE,SS_KRAANAN,SS_FAREN]
+%         foreach i in [SS_JALA,SS_RIIJA,SS_QOR,SS_SHALILLE,SS_KRAANAN,SS_FAREN]
 %         {
 %            if Send(self,@CountKnownAtLevel,#school=i,#level=6) >= 1
 %            {
-%               if not j
+%               if NOT j
 %               {
 %                  AppendTempString(player_known_for_mastery);
 %                  j = TRUE;
@@ -2161,7 +2166,7 @@ messages:
 %         % weaponcraft
 %         if Send(self,@CountKnownAtLevel,#school=SKS_FENCING,#level=5) >= 1
 %         {
-%            if not j
+%            if NOT j
 %            {
 %               AppendTempString(player_known_for_mastery);
 %               j = TRUE;
@@ -2176,28 +2181,49 @@ messages:
 %         AppendTempString(player_dot);
 %         AppendTempString(player_nl);
 %      }
+%      AddPacket(4,GetTempString());
 
-      % Append all the honor strings to the temp string.
+      %
+      % Add newbie tag resource ID, so client can translate it.
+      %
+      if Send(self,@HasHonorString,#string=player_newbie_honor_string)
+      {
+         AddPacket(4,player_newbie_honor_string);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      %
+      % Append all honor strings (except newbie tag) to the temp string.
+      %
+      ClearTempString();
       Send(self,@AppendHonorStrings);
+      AddPacket(4,GetTempString());
 
+      %
+      % Add donation years.
+      %
+      ClearTempString();
       if plDonationYears <> $
       {
-         % Example: Benefactor of Meridian in 2010, 2011
-         AppendTempString(player_donation_title);
          i = 0;
-         for year in plDonationYears
+         foreach year in plDonationYears
          {
             if i <> 0
             {
                AppendTempString(player_donation_separator);
             }
             AppendTempString(year);
-            i = i + 1;
+            ++i;
          }
-         AppendTempString(player_dot);
+         AddPacket(4,player_donation_title,4,GetTempString());
       }
-
-      AddPacket(0,GetTempString());
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
 
       return;
    }
@@ -2206,12 +2232,12 @@ messages:
    {
       local i, oGame, oParl, iBonus, iDefaultBonus, iTimespan;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          Send(i,@UserLogon);
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          Send(i,@UserLogon);
       }
@@ -2332,12 +2358,12 @@ messages:
    {
       local i;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          Send(i,@UserLogoff);
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          Send(i,@UserLogoff);
       }
@@ -2345,7 +2371,7 @@ messages:
       % If this player has created any evil twins, delete them.
       if plEvilTwins <> $
       {
-         for i in plEvilTwins
+         foreach i in plEvilTwins
          {
             Send(i,@Delete);
          }
@@ -2397,7 +2423,7 @@ messages:
    {
       local i;
 
-      for i in plWindow_overlays
+      foreach i in plWindow_overlays
       {
          Send(self,@SetWindowOverlay,#what=i);
       }
@@ -2592,7 +2618,7 @@ messages:
       lSkills = Nth(charinfo,6);
 
       iPoints = 0;
-      for i in lSpells
+      foreach i in lSpells
       {
          iLevel = Send(Send(SYS,@FindSpellByNum,#num=i),@GetLevel);
 
@@ -2606,7 +2632,7 @@ messages:
          }
       }
 
-      for i in lSkills
+      foreach i in lSkills
       {
          iLevel = Send(Send(SYS,@FindSkillByNum,#num=i),@GetLevel);
 
@@ -2628,7 +2654,7 @@ messages:
       {
          if not IsClass(self,&Guest)
          {
-            for i in lSpells
+            foreach i in lSpells
             {
                oSpell = Send(SYS, @FindSpellByNum, #num=i);
                % Not offered to new characters -> cheating, skip spell
@@ -2650,7 +2676,7 @@ messages:
                }
             }
 
-            for i in lSkills
+            foreach i in lSkills
             {
                oSkill = Send(SYS,@FindSkillByNum,#num=i);
                if (oSkill <> $)
@@ -2722,12 +2748,12 @@ messages:
 
       % first, kill all their items
 
-      for i in plActive
+      foreach i in plActive
       {
          Send(i,@Delete);
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          Send(i,@Delete);
       }
@@ -2795,7 +2821,7 @@ messages:
       piLight = 5;
 
       % Be sure they aren't declared a 'former member' by any existing guilds.
-      for i in Send(SYS,@GetGuilds)
+      foreach i in Send(SYS,@GetGuilds)
       {
          Send(i,@RemoveFromFormerMemberList,#who=self);
       }
@@ -2859,9 +2885,9 @@ messages:
       local lItems,oItem;
 
       % Delete the old stuff.
-      for lItems in [plActive,plPassive]
+      foreach lItems in [plActive,plPassive]
       {
-         for oItem in lItems
+         foreach oItem in lItems
          {
             Send(oItem,@Delete);
          }
@@ -2910,13 +2936,13 @@ messages:
    {
       local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
 
-      for iInfo in plSpells
+      foreach iInfo in plSpells
       {
          oSpell = Send(SYS,@FindSpellByNum,
                      #num=Send(self,@DecodeSpellNum,#compound=iInfo));
          lReagents = Send(oSpell,@GetReagents);
 
-         for lItems in lReagents
+         foreach lItems in lReagents
          {
             cReagent = first(lItems);
             iNumber = Nth(lItems,2);
@@ -3128,7 +3154,7 @@ messages:
    {
       local i, j, oEnchanter;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if First(i) = timer
          {
@@ -3150,7 +3176,7 @@ messages:
             plEnchantments = DelListElem(plEnchantments,i);
             
             % Also remove from passive improvement list.
-            for j in plPassiveImprovement
+            foreach j in plPassiveImprovement
             {
                if First(j) = Nth(i,2)
                {
@@ -3191,7 +3217,7 @@ messages:
    {
       local i ;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if First(i) = timer
          {
@@ -3284,7 +3310,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if NOT IsClass(Nth(i,2),&RadiusEnchantment)
          {
@@ -3302,7 +3328,7 @@ messages:
    {
       local i;
 
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          Send(self,@RemoveRadiusEnchantment,#what=Nth(i,1),
                #iPower=Nth(i,2),#caster=Nth(i,3),#report=report);
@@ -3321,7 +3347,7 @@ messages:
 
       removedSomething = FALSE;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@IsPersonalEnchantment)
@@ -3355,7 +3381,7 @@ messages:
          return;
       }
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if First(i) <> $
          {
@@ -3402,7 +3428,7 @@ messages:
    {
       local i, tTimer, iTime, state;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          % Phase reactivates enchantments while it is still in plEnchantments
          if IsClass(Nth(i,2),&Phase)
@@ -3461,7 +3487,7 @@ messages:
    {
       local i, oSpell, each_obj;
 
-      for i in plEnchantments 
+      foreach i in plEnchantments 
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@IsIllusion)
@@ -3473,7 +3499,7 @@ messages:
 
       % Kludgy, but oh well.  Not like any other code from this era is
       % exactly well-engineered or even "good", really.
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&NecromancerAmulet)
@@ -3489,7 +3515,7 @@ messages:
    {
       local i, oSpell, each_obj;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = school
@@ -3508,7 +3534,7 @@ messages:
 
       state = $ ;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
          {
@@ -3552,7 +3578,7 @@ messages:
       }
 
       % Also remove from passive improvement list.
-      for i in plPassiveImprovement
+      foreach i in plPassiveImprovement
       {
          if First(i) = what
          {
@@ -3570,7 +3596,7 @@ messages:
 
       removedSomething = FALSE;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if IsClass(Nth(i,2),class)
          {
@@ -3597,7 +3623,7 @@ messages:
       }
 
       % Also remove from passive improvement list.
-      for i in plPassiveImprovement
+      foreach i in plPassiveImprovement
       {
          if IsClass(First(i),class)
          {
@@ -3620,7 +3646,7 @@ messages:
    {
       local i,each_obj;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          each_obj = Nth(i,2);
          if NOT (IsClass(each_obj,&Seance)
@@ -3660,7 +3686,7 @@ messages:
    {
       local i;
 
-      for i in plAttack_modifiers
+      foreach i in plAttack_modifiers
       {
          if i = what
          {
@@ -3695,7 +3721,7 @@ messages:
       local i, bFound;
 
       bFound = FALSE ;
-      for i in plDefense_modifiers
+      foreach i in plDefense_modifiers
       {
          if i = what
          {
@@ -3818,7 +3844,7 @@ messages:
       }
 
       iSpace = space;
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@GetItemUseType) & type
          {
@@ -3931,7 +3957,7 @@ messages:
       }
 
       % make sure not already using or something using disallows
-      for i in plUsing
+      foreach i in plUsing
       {
          if i = what
          {
@@ -4031,7 +4057,7 @@ messages:
       bFound = FALSE;
 
       %check and see if item disallows
-      for i in plUsing
+      foreach i in plUsing
       {
          if i = what
          {
@@ -4060,7 +4086,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if i = what
          {
@@ -4878,7 +4904,7 @@ messages:
       }
 
       % Give offensive buffs a small chance to improve each swing!
-      for i in plPassiveImprovement
+      foreach i in plPassiveImprovement
       {
          if Nth(i,3) AND random(1,50) = 50
          {
@@ -5048,7 +5074,7 @@ messages:
       }
 
       % List of items and spells that affect chance-to-hit
-      for i in plAttack_modifiers
+      foreach i in plAttack_modifiers
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                         #hit_roll=iOffense,#stroke_obj=stroke_obj);
@@ -5131,13 +5157,13 @@ messages:
                      + (200 * iHealth)/(100 + Send(self,@GetStamina));
       }
 
-      for i in plDefense_modifiers
+      foreach i in plDefense_modifiers
       {
          iDefense = Send(i,@ModifyDefensePower,#who=self,
                            #what=what,#defense_power=iDefense);
       }
 
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          iDefense = Send(Nth(i,1),@ModifyDefensePower,#attacker=what,
                      #iPower=Nth(i,2),#caster=Nth(i,3),#defense_power=iDefense);
@@ -5253,18 +5279,15 @@ messages:
             {
                oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
             }
+            else if IsClass(oWeapon,&Weapon)
+            {
+               oStroke=Send(SYS,@FindSkillByNum,
+                     #num=Send(oWeapon,@GetDefaultStrokeNumber));
+            }
             else
             {
-               if IsClass(oWeapon,&Weapon)
-               {
-                  oStroke=Send(SYS,@FindSkillByNum,
-                        #num=Send(oWeapon,@GetDefaultStrokeNumber));
-               }
-               else
-               {
-                  % It's a spell, use it as the stroke object.
-                  oStroke = oWeapon;
-               }
+               % It's a spell, use it as the stroke object.
+               oStroke = oWeapon;
             }
          }
 
@@ -5276,7 +5299,7 @@ messages:
 
       % Spells and attmods that modify damage
       iDamageBonus = 0;
-      for i in plAttack_modifiers
+      foreach i in plAttack_modifiers
       {
          % Attack modifiers return the total damage, subtract out the original
          %  damage to get the damage bonus.
@@ -5450,7 +5473,7 @@ messages:
                            #atype=atype,#aspell=aspell);
          }
          
-         for i in plDefense_modifiers
+         foreach i in plDefense_modifiers
          {
             damage = Send(i,@ModifyDefenseDamage,#who=self,#what=what,
                            #damage=damage,#atype=atype,#aspell=aspell,
@@ -5460,7 +5483,7 @@ messages:
       
          iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
 
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,
                   #atype=atype,#iPower=Nth(i,2),
@@ -5471,7 +5494,7 @@ messages:
                         #value=iResistance);
 
          % Allow protective spells a chance to improve when they take effect!
-         for i in plPassiveImprovement
+         foreach i in plPassiveImprovement
          {
             if (aspell & -Nth(i,4)) AND random(1,10) = 10
             {
@@ -5584,7 +5607,7 @@ messages:
       if what <> $
          AND IsClass(what,&Player)
       {
-         for oRod in Send(what,@GetHolderPassive)
+         foreach oRod in Send(what,@GetHolderPassive)
          {
             if IsClass(oRod,&DamageRod)
                AND Send(oRod,@IsActive)
@@ -5601,7 +5624,7 @@ messages:
 
       % Look for active shield rods in inventory, reduce final damage to 1 if any active
       bShielded = FALSE;
-      for oRod in plPassive
+      foreach oRod in plPassive
       {
          if IsClass(oRod,&ShieldRod)
             AND Send(oRod,@IsActive)
@@ -5687,7 +5710,7 @@ messages:
          Send(oWeapon,@WeaponHitTarget);
       }
 
-      for i in plAttack_modifiers
+      foreach i in plAttack_modifiers
       {
          Send(i,@WeaponHitTarget);
       }
@@ -6474,7 +6497,7 @@ messages:
    {
       local i;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(i,&Money)
          {
@@ -6490,7 +6513,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Weapon)
          {
@@ -6505,7 +6528,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Shield)
             AND Send(i,@GetBlockAbility,#who=self) > 0
@@ -6547,7 +6570,7 @@ messages:
          Send(self,@ResetPlayerArms);
       }
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if i = what
          {
@@ -6581,7 +6604,7 @@ messages:
          return FALSE;
       }
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,class)
          {
@@ -6603,7 +6626,7 @@ messages:
          return $;
       }
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,class)
          {
@@ -6658,7 +6681,7 @@ messages:
 
       if armor_pos = -1
       {
-         for i in plUsing
+         foreach i in plUsing
          {
             if IsClass(i,&Shield)
             {
@@ -6673,7 +6696,7 @@ messages:
          if armor_pos & ITEM_USE_BODY
          {
             shirt = $;
-            for i in plUsing
+            foreach i in plUsing
             {
                if Send(i,@GetItemUseType) & armor_pos
                {
@@ -6689,7 +6712,7 @@ messages:
          }
          else
          {
-            for i in plUsing
+            foreach i in plUsing
             {
                if Send(i,@GetItemUseType) = armor_pos
                {
@@ -7192,7 +7215,7 @@ messages:
       }
 
       % Account for any items that may affect max mana
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@AdjustsMaxMana)
          {
@@ -7200,7 +7223,7 @@ messages:
          }
       }
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Send(Nth(i,2),@AffectsMaxMana)
          {
@@ -7347,13 +7370,13 @@ messages:
       local num, i, oSpell;
 
       num = 0;
-      for i in plSpells
+      foreach i in plSpells
       {
          oSpell = Send(SYS,@FindSpellByNum,
                #num=Send(self,@DecodeSpellNum,#compound=i));
          if school = Send(oSpell,@GetSchool)
          {
-            num = num + 1;
+            ++num;
          }
       }
 
@@ -7713,7 +7736,7 @@ messages:
    {
       local i,oSpell;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if Send(self,@DecodeSpellNum,#compound=i) = num
          {
@@ -7736,23 +7759,23 @@ messages:
 
    DecodeSpellNum(compound = 0)
    {
-      return abs(compound) / 100;
+      return Abs(compound) / 100;
    }
 
    DecodeSpellAbility(compound = 0)
    {
-      return abs(compound) MOD 100;
+      return Abs(compound) MOD 100;
    }
 
    GetSpellAbility(spell_num = 0)
    {
       local i;
 
-      for i in plSpells
+      foreach i in plSpells
       {
-         if Send(self,@DecodeSpellNum,#compound=i) = spell_num
+         if Abs(i) / 100 = spell_num
          {
-            return Send(self,@DecodeSpellAbility,#compound=i);
+            return Abs(i) MOD 100;
          }
       }
 
@@ -7780,9 +7803,9 @@ messages:
 
       % Do _not_ replace with HasSpell.
       % This also finds the spell/ability pair and puts it in 'i' for later use.
-      for i in plSpells
+      foreach i in plSpells
       {
-         elemNum = elemNum + 1;
+         ++elemNum;
          if spell_num = Send(self,@DecodeSpellNum,#compound=i)
          {
             bFound = TRUE;
@@ -7886,7 +7909,7 @@ messages:
       % 11 elements right now.
       plSchools = [ 0,0,0,0,0,0,0,0,0,0,0 ];
 
-      for i in plSpells
+      foreach i in plSpells
       {
          iAbility = Send(self,@DecodeSpellAbility,#compound=i);
          iNum = Send(self,@DecodeSpellNum,#compound=i);
@@ -7899,7 +7922,7 @@ messages:
          }
       }
 
-      for i in plSkills
+      foreach i in plSkills
       {
          oAbility=Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
          iSchool = Send(oAbility,@GetSchool);
@@ -7920,7 +7943,7 @@ messages:
       % We want to know if something has changed.
       bChanged = FALSE;
       index = 0;
-      for i in lOldList
+      foreach i in lOldList
       {
          index = index + 1;
          if Nth(lOldList,index) <> Nth(plSchools,index)
@@ -8039,7 +8062,7 @@ messages:
       
       lPrereqs = Send(oSpell,@GetPrerequisites);
 
-      for i in lPrereqs
+      foreach i in lPrereqs
       {
          if NOT Send(self,@HasSpell,#num=i)
          {
@@ -8085,7 +8108,7 @@ messages:
               #wave_rsc=player_sound_learn_spell);
       }
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&DiscipleRobe)
          {
@@ -8110,7 +8133,7 @@ messages:
 
       Send(self,@PlayerIsIntriguing);
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&DiscipleRobe)
          {
@@ -8138,7 +8161,7 @@ messages:
       }
 
       bFound = FALSE;
-      for i in plSpells
+      foreach i in plSpells
       {
          if num = Send(self,@DecodeSpellNum,#compound=i)
          {
@@ -8152,7 +8175,7 @@ messages:
             Send(self,@PlayerIsIntriguing);
 
             bFound = TRUE;
-            for j in plUsing
+            foreach j in plUsing
             {
                if IsClass(j,&DiscipleRobe)
                {
@@ -8191,8 +8214,14 @@ messages:
    {
       local i, elemnum, spellnum;
 
+      % This system is usually off.
+      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      {
+         return;
+      }
+
       elemnum = 0;
-      for i in plSpells
+      foreach i in plSpells
       {
          elemnum = elemnum + 1;
          if Send(self,@DecodeSpellNum,#compound=i) = SID
@@ -8214,7 +8243,7 @@ messages:
       % Must get below highmark for atrophy to activate
       iAmount = -2;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if i < 0
          {
@@ -8225,7 +8254,7 @@ messages:
                      #num=Send(self,@DecodeSpellNum,#compound=i));
                bFound = FALSE;
 
-               for j in plSpells
+               foreach j in plSpells
                {
                   bSpell = Send(SYS,@FindSpellByNum,
                         #num=Send(self,@DecodeSpellNum,#compound=j));
@@ -8253,7 +8282,7 @@ messages:
    {
       local i,oSkill;
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if Send(self,@DecodeSkillNum,#compound=i) = num
          {
@@ -8288,11 +8317,11 @@ messages:
    {
       local i;
 
-      for i in plSkills
+      foreach i in plSkills
       {
-         if Send(self,@DecodeSkillNum,#compound=i) = Skill_num
+         if Abs(i) / 100 = Skill_num
          {
-            return Send(self,@DecodeSkillAbility,#compound=i);
+            return Abs(i) MOD 100;
          }
       }
 
@@ -8319,7 +8348,7 @@ messages:
 
       % Do _not_ replace with HasSkill.
       % This also finds the Skill/ability pair and puts it in 'i' for later use.
-      for i in plSkills
+      foreach i in plSkills
       {
          elemnum = elemnum + 1;
          if Skill_num = Send(self, @DecodeSkillNum, #compound=i)
@@ -8539,7 +8568,7 @@ messages:
                #amount=piVigor_rest_threshold - iVigorChange);
       }
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if num = Send(self,@DecodeSkillNum,#compound=i)
          {
@@ -8571,8 +8600,14 @@ messages:
    {
       local i, elemnum, Skillnum;
 
+      % This system is usually off.
+      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      {
+         return;
+      }
+
       elemnum = 0;
-      for i in plSkills
+      foreach i in plSkills
       {
          elemnum = elemnum + 1;
          if Send(self,@decodeSkillNum,#compound=i) = SKID
@@ -8593,7 +8628,7 @@ messages:
 
       iAmount = -2;
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if i < 0
          {
@@ -8603,7 +8638,7 @@ messages:
                aSkill = Send(SYS,@FindSkillByNum,
                      #num=Send(self,@DecodeSkillNum,#compound=i));
                bFound = FALSE;
-               for j in plSkills
+               foreach j in plSkills
                {
                   bSkill = Send(SYS,@FindSkillByNum,
                         #num=Send(self,@DecodeSkillNum,#compound=j));
@@ -8633,15 +8668,21 @@ messages:
    {
       local i, elemnum;
 
+      % This system is usually off.
+      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      {
+         return;
+      }
+
       elemnum = 0;
-      for i in plSpells
+      foreach i in plSpells
       {
          elemnum = elemnum+1;
          SetNth(plSpells,elemnum,-(abs(i)));
       }
 
       elemnum = 0;
-      for i in plSkills
+      foreach i in plSkills
       {
          elemnum = elemnum+1;
          SetNth(plSkills,elemnum,-(abs(i)));
@@ -8694,7 +8735,7 @@ messages:
       {
          bGainedCharge = FALSE;
 
-         for i in plPassive
+         foreach i in plPassive
          {
             if IsClass(i,&Rod)
                AND Send(i,@SomethingKilled,#what=what,#victim=victim)
@@ -8788,7 +8829,7 @@ messages:
             AND ((piFlags & PFLAG_TOOK_DAMAGE)
                OR (piFlags & PFLAG_DODGED))
          {
-            for i in plPassiveImprovement
+            foreach i in plPassiveImprovement
             {
                if Nth(i,2) and random(1,5) = 5
                {
@@ -9210,7 +9251,7 @@ messages:
       % If this player has created any evil twins, delete them.
       if plEvilTwins <> $
       {
-         for i in plEvilTwins
+         foreach i in plEvilTwins
          {
             Send(i,@Delete);
          }
@@ -9220,7 +9261,7 @@ messages:
       % If we have Apparitions attacking us, delete them.
       if plApparitionList <> $
       {
-         for j in plApparitionList
+         foreach j in plApparitionList
          {
             Send(j,@Delete);
          }
@@ -9307,7 +9348,7 @@ messages:
 
          % Currently, the following block is only for
          % Necromancer Amulets and Hunter Swords.
-         for i in plActive
+         foreach i in plActive
          {
             if Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
             {
@@ -9340,7 +9381,7 @@ messages:
       % so that token deaths _will_ make you lose your artifact.
       if bNo_drop_death
       {
-         for i in plActive
+         foreach i in plActive
          {
             if Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
             {
@@ -9355,7 +9396,7 @@ messages:
       Send(Send(SYS,@GetStatistics),@PlayerDiedCounter);
 
       % Token death?
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Token)
          {
@@ -9411,9 +9452,9 @@ messages:
             lInventoryContents = [plActive,plPassive];
          }
 
-         for lItems in lInventoryContents
+         foreach lItems in lInventoryContents
          {
-            for i in lItems
+            foreach i in lItems
             {
                if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
                   AND Send(i,@DropOnDeath)
@@ -9666,7 +9707,7 @@ messages:
          iAmount = -1;
       }
 
-      for i in plSpells
+      foreach i in plSpells
       {
          if Send(self,@DecodeSpellAbility,#compound=i) > 5
             AND random(1,100) > Send(self,@GetStamina)
@@ -9677,7 +9718,7 @@ messages:
          }
       }
 
-      for i in plSkills
+      foreach i in plSkills
       {
          if Send(self,@DecodeSkillAbility,#compound=i) > 5
             AND random(1,100) > Send(self,@GetStamina)
@@ -9816,7 +9857,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if (Send(i,@GetItemUseType) & ITEM_USE_HAND)
             AND Send(i,@ReqUnuse)
@@ -9832,7 +9873,7 @@ messages:
    {
       local i, iSpace;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@GetItemUseType) & ITEM_USE_HAND
          {
@@ -9950,7 +9991,7 @@ messages:
       if pbLogged_on
       {
          iGroup = 0;
-         for i in plWindow_overlays
+         foreach i in plWindow_overlays
          {
             if Send(i,@GetWindowOverlayID) = PWO_RIGHT_HAND
             {
@@ -10014,7 +10055,7 @@ messages:
    {
       local i;
 
-      for i in plWindow_overlays
+      foreach i in plWindow_overlays
       {
          if i = what
          {
@@ -10042,7 +10083,7 @@ messages:
    {
       local i;
 
-      for i in plWindow_overlays
+      foreach i in plWindow_overlays
       {
          if i = what
          {
@@ -10059,7 +10100,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if Send(i,@GetOwner) <> self
          {
@@ -10101,7 +10142,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if i = what
          {
@@ -10119,7 +10160,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if i = what
          {
@@ -10212,7 +10253,7 @@ messages:
       poIcon_set = $;
 
       % A player may be wearing something under his armor.
-      for i in plUsing
+      foreach i in plUsing
       {
          % Shirt or armor.
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
@@ -10272,7 +10313,7 @@ messages:
       poArms_set = $;
 
       bFound = FALSE;
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@OverrideArms)
          {
@@ -10408,7 +10449,7 @@ messages:
       bLegs = FALSE;
       bArms = FALSE;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
          {
@@ -10460,11 +10501,11 @@ messages:
 
       plRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
 
-      for n in plRefreshItemTypes
+      foreach n in plRefreshItemTypes
       {
          iHighestLayer = 0;
          oHighestGear = $;
-         for i in plUsing
+         foreach i in plUsing
          {
             if IsClass(i,&DefenseModifier)
                AND Send(i,@GetItemUseType) & n
@@ -10487,7 +10528,7 @@ messages:
       % In this case, we actually refresh the lowest layer to put it underneath
       iLowestLayer = 100000;
       oLowestGear = $;
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&DefenseModifier)
             AND Send(i,@GetItemUseType) & ITEM_USE_HEAD
@@ -10511,7 +10552,7 @@ messages:
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
       if oSoldierShield <> $
       {
-         for i in plUsing
+         foreach i in plUsing
          {
             if (IsClass(i,&Shield)
                AND NOT IsClass(i,&SoldierShield))
@@ -10523,7 +10564,7 @@ messages:
 
                % Now restore the first-person view of other shield
                % if we're using one
-               for n in plUsing
+               foreach n in plUsing
                {
                   if (IsClass(n,&Shield)
                      AND NOT IsClass(n,&SoldierShield)
@@ -10814,7 +10855,7 @@ messages:
       iLeft_group = 1;
       iRight_group = 1;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays);
          hotspot = Send(i,@GetOverlayHotspot);
@@ -10920,7 +10961,7 @@ messages:
                    1,Send(self,@GetHairColor), 1,ANIMATE_NONE, 2,1); 
       }
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          % Moved all of this to the item kod, since items may now
          %  have more than one overlay.
@@ -10971,7 +11012,7 @@ messages:
 
       iLeft_group = 1;
       iRight_group = 1;
-      for i in plOverlays
+      foreach i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,#iAnimation=iAnimation);
          hotspot = Send(i,@GetOverlayHotspot);
@@ -11140,7 +11181,7 @@ messages:
                    1,Send(self,@GetHairColor), 1,ANIMATE_NONE, 2,1);
       }
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          Send(i,@SendOverlayInformation,#iAnimation=iAnimation);
       }
@@ -11520,7 +11561,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@IsCursed)
          {
@@ -11537,7 +11578,7 @@ messages:
       local i, bFound;
 
       bFound = FALSE;
-      for i in plUsing
+      foreach i in plUsing
       {
          if Send(i,@IsCursed)
          {
@@ -11554,7 +11595,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Armor)
          {
@@ -11603,7 +11644,7 @@ messages:
       local i;
 
       piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Torch)
             OR (IsClass(i,&Weapon) 
@@ -11623,7 +11664,7 @@ messages:
       local i, oEnch,state, bFound, oYellNum, oYellRoom;
 
       bFound = FALSE;
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          oEnch = Nth(i,2);
          if IsClass(oEnch,&Spell) OR IsClass(oEnch,&Trance)
@@ -11640,7 +11681,7 @@ messages:
          }
       }
 
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,3) = self
          {
@@ -11650,7 +11691,7 @@ messages:
 
       if event = EVENT_NEWOWNER
       {
-         for oYellNum in Send(poOwner,@GetYellZone)
+         foreach oYellNum in Send(poOwner,@GetYellZone)
          {
             oYellRoom = Send(SYS,@FindRoomByNum,#num=oYellNum);
             if Send(oYellRoom,@BreakTrance,#who=self)
@@ -11685,7 +11726,7 @@ messages:
       iLight = 5;
 
       % Torch, Amulet
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Torch)
          {
@@ -11740,7 +11781,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          Send(self,@UnuseItem,#what=i,#Recalibrate=TRUE);
       }
@@ -11788,7 +11829,7 @@ messages:
       % bug.  This is also true for defense modifiers and resistances.
       if plAttack_modifiers <> $
       {
-         for i in plAttack_modifiers
+         foreach i in plAttack_modifiers
          {
             Debug("Recalibrating: player",Send(self,@GetTrueName),self,
                   "still had attmod",Send(i,@GetName));
@@ -11799,7 +11840,7 @@ messages:
 
       if plDefense_modifiers <> $
       {
-         for i in plDefense_modifiers
+         foreach i in plDefense_modifiers
          {
             Debug("Recalibrating: player",Send(self,@GetTrueName),self,
                   "still had defmods",Send(i,@GetName));
@@ -11810,7 +11851,7 @@ messages:
 
       if plResistances <> $
       {
-         for i in plResistances
+         foreach i in plResistances
          {
             Debug("Recalibrating: player",Send(self,@GetTrueName),self,
                   "still had resistance",first(i),Nth(i,2));
@@ -11825,7 +11866,7 @@ messages:
 
       if plEnchantments <> $
       {
-         for i in plEnchantments
+         foreach i in plEnchantments
          {
             Debug("Recalibrating: player",Send(self,@GetTrueName),self,
                   "still had enchantments",Send(Nth(i,2),@GetName));
@@ -11876,7 +11917,7 @@ messages:
 
       if bSoldier
       {
-         for i in plPassive
+         foreach i in plPassive
          {
             if IsClass(i,&SoldierShield)
             {
@@ -11908,7 +11949,7 @@ messages:
       local i, count, nSID, nObj;
 
       count = 0;
-      for i in plSkills
+      foreach i in plSkills
       {
          nSID = Send(self,@DecodeSkillNum,#compound=i);
          nObj = Send(SYS,@FindSkillByNum,#num=nSID);
@@ -11925,7 +11966,7 @@ messages:
             count = count + 1;
          }
       }
-      for i in plSpells
+      foreach i in plSpells
       {
          nSID = Send(self,@DecodeSpellNum,#compound=i);
          nObj = Send(SYS,@FindSpellByNum,#num=nSID);
@@ -12069,7 +12110,7 @@ messages:
       iRiija = 0;
       iJala = 0;
 
-      for i in plSkills
+      foreach i in plSkills
       {
          nSID=Send(self,@DecodeSkillNum,#compound=i);
          nobj=Send(SYS,@FindSkillByNum,#num=nSID);
@@ -12118,7 +12159,7 @@ messages:
          }
       }
 
-      for i in plSpells
+      foreach i in plSpells
       {
          nSID=Send(self,@DecodeSpellNum,#compound=i);
          nobj=Send(SYS,@FindSpellByNum,#num=nSID);
@@ -12401,7 +12442,7 @@ messages:
       iJala = 0;
       iWeapon = 0;
 
-      for iSpell in plSpells
+      foreach iSpell in plSpells
       {
          iSID = Send(self,@DecodeSpellNum,#compound=iSpell);
          oSpellObj = Send(SYS,@FindSpellByNum,#num=iSID);
@@ -12454,7 +12495,7 @@ messages:
 
       if except <> SKS_FENCING
       {
-         for iSpell in plSkills
+         foreach iSpell in plSkills
          {
             iSID = Send(self,@DecodeSkillNum,#compound=iSpell);
             oSpellObj = Send(SYS,@FindSkillByNum,#num=iSID);
@@ -12832,7 +12873,7 @@ messages:
             ptFactionTimer=$;
          }
 
-         for i in plUsing
+         foreach i in plUsing
          {
             if IsClass(i,&Token)
             {
@@ -12882,7 +12923,7 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=player_lost_intriguing);
          Send(self,@ResignFaction);
          Send(oParl,@MovetoFaction,#who=self,#faction=(-1));
-         for i in plUsing
+         foreach i in plUsing
          {
             if IsClass(i,&Token)
             {
@@ -13108,7 +13149,7 @@ messages:
    {
       local i, sid, oSpell;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          sid = abs(i/100);
          oSpell = Send(SYS,@FindSpellByNum,#num=sid);
@@ -13136,7 +13177,7 @@ messages:
 
       bFound = FALSE;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(i,&Token)
          {
@@ -13237,7 +13278,7 @@ messages:
       % Search through for the instrument of the highest power.
       %  We could have a necklace and a lute.  Let the lute contribute
       %  its power, rather than the necklace.
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Instrument)
          {
@@ -13375,7 +13416,7 @@ messages:
          return FALSE;
       }
 
-      for i in Send(SYS,@GetSpells)
+      foreach i in Send(SYS,@GetSpells)
       {
          if not IsClass(i,&Spell)
          {
@@ -13456,7 +13497,7 @@ messages:
          return FALSE;
       }
 
-      for i in Send(SYS,@GetSkills)
+      foreach i in Send(SYS,@GetSkills)
       {
          if not IsClass(i,&Skill)
          {
@@ -13484,7 +13525,7 @@ messages:
       weaponcraft_level = 0;
       iLevel = 0;
 
-      for i in plSkills
+      foreach i in plSkills
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,
                                                       #compound=i));
@@ -13519,7 +13560,7 @@ messages:
       % the least number of comparisons possible per spell. Schools in order
       % of popularity, your results may vary. 10/25/2014 103 stats: 578 kran,
       % 228 faren, 284 shal, 160 riija, 216 qor, 151 jala
-      for i in plSpells
+      foreach i in plSpells
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,
                                                       #compound=i));
@@ -13536,54 +13577,39 @@ messages:
                   kraanan_level = iLevel;
                }
             }
-            else
+            else if (iSchool = SS_SHALILLE)
             {
-               if (iSchool = SS_SHALILLE)
+               if (iLevel > shalille_level)
                {
-                  if (iLevel > shalille_level)
-                  {
-                     shalille_level = iLevel;
-                  }
+                  shalille_level = iLevel;
                }
-               else
+            }
+            else if (iSchool = SS_QOR)
+            {
+               if (iLevel > qor_level)
                {
-                  if (iSchool = SS_QOR)
-                  {
-                     if (iLevel > qor_level)
-                     {
-                        qor_level = iLevel;
-                     }
-                  }
-                  else
-                  {
-                     if (iSchool = SS_FAREN)
-                     {
-                        if (iLevel > faren_level)
-                        {
-                           faren_level = iLevel;
-                        }
-                     }
-                     else
-                     {
-                        if (iSchool = SS_RIIJA)
-                        {
-                           if (iLevel > riija_level)
-                           {
-                              riija_level = iLevel;
-                           }
-                        }
-                        else
-                        {
-                           if (iSchool = SS_JALA)
-                           {
-                              if (iLevel > jala_level)
-                              {
-                                 jala_level = iLevel;
-                              }
-                           }
-                        }
-                     }
-                  }
+                  qor_level = iLevel;
+               }
+            }
+            else if (iSchool = SS_FAREN)
+            {
+               if (iLevel > faren_level)
+               {
+                  faren_level = iLevel;
+               }
+            }
+            else if (iSchool = SS_RIIJA)
+            {
+               if (iLevel > riija_level)
+               {
+                  riija_level = iLevel;
+               }
+            }
+            else if (iSchool = SS_JALA)
+            {
+               if (iLevel > jala_level)
+               {
+                  jala_level = iLevel;
                }
             }
          }
@@ -13609,9 +13635,9 @@ messages:
             while (k < NUM_SPELL_LEVELS)
             {
                Send(self, @StripSpellsOfSchoolByLevel, #school=j, #level=k);
-               k = k +1;
+               ++k;
             }
-            j = j + 1;
+            ++j;
          }
       }
       else
@@ -13620,7 +13646,7 @@ messages:
          while (k < NUM_SPELL_LEVELS)
          {
             Send(self, @StripSpellsOfSchoolByLevel, #school=school, #level=k);
-            k = k + 1;
+            ++k;
          }
       }
 
@@ -13631,7 +13657,7 @@ messages:
    {
       local i, oSpell, iSchool, iLevel, iCanForget, iSpellNum;
    
-      for i in plSpells
+      foreach i in plSpells
       {
          iSpellNum = Send(self,@DecodeSpellNum,#compound=i);
          oSpell = Send(SYS,@FindSpellByNum,#num=iSpellNum);
@@ -13650,7 +13676,7 @@ messages:
    StripSkillsOfSchoolByLevel(school = 0, level = 0)
    {
       local i, oSkill, iSchool, iLevel;
-      for i in plSkills
+      foreach i in plSkills
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
          iSchool = Send(oSkill,@GetSchool);
@@ -13755,7 +13781,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&shirt)
          {
@@ -13793,7 +13819,7 @@ messages:
       Send(self,@SetSkinTranslation,#translation=color);
       iColor = Send(self,@GetDefaultShirtColor);
       Send(self,@SetDefaultClothes,#shirt_color = iColor);
-      for i in plUsing
+      foreach i in plUsing
       {
          Send(i,@DoPlayerArt);
       }
@@ -13903,7 +13929,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if IsClass(i,&Shield)
          {
@@ -13918,7 +13944,7 @@ messages:
    {
       local i;
       
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if IsClass(i,&Shield)
          {
@@ -13933,7 +13959,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if IsClass(i,&GuildShield)
          {
@@ -14010,7 +14036,7 @@ messages:
    {
       local num, i, oSpell, iability;
 
-      for i in plSpells
+      foreach i in plSpells
       {
          num = Send(self,@DecodeSpellNum,#compound=i);
          oSpell = Send(SYS,@FindSpellByNum,#num=num);
@@ -14056,7 +14082,7 @@ messages:
    {
       local i;
       
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Shirt)
             OR IsClass(i,&LightRobe)
@@ -14195,7 +14221,7 @@ messages:
          %  to find out if any want to add lighting information to us.
          if plRadiusEnchantments <> $
          {
-            for oLightObject in plRadiusEnchantments
+            foreach oLightObject in plRadiusEnchantments
             {
                if Nth(oLightObject,3) = self
                   AND NOT Send(Nth(oLightObject,1),@GetOldAreaEnchStyle)
@@ -14261,7 +14287,7 @@ messages:
       local y;
 
       % Already in the list?
-      for y in plDonationYears
+      foreach y in plDonationYears
       {
          if y = year
          {
@@ -14441,7 +14467,7 @@ messages:
          Send(poOwner,@SomethingChanged,#what=self);
 
          % Let's see that we left the group
-         for i in Send(poOwner,@GetPlActive)
+         foreach i in Send(poOwner,@GetPlActive)
          {
             each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
@@ -14477,7 +14503,7 @@ messages:
                                        Send(poOwner,@GetGroupTime));
 
          % Let's see our new group
-         for i in Send(poOwner,@GetPlActive)
+         foreach i in Send(poOwner,@GetPlActive)
          {
             each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
@@ -14548,7 +14574,7 @@ messages:
 
       bGainedCharges = FALSE;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(i,&Rod)
             AND Send(i,@FullyRecharge)
@@ -14590,7 +14616,7 @@ messages:
 
       if Send(self,@AllowPlayerAttack,#victim=oTarget)
       {
-         for oActive in plControlledMinions
+         foreach oActive in plControlledMinions
          {
             if IsClass(oActive,&Monster)
                AND Send(oActive,@GetMaster) = self
@@ -14615,7 +14641,7 @@ messages:
 
       iArmor = 0;
 
-      for d in plDefense_modifiers
+      foreach d in plDefense_modifiers
       {
          if IsClass(d,&DefenseModifier)
          {
@@ -14640,7 +14666,7 @@ messages:
    {
       local i;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(i,&ReagentBag)
          {
@@ -14655,7 +14681,7 @@ messages:
    {
       local i;
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(i,&ReagentBag)
          {
@@ -14690,7 +14716,7 @@ messages:
          % If this player has created any evil twins, delete them.
          if plEvilTwins <> $
          {
-            for i in plEvilTwins
+            foreach i in plEvilTwins
             {
                Send(i,@Delete);
             }
@@ -14940,7 +14966,7 @@ messages:
          return;
       }
       
-      for m in plControlledMinions
+      foreach m in plControlledMinions
       {
          if IsClass(m,&Monster)
          {
@@ -14956,7 +14982,7 @@ messages:
       if Send(self,@IsPhasedOut)
       {
          % Check for phase when going from normal to spectator
-         for j in plEnchantments
+         foreach j in plEnchantments
          {
             if IsClass(Nth(j,2),&Phase)
             {

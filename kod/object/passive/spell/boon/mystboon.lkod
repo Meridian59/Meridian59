@@ -1,0 +1,5 @@
+mystboon_name_rsc = de "Magie Effekt"
+mystboon_desc_rsc = de "Deine Magie steigt unnatürlich."
+mystboon_intro_rsc = de "The mysticism of the victim is boosted temporarily."
+mystboon_inc = de "Deine Magie steigt plötzlich!"
+mystboon_dec = de "Die zusätzliche Magie verlässt Dich."

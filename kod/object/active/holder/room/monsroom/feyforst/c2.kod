@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include c2.lkod
+
    room_name_OutdoorsC2 = "The Vale of Sorrows"
    room_OutdoorsC2 = C2.roo
    OutdoorsC2_music = walk7.mp3
@@ -90,7 +92,7 @@ messages:
       }
 	
       karma = Send(self,@GetKarma);
-      for i in plFey_Forest
+      foreach i in plFey_Forest
       {
          oRoom = Send(SYS,@FindRoomByNum,#num=i);
 
@@ -169,7 +171,7 @@ messages:
          return;
       }          
 				          
-      for i in plPassive
+      foreach i in plPassive
       {
          if IsClass(First(i),&ManaNode)
          {

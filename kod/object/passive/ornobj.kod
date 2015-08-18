@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include ornobj.lkod
+
    oo_3bolts_name = "bolts of cloth"
    oo_3bolts_icon = 3bolts.bgf
    oo_3bolts_desc = "These three bolts are used for the common clothes of Ko'catan."
@@ -825,7 +827,7 @@ messages:
       }
 
       lPassive = send(poOwner,@GetHolderPassive);
-      for i in lPassive
+      foreach i in lPassive
       {
          oPassive = first(i);
          if isClass(oPassive,&OrnamentalObject)

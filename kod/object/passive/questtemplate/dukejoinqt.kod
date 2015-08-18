@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include dukejoinqt.lkod
+
    % Quest description.
    dukejoin_icon_rsc = dukeneph.bgf
    dukejoin_name_rsc = "Duke join faction quest"

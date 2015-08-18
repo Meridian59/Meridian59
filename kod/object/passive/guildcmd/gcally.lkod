@@ -1,0 +1,23 @@
+guildforgealliance_name_rsc = de "Allianz schmieden"
+guildforgealliance_desc_text_rsc = de \
+   "Wird verwendet, um sich mit anderen Gilden zu verbünden.  Primäres Ziel "
+   "einer Allianz - gemeinschaftliches Nutzen einer Gildenhalle."
+guildforgealliance_to_inductor = de \
+   "Du erstreckst dich auf %s einen Vertrag deiner Gilde gegen %s%s."
+guildforgealliance_to_inductee = de \
+   "%s streckt einen Vertrag deiner Gilde gegen %s%s!"
+guildforgealliance_already_your_guild = de "%s ist ein Mitglieder deiner Gilde!"
+ally_not_user = de \
+   "Du würdest dich ziemlich albern fühlen mit %s%q an Deiner Seite in den "
+   "Kampf zu marschieren!"
+ally_cant_ally_self = de \
+   "Du willst ein Bündnis mit Dir selber schmieden? Sehr gern, Du akzeptierst."
+ally_only_one_treaty = de \
+   "Du könntest versuchen zu einer Zeit einen Vertrag zu knüpfen."
+ally_on_enemy_list = de \
+   "Du wirst keine Allianz mit %s%q eingehen bis du die Feindseligkeiten "
+   "beigelegt hast."
+ally_on_ally_list = de "Die Krieger von %s%q sind bereits Deine Verbündeten!"
+ally_too_low = de \
+   "%s ist offiziell keine hochranginge Gilde und kann keine Allianz mit "
+   "Dir besprechen."

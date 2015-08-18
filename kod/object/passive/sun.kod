@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sun.lkod
+
    sun_icon_rsc = sun.bgf
    sun_name_rsc = "sun"
    sun_desc_rsc = \
@@ -54,7 +56,7 @@ messages:
       {
 	 piHeight = -200;
       }
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
 	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
       }

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include drumstik.lkod
+
    drumstick_name_rsc = "drumstick"
    drumstick_icon_rsc = drumstik.bgf
    drumstick_desc_rsc = \

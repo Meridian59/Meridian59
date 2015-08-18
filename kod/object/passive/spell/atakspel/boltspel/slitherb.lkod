@@ -1,0 +1,5 @@
+Slitherbolt_name_rsc = de "Bolzen"
+Slitherbolt_hit_rsc = de "Der Bolzen trifft %s%s!"
+Slitherbolt_desc_rsc = de \
+   "Schleudert einen Bolzen auf das Ziel. Der Zauber benötigt blaue Pilze "
+   "und Orkzähne."

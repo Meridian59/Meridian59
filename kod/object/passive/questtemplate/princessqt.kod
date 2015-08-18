@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include princessqt.lkod
+
    % Quest description.
    princessqt_icon_rsc = princess.bgf
 

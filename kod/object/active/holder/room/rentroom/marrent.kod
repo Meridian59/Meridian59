@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include marrent.lkod
+
    MarionRentableRoom_name = "A comfortable room"
    MarionRentableRoom_roo = marrent.roo
 

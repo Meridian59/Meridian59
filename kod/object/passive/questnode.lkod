@@ -1,0 +1,12 @@
+default_monster_desc = de "Monster"
+default_message_desc = de "Nachricht"
+default_indef = de ""
+default_def = de ""
+default_money_desc = de "biﬂchen Bares"
+default_prize_desc = de "Preis"
+NPC_quote_to_one = de "~w%s%s sagt zu Dir, \"%q~n~w\""
+questnode_not_enough_items = de \
+   "~w%s%s sagt zu Dir, \"Du bist auf der richtigen F‰hrte, aber Du musst "
+   "mir %q mehr davon bringen.~n~w\""
+questnode_cant_carry = de \
+   "%q kann von Dir nicht mehr getragen werden und f‰llt zu Boden."

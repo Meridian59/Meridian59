@@ -1,0 +1,4 @@
+lamp_name_rsc = de "Lampe"
+lamp_desc_off_rsc = de "Diese Lampe steht wie ein stiller Wächter."
+lamp_desc_on_rsc = de \
+   "Du musst Deine Augen von dem Licht dieser Lampe abschirmen."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mushgray.lkod
+
    graymushroom_name_rsc = "gray mushroom"
    graymushroom_icon_rsc = mushroom.bgf
    graymushroom_desc_rsc = \

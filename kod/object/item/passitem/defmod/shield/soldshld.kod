@@ -27,37 +27,29 @@ constants:
 
 resources:
 
-   SoldierShield_name_rsc = "soldier's shield"
+   include soldshld.lkod
 
+   SoldierShield_name_rsc = "soldier's shield"
    SoldierShield_desc_rsc = \
       "Shields of this style show allegiance to a particular faction"
-
    SoldierShield_icon_rsc = gshE.bgf
    SoldierShield_icon_back_rsc = gsheback.bgf
    SoldierShield_window_overlay_rsc = povgshE.bgf
-
-   SoldierShield_rank_desc1 = "\n\nYour rank within "
-   SoldierShield_rank_desc2 = " is: "
-   SoldierShield_rank_desc3 = "."
-
+   SoldierShield_rank_desc = "\n\nYour rank within %s is: %s."
    SoldierShield_ArmyName = "the forces of neutrality"
-
    SoldierShield_rank_name1 = "a lowly peon"
    SoldierShield_rank_name2 = "an average soldier"
    SoldierShield_rank_name3 = "a notable fighter"
    SoldierShield_rank_name4 = "a great warrior"
    SoldierShield_rank_name5 = "a supreme hero"
-
    SoldierShield_welcome_mail = "Subject: Welcome.\n"
       "You are a soldier now."
-
    SoldierShield_lost_status = "Your liege revokes your status as a soldier!"
    SoldierShield_lost_status_nonfaction = \
       "You are not worthy to hold a soldier shield!"
    SoldierShield_booted_mail = "Subject: Your soldier status is revoked.\n"
       "I have removed you from my army of soldiers.  I have no use for one so "
       "cowardly as yourself."
-
    SoldierShield_sling_on_back = "You sling your shield on your back."
    SoldierShield_remove_from_back = "You remove your shield from your back."
 
@@ -66,20 +58,15 @@ classvars:
    vrName = SoldierShield_name_rsc
    vrDesc = SoldierShield_desc_rsc
    vrIcon = SoldierShield_icon_rsc
-
    viWeight = 0
    viBulk = 0
-
    viDefense_base = 20
    viDamage_base = 2
-
    viFaction = FACTION_NEUTRAL
    viColor = XLAT_TO_GRAY
-
    prShield_emblem_held = $
    prShield_emblem_drop = $
    prShield_emblem_back = $
-
    viGround_group = 3
    viInventory_group = 1
 
@@ -95,7 +82,7 @@ classvars:
    vrRank3 = SoldierShield_rank_name3
    vrRank4 = SoldierShield_rank_name4
    vrRank5 = SoldierShield_rank_name5
-   
+
    % Layer 0 soldier shields will be slung on use
    viLayer = 0
 
@@ -345,13 +332,11 @@ messages:
 
          % Gotta have a shield, and it can't be the same faction as us.
          if oSoldierShield <> $
+            AND Send(oSoldierShield,@GetFaction) <> viFaction
          {
-            if Send(oSoldierShield,@GetFaction) <> viFaction
-            {
-               Send(oSoldierShield,@AttackedByEnemy,#who=what);
+            Send(oSoldierShield,@AttackedByEnemy,#who=what);
 
-               return TRUE;
-            }
+            return TRUE;
          }
       }
 
@@ -453,7 +438,7 @@ messages:
    {
       return FALSE;
    }
-   
+
    ReqUseSomething(what = $)
    {
       if (IsClass(what,&Shield)
@@ -463,8 +448,10 @@ messages:
          OR IsClass(what,&Totem)
       {
          Send(self,@SlingOnBack,#report=FALSE);
+
          return TRUE;
       }
+
       propagate;
    }
 
@@ -543,43 +530,28 @@ messages:
    AppendDesc()
    "Appends faction rank to description."
    {
-      AppendTempString(SoldierShield_rank_desc1);
-      AppendTempString(vrArmyName);
-      AppendTempString(SoldierShield_rank_desc2);
-
       if piFactionRank <= 2
       {
-         AppendTempString(vrRank1);
+         AddPacket(4,SoldierShield_rank_desc,4,vrArmyName,4,vrRank1);
+      }
+      else if piFactionRank <= 4
+      {
+         AddPacket(4,SoldierShield_rank_desc,4,vrArmyName,4,vrRank2);
+      }
+      else if piFactionRank <= 6
+      {
+         AddPacket(4,SoldierShield_rank_desc,4,vrArmyName,4,vrRank3);
+      }
+      else if piFactionRank <= 8
+      {
+         AddPacket(4,SoldierShield_rank_desc,4,vrArmyName,4,vrRank4);
       }
       else
       {
-         if piFactionRank <= 4
-         {
-            AppendTempString(vrRank2);
-         }
-         else
-         {
-            if piFactionRank <= 6
-            {
-               AppendTempString(vrRank3);
-            }
-            else
-            {
-               if piFactionRank <= 8
-               {
-                  AppendTempString(vrRank4);
-               }
-               else
-               {
-                  AppendTempString(vrRank5);
-               }
-            }
-         }
+         AddPacket(4,SoldierShield_rank_desc,4,vrArmyName,4,vrRank5);
       }
 
-      AppendTempString(SoldierShield_rank_desc3);
-
-      propagate;
+      return;
    }
 
    % Copied from Shield superclass so we don't take damage.
@@ -853,7 +825,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

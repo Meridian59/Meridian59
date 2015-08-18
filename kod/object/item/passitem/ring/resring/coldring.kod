@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include coldring.lkod
+
    ColdRing_name_rsc = "ring of cold resistance"
    ColdRing_desc_rsc = \
       "This ring is warm to the touch.  Magical runes are inscribed on its inner surface."

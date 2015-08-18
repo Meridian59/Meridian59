@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include avar.lkod
+
    avar_default_name = "avar"
    avar_koc_name_rsc = "avar"
    avar_icon_rsc = avwar.bgf

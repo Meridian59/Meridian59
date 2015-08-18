@@ -1,0 +1,9 @@
+BatteredSkeleton_koc_name_rsc = de "cha'oleoc"
+BatteredSkeleton_name_rsc = de "Das Zerschlagene Skelett"
+BatteredSkeleton_desc_rsc = de \
+   "Einige Streifen verfaulten Fleisches hängen an dieser Sammlung vonmenschlichen "
+   "Knochen, die von einem zerschlagenen und sichtbar unmenschlichenSchädel "
+   "gekrönt werden. Zischende Flüssigkeit tropft von den Zähnen undhinterlässt "
+   "kleine Pfützen auf dem Boden. Du schauderst, wenn Du darandenkst, was "
+   "für ein dunkles Ritual diese Abnormalität zum Leben erweckt hat."
+BatteredSkeleton_dead_name_rsc = de "Ein Knochenhaufen"

@@ -1,0 +1,10 @@
+guildsetpassword_name_rsc = de "Passwort setzen"
+guildsetpassword_lieutenant = de "Ändert ein Passwort einer Gildenhalle."
+setpassword_not_guilded = de \
+   "Du bist nicht Mitglied einer Gilde und hast somit kein Passwort was geändert "
+   "werden kann!"
+setpassword_cant_setpassword = de \
+   "Nur Gildenmeister können das Passwort einer Gildenhalle ändern!"
+setpassword_no_hall = de \
+   "Du kannst kein Gildenhallen Passwort ändern, wenn Du keine Gildenhalle "
+   "hast!"

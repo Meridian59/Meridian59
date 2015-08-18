@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include princessjoinqt.lkod
+
    % Quest description.
    princessjoin_name_rsc = "Princess join faction quest"
    princessjoin_desc_rsc = \

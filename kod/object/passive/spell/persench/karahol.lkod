@@ -1,0 +1,18 @@
+KaraholsCurse_name_rsc = de "Karahols Fluch"
+KaraholsCurse_desc_rsc = de \
+   "Dein Körper wird für eine kurze Zeit vom Geist des Kriegers Kara'hol "
+   "in Besitz genommen, der die Härte Deiner Attacken erhöht. Wenn Kara'hols "
+   "Geist Dich wieder verlässt, wird er Deinen Körper für kurze Zeit lähmen. "
+   "Benötigt das Opfer einiger Wurzelknollen."
+KaraholsCurse_on = de \
+   "Der Geist von Kara'hol fällt über dich her und deine Muskeln zucken vor "
+   "neu gewonnener Kraft"
+KaraholsCurse_off = de \
+   "Dein Körper erstarrt als die Erschöpfung deine Gliedmaßen in den Griff "
+   "nimmt."
+KaraholsCurse_already_enchanted_rsc = de \
+   "Dein Blut kocht bereits vor Kara'hols Geist!"
+Karahols_spell_intro = de "Qor Levelv 2: Gibt dir temporär große Kraft."
+karahol_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Offensiv und 1-%i Angriffsschaden "
+   "hinzu. Wenn der Zauber nachlässt lähmt er dich für %i Sekunden."

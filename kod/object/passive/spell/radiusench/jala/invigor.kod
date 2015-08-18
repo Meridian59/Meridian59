@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include invigor.lkod
+
    Invigorate_name_rsc = "invigorate"
    Invigorate_icon_rsc = iinvigor.bgf
    Invigorate_desc_rsc = \
@@ -87,7 +89,7 @@ messages:
    {
       local oUser, lState;
       
-      for oUser in lEnchanted
+      foreach oUser in lEnchanted
       {
          if IsClass(oUser,&User)
          {

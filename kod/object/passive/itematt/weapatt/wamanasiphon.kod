@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include wamanasiphon.lkod
+
    weapattSiphon_desc = \
       "  A mystical force seems to draw energy from the air around the weapon."
    Siphon_dm = "Siphon"
@@ -35,7 +37,6 @@ resources:
 classvars:
 
    vrDesc = weapattSiphon_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_SIPHON
 

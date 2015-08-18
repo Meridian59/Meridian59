@@ -1,0 +1,44 @@
+% Quest description.
+dementpupilquest_name_rsc = de "dement pupil quest"
+dementpupilquest_desc_rsc = de \
+   "Afiera D'xor has asked you to deliver some cargo.  Do so, and return "
+   "to him when you are done."
+
+dementpupilquest_nodetwo_rsc = de \
+   "Afiera D'xor has asked you to deliver %s%s to %s."
+dementpupilquest_return_rsc = de \
+   "Return to Afiera D'xor and let him know the task has been "
+   "completed."
+
+dementpupilquest_completed = de \
+   "You have completed the dement pupil quest.  Afiera D'xor will now "
+   "teach you how to cast the dement spell."
+
+% Quest resources.
+dementlearn_trigger = de "Schüler"
+dementlearn_assign_2 = de \
+   "Ich kann Dir das bisschen beibringen was ich über die mystische Magie "
+   "weiß. Dafür verlange ich einen Gefallen.  Ich brauche dringend folgendes "
+   "%CARGO zu %NPC, ich bin %HIMHER_NPC ungern nah.  Siehst Du, %NPC ist "
+   "einer der letzten betroffenender sich von der ungesunden Kraft menschlicher "
+   "Energie ernährt.  Ich weiß nicht mehr als das%NPC's Nähe einen schlechten "
+   "Einfluss auf Dich hat.  Triff ihn nur kurz, vielleicht Du kannst diesen "
+   "Effekt damit vermeiden."
+dementlearn_success_2 = de \
+   "DAnke, %NAME.  Ich hoffe, dass dies %CARGO mir helfen wird, die Kraft "
+   "vor der Du gewarnt wurdest zu zerstören.  Geh jetzt, es sei denn, Du "
+   "möchtest auch davon befallen werden."
+dementlearn_failure_2 = de \
+   "Betreff:  Lieferung des %CARGO\nIch kann Deine Besorgnis und Angst sich "
+   "%NPC zu nähern verstehen.  Gleichwohl, hast Du versagt und  unser Geschäft "
+   "ist hiermit hinfällig."
+dementlearn_success_3 = de \
+   "Ah, Du bist von Deinem Auftrag zurückgekehrt %NAME.  Dast has Du gut "
+   "gemacht.  Ich hoffe Du hast nicht zu stark unter dem Kontakt zu %SOURCE_NPC "
+   "gelitten.  Ich verstehe, die Effekte sind nur temporär.  Trotzude, hast "
+   "du Dich als würdig bewährt meine Lehren zu erlernen.  Komm wieder, wenn "
+   "Du den  \"dement\"zauber lernen willst ."
+dementlearn_failure_3 = de \
+   "Betreff:  Dement Zauber\nIch habe seit einiger Zeit nichts mehr von Dir "
+   "gehört und gehe damit davon aus das Du den Zauber nicht mehr lernen willst.  "
+   "Komm wieder, wenn Du es Dir anders überlegt hast, mein Freund."

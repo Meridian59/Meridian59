@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include daemskel.lkod
+
    DaemonSkeleton_koc_name_rsc = "kochaleoc"
    DaemonSkeleton_name_rsc = "daemon skeleton"
    DaemonSkeleton_icon_rsc = skelbody.bgf

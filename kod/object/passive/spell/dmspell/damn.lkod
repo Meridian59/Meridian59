@@ -1,0 +1,6 @@
+damn_name_rsc = de "Verdammen"
+damn_desc_rsc = de "Wirft einen bösen Spieler in den Schuldturm."
+damn_msg_DM = de "Du verbannst %s%s in den Schuldturm."
+damn_msg_target = de "Du wurdest in den Schuldturm verbannt durch %s%s!"
+damn_last_annoyed = de " wurde zur Hölle geschickt von "
+damn_dot = de "."

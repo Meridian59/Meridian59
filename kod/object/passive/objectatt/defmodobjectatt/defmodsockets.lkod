@@ -1,0 +1,5 @@
+not_while_equipped = de "Du kannst %s nicht anlegen solange Du %s trägst."
+not_enough_sockets = de "Das %s hat nicht genug Platz um %s anzulegen."
+gem_attach_successful = de "Du legst sorgfälltig %s an, an das %s."
+remove_no_gems = de "Die %s hat keine Edelsteine zu entfernen!"
+gem_remove_successful = de "Sie hebeln jeden Edelstein vorsichtig aus der %s."

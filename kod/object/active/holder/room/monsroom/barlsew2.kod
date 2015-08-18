@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include barlsew2.lkod
+
    room_barlsew2 = barlsew2.roo
    room_name_barsew2 = "The Sewers of Barloque"
    barsew2_music = cave.mp3

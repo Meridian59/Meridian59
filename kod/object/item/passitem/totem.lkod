@@ -1,0 +1,12 @@
+totem_name_rsc = de "Totem"
+totem_desc_rsc = de \
+   "Nach diesem gefiederten Totem wird häufig im Auftrag der Barden aus der "
+   "Welt von Meridian von den Sterblichen gesucht. \n\nWenn man in den Besitz "
+   "des Totems kommt, muss man es halten, und wenn es seinen Zweck erfüllt "
+   "hat, verschwindet es."
+totem_cantuse_rsc = de \
+   "Du kannst nicht so viele Gegenstände in Deinen Händen halten. %s%s fällt "
+   "deshalb auf den Boden."
+totem_unuse_rsc = de \
+   "%s%s wird von Dir auf den Boden gelegt, um Deine Hände freizubekommen."
+totem_drops = de "%s%s entwindet sich Deinen Händen und fällt zu Boden!"

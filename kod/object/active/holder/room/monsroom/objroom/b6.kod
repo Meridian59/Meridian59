@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include b6.lkod
+
    room_name_OutdoorsB6 ="Druid Hills"
    room_OutdoorsB6 = B6.roo
    OutdoorsB6_music = walk4.mp3

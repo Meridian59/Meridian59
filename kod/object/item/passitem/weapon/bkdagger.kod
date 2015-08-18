@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include bkdagger.lkod
+
    BlackDagger_name_rsc = "black dagger"
    BlackDagger_icon_rsc = bkswd.bgf
    BlackDagger_desc_rsc = \
@@ -164,41 +166,32 @@ messages:
       {
          AddPacket(4,BlackDagger_4_gems);
       }
+      else if piPlayer_hits = 3
+      {
+         AddPacket(4,BlackDagger_3_gems);
+      }
+      else if piPlayer_hits = 2
+      {
+         AddPacket(4,BlackDagger_2_gems);
+      }
       else
       {
-         if piPlayer_hits = 3
-         {
-            AddPacket(4,BlackDagger_3_gems);
-         }
-         else
-         {
-            if piPlayer_hits = 2
-            {
-               AddPacket(4,BlackDagger_2_gems);
-            }
-            else
-            {
-               if piPlayer_hits = 1
-               {
-                  AddPacket(4,BlackDagger_1_gems);
-               }
-            }
-         }
+         AddPacket(4,BlackDagger_1_gems);
       }
 
       % The notches show the number of kills that player has.
-      if piNotches < 1 { AddPacket(4,BlackDagger_no_notches); }
+      if piNotches < 1
+      {
+         AddPacket(4,BlackDagger_no_notches);
+      }
+      else if piNotches = 1
+      {
+         AddPacket(4,BlackDagger_one_notch);
+      }
       else
       {
-         if piNotches = 1
-         {
-            AddPacket(4,BlackDagger_one_notch);
-         }
-         else
-         {
-            AddPacket(4,BlackDagger_notches);
-            bDo_notch = TRUE;
-         }
+         AddPacket(4,BlackDagger_notches);
+         bDo_notch = TRUE;
       }
 
       % Tell the player who his target is
@@ -342,12 +335,9 @@ messages:
       {
          Post(self,@AssassinDies,#attacker=attacker);
       }
-      else
+      else if ptPlayer_heal = $
       {
-         if ptPlayer_heal = $
-         {
-            ptPlayer_heal = CreateTimer(self,@PlayerHealTimer,PLAYER_HEAL_TIME);
-         }
+         ptPlayer_heal = CreateTimer(self,@PlayerHealTimer,PLAYER_HEAL_TIME);
       }
 
       return;
@@ -397,10 +387,7 @@ messages:
       {
          piPlayer_hits = piPlayer_hits + 1;
          Send(poOwner,@MsgSendUser,#message_rsc=BlackDagger_glows);
-      }
 
-      if piPlayer_hits < PLAYER_MAX
-      {
          ptPlayer_heal = CreateTimer(self,@PlayerHealTimer,PLAYER_HEAL_TIME);
       }
       else
@@ -413,7 +400,8 @@ messages:
 
    DaggerHealTimer()
    {
-      if piDagger_hits < 1 OR piDagger_hits > (DAGGER_MAX - 1)
+      if piDagger_hits < 1
+         OR piDagger_hits > (DAGGER_MAX - 1)
       {
          Debug("DaggerHealTimer called while piDagger_hits was an invalid value!");
 
@@ -423,10 +411,7 @@ messages:
       if piDagger_hits < DAGGER_MAX
       {
          piDagger_hits = piDagger_hits + 1;
-      }
 
-      if piDagger_hits < DAGGER_MAX
-      {
          ptDagger_heal = CreateTimer(self,@DaggerHealTimer,DAGGER_HEAL_TIME);
       }
       else
@@ -450,7 +435,8 @@ messages:
 
       oGame=Send(SYS,@GetAssassinGame);
 
-      if Send(oGame,@InSession) AND Send(oGame,@isCombatant,#who=what)
+      if Send(oGame,@InSession)
+         AND Send(oGame,@IsCombatant,#who=what)
       {
          return TRUE;
       }

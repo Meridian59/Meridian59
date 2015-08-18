@@ -16,13 +16,16 @@ constants:
 
 resources:
 
+   include mshield.lkod
+
    magicshield_name_rsc = "magic shield"
    magicshield_icon_rsc = armorico.bgf
    magicshield_desc_rsc = \
       "Summons a shield of powerful magical energy that will "
       "deflect some of the blows aimed at you for several minutes.  "
       "Requires two mushrooms and one red mushroom to cast."
-   
+   mshield_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i defense."
    magicshield_already_enchanted_rsc = "You already have magic shield."
    magicshield_on_rsc = \
       "A protective shield of magical energy forms around you."
@@ -121,14 +124,10 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(50 + (2 * Send(who,@GetEnchantedState,#what=self)));
-      AppendTempString(" defense.");
+      AddPacket(4,mshield_enchantment_rsc, 4,Send(self,@GetName),
+                4,50 + 2 * Send(who,@GetEnchantedState,#what=self));
 
-      propagate;
+      return;
    }
 
 end

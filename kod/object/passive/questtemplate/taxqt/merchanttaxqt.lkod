@@ -1,0 +1,27 @@
+% Quest description.
+merchanttaxqt_name_rsc = de "merchant tax quest"
+merchanttaxqt_desc_rsc = de \
+   "Courier some taxes for an NPC."
+
+merchanttaxqt_completed_rsc = de \
+   "You have completed the merchant tax quest."
+
+% Quest resources.
+merchanttax_assign_2 = de \
+   "Kannst du meine Steuern zu %NPC bringen?  Ich bin mir sicher, dass ich "
+   "zu spät drann bin, und brauche Dich, um diese %INDEF_CARGO%CARGO zu %NPC "
+   "zu bringen.  Diebstahl deklariert Dich zu einem Gesetzeslosen also denk "
+   "nicht mal daran mich zu täuschen.  Ich habe mich um Deine Bezahlung gekümmert "
+   "und sie wird von %HIMHER_NPC beglichen."
+merchanttax_assign_2_h = de \
+   "Kannst du meine Steuern zu %NPC bringen?  Ich bin mir sicher, dass ich "
+   "zu spät drann bin, und brauche Dich m diese %INDEF_CARGO%CARGO zu %NPC "
+   "zu bringen.  Diebstahl führt zu einem Unglück also denk nicht daran mich "
+   "zu täuschen.  Ich habe mich um Deine Bezahlung gekümmert und sie wird "
+   "von %HIMHER_NPC beglichen."
+merchanttax_success_2 = de \
+   "Ah, ich habe mich schon gefragt, wann %SOURCE_NPC mir einen Besuch abstatten "
+   "würde.  Hier ist Deine Bezahlung für Deine... schnelle Lieferung.   "
+merchanttax_failure_2 = de \
+   "Betreff: Dieb!\nDein Diebstahl von %CARGO hat Dich zu einem Gesetzeslosen "
+   "gemacht, durch einen Erlass von %NPC."

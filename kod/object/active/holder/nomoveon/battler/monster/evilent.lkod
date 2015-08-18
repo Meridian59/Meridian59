@@ -1,0 +1,6 @@
+EvilEnt_koc_name_rsc = de "teotezmecya"
+EvilEnt_name_rsc = de "Der verdorbene Waldschrat"
+EvilEnt_desc_rsc = de \
+   "Während er aus der verdorbenen Erde der Lande zehrt, sondert dieser verdorbene "
+   "Waldschrat das Böse aus, seine Säfte schwarz vor Hass."
+EvilEnt_dead_name_rsc = de "Die toten Überreste eines verdorbenen Waldschrates"

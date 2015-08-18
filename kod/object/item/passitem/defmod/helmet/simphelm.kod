@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include simphelm.lkod
+
    SimpleHelm_name_rsc = "helm"
    SimpleHelm_icon_rsc = helm.bgf
    SimpleHelm_desc_rsc = \

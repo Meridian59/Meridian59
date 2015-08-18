@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include denial.lkod
+
    denial_name_rsc = "denial"
    denial_icon_rsc = idenial.bgf
    denial_desc_rsc = \

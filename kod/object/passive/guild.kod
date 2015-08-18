@@ -54,6 +54,8 @@ constants:
 
 resources:
 
+   include guild.lkod
+
    guild_name_rsc = "guild"
    guild_icon_rsc = light.bgf
    guild_desc_rsc = "An organization of individuals with similar purposes."
@@ -159,11 +161,11 @@ resources:
    guild_cant_enemy_mature = \
       "You cannot declare enemies until your guild is more mature."
    guild_cant_enemy_funds = \
-      "You need %q shillings prepaid rent to declare an enemy and fund a war."
+      "You need %i shillings prepaid rent to declare an enemy and fund a war."
    guild_end_enemy_loser = \
-      "~BYour guild has lost %q shillings in rent for your cowardly loss."
+      "~BYour guild has lost %i shillings in rent for your cowardly loss."
    guild_end_enemy_winner = \
-      "~BYour guild is awarded %q shillings in rent for conquering your "
+      "~BYour guild is awarded %i shillings in rent for conquering your "
       "cowardly enemy."
 
    guild_end_alliance = \
@@ -384,9 +386,9 @@ resources:
    guild_ascension_mail = "Subject: Congratulations!\n"
       "You were chosen to be the new %q of %s%q!\n\n"
       "  -- Frular, the Guild Administrator"
-   guild_left_another = "You have left another guild too recently to join "
+   guild_left_another = "You have left another guild too recently to join %s%q"
    guild_left_another_2 = \
-      " has left another guild too recently to join your guild."
+      "%s has left another guild too recently to join your guild."
    
    guild_war_title = " declares war."
    guild_war_body1 = "Let it be known that on this day "
@@ -588,7 +590,7 @@ messages:
       {
          lGuildCommands=Send(SYS,@GetGuildcommands);
 
-         for i in lGuildCommands
+         foreach i in lGuildCommands
          {
             Send(i,@ResetCommand,#who=who,#rank=rank,#necro=bIsNecro); 
          }
@@ -663,7 +665,7 @@ messages:
          
          if piThreePersonWarning = 0
          {
-            for i in plMembers
+            foreach i in plMembers
             {
                Post(First(i),@MsgSendUser,
                      #message_rsc=guild_threeperson_failed);
@@ -688,7 +690,7 @@ messages:
                   hourhours = guild_hours_rsc;
                }
 
-               for i in plMembers
+               foreach i in plMembers
                {
                   Post(First(i),@MsgSendUser,
                         #message_rsc=guild_threeperson_failing,
@@ -712,7 +714,7 @@ messages:
          if piMature = 0
          {
             bPKserver = Send(SYS,@IsPKAllowed);
-            for i in plMembers
+            foreach i in plMembers
             {
                if bPKserver
                {
@@ -737,7 +739,7 @@ messages:
 
       Post(self,@AccrueRent);
 
-      for i in plFormerMembers
+      foreach i in plFormerMembers
       {
          timeleft = Nth(i,2) - 1;
 
@@ -756,7 +758,7 @@ messages:
       {
          Debug("Guild points to a guild hall that does not point back to it!");
          piGuild_hall = $;
-         for i in plMembers
+         foreach i in plMembers
          {
             Post(self,@ResetPowers,#who=First(i),
                   #rank=Send(self,@GetRank,#who=First(i)));
@@ -789,7 +791,7 @@ messages:
 
       if piRentCounter = 1
       {
-         for i in plMembers
+         foreach i in plMembers
          {
             Post(First(i),@MsgSendUser,#message_rsc=guild_rent_nonpayment);
          }
@@ -806,7 +808,7 @@ messages:
          rent = rent + RENT_SECRET;
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          rent = rent + RENT_PER_MEMBER;
       }
@@ -814,12 +816,12 @@ messages:
       if piGuild_hall <> $
       {
          rent = rent + Send(Send(self,@GetGuildHall),@GetRentValue)/10;   
-         for i in plAllies
+         foreach i in plAllies
          {
             rent = rent + RENT_PER_ALLY;
          }
 
-         for i in plEnemies
+         foreach i in plEnemies
          {
             rent = rent + RENT_PER_ENEMY;
          }
@@ -828,12 +830,12 @@ messages:
       }
       else
       {
-         for i in plAllies
+         foreach i in plAllies
          {
             rent = rent + RENT_PER_ALLY/2;
          }
 
-         for i in plEnemies
+         foreach i in plEnemies
          {
             rent = rent + RENT_PER_ENEMY/5;
          }
@@ -864,7 +866,7 @@ messages:
             hourhours = guild_hour_rsc;
          }
 
-         for i in plMembers
+         foreach i in plMembers
          {
             Post(First(i),@MsgSendUser,#message_rsc=guild_rent_due,
                  #parm1=piRentDue,#parm2=piRentCounter/10,#parm3=hourhours);
@@ -927,7 +929,7 @@ messages:
 
       psPassword = password;
       piGuild_hall = RID;
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(self,@ResetPowers,#who=First(i),
                #rank=Send(self,@GetRank,#who=First(i)));
@@ -947,10 +949,10 @@ messages:
          }
       }
 
-      for j in plAllies
+      foreach j in plAllies
       {
          members = Send(j,@GetMemberList);
-         for i in Members
+         foreach i in Members
          {
             Send(First(i),@MsgSendUser,#message_rsc=guild_new_hall,
                   #parm1=name,#parm2=Send(self,@GetDef),
@@ -974,17 +976,17 @@ messages:
 
       psPassword = $;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@MsgSendUser,#message_rsc=guild_abandon_hall,
                #parm1=Send(Send(self,@GetGuildHall),@GetName),
                #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName));
       }
       
-      for j in plAllies
+      foreach j in plAllies
       {
          members = Send(j,@GetMemberList);
-         for i in Members
+         foreach i in Members
          {
             Send(First(i),@MsgSendUser,#message_rsc=guild_abandon_hall,
                   #parm1=Send(Send(self,@GetGuildHall),@GetName),
@@ -995,7 +997,7 @@ messages:
       Send(Send(self,@GetGuildHall),@ResetGuildHall);
       piGuild_hall = $;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(self,@ResetPowers,#who=First(i),
               #rank=Send(self,@GetRank,#who=First(i)));
@@ -1019,7 +1021,7 @@ messages:
          conq_msg = guild_hall_conquered;
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Post(self,@ResetPowers,#who=First(i),
                #rank=Send(self,@GetRank,#who=First(i)));
@@ -1041,12 +1043,12 @@ messages:
       psPassword = $;
       piGuild_hall = $;
 
-      for j in plAllies
+      foreach j in plAllies
       {
          if j <> oConquerer
          {
             members = Send(j,@GetMemberList);
-            for i in Members
+            foreach i in Members
             {
                Send(First(i),@MsgSendUser,#message_rsc=conq_msg,
                     #parm1=name,#parm2=Send(self,@GetDef),
@@ -1081,7 +1083,7 @@ messages:
    {
       local lMemberInfo;
 
-      for lMemberInfo in plMembers
+      foreach lMemberInfo in plMembers
       {
          % First element is the guild object.
          Send(First(lMemberInfo),@ReceiveMail,#from=from,#dest_list=dest_list,
@@ -1095,7 +1097,7 @@ messages:
    {
       local i;
 
-      for i in plInvitations
+      foreach i in plInvitations
       {
          if Send(i,@GetInductor) = inductor
          {
@@ -1105,7 +1107,7 @@ messages:
          }
       }
 
-      for i in plInvitations
+      foreach i in plInvitations
       {
          if Send(i,@getinductee) = inductee
          {
@@ -1134,7 +1136,7 @@ messages:
    {
       local i;
 
-      for i in plInvitations
+      foreach i in plInvitations
       {
          if i = invite_obj
          {
@@ -1162,7 +1164,7 @@ messages:
    {
       local i;
 
-      for i in plTreaties
+      foreach i in plTreaties
       {
          if i = treaty_obj
          {
@@ -1180,7 +1182,7 @@ messages:
    {
       local i;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) = who
          {
@@ -1267,7 +1269,7 @@ messages:
       local i,MemberString;
 
       ClearTempString();
-      for i in plMembers
+      foreach i in plMembers
       {
          AppendTempString(Send(First(i),@GetTrueName));
          AppendTempString(",\n");
@@ -1280,7 +1282,7 @@ messages:
    {
       local i;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if Nth(i,2) = RANK_MASTER
          {
@@ -1298,7 +1300,7 @@ messages:
 
       lOfficers = [];
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if Nth(i,2) >= RANK_LIEUTENANT
          {
@@ -1313,7 +1315,7 @@ messages:
    {
       local i;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) = who
          {
@@ -1343,7 +1345,7 @@ messages:
          return FALSE;
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) = who
          {
@@ -1374,22 +1376,14 @@ messages:
 
       if Send(who,@HasLeftAGuildTooRecently)
       {
-         ClearTempString();
-         AppendTempString(guild_left_another);
-         AppendTempString(Send(self,@GetDef));
-         AppendTempString(Send(self,@GetName));
-         AppendTempString(".");
-
-         Send(who,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-               #parm1=GetTempString(),#type1=STRING_RESOURCE);
+         Send(who,@MsgSendUser,#message_rsc=guild_left_another,
+               #parm1=Send(self,@GetDef),#type2=STRING_RESOURCE,
+               #parm2=Send(self,@GetName));
          
          if inductor <> $
          {
-            ClearTempString();
-            AppendTempString(Send(who,@GetName));
-            AppendTempString(guild_left_another_2);
-            Send(inductor,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-                  #parm1=GetTempString(),#type1=STRING_RESOURCE);
+            Send(inductor,@MsgSendUser,#message_rsc=guild_left_another_2,
+                  #parm1=Send(who,@GetName));
          }
 
          return FALSE;
@@ -1407,7 +1401,7 @@ messages:
          piThreePersonWarning = 0;
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@MsgSendUser,#message_rsc=guild_welcome,
                #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
@@ -1426,7 +1420,7 @@ messages:
 
       bFound = FALSE;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) = who
          {
@@ -1492,7 +1486,7 @@ messages:
 
       old_master = $;
       % Demote anyone at guildmaster rank.
-      for i in plMembers
+      foreach i in plMembers
       {
          if Nth(i,2) = RANK_MASTER
          {
@@ -1551,7 +1545,7 @@ messages:
          }
       }
       
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) <> new_master
             AND (First(i) <> old_master OR abdicate = FALSE)
@@ -1599,7 +1593,7 @@ messages:
       local i, number;
 
       number = 0;
-      for i in plMembers
+      foreach i in plMembers
       {
          if Nth(i,2) = RANK_LIEUTENANT
          {
@@ -1697,7 +1691,7 @@ messages:
 
       if Send(who,@GetGuild) = self
       {
-         for i in plMembers
+         foreach i in plMembers
          {
             if First(i) = who
             {
@@ -1730,7 +1724,7 @@ messages:
                           #parm2=Send(self,@GetRankName,#rank=newrank,
                                       #sex=Send(who,@GetGender)));
                           
-                     for j in plMembers
+                     foreach j in plMembers
                      {
                         if First(j) <> promoter AND First(j) <> who
                         {
@@ -1766,7 +1760,7 @@ messages:
                           #parm2=Send(self,@GetRankName,#rank=newrank,
                                       #sex=Send(who,@GetGender)));
                           
-                     for j in plMembers
+                     foreach j in plMembers
                      {
                         if First(j) <> promoter AND First(j) <> who
                         {
@@ -1821,11 +1815,11 @@ messages:
 
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if First(i) = candidate
          {
-            for j in plMembers
+            foreach j in plMembers
             {
                if First(j) = who
                {
@@ -1908,7 +1902,7 @@ messages:
       if guildmaster <> $
       {
          count = 0;
-         for i in plMembers
+         foreach i in plMembers
          {
             if Nth(i,3) = guildmaster
             {
@@ -1929,10 +1923,10 @@ messages:
 
       mostvotes = -1;
       winner = $;
-      for i in plMembers
+      foreach i in plMembers
       {
          count = 0;
-         for j in plMembers
+         foreach j in plMembers
          {
             if Nth(j,3) = First(i)
             {
@@ -1977,12 +1971,12 @@ messages:
    {
       local i, j;
 
-      for i in plAllies
+      foreach i in plAllies
       {
          if i = what
          {
             plAllies = DelListElem(plAllies, i);
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,#message_rsc=guild_allies_defunct,
                      #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
@@ -1990,12 +1984,12 @@ messages:
          }
       }
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
          if i = what
          {
             plEnemies = DelListElem(plEnemies, i);
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,#message_rsc=guild_enemies_defunct,
                      #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
@@ -2003,7 +1997,7 @@ messages:
          }
       }
 
-      for i in plEnemiesOf
+      foreach i in plEnemiesOf
       {
          if i = what
          {
@@ -2011,7 +2005,7 @@ messages:
          }
       }
 
-      for i in plAlliesOf
+      foreach i in plAlliesOf
       {
          if i = what
          {
@@ -2020,7 +2014,7 @@ messages:
       }
 
       % Reset friend/foe colors
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@ToCliRoomContents);
       }
@@ -2053,7 +2047,7 @@ messages:
    {
       local i;
 
-      for i in plAllies
+      foreach i in plAllies
       {
          if i = otherguild
          {
@@ -2069,7 +2063,7 @@ messages:
    {
       local i;
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
          if i = otherguild
          {
@@ -2114,7 +2108,7 @@ messages:
          return FALSE;
       }
       
-      for i in plEnemies
+      foreach i in plEnemies
       {
          if i = otherguild
          {
@@ -2126,7 +2120,7 @@ messages:
          }
       }
        
-      for i in plAllies
+      foreach i in plAllies
       {
          if i = otherguild
          {
@@ -2148,7 +2142,7 @@ messages:
 
       plAllies = cons(otherguild, plAllies);
       
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@MsgSendUser,#message_rsc=guild_new_allies,
               #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
@@ -2190,7 +2184,7 @@ messages:
       local i;
 
       plAlliesOf = cons(otherguild, plAlliesOf);
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@MsgSendUser,#message_rsc=guild_declared_allies,
               #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
@@ -2209,12 +2203,12 @@ messages:
    {
       local i, j, oMaster, oBook, peace_string1, peace_string2;
 
-      for i in plAllies
+      foreach i in plAllies
       {
          if i = otherguild
          {
             plAllies = DelListElem(plAllies, i);
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,#message_rsc=guild_end_alliance,
                     #parm1=Send(otherguild,@GetDef),
@@ -2263,12 +2257,12 @@ messages:
    {
       local i, j;
 
-      for i in plAllies
+      foreach i in plAllies
       {
          if i = otherguild
          {
             plAllies = DelListElem(plAllies, i);
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,
                     #message_rsc=guild_end_alliance,
@@ -2284,12 +2278,12 @@ messages:
          }
       }
 
-      for i in plAlliesOf
+      foreach i in plAlliesOf
       {
          if i = otherguild
          {
             plAlliesOf = DelListElem(plAlliesOf, i);
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,
                     #message_rsc=guild_end_declared_alliance,
@@ -2323,10 +2317,8 @@ messages:
       % Gotta have enough cash to declare a war, in case of losing.
       if Send(self,@GetRentDue) > -WAR_LOSS_PENALTY
       {
-         ClearTempString();
-         AppendTempString(WAR_LOSS_PENALTY);
          Send(rep,@MsgSendUser,#message_rsc=guild_cant_enemy_funds,
-              #parm1=GetTempString());
+              #parm1=WAR_LOSS_PENALTY);
 
          return FALSE;
       }
@@ -2367,7 +2359,7 @@ messages:
          rMessage = guild_new_enemies;
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@MsgSendUser,#message_rsc=rMessage,
               #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
@@ -2420,7 +2412,7 @@ messages:
          rMessage = guild_declared_enemies;
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@MsgSendUser,#message_rsc=rMessage,
               #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
@@ -2491,10 +2483,6 @@ messages:
          return TRUE;
       }
 
-      % Set up temp string for message below.
-      ClearTempString();
-      AppendTempString(WAR_LOSS_PENALTY);
-
       Send(self,@AccrueRent,#amount=WAR_LOSS_PENALTY);
 
       % Give our enemy spoils equal to 60% of the positive rent lost.
@@ -2502,11 +2490,11 @@ messages:
                                          WAR_LOSS_PENALTY);
       iSpoils = (iSpoils * WAR_WINNER_PERCENT) / 100;
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
          if i = otherguild
          {
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,#message_rsc=guild_sue_for_peace,
                     #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
@@ -2514,7 +2502,7 @@ messages:
                     #parm4=Send(otherguild,@GetName));
 
                Send(First(j),@MsgSendUser,#message_rsc=guild_end_enemy_loser,
-                    #parm1=GetTempString());
+                    #parm1=WAR_LOSS_PENALTY);
             }
             
             Send(otherguild,@NotifyOtherEndEnemy,#otherguild=self,
@@ -2545,13 +2533,9 @@ messages:
       if spoils > 0
       {
          Send(self,@PayRent,#amount=spoils);
-
-         % Setup temp string for message below.
-         ClearTempString();
-         AppendTempString(spoils);
       }
 
-      for j in plMembers
+      foreach j in plMembers
       {
          Send(First(j),@MsgSendUser,#message_rsc=guild_sue_for_peace,
               #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
@@ -2560,7 +2544,7 @@ messages:
          if spoils > 0
          {
             Send(First(j),@MsgSendUser,#message_rsc=guild_end_enemy_winner,
-               #parm1=GetTempString());
+               #parm1=spoils);
          }
       }
 
@@ -2582,13 +2566,13 @@ messages:
    {
       local i, j;
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
          if i = otherguild
          {
             plEnemies = DelListElem(plEnemies, i);
 
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,#message_rsc=guild_not_enemies,
                     #parm1=Send(otherguild,@GetDef),
@@ -2614,7 +2598,7 @@ messages:
    {
       local i,j;
 
-      for i in plEnemiesOf
+      foreach i in plEnemiesOf
       {
          if i = otherguild
          {
@@ -2628,7 +2612,7 @@ messages:
                Post(self,@TimerEndEnemy);
             }
 
-            for j in plMembers
+            foreach j in plMembers
             {
                Send(First(j),@MsgSendUser,
                      #message_rsc=guild_not_declared_enemies,
@@ -2667,7 +2651,7 @@ messages:
       prSetMOTDrank = $;
       prSetMOTDname = $;
 
-      for i in plEnemies
+      foreach i in plEnemies
       {
          % Give mutual enemies their reward for destroying the guild.
          if Send(self,@IsMutualEnemy,#otherguild=i)
@@ -2676,7 +2660,7 @@ messages:
          }
       }
 
-      for i in plMembers
+      foreach i in plMembers
       {
          if NOT Send(First(i),@IsLoggedOn)
             AND NOT IsClass(self,&NecromancerGuild)
@@ -2698,7 +2682,7 @@ messages:
       }
 
       % Delete any outstanding invites
-      for i in plInvitations
+      foreach i in plInvitations
       {
          Send(i,@InvitationVanish);
       }
@@ -2727,7 +2711,7 @@ messages:
       plFormerMembers = $;
 
       % Reset friend/foe colors
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(First(i),@ToCliRoomContents);
       }
@@ -2758,7 +2742,7 @@ messages:
    {
       local i;
 
-      for i in plMembers
+      foreach i in plMembers
       {
          Send(self,@ResetPowers,#who=First(i),
                #rank=Send(self,@GetRank,#who=First(i)));
@@ -2771,7 +2755,7 @@ messages:
    {
       local i;
 
-      for i in plFormerMembers
+      foreach i in plFormerMembers
       {
          if First(i) = who
          {
@@ -2794,7 +2778,7 @@ messages:
          return;
       }
 
-      for i in plFormerMembers
+      foreach i in plFormerMembers
       {
          if First(i) = who
          {

@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include wavamper.lkod
+
    weapattVamper_desc = \
       "  An unholy glow seems to suck all life from the air around the weapon."
    Vamper_dm = "Vamper"
@@ -39,7 +41,6 @@ resources:
 classvars:
 
    vrDesc = weapattVamper_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_Vamper
 

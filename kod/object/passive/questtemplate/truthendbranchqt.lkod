@@ -1,0 +1,14 @@
+% Quest description.
+truthendbranch_name_rsc = de "lying to Parrin"
+truthendbranch_desc_rsc = de \
+   "Tell Parrin how your performance really went."
+
+truthendbranch_completed = de \
+   "You have completed Parrin's pupil quest.  Parrin will now "
+   "teach you the songs of Jala."
+
+% Quest resources.
+truthquest_trigger_5 = de "gut"
+truthquest_success_5 = de \
+   "Das wäre eine bemerkenswerte Sache, für einen so jungen Dichter wie Du "
+   "es bist.  Bist Du wirklich ganz ehrlich zu Dir selbst, %NAME?"

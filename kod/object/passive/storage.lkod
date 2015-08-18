@@ -1,0 +1,6 @@
+msg_not_enough_items_on_deposit = de "%s%s hat nicht soviel auf Lager."
+msg_does_not_have_item = de \
+   "%s%s hat nicht so viele Gegenstände für Dich eingelagert."
+msg_has_no_deposit = de "%s%s hat keine Sachen für Dich eingelagert."
+msg_reduced_tally = de "Du kannst nicht alles tragen, was Du forderst."
+msg_cannot_carry = de "Du bist nicht in der Lage %s%s aufzunehmen."

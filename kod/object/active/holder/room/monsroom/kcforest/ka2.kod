@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ka2.lkod
+
    room_name_OutdoorsKA2 = "The Jungle Cliffs"
    room_OutdoorsKA2 = KA2.roo
    OutdoorsKA2_music = avarwar.mp3

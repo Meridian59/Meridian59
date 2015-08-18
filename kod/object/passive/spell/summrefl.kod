@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include summrefl.lkod
+
    summonreflection_cast_rsc = "A mirror image of yourself appears."
    summonreflection_name_rsc = "reflection"
    summonreflection_icon_rsc = ireflect.bgf
@@ -124,7 +126,7 @@ messages:
    {
       local i;
 
-      for i in Send(SYS,@GetReflectionsList)
+      foreach i in Send(SYS,@GetReflectionsList)
       {
          if first(i) = who
          {

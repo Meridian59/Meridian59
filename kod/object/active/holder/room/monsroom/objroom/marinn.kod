@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include marinn.lkod
+
    room_name_marinn = "The Limping Toad Inn and Tavern"
    room_marinn = marinn.roo
 
@@ -139,7 +141,7 @@ messages:
          return;
       }
 
-      for i in plActive 
+      foreach i in plActive 
       {
          if IsClass(first(i), &MarionInnkeeper)
          {

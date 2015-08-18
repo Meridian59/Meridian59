@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bqbanker.lkod
+
    BarloqueBanker_name_rsc = "Setag'lib"
    BarloqueBanker_icon_rsc = banker.bgf
    BarloqueBanker_desc_rsc = "A small, pecuniarily oriented man."

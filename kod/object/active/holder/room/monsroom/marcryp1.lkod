@@ -1,0 +1,10 @@
+room_name_MarionCrypt1 = de "Die Krypta von Marion"
+MarionCrypt1_corpse_name = de "Ein mumifizierter Körper"
+MarionCrypt1_corpse_desc = de \
+   "Die Gefallenen Seelen, die in der Krypta hausen, waren einst nur mumifizierte "
+   "Körper."
+MarionCrtyp1_martyr_on = de \
+   "Die guten angestammten Geister dieser Hallen rufen die Götter an, die "
+   "Unschuldigen zu beschützen."
+MarionCrypt1_gods = de "Götter"
+MarionCrypt1_venyacyr = de "Venya'cyr die Verdammte"

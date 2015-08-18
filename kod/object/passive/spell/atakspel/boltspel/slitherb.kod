@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include slitherb.lkod
+
    Slitherbolt_name_rsc = "slitherbolt"
    Slitherbolt_icon_rsc = orcspel.bgf
    Slitherbolt_hit_rsc = "The slitherbolt strikes %s%s!"

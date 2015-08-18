@@ -1,0 +1,8 @@
+TosBlacksmith_name_rsc = de "Ferloi Qan"
+TosBlacksmith_desc_rsc = de \
+   "Aufgrund seiner überragenden Fähigkeiten wurde Ferloi Qan Hofschmied "
+   "des Herzogs."
+entry_welcome = de "Guten Tag, %s%s."
+TsSm_mace_sale = de \
+   "%s%s?? Ich biete so viele schöne Waffen an und Du willst einen Streitkolben! "
+   "Nun gut, anscheinend habe ich keine Wahl und muss Dir einen verkaufen."

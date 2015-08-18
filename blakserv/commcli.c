@@ -102,7 +102,7 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
 						  obj_data.v.data);
 				return;
 			}
-			AddStringToPacket(strlen(r->resource_val),r->resource_val);
+			AddStringToPacket(strlen(r->resource_val[0]),r->resource_val[0]);
 			break;
       default :
 			bprintf("AddBlakodToPacket can't send %i bytes\n",num_bytes);

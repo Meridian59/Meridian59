@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include huntghst.lkod
+
    HunterGhost_name_rsc = "Tendrath"
    HunterGhost_icon_rsc = nnm01.bgf
    HunterGhost_desc_rsc =  \

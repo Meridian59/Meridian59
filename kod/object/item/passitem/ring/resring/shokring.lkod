@@ -1,0 +1,7 @@
+ShockRing_name_rsc = de "Ring des Schockwiderstands"
+ShockRing_desc_rsc = de \
+   "Dieser Ring hat ein weiches Äusseres. Magische Runen zieren seine innere "
+   "Oberfläche."
+ShockRing_use_rsc = de \
+   "Du spürst die Kraft des Rings und fühlst Dich wohl geschützt."
+ShockRing_dead_rsc = de "Der Ring zerspringt in einer kleinen Explosion."

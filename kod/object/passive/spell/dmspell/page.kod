@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include page.lkod
+
    page_wave_rsc = god2god.wav
 
    page_name_rsc = "page"
@@ -67,7 +69,7 @@ messages:
       send(who,@wavesenduser,#wave_rsc=page_wave_rsc);  
       send(who,@msgsenduser,#message_rsc=page_msg_dm,
 	  #parm1=Send(First(lTargets),@GetDef),#parm2=Send(First(lTargets),@GetName));
-      for i in lTargets
+      foreach i in lTargets
       {
 	 send(i,@wavesenduser,#wave_rsc=page_wave_rsc);
 	 send(i,@msgsenduser,#message_rsc=page_msg_target,

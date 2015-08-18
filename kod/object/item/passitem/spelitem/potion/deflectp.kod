@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include deflectp.lkod
+
    DeflectPotion_name_rsc = "potion of deflection"
    %DeflectPotion_icon_rsc = potion01.bgf
    DeflectPotion_desc_rsc = "This is a glass vial of colored liquid.  "

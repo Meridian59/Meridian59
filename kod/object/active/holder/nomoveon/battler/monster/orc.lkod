@@ -1,0 +1,7 @@
+orc_koc_name_rsc = de "utomca"
+orc_name_rsc = de "Der Ork"
+orc_desc_rsc = de \
+   "Dieser stinkende Diener Qors ist über und über mit Schmutz bedeckt und "
+   "überragt jeden Menschen bei weitem. Er fuchtelt wild mit einem Säbel "
+   "in seiner knorrigen Hand herum."
+orc_dead_name_rsc = de "toter Ork"

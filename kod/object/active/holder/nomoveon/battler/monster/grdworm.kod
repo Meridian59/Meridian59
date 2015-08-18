@@ -33,6 +33,8 @@ constants:
 
 resources:
 
+   include grdworm.lkod
+
    GroundWorm_name_rsc = "groundworm"
    GroundWorm_icon_rsc = wormm.bgf
    GroundWorm_koc_name_rsc = "slithic"
@@ -314,7 +316,7 @@ messages:
          piLastCol = piCol;
       }
 
-      for i in plTrail
+      foreach i in plTrail
       {
          Send(i,@Delete);
       }
@@ -339,7 +341,7 @@ messages:
          piLastCol = piCol;
          bAddTrailClump = TRUE;
 
-         for i in plTrail
+         foreach i in plTrail
          {
             if Send(i,@GetOwner) = $
             {
@@ -430,7 +432,7 @@ messages:
    {
       local i;
 
-      for i in plTrail
+      foreach i in plTrail
       {
          Send(i,@Delete);
       }

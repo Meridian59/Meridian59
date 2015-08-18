@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include denialp.lkod
+
    DenialPotion_fake_name_rsc = "flask"
    DenialPotion_name_rsc = "potion of denial"
    DenialPotion_icon_rsc = flask.bgf

@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include shroud.lkod
+
    shroud_cast_rsc = "A dark cloak settles over your %s."
    
    shroud_fails = "%s%s is strangely unaffected by the spell."
@@ -25,7 +27,7 @@ resources:
       "Used to protect a warrior's tools against polluting magics.  "
       "Requires two mushrooms and two elderberries to cast."
 
-   shroud_label_rsc = "Shrouder."
+   shroud_label_rsc = "Shrouder"
 
 classvars:
 

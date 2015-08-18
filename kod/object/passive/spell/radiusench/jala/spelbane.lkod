@@ -1,0 +1,18 @@
+Spellbane_name_rsc = de "Magie bannen"
+Spellbane_desc_rsc = de \
+   "Die Worte dieses Liedes bilden einen Zauber, der das Ausführen jeglicher "
+   "Magie, die schwächer als dieses Lied ist unterbindet. Man benötigt erstklassig "
+   "polierte Seraphyme."
+Spellbane_no_towns = de "Du wurdest daran gehindert, das Lied zu singen."
+Spellbane_cast = de \
+   "Du fängst an, ein Lied voller mechanischer Rythmen zu spielen."
+Spellbane_starts = de \
+   "%s beginnt ein Lied zu singen, was voller mechanischer Rythmen ist."
+Spellbane_ends = de "Die mechanischen Rythmen von %s fades verstummen."
+Spellbane_caster_ends = de "Deine mechanischen Rythmen verstummen."
+Spellbane_caster_enter = de \
+   "Deine mechanische Rythmen generieren ein Labyrinth in der Umgebung."
+Spellbane_enter = de \
+   "Das Lied, gesungen von %s erfüllt die Luft mit mechanischer Rythmen."
+Spellbane_leave = de \
+   "Du kannst das Lied voller mechanischer Rythmen von %s's nicht mehr hören."

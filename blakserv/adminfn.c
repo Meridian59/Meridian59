@@ -831,7 +831,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			break;
 		case R :
 			/* remember how strtok works to see why this works */
-			admin_parm[i] = (admin_parm_type)strtok(NULL, " \t\n");
+			admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
 			if (!admin_parm[i])
 			{
 				aprintf("Missing text parameter.\n");
@@ -1215,7 +1215,7 @@ void AdminWhoEachSession(session_node *s)
 				if (r == NULL)
 					aprintf("Invalid resource id %i",name_val.v.data);
 				else
-					aprintf("%s",r->resource_val);
+					aprintf("%s",r->resource_val[0]);
 			}
 			else
 				aprintf("Non-resource %i,%i",name_val.v.tag,name_val.v.data);
@@ -1241,7 +1241,7 @@ void AdminLock(int session_id,admin_parm_type parms[],
 	lockstr = ConfigStr(LOCK_DEFAULT);
 	
 	ptr = text;
-	while (ptr && *ptr != 0)
+	while (ptr && *ptr > 0)
 	{
 		if (*ptr != ' ' && *ptr != '\n' && *ptr != '\t')
 		{
@@ -1332,28 +1332,28 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	kstat = GetKodStats();
 	
 	aprintf("Current time is %s\n",TimeStr(now));
-	aprintf("System started at %s (up for %s = %i seconds)\n",
+	aprintf("System started at %s\n(up for %s = %i seconds)\n",
 		TimeStr(kstat->system_start_time),
 		RelativeTimeStr(now - kstat->system_start_time),
 		now - kstat->system_start_time);
 	
 	aprintf("----\n");
-	aprintf("Interpreted %i.%09i billion total instructions in %i seconds\n",
+	aprintf("Interpreted %i.%09i billion total instructions in %.2f seconds\n",
 		kstat->billions_interpreted,kstat->num_interpreted,
-		kstat->interpreting_time/1000);
+		kstat->interpreting_time / 1000000.0);
 	aprintf("Handled %i top level messages, total %i messages\n",
 		kstat->num_top_level_messages, kstat->num_messages);
 	aprintf("Deepest message call stack is %i calls from top level\n",kstat->message_depth_highest);
 	aprintf("Most instructions on one top level message is %i instructions\n",kstat->num_interpreted_highest);
 	aprintf("Number of top level messages over 1000 milliseconds is %i\n",kstat->interpreting_time_over_second);
-	aprintf("Longest time on one top level message is %i milliseconds\n",kstat->interpreting_time_highest);
+	aprintf("Longest time on one top level message is %i milliseconds\n",(int)(kstat->interpreting_time_highest/1000.0));
 	if (kstat->interpreting_time_object_id != INVALID_ID)
 	{
 		o = GetObjectByID(kstat->interpreting_time_object_id);
 		c = o ? GetClassByID(o->class_id) : NULL;
 	}
 		m = GetNameByID(kstat->interpreting_time_message_id);
-		aprintf("Most recent slow top level message is OBJECT %i CLASS %s MESSAGE %s\n",
+		aprintf("Most recent slow top level message is:\nOBJECT %i CLASS %s MESSAGE %s\n",
 			kstat->interpreting_time_object_id,
 			(char*)(c? c->class_name : "(unknown)"),
 			(char*)(m? m : "(unknown)"));
@@ -1406,56 +1406,75 @@ void AdminShowMemory(int session_id,admin_parm_type parms[],
 
 static int show_messages_ignore_count;
 static int show_messages_ignore_id;
-static int show_messages_count;
+static int show_messages_timed_count;
+static int show_messages_untimed_count;
+static int show_messages_total_count;
+static double show_messages_time;
 static int show_messages_message_id;
 static class_node * show_messages_class;
 void AdminShowCalled(int session_id,admin_parm_type parms[],
-                     int num_blak_parm,parm_node blak_parm[])               
+                     int num_blak_parm,parm_node blak_parm[])
 {
-	int i;
-	
-	int num_show;
-	num_show = (int)parms[0];
-	
-	num_show = std::max(1,num_show);
-	num_show = std::min(500,num_show);
-	
-	aprintf("%4s %-22s %-22s %s\n","Rank","Class","Message","Count");
-	
-	show_messages_ignore_count = -1;
-	show_messages_ignore_id = -1;
-	for (i=0;i<num_show;i++)
-	{
-		show_messages_count = -1;
-		ForEachClass(AdminShowCalledClass);
-		if (show_messages_count <= 0)
-			break;
-		aprintf("%3i. %-22s %-22s %i\n",i+1,
-			(show_messages_class == NULL)?("Unknown"):show_messages_class->class_name,
-			GetNameByID(show_messages_message_id),show_messages_count);
-		show_messages_ignore_count = show_messages_count;
-		show_messages_ignore_id = show_messages_message_id;
-	}
-	
+   int i;
+
+   int num_show;
+   num_show = (int)parms[0];
+
+   num_show = std::max(1,num_show);
+   num_show = std::min(500,num_show);
+
+   aprintf("%4s %-20s %-30s %-11s %s\n", "Rank", "Class", "Message", "Count", "Avg Time(us)");
+
+   show_messages_ignore_count = -1;
+   show_messages_ignore_id = -1;
+   for (i=0;i<num_show;i++)
+   {
+      show_messages_timed_count = -1;
+      show_messages_untimed_count = -1;
+      show_messages_total_count = -1;
+      ForEachClass(AdminShowCalledClass);
+      if (show_messages_total_count <= 0)
+         break;
+      aprintf("%3i. %-20s %-30s %-11i %.3f\n",i+1,
+         (show_messages_class == NULL)?("Unknown"):show_messages_class->class_name,
+         GetNameByID(show_messages_message_id), show_messages_total_count, show_messages_time);
+      show_messages_ignore_count = show_messages_total_count;
+      show_messages_ignore_id = show_messages_message_id;
+   }
 }
 
 void AdminShowCalledClass(class_node *c)
 {
-	int i;
-	
-	for (i=0;i<c->num_messages;i++)
-		if ((show_messages_ignore_count == -1 || 
-			(c->messages[i].called_count < show_messages_ignore_count ||
-			(c->messages[i].called_count == show_messages_ignore_count &&
-			c->messages[i].message_id > show_messages_ignore_id))))
-			if (c->messages[i].called_count > show_messages_count ||
-				(c->messages[i].called_count == show_messages_count && 
-				c->messages[i].message_id < show_messages_message_id))
-			{
-				show_messages_count = c->messages[i].called_count;
-				show_messages_message_id = c->messages[i].message_id;
-				show_messages_class = c;
-			}      
+   int i, num_calls;
+
+   for (i = 0; i<c->num_messages; i++)
+   {
+      num_calls = c->messages[i].timed_call_count + c->messages[i].untimed_call_count;
+      if ((show_messages_ignore_count == -1 ||
+         (num_calls < show_messages_ignore_count ||
+         (num_calls == show_messages_ignore_count &&
+         c->messages[i].message_id > show_messages_ignore_id))))
+      {
+         if (num_calls > show_messages_total_count ||
+            (num_calls == show_messages_total_count &&
+            c->messages[i].message_id < show_messages_message_id))
+         {
+            show_messages_timed_count = c->messages[i].timed_call_count;
+            show_messages_untimed_count = c->messages[i].untimed_call_count;
+            show_messages_total_count = num_calls;
+            if (show_messages_timed_count)
+            {
+               show_messages_time = c->messages[i].total_call_time / (double)show_messages_timed_count;
+            }
+            else
+            {
+               show_messages_time = 0.0;
+            }
+            show_messages_message_id = c->messages[i].message_id;
+            show_messages_class = c;
+         }
+      }
+   }
 }
 
 void AdminShowObjects(int session_id,admin_parm_type parms[],
@@ -1670,7 +1689,7 @@ void AdminShowOneUser(user_node *u)
 		if (r == NULL)
 			aprintf("Invalid resource id %i.",name_val.v.data);
 		else
-			aprintf("%s",r->resource_val);
+			aprintf("%s",r->resource_val[0]);
 	}
 	else
 		aprintf("Non-resource %i,%i.",name_val.v.tag,name_val.v.data);
@@ -1858,7 +1877,7 @@ void AdminPrintResource(resource_node *r)
 	else
 	{
 		aprintf("%-7i %s = %s\n",r->resource_id,
-			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val);
+			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val[0]);
 	}
 }
 
@@ -2027,7 +2046,7 @@ void AdminShowEachSysTimer(systimer_node *st)
 void AdminShowCalls(int session_id,admin_parm_type parms[],
                     int num_blak_parm,parm_node blak_parm[])                    
 {
-	int i,count,ignore_val,max_index;
+   int i, count, ignore_val, max_index, totalCalls;
 	kod_statistics *kstat;
 	char c_name[50];
 	
@@ -2036,7 +2055,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 	
 	kstat = GetKodStats();
 	
-	aprintf("%4s %-15s %s\n","Rank","Function","Count");
+	aprintf("%4s %-23s %-12s %s\n","Rank","Function","Count","Avg Time(us)");
 	
 	ignore_val = -1;
 	for (count=0;count<num_show;count++)
@@ -2044,13 +2063,14 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		max_index = -1;
 		for (i=0;i<MAX_C_FUNCTION;i++)
 		{
-			if (ignore_val == -1 || kstat->c_count[i] < ignore_val)
+         totalCalls = kstat->c_count_timed[i] + kstat->c_count_untimed[i];
+         if (ignore_val == -1 || totalCalls < ignore_val)
 			{
-				if (max_index == -1 || kstat->c_count[i] > kstat->c_count[max_index])
+            if (max_index == -1 || totalCalls > (kstat->c_count_timed[max_index] + kstat->c_count_untimed[max_index]))
 					max_index = i;
 			}
 		}
-		ignore_val = kstat->c_count[max_index];
+      ignore_val = kstat->c_count_timed[max_index] + kstat->c_count_untimed[max_index];
 		
 		if (ignore_val == 0)
 			break;
@@ -2136,8 +2156,10 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 			sprintf(c_name,"Unknown (%i)",max_index);
 			break;
 		}
-		
-		aprintf("%3i. %-15s %i\n",count+1,c_name,kstat->c_count[max_index]);
+      double avgTime = 0.0;
+      if (kstat->c_count_timed[max_index] > 0)
+         avgTime = kstat->ccall_total_time[max_index] / (double)kstat->c_count_timed[max_index];
+      aprintf("%3i. %-23s %-12i %4.3f\n", count + 1, c_name, ignore_val, avgTime);
 	}
 }
 
@@ -2184,7 +2206,11 @@ void AdminShowMessage(int session_id,admin_parm_type parms[],
 	if (c != found_class)
 		aprintf(" (handled by CLASS %s)",found_class->class_name);
 	aprintf("\n");
-	aprintf("Called count: %i\n", m->called_count);
+   aprintf("Called count (total): %i\n", m->timed_call_count + m->untimed_call_count);
+   if (m->timed_call_count > 0)
+      aprintf("Average running time: %8.3f\n", m->total_call_time / (double)m->timed_call_count);
+   if (m->untimed_call_count > 0)
+      aprintf("Called count (untimed): %i\n", m->untimed_call_count);
 	aprintf("--------------------------------------------------------------\n");
 	aprintf("  Parameters:\n");
 	/* we need to read the first few bytes from the bkod to get the parms */
@@ -3081,13 +3107,21 @@ void AdminSetConfigBool(int session_id,admin_parm_type parms[],
 		return;
 	}
 	
-	
-	if (stricmp(new_value,"YES") == 0)
-		SetConfigBool(c->config_id,True);
-	else
-		SetConfigBool(c->config_id,False);
-	
-	
+   if (stricmp(new_value, "YES") == 0)
+   {
+      SetConfigBool(c->config_id, True);
+      // Start timing if we set the debug time calls boolean to true.
+      if (c->config_id == DEBUG_TIME_CALLS)
+         InitTimeProfiling();
+   }
+   else
+   {
+      SetConfigBool(c->config_id, False);
+      // Stop timing if we set the debug time calls boolean to true.
+      if (c->config_id == DEBUG_TIME_CALLS)
+         EndTimeProfiling();
+   }
+
 	aprintf("Configure option group %s name %s is now set to '%s'.\n",
 		group,name,new_value);
 }
@@ -3869,10 +3903,27 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 	if (data)
 		message_name = data;
 	
-		/* Send the message and handle any posted messages spawned, also.
-    */
-	blak_val.int_val = SendTopLevelBlakodMessage(object_id,message_id,num_blak_parm,blak_parm);
-	
+   // Time the message if running on Windows.
+#ifdef BLAK_PLATFORM_WINDOWS
+   LARGE_INTEGER startTime, endTime, frequency;
+   double freq;
+   QueryPerformanceFrequency(&frequency);
+   freq = frequency.QuadPart / 1000000.0;
+   QueryPerformanceCounter(&startTime);
+#endif
+
+   // Send the message and handle any posted messages spawned, also.
+   blak_val.int_val = SendTopLevelBlakodMessage(object_id, message_id, num_blak_parm, blak_parm);
+
+#ifdef BLAK_PLATFORM_WINDOWS
+   QueryPerformanceCounter(&endTime);
+   if (freq > 0.0)
+   {
+      aprintf("Message %s completed in %.3f microseconds.\n", message_name,
+         ((double)(endTime.QuadPart - startTime.QuadPart) / freq));
+   }
+#endif
+
 	/* Note that o may be invalid from here if we needed to resize our object array
     * mid-message.  Messages that could create a ton of objects could do that, such
 	* as Meridian's RecreateAll() message.
@@ -3907,12 +3958,12 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 		{
 			resource_node* rnod = GetResourceByID(blak_val.v.data);
 			int len;
-			if (rnod && rnod->resource_val && *rnod->resource_val)
+			if (rnod && rnod->resource_val[0] && *rnod->resource_val[0])
 			{
-            len = std::min(strlen(rnod->resource_val), (size_t) 60);
+            len = std::min(strlen(rnod->resource_val[0]), (size_t) 60);
 			  aprintf(":   == \"");
-			  AdminBufferSend(rnod->resource_val, len);
-			  if (len < (int)strlen(rnod->resource_val))
+			  AdminBufferSend(rnod->resource_val[0], len);
+			  if (len < (int)strlen(rnod->resource_val[0]))
 			    aprintf("...");
 			  aprintf("\"\n");
 			}

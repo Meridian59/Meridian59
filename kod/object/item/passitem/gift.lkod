@@ -1,0 +1,12 @@
+gift_name_rsc = de "Das Geschenk"
+gift_desc_rsc = de \
+   "Dies ist ein Geschenk der Götter, die sich für Deine Geduld und Ergebenheit "
+   "bedanken wollen."
+gift_open = de \
+   "Mit ungezügelter Freude öffnest Du das Geschenk und findest darin %s%s!"
+gift_desc_name = de \
+   "Dies ist ein niedlich verpacktes Geschenk. Auf einem kleinen Zettelchen "
+   "steht geschrieben: 'Von %q in Liebe'."
+gift_bonded_wrapped_1 = de \
+   "Du fühlst, dass Du vergiftet wurdest %s wurde mit Geschenkpapier umwickelt."
+gift_bonded_unwrapped = de "Dein Geschenk ist nun unverpackt. Es ist: %s%s."

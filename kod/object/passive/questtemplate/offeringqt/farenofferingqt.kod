@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include farenofferingqt.lkod
+
    % Quest description.
    farenofferingqt_icon_rsc = burnwate.bgf
    farenofferingqt_name_rsc = "Faren offering quest"

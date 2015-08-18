@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include fadepupilqt.lkod
+
    % Quest description.
    fadepupilquest_icon_rsc = ifade.bgf
    fadepupilquest_name_rsc = "fade pupil quest"
@@ -149,7 +151,7 @@ messages:
                #quest_node_index=QNT_ID_FADE_PUPIL_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -168,19 +170,19 @@ messages:
                #timelimit=3 * 3600,#quest_node_index=QNT_ID_FADE_PUPIL_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Heretic)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Heretic)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

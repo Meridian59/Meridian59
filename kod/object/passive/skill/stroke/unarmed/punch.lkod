@@ -1,0 +1,16 @@
+punch_name_rsc = de "Boxen"
+punch_desc_rsc = de \
+   "Dies ist die gebräuchlichste Art, waffenlos zu kämpfen. Von einem starken "
+   "Krieger ausgeführt, kann es sehr effektiv sein, ist aber auch äußerst "
+   "ermüdend.."
+punch_player_was_hit = de "%s%s schlägt Dir fest auf den Kiefer."
+punch_player_hit_something = de \
+   "%sDu triffst %s%s mit einem festen rechten Haken."
+punch_player_killed_something = de \
+   "%s%s fällt auf den Boden und steht nicht wieder auf."
+punch_player_was_killed = de \
+   "Das letzte was Du siehst ist %s%s's Faust in Richtung Deiner Nase."
+punch_skill_intro = de \
+   "Waffenfertigkeiten Level 1: Dies ist die gebräuchlichste Art, waffenlos "
+   "zu kämpfen. Von einem starken Krieger ausgeführt, kann es sehr effektiv "
+   "sein, ist aber auch äußerst ermüdend.."

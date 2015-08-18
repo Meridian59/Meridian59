@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include neruarow.lkod
+
    nerudite_arrow_name_rsc = "nerudite arrows"
    nerudite_arrow_icon_rsc = arrowner.bgf
    nerudite_arrow_desc_rsc = \

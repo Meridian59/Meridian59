@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcexile.lkod
+
    guildexile_name_rsc = "exile"
    guildexile_icon_rsc = light.bgf
    guildexile_desc_Rsc = "Use this to kick someone out of your guild.  Will not affect those of other guilds, or those of higher rank than you."
@@ -114,7 +116,7 @@ messages:
 		 #parm2=send(myguild,@getdef),
          #parm3=send(myguild,@gettruename));
 
-      for i in send(myGuild,@getmemberlist)
+      foreach i in send(myGuild,@getmemberlist)
         {
           send(first(i),@msgsenduser,#message_rsc=exile_to_others,
             #parm1=send(who,@gettruename),#type2=STRING_RESOURCE,#parm3=send(myguild,@getdef),

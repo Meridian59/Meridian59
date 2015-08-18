@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include necport.lkod
+
    NecropolisPortal_icon_rsc = teleport.bgf
 
    NecropolisPortal_closing = "The portal flickers and begins to draw imperceptibly in on itself."
@@ -80,7 +82,7 @@ messages:
       if isClass(what,&Player)
       {
          % A player just left, so check if there are any left in the room
-         for oPlayer in send(poOwner,@GetHolderActive)
+         foreach oPlayer in send(poOwner,@GetHolderActive)
          {
             if IsClass(first(oPlayer),&Player)
             {
@@ -89,7 +91,7 @@ messages:
          }
 
          % No players left, start closing it!
-         for oPlayer in send(poOwner,@GetHolderActive)
+         foreach oPlayer in send(poOwner,@GetHolderActive)
          {
             if isClass(first(oPlayer),&Player)
             {
@@ -115,7 +117,7 @@ messages:
 
       ptClosePortal = $;
 
-      for oPlayer in send(poOwner,@GetHolderActive)
+      foreach oPlayer in send(poOwner,@GetHolderActive)
       {
          if IsClass(first(oPlayer),&Player)
          {

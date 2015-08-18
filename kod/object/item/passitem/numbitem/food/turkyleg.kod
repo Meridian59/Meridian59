@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include turkyleg.lkod
+
    TurkeyLeg_name_rsc = "turkey leg"
    TurkeyLeg_icon_rsc = drumstik.bgf
    TurkeyLeg_desc_rsc = \

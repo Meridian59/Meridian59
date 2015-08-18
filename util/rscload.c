@@ -6,7 +6,7 @@
 
 #include "rscload.h"
 
-static const int RSC_VERSION = 4;
+static const int RSC_VERSION = 5;
 static const int MAX_RSC_LEN = 20000;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
@@ -38,7 +38,7 @@ bool RscFileLoad(char *fname, RscCallbackProc callback)
  */
 bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback)
 {
-   int i, num_resources, version, rsc_num;
+   int i, num_resources, version, rsc_num, lang_id;
    unsigned char byte;
    
    // Check magic number and version
@@ -51,31 +51,34 @@ bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback)
    
    if (fread(&num_resources, 1, 4, f) != 4 || num_resources < 0)
       return false;
-   
+
    // Read each resource
    for (i=0; i < num_resources; i++)
    {
       if (fread(&rsc_num, 1, 4, f) != 4)
          return false;
 
-      char rsc[MAX_RSC_LEN];
+      // each resource has a language number and a string
+      if (fread(&lang_id, 1, 4, f) != 4)
+         return false;
+
+      char str[MAX_RSC_LEN];
       int pos = 0;
-      while (!feof(f) && fread(&rsc[pos], 1, 1, f) == 1)
+      while (!feof(f) && fread(&str[pos], 1, 1, f) == 1)
       {
          // Too big for buffer?
          if (pos == MAX_RSC_LEN - 1)
             return false;
          
          // Reached end of string?
-         if (rsc[pos] == 0)
+         if (str[pos] == '\0')
             break;
          pos++;
       }
-      
-      if (!(*callback)(fname, rsc_num, rsc))
+
+      if (!(*callback)(fname, rsc_num, lang_id, str))
          return false;
    }
 
    return true;
 }
-

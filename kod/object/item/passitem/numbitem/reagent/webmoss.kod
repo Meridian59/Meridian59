@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include webmoss.lkod
+
    WebMoss_name_rsc = "web moss"
    WebMoss_icon_rsc = webmoss.bgf
    WebMoss_desc_rsc = \

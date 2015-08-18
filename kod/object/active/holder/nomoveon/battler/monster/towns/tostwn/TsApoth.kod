@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tsapoth.lkod
+
    tosapothecary_name_rsc = "Frisconar"
    tosapothecary_icon_rsc = tsapoth.bgf
    tosapothecary_desc_rsc = \

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include kcguardE.lkod
+
    KocatanCaptainEvil_name_rsc = "Xacal ko'Ixca"
    KocatanCaptainEvil_icon_rsc = kcguardE.bgf
 
@@ -76,7 +78,7 @@ messages:
    {
       local i;
 
-      for i in plBribes
+      foreach i in plBribes
       {
          if i = what
          {

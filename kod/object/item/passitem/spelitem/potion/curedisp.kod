@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include curedisp.lkod
+
    CureDiseasePotion_name_rsc = "cure disease potion"
    %CureDiseasePotion_icon_rsc = potion01.bgf
    CureDiseasePotion_desc_rsc = "This is a glass vial of colored liquid.  "

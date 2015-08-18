@@ -1,0 +1,44 @@
+% Quest description.
+idwandqt_name_rsc = de "wand identification quest"
+idwandqt_desc_rsc = de \
+   "Help an NPC identify a wand."
+
+idwandqt_nodetwo_rsc = de \
+   "%s%s recently received a wand %s is unable to identify, and would "
+   "like your assistance in determining its nature.  Offer the wand to "
+   "%s%s and see if %s can help with this task."
+
+idwandqt_nodethree_rsc = de \
+   "%s%s has determined the nature of the wand. Go back to %s%s and "
+   "offer %s the now identified wand, and collect your reward."
+
+idwandqt_completed_rsc = de \
+   "You have completed the wand identification quest."
+
+% Quest resources.
+wand_identify_assign_1 = de \
+   "Nun, jetzt wo Du es sagst, ich habe den Zauberstab den ich an dem Tag "
+   "gefunden habe mitgenommen. Ich kann aber leider nicht herausfinden was "
+   "er macht - Er scheint Magie abzuwehren.  Kannst Du ihn zu %NPC bringen "
+   "und lass %HIMHER_NPC für mich identifizieren?  Ich wäre Dir sehr dankbar "
+   "dafür, wenn Du das tun würdest."
+wand_identify_assign_2 = de \
+   "Ein Zauberstab, nicht wahr? Nun lass mal sehen.... ah ha! Siehst Du diese "
+   "Runen hier.... entlang am Griff....  Die Runen sagen, dass es ein %CARGO "
+   "ist.  ERlaube mir, ein Etikett mit der Übersetzung draufzukleben, damit "
+   "%NPC weiß um welchen es sich handelt."
+wand_identify_success = de \
+   "Fabehlaft.  Ein %CARGO wird sich sicherlich als nützlich erweisen.  Lass "
+   "mich Dir etwas für Deine Mühen geben."
+wand_identify_failure_1 = de \
+   "Betreff: Der seltsame Zauberstab\nWegen dem Zauberstab. Ich kann mich "
+   "daran erinnern, es war ein ziemlich nutzloses Stück.  Kümmer Dich nicht "
+   "darum ihn zu identifizieren, ich bin mir sicher, er ist es nicht wert.  "
+   "Ich werde in der Zukunft sicherlich noch andere Gelegenheiten für Dich "
+   "haben. Bis später!"
+wand_identify_failure_2 = de \
+   "Betreff: Der seltsame Zauberstab\nWegen dem Zauberstab, %NPC hat mir gesagt, "
+   "dass er nichts wert ist.  Kümmer Dich nicht ihn zurückzubringen.  Eigentlich, "
+   "wenn ich Du wäre, würde ich ihn wegwerfen.  Obwohl ich könnte Dir sagen "
+   "was es war, er sah aber nicht so aus als ob er nicht wirklich funktioniert "
+   "hätte."

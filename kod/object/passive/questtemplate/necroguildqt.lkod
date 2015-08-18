@@ -1,0 +1,31 @@
+% Quest description.
+necroguildquest_name_rsc = de "raise Queen Venya'cyr quest"
+necroguildquest_desc_rsc = de \
+   "The ghostly remains of Queen Venya'cyr have whispered to you, and "
+   "told you of her desire to return to this plane of existence.  Will "
+   "you assist her?"
+
+necroguildquest_nodethree_rsc = de \
+   "To assist in Queen Venya'cyr's return to this plane of existence, "
+   "you must obtain the \"blood of the innocent\".  Find this item and "
+   "offer it to the ghostly remains."
+
+necroguildquest_completed_rsc = de \
+   "You have successfully raised Queen Venya'cyr from the dead, and are "
+   "now her loyal undead servant."
+
+% Quest resources.
+necroguild_assign_2 = de \
+   "Ich sehne mich danach, wiederzukehren auf die Ebene der Existenz, mein "
+   "dunkles Kind.  Wirst Du mir helfen wieder aufzusteigen?"
+necroguild_trigger_2 = de "Ja"
+necroguild_assign_3 = de \
+   "Ausgezeichnet.  Meine Seele sehnt sich nach dem Blut eines Unschuldigen.  "
+   "Bringe es mir, damit ich die Welt von Meridian wieder beherschen kann!"
+necroguild_failure_3 = de \
+   "Betreff: Du hast versagt.\nDu hast versagt. Ich werde nach jemandem anderen "
+   "suchen, der mich wieder zurück auf diese Welt bringen kann."
+necroguild_success_3 = de \
+   "Ah!  LEBEN!!  Ich wurde, zusammen mit dem dunklen Orden der Nekromanten "
+   "wiedergeboren!  Für Deinen treuen Dienst, ernenne ich Dich zum Meister "
+   "des Ordens."

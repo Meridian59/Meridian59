@@ -1,0 +1,5 @@
+ActiveWallElement_name_rsc = de "Ein Wandelement"
+ActiveWallElement_desc_rsc = de "Dies ist ein Element eines Wandzauberspruches."
+ActiveWallElement_dissipate_rsc = de "Das Wandelement verschwindet."
+ActiveWallElement_unaffected_rsc = de \
+   "Du wirst von dem Wandelement nicht behelligt."

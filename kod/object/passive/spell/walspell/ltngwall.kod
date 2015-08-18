@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ltngwall.lkod
+
    LightningWall_name_rsc = "lightning wall"
    LightningWall_icon_rsc = iwalllit.bgf
    LightningWall_desc_rsc = \

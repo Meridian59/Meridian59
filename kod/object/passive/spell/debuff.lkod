@@ -1,0 +1,15 @@
+debuff_name_rsc = de "debuff"
+debuff_desc_rsc = de "Ein Zauber, der auf andere Spieler gezaubert wird."
+debuff_already_enchanted_rsc = de "Du bist bereits verzaubert."
+debuff_On_rsc = de "Dein Körper prickelt mit magischer Energie."
+debuff_Off_rsc = de \
+   "Du fühlst, wie dein magisches Feld knistert und dann verschwindet."
+debuff_Success_rsc = de "Du verzauberst %s%s."
+debuff_Target_Already_Enchanted_rsc = de \
+   "%s%s hat versucht %s%s auf dich zu zaubern."
+debuff_Other_Already_Enchanted_rsc = de \
+   "%s%s ist bereits mit dem Zauber verzaubert."
+debuff_bad_target = de "Du kannst %s%s nicht verzaubern."
+debuff_bad_location = de \
+   "Du kannst in diesem Raum nichts auf andere Spieler zaubern."
+debuff_display_duration = de "Dauer von ~k~B%s~n is ~k~B%i~n Millisekunden."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include neruarmr.lkod
+
    neruditearmor_name_rsc = "nerudite armor"
    neruditearmor_icon_rsc = nerudamr.bgf
    neruditearmor_desc_rsc = \

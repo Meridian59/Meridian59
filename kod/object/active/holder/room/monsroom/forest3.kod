@@ -17,6 +17,8 @@ constants:
    
    
 resources:
+
+   include forest3.lkod
    
    room_forest3 = forest3.roo
    room_name_forest3 = "The Forests of Meridian"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ghost.lkod
+
    ghost_koc_name_rsc = "far'nohl kotezleoc"
    ghost_name_rsc = "ghost of Far'Nohl"
    ghost_generic_name_rsc = "ghost"

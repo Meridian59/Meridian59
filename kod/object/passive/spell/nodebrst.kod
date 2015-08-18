@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include nodebrst.lkod
+
    Nodeburst_name_rsc = "nodeburst"
    Nodeburst_icon_rsc = icanniba.bgf
    Nodeburst_desc_rsc = \
@@ -89,7 +91,7 @@ messages:
 	      return FALSE;
       }
 
-      for oCaster in plRecentCasters
+      foreach oCaster in plRecentCasters
       {
          if who = oCaster
          {

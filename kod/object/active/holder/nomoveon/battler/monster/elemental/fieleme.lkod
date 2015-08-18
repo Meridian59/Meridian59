@@ -1,0 +1,7 @@
+fireelemental_name_rsc = de "Der Feuergolem"
+fireelemental_desc_rsc = de \
+   "Diese Kreatur ist eine Masse aus purer Energie.  Du fühlst die kraftvolle "
+   "Hitze die aus seinem riesen Körper kommt.  Seine Bewegungen knistern "
+   "wie hungrige Flammen."
+fireelemental_koc_name_rsc = de "atzmochcho"
+fireelemental_dead_name_rsc = de "toter Feuergolem"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include snowrat.lkod
+
    SnowRat_name_rsc = "snow rat"
    SnowRat_icon_rsc = srat.bgf
    SnowRat_desc_rsc = \

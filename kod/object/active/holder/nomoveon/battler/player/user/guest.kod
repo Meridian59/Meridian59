@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include guest.lkod
+
    guest_cant_broadcast = "Only regular players may broadcast messages."
 
    guest_cant_send_non_guest = "Only regular players may send messages to the real world."
@@ -79,16 +81,16 @@ messages:
    {
       local i,oRoom;
 
-      for i in users
+      foreach i in users
       {
-		oRoom = Send(SYS,@UtilGetRoom,#what=i);
-		if oRoom = $ { continue; }        %% this group member is not logged in - lagged out?
+         oRoom = Send(SYS,@UtilGetRoom,#what=i);
+         if oRoom = $ { continue; }        %% this group member is not logged in - lagged out?
 
-		if not Send(oRoom,@IsGuestRoom)
-		{
-			Send(self,@MsgSendUser,#message_rsc=guest_cant_send_non_guest);
-			return False;
-		}
+         if not Send(oRoom,@IsGuestRoom)
+         {
+            Send(self,@MsgSendUser,#message_rsc=guest_cant_send_non_guest);
+            return False;
+         }
       }
       propagate;
    }

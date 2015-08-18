@@ -1,0 +1,7 @@
+forgetpotionskills_desc_rsc = de \
+   "Dieses höchst erfrischend aussehende Gebräu wird Deine Waffenfertigkeiten "
+   "restlos auslöschen.Es sei jedoch vor eventuellen Nebenwirkungen gewarnt."
+forgetpotionskills_forget_skill = de \
+   "'%s' wird aus Deinen Erinnerungen gelöscht."
+forgetpotionskills_vulnerable = de \
+   "Du fühlst Dich plötzlich leichter verwundbar!"

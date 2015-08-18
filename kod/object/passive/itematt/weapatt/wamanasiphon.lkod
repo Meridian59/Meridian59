@@ -1,0 +1,9 @@
+weapattSiphon_desc = de \
+   "  Eine mystische Kraft scheint Energie aus der Luft auf die Waffe zu "
+   "bündeln."
+Siphon_dm = de "Sauger"
+Siphon_fail_use = de "Du bist nicht bereit um %s%s zu nutzen."
+siphon_worked = de "%s%s erscheint müde als %s mystische Energie aufsaugt!"
+siphon_worked_target = de \
+   "Strands of energy spark from %s%s as the metal of %s weapon rips away "
+   "your mystical energy!"

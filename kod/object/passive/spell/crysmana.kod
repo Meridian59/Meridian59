@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include crysmana.lkod
+
    CrystalizeMana_name_rsc = "crystalize mana"
    CrystalizeMana_icon_rsc = icrysman.bgf
    CrystalizeMana_desc_rsc = \
@@ -171,30 +173,22 @@ messages:
       return bound((spell_ability+1)/5,0,20);
    }
 
-   GetStatsDesc(who=$)
+   SendTimeDesc(who=$)
    {
-      ClearTempString();
+      local iDuration, iTimer;
 
-      if who <> $
-         AND IsClass(who,&User)
+      if who = $
+         OR NOT IsClass(who,&User)
       {
-         Send(self,@CreateStatsDesc,#who=who);
+         propagate;
       }
-
-      return GetTempString();
-   }
-
-   CreateStatsDesc(who=$)
-   {
-      local iDuration, iMinutes, iSeconds, iTimer;
 
       iTimer = Send(who,@GetManaSurgeTimer);
       if iTimer = $
       {
-         return;
+         iDuration = 0;
       }
-
-      if IsTimer(iTimer)
+      else if IsTimer(iTimer)
       {
          iDuration = GetTimeRemaining(iTimer);
       }
@@ -204,31 +198,14 @@ messages:
          iDuration = iTimer;
       }
 
-      iDuration = iDuration / 1000;
-      iMinutes = iDuration / 60;
-      iSeconds = iDuration MOD 60;
-
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment will last for ");
-      if iMinutes > 0
+      if iDuration > 0
       {
-         AppendTempString(iMinutes);
-         if iMinutes = 1
-         {
-            AppendTempString(" minute and ");
-         }
-         else
-         {
-            AppendTempString(" minutes and ");
-         }
+         iDuration = iDuration / 1000;
       }
 
-      AppendTempString(iSeconds);
-      AppendTempString(" seconds.");
+      Send(self,@SendTimeRemaining,#iTime=iDuration);
 
-      return GetTempString();
+      return;
    }
 
    GetWaitTime(who=$)

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tosinn.lkod
+
    tosnews_god_name = "Designers' News"
    tosnews_god_desc = "Check here for information from the game administrators."
 

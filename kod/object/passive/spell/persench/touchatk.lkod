@@ -1,0 +1,8 @@
+TouchAttackSpell_name_rsc = de "Griffzauber"
+TouchAttackSpell_desc_rsc = de \
+   "Dies ist ein Griffzauber der Schaden verursacht."
+TouchAttack_Succeed_rsc = de \
+   "Du hast einen Griffzauber auf einen anderen Spieler gezaubert.  Dies "
+   "ist ein Bug.  Bitte melde es. Schönen Tag noch."
+touchattack_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber verursacht %i - %i Grund %s Schaden."

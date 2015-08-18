@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include centip.lkod
+
    centipede_koc_name_rsc = "puuckinich"
    centipede_name_rsc = "centipede"
    centipede_icon_rsc = centip.bgf

@@ -59,7 +59,7 @@ messages:
          lChoose = Nth(plItem_coords,Random(1,Length(plItem_coords)));
 
          % Don't generate any of this item type if any exist already.
-         for i in plPassive
+         foreach i in plPassive
          {
             if IsClass(first(i),(first(lChoose)))
             {
@@ -85,6 +85,11 @@ messages:
    GetClan()
    {
       return viAvar_clan;
+   }
+
+   GetRegion()
+   {
+      return RID_KOCATAN;
    }
 
 end

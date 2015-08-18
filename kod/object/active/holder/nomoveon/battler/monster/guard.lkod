@@ -1,0 +1,5 @@
+guard_name_rsc = de "Die Wachkuh"
+guard_koc_name_rsc = de "tanahyijoa"
+guard_desc_rsc = de \
+   "Dies ist die bösartige Wachkuh, die alle Missetäter bestraft."
+guard_dead_name_rsc = de "tote Wachkuh"

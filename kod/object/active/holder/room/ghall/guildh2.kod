@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include guildh2.lkod
+
    room_name_guildh2 = "The Hall of Explorers"
    room_guildh2 = guildh2.roo
 

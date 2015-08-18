@@ -67,6 +67,8 @@ constants:
 
 resources:
 
+   include sewking.lkod
+
    room_SewerKingLair = sewking.roo
    room_name_SewerKingLair = "The Ancient Smuggler's Crossing"
 
@@ -288,7 +290,7 @@ messages:
                            [ SewerKingLair_waterfall_sound, 3, 39, 40, 100 ],
                            [ SewerKingLair_waterfall_sound, 3, 33, 40, 100 ],
                            [ SewerKingLair_waterfall_sound, 5, 27, 40, 100 ] ];
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
          {
@@ -466,7 +468,7 @@ messages:
       local i;
       ptDrownCountdownTimer = $;
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
             AND Send(self,@IsInDrownArea,#who=First(i))
@@ -492,7 +494,7 @@ messages:
       UsersStillDrowning = FALSE;
       ptDrownIntervalTimer = $;
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(First(i),&User)
             AND Send(self,@IsInDrownArea,#who=First(i))

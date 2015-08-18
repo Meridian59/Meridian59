@@ -1,0 +1,30 @@
+Shrine_name_rsc = de "Der Schrein"
+Shrine_desc_rsc = de \
+   "Die Götter bevorzugen jene, die ihr Königreich auf Erden stärken, indem "
+   "sie ihnen Plätze geben, um ihnen zu huldigen. Wenn Du hier eine angemessene "
+   "Spende abgibst, könnte das Deinem Gott gefallen.%s\n\n"
+Shrine_noone = de ""
+Shrine_dedicated = de "%s ist zur Zeit %s geweiht."
+Shrine_not_in_range = de \
+   "Du bist nicht nah genug an dem Schrein, um mit ihm kommunizieren zu können."
+Shrine_meld = de \
+   "Du kniest vor dem Schrein nieder und bietest Deine Opfergabe dar."
+Shrine_satisfied = de \
+   "%s scheint kurz über dem Schrein zu schweben und löst sich dann auf. "
+   "Der Schrein ist jetzt geweiht."
+Shrine_Shalille_text = de \
+   "Du wirst ergriffen von dem Gefühl plötzlicher Zufriedenheit, so als würdest "
+   "Du behutsam gehalten und getröstet."
+Shrine_Qor_text = de \
+   "Ein Schauer läuft Dir über den Rücken und die Schatten sehen plötzlich "
+   "viel dunkler und unheilsvoller aus."
+Shrine_Kraanan_text = de "Ein triumphaler Siegesschrei durchbricht den Himmel."
+Shrine_Faren_text = de \
+   "Ein gewaltiger Donnerschlag der Elemente hallt durch die zitternde Luft."
+Shrine_Riija_text = de "Ein unheilvolles Gelächter schallt vom Himmel herab."
+Shrine_Jala_text = de "Ein süßes Lied schwebt gemütlich durch die Luft."
+Shrine_unsatisfied = de "Dem Schrein gefällt nichts davon."
+Shrine_mana_boost = de \
+   "Dein Körper zittert durch den Zufluß magischer Ströme, die von dem Schrein "
+   "ausgehen."
+shrine_trance_break = de "Dein Gebet endet unvermittelt."

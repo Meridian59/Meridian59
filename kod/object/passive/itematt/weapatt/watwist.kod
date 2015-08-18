@@ -26,20 +26,18 @@ constants:
 
 resources:
 
+   include watwist.lkod
+
    weapatt_twister_desc = \
       "  A swirling green 'GMT' is stamped into the pommel."
    twister_dm = "twister"
-
    weapatt_twister_victim_effect = \
       "~gYou feel disoriented, losing your bearings."
 
 classvars:
 
    vrDesc = weapatt_twister_desc
-   vrDesc2 = $
-
    viItem_Att_Num = WA_TWISTER
-
    viDifficulty = 9
    vrDM_trigger = twister_dm
 

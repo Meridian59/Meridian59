@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include secwind.lkod
+
    SecondWind_name_rsc = "second wind"
    SecondWind_icon_rsc = isecwind.bgf
    SecondWind_desc_rsc = \

@@ -1,0 +1,13 @@
+unholyweapon_cast_rsc = de "Dein %s ist nun gesegnet durch Qor."
+unholyweapon_no_can = de "Du kannst %s%s nicht Qor segnen."
+unholyweapon_fails = de "Der %s ist unberührt von Deinem Zauber."
+unholyweapon_already_done = de "Diese Waffe ist bereits gesegnet durch Qor."
+unholyweapon_name_rsc = de "Unheilige Waffe"
+unholyweapon_desc_rsc = de \
+   "Weiht Deine Waffe Qor und steigert ihre Wirksamkeit gegen das Heilige. "
+   "Der Zauber benötigt eine gewisse Zeitspanne an Konzentration, Feenflügel "
+   "und Orkzähne.."
+unholyweapon_spell_intro = de \
+   "Qor Level 2: Weiht Deine Waffe Qor und steigert ihre Wirksamkeit gegen "
+   "das Heilige."
+unholyweapon_label_rsc = de "Diener Qors"

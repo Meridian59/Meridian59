@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include iabonded.lkod
+
 ItemAttBonded_desc = ""
 
 classvars:
@@ -120,7 +122,6 @@ messages:
 
    AppendDesc(oItem=$)
    {
-      %AppendTempString(vrDesc);
       return;
    }
 

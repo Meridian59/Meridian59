@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include tosforgt.lkod
+
    room_name_tosforgot = "Hall of the Forgotten Heroes"
    room_tosforgot = kochoh.roo
    tosforgot_music = extra01.mp3
@@ -294,7 +296,7 @@ messages:
       local oStatue, i, iRandom;
 
       %% delete any existing statues
-      for i in plPassive
+      foreach i in plPassive
       {
          oStatue = send(self,@HolderExtractObject,#data=i);
 

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include huntsw.lkod
+
    HunterSword_name_rsc = "Sword of the Hunt"
    HunterSword_icon_rsc = huntswrd.bgf
    HunterSword_desc_rsc = \

@@ -1,0 +1,62 @@
+BlackDagger_name_rsc = de "Der Schwarze Dolch"
+BlackDagger_desc_rsc = de \
+   "Diese elegante Klinge dürfte ziemlich gut zwischen zwei Schulterblätter "
+   "passen. \n\n\n%s%s%s"
+BlackDagger_gamestart_glow = de \
+   "~IDein Dolch leuchtet in einem unirdischen Licht auf."
+BlackDagger_impact = de "~IDer Schwarze Dolch zerbricht beim ersten Stich!"
+BlackDagger_cant_use = de \
+   "~IDu versuchst, die dunkle Klinge zu führen, aber ..."
+BlackDagger_shiver = de "~IDer Schwarze Dolch zittert plötzlich merkwürdig ..."
+BlackDagger_notches = de "Insgesamt %i Kerben sind in den Griff eingeritzt."
+BlackDagger_one_notch = de "Du siehst im Griff eine einzige, elegante Kerbe."
+BlackDagger_no_notches = de "Der Griff ist glatt und in einwandfreiem Zustand. "
+BlackDagger_4_gems = de \
+   "Alle vier Edelsteine im Griff leuchten mit unvergleichlicher Brillanz. "
+   ""
+BlackDagger_3_gems = de \
+   "Drei der Edelsteine im Griff strahlen einen erfrischenden Glanz aus. "
+   ""
+BlackDagger_2_gems = de \
+   "Zwei der Edelsteine im Griff scheinen heller als die anderen zu leuchten. "
+   ""
+BlackDagger_1_gems = de \
+   "Nur einer der vier Edelsteine leuchtet, und selbst dieser scheint zu "
+   "flimmern. "
+BlackDagger_runes = de \
+   "Nur einer der vier Edelsteine leuchtet, und selbst dieser scheint zu "
+   "flimmern. "
+BlackDagger_name = de \
+   "In der Klinge ist sehr deutlich ein Name eingraviert. Er lautet: %q! "
+   ""
+BlackDagger_miss = de "%s%s wird von Deinem Schwarzen Dolch verfehlt."
+BlackDagger_miss_target = de "%s%s verfehlt Dich mit dem %sSchwarzen Dolch."
+BlackDagger_hit = de \
+   "%s%s wird von Deinem Schwarzen Dolch getroffen, aber die Klinge scheint "
+   "dabei ihre Kraft zu verlieren."
+BlackDagger_hit_target = de \
+   "%s%s trifft Dich mit dem Schwarzen Dolch, fügt Dir aber fast keine Verletzung "
+   "zu."
+BlackDagger_surehit = de \
+   "%s%s wird von Deinem Schwarzen Dolch getroffen. Die ganze Klinge bohrt "
+   "sich in den Gegner."
+BlackDagger_surehit_target = de \
+   "%s%s trifft Dich mit dem %sSchwarzen Dolch, und Du spürst, wie nach Deiner "
+   "Seele gegriffen wird!"
+BlackDagger_dies = de "Du wurdest getötet durch die Hände von %s%s!"
+BlackDagger_dies_killer = de "%s%s wurde durch Deinen Schwarzen Dolch ermordet!"
+BlackDagger_no_leave = de \
+   "Als Du den Schwarzen Dolch loslässt, scheint er an Deiner Hand zu kleben!"
+BlackDagger_glows = de \
+   "~IEiner der Edelsteine im Griff Deiner Klinge flackert und erwacht wieder "
+   "zum Leben."
+BlackDagger_mail_logoff = de \
+   "Betreff: Nur Feiglinge ignorieren ihre Edelsteine.Du hast die Verbindung "
+   "gelöst, während mindestens einer Deiner Edelsteine nicht leuchtete. Deswegen "
+   "wirst Du aus dem Spiel der Meuchelmörder verbannt.-- Roq"
+BlackDagger_mail_warning = de \
+   "Betreff: Ich beobachte Dich, Unwürdiger.Du warst nicht lange genug online, "
+   "um am Spiel der Meuchelmörder teilzunehmen. Sofern ich das nochmals feststellen "
+   "muss, werde ich Dich ohne Vorwarnung aus dem Spiel verbannen. -- Roq"
+BlackDagger_roq = de "Roq, die dunkle Klinge"
+bkswd_dead_name_rsc = de "Ermordeter Abenteurer"

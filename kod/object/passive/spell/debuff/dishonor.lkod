@@ -1,0 +1,16 @@
+MarkOfDishonor_name_rsc = de "Zeichen der Ächtung"
+MarkOfDishonor_desc_rsc = de \
+   "Erlaubt dem Aussprechenden, dem Ziel Sha-Lills Verdruss zuteil werden "
+   "zu lassen. Dies wird verhindern, dass die Lebensenergie der Zielperson "
+   "das Maximale des Körpers übersteigt. Boshafte Ziele werden an Ausdauer "
+   "verlieren. Man benötigt Edelsteine um diesen Zauber zu sprechen. Die "
+   "Anwendung dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt "
+   "wirst."
+MarkOfDishonor_start = de \
+   "Sha-Lill wählt Dich für eine Bestrafung aus. Deine Ausdauer nimmt ab."
+MarkOfDishonor_stop = de "Shal'ills Anwesenheit verlässt Deinen Körper."
+MarkOfDishonor_success = de "Die Augen von Shal'ill schauen auf %s%s."
+MarkOfDishonor_already_enchanted = de "%s%s ist bereits geächtet."
+MarkOfDishonor_no_self = de \
+   "Du kannst nicht auf Dich selber zaubern; Wenn Du wirklich gesetzeslos "
+   "wärst, könntest Du Shal'ill nicht anwenden."

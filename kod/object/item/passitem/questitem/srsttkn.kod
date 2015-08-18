@@ -16,19 +16,17 @@ constants:
 
 resources:
 
+   include srsttkn.lkod
+
    StatsResetToken_name_rsc = "ancient trinket"
    StatsResetToken_icon_rsc = srtoken.bgf
    StatsResetToken_desc_rsc = \
       "This is a Trinket of the Elders, said to be handed to them by the Gods. "
       "Legend holds that these Ancient Trinkets contain the power to change "
-	  "the very structure of a Mortal. Surely the Elders would greatly "
-	  "reward anyone who returns this Trinket to them."
-      
-   StatsResetToken_desc_append1 = \
-      "\n\nThis token will expire in "
-   StatsResetToken_desc_append2= \
-      " Meridian years."
-      
+      "the very structure of a Mortal. Surely the Elders would greatly "
+      "reward anyone who returns this Trinket to them."
+   StatsResetToken_desc_append = \
+      "\n\nThis token will expire in %i Meridian years.%s"
    StatsResetToken_desc_noTrade = \
       "\n\nNo Trade"
 
@@ -37,9 +35,7 @@ classvars:
    vrName = StatsResetToken_name_rsc
    vrIcon = StatsResetToken_icon_rsc
    vrDesc = StatsResetToken_desc_rsc
-
    viIndefinite = ARTICLE_AN
-   
    viValue_average = 0
    viWeight = 0
    viBulk = 0
@@ -62,32 +58,32 @@ messages:
       }
       else
       {
-         piGameYearsRemaining = Send(Send(Sys,@GetSettings),
-            @GetStatResetTokenLife);
+         piGameYearsRemaining = Send(Send(SYS,@GetSettings),
+                                    @GetStatResetTokenLife);
       }
-      
+
       propagate;
    }
 
-   reqNewOwner(what = $)
+   ReqNewOwner(what = $)
    {
-      if IsClass(Send(self,@GetOwner),&Room)
+      if IsClass(poOwner,&Room)
       {
          return TRUE;
       }
-      
+
       if IsClass(what,&MarionElder)
          OR IsClass(what,&JasperElder)
          OR IsClass(what,&HazarElder)
       {
          return TRUE;
       }
-      
+
       return pbTradeable;
    }
-   
+
    CanWeaken()
-   { 
+   {
       return FALSE;
    }
 
@@ -105,17 +101,17 @@ messages:
    {
       return FALSE;
    }
-   
-   CanBeStoredInVault()   
+
+   CanBeStoredInVault()
    {
       return FALSE;
    }
-   
+
    DropOnDeath()
    {
       return FALSE;
    }
-   
+
    NewYear()
    {
       if pbTemporary
@@ -127,7 +123,7 @@ messages:
             Send(self,@Delete);
          }
       }
-   
+
       return;
    }
 
@@ -135,17 +131,33 @@ messages:
    {
       if pbTemporary
       {
-         AppendTempString(StatsResetToken_desc_append1);
-         AppendTempString(piGameYearsRemaining);
-         AppendTempString(StatsResetToken_desc_append2);
+         if pbTradeable
+         {
+            AddPacket(4,StatsResetToken_desc_append,4,piGameYearsRemaining,
+                      4,system_blank_resource);
+
+            return;
+         }
+         else
+         {
+            AddPacket(4,StatsResetToken_desc_append,4,piGameYearsRemaining,
+                      4,StatsResetToken_desc_noTrade);
+
+            return;
+         }
       }
-      
-      if NOT pbTradeable
+
+      if pbTradeable
       {
-         AppendTempString(StatsResetToken_desc_noTrade);
+         AddPacket(4,system_blank_resource);
       }
-      
-      propagate;
+      else
+      {
+         AddPacket(4,StatsResetToken_desc_noTrade);
+      }
+
+      return;
    }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

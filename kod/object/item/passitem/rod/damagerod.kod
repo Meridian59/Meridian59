@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include damagerod.lkod
+
    DamageRod_name_rsc = "rod of power"
    DamageRod_icon_rsc = wand5.bgf
    DamageRod_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include detevil.lkod
+
    DetectEvil_name_rsc = "detect evil"
    DetectEvil_icon_rsc = iDetEvil.bgf
    DetectEvil_desc_rsc = \

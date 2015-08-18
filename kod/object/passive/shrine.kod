@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include shrine.lkod
+
    Shrine_name_rsc = "shrine"
    Shrine_icon_rsc = shrine.bgf
    Shrine_desc_rsc = \
@@ -199,7 +201,7 @@ messages:
          rSound = Shrine_Jala_sound;
       }
 
-      for iUserCntr in Send(SYS,@GetUsersLoggedOn)
+      foreach iUserCntr in Send(SYS,@GetUsersLoggedOn)
       {
          Post(iUserCntr,@MsgSendUser,#message_rsc=rRsc);
          Post(iUserCntr,@WaveSendUser,#wave_rsc=rSound);

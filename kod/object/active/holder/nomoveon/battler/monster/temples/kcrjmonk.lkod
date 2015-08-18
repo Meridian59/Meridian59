@@ -1,0 +1,21 @@
+RiijaMonk_name_rsc = de "Mönch von Riija"
+RiijaMonk_desc_rsc = de \
+   "Ein paar Fuß über dem Boden schwebend beobachtet dich dieses rätselhafte "
+   "Wesen. Wenn es spricht, knistert die Stimme des Mönchs wie Jahrhunderte "
+   "altes Pergament. Du hast das ungut Gefühl, daß alles nicht so ist, wie "
+   "es scheint. "
+RiijaMonk_name_rsc2 = de "gespenstisches kleines Mädchen"
+RiijaMonk_desc_rsc2 = de "Ein Kind mit einem unschuldigem Blick."
+riijamonk_teach = de \
+   "Durch ~I~rRiijas Wahnsinn, ~bkannst du lernen %s%s%s%s%s%s%s%s%s%s%s%s "
+   "ab diesem Zirkel."
+riijamonk_notworthy = de \
+   "~IIch sehe ~gkeinen Beweis, ~bdas du bereit bist~g um zu ~rlernen."
+riijamonk_worthy = de "~IBist du ~rbereit für ~I~B~fErleuchtung?"
+riijamonk_nobait = de \
+   "~lVielleicht, wenn du ~I ~I geschickter ~cwärst, würde ich dir ~fbeibringen, "
+   "Verleiten zu lernen."
+riijamonk_dispel = de "~B~rTu das NIE wieder!"
+riijamonk_respel = de "Yrxlfle'man ~I~gGrn'Solagh ~rYippie ~bYup-Yup..."
+riijamonk_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"~BNarr,~I ich benötige nichts von ~n~r~Bdir~n~k\""

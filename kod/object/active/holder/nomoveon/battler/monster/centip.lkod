@@ -1,0 +1,6 @@
+centipede_koc_name_rsc = de "puuckinich"
+centipede_name_rsc = de "Der Tausendfüßler"
+centipede_desc_rsc = de \
+   "Glänzende rote Schuppen umhüllen das Exoskelett des riesigen Tausendfüßlers. "
+   "Instinkt, nicht Intelligenz, leiten diesen Allesfresser."
+centipede_dead_name_rsc = de "Ein toter Tausendfüßler"

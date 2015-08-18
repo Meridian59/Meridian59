@@ -1,0 +1,24 @@
+% Quest description.
+madscientistdflyquest_name_rsc = de "mad scientist dragonfly quest"
+madscientistdflyquest_desc_rsc = de \
+   "Bahal zax'Ot would like you to bring him a live dragonfly queen "
+   "to experiment on.  In return, he has something interesting for you.  "
+   "Locate a wild dragonfly queen and find some way to entice it to "
+   "follow you."
+
+madscientistdflyquest_completed_rsc = de \
+   "You have delivered a dragonfly queen to Bahal zax'Ot, and received "
+   "a Riija sword shard in return."
+
+% Quest resources.
+madscientistquest_trigger_1 = de "Kohuzotz"
+madscientistquest_assign_2 = de \
+   "Ich bin stets bemüht mit meinen Haustieren zu experimentieren.  Wenn "
+   "Du mir ein lebendes Exemplar bringst, könnte ich Dir etwas Interessantes "
+   "im Gegenzug anbieten."
+madscientistquest_success_2 = de "Ausgezeichnet.  Gute Arbeit, fairer Lehrling."
+madscientistquest_failure_2 = de \
+   "Betreff: kohuzotz Exemplar\nDu hast so lange gebraucht, um mir ein Exemplar "
+   "zu bringen, dass ich es mir schon anderweitig besorgt habe.  Ich werde "
+   "mit diesem Exemplar sehr beschäftigt sein in der nächsten Zeit. Also "
+   "mach Dir keine Mühe mir ein weiteres Exemplar zu bringen."

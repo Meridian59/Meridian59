@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hospicew.lkod
+
    HospiceWand_label_name_rsc = "wand of rejuvenation"
    HospiceWand_desc_rsc = "Magical energy crackles about this slender wand."
 

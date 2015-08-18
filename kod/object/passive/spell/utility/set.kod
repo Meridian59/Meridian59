@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include set.lkod
+
    Set_cast = "You register your inventory preferences."
 
    Set_name_rsc = "set"
@@ -56,7 +58,7 @@ messages:
       plLocal_list = $;
       plPassive = Send(who,@GetHolderPassive);
       
-      for i in plPassive
+      foreach i in plPassive
       {
          each_obj = Send(who,@HolderExtractObject,#data=i);
 

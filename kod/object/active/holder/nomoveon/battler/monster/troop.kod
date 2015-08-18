@@ -34,6 +34,8 @@ constants:
 
 resources:
 
+   include troop.lkod
+
    FactionTroop_name_rsc = "faction troop"
 
    FactionTroop_male_icon_rsc = bta.bgf
@@ -731,7 +733,7 @@ messages:
    {
       local i;
 
-      for i in plUsing
+      foreach i in plUsing
       {
          if IsClass(i,&Weapon)
          {
@@ -876,7 +878,7 @@ messages:
       iLeft_group = 1;
       iRight_group = 1;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays);  %bows can have more than 1.
          hotspot = Send(i,@GetOverlayHotspot);
@@ -956,7 +958,7 @@ messages:
          AddPacket(1,ANIMATE_NONE,2,1); 
       }
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          Send(i,@SendOverlayInformation,#iAnimation = $);
       }
@@ -983,7 +985,7 @@ messages:
       iLeft_group = 1;
       iRight_group = 1;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,#iAnimation=piAnimation);  %bows can have more than 1.
          hotspot = Send(i,@GetOverlayHotspot);
@@ -1101,7 +1103,7 @@ messages:
          AddPacket(1,ANIMATE_NONE,2,1); 
       }
       
-      for i in plOverlays
+      foreach i in plOverlays
       {
          Send(i,@SendOverlayInformation,#iAnimation=piAnimation);
       }
@@ -1182,7 +1184,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if i = what
          {
@@ -1191,7 +1193,7 @@ messages:
       }
       if IsClass(what,&Bow)
       {
-         for i in plUsing
+         foreach i in plUsing
          {
             if IsClass(i,&SoldierShield)
             {
@@ -1221,7 +1223,7 @@ messages:
 
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_CORPSEPOINTER);
 
-      for oUsedItem in plUsing
+      foreach oUsedItem in plUsing
       {
          % Only a percentage chance to drop each item.  Too much stuff otherwise.
          % Don't drop the shield!  It's a quest/special item!
@@ -1342,7 +1344,7 @@ messages:
    {
       local i, oUsedItem;
       
-      for oUsedItem in plUsing
+      foreach oUsedItem in plUsing
       {
          Send(oUsedItem,@delete);
       }
@@ -1405,7 +1407,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if i = what
          {
@@ -1423,7 +1425,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if i = what
          {

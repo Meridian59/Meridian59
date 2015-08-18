@@ -1,0 +1,19 @@
+Silence_name_rsc = de "Stille"
+Silence_desc_rsc = de \
+   "Dämpft alle gesprochenen Worte und verhindert so das Anwenden von Zaubersprüchen. "
+   "Man braucht dazu die Federn eines schwarzen Engels und lila Pilze. Die "
+   "Anwendung dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt "
+   "wirst."
+Silence_unnecessary = de "Diese Gegend wurde bereits mit Stille belegt."
+Silence_on = de "Ein Vorhang des Schweigens fällt über die Gegend."
+Silence_off = de "Der Vorhang der Stille verschwindet."
+Silence_new_entrant = de "Die Gegend ist sehr ruhig."
+Silence_cant_block_jala_caster = de \
+   "Der Zauber schlägt fehl, da du den Gesang des Bardens nicht zum schweigen "
+   "bringen kannst."
+Silence_cant_block_jala_victim = de \
+   "Deine Worte gehen durch den Raum der mit Stille belegt ist."
+Silence_blocked_jala_victim = de "Der Stille Zauber dämpft dein Lied."
+Silence_spell_intro = de \
+   "Qor Level 3: Dämpft alle gesprochenen Worte und verhindert so das Anwenden "
+   "von Zaubersprüchen."

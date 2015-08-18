@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include heatscrl.lkod
+
    HeatScroll_label_name_rsc = "scroll of heat"
    HeatScroll_icon_rsc = scr08.bgf
    HeatScroll_desc_rsc = \

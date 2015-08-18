@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dementw.lkod
+
    DementWand_label_name_rsc = "wand of dementia"
    DementWand_icon_rsc = wand6.bgf
    DementWand_desc_rsc = "Magical energy crackles about this slender wand."

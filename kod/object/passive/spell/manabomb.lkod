@@ -1,0 +1,18 @@
+manabomb_name_rsc = de "Magische Bombe"
+manabomb_desc_rsc = de \
+   "Zündet eine weiße, heiße Explosion, welche die gesamte magische Kraft "
+   "des Zaubernden und die Hälfte der Kraft aller anderen im Raum verbrennt. "
+   "Der Zauber benötigt Saphire. Die Anwendung dieses Zaubers kann dazu führen, "
+   "dass Du zum Gesetzlosen erklärt wirst."
+manabomb_cast = de "%s%ss Mana detoniert schmerzhaft!"
+manabomb_hit_some = de \
+   "Du fühlst, wie sich dein Geist aus deinem Körper reißt und du verlierst "
+   "~b~B%i~B~n Mana in einer magischen Kettenreaktion."
+manabomb_hit_all = de \
+   "All dein Mana verschwindet in einer magischen Kettenreaktion!"
+manabomb_took_some = de \
+   "%s%s weint, als dine magische bombe%s$0 Geist, und verliert ~b~B%i~B~n "
+   "Mana!"
+manabomb_took_all = de \
+   "%s%s weint, als dine magische bombe %s Geist, und hinterlässt ohne "
+   "jegliches Mana!%s"

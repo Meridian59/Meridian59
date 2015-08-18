@@ -1,0 +1,5 @@
+ruby_name_rsc = de "Der Rubin"
+ruby_desc_rsc = de \
+   "Dieser feurige Rubin ist größer als die Faust eine Mannes und extrem "
+   "wertvoll."
+ruby_name_plural_rsc = de "Rubine"

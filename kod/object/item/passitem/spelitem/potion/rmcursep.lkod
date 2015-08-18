@@ -1,0 +1,16 @@
+RemoveCursePotion_name_rsc = de "Entfluchungstrank"
+RemoveCursePotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht frisch, "
+   "sauber und erfrischend."
+RemoveCursePotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."
+RemoveCursePotion_drink = de \
+   "Du stürzt den Inhalt der Phiole in einem einzigen Zug herunter."
+RemoveCursePotion_worked = de \
+   "Fast umgehend spürst Du die lindernde Kraft Sha-Lills, die, ausgehend "
+   "von Deinem Magen, den Griff der Verwünschungen um Deine Seele löst."
+RemoveCursePotion_bad_drink = de \
+   "Du stürzt den faulig schmeckenden Inhalt der Phiole herunter und bemerkst "
+   "sofort, dass das eine ziemlich schlechte Idee war. Mit der Zeit ist er "
+   "sauer geworden."

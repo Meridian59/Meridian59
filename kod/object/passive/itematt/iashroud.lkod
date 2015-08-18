@@ -1,0 +1,4 @@
+itematt_shroud_desc = de " Ein Mantel der Magie umgibt es."
+iashroud_gone = de "Der mystische Mantel verlässt %s."
+iashroud_name = de "Eingehüllt %s"
+shroud_dm = de "Eingehüllt"

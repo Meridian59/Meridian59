@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ring.lkod
+
    ring_unidentified_name_rsc = "magical ring"
    ring_unidentified_description_rsc = "The ring pulses with magical energy."
 

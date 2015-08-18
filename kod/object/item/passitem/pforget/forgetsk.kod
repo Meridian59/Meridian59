@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include forgetsk.lkod
+
    forgetpotionskills_desc_rsc = \
       "Drinking this potion causes one to forget all skills that he or she "
       "possesses.\n\nMay have very serious side effects."
@@ -43,7 +45,7 @@ messages:
       piCount = 0;
       iHP_loss = 0;
 
-      for i in Skills
+      foreach i in Skills
       {
          iSkillNum = Send(poApply_target,@DecodeSkillNum,#compound=i);
          if iSkillNum = SKID_SLASH OR iSkillnum = SKID_DODGE

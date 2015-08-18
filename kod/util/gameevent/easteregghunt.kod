@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include easteregghunt.lkod
+
    egghunt_start_msg = \
       "~B~k[Event]~n ~B~vThe Easter Egg Hunt has started!  %i Easter Eggs "
       "have been hidden around the world, find as many as you can!"
@@ -123,7 +125,7 @@ messages:
 
       % Just hide on the mainland.
       lRooms = Send(SYS,@GetRooms);
-      for i in lRooms
+      foreach i in lRooms
       {
          iRegion = Send(i,@GetRegion);
          % Only want mainland and Ko'catan, and no guild halls or
@@ -195,7 +197,7 @@ messages:
 
       iNumRooms = Length(plEventRooms);
 
-      for i in plEventRooms
+      foreach i in plEventRooms
       {
          % Try to distribute the eggs equally around the world.
          if Random(1,100) < piTotalEggs * 120 / iNumRooms
@@ -257,7 +259,7 @@ messages:
    {
       local i, oEggOwner, iLength;
 
-      for i in plEggs
+      foreach i in plEggs
       {
          oEggOwner = Send(i,@GetOwner);
 
@@ -336,7 +338,7 @@ messages:
    {
       local i;
 
-      for i in plEggs
+      foreach i in plEggs
       {
          if IsClass(i,&EasterEgg)
          {
@@ -369,7 +371,7 @@ messages:
       % Score header.
       Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=vrScores);
 
-      for i in plScores
+      foreach i in plScores
       {
          % Have to make a string, if the player logged off
          % other players might not have their dynamic resource.

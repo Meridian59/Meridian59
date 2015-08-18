@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mrsmith.lkod
+
    MarionBlacksmith_name_rsc = "Colhorr"
    MarionBlacksmith_icon_rsc = mrsmith.bgf
    MarionBlacksmith_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bosshead.lkod
+
    OrcPitBossHead_icon_rsc = OrcPitbX.bgf
    OrcPitBossHead_name_rsc = "orc pit boss head"
    OrcPitBossHead_desc_rsc = \

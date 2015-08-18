@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include chessqt.lkod
+
    % Quest description.
    chessqt_icon_rsc = chesclos.bgf
    chessqt_desc_rsc = \

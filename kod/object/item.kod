@@ -19,11 +19,16 @@ constants:
    
 resources:
 
+   include item.lkod
+
    item_this = "This "
    item_blank_template = "%q"
-   item_desc_template = "%s%s"
+
+   % item_desc_template is vrDesc, item attributes, object attributes,
+   % variable item appends, item stats, item condition.
+   item_desc_template = "%r%r%r%r%r%r"
    resource_blank = ""
-   
+
    item_try_use_cursed_rsc = \
       "As you pick the item up, you feel a will greater than your own "
       "overwhelm your mind!  Not of your own volition, you try to put it on!"
@@ -34,7 +39,7 @@ resources:
    item_broken_battle_clothing_plural = "Your %s fall into useless tatters!"
 
    itematt_generic = \
-      " At first glance, it seems quite ordinary, but there is something odd "
+      "  At first glance, it seems quite ordinary, but there is something odd "
       "about it you can't put your finger on."
 
    nakedleftarm_male = blg.bgf
@@ -49,11 +54,39 @@ resources:
    item_condition_med = " has a few unsightly rips."
    item_condition_poor = " is in tatters, and barely holding together."
    item_condition_broken = " is covered in filth and ripped beyond use."
-   
-   special_properties_header = "\n\nThis item has the following properties:\n"
+   item_cond_master = "\n%s%s%s (%i/%i)"
+   special_properties_header = \
+      "\n\nThis item has the following properties:\n"
+   item_stats_range = "%i range\n"
+   item_stats_offense = "%i offense rating bonus\n"
+   item_stats_armor = "%i armor\n"
+   item_stats_defense = "%i defense rating bonus\n"
+   item_stats_melee = "%i melee damage bonus\n"
+   item_stats_min_dmg = "%i-"
+   item_stats_base_dmg = "%r%i base damage\n"
+   item_stats_owner_dmg = "%r%i damage in owner's hands\n"
+   item_stats_cond_dmg = "%r%i conditional base damage\n"
+   item_stats_cond_owner_dmg = "%r%i conditional damage in owner's hands\n"
+   item_stats_dmg_bonus = "%i damage bonus\n"
+   item_stats_gen_sp = "%i general spellpower\n"
+   item_stats_faren_sp = "%i Faren spellpower\n"
+   item_stats_riija_sp = "%i Riija spellpower\n"
+   item_stats_kran_sp = "%i Kraanan spellpower\n"
+   item_stats_jala_sp = "%i Jala spellpower\n"
+   item_stats_shal_sp = "%i Shal'ille spellpower\n"
+   item_stats_qor_sp = "%i Qor spellpower\n"
+   item_stats_jala_instrument_sp = "%i Jala instrument power\n"
+   item_stats_resistance = "%i%% %s\n"
+   item_stats_dmg_type = "Deals %s damage\n"
+   item_stats_proc_hold = "15%% chance to cast Hold on hit\n"
+   item_stats_proc_blind = "15%% chance to cast Blind on hit\n"
+   item_stats_proc_bonk = "8%% chance to cast Bonk on hit\n"
+   item_stats_proc_purge = "15%% chance to cast Purge on hit\n"
+   item_stats_proc_twister = "8%% chance to disorient victim on hit\n"
+   item_stats_proc_vamp = "10%% chance to gain up to 8 health on hit\n"
 
 classvars:
-   
+
    vrItem_broken = item_broken_battle
 
    vrPoss_article = item_this
@@ -144,199 +177,246 @@ messages:
       return;
    }
 
-   AppendDesc()
+   AppendStatsDesc()
+   "This is the statistics for the weapon, such as damage, armor, "
+   "resists and spellpower added."
    {
-      % This is special 'status' stuff, like the number of 
-      %  number items you have left, or the condition of your 
-      %  weapon.
-      local rItem_condition, iHit_percent, i, bFoundProperties, oSpell, iHigh_level, n,
-                             iFarenPower, iRiijaPower, iKraananPower, iJalaPower, iShalPower, iQorPower, iInstrumentPower;
+      local i, bFoundProperties, iHigh_level, n, iFarenPower, iRiijaPower,
+            iKraananPower, iJalaPower, iShalPower, iQorPower, iInstrumentPower,
+            iNum, bID, iMinDamage, iMinDamageOwner, iAttackType;
 
-      for i in plObject_attributes
-      {
-         Send(i,@AttributeDesc);
-      }
-      
-      % Describe special properties
+      % This message 'telescopes' resources into the 5th %r of
+      % item_desc_template. There are 16 different stats we can add;
+      % when we first add a stat to be displayed we add a template with
+      % the correct number of %r formatters to match the number of stats
+      % remaining (plus one for the special_properties_header). If a stat
+      % is missing after we have already added the headers, add a blank
+      % resource ("") in its place. If new stats are added to this message,
+      % the system_rsc_template_<number> resources should be updated
+      % accordingly.
+
+      % bFoundProperties is TRUE if we've already added a property. Use this
+      % to lower the amount of resources we send to only those necessary.
       bFoundProperties = FALSE;
+
       if Send(self,@GetRange) <> 0
       {
-         if NOT bFoundProperties
-         {
-            AppendTempString(special_properties_header);
-         }
-
-         AppendTempString(Send(self,@GetRange)/FINENESS);
-         AppendTempString(" range");
-         AppendTempString("\n");
-
+         AddPacket(4,system_rsc_template_16, 4,special_properties_header,
+                   4,item_stats_range, 4,Send(self,@GetRange)/FINENESS);
          bFoundProperties = TRUE;
       }
-      
+
       if Send(self,@GetHitBonus) <> 0
       {
-         if NOT bFoundProperties
+         if bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            % bFoundProperties TRUE, already added headers.
+            AddPacket(4,item_stats_offense, 4,Send(self,@GetHitBonus));
          }
-
-         AppendTempString(Send(self,@GetHitBonus));
-         AppendTempString(" offense rating bonus");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            % bFoundProperties FALSE, add headers.
+            AddPacket(4,system_rsc_template_15, 4,special_properties_header,
+                      4,item_stats_offense, 4,Send(self,@GetHitBonus));
+            bFoundProperties = TRUE;
+         }
       }
-      
+      else if bFoundProperties
+      {
+         % bFoundProperties TRUE and didn't add this particular stat,
+         % so add a blank resource in its place.
+         AddPacket(4,system_blank_resource);
+      }
+
       if Send(self,@GetDamageReduction) <> 0
       {
-         if NOT bFoundProperties
+         if bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,item_stats_armor, 4,Send(self,@GetDamageReduction));
          }
-
-         AppendTempString(Send(self,@GetDamageReduction));
-         AppendTempString(" armor");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,system_rsc_template_14, 4,special_properties_header,
+                      4,item_stats_armor, 4,Send(self,@GetDamageReduction));
+            bFoundProperties = TRUE;
+         }
       }
-      
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
       if Send(self,@GetDefenseBonus) <> 0
       {
-         if NOT bFoundProperties
+         if bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,item_stats_defense, 4,Send(self,@GetDefenseBonus));
          }
-
-         AppendTempString(Send(self,@GetDefenseBonus));
-         AppendTempString(" defense rating");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,system_rsc_template_13,4,special_properties_header,
+                      4,item_stats_defense, 4,Send(self,@GetDefenseBonus));
+            bFoundProperties = TRUE;
+         }
       }
-      
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
       if Send(self,@GetMeleeDamageBonus) <> 0
       {
-         if NOT bFoundProperties
+         if bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,item_stats_melee, 4,Send(self,@GetMeleeDamageBonus));
          }
-
-         AppendTempString(Send(self,@GetMeleeDamageBonus));
-         AppendTempString(" melee damage bonus");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,system_rsc_template_12, 4,special_properties_header,
+                      4,item_stats_melee, 4,Send(self,@GetMeleeDamageBonus));
+            bFoundProperties = TRUE;
+         }
       }
-      
-      if Send(self,@GetMinDamage) <> 0
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      iMinDamage = Send(self,@GetMinDamage);
+      if iMinDamage <> 0
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,system_rsc_template_11, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
-
-         AppendTempString(Send(self,@GetMinDamage));
-         If Send(self,@GetMaxDamage) <> Send(self,@GetMinDamage)
+         if Send(self,@GetMaxDamage) <> iMinDamage
          {
-            AppendTempString("-");
-            AppendTempString(Send(self,@GetMaxDamage));
+            AddPacket(4,item_stats_base_dmg,4,item_stats_min_dmg,
+                      4,iMinDamage,4,Send(self,@GetMaxDamage));
          }
-         AppendTempString(" base damage");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,item_stats_base_dmg,4,system_blank_resource,
+                      4,iMinDamage);
+         }
       }
-      
-      if Send(self,@GetMinDamageWithOwnerStats) <> 0
-         AND Send(self,@GetMinDamageWithOwnerStats) <> Send(self,@GetMinDamage)
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      iMinDamageOwner = Send(self,@GetMinDamageWithOwnerStats);
+      if iMinDamageOwner <> 0
+         AND iMinDamageOwner <> iMinDamage
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,system_rsc_template_10, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
-
-         AppendTempString(Send(self,@GetMinDamageWithOwnerStats));
-         If Send(self,@GetMaxDamageWithOwnerStats) <> Send(self,@GetMinDamageWithOwnerStats)
+         if Send(self,@GetMaxDamageWithOwnerStats)
+            <> iMinDamageOwner
          {
-            AppendTempString("-");
-            AppendTempString(Send(self,@GetMaxDamageWithOwnerStats));
+            AddPacket(4,item_stats_owner_dmg, 4,item_stats_min_dmg,
+                      4,iMinDamageOwner,4,Send(self,@GetMaxDamageWithOwnerStats));
          }
-         AppendTempString(" damage in owner's hands");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,item_stats_owner_dmg, 4,system_blank_resource,
+                      4,iMinDamageOwner);
+         }
       }
-      
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
       if Send(self,@GetMinSpecialDamage) <> 0
-         AND Send(self,@GetMinSpecialDamage) <> Send(self,@GetMinDamage)
+         AND Send(self,@GetMinSpecialDamage) <> iMinDamage
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,system_rsc_template_9, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
-
-         AppendTempString(Send(self,@GetMinSpecialDamage));
-         If Send(self,@GetMaxSpecialDamage) <> Send(self,@GetMinSpecialDamage)
+         if Send(self,@GetMaxSpecialDamage) <> Send(self,@GetMinSpecialDamage)
          {
-            AppendTempString("-");
-            AppendTempString(Send(self,@GetMaxSpecialDamage));
+            AddPacket(4,item_stats_cond_dmg, 4,item_stats_min_dmg,
+                      4,Send(self,@GetMinSpecialDamage),
+                      4,Send(self,@GetMaxSpecialDamage));
          }
-         AppendTempString(" conditional base damage");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,item_stats_cond_dmg, 4,system_blank_resource,
+                      4,Send(self,@GetMinSpecialDamage));
+         }
       }
-      
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
       if Send(self,@GetMinSpecialDamageWithOwnerStats) <> 0
-         AND Send(self,@GetMinSpecialDamageWithOwnerStats) <> Send(self,@GetMinSpecialDamage)
+         AND Send(self,@GetMinSpecialDamageWithOwnerStats)
+            <> Send(self,@GetMinSpecialDamage)
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,system_rsc_template_8, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
-
-         AppendTempString(Send(self,@GetMinSpecialDamageWithOwnerStats));
-         If Send(self,@GetMaxSpecialDamageWithOwnerStats) <> Send(self,@GetMinSpecialDamageWithOwnerStats)
+         if Send(self,@GetMaxSpecialDamageWithOwnerStats)
+            <> Send(self,@GetMinSpecialDamageWithOwnerStats)
          {
-            AppendTempString("-");
-            AppendTempString(Send(self,@GetMaxSpecialDamageWithOwnerStats));
+            AddPacket(4,item_stats_cond_owner_dmg, 4,item_stats_min_dmg,
+                      4,Send(self,@GetMinSpecialDamageWithOwnerStats),
+                      4,Send(self,@GetMaxSpecialDamageWithOwnerStats));
          }
-         AppendTempString(" conditional damage in owner's hands");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,item_stats_cond_owner_dmg,4,system_blank_resource,
+                      4,Send(self,@GetMinSpecialDamageWithOwnerStats));
+         }
       }
-      
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
       if Send(self,@GetDamageBonus) <> 0
       {
-         if NOT bFoundProperties
+         if bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,item_stats_dmg_bonus, 4,Send(self,@GetDamageBonus));
          }
-
-         AppendTempString(Send(self,@GetDamageBonus));
-         AppendTempString(" damage bonus");
-         AppendTempString("\n");
-
-         bFoundProperties = TRUE;
+         else
+         {
+            AddPacket(4,system_rsc_template_7, 4,special_properties_header,
+                      4,item_stats_dmg_bonus, 4,Send(self,@GetDamageBonus));
+            bFoundProperties = TRUE;
+         }
+      }
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
       }
 
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHT);
-      iFarenPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLINK);
-      iRiijaPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLESS);
-      iKraananPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_MIRTH);
-      iJalaPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SEANCE);
-      iShalPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DARKNESS);
-      iQorPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      iFarenPower = Send(self,@GetSpellModifier,
+                        #oSpell=Send(SYS,@FindSpellByNum,#num=SID_LIGHT));
+      iRiijaPower = Send(self,@GetSpellModifier,
+                        #oSpell=Send(SYS,@FindSpellByNum,#num=SID_BLINK));
+      iKraananPower = Send(self,@GetSpellModifier,
+                           #oSpell=Send(SYS,@FindSpellByNum,#num=SID_BLESS));
+      iJalaPower = Send(self,@GetSpellModifier,
+                        #oSpell=Send(SYS,@FindSpellByNum,#num=SID_MIRTH));
+      iShalPower = Send(self,@GetSpellModifier,
+                        #oSpell=Send(SYS,@FindSpellByNum,#num=SID_SEANCE));
+      iQorPower = Send(self,@GetSpellModifier,
+                        #oSpell=Send(SYS,@FindSpellByNum,#num=SID_DARKNESS));
 
       iInstrumentPower = 0;
-      If IsClass(self,&Instrument)
+      if IsClass(self,&Instrument)
       {
          iInstrumentPower = Send(self,@GetInstrumentLevel);
       }
@@ -358,205 +438,467 @@ messages:
          {
             if NOT bFoundProperties
             {
-               AppendTempString(special_properties_header);
+               AddPacket(4,system_rsc_template_6, 4,special_properties_header);
                bFoundProperties = TRUE;
             }
-         
-            AppendTempString(iFarenPower);
-            AppendTempString(" general spellpower\n");
+            AddPacket(4,item_stats_gen_sp, 4,iFarenPower);
          }
          else
          {
             if NOT bFoundProperties
             {
-               AppendTempString(special_properties_header);
+               AddPacket(4,system_rsc_template_6, 4,special_properties_header);
                bFoundProperties = TRUE;
             }
 
+            AddPacket(4,system_rsc_template_7);
+
             if iFarenPower <> 0
             {
-               AppendTempString(iFarenPower);
-               AppendTempString(" Faren spellpower\n");
+               AddPacket(4,item_stats_faren_sp, 4,iFarenPower);
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
             }
             if iRiijaPower <> 0
             {
-               AppendTempString(iRiijaPower);
-               AppendTempString(" Riija spellpower\n");
+               AddPacket(4,item_stats_riija_sp, 4,iRiijaPower);
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
             }
             if iKraananPower <> 0
             {
-               AppendTempString(iKraananPower);
-               AppendTempString(" Kraanan spellpower\n");
+               AddPacket(4,item_stats_kran_sp, 4,iKraananPower);
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
             }
             if iJalaPower <> 0
             {
-               AppendTempString(iJalaPower);
-               AppendTempString(" Jala spellpower\n");
+               AddPacket(4,item_stats_jala_sp, 4,iJalaPower);
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
             }
             if iShalPower <> 0
             {
-               AppendTempString(iShalPower);
-               AppendTempString(" Shal'ille spellpower\n");
+               AddPacket(4,item_stats_shal_sp, 4,iShalPower);
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
             }
             if iQorPower <> 0
             {
-               AppendTempString(iQorPower);
-               AppendTempString(" Qor spellpower\n");
+               AddPacket(4,item_stats_qor_sp, 4,iQorPower);
             }
-
+            else
+            {
+               AddPacket(4,system_blank_resource);
+            }
             if iInstrumentPower <> 0
             {
-               AppendTempString(iInstrumentPower);
-               AppendTempString(" Jala instrument power\n");
+               AddPacket(4,item_stats_jala_instrument_sp, 4,iInstrumentPower);
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
             }
          }
       }
-      
-      If Send(self,@GetCurrentResistances) <> $
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      if Send(self,@GetCurrentResistances) <> $
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
+            AddPacket(4,system_rsc_template_5, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
-         
-         for i in Send(self,@GetCurrentResistances)
+
+         if Length(Send(self,@GetCurrentResistances)) > 1
          {
-            AppendTempString(Nth(i,2));
-            AppendTempString("\% ");
-            AppendTempString(Send(SYS,@GetResistanceName,#type=Nth(i,1)));
-            AppendTempString("\n");
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                           #iNum=Length(Send(self,@GetCurrentResistances))));
          }
-         bFoundProperties = TRUE;
+
+         foreach i in Send(self,@GetCurrentResistances)
+         {
+            AddPacket(4,item_stats_resistance, 4,Nth(i,2),
+                      4,Send(SYS,@GetResistanceName,#type=Nth(i,1)));
+         }
       }
-      
-      if Send(self,@GetAttackType) <> 0
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      iAttackType = Send(self,@GetAttackType);
+      if iAttackType <> 0
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
-         }
-         
-         for i in Send(SYS,@GetAttackTypeList)
-         {
-            if (Send(self,@GetAttackType) & i)
-            {
-               AppendTempString("Deals ");
-               AppendTempString(Send(SYS,@GetAttackDamageTypeName,#type=i));
-               AppendTempString(" damage");
-               AppendTempString("\n");
-            }
+            AddPacket(4,system_rsc_template_4, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
 
-         bFoundProperties = TRUE;
+         if Length(Send(SYS,@GetAttackTypeList)) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                           #iNum=Length(Send(SYS,@GetAttackTypeList))));
+         }
+
+         foreach i in Send(SYS,@GetAttackTypeList)
+         {
+            if (iAttackType & i)
+            {
+               AddPacket(4,item_stats_dmg_type,
+                         4,Send(SYS,@GetAttackDamageTypeName,#type=i));
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
+            }
+         }
       }
-      
-      if Send(self,@GetAttackSpell) <> 0
+      else if bFoundProperties
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      iAttackType = Send(self,@GetAttackSpell);
+      if iAttackType <> 0
       {
          if NOT bFoundProperties
          {
-            AppendTempString(special_properties_header);
-         }
-         
-         for i in Send(SYS,@GetSpellTypeList)
-         {
-            if (Send(self,@GetAttackSpell) & i)
-            {
-               AppendTempString("Deals ");
-               AppendTempString(Send(SYS,@GetSpellDamageTypeName,#type=i));
-               AppendTempString(" damage");
-               AppendTempString("\n");
-            }
+            AddPacket(4,system_rsc_template_3, 4,special_properties_header);
+            bFoundProperties = TRUE;
          }
 
-         bFoundProperties = TRUE;
+         if Length(Send(SYS,@GetSpellTypeList)) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                        #iNum=Length(Send(SYS,@GetSpellTypeList))));
+         }
+
+         foreach i in Send(SYS,@GetSpellTypeList)
+         {
+            if (iAttackType & i)
+            {
+               AddPacket(4,item_stats_dmg_type,
+                         4,Send(SYS,@GetSpellDamageTypeName,#type=i));
+            }
+            else
+            {
+               AddPacket(4,system_blank_resource);
+            }
+         }
       }
-      
-      if Send(self,@GetAttributes) <> $
+      else if bFoundProperties
       {
-         for i in Send(self,@GetAttributes)
+         AddPacket(4,system_blank_resource);
+      }
+
+      if plItem_attributes <> $
+      {
+         if Length(plItem_attributes) > 1
          {
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER
-               AND Send(self,@GetIDStatusFromCompound,#compound=First(i)) 
-            {
-               if NOT bFoundProperties
-               {
-                  AppendTempString(special_properties_header);
-                  bFoundProperties = TRUE;
-               }
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                           #iNum=Length(plItem_attributes)));
+         }
 
-               AppendTempString("15\% chance to cast Hold on hit");
-               AppendTempString("\n");
+         % TODO: Item attributes should handle this.
+         foreach i in plItem_attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            bID = Send(self,@GetIDStatusFromCompound,#compound=First(i));
+            if bID
+            {
+               if iNum = WA_PARALYZER
+               {
+                  if NOT bFoundProperties
+                  {
+                     AddPacket(4,system_rsc_template_2,
+                               4,special_properties_header);
+                     bFoundProperties = TRUE;
+                  }
+                  AddPacket(4,item_stats_proc_hold);
+               }
+               else if iNum = WA_BLINDER
+               {
+                  if NOT bFoundProperties
+                  {
+                     AddPacket(4,system_rsc_template_2,
+                               4,special_properties_header);
+                     bFoundProperties = TRUE;
+                  }
+                  AddPacket(4,item_stats_proc_blind);
+               }
+               else if iNum = WA_BONKER
+               {
+                  if NOT bFoundProperties
+                  {
+                     AddPacket(4,system_rsc_template_2,
+                               4,special_properties_header);
+                     bFoundProperties = TRUE;
+                  }
+                  AddPacket(4,item_stats_proc_bonk);
+               }
+               else if iNum = WA_PURGER
+               {
+                  if NOT bFoundProperties
+                  {
+                     AddPacket(4,system_rsc_template_2,
+                               4,special_properties_header);
+                     bFoundProperties = TRUE;
+                  }
+                  AddPacket(4,item_stats_proc_purge);
+               }
+               else if iNum = WA_TWISTER
+               {
+                  if NOT bFoundProperties
+                  {
+                     AddPacket(4,system_rsc_template_2,
+                               4,special_properties_header);
+                     bFoundProperties = TRUE;
+                  }
+                  AddPacket(4,item_stats_proc_twister);
+               }
+               else if iNum = WA_VAMPER
+               {
+                  if NOT bFoundProperties
+                  {
+                     AddPacket(4,system_rsc_template_2,
+                               4,special_properties_header);
+                     bFoundProperties = TRUE;
+                  }
+                  AddPacket(4,item_stats_proc_vamp);
+               }
+               else
+               {
+                  AddPacket(4,system_blank_resource);
+               }
             }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BLINDER  
-               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
+            else
             {
-               if NOT bFoundProperties
-               {
-                  AppendTempString(special_properties_header);
-                  bFoundProperties = TRUE;
-               }
-
-               AppendTempString("15\% chance to cast Blind on hit");
-               AppendTempString("\n");
-            }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BONKER
-               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
-            {
-               if NOT bFoundProperties
-               {
-                  AppendTempString(special_properties_header);
-                  bFoundProperties = TRUE;
-               }
-
-               AppendTempString("8\% chance to cast Bonk on hit");
-               AppendTempString("\n");
-            }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PURGER
-               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
-            {
-               if NOT bFoundProperties
-               {
-                  AppendTempString(special_properties_header);
-                  bFoundProperties = TRUE;
-               }
-
-               AppendTempString("15\% chance to cast Purge on hit");
-               AppendTempString("\n");
-            }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_TWISTER
-               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
-            {
-               if NOT bFoundProperties
-               {
-                  AppendTempString(special_properties_header);
-                  bFoundProperties = TRUE;
-               }
-
-               AppendTempString("8\% chance to disorient victim on hit");
-               AppendTempString("\n");
-            }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_Vamper
-               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
-            {
-               if NOT bFoundProperties
-               {
-                  AppendTempString(special_properties_header);
-                  bFoundProperties = TRUE;
-               }
-
-               AppendTempString("10\% chance to gain up to 8 health on hit");
-               AppendTempString("\n");
+               AddPacket(4,system_blank_resource);
             }
          }
       }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      return;
+   }
+
+   GetMinDamageWithOwnerStats()
+   {
+      return 0;
+   }
+
+   GetMaxDamageWithOwnerStats()
+   {
+      return 0;
+   }
+
+   GetMinSpecialDamageWithOwnerStats()
+   {
+      return 0;
+   }
+
+   GetMaxSpecialDamageWithOwnerStats()
+   {
+      return 0;
+   }
+
+   GetAttackType()
+   {
+      return 0;
+   }
+
+   GetAttackSpell()
+   {
+      return 0;
+   }
+
+   GetMinDamage()
+   {
+      return 0;
+   }
+
+   GetMaxDamage()
+   {
+      return 0;
+   }
+
+   % Some weapons and spells have special conditions, like nerudite arrows that can shatter
+   GetMinSpecialDamage()
+   {
+      return 0;
+   }
+
+   GetMaxSpecialDamage()
+   {
+      return 0;
+   }
+
+   GetRange()
+   {
+      return 0;
+   }
+
+   GetHitBonus()
+   {
+      return 0;
+   }
+
+   GetDefenseBonus()
+   {
+      return 0;
+   }
+
+   GetMeleeDamageBonus()
+   {
+      return 0;
+   }
+
+   GetDamageBonus()
+   {
+      return 0;
+   }
+
+   GetDamageReduction()
+   {
+      return 0;
+   }
+
+   GetAttributes()
+   {
+      return plItem_Attributes;
+   }
+
+   GetResistanceModifiers()
+   {
+      return $;
+   }
+
+   DoBaseDesc()
+   "Items can override this to provide a more detailed base description."
+   {
+      AddPacket(4,vrDesc);
+
+      return;
+   }
+
+   ShowDesc(bShowAll = FALSE)
+   {
+      local bAlreadyBlind, bIdentified, oItemAtt, i, iNum;
+
+      bAlreadyBlind = FALSE;
+
+      AddPacket(4,item_desc_template);
+
+      Send(self,@DoBaseDesc);
+
+      if Send(self,@HasAttribute,#ItemAtt=IA_MISDIRECTION)
+         AND NOT bShowAll
+      {
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+         Send(oItemAtt,@AppendMisdirectedDesc,#oItem=self,
+               #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+      }
+      else if plItem_Attributes <> $
+      {
+         % Support for displaying up to 12 itematts.
+         if Length(plItem_Attributes) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                              #iNum=Length(plItem_Attributes)));
+         }
+
+         foreach i in plItem_Attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            bIdentified = Send(self,@GetIDStatusFromCompound,
+                              #compound=First(i));
+
+            if NOT (bIdentified OR bShowAll)
+            {
+               if bAlreadyBlind
+               {
+                  AddPacket(4,system_blank_resource);
+               }
+               else
+               {
+                  AddPacket(4,itematt_generic);
+                  bAlreadyBlind = TRUE;
+               }
+            }
+            else
+            {
+               Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+            }
+         }
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      if plObject_attributes = $
+      {
+         AddPacket(4,system_blank_resource);
+      }
+      else
+      {
+         % Support for displaying up to 12 objectatts.
+         if Length(plObject_attributes) > 1
+         {
+            AddPacket(4,Send(SYS,@AddResourceTemplate,
+                              #iNum=Length(plObject_attributes)));
+         }
+
+         foreach i in plObject_attributes
+         {
+            Send(i,@AttributeDesc);
+         }
+      }
+
+      % Special things for number items, etc.
+      Send(self,@AppendDesc);
+      Send(self,@AppendStatsDesc);
+      Send(self,@AppendItemCondition);
+
+      return;
+   }
+
+   AppendDesc()
+   {
+      AddPacket(4,system_blank_resource);
+
+      return;
+   }
+
+   AppendItemCondition()
+   {
+      local iHit_Percent, rItem_condition;
 
       if vbShow_Condition
          AND piHits_init > 0
       {
          rItem_condition = vrCondition_exc;
-      
          iHit_Percent = (100 * piHits) / piHits_init;
-      
          if iHit_Percent > 90
          {
             % If item is worse than what can be found in the wild, describe it
@@ -570,207 +912,30 @@ messages:
                rItem_condition = vrCondition_exc_mended;
             }
          }
-         else
-         { 
-            if iHit_Percent > 65
-            {
-               ritem_condition = vrCondition_good;
-            }
-            else
-            {
-               if iHit_Percent > 30
-               {
-                  ritem_condition = vrCondition_med;
-               }
-               else
-               {
-                  if piHits > 0
-                  {
-                     ritem_condition= vrCondition_poor;
-                  }
-                  else
-                  {
-                     ritem_condition= vrCondition_broken;
-                  }
-               }
-            }
-         }
-      
-         AppendTempString("\n");
-         AppendTempString(vrPoss_Article);
-         AppendTempString(Send(self,@GetName));
-         AppendTempString(rItem_condition);
-         AppendTempString(" \(");
-         AppendTempString(piHits);
-         AppendTempString("/");
-         AppendTempString(piHits_init);
-         AppendTempString("\)");
-      }
-
-      return;
-   }
-     
-   GetMinDamageWithOwnerStats()
-   {
-      return 0;
-   }
-
-   GetMaxDamageWithOwnerStats()
-   {
-      return 0;
-   }
-   
-   GetMinSpecialDamageWithOwnerStats()
-   {
-      return 0;
-   }
-   
-   GetMaxSpecialDamageWithOwnerStats()
-   {
-      return 0;
-   }
-   
-   GetAttackType()
-   {
-      return 0;
-   }
-   
-   GetAttackSpell()
-   {
-      return 0;
-   }
-   
-   GetMinDamage()
-   {
-      return 0;
-   }
-   
-   GetMaxDamage()
-   {
-      return 0;
-   }
-   
-   % Some weapons and spells have special conditions, like nerudite arrows that can shatter
-   GetMinSpecialDamage()
-   {
-      return 0;
-   }
-   
-   GetMaxSpecialDamage()
-   {
-      return 0;
-   }
-   
-   GetRange()
-   {
-      return 0;
-   }
-   
-   GetHitBonus()
-   {
-      return 0;
-   }
-   
-   GetDefenseBonus()
-   {
-      return 0;
-   }
-   
-   GetMeleeDamageBonus()
-   {
-      return 0;
-   }
-   
-   GetDamageBonus()
-   {
-      return 0;
-   }
-   
-   GetDamageReduction()
-   {
-      return 0;
-   }
-   
-   GetAttributes()
-   {
-      return plItem_Attributes;
-   }
-
-   GetResistanceModifiers()
-   {
-      return $;
-   }
-   
-   DoBaseDesc()
-   {
-      local lData;
-
-      % This is the meat of the description for items.
-      if Send(self,@HasAttribute,#ItemAtt=IA_NEW_DESCRIPTION)
-      {
-         lData = Send(self,@GetAttributeData,#ItemAtt=IA_NEW_DESCRIPTION);
-         AppendTempString(Nth(lData,2));
-      }
-      else
-      {
-         AppendTempString(vrDesc);
-      }
-      
-      return;
-   }
-
-   CreateDesc(bShowall=FALSE)
-   {
-      local bAlreadyBlind, bIdentified, oItemAtt, i, iNum;
-
-      bAlreadyBlind = FALSE;
-      ClearTempString();
-      Send(self,@DoBaseDesc);
-
-      if Send(self,@HasAttribute,#ItemAtt=IA_MISDIRECTION) AND NOT bShowAll
-      {
-         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
-         Send(oItemAtt,@AppendMisdirectedDesc,#oItem=self,
-              #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
-      }
-      else
-      {
-         for i in plItem_Attributes
+         else if iHit_Percent > 65
          {
-            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-            bIdentified = Send(self,@GetIDStatusFromCompound,
-                               #compound=First(i));
+            ritem_condition = vrCondition_good;
+         }
+         else if iHit_Percent > 30
+         {
+            ritem_condition = vrCondition_med;
+         }
+         else if piHits > 0
+         {
+            ritem_condition = vrCondition_poor;
+         }
+         else
+         {
+            ritem_condition = vrCondition_broken;
+         }
 
-            if NOT (bIdentified OR bShowAll)
-            {
-               if bAlreadyBlind
-               {
-                  continue;
-               }
-               else
-               {
-                  AppendTempString(itematt_generic);
-                  bAlreadyBlind = TRUE;
-               }
-            }
-            else
-            {
-               Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
-            }
-         }       
+         AddPacket(4,item_cond_master, 4,vrPoss_Article, 4,Send(self,@GetName),
+                   4,rItem_condition,4,piHits,4,piHits_init);
       }
-
-      % Special things for number items, etc.
-      Send(self,@AppendDesc);  
-      
-      return;
-   }
-   
-   ShowDesc(bShowAll = FALSE)
-   {
-      Send(self,@CreateDesc,#bShowAll=bShowAll);      
-      AddPacket(4,item_blank_template,4,GetTempString());
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
 
       return;
    }
@@ -842,7 +1007,7 @@ messages:
       iFinal = (iValue * iPercent)/100;
       iFinal = bound(iFinal,10,iValue);      
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -953,7 +1118,7 @@ messages:
       local i, oItemAtt, iNum;
           
       %% check to be sure nothing in ItemAtts disallows this
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -972,7 +1137,7 @@ messages:
       local i, oItemAtt, iNum;
           
       % Check to be sure nothing in ItemAtts disallows this
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1001,7 +1166,7 @@ messages:
    {
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1024,7 +1189,7 @@ messages:
       % Type 0 is get
       % Type 1 is offer
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1125,7 +1290,7 @@ messages:
       local i, oItemAtt, iNum;
                 
       % Check to be sure nothing in ItemAtts disallows this
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1166,7 +1331,7 @@ messages:
 
       % Remove itematts from us, since we're not gonna use 'em anymore.
       % This also lets cursed items finally remove themselves from us.
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1257,7 +1422,7 @@ messages:
    {
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1283,7 +1448,7 @@ messages:
    { 
       local i, oItemAtt, iNum;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1309,7 +1474,7 @@ messages:
    {  
       local i, oItemAtt, iNum;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1333,7 +1498,7 @@ messages:
    {  
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1381,7 +1546,7 @@ messages:
       AND (IsClass(self,&Weapon)
          OR IsClass(self,&DefenseModifier))
       {
-         for i in plItem_Attributes
+         foreach i in plItem_Attributes
          {
             iNum = Send(self,@GetNumFromCompound,#compound=First(i));
             oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1412,7 +1577,7 @@ messages:
       local i, oItemAtt, iNum;
       
       % Check ItemAtts to be sure nothing funky is there
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1431,7 +1596,7 @@ messages:
    {
       local i;
       
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          % KLUDGE: We specifically prevent made items from being given to NPCs.
          %  Should be more general.
@@ -1490,7 +1655,7 @@ messages:
          return FALSE;
       }
 
-      for i in Send(oRoom,@GetHolderActive)
+      foreach i in Send(oRoom,@GetHolderActive)
       {
          oPlayer = Send(oRoom,@HolderExtractObject,#data=i);
          if NOT IsClass(oPlayer,&Player)
@@ -1578,7 +1743,7 @@ messages:
    {
       local i;
 
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       { 
          if Send(self,@GetNumFromCompound,#compound=First(i)) = ItemAtt  
          {
@@ -1604,7 +1769,7 @@ messages:
       local i, n;
 
       n = 0;
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       { 
          if Send(self,@GetNumFromCompound,#compound=First(i)) = ItemAtt
          {
@@ -1651,7 +1816,7 @@ messages:
       local i, bDone;
 
       bDone = FALSE;
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
          {
@@ -1673,6 +1838,33 @@ messages:
       }
 
       plItem_attributes = Cons(lItemAtt,plItem_attributes);
+
+      return;
+   }
+
+   RemoveItemAttIfPresent(iNum=0)
+   "Attempts to removes a specific item attribute if present.  Used to "
+   "remove an attribute from all items without generating debug messages "
+   "if the item does not have that attribute."
+   {
+      local oItemAtt;
+
+      if iNum = 0
+      {
+         return;
+      }
+
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+
+      if oItemAtt = $
+      {
+         return;
+      }
+
+      if Send(self,@HasAttribute,#ItemAtt=iNum)
+      {
+         Send(oItemAtt,@RemoveFromItem,#oItem=self);
+      }
 
       return;
    }
@@ -1745,7 +1937,7 @@ messages:
          return;
       }
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if Length(i) >= 2 AND Nth(i,2) = timer
          {  
@@ -1769,7 +1961,7 @@ messages:
    {
       local i, oItemAtt, iNum;
 
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
@@ -1803,7 +1995,7 @@ messages:
       }
       
       iHigh_index = 0;  oHigh_obj = $;
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
          {
@@ -1859,22 +2051,24 @@ messages:
       local oItemAtt, iModifier, i, iNum, oObjectAttribute;
 
       iModifier = Send(self,@GetBaseSpellModifier,#oSpell=oSpell);
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
          iModifier = iModifier + Send(oItemAtt,@ItemGetSpellModifier,
                                       #oSpell=oSpell,#oCaster=poOwner);
       }
-      
-      for oObjectAttribute in plObject_attributes
+
+      foreach oObjectAttribute in plObject_attributes
       {
-         iModifier = Send(oObjectAttribute,@ModifySpellPower,#iModifier=iModifier,#oSpell=oSpell,#oCaster=poOwner);
+         iModifier = Send(oObjectAttribute,@ModifySpellPower,
+                           #iModifier=iModifier,#oSpell=oSpell,
+                           #oCaster=poOwner);
       }
-      
+
       return iModifier;
    }
-   
+
    GetHeatDamage()
    "Only things worn at the armor position will be asked this, but "
    "just in case, default is 0."
@@ -1898,7 +2092,7 @@ messages:
 
       if Send(self,@OverrideArmsForGauntlets)
       {
-         for i in Send(who,@GetPlayerUsing)
+         foreach i in Send(who,@GetPlayerUsing)
          {
             if Send(i,@OverRideArms)
             {
@@ -1941,7 +2135,7 @@ messages:
 
       if Send(self,@OverrideArmsForGauntlets)
       {
-         for i in Send(who,@GetPlayerUsing)
+         foreach i in Send(who,@GetPlayerUsing)
          {
             if Send(i,@OverRideArms)
             {
@@ -1962,7 +2156,7 @@ messages:
    {
       local i;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if Send(i,@OverRideArms)
          {
@@ -1982,7 +2176,7 @@ messages:
    {
       local i;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if Send(i,@OverRideArms)
          {
@@ -2220,7 +2414,7 @@ messages:
       
       lCurrentResistances = Send(self,@GetResistanceModifiers);
       
-      for oObjectAttribute in plObject_attributes
+      foreach oObjectAttribute in plObject_attributes
       {
          lCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=lCurrentResistances);
       }
@@ -2234,7 +2428,7 @@ messages:
       
       lCurrentResistances = Send(self,@GetCurrentResistances);
       
-      for oResist in lCurrentResistances
+      foreach oResist in lCurrentResistances
       {
          resistance_list = Send(SYS,@AddResistance,#what=Nth(oResist,1),#value=Nth(oResist,2),#resistance_list=resistance_list);
       }
@@ -2246,7 +2440,7 @@ messages:
    {
       local i;
       
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
@@ -2276,7 +2470,7 @@ messages:
       local i, bFound;
 
       bFound = FALSE ;
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
@@ -2318,7 +2512,7 @@ messages:
 
       if what = $
       {
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             if IsClass(Nth(i,1),byClass)
             {
@@ -2338,7 +2532,7 @@ messages:
       }
       else
       {
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             if Nth(i,1) = what
             {
@@ -2366,7 +2560,7 @@ messages:
    
       oHighest = $;
    
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if IsClass(Nth(i,1), byClass)
          {
@@ -2458,7 +2652,7 @@ messages:
    {
       local i, iNum, oItemAtt;
       
-      for i in plItem_attributes
+      foreach i in plItem_attributes
       {
          iNum = Send(self,@GetNumFromCompound,#compound=First(i));
          oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);

@@ -61,10 +61,15 @@ void ResetResource(void)
       {
          temp = r->next;
 
-         if (r->resource_name)
-            FreeMemory(MALLOC_ID_KODBASE,r->resource_name,
-               strlen(r->resource_name)+1);
-         FreeMemory(MALLOC_ID_RESOURCE,r->resource_val,strlen(r->resource_val)+1);
+         for (int j = 0; j < MAX_LANGUAGE_ID; j++)
+         {
+            if (r->resource_val[j])
+            {
+               FreeMemory(MALLOC_ID_KODBASE,r->resource_val[j],
+                  strlen(r->resource_val[j])+1);
+            }
+         }
+
          FreeMemory(MALLOC_ID_RESOURCE,r,sizeof(resource_node));
 
          r = temp;
@@ -76,39 +81,43 @@ void ResetResource(void)
 	resource_name_map = CreateSIHash(ConfigInt(MEMORY_SIZE_RESOURCE_NAME_HASH));
 }
 
-void AddResource(int id,char *str_value)
+void AddResource(int id, int lang_id, char *str_value)
 {
-	int hash_num;
-	resource_node *new_node;
+   int hash_num;
+   bool new_resource = false;
+   resource_node *r;
 
-	/* str_value is not permanent so need to make a copy here!
-		Comes fromloadrsc or adddynamicrsc */
-	
-	if (GetResourceByID(id) != NULL)
-	{
-		eprintf("AddResource can't add resource num %i because it already exists! (%s)\n",id,str_value);
-		return;
-	}
-	
-	/* Ok, also check for dynamic resources being loaded/created here, in that we have
-	to keep track of the next dynamic resource # to use. */
-	if (id >= MIN_DYNAMIC_RSC && id >= next_dynamic_rsc)
-	{
-		next_dynamic_rsc = id + 1;
-		/* dprintf("setting next dyn rsc to %i\n",next_dynamic_rsc); */
-	}
-	
-	new_node = (resource_node *)AllocateMemory(MALLOC_ID_RESOURCE,sizeof(resource_node));
-	new_node->resource_id = id;
-	new_node->resource_val = (char *)AllocateMemory(MALLOC_ID_RESOURCE,strlen(str_value)+1);
-	strcpy(new_node->resource_val,str_value);
-	
-	new_node->resource_name = NULL;
-	
-	/* add to resources table */
-	hash_num = new_node->resource_id % resources_table_size;
-	new_node->next = resources[hash_num];
-	resources[hash_num] = new_node;
+   /* str_value is not permanent so need to make a copy here!
+   Comes fromloadrsc or adddynamicrsc */
+
+   /* Ok, also check for dynamic resources being loaded/created here, in that
+   we have to keep track of the next dynamic resource # to use. */
+   if (id >= MIN_DYNAMIC_RSC && id >= next_dynamic_rsc)
+   {
+      next_dynamic_rsc = id + 1;
+      /* dprintf("setting next dyn rsc to %i\n",next_dynamic_rsc); */
+   }
+
+   r = GetResourceByID(id);
+   if (r == NULL)
+   {
+      r = (resource_node *)AllocateMemory(MALLOC_ID_RESOURCE,sizeof(resource_node));
+      r->resource_id = id;
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+         r->resource_val[i] = NULL;
+      new_resource = true;
+   }
+
+   r->resource_val[lang_id] = (char *)AllocateMemory(MALLOC_ID_RESOURCE,strlen(str_value)+1);
+   strcpy(r->resource_val[lang_id],str_value);
+
+   r->resource_name = NULL;
+
+   /* add to resources table */
+   hash_num = r->resource_id % resources_table_size;
+   if (new_resource)
+      r->next = resources[hash_num];
+   resources[hash_num] = r;
 }
 
 void SetResourceName(int id,char *name)
@@ -125,7 +134,7 @@ void SetResourceName(int id,char *name)
    r->resource_name = (char *)AllocateMemory(MALLOC_ID_KODBASE,strlen(name)+1);
    strcpy(r->resource_name,name);
 
-	SIHashInsert(resource_name_map,name,id);
+   SIHashInsert(resource_name_map,name,id);
 }
 
 static resource_node *notify_r;
@@ -136,7 +145,7 @@ int AddDynamicResource(char *str_value)
 	resource_node *r;
 	
 	new_rsc_id = next_dynamic_rsc;
-	AddResource(new_rsc_id,str_value);
+	AddResource(new_rsc_id,0,str_value);
 	
 	r = GetResourceByID(new_rsc_id);
 	if (r == NULL)
@@ -164,11 +173,11 @@ void ChangeDynamicResource(resource_node *r,char *data,int len_data)
 		return;
 	}
 	
-	FreeMemory(MALLOC_ID_RESOURCE,r->resource_val,strlen(r->resource_val)+1);
-	r->resource_val = (char *)AllocateMemory(MALLOC_ID_RESOURCE,len_data+1);
-	memcpy(r->resource_val,data,len_data);
-	r->resource_val[len_data] = 0; /* null terminate */
-	
+	FreeMemory(MALLOC_ID_RESOURCE,r->resource_val[0],strlen(r->resource_val[0])+1);
+	r->resource_val[0] = (char *)AllocateMemory(MALLOC_ID_RESOURCE,len_data+1);
+	memcpy(r->resource_val[0],data,len_data);
+	r->resource_val[0][len_data] = 0; /* null terminate */
+
 	/* now notify everyone in game */
 	notify_r = r;
 	ForEachSession(DynamicResourceChangeNotify);
@@ -180,7 +189,7 @@ void DynamicResourceChangeNotify(session_node *s)
 	{
 		AddByteToPacket(BP_CHANGE_RESOURCE);
 		AddIntToPacket(notify_r->resource_id);
-		AddStringToPacket(strlen(notify_r->resource_val),notify_r->resource_val);
+		AddStringToPacket(strlen(notify_r->resource_val[0]),notify_r->resource_val[0]);
 		SendPacket(s->session_id);
 	}
 }
@@ -198,6 +207,30 @@ resource_node * GetResourceByID(int id)
 	}
 
 	return NULL;
+}
+
+// Returns language string 'lang_id' of resource 'id'.
+char * GetResourceStrByLanguageID(int id, int lang_id)
+{
+   resource_node *r;
+
+   if (lang_id < 0 || lang_id > MAX_LANGUAGE_ID)
+   {
+      eprintf("GetResourceStrByLanguageID received invalid language ID %i for resource %i\n",
+         lang_id, id);
+      return NULL;
+   }
+
+   r = resources[id % resources_table_size];
+   while (r != NULL)
+   {
+      if (r->resource_id == id)
+         return r->resource_val[lang_id] ? r->resource_val[lang_id] : r->resource_val[0];
+         
+      r = r->next;
+   }
+
+   return NULL;
 }
 
 Bool IsResourceByID(int id)
@@ -227,7 +260,7 @@ void ForEachResource(void (*callback_func)(resource_node *r))
 	
 	for (i=0;i<resources_table_size;i++)
 	{
-		r = resources[i];
+      r = resources[i];
 		while (r != NULL)
 		{
 			if (r->resource_id < MIN_DYNAMIC_RSC)
@@ -245,7 +278,7 @@ void ForEachDynamicRsc(void (*callback_func)(resource_node *r))
 	
 	for (i=0;i<resources_table_size;i++)
 	{
-		r = resources[i];
+      r = resources[i];
 		while (r != NULL)
 		{
 			if (r->resource_id >= MIN_DYNAMIC_RSC)

@@ -1,0 +1,9 @@
+FireWall_name_rsc = de "Feuerwand"
+FireWall_desc_rsc = de \
+   "Erzeugt einen Feuerwand. Dazu braucht man Feuersand, Regenbogenfarne "
+   "und ungeschliffenen Seraphym. Die Anwendung dieses Zaubers kann dazu "
+   "führen, daß Du zum Gesetzlosen erklärt wirst."
+FireWall_cast_rsc = de "Eine glühend heiße Feuerwand erscheint vor dir!"
+FireWall_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in diesem Raum. Du kannst nicht noch "
+   "weitere Wände erschaffen"

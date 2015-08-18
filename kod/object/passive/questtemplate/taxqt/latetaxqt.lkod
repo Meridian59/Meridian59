@@ -1,0 +1,38 @@
+% Quest description.
+latetaxqt_name_rsc = de "late tax quest"
+latetaxqt_desc_rsc = de \
+   "An NPC is late in paying their taxes; courier a letter from the Duke "
+   "to inform them of their tardiness."
+
+latetaxqt_deliver_rsc = de \
+   "%s%s is late in paying %s taxes; courier a letter from the Duke "
+   "to inform %s%s of %s tardiness."
+
+latetaxqt_completed_rsc = de \
+   "You have completed the late tax quest."
+
+% Quest resources.
+latetax_assign_2 = de \
+   "Eine dringende Sache ist mir zu Ohren gekommen.  Bestimmte Geschäftseigentümer "
+   "in der Gemeinschaft waren mit ihren finanziellen Verpflichtungen nachlässig.  "
+   "Würdest Du bitte diesen Brief umgehend zu %NPC bringen.  Sei gewarnt, "
+   "dass dieser Eigentum des Reichs ist, und wenn er nicht in der Zeit ausgeliefert "
+   "wird, wirst Du als Gesetzesloser deklariert.  Hier ist etwas für Deine "
+   "Mühen.  Nun fort mit Dir."
+latetax_assign_2_h = de \
+   "Eine dringende Sache ist mir zu Ohren gekommen.  Bestimmte Geschäftseigentümer "
+   "in der Gemeinschaft waren mit ihren finanziellen Verpflichtungen nachlässig.  "
+   "Würdest Du bitte diesen Brief umgehend zu %NPC bringen.  Sei gewarnt, "
+   "dass dieser Eigentum des Reichs ist, und wenn er nicht in der Zeit ausgeliefert "
+   "wird, wirst Du Leid davon tragen.  Hier ist etwas für Deine Mühen. Nun "
+   "mach Dich fort!"
+latetax_success_2 = de \
+   "Was ist das?  Weißt Du, es is komisch wie streng %SOURCE_NPC geworden "
+   "ist beim Sammeln seiner Steuern.  Ich denke da ist noch mehr als wir "
+   "sehen.  Ich habe meine Vermutungen aber die sind nichts für Dich."
+latetax_failure_2 = de \
+   "Betreff: Du bist nun ein Gesetzesloser\nDu wurdest von %NPC als Gesetzesloser "
+   "deklariert wegen der fehlerhaften Auslieferung eines Regierungsbriefes."
+latetax_failure_2_h = de \
+   "Betreff: Nun wirst Du leiden, Dieb!\nIch habe mit meinem befreundeten "
+   "Zauberer gesprochen, und er hat dafür gesorgt, dass Du leiden wirst."

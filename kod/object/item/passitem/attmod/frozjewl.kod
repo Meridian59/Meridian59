@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include frozjewl.lkod
+
    frozjewel_name_rsc = "Jewel of Froz"
    frozjewel_icon_rsc = frozjewl.bgf
    frozjewel_desc_rsc = \
@@ -112,7 +114,7 @@ messages:
       {
          iJewelNumber = 0;
 
-         for i in Send(poOwner,@GetPlayerUsing)
+         foreach i in Send(poOwner,@GetPlayerUsing)
          {
             if IsClass(i,&JewelOfFroz)
                OR IsClass(i,&Book)
@@ -187,7 +189,7 @@ messages:
          iMana = 0;
          if pbDoubleManaCost
          {
-            for i in Send(who,@GetPlayerUsing)
+            foreach i in Send(who,@GetPlayerUsing)
             {
                if IsClass(i,&JewelOfFroz)
                {

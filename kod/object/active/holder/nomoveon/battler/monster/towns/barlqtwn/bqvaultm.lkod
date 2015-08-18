@@ -1,0 +1,34 @@
+barloquevaultman_name_rsc = de "Obert Cair'bre"
+barloquevaultman_desc_rsc = de \
+   "Obert ist ein nobler Geschäftsmann, der auf seine Schatzkammer fast ebenso "
+   "stolz ist wie auf seine Familie. Seine professionellen Geschäftsgebaren "
+   "zeigen, daß er sehr wohl weiß wie oft seine Kunden in höchster Eile sind "
+   "und schnellstmöglich bedient werden wollen."
+barloquevaultman_entry_welcome = de "Hey Kumpel!"
+barloquevaultman_nogold = de \
+   "Du kannst meine Dienste nicht nutzen und %s%s einlagern."
+barloquevaultman_nocursed = de "Ich kann %s%s von dir nicht einlagern."
+barloquevaultman_fullvault = de \
+   "Das passt alles nicht in deine Kiste!  Vielleicht hast du Sachen geringerer "
+   "Menge."
+barloquevaultman_thanks_amount = de \
+   "Das kostet %i Schilling.  Ich danke dir für dein Vertrauen, als Verwalter "
+   "deiner Sachen."
+barloquevaultman_dont_have = de \
+   "Hmmm, ich kann scheinbar %s%s in deinen Sachen nicht finden."
+barloquevaultman_no_room = de \
+   "Du kannst das nicht alles tragen!  Vielleicht solltest du ein paar deiner "
+   "Dinge ablegen."
+barloquevaultman_deposit_thanks = de \
+   "Ich danke dir für das Vertrauen als dein Verwalter."
+barloquevaultman_thanks = de "Ich danke dir für dein Vertrauen."
+barloquevaultman_nowithdraw_cash = de \
+   "Du kannst derzeit nichts entnehmen, dafür hast du nicht genug Geld."
+barloquevaultman_nodeposit_cash = de \
+   "All diese Sachen zu verstauen würde %i Schilling kosten - welche du nicht "
+   "hast, wie ich sehen kann."
+barloquevaultman_cant_part = de \
+   "Oh man, ich will nicht verantwortlich sein für %s wenn sie verschwinden. "
+   "Ich kan sie leider nicht für dich verstauen."
+barloquevaultman_noaccount = de "Ich habe nichts von dir im Speicher."
+barloquevaultman_not_enough = de "Du hast nicht so viele %s in deinem Speicher!"

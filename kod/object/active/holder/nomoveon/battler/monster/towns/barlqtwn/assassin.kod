@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include assassin.lkod
+
    assassin_name_rsc = "Roq"
    assassin_mailname_rsc = "Roq the Dark Blade"
 

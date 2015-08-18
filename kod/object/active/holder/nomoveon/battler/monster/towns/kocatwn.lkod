@@ -1,0 +1,12 @@
+kocatan_may_pass = de "Du darfst passieren."
+kocatan_no_alcohol = de "Kein Alkoholschmuggel zu den Einheimischen!"
+kocatan_no_nerudite = de \
+   "Den Avars darf es nicht erlaubt werden, in den Besitz von Roh-Neruditen "
+   "zu gelangen!"
+kocatan_no_weapons = de \
+   "Es ist verboten, andere Waffen, als die, die zum Schutz des Reisenden "
+   "dienen, mit in den Wald zu nehmen."
+kocatan_no_armor = de "Du darfst nur eine Rüstung mit in den Wald nehmen!"
+kocatan_no_helm = de "Du darfst nur einen Helm mitnehmen."
+kocatan_no_gauntlets = de "Nur ein Paar Panzerhandschuhe ist erlaubt."
+kocatan_no_shields = de "Du darfst nur einen Schild mitnehmen."

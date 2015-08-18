@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include karahol.lkod
+
    KaraholsCurse_name_rsc = "Kara'hol's curse"
    KaraholsCurse_icon_rsc = ikarahol.bgf
    KaraholsCurse_desc_rsc = \
@@ -24,7 +26,9 @@ resources:
       "your attacks.  When the spirit departs, your body "
       "is temporarily paralyzed from shock.  "
       "Requires the sacrifice of two entroot berries to cast."
-   
+   karahol_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i offense and 1-%i attack "
+      "damage.  When it expires, it will paralyze you for %i seconds."
    KaraholsCurse_on = \
       "The spirit of Kara'hol descends upon you making your "
       "blood boil and your muscles twitch with newfound vigor."
@@ -136,18 +140,15 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(100 + (Send(who,@GetEnchantedState,#what=self) * 2));
-      AppendTempString(" offense and 1-");
-      AppendTempString(1 + (Send(who,@GetEnchantedState,#what=self) / 20));
-      AppendTempString(" attack damage. When it expires, it will paralyze you for ");
-      AppendTempString((40 + (Send(who,@GetEnchantedState,#what=self) / 2)) / 6);
-      AppendTempString(" seconds.");
+      local iState;
 
-      propagate;
+      iState = Send(who,@GetEnchantedState,#what=self);
+
+      AddPacket(4,karahol_enchantment_rsc, 4,Send(self,@GetName),
+                4,100 + iState * 2, 4,1 + iState / 20,
+                4,(40 + (iState / 2)) / 6);
+
+      return;
    }
 
 end

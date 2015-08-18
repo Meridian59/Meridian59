@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resmagic.lkod
+
    resistmagic_name_rsc = "resist magic"
    resistmagic_icon_rsc = iresmagc.bgf
    resistmagic_desc_rsc = \

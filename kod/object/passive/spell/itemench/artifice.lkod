@@ -1,0 +1,6 @@
+artifice_cast_rsc = de "Die Form von %s%s beginnt sich zu verschieben."
+artifice_fails = de "%s%s ist seltsam unberührt von dem Zauberspruch."
+artifice_name_rsc = de "List"
+artifice_desc_rsc = de \
+   "Kennzeichnet jemanden als Ausgestoßenen oder Mörder. Dieser Zauber kann "
+   "nur von Göttern und Barden ausgeführt werden."

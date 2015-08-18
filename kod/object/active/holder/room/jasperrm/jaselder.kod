@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jaselder.lkod
+
    room_jasperelder = jaselder.roo
    room_name_Jasperelder = "The Home of the Wise Man"
 

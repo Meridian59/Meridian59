@@ -16,7 +16,9 @@ constants:
 
 resources:
 
-   NumberItem_desc_rsc = "\n\nYou are looking at "
+   include numbitem.lkod
+
+   NumberItem_desc_rsc = "\n\nYou are looking at %i %s."
    NumberItem_got_one = "Hungrily, you yank %s%s from %s%s."
 
    NumberItem_dispenser_name = "magic item creator"
@@ -56,12 +58,12 @@ messages:
       {
          piNumber = number;
       }
-	  if tl <> $
-	  {
-	     Send(SYS,@AddTempList,#oItem=self);
-	  }
+      if tl <> $
+      {
+         Send(SYS,@AddTempList,#oItem=self);
+      }
       Send(self,@NewNumber);
-      
+
       propagate;
    }
 
@@ -98,7 +100,9 @@ messages:
          AND NOT IsClass(self,&Ammo)
          AND NOT IsClass(self,&Money)
       {
-         Send(Send(what,@GetReagentBag),@NewHold,#what=self,#where=Send(what,@GetReagentBag),#number=Send(self,@GetNumber));
+         Send(Send(what,@GetReagentBag),@NewHold,#what=self,
+               #where=Send(what,@GetReagentBag),
+               #number=Send(self,@GetNumber));
       }
 
       return;
@@ -115,7 +119,7 @@ messages:
       {
          return (-viWeight) * piNumber / 100;
       }
-      
+
       return viWeight * piNumber;
    }
 
@@ -125,7 +129,7 @@ messages:
       {
          return (-viBulk) * piNumber / 100;
       }
-      
+
       return viBulk * piNumber;
    }
 
@@ -182,17 +186,17 @@ messages:
       {
          return iWeight_can_hold;
       }
-      
+
       if iWeight_can_hold = INFINITE_COUNT
       {
          return iBulk_can_hold;
       }
-      
+
       if iBulk_can_hold < iWeight_can_hold
       {
          return iBulk_can_hold;
       }
-      
+
       return iWeight_can_hold;
    }
 
@@ -202,26 +206,21 @@ messages:
       {
          propagate;
       }
-      
+
       if vrName_plural <> $
       {
          return vrName_plural;
       }
-      
+
       propagate;
    }
 
    AppendDesc()
    {
       % You are looking at 8 elderberries.
-      AppendTempString(NumberItem_desc_rsc);
-      
-      send(SYS,@AppendCardinalToTempString,#number=piNumber);
-      AppendTempString(" ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(".");
+      AddPacket(4,NumberItem_desc_rsc, 4,piNumber, 4,Send(self,@GetName));
 
-      propagate;
+      return;
    }
 
    GetValue()

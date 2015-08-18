@@ -1,0 +1,14 @@
+KarmaPotion_name_rsc = de "Karma Trank"
+KarmaPotion_desc_rsc = de \
+   "Trinke diesen Trank w‰hrend einer Frenzy und dein Karma wird sich ‰ndern."
+KarmaPotion_pos_name_rsc = de "Trank des positiven Karma"
+KarmaPotion_pos_desc_rsc = de \
+   "Trinkst du diesen Trank w‰hrend einer Frenzy ‰ndert sich dein Karma auf "
+   "+100."
+KarmaPotion_neg_name_rsc = de "Trank des negativen Karma"
+KarmaPotion_neg_desc_rsc = de \
+   "Trinkst du diesen Trank w‰hrend einer Frenzy ‰ndert sich dein Karma auf "
+   "-100."
+KarmaPotion_drink = de "Du trinkst den Trank mit einem Schluck leer."
+KarmaPotion_no_drink = de \
+   "Du kannst diesen Trank nicht auﬂerhalb einer Frenzy trinken."

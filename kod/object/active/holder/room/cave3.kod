@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include cave3.lkod
+
    room_name_cave3 = "The Underground Lake"
    room_cave3 = cave3.roo
    cave3_music = ksong.mp3
@@ -100,7 +102,7 @@ messages:
          if row = 68 AND (col=37 OR col=38)
          {
             lPassive = send(what,@GetHolderPassive);
-            for i in lPassive
+            foreach i in lPassive
             {
                each_obj = send(what,@HolderExtractObject,#data=i);
                if isClass(each_obj,&Key)
@@ -128,7 +130,7 @@ messages:
    %      if row = 28 AND col=73
    %      {
    %         lPassive = send(what,@GetHolderPassive);
-   %         for i in lPassive
+   %         foreach i in lPassive
    %         {
    %            each_obj = send(what,@HolderExtractObject,#data=i);
    %            if isClass(each_obj,&SanctuaryKey)
@@ -158,7 +160,7 @@ messages:
       
       lPassive = send(self,@GetHolderPassive);
 
-      for i in lPassive
+      foreach i in lPassive
       {
          each_obj = send(self,@HolderExtractObject,#data=i);
          if isClass(each_obj,&JewelOfFroz)

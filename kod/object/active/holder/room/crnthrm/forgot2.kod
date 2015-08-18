@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include forgot2.lkod
+
    room_ForgottenToo = bizmans.roo
    room_name_ForgottenToo = "Chamber of the Forgotten Heroes"
    ForgottenToo_music = extra01.mp3
@@ -256,7 +258,7 @@ messages:
       local oStatue, i;
 
       %% delete any existing statues
-      for i in plPassive
+      foreach i in plPassive
       {
          if isClass(first(i),&statue)
          {  send(first(i),@delete);  }

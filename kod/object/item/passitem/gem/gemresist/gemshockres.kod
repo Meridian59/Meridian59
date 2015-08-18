@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemshockres.lkod
+
    gem_shock_resist_name_rsc = "quartz crystal"
    gem_shock_resist_icon_rsc = diamond.bgf
    gem_shock_resist_desc_rsc = \

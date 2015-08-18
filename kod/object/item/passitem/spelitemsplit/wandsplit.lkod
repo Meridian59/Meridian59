@@ -1,0 +1,5 @@
+WandSplitter_name_rsc = de "Ungeladener Zauberstab"
+WandSplitter_desc_rsc = de \
+   "Dieser Zauberstab glimmt vor Energie die aufgeladen werden muss."
+wand_split_spell_item_rsc = de \
+   "Du lässt %s ab. Der ungeladene Zauberstab wird %d geladen von %d Zauberkraft."

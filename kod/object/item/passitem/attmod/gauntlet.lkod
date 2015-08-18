@@ -1,0 +1,15 @@
+gauntlet_name_rsc = de "Das Paar Panzerhandschuhe"
+gauntlet_desc_rsc = de \
+   "Diese polierten Panzerhandschuhe bieten Schutz für Hände und Unterarme. "
+   "Sie verleihen Deinem Schlag mehr Genauigkeit und Wucht."
+gauntlet_condition_exc = de " leuchtet im Schimmer der Vollkommenheit.."
+gauntlet_condition_exc_mended = de \
+   " sind in einem perfektem Zustand, wurden aber bereits repariert."
+gauntlet_condition_good = de " sind angeschlagen, doch immer noch brauchbar."
+gauntlet_condition_med = de " sind ziemlich verbeult."
+gauntlet_condition_poor = de \
+   " sind in Gefahr, auseinanderzufallen. Große Metallstücke sind während "
+   "des Kampfes herausgerissen worden."
+gauntlet_condition_broken = de " sind kaputt und haben keinen Nutzen mehr."
+gauntlet_broken = de \
+   "Die Panzerhandschuhe bestehen nur noch aus unbrauchbarem Metall."

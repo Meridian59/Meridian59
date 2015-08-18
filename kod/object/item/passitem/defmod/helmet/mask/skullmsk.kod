@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include skullmsk.lkod
+
    SkullMask_name_rsc = "skull mask"
    SkullMask_icon_male_rsc = mmskl.bgf
    SkullMask_icon_female_rsc = mfskl.bgf

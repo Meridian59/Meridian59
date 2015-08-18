@@ -1,0 +1,22 @@
+CrystalizeMana_name_rsc = de "Mana Kristalisieren"
+CrystalizeMana_desc_rsc = de \
+   "Dieses Lied fängt das durch das Singen freigesetzte Mana ein und kristallisiert "
+   "es in eine feste Form. Der Manakristall speichert das Mana für eine spätere "
+   "Benutzung und erlaubt dem Sänger dadurch im Wesentlichen, zusätzliches "
+   "Mana zu speichern. Nur ein Kristall auf einmal kann vom Sänger erschaffen "
+   "werden, aber je länger dieses Lied andauert, desto mehr Mana wird in "
+   "dem Kristall gespeichert. Da das Mana auf den Sänger abgestimmt ist, "
+   "kann der Kristall anderen nicht zur Verfügung gestellt werden. Dieses "
+   "Lied benötigt Saphire und ungeschliffene Seraphen."
+CrystalizeMana_no_room = de \
+   "Du brichst Deinen Gesang ab, als Du bemerkst dass Du den Manakristall "
+   "nicht halten kannst."
+CrystalizeMana_already_surging = de \
+   "Dein Geist ist zu schwach um eine weitere Welle von Energie zu beschwören."
+CrystalizeMana_cast = de \
+   "Du zerstörst auf magische Weise deine Edelsteine und nutzt deren innere "
+   "Energie um tiefe Energie frei zu setzen."
+CrystalizeMana_triggered = de \
+   "Deine spirituelle Energie ist erschöpft und deine Seele ruhig und du "
+   "hörst ein Lied in der großen Ferne"
+CrystalizeMana_surge = de "Unglaubliche Energie brüllt aus dir heraus!"

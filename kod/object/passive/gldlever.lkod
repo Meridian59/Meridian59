@@ -1,0 +1,16 @@
+guildlever_name_rsc = de "Mystischer Schild Deaktivator"
+guildlever_desc_rsc = de \
+   "Bei Betätigung dieses Schalters, schalten sie die Verteidigung der Gildenhalle "
+   "ein oder aus.  Wenn der Schalter betätigt wurde und nicht innerhalb von "
+   "10 Minuten zurückgeschaltet wird, zählt die Gildenhalle als erobert.\n\n%s"
+guildlever_not_in_range = de "Du bist nicht nah genug am Deaktivator."
+guildlever_changed = de "Du betätigst den Schalter."
+lever_unowned_desc = de \
+   "Da die Gildenhalle derzeit unbenutzt ist, passiert nichts."
+lever_defenses_up_desc = de \
+   "Schutzenergie knistert um das mystische Auge und der Schutz ist aktiviert."
+lever_defenses_down_desc = de \
+   "Das Auge bleibt kalt - die Verteidigung der Halle ist deaktiviert!"
+guildlever_not_qualified = de \
+   "Du versuchst den Schalter umzulegen, jedoch passiert nichts."
+guildlever_happyland = de "Du kannst Gildenhallen in dieser Welt nicht erobern."

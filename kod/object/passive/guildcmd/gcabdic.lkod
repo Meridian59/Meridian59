@@ -1,0 +1,15 @@
+GuildAbdicate_name_rsc = de "abdanken"
+GuildAbdicate_desc_Rsc = de \
+   "Dies ist der einzige Weg für einen Gildenmeister, die Gilde zu verlassen.  "
+   "Er muss einen Nachfolger festlegen bevor er Abdankt."
+abdicate_non_user = de \
+   "%s%s danke Dir, aber fühlt sich nicht bereit, deine Gilde zu führen."
+abdicate_not_member = de "%s%q ist kein Mitglied von %s%q!"
+abdicate_cant_self = de \
+   "Du kannst Dich nicht selber als Nachfolger von Dir ernennen!"
+abdicate_to_chosen = de \
+   "~B%s hat as Führer von %s%q abgedankt, und hat Dich als Nachfolger gewählt!"
+abdicate_to_abdicator = de "~BDu bist %q der neue Führer von %s%q."
+abdicate_necro_nak = de \
+   "~BDu hast den Blutschwur als Meister des Ordens geschworen.  Du kannst "
+   "nicht so einfach abdanken!"

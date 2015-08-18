@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fountjet.lkod
+
    fountainjet_name_rsc = "fountain"
    fountainjet_icon_rsc = fountjet.bgf
    fountainjet_desc_rsc = "A spray of water from some underground source."

@@ -1,0 +1,7 @@
+earthelemental_name_rsc = de "Der Erdgolem"
+earthelemental_desc_rsc = de \
+   "Ein Wesen aus lebendiger Erde. Der Boden unter ihm bebt bei jedem Schritt.Seine "
+   "Bewegungen klingen wie ein Schleifstein, und der Duft von frischem Boden "
+   "dring in die Nase."
+earthelemental_koc_name_rsc = de "atzmochzhu"
+earthelemental_dead_name_rsc = de "toter Erdgolem"

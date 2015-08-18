@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include castle1c.lkod
+
    room_castle1c = castle1c.roo
    
    castle1c_name = "Outside Castle Victoria"

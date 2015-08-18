@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include barmerch.lkod
+
    room_barmerch = barmerch.roo
    room_name_barmerch = "The Sparkling Stone Shop"
 

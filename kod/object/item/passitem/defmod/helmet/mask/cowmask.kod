@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cowmask.lkod
+
    CowMask_name_rsc = "cow mask"
    CowMask_icon_male_rsc = res0002c.bgf
    CowMask_icon_female_rsc = res0002d.bgf

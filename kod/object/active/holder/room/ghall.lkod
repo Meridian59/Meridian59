@@ -1,0 +1,50 @@
+guildhall_hotplate_firstpass = de "Spieler hat die erste Prüfung bestanden."
+guildhall_hotplate = de "Spieler hat Kochplatte #%i gefunden."
+guildhall_entered_legally = de \
+   "Gildenhalle wurde gerade auf legale Weise betreten."
+guildhall_muffled = de "Du hörst eine gedämpfte Unterhaltung."
+guildhall_cant_flip = de \
+   "Trotz Deiner Bemühungen zeigt dieser Gegenstand keine Funktion."
+guildhall_being_raided = de \
+   "~B%s, Gildenhalle von %s%q, wird von %s%q überfallen!"
+guildhall_player_raided = de \
+   "~B%s, die Gildenhalle von %s%q, wird von %s%s überfallen!"
+guildhall_raided = de \
+   "~BAls Du den Raum betrittst, bemerkst Du, dass die magische Verteidigung "
+   "der Gildenhalle deaktiviert ist!"
+guildhall_being_raided_ally = de \
+   "~B%s, Gildenhalle von %s%q, wird von %s%q überfallen!"
+guildhall_shield_lower = de \
+   "~BDas Manafeld um Dich herum wird instabil, da %s%s die magische Verteidigung "
+   "der Halle aufgehoben hat!"
+guildhall_shield_raise = de \
+   "~B%s%s hat die magische Verteidigung der Halle wieder reaktiviert."
+guildhall_shield_lower_raider = de \
+   "~BDu hast die Verteidigung der Gildenhalle deaktiviert, d. h. jeder kann "
+   "nun die Gildenhalle betreten. Wenn Du den Schild nicht wieder reaktivierst, "
+   "könnte die Halle erobert werden!"
+guildhall_uneasiness = de \
+   "~BDu hast ein unangenehmes Gefühl, Du glaubst, die Halle ist nicht gesichert."
+guildhall_default_password = de "aardvark"
+guildhall_no_guild = de \
+   "Du kannst keine Gildenhalle mieten, wenn Du keiner Gilde angehörst!"
+guildhall_not_mature = de \
+   "Deine Gilde ist noch nicht reif genug, um eine Gildenhalle zu mieten."
+guildhall_already_has = de \
+   "Du darfst keine Gildenhalle mieten, bis Du Deine derzeitige Halle aufgibst."
+guildhall_already_rented = de \
+   "Deine Gilde hat diese Gildenhalle bereits gemietet!"
+guildhall_conquered = de "~B%s, Halle der Gilde %s%q, wurde erobert!"
+guildhall_conquerer = de \
+   "~B%s, Gildenhalle von %s%q, wurde von %s%q erobert!Für kurze Zeit wird "
+   "Frular diese Gildenhalle nur an Dich vermieten!"
+guildhall_conquerer_unguilded = de \
+   "~B%s, Gildenhalle von/der %s%q, wurde erobert von %s%s!"
+guildhall_new_password = de "~BDas Passwort der Halle %s wurde geändert."
+guildhall_cant_open = de \
+   "Die magische Verteidigung der Gildenhalle %s verhindert, dass Du die "
+   "äußere Tür öffnest."
+guildhall_new_occupants = de "~B%s wird an neue Besitzer vermietet."
+guildhall_someone_rented = de "Diese Gildenhalle ist bereits vermietet."
+guildhall_newsball = de "Nachrichten"
+guildhall_newsdesc = de "Aktuelle Gildennachrichten."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include baitp.lkod
+
    BaitPotion_name_rsc = "The Widow Qesino's Secret Sauce"
    %BaitPotion_icon_rsc = potion01.bgf
    BaitPotion_desc_rsc = "This is a glass vial of colored liquid.  "

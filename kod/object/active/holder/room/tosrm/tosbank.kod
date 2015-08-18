@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tosbank.lkod
+
    room_name_tosbank = "First Royal Bank of Tos"
    room_tosbank = tosbank.roo
    tosbank_music = bank.mp3

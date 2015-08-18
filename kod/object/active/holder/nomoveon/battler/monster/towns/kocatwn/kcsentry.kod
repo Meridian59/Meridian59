@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcsentry.lkod
+
    Kocatansentry_name_rsc = "sentry"
    kocatansentry_icon_rsc = kcsentry.bgf
    kocatansentry_desc_rsc =  \

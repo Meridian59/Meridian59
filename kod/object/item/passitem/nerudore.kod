@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nerudore.lkod
+
    NeruditeOreChunk_icon_rsc = neruOre.bgf
    NeruditeOreChunk_name_rsc = "chunk of nerudite"
    NeruditeOreChunk_desc_rsc = "This is a huge, unwieldy hunk of ugly, green rock, with strong, luminent veins suggesting immense hidden value inside."

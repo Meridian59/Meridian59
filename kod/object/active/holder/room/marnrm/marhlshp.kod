@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include marhlshp.lkod
+
    room_MarionHealerShop = marheal.roo
    room_name_MarionHealerShop = "Lady Aftyn's Sanctuary"
 

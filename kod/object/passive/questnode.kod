@@ -43,6 +43,8 @@ constants:
 
 resources:
 
+   include questnode.lkod
+
    default_cargo_desc = "whatchamacallit"
    default_monster_desc = "monster"
    default_message_desc = "message"
@@ -613,7 +615,7 @@ messages:
       if Send(oQuestEngine,@GetQuestNodeAssignHint,
               #index=piQuestNodeTemplateIndex) <> $
       { 
-         for oQuester in Send(poQuest,@GetQuesters)
+         foreach oQuester in Send(poQuest,@GetQuesters)
          {
             % Have to substitute each time, in case player %NAME is
             %  substituted.
@@ -634,7 +636,7 @@ messages:
                                     #index=piQuestNodeTemplateIndex );
 
       % Give the player(s) the quest and questnode to keep track of.
-      for oQuester in Send(poQuest,@GetQuesters)
+      foreach oQuester in Send(poQuest,@GetQuesters)
       {
          Send(oQuester,@AddCurrentQuest,#node=self,
                #template=Send(poQuest,@GetQuestTemplateIndex));
@@ -656,7 +658,7 @@ messages:
       if piStatus <> QN_STATUS_WAITING_FOR_PLAYERS
       {
          bOnQuest = FALSE;
-         for oQuester in Send(poQuest,@GetQuesters)
+         foreach oQuester in Send(poQuest,@GetQuesters)
          {
             if oQuester = who_tried
             {
@@ -773,7 +775,7 @@ messages:
       {
          bFound = FALSE;
          % First see if there are any charmed by the quester.
-         for lMonster in Send(Send(who_tried,@GetOwner),@GetHolderActive)
+         foreach lMonster in Send(Send(who_tried,@GetOwner),@GetHolderActive)
          {
             oMonster = first(lMonster);
             if IsClass(oMonster,GetClass(poMonster))
@@ -788,7 +790,7 @@ messages:
          % next see if there are any uncharmed.
          if NOT bFound
          {
-            for lMonster in Send(Send(who_tried,@GetOwner),@GetHolderActive)
+            foreach lMonster in Send(Send(who_tried,@GetOwner),@GetHolderActive)
             {
                oMonster = first(lMonster);
                if IsClass(oMonster, GetClass(poMonster))
@@ -874,7 +876,7 @@ messages:
          OR (piDeadline-GetTime()) >= 1
       {
          % deadline met, or not yet started (for first node)
-         for lPrize in Send(oQuestEngine,@GetRandomPrizeFromQuestNodeTemplate,
+         foreach lPrize in Send(oQuestEngine,@GetRandomPrizeFromQuestNodeTemplate,
                             #index=piQuestNodeTemplateIndex)
          {
             Send(self,@AwardPrizeOrPenalty,#prize=lPrize,
@@ -886,7 +888,7 @@ messages:
                  #index=piQuestNodeTemplateIndex) <> $
          { 
             sSay = CreateString();
-            for oQuester in lQuesters
+            foreach oQuester in lQuesters
             {
                % Have to substitute each time, in case player %NAME is
                %  substituted.
@@ -915,7 +917,7 @@ messages:
       piStatus = QN_STATUS_COMPLETED;
       if NOT Send(poQuest,@QuestHasMoreNodes)
       {
-         for oQuester in lQuesters
+         foreach oQuester in lQuesters
          {
             Send(oQuester,@AddQuestHistory,
                  #index=Send(poQuest,@GetQuestTemplateIndex),
@@ -963,7 +965,7 @@ messages:
          return;
       }
 
-      for oQuest in lActiveQuests
+      foreach oQuest in lActiveQuests
       {
          if Send(oQuest,@IsWaitingForActivation)
          {
@@ -1019,10 +1021,10 @@ messages:
          % number of tied guilds
          n3 = 0;  
 
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             n1 = 0;
-            for i in recipients
+            foreach i in recipients
             {
                if Send(oQuester,@GetGuild) = Send(i,@GetGuild)
                {
@@ -1064,12 +1066,12 @@ messages:
    {
       local oQuester, oGuildShield, i, iInsignia;
 
-      for oQuester in recipients
+      foreach oQuester in recipients
       {
          if Send(oQuester,@PossessesA,#class=&GuildShield)
          {
             oGuildShield = $;
-            for i in Send(oQuester,@GetPlayerUsing)
+            foreach i in Send(oQuester,@GetPlayerUsing)
             {
                if IsClass(i,&GuildShield)
                {
@@ -1081,7 +1083,7 @@ messages:
 
             if oGuildShield = $
             {
-               for i in Send(oQuester,@GetHolderPassive)
+               foreach i in Send(oQuester,@GetHolderPassive)
                {
                   if IsClass(i,&GuildShield)
                   {
@@ -1191,7 +1193,7 @@ messages:
          cPrizeClass = Nth(prize,2);
          iAmount = Nth(prize,3);
 
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             oPrize = Create(cPrizeClass,#number=iAmount,#guildMember=oQuester,
                             #quester=oQuester);
@@ -1220,7 +1222,7 @@ messages:
 
       if iPrizeType = QN_PRIZETYPE_STATISTIC
       {
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             % Prize is a boost of given statistic by amount
             iPrizeStat = Nth(prize,2);
@@ -1291,7 +1293,7 @@ messages:
          % Format for a prize entry of this type:
          % [ QN_PRIZETYPE_TRAINING_POINTS, amount ]
 
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             Post(oQuester,@AddTrainingPoints,#points=Nth(prize,2));
          }
@@ -1304,7 +1306,7 @@ messages:
          % Format for a prize entry of this type:
          % [ QN_PRIZETYPE_EXPERIENCE_POINTS, amount ]
 
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             Send(oQuester,@AddGainChance,#iAmount=Nth(prize,2));
             Post(oQuester,@RollForTougher,#iLevel=Send(oQuester,@GetBaseMaxHealth));
@@ -1315,7 +1317,7 @@ messages:
 
       if iPrizeType = QN_PRIZETYPE_BOON
       {
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             % A temporary boost/reduction of given statistic by amount
             iPrizeBoon = Nth(prize,2);
@@ -1400,7 +1402,7 @@ messages:
 
       if( iPrizeType = QN_PRIZETYPE_FACTION )
       {
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             iPrizeFaction = Nth(prize,2);
 
@@ -1586,7 +1588,7 @@ messages:
          % format for a prize entry of this type:
          %     [ QN_PRIZETYPE_OUTLAW ]
 
-         for oQuester in recipients
+         foreach oQuester in recipients
          {
             iPrizeBoon = Nth([QN_PRIZE_BOON_INTELLECT,
                               QN_PRIZE_BOON_AIM,
@@ -1606,6 +1608,11 @@ messages:
       Debug("AwardPrizesOrPenalties got unknown prize type",iPrizeType);
 
       return;
+   }
+
+   GetQuesters()
+   {
+      return Send(poQuest,@GetQuesters);
    }
 
    GetCargo()
@@ -1647,7 +1654,7 @@ messages:
          return FALSE;
       }
 
-      for oQuester in Send(poQuest,@GetQuesters)
+      foreach oQuester in Send(poQuest,@GetQuesters)
       {
          if killing_player = oQuester
          {
@@ -1750,7 +1757,7 @@ messages:
       lQuesters = Send(poQuest,@GetQuesters);
 
       % penalties to the participants
-      for lPenalty in Send(oQuestEngine,@GetRandomPenaltyFromQuestNodeTemplate,
+      foreach lPenalty in Send(oQuestEngine,@GetRandomPenaltyFromQuestNodeTemplate,
                            #index=piQuestNodeTemplateIndex)
       {
          Send(self,@AwardPrizeOrPenalty,#prize=lPenalty,#recipients=lQuesters);
@@ -1763,7 +1770,7 @@ messages:
          sSay = CreateString();
 
          lQuesters = Send(poQuest,@GetQuesters);
-         for oQuester in lQuesters
+         foreach oQuester in lQuesters
          {
             % have to substitute each time, in case player %NAME is substituted
             SetString(sSay,Send(oQuestEngine,@GetQuestNodeFailureHint,
@@ -1781,7 +1788,7 @@ messages:
       % clear our memory of the quest we just activated
       poQuestActivated = $;
    
-      for oQuester in lQuesters
+      foreach oQuester in lQuesters
       {
          Send(oQuester,@AddQuestHistory,
               #index=Send(poQuest,@GetQuestTemplateIndex),

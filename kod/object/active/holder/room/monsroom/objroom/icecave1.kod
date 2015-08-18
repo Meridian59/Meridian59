@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include icecave1.lkod
+
    room_Icecave1 = icecave1.roo
    room_name_Icecave1 ="The Dreaded Caves of Ice"
    Icecave1_music = castle.mp3
@@ -123,7 +125,7 @@ messages:
       ptYeti_gen = $;
       bFound = FALSE;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&yeti)
@@ -257,7 +259,7 @@ messages:
       lFound = Send(self,@FindUsersInArea,#lArea=plNode_area);
       if lFound <> $
       {
-         for i in lFound
+         foreach i in lFound
          {
             Send(self,@Teleport,#what=i);
          }

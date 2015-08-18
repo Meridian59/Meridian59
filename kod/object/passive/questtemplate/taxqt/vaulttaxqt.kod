@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include vaulttaxqt.lkod
+
    % Quest description.
    vaulttaxqt_name_rsc = "vault tax quest"
    vaulttaxqt_desc_rsc = \
@@ -94,35 +96,35 @@ messages:
                #quest_node_index=QNT_ID_VAULT_TAX_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueVaultman)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueVaultman)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBanker)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBanker)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosBanker)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosBanker)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBartender)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBartender)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -161,7 +163,7 @@ messages:
             #timelimit=2 * 3600,#quest_node_index=QNT_ID_VAULT_TAX_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

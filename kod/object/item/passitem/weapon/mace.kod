@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mace.lkod
+
    mace_name_rsc = "mace"
    mace_icon_rsc = mace.bgf
    mace_desc_rsc = \

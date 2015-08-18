@@ -16,10 +16,13 @@ constants:
 
 resources:
 
+   include gem.lkod
+
    gem_name_rsc = "mystical gem"
    gem_icon_rsc = emerald.bgf
-   gem_desc = "This strange gem seems to gravitate powerfully towards your armor."
-   
+   gem_desc = \
+      "This strange gem seems to gravitate powerfully towards your armor."
+   gem_attached_rsc = "\nAn attached %s adds a strange mystical effect."
    gem_attach_no_sockets = "The %s has no sockets for attaching a gem!"
 
 classvars:
@@ -27,10 +30,9 @@ classvars:
    vrName = gem_name_rsc
    vrIcon = gem_icon_rsc
    vrDesc = gem_desc
-
    viUse_type = ITEM_SINGLE_USE
    viItem_type = ITEMTYPE_GEM
-   
+
 properties:
 
    poSocketedObject = $
@@ -38,7 +40,7 @@ properties:
    viObject_flags = OF_APPLYABLE
 
 messages:
-   
+
    ReqNewApply(what = $,apply_on = $)
    {
       if Send(self,@ReqAttach)
@@ -48,70 +50,71 @@ messages:
 
       return FALSE;
    }
-   
+
    ReqAttach(socketed_object = $)
    {
       if poSocketedObject <> $
       {
-         return false;
+         return FALSE;
       }
-      
-      return true;
+
+      return TRUE;
    }
-   
+
    NewApplied(what = $,apply_on = $)
    {
       local oObjectAtt;
-      
-      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+
+      foreach oObjectAtt in Send(apply_on,@GetObjectAttributes)
       {
          if IsClass(oObjectAtt,&DefModSockets)
          {
             Send(oObjectAtt,@AttachGem,#who=what,#oGem=self);
+
             return;
          }
       }
-      
-      Send(what,@MsgSendUser,#message_rsc=gem_attach_no_sockets,#parm1=Send(apply_on,@GetName));
-      
+
+      Send(what,@MsgSendUser,#message_rsc=gem_attach_no_sockets,
+            #parm1=Send(apply_on,@GetName));
+
       return;
    }
-   
+
    SetSocketedObject(socketed_object = $)
    {
       poSocketedObject = socketed_object;
+
       return;
    }
-   
+
    AttributeDesc()
    {
-      AppendTempString("An attached ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" adds a strange mystical effect. ");
-      
+      AddPacket(4,gem_attached_rsc, 4,Send(self,@GetName));
+
       return;
    }
-   
+
    ModifyDamage(damage=$)
    {
       return damage;
    }
-   
+
    ModifyHitRoll(hit_roll=$)
    {
       return hit_roll;
    }
-   
+
    ModifyDefenseDamage(damage=$)
    {
       return damage;
    }
-   
+
    ModifyDefensePower(defense_power=$)
    {
       return defense_power;
    }
-   
+
    ModifyResistance(resistance_list=$)
    {
       return resistance_list;
@@ -123,8 +126,9 @@ messages:
       {
          Send(poSocketedObject,@DeleteGemFromSockets,#oGem=self);
       }
+
       propagate;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

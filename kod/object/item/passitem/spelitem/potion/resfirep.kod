@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resfirep.lkod
+
    ResistFirePotion_name_rsc = "succulent salve"
    %ResistFirePotion_icon_rsc = potion01.bgf
    ResistFirePotion_desc_rsc = "This is a glass vial of colored liquid.  "

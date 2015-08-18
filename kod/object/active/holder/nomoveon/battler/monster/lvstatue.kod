@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include lvstatue.lkod
+
    LivingStatue_name_rsc = "statue"
    LivingStatue_active_name_rsc = "living statue"
 
@@ -261,7 +263,7 @@ messages:
          ptRemainDormant = $;
       }
 
-      for oUsedItem in plUsing
+      foreach oUsedItem in plUsing
       {
          Send(oUsedItem,@Delete);
       }
@@ -353,7 +355,7 @@ messages:
 
       Send(poOwner,@SomethingChanged,#what=self);
 
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj=Send(poOwner,@HolderExtractObject,#data=i);
          if isClass(each_obj,&User) AND Send(each_obj,@GetKillTarget) = self 
@@ -863,7 +865,7 @@ messages:
       iLeft_group = 1;
       iRight_group = 1;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          % Bows can have more than 1.
          iOverlays = iOverlays + Send(i,@GetNumberOverlays);
@@ -919,7 +921,7 @@ messages:
          AddPacket(1,ANIMATE_NONE, 2,1);
       }
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          Send(i,@SendOverlayInformation,#iAnimation=$);
       }
@@ -947,7 +949,7 @@ messages:
       iLeft_group = 1;
       iRight_group = 1;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          % Bows can have more than 1.
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,
@@ -1027,7 +1029,7 @@ messages:
          AddPacket(1,ANIMATE_NONE, 2,1); 
       }
       
-      for i in plOverlays
+      foreach i in plOverlays
       {
          Send(i,@SendOverlayInformation,#iAnimation=piAnimation);
       }
@@ -1053,7 +1055,7 @@ messages:
    {
       local i;
 
-      for i in plOverlays
+      foreach i in plOverlays
       {
          if i = what
          {

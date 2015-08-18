@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include blind.lkod
+
    blind_name_rsc = "blind"
    blind_icon_rsc = iblind.bgf
    blind_desc_rsc = \
@@ -107,7 +109,7 @@ messages:
       % multiple checks of every item in the target's inventory.
       if IsClass(target,&Player)
       {
-         for i in Send(target,@GetHolderPassive)
+         foreach i in Send(target,@GetHolderPassive)
          {
             if IsClass(i,&BreakRodBlind)
                AND Send(i,@IsActive)
@@ -121,7 +123,7 @@ messages:
 
       if IsClass(who,&Player)
       {
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if IsClass(i,&BreakRodBlind)
                AND Send(i,@IsSecondaryActive)

@@ -1,0 +1,11 @@
+room_name_JasperWest = de "West Jasper"
+jasper_factory_closed = de \
+   "Seit die Minen aufgegeben wurden, wurde auch diese Farbik geschlossen."
+jasper_yevitan_rsc = de \
+   "Obwohl es schon sehr mitgenommen aussieht, hält Yevitans Haus jeglichen "
+   "Betretungsversuchen stand."
+jasper_bank_closed_rsc = de \
+   "Kein Zutritt! Eigentum der königlichen Bank von Jasper."
+jasper_hard_times_rsc = de "Das Wohnhaus wurde in schweren Zeiten verlassen."
+jasper_tenement = de "Das Mietshaus ist verlassen."
+jasper_schoolmarm_rsc = de "Das Schulgebäude ist verfallen."

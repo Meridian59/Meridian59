@@ -1,0 +1,11 @@
+% Quest description.
+soldierqt_kill_rsc = de \
+   "%s will admit you to the ranks of %s soldiers, but first you "
+   "must slay %s%s at one of the flagpoles placed around the world.  "
+   "Complete this task and return to %s."
+
+soldierqt_return_rsc = de \
+   "Return to %s and inform %s that you have completed your task."
+
+% Quest resources.
+faction_soldier_trigger = de "Soldat"

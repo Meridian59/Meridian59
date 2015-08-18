@@ -1,0 +1,10 @@
+SecondWind_name_rsc = de "Zweiter Atem"
+SecondWind_desc_rsc = de \
+   "Der zweite Atem gibt dem starken Abenteurer die nötige Ausdauer um weiterzukämpfen "
+   "selbst wenn er erschöpft ist. Kurz vor der völligen Erschöpfung gibt "
+   "diese Fähigkeit neue Energie. Für eine kurze Zeit danach kann man sich "
+   "allerdings weder durch Essen noch Rasten erholen."
+SecondWind_skill_intro = de \
+   "Waffenfertigkeit Level 4: Der zweite Atem gibt dem starken Abenteurer "
+   "die nötige Ausdauer um weiterzukämpfen."
+SecondWind_success = de "Du ergreifst deinen zweiten Atem!"

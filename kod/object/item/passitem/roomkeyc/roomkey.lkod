@@ -1,0 +1,12 @@
+RoomKey_name_rsc = de "Ein goldener Zimmerschlüssel."
+RoomKey_desc_rsc = de \
+   "Dieser solide, goldene Schlüssel trägt die Beschriftung:\n%q's Zimmer "
+   "in der %s."
+RoomKey_vanishes = de \
+   "Dein goldener Zimmerschlüssel schmilzt zu einer seltsam gelben Flüssigkeit "
+   "und verdampft wenig später in einer grünen Dunstwolke."
+RoomKey_teleport = de \
+   "Als Du den Schlüssel ins Schlüsselloch steckst, umgibt Dich ein helles "
+   "weißes Licht und Du befindest Dich plötzlich woanders."
+RoomKey_no_use = de \
+   "Es scheint nichts in der Nähe zu sein, um den Schlüssel zu benutzen."

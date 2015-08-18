@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include minigame.lkod
+
    minigame_name_rsc = "game board"
    minigame_icon_rsc = marblplr.bgf
    minigame_desc_rsc = "A game."
@@ -86,7 +88,7 @@ messages:
       % Unload module for players, so that they don't send any messages to a 
       % deleted object
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 Send(i, @UserUnloadModule, #module = vrModule);
       }
@@ -100,7 +102,7 @@ messages:
 
       room = Send(SYS, @UtilGetRoom, #what = self);
       
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if Send(SYS, @UtilGetRoom, #what = i) = room
 	 {
@@ -124,7 +126,7 @@ messages:
       % See if already a player
       player_num = piNumPlayers;   % Count down, since added to list in reverse order
       found = False;
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if i = who
 	 {
@@ -140,7 +142,7 @@ messages:
 	 {
 	    % Game is full--become an observer
 	    found = False;
-	    for i in plObservers
+	    foreach i in plObservers
 	    {
 	       if i = who
 	       {
@@ -199,7 +201,7 @@ messages:
       % Make sure that "who" is playing the game
       found = False;
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if i = who
 	 {
@@ -217,7 +219,7 @@ messages:
       Send(self, @SetAppearance);
 
       % Send new state to players
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if (i <> who)
 	 {
@@ -226,7 +228,7 @@ messages:
       }
 
       % Send new state to observers--remove from list if not in same room as game
-      for i in plObservers
+      foreach i in plObservers
       {
 	 if Send(SYS, @UtilGetRoom, #what = i) = Send(SYS, @UtilGetRoom, #what = self)
 	 {
@@ -250,7 +252,7 @@ messages:
       % Make sure that "who" is playing the game
       found = False;
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if i = who
 	 {
@@ -284,7 +286,7 @@ messages:
 	 propagate;
       }
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if (i = what)
 	 {
@@ -334,14 +336,14 @@ messages:
 
       % being picked up by a user; keep game going but kick off any users watching
 
-      for i in plObservers
+      foreach i in plObservers
       {
 	 Send(i, @UserUnloadModule, #module = vrModule);
 	 % XXX Send message here
       }
       plObservers = $;
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 if (i <> what)
 	 {
@@ -359,7 +361,7 @@ messages:
       local i, player_num;
 
       player_num = piNumPlayers;   % Count down, since added to list in reverse order
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 Send(who, @GamePlayerSendUser, #who = i, #num = player_num);
 	 player_num = player_num - 1;
@@ -372,7 +374,7 @@ messages:
    {
       local i;
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 Send(i, @GamePlayerSendUser, #who = who, #num = player_num);
       }
@@ -385,13 +387,13 @@ messages:
       local i;
 
       % Remove players and observers
-      for i in plObservers
+      foreach i in plObservers
       {
 	 Send(i, @UserUnloadModule, #module = vrModule);
       }
       plObservers = $;
 
-      for i in plPlayers
+      foreach i in plPlayers
       {
 	 Send(i, @UserUnloadModule, #module = vrModule);
       }

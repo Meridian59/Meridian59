@@ -19,19 +19,19 @@ resources:
    gem_remove_name_rsc = "jeweller's chisel"
    gem_remove_icon_rsc = wand6.bgf
    gem_remove_desc_rsc = \
-	"This wand has a rather mundane use - rather than casting a spell, its sturdy "
-    "construction and anti-magic properties will help you physically pry gems from the armor to which they are attached."
-    
-    gem_remove_not_while_wearing = "You can't pry gems from your armor while you're wearing it!"
-    
-    gem_remove_work_complete = "The chisel shatters as the final gem pops free."
-	
+      "This wand has a rather mundane use - rather than casting a spell, "
+      "its sturdy construction and anti-magic properties will help you "
+      "physically pry gems from the armor to which they are attached."
+    gem_remove_not_while_wearing = \
+      "You can't pry gems from your armor while you're wearing it!"
+    gem_remove_work_complete = \
+      "The chisel shatters as the final gem pops free."
+
 classvars:
-   
+
    vrName = gem_remove_name_rsc
    vrIcon = gem_remove_icon_rsc
    vrDesc = gem_remove_desc_rsc
-
    viValue_average = 25000
    viWeight = 0
    viBulk = 0
@@ -43,15 +43,15 @@ messages:
    ReqNewApply(what = $,apply_on = $)
    {
       local oObjectAtt, i;
-      
+
       if Send(apply_on,@GetOwner) <> what
       {
          return FALSE;
       }
-      
-      If IsClass(what,&Player)
+
+      if IsClass(what,&Player)
       {
-         for i in Send(what,@GetPlayerUsing)
+         foreach i in Send(what,@GetPlayerUsing)
          {
             if apply_on = i
             {
@@ -60,10 +60,10 @@ messages:
             }
          }
       }
-      
-      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+
+      foreach oObjectAtt in Send(apply_on,@GetObjectAttributes)
       {
-         If IsClass(oObjectAtt,&DefModSockets)
+         if IsClass(oObjectAtt,&DefModSockets)
             AND Send(oObjectAtt,@GetSocketed) <> $
          {
             return TRUE;
@@ -72,23 +72,24 @@ messages:
 
       return FALSE;
    }
-   
+
    NewApplied(what = $,apply_on = $)
    {
       local oObjectAtt;
-      
-      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+
+      foreach oObjectAtt in Send(apply_on,@GetObjectAttributes)
       {
          if IsClass(oObjectAtt,&DefModSockets)
          {
             Send(oObjectAtt,@RemoveGems,#who=what);
+
             return;
          }
       }
-      
+
       Send(what,@MsgSendUser,#message_rsc=gem_remove_work_complete);
       Send(self,@Delete);
-      
+
       return;
    }
 

@@ -29,26 +29,24 @@ constants:
 
 resources:
 
+   include wapunish.lkod
+
    weapattpunisher_desc = \
-      " The emblem of a fist holding an ankh rests in the pommel of "
-      "this weapon, promising "
-   weapattpunisher_desc2 = " advantage in the fight for justice."
+      "  The emblem of a fist holding an ankh rests in the pommel of "
+      "this weapon, promising %s advantage in the fight for justice."
    punisher_fail_use = \
       "As you grab the hilt of %s%s, you scream out in pain and let go!"
    weapattpunisher_name = "%s of the just"
-
    punisher_dm = "punisher"
 
 classvars:
 
    vrDesc = weapattpunisher_desc
-   vrDesc2 = weapattpunisher_desc2
+   vbPowerDesc = TRUE
    viItem_Att_Num = WA_PUNISHER
-
    viDifficulty = 7
    vrName = weapattpunisher_name
    vrDM_trigger = punisher_dm
-
    vbAppears_in_Happyland = FALSE
 
 properties:
@@ -63,7 +61,7 @@ messages:
 
    InitialPower(oItem=$)
    {
-      if oItem = $ 
+      if oItem = $
       {
          Debug("This shouldn't have happened!");
 
@@ -156,7 +154,7 @@ messages:
       lUsing = Send(oPlayer,@GetPlayerUsing);
       bUsingAmulet = FALSE;
 
-      for oUsedItem in lUsing
+      foreach oUsedItem in lUsing
       {
          if IsClass(oUsedItem,&NecromancerAmulet)
          {

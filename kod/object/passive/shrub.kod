@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shrub.lkod
+
    shrub_icon_rsc = shrub.bgf
    shrub_name_rsc = "shrub"
    shrub_desc_rsc = "This is a woody plant with multiple permanent stems branching near the ground."

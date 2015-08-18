@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include discord.lkod
+
    discordance_name_rsc = "discordance"
    discordance_icon_rsc = idiscord.bgf
    discordance_desc_rsc = \
@@ -113,7 +115,7 @@ messages:
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=discordance_on,#what=self);
       Send(self,@DoDiscordance,#oRoom=oRoom,#iChance=iSpellPower);
 
-      for i in Send(who,@GetRadiusEnchantments)
+      foreach i in Send(who,@GetRadiusEnchantments)
       {
          if iSpellPower = $
             OR Random(1,100) < iSpellPower
@@ -166,7 +168,7 @@ messages:
          iNumEnchantments = length(lEnchantments);
       }
 
-      for oEnchantment in lEnchantments
+      foreach oEnchantment in lEnchantments
       {
          oSpell = Nth(oEnchantment,2);
          iModifiedChance = iChance;

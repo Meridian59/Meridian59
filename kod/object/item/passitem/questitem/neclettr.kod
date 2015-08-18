@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include neclettr.lkod
+
    NecromancerLetter_name_rsc = "sinister parchment"
    NecromancerLetter_icon_rsc = necscrol.bgf
    NecromancerLetter_desc_rsc = \

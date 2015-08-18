@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include mysterymobqt.lkod
+
    % Quest description.
    mysterymobquest_icon_rsc = scr10.bgf
    mysterymobquest_name_rsc = "mystery monster quest"
@@ -145,7 +147,7 @@ messages:
                #quest_node_index=QNT_ID_MYSTERY_MONSTER_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_TAILOR,
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_TAILOR,
                            #onIsland=FALSE)
          {
             lNPCs = Cons(oNPC, lNPCs);

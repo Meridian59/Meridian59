@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include magicbow.lkod
+
    MagicBow_name_rsc = "magic bow"
    MagicBow_desc_rsc = \
       "Crafted by the gods, this bow hums with magical power."

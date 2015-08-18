@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include soldierqt.lkod
+
    % Quest description.
    soldierqt_kill_rsc = \
       "%s will admit you to the ranks of %s soldiers, but first you "

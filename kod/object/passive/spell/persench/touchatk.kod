@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include touchatk.lkod
+
    TouchAttackSpell_name_rsc = "Touch Spell"
    TouchAttackSpell_icon_rsc = light.bgf
    TouchAttackSpell_desc_rsc = "This is a touch spell that does damage."
@@ -27,10 +29,14 @@ resources:
    TouchAttack_Succeed_rsc = \
       "You have cast a touch attack on another player.  This is a bug.  "
       "Please report it.  Have a nice day."
+
+   touchattack_enchantment_rsc = \
+      "\n\nYour current %s enchantment will deal %i - %i base %s damage."
+
    TouchAttack_missed1_sound = swswish1.wav
    TouchAttack_missed2_sound = swswish2.wav
    TouchAttack_missed3_sound = swswish3.wav
-   
+
    TouchAttack_hit_sound = patk.wav
 
 classvars:
@@ -455,18 +461,13 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment will deal ");
-      AppendTempString(Send(self,@FindMinDamage,#who=who));
-      AppendTempString("-");
-      AppendTempString(Send(self,@FindMaxDamage,#who=who));
-      AppendTempString(" base ");
-      AppendTempString(Send(SYS,@GetSpellDamageTypeName,#type=(viSpellType & ~ATCK_SPELL_ALL)));
-      AppendTempString(" damage.");
+      AddPacket(4, touchattack_enchantment_rsc, 4, Send(self,@GetName),
+                4, Send(self,@FindMinDamage,#who=who),
+                4, Send(self,@FindMaxDamage,#who=who),
+                4, Send(SYS,@GetSpellDamageTypeName,
+                        #type=(viSpellType & ~ATCK_SPELL_ALL)));
 
-      propagate;
+      return;
    }
 
 end

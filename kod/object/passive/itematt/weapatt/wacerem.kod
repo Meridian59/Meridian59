@@ -27,20 +27,21 @@ constants:
    include blakston.khd
 
 resources:
-   weapattcerem_desc = " Beautiful and ornate, this weapon is obviously "
-      "unsuitable for blood combat, though it might provide "
-   weapattcerem_desc2 = " edge in games and tourneys."
-   weapatt_ceremonial_name = "ceremonial %s"
 
+   include wacerem.lkod
+
+   weapattcerem_desc = \
+      "  Beautiful and ornate, this weapon is obviously unsuitable for blood "
+      "combat, though it might provide %s edge in games and tourneys."
+   weapatt_ceremonial_name = "ceremonial %s"
    ceremonial_dm = "ceremonial"
 
 classvars:
 
    vrDesc = weapattcerem_desc
-   vrDesc2 = weapattcerem_desc2
+   vbPowerDesc = TRUE
    viItem_Att_Num = WA_CEREMONIAL
    viDamage_bonus = 2
-
    viDifficulty = 5
    vrDM_Trigger = ceremonial_dm
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include eventtxt.lkod
+
    EventText_1 = "Burnt-out amulet of the three"
    EventText_2 = "This is a fused hunk of metal that looks like it used to be an amulet of the three.  It appears worthless now."
    EventText_3 = "3"

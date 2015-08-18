@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include focus.lkod
+
    manafocus_name_rsc = "mana focus"
    manafocus_icon_rsc = imanafoc.bgf
    manafocus_desc_rsc = \
@@ -25,7 +27,8 @@ resources:
       "increasing the damage of natural elemental attack spells. "
       "Dissipates if your concentration is broken.  "
       "Requires one mushroom to cast."
-
+   manafocus_enchantment_rsc = \
+      "\n\nYour current %s enchantment was cast with %i spellpower."
    manafocus_on = "You feel newly focused magic raging through your body."
    manafocus_break_trance = "You have lost your mana focus."
    manafocus_already_enchanted = "You already have %s%s."
@@ -108,13 +111,9 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment was cast with ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString(" spellpower.");
-
+      AddPacket(4,manafocus_enchantment_rsc, 4,Send(self,@GetName),
+                4,Send(who,@GetEnchantedState,#what=self));
+      
       return;
    }
 

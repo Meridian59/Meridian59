@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include dukeloyaltyqt.lkod
+
    % Quest description.
    dukeloyalty_icon_rsc = dukeneph.bgf
    dukeloyalty_name_rsc = "Duke loyalty quest"
@@ -133,19 +135,19 @@ messages:
                #quest_node_index=QNT_ID_DUKE_LOYALTY_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperTown)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARD,
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARD,
                            #cNPC_class=&Minstrel)
          {
             lNPCs = Cons(oNPC, lNPCs);

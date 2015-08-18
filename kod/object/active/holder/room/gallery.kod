@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gallery.lkod
+
    room_gallery = univ.roo
    room_name_gallery = "object gallery"
    gallery_music = main.mp3

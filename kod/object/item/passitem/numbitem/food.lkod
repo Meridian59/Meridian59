@@ -1,0 +1,3 @@
+food_desc_rsc = de "%s\n\nDies wird den Hunger stillen.%s"
+food_use = de "Lecker, lecker, lecker!"
+food_cant_use_on = de "Du kannst %s%s nicht füttern"

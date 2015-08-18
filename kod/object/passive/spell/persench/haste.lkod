@@ -1,0 +1,15 @@
+Haste_name_rsc = de "Hast"
+Haste_desc_rsc = de \
+   "Sorgt dafür, dass Du nicht so schnell ermüdest, wenn Du mit voller Kraft "
+   "läufst. Der Zauber benötigt genießbare Pilze."
+Haste_on_rsc = de \
+   "Dein Blut beginnt zu kribbeln, und du fühlst, wie deine Müdigkeit verschwindet."
+Haste_off_rsc = de \
+   "Du fühlst, dass deine Müdigkeit wieder zum Normalzustand zurückkehrt."
+Haste_already_enchanted_rsc = de \
+   "Du bist bereits wach, noch wacher kann dich selbst ein Zauber nicht machen."
+Haste_success_rsc = de "%s%s ist nun mit deiner magischen Energie aufgeladen."
+Haste_spell_intro = de \
+   "Kraanan Level 2: Sorgt dafür, dass Du nicht so schnell ermüdest."
+haste_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber reduziert dein Ausdauerverlust um %i%%."

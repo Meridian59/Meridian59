@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include throne2.lkod
+
    name_throne2 = "The Throne Room of Victoria Castle" 
    room_throne2 = throne2.roo
 
@@ -118,7 +120,7 @@ messages:
          ptGhost = CreateTimer(self,@GhostTimer,iTime);
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(Send(self,@HolderExtractObject,#data=i),&Ghost)
          {

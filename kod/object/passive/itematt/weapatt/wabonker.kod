@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include wabonker.lkod
+
    weapattbonker_desc = \
       " Mocker's signature flamboyantly emblazons the pommel."
    bonker_dm = "bonker"
@@ -33,7 +35,6 @@ resources:
 classvars:
 
    vrDesc = weapattbonker_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_BONKER
 

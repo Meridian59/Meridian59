@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tos.lkod
+
    room_name_tos = "The Streets of Tos"
    room_tos = tos.roo
    tos_music = tos.mp3

@@ -1,0 +1,8 @@
+SpellItemSplitter_name_rsc = de "Zaubergegenstand Zerteiler"
+SpellItemSplitter_desc_rsc = de "Dies ist ein Zaubergegenstand Zerteiler."
+splitter_cant_use_on = de "Du kannst kein Besitz von %s%s ergreifen."
+default_split_spell_item_rsc = de \
+   "Du kombinierst die Hälfte deiner %s in den Zerstörer, und erschaffst "
+   "einen Gegenstand der %d Ladungen mit %d Zauberkraft."
+cant_split = de "Es ist nicht genügend zu Zerteilen vorhanden!"
+item_no_split = de "Du kannst diesen Gegenstand nicht zerteilen!"

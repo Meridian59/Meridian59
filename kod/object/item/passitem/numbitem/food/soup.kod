@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include soup.lkod
+
    soup_name_rsc = "bowl of soup"
    soup_icon_rsc = soupbowl.bgf
    soup_desc_rsc = \

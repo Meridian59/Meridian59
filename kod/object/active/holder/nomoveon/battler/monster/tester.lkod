@@ -1,0 +1,6 @@
+name_test1 = de "test1.bgf"
+name_test2 = de "test2.bgf"
+name_test3 = de "test3.bgf"
+name_test4 = de "test4.bgf"
+tester_desc = de \
+   "Grafiktester. Verprügle mich, um zu dem nächsten bfg-Set zu schalten."

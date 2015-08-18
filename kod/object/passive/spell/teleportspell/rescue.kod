@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rescue.lkod
+
    rescue_name_rsc = "rescue"
    rescue_icon_rsc = rescuico.bgf
    rescue_desc_rsc = \
@@ -170,7 +172,7 @@ messages:
       % Default: Go to our home room.
       Post(who,@AdminGoToSafety);
 
-      for i in Send(Send(who,@GetOwner),@GetHolderActive)
+      foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
       {
          each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)

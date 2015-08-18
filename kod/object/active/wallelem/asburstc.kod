@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include asburstc.lkod
+
    ActiveSporeCloud_name_rsc = "thick fog"
    ActiveSporeCloud_icon_rsc = poisoncl.bgf
    ActiveSporeCloud_desc_rsc = \

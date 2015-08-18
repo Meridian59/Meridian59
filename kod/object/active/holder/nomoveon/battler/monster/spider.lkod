@@ -1,0 +1,8 @@
+spider_koc_name_rsc = de "teotkauilkinich"
+spider_name_rsc = de "Die Riesenspinne"
+spider_desc_rsc = de \
+   "Diese außergewöhnliche Kreatur schleicht sich getarnt an und schlägt "
+   "mit tödlicher Präzision zu."
+spider_illusion_poisoned = de \
+   "%s%s taumelt als Gift in den Adern von %s fließt."
+spider_dead_name_rsc = de "tote Riesenspinne"

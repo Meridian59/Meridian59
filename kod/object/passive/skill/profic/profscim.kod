@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profscim.lkod
+
    scimitarproficiency_name_rsc = "scimitar wielding"
    scimitarproficiency_icon_rsc = scimico.bgf
    scimitarproficiency_desc_rsc = "Allows for growth and strength in Meridian's most exotic weapon."

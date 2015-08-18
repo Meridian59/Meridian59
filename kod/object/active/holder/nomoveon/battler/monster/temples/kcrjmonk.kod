@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcrjmonk.lkod
+
    RiijaMonk_name_rsc = "Monk of Riija"
    RiijaMonk_icon_rsc = kcrjmonk.bgf
    RiijaMonk_desc_rsc = \
@@ -29,7 +31,9 @@ resources:
       "With a sickly sweet child's voice and an unwholesome look of innocence, "
       "the priestess of Riija welcomes you to her inner sanctum of unreality."
 
-   riijamonk_teach = "Through ~I~rRiija's madness, ~byou can learn "
+   riijamonk_teach = \
+      "Through ~I~rRiija's madness, ~byou can learn %s%s%s%s%s%s%s%s%s%s%s%s "
+      "at that level."
    riijamonk_notworthy = \
       "~II see ~gno evidence that ~byou~g are ready to ~rlearn."
    riijamonk_worthy = "~IAre you ~rprepared for ~I~B~fenlightenment?"
@@ -218,7 +222,7 @@ messages:
 
       bWorthy = FALSE;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if IsClass(i,&RiijaSword) AND Send(i,@GetQuester) = who
          {

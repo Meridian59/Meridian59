@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include lupking.lkod
+
    lupoggking_name_rsc = "lupogg king"
    lupoggking_icon_rsc = lupking.bgf
    lupoggking_desc_rsc = \
@@ -146,7 +148,7 @@ messages:
    {
       local i;
 
-      for i in plAttackers
+      foreach i in plAttackers
       {
          if i = what
          {
@@ -474,7 +476,7 @@ messages:
 
       if Send(poTarget,@IsEnchanted,#what=oHold)
       {
-         for i in lActive
+         foreach i in lActive
          {
             each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             iDistance = Send(self,@SquaredDistanceTo,#what=each_obj);
@@ -503,7 +505,7 @@ messages:
 
       NumAttackers = length(plAttackers);
 
-      for i in plAttackers
+      foreach i in plAttackers
       {
          if i = what
          {
@@ -583,7 +585,7 @@ messages:
    {
       local i, oSpell, lFinalTargets;
       
-      for i in plAttackers
+      foreach i in plAttackers
       {
          Send(i,@MsgSendUser,#message_rsc=angered_by_wall_element_msg,
                              #parm1=Send(what,@GetDef),

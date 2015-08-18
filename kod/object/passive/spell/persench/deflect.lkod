@@ -1,0 +1,25 @@
+Deflect_name_rsc = de "Reflektieren"
+Deflect_desc_rsc = de \
+   "Ruft die Kraft Kraanans um einen Schutzwall um das Ziel zu legen, um "
+   "es von direkt schädigenden Zaubersprüchen zu schützen. Andere Magie, "
+   "wie Verzauberungen behindert er nicht. Benötigt Phiolen mit Solagh und "
+   "Kriipa Klauen."
+Deflect_already_enchanted_rsc = de \
+   "Du bist bereits mit Reflektieren verzaubert."
+Deflect_on_rsc = de "Eine magische Barriere umgibt dich."
+Deflect_success_rsc = de "Du schaffst eine magische Barriere über %s%s."
+Deflect_off_rsc = de "Der Schutz der magischen Barriere verlässt dich."
+Deflect_spell_intro = de \
+   "Kraanan Level 4: Ruft die Kraft Kraanans um einen Schutzwall um das Ziel "
+   "zu legen, um es von direkt schädigenden Zaubersprüchen zu schützen. "
+Deflect_success_to_victim = de \
+   "Dein Reflektionsuaber lässt %ss Zauber von dir auf den Zauberer zurückspringen!"
+Deflect_success_to_caster = de \
+   "Eine mystische Barriere vor %s, sorgt dafür, dass dein Zauber auf dich "
+   "zurückspringt!"
+Deflect_failure_to_victim = de \
+   "Dein Reflektionszauber versucht %ss Zauber zurück springen zu lassen, "
+   "aber er ist nicht stark genug."
+deflect_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber reflektiert gegnerische Angriffe um "
+   "%i%% der Zeit."

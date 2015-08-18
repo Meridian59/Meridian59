@@ -1,0 +1,13 @@
+newbportal_desc_rsc = de \
+   "Solltest Du dieses Portal durchschreiten, verlierst Du Deine gesamte "
+   "Trainingsausrüstung und wirst in der eigentlichen Welt von Meridian wiedergeboren. "
+   "Ein Zurück nach Raza gibt es dann nicht mehr."
+newbportal_dead = de "Dieses Portal ist kalt und pulsiert nicht voller Energie."
+newbportal_enter = de \
+   "Du durchschreitest das Portal und beginnst Deine abenteuerliche Reise "
+   "durch die Welten des 59. Meridians!"
+newbportal_warning = de \
+   "~BWarnung~B: Wenn Du durch dieses Portal schreitest, wirst Du nicht in "
+   "der Lage sein, nach Raza zurückzukehren. Betrete dieses Portal erst dann, "
+   "wenn Du mit Deinen Fähigkeiten vertraut bist. Für weitere Informationen "
+   "lies (Rechtsklick) das Schild rechts neben diesem Portal."

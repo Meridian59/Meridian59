@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcapoth.lkod
+
    KocatanApoth_name_rsc = "Zala ix'Mecya"
    kocatanapoth_icon_rsc = kcapoth.bgf
    kocatanapoth_desc_rsc = \

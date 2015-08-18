@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include invitat.lkod
+
    invitation_name_rsc = "invitation"
    invitation_icon_rsc = scroll.bgf
 

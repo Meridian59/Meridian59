@@ -16,11 +16,13 @@ constants:
 
 resources:
 
+   include ghostitm.lkod
+
    ghostItem_name_rsc = "illusionary item"
    ghostItem_icon_rsc = music.bgf
    ghostItem_desc_rsc = \
       "An insubstantial image sits on the ground, unable to be picked up.  "
-      "The illusion appears to be "
+      "The illusion appears to be %s%s."
 
 classvars:  
 
@@ -52,12 +54,7 @@ messages:
 
    ShowDesc()
    {
-      ClearTempString();
-      AppendTempString(vrDesc);
-      AppendTempString(send(poObj,@GetInDef));
-      AppendTempString(send(poObj,@GetTrueName));
-      AppendTempString(".");
-      Addpacket(4,send(SYS,@GetPercentQRsc),4,GetTempString());
+      AddPacket(4,vrDesc, 4,Send(poObj,@GetInDef), 4,Send(poObj,@GetTrueName));
 
       return;
    }

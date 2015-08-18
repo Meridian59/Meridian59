@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include totem4.lkod
+
    TotemFour_name_rsc = "Ancient Shield"
    TotemFour_icon_rsc = qo09.bgf
    TotemFour_desc_rsc = "Thought to be an artifact from the Empire of the Nexus before this land was even "

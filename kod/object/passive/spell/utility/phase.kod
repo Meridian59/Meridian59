@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include phase.lkod
+
    Phase_name_rsc = "phase"
    Phase_icon_rsc = iboonint.bgf
    Phase_desc_rsc = \
@@ -82,6 +84,9 @@ resources:
 
    no_phasing_here_override_msg = \
       "A mysterious force prevents you from phasing out here."
+
+   phase_time_header = \
+      "\n\nYou have %r%r%r%r%r%r%r of %s time remaining."
 
 classvars:
 
@@ -265,7 +270,7 @@ messages:
       iHealth = Send(who,@GetHealth);
       iMaxHealth = Send(who,@GetMaxHealth);
 
-      for i in Send(oRoom,@GetplActive)
+      foreach i in Send(oRoom,@GetplActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 
@@ -323,7 +328,7 @@ messages:
       }
 
       oRoom = Send(who,@GetOwner);
-      for i in Send(oRoom,@GetplActive)
+      foreach i in Send(oRoom,@GetplActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
@@ -394,7 +399,7 @@ messages:
          return;
       }
 
-      for i in Send(oRoom,@GetplActive)
+      foreach i in Send(oRoom,@GetplActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
@@ -649,54 +654,44 @@ messages:
       return FALSE;
    }
 
-   GetStatsDesc(who=$)
+   SendTimeDesc(who=$)
    {
-      ClearTempString();
+      local iDuration;
 
-      if who <> $
-         AND IsClass(who,&User)
+      if who = $
+         OR NOT IsClass(who,&User)
       {
-         Send(self,@CreateStatsDesc,#who=who);
+         propagate;
       }
-
-      return GetTempString();
-   }
-
-   CreateStatsDesc(who=$)
-   {
-      local iDuration, iMinutes, iSeconds;
 
       % Always returns the remaining time as an integer.
       iDuration = Send(who,@GetRemainingPhaseTime);
       if iDuration = $
       {
-         return;
+         iDuration = 0;
       }
-
-      iDuration = iDuration;
-      iDuration = iDuration / 1000;
-      iMinutes = iDuration / 60;
-      iSeconds = iDuration MOD 60;
-
-      AppendTempString("\n\n");
-      AppendTempString("You have ");
-      if iMinutes > 0
+      else
       {
-         AppendTempString(iMinutes);
-         if iMinutes = 1
-         {
-            AppendTempString(" minute and ");
-         }
-         else
-         {
-            AppendTempString(" minutes and ");
-         }
+         iDuration = iDuration / 1000;
       }
 
-      AppendTempString(iSeconds);
-      AppendTempString(" seconds of phase time remaining.");
+      Send(self,@SendTimeRemaining,#iTime=iDuration);
 
-      return GetTempString();
+      return;
+   }
+
+   SendTimeRemainingHeader(parm1=$)
+   {
+      AddPacket(4,phase_time_header);
+
+      return;
+   }
+
+   SendTimeRemainingExtra()
+   {
+      AddPacket(4,Send(self,@GetName));
+
+      return;
    }
 
 end

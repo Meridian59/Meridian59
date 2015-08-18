@@ -1,0 +1,9 @@
+WallSpell_outlaw = de \
+   "\nHINWEIS: Wenn deine Sicherheit an ist, wird dieser Zauber keine Unschuldigen "
+   "verletzen.  Wenn deine Sicherheit aus ist, wirst du gesetzlos, wenn andere "
+   "Spieler dadurch verletzt werden."
+WallSpell_outlaw_murderer = de \
+   "\nHINWEIS: Wenn deine Sicherheit an ist, wird dieser Zauber keine Unschuldigen "
+   "verletzen.  Wenn deine Sicherheit aus ist, wirst du gesetzlos, wenn andere "
+   "Spieler dadurch verletzt werden oder ein Mörder wenn du jemanden tötest."
+WallSpell_failed_rsc = de "Schon zu viel Beschwörungszaubber im Raum."

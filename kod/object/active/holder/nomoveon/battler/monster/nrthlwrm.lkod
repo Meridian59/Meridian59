@@ -1,0 +1,8 @@
+NarthylWorm_koc_name_rsc = de "tepna'arthyl"
+NarthylWorm_name_rsc = de "Der Natterwurm"
+NarthylWorm_desc_rsc = de \
+   "Trotz seiner unirdischen Scheußlichkeit sind die geschmeidigen Bewegungen "
+   "des Natterwurmes stark hypnotisch. Ein tranceartiger Zustand überkommt "
+   "Dich, als Du, fast völlig abgedämpft, jeden Nerv in Deinem Körper Gefahr "
+   "schreien hörst."
+NarthylWorm_dead_name_rsc = de "toter Natterwurm"

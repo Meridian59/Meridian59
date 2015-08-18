@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fire.lkod
+
    fire_name_rsc = "fire"
    fire_icon_rsc = fibowico.bgf
    fire_desc_rsc = "Fire is the most basic technique used for shooting a missile weapon.  "
@@ -81,7 +83,7 @@ messages:
 
       oLikelyAmmo = $;
 
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
          {
@@ -96,7 +98,7 @@ messages:
          %% if the player doesn't have any arrows available and equipped,
          %% auto-equip the cheapest ones.
 
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if (Send(i,@GetItemUseType) = ITEM_USE_QUIVER)
                AND (Send(i,@GetAmmoType) = cAmmoType)

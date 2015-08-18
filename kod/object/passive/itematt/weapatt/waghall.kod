@@ -31,10 +31,11 @@ constants:
 
 resources:
 
-   weapattguildhalldesc= " The crest of "
-   weapattguildhalldesc2 = \
-      " is inscribed on the hilt of the weapon, suggesting "
-   weapattguildhalldesc3 = " bonus in the defense of that hall."
+   include waghall.lkod
+
+   weapattguildhalldesc = \
+      "  The crest of %s is inscribed on the hilt of the weapon, suggesting "
+      "%s bonus in the defense of that hall."
    weapattdefender_name = "%s of the defender"
 
    defender_dm = "guild hall defender"
@@ -281,14 +282,9 @@ messages:
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       }
 
-      AppendTempString(weapattguildhalldesc);
-
       oRoom = Send(SYS,@FindRoomByNum,#num=iData);
-      AppendTempString(Send(oRoom,@GetName));
-      AppendTempString(weapattguildhalldesc2);
-
-      AppendTempSTring(Send(self,@GetPowerDesc,#iPower=iPower));
-      AppendTempString(weapattguildhalldesc3);
+      AddPacket(4,weapattguildhalldesc, 4,Send(oRoom,@GetName),
+                4,Send(self,@GetPowerDesc,#iPower=iPower));
 
       return;
    }

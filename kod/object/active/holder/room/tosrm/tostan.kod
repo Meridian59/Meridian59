@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tostan.lkod
+
    room_tostan = tostan.roo
    room_name_tostan = "Abandoned Building"
    tostan_music = tos.mp3

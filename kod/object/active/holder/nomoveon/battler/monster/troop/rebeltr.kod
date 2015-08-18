@@ -16,6 +16,8 @@ include blakston.khd
 
 resources:
 
+   include rebeltr.lkod
+
    RebelTroop_name_rsc = "rebel soldier"
 
    RebelTroop_desc_rsc = \

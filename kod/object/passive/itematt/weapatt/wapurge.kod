@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include wapurge.lkod
+
    weapattpurger_desc = " The sign of Psychochild is engraved on the weapon."
    purger_fail_use = "You are not yet ready to use %s%s."
    purger_worked_user = "Your weapon tears at the magic surrounding %s%s."
@@ -36,13 +38,9 @@ resources:
 classvars:
 
    vrDesc = weapattpurger_desc
-   vrDesc2 = $
-
    viItem_Att_Num = WA_PURGER
-
    viDifficulty = 9
    vrDM_trigger = purger_dm
-
    vbAppears_in_Happyland = FALSE
 
 properties:
@@ -56,7 +54,7 @@ messages:
    ItemReqUse(oItem=$,oPlayer=$)
    {
       % this person needs 50% in the weapon's proficiency to use
-      if Send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50
       {
          Send(oPlayer,@MsgSendUser,#message_rsc=purger_fail_use,
               #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));

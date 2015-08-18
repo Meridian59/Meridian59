@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include block.lkod
    Block_name_rsc = "block"
    Block_icon_rsc = iblock.bgf
    Block_desc_rsc = "Block is a basic skill, allowing people in combat to block blows with a shield.  "

@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include potion.lkod
+
    Potion_name_rsc = "potion"
    Potion_label_name_rsc = "generic potion"
    Potion_icon_rsc = potion01.bgf
@@ -29,18 +31,15 @@ resources:
    Potion_bad_desc_rsc = \
       "This is a glass vial of slightly cloudy colored liquid.  "
       "A slight whiff of it is enough to turn your stomach."
-
    Potion_broken = "You quaff the contents of the vial in a single gulp."
    Potion_bad_drink = \
       "You choke down the foul-tasting contents of the vial, realizing almost "
       "immediately that this was a pretty bad idea.  Time has caused it to sour."
-
    Potion_sell_info = \
       "Be sure to drink this potion soon, dear, they go bad fairly quickly."
-
    Potion_has_karma_requirement = \
-      "Before drinking, make sure you have enough karma to cast the spell inside."
-
+      "\n\nBefore drinking, make sure you have enough karma to cast the "
+      "spell inside."
    Potion_gulp_sound = drkptn.wav
 
 classvars:
@@ -50,22 +49,16 @@ classvars:
    vrDesc = Potion_desc_rsc
    vrBroken = Potion_Broken
    vrKarmaDesc = Potion_has_karma_requirement
-
    viBulk = 20
    viWeight = 20
    viValue_average = 60
-
    viFilling = 10
-
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
-
    viPoisonPercent = 0
    viGoBadDamage = 0
    vbNoBrokenView = TRUE
-
    viGround_Group = 1
-
    viHits_init_min = 1
    viHits_init_max = 1
 
@@ -74,7 +67,6 @@ properties:
    vrName = Potion_name_rsc
    vrIcon = Potion_icon_rsc
    vrBroken = Potion_broken
-
    piMinSpellPower = 20
    piMaxSpellPower = 60
 
@@ -156,31 +148,6 @@ messages:
    {
       % Overriding because the superclass gives a "broken" message.  Oops.
       return;
-   }
-
-   AppendDesc()
-   {
-      if piSpellPower <> $
-         AND piHits <> 0
-      {
-         AppendTempString("\n\nThis potion contains ");
-         AppendTempString(piHits);
-
-         if piHits > 1
-         {
-            AppendTempString(" draughts");
-         }
-         else
-         {
-            AppendTempString(" draught");
-         }
-
-         AppendTempString(". The liquid within averages ");
-         AppendTempString(piSpellPower);
-         AppendTempString(" power.");
-      }
-
-      propagate;
    }
 
    SetPotionFlags()

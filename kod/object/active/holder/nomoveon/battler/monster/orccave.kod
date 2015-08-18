@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccave.lkod
+
    CaveOrc_Koc_name_rsc = "utom"
    CaveOrc_name_rsc = "cave orc"
    CaveOrc_icon_rsc = OrcCave.bgf

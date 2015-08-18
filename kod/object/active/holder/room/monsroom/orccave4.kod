@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orccave4.lkod
+
    room_orccave4 = oc04.roo
    room_name_orccave4 = "Aqueducts of Merb"
 

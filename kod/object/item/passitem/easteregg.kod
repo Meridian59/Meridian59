@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include easteregg.lkod
+
    ee_g_one_bgf = eegray1.bgf
    ee_g_two_bgf = eegray2.bgf
    ee_g_three_bgf = eegray3.bgf
@@ -44,69 +46,54 @@ resources:
       "Made from the finest dark chocolate from Barloque, this easter egg "
       "seems to be quite warm but unmelted.  You wonder at what magic "
       "keeps the egg in one piece."
-
    easteregg_eat = \
       "You unwrap the colored, waxy parchment from the egg and bite into "
       "the tasty chocolate."
-
    easteregg_eat_wav = eat.wav
    easteregg_cant_use_on = "You can't feed %s%s"
-
    easteregg_healed = "You feel revitalized as you regain ~B~g%d~n health!"
    easteregg_gave_mana = "You feel re-energized as you regain ~b~B%i~B~n mana!"
    easteregg_vigor = "Yum-yum good!"
-
    easteregg_type_health = \
       "\n\nEating this easter egg will return your health."
    easteregg_type_mana = \
       "\n\nEating this easter egg will return your magical power."
    easteregg_type_vigor = \
       "\n\nEating this easter egg will invigorate you."
-   easteregg_type_spell_one = \
-      "\n\nEating this easter egg will unleash the "
-   easteregg_type_spell_two = \
-      " spell."
+   easteregg_type_spell = \
+      "\n\nEating this easter egg will unleash the %s spell."
 
 classvars:
 
    viGround_group = 2
    viInventory_group = 1
-
+   viIndefinite = ARTICLE_AN
    vrDesc = easteregg_desc_rsc
    vrName = easteregg_name_rsc
    vrCantUseOn = easteregg_cant_use_on
    vrEat_wav = easteregg_eat_wav
-
    viBulk = 4
    viWeight = 4
    viValue_average = 60
-
    viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
-
    % Default amounts added.
    viHealthAmount = 30
    viManaAmount = 40
    viVigorAmount = 80
-
    viFilling = 5
-
    % Spellpower for egg-cast spells. Default 99.
    viSpellPower = 99
 
 properties:
 
    vrIcon = ee_g_one_bgf
-
    piEggType = EGG_HEALTH
    piResourceAmount = 30
-
    % For spell eggs.
    viSpellEffect = SID_LIGHT
-   
    % No nutrition unless vigor egg.
    viNutrition = 0
-
    % Spellpower for egg-cast spells. Default 99.
    piSpellPower = 99
 
@@ -280,33 +267,31 @@ messages:
    {
       if piEggType = EGG_HEALTH
       {
-         AppendTempString(easteregg_type_health);
+         AddPacket(4,easteregg_type_health);
 
-         propagate;
+         return;
       }
       if piEggType = EGG_MANA
       {
-         AppendTempString(easteregg_type_mana);
+         AddPacket(4,easteregg_type_mana);
 
-         propagate;
+         return;
       }
       if piEggType = EGG_VIGOR
       {
-         AppendTempString(easteregg_type_vigor);
+         AddPacket(4,easteregg_type_vigor);
 
-         propagate;
+         return;
       }
       if piEggType = EGG_SPELL
       {
-         AppendTempString(easteregg_type_spell_one);
-         AppendTempString(Send(Send(SYS,@FindSpellByNum,
-               #num=viSpellEffect),@GetName));
-         AppendTempString(easteregg_type_spell_two);
+         AddPacket(4,easteregg_type_spell,4,Send(Send(SYS,@FindSpellByNum,
+                                                #num=viSpellEffect),@GetName));
 
-         propagate;
+         return;
       }
 
-      propagate;
+      return;
    }
 
    GetFilling()

@@ -1,0 +1,9 @@
+RiijaSword_name_rsc = de "Das Schwert Riijas"
+RiijaSword_desc_rsc = de \
+   "Dies ist ein sehr seltsam anmutenndes Schwert, aber es liegt überraschend "
+   "leicht in Deiner Hand. Die dunklen und unheimlichen Runen auf dieser "
+   "tödlichen Waffe verschwimmen vor Deinen Augen, wann auch immer Du den "
+   "Blick auf sie richtest."
+RiijaSword_desc_append = de \
+   " Ein paar der Runen sagen, \"Dieses Schwert wird %q in unerschütterlichem "
+   "Glauben führen.\""

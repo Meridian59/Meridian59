@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include resfire.lkod
+
    resistfire_name_rsc = "withstand fire"
    resistfire_icon_rsc = iresfire.bgf
    resistfire_desc_rsc = \

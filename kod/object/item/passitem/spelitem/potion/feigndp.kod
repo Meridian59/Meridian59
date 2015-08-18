@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include feigndp.lkod
+
    FeignDeathPotion_name_rsc = "possum potion"
    %FeignDeathPotion_icon_rsc = potion01.bgf
    FeignDeathPotion_desc_rsc = "This is a glass vial of colored liquid.  "

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kd2.lkod
+
    room_name_OutdoorsKD2 = "Territory of the Noble Avars"
    room_OutdoorsKD2 = KD2.roo
    OutdoorsKD2_music = boneprst.mp3

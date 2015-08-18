@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include flash.lkod
+
    Flash_name_rsc = "flash"
    Flash_icon_rsc = iflash.bgf
    Flash_desc_rsc = \
@@ -70,7 +72,7 @@ messages:
       lFinalTargets = $;
 
       oRoom = Send(who,@GetOwner);
-      for i in Send(oRoom,@GetHolderActive)
+      foreach i in Send(oRoom,@GetHolderActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Battler)
@@ -99,7 +101,7 @@ messages:
          Send(who,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
       }
 
-      for i in lTargets
+      foreach i in lTargets
       {
          if Random(1,100) > iChance
          {

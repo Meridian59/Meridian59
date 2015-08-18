@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include spelitemsplit.lkod
+
    SpellItemSplitter_name_rsc = "spell item splitter"
    SpellItemSplitter_icon_rsc = potion01.bgf
    SpellItemSplitter_desc_rsc = \

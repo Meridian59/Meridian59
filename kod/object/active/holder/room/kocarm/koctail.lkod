@@ -1,0 +1,6 @@
+room_name_koctail = de "Der Kleiderladen Zum Schiefen Saum"
+koctail_locked_1 = de "Schneider Tepal ix'Zonaks Wohnstatt ist verschlossen."
+koctail_locked_2 = de "Diese Tür ist fest verschlossen."
+koctail_locked_3 = de \
+   "Ein übler Geruch weht von jenseits der verschlossenen Eisentür hervor."
+koctail_key_disappears = de "Der schwere Eisenschlüssel verschwindet!"

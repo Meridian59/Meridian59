@@ -1,0 +1,23 @@
+princess_name_rsc = de "Princess Kateriina"
+princess_desc_rsc = de \
+   "Das Alter machte Prinzessin Kateriina stärker und selbstbewußter,aber "
+   "es änderte nur wenig an ihrer Naivität. Sie entwickelte einegroße Verachtung "
+   "für den Herzog und alle, die sich in politischenIntrigen engagieren. "
+   "Erwägungen politischer Intrigen sind unter ihrerWürde, weil sie darauf "
+   "vertraut, daß man sie akzeptiert, wenn sie weiseund gerecht regiert. "
+   "Die Magie fasziniert sie weiterhin und manchmalträumt sie davon, wegzulaufen, "
+   "um die geheimnisvollen Künste zu studieren."
+princess_token_delivered_rsc = de \
+   "Ahhh.  Ich werde dafür Sorge tragen, dass dies seinem rechtmäßigen Besitzerim "
+   "Rat zurück gegeben wird. Bei meiner Krone, dafür wird er mir einenGefallen "
+   "tun müssen. %s"
+princess_princess_delivered_rsc = de "Ihr wart immer ein treuer Gefolgsmann."
+princess_neutral_delivered_rsc = de \
+   "Euer Ansinnen gleicht dem Meinen, bitte unterstützt meine Fraktion.Bitte "
+   "unterzeichnet diese Schriftrolle."
+princess_other_delivered_rsc = de \
+   "Amen.  Sogar die Diener der Thronanwärter beginnen, den besseren Wegzu "
+   "erkennen. Lasst uns zusammen zu dieser Fraktion übertreten, ja?"
+princess_toopowered_rsc = de \
+   "Ich bin offen zu Euch: Wären wir nicht bereits eine sehr starkeFraktion, "
+   "hätte ich Euch vorgeschlagen, uns beizutreten."

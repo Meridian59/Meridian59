@@ -1,0 +1,5 @@
+itematt_durable_name = de "gut gemachte %s"
+durable_dm = de "langlebig"
+itematt_durable_desc_1 = de \
+   "  Die Handwerkskunst von diesem %s bewundenswert, offensichtlich das "
+   "Ergebnis von Hunderten von Stunden der Arbeit von erfahrenen Händen."

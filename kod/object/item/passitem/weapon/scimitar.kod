@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include scimitar.lkod
+
    scimitar_name_rsc = "scimitar"
    scimitar_icon_rsc = scimitar.bgf
    scimitar_desc_rsc = \

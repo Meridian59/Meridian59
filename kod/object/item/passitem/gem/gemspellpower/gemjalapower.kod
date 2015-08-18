@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemjalapower.lkod
+
    gem_jalapower_name_rsc = "bard's jewel"
    gem_jalapower_icon_rsc = sapphire.bgf
    gem_jalapower_desc_rsc = \

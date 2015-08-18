@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include twocon.lkod
+
    twoCouncilor_name_rsc = "Bei Naq"
    twoCouncilor_icon_rsc = twocon.bgf
    twoCouncilor_desc_rsc = \

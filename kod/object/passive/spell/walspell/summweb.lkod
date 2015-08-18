@@ -1,0 +1,11 @@
+SummonWeb_name_rsc = de "Spinnennetz"
+SummonWeb_desc_rsc = de \
+   "Die Spinnennetze, die durch den Spruch geschaffen wurden könnten die "
+   "Bewegungen derer behindern, die über sie laufen. Zum Zaubern wird Moosnetz "
+   "benötigt. Die Anwendung dieses Zaubers kann dazu führen, daß Du zum Gesetzlosen "
+   "erklärt wirst."
+SummonWeb_cast_rsc = de \
+   "Ein klebendes Feld von Spinnennetzen erscheint vor dir."
+SummonWeb_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in diesem Raum. Du kannst diesen Zauber "
+   "nicht ausführen."

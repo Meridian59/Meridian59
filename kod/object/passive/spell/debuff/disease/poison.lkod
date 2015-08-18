@@ -1,0 +1,8 @@
+poison_start = de "Fresh poison courses through your veins like fire."
+poison_stop = de "The poison abates somewhat."
+poison_name = de "poison"
+poison_kraanan = de \
+   "~IKraanan's magic fortifies you against the accursed venom!"
+poison_desc = de \
+   "Like fire under your skin, the poison burns with dangerous strength, "
+   "slowly sapping away at your strength, your health, and your will to live.  "

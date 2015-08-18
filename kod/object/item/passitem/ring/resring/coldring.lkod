@@ -1,0 +1,7 @@
+ColdRing_name_rsc = de "Ring des Kältewiderstands"
+ColdRing_desc_rsc = de \
+   "Dieser Ring hat eine warme Oberfläche. Magische Runen zieren seine innere "
+   "Oberfläche."
+ColdRing_use_rsc = de \
+   "Du spürst die Wirkung des Rings. Du fühlst eine angenehme Wärme."
+ColdRing_dead_rsc = de "Der Ring zerfällt in Stücke!"

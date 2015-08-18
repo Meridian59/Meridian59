@@ -1,0 +1,5 @@
+switch_name_rsc = de "Der Schalter"
+switch_desc_rsc = de "Dieser Schalter hat keine Funktion."
+switch_not_in_range = de \
+   "Der Schalter ist zu weit entfernt, um ihn zu aktivieren."
+switch_changed = de "Du legst den Schalter um."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include manaconv.lkod
+
    ManaConvergence_name_rsc = "mana convergence"
    ManaConvergence_icon_rsc = imanacon.bgf
    ManaConvergence_desc_rsc = \

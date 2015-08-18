@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kc4.lkod
+
    room_name_OutdoorsKC4 = "Origin of the Kriipa"
    room_OutdoorsKC4 = KC4.roo
    OutdoorsKC4_music = orcbeg.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orechunk.lkod
+
    OreChunk_icon_rsc = Ore.bgf
    OreChunk_name_rsc = "chunk of ore"
    OreChunk_desc_rsc = "This is a huge, unwieldy hunk of rock, with strong, silver veins suggesting immense hidden value inside."

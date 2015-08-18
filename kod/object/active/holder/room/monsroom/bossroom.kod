@@ -138,11 +138,11 @@ messages:
       }
 
       % Heal the bosses to max!
-      for oBoss in plBoss
+      foreach oBoss in plBoss
       {
          Send(oBoss,@SetMaxHitPoints,#amount=Send(oBoss,@ReturnMaxHitPoints));
       }
-      for oBoss in plHenchmen
+      foreach oBoss in plHenchmen
       {
          Send(oBoss,@SetMaxHitPoints,#amount=Send(oBoss,@ReturnMaxHitPoints));
       }
@@ -206,7 +206,7 @@ messages:
          return;
       }
 
-      for i in plBossTemplate
+      foreach i in plBossTemplate
       {
          oTempMonster = Create(First(i));
          % For now, assume no problems with ReqSomethingEntered failing
@@ -219,7 +219,7 @@ messages:
 
       if plHenchmenTemplate <> $
       {
-         for i in plHenchmenTemplate
+         foreach i in plHenchmenTemplate
          {
             oTempMonster = Create(First(i));
             % For now, assume no problems with ReqSomethingEntered failing
@@ -234,7 +234,7 @@ messages:
       % Last, make treasure. For now, no sweeping first - FIX??
       if plBossTreasureTemplate <> $
       {
-         for i in plBossTreasureTemplate
+         foreach i in plBossTreasureTemplate
          {
             oTempTreasure = Create(First(i));
             Send(self,@NewHold,#what=oTempTreasure,
@@ -263,7 +263,7 @@ messages:
 
       if plBossTreasure <> $
       {
-         for i in plBossTreasure
+         foreach i in plBossTreasure
          {
             if what = i
             {
@@ -299,7 +299,7 @@ messages:
       ptDispose = $;
       ptDispose = CreateTimer(self,@DisposeTimer,piDispose_delay);
 
-      for i in plPassive
+      foreach i in plPassive
       {
          % If there is a player's corpse anywhere, don't clear it.
          % player's corpse has own delete timer.  Monster corpses
@@ -330,7 +330,7 @@ messages:
          {
             delete_index = 4*iLen/5;
             count = 0;
-            for i in plPassive
+            foreach i in plPassive
             {
                count = count + 1;
 
@@ -351,7 +351,7 @@ messages:
    {
       local i;
 
-      for i in plActive
+      foreach i in plActive
       {
          % Never dispose of Boss or Henchmen automatically,
          % handle this in reset code.
@@ -362,7 +362,7 @@ messages:
          }
       }
 
-      for i in plPassive
+      foreach i in plPassive
       {
          % Never dispose of Boss Treasure automatically,
          % handle this in reset code.

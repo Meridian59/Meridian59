@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include marion.lkod
+
    room_name_marion = "Marion"
    room_marion = marion.roo
 

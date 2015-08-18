@@ -34,6 +34,8 @@ constants:
 
 resources:
 
+   include dflypet.lkod
+
    DragonFlyPet_koc_name_rsc = "vo'huzotz"
    DragonFlyPet_name_rsc = "pet dragonfly"
    DragonFlyPet_icon_rsc = dflypet.bgf

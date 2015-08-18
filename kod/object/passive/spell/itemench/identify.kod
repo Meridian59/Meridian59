@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include identify.lkod
+
    identify_name_rsc = "identify"
    identify_icon_rsc = iidentif.bgf
    identify_desc_rsc = \

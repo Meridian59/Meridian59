@@ -1,0 +1,4 @@
+weapattglowing_desc = de " Es glüht sanft wie eine Fackel."
+weapattglowing_name = de "Glühen %s"
+waglowing_gone = de "Dein %s hat aufgehört zu glühen."
+glowing_dm = de "Glühen"

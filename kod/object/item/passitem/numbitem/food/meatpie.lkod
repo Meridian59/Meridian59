@@ -1,0 +1,6 @@
+meatpie_name_rsc = de "Der Trollkeks"
+meatpie_desc_rsc = de \
+   "Diese Trollkekse sind mit einer goldbraunen Kruste überbacken und gefüllt "
+   "mit geschmortem Trollfleisch, Käse und exotischen Gewürzen aus fernen "
+   "Landen."
+meatpie_name_plural_rsc = de "Trollkekse"

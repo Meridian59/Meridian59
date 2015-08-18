@@ -1,0 +1,4 @@
+weapattblinder_desc = de " Q's Insignien schmücken das Metall dieser Waffe."
+blinder_fail_use = de "Du bist nicht bereit %s%s zu nutzen."
+blinder_worked = de "%s%s stolpert davon, schreiend und klammert %s Augen!"
+blinder_dm = de "Blender"

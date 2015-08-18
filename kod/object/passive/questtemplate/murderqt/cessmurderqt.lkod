@@ -1,0 +1,20 @@
+% Quest description.
+cessmurderqt_name_rsc = de "Princess murder mystery quest"
+cessmurderqt_desc_rsc = de \
+   "The Princess would like you to question people regarding the "
+   "death of Duke Kalior."
+
+cessmurderqt_completed_rsc = de \
+   "You have completed a Princess murder mystery quest."
+
+% Quest resources.
+murder_princess_assign = de \
+   "So wie der Rest der Menschen in unserem schönen Land, bin ich neugierig "
+   "zu erfahren wer den ehemaligen Herzog geötet hat.  Obwohl er und ich "
+   "Rivalen waren, macht es mich traurig zu sehen, wie brutal er von uns "
+   "gegangen ist.  Wenn Du mir helfen magst frag %NPC nach Informationen "
+   "über den Mord  und berichte mir danach."
+murder_princess_success = de \
+   "Ich weiß nicht, ob wir diesen Gerüchten glauben können.  Ich danke Dir "
+   "für Deine Hilfe;  je mehr wir untersuchen, desto näher kommen wir der "
+   "Wahrheit.  Bitte nimm dieses Zeichen als meine Wertschätzung."

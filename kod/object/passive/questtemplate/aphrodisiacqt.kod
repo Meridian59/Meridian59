@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include aphrodisiacqt.lkod
+
    % Quest description.
    aphrodisiacqt_icon_rsc = solagh.bgf
    aphrodisiacqt_name_rsc = "aphrodisiac potion quest"
@@ -134,11 +136,11 @@ messages:
                #quest_node_index=QNT_ID_APHRODISIAC_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KraananPriestess)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KraananPriestess)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTailor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTailor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -157,19 +159,19 @@ messages:
                #timelimit=3600,#quest_node_index=QNT_ID_APHRODISIAC_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionHealer)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Heretic)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Heretic)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

@@ -1,0 +1,11 @@
+% Quest description.
+chessmovequest_name_rsc = de "chess move courier quest"
+
+chessmovequest_completed_rsc = de \
+   "You have completed a chess move courier quest."
+
+% Quest resources.
+chess_success_4 = de \
+   "Ganz schön clever!  Ich muss ein wenig überlegen, bevor ich antworte.  "
+   "Vielen Dank, dass Du uns geholfen hast zu spielen. Hier ist eine Kleinigkeit "
+   "für Deine Mühen."

@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include guildh11.lkod
+
    room_name_guildh11 = "The home of the Friends of the Forest"
    room_guildh11 = guildh11.roo
 

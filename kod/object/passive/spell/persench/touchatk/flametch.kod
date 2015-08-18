@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include flametch.lkod
+
    TouchOfFlame_name_rsc = "touch of flame"
    TouchOfFlame_icon_rsc = itoucfla.bgf
    TouchOfFlame_desc_rsc = \

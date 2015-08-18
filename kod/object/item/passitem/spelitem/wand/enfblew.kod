@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include enfblew.lkod
+
    EnfeebleWand_label_name_rsc = "wand of weakness"
    EnfeebleWand_icon_rsc = wand6.bgf
    EnfeebleWand_desc_rsc = "Magical energy crackles about this slender wand."

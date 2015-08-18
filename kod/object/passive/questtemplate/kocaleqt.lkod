@@ -1,0 +1,54 @@
+% Quest description.
+kocaleqt_name_rsc = de "Ko'catan ale trade quest"
+kocaleqt_desc_rsc = de \
+   "Make an alcohol delivery to the Island."
+
+kocaleqt_nodetwo_rsc = de \
+   "%s%s needs a guaranteed delivery made to the island.  Failure to "
+   "make the delivery would be punished. Will you accept these terms?"
+
+kocaleqt_nodethree_rsc = de \
+   "Deliver %i %s to %s%s.  Do not be tempted to keep the supplies "
+   "for yourself; thievery will be punished."
+
+kocaleqt_completed_rsc = de \
+   "You have completed the Ko'catan weapon trade quest."
+
+% Quest resources.
+kocale_assign_2 = de \
+   "Ich brauche eine garantierte Zustellung zum Festland.  Ein Versagen führt "
+   "dazu, dass Du ein Gesetzesloser wirst.  Bist Du bereit diesen Bedingungen "
+   "zu folgen?"
+kocale_assign_2_h = de \
+   "Ich brauche eine garantierte Zustellung zum Festland.  Ein Versagen führt "
+   "zu einem Unglück.  Bist Du bereit diesen Bedingungen zu folgen?"
+kocale_failure_2 = de \
+   "Betreff: Ich werde mir einen anderen Kurier suchen\nIch verstehe deine "
+   "Zurückhaltung, Dich auf so eine lange Reise zu begeben. Danke trotzdem."
+kocale_assign_3 = de \
+   "%NPC in Kocatan hat angefragt, ob wir seinem Kunden auf der anderen Seite "
+   "mit unserem Gebräu versorgen können.  Bitte bring diese %INDEF_CARGO%CARGO "
+   "zu %HIMHER_NPC.  Ich habe vereinbart, dass %npc Dich für Deine Reise "
+   "bezahlt.  Stehle nicht meine Waren.  Es wird Dich nicht nur als Gesetzeslosen "
+   "deklarieren, denn ich habe noch einen Freund, der ein Zauberer ist, und "
+   "sehr gute Flüche kennt.  Aber bitte, lass uns nicht auf der schäbigeren "
+   "Seite leben.  Dies könnte der Anfang einer sehr profitablen Sache sein, "
+   "mein Freund!"
+kocale_assign_3_h = de \
+   "%NPC in Kocatan hat angefragt, ob wir seinem Kunden auf der anderen Seite "
+   "mit unserem Gebräu versorgen können.  Bitte bring diese %INDEF_CARGO%CARGO "
+   "zu %HIMHER_NPC.  Ich habe vereinbart, dass %npc Dich für Deine Reise "
+   "bezahl  Stehle nicht meine Waren. Ich habe einen Freund, der ein Zauberer "
+   "ist, und sehr gute Flüche kennt.  Aber bitte, lass uns nicht auf der "
+   "schäbigeren Seite leben.  Dies könnte der Anfang einer sehr profitablen "
+   "Sache sein, mein Freund!"
+kocale_failure_3 = de \
+   "Betreff: Dieb!\nDein Diebstall macht Dich zu einem Gesetzeslosen durch "
+   "einen Erlass vom Herzog."
+kocale_failure_3_h = de \
+   "Betreff: Dieb!\nDas Unglück durch Deine böse Tat wird Dich nun überall "
+   "hin verflogen."
+kocale_success_3 = de \
+   "I see %SOURCE_NPC has kept his word.  This is very good.  Ich bin mir "
+   "sicher, das ist der Anfang einer sehr profitablen Geschäftsbeziehung. "
+   "Hier ist ein Zeichen meiner Dankbarkeit."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ent.lkod
+
    ent_koc_name_rsc = "tezmecya"
    ent_name_rsc = "living tree"
    ent_icon_rsc = res0003a.bgf

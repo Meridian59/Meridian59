@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include oblak.lkod
+
    oblak_name_rsc = "oblak"
    oblak_icon_rsc = bsmith.bgf
    oblak_desc_rsc = "This is an oblak, who can repair your broken items."
@@ -149,7 +151,7 @@ messages:
       oRepaired = First(plOffer_items);
 
       iValue_offered = 0;
-      for i in item_list
+      foreach i in item_list
       {
 	 if not IsClass(i,&Money)
 	 {
@@ -177,7 +179,7 @@ messages:
       }
 
       oHolder = Send(SYS,@GetSystemHolder1);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
 	 Send(oHolder,@NewHold,#what=i);
       }
@@ -201,7 +203,7 @@ messages:
 	    lTake_items = Send(oHolder,@GetHolderPassive);
 	 }
 
-	 for i in lTake_items
+	 foreach i in lTake_items
 	 {
 	    Send(i,@Delete);
 	 }

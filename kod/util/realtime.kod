@@ -448,7 +448,7 @@ messages:
 
          % Debug("Executing NewMinute",iYear,iMonth,iDay,iHour,iMinute);
 
-         for i in plCallbacks
+         foreach i in plCallbacks
          {
             if Nth(Nth(i,1),3) <= iYear
                AND Nth(Nth(i,1),1) <= iMonth
@@ -585,7 +585,7 @@ messages:
       iTime = GetTime() + piTimeZoneOffset;
       iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
 
-      for i in iMonthDays
+      foreach i in iMonthDays
       {
          if iDay > i
          {

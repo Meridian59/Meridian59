@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include koctav.lkod
   
    room_name_koctavern = "The Barking Monster"
    room_koctavern = koctav.roo

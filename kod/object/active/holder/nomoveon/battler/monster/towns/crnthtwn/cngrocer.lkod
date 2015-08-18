@@ -1,0 +1,17 @@
+Cornoth_grocer_name_rsc = de "Solomon"
+Cornoth_grocer_desc_rsc = de \
+   "Dieser Laden spiegelt den feinen und exotischen Geschmack seines Besitzers "
+   "wider. Solomon hat Waren und Kunstgegenstände aus aller Herren Länder "
+   "gesammelt, und man munkelt, daß er sogar Relikte und Artefakte aus noch "
+   "weiter entfernten Gegenden hat."
+CnGro_entry_welcome = de "Oh Willkommen, willkommen, willkommen!"
+CnGro_unwanted_keep = de \
+   "~k%s%s teilt dir mit, \"Was für einen großzügigen Freund ich doch habe!  "
+   "Du segnest mich mit deiner Güte!~n~k\""
+CnGro_unwanted_pay = de \
+   "~k%s%s teilt dir mit, \"Ich bezahle dir was es wert ist und keinen Schilling "
+   "mehr.~n~k\""
+CnGro_unwanted_give = de \
+   "~k%s%s teilt dir mit, \"Sicher machst du einen Witz auf meine Kosten!  "
+   "Du müsstest wissen, dass Solomon nur mit Qualitätsware handelt und das "
+   "ist Müll!~n~k\""

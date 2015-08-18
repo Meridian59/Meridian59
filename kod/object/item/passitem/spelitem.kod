@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include spelitem.lkod
+
    Spellitem_name_rsc = "spellitem"
    Spellitem_label_name_rsc = "generic spellitem"
    Spellitem_icon_rsc = scr07.bgf
@@ -31,20 +33,20 @@ resources:
    Spellitem_bad_item_rsc = "generic bad item message"
    Spellitem_bad_karma = "Your karma cannot unleash the spell within %s%s."
    Spellitem_has_karma_requirement = \
-     "To use this, you must have sufficient karma to cast the spell inside."
-
+     "\n\nTo use this, you must have sufficient karma to cast the spell inside."
+   spellitem_append_hits = "\n\nThis potion contains %i %s."
+   spellitem_append_spellpower = "  The liquid within averages %i spellpower."
+   spellitem_hits_singular = "draught"
+   spellitem_hits_plural = "draughts"
    SpellItem_divine_rsc = "  Divinely Crafted."
-   SpellItem_made_rsc = "  Made by "
-   SpellItem_distiller_rsc = " Distiller"
-   SpellItem_novice_rsc = ", Novice"
-   SpellItem_apprentice_rsc = ", Apprentice"
-   SpellItem_journeyman_rsc = ", Journeyman"
-   SpellItem_master_rsc = ", Master"
-
+   SpellItem_made_rsc = "  Made by %q%s%s"
+   SpellItem_novice_rsc = ", Novice Distiller."
+   SpellItem_apprentice_rsc = ", Apprentice Distiller."
+   SpellItem_journeyman_rsc = ", Journeyman Distiller."
+   SpellItem_master_rsc = ", Master Distiller."
    combine_spell_item_rsc = \
       "You combine the %s with your current stock, for a total "
       "of %d uses with %d power."
-
    spellitem_cannot_use_yet = "You cannot use that item yet."
    spellitem_disabled = "This item is currently disabled."
 
@@ -57,29 +59,26 @@ classvars:
    vrBadDesc = Spellitem_bad_item_rsc
    vrBroken = Spellitem_Broken
    vrBrokenDesc = Spellitem_broken_desc
+   vrDescHits = spellitem_append_hits
+   vrDescHitsSingular = spellitem_hits_singular
+   vrDescHitsPlural = spellitem_hits_plural
+   vrDescSpellpower = spellitem_append_spellpower
    vrFails = Spellitem_fails
    vrKarmaDesc = Spellitem_has_karma_requirement
-
    viUse_type = ITEM_SINGLE_USE
-
    vrIcon = Spellitem_icon_rsc
    vrDesc = Spellitem_desc_rsc
-
    viValue_average = 120
    viWeight = 2
    viBulk = 2
-
    vbFailSafe = FALSE
 
    % Set to true for items you want to have delete themselves when they run out of charges.
    vbNoBrokenView = FALSE
-
    viGround_group = 2
    viInventory_group = 1
-
    viHits_init_min = 1
    viHits_init_max = 1
-
    vbDisabled = FALSE
 
 properties:
@@ -181,23 +180,6 @@ messages:
       }
 
       return FALSE;
-   }
-
-   AppendDesc()
-   {
-      local iSchool;
-
-      iSchool = Send(Send(SYS,@FindSpellByNum,#num=viSpellEffect),@GetSchool);
-      % Tell player if this has karma restrictions
-      if pbCheckKarma
-         AND (iSchool = SS_SHALILLE
-            OR iSchool = SS_QOR)
-      {
-         AppendTempString("\n\n");
-         AppendTempString(vrKarmaDesc);
-      }
-
-      propagate;
    }
 
    ReqNewApply(what=$,apply_on=$)
@@ -396,31 +378,101 @@ messages:
 
    DoBaseDesc()
    {
-      ClearTempString();
+      local iSchool;
 
       if pbBad
       {
-         AppendTempString(vrBadDesc);
-      }
-      else
-      {
-         AppendTempString(vrDesc);
+         AddPacket(4,vrBadDesc);
+
+         return;
       }
 
+      % Add maker info.
       if pbMade
       {
          if IsClass(poMaker,&Admin)
          {
-            AppendTempString(SpellItem_Divine_rsc);
+            AddPacket(4,system_rsc_template_3, 4,vrDesc,
+                      4,SpellItem_Divine_rsc);
+         }
+         else
+         {
+            AddPacket(4,system_rsc_template_3, 4,vrDesc,
+                     4,SpellItem_made_rsc, 6,Send(poMaker,@GetTrueName),
+                     4,Send(poMaker,@GetCapDef), 4,Send(self,@GetTitle));
+         }
+      }
+      else
+      {
+         if NOT pbCheckKarma
+         {
+            AddPacket(4,vrDesc);
+
             return;
          }
 
-         AppendTempString(SpellItem_made_rsc);
-         AppendTempString(Send(poMaker,@GetTrueName));
-         AppendTempString(" ");
-         AppendTempString(Send(poMaker,@GetCapDef));
-         AppendTempString(Send(self,@GetTitle));
-         AppendTempString(SpellItem_distiller_rsc);
+         AddPacket(4,system_rsc_template_2, 4,vrDesc);
+      }
+
+      if pbCheckKarma
+      {
+         iSchool = Send(Send(SYS,@FindSpellByNum,#num=viSpellEffect),@GetSchool);
+
+         if iSchool = SS_SHALILLE
+            OR iSchool = SS_QOR
+         {
+            AddPacket(4,vrKarmaDesc);
+         }
+         else
+         {
+            AddPacket(4,system_blank_resource);
+         }
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      return;
+   }
+
+   AppendDesc()
+   {
+      local iSpellpower;
+
+      if piHits > 1
+      {
+         AddPacket(4,system_rsc_template_2, 4,vrDescHits,
+                   4,piHits, 4,vrDescHitsPlural);
+      }
+      else if piHits = 1
+      {
+         AddPacket(4,system_rsc_template_2, 4,vrDescHits,
+                   4,piHits, 4,vrDescHitsSingular);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+
+         return;
+      }
+
+      if piSpellPower = $
+      {
+         iSpellPower = (piMinSpellPower + piMaxSpellPower) / 2;
+
+         if iSpellpower = 0
+         {
+            AddPacket(4,system_blank_resource);
+
+            return;
+         }
+
+         AddPacket(4,vrDescSpellpower, 4,iSpellPower);
+      }
+      else
+      {
+         AddPacket(4,vrDescSpellpower, 4,piSpellPower);
       }
 
       return;
@@ -526,7 +578,7 @@ messages:
    {
       return viValue_average * piHits;
    }
-   
+
    GetSpellPower()
    {
       if piSpellPower = $

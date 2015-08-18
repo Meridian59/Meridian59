@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include cdisease.lkod
+
    curedisease_name_rsc = "cure disease"
    curedisease_icon_rsc = icuredis.bgf
    curedisease_desc_rsc = \

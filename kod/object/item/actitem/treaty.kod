@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include treaty.lkod
+
    treaty_name_rsc = "treaty"
    treaty_icon_rsc = light.bgf
 

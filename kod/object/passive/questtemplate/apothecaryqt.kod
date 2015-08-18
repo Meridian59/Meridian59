@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include apothecaryqt.lkod
+
    % Quest description.
    apothecaryqt_icon_rsc = shrubbry.bgf
    apothecaryqt_name_rsc = "apothecary quest"
@@ -121,11 +123,11 @@ messages:
                #quest_node_index=QNT_ID_APOTHECARY_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

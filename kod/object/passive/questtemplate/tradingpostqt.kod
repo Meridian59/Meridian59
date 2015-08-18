@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include tradingpostqt.lkod
+
    % Quest description.
    tradingpostquest_icon_rsc = openches.bgf
    tradingpostquest_name_rsc = "trading post inventory quest"

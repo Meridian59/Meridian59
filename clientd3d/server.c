@@ -140,7 +140,7 @@ void UpdateSecurityRedbook(ID idRedbook)
 
    _redbook = idRedbook;
    if (_redbook)
-      _redbookstring = LookupRsc(_redbook);
+      _redbookstring = LookupRscRedbook(_redbook);
 
    if (_redbook && !_redbookstring)
    {

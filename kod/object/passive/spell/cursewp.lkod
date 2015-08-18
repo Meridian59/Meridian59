@@ -1,0 +1,7 @@
+curseweapon_cast_rsc = de "%s%s bekommt ein unheimliches rotes Glühen."
+curseweapon_fails = de "%s%s bleibt von dem Zauber unberührt."
+curseweapon_name_rsc = de "Verfluchte Waffe"
+curseweapon_desc_rsc = de \
+   "Macht die Zielwaffe für einige Zeit fast unbrauchbar und verflucht den "
+   "Benutzer dazu, sie zu führen bis er oder sie heilige Hilfe erhält. Erfordert "
+   "Schamanenblut und Orkzähne."

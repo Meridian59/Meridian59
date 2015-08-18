@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include lever.lkod
+
    lever_name_rsc = "lever"
    lever_icon_rsc = lever.bgf
    default_lever_desc_rsc = \

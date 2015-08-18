@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include forest2.lkod
+
    room_forest2 = forest2.roo
    room_name_forest2 = "The Forests of Meridian"
 
@@ -88,7 +90,7 @@ messages:
       ptNoise = CreateTimer(self,@NoiseTimer,
 			    NOISE_DELAY + Random(-NOISE_VARIATION,NOISE_VARIATION));
       
-      for i in plActive
+      foreach i in plActive
       {
 	 Send(First(i),@WaveSendUser,#wave_rsc=forest2_noise);
       }

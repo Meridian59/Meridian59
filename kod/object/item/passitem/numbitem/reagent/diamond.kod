@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include diamond.lkod
+
 
    diamond_name_rsc = "diamond"
    diamond_icon_rsc = diamond.bgf

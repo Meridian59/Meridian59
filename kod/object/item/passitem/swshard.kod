@@ -15,29 +15,35 @@ constants:
    include blakston.khd
 
 resources:
-   swordshard_name_rsc = "shard of a sword"
-   swordshard_desc_rsc = "This is one piece of a very elaborate looking sword.  "
-   swordshard_possessive = "'s name is written in subtle, glowing eldritch script on the metal of the shard."
 
-   SwordShard_bind = "You watch in amazement as the shards of the sword bind themselves into a new whole."
-   swordshard_try_bind = "Your sword shards attempt to bind themselves together, but fail, and collapse into a pile of junk."
+   include swshard.lkod
+   swordshard_name_rsc = "shard of a sword"
+   swordshard_desc_rsc = \
+      "This is one piece of a very elaborate looking sword.  "
+   swordshard_possessive = \
+      "%q's name is written in subtle, glowing eldritch script on the metal "
+      "of the shard."
+   SwordShard_bind = \
+      "You watch in amazement as the shards of the sword bind themselves "
+      "into a new whole."
+   swordshard_try_bind = \
+      "Your sword shards attempt to bind themselves together, but fail, "
+      "and collapse into a pile of junk."
 
 classvars:
-   
-   vrName = SwordShard_name_rsc
-   vrDesc = SwordShard_desc_rsc   
 
+   vrName = SwordShard_name_rsc
+   vrDesc = SwordShard_desc_rsc
    viValue_average = 150
    viWeight = 25
    viBulk = 25
-
    viInventory_group = 3
 
-properties:  
+properties:
 
    poQuester = $
 
-messages:   
+messages:
 
    Constructor(quester = $)
    {
@@ -46,12 +52,12 @@ messages:
          poQuester = quester;
       }
 
-      propagate;	 
+      propagate;
    }
 
    NewOwner()
    {
-      post(self,@CheckForAllPieces);
+      Post(self,@CheckForAllPieces);
 
       propagate;
    }
@@ -60,17 +66,17 @@ messages:
    {
       local i, ShardA, ShardB, ShardC, ShardD, oOwner,
                bShardA, bShardb, bShardC, bShardD;
-      
+
       if poQuester = $
       {
          return;
       }
-      
-      if poOwner = $ OR NOT isClass(poOwner,&user)
+
+      if poOwner = $ OR NOT IsClass(poOwner,&user)
       {
          return;
       }
-      
+
       ShardA = $;
       ShardB = $;
       ShardC = $;
@@ -80,87 +86,84 @@ messages:
       bShardC = FALSE;
       bShardD = FALSE;
 
-      for i in send(poOwner,@GetHolderPassive)
+      foreach i in Send(poOwner,@GetHolderPassive)
       {
-         if isClass(i,&SwordShardA) 
+         if IsClass(i,&SwordShardA)
          {
-            if (send(i,@GetQuester) = poQuester)
+            if (Send(i,@GetQuester) = poQuester)
             {
                ShardA = i;
                bShardA = TRUE;
             }
-            else 
+            else
             {
                bShardA = TRUE;
             }
          }
-
-         if isClass(i,&SwordShardB) 
+         else if IsClass(i,&SwordShardB)
          {
-            if (send(i,@GetQuester) = poQuester)
+            if (Send(i,@GetQuester) = poQuester)
             {
                ShardB = i;
                bShardB = TRUE;
             }
-            else 
+            else
             {
                bShardB = TRUE;
             }
          }
-
-         if isClass(i,&SwordShardC)
+         else if IsClass(i,&SwordShardC)
          {
-            if (send(i,@GetQuester) = poQuester)
+            if (Send(i,@GetQuester) = poQuester)
             {
                ShardC = i;
                bShardC = TRUE;
             }
-            else 
+            else
             {
                bShardC = TRUE;
             }
          }
-
-         if isClass(i,&SwordShardD) 
+         else if IsClass(i,&SwordShardD)
          {
-            if (send(i,@GetQuester) = poQuester)
+            if (Send(i,@GetQuester) = poQuester)
             {
                ShardD = i;
                bShardD = TRUE;
             }
-            else 
+            else
             {
                bShardD = TRUE;
             }
          }
-      }         
+      }
       
-      %% Okay, see if all four parts are there.      
+      %% Okay, see if all four parts are there.
       if (ShardA <> $) AND (ShardB <> $)
          AND (ShardC <> $) AND (ShardD <> $)
-      {         
+      {
          %% They have all the parts.  Delete 'em and give
          %% the owner a sword.
-         oOwner = send(self,@GetOwner);         
-         send(oOwner,@msgsenduser,#message_rsc= swordshard_bind);
-         send(oOwner,@NewHold,#what=Create(&RiijaSword,#quester=poQuester));
-         send(shardA,@Delete);
-         send(shardB,@Delete);
-         send(ShardC,@Delete);
-         send(shardD,@delete);
+         oOwner = Send(self,@GetOwner);
+         Send(oOwner,@msgsenduser,#message_rsc= swordshard_bind);
+         Send(oOwner,@NewHold,#what=Create(&RiijaSword,#quester=poQuester));
+         Send(shardA,@Delete);
+         Send(shardB,@Delete);
+         Send(ShardC,@Delete);
+         Send(shardD,@delete);
       }
       else
       {
          if (bShardA <> FALSE) AND (bShardB <> FALSE)
             AND (bShardC <> FALSE) AND (bShardD <> FALSE)
          {
-            send(poOwner,@MsgSendUser,#message_rsc=swordshard_try_bind);
+            Send(poOwner,@MsgSendUser,#message_rsc=swordshard_try_bind);
          }
       }
 
       return;
    }
-   
+
    GetQuester()
    {
       return poQuester;
@@ -170,8 +173,11 @@ messages:
    {
       if poQuester <> $
       {
-         AppendTempString(send(poQuester,@GetName));
-         AppendTempString(swordshard_possessive);
+         AddPacket(4,swordshard_possessive,6,Send(poQuester,@GetName));
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
       }
 
       return;
@@ -197,4 +203,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

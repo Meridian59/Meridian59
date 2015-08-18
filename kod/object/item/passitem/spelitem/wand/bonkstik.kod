@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bonkstik.lkod
+
    BonkStick_name_rsc = "bonkstick"
    BonkStick_icon_rsc = hammer.bgf
    BonkStick_desc_rsc = \

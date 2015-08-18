@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include summcow.lkod
+
    SummonCow_name_rsc = "summon bovine"
    SummonCow_icon_rsc = cow.bgf
    SummonCow_desc_rsc = "Summons a pygmy cow for the amusement of all nearby.  "
@@ -80,7 +82,7 @@ messages:
          ((send(oRoom,@CountHoldingSummoned)) > 
            Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
       {
-         for who in lCasters
+         foreach who in lCasters
          {
             send(who,@MsgSendUser,#message_rsc=summoncow_failed_rsc);
          }

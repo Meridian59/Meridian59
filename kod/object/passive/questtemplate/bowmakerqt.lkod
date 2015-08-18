@@ -1,0 +1,11 @@
+% Quest description.
+bowmakerquest_name_rsc = de "avar shaman tailfeather quest"
+
+bowmakerquest_completed_rsc = de \
+   "You have obtained an avar shaman tailfeather for Hanla zax'Ta "
+   "and received a Riija sword shard in return."
+
+% Quest resources.
+bowmaker_trigger_1 = de "Pfeile"
+bowmaker_success_3 = de \
+   "Danke, hier nimm diesen Schrott aus Metall als Belohnung."

@@ -1,0 +1,17 @@
+izzio_name_rsc = de "Izzio"
+izzio_desc_rsc = de \
+   "Izzio trägt seinen schwer gefüllten und zum Bersten vollen Bauch mit "
+   "überraschender Leichtigkeit und Würde. Ein seliges Lächeln und glückliche "
+   "Augen verkünden Izzios reine Freude an der Natur. Leider mildert Izzios "
+   "Zen-mäßiger Umgang mit dem Natürlichen nicht sein zwanghaftes Streben "
+   "nach Profit."
+izzio_AlreadyHaveOne_rsc = de \
+   "Tut mir leid!  Dieses Bündel ist schwer genug, ich trage keine Duplikate."
+izzio_Full_rsc = de \
+   "Schau Dir mein Bündel an, ein weiser Mann kennt seine Grenzen."
+izzio_Not_Interested = de \
+   "Ich würde mich nicht wohl dabei fühlen, wenn ich es nehmen würde."
+izzio_too_many_rsc = de \
+   "Ich würde es Dir abnehmen, aber ich habe schon einige davon zu verkaufen. "
+   "Ich würde lieber erst diese abstoßen."
+Izzio_sold_rsc = de "Danke! Möge es Dir Wohlergehen und Gesundheit schenken."

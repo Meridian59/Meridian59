@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include insight.lkod
+
    Insight_name_rsc = "insight"
    Insight_icon_rsc = lightnin.bgf
 
@@ -75,7 +77,7 @@ messages:
          Send(self,@ComputeInsightInfo,#who=First(lTargets),#dmis=who);
       }
 
-      for i in lActive
+      foreach i in lActive
       {
 
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
@@ -108,7 +110,7 @@ messages:
       local iInitialchance, total_chance, increase_chance, i, num, obj;
       if dmis=$ or who=$  { debug("Bad data!");  return FALSE; }
       
-      for i in send(who,@GetSpellList)
+      foreach i in send(who,@GetSpellList)
       {
          num = send(who,@DecodeSpellNum,#compound=i);
          obj = send(SYS,@FindSpellByNum,#num=num);
@@ -120,7 +122,7 @@ messages:
               #parm3=total_chance,#parm4=iInitialChance,#parm5=increase_chance);
       }
       
-      for i in send(who,@GetSkillList)
+      foreach i in send(who,@GetSkillList)
       {
          num = send(who,@DecodeSkillNum,#compound=i);
          obj = send(SYS,@FindSkillByNum,#num=num);

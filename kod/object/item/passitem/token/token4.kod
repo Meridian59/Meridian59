@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include token4.lkod
+
    FourToken_name_rsc = "demon skull token"
    FourToken_desc_rsc = \
       "The fabled demon beast was known for its endurance and fortitude.  This "

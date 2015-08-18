@@ -1,0 +1,5 @@
+manaboon_name_rsc = de "Mana Effekt"
+manaboon_desc_rsc = de "Irgendetwas beeinflust Deine natürliche Mana Kraft."
+manaboon_intro_rsc = de "Steigert Mana vom Ziel temporär."
+manaboon_inc = de "Du fühlst dich als ob Du mehr Magie in Dir trägst!"
+manaboon_dec = de "Die zusätzliche Mana verlässt Dich."

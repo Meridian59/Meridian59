@@ -16,12 +16,16 @@ constants:
 
 resources:
 
+   include cloak.lkod
+
    Cloak_name_rsc = "cloak"
    Cloak_icon_rsc = icloak.bgf
    Cloak_desc_rsc = \
       "Qor shrouds your astral body in shifting shadows, allowing you to "
       "elude magical tracking. .Requires two entroot berries to cast."
-
+   cloak_enchantment_rsc = \
+      "\n\nYour current %s enchantment will keep you hidden from enemy "
+      "scrying %i%% of the time."
    Cloak_on_rsc = \
       "It feels as though your very spirit has become somehow indistinct."
    Cloak_off_rsc = "You feel more conspicuous."
@@ -115,17 +119,13 @@ messages:
    {
       return &CloakPotion;
    }
-  
+
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment will keep you hidden from enemy scrying ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString("\% of the time.");
+      AddPacket(4,cloak_enchantment_rsc, 4,Send(self,@GetName),
+                4,Send(who,@GetEnchantedState,#what=self));
 
-      propagate;
+      return;
    }
 
 end

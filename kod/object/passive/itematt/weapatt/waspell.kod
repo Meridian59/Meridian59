@@ -26,18 +26,22 @@ constants:
 
 resources:
 
-   WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."
-   WeapAttSpellCaster_desc2 = " This weapon will cast the "
-   WeapAttSpellCaster_desc3 = " spell on your target."
-   WeapAttSpellCaster_desc_invis = " spell on the wielder."
+   include waspell.lkod
+
+   WeapAttSpellCaster_desc = "  Mystical energy flits about this weapon."
+   WeapAttSpellCaster_desc_target = \
+      "  Mystical energy flits about this weapon.  This weapon will cast "
+      "the %s spell on your target."
+   WeapAttSpellCaster_desc_self = \
+      "  Mystical energy flits about this weapon. This weapon will cast "
+      "the %s spell on the wielder."
    WeapAttSpellCaster_dm = "spellcaster"
 
 classvars:
 
    vrDesc = WeapAttSpellCaster_desc
-   vrDesc2 = WeapAttSpellCaster_desc2
-   vrDesc3 = WeapAttSpellCaster_desc3
-   vrDesc4 = WeapAttSpellCaster_desc_invis
+   vrDesc2 = WeapAttSpellCaster_desc_target
+   vrDesc3 = WeapAttSpellCaster_desc_self
 
    viItem_Att_Num = WA_SPELLCASTER
 
@@ -136,7 +140,7 @@ messages:
       }
 
       iSpell = 0;
-      for i in plSpells
+      foreach i in plSpells
       {
          if StringContain(string,Send(Send(SYS,@FindSpellByNum,#num=First(i)),@GetName))
          {
@@ -178,7 +182,7 @@ messages:
          iValue = Random(1,100);
          spellNum = First(First(plSpells));
 
-         for i in plSpells
+         foreach i in plSpells
          {
             if iValue <= Nth(i,2)
             {
@@ -216,27 +220,26 @@ messages:
    % Add the spell name to the description.
    AppendDesc(oItem=$,lData=$)
    {
-      AppendTempString(vrDesc);
-
       % Check if we have a valid lData list. If we don't, don't try to
       % append the spell name to the description. This happens with
       % artificed items.
       if lData = $
       {
+         AddPacket(4,vrDesc);
+
          return;
       }
-
-      AppendTempString(vrDesc2);
-      AppendTempString(Send(Send(SYS,@FindSpellByNum,#num=Nth(lData,2)),@GetName));
 
       % Special case for spell cast on self.
       if Nth(lData,2) = SID_INVISIBILITY
       {
-         AppendTempString(vrDesc4);
+         AddPacket(4,vrDesc3, 4,Send(Send(SYS,@FindSpellByNum,
+                                    #num=Nth(lData,2)),@GetName));
       }
       else
       {
-         AppendTempString(vrDesc3);
+         AddPacket(4,vrDesc2, 4,Send(Send(SYS,@FindSpellByNum,
+                                    #num=Nth(lData,2)),@GetName));
       }
 
       return;

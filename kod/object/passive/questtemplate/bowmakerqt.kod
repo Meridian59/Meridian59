@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include bowmakerqt.lkod
+
    % Quest description.
    bowmakerquest_name_rsc = "avar shaman tailfeather quest"
 

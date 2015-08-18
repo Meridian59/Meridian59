@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include distill.lkod
+
    Distill_name_rsc = "distill"
    Distill_icon_rsc = idistill.bgf
    Distill_desc_rsc = \
@@ -128,7 +130,7 @@ messages:
                           #oTarget=oTarget);
 
       % Check reagents
-      for lIngredient in lIngredients
+      foreach lIngredient in lIngredients
       {
          cReagentClass = first(lIngredient);
          iNumNeeded = Nth(lIngredient, 2);
@@ -141,9 +143,9 @@ messages:
                   ];
 
          % Count # of reagent that user has; complain if not enough
-         for lItems in lLists
+         foreach lItems in lLists
          {
-            for oUserObject in lItems
+            foreach oUserObject in lItems
             {
                if isClass(oUserObject,cReagentClass)
                {
@@ -207,7 +209,7 @@ messages:
       }
 
       % Use up reagents
-      for lIngredient in lIngredients
+      foreach lIngredient in lIngredients
       {
          cIngredientClass = First(lIngredient);
          iNumNeeded = Nth(lIngredient, 2);
@@ -231,7 +233,7 @@ messages:
             }
 
             % Since spell is cast, we can be cavalier about deleting things
-            for oUserObject in lItems
+            foreach oUserObject in lItems
             {
                if IsClass(oUserObject,cIngredientClass)
                {
@@ -336,7 +338,7 @@ messages:
 
       lReagents  = Send(oTarget,@GetReagents);
 
-      for i in lReagents
+      foreach i in lReagents
       {
          cType  = Nth(i,1);
          iNumber = Nth(i,2) * iMultiple;
@@ -364,7 +366,7 @@ messages:
       % Use EVENT_STEER: don't print fizzle message
       Send(who,@BreakTrance,#event=EVENT_STEER);
 
-      for i in lSpells
+      foreach i in lSpells
       {
          if StringEqual(string,Send(i,@GetName))
          {

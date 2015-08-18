@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fountain.lkod
+
    fountain_name_rsc = "fountain"
    fountain_icon_rsc = fountain.bgf
    fountain_frozen_icon_rsc = fountfrozen.bgf
@@ -167,19 +169,19 @@ messages:
 
       if (iHour >= 7) AND (iHour <= 20)
       {
-         Send(self,@SetSwitch,#switch=OFF);
+         Send(self,@SetSwitch,#bSwitch=OFF);
       }
       else
       {
-         Send(self,@SetSwitch,#switch=ON);
+         Send(self,@SetSwitch,#bSwitch=ON);
       }
 
       return;
    }
 
-   SetSwitch(switch = ON)
+   SetSwitch(bSwitch = ON)
    {
-      if switch = ON
+      if bSwitch = ON
       {
          pbIsLit = TRUE;
       }

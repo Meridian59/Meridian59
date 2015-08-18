@@ -16,13 +16,18 @@ constants:
 
 resources:
 
+   include scroll.lkod
+
    Scroll_name_rsc = "scroll"
    Scroll_label_name_rsc = "generic scroll"
    Scroll_icon_rsc = scr06.bgf
    Scroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical "
       "writing in a spidery hand."
-
+   scroll_append_hits = "\n\nThis parchment encodes %i %s."
+   scroll_hits_plural = "mystic incantations"
+   scroll_hits_singular = "mystic incantation"
+   scroll_append_spellpower = "  The runic script averages %i spellpower."
    Scroll_Broken = \
       "The scroll burns and chars in your hands, crumbling to ashes."
    Scroll_fails = "You finish reading the scroll, but nothing happens."
@@ -37,23 +42,21 @@ classvars:
    vrFails = Scroll_fails
    viSpellEffect = SID_LIGHT
    viColor = XLAT_TO_RED
-
    viUse_type = ITEM_SINGLE_USE
-
    viItem_type = ITEMTYPE_SCROLL
    vbNoBrokenView = TRUE
-
    vrIcon = Scroll_icon_rsc
    vrDesc = Scroll_desc_rsc
    vrBroken = Scroll_Broken
-
+   vrDescHits = scroll_append_hits
+   vrDescHitsSingular = scroll_hits_singular
+   vrDescHitsPlural = scroll_hits_plural
+   vrDescSpellpower = scroll_append_spellpower
    viValue_average = 120
    viWeight = 5
    viBulk = 5
-
    viGround_group = 2
    viInventory_group = 1
-
    viHits_init_min = 1
    viHits_init_max = 1
 
@@ -84,31 +87,6 @@ messages:
       }
 
       return;
-   }
-
-   AppendDesc()
-   {
-      if piSpellPower <> $
-         AND piHits <> 0
-      {
-         AppendTempString("\n\nThis parchment encodes ");
-         AppendTempString(piHits);
-
-         if piHits > 1
-         {
-            AppendTempString(" mystic incantations");
-         }
-         else
-         {
-            AppendTempString(" mystic incantation");
-         }
-
-         AppendTempString(". The runic script averages ");
-         AppendTempString(piSpellPower);
-         AppendTempString(" power.");
-      }
-
-      propagate;
    }
 
 end

@@ -1,0 +1,15 @@
+WallofLightning_name_rsc = de "Die Blitzwand"
+WallofLightning_desc_rsc = de \
+   "Die Wand aus Blitzen knistert gefährlich, fast so, als würde sie hoffen, "
+   "dass Du sie betrittst."
+lightningwall_damage0 = de \
+   "Du gehst ohne Zwischenfall durch die Wand aus Blitzen."
+lightningwall_damage5 = de \
+   "Sicherlich wird man eines Tages einen anderen Nutzen für Blitze finden, "
+   "als Dir den Hintern damit zu versengen."
+lightningwall_damage10 = de "Woooaaa das kribbelt!!"
+lightningwall_damage15 = de \
+   "Whoooooiiee, das wird Dich morgens sicher wach machen!"
+lightningwall_damage20 = de "SO fühlt es sich also an."
+lightningwall_dissipates = de \
+   "Ein Teil der Blitzwand flackert und verschwindet."

@@ -36,6 +36,8 @@ constants:
 
 resources:
 
+   include guildh7.lkod
+
    room_name_guildh7 = "The Old Dwarven Hall"
    room_guildh7 = guildh7.roo
 
@@ -181,7 +183,7 @@ messages:
       local i, count;
 
       count = 0;
-      for i in plGuild_doors
+      foreach i in plGuild_doors
       {
          if row = First(i) AND col = Nth(i,2)
          {

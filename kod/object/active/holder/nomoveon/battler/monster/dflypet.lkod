@@ -1,0 +1,9 @@
+DragonFlyPet_koc_name_rsc = de "vo'huzotz"
+DragonFlyPet_name_rsc = de "Zahme Drachenfliege"
+DragonFlyPet_desc_rsc = de \
+   "Diese kleinen Eidechsen sehen außergewöhnlich freundlich aus. Ihre hauchzarten "
+   "Flügel erlauben es ihnen, sich in die Luft zu schwingen und für einen "
+   "kurzen Augenblick zu fliegen. Wenn Drachenfliegen in eine Ecke gedrängt "
+   "werden, weiß man, dass sie darauf mit einem widerlichen Spuckangriff "
+   "reagieren."
+DragonFlyPet_dead_name_rsc = de "Tote zahme Drachenfliege"

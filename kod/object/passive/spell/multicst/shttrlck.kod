@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include shttrlck.lkod
+
    ShatterLock_name_rsc = "shatterlock"
    ShatterLock_icon_rsc = ishatlok.bgf
    ShatterLock_desc_rsc = \
@@ -134,7 +136,7 @@ messages:
       {
          % Reduce casting time with more enemy guildmembers online.
          lMembers = Send(oGuild,@GetMemberList);
-         for i in lMembers
+         foreach i in lMembers
          {
             if NOT Send(First(i),@IsLoggedOn)
             {
@@ -179,7 +181,7 @@ messages:
          }
       }
 
-      for i in lCasters
+      foreach i in lCasters
       {
          Send(i,@MsgSendUser,#message_rsc=ShatterLock_cast_complete);
       }
@@ -210,7 +212,7 @@ messages:
       {
          lMembers = Send(oGuild,@GetMemberList);
 
-         for i in lMembers
+         foreach i in lMembers
          {
             if (Random(1,Length(lMembers))=1) AND Send(First(i),@IsLoggedOn)
             {

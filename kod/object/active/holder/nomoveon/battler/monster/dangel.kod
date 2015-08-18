@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include dangel.lkod
+
    DarkAngel_koc_name_rsc = "ozangelis"
    DarkAngel_name_rsc = "dark angel"
    DarkAngel_icon_rsc = angel.bgf

@@ -38,7 +38,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@Update);
       }
@@ -72,7 +72,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@NewYear);
       }
@@ -84,7 +84,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@NewMinute);
       }
@@ -96,7 +96,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@NewHour);
       }
@@ -108,7 +108,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@NewDay);
       }
@@ -120,7 +120,7 @@ messages:
    {
       local i;
 
-      for i in plActiveEvents
+      foreach i in plActiveEvents
       {
          Send(i,@NewMonth);
       }

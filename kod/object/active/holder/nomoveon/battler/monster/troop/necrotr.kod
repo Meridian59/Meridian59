@@ -19,6 +19,8 @@ include blakston.khd
 
 resources:
 
+   include necrotr.lkod
+
    NecromancerTroop_name_rsc = "necromancer"
 
    NecromancerTroop_desc_rsc = \

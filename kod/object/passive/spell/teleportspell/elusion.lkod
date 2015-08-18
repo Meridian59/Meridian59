@@ -1,0 +1,17 @@
+Elusion_name_rsc = de "Fliehen"
+Elusion_desc_rsc = de \
+   "Erlaubt es dem Zaubernden aus seiner momentanen Umgebung zu entfliehen. "
+   "Stehen mehrere Zielorte zur Verfügung, so muss der gewünschte genannt "
+   "werden. Dieser Zauber benötigt die Klauen der Kriipa."
+Elusion_No_Location_Given = de \
+   "Der Zauber schlägt fehl, da keine Ziel gewählt wurde."
+Elusion_Success = de "Die Welt fällt in sich zusammen."
+Elusion_Location_list = de \
+   "Die Welt schimmert und Schleichwege werden aufgedeckt welche "
+   "zu %s%s%s%s%s%s%s%s%s%s%s%s führen."
+Elusion_fail = de "Das ist kein gültiges Ziel."
+Elusion_cant_cast_here = de "Du darfst nur ein Ziel nennen, wo du hinwillst."
+Elusion_depart_to_destination = de \
+   "%s verschwindet innerhalb eines Augenblicks und hinterlässt nur einen "
+   "blassen Schimmer in einem verzerrtem Raum."
+elusion_loc_list_and = de "und "

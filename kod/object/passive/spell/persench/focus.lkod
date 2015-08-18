@@ -1,0 +1,10 @@
+manafocus_name_rsc = de "Konzentration"
+manafocus_desc_rsc = de \
+   "Bündelt Deine magische Energie, den Schaden von Element-Angriffszaubern "
+   "erhöhend. Verschwindet, sobald die Konzentration unterbrochen wird. Der "
+   "Zauber benötigt Pilze."
+manafocus_on = de "Deine gerade ausgerichtete Energie tobt durch deinen Körper."
+manafocus_break_trance = de "Du hast deine Konzentration verloren."
+manafocus_already_enchanted = de "Du hast bereits %s%s."
+manafocus_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber wurde mir Zauberkraft %i gezaubert."

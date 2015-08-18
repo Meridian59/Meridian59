@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include trgtglbe.lkod
+
    TargetGlobe_name = "Globe"
    TargetGlobe_icon = necglobe.bgf
    TargetGlobe_desc = \

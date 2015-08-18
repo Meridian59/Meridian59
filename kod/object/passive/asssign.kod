@@ -17,17 +17,24 @@ constants:
 
 resources:
 
+   include asssign.lkod
+
    AssassinSign_name_rsc = "the Assassin's Circle"
    Assassinsign_icon_rsc = newbsign.bgf
    
-   asssign_insession = "An Assassin's Circle is currently in session.  There "
-         "are %i combatants remaining.\n\n%s"
-   asssign_accepting = "An Assassin's Circle will be starting in relatively short "
-         "order.  I am currently accepting would-be assassins.\n\n%s"
-   asssign_not_accepting = "It will be some time before a new Assassin's Circle is underway.\n\n%s"
+   asssign_insession = \
+      "An Assassin's Circle is currently in session.  There "
+      "are %i combatants remaining.\n\n%s"
+   asssign_accepting = \
+      "An Assassin's Circle will be starting in relatively short "
+      "order.  I am currently accepting would-be assassins.\n\n%s"
+   asssign_not_accepting = \
+      "It will be some time before a new Assassin's Circle is underway.\n\n%s"
    asssign_lastwinner = "Reigning champion: %q||\n--%s"
-   asssign_darkblade = "Reigning champion: %q \nDarkest blade, with %i kills: %q\n"
-   asssign_darkblades = "Reigning champion: %q \nDarkest blades, with %i kills: \n%s"
+   asssign_darkblade = \
+      "Reigning champion: %q \nDarkest blade, with %i kills: %q\n"
+   asssign_darkblades = \
+      "Reigning champion: %q \nDarkest blades, with %i kills: \n%s"
    asssign_darkblade_format = "%q\n%s"
    asssign_last_darkblade_format = "%q\n"
    asssign_blank_winner = "Mocker"
@@ -36,107 +43,100 @@ resources:
 
 classvars:
 
-	vrName = Assassinsign_name_rsc
-    vrIcon = Assassinsign_icon_rsc
-   
+   vrName = Assassinsign_name_rsc
+   vrIcon = Assassinsign_icon_rsc
+
 properties:
 
-   
 messages:
 
    ReqNewOwner(what = $)
    {
-      return False;
+      return FALSE;
    }
 
    ShowDesc()
    {
-	local oGame, bInSession, bAccepting, oWinner, lDarkblade, i, count;
+      local oGame, bInSession, bAccepting, oWinner, lDarkblade, i, count;
 
-	oGame = send(SYS,@getAssassinGame);
-	bInSession = send(oGame,@InSession);
-	bAccepting = send(oGame,@InAcceptMode);
-    
-	%% tell if a match is underway and, if so, how many people are left.
-	
-	if bInSession
-	{
-		addpacket(4,asssign_insession,4,send(oGame,@GetNumCombatants));
-	}
-	else
-	{
-		if bAccepting
-		{
-			addpacket(4,asssign_accepting);
-		}
-		else		
-		{
-			addpacket(4,asssign_not_accepting);
-		}
-	}	
-	
-	%% tell who won the last match.
-        oWinner = send(oGame,@getLastWinner);
-        lDarkBlade = send(oGame,@getMostKills);
+      oGame = Send(SYS,@GetAssassinGame);
+      bInSession = Send(oGame,@InSession);
+      bAccepting = Send(oGame,@InAcceptMode);
 
-	if lDarkBlade <> $
-	{
-	    count = length(lDarkBlade);
-	    if count = 1
-	    {
-		AddPacket(4,asssign_darkblade);
+      % Tell if a match is underway and, if so, how many people are left.
+      if bInSession
+      {
+         AddPacket(4, asssign_insession, 4, Send(oGame,@GetNumCombatants));
+      }
+      else if bAccepting
+      {
+         AddPacket(4, asssign_accepting);
+      }
+      else
+      {
+         AddPacket(4, asssign_not_accepting);
+      }
 
-                if oWinner <> $
-                {
-                Addpacket(STRING_RESOURCE,send(oWinner,@gettruename));
-                }
-                else
-                {
-                addpacket(4,asssign_blank_winner);
-                }
+      % Tell who won the last match.
+      oWinner = Send(oGame,@GetLastWinner);
+      lDarkBlade = Send(oGame,@GetMostKills);
 
-		Addpacket(4,send(oGame,@getNumKills));
-		AddPacket(STRING_RESOURCE,send(first(lDarkBlade),@gettruename));
-	    }
-	    else
-	    {
-		AddPacket(4,asssign_darkblades);
+      if lDarkBlade = $
+      {
+         AddPacket(4,asssign_noone);
 
-                if oWinner <> $
-                {
-                Addpacket(STRING_RESOURCE,send(oWinner,@gettruename));
-                }
-                else
-                {
-                addpacket(4,asssign_blank_winner);
-                }
+         return;
+      }
 
-	 	Addpacket(4,send(oGame,@getNumKills));
-		for i in lDarkBlade
-		{
-		  if count > 1
-		     {
-		     AddPacket(4,asssign_darkblade_format);
-		     AddPacket(STRING_RESOURCE,send(i,@gettruename));
-		     }
-		  else
-		     {
-		     AddPacket(4,asssign_last_darkblade_format);
-		     AddPacket(STRING_RESOURCE,send(i,@gettruename));
-	             }
-		  count = count -1;
-	        }
-	    }
+      count = Length(lDarkBlade);
+      if count = 1
+      {
+         AddPacket(4,asssign_darkblade);
 
-	}	
-	else
-	{
-		AddPacket(4,asssign_noone);
-	}
-	return;		
+         if oWinner <> $
+         {
+            AddPacket(STRING_RESOURCE, Send(oWinner,@GetTrueName));
+         }
+         else
+         {
+            AddPacket(4,asssign_blank_winner);
+         }
+
+         AddPacket(4, Send(oGame,@GetNumKills),
+                   STRING_RESOURCE, Send(First(lDarkBlade),@GetTrueName));
+      }
+      else
+      {
+         AddPacket(4, asssign_darkblades);
+
+         if oWinner <> $
+         {
+            AddPacket(STRING_RESOURCE, Send(oWinner,@GetTrueName));
+         }
+         else
+         {
+            AddPacket(4,asssign_blank_winner);
+         }
+
+         AddPacket(4, Send(oGame,@GetNumKills));
+
+         foreach i in lDarkBlade
+         {
+            if count-- > 1
+            {
+               AddPacket(4,asssign_darkblade_format,
+                         STRING_RESOURCE, Send(i,@GetTrueName));
+            }
+            else
+            {
+               AddPacket(4,asssign_last_darkblade_format,
+                         STRING_RESOURCE, Send(i,@GetTrueName));
+            }
+         }
+      }
+
+      return;
    }
+
 end
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

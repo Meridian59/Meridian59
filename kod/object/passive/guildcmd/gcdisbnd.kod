@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gcdisbnd.lkod
+
    guilddisband_name_rsc = "disband"
    guilddisband_icon_rsc = light.bgf
    guilddisband_desc_Rsc = "This is how to delete a guild."
@@ -65,7 +67,7 @@ messages:
       }
 
       % Tell people the guild is going away
-      for i in Send(oGuild,@GetMemberList)
+      foreach i in Send(oGuild,@GetMemberList)
       {
          oUser = First(i);
          if oUser = who

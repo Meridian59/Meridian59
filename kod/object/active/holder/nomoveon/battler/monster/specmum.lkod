@@ -1,0 +1,10 @@
+SpectralMummy_koc_name_rsc = de "kosnapleoc"
+SpectralMummy_name_rsc = de "Die Gefallene Seele"
+SpectralMummy_desc_rsc = de \
+   "Diese arme Kreatur war dereinst ein Mensch, welcher in einem alten Ritual "
+   "mumifiziert und zu den anderen in die Krypta gesteckt wurde. Jahre sind "
+   "verstrichen, und nur der Geist der ursprünglichen Person blieb übrig. "
+   "Sie ist nun schon so lange tot und mumifiziert, dass sie lange vergessen "
+   "hat, wie sie ursprünglich aussah. Nun wandert sie so, wie sie aussah, "
+   "als sie zur Ruhe gebettet wurde als spektrales Wesen umher."
+SpectralMummy_dead_name_rsc = de "tote Gefallene Seele"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include orcinvasion.lkod
+
    OrcInvasion_start_msg = \
       "The orc invasion has begun."
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include f7.lkod
+
    room_OutdoorsF7 = F7.roo
    room_name_OutdoorsF7 ="Off the beaten path"
    OutdoorsF7_music = walk1.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wolf.lkod
+
    wolf_koc_name_rsc = "ixleocwolf"
    wolf_name_rsc = "wolf"
    wolf_icon_rsc = wolf.bgf

@@ -1,0 +1,65 @@
+lich_pretty_name_rsc = de "Die Königin Venya'cyr"
+lich_pretty_desc_rsc = de \
+   "Eine edle Frau von unglaublicher Schönheit. Königin Venya'cyr bewegt "
+   "sich mit einer kultivierten Eleganz, die in diesem Zeitalter fast nicht "
+   "mehr gesehen wird. Du kannst Dich nur wundern, wie sie es über all diese "
+   "Jahrhunderte geschafft hat, ihr Gesicht so jung und schön zu halten."
+lich_name_rsc = de "Queen Venya'cyr"
+lich_desc_rsc = de \
+   "Duch einen dunklen Pakt der Jahrhunderte in der Vergangenheit geschlossen "
+   "wurde, wird Königin Venya'cyrs entsetzlicher Leichnam durch dunkle Magie "
+   "am Leben erhalten. Reine Kraft geht spürbar von ihren Augen aus, als "
+   "ein intensiver Blick Dein Herz mit Furcht erfüllt.Die Jahrhunderte haben "
+   "scheinbar ihren Zoll von ihrer pysikalischen Form gefordert, denn ihre "
+   "Haut ist ein Haufen verrottendes Fleisch, das von Würmern bevölkert wird."
+lich_dispel = de \
+   "Die schreckliche Erscheinung des Lichs ist nun enthüllt und für alle "
+   "sichtbar!"
+lich_respel = de \
+   "Die schreckliche Erscheinung des Lichs ist wieder mit einer Illusion "
+   "verdeckt."
+lich_dead_name_rsc = de "Der Geist von Königin Venya'cyr"
+lich_cast_spell = de "Die Lichkönigin beschwört die Dunkelheit!!"
+lich_death_blow = de \
+   "Dein letzter Schlag hat die verdorbene Königin Venya'cyr von dieser Ebene "
+   "der Existenz verbannt!"
+lich_single_killer = de \
+   "Du hast persönlich die verdorbene Königin Venya'cyr von dieser Ebene "
+   "der Existenz verbannt!"
+lich_double_killer = de \
+   "Die verdorbene Lichkönigin wurde dank Dir und Deinen Kameraden von dieser "
+   "Ebene der Existenz verbannt!"
+lich_helper_killer = de \
+   "Die verdorbene Lichkönigin wurde dank Dir und Deinen Kameraden von dieser "
+   "Ebene der Existenz verbannt!"
+lich_no_truce = de \
+   "Die verdorbene Gegenwart der Lichkönigin zerstört Deine Waffenruhe, bevor "
+   "Du sie auch nur zaubern kannst."
+lich_killed_world_saved = de \
+   "~B%s hat die dunkle Königin Venya'cyr getötet und Meridian von der bösen "
+   "Herrschaft der Nekromanten befreit!\nDanke an %q%s%q.  Die guten "
+   "Bewohner Meridians können nun wieder in Sicherheit leben, wissend, "
+   "dass %q%s%q mit der untoten Königin vergangen sind.%s$0"
+lich_killed_world_saved_nolich = de \
+   "~B%s hat den letzen des Ordens der Nekromanten erschlagen und befreit "
+   "somit Meridian von ihrer Bosheit!"
+lich_and = de " und "
+lich_tribute_trigger = de "Anerkennung"
+lich_hunger_trigger = de "Hunger"
+Lich_starting_password = de "Todesmagier"
+lich_hunger_5 = de \
+   "~rMein Hunger ist wie ein glühende Kohle in meiner Brust! Füttere mich "
+   "sofort!"
+lich_hunger_4 = de \
+   "~rIch hungere sehr stark! Der Orden hat mir gegenüber seine Pflichten "
+   "vernachlässigt. Füttere mich sofort!"
+lich_hunger_3 = de "~rIch bin sehr hungrig! Füttere mich, mein Diener."
+lich_hunger_2 = de "~rIch bin hungrig und möchte bald gefüttert werden."
+lich_hunger_1 = de "~rIch verspüre zur Zeit nur ein wenig Hunger."
+lich_hunger_0 = de "~rIch bin zufrieden. Der Orden dient mir gut."
+lich_not_powerful = de \
+   "~wQueen Venya'cyr sagt, \"~rDein schwacher Geist ist nicht in der Lage, "
+   "solch mächtige Magie zu lernen.\""
+lich_not_order = de \
+   "~wQueen Venya'cyr sagt, \"~rNur meine Diener erhalten diesen mächtigen "
+   "Bonus.\""

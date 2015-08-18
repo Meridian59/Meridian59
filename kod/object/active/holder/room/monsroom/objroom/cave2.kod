@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cave2.lkod
+
    room_cave2 = cave2.roo
    room_name_cave2 = "A Deep, Dark, Spooky, Icky Cave"
 
@@ -164,7 +166,7 @@ messages:
          return FALSE;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj=Send(self,@holderExtractObject,#data=i);
          if isClass(each_obj,&orc)

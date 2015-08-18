@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include seance.lkod
+
    Seance_cast_rsc = SID_SEANCE
 
    Seance_name_rsc = "seance"
@@ -115,7 +117,7 @@ messages:
          if (send(oKiller,@IsEnchanted,#what=oSpell))
          {
             % Give players a decent chance to improve the spell!
-            for i in Send(oKiller,@GetPassiveImprovementList)
+            foreach i in Send(oKiller,@GetPassiveImprovementList)
             {
                if First(i) = oSpell AND random(1,2) = 2
                {

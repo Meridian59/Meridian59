@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include finelute.lkod
+
    FineLute_name_rsc = "fine lute"
    FineLute_icon_rsc = music.bgf
    FineLute_overlay_rsc = luteov.bgf

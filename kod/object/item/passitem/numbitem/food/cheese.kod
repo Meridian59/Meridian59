@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cheese.lkod
+
    Cheese_name_rsc = "wheel of cheese"
    Cheese_icon_rsc = cheese.bgf
    Cheese_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include nectome.lkod
+
    NecromancerTome_name_rsc = "ancient tome"
    NecromancerTome_icon_rsc = nectome.bgf
    NecromancerTome_desc_rsc = "An ancient tome, its pages yellow and crumbling."

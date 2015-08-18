@@ -1,0 +1,57 @@
+% Quest description.
+mysterymobquest_name_rsc = de "mystery monster quest"
+mysterymobquest_desc_rsc = de \
+   "The tailor has been having insect trouble lately.  She found a large "
+   "insect of some sort nesting in her storage area and while she was able "
+   "to chase it away with fire and smoke, it made off with one of her "
+   "special dress patterns.  Find the insect, slay it and retrieve the "
+   "pattern."
+
+mysterymobquest_node_two_rsc = de \
+   "%s%s mentioned that %s has been having \"insect\" troubles,  "
+   "and that %s will reward you if you can help %s."
+mysterymobquest_node_three_rsc = de \
+   "%s%s found a large insect of some sort nesting in %s "
+   "storage area.  %s was able to chase it away with fire and smoke, "
+   "but when the smoke cleared %s noticed one of %s \"dress patterns\" "
+   "was missing."
+mysterymobquest_kill_rsc = de \
+   "%s%s has asked you to get %s missing dress pattern back.  "
+   "It is likely still stuck to the insect's carapace, but %s didn't "
+   "see what type of insect it was.  Slay insects in the surrounding "
+   "area and see if any of them have the dress pattern."
+mysterymobquest_return_rsc = de \
+   "You have found the missing dress pattern.  Return it "
+   "to %s%s for a reward."
+
+mysterymobquest_completed_rsc = de \
+   "You have slain the mystery monster and returned the dress pattern. "
+   "In return you have received a disciple robe, which will add "
+   "power to spells that you cast.  Disciple robes bear the insignia "
+   "of a specific school, and provide extra spellpower to spells of that "
+   "school."
+
+% Quest resources.
+mysterymonster_assign_2 = de \
+   "Würdest Du etwas für mich machen?  Ich werde Dich belohnen.  Ich habe "
+   "ein Insektenproblem, , wirklich."
+mysterymonster_trigger_2 = de "Insekt"
+mysterymonster_assign_3 = de \
+   "Wahrlich, einige große Insekten haben vor einer Weile in meinem Lagerraum "
+   "genistet.  Es gelang mir sie zu vertreiben, in dem ich ein kleines Feuer "
+   "gemacht habe und Rauch reingeblasen habe.  Als der Rauch abzog suchte "
+   "ich in meinem Lager nach meinen Schnittmustern, und eines fehlte!"
+mysterymonster_trigger_3 = de "Schnittmuster"
+mysterymonster_assign_4 = de \
+   "Ich ~Ibenötige~I die Schnittmuster zurück, und ich wette, es steckt immer "
+   "noch in diesem Insektenpanzer.  Kannst Du es mir zurückbringen?  Das "
+   "Problem ist, mit all dem Rauch konnte ich nicht sehen, als es weg lief "
+   "und somit auch nicht welche Art es war.  Obwohl, es kann nicht all zu "
+   "weit entfernt sein."
+mysterymonster_success_4 = de \
+   "Segne Dich, Kind!  Hier, diese Robe ist von einem meiner anderen speziellen "
+   "Muster.  Es hat ein wirklich sehr altes Design. Trage sie gut, mein Freund"
+mysterymonster_failure_4 = de \
+   "Betreff: Fehlende Schnittmuster\nIch habe eine weiter Kopie von dem fehlenden "
+   "Schnittmuster gefunden, also vergiss einfach das was ich verloren habe.  "
+   "Ich danke Dir das Du es versucht hast."

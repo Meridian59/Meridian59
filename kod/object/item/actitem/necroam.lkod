@@ -1,0 +1,100 @@
+necamulet_name_rsc = de "Das Amulett der Drei"
+necamulet_desc_rsc = de \
+   "Dieses Amulett hat etwas äußerst Beunruhigendes an sich. Wenn Du es aus "
+   "der Deinen Augenwinkeln betrachtest, kannst Du fast sehen, wie das Böse "
+   "aus ihm läuft."
+necamulet_newbie_pickup_good = de \
+   "Dein Schutzengel flüstert Dir zu, \"Dieses Amulett ist ein Gegenstand "
+   "abgrundtiefen Übels. Es nur in Deinem Besitz zu führen würde Deine Seele "
+   "untergraben und Dich letztendlich zerstören.\""
+necamulet_newbie_pickup_evil = de \
+   "Dein Schutzengel flüstert Dir zu, \"Dieses Amulett hat bei weitem mehr "
+   "Kraft, als Du aufnehmen kannst. Halte Dich vorerst von ihm fern.\""
+necamulet_holding_damage_wearing = de \
+   "Die unheilige Energie, die von dem Amulett der Drei ausgeht, sickert "
+   "in Dich und erfüllt Deinen Körper mit Schmerz, während es von Deiner "
+   "Seele Besitz ergreift. Du musst etwas unternehmen, bevor es Dich zerstört!"
+necamulet_holding_damage = de \
+   "Die unheilige Energie, die von dem Amulett der Drei ausgeht, sickert "
+   "in Dich und erfüllt Deinen Körper mit Schmerz, während es von Deiner "
+   "Seele Besitz ergreift."
+necamulet_holding_unworthy_wearing = de \
+   "Die unheilige Energie, die von dem Amulett der Drei ausgeht, sickert "
+   "in Dich und erfüllt Dich mit Freude, obwohl es Dich mit Schmerzen peinigt. "
+   "Du musst es irgendwie entfernen, bevor es Dich zerstört!"
+necamulet_holding_unworthy = de \
+   "Die unheilige Energie, die von dem Amulett der Drei ausgeht, sickert "
+   "in Dich und erfüllt Dich mit Freude, obwohl es Dich mit Schmerzen peinigt. "
+   "Du fühlst den starken Drang, das Amulett anzulegen und all seine Energie "
+   "zu bündeln, aber Du weißt irgendwie, dass es Dich mit Sicherheit zerstören "
+   "würde."
+necamulet_holding_tempt = de \
+   "Die unheilige Energie, die von dem Amulett der Drei ausgeht, sickert "
+   "in Dich und erfüllt Dich mit Freude. Du kannst nicht anders, als Dir "
+   "auszumalen, wie wunderbar es wäre, das Amulett anzulegen und seine volle "
+   "Energie zu bündeln."
+necamulet_warning = de \
+   "Als Du das Amulett um Deinen Hals legst, fühlst Du eine starke Vorahnung; "
+   "es ist unwahrscheinlich, dass diese Tat rückgängig gemacht werden kann."
+necamulet_used_unworthy = de \
+   "Als Du das Amulett anlegst, fließt eine Welle von Kraft durch Dich, die "
+   "jede Faser Deines Körpers mit Freude und Schmerz erfüllt. Die Kraft, "
+   "die Deinen Körper durchflutet, ist von unermeßbarem Umfang und wächst "
+   "mit jeder verstrichenen Sekunde weiter an - der kupferne Geschmack der "
+   "Angst füllt Deinen Mund, als Du feststellst, dass Du nicht alle Kraft "
+   "in Dir aufnehmen kannst."
+necamulet_used_rsc = de \
+   "Als Du das Amulett anlegst, fließt eine Welle von Kraft durch Dich, die "
+   "jede Faser Deines Körpers mit Freude erfüllt und jede Zelle unaufhebbar "
+   "verändert. Tief in Deinem Inneren, unter dem Gefühl der Kraft, spürst "
+   "Du noch etwas anderes - eine Art Hunger, die an Dir nagt, mehr und mehr "
+   "mit jeder verstrichenen Sekunde."
+necamulet_try_unuse_rsc = de \
+   "Als Du versuchst, das Amulett von Deinem Hals zu ziehen, spürst Du, wie "
+   "es schmerzvoll an Deinem Inneren zerrt, als wäre es magisch mit Deinen "
+   "Innereien verbunden, für immer in den dunkelsten Teil Deiner Seele gepflanzt."
+necamulet_unused_rsc = de \
+   "Als das Amulett der Drei Deinen Körper verläßt, fühlst Du, wie sich noch "
+   "etwas anderes in Deinem Körper losreißt und Deine Organe aufgelöst zurückläßt."
+necamulet_hunger_1 = de "Du fängst an, ein wenig hungrig zu werden."
+necamulet_hunger_2 = de "Du fühlst Dich definitiv hungrig."
+necamulet_hunger_3 = de \
+   "Mittlerweile bist Du sehr hungrig. Der Hunger ist ein brennender Knoten "
+   "irgendwo tief in Deinem Schädel. Es ist Zeit zu essen."
+necamulet_hunger_4 = de \
+   "Dein Gehirn brennt mit einem einzigen Impuls - Du musst essen. Jeder "
+   "Augenblick  zieht sich in die Länge, eine Ewigkeit des Leidens."
+necamulet_hunger_5 = de \
+   "Dein Körper erleidet unerträgliche Schmerzen. Du fühlst Dich, als ob "
+   "Du von ihm weggezogen würdest. Du stößt Dich mit großer Anstrengung zurück "
+   "- Du musst schnell essen, sonst bist Du verloren verloren gehen."
+necamulet_illusion_slipped = de \
+   "Die Illusion, die Deine wahren Fähigkeiten verdeckte, verschwindet und "
+   "zeigt Deine bösartige Erscheinung in all ihrem obszönen Glanz!"
+necamulet_illusion_restored = de \
+   "Deine fürchterliche Erscheinung wurde erneut durch eine Illusion verhüllt."
+necamulet_hunger_assuaged = de \
+   "%s%s vergeht. Du fühlst, wie Dein Amulett Lebensenergie absorbiert. Eine "
+   "Energiewelle wäscht Deinen Hunger hinfort und läßt Dich gestärkt zurück."
+necamulet_cant_eat = de \
+   "Du versuchst %s%s zurückzugewinnen, vergeblich. Lebensspendende Nahrung "
+   "wird nicht mehr nötig sein. Ein bohrendes Hungergefühl quält Deinen unreinen "
+   "Körper."
+necamulet_cant_pay = de \
+   "Deine Dunkle Königin versucht, Dein Amulett zu berühren. Sie hält es "
+   "für einen kurzen Moment, dann stößt sie Dich angeekelt zur Seite.~wKönigin "
+   "Venya'cyr spricht zu Dir, \"~rSchwächlicher Narr, Dein eigener Hunger "
+   "ist zu gross, als dass Du meinen eigenen stillen könntest!~n\""
+necamulet_pay_ouch = de \
+   "Deine Dunkle Königin versucht, Dein Amulett zu berühren. Du keuchst, "
+   "als sie Dir Deine Lebensenergie entzieht und Dich erschöpft und schwach "
+   "zurückläßt.~wKönigin Venya'cyr sagt zu Dir, \"~rIch danke Dir, mein loyaler "
+   "Diener. Geh' jetzt und stärke Dich wieder!~n\""
+necamulet_pay = de \
+   "Deine Dunkle Königin versucht, Dein Amulett zu berühren. Du keuchst, "
+   "als sie Dir die Lebensenergie entzieht.~wKönigin Venya'cyr sagt zu Dir, "
+   "\"~rAh, welch erfrischende Seele Du doch hast. Du unterstützest mich gut, "
+   "mein Dunkler Krieger!~w\""
+necamulet_drops = de \
+   "Als Deine Essenz von dieser Ebene der Existenz verschwindet, gleitet "
+   "Dir das Amulett aus den Händen und fällt auf den Boden."

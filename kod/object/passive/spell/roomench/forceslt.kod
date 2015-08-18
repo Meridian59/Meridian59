@@ -16,15 +16,20 @@ constants:
 
 resources:
 
+   include forceslt.lkod
+
    forcesoflight_name_rsc = "forces of light"
    forcesoflight_icon_rsc = ifrclite.bgf
    forcesoflight_desc_rsc = \
       "Summons Shal'ille to infuse her power into all good players in the room, "
       "making their attacks more accurate and her spells more potent.  "
       "Requires elderberries and emeralds to cast."
-   
-   forcesoflight_already_enchanted = "This place is already infused with the spirit of Shal'ille."
 
+   forcesoflight_already_enchanted = \
+      "This place is already infused with the spirit of Shal'ille."
+   forcesoflight_enchantment_rsc = \
+      "\n\nThe %s enchantment currently adds %i offense to the attacks of good "
+      "players and %i spellpower to all Shal'ille spells cast in the area."
    forcesoflight_on = "This place is infused with the spirit of Shal'ille."
    forcesoflight_off = "The spirit of Shal'ille departs from this place."
    forcesoflight_player_on = "You are filled with the spirit of Shal'ille."
@@ -167,20 +172,13 @@ messages:
 
    EffectDesc(who=$)
    {
-      local i, iState;
+      local iState;
 
-      AppendTempString("\n\n");
-      AppendTempString("The ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment currently adds ");
-      
       iState = Send(Send(who,@GetOwner),@GetEnchantedState,#what=self);
-      
-      AppendTempString(iState + 50);
-      AppendTempString(" offense to the attacks of good players and ");
-      AppendTempString(iState / 10);
-      AppendTempString(" spellpower to all Shal'ille spells cast in the area.");
-      
+
+      AddPacket(4, forcesoflight_enchantment_rsc, 4, Send(self,@GetName),
+                4, iState + 50, 4, iState / 10);
+
       return;
    }
 

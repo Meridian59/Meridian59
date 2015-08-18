@@ -1,0 +1,7 @@
+PKpointer_no_loot = de \
+   "Du greifst nach %s%s, aber eine mystische Barriere hindert Dich daran."
+PKPointer_no_offer_accept = de \
+   "%s versucht Dir %s%s anzubieten, aber eine mystischer Barriere hindert "
+   "Dich daran."
+PKpointer_no_offer = de \
+   "%s ist es nicht möglich %s%s aus Deiner Hand zu nehmen."

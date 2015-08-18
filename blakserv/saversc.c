@@ -17,8 +17,6 @@
  Then once the resources are loaded, WriteAllDynamicResource is called, which writes
  all the dynamic resources to disk.  Then the saved times are used to set
  the file time of these files, as long as chunking size didn't change.  Phew.
- 
-
  */
 
 #include "blakserv.h"
@@ -94,12 +92,13 @@ void SaveEachDynamicRsc(resource_node *r)
    if (written != LEN_RSC_TYPE)
       eprintf("SaveEachDynamicRsc 2 error writing to file!\n");
 
-   write_int = strlen(r->resource_val);
+   // Save English only for now.
+   write_int = strlen(r->resource_val[0]);
    written = fwrite(&write_int, 1, LEN_RSC_LEN, rscfile);
    if (written != LEN_RSC_LEN)
       eprintf("SaveEachDynamicRsc 3 error writing to file!\n");
 
-   written = fwrite(r->resource_val, 1, strlen(r->resource_val), rscfile);
-   if (written != (int)strlen(r->resource_val))
+   written = fwrite(r->resource_val[0], 1, strlen(r->resource_val[0]), rscfile);
+   if (written != (int)strlen(r->resource_val[0]))
       eprintf("SaveEachDynamicRsc 4 error writing to file!\n");
 }

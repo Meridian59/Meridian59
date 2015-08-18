@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include multicst.lkod
+
    multicast_no_prism = "You can't find a prism nearby to focus your energies on."
 
 classvars:
@@ -154,7 +156,7 @@ messages:
       cPrism = $;
       cDist = 100000;
 
-      for i in Send(oRoom,@GetHolderPassive)
+      foreach i in Send(oRoom,@GetHolderPassive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Prism)

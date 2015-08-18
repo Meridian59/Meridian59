@@ -29,17 +29,15 @@ constants:
 
 resources:
 
+   include iaquest.lkod
+
    ItemAttQuestCargo_desc_rsc = \
-      "\n\nThis was given by %sourceNPC to %player, to be delivered to %destNPC."
-   ItemAttQuestCargo_sub_sourceNPC = "%sourceNPC"
-   ItemAttQuestCargo_sub_player = "%player"
-   ItemAttQuestCargo_sub_destNPC = "%destNPC"
-   ItemAttQuestCargo_desc = ""
+      "\n\nThis was given by %s to %q, to be delivered to %s."
 
 classvars:
 
    viItem_Att_Num = IA_QUEST_CARGO
-   vrDesc = ItemAttQuestCargo_desc
+   vrDesc = ItemAttQuestCargo_desc_rsc
 
 properties:
 
@@ -94,6 +92,7 @@ messages:
    {
       local lData, iValue;
 
+      % lData is [ compound, QN ]
       lData = $;
 
       lData = Cons(oQuestnode,lData);
@@ -164,26 +163,6 @@ messages:
    "some part of the item's stats.\n"   
    "This should be tailored for each Attribute."
    {
-      local sAppendedDesc;
-      if NOT Send(oItem,@HasAttribute,#ItemAtt = viItem_Att_num)
-      {
-         % add IA_APPEND_DESCRIPTION attribute
-         sAppendedDesc = CreateString();
-         ClearTempString();
-         AppendTempString(ItemAttQuestCargo_desc_rsc);
-         SetString(sAppendedDesc,GetTempString());
-         StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_sourceNPC,
-                          Send(Send(Nth(lData,2),@GetSourceNPC),@GetName));
-         StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_player,
-                          Send(oPlayer,@GetName));
-         StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_destNPC,
-                          Send(Send(Nth(lData,2),@GetDestNPC),@GetName));
-
-         % add attribute with sAppendedDesc
-         Send(Send(SYS,@FindItemAttByNum,#num=IA_APPEND_DESCRIPTION),
-              @AddToItem,#oItem=oItem,#state1=sAppendedDesc);
-      }
-
       return;
    }
 
@@ -195,7 +174,13 @@ messages:
 
    AppendDesc(oItem=$)
    {
-      % Don't propagate.
+      local oQN;
+
+      oQN = Nth(Send(oItem,@GetAttributeData,#ItemAtt=IA_QUEST_CARGO),2);
+      AddPacket(4,vrDesc, 4,Send(Send(oQN,@GetSourceNPC),@GetName),
+                6,Send(First(Send(oQN,@GetQuesters)),@GetName),
+                4,Send(Send(oQN,@GetDestNPC),@GetName));
+
       return;
    }
 

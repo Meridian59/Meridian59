@@ -1,0 +1,10 @@
+SummonPoisonFog_name_rsc = de "Giftnebel"
+SummonPoisonFog_desc_rsc = de \
+   "Erschafft eine Wolke beißenden Giftnebels. Benötigt Schamanenblut. Die "
+   "Anwendung dieses Zaubers kann dazu führen, daß Du zum Gesetzlosen erklärt "
+   "wirst."
+SummonPoisonFog_cast_rsc = de \
+   "Eine dicke, scharf stechende Nebelwolke schwebt vor Dir"
+SummonPoisonFog_failed_rsc = de \
+   "Es gibt zu viel Beschwörungsmagie in diesem Raum. Du kannst diesen Zauber "
+   "nicht ausführen."

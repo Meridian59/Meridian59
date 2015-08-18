@@ -1,0 +1,7 @@
+oldarenasign_name_rsc = de "Das Schild"
+oldarenasign_desc_rsc = de "Auf dem Schild steht:\n\n %s "
+oldarenasign_arena_msg = de \
+   "\"Sag HERAUSFORDERUNG, um einen Kampf mit einem Champion zu beginnen. "
+   "Sag CHAMPION, wenn es keinen Champion gibt. Champions müssen jede Herausforderung "
+   "AKZEPTIEREN; sonst verlieren sie ihren Titel. Champions dürfen ihren "
+   "Titel ABGEBEN, jedoch nicht während eines Kampfes.\""

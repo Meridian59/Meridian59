@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include kmadscih.lkod
    room_name_MadScientistHut = "Hut of the Mad Scientist"
    room_MadScientistHut = KC5a.roo
    MadScientistHut_music = madsci.mp3
@@ -81,7 +83,7 @@ messages:
 
       iFlys = 0;
 
-      for i in plActive
+      foreach i in plActive
       {
          oObj = Send(self,@HolderExtractObject,#Data=i);
          if IsClass(oObj,&DragonFlyQueen)

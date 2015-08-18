@@ -1,0 +1,7 @@
+kick_name_rsc = de "Treten"
+kick_desc_rsc = de "Eine schadenverursachende und wertvolle Kampfhandlung.."
+kick_player_was_hit = de "%s%s tritt Dir in den Unnennbaren."
+kick_player_hit_something = de "%sDu trittst %s%s hart in die Leiste."
+kick_player_killed_something = de \
+   "%s%s ist auf den Boden geworfen worden und steht nicht mehr auf."
+kick_player_was_killed = de "%s%s's tritt irgendwas keine ahnung."

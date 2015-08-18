@@ -18,56 +18,46 @@ constants:
 
 resources:
 
+   include guilshld.lkod
+
    guildshield_name_rsc = "herald shield"
 
    guildshield_base_sash = gshA.bgf
    guildshield_base_halvesv = gshB.bgf
    guildshield_base_stripeh = gshC.bgf
    guildshield_base_checker = gshD.bgf
-
    guildshield_pov_sash = povgshA.bgf
    guildshield_pov_halvesv = povgshB.bgf
    guildshield_pov_stripeh = povgshC.bgf
    guildshield_pov_checker = povgshD.bgf
-
-
    guildshield_duke = gshda.bgf
    guildshield_duke_over = gshdaov.bgf
-
    guildshield_old_duke = gshdu.bgf
    guildshield_old_duke_over = gshduov.bgf
-
    guildshield_princess = gshpr.bgf
    guildshield_princess_over = gshprov.bgf
-
    guildshield_rebel = gshre.bgf
    guildshield_rebel_over = gshreov.bgf
-
    guildshield_riija = gshri.bgf
    guildshield_riija_over = gshriov.bgf
-
    guildshield_faren = gshfa.bgf
    guildshield_faren_over = gshfaov.bgf
-
    guildshield_qor = gshqo.bgf
    guildshield_qor_over = gshqoov.bgf
-
    guildshield_shalille = gshsh.bgf
    guildshield_shalille_over = gshshov.bgf
-
    guildshield_kraanan = gshkr.bgf
    guildshield_kraanan_over = gshkrov.bgf
-
    guildshield_jala = gshja.bgf
    guildshield_jala_over = gshjaov.bgf
-
    guildshield_window_overlay_rsc = povshldE.bgf
-
    guildshield_desc_rsc = \
-      "Heavy metal shields of this style are decorated in the standards of its owner guild. "
-
-   guildshield_heraldry_prefix = "The pattern on this shield is "
-
+      "Heavy metal shields of this style are decorated in the standards "
+      "of its owner guild.  "
+   guildshield_herald_guild_master = \
+      "The pattern on this shield is %s%s%s: the mark of the %q.  %s"
+   guildshield_herald_noguild_master = \
+      "The pattern on this shield is %s%s%s.  %s"
    guildshield_red = "rose"
    guildshield_skin1 = "sand"
    guildshield_skin2 = "bronze"
@@ -83,15 +73,10 @@ resources:
    guildshield_black = "ebony"
    guildshield_darkgreen = "forest green"
    guildshield_unknown = "a color"
-
    guildshield_slash = " tierced in bend sinister by "
    guildshield_half = " astride "
    guildshield_horiz = " tierced in feld by "
    guildshield_checker = " quartered with "
-
-   guildshield_heraldry_known = ": the mark of the "
-   guildshield_heraldry_postfix = ". "
-
    guildshield_insig_riija = "The unblinking eye of Riija stares from its center. "
    guildshield_insig_qor = "The skull insignia of Qor is upon it. "
    guildshield_insig_kraanan = "The weapons of Kraanan are crossed acenter. "
@@ -183,29 +168,29 @@ messages:
 
    AppendColor(color=0,iColorNum=1)
    {
-      if color = XLAT_TO_RED { AppendTempString(guildshield_red); return; }
-      if color = XLAT_TO_SKIN1 { AppendTempString(guildshield_skin1); return; }
-      if color = XLAT_TO_SKIN2 { AppendTempString(guildshield_skin2); return; }
-      if color = XLAT_TO_SKIN4 { AppendTempString(guildshield_skin4); return; }
-      if color = XLAT_TO_ORANGE { AppendTempString(guildshield_orange); return; }
-      if color = XLAT_TO_GREEN { AppendTempString(guildshield_green); return; }
-      if color = XLAT_TO_BLUE { AppendTempString(guildshield_blue); return; }
-      if color = XLAT_TO_PURPLE { AppendTempString(guildshield_purple); return; }
-      if color = XLAT_TO_YELLOW { AppendTempString(guildshield_yellow); return; }
-      if color = XLAT_TO_GRAY { AppendTempString(guildshield_gray); return; }
-      if color = XLAT_TO_SKY { AppendTempString(guildshield_sky); return; }
-      if color = XLAT_TO_BLACK { AppendTempString(guildshield_darkgray); return; }
-      if color = XLAT_TO_DGREEN { AppendTempString(guildshield_darkgreen); return; }
+      if color = XLAT_TO_RED { AddPacket(4,guildshield_red); return; }
+      if color = XLAT_TO_SKIN1 { AddPacket(4,guildshield_skin1); return; }
+      if color = XLAT_TO_SKIN2 { AddPacket(4,guildshield_skin2); return; }
+      if color = XLAT_TO_SKIN4 { AddPacket(4,guildshield_skin4); return; }
+      if color = XLAT_TO_ORANGE { AddPacket(4,guildshield_orange); return; }
+      if color = XLAT_TO_GREEN { AddPacket(4,guildshield_green); return; }
+      if color = XLAT_TO_BLUE { AddPacket(4,guildshield_blue); return; }
+      if color = XLAT_TO_PURPLE { AddPacket(4,guildshield_purple); return; }
+      if color = XLAT_TO_YELLOW { AddPacket(4,guildshield_yellow); return; }
+      if color = XLAT_TO_GRAY { AddPacket(4,guildshield_gray); return; }
+      if color = XLAT_TO_SKY { AddPacket(4,guildshield_sky); return; }
+      if color = XLAT_TO_BLACK { AddPacket(4,guildshield_darkgray); return; }
+      if color = XLAT_TO_DGREEN { AddPacket(4,guildshield_darkgreen); return; }
 
       if color = XLAT_REDTOBLACK
       {
          if iColorNum = 1
          {
-            AppendTempString(guildshield_black);
+            AddPacket(4,guildshield_black);
          }
          else
          {
-            AppendTempString(guildshield_blue);
+            AddPacket(4,guildshield_blue);
          }
 
          return;
@@ -214,11 +199,11 @@ messages:
       {
          if iColorNum = 1
          {
-            AppendTempString(guildshield_blue);
+            AddPacket(4,guildshield_blue);
          }
          else
          {
-            AppendTempString(guildshield_black);
+            AddPacket(4,guildshield_black);
          }
 
          return;
@@ -228,7 +213,7 @@ messages:
       if color >= PT_REDTODKBLACK1
          AND color <= PT_REDTODKBLACK3
       {
-         AppendTempString(guildshield_black);
+         AddPacket(4,guildshield_black);
 
          return;
       }
@@ -237,11 +222,11 @@ messages:
       {
          if iColorNum = 1
          {
-            AppendTempString(guildshield_black);
+            AddPacket(4,guildshield_black);
          }
          else
          {
-            AppendTempString(guildshield_gray);
+            AddPacket(4,guildshield_gray);
          }
 
          return;
@@ -251,71 +236,80 @@ messages:
       {
          if iColorNum = 1
          {
-            AppendTempString(guildshield_gray);
+            AddPacket(4,guildshield_gray);
          }
          else
          {
-            AppendTempString(guildshield_black);
+            AddPacket(4,guildshield_black);
          }
 
          return;
       }
 
-      AppendTempString(guildshield_unknown);
+      AddPacket(4,guildshield_unknown);
 
       return;
    }
 
    AppendDesc()
    {
-      local a, b, x;
+      local iColor1, iColor2, iTranslation, oGuild, bGuild;
 
       % sample: "The pattern on this shield is rose astride gold;
       %          the traditional mark of the Foobars.  The eye of
       %          Riija is staring ahead."
 
-      AppendTempString(guildshield_heraldry_prefix);
+      % Color 1
+      iTranslation = Send(self,@GetPaletteTranslation);
+      iColor1 = Send(SYS,@DecodePrimaryColor,#xlat=iTranslation);
+      % Color 2
+      iColor2 = Send(SYS,@DecodeSecondaryColor,#xlat=iTranslation);
 
-      % color 1
-      x = Send(self,@GetPaletteTranslation);
-      a = Send(SYS,@DecodePrimaryColor,#xlat=x);
-      Send(self,@AppendColor,#color=a,#iColorNum=1);
-
-      % shape
-      if piShield_shape = SHIELDSHAPE_SLASH { AppendTempString(guildshield_slash); }
-      if piShield_shape = SHIELDSHAPE_HALF { AppendTempString(guildshield_half); }
-      if piShield_shape = SHIELDSHAPE_HORIZ { AppendTempString(guildshield_horiz); }
-      if piShield_shape = SHIELDSHAPE_CHECKER { AppendTempString(guildshield_checker); }
-
-      % color 2
-      b = Send(SYS,@DecodeSecondaryColor,#xlat=x);
-      Send(self,@AppendColor,#color=b,#iColorNum=2);
-
-      % guild, if known
-      x = Send(SYS,@FindGuildByShield,#color1=a,#color2=b,#shape=piShield_shape);
-      if (x <> $) and isClass(x,&Guild)
+      % Pick main resource based on whether guild added or not.
+      oGuild = Send(SYS,@FindGuildByShield,#color1=iColor1,#color2=iColor2,
+                     #shape=piShield_shape);
+      if oGuild <> $
+         AND IsClass(oGuild,&Guild)
+         AND NOT Send(oGuild,@IsSecret)
       {
-         if not Send(x, @IsSecret)
-         {
-            AppendTempString(guildshield_heraldry_known);
-            AppendTempString(Send(x, @GetName));
-         }
+         AddPacket(4,guildshield_herald_guild_master);
+         bGuild = TRUE;
       }
-      AppendTempString(guildshield_heraldry_postfix);
+      else
+      {
+         AddPacket(4,guildshield_herald_noguild_master);
+         bGuild = FALSE;
+      }
 
-      % insignia, if any
-      if piInsigniaType = INSIG_RIIJA { AppendTempString(guildshield_insig_riija); }
-      if piInsigniaType = INSIG_QOR { AppendTempString(guildshield_insig_qor); }
-      if piInsigniaType = INSIG_KRAANAN { AppendTempString(guildshield_insig_kraanan); }
-      if piInsigniaType = INSIG_FAREN { AppendTempString(guildshield_insig_faren); }
-      if piInsigniaType = INSIG_JALA { AppendTempString(guildshield_insig_jala); }
-      if piInsigniaType = INSIG_PRINCESS { AppendTempString(guildshield_insig_princess); }
-      if piInsigniaType = INSIG_DUKE { AppendTempString(guildshield_insig_duke); }
-      if piInsigniaType = INSIG_SHALILLE { AppendTempString(guildshield_insig_shalille); }
-      if piInsigniaType = INSIG_REBEL { AppendTempString( guildshield_insig_rebel); }
-      if piInsigniaType = INSIG_NONE { AppendTempString(guildshield_insig_none); }
+      % Add first color.
+      Send(self,@AppendColor,#color=iColor1,#iColorNum=1);
+      % Add shape.
+      if piShield_shape = SHIELDSHAPE_SLASH { AddPacket(4,guildshield_slash); }
+      else if piShield_shape = SHIELDSHAPE_HALF { AddPacket(4,guildshield_half); }
+      else if piShield_shape = SHIELDSHAPE_HORIZ { AddPacket(4,guildshield_horiz); }
+      else { AddPacket(4,guildshield_checker); }
+      % Add second color.
+      Send(self,@AppendColor,#color=iColor2,#iColorNum=2);
 
-      propagate;
+      % Add guild name now if we have one.
+      if bGuild
+      {
+         AddPacket(6,Send(oGuild,@GetName));
+      }
+
+      % Insignia, if any.
+      if piInsigniaType = INSIG_RIIJA { AddPacket(4,guildshield_insig_riija); }
+      else if piInsigniaType = INSIG_QOR { AddPacket(4,guildshield_insig_qor); }
+      else if piInsigniaType = INSIG_KRAANAN { AddPacket(4,guildshield_insig_kraanan); }
+      else if piInsigniaType = INSIG_FAREN { AddPacket(4,guildshield_insig_faren); }
+      else if piInsigniaType = INSIG_JALA { AddPacket(4,guildshield_insig_jala); }
+      else if piInsigniaType = INSIG_PRINCESS { AddPacket(4,guildshield_insig_princess); }
+      else if piInsigniaType = INSIG_DUKE { AddPacket(4,guildshield_insig_duke); }
+      else if piInsigniaType = INSIG_SHALILLE { AddPacket(4,guildshield_insig_shalille); }
+      else if piInsigniaType = INSIG_REBEL { AddPacket(4, guildshield_insig_rebel); }
+      else { AddPacket(4,guildshield_insig_none); }
+
+      return;
    }
 
    Randomize()
@@ -338,7 +332,7 @@ messages:
          color1 = Random(XLAT_TO_RED, XLAT_TO_SKY);
          color2 = Random(XLAT_TO_RED, XLAT_TO_SKY);
       }
-      
+
       shape = Random(SHIELDSHAPE_SLASH, SHIELDSHAPE_CHECKER);
       insignia = Random(INSIG_RIIJA, INSIG_NONE);
 

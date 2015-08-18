@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dispillu.lkod
+
    dispelillusion_name_rsc = "dispel illusion"
    dispelillusion_icon_rsc = idispill.bgf
    dispelillusion_desc_rsc = \

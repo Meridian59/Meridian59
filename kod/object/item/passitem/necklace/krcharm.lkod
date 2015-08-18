@@ -1,0 +1,7 @@
+KraananCharm_name_rsc = de "Das stählerne Halsband"
+KraananCharm_desc_rsc = de \
+   "Dieses Halsband dient nicht als Schmuck, sondern wurde eher dafür gefertigt, "
+   "einen Schlag gegen den Hals abzudämpfen."
+KraananCharm_whisper = de \
+   "Du hörst eine Stimme flüstern, \"~I...spring immer zur Seite, ein großer "
+   "Krieger braucht sie nur einmal zu treffen...\""

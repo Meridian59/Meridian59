@@ -1,0 +1,14 @@
+killingfields_name_rsc = de "Schlachtfeld"
+killingfields_desc_rsc = de \
+   "Weckt den Durst nach Blut und erhöht den Schaden aller Angriffe in der "
+   "Umgebung. Der Zauber benötigt Holunderbeeren und Orkzähne."
+killingfields_already_enchanted = de "Dieser Ort ist bereits ein Schlachtfeld."
+killingfields_on = de \
+   "Kraanan lächelt und Kampfeswille erfüllt dein Herz. Die Erde dürstet "
+   "nach frisch vergossenem Blut."
+killingfields_off = de "Der Geist Kraanans verlässt diesen Ort."
+killingfields_on_new_entrant = de \
+   "Kampfeswille erfüllt dein Herz, und die Erde dürstet nach frisch vergossenem "
+   "Blut."
+killingfields_enchantment_rsc = de \
+   "\n\nDer %s Zauber fügt 2-5 Schaden allen Attacken hinzu."

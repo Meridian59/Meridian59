@@ -1,0 +1,7 @@
+DetectInvisibilityPotion_name_rsc = de "Trank der Entdeckung des Unsichtbaren"
+DetectInvisibilityPotion_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit. Sie riecht frisch, "
+   "sauber und erfrischend."
+DetectInvisibilityPotion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."

@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include scry.lkod
+
    scry_name_rsc = "scry"
    scry_icon_rsc = lightnin.bgf
 
@@ -88,7 +90,7 @@ messages:
          Send(self,@ComputeScryInfo,#who=First(lTargets),#dmis=who);
          }
 
-      for i in lActive
+      foreach i in lActive
          {
 
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
@@ -129,7 +131,7 @@ messages:
    {
       local i;
 
-      for i in plSchools
+      foreach i in plSchools
       {	 
 	 send(self,@ReportMastery,#dmis=dmis,#who=who,#school=i);
      }
@@ -144,7 +146,7 @@ messages:
       if school > 9 { send(self,@ReportSkillMastery,#who=who,#dmis=dmis,#school=school); return;  }
 
       high_level = 0;
-      for i in send(who,@GetSpellList)
+      foreach i in send(who,@GetSpellList)
       {
          obj = send(sys,@FindSpellByNum,#num=send(who,@DecodeSpellNum,#compound=i));
          if send(obj,@GetSchool) = school
@@ -170,7 +172,7 @@ messages:
       %% let's find out about the next level!  Whee!
       if send(SYS,@GetNumAtLevel,#school=school,#level=high_level+1) <> 0
       {
-         for i in send(SYS,@GetSpells)
+         foreach i in send(SYS,@GetSpells)
          {
             if not isClass(i,&Spell)  {  continue;  }
             if (send(i,@getlevel) = (high_level + 1))
@@ -189,7 +191,7 @@ messages:
       local i, high_level, obj, rName, rMastery, num;
             
       high_level = 0;
-      for i in send(who,@GetSkillList)
+      foreach i in send(who,@GetSkillList)
       {
          num = send(who,@DecodeSkillNum,#compound=i);
          obj = send(sys,@FindSkillByNum,#num=num);	 
@@ -216,7 +218,7 @@ messages:
       %% let's find out about the next level!  Whee!
       if send(SYS,@GetNumAtLevel,#school=school,#level=high_level+1) <> 0
       {
-         for i in send(SYS,@GetSkills)
+         foreach i in send(SYS,@GetSkills)
          {
             if (send(i,@getlevel) = (high_level + 1))
                   and (school = send(i,@getSchool))

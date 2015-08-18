@@ -1,0 +1,26 @@
+% Quest description.
+princesssoldier_name_rsc = de "Princess soldier shield quest"
+princesssoldier_desc_rsc = de \
+  "Princess Kateriina will allow you to join the Royal, but first "
+   "you must prove your loyalty by slaying her enemies."
+
+princesssoldier_completed_rsc = de \
+   "You have proven your worth, and are now a soldier in the Royal army."
+
+% Quest resources.
+princess_faction_soldier_assign_1 = de \
+   "Ich benötige Verbündete.  Bitte, beweise Deine Loyalität, indem Du %INDEF_MONSTER%MONSTER "
+   "tötest.  Du solltest ein paar von Ihnen an den Fahnenmasten finden.  "
+   "Komm zurück, wenn Du es erledigt hast."
+princess_faction_soldier_assign_2 = de \
+   "Ich freue mich, dass Du zurückgekehrt bist.  Bitte töte %INDEF_MONSTER%MONSTER.  "
+   "Sag mir, wenn Du fertig bist und wir werden einen Soldaten aus Dir machen."
+princess_faction_soldier_success = de \
+   "Es ist gut, dass wir auf unsere Verbündeten zählen können.  Nimm dies "
+   "als Symbol für Dein Engagement im Kampf."
+princess_faction_soldier_failure = de \
+   "Ja, der Krieg ist hässlich und schrecklich und es ist keine Schande sich "
+   "abzuwenden von der Aufgabe diese grausige Aufgabe zu erledigen Allerdings "
+   "muss ich Soldaten haben, die das königliche Recht auf den Thron auf dem "
+   "Schlachtfeld verteidigen.  Suche mich erneut auf, wenn Du genug Mut hast "
+   "um unsere Feinde zu bekämpfen."

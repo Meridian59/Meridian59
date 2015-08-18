@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include neruswd.lkod
+
    NeruditeSword_name_rsc = "nerudite sword"
    NeruditeSword_icon_rsc = nerswd.bgf
    NeruditeSword_desc_rsc = \

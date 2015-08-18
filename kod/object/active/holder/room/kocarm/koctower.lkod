@@ -1,0 +1,12 @@
+room_name_koctower = de "Der Ostturm"
+koctowereast_guarddoor1 = de \
+   "~wDer Soldat sagt, \"Du da, geh' von der Tür weg!\""
+koctowereast_barracks = de \
+   "Die Kaserne darf nur von Militärpersonal betreten werden."
+koctowereast_citadelgate = de \
+   "Ein verriegeltes Tor hindert Dich am Betreten der Zitadelle."
+koctowereast_dungeons = de \
+   "Die Tür zum Zentralverlies ist verschlossen. Du kannst nicht eintreten."
+koctowereast_wall = de "Du hast keine Erlaubnis, den großen Wall zu betreten."
+koctowereast_guarddoor2 = de "~wDer Soldat sagt, \"Hey, bleib da weg!\""
+koctowereast_lockedgate = de "Das Tor ist fest verschlossen."

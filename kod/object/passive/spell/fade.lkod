@@ -1,0 +1,12 @@
+fade_name_rsc = de "Verblassen"
+fade_desc_rsc = de \
+   "Löst zeitweilig Deinen Körper auf und macht Dich unsichtbar. Der Zauber "
+   "hält solange an, wie Deine Trance besteht. Der Zauber benötigt die Federn "
+   "eines schwarzen Engels."
+fade_already_enchanted = de "Du bist bereits unsichtbar."
+fade_on = de \
+   "Deine physische Form verschwindet und eine schillernde Erscheinung verbleibt."
+fade_off = de "Deine physische Form wird wieder sichtbar."
+fade_broke_trance = de \
+   "Du hast deine KOnzentration verloren und deine physische Form ist wieder "
+   "sichtbar."

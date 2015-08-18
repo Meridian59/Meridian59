@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hold.lkod
+
    hold_name_rsc = "hold"
    hold_icon_rsc = ihold.bgf
    hold_desc_rsc = \
@@ -91,7 +93,7 @@ messages:
       % multiple checks of every item in the target's inventory.
       if IsClass(target,&Player)
       {
-         for i in Send(target,@GetHolderPassive)
+         foreach i in Send(target,@GetHolderPassive)
          {
             if IsClass(i,&BreakRodHold)
                AND Send(i,@IsActive)
@@ -105,7 +107,7 @@ messages:
 
       if IsClass(who,&Player)
       {
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if IsClass(i,&BreakRodHold)
                AND Send(i,@IsSecondaryActive)

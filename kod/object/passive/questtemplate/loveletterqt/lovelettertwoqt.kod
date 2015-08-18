@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include lovelettertwoqt.lkod
+
    % Quest description.
    lovelettertwoquest_name_rsc = "Madelia's love letter quest"
    lovelettertwoquest_desc_rsc = \
@@ -91,7 +93,7 @@ messages:
                #quest_node_index=QNT_ID_LOVE_LETTERTWO_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Barloquetailor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Barloquetailor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -118,15 +120,15 @@ messages:
                #timelimit=6 * 3600,#quest_node_index=QNT_ID_LOVE_LETTERTWO_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&GuildCreator)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&GuildCreator)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

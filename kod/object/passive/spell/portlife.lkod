@@ -1,0 +1,9 @@
+portaloflife_cast_rsc = de \
+   "Du fühlst dich zuverlässig, dass %s%s wird %s den Weg zurück finden."
+portaloflife_name_rsc = de "Portal des Lebens"
+portaloflife_desc_rsc = de \
+   "Öffnet für Deine gefallenen Kameraden ein Tor, durch das sie aus der "
+   "Unterwelt in ihren echten Körper zurückkehren können. Man braucht polierte "
+   "Seraphyme und Smaragde für die Beschwörung."
+portaloflife_spell_intro = de \
+   "Shal'ill Level 6: Öffnet für Deine gefallenen Kameraden ein Tor."

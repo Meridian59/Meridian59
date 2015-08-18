@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include bow.lkod
+
    bow_name_rsc = "bow"
    bow_icon_rsc = bow.bgf
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mrbart.lkod
+
    MarionBartender_name_rsc = "Tova"
    MarionBartender_icon_rsc = mrbart.bgf
    MarionBartender_desc_rsc = \
@@ -94,7 +96,7 @@ messages:
       %% Number items suck.
 
       TargetObj = $;
-      for i in Send(who,@GetHolderPassive)
+      foreach i in Send(who,@GetHolderPassive)
       {
          if getClass(i) = getClass(obj)
          {

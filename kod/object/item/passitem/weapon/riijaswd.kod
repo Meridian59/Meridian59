@@ -16,15 +16,16 @@ constants:
 
 resources:
 
+   include riijaswd.lkod
+
    RiijaSword_name_rsc = "sword of Riija"
    RiijaSword_icon_rsc = quswrd.bgf
    RiijaSword_desc_rsc = \
       "This is a very awkward looking sword, but it feels surprisingly light "
       "in your hands.  Before your very eyes, dark and weird runes shift "
       "slightly on this deadly weapon."
-   RiijaSword_desc_append1 = "  Some of the runes say, \"Let "
-   RiijaSword_desc_append2 = " walk with faith.\""
-
+   RiijaSword_desc_append = \
+      "  Some of the runes say, \"Let %q walk with faith.\""
    RiijaSword_window_overlay_rsc = povquswd.bgf
    RiijaSword_player_overlay = quswrdov.bgf
 
@@ -33,26 +34,21 @@ classvars:
    vrName = RiijaSword_name_rsc
    vrIcon = RiijaSword_icon_rsc
    vrDesc = RiijaSword_desc_rsc
-
    viHits_init_min = 600
    viHits_init_max = 650
 
    % Riija Swords are high quality thrusting weapons
    viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_HIGH
-
    viProficiency_needed = SKID_PROFICIENCY_SHORT_SWORD
-
    viValue_average = 5000
    viWeight = 90
    viBulk = 90
-
    vrWeapon_window_overlay = RiijaSword_window_overlay_rsc
    vrWeapon_window_attack_start = 1
    vrWeapon_window_attack_end = 4
    vrWeapon_window_hold = 5
    vrWeapon_overlay = RiijaSword_player_overlay
-
    viGround_group = 1
    viInventory_group = 3
    viBroken_group = 2
@@ -73,7 +69,7 @@ messages:
          poQuester = quester;
       }
 
-      propagate;	 
+      propagate;
    }
 
    DropOnDeath()
@@ -81,24 +77,26 @@ messages:
    {
       return FALSE;
    }
-   
+
    AppendDesc()
    {
       if poQuester <> $
       {
-         AppendTempString(RiijaSword_desc_append1) ;
-         AppendTempString(send(poQuester,@GetTrueName));
-         AppendTempString(RiijaSword_desc_append2);
+         AddPacket(4,RiijaSword_desc_append,6,Send(poQuester,@GetTrueName));
       }
-      
-      propagate;
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      return;
    }
-   
+
    GetQuester()
    {
       return poQuester;
    }
-   
+
    ForgetQuester(quester=$)
    "Sent to all swords when someone suicides."
    {
@@ -106,7 +104,7 @@ messages:
       {
          poQuester = $;
       }
-      
+
       return;
    }
 
@@ -118,7 +116,7 @@ messages:
    Delete()
    {
       poQuester = $;
-      
+
       propagate;
    }
 
@@ -129,7 +127,7 @@ messages:
       {
          return (poOwner = poQuester);
       }
-      
+
       return FALSE;
    }
 
@@ -146,7 +144,7 @@ messages:
 
       propagate;
    }
-     
+
    WeaponHitTarget()
    "Sword wears down rapidly in the hands of someone else, but does not break."
    {
@@ -165,12 +163,12 @@ messages:
    "Do something special when we're shattered."
    {
       local cPiece, lPieces, oPiece, cBadPiece;
-      
+
       % When shattered, pick 3 random quest pieces and give them to our owner.
       lPieces = [&SwordShardA,&SwordShardB,&SwordShardC,&SwordShardD];
       cBadPiece = Nth(lPieces,random(1,4));
 
-      for cPiece in lPieces
+      foreach cPiece in lPieces
       {
          if cPiece = cBadPiece
          {
@@ -178,7 +176,7 @@ messages:
          }
 
          oPiece = create(cPiece,#quester=poQuester);
-         send(poOwner,@NewHold,#what=oPiece);
+         Send(poOwner,@NewHold,#what=oPiece);
       }
 
       % We are deleted further up the chain.
@@ -187,17 +185,16 @@ messages:
 
    GetBaseSpellModifier(oSpell=$)
    {
-      if send(oSpell,@GetSchool) = SS_RIIJA
+      if Send(oSpell,@GetSchool) = SS_RIIJA
       {
          % Casting spells while the sword is wielded "heals" the sword.
          piHits = bound(piHits + 1,1,Send(self,@GetMaxHits));
-         
+
          return 10;
       }
-      
+
       return -10;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

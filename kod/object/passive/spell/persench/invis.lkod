@@ -1,0 +1,12 @@
+invisibility_name_rsc = de "Unsichtbarkeit"
+invisibility_desc_rsc = de \
+   "Qor bedeckt Deinen Körper mit einem schimmernden Feld und macht Dich "
+   "kurzzeitig unsichtbar. Der Zauber benötigt die Federn eines schwarzen "
+   "Engels."
+invisibility_already_enchanted_rsc = de "Du bist bereits unsichtbar."
+invisibility_on = de "Ein schimmerndes Feld umgibt deinen Körper."
+invisibility_off = de \
+   "Das schimmernde Feld um Dich herum löst sich auf und du bist wieder sichtbar."
+invisibility_success_rsc = de "%s%s ist nicht mehr sichtbar."
+invis_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Defensive hinzu."

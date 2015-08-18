@@ -1,0 +1,10 @@
+drumstick_name_rsc = de "Hühnerbeinchen"
+drumstick_desc_rsc = de \
+   "Das köstliche Bein eines großen, südlichen Vogels, dünn mit knusprigen "
+   "Brotkrumen bestreut und goldbraun gebraten."
+drumstick_disp_name = de "Eine Platte Hühnerbeinchen"
+drumstick_disp_desc = de \
+   "Einige Leute munkeln, Frisconars Leibspeise sei das weiche, helle Fleisch "
+   "des Geflügels von Meridian. Gut für uns alle, denn dann bleibt mehr von "
+   "den einfachen Hühnerbeinchen für uns übrig!"
+drumstick_name_plural_rsc = de "Hühnerbeinchen"

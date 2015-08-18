@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include creaweap.lkod
+
    createweapon_cast_rsc = "%s%s appears."
    createweapon_inv_full_rsc = \
       "%s%s appears in the air before you but since you are unable "
@@ -79,7 +81,7 @@ messages:
       iSpellPower = Send(self,@GetSpellPower,#who=who);
       iSpellPercent = Send(who,@GetSpellAbility,#spell_num=SID_CREATE_WEAPON);
 
-      for i in Send(SYS,@GetItemTemplates)
+      foreach i in Send(SYS,@GetItemTemplates)
       {
          if(StringEqual(string,Send(i,@GetName)))
          {

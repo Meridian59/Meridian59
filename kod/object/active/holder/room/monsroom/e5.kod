@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include e5.lkod
+
    room_OutdoorsE5 = E5.roo
    room_name_OutdoorsE5 ="The Forest Shrine"
    OutdoorsE5_music = walk5.mp3
@@ -106,9 +108,9 @@ messages:
    {
       local iCount,iCount2,oFog;
 
-      for iCount in plColNums
+      foreach iCount in plColNums
       {
-         for iCount2 in plRowNums
+         foreach iCount2 in plRowNums
          {
             oFog = create(&ShrineFog);
             Send(self,@NewHold,#what=oFog,#new_row=iCount2,#new_col=iCount);
@@ -257,7 +259,7 @@ messages:
 
       iCntr = 0;
 
-      for iCntr in plActive
+      foreach iCntr in plActive
       {
          oWho = First(iCntr);
          if IsClass(oWho,&User)

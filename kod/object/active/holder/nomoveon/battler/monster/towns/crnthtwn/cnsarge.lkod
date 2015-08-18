@@ -1,0 +1,14 @@
+cornothsergeant_name_rsc = de "Roluk"
+cornothsergeant_desc_rsc = de \
+   "Als Edelmann und ehemaliger Armeeoffizier gibt sich Roluk von einer etwas "
+   "steifen Würde. Er ist ein Waffenmeister und bestreitet seinen Unterhalt, "
+   "indem er seine Fertigkeiten an die Studenten weitergibt, die auf dem "
+   "Kriegspfad sind. Seine Meisterstücke mit dem Schwert sind berühmt und "
+   "unerreicht."
+CnSer_forget_potion_sale = de \
+   "Gut, ich erfreue mich, dass Du kommst um dir %s%s zu holen, damit du "
+   "all den Krieger Gott Zauber Kram vergessen kannst."
+CnSer_Alcohol_taken = de \
+   "Ohhh, danke dir! Hier hast du eines meiner alten Trainingsschwerter! "
+   "Die halten nicht lange, aber vielleicht kann ich es reparieren, wenn "
+   "du es mir bringst?"

@@ -1,0 +1,12 @@
+magicshield_name_rsc = de "Magischer Schild"
+magicshield_desc_rsc = de \
+   "Ein Schild aus mächtiger, aber nicht völlig unempfindlicher magischer "
+   "Energie, der Deine Abwehr für einige Minuten verstärkt. Der Zauber benötigt "
+   "Normale Pilze und Rote Pilze."
+magicshield_already_enchanted_rsc = de \
+   "Du besitzt bereits ein magisches Schild."
+magicshield_on_rsc = de "Ein schützendes Schild erschafft sich vor Dir."
+magicshield_off_rsc = de "Das magische Schild verschwindet."
+magicshield_success_rsc = de "Ein magisches Schild formt sich vor %s%s."
+mshield_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Verteidigung hinzu."

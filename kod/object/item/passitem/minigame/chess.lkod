@@ -1,0 +1,7 @@
+chess_name_rsc = de "Das Schachbrett"
+chess_desc_rsc = de \
+   "Hier kann man zu zweit eine Partie Schach spielen. Du kannst natürlich "
+   "auch einfach nur zusehen. Das Schachbrett muss zum Spielen auf dem Boden "
+   "liegen. Wenn Du während eines Spiels das Schachbrett hochhebst, wird "
+   "der Spielstand gespeichert, so dass man später fortfahren kann. Es ist "
+   "empfehlenswert, einen sicheren Ort zum Spielen aufzusuchen."

@@ -1,0 +1,5 @@
+barloque_urchin_name_rsc = de "Der Urchin"
+barloque_urchin_desc_rsc = de \
+   "Dies ist ein junges, dreckiges Urchin, welches bislang noch kein Ärger "
+   "macht."
+barloque_urchin_dead_name_rsc = de "Ein totes Urchin"

@@ -1,0 +1,13 @@
+ringinvisibility_name_rsc = de "Der Unsichtbarkeits-Ring"
+ringinvisibility_desc_rsc = de \
+   "Dieser Ring trägt seltsame Zeichen und scheint so zu schimmern, dass "
+   "es schwer fällt, klar zu sehen."
+ringinvisibility_use = de \
+   "Deine menschliche Form beginnt zu schimmern und löst sich gleichzeitig "
+   "auf."
+ringinvisibility_dead_rsc = de \
+   "Dein Ring der Unsichtbarkeit erkaltet, nachdem seine magischen Kräfte "
+   "aufgezehrt sind."
+ringinvisibility_already_invisible_rsc = de \
+   "Du kannst den Ring der Unsichtbarkeit nicht einsetzen, da Du bereits "
+   "unsichtbar bist."

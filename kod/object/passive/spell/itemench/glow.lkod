@@ -1,0 +1,14 @@
+GlowWeapon_name_rsc = de "Glühen"
+GlowWeapon_desc_rsc = de \
+   "Bringt eine Waffe dazu, wie eine Fackel zu glühen. Dieser Zauber benötigt "
+   "Holunderbeeren und Pilze.."
+GlowWeapon_spell_intro = de \
+   "Kraanan Level 1: Bringt eine Waffe dazu, wie eine Fackel zu glühen. Dieser "
+   "Zauber benötigt Holunderbeeren und Pilze."
+GlowWeapon_label_rsc = de "Illuminator"
+GlowWeapon_cast_rsc = de "%s%s glüht nun wie eine Fackel."
+GlowWeapon_no_can = de "Du kannst %s%s nicht zum leuchten bringen."
+GlowWeapon_no_weapon = de "%s%s hat keinen PLATZHALTER Gegenstand."
+GlowWeapon_broken = de "Du kannst %s%s nicht verzaubern. Es ist zerstört."
+GlowWeapon_already_stronger = de "Der Gegenstand wurde bereits verzaubert."
+GlowWeapon_cap_your = de "Dein "

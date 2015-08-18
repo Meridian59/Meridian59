@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include newb4.lkod
+
    room_name_newb4 = "Ravi's Magicks of Raza"
 
 classvars:

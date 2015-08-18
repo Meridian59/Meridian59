@@ -1,0 +1,29 @@
+% Quest description.
+warletterqt_name_rsc = de "war letter quest"
+warletterqt_desc_rsc = de \
+   "Deliver a letter for an NPC."
+
+warletterqt_nodetwo_rsc = de \
+   "%s%s has asked you to deliver a letter to %s%s.  You have been told "
+   "that it might be dangerous to transport this letter, but you will be "
+   "rewarded for its delivery."
+
+warletterqt_completed_rsc = de \
+   "You have completed the war letter quest."
+
+% Quest resources.
+warletter_trigger1 = de "Kurier"
+warletter_assign = de \
+   "Ah, ja!  Ich habe gerade einen Brief an %NPC geschrieben.  Bitte bringe "
+   "ihn zu %HIMHER_NPC.  Ich schlage vor, Du heuerst einen Beschützer an, "
+   "denn es kann sehr gefährlich sein. Ich bin mir sicher die Belohnung wird "
+   "genug sein für euch Beide."
+warletter_success = de \
+   "Vielen Dank!  Ich habe nicht erwartet einen Brief von %SOURCE_NPC zu "
+   "bekommen, aber ich begrüße es.  Bitte nimm dies als ein Zeichen meiner "
+   "Wertschätzung."
+warletter_failure = de \
+   "Betreff: Mein Brief?\nIch habe aus einer zuverlässigen Quelle erfahren, "
+   "dass Du nicht nur versäumt hast den Brief auszuliefern, sondern auch "
+   "noch geöffnet und gelesen!  Wie kannst Du nur!  Das nächste mal werde "
+   "ich Dich bei Gericht melden."

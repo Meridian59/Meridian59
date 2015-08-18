@@ -1,0 +1,6 @@
+Bell_name_rsc = de "Service Klingel"
+Bell_desc_rsc = de \
+   "Dieser Klingelzug wird das Dekorations Personal informieren, dass der "
+   "Bewohner Hilfe benötigt"
+Bell_not_in_range = de "Der Klingelzug ist zu weit entfernt um ihn zu benutzen."
+Bell_decorator_summoned = de "Ein zarter Glockenschlag hallt durch den Raum."

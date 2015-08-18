@@ -18,12 +18,17 @@ constants:
 
 resources:
 
+   include gaze.lkod
+
    paralyze_name_rsc = "gaze of the basilisk"
    paralyze_icon_rsc = iparalyz.bgf
    paralyze_desc_rsc = \
       "Grants the caster the ability to paralyze any who meet his gaze.  "
       "Requires one yrxl sap and one purple mushroom to cast."
-
+   gaze_enchantment_rsc = \
+      "\n\nYour current %s enchantment will paralyze opponents that attack "
+      "you for %i - %i milliseconds.  Opponents attacking at range have a "
+      "50%% chance to avoid your paralyzing gaze."
    paralyze_on_rsc = "Your eyes seem to swell and pulse with magical energy."
    paralyze_off_rsc = "Your eyes return to normal."
    paralyze_already_enchanted_rsc = \
@@ -154,16 +159,14 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment will paralyze opponents that attack you for ");
-      AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 20,500,2500));
-      AppendTempString("-");
-      AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 25,500,2500));
-      AppendTempString(" milliseconds. Opponents attacking at range have a 50\% chance to avoid your paralyzing gaze.");
+      local iState;
 
-      propagate;
+      iState = Send(who,@GetEnchantedState,#what=self);
+
+      AddPacket(4,gaze_enchantment_rsc, 4,Send(self,@GetName),
+                4,Bound(iState * 20,500,2500), 4,Bound(iState * 25,500,2500));
+
+      return;
    }
 
 end

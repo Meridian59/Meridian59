@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include gstlever.lkod
+
    guestlever_name_rsc = "lever"
    guestlever_icon_rsc = lever.bgf
    guestlever_desc_rsc = \

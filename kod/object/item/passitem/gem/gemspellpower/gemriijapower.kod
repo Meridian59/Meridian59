@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemriijapower.lkod
+
    gem_riijapower_name_rsc = "trickster's jewel"
    gem_riijapower_icon_rsc = serappol.bgf
    gem_riijapower_desc_rsc = \

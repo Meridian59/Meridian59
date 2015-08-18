@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jsbanker.lkod
+
    JasperBanker_name_rsc = "Yevitan"
    JasperBanker_icon_rsc = jsbanker.bgf
    JasperBanker_desc_rsc = \

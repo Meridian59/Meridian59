@@ -1,0 +1,4 @@
+flytrap_name_rsc = de "Menschenfressende Pflanze"
+flytrap_desc_rsc = de \
+   "Eine grausame Pflanze, die den Geschmack von Menschenfleisch mag."
+flytrap_dead_name_rsc = de "eine eingezäunte menschenfressende Pflanze"

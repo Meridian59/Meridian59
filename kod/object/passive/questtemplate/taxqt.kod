@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include taxqt.lkod
+
    % Quest description.
    taxqt_icon_rsc = coin.bgf
    taxqt_deliver_rsc = \

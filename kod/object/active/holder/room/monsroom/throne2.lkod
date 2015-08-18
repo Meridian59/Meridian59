@@ -1,0 +1,4 @@
+name_throne2 = de "Der Thronsaal von Schloss Viktoria"
+throne2_ghost_spawn = de \
+   "~wEine kratzende Stimme ächzt, \"~r~IErwarte meine Rache, Eindringling!~I~w\""
+no_walls_here = de "Dunkle Mächte hindern dich daran Wandzauber zu sprechen."

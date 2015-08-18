@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include unarmed.lkod
+
    unarmed_name_rsc = "Unarmed Combat"
    unarmed_icon_rsc = light.bgf
    unarmed_desc_rsc = "This is a hand to hand combat move."

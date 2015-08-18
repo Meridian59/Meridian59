@@ -1,0 +1,9 @@
+guildpeace_name_rsc = de "Allianz beenden"
+guildpeace_desc_Rsc = de \
+   "Benutze diesen Befehl um eine Feindschaft zu beenden. Das macht die Gilde "
+   "aber nicht zu deinem Alliierten."
+peace_non_user = de \
+   "%s%s ist nicht beeindruckt von deinen friedlichen Absichten."
+peace_not_member = de "%s%s ist kein Mitglied einer verveindeten Gilde!"
+peace_your_guild = de "%s ist ein Mitglied deiner eigenen Gilde!"
+peace_cant_self = de "Du kommst mit dir selbst ins Reine. Wheeee."

@@ -1,0 +1,30 @@
+% Quest description.
+riijaofferingqt_name_rsc = de "Riija offering quest"
+riijaofferingqt_desc_rsc = de \
+   "The Riija Monk has invited you to chant with him, to give strength "
+   "to Lord Riija."
+
+riijaofferingqt_completed = de \
+   "Riija has bestowed temporary power upon you, in return for some "
+   "of your life essence.  You have also received a powerful magical "
+   "item.  When placed at one of the Shrines located around the "
+   "world, the Shrine will be dedicated to Riija and his spells "
+   "will have more power."
+
+% Quest resources.
+riijaoffering_assign_2 = de \
+   "%NAME, Lord Pappnase will Dich stärken? Willst Du mit mir singen?"
+riijaoffering_trigger_2 = de "ja"
+riijaoffering_assign_3 = de \
+   "Sprich diese Wörter mit mir: %CARGO.  Fühle die Macht, die bei jedem "
+   "Wort wächst.."
+riijaoffering_trigger_3 = de \
+   "Du sprichst weise Worte durch mich, mein Herr Riija"
+riijaoffering_failure_3 = de \
+   "Betreff: Pappnase!\nDer, der am Rande der Klippe steht, und munter weitergeht, "
+   "ist ein Gott so wie ein Narr.  Geh weiter, Diener des Scheins."
+riijaoffering_assign_4 = de "%CARGO!"
+riijaoffering_success_5 = de \
+   "Siehe, der zweischneidige Segen von Riija.  Trage es in die Weld und "
+   "ernte das Chaos welches es säht!  Denke an die alten Worte der Weisheit:  "
+   "dies wird am morgen wirklich weh tun."

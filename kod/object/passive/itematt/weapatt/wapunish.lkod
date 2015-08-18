@@ -1,0 +1,9 @@
+weapattpunisher_desc = de \
+   "  Das Emblem einer Faust welche ein Kreuz hält ist auf dem Knauf zu sehen "
+   "und verspricht einen Erfolg für diese Waffe %s Vorteil im Kampf für "
+   "die Gerechtigkeit."
+punisher_fail_use = de \
+   "Als Du den Griff von %s%s halten willst, schreist Du vor Schmerz und "
+   "lässt wieder los!"
+weapattpunisher_name = de "%s von der Gerechtigkeit"
+punisher_dm = de "Bestrafer"

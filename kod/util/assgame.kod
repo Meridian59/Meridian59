@@ -37,6 +37,8 @@ constants:
 
 resources:
 
+   include assgame.lkod
+
    assgame_impact = "~IThe black dagger shatters upon impact!"
    assgame_blade_shivers = "~IThe black dagger shivers ominously in your hand."
 
@@ -174,7 +176,7 @@ messages:
       
       % A game is in session, and has been for quite some time.
       %  Kick out the deadwood players 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          Send(self,@CheckForDeadWeight,#who=i);
          
@@ -197,7 +199,7 @@ messages:
 
       if piDays_without_kills = 2
       {
-         for i in plCombatants
+         foreach i in plCombatants
          {
             Send(i,@ReceiveNestedMail,#nest_list=[4,assgame_mail_no_kills],
                  #from=assgame_roq,#dest_list=[i]);
@@ -206,7 +208,7 @@ messages:
       
       if piDays_without_kills > 2
       {
-         for i in plCombatants
+         foreach i in plCombatants
          {
             Send(i,@ReceiveNestedMail,#nest_list=[4,assgame_mail_disgrace],
                  #from=assgame_roq,#dest_list=[i]);
@@ -228,7 +230,7 @@ messages:
       local i;
 
       ptMaintenance=CreateTimer(self,@MaintenanceTimer,MAINTENANCE_TIME);
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if Send(self,@GetDagger,#who=i) = $
          {
@@ -327,7 +329,7 @@ messages:
       }
 
       bFound = FALSE;
-      for i in plCombatants       
+      foreach i in plCombatants       
       {                         
          if i = who                        
          {
@@ -423,7 +425,7 @@ messages:
          return FALSE;
       }
 
-      for i in plAdvertise
+      foreach i in plAdvertise
       {
          if i = who
          {
@@ -458,7 +460,7 @@ messages:
             poWinner_lastgame = $;
          }
 
-         for i in plMost_kills_lastgame
+         foreach i in plMost_kills_lastgame
          {
             if i = who
             {
@@ -471,7 +473,7 @@ messages:
             }
          }
         
-         for i in plMost_kills
+         foreach i in plMost_kills
          {
             if i = who
             {
@@ -592,14 +594,14 @@ messages:
 
       if report = TRUE
       {
-         for i in plCombatants
+         foreach i in plCombatants
          {
             Send(i,@ReceiveNestedMail,#nest_list=[4,assgame_mail_reset],
                #from=assgame_roq,#dest_list=[i]);
          }
       }
       
-      for i in plCombatants
+      foreach i in plCombatants
       {
          Send(self,@QuitCombatant,#who=i,#wincheck=FALSE,#report=FALSE);
       }
@@ -644,7 +646,7 @@ messages:
       }
 
       % We have a winner!
-      for i in plAdvertise
+      foreach i in plAdvertise
       {
          if Send(i,@isLoggedOn)
          {
@@ -782,7 +784,7 @@ messages:
       }
       
       pbAccept_mode = TRUE;
-      for i in plAdvertise
+      foreach i in plAdvertise
       {
          if Send(i,@IsLoggedOn)
          {
@@ -832,7 +834,7 @@ messages:
       piDays_without_kills = 0;
 
       Send(self,@RandomizeCombatants);
-      for i in plCombatants
+      foreach i in plCombatants
       {
          % Init the dagger's stats
          Send(Send(self,@GetDagger,#who=i),@InitGame);   
@@ -869,7 +871,7 @@ messages:
          return FALSE;
       }
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if i = who
          {
@@ -892,7 +894,7 @@ messages:
          return;
       }
 
-      for i in plAdvertise
+      foreach i in plAdvertise
       {
          if i = who
          {
@@ -1107,7 +1109,7 @@ messages:
       }
 
       lPassive = Send(who,@GetHolderPassive);
-      for i in lPassive
+      foreach i in lPassive
       {
          if isClass(i,&BlackDagger)
          {

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include testswrd.lkod
+
    testsword_name_rsc = "test sword"
    testsword_icon_rsc = huntswrd.bgf
 
@@ -82,7 +84,7 @@ messages:
 
       % Then check weapon attributes
       %  Weapon Attributes in general should only + or - damage - no multipliers!
-      for i in plItem_Attributes
+      foreach i in plItem_Attributes
       {
          oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
          if isClass(oWeapAtt,&WeaponAttribute)

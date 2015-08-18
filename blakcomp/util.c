@@ -288,11 +288,22 @@ int get_statement_line(stmt_type s, int curline)
    case S_IF:
       return s->value.if_stmt_val->condition->lineno - 1;
 
+   case S_FOREACH:
+      return s->value.foreach_stmt_val->condition->lineno - 1;
+
    case S_FOR:
       return s->value.for_stmt_val->condition->lineno - 1;
 
    case S_WHILE:
+   case S_DOWHILE:
       return s->value.while_stmt_val->condition->lineno - 1;
+
+   case S_CASE:
+   case S_DEFAULTCASE:
+      return s->value.case_stmt_val->condition->lineno - 1;
+
+   case S_SWITCH:
+      return s->value.switch_stmt_val->condition->lineno - 1;
 
    default:
       return curline;

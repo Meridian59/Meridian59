@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include oldbarln.lkod
+
    room_name_OldBarloqueNorth = "Historic North Barloque"
    room_OldBarloqueNorth = obarln.roo
    OldBarloqueNorth_music = corloth.mp3

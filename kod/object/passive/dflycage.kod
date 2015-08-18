@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include dflycage.lkod
+
    DragonflyCage_name_rsc = "wire cage"
    DragonflyCage_icon_rsc = roomcage.bgf
    DragonflyCage_desc_rsc = "This is a delicately crafted wire cage, suitable for "

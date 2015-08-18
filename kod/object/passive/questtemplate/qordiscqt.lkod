@@ -1,0 +1,53 @@
+% Quest description.
+qorquest_name_rsc = de "Qor disciple quest"
+qorquest_desc_rsc = de \
+   "Priestess Zuxana has asked you to go to %s and speak "
+   "the words: \"In darkness all shall be bound.  Our Mistress would walk "
+   "among men in the comfort of a lightless sky and a bloody moon.\".  "
+   "Return when you have completed this task."
+
+qorquest_node_three_rsc = de \
+   "Return to Priestess Zuxana and let her know the task has been "
+   "completed."
+
+qorquest_completed = de \
+   "You have completed the Qor disciple quest.  You are a faithful "
+   "disciple of Qor, and Priestess Zuxana will now teach you more "
+   "powerful spells."
+
+% Quest resources.
+qordisciple_trigger = de \
+   "Alles sollte in Dunkelheit gehüllt sein. Dann würde unsere Meisterin "
+   "unter den Menschen im Schutz eines lichtlosen Himmels und eines blutigen "
+   "Mondes wandeln. "
+qordisciple_assign = de \
+   "~rDu möchtest umgeben sein von der unsterblichen Umarmung unserer Schutzpatronin. "
+   "Dein Urteil ist scharfsinnig, doch was ist mit Deiner Loyalität? Um sie "
+   "mir zu beweisen, solltest Du bei %NPC auf die Meisterin Qor zu sprechen "
+   "kommen, und zwar mit diesen Worten: %CARGOKehre danach zurück, und wir "
+   "werden die Schönheit der Fäulnis genießen."
+qordisciple_success = de \
+   "`rDu hast meine Wünsche erfüllt. Du bist nicht nur klug sondern auch "
+   "zäh.  Suche mich auf, wenn Du mehr über Qor's Zauber der Macht erfahren "
+   "möchtest."
+qordisciple_failure = de \
+   "Betreff: Qor hat Dich für unwürdig erachtet\nDu schwache pathetische Seele! "
+   "Es war so wie ich es vermutet habe. Ich bin froh, dass ich Dir nichts "
+   "von wirklichem Wert gegeben habe, denn es wäre jetzt sicherlich verloren.  "
+   "Wenn Du irgendwann wiederkommst, werde ich Dir vielleicht eine weitere "
+   "Chance gewähren in die Reihen der Elite aufgenommen zu werden."
+
+% NPC responses.
+qordisc_shalpr_resp = de \
+   "~kPriestess Xiana says, \"~bReconsider your actions, Shal'ille will "
+   "grant you forgiveness when you are ready to receive it.~k\""
+qordisc_marheal_resp = de \
+   "~kLady Aftyn says, \"Shal'ille's compassion will brush aside "
+   "the darkness.\""
+qordisc_barsmith_resp = de \
+   "~kFehr'loi Qan says, \"I'm gettin' mad now.  You better leave before "
+   "I give you a good punch.\""
+qordisc_tosapoth_resp = de \
+   "~kFrisconar says, \"Did you just put a curse on me?  Please, get out!\""
+qordisc_jasinn_resp = de \
+   "~kThe Widow Qesino says, \"You are evil, you must leave at once.\""

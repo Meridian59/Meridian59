@@ -1,0 +1,16 @@
+revenant_name_rsc = de "Der Racheengel"
+revenant_desc_rsc = de \
+   "Die Belohnung für einen Missetäter: der Kampf bis zum Tod mit einer verlorenen "
+   "Seele. Eigentlich sind sie für alle bis auf einen Mörder harmlos, doch "
+   "nur ein Narr würde sich in den Kampf einmischen - ihm droht das selbe "
+   "Schicksal."
+Rev_grouping_is_bad = de \
+   "Deine Seele verkrampft sich, als Du Dich in den Kampf anderer einmischt. "
+   "Du weißt, dass Du jetzt auch gejagt wirst, sobald Du diesen Ort verläßt."
+Rev_vanquished = de \
+   "Du spürst, wie ein großes Gewicht von Deiner Seele genommen wird."
+Rev_coming_to_get_ya = de \
+   "Ein Schauer läuft Dir den Rücken hinunter, als Du fühlst, dass Dein Verfolger "
+   "näherkommt."
+Rev_draining_effect = de \
+   "Der Racheengel vollführt eine mystische Bewegung... Du fühlst Dich ausgelaugt."

@@ -1,0 +1,9 @@
+dispelillusion_name_rsc = de "Illusionen auflösen"
+dispelillusion_desc_rsc = de \
+   "Versucht jegliche Illusionen in Deiner Nähe zu vertreiben. Dieser machtvolle "
+   "Spruch ist der Bann der Zauberschule von Riija, allerdings nur mit hohem "
+   "Einsatz von Reagenzien. Man benötigt dazu Augen einer Drachenfliege, "
+   "ungeschliffene Seraphyme und Phiolen mit Solagh."
+dispelillusion_castermsg_rsc = de \
+   "Du kreuzt deine Augen für einen Moment um sämtliche Illusionen in diesem "
+   "Raum verschwinden zu lassen."

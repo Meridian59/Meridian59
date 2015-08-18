@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hospice.lkod
+
    hospice_name_rsc = "hospice"
    hospice_icon_rsc = ihospice.bgf
    hospice_desc_rsc = \

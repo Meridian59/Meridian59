@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dement.lkod
+
    dement_name_rsc = "dement"
    dement_icon_rsc = idement.bgf
    dement_desc_rsc = \

@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include glow.lkod
+
    GlowWeapon_name_rsc = "glow"
    GlowWeapon_icon_rsc = iglow.bgf
    GlowWeapon_desc_rsc = \
@@ -26,7 +28,7 @@ resources:
    GlowWeapon_spell_intro = \
       "Kraanan Lv. 1: Enchants a weapon or an instrument to glow like a torch."
 
-   GlowWeapon_label_rsc = "illuminator."
+   GlowWeapon_label_rsc = "illuminator"
 
    GlowWeapon_cast_rsc = "%s%s now glows like a torch."
    GlowWeapon_no_can = "You cannot enchant %s%s to glow."

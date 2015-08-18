@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include marsmith.lkod
+
    room_name_marsmith = "Ye Olde Slasher Salesman"
    room_MarSmith = marsmith.roo
 

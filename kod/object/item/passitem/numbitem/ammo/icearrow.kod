@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include icearrow.lkod
+
    ice_arrow_name_rsc = "ice arrows"
    ice_arrow_icon_rsc = arrowice.bgf
    ice_arrow_desc_rsc = \

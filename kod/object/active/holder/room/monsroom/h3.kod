@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include h3.lkod
+
    room_OutdoorsH3 = H3.roo
    room_name_OutdoorsH3 ="Outskirts of Barloque"
    OutdoorsH3_music = forest.mp3

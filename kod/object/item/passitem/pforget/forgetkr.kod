@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forgetkr.lkod
+
    forgetpotionkraanan_desc_rsc = "Swallowing this cool liquid will wipe all memory of the spells of Kraanan the Fist from your mind.\n\nMay have very serious side effects."
 
 classvars:

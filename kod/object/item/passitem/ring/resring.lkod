@@ -1,0 +1,8 @@
+resistring_use_rsc = de "Du streifst den Ring über."
+resistring_dead_rsc = de "Der Ring zerfällt."
+resistring_chargesleft_rsc = de \
+   "\n\nEs sind noch %i Ladungen vorhanden in dem Ring."
+resistring_working_rsc = de \
+   "Your resistance ring offers a surge of elemental protection!"
+resistring_attacker_rsc = de \
+   "A flare of energy from %s's resistance ring counteracts your attack!"

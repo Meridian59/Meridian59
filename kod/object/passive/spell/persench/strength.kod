@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include strength.lkod
+
    superstrength_on_rsc = \
       "Your blood tingles with the force of Kraanan.  You are ready for "
       "battle!"
@@ -26,7 +28,8 @@ resources:
       "You already have superior strength."
    superstrength_success_rsc = \
       "%s%s reels under the impact of Kraanan's power."
-
+   ss_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i Might."
    superstrength_name_rsc = "super strength"
    superstrength_icon_rsc = istreng.bgf
    superstrength_desc_rsc = \
@@ -116,14 +119,10 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString(" Might.");
+      AddPacket(4,ss_enchantment_rsc, 4,Send(self,@GetName),
+                4,Send(who,@GetEnchantedState,#what=self));
 
-      propagate;
+      return;
    }
 
 end

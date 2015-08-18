@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hermhut.lkod
+
    room_hermithut = hermhut.roo
    room_name_hermithut = "The Hermit's Hut"
 

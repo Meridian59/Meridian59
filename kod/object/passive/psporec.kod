@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include psporec.lkod
+
    SporeCloud_name_rsc = "thick fog"
    SporeCloud_icon_rsc = poisoncl.bgf
    SporeCloud_desc_rsc = "You choke just looking at the thick putrid fog."

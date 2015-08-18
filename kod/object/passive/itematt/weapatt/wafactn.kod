@@ -32,15 +32,17 @@ constants:
 
 resources:
 
+   include wafactn.lkod
+
    weapatt_faction_princess = \
-      " The princess' sigil is embossed on the weapon, promising "
-   weapatt_faction_princess2 = " advantage in the defense of her honor."
+      " The princess' sigil is embossed on the weapon, promising %s "
+      "advantage in the defense of her honor."
    weapatt_faction_duke = \
-      " The duke's family crest is embossed on the weapon, offering "
-   weapatt_faction_duke2 = " advantage in his quest for the throne."
+      " The duke's family crest is embossed on the weapon, offering %s "
+      "advantage in his quest for the throne."
    weapatt_faction_rebel = \
-      " The rebel army flag is embossed on the weapon, giving "
-   weapatt_faction_rebel2 = " advantage for the rebellion."
+      " The rebel army flag is embossed on the weapon, giving %s "
+      "advantage for the rebellion."
 
    weapatt_faction_duke_name = "%s of the duke"
    weapatt_faction_princess_name = "the princess' %s"
@@ -287,7 +289,7 @@ messages:
 
    AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
-      local iData, iPower;
+      local iData, iPower, rPowerDesc;
 
       iData = 0;
       if lData = $
@@ -315,40 +317,20 @@ messages:
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       }
 
-      if iData = FACTION_DUKE
-      {
-         AppendTempString(weapatt_faction_duke);
-      }
-      else
-      {
-         if iData = FACTION_PRINCESS
-         {
-            AppendTempString(weapatt_faction_princess);
-         }
-         else
-         {
-            % iData = FACTION_REBEL
-            AppendTempString(weapatt_faction_rebel);
-         }
-      }
-
-      AppendTempString(Send(self,@GetPowerDesc,#iPower=iPower));
+      rPowerDesc = Send(self,@GetPowerDesc,#iPower=iPower);
 
       if iData = FACTION_DUKE
       {
-         AppendTempString(weapatt_faction_duke2);
+         AddPacket(4,weapatt_faction_duke,4,rPowerDesc);
+      }
+      else if iData = FACTION_PRINCESS
+      {
+         AddPacket(4,weapatt_faction_princess,4,rPowerDesc);
       }
       else
       {
-         if iData = FACTION_PRINCESS
-         {
-            AppendTempString(weapatt_faction_princess2);
-         }
-         else
-         {
-            % iData = FACTION_REBEL
-            AppendTempString(weapatt_faction_rebel2);
-         }
+         % iData = FACTION_REBEL
+         AddPacket(4,weapatt_faction_rebel,4,rPowerDesc);
       }
 
       return;
@@ -385,21 +367,18 @@ messages:
          iData = iFakeData;
       }
 
-      if iData = FACTION_DUKE 
+      if iData = FACTION_DUKE
       {
          AddPacket(4,weapatt_faction_duke_name);
       }
+      else if iData = FACTION_PRINCESS
+      {
+         AddPacket(4,weapatt_faction_princess_name);
+      }
       else
       {
-         if iData = FACTION_PRINCESS
-         {
-            AddPacket(4,weapatt_faction_princess_name);
-         }
-         else
-         {
-            % iData = FACTION_REBEL
-            AddPacket(4,weapatt_faction_rebel_name);
-         }
+         % iData = FACTION_REBEL
+         AddPacket(4,weapatt_faction_rebel_name);
       }
 
       AddPacket(4,Send(oItem,@GetName));

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forgetqr.lkod
+
    forgetpotionqor_desc_rsc = "Drinking this potion will wipe all memory of Qor's spells from your mind.\n\nMay have very serious side effects."
 
 classvars:

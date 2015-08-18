@@ -87,6 +87,7 @@ constants	{ return CONSTANTS; }
 else            { return ELSE;}
 end		{ BEGIN INITIAL; cur_state = STATE_INITIAL; return END; } 
 for		{ return FOR; }
+foreach	{ return FOREACH; }
 if		{ return IF; }
 in		{ return IN; }
 is		{ return IS; }
@@ -101,6 +102,10 @@ resources	{ return RESOURCES; }
 return	        { return RETURN; }
 while		{ return WHILE; }
 include         { return INCLUDE; }
+do { return DO; }
+case { return CASE; }
+switch { return SWITCH; }
+default { return DEFAULT; }
 
 	/* punctuation */
 "<>"	{ yylval.int_val = NEQ_OP; return REL_OP; }
@@ -108,6 +113,8 @@ include         { return INCLUDE; }
 ">"	{ yylval.int_val = GT_OP; return REL_OP; }
 "<="	{ yylval.int_val = LEQ_OP; return REL_OP; }
 ">="	{ yylval.int_val = GEQ_OP; return REL_OP; }
+"--"	{ yylval.int_val = DEC_OP; return DEC_OP; }
+"++"	{ yylval.int_val = INC_OP; return INC_OP; }
 
 
 [-+*/,:#&@()={}\$\[\]\|~]	{ return yytext[0]; }	/* return character itself */

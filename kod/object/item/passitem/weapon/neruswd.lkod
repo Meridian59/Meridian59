@@ -1,0 +1,5 @@
+NeruditeSword_name_rsc = de "Das Nerudit-Schwert"
+NeruditeSword_desc_rsc = de \
+   "Die schnelle und starke Nerudit-Waffe liegt gut in Deiner Hand."
+nerusword_shatters = de \
+   "Das Nerudit-Schwert zerbirst in einem Regen aus Splittern!"

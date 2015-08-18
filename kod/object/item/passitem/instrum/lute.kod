@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include lute.lkod
+
    lute_name_rsc = "lute"
    lute_icon_rsc = music.bgf
    lute_overlay_rsc = luteov.bgf

@@ -16,10 +16,13 @@ constants:
 
 resources:
 
+   include roomkeyc.lkod
+
    RoomKeyCopy_name_rsc = "silver room key"
    RoomKeyCopy_icon_rsc = roomkeyc.bgf
-   RoomKeyCopy_desc_rsc = "This solid silver key bears an inscription which reads:\n"
-   RoomKeyCopy_desc2_rsc = "'s room at "
+   RoomKeyCopy_desc_rsc = \
+      "This solid silver key bears an inscription which reads:\n%q's room "
+      "at %s."
 
    RoomKeyCopy_vanishes = \
       "Your silver room key dissolves into a strange silver liquid, then "
@@ -33,7 +36,8 @@ resources:
 
    RoomKeyCopy_no_drop_room = "You cannot drop your key here."
 
-   RoomKeyCopy_no_token = "You can't let go of your token to fit your key into the lock."
+   RoomKeyCopy_no_token = \
+      "You can't let go of your token to fit your key into the lock."
 
 classvars:
 
@@ -83,9 +87,9 @@ messages:
    {
       if (poOwner <> $) and isClass(poOwner,&User)
       {
-         if send(poOwner,@IsLoggedOn)
+         if Send(poOwner,@IsLoggedOn)
          {
-            send(poOwner,@MsgSendUser,#message_rsc=RoomKeyCopy_vanishes);
+            Send(poOwner,@MsgSendUser,#message_rsc=RoomKeyCopy_vanishes);
          }
          else
          {
@@ -95,35 +99,30 @@ messages:
             }
          }
       }
-      
-      send(self,@Delete);
-      
+
+      Send(self,@Delete);
+
       return;
    }
 
    DoBaseDesc()
    {
-      local oRoom,rName,rLocation;
+      local oRoom;
 
       oRoom = Send(SYS,@FindRoomByNum,#num=piRID);
       if (oRoom = $)
       {
          Send(self,@Delete);
+
          return;
       }
 
-      rName = Send(Send(oRoom,@GetRenter),@GetName);
-      rLocation = Send(oRoom,@GetLocationName);
-
-      ClearTempString();
-      AppendTempString(vrDesc);
-      AppendTempString(rName);
-      AppendTempString(RoomKeyCopy_desc2_rsc);
-      AppendTempString(rLocation);
+      AddPacket(4,vrDesc, 6,Send(Send(oRoom,@GetRenter),@GetTrueName),
+                4,Send(oRoom,@GetLocationName));
 
       return;
    }
-   
+
    SendAnimation()
    {
       AddPacket(1,ANIMATE_NONE,2,2);
@@ -153,27 +152,28 @@ messages:
    NewApplied(what = $,apply_on = $)
    {
       local oRoom, oInn;
-      
-      oRoom = Send(SYS,@FindRoomByNum,#num=piRID);
-      oInn = Send(SYS,@FindRoomByNum,#num=send(oRoom,@GetLocation));
 
-      if send(what,@GetOwner) = oInn
-         AND send(oInn,@EnterRentableRoom,#who=what)
+      oRoom = Send(SYS,@FindRoomByNum,#num=piRID);
+      oInn = Send(SYS,@FindRoomByNum,#num=Send(oRoom,@GetLocation));
+
+      if Send(what,@GetOwner) = oInn
+         AND Send(oInn,@EnterRentableRoom,#who=what)
       {
          % Can't bring a token in; no one can follow you
-         if Send(what, @PossessesA, #class = &Token) 
+         if Send(what,@PossessesA,#class=&Token)
          {
-            Send(what, @MsgSendUser, #message_rsc = RoomKeyCopy_no_token);
+            Send(what,@MsgSendUser,#message_rsc=RoomKeyCopy_no_token);
+
             return;
          }
 
-         send(what,@MsgSendUser,#message_rsc=RoomKeyCopy_teleport);
-         send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
-         send(send(SYS,@FindRoomByNum,#num=piRID),@Enter,#who=what);
+         Send(what,@MsgSendUser,#message_rsc=RoomKeyCopy_teleport);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
+         Send(Send(SYS,@FindRoomByNum,#num=piRID),@Enter,#who=what);
       }
       else
       {
-         send(what,@MsgSendUser,#message_rsc=RoomKeyCopy_no_use);
+         Send(what,@MsgSendUser,#message_rsc=RoomKeyCopy_no_use);
       }
 
       return;
@@ -181,7 +181,8 @@ messages:
 
    NoDropMessage()
    {
-      if (poOwner <> $) AND IsClass(poOwner,&Player)
+      if (poOwner <> $)
+         AND IsClass(poOwner,&Player)
       {
          Send(poOwner,@MsgSendUser,#message_rsc=RoomKeyCopy_no_drop_room);
       }
@@ -192,10 +193,11 @@ messages:
    ReqNewOwner(what=$)
    {
       % No dropping in rentable rooms to circumvent the room expiration code
-      if what <> $ AND isClass(what,&RentableRoom)
+      if what <> $
+         AND IsClass(what,&RentableRoom)
       {
-         send(self,@NoDropMessage);
-           
+         Send(self,@NoDropMessage);
+
          return FALSE;
       }
 
@@ -218,7 +220,7 @@ messages:
       return FALSE;
    }
    
-   CanBeStoredInVault()   
+   CanBeStoredInVault()
    {
       return FALSE;
    }
@@ -227,7 +229,6 @@ messages:
    {
       return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

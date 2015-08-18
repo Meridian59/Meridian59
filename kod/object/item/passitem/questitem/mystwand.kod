@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mystwand.lkod
+
    MysteryWand_name_rsc = "mysterious wand"
    MysteryWand_icon_rsc = joltstaf.bgf
    MysteryWand_desc_rsc = \

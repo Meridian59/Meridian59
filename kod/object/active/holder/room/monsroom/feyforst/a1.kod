@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include a1.lkod
+
    room_OutdoorsA1 = A1.roo
    room_name_OutdoorsA1 ="North Quilicia Wood"
    OutdoorsA1_music = walk7.mp3

@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include cesssoldierqt.lkod
+
    % Quest description.
    princesssoldier_icon_rsc = flagpinv.bgf
    princesssoldier_name_rsc = "Princess soldier shield quest"

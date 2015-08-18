@@ -16,10 +16,13 @@ constants:
 
 resources:
 
+   include roomkey.lkod
+
    RoomKey_name_rsc = "gold room key"
    RoomKey_icon_rsc = roomkey.bgf
    RoomKey_desc_rsc = \
-      "This solid gold key bears an inscription which reads:\n"
+      "This solid gold key bears an inscription which reads:\n%q's room "
+      "at %s."
 
    RoomKey_vanishes = \
       "Your gold room key dissolves into a strange gold liquid, then "
@@ -56,10 +59,10 @@ messages:
    Copy()
    {
       local oCopy;
-      
+
       oCopy = Create(&RoomKeyCopy,#iRID=piRID);
-      plCopies = cons(oCopy,plCopies);
-      
+      plCopies = Cons(oCopy,plCopies);
+
       return oCopy;
    }
 
@@ -86,29 +89,29 @@ messages:
 
       % Post this so that room can clean itself up first before we try to
       %  delete it.
-      Post(self,@Delete);  
-      
+      Post(self,@Delete);
+
       return;
    }
 
    Delete()
    {
       local i;
-      
-      for i in plCopies
+
+      foreach i in plCopies
       {
          Send(i,@OriginalDeleted);
       }
-      
+
       plCopies = $;
-      
+
       i = Send(SYS,@FindRoomByNum,#num=piRID);
-      
+
       if i <> $
       {
          Send(i,@Delete);
       }
-      
+
       propagate;
    }
 
@@ -143,13 +146,13 @@ messages:
    {
       if what <> $
       {
-         if isClass(what,&Room)
+         if IsClass(what,&Room)
          {
             Send(self,@NoDropMessage);
-            
+
             return FALSE;
          }
-         
+
          % Can't get rid of the key if it has an owner.
          if poOwner <> $
             AND isClass(poOwner,&User)
@@ -172,7 +175,6 @@ messages:
       local oPlayerOwner, oRoom;
 
       oRoom = Send(SYS,@FindRoomByNum,#num=piRID);
-
       if oRoom = $
       {
          % Delete it if the room isn't found.
@@ -180,20 +182,18 @@ messages:
 
          return;
       }
-      
+
       % This is the person that owns the room that this key goes to.
       oPlayerOwner = Send(oRoom,@GetRenter);
-
       if what <> oPlayerOwner
       {
          % Post this so that so we don't have any conflicts about where it's
          %  going.
          Post(oPlayerOwner,@NewHold,#what=self);
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

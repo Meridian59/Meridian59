@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcbowmak.lkod
+
    KocatanBowMaker_name_rsc = "Hanla zax'Ta"
    KocatanBowMaker_icon_rsc = kcbowmak.bgf
    KocatanBowMaker_desc_rsc = \

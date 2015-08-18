@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include guildcmd.lkod
+
    guildcommand_name_rsc = "guild command"
    guildcommand_icon_rsc = light.bgf
    guildcommand_desc_text_rsc = "This is a guild command, used to administer a guild."
@@ -134,7 +136,7 @@ messages:
 
       % Check that target(s) are in range
       oOwner = Send(who, @GetOwner);
-      for i in lTargets
+      foreach i in lTargets
       {
 	 if oOwner <> Send(i, @GetOwner)
 	 {

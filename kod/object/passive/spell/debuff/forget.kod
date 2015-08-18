@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include forget.lkod
+
    forgetspell_name_rsc = "forget"
    forgetspell_icon_rsc = iforget.bgf
    forgetspell_desc_rsc = \
@@ -177,7 +179,7 @@ messages:
          iPowerLeft = iPowerLeft - 24;
       }
 
-      for i in lState
+      foreach i in lState
       {
          if i <> $
          {
@@ -254,7 +256,7 @@ messages:
          return FALSE;
       }
 
-      for iStateMember in lState
+      foreach iStateMember in lState
       {
          if iStateMember = what
          {

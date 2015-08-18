@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gempierceres.lkod
+
    gem_pierce_resist_name_rsc = "cobalt disc"
    gem_pierce_resist_icon_rsc = sapphire.bgf
    gem_pierce_resist_desc_rsc = \

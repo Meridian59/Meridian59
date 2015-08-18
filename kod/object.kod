@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include object.lkod
+
    object_name_rsc = "something"
    object_icon_rsc = somethin.bgf
    object_desc_rsc = "You are looking at an object"
@@ -131,7 +133,7 @@ messages:
          poOwner = $;
       }
       
-      for i in plObject_attributes
+      foreach i in plObject_attributes
       {
          Send(i,@Delete);
       }
@@ -175,6 +177,13 @@ messages:
    {
       AddPacket(4,object_time_header_rsc, 4,Send(self,@GetName));
 
+      return;
+   }
+
+   SendTimeRemainingExtra()
+   "If anything extra needs to be sent after the time remaining packets "
+   "are added, this messsage should be overridden to do so."
+   {
       return;
    }
 
@@ -313,6 +322,9 @@ messages:
       {
          AddPacket(4,object_time_blank_rsc);
       }
+
+      % Call this to add anything after the time resources if necessary.
+      Send(self,@SendTimeRemainingExtra);
 
       return;
    }
@@ -761,6 +773,11 @@ messages:
    }
 
    MsgSendUser()
+   {
+      return;
+   }
+
+   MsgSendUserCallback()
    {
       return;
    }

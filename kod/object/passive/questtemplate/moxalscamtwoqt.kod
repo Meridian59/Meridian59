@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include moxalscamtwoqt.lkod
+
    % Quest description.
    moxalscamtwoquest_name_rsc = "Moxal's investment quest"
    moxalscamtwoquest_desc_rsc = \
@@ -139,7 +141,7 @@ messages:
                #quest_node_index=QNT_ID_MOXAL_SCAMTWO_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -158,7 +160,7 @@ messages:
                #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMTWO_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
          {
             if NOT IsClass(oNPC, &KocatanBonePriestess)
                AND NOT IsClass(oNPC, &KocatanSentry)

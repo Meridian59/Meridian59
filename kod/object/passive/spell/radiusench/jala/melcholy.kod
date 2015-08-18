@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include melcholy.lkod
+
    Melancholy_name_rsc = "melancholy"
    Melancholy_icon_rsc = imlnchly.bgf
    Melancholy_desc_rsc = \

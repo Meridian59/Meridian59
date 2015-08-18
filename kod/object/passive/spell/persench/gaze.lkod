@@ -1,0 +1,20 @@
+paralyze_name_rsc = de "Basiliskenblick"
+paralyze_desc_rsc = de \
+   "Legt einen schützenden Zauber um Dich, der Deine Feinde befällt, wenn "
+   "sie Dich Angreifen und sie somit für einen kurzen Moment außer Gefecht "
+   "setzt. Der Zauber benötigt Harz des Yrxl Baumes und lila Pilze."
+paralyze_on_rsc = de \
+   "Deine Augen schwellen an und pulsieren voller magischer Energie."
+paralyze_off_rsc = de "Deine Augen kehren zur normalen Sichtweise zurück."
+paralyze_already_enchanted_rsc = de "Du besitzt bereits den Basiliskenblick."
+paralyze_caster = de \
+   "%s%s trifft den Basiliskenblick und friert an Ort und Stelle ein."
+paralyze_target_on = de \
+   "Als Du %s%ss schrecklichen Blick triffst, frieren all deine Gliedmaßen "
+   "ein und Du bist gelähmt."
+paralyze_no_soul = de \
+   "Du kannst keine Seele in %s%s erkennen und sie in Stein verwandeln!"
+gaze_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber lähmt Gegner die dich angreifen für %i-%i "
+   "Millisekunden.  Gegner mit Fernwaffen haben eine 50%% Chance dem Lähmen "
+   "zu widerstehen."

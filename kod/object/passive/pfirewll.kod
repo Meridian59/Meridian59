@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pfirewll.lkod
+
    PassiveWallofFire_name_rsc = "wall of fire"
    PassiveWallofFire_icon_rsc = woflame.bgf
    PassiveWallofFire_desc_rsc = \

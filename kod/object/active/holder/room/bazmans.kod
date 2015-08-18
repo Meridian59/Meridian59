@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bazmans.lkod
+
    room_bazmans = bizmans.roo
    room_name_bazmans = "The Councilors' Chamber"
 

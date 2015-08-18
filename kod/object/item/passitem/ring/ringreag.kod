@@ -23,10 +23,7 @@ resources:
       "even while lacking the necessary reagents.  Sadly, since it is "
       "a mere copy of the original, it will only gift you with limited "
       "usage."
-
-   ReagentRing_chargeslefta_rsc = "There are "
-   ReagentRing_chargesleftb_rsc = " charges left in this ring."
-
+   ReagentRing_chargesleft_rsc = "\n\nThere are %i charges left in this ring."
    ReagentRing_disappear_rsc = \
       "As the last charge is consumed, the ring of Far'nohl disappears in "
       "a puff of dust."
@@ -36,22 +33,17 @@ classvars:
    vrRealName = ReagentRing_name_rsc
    vrIcon = ReagentRing_icon_rsc
    vrRealDesc = ReagentRing_desc_rsc
-
    viHits_init_min = 5
    viHits_init_max = 5
-
    viBulk = 5
    viWeight = 10
-   
    viValue_average = 100
 
 properties:
 
    vrName = ReagentRing_name_rsc
    vrDesc = ReagentRing_desc_rsc
-
    piItem_flags = PT_GRAY_TO_BLACK
-
    piCharges = 5
    pbIn_use = FALSE
 
@@ -66,11 +58,8 @@ messages:
 
    AppendDesc()
    {
-      AppendTempString("\n\n");   
-      AppendTempString(ReagentRing_chargeslefta_rsc);      
-      Send(SYS,@AppendCardinalToTempString,#number=piCharges);
-      AppendTempString(ReagentRing_chargesleftb_rsc);
-      
+      AddPacket(4,ReagentRing_chargesleft_rsc,4,piCharges);
+
       return;
    }
 
@@ -105,7 +94,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       piCharges = piCharges - iCharges;
 
       Send(self,@SetColor,#iColor=piCharges);
@@ -124,23 +113,17 @@ messages:
       {
          piItem_flags = PT_GRAY_TO_DBLUE;
       }
+      else if iColor > 1 AND iColor < 4
+      {
+         piItem_flags = PT_GRAY_TO_BBLUE;
+      }
+      else if iColor = 1
+      {
+         piItem_flags = PT_GRAY_TO_SKY;
+      }
       else
       {
-         if iColor > 1 AND iColor < 4
-         {
-            piItem_flags = PT_GRAY_TO_BBLUE;
-         }
-         else
-         {
-            if iColor = 1
-            {
-               piItem_flags = PT_GRAY_TO_SKY;
-            }
-            else
-            {
-               piItem_flags = PT_GRAY_TO_BLACK;
-            }
-         }
+         piItem_flags = PT_GRAY_TO_BLACK;
       }
 
       if poOwner <> $
@@ -148,7 +131,7 @@ messages:
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
-      return;         
+      return;
    }
 
    Delete()
@@ -176,7 +159,5 @@ messages:
       return FALSE;
    }
 
- 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

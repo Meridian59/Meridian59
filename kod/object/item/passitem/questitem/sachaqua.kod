@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sachaqua.lkod
+
    Sacchaqua_name_rsc = "vial of sacchaqua"
    Sacchaqua_name_plural_rsc = "vials of sacchaqua"
    Sacchaqua_icon_rsc = solagh.bgf

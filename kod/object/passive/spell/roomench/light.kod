@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include light.lkod
+
    light_name_rsc = "light"
    light_icon_rsc = isunlite.bgf
    light_desc_rsc = \
@@ -29,6 +31,9 @@ resources:
    light_off = "The light spell wears off."
    light_new_entrant = "This place is illuminated by a magical glow."  %replace by icon
    light_spell_intro = "Faren Lv. 1:  Fills an area with magical illumination."
+
+   light_enchantment_rsc = \
+      "\n\nThe %s enchantment currently adds %i light level to the area."
 
    light_sound = flight.wav
 
@@ -131,18 +136,12 @@ messages:
 
    EffectDesc(who=$)
    {
-      local i, iState;
+      local iState;
 
-      AppendTempString("\n\n");
-      AppendTempString("The ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment currently adds ");
-      
       iState = Send(Send(who,@GetOwner),@GetEnchantedState,#what=self);
-      
-      AppendTempString(iState);
-      AppendTempString(" light level to the area.");
-      
+
+      AddPacket(4, light_enchantment_rsc, 4, Send(self,@GetName), 4,iState);
+
       return;
    }
 

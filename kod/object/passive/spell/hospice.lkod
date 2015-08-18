@@ -1,0 +1,9 @@
+hospice_name_rsc = de "Heilung"
+hospice_desc_rsc = de \
+   "Heilt die Zielperson des Zaubers mit der Kraft Sha-Lills. Der Zauber "
+   "benötigt 3 Kräuter."
+hospice_cast_rsc = de "%s%ss Zauber stellt ~g~B%i~B~n Lebenspunkte wieder her."
+hospice_cast_self = de \
+   "Shal'ills Magie stellt bei dir ~g~B%i~B~n Lebenspunkte wieder her."
+hospice_cast_on_other = de "Du heilst %s%s um ~g~B%i~B~n Lebenspunkte."
+hospice_unnecessary_rsc = de "%s%s ist bei bester Gesundheit."

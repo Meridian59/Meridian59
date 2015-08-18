@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include oldjas.lkod
+
    room_name_OldJasper = "Historic Jasper"
    room_OldJasper = ojas.roo
    OldJasper_music = city03.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include totem3.lkod
+
    TotemThree_name_rsc = "Minjaka Vase"
    TotemThree_icon_rsc = qo06.bgf
    TotemThree_desc_rsc = "Antiquarians claim there only to be a few of the priceless Minjaka Vases left in "

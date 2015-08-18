@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include parlia.lkod
+
    parliament_price_up = "~IYour association with %s gets you the best possible price."
    parliament_dam_up = "~ITechniques learned from %s help your attack do more damage."
    parliament_hit_up = "~ITechniques learned from %s help guide your attack."
@@ -171,7 +173,7 @@ messages:
       local oGame;
 
       pbDeleting=value;
-      for oGame in plFactionGames
+      foreach oGame in plFactionGames
       {
          Send(oGame,@SetDeleting,#value=value);
       }
@@ -186,7 +188,7 @@ messages:
       % Delete the old faction lieges
       if plLieges<>$
       { 
-         for i in plLieges { Send(i,@Delete); }
+         foreach i in plLieges { Send(i,@Delete); }
       }
       
       plLieges=$;
@@ -220,9 +222,9 @@ messages:
       local i,j;
       if (plFactions<>$)
       {
-         for i in plFactions
+         foreach i in plFactions
          {
-            for j in Nth(i,2)
+            foreach j in Nth(i,2)
             {
                Send(j,@ResignFaction);
             }
@@ -252,9 +254,9 @@ messages:
    {
       local i,j;
       
-      for i in plFactions
+      foreach i in plFactions
       {
-         for j in Nth(i,2)
+         foreach j in Nth(i,2)
          {
             if j = who
             {
@@ -275,7 +277,7 @@ messages:
    {
       local oGame;
 
-      for oGame in plFactionGames
+      foreach oGame in plFactionGames
       {
          send(oGame,@Delete);
       }
@@ -307,7 +309,7 @@ messages:
 
       if plFactionGames <> $
       {
-         for oGame in plFactionGames
+         foreach oGame in plFactionGames
          {
             Send(oGame,@RecreateNPCs);
          }
@@ -331,7 +333,7 @@ messages:
       % Then, create and list our FactionGames.  Currently two: Tokens and Territory games.
       if plFactionGames <> $
       {
-         for oGame in plFactionGames
+         foreach oGame in plFactionGames
          {
             send(oGame,@Delete);
          }
@@ -363,7 +365,7 @@ messages:
       Send(Self,@RedoPower);
       pbDeleting=False;
 
-      For i in plLieges
+      foreach i in plLieges
       {
          Send(i,@GotoHomeRoom);
       }
@@ -399,7 +401,7 @@ messages:
       local i;
       
       pbIntrigue_enable = FALSE;     
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          Send(i,@PlayerIsIntriguing);
       }
@@ -420,7 +422,7 @@ messages:
       piTotalPowerPoints = 0;
       if plFactionGames <> $
       {
-         for oGame in plFactionGames
+         foreach oGame in plFactionGames
          {
             piTotalPowerPoints = piTotalPowerPoints + Send(oGame,@GetTotalPoints);
          }
@@ -441,7 +443,7 @@ messages:
       {
          count = 0;
          power = 0;
-         for oGame in plFactionGames
+         foreach oGame in plFactionGames
          {
             count = count + send(oGame,@GetPoints,#faction=fact);
          }
@@ -457,7 +459,7 @@ messages:
          Send(self,@UpdateEffects); 
          if not pbDeleting
          {
-            for i in Send(SYS,@GetUsersLoggedOn)
+            foreach i in Send(SYS,@GetUsersLoggedOn)
             {
                if Send(i,@PlayerisIntriguing)
                {
@@ -545,7 +547,7 @@ messages:
       }
       else
       {
-         for pers in Send(SYS,@GetUsersLoggedOn)
+         foreach pers in Send(SYS,@GetUsersLoggedOn)
          {
             if NOT Send(pers,@PlayerIsIntriguing)
             {
@@ -680,7 +682,7 @@ messages:
          return;
       }
       
-      for i in plLieges
+      foreach i in plLieges
       {
          if i=what
          {
@@ -914,7 +916,7 @@ messages:
       piNumberOfRebel = 0;
       piNumberOfNeutral = 0;
 
-      for oPerson in Send(SYS,@GetUsers)
+      foreach oPerson in Send(SYS,@GetUsers)
       {
          if NOT send(oPerson,@IsUserInactive) AND Send(oPerson,@PlayerIsIntriguing)
          {

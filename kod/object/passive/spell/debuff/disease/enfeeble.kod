@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include enfeeble.lkod
+
    enfeeble_cast_rsc = "You sense an unsavory presence."
    enfeeble_already_enchanted = "That poor soul is already enfeebled."
    palsy_start = "Your muscles turn to water."

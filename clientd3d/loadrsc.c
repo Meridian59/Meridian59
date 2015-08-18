@@ -25,6 +25,8 @@
 
 static Table *t;      /* Hash table of all resources loaded in */
 
+static Bool available_languages[MAX_LANGUAGE_ID]; // 1 if language present.
+
 static char resource_dir[] = "resource";
 static char room_dir[] = "resource";
 static char rsb_spec[] = "*.rsb";
@@ -38,7 +40,7 @@ static Bool  ResourceCompare(void *r1, void *r2);
 static DWORD IdHash(void *idnum, DWORD tablesize);
 static Bool  IdResourceCompare(void *idnum, void *r1);
 static void  FreeRsc(void *entry);
-static bool  RscAddCallback(char *fname, int res, char *string);
+static bool  RscAddCallback(char *fname, int res, int lang_id, char *string);
 static Bool  LoadRscFiles(char *filespec);
 static Bool  LoadRscFilesSorted(char *filespec);
 /******************************************************************************/
@@ -105,12 +107,12 @@ Bool LoadResources(void)
 	rsc_loaded = LoadRscFiles(rsc_spec);
 	
 	// Built-in resources for About box
-	RscAddCallback("", ABOUT_RSC, "aarmor.bgf");
-	RscAddCallback("", ABOUT_RSC1, "c1.bgf");
-	RscAddCallback("", ABOUT_RSC2, "c2.bgf");
-	RscAddCallback("", ABOUT_RSC3, "c3.bgf");
-	RscAddCallback("", LAGBOXICON_RSC, "ilagbox.bgf");
-	RscAddCallback("", LAGBOXNAME_RSC, "Latency");
+	RscAddCallback("", ABOUT_RSC, 0, "aarmor.bgf");
+	RscAddCallback("", ABOUT_RSC1, 0,"c1.bgf");
+	RscAddCallback("", ABOUT_RSC2, 0, "c2.bgf");
+	RscAddCallback("", ABOUT_RSC3, 0, "c3.bgf");
+	RscAddCallback("", LAGBOXICON_RSC, 0, "ilagbox.bgf");
+	RscAddCallback("", LAGBOXNAME_RSC, 0, "Latency");
 	
 	ignore_duplicates = False;
 	
@@ -148,7 +150,7 @@ Bool LoadRscFiles(char *filespec)
 			/* Add subdirectory name, using file_load_path as temporary */
 			sprintf(file_load_path, "%s%s\\%s", game_path, resource_dir, file_info.cFileName);  
 			_RPT1(_CRT_WARN,"Loading File : %s\n",file_load_path); 
-			if (!RscFileLoad(file_load_path, RscAddCallback))
+			if (!RscFileLoad((char *) file_load_path, RscAddCallback))
 				debug(("Can't load resource file %s\n", file_info.cFileName));
 		}
 		
@@ -210,22 +212,8 @@ Bool LoadRscFilesSorted(char *filespec)
 /******************************************************************************/
 void ChangeResource(ID res, char *value)
 {
-	resource_type r, entry;
-	
-	//   debug(("got new resource %d, type = %d, value = %s\n", res, type, value));
-	r = (resource_type) table_lookup(t, &res, IdHash, IdResourceCompare);
-	if (r != NULL)
-	{
-		table_delete_item(t, r, ResourceHash, ResourceCompare);
-		FreeRsc(r);
-	}
-	
-	entry = (resource_type) SafeMalloc(sizeof(resource_struct));
-	
-	entry->data = (char *) SafeMalloc(strlen(value) + 1);
-	strcpy(entry->data, value);
-	entry->idnum = res;
-	table_insert(t, entry, ResourceHash, ResourceCompare);
+   debug(("Got new resource %d, value = %s\n", res, value));
+   RscAddCallback("", res, 0, value);
 }
 /******************************************************************************/
 /*
@@ -240,37 +228,41 @@ void FreeResources(void)
 * RscAddCallback:  Called for each new resource that's loaded from a file.
 *   Add given resource to table.
 */
-bool RscAddCallback(char *fname, int res, char *string)
+bool RscAddCallback(char *fname, int res, int lang_id, char *string)
 {
-	resource_type entry, r;
-	
-	entry = (resource_type) SafeMalloc(sizeof(resource_struct));
-	
-	entry->idnum = res;
-	entry->data = (char *) SafeMalloc(strlen(string) + 1);
-	strcpy(entry->data, string);
-	
-	if (table_insert(t, entry, ResourceHash, ResourceCompare) != 0)
-	{
-		if (!ignore_duplicates)
-		{
-			ClientError(hInst, hMain, IDS_DUPRESOURCE, res, fname);
-			FreeRsc(entry);
-		}
-		else
-		{
-			// Free existing resource
-			r = (resource_type) table_lookup(t, &res, IdHash, IdResourceCompare);
-			if (r != NULL)
-			{
-				table_delete_item(t, r, ResourceHash, ResourceCompare);
-				FreeRsc(r);
-				table_insert(t, entry, ResourceHash, ResourceCompare);
-			}
-		}
-	}
-	
-	return true;
+   resource_type r;
+
+   // Check for existing resource first, since we might want to add
+   // another language string to it.
+   r = (resource_type) table_lookup(t, &res, IdHash, IdResourceCompare);
+   if (r == NULL)
+   {
+      r = (resource_type) SafeMalloc(sizeof(resource_struct));
+      r->idnum = res;
+
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+         r->resource[i] = NULL;
+   }
+   else
+      table_delete_item(t, r, ResourceHash, ResourceCompare);
+
+   // Shouldn't be able to compile blakod with multiple strings
+   // of the same language type.
+   if (r->resource[lang_id])
+      SafeFree(r->resource[lang_id]);
+   r->resource[lang_id] = (char *) SafeMalloc(strlen(string) + 1);
+   strcpy(r->resource[lang_id], string);
+
+   available_languages[lang_id] = True;
+
+   // Replace the existing resource if we used it.
+   table_insert(t, r, ResourceHash, ResourceCompare);
+
+   return true;
+}
+Bool *GetAvailableLanguages(void)
+{
+   return available_languages;
 }
 /******************************************************************************/
 /*
@@ -279,20 +271,24 @@ bool RscAddCallback(char *fname, int res, char *string)
 */
 char *LookupRsc(ID idnum)
 {
-	resource_type r;
-	r = (resource_type) table_lookup(t, &idnum, IdHash, IdResourceCompare);
-	if (r == NULL)
-	{
-		debug(("Missing resource %d\n", idnum));
-		/* Ask if user wants to redownload */
-		// We post this message to the main window, which then calls MissingResource.
-		// This avoids problems with the animation timer going off with the redownload
-		// dialog going off, which causes a crash for an unknown reason.
-		PostMessage(hMain, BK_NORESOURCE, 0, 0);
-		return NULL;
-	}
-	
-	return r->data;
+   resource_type r;
+   r = (resource_type) table_lookup(t, &idnum, IdHash, IdResourceCompare);
+   if (r == NULL)
+   {
+      debug(("Missing resource %d\n", idnum));
+      /* Ask if user wants to redownload */
+      // We post this message to the main window, which then calls MissingResource.
+      // This avoids problems with the animation timer going off with the redownload
+      // dialog going off, which causes a crash for an unknown reason.
+      PostMessage(hMain, BK_NORESOURCE, 0, 0);
+      return NULL;
+   }
+
+   // Default to English.
+   if (r->resource[config.language] == NULL)
+      return r->resource[0];
+
+   return r->resource[config.language];
 }
 /******************************************************************************/
 /*
@@ -308,6 +304,22 @@ char *LookupNameRsc(ID idnum)
 }
 /******************************************************************************/
 /*
+* LookupRscRedbook: Return the string associated with the given resource id #, or
+*   "<Unknown>" if it's not in the table.
+*/
+char *LookupRscRedbook(ID idnum)
+{
+   resource_type r;
+   r = (resource_type)table_lookup(t, &idnum, IdHash, IdResourceCompare);
+   if (r == NULL)
+   {
+      debug(("Missing resource %d\n", idnum));
+      return GetString(hInst, IDS_UNKNOWN);
+   }
+   return r->resource[0];
+}
+/******************************************************************************/
+/*
 * LookupRscNoError: Return the string associated with the given resource id #, or 
 *   "<Unknown>" if it's not in the table.
 */
@@ -320,7 +332,11 @@ char *LookupRscNoError(ID idnum)
 		debug(("Missing resource %d\n", idnum));
 		return GetString(hInst, IDS_UNKNOWN);
 	}
-	return r->data;
+   // Default to English.
+   if (r->resource[config.language] == NULL)
+      return r->resource[0];
+
+   return r->resource[config.language];
 }
 /******************************************************************************/
 /* 
@@ -328,9 +344,12 @@ char *LookupRscNoError(ID idnum)
 */
 void FreeRsc(void *entry)
 {
-	resource_type typecast_entry = (resource_type) entry;
-	SafeFree(typecast_entry->data);
-	SafeFree(typecast_entry);
+   resource_type typecast_entry = (resource_type) entry;
+   for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      if (typecast_entry->resource[i])
+         SafeFree(typecast_entry->resource[i]);
+
+   SafeFree(typecast_entry);
 }
 /******************************************************************************/
 /*

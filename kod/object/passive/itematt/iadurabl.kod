@@ -36,20 +36,20 @@ constants:
 
 resources:
 
+   include iadurabl.lkod
+
    itematt_durable_name = "well-crafted %s"
    durable_dm = "durable"
-   itematt_durable_desc_1 = " The craftsmanship of this "
-   itematt_durable_desc_2 = \
-      " is admirable, obviously the result of hundreds of hours "
-      "of work by expert hands."
+   itematt_durable_desc = \
+      "  The craftsmanship of this %s is admirable, obviously the result of "
+      "hundreds of hours of work by expert hands."
 
 classvars:
 
    viItem_Att_Num = IA_DURABLE
    vrName = itematt_durable_name
-
+   vrDesc = itematt_durable_desc
    viDefault_bonus = 300    %%% 300 percent bonus to enchanted item.
-
    vrDM_Trigger = durable_DM
 
 properties:
@@ -79,11 +79,7 @@ messages:
 
    AppendDesc(oItem =$)
    {
-      local lData, oRoom;
-
-      AppendTempString(itematt_durable_desc_1);
-      AppendTempString(Send(oItem,@GetName));
-      AppendTempString(itematt_durable_desc_2);
+      AddPacket(4,vrDesc, 4,Send(oItem,@GetName));
 
       return;
    }

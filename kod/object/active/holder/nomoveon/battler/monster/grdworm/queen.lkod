@@ -1,0 +1,9 @@
+GroundWormQueen_name_rsc = de "Grundwurm Königin"
+GroundWormQueen_koc_name_rsc = de "koslithic"
+GroundWormQueen_desc_rsc = de \
+   "Der größte Grundwurm ist die Königin, ein furchterregendes Monster.Nach "
+   "ihrer langen Wachstumsphase brauchen Grundwürmer immer größereMengen "
+   "Nahrung, um sich zu ernähren. Die Königinnen sind verrückt vorVerlangen "
+   "nach Nahrung, um ihren immensen Hunger zu stillen. Gelegentlichlegen "
+   "sie ihre Eier in Leichen, aus denen Grundwurmlarven schlüpfen."
+GroundWormQueen_dead_name_rsc = de "erschlagene Grundwurm Königin"

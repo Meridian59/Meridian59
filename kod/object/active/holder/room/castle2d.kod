@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include castle2d.lkod
+
    room_castle2d = castle2d.roo
    room_name_castle2d = "Royal Library of the Bourgeois Castle"
 

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include warptime.lkod
+
    WarpTime_name_rsc = "warp time"
    WarpTime_icon_rsc = iwarptim.bgf
    WarpTime_desc_rsc = \

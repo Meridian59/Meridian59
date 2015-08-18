@@ -1,0 +1,17 @@
+KocatanCaptainEvil_name_rsc = de "Xacal ko'Ixca"
+KocatanCaptainEvil_desc_rsc = de \
+   "Als einer der höchstrangigen Offiziere in der Armee von Ko'catan ist "
+   "Xacal ko'Ixca ein Veteran vieler Kriegszüge. In Friedenszeiten gehört "
+   "es zu seinen Aufgaben, das Haupttorhaus während der Nachtstunden vor "
+   "unbekannten Feinden zu schützen. Und da es zur Zeit recht friedlich ist, "
+   "gehört es zu Xacal ko'Ixcas Pflichten zu entscheiden, wer diese Feinde "
+   "sind. Er wird allgemein wegen seiner Härte und Durchsetzungskraft respektiert"
+evilguard_Pass = de "Du bist auf dich allein gestellt."
+evilguard_winknudge = de \
+   "Weißt du, dass es lustig ist, wie dieses Geld aus deiner Handtasche in "
+   "meine Hand gefallen ist."
+evilguard_winknudge_action = de "~kXacal winkt und gibt dir einen Stups."
+evilguard_no_money = de \
+   "Wenn Du den Jungle betrittst, brauchst du Geld zum handeln. Du bist pleite, "
+   "also verschwende nicht meine Zeit."
+EvilGuard_not_enough = de "Nicht genug..."

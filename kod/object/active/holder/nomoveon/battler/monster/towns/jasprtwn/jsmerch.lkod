@@ -1,0 +1,8 @@
+jaspermerchant_name_rsc = de "Bob"
+jaspermerchant_desc_rsc = de \
+   "Bob arbeitet hart, damit sein Geschäft in diesem Ort gut läuft. Er ist "
+   "eifrig um das Erscheinungsbild bemüht."
+JsMer_entry_welcome = de \
+   "Dürfte ich dich für einige meiner feinen Waren interessieren?"
+JsMer_ruby_sale = de \
+   "Ja, ich habe %s%s.  Die sind der Stolz meines kleinen Geschäfts."

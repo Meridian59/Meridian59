@@ -1,0 +1,13 @@
+duskrat_koc_name_rsc = de "teotnapyijoa"
+duskrat_name_rsc = de "dusk rat"
+duskrat_desc_rsc = de \
+   "The air around the rat is dark and thick with evil.  The smell of death "
+   "and disease linger on its fetid breath as it darts towards its target.  "
+   "The origins of this abomination are unknown.  The only definite knowledge "
+   "known is of the deadly poison it carries in its bite."
+duskrat_poisoned_add_rsc = de \
+   "As the poison travels to your head, you begin to feel a little light-headed.  "
+   "The room spins around you."
+duskrat_illusion_poisoned = de \
+   "%s%s reels as poison from your attack courses through %s veins."
+duskrat_dead_name_rsc = de "dead dusk rat"

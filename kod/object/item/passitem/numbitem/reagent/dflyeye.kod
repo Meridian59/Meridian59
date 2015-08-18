@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dflyeye.lkod
+
    DragonflyEye_name_rsc = "dragonfly eye"
    DragonflyEye_icon_rsc = dflyeye.bgf
    DragonflyEye_desc_rsc = \

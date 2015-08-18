@@ -1,0 +1,14 @@
+frozjewel_name_rsc = de "Das Juwel von Froz"
+frozjewel_desc_rsc = de \
+   "Der Edelstein wurde vom großen Alchemisten Froz auf geheime Weise erschaffen, "
+   "die nur ihm selbst bekannt ist. Gerüchte besagen, dass er mystische Agressionen "
+   "kanalisieren kann, um mit rohem Mana elementare Griffzauber zu verstärken. "
+   "Deine Hand beginnt zu kribbeln als du ihn anfasst."
+jof_condition_exc = de " ist in einem einwandfreiem Zustand."
+jof_condition_good = de " ist leicht zerkratzt."
+jof_condition_med = de " ist zerkratzt und leuchtet schwacher."
+jof_condition_poor = de " ist stark zerkratzt und leuchtet kaum noch."
+frozjewel_desc_broken_rsc = de \
+   "Das Juwel wirkt sehr gewöhnlich und ist glanzlos."
+frozjewel_broken = de \
+   "Das Juwel von Froz macht jetzt einen sehr gewöhnlichen Eindruck."

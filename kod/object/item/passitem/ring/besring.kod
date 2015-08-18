@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include besring.lkod
+
    berserkerring_name_rsc = "berserker ring"
    berserkerring_icon_rsc = ring2.bgf            
    berserkerring_desc_rsc = \

@@ -1,0 +1,15 @@
+weapon_already_broken = de "%s%s ist zerbrochen und nicht mehr zu gebrauchen."
+weapon_broken = de "%s%s zerbricht in Stücke."
+weapon_condition_exc = de " ist in tadellosem Zustand."
+weapon_condition_exc_mended = de \
+   " ist in tadellosem Zustand, aber wurde bereits repariert."
+weapon_condition_good = de " zeigt erste Spuren von Abnutzung."
+weapon_condition_med = de \
+   " ist schartig und blutgetränkt, aber immer noch effektiv."
+weapon_condition_poor = de \
+   " ist schon schwer beschädigt und wird vermutlich bald zerbrechen."
+weapon_condition_broken = de " wurde durch einen brutalen Schlag zerbrochen."
+weapon_do_damage = de "Ich habe gerade %i Zerstörungspunkte gemacht! (%i)"
+weapon_to_hit = de "Ich habe eine %i Gelegenheit zuzuschlagen! (%i/%i)"
+weapon_head = de "auf den Kopf"
+weapon_grip = de "auf den Griff"

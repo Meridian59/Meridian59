@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include avchief.lkod
+
    avarchief_koc_name_rsc = "koavar"
    avarchief_default_name = "avar chieftain"
    avarchief_icon_rsc = avchief.bgf

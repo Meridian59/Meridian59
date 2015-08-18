@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include dkwizard.lkod
+
    DarkWizard_name_rsc = "Maleval"
    DarkWizard_icon_rsc = wndarkwi.bgf
    DarkWizard_desc_rsc =  \
@@ -207,7 +209,7 @@ messages:
 
       % Special checks for high level spells: need a high level spell in 
       % a particular school.
-      for i in Send(who,@GetSpellList)
+      foreach i in Send(who,@GetSpellList)
       {
          oSpell = Send(SYS,@FindSpellByNum,
                         #num=Send(who,@DecodeSpellNum,#compound=i));

@@ -1,0 +1,24 @@
+room_name_marion = de "Marion"
+mimosa_rose_offering = de \
+   "Du hältst inne, um der Gefallenen zu gedenken und zu fühlen, wie ihr "
+   "Geist durch das Mitgefühl erfrischt wird."
+mimosa_rose_offering_spam = de \
+   "Du machst eine kurze Pause, um über den Sinn des Lebens zu sinnieren."
+mimosa_other_offering = de \
+   "Deine Gabe an die Gefallenen fällt in ein weiches Bett getrockneter Blütenblätter."
+mimosa_name = de "Der Mimosenbaum"
+mimosa_desc = de \
+   "Dieser Baum steht zum Gedenken an einen gefallenen Freund. Eine kleine "
+   "Metallplatte ist nahe des Bodens angebracht; einige trockene Rosenblätter "
+   "liegen in ihrer Nähe."
+mimosa_insc = de \
+   "Die jungen Mädchen Schnitten sich die Haare ab.Kein Brot wurd' gebacken "
+   "an dem Tage,Und selbst der Wein schmeckte schal.Wir wanden uns den Berg "
+   "hinauf,Es regnete in StrömenUm Dir Geleit zu geben,Ein Stück näher an "
+   "der EwigkeitAls Deine duchnässten Kameraden.Diana hält Dein Schwert;Aspasia "
+   "den erdigen Mantel aus roter Wolle.Ich erinnere mich an Dich und die "
+   "dunkle Tunika,Mit der wir Dein Gesicht vom Schmutz befreiten.Mehr als "
+   "das hätte ich nie getan."
+marion_gate_warning = de \
+   "Dieses Gitter wurde errichtet, um die Bevölkerung vor den Gefahren zu "
+   "beschützen, die in der Krypta lauern."

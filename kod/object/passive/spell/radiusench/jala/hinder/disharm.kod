@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include disharm.lkod
+
    Disharmony_name_rsc = "disharmony"
    Disharmony_icon_rsc = idisharm.bgf
    Disharmony_desc_rsc = \

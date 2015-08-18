@@ -16,6 +16,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include mockers.lkod
    waterfall_soundmockers = wfall2.wav
    room_mockers = mockers.roo
    room_name_mockers = "Chamber of the Mocker"

@@ -40,6 +40,8 @@ constants:
 
 resources:
 
+   include guest6.lkod
+
    room_name_guest6 = "Mausoleum"
    room_guest6 = guest6.roo
    guest6_music = nec03.mp3
@@ -560,7 +562,7 @@ messages:
       local i,each_obj,iCount,iRow,iCol;
 
       iCount = 0;
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if count = COUNT_MONSTERS
@@ -594,7 +596,7 @@ messages:
    {
       local i,each_obj,iCount,iRow,iCol;
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = First(i);
          if IsClass(each_obj,&Monster)

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pants.lkod
+
    pants_name_rsc = "pants"   
    pants_desc_rsc = \
    "These pants will cover your legs but won't help much in the way of protection."

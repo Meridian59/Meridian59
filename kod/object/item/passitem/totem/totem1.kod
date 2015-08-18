@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include totem1.lkod
+
    TotemOne_name_rsc = "Priceless Heirloom of Barloque"
    TotemOne_icon_rsc = qo03.bgf
    TotemOne_desc_rsc = "This decorative piece of art was created for King Zarcos the 4th to be given to his wife "

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include toscrypt.lkod
+
    room_name_toscrypt = "The Crypt"
    room_toscrypt = toscrypt.roo
    music_toscrypt = ksong.mp3

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sporbrst.lkod
+
    SporeBurst_name_rsc = "spore burst"
    SporeBurst_icon_rsc = isporecl.bgf
    SporeBurst_desc_rsc = \

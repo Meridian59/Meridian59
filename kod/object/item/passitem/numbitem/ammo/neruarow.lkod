@@ -1,0 +1,6 @@
+nerudite_arrow_name_rsc = de "Die Nerudit-Pfeile"
+nerudite_arrow_desc_rsc = de \
+   "Diese geschnitzten Pfeilspitzen verursachen ein wenig mehr Schaden als "
+   "die normalen Pfeilspitzen. Sollte jedoch der kleine grüne Stein durch "
+   "den Aufschlag zerbrechen, kann sich das als fatal für das Opfer erweisen."
+nerudite_arrow_explodes = de "Die Pfeilspitze aus Nerudit zerbricht!"

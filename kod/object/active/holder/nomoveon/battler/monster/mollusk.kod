@@ -40,6 +40,8 @@ constants:
 
 resources:
 
+   include mollusk.lkod
+
    MolluskMonster_koc_name_rsc = "kolisith"
    MolluskMonster_name_rsc = "mollusk creature"
    MolluskMonster_icon_rsc = mollusk.bgf

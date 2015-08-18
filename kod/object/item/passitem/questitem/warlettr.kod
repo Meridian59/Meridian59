@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include warlettr.lkod
+
    WarLetter_name_rsc = "personal letter"
    WarLetter_icon_rsc = scr01.bgf
    WarLetter_desc_closed_rsc = \
@@ -28,12 +30,12 @@ resources:
    WarLetter_desc_opened_rsc = \
       "This is a rather simple letter written in an easily readable script."
    WarLetter_intro_rsc = \
-      "\n\nThe letter reads as follows:\n\n"
+      "\n\nThe letter reads as follows:\n\n%r"
 
    WarLetter_open_rsc = "You carefully remove the string and open the letter."
    WarLetter_close_rsc = "You carefully replace the string, closing the letter."
 
-   Warletter_text_default = "The letter is blank."
+   Warletter_text_default = "  The letter is blank."
 
    Warletter_text1_rsc = \
       "Dear %s,\n"
@@ -295,7 +297,7 @@ properties:
 
    piState = WARLETTER_CLOSED
    viInventory_group = WARLETTER_CLOSED
-   psAssembledText = $
+   vrDescOpen = Warletter_text_default
    vrDesc = WarLetter_desc_closed_rsc
 
 messages:
@@ -346,104 +348,87 @@ messages:
 
    AppendDesc()
    {
+      local lQuestInfo;
+
       if piState = WARLETTER_OPEN
       {
-         AppendTempString(WarLetter_intro_rsc);
-         AppendTempString(psAssembledText);
+         lQuestInfo = Send(self,@GetAttributeData,#ItemAtt=IA_QUEST_CARGO);
+         if lQuestInfo = $
+         {
+            AddPacket(4,Warletter_text_default);
+
+            return;
+         }
+
+         AddPacket(4,WarLetter_intro_rsc, 4,vrDescOpen,
+                   4,Send(Send(Nth(lQuestInfo,2),@GetDestNPC),@GetName),
+                   4,Send(Send(Nth(lQuestInfo,2),@GetSourceNPC),@GetName));
       }
-      
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
       return;
    }
 
-
    UpdateText()
    {
-      local lQuestInfo, iRandomNumber, rText, Temp;
-      
-      lQuestInfo = Send(self,@GetAttributeData,#ItemAtt=IA_QUEST_CARGO);
-      iRandomNumber = random(1,15);
+      local iRandomNumber;
 
-      if iRandomNumber = 1
+      iRandomNumber = Random(1,15);
+
+      switch(iRandomNumber)
       {
-         rText = Warletter_text1_rsc;
-      } else {
-         if iRandomNumber = 2
-         {
-            rText = Warletter_text2_rsc;
-         } else {
-            if iRandomNumber = 3
-            {
-               rText = Warletter_text3_rsc;
-            } else {
-               if iRandomNumber = 4
-               {
-                  rText = Warletter_text4_rsc;
-               } else { 
-                  if iRandomNumber = 5
-                  {
-                     rText = Warletter_text5_rsc;
-                  } else {
-                     if iRandomNumber = 6
-                     {
-                        rText = Warletter_text6_rsc;
-                     } else {
-                        if iRandomNumber = 7
-                        {
-                           rText = Warletter_text7_rsc;
-                        } else {
-                           if iRandomNumber = 8
-                           {  
-                              rText = Warletter_text8_rsc;
-                           } else {
-                              if iRandomNumber = 9
-                              {
-                                 rText = Warletter_text9_rsc;
-                              } else {
-                                 if iRandomNumber = 10
-                                 {
-                                    rText = Warletter_text10_rsc;
-                                 } else {
-                                    if iRandomNumber = 11
-                                    {
-                                       rText = Warletter_text11_rsc;
-                                    } else {
-                                       if iRandomNumber = 12
-                                       {
-                                          rText = Warletter_text12_rsc;
-                                       } else {
-                                          if iRandomNumber = 13
-                                          {
-                                             rText = Warletter_text13_rsc;
-                                          } else {
-                                             if iRandomNumber = 14
-                                             {
-                                                rText = Warletter_text14_rsc;
-                                             } else {
-                                                if iRandomNumber = 15
-                                                {
-                                                   rText = Warletter_text15_rsc;
-                                                } else {
-                                                   rText = Warletter_text_default;
-                                                }
-                                             }
-                                          }
-                                       }
-                                    }
-                                 }
-                              }
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
+         case 1:
+            vrDescOpen = Warletter_text1_rsc;
+            break;
+         case 2:
+            vrDescOpen = Warletter_text2_rsc;
+            break;
+         case 3:
+            vrDescOpen = Warletter_text3_rsc;
+            break;
+         case 4:
+            vrDescOpen = Warletter_text4_rsc;
+            break;
+         case 5:
+            vrDescOpen = Warletter_text5_rsc;
+            break;
+         case 6:
+            vrDescOpen = Warletter_text6_rsc;
+            break;
+         case 7:
+            vrDescOpen = Warletter_text7_rsc;
+            break;
+         case 8:
+            vrDescOpen = Warletter_text8_rsc;
+            break;
+         case 9:
+            vrDescOpen = Warletter_text9_rsc;
+            break;
+         case 10:
+            vrDescOpen = Warletter_text10_rsc;
+            break;
+         case 11:
+            vrDescOpen = Warletter_text11_rsc;
+            break;
+         case 12:
+            vrDescOpen = Warletter_text12_rsc;
+            break;
+         case 13:
+            vrDescOpen = Warletter_text13_rsc;
+            break;
+         case 14:
+            vrDescOpen = Warletter_text14_rsc;
+            break;
+         case 15:
+            vrDescOpen = Warletter_text15_rsc;
+            break;
+         default:
+            vrDescOpen = Warletter_text_default;
+            break;
       }
-
-      psAssembledText = createString();
-      SetString(psAssembledText,rText);
-      StringSubstitute(psAssembledText,Warletter_percent_s,Send(Send(nth(lQuestInfo,2),@GetDestNPC),@GetName));
-      StringSubstitute(psAssembledText,Warletter_percent_s,Send(Send(nth(lQuestInfo,2),@GetSourceNPC),@GetName));
 
       return;
    }

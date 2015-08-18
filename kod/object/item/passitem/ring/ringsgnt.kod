@@ -17,10 +17,13 @@ constants:
 
 resources:
 
+   include ringsgnt.lkod
+
    ringsignet_name_rsc = "signet ring"
    ringsignet_icon_rsc = signet.bgf
-   ringsignet_desc_rsc = "This ring is worn and dirty, but you make out the family crest of "
-   ringsignet_desc_rsc2 =". Surely, its return would be appreciated."
+   ringsignet_desc_rsc = \
+      "This ring is worn and dirty, but you make out the family crest of %s.  "
+      "Surely, its return would be appreciated."
 
 classvars:
 
@@ -33,7 +36,7 @@ classvars:
 
    viBulk = 2
    viWeight = 2
-   
+
    viValue_average = 1000
 
 properties:
@@ -52,14 +55,14 @@ messages:
    {
       if mob=$
       {
-         debug("SignetRing created without a defined mob as goal.");
+         Debug("SignetRing created without a defined mob as goal.");
          Post(self,@Delete);
       }
-      
+
       poRingOwner = mob;
       Send(poRingOwner,@SetWantedItem,#class=&SignetRing);
       Send(Send(SYS,@GetLibrary),@RegisterSignet,#newring=self);
-      
+
       propagate;
    }
 
@@ -72,15 +75,15 @@ messages:
       {
         Send(poRingOwner,@CutWantedItem,#class=&SignetRing);
       }
-      
-      send(send(SYS,@GetLibrary),@UnregisterSignet,#newring=self);
+
+      Send(Send(SYS,@GetLibrary),@UnregisterSignet,#newring=self);
 
       if ptLazyTimer <> $
       {
          DeleteTimer(ptLazyTimer);
          ptLazyTimer = $;
       }
-      
+
       propagate;
    }
 
@@ -107,7 +110,8 @@ messages:
       {
          oMoney = Create(&Money,#number=iValue);
          Send(who,@NewHold,#what=oMoney);
-		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,
+               #amount=Send(oMoney,@GetNumber));
       }
       else
       {
@@ -127,43 +131,40 @@ messages:
       if ptLazyTimer <> $
       {
          DeleteTimer(ptLazyTimer);
-         ptLazyTimer=$;
+         ptLazyTimer = $;
       }
-      
+
       if what = $
       {
          propagate;
       }
-      
+
       if (IsClass(what,&Room))
       {
-         ptLazyTimer=CreateTimer(self,@LazySignetTimer,LAZY_RESET_TIME);
+         ptLazyTimer = CreateTimer(self,@LazySignetTimer,LAZY_RESET_TIME);
       }
-      
+
       propagate;
    }
 
    LazySignetTimer()
    {
-      ptLazyTimer=$;
+      ptLazyTimer = $;
+
       if IsClass(poOwner,&Room)
       {
          Send(poOwner,@Teleport,#what=self);
       }
-     
+
       return;
    }
 
    DoBaseDesc()
    {
-      AppendTempString(ringsignet_desc_rsc);
-      AppendTempString(Send(poRingOwner,@GetName));
-      AppendTempString(ringsignet_desc_rsc2);
-     
+      AddPacket(4, vrDesc, 4, Send(poRingOwner,@GetName));
+
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

@@ -1,0 +1,5 @@
+Thrust_name_rsc = de "Zustoßen"
+Thrust_desc_rsc = de \
+   "Das Zustoßen verursacht großen Schaden, ein tief ausgeführter Schlag."
+Thrust_player_killed_something = de \
+   "Mit einem schnellem Zustoßen beendest Du %s%s."

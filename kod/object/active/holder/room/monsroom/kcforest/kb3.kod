@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kb3.lkod
+
    room_name_OutdoorsKB3 = "Camp of the Warrior Avars"
    room_OutdoorsKB3 = KB3.roo
    OutdoorsKB3_music = avarwar.mp3

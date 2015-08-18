@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include bonk.lkod
+
    bonk_name_rsc = "bonk"
    bonk_icon_rsc = lightnin.bgf
 
@@ -119,7 +121,7 @@ messages:
          Send(oTarget,@Bonked);
       }
       
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if (IsClass(each_obj,&Player)

@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include kranofferingqt.lkod
+
    % Quest description.
    kranofferingqt_icon_rsc = sweat.bgf
    kranofferingqt_name_rsc = "Kraanan offering quest"

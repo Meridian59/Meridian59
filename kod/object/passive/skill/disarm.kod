@@ -18,6 +18,8 @@ constants:
    DISARM_FACTOR = 10            % Divide raw success total by this number before taking percent chance.
 
 resources:
+
+   include disarm.lkod
    Disarm_name_rsc = "disarm"
    Disarm_icon_rsc = idisarm.bgf
    Disarm_desc_rsc = "A technique that allows a warrior to strike at his or her opponent's weapon.  Often "

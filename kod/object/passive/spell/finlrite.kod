@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include finlrite.lkod
+
    FinalRites_name_rsc = "final rites"
    FinalRites_icon_rsc = ifinrite.bgf
    FinalRites_desc_rsc = \
@@ -100,7 +102,7 @@ messages:
       lFinalTargets = $;
 
       oRoom = Send(who,@GetOwner);
-      for i in Send(oRoom,@GetHolderActive)
+      foreach i in Send(oRoom,@GetHolderActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Battler)
@@ -124,7 +126,7 @@ messages:
            #string=FinalRites_success_others,
            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
-      for oUndead in lTargets
+      foreach oUndead in lTargets
       {
          if isClass(oUndead,&Player)
          {

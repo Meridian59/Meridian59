@@ -1,0 +1,7 @@
+guildendalliance_name_rsc = de "Allianz beenden"
+guildendalliance_desc_Rsc = de \
+   "Benutze diesen Befehl um eine Allianz mit einer anderen Gilde aufzulösen."
+endalliance_non_user = de "%s%s wollte sowieso nicht dein Freund sein."
+endalliance_not_member = de "%s%s ist kein Mitglieder einer alliierten Gilde!"
+endalliance_your_guild = de "%s ist ein Mitglied deiner eigenen Gilde!"
+endalliance_cant_self = de "Aw, komm schon. Du willst dein eigener Freund sein."

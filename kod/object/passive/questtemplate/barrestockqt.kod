@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include barrestockqt.lkod
+
    % Quest description.
    barrestockqt_icon_rsc = pitcher.bgf
    barrestockqt_name_rsc = "bar restock quest"
@@ -130,7 +132,7 @@ messages:
                #quest_node_index=QNT_ID_BAR_RESTOCK_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_BARTENDER)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

@@ -1,0 +1,8 @@
+MarionHealer_name_rsc = de "Lady Aftyn"
+MarionHealer_desc_rsc = de \
+   "In der Gegenwart von Lady Aftyn gibt es keinen Zweifel, daß sie von königlicher "
+   "Geburt ist. Sie strömt eine Art von friedlicher Entschlossenheit; von "
+   "Vertrauen, Ernsthaftigkeit und Zielstrebigkeit aus."
+Mrhealer_entry_welcome = de \
+   "Entschuldige, aber du siehst aus als könntest du eine Pause gebrauchen  "
+   "%s%s.  Ich habe keine Räume zu vermieten aber du bist hier willkommen."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include killfscl.lkod
+
    KillingFieldScroll_label_name_rsc = "scroll of killing fields"
    KillingFieldScroll_icon_rsc = scr05.bgf
    KillingFieldScroll_desc_rsc = \

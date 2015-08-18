@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include dukemurderqt.lkod
+
    % Quest description.
    dukemurderqt_name_rsc = "Duke murder mystery quest"
    dukemurderqt_desc_rsc = \
@@ -76,7 +78,7 @@ messages:
                #quest_node_index=QNT_ID_DUKE_MURDER_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

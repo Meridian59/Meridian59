@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include chandelr.lkod
+
    chandelier_name_rsc = "Chandelier"
    chandelier_icon_rsc = chandelr.bgf
    chandelier_desc_rsc = \

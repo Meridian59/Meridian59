@@ -24,20 +24,19 @@ constants:
 
 resources:
 
+   include waexpert.lkod
+
    weapattexpert_desc = \
       " Colhorr's signature is engraved on the handle of this weapon. This "
-      "weapon looks to provide "
-   weapattexpert_desc2 = " advantage - in the right hands."
+      "weapon looks to provide %s advantage - in the right hands."
    weapattexpert_name = "%s of the master"
    expert_dm = "expert"
 
 classvars:
 
    vrDesc = weapattexpert_desc
-   vrDesc2 = weapattexpert_desc2
-
+   vbPowerDesc = TRUE
    viItem_Att_Num = WA_EXPERT
-
    viDifficulty = 9
    vrName = weapattexpert_name
    vrDM_trigger = expert_dm

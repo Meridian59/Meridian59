@@ -1,0 +1,16 @@
+Seance_name_rsc = de "Aufspühren"
+Seance_desc_rsc = de \
+   "Sha-Lills Magie erlaubt eine Kommunikation mit der Geisterwelt, um den "
+   "Aufenthaltsort der letzten Person, die einen Unschuldigen ermordet hat "
+   "zu enthüllen. Der Zauber benötigt Kräuter."
+Seance_No_Murderer_rsc = de "Es gibt momentan keinen Mörder der gesucht wird."
+Seance_I_See_You_rsc = de \
+   "Du spürst, dass jemand über deinen Aufenthaltsort bescheid weiß."
+Seance_Cloaked_Target_rsc = de \
+   "Qors dunkle Magie hat die Aufmerksamkeit des Gegners umgeleitet."
+Seance_casting_rsc = de \
+   "Du appellierst an Shal'ills Kenntnis den Auftenhaltsort von %s%s zu bekommen."
+Seance_Target_Location_rsc = de \
+   "Du spürst, dass %s%s in der Nähe von %s sein könnte."
+seance_spell_intro_rsc = de \
+   "Shal'ille Level 1: Aufenthalt des letzten Mörders aufspüren."

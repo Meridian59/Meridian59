@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include easterinvasion.lkod
+
    easterinvasion_start_msg = \
       "The Easter Bunny invasion has begun."
 

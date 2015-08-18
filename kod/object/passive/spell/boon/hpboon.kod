@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include hpboon.lkod
+
    hpboon_name_rsc = "health effect"
    hpboon_icon_rsc = iboonhea.bgf
    hpboon_desc_rsc = "Your carnal health seems unnaturally influenced."

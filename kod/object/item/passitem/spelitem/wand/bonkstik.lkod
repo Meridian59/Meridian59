@@ -1,0 +1,7 @@
+BonkStick_name_rsc = de "Der Schlagstock"
+BonkStick_desc_rsc = de \
+   "Dieser Stab würde sich gut eignen, jemanden so richtig zu verdreschen."
+bonkstick_bad_target = de "Du kannst den Bonkstick nicht auf %s%s anwenden."
+bonkstick_not_self = de \
+   "Du würdest Dich nicht wohlfühlen, Dir selbst den Bonkstick auf den Kopf "
+   "zu hauen."

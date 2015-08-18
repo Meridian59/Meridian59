@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include joltrod.lkod
+
    staffofjolting_name_rsc = "gnarled staff"
    staffofjolting_icon_rsc = joltstaf.bgf
    staffofjolting_desc_rsc = \

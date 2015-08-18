@@ -1,0 +1,11 @@
+shadowform_name_rsc = de "Schattenform"
+shadowform_desc_rsc = de \
+   "Wandelt Dein Ziel in einen Schatten seiner selbst. Ideal, um in dunkleren "
+   "Gefilden herumzuschleichen. Dafür reicht eine handvoll Regenbogenfarn."
+shadowform_already_enchanted = de "Du bist bereits eine Schattenform."
+shadowform_already_affected = de "Du bist bereits eine Schattenform."
+shadowform_on = de "Du verschmilzt mit deinem eigenen Schatten."
+shadowform_off = de "Du kehrst zu deinem normalen Aussehen zurück."
+shadowform_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Verteidigung gegen Monster hinzu.  "
+   "Gegen Spieler normalem Level, fügt er %i Verteidigung hinzu."

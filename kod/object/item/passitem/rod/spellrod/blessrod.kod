@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include blessrod.lkod
+
    BlessRod_name_rsc = "rod of bless"
    BlessRod_icon_rsc = wand4.bgf
 

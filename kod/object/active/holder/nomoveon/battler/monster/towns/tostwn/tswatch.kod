@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include tswatch.lkod
+
    TosWatcher_name_rsc = "Watcher"
    TosWatcher_icon_rsc = tswatch.bgf
    TosWatcher_desc_rsc = \
@@ -461,7 +463,7 @@ messages:
       if piCombat_Style = STYLE_GUILD_VS_GUILD
          OR piCOmbat_style = STYLE_LAST_GUILD_STANDING
       {
-         for i in plCombatants
+         foreach i in plCombatants
          {
             if Send(i,@GetGuild) = poChampion_guild
             {
@@ -496,7 +498,7 @@ messages:
          OR piCombat_Style = STYLE_LAST_GUILD_STANDING
       {
          oGuild = $;
-         for i in plCombatants
+         foreach i in plCombatants
          {
             if oGuild = $
             {
@@ -606,7 +608,7 @@ messages:
             or piCombat_style = STYLE_LAST_GUILD_STANDING              
          {
             bFound = FALSE;
-            for i in plCombatants
+            foreach i in plCombatants
             {
                if Send(i,@GetGuild) = Send(who,@GetGuild) AND NOT bFound
                {
@@ -672,7 +674,7 @@ messages:
          aGuild = $;
          bGuild = $;
 
-         for i in plCombatants
+         foreach i in plCombatants
          {
             if aGuild = $
             {
@@ -771,7 +773,7 @@ messages:
       {
          oGuild = Send(who,@GetGuild);
 
-         for i in plCombatants
+         foreach i in plCombatants
          {
             if Send(i,@GetGuild) = oGuild AND oGuild <> $
             {
@@ -854,7 +856,7 @@ messages:
       if piCombat_style = STYLE_GUILD_VS_GUILD
       {
          oGuild = $;
-         for i in plCombatants
+         foreach i in plCombatants
          {
 
             if Send(i,@GetGuild) <> poChampion_guild
@@ -879,7 +881,7 @@ messages:
       iDelay = Random(COMMENCE_DELAY_MIN,COMMENCE_DELAY_MAX);
       ptCommence = CreateTimer(self,@CommenceTimer,iDelay);
 
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj = Send(poOwner,@HolderExtractObject,#data=i);
          if Send(self,@IsCombatant,#who=each_obj)
@@ -929,7 +931,7 @@ messages:
    {
       local i;
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if i = who
          {
@@ -1085,7 +1087,7 @@ messages:
             {
                if Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
                {
-                  for i in Send(poOwner,@GetHolderActive)
+                  foreach i in Send(poOwner,@GetHolderActive)
                   {
                      j = Send(poOwner,@HolderExtractObject,#data=i);
                      if IsClass(j,&Monster)
@@ -1138,7 +1140,7 @@ messages:
       local oGuild, oldChamp, oldGuild, i;
 
       oGuild = $;
-      for i in plCombatants
+      foreach i in plCombatants
       {
          % If there are more than two guilds then don't cancel.         
          if oGuild = $
@@ -1219,7 +1221,7 @@ messages:
       Send(poOwner,@EndFight,#lCombatants=plCombatants);
 
       % Assume that everyone left in plCombatant is a winner.
-      for i in plCombatants
+      foreach i in plCombatants
       {
          index = (Send(i,@GetMaxHealth)+15) - Send(i,@GetHealth);
          Send(i,@GainHealth,#amount=Bound(index,0,15));
@@ -1317,7 +1319,7 @@ messages:
          else
          {
             Send(self,@Say,#message_rsc=TosWatcher_speed_up);
-            for i in plCombatants
+            foreach i in plCombatants
             {
                Send(poOwner,@SomethingShot,#who=self,#target=i,
                     #projectile=Send(SYS,@FindSpellByNum,#num=SID_FIREBALL));
@@ -1524,7 +1526,7 @@ messages:
                return FALSE;
             }
 
-            for i in Send(poOwner,@GetHolderActive)
+            foreach i in Send(poOwner,@GetHolderActive)
             {
                if IsClass(First(i),&Player)
                   AND StringEqual(string,Send(First(i),@GetName))
@@ -1847,7 +1849,7 @@ messages:
       local i, count;
 
       count = 1;
-      for i in plCombatants
+      foreach i in plCombatants
       {
          if i = who
          {
@@ -1887,7 +1889,7 @@ messages:
       {
          % teleport to the playing field
          bInList = FALSE;
-         for i in plUserStats
+         foreach i in plUserStats
          {
             if First(i) = what
             {
@@ -1921,7 +1923,7 @@ messages:
       else
       {
          % Teleport out of play
-         for i in plUserStats
+         foreach i in plUserStats
          {
             if First(i) = what
             {
@@ -1941,7 +1943,7 @@ messages:
          lMinions = Send(what,@GetControlledMinions);
          if lMinions <> $
          {
-            for i in lMinions
+            foreach i in lMinions
             {
                if Send(i,@GetOwner) = Send(self,@GetOwner)
                {
@@ -1959,7 +1961,7 @@ messages:
    {
       local i, j;
 
-      for i in plCombatants
+      foreach i in plCombatants
       {
          Send(self,@Teleport,#what=i,#outofplay=TRUE);
       }
@@ -1972,7 +1974,7 @@ messages:
       if pbTournament
          OR Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
       {
-         for i in Send(poOwner,@getholderactive)
+         foreach i in Send(poOwner,@getholderactive)
          {
             j = First(i);
 
@@ -2141,7 +2143,7 @@ messages:
       % If the caster's single target is not a combatant, don't let him cast.
       if Length(lItems) = 1
       {
-         for i in lItems
+         foreach i in lItems
          {
             if NOT Send(self,@isCombatant,#who=i)
             {
@@ -2263,10 +2265,10 @@ messages:
 
       if IsClass(what,&Player)
       {
-         for lSublist in plChampions
+         foreach lSublist in plChampions
          {
             lTemp = Nth(lSublist,2);
-            for i in lTemp
+            foreach i in lTemp
             {
                if First(i) = what
                {
@@ -2340,7 +2342,7 @@ messages:
 
       % If player is already in the champ list, then check their victories.
       % If their old record is smaller, replace it.
-      for i in lChampList
+      foreach i in lChampList
       {
          if First(i) = oChamp
          {
@@ -2362,7 +2364,7 @@ messages:
 
       if NOT bFound
       {
-         for i in lChamplist
+         foreach i in lChamplist
          {
             if Nth(i,2) < piKill_counter
             {
@@ -2383,10 +2385,10 @@ messages:
    {
       local lSublist, lTemp, i;
 
-      for lSublist in plChampions
+      foreach lSublist in plChampions
       {
          lTemp = Nth(lSublist,2);
-         for i in lTemp
+         foreach i in lTemp
          {
             if First(i) = oldChamp
             {
@@ -2412,7 +2414,7 @@ messages:
       {
          bCheckAgain = FALSE;
          iCount = 0;
-         for i in lChamplist
+         foreach i in lChamplist
          {
             iCount = iCount + 1;
             if iCount < 5
@@ -2444,7 +2446,7 @@ messages:
          return plChampions;
       }
 
-      for i in plChampions
+      foreach i in plChampions
       {
          if First(i) = STYLE
          {
@@ -2482,7 +2484,7 @@ messages:
    {
       local i;
 
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          if IsClass(First(i),&DM) AND Send(First(i),@IsActor)
          {

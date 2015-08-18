@@ -17,6 +17,8 @@ constants:
    VAULT_ITEMS_MAX = 600
 
 resources:
+
+   include storage.lkod
    msg_not_enough_items_on_deposit = "%s%s does not have that many on deposit."
    msg_does_not_have_item = "%s%s does not have that item on deposit for you."
    msg_has_no_deposit = "%s%s does not have any items on deposit for you."
@@ -62,7 +64,7 @@ messages:
    {
       local i, j;
 
-      for i in plStored
+      foreach i in plStored
       {
          Send(i,@Delete);
          plStored = DelListElem(plStored,i);
@@ -134,7 +136,7 @@ messages:
       local oIndexBox, oPlayerBox, oItem, oNewItem;
 
       oPlayerBox = $;
-      for oIndexBox in plStored
+      foreach oIndexBox in plStored
       {
          %% does the player have an account already?
          if Send(oIndexBox,@GetSafeBoxOwner) = who
@@ -154,7 +156,7 @@ messages:
 
       % Take the items, put them in storage.  Assume ReqNewHold has already
       % been passed.  Remove number items from that player's possession.
-      for oItem in lItems
+      foreach oItem in lItems
       {
          if IsClass(oItem,&NumberItem)
          {
@@ -180,7 +182,7 @@ messages:
 
       iBulk = 0;
 
-      for i in plStored
+      foreach i in plStored
       {
          if Send(i,@GetSafeBoxOwner) = who
          {
@@ -196,7 +198,7 @@ messages:
    {
       local i;
 
-      for i in plStored
+      foreach i in plStored
       {
          if Send(i,@GetSafeBoxOwner) = who
          {
@@ -211,7 +213,7 @@ messages:
    {
       local i;
 
-      for i in plStored
+      foreach i in plStored
       {
          if Send(i,@GetSafeBoxOwner) = who
          {
@@ -338,7 +340,7 @@ messages:
    {
       local i, j;
 
-      for i in plStored
+      foreach i in plStored
       {
          if Send(i,@GetSafeBoxOwner) = who
          {

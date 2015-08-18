@@ -1,0 +1,20 @@
+jig_name_rsc = de "Zwingtanz"
+jig_desc_rsc = de \
+   "Dieser Zauber bringt jeden Anwesenden dazu, wie wild loszutanzen und "
+   "ist ein riesen Spaß auf Festen. Man benötigt Diamanten, um dieses Magische "
+   "Lied zu singen."
+Jig_cast = de "Du beginnst ein überwältigend süchtig machendes Lied zu spielen!"
+Jig_starts = de \
+   "%s beginnt ein überwältigendes süchtig machendes Lied zu spielen!"
+Jig_ends = de \
+   "Das Liedchen, gespielt von %s endet mit einem fröhlichen Ton zum Abschluss."
+Jig_caster_ends = de "Du hörst auf, deinen Zwingtanz zu spielen."
+Jig_caster_enter = de \
+   "Du fühlst dich gezwungen, nach deiner eigenen Nase zu tanzen!"
+Jig_enter = de \
+   "Als %ss auf Deine Ohren trifft, bist du einfach dazu gewungen zu tanzen!"
+Jig_leave = de \
+   "Du bist außerhalb des Bereichs von %ss Song, und verlierst den Drang "
+   "zu tanzen."
+Jig_cannot_do_that = de \
+   "Du kannst das nicht tun, solange Du nach %ss Song tanzt!"

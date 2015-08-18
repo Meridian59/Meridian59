@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include necbal.lkod
+
    necbal_starting_password = "deathmage"
 
 properties:
@@ -851,7 +853,7 @@ messages:
          return FALSE;
       }
 
-      for i in plAmuletLocations
+      foreach i in plAmuletLocations
       {
          if Send(oOwner,@GetRoomNum) = First(i)
          {

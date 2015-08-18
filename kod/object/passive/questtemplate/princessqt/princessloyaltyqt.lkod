@@ -1,0 +1,18 @@
+% Quest description.
+princessloyalty_name_rsc = de "Princess loyalty quest"
+princessloyalty_desc_rsc = de \
+   "Princess Kateriina has asked you to deliver a letter for her, to prove "
+   "your loyalty to the crown."
+
+princessloyalty_deliver_rsc = de \
+   "Princess Kateriina has requested that you deliver a letter to %s, to "
+   "prove your continuing loyalty to the crown."
+
+princessloyalty_completed = de \
+   "You have proven your loyalty to the crown, and remain a trusted "
+   "servant of Princess Kateriina."
+
+% Quest resources.
+princess_standard2_assign = de \
+   "Ah, %NAME, mein treuer Diener.  Würdest Du so freundlich sein und diesen "
+   "offiziellen Brief zu %NPC bringen?  Ich wäre Dir sehr dankbar."

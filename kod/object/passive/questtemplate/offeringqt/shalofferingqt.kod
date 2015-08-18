@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include shalofferingqt.lkod
+
    % Quest description.
    shalofferingqt_icon_rsc = tear.bgf
    shalofferingqt_name_rsc = "Shal'ille offering quest"

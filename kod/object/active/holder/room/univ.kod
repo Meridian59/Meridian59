@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include univ.lkod
+
    room_university = univ.roo
    room_name_university = "Meridian University"
    univ_music = main.mp3
@@ -67,7 +69,7 @@ messages:
       if type = SAY_DM and StringEqual(string,"portal")
       {
          bFound = FALSE;
-         for i in plActive
+         foreach i in plActive
          {
             if isClass(first(i),&HellPortal)
             { send(first(i),@delete);  bFound = TRUE; }

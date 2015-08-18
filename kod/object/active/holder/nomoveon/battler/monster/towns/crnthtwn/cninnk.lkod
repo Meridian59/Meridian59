@@ -1,0 +1,13 @@
+CornothInnkeep_name_rsc = de "D'Franko"
+CornothInnkeep_desc_rsc = de \
+   "Die Kneipe zum Bach ist ein beliebter Treffpunkt für Schüler und Studenten "
+   "aus der nahegelegenen Universität und häufig der Schauplatz von Diskussionen "
+   "über jede Art von Problem. D'Franko ermutigt und respektiert jede gute "
+   "Diskussion, obwohl seine Ansichten manchmal etwas konservativ sind."
+CnInn_entry_welcome = de "Guten Tag, %s%s."
+CnInn_wedding_ring_sale = de \
+   "~B<winkt>~n Hast einen besonderen Menschen gefunden, mh? Ich wäre erfreut "
+   "dir %s%s anbieten zu dürfen."
+CnInn_not_ready = de \
+   "Ich denke nicht, dass deine Stimme gut genug ist, dass ich dir das Arbeitslied "
+   "meines Großvaters kann. Geh und sprich mit Parrin und schau was er denkt."

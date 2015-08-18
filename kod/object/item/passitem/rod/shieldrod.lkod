@@ -1,0 +1,6 @@
+ShieldRod_name_rsc = de "Der Stab des Schildes"
+ShieldRod_desc_rsc = de \
+   "Dieser Stab verhindert nahezu jeden Schaden für 5 Sekunden"
+ShieldRod_success_rsc = de \
+   "Du fühlst dich magisch geschützt vor allen Angriffen!"
+ShieldRod_drop_rsc = de "Der magische Schutz verschwindet wieder."

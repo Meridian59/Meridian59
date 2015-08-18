@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kranprst.lkod
+
    kranpriestess_name_rsc = "Priestess Qerti'nya"
    kranpriestess_icon_rsc = kranprst.bgf
    kranpriestess_desc_rsc = \
@@ -27,7 +29,9 @@ resources:
    Kran_forget_potion_sale = \
       "~B~bI do sell %s%s which is very potent.  You will remember none of "
       "those clumsy physical-based combat skills if you quaff it.~n~k"
-   kraananpriestess_teach = "Through rigorous discipline, I can teach you "
+   kraananpriestess_teach = \
+      "Through rigorous discipline, I can teach you %s%s%s%s%s%s%s%s%s%s%s%s "
+      "at that level."
 
 classvars:
    vrTeach_message = Kraananpriestess_teach

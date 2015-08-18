@@ -1,0 +1,8 @@
+illusionaryformpotion_already_enchanted = de \
+   "Du hast bereits eine andere Gestalt angenommen. Der Trank zeigt keine "
+   "Wirkung."
+illusionaryformpotion_name_rsc = de "Der braune Trank"
+illusionaryformpotion_desc_rsc = de \
+   "Dies ist ein zähflüssiger, dunkler, klebriger Trank."
+illusionaryformpotion_cant_use_on = de \
+   "%s%s kann von Dir nicht getrunken werden."

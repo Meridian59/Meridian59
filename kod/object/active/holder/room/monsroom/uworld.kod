@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include uworld.lkod
+
    room_name_underworld = "The Underworld"
    room_underworld = uworld.roo
    underworld_music = undrwrld.mp3
@@ -322,7 +324,7 @@ messages:
 
       if isClass(what,&Player)
       {
-         for i in plCorpses
+         foreach i in plCorpses
          {
             if StringEqual(Send(what,@GetTrueName),Send(i,@GetCorpseName))
             {
@@ -353,7 +355,7 @@ messages:
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
       Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
 
-      for i in plCorpses
+      foreach i in plCorpses
       {
          if StringEqual(rUserName,Send(i,@GetCorpseName))
          {
@@ -407,7 +409,7 @@ messages:
 
       Send(self,@SomethingWaveRoom,#wave_rsc=portal_zap_sound);
 
-      for i in plPassive
+      foreach i in plPassive
       {
          if isClass(First(i),&skull)
          {
@@ -415,7 +417,7 @@ messages:
          }
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          if isClass(First(i),&Portal)
          {
@@ -451,7 +453,7 @@ messages:
       ptReset = $;
       ptMaintenance = CreateTimer(self,@MaintenanceTimer,MAINTENANCE_DELAY);
 
-      for i in plActive
+      foreach i in plActive
       {
          if IsClass(first(i),&CorpseNode)
          {
@@ -621,7 +623,7 @@ messages:
    {
       local i, each_obj, oDeadPlayer;
 
-      for i in plCorpses
+      foreach i in plCorpses
       {
          if i = what
          {

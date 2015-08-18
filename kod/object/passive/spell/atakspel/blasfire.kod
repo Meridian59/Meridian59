@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include blasfire.lkod
+
    BlastOfFire_name_rsc = "blast of fire"
 
    BlastOfFire_icon_rsc = iblfire.bgf

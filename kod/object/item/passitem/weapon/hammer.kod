@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include hammer.lkod
+
    hammer_name_rsc = "hammer"
    hammer_icon_rsc = hammer.bgf
    hammer_desc_rsc = \

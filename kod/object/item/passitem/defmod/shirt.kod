@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shirt.lkod
+
    shirt_condition_exc = " is in immaculate condition."
    shirt_condition_good = " is scuffed and slightly worn."
    shirt_condition_med = " has a few unsightly rips."

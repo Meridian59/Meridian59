@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mask.lkod
+
    FaceMask_name_rsc = "mask"
    FaceMask_icon_male_rsc = mmskl.bgf
    FaceMask_icon_female_rsc = mfskl.bgf

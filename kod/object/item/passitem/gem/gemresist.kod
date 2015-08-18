@@ -19,14 +19,17 @@ resources:
    gem_resist_name_rsc = "star ruby"
    gem_resist_icon_rsc = ruby.bgf
    gem_resist_desc_rsc = \
-	"This shard of gemstone mysteriously retains some of the living heat from its celestial fall."
-	
+      "This shard of gemstone mysteriously retains some of the living "
+      "heat from its celestial fall."
+   gem_resist_effect_desc_rsc = \
+      "  When attached to armor, it will offer %i%% %s."
+   gem_resist_attached_rsc = "\nAn attached %s adds %i%% %s."
+
 classvars:
-   
+
    vrName = gem_resist_name_rsc
    vrIcon = gem_resist_icon_rsc
    vrDesc = gem_resist_desc_rsc
-
    viValue_average = 25000
    viWeight = 0
    viBulk = 0
@@ -41,57 +44,57 @@ messages:
    Constructor()
    {
       local iRandomRoll;
-      
+
       iRandomRoll = Random(1,1000);
-      
+
       if iRandomRoll < 333
       {
          piResistStrength = 1;
          propagate;
       }
-      
+
       if iRandomRoll < 666
       {
          piResistStrength = 2;
          propagate;
       }
-      
+
       if iRandomRoll < 950
       {
          piResistStrength = 3;
          propagate;
       }
-      
+
       if iRandomRoll < 1000
       {
          piResistStrength = 4;
          propagate;
       }
-      
+
       if iRandomRoll = 1000
       {
          piResistStrength = 5;
          propagate;
       }
-      
+
       propagate;
    }
-   
+
    GetType()
    {
       return piResistType;
    }
-   
+
    GetStrength()
    {
       return piResistStrength;
    }
-   
+
    ModifyResistance(resistance_list=$)
    {
       local oResist;
       
-      for oResist in resistance_list
+      foreach oResist in resistance_list
       {
          if Nth(oResist,1) = piResistType
          {
@@ -104,33 +107,26 @@ messages:
             return resistance_list;
          }
       }
-      
+
       resistance_list = Cons([piResistType,piResistStrength],resistance_list);
-      
+
       return resistance_list;
    }
    
    AppendDesc()
    {
-      AppendTempString(" When attached to armor, it will offer ");
-      AppendTempString(piResistStrength);
-      AppendTempString("\% ");
-      AppendTempString(Send(SYS,@GetResistanceName,#type=piResistType));
-      AppendTempString(". ");
-      
-      propagate;
+      AddPacket(4,gem_resist_effect_desc_rsc, 4,piResistStrength,
+                4,Send(SYS,@GetResistanceName,#type=piResistType));
+
+      return;
    }
-   
+
    AttributeDesc()
    {
-      AppendTempString("An attached ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" adds ");
-      AppendTempString(piResistStrength);
-      AppendTempString("\% ");
-      AppendTempString(Send(SYS,@GetResistanceName,#type=piResistType));
-      AppendTempString(". ");
-      
+      AddPacket(4,gem_resist_attached_rsc, 4,Send(self,@GetName),
+                4,piResistStrength, 4,Send(SYS,@GetResistanceName,
+                                          #type=piResistType));
+
       return;
    }
 

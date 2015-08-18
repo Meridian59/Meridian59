@@ -1,0 +1,18 @@
+% Quest description.
+lovelettertwoquest_name_rsc = de "Madelia's love letter quest"
+lovelettertwoquest_desc_rsc = de \
+   "Madelia has asked you to deliver a letter to her lover."
+
+lovelettertwoquest_deliver_rsc = de \
+   "Madelia has asked you to deliver a love letter to %s%s."
+
+lovelettertwoquest_completed_rsc = de \
+   "You have delivered a love letter for Madelia."
+
+% Quest resources.
+love_letter_2_assign = de \
+   "Ja, tatsächlich. Ich habe ein Schreiben was ausgeliefert werden muss.  "
+   "Wenn Du diesen Brief zu %NPC bringen würdest, wäre ich Dir sehr dankbar."
+love_letter_2_success = de \
+   "Ah, ein Brief von meiner schönen %SOURCE_NPC!  Es wärmt mein Herz zu "
+   "wissen, dass sie an mich denkt Bitte nimm dies als Zeichen meines Dankes."

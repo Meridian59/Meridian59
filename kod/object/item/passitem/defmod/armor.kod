@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include armor.lkod
+
    armor_condition_exc = " is without blemish or flaw."
    armor_condition_exc_mended = \
       " is in great condition, but has been repaired before."

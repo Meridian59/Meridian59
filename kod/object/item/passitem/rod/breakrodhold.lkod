@@ -1,0 +1,6 @@
+BreakRodHold_name_rsc = de "Der Stab der Bewegung"
+BreakRodHold_desc_rsc = de "Dieser Stab verhindert Lähmzauber für 2 Sekunden"
+BreakRodHold_success_rsc = de "Die Kraft des Stabes schießt durch dich!"
+BreakRodHold_drop_rsc = de "Die Kraft des Stabes verschwindet wieder."
+BreakRodHold_secondary_drop_msg = de \
+   "Die bemerkst, dass deine Fähigkeiten des Lähmens zurückkehrt."

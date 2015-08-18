@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include brazier.lkod
+
    brazier_name_rsc = "brazier"
    brazier_icon_rsc = brazier.bgf
    brazier_desc_rsc = "The flame burns bright, offering welcome light to the surroundings."

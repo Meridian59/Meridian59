@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemcoldres.lkod
+
    gem_cold_resist_name_rsc = "sapphire teardrop"
    gem_cold_resist_icon_rsc = sapphire.bgf
    gem_cold_resist_desc_rsc = \

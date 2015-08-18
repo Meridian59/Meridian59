@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include reflectn.lkod
+
    reflection_name_rsc = "reflection"
 
    reflection_male_icon_rsc = btg.bgf
@@ -592,7 +594,7 @@ messages:
             {
                piAnimation = PANM_BOW_FIRE;
 
-               for i in Send(poOriginal,@GetPlayerUsing)
+               foreach i in Send(poOriginal,@GetPlayerUsing)
                {
                   if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
                   {

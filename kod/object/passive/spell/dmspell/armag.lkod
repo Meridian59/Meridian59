@@ -1,0 +1,7 @@
+armageddon_name_rsc = de "Armageddon"
+armageddon_monster_death_msg = de \
+   "~bDu hörst einen Schrei als %s%s sich in Staub auflöst."
+armageddon_casted_msg = de \
+   "Mit einem Todesschrei verschwinden %s%s blub klalasd!%s"
+armageddon_unworthy = de "Dir wurde der Zauberstpruch Armgageddon weggenommen"
+armageddon_desc_rsc = de "Tötet ALLE Monster in der Karte."

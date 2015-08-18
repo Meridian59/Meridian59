@@ -1,0 +1,31 @@
+% Quest description.
+tradingpostquest_name_rsc = de "trading post inventory quest"
+tradingpostquest_desc_rsc = de \
+   "Wulfgang zax'Ak has asked you to obtain some items for him so that "
+   "he may replenish his inventory.  He is willing to make it worth "
+   "your trip."
+
+tradingpostquest_deliver_rsc = de \
+   "Wulfgang zax'Ak has asked you to obtain %s%s for him so that "
+   "he may replenish his inventory.  He is willing to make it worth "
+   "your trip."
+
+tradingpostquest_deliver_number_rsc = de \
+   "Wulfgang zax'Ak has asked you to obtain %i %s for him so that "
+   "he may replenish his inventory.  He is willing to make it worth "
+   "your trip."
+
+tradingpostquest_completed_rsc = de \
+   "You have helped Wulfgang zax'Ak replenish his supplies, and in return "
+   "have obtained a Riija sword shard."
+
+% Quest resources.
+tradingpost_trigger_1 = de "Inventar"
+tradingpost_assign_2 = de \
+   "Ich bin immer auf der Suche nach Leuten, die mein Inventar auffüllen "
+   "könnten.  Wenn Du bereit bist mir %INDEF_CARGO%CARGO zu bringen, werde "
+   "ich Dich reich belohnen."
+tradingpost_success_2 = de "Großartig.  Hier, das brauche ich nicht."
+tradingpost_failure_2 = de \
+   "Betreff: Lieferung von %CARGO\nVergiss es, ich habe einen anderen Lieferanten "
+   "gefunden."

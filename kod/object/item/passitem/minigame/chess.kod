@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include chess.lkod
+
    chess_name_rsc = "chess board"
    chess_closed_rsc = chesclos.bgf
    chess_open_rsc = chesopen.bgf

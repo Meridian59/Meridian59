@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include mug.lkod
+
    mug_name_rsc = "mug of stout"
    mug_icon_rsc = mug.bgf
    mug_desc_rsc = \

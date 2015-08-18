@@ -1,0 +1,24 @@
+% Quest description.
+rebelsoldier_name_rsc = de "rebel soldier shield quest"
+rebelsoldier_desc_rsc = de \
+  "Jonas D'Accor will allow you to join the Rebel army, but first "
+   "you must prove your loyalty by slaying his enemies."
+
+rebelsoldier_completed_rsc = de \
+   "You have proven your worth, and are now a soldier in the Rebel army."
+
+% Quest resources.
+rebel_faction_soldier_assign_1 = de \
+   "Ich glaube an Dich.  Geh und erledige %INDEF_MONSTER%MONSTER an dem Fahnenmast, "
+   "und komm zurück um vom Kampf zu berichten. Danach werde ich mit Dir über "
+   "Deine Zukunft als Soldat reden."
+rebel_faction_soldier_assign_2 = de \
+   "Ja, ich habe Geschichten über deinen Kampf gehört. Nun, erobere %INDEF_MONSTER%MONSTER "
+   "und Du wirst einer von uns werden."
+rebel_faction_soldier_success = de \
+   "Ich wusste, dass Du ein Soldat bist. Nun kannst Du uns beitreten und "
+   "mithelfen für Freiheit und gegen Tyrannei zu kämpfen!"
+rebel_faction_soldier_failure = de \
+   "Ich bin enttäuscht von Dir.  Ich mehr von einem treuen Anhänger erwartet.  "
+   "Solltest Du gegen die kämpfen, die für die Tyrannei kämpfen, weißt du "
+   "wo Du mich findest."

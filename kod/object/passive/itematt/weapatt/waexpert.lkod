@@ -1,0 +1,5 @@
+weapattexpert_desc = de \
+   " Colhorrs Unterschrift ist auf dem Griff der Waffe eingraviert. Diese "
+   "Waffe sieht aus als würde sie %s Vorteil bringen - in der richtigen Hand."
+weapattexpert_name = de "%s von dem Meister"
+expert_dm = de "Experte"

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include fivecon.lkod
+
    fiveCouncilor_name_rsc = "Esseldi"
    fiveCouncilor_icon_rsc = fivecon.bgf
    fiveCouncilor_desc_rsc = "A great traveller and explorer, he now hunts "

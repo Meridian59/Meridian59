@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include lightngw.lkod
+
    LightningWand_label_name_rsc = "lightning wand"
    LightningWand_icon_rsc = wand6.bgf
    LightningWand_desc_rsc = "Magical energy crackles about this slender wand."

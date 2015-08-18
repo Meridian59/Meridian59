@@ -1,0 +1,7 @@
+ringwedding_name_rsc = de "Der Hochzeitsring"
+ringwedding_desc_rsc = de \
+   "Das ist ein einfaches, aber durchaus elegantes Goldband."
+ringwedding_one = de \
+   "  Eingraviert mit magischen Runen ist der Name %q."
+ringwedding_two = de \
+   "  Eingraviert mit magischen Runen sind die Namen %q und %q."

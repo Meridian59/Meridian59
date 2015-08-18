@@ -1,0 +1,7 @@
+room_name_JasperEast = de "Ost-Jasper"
+jasper_Arsenal_rsc = de \
+   "Fest verschlossen. Die städtische Waffenkammer ist sicher vor Eindringlingen."
+jasper_granary_rsc = de \
+   "Du hast keine Berechtigung den Kornspeicher zu betreten."
+jasper_shack_rsc = de \
+   "Diese alte Bergarbeiterhütte zu betreten wäre möglicherweise sehr gefährlich."

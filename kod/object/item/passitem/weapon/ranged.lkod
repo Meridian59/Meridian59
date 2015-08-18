@@ -1,0 +1,4 @@
+ranged_desc_rsc = de "Dies ist eine Fernwaffe."
+ranged_wrong_ammo_rsc = de \
+   "Du bist nicht mit den richtigen Geschossen für einen Angriff ausgerüstet."
+ranged_ammo_name = de "Der Pfeil"

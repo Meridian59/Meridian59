@@ -1,0 +1,9 @@
+apple_name_rsc = de "Der Apfel"
+apple_desc_rsc = de \
+   "Dieser leuchtend rote Apfel ist die bevorzugte Frucht des Landvolks von "
+   "Marion und ist absolut makellos. Er stammt wahrscheinlich aus dem dunklen "
+   "Wald."
+apple_name_plural_rsc = de "Äpfel"
+apple_disp_name = de "Apfelbaum"
+apple_disp_desc = de "Apfelbaum - plück dir einen!"
+apple_got_one = de "Du greifst nach einem Apfel und plückst einen."

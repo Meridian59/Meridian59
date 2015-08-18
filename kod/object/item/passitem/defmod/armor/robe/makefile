@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\robe.bof
-BOFS = robedisc.bof lghtrobe.bof lightdisc.bof
+BOFS = robedisc.bof lghtrobe.bof
 
 !include $(KODDIR)\kod.mak

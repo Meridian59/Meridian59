@@ -1,0 +1,9 @@
+room_name_OutdoorsF8 = de "See Jalas Lied"
+OutdoorsF8_muffled = de "Ganz in der Ferne hörst Du, wie sich jemand unterhält."
+OutdoorsF8_PasswordDoorUnlocked = de \
+   "Du hörst ein lautes Klicken. Die Tür ist nun nicht mehr verschlossen."
+OutdoorsF8_PasswordDoorRelocked = de \
+   "Du hörst ein lautes Klicken. Die Tür ist nun wieder verschlossen."
+OutdoorsF8_locked = de \
+   "Die Tür zur Gildehalle ist von der anderen Seite verschlossen. Du benötigst "
+   "das Gildenpasswort, um einzutreten."

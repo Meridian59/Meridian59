@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shadrift.lkod
+
 
    DeathsDoor_name_rsc = "shadow rift"
    DeathsDoor_icon_rsc = ideadoor.bgf
@@ -113,7 +115,7 @@ messages:
       % guild halls are a bad idea.
       if (NOT Send(Send(oPrism,@GetOwner),@CanHavePlayerPortal))
       {
-         for oCaster in lCasters
+         foreach oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=spell_bad_location,
                   #parm1=vrName);
@@ -137,7 +139,7 @@ messages:
          oTargetRoom = Send(SYS, @FindRoomByNum, #num = first(lTargetLocation));
          if oTargetRoom = Send(oPrism, @GetOwner)
          {
-            for oCaster in lCasters
+            foreach oCaster in lCasters
             {
                Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_room_loop);
             }
@@ -148,7 +150,7 @@ messages:
          % Fail if target room already has a portal, to prevent infinite loops
          if Send(oTargetRoom,@FindHoldingActive,#class=&Portal)
          {
-            for oCaster in lCasters
+            foreach oCaster in lCasters
             {
                Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_target_has_portal);
             }
@@ -164,7 +166,7 @@ messages:
          #new_row=nth(lPortalLocation,2),#new_col=nth(lPortalLocation,3),
          #fine_row=nth(lPortalLocation,4),#fine_col=nth(lPortalLocation,5));
 
-         for oCaster in lCasters
+         foreach oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_succeeded);
          }
@@ -176,7 +178,7 @@ messages:
          Send(oPrism,@LearnLocation,#lLocation=Send(self,@GetPortalLocation,
                #what=oPrism));
 
-         for oCaster in lCasters
+         foreach oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_succeeded2);
          }

@@ -16,13 +16,16 @@ constants:
 
 resources:
 
+   include invis.lkod
+
    invisibility_name_rsc = "invisibility"
    invisibility_icon_rsc = iinvisib.bgf
    invisibility_desc_rsc = \
      "Qor cloaks your body with a shimmering field leaving you "
      "invisible for a brief period.  "
      "Requires one dark angel feather to cast."
-   
+   invis_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i defense."
    invisibility_already_enchanted_rsc = "You are already invisible."
 
    invisibility_on = "A shimmering field cloaks your body."
@@ -143,14 +146,10 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(25 + Send(who,@GetEnchantedState,#what=self));
-      AppendTempString(" defense.");
+      AddPacket(4,invis_enchantment_rsc, 4,Send(self,@GetName),
+                4,25 + Send(who,@GetEnchantedState,#what=self));
 
-      propagate;
+      return;
    }
 
 end

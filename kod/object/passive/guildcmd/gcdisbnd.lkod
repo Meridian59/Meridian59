@@ -1,0 +1,7 @@
+guilddisband_name_rsc = de "auflösen"
+guilddisband_desc_Rsc = de "Dies beschreibt, wie man eine Gilde auflöst."
+guilddisband_disband_master = de "~BDu löst %s%q auf."
+guilddisband_disband_users = de "~BDeine Gilde wurde aufgelöst von %s%s."
+guilddisband_necro_nak = de \
+   "~BDer Orden der Nekromanten wurde mit dem Blutschwur zur dunklen Königin "
+   "geschaffen.  Du kannst sie nicht einfach auflösen."

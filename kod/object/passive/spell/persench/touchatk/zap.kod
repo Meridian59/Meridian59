@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include zap.lkod
+
    Zap_name_rsc = "zap"
    Zap_icon_rsc = izap.bgf
    Zap_desc_rsc = \

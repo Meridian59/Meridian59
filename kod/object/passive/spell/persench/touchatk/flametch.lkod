@@ -1,0 +1,19 @@
+TouchOfFlame_name_rsc = de "Flammengriff"
+TouchOfFlame_desc_rsc = de \
+   "Kocht die Eingeweide der Zielperson mit einer heiﬂen, weiﬂen Flamme. "
+   "Der Zauber benˆtigt Rote Pilze."
+TouchOfFlame_already_enchanted_rsc = de \
+   "Deine H‰nde sind bereits mit Flammen ummantelt."
+TouchOfFlame_On_rsc = de "Stichflammen brechen aus deinen Fingern."
+TouchOfFlame_Off_rsc = de "Deine H‰nde sind nicht l‰nger ummantelt mit Feuer."
+TouchOfFlame_player_was_hit = de \
+   "Flammen brechen aus %s%ss Finger, und verbrennen Dich!"
+TouchOfFlame_player_hit_something = de \
+   "%sFlammen springen aus seinen Fingern und verbrennen %s%s."
+TouchOfFlame_player_killed_something = de \
+   "%s%s, steht in Flammen, und stˆﬂt einen letzten Schrei aus."
+TouchOfFlame_player_was_killed = de \
+   "Ein Ausbruch aus Flammen von %s%ss H‰nden, ist das Letzte das du siehst."
+TouchOfFlame_spell_intro = de \
+   "Faren Level 2: Kocht die Eingeweide der Zielperson mit einer heiﬂen, "
+   "weiﬂen Flamme.your foes."

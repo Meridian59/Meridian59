@@ -1,0 +1,56 @@
+% Quest description.
+shalquest_name_rsc = de "Shal'ille disciple quest"
+shalquest_desc_rsc = de \
+   "Priestess Xiana has asked you to go to %s and speak "
+   "the words: \"The ways of violence and destruction have hardened our "
+   "people.  It is time to move towards gentleness and peace.  I will "
+   "begin this process by granting forgiveness for your deeds.  Please "
+   "accept my blessing.\".  Return when you have completed this task."
+
+shalquest_node_three_rsc = de \
+   "Return to Priestess Xiana and let her know the task has been "
+   "completed."
+
+shalquest_completed = de \
+   "You have completed the Shal'ille disciple quest.  You are a faithful "
+   "disciple of Shal'ille, and Priestess Xiana will now teach you more "
+   "powerful spells."
+
+% Quest resources.
+shalilledisciple_trigger = de \
+   "Ihr und Euresgleichen, empfanget die Reinheit welches uns leitet in unserer "
+   "Not und unserer Trauer. Ich verzeihe euch und euren Jüngern. Euer Leben "
+   "ist dem Krieg gewidmet doch niemand anderes als die Gütige selbst wird "
+   "euchnach eurem Tode richten."
+shalilledisciple_assign = de \
+   "~bDu möchtest mehr lernen über das sanfte, heilende Wesen unserer guten "
+   "Herrin. Du musst den Machenschaften von %NPC trotzen und Deine Absicht "
+   "verkünden, jenen die Erbarmungslosigkeit und Brutalität zu vergeben. "
+   "Heile sie, wenn Du kannst. Sage: \"%CARGO\"Kehre danach zu mir zurück und "
+   "berichte, dass Du getan hast worum ich Dich gebeten habe."
+shalilledisciple_success = de \
+   "`bGesegnet soll der Tag sein. Heute ist die Geburt einer weiteren Seele "
+   "gefüllt mit dem Licht von Shal'ill.  Suche mich wieder auf, wenn Du bereit "
+   "bist mehr Wissen von der Gottesmutter zu lernen.Du bist es wert."
+shalilledisciple_failure = de \
+   "Betreff: Behalte Dein Herz, Kind von Shal'ill\nDas Scheitern ist Teil "
+   "des Lebens. Suche in Deinem Herzen und finde den Makel. Bitte komm zu "
+   "mir zurück und wir werden unsere Reise auf dem Weg zur Harmonie von Neuem "
+   "beginnen."
+
+% NPC responses.
+shaldisc_qorpr_resp = de \
+   "~kPriestess Zuxana says, \"~r~IYes, I suppose it is time for Qor to seek "
+   "redemption.  You are the key to her salvation.  Join our fold and "
+   "together we can begin the path towards malumnea.~I~k\""
+shaldisc_farenpr_resp = de \
+   "~kPriestess Tenuv'vyal says, \"~B~gHow dare you presume to forgive of "
+   "Lord Faren.  Leave!~B~k\""
+shaldisc_kranpr_resp = de \
+   "~kPriestess Qerti'nya says, \"~B~bLittle Xiana seeks to train another "
+   "student.  Very well, you have delivered your message.  You may now "
+   "return to her.~B~k\""
+shaldisc_duke_resp = de \
+   "~kDuke Akardius laughs and says, \"~B~bSurely you cannot be serious?  "
+   "I do not need forgiveness.  Crawl back to your temple, your deed is "
+   "done.~B~k\""

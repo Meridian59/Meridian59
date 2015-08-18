@@ -1,0 +1,12 @@
+enchantedweapon_cast_rsc = de "Dein %s ist nun Kraanan gesegnet."
+enchantweapon_no_can = de "Du kannst %s%s nicht Kraanan segnen."
+enchantweapon_fails = de "Der %s ist unberührt von dem Zauber."
+enchantweapon_already_done = de "Diese Waffe ist bereits Kraaanan gesegnet."
+enchantweapon_name_rsc = de "Waffe Segnen"
+enchantweapon_desc_rsc = de \
+   "Weiht Deine Waffe Kraanan. Der Zauber benötigt viele Holunderbeeren, "
+   "einige Orkzähne und Zeit."
+enchantweapon_resists = de \
+   "%s%s widersteht dem Versuch Kraanan gesegnet zu werden."
+enchantweapon_spell_intro = de "Kraanan Level 2: Weiht Deine Waffe Kraanan."
+enchantweapon_label_rsc = de "Blutbrief"

@@ -16,14 +16,15 @@ constants:
 
 resources:
 
+   include ringwedd.lkod
+
    ringwedding_name_rsc = "wedding ring"
    ringwedding_icon_rsc = ring1.bgf
-   ringwedding_desc_rsc = "This is an elegant gold band demonstrating the bond between two people."
+   ringwedding_desc_rsc = \
+      "This is an elegant gold band demonstrating the bond between two people."
 
-   ringwedding_one = " Inscribed with magic runes is the name "
-   ringwedding_two = " Inscribed with magic runes are the names "
-   ringwedding_and = " and "
-   ringwedding_dot = "."
+   ringwedding_one = "  Inscribed with magic runes is the name %q."
+   ringwedding_two = "  Inscribed with magic runes are the names %q and %q."
 
 classvars:
 
@@ -55,22 +56,17 @@ messages:
       {
          if poSecondHeld <> $
          {
-            AppendTempString(ringwedding_two);
+            AddPacket(4,ringwedding_two,6,Send(poFirstHeld,@GetTrueName),
+                      6,Send(poSecondHeld,@GetTrueName));
          }
          else
          {
-            AppendTempString(ringwedding_one);
+            AddPacket(4,ringwedding_one,6,Send(poFirstHeld,@GetTrueName));
          }
-
-         AppendTempString(send(poFirstHeld,@GetTrueName));
-
-         if poSecondHeld <> $
-         {
-            AppendTempString(ringwedding_and);
-            AppendTempString(send(poSecondHeld,@GetTrueName));
-         }
-
-         AppendTempString(ringwedding_dot);
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
       }
 
       return;
@@ -80,7 +76,7 @@ messages:
    {
       % First two unique players to use the ring get their name on it.
 
-      if what <> $ AND isClass(what,&Player)
+      if what <> $ AND IsClass(what,&Player)
       {
          if poFirstHeld = $
          {
@@ -88,7 +84,7 @@ messages:
 
             propagate;
          }
-         
+
          if poSecondHeld = $
          {
             if what <> poFirstHeld
@@ -97,7 +93,7 @@ messages:
             }
          }
       }
-      
+
       propagate;
    }
 
@@ -105,7 +101,7 @@ messages:
    {
       propagate;
    }
-   
+
    DefendingHit()
    {
       return;
@@ -148,7 +144,6 @@ messages:
    {
       return damage;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

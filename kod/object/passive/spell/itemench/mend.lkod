@@ -1,0 +1,10 @@
+mend_name_rsc = de "Reparieren"
+mend_desc_rsc = de \
+   "Beseitigt die Spuren vieler Kämpfe von einem Teil der Ausrüstung und "
+   "stellt sie fast völlig wieder her. Der Zauber benötigt Orkzähne und Saphire."
+mend_not_weaponry = de \
+   "Du versuchst dich auf %s%s zu fokussieren, aber es scheint nicht zu funktionieren!"
+mend_beyond_hope = de "%s%s ist nicht mehr zu retten."
+mend_full_healed = de "%s%s ist bereits im perfektem Zustand."
+mend_working = de \
+   "Teile von %s%s verbinden sihc miteinander, um eine neue Einheit zu bilden."

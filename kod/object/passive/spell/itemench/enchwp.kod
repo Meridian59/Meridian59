@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include enchwp.lkod
+
    enchantedweapon_cast_rsc = "Your %s is now dedicated to Kraanan."
    enchantweapon_no_can = "You may not enchant %s%s."
    enchantweapon_fails = "The %s is strangely unaffected by the spell."
@@ -32,7 +34,7 @@ resources:
    enchantweapon_spell_intro = \
       "Kraanan Lv. 2: Graces your weapon with a touch of magic, improving its damage."
 
-   enchantweapon_label_rsc = "blood-letter."
+   enchantweapon_label_rsc = "blood-letter"
 
 classvars:
 

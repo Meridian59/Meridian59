@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include elusion.lkod
+
    Elusion_name_rsc = "elusion"
    Elusion_icon_rsc = ielusion.bgf
    Elusion_desc_rsc = \
@@ -30,7 +32,11 @@ resources:
       "With no location specified your elusion attempt fails."
    Elusion_Success = "The world folds in on itself."
    Elusion_Location_list = \
-      "The world shimmers and secret paths are revealed, leading to %q."
+      "The world shimmers and secret paths are revealed, leading "
+      "to %s%s%s%s%s%s%s%s%s%s%s%s."
+   elusion_loc_list_comma = ", "
+   elusion_loc_list_and = "and "
+   elusion_loc_list_blank = ""
    Elusion_fail = "That is not a valid destination."
    Elusion_cant_cast_here = \
        "You may only elude from a place you can elude to."
@@ -38,8 +44,6 @@ resources:
    Elusion_depart_to_destination = \
       "%s vanishes in an instant, leaving behind a fading shimmer of "
       "warped space."
-
-   Elusion_and = "and "
 
    % Yeah, it's Illusionary wounds sound, but it fits.
    % Plus, Ill. Wounds wasn't using it anymore.
@@ -139,9 +143,11 @@ messages:
       lLocations = Send(self,@GetLocations,#iSpellpower=iSpellpower,
                         #target=who);
 
-      sLocations = Send(self,@GetLocationsString,#lLocations=lLocations);
-      Send(who,@MsgSendUser,#message_rsc=Elusion_location_list,
-            #parm1=sLocations);
+      % User will add the protocol packet and callback SendElusionLocations
+      % to send the appropriate resources.
+      Send(who,@MsgSendUserCallback,#what=self,
+            #sCallback=SetString($,@SendElusionLocations),
+            #parm1=lLocations);
 
       % lTargets is of the form = [location1, location2,...]
       Send(oTrance,@BeginCastingTrance,#what=self,#who=who,
@@ -183,7 +189,7 @@ messages:
          }
       }
 
-      for oRoom in lAllTargets
+      foreach oRoom in lAllTargets
       {
          sRoomName = Send(oRoom,@GetName);
          if StringContain(string,sRoomName)
@@ -191,7 +197,7 @@ messages:
             bFound = TRUE;
             Post(oRoom,@Teleport,#what=who);
 
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(Send(who,@GetOwner),@GetHolderActive)
             {
                each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
                if IsClass(each_obj,&User)
@@ -257,43 +263,56 @@ messages:
       return lAvailable;
    }
 
-   GetLocationsString(lLocations=$)
+   SendElusionLocations(parm1=$)
    {
-      local i, iNumRooms, sString, iCounter;
+      local i, iNumRooms, iNumRsc, iCounter, lLocations;
 
-      ClearTempString();
-      iCounter = 0;
-
-      iNumRooms = length(lLocations);
-
-      for i in lLocations
+      if parm1 = $
       {
-         iCounter = iCounter + 1;
+         return FALSE;
+      }
+
+      % Add master resource.
+      AddPacket(4,Elusion_Location_list);
+      lLocations = parm1;
+
+      iCounter = 0;
+      iNumRsc = 0;
+
+      iNumRooms = Length(lLocations);
+
+      foreach i in lLocations
+      {
+         iCounter++;
 
          if iNumRooms > 1
          {
             if iCounter = iNumRooms
             {
-               AppendTempString(Elusion_and);
-               AppendTempString(Send(i,@GetName));
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,elusion_loc_list_and, 4,Send(i,@GetName));
             }
             else
             {
-               AppendTempString(Send(i,@GetName));
-               AppendTempString(", ");
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,Send(i,@GetName), 4,elusion_loc_list_comma);
             }
          }
          else
          {
-            AppendTempString(Send(i,@GetName));
+            iNumRsc++;
+            AddPacket(4,Send(i,@GetName));
          }
-
       }
 
-      sString = CreateString();
-      sString = GetTempString();
+      % If we didn't add enough location resources, make up for it
+      % with blank ones.
+      while iNumRsc++ < 12
+      {
+         AddPacket(4,elusion_loc_list_blank);
+      }
 
-      return sString;
+      return TRUE;
    }
 
    DoubleCheckAfterTrance(who=$,lTargets=$)

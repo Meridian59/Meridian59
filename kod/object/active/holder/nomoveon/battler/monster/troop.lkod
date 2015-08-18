@@ -1,0 +1,3 @@
+FactionTroop_name_rsc = de "Der Fraktionssoldat"
+FactionTroop_desc_rsc = de "This is a member of the local militia."
+FactionTroop_dead_name_rsc = de "toter Fraktionssoldat"

@@ -94,9 +94,9 @@ messages:
       return;
    }
 
-   SetSwitch(switch = ON)
+   SetSwitch(bSwitch = ON)
    {
-      if switch = ON
+      if bSwitch = ON
       {
          pbIsLit = TRUE;
       }

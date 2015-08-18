@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include wacursed.lkod
+
    weapattcursed_desc = " It glows with a pale red aura."
    cursedweapon_fail_unuse= "%s%s seems to cling to your hand!"
    weapattcursed_name = "cursed %s"
@@ -116,7 +118,7 @@ messages:
       oOwner = Send(oItem,@GetOwner);
       if IsClass(oOwner,&player)
       {
-         for i in Send(oOwner,@getplayerusing)
+         foreach i in Send(oOwner,@getplayerusing)
          {
             if i = oItem
             {

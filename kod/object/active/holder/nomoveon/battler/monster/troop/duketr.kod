@@ -16,6 +16,8 @@ include blakston.khd
 
 resources:
 
+   include duketr.lkod
+
    DukeTroop_name_rsc = "soldier of the Duke's army"
 
    DukeTroop_desc_rsc = \

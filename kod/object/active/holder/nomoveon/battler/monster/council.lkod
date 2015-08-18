@@ -1,0 +1,13 @@
+Councilor_name_rsc = de "Das Ratsmitglied"
+Councilor_desc_rsc = de ""
+blank_spec_rsc = de ""
+con_token_delivered_rsc = de \
+   "Danke. Du hast mir einen großen Dienst erwiesen. %s %s"
+con_duke_delivered_rsc = de \
+   "Ich werde der Sache des Herzogs mehr Aufmerksamkeit widmen."
+con_princess_delivered_rsc = de \
+   "Ich halte mehr von Prinzessin Kateriinas Ideen."
+con_rebel_delivered_rsc = de \
+   "Ich sehe die Rebellion als Zeichen für einen Wandel zum Guten an."
+con_neutral_delivered_rsc = de \
+   "Ich werde mich bemühen, am Hof so unparteiisch wie Ihr zu sein."

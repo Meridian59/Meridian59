@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include survivalmaint.lkod
+
    public_survival_started = \
       "%s has started a public co-op survival arena. It will begin in "
       "three minutes."
@@ -102,7 +104,7 @@ messages:
       
       iNatural = TRUE;
       iPvP = FALSE;
-      for o in lSurvivalOptions
+      foreach o in lSurvivalOptions
       {
          if o = OPT_NATURAL
          {
@@ -122,7 +124,7 @@ messages:
       % for the survival room.
       if sString <> $
       {
-         for i in plAllRooms
+         foreach i in plAllRooms
          {
             if StringContain(sString,Send(i,@GetName))
             {
@@ -134,7 +136,7 @@ messages:
       }
 
       plExcludedRoomsObjs = $;
-      for z in plExcludedRoomsList
+      foreach z in plExcludedRoomsList
       {
          plExcludedRoomsObjs = Cons(Send(SYS,@FindRoomByNum,#num=z),
                                     plExcludedRoomsObjs);
@@ -220,7 +222,7 @@ messages:
          {
             plPlayersLoggedOn = Send(SYS,@GetUsersLoggedOn);
          
-            for i in plPlayersLoggedOn
+            foreach i in plPlayersLoggedOn
             {
                Send(i,@MsgSendUser,#message_rsc=public_survival_started,
                                    #parm1=Send(who,@GetTrueName));
@@ -245,7 +247,7 @@ messages:
       while iRID <= RID_SURVIVAL_END
       {
          bExists = FALSE;
-         for i in plSurvivalRooms
+         foreach i in plSurvivalRooms
          {
             if Send(i,@GetRoomNum) = iRID
             {
@@ -268,7 +270,7 @@ messages:
    {
       local i;
       
-      for i in plSurvivalRooms
+      foreach i in plSurvivalRooms
       {
          if Send(i,@GetGuildAssociation) = oGuild
             AND Send(i,@GetAllowJoins)
@@ -284,7 +286,7 @@ messages:
    {
       local i;
       
-      for i in plSurvivalRooms
+      foreach i in plSurvivalRooms
       {
          if Send(i,@GetPublicStatus) = TRUE
             AND Send(i,@GetAllowJoins)
@@ -306,7 +308,7 @@ messages:
          if Send(what,@GetPublicStatus)
          {
             plUsers = Send(SYS,@GetUsersLoggedOn);
-            for i in plUsers
+            foreach i in plUsers
             {
                Send(i,@MsgSendUser,#message_rsc=public_ended,
                                    #parm1=Send(what,@GetLevel));
@@ -435,7 +437,7 @@ messages:
          return;
       }
 
-      for i in plSurvivalRooms
+      foreach i in plSurvivalRooms
       {
          if Send(i,@GetPublicStatus)
          {

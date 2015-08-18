@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include statue.lkod
+
    Statue_name_rsc = "statue"
    Statue_desc_rsc = "This is a statue of %q, a great adventurer."
 
@@ -163,7 +165,8 @@ messages:
       return;
    }
 
-   Constructor(original = $, default = FALSE,desc = $,special=FALSE, specialname = $, specialgender = GENDER_MALE)
+   Constructor(original = $, bDefault = FALSE,desc = $,special=FALSE,
+               specialname = $, specialgender = GENDER_MALE)
    {
       local i;
       
@@ -176,7 +179,7 @@ messages:
 
       if desc <> $  { vrDesc = desc; }
       
-      if default
+      if bDefault
       {
          if Send(SYS,@GetUsers) <> $
          {

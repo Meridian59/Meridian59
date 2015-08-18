@@ -1,0 +1,4 @@
+portal_name_rsc = de "Portal"
+portal_desc_rsc = de \
+   "Das leuchtende Portal lädt Dich zu einer Reise mit unbekanntem Ziel ein."
+portal_dead = de "Dieses Portal ist kalt und pulsiert nicht voller Energie."

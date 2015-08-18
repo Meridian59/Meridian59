@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include councilletterqt.lkod
+
    % Quest description.
    councilletterquest_icon_rsc = scr04.bgf
    councilletterquest_name_rsc = "council letter quest"
@@ -104,7 +106,7 @@ messages:
                #quest_node_index=QNT_ID_COUNCIL_LETTER_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_INNKEEPER)
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_INNKEEPER)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -127,7 +129,7 @@ messages:
                #timelimit=6 * 3600,#quest_node_index=QNT_ID_COUNCIL_LETTER_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Council)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Council)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

@@ -1,0 +1,5 @@
+feynode_name_good = de "Fey Elhai"
+feynode_name_evil = de "Fey Dirhai"
+feynode_stripped = de "~IDu fühlst, dass dich einige deiner Energie verlässt."
+feynode_scream = de \
+   "~IDu schreist vor Schmerz, als die Mana Node Dich verlässt!"

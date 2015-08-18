@@ -1,0 +1,23 @@
+ArmorOfGort_name_rsc = de "Gorts Panzer"
+ArmorOfGort_desc_rsc = de \
+   "Umgibt den Zaubernden mit einem mächtigen Schutz, der schweren Schaden "
+   "durch harte Schläge abwehrt. Der Zauber benötigt Drachenschuppen."
+ArmorOfGort_already_enchanted_rsc = de "Du hast bereits den Panzer Gorts."
+ArmorOfGort_on_rsc = de \
+   "Du fühlst, wie sich der Panzer Gorts um deine Haut legt."
+ArmorOfGort_off_rsc = de "Gorts Panzer verschwindet."
+ArmorOfGort_success_rsc = de \
+   "%s%ss Haut strafft, als Gorts Panzer sich auf die Haut legt."
+ArmorOfGort_spell_intro = de \
+   "Kraanan Level 5: Umgibt den Zaubernden mit einem mächtigen Schutz."
+gort_reduction_physical_rsc = de \
+   "%s%ss Gorts Panzer erhört den Schutz %s gegen sämtliche Angriffe."
+gort_reduction_partial_magic_rsc = de \
+   "%s%ss Gorts Panzer erhört den Schutz gegen sämtliche Angriffe."
+gort_reduction_fully_magic_rsc = de \
+   "%s%ss Gorts Panzer erhört den Schutz gegen sämtliche Angriffe."
+gort_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt 1-%i Rüstung gegen nicht magische "
+   "Angriffe 15, partieller magischer Widerstand um 20, und kompletter "
+   "magischer Widerstand um 25 hinzu. Nur der bessere der beiden "
+   "Eigenschaften greift."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tanktop.lkod
+
    tanktop_name_rsc = "light jerkin"
    tanktop_ground_icon = tanktop.bgf
    tanktop_male = bta.bgf

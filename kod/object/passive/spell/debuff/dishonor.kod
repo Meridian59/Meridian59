@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include dishonor.lkod
+
    MarkOfDishonor_name_rsc = "mark of dishonor"
    MarkOfDishonor_icon_rsc = imarkdis.bgf
    MarkOfDishonor_desc_rsc = \

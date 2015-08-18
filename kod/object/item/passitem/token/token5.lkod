@@ -1,0 +1,7 @@
+FiveToken_name_rsc = de "Die Kristallkugel"
+FiveToken_desc_rsc = de \
+   "Umgeben mit mystischen Mustern, ist dieses Artefakt verbunden mit den "
+   "magischen Energiequellen. Dieses Artefakt soll angeblich in der Nähe "
+   "einer Energiequelle glühen. Wenn Du es zurückgibst, würde wahrscheinlich "
+   "Dein Ansehen beim königlichen Gericht steigen."
+FiveToken_icon_rsc = de "sphere.bgf"

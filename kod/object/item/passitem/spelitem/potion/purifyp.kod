@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include purifyp.lkod
+
    PurifyPotion_name_rsc = "potion of purification"
    %PurifyPotion_icon_rsc = potion01.bgf
    PurifyPotion_desc_rsc = "This is a glass vial of colored liquid.  "
@@ -54,7 +56,7 @@ messages:
    ApplyPotionEffects(apply_on = $)
    {
       local i;
-      for i in send(apply_on,@GetEnchantmentList) {
+      foreach i in send(apply_on,@GetEnchantmentList) {
 	     if Send(Nth(i,2),@IsPersonalEnchantment) {
             Send(apply_on,@MsgSendUser,#message_rsc=PurifyPotion_worked);
             Send(apply_on,@RemoveAllPersonalEnchantments);

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include firestorm.lkod
+
    firestorm_name_rsc = "fire storm"
    firestorm_icon_rsc = ifirebal.bgf
    firestorm_projectile_rsc = fireball.bgf
@@ -130,7 +132,7 @@ messages:
       lActive = Send(oRoom,@GetHolderActive);
 
       % Send a message to all in room of spellcasters actions
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 

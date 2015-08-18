@@ -1,0 +1,54 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LightDiscipleRobe is DiscipleRobe
+
+%% This item is significant in that it is a torso with something
+%% hotspotted onto it.  WHy they did it that way, but I guess we 
+%% all learn from other people's stupid implementations, neh?
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include lightdisc.lkod
+
+   LightRobeDiscipleInsignia_name_rsc = "light robes of the disciple"
+   LightRobeDiscipleInsignia_icon_rsc = ltrobe.bgf
+   LightRobeDiscipleInsignia_desc_rsc = \
+      "Light and comfortable, these disciple robes typically denote a "
+      "fervent (and some would say unhealthy) dedication to one school or "
+      "another.  These robes bear the insignia of %s and will give bonuses "
+      "to spells in that school."
+
+classvars:
+
+   vrName = LightRobeDiscipleInsignia_name_rsc
+   vrIcon = LightRobeDiscipleInsignia_icon_rsc
+   vrDesc = LightRobeDiscipleInsignia_desc_rsc
+
+   vrLeftarm_male = $
+   vrRightarm_male = $
+   vrLeftarm_female = $
+   vrRightarm_female = $
+
+properties:
+
+messages:
+
+   ItemChangesArms()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

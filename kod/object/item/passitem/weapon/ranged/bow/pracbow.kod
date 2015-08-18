@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pracbow.lkod
+
    PracticeBow_name_rsc = "practice bow"
    PracticeBow_desc_rsc = \
       "Carved for durability, this bow is generally used by students to practice "

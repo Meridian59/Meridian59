@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include dementpupilqt.lkod
+
    % Quest description.
    dementpupilquest_icon_rsc = idement.bgf
    dementpupilquest_name_rsc = "dement pupil quest"
@@ -127,7 +129,7 @@ messages:
                #quest_node_index=QNT_ID_DEMENT_PUPIL_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -150,19 +152,19 @@ messages:
                #timelimit=4 * 3600,#quest_node_index=QNT_ID_DEMENT_PUPIL_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Minstrel)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

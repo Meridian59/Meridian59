@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include toshidden.lkod
+
    room_name_TosHidden = "Secret Passage"
    room_TosHidden = toshidden.roo
    TosHidden_music = ksong.mp3

@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include specgift.lkod
+
    SpecialGift_name_rsc = "special gift"
    SpecialGift_icon_rsc = package.bgf
    SpecialGift_desc_rsc = \

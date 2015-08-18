@@ -1,0 +1,15 @@
+DragonFlyQueen_koc_name_rsc = de "kohuzotz"
+DragonFlyQueen_name_rsc = de "Die Drachenfliegenkönigin"
+DragonFlyQueen_desc_rsc = de \
+   "Die anderen Drachenfliegen scheinen dieses merkwürdig gefärbte Weibchen "
+   "zu verehren. Sie sieht zu Dir mit Hunger oder Neugier auf, Du weißt nicht, "
+   "welches von beiden es ist."
+DragonFlyQueen_dead_name_rsc = de "tote Drachenfliegenkönigin"
+dragonfly_charmed = de \
+   "Die Drachenfliegenkönigin frisst %s auf und schaut Dich mit offensichtlicher "
+   "Bewunderung an."
+dragonfly_notcharmed = de \
+   "Die Drachenfliegenkönigin frißt %s auf, schnuppert an Deiner Hand und "
+   "schaut Dich erwartungsvoll an."
+DragonFlyQueen_unwanted_give = de \
+   "~w%s%s hebt spöttisch den Kopf und schnuppert an Deiner Hand.~n~w"

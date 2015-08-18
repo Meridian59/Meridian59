@@ -1,0 +1,22 @@
+Rod_desc_rsc = de \
+   "Du kannst die magische Energie spüren, die den Stab durchströmt."
+Rod_broken = de "%s%s zerbricht in Stücke!"
+Rod_useless = de \
+   "Der Stab hat seine magische Energie verbraucht und ist jetzt verkohlt "
+   "und nutzlos."
+Rod_desc_broken_rsc = de \
+   "Dieser einst so prächtige Stab ist jetzt nur noch ein wertloses Stück "
+   "Holz."
+Rod_success_msg = de "Der Zauberstab pulsiert in deiner Hand"
+rod_consumes_charges_rsc = de \
+   "  Entfesselung der Energie im Inneren verbraucht %i Ladungen."
+rod_charges_left_rsc = de \
+   "\n\nDieser Zauberstab hat %i übrige Ladungen, und kann maximal %i "
+   "Ladungen aufnehmen."
+rod_cannot_hold_more_rsc = de \
+   "Wenn Du einen anderen Zauberstab halten würdest, würden sich die Zauber "
+   "gegenseitig bekämpfen."
+rod_default_expire_msg = de "Der Effekt des Zauberstabs verschwindet."
+rod_default_secondary_expire_msg = de \
+   "Der zweite Effekt des Zauberstabs verschwindet."
+rod_cant_use_yet = de "Du kannst diesen Gegenstand noch nicht benutzen."

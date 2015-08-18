@@ -1,0 +1,5 @@
+intboon_name_rsc = de "Intelligenz Effekt"
+intboon_desc_rsc = de "Deine Intelligenz steigt unnatürlich."
+intboon_intro_rsc = de "Die Intelligenz Deines Ziels steigt temporär."
+intboon_inc = de "Du fühlst Dich plötzlich weiser!"
+intboon_dec = de "Du Intelligenz verlässt Dich."

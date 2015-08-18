@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shamblod.lkod
+
    ShamanBlood_name_rsc = "shaman blood"
    ShamanBlood_icon_rsc = avblood.bgf
    ShamanBlood_desc_rsc = \

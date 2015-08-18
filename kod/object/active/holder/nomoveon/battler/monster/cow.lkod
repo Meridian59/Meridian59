@@ -1,0 +1,13 @@
+cow_koc_name_rsc = de "nahyijoa"
+cow_name_rsc = de "Die Kuh"
+cow_desc_rsc = de \
+   "Alchemisten und Bauern bemühten sich, die vollkommene Kuh mit süßer Milch "
+   "und zartem Fleisch zu züchten. Unglücklicherweise gingen ihre Experimente "
+   "zu weit und sie schufen schließlich die völlig nutzlose Pygmäenkuh. Enttäuscht "
+   "angesichts ihrer Niederlage, ließen sie die ganze Herde frei. Die wildlebende "
+   "Pygmäenkuh ist kaum mehr zu sehen."
+cow_cant_attack = de "Du kannst die ~Iarme~I Kuh nicht angreifen!"
+cow_dead_name_rsc = de "tote Kuh"
+cow_dung = de \
+   "Überrascht und erschrocken lässt die arme Kuh einen Fladen Dung auf den "
+   "Boden fallen."

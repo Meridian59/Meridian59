@@ -16,6 +16,9 @@ constants:
 
 resources:
 
+   resist_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i%% %s."
+
 classvars:
 
    viPersonal_ench = True
@@ -38,7 +41,10 @@ messages:
 
       lTargets = [who];
 
-      if (vrAlreadyEnchanted = $) OR (vrEnchantment_On = $) OR (vrEnchantment_Off = $) OR (vrSuccess = $)
+      if (vrAlreadyEnchanted = $)
+         OR (vrEnchantment_On = $)
+         OR (vrEnchantment_Off = $)
+         OR (vrSuccess = $)
       {
          Debug("Haven't set messages for this spell!  Aborting cast.");
          
@@ -98,16 +104,11 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString("\% ");
-      AppendTempString(Send(SYS,@GetResistanceName,#type=viResistanceType));
-      AppendTempString(".");
+      AddPacket(4,resist_enchantment_rsc, 4,Send(self,@GetName),
+                4,Send(who,@GetEnchantedState,#what=self),
+                4,Send(SYS,@GetResistanceName,#type=viResistanceType));
 
-      propagate;
+      return;
    }
 
 end

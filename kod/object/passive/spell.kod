@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include spell.lkod
+
    spell_name_rsc = "spell"
    spell_icon_rsc = light.bgf
    spell_desc_text_rsc = "This is a spell."
@@ -38,6 +40,7 @@ resources:
       "You have been labeled an outlaw for casting an antisocial spell!"
    spell_outlaw = " Casting this spell can cause you to be labeled an outlaw."
    spell_nothing = " "
+   spell_blank = ""
 
    spell_no_rest = "You can't cast spells while resting!"
    spell_bad_location = "You can't cast %s here."
@@ -86,7 +89,7 @@ resources:
    spell_silenced_rsc = "Your words catch in your throat and you cannot speak."
 
    spell_fail_wav = spelfail.wav
-   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%q%r"
+   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%r%r%r"
    spell_school_riija = "Riija"
    spell_school_shalille = "Shal'ille"
    spell_school_qor = "Qor"
@@ -135,12 +138,7 @@ resources:
    spell_meditate_ratio_rsc = \
       "\n\nIt will cost you %i training points to improve in this spell."
 
-   Spell_made_rsc = "  Enchanted by "
-   Spell_novice_rsc = ", Novice "
-   Spell_apprentice_rsc = ", Apprentice "
-   Spell_journeyman_rsc = ", Journeyman "
-   Spell_master_rsc = ", Master "
-   spell_Enchantment_type_default_rsc = "enchanter."
+   spell_Enchantment_type_default_rsc = "enchanter"
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
 
@@ -279,37 +277,35 @@ messages:
    GetSchoolStr(iSchool=-1)
    {
       local rSchool;
-      
+
       if iSchool = -1
       {
          iSchool = viSchool;
       }
 
-      rSchool = spell_school_shalille;
-      
       if iSchool = SS_RIIJA
       {
          rSchool = spell_school_riija;
       }
-      
-      if iSchool = SS_QOR
+      else if iSchool = SS_QOR
       {
          rSchool = spell_school_qor;
       }
-      
-      if iSchool = SS_KRAANAN
+      else if iSchool = SS_KRAANAN
       {
          rSchool = spell_school_kraanan;
       }
-      
-      if iSchool = SS_FAREN
+      else if iSchool = SS_FAREN
       {
          rSchool = spell_school_faren;
       }
-      
-      if iSchool = SS_JALA
+      else if iSchool = SS_JALA
       {
          rSchool = spell_school_jala;
+      }
+      else
+      {
+         rSchool = spell_school_shalille;
       }
 
       return rSchool;
@@ -317,7 +313,7 @@ messages:
 
    ShowDesc(who=$)
    {
-      local rSchool, rOutlaw, rExtra, rStats;
+      local rSchool, rOutlaw, rExtra;
 
       if viSchool <> SS_DM_COMMAND
       {
@@ -330,17 +326,12 @@ messages:
          }
 
          rExtra = Send(self,@GetExtraDesc);
-         
-         rStats = Send(self,@GetStatsDesc,#who=who);
-         
-         if rStats = $
-         {
-            rStats = CreateString();
-            SetString(rStats,spell_nothing);
-         }
 
          AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,
-                   4,rOutlaw, 4,rExtra, 4,rStats);
+                   4,rOutlaw, 4,rExtra);
+
+         Send(self,@SendStatsDesc,#who=who);
+         Send(self,@SendTimeDesc,#who=who);
 
          if piMeditate_ratio = 0
          {
@@ -357,17 +348,24 @@ messages:
       propagate;
    }
 
+   SendTimeDesc()
+   {
+      % Adds a blank time resource.
+      Send(self,@SendTimeRemaining,#iTime=0,#parm1=self);
+
+      return;
+   }
+
    GetExtraDesc()
    {
       return spell_nothing;
    }
 
-   GetStatsDesc()
+   SendStatsDesc()
    {
-      local sString;
-      sString = CreateString();
-      SetString(sString,spell_nothing);
-      return sString;
+      AddPacket(4, spell_blank);
+
+      return;
    }
 
    Delete()
@@ -695,7 +693,7 @@ messages:
       }
 
       % Check reagents
-      for lReagent in plReagents
+      foreach lReagent in plReagents
       {
          cReagentClass = First(lReagent);
          iNumNeeded = Nth(lReagent,2);
@@ -705,10 +703,10 @@ messages:
          lLists = [Send(who,@GetHolderActive),Send(who,@GetHolderPassive),
                      Send(who,@GetReagentBagContents)];
 
-         for lItems in lLists
+         foreach lItems in lLists
          {
             % Count # of reagent that user has; complain if not enough
-            for oUserObject in lItems
+            foreach oUserObject in lItems
             {
                if IsClass(oUserObject,cReagentClass)
                {
@@ -864,7 +862,7 @@ messages:
       if NOT bItemCast
       {
          piCast_attempts = piCast_attempts + 1;
-         for i in lTargets
+         foreach i in lTargets
          {
             if IsClass(i,&Player)
             {
@@ -906,7 +904,7 @@ messages:
       }
 
       % Out of range?
-      for i in lTargets
+      foreach i in lTargets
       {
          if NOT Send(self,@IsTargetInRange,#who=who,#target=i)
          {
@@ -924,7 +922,7 @@ messages:
          {
             if viNoNewbieOffense
             {
-               for i in Send(oRoom,@GetHolderActive)
+               foreach i in Send(oRoom,@GetHolderActive)
                {
                   if IsClass(First(i),&Player) AND First(i) <> who
                   {
@@ -1076,7 +1074,7 @@ messages:
          {
             % Targets everyone in the room, and cannot target any less.
             oRoom = Send(who,@GetOwner);
-            for i in Send(oRoom,@GetHolderActive)
+            foreach i in Send(oRoom,@GetHolderActive)
             {
                i = Send(oRoom,@HolderExtractObject,#data=i);
                if i = who
@@ -1130,7 +1128,7 @@ messages:
       % If lTargets is $, then we're casting an room-effect spell, let it go.
       if lTargets <> $
       {
-         for oObject in lTargets
+         foreach oObject in lTargets
          {
             % If we're in the arena, we can cast it.
             if IsClass(oObject,&Battler)
@@ -1193,7 +1191,7 @@ messages:
 
       oWhoRoom = Send(who,@GetOwner);
 
-      for i in lFinalTargets
+      foreach i in lFinalTargets
       {
          % Remove an element from the list if:
          % - We've targetted ourself with a spell that's not single-target
@@ -1294,7 +1292,7 @@ messages:
       % Hinder spell effects stack.
       if Send(who,@IsAffectedByRadiusEnchantment,#byClass=&HinderSpell)
       {
-         for i in Send(who,@GetRadiusEnchantments)
+         foreach i in Send(who,@GetRadiusEnchantments)
          {
             num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#lRadiusState=i);
          }
@@ -1379,7 +1377,7 @@ messages:
          % Use up reagents, provided reagent use is turned on
          if NOT Send(oRoom, @NoReagents)
          {
-            for lReagent in plReagents
+            foreach lReagent in plReagents
             {
                cReagentClass = First(lReagent);
                iNumNeeded = Nth(lReagent, 2);
@@ -1402,7 +1400,7 @@ messages:
                   }
 
                   % Since spell is cast, we can be cavalier about deleting things
-                  for oUserObject in lItems
+                  foreach oUserObject in lItems
                   {
                      if IsClass(oUserObject,cReagentClass)
                      {
@@ -1481,7 +1479,7 @@ messages:
 
       if lTargets <> $
       {
-         for oTarget in lTargets
+         foreach oTarget in lTargets
          {
             % Most spells have no flash.  Damage spells of course flash red.
             if IsClass(oTarget,&User)
@@ -1604,7 +1602,7 @@ messages:
                AND NOT IsClass(self,&DMSpell)
                AND NOT (Send(Send(who,@GetOwner),@IsArena))
             {
-               for oTarget in lTargets
+               foreach oTarget in lTargets
                {
                   % Ignore: Non-Players, ourself, and Players that aren't
                   %  outlaws or murderers.
@@ -1994,7 +1992,7 @@ messages:
       iCastTime = Send(self,@GetTranceTime,#iSpellpower=iSpellpower,#who=who);
 
       % Give casting message to people nearby.
-      for i in Send(oOwner,@GetHolderActive)
+      foreach i in Send(oOwner,@GetHolderActive)
       {
          oObject = Send(oOwner,@HolderExtractObject,#data=i);
          if IsClass(oObject,&Player) 
@@ -2278,7 +2276,7 @@ messages:
       % Check the player's in use items to see if they affect anything.
       % Note that this also checks itematts.
       iItemModifier = 0;
-      for i in Send(who,@GetPlayerUsing)
+      foreach i in Send(who,@GetPlayerUsing)
       {
          iItemModifier = iItemModifier + Send(i,@GetSpellModifier,
                                               #oSpell=self);
@@ -2330,7 +2328,7 @@ messages:
       {
          % Riija's bonuses are a bit random seeming.
          % Riija strength determined by moon position - range is -16 to 30
-         for i in Send(SYS,@GetBackgroundObjects)
+         foreach i in Send(SYS,@GetBackgroundObjects)
          {
             if IsClass(i,&Moon)  
             {
@@ -2514,7 +2512,7 @@ messages:
       
       if Send(self,@AffectsSpellPower)
       {
-         for iEnch in Send(where,@GetEnchantmentList)
+         foreach iEnch in Send(where,@GetEnchantmentList)
          {
             if Send(Nth(iEnch,2),@AffectsSpellPower) AND Nth(iEnch,2) <> self
             {
@@ -2562,53 +2560,16 @@ messages:
    %%%  Enchanted Item Labeling stuff.
 
    % When a player enchants an item information about them
-   %  is added to the item's desc.  The string is built here.
+   % is added to the item's desc.
    GetMakerInfo(who=$)
    {
-      local sTitle, sInfo;
-
-      sTitle = Send(self,@GetTitle,#who=who);
-
-      ClearTempString();
-
-      AppendTempString(Spell_made_rsc);
-      AppendTempString(Send(who,@GetTrueName));
-      AppendTempString(sTitle);
-      AppendTempString(vrEnchantment_type);
- 
-      sInfo = CreateString();
-      SetString(sInfo,GetTempString() );
-
-      return sInfo;
+      return [who,self,Send(who,@GetSpellAbility,#spell_num=viSpell_Num)];
    }
 
-   GetTitle(who=$)
+   GetEnchantmentType()
+   "Used for flavor text on player-enchanted items."
    {
-      local stitle,iAbility;
-
-      iAbility = bound(((Send(who,@GetSpellAbility,#spell_num=viSpell_Num)/25)+1),1,4);
-
-      if iAbility = 1
-      {
-         stitle = Spell_novice_rsc;
-      }
-
-      if iAbility = 2
-      {
-         sTitle = Spell_apprentice_rsc;
-      }
-
-      if iAbility = 3
-      {
-         sTitle = Spell_journeyman_rsc;
-      }
-
-      if iAbility = 4
-      {
-         sTitle = Spell_master_rsc;
-      }
-
-      return sTitle;
+      return vrEnchantment_type;
    }
 
    GetRingCharges()

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kocsouth.lkod
+
    room_name_kocatansouth = "Ko'catan, the Island Settlement"
    room_kocatansouth = settle2.roo
    kocatansouth_music = song08.mp3

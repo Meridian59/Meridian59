@@ -1,0 +1,5 @@
+vigorboon_name_rsc = de "vigor effect"
+vigorboon_desc_rsc = de "Your vigor seems unnaturally affected."
+vigorboon_intro_rsc = de "The vigor of the victim is boosted temporarily."
+vigorboon_inc = de "You suddenly feel more energetic!"
+vigorboon_dec = de "You feel less energetic."

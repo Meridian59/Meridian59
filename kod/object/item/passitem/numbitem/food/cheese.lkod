@@ -1,0 +1,6 @@
+Cheese_name_rsc = de "Der Laib Käse"
+Cheese_desc_rsc = de \
+   "Dieser delikate Käse wurde aus der süßen Milch der Pygmäenkuh hergestellt.So "
+   "selten wie die Pygmäenkühe in Meridian sind, so delikat ist auch ein "
+   "Käse wie dieser."
+Cheese_name_plural_rsc = de "Die Käselaibe"

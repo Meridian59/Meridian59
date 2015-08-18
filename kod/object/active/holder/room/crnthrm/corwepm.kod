@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include corwepm.lkod
+
    room_name_weaponsmaster = "The Weapon Master's Abode"
    room_weaponsmaster = weaponsm.roo
    weaponsmaster_music = smithy.mp3

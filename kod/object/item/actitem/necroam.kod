@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include necroam.lkod
+
    necamulet_name_rsc = "Amulet of the Three"
    necamulet_icon_rsc = necamlet.bgf
    necamulet_desc_rsc = \
@@ -1099,8 +1101,7 @@ messages:
          AND IsClass(poOwner,&User)
          AND oLich <> $
       {
-         Send(oLich,@NecromancerRosterReply,
-               #necroName=Send(poOwner,@GetTrueName));
+         Send(oLich,@NecromancerRosterReply,#oNecro=poOwner);
       }
 
       return;
@@ -1125,7 +1126,7 @@ messages:
          oNecro = poOwner;
          oNecBal = Send(SYS,@GetNecromancerBalance);
 
-         for oTreasure in Send(oNecro,@GetHolderActive)
+         foreach oTreasure in Send(oNecro,@GetHolderActive)
          {
             if oTreasure <> self
                AND Send(oTreasure,@DropOnDeath)
@@ -1134,7 +1135,7 @@ messages:
             }
          }
 
-         for oTreasure in Send(oNecro,@GetHolderPassive)
+         foreach oTreasure in Send(oNecro,@GetHolderPassive)
          {
             if Send(oTreasure,@DropOnDeath)
             {
@@ -1230,7 +1231,7 @@ messages:
       oAmulet = $;
       if Send(oMaster,@IsUsingA,#Class=&NecromancerAmulet)
       {
-         for i in Send(oMaster,@GetPlayerUsing)
+         foreach i in Send(oMaster,@GetPlayerUsing)
          {
             if IsClass(i,&NecromancerAmulet)
             {

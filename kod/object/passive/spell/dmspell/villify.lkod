@@ -1,0 +1,8 @@
+villify_name_rsc = de "Verurteilen"
+villify_desc_rsc = de \
+   "Kennzeichnet jemanden als Ausgestoßenen oder Mörder. Dieser Zauber kann "
+   "nur von Göttern und Barden ausgeführt werden."
+villify_msg_DM = de "Du verurteilst %s."
+villify_msg_target = de "Du wurdest von %s verurteilt."
+villify_failed = de "%s%s ist bereits ein Mörder."
+villify_unworthy = de "Dir wurde der Zauberspruch wegegenommen."

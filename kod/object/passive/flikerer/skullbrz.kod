@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include skullbrz.lkod
+
    skullbrazier_name = "skull brazier"
    skullbrazier_desc = \
       "This skull brazier offers an ominous, eerie glow.  Fire glints in the eye "

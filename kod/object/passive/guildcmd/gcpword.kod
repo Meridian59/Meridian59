@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcpword.lkod
+
    guildsetpassword_name_rsc = "set password"
    guildsetpassword_icon_rsc = light.bgf
 

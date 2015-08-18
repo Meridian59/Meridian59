@@ -1,0 +1,106 @@
+pawn = de "Knappe"
+pawn1 = de "Knappe der Damenfestung"
+pawn2 = de "Knappe des Damenrosses"
+pawn3 = de "Knappe der Damenpriesterin"
+pawn4 = de "Knappe der Dame"
+pawn5 = de "Knappe der Königsfestung"
+pawn6 = de "Knappe des Königsrosses"
+pawn7 = de "Knappe der Königspriesterin"
+pawn8 = de "Knappe des Königs"
+rook = de "Festung"
+rook1 = de "Königsfestung"
+rook2 = de "Damenfestung"
+knight = de "Roß"
+knight1 = de "Königsroß"
+knight2 = de "Damenroß"
+bishop = de "Priesterin"
+bishop1 = de "Königspriesterin"
+bishop2 = de "Damenpriesterin"
+queen = de "Dame"
+king = de "König"
+two = de "2"
+three = de "3"
+four = de "4"
+five = de "5"
+six = de "6"
+seven = de "7"
+default_message = de "Ein roter Himmel beginnt, ehe wieder Vollmond ist."
+chess_move = de "%q nach %q %q"
+chess_capture = de "%q schlägt %q"
+chess_substring = de "%q"
+default_assign_hint = de "Dir wurde eine neue Aufgabe zugewiesen."
+temp_assign_hint_bring_me_item = de \
+   "Entschuldigung. Ich habe gerade ein paar simple Experimente am Rande "
+   "der bekannten Magie durchgeführt. Mir fehlt %INDEF_CARGO %CARGO, damit "
+   "ich meine Forschungen fortsetzen kann. Könntest Du mir so etwas freundlicherweise "
+   "besorgen?"
+temp_assign_hint_bring_message = de \
+   "Bitte bring diese Nachricht für mich zu %NPC: %CARGO"
+temp_success_hint_bring_message = de "Danke, aber das wusste ich bereits."
+temp_assign_hint_reward_message = de \
+   "Du kannst %NPC dies von mir sagen, nämlich: %CARGO"
+temp_success_hint_reward_message = de \
+   "Um es mal deutlich zu sagen, Deine Belohnung ist %INDEF_PRIZE %PRIZE."
+default_success_hint = de "Du hast die Aufgabe erfüllt."
+first_success_hint = de "Ah, da ist die Person, nach der ich gesucht habe."
+temp_success_hint_bring_me_item = de \
+   "Danke, dass Du mir %DEF_CARGO %CARGO bringst.  ich habe nicht viel, aber "
+   "ich gebe Dir %INDEF_PRIZE %PRIZE für Deine Bemühnungen."
+default_failure_hint = de \
+   "Du hast es versäumt meinen Auftrag rechtzeitig zu erfüllen. Ich bin sehr "
+   "enttäuscht von Dir."
+never_again_failure_hint = de \
+   "Hmmph.  Du hast versagt. Ich werde bei weiteren Aufträgen wie dieser "
+   "keine Rücksicht mehr auf Dich nehmen in der Zukunft."
+temp_assign_hint_chess1 = de \
+   "Ich spiele eine Runde Schach mit %NPC.  Ich nachgedacht und schicke %HIMHER_NPC "
+   "meinen nächsten Zug.  Würdest Du bitte %HIMHER_NPC mitteilen, dass mein "
+   "nächster Zug %CARGO lautet?"
+temp_success_hint_chess1 = de "Ein genialer Schachzug, aber leicht zu blocken."
+temp_assign_hint_chess2 = de "Bitte, teile %NPC mit %CARGO."
+temp_success_hint_chess2 = de "Dieser Pfau hat Dir das mitgeteilt, ja?"
+temp_assign_hint_chess3 = de \
+   "Gut, sage %HIMHER_NPC %CARGO.  Und während Du dort bist, sage %HIMHER_NPC "
+   "'Schachmatt'."
+temp_success_hint_chess3 = de \
+   "Ein schlauer Zug.  Ich muss %NPC gratulieren.  Nimm diesen %PRIZE als "
+   "ein Artefakt als Wertschätzung für deine Kurierdienste."
+temp_assign_hint_monster = de \
+   "Achtung %DEF_MONSTER %MONSTER, mein kleiner Junge.  Die Zähne beißen, "
+   "die Krallen kratzen. Willst Du ihn für mich töten?"
+temp_success_hint_monster = de \
+   "Jippi Jai Jei ein toller Tag!  Du hast %DEF_MONSTER %MONSTER ermordet."
+temp_assign_hint_monster_item = de \
+   "Ich brauche Dich um %INDEF_MONSTER %MONSTER zu töten, und bringe mir "
+   "%DEF_CARGO %CARGO frisch von seinem Kadaver.  Ich werde Dich passend "
+   "belohnen."
+temp_success_hint_monster_item = de \
+   "Ah, das ist genau was ich benötige.  Hier ist Deine Entschädigung, %INDEF_PRIZE "
+   "%PRIZE."
+temp_assign_hint_food_item = de \
+   "Ich bin ein bisschen hungrig und habe ein Verlangen nach %INDEF_CARGO "
+   "%CARGO.  Würdest Du so nett sein und mir direkt eines davon bringen?"
+temp_success_hint_food_item = de \
+   "Oh lecker! Vielen Dank, und hier ist %INDEF_PRIZE %PRIZE."
+temp_assign_hint_E3_message = de \
+   "Kannst Du mir helfen?  Ich bin in großen Schwierigkeiten.  Als ich außerhalb "
+   "der Mauern Pilze gesammelt habe, eine Teufelsbande der Avar hat mich "
+   "angegriffen. Ich bin entkommen, habe aber Tepal's Buch der Scavengermancy "
+   "verloren. Er wird mich dafür hassen, wenn ich es ihm nicht zurückgebe. "
+   "Könntest Du es zurückbekommen und es Tepal zurückgeben? Bitte, wenn Du "
+   "es zurückbringst werde ich einen Zauber sprechen, der Dich für ein paar "
+   "Tage stärker machen wird."
+temp_success_hint_E3_message = de \
+   "Da ist ja mein Buch! Orks zum Teufel, ich dachte es ist für immer weg."
+temp_failure_hint_E3_message = de \
+   "Hat Zala nicht etwas erwähnt, dass Du mir das Buch zurückbringst? Nun, "
+   "Du kannst es wieder vergessen. Ich brauche es nicht mehr. Und ich sage "
+   "Dir etwas. Es wird wird eine lange Zeit dauern bis ich ihr wieder etwas "
+   "leihe."
+temp_E3_trigger = de "Hallo"
+
+questEngine_report_sender = de "Quest Engine"
+questEngine_report_1 = de \
+   "Betreff: Report: Quest %q\nQuest %q has %q active instances, %q of which "
+   "are unassigned, and %q of which have been assigned to:\n%q"
+questEngine_report_2 = de ",\n"

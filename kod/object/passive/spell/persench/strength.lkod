@@ -1,0 +1,17 @@
+superstrength_on_rsc = de \
+   "Dein Blut prickelt mit der Kraft von Kraanan. Du bist bereit für den "
+   "Kampf!"
+superstrength_off_rsc = de \
+   "Die übermenschliche Kraft von Kraanan verlässt Deinen Körper und Du bleibst "
+   "erneut als Sterblicher zurück."
+superstrength_already_enchanted_rsc = de "Du hast bereits Kraanans Kraft."
+superstrength_success_rsc = de "%s%s's Blut prickelt mit der Kraft von Kraanan."
+superstrength_name_rsc = de "Kraanans Kraft"
+superstrength_desc_rsc = de \
+   "Dein Körper füllt sich mit übermenschlicher Stärke. Der Zauber benötigt "
+   "Pilze und Orkzähne."
+superstrength_spell_intro = de \
+   "Kraanan Level 2: Dein Körper füllt sich mit übermenschlicher Stärke. "
+   ""
+ss_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Stärke hinzu."

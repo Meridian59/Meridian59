@@ -453,7 +453,7 @@ messages:
       local i, lObjects;
 
       lObjects = Send(self,@ListCopy,#source=lSource);
-      for i in lSource
+      foreach i in lSource
       {
          Debug("create object", GetClass(i));
          if (IsClass(i,&NumberItem))
@@ -503,7 +503,7 @@ messages:
       local i,lSpells;
 
       lSpells = Send(self,@ListCopy,#source=plSpells);
-      for i in lSpells
+      foreach i in lSpells
       {
          %AdminSetSpell(num = 0, ability = 0, add = 0)
          Debug("send o % AdminSetSpell num int",
@@ -523,7 +523,7 @@ messages:
 
       % First, let's delete any deadweight from the list.
       % People who never logged on get nothing.
-      for i in lUsers
+      foreach i in lUsers
       {
          if Send(i,@GetTimeLoggedIn) < 1
          {
@@ -540,7 +540,7 @@ messages:
          iHigh = 0;
          iIndex = $;
 
-         for i in lUsers
+         foreach i in lUsers
          {
             if Send(i,@GetTimeLoggedIn) > iHigh
             {
@@ -611,7 +611,7 @@ messages:
 
       iCount = 0;
 
-      for lEntry in lList
+      foreach lEntry in lList
       {
          iCount = iCount + 1;
          if who = First(lEntry)
@@ -648,7 +648,7 @@ messages:
       iCount = 1;
       % User wasn't on scoreboard. Get the position in list of
       % where we need to add them.
-      for lEntry in lList
+      foreach lEntry in lList
       {
          if Nth(lEntry,2) < iPoints
          {
@@ -675,7 +675,7 @@ messages:
          return lList;
       }
 
-      for i in lList
+      foreach i in lList
       {
          if First(i) = who
          {

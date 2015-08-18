@@ -1,0 +1,5 @@
+jasper_urchin_name_rsc = de "Der Urchin"
+jasper_urchin_desc_rsc = de \
+   "Dies ist ein junges, dreckiges Urchin, welches momentan noch kein Ärger "
+   "macht"
+jasper_urchin_dead_name_rsc = de "der tote Urchin"

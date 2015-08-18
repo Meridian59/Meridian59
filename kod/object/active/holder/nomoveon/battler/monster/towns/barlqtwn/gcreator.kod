@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gcreator.lkod
+
    GuildCreator_name_rsc = "Frular"
    GuildCreator_icon_rsc = gcreator.bgf
    GuildCreator_desc_rsc = \
@@ -282,7 +284,7 @@ messages:
                }
 
                iAvailable = 0;
-               for i in Send(SYS,@GetGuildHalls)
+               foreach i in Send(SYS,@GetGuildHalls)
                {
                   if Send(i,@GetPurchaseValue,#who=who) <> -1
                   {
@@ -346,7 +348,7 @@ messages:
          return FALSE;
       }
 
-      for i in item_list
+      foreach i in item_list
       {
          if NOT IsClass(i,&Money)
          {
@@ -364,7 +366,7 @@ messages:
       }
 
       iMoney = 0;
-      for i in item_list
+      foreach i in item_list
       {
          iMoney = iMoney + Send(i,@GetValue);
       }

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include necroguildqt.lkod
+
    % Quest description.
    necroguildquest_icon_rsc = necamlet.bgf
    necroguildquest_name_rsc = "raise Queen Venya'cyr quest"
@@ -119,14 +121,14 @@ messages:
                #quest_node_index=QNT_ID_NECROGUILD_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DeadLich)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DeadLich)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
          % If the Lich is active and not the dead Lich, use her instead.
          if lNPCs = $
          {
-            for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Lich)
+            foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Lich)
             {
                lNPCs = Cons(oNPC, lNPCs);
             }

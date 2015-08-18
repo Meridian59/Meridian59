@@ -16,16 +16,15 @@ constants:
 
 resources:
 
+   include watrskin.lkod
+
    waterskin_name_rsc = "water skin"
    waterskin_icon_rsc = watrskin.bgf
    waterskin_desc_rsc = \
-   "This leather skin contains cool, refreshing water drawn from the "
-   "headwaters of the River Ille."
-
-   waterskin_desc_amount_singular = "\n\nThere is "
-   waterskin_desc_amount_plural = "\n\nThere are "
-   waterskin_desc_amount_singular2 = " drink remaining."
-   waterskin_desc_amount_plural2 = " drinks remaining."
+      "This leather skin contains cool, refreshing water drawn from the "
+      "headwaters of the River Ille."
+   waterskin_desc_amount_singular = "\n\nThere is %i drink remaining."
+   waterskin_desc_amount_plural = "\n\nThere are %i drinks remaining."
 
    waterskin_eat_wav = drink.wav
 
@@ -34,11 +33,9 @@ classvars:
    vrName = waterskin_name_rsc
    vrIcon = waterskin_icon_rsc
    vrDesc = waterskin_desc_rsc
-
    viBulk = 15
    viWeight = 30
    viValue_average = 10
-
    vrEat_wav = waterskin_eat_wav
 
 properties:
@@ -50,20 +47,16 @@ properties:
 messages:
 
    AppendDesc()
-   {      
+   {
       if piNumber = 1
       {
-	 AppendTempString(waterskin_desc_amount_singular);
-	 send(SYS,@AppendCardinalToTempString,#number=piNumber);
-	 AppendTempString(waterskin_desc_amount_singular2);
+         AddPacket(4,waterskin_desc_amount_singular, 4,piNumber);
       }
       else
       {
-	 AppendTempString(waterskin_desc_amount_plural);
-	 send(SYS,@AppendCardinalToTempString,#number=piNumber);
-	 AppendTempString(waterskin_desc_amount_plural2);
+         AddPacket(4,waterskin_desc_amount_plural, 4,piNumber);
       }
-    
+
       return;
    }
 
@@ -71,18 +64,20 @@ messages:
    {
       if piNumber <= 3
       {
-	 AddPacket(1,ANIMATE_NONE,2,2);
-	 return;
+         AddPacket(1,ANIMATE_NONE,2,2);
+
+         return;
       }
+
       propagate;
    }
 
    SendInventoryAnimation()
    {
       Send(self,@SendAnimation);
+
       return;
    }
-
 
    IsBeverage()
    {

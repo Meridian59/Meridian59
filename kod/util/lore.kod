@@ -338,7 +338,7 @@ messages:
 
       % Go through the list.  See if you're currently on the list.  If so,
       %  replace the value and sort the list.
-      for i in lList
+      foreach i in lList
       {
          if (who = First(i))
          {
@@ -534,7 +534,7 @@ messages:
    {
       local i;
 
-      for i in plCurrentBest
+      foreach i in plCurrentBest
       {
          if i = who
          {
@@ -569,7 +569,7 @@ messages:
       % to be the best.
 
       oChosen = $;
-      For i in lList
+      foreach i in lList
       {
          if not Send(self,@IsInCurrentBest,#who=First(i))
          {
@@ -600,7 +600,7 @@ messages:
          return;
       }
 
-      for i in lList
+      foreach i in lList
       {
          if First(i) = who
          {

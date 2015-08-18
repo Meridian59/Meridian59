@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include letter.lkod
+
    letter_name_rsc = "letter"
    letter_icon_rsc = scr04.bgf
    letter_desc_rsc = \

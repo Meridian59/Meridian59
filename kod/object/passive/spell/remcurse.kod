@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include remcurse.lkod
+
    RemoveCurse_name_rsc = "remove curse"
    RemoveCurse_icon_rsc = iremcurs.bgf
    RemoveCurse_desc_rsc = \

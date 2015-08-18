@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include cortail.lkod
+
    room_cortail = cortail.roo
    room_name_cortail = "The Spindle and the Spinster"
 

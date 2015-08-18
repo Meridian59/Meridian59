@@ -1,0 +1,8 @@
+ActiveSporeCloud_name_rsc = de "Dichter Nebel"
+ActiveSporeCloud_desc_rsc = de \
+   "Du würgst, als Du nur auf den dichten fauligen Nebel blickst."
+ActiveSporeCloud_dissipates = de "Die Sporenwolken werden vom Wind verweht."
+ActiveSporeCloud_poisoned = de \
+   "Ein Teil des Giftes lässt nach, verschwindet ganz."
+ActiveSporeCloud_unaffected = de \
+   "Seltsamerweise tut Dir die giftige Wolke nichts."

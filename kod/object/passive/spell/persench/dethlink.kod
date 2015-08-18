@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include dethlink.lkod
+
    deathlink_name_rsc = "death link"
    deathlink_icon_rsc = ideathli.bgf
    deathlink_desc_rsc = \
@@ -150,11 +152,6 @@ messages:
    ModifyDamage(who=$,what=$,damage=$)
    {
       return damage;
-   }
-
-   EffectDesc()
-   {
-      propagate;
    }
 
 end

@@ -1,0 +1,7 @@
+PotionSplitter_name_rsc = de "Leere Flasche"
+PotionSplitter_desc_rsc = de \
+   "Eine Leere Flasche, die so ausieht, als ob man irgendwo etwas zum Füllen "
+   "herbekommt."
+potion_split_spell_item_rsc = de \
+   "Deine ganze hälfte von %s in deine leere flasche und es kommt  ein Trank "
+   "mit %d und einer KRaft von %d."

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include kc5.lkod
+
    room_name_OutdoorsKC5 = "Outside the Mad Scientist's Hut"
    room_OutdoorsKC5 = KC5.roo
    OutdoorsKC5_music = madsci.mp3
@@ -152,7 +154,7 @@ messages:
                      - MAX_QUEENS;
 
       % Delete ones inside the pen first.
-      for i in plActive
+      foreach i in plActive
       {
          if iNumDel <= 0
          {
@@ -171,7 +173,7 @@ messages:
       }
 
       % Then delete ones outside the pen.
-      for i in plActive
+      foreach i in plActive
       {
          if iNumDel <= 0
          {

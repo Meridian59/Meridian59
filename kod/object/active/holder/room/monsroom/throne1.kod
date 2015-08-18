@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include throne1.lkod
+
    name_throne1 = "The Antechamber of Victoria Castle" 
    room_throne1 = throne1.roo
 

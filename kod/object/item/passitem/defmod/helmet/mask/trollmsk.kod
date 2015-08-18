@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include trollmsk.lkod
+
    TrollMask_name_rsc = "troll mask"
    TrollMask_icon_male_rsc = mmtrl.bgf
    TrollMask_icon_female_rsc = mftrl.bgf

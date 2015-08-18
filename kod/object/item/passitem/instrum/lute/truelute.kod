@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include truelute.lkod
+
    TrueLute_name_rsc = "true lute"
    TrueLute_icon_rsc = music.bgf
    TrueLute_overlay_rsc = luteov.bgf

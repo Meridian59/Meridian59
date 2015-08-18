@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include oldmar.lkod
+
    room_name_OldMarion = "Historic Marion"
    room_OldMarion = omar.roo
    OldMarion_music = city02.mp3

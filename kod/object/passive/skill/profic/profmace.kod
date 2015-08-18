@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include profmace.lkod
+
    Maceproficiency_name_rsc = "mace fighting"
    Maceproficiency_icon_rsc = maceico.bgf
    Maceproficiency_desc_rsc = "Allows one to become more proficient at Meridian's most common weapon."

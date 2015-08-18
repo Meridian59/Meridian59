@@ -16,6 +16,8 @@ include blakston.khd
 
 resources:
 
+   include printr.lkod
+
    PrincessTroop_name_rsc = "soldier of the Princess' army"
 
    PrincessTroop_desc_rsc = \

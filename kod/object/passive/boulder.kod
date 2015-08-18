@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include boulder.lkod
+
    boulder_name_rsc = "Boulder"
    boulder_icon_rsc = boulder.bgf
    boulder_desc_rsc = "You are looking at a boulder, a harsh, cold hunk of stone."

@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include guildh15.lkod
+
    room_name_guildh15 = "Inner Sanctum of Queen Venya'cyr"
    room_guildh15 = guildh15.roo
 
@@ -412,13 +414,13 @@ messages:
 
       if IsClass(what,&Lever)
       {
-         for oLever in plLevers
+         foreach oLever in plLevers
          {
             if what = oLever
             {
                Send(Send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@LeverPulled,
                      #num=FindListElem(plLevers,oLever));
-               for i in plLevers
+               foreach i in plLevers
                {
                   Send(i,@SetStuck,#newStuck=TRUE);
                }
@@ -436,7 +438,7 @@ messages:
       local i;
       ptReactivateLevers = $;
 
-      for i in plLevers
+      foreach i in plLevers
       {
          Send(i,@SetStuck,#newStuck=FALSE);
       }
@@ -532,6 +534,11 @@ messages:
             Send(who,@GetFineRow),Send(who,@GetFineCol));
 
       return FALSE;
+   }
+
+   GetRegion()
+   {
+      return RID_BRAX;
    }
 
 end

@@ -1,0 +1,22 @@
+QorBane_name_rsc = de "Shal'ills Aura"
+QorBane_desc_rsc = de \
+   "Durchdringt ein Gebiet mit der heiligen Essenz von Sha-Lill, wodurch "
+   "jeder Schaden nimmt, der die böse Macht der Qor anruft. Für dieses Ritual "
+   "werden Yrxl-Harz und Feenflügel benötigt."
+QorBane_unnecessary = de "Diese Gegend polarisiert bereits gegen Qor."
+QorBane_on = de \
+   "Eine magische Kraft umgtibt diesen Raum und die Luft hat einen süßen "
+   "Gerich. Allesum dich herum scheint fast unmerklich zu glühen und strahlen "
+   "mit heiliger Energie"
+QorBane_off = de "Die heilige Kraft verschwindet."
+QorBane_new_entrant = de \
+   "Dieser Ort ist von einer heiligen Gegenwart umgeben. Du kannst fühlen, "
+   "das Shal'ill dich beobachtet und dich davor warnt die dunklen Zauber "
+   "Qors auszuüben."
+QorBane_HurtCaster = de \
+   "Als Du den dunklen Zauber ausführst, spürst Du einen Stich und erleidest "
+   "Verbrühungen durch die heilie Kraft"
+QorBane_kills_you = de \
+   "Als Du den dunklen Zauber ausführst, spürst Du einen Stich und erleidest "
+   "Verbrühungen durch die heilie Kraft.Du schreist noch ein einiziges Mal "
+   "auf bevor die Heiligkeit dich tötet."

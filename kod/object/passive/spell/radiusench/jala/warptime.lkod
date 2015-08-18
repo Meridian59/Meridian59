@@ -1,0 +1,19 @@
+WarpTime_name_rsc = de "Verzögerung"
+WarpTime_desc_rsc = de \
+   "Die Worte dieses Liedes bilden einen Zauber, der die Konzentrationsphase "
+   "eines Zaubereres verlängert. Es wird lediglich eine Phase der Konzentration "
+   "benötigt, um dieses Lied anzustimmen."
+WarpTime_StartEnchantment = de \
+   "Ein benebeltes Gefühl geht dir durch den Kopf, so das Du länger benötigst "
+   "um dich zu konzentrieren."
+WarpTime_RemoveEnchantment = de \
+   "Ein rauschendes Gefühl lässt dich merken, dass deine Konzentration zurückgekehrt "
+   "ist."
+Warp_Time_cast = de "Du beginnst, ein benebelnden Lied zu spielen."
+Warp_Time_starts = de "%s beginnt ein benebeldes Lied."
+Warp_Time_ends = de "Das benebelnde Lied, gespielt von %s verstummt."
+Warp_Time_caster_ends = de "Dein benebelndes Lied verstummt."
+Warp_Time_caster_enter = de "Dein benebeltes Lied lässt die Zeit verlangsamen."
+Warp_Time_enter = de "Das Lied, gesungen von %s füllt die Luft mit einem Nebel."
+Warp_Time_leave = de \
+   "Du kannst den benebelnden Song von %s's nicht länger hören."

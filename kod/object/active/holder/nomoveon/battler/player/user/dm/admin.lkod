@@ -1,0 +1,43 @@
+admin_login = de \
+   "Sei gegrüßt, Sphärenwandler %s! Wende Dein Angesicht auf diese Welt und "
+   "übe Dich in Langmut ... Denn sie wissen nicht, was sie tun! "
+admin_mortal = de "Du bist jetzt sterblich."
+admin_immortal = de "Du bist jetzt unsterblich."
+admin_morphed = de \
+   "Du befindest Dich nicht in Deinem normalen menschlichen Zustand."
+admin_anonymous = de \
+   "Du kannst nicht mehr durch Deinem Namen identifiziert werden."
+admin_anonymous_hint = de "(Wiederhole den Befehl, um Deinen Namen zu sichern.)"
+admin_not_anonymous = de "Du bist jetzt wieder mit Deinem Namen %s zu erkennen."
+admin_black = de "Du hast die Form eines Schattens angenommen.."
+admin_currently_in = de \
+   "The ROO for `b%s`n is `k`B%s`n.  The room number is %i."
+admin_create_itematt_command = de "create item attribute"
+admin_anonymous_command = de "anonymous"
+admin_shadow_command = de "shadow"
+admin_relic_command = de "relic"
+admin_start_tour_command = de "start tour"
+admin_end_tour_command = de "end tour"
+admin_mortal_command = de "mortal"
+admin_immortal_command = de "immortal"
+admin_logoffghost_on_command = de "logoffghost on"
+admin_logoffghost_off_command = de "logoffghost off"
+admin_logoffghost_temp_off_command = de "logoffghost temp off"
+admin_no_longer = de \
+   "Dieser Befehl existiert nicht mehr; versuche die DM Befehlsform."
+admin_cant_create_itematt = de \
+   "Du kannst einem Gegenstand, der eine Waffe sein soll, keinen solchen "
+   "Namen geben."
+admin_need_weapon = de \
+   "Du musst die gewünschte Waffe in die Hand nehmen, um ihr eine Funktion "
+   "zuzuweisen (dieser Befehl funktioniert fürs erste nur bei Waffen)."
+admin_made_itematt = de \
+   "%s hebt %s%s, kurz in einem mystischen Licht aufleuchtend!"
+admin_gone_mortal = de "%s scheint verwundbarer."
+admin_gone_immortal = de "%s scheint weniger verwundbar."
+admin_logoffghost_on = de \
+   "Strafpunkte für das Beenden des Spiels werden jetzt vergeben."
+admin_logoffghost_off = de \
+   "Strafpunkte für das Beenden des Spiels werden jetzt nicht vergeben."
+admin_logoffghost_temp_off = de \
+   "Strafpunkte für das Beenden des Spiels werden jetzt zeitweise nicht vergeben."

@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include prinshld.lkod
+
    PrincessShield_name_rsc = "shield of the Princess' army"
 
    PrincessShield_desc_rsc = \

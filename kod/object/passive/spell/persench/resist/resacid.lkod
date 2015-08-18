@@ -1,0 +1,19 @@
+ResistAcid_name_rsc = de "Säure Widerstehen"
+ResistAcid_desc_rsc = de \
+   "Umgibt Deinen Körper mit einer klebrigen Masse, wodurch der Schaden von "
+   "Säureattacken für einige Minuten vermindert wird. Der Zauber benötigt "
+   "eine Wurzelknolle."
+ResistAcid_intro = de \
+   "Sha-Lill Zirkel 2: Umgibt Deinen Körper mit einer klebrigen Masse, wodurch "
+   "der Schaden von Säureattacken für einige Minuten vermindert wird."
+ResistAcid_already_enchanted = de \
+   "Du bist bereits gegen Säure-Zauberprüche resistent."
+ResistAcid_on = de \
+   "Eine kreidehaltige, schmierige Masse quillt aus Deinen Poren und bedeckt "
+   "Deinen ganzen Körper."
+ResistAcid_off = de \
+   "Die schützende Masse, die Dich umgibt, blubbert ein letztes Mal und verschwindet, "
+   "als Dich der Säure widerstehen-Zauber verläßt."
+ResistAcid_Success = de \
+   "Eine kreidehaltige, schmierige Masse quillt aus %s%s's Poren und bedeckt "
+   "den ganzen Körper."

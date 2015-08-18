@@ -1,0 +1,14 @@
+bonk_name_rsc = de "Bonk"
+allinroom_bonk_msg1 = de "~b%s%s bonkt %s%s auf die Rübe."
+allinroom_bonk_msg2 = de "~bDu zuckst, als %s%s bösartigerweise %s%s bonkt."
+caster_bonk_msg = de "~bDu bonkst %s%s bösartigerweise."
+bonked_bonk_msg = de \
+   "~r~B>OUCH<~n~b  Du wurdest auf den Kopf geschlagen von %s%s."
+bonk_desc_rsc = de "Dies Bonkt eine Person Deiner Wahl.  "
+caster_bonkstick_msg = de \
+   "~bDu richtest bösartigerweise deinen Bonkstab auf %s%s's Rübe."
+bonked_bonkstick_msg = de \
+   "~r~B>OUCH<~n~b  %s%s schlägt unbarmherzig auf den Kopf mit einem %s Bonkstick!!"
+allinroom_bstick_msg1 = de \
+   "~b%s%s's Augen machen aua %s%s wegen %s auf Rübe mit %s Bonkstick."
+allinroom_bstick_msg2 = de "~bDu zuckst, als %s%s bösartigerweise %s%s bonkt."

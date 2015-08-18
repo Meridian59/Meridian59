@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include necshield.lkod
+
    necshield_name_rsc = "shield of the Necromancer's army"
 
    necshield_desc_rsc = \

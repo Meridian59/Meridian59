@@ -1,0 +1,9 @@
+FireRing_name_rsc = de "Der Ring des Feuerwiderstands"
+FireRing_desc_rsc = de \
+   "Dieser goldene Ring fühlt sich kalt an. In seine Innenseite sind magische "
+   "Runen graviert."
+FireRing_use_rsc = de \
+   "Du fühlst die Kraft des Rings. Selbst die Sonnenhitze scheint sich zu "
+   "mildern."
+FireRing_dead_rsc = de \
+   "Der Ring beginnt zu zischen und zu rauchen und löst sich in Luft auf!"

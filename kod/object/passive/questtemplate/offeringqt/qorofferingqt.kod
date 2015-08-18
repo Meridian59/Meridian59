@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include qorofferingqt.lkod
+
    % Quest description.
    qorofferingqt_icon_rsc = bloodinn.bgf
    qorofferingqt_name_rsc = "Qor offering quest"

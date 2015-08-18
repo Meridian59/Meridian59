@@ -1,0 +1,109 @@
+spell_name_rsc = de "Zauberspruch"
+spell_desc_text_rsc = de "Dies ist ein Zauberspruch."
+spell_not_good_enough = de "Du bist nicht würdig, den %s-Zauber anzuwenden!"
+spell_not_evil_enough = de \
+   "Du bist nicht verdorben genug, um den %s-Zauber anzuwenden!"
+spell_already_in_effect = de "Dieser Zauber wirkt hier bereits."
+spell_cast_on_target = de "Du zauberst %s%s auf %s."
+spell_triggers_outlawing = de \
+   "Du wurdest wegen der Anwendung eines offensiven Zaubers zum Gesetzlosen "
+   "erklärt!"
+spell_outlaw = de \
+   "Die Anwendung dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen "
+   "erklärt wirst."
+spell_nothing = de " "
+spell_no_rest = de \
+   "Du kannst keine Zaubersprüche aussprechen, während Du rastest!"
+spell_bad_location = de "Du kannst '%s' hier nicht anwenden."
+spell_bad_target = de \
+   "Du kannst den %s-Zauber nicht anwenden. %s%s als Ziel? Das kann nicht "
+   "funktionieren."
+spell_no_targets = de "Das ist kein passendes Ziel für %s."
+spell_no_self_target = de \
+   "Du kannst den %s-Zauber nicht auf Dich selbst anwenden!"
+spell_too_tired = de "Du bist zu erschöpft, um den %s-Zauber anzuwenden!"
+spell_insufficient_magic = de \
+   "Du hast nicht genügend Zauberkraft, um den %s-Zauber anzuwenden!"
+spell_insufficient_reagent = de \
+   "Du hast nicht die nötigen Zutaten, um %s zu zaubern!"
+spell_out_of_range = de "%s%s ist außer Reichweite."
+spell_begin_trance = de "Du konzentrierst Dich auf den %s-Zauber."
+spell_safety_on = de \
+   "Du kannst keinen offensiven Zauberspruch anwenden; Du willst schließlich "
+   "keine Unschuldigen angreifen."
+spell_safety_no_unlawful = de \
+   "Einer gesetzlosen Person wie %s%s zu helfen wird Dich als Gesetzloser "
+   "ächten. Gut, dass Deine Sicherung aktiviert war!"
+spell_angel_no_unlawful = de \
+   "Einer gesetzlosen Person wie %s%s zu helfen wird Dich als Gesetzloser "
+   "ächten. Gut, dass Deine Sicherung aktiviert war!"
+spell_outlaw_cast = de \
+   "Mit diesem Zauber riskierst Du es, zum Gesetzlosen erklärt zu werden. "
+   "Du bist aber noch nicht für einen Kampf gegen andere Spieler bereit."
+spell_hands_too_full = de \
+   "Deine Hände sind zu voll, um Zauber zu sprechen, die auf andere Spieler "
+   "wirken."
+spell_unlawful_outlaw = de \
+   "Sha-Lill ist Durch Deinen ungerechtfertigten Angriff erzürnt."
+spell_failed_by_chance = de \
+   "Dein Versuch, den %s-Zauber anzuwenden, war erfolglos."
+spell_spellbane_stopped = de \
+   "Die Noten des Liedes, gesungen von %s vermischen sich mit den Worten "
+   "Deines Zauberspruches und lösen diese schneller auf, als Deine Zunge "
+   "sie weben kann."
+spell_advanced = de \
+   "Du hast Deine Fähigkeiten in %s verbessert! Deine Fähigkeit liegt nun "
+   "bei %s."
+spell_guardian = de \
+   "Dein Schutzengel sagt zu Dir, \"Du bist noch nicht so weit, offensive "
+   "Zaubersprüche gegen andere Spieler auszusprechen.\""
+spell_cant_help = de \
+   "Dein Schutzengel flüstert Dir zu, \"%s%s hat erst kürzlich jemanden angegriffen. "
+   "Greife nicht ein.\""
+spell_too_soon_since_attacking = de \
+   "Du hast vor kurzem auch einen Spieler angegriffen."
+spell_resists = de "%s%s widersteht Deinem Zauber!"
+spell_silenced_rsc = de \
+   "Die Worte bleiben Dir im Halse stecken und Du kannst nicht sprechen."
+spell_desc_rsc = de "SCHULE : %s         LEVEL : %i \n\n%s%s%s%r%r%r"
+spell_school_riija = de "Riija"
+spell_school_shalille = de "Shal'ill"
+spell_school_qor = de "Qor"
+spell_school_faren = de "Faren"
+spell_school_kraanan = de "Kraanan"
+spell_school_jala = de "Jala"
+spell_intro_rsc = de "Einer der vielen magischen Zaubersprüche."
+spell_gesture_third = de \
+   "%s%s murmelt etwas %s vor sich hin und führt eine geheimnisvolle Geste "
+   "aus."
+spell_gesture_third_target = de \
+   "%s%s murmelt etwas vor sich hin und deutet auf %s%s%s."
+spell_you = de "sich selbst"
+spell_resisted = de "%s%s widersteht deinem Zauber!"
+spell_forgot1 = de \
+   "Du ... Du kannst Dich nicht so genau an den Zauberspruch erinnern."
+spell_forgot2 = de \
+   "Der Zauberspruch liegt Dir auf der Zunge, doch Du bekommst ihn nicht "
+   "heraus!"
+spell_forgot3 = de \
+   "Da Du den Zauberspruch vergessen hast, spuckst Du ein paar unzusammenhängende "
+   "Wörter aus und wedelst mit den Armen in der Hoffnung, dass ein Wunder "
+   "geschieht."
+spell_forgot4 = de "Klaatu Veratu Nepto?!?!"
+spell_trance_begin = de \
+   "Du konzentrierst Deinen gesamten Willen auf den Zauberspruch %s."
+spell_trance_break = de \
+   "Deine Konzentration wurde gestört, und der %s-Zauber schlägt fehl."
+spell_disabled = de \
+   "~g~BEine unbekannte Kraft raubt Dir die Zauberworte aus der Kehle bevor "
+   "Du sie ganz aussprechen kannst."
+spell_display_spellpower = de "Zauberkraft für ~k~B%s~n ist ~k~B%i~n."
+no_line_of_sight = de "Deine schlechte Sicht macht es noch schwerer zu Zaubern"
+spell_meditate_ratio_rsc = de \
+   "\n\nEs kostet dich %i Trainings Punkte um diesen Zauber zu verbessern."
+spell_Enchantment_type_default_rsc = de "Erzmagier"
+Spell_too_few_hp_rsc = de \
+   "Du bist nicht stark genug um diesen Zauber zu benutzen."
+cannot_cast_on_phased_out = de \
+   "Du kannst nichts auf %s zaubern, solange %s aus der Existenz getreten "
+   "ist!"

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fairy.lkod
+
    good_fairy_koc_name_rsc = "kinimixlal"
    good_fairy_name_rsc = "fey elhai"
    good_fairy_icon_rsc = faerie-g.bgf

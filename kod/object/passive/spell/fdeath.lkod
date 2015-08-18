@@ -1,0 +1,11 @@
+feigndeath_name_rsc = de "Tod vortäuschen"
+feigndeath_desc_rsc = de \
+   "Läßt Dich so aussehen, als ob Du tot seist. Das hilft dass Dich nicht "
+   "wirklich jemand sterben läßt. Der Zauber benötigt Regenbogenfarn."
+feigndeath_user_killed = de \
+   "~B~U~k[###]~n ~B~v%s wurde gerade von %s%s getötet."
+feigndeath_angrymocker = de "ein zorniger Mann namens Mocker"
+feigndeath_fallingpiano = de "ein fallendes Klavier"
+feigndeath_firebunny = de "ein Feier speiendes Kaninchen"
+feigndeath_giantrat = de "eine Riesenratte"
+feigndeath_nuthin = de ""

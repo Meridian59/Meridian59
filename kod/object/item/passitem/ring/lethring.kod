@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include lethring.lkod
+
    ringoflethargy_name_rsc = "ring of lethargy"
    ringoflethargy_icon_rsc = ring3.bgf
 
@@ -34,8 +36,9 @@ resources:
       "After putting on the ring you feel drained and out of breath."
   
    ringoflethargy_try_unuse_rsc = \
-      "As you remove the ring, you suddenly feel your strength flow from your body!  "
-      "Involuntarily you place the ring back on-- you are linked to it, and need special help to remove it."
+      "As you remove the ring, you suddenly feel your strength flow from "
+      "your body!  Involuntarily you place the ring back on-- you are linked "
+      "to it, and need special help to remove it."
 
    ringoflethargy_unuse_rsc = \
       "The ring pops off of your finger of its own volition.  "
@@ -72,11 +75,11 @@ messages:
    {
       if pbIn_use
       {
-         AppendTempString(ringoflethargy_desc_used_rsc);
-         
+         AddPacket(4, ringoflethargy_desc_used_rsc);
+
          return;
       }
-      
+
       propagate;
    }
 
@@ -92,18 +95,19 @@ messages:
          propagate;
       }
 
-      iVigorRestThreshold = send(poOwner, @GetVigorRestThreshold);
+      iVigorRestThreshold = Send(poOwner, @GetVigorRestThreshold);
 
-      % this is to ensure both that the player's rest threshold does not drop below
-      %   10 as well as to make sure we don't make it above maximum when the ring comes
-      %   off  (see player.kod line 529 for why)
+      % This is to ensure both that the player's rest threshold does not drop below
+      % 10 as well as to make sure we don't make it above maximum when the ring comes
+      % off  (see player.kod for why)
       if (iVigorRestThreshold - piVigorRestThresholdChange < 10)
       {
          piVigorRestThresholdChange = iVigorRestThreshold - 10;
       }
 
       Send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_use_rsc);
-      Send(poOwner,@SetVigorRestThreshold, #amount = iVigorRestThreshold - piVigorRestThresholdChange);
+      Send(poOwner,@SetVigorRestThreshold,
+            #amount=iVigorRestThreshold - piVigorRestThresholdChange);
 
       propagate;
    }
@@ -111,38 +115,41 @@ messages:
    ReqLeaveOwner()
    "Don't allow if in use"
    {
-      if NOT isClass(poOwner,&Player) OR Send(poOwner,@PlayerIsImmortal)
+      if NOT isClass(poOwner,&Player)
+         OR Send(poOwner,@PlayerIsImmortal)
       {
          propagate;
       }
 
       if pbIn_use
       {
-         Send (self, @TortureOwner);
-         return false;
+         Send(self,@TortureOwner);
+
+         return FALSE;
       }
 
       propagate;
    }
 
    ReqUnuse()
-   "Since it is a cursed item, it does not come off easily, and there is a price to be paid to try it..."
+   "Since it is a cursed item, it does not come off easily, and "
+   "there is a price to be paid to try it..."
    {
       if Send(poOwner,@PlayerIsImmortal)
       {
          return TRUE;
       }
-      
-      Send(self, @TortureOwner);
-      
+
+      Send(self,@TortureOwner);
+
       return FALSE;
    }
 
    TortureOwner()
    {
-      send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_try_unuse_rsc);
-      send(poOwner,@AddExertion,#amount=viVigorDrop);
-      
+      Send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_try_unuse_rsc);
+      Send(poOwner,@AddExertion,#amount=viVigorDrop);
+
       return;
    }
 
@@ -150,19 +157,20 @@ messages:
    "Called when the curse is broken"
    {
       local iVigorRestThreshold;
-      iVigorRestThreshold = send(poOwner, @GetVigorRestThreshold);
 
+      iVigorRestThreshold = Send(poOwner,@GetVigorRestThreshold);
       pbIn_use = FALSE;
-      
+
       if Send(poOwner,@PlayerIsImmortal)
       {
          propagate;
       }
 
-      send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_unuse_rsc);
-      send(poOwner,@SetVigorRestThreshold,#amount=iVigorRestThreshold+piVigorRestThresholdChange);
+      Send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_unuse_rsc);
+      Send(poOwner,@SetVigorRestThreshold,
+            #amount=iVigorRestThreshold + piVigorRestThresholdChange);
 
-      % reset the vigor change in case it was adjusted earlier
+      % Reset the vigor change in case it was adjusted earlier.
       piVigorRestThresholdChange = 20;
 
       propagate;
@@ -175,4 +183,3 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

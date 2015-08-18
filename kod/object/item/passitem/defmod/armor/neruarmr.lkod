@@ -1,0 +1,7 @@
+neruditearmor_name_rsc = de "Die Nerudit-Rüstung"
+neruditearmor_desc_rsc = de \
+   "Aus Nerudit geschmiedet, ist dieser Panzer leichter und haltbarer als "
+   "ein normaler Panzer. Dieses Bruststück verdeutlicht die außergewöhnliche "
+   "Fertigkeit von Ixla cha'Totlak."
+neruarmor_shatters = de \
+   "Die Nerudit-Rüstung zerbricht in einem Regen aus Splittern!"

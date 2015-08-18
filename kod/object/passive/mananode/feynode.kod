@@ -28,6 +28,8 @@ constants:
 
 resources:
 
+   include feynode.lkod
+
    feynode_name_good = "kii'elhai"
    feynode_name_evil = "kii'dirhai"
 
@@ -76,7 +78,7 @@ messages:
 %      lUsers = Send(SYS,@GetUsers);
 %      if piKarma = FEYNODE_GOOD
 %      {
-%         for i in lUsers
+%         foreach i in lUsers
 %         {
 %            % If player is evil and has node, strip it.
 %            if (Send(i,@GetKarma) <= 0)
@@ -89,7 +91,7 @@ messages:
 %      }
 %      else
 %      {
-%         for i in lUsers
+%         foreach i in lUsers
 %         {
 %            % If player is good and has node, strip it.
 %            if (Send(i,@GetKarma) > 0)

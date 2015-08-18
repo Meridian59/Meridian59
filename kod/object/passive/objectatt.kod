@@ -28,6 +28,8 @@ constants:
 
 resources:
 
+   include objectatt.lkod
+
    object_attribute_desc_default = "  This object appears to be special in some way."
    object_attribute_name_default = "special %s"
 

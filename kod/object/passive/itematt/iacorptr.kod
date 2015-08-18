@@ -33,6 +33,8 @@ constants:
    include blakston.khd
 
 resources:
+
+   include iacorptr.lkod
  
    corpsepointer_no_loot = \
       "You reach for %s%s, but you can't get past %s picking over "

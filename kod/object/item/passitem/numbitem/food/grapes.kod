@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include grapes.lkod
+
    grapes_name_rsc = "bunch of grapes"
    grapes_icon_rsc = grapes.bgf
    grapes_desc_rsc = \

@@ -34,6 +34,8 @@ constants:
 
 resources:
 
+   include xeochctl.lkod
+
    Xeochicatl_name_rsc = "Xeochicatl"
    Xeochicatl_koc_name_rsc = "Xeo'chicatl"
    Xeochicatl_icon_rsc = Xeo.bgf

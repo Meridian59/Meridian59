@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cloakp.lkod
+
    CloakPotion_name_rsc = "elixir of cloaking"
    %CloakPotion_icon_rsc = potion01.bgf
    CloakPotion_desc_rsc = "This is a glass vial of colored liquid.  "

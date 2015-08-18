@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include majheal.lkod
+
    majorheal_name_rsc = "major heal"
    majorheal_icon_rsc = imajheal.bgf
    majorheal_desc_rsc = \

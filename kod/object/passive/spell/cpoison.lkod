@@ -1,0 +1,10 @@
+curepoison_name_rsc = de "Gift Neutralisieren"
+curepoison_desc_rsc = de \
+   "Reine, heilende Kraft saugt das Gift aus dem Blut des Ziels. Der Zauber "
+   "benötigt Kräuter und Holunderbeeren."
+curepoison_on = de "Die Kraft Shal'ills bekämpft das Gift in deinen Adern."
+curepoison_unnecessary = de "%s%s ist nicht von einem Gift befallen."
+curepoison_abates = de "Du spürst das, das Gift nachlässt."
+curepoison_spell_intro = de \
+   "Shal'ill Level 2: Reine, heilende Kraft saugt das Gift aus dem Blut des "
+   "Ziels."

@@ -1,0 +1,114 @@
+Goad_name_rsc = de "Goad"
+Goad_desc_rsc = de \
+   "Als ein sterblicher Mensch hat Goad seine Königin betrogen und sie in "
+   "den Tod geschickt. Zu seinem Entsetzen war sie nur für kurze Zeit in "
+   "Schwierigkeiten und jetzt ist er gezwungen hier zu bleiben, um ihr für "
+   "alle Ewigkeiten zu dienen. Seine gekrümmte Gestalt windet sich in ständiger "
+   "Qual, nur manchmal kurz erleichtert durch einen Strudel der Extase, den "
+   "er beim Anblick des Tod eines anderen empfindet."
+Goad_ad_need_champion1 = de "Kommt meine Schönen, habt keine Angst . . ."
+Goad_ad_need_champion2 = de \
+   "Ich kann Dein Verlangen spüren . . . gib ihm nach, Du kannst so viel "
+   "Kraft gewinnen."
+Goad_ad_need_champion3 = de \
+   "Es ist so einfach, jemanden zu töten. Willst Du nicht für mich tanzen?"
+Goad_ad_need_champion4 = de "Ich muss einen Tod haben!"
+Goad_ad_need_challenger = de "Komm her... willst Du nicht mit %s%s tanzen?"
+Goad_ad_good_fight1 = de "JA!! Oh Gott, ja!!! Sterbt, ihr Narren, sterbt!"
+Goad_ad_good_fight2 = de "Ich kann Deine Seele schmecken."
+Goad_ad_good_fight3 = de "So süß . . . Dein Blut ist so süß!"
+Goad_no_need = de "Sei ruhig Kleines, Deine Zeit zu sterben wird kommen."
+Goad_need_champion = de \
+   "Gemäß dem alten Gesetz, muss ich zuerst einen Champion haben. Geb Dich "
+   "mir hin."
+Goad_dont_need_challenger = de \
+   "Später mein Süßer, später! Durch die Adern dieser Narren fließt genug "
+   "Blut, auf Deines kann ich warten."
+Goad_fight_in_progress = de \
+   "Ja! Sobald ich mich an diesen Narren gütlich getan habe, wirst Du ihnen "
+   "folgen,"
+Goad_already_combatant = de "Sehr großzügig . . . aber Du gehörst mir bereits."
+Goad_already_champion = de "Sehr großzügig . . . aber Du gehörst mir bereits."
+Goad_already_have_champion = de \
+   "Du willst Champion sein? Nichts leichter als das! Vernichte %s%s! Bist "
+   "Du mutig genug für die Herausforderung?"
+Goad_challenge_offered = de \
+   "%s%s hat Dich herausgefordert.  Willst Du Deinen Gegner wie einen Wurm "
+   "zerquetschen?%s$0%s$0"
+Goad_must_accept = de \
+   "Worauf wartest Du Narr? Du hast nur noch %i Sekunden, um die Herausforderung "
+   "von %s%s anzunehmen!"
+Goad_cant_renege = de "Du kannst nur aufgeben, wenn Du ein Teilnehmer bist."
+Goad_commence = de "Kämpfe! Töte! Sterbe!"
+Goad_last_minute = de "Ihr habt eine Minute . . . Dann nehme ich euch beide."
+Goad_victor = de \
+   "~BVerflucht sollst Du sein, %s%s! Heute wirst Du leben, aber nicht für "
+   "immer!~B"
+Goad_new_champion = de \
+   "~BSeht: %s%s ist der neue Champion. Bereit zu sterben?~B"
+Goad_killed_champion = de \
+   "%s%s hat den Champion %s%s besiegt!  . . . frisches Blut!"
+Goad_retain_title = de \
+   "%s%s bleibt Champion! Wer wagt es, den Champion herauszufordern?"
+Goad_champion_killed = de "Der Champion hat %s%s getötet!"
+Goad_someone_killed = de "%s%s hat %s%s besiegt."
+Goad_champ_reneges = de \
+   "%s%s, der Champion von Kraanan, hat den Titel abgegeben."
+Goad_ready_to_fight = de "%s%s gegen %s%s. Seid bereit zu sterben. . ."
+Goad_combatant_reneges = de \
+   "%s%s hat sich entschlossen, nicht weiter zu kämpfen."
+Goad_cant_leave = de "Du Narr, es gibt kein Entkommen."
+Goad_pitifully_fled = de \
+   "%s%s ist auf erbärmliche Weise geflohen! Ich denke, es wird hier jemand "
+   "sterben, sollte der Kampf nicht in 10 Sekunden weitergehen."
+Goad_only_combatants = de \
+   "Du musst in meine Arme kommen, wenn Du hier töten willst."
+Goad_no_fighting_yet = de \
+   "Noch nicht, mein süßer kleiner Blutbeutel, noch nicht."
+Goad_only_combatants_cast = de \
+   "Du musst in meine Arme kommen, wenn Du hier Zauber einsetzen willst."
+Goad_only_target_combatants = de \
+   "Du musst in meine Arme kommen, wenn Du hier kämpfen willst."
+Goad_spell_banned = de \
+   "Oh, das tut mir leid. Du kannst %s hier nicht benutzen. Warum? Weil ich "
+   "es sage!"
+Goad_must_choose_style = de \
+   "Die wichtigen Dinge zuerst . . . Wollen wir ein Duell haben oder ein "
+   "Blutbad?"
+Goad_cant_switch = de "Du kannst das jetzt nicht ändern, Wurm."
+Goad_new_combat_style = de \
+   "Sehr gut. Ich sehne mich lange nach einem guten %s. Wer sagt das Zauberwort, "
+   "\"Champion\"?"
+Goad_style_one_on_one = de "Duell"
+Goad_style_last_man_standing = de "Blutbad"
+Goad_new_combatant = de "%s%s wird auch ein Mitstreiter bei diesem Kampf sein!"
+Goad_more_combatants = de \
+   "Weitere Krieger haben nur noch %i Sekunden, um an diesem Kampf teilzunehmen."
+Goad_ready_last_man = de \
+   "Die Regeln: Kampf bis zum letzten Mann. Die Schlacht beginnt auf mein "
+   "Kommando!"
+Goad_welcome = de "~wGoad teilt Dir mit, \"Willkommen in meiner Hölle, Wurm!\""
+Goad_worship_admin = de "Oh wie dramatisch. . . es ist %s, %s ist sooo wichtig."
+Goad_worship_dm = de \
+   "Erwartet nicht, dass ich vor Euch am Boden krieche, mich beeindruckt "
+   "Ihr nicht!"
+Goad_welcome_champion = de "Beachtet %s%s, den blutigen Metzler."
+Goad_welcome_champion_guild = de \
+   "Bug. Diese Nachricht sollte niemals auftreten!"
+Goad_invalid_fight = de \
+   "Dieser Kampf war aus bestimmten Gründen ungültig und wird deshalb gestrichen."
+Goad_not_during_fight = de \
+   "~wDer Meister der Arena sagt zu Dir, \"Während eines Kampfes werden keine "
+   "Befehle ausgesprochen.\""
+Goad_speed_up = de "Vielleicht können wir das ein wenig beschleunigen..."
+Goad_not_more = de \
+   "Es dürfen nicht mehr als 25 Krieger an dieser Schlacht teilnehmen."
+Goad_killed_by_spell = de "%s%s wurde durch den %s Zauberspruch getötet!"
+Goad_unwanted_give = de "~w%s%s beachtet Dein Bestechungsgeschenk nicht.~n~w"
+Goad_Draw = de \
+   "`rDer Kampf ist unentschieden. Dies ist ein Fehler. Bitte melde den Fehler "
+   "und spezifiziere die Kampfart und alle Aktionen, die zu dieser Meldung "
+   "geführt haben."
+Goad_wont_fight = de \
+   "~wOffenbar ist %s%s zu feige für einen Kampf. Feiglinge sollten sterben. "
+   ". . qualvoll sterben."

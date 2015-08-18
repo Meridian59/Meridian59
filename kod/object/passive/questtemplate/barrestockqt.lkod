@@ -1,0 +1,41 @@
+% Quest description.
+barrestockqt_name_rsc = de "bar restock quest"
+barrestockqt_desc_rsc = de \
+   "A bartender is running low on supplies, and would like your assistance."
+
+barrestockqt_nodetwo_rsc = de \
+   "%s%s is running low on supplies for %s bar. %s would like your help "
+   "to restock - go to %s%s and ask %s about the \"shipment\"."
+barrestockqt_nodethree_rsc = de \
+   "Bring %i %s back to %s%s, and don't take any for yourself lest you "
+   "be punished for your thievery!"
+
+barrestockqt_completed_rsc = de \
+   "You have completed the bar restock quest."
+
+% Quest resources.
+barrestock_assign_2 = de \
+   "Ja, ich habe nur noch wenige Waren.  %NPC weiß, was ich brauche und es "
+   "ist bereits bezahlt worden.  Frage einfach %HIMHER_NPC über die Lieferung, "
+   "aber schnell!"
+barrestock_trigger_2 = de "Lieferung"
+barrestock_failure_2 = de \
+   "Betreff: Meine Lieferung der Waren\nVergiss die Lieferung.  Ich werde "
+   "einen anderen Kurier finden."
+barrestock_assign_3 = de \
+   "Äh, ja, die Lieferung ist versandbereit.  Eile mit diesen %INDEF_CARGO%CARGO "
+   "zurück zu %NPC, und bitte keine Unehrlichkeiten, oder ich muss Dich als "
+   "ein Gesetzloser bei Gericht melden."
+barrestock_assign_3_h = de \
+   "Äh, ja, die Lieferung ist versandbereit.  Eile mit diesen %INDEF_CARGO%CARGO "
+   "zurück zu %NPC, und keine Unehrlichkeiten, oder Deine Missetaten werden "
+   "sicherlich Folgen haben."
+barrestock_success_3 = de \
+   "Vielen Dank, %NAME, Du hast mir heute einen großen Dienst erwiesen.  "
+   "Nimm diese, kleine Aufmerksamkeit als mein Dank."
+barrestock_failure_3 = de \
+   "Betreff: Dieb!\nIch habe Deinen Diebstahl von %CARGO beim Gericht gemeldet, "
+   "und von nun an wirst Du als Gesetzloser deklariert."
+barrestock_failure_3_h = de \
+   "Betreff: Dieb!\nIch habe Deinen Diebstahl von %CARGO an einen befreundeten "
+   "Zauberer gemeldet und er wird dafür Sorge tragen, dass Du leidest."

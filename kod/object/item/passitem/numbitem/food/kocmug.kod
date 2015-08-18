@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kocmug.lkod
+
    kocatanmug_name_rsc = "copper pekonch mugs"
    kocatanmug_icon_rsc = mug2.bgf
    kocatanmug_desc_rsc = \

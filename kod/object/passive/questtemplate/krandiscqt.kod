@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include krandiscqt.lkod
+
    % Quest description.
    kranquest_icon_rsc = iglow.bgf
    kranquest_name_rsc = "Kraanan disciple quest"

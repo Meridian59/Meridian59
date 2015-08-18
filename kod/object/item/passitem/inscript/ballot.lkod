@@ -1,0 +1,10 @@
+ballot_name_rsc = de "Der Königliche Wahlzettel"
+ballot_desc_rsc = de \
+   "Dies ist ein offizielles Dokument des Büros des Justiziars.Der Königliche "
+   "Justiziar fungiert als Vermittler im Streit um das Recht. Ihr könnt Eure "
+   "Stimme für einen Kandidat für das Amt des Justiziars abgeben. Ihr selbst "
+   "als auch Euer Kandidat müsst jedoch ein rechtschaffener Bürger sein. "
+   "Ihr könnt nur eine einzige Stimme in jeder Abstimmung abgeben. Nur die "
+   "Stimmen, die von Caramo, der Assistentin des Justiziars in Empfang genommen "
+   "werden, können anerkannt werden.    \n=[C]=   Caramo, Assistentin des "
+   "Königlichen Justiziars"

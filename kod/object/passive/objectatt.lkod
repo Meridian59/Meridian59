@@ -1,0 +1,3 @@
+object_attribute_desc_default = de \
+   "  Dieser Gegenstand sieht irgendwie speziell aus."
+object_attribute_name_default = de "Spezial %s"

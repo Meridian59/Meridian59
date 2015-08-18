@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include d5.lkod
+
    room_name_OutdoorsD5 ="West Merchant Way"
    room_OutdoorsD5 = D5.roo
    OutdoorsD5_music = forest.mp3

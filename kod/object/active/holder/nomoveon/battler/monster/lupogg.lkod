@@ -1,0 +1,8 @@
+lupogg_koc_name_rsc = de "tez"
+lupogg_name_rsc = de "Der Lupogg"
+lupogg_desc_rsc = de \
+   "Dieser schreckliche und seelenlose Wasserbewohner soll Gerüchten zufolge "
+   "von Natur aus friedlich sein. Beweise gibt es bislang keine. Der Lupogg "
+   "scheint wütend zu werden, wenn sein Territorium durchschritten wird, "
+   "und will wohl jeden herausfordern, den er finden kann."
+lupogg_dead_name_rsc = de "toter Lupogg"

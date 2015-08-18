@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include gcvote.lkod
+
    guildvote_name_rsc = "vote"
    guildvote_icon_rsc = light.bgf
    guildvote_desc_text_rsc = "Use this command to swing your support for leadership of the guild for one person in particular."

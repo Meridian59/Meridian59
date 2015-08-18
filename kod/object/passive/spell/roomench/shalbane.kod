@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include shalbane.lkod
+
    ShalilleBane_name_rsc = "Shal'illebane"
    ShalilleBane_icon_rsc = ishabane.bgf
    ShalilleBane_desc_rsc = \

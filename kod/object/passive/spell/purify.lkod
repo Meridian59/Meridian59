@@ -1,0 +1,10 @@
+purify_name_rsc = de "Reinigen"
+purify_desc_rsc = de \
+   "Beseitigt schädliche persönliche Zauber der Zielperson. Der Zauber benötigt "
+   "Smaragde und Holunderbeeren."
+purify_on = de \
+   "Ein helles heiliges Licht versucht deine Seele von unreinem zu waschen."
+purify_not_enchanted = de "%s%s ist nicht von einem unreinen Zauber verzaubert."
+purify_spell_intro = de \
+   "Shal'ill Level 4: Beseitigt schädliche persönliche Zauber der Zielperson."
+purify_spell_self_cast_rsc = de "Du kannst nur %s auf dich selber zaubern."

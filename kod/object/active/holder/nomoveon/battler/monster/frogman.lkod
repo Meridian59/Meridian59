@@ -1,0 +1,6 @@
+frogman_koc_name_rsc = de "yozotz"
+frogman_name_rsc = de "Der Froschmensch"
+frogman_desc_rsc = de \
+   "Dies ist ein Froschmensch, eine freundliche Rasse von Amphibien. Sie "
+   "sind bekannt für ihren Haß auf jene, die den Weg des Bösen gehen."
+frogman_dead_name_rsc = de "toter Froschmensch"

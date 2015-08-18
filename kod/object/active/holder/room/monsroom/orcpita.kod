@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include orcpita.lkod
+
    room_OrcPitA = ocpa.roo
    room_name_OrcPitA = "Grog's Antechamber"
 
@@ -124,7 +126,7 @@ messages:
       local i, each_obj, count, iRow, iCol;
       count = 0;
       
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = send(self,@HolderExtractObject,#data=i);
 	 iRow = send(each_obj,@getrow);
@@ -139,7 +141,7 @@ messages:
    {
       local i, each_obj, iRow, iCol, bAOne;
       bAOne = FALSE;
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = send(self,@HolderExtractObject,#data=i);
 	 iRow = send(each_obj,@getrow);
@@ -155,7 +157,7 @@ messages:
       local i, each_obj, count, iRow, iCol, bBOne, bBTwo;
       bBOne = FALSE;
       bBTwo = FALSE;
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = send(self,@HolderExtractObject,#data=i);
 	 iRow = send(each_obj,@getrow);

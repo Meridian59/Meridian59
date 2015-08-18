@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include ivycircl.lkod
+
    IvyCirclet_name_rsc = "ivy circlet"
    IvyCirclet_icon_rsc = ivycircl.bgf
    IvyCirclet_desc_rsc = \

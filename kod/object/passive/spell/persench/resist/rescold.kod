@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rescold.lkod
+
    resistcold_name_rsc = "resist cold"
    resistcold_icon_rsc = irescold.bgf
    resistcold_desc_rsc = \

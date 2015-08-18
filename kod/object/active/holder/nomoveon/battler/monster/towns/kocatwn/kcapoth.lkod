@@ -1,0 +1,19 @@
+KocatanApoth_name_rsc = de "Zala ix'Mecya"
+kocatanapoth_desc_rsc = de \
+   "Zala ist eine sich langsam bewegende Frau, die offensichtlich die irdischen "
+   "Vergnügungen genießt. Sie hat eine weiche, heisere Stimme und nimmt lange "
+   "Züge aus ihrer Tonpfeife."
+kocatanapoth_entry_welcome = de "Frieden, Liebe für dich, mein Freund."
+apoth_potion_riija = de \
+   "Ja, ich habe einen Trank des Vergessens. Nimm ihn mit Vorsicht zu Dir, "
+   "damit seine Effekte effektiv sind."
+kocatanapoth_herbs_sale = de \
+   "Nunja, ich habe einige %s%s aus meinem persönlichem Lager für dich. Frisch "
+   "vom Festland."
+kocatanapoth_elderberry_sale = de \
+   "Warum willst du %s%s?  Die sehen nicht sehr effektiv aus."
+kocatanapoth_bluemushroom_sale = de \
+   "Wusstest du, dass %s%s Wunder bewirken, wenn man sie nach einer harten "
+   "Nacht nimmt. Versuch es mal."
+kocatanapoth_redmushroom_sale = de \
+   "Ah, du willst %s%s?  Ich sehe, du weißt, wie man sich amüsiert."

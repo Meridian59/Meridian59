@@ -1,0 +1,8 @@
+room_name_barvault = de "Das Büro des Lagerverwalters von Barloque"
+BarVault_sign_name = de "Willkommen in der Schatzkammer von Barloque"
+BarVault_sign_desc = de \
+   "Um meine treuen Dienste zu nutzen, tippe einfach EINZAHLEN. Daraufhin "
+   "erscheint eine Liste Deines Inventars, und Du kannst Gegenstände auswählen, "
+   "die Du hierlassen möchtest. Um Gegenstände abzuholen, benutze den Befehl "
+   "ABHEBEN.Das alles ist aber nicht umsonst (die Kosten dafür werden automatisch "
+   "von Dir entrichtet), und ich bewahre keine Schillinge auf."

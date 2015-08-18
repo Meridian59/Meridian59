@@ -1,0 +1,55 @@
+flag_name_rsc = de "Flaggenmast"
+flag_desc_rsc = de \
+   "Dieser Flaggenmast ist leer und nicht erobert im Kampf um die "
+   "Gebietsansprüche.  %r"
+flag_duke_desc_rsc = de \
+   "Auf diesem Flaggenmast wehen die königlichen Farben von Herzog Arkadius, "
+   "Beschützer von Tos.  %r"
+flag_princess_desc_rsc = de \
+   "An diesem Flaggenmast wehen die königlichen Farben von Prinzessin Kateriina, "
+   "Hoheit von Barloque.  %r"
+flag_rebel_desc_rsc = de \
+   "Auf diesem Flaggenmast wehen die Farben der Rebellenarmee aus Jasper.  %r"
+flag_append_desc = de \
+   "%s%s erhebt bereits Anspruch auf dieses Gebiet im Namen von %s."
+flag_claim_attempt = de "~I%s%s erhebt Anspruch auf %s%s im Namen %s!"
+flag_claim_plugin_duke = de "Herzog Akardius"
+flag_claim_plugin_princess = de "Prinzessin Kateriina"
+flag_claim_plugin_rebel = de "der Rebellenfraktion"
+flag_claim_plugin_unfactioned = de "die Fraktionslosen"
+flag_claim_attempt_succeeded = de \
+   "~BAlle sollen %s%s preisen! %s%s wurde im Namen %s erobert!"
+flag_claim_attempt_failed_flee = de \
+   "~B%s%s hat feige das Schlachtfeld verlassen! %s%s wurde nicht im Namen "
+   "%s erobert!"
+flag_claim_attempt_failed_killed = de \
+   "~B%s%s hat tapfer %s%s gegen %s%ss verteidigt! Der Eroberungsversuch "
+   "im Namen  %s ist gescheitert!"
+flag_claim_attempt_failed_dropped_flag = de \
+   "~B%s%s hat den Eroberungsversuch von %s%s im Namen %s aufgegeben!"
+flag_claim_attempt_failed_generic = de \
+   "~B%s%s hat versagt! %s%s wurde nicht im Namen %s erobert!"
+flag_claim_attempt_failed_happyland = de \
+   "~B%s%ss Versuch, %s%s im Namen %s zu erobern scheiterte durch einen Mangel "
+   "an politischem Einfluss in diesem Gebiet!"
+flag_failed_yours = de \
+   "Dieses Gebiet wurde bereits im Namen Deiner Fraktion in Besitz genommen."
+flag_failed_not_soldier = de \
+   "%s%s kämpft bereits um dieses Gebiet.soldier of your faction."
+flag_failed_temp_safe = de \
+   "Your guardian angel prevents you from interfering here."
+flag_failed_in_progress = de "%s%s kämpft bereits um dieses Gebiet."
+flag_failed_too_recent = de \
+   "Nach den Gesetzen des Rates ist auf dieses Gebiet zu kurze Zeit zuvor "
+   "Anspruch erhoben worden, um erneut einen Besitzanspruch geltend zu machen."
+flag_failed_not_enough_users = de \
+   "Nach den Gesetzen des Rates sind nicht genügend Leute aktiv, um einen "
+   "legitimen Besitzanspruch über ein Gebiet zu erheben."
+flag_failed_no_flag = de \
+   "Du hast keine Flagge mit Deinen Farben, um sie zu am Mast hochzuziehen!"
+flag_failed_not_enough_allies = de \
+   "Nach dem Gesetz des Rates hast Du nicht genug politische Unterstützung "
+   "in diesem Gebiet, um es rechtmäßig zu erobern."
+flag_failed_no_adjacent = de \
+   "Nach dem Gesetz des Rates kann ein Fraktionsmitglied nur ein Gebiet erobern, "
+   "das an ein bereits von der Fraktion erobertes Gebiet grenzt."

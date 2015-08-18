@@ -25,6 +25,8 @@ constants:
 
 resources:
 
+   include guildh13.lkod
+
    room_name_guildh13 = "The Hall of the Slaughtered Command"
    room_guildh13 = guildh13.roo
 
@@ -149,7 +151,7 @@ messages:
       {
          % Stolen from Holder, since we can't just
          % propagate to GuildHall's version.
-         for i in plActive
+         foreach i in plActive
          {
             each_obj = Send(self,@HolderExtractObject,#data=i);
             if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
@@ -164,7 +166,7 @@ messages:
       }
 
       % Say to people inside or outside the guild hall only.
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)

@@ -1,0 +1,7 @@
+NumberItem_desc_rsc = de "\n\nDu blickst auf %i %s."
+NumberItem_got_one = de \
+   "%s%s werden von Dir gierig in Deinem Rucksack verstaut. %s%s hält aber "
+   "noch genug für alle bereit."
+NumberItem_dispenser_name = de "Das magische Gerät"
+NumberItem_dispenser_desc = de \
+   "Dies ist ein magisches Gerät. Es erschafft kleine Gegenstände."

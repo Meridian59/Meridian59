@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include duke.lkod
+
 
    duke_name_rsc = "Duke Akardius"
    duke_icon_rsc = dukeneph.bgf

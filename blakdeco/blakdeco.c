@@ -503,6 +503,11 @@ char * name_unary_operation(int unary_op)
       case NEGATE : return "-";
       case NONE : return "";
       case BITWISE_NOT : return "~";
+      case PRE_INCREMENT :
+      case POST_INCREMENT : return "++";
+      case PRE_DECREMENT :
+      case POST_DECREMENT : return "--";
+      
       default : return "INVALID";
    }
 }

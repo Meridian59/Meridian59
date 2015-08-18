@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rose.lkod
+
    Rose_icon_rsc = rose.bgf
    rose_name_rsc = "rose"
    rose_desc_rsc = "This is a simple, yet elegant and delicate, rose."

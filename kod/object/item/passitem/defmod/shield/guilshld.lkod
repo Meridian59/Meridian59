@@ -1,0 +1,42 @@
+guildshield_name_rsc = de "Der Gildenschild"
+guildshield_desc_rsc = de \
+   "Heavy metal shields of this style are decorated in the standards of its "
+   "owner guild.  "
+guildshield_herald_guild_master = de \
+   "The pattern on this shield is %s%s%s. Das Wappen der Gilde %q.  %s"
+guildshield_herald_noguild_master = de \
+   "The pattern on this shield is %s%s%s.  %s"
+guildshield_red = de "rot"
+guildshield_skin1 = de "beige"
+guildshield_skin2 = de "bronze"
+guildshield_skin4 = de "ocker"
+guildshield_orange = de "golden"
+guildshield_green = de "grün"
+guildshield_blue = de "blau"
+guildshield_purple = de "lila"
+guildshield_yellow = de "golden"
+guildshield_gray = de "grau"
+guildshield_sky = de "azurblau"
+guildshield_darkgray = de "dunkelgrau"
+guildshield_black = de "schwarz"
+guildshield_darkgreen = de "dunkelgrün"
+guildshield_unknown = de "einfarbig"
+guildshield_slash = de " und versetzt mit "
+guildshield_half = de " geteilt durch "
+guildshield_horiz = de " dreigeteilt durch "
+guildshield_checker = de " gevierteilt durch "
+guildshield_insig_riija = de "Das starre Auge Riijas blickt aus der Mitte. "
+guildshield_insig_qor = de \
+   "Das Schädelabzeichen von Qor befindet sich darüber. "
+guildshield_insig_kraanan = de \
+   "Die Waffen Kraanans sind in der Mitte gekreuzt. "
+guildshield_insig_faren = de "Die Kraft von Faren-Bogen darüber. "
+guildshield_insig_jala = de "Die Laute von Jala ist darauf dargestellt. "
+guildshield_insig_princess = de \
+   "Es ist mit der Königskrone von Kateriina geschmückt. "
+guildshield_insig_old_duke = de "Verziert von Kaliors stolzem Siegel."
+guildshield_insig_duke = de "Verziert von Kaliors stolzem Siegel."
+guildshield_insig_shalille = de \
+   "Das Henkelkreuz von Sha-Lills Segen ist dargestellt. "
+guildshield_insig_rebel = de "Verziert mit Jonas' stolzer Rebellenflagge."
+guildshield_insig_none = de ""

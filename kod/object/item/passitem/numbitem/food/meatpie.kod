@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include meatpie.lkod
+
    meatpie_name_rsc = "meat pie"
    meatpie_icon_rsc = meatpie.bgf
    meatpie_desc_rsc = \

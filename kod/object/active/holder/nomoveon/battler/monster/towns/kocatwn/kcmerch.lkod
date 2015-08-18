@@ -1,0 +1,27 @@
+kocatanTradeMaster_name_rsc = de "Wulfgang zax'Ak"
+kocatanTradeMaster_desc_rsc = de \
+   "Ein bemerkenswerter Mann, der ein hartes Leben hinter sich hat. Wulfgang "
+   "wurde auf dem Festland geboren und ist in einer verfolgten Geheimgesellschaft "
+   "der letzten Riijaschule aufgezogen worden. Außer, daß er irgendwie auf "
+   "diese Insel geflohen ist und hier seinen Handelsposten etabliert hat, "
+   "weiß man wenig über seine Vergangenheit"
+Wolfgang_lute = de \
+   "Eine Laute... eine Laute... ich glaube, ich habe hier irgendwo eine von "
+   "denen...."
+Wolfgang_potion_jala = de \
+   "Ja, ich habe eine von denen. Natürlich habe ich keine Verwendung für "
+   "sie..."
+Wolfgang_entrootberry_sale = de \
+   "Du fragst nach %s%s?  Nimm sie, sie ist nur eine bittere Erinnerung daran, "
+   "was ich zurückgelassen habe."
+Wolfgang_fairywing_sale = de \
+   "Du willst %s%s?  Du kannst sie haben. Ich habe keinen Nutzen mehr dafür."
+Wolfgang_mushroom_sale = de \
+   "Ah, ja.  Du möchtest gerne %s%s kaufen?  Ich kann mich daran erinnern, "
+   "dass ich die als Kind um meine Heimatstadt immer danach gesucht habe."
+Wolfgang_Nerudite_bought = de \
+   "Wunderbar! Dies wird einen feinen Preis bei den Peet- 'äem' holen.Von "
+   "meinen Kunden natürlich."
+Wolfgang_Nerudite_cant_accept_money = de \
+   "Ich würde dir gerne das feine Stück Erz aus der Hand nehmen, aber ich "
+   "fürchte, du trägst zu viel um deine Zahlung an zu nehmen."

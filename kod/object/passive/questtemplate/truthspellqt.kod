@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include truthspellqt.lkod
+
    % Quest description.
    truthspellquest_icon_rsc = idisharm.bgf
    truthspellquest_name_rsc = "Jala pupil quest"
@@ -152,31 +154,31 @@ messages:
                #quest_node_index=QNT_ID_TRUTHPUPIL_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&barloqueVaultman)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&barloqueVaultman)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&GuildCreator)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&GuildCreator)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Barloquetailor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&Barloquetailor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothSergeant)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothSergeant)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueClerk)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueClerk)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

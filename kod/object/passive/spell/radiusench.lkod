@@ -1,0 +1,19 @@
+radius_ench_default_cast = de "Ein magischer Kreis breitet sich vor dir aus."
+radius_ench_default_starts = de "Ein magischer Kreis breitet sich vor %s aus."
+radius_ench_default_ends = de \
+   "Ein magischer Kreis, gezaubert von %s kollabiert."
+radius_ench_default_caster_ends = de "Dein magischer Kreis kollabiert."
+radius_ench_default_caster_enter = de \
+   "Du fühlst, dass dein magischer Kreis eine Wirkung erzielt."
+radius_ench_default_enter = de \
+   "Du begibst dich in einem magischen Kreis, gezaubert von %s."
+radius_ench_default_leave = de \
+   "Du verlässteinem magischen Kreis, gezaubert von %s."
+radius_ench_no_newbie = de \
+   "Dein Schutzengel sagt dir, \"Du bist noch nicht in der Lage Zauber die "
+   "andere Spieler behindern, zu zaubern.\""
+radius_ench_default_already_cast = de "Du zauberst bereits einen Kreiszauber."
+radius_ench_need_instrument = de "Du benötigst ein Instrument!"
+radius_ench_old_style_aleady_cast = de \
+   "Du stehst bereits unter dem Effekt des Zaubers."
+radius_ench_cant_fight_here = de "Du kannst hier nicht kämpfen."

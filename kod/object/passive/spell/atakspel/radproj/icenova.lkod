@@ -1,0 +1,16 @@
+icenova_name_rsc = de "Eisstern"
+icenova_desc_rsc = de \
+   "Call upon the magic of Faren and propel forth a blast of ice, chilling "
+   "and blistering the skin of those around you.  Requires one red and two "
+   "blue mushrooms to cast."
+icenova_first_rsc = de \
+   "You channel the power of Faren and unleash a flurry of ice shards!"
+icenova_third_rsc = de \
+   "%s%s channels the power of Faren and unleashes a flurry of ice shards!"
+icenova_killed_someone = de "The ice shards fatally wound %s%s."
+icenova_cast_rsc = de \
+   "You let out a cry of pain as ice shards pierce your skin, causing ~r~B%i~n "
+   "damage."
+icenova_hit_rsc = de \
+   "%s%s lets out a cry of pain as ice shards pierce %s skin for ~k~B%i~n "
+   "damage."

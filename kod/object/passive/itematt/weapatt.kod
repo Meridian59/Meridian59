@@ -35,6 +35,8 @@ constants:
 
 resources:
 
+   include weapatt.lkod
+
    weapatt_slight = "a slight"
    weapatt_small = "a small"
    weapatt_swift = "a swift"
@@ -48,7 +50,8 @@ resources:
 
 classvars:
 
-   vrDesc2 = $
+   % If TRUE, add the weaponatt power to description.
+   vbPowerDesc = FALSE
    viDamage_bonus = 0
 
 properties:
@@ -250,21 +253,20 @@ messages:
    AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iPower;
-      if vrDesc2 <> $
-      {
-         AppendTempString(vrDesc);
 
+      if vbPowerDesc
+      {
          if lData = $
          {
             iPower = iFakePower;
          }
          else
          {
-            iPower=Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+            iPower = Send(self,@TranslatePowerFromCompound,
+                           #iCompound=First(lData));
          }
 
-         AppendTempString(Send(self,@GetPowerDesc,#iPower = iPower));
-         AppendTempString(vrDesc2);
+         AddPacket(4,vrDesc, 4,Send(self,@GetPowerDesc,#iPower=iPower));
 
          return;
       }

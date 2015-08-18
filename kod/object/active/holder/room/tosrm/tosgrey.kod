@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include tosgrey.lkod
+
    room_tosgrey = tosgrey.roo
    room_name_tosgrey = "Abandoned Building"
    tosgrey_music = tos.mp3

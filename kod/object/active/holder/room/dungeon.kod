@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include dungeon.lkod
+
    room_dungeon = greeny.roo
    room_name_dungeon = "Underbasement of Victoria"
    dungeon_music = cave.mp3

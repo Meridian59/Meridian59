@@ -320,6 +320,7 @@ BEGIN
     13                      "Ausdauer"
     14                      "Lächeln"
     15                      "Grimmig"
+    245                     "zaubern "
 END
 
 STRINGTABLE 
@@ -448,6 +449,11 @@ BEGIN
     IDS_MENU_SAD            "T&raurig"
     IDS_MENU_NEUTRAL        "&Neutral"
     IDS_MENU_WRY            "Gri&mmig"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LANGUAGE_MENU       "&Sprache"
 END
 
 #endif    // German (Neutral) resources
@@ -990,6 +996,7 @@ BEGIN
     IDS_TOUGHER             "Tougher Chance"
     IDS_TBSMILE             "Smile"
     IDS_TBFROWN             "Frown"
+    IDS_DOCAST              "cast "
 END
 
 STRINGTABLE 
@@ -1119,6 +1126,11 @@ BEGIN
     IDS_MENU_SAD            "&Sad"
     IDS_MENU_NEUTRAL        "&Neutral"
     IDS_MENU_WRY            "W&ry"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LANGUAGE_MENU       "&Language"
 END
 
 #endif    // English (U.S.) resources

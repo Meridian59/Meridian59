@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include easttos.lkod
+
    room_EastTos = toseast.roo
    name_EastTos = "East Ende"
 

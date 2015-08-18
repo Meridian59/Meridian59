@@ -39,6 +39,8 @@ constants:
 
 resources:
 
+   include radiusench.lkod
+
    radius_ench_default_cast = "A circle of magic expands outward from you."
    radius_ench_default_starts = "A circle of magic expands outward from %s."
    radius_ench_default_ends = "The circle of magic maintained by %s collapses."
@@ -147,7 +149,7 @@ messages:
 
       if piOldAreaEnchStyle
       {
-         for i in plCurrentEnchantments
+         foreach i in plCurrentEnchantments
          {
             if Nth(i,8) = oRoom
             {
@@ -162,7 +164,7 @@ messages:
       }
       else
       {
-         for i in plCurrentEnchantments
+         foreach i in plCurrentEnchantments
          {
             if Nth(i,1) = who
             {
@@ -196,7 +198,7 @@ messages:
          propagate;
       }
 
-      for oObj in Send(oRoom,@GetPlActive)
+      foreach oObj in Send(oRoom,@GetPlActive)
       {
          oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
 
@@ -279,7 +281,7 @@ messages:
          ptRecalculationTimer = $;
       }
 
-      for i in plCurrentEnchantments
+      foreach i in plCurrentEnchantments
       {
          source = Nth(i,1);
          iDrain = Nth(i,2);
@@ -305,7 +307,7 @@ messages:
          }
 
          % Check for active objects that have entered the radius of effect
-         for oActive in Send(oRoom,@GetPlActive)
+         foreach oActive in Send(oRoom,@GetPlActive)
          {
             oObject = Send(oRoom,@HolderExtractObject,#data=oActive);
 
@@ -326,7 +328,7 @@ messages:
          % Check for passive objects that have entered the radius of effect
          if viAffectsItems
          {
-            for oPassive in Send(oRoom,@GetPlPassive)
+            foreach oPassive in Send(oRoom,@GetPlPassive)
             {
                oObject = Send(oRoom,@HolderExtractObject,#data=oPassive);
 
@@ -346,7 +348,7 @@ messages:
          }
 
          % Check for objects that have left the radius of effect
-         for oObject in lEnchanted
+         foreach oObject in lEnchanted
          {
             iDistance = Send(source,@SquaredDistanceTo,#what=oObject);
             if ((iDistance = $
@@ -678,7 +680,7 @@ messages:
    {
       local i, n, oUser, oObj, iDrain, iPeriodic, lEnchanted, iPower, iRange, oRoom;
 
-      for i in plCurrentEnchantments
+      foreach i in plCurrentEnchantments
       {
          if Nth(i,1) = source
          {
@@ -689,7 +691,7 @@ messages:
             iPower = Nth(i,5);
             iRange = Nth(i,6);
 
-            for oObj in lEnchanted
+            foreach oObj in lEnchanted
             {
                Send(self,@LeaveRadius,#what=oObj,#iPower=iPower,#source=source);
             }
@@ -706,7 +708,7 @@ messages:
             if oRoom <> $
                AND IsClass(oRoom,&Room)
             {
-               for n in Send(oRoom,@GetPlActive)
+               foreach n in Send(oRoom,@GetPlActive)
                {
                   oUser = Send(oRoom,@HolderExtractObject,#data=n);
                   

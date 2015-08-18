@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jsmerch.lkod
+
    jaspermerchant_name_rsc = "Zhieu B'hob"
    jaspermerchant_icon_rsc = jsmerch.bgf
    jaspermerchant_desc_rsc = \

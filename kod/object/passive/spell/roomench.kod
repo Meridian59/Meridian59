@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include roomench.lkod
+
    RoomEnchantment_name_rsc = "room enchantment"
    RoomEnchantment_icon_rsc = iheat.bgf
    RoomEnchantment_desc_rsc = \
@@ -61,28 +63,21 @@ messages:
 
    EffectDesc(who=$)
    {
-      return;
+      propagate;
    }
 
-   CreateStatsDesc(who=$)
+   SendStatsDesc(who=$)
    {
-      ClearTempString();
-      
       if who <> $
          AND IsClass(who,&User)
          AND Send(Send(who,@GetOwner),@IsEnchanted,#what=self)
       {
          Send(self,@EffectDesc,#who=who);
-      }
-      
-      return;
-   }
-   
-   GetStatsDesc(who=$)
-   {
-      Send(self,@CreateStatsDesc,#who=who);      
 
-      return GetTempString();
+         return;
+      }
+
+      propagate;
    }
 
 end

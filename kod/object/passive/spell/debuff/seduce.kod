@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include seduce.lkod
+
    seduce_name_rsc = "seduce"
    seduce_icon_rsc = iseduce.bgf
    seduce_desc_rsc = \

@@ -1,0 +1,11 @@
+Wand_name_rsc = de "Zauberstab"
+Wand_label_name_rsc = de "allgemeiner Zauberstab"
+Wand_desc_rsc = de "Magische Energien umströmen diesen dünnen Stab."
+Wand_broken = de "%s%s zerbricht in Stücke!"
+Wand_useless = de \
+   "Der Stab hat seine magische Energie verbraucht und ist jetzt verkohlt "
+   "und nutzlos."
+Wand_target_gone = de \
+   "Du zielst mit Deinem Zauberstab sorgfältig auf %s%s, aber plötzlich merkst "
+   "Du, dass Dein Ziel verschwunden ist."
+Wand_fails = de "Du deutest mit Deinen Zauberstab aber nichts passiert. "

@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include torch.lkod
+
    torch_name_rsc = "torch"
    torch_icon_rsc = torch.bgf
    torch_desc_rsc = \
@@ -117,7 +119,7 @@ messages:
       }
       
       oUsing = Send(poOwner,@GetPlayerUsing);
-      for i in oUsing
+      foreach i in oUsing
       {
          if IsClass(i,&weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
          {

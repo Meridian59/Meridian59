@@ -23,6 +23,8 @@ constants:
 
 resources:
 
+   include bramble.lkod
+
    brambles_name_rsc = "patch of bramble"
    brambles_icon_rsc = wothorns.bgf
    brambles_desc_rsc = "The patch of bramble looms dangerously, "

@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include cateringqt.lkod
+
    % Quest description.
    cateringqt_icon_rsc = drumspla.bgf
    cateringqt_name_rsc = "catering quest"
@@ -139,31 +141,31 @@ messages:
                #quest_node_index=QNT_ID_CATERING_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ThreeCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ThreeCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FourCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FourCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -182,7 +184,7 @@ messages:
                #timelimit=3600,#quest_node_index=QNT_ID_CATERING_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_INNKEEPER)
+         foreach oNPC in Send(oLib,@GetOccupationList,#iJob=MOB_ROLE_INNKEEPER)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -224,31 +226,31 @@ messages:
             #timelimit=3600,#quest_node_index=QNT_ID_CATERING_THREE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&PrincessLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&OneCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TwoCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ThreeCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&ThreeCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&fourCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&fourCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&FiveCouncilor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

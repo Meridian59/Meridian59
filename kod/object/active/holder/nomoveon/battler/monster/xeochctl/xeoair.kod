@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include xeoair.lkod
+
    XeoAir_name_rsc = "ve'xeochicatl"
    XeoAir_koc_name_rsc = "ve'xeo'chicatl"
    XeoAir_icon_rsc = Xeo.bgf

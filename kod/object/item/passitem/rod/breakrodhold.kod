@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include breakrodhold.lkod
+
    BreakRodHold_name_rsc = "rod of movement"
    BreakRodHold_icon_rsc = wand5.bgf
    BreakRodHold_desc_rsc = \

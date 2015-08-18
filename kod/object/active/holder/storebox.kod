@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include storebox.lkod
+
    storagebox_name_rsc = "some storage"
    storagebox_icon_rsc = box1.bgf
 

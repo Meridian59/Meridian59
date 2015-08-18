@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include wand.lkod
+
    Wand_name_rsc = "wand"
    Wand_label_name_rsc = "generic wand"
    Wand_icon_rsc = wand6.bgf
@@ -24,7 +26,10 @@ resources:
    Wand_useless = \
       "The wand has spent its magical energy and is now charred and useless."
    Wand_desc_broken_rsc = "The once pristine wand is now a blackened mess."
-
+   wand_append_hits = "\n\nThis wand coruscates with the energies of %i %s."
+   wand_hits_plural = "charges"
+   wand_hits_singular = "charge"
+   wand_append_spellpower = "  The magical force within averages %i spellpower."
    Wand_target_gone = \
       "You carefully aim your wand at %s%s, but you suddenly "
       "realize your target is gone."
@@ -35,16 +40,17 @@ classvars:
    vrLabelName = Wand_label_name_rsc
    vrIcon = Wand_icon_rsc
    vrBroken =    Wand_broken
+   vrDescHits = wand_append_hits
+   vrDescHitsSingular = wand_hits_singular
+   vrDescHitsPlural = wand_hits_plural
+   vrDescSpellpower = wand_append_spellpower
    vrFails = Wand_fails
    viSpellEffect = SID_FIREBALL
    viColor = XLAT_TO_RED
    viItem_Type = ITEMTYPE_WAND
-
    viGround_group = 2
    viInventory_group = 1
-
    vbNoBrokenView = TRUE
-
    viHits_init_min = 4
    viHits_init_max = 9
 
@@ -52,7 +58,6 @@ properties:
 
    vrName = Wand_name_rsc
    vrDesc = Wand_desc_rsc
-
    viObject_flags = OF_APPLYABLE | OF_GETTABLE
 
    % Set to negative so it doesn't expire naturally.
@@ -85,31 +90,6 @@ messages:
             #parm2=Send(First(lTargets),@GetName));
 
       return;
-   }
-
-   AppendDesc()
-   {
-      if piSpellPower <> $
-         AND piHits <> 0
-      {
-         AppendTempString("\n\nThis wand coruscates with the energies of ");
-         AppendTempString(piHits);
-
-         if piHits > 1
-         {
-            AppendTempString(" charges");
-         }
-         else
-         {
-            AppendTempString(" charge");
-         }
-
-         AppendTempString(". The magical force within averages ");
-         AppendTempString(piSpellPower);
-         AppendTempString(" power.");
-      }
-
-      propagate;
    }
 
 end

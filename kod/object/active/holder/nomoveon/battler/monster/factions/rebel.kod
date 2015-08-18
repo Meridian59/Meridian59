@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rebel.lkod
+
    RebelLiege_name_rsc = "Jonas D'Accor"
    RebelLiege_icon_rsc = wngenera.bgf
    RebelLiege_desc_rsc = \

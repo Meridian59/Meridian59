@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include loveletteroneqt.lkod
+
    % Quest description.
    loveletteronequest_name_rsc = "love letter quest"
    loveletteronequest_desc_rsc = \
@@ -93,19 +95,19 @@ messages:
                #quest_node_index=QNT_ID_LOVE_LETTERONE_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&GuildCreator)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&GuildCreator)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&RebelLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -141,7 +143,7 @@ messages:
                #timelimit=6 * 3600,#quest_node_index=QNT_ID_LOVE_LETTERONE_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTailor)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueTailor)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

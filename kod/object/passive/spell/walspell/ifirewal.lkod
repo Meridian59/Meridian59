@@ -1,0 +1,9 @@
+IllusionaryFireWall_name_rsc = de "illusionary firewall"
+IllusionaryFireWall_desc_rsc = de \
+   "Creates an illusionary wall of fire.  This wall will cause illusionary "
+   "wounds, which are never lethal, to victims walking through it.  Requires "
+   "rainbow ferns and firesand to cast."
+IllusionaryFireWall_cast_rsc = de \
+   "An illusionary wall of fire appears before you!"
+IllusionaryFireWall_failed_rsc = de \
+   "There is too much summoning magic focused here to create a wall of fire."

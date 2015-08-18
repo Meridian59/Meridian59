@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include kcshopk.lkod
+
    kocatanShopkeeper_name_rsc = "Pacal ix'Anoak"
    kocatanShopkeeper_icon_rsc = kcshopk.bgf
    kocatanShopkeeper_desc_rsc =  \
@@ -153,7 +155,7 @@ messages:
       oJunk = Create(&Junk);
       bAdd = (length(lForSale) < MAX_FORSALE);
 
-      for i in lForSale
+      foreach i in lForSale
       {
          if bAdd AND Send(i,@GetName) = Send(oJunk,@GetName)
          {
@@ -225,7 +227,7 @@ messages:
          return FALSE;
       }
 
-      for i in first(plFor_Sale)
+      foreach i in first(plFor_Sale)
       {
          if GetClass(i) = GetClass(what)
          {
@@ -263,23 +265,23 @@ messages:
 
       % Set the stuff where the user can get to it
       oHolder = Send(SYS,@GetSystemHolder2);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
       }
 
       % Take stuff the user put there.
       oHolder = Send(SYS,@GetSystemHolder1);
-      for lTake_items in [ Send(oHolder,@GetHolderActive),
+      foreach lTake_items in [ Send(oHolder,@GetHolderActive),
                            Send(oHolder,@GetHolderPassive) ]
       {
-         for i in lTake_items
+         foreach i in lTake_items
          {
             Send(self,@NewHold,#what=i);
             if IsClass(i,&NumberItem)
             {
                bHadSomeNum = FALSE;
-               for j in lForSale
+               foreach j in lForSale
                {
                   if GetClass(j) = GetClass(i)
                   {

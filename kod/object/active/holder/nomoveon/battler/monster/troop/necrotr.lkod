@@ -1,0 +1,7 @@
+NecromancerTroop_name_rsc = de "Ein Nekromant"
+NecromancerTroop_desc_rsc = de \
+   "Versteinert unter dem unheimlichen Blick dieses widerlichen Wesens, flattert "
+   "Dein Verstand ängstlich um die dunklen Rituale, die es in das transformiert "
+   "haben, was es jetzt ist. In der Tat ist der Nekromant ein lebloser Beweis "
+   "für den schrecklichen Preis der magischen Kraft."
+NecromancerTroop_dead_name_rsc = de "Ein toter Nekromant"

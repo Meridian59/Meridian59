@@ -21,6 +21,7 @@
     <ClInclude Include="guild.h" />
     <ClInclude Include="guildinv.h" />
     <ClInclude Include="inventry.h" />
+    <ClInclude Include="language.h" />
     <ClInclude Include="merintr.h" />
     <ClInclude Include="merintrc.h" />
     <ClInclude Include="mermain.h" />
@@ -54,6 +55,7 @@
     <ClCompile Include="guildmtr.c" />
     <ClCompile Include="guildshi.c" />
     <ClCompile Include="inventry.c" />
+    <ClCompile Include="language.c" />
     <ClCompile Include="merintr.c" />
     <ClCompile Include="mermain.c" />
     <ClCompile Include="skills.c" />

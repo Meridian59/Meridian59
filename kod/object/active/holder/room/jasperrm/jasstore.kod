@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jasstore.lkod
+
    room_jasperStore = jasstore.roo
    room_name_JasperStore = "General Store of Jasper"
 

@@ -1,0 +1,16 @@
+Potion_name_rsc = de "Trank"
+Potion_label_name_rsc = de "allgemeiner Trank"
+Potion_desc_rsc = de "Dies ist eine Glasphiole mit einer farbigen Flüssigkeit."
+Potion_bad_desc_rsc = de \
+   "Dies ist eine Glasphiole mit einer leicht trüben Flüssigkeit. Nur ein "
+   "Hauch davon genügt, um Dir den Magen umzudrehen."
+Potion_broken = de \
+   "Du stürzt den Inhalt der Phiole in einem einzigen Zug herunter."
+Potion_bad_drink = de \
+   "Du stürzt den faulig schmeckenden Inhalt der Phiole herunter bemerkst "
+   "fast umgehend, dass das eine ziemlich schlechte Idee war. Mit der Zeit "
+   "ist er sauer geworden."
+Potion_sell_info = de \
+   "Nimm diesen Trank bald, Schätzchen, denn er wird schnell schlecht."
+Potion_has_karma_requirement = de \
+   "\n\nDein Karma ist nicht geeignet für diesen Trank."

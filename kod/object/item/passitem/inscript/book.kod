@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include book.lkod
+
    book_name_rsc = "book"
    book_icon_rsc = book1.bgf
    book_desc_rsc = \
@@ -88,7 +90,7 @@ messages:
 
       % Any other combo and we remove the book.
       iUsing = 0;
-      for i in Send(poOwner,@GetPlayerUsing)
+      foreach i in Send(poOwner,@GetPlayerUsing)
       {
          if Send(i,@GetItemUseType) = ITEM_USE_HAND
          {

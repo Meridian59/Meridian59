@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include h9.lkod
+
    room_OutdoorsH9 = H9.roo
    room_name_OutdoorsH9 ="Under the shadow of the Sentinel"
    OutdoorsH9_music = walk4.mp3
@@ -103,7 +105,7 @@ messages:
       Send(self,@SetSector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
             #height = 350,#speed = 8);
 
-      for i in plYell_zone
+      foreach i in plYell_zone
       {
          if i = RID_TEMPLE_QOR
          {

@@ -1,0 +1,13 @@
+ResistPoison_name_rsc = de "Gift widerstehen"
+ResistPoison_desc_rsc = de \
+   "Stabilisiert Dein Immunsystem und schützt Dich vor einigen Giftstoffen. "
+   "Man benötigt Kräuter und Rote Pilze."
+ResistPoison_on_rsc = de \
+   "Dein Körper kribbelt für einen Moment, und du fühlst dich ein wenig seltsam."
+ResistPoison_off_rsc = de "Dein seltsames Gefühl verlässt dich wieder."
+ResistPoison_already_enchanted_rsc = de "Du widerstehst Gift bereits."
+ResistPoison_success_rsc = de \
+   "Deine magische Kraft lässt %s%s gegen Gift widerstehen."
+rpoison_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber beschützt dich vor Gift für eine Dauer "
+   "von %i%%."

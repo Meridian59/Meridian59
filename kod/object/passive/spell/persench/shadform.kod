@@ -16,13 +16,17 @@ constants:
 
 resources:
 
+   include shadform.lkod
+
    shadowform_name_rsc = "shadow form"
    shadowform_icon_rsc = ishadfrm.bgf
    shadowform_desc_rsc = \
      "Transforms the target into a silhouette of their former self, "
      "perfect for skulking in darker locales and making them more difficult "
      "to hit.  Requires three rainbow ferns to cast."
-
+   shadowform_enchantment_rsc = \
+      "\n\nYour current %s enchantments adds %i defense against monsters "
+      "here.  Against a player of average light level, it will add %i defense."
    shadowform_already_enchanted = \
       "You already have shadow form."
    shadowform_already_affected = \
@@ -162,23 +166,17 @@ messages:
    {
       local iShadowBonusMonster, iShadowBonusPlayer, iLight;
 
-      iLight = send(send(who,@GetOwner),@GetRoomLight);
+      iLight = Send(Send(who,@GetOwner),@GetRoomLight);
       iShadowBonusMonster = 30 + (LIGHT_NICE - iLight);
-      iShadowBonusMonster = bound(iShadowBonusMonster,10,150);
+      iShadowBonusMonster = Bound(iShadowBonusMonster,10,150);
 
       iShadowBonusPlayer = 30 + (LIGHT_NICE - (iLight + 5));
-      iShadowBonusPlayer = bound(iShadowBonusPlayer,10,150);
+      iShadowBonusPlayer = Bound(iShadowBonusPlayer,10,150);
 
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(iShadowBonusMonster);
-      AppendTempString(" defense against monsters here. Against a player of average light level, it will add ");
-      AppendTempString(iShadowBonusPlayer);
-      AppendTempString(" defense.");
+      AddPacket(4,shadowform_enchantment_rsc, 4,Send(self,@GetName),
+                4,iShadowBonusMonster, 4,iShadowBonusPlayer);
 
-      propagate;
+      return;
    }
 
 end

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include stew.lkod
+
    Stew_name_rsc = "bowl of stew"
    stew_icon_rsc = soupbowl.bgf
    stew_desc_rsc = \

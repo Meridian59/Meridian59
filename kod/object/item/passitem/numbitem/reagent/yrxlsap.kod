@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include yrxlsap.lkod
+
    Yrxlsap_name_rsc = "yrxl sap"
    Yrxlsap_icon_rsc = yrxlsap.bgf
    Yrxlsap_desc_rsc = \

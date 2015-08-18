@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include battler.lkod
+
    % KNOWN BUG: placing a comment on the same line as a resource definition
    %  will comment out the next line.
 
@@ -208,7 +210,7 @@ messages:
       % just need to let them know they're to be deleted.
       if plControlledMinions <> $
       {
-         for i in plControlledMinions
+         foreach i in plControlledMinions
          {
             if IsClass(i,&Monster)
                AND NOT IsClass(i,&Reflection)
@@ -222,7 +224,7 @@ messages:
       % If this Battler has created any evil twins, delete them.
       if plEvilTwins <> $
       {
-         for i in plEvilTwins
+         foreach i in plEvilTwins
          {
             Send(i,@Delete);
          }
@@ -232,7 +234,7 @@ messages:
       % If this Battler has Apparitions attacking it, delete them.
       if plApparitionList <> $
       {
-         for i in plApparitionList
+         foreach i in plApparitionList
          {
             Send(i,@Delete);
          }
@@ -283,19 +285,19 @@ messages:
       
       plCurrentResistances = Send(SYS,@ListCopy,#source=Send(self,@GetBaseResistances));
       
-      for oObjectAttribute in plObject_attributes
+      foreach oObjectAttribute in plObject_attributes
       {
          plCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=plCurrentResistances);
       }
       
-      for oEquipment in Send(self,@GetEquippedItems)
+      foreach oEquipment in Send(self,@GetEquippedItems)
       {
          plCurrentResistances = Send(oEquipment,@ModifyResistance,#resistance_list=plCurrentResistances);
       }
       
       If IsClass(self,&User)
       {
-         for oEnchantment in Send(self,@GetEnchantmentList)
+         foreach oEnchantment in Send(self,@GetEnchantmentList)
          {
             if Length(oEnchantment) > ENCHANTMENT_LIST_NO_STATE
             {
@@ -328,7 +330,7 @@ messages:
       
       resistance_list = Send(self,@GetCurrentResistances);
 
-      for j in resistance_list
+      foreach j in resistance_list
       {
          iResType = Nth(j,1);
          if iResType > 0   
@@ -407,7 +409,7 @@ messages:
 
       if what = $
       {
-         for i in plEnchantments
+         foreach i in plEnchantments
          {
             if IsClass(Nth(i,2),byClass)
             {
@@ -417,7 +419,7 @@ messages:
       }
       else
       {
-         for i in plEnchantments
+         foreach i in plEnchantments
          {
             if Nth(i,2) = what
             {
@@ -439,7 +441,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
             AND Length(i) > 2
@@ -457,7 +459,7 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
             AND Length(i) > ENCHANTMENT_LIST_NO_STATE
@@ -475,7 +477,7 @@ messages:
       local i, returnList;
       returnList = $;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if IsClass(Nth(i,2),enchClass)
          {
@@ -498,7 +500,7 @@ messages:
    {
       local i, iCastPower;
 
-      for i in plEnchantments
+      foreach i in plEnchantments
       {
          if Nth(i,2) = what
          {
@@ -1302,7 +1304,8 @@ messages:
          }
 
 
-         if IsClass(what,&Player) AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         if IsClass(what,&Player)
+            AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          {
             rColor = battler_plain_text;
          }
@@ -1316,31 +1319,29 @@ messages:
             if damage = $
             {
                Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
-               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+                     #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                     #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+            }
+            else if damage > 99
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                     #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                     #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                     #parm6=damage/100,#parm7=rColor);
             }
             else
             {
-               if damage > 99
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-                  #parm6=damage/100,#parm7=rColor);
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battler_attacker_fail,
-                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
-               }
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_fail,
+                     #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                     #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
             }
          }
       }
 
       if IsClass(what,&Player)
       {
-         if IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         if IsClass(self,&Player)
+            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
          {
             rColor = battler_plain_text;
          }
@@ -1348,30 +1349,27 @@ messages:
          {
             rColor = battler_blue_text;
          }
-      
+
          if damage = $
-         {   
+         {
             Send(what,@MsgSendUser,#message_rsc=battler_defender_slay,
-              #parm1=rColor,#parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),#parm4=rWeaponName,
-              #parm5=rDamageDesc);
+                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                  #parm5=rDamageDesc);
+         }
+         else if damage > 99
+         {
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                  #parm5=rDamageDesc,#parm6=damage/100,#parm7=rColor);
          }
          else
          {
-            if damage > 99
-            {
-               Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
-                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
-                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
-                 #parm5=rDamageDesc,#parm6=damage/100,#parm7=rColor);
-            }
-            else
-            {
-               Send(what,@MsgSendUser,#message_rsc=battler_defender_fail,
-                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
-                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
-                 #parm5=rDamageDesc);
-            }
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_fail,
+                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                  #parm5=rDamageDesc);
          }
       }
 
@@ -1408,7 +1406,8 @@ messages:
 
       if IsClass(what,&Player)
       {
-         if IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         if IsClass(self,&Player)
+            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
          {
             rColor = battler_plain_text;
          }
@@ -1418,12 +1417,11 @@ messages:
          }
       
          Send(what,@MsgSendUser,#message_rsc=battler_defender_miss,
-              #parm1=rColor,
-              #parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),
-              #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
+               #parm1=rColor,#parm2=Send(self,@GetCapDef),
+               #parm3=Send(self,@GetName),
+               #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
          % Flag them as "dodging", so they can potentially improve.
-         Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
+         Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);
       }
 
       return;
@@ -1467,7 +1465,7 @@ messages:
    {
       local oResist;
       
-      for oResist in Send(self,@GetCurrentResistances)
+      foreach oResist in Send(self,@GetCurrentResistances)
       {
          if Nth(oResist,1) = type
          {
@@ -1519,7 +1517,7 @@ messages:
 
       iMinionCount = 0;
 
-      for i in plControlledMinions
+      foreach i in plControlledMinions
       {
          if NOT IsClass(i,&Reflection)
          {
@@ -1536,7 +1534,7 @@ messages:
 
       if Length(plControlledMinions) > 0
       {
-         for i in plControlledMinions
+         foreach i in plControlledMinions
          {
             if Send(i,@GetMaster) <> self
             {
@@ -1652,7 +1650,7 @@ messages:
    {
       local i;
 
-      for i in plApparitionList
+      foreach i in plApparitionList
       {
          if i = what
          {

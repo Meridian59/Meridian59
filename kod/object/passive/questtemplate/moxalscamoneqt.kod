@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include moxalscamoneqt.lkod
+
    % Quest description.
    moxalscamonequest_name_rsc = "Moxal's get rich quick quest"
    moxalscamonequest_desc_rsc = \
@@ -130,7 +132,7 @@ messages:
                #quest_node_index=QNT_ID_MOXAL_SCAMONE_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -164,7 +166,7 @@ messages:
                #timelimit=4 * 3600,#quest_node_index=QNT_ID_MOXAL_SCAMONE_THREE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&KocatanTown)
          {
             if NOT IsClass(oNPC,&KocatanBonePriestess)
                AND NOT IsClass(oNPC,&KocatanSentry)

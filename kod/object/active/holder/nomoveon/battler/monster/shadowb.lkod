@@ -1,0 +1,9 @@
+Shadowbeast_koc_name_rsc = de "teotkriipa"
+Shadowbeast_name_rsc = de "Die Schattenbestie"
+Shadowbeast_desc_rsc = de \
+   "Ein widerlicher Zauber stellt eine Mischung aus einem Wald-Kriipa und "
+   "einem quasi-stofflichen Wesen aus der Unterwelt her. Die restliche Qor-Magie "
+   "scheint die Luft dunkler zu machen, wenn dieses faulige Biest in der "
+   "Nähe ist. Obwohl sie vornehmlich Höhlenorks jagt, soll die Schattenbestie "
+   "auch gelegentlich Menschen töten."
+Shadowbeast_dead_name_rsc = de "tote Schattenbestie"

@@ -1,0 +1,13 @@
+RoomKeyCopy_name_rsc = de "Ein silberner Zimmerschlüssel"
+RoomKeyCopy_desc_rsc = de \
+   "Dieser silberne Schlüssel trägt die Inschrift:\n%q's Zimmer in der %s."
+RoomKeyCopy_vanishes = de \
+   "Dein silberner Zimmerschlüssel schmilzt zu einer seltsam silbrigen Flüssigkeit, "
+   "und verdampft wenig später in einer blauen Dunstwolke."
+RoomKeyCopy_teleport = de \
+   "Als Du den Schlüssel ins Schlüsselloch steckst, umgibt Dich ein helles "
+   "weißes Licht und Du befindest Dich plötzlich woanders."
+RoomKeyCopy_no_use = de \
+   "Es scheint nichts in der Nähe zu sein, um den Schlüssel zu benutzen."
+RoomKeyCopy_no_drop_room = de "Du kannst Deinen Schlüssel hier nicht ablegen. "
+RoomKeyCopy_no_token = de "Du hast keinen Token um die Tür zu öffnen."

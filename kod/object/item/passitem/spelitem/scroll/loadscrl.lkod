@@ -1,0 +1,6 @@
+LoadoutScroll_label_name_rsc = de "scroll of loadout"
+LoadoutScroll_desc_rsc = de \
+   "This scroll will activate your link with your guildhall chests, magically "
+   "acquiring gear according to your preferences registered with Frular's "
+   "office. The magic will only function in a safe environment, and then "
+   "only for guild members rank two or above."

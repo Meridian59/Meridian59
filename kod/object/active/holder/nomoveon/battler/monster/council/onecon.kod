@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include onecon.lkod
+
    oneCouncilor_name_rsc = "Alzahakar"
    oneCouncilor_icon_rsc = onecon.bgf
    oneCouncilor_desc_rsc = \
@@ -160,7 +162,7 @@ messages:
 
       bOkay = FALSE;
       lSpells = Send(who,@GetSpellList);
-      for i in lSpells
+      foreach i in lSpells
       {
          oSpell = Send(SYS,@FindSpellByNum,
                         #num=Send(who,@DecodeSpellNum,#compound=i));

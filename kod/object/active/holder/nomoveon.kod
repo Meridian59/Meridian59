@@ -188,7 +188,7 @@ messages:
    {
       local i;
       
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
@@ -218,7 +218,7 @@ messages:
    {
       local i;
 
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if Nth(i,1) = what
             AND Nth(i,2) = iPower
@@ -254,7 +254,7 @@ messages:
 
       if what = $
       {
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             if IsClass(Nth(i,1),byClass)
             {
@@ -274,7 +274,7 @@ messages:
       }
       else
       {
-         for i in plRadiusEnchantments
+         foreach i in plRadiusEnchantments
          {
             if Nth(i,1) = what
             {
@@ -302,7 +302,7 @@ messages:
    
       oHighest = $;
    
-      for i in plRadiusEnchantments
+      foreach i in plRadiusEnchantments
       {
          if IsClass(Nth(i,1), byClass)
          {

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include deadlich.lkod
+
    DeadLich_name_rsc = "ghostly remains of Queen Venya'cyr"
    DeadLich_icon_rsc = lichax.bgf
    DeadLich_desc_rsc = \

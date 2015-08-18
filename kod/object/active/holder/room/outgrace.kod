@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include outgrace.lkod
+
    room_outofgrace = outgrace.roo
    room_name_outofgrace = "Out of Grace with the Higher Powers"
 
@@ -92,7 +94,7 @@ messages:
 
        if type = SAY_GROUP or type = SAY_GROUP_ONE
        {
-          for i in users
+          foreach i in users
           {
              if not isClass(i,&DM)
              {
@@ -119,6 +121,11 @@ messages:
    CanTokenEnterRoom()
    {
       return FALSE;
+   }
+
+   GetRegion()
+   {
+      return RID_OUTOFGRACE;
    }
 
 end

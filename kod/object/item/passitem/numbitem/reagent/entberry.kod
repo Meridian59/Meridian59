@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include entberry.lkod
+
    entrootberry_name_rsc = "entroot berry"
    entrootberry_icon_rsc = darkber.bgf
    entrootberry_desc_rsc = \

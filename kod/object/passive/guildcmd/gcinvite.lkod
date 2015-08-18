@@ -1,0 +1,20 @@
+guildInvite_name_rsc = de "Einladen"
+guildinvite_desc_text_rsc = de \
+   "Wird verwendet, um potentielle Mitglieder der Gilde einzuladen. Eingeladene "
+   "Person hat 1 Minute um die Einladung anzunehmen."
+guildinvite_already_your_guild = de \
+   "Diese Person gehört bereits zu deiner Gilde."
+invite_cant_invite_self = de \
+   "Du kannst dich nicht selber zu deiner eigenen Gilde einladen!"
+invite_non_user = de "%s%s lehnt respektvoll dein verlockendes Angebot ab."
+guildinvitation_to_inductor = de \
+   "~BDu verlängerst die %s%q die Möglichkeit %s%q beizutreten."
+guildinvitation_to_inductee = de \
+   "~B%s%s verlängert die Möglichkeit der Gilde %s%q beizutreten!"
+guildinvitation_guild_full = de \
+   "%s%q's Ränge sind voll und werden keine weiteren Mitglieder aufnehmen."
+guildinvitation_cannot_rejoin = de \
+   "~BDieser Spieler kann derzeit der Gilde nicht wieder beitreten.."
+guildinvitation_necro_no_amulet = de \
+   "~BNur ein Nekromant kann dieser Gilde beitreten!  Dieser Spieler ist "
+   "nur für den Verbrauch gut."

@@ -1,0 +1,6 @@
+room_name_guildh15 = de "Das Allerheiligste von Königin Venya'cyr"
+Guildh15_lever_desc = de \
+   "Dieser Hebel hat ein archaisches Aussehen, scheint aber in gutem Zustand "
+   "zu sein. Du fragst Dich natürlich, was er bewirkt."
+guildh15_guildwarning = de \
+   "Dein Amulett vibriert für einen Moment sehr stark. Irgendetwas fehlt."

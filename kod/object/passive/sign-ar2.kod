@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include sign-ar2.lkod
+
    newarenasign_name_rsc = "Kraanan's Pride"
    newarenasign_icon1_rsc = artrop01.bgf
    newarenasign_icon2_rsc = artrop02.bgf
@@ -103,7 +105,7 @@ messages:
       Addpacket(4,send(oWatcher,@getcombatname,#style=piStyle));
 
       iCount = 0;
-      for i in lChampList
+      foreach i in lChampList
         {           
            if first(i) = $
              {
@@ -130,7 +132,7 @@ messages:
             iCount = iCount + 1;
         }
 
-      for i in lChampList
+      foreach i in lChampList
         {
            if first(i) <> $
              {

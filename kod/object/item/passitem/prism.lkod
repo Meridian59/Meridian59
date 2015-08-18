@@ -1,0 +1,36 @@
+prism_name_rsc = de "Das Prisma"
+prism_desc_rsc = de \
+   "In das Licht gehalten, produziert dieses Prisma einen wunderschönen farbigen "
+   "Regenbogen. Wenn die Sagen über diese magischen Gegenstände zutreffen, "
+   "wie auch immer, der wahre Wert liegt in der Fähigkeit, die magische Energie "
+   "vieler Zauberer zu bündeln und einige wirklich besondere Zaubersprüche "
+   "hervorzubringen. Wie bei den Magiern der Antike muss ein Prisma auf den "
+   "Boden gelegt werden, bevor ein Spruch hindurch gesprochen werden kann. "
+   "Wenn der Zauber begonnen hat, müssen genau soviele Magier, wie das Prisma "
+   "Seiten hat, ihre Energie in das Prisma abgeben und wenigstens ein Magier "
+   "muss die ganze Zeit zaubern, um die Energie im Prisma zu bewahren. Der "
+   "Zauber wird wirken, wenn sich genügend magische Energie im Prisma angesammelt "
+   "hat und wenn je ein Magier für jede Seite des Prismas vorhanden ist. "
+   "Dieses Prisma hat %i%s"
+prism_desc2_rsc = de " Seiten."
+prism_desc2a_rsc = de " Seiten und glimmt schwach von innen heraus."
+prism_desc2b_rsc = de \
+   " Seiten und glimmt schwach von einem Punkt in der Mitte aus."
+prism_desc2c_rsc = de " Seiten und glüht hell strahlend."
+prism_desc2d_rsc = de " Seiten und glüht gleißend hell."
+prism_new_spell = de \
+   "%s%s beginnt eine Zauberformel zu singen und das Prisma in der Nähe fängt "
+   "an zu glimmen!"
+prism_new_spell_tocaster = de \
+   "Du beginnst den Sprechgesang und das Prisma in der Nähe fängt an zu glimmen!"
+prism_new_caster = de "%s%s fällt in den Sprechgesang mit ein."
+prism_new_caster_tocaster = de "Du fällst in den Sprechgesang mit ein."
+prism_lack_casters = de \
+   "Du glaubst, dass das Prisma genügend Energie für den Zauberspruch gesammelt "
+   "hat, aber die Symmetrie der Magischen Energie nicht stimmt."
+prism_chant_over = de \
+   "Das Prisma verdunkelt sich und ein Schleier der Ruhe legt sich über Dich, "
+   "der Sprechgesang verstummt."
+prism_desc_location_rsc = de \
+   "\n\nWenn Du genauer hinschaust, erkennst Du eine Miniaturlandschaft im Prisma. "
+   "Es sieht aus wie %s%s."

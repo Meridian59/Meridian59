@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include eagleyes.lkod
+
    EagleEyes_name_rsc = "eagle eyes"
    EagleEyes_icon_rsc = ieagleye.bgf
    EagleEyes_desc_rsc = \
@@ -28,7 +30,11 @@ resources:
    EagleEyes_off_rsc = "The world seems somehow less distinct and vivid."
    EagleEyes_already_enchanted_rsc = "You already have Eagle Eyes."
    EagleEyes_Success_rsc = "You grant %s%s preternatural sight."
-
+   eagleeyes_enchantment_rsc = \
+      "\n\nYour current %s enchantment adds %i offense and 1 damage to your "
+      "ranged attacks.  It will completely resist an attempt to render you "
+      "sightless %i%% of the time.  Successful attempts to remove your sight "
+      "will be reduced by %i%%."
    EagleEyes_resist = \
       "Krannan's magic fights to penetrate the veil of darkness."
    EagleEyes_evade = "The magic of Krannan preserves your sight."
@@ -131,7 +137,7 @@ messages:
       oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
 
       % Give players a decent chance to improve the spell!
-      for i in Send(oTarget,@GetPassiveImprovementList)
+      foreach i in Send(oTarget,@GetPassiveImprovementList)
       {
          if First(i) = self AND random(1,3) = 3
          {
@@ -202,19 +208,14 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment adds ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString(" offense and 1 damage to your ranged attacks.  ");
-      AppendTempString("It will completely resist an attempt to render you sightless " );
-      AppendTempString(Send(who,@GetEnchantedState,#what=self) * piResistPercent / 100);
-      AppendTempString("\% of the time.  Successful attempts to remove your sight will be reduced by ");
-      AppendTempString(100 * Send(who,@GetEnchantedState,#what=self) / piReductionFactor);
-      AppendTempString("\%.");
+      local iState;
 
-      propagate;
+      iState = Send(who,@GetEnchantedState,#what=self);
+
+      AddPacket(4,eagleeyes_enchantment_rsc, 4,Send(self,@GetName),
+                4,iState, 4,iState * piResistPercent / 100,
+                4,100 * iState / piReductionFactor);
+      return;
    }
 
 end

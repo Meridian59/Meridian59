@@ -17,14 +17,18 @@ constants:
 
 resources:
 
+   include villify.lkod
+
    villify_name_rsc = "vilify"
    villify_icon_rsc = light.bgf
    villify_desc_rsc = "Accuses someone of being an outlaw or murderer."
 
-   villify_msg_DM = "You vilify %s%."
+   villify_msg_DM = "You vilify %s."
    villify_msg_target = "You have been vilified by %s."
    villify_failed = "%s%s is already a murderer."
-   villify_unworthy = "You have been deemed unworthy to cast so powerful a spell, and it has been stripped from you."
+   villify_unworthy = \
+      "You have been deemed unworthy to cast so powerful a spell, and "
+      "it has been stripped from you."
 
 classvars:
 
@@ -47,28 +51,30 @@ messages:
    SuccessChance(who=$)
    "If they are not a creator, then they do not get this spell off."
    {
-      if send(who,@PlayerIsImmortal,#gn=TRUE) <> 2 AND NOT isclass(who,&Creator)
+      if Send(who,@PlayerIsImmortal,#gn=TRUE) <> 2
+         AND NOT Isclass(who,&Creator)
       {
-         send(who,@MsgSendUser,#message_rsc=villify_unworthy);
-         send(who,@RemoveSpell,#num=viSpell_num);
-         send(who,@ToCliStats,#group=3);
-         
+         Send(who,@MsgSendUser,#message_rsc=villify_unworthy);
+         Send(who,@RemoveSpell,#num=viSpell_num);
+         Send(who,@ToCliStats,#group=3);
+
          return FALSE;
       }
-      
+
       return TRUE;
    }
 
    CanPayCosts(who = $, lTargets = $)
    {
-      if not IsClass(First(lTargets),&User)
+      if NOT IsClass(First(lTargets),&User)
       {
-         send(who,@MsgSendUser,#message_rsc=villify_failed,
-              #parm1=Send(First(lTargets),@GetDef),#parm2=Send(First(lTargets),@GetTrueName));
-              
+         Send(who,@MsgSendUser,#message_rsc=villify_failed,
+               #parm1=Send(First(lTargets),@GetDef),
+               #parm2=Send(First(lTargets),@GetTrueName));
+
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -76,35 +82,35 @@ messages:
    {
       local i;
 
-      for i in lTargets
+      foreach i in lTargets
       {
          % already a murderer
-         if send(i,@checkplayerflag,#flag=PFLAG_MURDERER)
+         if Send(i,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
-            send(who,@MsgSendUser,#message_rsc=villify_failed,
-	              #parm1=Send(i,@GetDef),#parm2=Send(i,@GetTrueName));
-	         
+            Send(who,@MsgSendUser,#message_rsc=villify_failed,
+                  #parm1=Send(i,@GetDef),#parm2=Send(i,@GetTrueName));
+
             continue;
          }
 
          % from outlaw to murderer
-         if send(i,@checkplayerflag,#flag=PFLAG_OUTLAW)
+         if Send(i,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
-            send(who,@MsgSendUser,#message_rsc=villify_msg_DM,#parm1=Send(i,@GetTrueName));
-            send(i,@MsgSendUser,#message_rsc=villify_msg_target,#parm1=Send(who,@GetTrueName));
-            send(i,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=False);
-            send(i,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=True);
-            post(i,@EvaluatePKStatus);
-            
+            Send(who,@MsgSendUser,#message_rsc=villify_msg_DM,#parm1=Send(i,@GetTrueName));
+            Send(i,@MsgSendUser,#message_rsc=villify_msg_target,#parm1=Send(who,@GetTrueName));
+            Send(i,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=False);
+            Send(i,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=True);
+            Post(i,@EvaluatePKStatus);
+
             continue;
          }
 
          % from lawful to outlaw
-         send(who,@MsgSendUser,#message_rsc=villify_msg_DM,#parm1=Send(i,@GetTrueName));		
-         send(i,@MsgSendUser,#message_rsc=villify_msg_target,#parm1=Send(who,@GetTrueName));
-         send(i,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=True);
-         send(i,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=False);
-         post(i,@EvaluatePKStatus);
+         Send(who,@MsgSendUser,#message_rsc=villify_msg_DM,#parm1=Send(i,@GetTrueName));		
+         Send(i,@MsgSendUser,#message_rsc=villify_msg_target,#parm1=Send(who,@GetTrueName));
+         Send(i,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=True);
+         Send(i,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=False);
+         Post(i,@EvaluatePKStatus);
       }
 
       propagate;

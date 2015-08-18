@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include yrxltree.lkod
+
    yrxltree_name_rsc = "yrxl tree"
    yrxltree_desc_rsc = \
       "The last of many yrxl trees, this is the only one to "
@@ -52,7 +54,7 @@ messages:
    local oRoom, each_obj, i;
 
    oRoom = send(self,@getowner);
-   for i in Send(oRoom,@GetHolderActive)
+   foreach i in Send(oRoom,@GetHolderActive)
       {
       each_obj = Send(oRoom,@HolderExtractObject,#data=i);
       if isclass(each_obj,&player)

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include detinvis.lkod
+
    DetectInvisible_name_rsc = "detect invisible"
    DetectInvisible_icon_rsc = idetinvi.bgf
    DetectInvisible_desc_rsc = \
@@ -96,11 +98,6 @@ messages:
    GetPotionClass()
    {
       return &DetectInvisibilityPotion;
-   }
-
-   EffectDesc()
-   {
-      propagate;
    }
 
 end

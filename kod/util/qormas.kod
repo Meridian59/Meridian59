@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include qormas.lkod
+
    Qormas_start_message = \
       "~B~kMerry Qormas!\n"
       "~kThe citizens of Meridian have decorated in celebration of the "
@@ -474,12 +476,12 @@ messages:
    {
       local i;
 
-      for i in plDecorations
+      foreach i in plDecorations
       {
          Send(i,@Delete);
       }
 
-      for i in plWreaths
+      foreach i in plWreaths
       {
          if Nth(i,1) <> $
             AND IsClass(Nth(i,1),&Room)
@@ -608,9 +610,9 @@ messages:
       
       lPassive = Send(oRoom,@GetPlPassive);
       
-      for j in lPassive
+      foreach j in lPassive
       {
-         for i in j
+         foreach i in j
          {
             if IsObject(i)
             {
@@ -903,7 +905,7 @@ messages:
    
       lGiftsBackup = $;
    
-      for i in plGifts
+      foreach i in plGifts
       {
          if (Send(i,@GetRecipient) <> $)
          {
@@ -920,9 +922,9 @@ messages:
    
       if (lGiftsBackup <> $)
       {
-         for i in lGiftsBackup
+         foreach i in lGiftsBackup
          {
-            for j in plGifts
+            foreach j in plGifts
             {
                if (Nth(i,1) = Send(j,@GetRow))
                   AND (Nth(i,2) = Send(j,@GetCol))
@@ -947,7 +949,7 @@ messages:
          return;
       }
 
-      for i in plGifts
+      foreach i in plGifts
       {
          oOwner = Send(i,@GetOwner);
 
@@ -971,7 +973,7 @@ messages:
          return;
       }
 
-      for i in plGifts
+      foreach i in plGifts
       {
          oOwner = Send(i,@GetOwner);
 
@@ -1021,7 +1023,7 @@ messages:
       oGift = $;
 
       % Only 1 claim per user per day.
-      for i in plGiftClaims
+      foreach i in plGiftClaims
       {
          if i = who
          {
@@ -1031,7 +1033,7 @@ messages:
 
       % Check per IP limit
       lIP = Send(who,@GetIP);
-      for i in plGiftIPCount
+      foreach i in plGiftIPCount
       {
          j = Nth(i,1);
          if Nth(lIP,1) = Nth(j,1)
@@ -1069,7 +1071,7 @@ messages:
 
       if (pbGifts)
       {
-         for i in plGifts
+         foreach i in plGifts
          {
             if IsObject(i)
             {
@@ -1137,7 +1139,7 @@ messages:
       }
 
       % Build lists of island and mainland gifts available.
-      for i in plGifts
+      foreach i in plGifts
       {
          if (Send(i,@GetRecipient) = $)
          {
@@ -1250,7 +1252,7 @@ messages:
          plGiftClaims = Cons(who,plGiftClaims);
          lIP = send(who,@GetIP);
          
-         for i in plGiftIPCount
+         foreach i in plGiftIPCount
          {
             j = Nth(i,1);
             if Nth(lIP,1) = Nth(j,1)
@@ -1298,7 +1300,7 @@ messages:
    {
       local i;
       
-      for i in plGifts
+      foreach i in plGifts
       {
          Send(i,@SetRecipient,#who=who);
       }

@@ -38,6 +38,8 @@ constants:
 
 resources:
 
+   include waspellt.lkod
+
    iaSpelltype_gone = "Your %s suddenly seems a little more... ordinary."
 
    iaSpelltype_holy = " The weapon glows with a pure, white light."
@@ -84,47 +86,52 @@ messages:
          iData = iFakeData;
       }
 
-      rName = $;
-
       if iData & ATCK_SPELL_HOLY
       {
          rName = iaSpelltype_holy;
       }
-
-      if iData & ATCK_SPELL_UNHOLY
+      else if iData & ATCK_SPELL_UNHOLY
       {
          rName = iaSpellType_unholy;
       }
-
-      if iData & ATCK_SPELL_FIRE
+      else if iData & ATCK_SPELL_FIRE
       {
          rName = iaSpellType_fire;
       }
-
-      if iData & ATCK_SPELL_COLD
+      else if iData & ATCK_SPELL_COLD
       {
          rName = iaSpellType_cold;
       }
-
-      if iData & ATCK_SPELL_SHOCK
+      else if iData & ATCK_SPELL_SHOCK
       {
          rName = iaSpellType_shock;
       }
-
-      if iData & ATCK_SPELL_ACID
+      else if iData & ATCK_SPELL_ACID
       {
          rName = iaSpellType_acid;
       }
+      else
+      {
+         rName = $;
+      }
 
-      AppendTempString(rName);
+      if rName = $
+      {
+         Debug("Spellcaster weapon attribute got $ spell data.");
+         AddPacket(4,system_blank_resource);
+
+         return;
+      }
 
       % If not faked, then add maker information if available.
       if iFakeData = $
       {
          lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
 
-         if length(lData) <> 5
+         if Length(lData) <> 5
          {
+            AddPacket(4,rName);
+
             return;
          }
 
@@ -133,9 +140,16 @@ messages:
          %%Then we add information about the maker to the desc.
          if sMakerInfo <> $
          {
-            AppendTempString(sMakerInfo);
+            AddPacket(4,system_rsc_template_2, 4,rName,
+                   4,itematt_made_rsc, 6,Send(First(sMakerInfo),@GetName),
+                   4,Send(self,@GetTitle,#iAbility=Nth(sMakerInfo,3)),
+                   4,Send(Nth(sMakerInfo,2),@GetEnchantmentType));
+
+            return;
          }
       }
+
+      AddPacket(4,rName);
 
       return;
    }
@@ -145,7 +159,7 @@ messages:
    DMCreateItemAtt(who=$,string=$,oWeapon=$)
    {
       local iSpellType;
-      iSpellType = 0;
+
 
       if who = $ OR string= $ OR oWeapon = $
       {
@@ -154,34 +168,33 @@ messages:
          return FALSE;
       }
 
-      if stringContain(string,iaspelltype_fire_DM)
+      if StringContain(string,iaspelltype_fire_DM)
       {
          iSpelltype = ATCK_SPELL_FIRE;
       }
-
-      if stringContain(string,iaspelltype_cold_DM)
+      else if StringContain(string,iaspelltype_cold_DM)
       {
          iSpelltype = ATCK_SPELL_COLD;
       }
-
-      if stringContain(string,iaspelltype_holy_DM)
+      else if StringContain(string,iaspelltype_holy_DM)
       {
          iSpelltype = ATCK_SPELL_HOLY;
       }
-      
-      if stringContain(string,iaspelltype_unholy_DM)
+      else if StringContain(string,iaspelltype_unholy_DM)
       {
          iSpelltype = ATCK_SPELL_UNHOLY;
       }
-
-      if stringContain(string,iaspelltype_acid_DM)
+      else if StringContain(string,iaspelltype_acid_DM)
       {
          iSpelltype = ATCK_SPELL_ACID;
       }
-
-      if stringContain(string,iaspelltype_shock_DM)
+      else if StringContain(string,iaspelltype_shock_DM)
       {
          iSpelltype = ATCK_SPELL_SHOCK;
+      }
+      else
+      {
+         iSpellType = 0;
       }
 
       if iSpellType = 0

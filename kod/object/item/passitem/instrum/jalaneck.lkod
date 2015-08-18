@@ -1,0 +1,9 @@
+JalaNecklace_name_rsc = de "Jalas Halskette"
+JalaNecklace_desc_rsc = de \
+   "Diese Kette sieht so aus, als ob sie ideal um Deinen Hals passt. Der "
+   "goldene Notenschlüssel weist darauf hin, dass dieser Gegenstand von Barden "
+   "benutzt wird."
+JalaNecklace_used_rsc = de \
+   "Jalas Halskette vibriert um Deinen Hals. Sie verleiht Deiner Stimme magische "
+   "Kräfte."
+JalaNecklace_unused_rsc = de "Deine Stimme verliert ihre Kraft."

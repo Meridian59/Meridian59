@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include intboon.lkod
+
    intboon_name_rsc = "intellect effect"
    intboon_icon_rsc = iboonint.bgf
    intboon_desc_rsc = "Your intellect seems oddly affected."

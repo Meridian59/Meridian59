@@ -1,0 +1,9 @@
+KocatanBlacksmith_name_rsc = de "Ixla cha'Totlak"
+KocatanBlacksmith_desc_rsc = de \
+   "Diese starke Frau hat sich selbst als hervorragende Waffenschmiedin in "
+   "der Kriegergesellschaft von Ko'catan etabliert. Sie ist außerdem eine "
+   "Frau, die besonders gut in der Sprache von Ko'catan ist."
+kcsmith_entry_welcome = de "Sei Gegrüßt!"
+kcSm_mace_sale = de \
+   "All diese schönen Waffen, und du willst %s%s.  Nunja, ich denke ich werde "
+   "dir dann wohl einen verkaufen müssen."

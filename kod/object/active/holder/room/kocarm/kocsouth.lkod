@@ -1,0 +1,14 @@
+room_name_kocatansouth = de "Ko'catan, die Insel-Siedlung"
+kocatansouth_northdoors = de \
+   "Diese Tür zum Inneren der Wand ist fest verschlossen."
+kocatansouth_private = de \
+   "Du darfst nicht in diese Wohnstatt hinein - sie ist privat."
+kocatansouth_whooping = de \
+   "Du hörst laute keuchende Geräusche von drinnen und beschließt, nicht "
+   "einzutreten."
+kocatansouth_drown = de \
+   "Du beschließt, dass es nicht in Deinem Interesse ist, zu ertrinken."
+kocatansouth_guild_locked = de \
+   "In dem Moment, als Du die Tür berührtest, konntest Du hören, dass sie "
+   "sich selbst verriegelt hat. Offenbar ist diese Tür magisch gesichert, "
+   "um Nicht-Mitglieder (wie z. B. Dich) fernzuhalten."

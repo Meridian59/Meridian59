@@ -1,0 +1,3 @@
+RoomEnchantment_name_rsc = de "Raumzauber"
+RoomEnchantment_desc_rsc = de "Ein Zauber der an einen Raum gebunden ist."
+room_blank_template = de "%q"

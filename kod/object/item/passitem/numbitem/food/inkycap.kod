@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include inkycap.lkod
+
    inkycap_name_rsc = "Inky-cap mushroom"
    inkycap_name_plural_rsc = "Inky-cap mushrooms"
    inkycap_icon_rsc = mushroom.bgf

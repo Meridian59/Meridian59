@@ -1,0 +1,10 @@
+book_name_rsc = de "Das Buch"
+book_desc_rsc = de \
+   "Ein speckiger Ledereinband umgibt das Buch. Die dunklen Flecken und Risse "
+   "deuten auf jahrhundertelangen Gebrauch hin."
+book_emote_open_rsc = de \
+   "%s%s wird von Dir aufgeschlagen und Du blätterst zu einer interessanten "
+   "Seite."
+book_emote_open_third_rsc = de "%s%s öffnet %s%s und geht die Seiten durch."
+book_emote_close_rsc = de "%s%s wird von Dir zufrieden wieder zugeschlagen."
+book_emote_close_third_rsc = de "%s%s schließt zufrieden %s%s."

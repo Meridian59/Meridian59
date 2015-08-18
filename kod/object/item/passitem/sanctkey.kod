@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sanctkey.lkod
+
    SanctuaryKey_name_rsc = "iron key"
    SanctuaryKey_icon_rsc = fishkey.bgf
    SanctuaryKey_desc_rsc = "This is an intricately wrought iron key."

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include taxlettr.lkod
+
    TaxLetter_name_rsc = "notice of delinquent taxes"
    TaxLetter_icon_rsc = scr04.bgf
    TaxLetter_desc_rsc = \

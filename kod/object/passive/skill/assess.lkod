@@ -1,0 +1,17 @@
+assess_name_rsc = de "Einschätzen"
+assess_desc_rsc = de \
+   "Dies ist eine grobe und oft ungenaue Methode, um herauszufinden, wie "
+   "gut ein Gegner im Nahkampf ist.."
+assess_below_20 = de "%s%s is a twig, waiting to be broken."
+assess_20_30 = de "%s%s is an infant of the battlefield."
+assess_30_40 = de "%s%s fights hardly better than a lowly squire."
+assess_40_50 = de "%s%s possesses not talent, but great potential."
+assess_50_60 = de "%s%s has a good sense in the ways of combat."
+assess_60_70 = de "%s%s is firmly competent on the battlefield."
+assess_70_80 = de "%s%s shows the scars of many battles."
+assess_80_90 = de "%s%s is certainly no one to be trifled with."
+assess_90_100 = de "%s%s wins many conflicts without so much as shrugging."
+assess_100_150 = de \
+   "%s%s possesses near super-human abilities on the battlefield."
+assess_150_up = de "%s%s could crush you like a bug!"
+assess_self = de "Who?  This person?  A cinch!"

@@ -1,0 +1,15 @@
+tosinnkeeper_name_rsc = de "Paddock"
+tosinnkeeper_desc_rsc = de \
+   "Paddock, der Besitzer der vielleicht beliebtesten Bar in der Welt, hat "
+   "für alle seine Gäste, die bei ihm einkehren, ein Lächeln übrig. Sein "
+   "nüchternes Verhalten und seine umgängliche Art gegenüber den Kunden machen "
+   "ihn zu einem der beliebtesten Männer in Tos."
+TsIK_entry_welcome = de \
+   "Willkommen in der Brunnenkneipe, der beliebtesten Bar im Land!"
+TsIK_purplemushroom_sale = de \
+   "Ja, ich habe %s%s hier. Lass mal sehen, was wir für ein Geschäft mit "
+   "diesen Raritäten machen können."
+TsIK_orcteeth_sale = de \
+   "Noch einer interessiert an %s%sn? Ich sollte die Kneipe dicht machen "
+   "und nur noch diese Sachen verkaufen.."
+TsIK_watch_head = de "Hey, %s%s! Pass auf Deinen Kopf auf."

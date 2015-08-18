@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include rejuven.lkod
+
    Rejuvenate_name_rsc = "rejuvenate"
    Rejuvenate_icon_rsc = irejuven.bgf
    Rejuvenate_desc_rsc = \
@@ -86,7 +88,7 @@ messages:
    {
       local oUser, lState;
 
-      for oUser in lEnchanted
+      foreach oUser in lEnchanted
       {
          if IsClass(oUser,&User)
          {

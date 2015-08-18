@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include mrurchin.lkod
+
    marion_urchin_name_rsc = "urchin"
    marion_urchin_icon_rsc = urchin.bgf
    marion_urchin_desc_rsc = \

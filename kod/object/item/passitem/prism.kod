@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include prism.lkod
+
    prism_name_rsc = "prism"
 
    prism_3_icon_rsc = prism3.bgf
@@ -31,7 +33,7 @@ resources:
       "may contribute to the energies stored within, and at least one mage must be casting at all "
       "times to keep the stored energy from dissipating.  The spell being chanted will fire "
       "when enough magical power has been stored in the prism and there is exactly one caster "
-      "for each side of the prism.  This prism has "
+      "for each side of the prism.  This prism has %i%s"
    prism_desc2_rsc = " sides."
    prism_desc2a_rsc = " sides and glows faintly from within."
    prism_desc2b_rsc = " sides and is glowing from a point at its center."
@@ -40,13 +42,21 @@ resources:
 
    prism_projectile = lightnin.bgf
 
-   prism_new_spell = "%s%s begins to chant an incantation and a prism nearby starts to glow!"
-   prism_new_spell_tocaster = "You begin to chant and a prism nearby starts to glow!"
+   prism_new_spell = \
+      "%s%s begins to chant an incantation and a prism nearby starts to glow!"
+   prism_new_spell_tocaster = \
+      "You begin to chant and a prism nearby starts to glow!"
    prism_new_caster = "%s%s joins in the chanting of an incantation."
    prism_new_caster_tocaster = "You join in the chanting of an incantation."
-   prism_lack_casters = "You feel like the prism has the power to cast the spell, but lacks the right symmetry of focal energy."
-   prism_chant_over = "The prism darkens and a blanket of silence seems to settle over you as the chant ceases."
-   prism_desc_location_rsc = "  If you peer closely you can see a miniture landscape inside the prism, it appears to be "
+   prism_lack_casters = \
+      "You feel like the prism has the power to cast the spell, but lacks "
+      "the right symmetry of focal energy."
+   prism_chant_over = \
+      "The prism darkens and a blanket of silence seems to settle over you "
+      "as the chant ceases."
+   prism_desc_location_rsc = \
+      "\n\nIf you peer closely you can see a miniture landscape inside the "
+      "prism, it appears to be %s%s."
 
    prism_charged_wav_rsc = portal.wav
 
@@ -83,30 +93,39 @@ messages:
 
    Constructor(numSides=0)
    {
-      send(self,@SetNumSides,#numSides=numSides);
+      Send(self,@SetNumSides,#numSides=numSides);
 
       propagate;
    }
 
-   AppendDesc()
+   DoBaseDesc()
    {
-      local lDescs, oRoom;
+      local lDescs;
 
-      % This prism has <n> sides.
-      send(SYS,@AppendCardinalToTempString,#number=piNumSides);
-
-      lDescs = [prism_desc2_rsc, prism_desc2a_rsc, prism_desc2b_rsc, prism_desc2d_rsc];
+      lDescs = [prism_desc2_rsc, prism_desc2a_rsc,
+                prism_desc2b_rsc, prism_desc2d_rsc];
 
       % Append the glow description based on the charge level.
-      AppendTempString(Nth(lDescs,(send(self,@GetChargeLevel)+1)));
+      AddPacket(4,vrDesc, 4,piNumSides,
+                4,Nth(lDescs,(Send(self,@GetChargeLevel)+1)));
 
-      if IsList(plLocation) AND plLocation <> $
+      return;
+   }
+
+   AppendDesc()
+   {
+      local oRoom;
+
+      if plLocation <> $
+         AND IsList(plLocation)
       {
-         oRoom = Send(SYS, @FindRoomByNum, #num = First(plLocation));
-         AppendTempString(prism_desc_location_rsc);
-         AppendTempString(send(oRoom,@GetCapDef));
-         AppendTempString(send(oRoom,@GetName));
-         AppendTempString(".");
+         oRoom = Send(SYS,@FindRoomByNum,#num=First(plLocation));
+         AddPacket(4,prism_desc_location_rsc,4,Send(oRoom,@GetCapDef),
+                   4,Send(oRoom,@GetName));
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
       }
 
       return;
@@ -123,22 +142,20 @@ messages:
          piNumSides = numSides;
       }
 
-      if (piNumSides <> 3) and (piNumSides <> 5) and (piNumSides <> 7)
+      if (piNumSides <> 3) AND (piNumSides <> 5) AND (piNumSides <> 7)
       {
          piNumSides = 3;
       }
-      
+
       if piNumSides = 3
       {
          vrIcon = prism_3_icon_rsc;
       }
-
-      if piNumSides = 5
+      else if piNumSides = 5
       {
          vrIcon = prism_5_icon_rsc;
       }
-
-      if piNumSides = 7
+      else if piNumSides = 7
       {
          vrIcon = prism_7_icon_rsc;
       }
@@ -150,7 +167,7 @@ messages:
    {
       if piNumSides <> 3 AND piNumSides <> 5 AND piNumSides <> 7
       {
-         send(self,@SetNumSides,#numSides=3);
+         Send(self,@SetNumSides,#numSides=3);
       }
 
       if Length(plCasters) >= piNumSides
@@ -187,7 +204,7 @@ messages:
 
       if poSpell = $
       {
-         if NOT send(what,@IsMulticaster)
+         if NOT Send(what,@IsMulticaster)
          {
             return FALSE;
          }
@@ -196,11 +213,11 @@ messages:
          poSpell = What;
          plCasters = $;
          plCasters = cons(who,plCasters);
-         piSpellPowerNeeded = send(what,@GetTotalSpellPower,#oPrism=self);
+         piSpellPowerNeeded = Send(what,@GetTotalSpellPower,#oPrism=self);
 
-         for i in send(poOwner,@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
-            each_obj = send(poOwner,@HolderExtractObject,#data=i);
+            each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             if isclass(each_obj,&Player)
             {
                if each_obj = who
@@ -224,9 +241,9 @@ messages:
          return FALSE;
       }
 
-      for i in send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
-         each_obj = send(poOwner,@HolderExtractObject,#data=i);
+         each_obj = Send(poOwner,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Player)
          {
             if each_obj = who
@@ -255,15 +272,16 @@ messages:
          return FALSE;
       }
 
-      iOldLevel = send(self,@GetChargeLevel);
+      iOldLevel = Send(self,@GetChargeLevel);
 
       piSpellPowerSoFar = piSpellPowerSoFar + amount;
-      iNewLevel = send(self,@GetChargeLevel);
+      iNewLevel = Send(self,@GetChargeLevel);
 
       % Shoot a projectile sometimes.
       if random(1,5) = 5 AND IsClass(poOwner,&Room)
       {
-         Send(poOwner,@SomethingShot,#who=who,#target=self,#projectile=self,#flags=PROJ_FLAG_LIGHT_SOURCE);
+         Send(poOwner,@SomethingShot,#who=who,#target=self,
+               #projectile=self,#flags=PROJ_FLAG_LIGHT_SOURCE);
       }
 
       if iNewLevel <> iOldLevel
@@ -275,7 +293,7 @@ messages:
             piGlowing = TRUE;
          }
 
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
 
          % Play a sound
          Send(poOwner, @SomethingWaveRoom, #what = self,
@@ -284,7 +302,7 @@ messages:
 
       if piSpellPowerSoFar >= piSpellPowerNeeded
       {
-         send(self,@CastSpell);
+         Send(self,@CastSpell);
       }
 
       return TRUE;
@@ -304,7 +322,7 @@ messages:
 
    NewOwner()
    {
-      send(Self,@EndCeremony);
+      Send(Self,@EndCeremony);
 
       propagate;
    }
@@ -313,7 +331,7 @@ messages:
    {
       local i;
 
-      for i in plCasters
+      foreach i in plCasters
       {
          Send(i,@ClearTranceFlag);
          Send(i,@RemoveEnchantment,#what=poSpell);
@@ -321,7 +339,8 @@ messages:
 
       if piSpellPowerSoFar > 0
       {
-         Send(send(SYS,@UtilGetRoomRecurse,#what=self),@SomeoneSaid,#type=SAY_MESSAGE,#string=prism_chant_over,#what=self);
+         Send(Send(SYS,@UtilGetRoomRecurse,#what=self),@SomeoneSaid,
+               #type=SAY_MESSAGE,#string=prism_chant_over,#what=self);
       }
 
       piSpellPowerSoFar = 0;
@@ -334,7 +353,7 @@ messages:
 
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -344,9 +363,9 @@ messages:
    {
       if length(plCasters) >= piNumSides
       {     
-         send(poSpell,@PrismCast,#SpellPower=piSpellPowerSoFar,
+         Send(poSpell,@PrismCast,#SpellPower=piSpellPowerSoFar,
               #lCasters=plCasters,#lTargets=plTargets,#oPrism=self);
-         send(self,@EndCeremony);
+         Send(self,@EndCeremony);
       }
       else
       {
@@ -374,7 +393,7 @@ messages:
          plCasters = DelListElem(plCasters,who);
          if Length(plCasters) = 0
          {
-            send(self,@EndCeremony);
+            Send(self,@EndCeremony);
          }
       }
 
@@ -382,7 +401,8 @@ messages:
    }
 
    GetChargeLevel()
-   "Simply returns an integer between 0 and 3 inclusive to indicate relative charge level. "
+   "Simply returns an integer between 0 and 3 inclusive to indicate "
+   "relative charge level. "
    {
       if piSpellPowerNeeded > 0 AND piSpellPowerSoFar > 0
       {
@@ -391,7 +411,8 @@ messages:
             return 1;
          }
 
-         if piSpellPowerSoFar >= (piSpellPowerNeeded/3) AND piSpellPowerSoFar < (piSpellPowerNeeded*2/3)
+         if piSpellPowerSoFar >= (piSpellPowerNeeded/3)
+            AND piSpellPowerSoFar < (piSpellPowerNeeded*2/3)
          {
             return 2;
          }
@@ -421,7 +442,7 @@ messages:
 
    Delete()
    {
-      send(Self,@EndCeremony);
+      Send(Self,@EndCeremony);
 
       propagate;
    }
@@ -505,7 +526,7 @@ messages:
 
       AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
       % Intensity is variable, depending on charge level.  Out of 255 intensity of light
-      iIntensity = bound((send(self,@GetChargeLevel)*20),1,255);
+      iIntensity = bound((Send(self,@GetChargeLevel)*20),1,255);
       AddPacket(1,iIntensity);
       % Color
       AddPacket(2,LIGHT_WHITE);

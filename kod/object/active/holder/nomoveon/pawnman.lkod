@@ -1,0 +1,5 @@
+pawnman_name_rsc = de "Pfandleiher"
+pawnman_desc_rsc = de "Dies ist ein Pfandleiher."
+pawnman_offer_busy = de "%s ist gerade mit einem anderen Kunden beschäftigt."
+pawnman_no_value = de \
+   "Ich kann Dir noch nicht einmal einen Schilling dafür geben"

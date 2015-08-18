@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include i3.lkod
+
    room_OutdoorsI3 = I3.roo
    room_name_OutdoorsI3 ="Main gate of Barloque-- Royal City of Meridian"
    OutdoorsI3_music = walk1.mp3

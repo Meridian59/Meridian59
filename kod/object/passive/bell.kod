@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bell.lkod
+
    Bell_name_rsc = "service bell"
    Bell_icon_rsc = roombell.bgf
    Bell_desc_rsc = "This bellpull is used to notify the decorating staff that "

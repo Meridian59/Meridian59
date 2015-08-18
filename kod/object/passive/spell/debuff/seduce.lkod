@@ -1,0 +1,17 @@
+seduce_name_rsc = de "Verleiten"
+seduce_desc_rsc = de \
+   "Du bohrst Dir einen Weg in den Geist einer geistig schwachen Kreatur, "
+   "in der Hoffnung, dass sie Dir folgt und für Dich kämpfen wird, wenn Du "
+   "angegriffen wirst. Benötigt einige Moosnetze und Feuersand. Die Anwendung "
+   "dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst"
+seduce_caster = de "%s%s wurde verführt."
+seduce_target_on = de "Du machst einen Schritt auf %s%s."
+seduce_player_second = de "%s%s versucht %s dich zu verführen."
+seduce_player_third = de "%s%s versucht %s%s zu verführen."
+seduce_already_enchanted = de "%s%s folgt bereits Deinem Aufruf."
+seduce_fail_spell = de "Dein schwacher Versuch %s%s zu verführen schlägt fehl."
+seduce_target_off = de "Du bist nicht länger verführt."
+seduce_cast_self = de "Du kannst Dich nicht selber verführen!"
+seduce_stolen = de "%s%s hat deinen %s verführt!"
+seduce_too_many = de \
+   "Du bist nicht in der lange noch weitere Dienger zu verführen."

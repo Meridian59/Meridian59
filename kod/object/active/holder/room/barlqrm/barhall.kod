@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include barhall.lkod
+
    room_barhall = barhall.roo
    room_name_barhall = "Adventurer's Hall of Barloque"
 

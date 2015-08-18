@@ -1,0 +1,9 @@
+StatsResetToken_name_rsc = de "Das altertümliche Schmuckstück"
+StatsResetToken_desc_rsc = de \
+   "Dies ist ein Schmuckstück der Ältesten, welches ihnen von den Göttern "
+   "gegeben wurde.Die Legende besagt, dass das Schmuckstück die Kraft besitzt "
+   "die Grundwerte der Sterblichen zu ändernDie Ältesten werden dich sicher "
+   "belohnen, wenn du es ihnen zurückbringst. "
+StatsResetToken_desc_append = de \
+   "\n\nDieses Artefakt wird auslaufen in %i Meridian Jahren.%s"
+StatsResetToken_desc_noTrade = de "\n\nKein Handel"

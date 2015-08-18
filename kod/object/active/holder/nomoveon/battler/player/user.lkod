@@ -1,0 +1,296 @@
+user_name_rsc = de "Benutzername"
+user_garbage_collecting = de "System-Sicherung läuft - bitte warten."
+user_garbage_collecting_done = de \
+   "System-Sicherung beendet; Spiel bitte fortführen."
+user_err_get_unk = de "%s%s? Das hat schon jemand aufgehoben."
+user_err_get_dist = de "%s%s? Das geht nicht, Du bist zu weit entfernt."
+user_disallow_get = de \
+   "Du kannst das nicht mehr aufheben. Das wird Dir zu schwer."
+user_got_some = de "Du kannst das nicht mehr aufheben. Das wird Dir zu schwer."
+user_disallow_drop = de "%s%s kann nicht weggeworfen werden."
+user_err_drop = de "Der Gegenstand ist nicht in Deinem Besitz."
+user_err_put = de \
+   "%s%s kann nicht in die Truhe gelegt werden. %s%s ist schon zu voll! %s%s "
+   "kann nur eine begrenzte Anzahl an Gegenständen aufnehmen."
+user_disallow_put = de \
+   "%s%s kann nicht abgelegt werden. %s%s ist schon zu voll."
+user_err_get_contents = de "%s%s kann von Dir nicht eingesehen werden!"
+user_err_activate_unk = de \
+   "%s%s kann nicht aktiviert werden, da er nicht länger verfügbar ist."
+user_activate_failed = de "%s%s ist nicht aktivierbar."
+user_cap_Someone_string = de "Jemand"
+user_Someone_string = de "jemand"
+user_blank_string = de ""
+user_said_str = de "%s sagt, \"%q~n\""
+user_said_echo_str = de "Du sagst, \"%q~n\""
+user_yelled_str = de "%s ruft, \"%q~n\""
+user_yelled_nearby_str = de "Du hörst %s rufen, \"%q~n\""
+user_yelled_echo_str = de "Du rufst, \"%q~n\""
+user_broadcast_str = de "%s teilt allen mit, \"%q~n\""
+user_broadcast_echo_str = de "Du teilst allen mit, \"%q~n\""
+user_send_str = de "%s teilt den anderen mit, \"%q~n\""
+user_send_one_str = de "%s teilt dir mit, \"%q~n\""
+user_said_resource_str = de "%s%s sagt, \"%s~n\""
+user_emote_str = de "%s %q"
+user_echo_str = de "%q"
+user_send_echo_str = de "Du teilst den anderen mit, \"%q~n\""
+user_send_single_echo_str = de "Du teilst %s mit, \"%q~n\""
+user_no_respond = de \
+   "~IWegen irgendetwas ist der User nicht in der Lage zu antworten."
+user_said_str_morphed = de "~n%s%s sagt, \"%q~n\""
+user_yelled_str_morphed = de "~n%s%s ruft, \"%q~n\""
+user_emote_str_morphed = de "~n%s%s %q"
+user_no_cast = de "Du bist nicht in der Lage, einen Zauberspruch zu zaubern."
+user_no_fight = de "Du bist nicht in der Lage, Deine Waffe zu heben."
+user_cant_mail_to = de \
+   "Du kannst an %s keine Nachricht versenden, da er nicht existiert."
+user_mail_to = de "Deine Nachricht wird verschickt."
+user_new_mail = de "Du hast eine neue Nachricht von %s."
+user_new_nested_mail = de "Du hast neue Nachrichten."
+user_show_mail = de "%q"
+user_show_nested_mail = de "%s"
+user_logon_one_mail = de "Du hast %i neue Nachricht bekommen."
+user_logon_many_mail = de "Du hast %i neue Nachrichten bekommen."
+user_mail_toobig = de \
+   "Sorry, die Nachricht war zu lang, der Kurier ist unterwegs verstorben... "
+   "versuch es nocheinmal aber bitte nicht ganz so lang."
+user_was_killed = de \
+   "%s%s hat Dich getötet. Geh nun, Du arme Seele, und räche Dich!"
+user_was_killed_bridge_faith = de "Autsch, die letzte Stufe war kaputt.."
+user_is_resting = de "Du sitzt da und ruhst Dich aus."
+user_is_standing = de "Du stehst."
+user_stat_might = de "Stärke"
+user_stat_intellect = de "Klugheit"
+user_stat_stamina = de "Konstitution"
+user_stat_agility = de "Gewandheit"
+user_stat_mysticism = de "Magie"
+user_stat_aim = de "Genauigkeit"
+user_stat_karma = de "Karma"
+user_stat_capacity = de "Gesamtgewicht"
+user_stat_bulk = de "Gesamtmasse"
+user_stat_offense = de "Angriff"
+user_stat_defense = de "Verteidigung"
+user_stat_armor = de "Rüstung"
+user_stat_training = de "Training Pkt."
+user_resist_magic = de "Magie Wid."
+user_resist_fire = de "Feuer Wid."
+user_resist_shock = de "Schock Wid."
+user_resist_cold = de "Kälte Wid."
+user_resist_holy = de "Heiliger Wid."
+user_resist_unholy = de "Unheiliger Wid."
+user_resist_acid = de "Säure Wid."
+user_resist_quake = de "Erdbeben Wid."
+user_resist_nerudite = de "Nerudit"
+user_resist_silver = de "Silber"
+user_resist_unarmed = de "Unbewaffnet"
+user_resist_punch = de "Ringen"
+user_resist_kick = de "Boxen"
+user_resist_hunt = de "Jagdschwert"
+user_resist_claw = de "Klauen"
+user_resist_bite = de "Beißen"
+user_resist_sting = de "Stechen"
+user_resist_ichor = de "Ichor"
+user_resist_weapons = de "Waffen Wid."
+user_resist_weapon_nonmagic = de "gewöhnlich"
+user_resist_weapon_magic = de "verzaubert"
+user_resist_hit = de "Schlagen"
+user_resist_bludgeon = de "Hieb Wid."
+user_resist_pierce = de "Stech Wid."
+user_resist_thrust = de "Stoß Wid."
+user_resist_slash = de "Schlag Wid."
+user_resist_whip = de "Gerte"
+user_shal_power = de "Shal'ill"
+user_qor_power = de "Qor"
+user_faren_power = de "Faren"
+user_kraanan_power = de "Kraanan"
+user_riija_power = de "Riija"
+user_jala_power = de "Jala"
+user_group_condition = de "Zustand"
+user_group_stats = de "Stats"
+user_group_spells = de "Spells"
+user_group_skills = de "Skills"
+user_got_offer = de "Du hast ein Angebot von %s%s."
+user_cant_offer = de "Du kannst %s%s nichts anbieten."
+user_cant_offer_arena = de \
+   "In Spielbereichen wie diesem ist es nicht erlaubt, Geschäfte zu machen."
+user_offer_busy = de "%s%s kann momentan nicht mit Dir handeln."
+user_cant_cancel_offer = de \
+   "Du kannst ein nicht vorhandenes Angebot nicht zurücknehmen."
+user_canceled_offer = de "%s%s hat das Angebot zurückgezogen."
+user_cant_counteroffer = de \
+   "Du kannst ein nicht vorhandenes Angebot nicht annehmen."
+user_cant_acceptoffer = de \
+   "Du kannst ein nicht vorhandenes Angebot nicht akzeptieren."
+user_dont_have_offer = de \
+   "Dein Angebot ist ungültig, da Du nicht alles besitzt, was Du angeboten "
+   "hast."
+user_dont_have_number_offer = de \
+   "Dein Angebot ist ungültig, da Du nicht genug von dem besitzt, was Du "
+   "angeboten hast."
+user_offer_too_many = de "Du kannst nicht so viele %s anbieten!"
+user_cant_drop_offer = de \
+   "Als Du bemerkst, dass %s%s nicht abgegeben wird, ziehst Du das Angebot "
+   "zurück."
+user_didnt_have_offer = de \
+   "Der Handel ist ungültig, %s%s hatte nicht alles angeboten."
+user_didnt_drop_offer = de \
+   "%s%s versucht, Dir etwas zu geben. %s%s kann nicht übergeben werden!"
+user_cant_offer_get = de \
+   "%s%s auch noch? Soviel kannst Du nicht tragen! Der Gegenstand liegt auf "
+   "dem Boden."
+user_offer_not_online = de "%s%s ist nicht online, um Dein Angebot anzunehmen."
+user_offer_not_here = de \
+   "Du versuchst Deine Waren %s%s anzubieten, aber %s ist nicht mehr hier."
+user_couldnt_carry_offer = de "%s%s kann nicht alle Gegenstände aufnehmen."
+user_cant_carry_offer = de \
+   "Du kannst nicht alle Gegenstände aufnehmen, die dir %s%s anbietet."
+user_not_item = de "Du kannst das nicht aufheben."
+user_not_have_number = de "Du kannst nicht so viele %s ablegen."
+user_cant_deal_number = de "Du kannst mit %i Gegenständen nichts anfangen."
+user_cant_attack_non_battler = de "Du kannst %s%s nicht angreifen."
+user_no_say_guild = de \
+   "Du kannst keine Nachricht an Deine Gilde senden, da Du keiner Gilde angehörst."
+user_no_guild_logged_on = de "Außer Dir ist niemand Deiner Gilde eingewählt."
+user_someone_logon = de "~B~U~k[###]~n %s ist gerade in Meridian angekommen."
+user_someone_logoff = de "~B~U~k[###]~n %s hat das Spiel verlassen."
+user_guildmate_logon = de "~IBegrüße Dein Gildenmitglied %s!"
+user_guildmate_logoff = de \
+   "~IDein Gildenmitglied %s hat sich gerade verabschiedet."
+user_safety_on = de \
+   "### Deine 'Sicherheit' ist ~B~gAKTIVIERT~n: Du kannst keine Unschuldigen "
+   "angreifen."
+user_safety_off = de \
+   "### Deine 'Sicherheit' ist ~B~rDEAKTIVIERT~n: Sei vorsichtig, Du kannst "
+   "jetzt andere Spieler verletzen!"
+user_temp_safe_on = de \
+   "~B~U~k[###]~n ~B~vDu bekommst einen temporären Schutzengel."
+user_temp_safe_off = de \
+   "~B~U~k[###]~n ~B~vDu bekommst nun nicht länger einen temporären Schutzengel "
+   "nach dem Tode."
+user_temp_safe_invalid = de \
+   "~B~U~k[###]~n ~B~vDein Schutzengel kann dich nicht weiter beschützen."
+user_grouping_on = de "~B~U~k[###]~n ~B~vDu kannst nun Gruppen beitreten."
+user_grouping_off = de \
+   "~B~U~k[###]~n ~B~vDu kannst keiner Gruppe mehr beitreten."
+user_cant_go = de "Du kannst zu keinem Ort gehen."
+user_blocked_send = de "%s ignoriert Deine Mitteilungen."
+user_cant_suicide = de \
+   "Du kannst Dich nicht selbst töten - das Leben ist einfach zu schön. Du "
+   "musst die Führerschaft Deiner Gilde abgeben, bevor Du Dich umbringen "
+   "kannst."
+user_cant_suicide_justicar = de \
+   "Es ist unwürdig für einen derart hohen Beamten, sich selbst das Leben "
+   "zu nehmen!"
+user_cant_suicide_yet = de \
+   "Es sieht so aus, als ob Du nicht in der Lage wärst, Dir das Leben zu "
+   "nehmen. Du fühlst, dass Dein Leben gerade erst begonnen hat."
+user_cant_suicide_token = de \
+   "Du kannst Dich nicht umbringen, da Du ein heiliger Wächter eines Artefakts "
+   "bist!"
+user_cant_suicide_OOG = de \
+   "Die Seele schwer von Schuldgefühlen, kannst Du den Gedanken nicht ertragen, "
+   "Dich umzubringen, so sehr Du Dir es auch wünschst!"
+user_no_seller = de "Du kannst hier nichts kaufen."
+user_no_guild = de "Du gehörst keiner Gilde an."
+user_no_guild_broke = de \
+   "Kehre zurück, sobald Du genug Geld besitzt, um eine Gilde zu gründen."
+user_no_guildhall_broke = de \
+   "Kehre zurück, sobald Du genug Geld besitzt, um die Zahlung für die Gildenhalle "
+   "zu tätigen."
+user_duplicate_guildname = de \
+   "Es existiert bereits eine Gilde mit diesem Namen - bitte wähle einen "
+   "anderen Namen."
+user_duplicate_guild_username = de \
+   "Deine Gilde kann nicht den Namen eines Spielers tragen. Wähle einen anderen "
+   "Namen."
+user_couldnt_replace = de \
+   "Du konntest nicht zu Deinem Ausgangsort zurückkehren."
+user_logon = de \
+   "Willkommen in der Welt von Meridian 59! (Tippe \"hilfe\" um eine Anleitung "
+   "aufzurufen)."
+user_goto_lastsaferoom = de \
+   "You have been sent to the last safe place you visited."
+user_goto_safety = de "Du wurdest an einen sicheren Ort geschickt."
+user_goto_object = de "%s%s hat Dich zu sich gerufen."
+user_goto_jail = de "Du wurdest ins Gefängnis von Barloque geworfen!"
+user_last_known = de "Du hast Dich nach %s%s teleportiert."
+user_school_shallile = de "Schule von Sha-Lill"
+user_school_qor = de "Schule von Qor"
+user_school_kraanan = de "Schule von Kraanan"
+user_school_faren = de "Schule von Faren"
+user_school_riija = de "Schule von Riija"
+user_school_jala = de "Schule von Jala"
+user_school_dm = de "Götter-Zauber"
+user_admin_message = de "%q"
+user_doesnt_know_stroke = de "Du weißt nicht zu %s!"
+user_doesnt_know_spell = de "Du hast den Zauberspruch '%s' noch nicht gelernt!"
+user_cant_withdraw = de "Du kannst hier nichts abheben!"
+user_cant_withdraw_items = de "Du kannst hier keine Gegenstände mitnehmen!"
+user_cant_deposit = de "Du kannst hier nichts einzahlen!"
+user_cant_deposit_items = de "Du kannst hier keine Gegenstände lagern!"
+user_cant_balance = de "Du kannst Deinen Kontostand hier nicht überprüfen!"
+user_appeal = de "%s beschwert sich: %q"
+user_first_time_appeal = de \
+   "~B~U~k[###]~n %s hat sich zum ersten Mal eingewählt."
+user_did_appeal = de \
+   "Solltest Du nicht sofort eine Antwort erhalten, sind die Barden und Guides "
+   "sicher beschäftigt. Du kannst jedoch versuchen, eine Gamemail zu schreiben."
+user_kill_zone = de \
+   "Dein Schutzengel flüstert Dir zu, \"Ich kann Dich hier nicht verteidigen.\""
+user_angel_rejoins = de "Dein Schutzengel kehrt zu Dir zurück."
+user_fumble = de "Du stolperst und verlierst Dein %s."
+user_wait_for_news_posting = de \
+   "Du musst einen Moment warten, bevor Du wieder Nachrichten absenden kannst."
+user_news_squelched = de \
+   "Deine Fähigkeiten Nachrichten zu schreiben wurden dir genommen."
+user_news_toobig = de \
+   "Wow Kumpel!! Atme mal tief durch, die Nachricht ist zu lang!"
+user_guild_rsc = de "Gilde"
+user_guildofficer_rsc = de "guildofficer"
+user_default_url = de "http://www.openmeridian.de/"
+autocombine_off_msg = de \
+   "Du entscheidest dich, die Gegenstände nicht mehr zu kombinieren."
+autocombine_on_msg = de "Du entscheidest dich, die Gegenstände zu kombinieren."
+user_say_autoloot_on = de "autoloot an"
+user_say_autoloot_off = de "autoloot aus"
+autoloot_on_msg = de "Autoloot ist an."
+autoloot_off_msg = de "Autoloot ist aus."
+user_say_reagentbag_on = de "reagentbag an"
+user_say_reagentbag_off = de "reagentbag aus"
+guild_survival_too_late = de \
+   "Deine Gilde hat bereits eine Arena gestartet. Du musst warten."
+public_survival_too_late = de \
+   "Eine öffentliche Arena ist bereits gestartet. Du musst warten."
+survival_err_not_safe = de \
+   "Du musst irgendwo sein wo es sicher ist, um einer Arena beizutreten oder "
+   "eine zu starten!"
+survival_err_no_guild = de "Du bist in keiner Gilde!"
+survival_err_already_guild = de \
+   "Es ist bereits eine Gilden Arena gestartet worden."
+survival_err_already_public = de \
+   "Es ist bereits eine öffentliche Arena gestartet worden."
+survival_no_public_rooms = de \
+   "Es ist noch keine öffentliche Arena gestartet worden."
+survival_no_guild_rooms = de "Deine Gilde hat derzeit keine Arena gestartet."
+survival_err_cant_join = de \
+   "Die Survival Arena hat bereits begonnen. Du kannst nicht mehr beitreten"
+phased_out_cant_drop = de \
+   "Du kannst keine Gegenstände wegwerfen, während du ausgestiegen bist."
+reagentbag_auto_on = de "Reagenzien Beutel AN"
+reagentbag_auto_off = de "Reagenzien Beutel AUS"
+user_logon_delay = de "Du brauchst einen Moment um dich wieder zu fassen"
+inventory_sort_cleared = de "Deine Sortierliste wurde gelöscht."
+inventory_class_added = de "Du fügst %s zu Deiner Sortierliste hinzu."
+inventory_sort_no_item = de "Es existiert kein Gegenstand mit diesen Namen."
+inventory_sort_help = de \
+   "Sage 'Inventar Sortierung hinzufügen der Säbel' um z.B. einen Säbel zur "
+   "Sortierliste hinzu zu fügen. Jeder Gegenstand funktioniert, Du kannst "
+   "auch die folgenden benutzen: Waffen, Rüstungen, Helme, Schilde, Ringe, "
+   "Tränke, Schriftrollen, Stäbe, Zauberstäbe, Reagenzien, Munition, und "
+   "Essen. Sage 'Inventar sortieren' um es jeder Zeit der Liste nach zu sortieren. "
+   "Sage 'Inventar Sortierung löschen' um die Liste zu löschen. Sage 'Inventar "
+   "Sortierung Report' um deine aktuelle Liste anzuzeigen."
+inventory_sort_report_header = de \
+   "Dein Inventar wird der nach der folgenden Reihenfolge sortiert:"
+inventory_sort_report = de "%s"
+inventory_already_in_list = de "Dies ist bereits in deiner Liste."

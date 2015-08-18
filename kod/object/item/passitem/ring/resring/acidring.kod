@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include acidring.lkod
+
    AcidRing_name_rsc = "ring of acid resistance"
    AcidRing_desc_rsc = \
       "This ring is odd to the touch.  Magical runes are etched on its inner surface."

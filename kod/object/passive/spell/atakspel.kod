@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include atakspel.lkod
+
    attack_spell_hit_rsc = "You hit %s%s."
    attack_spell_no_self_rsc = "You can't cast %s on yourself."
    attack_spell_out_of_range = "%s%s is too far away to hit with %s."
@@ -211,7 +213,7 @@ messages:
 
       % After figuring damage, do an AssessDamage.  This will handle the necessary
       %  attack messages.
-      for i in lTargets
+      foreach i in lTargets
       {
          if IsClass(who,&Player)
          {

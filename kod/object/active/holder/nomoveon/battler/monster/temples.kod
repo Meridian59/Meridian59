@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include temples.lkod
+
    priestess_teach_quest_needed = \
       "To learn that, you must first become my disciple by proving "
       "the strength of your faith."

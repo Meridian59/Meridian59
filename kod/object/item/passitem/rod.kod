@@ -18,20 +18,19 @@ constants:
 
 resources:
 
+   include rod.lkod
+
    Rod_desc_rsc = "You can feel magical energy pulsing through the rod."
    Rod_broken = "%s%s goes dark, having expended its last charge!"
    Rod_useless = "The rod must be recharged before it can be used again."
    Rod_desc_broken_rsc = \
       "This once pristine rod is dull and dark, and must be recharged."
    Rod_success_msg = "The rod pulses in your hand."
-
-   rod_consumes_charges_a_rsc = " Unleashing the magic within will consume "
-   rod_consumes_charges_b_rsc = " charges."
-
-   rod_charges_left_a_rsc = "This rod has "
-   rod_charges_left_b_rsc = " charges remaining, and can hold a maximum of "
-   rod_charges_left_c_rsc = " charges."
-
+   rod_consumes_charges_rsc = \
+      "  Unleashing the magic within will consume %i charges."
+   rod_charges_left_rsc = \
+      "\n\nThis rod has %i charges remaining, and can hold a maximum "
+      "of %i charges."
    rod_success_wav_default_rsc = healwand.wav
    rod_fail_wav_default_rsc = spelfail.wav
 
@@ -110,7 +109,7 @@ messages:
       iRodCount = 0;
       if IsClass(what,&User)
       {
-         for i in Send(what,@GetHolderPassive)
+         foreach i in Send(what,@GetHolderPassive)
          {
             if IsClass(i,&Rod)
             {
@@ -275,21 +274,24 @@ messages:
       return;
    }
 
-   AppendDesc()
+   DoBaseDesc()
    {
-      if viConsumesHits <> 1
+      if viConsumesHits > 1
       {
-         AppendTempString(rod_consumes_charges_a_rsc);
-         Send(SYS,@AppendCardinalToTempString,#number=viConsumesHits);
-         AppendTempString(rod_consumes_charges_b_rsc);
+         AddPacket(4, system_rsc_template_2, 4,vrDesc,
+                   4,rod_consumes_charges_rsc, 4,viConsumesHits);
+      }
+      else
+      {
+         AddPacket(4,vrDesc);
       }
 
-      AppendTempString("\n\n");
-      AppendTempString(rod_charges_left_a_rsc);
-      Send(SYS,@AppendCardinalToTempString,#number=piHits);
-      AppendTempString(rod_charges_left_b_rsc);
-      Send(SYS,@AppendCardinalToTempString,#number=viStartMaxHits);
-      AppendTempString(rod_charges_left_c_rsc);
+      return;
+   }
+
+   AppendDesc()
+   {
+      AddPacket(4,rod_charges_left_rsc, 4,piHits, 4,viStartMaxHits);
 
       return;
    }

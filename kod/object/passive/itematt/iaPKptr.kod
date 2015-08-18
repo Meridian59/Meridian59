@@ -29,9 +29,11 @@ ItemAttPKPointer is ItemAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
+
+   include iapkptr.lkod
  
    PKpointer_no_loot = \
       "You reach for %s%s, but you are mystically barred from grasping it."
@@ -108,12 +110,11 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
    TimerExpired(oItem=$,lData=$)
    {
       SetNth(lData,2,$);   %% timer is gone, now remove reference
       Send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
-   
+
       return;
    }
 

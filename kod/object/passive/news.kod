@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include news.lkod
+
    news_name_rsc = "Newscroll"
    news_icon_rsc = news.bgf
    news_desc_rsc = "You are looking at a public posting device."
@@ -147,7 +149,7 @@ messages:
    {
       local i;
 
-      for i in plMessages
+      foreach i in plMessages
       {
          if First(i) = num
          {
@@ -201,7 +203,7 @@ messages:
    {
       local i;
       
-      for i in plMessages
+      foreach i in plMessages
       {
          if First(i) = number
          {
@@ -218,7 +220,7 @@ messages:
    {
       local i;
 
-      for i in plMessages
+      foreach i in plMessages
       {
          if First(i) = number
          {
@@ -255,7 +257,7 @@ messages:
       }
 
       list = $;
-      for i in plMessages
+      foreach i in plMessages
       {
          if (poster <> $) AND (Nth(i, 2) = poster)
          {

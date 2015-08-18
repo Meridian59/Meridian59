@@ -35,6 +35,8 @@ constants:
 
 
 resources:
+
+   include ladyphen.lkod
  
    ladypheonix_name_rsc = "LadyPhoenix"
    ladypheonix_desc_rsc = \
@@ -44,25 +46,28 @@ resources:
       "actions.   A feeling of well being and protection washes over you, "
       "and you know that you can trust in her guidance."
 
-   ladypheonix_Directions_rsc = "`kLadyPhoenix whispers,\"Now take %q"
+   ladyph_dir_step_rsc = \
+      "`kLadyPhoenix whispers, \"Now take %s %s %s, then take a "
+      "step forward.\""
+   ladyph_dir_nostep_rsc = \
+      "`kLadyPhoenix whispers, \"Now take a step forward.\""
    ladypheonix_not_in_range = \
       "`kLadyPhoenix whispers something, but you are too far away to hear it."
+   ladypheonix_whisper_start = \
+      "~kLadyPhoenix whispers, \"The %s will not harm you, but go no further "
+      "without my guidance.\""
 
-   ladypheonix_whispers = "~kLadyPhoenix whispers,\"The "
-   ladypheonix_row_6 = "northernmost cloud "
-   ladypheonix_row_7 = "second cloud from the north "
-   ladypheonix_row_8 = "third cloud from the north "
-   ladypheonix_row_9 = "center cloud "
-   ladypheonix_row_10 = "third cloud from the south "
-   ladypheonix_row_11 = "second cloud from the south "
-   ladypheonix_row_12 = "southernmost cloud "
-   ladyphoenix_no_further = \
-      "will not harm you, but go no further without my guidance.\""
-   ladypheonix_step = "step "
-   ladypheonix_steps = "steps "
-   ladypheonix_south = "south "
-   ladypheonix_north = "north "
-   ladypheonix_step_forward = "then take a step forward.\""
+   ladypheonix_row_6 = "northernmost cloud"
+   ladypheonix_row_7 = "second cloud from the north"
+   ladypheonix_row_8 = "third cloud from the north"
+   ladypheonix_row_9 = "center cloud"
+   ladypheonix_row_10 = "third cloud from the south"
+   ladypheonix_row_11 = "second cloud from the south"
+   ladypheonix_row_12 = "southernmost cloud"
+   ladypheonix_step = "step"
+   ladypheonix_steps = "steps"
+   ladypheonix_south = "south"
+   ladypheonix_north = "north"
    ladypheonix_protect_command = "protect"
    ladypheonix_wlll_protect = "~kLadyPhoenix whispers,\"I will protect you.\""
    ladypheonix_already_protecting = \
@@ -74,8 +79,6 @@ resources:
    ladyphoenix_pantsA_female_player_rsc = bfb.bgf
 
 classvars:
-
-   vrDirections = ladypheonix_Directions_rsc
 
 properties:
 
@@ -142,15 +145,6 @@ messages:
    {
       local iSteps,iDirection; 
 
-      if RunnerRow = SafeRow
-      % Just stepping forward so no need to pass parameters to build directions.
-      {
-         Send(self,@BuildDirections);
-         Send(self,@GiveDirections);
-
-         return;
-      }
-
       iSteps = Send(self,@GetSteps,#from=RunnerRow,#to=SafeRow);
 
       if Abs(iSteps) > iSteps
@@ -162,8 +156,7 @@ messages:
          iDirection = NORTH;
       }
 
-      Send(self,@BuildDirections,#steps=Abs(iSteps),#Direction=iDirection);
-      Send(self,@GiveDirections);
+      Send(self,@GiveDirections,#iSteps=Abs(iSteps),#iDirection=iDirection);
 
       return;
    }
@@ -179,87 +172,50 @@ messages:
       return iSteps;
    }
 
-   BuildInitDirections()
+   BuildInitDirections(who=$)
    "Builds the direction for the first step into the maze."
    {
-      ClearTempString();
-      AppendTempString(ladypheonix_whispers);
+      local rDirection;
 
-      if piStartRow = 6
+      if who = $
       {
-         AppendTempString(ladypheonix_row_6);
+         return;
       }
 
-      if piStartRow = 7
+      switch(piStartRow)
       {
-         AppendTempString(ladypheonix_row_7);
+         case 6:
+            rDirection = ladypheonix_row_6;
+            break;
+         case 7:
+            rDirection = ladypheonix_row_7;
+            break;
+         case 8:
+            rDirection = ladypheonix_row_8;
+            break;
+         case 9:
+            rDirection = ladypheonix_row_9;
+            break;
+         case 10:
+            rDirection = ladypheonix_row_10;
+            break;
+         case 11:
+            rDirection = ladypheonix_row_11;
+            break;
+         default:
+            rDirection = ladypheonix_row_12;
+            break;
       }
 
-      if piStartRow = 8
-      {
-         AppendTempString(ladypheonix_row_8);
-      }
-
-      if piStartRow = 9
-      {
-         AppendTempString(ladypheonix_row_9);
-      }
-
-      if piStartRow = 10
-      {
-         AppendTempString(ladypheonix_row_10);
-      }
-
-      if piStartRow = 11
-      {
-         AppendTempString(ladypheonix_row_11);
-      }
-
-      if piStartRow = 12
-      {
-         AppendTempString(ladypheonix_row_12);
-      }
-
-      AppendTempString(ladyphoenix_no_further);
+      Send(who,@MsgSendUser,#message_rsc=ladypheonix_whisper_start,
+            #parm1=rDirection);
 
       return;
    }
 
-   BuildDirections(Steps=0,Direction=0)
-   "Gives number of steps to travel."
+   GiveDirections(iSteps=0,iDirection=0)
    {
-      ClearTempString();
-
-      Send(SYS,@AppendCardinalToTempString,#number=steps);
-      AppendTempString(" ");
-
-      if Steps = 1
-      {
-         AppendTempString(ladypheonix_step);
-      }
-      else
-      {
-         AppendTempString(ladypheonix_steps);
-      }
-
-      if Direction = SOUTH
-      {
-         AppendTempString(ladypheonix_south);
-      }
-
-      if Direction = NORTH
-      {
-         AppendTempString(ladypheonix_north);
-      }
-
-      AppendTempString(ladypheonix_step_forward);
-
-      return;
-   }
-
-   GiveDirections()
-   {
-      local i,lActive,oObject,oRoom;
+      local i, lActive, oObject, oRoom, rNumSteps, rStepPlural, rDir;
 
       if poOwner = $
       {
@@ -267,24 +223,66 @@ messages:
       }
 
       oRoom = Send(self,@GetOwner);
-
       lActive = Send(oRoom,@GetplActive);
 
-      for i in lActive
-      {
+      rStepPlural = ladypheonix_steps;
 
+      switch(iSteps)
+      {
+         case 1:
+            rNumSteps = system_cardinal_1;
+            rStepPlural = ladypheonix_step;
+            break;
+         case 2:
+            rNumSteps = system_cardinal_2;
+            break;
+         case 3:
+            rNumSteps = system_cardinal_3;
+            break;
+         case 4:
+            rNumSteps = system_cardinal_4;
+            break;
+         case 5:
+            rNumSteps = system_cardinal_5;
+            break;
+         case 6:
+            rNumSteps = system_cardinal_6;
+            break;
+         case 7:
+            rNumSteps = system_cardinal_7;
+            break;
+         default:
+            rNumSteps = system_cardinal_0;
+            break;
+      }
+
+      if iDirection = SOUTH
+      {
+         rDir = ladypheonix_south;
+      }
+      else
+      {
+         rDir = ladypheonix_north;
+      }
+
+      foreach i in lActive
+      {
          oObject = Send(oRoom,@HolderExtractObject,#data=i);
-         if IsClass(oObject,&user)
+         if IsClass(oObject,&User)
          {
             if (Abs((Send(oObject,@GetRow) - Send(self,@GetRow))) > 2
                OR Abs((Send(oObject,@GetCol) - Send(self,@GetCol))) > 2)
             {
                Send(oObject,@MsgSendUser,#message_rsc=ladypheonix_not_in_range);
             }
+            else if iSteps = 0
+            {
+               Send(oObject,@MsgSendUser,#message_rsc=ladyph_dir_nostep_rsc);
+            }
             else
             {
-               Send(oObject,@MsgSendUser,#message_rsc=vrDirections,
-                     #parm1=getTempString(),#type1=0);
+               Send(oObject,@MsgSendUser,#message_rsc=ladyph_dir_step_rsc,
+                     #parm1=rNumSteps,#parm2=rStepPlural,#parm3=rDir);
             }
          }
       }
@@ -299,20 +297,12 @@ messages:
       {
          if Send(poOwner,@ReqSetRunner,#who=what)
          {
-            clearTempString();
-            AppendTempString(ladypheonix_wlll_protect);
-            Send(what,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-                  #parm1=getTempString(),#type1=0);
-            Send(self,@BuildInitDirections);
-            Send(what,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-                  #parm1=getTempString(),#type1=0);
+            Send(what,@MsgSendUser,#message_rsc=ladypheonix_wlll_protect);
+            Send(self,@BuildInitDirections,#who=what);
          }
          else
          {
-            clearTempString();
-            AppendTempString(ladypheonix_already_protecting);
-            Send(what,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-                  #parm1=getTempString(),#type1=0);
+            Send(what,@MsgSendUser,#message_rsc=ladypheonix_already_protecting);
          }
       }
 

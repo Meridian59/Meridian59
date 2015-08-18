@@ -17,6 +17,8 @@ constants:
 
 resources:
 
+   include fourcon.lkod
+
    fourCouncilor_name_rsc = "Drechx"
    fourCouncilor_icon_rsc = fourcon.bgf
    fourCouncilor_desc_rsc = \

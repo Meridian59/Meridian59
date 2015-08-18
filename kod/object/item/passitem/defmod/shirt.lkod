@@ -1,0 +1,17 @@
+shirt_condition_exc = de " ist in makellosem Zustand."
+shirt_condition_good = de " ist leicht abgetragen."
+shirt_condition_med = de " hat ein paar unscheinbare Risse."
+shirt_condition_poor = de \
+   " besteht nur noch aus Fetzen und hält kaum noch zusammen."
+shirt_condition_broken = de \
+   " ist mit Dreck bedeckt und zerrissen, so dass man es nicht mehr benutzen "
+   "kann."
+shirt_name_rsc = de "Das Hemd"
+shirt_desc_rsc = de \
+   "Dieses Hemd bedeckt das Nötigste, bietet seinem Träger aber nur wenig "
+   "oder gar keinen Schutz."
+shirt_wrong_gender = de \
+   "Ein Hemd, das für %s gemacht wurde, würde Dir überhaupt nicht passen."
+shirt_woman = de "Frau"
+shirt_man = de "Mann"
+shirt_this = de "This "

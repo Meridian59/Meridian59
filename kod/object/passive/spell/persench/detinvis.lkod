@@ -1,0 +1,9 @@
+DetectInvisible_name_rsc = de "Unsichtbares entdecken"
+DetectInvisible_desc_rsc = de \
+   "Der Zauber lässt Dich Gestalten erkennen, die anderen verborgen bleiben. "
+   "Benötigt Phiolen mit Solagh."
+DetectInvisible_on_rsc = de "Du kannst fühlen wie deine Augen prickeln."
+DetectInvisible_off_rsc = de "Dein Augenlicht kehrt zur Normalform zurück."
+DetectInvisible_already_enchanted_rsc = de \
+   "Du kannst die Unsichtbaren bereits sehen."
+DetectInvisible_Success_rsc = de "%s%s Augen pulsieren kurz."

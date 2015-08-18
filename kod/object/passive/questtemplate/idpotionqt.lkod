@@ -1,0 +1,43 @@
+% Quest description.
+idpotionqt_name_rsc = de "potion identification quest"
+idpotionqt_desc_rsc = de \
+   "Help an NPC identify a potion."
+
+idpotionqt_nodetwo_rsc = de \
+   "%s%s recently received a potion %s is unable to identify, and would "
+   "like your assistance in determining its nature.  Offer the potion to "
+   "%s%s and see if %s can help with this task."
+
+idpotionqt_nodethree_rsc = de \
+   "%s%s has determined the nature of the potion. Go back to %s%s and "
+   "offer %s the now identified potion, and collect your reward."
+
+idpotionqt_completed_rsc = de \
+   "You have completed the potion identification quest."
+
+% Quest resources.
+potion_identify_assign_1 = de \
+   "In der Tat, ja!  Vor kurzem habe ich diesen Trank erhalten.  Ich habe "
+   "versucht ihn auf magische Weise zu identifizieren aber er scheint meine "
+   "Versuche abzuwehren.  Kannst Du ihn zu %NPC bringen und frag %HIMHER_NPC "
+   "ob er identifiziert werden kann?  Komm zurück mit der Lösung was es ist "
+   "und ich werde Dich belohnen."
+potion_identify_assign_2 = de \
+   "Hmmm, ein sehr interessantes Exemplar.  Lass mich nur ein paar Tropfen "
+   "nehmen zur Analyse...  Ah ja, die scheint mir ein %CARGO zu sein.  Lass "
+   "mich ein Etikett aufkleben, so dass %NPC weiß was es ist."
+potion_identify_success = de \
+   "Ausgezeichnet, ich bin sicher, dass ich eine Verwendung finde für den "
+   "%CARGO.  Hier, nimm das als Bezahlung."
+potion_identify_failure_1 = de \
+   "Betreff: Der seltsame Zaubertrank\nBist Du verloren gegangen?  Mach Dir "
+   "keine Sorgen, das passiert häufiger mit Leuten die nicht aus dieser Gegend "
+   "sind.  Der Trank war wohl scheinbar nicht so wichtig.  Ich könnte möglicherweise "
+   "andere Jobs für Dich haben, falls Du wieder zu Besuch hier in der Gegend "
+   "bist. Pass auf Dich auf!"
+potion_identify_failure_2 = de \
+   "Der seltsame Zaubertrank\nBist Du verloren gegangen?  Mach Dir keine Sorgen, "
+   "das passiert häufiger mit Leuten die nicht aus dieser Gegend sind.  %NPC "
+   "hat mich kontaktiert und sagte, der Trank wäre eh nichts Besonderes.  "
+   "Du kannst den %CARGO gerne wegwerfen, da das Verfallsdatum eh überschritten "
+   "ist."

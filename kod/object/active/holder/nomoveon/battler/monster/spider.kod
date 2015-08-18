@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include spider.lkod
+
    spider_koc_name_rsc = "teotkauilkinich"
    spider_name_rsc = "spider"
    spider_icon_rsc = spider.bgf

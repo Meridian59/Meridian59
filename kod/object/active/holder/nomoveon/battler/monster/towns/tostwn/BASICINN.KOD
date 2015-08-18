@@ -7,6 +7,8 @@ constants:
 
 resources:
 
+   include basicinn.lkod
+
    basicinnkeeper_name_rsc = "Rycksher"
    basicinnkeeper_icon_rsc = basicinn.bgf
    basicinnkeeper_desc_rsc = \
@@ -94,7 +96,7 @@ messages:
       CostObj = $;
       if pcCostToWrap <> $ AND piNumberToWrap <> $ AND piNumberToWrap <> 0
       {
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if getClass(i) <> pcCostToWrap
             {
@@ -133,7 +135,7 @@ messages:
       if IsClass(obj,&NumberItem)
       {
          TargetObj = $;
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if GetClass(i) = GetClass(obj)
             {

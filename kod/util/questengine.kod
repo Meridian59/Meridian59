@@ -51,6 +51,8 @@ constants:
 
 resources:
 
+   include questengine.lkod
+
    % Chess piece names
    pawn = "Knave"
    pawn1 = "Queen's Keep's Knave"
@@ -240,7 +242,7 @@ messages:
    {
       local lQT;
 
-      for lQT in plQuestTemplates
+      foreach lQT in plQuestTemplates
       {
          if Nth(lQT,QT_QST_ID) = index
          {
@@ -319,6 +321,13 @@ messages:
       plDefaultPrizeList = [];
       plDefaultPenaltyList = [];
 
+      Post(self,@RecreateQuestTemplates);
+
+      return;
+   }
+
+   RecreateQuestTemplates()
+   {
       % Permanent quests, index is determined by constants from old quest setup
       % Quest templates are now objects, they will send the appropriate data
       % back to QuestEngine to set up their quest template. RecreateQuestNodes
@@ -508,7 +517,7 @@ messages:
       % might get a little bulky. Since we don't *need* to have a quest
       % available for every member, lets try this out at 30 scheduled quests
       % and go from there. Old scheduling code commented out here for now.
-      %for i in Send(Send(SYS,@GetParliament),@GetFactionList)
+      %foreach i in Send(Send(SYS,@GetParliament),@GetFactionList)
       %{
       %   if Nth(i,1) = FACTION_PRINCESS
       %   {
@@ -578,7 +587,7 @@ messages:
 
       oQT = $;
       % Let all the quests know to send their quest node templates.
-      for i in plQuestTemplates
+      foreach i in plQuestTemplates
       {
          oQT = Nth(i,QT_QUEST_OBJECT);
          if oQT <> $
@@ -697,7 +706,7 @@ messages:
       }
 
       % Don't add duplicate quest nodes.
-      for lQNT in plQuestNodeTemplates
+      foreach lQNT in plQuestNodeTemplates
       {
          if Nth(lQNT,QNT_QNT_ID) = quest_node_index
          {
@@ -772,7 +781,7 @@ messages:
          return $;
       }
 
-      for lQNT in plQuestNodeTemplates
+      foreach lQNT in plQuestNodeTemplates
       {
          if Nth(lQNT,QNT_QNT_ID) = index
          {
@@ -795,7 +804,7 @@ messages:
          return FALSE;
       }
 
-      for lQNT in plQuestNodeTemplates
+      foreach lQNT in plQuestNodeTemplates
       {
          if Nth(lQNT,QNT_QNT_ID) = index
          {
@@ -966,7 +975,7 @@ messages:
       }
 
       % NPC's must be listeners and receivers and not quest prohibited
-      for oNPC in new_NPC_list
+      foreach oNPC in new_NPC_list
       {
          if (((Send(oNPC,@GetAttributes) & (MOB_RECEIVE | MOB_LISTEN)) = 0)
             OR (Send(oNPC,@GetAttributes) & MOB_NOQUEST))
@@ -1305,7 +1314,7 @@ messages:
       }
 
       % Don't add duplicate quests.
-      for lQT in plQuestTemplates
+      foreach lQT in plQuestTemplates
       {
          if Nth(lQT,QT_QST_ID) = quest_index
          {
@@ -1336,7 +1345,7 @@ messages:
          return FALSE;
       }
 
-      for lQT in plQuestTemplates
+      foreach lQT in plQuestTemplates
       {
          if Nth(lQT,QT_QST_ID) = index
          {
@@ -1363,7 +1372,7 @@ messages:
          return $;
       }
 
-      for lQT in plQuestTemplates
+      foreach lQT in plQuestTemplates
       {
          if Nth(lQT,QT_QST_ID) = index
          {
@@ -1452,7 +1461,7 @@ messages:
          new_list = plDefaultQuestNodes;
       }
 
-      for iNodeIndex in new_list
+      foreach iNodeIndex in new_list
       {
          if NOT Send(self,@IsValidQuestNodeTemplate,#index=iNodeIndex)
          {
@@ -1716,7 +1725,7 @@ messages:
    {
       local QN;
 
-      for QN in plQuestNodesAwaitingMonsterDeath
+      foreach QN in plQuestNodesAwaitingMonsterDeath
       {
          if QN <> $
          {
@@ -1764,7 +1773,7 @@ messages:
 
       % Check each quest template to see if another quest needs to be scheduled.
       % TODO: quests should probably keep track of their own timers?
-      for i in plQuestTemplates
+      foreach i in plQuestTemplates
       {
          Send(self,@ScheduleQuest,#index=Nth(i,QT_QST_ID));
       }
@@ -1827,7 +1836,7 @@ messages:
 
       iTime = GetTime();
 
-      for QT in plQuestTemplates
+      foreach QT in plQuestTemplates
       {
          if QT = $
          {
@@ -1836,7 +1845,7 @@ messages:
          }
          else
          {
-            for Q in Nth(QT, QT_ACTIVE_QUESTS)
+            foreach Q in Nth(QT, QT_ACTIVE_QUESTS)
             {
                if Q = $
                {
@@ -1882,9 +1891,9 @@ messages:
          Send(self,@Suspend);
       }
 
-      for iQT in plQuestTemplates
+      foreach iQT in plQuestTemplates
       {
-         for oQuest in Nth(iQT,QT_ACTIVE_QUESTS)
+         foreach oQuest in Nth(iQT,QT_ACTIVE_QUESTS)
          {
             Send(oQuest,@Cancel,#bRecreate=TRUE);
          }
@@ -1925,7 +1934,7 @@ messages:
          return;
       }
 
-      for i in plQuestTemplates
+      foreach i in plQuestTemplates
       {
          iQTIndex = Nth(i,QT_QST_ID);
 
@@ -1935,7 +1944,7 @@ messages:
          ClearTempString();
          bFirst = TRUE;
 
-         for oQ in Nth(i,QT_ACTIVE_QUESTS)
+         foreach oQ in Nth(i,QT_ACTIVE_QUESTS)
          {
             iAvailable = iAvailable + 1;
             if Send(oQ,@GetQuesters) = $
@@ -1974,7 +1983,7 @@ messages:
          }
          if piDebug > 1
          {
-            for oQ in Nth(i,QT_ACTIVE_QUESTS)
+            foreach oQ in Nth(i,QT_ACTIVE_QUESTS)
             {
                if Send(oQ,@GetQuesters) <> $
                {
@@ -1993,7 +2002,7 @@ messages:
    {
       local iQTIndex, lQT;
 
-      for lQT in plQuestTemplates
+      foreach lQT in plQuestTemplates
       {
          iQTIndex = Nth(lQT,QT_QST_ID);
 
@@ -2036,7 +2045,7 @@ messages:
 
       bFound = FALSE;
 
-      for oQ in Nth(Send(self,@GetQuestTemplate,#index=Send(what,@GetQuestTemplateIndex)),QT_ACTIVE_QUESTS)
+      foreach oQ in Nth(Send(self,@GetQuestTemplate,#index=Send(what,@GetQuestTemplateIndex)),QT_ACTIVE_QUESTS)
       {
          if oQ = what
          {

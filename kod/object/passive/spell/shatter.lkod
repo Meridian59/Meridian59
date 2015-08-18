@@ -1,0 +1,13 @@
+shatter_name_rsc = de "Zerbrechen"
+shatter_desc_rsc = de \
+   "Die eisige Magie Farens zerbricht einen oder mehrere Gegenstände im Inventar "
+   "der Zielperson. Der Zauber benötigt Lila Pilze und Rote Pilze. Die Anwendung "
+   "dieses Zaubers kann dazu führen, dass Du zum Gesetzlosen erklärt wirst."
+shatter_cast_rsc = de "Dein %s gefriert, zittert und zerbricht!"
+shatter_cast_plural_rsc = de "Deine %s gefrieren, zittern und zerbrechen!"
+shatter_succeed = de "Du zerbrichts %s%ss %s!"
+shatter_failed_caster = de \
+   "Du zeigst auf %s%s, aber nichts scheint zu passieren."
+shatter_failed_target = de \
+   "%s%s zeigt auf dich, aber es scheint nichts zu passieren."
+shatter_not_enough_hp = de "Du bist nicht stark genug Objekte zu zerbrechen."

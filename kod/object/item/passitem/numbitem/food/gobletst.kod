@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gobletst.lkod
+
    StoutGoblet_name_rsc = "mug of brew"
    StoutGoblet_icon_rsc = mug.bgf
    StoutGoblet_desc_rsc = \

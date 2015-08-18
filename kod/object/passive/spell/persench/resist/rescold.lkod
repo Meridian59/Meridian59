@@ -1,0 +1,14 @@
+resistcold_name_rsc = de "Kälte Widerstehen"
+resistcold_desc_rsc = de \
+   "Der Körper Deines Ziels füllt sich mit dem magischen Feuer von Faren, "
+   "das den Schaden von Kälteangriffen für mehrere Minuten verringert. Der "
+   "Zauber benötigt gewöhnliche und rote Pilze.."
+resistcold_already_enchanted = de "Du widerstehst Kälte bereits."
+resistcold_on = de "Das magischer Feuer Farens umschließt Deinen Körper."
+resistcold_off = de \
+   "Dein Körper kühlt sich ab und Du spürst das Du nicht mehr immun gegen "
+   "Kälte bist."
+resistcold_success = de "%s%s's Körper wird umschlossen von Farens Wärme."
+resistcold_spell_intro = de \
+   "Faren Level 2: Der Körper Deines Ziels füllt sich mit dem magischen Feuer "
+   "von Faren."

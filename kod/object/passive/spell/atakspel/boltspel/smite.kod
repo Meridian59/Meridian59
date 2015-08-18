@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include smite.lkod
+
    smite_name_rsc = "smite"
    smite_icon_rsc = iseduce.bgf
    smite_desc_rsc = \

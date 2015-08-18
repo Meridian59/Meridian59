@@ -1,0 +1,13 @@
+twoCouncilor_name_rsc = de "Bei Naq"
+twoCouncilor_desc_rsc = de \
+   "Ein kleiner geierähnlicher Mann, der mit einer extravaganten Robe ausGold "
+   "und Juwelen herausgeputzt ist. Er lebt in beständiger Furcht, daßandere "
+   "seine Schätze wollen könnten. Während seiner Studien hat erzahlreiche "
+   "Edelsteinminen entdeckt und ist somit der reichste Mann im Land,obwohl "
+   "seine Börse sich nur selten öffnet."
+twocon_true_ideal_rsc = de \
+   "Dein Vermögen ist beträchtlich. Ich bin tief beeindruckt von Leuten,die "
+   "ein solches Kapital mit sich tragen."
+twocon_half_ideal_rsc = de \
+   "Als Hinweis für die Zukunft: Ich bevorzuge es, Geschäfte mit Leutenzu "
+   "tätigen, die etwas mehr Reichtum vorweisen können."

@@ -1,0 +1,8 @@
+guildDeclareEnemy_name_rsc = de "Feind erklären"
+guildDeclareEnemy_desc_Rsc = de \
+   "Benutze diesen Befehl um eine andere Gilde als einen Feind zu erklären."
+DeclareEnemy_non_user = de "%s%s mag euch auch nicht besonders."
+DeclareEnemy_not_member = de "%s ist kein Mitglied einer verfeindeten Gilde!"
+DeclareEnemy_your_guild = de "%s ist ein Mitglied deiner eigenen Gilde!"
+DeclareEnemy_cant_self = de \
+   "Haben wir ein Problem mit unserem Selbstwertgefühl??"

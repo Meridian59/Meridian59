@@ -1,0 +1,4 @@
+RebelTroop_name_rsc = de "Ein Rebellensoldat"
+RebelTroop_desc_rsc = de \
+   "Dieser Soldat trägt stolz die Farben der Jasper-Miliz."
+RebelTroop_dead_name_rsc = de "Ein toter Rebellensoldat"

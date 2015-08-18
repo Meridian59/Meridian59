@@ -13,30 +13,39 @@ WeaponSpellProc is WeaponObjectAttribute
 constants:
 
    include blakston.khd
-   
+
    SELF_CAST_TYPE = 1
    DEFENDER_CAST_TYPE = 2
    NO_TARGET_CAST_TYPE = 3
 
 resources:
 
-   weapon_proc = "The %s worn by %s gives off a magical flare, casting %s on %s!"
+   include weaponspellproc.lkod
+
+   weapon_proc = \
+      "The %s worn by %s gives off a magical flare, casting %s on %s!"
    weapon_proc_you = "Your %s gives off a magical flare, casting %s on you!"
    weapon_proc_them = "Your %s gives off a magical flare, casting %s on %s!"
    weapon_proc_nobody = "Your %s gives off a magical flare, casting %s!"
-   weapon_proc_no_target = "The %s worn by %s gives off a magical flare, casting %s!"
+   weapon_proc_no_target = \
+      "The %s worn by %s gives off a magical flare, casting %s!"
+   weapspellproc_attribute_desc = \
+      "\n\nUpon a successful strike, the runes engraved on this %s will cast "
+      "%s %s with %i spellpower %i%% of the time."
+   wsp_attribute_self_rsc = "on you"
+   wsp_attribute_target_rsc = "on the enemy"
 
 classvars:
 
 properties:
-  
+
    poSpell = $
    piType = SELF_CAST_TYPE
    piSpellPower = 70
    piProcChance = 15
 
 messages:
-   
+
    Constructor(host_object=$,set_spell=$,set_type=1,set_spellpower=1,set_proc_chance=0)
    {
       local iRandomSpell;
@@ -47,11 +56,12 @@ messages:
          piType = set_type;
          piSpellPower = set_spellpower;
          piProcChance = set_proc_chance;
+
          propagate;
       }
-      
+
       iRandomSpell = Random(1,100);
-      
+
       if host_object <> $
          AND IsClass(host_object,&Weapon)
       {
@@ -144,120 +154,152 @@ messages:
             propagate;
          }
       }
-         
+
       propagate;
    }
-   
+
    GetSpell()
    {
       return poSpell;
    }
-   
+
    GetType()
    {
       return piType;
    }
-   
+
    GetSpellpower()
    {
       return piSpellPower;
    }
-   
+
    GetProcChance()
    {
       return piProcChance;
    }
-   
+
    ModifyDamage(damage = $,who = $,what = $)
    {
-      local i, each_obj;
+      local i, each_obj, oRoom;
+
+      if who = $
+      {
+         return damage;
+      }
+
+      oRoom = Send(who,@GetOwner);
 
       if poSpell <> $
          AND Random(1,100) <= piProcChance
       {
          if piType = SELF_CAST_TYPE
-            AND who <> $
             AND NOT Send(who,@IsEnchanted,#what=poSpell)
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(oRoom,@GetHolderActive)
             {
-               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
-               If IsClass(each_obj,&Player)
+               each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+               if IsClass(each_obj,&Player)
                   AND each_obj <> who
                {
                   Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc,
-                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
-                                             #parm2=Send(who,@GetName),
-                                             #parm3=Send(poSpell,@GetName),
-                                             #parm4=Send(who,@GetHimHer));
+                        #parm1=Send(Send(self,@GetHostObject),@GetName),
+                        #parm2=Send(who,@GetName),#parm3=Send(poSpell,@GetName),
+                        #parm4=Send(who,@GetHimHer));
                }
                if IsClass(each_obj,&Player)
                   AND each_obj = who
                {
                   Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc_you,
-                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
-                                             #parm2=Send(poSpell,@GetName));
+                        #parm1=Send(Send(self,@GetHostObject),@GetName),
+                        #parm2=Send(poSpell,@GetName));
                }
             }
-            Post(poSpell,@CastSpell,#who=who,#ltargets=[who],#iSpellPower=piSpellPower,#bItemCast=TRUE);
+            Post(poSpell,@CastSpell,#who=who,#ltargets=[who],
+                  #iSpellPower=piSpellPower,#bItemCast=TRUE);
          }
-         
-         % IsEnchanted check skipped so that the proc can replace enemy buffs with weaker versions.
-         % For example, a Qor player may wish to proc a weaker Eagle Eyes on an enemy that they are hitting.
+
+         % IsEnchanted check skipped so that the proc can replace enemy
+         % buffs with weaker versions. For example, a Qor player may wish
+         % to proc a weaker Eagle Eyes on an enemy that they are hitting.
          if piType = DEFENDER_CAST_TYPE
             AND what <> $
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(oRoom,@GetHolderActive)
             {
-               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
-               If IsClass(each_obj,&Player)
+               each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+               if IsClass(each_obj,&Player)
                   AND each_obj <> who
                {
                   Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc,
-                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
-                                             #parm2=Send(who,@GetName),
-                                             #parm3=Send(poSpell,@GetName),
-                                             #parm4=Send(what,@GetName));
+                        #parm1=Send(Send(self,@GetHostObject),@GetName),
+                        #parm2=Send(who,@GetName),#parm3=Send(poSpell,@GetName),
+                        #parm4=Send(what,@GetName));
                }
                if IsClass(each_obj,&Player)
                   AND each_obj = who
                {
                   Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc_them,
-                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
-                                             #parm2=Send(poSpell,@GetName),
-                                             #parm3=Send(what,@GetName));
+                     #parm1=Send(Send(self,@GetHostObject),@GetName),
+                     #parm2=Send(poSpell,@GetName),#parm3=Send(what,@GetName));
                }
             }
-            Post(poSpell,@CastSpell,#who=who,#ltargets=[what],#iSpellPower=piSpellPower,#bItemCast=TRUE);
+            Post(poSpell,@CastSpell,#who=who,#ltargets=[what],
+                  #iSpellPower=piSpellPower,#bItemCast=TRUE);
          }
-         
+
          if piType = NO_TARGET_CAST_TYPE
-            AND who <> $
          {
-            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            foreach i in Send(oRoom,@GetHolderActive)
             {
-               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
-               If IsClass(each_obj,&Player)
+               each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+               if IsClass(each_obj,&Player)
                   AND each_obj <> who
                {
                   Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc,
-                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
-                                             #parm2=Send(who,@GetName),
-                                             #parm3=Send(poSpell,@GetName));
+                        #parm1=Send(Send(self,@GetHostObject),@GetName),
+                        #parm2=Send(who,@GetName),#parm3=Send(poSpell,@GetName));
                }
                if IsClass(each_obj,&Player)
                   AND each_obj = who
                {
                   Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc_nobody,
-                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
-                                             #parm2=Send(poSpell,@GetName));
+                        #parm1=Send(Send(self,@GetHostObject),@GetName),
+                        #parm2=Send(poSpell,@GetName));
                }
             }
-            Post(poSpell,@CastSpell,#who=who,#ltargets=Send(poSpell,@GetTargets,#who=who),#iSpellPower=piSpellPower,#bItemCast=TRUE);
+            Post(poSpell,@CastSpell,#who=who,
+                  #lTargets=Send(poSpell,@GetTargets,#who=who),
+                  #iSpellPower=piSpellPower,#bItemCast=TRUE);
          }
       }
+
       return damage;
    }
-   
+
+   AttributeDesc()
+   {
+      local target_type;
+
+      target_type = Send(self,@GetType);
+      if target_type = 1
+      {
+         AddPacket(4,weapspellproc_attribute_desc, 4,Send(poHostObject,@GetName),
+                   4,Send(Send(self,@GetSpell),@GetName),4,wsp_attribute_self_rsc,
+                   4,Send(self,@GetSpellPower),4,Send(self,@GetProcChance));
+      }
+      else if target_type = 2
+      {
+         AddPacket(4,weapspellproc_attribute_desc, 4,Send(poHostObject,@GetName),
+                   4,Send(Send(self,@GetSpell),@GetName),4,wsp_attribute_target_rsc,
+                   4,Send(self,@GetSpellPower),4,Send(self,@GetProcChance));
+      }
+      else
+      {
+         AddPacket(4,system_blank_resource);
+      }
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

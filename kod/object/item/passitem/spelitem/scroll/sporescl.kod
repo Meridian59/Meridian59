@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include sporescl.lkod
+
    SporeBurstScroll_label_name_rsc = "scroll of spore burst"
    SporeBurstScroll_icon_rsc = scr08.bgf
    SporeBurstScroll_desc_rsc = \

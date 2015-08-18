@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gortrod.lkod
+
    ArmorOfGortRod_name_rsc = "rod of armor of Gort"
    ArmorOfGortRod_icon_rsc = wand1.bgf
 

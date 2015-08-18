@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include cnsarge.lkod
+
    cornothsergeant_name_rsc = "Rook"
    cornothsergeant_icon_rsc = cnsarge.bgf
    cornothsergeant_desc_rsc = \

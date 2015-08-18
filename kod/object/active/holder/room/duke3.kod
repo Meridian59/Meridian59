@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include duke3.lkod
+
    room_Duke3 = Duke3.roo
    room_name_Duke3_old = "The Chambers of Duke Kalior"
    room_name_Duke3 = "The Chambers of Duke Akardius"

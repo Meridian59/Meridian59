@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include prncflag.lkod
+
    PrincessFlag_icon_rsc = flagpinv.bgf
    PrincessFlag_name_rsc = "flag of the Princess"
    PrincessFlag_desc_rsc = \

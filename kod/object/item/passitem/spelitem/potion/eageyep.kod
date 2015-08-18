@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include eageyep.lkod
+
    EagleEyesPotion_name_rsc = "bottled avian eyesight"
    EagleEyesPotion_desc_rsc = "This is a glass vial of colored liquid.  "
                         "It smells crisp, clean and refreshing."

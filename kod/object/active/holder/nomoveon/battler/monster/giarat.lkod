@@ -1,0 +1,6 @@
+giantrat_koc_name_rsc = de "napyijoa"
+giantrat_name_rsc = de "Die Riesenratte"
+giantrat_desc_rsc = de \
+   "Diese Riesenratte entblößt herausfordernd ihre gelben Zähne. Der Gestank "
+   "von Fäulnis entströmt ihrem schmutzigen Fell."
+giantrat_dead_name_rsc = de "tote Riesenratte"

@@ -39,6 +39,7 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
    DWORD field, num_chars;
    WORD string_len;
    Bool done = False;
+   Bool skip = False; // True if we skip this formatter and its data.
 
    /* qparams are %q parameters; we need to save their positions and replace them last, 
     * even after %s (in case replacement %q string contains a literal %s) */
@@ -72,12 +73,7 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
    while (*rsc)
    {
       if (rsc[0] == '%')
-      {
-         if (rsc[1] == '%')
-            rsc++;
-         else
-            break;
-      }
+         break;
 
       rsc++;
    }
@@ -110,6 +106,18 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
          if (type_char == '\0')
             break;
 
+         // If we had a % in the resulting message created from %% and we loop
+         // back through it due to an %s formatter on the end, we have to skip
+         // it here. Any potential characters that could come after the % should
+         // be checked here to skip to next formatter (if any).
+         if (type_char == ' ' || type_char == '.' || type_char == ','
+            || type_char == '!' || type_char == '?')
+         {
+            next_ptr = strchr(next_ptr, '%');
+
+            continue;
+         }
+
          /* Skip marked %q parameters */
          if (type_char <= MAXQPARAMS)
          {
@@ -122,12 +130,28 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 
          /* Make temporary buffer for this section of format string */
          strncpy(tempfmt, fmt, next_ptr - fmt);
-         tempfmt[next_ptr - fmt] = '\0';
+
+         // Setting the formatter's "number parameter" to $0 provides
+         // a way to exclude that part of the message from appearing
+         // in the displayed resource. Check for that here and if so,
+         // set a boolean so this data is not added to the final msg.
+         if (*next_ptr == '$' && *(next_ptr + 1) == '0')
+         {
+            skip = True;
+            // Skipping, so replace the formatter with null terminator.
+            tempfmt[next_ptr - fmt - 2] = '\0';
+         }
+         else
+         {
+            tempfmt[next_ptr - fmt] = '\0';
+         }
 
          switch (type_char)
          {
          case '%':              /* %% ==> % */
-            *message++ = '%';
+            // Add what we have so far to the message (including one of the %s).
+            num_chars = sprintf(message, tempfmt);
+            message += num_chars;
             break;
          case 'r':
             if (*len < SIZE_ID)
@@ -143,7 +167,9 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             // Process the next resource as if it were a complete message.
             if (!CheckServerMessage(&msg2, &param_ptr, len, field))
                return False;
-
+            // Put a null terminator on the end of message, so we can check the
+            // length.
+            *message = '\0';
             // Check if we're going to write outside the bounds of msg.
             if (strlen(*msg) + strlen(msg2) >= MAXMESSAGE)
             {
@@ -156,10 +182,18 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             // sprintf formatter, while %s is.
             // Copy the part before the %r modifier into message.
             num_chars = sprintf(message, tempfmt);
-            // Increment message, but remove the 'r' character.
-            message += (num_chars - 1);
-            // Copy the msg2 string into message.
-            num_chars = sprintf(message, "%s", msg2);
+
+            if (!skip)
+            {
+               // Increment message, but remove the 'r' character.
+               message += (num_chars - 1);
+               // Copy the msg2 string into message.
+               num_chars = sprintf(message, "%s", msg2);
+            }
+            else
+            {
+               skip = False;
+            }
             message += num_chars;
 
             // Reset message2 and msg2.
@@ -189,18 +223,27 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
             *len -= SIZE_ID;
 
             /* Look up resource strings; use integers immediately */
-            if (type_char == 's')
+            if (!skip)
             {
-               done = False;
-               if ((rsc = LookupRsc(field)) == NULL)
-                  return False;
+               if (type_char == 's')
+               {
+                  done = False;
+                  if ((rsc = LookupRsc(field)) == NULL)
+                     return False;
 
-               num_chars = sprintf(message, tempfmt, rsc);
+                  num_chars = sprintf(message, tempfmt, rsc);
+               }
+               else
+               {
+                  num_chars = sprintf(message, tempfmt, field);
+               }
             }
             else
             {
-               num_chars = sprintf(message, tempfmt, field);
+               skip = False;
+               num_chars = sprintf(message, tempfmt);
             }
+            message += num_chars;  /* Overwrite null char next time */
 
             // Get rid of any numbered parameter formatters.
             if (*next_ptr == '$')
@@ -211,8 +254,6 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
                   next_ptr++;
                }
             }
-
-            message += num_chars;  /* Overwrite null char next time */
             break;
          case 'q':     /* Literal string from server */
             /* Store location; we will perform replacement later */	    
@@ -220,7 +261,7 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
                return False;
 
             /* We can only hold a certain # of qparams */
-            if (num_qparams <= MAXQPARAMS)
+            if (num_qparams <= MAXQPARAMS && !skip)
             {
                /* Save current location in parameters */
                qparams[num_qparams] = param_ptr;
@@ -232,7 +273,7 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
                return False;
 
             /* Mark this position with qparam # */
-            if (num_qparams <= MAXQPARAMS)
+            if (num_qparams <= MAXQPARAMS && !skip)
             {
                tempfmt[(next_ptr - fmt) - 1] = (char) num_qparams;
                num_qparams++;
@@ -240,7 +281,13 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 
             /* Copy this section of format string */
             strncpy(message, tempfmt, (next_ptr - fmt));
-            message += (next_ptr - fmt);
+            if (!skip)
+               message += (next_ptr - fmt);
+            else
+            {
+               skip = False;
+               message += (next_ptr - fmt - 2);
+            }
             // Add a null terminator here so we can check length of string
             // if there is an %r formatter next.
             *message = '\0';
@@ -331,18 +378,17 @@ Bool CheckServerMessage(char** msg, char **params, long *len, ID fmt_id)
 /************************************************************************/
 /*
  * CheckMessageOrder:  Loops through the resource specified by fmt_id, and
- *                     checks for "numbered parameters", indicated by a
- *                     $ and a number present after a string formatter such
- *                     as %s, %i, %q or %r (e.g. %s$2 %i$1). The message
- *                     sent by the server is reordered so that these numbers
- *                     are in order, and the parameters attached to them are
- *                     reordered accordingly. This function recurses if it
- *                     encounters a %r formatter, and reorders that resource
- *                     if needed. CheckMessageOrder should be called before
- *                     CheckServerMessage if the message could possibly
- *                     contain $number formatters. Maximum 25 formatters.
- *                     Returns the length of any fields referenced by the
- *                     resource if successful, -1 if the resource wasn't found.
+ *   checks for "numbered parameters", indicated by a $ and a number present
+ *   after a string formatter such as %s, %i, %q or %r (e.g. %s$2 %i$1). The
+ *   messagesent by the server is reordered so that these numbers are in order,
+ *   and the parameters attached to them are reordered accordingly. This
+ *   function recurses if it encounters a %r formatter, and reorders that
+ *   resource if needed. CheckMessageOrder should be called before
+ *   CheckServerMessage if the message could possibly contain $number parameters.
+ *   Maximum 25 allowed. Returns the length of any fields referenced by the
+ *   resource if successful, -1 if the resource wasn't found. If a numbered
+ *   parameter has 0 (or less) for the number, the corresponding formatter
+ *   (and its contents) will not be displayed (CheckServerMessage will skip it).
  */
 int CheckMessageOrder(char **params, long *len, ID fmt_id)
 {
@@ -390,6 +436,12 @@ int CheckMessageOrder(char **params, long *len, ID fmt_id)
                digit[1] = rsc[4];
             // Take one, because arrays are 0-indexed.
             fieldPos = atoi(digit) - 1;
+
+            // If less than 0, assign the current position number to it.
+            // CheckServerMessage will skip this field when processing the
+            // resource.
+            if (fieldPos < 0)
+               fieldPos = currentPos;
          }
          else
          {
@@ -421,6 +473,7 @@ int CheckMessageOrder(char **params, long *len, ID fmt_id)
             // anything referenced by string formatters in the next resource.
             // This section of new_param_ptr is reordered if necessary.
             tempLen = CheckMessageOrder(&new_param_ptr, len, field);
+            reorder = True;
             // If we got less than 0 bytes, return -1 (fail).
             if (tempLen < 0)
             {

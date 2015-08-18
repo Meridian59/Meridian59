@@ -21,29 +21,26 @@ constants:
 
 resources:
 
+   include flag.lkod
+
    flag_name_rsc = "flagpole"
    flag_desc_rsc = \
       "This flagpole lies empty, unclaimed in the struggle between "
-      "the factions for territorial rights.%s%s%s%s%s%s"
+      "the factions for territorial rights.  %r"
    flag_duke_desc_rsc = \
       "This flagpole flies the royal colors of Duke Akardius, "
-      "protector of Tos.%s%s%s%s%s%s"
+      "protector of Tos.  %r"
    flag_princess_desc_rsc = \
       "This flagpole flies the royal colors of Princess Kateriina, "
-      "sovereign of Barloque.%s%s%s%s%s%s"
+      "sovereign of Barloque.  %r"
    flag_rebel_desc_rsc = \
       "This flagpole flies the colors of the rebel forces based "
-      "in Jasper.%s%s%s%s%s%s"
-
+      "in Jasper.  %r"
    flag_append_desc = \
-      "  %s%s is currently attempting to stake a claim to this "
+      "%s%s is currently attempting to stake a claim to this "
       "territory in the name of %s."
+
    flag_append_desc_empty = ""
-   flag_append_desc2a = "  "
-   flag_append_desc2b = \
-      " is currently attempting to stake a claim to this territory "
-      "in the name of "
-   flag_append_desc2c = "."
 
    flag_icon_rsc = flagpole.bgf
    flag_duke_icon_rsc = flagduke.bgf
@@ -162,7 +159,7 @@ messages:
                                  Send(oTerritoryGame,@GetClaimRetry)*60000);
 
       % System message:  Aphasia stakes a claim to The Twisted Woods in the name of the rebels!
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if (NOT Send(i,@PlayerIsIntriguing))
          {
@@ -180,7 +177,7 @@ messages:
       piTroopCap = Send(oTerritoryGame,@GetClaimTroopCap);
 
       % Make the existing troops hate the claimer.
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          if IsClass(First(i),&FactionTroop)
             AND (Send(First(i),@GetFaction) <> Send(poClaimer,@GetFaction))
@@ -274,7 +271,7 @@ messages:
       }
       else
       {
-         for i in Send(poOwner,@GetYellZone)
+         foreach i in Send(poOwner,@GetYellZone)
          {
             oFlagpole = Send(Send(SYS,@FindRoomByNum,#num=i),
                               @FindHoldingActive,#class=&Flagpole);
@@ -322,7 +319,7 @@ messages:
       }
 
       iCountFactionAllies = 0;
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          if IsClass(First(i),&User)
             AND (Send(First(i),@GetFaction)=iClaimerFaction)
@@ -416,7 +413,7 @@ messages:
       }
 
       % System message: Aphasia successfully claims The Twisted Woods in the name of the rebels!
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if NOT Send(i,@PlayerIsIntriguing)
          {
@@ -471,7 +468,7 @@ messages:
       local i, oVoter, iCount;
 
       iCount = 0;
-      for i in Send(poOwner,@GetHolderActive)
+      foreach i in Send(poOwner,@GetHolderActive)
       {
          oVoter = First(i);
          if IsClass(oVoter,&Player)
@@ -536,7 +533,7 @@ messages:
       {
          rFailMessage = flag_claim_attempt_failed_generic;
          bClaimerInRoom = FALSE;
-         for j in Send(poOwner,@GetHolderActive)
+         foreach j in Send(poOwner,@GetHolderActive)
          {
             if First(j) = poClaimer
             {
@@ -562,7 +559,7 @@ messages:
             rFailMessage = flag_claim_attempt_failed_flee;
          }
 
-         for i in Send(SYS,@GetUsersLoggedOn)
+         foreach i in Send(SYS,@GetUsersLoggedOn)
          {
             if NOT Send(i,@PlayerIsIntriguing)
             {
@@ -578,7 +575,7 @@ messages:
       }
       else
       {
-         for i in Send(SYS,@GetUsersLoggedOn)
+         foreach i in Send(SYS,@GetUsersLoggedOn)
          {
             if NOT Send(i,@PlayerIsIntriguing)
             {
@@ -640,59 +637,34 @@ messages:
 
    ShowDesc()
    {
-      local rBaseDesc;
-
-      rBaseDesc = flag_desc_rsc;
       if piFaction = FACTION_DUKE
       {
-         rBaseDesc = flag_duke_desc_rsc;
+         AddPacket(4,flag_duke_desc_rsc);
+      }
+      else if piFaction = FACTION_PRINCESS
+      {
+         AddPacket(4,flag_princess_desc_rsc);
+      }
+      else if piFaction = FACTION_REBEL
+      {
+         AddPacket(4,flag_rebel_desc_rsc);
       }
       else
       {
-         if piFaction = FACTION_PRINCESS
-         {
-            rBaseDesc = flag_princess_desc_rsc;
-         }
-         else
-         {
-            if piFaction = FACTION_REBEL
-            {
-               rBaseDesc = flag_rebel_desc_rsc;
-            }
-         }
+         AddPacket(4,flag_desc_rsc);
       }
 
-      AddPacket(4,rBaseDesc);
       if (poClaimer <> $)
          AND (ptClaimAttempt <> $)
          AND IsClass(poClaimer,&Player)
       {
-         AddPacket(4,flag_append_desc2a);
-         AddPacket(4,Send(poClaimer,@GetCapIndef));
-         AddPacket(4,Send(poClaimer,@GetName));
-         AddPacket(4,flag_append_desc2b);
-         AddPacket(4,Send(self,@GetFactionNamePlugin,#who=poClaimer));
-         AddPacket(4,flag_append_desc2c);
+         AddPacket(4,flag_append_desc, 4,Send(poClaimer,@GetCapIndef),
+                   4,Send(poClaimer,@GetName),
+                   4,Send(self,@GetFactionNamePlugin,#who=poClaimer));
       }
       else
       {
-         AddPacket(4,flag_append_desc_empty,4,flag_append_desc_empty,
-                   4,flag_append_desc_empty,4,flag_append_desc_empty,
-                   4,flag_append_desc_empty,4,flag_append_desc_empty);
-      }
-
-      return;
-   }
-
-   AppendDesc()
-   {
-      if (poClaimer <> $) AND (ptClaimAttempt <> $)
-      {
-         AppendTempString(flag_append_desc2a);
-         AppendTempString(Send(poClaimer,@GetName));
-         AppendTempString(flag_append_desc2a);
-         AppendTempString(Send(self,@GetFactionNamePlugin,#who=poClaimer));
-         AppendTempString(flag_append_desc2a);
+         AddPacket(4,flag_append_desc_empty);
       }
 
       return;
@@ -711,19 +683,13 @@ messages:
             {
                return flag_claim_plugin_duke;
             }
-            else
+            else if iFaction = FACTION_PRINCESS
             {
-               if iFaction = FACTION_PRINCESS
-               {
-                  return flag_claim_plugin_princess;
-               }
-               else
-               {
-                  if iFaction = FACTION_REBEL
-                  {
-                     return flag_claim_plugin_rebel;
-                  }
-               }
+               return flag_claim_plugin_princess;
+            }
+            else if iFaction = FACTION_REBEL
+            {
+               return flag_claim_plugin_rebel;
             }
          }
       }
@@ -776,7 +742,7 @@ messages:
    }
 
    SetFaction(faction=FACTION_NEUTRAL)
-   "For admin use."
+   "for admin use."
    {
       piFaction = faction;
       if poOwner <> $
@@ -845,16 +811,8 @@ messages:
       ptGenerateTroops = $;
 
       if poOwner = $
-      {
-         return;
-      }
-
-      if NOT IsClass(poOwner,&MonsterRoom)
-      {
-         return;
-      }
-
-      if piFaction = FACTION_NEUTRAL
+         OR NOT IsClass(poOwner,&MonsterRoom)
+         OR piFaction = FACTION_NEUTRAL
       {
          return;
       }
@@ -862,17 +820,16 @@ messages:
       ptGenerateTroops = CreateTimer(self,@GenerateTroops,piGen_time);
 
       oTroop = $;
+
       if piFaction = FACTION_DUKE
       {
          oTroop = &DukeTroop;
       }
-
-      if piFaction = FACTION_PRINCESS
+      else if piFaction = FACTION_PRINCESS
       {
          oTroop = &PrincessTroop;
       }
-
-      if piFaction = FACTION_REBEL
+      else if piFaction = FACTION_REBEL
       {
          oTroop = &RebelTroop;
       }
@@ -889,7 +846,7 @@ messages:
          return;
       }
 
-      oTroop = create(oTroop);
+      oTroop = Create(oTroop);
 
       iGenRow = (Send(self,@GetRow) + Random(-1,1));
       iGenCol = (Send(self,@GetCol) + Random(-1,1));

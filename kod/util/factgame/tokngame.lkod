@@ -1,0 +1,34 @@
+parl_councilor_report = de "%s%s steht im Verdacht ein %s Anhänger von %s."
+parl_factioned_nSelf = de "die Torheit der Fraktionen"
+parl_factioned_neutral = de "Shal'ills Anleitung anstatt unserer Ideen"
+parl_factioned_duke = de "die banalen Gründe des Herzogs"
+parl_factioned_Dself = de "unsere Gründe"
+parl_factioned_princess = de \
+   "die fehlgeleiteten Hoffnungen von Prinzessin Kateriina"
+parl_factioned_Pself = de "unsere Wünsche"
+parl_factioned_rebel = de "die schädliche Rebellion von Jonas"
+parl_factioned_Rself = de "unser Kampf für Gerechtigkeit"
+parl_strength_weak = de "schwach"
+parl_strength_strong = de "stark"
+parl_strength_dedicated = de "engagiert"
+scandal_occurrence = de \
+   "~IUnter Verdacht, der Annahme von Gefälligkeiten als Gegenleistung für "
+   "seine Stimme, Ratsmitglied %s%s unternimmt eine Pilgerreise zum Tempel "
+   "von Shal'ill um seine Seele zu reinigen."
+parl_liege_token_secret = de \
+   "Es tut mir leid, aber ich werde nur Mitgliedern meiner Fraktion, Information "
+   "über den Aufenthalt der Artefakte mitteilen."
+parl_liege_token_location = de \
+   "Unsere Spione berichten, dass %s%s zu letzte nahe %s gesehen wurde. Schau "
+   "ob Du es zu mir bringen kannst, oder bringe es zurück."
+parl_liege_token_none = de \
+   "Unsere Spione berichten, dass sich alle Artefakte sicher im Besitz der "
+   "Ratsmitglieder befinden."
+parl_token_location = de \
+   "Ich habe das Gerücht gehört, dass %s%s sich von seinem Besitzer wegteleportiert "
+   "haben soll, und es wurde nahe %s gesehen. Hoffentlich ist bereits jemand "
+   "auf dem Weg um es zurück zu holen. Aber vielleicht haben es ja bereits "
+   "einige teuflische Monster geholt!"
+imposter_token = de \
+   "Nun, warum trägst Du ein Imitat von einem Artefakt mit Dir? Du solltest "
+   "Dich darüber beschweren, ein solches bekommen zu haben."

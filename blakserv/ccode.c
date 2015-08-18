@@ -177,7 +177,7 @@ int C_GodLog(int object_id,local_var_type *local_vars,
 				}
 				else
 				{
-					sprintf(buf+strlen(buf),"%s",r->resource_val);
+					sprintf(buf+strlen(buf),"%s",r->resource_val[0]);
 				}
 			}
 			break;
@@ -321,7 +321,7 @@ int C_Debug(int object_id,local_var_type *local_vars,
 				}
 				else
 				{
-					sprintf(buf+strlen(buf),"%s",r->resource_val);
+					sprintf(buf+strlen(buf),"%s",r->resource_val[0]);
 				}
 			}
 			break;
@@ -693,7 +693,6 @@ int C_GetClass(int object_id,local_var_type *local_vars,
 bool LookupString(val_type val, const char *function_name, const char **str, int *len)
 {
 	string_node *snod;
-	resource_node *r;
 
 	switch(val.v.tag)
 	{
@@ -714,14 +713,13 @@ bool LookupString(val_type val, const char *function_name, const char **str, int
 		break;
 		
 	case TAG_RESOURCE :
-		r = GetResourceByID(val.v.data);
-		if( r == NULL )
+      *str = GetResourceStrByLanguageID(val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (*str == NULL)
 		{
 			bprintf( "%s can't use invalid resource %i as string\n",
                   function_name, val.v.data );
 			return false;
 		}
-		*str = r->resource_val;
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -764,40 +762,136 @@ int C_StringEqual(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
-	val_type s1_val,s2_val,ret_val;
-	const char *s1,*s2;
-	int len1,len2;
-	
-	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-   if (!LookupString(s1_val, "C_StringEqual", &s1, &len1))
-      return NIL;
-	
-	s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-   if (!LookupString(s2_val, "C_StringEqual", &s2, &len2))
-      return NIL;
+   val_type s1_val, s2_val, ret_val;
+   const char *s1 = NULL, *s2 = NULL;
+   int len1, len2;
+   resource_node *r1 = NULL, *r2 = NULL;
+   Bool s1_resource = False, s2_resource = False;
 
-	/*
-	{
-	int i;
-	dprintf("-----------\n");
-	for (i=0;i<len1;i++)
-	dprintf("%c",s1[i]);
-	dprintf("-----------\n");
-	for (i=0;i<len2;i++)
-	dprintf("%c",s2[i]);
-	dprintf("-----------\n");
-	}
-	*/
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = FuzzyBufferEqual(s1,len1,s2,len2);
-	/*
-	dprintf("return %i\n-----\n",ret_val.v.data);
-	*/
-	
-	return ret_val.int_val;
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = False;
+
+   s1_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   s2_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (s1_val.v.tag == TAG_RESOURCE)
+   {
+      r1 = GetResourceByID(s1_val.v.data);
+      if (r1 == NULL)
+      {
+         bprintf("C_StringEqual can't use invalid resource %i as string\n",
+            s1_val.v.data);
+         return ret_val.int_val;
+      }
+      s1_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s1_val, "C_StringEqual", &s1, &len1))
+         return NIL;
+   }
+
+   if (s2_val.v.tag == TAG_RESOURCE)
+   {
+      r2 = GetResourceByID(s2_val.v.data);
+      if (r2 == NULL)
+      {
+         bprintf("C_StringEqual can't use invalid resource %i as string\n",
+            s2_val.v.data);
+         return ret_val.int_val;
+      }
+      s2_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s2_val, "C_StringEqual", &s2, &len2))
+         return NIL;
+   }
+
+   // If both are resources, just compare the English string (first array position).
+   if (s1_resource && s2_resource)
+   {
+      s1 = r1->resource_val[0];
+      if (s1 == NULL)
+      {
+         bprintf("C_StringEqual got NULL string resource 1");
+         return ret_val.int_val;
+      }
+      s2 = r2->resource_val[0];
+      if (s2 == NULL)
+      {
+         bprintf("C_StringEqual got NULL string resource 2");
+         return ret_val.int_val;
+      }
+
+      len1 = strlen(s1);
+      len2 = strlen(s2);
+      ret_val.v.data = FuzzyBufferEqual(s1, len1, s2, len2);
+
+      return ret_val.int_val;
+   }
+
+   // First string is resource, second isn't.
+   if (s1_resource)
+   {
+      len2 = strlen(s2);
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s1 = r1->resource_val[i];
+         if (s1 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringEqual got NULL string resource 1");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len1 = strlen(s1);
+         if (FuzzyBufferEqual(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Second string is resource, first isn't.
+   if (s2_resource)
+   {
+      len1 = strlen(s1);
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s2 = r2->resource_val[i];
+         if (s2 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringEqual got NULL string resource 2");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len2 = strlen(s2);
+         if (FuzzyBufferEqual(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Neither strings are resources.
+   len1 = strlen(s1);
+   len2 = strlen(s2);
+   ret_val.v.data = FuzzyBufferEqual(s1, len1, s2, len2);
+   return ret_val.int_val;
 }
 
 void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
@@ -865,7 +959,6 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	char *s0, *copyspot;
    const char *s1, *s2, *subspot;
 	int len1, len2, new_len;
-	resource_node *r;
 	
 	s0 = buf0;
 	s1 = buf1;
@@ -916,14 +1009,13 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		break;
 		
 	case TAG_RESOURCE :
-		r = GetResourceByID( s1_val.v.data );
-		if( r == NULL )
+      s1 = GetResourceStrByLanguageID(s1_val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (s1 == NULL)
 		{
 			bprintf( "C_StringSub can't sub for invalid resource %i\n", s1_val.v.data );
 			return NIL;
 		}
-		s1 = r->resource_val;
-		len1 = strlen( r->resource_val );
+		len1 = strlen(s1);
 		break;
 		
 	case TAG_DEBUGSTR :
@@ -1027,43 +1119,141 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 }
 
 int C_StringContain(int object_id,local_var_type *local_vars,
-					int num_normal_parms,parm_node normal_parm_array[],
-					int num_name_parms,parm_node name_parm_array[])
+               int num_normal_parms,parm_node normal_parm_array[],
+               int num_name_parms,parm_node name_parm_array[])
 {
-	val_type s1_val,s2_val,ret_val;
-	const char *s1,*s2;
-	int len1,len2;
-	
-	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-   if (!LookupString(s1_val, "C_StringContain", &s1, &len1))
-      return NIL;
-	
-	s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-   if (!LookupString(s2_val, "C_StringContain", &s2, &len2))
-      return NIL;
+   val_type s1_val, s2_val, ret_val;
+   const char *s1 = NULL,*s2 = NULL;
+   int len1, len2;
+   resource_node *r1 = NULL, *r2 = NULL;
+   Bool s1_resource = False, s2_resource = False;
+   
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = False;
 
-	/*
-	{
-	int i;
-	dprintf("-----------\n");
-	for (i=0;i<len1;i++)
-	dprintf("%c",s1[i]);
-	dprintf("-----------\n");
-	for (i=0;i<len2;i++)
-	dprintf("%c",s2[i]);
-	dprintf("-----------\n");
-	}
-	*/
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = FuzzyBufferContain(s1,len1,s2,len2);
-	/*
-	dprintf("return %i\n-----\n",ret_val.v.data);
-	*/
-	
-	return ret_val.int_val;
+   s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   s2_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+
+   if (s1_val.v.tag == TAG_RESOURCE)
+   {
+      r1 = GetResourceByID(s1_val.v.data);
+      if (r1 == NULL)
+      {
+         bprintf("C_StringContain can't use invalid resource %i as string\n",
+            s1_val.v.data);
+         return ret_val.int_val;
+      }
+      s1_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s1_val, "C_StringContain", &s1, &len1))
+         return NIL;
+   }
+
+   if (s2_val.v.tag == TAG_RESOURCE)
+   {
+      r2 = GetResourceByID(s2_val.v.data);
+      if (r2 == NULL)
+      {
+         bprintf("C_StringContain can't use invalid resource %i as string\n",
+            s2_val.v.data);
+         return ret_val.int_val;
+      }
+      s2_resource = True;
+   }
+   else
+   {
+      if (!LookupString(s2_val, "C_StringContain", &s2, &len2))
+         return NIL;
+   }
+
+   // If both are resources, just compare the English string (first array position).
+   if (s1_resource && s2_resource)
+   {
+      s1 = r1->resource_val[0];
+      if (s1 == NULL)
+      {
+         bprintf("C_StringContain got NULL string resource 1");
+         return ret_val.int_val;
+      }
+      s2 = r2->resource_val[0];
+      if (s2 == NULL)
+      {
+         bprintf("C_StringContain got NULL string resource 2");
+         return ret_val.int_val;
+      }
+
+      len1 = strlen(s1);
+      len2 = strlen(s2);
+      ret_val.v.data = FuzzyBufferContain(s1, len1, s2, len2);
+
+      return ret_val.int_val;
+   }
+
+   // First string is resource, second isn't.
+   if (s1_resource)
+   {
+      len2 = strlen(s2);
+      ret_val.v.tag = TAG_INT;
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s1 = r1->resource_val[i];
+         if (s1 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringContain got NULL string resource 1");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len1 = strlen(s1);
+         if (FuzzyBufferContain(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Second string is resource, first isn't.
+   if (s2_resource)
+   {
+      len1 = strlen(s1);
+      ret_val.v.tag = TAG_INT;
+      for (int i = 0; i < MAX_LANGUAGE_ID; i++)
+      {
+         s2 = r2->resource_val[i];
+         if (s2 == NULL)
+         {
+            if (i == 0)
+            {
+               bprintf("C_StringContain got NULL string resource 2");
+               return ret_val.int_val;
+            }
+            continue;
+         }
+
+         len2 = strlen(s2);
+         if (FuzzyBufferContain(s1, len1, s2, len2))
+         {
+            ret_val.v.data = True;
+            return ret_val.int_val;
+         }
+      }
+      return ret_val.int_val;
+   }
+
+   // Neither strings are resources.
+   len1 = strlen(s1);
+   len2 = strlen(s2);
+   ret_val.v.data = FuzzyBufferContain(s1, len1, s2, len2);
+   return ret_val.int_val;
 }
 
 /*
@@ -1130,8 +1320,8 @@ int C_SetResource(int object_id,local_var_type *local_vars,
 					str_val.v.data);
 				return NIL;
 			}
-			new_len = strlen(r->resource_val);
-			new_str = r->resource_val;
+			new_len = strlen(r->resource_val[0]);
+			new_str = r->resource_val[0];
 			break;
 		}
 	case TAG_STRING :
@@ -1253,7 +1443,6 @@ int C_SetString(int object_id,local_var_type *local_vars,
 {
    val_type s1_val,s2_val;
    string_node *snod,*snod2;
-   resource_node *r;
    const char *str;
 
    s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -1307,14 +1496,14 @@ int C_SetString(int object_id,local_var_type *local_vars,
       break;
 
    case TAG_RESOURCE :
-      r = GetResourceByID(s2_val.v.data);
-      if (r == NULL)
+      str = GetResourceStrByLanguageID(s2_val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (str == NULL)
       {
          bprintf("C_SetString can't set from invalid resource %i\n",s2_val.v.data);
          return NIL;
       }
       //bprintf("SetString string%i<--resource%i\n",s1_val.v.data,s2_val.v.data);
-      SetString(snod,r->resource_val,strlen(r->resource_val));
+      SetString(snod, (char*)str, strlen(str));
       break;
 
    case TAG_MESSAGE :
@@ -1376,7 +1565,6 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 {
 	val_type s_val;
 	string_node *snod;
-	resource_node *r;
 	
 	s_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
@@ -1401,16 +1589,18 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 		bprintf("C_AppendTempString attempting to append temp string to itself!\n");
 		return NIL;
 		
-	case TAG_RESOURCE :
-		r = GetResourceByID(s_val.v.data);
-		if (r == NULL)
-		{
-			bprintf("C_AppendTempString can't set from invalid resource %i\n",s_val.v.data);
-			return NIL;
-		}
-		AppendTempString(r->resource_val,strlen(r->resource_val));
-		break;
-		
+   case TAG_RESOURCE:
+   {
+      const char *pStrConst;
+      pStrConst = GetResourceStrByLanguageID(s_val.v.data, ConfigInt(RESOURCE_LANGUAGE));
+      if (pStrConst == NULL)
+      {
+         bprintf("C_AppendTempString can't set from invalid resource %i\n", s_val.v.data);
+         return NIL;
+      }
+      AppendTempString(pStrConst, strlen(pStrConst));
+   }
+      break;
 	case TAG_DEBUGSTR :
 		{
 			kod_statistics *kstat = GetKodStats();
@@ -3469,17 +3659,17 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				r_weapon = GetResourceByID(stat7.v.data);
 				
 				if (!r_who_damaged || !r_who_attacker || !r_weapon ||
-					!r_who_damaged->resource_val || !r_who_attacker->resource_val || !r_weapon->resource_val)
+					!r_who_damaged->resource_val[0] || !r_who_attacker->resource_val[0] || !r_weapon->resource_val[0])
 				{
 					bprintf("NULL string in C_RecordStat() for STAT_ASSESS_DAM");				
 				}
 				else
 				{					
 					MySQLRecordPlayerAssessDamage(
-						r_who_damaged->resource_val, 
-						r_who_attacker->resource_val, 
+						r_who_damaged->resource_val[0], 
+						r_who_attacker->resource_val[0], 
 						stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, 
-						r_weapon->resource_val);
+						r_weapon->resource_val[0]);
 				}
 			}
 			break;

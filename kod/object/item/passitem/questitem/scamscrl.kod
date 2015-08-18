@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include scamscrl.lkod
+
    ScamScroll_name_rsc = "obfuscatory document"
    ScamScroll_icon_rsc = scr09.bgf
    ScamScroll_desc_rsc = \

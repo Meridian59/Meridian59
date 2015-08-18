@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include kcbanker.lkod
+
    Kocatanbanker_name_rsc = "Huital ko'Nosak"
    kocatanbanker_icon_rsc = kcbanker.bgf
    kocatanbanker_desc_rsc =  \

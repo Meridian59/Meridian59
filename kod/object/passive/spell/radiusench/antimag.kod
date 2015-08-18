@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include antimag.lkod
+
    AntiMagicAura_name_rsc = "anti-magic aura"
    AntiMagicAura_icon_rsc = iantimag.bgf
    AntiMagicAura_desc_rsc = \

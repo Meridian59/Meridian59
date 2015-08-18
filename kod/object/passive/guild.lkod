@@ -1,0 +1,302 @@
+guild_name_rsc = de "Die Gilde"
+guild_desc_rsc = de "Eine Gruppe von Individuen mit ähnlichen Zielen."
+guild_master = de "Der Gildenmeister"
+guild_mistress = de "Die Gildenmeisterin"
+Guild_lieutenant_Male = de "Leutnant"
+Guild_lieutenant_female = de "Leutnant"
+guild_lord = de "Lord"
+guild_lady = de "Lady"
+guild_sir = de "Sir"
+guild_madame = de "Lady"
+guild_apprentice = de "Lehrling"
+guild_apprenticette = de "Lehrling"
+guild_newly_formed = de "~BDeine neue Gilde wurde soeben gegründet."
+guild_threeperson_failing = de \
+   "Deine Gilde besteht aus weniger als drei Personen. Sofern Du nicht innerhalb "
+   "von %i %s auf drei Mitglieder kommst, wird Deine Gilde wieder aufgelöst."
+guild_threeperson_failed = de \
+   "Aufgrund zu geringer Mitgliederzahl wurde Deine Gilde aufgelöst."
+guild_welcome = de "~BHeißt das neueste Mitglied der Gilde %s%q willkommen: %s!"
+guild_induct_already_guilded = de "Du bist bereits Mitglied einer Gilde."
+guild_induct_already_member = de "Du bist bereits Mitglied dieser Gilde."
+guild_lieut_cant_promote = de \
+   "%ss kann keine Mitglieder über den Rang %q hinaus befördern."
+guild_cant_promote_lieut = de \
+   "Du kannst niemanden über den Rang %q befördern, da es nur einen %q geben "
+   "kann."
+guild_cant_promote_capt = de \
+   "Eine Gilde soll nicht mehr als zwei Mitglieder des Ranges %q besitzen."
+guild_cant_promote_sire = de \
+   "Es gibt zu viele Mitglieder mit dem Rang %q, um weiteren diesen Status "
+   "zu verschaffen."
+guild_promotee = de "~B%q hat Dir den Rang %q verliehen!"
+guild_promoter = de "~BDu verleihst %q den Rang %q."
+guild_promoted = de "~B%s hat %q den Rang %q verliehen."
+guild_promotee_no_promoter = de "~BDir wurde der Rang %q verliehen!"
+guild_promote_too_high = de \
+   "Du kannst niemand auf einen Rang befördern, der gar nicht existiert!"
+guild_demotee = de "~B%q hat Dich auf den Rang %q herabgesetzt!"
+guild_demoter = de "~BDu setzt %q auf den Rang %q!"
+guild_demoted = de "~B%s hat %q auf den Rang %q herabgesetzt."
+guild_demotee_no_demoter = de "~BDu wurdest auf den Rang %q herabgesetzt!"
+guild_demote_apprentice = de \
+   "Du kannst niemand auf den Rang %q herabsetzen. Es existiert kein niedrigerer "
+   "Rang!"
+guild_demote_equal_higher = de \
+   "Du kannst niemand herabsetzen, der den gleichen oder höheren Rang als "
+   "Du besitzt!"
+guild_cant_vote_outsider = de \
+   "Du kannst nicht für %q%s stimmen. Diese Person gehört nicht der Gilde "
+   "%s%q an!"
+guild_cant_vote_nonuser = de "%s%s bedankt sich für Deine Unterstützung."
+guild_descension = de "~BDu bist als %q von %s%q degradiert worden!"
+guild_ascension = de "~~BGratulation! Du bist nun %q der Gilde %s%q!"
+guild_reassure = de \
+   "~B%s verspricht Dir, Dich weiterhin politisch zu unterstützen."
+guild_talking_to_self = de \
+   "~BDu versicherst Dir noch einmal selbst, dass Du Dich wirklich magst."
+guild_support_withers = de \
+   "~BDu spürst, dass Du immer weniger politische Unterstützung bekommst."
+guild_support_self = de \
+   "~BDu beschließt, selbst Deinen Führungsanspruch über %s%q anzumelden."
+guild_support_other = de \
+   "~BDu schwörst, %q bei der Führung der Gilde %s%q zu unterstützen."
+guild_supported = de \
+   "~B%s schwört, Dich bei Deinem Führungsanspruch über %s%q zu unterstützen."
+guild_new_master = de "~BGratuliere %q, dem neuen %q von %s%q!"
+guild_abdicate = de \
+   "~B%s hat beschlossen, die Führung der Gilde %s%q niederzulegen."
+guild_allies_defunct = de \
+   "~BDein ehrenwerter Verbündeter, die Gilde %s%q, hat sich losgesagt."
+guild_enemies_defunct = de \
+   "~BDein verhaßter Feind, die Gilde %s%q, hat sich aufgelöst."
+guild_cant_ally_enemy = de \
+   "Du kannst Dich mit der Gilde %s%q nicht verbünden! Sie sind Deine erklärten "
+   "Feinde!"
+guild_already_allies = de \
+   "Deine Gilde ist bereits mit der Gilde %s%q verbündet!"
+guild_not_member_currently = de \
+   "Du bist kein Mitglied der Gilde %s%q und kannst in ihrem Namen keine "
+   "Bündnisse abschließen!"
+guild_not_qualified = de \
+   "Du bist nicht hochrangig genug, um Bündnisse mit anderen Gilden abzuschließen!"
+guild_cant_enemy_ally = de \
+   "Du kannst eine andere Gilde nicht zum Feind erklären, bevor Du nicht "
+   "das Bündnis mit ihr aufgekündigt hast!"
+guild_already_enemies = de \
+   "Die Mitglieder der Gilde %s%q sind bereits die verhaßten Gegner der Gilde "
+   "%s%q!"
+guild_new_allies = de \
+   "~BHeute ist der Tag, an dem das Bündnis zwischen den Gilden %s%q und "
+   "%s%q in Kraft tritt."
+guild_new_enemies = de \
+   "~BHiermit wird bekanntgegeben, dass die Mitglieder der Gilde %s%q die "
+   "erklärten Feinde der Gilde %s%q sind!"
+guild_declared_allies = de \
+   "~BHiermit wird bekanntgegeben, dass sich die Gilde %s%q mit Deiner Gilde "
+   "%s%q verbündet hat!"
+guild_declared_enemies = de \
+   "~BHiermit wird bekanntgegeben, dass die Gilde %s%q der Gilde %s%q feindlich "
+   "gesinnt ist!"
+guild_mutual_enemies = de \
+   "~BEs sei verkündet, dass sich %s%q und %s%q nun im Krieg befinden!"
+guild_cant_enemy_mature = de \
+   "Du kannst keine Feinde erklären solange Deine Gilde nicht reifer geworden "
+   "ist."
+guild_cant_enemy_funds = de \
+   "Du benötigst %i Schillinge an Guthaben auf Deinem Gildenkonto um einen "
+   "Feind zu erklären und einen Krieg zu finanzieren."
+guild_end_enemy_loser = de \
+   "~BDeine Gilde hat %i Schillinge wegen eurer feigen Niederlage verloren."
+guild_end_enemy_winner = de \
+   "~BDeine Gilde hat für den Sieg über euren feigen Feind %i Schillinge "
+   "gutgeschrieben bekommen."
+guild_end_alliance = de \
+   "~BHiermit wird bekanntgegeben, dass das Bündnis zwischen den Gilden %s%q "
+   "und %s%q zerbrochen ist!"
+guild_not_enemies = de \
+   "~BHiermit wird bekanntgegeben, dass die Mitglieder der Gilde %s%q der "
+   "Gilde %s%q nicht mehr feindlich gesinnt sind."
+guild_end_declared_alliance = de \
+   "~BHiermit wird bekanntgegeben, dass die Gilde %s%q ihr Bündnis mit der "
+   "Gilde %s%q aufkündigen will."
+guild_not_declared_enemies = de \
+   "~BHiermit wird bekanntgegeben, dass die Gilde %s%q ihre Feindschaft mit "
+   "der Gilde %s%q beendet hat."
+guild_sue_for_peace = de \
+   "~BEs sei verkündet, dass die Mitglieder von %s%q im Krieg mit %s%q um "
+   "Frieden flehen."
+guild_already_suing_for_peace = de "Ihr fleht bereits um Frieden mit %s%q."
+guild_only_one_suing_for_peace = de \
+   "Ihr könnt nur bei einem Feind auf einmal um Frieden flehen."
+guild_mature = de \
+   "~BDie Gilde %s%q ist nun eine vollwertige Gilde, die selbst Hallen besitzen "
+   "und einnehmen kann."
+guild_hour_rsc = de "Stunde"
+guild_hours_rsc = de "Stunden"
+guild_rent_nonpayment = de \
+   "~BDeine Gilde wurde aufgelöst, weil sie ihre Schulden nicht bezahlt hat!"
+guild_rent_due = de \
+   "~BDeine Gilde hat %i Schulden. Wenn dieser Betrag in den nächsten %i%s "
+   "nicht beglichen wird, wird Deine Gilde aufgelöst."
+guild_new_hall = de "~B%s ist die neue Halle der Gilde %s%q!"
+guild_abandon_hall = de "~B%s ist nicht mehr die Halle der Gilde %s%q!"
+guild_hall_conquered = de "~B%s, Halle der Gilde %s%q, wurde erobert!"
+guild_hall_betrayed = de \
+   "~B%s, Halle der Gilde %s%q, wurde von einem Mitglied verraten!"
+guild_ranks_full = de \
+   "~BDu konntest der Gilde %s%q nicht beitreten, weil die Gilde schon zu "
+   "viele Mitglieder hat."
+guild_ranks_full_inductor = de \
+   "~B%s%s konnte nicht in %s%q aufgenommen werden, weil alle Ränge bereits "
+   "vergeben sind."
+guild_invitation_one = de "Du kannst immer nur eine Einladung zugleich haben."
+guild_invitation_one_inductee = de \
+   "Jemand aus Deiner Gilde hat %s%s bereits mit einer Einladung versorgt."
+guild_cannot_rejoin = de \
+   "~BDieses ehemalige Mitglied Deiner Gilde kann noch nicht wieder eintreten."
+guild_you_cannot_rejoin = de \
+   "~BNoch kannst Du Deiner früheren Gilde nicht wieder beitreten."
+guild_new_password = de "~BDas Passwort der Halle %s wurde geändert."
+guild_frular = de "Frular, Verwalter aller Gilden"
+guild_creation_mail = de \
+   "Betreff: Deine Gilde hat sich formiert\nIch gratuliere Dir zur Gründung "
+   "der Gilde %s%q! Es gibt jedoch ein paar Regeln, die Du kennen solltest.\n\nVOLLWERTIGKEIT: "
+   "Ich gestatte es nicht jeder beliebigen Gilde, eine Halle zu mieten. Du "
+   "musst Dich erst draußen in der Welt bewähren. Ich werde Dich informieren, "
+   "wenn ich das Gefühl habe, dass Deine Gilde reif ist. Dann (und nur dann) "
+   "kannst Du eine Halle mieten oder die einer anderen Gilde erobern.\n\nMITGLIEDSCHAFT: "
+   "Ich überlasse es Dir, die Einzelheiten für eine Mitgliedschaft in Deiner "
+   "Gilde selbst festzulegen, aber wenn Deine Gilde weniger als drei Mitglieder "
+   "hat, ist sie den Verwaltungsaufwand nicht wert. In diesem Fall löse ich "
+   "die Gilde auf. Aus diesem Grund solltest Du Dein erstes Augenmerk darauf "
+   "richten, mehr als drei Mitglieder in Deiner Gilde zu versammeln.\n\nNEUE "
+   "MITGLIEDER ANWERBEN: Wenn Du ein potentielles Mitglied einlädst, wird "
+   "in seinem Inventar eine Einladung hinterlegt, die entweder angenommen "
+   "oder abgelehnt werden kann. Eine Einladung wird immer erteilt, auch wenn "
+   "jemand aus irgendeinem Grund keiner Gilde beitreten will. Ein Spieler "
+   "muss ziemlich machtvoll sein, um einer Gilde beitreten zu können. Er "
+   "kann gleichzeitig immer nur Mitglied einer einzigen Gilde sein.\n\nRÄNGE: "
+   "Du kannst Leuten verschiedene Ränge zuweisen und damit auch mehr Macht "
+   "und Verantwortung verleihen. \nDu kannst Spieler auch in niedrigere Ränge "
+   "verweisen, wenn Du das Gefühl hast, ihnen nicht trauen zu können.\nEs "
+   "gibt folgende Ränge:\n +++ %q: haben keine besonderen Fertigkeiten. Sie "
+   "dürfen lediglich einen Anführer wählen. Es ist ihnen nicht einmal gestattet, "
+   "die äußeren Türen ihrer Gildenhalle zu öffnen.\n +++ %q: dürfen nur wählen.\n "
+   "+++ %q: dürfen wählen und neue Mitglieder in die Gilde einladen.\n +++ "
+   "%q: dürfen wählen, neue Mitglieder einladen, undisziplinierte Mitglieder "
+   "hinauswerfen, andere Leute niedrigen Ranges \nempfehlen oder ablehnen "
+   "sowie Bündnisse formen und aufkündigen. Sie dürfen auch eine Gildenhalle "
+   "mieten, wenn ihre Gilde vollwertig ist. +++ %q: hat alle Befugnisse in "
+   "Zusammenhang mit Gilden, einschließlich dem Recht, die Gilde aufzulösen.\n\nMIETE: "
+   "Der Verwaltungsaufwand, den ich mit Deiner Satzung habe, verursacht mir "
+   "Kosten und deshalb verlange ich eine Gebühr für diese Dienstleistung: "
+   "Miete wird regelmäßig fällig und die Steigerungsrate ist dabei von vielen "
+   "Faktoren abhängig, u. a. der Anzahl der Gildenmitglieder sowie der Zahl "
+   "Deiner erklärten Feinde und Verbündeten. Entscheidend ist, ob Du eine "
+   "Gildenhalle besitzt oder nicht. Gildenhallen können ziemlich teuer sein "
+   "und deshalb empfiehlt es sich, zu warten, bis die eigene Gilde über ausreichend "
+   "Mitglieder verfügt.\nJedes Mitglied in Deiner Gilde kann mir die fälligen "
+   "Schulden bezahlen. Um jedoch Verwirrung zu vermeiden, empfiehlt es sich, "
+   "eine bestimmte Person mit der Aufgabe zu betrauen.\nGratulation zur Gründung "
+   "Deiner Gilde! Und vergiß nicht, Deine Schulden zu begleichen!\n -- Frular, "
+   "Verwalter aller Gilden"
+guild_mature_mail = de \
+   "Betreff: Deine Gilde ist nun vollwertig\n%s%q ist nun eine vollwertige "
+   "Gilde, d. h. ihre Mitglieder können nun Gildenhallen besitzen und erobern.\n\nGILDENHALLEN: "
+   "Eine Gilde kann eine Gildenhalle bei mir erwerben. Gildenhallen bieten "
+   "ihren Besitzern eine Reihe von Annehmlichkeiten, wie z. B. einen relativ "
+   "sicheren Platz zum Ausruhen, eine Nachrichtenkugel mit den Gilden-Neuigkeiten "
+   "und eine Geheimtür, die durch ein von Dir festgelegtes Paßwort geschützt "
+   "wird. Gildenhallen sind auch Plätze, an denen die Wunden des Spielers "
+   "schneller heilen.\n\nGildenhallen werden durch eine Außentür mit einem "
+   "magischen Verteidigungsschild geschützt. Nur Mitglieder der Besitzergilde "
+   "können die Außentür ihrer Gildenhalle öffnen. Sobald die Tür einmal offen "
+   "ist, kann jedoch jeder eintreten. Die Türen bleiben für eine sehr kurze "
+   "Zeitspanne offen.\n\nEROBERUNG: Jede Gildenhalle verfügt auch über eine "
+   "Vorrichtung zum Deaktivieren des mystischen Schildes. Wenn diese Vorrichtung "
+   "benutzt wird, verliert die Gildenhalle ihren Schutz und jeder kann die "
+   "Außentüren öffnen. Wenn die Vorrichtung für mehr als 10 Minuten hintereinander "
+   "ausgeschaltet bleibt, so gilt die Gildenhalle als 'erobert'.\n\nNur die "
+   "Gilde, die eine spezielle Halle erobert hat, darf sie nachher mieten. "
+   "Man kann jedoch immer nur eine einzige Gildenhalle besitzen, d. h. wenn "
+   "man eine Halle erobert, muss man erst seine alte verlassen, um die neue "
+   "übernehmen zu können. Eine Stunde nach der Eroberung wird die Gildenhalle "
+   "wieder auf dem offenen Markt angeboten und jeder kann sie mieten.\n\nBETRUG "
+   "UND HÄNDLER EROBERUNG:  Wenn eine Gildenhalle von einem Mitglied Deiner "
+   "eigenen Gilde erobert wird, drückt die Gilde offiziell ihre Verlegenheit "
+   "aus. In einem solchen Falle kann jeder außer der besiegten Gilde die "
+   "Halle mieten. Dieses Limit gilt für eine Stunde.\n\nVERBÜNDETE: Wenn Du "
+   "eine Gilde zu Deinem Verbündeten machst, können deren Mitglieder Deine "
+   "Halle betreten, als ob es ihre eigene wäre. Dieses Zeichen des Vertrauens "
+   "senkt die Miete Deiner Gilde.\n\nFEINDE: Wenn Du eine Gilde zu Deinen Feinden "
+   "erklärst, wirst Du rechtzeitig gewarnt, falls diese versucht, Deine Gilde "
+   "zu besiegen. Ansonsten bekommst Du nur bruchstückhafte und verspätete "
+   "Informationen von den mystischen Verteidigungsvorrichtungen Deiner Gilde. "
+   "Diese zusätzliche Vorsichtsmaßnahme erhöht Deine Mietkosten.\n\nNIEDERE "
+   "RÄNGE: Kein Mitglied des Ranges '%q' kann die Außentür Deiner Gildenhalle "
+   "öffnen, egal ob es sich in Deiner eigenen Gilde oder der eines Verbündeten "
+   "aufhält.\nGratulation, Deine Gilde ist vollwertig geworden. Ich weiß, "
+   "dass Du es noch weit bringen wirst.\n\n -- Frular, Verwalter aller Gilden"
+guild_mature_happyland_mail = de \
+   "Betreff: Deine Gilde ist nun vollwertig\n%s%q ist nun eine vollwertige "
+   "Gilde, d. h. ihre Mitglieder können nun Gildenhallen besitzen und erobern.\nEine "
+   "Gilde kann eine Gildenhalle in Besitz nehmen, indem sie einen Vertrag "
+   "mit mir abschließt. Gildenhallen bieten ihren Besitzern eine Reihe von "
+   "Annehmlichkeiten, wie z. B. einen relativ sicheren Platz zum Ausruhen, "
+   "eine Nachrichtenkugel mit den Gilden-Neuigkeiten und eine Geheimtür, "
+   "die durch ein von Dir festgelegtes Paßwort geschützt wird. Gildenhallen "
+   "sind auch Plätze, an denen die Wunden des Spielers schneller heilen.\n\nGildenhallen "
+   "werden durch eine Außentür mit einem magischen Verteidigungsschild geschützt. "
+   "Nur Mitglieder der Besitzergilde können die Außentür ihrer Gildenhalle "
+   "öffnen. Sobald die Tür einmal offen ist, kann jedoch jeder eintreten. "
+   "Die Türen bleiben für eine sehr kurze Zeitspanne offen.\n\nBeachte, dass, "
+   "auch wenn sich jemand in Deine Halle schleichen kann, er doch nicht in "
+   "der Lage ist, sie in dieser Welt zu erobern. Diese zusätzliche Sicherheit "
+   "wird durch, wie soll ich es sagen, eine HÖHERE Miete belohnt.\n\n -- Frular, "
+   "Verwalter aller Gilden."
+guild_conquered_mail = de \
+   "Betreff: Gildenhalle erobert\n%s, Halle der Gilde %s%q, wurde während "
+   "Deiner Abwesenheit erobert.\n-- Frular, Verwalter aller Gilden"
+guild_disbanded_mail = de \
+   "Betreff: Gilde aufgelöst\nDeine Gilde %s%q wurde während Deiner Abwesenheit "
+   "aufgelöst.\n -- Frular, Verwalter aller Gilden"
+guild_deposed_mail = de \
+   "Betreff: Meuterei in den Rängen\nDu wurdest während Deiner Abwesenheit "
+   "als %q der Gilde %s%q gestürzt. %q hat einen neuen Rang verliehen bekommen: "
+   "%q.\n -- Frular, Verwalter aller Gilden"
+guild_new_master_mail = de \
+   "Betreff: Meuterei in den Rängen\nWährend Deiner Abwesenheit hat es einen "
+   "Führungswechsel gegeben. %q ist jetzt %q der Gilde %s%q. \n-- Frular, "
+   "Verwalter aller Gilden"
+guild_new_hall_mail = de \
+   "Betreff: Neue Gildenhalle\n%s ist während Deiner Abwesenheit zur Halle "
+   "der Gilde %s%q erklärt worden.\n -- Frular, Verwalter aller Gilden"
+guild_ascension_mail = de \
+   "Betreff: Gratulation!\nDu wurdest als %q der Gilde %s%q ausersehen!\n -- "
+   "Frular, Verwalter aller Gilden"
+guild_left_another = de \
+   "Du hast eine andere Gilde erst kürzlich verlassen und kannst folgender "
+   "Gilde %s%q nicht beitreten."
+guild_left_another_2 = de \
+   "%s hat eine andere Gilde erst kürzlich verlassen und kann derzeit Deiner "
+   "Gilde noch nicht beitreten."
+guild_war_title = de " erklärt Krieg."
+guild_war_body1 = de "Hiermit wird bekanntgegeben, dass vom heutigen tag "
+guild_war_body2 = de " hat Krieg erklärt mit "
+guild_war_body3 = de "."
+guild_endwar_title = de " haben den Krieg beigelegt."
+guild_endwar_body2 = de " haben entschieden den Krieg zu beenden mit "
+guild_peace_title = de " erklärt Frieden."
+guild_peace_body1 = de "Hiermit wird bekanntgegeben, dass vom heutigen tag "
+guild_peace_body2 = de " haben sich alliert mit "
+guild_peace_body3 = de "."
+guild_endpeace_title = de " beendet die Allianz."
+guild_endpeace_body2 = de " haben entschieden die Allianz zu beenden mit "
+guild_motd_set_msg = de "Die Gildennachricht des Tages wurde verschickt."
+guild_motd_cleared_msg = de "Die Gildennachricht des Tages wurde gelöscht."
+guild_motd_too_long = de "Nachricht zu lang, bitte kürzer schreiben :) ."
+guild_motd_too_short = de \
+   "Na das ist etwas wenig oder? Schreib noch ein wenig mehr."
+guild_motd_test = de "NdT: %q"
+guild_motd_message = de "Die Gildennachricht des Tages von %q, %q:\n\"%q~n\""

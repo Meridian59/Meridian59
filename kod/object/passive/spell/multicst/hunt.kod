@@ -19,6 +19,8 @@ constants:
 
 resources:
 
+   include hunt.lkod
+
    Hunt_name_rsc = "hunt"
    Hunt_icon_rsc = ihunt.bgf
    Hunt_desc_rsc = \
@@ -106,14 +108,14 @@ messages:
 
       if NOT Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         for i in Send(oPrism,@GetCasters)
+         foreach i in Send(oPrism,@GetCasters)
          {
             Send(i,@MsgSendUser,#message_rsc=hunt_must_be_murderer);
          }
          return;
       }
 
-      for i in Send(oPrism,@GetCasters)
+      foreach i in Send(oPrism,@GetCasters)
       {
          if i = oTarget
          {
@@ -126,7 +128,7 @@ messages:
             #state=lCasters,#time=HUNT_TIME,
             #iSpellPower=SpellPower,#lastcall=TRUE,#addicon=FALSE);
 
-      for i in lCasters
+      foreach i in lCasters
       {
          Send(i,@MsgSendUser,#message_rsc=hunt_is_on);
       }
@@ -200,7 +202,7 @@ messages:
       {
          Send(who,@SetPlayerFlag,#flag=PFLAG2_HUNTED,#value=FALSE,#flagset=2);
          Send(who,@MsgSendUser,#message_rsc=hunt_lost_trackers);
-         for i in state
+         foreach i in state
          {
             Send(i,@MsgSendUser,#message_rsc=hunt_cold_trail,
                   #parm1=Send(who,@GetDef),#parm2=Send(who,@GetUserName));

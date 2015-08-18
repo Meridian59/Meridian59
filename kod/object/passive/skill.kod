@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include skill.lkod
+
    skill_name_rsc = "skill"
    skill_icon_rsc = light.bgf
    skill_desc_text_rsc = "This is a skill."

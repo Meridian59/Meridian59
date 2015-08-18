@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gemfarenpower.lkod
+
    gem_farenpower_name_rsc = "magma crystal"
    gem_farenpower_icon_rsc = ruby.bgf
    gem_farenpower_desc_rsc = \

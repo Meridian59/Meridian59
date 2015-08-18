@@ -1,0 +1,5 @@
+guildcommand_name_rsc = de "Gildenbefehle"
+guildcommand_desc_text_rsc = de \
+   "Dies ist ein Gildenbefehl, der benutzt wird um eine Gilde zu administrieren."
+guildcommand_out_of_range = de "%s%q ist nicht in Reichweite."
+guildcommand_desc_rsc = de "Gildenbefehl    Benötiger Rang: %s/%s\n\n%s"

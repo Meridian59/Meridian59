@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include moon.lkod
+
    moon_icon_rsc = moon.bgf
    moon_name_rsc = "moon"
    moon_desc_rsc = \
@@ -60,7 +62,7 @@ messages:
       {
 	 piHeight = -200;
       }
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
 	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
       }

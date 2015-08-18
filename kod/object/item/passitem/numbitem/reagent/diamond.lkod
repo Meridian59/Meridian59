@@ -1,0 +1,5 @@
+diamond_name_rsc = de "Der Diamant"
+diamond_desc_rsc = de \
+   "Dieser Diamant, aus den dunklen und gefährlichen Höhlen tief unter Jasper, "
+   "ist äußerst rein und wertvoll."
+diamond_name_plural_rsc = de "Diamanten"

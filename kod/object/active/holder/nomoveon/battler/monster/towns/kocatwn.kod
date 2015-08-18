@@ -16,6 +16,8 @@ constants:
    
 resources:
 
+   include kocatwn.lkod
+
    kocatan_may_pass = "You may pass."
    kocatan_no_alcohol = "No smuggling alcohol to the natives!"
    kocatan_no_nerudite = \
@@ -45,7 +47,7 @@ messages:
       bAlcohol = FALSE;
       bNerudite = FALSE;
 
-      for i in Send(what,@GetHolderPassive)
+      foreach i in Send(what,@GetHolderPassive)
       {
          % Don't include the assassin's weapon as a real weapon.
          if IsClass(i,&Weapon) AND NOT IsClass(i,&BlackDagger)

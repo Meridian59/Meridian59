@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pillow.lkod
+
    Pillow_icon_rsc = roompilo.bgf
    Pillow_name_rsc = "goosefeather pillow"
    Pillow_desc_rsc = "This soft, enveloping pillow looks mighty inviting."

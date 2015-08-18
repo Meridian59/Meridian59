@@ -1,0 +1,9 @@
+lever_name_rsc = de "Hebel"
+default_lever_desc_rsc = de \
+   "Der auf diesem Hebel angebrachte Mechanismus scheint fast völlig durchgerostet "
+   "zu sein.  Was auch immer er für einen Zweck hatte, er scheint nun nutzlos "
+   "zu sein."
+lever_not_in_range = de "Dieser Hebel ist nicht nah genug um ihn zu betätigen."
+lever_stuck = de \
+   "Der Hebel scheint wie angeklebt zu sein,  als du versuchst ihn zu bewegen."
+lever_changed = de "Du betätigst den Hebel."

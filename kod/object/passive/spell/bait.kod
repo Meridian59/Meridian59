@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include bait.lkod
+
    Bait_name_rsc = "bait"
    Bait_icon_rsc = idistrac.bgf
    Bait_desc_rsc = \
@@ -71,7 +73,7 @@ messages:
    {
       local oMonster,iMonsterFaction,iModifier,iBaseChance;
       Send(who,@MsgSendUser,#message_rsc=Bait_success);
-      for oMonster in send(send(who,@GetOwner),@GetHolderActive)
+      foreach oMonster in send(send(who,@GetOwner),@GetHolderActive)
       {
          if isClass(first(oMonster), &Monster)
                and not ( send(first(oMonster), @GetBehavior) & AI_NPC )

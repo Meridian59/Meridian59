@@ -1,0 +1,18 @@
+EagleEyes_name_rsc = de "Adleraugen"
+EagleEyes_desc_rsc = de \
+   "Verleiht dem Zaubernden einen übernatürlich scharfen Blick, schützt die "
+   "Sehkraft vor magischen Attacken und verbessert die Genauigkeit auf weite "
+   "Entfernungen. Benötigt braune Pilze und Lila Pilze."
+EagleEyes_on_rsc = de \
+   "Deine Augen brennen und die Welt erscheint in surrealer Klarheit."
+EagleEyes_off_rsc = de "Die Welt erscheint irgendwie weniger deutlich."
+EagleEyes_already_enchanted_rsc = de "Du hast bereits Adleraugen."
+EagleEyes_Success_rsc = de "Du gewährst %s%s eine unnatürliche Sicht."
+EagleEyes_resist = de \
+   "Krannans magische Kraft kämpft gegen den Schleier der Dunkelheit an."
+EagleEyes_evade = de "Die Magie Kraanans bewahrt dein Augenlicht."
+EagleEyes_resist_caster = de \
+   "Du spürst eine Kraft, die dem Blendzauber widersteht."
+EagleEyes_evade_caster = de "Die Magie Kraanans bewahrt dein Augenlich."
+eagleeyes_enchantment_rsc = de \
+   "\n\nDein aktueller %s Zauber fügt %i Offensive hinzu und Zielen +1.%i$0%i$0"

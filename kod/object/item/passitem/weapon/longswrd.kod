@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include longswrd.lkod
+
    longsword_name_rsc = "long sword"
    longsword_icon_rsc = sword.bgf
 

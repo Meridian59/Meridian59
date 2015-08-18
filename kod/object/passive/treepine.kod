@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include treepine.lkod
+
    treepine_name_rsc = "tree"
    treepine_desc_rsc = "You smell the fresh scent of pine as you stand near this tree."
    treepine_icon_rsc = treepine.bgf

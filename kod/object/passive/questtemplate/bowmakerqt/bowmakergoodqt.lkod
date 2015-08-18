@@ -1,0 +1,25 @@
+% Quest description.
+bowmakergoodquest_desc_rsc = de \
+   "Hanla zax'Ta has asked you to obtain the tailfeather of an "
+   "avar shaman for her.  Locate an avar magician and see if they "
+   "are willing to trade a tailfeather for something they find "
+   "precious.  Return when you have obtained the tailfeather."
+
+bowmakergoodquest_nodetwo_rsc = de \
+   "Hanla zax'Ta has asked you to obtain the tailfeather of an "
+   "avar shaman for her.  Locate an avar magician and see if they "
+   "are willing to trade a tailfeather for something they find precious."
+bowmakergoodquest_nodethree_rsc = de \
+   "Return to Hanla zax'Ta with the avar shaman tailfeather."
+
+% Quest resources.
+bowmaker_assign_2 = de \
+   "Ich nutze spezielle Materialien um meine besten Pfeile herzustellen.  "
+   "Die Schwanzfeder eines Avar Zauberer haben den Ruf, dem Pfeil der sie "
+   "benutzt magische Eigenschaften zu geben.  Geh, und schau ob Du einen "
+   "Avar findest, der bereit ist seine Schwanzfeder im Austausch für etwas "
+   "wertvolles herzugeben."
+bowmaker_success_2 = de "Nyuk nyuk uk ak a-ak!"
+bowmaker_failure_2 = de \
+   "Betreff: Avar Feder\nOffensichtlich warst Du nicht in der Lage eine Avar "
+   "Feder für mich zu finden, na ja.  Ich werde woanders danach suchen."

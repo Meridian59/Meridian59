@@ -16,7 +16,7 @@
 #define MAX_C_PARMS 40
 #define MAX_NAME_PARMS 45
 #define MAX_LOCALS 50
-
+#define MAX_BLAKOD_STATEMENTS 20000000
 /* the c function id is 1 byte */
 #define MAX_C_FUNCTION 256
 
@@ -45,7 +45,7 @@ typedef struct
    int num_top_level_messages;
    int system_start_time;
 
-   int interpreting_time;
+   double interpreting_time;
    int interpreting_time_highest;
    int interpreting_time_over_second;
    int interpreting_time_message_id;
@@ -57,9 +57,11 @@ typedef struct
    int interpreting_class;
 
    int debugging;
-
+   double frequency;
+   double ccall_total_time[MAX_C_FUNCTION];
    /* the number of calls to each C function */
-   int c_count[MAX_C_FUNCTION];
+   int c_count_untimed[MAX_C_FUNCTION];
+   int c_count_timed[MAX_C_FUNCTION];
 } kod_statistics;
 
 /* stuff for PostMessage queue */
@@ -82,6 +84,8 @@ typedef struct
 } post_queue_type;
 
 void InitProfiling(void);
+void InitTimeProfiling(void);
+void EndTimeProfiling(void);
 void InitBkodInterpret(void);
 kod_statistics * GetKodStats(void);
 char * GetBkodPtr(void);

@@ -1,0 +1,8 @@
+dark_fairy_koc_name_rsc = de "teotimixlal"
+dark_fairy_name_rsc = de "Der Fey Dirhai"
+dark_fairy_desc_rsc = de \
+   "Dunkel, boshaft und heimtückisch: Diese Kobolde haben nur ein Ziel - "
+   "die Wälder von Qulicia in ewige Dunkelheit zu stürzen, um dasTal der "
+   "Trauer selbst in Besitz zu nehmen. Sie hassen ihre Artgenossen, die Fey "
+   "Elhai, mit verzehrender Leidenschaft."
+darkfairy_dead_name_rsc = de "Ein toter Fey"

@@ -26,6 +26,8 @@ constants:
 
 resources:
 
+   include izzio.lkod
+
    izzio_name_rsc = "Izzio"
    izzio_icon_rsc = wnizzio.bgf
    izzio_desc_rsc = \
@@ -132,7 +134,7 @@ messages:
          oJunk = Send(self,@PickJunk);
          bDuplicate = FALSE;
 
-         for i in lForSale
+         foreach i in lForSale
          {
             if Send(i,@GetName) = Send(oJunk,@Getname)
             {
@@ -272,7 +274,7 @@ messages:
          return FALSE;
       }
 
-      for i in First(plFor_Sale)
+      foreach i in First(plFor_Sale)
       {
          if GetClass(i) = GetClass(what)
          {
@@ -315,23 +317,23 @@ messages:
       lForSale = First(plFor_Sale);
       % Set the stuff where the user can get to it.
       oHolder = Send(SYS,@GetSystemHolder2);
-      for i in plOffer_items
+      foreach i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
       }
 
       % Take stuff the user put there.
       oHolder = Send(SYS,@GetSystemHolder1);
-      for lTake_items in [ Send(oHolder,@GetHolderActive),
+      foreach lTake_items in [ Send(oHolder,@GetHolderActive),
                            Send(oHolder,@GetHolderPassive) ]
       {
-         for i in lTake_items
+         foreach i in lTake_items
          {
             Send(self,@NewHold,#what=i);
             if IsClass(i,&NumberItem)
             {
                bHadSomeNum = FALSE;
-               for j in lForSale
+               foreach j in lForSale
                {
                   if GetClass(j) = GetClass(i)
                   {

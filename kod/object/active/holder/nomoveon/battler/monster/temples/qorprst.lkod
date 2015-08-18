@@ -1,0 +1,26 @@
+qorpriestess_name_rsc = de "Priesterin Zuxana"
+qorpriestess_desc_rsc = de \
+   "Der perfekte Diener der schändlichen Qor. Die Schatten verdichten sich, "
+   "wo diese mißgünstige Frau auftaucht. Sie verfügt über eine verschlagene "
+   "Sinnlichkeit, die sie nutzt, damit Männer und Frauen sich dem dunklen "
+   "Willen Qors ergeben. Wen sie nicht zu Qor verführen kann, sieht sie lieber "
+   "tot."
+Qor_forget_potion_sale = de \
+   "~I~rIn der tat kannst du %s%s kaufen.  Qor würde sich freuen, dir zu "
+   "helfen Shal'ill zu vergessen.~n~k"
+qorpriestess_already_have_spell = de \
+   "~bSpiel nicht mit mir, %s, du hast bereits teilgenommen beim Handel von "
+   "diesem verfluchten Betrüger Riija.~n~k"
+qorpriestess_not_ready = de \
+   "~bDu musst dich erst noch vor Qor beweisen. Geh hin und werde Anhänger "
+   "dieses Betrügers Riija.Lerne und verbessere dich, erst dann kann ich "
+   "Dir das Geheimnis von Austauschen beibringen.~n~k"
+qorpriestess_teach_song = de \
+   "Bist du einer der Katzenjammermusik Barden? Ich kann dich das Lied lehren, "
+   "welchesdie Magie aller Feinde verhindert."
+qorpriestess_not_powerful = de \
+   "~bKomm wieder, wenn du dich von diesem erbärmlichen Schutzengel befreit "
+   "hast und du bereit bist, andere zu töten, für die Dunklen Herrin  ~n~k"
+qorpriestess_teach = de \
+   "Durch die Dunkelheit Qors, lernst du %s%s%s%s%s%s%s%s%s%s%s%s "
+   "ab diesem Zirkel."

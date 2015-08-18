@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include pillar.lkod
+
    pillar_name_rsc = "pillar"
    pillar_icon_rsc = marblplr.bgf
    pillar_desc_rsc = "This is a tall, impressive marble pillar."

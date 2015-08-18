@@ -15,6 +15,8 @@ constants:
 
 resources:
 
+   include evaluate.lkod
+
    Evaluate_name_rsc = "evaluate"
    Evaluate_icon_rsc = lightnin.bgf
 
@@ -72,7 +74,7 @@ messages:
       }
       Send(self,@ComputeEvaluateInfo,#who=First(lTargets),#dmis=who);
 
-      for i in lActive
+      foreach i in lActive
       {
 
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
@@ -117,7 +119,7 @@ messages:
                  #parm2=gainchance,#parm3=highmark,#parm4=total);
          }      
          monsterA=$; monsterB=$;
-         for i in send(SYS,@GetMonsterTemplates)
+         foreach i in send(SYS,@GetMonsterTemplates)
          {
             %% This routine finds two monsters who are closest in level to the player, whilst still
             %% being of greater level than the player.

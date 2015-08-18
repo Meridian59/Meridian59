@@ -13,11 +13,14 @@ Lich is Monster
 constants:
 
    include blakston.khd
+   include protocol.khd
 
    LICH_ILLUSION_TIME = 5 * 60 * 1000  % five minutes
    MAGIC_RESIST = 60
 
 resources:
+
+   include lich.lkod
 
    lich_pretty_name_rsc = "Queen Venya'cyr"
    lich_pretty_icon_rsc = licha.bgf
@@ -66,21 +69,18 @@ resources:
       "The Lich Queen's evil presence dispels your truce before you "
       "can even cast it."
 
-   lich_killed_world_saved_0 = "~B"
-   lich_killed_world_saved_1 = \
-      " has struck down the Dark Queen Venya'cyr, ridding Meridian of "
-      "the evil Order of Necromancers!\n"
-      "Thanks to "
+   lich_blank = ""
    lich_comma = ", "
-   lich_and = "and "
-   lich_killed_world_saved_2 = \
-      "the good citizens of Meridian can walk the land in safety once again, "
-      "knowing that "
-   lich_killed_world_saved_3 = \
-      " have perished along with their undead queen."
-
+   lich_and = " and "
+   lich_has = "has"
+   lich_have = "have"
+   lich_killed_world_saved = \
+      "~B%s has struck down the Dark Queen Venya'cyr, ridding Meridian of "
+      "the evil Order of Necromancers!\nThanks to %q%s%q, the good citizens "
+      "of Meridian can walk the land in safety once again, knowing that "
+      "%q%s%q %s perished along with the undead queen."
    lich_killed_world_saved_nolich = \
-      " has struck down the last of the Order of Necromancers, "
+      "~B%s has struck down the last of the Order of Necromancers, "
       "ridding Meridian of their evil!"
 
    lich_spit = lightnin.bgf
@@ -154,7 +154,7 @@ properties:
    piAnimation = ANIM_NONE
    plAttackers = $  % [player,player....]
 
-   psTempRosterString = $
+   plTempRoster = $
    
    pbIllusioned = TRUE
    ptGoIllusioned = $
@@ -312,7 +312,7 @@ messages:
    {
       local i;
 
-      for i in plAttackers
+      foreach i in plAttackers
       {
          if i = what
          {
@@ -557,7 +557,7 @@ messages:
 
       if Send(poTarget,@IsEnchanted,#what=oBlind)
       {
-         for i in lActive
+         foreach i in lActive
          {
             each_obj = Send(poOwner,@HolderExtractObject,#data=i);
             iDistance = Send(self,@SquaredDistanceTo,#what=each_obj);
@@ -592,7 +592,7 @@ messages:
 
       NumAttackers = Length(plAttackers);
 
-      for i in plAttackers
+      foreach i in plAttackers
       {
          if i = what
          {
@@ -649,53 +649,54 @@ messages:
    BroadcastLichDeathMessage(what=$, Attackers=$, resetScenario=TRUE,
                               lichActivated=TRUE)
    {
-      local i, sKilledMessage, sRoster;
+      local i, iLength;
+
+      AddPacket(1,BP_MESSAGE);
 
       if lichActivated
       {
          % Send a message to the world.
-         sRoster = Send(self,@GetNecromancerRoster);
+         AddPacket(4,lich_killed_world_saved, 4,Send(what,@GetTrueName));
+
          ClearTempString();
-         AppendTempString(lich_killed_world_saved_0);
-         AppendTempString(Send(what,@GetTrueName));
-         AppendTempString(lich_killed_world_saved_1);
-         for i in Attackers
+
+         iLength = Length(Attackers);
+         foreach i in Attackers
          {
-            if Length(Attackers) > 1
-               AND i = Nth(Attackers,Length(Attackers))
+            if iLength > 1
+               AND i = Last(Attackers)
             {
-               AppendTempString(lich_and);
+               AddPacket(4,GetTempString(), 4,lich_and,
+                         STRING_RESOURCE,Send(i,@GetTrueName));
+
+               break;
             }
+
             AppendTempString(Send(i,@GetTrueName));
-            if Length(Attackers) > 2
+
+            if iLength > 2
             {
                AppendTempString(lich_comma);
             }
-            else
+            else if iLength = 1
             {
-               AppendTempString(" ");
+               AddPacket(4,GetTempString(), 4,lich_blank);
+               ClearTempString();
+               AddPacket(4,GetTempString());
+
+               break;
             }
          }
 
-         AppendTempString(lich_killed_world_saved_2);
-         AppendTempString(sRoster);
-         AppendTempString(lich_killed_world_saved_3);
-
-         sKilledMessage = SetString($,GetTempString());
-
-         Send(SYS,@AdminSystemMessage,#string=sKilledMessage);
+         Send(self,@AddNecromancerRoster);
+         Send(SYS,@SystemSendCopyPacketAll);
       }
       else
       {
          % Send a message to the world.
-         ClearTempString();
-         AppendTempString(lich_killed_world_saved_0);
-         AppendTempString(Send(what,@GetTrueName));
-         AppendTempString(lich_killed_world_saved_nolich);
-
-         sKilledMessage = SetString($,GetTempString());
-
-         Send(SYS,@AdminSystemMessage,#string=sKilledMessage);
+         AddPacket(4,lich_killed_world_saved_nolich,
+                   4,Send(what,@GetTrueName));
+         Send(SYS,@SystemSendCopyPacketAll);
       }
 
       return;
@@ -778,7 +779,7 @@ messages:
          {
             % Tell the amulet to pay up, find out how much we sucked out.
             oAmulet = $;
-            for oAmulet in Send(what,@GetPlayerUsing)
+            foreach oAmulet in Send(what,@GetPlayerUsing)
             {
                if IsClass(oAmulet,&NecromancerAmulet)
                {
@@ -834,33 +835,52 @@ messages:
       propagate;
    }
 
-   GetNecromancerRoster()
+   AddNecromancerRoster()
    {
-      local sRoster;
+      local i, iLength;
 
-      ClearTempString();
       Send(&NecromancerAmulet,@NecromancerRosterRequest,#oLich=self);
 
-      if StringContain(GetTempString(),lich_comma)
+      iLength = Length(plTempRoster);
+
+      ClearTempString();
+
+      foreach i in plTempRoster
       {
-         AppendTempString(lich_and);
+         if iLength > 1
+            AND i = Last(plTempRoster)
+         {
+            AddPacket(4,GetTempString(), 4,lich_and,
+                      STRING_RESOURCE,Send(i,@GetTrueName), 4,lich_have);
+
+            break;
+         }
+
+         AppendTempString(Send(i,@GetTrueName));
+
+         if iLength > 2
+         {
+            AppendTempString(lich_comma);
+         }
+         else if iLength = 1
+         {
+            AddPacket(4,GetTempString(), 4,lich_blank, 4,0, 4,lich_has);
+
+            break;
+         }
       }
-      AppendTempString(psTempRosterString);
-      psTempRosterString = $;
 
-      sRoster = SetString($,GetTempString());
+      plTempRoster = $;
 
-      return sRoster;
+      return;
    }
 
-   NecromancerRosterReply(necroName = $)
+   NecromancerRosterReply(oNecro = $)
    {
-      if psTempRosterString <> $
+      if oNecro <> $
       {
-         AppendTempString(psTempRosterString);
-         AppendTempString(lich_comma);
+         plTempRoster = Cons(oNecro,plTempRoster);
       }
-      psTempRosterString = necroName;
 
       return;
    }
@@ -906,7 +926,7 @@ messages:
 
          if Send(what,@IsUsingA,#class=&NecromancerAmulet)
          {
-            for i in plAttackers
+            foreach i in plAttackers
             {
                if i = what
                {
@@ -928,7 +948,7 @@ messages:
 
       % Get rid of any active quests so any new ones get scheduled with the
       % body instead.
-      for oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
+      foreach oQ in Nth(Send(oQE,@GetQuestTemplate,#index=QST_ID_ESTABLISH_NECROGUILD)
                      ,QT_ACTIVE_QUESTS)
       {
          Send(oQ,@DeadlineExpired);

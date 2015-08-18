@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include splsacid.lkod
+
    SplashOfAcid_name_rsc = "splash of acid"
 
    SplashOfAcid_icon_rsc = isplacid.bgf

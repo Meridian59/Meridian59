@@ -1,0 +1,8 @@
+pardon_name_rsc = de "Begnadigen"
+pardon_desc_rsc = de \
+   "Macht Mörder und Gesetzlose wieder zu ehrbaren Spielern. Dieser Zauber "
+   "kann nur von Göttern und Barden ausgeführt werden.."
+pardon_msg_DM = de "Du begnadigst %s%s."
+pardon_msg_target = de "Du wurdest begnadigt von %s%s."
+pardon_failed = de \
+   "%s%s ist kein Mörder oder Gesetzesloser und kann nicht begnadigt werden."

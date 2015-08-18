@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include poisfogc.lkod
+
    PoisonFogCloud_name_rsc = "thick fog"
    PoisonFogCloud_icon_rsc = poisoncl.bgf
    PoisonFogCloud_desc_rsc = \

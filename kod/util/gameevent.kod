@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include gameevent.lkod
+
    event_start_msg = "Event Started."
    event_end_msg = "Event Ended"
 
@@ -118,7 +120,7 @@ messages:
       count = 0;
       lActive = Send(Send(SYS,@FindRoomByNum,#num=piActiveRoom),@GetPlActive);
 
-      for i in lActive
+      foreach i in lActive
       {
          if IsClass(Nth(i,1),type)
          {

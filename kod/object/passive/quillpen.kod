@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include quillpen.lkod
+
    quillpen_icon_rsc = quillpen.bgf
    quillpen_name_rsc = "quill pen"
    quillpen_desc_rsc = "Many important works were written with this quill pen.  Presently it is out of ink."

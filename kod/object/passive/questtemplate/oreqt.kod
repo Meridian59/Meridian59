@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include oreqt.lkod
+
    % Quest description.
    oreqt_icon_rsc = ore.bgf
    oreqt_name_rsc = "blacksmith ore quest"
@@ -118,15 +120,15 @@ messages:
                #quest_node_index=QNT_ID_BLACKSMITH_ORE_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBlacksmith)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueBlacksmith)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBlacksmith)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBlacksmith)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBlacksmith)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionBlacksmith)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

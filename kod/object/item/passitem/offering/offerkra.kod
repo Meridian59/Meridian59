@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include offerkra.lkod
+
    OfferingKraanan_name_rsc = "sweat of the warrior king"
    OfferingKraanan_icon_rsc = sweat.bgf
    OfferingKraanan_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."

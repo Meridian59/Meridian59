@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include guildh5.lkod
+
    room_name_guildhall5 ="Konima's Abandoned Dwelling"
    room_guildhall5 = guildh5.roo
 
@@ -237,7 +239,7 @@ messages:
          pbPrivate = FALSE;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)

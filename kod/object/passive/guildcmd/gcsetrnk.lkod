@@ -1,0 +1,13 @@
+guildsetrank_name_rsc = de "Rang setzen"
+guildsetrank_lieutenant = de \
+   "Ersetzt befördern und degradieren im neuen sauberen Menü."
+setrank_not_member = de "%s%s ist kein Mitglied von %s%q!"
+setrank_cant_setrank_self = de \
+   "Du kannst dich nicht selber befördern oder degradieren!"
+setrank_non_user = de \
+   "%s%s scheint sich betroffen zu sein über deine Entscheidung."
+setrank_too_high = de \
+   "Du kannst keine Ränge setzen von Leuten die höheren Rangs sind als Du!"
+setrank_promotion_too_high = de \
+   "Du kannst keine Ränge setzen von Leuten die höheren oder gleichem Rangs "
+   "sind als Du!"

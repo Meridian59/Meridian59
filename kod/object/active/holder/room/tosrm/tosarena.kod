@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include tosarena.lkod
+
    room_TosArena = tosarena.roo
    name_TosArena = "The Arena of Kraanan"
 
@@ -331,7 +333,7 @@ messages:
       }
 
       oWatcher = $;
-      for i in plActive
+      foreach i in plActive
       {
       
          if IsClass(First(i),&TosWatcher)
@@ -361,7 +363,7 @@ messages:
    {
       local i, oEachObj;
 
-      for i in plActive
+      foreach i in plActive
       {
          oEachObj = Send(self,@HolderExtractObject,#data=i);
          if isClass(oEachObj,&TosWatcher)
@@ -565,13 +567,13 @@ messages:
       Send(self,@LowerMaze);
 
       % Remove radius enchantments
-      for i in Send(self,@GetHolderActive)
+      foreach i in Send(self,@GetHolderActive)
       {
          j = Send(self,@HolderExtractObject,#data=i);
          if IsClass(j,&Player)
             OR (IsClass(j,&Monster) AND NOT ((Send(j,@GetBehavior) & AI_NPC)))
          {
-            for k in Send(j,@GetRadiusEnchantments)
+            foreach k in Send(j,@GetRadiusEnchantments)
             {
                Send(Nth(k,1),@CancelRadiusEnchantment,#source=Nth(k,3));
             }
@@ -748,7 +750,7 @@ messages:
       oWatcher = Send(self,@GetWatcher);
       lCombatants = Send(oWatcher,@GetCombatantList);
 
-      for i in lCombatants
+      foreach i in lCombatants
       {
          if Send(i,@GetCol) < 7
          {

@@ -1,0 +1,6 @@
+reflection_name_rsc = de "Das Spiegelbild"
+reflection_dead_name_rsc = de "totes Spiegelbild"
+reflection_delete = de "%s%s verschwindet in einer Rauchwolke."
+reflection_trouble = de \
+   "Du spürst, dass Dein Spiegelbild Dich in irgendwelche Schwierigkeiten "
+   "gebracht hat..."

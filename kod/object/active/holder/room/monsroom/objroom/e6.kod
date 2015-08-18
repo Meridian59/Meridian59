@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include e6.lkod
+
    room_OutdoorsE6 = E6.roo
    room_name_OutdoorsE6 ="Deep Forest of Farol"
    OutdoorsE6_music = walk5.mp3

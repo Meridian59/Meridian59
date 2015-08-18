@@ -57,6 +57,8 @@ constants:
 
 resources:
 
+   include guildh14.lkod
+
    room_name_guildh14 = "The Bookmaker's Guild House"
    room_guildh14 = guildh14.roo
 
@@ -230,7 +232,7 @@ messages:
          propagate;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include detevilp.lkod
+
    DetectEvilPotion_name_rsc = "potion of evil detection"
    %DetectEvilPotion_icon_rsc = potion01.bgf
    DetectEvilPotion_desc_rsc = "This is a glass vial of colored liquid.  "

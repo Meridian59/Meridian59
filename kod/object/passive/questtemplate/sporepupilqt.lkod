@@ -1,0 +1,70 @@
+% Quest description.
+sporepupilquest_name_rsc = de "sporeburst pupil quest"
+sporepupilquest_desc_rsc = de \
+   "Maleval has offered to teach you a powerful new spell, but has "
+   "requested that you bring him rare magical items before he will do so."
+
+sporepupilquest_nodetwo_rsc = de \
+   "Maleval has offered to teach you a powerful new spell, but has "
+   "requested that you obtain %s%s for him first."
+
+sporepupilquest_nodethree_rsc = de \
+   "Maleval has asked that you obtain another item for him, %s%s.  Bring "
+   "it to him so that he will teach you the spell."
+
+sporepupilquest_completed = de \
+   "You have completed the sporeburst pupil quest.  Maleval will now "
+   "teach you the sporeburst spell, provided you know at least level "
+   "5 Qor and level 6 Faren.  He will also teach you the curse weapon "
+   "spell, if you know level 4 Qor and level 5 Kraanan."
+
+% Quest resources.
+sporeburstlearn_assign_2 = de \
+   "Oh, %LORDLADY %NAME, es ist mir ~Iwirklich~I eine Ehre Dich zu sehen.  "
+   "Ich habe Deinen Fortschritt in Deinen Studien mit großem Interesse verfolgt;  "
+   "Selten, habe ich solch einen würdigen meines gleichen gesehen.  Du magst "
+   "über meine Forschung in den magischen Künsten gehört haben.  Ich habe "
+   "endlich einen neuen Zauber erfunden, der die Energie von Faren und Qor "
+   "vereinigt. Ich werde ihn Dir beibringen aber zuerst erledige eine Aufgabe "
+   "für mich:  Bringe mir %INDEF_CARGO%CARGO, damit ich seine magischen Eigenschaften "
+   "untersuchen kann."
+sporeburstlearn_assign_2_h = de \
+   "Oh, %LORDLADY %NAME, es ist mir ~Iwirklich~I eine große Ehre.  Ich habe "
+   "Deinen Fortschritt mit großem Interesse beobachtet;  Selten habe ich "
+   "einen so würden meinesgleichen gesehen.   Du hast vielleicht von meinen "
+   "Forschungen gehört.  Nun, ich habe gerade erst einen neuen Zauber entwickelt.  "
+   "Ich werde Dir meine Zauberformel zeigen, wenn Du eine kleine Aufgabe "
+   "für mich erfüllst:  Bringe mir %INDEF_CARGO%CARGO, damit ich seine magischen "
+   "Eigenschaften untersuchen kann."
+sporeburstlearn_failure_2 = de \
+   "Betreff:  Schwacher Narr!\nIch habe Dich falsch eingeschätzt, %NAME.  "
+   "Ich habe geglaubt Du wärst in der Lage große Dinge und höhere Mächte "
+   "zu erreichen die selbst die Nekromanten nicht erreicht haben.  Ich sehe "
+   "nun, dass ich falsch lag."
+sporeburstlearn_success_2 = de \
+   "Du bist wirklich ein würdiger Schüler, %NAME.  Ah, %INDEF_CARGO%CARGO!  "
+   "Kannst Du es ~Ifühlen~I es sind magische Wesen, die in Wellen kommen?  "
+   "Die Macht, in diesem Dokument, übersteigt die triviale religiöseBedeutung "
+   "dieser gewöhnlichen Priester.  Die ist der Stoff, aus dem das Universum "
+   "gemacht wurde! ..."
+sporeburstlearn_assign_3 = de \
+   "Ah ja, der Zauber, der Zauber.  Sporenwolke!  Jetzt bring mir %INDEF_CARGO%CARGO, "
+   "und ich werde ihn Dir beibringen, und mehr noch - ich habe vor kurzem "
+   "einen weiteren faszinierenden Zauber entdeckt."
+sporeburstlearn_assign_3_h = de \
+   "Ah ja, der Zauber, der Zauber.  Verfluchte Waffe!  Jetzt bring mir %INDEF_CARGO%CARGO, "
+   "und ich werde ihn Dir beibringen."
+sporeburstlearn_success_3 = de \
+   "Es sind schon viele Monde vergangen seit %INDEF_CARGO%CARGO zuletzt meine "
+   "Lippen berührt hat.  Würdest Du Dich um einen Schluck kümmern?  Es ist "
+   "~Irichtig~I erfrischend.  Kehre zurück, wenn Du den Sporenwolke Zauber "
+   "lernen willst, und wir werden einen kleinen Toast aussprechen - ~IAuf "
+   "die törichten Massen, die ihren Körper aus Blut und Knochen anbieten "
+   "damit diese von ein paar Puppen-Göttern verspeist werden.~I"
+sporeburstlearn_success_3_h = de \
+   "Es sind schon viele Monde vergangen seit %INDEF_CARGO%CARGO zuletzt meine "
+   "Lippen berührt hat.  Würdest Du Dich um einen Schluck kümmern?  Es ist "
+   "~Irichtig~I erfrischend.  Kehre zurück, wenn Du den Sporenwolke Zauber "
+   "lernen willst, und wir werden einen kleinen Toast aussprechen - ~IAuf "
+   "die törichten Massen, die ihren Körper aus Blut und Knochen anbieten "
+   "damit diese von ein paar Puppen-Göttern verspeist werden.~I"

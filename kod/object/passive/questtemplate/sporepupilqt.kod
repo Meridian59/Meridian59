@@ -30,6 +30,8 @@ constants:
 
 resources:
 
+   include sporepupilqt.lkod
+
    % Quest description.
    sporepupilquest_icon_rsc = isporecl.bgf
    sporepupilquest_name_rsc = "sporeburst pupil quest"
@@ -155,7 +157,7 @@ messages:
                #quest_node_index=QNT_ID_SPORE_PUPIL_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DarkWizard)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

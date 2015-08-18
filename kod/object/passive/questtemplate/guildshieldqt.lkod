@@ -1,0 +1,34 @@
+% Quest description.
+guildshieldquest_name_rsc = de "mining expedition quest"
+guildshieldquest_desc_rsc = de \
+   "The blacksmith has asked you to obtain some ore from the orc caves "
+   "for him.  In return, he will make you a herald shield with your "
+   "guild's crest and colors."
+
+guildshieldquest_deliver_rsc = de \
+   "%s has asked you to obtain some ore from the orc caves for %s.  "
+   "In return, %s will make you a herald shield with your guild's "
+   "crest and colors.  Find %s%s and bring it back to %s."
+
+guildshieldquest_completed_rsc = de \
+   "You have completed the mining expedition quest, and received "
+   "a herald shield with your guilds coat of arms."
+
+% Quest resources.
+guildshield_initial_trigger = de "Bergwerksexpedition"
+guildshield_assign = de \
+   "Aye, jemand eifriges will mir diesen Gefallen tun.  Ohne Zweifel hast "
+   "Du gehört, dass die Orkhölen wieder geöffnet wurden.  Nun, die Orkminen "
+   "haben eine viel bessere Eisenqualität als wir aus unseren Minen bei Jasper "
+   "bekommen.  Ich würde gerne einige davon erhalten bevor die Prinzessin "
+   "oder der Herzog order wer auch immer die Höhlen wieder verschließen.  "
+   "Bring mir etwas Erz und ich werde das letzte was ich noch habe dazu nutzen "
+   "um Dir dein Wappen zu machen."
+guildshield_success = de \
+   "Ah, das wird für einige Waffen und Rüstungen reichen!  Danke Dir vielmals, "
+   "%NAME.  In Deiner Abwesenheit habe ich mit dem Wappen und den Farben "
+   "Deiner Gilde hergestellt.  Trage es mit Stolz, so wie du Deine Gilde "
+   "am heutigen Tage stolz gemacht hast."
+guildshield_failure = de \
+   "Betreff: Erz aus den Orkhöhlen\nVergiss es bzgl. des Erzes;  Ich habe "
+   "andere, zuverlässigere Geschäfte gemacht."

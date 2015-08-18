@@ -1,0 +1,5 @@
+necshield_name_rsc = de "shield of the Necromancer's army"
+necshield_desc_rsc = de \
+   "This shield identifies you as an elite soldier of Queen Venya'cyr army."
+necshield_ArmyName = de "the undead army"
+necshield_welcome_mail = de "Subject: You are now an elite soldier.\n"

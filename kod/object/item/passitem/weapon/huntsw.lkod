@@ -1,0 +1,50 @@
+HunterSword_name_rsc = de "Das Jagdschwert"
+HunterSword_desc_rsc = de \
+   "Diese Waffe wurde mit allergrößter Handwerkskunst geschmiedet. Der Griff "
+   "ist mit verschlungen Ornamenten verziert,die einen wertvollen Edelstein "
+   "einschließen. Dieser Stein scheint Dich wie ein Auge auf allen Deinen "
+   "Wegen zu beobachten.Ab und zu wirst Du aus den Augenwinkeln sogar ein "
+   "kleines Zwinkern sehen können."
+HunterSword_holding_damage = de \
+   "Als Du versuchst das Jagdschwert aufzuheben, ~Ibeißt~I Dich die Schnitzerei "
+   "im Griff in die Hand. Erstaunt wirfst Du das Jagdschwert wieder auf den "
+   "Boden. Das Schwert scheint Dich nicht zu mögen. Am besten läßt Du es "
+   "liegen."
+HunterSword_holding_damage_using = de \
+   "Das Jagdschwert verursacht in Deiner Brust ein großes Gefühl von Verdruß. "
+   "Du hast irgendetwas getan, was das Schwert nicht billigen kann."
+HunterSword_warning = de \
+   "Du bist nun bereit, das mächtige Jagdschwert aufzunehmen. Als es in Deiner "
+   "Hand zu zucken anfängt, zögerst Du einen Moment. Dieses Schwert scheint "
+   "lebendig zu sein. Du wirst Dich nicht mehr von ihm trennen können, wenn "
+   "Du es erst einmal zu Deinem Eigentum erklärt hast. Bist Du für dieses "
+   "Zugeständnis wirklich bereit?"
+HunterSword_used_rsc = de \
+   "Du nimmst all Deinen Mut zusammen und hebst das Jagdschwert auf. Der "
+   "Griff erwacht sofort zum Leben und paßt sich Deiner Handfläche an. Dir "
+   "entfährt ein Keuchen, als sich die unsichtbaren Wurzeln des Griffs bis "
+   "in Deine Brust schlängeln und Dein Herz umschlingen. Seltsamerweise spürst "
+   "Du bei diesem Prozeß keinerlei Schmerz, nur ein überwältigendes Gefühl "
+   "der Kraft und einen großen Hunger."
+HunterSword_try_unuse_rsc = de \
+   "Als Du versuchst, das Schwert abzulegen, fühlst Du einen ziehenden Schmerz "
+   "in Deiner Brust, der von den Wurzeln stammt, die sich in Deinen Körper "
+   "gewunden haben. Das ist nicht gerade eine nette Erfahrung."
+HunterSword_hunger_1 = de "Dein Schwert wartet begierig auf die Jagd."
+HunterSword_hunger_2 = de "Dein Schwert wartet immer ungeduldiger auf die Jagd."
+HunterSword_hunger_3 = de \
+   "Dein Schwert dürstet nach unreinem Blut. Auf zur Jagd."
+HunterSword_hunger_4 = de \
+   "Dein Schwert hungert nach unreinem Blut. Seine Wurzeln beginnen, Deinem "
+   "Körper Substanz zu entziehen. "
+HunterSword_hunger_5 = de \
+   "Dein Schwert hungert nach unreinem Blut. Seine Wurzeln schlagen sich "
+   "schmerzhaft in Deinen Brustkorb und beginnen Deine Lebensessenz aufzusaugen. "
+   ""
+HunterSword_hunger_assuaged = de \
+   "%s%s vergießt unreines Blut, das von der Klinge aufgesogen wird. Du kannst "
+   "ein Pulsieren feststellen, als das Schwert Deinem Körper Energie zuführt."
+HunterSword_lose_sword = de \
+   "Deine Unwürdigkeit hat das Jagdschwert erzürnt. Das Schwert windet sich "
+   "brutal in Deinen Händen und springt plötzlich aus Deinem Griff und aus "
+   "Deiner Sicht."

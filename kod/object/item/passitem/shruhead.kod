@@ -16,16 +16,28 @@ constants:
 
    BABBLE_MINIMUM = 10000
    BABBLE_MAXIMUM = 100000
-   
-   % percentage to speak on hit/kill
+
+   % Percentage to speak on hit/kill.
    KILL_CHAT_PROB_HIT = 5
    KILL_CHAT_PROB_KIL = 10
    KILL_CHAT_PROB_IMP = 20
 
+   % The 'say type', depending on the user's relation to the shrunken head
+   % SH_FIRST_PERSON = owner, SH_GENERIC = SH owned by room,
+   % SH_THIRD_PERSON = another user is owner.
+   SH_FIRST_PERSON = 1
+   SH_GENERIC = 2
+   SH_THIRD_PERSON = 3
+
 resources:
 
-   ShrunkenHead_pickup = "Congratulations on adopting a Shrunken Head. This head will monitor your building activities and track your progress - most certainly a positive building accessory. Try using the following commands: 'Shrunken head, status report!' and 'Shrunken head, reset!."  
-     
+   include shruhead.lkod
+
+   ShrunkenHead_pickup = \
+      "Congratulations on adopting a Shrunken Head. This head will monitor "
+      "your building activities and track your progress - most certainly a "
+      "positive building accessory. Try using the following commands: "
+      "'Shrunken head, status report!' and 'Shrunken head, reset!."
    ShrunkenHead_icon_rsc = shruhead.bgf
    ShrunkenHead_name_rsc = "shrunken head"
    ShrunkenHead_desc_rsc = \
@@ -35,15 +47,12 @@ resources:
 
    ShrunkenHead_shut_up = "shut up"
    ShrunkenHead_offended = "Well, I never!"
-   ShrunkenHead_third_part_one = "~kA voice from "
-   ShrunkenHead_third_part_two = " babbles, \""
-   ShrunkenHead_first = "~kYour shrunken head babbles, \""
-   ShrunkenHead_generic = "~kA shrunken head babbles, \""
-   ShrunkenHead_said = " said to me, \'"
-   ShrunkenHead_near = " is near "
-   ShrunkenHead_laugh = ", hee hee hee!"
-   ShrunkenHead_magic_number = "Today's magic numbers are "
-   ShrunkenHead_number_and = " and "
+   ShrunkenHead_third = "~kA voice from %s babbles, \"%r\""
+   ShrunkenHead_first = "~kYour shrunken head babbles, \"%r\""
+   ShrunkenHead_generic = "~kA shrunken head babbles, \"%r\""
+   ShrunkenHead_said = "%s%q said to me, \'%q~n~k\'"
+   ShrunkenHead_near = "%s%q is near %s, hee hee hee!"
+   ShrunkenHead_magic_number = "Today's magic numbers are %i, %i and %i."
    ShrunkenHead_random_1 = "Can you scratch my stitches?"
    ShrunkenHead_random_2 = "Will you be my love slave?"
    ShrunkenHead_random_3 = "When do we eat?"
@@ -52,322 +61,333 @@ resources:
    ShrunkenHead_random_6 = "You act so suave, but we know better, don't we?"
    ShrunkenHead_random_Spider_eyes_ask = "I like spider eyes.  Got some?"
    ShrunkenHead_random_Spider_eyes_eat = "Yummy spider eyes!"
-   ShrunkenHead_random_lonely = "I'm lonely. You know what they say... two shrunken heads are better than one!"
-   ShrunkenHead_random_not_lonely_1 = "Another shrunken head!  Let's be friends!"
+   ShrunkenHead_random_lonely = \
+      "I'm lonely. You know what they say... two shrunken heads are better "
+      "than one!"
+   ShrunkenHead_random_not_lonely_1 = \
+      "Another shrunken head!  Let's be friends!"
    ShrunkenHead_random_not_lonely_2 = "Sure!  You'll be my bestest friend!"
-   ShrunkenHead_see_players = "I see "
-   ShrunkenHead_and = "and"
-   ShrunkenHead_inventory_has = " has "   
-   
-   ShrunkenHead_win1 = "Good form"
-   ShrunkenHead_win2 = "Have it! You pathetic "
+   ShrunkenHead_see_players = "I see %s%s%s%s%s%s%s%s%s%s, hee hee hee!"
+   ShrunkenHead_and = "and "
+   ShrunkenHead_comma = ", "
+   ShrunkenHead_inventory_has = "%s%s has %r%r%r%r%r%r%r%r%r%r, hee hee hee!"
+   Shrunkenhead_inventory_number = "%s%s"
+
+   ShrunkenHead_win1 = "Good form ~B%s."
+   ShrunkenHead_win2 = "Have it! You pathetic %s!"
    ShrunkenHead_win3 = "Doooshh!"
    ShrunkenHead_win4 = "ka-powza!"
    ShrunkenHead_win5 = "Nicely done sir. I won't tell Shal'ille if you don't!"
-   
+   ShrunkenHead_win6 = "Hail!  Another %s bites the dust!"
+
    ShrunkenHead_dealt1 = "Ouch!!"
    ShrunkenHead_dealt2 = "Stop hitting us!"
    ShrunkenHead_dealt3 = "Run Away!! Retreat!! ~INo hope!!"
    ShrunkenHead_dealt4 = "HA! Master laughs off your weak and insignificant blow!"
-   
+
    ShrunkenHead_hit1 = "Strong and True!"
    ShrunkenHead_hit2 = "Just and Powerful!"
    ShrunkenHead_hit3 = "For the alliance!"
-   ShrunkenHead_hit4 = "There is no hope for you "
+   ShrunkenHead_hit4 = "There is no hope for you %s!"
 
    ShrunkenHead_cheer1 = "Well Done!"
    ShrunkenHead_cheer2 = "Your patience really paid off...."
-   
-   ShrunkenHead_tougher1 = "Woooooooooooot!!!"
-   ShrunkenHead_tougher2 = "Master is sooooo strong!!!"
-   ShrunkenHead_tougher3 = "Oh Master!!! Congratulations!!!!"   
-      
+
+   ShrunkenHead_tougher1 = "Woooooooooooot!!!%s"
+   ShrunkenHead_tougher2 = "Master is sooooo strong!!!%s"
+   ShrunkenHead_tougher3 = "Oh Master!!! Congratulations!!!!%s"
+   shrunken_divulge_hp = "  Master now has %i hitpoints! hee hee hee"
+
    ShrunkenHead_check = "Shrunken head, status report!"
+   ShrunkenHead_status_report = \
+      "Master has killed %i foes, improved %i times and gained %i toughers!  "
+      "Master has also dealt %i and hurt for %i damage."
    ShrunkenHead_reset = "Shrunken head, reset!"
+   ShrunkenHead_reset_stats = "OK boss!"
+
+   shrunken_head_drop_rsc = "Please master %s, don't leave me here like this!!"
 
 classvars:
-   
+
    vrName = ShrunkenHead_name_rsc
    vrDesc = ShrunkenHead_desc_rsc
    vrIcon = ShrunkenHead_icon_rsc
-
    viValue_average = 50
    viWeight = 10
    viBulk = 10
-
    viGround_group = 1
 
-
-properties:  
+properties:
 
    psOverheard = $
    poOverheard = $
    piSilenced = 0
    ptBabble = $
-   
-      
-   % what kind of shrunken head did you get? :D
-   personality = 1
-   
-   % shrunken head works like a walking journal... 
-   statKills = 0
-   statImprovements = 0
-   statToughers = 0   
-   statDealt = 0
-   statReceived = 0
 
-messages:   
+   % Shrunken head works like a walking journal... 
+   piStatKills = 0
+   piStatImprovements = 0
+   piStatToughers = 0
+   piStatDealt = 0
+   piStatReceived = 0
+
+messages:
 
    Dropped(by = $, where = $)
    "The poor shrunken head has been dropped!"
    {
-		local s, choice;		
-		
-		s = createString();
-		clearTempString();
+      Send(self,@DoBabbleString,#string=shrunken_head_drop_rsc,
+            #parm2=Send(by,@GetName));
 
-		appendTempString("Please master ");
-		appendTempString(send(by,@GetName));
-		appendTempString(" don't leave me here like this!!");
+      return;
+   }
 
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }   
-   
    PickedUp(by = $)
    "Shrunken head has been picked up"
-   {		  
-		Send(by,@MsgSendUser,#message_rsc=ShrunkenHead_pickup);
-		return;
+   {
+      Send(by,@MsgSendUser,#message_rsc=ShrunkenHead_pickup);
+
+      return;
    }
 
    Tougher(hp = $)
    "Master gained a tougher!"
-   {		
-		local s, choice, divulgeHp;
-		statToughers=statToughers+1;
-		
-		if poOwner = $ { return; }   		
+   {
+      local rMsg, iChoice, iDivulgeHp;
 
-		s = createString();
-		clearTempString();		
+      if poOwner = $
+      {
+         return;
+      }
 
-		choice = random(1,3);
-		divulgeHp = random(0, 100);
-		
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_tougher1);
-		}
-		if choice = 2
-		{
-			appendTempString(ShrunkenHead_tougher2);
-		}
-		if choice = 3
-		{
-			appendTempString(ShrunkenHead_tougher3);
-		}		
-		if(divulgeHp<10) 
-		{
-			% 10 percentage chance to divulge current hp :D
-			appendTempString("Master now has ");
-			appendTempString(hp);
-			appendTempString(" hitpoints! hee hee hee");
-		}
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
+      ++piStatToughers;
+
+      iChoice = Random(1,3);
+      iDivulgeHp = Random(0,100);
+
+      if iChoice = 1
+      {
+         rMsg = ShrunkenHead_tougher1;
+      }
+      else if iChoice = 2
+      {
+         rMsg = ShrunkenHead_tougher2;
+      }
+      else
+      {
+         rMsg = ShrunkenHead_tougher3;
+      }
+
+      if iDivulgeHp < 10
+      {
+         Send(self,@DoBabbleString,#string=rMsg,#parm1=shrunken_divulge_hp);
+      }
+      else
+      {
+         Send(self,@DoBabbleString,#string=rMsg,#parm1=system_blank_resource);
+      }
+
+      return;
    }
 
-   DamageTaken(what = $, amount = 0) 
+   DamageTaken(what = $, amount = 0)
    "Master is being hit! Oww"
    {
-		local s, choice;
-		
-		statReceived=statReceived+amount;
+      local rMsg, iChoice;
 
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_HIT { return; }
-		
-		s = createString();
-		clearTempString();		
-		
-		choice = random(1,2);
-		
-		if amount>18 
-		{
-			% owww
-			appendTempString(ShrunkenHead_dealt3);
-			choice = 3;
-		}		
-		if(amount = 1) 
-		{
-			% weak opponent
-			appendTempString(ShrunkenHead_dealt4);
-			choice = 3;
-		}		
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_dealt1);
-		}
-		if choice = 2 
-		{
-			appendTempString(ShrunkenHead_dealt2);
-		}	
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
+      piStatReceived = piStatReceived + amount;
+
+      if poOwner = $
+      {
+         return;
+      }
+
+      if Random(1,100) > KILL_CHAT_PROB_HIT
+      {
+         return;
+      }
+
+      iChoice = Random(1,2);
+
+      if amount > 18
+      {
+         % owww
+         rMsg = ShrunkenHead_dealt3;
+      }
+      else if amount = 1
+      {
+         % Weak opponent
+         rMsg = ShrunkenHead_dealt4;
+      }
+      else if iChoice = 1
+      {
+         rMsg = ShrunkenHead_dealt1;
+      }
+      else
+      {
+         rMsg = ShrunkenHead_dealt2;
+      }
+
+      Send(self,@DoBabbleString,#string=rMsg);
+
+      return;
    }
-   
+
    DamageDealt(what = $, amount = 0) 
    "Master is hitting something... good"
    {
-		local s, choice;
-		statDealt=statDealt+amount;
-		
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_HIT { return; }
-		
-		s = createString();
-		clearTempString();		
-		
-		choice = random(1,3);
-		
-		if amount > 18
-		{	
-			% powerful blow
-			appendTempString(ShrunkenHead_hit4);
-			appendTempString(send(what,@GetName));
-			appendTempString("!");
-			choice = 4;
-		}	
-	
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_hit1);
-		}
-		if choice = 2 
-		{
-			appendTempString(ShrunkenHead_hit2);
-		}	
-		if choice = 3 
-		{
-			appendTempString(ShrunkenHead_hit3);
-		}	
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }   
-   
+      local rMsg, iChoice;
+
+      piStatDealt = piStatDealt + amount;
+
+      if poOwner = $
+      {
+         return;
+      }
+
+      if Random(1,100) > KILL_CHAT_PROB_HIT
+      {
+         return;
+      }
+
+      iChoice = Random(1,3);
+
+      if amount > 18
+      {
+         % Powerful blow
+         Send(self,@DoBabbleString,#string=ShrunkenHead_hit4,
+               #parm1=Send(what,@GetName));
+
+         return;
+      }
+      else if iChoice = 1
+      {
+         rMsg = ShrunkenHead_hit1;
+      }
+      else if iChoice = 2
+      {
+         rMsg = ShrunkenHead_hit2;
+      }
+      else
+      {
+         rMsg = ShrunkenHead_hit3;
+      }
+
+      Send(self,@DoBabbleString,#string=rMsg);
+
+      return;
+   }
+
    Improvement(spellName=$) 
    "Master gained an improvement :-)"
-   {   
-		local s, choice;
-		statImprovements=statImprovements+1;
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_IMP { return; }
-		
-		s = createString();
-		clearTempString();		
-		
-		choice = random(1,2);
-		
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_cheer1);
-		}
-		if choice = 2 
-		{
-			appendTempString(ShrunkenHead_cheer2);
-		}	
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;		
+   {
+      local rMsg, iChoice;
+
+      piStatImprovements = piStatImprovements + 1;
+
+      if poOwner = $
+      {
+         return;
+      }
+
+      if Random(1,100) > KILL_CHAT_PROB_IMP
+      {
+         return;
+      }
+
+      iChoice = Random(1,2);
+      
+      if iChoice = 1
+      {
+         rMsg = ShrunkenHead_cheer1;
+      }
+      else
+      {
+         rMsg = ShrunkenHead_cheer2;
+      }
+
+      Send(self,@DoBabbleString,#string=rMsg);
+
+      return;
    }
-   
+
    OpponentKilled(what=$,stroke_obj=$) 
    "Our master killed something..."
    {
-      	local s, choice, karma;		
-		statKills=statKills+1;
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_KIL { return; }
+      local iChoice, iKarma, rMsg;
 
-		s = createString();
-		clearTempString();
-		
-		choice = random(1,6);
+      ++piStatKills;
 
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_win1);
-			appendTempString(" ~B");
-			appendTempString(send(poOwner,@GetName));
-			appendTempString("~n.");
-		}
-		if choice = 2
-		{
-			appendTempString(ShrunkenHead_win2);
-			appendTempString(send(what,@GetName));
-			appendTempString("!");
-		}
-		if choice = 3
-		{
-			appendTempString(ShrunkenHead_win3);
-		}
-		if choice = 4
-		{
-			appendTempString(ShrunkenHead_win4);
-		}
-		if choice = 5 
-		{
-			appendTempString("Hail! Another ");
-			appendTempString(send(what,@GetName));
-			appendTempString(" bites the dust!");
-		}
-		if choice = 6
-		{	
-			karma = Send(what,@GetKarma);
-			if karma > 10
-			{
-				appendTempString(ShrunkenHead_win5);
-			}				
-		}
+      if poOwner = $
+      {
+         return;
+      }
 
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }  
+      if Random(1,100) > KILL_CHAT_PROB_KIL
+      {
+         return;
+      }
 
+      iChoice = Random(1,6);
+
+      if iChoice = 1
+      {
+         Send(self,@DoBabbleString,#string=ShrunkenHead_win1,
+               #parm1=Send(poOwner,@GetName));
+
+         return;
+      }
+      else if iChoice = 2
+      {
+         Send(self,@DoBabbleString,#string=ShrunkenHead_win2,
+               #parm1=Send(what,@GetName));
+
+         return;
+      }
+      else if iChoice = 3
+      {
+         rMsg = ShrunkenHead_win3;
+      }
+      else if iChoice = 4
+      {
+         rMsg = ShrunkenHead_win4;
+      }
+      else if iChoice = 5
+      {
+         Send(self,@DoBabbleString,#string=ShrunkenHead_win6,
+               #parm1=Send(what,@GetName));
+
+         return;
+      }
+      else
+      {
+         iKarma = Send(what,@GetKarma);
+         if iKarma > 10
+         {
+            rMsg = ShrunkenHead_win5;
+         }
+         else
+         {
+            rMsg = ShrunkenHead_win4;
+         }
+      }
+
+      Send(self,@DoBabbleString,#string=rMsg);
+
+      return;
+   }
 
    Delete()
    {
       if ptBabble <> $
       {
-         deleteTimer(ptBabble);
+         DeleteTimer(ptBabble);
          ptBabble = $;
       }
-      
+
       psOverheard = $;
       poOverheard = $;
-      
+
       propagate;
    }
 
@@ -375,96 +395,87 @@ messages:
    {
       if ptBabble <> $
       {
-         deleteTimer(ptBabble);
+         DeleteTimer(ptBabble);
          ptBabble = $;
       }
-      
-      piSilenced = getTime();
-      
+
+      piSilenced = GetTime();
+
       return;
    }
 
    SomeoneOverheard(from=$,string=$)
    {
-	  local s;
-	  
-      % Keyword to get the thing to shut up.	
-      if poOwner = $ { return; }
+      local oRoom;
 
-	  % check for stat request from master
-	  if from = poOwner AND stringContain(string,ShrunkenHead_check)
-	  {
-		s = createString();
-		clearTempString();
-		appendTempString("Master has killed ");
-		appendTempString(statKills);
-		appendTempString(" foes, improved ");
-		appendTempString(statImprovements);
-		appendTempString(" times and gained ");
-		appendTempString(statToughers);
-		appendTempString(" toughers! Master has also");
-		appendTempString(" dealt ");
-		appendTempString(statDealt);
-		appendTempString(" and hurt for ");
-		appendTempString(statReceived);
-		appendTempString(" damage.");
-		setString(s,getTempString());
-		clearTempString();
-		send(self,@DoBabbleString,#string=s);
-		return;			
-	  }
-	  
-	  % reset stats
-	  if from = poOwner AND stringContain(string,ShrunkenHead_reset)
-	  {
-		s = createString();
-		clearTempString();
-		appendTempString("OK boss!");
-		setString(s,getTempString());
-		clearTempString();
-		send(self,@DoBabbleString,#string=s);
-		
-		% and reset....
-		statKills = 0;
-		statToughers = 0;
-		statDealt = 0;
-		statReceived = 0;
-		statImprovements = 0;
-		
-		return;			
-	  }	  
-	  
-	  
-	  if from = poOwner
-	  {
-	    % don't record the master
-		return;
-	  }  
-	  
-      if stringContain(string,ShrunkenHead_name_rsc)
-         AND stringContain(string,ShrunkenHead_shut_up)
+      % Keyword to get the thing to shut up.
+      if poOwner = $
       {
-         if not isClass(poOwner,&Player) or
-            stringContain(string,send(poOwner,@GetName))
+         return;
+      }
+
+      % Check for stat request from master.
+      if from = poOwner
+         AND StringContain(string,ShrunkenHead_check)
+      {
+         Send(self,@DoBabbleString,#string=ShrunkenHead_status_report,
+               #parm1=piStatKills,#parm2=piStatImprovements,
+               #parm3=piStatToughers,#parm4=piStatDealt,#parm5=piStatReceived);
+
+         return;
+      }
+
+      % Reset stats.
+      if from = poOwner
+         AND StringContain(string,ShrunkenHead_reset)
+      {
+         Send(self,@DoBabbleString,#string=ShrunkenHead_reset_stats);
+         % And reset....
+         piStatKills = 0;
+         piStatToughers = 0;
+         piStatDealt = 0;
+         piStatReceived = 0;
+         piStatImprovements = 0;
+
+         return;
+      }
+
+      if StringContain(string,ShrunkenHead_name_rsc)
+         AND StringContain(string,ShrunkenHead_shut_up)
+      {
+         if NOT IsClass(poOwner,&Player)
+            OR StringContain(string,Send(poOwner,@GetName))
          {
-            post(self,@DoBabbleString,#string=ShrunkenHead_offended);
-            post(self,@DoSilence);
+            Post(self,@DoBabbleString,#string=ShrunkenHead_offended);
+            Post(self,@DoSilence);
+
             return;
          }
       }
 
-      % Small chance that the head will learn what it hears.
-
-      if random(1,100) < 10 OR psOverheard = $
+      if from = poOwner
       {
-         psOverheard = createString();
-         setString(psOverheard,string);
-         poOverheard = from;
+         % Don't record the master.
+         return;
       }
 
-      if psOverheard <> $ AND ptBabble = $
+      % Small chance that the head will learn what it hears.
+      if Random(1,100) < 10 OR psOverheard = $
       {
-         ptBabble = createTimer(self,@Babble,random(BABBLE_MINIMUM,BABBLE_MAXIMUM));
+         % Except if we're in a guildhall, so we don't record passwords.
+         oRoom = Send(SYS,@UtilGetRoomRecurse,#what=self);
+         if oRoom <> $
+            AND NOT IsClass(oRoom,&GuildHall)
+         {
+            psOverheard = SetString($,string);
+            poOverheard = from;
+         }
+      }
+
+      if psOverheard <> $
+         AND ptBabble = $
+      {
+         ptBabble = CreateTimer(self,@Babble,Random(BABBLE_MINIMUM,BABBLE_MAXIMUM));
       }
 
       return;
@@ -474,7 +485,7 @@ messages:
    {
       local oRoom, i, lNearby, lPlayers;
 
-      oRoom = send(SYS,@UtilGetRoomRecurse,#what=self);
+      oRoom = Send(SYS,@UtilGetRoomRecurse,#what=self);
 
       if oRoom = $
       {
@@ -482,112 +493,96 @@ messages:
       }
 
       lPlayers = $;
-      lNearby = send(oRoom,@GetHolderActive);
+      lNearby = Send(oRoom,@GetHolderActive);
 
-      for i in lNearby
+      foreach i in lNearby
       {
-         if isClass(first(i),&Player)
-            AND NOT send(first(i),@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-            AND NOT send(first(i),@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+         if IsClass(First(i),&Player)
+            AND NOT Send(First(i),@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+            AND NOT Send(First(i),@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
          {
-            lPlayers = cons(first(i), lPlayers);
+            lPlayers = Cons(First(i),lPlayers);
          }
       }
 
       if lPlayers <> $
       {
-         i = length(lPlayers);
-         i = Nth(lPlayers,random(1,i));
-         
-         return i;
+         return Nth(lPlayers,Random(1,Length(lPlayers)));
       }
 
       return $;
    }
 
-   DoNameList(things=$,conjunction=$,definite=FALSE)
+   % The next two message take care of sending say resources to the user.
+   DoBabbleCallback(sMessage=$,lList=$,oTarget=$)
+   "Use this message to babble a more complicated string.  Currently handles "
+   "babbling variable lists such as inventory content or people nearby.  "
+   "sMessage is the message for the user to call, lList is the list of items "
+   "that needs to be said.  oTarget is used for the user whose inventory is "
+   "being babbled."
    {
-      local i, n, m;
+      local oRoom, i, lHear;
 
-      clearTempString();
-
-      if things = $
-         OR length(things) = 0
+      oRoom = Send(SYS,@UtilGetRoomRecurse,#what=self);
+      if oRoom = $
       {
-         return $;
+         return;
       }
 
-      n = length(things);
-
-      m = 1;
-      for i in things
+      if sMessage = $
+         OR lList = $
       {
-         % list grammar
+         return;
+      }
 
-         if (m > 1) and (m < n)
+      lHear = Send(oRoom,@GetHolderActive);
+      foreach i in lHear
+      {
+         if IsClass(First(i),&User)
          {
-            appendTempString(", ");
-         }
-         
-         if (m > 1) and (m = n)
-         {
-            appendTempString(" ");
-            appendTempString(conjunction);
-            appendTempString(" ");
-         }
-
-         % actual article/number and name of thing
-
-         if i = $ { return $; }
-
-         if isClass(i,&NumberItem)
-         {
-            send(SYS,@AppendFuzzyCardinalToTempString,#number=send(i,@GetNumber));
-            appendTempString(" ");
-         }
-         else
-         {
-            if definite
+            % The parm1 type determines which header the callback message
+            % will add.
+            if First(i) = poOwner
             {
-               appendTempString(send(i,@GetDef));
+               % Add 1st person, e.g. Your shrunken head babbles
+               Send(First(i),@MsgSendUserCallback,#what=self,#sCallback=sMessage,
+                     #parm1=SH_FIRST_PERSON,#parm2=lList,#parm3=oTarget);
+            }
+            else if oRoom = poOwner
+            {
+               % Add generic, e.g. A shrunken head babbles
+               Send(First(i),@MsgSendUserCallback,#what=self,#sCallback=sMessage,
+                     #parm1=SH_GENERIC,#parm2=lList,#parm3=oTarget);
             }
             else
             {
-               appendTempString(send(i,@GetIndef));
+               % Player owner, but not 'i'. e.g. A voice from Joe babbles
+               Send(First(i),@MsgSendUserCallback,#what=self,#sCallback=sMessage,
+                     #parm1=SH_THIRD_PERSON,#parm2=lList,#parm3=oTarget);
             }
          }
-         
-         appendTempString(send(i,@GetName));
-
-         % next item
-
-         m = m + 1;
       }
 
-      i = createString();
-      setString(i,getTempString());
-
-      return i;
+      return;
    }
 
-   DoBabbleString(string=$)
+   DoBabbleString(string=$,parm1=$,parm2=$,parm3=$,parm4=$,parm5=$)
+   "Use this message if the message to be displayed is the initial resource, "
+   "with up to 5 additional parameters (parameters must be sent to user with "
+   "4 byte headers in BP_MESSAGE)."
    {
-      local oRoom, i, lHear, rsc;
+      local oRoom, i, lHear;
 
-      oRoom = send(SYS,@UtilGetRoomRecurse,#what=self);
-      if oRoom = $ { return; }
-
-      if string = getTempString()
+      oRoom = Send(SYS,@UtilGetRoomRecurse,#what=self);
+      if oRoom = $
       {
-         string = createString();
-         setString(string,getTempString());
+         return;
       }
 
-      rsc = send(SYS,@GetPercentQRsc);
-      lHear = send(oRoom,@GetHolderActive);
-      for i in lHear
+      lHear = Send(oRoom,@GetHolderActive);
+      foreach i in lHear
       {
-         if isClass(first(i),&User)
+         if IsClass(First(i),&User)
          {
             % (example) A voice from Joe babbles, "Hey!"
             %
@@ -595,58 +590,53 @@ messages:
             % (example) A shrunken head babbles, "Hey!"
             % (example) Your shrunken head babbles, "Hey!"
 
-            clearTempString();
-            AppendTempString(ShrunkenHead_third_part_one);
-            AppendTempString(send(poOwner,@GetIndef));
-            AppendTempString(send(poOwner,@GetName));
-            AppendTempString(ShrunkenHead_third_part_two);
-
-            if first(i) = poOwner
+            if First(i) = poOwner
             {
-               clearTempString();
-               AppendTempString(ShrunkenHead_first);
+               Send(First(i),@MsgSendUser,#message_rsc=ShrunkenHead_first,
+                     #parm1=string,#parm2=parm1,#parm3=parm2,#parm4=parm3,
+                     #parm5=parm4,#parm6=parm5);
             }
-
-            if oRoom = poOwner
+            else if oRoom = poOwner
             {
-               clearTempString();
-               AppendTempString(ShrunkenHead_generic);
+               Send(First(i),@MsgSendUser,#message_rsc=ShrunkenHead_generic,
+                     #parm1=string,#parm2=parm1,#parm3=parm2,#parm4=parm3,
+                     #parm5=parm4,#parm6=parm5);
             }
-
-            appendTempString(string);
-            appendTempString("~n~k\"");
-
-            send(first(i),@MsgSendUser,#message_rsc=rsc,#parm1=getTempString(),#type1=0);
+            else
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=ShrunkenHead_third,
+                     #parm1=Send(poOwner,@GetName),#parm2=string,
+                     #parm3=parm1,#parm4=parm2,#parm5=parm3,
+                     #parm6=parm4,#parm7=parm5);
+            }
          }
       }
 
       return;
    }
 
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
    Babble()
    {
       ptBabble = $;
 
-      if isClass(poOwner,&Player)
-         AND (send(poOwner,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
-              OR send(poOwner,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE))
+      if IsClass(poOwner,&Player)
+         AND (Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+            OR Send(poOwner,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE))
       {
          return;
       }
 
-      if getTime() < (piSilenced + 900)
+      if GetTime() < (piSilenced + 900)
       {
          return;
       }
 
       % Good chance the head will continue to babble.
-      send(self,@BabbleRandom);
+      Send(self,@BabbleRandom);
 
-      if random(1,100) < 90
+      if Random(1,100) < 90
       {
-         ptBabble = createTimer(self,@Babble,random(BABBLE_MINIMUM,BABBLE_MAXIMUM));
+         ptBabble = CreateTimer(self,@Babble,Random(BABBLE_MINIMUM,BABBLE_MAXIMUM));
       }
 
       return;
@@ -654,45 +644,35 @@ messages:
 
    BabbleRandom()
    {
-      local choice;
+      local iChoice;
 
-      choice = random(1,9);
+      iChoice = Random(1,9);
 
-      if choice = 1
-         OR choice = 2
+      switch(iChoice)
       {
-         send(self,@BabbleOverheard);
-      }
-
-      if choice = 3
-      {
-         send(self,@BabbleLottery);
-      }
-
-      if choice = 4
-         OR choice = 5
-      {
-         send(self,@BabbleInventoryNearby);
-      }
-
-      if choice = 6
-      {
-         send(self,@BabblePeopleNearby);
-      }
-
-      if choice = 7
-      {
-         send(self,@BabbleFortune);
-      }
-
-      if choice = 8
-      {
-         send(self,@BabbleBizarre);
-      }
-
-      if choice = 9
-      {
-         send(self,@BabbleMurderer);
+         case 1:
+         case 2:
+            Send(self,@BabbleOverheard);
+            break;
+         case 3:
+            Send(self,@BabbleLottery);
+            break;
+         case 4:
+         case 5:
+            Send(self,@BabbleInventoryNearby);
+            break;
+         case 6:
+            Send(self,@BabblePeopleNearby);
+            break;
+         case 7:
+            Send(self,@BabbleFortune);
+            break;
+         case 8:
+            Send(self,@BabbleBizarre);
+            break;
+         default:
+            Send(self,@BabbleMurderer);
+            break;
       }
 
       return;
@@ -702,24 +682,24 @@ messages:
    {
       local s;
 
-      if psOverheard = $ { return; }
-
-      if poOverheard = $ or random(1,100) < 50
+      if psOverheard = $
       {
-         send(self,@DoBabbleString,#string=psOverheard);
+         return;
+      }
+
+      if poOverheard = $
+         OR Random(1,100) < 50
+      {
+         Send(self,@DoBabbleString,#string=Send(SYS,@GetPercentQRsc),
+               #parm1=psOverheard);
       }
       else
       {
-         s = createString();
-         clearTempString();
-         appendTempString(send(poOverheard,@GetCapIndef));
-         appendTempString(send(poOverheard,@GetName));
-         appendTempString(ShrunkenHead_said);
-         appendTempString(psOverheard);
-         appendTempString("~n~k\'");
-         setString(s,getTempString());
-
-         send(self,@DoBabbleString,#string=s);
+         ClearTempString();
+         AppendTempString(Send(poOverheard,@GetName));
+         Send(self,@DoBabbleString,#string=ShrunkenHead_said,
+               #parm1=Send(poOverheard,@GetCapIndef),#parm2=GetTempString(),
+               #parm3=psOverheard);
       }
 
       return;
@@ -727,129 +707,108 @@ messages:
 
    BabbleMurderer()
    {
-      local s, oKiller, oLocation;
+      local iNum, oKiller, oLocation;
 
-      oKiller = send(SYS,@GetLastMurderer);
-      if oKiller = $ { return; }
+      oKiller = Send(SYS,@GetLastMurderer);
+      if oKiller = $
+      {
+         return;
+      }
 
-      oLocation = send(oKiller,@GetOwner);
+      oLocation = Send(oKiller,@GetOwner);
       if oLocation = $
       {
-         s = send(oKiller,@GetSaveRoom);
-         oLocation = send(SYS,@FindRoomByNum,#num=s);
+         iNum = Send(oKiller,@GetSaveRoom);
+         oLocation = Send(SYS,@FindRoomByNum,#num=iNum);
       }
-      
+
       if oLocation = $
       {
          return;
       }
 
-      s = createString();
-      clearTempString();
-      appendTempString(send(oKiller,@GetCapIndef));
-      appendTempString(send(oKiller,@GetName));
-      appendTempString(ShrunkenHead_near);
-      appendTempString(send(oLocation,@GetName));
-      appendTempString(ShrunkenHead_laugh);
-      setString(s,getTempString());
+      ClearTempString();
+      AppendTempString(Send(oKiller,@GetName));
 
-      send(self,@DoBabbleString,#string=s);
+      Send(self,@DoBabbleString,#string=ShrunkenHead_near,
+            #parm1=Send(oKiller,@GetCapIndef),#parm2=GetTempString(),
+            #parm3=Send(oLocation,@GetName));
 
       return;
    }
 
    BabbleLottery()
    {
-      local s;
-
-      s = createString();
-
-      clearTempString();
-      appendTempString(ShrunkenHead_magic_number);
-      send(SYS,@AppendCardinalToTempString,#number=random(1,12));
-      appendTempString(", ");
-      send(SYS,@AppendCardinalToTempString,#number=random(1,12));
-      appendTempString(ShrunkenHead_number_and);
-      send(SYS,@AppendCardinalToTempString,#number=random(1,12));
-      appendTempString(".");
-      setString(s,getTempString());
-
-      send(self,@DoBabbleString,#string=s);
+      Send(self,@DoBabbleString,#string=ShrunkenHead_magic_number,
+            #parm1=Random(1,12),#parm2=Random(1,12),#parm3=Random(1,12));
 
       return;
    }
 
    BabbleBizarre()
    {
-      local choice, oObject, iCount;
+      local iChoice, oObject, iCount;
 
-      choice = random(1,8);
+      iChoice = Random(1,8);
 
-      if choice = 1
+      if iChoice = 1
       {
-         send(self,@DoBabbleString,#string=ShrunkenHead_random_1);
+         Send(self,@DoBabbleString,#string=ShrunkenHead_random_1);
       }
-      
-      if choice = 2
+      else if iChoice = 2
       {
-         send(self,@DoBabbleString,#string=ShrunkenHead_random_2);
+         Send(self,@DoBabbleString,#string=ShrunkenHead_random_2);
       }
-      
-      if choice = 3
+      else if iChoice = 3
       {
-         send(self,@DoBabbleString,#string=ShrunkenHead_random_3);
+         Send(self,@DoBabbleString,#string=ShrunkenHead_random_3);
       }
-      
-      if choice = 4
+      else if iChoice = 4
       {
-         send(self,@DoBabbleString,#string=ShrunkenHead_random_4);
+         Send(self,@DoBabbleString,#string=ShrunkenHead_random_4);
       }
-      
-      if choice = 5
+      else if iChoice = 5
       {
-         send(self,@DoBabbleString,#string=ShrunkenHead_random_5);
+         Send(self,@DoBabbleString,#string=ShrunkenHead_random_5);
       }
-      
-      if choice = 6
+      else if iChoice = 6
       {
-         send(self,@DoBabbleString,#string=ShrunkenHead_random_6);
+         Send(self,@DoBabbleString,#string=ShrunkenHead_random_6);
       }
-
-      if choice = 7
+      else if iChoice = 7
       {
          % Check for spider eyes.
-         oObject = send(poOwner,@FindHolding,#class=&SpidEye);
+         oObject = Send(poOwner,@FindHolding,#class=&SpidEye);
          
          if oObject = $
          {
-            send(self,@DoBabbleString,#string=ShrunkenHead_random_Spider_eyes_ask);
+            Send(self,@DoBabbleString,#string=ShrunkenHead_random_Spider_eyes_ask);
          }
          else
          {
             % Eat a spider eye!
-            send(oObject,@SubtractNumber,#number=1);
-            send(self,@DoBabbleString,#string=ShrunkenHead_random_Spider_eyes_eat);
+            Send(oObject,@SubtractNumber,#number=1);
+            Send(self,@DoBabbleString,#string=ShrunkenHead_random_Spider_eyes_eat);
          }
       }
-      
-      if choice = 8
+      else
       {
          % See how many shrunken heads are around.
-         iCount = send(poOwner,@CountHoldingHowMany,#class=&ShrunkenHead);
+         iCount = Send(poOwner,@CountHoldingHowMany,#class=&ShrunkenHead);
          
          if iCount <= 1
          {
             % Aw, the poor guy is lonely!
-            send(self,@DoBabbleString,#string=ShrunkenHead_random_lonely);
+            Send(self,@DoBabbleString,#string=ShrunkenHead_random_lonely);
          }
          else
          {
             % A crowd!  Let's be talkative!
-            send(self,@DoBabbleString,#string=ShrunkenHead_random_not_lonely_1);
+            Send(self,@DoBabbleString,#string=ShrunkenHead_random_not_lonely_1);
             while iCount > 1
             {
                iCount = iCount - 1;
-               send(self,@DoBabbleString,#string=ShrunkenHead_random_not_lonely_2);
+               Send(self,@DoBabbleString,#string=ShrunkenHead_random_not_lonely_2);
             }
          }
       }
@@ -859,33 +818,33 @@ messages:
 
    BabbleFortune()
    {
-      local fortune;
+      local rFortune;
 
-      fortune = send(send(SYS,@GetLibrary),@PickFortune);
-      send(self,@DoBabbleString,#string=fortune);
+      rFortune = Send(Send(SYS,@GetLibrary),@PickFortune);
+      Send(self,@DoBabbleString,#string=rFortune);
 
       return;
    }
 
    BabblePeopleNearby()
    {
-      local lNearby, i, j, s;
+      local lNearby, i, j, lNames;
 
       % Pick up to five nearby people.
 
       lNearby = $;
       j = 0;
-      
-      while j < 5
+
+      while j++ < 5
       {
-         i = send(self,@PickSomeoneNearby);
-         
-         if FindListElem(lNearby, i) = 0
+         i = Send(self,@PickSomeoneNearby);
+
+         if i <> $
+            AND (lNearby = $
+               OR FindListElem(lNearby, i) = 0)
          {
-            lNearby = cons(i, lNearby);
+            lNearby = Cons(i,lNearby);
          }
-         
-         j = j + 1;
       }
 
       if lNearby = $
@@ -893,78 +852,224 @@ messages:
          return;
       }
 
-      % (example) I see Joe, Bob and Mike, hee hee hee!
-
-      s = send(self,@DoNameList,#things=lNearby,#conjunction=ShrunkenHead_and);
-
-      if s = $
-      {
-         return;
-      }
-
-      clearTempString();
-      appendTempString(ShrunkenHead_see_players);
-      appendTempString(s);
-      appendTempString(ShrunkenHead_laugh);
-      setString(s,getTempString());
-
-      send(self,@DoBabbleString,#string=s);
+      % This has the user add a BP_MESSAGE packet, then calls
+      % SendBabblePeopleNearby to add the appropriate resources from lList.
+      Send(self,@DoBabbleCallback,#sMessage=SetString($,@SendBabblePeopleNearby),
+            #lList=lNearby);
 
       return;
    }
 
+   SendBabblePeopleNearby(parm1=0,parm2=$)
+   "parm1 is iType (determines 1st/3rd person/generic header.  parm2 is "
+   "a list of items that need to be said.  This should only be called from "
+   "MsgSendUserCallback in user.kod."
+   {
+      local i, iCounter, iNumRsc, iNumNames;
+
+      if parm1 = 0
+         OR parm2 = $
+      {
+         return FALSE;
+      }
+
+      if parm1 = SH_FIRST_PERSON
+      {
+         AddPacket(4,ShrunkenHead_first, 4,ShrunkenHead_see_players);
+      }
+      else if parm1 = SH_GENERIC
+      {
+         AddPacket(4,ShrunkenHead_generic, 4,ShrunkenHead_see_players);
+      }
+      else
+      {
+         AddPacket(4,ShrunkenHead_third, 4,Send(poOwner,@GetName),
+                   4,ShrunkenHead_see_players);
+      }
+
+      iCounter = 0;
+      iNumRsc = 0;
+
+      iNumNames = Length(parm2);
+
+      foreach i in parm2
+      {
+         iCounter++;
+
+         if iNumNames > 1
+         {
+            if iCounter = iNumNames
+            {
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,ShrunkenHead_and, 4,Send(i,@GetName));
+            }
+            else
+            {
+               iNumRsc = iNumRsc + 2;
+               AddPacket(4,Send(i,@GetName), 4,ShrunkenHead_comma);
+            }
+         }
+         else
+         {
+            iNumRsc++;
+            AddPacket(4,Send(i,@GetName));
+         }
+      }
+
+      % If we didn't add enough name resources, make up for it
+      % with blank ones.
+      while iNumRsc++ < 10
+      {
+         AddPacket(4, system_blank_resource);
+      }
+
+      return TRUE;
+   }
+
    BabbleInventoryNearby()
    {
-      local oPerson, lInventory, lPicks, oItem, iCount, sString, iNumberItems;
+      local oTarget, lInventory, lPicks, oItem, iCount, sString, iNumberItems;
 
       % Pick one nearby person, and up to five things from their inventory.
 
-      oPerson = send(self,@PickSomeoneNearby);
-      if oPerson = $
+      oTarget = Send(self,@PickSomeoneNearby);
+      if oTarget = $
       {
          return;
       }
 
       lPicks = $;
-      lInventory = send(oPerson,@GetHolderPassive);
+      lInventory = Send(oTarget,@GetHolderPassive);
       iCount = 0;
-      iNumberItems = length(lInventory);
+      iNumberItems = Length(lInventory);
 
       if iNumberItems > 0
       {
-         while iCount < 5 
+         while iCount++ < 5
          {
-            oItem = Nth(lInventory,random(1,iNumberItems));
+            oItem = Nth(lInventory,Random(1,iNumberItems));
 
-            if lPicks = $
-               OR FindListElem(lPicks, oItem) = 0
+            if oItem <> $
+            AND (lPicks = $
+               OR FindListElem(lPicks, oItem) = 0)
             {
-               lPicks = cons(oItem, lPicks);
+               lPicks = Cons(oItem,lPicks);
             }
-
-            iCount = iCount + 1;
          }
       }
 
-      % (example) Joe has a few apples, dozens of diamonds and a sword, hee hee hee!
-
-      sString = send(self,@DoNameList,#things=lPicks,#conjunction=ShrunkenHead_and);
-      if sString = $
-      {
-         return;
-      }
-
-      clearTempString();
-      appendTempString(send(oPerson,@GetIndef));
-      appendTempString(send(oPerson,@GetName));
-      appendTempString(ShrunkenHead_inventory_has);
-      appendTempString(sString);
-      appendTempString(ShrunkenHead_laugh);
-      setString(sString,getTempString());
-
-      send(self,@DoBabbleString,#string=sString);
+      % This has the user add a BP_MESSAGE packet, then calls
+      % SendBabbleInventoryNearby to add the appropriate resources from lList.
+      Send(self,@DoBabbleCallback,#sMessage=SetString($,@SendBabbleInventoryNearby),
+            #lList=lPicks,#oTarget=oTarget);
 
       return;
+   }
+
+   SendBabbleInventoryNearby(parm1=0,parm2=$,parm3=$)
+   "parm1 is iType (determines 1st/3rd person/generic header.  parm2 is "
+   "a list of items that need to be said. parm3 is the user whose inventory "
+   "is being babbled.  This should only be called from MsgSendUserCallback "
+   "in user.kod."
+   {
+      local i, iCounter, iNumRsc, iNumItems;
+
+      if parm1 = 0
+         OR parm2 = $
+         OR parm3 = $
+      {
+         return FALSE;
+      }
+
+      if parm1 = SH_FIRST_PERSON
+      {
+         AddPacket(4,ShrunkenHead_first, 4,ShrunkenHead_inventory_has,
+                   4,Send(parm3,@GetIndef), 4,Send(parm3,@GetName));
+      }
+      else if parm1 = SH_GENERIC
+      {
+         AddPacket(4,ShrunkenHead_generic, 4,ShrunkenHead_inventory_has,
+                   4,Send(parm3,@GetIndef), 4,Send(parm3,@GetName));
+      }
+      else
+      {
+         AddPacket(4,ShrunkenHead_third, 4,Send(poOwner,@GetName),
+                   4,ShrunkenHead_inventory_has, 4,Send(parm3,@GetIndef),
+                   4,Send(parm3,@GetName));
+      }
+
+      iCounter = 0;
+      iNumRsc = 0;
+
+      iNumItems = Length(parm2);
+
+      foreach i in parm2
+      {
+         iCounter++;
+
+         if iNumItems > 1
+         {
+            if iCounter = iNumItems
+            {
+               iNumRsc = iNumRsc + 2;
+
+               if IsClass(i,&NumberItem)
+               {
+                  AddPacket(4,ShrunkenHead_and, 4,Shrunkenhead_inventory_number,
+                            4,Send(SYS,@GetFuzzyCardinalResource,
+                                    #number=Send(i,@GetNumber)),
+                            4,Send(i,@GetName));
+               }
+               else
+               {
+                  AddPacket(4,ShrunkenHead_and, 4,Shrunkenhead_inventory_number,
+                            4,Send(i,@GetInDef), 4,Send(i,@GetName));
+               }
+            }
+            else
+            {
+               iNumRsc = iNumRsc + 2;
+               if IsClass(i,&NumberItem)
+               {
+                  AddPacket(4,Shrunkenhead_inventory_number,
+                            4,Send(SYS,@GetFuzzyCardinalResource,
+                                    #number=Send(i,@GetNumber)),
+                            4,Send(i,@GetName), 4,ShrunkenHead_comma);
+               }
+               else
+               {
+                  AddPacket(4,Shrunkenhead_inventory_number, 4,Send(i,@GetInDef),
+                            4,Send(i,@GetName), 4,ShrunkenHead_comma);
+               }
+
+            }
+         }
+         else
+         {
+            iNumRsc++;
+            if IsClass(i,&NumberItem)
+            {
+               AddPacket(4,Shrunkenhead_inventory_number,
+                         4,Send(SYS,@GetFuzzyCardinalResource,
+                                 #number=Send(i,@GetNumber)),
+                         4,Send(i,@GetName));
+            }
+            else
+            {
+               AddPacket(4,Shrunkenhead_inventory_number, 4,Send(i,@GetInDef),
+                         4,Send(i,@GetName));
+            }
+         }
+      }
+
+      % If we didn't add enough name resources, make up for it
+      % with blank ones.
+      while iNumRsc++ < 10
+      {
+         AddPacket(4, system_blank_resource);
+      }
+
+      return TRUE;
    }
 
 end

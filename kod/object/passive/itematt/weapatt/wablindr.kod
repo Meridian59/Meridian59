@@ -27,6 +27,8 @@ constants:
 
 resources:
 
+   include wablindr.lkod
+
    weapattblinder_desc = \
       " Q's insignia is emblazoned on the metal of the weapon."
    blinder_fail_use = "You are not yet ready to use %s%s."
@@ -36,7 +38,6 @@ resources:
 classvars:
 
    vrDesc = weapattblinder_desc
-   vrDesc2 = $
 
    viItem_Att_Num = WA_BLINDER
 

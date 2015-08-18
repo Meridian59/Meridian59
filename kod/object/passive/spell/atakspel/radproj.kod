@@ -69,7 +69,7 @@ messages:
       oRoom = Send(who,@GetOwner);
       lActive = Send(oRoom,@GetplActive);
 
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if each_obj <> who
@@ -109,7 +109,7 @@ messages:
       % Show bolt flying through the air.
       lActive = Send(oOwner,@GetHolderActive);
 
-      for i in lActive
+      foreach i in lActive
       {
          each_obj = Send(oOwner,@HolderExtractObject,#data=i);
 

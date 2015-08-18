@@ -1,0 +1,46 @@
+KocatanTailor_name_rsc = de "Tepal ix'Zonak"
+kocatanTailor_desc_rsc = de \
+   "Tepals schnelle, verstohlene Blicke zeigen die hohe, nervöse Energie, "
+   "die ihm innewohnt. Irgendetwas an ihm sagt dir, daß er Gründe hat, nervös "
+   "zu sein. "
+kocatanTailor_entry_welcome = de \
+   "Oh! -- Entschuldigung, Du hast mich überrascht. Kann ich Dir irgendwie "
+   "helfen?"
+kocatantailor_sanctuary = de "Zuflucht"
+kocatantailor_sanctuary_response = de \
+   "Ahhh... Ich könnte Dir eine Zuflucht bieten ... aber das hat natürlich "
+   "seinen Preis."
+kocatantailor_Stones = de "Wertvolle Steine"
+kocatantailor_stones_response = de \
+   "Es gibt einen echten Markt für wertvolle Steine im Moment. Jemand, der "
+   "etwas Risiko auf sich nimmt,könnte eine Menge Geld machen. Zufällig weiß "
+   "ich ein bißchen etwas darüber."
+KocatanTailor_new_look = de "neue Kleider"
+KocatanTailor_new_look_r = de \
+   "Ich denke du wirst zufrieden sein mit meiner Auswahl."
+KocatanTailor_kriipa = de "Die Kriipa"
+KocatanTailor_kriipa_r = de \
+   "Die Krallen der Kriipa sind selten, aber ich habe einige davon."
+KocatanTailor_mutant_ant = de "Die rote Ameise"
+KocatanTailor_mutant_ant_r = de \
+   "Ich mag die rote Farbe, auch wenn sie von so einem Insekt kommt."
+KocatanTailor_dragonfly = de "Die Drachenfliegenkönigin"
+KocatanTailor_dragonfly_r = de \
+   "Sie haben eine brilliante regenbogenfarbige Haut, oder?"
+KocatanTailor_yeti = de "Yeti"
+KocatanTailor_yeti_r = de \
+   "Du musst Moxal danken, Er hat mir eine Yeti Fell gegeben."
+KocatanTailor_fey_elhai = de "Der Fey Elhai"
+KocatanTailor_fey_elhai_r = de "Sie glitzern weiß und grau."
+KocatanTailor_fey_dirhai = de "Der Fey Dirhai"
+KocatanTailor_fey_dirhai_r = de "Sie glitzern blau."
+KocatanTailor_avar = de "Avar-Kämpfer"
+KocatanTailor_avar_r = de "Toll."
+KocatanTailor_shadow = de "Schattenwesen"
+KocatanTailor_shadow_r = de \
+   "Und woher weißt Du, welche Farbe das Schattenwesen hat?"
+KocatanTailor_sapphire_sale = de \
+   "Ich habe %s%s vom Festland importiert. Ich liebe diese klare blaue Farbe."
+KocatanTailor_emerald_sale = de \
+   "Ich kann Dir %s%s verkaufen. Sie stammen vom Festland, was sie nicht "
+   "gerade billig macht."

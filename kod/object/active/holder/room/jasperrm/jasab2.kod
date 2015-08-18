@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include jasab2.lkod
+
    room_jasperAB2 = jasab2.roo
    room_name_JasperAB2 = "Icehouse"
 

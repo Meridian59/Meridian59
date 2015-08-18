@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include haste.lkod
+
    Haste_name_rsc = "haste"
    Haste_icon_rsc = ihaste.bgf
    Haste_desc_rsc = \
@@ -31,7 +33,8 @@ resources:
    Haste_already_enchanted_rsc = \
       "You're already resistant to running fatigue."
    Haste_success_rsc = "%s%s is charged with your magical energy."
-
+   haste_enchantment_rsc = \
+      "\n\nYour current %s enchantment reduces your exertion costs by %i%%."
    Haste_spell_intro = \
       "Kraanan Lv. 2: Allows you to use less stamina as you run."
 
@@ -102,14 +105,10 @@ messages:
 
    EffectDesc(who=$)
    {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment reduces your exertion costs by ");
-      AppendTempString(Send(who,@GetEnchantedState,#what=self));
-      AppendTempString("\%.");
+      AddPacket(4,haste_enchantment_rsc, 4,Send(self,@GetName),
+                4,Send(who,@GetEnchantedState,#what=self));
       
-      propagate;
+      return;
    }
 
 end

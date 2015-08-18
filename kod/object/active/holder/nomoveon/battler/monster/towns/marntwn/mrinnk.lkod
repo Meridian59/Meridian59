@@ -1,0 +1,35 @@
+MarionInnkeep_name_rsc = de "Morrigan"
+MarionInnkeep_desc_rsc = de \
+   "Morrigan, ein dummer kleiner Mann, handelt in bescheidenem Rahmen mit "
+   "dem Kauf und Verkauf von Reagenzien und verschiedenen anderen Kinkerlitzchen. "
+   "Obwohl er nicht sehr geschäftstüchtig zu sein scheint, gibt es doch kaum "
+   "Zweifel, daß er seine Arbeit liebt. "
+MrIk_entry_welcome = de \
+   "Entschuldige, aber du siehst aus als könntest du eine Pause gebrauchen, "
+   "%s%s."
+MarionInnkeeper_room_rented = de \
+   "Na dann willkommen. Solltest du irgendwelche Fragen haben, wird Tova "
+   "gerne helfen."
+MarionInnkeeper_cost1 = de \
+   "Oh, gut. Du solltest Rasten.  Lass mal sehen....  Ich berechne "
+MarionInnkeeper_cost2 = de \
+   " Schillinge um den schönen ~IRaum~n hier zu ~Imieten~n für die nächsten "
+   "85 Tage.  Wenn Du willst, kannst du länger bleiben, dann berechne ich "
+   ""
+MarionInnkeeper_cost3 = de \
+   " pro Tag bei Vorauszahlung.  Kopie des Schlüssels, uh, eine Schlüsselkopie....  "
+   "Oh, die kosten "
+MarionInnkeeper_cost4 = de " Schilling.  Ich weiß, du wirst dein Zimmer mögen."
+MarionInnkeeper_days_left = de \
+   "Du magst es hier, wie ich sehe.  Es verbleiben %q Tage bis du mich noch "
+   "einmal bezahlen musst."
+MarionInnkeeper_too_long = de \
+   "Och, ich kann für so viel Geld nicht verantwortlich sein!  Zahle noch "
+   "einmal wenn du nicht mehr so viele Tage verbleiben hast."
+MarionInnkeeper_destroy_key_copy = de \
+   "~kMorrigan teilt dir mit, \"Oh, Ja. Ich kann den Schlüssel für dich vernichten. "
+   "Kein Problem.\""
+MrIk_room_command = de "Zimmer"
+MrIk_rent_command = de "mieten"
+MrIk_cost_command = de "Kosten"
+MrIk_copy_key_command = de "Schlüsselkopie"

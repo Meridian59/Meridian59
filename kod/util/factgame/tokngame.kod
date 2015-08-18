@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include tokngame.lkod
+
    parl_councilor_report= "%s%s is suspected to be a %s believer in %s."
    parl_factioned_nSelf = "the foolishness of factions"
    parl_factioned_neutral = "Shal'ille's guidance instead of our ideas"
@@ -75,7 +77,7 @@ messages:
       Send(self,@RecreateCouncilors);
       Send(self,@RecreateTokenRooms);
 
-      For lCounsel in plSenate
+      foreach lCounsel in plSenate
       {
          Send(Nth(lCounsel,2),@GotoHomeRoom);
       }
@@ -120,7 +122,7 @@ messages:
 
       if plSenate <> $
       { 
-         for lSenator in plSenate
+         foreach lSenator in plSenate
          {
             SetNth(lSenator,3,Send(self,@GetInitialState,#councilor_num=First(lSenator)));
             SetNth(lSenator,5,Send(self,@GetInitialTimeval,#token_num=First(lSenator)));
@@ -144,7 +146,7 @@ messages:
 
       if plSenate <> $
       { 
-         for i in plSenate
+         foreach i in plSenate
          {
             if Nth(i,4) <> $
             {
@@ -162,7 +164,7 @@ messages:
       local i;
 
       % Recreate the tokens and councilors
-      for i in plSenate
+      foreach i in plSenate
       {
          SetNth(i,4,Create(Send(Self,@TokenClass,#num=First(i)))); 
       }
@@ -176,7 +178,7 @@ messages:
 
       if plSenate <> $
       { 
-         for i in plSenate
+         foreach i in plSenate
          {
             if Nth(i,2) <> $
             {
@@ -194,7 +196,7 @@ messages:
       local i;
 
       % Recreate the tokens and councilors
-      for i in plSenate
+      foreach i in plSenate
       {
          SetNth(i,2,Create(Send(Self,@CouncilorClass,#num=First(i)))); 
          Send(Nth(i,2),@GotoHomeroom);
@@ -235,7 +237,7 @@ messages:
          return $;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,6) = Send(location,@GetRoomNum)
          {
@@ -260,7 +262,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
         if Nth(i,4) = mytoken
         {
@@ -282,7 +284,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,4) = mytoken
          {
@@ -314,7 +316,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,2) = mycouncilor
          {
@@ -370,7 +372,7 @@ messages:
          return 1;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,2) = mycouncilor
          {
@@ -400,7 +402,7 @@ messages:
          return 99999999;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,4) = mytoken
          {
@@ -477,7 +479,7 @@ messages:
 
       Send(self,@SetState,#mycouncilor=mob,#scandal=TRUE);
 
-      for i in Send(SYS,@GetUsersLoggedOn)
+      foreach i in Send(SYS,@GetUsersLoggedOn)
       {
          if Send(i,@PlayerisIntriguing)
          {
@@ -502,7 +504,7 @@ messages:
          return;
       }
       
-      for i in plSenate 
+      foreach i in plSenate 
       {
          if Nth(i,3) <= 100
          {
@@ -627,7 +629,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          iFactor = 0;
          
@@ -667,7 +669,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,2) = what
          {
@@ -696,7 +698,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,4) = what
          {
@@ -721,7 +723,7 @@ messages:
          AND isClass(obj,&Token)
          AND plSenate <> $
       {
-         for i in plSenate
+         foreach i in plSenate
          {
             if Nth(i,4) = obj
             {
@@ -742,7 +744,7 @@ messages:
          return;
       }
 
-      for i in plSenate
+      foreach i in plSenate
       {
          if Nth(i,4) = what
          {
@@ -782,7 +784,7 @@ messages:
       % We need to check to see if there is a token worth rumoring about...
       % If so, we need to get owning room,
 
-      for i in plSenate
+      foreach i in plSenate
       {
          mytok = Nth(i,4);
          if mytok = $
@@ -972,7 +974,7 @@ messages:
       % How this works: Each loyal counselor contributes a share of points to total.
       %                 Giving counselors extra tokens keeps them from swinging
       %                 to other factions too easily, but doesn't increase value.
-      for lCounsel in plSenate
+      foreach lCounsel in plSenate
       {
          if Nth(lCounsel,3)/100 = faction
          {
@@ -1020,9 +1022,9 @@ messages:
          AND IsList(lSenate)
          AND Length(lSenate) = Length(plSenate)
       {
-         for lCouncilor in plSenate
+         foreach lCouncilor in plSenate
          {
-            for i in lSenate
+            foreach i in lSenate
             {
                if Nth(lCouncilor,1) = Nth(i,1)
                {

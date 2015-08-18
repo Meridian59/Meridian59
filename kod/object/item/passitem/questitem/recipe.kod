@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include recipe.lkod
+
    RecipeScroll_name_rsc = "Recipe for a Stunted Dwarf"
    RecipeScroll_icon_rsc = scr05.bgf
    RecipeScroll_desc_rsc = \

@@ -1,0 +1,25 @@
+BetaPotion_name_rsc = de "Der berühmte BETATRANK!"
+BetaPotion_desc_rsc = de \
+   "Dieser Trank soll das Beta-Testen erleichtern, indem den Spielern die "
+   "Möglichkeit gegeben wird, die fortgeschritteneren Abschnitte des Spiels "
+   "zu testen.\n\n"
+BetaPotion_append_rsc = de \
+   "Dieser Trank erhöht Deine Lebenskraft um %i Punkte (wird aber Deine "
+   "gesamte Lebenskraft nicht über %i Punkte anheben). Der Umfang der "
+   "Erhöhung steht in direktem Zusammenhang damit, wie lange Deine Spielfigur "
+   "schon online ist. Also werden Tester, die sich dem Spiel länger gewidmet "
+   "haben höher belohnt.Außerdem erhältst Du alle Zaubersprüche bis zum %i "
+   "Zirkel in der Zauberschule %s, aber begrenzt von Deiner Klugheit. Wenn "
+   "Du die Flasche auf irgendeine Art verlierst (das schließt mit ein, dass "
+   "Du sie einem Freund/in gibst und er/sie diese schluckt, Du durch das "
+   "Portal von Raza gehst oder Deine kleine Schwester mit Deinem Charakter "
+   "Harakiri begeht, um Dich zu ärgern), oder wenn Du einen Trank für eine "
+   "andere Schule erhalten und diesen weggeworfen hast wirst Du keinen "
+   "weiteren Trank erhalten. Also frag erst gar nicht danach\n\n."
+BetaPotion_drink = de \
+   "Du stürzt den Inhalt der Phiole in einem einzigen Zug herunter."
+BetaPotion_worked = de "Du fühlst Dich plötzlich ein bisschen größer."
+BetaPotion_bad_drink = de \
+   "Du stürzt den faulig schmeckenden Inhalt der Phiole herunter und bemerkst "
+   "sofort, dass das eine ziemlich schlechte Idee war. Mit der Zeit ist er "
+   "sauer geworden."

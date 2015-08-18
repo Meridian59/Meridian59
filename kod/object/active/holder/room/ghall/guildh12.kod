@@ -29,6 +29,8 @@ constants:
 
 resources:
 
+   include guildh12.lkod
+
    room_name_guildh12 = "West Tower Guild Hall in Ko'catan"
    room_guildh12 = guildh12.roo
 
@@ -374,7 +376,7 @@ messages:
          propagate;
       }
 
-      for i in plActive
+      foreach i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
 

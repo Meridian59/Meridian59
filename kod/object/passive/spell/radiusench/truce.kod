@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include truce.lkod
+
    truce_name_rsc = "truce"
    truce_icon_rsc = itruce.bgf
    truce_desc_rsc = \

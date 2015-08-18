@@ -1,0 +1,8 @@
+blackmummy_koc_name_rsc = de "teotnapleoc"
+blackmummy_name_rsc = de "Die Schattenmumie"
+blackmummy_desc_rsc = de \
+   "Diese üble Kreatur wurde durch schwarze Magie unbekannter Herkunft insLeben "
+   "gerufen.Ihr Fleisch ist faulig und weich, und ihre Augen bittenum Ruhe "
+   "von diesem verfluchten Unleben. Diese Kreatur leidet unter einemständigen "
+   "Schatten-Fluch, der ihr große Stärke, aber auch großes Leid gibt."
+blackmummy_dead_name_rsc = de "Eine tote Schattenmumie"

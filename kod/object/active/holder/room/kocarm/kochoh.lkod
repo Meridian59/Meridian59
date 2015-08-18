@@ -1,0 +1,15 @@
+room_name_Kocatanhall = de "Die Halle der Helden"
+news_Kocatan_hall = de "Allgemeine Nachrichten"
+news_Kocatan_hall_desc = de "Finde heraus, was in Meridian abgeht."
+hoh_best_adventurer = de \
+   "Das ist eine Statue von %q, dem größten Abenteurer des Landes."
+hoh_best_warrior = de \
+   "Das ist eine Statue von %q, dem mächtigsten Krieger des Landes."
+hoh_best_wizard = de \
+   "Das ist eine Statue von %q, dem mächtigsten Zauberer des Landes."
+hoh_best_faren = de "Dies ist eine Statue von %q, dem Meister von Faren."
+hoh_best_qor = de "Dies ist eine Statue von %q, dem Meister von Qor."
+hoh_best_shalille = de "Dies ist eine Statue von %q, dem Meister von Shal'ill."
+hoh_best_riija = de "Dies ist eine Statue von %q, dem Meister von Riija."
+hoh_best_kraanan = de "Dies ist eine Statue von %q, dem Meister von Kraanan."
+hoh_best_jala = de "Dies ist eine Statue von %q, dem Meister von Jala."

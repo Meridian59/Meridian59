@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include qorprst.lkod
+
    qorpriestess_name_rsc = "Priestess Zuxana"
    qorpriestess_icon_rsc = qorprst.bgf
    qorpriestess_desc_rsc = \
@@ -45,7 +47,9 @@ resources:
       "~bCome back when you have rid yourself of that pathetic guardian angel "
       "and are ready to kill others for the glory of the Dark Mistress.~n~k"
 
-   qorpriestess_teach = "Through the darkness of Qor, you can learn "
+   qorpriestess_teach = \
+      "Through the darkness of Qor, you can learn %s%s%s%s%s%s%s%s%s%s%s%s "
+      "at that level."
 
 classvars:
    vrTeach_message = qorpriestess_teach
@@ -178,7 +182,7 @@ messages:
          }
 
          bFound = FALSE;
-         for i in Send(who,@GetSpellList)
+         foreach i in Send(who,@GetSpellList)
          {
             oSpell = Send(SYS,@FindSpellByNum,
                            #num=Send(who,@DecodeSpellNum,#compound=i));

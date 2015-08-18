@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include fdeath.lkod
+
    feigndeath_name_rsc = "feign death"
    feigndeath_icon_rsc = ifeignde.bgf
    feigndeath_desc_rsc = \
@@ -115,7 +117,7 @@ messages:
          % Chance to drop item, 1-10%, decreasing with increasing spellpower.
          iDropChance = bound((10 - (iSpellPower/10)),1,10);
 
-         for i in Send(who,@GetPlayerUsing)
+         foreach i in Send(who,@GetPlayerUsing)
          {
             if (Send(i,@GetItemUseType) & (ITEM_USE_HAND | ITEM_USE_HEAD))
                AND (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
@@ -130,7 +132,7 @@ messages:
             }
          }
          
-         for i in Send(who,@GetHolderActive)
+         foreach i in Send(who,@GetHolderActive)
          {
             if (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
                AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
@@ -144,7 +146,7 @@ messages:
             }
          }
          
-         for i in Send(who,@GetHolderPassive)
+         foreach i in Send(who,@GetHolderPassive)
          {
             if (NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
                AND Send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
@@ -214,14 +216,14 @@ messages:
       oRoom = Send(who,@GetOwner);
       lYellList = Send(oRoom,@GetYellZone);
 
-      for i in lYellList
+      foreach i in lYellList
       {
          oYellRoom = Send(SYS,@FindRoomByNum,#Num=i);
          if oYellRoom = oRoom
          {
             bThisRoom = TRUE;
          }
-         for j in Send(oYellRoom,@GetHolderActive)
+         foreach j in Send(oYellRoom,@GetHolderActive)
          {
             each_obj = Send(oYellRoom,@HolderExtractObject,#data=j);
             if IsClass(each_obj,&player)
@@ -234,7 +236,7 @@ messages:
 
       if NOT bThisRoom
       {
-         for j in Send(oRoom,@GetHolderActive)
+         foreach j in Send(oRoom,@GetHolderActive)
          {
             each_obj = Send(oRoom,@HolderExtractObject,#data=j);
             if IsClass(each_obj,&player)

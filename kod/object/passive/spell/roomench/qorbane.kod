@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include qorbane.lkod
+
    QorBane_name_rsc = "Qorbane"
    QorBane_icon_rsc = iqorbane.bgf
    QorBane_desc_rsc = \

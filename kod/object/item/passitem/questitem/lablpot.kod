@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include lablpot.lkod
+
    LabeledPotion_name0_rsc = "liquid digestive"
    LabeledPotion_name1_rsc = "potion of corn removal"
    LabeledPotion_name2_rsc = "vial of plant fertilizer"

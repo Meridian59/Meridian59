@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include lovelttr.lkod
+
    LoveLetter_name_rsc = "love letter"
    LoveLetter_icon_rsc = scr01.bgf
    LoveLetter_desc_rsc = \

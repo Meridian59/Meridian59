@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include apple.lkod
+
    apple_name_rsc = "apple"
    apple_icon_rsc = apple.bgf
    apple_desc_rsc = \

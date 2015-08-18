@@ -20,6 +20,8 @@ constants:
 
 resources:
 
+   include umbrella.lkod
+
    Umbrella_name_rsc = "umbrella"
    Umbrella_icon_rsc = iumbrela.bgf
    Umbrella_desc_rsc = \

@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include unique.lkod
+
    UniqueWeapon_name_rsc = "Dark Blade of Roq"
    UniqueWeapon_icon_rsc = bkswd.bgf
    UniqueWeapon_desc_rsc = \

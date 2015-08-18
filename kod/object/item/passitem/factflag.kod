@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include factflag.lkod
+
    FactionFlag_icon_rsc = dukeflag.bgf
    FactionFlag_name_rsc = "flag"
    FactionFlag_desc_rsc = "This is the flag of neutrality."

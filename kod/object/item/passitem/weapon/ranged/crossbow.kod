@@ -22,6 +22,8 @@ constants:
 
 resources:
 
+   include crossbow.lkod
+
    crossbow_name_rsc = "crossbow"
    crossbow_icon_rsc = tcat.bgf             %ADD A PICTURE!!!
 

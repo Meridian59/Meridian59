@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include idpotionqt.lkod
+
    % Quest description.
    idpotionqt_icon_rsc = potion01.bgf
    idpotionqt_name_rsc = "potion identification quest"
@@ -128,31 +130,31 @@ messages:
                #quest_node_index=QNT_ID_POTION_ID_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CornothGrocer)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CornothGrocer)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothSergeant)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CorNothSergeant)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperMerchant)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperMerchant)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBanker)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperBanker)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionInnkeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionInnkeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionElder)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionElder)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnKeeper)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosInnKeeper)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

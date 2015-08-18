@@ -1,0 +1,2 @@
+MovingSector_name_rsc = de "moving sector"
+MovingSector_desc_rsc = de "A sector whose floor/ceiling moves up and down."

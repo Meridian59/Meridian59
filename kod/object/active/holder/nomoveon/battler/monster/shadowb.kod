@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include shadowb.lkod
+
    Shadowbeast_koc_name_rsc = "teotkriipa"
    Shadowbeast_name_rsc = "shadowbeast"
    Shadowbeast_icon_rsc = shadow.bgf

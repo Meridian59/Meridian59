@@ -24,6 +24,8 @@ constants:
 
 resources:
 
+   include thrasher.lkod
+
    thrasher_koc_name_rsc = "teotixleoc"
    thrasher_name_rsc = "thrasher"
    thrasher_icon_rsc = res0001a.bgf
@@ -342,7 +344,7 @@ messages:
       lValidTargets = $;
 
       oRoom = Send(self,@GetOwner);
-      for i in Send(oRoom,@GetHolderActive)
+      foreach i in Send(oRoom,@GetHolderActive)
       {
          each_obj = Send(oRoom,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&User)
@@ -369,7 +371,7 @@ messages:
          lTargets = Send(self,@GetFinalTargets);
       }
 
-      for i in lTargets
+      foreach i in lTargets
       {
          if Send(i,@AssessDamage,#what=self,#damage=iDamage,
                         #atype=viAttack_type,#aspell=viAttack_spell,

@@ -1,0 +1,8 @@
+attribute_desc_default = de \
+   "  Dieser Gegenstand sieht irgendwie verzaubert aus."
+attribute_name_default = de "Spezial %s"
+itematt_made_rsc = de "  Verzaubert von %q, %s %s."
+itematt_novice_rsc = de "Novize"
+itematt_apprentice_rsc = de "Schüler"
+itematt_journeyman_rsc = de "Gelehrter"
+itematt_master_rsc = de "Meister"

@@ -21,6 +21,8 @@ constants:
 
 resources:
 
+   include lichmaze.lkod
+
    LichMaze_room_name = "The Dungeon of Castle Brax"
    LichMaze_room = lichmaze.roo
    LichMaze_music = nec03.mp3
@@ -70,7 +72,7 @@ messages:
                    ];
 
       plSectors = $;
-      for IDs in lSectorIDs
+      foreach IDs in lSectorIDs
       {
          lTemp = $;
          oMovingSector = Create(&MovingSector,#sectorroom=self,#sectorID=Nth(IDs,1),
@@ -176,7 +178,7 @@ messages:
          return;
       }
 
-      for oSector in Nth(plSectors,Nth(plLeverEffects,num))
+      foreach oSector in Nth(plSectors,Nth(plLeverEffects,num))
       {
          Send(oSector,@Toggle,#toggleback=FALSE);
       }
@@ -187,7 +189,7 @@ messages:
          num = 1;
       }
 
-      for oSector in Nth(plSectors,Nth(plLeverEffects,num))
+      foreach oSector in Nth(plSectors,Nth(plLeverEffects,num))
       {
          Send(oSector,@Toggle,#toggleback=FALSE);
       }
@@ -232,9 +234,9 @@ messages:
    {
       local i,j;
 
-      for i in plSectors
+      foreach i in plSectors
       {
-         for j in i
+         foreach j in i
          {
             Send(j,@Delete);
          }

@@ -18,6 +18,8 @@ constants:
 
 resources:
 
+   include pforget.lkod
+
    forgetpotion_use = "You quaff the potion. Nothing happens at first, then dizziness strikes...."
    forgetpotion_cant_use_on = "You can't serve a %s%s."
 
@@ -129,7 +131,7 @@ messages:
       Spells = send(poApply_target,@GetSpellList);
       piCount = 0;
       
-      for i in Spells
+      foreach i in Spells
       {
          iSpellNum = send(poApply_target,@DecodeSpellNum,#compound=i);
          oSpell = send(SYS,@FindSpellByNum,#num=iSpellNum);

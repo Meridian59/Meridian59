@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include evfairy.lkod
+
    dark_fairy_koc_name_rsc = "teotimixlal"
    dark_fairy_name_rsc = "fey dirhai"
 

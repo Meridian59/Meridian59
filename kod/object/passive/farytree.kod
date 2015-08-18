@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include farytree.lkod
+
    feytree_name_rsc = "tree"
    feytree_icon_rsc = feytree.bgf
    feytree_desc_rsc = "These trees offer cool shade and interesting scenery."

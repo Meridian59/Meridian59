@@ -32,6 +32,8 @@ constants:
 
 resources:
 
+   include riijaofferingqt.lkod
+
    % Quest description.
    riijaofferingqt_icon_rsc = lies.bgf
    riijaofferingqt_name_rsc = "Riija offering quest"

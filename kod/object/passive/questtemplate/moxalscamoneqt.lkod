@@ -1,0 +1,42 @@
+% Quest description.
+moxalscamonequest_name_rsc = de "Moxal's get rich quick quest"
+moxalscamonequest_desc_rsc = de \
+   "Moxal ix'Hanak says he found the perfect \"opportunity\" for you both to "
+   "make some shillings. Do you trust him?"
+
+moxalscamonequest_nodethree_rsc = de \
+   "Moxal ix'Hanak has asked you to take a letter to %s%s.  He claims you "
+   "will both soon be rolling in cash!"
+
+moxalscamonequest_nodefour_rsc = de \
+   "%s%s says that to get rich, you need to pass the letter on to %s%s."
+
+moxalscamonequest_completed_rsc = de \
+   "You have completed Moxal ix'Hanak's get rich quick scheme.  You don't "
+   "feel very rich, but you do feel slightly wiser."
+
+% Quest resources.
+moxalscam1_assign_2 = de \
+   "Ah, mein Freund und geselliger Träumer!  Ich glaube, ich habe die perfekte "
+   "Gelegenheit für uns gefunden!  Es darf nicht scheitern! Sicherlich willst "
+   "Du mehr über diese einmalige Gelegenheit erfahren?"
+moxalscam1_trigger_2 = de "Gelegenheit"
+moxalscam1_assign_3 = de \
+   "Einfach! Bringe einfach nur diesen Brief zu %NPC.  Bevor Du es weißt, "
+   "wird das Geld rollen!"
+moxalscam1_failure_3 = de \
+   "Betreff: Mein unberechenbarer Partner!\nIch denke, Du wolltest nicht ernsthaft "
+   "Geld machen...  Das ist schade.  Komm wieder, wenn du tief in, Deinem "
+   "Herzen wirklich reich sein willst!"
+moxalscam1_assign_4 = de \
+   "Hmmm...  Demnach sollen wir den Brief an jemandem anderen weitergeben, "
+   "und wir beide werden reich werden.  Okay, warum bringst Du ihn nicht "
+   "zu %NPC."
+moxalscam1_failure_4 = de \
+   "Betreff: Wo ist mein Geld?!?!\nDu hast mir Schillinge versprochen, viele "
+   "von ihnen!  Wo sind sie?  Du hast sie selber behalten, oder?  Ich werde "
+   "Deinen Verrat nie vergessen..... Pass auf Dich auf, Dieb."
+moxalscam1_success_5 = de \
+   "Hmmm...  Anscheinend denkt diese Person, ich bin ein totaler Idiot.  "
+   "Ich bin ein wenig überrascht das DU ein Gefühl dafür hattest.  Nun ja, "
+   "da Du die ganzen Probleme hattest, will ich Dir etwas geben.  "

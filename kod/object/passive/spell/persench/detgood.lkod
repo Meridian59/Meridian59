@@ -1,0 +1,12 @@
+DetectGood_name_rsc = de "Gutes erkennen"
+DetectGood_desc_rsc = de \
+   "Ermöglicht Dir, die wahrhaft erschreckende Reinheit des Herzens zu erfahren. "
+   "Man braucht dazu die Flügel eines Feys."
+DetectGood_on_rsc = de \
+   "Du kannst nun alle Guten sehen, die darauf warten verunreinigt zu werden."
+DetectGood_off_rsc = de "Deine Sichtweise kehrt zur Normalform zurück."
+DetectGood_already_enchanted_rsc = de "Du kannst die Reinen bereits sehen."
+DetectGood_Success_rsc = de "%s%s kann nun die Reinen auch sehen."
+DetectGood_spell_intro = de \
+   "Qor Level 1: Ermöglicht Dir, die wahrhaft erschreckende Reinheit des "
+   "Herzens zu erfahren"

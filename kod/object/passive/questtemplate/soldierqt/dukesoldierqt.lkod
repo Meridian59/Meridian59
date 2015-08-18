@@ -1,0 +1,25 @@
+% Quest description.
+dukesoldier_name_rsc = de "Duke soldier shield quest"
+dukesoldier_desc_rsc = de \
+   "Duke Akardius will allow you to join the Ducal army, but first "
+   "you must prove your loyalty by slaying his enemies."
+
+dukesoldier_completed_rsc = de \
+   "You have proven your worth, and are now a soldier in the Ducal army."
+
+% Quest resources.
+duke_faction_soldier_assign_1 = de \
+   "Ja, vielleicht tust Du das.  Prüfe Deine Loyalität in dem Du %INDEF_MONSTER%MONSTER "
+   "tötest.  Normalerweise findest Du ein paar Soldaten an den Fahnenstangen.  "
+   "Komm zurück, um mir von Deinen Taten zu berichten."
+duke_faction_soldier_assign_2 = de \
+   "Ausgezeichnet.  Nun zeig Deine Verachtung gegen meine Feinde indem Du "
+   "%INDEF_MONSTER%MONSTER tötest.  Kehre zurück, wenn Du fertig bist, um "
+   "mir mitzuteilen, dass die Arbeit erledigt ist."
+duke_faction_soldier_success = de \
+   "Das hast du gut gemacht, mein Soldat.  Trete ein in die Reihen der Elite "
+   "und bringe meinen Einfluss und Macht zu denen  in diesem Land!"
+duke_faction_soldier_failure = de \
+   "Hast Du deine Nerven verloren?  Was denkst Du eigentlich, wie Du auf "
+   "dem Schlachtfeld überleben kannst, wenn Du keinen Mumm dazu hast zu töten?"
+

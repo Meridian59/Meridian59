@@ -16,6 +16,8 @@ constants:
 
 resources:
 
+   include engrave.lkod
+
    engrave_name_rsc = "engrave"
    engrave_icon_rsc = iillufrm.bgf
    engrave_desc_rsc = "Adds a message to an item.  A DM only spell, currently.  "

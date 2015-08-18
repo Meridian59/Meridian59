@@ -31,6 +31,8 @@ constants:
 
 resources:
 
+   include merchanttaxqt.lkod
+
    % Quest description.
    merchanttaxqt_name_rsc = "merchant tax quest"
    merchanttaxqt_desc_rsc = \
@@ -96,31 +98,31 @@ messages:
                #quest_node_index=QNT_ID_MERCHANT_TAX_ONE)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueMerchant)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperElder)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionElder)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&MarionElder)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&TosApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&BarloqueApothecary)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperMerchant)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&JasperMerchant)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CornothGrocer)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&CornothGrocer)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }
@@ -158,7 +160,7 @@ messages:
                #timelimit=2 * 3600,#quest_node_index=QNT_ID_MERCHANT_TAX_TWO)
       {
          lNPCs = $;
-         for oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
+         foreach oNPC in Send(oLib,@GetOccupationList,#cNPC_class=&DukeLiege)
          {
             lNPCs = Cons(oNPC, lNPCs);
          }

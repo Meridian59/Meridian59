@@ -55,7 +55,7 @@ classvars:
    viConsumesHits = 5
 
    vbDurationEffect = TRUE
-   viEffectDuration = 5000
+   viEffectDuration = 3000
 
 properties:
 

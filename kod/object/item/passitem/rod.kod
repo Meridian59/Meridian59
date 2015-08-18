@@ -68,7 +68,7 @@ classvars:
    vbSecondaryDurationEffect = FALSE
    viSecondaryEffectDuration = 0
 
-   viRodUseDelay = 1000 % Milliseconds
+   viRodUseDelay = 500 % Milliseconds
 
 properties:
 
@@ -81,7 +81,7 @@ properties:
    ptSecondaryActiveTimer = $
    pbSecondaryActive = FALSE
 
-   piRodUseDelay = 1000 % Milliseconds
+   piRodUseDelay = 500 % Milliseconds
 
 messages:
 

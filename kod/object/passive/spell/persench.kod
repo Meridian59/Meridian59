@@ -270,11 +270,6 @@ messages:
       return defense_power;
    }
 
-   EffectDesc(who=$)
-   {
-      return;
-   }
-
    SendTimeDesc(who=$)
    {
       local i, iDuration, oList;

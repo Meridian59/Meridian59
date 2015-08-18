@@ -61,11 +61,6 @@ messages:
       propagate;
    }
 
-   EffectDesc(who=$)
-   {
-      propagate;
-   }
-
    SendStatsDesc(who=$)
    {
       if who <> $

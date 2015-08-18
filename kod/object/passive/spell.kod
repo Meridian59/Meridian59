@@ -368,6 +368,13 @@ messages:
       return;
    }
 
+   EffectDesc(who=$)
+   {
+      AddPacket(4, spell_blank);
+
+      return;
+   }
+
    Delete()
    {
       Send(SYS,@DeleteSpell,#what=self);

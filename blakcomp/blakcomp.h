@@ -30,7 +30,7 @@
 #include "util.h"
 #include "table.h"
 
-#define BOF_VERSION 5
+#define BOF_VERSION 6
 
 #define IDBASE        10000      /* Lowest # of user-defined id.  Builtin ids have lower #s */
 #define RESOURCEBASE  20000      /* Lowest # of user-defined resource. */

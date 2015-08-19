@@ -107,7 +107,7 @@ void Insert(BYTE **buf, void *data, UINT numbytes)
  */
 WORD InsertString(BYTE **buf, char *str)
 {
-   WORD len = strlen(str);
+   WORD len = (WORD)strlen(str);
 
    Insert(buf, &len, SIZE_STRING_LEN);
    Insert(buf, str, len);

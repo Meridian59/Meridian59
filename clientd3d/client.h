@@ -214,6 +214,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "objdraw.h"
 #include "profane.h"
 #include "png.h"
+#include "pngstruct.h"
 #include "d3dtypes.h"
 #include "d3dcache.h"
 #include "d3drender.h"

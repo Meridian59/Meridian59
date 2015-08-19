@@ -83,7 +83,7 @@ void OpenBBG(void)
    ungetc(ch, fp);
 
    fscanf(fp, " ");
-   fscanf(fp, "-s%d ", &BBGs[NumBBGs].Shrink);
+   fscanf(fp, "-s%hhd ", &BBGs[NumBBGs].Shrink);
 
    fscanf(fp, "%d", &BBGs[NumBBGs].NumBitmaps);
    for (i = 0; i < BBGs[NumBBGs].NumBitmaps;i++)
@@ -99,7 +99,7 @@ void OpenBBG(void)
       {
 	 fscanf(fp,"[%d,%d] ", &b->XOffset, &b->YOffset);
 	 
-	 if ( fscanf(fp,":%d",&b->NumHotspots))
+	 if ( fscanf(fp,":%hhd",&b->NumHotspots))
 	    for (j = 0; j < b->NumHotspots; j++)
 	       fscanf(fp,"%d [%d,%d]",&b->Hotspots[j].Lap,
 		      &b->Hotspots[j].X, &b->Hotspots[j].Y);

@@ -64,7 +64,7 @@ user_node * CreateNewUser(int account_id,int class_id)
    p[0].value = system_id_const.int_val;
    p[0].name_id = SYSTEM_PARM;
 
-   sprintf(buf,"User%i%i%i",account_id,GetTime()%100000,GetMilliCount()%1000);
+   sprintf(buf,"User%i%i%I64i",account_id,GetTime()%100000,GetMilliCount()%1000);
    
    name_val.v.tag = TAG_RESOURCE;
    name_val.v.data = AddDynamicResource(buf);

@@ -26,9 +26,8 @@ SOURCEDIR = $(LIBPNGDIR)
 
 LIBS = zdll.lib
 
-all: makedirs $(OUTDIR)\libpng.lib
+all: makedirs $(BLAKLIBDIR)\libpng.lib
 
-$(OUTDIR)\libpng.lib: $(OBJS)
-	$(LINKST) /NOLOGO /MACHINE:X86 /SUBSYSTEM:CONSOLE",5.01" $** $(LIBS) -out:$@
-	$(CP) $(OUTDIR)\libpng.lib $(TOPDIR)\lib\
+$(BLAKLIBDIR)\libpng.lib: $(OBJS)
+	$(LINKST) $(LINKSTFLAGS) /SUBSYSTEM:CONSOLE",5.01" $** $(LIBS) -out:$@
 !include $(TOPDIR)\rules.mak

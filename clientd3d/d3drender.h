@@ -15,7 +15,7 @@ inline DWORD F2DW( FLOAT f ) { return *((DWORD*)&f); }
 
 #define DLIGHT_SCALE(_x)		((_x * 14000 / 255) + 4000)
 
-#define D3DRENDER_CLIP(_x, _w)	((_x > -abs(_w)) && (_x < abs(_w)) ? 1 : 0)
+#define D3DRENDER_CLIP(_x, _w)	((_x > -fabs(_w)) && (_x < fabs(_w)) ? 1 : 0)
 
 #define ZBIAS_UNDERUNDER		1
 #define ZBIAS_UNDER				3

@@ -6615,8 +6615,8 @@ void D3DRenderFloorExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom_s
 				}
 				else
 				{
-					pST[count].s = abs(pNode->u.leaf.poly.p[count].y - top) - pSector->ty;// / pDib->shrink;
-					pST[count].t = abs(pNode->u.leaf.poly.p[count].x - left) - pSector->tx;// / pDib->shrink;
+					pST[count].s = fabs(pNode->u.leaf.poly.p[count].y - top) - pSector->ty;// / pDib->shrink;
+					pST[count].t = fabs(pNode->u.leaf.poly.p[count].x - left) - pSector->tx;// / pDib->shrink;
 				}
 
 				if (pSector->animate != NULL && pSector->animate->animation == ANIMATE_SCROLL)
@@ -6892,8 +6892,8 @@ void D3DRenderCeilingExtract(BSPnode *pNode, PDIB pDib, custom_xyz *pXYZ, custom
 				}
 				else
 				{
-					pST[count].s = abs(pNode->u.leaf.poly.p[count].y - top) - pSector->ty;
-					pST[count].t = abs(pNode->u.leaf.poly.p[count].x - left) - pSector->tx;
+					pST[count].s = fabs(pNode->u.leaf.poly.p[count].y - top) - pSector->ty;
+					pST[count].t = fabs(pNode->u.leaf.poly.p[count].x - left) - pSector->tx;
 				}
 
 				if (pSector->animate != NULL && pSector->animate->animation == ANIMATE_SCROLL)

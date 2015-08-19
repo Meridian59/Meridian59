@@ -195,7 +195,7 @@ void WritePalette(char *dir)
 
    fprintf(palfile, "\n};\n\n");
 
-	fprintf(palfile, "\n// Blend 25% to 75% Palette:\n");
+	fprintf(palfile, "\n// Blend 25%% to 75%% Palette:\n");
 	fprintf(palfile, "bixlat _blend25 =\n{");
 	for (i = 0; i < NUM_COLORS; i++)
 	{
@@ -208,7 +208,7 @@ void WritePalette(char *dir)
 	}
 	fprintf(palfile, "\n};\n");
 
-	fprintf(palfile, "\n// Blend 50% to 50% Palette:\n");
+	fprintf(palfile, "\n// Blend 50%% to 50%% Palette:\n");
 	fprintf(palfile, "bixlat _blend50 =\n{");
 	for (i = 0; i < NUM_COLORS; i++)
 	{
@@ -221,7 +221,7 @@ void WritePalette(char *dir)
 	}
 	fprintf(palfile, "\n};\n");
 
-	fprintf(palfile, "\n// Blend 75% to 25% Palette:\n");
+	fprintf(palfile, "\n// Blend 75%% to 25%% Palette:\n");
 	fprintf(palfile, "bixlat _blend75 =\n{");
 	for (i = 0; i < NUM_COLORS; i++)
 	{

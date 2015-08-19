@@ -181,7 +181,7 @@ PDIB DibReadBitmapInfo(int fh)
 
     if (nNumColors == 0)
     {
-       printf("Bitmap has no palette (24 bit)\n", NUM_COLORS, nNumColors);
+       printf("Bitmap has no palette (24 bit)\n");
        return NULL;
     }
 

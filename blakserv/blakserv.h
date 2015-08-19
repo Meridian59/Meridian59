@@ -34,6 +34,8 @@
 
 #define MAX_DEPTH 2000
 
+#define BOF_VERSION 6
+
 enum
 {
    USER_CLASS = 1,

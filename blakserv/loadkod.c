@@ -126,10 +126,11 @@ Bool LoadBofName(char *fname)
    }
    
    int version;
-   if (fread(&version, 1, 4, f) != 4 || version != 5)
+   if (fread(&version, 1, 4, f) != 4 || version != BOF_VERSION)
 	{
-		eprintf("LoadBofName %s can't understand bof version != 5\n",fname);
-      fclose(f);
+		eprintf("LoadBofName %s can't understand bof version %i\n",
+			fname, version);
+		fclose(f);
 		return False;
 	}
    

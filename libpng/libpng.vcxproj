@@ -127,7 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="png.c" />
-    <ClCompile Include="pngerror.c" />
+    <ClCompile Include="pngerr.c" />
     <ClCompile Include="pngget.c" />
     <ClCompile Include="pngmem.c" />
     <ClCompile Include="pngpread.c" />

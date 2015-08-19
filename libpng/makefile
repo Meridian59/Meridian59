@@ -6,7 +6,7 @@ TOPDIR=..
 OBJS = \
         $(OUTDIR)\example.obj \
         $(OUTDIR)\png.obj \
-		$(OUTDIR)\pngerror.obj \
+		$(OUTDIR)\pngerr.obj \
         $(OUTDIR)\pngget.obj \
 		$(OUTDIR)\pngmem.obj \
         $(OUTDIR)\pngpread.obj \

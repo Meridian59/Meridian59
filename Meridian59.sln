@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40418.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "blakserv", "blakserv\blakserv.vcxproj", "{FA63A56D-3C89-447C-9409-676477E93AE9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clientd3d", "clientd3d\clientd3d.vcxproj", "{4E237A90-C6F7-4C12-9E2E-4B852E859E70}"
 	ProjectSection(ProjectDependencies) = postProject
+		{7DB10B50-CE00-4D7A-B322-6824F05D2FCB} = {7DB10B50-CE00-4D7A-B322-6824F05D2FCB}
 		{946D268A-F73B-4387-ACD4-BF6D21BC076D} = {946D268A-F73B-4387-ACD4-BF6D21BC076D}
 		{CD5804A4-972E-4E67-A461-427A9725786F} = {CD5804A4-972E-4E67-A461-427A9725786F}
 	EndProjectSection
@@ -101,6 +102,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rscmerge", "util\rscmerge.vcxproj", "{1A817DCA-27AD-44E9-BF25-B70E59C40EC0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rscprint", "util\rscprint.vcxproj", "{2B5950D0-2E1F-4852-A8BD-02020D446327}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "libpng\libpng.vcxproj", "{7DB10B50-CE00-4D7A-B322-6824F05D2FCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -220,6 +223,10 @@ Global
 		{2B5950D0-2E1F-4852-A8BD-02020D446327}.Debug|Win32.Build.0 = Debug|Win32
 		{2B5950D0-2E1F-4852-A8BD-02020D446327}.Release|Win32.ActiveCfg = Release|Win32
 		{2B5950D0-2E1F-4852-A8BD-02020D446327}.Release|Win32.Build.0 = Release|Win32
+		{7DB10B50-CE00-4D7A-B322-6824F05D2FCB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7DB10B50-CE00-4D7A-B322-6824F05D2FCB}.Debug|Win32.Build.0 = Debug|Win32
+		{7DB10B50-CE00-4D7A-B322-6824F05D2FCB}.Release|Win32.ActiveCfg = Release|Win32
+		{7DB10B50-CE00-4D7A-B322-6824F05D2FCB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -255,5 +262,6 @@ Global
 		{AB4F2AAE-51B1-4C8E-9D24-D85ACC2A9840} = {74F98C8E-442E-42DE-9CAF-0C3301672810}
 		{1A817DCA-27AD-44E9-BF25-B70E59C40EC0} = {74F98C8E-442E-42DE-9CAF-0C3301672810}
 		{2B5950D0-2E1F-4852-A8BD-02020D446327} = {74F98C8E-442E-42DE-9CAF-0C3301672810}
+		{7DB10B50-CE00-4D7A-B322-6824F05D2FCB} = {F61FD909-1143-4CFB-8D0F-0BDAADF01B2F}
 	EndGlobalSection
 EndGlobal

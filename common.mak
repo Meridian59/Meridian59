@@ -48,6 +48,7 @@ SPROCKETDIR = $(TOPDIR)\sprocket
 CLUBDIR     = $(TOPDIR)\club
 KEYBINDDIR  = $(TOPDIR)\keybind
 WAVEMIXDIR  = $(TOPDIR)\wavemix
+LIBPNGDIR   = $(TOPDIR)\libpng
 
 BLAKBINDIR = $(TOPDIR)\bin
 BLAKLIBDIR = $(TOPDIR)\lib
@@ -56,6 +57,7 @@ BLAKSERVRUNDIR = $(TOPDIR)\run\server
 CLIENTRUNDIR = $(TOPDIR)\run\localclient
 MYSQLINCLUDEDIR = $(TOPDIR)\include\mysql
 DX9INCLUDEDIR = $(TOPDIR)\include\dx9
+LIBPNGINCLUDEDIR = $(TOPDIR)\include\libpng
 
 KODDIR = $(TOPDIR)\kod
 KODINCLUDEDIR = $(KODDIR)\include
@@ -116,6 +118,7 @@ CC     = cl
 MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
+LINKST = lib
 RC     = rc
 RSCMERGE = $(TOPDIR)\bin\rscmerge.exe -o
 POSTBUILD = $(TOPDIR)\postbuild.bat
@@ -135,4 +138,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(MYSQLINCLUDEDIR);$(DX9INCLUDEDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(MYSQLINCLUDEDIR);$(DX9INCLUDEDIR);$(LIBPNGINCLUDEDIR)

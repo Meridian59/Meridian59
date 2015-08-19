@@ -200,3 +200,4 @@ pip-log.txt
 /roomedit/windeu32.log
 /roomedit/owl-6.34/lib
 *.roo~
+/lib/libpng.lib

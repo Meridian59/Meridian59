@@ -209,6 +209,8 @@ void AdminCreateAutomated(int session_id,admin_parm_type parms[],
                           int num_blak_parm,parm_node blak_parm[]);
 void AdminRecreateAutomated(int session_id,admin_parm_type parms[],
                             int num_blak_parm,parm_node blak_parm[]);
+void AdminResetHighestTimed(int session_id, admin_parm_type parms[],
+                            int num_blak_parm, parm_node blak_parm[]);
 void AdminAddUserToEachAccount(int session_id,admin_parm_type parms[],
 							   int num_blak_parm,parm_node blak_parm[]);
 void AdminCreateUser(int session_id,admin_parm_type parms[],
@@ -480,6 +482,12 @@ admin_table_type admin_recreate_table[] =
 };
 #define LEN_ADMIN_RECREATE_TABLE (sizeof(admin_recreate_table)/sizeof(admin_recreate_table))
 
+admin_table_type admin_reset_table[] =
+{
+   { AdminResetHighestTimed, {N}, F, A|M, NULL, 0, "highest", "Reset highest timed message" },
+};
+#define LEN_ADMIN_RESET_TABLE (sizeof(admin_reset_table)/sizeof(admin_reset_table))
+
 admin_table_type admin_disable_table[] =
 {
 	{ AdminDisableSysTimer,{I,N}, F, A|M, NULL, 0, "systimer","Disable a system timer" },
@@ -523,6 +531,7 @@ admin_table_type admin_main_table[] =
 	{ AdminRead,          {S,N}, F, A|M, NULL, 0, "read",      "Read admin commands from a file, echoes everything" },
 	{ NULL, {N}, F, A|M, admin_recreate_table,LEN_ADMIN_RECREATE_TABLE, "recreate", "Recreate subcommand" },
 	{ NULL, {N}, F, A|M, admin_reload_table, LEN_ADMIN_RELOAD_TABLE, "reload", "Reload subcommand" },
+   { NULL, {N}, F, A|M, admin_reset_table, LEN_ADMIN_RESET_TABLE, "reset", "Reset subcommand" },
 	{ NULL, {N}, F, A|M, admin_save_table,   LEN_ADMIN_SAVE_TABLE,   "save",   "Save subcommand" },
 	{ AdminSay,           {R,N}, F, A|M, NULL, 0, "say",       "Say text to all admins logged in" },
 	{ NULL, {N}, F, A|M, admin_send_table,   LEN_ADMIN_SEND_TABLE,   "send",   "Send subcommand" },
@@ -3572,6 +3581,37 @@ void AdminRecreateAutomated(int session_id,admin_parm_type parms[],
 	AdminShowOneUser(u);
 	
 }
+
+// Prints out the highest timed blakod message and resets the values.
+void AdminResetHighestTimed(int session_id, admin_parm_type parms[],
+   int num_blak_parm, parm_node blak_parm[])
+{
+   kod_statistics *kod_stat = GetKodStats();
+   object_node *o = NULL;
+   class_node *c = NULL;
+   char *m = NULL;
+
+   aprintf("Longest time on one top level message is %i milliseconds\n",
+      (int)(kod_stat->interpreting_time_highest / 1000.0));
+   if (kod_stat->interpreting_time_object_id != INVALID_ID)
+   {
+      o = GetObjectByID(kod_stat->interpreting_time_object_id);
+      c = o ? GetClassByID(o->class_id) : NULL;
+   }
+   m = GetNameByID(kod_stat->interpreting_time_message_id);
+   aprintf("Most recent slow top level message is:\nOBJECT %i CLASS %s MESSAGE %s\n",
+      kod_stat->interpreting_time_object_id,
+      (char*)(c ? c->class_name : "(unknown)"),
+      (char*)(m ? m : "(unknown)"));
+   aprintf("Most recent slow top level message includes %i posted followups\n",
+      kod_stat->interpreting_time_posts);
+
+   kod_stat->interpreting_time_highest = 0;
+   kod_stat->interpreting_time_message_id = INVALID_ID;
+   kod_stat->interpreting_time_object_id = INVALID_ID;
+   aprintf("Highest timed message reset.\n");
+}
+
 void AdminAddUserToEachAccount(int session_id,admin_parm_type parms[],
 							   int num_blak_parm,parm_node blak_parm[])                         
 {

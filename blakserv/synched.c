@@ -302,11 +302,21 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
 }
 
 int num_with_same_ip;
-struct in_addr check_addr;
+struct in6_addr check_addr;
 void CheckIPAddress(session_node *s)
 {
-   if (s->conn.addr.s_addr == check_addr.s_addr)
-      ++num_with_same_ip;
+	BOOL equal = 1;
+	for (int i = 0; i < sizeof(check_addr.u.Byte); i++)
+	{
+		if (s->conn.addr.u.Byte[i] != check_addr.u.Byte[i])
+		{
+			equal = 0;
+			break;
+		}
+	}
+	
+	if (equal)
+		++num_with_same_ip;
 }
 
 void SynchedAcceptLogin(session_node *s,char *name,char *password)

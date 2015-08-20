@@ -518,7 +518,8 @@ void StartAsyncSocketAccept(SOCKET sock,int connection_type)
 		eprintf("StartAsyncSocketAccept got error %i\n",val);
 }
 
-/* this is executed in our thread, actually */
+/* this is executed in our thread, actually.
+   this needs modifications to work with IPv6 */
 HANDLE StartAsyncNameLookup(char *peer_addr,char *buf)
 {
 	HANDLE ret_val;

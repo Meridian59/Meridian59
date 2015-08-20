@@ -125,6 +125,7 @@ enum
 #define NOMINMAX
 #include <windows.h>
 #include <winsock2.h>
+#include <Ws2tcpip.h>
 #include "resource.h"
 #include <crtdbg.h>
 #include <io.h>

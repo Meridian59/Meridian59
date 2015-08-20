@@ -4289,7 +4289,7 @@ void AdminHangupUser(int session_id,admin_parm_type parms[],
 	HangupSession(hangup_session);
 }
 
-extern block_node* FindBlock(struct in_addr* piaPeer);
+extern block_node* FindBlock(struct in6_addr* piaPeer);
 
 /*
  * AdminBlockIP - Block an IP address from accessing this server
@@ -4298,18 +4298,20 @@ extern block_node* FindBlock(struct in_addr* piaPeer);
 void AdminBlockIP(int session_id,admin_parm_type parms[],
                   int num_blak_parm,parm_node blak_parm[])                  
 {
-	struct in_addr blocktoAdd;
+	struct in6_addr blocktoAdd;
 	char *arg_str = (char *)parms[0];
-	
+	char ip[46];
+
 	aprintf("This command will only affect specified IPs until the server reboots\n");
 
-	if( ( blocktoAdd.s_addr = inet_addr( arg_str ) ) != -1 ) {
+	if (inet_pton(AF_INET6, arg_str, &blocktoAdd) != -1) {
+		inet_ntop(AF_INET6, &blocktoAdd, ip, sizeof(ip));
 		if(FindBlock( &blocktoAdd ) == NULL )  {
 			AddBlock(-1, &blocktoAdd);
-			aprintf("IP %s blocked\n",inet_ntoa( blocktoAdd ) );
+			aprintf("IP %s blocked\n", ip);
 		} else {
 			DeleteBlock( &blocktoAdd );
-			aprintf("IP %s has been unblocked\n" ,inet_ntoa( blocktoAdd ) );
+			aprintf("IP %s has been unblocked\n", ip);
 		}
 	}  else {
 		aprintf("Couldn`t build IP address bad format %s\n",arg_str );

@@ -7638,6 +7638,18 @@ messages:
                AND Nth(lIP,2) = Nth(j,2)
                AND Nth(lIP,3) = Nth(j,3)
                AND Nth(lIP,4) = Nth(j,4)
+               AND Nth(lIP,5) = Nth(j,5)
+               AND Nth(lIP,6) = Nth(j,6)
+               AND Nth(lIP,7) = Nth(j,7)
+               AND Nth(lIP,8) = Nth(j,8)
+               AND Nth(lIP,9) = Nth(j,9)
+               AND Nth(lIP,10) = Nth(j,10)
+               AND Nth(lIP,11) = Nth(j,11)
+               AND Nth(lIP,12) = Nth(j,12)
+               AND Nth(lIP,13) = Nth(j,13)
+               AND Nth(lIP,14) = Nth(j,14)
+               AND Nth(lIP,15) = Nth(j,15)
+               AND Nth(lIP,16) = Nth(j,16)
             {
                bFound = TRUE;
             }

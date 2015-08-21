@@ -12,7 +12,7 @@ BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug /SUBSYSTEM:WINDOWS",5.01"
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib libmysql.lib libcurl.lib
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib libmysql.lib libcurl.lib ws2_32.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \

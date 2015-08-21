@@ -18,13 +18,13 @@ static block_node* block_head = NULL;
 
 //////////
 
-block_node* FindBlock(struct in_addr* piaPeer)
+block_node* FindBlock(struct in6_addr* piaPeer)
 {
 	block_node* pBlock = block_head;
 
 	while (pBlock)
 	{
-		if (0 == memcmp(&pBlock->iaPeer, piaPeer, sizeof(struct in_addr)))
+		if (0 == memcmp(&pBlock->iaPeer, piaPeer, sizeof(struct in6_addr)))
 			return pBlock;
 
 		pBlock = pBlock->next;
@@ -33,7 +33,7 @@ block_node* FindBlock(struct in_addr* piaPeer)
 	return NULL;
 }
 
-void AddBlock(int iSeconds, struct in_addr* piaPeer)
+void AddBlock(int iSeconds, struct in6_addr* piaPeer)
 {
 	block_node* pBlock = FindBlock(piaPeer);
 	int iExpires = (iSeconds < 0)? -1 : GetTime() + iSeconds;
@@ -58,14 +58,14 @@ void AddBlock(int iSeconds, struct in_addr* piaPeer)
 	}
 }
 
-void DeleteBlock(struct in_addr* piaPeer)
+void DeleteBlock(struct in6_addr* piaPeer)
 {
 	block_node** pHook = &block_head;
 	block_node* pBlock = block_head;
 
 	while (pBlock)
 	{
-		if (0 == memcmp(&pBlock->iaPeer, piaPeer, sizeof(struct in_addr)))
+		if (0 == memcmp(&pBlock->iaPeer, piaPeer, sizeof(struct in6_addr)))
 		{
 			*pHook = pBlock->next;
 			FreeMemory(MALLOC_ID_BLOCK,pBlock,sizeof(block_node));
@@ -88,7 +88,7 @@ void DeleteAllBlocks()
 	}
 }
 
-bool CheckBlockList(struct in_addr* piaPeer)
+bool CheckBlockList(struct in6_addr* piaPeer)
 {
 	block_node* pBlock = FindBlock(piaPeer);
 
@@ -125,8 +125,9 @@ void BuildBannedIPBlocks( char *filename )
   
   FILE*fp;
   char buffer[1024];
-  struct in_addr blocktoAdd ;
-  
+  struct in6_addr blocktoAdd ;
+  char ip[46];
+
   fp = fopen(filename,"rt");
   if( fp == NULL ) {
     eprintf("Cannot open banned log file %s\n",filename );
@@ -137,13 +138,14 @@ void BuildBannedIPBlocks( char *filename )
   do {
     if(fgets(buffer,1023,fp) != NULL ) {
       /* lets be cautious */
-      if(strlen(buffer)>0) {
-	if( ( blocktoAdd.s_addr = inet_addr( buffer ) ) != -1 ) {
-	  AddBlock( -1, &blocktoAdd );
-	  dprintf("Banned IP address %s\n", inet_ntoa( blocktoAdd ) );
-	} else {
-	  eprintf("Warning invalid entry in %s is [%s]\n",filename,buffer);
-	}
+      if (strlen(buffer)>0) {
+        if (inet_pton(AF_INET6, buffer, &blocktoAdd) != -1) {
+          AddBlock(-1, &blocktoAdd);
+          inet_ntop(AF_INET6, &blocktoAdd, ip, sizeof(ip));
+          dprintf("Banned IP address %s\n", ip);	
+        } else {
+          eprintf("Warning invalid entry in %s is [%s]\n", filename, buffer);	
+        }
       }
     }
   } while( !feof( fp ) );

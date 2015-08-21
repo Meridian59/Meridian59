@@ -10134,13 +10134,37 @@ messages:
       ClearTempString();
       
       AppendTempString(Nth(lIP,1));
-      AppendTempString(".");
+      AppendTempString(":");
       AppendTempString(Nth(lIP,2));
-      AppendTempString(".");
+      AppendTempString(":");
       AppendTempString(Nth(lIP,3));
-      AppendTempString(".");
+      AppendTempString(":");
       AppendTempString(Nth(lIP,4));
-      
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,5));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,6));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,7));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,8));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,9));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,10));
+      AppendTempString(":");      
+      AppendTempString(Nth(lIP,11));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,12));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,13));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,14));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,15));
+      AppendTempString(":");
+      AppendTempString(Nth(lIP,16));
+
       SetString(sReturn,GetTempString());
       
       return sReturn;

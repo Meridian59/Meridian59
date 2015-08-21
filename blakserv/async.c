@@ -22,7 +22,7 @@
 void AcceptSocketConnections(int socket_port,int connection_type);
 void AsyncEachSessionNameLookup(session_node *s);
 
-Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr);
+Bool CheckMaintenanceMask(SOCKADDR_IN6 *addr,int len_addr);
 
 void AsyncSocketClose(SOCKET sock);
 void AsyncSocketWrite(SOCKET sock);
@@ -84,11 +84,11 @@ keep track of what state to send clients into. */
 void AcceptSocketConnections(int socket_port,int connection_type)
 {
 	SOCKET sock;
-	SOCKADDR_IN sin;
+	SOCKADDR_IN6 sin;
 	struct linger xlinger;
 	int xxx;
 	
-	sock = socket(AF_INET,SOCK_STREAM,0);
+	sock = socket(AF_INET6,SOCK_STREAM,0);
 	if (sock == INVALID_SOCKET) 
 	{
 		eprintf("AcceptSocketConnections socket() failed WinSock code %i\n",
@@ -97,19 +97,28 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 		return;
 	}
 	
+	/* Make sure this is a IPv4/IPv6 dual stack enabled socket */
+	
+	xxx = 0;
+	if (setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&xxx, sizeof(xxx)) < 0)
+	{
+		eprintf("AcceptSocketConnections error setting sock opts: IPV6_V6ONLY\n");
+		return;
+	}
+
 	/* Set a couple socket options for niceness */
 	
 	xlinger.l_onoff=0;
 	if (setsockopt(sock,SOL_SOCKET,SO_LINGER,(char *)&xlinger,sizeof(xlinger)) < 0)
 	{
-		eprintf("AcceptSocketConnections error setting sock opts 1\n");
+		eprintf("AcceptSocketConnections error setting sock opts: SO_LINGER\n");
 		return;
 	}
 	
 	xxx=1;
 	if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,(char *)&xxx,sizeof xxx) < 0)
 	{
-		eprintf("AcceptSocketConnections error setting sock opts 2\n");
+		eprintf("AcceptSocketConnections error setting sock opts: SO_REUSEADDR\n");
 		return;
 	}
 	
@@ -119,15 +128,17 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 		xxx = true;
 		if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(char *)&xxx,sizeof xxx))
 		{
-			eprintf("AcceptSocketConnections error setting sock opts 3\n");
+			eprintf("AcceptSocketConnections error setting sock opts: TCP_NODELAY\n");
 			return;
 		}
 	}
 	
 	memset(&sin,sizeof sin,0);
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = htonl(INADDR_ANY);
-	sin.sin_port = htons((short)socket_port);
+	sin.sin6_family = AF_INET6;
+	sin.sin6_addr = in6addr_any;
+	sin.sin6_flowinfo = 0;
+	sin.sin6_scope_id = 0;
+	sin.sin6_port = htons((short)socket_port);
 	
 	if (bind(sock,(struct sockaddr *) &sin,sizeof(sin)) == SOCKET_ERROR) 
 	{
@@ -152,11 +163,11 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 {
 	SOCKET new_sock;
-	SOCKADDR_IN acc_sin;    /* Accept socket address - internet style */
+	SOCKADDR_IN6 acc_sin;    /* Accept socket address - internet style */
 	int acc_sin_len;        /* Accept socket address length */
-	SOCKADDR_IN peer_info;
+	SOCKADDR_IN6 peer_info;
 	int peer_len;
-	struct in_addr peer_addr;
+	struct in6_addr peer_addr;
 	connection_node conn;
 	session_node *s;
 	
@@ -190,9 +201,9 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 		return;
 	}
 	
-	memcpy(&peer_addr,(long *)&(peer_info.sin_addr),sizeof(struct in_addr));
-	memcpy(&conn.addr, &peer_addr, sizeof(struct in_addr));
-	sprintf(conn.name,"%s",inet_ntoa(peer_addr));
+	memcpy(&peer_addr, &peer_info.sin6_addr, sizeof(struct in6_addr));
+	memcpy(&conn.addr, &peer_addr, sizeof(struct in6_addr));
+	inet_ntop(AF_INET6, &peer_addr, conn.name, sizeof(conn.name));
 	
 	// Too out following line to prevent log files from becoming spammed with extra lines.
 	// This line is extraneous because the outcome of the authentication is always posted to logs.
@@ -244,7 +255,8 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 		
 		if (ConfigBool(SOCKET_DNS_LOOKUP))
 		{
-			s->conn.hLookup = StartAsyncNameLookup((char *)&peer_addr,s->conn.peer_data);
+			// disabled due to IPv6 right now
+			//s->conn.hLookup = StartAsyncNameLookup((char *)&peer_addr,s->conn.peer_data);
 		}
 		else
 		{
@@ -255,15 +267,15 @@ void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type)
 	LeaveServerLock();
 }
 
-Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
+Bool CheckMaintenanceMask(SOCKADDR_IN6 *addr,int len_addr)
 {
-	IN_ADDR mask;
+	IN6_ADDR mask;
 	int i;
+	BOOL skip;
 
 	for (i=0;i<num_maintenance_masks;i++)
 	{
-		mask.S_un.S_addr = inet_addr(maintenance_masks[i]);
-		if (mask.S_un.S_addr == INADDR_NONE)
+		if (inet_pton(AF_INET6, maintenance_masks[i], &mask) != 1)
 		{
 			eprintf("CheckMaintenanceMask has invalid configured mask %s\n",
 					  maintenance_masks[i]);
@@ -272,31 +284,20 @@ Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
 	
 		/* for each byte of the mask, if it's non-zero, the client must match it */
 	
-		if ((mask.S_un.S_un_b.s_b1 != 0) && (addr->sin_addr.S_un.S_un_b.s_b1 != mask.S_un.S_un_b.s_b1))
-			continue;
-	
-		if ((mask.S_un.S_un_b.s_b2 != 0) && (addr->sin_addr.S_un.S_un_b.s_b2 != mask.S_un.S_un_b.s_b2))
-			continue;
-	
-		if ((mask.S_un.S_un_b.s_b3 != 0) && (addr->sin_addr.S_un.S_un_b.s_b3 != mask.S_un.S_un_b.s_b3))
-			continue;
-	
-		if ((mask.S_un.S_un_b.s_b4 != 0) && (addr->sin_addr.S_un.S_un_b.s_b4 != mask.S_un.S_un_b.s_b4))
-			continue;
-	
-		/*
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b1);
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b2);
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b3);
-		dprintf("%u\n",addr->sin_addr.S_un.S_un_b.s_b4);
+		skip = 0;
+		for (int k = 0; k < sizeof(mask.u.Byte); k++)
+		{
+			if (mask.u.Byte[k] != 0 && mask.u.Byte[k] != addr->sin6_addr.u.Byte[k])
+			{
+				// mismatch
+				skip = 1;
+				break;
+			}
+		}
 		
-		  dprintf("----\n");
-		  
-			dprintf("%u\n",mask.S_un.S_un_b.s_b1);
-			dprintf("%u\n",mask.S_un.S_un_b.s_b2);
-			dprintf("%u\n",mask.S_un.S_un_b.s_b3);
-			dprintf("%u\n",mask.S_un.S_un_b.s_b4);
-	*/
+		if (skip)
+			continue;
+
 		return True;
 	}
 	return False;

@@ -3687,41 +3687,38 @@ int C_GetSessionIP(int object_id,local_var_type *local_vars,
             int num_name_parms,parm_node name_parm_array[])
 {
    val_type session_id, temp, ret_val;
-   int ip;
+   session_node* session = NULL;
    
    session_id = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
       normal_parm_array[0].value);
       
    
-	if (session_id.v.tag != TAG_SESSION)
+   if (session_id.v.tag != TAG_SESSION)
    {
       bprintf("C_GetSessionIP can't use non session %i,%i\n",session_id.v.tag,session_id.v.data);
       return NIL;
    }
 
-   ip = GetIPBySessionId(session_id.v.data);
+   session = GetSessionByID(session_id.v.data);
+   
+   if (!session)
+   {
+      bprintf("C_GetSessionIP can't find session for %i,%i\n", session_id.v.tag, session_id.v.data);
+      return NIL;
+   }
    
    ret_val.int_val = NIL;
-   
    temp.v.tag = TAG_INT;
    
-   temp.v.data = (ip >> 24) & 0xFF;
-   ret_val.v.data = Cons(temp,ret_val);
-   ret_val.v.tag = TAG_LIST;
-   
-   temp.v.data = (ip >> 16) & 0xFF;
-   ret_val.v.data = Cons(temp,ret_val);
-   ret_val.v.tag = TAG_LIST;
-   
-   temp.v.data = (ip >> 8) & 0xFF;
-   ret_val.v.data = Cons(temp,ret_val);
-   ret_val.v.tag = TAG_LIST;
-   
-   temp.v.data = ip & 0xFF;
-   ret_val.v.data = Cons(temp,ret_val);
-   ret_val.v.tag = TAG_LIST;
-   	
-	return ret_val.int_val;  
+   // reverse the order, because the address is stored in network order in in6_addr
+   for (int i = sizeof(struct in6_addr) - 1; i >= 0; i--)
+   {
+      temp.v.data = session->conn.addr.u.Byte[i];
+      ret_val.v.data = Cons(temp, ret_val);
+      ret_val.v.tag = TAG_LIST;
+   }
+
+   return ret_val.int_val;
 }
 
 int C_SetClassVar(int object_id,local_var_type *local_vars,

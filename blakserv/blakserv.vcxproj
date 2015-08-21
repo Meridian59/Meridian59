@@ -43,7 +43,6 @@
     <TargetName>blakserv</TargetName>
     <IntDir>$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-   
     <CustomBuildAfterTargets>
     </CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
@@ -54,7 +53,6 @@
     <TargetName>blakserv</TargetName>
     <IntDir>$(Configuration)\</IntDir>
     <ExtensionsToDeleteOnClean>$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
-   
     <CustomBuildAfterTargets>
     </CustomBuildAfterTargets>
     <CustomBuildBeforeTargets>
@@ -78,7 +76,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
@@ -134,7 +132,7 @@ copy $(SolutionDir)bin\libcurl.dll $(SolutionDir)run\server</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;winmm.lib;comctl32.lib;libmysql.lib;libcurl.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>

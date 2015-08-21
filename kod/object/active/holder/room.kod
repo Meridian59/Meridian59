@@ -1473,7 +1473,7 @@ messages:
             return FALSE;
          }
       }
-      
+
       propagate;
    }
 
@@ -1499,8 +1499,7 @@ messages:
                  #shalSpellLevel=Send(oSpell,@GetLevel));
          }
       }
-
-      if school = SS_QOR
+      else if school = SS_QOR
       {
          roomench = Send(SYS,@FindSpellByNum,#num=SID_QORBANE);
          state = Send(self,@GetEnchantmentState,#what=roomench);
@@ -1542,8 +1541,7 @@ messages:
       {
          iLight = LIGHT_MIN;
       }
-
-      if iLight > LIGHT_MAX
+      else if iLight > LIGHT_MAX
       {
          iLight = LIGHT_MAX;
       }
@@ -1600,7 +1598,7 @@ messages:
 
    DisposeTimer()
    {
-      local iTime, iLen, i, oEachObj, count, delete_index,
+      local iTime, i, oEachObj, count, delete_index,
             iLengthDispose, lDisposeItems, j;
 
       lDisposeItems = $;
@@ -1635,10 +1633,7 @@ messages:
          % This number is large to reduce the amount of times this is run
          % unnecessarily in rooms with lots of passive objects present, or
          % a small amount of items that don't really need disposing.
-
-         iLen = Length(plPassive);
-
-         if iLen > 15
+         if Length(plPassive) > 15
          {
             foreach i in plPassive
             {
@@ -1944,7 +1939,7 @@ messages:
       if bUser
       {
          session = Send(what,@GetSession);
-         
+
          Send(Send(SYS, @GetStatistics), @PlayerEnteredRoom,
               #oRoom = self, #who = what);
       }
@@ -2049,7 +2044,7 @@ messages:
          each_obj = Nth(i,2);
          Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
       }
-      
+
       if IsClass(what,&User)
       {
          foreach i in Send(what,@GetRadiusEnchantments)
@@ -2260,18 +2255,18 @@ messages:
          % go between rooms in RoomObjOffGrid
          return TRUE;
       }
-        
+
       % if the caller didn't provide his fine values
-	  % we pick the center of the square for him, however his source position
-	  % then also has to be the center of his current square and not his fine values
-	  iFineRow = 0;
-	  iFineCol = 0;
+      % we pick the center of the square for him, however his source position
+      % then also has to be the center of his current square and not his fine values
+      iFineRow = 0;
+      iFineCol = 0;
       if new_finerow = $ OR new_finecol = $
       {
-        new_finerow = FINENESS_HALF;
-		new_finecol = FINENESS_HALF;
-		iFineRow = FINENESS_HALF;
-	    iFineCol = FINENESS_HALF;
+         new_finerow = FINENESS_HALF;
+         new_finecol = FINENESS_HALF;
+         iFineRow = FINENESS_HALF;
+         iFineCol = FINENESS_HALF;
       }
 
       if Send(what,@GetOwner) = self AND Send(self,@IsHolding,#what=what)
@@ -2279,22 +2274,22 @@ messages:
          % get position of object to move
          iRow = Send(what,@GetRow);
          iCol = Send(what,@GetCol);
-		 
-		 % as stated above, only use fine values if
-		 % defaults were not used
-		 if iFineRow = 0
-		 {
-		   iFineRow = Send(what,@GetFineRow);
-		 } 
-		 
-		 if iFineCol = 0
-		 {
-           iFineCol = Send(what,@GetFineCol);
-		 }
+
+         % as stated above, only use fine values if
+         % defaults were not used
+         if iFineRow = 0
+         {
+            iFineRow = Send(what,@GetFineRow);
+         }
+
+         if iFineCol = 0
+         {
+            iFineCol = Send(what,@GetFineCol);
+         }
       }
       else
       {
-         if entering_room and dir <> $
+         if entering_room AND dir <> $
          {
             % If doing a normal room to room movement (not teleport across
             %  rooms).
@@ -2303,20 +2298,17 @@ messages:
                iRow = new_row - 1;
                iCol = new_col;
             }
-
-            if dir = ENTER_SOUTH
+            else if dir = ENTER_SOUTH
             {
                iRow = new_row + 1;
                iCol = new_col;
             }
-
-            if dir = ENTER_EAST
+            else if dir = ENTER_EAST
             {
                iRow = new_row;
                iCol = new_col + 1;
             }
-
-            if dir = ENTER_WEST
+            else if dir = ENTER_WEST
             {
                iRow = new_row;
                iCol = new_col - 1;
@@ -2332,16 +2324,17 @@ messages:
 
       if server_validate
       {
-		 if NOT CanMoveInRoomHighRes(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,new_col,new_finerow,new_finecol)
+         if NOT CanMoveInRoomHighRes(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,
+                     new_col,new_finerow,new_finecol)
          {
-           return FALSE;
+            return FALSE;
          }
-		 
+
          % iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
 
          % if iLOS = LOS_NEW_BOTH
          %    OR (iLOS = LOS_NEW_MONSTER AND IsClass(what,&Monster))
-         %    OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))                 
+         %    OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))
       }
 
       propagate;
@@ -2522,7 +2515,7 @@ messages:
 
    SomethingTurned(what = $,new_angle = $,cause = CAUSE_UNKNOWN)
    {
-      local i,bFound,each_obj,packet_built,temp;
+      local i, bFound, each_obj, packet_built, temp;
 
       bFound = FALSE;
 
@@ -2536,25 +2529,29 @@ messages:
             break;
          }
       }
-      foreach i in plPassive
-      {
-         if First(i) = what
-         {
-            SetNth(i,2,new_angle);
-            bFound = TRUE;
 
-            break;
+      if NOT bFound
+      {
+         foreach i in plPassive
+         {
+            if First(i) = what
+            {
+               SetNth(i,2,new_angle);
+               bFound = TRUE;
+
+               break;
+            }
          }
       }
 
-      if not bFound
+      if NOT bFound
       {
          return;
       }
 
       if (new_angle >= MAX_ANGLE)
       {
-         new_angle = new_angle mod MAX_ANGLE;
+         new_angle = new_angle MOD MAX_ANGLE;
       }
 
       % if we propagated here, it should work but be inefficient.
@@ -2576,14 +2573,14 @@ messages:
          if IsClass(each_obj,&User)
          {
             % we don't send turns to non-users
-            if not packet_built
+            if NOT packet_built
             {
                Send(each_obj,@BuildPacketSomethingTurned,#what=what,
-                    #new_angle=new_angle,#cause=cause);
+                     #new_angle=new_angle,#cause=cause);
                packet_built = TRUE;
             }
 
-            if each_obj <> what or cause <> CAUSE_USER_INPUT
+            if each_obj <> what OR cause <> CAUSE_USER_INPUT
             {
                % Seventh element will be a user's session
                SendCopyPacket(Nth(i,7));
@@ -3014,7 +3011,7 @@ messages:
          {
             % reset this texture-change in BSP room data
             ChangeTextureBSP(prmRoom, Nth(i,1), Nth(i,2), Nth(i,3) | CTF_RESET);
-	  
+
             plTexture_changes = DelListElem(plTexture_changes,i);
          }
       }
@@ -3738,7 +3735,6 @@ messages:
       {
          Send(self,@SetRoomFlag,#flag=ROOM_RAINING,#value=FALSE);
          Send(self,@WeatherChanged);
-
       }
 
       return;
@@ -3793,7 +3789,7 @@ messages:
       Send(self,@TrySetRoomFlag,#flag=ROOM_GUILD_PK_ONLY,#value=FALSE);
       Send(self,@TrySetRoomFlag,#flag=ROOM_NO_PK,#value=FALSE);
       Send(self,@TrySetRoomFlag,#flag=ROOM_NO_MAGIC,#value=FALSE);
-	  
+
       % change the background graphic
       prBackground = background_chaos_night;
       Send(self,@BackgroundChanged);
@@ -3817,7 +3813,7 @@ messages:
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_GUILD_PK_ONLY,#value=FALSE);
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_PK,#value=FALSE);
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_MAGIC,#value=FALSE);
-	  
+
       % Restore the old background.
       Send(self,@RecalcLightAndWeather);
 
@@ -4701,7 +4697,7 @@ messages:
       }
       return;
    }
-   
+
    AddToBuilderGroup(who=$)
    {
       if who = $
@@ -4710,16 +4706,16 @@ messages:
       {
          return;
       }
-      
-      If plBuilderGroup = $
+
+      if plBuilderGroup = $
          OR FindListElem(plBuilderGroup, who) = 0
       {
          plBuilderGroup = Cons(who,plBuilderGroup);
       }
-      
+
       return;
    }
-   
+
    RemoveFromBuilderGroup(who=$)
    {
       if plBuilderGroup = $
@@ -4727,7 +4723,7 @@ messages:
       {
          return;
       }
-      
+
       if FindListElem(plBuilderGroup,who) <> 0
       {
          plBuilderGroup = DelListElem(plBuilderGroup,who);
@@ -4735,12 +4731,12 @@ messages:
       
       return;
    }
-   
+
    GetBuilderGroup()
    {
       return plBuilderGroup;
    }
-   
+
    AreGroupedHere(who=$,what=$)
    {
       if who <> $
@@ -4756,12 +4752,12 @@ messages:
 
       return FALSE;
    }
-   
+
    GetGroupTime()
    {
       return piGroupTime;
    }
-   
+
    SetGroupTime(victim=$)
    {
       if victim <> $
@@ -4796,11 +4792,11 @@ messages:
 
       return;
    }
-   
+
    WentSpectatorMode(who=$)
    {
       local i;
-      
+
       % Ditch aggros on fresh spectators
       if IsClass(who,&Player)
       {
@@ -4824,49 +4820,51 @@ messages:
    TurnReagentsOff()
    {
       pbNoReagents=TRUE;
+
       return;
    }
-   
+
    TurnReagentsOn()
    {
       pbNoReagents=FALSE;
+
       return;
    }
-   
+
    GetBaseLight()
    {
       return piBaseLight;
    }
-   
+
    GetDirectionalPercent()
    {
       return piDirectional_percent;
    }
-   
+
    GetMusic()
    {
       return prMusic;
    }
-   
+
    OverridesDeathFunction()
    {
       return piOverridesDeathFunction;
    }
-   
+
    OverrideDeathFunction(who=$,what=$)
    {
       return;
    }
-   
+
    GetChaosZone()
    {
       return piChaosZone;
    }
-   
+
    GetGenerators()
    {
       return $;
    }
-      
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

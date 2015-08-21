@@ -2305,93 +2305,85 @@ messages:
    "e=0, ne=1, n=2, nw=3, w=4, sw=5, s=6, se=7"
    {
       local iNew_row, iNew_col, iNew_finerow, iNew_finecol, iLong_step;
-	  iNew_row = piRow;
-	  iNew_col = piCol;
-	  
-      if dir = 0  
+
+      iNew_row = piRow;
+      iNew_col = piCol;
+
+      if dir = 0
       {
          iNew_finerow = piFine_row + 16;
-		 iNew_finecol = piFine_col;
-		 iLong_step = FALSE;
+         iNew_finecol = piFine_col;
+         iLong_step = FALSE;
       }
-
-      if dir = 1
+      else if dir = 1
       {
          iNew_finerow = piFine_row + 16;
          iNew_finecol = piFine_col + 16;
          iLong_step = TRUE;
       }
-
-      if dir = 2
+      else if dir = 2
       {
          iNew_finerow = piFine_row;
          iNew_finecol = piFine_col + 16;
          iLong_step = FALSE;
       }
-
-      if dir = 3
+      else if dir = 3
       {
          iNew_finerow = piFine_row - 16;
          iNew_finecol = piFine_col + 16;
          iLong_step = TRUE;
       }
-
-      if dir = 4
+      else if dir = 4
       {
          iNew_finerow = piFine_row - 16;
          iNew_finecol = piFine_col;
          iLong_step = FALSE;
       }
-
-      if dir = 5
+      else if dir = 5
       {
          iNew_finerow = piFine_row - 16;
          iNew_finecol = piFine_col - 16;
          iLong_step = TRUE;
       }
-
-      if dir = 6
+      else if dir = 6
       {
          iNew_finerow = piFine_row;
          iNew_finecol = piFine_col - 16;
          iLong_step = FALSE;
       }
-
-      if dir = 7
+      else if dir = 7
       {
          iNew_finerow = piFine_row + 16;
          iNew_finecol = piFine_col - 16;
          iLong_step = TRUE;
       }
 
-	  % moved down at least a full row 
-	  if iNew_finerow >= FINENESS
-	  {
-		iNew_row = piRow + (iNew_finerow / FINENESS);
-		iNew_finerow = iNew_finerow MOD FINENESS;
-	  }
-	  
-	  % moved up at least a full row
-	  if iNew_finerow < 0
-	  {
-	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
-		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
-	  }
-	  
-	  % moved right at least a full col 
-	  if iNew_finecol >= FINENESS
-	  {
-		iNew_col = piCol + (iNew_finecol / FINENESS);
-		iNew_finecol = iNew_finecol MOD FINENESS;
-	  }
-	  
-	  % moved left at least a full row
-	  if iNew_finecol < 0
-	  {
-	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
-		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
-	  }
-	
+      if iNew_finerow >= FINENESS
+      {
+         % moved down at least a full row
+         iNew_row = piRow + (iNew_finerow / FINENESS);
+         iNew_finerow = iNew_finerow MOD FINENESS;
+      }
+      else if iNew_finerow < 0
+      {
+         % moved up at least a full row
+         iNew_row = piRow - Bound((-iNew_finerow / FINENESS), 1, 100);
+         iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+      }
+
+      if iNew_finecol >= FINENESS
+      {
+         % moved right at least a full col 
+         iNew_col = piCol + (iNew_finecol / FINENESS);
+         iNew_finecol = iNew_finecol MOD FINENESS;
+      }
+      else if iNew_finecol < 0
+      {
+         % moved left at least a full row
+         iNew_col = piCol - Bound((-iNew_finecol / FINENESS), 1, 100);
+         iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+      }
+
       if iLong_step
       {
          piState = piState | ESTATE_LONG_STEP;
@@ -2402,27 +2394,26 @@ messages:
       }
 
       if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
-                                   #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
-              #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
-              #face_target=face_target,#face_away=face_away);
+               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
+               #face_target=face_target,#face_away=face_away);
 
          if Send(poOwner,@ReqSomethingMoved,#what=self,
-                 #new_row=iNew_row,#new_col=iNew_col,
-                 #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)),
-				 #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
-         {		
+                  #new_row=iNew_row,#new_col=iNew_col,
+                  #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)),
+                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+         {
             Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
-                 #new_row=iNew_row,#new_col=iNew_col,
-                 #fine_row=iNew_finerow,
-                 #fine_col=iNew_finecol,
-                 #non_monsters_only=TRUE);
+                  #new_row=iNew_row,#new_col=iNew_col,
+                  #fine_row=iNew_finerow,#fine_col=iNew_finecol,
+                  #non_monsters_only=TRUE);
 
             % Turn to face target
             Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
-                 #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
-                 #face_target=face_target,#face_away=face_away);
+                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
+                  #face_target=face_target,#face_away=face_away);
 
             return TRUE;
          }
@@ -2518,77 +2509,58 @@ messages:
          iAtan = 1000 * col_diff / row_diff;
       }
 
-      % right half-plane
-      if row_diff > 0 
+      if row_diff > 0
       {
+         % right half-plane
          if iAtan >= 2414
          {
             iDir = 2;
          }
+         else if iAtan >= 414
+         {
+            iDir = 1;
+         }
+         else if iAtan >= -414
+         {
+            iDir = 0;
+         }
+         else if iAtan >= -2414
+         {
+            iDir = 7;
+         }
          else
          {
-            if iAtan >= 414
-            {
-               iDir = 1;
-            }
-            else
-            {
-               if iAtan >= -414
-               {
-                  iDir = 0;
-               }
-               else
-               {
-                  if iAtan >= -2414
-                  {
-                     iDir = 7;
-                  }
-                  else
-                  {
-                     iDir = 6;
-                  }
-               }
-            }
+            iDir = 6;
          }
       }
-
-      % left half-plane
-      if row_diff < 0 
+      else if row_diff < 0
       {
+         % left half-plane
          if iAtan >= 2414
          {
             iDir = 6;
          }
+         else if iAtan >= 414
+         {
+            iDir = 5;
+         }
+         else if iAtan >= -414
+         {
+            iDir = 4;
+         }
+         else if iAtan >= -2414
+         {
+            iDir = 3;
+         }
          else
          {
-            if iAtan >= 414
-            {
-               iDir = 5;
-            }
-            else
-            {
-               if iAtan >= -414
-               {
-                  iDir = 4;
-               }
-               else
-               {
-                  if iAtan >= -2414
-                  {
-                     iDir = 3;
-                  }
-                  else
-                  {
-                     iDir = 2;
-                  }
-               }
-            }
+            iDir = 2;
          }
       }
 
       iTry_dir = iDir;
       if Send(self,@TryDirection,#dir=iTry_dir,
-         #face_target=face_target,#face_away=face_away) 
+               #face_target=face_target,#face_away=face_away)
       {
          % we successfully moved in our direction of choice
          piState = piState & ESTATE_ZERO_MASK;

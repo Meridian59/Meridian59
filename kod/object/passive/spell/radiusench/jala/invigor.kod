@@ -55,10 +55,9 @@ classvars:
    viMana = 5           % Mana is amount used upon inititiation
    viManaDrain = 1      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
-   viBaseRange = 12
-   
+
    viPeriodicEffect = TRUE
-   
+
    viSpellExertion = 1
    viChance_To_Increase = 20
    viMeditate_ratio = 10

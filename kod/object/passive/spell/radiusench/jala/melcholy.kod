@@ -38,7 +38,7 @@ resources:
    Melancholy_caster_enter = "Your heart feels heavy."
    Melancholy_enter = "%s's melancholy song makes your heart feel heavy."
    Melancholy_leave = "You can no longer hear the melancholy notes of %s's song."
-   
+
 classvars:
 
    radius_ench_cast = Melancholy_cast
@@ -48,7 +48,7 @@ classvars:
    radius_ench_caster_enter = Melancholy_caster_enter
    radius_ench_enter = Melancholy_enter
    radius_ench_leave = Melancholy_leave
-   
+
    vrName = Melancholy_name_rsc
    vrIcon = Melancholy_icon_rsc
    vrDesc = Melancholy_desc_rsc
@@ -60,7 +60,6 @@ classvars:
    viMana = 2
    viManaDrain = 2
    viDrainTime = 5000
-   viBaseRange = 3
 
    viSpellExertion = 1
    viChance_To_Increase = 25

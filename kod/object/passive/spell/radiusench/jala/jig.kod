@@ -25,7 +25,7 @@ resources:
       "and is lots of fun at parties.  Requires one diamond to cast."
 
    jig_song = jala2.mp3
- 
+
    Jig_cast = "You begin playing an overwhelmingly addictive ditty!"
    Jig_starts = "%s begins playing an overwhelmingly addictive ditty!"
    Jig_ends = "The ditty played by %s ends with a final cheery high note."
@@ -35,7 +35,7 @@ resources:
    Jig_leave = "You have passed outside the range of %s's song, you lose your compulsion to dance."
 
    Jig_cannot_do_that = "You can't do that while you're dancing to %s's song!"
-   
+
 classvars:
 
    radius_ench_cast = Jig_cast
@@ -45,7 +45,7 @@ classvars:
    radius_ench_caster_enter = Jig_caster_enter
    radius_ench_enter = Jig_enter
    radius_ench_leave = Jig_leave
-   
+
    vrName = jig_name_rsc
    vrIcon = jig_icon_rsc
    vrDesc = jig_desc_rsc
@@ -67,7 +67,7 @@ classvars:
 properties:
 
    prMusic = jig_song
-      
+
 messages:
 
    ResetReagents()

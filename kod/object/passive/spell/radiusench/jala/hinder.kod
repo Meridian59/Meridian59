@@ -41,7 +41,6 @@ classvars:
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
    viChance_To_Increase = 10
    viMeditate_ratio = 20
-   viBaseRange = 4
 
    viHinderedSchool = SS_JALA  % What school does this song hinder?
 

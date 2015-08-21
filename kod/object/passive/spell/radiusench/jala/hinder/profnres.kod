@@ -12,7 +12,7 @@ ProfaneResonance is HinderSpell
 
 constants:
 
-	include blakston.khd
+   include blakston.khd
 
 resources:
 
@@ -25,7 +25,7 @@ resources:
       "A ruby and some herbs are required to begin performing this song."
 
    ProfaneResonance_song = nec02.mp3
- 
+
 classvars:
 
    vrName = ProfaneResonance_name_rsc

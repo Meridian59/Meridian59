@@ -25,7 +25,7 @@ resources:
       "Requires one diamond and several herbs to cast."
 
    Restorate_song = song05.mp3
-   
+
    Restorate_cast = "You begin to play a soothing song."
    Restorate_starts = "%s begins to play a soothing song."
    Restorate_ends = "The soothing song played by %s fades away."
@@ -33,7 +33,7 @@ resources:
    Restorate_caster_enter = "You feel the ache of your wounds diminish."
    Restorate_enter = "%s's soothing song eases the pain of your wounds."
    Restorate_leave = "You can no longer hear the soothing notes of %s's song."
-   
+
 classvars:
 
    radius_ench_cast = Restorate_cast
@@ -43,7 +43,7 @@ classvars:
    radius_ench_caster_enter = Restorate_caster_enter
    radius_ench_enter = Restorate_enter
    radius_ench_leave = Restorate_leave
-   
+
    vrName = Restorate_name_rsc
    vrIcon = Restorate_icon_rsc
    vrDesc = Restorate_desc_rsc
@@ -55,10 +55,9 @@ classvars:
    viMana = 5           % Mana is amount used upon inititiation
    viManaDrain = 3      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
-   viBaseRange = 12
-   
+
    viPeriodicEffect = TRUE
-   
+
    viSpellExertion = 3
    viChance_To_Increase = 20
    viMeditate_ratio = 20
@@ -68,7 +67,7 @@ classvars:
 properties:
 
    prMusic = Restorate_song
-      
+
 messages:
 
    ResetReagents()

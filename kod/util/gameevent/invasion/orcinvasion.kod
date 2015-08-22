@@ -34,7 +34,7 @@ resources:
       "~B~k[Event]~n ~B~vThe orc invasion has ended."
 
    OrcInvasion_fail_msg = \
-      "~B~k[Event]~n ~B~vYou have failed to defend XXXXX, the orcs are victorious."
+      "~B~k[Event]~n ~B~vYou have failed to defend Meridian, the orcs are victorious."
 
 classvars:
 
@@ -113,7 +113,6 @@ messages:
    StartEvent()
    {
       plCurrentBattlePlan = Nth(plBattlePlans ,Random (1,Length(plBattlePlans)));
-      %plCurrentBattlePlan = Nth(plBattlePlans,2);
       Send(self,@BuildRoomList);
       Send(self,@SaveRoomStates);
       Send(self,@PrepareRooms);
@@ -149,13 +148,15 @@ messages:
          {
             Send(self,@PhaseTwo);
          }
-      
-         if (piInvaderScore >= 25)
+         else if (piInvaderScore >= 25)
          {
             Send(self,@EventFailed);
             Send(self,@NotifyEngineEndEvent);
          }
-         Send(self,@TrySpawnMonster);
+         else
+         {
+            Send(self,@TrySpawnMonster);
+         }
       }
       if (piPhase = 2)
       {
@@ -163,13 +164,15 @@ messages:
          {
             Send(self,@PhaseThree);
          }
-         
-         if (piInvaderScore >= 25)
+         else if (piInvaderScore >= 25)
          {
             Send(self,@EventFailed);
             Send(self,@NotifyEngineEndEvent);
          }
-         Send(self,@TrySpawnMonster);
+         else
+         {
+            Send(self,@TrySpawnMonster);
+         }
       }
       if (piPhase = 3)
       {
@@ -177,13 +180,15 @@ messages:
          {
             Send(self,@FinalPhase);
          }
-         
-         if (piInvaderScore >= 25)
+         else if (piInvaderScore >= 25)
          {
             Send(self,@EventFailed);
             Send(self,@NotifyEngineEndEvent);
          }
-         Send(self,@TrySpawnMonster);
+         else
+         {
+            Send(self,@TrySpawnMonster);
+         }
       }
       if (piPhase = 4)
       {
@@ -191,13 +196,15 @@ messages:
          {
             Send(self,@NotifyEngineEndEvent);
          }
-         
-         if (piInvaderScore >= 25)
+         else if (piInvaderScore >= 25)
          {
             Send(self,@EventFailed);
             Send(self,@NotifyEngineEndEvent);
          }
-         Send(self,@TrySpawnMonster);
+         else
+         {
+            Send(self,@TrySpawnMonster);
+         }
       }
       
       propagate;
@@ -287,7 +294,7 @@ messages:
       
       foreach i in plInvaders
       {
-         Send(i,@Delete);
+         Post(i,@Delete);
       }
    
       Send(self,@RestoreRoomStates);
@@ -462,16 +469,16 @@ messages:
             }
          }
          
-         if ( oCurrentRoom = poTargetRoom 
-            AND ((Send(poTargetRoom,@CountMonsters,#class=&Orc) +
-                  Send(poTargetRoom,@CountMonsters,#class=&CaveOrc) +
-                  Send(poTargetRoom,@CountMonsters,#class=&OrcWizard) +
-                  Send(poTargetRoom,@CountMonsters,#class=&OrcPitBoss))
-                     > piInvadersMaxInTargetRoom))
-         {
-            plInvaders = DelListElem(plInvaders,i);
-            send(i,@Delete);
-         }
+         %if ( oCurrentRoom = poTargetRoom 
+         %   AND ((Send(poTargetRoom,@CountMonsters,#class=&Orc) +
+         %         Send(poTargetRoom,@CountMonsters,#class=&CaveOrc) +
+         %         Send(poTargetRoom,@CountMonsters,#class=&OrcWizard) +
+         %         Send(poTargetRoom,@CountMonsters,#class=&OrcPitBoss))
+         %            > piInvadersMaxInTargetRoom))
+         %{
+         %   plInvaders = DelListElem(plInvaders,i);
+         %   send(i,@Delete);
+         %}
          
       }
       

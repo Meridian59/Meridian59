@@ -551,14 +551,14 @@ messages:
          return;
       }
       
-      if (Send(mob,@HasTargetLocation))
+      if (behavior & AI_HAS_TARGET_LOCATION)
       {
          Send(mob,@DoGoTowardsLocation);
             
          return;
       }
       
-      if (Send(mob,@CanPatrol))
+      if (behavior & AI_CAN_PATROL)
       {
          if (Random(1,10000) < Send(mob,@GetChanceToPatrol))
          {
@@ -621,7 +621,7 @@ messages:
 
       % If in doubt, wander aimlessly.
       % skip 9/10 of the possible steps
-      if (Random(1,100) < 10 AND NOT Send(mob,@CanPatrol))
+      if (Random(1,100) < 10 AND NOT (behavior & AI_CAN_PATROL))
 	  {
          Send(mob,@DoRandomWalk);
       }

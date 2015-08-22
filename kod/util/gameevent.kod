@@ -164,8 +164,7 @@ messages:
                   {
                      if ((IsClass(Nth(j,1),&Monster)) 
                         AND NOT (Send(Nth(j,1),@IsOwnedByPlayer))
-                        AND NOT (IsClass(Nth(j,1),&Towns))
-                        AND NOT (IsClass(Nth(j,1),&Council)))
+                        AND NOT (Send(Nth(j,1),@GetBehavior) & AI_NPC))
                      {
                         Send(Nth(j,1),@Delete);
                      }

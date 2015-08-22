@@ -369,7 +369,6 @@ properties:
 
    poBrain = $
 
-   pbHasTargetLocation = False
    piTargetLocationRow
    piTargetLocationCol
    piTargetLocationFineRow = 0
@@ -563,6 +562,8 @@ messages:
       if(lPath <> $)
       {
          plPatrolPath = lPath;
+         Send(self,@SetBehaviorFlag,
+            #flag=AI_CAN_PATROL,#value=TRUE);
       }
       
       return;
@@ -1366,7 +1367,8 @@ messages:
    
    ClearPatrolLocation()
    {
-      pbHasTargetLocation = False;
+      Send(self,@SetBehaviorFlag,
+         #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
       piTargetLocationRow  = 0;
       piTargetLocationCol  = 0;
       piTargetLocationFineRow = 0;
@@ -1850,15 +1852,16 @@ messages:
          if ((piRow = piTargetLocationRow)
             AND (piCol = piTargetLocationCol))
          {
-            pbHasTargetLocation = False;
+            Send(self,@SetBehaviorFlag,
+               #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
             piPatrolAttempts = 0;
          }
          
          % after a while just give up
          if (piPatrolAttempts >= 500)
          {
-            %Debug("monster had too many attempts trying to reach a location, giving up.");
-            pbHasTargetLocation = False;
+            Send(self,@SetBehaviorFlag,
+               #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
             piPatrolAttempts = 0;
          }
    
@@ -2924,14 +2927,10 @@ messages:
       piTargetLocationCol = iCol;
       piTargetLocationFineRow = iFineRow;
       piTargetLocationFineCol = iFineCol;
-      pbHasTargetLocation = True;
+      Send(self,@SetBehaviorFlag,
+         #flag=AI_HAS_TARGET_LOCATION,#value=TRUE);
    
       return;
-   }
-   
-   HasTargetLocation()
-   {
-      return pbHasTargetLocation;
    }
    
    GetTargetLocationRow()

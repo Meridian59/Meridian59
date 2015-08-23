@@ -38,7 +38,7 @@ classvars:
    viSpell_num = SID_TRUTH
 
    viSchool = SS_JALA
-   viSpell_level = 1
+   viSpell_level = 4
 
    viHinderedSchool = SS_RIIJA
 

@@ -43,7 +43,7 @@ classvars:
 
    viSpell_num = SID_UNHOLY_RESOLVE
    viSchool = SS_QOR
-   viSpell_level = 1
+   viSpell_level = 3
    viMana = 3
    
    viChance_To_Increase = 35

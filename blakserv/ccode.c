@@ -53,6 +53,100 @@ int C_Invalid(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
+/*
+ * C_SaveGame: Performs a system save, but without garbage collection. We
+ *    can't garbage collect when the game is saved from blakod as object,
+ *    list, timer and string references (in local vars) may be incorrect when
+ *    control passes back to the calling message. Returns a blakod string
+ *    containing the time of the saved game if successful.
+ */
+int C_SaveGame(int object_id,local_var_type *local_vars,
+               int num_normal_parms,parm_node normal_parm_array[],
+               int num_name_parms,parm_node name_parm_array[])
+{
+   val_type ret_val;
+   int save_time = 0;
+   string_node *snod;
+   char timeStr[15];
+
+   PauseTimers();
+   lprintf("C_SaveGame saving game\n");
+   save_time = SaveAll();
+   UnpauseTimers();
+
+   // Check for a sane time value.
+   if (save_time < 0 || save_time > INT_MAX)
+   {
+      bprintf("C_SaveGame got invalid save game time!");
+      return NIL;
+   }
+
+   ret_val.v.tag = TAG_STRING;
+   ret_val.v.data = CreateString("");
+
+   snod = GetStringByID(ret_val.v.data);
+   if (snod == NULL)
+   {
+      bprintf("C_SaveGame can't set invalid string %i,%i\n",
+         ret_val.v.tag, ret_val.v.data);
+      return NIL;
+   }
+
+   // Make a string with the save game time.
+   sprintf(timeStr, "%d", save_time);
+
+   // Make a blakod string using the string value of the save game time.
+   SetString(snod, timeStr, 10);
+
+   return ret_val.int_val;
+}
+
+/*
+ * C_LoadGame: Takes a blakod string as a parameter, which contains a save
+ *    game time.  Posts a message to the blakserv main thread which triggers
+ *    a load game, using the save game time value sent in the message. All
+ *    users are disconnected when the game reload triggers.
+ */
+int C_LoadGame(int object_id, local_var_type *local_vars,
+               int num_normal_parms, parm_node normal_parm_array[],
+               int num_name_parms, parm_node name_parm_array[])
+{
+   val_type game_val;
+   string_node *snod;
+   int save_time = 0;
+
+   game_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   if (game_val.v.tag != TAG_STRING)
+   {
+      bprintf("C_LoadGame can't process invalid string %i,%i\n",
+         game_val.v.tag, game_val.v.data);
+      return NIL;
+   }
+
+   snod = GetStringByID(game_val.v.data);
+   if (snod == NULL)
+   {
+      bprintf("C_LoadGame can't get invalid string %i,%i\n",
+         game_val.v.tag, game_val.v.data);
+      return NIL;
+   }
+
+   // Convert string time to integer.
+   save_time = atoi(snod->data);
+
+   // Check for a sane time value.
+   if (save_time < 0 || save_time > INT_MAX)
+   {
+      bprintf("C_LoadGame got invalid save game time!");
+      return NIL;
+   }
+
+   PostThreadMessage(main_thread_id, WM_BLAK_MAIN_LOAD_GAME, 0, save_time);
+
+   return NIL;
+}
 
 int C_AddPacket(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],

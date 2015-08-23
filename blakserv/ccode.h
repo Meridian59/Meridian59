@@ -17,6 +17,14 @@ int C_Invalid(int object_id,local_var_type *local_vars,
 	      int num_normal_parms,parm_node normal_parm_array[],
 	      int num_name_parms,parm_node name_parm_array[]);
 
+int C_SaveGame(int object_id,local_var_type *local_vars,
+      int num_normal_parms,parm_node normal_parm_array[],
+      int num_name_parms,parm_node name_parm_array[]);
+
+int C_LoadGame(int object_id, local_var_type *local_vars,
+      int num_normal_parms, parm_node normal_parm_array[],
+      int num_name_parms, parm_node name_parm_array[]);
+
 int C_AddPacket(int object_id,local_var_type *local_vars,
 		int num_normal_parms,parm_node normal_parm_array[],
 		int num_name_parms,parm_node name_parm_array[]);

@@ -140,7 +140,10 @@ void InitBkodInterpret(void)
 	
 	ccall_table[SENDMESSAGE] = C_SendMessage;
 	ccall_table[POSTMESSAGE] = C_PostMessage;
-	
+
+	ccall_table[SAVEGAME] = C_SaveGame;
+	ccall_table[LOADGAME] = C_LoadGame;
+
 	ccall_table[ADDPACKET] = C_AddPacket;
 	ccall_table[SENDPACKET] = C_SendPacket;
 	ccall_table[SENDCOPYPACKET] = C_SendCopyPacket;
@@ -297,12 +300,13 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 	
 	if (message_depth != 0)
 	{
-		eprintf("SendTopLevelBlakodMessage called with message_depth %i\n",message_depth);
+		eprintf("SendTopLevelBlakodMessage called with message_depth %i "
+			"and message id %i\n", message_depth,message_id);
 	}
 	
 	kod_stat.debugging = ConfigBool(DEBUG_UNINITIALIZED);
 	
-   start_time = GetMicroCountDouble();
+	start_time = GetMicroCountDouble();
 	kod_stat.num_top_level_messages++;
 	trace_session_id = INVALID_ID;
 	num_interpreted = 0;
@@ -336,7 +340,7 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 		post_q.last = (post_q.last + 1) % MAX_POST_QUEUE;
 	}
 	
-   interp_time = GetMicroCountDouble() - start_time;
+	interp_time = GetMicroCountDouble() - start_time;
 	kod_stat.interpreting_time += interp_time;
 	if (interp_time > kod_stat.interpreting_time_highest)
 	{
@@ -365,7 +369,8 @@ int SendTopLevelBlakodMessage(int object_id,int message_id,int num_parms,parm_no
 	
 	if (message_depth != 0)
 	{
-		eprintf("SendTopLevelBlakodMessage returning with message_depth %i\n",message_depth);
+		eprintf("SendTopLevelBlakodMessage returning with message_depth %i "
+			"and message id %i\n", message_depth, message_id);
 	}
 	
 	return ret_val;

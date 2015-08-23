@@ -569,7 +569,8 @@ char * name_function(int fnum)
    case GETCLASS: return "GetClass";
 
    case SENDMESSAGE : return "Send";
-
+   case SAVEGAME : return "SaveGame";
+   case LOADGAME : return "LoadGame";
    case GODLOG : return "GodLog";
    case DEBUG : return "Debug";  
    case ADDPACKET : return "AddPacket";

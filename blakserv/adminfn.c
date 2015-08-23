@@ -2093,6 +2093,8 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case POSTMESSAGE : strcpy(c_name, "Post"); break;
 		case GODLOG : strcpy(c_name, "GodLog"); break;
 		case DEBUG : strcpy(c_name, "Debug"); break;
+		case SAVEGAME : strcpy(c_name, "SaveGame"); break;
+		case LOADGAME : strcpy(c_name, "LoadGame"); break;
 		case ADDPACKET : strcpy(c_name, "AddPacket"); break;
 		case SENDPACKET : strcpy(c_name, "SendPacket"); break;
 		case SENDCOPYPACKET : strcpy(c_name, "SendCopyPacket"); break;

@@ -117,6 +117,45 @@ Bool LoadAllButAccountAtTime(char *time_str)
 	return load_ok;
 }
 
+Bool LoadFromKod(int save_time)
+{
+   // Check for a sane time value.
+   if (save_time < 0 || save_time > INT_MAX)
+   {
+      bprintf("LoadFromKod got invalid save game time!");
+      return false;
+   }
+
+   lprintf("LoadFromKod loading game\n");
+
+   // Boot everyone from game.
+   ForEachSession(HangupSessionNow);
+
+   ResetRoomData();
+   ResetUser();
+   ResetString();
+   ResetTimer();
+   ResetList();
+   ResetObject();
+
+   // Set the save game we want to load in LASTSAVE.
+   lprintf("Game save time forced to (%i)\n", save_time);
+   SaveControlFile(save_time);
+
+   // Can't reload accounts because sessions have pointers to accounts.
+   if (!LoadAllButAccount())
+      bprintf("LoadFromKod couldn't reload all, system dead\n");
+
+   // List nodes for client parameters.
+   AllocateParseClientListNodes();
+
+   // Since it's an older saved game, tell Blakod that everyone's off.
+   // Calls LoadedFromDisk() in system.kod.
+   SendTopLevelBlakodMessage(GetSystemObjectID(), LOADED_GAME_MSG, 0, NULL);
+
+   return true;
+}
+
 Bool LoadControlFile(int *last_save_time)
 {
 	FILE *loadfile;

@@ -15,5 +15,6 @@
 
 Bool LoadAll(void);
 Bool LoadAllButAccount(void);
+Bool LoadFromKod(int save_time);
 
 #endif

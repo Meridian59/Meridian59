@@ -3230,6 +3230,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_ZAP,#class=&Zap);
       Send(self,@CreateOneSpellIfNew,#num=SID_VAMPIRIC_DRAIN,#class=&VampiricDrain);
       Send(self,@CreateOneSpellIfNew,#num=SID_HOLY_TOUCH,#class=&HolyTouch);
+      Send(self,@CreateOneSpellIfNew,#num=SID_UNHOLY_TOUCH,#class=&UnholyTouch);
       Send(self,@CreateOneSpellIfNew,#num=SID_ICY_FINGERS,#class=&IcyFingers);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_WINDS,#class=&Winds);

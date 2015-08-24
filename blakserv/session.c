@@ -489,6 +489,19 @@ void CloseSession(int session_id)
 	LeaveSessionLock();
 }
 
+// Hangs up a session straight away, instead of posting to main loop.
+void HangupSessionNow(session_node *s)
+{
+   if (!s->connected)
+      return;
+
+   if (s->conn.type != CONN_SOCKET)
+      return;
+
+   CloseSession(s->session_id);
+   HangupSession(s);
+}
+
 void HangupSession(session_node *s)
 {
 	s->hangup = True;

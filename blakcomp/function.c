@@ -43,6 +43,8 @@ function_type Functions[] = {
 {"AppendListElem",      APPENDLISTELEM,  AEXPRESSION,   AEXPRESSION,  ANONE},
 {"Last",                LAST,            AEXPRESSION,   ANONE},
 {"Random",              RANDOM,          AEXPRESSION,   AEXPRESSION,  ANONE},
+{"SaveGame",            SAVEGAME,        ANONE},
+{"LoadGame",            LOADGAME,        AEXPRESSION,   ANONE},
 {"AddPacket",           ADDPACKET,       AEXPRESSIONS,  ANONE},
 {"SendPacket",          SENDPACKET,      AEXPRESSION,   ANONE},
 {"SendCopyPacket",      SENDCOPYPACKET,  AEXPRESSION,   ANONE},

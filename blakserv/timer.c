@@ -384,6 +384,11 @@ void ServiceTimers(void)
 	       VerifiedLoginSession(msg.lParam);
 	       LeaveServerLock();
 	       break;
+       case WM_BLAK_MAIN_LOAD_GAME :
+          EnterServerLock();
+          LoadFromKod(msg.lParam);
+          LeaveServerLock();
+          break;
 
 	    default :
 	       dprintf("ServiceTimers got unknown message %i\n",msg.message);

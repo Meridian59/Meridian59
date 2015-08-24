@@ -118,6 +118,9 @@ enum
    SENDMESSAGE = 11,
    POSTMESSAGE = 12,
 
+   SAVEGAME = 19,
+   LOADGAME = 20,
+
    GODLOG = 21,
    DEBUG = 22,
    ADDPACKET = 23,

@@ -182,6 +182,7 @@ Bool PeekSessionBytes(session_node *s,int num_bytes,void *buf);
 void SendClientStr(int session_id,char *str);
 void SendClient(int session_id,char *data,unsigned short len_data);
 void SendClientBufferList(int session_id,buffer_node *blist);
+void HangupSessionNow(session_node *s);
 void HangupSession(session_node *s);
 void CloseAllSessions(void);
 void PollSessions(void);

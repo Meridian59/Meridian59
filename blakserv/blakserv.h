@@ -215,6 +215,7 @@ char * GetLastErrorStr();
 #define WM_BLAK_MAIN_RECALIBRATE    (WM_APP + 4001)
 #define WM_BLAK_MAIN_DELETE_ACCOUNT (WM_APP + 4002)
 #define WM_BLAK_MAIN_VERIFIED_LOGIN (WM_APP + 4003)
+#define WM_BLAK_MAIN_LOAD_GAME      (WM_APP + 4004)
 
 #include "bof.h"
 

@@ -41,6 +41,8 @@ resources:
    KocatanBonePriestess_mrcnt_too_costly = \
       "AAAK TIC-TIC NYUK IK NYUK-TAK!!"
 
+   KocatanBonePriestess_stat_window_trigger = "change stats"
+
    KocatanBonePriestess_squawk_1 = "ak ak ak "
    KocatanBonePriestess_squawk_2 = "wak-wak "
    KocatanBonePriestess_squawk_3 = "ik ik "
@@ -147,6 +149,42 @@ messages:
       plSquawks = cons(KocatanBonePriestess_squawk_42, plSquawks);
       plSquawks = cons(KocatanBonePriestess_squawk_43, plSquawks);
       plSquawks = cons(KocatanBonePriestess_squawk_44, plSquawks);
+
+      plWantedItems = [&StatsResetToken];
+
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      local i;
+
+      if StringEqual(string,MrEl_stat_window_trigger)
+      {
+         if Send(what,@FindHolding,#class=&StatsResetToken) <> $
+            OR (Send(what,@GetBaseMaxHealth)
+               <= Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap))
+         {
+            Send(what,@SendStatChange);
+         }
+
+         if (IsClass(what,&User)) AND (type = SAY_NORMAL)
+         {
+            foreach i in plSquawks
+            {
+               if (StringContain(string, i))
+               {
+                  Send(self,@Say,#message_rsc=monster_percent_q,
+                        #parm1=Send(self,@GetRandomSquawking,
+                        #squawkLength=random(2,5)));
+
+                  break;
+               }
+            }
+         }
+
+      }
       propagate;
    }
 
@@ -247,23 +285,19 @@ messages:
       return;
    }
 
-   SomeoneSaid(what=$,type=$,string=$)
+   CanAcceptOffer()
    {
-      local i;
+      return TRUE;
+   }
 
-      if (IsClass(what,&User)) AND (type = SAY_NORMAL)
+   CheckWhyWanted(obj=$,who=$)
+   {
+      if IsClass(obj,&StatsResetToken)
       {
-         foreach i in plSquawks
-         {
-            if (StringContain(string, i))
-            {
-               Send(self,@Say,#message_rsc=monster_percent_q,
-                     #parm1=Send(self,@GetRandomSquawking,
-                     #squawkLength=random(2,5)));
+         Send(who,@SendStatChange);
 
-               break;
-            }
-         }
+         % We don't destroy the item, so return FALSE.
+         return FALSE;
       }
 
       propagate;

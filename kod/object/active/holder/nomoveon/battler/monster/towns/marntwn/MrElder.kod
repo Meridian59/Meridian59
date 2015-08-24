@@ -57,7 +57,7 @@ messages:
    Constructor()
    {
       plWantedItems = [&StatsResetToken];
-      
+
       propagate;
    }
 
@@ -129,7 +129,7 @@ messages:
 
       propagate;
    }
-   
+
    CanAcceptOffer()
    {
       return TRUE;

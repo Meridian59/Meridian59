@@ -13282,10 +13282,7 @@ messages:
       {
          if IsClass(i,&Instrument)
          {
-            if Send(i,@GetInstrumentLevel) > iPower
-            {
-               iPower = Send(i,@GetInstrumentLevel);
-            }
+            iPower = iPower + Send(i,@GetInstrumentLevel);
          }
       }
 

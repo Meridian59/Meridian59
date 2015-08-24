@@ -12,7 +12,7 @@ SacredResonance is HinderSpell
 
 constants:
 
-	include blakston.khd
+   include blakston.khd
 
 resources:
 
@@ -25,7 +25,7 @@ resources:
       "A ruby and an entroot berry are required to begin performing this song."
 
    SacredResonance_song = goodfor.mp3
- 
+
 classvars:
 
    vrName = SacredResonance_name_rsc

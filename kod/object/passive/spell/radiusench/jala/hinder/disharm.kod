@@ -12,7 +12,7 @@ Disharmony is HinderSpell
 
 constants:
 
-	include blakston.khd
+   include blakston.khd
 
 resources:
 
@@ -25,7 +25,7 @@ resources:
       "A single ruby is required to begin performing this song."
 
    Disharmony_song = bridge.mp3
- 
+
 classvars:
 
    vrName = Disharmony_name_rsc

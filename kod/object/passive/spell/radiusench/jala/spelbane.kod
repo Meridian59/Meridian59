@@ -53,8 +53,7 @@ classvars:
 
    viSpell_num = SID_SPELLBANE
    viSchool = SS_JALA
-   viSpell_level = 3
-   viBaseRange = 2
+   viSpell_level = 5
 
    viMana = 12          % Mana is amount used upon inititiation
    viManaDrain = 8      % Drain is amount used every viDrainTime milliseconds
@@ -69,7 +68,7 @@ classvars:
 properties:
 
    prMusic = Spellbane_song
-      
+
 messages:
 
    ResetReagents()

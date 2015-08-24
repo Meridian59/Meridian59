@@ -46,7 +46,7 @@ classvars:
    radius_ench_caster_enter = Mana_Convergence_caster_enter
    radius_ench_enter = Mana_Convergence_enter
    radius_ench_leave = Mana_Convergence_leave
-   
+
    vrName = ManaConvergence_name_rsc
    vrIcon = ManaConvergence_icon_rsc
    vrDesc = ManaConvergence_desc_rsc
@@ -66,7 +66,7 @@ classvars:
 properties:
 
    prMusic = ManaConvergence_song
-      
+
 messages:
 
    ResetReagents()

@@ -25,6 +25,8 @@ classvars:
 
    vrSucceed_wav = Jala_sound
 
+   viBaseRange = 12
+
 properties:
 
 

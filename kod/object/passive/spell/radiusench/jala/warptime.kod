@@ -49,7 +49,7 @@ classvars:
    radius_ench_caster_enter = Warp_Time_caster_enter
    radius_ench_enter = Warp_Time_enter
    radius_ench_leave = Warp_Time_leave
-   
+
    vrName = WarpTime_name_rsc
    vrIcon = WarpTime_icon_rsc
    vrDesc = WarpTime_desc_rsc
@@ -59,7 +59,6 @@ classvars:
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
    viSpell_Exertion = 0
    viSpell_num = SID_WARP_TIME
-   viBaseRange = 20
 
    viSchool = SS_JALA
    viSpell_level = 2

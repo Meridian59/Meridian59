@@ -38,7 +38,7 @@ resources:
    Mirth_caster_enter = "Your spirits lift a bit."
    Mirth_enter = "%s's mirthful song lifts your spirits a bit."
    Mirth_leave = "You can no longer hear the mirthful notes of %s's song."
-   
+
 classvars:
 
    radius_ench_cast = Mirth_cast
@@ -48,7 +48,7 @@ classvars:
    radius_ench_caster_enter = Mirth_caster_enter
    radius_ench_enter = Mirth_enter
    radius_ench_leave = Mirth_leave
-   
+
    vrName = Mirth_name_rsc
    vrIcon = Mirth_icon_rsc
    vrDesc = Mirth_desc_rsc
@@ -60,7 +60,6 @@ classvars:
    viMana = 2
    viManaDrain = 2
    viDrainTime = 5000
-   viBaseRange = 3
 
    viSpellExertion = 1
    viChance_To_Increase = 25
@@ -71,7 +70,7 @@ classvars:
 properties:
 
    prMusic = Mirth_song
-      
+
 messages:
 
    ResetReagents()

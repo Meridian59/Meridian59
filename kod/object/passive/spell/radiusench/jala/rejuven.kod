@@ -33,7 +33,7 @@ resources:
    Rejuvenate_caster_enter = "You feel the weariness of your soul diminish."
    Rejuvenate_enter = "%s's energizing song eases the weariness of your soul."
    Rejuvenate_leave = "You can no longer hear the energizing notes of %s's song."
-   
+
 classvars:
 
    radius_ench_cast = Rejuvenate_cast
@@ -43,7 +43,7 @@ classvars:
    radius_ench_caster_enter = Rejuvenate_caster_enter
    radius_ench_enter = Rejuvenate_enter
    radius_ench_leave = Rejuvenate_leave
-   
+
    vrName = Rejuvenate_name_rsc
    vrIcon = Rejuvenate_icon_rsc
    vrDesc = Rejuvenate_desc_rsc
@@ -55,9 +55,9 @@ classvars:
    viMana = 5           % Mana is amount used upon inititiation
    viManaDrain = 8      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
-   
+
    viPeriodicEffect = TRUE
-   
+
    viSpellExertion = 3
    viChance_To_Increase = 20
    viMeditate_ratio = 50
@@ -67,7 +67,7 @@ classvars:
 properties:
 
    prMusic = Rejuvenate_song
-      
+
 messages:
 
    ResetReagents()

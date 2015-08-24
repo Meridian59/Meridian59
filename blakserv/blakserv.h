@@ -301,5 +301,7 @@ char * GetLastErrorStr();
 #include "block.h"
 #include "database.h"
 
+#include "jansson.h"
+
 #endif
 

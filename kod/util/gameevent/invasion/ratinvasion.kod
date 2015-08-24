@@ -108,7 +108,7 @@ messages:
             % deletes the event in the GameEventEngine, which also calls
             % the appropriate code in EndEvent, which handles the end of
             % the specific event.
-            Send(self,@EventEnd);
+            Send(self,@NotifyEngineEndEvent);
          }
       }
 

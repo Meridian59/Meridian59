@@ -1225,6 +1225,11 @@ messages:
          Send(poQormas, @UserLogon, #who = what);
       }
 
+      if (poEventEngine <> $)
+      {
+         Send(poEventEngine,@UserLogon,#who=what);
+      }
+
       return;
    }
 
@@ -1287,6 +1292,11 @@ messages:
       if (poQormas <> $)
       {
          Send(poQormas,@UserLogoff,#who=what);
+      }
+
+      if (poEventEngine <> $)
+      {
+         Send(poEventEngine,@UserLogoff,#who=what);
       }
 
       return;
@@ -1783,6 +1793,12 @@ messages:
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
             war_string1, war_string2, oBook, oMaster;
+
+      % Notify the event engine
+      if (poEventEngine <> $)
+      {
+         Send(poEventEngine,@UserKilled,#who=what,#killer=killer);
+      }
 
       if IsClass(what,&Guest)
          OR (killer = $)

@@ -369,6 +369,17 @@ properties:
 
    poBrain = $
 
+   piTargetLocationRow
+   piTargetLocationCol
+   piTargetLocationFineRow = 0
+   piTargetLocationFineCol = 0
+   piPatrolAttempts = 0
+   plPatrolPath = $
+   pbLoopingPatrol = True
+   piPatrolNode = 0
+   % chance to move to next patrol node (1 to 10000)
+   piChanceToPatrol = 125
+
    %%% The Monster State Meta-Object
 
    % These should be modified only by the EnterStateX routines
@@ -546,6 +557,18 @@ messages:
       propagate;
    }
 
+   SetPatrolPath(lPath = $)
+   {
+      if(lPath <> $)
+      {
+         plPatrolPath = lPath;
+         Send(self,@SetBehaviorFlag,
+            #flag=AI_CAN_PATROL,#value=TRUE);
+      }
+      
+      return;
+   }
+   
    GetKocName()
    {
       return vrKocName;
@@ -1264,7 +1287,96 @@ messages:
    {
       return poCustomer;
    }
+   
+   CanPatrol()
+   {
+      if (plPatrolPath <> $)
+      {
+         return True;
+      }
+      
+      return False;
+   }
 
+   GetChanceToPatrol()
+   {
+      return piChanceToPatrol;
+   }
+   
+   SetChanceToPatrol(chance=125)
+   {
+      piChanceToPatrol = chance;
+      
+      return;
+   }
+   
+   SetLoopingPatrol(looping=True)
+   {
+      pbLoopingPatrol = looping;
+      return;
+   }
+   
+   GetNextPatrolNode()
+   {
+      if (plPatrolPath = $)
+      {
+         return;
+      }
+   
+      piPatrolNode = piPatrolNode + 1;
+      
+      if (piPatrolNode > Length(plPatrolPath))
+      {
+         if (pbLoopingPatrol)
+         {
+            piPatrolNode = 1;
+         }
+         else 
+         {
+            piPatrolNode = Length(plPatrolPath);
+         }
+      }
+   
+      return Nth(plPatrolPath, piPatrolNode);
+   }
+   
+   SetPatrolNode(node=1)
+   {
+      piPatrolNode = node;
+      return;
+   }
+   
+   IncrementPatrolAttempts()
+   {
+      piPatrolAttempts = piPatrolAttempts + 1;
+      
+      return;
+   }
+   
+   GetPatrolAttempts()
+   {
+      return piPatrolAttempts;
+   }
+   
+   ClearPatrolAttempts()
+   {
+      piPatrolAttempts = 0;
+      
+      return;
+   }
+   
+   ClearPatrolLocation()
+   {
+      Send(self,@SetBehaviorFlag,
+         #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
+      piTargetLocationRow  = 0;
+      piTargetLocationCol  = 0;
+      piTargetLocationFineRow = 0;
+      piTargetLocationFineCol = 0;
+      
+      return;
+   }
+   
    %%%  Action Routines
 
    AttackTimer(timer = $)
@@ -1725,6 +1837,51 @@ messages:
       return;
    }
 
+   DoGoTowardsLocation()
+   {
+         piPatrolAttempts = piPatrolAttempts + 1;
+      
+         Send(self,@MoveTowardsCoords,
+            #iRow=piTargetLocationRow,
+            #iCol=piTargetLocationCol,
+            #iFineRow=piTargetLocationFineRow,
+            #iFineCol=piTargetLocationFineCol);
+            
+         % for now just reaching the row and col is good enough
+         % fineness is ignored
+         if ((piRow = piTargetLocationRow)
+            AND (piCol = piTargetLocationCol))
+         {
+            Send(self,@SetBehaviorFlag,
+               #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
+            piPatrolAttempts = 0;
+         }
+         
+         % after a while just give up
+         if (piPatrolAttempts >= 500)
+         {
+            Send(self,@SetBehaviorFlag,
+               #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
+            piPatrolAttempts = 0;
+         }
+   
+      return;
+   }
+   
+   StartNextPatrolLeg()
+   {
+      local lPatrolNode;
+   
+      lPatrolNode = Send(self,@GetNextPatrolNode);
+            
+      if (lPatrolNode <> $)
+      {
+         Send(self,@GotoCoords,#iRow=Nth(lPatrolNode,1),#iCol=Nth(lPatrolNode,2));
+      }
+   
+      return;
+   }
+   
    %%% Combat messages
 
    TryAttack(what=$,stroke_obj=$)
@@ -2706,7 +2863,68 @@ messages:
 
       return;
    }
-    
+
+   MoveTowardsCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0,
+      face_target=FALSE, face_away=FALSE, to_master=FALSE)
+   {
+      local drow, dcol;
+      
+      if (iRow = $ or iCol = $)
+      {
+         return;
+      }
+      
+      % calculate square delta in highres-grid
+      drow = ((iRow * FINENESS) + iFineRow) / 16;
+      dcol = ((iCol * FINENESS) + iFineCol) / 16;
+      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
+      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+
+      return Send(self,@MoveInDirection,#row_diff=drow,#col_diff=dcol,
+                  #face_target=face_target,#face_away=face_away,
+                  #to_master=to_master);
+   }
+   
+   GotoCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0)
+   "Move to a specific row and column. warning! fineness really"
+   "isn't accurate as the monster will stop when it reaches the destination"
+   "row and column"
+   {
+      if (iRow = $ OR iCol = $)
+      {
+         return;
+      }
+   
+      piTargetLocationRow = iRow;
+      piTargetLocationCol = iCol;
+      piTargetLocationFineRow = iFineRow;
+      piTargetLocationFineCol = iFineCol;
+      Send(self,@SetBehaviorFlag,
+         #flag=AI_HAS_TARGET_LOCATION,#value=TRUE);
+   
+      return;
+   }
+   
+   GetTargetLocationRow()
+   {
+      return piTargetLocationRow;
+   }
+   
+   GetTargetLocationCol()
+   {
+      return piTargetLocationCol;
+   }
+   
+   GetTargetLocationFineRow()
+   {
+      return piTargetLocationFineRow;
+   }
+   
+   GetTargetLocationFineCol()
+   {
+      return piTargetLocationFineCol;
+   }
+   
    %%% Spasming messages
 
    SpasmMonsterTimer()
@@ -3673,6 +3891,9 @@ messages:
             % Notify the quest engine, to check if a quest is affected -AJM
             Send(Send(SYS,@GetQuestEngine),@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
+                  
+            Send(Send(SYS,@GetEventEngine),@MonsterKilled,#dead_monster=self,
+                  #killing_player=what,#corpse=oBody);                  
 
             Send(self,@CreateTreasure,#who=what,#corpse=oBody);
          }

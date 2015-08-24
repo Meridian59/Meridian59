@@ -1171,7 +1171,7 @@ void AdminWho(int session_id,admin_parm_type parms[],
               int num_blak_parm,parm_node blak_parm[])
 {
 	aprintf("\n");
-	aprintf("Name                Act Ver Sess Port               Where\n");
+	aprintf("Name                Act Ver Sess Port                   Where\n");
 	aprintf("--------------------------------------------------------"
 		"--------------------\n");
 	
@@ -1204,7 +1204,7 @@ void AdminWhoEachSession(session_node *s)
 		aprintf(" %-3s","No");
 	
 	aprintf(" %4i ",s->session_id);
-	aprintf("%-18.18s ",s->conn.name);
+	aprintf("%-22.22s ",s->conn.name);
 	
 	aprintf("%s",GetStateName(s));
 	

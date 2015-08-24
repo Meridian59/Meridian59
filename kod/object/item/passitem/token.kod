@@ -211,7 +211,9 @@ messages:
          Send(what,@MsgSendUser,#message_rsc=token_cantuse_rsc);
 
          Post(Send(what,@GetOwner),@NewHold,#what=self,
-               #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+               #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
+               #fine_row=Send(poOwner,@GetFineRow),
+               #fine_col=Send(poOwner,@GetFineCol));
       }
       else
       {
@@ -231,8 +233,9 @@ messages:
          {
             Send(what,@MsgSendUser,#message_rsc=token_cantuse_rsc);
             Post(Send(what,@GetOwner),@NewHold,#what=self,
-                  #new_row=Send(poOwner,@GetRow),
-                  #new_col=Send(poOwner,@GetCol));
+                  #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
+                  #fine_row=Send(poOwner,@GetFineRow),
+                  #fine_col=Send(poOwner,@GetFineCol));
          }
       }
 
@@ -317,7 +320,7 @@ messages:
    "Called when the token is dropped or unused (same thing). The special"
    "where flag is needed to handle guild hall enterings."
    {
-      local iVigorRestThreshold, oldOwner, oldrow, oldcol, oldroom;
+      local iVigorRestThreshold, oldOwner, oldroom;
 
       if (NOT pbIn_use)
       {
@@ -342,19 +345,20 @@ messages:
             #amount=iVigorRestThreshold+piVigorRestThresholdChange);
       piVigorRestThresholdChange = 200;
 
-      if where<>$
+      if where <> $
       {
          Post(where,@NewHold,#what=self,#new_row=Send(poOwner,@GetRow),
-               #new_col=Send(poOwner,@GetCol));
+               #new_col=Send(poOwner,@GetCol),#fine_row=Send(poOwner,@GetFineRow),
+               #fine_col=Send(poOwner,@GetFineCol));
       }
       else
       {
          oldOwner = poOwner;
          oldRoom = Send(poOwner,@GetOwner);
-         oldCol = Send(poOwner,@GetCol);
-         oldRow = Send(poOwner,@GetRow);
          Post(self,@CheckForDrop,#owned=oldOwner,#oldroom=oldroom,
-               #oldrow=oldrow,#oldcol=oldcol);
+               #oldrow=Send(poOwner,@GetRow),#oldcol=Send(poOwner,@GetCol),
+               #oldfinerow=Send(poOwner,@GetFineRow),
+               #oldfinecol=Send(poOwner,@GetFineCol));
       }
 
       if vrTokenOverlay <> $
@@ -370,27 +374,32 @@ messages:
    % the owner when we get here, it means we unused it ourselves, and
    % need to drop it.
 
-   CheckForDrop(owned=$, oldroom = $, oldrow = 20, oldcol = 20)
+   CheckForDrop(owned = $, oldroom = $, oldrow = 20, oldcol = 20,
+                oldfinerow = 32, oldfinecol = 32)
    {
       Post(self,@CheckForDropTwo,#owned=owned,#oldroom=oldroom,
-            #oldrow=oldrow,#oldcol=oldcol);
+            #oldrow=oldrow,#oldcol=oldcol,#oldfinerow=oldfinerow,
+            #oldfinecol=oldfinecol);
 
       return;
    }
 
-   CheckForDropTwo(owned=$,oldroom=$,oldrow=20,oldcol=20)
+   CheckForDropTwo(owned = $, oldroom = $, oldrow = 20, oldcol = 20,
+                   oldfinerow = 32, oldfinecol = 32)
    {
       if poOwner = owned AND NOT pbRejectedOffer
       {
          if Send(poOwner,@GetOwner) = $ AND oldroom <> $
          {
-            Send(oldroom,@NewHold,#what=self,#new_row=oldrow,#new_col=oldcol);
+            Send(oldroom,@NewHold,#what=self,#new_row=oldrow,#new_col=oldcol,
+                  #fine_row=oldfinerow,#fine_col=oldfinecol);
          }
          else
          {
             Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
-                  #new_row=Send(poOwner,@GetRow),
-                  #new_col=Send(poOwner,@GetCol));
+                  #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
+                  #fine_row=Send(poOwner,@GetFineRow),
+                  #fine_col=Send(poOwner,@GetFineCol));
          }
       }
 

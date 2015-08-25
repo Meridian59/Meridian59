@@ -457,14 +457,16 @@ messages:
             {
                if Nth(Nth(i,1),5) = iMinute
                {
-                  Send(Nth(i,2),Nth(i,3),
+                     % foreach creates a copy of the list so i exists even if we
+                     % delete it from the original list
+                     plCallbacks = DelListElem(plCallbacks,i);
+                     Send(Nth(i,2),Nth(i,3),
                         #parm1=Nth(i,4),#parm2=Nth(i,5),#parm3=Nth(i,6),
                         #parm4=Nth(i,7),#parm5=Nth(i,8),#parm6=Nth(i,9),
                         #parm7=Nth(i,10),#parm8=Nth(i,11),#parm9=Nth(i,12),
                         #parm10=Nth(i,13),#parm11=Nth(i,14),#parm12=Nth(i,15),
                         #parm13=Nth(i,16),#parm14=Nth(i,17),#parm15=Nth(i,18));
-                  plCallbacks = DelListElem(plCallbacks,i);
-               }
+                }
                else
                {
                   if Nth(Nth(i,1),5) < iMinute

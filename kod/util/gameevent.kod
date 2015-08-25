@@ -25,8 +25,8 @@ classvars:
 
    vrStartMessage = event_start_msg
    vrEndMessage = event_end_msg
-
    vbAnnounce = FALSE
+   vbUnique = TRUE
 
 properties:
 
@@ -53,6 +53,11 @@ messages:
       return;
    }
 
+   IsUnique()
+   {
+      return vbUnique;
+   }
+   
    Update()
    {
       return;

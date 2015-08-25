@@ -18,6 +18,9 @@ resources:
 
    event_success_rsc = "Success."
    event_failure_rsc = "Failure."
+   event_failure_duplicate_rsc = \
+      "Failure. Event type is unique and an event of"
+      " that type is already active."
 
 classvars:
 
@@ -30,17 +33,6 @@ properties:
 
 messages:
 
-   go()
-   {
-      Send(self,@EventStart,#parm1=&OrcInvasion);
-      return;
-   }
-
-   stop()
-   {
-      Send(self,@EventEnd,#parm1=Nth(plActiveEvents,1));
-      return;
-   }
    
    Constructor()
    {
@@ -418,10 +410,21 @@ messages:
    EventStart(parm1=$)
    "parm1 should be the class of an event."
    {
-      local oEvent;
+      local i, oEvent;
 
       oEvent = $;
 
+      % first make sure this would not create a second copy of an event that
+      % is unique
+      foreach i in plActiveEvents
+      {
+         if IsClass(i,parm1) AND Send(i,@IsUnique)
+         {
+            Debug("Error, unique event type and an event of that type is already active.");
+            return event_failure_duplicate_rsc;
+         }
+      }
+      
       if parm1 <> $
       {
          oEvent = Create(parm1);
@@ -439,10 +442,10 @@ messages:
       else
       {
          Debug("Error Starting Event!",parm1);
-         return system_failure_rsc;
+         return event_failure_rsc;
       }
 
-      return system_success_rsc;
+      return event_success_rsc;
    }
 
    EventEnd(parm1=$)

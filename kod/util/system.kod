@@ -393,8 +393,6 @@ properties:
 
    poWarEvent = $
    
-   poQormas = $
-
    % Hash table for users.
    phUsers
    % Hash table for rooms.
@@ -808,11 +806,6 @@ messages:
          Send(self,@RefigureAllAbilityTotals);
       }
 
-      if poQormas <> $
-      {
-         Send(poQormas,@Reset);
-      }
-      
       Send(self,@RecalcLightAndWeather);
       Send(self,@ReturnShrineAllegiance);
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
@@ -1220,11 +1213,6 @@ messages:
          Send(poChaosNight, @UserLogon, #who = what);
       }
       
-      if (poQormas <> $)
-      {
-         Send(poQormas, @UserLogon, #who = what);
-      }
-
       if (poEventEngine <> $)
       {
          Send(poEventEngine,@UserLogon,#who=what);
@@ -1287,11 +1275,6 @@ messages:
 
             break;
          }
-      }
-
-      if (poQormas <> $)
-      {
-         Send(poQormas,@UserLogoff,#who=what);
       }
 
       if (poEventEngine <> $)
@@ -1476,11 +1459,6 @@ messages:
       Send(Send(self,@FindSpellByNum,#num=SID_NODEBURST),@NewDay);
 
       Send(self,@VerifyUsersLoggedOn);
-      
-      if (poQormas <> $)
-      {
-         Send(poQormas,@NewDay);
-      }
 
       return;
    }
@@ -5082,41 +5060,18 @@ messages:
    {
       return poEventEngine;
    }
-   
-   GetQormas()
-   {
-      return poQormas;
-   }
-   
-   StartQormas()
-   {
-      % Qormas already started!
-      if (poQormas <> $)
-      {
-         return system_failure_rsc;
-      }
-      
-      poQormas = Create(&Qormas);
-      Send(poQormas,@StartQormas);
-      
-      return system_success_rsc;
-   }
-   
-   EndQormas()
-   {
-      % No Qormas to end!
-      if (poQormas = $)
-      {
-         return system_failure_rsc;
-      }
-      
-      Send(poQormas,@EndQormas);
-      Send(poQormas,@Delete);
-      poQormas = $;
-      
-      return system_success_rsc;
-   }
 
+   StartEvent(event_type=$)
+   "event_type should be the class type of an event"
+   {
+      return Send(poEventEngine,@EventStart,#parm1=event_type);
+   }
+   
+   EndEvent(event_obj=$)
+   {
+      return Send(poEventEngine,@EventEnd,#parm1=event_obj);
+   }
+   
    GetChaosNight()
    "Return true if there's a chaos night (\"frenzy\") running."
    {

@@ -67,6 +67,8 @@ properties:
    viObject_flags = OF_NOEXAMINE | OF_GETTABLE
    vrIcon = QormasGift_icon_rsc
 
+   poQormas = $
+
    poRecipient = $
 
    % individual gift payload toggles
@@ -91,13 +93,17 @@ properties:
    
 messages:   
 
-   Constructor(mask=FALSE)
+   Constructor(mask=FALSE,qormas_obj=$)
    {
       Send(self,@SetRandomPaper);
       
       if (mask)
       {
          pbMaskPossible = TRUE;
+      }
+      if(qormas_obj)
+      {
+         poQormas = qormas_obj;
       }
       
       propagate;
@@ -390,15 +396,11 @@ messages:
 
    NewOwner(what=$)
    {
-      local oQormas;
-
-      oQormas = Send(SYS,@GetQormas);
-
-      if (oQormas <> $)
+      if (poQormas <> $)
       {
          if (IsClass(what,&User))
          {
-            Send(oQormas,@GiftClaimed,#what=self,#who=what);
+            Send(poQormas,@GiftClaimed,#what=self,#who=what);
          }
       }
 

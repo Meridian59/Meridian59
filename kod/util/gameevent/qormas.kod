@@ -8,7 +8,7 @@
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Qormas is UtilityFunctions
+Qormas is GameEvent
 
 constants:
 
@@ -18,11 +18,11 @@ resources:
 
    include qormas.lkod
 
-   Qormas_start_message = \
+   Qormas_StartMessage = \
       "~B~kMerry Qormas!\n"
       "~kThe citizens of Meridian have decorated in celebration of the "
       "holidays.  "
-   Qormas_end_message = \
+   Qormas_EndMessage = \
       "~B~kTired of looking at Qormas trees, the citizens of Meridian "
       "have removed all of the holiday decorations. "
       
@@ -30,6 +30,10 @@ resources:
       "\n~kMerry Qormas!  A gift awaits you at %s.\n"
 
 classvars:
+
+   vrStartMessage = Qormas_StartMessage
+   vrEndMessage = Qormas_EndMessage
+   vbAnnounce = TRUE
 
 properties:
 
@@ -92,6 +96,19 @@ messages:
       return;
    }
 
+   % required GameEvent Overload
+   StartEvent()
+   {
+      Send(self,@StartQormas);
+      propagate;
+   }
+   
+   EndEvent()
+   {
+      Send(self,@EndQormas);
+      propagate;
+   }
+   
    StartQormas(override=FALSE,bDisplayMessage=TRUE)
    {
       local oDecoration, oRoom;
@@ -444,20 +461,11 @@ messages:
          Send(&Room,@StartSnow);
       }
 
-      if bDisplayMessage
-      {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=Qormas_start_message);
-      }
-
       return TRUE;
    }
 
    EndQormas(reporter=$,bDisplayMessage=TRUE)
    {
-      if bDisplayMessage
-      {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=Qormas_end_message);
-      }
 
       Send(self,@RemoveDecorations);
 
@@ -676,11 +684,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -709,11 +717,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -736,11 +744,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -768,11 +776,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -795,11 +803,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -827,11 +835,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -854,11 +862,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -886,11 +894,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);

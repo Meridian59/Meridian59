@@ -18,22 +18,23 @@ resources:
 
    include qormas.lkod
 
-   Qormas_StartMessage = \
-      "~B~kMerry Qormas!\n"
-      "~kThe citizens of Meridian have decorated in celebration of the "
-      "holidays.  "
-   Qormas_EndMessage = \
-      "~B~kTired of looking at Qormas trees, the citizens of Meridian "
+   Qormas_start_Message = \
+      "~B~k[Event] ~vMerry Qormas!\n"
+      "~k[Event] ~vThe citizens of Meridian have decorated in celebration of the "
+      "holidays!  "
+   Qormas_end_Message = \
+      "~B~k[Event] ~vTired of looking at Qormas trees, the citizens of Meridian "
       "have removed all of the holiday decorations. "
       
    Qormas_gift_hint = \
-      "\n~kMerry Qormas!  A gift awaits you at %s.\n"
+      "\n~B~k[Event] ~vMerry Qormas!  A gift awaits you at %s.\n"
 
 classvars:
 
-   vrStartMessage = Qormas_StartMessage
-   vrEndMessage = Qormas_EndMessage
+   vrStartMessage = Qormas_start_message
+   vrEndMessage = Qormas_end_message
    vbAnnounce = TRUE
+   viRunDays = 1
 
 properties:
 
@@ -99,10 +100,30 @@ messages:
    % required GameEvent Overload
    StartEvent()
    {
+      local oRealTime, sMessage;
+      
       Send(self,@StartQormas);
+      
+      oRealTime = Send(SYS,@GetRealTimeObject);
+
+      sMessage = SetString($,@NotifyEngineEndEvent);
+      Debug("TEMPORARY CODE HERE, DELETE ME!");
+      % TODO: ALSO CHANGE vbRunDays
+      % TODO: ALSO CHANGE vbRunDays
+      % TODO: ALSO CHANGE vbRunDays
+      %Send(oRealTime,@RegisterCallbackInDays,
+      %               #oObject=self,
+      %               #days=viRunDays,
+      %               #message=sMessage);
+      Send(oRealTime,@RegisterCallbackInMinutes,
+                     #oObject=self,
+                     #minutes=viRunDays,
+                     #message=sMessage);
+      
       propagate;
    }
    
+   % not required to overload, but a good idea for cleanup
    EndEvent()
    {
       Send(self,@EndQormas);

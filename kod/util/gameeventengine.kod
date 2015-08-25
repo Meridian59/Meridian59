@@ -448,14 +448,17 @@ messages:
       return event_success_rsc;
    }
 
-   EventEnd(parm1=$)
+   EventEnd(parm1=$,override_delete=FALSE)
    "parm1 should be an active event object."
    {
       if parm1 <> $
       {
          Send(parm1,@EndEvent);
          plActiveEvents = DelListElem(plActiveEvents,parm1);
-         Send(parm1,@Delete);
+         if NOT (override_delete)
+         {
+            Send(parm1,@Delete);
+         }
       }
 
       return;

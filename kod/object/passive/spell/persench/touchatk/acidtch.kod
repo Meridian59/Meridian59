@@ -23,7 +23,7 @@ resources:
    AcidTouch_desc_rsc = \
       "Burns the target with the force of a powerful acid, "
       "penetrating armor, clothing, and flesh.  "
-      "Requires entroot berries."
+      "Requires a single entroot berry to cast."
 
    AcidTouch_On_rsc = "The corrosive spittle of Qor's love oozes from the pores of your hand."
    AcidTouch_Off_rsc = "Your hands no longer drip with acidic ooze."

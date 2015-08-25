@@ -22,7 +22,7 @@ resources:
    UnholyTouch_desc_rsc = \
       "Dark energy from Qor sears your target.  More effective on good "
       "targets.   "
-      "Requires a single entroot berry."
+      "Requires a single fairy wing to cast."
 
    UnholyTouch_already_enchanted_rsc = \
       "Your hands are already bathed in Qor's magic."
@@ -93,7 +93,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&EntrootBerry,1],plReagents);
+      plReagents = Cons([&FairyWing,1],plReagents);
 
       return;
    }

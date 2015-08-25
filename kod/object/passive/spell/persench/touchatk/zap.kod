@@ -22,7 +22,7 @@ resources:
    Zap_icon_rsc = izap.bgf
    Zap_desc_rsc = \
       "Channels natural electrical energy into a powerful charge transmitted with a touch.  "
-      "Requires blue mushrooms to cast."
+      "Requires a blue mushroom to cast."
 
    Zap_already_enchanted_rsc = "Your hands already crackle with electric charge."
    Zap_On_rsc = "Sparks jump and crackle from your fingertips."

@@ -1099,9 +1099,6 @@ properties:
    piRemainingPhaseTime = 60000 * 8
    ptCanPhaseTimer = $
 
-   % Put new reagents in your bag
-   pbReagentBagAuto = TRUE
-   
    % Spectator mode?
    pbSpectatorMode = FALSE
 
@@ -14847,18 +14844,6 @@ messages:
       return;
    }
 
-   GetReagentBagAuto()
-   {
-      return pbReagentBagAuto;
-   }
-
-   SetReagentBagAuto(value=TRUE)
-   {
-      pbReagentBagAuto = value;
-
-      return;
-   }
-   
    GetLastPvpWarned()
    {
       return piTimeAttackedByPlayer;

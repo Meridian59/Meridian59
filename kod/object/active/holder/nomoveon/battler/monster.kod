@@ -6088,13 +6088,12 @@ messages:
 
       oTreasure_type = Send(SYS,@FindTreasureByNum,
                             #num=Send(self,@GetTreasureType));
-      
       if oTreasure_type = $
-      {         
+      {
          Debug("Can't find monster treasure type",Send(self,@GetTreasureType),
                vrname,self);
-         
-         return; 
+
+         return;
       }
 
       lTreasureItems = $;
@@ -6119,16 +6118,15 @@ messages:
             iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor)*iNumberItems)/100;
             iNumberItems = Bound(iNumberItems,1,$);
          }
-      
+
          tokengen = TRUE;
          i = 1;
-      
-         while i <= iNumberItems
+
+         while i++ <= iNumberItems
          {
             oTreasure = Send(oTreasure_type,@GenerateTreasure,#level=viLevel,
-                             #who=who,#mob=self,#tokengen=tokengen,
-                             #corpse=corpse);
-
+                              #who=who,#mob=self,#tokengen=tokengen,
+                              #corpse=corpse);
             if oTreasure <> $
             {
                if IsClass(oTreasure,&SpellItem)
@@ -6136,23 +6134,20 @@ messages:
                   iSafetyCntr = 0;
 
                   while (NOT Send(oTreasure,@SpellItemIsAccessible))
-                        AND iSafetyCntr < 5
+                        AND iSafetyCntr++ < 5
                   {
                      oTreasure = Send(oTreasure_type,@GenerateTreasure,
                                       #level=viLevel,#who=who,#mob=self,
                                       #tokengen=tokengen,#corpse=corpse);
-                     iSafetyCntr = iSafetyCntr + 1;
                   }
                }
-            
-               if IsClass(oTreasure,&Token) 
+
+               if IsClass(oTreasure,&Token)
                {
                   tokengen = FALSE;
                }
 
-               lTreasureItems = cons(oTreasure, lTreasureItems);
-            
-               i = i + 1;
+               lTreasureItems = Cons(oTreasure,lTreasureItems);
             }
          }
       }
@@ -6160,12 +6155,12 @@ messages:
       % Add in our inventory
       foreach i in plActive
       {
-         lTreasureItems = cons(i,lTreasureItems);
+         lTreasureItems = Cons(i,lTreasureItems);
       }
 
       foreach i in plPassive
       {
-         lTreasureItems = cons(i,lTreasureItems);
+         lTreasureItems = Cons(i,lTreasureItems);
       }
 
       % Add money to the treasure
@@ -6185,7 +6180,7 @@ messages:
                      * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
-         lTreasureItems = cons(oMoney,lTreasureItems);
+         lTreasureItems = Cons(oMoney,lTreasureItems);
       }
 
       % Add one set of spell reagents to the treasure for each type of spell 
@@ -6213,37 +6208,35 @@ messages:
             Send(poOwner,@NewHold,#what=oTreasure,
                   #new_row=piRow,#new_col=piCol,
                   #fine_row=piFine_row,#fine_col=piFine_col);
-            
+
             if NOT IsClass(oTreasure,&Money)
             {
-               iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+               ++iNumberOfItemsDropped;
             }
 
             if IsClass(oTreasure,&NumberItem)
                AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
                AND Send(oTreasure,@GetPos) <> $
                AND IsClass(who,&User)
-               AND Send(who,@IsAutolooting)
+               AND Send(who,@CheckPlayerFlag,#flag=PFLAG_AUTOLOOT)
                AND (IsClass(oTreasure,&Money)
                        OR (NOT bRangeFailure
                            AND NOT bCapacityFailure))
             {
                iGetResult = Send(who,@UserGet,#what=oTreasure,#report=FALSE);
-               
-               If NOT IsClass(oTreasure,&Money)
+               if NOT IsClass(oTreasure,&Money)
                   AND (iGetResult = AUTOLOOT_GOT_ITEM
                          OR iGetResult = AUTOLOOT_GOT_PARTIAL_STACK)
                {
-                  iNumberOfItemsLooted = iNumberOfItemsLooted + 1;
+                  ++iNumberOfItemsLooted;
                }
-               
+
                if iGetResult = AUTOLOOT_OUT_OF_RANGE
                {
                   bRangeFailure = TRUE;
                }
-               
-               if iGetResult = AUTOLOOT_GOT_PARTIAL_STACK
-                  OR iGetResult = AUTOLOOT_CANNOT_GET
+               else if (iGetResult = AUTOLOOT_GOT_PARTIAL_STACK
+                        OR iGetResult = AUTOLOOT_CANNOT_GET)
                {
                   bCapacityFailure = TRUE;
                }
@@ -6254,78 +6247,79 @@ messages:
             Send(oTreasure,@Delete);
          }
       }
-      
+
+      % Handle autoloot resources displayed to user.
       if iNumberOfItemsDropped <> 0
          AND IsClass(who,&User)
-         AND Send(who,@IsAutolooting)
+         AND Send(who,@CheckPlayerFlag,#flag=PFLAG_AUTOLOOT)
       {
          if bRangeFailure
          {
             Send(who,@MsgSendUser,#message_rsc=autoloot_too_far_away);
+
             return;
          }
-         
+
          if bCapacityFailure
          {
             if iNumberOfItemsLooted > 0
             {
                Send(who,@MsgSendUser,#message_rsc=autoloot_got_some_but_full_now);
             }
-            
-            if iNumberOfItemsLooted = 0
+            else if iNumberOfItemsLooted = 0
             {
                if iRandomCashAmount > 0
                {
                   Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,
-                     #parm1=Send(oMoney,@GetNumber));
+                        #parm1=Send(oMoney,@GetNumber));
                }
                else
                {
                   Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
                }
             }
+
             return;
          }
-         
-         if iNumberOfItemsLooted = iNumberOfItemsDropped
-            AND iNumberOfItemsLooted > 0
-         {
-            if iRandomCashAmount > 0
-            {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_all,
-                  #parm1=Send(oMoney,@GetNumber));
-            }
-            else
-            {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
-            }
-         }
-         
+
          if iNumberOfItemsLooted > 0
-            AND iNumberOfItemsLooted < iNumberOfItemsDropped
+         {
+            if iNumberOfItemsLooted = iNumberOfItemsDropped
+            {
+               if iRandomCashAmount > 0
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_all,
+                        #parm1=Send(oMoney,@GetNumber));
+               }
+               else
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+               }
+            }
+            else if iNumberOfItemsLooted < iNumberOfItemsDropped
+            {
+               if iRandomCashAmount > 0
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_some,
+                        #parm1=Send(oMoney,@GetNumber));
+               }
+               else
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+               }
+            }
+         }
+         else if iNumberOfItemsLooted = 0
          {
             if iRandomCashAmount > 0
             {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_some,
-                  #parm1=Send(oMoney,@GetNumber));
+               Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
+                     #parm1=Send(oMoney,@GetNumber));
             }
-            else
+            else if iRandomCashAmount <= 0
             {
-               Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+               Send(who,@MsgSendUser,#message_rsc=autolooted_none);
             }
-         }
-         
-         if iNumberOfItemsLooted = 0
-            AND iRandomCashAmount > 0
-         {
-            Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,
-               #parm1=Send(oMoney,@GetNumber));
-         }
-         
-         if iNumberOfItemsLooted = 0
-            AND iRandomCashAmount <= 0
-         {
-            Send(who,@MsgSendUser,#message_rsc=autolooted_none);
          }
       }
 
@@ -6409,9 +6403,9 @@ messages:
       {
          return;
       }
-      
+
       Send(self,@Delete);
-      
+
       return;
    }
 

@@ -477,7 +477,6 @@ classvars:
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
-   
    viDM = FALSE
 
 properties:
@@ -528,14 +527,11 @@ properties:
    % This is a token-bucket to limit speedhacking.
    % Moves are accepted unless there is not enough tokens in the bucket left.
    piMovementBucket = 0
-   
+
    piCheaterLogs = 0
 
-   pbAutoCombine = TRUE
-   pbAutoloot = TRUE
-
    ptLogonDelayTimer = $
-   
+
    % What order do you want your inventory sorted in?
    plClassOrderPreferences = $
 
@@ -5266,18 +5262,18 @@ messages:
    UserSayReagentBag(string = $)
    {
       if StringContain(string,user_say_reagentbag_on)
-         AND NOT Send(self,@GetReagentBagAuto)
+         AND NOT (piFlags & PFLAG_REAGENTBAG)
       {
-         Send(self,@SetReagentBagAuto,#value=TRUE);
+         piflags = (piFlags | PFLAG_REAGENTBAG);
          Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_on);
 
          return TRUE;
       }
 
       if StringContain(string,user_say_reagentbag_off)
-         AND Send(self,@GetReagentBagAuto)
+         AND (piFlags & PFLAG_REAGENTBAG)
       {
-         Send(self,@SetReagentBagAuto,#value=FALSE);
+         piflags = (piFlags & ~PFLAG_REAGENTBAG);
          Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_off);
 
          return TRUE;
@@ -5289,18 +5285,18 @@ messages:
    UserSayAutocombine(string = $)
    {
       if StringContain(string,user_say_autocombine_on)
-         AND NOT Send(self,@IsAutoCombining)
+         AND NOT (piFlags2 & PFLAG2_AUTOCOMBINE)
       {
-         Send(self,@SetAutoCombine,#value=TRUE);
+         piflags2 = (piFlags2 | PFLAG2_AUTOCOMBINE);
          Send(self,@MsgSendUser,#message_rsc=autocombine_on_msg);
 
          return TRUE;
       }
 
       if StringContain(string,user_say_autocombine_off)
-         AND Send(self,@IsAutoCombining)
+         AND (piFlags2 & PFLAG2_AUTOCOMBINE)
       {
-         Send(self,@SetAutoCombine,#value=FALSE);
+         piflags2 = (piFlags2 & ~PFLAG2_AUTOCOMBINE);
          Send(self,@MsgSendUser,#message_rsc=autocombine_off_msg);
 
          return TRUE;
@@ -5312,18 +5308,18 @@ messages:
    UserSayAutoloot(string = $)
    {
       if StringContain(string,user_say_autoloot_on)
-         AND NOT Send(self,@IsAutolooting)
+         AND NOT (piFlags & PFLAG_AUTOLOOT)
       {
-         Send(self,@SetAutoloot,#value=TRUE);
+         piFlags = piFlags | PFLAG_AUTOLOOT;
          Send(self,@MsgSendUser,#message_rsc=autoloot_on_msg);
 
          return TRUE;
       }
 
       if StringContain(string,user_say_autoloot_off)
-         AND Send(self,@IsAutolooting)
+         AND (piFlags & PFLAG_AUTOLOOT)
       {
-         Send(self,@SetAutoloot,#value=FALSE);
+         piFlags = piFlags & ~PFLAG_AUTOLOOT;
          Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
 
          return TRUE;
@@ -7317,14 +7313,14 @@ messages:
          AND NOT IsClass(what,&Money)
          AND NOT bFromReagentBag
          AND Send(self,@GetReagentBag) <> $
-         AND Send(self,@GetReagentBagAuto)
+         AND (piFlags & PFLAG_REAGENTBAG)
       {
          Post(Send(self,@GetReagentBag),@NewHold,#what=what,#where=Send(self,@GetReagentBag));
          return;
       }
-      
-      If IsClass(what,&SpellItem)
-         AND Send(self,@IsAutoCombining)
+
+      if IsClass(what,&SpellItem)
+         AND (piFlags2 & PFLAG2_AUTOCOMBINE)
          AND check_combine
       {
          oLastSpellItem = $;
@@ -10091,28 +10087,6 @@ messages:
       return 0;
    }
 
-   SetAutoloot(value=TRUE)
-   {
-      pbAutoloot = value;
-      return;
-   }
-   
-   IsAutolooting()
-   {
-      return pbAutoloot;
-   }
-
-   IsAutoCombining()
-   {
-      return pbAutoCombine;
-   }
-   
-   SetAutoCombine(value=TRUE)
-   {
-      pbAutoCombine = value;
-      return;
-   }
-   
    GetIP()
    "Returns the user's ip in a list which contains the 4 octets"
    "use this message for comparisons and the string message sparingly"

@@ -2252,7 +2252,7 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x1C63D7E
+   PFLAG_MASK              = 0x7C63D7E
 
    PFLAG_INVISIBLE         = 0x0000001
    PFLAG_MURDERER          = 0x0000002
@@ -2282,10 +2282,13 @@
    PFLAG_MOVED_SINCE_ENTRY = 0x0400000
    PFLAG_GROUPING          = 0x0800000
    PFLAG_KILLED_BY_PLAYER  = 0x1000000
+   PFLAG_REAGENTBAG        = 0x2000000
+   PFLAG_AUTOLOOT          = 0x4000000
+   % This PFLAG is full.
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG2_MASK             = 0x003E80
+   PFLAG2_MASK             = 0x007E80
 
    PFLAG2_HASTED           = 0x000001
    PFLAG2_DANCING          = 0x000002
@@ -2305,6 +2308,7 @@
    % Sum of the other squelched flags.
    PFLAG2_SQUELCHED_ALL    = 0x001E00
    PFLAG2_TEMPSAFE         = 0x002000
+   PFLAG2_AUTOCOMBINE      = 0x004000
 
    % Set of flags just for DM's
    % DM is completely invisible

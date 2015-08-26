@@ -1698,515 +1698,432 @@ messages:
       return Send(SYS,@GetSuccessRsc);
    }
 
+   UserCommandSuicide()
+   {
+      if poGuild <> $
+         AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_cant_suicide);
+
+         return;
+      }
+
+      if IsClass(poOwner,&OutOfGrace)
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_OOG);
+
+         return;
+      }
+
+      if GetTime() < piLast_restart_time + SUICIDE_REPEAT_TIME
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_yet);
+
+         return;
+      }
+
+      if Send(self,@FindHolding,#class=&Token)
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_token);
+
+         return;
+      }
+
+      if Send(SETTINGS_OBJECT,@GetMaxSuicideHP) <= piBase_Max_health
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_hp);
+
+         return;
+      }
+
+      % Successful SUICIDE.
+      Send(self,@PerformSuicide);
+
+      return;
+   }
+
+   UserCommandSetSafety(value = 0)
+   {
+      Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=value);
+      if value
+      {
+         if Send(SYS,@IsPKAllowed)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+            Send(self,@WaveSendUser,#what=self,
+                  #wave_rsc=user_safety_on_wav_rsc);
+         }
+      }
+      else
+      {
+         if Send(SYS,@IsPKAllowed)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_safety_off);
+            Send(self,@WaveSendUser,#what=self,
+                  #wave_rsc=user_safety_off_wav_rsc);
+         }
+      }
+
+      return;
+   }
+
+   UserCommandSetTempSafe(value = 0)
+   {
+      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMP_SAFETY,#value=value);
+
+      if piBase_max_health > 99
+         OR (piFlags & PFLAG_MURDERER)
+         OR (piFlags & PFLAG_OUTLAW)
+         OR Send(self,@FindUsing,#class=&SoldierShield) <> $
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_temp_safe_invalid);
+
+         return;
+      }
+
+      if value
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_temp_safe_on);
+      }
+      else
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_temp_safe_off);
+      }
+
+      return;
+   }
+
+   UserCommandSetGrouping(value = 0)
+   {
+      Send(self,@SetPlayerFlag,#flag=PFLAG_GROUPING,#value=value);
+      if value
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_grouping_on);
+      }
+      else
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_grouping_off);
+      }
+
+      return;
+   }
+
    UserCommand(client_msg=$, number_stuff=$)
    {
-      local iClient_cmd, i, oMoney, cost, oGuild, oWhat;
+      local iClient_cmd, oWhat;
 
       iClient_cmd = First(client_msg);
-      
+
       % TODO: Should arrange in decreasing order of frequency
 
-      if iClient_cmd = UC_REST
+      switch(iClient_cmd)
       {
-         Send(self,@StartResting);
-         
-         return;
-      }
-      
-      if iClient_cmd = UC_STAND
-      {
-         Send(self,@StopResting);
-         
-         return;
-      }
-
-      if iClient_cmd = UC_SUICIDE
-      {
-         if poGuild <> $ and Send(poGuild,@GetRank,#who=self) = RANK_MASTER
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide);
-            
+         case UC_REST:
+            Send(self,@StartResting);
             return;
-         }
-         
-         if IsClass(poOwner,&OutOfGrace)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_OOG);
-            
+         case UC_STAND:
+            Send(self,@StopResting);
             return;
-         }
-         
-         if GetTime() < piLast_restart_time + SUICIDE_REPEAT_TIME
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_yet);
-            
+         case UC_SUICIDE:
+            Send(self,@UserCommandSuicide);
             return;
-         }
-
-         if Send(self,@FindHolding,#class=&Token)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_token);
-            
+         case UC_SAFETY:
+            Send(self,@UserCommandSetSafety,#value=Nth(client_msg,2) <> 0);
             return;
-         }
-
-         if Send(SETTINGS_OBJECT,@GetMaxSuicideHP) <= piBase_Max_health
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_hp);
-
+         case UC_TEMPSAFE:
+            Send(self,@UserCommandSetTempSafe,#value=Nth(client_msg,2) <> 0);
             return;
-         }
-
-         % Successful SUICIDE.
-
-         Send(self,@PerformSuicide);
-
-         return;
-      }
-
-      if iClient_cmd = UC_SAFETY
-      {
-         if Nth(client_msg,2) <> 0
-         {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=TRUE);
-            if Send(SYS,@IsPKAllowed)
-            {
-               Send(self,@MsgSendUser,#message_rsc=user_safety_on);
-               Send(self,@WaveSendUser,#what=self,
-                     #wave_rsc=user_safety_on_wav_rsc);
-            }
-         }
-         else
-         {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=FALSE);
-            if Send(SYS,@IsPKAllowed)
-            {
-               Send(self,@MsgSendUser,#message_rsc=user_safety_off);
-               Send(self,@WaveSendUser,#what=self,
-                     #wave_rsc=user_safety_off_wav_rsc);
-            }
-         }
-
-         return;
-      }
-
-      if iClient_cmd = UC_TEMPSAFE
-      {
-         if Nth(client_msg,2) <> 0
-         {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_TEMP_SAFETY,#value=TRUE);
-
-            if piBase_max_health > 99
-               OR (piFlags & PFLAG_MURDERER)
-               OR (piFlags & PFLAG_OUTLAW)
-               OR Send(self,@FindUsing,#class=&SoldierShield) <> $
-            {
-               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_invalid);
-            }
-            else
-            {
-               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_on);
-            }
-         }
-         else
-         {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_TEMP_SAFETY,#value=FALSE);
-
-            if piBase_max_health > 99
-               OR (piFlags & PFLAG_MURDERER)
-               OR (piFlags & PFLAG_OUTLAW)
-               OR Send(self,@FindUsing,#class=&SoldierShield) <> $
-            {
-               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_invalid);
-            }
-            else
-            {
-               Send(self,@MsgSendUser,#message_rsc=user_temp_safe_off);
-            }
-         }
-
-         return;
-      }
-
-      if iClient_cmd = UC_GROUPING
-      {
-         if Nth(client_msg,2) <> 0
-         {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_GROUPING,#value=TRUE);
-            Send(self,@MsgSendUser,#message_rsc=user_grouping_on);
-         }
-         else
-         {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_GROUPING,#value=FALSE);
-            Send(self,@MsgSendUser,#message_rsc=user_grouping_off);
-         }
-
-         return;
-      }
-
-      if iClient_cmd = UC_REQ_GUILDINFO
-      {
-         Send(self,@UserGuildSendInfo);
-         
-         return;
-      }
-
-      if iClient_cmd = UC_INVITE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_INVITE,
-              #oTarget=Nth(client_msg,2));
-         
-         return;
-      }
-
-      if iClient_cmd = UC_RENOUNCE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_RENOUNCE);
-         
-         return;
-      }
-
-      if iClient_cmd = UC_EXILE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_EXILE,
-              #oTarget=Nth(client_msg,2));
-         
-         return;
-      }
-
-      if iClient_cmd = UC_ABDICATE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_ABDICATE,
-              #oTarget=Nth(client_msg,2));
-         
-         return;
-      }
-
-      if iClient_cmd = UC_VOTE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_VOTE,
-              #oTarget=Nth(client_msg,2));
-         
-         return;
-      }
-
-      if iClient_cmd = UC_SET_RANK
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_SET_RANK,
-              #oTarget=Nth(client_msg,2),#data=Nth(client_msg,3));
-              
-         return;
-      }
-      
-      if iClient_cmd = UC_GUILD_CREATE
-      {
-         oMoney=Send(self,@GetMoneyObject);
-
-         % Secret guild?
-         if Nth(client_msg,13) 
-         {
-            cost = Send(SYS,@GetGuildSecretPrice);
-         }
-         else
-         {
-            cost = Send(SYS,@GetGuildPrice);
-         }
-
-         if oMoney = $ or Send(oMoney,@GetNumber) < cost
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_no_guild_broke);
-            
-            return FALSE;
-         }
-
-         if Send(SYS,@FindGuildByString,#string=Nth(client_msg,2)) <> $
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_duplicate_guildname);
-               
-            return FALSE;
-         }
-
-         % Check if equal to a user name.
-         if Send(SYS,@FindUserByString,#string=Nth(client_msg,2)) <> $
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_duplicate_guild_username);
-            
-            return FALSE;
-         }
-
-         % Validate string lengths
-         if StringLength(Nth(client_msg, 2)) < 1
-         {
-            Debug(self, "had guild name too short");
-            return FALSE;
-         }
-         if StringLength(Nth(client_msg, 2)) > MAX_GUILD_NAME_LEN
-         {
-            Debug(self, "had guild name too long");
-            return FALSE;
-         }
-         i = 3;
-         while (i <= 12)
-         {
-            if StringLength(Nth(client_msg, i)) > MAX_GUILD_RANK_LEN
-            {
-               Debug(self, "had guild rank too long");
-               return FALSE;
-            }
-            i = i + 1;
-         }
-         oGuild = Create(&Guild,#master=self,#guildname=Nth(client_msg,2),
-                         #secret=Nth(client_msg,13),
-                         #rApprentice_male=Nth(client_msg,3),
-                         #rApprentice_female=Nth(client_msg,4),
-                         #rSir=Nth(client_msg,5),#rMadame=Nth(client_msg,6),
-                         #rLord=Nth(client_msg,7),#rLady=Nth(client_msg,8),
-                         #rLieutenant_male=Nth(client_msg,9),
-                         #rLieutenant_female=Nth(client_msg,10),
-                         #rMaster=Nth(client_msg,11),
-                         #rMistress=Nth(client_msg,12));
-
-         Send(oMoney,@SubtractNumber,#number=cost);
-
-         return;
-      }
-      
-      if iClient_cmd = UC_DISBAND
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_DISBAND);
-         
-         return;
-      }
-
-      if iClient_cmd = UC_MAKE_ALLIANCE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_FORGE_ALLIANCE,
-              #oTarget=Nth(client_msg,2));
-              
-         return;
-      }
-
-      if iClient_cmd = UC_END_ALLIANCE
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_END_ALLIANCE,
-              #oTarget=Nth(client_msg,2));
-              
-         return;
-      }
-
-      if iClient_cmd = UC_MAKE_ENEMY
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_DECLARE_ENEMY,
-              #oTarget=Nth(client_msg,2));
-              
-         return;
-      }
-
-      if iClient_cmd = UC_END_ENEMY
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_PEACE,
-              #oTarget=Nth(client_msg,2));
-              
-         return;
-      }
-
-      if iClient_cmd = UC_REQ_GUILD_LIST
-      {
-         if poGuild <> $
-         {
+         case UC_GROUPING:
+            Send(self,@UserCommandSetGrouping,#value=Nth(client_msg,2) <> 0);
+            return;
+         case UC_REQ_GUILDINFO:
+            Send(self,@UserGuildSendInfo);
+            return;
+         case UC_INVITE:
+            Send(self,@UserGuildCommand,#command_num=GCID_INVITE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_RENOUNCE:
+            Send(self,@UserGuildCommand,#command_num=GCID_RENOUNCE);
+            return;
+         case UC_EXILE:
+            Send(self,@UserGuildCommand,#command_num=GCID_EXILE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_ABDICATE:
+            Send(self,@UserGuildCommand,#command_num=GCID_ABDICATE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_VOTE:
+            Send(self,@UserGuildCommand,#command_num=GCID_VOTE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_SET_RANK:
+            Send(self,@UserGuildCommand,#command_num=GCID_SET_RANK,
+                  #oTarget=Nth(client_msg,2),#data=Nth(client_msg,3));
+            return;
+         case UC_GUILD_CREATE:
+            Send(self,@UserCommandCreateGuild,#client_msg=client_msg);
+            return;
+         case UC_DISBAND:
+            Send(self,@UserGuildCommand,#command_num=GCID_DISBAND);
+            return;
+         case UC_MAKE_ALLIANCE:
+            Send(self,@UserGuildCommand,#command_num=GCID_FORGE_ALLIANCE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_END_ALLIANCE:
+            Send(self,@UserGuildCommand,#command_num=GCID_END_ALLIANCE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_MAKE_ENEMY:
+            Send(self,@UserGuildCommand,#command_num=GCID_DECLARE_ENEMY,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_END_ENEMY:
+            Send(self,@UserGuildCommand,#command_num=GCID_PEACE,
+                  #oTarget=Nth(client_msg,2));
+            return;
+         case UC_REQ_GUILD_LIST:
             Send(self,@UserGuildSendList);
-         }
-
-         return;
-      }
-
-      if iClient_cmd = UC_GUILD_SHIELDS
-      {
-         Send(self,@UserGuildSendShieldSamples);
-         
-         return;
-      }
-
-      if iClient_cmd = UC_GUILD_SHIELD
-      {
-         Send(self,@UserGuildSendShieldInfo,#oguild=poGuild);
-         
-         return;
-      }
-
-      if iClient_cmd = UC_CLAIM_SHIELD
-      {
-         % Check if they have a guild.
-         if poGuild = $
-         {
             return;
-         }
-
-         % Find the guild from the color info.
-         oGuild = Send(SYS,@FindGuildByShield,
-                        #color1=Nth(client_msg,2),
-                        #color2=Nth(client_msg,3),
-                        #shape=Nth(client_msg,4));
-
-         if oGuild = $
-            AND Nth(client_msg,5) <> FALSE
-            AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
-         {
-            Send(poGuild,@SetGuildColors,
-                  #color1=Nth(client_msg,2),
-                  #color2=Nth(client_msg,3),
-                  #shape=Nth(client_msg,4));
-         }
-
-         Send(self,@UserGuildSendShieldInfo,#oguild=oGuild,
-               #color1=Nth(client_msg,2),
-               #color2=Nth(client_msg,3),
-               #shape=Nth(client_msg,4));
-
-         return;
-      }
-
-      if iClient_cmd = UC_GUILD_RENT
-      {
-         cost = Send(nth(client_msg,2),@GetPurchaseValue,#who=self);
-         oMoney = Send(self,@GetMoneyObject);
-
-         if oMoney = $ OR Send(oMoney,@GetNumber) < cost
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_no_guildhall_broke);
-            
-            return FALSE;              
-         }
-
-         if Send(nth(client_msg,2),@ClaimGuildHall,#oGuild=poGuild,#rep=self,
-                 #password=Nth(client_msg,3))
-         {
-             Send(oMoney,@SubtractNumber,#number=cost);
-         }
-         
-         return;
-      }
-
-      if iClient_cmd = UC_ABANDON_GUILD_HALL
-      {
-         Send(self,@UserGuildCommand,#command_num=GCID_ABANDON_HALL);
-         
-         return;
-      }
-      
-      if iClient_cmd = UC_GUILD_SET_PASSWORD
-      {
-         % Validate string length
-         if StringLength(Nth(client_msg, 2)) > MAX_GUILD_NAME_LEN
-         {
-            Debug(self, "had guild password too long");
+         case UC_GUILD_SHIELDS:
+            Send(self,@UserGuildSendShieldSamples);
             return;
-         }
-         Send(self,@UserGuildCommand,#command_num=GCID_SET_PASSWORD,
-              #data=Nth(client_msg,2));
-              
-         return;
-      }
-
-      if iClient_cmd = UC_CHANGE_URL
-      {
-         oWhat = Nth(client_msg,2);
-
-         if oWhat <> self
-            AND NOT IsClass(oWhat,&Admin)
-         {
-            Debug(self,"tried to change url of",Nth(client_msg,2));
-            
+         case UC_GUILD_SHIELD:
+            Send(self,@UserGuildSendShieldInfo,#oGuild=poGuild);
             return;
-         }
-
-         if StringLength(Nth(client_msg, 3)) > MAX_URL_LEN
-         {
-            Debug(self, "had URL too long");
+         case UC_CLAIM_SHIELD:
+            Send(self,@UserCommandClaimShield,#client_msg=client_msg);
             return;
-         }
-         
-         Send(self,@UserChangeURL,#string=Nth(client_msg,3));
-         
-         return;
-      }
-	  
-      if iClient_cmd = UC_DEPOSIT
-      {
-         if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
-                     #command=UC_DEPOSIT,#data=Nth(client_msg,2))
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_deposit);
-         }
-         
-         return;
-      }
-
-      if iClient_cmd = UC_WITHDRAW
-      {
-         if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
-                     #command=UC_WITHDRAW,#data=Nth(client_msg,2))
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_withdraw);
-         }
-         
-         return;
-      }
-
-      if iClient_cmd = UC_BALANCE
-      {
-         if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
-                     #command=UC_BALANCE)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_balance);
-         }
-         
-         return;
-      }
-
-      if iClient_cmd = UC_APPEAL
-      {
-         Send(self,@UserAppeal,#string=Nth(client_msg,2));
-         
-         return;
-      }
-
-      if iClient_cmd = UC_REQ_RESCUE
-      {
-         if poOwner <> $
-            AND Send(poOwner,@GetRoomNum) = Send(self,@GetHomeroom)
-         {
-            AddPacket(1,BP_USERCOMMAND,1,UC_SEND_QUIT);
-            SendPacket(poSession);
-            
+         case UC_GUILD_RENT:
+            Send(self,@UserCommandGuildRent,#oHall=Nth(client_msg,2),
+                  #sPassword=Nth(client_msg,3));
             return;
+         case UC_ABANDON_GUILD_HALL:
+            Send(self,@UserGuildCommand,#command_num=GCID_ABANDON_HALL);
+            return;
+         case UC_GUILD_SET_PASSWORD:
+            Send(self,@UserGuildCommand,#command_num=GCID_SET_PASSWORD,
+                  #data=Nth(client_msg,2));
+            return;
+         case UC_CHANGE_URL:
+            oWhat = Nth(client_msg,2);
+
+            if oWhat <> self
+               AND NOT IsClass(oWhat,&Admin)
+            {
+               Debug(self,"tried to change url of",Nth(client_msg,2));
+
+               return;
+            }
+            Send(self,@UserChangeURL,#string=Nth(client_msg,3));
+
+            return;
+         case UC_DEPOSIT:
+            if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
+                        #command=UC_DEPOSIT,#data=Nth(client_msg,2))
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_cant_deposit);
+            }
+
+            return;
+         case UC_WITHDRAW:
+            if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
+                        #command=UC_WITHDRAW,#data=Nth(client_msg,2))
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_cant_withdraw);
+            }
+
+            return;
+         case UC_BALANCE:
+            if NOT Send(poOwner,@SomeoneTryUserCommand,#who=self,
+                        #command=UC_BALANCE)
+            {
+               Send(self,@MsgSendUser,#message_rsc=user_cant_balance);
+            }
+
+            return;
+         case UC_APPEAL:
+            Send(self,@UserAppeal,#string=Nth(client_msg,2));
+            return;
+         case UC_REQ_RESCUE:
+            if poOwner <> $
+               AND Send(poOwner,@GetRoomNum) = Send(self,@GetHomeroom)
+            {
+               AddPacket(1,BP_USERCOMMAND,1,UC_SEND_QUIT);
+               SendPacket(poSession);
+
+               return;
+            }
+
+            Send(self,@AdminGotoSafety);
+            Debug(self,"was just sent to safety because their client had a "
+                  "broken room",poOwner);
+
+            return;
+         case UC_MINIGAME_STATE:
+            Send(Nth(client_msg,2),@GotNewState,#who=self,
+                 #state=Nth(client_msg,3));
+            return;
+         case UC_MINIGAME_RESET_PLAYERS:
+            Send(Nth(client_msg,2),@ResetPlayers,#who=self);
+            return;
+         default:
+            Debug("User.kod got unknown UserCommand command from client",
+               iClient_cmd);
+            return;
+      }
+
+      return;
+   }
+
+   UserCommandGuildRent(oHall = $, sPassword = $)
+   {
+      local iCost, oMoney;
+
+      if poGuild = $
+         OR oHall = $
+         OR sPassword = $
+      {
+         return;
+      }
+
+      iCost = Send(oHall,@GetPurchaseValue,#who=self);
+      oMoney = Send(self,@GetMoneyObject);
+
+      if oMoney = $ OR Send(oMoney,@GetNumber) < iCost
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_no_guildhall_broke);
+         
+         return FALSE;
+      }
+
+      if Send(oHall,@ClaimGuildHall,#oGuild=poGuild,#rep=self,
+               #password=sPassword)
+      {
+          Send(oMoney,@SubtractNumber,#number=iCost);
+      }
+
+      return;
+   }
+
+   UserCommandClaimShield(client_msg = $)
+   {
+      local oGuild;
+
+      if client_msg = $
+      {
+         return;
+      }
+
+      % Check if they have a guild.
+      if poGuild = $
+      {
+         return;
+      }
+
+      % Find the guild from the color info.
+      oGuild = Send(SYS,@FindGuildByShield,#color1=Nth(client_msg,2),
+                     #color2=Nth(client_msg,3),#shape=Nth(client_msg,4));
+
+      if oGuild = $
+         AND Nth(client_msg,5) <> FALSE
+         AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
+      {
+         Send(poGuild,@SetGuildColors,#color1=Nth(client_msg,2),
+               #color2=Nth(client_msg,3),#shape=Nth(client_msg,4));
+      }
+
+      Send(self,@UserGuildSendShieldInfo,#oguild=oGuild,
+            #color1=Nth(client_msg,2),#color2=Nth(client_msg,3),
+            #shape=Nth(client_msg,4));
+
+      return;
+   }
+
+   UserCommandCreateGuild(client_msg = $)
+   {
+      local i, oMoney, iCost;
+
+      if client_msg = $
+      {
+         return;
+      }
+
+      oMoney = Send(self,@GetMoneyObject);
+
+      % Secret guild?
+      if Nth(client_msg,13)
+      {
+         iCost = Send(SYS,@GetGuildSecretPrice);
+      }
+      else
+      {
+         iCost = Send(SYS,@GetGuildPrice);
+      }
+
+      if oMoney = $
+         OR Send(oMoney,@GetNumber) < iCost
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_no_guild_broke);
+
+         return FALSE;
+      }
+
+      if Send(SYS,@FindGuildByString,#string=Nth(client_msg,2)) <> $
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_duplicate_guildname);
+
+         return FALSE;
+      }
+
+      % Check if equal to a user name.
+      if Send(SYS,@FindUserByString,#string=Nth(client_msg,2)) <> $
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_duplicate_guild_username);
+
+         return FALSE;
+      }
+
+      % Validate string lengths
+      if StringLength(Nth(client_msg, 2)) < 1
+      {
+         Debug(self, "had guild name too short");
+
+         return FALSE;
+      }
+      if StringLength(Nth(client_msg, 2)) > MAX_GUILD_NAME_LEN
+      {
+         Debug(self, "had guild name too long");
+
+         return FALSE;
+      }
+      i = 3;
+      while (i <= 12)
+      {
+         if StringLength(Nth(client_msg, i)) > MAX_GUILD_RANK_LEN
+         {
+            Debug(self, "had guild rank too long");
+
+            return FALSE;
          }
-
-         Send(self,@AdminGotoSafety);
-         Debug(self,"was just sent to safety because their client had a "
-               "broken room",poOwner);
-
-         return;
+         ++i;
       }
 
-      if iClient_cmd = UC_MINIGAME_STATE
-      {
-         Send(Nth(client_msg,2),@GotNewState,#who=self,
-              #state=Nth(client_msg,3));
-         
-         return;
-      }
+      Create(&Guild,#master=self,#guildname=Nth(client_msg,2),
+                    #secret=Nth(client_msg,13),
+                    #rApprentice_male=Nth(client_msg,3),
+                    #rApprentice_female=Nth(client_msg,4),
+                    #rSir=Nth(client_msg,5),#rMadame=Nth(client_msg,6),
+                    #rLord=Nth(client_msg,7),#rLady=Nth(client_msg,8),
+                    #rLieutenant_male=Nth(client_msg,9),
+                    #rLieutenant_female=Nth(client_msg,10),
+                    #rMaster=Nth(client_msg,11),
+                    #rMistress=Nth(client_msg,12));
 
-      if iClient_cmd = UC_MINIGAME_RESET_PLAYERS
-      {
-         Send(Nth(client_msg,2),@ResetPlayers,#who=self);
-         
-         return;
-      }
+      Send(oMoney,@SubtractNumber,#number=iCost);
 
-      Debug("User.kod got unknown UserCommand command from client",
-            iClient_cmd);
-      
       return;
    }
 
@@ -2278,7 +2195,13 @@ messages:
 
    UserGuildSendList()
    {
-      local lGuilds,i;
+      local lGuilds, i;
+
+      % Must be guilded to receive guild list.
+      if poGuild = $
+      {
+         return;
+      }
 
       if pbLogged_on
       {
@@ -5697,7 +5620,16 @@ messages:
 
    UserChangeURL(string = $)
    {
+      if StringLength(string) > MAX_URL_LEN
+      {
+         Debug(self,Send(self,@GetTrueName),
+               "tried to set URL larger than MAX_URL_LEN");
+
+         return;
+      }
+
       psURL = string;
+
       return;
    }
 

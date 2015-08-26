@@ -62,6 +62,13 @@ messages:
    {
       local oGuild, oHall;
 
+      if StringLength(data) > MAX_GUILD_NAME_LEN
+      {
+         Debug(who, "had guild password too long");
+
+         return;
+      }
+
       oGuild = send(who,@getguild);
 
       if oGuild = $

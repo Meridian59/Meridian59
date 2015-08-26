@@ -414,11 +414,6 @@ properties:
 
    psTemp = $
 
-   % Non-null when there's a chaos night ("frenzy") running
-   poChaosNight = $
-   % Timer for when the frenzy will end.
-   ptChaosNightEnd = $
-
    pbDecay_counter = 0
 
    piLogoffPenaltyDecayCounter = 0
@@ -504,7 +499,7 @@ properties:
 
    % A list of room type objects used forr room icons
    plRoomIcons = $
-
+   
    % Keeps track of the last save before a frenzy.
    psSaveGame = $
 
@@ -1208,11 +1203,6 @@ messages:
    
       plUsers_logged_on = Cons(what,plUsers_logged_on);
 
-      if poChaosNight <> $
-      {
-         Send(poChaosNight, @UserLogon, #who = what);
-      }
-      
       if (poEventEngine <> $)
       {
          Send(poEventEngine,@UserLogon,#who=what);
@@ -5082,85 +5072,98 @@ messages:
       return Send(poEventEngine,@EventEnd,#parm1=event_obj);
    }
    
-   GetChaosNight()
-   "Return true if there's a chaos night (\"frenzy\") running."
+   SaveGame_K(IKnowThisIsDangerous=$)
    {
-      return poChaosNight <> $;
-   }
-
-   StartChaosNight(parm1=3600000)
-   {
-      % Don't start two of these.
-      if Send(self,@GetChaosNight)
-      {
-         return system_failure_rsc;
-      }
-
+   
       % psSaveGame keeps track of the system save before frenzy starts.
       % If this already exists, don't start the frenzy.
       if psSaveGame <> $
       {
-         Debug("Not starting chaos night while System is already tracking ",
+         Debug("Not saving while System is already tracking ",
             "a save game!");
 
          return system_failure_rsc;
       }
-
-      % Save the game.
-      psSaveGame = SaveGame();
-
-      % Create the frenzy object (starts the frenzy).
-      poChaosNight = Create(&ChaosNight);
-
-      % Create a timer for the end, default 1 hour.
-      if parm1 = $
+      
+      if (IKnowThisIsDangerous = 820965)
       {
-         parm1 = 3600000;
+         % Save the game.
+         psSaveGame = SaveGame();
       }
+      return;
+   }
+   
+   LoadGame_K(IKnowThisIsDangerous=$)
+   {
+      if (IKnowThisIsDangerous=730527)
+      {
+         % If we don't have a save game, don't try to reload.
+         if psSaveGame = $
+         {
+            Debug("System has no save game, not ending chaos night!");
 
-      ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,parm1);
-
-      return system_success_rsc;
+            return system_failure_rsc;
+         }
+         % LoadGame will schedule a game reload in the blakserv main thread,
+         % which will kick all users offline and reload the saved game. This
+         % is performed in the main thread so that blakod interpreting isn't
+         % affected.
+         LoadGame(psSaveGame);
+         psSaveGame = $;
+      }
+      
+      return;
+   }
+   
+   GetChaosNight()
+   "Return true if there's a chaos night (\"frenzy\") running."
+   {
+      return send(poEventEngine,@IsChaosNightActive);
    }
 
-   EndChaosNightTimer()
+   ScheduleChaosNight(iMonth=$,iDay=$,iYear=$,
+                      iHour=21,iMinute=0,
+                      duration=60,
+                      duration_scale=GAMEEVENT_SCALE_MINUTES)
    {
-      ptChaosNightEnd = $;
-      Send(self,@EndChaosNight);
-
+      Send(poEventEngine,@ScheduleStartEvent,
+         #iClass=&ChaosNight,
+         #iYear=iYear,
+         #iMonth=iMonth,
+         #iDay=iDay,
+         #iHour=iHour,
+         #iMinute=iMinute,
+         #parm2=duration,
+         #parm3=duration_scale);
+         
       return;
+   }
+   
+   StartChaosNight(duration=60,duration_scale=GAMEEVENT_SCALE_MINUTES)
+   {
+      if (NOT Send(self,@GetChaosNight))
+      {
+         return Send(poEventEngine,@EventStart,
+            #parm1=&ChaosNight,
+            #parm2=duration,
+            #parm3=duration_scale);
+      }
+   
+      return system_failure_rsc;
    }
 
    EndChaosNight()
    {
-      if ptChaosNightEnd <> $
+      local oChaosNight;
+   
+      if (Send(self,@GetChaosNight))
       {
-         DeleteTimer(ptChaosNightEnd);
-         ptChaosNightEnd = $;
+         oChaosNight = Send(poEventEngine,
+                           @FindEventOfType,#event_type=&ChaosNight);
+         Send(poEventEngine,@EventEnd,#parm1=oChaosNight);
       }
-
-      % Don't run if frenzy isn't running.
-      if NOT Send(self,@GetChaosNight)
-      {
-         return system_failure_rsc;
-      }
-
-      % If we don't have a save game, don't try to reload.
-      if psSaveGame = $
-      {
-         Debug("System has no save game, not ending chaos night!");
-
-         return system_failure_rsc;
-      }
-
-      % LoadGame will schedule a game reload in the blakserv main thread,
-      % which will kick all users offline and reload the saved game. This
-      % is performed in the main thread so that blakod interpreting isn't
-      % affected.
-      LoadGame(psSaveGame);
-      psSaveGame = $;
-
-      return system_success_rsc;
+   
+      return;
    }
 
    EnableRoomIllusions()
@@ -5690,7 +5693,7 @@ messages:
 
       % Check for frenzy active first, to avoid running
       % this accidentally.
-      if poChaosNight = $
+      if (NOT Send(self,@GetChaosNight))
       {
          return;
       }

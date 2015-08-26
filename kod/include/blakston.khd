@@ -3439,6 +3439,15 @@
    GAMEEVENT_LOBYTE_ORC_INVASION     = 0x200
    GAMEEVENT_LOBYTE_QORMAS           = 0x400
    
+   %%% Game Event Time Scale Constants
+   GAMEEVENT_SCALE_SECONDS          = 0
+   GAMEEVENT_SCALE_MINUTES          = 1
+   GAMEEVENT_SCALE_HOURS            = 2
+   GAMEEVENT_SCALE_DAYS             = 3
+   GAMEEVENT_SCALE_WEEKS            = 4
+   GAMEEVENT_SCALE_MONTHS           = 5
+   GAMEEVENT_SCALE_YEARS            = 6
+   
    %%% War Event
 
    % Included here for use in admin window.

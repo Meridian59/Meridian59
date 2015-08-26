@@ -28,6 +28,8 @@ properties:
 
    plRandomEvents = $
    plActiveEvents = $
+   piActiveEventsFlagHi = 0
+   piActiveEventsFlagLo = 0
    ptMaintenance = $
    piMaintenanceInterval = 1000
 
@@ -427,7 +429,7 @@ messages:
       
       if parm1 <> $
       {
-         oEvent = Create(parm1);
+         oEvent = Create(parm1,#engine=self);
          Send(oEvent,@StartEvent);
       }
 
@@ -437,6 +439,68 @@ messages:
          if ptMaintenance = $
          {
             CreateTimer(self,@OnTimer,piMaintenanceInterval);
+         }
+         
+         switch(parm1)
+         {
+            case &ChaosNight:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_CHAOS;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_CHAOS;
+               break;
+               
+            case &WarEvent:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_WAR;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_WAR;
+               break;
+               
+            case &NodeAttack:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_NODE_ATK;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_NODE_ATK;
+               break;
+               
+            case &EasterEggHunt:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_EASTER_EGG;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_EASTER_EGG;
+               break;
+               
+            case &EasterInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_EASTER_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_EASTER_INVASION;
+               break;
+               
+            case &RatInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_RAT_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_RAT_INVASION;
+               break;
+               
+            case &OrcInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_ORC_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_ORC_INVASION;
+               break;
+
+            case &Qormas:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi | GAMEEVENT_HIBYTE_QORMAS;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo | GAMEEVENT_LOBYTE_QORMAS;
+               break;
+               
+            default:
+               break;
          }
       }
       else
@@ -455,6 +519,69 @@ messages:
       {
          Send(parm1,@EndEvent);
          plActiveEvents = DelListElem(plActiveEvents,parm1);
+         
+         switch(GetClass(parm1))
+         {
+            case &ChaosNight:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_CHAOS;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_CHAOS;
+               break;
+               
+            case &WarEvent:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_WAR;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_WAR;
+               break;
+               
+            case &NodeAttack:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_NODE_ATK;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_NODE_ATK;
+               break;
+            
+            case &EasterEggHunt:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_EASTER_EGG;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_EASTER_EGG;
+               break;
+               
+            case &EasterInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_EASTER_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_EASTER_INVASION;
+               break;
+   
+            case &RatInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_RAT_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_RAT_INVASION;
+               break;
+               
+            case &OrcInvasion:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_ORC_INVASION;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_ORC_INVASION;
+               break;
+
+            case &Qormas:
+               piActiveEventsFlagHi = 
+                  piActiveEventsFlagHi & ~GAMEEVENT_HIBYTE_QORMAS;
+               piActiveEventsFlagLo = 
+                  piActiveEventsFlagLo & ~GAMEEVENT_LOBYTE_QORMAS;
+               break;
+               
+            default:
+               break;
+         }
+         
          if NOT (override_delete)
          {
             Send(parm1,@Delete);
@@ -475,5 +602,73 @@ messages:
       return;
    }
 
+   FindEventsOfType(event_type=$)
+   {
+      local i, lEvents;
+      
+      if (event_type=$)
+      {
+         return;
+      }
+      
+      foreach i in plActiveEvents
+      {
+         if (i = event_type)
+         {
+            lEvents = Cons(lEvents,i);
+         }
+      }
+      
+      return lEvents;
+   }
+   
+   IsChaosActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_CHAOS)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_CHAOS));
+   }
+   
+   IsWarEventActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_WAR)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_WAR));
+   }
+
+   IsNodeAttackActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_NODE_ATK)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_NODE_ATK));
+   }
+   
+   IsEasterEggHuntActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_EASTER_EGG)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_EASTER_EGG));
+   }
+   
+   IsEasterInvasionActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_EASTER_INVASION)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_EASTER_INVASION));
+   }
+   
+   IsRatInvasionActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_RAT_INVASION)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_RAT_INVASION));
+   }
+   
+   IsOrcInvasionActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_ORC_INVASION)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_ORC_INVASION));
+   }
+
+   IsQormasActive()
+   {
+      return ((piActiveEventsFlagHi & GAMEEVENT_HIBYTE_QORMAS)
+         AND (piActiveEventsFlagLo & GAMEEVENT_LOBYTE_QORMAS));
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

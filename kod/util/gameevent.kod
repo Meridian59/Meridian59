@@ -30,6 +30,7 @@ classvars:
 
 properties:
 
+   poGameEventEngine = $
    plSpawnRects = $
    poActiveRoom = $
    plEventRooms = $
@@ -38,8 +39,13 @@ properties:
 
 messages:
 
-   Constructor()
+   Constructor(engine=$)
    {
+      if (engine <> $)
+      {
+         poGameEventEngine = engine;
+      }
+      
       return;
    }
 
@@ -53,6 +59,7 @@ messages:
       return;
    }
 
+   
    IsUnique()
    {
       return vbUnique;
@@ -120,7 +127,7 @@ messages:
 
    NotifyEngineEndEvent()
    {
-      Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
+      Send(poGameEventEngine,@EventEnd,#parm1=self);
 
       return;
    }

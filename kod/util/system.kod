@@ -5064,11 +5064,21 @@ messages:
    StartEvent(event_type=$)
    "event_type should be the class type of an event"
    {
+      if (event_type=$)
+      {
+         return;
+      }
+      
       return Send(poEventEngine,@EventStart,#parm1=event_type);
    }
    
    EndEvent(event_obj=$)
    {
+      if (event_obj=$)
+      {
+         return;
+      }
+      
       return Send(poEventEngine,@EventEnd,#parm1=event_obj);
    }
    

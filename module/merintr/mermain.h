@@ -19,6 +19,9 @@ typedef struct {
    Bool   aggressive;     // True when people allowed to kill others (safety off)
    Bool   tempsafe;       // True when player gets a temporary angel on death
    Bool   grouping;       // True when player will join building groups
+   Bool   autoloot;       // True when player autoloots items
+   Bool   autocombine;    // True when player autocombines spellitems
+   Bool   reagentbag;     // True when player auto-stashes items in reagent bag
 } PInfo;
 
 typedef struct {

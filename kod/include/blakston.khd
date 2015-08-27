@@ -55,6 +55,7 @@
    MOVEON_NOTIFY     = 3
 
    % Object flags for client.
+   OF_AUTOLOOT       = 0x00000001
    OF_GROUPING       = 0x00000002
    OF_PLAYER         = 0x00000004
    OF_ATTACKABLE     = 0x00000008
@@ -70,11 +71,12 @@
    OF_APPLYABLE      = 0x00001000
    OF_SAFETY         = 0x00002000
    OF_TEMPSAFE       = 0x00004000
-
+   OF_REAGENTBAG     = 0x00008000
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000
    OF_FLASHING       = 0x00040000
    OF_PHASING        = 0x00080000
+   OF_AUTOCOMBINE    = 0x00100000
 
    % Drawing effects flags, separate from the boolean object flags.
    DRAWFX_NONE           = 0

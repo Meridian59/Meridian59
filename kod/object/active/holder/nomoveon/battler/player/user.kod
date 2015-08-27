@@ -251,7 +251,6 @@ resources:
    user_safety_off = \
       "~B~U~k[###]~n ~B~vYour safety is now ~B~rOFF~n~B:  Be careful, you are "
       "now able to hurt those around you."
-
    user_temp_safe_on = \
       "~B~U~k[###]~n ~B~vYou will receive a temporary guardian angel on death."
    user_temp_safe_off = \
@@ -259,12 +258,16 @@ resources:
       "angel on death."
    user_temp_safe_invalid = \
       "~B~U~k[###]~n ~B~vYour guardian angel can no longer protect you."
-
    user_grouping_on = \
       "~B~U~k[###]~n ~B~vYou will now join builder groups."
-
    user_grouping_off = \
       "~B~U~k[###]~n ~B~vYou will no longer join builder groups."
+   user_autocombine_on = \
+      "You decide to combine spell items as you get them."
+   user_autocombine_off = \
+      "You decide to stop combining spell items as you get them."
+   user_autoloot_on = "You decide to pick up treasure as it drops."
+   user_autoloot_off = "You stop picking up treasure as it drops."
 
    user_cant_go = "You are unable to go anywhere."
    user_cant_go_wav_rsc = cant_go_anywhere_louder.wav
@@ -380,29 +383,6 @@ resources:
    guild_motd_command = "set motd "
    guild_clear_motd_command = "clear motd"
 
-   % Autocombine user say commands.
-   user_say_autocombine = "autocombine"
-   user_say_autocombine_on = "autocombine on"
-   user_say_autocombine_off = "autocombine off"
-
-   autocombine_on_msg = \
-      "You decide to combine spell items as you get them."
-   autocombine_off_msg = \
-      "You decide to stop combining spell items as you get them."
-
-   % Autoloot user say commands.
-   user_say_autoloot = "autoloot"
-   user_say_autoloot_on = "autoloot on"
-   user_say_autoloot_off = "autoloot off"
-
-   autoloot_on_msg = "You decide to pick up treasure as it drops."
-   autoloot_off_msg = "You stop picking up treasure as it drops."
-
-   % Reagent bag user say commands.
-   user_say_reagentbag = "reagentbag"
-   user_say_reagentbag_on = "reagentbag on"
-   user_say_reagentbag_off = "reagentbag off"
-
    % Inventory sorting user say commands.
    user_say_inventory = "inventory"
    user_say_inv_sort_clear = "inventory sort clear"
@@ -446,8 +426,8 @@ resources:
 
    phased_out_cant_drop = "You can't drop items while phased out of existence."
                                
-   reagentbag_auto_on = "You start putting new reagents in your bag."
-   reagentbag_auto_off = "You stop putting new reagents in your bag."
+   user_reagentbag_on = "You start putting new reagents in your bag."
+   user_reagentbag_off = "You stop putting new reagents in your bag."
 
    user_logon_delay = \
       "You take a moment to recollect your senses."
@@ -1797,14 +1777,95 @@ messages:
 
    UserCommandSetGrouping(value = 0)
    {
-      Send(self,@SetPlayerFlag,#flag=PFLAG_GROUPING,#value=value);
       if value
       {
+         if (piFlags & PFLAG_GROUPING)
+         {
+            return;
+         }
+         piFlags = piFlags | PFLAG_GROUPING;
          Send(self,@MsgSendUser,#message_rsc=user_grouping_on);
       }
       else
       {
+         if NOT (piFlags & PFLAG_GROUPING)
+         {
+            return;
+         }
+         piFlags = piFlags & ~PFLAG_GROUPING;
          Send(self,@MsgSendUser,#message_rsc=user_grouping_off);
+      }
+
+      return;
+   }
+
+   UserCommandSetAutoLoot(value = 0)
+   {
+      if value
+      {
+         if (piFlags & PFLAG_AUTOLOOT)
+         {
+            return;
+         }
+         piFlags = piFlags | PFLAG_AUTOLOOT;
+         Send(self,@MsgSendUser,#message_rsc=user_autoloot_on);
+      }
+      else
+      {
+         if NOT (piFlags & PFLAG_AUTOLOOT)
+         {
+            return;
+         }
+         piFlags = piFlags & ~PFLAG_AUTOLOOT;
+         Send(self,@MsgSendUser,#message_rsc=user_autoloot_off);
+      }
+
+      return;
+   }
+
+   UserCommandSetAutoCombine(value = 0)
+   {
+      if value
+      {
+         if (piFlags2 & PFLAG2_AUTOCOMBINE)
+         {
+            return;
+         }
+         piFlags2 = piFlags2 | PFLAG2_AUTOCOMBINE;
+         Send(self,@MsgSendUser,#message_rsc=user_autocombine_on);
+      }
+      else
+      {
+         if NOT (piFlags2 & PFLAG2_AUTOCOMBINE)
+         {
+            return;
+         }
+         piFlags2 = piFlags2 & ~PFLAG2_AUTOCOMBINE;
+         Send(self,@MsgSendUser,#message_rsc=user_autocombine_off);
+      }
+
+      return;
+   }
+
+   UserCommandSetReagentBag(value = 0)
+   {
+      if value
+      {
+         if (piFlags & PFLAG_REAGENTBAG)
+         {
+            return;
+         }
+         piFlags = piFlags | PFLAG_REAGENTBAG;
+         Send(self,@MsgSendUser,#message_rsc=user_reagentbag_on);
+      }
+      else
+      {
+         if NOT (piFlags & PFLAG_REAGENTBAG)
+         {
+            return;
+         }
+         piFlags = piFlags & ~PFLAG_REAGENTBAG;
+         Send(self,@MsgSendUser,#message_rsc=user_reagentbag_off);
       }
 
       return;
@@ -1833,6 +1894,15 @@ messages:
             return;
          case UC_GROUPING:
             Send(self,@UserCommandSetGrouping,#value=Nth(client_msg,2) <> 0);
+            return;
+         case UC_AUTOLOOT:
+            Send(self,@UserCommandSetAutoLoot,#value=Nth(client_msg,2) <> 0);
+            return;
+         case UC_AUTOCOMBINE:
+            Send(self,@UserCommandSetAutoCombine,#value=Nth(client_msg,2) <> 0);
+            return;
+         case UC_REAGENTBAG:
+            Send(self,@UserCommandSetReagentBag,#value=Nth(client_msg,2) <> 0);
             return;
          case UC_REQ_GUILDINFO:
             Send(self,@UserGuildSendInfo);
@@ -4663,33 +4733,6 @@ messages:
                return;
             }
          }
-
-         if StringContain(string,user_say_autocombine)
-         {
-            % If UserSayAutocombine handles the string, don't keep checking.
-            if Send(self,@UserSayAutocombine,#string=string)
-            {
-               return;
-            }
-         }
-
-         if StringContain(string,user_say_autoloot)
-         {
-            % If UserSayAutoloot handles the string, don't keep checking.
-            if Send(self,@UserSayAutoloot,#string=string)
-            {
-               return;
-            }
-         }
-
-         if StringContain(string,user_say_reagentbag)
-         {
-            % If UserSayReagentBag handles the string, don't keep checking.
-            if Send(self,@UserSayReagentBag,#string=string)
-            {
-               return;
-            }
-         }
       }
 
       if NOT Send(poOwner,@RoomReqCommunication,#type=type,#string=string,
@@ -5146,75 +5189,6 @@ messages:
          {
             Send(self,@MsgSendUser,#message_rsc=survival_err_already_guild);
          }
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   UserSayReagentBag(string = $)
-   {
-      if StringContain(string,user_say_reagentbag_on)
-         AND NOT (piFlags & PFLAG_REAGENTBAG)
-      {
-         piflags = (piFlags | PFLAG_REAGENTBAG);
-         Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_on);
-
-         return TRUE;
-      }
-
-      if StringContain(string,user_say_reagentbag_off)
-         AND (piFlags & PFLAG_REAGENTBAG)
-      {
-         piflags = (piFlags & ~PFLAG_REAGENTBAG);
-         Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_off);
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   UserSayAutocombine(string = $)
-   {
-      if StringContain(string,user_say_autocombine_on)
-         AND NOT (piFlags2 & PFLAG2_AUTOCOMBINE)
-      {
-         piflags2 = (piFlags2 | PFLAG2_AUTOCOMBINE);
-         Send(self,@MsgSendUser,#message_rsc=autocombine_on_msg);
-
-         return TRUE;
-      }
-
-      if StringContain(string,user_say_autocombine_off)
-         AND (piFlags2 & PFLAG2_AUTOCOMBINE)
-      {
-         piflags2 = (piFlags2 & ~PFLAG2_AUTOCOMBINE);
-         Send(self,@MsgSendUser,#message_rsc=autocombine_off_msg);
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   UserSayAutoloot(string = $)
-   {
-      if StringContain(string,user_say_autoloot_on)
-         AND NOT (piFlags & PFLAG_AUTOLOOT)
-      {
-         piFlags = piFlags | PFLAG_AUTOLOOT;
-         Send(self,@MsgSendUser,#message_rsc=autoloot_on_msg);
-
-         return TRUE;
-      }
-
-      if StringContain(string,user_say_autoloot_off)
-         AND (piFlags & PFLAG_AUTOLOOT)
-      {
-         piFlags = piFlags & ~PFLAG_AUTOLOOT;
-         Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
 
          return TRUE;
       }
@@ -9196,15 +9170,25 @@ messages:
       {
          iFlags = iFlags | OF_SAFETY;
       }
-
       if (piFlags & PFLAG_TEMP_SAFETY)
       {
          iFlags = iFlags | OF_TEMPSAFE;
       }
-
       if (piFlags & PFLAG_GROUPING)
       {
          iFlags = iFlags | OF_GROUPING;
+      }
+      if (piFlags & PFLAG_AUTOLOOT)
+      {
+         iFlags = iFlags | OF_AUTOLOOT;
+      }
+      if (piFlags2 & PFLAG2_AUTOCOMBINE)
+      {
+         iFlags = iFlags | OF_AUTOCOMBINE;
+      }
+      if (piFlags & PFLAG_REAGENTBAG)
+      {
+         iFlags = iFlags | OF_REAGENTBAG;
       }
 
       oIllusion = Send(self,@GetIllusionForm);

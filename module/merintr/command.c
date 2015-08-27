@@ -601,6 +601,60 @@ void CommandGroupingOff(char *args)
 }
 /************************************************************************/
 /*
+ * SendAutoLootOn: "autoloot on" command
+ */
+void CommandAutoLootOn(char *args)
+{
+   cinfo->config->autoloot = True;
+   SendAutoLoot(1);
+}
+/************************************************************************/
+/*
+ * SendAutoLootOff: "autoloot off" command
+ */
+void CommandAutoLootOff(char *args)
+{
+   cinfo->config->autoloot = False;
+   SendAutoLoot(0);
+}
+/************************************************************************/
+/*
+ * SendAutoCombineOn: "autocombine on" command
+ */
+void CommandAutoCombineOn(char *args)
+{
+   cinfo->config->autocombine = True;
+   SendAutoCombine(1);
+}
+/************************************************************************/
+/*
+ * SendAutoCombineOff: "autocombine off" command
+ */
+void CommandAutoCombineOff(char *args)
+{
+   cinfo->config->autocombine = False;
+   SendAutoCombine(0);
+}
+/************************************************************************/
+/*
+ * SendReagentBagOn: "reagentbag on" command
+ */
+void CommandReagentBagOn(char *args)
+{
+   cinfo->config->reagentbag = True;
+   SendReagentBag(1);
+}
+/************************************************************************/
+/*
+ * SendReagentBagOff: "reagentbag off" command
+ */
+void CommandReagentBagOff(char *args)
+{
+   cinfo->config->reagentbag = False;
+   SendReagentBag(0);
+}
+/************************************************************************/
+/*
  * CommandGuild: "guild" command
  */
 void CommandGuild(char *args)

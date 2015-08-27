@@ -92,6 +92,9 @@ client_message user_msg_table[] = {
 { UC_SAFETY,               { PARAM_BYTE, PARAM_END }, },
 { UC_TEMPSAFE,             { PARAM_BYTE, PARAM_END }, },
 { UC_GROUPING,             { PARAM_BYTE, PARAM_END }, },
+{ UC_AUTOLOOT,             { PARAM_BYTE, PARAM_END }, },
+{ UC_AUTOCOMBINE,          { PARAM_BYTE, PARAM_END }, },
+{ UC_REAGENTBAG,           { PARAM_BYTE, PARAM_END }, },
 { UC_REQ_GUILDINFO,        { PARAM_END }, },
 { UC_INVITE,               { PARAM_ID, PARAM_END }, },
 { UC_EXILE,                { PARAM_ID, PARAM_END }, },
@@ -405,6 +408,18 @@ static TypedCommand commands[] = {
 { "gruppenbildung an",  CommandGroupingOn, },
 { "grouping off",   CommandGroupingOff, },
 { "gruppenbildung aus", CommandGroupingOff, },
+{ "autoloot on",    CommandAutoLootOn, },
+{ "autoloot an",  CommandAutoLootOn, },
+{ "autoloot off",   CommandAutoLootOff, },
+{ "autoloot aus", CommandAutoLootOff, },
+{ "autocombine on",    CommandAutoCombineOn, },
+{ "autocombine an",  CommandAutoCombineOn, },
+{ "autocombine off",   CommandAutoCombineOff, },
+{ "autocombine aus", CommandAutoCombineOff, },
+{ "reagentbag on",    CommandReagentBagOn, },
+{ "reagentbag an",  CommandReagentBagOn, },
+{ "reagentbag off",   CommandReagentBagOff, },
+{ "reagentbag aus", CommandReagentBagOff, },
 { NULL,          NULL},    // Must end table this way
 };
 

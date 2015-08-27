@@ -1252,8 +1252,7 @@ messages:
             piFlags=piFlags | flag ;
          }
       }
-
-      if flagset=2
+      else if flagset=2
       {
          if NOT Value
          {

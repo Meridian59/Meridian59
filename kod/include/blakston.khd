@@ -2312,6 +2312,12 @@
    PFLAG2_TEMPSAFE         = 0x002000
    PFLAG2_AUTOCOMBINE      = 0x004000
 
+   % Third set of player flags (in piFlags3)
+   % piFlags3 can now be used as a proper bitfield, and no longer
+   % modifies player advancement.
+   % A mask of flags that are unaffected by ResetPlayerFlagList
+   PFLAG3_MASK             = 0x0000000
+
    % Set of flags just for DM's
    % DM is completely invisible
    DMFLAG_INVISIBLE = 0x000001

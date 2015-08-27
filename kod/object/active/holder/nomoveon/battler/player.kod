@@ -852,10 +852,6 @@ properties:
    % Flags for various character attributes.
    piFlags = 0
    piFlags2 = 0
-
-   % A generic modifier.  Setting this value can help or hinder a character.
-   % Intended for use to curb overagressive players or to give a boost to
-   % nicer players. Named something unusual to deter experimentation.
    piFlags3 = 0
 
    % player starts unguilded--doesn't do much yet
@@ -1245,22 +1241,33 @@ messages:
       {
          if NOT Value
          {
-            piFlags=piFlags & ~flag ;
+            piFlags = piFlags & ~flag;
          }
          else
          {
-            piFlags=piFlags | flag ;
+            piFlags = piFlags | flag;
          }
       }
-      else if flagset=2
+      else if flagset = 2
       {
          if NOT Value
          {
-            piFlags2=piFlags2 & ~flag ;
+            piFlags2 = piFlags2 & ~flag;
          }
          else
          {
-            piFlags2=piFlags2 | flag ;
+            piFlags2 = piFlags2 | flag;
+         }
+      }
+      else if flagset = 3
+      {
+         if NOT Value
+         {
+            piFlags3 = piFlags3 & ~flag;
+         }
+         else
+         {
+            piFlags3 = piFlags3 | flag;
          }
       }
 
@@ -1272,15 +1279,15 @@ messages:
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
-      if flag=PFLAG_MORPHED
+      if flag = PFLAG_MORPHED
       {
          Post(self,@DrawOffense);
       }
 
-      if flag=PFLAG_NO_MOVE
-         OR flag=PFLAG_NO_FIGHT
-         OR flag=PFLAG_NO_MAGIC
-         OR flag=PFLAG_MORPHED
+      if flag = PFLAG_NO_MOVE
+         OR flag = PFLAG_NO_FIGHT
+         OR flag = PFLAG_NO_MAGIC
+         OR flag = PFLAG_MORPHED
       {
          Post(self,@DrawDefense);
       }
@@ -1310,7 +1317,7 @@ messages:
 
       if flagset = 3
       {
-         return piFlags3;
+         return (piFlags3 & flag);
       }
 
       return FALSE;
@@ -1327,6 +1334,7 @@ messages:
 
       piFlags = (piFlags & PFLAG_MASK);
       piFlags2 = (piFlags2 & PFLAG2_MASK);
+      piFlags3 = (piFlags3 & PFLAG3_MASK);
       if Send(self,@IsResting)
       {
          piFlags = piFlags | PFLAG_NO_MOVE;
@@ -5075,9 +5083,6 @@ messages:
          iOffense = iOffense / 2;
       }
 
-      % The universal modifier.
-      iOffense = iOffense + ((iOffense * piFlags3) / 100);
-
       return Bound(iOffense,1,2000);
    }
 
@@ -5136,10 +5141,7 @@ messages:
       iDefense = iDefense + Send(Send(SYS,@GetParliament),
                                  @GetFactionDefenseBonus,#who=self);
 
-      % The universal modifier.
-      iDefense = iDefense + ((iDefense * piFlags3) / 100);
-
-      return bound(iDefense,1,2000);
+      return Bound(iDefense,1,2000);
    }
 
    % The next three messages deal with the three defense skills.  These
@@ -5296,9 +5298,6 @@ messages:
       iDamageBonus = iDamageBonus*100;
 
       iDamage = iDamage + iDamageBonus;
-
-      % The universal modifier.
-      iDamage = iDamage + ((iDamage * piFlags3) / 100);
 
       return iDamage;
    }

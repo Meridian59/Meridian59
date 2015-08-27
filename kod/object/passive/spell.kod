@@ -1877,9 +1877,6 @@ messages:
       
       iFinal = (viChance_to_increase + iBonus);
 
-      % The personal universal modifier.
-      iFinal = iFinal + ((iFinal * Send(who,@CheckPlayerFlag,#flagset=3))/100);
-
       return iFinal;
    }
 
@@ -1933,12 +1930,8 @@ messages:
       % The global modifier from system.
       final = (final * Send(SETTINGS_OBJECT, @GetAdvancementRate)) / 100;
 
-      % The individual universal modifier.
-      final = final + ((final * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);
-
       return final;
    }
-
 
    GetExertion()
    {
@@ -2426,16 +2419,12 @@ messages:
          iSpellpower = iSpellpower - iAbilityLoss;
       }
 
-      % The personal universal modifier.
-      iSpellpower = iSpellpower
-                     + (iSpellpower*Send(who,@CheckPlayerFlag,#flagset=3)/100);
-         
       % Bound the result.
       iSpellPower = bound(iSpellPower,SPELLPOWER_MINIMUM,SPELLPOWER_MAXIMUM);
-      
+
       return iSpellPower;
    }
-      
+
    CanBeRemovedByPlayer()
    "Returns if a spell can be removed by normal Purge/Purify"
    {

@@ -34,7 +34,7 @@ classvars:
    vrStartMessage = Qormas_start_message
    vrEndMessage = Qormas_end_message
    vbAnnounce = TRUE
-   viRunDays = 1
+   viRunDays = 30
 
 properties:
 
@@ -107,17 +107,9 @@ messages:
       oRealTime = Send(SYS,@GetRealTimeObject);
 
       sMessage = SetString($,@NotifyEngineEndEvent);
-      Debug("TEMPORARY CODE HERE, DELETE ME!");
-      % TODO: ALSO CHANGE vbRunDays
-      % TODO: ALSO CHANGE vbRunDays
-      % TODO: ALSO CHANGE vbRunDays
-      %Send(oRealTime,@RegisterCallbackInDays,
-      %               #oObject=self,
-      %               #days=viRunDays,
-      %               #message=sMessage);
-      Send(oRealTime,@RegisterCallbackInMinutes,
+      Send(oRealTime,@RegisterCallbackInDays,
                      #oObject=self,
-                     #minutes=viRunDays,
+                     #days=viRunDays,
                      #message=sMessage);
       
       propagate;

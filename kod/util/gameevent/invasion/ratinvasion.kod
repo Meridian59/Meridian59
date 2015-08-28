@@ -35,6 +35,9 @@ resources:
 
 classvars:
 
+   % It is a good idea to replace the default start and stop messsages with
+   % your own.  You can also turn off the event start and stop messages if you
+   % would like it to be a suprise. (set vbAnnounce to FALSE)
    vrStartMessage = RatInvasion_start_msg
    vrEndMessage = RatInvasion_end_msg
 
@@ -71,6 +74,34 @@ messages:
       propagate;
    }
 
+   % OPTIONAL, DO NOT CALL DIRECTLY!  The engine will call this after it ends
+   % your event
+   Delete()
+   {
+      propagate;
+   }
+
+   % OPTIONAL but a good idea to put cleanup stuff in here, the event engine
+   % calls this when ending an event, DO NOT CALL DIRECTLY!  If you want to end
+   % your event call Send(self,@NotifyEngineEndEvent)
+   EndEvent()
+   {
+      propagate;
+   }
+   
+   % REQUIRED for every game event.  The engine calls this when it is time to
+   % start your event.  DO NOT CALL DIRECTLY.  Launch events from the game event
+   % engine with Send(<engine object>,EventStart,#parm1=&<event type>) or using
+   % the event sceduling system
+   StartEvent()
+   {
+      Send(self,@PhaseOne);
+
+      propagate;
+   }
+
+   %%% The rest is up to you!
+   
    Update()
    {
       if piPhase = 1
@@ -104,20 +135,12 @@ messages:
       {
          if Send(self,@CountMonsters,#type=&GiantRatKing) = 0
          {
-            % Call EventEnd to handle ending the event properly. This
-            % deletes the event in the GameEventEngine, which also calls
-            % the appropriate code in EndEvent, which handles the end of
-            % the specific event.
+            % Call NotifyEngineEndEvent to handle ending the event properly. 
+            % This deletes the event from the GameEventEngine. It also calls
+            % EndEvent in this class, which handles your end of event cleanup
             Send(self,@NotifyEngineEndEvent);
          }
       }
-
-      propagate;
-   }
-
-   StartEvent()
-   {
-      Send(self,@PhaseOne);
 
       propagate;
    }
@@ -244,11 +267,6 @@ messages:
             @NewHold,#what=oKing,#new_row=51,#new_col=18);
 
       return;
-   }
-
-   EndEvent()
-   {
-      propagate;
    }
 
 end

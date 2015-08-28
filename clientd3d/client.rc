@@ -344,52 +344,58 @@ BEGIN
     PUSHBUTTON      "Abbrechen",2,267,183,50,14
 END
 
-116 DIALOGEX 0, 0, 257, 318
+
+116 DIALOGEX 0, 0, 279, 338
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Voreinstellungen"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Zielerfassung",IDC_STATIC,6,6,91,78,WS_GROUP
-    CONTROL         "Unschuldige können angegriffen werden",1153,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,82,25
+    GROUPBOX        "Zielerfassung",IDC_STATIC,6,6,104,78,WS_GROUP
+    CONTROL         "Unschuldige können angegriffen werden",1153,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,84,25
     CONTROL         "Hebe Rot hervor",1180,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,45,70,10
     CONTROL         "Hebe Blau hervor",1181,"Button",BS_AUTORADIOBUTTON,14,56,70,10
     CONTROL         "Hebe Grün hervor",1182,"Button",BS_AUTORADIOBUTTON,14,67,70,10
-    GROUPBOX        "Spezialeffekte",IDC_STATIC,104,6,147,78,WS_GROUP
-    CONTROL         "Schrittschwankungen anzeigen",1163,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,17,132,9
-    CONTROL         "Schmerzen bei Treffern anzeigen",1146,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,28,132,9
-    CONTROL         "Spielernamen anzeigen",1143,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,111,39,132,9
-    CONTROL         "Stapelgröße bei Gegenständen anzeigen",1148,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,111,50,135,18
-    CONTROL         "Wettereffekte anzeigen",1208,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,111,72,132,9
-    CONTROL         "Zeige Partikeleffekt",1184,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,111,61,126,10
-    GROUPBOX        "Spieloptionen",IDC_STATIC,6,84,245,41,WS_GROUP
+    GROUPBOX        "Spezialeffekte",IDC_STATIC,118,6,151,78,WS_GROUP
+    CONTROL         "Schrittschwankungen anzeigen",1163,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,129,17,132,9
+    CONTROL         "Schmerzen bei Treffern anzeigen",1146,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,129,28,132,9
+    CONTROL         "Spielernamen anzeigen",1143,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,129,39,132,9
+    CONTROL         "Stapelgröße bei Gegenständen anzeigen",1148,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,129,50,135,18
+    CONTROL         "Wettereffekte anzeigen",1208,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,129,72,132,9
+    CONTROL         "Zeige Partikeleffekt",1184,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_DISABLED | WS_TABSTOP,129,61,126,10
+    GROUPBOX        "Spieloptionen",IDC_STATIC,6,84,263,63,WS_GROUP
     CONTROL         "Vorübergehender PvP-Schutz nach Tod",1209,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,96,140,9
-    CONTROL         "An Gruppenbildung teilnehmen",1210,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,110,120,9
-    GROUPBOX        "Audio Effekte",IDC_STATIC,6,128,245,63,WS_GROUP
-    CONTROL         "Musik",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,140,35,9
-    CONTROL         "Sounds",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,52,140,44,9
-    CONTROL         "Klangschleifen",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,97,140,64,9
-    CONTROL         "Umgebungs-Sound",1154,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,165,140,80,9
-    LTEXT           "Sound Lautstärke",IDC_STATIC,13,157,73,10
-    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,154,173,15
-    LTEXT           "Musik Lautstärke",IDC_STATIC,13,175,73,10
-    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,172,173,15
-    GROUPBOX        "Oberfläche",IDC_STATIC,5,196,245,64,WS_GROUP
-    CONTROL         "Toolbar anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,209,70,9
-    CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,209,100,9
-    CONTROL         "FPS anzeigen",1211,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,189,209,56,9
-    CONTROL         "Tooltips anzeigen",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,220,65,9
-    CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,220,79,10
-    CONTROL         "Kartenanmerkungen",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,220,80,9
-    CONTROL         "Textfenster beim zurückscrollen einfrieren",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,232,163,9
-    CONTROL         "Bunter Text",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,232,72,10
-    CONTROL         "Textfilter",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,244,77,9
-    PUSHBUTTON      "Filtereinstellungen",1164,101,244,142,12
-    GROUPBOX        "Web Browser",IDC_STATIC,5,262,245,31,WS_GROUP
-    LTEXT           "Programm:",IDC_STATIC,13,275,45,8
-    EDITTEXT        1155,59,274,136,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "&Durchsuchen",1162,197,274,49,12
-    DEFPUSHBUTTON   "Bestätigen",1,145,300,50,12,WS_GROUP
-    PUSHBUTTON      "Abbrechen",2,200,300,50,12,WS_GROUP
+    CONTROL         "Autoaufnahme stapelbarer Gegenstände von Kills",1212,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,108,177,9
+    CONTROL         "Gegenstände automatisch kombinieren",1213,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,120,225,9
+    CONTROL         "Verstaue Reagenzien automatisch in den Reagenzienbeutel",1214,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,132,237,9
+    CONTROL         "An Gruppenbildung teilnehmen",1210,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,157,96,109,9
+    GROUPBOX        "Audio Effekte",IDC_STATIC,6,149,263,63,WS_GROUP
+    CONTROL         "Musik",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,161,35,9
+    CONTROL         "Sounds",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,161,44,9
+    CONTROL         "Klangschleifen",1152,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,113,162,64,9
+    CONTROL         "Umgebungs-Sound",1154,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,181,162,74,9
+    LTEXT           "Sound Lautstärke",IDC_STATIC,13,178,73,10
+    CONTROL         "",IDC_SOUND_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,175,190,15
+    LTEXT           "Musik Lautstärke",IDC_STATIC,13,196,73,10
+    CONTROL         "",IDC_MUSIC_VOLUME,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,69,193,189,15
+    GROUPBOX        "Oberfläche",IDC_STATIC,5,217,263,64,WS_GROUP
+    CONTROL         "Toolbar anzeigen",1165,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,230,70,9
+    CONTROL         "Übertragungsrate anzeigen",147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,230,100,9
+    CONTROL         "FPS anzeigen",1211,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,189,230,56,9
+    CONTROL         "Tooltips anzeigen",1147,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,241,65,9
+    CONTROL         "Dynamische Karte",1198,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,241,79,10
+    CONTROL         "Kartenanmerkungen",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,189,242,78,9
+    CONTROL         "Textfenster beim zurückscrollen einfrieren",1145,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,253,163,9
+    CONTROL         "Bunter Text",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,189,252,53,10
+    CONTROL         "Textfilter",1173,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,265,77,9
+    PUSHBUTTON      "Filtereinstellungen",1164,101,265,142,12
+    GROUPBOX        "Web Browser",IDC_STATIC,5,283,263,31,WS_GROUP
+    LTEXT           "Programm:",IDC_STATIC,13,296,45,8
+    EDITTEXT        1155,59,295,136,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Durchsuchen",1162,208,295,49,12
+    DEFPUSHBUTTON   "Bestätigen",1,156,318,50,12,WS_GROUP
+    PUSHBUTTON      "Abbrechen",2,216,318,50,12,WS_GROUP
 END
 
 110 DIALOG 0, 0, 340, 140

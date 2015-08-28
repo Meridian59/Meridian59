@@ -46,8 +46,10 @@ int GetTimeZoneOffset()
       bprintf("GetTimeZoneOffset got invalid timezone data, returning 0.");
       return 0;
    }
-
-   return (int)t1.Bias * 60;
+   if (retval == TIME_ZONE_ID_DAYLIGHT)
+      return (int)(t1.Bias + t1.DaylightBias) * 60;
+   else
+      return (int)t1.Bias * 60;
 #else
    // Need to implement timezone offset for Linux.
    return 0;

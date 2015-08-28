@@ -68,6 +68,7 @@ function_type Functions[] = {
 {"FreeRoom",            FREEROOM,        AEXPRESSION,   ANONE},
 {"GetClass",            GETCLASS,        AEXPRESSION,   ANONE},
 {"GetTime",             GETTIME,         ANONE},
+{"GetTimeZoneOffset",   GETTIMEZONEOFFSET,ANONE},
 {"GetTickCount",        GETTICKCOUNT,    ANONE},
 {"SetClassVar",         SETCLASSVAR,     AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"CanMoveInRoom",       CANMOVEINROOM,   AEXPRESSION,   AEXPRESSION,  AEXPRESSION,

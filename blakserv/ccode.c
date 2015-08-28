@@ -3198,6 +3198,23 @@ int C_FindListElem(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+/*
+ * C_GetTimeZoneOffset: returns the amount of seconds that must be added
+ *                      to local time to equal UTC. Conversely, subtracting
+ *                      this number from UTC (GetTime()) equals local time.
+ */
+int C_GetTimeZoneOffset(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   val_type ret_val;
+
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = GetTimeZoneOffset();
+
+   return ret_val.int_val;
+}
+
 int C_GetTime(int object_id,local_var_type *local_vars,
 			  int num_normal_parms,parm_node normal_parm_array[],
 			  int num_name_parms,parm_node name_parm_array[])

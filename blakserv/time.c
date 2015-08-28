@@ -34,6 +34,26 @@ int GetTime()
 	return (int)time(NULL);
 }
 
+int GetTimeZoneOffset()
+{
+#ifdef BLAK_PLATFORM_WINDOWS
+   DWORD retval;
+   TIME_ZONE_INFORMATION t1;
+
+   retval = GetTimeZoneInformation(&t1);
+   if (retval == TIME_ZONE_ID_INVALID)
+   {
+      bprintf("GetTimeZoneOffset got invalid timezone data, returning 0.");
+      return 0;
+   }
+
+   return (int)t1.Bias * 60;
+#else
+   // Need to implement timezone offset for Linux.
+   return 0;
+#endif
+}
+
 const char * TimeStr(time_t time)
 {
 	struct tm *tm_time;

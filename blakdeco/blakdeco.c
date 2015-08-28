@@ -614,6 +614,7 @@ char * name_function(int fnum)
    case INSERTLISTELEM : return "InsertListElem";
    case LAST : return "Last";
 
+   case GETTIMEZONEOFFSET : return "GetTimeZoneOffset";
    case GETTIME : return "GetTime";
    case GETTICKCOUNT : return "GetTickCount";
    case SETCLASSVAR : return "SetClassVar";

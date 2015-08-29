@@ -1,6 +1,6 @@
 LivingStatue_name_rsc = de "Eine Statue"
 LivingStatue_active_name_rsc = de "Eine lebendige Statue"
-LivingStatue_desc_rsc = de "Diese Statue ist das Abbild eines alten %s."
+LivingStatue_desc_rsc = de "Diese Statue ist das Abbild eines alten %s.\n\n%r"
 LivingStatue_dead_name_rsc = de "Eine zerbröselte lebendige Statue"
 LivingStatue_mason = de "Baumeisters"
 LivingStatue_farmer = de "Bauern"

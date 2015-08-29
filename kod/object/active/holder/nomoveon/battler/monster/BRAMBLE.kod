@@ -355,7 +355,7 @@ messages:
       return;
    }
 
-   HitPointThreshold()
+   HitPointThresholdDamage()
    "Shows physical damage instead of a message."
    {
       return;

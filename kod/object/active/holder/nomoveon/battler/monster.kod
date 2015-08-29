@@ -2182,13 +2182,13 @@ messages:
       }
 
       % Check to see if we crossed a threshold due to the damage.
-      if iPercentClass <> (piHit_points/(piMax_hit_points*20))
+      if iPercentClass <> (piHit_points / (piMax_hit_points * 20))
       {
-         Send(self,@HitPointThreshold);
+         Send(self,@HitPointThresholdDamage);
       }
-      
+
       % Let the attacker know if they hit some weakness/strength of the mob
-      if IsClass(what,&player) and NOT absolute
+      if IsClass(what,&player) AND NOT absolute
       {
          Post(what,@MsgPlayerHitResisted,#what=what,#resistance=iResist,
               #target=self,#color_rsc=monster_color_blue_rsc);
@@ -4919,69 +4919,68 @@ messages:
       return;
    }
 
-   HitPointThreshold()
+   HitPointThresholdDamage()
    {
       local i, iThreshold, rDamage_report, each_obj;
 
-      iThreshold = piHit_points / (piMax_hit_points *20);
+      iThreshold = piHit_points / (piMax_hit_points * 20);
 
       if iThreshold >= 4
       {
          return;
       }
+      else if iThreshold = 3
+      {
+         rDamage_report = vrFirst_damage_level;
+      }
+      else if iThreshold = 2
+      {
+         rDamage_report = vrSecond_damage_level;
+      }
+      else if iThreshold = 1
+      {
+         rDamage_report = vrThird_damage_level;
+      }
       else
       {
-         if iThreshold = 3
-         {
-            rDamage_report=vrFirst_damage_level;
-         }
-         else
-         {
-            if iThreshold = 2
-            {
-               rDamage_report=vrSecond_damage_level;
-            }
-            else
-            {
-               if iThreshold = 1
-               {
-                  rDamage_report=vrThird_damage_level;
-               }
-               else
-               {
-                  rDamage_report=vrFourth_damage_level;
-               }
-            }
-         }
+         rDamage_report = vrFourth_damage_level;
       }
 
       foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj=Send(poOwner,@HolderExtractObject,#data=i);
-         if isClass(each_obj,&User) AND Send(each_obj,@GetKillTarget) = self
+         if isClass(each_obj,&User)
+            AND Send(each_obj,@GetKillTarget) = self
          {
             Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamage_report,
-                 #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+                  #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
          }
       }
 
       return;
    }
 
+   HitPointThresholdHeal()
+   {
+      return;
+   }
+
    HealHitPoint()
    {
-      local iPercentClass,i,each_obj;
+      local iPercentClass, i, each_obj;
 
-      if piHit_points >= piMax_Hit_points*100
+      if piHit_points >= piMax_Hit_points * 100
       {
          return;
       }
 
       % We set a mark to see if the healing changes our threshold
-      iPercentClass = piHit_points/(piMax_Hit_points*20);
-      piHit_points = piHit_points+100;
-      if iPercentClass <> (piHit_points/(piMax_Hit_points*20))
+      iPercentClass = piHit_points / (piMax_Hit_points * 20);
+      piHit_points = piHit_points + 100;
+      if iPercentClass <> (piHit_points / (piMax_Hit_points * 20))
       {
+         Send(self,@HitPointThresholdHeal);
+
          foreach i in Send(poOwner,@GetHolderActive)
          {
             each_obj=Send(poOwner,@HolderExtractObject,#data=i);
@@ -4989,8 +4988,8 @@ messages:
                AND Send(each_obj,@GetKillTarget) = self
             {
                Post(each_obj,@MsgSendUser,#what=self,
-                    #message_rsc=vrMonster_healing,
-                    #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+                     #message_rsc=vrMonster_healing,
+                     #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
             }
          }
       }

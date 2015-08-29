@@ -436,7 +436,7 @@ messages:
    {
       local i, iYear, iMonth, iDay, iHour, iMinute;
 
-      Send(Send(SYS,@GetEventEngine),@NewMinute);
+      Send(EVENTENGINE_OBJECT,@NewMinute);
 
       if plCallbacks <> $
       {
@@ -482,28 +482,28 @@ messages:
    
    NewHour()
    {
-      Send(Send(SYS,@GetEventEngine),@NewHour);
+      Send(EVENTENGINE_OBJECT,@NewHour);
 
       return;
    }
 
    NewDay()
    {
-      Send(Send(SYS,@GetEventEngine),@NewDay);
+      Send(EVENTENGINE_OBJECT,@NewDay);
 
       return;
    }
 
    NewMonth()
    {
-      Send(Send(SYS,@GetEventEngine),@NewMonth);
+      Send(EVENTENGINE_OBJECT,@NewMonth);
 
       return;
    }
 
    NewYear()
    {
-      Send(Send(SYS,@GetEventEngine),@NewYear);
+      Send(EVENTENGINE_OBJECT,@NewYear);
 
       return;
    }

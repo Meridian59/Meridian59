@@ -3906,19 +3906,14 @@ void AdminCheckUserLoggedOn(session_node *s)
 void AdminSendInt(int session_id,admin_parm_type parms[],
                   int num_blak_parm,parm_node blak_parm[])
 {
-   if (parms[0] == 0)
+   if (parms[0] >= 0 && parms[0] <= MAX_BUILTIN_OBJECT)
    {
-      parms[0] = GetSystemObjectID();
-      AdminSendObject(session_id, parms, num_blak_parm, blak_parm);
-   }
-   else if (parms[0] == 1)
-   {
-      parms[0] = GetSettingsObjectID();
+      parms[0] = GetBuiltInObjectID((int)parms[0]);
       AdminSendObject(session_id, parms, num_blak_parm, blak_parm);
    }
    else
    {
-      aprintf("Can't reference object with int %i.\n", parms[0]);
+      aprintf("Can't reference object with int %i.\n", (int)parms[0]);
    }
 }
 

@@ -360,8 +360,6 @@ properties:
    piDay = 0
    piYear = 0
 
-   poRealTime = $
-   
    % outdoor brightness level (0-100), updated hourly
    piBrightness
    % updated here and there
@@ -384,9 +382,6 @@ properties:
 
    % Singleton object that keeps track of various game statistics
    poStatistics = $
-
-   % object that handles automated events
-   poEventEngine = $
 
    poWarEvent = $
    
@@ -518,8 +513,6 @@ messages:
    {
       % This shouldn't be changed!
       vlLevelPoints = [1,2,4,6,8,10];
-      
-      Send(self,@RecreateRealTime);
 
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
@@ -538,7 +531,6 @@ messages:
 
       Send(self,@RecreateAssassinGame);
       Send(self,@RecreateQuestEngine);
-      Send(self,@RecreateEventEngine);
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
@@ -609,6 +601,8 @@ messages:
 
       % Recreate settings.
       Send(SETTINGS_OBJECT,@Recreate);
+      Send(REALTIME_OBJECT,@Recreate);
+      Send(EVENTENGINE_OBJECT,@Recreate);
 
       if piRecreate_State <> RECREATE_NOT
       {
@@ -626,9 +620,7 @@ messages:
 
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
-      
-      Send(self,@RecreateRealTime);
-      
+
       plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
       plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
 
@@ -651,7 +643,6 @@ messages:
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateSurvivalRoomMaintenance);
       Send(self,@RecreateWarEvent);
-      Send(self,@RecreateEventEngine);
 
       % These don't need to be done here.
       % RecreateAllRooms calls CreateAllRoomsIfNew. Calling it again here
@@ -864,20 +855,6 @@ messages:
       }
 
       Send(room,@Delete);
-
-      return;
-   }
-   
-   RecreateRealTime()
-   {
-      if poRealTime <> $
-      {
-         Send(poRealTime,@Recreate);
-      }
-      else
-      {
-         poRealTime = Create(&RealTime);
-      }
 
       return;
    }
@@ -1222,10 +1199,7 @@ messages:
          Send(poQormas, @UserLogon, #who = what);
       }
 
-      if (poEventEngine <> $)
-      {
-         Send(poEventEngine,@UserLogon,#who=what);
-      }
+      Send(EVENTENGINE_OBJECT,@UserLogon,#who=what);
 
       return;
    }
@@ -1291,10 +1265,7 @@ messages:
          Send(poQormas,@UserLogoff,#who=what);
       }
 
-      if (poEventEngine <> $)
-      {
-         Send(poEventEngine,@UserLogoff,#who=what);
-      }
+      Send(EVENTENGINE_OBJECT,@UserLogoff,#who=what);
 
       return;
    }
@@ -1792,10 +1763,7 @@ messages:
             war_string1, war_string2, oBook, oMaster;
 
       % Notify the event engine
-      if (poEventEngine <> $)
-      {
-         Send(poEventEngine,@UserKilled,#who=what,#killer=killer);
-      }
+      Send(EVENTENGINE_OBJECT,@UserKilled,#who=what,#killer=killer);
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -4905,20 +4873,6 @@ messages:
       return TRUE;
    }
 
-   RecreateEventEngine()
-   {
-      if poEventEngine <> $
-      {
-         Send(poEventEngine,@Recreate);
-      }
-      else
-      {
-         poEventEngine = Create(&GameEventEngine);
-      }
-
-      return TRUE;
-   }
-   
    GetNecromancerBalance()
    {
       return poNecromancerBalance;
@@ -5058,17 +5012,7 @@ messages:
 
       return;
    }
-   
-   GetRealTimeObject()
-   {
-      return poRealTime;
-   }
-   
-   GetEventEngine()
-   {
-      return poEventEngine;
-   }
-   
+
    GetQormas()
    {
       return poQormas;

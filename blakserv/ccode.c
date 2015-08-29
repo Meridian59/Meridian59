@@ -605,10 +605,10 @@ int C_SendMessage(int object_id,local_var_type *local_vars,
    if (object_val.v.tag == TAG_INT)
    {
       /* Can send to built-in objects using constants. */
-      if (object_val.v.data == 0)
-         return SendBlakodMessage(GetSystemObjectID(), message_val.v.data, num_name_parms, name_parm_array);
-      if (object_val.v.data == 1)
-         return SendBlakodMessage(GetSettingsObjectID(), message_val.v.data, num_name_parms, name_parm_array);
+      object_val.v.data = GetBuiltInObjectID(object_val.v.data);
+      if (object_val.v.data > INVALID_OBJECT)
+         return SendBlakodMessage(object_val.v.data, message_val.v.data,
+                     num_name_parms, name_parm_array);
    }
 
    if (object_val.v.tag == TAG_CLASS)

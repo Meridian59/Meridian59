@@ -249,10 +249,10 @@ Bool LoadObject(int object_id,char *class_name)
    objects[object_id].p[0].val.v.tag = TAG_OBJECT; 
    objects[object_id].p[0].val.v.data = object_id;
 
-   // Set the built-in Settings object ID here, in case we're loading
-   // a save game with an old blakod Settings object.
-   if (c->class_id == SETTINGS_CLASS)
-      SetSettingsObjectID(object_id);
+   // Set any built-in object ID here, in case we're loading an old
+   // save game with a blakod object that needs to be saved as a built-in.
+   if (c->class_id <= MAX_BUILTIN_CLASS)
+      SetBuiltInObjectIDByClass(c->class_id, object_id);
 
    /* if no kod changed, then setting the properties shouldn't be
     * necessary.  however, who knows.
@@ -397,10 +397,9 @@ void MoveObject(int dest_id,int source_id)
    dest->num_props = source->num_props;
    dest->p = source->p;
 
-   if (source->class_id == SYSTEM_CLASS)
-      SetSystemObjectID(dest_id);
-   else if (source->class_id == SETTINGS_CLASS)
-      SetSettingsObjectID(dest_id);
+   // If this is a built-in object, set the new object ID.
+   if (source->class_id <= MAX_BUILTIN_CLASS)
+      SetBuiltInObjectIDByClass(source->class_id, dest_id);
 }
 
 void SetNumObjects(int new_num_objects)

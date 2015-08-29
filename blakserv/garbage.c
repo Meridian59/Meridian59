@@ -143,8 +143,11 @@ void GarbageCollect()
 
    ForEachObject(ClearObjectGarbageRef);
    ForEachUser(MarkUserObjectNodes);
-   MarkObject(GetSystemObjectID());
-   MarkObject(GetSettingsObjectID());
+
+   // Mark built-in objects so they don't get deleted.
+   for (int i = 0; i <= MAX_BUILTIN_OBJECT; ++i)
+      MarkObject(GetBuiltInObjectID(i));
+
    ForEachObject(DeleteUnreferencedObject);
 
    next_renumber = SERVER_MERGE_BASE;

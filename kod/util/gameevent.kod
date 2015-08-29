@@ -115,7 +115,7 @@ messages:
 
    NotifyEngineEndEvent()
    {
-      Send(Send(SYS,@GetEventEngine),@EventEnd,#parm1=self);
+      Send(EVENTENGINE_OBJECT,@EventEnd,#parm1=self);
 
       return;
    }

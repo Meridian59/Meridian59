@@ -99,8 +99,8 @@ Bool LoadGameOpen(char *fname);
 Bool LoadGameParse(char *filename);
 void LoadGameClose(void);
 
-Bool LoadGameSystem(void);
-Bool LoadGameSettings(void);
+Bool LoadGameBuiltInObject(int ref_id);
+
 Bool LoadGameObject(void);
 Bool LoadGameListNodes(void);
 Bool LoadGameTimer(void);
@@ -225,11 +225,19 @@ Bool LoadGameParse(char *filename)
 				return False;
 			break;
 		case SAVE_GAME_SYSTEM :
-			if (!LoadGameSystem())
+			if (!LoadGameBuiltInObject(SYSTEM_OBJECT))
 				return False;
 			break;
 		case SAVE_GAME_SETTINGS :
-			if (!LoadGameSettings())
+			if (!LoadGameBuiltInObject(SETTINGS_OBJECT))
+				return False;
+			break;
+		case SAVE_GAME_REALTIME :
+			if (!LoadGameBuiltInObject(REALTIME_OBJECT))
+				return False;
+			break;
+		case SAVE_GAME_EVENTENGINE :
+			if (!LoadGameBuiltInObject(EVENTENGINE_OBJECT))
 				return False;
 			break;
 		case SAVE_GAME_OBJECT :
@@ -258,24 +266,14 @@ Bool LoadGameParse(char *filename)
 	return True;
 }
 
-Bool LoadGameSystem(void)
+Bool LoadGameBuiltInObject(int ref_id)
 {
-	int system_id;
+   int obj_id;
 
-	LoadGameReadInt(&system_id);
-	SetSystemObjectID(system_id);
+   LoadGameReadInt(&obj_id);
+   SetBuiltInObjectID(ref_id, obj_id);
 
-	return True;
-}
-
-Bool LoadGameSettings(void)
-{
-	int settings_id;
-
-	LoadGameReadInt(&settings_id);
-	SetSettingsObjectID(settings_id);
-	
-	return True;
+   return True;
 }
 
 Bool LoadGameObject(void)

@@ -71,13 +71,26 @@ enum
    DM_CLASS = 32,
    FIND_USER_BY_STRING_MSG = 33,
    CREATOR_CLASS = 34,
-   SETTINGS_CLASS = 35
+   SETTINGS_CLASS = 35,
+   REALTIME_CLASS = 36,
+   EVENTENGINE_CLASS = 37,
+   MAX_BUILTIN_CLASS = 37
 
    // To add other C-accessible KOD identifiers,
    // see the BLAKCOMP's table of BuiltinIds[].
    //
    // The compiler assumes those builtins before
    // it reads any KODBASE.TXT.
+};
+
+// Enum for object constants blakod can use to call built-in objects.
+enum
+{
+   SYSTEM_OBJECT = 0,
+   SETTINGS_OBJECT = 1,
+   REALTIME_OBJECT = 2,
+   EVENTENGINE_OBJECT = 3,
+   MAX_BUILTIN_OBJECT = 3
 };
 
 #define MAX_PROC_TIME 5000

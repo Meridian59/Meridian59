@@ -144,8 +144,8 @@ id_struct BuiltinIds[] = {
 {"sendcharinfo",  I_MISSING,   18,  0,   I_MESSAGE},
 {"newhour",       I_MISSING,   19,  0,   I_MESSAGE},
 {"guest",         I_MISSING,   20,  0,   I_CLASS},
-{"name",    	  I_MISSING,   21,  0,   I_PARAMETER},
-{"icon",    	  I_MISSING,   22,  0,   I_PARAMETER},
+{"name",          I_MISSING,   21,  0,   I_PARAMETER},
+{"icon",          I_MISSING,   22,  0,   I_PARAMETER},
 {"admin",         I_MISSING,   23,  0,   I_CLASS},
 {"systemlogon",   I_MISSING,   24,  0,   I_MESSAGE},
 {"finduserbyinternetmailname",I_MISSING,25,0,I_MESSAGE},
@@ -159,6 +159,8 @@ id_struct BuiltinIds[] = {
 {"finduserbystring",I_MISSING, 33,  0,   I_MESSAGE},
 {"creator",       I_MISSING,   34,  0,   I_CLASS},
 {"settings",      I_MISSING,   35,  0,   I_CLASS},
+{"realtime",      I_MISSING,   36,  0,   I_CLASS},
+{"gameeventengine",I_MISSING,  37,  0,   I_CLASS},
 };
 
 int numbuiltins = (sizeof(BuiltinIds)/sizeof(id_struct));

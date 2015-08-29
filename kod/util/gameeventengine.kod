@@ -197,13 +197,11 @@ messages:
    ScheduleEventInMinutes(iClass=$,minutes=$,parm1=$,parm2=$,parm3=$,parm4=$,
                            parm5=$,parm6=$,parm7=$)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallbackInMinutes,
+      Send(REALTIME_OBJECT,@RegisterCallbackInMinutes,
                      #oObject=self,
                      #minutes=minutes,
                      #message=sMessage,
@@ -221,13 +219,11 @@ messages:
    ScheduleEventInHours(iClass=$,hours=$,parm1=$,parm2=$,parm3=$,parm4=$,
                         parm5=$,parm6=$,parm7=$)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallbackInHours,
+      Send(REALTIME_OBJECT,@RegisterCallbackInHours,
                      #oObject=self,
                      #hours=hours,
                      #message=sMessage,
@@ -245,13 +241,11 @@ messages:
    ScheduleEventInDays(iClass=$,days=$,parm1=$,parm2=$,parm3=$,parm4=$,
                         parm5=$,parm6=$,parm7=$)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallbackInDays,
+      Send(REALTIME_OBJECT,@RegisterCallbackInDays,
                      #oObject=self,
                      #days=days,
                      #message=sMessage,
@@ -269,13 +263,11 @@ messages:
    ScheduleEventInWeeks(iClass=$,weeks=$,parm1=$,parm2=$,parm3=$,parm4=$,
                         parm5=$,parm6=$,parm7=$)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallbackInDays,
+      Send(REALTIME_OBJECT,@RegisterCallbackInDays,
                      #oObject=self,
                      #days=weeks * 7,
                      #message=sMessage,
@@ -293,13 +285,11 @@ messages:
    ScheduleEventInMonths(iClass=$,months=$,parm1=$,parm2=$,parm3=$,parm4=$,
                         parm5=$,parm6=$,parm7=$)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallbackInMonths,
+      Send(REALTIME_OBJECT,@RegisterCallbackInMonths,
                      #oObject=self,
                      #months=months,
                      #message=sMessage,
@@ -317,13 +307,11 @@ messages:
    ScheduleEventInYears(iClass=$,years=$,parm1=$,parm2=$,parm3=$,parm4=$,
                         parm5=$,parm6=$,parm7=$)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallbackInYears,
+      Send(REALTIME_OBJECT,@RegisterCallbackInYears,
                      #oObject=self,
                      #years=years,
                      #message=sMessage,
@@ -342,18 +330,18 @@ messages:
    {
       local iYear, iMonth, iDay;
 
-      iYear = Send(Send(SYS,@GetRealTimeObject),@GetYear);
-      iMonth = Send(Send(SYS,@GetRealTimeObject),@GetMonth);
-      iDay = Send(Send(SYS,@GetRealTimeObject),@GetDay);
+      iYear = Send(REALTIME_OBJECT,@GetYear);
+      iMonth = Send(REALTIME_OBJECT,@GetMonth);
+      iDay = Send(REALTIME_OBJECT,@GetDay);
 
       if iHour = $
       {
-         iHour=Send(Send(SYS,@GetRealTimeObject),@GetHour);
+         iHour=Send(REALTIME_OBJECT,@GetHour);
       }
 
       if iMinute = $
       {
-         iMinute = Send(Send(SYS,@GetRealTimeObject),@GetMinute) + 2;
+         iMinute = Send(REALTIME_OBJECT,@GetMinute) + 2;
          if iMinute >= 60
          {
             iMinute = iMinute - 60;
@@ -372,13 +360,11 @@ messages:
 
    ScheduleStartEvent(iClass=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EventStart);
 
-      Send(oRealTime,@RegisterCallback,#oObject=self,
+      Send(REALTIME_OBJECT,@RegisterCallback,#oObject=self,
             #message=sMessage,#iYear=iYear,#iMonth=iMonth,
             #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=iClass);
 
@@ -387,13 +373,11 @@ messages:
 
    ScheduleEndEvent(oObject=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@EndEvent);
 
-      Send(oRealTime,@RegisterCallback,#oObject=self,
+      Send(REALTIME_OBJECT,@RegisterCallback,#oObject=self,
             #message=sMessage,#iYear=iYear,#iMonth=iMonth,
             #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=oObject);
 
@@ -402,13 +386,11 @@ messages:
 
    ScheduleAdvanceEvent(oObject=$,iYear=0,iMonth=0,iDay=0,iHour=0,iMinute=0)
    {
-      local oRealTime, sMessage;
-
-      oRealTime = Send(SYS,@GetRealTimeObject);
+      local sMessage;
 
       sMessage = SetString($,@AdvanceEvent);
 
-      Send(oRealTime,@RegisterCallback,#oObject=self,
+      Send(REALTIME_OBJECT,@RegisterCallback,#oObject=self,
             #message=sMessage,#iYear=iYear,#iMonth=iMonth,
             #iDay=iDay,#iHour=iHour,#iMinute=iMinute,#parm1=oObject);
 

@@ -22,6 +22,8 @@
    % blakserv.
    SYS = 0
    SETTINGS_OBJECT = 1
+   REALTIME_OBJECT = 2
+   EVENTENGINE_OBJECT = 3
 
    % Maximum integer value in blakod
    %  Truncated a bit for fudge factor room.  Useful for timer bounds.

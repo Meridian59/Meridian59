@@ -22,7 +22,9 @@ enum
    SAVE_GAME_LIST_NODES = 5,
    SAVE_GAME_TIMER = 6,
    SAVE_GAME_USER = 7,
-   SAVE_GAME_SETTINGS = 8
+   SAVE_GAME_SETTINGS = 8,
+   SAVE_GAME_REALTIME = 9,
+   SAVE_GAME_EVENTENGINE = 10
 };
 
 Bool SaveGame(char *filename);

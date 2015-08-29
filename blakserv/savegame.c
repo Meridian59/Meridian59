@@ -70,8 +70,7 @@ void SaveClasses(void);
 void SaveEachClass(class_node *c);
 void SaveResources(void);
 void SaveEachResource(resource_node *r);
-void SaveSystem(void);
-void SaveSettings(void);
+void SaveBuiltInObjects(void);
 void SaveObjects(void);
 void SaveEachObject(object_node *o);
 void SaveListNodes(void);
@@ -95,8 +94,7 @@ Bool SaveGame(char *filename)
 	
 	SaveClasses();
 	SaveResources();
-	SaveSystem();
-	SaveSettings();
+	SaveBuiltInObjects();
 	SaveObjects();
 	SaveListNodes();
 	SaveTimers(); 
@@ -159,16 +157,20 @@ void SaveEachResource(resource_node *r)
 	SaveGameWriteString(r->resource_name);
 }
 
-void SaveSystem(void)
+// Write these out individually for backwards compatibility.
+void SaveBuiltInObjects(void)
 {
 	SaveGameWriteByte(SAVE_GAME_SYSTEM);
 	SaveGameWriteInt(GetSystemObjectID());
-}
 
-void SaveSettings(void)
-{
 	SaveGameWriteByte(SAVE_GAME_SETTINGS);
 	SaveGameWriteInt(GetSettingsObjectID());
+
+	SaveGameWriteByte(SAVE_GAME_REALTIME);
+	SaveGameWriteInt(GetRealTimeObjectID());
+
+	SaveGameWriteByte(SAVE_GAME_EVENTENGINE);
+	SaveGameWriteInt(GetEventEngineObjectID());
 }
 
 void SaveObjects(void)

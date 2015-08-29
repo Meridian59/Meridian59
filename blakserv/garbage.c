@@ -92,7 +92,7 @@ void GarbageCollect()
    if (GetKodStats())
       GetKodStats()->interpreting_time_object_id = INVALID_ID;
 
-   ResetTable(); /* tables are not GC'ed yet, so we gotta clear 'em. */
+   ResetTables(); /* tables are not GC'ed yet, so we gotta clear 'em. */
 
    /* first, garbage collect the list nodes */
 

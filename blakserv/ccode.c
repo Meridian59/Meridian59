@@ -3404,7 +3404,7 @@ int C_CreateTable(int object_id,local_var_type *local_vars,
 {
 	val_type ret_val;
 	
-	ret_val.v.tag = TAG_INT;
+	ret_val.v.tag = TAG_TABLE;
 	ret_val.v.data = CreateTable(2999);
 	
 	return ret_val.int_val;
@@ -3415,14 +3415,14 @@ int C_AddTableEntry(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val,key_val,data_val;
+	val_type table_val,key_val,data_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_AddTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_AddTableEntry can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
@@ -3432,7 +3432,7 @@ int C_AddTableEntry(int object_id,local_var_type *local_vars,
 	data_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
 		normal_parm_array[2].value);
 	
-	InsertTable(int_val.v.data,key_val,data_val);
+	InsertTable(table_val.v.data,key_val,data_val);
 	return NIL;
 }
 
@@ -3440,21 +3440,21 @@ int C_GetTableEntry(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val,key_val,ret_val;
+	val_type table_val,key_val,ret_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_GetTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_GetTableEntry can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
 	key_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
 	
-	ret_val.int_val = GetTableEntry(int_val.v.data,key_val);
+	ret_val.int_val = GetTableEntry(table_val.v.data,key_val);
 	return ret_val.int_val;
 }
 
@@ -3462,21 +3462,21 @@ int C_DeleteTableEntry(int object_id,local_var_type *local_vars,
 					   int num_normal_parms,parm_node normal_parm_array[],
 					   int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val,key_val;
+	val_type table_val,key_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_DeleteTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_DeleteTableEntry can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
 	key_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
 	
-	DeleteTableEntry(int_val.v.data,key_val);
+	DeleteTableEntry(table_val.v.data,key_val);
 	return NIL;
 }
 
@@ -3484,18 +3484,18 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val;
+	val_type table_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_DeleteTable can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_DeleteTable can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
-	DeleteTable(int_val.v.data);
+	DeleteTable(table_val.v.data);
 	return NIL;
 }
 

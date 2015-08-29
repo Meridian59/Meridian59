@@ -1382,6 +1382,7 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	
 	aprintf("----\n");
 	aprintf("Used %i list nodes\n",GetListNodesUsed());
+	aprintf("Used %i tables\n",GetTablesUsed());
 	aprintf("Used %i object nodes\n",GetObjectsUsed());
 	aprintf("Used %i string nodes\n",GetStringsUsed());
 	aprintf("Watching %i active timers\n",GetNumActiveTimers());
@@ -2544,7 +2545,7 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
 		return;
 	}
 	
-	aprintf("Table %i (size %i)\n",tn->table_id,tn->size);
+	aprintf("Table %i (size %i)\n",table_id,tn->size);
 	aprintf("----------------------------------------------------------------------\n");
 	for (i=0;i<tn->size;i++)
 	{

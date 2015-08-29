@@ -96,7 +96,7 @@ void MainServer()
 	InitGameLock();
 	InitBkodInterpret();
 	InitBufferPool();
-	InitTable();
+	InitTables();
 	AddBuiltInDLlist();
 	
 	LoadMotd();
@@ -148,7 +148,7 @@ void MainExitServer()
 	ResetLoadMotd();
 	ResetLoadBof();
 	
-	ResetTable();
+	ResetTables();
 	ResetBufferPool();
 	ResetSysTimer();
 	ResetDLlist();

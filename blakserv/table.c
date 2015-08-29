@@ -19,111 +19,84 @@
 #include "blakserv.h"
 
 table_node *tables;
-int next_table_id;
-
+int num_tables, max_num_tables;
 static char buf0[LEN_MAX_CLIENT_MSG+1];
 
 /* local function prototypes */
 
-void FreeTable(table_node *tn);
+int AllocateTable(void);
 hash_node * AllocateTableEntry(val_type key_val,val_type data_val);
 
 Bool EqualTableEntry(val_type s1_val,val_type s2_val);
 unsigned int GetTableHash(val_type val);
 
 
-void InitTable()
+void InitTables()
 {
-   tables = NULL;
-   next_table_id = 1;
-
-/*   
-   {
-      int t;
-      val_type k,d;
-
-      t = CreateTable(3299);
-
-      k.v.tag = TAG_RESOURCE;
-      d.v.tag = TAG_OBJECT;
-
-
-      k.v.data = 1000003;
-      d.v.data = 23;
-      InsertTable(t,k,d);
-      
-      k.v.data = 1000005;
-      d.v.data = 25;
-      InsertTable(t,k,d);
-      
-      k.v.data = 1000008;
-      d.v.data = 28;
-      InsertTable(t,k,d);
-
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000007;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000003;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000002;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000005;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      ResetTable();
-   }
-   */
+   num_tables = 0;
+   max_num_tables = INIT_TABLE_NODES;
+   tables = (table_node *)AllocateMemory(MALLOC_ID_TABLE,
+                              max_num_tables * sizeof(table_node));
 }
 
-void ResetTable()
+int GetTablesUsed(void)
 {
-   table_node *tn,*temp;
+   return num_tables;
+}
 
-   tn = tables;
-   while (tn != NULL)
+int AllocateTable(void)
+{
+   int old_nodes;
+
+   if (num_tables == max_num_tables)
    {
-      temp = tn->next;
-      FreeTable(tn);
-      tn = temp;
+      old_nodes = max_num_tables;
+      max_num_tables = max_num_tables + (INIT_TABLE_NODES / 2);
+
+      tables = (table_node *)ResizeMemory(MALLOC_ID_TABLE, tables,
+         old_nodes * sizeof(table_node), max_num_tables * sizeof(table_node));
+      lprintf("AllocateTable resized to %i tables\n",max_num_tables);
    }
-   tables = NULL;
-   /* next_table_id = 1; */
+
+   return num_tables++;
+}
+
+void ResetTables()
+{
+   int old_nodes;
+
+   for (int i = 0; i < num_tables; ++i)
+      DeleteTable(i);
+
+   num_tables = 0;
+   old_nodes = max_num_tables;
+   max_num_tables = INIT_TABLE_NODES;
+   tables = (table_node *)ResizeMemory(MALLOC_ID_TABLE, tables,
+      old_nodes * sizeof(table_node), max_num_tables * sizeof(table_node));
 }
 
 int CreateTable(int size)
 {
    table_node *tn;
-   int i;
-   
-   tn = (table_node *)AllocateMemory(MALLOC_ID_TABLE,sizeof(table_node));
-   tn->table_id = next_table_id++;
-   tn->size = size;
-   tn->table = (hash_node **)AllocateMemory(MALLOC_ID_TABLE,tn->size*sizeof(hash_node *));
+   int table_id;
 
-   for (i=0;i<tn->size;i++)
-      tn->table[i] = NULL;
-   
-   tn->next = tables;
-   tables = tn;
-   
-   return tn->table_id;
+   table_id = AllocateTable();
+   tn = GetTableByID(table_id);
+   tn->size = size;
+   tn->table = (hash_node **)AllocateMemoryCalloc(MALLOC_ID_TABLE, size,
+                                 sizeof(hash_node *));
+
+   return table_id;
 }
 
-void FreeTable(table_node *tn)
+void DeleteTable(int table_id)
 {
    hash_node *hn,*temp;
-   int i;
-   
-   for (i=0;i<tn->size;i++)
+   table_node *tn;
+
+   tn = GetTableByID(table_id);
+
+   for (int i = 0; i < tn->size; ++i)
    {
       hn = tn->table[i];
       while (hn != NULL)
@@ -133,57 +106,26 @@ void FreeTable(table_node *tn)
          hn = temp;
       }
    }
-   
+
    FreeMemory(MALLOC_ID_TABLE,tn->table,tn->size*sizeof(hash_node *));
-   FreeMemory(MALLOC_ID_TABLE,tn,sizeof(table_node));
-}   
-
-void DeleteTable(int table_id)
-{
-   table_node *tn,*temp;
-
-   tn = tables;
-   if (tn->table_id == table_id)
-   {
-      tables = tables->next;
-      FreeTable(tn);
-      return;
-   }
-
-   while (tn->next != NULL && tn->next->table_id != table_id)
-   {
-      tn = tn->next;
-   }
-
-   if (tn->next == NULL)
-   {
-      bprintf("DeleteTable can't find table %i\n",table_id);
-      return;
-   }
-   temp = tn->next;
-   tn->next = tn->next->next;
-   FreeTable(temp);
 }
 
 table_node * GetTableByID(int table_id)
 {
-   table_node *tn;
-
-   tn = tables;
-
-   while (tn != NULL)
+   if (table_id < 0 || table_id >= num_tables)
    {
-      if (tn->table_id == table_id)
-         return tn;
-      tn = tn->next;
+      eprintf("GetTableByID can't retrieve invalid table %i\n",table_id);
+
+      return NULL;
    }
-   return NULL;
+
+   return &tables[table_id];
 }
 
 hash_node * AllocateTableEntry(val_type key_val,val_type data_val)
 {
    hash_node *hn;
-   
+
    hn = (hash_node *)AllocateMemory(MALLOC_ID_TABLE,sizeof(hash_node));
 
    hn->key_val = key_val;
@@ -457,4 +399,12 @@ unsigned int GetBufferHash(const char *buf,unsigned int len_buf)
    }
 
    return h;
+}
+
+void ForEachTable(void (*callback_func)(table_node *t,int table_id))
+{
+   int i;
+
+   for (i=0;i<num_tables;i++)
+      callback_func(&tables[i],i);
 }

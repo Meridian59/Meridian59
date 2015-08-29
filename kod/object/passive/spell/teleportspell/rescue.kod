@@ -74,7 +74,7 @@ messages:
    {
       % Can't cast just after attacking someone
       if Send(who,@GetLastPlayerAttackTime)
-         + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+         + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
          > GetTime()
       {
          Send(who,@MsgSendUser,#message_rsc=spell_too_soon_since_attacking);
@@ -104,7 +104,7 @@ messages:
       local iDelay;
 
       % Start with the base time.  Reduce time by spellpower.
-      iDelay = 1000 * Send(Send(SYS, @GetSettings), @RescueBaseDelaySec);
+      iDelay = 1000 * Send(SETTINGS_OBJECT, @RescueBaseDelaySec);
       iDelay = iDelay - (iSpellPower * iDelay) / 100 / 4;
 
       % Add a little delay in sometimes.

@@ -241,9 +241,13 @@ properties:
 
 messages:
 
-   Constructor(server_num = $)
+   Constructor()
    "Apply the appropriate settings for a given server number"
    {
+      local server_num;
+
+      server_num = Send(SYS,@GetServerNumber);
+
       % Apparently at some point someone decided this was a better value
       piKillKarmaSwingNeutral = 3;
 
@@ -258,7 +262,7 @@ messages:
             piItemFactor         = 125;
             piMagicItemModifier  = 80;
             piSpawnRate          = 80;
-         } 
+         }
 
          if server_num = 102
          {
@@ -268,11 +272,22 @@ messages:
             piItemFactor         = 175;
             piMagicItemModifier  = 100;
             piSpawnRate          = 85;
-         } 
+         }
       }
       return;
    }
-   
+
+   GetSettingsObject()
+   "If we need to obtain the settings object, use this message."
+   {
+      return self;
+   }
+
+   Recreate()
+   {
+      return;
+   }
+
    GetPKillEnableHP()
    {
       return piPKillEnableHP;

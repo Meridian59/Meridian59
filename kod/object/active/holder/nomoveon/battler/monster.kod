@@ -2840,7 +2840,7 @@ messages:
          drow = drow - ((piRow * FINENESS) + piFine_row);
          dcol = dcol - ((piCol * FINENESS) + piFine_col);
 
-         % rotate 180°, if we face away
+         % rotate 180??, if we face away
          if face_away
          { 
             drow = -drow;
@@ -6091,7 +6091,7 @@ messages:
             iNumberItems = 1 + (viLevel/55) + Random(0,viDifficulty/3)
                               + iSurvivalLoot;
             iNumberItems = Bound(iNumberItems,$,6 + iSurvivalLoot);
-            iNumberItems = (Send(Send(SYS,@GetSettings),@GetItemFactor)*iNumberItems)/100;
+            iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor)*iNumberItems)/100;
             iNumberItems = Bound(iNumberItems,1,$);
          }
       

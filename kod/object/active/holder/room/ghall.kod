@@ -718,7 +718,7 @@ messages:
    {
       local oRaidingGuild;
 
-      if (NOT Send(Send(SYS, @GetSettings), @GuildHallRaidsEnabled))
+      if (NOT Send(SETTINGS_OBJECT, @GuildHallRaidsEnabled))
          OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          return FALSE;

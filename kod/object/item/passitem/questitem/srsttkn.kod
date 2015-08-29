@@ -52,14 +52,22 @@ messages:
    {
       pbTradeable = tradeable;
       pbTemporary = temporary;
+
+      % Just assign 2 years if not temporary, it won't decrease anyway.
+      if NOT pbTemporary
+      {
+         piGameYearsRemaining = 2;
+
+         propagate;
+      }
+
       if lifetime <> -1
       {
          piGameYearsRemaining = lifetime;
       }
       else
       {
-         piGameYearsRemaining = Send(Send(SYS,@GetSettings),
-                                    @GetStatResetTokenLife);
+         piGameYearsRemaining = Send(SETTINGS_OBJECT,@GetStatResetTokenLife);
       }
 
       propagate;

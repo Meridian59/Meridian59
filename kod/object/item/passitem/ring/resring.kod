@@ -52,7 +52,7 @@ messages:
 
    AppendDesc()
    {
-      if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability)
+      if Send(SETTINGS_OBJECT,@GetResistRingLoseDurability)
       {
          AddPacket(4,resistring_chargesleft_rsc,4,piHits);
       }
@@ -115,7 +115,7 @@ messages:
 
       if (aspell & iResType) <> 0
       {
-         if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability) = TRUE
+         if Send(SETTINGS_OBJECT,@GetResistRingLoseDurability) = TRUE
          {
             piHits = piHits - 1;
          }

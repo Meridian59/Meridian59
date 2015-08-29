@@ -868,7 +868,7 @@ messages:
          }
          Send(self,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
          Send(self,@SysMsgSendUser,#message_rsc=user_logon_delay);
-         iLogonDelay = Send(Send(SYS,@GetSettings),@GetLogonDelay);
+         iLogonDelay = Send(SETTINGS_OBJECT,@GetLogonDelay);
          ptLogonDelayTimer = CreateTimer(self,@LogonHoldOff,iLogonDelay);
       }
 
@@ -911,7 +911,7 @@ messages:
          % Add phase time remaining to piTimeAttackedPlayer if it is currently
          % preventing the player from casting escape spells.
          if Send(self,@GetLastPlayerAttackTime)
-               + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+               + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
                > GetTime()
          {
             piTimeAttackedPlayer = piTimeAttackedPlayer
@@ -924,8 +924,8 @@ messages:
          Send(self,@RefreshPhaseTimeToBase);
          
          % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
-         if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
-            AND Send(SYS, @GetLogoffPenaltyEnable)
+         if Send(SETTINGS_OBJECT,@LogSafePenaltyEnable)
+            AND Send(SYS,@GetLogoffPenaltyEnable)
          {
             Send(self,@LoseMana,#amount=(piMana/2));
             Send(Send(SYS,@FindSpellByNum,#num=SID_PURGE),@DoPurge,#who=self,#iChance=100);
@@ -1754,7 +1754,7 @@ messages:
             return;
          }
 
-         if Send(Send(SYS,@GetSettings),@GetMaxSuicideHP) <= piBase_Max_health
+         if Send(SETTINGS_OBJECT,@GetMaxSuicideHP) <= piBase_Max_health
          {
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_hp);
 
@@ -3522,7 +3522,7 @@ messages:
       %
       % 4.3 Bound the maximum bucketsize
       %
-      piMovementBucket = Bound(piMovementBucket, 0, Send(Send(SYS,@GetSettings),@GetMovementBucketMax));
+      piMovementBucket = Bound(piMovementBucket, 0, Send(SETTINGS_OBJECT,@GetMovementBucketMax));
       %Debug("Bucket before move:",piMovementBucket);
 
       %
@@ -8867,7 +8867,7 @@ messages:
    SetInitialHomeroom()
    {
       % Get initial Homeroom from system settings.
-      piHomeroom = Send(Send(SYS,@GetSettings),@GetInitialRoomID);
+      piHomeroom = Send(SETTINGS_OBJECT,@GetInitialRoomID);
 
       return;
    }
@@ -9095,7 +9095,7 @@ messages:
    {
       local iInitialRoomID, oRoom;
 
-      iInitialRoomID = Send(Send(SYS,@GetSettings),@GetInitialRoomID);
+      iInitialRoomID = Send(SETTINGS_OBJECT,@GetInitialRoomID);
       oRoom = Send(SYS,@FindRoomByNum,#num=iInitialRoomID);
 
       if oRoom = $
@@ -9507,7 +9507,7 @@ messages:
    LeaveNewbieOrGuestRegion()
    {
       % Delete their inventory?
-      if Send(Send(SYS, @GetSettings), @CleanNewbieInventoryOnEnteringRealWorld)
+      if Send(SETTINGS_OBJECT, @CleanNewbieInventoryOnEnteringRealWorld)
       {
          Send(self,@StripInventory);
       }
@@ -10177,14 +10177,14 @@ messages:
       local lSpellLevels, lSkillLevels;
 
       % if stats reset is turned off, ignore the request
-      if NOT Send(Send(Sys,@GetSettings),@GetStatsResetEnabled)
+      if NOT Send(SETTINGS_OBJECT,@GetStatsResetEnabled)
       {
          return;
       }
       
       % must have a token if over the free stat reset cap
       if Send(self,@FindHolding,#class=&StatsResetToken) = $
-         AND (piBase_Max_Health > Send(Send(Sys,@GetSettings),@GetFreeStatsResetCap))
+         AND (piBase_Max_Health > Send(SETTINGS_OBJECT,@GetFreeStatsResetCap))
       {
          return;
       }
@@ -10225,13 +10225,13 @@ messages:
             oSkill,iSkillAbility,iSkillNum;
 
       % if stats reset is turned off, ignore the request
-      if NOT Send(Send(SYS,@GetSettings),@GetStatsResetEnabled)
+      if NOT Send(SETTINGS_OBJECT,@GetStatsResetEnabled)
       {
          return;
       }
       
       if Send(self,@FindHolding,#class=&StatsResetToken) = $
-         AND (piBase_Max_Health > Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap))
+         AND (piBase_Max_Health > Send(SETTINGS_OBJECT,@GetFreeStatsResetCap))
       {
          return;
       }
@@ -10342,7 +10342,7 @@ messages:
       % everything looks good, start adjusting stats
       
       % Consume token
-      if piBase_Max_Health > Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap)
+      if piBase_Max_Health > Send(SETTINGS_OBJECT,@GetFreeStatsResetCap)
       {
          Send(Send(self,@FindHolding,#class=&StatsResetToken),@Delete);
       }
@@ -10396,7 +10396,7 @@ messages:
             {
                Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
                      #amount=((piStamina - stamina)
-                     * Send(Send(SYS,@GetSettings),@GetStatsResetPenalty)));
+                     * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
             }
          }
          else
@@ -10408,7 +10408,7 @@ messages:
                {
                   Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
                         #amount=((piIntellect - intellect)
-                        * Send(Send(SYS,@GetSettings),@GetStatsResetPenalty)));
+                        * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
                }
             }
             % must be STAT_ID_MYSTICISM
@@ -10419,7 +10419,7 @@ messages:
                {
                   Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
                         #amount=((piMysticism - mysticism)
-                        * Send(Send(SYS,@GetSettings),@GetStatsResetPenalty)));
+                        * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
                }
             }
          }

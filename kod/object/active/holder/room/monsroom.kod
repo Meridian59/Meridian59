@@ -104,7 +104,7 @@ messages:
       % GetSpawnRate =  1
       % iWaitTime = (20000 * (300 / 100));
       % iWaitTime = 200
-      iWaitTime = (piGen_Time * Send(Send(SYS,@GetSettings),@GetSpawnRate)) / 100;
+      iWaitTime = (piGen_Time * Send(SETTINGS_OBJECT,@GetSpawnRate)) / 100;
 
       % Reduce spawn time for up to 5 people.
       iNumberOfPlayers = Send(self,@CountHoldingHowMany,#class=&Player);
@@ -323,7 +323,7 @@ messages:
       if (ptOkay_To_Load = $) AND (piMonster_count = 0)
       {
          iWaitTime = (piReload_Wait_Time
-                        * Send(Send(SYS,@GetSettings),@GetSpawnRate)) / 100;
+                        * Send(SETTINGS_OBJECT,@GetSpawnRate)) / 100;
          ptOkay_To_Load = CreateTimer(self,@OkaytoLoadTimer,iWaitTime);
          pbOkay_To_Load = FALSE;
       }

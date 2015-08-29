@@ -71,6 +71,7 @@ void SaveEachClass(class_node *c);
 void SaveResources(void);
 void SaveEachResource(resource_node *r);
 void SaveSystem(void);
+void SaveSettings(void);
 void SaveObjects(void);
 void SaveEachObject(object_node *o);
 void SaveListNodes(void);
@@ -95,6 +96,7 @@ Bool SaveGame(char *filename)
 	SaveClasses();
 	SaveResources();
 	SaveSystem();
+	SaveSettings();
 	SaveObjects();
 	SaveListNodes();
 	SaveTimers(); 
@@ -161,6 +163,12 @@ void SaveSystem(void)
 {
 	SaveGameWriteByte(SAVE_GAME_SYSTEM);
 	SaveGameWriteInt(GetSystemObjectID());
+}
+
+void SaveSettings(void)
+{
+	SaveGameWriteByte(SAVE_GAME_SETTINGS);
+	SaveGameWriteInt(GetSettingsObjectID());
 }
 
 void SaveObjects(void)

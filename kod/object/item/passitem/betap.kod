@@ -118,7 +118,7 @@ messages:
             Send(apply_on,@GainBaseMaxHealth,#amount=HealthBoost);
 
             % Don't use iBaseMaxHealth, because it changed.
-            if (Send(apply_on,@GetBaseMaxHealth) >= Send(Send(SYS,@GetSettings),@GetPKillEnableHP))
+            if (Send(apply_on,@GetBaseMaxHealth) >= Send(SETTINGS_OBJECT,@GetPKillEnableHP))
                AND (NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
             {
                Send(apply_on,@PkillEnable);

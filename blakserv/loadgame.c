@@ -100,6 +100,7 @@ Bool LoadGameParse(char *filename);
 void LoadGameClose(void);
 
 Bool LoadGameSystem(void);
+Bool LoadGameSettings(void);
 Bool LoadGameObject(void);
 Bool LoadGameListNodes(void);
 Bool LoadGameTimer(void);
@@ -227,6 +228,10 @@ Bool LoadGameParse(char *filename)
 			if (!LoadGameSystem())
 				return False;
 			break;
+		case SAVE_GAME_SETTINGS :
+			if (!LoadGameSettings())
+				return False;
+			break;
 		case SAVE_GAME_OBJECT :
 			if (!LoadGameObject())
 				return False;
@@ -256,9 +261,19 @@ Bool LoadGameParse(char *filename)
 Bool LoadGameSystem(void)
 {
 	int system_id;
-	
+
 	LoadGameReadInt(&system_id);
 	SetSystemObjectID(system_id);
+
+	return True;
+}
+
+Bool LoadGameSettings(void)
+{
+	int settings_id;
+
+	LoadGameReadInt(&settings_id);
+	SetSettingsObjectID(settings_id);
 	
 	return True;
 }
@@ -305,11 +320,10 @@ Bool LoadGameObject(void)
 
 		if (!SetObjectPropertyByName(current_object_id,property_str,prop_val))
 		{
-			eprintf("LoadGameObject object %i class %s property %s can't set object property\n",
-				object_id,lgc->class_name,property_str);
+			//eprintf("LoadGameObject object %i class %s property %s can't set object property\n",
+			//	object_id,lgc->class_name,property_str);
 			// it's usually ok, property just eliminated in new kod
 		}
-
 	}
 	
 	return True;

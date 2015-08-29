@@ -132,7 +132,7 @@ messages:
    {
       local i, iDuration, oList;
 
-      if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+      if Send(SETTINGS_OBJECT,@DisplaySpellData)
       {
          oList = Send(oTarget,@GetEnchantmentList);
 

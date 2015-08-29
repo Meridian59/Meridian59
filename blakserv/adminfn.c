@@ -235,7 +235,8 @@ void AdminDeleteAccount(int session_id,admin_parm_type parms[],
 void AdminDeleteUser(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminCheckUserLoggedOn(session_node *s);
-
+void AdminSendInt(int session_id, admin_parm_type parms[],
+                  int num_blak_parm, parm_node blak_parm[]);
 void AdminSendObject(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminSendUsers(int session_id,admin_parm_type parms[],
@@ -429,6 +430,7 @@ admin_table_type admin_delete_table[] =
 admin_table_type admin_send_table[] =
 {
 	{ AdminSendObject,    {I,S,N}, T, A|M, NULL, 0, "object", "Send object by ID a message" },
+	{ AdminSendInt,       {I,S,N}, T, A|M, NULL, 0, "integer", "Send integer a message" },
 	{ AdminSendUsers,     {R,N},   F, A|M, NULL, 0, "users",  "Send logged in people a system message" },
 	{ AdminSendClass,     {S,S,N}, T, A|M, NULL, 0, "class",  "Send all objects of class a message" },
 };
@@ -3899,6 +3901,25 @@ void AdminCheckUserLoggedOn(session_node *s)
 {
 	if (s && s->state == STATE_GAME && s->game && s->game->object_id == admin_check_user)
 		admin_user_is_logged_in = True;
+}
+
+void AdminSendInt(int session_id,admin_parm_type parms[],
+                  int num_blak_parm,parm_node blak_parm[])
+{
+   if (parms[0] == 0)
+   {
+      parms[0] = GetSystemObjectID();
+      AdminSendObject(session_id, parms, num_blak_parm, blak_parm);
+   }
+   else if (parms[0] == 1)
+   {
+      parms[0] = GetSettingsObjectID();
+      AdminSendObject(session_id, parms, num_blak_parm, blak_parm);
+   }
+   else
+   {
+      aprintf("Can't reference object with int %i.\n", parms[0]);
+   }
 }
 
 void AdminSendObject(int session_id,admin_parm_type parms[],

@@ -277,7 +277,7 @@ messages:
       if piDiff_seed > 0
       {
          if who <> $ and IsClass(who,&User)
-            AND Random(1,400) <= (Send(Send(SYS,@GetSettings),@GetMagicItemModifier) *
+            AND Random(1,400) <= (Send(SETTINGS_OBJECT,@GetMagicItemModifier) *
                                     piItem_Att_chance) / 100 
          {
             oObj = Send(self,@GenerateItemAtt,#who=who,#diff_seed=piDiff_seed);
@@ -289,11 +289,11 @@ messages:
       }
 
       % Stats reset token generation. System has to be turned on to drop tokens.
-      if Send(Send(SYS,@GetSettings),@GetStatsResetEnabled)
+      if Send(SETTINGS_OBJECT,@GetStatsResetEnabled)
          AND who <> $
          AND IsClass(who,&User)
       {
-         iStatTokenChance = Send(Send(SYS,@GetSettings),@GetStatResetTokenDropFactor)
+         iStatTokenChance = Send(SETTINGS_OBJECT,@GetStatResetTokenDropFactor)
                                  / Bound(Send(mob,@GetLevel),50,150);
          if Random(1,iStatTokenChance) = 1
             AND Send(mob,@GetLevel) > Send(who,@GetBaseMaxHealth)
@@ -316,7 +316,7 @@ messages:
       }
 
       % Lore Books
-      if (Random(1,Send(Send(SYS,@GetSettings),@GetLoreBookDropFactor)) = 1)
+      if (Random(1,Send(SETTINGS_OBJECT,@GetLoreBookDropFactor)) = 1)
       {
          oObj = Create(&LoreTosApoth,#random_book=true);
          return oObj;

@@ -102,7 +102,7 @@ messages:
       {
          if Send(what,@FindHolding,#class=&StatsResetToken) <> $
             OR (Send(what,@GetBaseMaxHealth)
-               <= Send(Send(SYS,@GetSettings),@GetFreeStatsResetCap))
+               <= Send(SETTINGS_OBJECT,@GetFreeStatsResetCap))
          {
             Send(what,@SendStatChange);
          }

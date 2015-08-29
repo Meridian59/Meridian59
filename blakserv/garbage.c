@@ -144,6 +144,7 @@ void GarbageCollect()
    ForEachObject(ClearObjectGarbageRef);
    ForEachUser(MarkUserObjectNodes);
    MarkObject(GetSystemObjectID());
+   MarkObject(GetSettingsObjectID());
    ForEachObject(DeleteUnreferencedObject);
 
    next_renumber = SERVER_MERGE_BASE;

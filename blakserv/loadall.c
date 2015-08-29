@@ -44,6 +44,7 @@ Bool LoadAll(void)
 	{
 		lprintf("LoadAll initializing a new game\n");
 		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
+		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
 		CreateBuiltIn();
 		return False;
 	}
@@ -55,6 +56,7 @@ Bool LoadAll(void)
 	{
 		lprintf("LoadAll error loading accounts, initializing a new game\n");
 		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
+		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
 		CreateBuiltIn();
 		return False;
 	}
@@ -78,6 +80,7 @@ Bool LoadAllButAccount(void)
 	{
 		/* couldn't load anything in, so system is dead */
 		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
+		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
 		return False;
 	}
 	
@@ -105,10 +108,11 @@ Bool LoadAllButAccountAtTime(char *time_str)
 		and start a new game. */
 		
 		ClearObject();
-		ClearList(); 
+		ClearList();
 		ClearTimer();
 		ClearUser();
 		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
+		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
 	}
 	
 	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);

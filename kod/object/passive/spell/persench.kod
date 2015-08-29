@@ -132,7 +132,7 @@ messages:
       {
          % Can you override an existing enchantment on yourself?
          if who = oTarget AND
-            Send(Send(SYS,@GetSettings),@CanRecastSelfEnchantment)
+            Send(SETTINGS_OBJECT,@CanRecastSelfEnchantment)
          {
             propagate;
          }
@@ -189,7 +189,7 @@ messages:
       
       % If target already has this enchantment, remove it
       if Send(otarget,@IsEnchanted,#what=self) AND
-         Send(Send(SYS, @GetSettings), @CanRecastSelfEnchantment)
+         Send(SETTINGS_OBJECT, @CanRecastSelfEnchantment)
       {
          Send(oTarget,@RemoveEnchantment,#what=self,#report=FALSE);
       }

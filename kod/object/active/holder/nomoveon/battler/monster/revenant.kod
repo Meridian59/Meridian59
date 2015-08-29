@@ -103,7 +103,7 @@ messages:
 
       if speed <> $
       {
-         speed = Send(Send(SYS,@GetSettings),@GetRevenantSpeed);
+         speed = Send(SETTINGS_OBJECT,@GetRevenantSpeed);
          viSpeed = speed;
       }
 

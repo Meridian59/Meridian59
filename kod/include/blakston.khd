@@ -18,8 +18,10 @@
    % symbolizes positive infinity for quantities that must be non-negative
    INFINITE_COUNT = -1
 
-   % Special way to send message to system.
+   % Special way to send message to system and other objects created by
+   % blakserv.
    SYS = 0
+   SETTINGS_OBJECT = 1
 
    % Maximum integer value in blakod
    %  Truncated a bit for fudge factor room.  Useful for timer bounds.

@@ -40,7 +40,7 @@ messages:
 
    GetObjectFlags()
    {
-      if NOT Send(Send(SYS,@GetSettings),@ShowHotPlates)
+      if NOT Send(SETTINGS_OBJECT,@ShowHotPlates)
       {
          return (OF_NOEXAMINE);
       }

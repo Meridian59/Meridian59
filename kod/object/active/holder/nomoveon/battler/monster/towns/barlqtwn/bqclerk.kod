@@ -230,7 +230,7 @@ messages:
          return;
       }
 
-      iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
+      iAmount = Send(SETTINGS_OBJECT,@GetNameChangeCost);
 
       % No existing list, add player and warn.
       if plNameChangeWarn = $
@@ -351,7 +351,7 @@ messages:
          return TRUE;
       }
 
-      if amount < Send(Send(SYS,@GetSettings),@GetPardonIndulgenceCost)
+      if amount < Send(SETTINGS_OBJECT,@GetPardonIndulgenceCost)
       {
          Post(poOwner,@SomeoneSaid,#what=self,
                #string=indulgence_not_enough_money,
@@ -360,7 +360,7 @@ messages:
          return TRUE;
       }
 
-      Send(oMoney,@SubtractNumber,#number=Send(Send(SYS,@GetSettings),
+      Send(oMoney,@SubtractNumber,#number=Send(SETTINGS_OBJECT,
             @GetPardonIndulgenceCost));
       Send(self,@PerformIndulgencePardonMurderer,#who=who);
       Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_success,
@@ -458,7 +458,7 @@ messages:
       if StringContain(string,barloque_clerk_trigger_change)
             AND StringContain(string,barloque_clerk_trigger_name)
       {
-         iAmount = Send(Send(SYS,@GetSettings),@GetNameChangeCost);
+         iAmount = Send(SETTINGS_OBJECT,@GetNameChangeCost);
          oScroll = Create(&NameChangeScroll);
 
          if Send(what,@ReqNewHold,#what=oScroll)

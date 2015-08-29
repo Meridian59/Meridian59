@@ -71,8 +71,7 @@ enum
    DM_CLASS = 32,
    FIND_USER_BY_STRING_MSG = 33,
    CREATOR_CLASS = 34,
-   RECYCLED_MSG = 35,
-   OLD_PARM = 36
+   SETTINGS_CLASS = 35
 
    // To add other C-accessible KOD identifiers,
    // see the BLAKCOMP's table of BuiltinIds[].

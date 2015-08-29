@@ -2337,7 +2337,7 @@ messages:
             return FALSE;
          }
 
-         % iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
+         % iLOS = Send(SETTINGS_OBJECT, @GetLOS);
 
          % if iLOS = LOS_NEW_BOTH
          %    OR (iLOS = LOS_NEW_MONSTER AND IsClass(what,&Monster))
@@ -4795,7 +4795,7 @@ messages:
          % more time as players progress. Special case made for Thrashers,
          % due to the extreme nature of their room.
 
-         piGroupTime = Send(Send(SYS,@GetSettings),@GetDefaultGroupTime);
+         piGroupTime = Send(SETTINGS_OBJECT,@GetDefaultGroupTime);
 
          % 2 additional seconds per mob level point above 100
          % Max +100 seconds for 150 hp mobs

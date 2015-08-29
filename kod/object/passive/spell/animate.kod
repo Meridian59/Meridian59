@@ -113,7 +113,7 @@ messages:
       if IsClass(who,&Player)
       {
          if Send(who,@CheckBattlerMinionCount)
-               >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+               >= Send(SETTINGS_OBJECT,@GetPlayerMinionLimit)
          {
             Send(who,@MsgSendUser,#message_rsc=Animate_too_many_rsc);
 
@@ -123,7 +123,7 @@ messages:
       else
       {
          if Send(who,@CheckBattlerMinionCount)
-            >= Send(Send(SYS,@GetSettings),@GetMonsterMinionLimit)
+            >= Send(SETTINGS_OBJECT,@GetMonsterMinionLimit)
          {
             return FALSE;
          }

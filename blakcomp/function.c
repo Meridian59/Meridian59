@@ -158,6 +158,7 @@ id_struct BuiltinIds[] = {
 {"DM",            I_MISSING,   32,  0,   I_CLASS},
 {"finduserbystring",I_MISSING, 33,  0,   I_MESSAGE},
 {"creator",       I_MISSING,   34,  0,   I_CLASS},
+{"settings",      I_MISSING,   35,  0,   I_CLASS},
 };
 
 int numbuiltins = (sizeof(BuiltinIds)/sizeof(id_struct));

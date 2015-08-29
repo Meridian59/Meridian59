@@ -570,7 +570,7 @@ int C_SendMessage(int object_id,local_var_type *local_vars,
 {
    val_type object_val,message_val;
 
-   /* Get the object (or class or int 0) to which we are sending the message */
+   /* Get the object (or class or int) to which we are sending the message */
    /* Not to be confused with object_id, which is the 'self' object sending the message */
    object_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
       normal_parm_array[0].value);
@@ -599,31 +599,28 @@ int C_SendMessage(int object_id,local_var_type *local_vars,
       }
    }
 
-   /* Special:  sending to int 0 goes to system */
-   if (object_val.v.tag == TAG_INT && object_val.v.data == 0)
+   if (object_val.v.tag == TAG_OBJECT)
+      return SendBlakodMessage(object_val.v.data, message_val.v.data, num_name_parms, name_parm_array);
+
+   if (object_val.v.tag == TAG_INT)
    {
-      /* Allowed to send to INT 0 rather than OBJECT 0 (obsolete but backwards compatible) */
-      object_val.v.data = GetSystemObjectID();
-   }
-   else if (object_val.v.tag == TAG_CLASS)
-   {
-      /* allowed to send to TAG_CLASS (below) */
-   }
-   else if (object_val.v.tag != TAG_OBJECT)
-   {
-      /* Assumes object_id (the current 'self') is a valid object */
-      bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
-         object_id,
-         GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
-         GetNameByID(message_val.v.data), message_val.v.data,
-         object_val.v.tag,object_val.v.data);
-         return NIL;
+      /* Can send to built-in objects using constants. */
+      if (object_val.v.data == 0)
+         return SendBlakodMessage(GetSystemObjectID(), message_val.v.data, num_name_parms, name_parm_array);
+      if (object_val.v.data == 1)
+         return SendBlakodMessage(GetSettingsObjectID(), message_val.v.data, num_name_parms, name_parm_array);
    }
 
    if (object_val.v.tag == TAG_CLASS)
-      return SendBlakodClassMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
-   else
-      return SendBlakodMessage(object_val.v.data,message_val.v.data,num_name_parms,name_parm_array);
+      return SendBlakodClassMessage(object_val.v.data, message_val.v.data, num_name_parms, name_parm_array);
+
+   /* Assumes object_id (the current 'self') is a valid object */
+   bprintf("C_SendMessage OBJECT %i CLASS %s can't send MESSAGE %s (%i) to non-object %i,%i\n",
+      object_id,
+      GetClassByID(GetObjectByID(object_id)->class_id)->class_name,
+      GetNameByID(message_val.v.data), message_val.v.data,
+      object_val.v.tag,object_val.v.data);
+   return NIL;
 }
 
 int C_PostMessage(int object_id,local_var_type *local_vars,

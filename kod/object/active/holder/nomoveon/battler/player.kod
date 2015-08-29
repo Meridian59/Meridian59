@@ -2334,7 +2334,7 @@ messages:
          }
 
          % Retrieve the daily logon bonus from settings.
-         iDefaultBonus = Send(Send(SYS,@GetSettings),@GetLogonBonus);
+         iDefaultBonus = Send(SETTINGS_OBJECT,@GetLogonBonus);
          
          % Scale the logon bonus with the time that has passed since it has last
          % been received for a total bonus of up to 150 percent.
@@ -3798,7 +3798,7 @@ messages:
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
          AND NOT IsClass(self,&DM)
       {
-         iCost = piMana * Send(Send(SYS,@GetSettings),@GetBroadcastManaCost) / 100;
+         iCost = piMana * Send(SETTINGS_OBJECT,@GetBroadcastManaCost) / 100;
          if piMana < iCost
          {
             Send(self,@MsgSendUser,#message_rsc=player_cant_broadcast);
@@ -5555,7 +5555,7 @@ messages:
          if piHealth < (piBase_Max_Health * 200)
             AND ((NOT (piFlags & PFLAG_OUTLAW)
                AND NOT (piFlags & PFLAG_MURDERER))
-               OR Send(Send(SYS,@GetSettings),@DamageCapProtectionMurderersEnabled))
+               OR Send(SETTINGS_OBJECT,@DamageCapProtectionMurderersEnabled))
          {
             % Cap damage to 1/3 of max health (+2 so we "round up")
             iLimit = ((piBase_Max_Health*100) + (MAX_HEALTH_DAMAGE_FRACTION-1))
@@ -5790,7 +5790,7 @@ messages:
       }
 
       piWeaponSwings = piWeaponSwings + times;
-      if (piWeaponSwings MOD Send(Send(SYS,@GetSettings),
+      if (piWeaponSwings MOD Send(SETTINGS_OBJECT,
                                  @GetSwingsPerImproveCheck)) = 0
       {
          % Increase this number. Allows us to advance, and
@@ -7623,11 +7623,11 @@ messages:
       % thus, killing someone with 100 karma is a -100 karma act.
       if bIsMob
       {
-         iSwing = Send(Send(SYS, @GetSettings), @GetKillKarmaSwingMonster);
+         iSwing = Send(SETTINGS_OBJECT, @GetKillKarmaSwingMonster);
       }
       else
       {
-         iSwing = Send(Send(SYS, @GetSettings), @GetKillKarmaSwingPlayer);
+         iSwing = Send(SETTINGS_OBJECT, @GetKillKarmaSwingPlayer);
       }
 
       % Okay, let's give them a break if they are moving towards
@@ -7640,7 +7640,7 @@ messages:
          if (karma_killer > 0) <> (karma_victim > 0)
             AND (abs(karma_killer) > abs(karma_victim))
          {
-            iSwing = Send(Send(SYS, @GetSettings), @GetKillKarmaSwingNeutral);
+            iSwing = Send(SETTINGS_OBJECT, @GetKillKarmaSwingNeutral);
          }
       }
 
@@ -8215,7 +8215,7 @@ messages:
       local i, elemnum, spellnum;
 
       % This system is usually off.
-      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      if NOT Send(SETTINGS_OBJECT,@IsAtrophyOn)
       {
          return;
       }
@@ -8601,7 +8601,7 @@ messages:
       local i, elemnum, Skillnum;
 
       % This system is usually off.
-      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      if NOT Send(SETTINGS_OBJECT,@IsAtrophyOn)
       {
          return;
       }
@@ -8669,7 +8669,7 @@ messages:
       local i, elemnum;
 
       % This system is usually off.
-      if NOT Send(Send(SYS,@GetSettings),@IsAtrophyOn)
+      if NOT Send(SETTINGS_OBJECT,@IsAtrophyOn)
       {
          return;
       }
@@ -8699,7 +8699,7 @@ messages:
 
       if pbLogged_on
       {
-         if Send(Send(SYS, @GetSettings), @IsAtrophyOn)
+         if Send(SETTINGS_OBJECT, @IsAtrophyOn)
          {
             Send(self,@ActivateSpellAtrophy);
             Send(self,@ActivateSkillAtrophy);
@@ -8861,7 +8861,7 @@ messages:
                % or if it was a group member kill and the setting for group
                % member toughers is set to TRUE.
                if NOT group_member_kill
-                  OR Send(Send(SYS,@GetSettings),@GetGroupTougherSetting)
+                  OR Send(SETTINGS_OBJECT,@GetGroupTougherSetting)
                {
                   roll = TRUE;
                }
@@ -8910,7 +8910,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
+         if piBase_Max_health < Send(SETTINGS_OBJECT,@GetPKillEnableHP)
          {
             gain = gain + 1;
          }
@@ -8951,7 +8951,7 @@ messages:
             roll = FALSE;
          }
 
-         gainmult = Bound(Send(Send(SYS,@GetSettings),
+         gainmult = Bound(Send(SETTINGS_OBJECT,
                      @GetHPGainMultiplier),1,500);
          gain = gain * gainmult;
 
@@ -9235,7 +9235,7 @@ messages:
       }
 
       % Retrieve the daily logon bonus from settings.
-      iBonus = Send(Send(SYS,@GetSettings),@GetLogonBonus);
+      iBonus = Send(SETTINGS_OBJECT,@GetLogonBonus);
 
       Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
       Send(self,@AddTrainingPoints,#points=iBonus,#report=FALSE);
@@ -9304,7 +9304,7 @@ messages:
       % for Portal of Life to reduce penalties.  We get the default value of
       % piDeathCost from SYS, so that we can adjust global death penalties.
       % "Normal" value is 100.
-      piDeathCost = Send(Send(SYS,@GetSettings),@GetDefaultDeathCost);
+      piDeathCost = Send(SETTINGS_OBJECT,@GetDefaultDeathCost);
 
       % A player (probably) cannot die twice in two seconds in any valid way.
       if GetTime() < (piLastDeathTime + 2)
@@ -9638,7 +9638,7 @@ messages:
       bLostHealth = FALSE;
 
       % Lose your revenant, satisfied if you took a real death.
-      if piDeathCost >= Send(Send(SYS,@GetSettings),@GetDefaultDeathCost)
+      if piDeathCost >= Send(SETTINGS_OBJECT,@GetDefaultDeathCost)
       {
          % As an outlaw, justice was met by dying. But, not if it's a cheap death!
          Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
@@ -9706,7 +9706,7 @@ messages:
       }
 
       % Remove from guild if now under min HP
-      if piBase_max_health < Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
+      if piBase_max_health < Send(SETTINGS_OBJECT,@GetPKillEnableHP)
       {
          Send(self, @QuitGuild);
       }
@@ -12327,7 +12327,7 @@ messages:
       %  Intellect gives you a bonus to learning, currently about 20 points
       %  for 50 Intellect (approximately mastering 2 extra schools)
       iNeed =   (iPoints * POINTS_SLOPE)
-              + (297 - (Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) * POINTS_SLOPE))
+              + (297 - (Send(SETTINGS_OBJECT, @GetMaxLearnPoints) * POINTS_SLOPE))
               - ((Send(self,@GetRawIntellect) * 2 * POINTS_SLOPE) / 5);
 
       % NOTE: if you modify the above equation, also modify GivePlayerAllSkills
@@ -12552,7 +12552,7 @@ messages:
       if (piFlags & PFLAG_PKILL_ENABLE)
       {
          if poGuild = $
-            AND piBase_Max_health < Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
+            AND piBase_Max_health < Send(SETTINGS_OBJECT,@GetPKillEnableHP)
             AND NOT (piFlags & PFLAG_MURDERER)
             AND NOT (piFlags & PFLAG_OUTLAW)
          {
@@ -12572,7 +12572,7 @@ messages:
       else
       {
          if poGuild <> $
-            OR piBase_Max_health >= Send(Send(SYS,@GetSettings),@GetPKillEnableHP)
+            OR piBase_Max_health >= Send(SETTINGS_OBJECT,@GetPKillEnableHP)
             OR (piFlags & PFLAG_MURDERER)
             OR (piFlags & PFLAG_OUTLAW)
          {
@@ -12657,7 +12657,7 @@ messages:
       }
 
       % This returns minutes, so convert to milliseconds.
-      iTime = Send(Send(SYS,@GetSettings),@GetTempSafeTime);
+      iTime = Send(SETTINGS_OBJECT,@GetTempSafeTime);
       iTime = iTime * 60 * 1000;
 
       if ptTempSafe <> $
@@ -13157,7 +13157,7 @@ messages:
    PlayerIsHPIntrigue()
    "If player has over 40hp base."
    {
-      return (piBase_Max_health >= Send(Send(SYS,@GetSettings),@GetIntrigueEnableHP));
+      return (piBase_Max_health >= Send(SETTINGS_OBJECT,@GetIntrigueEnableHP));
    }
 
    PlayerIsAdept()
@@ -13397,7 +13397,7 @@ messages:
       if NOT (IsClass(self,&DM) OR override)
       {
          iMaxLevel = 0;
-         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) +
+         iMaxLearnPoints = Send(SETTINGS_OBJECT, @GetMaxLearnPoints) +
                               (Send(self,@GetRawIntellect) * 2) / 5;
 
          iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
@@ -13478,7 +13478,7 @@ messages:
       if NOT (IsClass(self,&DM) OR override)
       {
          iMaxLevel = 0;
-         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) +
+         iMaxLearnPoints = Send(SETTINGS_OBJECT, @GetMaxLearnPoints) +
             (Send(self,@GetRawIntellect) * 2) / 5;
 
          iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
@@ -14745,7 +14745,7 @@ messages:
       % Add phase time to piTimeAttackedPlayer if it is currently
       % preventing the player from casting escape spells.
       if piTimeAttackedPlayer
-            + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+            + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
             > GetTime()
       {
          piTimeAttackedPlayer = piTimeAttackedPlayer
@@ -14801,7 +14801,7 @@ messages:
       % If we added phase time to piTimeAttackedPlayer before,
       % remove what is remaining (restore to original time).
       if piTimeAttackedPlayer
-            + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+            + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
             > GetTime()
       {
          piTimeAttackedPlayer = piTimeAttackedPlayer
@@ -14850,11 +14850,11 @@ messages:
       if (piFlags & PFLAG_MURDERER)
          OR (piFlags & PFLAG_OUTLAW)
       {
-         return Send(Send(SYS,@GetSettings),
+         return Send(SETTINGS_OBJECT,
                @GetOutlawMurdererLogoffPenaltyGhostTime);
       }
 
-      return Send(Send(SYS,@GetSettings),@GetLogoffPenaltyGhostTime);
+      return Send(SETTINGS_OBJECT,@GetLogoffPenaltyGhostTime);
    }
 
    RefreshPhaseTimeToBase()
@@ -14876,7 +14876,7 @@ messages:
       % the phase time remaining from piTimeAttackedPlayer here if we
       % added it when the user logged off.
       if piTimeAttackedPlayer
-            + Send(Send(SYS,@GetSettings),@TeleportAttackDelaySec)
+            + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
             > GetTime()
       {
          piTimeAttackedPlayer = piTimeAttackedPlayer

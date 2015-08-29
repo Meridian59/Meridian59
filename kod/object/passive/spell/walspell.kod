@@ -92,7 +92,7 @@ messages:
 
       oRoom = Send(who,@GetOwner);
       if ((Send(oRoom,@CountHoldingSummoned) + viNumElements)
-          > Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
+          > Send(SETTINGS_OBJECT, @GetPlayerSummonedObjectLimit))
       {
          Send(who,@MsgSendUser,#message_rsc=vrSummonLimitMsg);
 

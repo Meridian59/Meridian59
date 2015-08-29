@@ -522,13 +522,13 @@ messages:
       % Are we above the spells requisite stat?  Apply the "soft cap".
       if iability > ((2*iRequisiteStat)-1)
       {
-         final = final / bound(Send(Send(SYS,@GetSettings),@GetSkillSoftcapPenalty),1,$);
+         final = final / bound(Send(SETTINGS_OBJECT,@GetSkillSoftcapPenalty),1,$);
       }
 
       final = bound(final,1,$);
 
       % The global modifier from system.
-      final = (final * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
+      final = (final * Send(SETTINGS_OBJECT, @GetAdvancementRate)) / 100;
 
       % The individual universal modifier.
       final = final + ((final * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);

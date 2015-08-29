@@ -660,10 +660,10 @@ messages:
       oWeapon = Send(self,@GetWeapon);
 
       iOffense = Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj) 
-         + Send(Send(SYS,@GetSettings),@GetBaseRating);
+         + Send(SETTINGS_OBJECT,@GetBaseRating);
       iDefense = Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj) 
-         + Send(Send(SYS,@GetSettings),@GetBaseRating);
-      iChanceToHit = iOffense * Send(Send(SYS,@GetSettings),@GetEqualChanceToHit) / iDefense;
+         + Send(SETTINGS_OBJECT,@GetBaseRating);
+      iChanceToHit = iOffense * Send(SETTINGS_OBJECT,@GetEqualChanceToHit) / iDefense;
       iChanceToHit = bound(iChanceToHit,125,2000);
       if iChanceToHit >= random(1,1000)
       {
@@ -672,7 +672,7 @@ messages:
          iScalefactor = 1000;
          
          % Scale damage with chance to hit beyond 100 percent.
-         if iChanceToHit > 1000 AND Send(Send(SYS,@GetSettings),@GetDamageScaling)
+         if iChanceToHit > 1000 AND Send(SETTINGS_OBJECT,@GetDamageScaling)
          {
             iScalefactor = iChanceToHit;
          }

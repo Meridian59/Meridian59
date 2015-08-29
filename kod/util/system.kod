@@ -381,12 +381,9 @@ properties:
    poNodeAttack = $
    poRentableRoomMaintenance = $
    poSurvivalRoomMaintenance = $
-   
+
    % Singleton object that keeps track of various game statistics
    poStatistics = $
-   
-   % Singleton object that holds global game settings
-   poSettings = $
 
    % object that handles automated events
    poEventEngine = $
@@ -527,8 +524,6 @@ messages:
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
 
-      Send(self,@RecreateSettings);
-
       Send(self,@RecreateNecromancerBalance);
       Send(self,@CreateUserTable);
       Send(self,@CreateRoomTable);
@@ -612,6 +607,9 @@ messages:
       % Reset our level points.
       vlLevelPoints = [1,2,4,6,8,10];
 
+      % Recreate settings.
+      Send(SETTINGS_OBJECT,@Recreate);
+
       if piRecreate_State <> RECREATE_NOT
       {
          Debug("Recreate attempted when recreate is already in progress.");
@@ -637,7 +635,6 @@ messages:
       % Don't leave any active spellcasting objects
       Send(self,@DeleteAllSpellTotems);
  
-      Send(self,@RecreateSettings);
       Send(self,@RecreateNecromancerBalance);
       Send(self,@ClearAllQuests);
       Send(self,@CreateAllBanksIfNew);
@@ -3071,17 +3068,6 @@ messages:
       return poStatistics;
    }
 
-   RecreateSettings()
-   {
-      poSettings = Create(&Settings, #server_num = Send(self, @GetServerNumber));
-      return;
-   }
-
-   GetSettings()
-   {
-      return poSettings;
-   }
-
    % Shrine utility
 
    AddShrine(num=$,oShrine=$)
@@ -5436,7 +5422,8 @@ messages:
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
 
       plItemTemplates = cons(create(&Money),plItemTemplates);
-      plItemTemplates = cons(create(&StatsResetToken),plItemTemplates);
+      plItemTemplates = cons(create(&StatsResetToken,#temporary=FALSE),
+                              plItemTemplates);
 
       % Gems
       plItemTemplates = cons(create(&GemRiijaPower),plItemTemplates);
@@ -6585,7 +6572,7 @@ messages:
 
    GetLogoffPenaltyGhostTime()
    {
-      return Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime);
+      return Send(SETTINGS_OBJECT,@GetLogoffPenaltyGhostTime);
    }
 
    TempDisableLogoffPenalties()
@@ -6598,7 +6585,7 @@ messages:
          ptLogoffPenaltyTempDisable = $;
       }
 
-      iDisableDuration = (Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime)*150)/100;
+      iDisableDuration = (Send(SETTINGS_OBJECT,@GetLogoffPenaltyGhostTime)*150)/100;
 
       ptLogoffPenaltyTempDisable = CreateTimer(self,@LogoffPenaltyTempDisableTrigger,iDisableDuration);
 
@@ -6930,7 +6917,7 @@ messages:
          iMaxLearnPoints = 0;
          iTotalLearnPoints = 0;
 
-         iMaxLearnPoints = Send(poSettings,@GetMaxLearnPoints)
+         iMaxLearnPoints = Send(SETTINGS_OBJECT,@GetMaxLearnPoints)
                               + (Send(i,@GetRawIntellect) * 2) / 5;
 
          iTotalLearnPoints = Send(i,@GetTotalLearnPoints);

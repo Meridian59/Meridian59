@@ -234,7 +234,7 @@ messages:
       {
          if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          {
-            if Send(Send(SYS,@GetSettings),@GetFlatPenaltiesEnable)
+            if Send(SETTINGS_OBJECT,@GetFlatPenaltiesEnable)
             {
                Send(self,@InflictFlatPenalties);
             }
@@ -266,7 +266,7 @@ messages:
       
       if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         if Send(Send(SYS, @GetSettings), @ReturnToSafetyPenaltiesEnabled)
+         if Send(SETTINGS_OBJECT, @ReturnToSafetyPenaltiesEnabled)
          {
 	        Send(poGhostedPlayer,@AdminGoToLastSafeRoom);
          }
@@ -277,7 +277,7 @@ messages:
       }
       else
       {
-         if Send(Send(SYS, @GetSettings), @AngelReturnToSafetyPenaltiesEnabled)
+         if Send(SETTINGS_OBJECT, @AngelReturnToSafetyPenaltiesEnabled)
          {
 	        Send(poGhostedPlayer,@AdminGoToLastSafeRoom);
          }

@@ -80,7 +80,7 @@ messages:
       if (send(oRoom,@CountHoldingHowMany,#class=&monster) > 25) or
          (send(oRoom,@CountHoldingHowMany,#class=&cow) > 5) or
          ((send(oRoom,@CountHoldingSummoned)) > 
-           Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
+           Send(SETTINGS_OBJECT, @GetPlayerSummonedObjectLimit))
       {
          foreach who in lCasters
          {

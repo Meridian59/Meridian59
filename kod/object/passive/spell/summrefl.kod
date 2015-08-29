@@ -71,7 +71,7 @@ messages:
    {
       % Limit reflections.
       if (Send(self,@CountPlayerReflections,#who=who)
-         >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit))
+         >= Send(SETTINGS_OBJECT,@GetPlayerReflectionLimit))
          AND NOT (IsClass(who,&DM)
             AND Send(who,@PlayerIsImmortal))
       {

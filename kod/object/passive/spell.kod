@@ -1501,7 +1501,7 @@ messages:
                   Send(oTarget,@BadSpellFlashEffect);
                }
                
-               if (Send(Send(SYS,@GetSettings),@DisplaySpellData)
+               if (Send(SETTINGS_OBJECT,@DisplaySpellData)
                      OR IsClass(oTarget,&DM))
                   AND oTarget <> who
                {
@@ -1512,7 +1512,7 @@ messages:
          }
       }
 
-      if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+      if Send(SETTINGS_OBJECT,@DisplaySpellData)
          OR IsClass(who,&DM)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_display_spellpower,
@@ -1925,13 +1925,13 @@ messages:
       % Are we above the spells requisite stat?  Apply the "soft cap".
       if iability > ((2*requisitestat)-1)
       {
-         final = final / bound(Send(Send(SYS,@GetSettings),@GetSpellSoftcapPenalty),1,$);
+         final = final / bound(Send(SETTINGS_OBJECT,@GetSpellSoftcapPenalty),1,$);
       }     
 
       final = bound(final,1,$);
 
       % The global modifier from system.
-      final = (final * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
+      final = (final * Send(SETTINGS_OBJECT, @GetAdvancementRate)) / 100;
 
       % The individual universal modifier.
       final = final + ((final * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);

@@ -9,16 +9,17 @@
  * system.c
  *
 
- This module supports keeping track of the system object, which we
+ This module supports keeping track of the built-in objects, which we
  have to send messages to sometimes (like garbage collection
- notifications and things like that).  It is not currently ever not
- object 0, but there's no permanent reason for that.
+ notifications for system and things like that). System iss not
+ currently ever not object 0, but there's no permanent reason for that.
 
  */
 
 #include "blakserv.h"
 
 int system_obj_id;
+int settings_obj_id;
 
 int GetSystemObjectID()
 {
@@ -30,4 +31,12 @@ void SetSystemObjectID(int new_id)
    system_obj_id = new_id;
 }
 
+int GetSettingsObjectID()
+{
+   return settings_obj_id;
+}
 
+void SetSettingsObjectID(int new_id)
+{
+   settings_obj_id = new_id;
+}

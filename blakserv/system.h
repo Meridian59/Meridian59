@@ -15,5 +15,7 @@
 
 int GetSystemObjectID(void);
 void SetSystemObjectID(int new_id);
+int GetSettingsObjectID();
+void SetSettingsObjectID(int new_id);
 
 #endif

@@ -43,9 +43,8 @@ Bool LoadAll(void)
 	if (LoadControlFile(&last_save_time) == False)
 	{
 		lprintf("LoadAll initializing a new game\n");
-		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
-		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
-		CreateBuiltIn();
+		CreateBuiltInObjects();
+		CreateBuiltInAccounts();
 		return False;
 	}
 	
@@ -55,9 +54,8 @@ Bool LoadAll(void)
 	if (LoadAccounts(load_name) == False)
 	{
 		lprintf("LoadAll error loading accounts, initializing a new game\n");
-		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
-		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
-		CreateBuiltIn();
+		CreateBuiltInObjects();
+		CreateBuiltInAccounts();
 		return False;
 	}
 	
@@ -79,8 +77,7 @@ Bool LoadAllButAccount(void)
 	if (LoadControlFile(&last_save_time) == False)
 	{
 		/* couldn't load anything in, so system is dead */
-		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
-		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
+		CreateBuiltInObjects();
 		return False;
 	}
 	
@@ -111,8 +108,7 @@ Bool LoadAllButAccountAtTime(char *time_str)
 		ClearList();
 		ClearTimer();
 		ClearUser();
-		SetSystemObjectID(CreateObject(SYSTEM_CLASS,0,NULL));
-		SetSettingsObjectID(CreateObject(SETTINGS_CLASS,0,NULL));
+		CreateBuiltInObjects();
 	}
 	
 	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);

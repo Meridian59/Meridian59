@@ -50,6 +50,18 @@
 typedef int Bool;
 enum {False = 0, True = 1};
 
+// enum for built-in class IDs. These appear in blakserv.h also.
+enum
+{
+   USER_CLASS = 0,
+   SYSTEM_CLASS = 4,
+   GUEST_CLASS = 20,
+   ADMIN_CLASS = 23,
+   DM_CLASS = 32,
+   CREATOR_CLASS = 34,
+   SETTINGS_CLASS = 35
+};
+
 enum { C_NUMBER, C_STRING, C_NIL, C_FNAME, C_RESOURCE, C_CLASS, C_MESSAGE, C_OVERRIDE }; 
 
 /* Types of operators */

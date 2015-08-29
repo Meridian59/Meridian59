@@ -34,7 +34,7 @@ enum
 	NUM_BUILTIN = sizeof(bi_accounts)/sizeof(bi_account)
 };
 
-void CreateBuiltIn(void)
+void CreateBuiltInAccounts(void)
 {
 	int i,account_id,object_id;
 	val_type name_val,system_id_val;
@@ -91,7 +91,7 @@ void CreateBuiltIn(void)
 			} 
 			
 			if (AssociateUser(account_id,object_id) == False)
-				eprintf("CreateBuiltIn had AssociateUser fail, on account %i object %i\n",
+				eprintf("CreateBuiltInAccounts had AssociateUser fail, on account %i object %i\n",
 				account_id,object_id);
 		}
 	}

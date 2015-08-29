@@ -220,6 +220,20 @@ int load_add_class(char *class_name, int class_id, int superclass_id, char *supe
    id_type temp_id = (id_type) SafeMalloc(sizeof(id_struct));
    class_type c = (class_type) SafeMalloc(sizeof(class_struct));
 
+   // Adding new built-in object types will render existing kodbase.txt files
+   // incompatible. This isn't a problem as a pre-existing kodbase.txt is only
+   // required for reloading a live server, so a new one can be made. Check
+   // for built-in class name/ID mismatches here and instruct the user to
+   // delete kodbase.txt if this check fails.
+   const char *settings_name = "Settings";
+   extern id_struct BuiltinIds[];
+   if (strcmp(class_name, settings_name) == 0
+      && class_id != SETTINGS_CLASS)
+   {
+      database_error("Incompatible kodbase.txt. Delete the file and recompile.");
+      return False;
+   }
+
    id->name = strdup(class_name);
    id->idnum = class_id;
    id->type = I_CLASS;

@@ -40,3 +40,11 @@ void SetSettingsObjectID(int new_id)
 {
    settings_obj_id = new_id;
 }
+
+// Creates all the built-in objects that aren't referenced by other objects
+// in blakod, but can be called by constant (e.g. SYSTEM).
+void CreateBuiltInObjects()
+{
+   SetSystemObjectID(CreateObject(SYSTEM_CLASS, 0, NULL));
+   SetSettingsObjectID(CreateObject(SETTINGS_CLASS, 0, NULL));
+}

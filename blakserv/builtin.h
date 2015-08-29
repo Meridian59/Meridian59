@@ -13,6 +13,6 @@
 #ifndef _BUILTIN_H
 #define _BUILTIN_H
 
-void CreateBuiltIn(void);
+void CreateBuiltInAccounts(void);
 
 #endif

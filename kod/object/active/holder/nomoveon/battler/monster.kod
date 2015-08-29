@@ -464,6 +464,10 @@ properties:
    piLastTimeAttacked = 0
    poLastAttacker = $
 
+   % some monsters are created on the fly (ex: avar) we may need to set this at
+   % runtime
+   viReputationGroup = REP_NEUTRAL
+   
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0)
@@ -3846,7 +3850,7 @@ messages:
    Killed(what=$)
    "The mob was just killed."
    {
-      local oBody;
+      local val,oBody,hReputation;
 
       % If the monster was just killed, assume it did itself in.
       if what = $
@@ -3895,6 +3899,41 @@ messages:
             Send(EVENTENGINE_OBJECT,@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
 
+            if (viReputationGroup <> REP_NEUTRAL)
+            {
+               hReputation = Send(what,@GetReputationHash);
+               
+               % attempt to create a players rep hash if it does not exist
+               if (hReputation=$)
+               {
+                  hReputation = Send(what,@CreateReputationHash);
+
+                  if (hReputation = $)
+                  {
+                     Debug("Unable to get player reputation hash, not changing reputation");
+                  }
+               }
+               
+               % now actually do the rep chenge unless there is no hash
+               if (hReputation <> $)
+               {
+                  val=GetTableEntry(hReputation,viReputationGroup);
+                  if (val <> $)
+                  {
+                     --val;
+                     if ((val <= 20000) AND (val >= -20000))
+                     {
+                        DeleteTableEntry(hReputation,viReputationGroup);
+                        AddTableEntry(hReputation,viReputationGroup,val);
+                     }
+                  }
+                  else
+                  {
+                     AddTableEntry(hReputation,viReputationGroup,REP_NEUTRAL - 1);
+                  }
+               }
+            }
+                  
             Send(self,@CreateTreasure,#who=what,#corpse=oBody);
          }
 

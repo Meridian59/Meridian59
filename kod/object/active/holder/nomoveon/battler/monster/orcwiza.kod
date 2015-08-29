@@ -87,6 +87,8 @@ properties:
 
    piSpellPower = 75
 
+   viReputationGroup = REP_ORC
+   
 messages:
 
    Constructed()

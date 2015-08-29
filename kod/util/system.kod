@@ -998,6 +998,11 @@ messages:
       phSpells = $;
       phSkills = $;
       phItemAtts = $;
+      
+      foreach i in plUsers
+      {
+         Send(i,@SaveReputationHash);
+      }
 
       Send(poStatistics,@GarbageCollecting);
 
@@ -1022,6 +1027,11 @@ messages:
       Send(self,@CreateSkillTable);
       Send(self,@CreateItemAttTable);
 
+      foreach i in plUsers
+      {
+         Send(i,@LoadReputationHash);
+      }      
+      
       foreach i in plUsers_logged_on
       {
          Send(i,@GarbageCollectingDone);

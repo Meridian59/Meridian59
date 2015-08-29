@@ -73,6 +73,8 @@ properties:
    viKarma = 50
    piAnimation = ANIM_NONE
 
+   viReputationGroup = REP_FEY_GOOD
+   
 messages:
 
    Constructor()

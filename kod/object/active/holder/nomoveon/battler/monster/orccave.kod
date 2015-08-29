@@ -69,6 +69,8 @@ properties:
 
    piAnimation = ANIM_NONE
 
+   viReputationGroup = REP_ORC
+   
 messages:
 
    Constructed()

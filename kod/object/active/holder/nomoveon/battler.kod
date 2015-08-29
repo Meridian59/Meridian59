@@ -189,6 +189,12 @@ properties:
 
    % Mana regen timer.
    ptMana = $
+   
+   % Reputation hashtable for monster territory/influence system
+   phReputation = $
+   
+   % temp list for storing phReputation during garbage collects
+   plReputationTemp = $
 
 messages:
 
@@ -1719,6 +1725,90 @@ messages:
    GetBoostedLevel()
    {
       return 0;
+   }
+
+   CreateReputationHash()
+   {
+      phReputation = CreateTable();
+      
+      return phReputation;
+   }
+   
+   GetReputationHash()
+   {
+      return phReputation;
+   }
+   
+   GetReputation(faction=$)
+   {
+      local i;
+      
+      i = repgroup;
+      if (i <> $)
+      {
+         return GetTableEntry(phReputation,i);
+      }
+      
+      return;
+   }
+   
+   SetReputation(faction=$,value=$)
+   {
+      if (repgroup <> $ AND value <> $)
+      {
+         AddTableEntry(phReputation,repgroup,value);
+      }
+      
+      return;
+   }
+   
+   SaveReputationHash()
+   {
+      local i;
+      
+      if (phReputation <> $)
+      {
+         for(i=REP_MONSTER_MIN;i<=REP_MONSTER_MAX;++i)
+         {
+            if (plReputationTemp = $)
+            {
+               plReputationTemp = Cons([i,GetTableEntry(phReputation,i)],plReputationTemp);
+            }
+            else
+            {
+               plReputationTemp = AppendListElem(
+                  [i,GetTableEntry(phReputation,i)],plReputationTemp);
+            }
+         }
+         for(i=REP_TOWN_MIN;i<=REP_TOWN_MAX;++i)
+         {
+            plReputationTemp = AppendListElem(
+               [i,GetTableEntry(phReputation,i)],plReputationTemp);
+         }
+         DeleteTable(phReputation);
+         phReputation = $;
+      }
+      return;
+   }
+   
+   LoadReputationHash()
+   {
+      local i;
+   
+      phReputation = CreateTable();
+   
+      if (plReputationTemp <> $)
+      {
+         foreach i in plReputationTemp
+         {
+            if (Nth(i,2) <> $)
+            {
+               AddTableEntry(phReputation,Nth(i,1),Nth(i,2));
+            }
+         }
+      }
+      plReputationTemp = $;
+      return;
    }
 
 end

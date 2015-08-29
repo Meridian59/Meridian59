@@ -77,7 +77,7 @@ classvars:
 
    % 1 in x chance to cast a spell.
    viSpellChance = 4
-
+   
 properties:
 
    piAnimation = ANIM_NONE
@@ -91,6 +91,8 @@ properties:
    piSpellPower = 99
    piMax_mana = 20
 
+   viReputationGroup = REP_FARNOHL
+   
 messages:
 
    Constructed()

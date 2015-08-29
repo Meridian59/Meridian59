@@ -78,6 +78,8 @@ properties:
    piSpellPower = 50
    piMax_mana = 12
 
+   viReputationGroup = REP_FAROL
+   
 messages:
 
    Constructor(iTrunkColor=$,iLeavesColor=$)

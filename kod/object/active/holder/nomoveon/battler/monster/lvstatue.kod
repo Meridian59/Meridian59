@@ -17,7 +17,7 @@ constants:
    ANIM_CAST = 3
 
    % Neutral action, our troops don't smile, etc.
-   NO_ACTION = 1  
+   NO_ACTION = 1
 
    % What percent of the statues are soldiers?
    SOLDIER_PERCENT = 20
@@ -36,7 +36,7 @@ resources:
    LivingStatue_active_name_rsc = "living statue"
 
    LivingStatue_desc_rsc = \
-      "This statue is the image of some ancient %s."
+      "This statue is the image of some ancient %s.\n\n%r"
 
    LivingStatue_dead_name_rsc = "crumbled living statue"
 
@@ -60,10 +60,10 @@ resources:
    % a is male, b is female
    LivingStatue_legs_a_rsc = bfa.bgf
    LivingStatue_legs_b_rsc = bfb.bgf
-  
+
    LivingStatue_rightarm_a_rsc = bra.bgf
    LivingStatue_rightarm_b_rsc = brb.bgf
-   
+
    LivingStatue_leftarm_a_rsc = bla.bgf
    LivingStatue_leftarm_b_rsc = blb.bgf
 
@@ -81,7 +81,7 @@ resources:
    LivingStatue_eyes_cx_icon = pecx.bgf
    LivingStatue_eyes_dx_icon = pedx.bgf
 
-   % female 
+   % female
    LivingStatue_eyes_kx_icon = pekx.bgf
    LivingStatue_eyes_lx_icon = pelx.bgf
    LivingStatue_eyes_mx_icon = pemx.bgf
@@ -91,7 +91,7 @@ resources:
    LivingStatue_mouth_bx_icon = pmbx.bgf
    LivingStatue_mouth_cx_icon = pmcx.bgf
 
-   % female 
+   % female
    LivingStatue_mouth_kx_icon = pmkx.bgf
    LivingStatue_mouth_lx_icon = pmlx.bgf
    LivingStatue_mouth_mx_icon = pmmx.bgf
@@ -101,7 +101,7 @@ resources:
    LivingStatue_nose_bx_icon = pnbx.bgf
    LivingStatue_nose_cx_icon = pncx.bgf
 
-   % female 
+   % female
    LivingStatue_nose_kx_icon = pnkx.bgf
    LivingStatue_nose_lx_icon = pnlx.bgf
    LivingStatue_nose_mx_icon = pnmx.bgf
@@ -110,7 +110,7 @@ resources:
    LivingStatue_hair_cd_icon = ptcd.bgf
    LivingStatue_hair_bald_icon = blank.bgf
 
-   % male 
+   % male
    LivingStatue_hair_ac_icon = ptac.bgf
    LivingStatue_hair_ba_icon = ptba.bgf
    LivingStatue_hair_ad_icon = ptad.bgf
@@ -191,6 +191,13 @@ properties:
    prNose = LivingStatue_nose_ax_icon
    prToupee = LivingStatue_hair_ac_icon
 
+   % Original data, for replacing when we heal.
+   prOriginalHead = LivingStatue_head_male_icon
+   prOriginalEyes = LivingStatue_eyes_ax_icon
+   prOriginalMouth = LivingStatue_mouth_ax_icon
+   prOriginalNose = LivingStatue_nose_ax_icon
+   prOriginalLeft_arm = LivingStatue_leftarm_a_rsc
+
    plUsing = $
    plOverlays = $
    poHair_Remove = $
@@ -221,7 +228,7 @@ messages:
       plOverlays = [ ];
       plUsing = [ ];
       plResistances = [ ];
-      
+
       pbIsSoldier = bIsSoldier;
 
       Send(self,@SetGender);
@@ -253,10 +260,22 @@ messages:
       propagate;
    }
 
+   Constructed()
+   {
+      % Set the original data here, for replacing when we heal from damage.
+      prOriginalHead = prHead;
+      prOriginalEyes = prEyes;
+      prOriginalMouth = prMouth;
+      prOriginalNose = prNose;
+      prOriginalLeft_arm = prLeft_arm;
+
+      propagate;
+   }
+
    Delete()
    {
       local oUsedItem;
-      
+
       if ptRemainDormant <> $
       {
          DeleteTimer(ptRemainDormant);
@@ -267,10 +286,10 @@ messages:
       {
          Send(oUsedItem,@Delete);
       }
-      
+
       plUsing = $;
       plOverlays = $;
-      
+
       propagate;
    }
 
@@ -279,17 +298,18 @@ messages:
    ShowDesc()
    {
       % Does not show status information, because it has none.
-      AddPacket(4,vrDesc, 4,prProfession);
+      AddPacket(4,vrDesc, 4,prProfession, 4,monster_desc_level,
+                4,Bound(viLevel,20,150));
 
       return;
    }
 
-   HitPointThreshold()
+   HitPointThresholdDamage()
    "Shows physical damage instead of a message."
    {
       local i, iThreshold, iRandomDamage, rDamageReport, each_obj;
 
-      iThreshold = piHit_points/(piMax_hit_points*20);
+      iThreshold = piHit_points / (piMax_hit_points * 20);
 
       % General damage report
       rDamageReport = LivingStatue_damage;
@@ -306,7 +326,7 @@ messages:
       }
       else
       {
-         iRandomDamage = random(1,4);
+         iRandomDamage = Random(1,4);
 
          if iRandomDamage = 1
          {
@@ -317,39 +337,33 @@ messages:
 
             prEyes = LivingStatue_icon_blank;
          }
+         else if iRandomDamage = 2
+         {
+            if prMouth = LivingStatue_icon_blank
+            {
+                  return;
+            }
+
+            prMouth = LivingStatue_icon_blank;
+         }
+         else if iRandomDamage = 3
+         {
+            if prNose = LivingStatue_icon_blank
+            {
+               return;
+            }
+
+            prNose = LivingStatue_icon_blank;
+         }
          else
          {
-            if iRandomDamage = 2
+            if prLeft_arm = LivingStatue_icon_blank
             {
-               if prMouth = LivingStatue_icon_blank
-               {
-                  return;
-               }
-
-               prMouth = LivingStatue_icon_blank;
+               return;
             }
-            else
-            {
-               if iRandomDamage = 3
-               {
-                  if prNose = LivingStatue_icon_blank
-                  {
-                     return;
-                  }
 
-                  prNose = LivingStatue_icon_blank;
-               }
-               else
-               {
-                  if prLeft_arm = LivingStatue_icon_blank
-                  {
-                     return;
-                  }
-
-                  prLeft_arm = LivingStatue_icon_blank;
-                  pbHasShield = FALSE;
-               }
-            }
+            prLeft_arm = LivingStatue_icon_blank;
+            pbHasShield = FALSE;
          }
       }
 
@@ -358,11 +372,44 @@ messages:
       foreach i in Send(poOwner,@GetHolderActive)
       {
          each_obj=Send(poOwner,@HolderExtractObject,#data=i);
-         if isClass(each_obj,&User) AND Send(each_obj,@GetKillTarget) = self 
+         if IsClass(each_obj,&User)
+            AND Send(each_obj,@GetKillTarget) = self
          {
             Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamageReport,
-                 #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+                  #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
          }
+      }
+
+      return;
+   }
+
+   HitPointThresholdHeal()
+   "Healed a health point, fix one of our broken parts."
+   {
+      if prHead <> prOriginalHead
+      {
+         prHead = prOriginalHead;
+      }
+      else if prLeft_arm <> prOriginalLeft_arm
+      {
+         prLeft_arm = prOriginalLeft_arm;
+      }
+      else if prEyes <> prOriginalEyes
+      {
+         prEyes = prOriginalEyes;
+      }
+      else if prMouth <> prOriginalMouth
+      {
+         prMouth = prOriginalMouth;
+      }
+      else if prNose <> prOriginalNose
+      {
+         prNose = prOriginalNose;
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -384,7 +431,7 @@ messages:
    SomethingMoved(what = $,new_row = $,new_col = $)
    {
       local iDelay;
-      
+
       % Only care about moving stuff if we're not already moving
       % Only care about non-immortal players we can see and are "close"
       if viSpeed = SPEED_NONE
@@ -473,7 +520,7 @@ messages:
       {
          return 0;
       }
-      
+
       return (viDifficulty*10)/2;
    }
 
@@ -484,7 +531,7 @@ messages:
       {
          return 0;
       }
-      
+
       return (viDifficulty*10);
    }
 
@@ -532,39 +579,29 @@ messages:
          {
             prToupee = LivingStatue_hair_cd_icon;
          }
+         else if RandomNumber = 2
+         {
+            prToupee = LivingStatue_hair_bald_icon;
+         }
+         else if RandomNumber = 3
+         {
+            prToupee = LivingStatue_hair_ba_icon;
+         }
+         else if RandomNumber = 4
+         {
+            prToupee = LivingStatue_hair_ad_icon;
+         }
+         else if RandomNumber = 5
+         {
+            prToupee = LivingStatue_hair_bb_icon;
+         }
          else
          {
-            if RandomNumber = 2
-            {
-               prToupee = LivingStatue_hair_bald_icon;
-            }
-            else
-            {
-               if RandomNumber = 3
-               {
-                  prToupee = LivingStatue_hair_ba_icon;
-               }
-               else
-               {
-                  if RandomNumber = 4
-                  {
-                     prToupee = LivingStatue_hair_ad_icon;
-                  }
-                  else
-                  {
-                     if RandomNumber = 5
-                     {
-                        prToupee = LivingStatue_hair_bb_icon;
-                     }
-                     else
-                     {
-                        prToupee = LivingStatue_hair_xa_icon;
-                     }
-                  }
-               }
-            }
+            prToupee = LivingStatue_hair_xa_icon;
          }
-      } else {
+      }
+      else
+      {
       % female
          RandomNumber = random(0,8);
          % 0 keeps the "default"
@@ -572,51 +609,33 @@ messages:
          {
             prToupee = LivingStatue_hair_cd_icon;
          }
+         else if RandomNumber = 2
+         {
+            prToupee = LivingStatue_hair_bc_icon;
+         }
+         else if RandomNumber = 3
+         {
+            prToupee = LivingStatue_hair_db_icon;
+         }
+         else if RandomNumber = 4
+         {
+            prToupee = LivingStatue_hair_bd_icon;
+         }
+         else if RandomNumber = 5
+         {
+            prToupee = LivingStatue_hair_cb_icon;
+         }
+         else if RandomNumber = 6
+         {
+            prToupee = LivingStatue_hair_dc_icon;
+         }
+         else if RandomNumber = 7
+         {
+            prToupee = LivingStatue_hair_dr_icon;
+         }
          else
          {
-            if RandomNumber = 2
-            {
-               prToupee = LivingStatue_hair_bc_icon;
-            }
-            else
-            {
-               if RandomNumber = 3
-               {
-                  prToupee = LivingStatue_hair_db_icon;
-               }
-               else
-               {
-                  if RandomNumber = 4
-                  {
-                     prToupee = LivingStatue_hair_bd_icon;
-                  }
-                  else
-                  {
-                     if RandomNumber = 5
-                     {
-                        prToupee = LivingStatue_hair_cb_icon;
-                     }
-                     else
-                     {
-                        if RandomNumber = 6
-                        {
-                           prToupee = LivingStatue_hair_dc_icon;
-                        }
-                        else
-                        {
-                           if RandomNumber = 7
-                           {
-                              prToupee = LivingStatue_hair_dr_icon;
-                           }
-                           else
-                           {
-                              prToupee = LivingStatue_hair_xb_icon;
-                           }
-                        }
-                     }
-                  }
-               }
-            }
+            prToupee = LivingStatue_hair_xb_icon;
          }
       }
 
@@ -636,16 +655,13 @@ messages:
          {
             prEyes = LivingStatue_eyes_bx_icon;
          }
+         else if RandomNumber = 2
+         {
+            prEyes = LivingStatue_eyes_cx_icon;
+         }
          else
          {
-            if RandomNumber = 2
-            {
-               prEyes = LivingStatue_eyes_cx_icon;
-            }
-            else
-            {
-               prEyes = LivingStatue_eyes_dx_icon;
-            }
+            prEyes = LivingStatue_eyes_dx_icon;
          }
 
          RandomNumber = random(0,2);
@@ -667,7 +683,6 @@ messages:
          {
             prMouth = LivingStatue_mouth_cx_icon;
          }
-
       }
       else
       {
@@ -716,18 +731,15 @@ messages:
       {
          oEquipmentItem = create(&Longsword);
       }
+      else if iRandomNumber <= 6
+      {
+         oEquipmentItem = create(&Hammer);
+      }
       else
       {
-         if iRandomNumber <= 6
-         {
-            oEquipmentItem = create(&Hammer);
-         }
-         else
-         {
-            oEquipmentItem = create(&Axe);
-         }
+         oEquipmentItem = create(&Axe);
       }
-                  
+
       Send(self,@AddEquipmentObject,#what=oEquipmentItem);
 
       % base 20% chance to be a soldier type statue.
@@ -743,16 +755,13 @@ messages:
          {
             oEquipmentItem = create(&LeatherArmor);
          }
+         else if iRandomNumber <= 8
+         {
+            oEquipmentItem = create(&ChainArmor);
+         }
          else
          {
-            if iRandomNumber <= 8
-            {
-               oEquipmentItem = create(&ChainArmor);
-            }
-            else
-            {
-               oEquipmentItem = create(&ScaleArmor);
-            }
+            oEquipmentItem = create(&ScaleArmor);
          }
 
          Send(self,@SetStatueArmor,#NewArmor=oEquipmentItem);
@@ -792,16 +801,13 @@ messages:
             {
                oEquipmentItem = Create(&MetalShield);
             }
+            else if iRandomNumber <= 80
+            {
+               oEquipmentItem = Create(&GoldShield);
+            }
             else
             {
-               if iRandomNumber <= 80
-               {
-                  oEquipmentItem = Create(&GoldShield);
-               }
-               else
-               {
-                  oEquipmentItem = Create(&KnightShield);
-               }
+               oEquipmentItem = Create(&KnightShield);
             }
 
             Send(self,@AddEquipmentObject,#what=oEquipmentItem);
@@ -810,12 +816,12 @@ messages:
 
       return;
    }
-   
+
    MonsterAttack(what = $)
    {
       % add in any attack animation calls
       Send(self,@DoSlash);
-      
+
       return;
    }
 
@@ -832,7 +838,7 @@ messages:
    {
       % use standing torso
       AddPacket(1,ANIMATE_NONE, 2,1);
-      
+
       return;
    }
 
@@ -845,7 +851,7 @@ messages:
 
          return;
       }
-      
+
       propagate;
    }
 
@@ -854,9 +860,9 @@ messages:
       local i, iOverlays, hotspot, iLeft_group, iRight_group;
 
       % Player has 7 standard overlays: right arm, left arm, legs, head,
-      %  eyes, mouth, nose      
+      %  eyes, mouth, nose
       iOverlays = 7;
-      
+
       if poHair_remove = $
       {
          iOverlays = iOverlays + 1;
@@ -874,19 +880,16 @@ messages:
          {
             iRight_group = 17;
          }
-         else
+         else if hotspot = HS_LEFT_WEAPON or hotspot = HS_BOTTOM_BOW
          {
-            if hotspot = HS_LEFT_WEAPON or hotspot = HS_BOTTOM_BOW
             % it's really a shield, not weapon
-            {
-               iLeft_group = 7;
-            }
+            iLeft_group = 7;
          }
       }
-      
+
       AddPacket(1,iOverlays);
       AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
-      
+
       if iLeft_group = 1
       {
          AddPacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,3);
@@ -897,7 +900,7 @@ messages:
       }
 
       AddPacket(4,prRight_arm, 1,HS_RIGHT_HAND);
-      
+
       if iRight_group = 1
       {
          Addpacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,3);
@@ -910,14 +913,14 @@ messages:
       AddPacket(4,prLegs, 1,HS_LEGS, 1,ANIMATE_CYCLE, 4,100, 2,2, 2,5);
 
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);        
-      
+
       AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_NONE, 2,NO_ACTION);
       AddPacket(4,prEyes, 1,HS_EYES, 1,ANIMATE_NONE, 2,NO_ACTION);
       AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_NONE, 2,1);
 
       if poHair_remove = $
-      {  
-         AddPacket(4,prToupee, 1,HS_TOUPEE);   
+      {
+         AddPacket(4,prToupee, 1,HS_TOUPEE);
          AddPacket(1,ANIMATE_NONE, 2,1);
       }
 
@@ -933,17 +936,17 @@ messages:
    {
       local i, iOverlays, hotspot, iLeft_group, iRight_group;
 
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
 
       % Player has 7 standard overlays: right arm, left arm, legs, head,
       %  eyes, mouth, nose
       iOverlays = 7;
-      
+
       if poHair_remove = $
       {
          iOverlays = iOverlays + 1;
       }
-      
+
       % Overlay info -- display correct group for animation & action
 
       iLeft_group = 1;
@@ -953,19 +956,16 @@ messages:
       {
          % Bows can have more than 1.
          iOverlays = iOverlays + Send(i,@GetNumberOverlays,
-                                      #iAnimation=piAnimation); 
+                                      #iAnimation=piAnimation);
          hotspot = Send(i,@GetOverlayHotspot);
          if hotspot = HS_RIGHT_WEAPON
          {
             iRight_group = 17;
          }
-         else
+         else if hotspot = HS_LEFT_WEAPON or hotspot = HS_BOTTOM_BOW
          {
-            if hotspot = HS_LEFT_WEAPON or hotspot = HS_BOTTOM_BOW
             % it's really a shield, not weapon 
-            {
-               iLeft_group = 7;
-            }
+            iLeft_group = 7;
          }
       }
 
@@ -977,37 +977,32 @@ messages:
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,8, 2,8, 2,iLeft_group);
       }
+      else if piAnimation = PANM_WEAPON_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
+      }
       else
       {
-         if piAnimation = PANM_WEAPON_ATTACK
-         {
-            AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
-         }
-         else
-         {
-            AddPacket(1,ANIMATE_NONE, 2,iLeft_group);
-         }
+         AddPacket(1,ANIMATE_NONE, 2,iLeft_group);
       }
 
       AddPacket(4,prRight_arm,1,HS_RIGHT_HAND);
 
       if piAnimation = ANIM_NONE
-      { 
-         AddPacket(1,ANIMATE_NONE, 2,iRight_group); 
+      {
+         AddPacket(1,ANIMATE_NONE, 2,iRight_group);
       }
-
-      if piAnimation = ANIM_CAST
+      else if piAnimation = ANIM_CAST
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,11, 2,11, 2,iRight_group);
       }
-
-      if piAnimation = PANM_WEAPON_ATTACK
+      else if piAnimation = PANM_WEAPON_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,17);
       }
 
       AddPacket(4,prLegs,1,HS_LEGS);
-      
+
       if piAnimation = PANM_WEAPON_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE, 4,900, 2,6, 2,6, 2,1);
@@ -1016,24 +1011,23 @@ messages:
       {
          AddPacket(1,ANIMATE_NONE, 2,1);
       }
-  
-      AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1); 
-      
+
+      AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
       AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_NONE, 2,NO_ACTION);
       AddPacket(4,prEyes, 1,HS_EYES, 1,ANIMATE_NONE, 2,NO_ACTION);
       AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_NONE, 2,1);
-      
+
       if poHair_remove = $
-      {  
+      {
          AddPacket(4,prToupee, 1,HS_TOUPEE);
          AddPacket(1,ANIMATE_NONE, 2,1); 
       }
-      
+
       foreach i in plOverlays
       {
          Send(i,@SendOverlayInformation,#iAnimation=piAnimation);
       }
-      
+
       return;
    }
 

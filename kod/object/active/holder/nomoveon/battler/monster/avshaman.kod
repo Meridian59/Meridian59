@@ -147,23 +147,25 @@ messages:
    {
       piColor_translation = clan;
 
-      if clan = AVARCLAN_ANTIMAGIC
+      switch(clan)
       {
-         vrName = avarshaman_nomagic_name;
-         vrDesc = avarshaman_nomagic_desc;
-      }
-      else
-      {
-         if clan = AVARCLAN_BONE_FACTION
-         {
-            vrName = avarshaman_bone_name;
-            vrDesc = avarshaman_bone_desc;
-         }
-         else
-         {
-            vrName = avarshaman_name_rsc;
-            vrDesc = avarshaman_desc_rsc;
-         }
+         case AVARCLAN_ANTIMAGIC:
+            vrName = avar_nomagic_name;
+            vrDesc = avar_nomagic_desc;
+            vrReputationGroup = REP_KKAVAR;
+            break;
+
+         case AVARCLAN_BONE_FACTION:
+            vrName = avar_bone_name;
+            vrDesc = avar_bone_desc;
+            vrReputationGroup = REP_CTAVAR;
+            break;
+
+         default:
+            vrName = avar_name_rsc;
+            vrDesc = avar_desc_rsc;
+            vrReputationGroup = REP_PSAVAR;
+            break;
       }
 
       if poOwner <> $

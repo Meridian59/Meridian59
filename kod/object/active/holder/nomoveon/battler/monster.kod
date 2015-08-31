@@ -2089,15 +2089,15 @@ messages:
    AssessDamage(what=$,damage=$,atype=0,aspell=0,bonus=0,scalefactor=1000,
       absolute=FALSE,precision=FALSE)
    {
-      local iDamage, iResist, iPercentClass, i, each_obj, oRod, bAttackerEmpowered;
+      local iDamage, iResist, iPercentClass, i, each_obj, bAttackerEmpowered;
 
       if NOT precision
       {
          damage = damage * 100;
       }
 
-      if (piBehavior & AI_NPC )
-      { 
+      if (piBehavior & AI_NPC)
+      {
          Send(what,@MsgSendUser,#message_rsc=LS_nofight_attacked);
 
          return 0;
@@ -2111,16 +2111,16 @@ messages:
       if what <> $
          AND IsClass(what,&Player)
       {
-         foreach oRod in Send(what,@GetHolderPassive)
+         foreach i in Send(what,@GetHolderPassive)
          {
-            if IsClass(oRod,&DamageRod)
-               AND Send(oRod,@IsActive)
+            if IsClass(i,&DamageRod)
+               AND Send(i,@IsActive)
             {
                bAttackerEmpowered = TRUE;
             }
          }
       }
-      
+
       if bAttackerEmpowered
       {
          damage = damage * 135 / 100;
@@ -4789,6 +4789,16 @@ messages:
       return;
    }
 
+   NewMaxMana(amount=0)
+   {
+      local iPrev_max;
+
+      iPrev_max = piMax_mana;
+      piMax_Mana = piMax_mana + amount;
+
+      return (piMax_mana - iPrev_max);
+   }
+
    CalculateManaTime()
    "Calculate # of milliseconds until monster will gain a mana point."
    {
@@ -5112,6 +5122,23 @@ messages:
       return piMax_hit_points;
    }
 
+   GainMaxHealth(amount = 0)
+   "Equivalent to the message in Player, but without starting a timer."
+   {
+      local iPrev_max;
+
+      iPrev_max = piMax_hit_points;
+      piMax_hit_points = Bound(piMax_hit_points + amount, 1, $);
+
+      return piMax_hit_points - iPrev_max;
+   }
+
+   GetMaxHealth()
+   "Some objects will call this instead of the monster-specific message."
+   {
+      return piMax_hit_points;
+   }
+
    SetMaxHitPoints(amount=$)
    {
       piMax_hit_points = amount;
@@ -5142,7 +5169,6 @@ messages:
       return viLevel;
    }
 
-   
    GetDifficulty()
    {
       return viDifficulty;
@@ -7222,6 +7248,17 @@ messages:
    GetBoostedLevel()
    {
       return piBoostedLevel;
+   }
+
+   % GainLight and LoseLight here so (some) mobs can use touch spells.
+   GainLight()
+   {
+      return 0;
+   }
+
+   LoseLight()
+   {
+      return 0;
    }
 
 end

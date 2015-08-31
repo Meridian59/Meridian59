@@ -85,11 +85,6 @@ constants:
    PLAYER_TRANSLATION2_ARMS_MASK = 0xff00
    PLAYER_TRANSLATION2_ARMS_MUL = 0x100
 
-   SHIRT_MASK = 0x00ff
-   SHIRT_MUL  = 0x0001
-   PANTS_MASK = 0xff00
-   PANTS_MUL  = 0x0100
-   
    BASE_NEED = 105
 
    % If vigor gets this low, see if second wind skill kicks in.
@@ -3592,37 +3587,9 @@ messages:
    RemoveEnchantmentClass(class = &Object)
    "If have a current enchantment set by anything in class, end it."
    {
-      local i,state,removedSomething;
+      local i;
 
-      removedSomething = FALSE;
-
-      foreach i in plEnchantments
-      {
-         if IsClass(Nth(i,2),class)
-         {
-            removedSomething = TRUE;
-            if First(i) <> $
-            {
-               DeleteTimer(First(i));
-            }
-
-            if Length(i) >= ENCHANTMENT_LIST_STATE
-               OR IsClass(Nth(i,2),&Boon)
-            {
-               state = Nth(i,3);
-            }
-
-            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#state=state);
-
-            Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
-                  #type=ENCHANTMENT_PLAYER);
-
-            plEnchantments = DelListElem(plEnchantments,i); 
-            Send(self,@ResetPlayerFlagList,#who=self);
-         }
-      }
-
-      % Also remove from passive improvement list.
+      % Remove from passive improvement list.
       foreach i in plPassiveImprovement
       {
          if IsClass(First(i),class)
@@ -3631,7 +3598,8 @@ messages:
          }
       }
 
-      return removedSomething;
+      % Rest of this now done in Battler.
+      propagate;
    }
 
    GetPassiveImprovementList()
@@ -5440,7 +5408,7 @@ messages:
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
             iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,
-            bAttackerEmpowered, bShielded, oRod;
+            bAttackerEmpowered, bShielded;
 
       if NOT precision
       {
@@ -5485,7 +5453,7 @@ messages:
 
          foreach i in plRadiusEnchantments
          {
-            iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,
+            iResistance = Send(First(i),@ModifyResistance,#attacker=what,
                   #atype=atype,#iPower=Nth(i,2),
                   #caster=Nth(i,3),#resistance=iResistance);
          }
@@ -5607,10 +5575,10 @@ messages:
       if what <> $
          AND IsClass(what,&Player)
       {
-         foreach oRod in Send(what,@GetHolderPassive)
+         foreach i in Send(what,@GetHolderPassive)
          {
-            if IsClass(oRod,&DamageRod)
-               AND Send(oRod,@IsActive)
+            if IsClass(i,&DamageRod)
+               AND Send(i,@IsActive)
             {
                bAttackerEmpowered = TRUE;
             }
@@ -5624,10 +5592,10 @@ messages:
 
       % Look for active shield rods in inventory, reduce final damage to 1 if any active
       bShielded = FALSE;
-      foreach oRod in plPassive
+      foreach i in plPassive
       {
-         if IsClass(oRod,&ShieldRod)
-            AND Send(oRod,@IsActive)
+         if IsClass(i,&ShieldRod)
+            AND Send(i,@IsActive)
          {
             bShielded = TRUE;
          }
@@ -10367,7 +10335,6 @@ messages:
       return;
    }
 
-
    SetPlayerLegs(what = $,new_legs = $,translation = $)
    "Sets our legs to <new_legs>, and keeps track of <what> to "
    "undo when necessary. Tells everyone we changed."
@@ -10416,7 +10383,7 @@ messages:
    SetDefaultClothes(pants_color=-1,shirt_color=-1,rand=FALSE,increment=TRUE)
    {
       local shirt_color_xlat, pants_color_xlat, skin_color, i,
-            bShirt, bLegs, bArms, oShirt, oRobes;
+            bShirt, bLegs, bArms;
 
       skin_color = Send(self,@GetSkinColor);
       skin_color = Send(self,@ConvertSkinColorToXLAT,#skin_color=skin_color);
@@ -10485,17 +10452,17 @@ messages:
          }
       }
 
-      if not bArms
+      if NOT bArms
       {
          Send(self,@ResetPlayerArms);
       }
 
-      if not bShirt
+      if NOT bShirt
       {
          Send(self,@ResetPlayerIcon);
       }
 
-      if not bLegs
+      if NOT bLegs
       {
          Send(self,@ResetPlayerLegs);
       }
@@ -10512,12 +10479,12 @@ messages:
 
    RefreshPlayerVisualGear()
    {
-      local n, plRefreshItemTypes, i, iHighestLayer, oHighestGear,
+      local n, lRefreshItemTypes, i, iHighestLayer, oHighestGear,
             iLowestLayer, oLowestGear, oSoldierShield, bSoldierShieldSlung;
 
-      plRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
+      lRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
 
-      foreach n in plRefreshItemTypes
+      foreach n in lRefreshItemTypes
       {
          iHighestLayer = 0;
          oHighestGear = $;
@@ -11060,37 +11027,25 @@ messages:
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,8, 2,8, 2,iLeft_group);
       }
+      else if iAnimation = PANM_FIST_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,600, 2,5, 2,6, 2,iLeft_group);
+      }
+      else if iAnimation = PANM_BOW_FIRE
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,1200, 2,9, 2,9, 2,iLeft_group);
+      }
+      else if iAnimation = PANM_WEAPON_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
+      }
+      else if iAnimation = PANM_DANCE
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,150, 2,10, 2,26);
+      }
       else
       {
-         if iAnimation = PANM_FIST_ATTACK
-         {
-            AddPacket(1,ANIMATE_ONCE, 4,600, 2,5, 2,6, 2,iLeft_group);
-         }
-         else
-         {
-            if iAnimation = PANM_BOW_FIRE
-            {
-               AddPacket(1,ANIMATE_ONCE, 4,1200, 2,9, 2,9, 2,iLeft_group);
-            }
-            else
-            {
-               if iAnimation = PANM_WEAPON_ATTACK
-               {
-                  AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
-               }  
-               else
-               {
-                  if iAnimation = PANM_DANCE
-                  {
-                     AddPacket(1,ANIMATE_CYCLE, 4,150, 2,10, 2,26);
-                  }  
-                  else
-                  {
-                     AddPacket(1,ANIMATE_NONE,2,iLeft_group);
-                  }
-               }
-            }
-         }
+         AddPacket(1,ANIMATE_NONE,2,iLeft_group);
       }
 
       AddPacket(4,prRight_arm, 1,HS_RIGHT_HAND);
@@ -11103,38 +11058,31 @@ messages:
       {
          AddPacket(1,ANIMATE_NONE, 2,iRight_group); 
       }
-
-      if iAnimation = PANM_WAVE
+      else if iAnimation = PANM_WAVE
       {
          AddPacket(1,ANIMATE_ONCE, 4,100, 2,7, 2,10, 2,iRight_group);
       }
-
-      if iAnimation = PANM_POINT
+      else if iAnimation = PANM_POINT
       {
          AddPacket(1,ANIMATE_ONCE, 4,700, 2,12, 2,12, 2,iRight_group);
       }
-      
-      if iAnimation = PANM_CAST
+      else if iAnimation = PANM_CAST
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,11, 2,11, 2,iRight_group);
       }
-
-      if iAnimation = PANM_FIST_ATTACK
+      else if iAnimation = PANM_FIST_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE, 4,600, 2,13, 2,14, 2,iRight_group);
       }
-
-      if iAnimation = PANM_BOW_FIRE
+      else if iAnimation = PANM_BOW_FIRE
       {
          AddPacket(1,ANIMATE_ONCE, 4,600, 2,15, 2,16, 2,iRight_group);
       }
-
-      if iAnimation = PANM_WEAPON_ATTACK
+      else if iAnimation = PANM_WEAPON_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,17);
       }
-
-      if iAnimation = PANM_DANCE
+      else if iAnimation = PANM_DANCE
       {
          AddPacket(1,ANIMATE_CYCLE, 4,150, 2,18, 2,34);
       }
@@ -11149,30 +11097,21 @@ messages:
       {
          AddPacket(1,ANIMATE_ONCE, 4,900, 2,6, 2,6, 2,1);
       }
+      else if iAnimation = PANM_FIST_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,1200, 2,6, 2,6, 2,1);
+      }
+      else if iAnimation = PANM_BOW_FIRE
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,1200, 2,7, 2,7, 2,1);
+      }
+      else if iAnimation = PANM_DANCE
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,150, 2,8, 2,24);
+      }
       else
       {
-         if iAnimation = PANM_FIST_ATTACK
-         {
-            AddPacket(1,ANIMATE_ONCE, 4,1200, 2,6, 2,6, 2,1);
-         }
-         else
-         {
-            if iAnimation = PANM_BOW_FIRE
-            {
-               AddPacket(1,ANIMATE_ONCE, 4,1200, 2,7, 2,7, 2,1);
-            }
-            else
-            {
-               if iAnimation = PANM_DANCE
-               {
-                  AddPacket(1,ANIMATE_CYCLE, 4,150, 2,8, 2,24);
-               }
-               else
-               {
-                  AddPacket(1,ANIMATE_NONE, 2,1);
-               }
-            }
-         }
+         AddPacket(1,ANIMATE_NONE, 2,1);
       }
 
       iSkin_xlat = Send(self,@GetSkinColor);

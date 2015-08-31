@@ -216,12 +216,20 @@ messages:
 
    EndEnchantment(who=$,report=TRUE,state=0)
    {
-      if report
+      if who = $
       {
-          Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
+         return;
       }
 
-      Post(who,@DrawResistances);
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
+      }
+
+      if IsClass(who,&User)
+      {
+         Post(who,@DrawResistances);
+      }
 
       return;
    }

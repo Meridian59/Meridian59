@@ -13,6 +13,7 @@ Battler is NoMoveOn
 constants:
 
    include blakston.khd
+   include protocol.khd
 
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
@@ -277,40 +278,42 @@ messages:
    {
       return $;
    }
-   
+
    GetCurrentResistances()
-   "Object attributes, such as spells and items, can change resistances temporarily."
+   "Spells and items can change resistances temporarily."
    {
-      local oObjectAttribute, plCurrentResistances, oEquipment, oEnchantment;
-      
-      plCurrentResistances = Send(SYS,@ListCopy,#source=Send(self,@GetBaseResistances));
-      
+      local oObjectAttribute, lCurResist, oEquipment, oEnchantment;
+
+      lCurResist = Send(SYS,@ListCopy,#source=Send(self,@GetBaseResistances));
+
       foreach oObjectAttribute in plObject_attributes
       {
-         plCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=plCurrentResistances);
+         lCurResist = Send(oObjectAttribute,@ModifyResistance,
+                           #resistance_list=lCurResist);
       }
-      
+
       foreach oEquipment in Send(self,@GetEquippedItems)
       {
-         plCurrentResistances = Send(oEquipment,@ModifyResistance,#resistance_list=plCurrentResistances);
+         lCurResist = Send(oEquipment,@ModifyResistance,
+                           #resistance_list=lCurResist);
       }
-      
-      If IsClass(self,&User)
+
+      foreach oEnchantment in Send(self,@GetEnchantmentList)
       {
-         foreach oEnchantment in Send(self,@GetEnchantmentList)
+         if Length(oEnchantment) > ENCHANTMENT_LIST_NO_STATE
          {
-            if Length(oEnchantment) > ENCHANTMENT_LIST_NO_STATE
-            {
-               plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances,#iState=Nth(oEnchantment,3));
-            }
-            else
-            {
-               plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances);
-            }
+            lCurResist = Send(Nth(oEnchantment,2),@ModifyResistance,
+                              #resistance_list=lCurResist,
+                              #iState=Nth(oEnchantment,3));
+         }
+         else
+         {
+            lCurResist = Send(Nth(oEnchantment,2),@ModifyResistance,
+                              #resistance_list=lCurResist);
          }
       }
-      
-      return plCurrentResistances;
+
+      return lCurResist;
    }
 
    GetEquippedItems()
@@ -318,7 +321,7 @@ messages:
    {
       return $;
    }
- 
+
    ResistanceCheck(atype = 0, aspell = 0)
    "Given bitvectors of attack type and spell, find the resistance modifier "
    "which applies. Largest resistance plus worst weakness gives the modifier."
@@ -327,13 +330,13 @@ messages:
 
       iMaxRes = NO_RESISTANCE;
       iMinRes = NO_RESISTANCE;
-      
+
       resistance_list = Send(self,@GetCurrentResistances);
 
       foreach j in resistance_list
       {
-         iResType = Nth(j,1);
-         if iResType > 0   
+         iResType = First(j);
+         if iResType > 0
          {
             % It's a resistance to weapon type
 
@@ -377,8 +380,8 @@ messages:
       }
 
       % clip to max/min values
-      iMaxRes = bound(iMaxRes,$,MAX_RESISTANCE);
-      iMinRes = bound(iMinRes,MIN_RESISTANCE,$);
+      iMaxRes = Bound(iMaxRes,$,MAX_RESISTANCE);
+      iMinRes = Bound(iMinRes,MIN_RESISTANCE,$);
 
       return iMaxRes + iMinRes;
    }
@@ -401,6 +404,53 @@ messages:
    }
 
    %%% Spell enchantment functions.
+
+   RemoveEnchantmentClass(class = &Object)
+   "If have a current enchantment set by anything in class, end it."
+   {
+      local i, state, removedSomething;
+
+      removedSomething = FALSE;
+
+      foreach i in plEnchantments
+      {
+         if IsClass(Nth(i,2),class)
+         {
+            removedSomething = TRUE;
+            if First(i) <> $
+            {
+               DeleteTimer(First(i));
+            }
+
+            if Length(i) >= ENCHANTMENT_LIST_STATE
+               OR IsClass(Nth(i,2),&Boon)
+            {
+               state = Nth(i,3);
+            }
+
+            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#state=state);
+
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
+                  #type=ENCHANTMENT_PLAYER);
+
+            plEnchantments = DelListElem(plEnchantments,i);
+            Send(self,@ResetPlayerFlagList,#who=self);
+         }
+      }
+
+      return removedSomething;
+   }
+
+   ShowRemoveEnchantment()
+   "User overrides this to send data to the client."
+   {
+      return;
+   }
+
+   ResetPlayerFlagList()
+   {
+      return;
+   }
 
    IsEnchanted(what=$,byClass=&Spell)
    "Returns whether or not currently enchanted by <what>."

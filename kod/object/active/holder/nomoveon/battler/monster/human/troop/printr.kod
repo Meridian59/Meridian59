@@ -1,0 +1,60 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PrincessTroop is FactionTroop
+
+constants:
+
+include blakston.khd
+
+resources:
+
+   include printr.lkod
+
+   PrincessTroop_name_rsc = "soldier of the Princess' army"
+
+   PrincessTroop_desc_rsc = \
+   "This soldier proudly bears the colors of the Princess."
+
+   PrincessTroop_dead_name_rsc = "dead soldier"
+   PrincessTroop_sound_aware = trps2awr.wav
+   
+classvars:
+
+   vrName = PrincessTroop_name_rsc
+   vrDesc = PrincessTroop_desc_rsc
+   vrDead_name = PrincessTroop_dead_name_rsc
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_type = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
+
+   viColorTranslate1 = XLAT_TO_ORANGE     % Shirt
+   viColorTranslate2 = XLAT_TO_GREEN   % Pants
+   vcShieldClass = &PrincessShield
+
+   viFaction = FACTION_PRINCESS
+
+properties:
+
+   piBaseLevel = 50
+   piBaseDifficulty = 2
+
+   %Here so they can be set
+   viLevel = 50         % piBaseLevel
+   viDifficulty = 2     % piBaseDifficulty
+
+   vrSound_aware = PrincessTroop_sound_aware
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

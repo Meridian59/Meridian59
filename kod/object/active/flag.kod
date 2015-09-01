@@ -823,11 +823,25 @@ messages:
 
       if piFaction = FACTION_DUKE
       {
-         oTroop = &DukeTroop;
+         if Random(0,8) = 1
+         {
+            oTroop = &DukeMage;
+         }
+         else
+         {
+            oTroop = &DukeTroop;
+         }
       }
       else if piFaction = FACTION_PRINCESS
       {
-         oTroop = &PrincessTroop;
+         if Random(0,8) = 1
+         {
+            oTroop = &PrincessMage;
+         }
+         else
+         {
+            oTroop = &PrincessTroop;
+         }
       }
       else if piFaction = FACTION_REBEL
       {

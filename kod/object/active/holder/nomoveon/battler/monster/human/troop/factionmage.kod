@@ -47,7 +47,8 @@ messages:
       }
       else
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=First(First(plSpellBook)));
+         oSpell = Send(SYS,@FindSpellByNum,
+                        #num=First(Nth(plSpellBook,Random(1,Length(plSpellBook)))));
          oEquipmentItem = Create(&DiscipleRobe,#school=Send(oSpell,@GetSchool));
          iBonusModifier = 40;
       }

@@ -213,7 +213,7 @@ messages:
       Send(self,@SetGender);
       Send(self,@SetHair);
       Send(self,@SetFace);
-      Send(self,@SetSkinColor);
+      Send(self,@SetSkinColor,#color=Random(1,4));
 
       % Sets random clothes for humans.
       Send(self,@SetClothes);

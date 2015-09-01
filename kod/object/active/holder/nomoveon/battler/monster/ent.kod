@@ -118,6 +118,8 @@ messages:
                         
       plSpellBook = [ [SID_LIGHTNING, 5, 100] ];
 
+      vlReputationEnemies = [REP_UNDEAD];
+
       propagate;
    }
 

@@ -2537,7 +2537,7 @@
    %%% Reputation
    
    REP_MONSTER_MIN = 0
-   REP_MONSTER_MAX = 12
+   REP_MONSTER_MAX = 13
    % monster factions
    REP_NEUTRAL    = 0
    REP_FAROL      = 1
@@ -2552,6 +2552,7 @@
    REP_FEY_EVIL   = 10
    REP_FROGMEN    = 11
    REP_HERETIC    = 12
+   REP_UNDEAD     = 13
    
    REP_TOWN_MIN   = 10001
    REP_TOWN_MAX   = 10007

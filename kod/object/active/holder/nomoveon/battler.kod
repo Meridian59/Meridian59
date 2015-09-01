@@ -1741,12 +1741,9 @@ messages:
    
    GetReputation(faction=$)
    {
-      local i;
-      
-      i = repgroup;
-      if (i <> $)
+      if (faction <> $)
       {
-         return GetTableEntry(phReputation,i);
+         return GetTableEntry(phReputation,faction);
       }
       
       return;
@@ -1754,9 +1751,9 @@ messages:
    
    SetReputation(faction=$,value=$)
    {
-      if (repgroup <> $ AND value <> $)
+      if (faction <> $ AND value <> $)
       {
-         AddTableEntry(phReputation,repgroup,value);
+         AddTableEntry(phReputation,faction,value);
       }
       
       return;

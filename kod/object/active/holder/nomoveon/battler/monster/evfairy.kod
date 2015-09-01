@@ -87,6 +87,8 @@ messages:
                         [-ATCK_SPELL_UNHOLY, 30 ]
                       ];
 
+      vlReputationEnemies = [REP_FEY_GOOD];
+
       propagate;
    }
 

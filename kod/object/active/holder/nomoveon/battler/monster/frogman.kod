@@ -76,6 +76,8 @@ messages:
                         [-30, -ATCK_SPELL_UNHOLY ],
                         [-10, -ATCK_SPELL_COLD ] ];
 
+      vlReputationEnemies = [REP_UNDEAD];
+
       propagate;
    }
 

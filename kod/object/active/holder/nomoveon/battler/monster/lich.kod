@@ -167,6 +167,8 @@ properties:
    ptDeathSequence = $
    piDeathSequenceTimestep = 200  % milliseconds
 
+   viReputationGroup = REP_LICH
+
 messages:
 
    Constructed()
@@ -190,6 +192,8 @@ messages:
                         [-ATCK_SPELL_HOLY, -40 ],
                         [-ATCK_SPELL_HUNTERSWORD, -90 ]
                       ];
+
+      vlReputationEnemies = [REP_FAROL];
 
       propagate;
    }

@@ -3921,7 +3921,8 @@ messages:
             Send(EVENTENGINE_OBJECT,@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
 
-            if (viReputationGroup <> REP_NEUTRAL)
+            if (viReputationGroup <> REP_NEUTRAL
+               AND Send(SETTINGS_OBJECT,@GetMonsterFactionEnabled))
             {
                hReputation = Send(what,@GetReputationHash);
                

@@ -1782,7 +1782,6 @@ messages:
             plReputationTemp = AppendListElem(
                [i,GetTableEntry(phReputation,i)],plReputationTemp);
          }
-         DeleteTable(phReputation);
          phReputation = $;
       }
       return;

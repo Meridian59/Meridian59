@@ -133,7 +133,8 @@ messages:
             SID_CLOAK,
             SID_POISON_FOG,
             SID_PROFANE_RESONANCE,
-            SID_DEATH_RIFT
+            SID_DEATH_RIFT,
+            SID_UNHOLY_TOUCH
          ],
       $];
 

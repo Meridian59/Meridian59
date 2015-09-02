@@ -1,0 +1,132 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+UnholyTouch is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   UnholyTouch_name_rsc = "unholy touch"
+   UnholyTouch_icon_rsc = iunholyt.bgf
+   UnholyTouch_desc_rsc = \
+      "Dark energy from Qor sears your target.  More effective on good "
+      "targets.   "
+      "Requires a single fairy wing to cast."
+
+   UnholyTouch_already_enchanted_rsc = \
+      "Your hands are already bathed in Qor's magic."
+   UnholyTouch_On_rsc = "Your hands are now beating with dark magic."
+   UnholyTouch_Off_rsc = "Your hands are no longer bathed in Qor's magic."
+
+   UnholyTouch_player_was_hit = "%s%s rips you with the dark force of Qor!"
+   UnholyTouch_player_hit_something = \
+      "%s%s%s shrinks away from the dark energy of Qor."
+
+   UnholyTouch_player_killed_something = \
+      "Dark evil energy escapes from %s%s, ripping apart their soul."
+   UnholyTouch_player_was_killed = \
+      "The touch of %s%s separates body from soul, dragging %s%s to the Underworld."
+
+   UnholyTouch_spell_intro = \
+      "Qor Lv. 1: Delivers the evil of Qor in your touch."
+
+   UnholyTouch_sound = qcurweap.wav
+
+classvars:
+
+   vrName = UnholyTouch_name_rsc
+   vrIcon = UnholyTouch_icon_rsc
+   vrDesc = UnholyTouch_desc_rsc
+
+   vrAlreadyEnchanted = UnholyTouch_already_enchanted_rsc
+   vrEnchantment_On = UnholyTouch_On_rsc
+   vrEnchantment_Off = UnholyTouch_Off_rsc
+
+   vrSpell_intro = UnholyTouch_spell_intro
+
+   vrPlayer_was_hit = UnholyTouch_player_was_hit
+   vrPlayer_hit_something = UnholyTouch_player_hit_something
+   vrPlayer_killed_something = UnholyTouch_player_killed_something
+   vrPlayer_was_killed = UnholyTouch_player_was_killed
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SS_QOR
+   viSpell_num = SID_UNHOLY_TOUCH
+   viSpellExertion = 1
+   viSpell_level = 1
+   viMana = 4
+
+   viMin_Damage = 5
+   viMax_Damage = 8
+
+   viSpellType = ATCK_SPELL_UNHOLY+ATCK_SPELL_ALL
+   viStroke = STROKE_UNHOLY_TOUCH
+
+   viDifficulty = 1
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = UnholyTouch_sound
+
+   viEnchantmentLight = -10
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FairyWing,1],plReagents);
+
+      return;
+   }
+
+   DamageFactors(damage=0, who=$, victim=$)
+   "Damage for attack spells is determined largely by expertise in the spell."
+   {
+      local iDamage, iKarma;
+
+      iDamage = damage;
+
+      % Avoid the condition of checking damage on a nil victim (like when
+      %  just querying average damage).
+      if victim <> $
+      {
+         if Send(victim,@IsUndead)
+         {
+            % Automatically do 50% of damage to undead.
+            iDamage = iDamage/2;
+         }
+         else
+         {
+            % Inncrease damage by 50% on opponent's with good Karma.
+            % Use the detect option in case we're hitting an event monster.
+            iKarma = Send(victim,@GetKarma,#detect=TRUE);
+            iDamage = iDamage + ((iKarma)*iDamage/200);
+         }
+      }
+
+      return iDamage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -175,7 +175,8 @@ messages:
             SID_HOLY_SYMBOL,
             SID_MINOR_HEAL,
             SID_DETECT_EVIL,
-            SID_BREATH_OF_LIFE
+            SID_BREATH_OF_LIFE,
+            SID_UNHOLY_TOUCH
          ],
       $];
 

@@ -196,6 +196,9 @@ properties:
    % Minimum swings needed for a chance to improve a weaponcraft skill.
    piWeaponcraftImprovementMinimumSwings = 50
    
+   % Riija Sword drops on death? (Used to limit griefing)
+   pbRiijaSwordDropOnDeath = FALSE
+
    % Replaces old constant
    piPKillEnableHP = 50
    
@@ -486,6 +489,10 @@ messages:
    %
    % Miscellaneous
    %
+   GetRiijaSwordDropOnDeath()
+   {
+      return pbRiijaSwordDropOnDeath;
+   }
 
    GetInitialRoomID()
    {

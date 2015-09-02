@@ -73,9 +73,8 @@ messages:
    }
 
    DropOnDeath()
-   "A player does NOT drop a Riija sword when he dies."
    {
-      return FALSE;
+      return Send(SETTINGS_OBJECT,@GetRiijaSwordDropOnDeath);
    }
 
    AppendDesc()

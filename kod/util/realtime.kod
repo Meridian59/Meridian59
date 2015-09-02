@@ -40,7 +40,7 @@ classvars:
 properties:
 
    % Time zone offset in seconds.
-   piTimeZoneOffset = -18000
+   piTimeZoneOffset = 18000
    ptTick = $
 
    plCallbacks = $
@@ -50,7 +50,7 @@ messages:
    Constructor()
    {
       ptTick = CreateTimer(self,@TimeTick,60000);
-
+      piTimeZoneOffset = GetTimeZoneOffset();
       return;
    }
 
@@ -446,8 +446,6 @@ messages:
          iHour = Send(self,@GetHour);
          iMinute = Send(self,@GetMinute);
 
-         % Debug("Executing NewMinute",iYear,iMonth,iDay,iHour,iMinute);
-
          foreach i in plCallbacks
          {
             if Nth(Nth(i,1),3) <= iYear
@@ -457,14 +455,16 @@ messages:
             {
                if Nth(Nth(i,1),5) = iMinute
                {
-                  Send(Nth(i,2),Nth(i,3),
+                     % foreach creates a copy of the list so i exists even if we
+                     % delete it from the original list
+                     plCallbacks = DelListElem(plCallbacks,i);
+                     Send(Nth(i,2),Nth(i,3),
                         #parm1=Nth(i,4),#parm2=Nth(i,5),#parm3=Nth(i,6),
                         #parm4=Nth(i,7),#parm5=Nth(i,8),#parm6=Nth(i,9),
                         #parm7=Nth(i,10),#parm8=Nth(i,11),#parm9=Nth(i,12),
                         #parm10=Nth(i,13),#parm11=Nth(i,14),#parm12=Nth(i,15),
                         #parm13=Nth(i,16),#parm14=Nth(i,17),#parm15=Nth(i,18));
-                  plCallbacks = DelListElem(plCallbacks,i);
-               }
+                }
                else
                {
                   if Nth(Nth(i,1),5) < iMinute
@@ -483,6 +483,7 @@ messages:
    NewHour()
    {
       Send(EVENTENGINE_OBJECT,@NewHour);
+      piTimeZoneOffset = GetTimeZoneOffset();
 
       return;
    }
@@ -507,12 +508,28 @@ messages:
 
       return;
    }
+   
+   GetTimeZoneOffset_K()
+   {
+      return GetTimeZoneOffset();
+   }
+   
+   SetTimeZoneOffset()
+   {
+      piTimeZoneOffset = GetTimeZoneOffset();
+      return;
+   }
 
+   GetTime_K()
+   {
+      return GetTime();
+   }
+   
    GetYear()
    {
       local iTime,iYear;
 
-      iTime = GetTime() + piTimeZoneOffset;
+      iTime = GetTime() - piTimeZoneOffset;
       iYear=(iTime / 31536000) + OFFSET_YEAR;
 
       return iYear;
@@ -522,7 +539,7 @@ messages:
    {
       local iTime,iDay;
 
-      iTime = GetTime() + piTimeZoneOffset;
+      iTime = GetTime() - piTimeZoneOffset;
       iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
 
       return iDay;
@@ -582,7 +599,7 @@ messages:
          iMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
       }
 
-      iTime = GetTime() + piTimeZoneOffset;
+      iTime = GetTime() - piTimeZoneOffset;
       iDay = (iTime - 31536000) / 86400 + OFFSET_DAY;
 
       foreach i in iMonthDays
@@ -600,7 +617,7 @@ messages:
    {
       local iTime,iHour;
 
-      iTime = GetTime() + piTimeZoneOffset;
+      iTime = GetTime() - piTimeZoneOffset;
       iHour = (iTime MOD 86400) / 3600;
 
       if (iHour < 0)
@@ -615,7 +632,7 @@ messages:
    {
       local iTime,iMinute;
 
-      iTime = GetTime() + piTimeZoneOffset;
+      iTime = GetTime() - piTimeZoneOffset;
       iMinute = (iTime MOD 3600) / 60;
 
       return iMinute;

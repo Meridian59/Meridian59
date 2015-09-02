@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ChaosNight is UtilityFunctions
+ChaosNight is GameEvent
 
 % Handles a chaos night, or "frenzy".  This is a mode where combat is encouraged
 % and people can kill each other without permanent repercussions.  Generally the
@@ -57,6 +57,9 @@ classvars:
 
 properties:
 
+   % Timer for when the frenzy will end.
+   ptChaosNightEnd = $
+
    plChaosNightLoot = $
    ptChaosNightLootTimer = $
    piChaosNightLootTimerIntervalMs = 3 * 60 * 1000
@@ -77,52 +80,7 @@ messages:
 
    Constructor()
    {
-      % Chaos night MUST be started after a system save, and afterwards,
-      % the attending guardian MUST revert back to that old save game!
-      % You have been warned!
-
-      local i;
-
-      foreach i in Send(SYS,@GetRooms)
-      {
-         % Sets all rooms to no reagent use.
-         Send(i,@TurnReagentsOff);
-
-         % Make all rooms except for inns kill zones (anyone can die).
-         % Also, change the background graphic.
-         if NOT Send(i,@CheckRoomFlag,#flag=ROOM_HOMETOWN)
-         {
-            Send(i,@StartChaosNight);
-         }
-      }
-
-      % Set up a timer to give everyone some reagents, etc.
-      Send(self,@ChaosNightPeriodicLoot);
-
-      % Give Innkeepers a list of frenzy loot to sell to players.
-      if pbSellFrenzyLoot
-      {
-         Post(self,@SetFrenzyNPCSellers);
-      }
-
-      % Tell the users online what's going on.
-      foreach i in Send(SYS,@GetUsersLoggedOn)
-      {
-         Send(i,@MsgSendUser,#message_rsc=chaos_night_rsc);
-         Send(i,@WaveSendUser,#wave_rsc=chaos_wav);
-
-         if IsClass(i,&Admin)
-         {
-            Send(i,@MsgSendUser,#message_rsc=chaos_night_admin_rsc);
-         }
-
-         if pbSellFrenzyLoot
-         {
-            Send(i,@MsgSendUser,#message_rsc=chaos_night_npcs_rsc);
-         }
-      }
-
-      return;
+      propagate;
    }
 
    Delete()
@@ -164,6 +122,137 @@ messages:
       return;
    }
 
+   StartEvent(parm2=$,parm3=$)
+   {
+      local i,millis,sMessage;
+      
+      sMessage = SetString($,@NotifyEngineEndEvent);
+      
+      if (parm2 <> $ AND parm3 <> $)
+      {
+         switch(parm3)
+         {
+            case GAMEEVENT_SCALE_SECONDS:
+               millis = parm2 * 1000;
+               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,millis);
+               break;
+
+            case GAMEEVENT_SCALE_MINUTES:
+               Send(REALTIME_OBJECT,@RegisterCallbackInMinutes,
+                     #oObject=self,
+                     #minutes=parm2,
+                     #message=sMessage);
+               break;
+               
+            case GAMEEVENT_SCALE_HOURS:
+               Send(REALTIME_OBJECT,@RegisterCallbackInHours,
+                     #oObject=self,
+                     #hours=parm2,
+                     #message=sMessage);
+               break;
+            
+            case GAMEEVENT_SCALE_DAYS:
+               Send(REALTIME_OBJECT,@RegisterCallbackInDays,
+                     #oObject=self,
+                     #days=parm2,
+                     #message=sMessage);
+               break;
+            
+            case GAMEEVENT_SCALE_WEEKS:
+               %Send(REALTIME_OBJECT,@RegisterCallbackInWeeks,
+               %      #oObject=self,
+               %      #weeks=parm2,
+               %      #message=sMessage);
+               Debug("GAMEEVENT_SCALE_WEEKS not implemented, event ending in 2 hours");
+               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,3600000);
+               break;
+            
+            case GAMEEVENT_SCALE_MONTHS:
+               Send(REALTIME_OBJECT,@RegisterCallbackInMonths,
+                     #oObject=self,
+                     #months=parm2,
+                     #message=sMessage);
+               break;
+            
+            case GAMEEVENT_SCALE_YEARS:
+               Send(REALTIME_OBJECT,@RegisterCallbackInYears,
+                     #oObject=self,
+                     #years=parm2,
+                     #message=sMessage);
+               break;
+            
+            default:
+               ptChaosNightEnd = CreateTimer(self,@EndChaosNightTimer,3600000);
+               break;
+         }
+      }
+      
+      foreach i in Send(SYS,@GetRooms)
+      {
+         % Sets all rooms to no reagent use.
+         Send(i,@TurnReagentsOff);
+
+         % Make all rooms except for inns kill zones (anyone can die).
+         % Also, change the background graphic.
+         if NOT Send(i,@CheckRoomFlag,#flag=ROOM_HOMETOWN)
+         {
+            Send(i,@StartChaosNight);
+         }
+      }
+
+      % Set up a timer to give everyone some reagents, etc.
+      Send(self,@ChaosNightPeriodicLoot);
+
+      % Give Innkeepers a list of frenzy loot to sell to players.
+      if pbSellFrenzyLoot
+      {
+         Post(self,@SetFrenzyNPCSellers);
+      }
+
+      % Tell the users online what's going on.
+      foreach i in Send(SYS,@GetUsersLoggedOn)
+      {
+         Send(i,@MsgSendUser,#message_rsc=chaos_night_rsc);
+         Send(i,@WaveSendUser,#wave_rsc=chaos_wav);
+
+         if IsClass(i,&Admin)
+         {
+            Send(i,@MsgSendUser,#message_rsc=chaos_night_admin_rsc);
+         }
+
+         if pbSellFrenzyLoot
+         {
+            Send(i,@MsgSendUser,#message_rsc=chaos_night_npcs_rsc);
+         }
+      }
+      
+      return event_success_rsc;
+   }
+   
+   EndEvent()
+   {
+      return Send(self,@EndChaosNight);
+   }
+   
+   EndChaosNightTimer()
+   {
+      ptChaosNightEnd = $;
+      Send(self,@NotifyEngineEndEvent);
+
+      return;
+   }
+
+   EndChaosNight()
+   {
+      if ptChaosNightEnd <> $
+      {
+         DeleteTimer(ptChaosNightEnd);
+         ptChaosNightEnd = $;
+      }
+
+      return event_success_rsc;
+   }
+   
    UserLogon(who = $)
    {
       Send(who,@MsgSendUser,#message_rsc=chaos_night_rsc);

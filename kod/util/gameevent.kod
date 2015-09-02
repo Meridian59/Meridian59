@@ -25,11 +25,12 @@ classvars:
 
    vrStartMessage = event_start_msg
    vrEndMessage = event_end_msg
-
    vbAnnounce = FALSE
+   vbUnique = TRUE
 
 properties:
 
+   poGameEventEngine = $
    plSpawnRects = $
    poActiveRoom = $
    plEventRooms = $
@@ -38,8 +39,13 @@ properties:
 
 messages:
 
-   Constructor()
+   Constructor(engine=$)
    {
+      if (engine <> $)
+      {
+         poGameEventEngine = engine;
+      }
+      
       return;
    }
 
@@ -53,6 +59,12 @@ messages:
       return;
    }
 
+   
+   IsUnique()
+   {
+      return vbUnique;
+   }
+   
    Update()
    {
       return;
@@ -120,7 +132,7 @@ messages:
       return;
    }
 
-   EndEvent()
+   EndEvent(parm1=$,parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,parm14=$,parm15=$)
    {
       if vbAnnounce
       {

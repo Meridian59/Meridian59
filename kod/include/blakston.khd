@@ -3416,6 +3416,48 @@
    HUNGER_4 = 8
    HUNGER_5 = 10
 
+   %%% Game Event Bit Field (double wide!!)
+   % This is a double wide bitfield, remember to add both a high byte and low
+   % byte for your event.  When you run out of flag room in the low byte, increment
+   % the high byte value and start over with lowbyte = 0x00000001 (or 0x1, etc.)
+   % for example if the high byte is 0x2 and you run out of lowbytes for that
+   % high byte, put your event at high byte = 0x3 and lowbyte = 0x1.  It is
+   % probably best to keep this list in order to avoid confusion
+   %%% Game Event High Byte
+   GAMEEVENT_HIBYTE_CHAOS            = 0x1
+   GAMEEVENT_HIBYTE_WAR              = 0x1
+   GAMEEVENT_HIBYTE_NODE_ATK         = 0x1
+   GAMEEVENT_HIBYTE_FACT_GAME        = 0x1
+   GAMEEVENT_HIBYTE_TERRITORY        = 0x1
+   GAMEEVENT_HIBYTE_TOKEN            = 0x1
+   GAMEEVENT_HIBYTE_EASTER_EGG       = 0x1
+   GAMEEVENT_HIBYTE_EASTER_INVASION  = 0x1
+   GAMEEVENT_HIBYTE_RAT_INVASION     = 0x1
+   GAMEEVENT_HIBYTE_ORC_INVASION     = 0x1
+   GAMEEVENT_HIBYTE_QORMAS           = 0x1
+   
+   %%% Game Event Low Byte
+   GAMEEVENT_LOBYTE_CHAOS            = 0x1
+   GAMEEVENT_LOBYTE_WAR              = 0x2
+   GAMEEVENT_LOBYTE_NODE_ATK         = 0x4
+   GAMEEVENT_LOBYTE_FACT_GAME        = 0x8
+   GAMEEVENT_LOBYTE_TERRITORY        = 0x10
+   GAMEEVENT_LOBYTE_TOKEN            = 0x20
+   GAMEEVENT_LOBYTE_EASTER_EGG       = 0x40
+   GAMEEVENT_LOBYTE_EASTER_INVASION  = 0x80
+   GAMEEVENT_LOBYTE_RAT_INVASION     = 0x100
+   GAMEEVENT_LOBYTE_ORC_INVASION     = 0x200
+   GAMEEVENT_LOBYTE_QORMAS           = 0x400
+   
+   %%% Game Event Time Scale Constants
+   GAMEEVENT_SCALE_SECONDS          = 0
+   GAMEEVENT_SCALE_MINUTES          = 1
+   GAMEEVENT_SCALE_HOURS            = 2
+   GAMEEVENT_SCALE_DAYS             = 3
+   GAMEEVENT_SCALE_WEEKS            = 4
+   GAMEEVENT_SCALE_MONTHS           = 5
+   GAMEEVENT_SCALE_YEARS            = 6
+   
    %%% War Event
 
    % Included here for use in admin window.

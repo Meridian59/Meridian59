@@ -1,7 +1,0 @@
-Qormas_start_message = de \
-   "~B~kMerry Qormas!\n~kDie Einwohner Meridians haben die Welt feierlich "
-   "geschmückt für das anstehende Fest.  "
-Qormas_end_message = de \
-   "~B~kMüde vom Anblick der Qormas Bäume haben die Bewohner beschlossensämtliche "
-   "Dekorationen zu beseitigen. "
-Qormas_gift_hint = de "\n~kMerry Qormas!  Ein Geschenk erwartet Dich in %s.\n"

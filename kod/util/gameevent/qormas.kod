@@ -8,7 +8,7 @@
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Qormas is UtilityFunctions
+Qormas is GameEvent
 
 constants:
 
@@ -18,18 +18,23 @@ resources:
 
    include qormas.lkod
 
-   Qormas_start_message = \
-      "~B~kMerry Qormas!\n"
-      "~kThe citizens of Meridian have decorated in celebration of the "
-      "holidays.  "
-   Qormas_end_message = \
-      "~B~kTired of looking at Qormas trees, the citizens of Meridian "
+   Qormas_start_Message = \
+      "~B~k[Event] ~vMerry Qormas!\n"
+      "~k[Event] ~vThe citizens of Meridian have decorated in celebration of the "
+      "holidays!  "
+   Qormas_end_Message = \
+      "~B~k[Event] ~vTired of looking at Qormas trees, the citizens of Meridian "
       "have removed all of the holiday decorations. "
       
    Qormas_gift_hint = \
-      "\n~kMerry Qormas!  A gift awaits you at %s.\n"
+      "\n~B~k[Event] ~vMerry Qormas!  A gift awaits you at %s.\n"
 
 classvars:
+
+   vrStartMessage = Qormas_start_message
+   vrEndMessage = Qormas_end_message
+   vbAnnounce = TRUE
+   viRunDays = 30
 
 properties:
 
@@ -92,6 +97,29 @@ messages:
       return;
    }
 
+   % required GameEvent Overload
+   StartEvent()
+   {
+      local sMessage;
+      
+      Send(self,@StartQormas);
+      
+      sMessage = SetString($,@NotifyEngineEndEvent);
+      Send(REALTIME_OBJECT,@RegisterCallbackInDays,
+                     #oObject=self,
+                     #days=viRunDays,
+                     #message=sMessage);
+      
+      propagate;
+   }
+   
+   % not required to overload, but a good idea for cleanup
+   EndEvent()
+   {
+      Send(self,@EndQormas);
+      propagate;
+   }
+   
    StartQormas(override=FALSE,bDisplayMessage=TRUE)
    {
       local oDecoration, oRoom;
@@ -444,20 +472,11 @@ messages:
          Send(&Room,@StartSnow);
       }
 
-      if bDisplayMessage
-      {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=Qormas_start_message);
-      }
-
       return TRUE;
    }
 
    EndQormas(reporter=$,bDisplayMessage=TRUE)
    {
-      if bDisplayMessage
-      {
-         Send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=Qormas_end_message);
-      }
 
       Send(self,@RemoveDecorations);
 
@@ -676,11 +695,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                               #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -709,11 +728,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -736,11 +755,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -768,11 +787,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -795,11 +814,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -827,11 +846,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -854,11 +873,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);
@@ -886,11 +905,11 @@ messages:
       
          if (pbGiftMasks)
          {
-            oGift = Create(&QormasGift,#mask=TRUE);
+            oGift = Create(&QormasGift,#mask=TRUE,#qormas_obj=self);
          }
          else
          {
-            oGift = Create(&QormasGift);
+            oGift = Create(&QormasGift,#qormas_obj=self);
          }
          Send(oRoom,@NewHold,#what=oGift,#new_row=iNewRow,#new_col=iNewCol,
                #fine_row=iNewFineRow,#fine_col=iNewFineCol);

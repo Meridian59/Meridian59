@@ -25,20 +25,15 @@ resources:
    egghunt_start_msg = \
       "~B~k[Event]~n ~B~vThe Easter Egg Hunt has started!  %i Easter Eggs "
       "have been hidden around the world, find as many as you can!"
-
    egghunt_end_msg = \
       "~B~k[Event]~n ~B~vThe Easter Egg hunt has been completed.  Time to "
       "enjoy all that chocolate!"
-
    egghunt_continues_msg = \
       "~B~k[Event]~n ~B~vThere are still %i Easter Eggs remaining to be found!"
-
    egghunt_oneleft_msg = \
       "~B~k[Event]~n ~B~vThere is only one Easter Egg left to be found!"
-
    egghunt_allfound_msg = \
       "~B~k[Event]~n ~B~vAll the Easter Eggs have been found!"
-
    egghunt_scores_msg = \
       "~B~k[Event]~n ~B~vThe tally of eggs found is as follows:"
    egghunt_score_eggs_msg = \
@@ -53,7 +48,6 @@ classvars:
    vrManyLeft = egghunt_continues_msg
    vrOneLeft = egghunt_oneleft_msg
    vrAllFound = egghunt_allfound_msg
-
    vrScores = egghunt_scores_msg
    vrScoreEggs = egghunt_score_eggs_msg
    vrScoreOneEgg = egghunt_score_egg_msg
@@ -100,19 +94,6 @@ messages:
 
    Constructor()
    {
-      local lUsers;
-
-      lUsers = Send(SYS,@GetUsersLoggedOn);
-      if lUsers = $
-      {
-         propagate;
-      }
-
-      Send(self,@SetRooms);
-
-      piTotalEggs = Length(lUsers) * 3;
-      piTotalEggs = Bound(piTotalEggs,piMinEggs,piMaxEggs);
-
       propagate;
    }
 
@@ -215,14 +196,28 @@ messages:
       return;
    }
 
-   StartEvent(parm1=$)
+   StartEvent(parm1=$,parm2=$)
    {
-      % StartEvent can accept a parameter to set the total number
-      % of eggs to spawn. This overrides the number set when the
-      % event object was created.
-      if parm1 <> $
+      local lUsers;
+
+      lUsers = Send(SYS,@GetUsersLoggedOn);
+      if lUsers = $
       {
-         piTotalEggs = parm1;
+         propagate;
+      }
+
+      Send(self,@SetRooms);
+
+      % StartEvent can accept a parameter to set the total number
+      % of eggs to spawn.
+      if parm2 = $
+      {
+         piTotalEggs = Length(lUsers) * 2;
+         piTotalEggs = Bound(piTotalEggs,piMinEggs,piMaxEggs);
+      }
+      else
+      {
+         piTotalEggs = parm2;
       }
 
       % Hide all the eggs. Eggs are added to plEggs when created,

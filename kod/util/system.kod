@@ -5251,9 +5251,12 @@ messages:
       plMonsterTemplates = cons(create(&GroundWorm),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GroundWormLarva),plMonsterTemplates);
       plMonsterTemplates = cons(create(&GroundWormQueen),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&Human),plMonsterTemplates);
       plMonsterTemplates = cons(create(&RebelTroop),plMonsterTemplates);
       plMonsterTemplates = cons(create(&DukeTroop),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&DukeMage),plMonsterTemplates);
       plMonsterTemplates = cons(create(&PrincessTroop),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&PrincessMage),plMonsterTemplates);
       plMonsterTemplates = cons(create(&NecromancerTroop),plMonsterTemplates);
 
       plMonsterTemplates = cons(create(&XeoFire),plMonsterTemplates);

@@ -186,6 +186,12 @@
    % Very dim white, with blue tint, for the Tos Fountain generally.
    LIGHT_FOUNTAIN  = 0x0C6C
 
+   % Used for shirts/pants on players and humans.
+   SHIRT_MASK = 0x00ff
+   SHIRT_MUL  = 0x0001
+   PANTS_MASK = 0xff00
+   PANTS_MUL  = 0x0100
+
    %%% Palette translations
 
    % Be sure to update BOTH of these if EITHER change.  -- Tim

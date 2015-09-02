@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FactionMage is FactionTroop
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+properties:
+
+   piMana = 100
+   piMax_Mana = 100
+
+messages:
+
+   SetEquipment()
+   {
+      local oEquipmentItem, iBonusModifier, oSpell;
+
+      oEquipmentItem = create(&Mace);
+      iBonusModifier = 3;
+
+      viDifficulty = piBaseDifficulty + iBonusModifier;
+      Send(self,@AddEquipmentObject,#what=oEquipmentItem);
+
+      if Random(0,1)
+      {
+         oEquipmentItem = Create(&LeatherArmor);
+         iBonusModifier = 30;
+      }
+      else if plSpellBook = $
+      {
+         oEquipmentItem = Create(&Robe,#color=Random(XLAT_TO_RED,XLAT_TO_SKY));
+         iBonusModifier = 20;
+      }
+      else
+      {
+         oSpell = Send(SYS,@FindSpellByNum,
+                        #num=First(Nth(plSpellBook,Random(1,Length(plSpellBook)))));
+         oEquipmentItem = Create(&DiscipleRobe,#school=Send(oSpell,@GetSchool));
+         iBonusModifier = 40;
+      }
+
+      viLevel = piBaseLevel + iBonusModifier;
+      Send(self,@AddEquipmentObject,#what=oEquipmentItem);
+
+      if Random(1,100) < 15
+      {
+         oEquipmentItem = Create(&Circlet);
+         Send(self,@AddEquipmentObject,#what=oEquipmentItem);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

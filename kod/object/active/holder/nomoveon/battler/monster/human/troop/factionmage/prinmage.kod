@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-PrincessTroop is FactionTroop
+PrincessMage is FactionMage
 
 constants:
 
@@ -16,27 +16,22 @@ include blakston.khd
 
 resources:
 
-   include printr.lkod
+   include prinmage.lkod
 
-   PrincessTroop_name_rsc = "soldier of the Princess' army"
+   Princessmage_name_rsc = "mage of the Princess' army"
 
-   PrincessTroop_desc_rsc = \
-   "This soldier proudly bears the colors of the Princess."
+   Princessmage_desc_rsc = \
+   "This mage proudly bears the colors of the Princess."
 
-   PrincessTroop_dead_name_rsc = "dead soldier"
-   PrincessTroop_sound_aware = trps2awr.wav
+   Princessmage_dead_name_rsc = "dead mage"
+   Princessmage_sound_aware = trps2awr.wav
    
 classvars:
 
-   vrName = PrincessTroop_name_rsc
-   vrDesc = PrincessTroop_desc_rsc
-   vrDead_name = PrincessTroop_dead_name_rsc
+   vrName = Princessmage_name_rsc
+   vrDesc = Princessmage_desc_rsc
+   vrDead_name = Princessmage_dead_name_rsc
 
-   viSpeed = SPEED_AVERAGE
-   viAttack_type = ATCK_WEAP_SLASH
-   viAttributes = 0
-   viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
-   viChanceFemale = 50  % percentage chance to be female
 
    viColorTranslate1 = XLAT_TO_ORANGE     % Shirt
    viColorTranslate2 = XLAT_TO_GREEN   % Pants
@@ -49,13 +44,20 @@ properties:
    piBaseLevel = 50
    piBaseDifficulty = 2
 
-   %Here so they can be set
+   % Here so they can be set
    viLevel = 50         % piBaseLevel
    viDifficulty = 2     % piBaseDifficulty
 
-   vrSound_aware = PrincessTroop_sound_aware
+   vrSound_aware = Princessmage_sound_aware
 
 messages:
+
+   Constructor()
+   {
+      plSpellBook = [ [SID_LIGHTNING_BOLT,5,100] ];
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

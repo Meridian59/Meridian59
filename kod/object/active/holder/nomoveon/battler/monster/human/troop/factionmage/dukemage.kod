@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DukeMage is FactionMage
+
+constants:
+
+include blakston.khd
+
+resources:
+
+   include dukemage.lkod
+
+   dukemage_name_rsc = "mage of the Duke's army"
+   dukemage_desc_rsc = \
+   "This mage proudly bears the colors of the Duke."
+   dukemage_dead_name_rsc = "dead mage"
+   dukemage_sound_aware = trps3awr.wav
+
+classvars:
+
+   vrName = dukemage_name_rsc
+   vrDesc = dukemage_desc_rsc
+   vrDead_name = dukemage_dead_name_rsc
+   viColorTranslate1 = XLAT_TO_PURPLE     % Shirt
+   viColorTranslate2 = XLAT_TO_BLUE   % Pants
+   vcShieldClass = &DukeShield
+   viFaction = FACTION_DUKE
+
+properties:
+
+   piBaseLevel = 50
+   piBaseDifficulty = 2
+
+   % Here so they can be set
+   viLevel = 50         % piBaseLevel
+   viDifficulty = 2     % piBaseDifficulty
+
+   vrSound_aware = dukemage_sound_aware
+
+messages:
+
+   Constructor()
+   {
+      plSpellBook = [ [SID_SPLASH_OF_ACID,5,100] ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

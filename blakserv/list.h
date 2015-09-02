@@ -35,6 +35,7 @@ int AppendListElem(val_type source,val_type list_val);
 int Cons(val_type source,val_type dest);
 int Length(int list_id);
 int Nth(int n,int list_id);
+int IsListMatch(int list_one_id, int list_two_id);
 int Last(int list_id);
 int SetFirst(int list_id,val_type new_val);
 int SetNth(int n,int list_id,val_type new_val);

@@ -229,6 +229,68 @@ int Nth(int n,int list_id)
 	return (l? l->first.int_val : NIL);
 }
 
+int IsListMatch(int list_one_id, int list_two_id)
+{
+   list_node *l1, *l2;
+
+   l1 = GetListNodeByID(list_one_id);
+   l2 = GetListNodeByID(list_two_id);
+
+   if (!l1)
+   {
+      bprintf("IsListMatch had invalid list node at start of list one\n");
+      return False;
+   }
+   if (!l2)
+   {
+      bprintf("IsListMatch had invalid list node at start of list two\n");
+      return False;
+   }
+
+   // If the element is a list, check its contents, else compare int_val.
+   if (l1->first.v.tag == TAG_LIST && l2->first.v.tag == TAG_LIST)
+   {
+      if (!IsListMatch(l1->first.v.data,l2->first.v.data))
+         return False;
+   }
+   else if (l1->first.int_val != l2->first.int_val)
+      return False;
+
+   // Iterate through lists and check each node.
+   while (l1->rest.v.tag != TAG_NIL && l2->rest.v.tag != TAG_NIL)
+   {
+      l1 = GetListNodeByID(l1->rest.v.data);
+      l2 = GetListNodeByID(l2->rest.v.data);
+
+      if (!l1)
+      {
+         bprintf("IsListMatch had invalid list node somewhere in list one\n");
+         return False;
+      }
+
+      if (!l2)
+      {
+         bprintf("IsListMatch had invalid list node somewhere in list two\n");
+         return False;
+      }
+
+      // If the element is a list, check its contents, else compare int_val.
+      if (l1->first.v.tag == TAG_LIST && l2->first.v.tag == TAG_LIST)
+      {
+         if (!IsListMatch(l1->first.v.data,l2->first.v.data))
+            return False;
+      }
+      else if (l1->first.int_val != l2->first.int_val)
+         return False;
+   }
+
+   // Make sure we're at end of both lists.
+   if (l1->rest.v.tag != TAG_NIL || l2->rest.v.tag != TAG_NIL)
+      return False;
+
+   return True;
+}
+
 int Last(int list_id)
 {
    list_node *l;

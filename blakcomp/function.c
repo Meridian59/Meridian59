@@ -34,6 +34,7 @@ function_type Functions[] = {
 {"Length",              LENGTH,          AEXPRESSION,   ANONE},
 {"List",                MLIST,           AEXPRESSIONS,  ANONE},
 {"Nth",                 NTH,             AEXPRESSION,   AEXPRESSION,  ANONE},
+{"IsListMatch",         ISLISTMATCH,     AEXPRESSION,   AEXPRESSION,  ANONE},
 {"SetFirst",            SETFIRST,        AEXPRESSION,   AEXPRESSION,  ANONE},
 {"SetNth",              SETNTH,          AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"SwapListElem",        SWAPLISTELEM,    AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},

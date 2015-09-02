@@ -604,6 +604,7 @@ char * name_function(int fnum)
    case FIRST  : return "First";
    case REST  : return "Rest";
    case LENGTH  : return "Length";
+   case ISLISTMATCH : return "IsListMatch";
    case NTH  : return "Nth";
    case MLIST  : return "List";
    case ISLIST : return "IsList";
@@ -621,6 +622,7 @@ char * name_function(int fnum)
 
    case RANDOM  : return "Random";
    case RECORDSTAT : return "RecordStat";
+   case GETSESSIONIP : return "GetSessionIP";
    default : sprintf(s,"Unknown function %i",fnum); return s;
    }
 

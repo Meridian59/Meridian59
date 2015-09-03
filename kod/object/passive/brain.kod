@@ -550,21 +550,6 @@ messages:
          % Monster is immobile.
          return;
       }
-      
-      if (behavior & AI_HAS_TARGET_LOCATION)
-      {
-         Send(mob,@DoGoTowardsLocation);
-            
-         return;
-      }
-      
-      if (behavior & AI_CAN_PATROL)
-      {
-         if (Random(1,10000) < Send(mob,@GetChanceToPatrol))
-         {
-            Send(mob,@StartNextPatrolLeg);
-         }
-      }
 
       % Example, monster is blind. Forced randomness has precedence
       % over everything else.
@@ -572,11 +557,26 @@ messages:
       {
          % skip 9/10 of the possible steps
          if Random(1,100) < 10
-         {		 
+         {
            Send(mob,@DoRandomWalk);
          }
 
          return;
+      }
+
+      if (behavior & AI_HAS_TARGET_LOCATION)
+      {
+         Send(mob,@DoGoTowardsLocation);
+
+         return;
+      }
+
+      if (behavior & AI_CAN_PATROL)
+      {
+         if (Random(1,10000) < Send(mob,@GetChanceToPatrol))
+         {
+            Send(mob,@StartNextPatrolLeg);
+         }
       }
 
       if (behavior & AI_MOVE_FLEE_FRIGHTENERS)
@@ -622,7 +622,7 @@ messages:
       % If in doubt, wander aimlessly.
       % skip 9/10 of the possible steps
       if (Random(1,100) < 10 AND NOT (behavior & AI_CAN_PATROL))
-	  {
+      {
          Send(mob,@DoRandomWalk);
       }
 

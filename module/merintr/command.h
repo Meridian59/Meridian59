@@ -67,5 +67,7 @@ void CommandAutoCombineOn(char *args);
 void CommandAutoCombineOff(char *args);
 void CommandReagentBagOn(char *args);
 void CommandReagentBagOff(char *args);
+void CommandSpellPowerOn(char *args);
+void CommandSpellPowerOff(char *args);
 
 #endif /* #ifndef _COMMAND_H */

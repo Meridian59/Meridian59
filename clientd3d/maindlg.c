@@ -184,6 +184,7 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       CheckDlgButton(hDlg, IDC_AUTOLOOT, config.autoloot);
       CheckDlgButton(hDlg, IDC_AUTOCOMBINE, config.autocombine);
       CheckDlgButton(hDlg, IDC_REAGENTBAG, config.reagentbag);
+      CheckDlgButton(hDlg, IDC_SPELLPOWER, config.spellpower);
       CheckDlgButton(hDlg, IDC_SHOWFPS, config.showFPS);
       CheckDlgButton(hDlg, IDC_BOUNCE, config.bounce);
       CheckDlgButton(hDlg, IDC_WEATHER, config.weather);
@@ -273,6 +274,7 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          config.autoloot      = IsDlgButtonChecked(hDlg, IDC_AUTOLOOT);
          config.autocombine   = IsDlgButtonChecked(hDlg, IDC_AUTOCOMBINE);
          config.reagentbag    = IsDlgButtonChecked(hDlg, IDC_REAGENTBAG);
+         config.spellpower    = IsDlgButtonChecked(hDlg, IDC_SPELLPOWER);
          config.showFPS       = IsDlgButtonChecked(hDlg, IDC_SHOWFPS);
          config.bounce        = IsDlgButtonChecked(hDlg, IDC_BOUNCE);
          config.weather       = IsDlgButtonChecked(hDlg, IDC_WEATHER);

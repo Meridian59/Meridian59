@@ -655,6 +655,24 @@ void CommandReagentBagOff(char *args)
 }
 /************************************************************************/
 /*
+ * SendReagentBagOn: "spellpower on" command
+ */
+void CommandSpellPowerOn(char *args)
+{
+   cinfo->config->spellpower = True;
+   SendSpellPower(1);
+}
+/************************************************************************/
+/*
+ * SendReagentBagOff: "spellpower off" command
+ */
+void CommandSpellPowerOff(char *args)
+{
+   cinfo->config->spellpower = False;
+   SendSpellPower(0);
+}
+/************************************************************************/
+/*
  * CommandGuild: "guild" command
  */
 void CommandGuild(char *args)

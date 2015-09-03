@@ -428,6 +428,10 @@ resources:
                                
    user_reagentbag_on = "You start putting new reagents in your bag."
    user_reagentbag_off = "You stop putting new reagents in your bag."
+   user_spellpower_on = \
+      "You will now see the power at which your spells are cast."
+   user_spellpower_off = \
+      "You will no longer see the power at which your spells are cast."
 
    user_logon_delay = \
       "You take a moment to recollect your senses."
@@ -1871,6 +1875,30 @@ messages:
       return;
    }
 
+   UserCommandSetSpellpowerDisplay(value = 0)
+   {
+      if value
+      {
+         if (piFlags2 & PFLAG2_SPELLPOWER)
+         {
+            return;
+         }
+         piFlags2 = piFlags2 | PFLAG2_SPELLPOWER;
+         Send(self,@MsgSendUser,#message_rsc=user_spellpower_on);
+      }
+      else
+      {
+         if NOT (piFlags2 & PFLAG2_SPELLPOWER)
+         {
+            return;
+         }
+         piFlags2 = piFlags2 & ~PFLAG2_SPELLPOWER;
+         Send(self,@MsgSendUser,#message_rsc=user_spellpower_off);
+      }
+
+      return;
+   }
+
    UserCommand(client_msg=$, number_stuff=$)
    {
       local iClient_cmd, oWhat;
@@ -1903,6 +1931,10 @@ messages:
             return;
          case UC_REAGENTBAG:
             Send(self,@UserCommandSetReagentBag,#value=Nth(client_msg,2) <> 0);
+            return;
+         case UC_SPELLPOWER:
+            Send(self,@UserCommandSetSpellpowerDisplay,
+                  #value=Nth(client_msg,2) <> 0);
             return;
          case UC_REQ_GUILDINFO:
             Send(self,@UserGuildSendInfo);

@@ -58,6 +58,7 @@
 #define SendAutoLoot(val)          ToServer(BP_USERCOMMAND, user_msg_table, UC_AUTOLOOT, val)
 #define SendAutoCombine(val)       ToServer(BP_USERCOMMAND, user_msg_table, UC_AUTOCOMBINE, val)
 #define SendReagentBag(val)        ToServer(BP_USERCOMMAND, user_msg_table, UC_REAGENTBAG, val)
+#define SendSpellPower(val)        ToServer(BP_USERCOMMAND, user_msg_table, UC_SPELLPOWER, val)
 #define RequestGuildInfo()         ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_GUILDINFO)
 #define RequestInvite(obj)         ToServer(BP_USERCOMMAND, user_msg_table, UC_INVITE, obj)
 #define RequestRenounce()          ToServer(BP_USERCOMMAND, user_msg_table, UC_RENOUNCE)

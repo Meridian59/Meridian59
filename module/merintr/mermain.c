@@ -40,6 +40,8 @@ static Bool reagentbag_flipped;
 static Bool autoloot_flipped;
 // True when we've told server to change player's autocombine setting
 static Bool autocombine_flipped;
+// True when we've told server to change player's spellpower display setting
+static Bool spellpower_flipped;
 
 /****************************************************************************/
 /*
@@ -113,6 +115,10 @@ void InterfaceInit(void)
       SendReagentBag(1);
    else
       SendReagentBag(0);
+   if (cinfo->config->spellpower)
+      SendSpellPower(1);
+   else
+      SendSpellPower(0);
 }
 /****************************************************************************/
 /*
@@ -658,6 +664,39 @@ void InterfaceUserChanged(void)
          reagentbag_flipped = True;
       }
    }
+
+   if (r->obj.flags & OF_SPELLPOWER)
+   {
+      if (cinfo->config->spellpower)
+      {
+         // Flag on, setting on, don't change.
+         pinfo.spellpower = cinfo->config->spellpower = True;
+         spellpower_flipped = False;
+      }
+      else
+      {
+         // Flag on, setting off, turn flag off.
+         if (!spellpower_flipped)
+            SendSpellPower(0);
+         spellpower_flipped = True;
+      }
+   }
+   else
+   {
+      if (!cinfo->config->spellpower)
+      {
+         // Flag off, setting off, don't change.
+         pinfo.spellpower = cinfo->config->spellpower = False;
+         spellpower_flipped = False;
+      }
+      else
+      {
+         // Flag off, setting on, turn flag on.
+         if (!spellpower_flipped)
+            SendSpellPower(1);
+         spellpower_flipped = True;
+      }
+   }
 }
 /****************************************************************************/
 void InterfaceConfigChanged(void)
@@ -714,6 +753,15 @@ void InterfaceConfigChanged(void)
       if (pinfo.reagentbag)
          SendReagentBag(1);
       else SendReagentBag(0);
+   }
+
+   // See if user changed spellpower display flag
+   if (pinfo.spellpower != cinfo->config->spellpower)
+   {
+      pinfo.spellpower = cinfo->config->spellpower;
+      if (pinfo.spellpower)
+         SendSpellPower(1);
+      else SendSpellPower(0);
    }
 }
 

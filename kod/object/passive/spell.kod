@@ -131,7 +131,7 @@ resources:
       "~g~BAn unseen force rips the words of the spell from your throat "
       "before you can fully utter them."
    spell_display_spellpower = \
-      "Spellpower for ~k~B%s~n is ~k~B%i~n."
+      "Spellpower for %s is ~b%i~n."
    no_line_of_sight = \
       "Your hindered line of sight makes casting more difficult."
 
@@ -1494,13 +1494,15 @@ messages:
                if viFlash = FLASH_GOOD
                {
                   Send(oTarget,@GoodSpellFlashEffect);
-               } 
-      
-               if viFlash = FLASH_BAD
+               }
+               else if viFlash = FLASH_BAD
                {
                   Send(oTarget,@BadSpellFlashEffect);
                }
-               
+
+               % Players can't see spellpower for spells cast ON them, only
+               % on spells they cast themselves. This can be overridden with
+               % this setting.
                if (Send(SETTINGS_OBJECT,@DisplaySpellData)
                      OR IsClass(oTarget,&DM))
                   AND oTarget <> who
@@ -1512,8 +1514,9 @@ messages:
          }
       }
 
-      if Send(SETTINGS_OBJECT,@DisplaySpellData)
-         OR IsClass(who,&DM)
+      % Let players see the spellpower their spells are cast at, if they
+      % have the setting enabled in their preference menu.
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG2_SPELLPOWER,#flagset=2)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_display_spellpower,
                #parm1=Send(self,@GetName),#parm2=iSpellPower);

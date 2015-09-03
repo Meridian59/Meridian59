@@ -131,6 +131,7 @@ client_def_table_type usercommand_def_table[] =
 	{ UC_AUTOLOOT,              { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_AUTOCOMBINE,           { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_REAGENTBAG,            { {1, TAG_INT}, {0, DONE_PARM} } },
+	{ UC_SPELLPOWER,            { {1, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_DEPOSIT,               { {4, TAG_INT}, {0, DONE_PARM} } },
 	{ UC_BALANCE,               { {0, DONE_PARM} } },
 	{ UC_WITHDRAW,              { {4, TAG_INT}, {0, DONE_PARM} } },

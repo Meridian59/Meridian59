@@ -2290,7 +2290,7 @@
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG2_MASK             = 0x007E80
+   PFLAG2_MASK             = 0x00FE80
 
    PFLAG2_HASTED           = 0x000001
    PFLAG2_DANCING          = 0x000002
@@ -2311,6 +2311,7 @@
    PFLAG2_SQUELCHED_ALL    = 0x001E00
    PFLAG2_TEMPSAFE         = 0x002000
    PFLAG2_AUTOCOMBINE      = 0x004000
+   PFLAG2_SPELLPOWER       = 0x008000
 
    % Third set of player flags (in piFlags3)
    % piFlags3 can now be used as a proper bitfield, and no longer

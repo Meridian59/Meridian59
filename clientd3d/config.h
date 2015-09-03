@@ -73,6 +73,7 @@ typedef struct {
    Bool autoloot;                /* Automatically loot stackable items? */
    Bool autocombine;             /* Autocombine spell items? */
    Bool reagentbag;              /* Automatically stash items into reagent bag? */
+   Bool spellpower;              /* Display spellpower for spells we cast? */
    Bool bounce;                  /* Display player "bouncing" animation? */
    Bool toolbar;                 /* Display toolbar? */
 

@@ -267,6 +267,7 @@ enum {
    UC_APPEAL = 40,
    UC_REQ_RESCUE = 41,
    UC_AUTOCOMBINE = 42,
+   UC_SPELLPOWER = 43,
 
    UC_MINIGAME_START        = 45,
    UC_MINIGAME_STATE        = 46,
@@ -383,6 +384,7 @@ enum {
 #define OF_PHASING       0x00080000    // For players or objects if phasing translucent/solid.
 
 #define OF_AUTOCOMBINE   0x00100000    // Set if player automatically combines spell items (self only)
+#define OF_SPELLPOWER    0x00200000    // Set if player gets spellpower readout from cast spells (self only)
 #define GetItemFlags(flags)   ((flags))
 
 // Drawing effects. Separate from object flags.

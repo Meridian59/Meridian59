@@ -1554,9 +1554,11 @@
    % When wounded, monster will seek the closest ally and move to them
    AI_MOVE_REGROUP            = 0x0000040
    AI_MOVE_WALKTHROUGH_WALLS  = 0x0000080
+   % monster will continue moving even if the room has no users
    AI_MOVE_WHEN_ALONE         = 0x0000100
    AI_CAN_PATROL              = 0x0000200
    AI_HAS_TARGET_LOCATION     = 0x0000400
+   AI_LOOPING_PATROL          = 0x0000800
    AI_NOFIGHT                 = 0x0001000
    % monster will fight other monsters
    AI_FIGHT_MONSTERS          = 0x0002000
@@ -1579,9 +1581,7 @@
    AI_FIGHT_SWITCHALOT        = 0x0800000
    % monster may strike through walls (revenants)
    AI_FIGHT_THROUGH_WALLS     = 0x1000000
-   % monster will continue moving even if the room has no users
 
-   
    % Monster movement speeds
    SPEED_NONE          = 0
    SPEED_VERY_SLOW     = 4

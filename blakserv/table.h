@@ -13,7 +13,10 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 
-#define INIT_TABLE_NODES (50)
+#define INIT_TABLE_NODES (18000)
+#define MIN_TABLE_SIZE (23)
+#define MAX_TABLE_SIZE (19463)
+#define DEFAULT_TABLE_SIZE (73)
 
 typedef struct hash_struct
 {
@@ -25,6 +28,7 @@ typedef struct hash_struct
 typedef struct table_struct
 {
    int size;
+   int num_entries;
    hash_node **table;
    int garbage_ref;
 } table_node;

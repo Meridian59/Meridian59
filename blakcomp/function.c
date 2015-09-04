@@ -92,7 +92,7 @@ function_type Functions[] = {
 {"Abs",                 ABS,             AEXPRESSION,   ANONE},
 {"Sqrt",                SQRT,            AEXPRESSION,   ANONE},
 {"ParseString",         PARSESTRING,     AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
-{"CreateTable",         CREATETABLE,     ANONE},
+{"CreateTable",         CREATETABLE,     AEXPRESSIONS,  ANONE},
 {"AddTableEntry",       ADDTABLEENTRY,   AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"GetTableEntry",       GETTABLEENTRY,   AEXPRESSION,   AEXPRESSION,  ANONE},
 {"DeleteTableEntry",    DELETETABLEENTRY,AEXPRESSION,   AEXPRESSION,  ANONE},

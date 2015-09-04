@@ -2544,7 +2544,11 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
 		aprintf("Cannot find table %i.\n",table_id);
 		return;
 	}
-	
+   if (tn->table == NULL)
+   {
+      aprintf("Table %i is empty.\n", table_id);
+      return;
+   }
 	aprintf("Table %i (size %i)\n",table_id,tn->size);
 	aprintf("----------------------------------------------------------------------\n");
 	for (i=0;i<tn->size;i++)

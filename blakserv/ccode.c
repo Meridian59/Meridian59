@@ -3399,16 +3399,29 @@ int C_Bound(int object_id,local_var_type *local_vars,
 }
 
 int C_CreateTable(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
+                  int num_normal_parms,parm_node normal_parm_array[],
+                  int num_name_parms,parm_node name_parm_array[])
 {
-	val_type ret_val;
-	
-	ret_val.v.tag = TAG_TABLE;
-	ret_val.v.data = CreateTable(2999);
-	
-	return ret_val.int_val;
-	
+   val_type ret_val, size_val;
+
+   if (num_normal_parms == 0)
+      size_val.v.data = 73;
+   else
+   {
+      size_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+         normal_parm_array[0].value);
+      if (size_val.v.tag != TAG_INT)
+      {
+         bprintf("C_CreateTable can't use non-int %i,%i for size\n",
+            size_val.v.tag, size_val.v.data);
+         size_val.v.data = 73;
+      }
+   }
+
+   ret_val.v.tag = TAG_TABLE;
+   ret_val.v.data = CreateTable(size_val.v.data);
+
+   return ret_val.int_val;
 }
 
 int C_AddTableEntry(int object_id,local_var_type *local_vars,
@@ -3494,8 +3507,8 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 		bprintf("C_DeleteTable can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
-	
-	DeleteTable(table_val.v.data);
+	//bprintf("C_DeleteTable is deprecated, tables are deleted at GC.\n");
+	//DeleteTable(table_val.v.data);
 	return NIL;
 }
 

@@ -98,8 +98,8 @@ ishash_type load_game_resources;
 Bool LoadGameOpen(char *fname);
 Bool LoadGameParse(char *filename);
 void LoadGameClose(void);
-
-Bool LoadGameBuiltInObject(int ref_id);
+Bool LoadGameVersion(void);
+Bool LoadGameBuiltInObjects();
 
 Bool LoadGameObject(void);
 Bool LoadGameListNodes(void);
@@ -118,6 +118,9 @@ char * GetLoadGamePropertyNameByID(load_game_class_node *lgc,int prop_old_id);
 const char * GetLoadGameResourceByID(int resource_old_id);
 
 void LoadGameTranslateVal(val_type *pval);
+
+// Save game version number.
+int savegame_version;
 
 Bool LoadGame(char *filename)
 {
@@ -146,7 +149,7 @@ Bool LoadGame(char *filename)
 			filename);
 		return False;
 	}
-	
+	savegame_version = 0;
 	ret_val = LoadGameParse(filename);
 	
 	LoadGameClose();
@@ -225,20 +228,12 @@ Bool LoadGameParse(char *filename)
 			if (!LoadGameResource())
 				return False;
 			break;
-		case SAVE_GAME_SYSTEM :
-			if (!LoadGameBuiltInObject(SYSTEM_OBJECT))
+		case SAVE_GAME_BUILTINOBJ :
+			if (!LoadGameBuiltInObjects())
 				return False;
 			break;
-		case SAVE_GAME_SETTINGS :
-			if (!LoadGameBuiltInObject(SETTINGS_OBJECT))
-				return False;
-			break;
-		case SAVE_GAME_REALTIME :
-			if (!LoadGameBuiltInObject(REALTIME_OBJECT))
-				return False;
-			break;
-		case SAVE_GAME_EVENTENGINE :
-			if (!LoadGameBuiltInObject(EVENTENGINE_OBJECT))
+		case SAVE_GAME_VERSION :
+			if (!LoadGameVersion())
 				return False;
 			break;
 		case SAVE_GAME_OBJECT :
@@ -271,12 +266,39 @@ Bool LoadGameParse(char *filename)
 	return True;
 }
 
-Bool LoadGameBuiltInObject(int ref_id)
+Bool LoadGameVersion(void)
 {
-   int obj_id;
+   int temp;
 
-   LoadGameReadInt(&obj_id);
-   SetBuiltInObjectID(ref_id, obj_id);
+   LoadGameReadInt(&temp);
+   savegame_version = temp;
+
+   return True;
+}
+
+Bool LoadGameBuiltInObjects()
+{
+   int obj_id, num_builtins, obj_constant;
+
+   // Old save games just had system built-in object.
+   if (savegame_version == 0)
+   {
+      LoadGameReadInt(&obj_id);
+      SetSystemObjectID(obj_id);
+      return True;
+   }
+
+   // Save game version 1 handles any number of built-ins.
+   if (savegame_version == 1)
+   {
+      LoadGameReadInt(&num_builtins);
+      for (int i = 0; i < num_builtins; ++i)
+      {
+         LoadGameReadInt(&obj_constant);
+         LoadGameReadInt(&obj_id);
+         SetBuiltInObjectID(obj_constant, obj_id);
+      }
+   }
 
    return True;
 }

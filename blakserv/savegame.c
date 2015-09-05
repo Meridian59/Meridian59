@@ -65,7 +65,7 @@ FILE *savefile;
 
 
 /* local function prototypes */
-
+void SaveGameVersion(void);
 void SaveClasses(void);
 void SaveEachClass(class_node *c);
 void SaveResources(void);
@@ -94,6 +94,7 @@ Bool SaveGame(char *filename)
 		return False;
 	}
 	
+	SaveGameVersion();
 	SaveClasses();
 	SaveResources();
 	SaveBuiltInObjects();
@@ -106,6 +107,12 @@ Bool SaveGame(char *filename)
 	fclose(savefile);
 	
 	return True;
+}
+
+void SaveGameVersion(void)
+{
+   SaveGameWriteByte(SAVE_GAME_VERSION);
+   SaveGameWriteInt(SAVEGAME_VERS);
 }
 
 void SaveClasses(void)
@@ -160,19 +167,19 @@ void SaveEachResource(resource_node *r)
 	SaveGameWriteString(r->resource_name);
 }
 
-// Write these out individually for backwards compatibility.
+// Write the save game type (SAVE_GAME_BUILTINOBJ), followed by the number
+// of built-in objects, then each object constant followed by the object ID.
 void SaveBuiltInObjects(void)
 {
-	SaveGameWriteByte(SAVE_GAME_SYSTEM);
+	SaveGameWriteByte(SAVE_GAME_BUILTINOBJ);
+	SaveGameWriteInt(NUM_BUILTIN_OBJECTS);
+	SaveGameWriteInt(SYSTEM_OBJECT);
 	SaveGameWriteInt(GetSystemObjectID());
-
-	SaveGameWriteByte(SAVE_GAME_SETTINGS);
+	SaveGameWriteInt(SETTINGS_OBJECT);
 	SaveGameWriteInt(GetSettingsObjectID());
-
-	SaveGameWriteByte(SAVE_GAME_REALTIME);
+	SaveGameWriteInt(REALTIME_OBJECT);
 	SaveGameWriteInt(GetRealTimeObjectID());
-
-	SaveGameWriteByte(SAVE_GAME_EVENTENGINE);
+	SaveGameWriteInt(EVENTENGINE_OBJECT);
 	SaveGameWriteInt(GetEventEngineObjectID());
 }
 

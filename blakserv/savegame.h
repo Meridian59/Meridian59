@@ -13,19 +13,22 @@
 #ifndef _SAVEGAME_H
 #define _SAVEGAME_H
 
+// Version 0 save games don't have a SAVE_GAME_VERSION byte/version added.
+// Version 1 are save games with the SAVE_GAME_BUILTINOBJ type that can load
+// any number of built-in objects (i.e. System, Settings, RealTime, etc.)
+#define SAVEGAME_VERS 1
+
 enum
 {
    SAVE_GAME_CLASS = 1,
    SAVE_GAME_RESOURCE = 2,
-   SAVE_GAME_SYSTEM = 3,
+   SAVE_GAME_BUILTINOBJ = 3,
    SAVE_GAME_OBJECT = 4,
    SAVE_GAME_LIST_NODES = 5,
    SAVE_GAME_TIMER = 6,
    SAVE_GAME_USER = 7,
-   SAVE_GAME_SETTINGS = 8,
-   SAVE_GAME_REALTIME = 9,
-   SAVE_GAME_EVENTENGINE = 10,
-   SAVE_GAME_TABLES = 11
+   SAVE_GAME_TABLES = 8,
+   SAVE_GAME_VERSION = 9
 };
 
 Bool SaveGame(char *filename);

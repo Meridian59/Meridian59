@@ -24,14 +24,11 @@
    Step 3: Add class to enum in .\blakserv\blakserv.h (matching compiler ones).
            Increment MAX_BUILTIN_CLASS.
    Step 4: Add object constant also in .\blakserv\blakserv.h, incrementing
-           MAX_BUILTIN_OBJECTS.
+           MAX_BUILTIN_OBJECTS and NUM_BUILTIN_OBJECTS.
    Step 5: Add in a global variable here to keep track of it, and add the
            appropriate data to existing functions as well as creating new
            set/get functions (headers in system.h).
-   Step 6: Add a save game constant in .\blakserv\savegame.h, and add the
-           new built-in to SaveBuiltInObjects() in savegame.c.
-   Step 7: Use the save game constant in .\blakserv\loadgame.c to load/set the
-           built-in with the object constant.
+   Step 6: Add the new built-in to SaveBuiltInObjects() in savegame.c.
    *** Blakod ***
    Step 8: Add the object constant to blakston.khd, and remove any object
            references to the built-in class.

@@ -486,3 +486,39 @@ void ForEachTable(void (*callback_func)(table_node *t,int table_id))
    for (i=0;i<num_tables;i++)
       callback_func(&tables[i],i);
 }
+
+// These functions are for garbage collecting.
+
+void MoveTable(int dest_id,int source_id)
+{
+   table_node *source,*dest;
+
+   source = GetTableByID(source_id);
+   if (source == NULL)
+   {
+      eprintf("MoveTable can't find source %i, total death end game\n",
+         source_id);
+      FlushDefaultChannels();
+      return;
+   }
+
+   dest = GetTableByID(dest_id);
+   if (dest == NULL)
+   {
+      eprintf("MoveTable can't find dest %i, total death end game\n",
+         dest_id);
+      FlushDefaultChannels();
+      return;
+   }
+
+   // Don't change the dest id here--it is set to array index, correctly.
+   dest->size = source->size;
+   dest->num_entries = source->num_entries;
+   dest->garbage_ref = source->garbage_ref;
+   dest->table = source->table;
+}
+
+void SetNumTables(int new_num_tables)
+{
+   num_tables = new_num_tables;
+}

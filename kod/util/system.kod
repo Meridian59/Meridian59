@@ -993,11 +993,12 @@ messages:
          Send(i,@GarbageCollecting);
       }
 
-      phUsers = $;
-      phRooms = $;
-      phSpells = $;
-      phSkills = $;
-      phItemAtts = $;
+      % Don't clear these on GC any more.
+      %phUsers = $;
+      %phRooms = $;
+      %phSpells = $;
+      %phSkills = $;
+      %phItemAtts = $;
 
       Send(poStatistics,@GarbageCollecting);
 
@@ -1016,11 +1017,12 @@ messages:
          }
       }
 
-      Send(self,@CreateUserTable);
-      Send(self,@CreateRoomTable);
-      Send(self,@CreateSpellTable);
-      Send(self,@CreateSkillTable);
-      Send(self,@CreateItemAttTable);
+      % Tables are GC'd now, don't need to recreate them.
+      %Send(self,@CreateUserTable);
+      %Send(self,@CreateRoomTable);
+      %Send(self,@CreateSpellTable);
+      %Send(self,@CreateSkillTable);
+      %Send(self,@CreateItemAttTable);
 
       foreach i in plUsers_logged_on
       {

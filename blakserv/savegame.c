@@ -75,6 +75,8 @@ void SaveObjects(void);
 void SaveEachObject(object_node *o);
 void SaveListNodes(void);
 void SaveEachListNode(list_node *l,int list_id);
+void SaveTables(void);
+void SaveEachTable(table_node *t,int table_id);
 void SaveTimers(void);
 void SaveEachTimer(timer_node *t);
 void SaveUsers(void);
@@ -97,6 +99,7 @@ Bool SaveGame(char *filename)
 	SaveBuiltInObjects();
 	SaveObjects();
 	SaveListNodes();
+	SaveTables();
 	SaveTimers(); 
 	SaveUsers();
 	
@@ -214,6 +217,31 @@ void SaveEachListNode(list_node *l,int list_id)
 {
 	SaveGameWriteInt(l->first.int_val);
 	SaveGameWriteInt(l->rest.int_val);
+}
+
+void SaveTables(void)
+{
+   SaveGameWriteByte(SAVE_GAME_TABLES);
+   SaveGameWriteInt(GetTablesUsed());
+   ForEachTable(SaveEachTable);
+}
+
+void SaveEachTable(table_node *t,int table_id)
+{
+   hash_node *hn;
+
+   SaveGameWriteInt(t->size);
+   SaveGameWriteInt(t->num_entries);
+   for (int i = 0; i < t->size; ++i)
+   {
+      hn = t->table[i];
+      while (hn != NULL)
+      {
+         SaveGameWriteInt(hn->key_val.int_val);
+         SaveGameWriteInt(hn->data_val.int_val);
+         hn = hn->next;
+      }
+   }
 }
 
 void SaveTimers(void)

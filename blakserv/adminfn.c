@@ -4508,6 +4508,7 @@ void AdminReloadSystem(int session_id,admin_parm_type parms[],
 	ResetResource();
 	ResetTimer();
 	ResetList();
+	ResetTables();
 	ResetObject();
 	ResetMessage();
 	ResetClass();
@@ -4567,6 +4568,7 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	ResetString();
 	ResetTimer();
 	ResetList();
+	ResetTables();
 	ResetObject();
 	aprintf("done.\n");
 	AdminSendBufferList();

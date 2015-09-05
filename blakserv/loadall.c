@@ -97,6 +97,9 @@ Bool LoadAllButAccountAtTime(char *time_str)
 	if (LoadBlakodStrings(load_name) == False)
 		load_ok = False;
 	
+   sprintf(load_name, "%s%s%s", ConfigStr(PATH_LOADSAVE), DYNAMIC_RSC_FILE_SAVE, time_str);
+   LoadDynamicRsc(load_name);
+
 	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),GAME_FILE_SAVE,time_str);
 	if (!LoadGame(load_name)) 
 	{
@@ -110,9 +113,6 @@ Bool LoadAllButAccountAtTime(char *time_str)
 		ClearUser();
 		CreateBuiltInObjects();
 	}
-	
-	sprintf(load_name,"%s%s%s",ConfigStr(PATH_LOADSAVE),DYNAMIC_RSC_FILE_SAVE,time_str);
-	LoadDynamicRsc(load_name);
 	
 	return load_ok;
 }
@@ -136,6 +136,7 @@ Bool LoadFromKod(int save_time)
    ResetString();
    ResetTimer();
    ResetList();
+   ResetTables();
    ResetObject();
 
    // Set the save game we want to load in LASTSAVE.

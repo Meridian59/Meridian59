@@ -24,7 +24,8 @@ enum
    SAVE_GAME_USER = 7,
    SAVE_GAME_SETTINGS = 8,
    SAVE_GAME_REALTIME = 9,
-   SAVE_GAME_EVENTENGINE = 10
+   SAVE_GAME_EVENTENGINE = 10,
+   SAVE_GAME_TABLES = 11
 };
 
 Bool SaveGame(char *filename);

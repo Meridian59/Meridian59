@@ -1009,6 +1009,7 @@ void InterfaceReloadSystem()
 	ResetResource();
 	ResetTimer();
 	ResetList();
+	ResetTables();
 	ResetObject();
 	ResetMessage();
 	ResetClass();

@@ -103,6 +103,7 @@ Bool LoadGameBuiltInObject(int ref_id);
 
 Bool LoadGameObject(void);
 Bool LoadGameListNodes(void);
+Bool LoadGameTables(void);
 Bool LoadGameTimer(void);
 Bool LoadGameUser(void);
 Bool LoadGameClass(void);
@@ -248,6 +249,10 @@ Bool LoadGameParse(char *filename)
 			if (!LoadGameListNodes())
 				return False;
 			break;
+		case SAVE_GAME_TABLES :
+			if (!LoadGameTables())
+				return False;
+			break;
 		case SAVE_GAME_TIMER :
 			if (!LoadGameTimer())
 				return False;
@@ -350,6 +355,56 @@ Bool LoadGameListNodes(void)
 	}
 	
 	return True;
+}
+
+Bool LoadGameTables(void)
+{
+   int num_tables, size, num_entries, table_id;
+   val_type key_val, data_val;
+   table_node *t;
+
+   LoadGameReadInt(&num_tables);
+
+   for (int i = 0; i < num_tables; ++i)
+   {
+      LoadGameReadInt(&size);
+      LoadGameReadInt(&num_entries);
+
+      table_id = CreateTable(size);
+      t = GetTableByID(table_id);
+      if (t == NULL)
+      {
+         eprintf("LoadGameTables can't set table %i\n",i);
+         return False;
+      }
+
+      if (table_id != i)
+      {
+         eprintf("LoadGameTables got incorrect table id %i, expected %i\n",
+            table_id, i);
+         return False;
+      }
+
+      if (t->size != size)
+      {
+         eprintf("LoadGameTables got invalid table size %i, expected %i\n",
+            t->size, size);
+         return False;
+      }
+
+      for (int j = 0; j < num_entries; ++j)
+      {
+         LoadGameReadInt(&key_val.int_val);
+         LoadGameReadInt(&data_val.int_val);
+
+         LoadGameTranslateVal(&key_val);
+         LoadGameTranslateVal(&data_val);
+
+         InsertTable(i, key_val, data_val);
+      }
+   }
+
+   return True;
 }
 
 Bool LoadGameTimer(void)

@@ -998,7 +998,7 @@ messages:
       phSpells = $;
       phSkills = $;
       phItemAtts = $;
-      
+
       Send(poStatistics,@GarbageCollecting);
 
       return;
@@ -5050,6 +5050,13 @@ messages:
    "Return true if there's a chaos night (\"frenzy\") running."
    {
       return send(EVENTENGINE_OBJECT,@IsChaosNightActive);
+   }
+
+   % HACK in case EVENTENGINE_OBJECT hasn't been created yet,
+   % don't call this, ever.  It is'nt useful for anything else.
+   IsChaosNightActive()
+   {
+      return false;
    }
 
    ScheduleChaosNight(iMonth=$,iDay=$,iYear=$,

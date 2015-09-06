@@ -504,15 +504,15 @@ void BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Hei
  */
 Bool BSPRooFileLoadServer(char *fname, room_type *room)
 {
-   int infile, i, j, temp;
+   int i, j, temp;
    unsigned char byte;
    unsigned short unsigshort;
    int offset_client, offset_tree, offset_walls, offset_sides, offset_sectors;
    int offset_server;
    char tmpbuf[128];
 
-   infile = open(fname, O_BINARY | O_RDONLY);
-   if (infile < 0)
+   FILE *infile = fopen(fname, "rb");
+   if (infile == NULL)
       return False;
 
    /****************************************************************************/
@@ -520,65 +520,65 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    /****************************************************************************/
    
    // check signature
-   if (read(infile, &temp, 4) != 4 || temp != ROO_SIGNATURE)
-   { close(infile); return False; }
+   if (fread(&temp, 1, 4, infile) != 4 || temp != ROO_SIGNATURE)
+   { fclose(infile); return False; }
 
    // check version
-   if (read(infile, &temp, 4) != 4 || temp < ROO_VERSION)
-   { close(infile); return False; }
+   if (fread(&temp, 1, 4, infile) != 4 || temp < ROO_VERSION)
+   { fclose(infile); return False; }
 
    // read room security
-   if (read(infile, &room->security, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&room->security, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // read pointer to client info
-   if (read(infile, &offset_client, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&offset_client, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // read pointer to server info
-   if (read(infile, &offset_server, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&offset_server, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    /****************************************************************************/
    /*                               CLIENT DATA                                */
    /****************************************************************************/
-   lseek(infile, offset_client, SEEK_SET);
+   fseek(infile, offset_client, SEEK_SET);
    
    // skip width
-   if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // skip height
-   if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // read pointer to bsp tree
-   if (read(infile, &offset_tree, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&offset_tree, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // read pointer to walls
-   if (read(infile, &offset_walls, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&offset_walls, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // skip offset to editor walls
-   if (read(infile, &temp, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // read pointer to sides
-   if (read(infile, &offset_sides, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&offset_sides, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // read pointer to sectors
-   if (read(infile, &offset_sectors, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&offset_sectors, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    /************************ BSP-TREE ****************************************/
 
-   lseek(infile, offset_tree, SEEK_SET);
+   fseek(infile, offset_tree, SEEK_SET);
 
    // read count of nodes
-   if (read(infile, &room->TreeNodesCount, 2) != 2)
-   { close(infile); return False; }
+   if (fread(&room->TreeNodesCount, 1, 2, infile) != 2)
+   { fclose(infile); return False; }
 
    // allocate tree mem
    room->TreeNodes = (BspNode*)AllocateMemory(
@@ -589,49 +589,49 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       BspNode* node = &room->TreeNodes[i];
 
       // type
-      if (read(infile, &byte, 1) != 1)
-      { close(infile); return False; }
+      if (fread(&byte, 1, 1, infile) != 1)
+      { fclose(infile); return False; }
       node->Type = (BspNodeType)byte;
 
       // boundingbox
-      if (read(infile, &node->BoundingBox.Min.X, 4) != 4)
-      { close(infile); return False; }
-      if (read(infile, &node->BoundingBox.Min.Y, 4) != 4)
-      { close(infile); return False; }
-      if (read(infile, &node->BoundingBox.Max.X, 4) != 4)
-      { close(infile); return False; }
-      if (read(infile, &node->BoundingBox.Max.Y, 4) != 4)
-      { close(infile); return False; }
+      if (fread(&node->BoundingBox.Min.X, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
+      if (fread(&node->BoundingBox.Min.Y, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
+      if (fread(&node->BoundingBox.Max.X, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
+      if (fread(&node->BoundingBox.Max.Y, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
 
       if (node->Type == BspInternalType)
       {
          // line equation coefficients of splitter line
-         if (read(infile, &node->u.internal.A, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &node->u.internal.B, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &node->u.internal.C, 4) != 4)
-         { close(infile); return False; }
+         if (fread(&node->u.internal.A, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&node->u.internal.B, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&node->u.internal.C, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
 
          // nums of children
-         if (read(infile, &node->u.internal.RightChildNum, 2) != 2)
-         { close(infile); return False; }
-         if (read(infile, &node->u.internal.LeftChildNum, 2) != 2)
-         { close(infile); return False; }
+         if (fread(&node->u.internal.RightChildNum, 1, 2, infile) != 2)
+         { fclose(infile); return False; }
+         if (fread(&node->u.internal.LeftChildNum, 1, 2, infile) != 2)
+         { fclose(infile); return False; }
 
          // first wall in splitter
-         if (read(infile, &node->u.internal.FirstWallNum, 2) != 2)
-         { close(infile); return False; }
+         if (fread(&node->u.internal.FirstWallNum, 1, 2, infile) != 2)
+         { fclose(infile); return False; }
       }
       else if (node->Type == BspLeafType)
       {
          // sector num
-         if (read(infile, &node->u.leaf.SectorNum, 2) != 2)
-         { close(infile); return False; }
+         if (fread(&node->u.leaf.SectorNum, 1, 2, infile) != 2)
+         { fclose(infile); return False; }
 
          // points count
-         if (read(infile, &node->u.leaf.PointsCount, 2) != 2)
-         { close(infile); return False; }
+         if (fread(&node->u.leaf.PointsCount, 1, 2, infile) != 2)
+         { fclose(infile); return False; }
 
          // allocate memory for points of polygon
          node->u.leaf.PointsFloor = (V3*)AllocateMemory(
@@ -642,10 +642,10 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
          // read points
          for (j = 0; j < node->u.leaf.PointsCount; j++)
          {
-            if (read(infile, &node->u.leaf.PointsFloor[j].X, 4) != 4)
-            { close(infile); return False; }
-            if (read(infile, &node->u.leaf.PointsFloor[j].Y, 4) != 4)
-            { close(infile); return False; }
+            if (fread(&node->u.leaf.PointsFloor[j].X, 1, 4, infile) != 4)
+            { fclose(infile); return False; }
+            if (fread(&node->u.leaf.PointsFloor[j].Y, 1, 4, infile) != 4)
+            { fclose(infile); return False; }
 			   
             // x,y are same on floor/ceiling
             node->u.leaf.PointsCeiling[j].X = node->u.leaf.PointsFloor[j].X;
@@ -656,11 +656,11 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 
    /*************************** WALLS ****************************************/
    
-   lseek(infile, offset_walls, SEEK_SET);
+   fseek(infile, offset_walls, SEEK_SET);
 
    // count of walls
-   if (read(infile, &room->WallsCount, 2) != 2)
-   { close(infile); return False; }
+   if (fread(&room->WallsCount, 1, 2, infile) != 2)
+   { fclose(infile); return False; }
 
    // allocate walls mem
    room->Walls = (Wall*)AllocateMemory(
@@ -674,53 +674,53 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       wall->Num = i + 1;
 
       // nextwallinplane num
-      if (read(infile, &wall->NextWallInPlaneNum, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&wall->NextWallInPlaneNum, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // side nums
-      if (read(infile, &wall->RightSideNum, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &wall->LeftSideNum, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&wall->RightSideNum, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&wall->LeftSideNum, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // endpoints
-      if (read(infile, &wall->P1.X, 4) != 4)
-      { close(infile); return False; }
-      if (read(infile, &wall->P1.Y, 4) != 4)
-      { close(infile); return False; }
-      if (read(infile, &wall->P2.X, 4) != 4)
-      { close(infile); return False; }
-      if (read(infile, &wall->P2.Y, 4) != 4)
-      { close(infile); return False; }
+      if (fread(&wall->P1.X, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
+      if (fread(&wall->P1.Y, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
+      if (fread(&wall->P2.X, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
+      if (fread(&wall->P2.Y, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
 
       // skip length
-      if (read(infile, &temp, 4) != 4)
-      { close(infile); return False; }
+      if (fread(&temp, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
 
       // skip texture offsets
-      if (read(infile, &temp, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &temp, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &temp, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &temp, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&temp, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&temp, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&temp, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&temp, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // sector nums
-      if (read(infile, &wall->RightSectorNum, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &wall->LeftSectorNum, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&wall->RightSectorNum, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&wall->LeftSectorNum, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
    }
 
    /***************************** SIDES ****************************************/
 
-   lseek(infile, offset_sides, SEEK_SET);
+   fseek(infile, offset_sides, SEEK_SET);
 
    // count of sides
-   if (read(infile, &room->SidesCount, 2) != 2)
-   { close(infile); return False; }
+   if (fread(&room->SidesCount, 1, 2, infile) != 2)
+   { fclose(infile); return False; }
 
    // allocate sides mem
    room->Sides = (Side*)AllocateMemory(
@@ -731,16 +731,16 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       Side* side = &room->Sides[i];
 
       // serverid
-      if (read(infile, &side->ServerID, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&side->ServerID, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // middle,upper,lower texture
-      if (read(infile, &side->TextureMiddle, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &side->TextureUpper, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &side->TextureLower, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&side->TextureMiddle, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&side->TextureUpper, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&side->TextureLower, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // keep track of original texture nums (can change at runtime)
 	  side->TextureLowerOrig  = side->TextureLower;
@@ -748,21 +748,21 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
 	  side->TextureUpperOrig  = side->TextureUpper;
 
       // flags
-      if (read(infile, &side->Flags, 4) != 4)
-      { close(infile); return False; }
+     if (fread(&side->Flags, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
 
       // skip speed byte
-      if (read(infile, &temp, 1) != 1)
-      { close(infile); return False; }
+     if (fread(&temp, 1, 1, infile) != 1)
+      { fclose(infile); return False; }
    }
 
    /***************************** SECTORS ****************************************/
 
-   lseek(infile, offset_sectors, SEEK_SET);
+   fseek(infile, offset_sectors, SEEK_SET);
 
    // count of sectors
-   if (read(infile, &room->SectorsCount, 2) != 2)
-   { close(infile); return False; }
+   if (fread(&room->SectorsCount, 1, 2, infile) != 2)
+   { fclose(infile); return False; }
 
    // allocate sectors mem
    room->Sectors = (Sector*)AllocateMemory(
@@ -773,44 +773,44 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
       Sector* sector = &room->Sectors[i];
 	   
       // serverid
-      if (read(infile, &sector->ServerID, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&sector->ServerID, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // floor+ceiling texture
-      if (read(infile, &sector->FloorTexture, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &sector->CeilingTexture, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&sector->FloorTexture, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&sector->CeilingTexture, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
 	  // keep track of original texture nums (can change at runtime)
       sector->FloorTextureOrig   = sector->FloorTexture;
       sector->CeilingTextureOrig = sector->CeilingTexture;
 
       // skip texture offsets
-      if (read(infile, &temp, 2) != 2)
-      { close(infile); return False; }
-      if (read(infile, &temp, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&temp, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
+      if (fread(&temp, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
 
       // floor+ceiling heights (from 1:64 to 1:1024 like the rest)
-      if (read(infile, &unsigshort, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&unsigshort, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
       sector->FloorHeight = FINENESSKODTOROO((float)unsigshort);
-      if (read(infile, &unsigshort, 2) != 2)
-      { close(infile); return False; }
+      if (fread(&unsigshort, 1, 2, infile) != 2)
+      { fclose(infile); return False; }
       sector->CeilingHeight = FINENESSKODTOROO((float)unsigshort);
 
       // skip light byte
-      if (read(infile, &temp, 1) != 1)
-      { close(infile); return False; }
+      if (fread(&temp, 1, 1, infile) != 1)
+      { fclose(infile); return False; }
 
       // flags
-      if (read(infile, &sector->Flags, 4) != 4)
-      { close(infile); return False; }
+      if (fread(&sector->Flags, 1, 4, infile) != 4)
+      { fclose(infile); return False; }
 
       // skip speed byte
-      if (read(infile, &temp, 1) != 1)
-      { close(infile); return False; }
+      if (fread(&temp, 1, 1, infile) != 1)
+      { fclose(infile); return False; }
 	   
       // possibly load floor slopeinfo
       if ((sector->Flags & SF_SLOPED_FLOOR) == SF_SLOPED_FLOOR)
@@ -819,26 +819,26 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
             MALLOC_ID_ROOM, sizeof(SlopeInfo));
 
          // read 3d plane equation coefficients (normal vector)
-         if (read(infile, &sector->SlopeInfoFloor->A, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &sector->SlopeInfoFloor->B, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &sector->SlopeInfoFloor->C, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &sector->SlopeInfoFloor->D, 4) != 4)
-         { close(infile); return False; }
+         if (fread(&sector->SlopeInfoFloor->A, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&sector->SlopeInfoFloor->B, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&sector->SlopeInfoFloor->C, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&sector->SlopeInfoFloor->D, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
 
          // skip x0, y0, textureangle
-         if (read(infile, &temp, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &temp, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &temp, 4) != 4)
-         { close(infile); return False; }
+         if (fread(&temp, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&temp, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&temp, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
 
          // skip unused payload (vertex indices for roomedit)
-         if (read(infile, &tmpbuf, 18) != 18)
-         { close(infile); return False; }
+         if (fread(&tmpbuf, 1, 18, infile) != 18)
+         { fclose(infile); return False; }
       }
       else
          sector->SlopeInfoFloor = NULL;
@@ -850,26 +850,26 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
             MALLOC_ID_ROOM, sizeof(SlopeInfo));
 
          // read 3d plane equation coefficients (normal vector)
-         if (read(infile, &sector->SlopeInfoCeiling->A, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &sector->SlopeInfoCeiling->B, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &sector->SlopeInfoCeiling->C, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &sector->SlopeInfoCeiling->D, 4) != 4)
-         { close(infile); return False; }
+         if (fread(&sector->SlopeInfoCeiling->A, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&sector->SlopeInfoCeiling->B, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&sector->SlopeInfoCeiling->C, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&sector->SlopeInfoCeiling->D, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
 
          // skip x0, y0, textureangle
-         if (read(infile, &temp, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &temp, 4) != 4)
-         { close(infile); return False; }
-         if (read(infile, &temp, 4) != 4)
-         { close(infile); return False;}
+         if (fread(&temp, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&temp, 1, 4, infile) != 4)
+         { fclose(infile); return False; }
+         if (fread(&temp, 1, 4, infile) != 4)
+         { fclose(infile); return False;}
 
          // skip unused payload (vertex indices for roomedit)
-         if (read(infile, &tmpbuf, 18) != 18)
-         { close(infile); return False; }
+         if (fread(&tmpbuf, 1, 18, infile) != 18)
+         { fclose(infile); return False; }
       }
       else
          sector->SlopeInfoCeiling = NULL;
@@ -992,26 +992,26 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    /*                               SERVER GRIDS                               */
    /****************************************************************************/
    
-   lseek(infile, offset_server, SEEK_SET);
+   fseek(infile, offset_server, SEEK_SET);
 
    // Read size of room
-   if (read(infile, &room->rows, 4) != 4)
-   { close(infile); return False; }
-   if (read(infile, &room->cols, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&room->rows, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
+   if (fread(&room->cols, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // Allocate and read movement grid
    room->grid = (unsigned char **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(char *));
    for (i=0; i < room->rows; i++)
    {
       room->grid[i] = (unsigned char *)AllocateMemory(MALLOC_ID_ROOM,room->cols);
-      if (read(infile, room->grid[i], room->cols) != room->cols)
+      if (fread(room->grid[i], 1, room->cols, infile) != room->cols)
       {
          for (j=0; j <= i; j++)
             FreeMemory(MALLOC_ID_ROOM,room->grid[i],room->cols);
          FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(char *));
 
-         close(infile);
+         fclose(infile);
          return False;
       }
    }
@@ -1021,13 +1021,13 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    for (i=0; i < room->rows; i++)
    {
       room->flags[i] = (unsigned char *)AllocateMemory(MALLOC_ID_ROOM,room->cols);
-      if (read(infile, room->flags[i], room->cols) != room->cols)
+      if (fread(room->flags[i], 1, room->cols, infile) != room->cols)
       {
          for (j=0; j <= i; j++)
             FreeMemory(MALLOC_ID_ROOM,room->flags[i],room->cols);
          FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(char *));
 
-         close(infile);
+         fclose(infile);
          return False;
       }
    }
@@ -1037,41 +1037,41 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    for (i=0; i < room->rows; i++)
    {
       room->monster_grid[i] = (unsigned char *)AllocateMemory(MALLOC_ID_ROOM,room->cols);
-      if (read(infile, room->monster_grid[i], room->cols) != room->cols)
+      if (fread(room->monster_grid[i], 1, room->cols, infile) != room->cols)
       {
          for (j=0; j <= i; j++)
             FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols);
          FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
 			   
-         close(infile);
+         fclose(infile);
          return False;
       }
    }
 
    // Read highres gridsize
-   if (read(infile, &room->rowshighres, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&room->rowshighres, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
-   if (read(infile, &room->colshighres, 4) != 4)
-   { close(infile); return False; }
+   if (fread(&room->colshighres, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
 
    // Allocate and read highres grid
    room->highres_grid = (unsigned int **)AllocateMemory(MALLOC_ID_ROOM,room->rowshighres * sizeof(int *));
    for (i=0; i < room->rowshighres; i++)
    {
       room->highres_grid[i] = (unsigned int *)AllocateMemory(MALLOC_ID_ROOM,room->colshighres * sizeof(int));
-      if (read(infile, room->highres_grid[i], room->colshighres * sizeof(int)) != room->colshighres * sizeof(int))
+      if (fread(room->highres_grid[i], 1, room->colshighres * sizeof(int), infile) != room->colshighres * sizeof(int))
       {
          for (j=0; j <= i; j++)
             FreeMemory(MALLOC_ID_ROOM,room->highres_grid[i],room->colshighres * sizeof(int));
          FreeMemory(MALLOC_ID_ROOM,room->highres_grid,room->rowshighres * sizeof(int *));
 			   
-         close(infile);
+         fclose(infile);
          return False;
       }
    }	   
 
-   close(infile);
+   fclose(infile);
 
    return True;
 }

@@ -176,6 +176,12 @@ void GarbageCollect()
 
    SetNumTables(next_renumber);
 
+   // To avoid the rare case where we somehow end up with a list inside a table
+   // referencing the table itself (or vice versa), go through each table again
+   // and clear the garbage ref. When marking objects, tables will be marked
+   // also to ensure they are traversed once only.
+   ForEachTable(ClearTableGarbageRef);
+
    /* now garbage collect the object nodes */
 
    /* 
@@ -195,6 +201,9 @@ void GarbageCollect()
     */
 
    ForEachObject(ClearObjectGarbageRef);
+   // Also clear string GC references now.
+   ForEachString(ClearStringGarbageRef);
+
    ForEachUser(MarkUserObjectNodes);
 
    // Mark built-in objects so they don't get deleted.
@@ -206,9 +215,9 @@ void GarbageCollect()
    next_renumber = SERVER_MERGE_BASE;
 
    ForEachObject(RenumberObject);
-   ForEachObject(RenumberObjectReferences);
-   ForEachListNode(RenumberListNodeObjectReferences);
-   ForEachTable(RenumberTableObjectReferences);
+   ForEachObject(RenumberObjectReferences); // Also mark strings here
+   ForEachListNode(RenumberListNodeObjectReferences); // Also mark strings here
+   ForEachTable(RenumberTableObjectReferences); // Also mark strings here
    ForEachUser(RenumberUserObjectReferences);
    ForEachSession(RenumberSessionObjectReferences);
    ForEachTimer(RenumberTimerObjectReferences);
@@ -218,22 +227,20 @@ void GarbageCollect()
    // Combined timer and string GC, as references to both can be
    // renumbered at the same time.
    // Timer GC prevents rollover since they are created and deleted constantly.
+   // String GC references previously cleared, and strings get marked during
+   // object renumbering to save time.
 
-   // Clear string GC references.
-   ForEachString(ClearStringGarbageRef);
-   // Mark all strings.
-   ForEachObject(MarkObjectStrings);
-   ForEachListNode(MarkListNodeStrings);
-   ForEachTable(MarkTableStrings);
    // Renumber timers and strings.
    next_timer_renumber = SERVER_MERGE_BASE;
    ForEachTimer(RenumberTimer);
    next_string_renumber = SERVER_MERGE_BASE;
    ForEachString(RenumberString);
+
    // Update references to timers and strings.
    ForEachObject(RenumberObjectTimerStringReferences);
    ForEachListNode(RenumberListNodeTimerStringReferences);
    ForEachTable(RenumberTableTimerStringReferences);
+
    // Compact timers and strings.
    ForEachTimer(CompactTimer);
    SetNumTimers(next_timer_renumber);
@@ -328,10 +335,15 @@ void MarkListNode(int list_id)
          return;
       }
 
+      if (l->garbage_ref == REFERENCED)
+         return;
+
       l->garbage_ref = REFERENCED;
 
       if (l->first.v.tag == TAG_LIST)
          MarkListNode(l->first.v.data);
+      else if (l->first.v.tag == TAG_TABLE)
+         MarkTableListNode(l->first.v.data);
 
       if (l->rest.v.tag != TAG_LIST)
          break;
@@ -684,6 +696,15 @@ void MarkTableObject(int table_id)
       eprintf("MarkTableObject death by garbage collection\n");
       return;
    }
+
+   // Mark the table, in case we have a list inside a table inside a list
+   // (i.e. the same list) or table inside a list inside a table. This will
+   // ensure all objects get marked without causing stack overflow.
+   if (t->garbage_ref == REFERENCED)
+      return;
+
+   t->garbage_ref = REFERENCED;
+
    for (int i = 0; i < t->size; ++i)
    {
       hn = t->table[i];
@@ -725,6 +746,8 @@ void RenumberObjectReferences(object_node *o)
                o->object_id);
          }
       }
+      else if (o->p[i].val.v.tag == TAG_STRING)
+         MarkString(o->p[i].val.v.data);
    }
 }
 
@@ -736,6 +759,8 @@ void RenumberListNodeObjectReferences(list_node *l,int list_id)
          eprintf("RenumberListNodesReferences got object death in list node %i first\n",
             list_id);
    }
+   else if (l->first.v.tag == TAG_STRING)
+      MarkString(l->first.v.data);
 
    if (l->rest.v.tag == TAG_OBJECT)
    {
@@ -743,6 +768,8 @@ void RenumberListNodeObjectReferences(list_node *l,int list_id)
          eprintf("RenumberListNodesReferences got object death in list node %i first\n",
             list_id);
    }
+   else if (l->rest.v.tag == TAG_STRING)
+      MarkString(l->rest.v.data);
 }
 
 void RenumberTableObjectReferences(table_node *t, int table_id)
@@ -755,9 +782,13 @@ void RenumberTableObjectReferences(table_node *t, int table_id)
       while (hn != NULL)
       {
          if (hn->data_val.v.tag == TAG_OBJECT)
+         {
             if (ResetObjectReference(&(hn->data_val)) == False)
                eprintf("RenumberTableObjectReferences got object death in table %i key %i\n",
-               table_id, i);
+                  table_id, i);
+         }
+         else if (hn->data_val.v.tag == TAG_STRING)
+            MarkString(hn->data_val.v.data);
          hn = hn->next;
       }
    }

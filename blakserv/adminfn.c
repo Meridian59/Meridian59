@@ -165,7 +165,8 @@ void AdminShowName(int session_id,admin_parm_type parms[],
 void AdminShowReferences(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[]);
 void AdminShowReferencesEachObject(object_node *o);
-void AdminShowReferencesEachList(int list_id);
+void AdminShowReferencesEachList(int list_id, int parent_id);
+void AdminShowReferencesEachTable(int table_id, int parent_id);
 void AdminShowInstances(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[]);
 void AdminShowMatches(int session_id,admin_parm_type parms[],
@@ -2678,15 +2679,26 @@ void AdminShowReferencesEachObject(object_node *o)
 		}
 		else if (o->p[i].val.v.tag == TAG_LIST)
 		{
-			AdminShowReferencesEachList(o->p[i].val.v.data);
+			AdminShowReferencesEachList(o->p[i].val.v.data, -1);
 		}
+      else if (o->p[i].val.v.tag == TAG_TABLE)
+      {
+         AdminShowReferencesEachTable(o->p[i].val.v.data, -1);
+      }
 	}
 }
 
-void AdminShowReferencesEachList(int list_id)
+void AdminShowReferencesEachList(int list_id, int parent_id)
 {
 	list_node *l;
-	
+
+   if (list_id == parent_id)
+   {
+      eprintf("AdminShowReferencesEachList found self-referencing list %i inside container %i!\n",
+         list_id, parent_id);
+      return;
+   }
+
 	for(;;)
 	{
 		l = GetListNodeByID(list_id);
@@ -2705,13 +2717,53 @@ void AdminShowReferencesEachList(int list_id)
 			admin_show_references_data_str);
 		
 		if (l->first.v.tag == TAG_LIST)
-			AdminShowReferencesEachList(l->first.v.data);
-		
+			AdminShowReferencesEachList(l->first.v.data, list_id);
+      else if (l->first.v.tag == TAG_TABLE && l->first.v.data != parent_id)
+         AdminShowReferencesEachTable(l->first.v.data, list_id);
 		if (l->rest.v.tag != TAG_LIST)
 			break;
 		
 		list_id = l->rest.v.data;
 	}
+}
+
+void AdminShowReferencesEachTable(int table_id, int parent_id)
+{
+   table_node *t;
+   hash_node *hn;
+
+   if (table_id == parent_id)
+   {
+      eprintf("AdminShowReferencesEachTable found self-referencing table %i inside container %i!\n",
+         table_id, parent_id);
+      return;
+   }
+
+   t = GetTableByID(table_id);
+   if (t == NULL)
+   {
+      eprintf("AdminShowReferencesEachTable can't get TABLE %i\n", table_id);
+      return;
+   }
+   for (int i = 0; i < t->size; ++i)
+   {
+      hn = t->table[i];
+      while (hn != NULL)
+      {
+         if (hn->data_val.int_val == admin_show_references_value.int_val)
+            aprintf(": OBJECT %i CLASS %s %s = TABLE containing %s %s\n",
+            admin_show_references_current_object,
+            admin_show_references_current_class->class_name,
+            admin_show_references_current_prop,
+            admin_show_references_tag_str,
+            admin_show_references_data_str);
+         if (hn->data_val.v.tag == TAG_LIST && hn->data_val.v.data != parent_id)
+            AdminShowReferencesEachList(hn->data_val.v.data, table_id);
+         else if (hn->data_val.v.tag == TAG_TABLE)
+            AdminShowReferencesEachTable(hn->data_val.v.data, table_id);
+         hn = hn->next;
+      }
+   }
 }
 
 /* in parsecli.c */

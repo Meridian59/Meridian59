@@ -969,19 +969,27 @@ void InterfaceCheckChannels()
 
 void InterfaceSave()
 {
+   UINT64 start_time, total_time;
+
 	EnterServerLock();
 	
 	lprintf("InterfaceSave saving\n");
 	
+	total_time = GetMilliCount();
 	PauseTimers();
 	SendBlakodBeginSystemEvent(SYSEVENT_SAVE);
 	/* ResetRoomData(); */
+	start_time = GetMilliCount();
 	GarbageCollect();
+	dprintf("GC completed in %ld ms.\n", GetMilliCount() - start_time);
+	start_time = GetMilliCount();
 	SaveAll();
+	dprintf("Save all completed in %ld ms.\n", GetMilliCount() - start_time);
 	AllocateParseClientListNodes(); /* it needs a list to send to users */
 	SendBlakodEndSystemEvent(SYSEVENT_SAVE);
 	UnpauseTimers();
 	
+	dprintf("Total interface save time %ld ms.\n", GetMilliCount() - total_time);
 	LeaveServerLock();
 }
 

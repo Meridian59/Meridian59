@@ -249,7 +249,7 @@ const char *memory_stat_names[] =
 		"List", "Object properties",
 		"Configuration", "Rooms",
 		"Admin constants", "Buffers", "Game loading",
-		"Tables", "Socket blocks",
+		"Tables", "Socket blocks", "Game saving",
 		
 		NULL
 };

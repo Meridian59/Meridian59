@@ -210,7 +210,8 @@ void InitBkodInterpret(void)
 	ccall_table[GETTABLEENTRY] = C_GetTableEntry;
 	ccall_table[DELETETABLEENTRY] = C_DeleteTableEntry;
 	ccall_table[DELETETABLE] = C_DeleteTable;
-	
+	ccall_table[ISTABLE] = C_IsTable;
+
 	ccall_table[ISOBJECT] = C_IsObject;
 	
 	ccall_table[RECYCLEUSER] = C_RecycleUser;

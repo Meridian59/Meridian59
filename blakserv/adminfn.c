@@ -2160,6 +2160,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETTABLEENTRY : strcpy(c_name, "GetTableEntry"); break;
 		case DELETETABLEENTRY : strcpy(c_name, "DeleteTableEntry"); break;
 		case DELETETABLE : strcpy(c_name, "DeleteTable"); break;
+		case ISTABLE : strcpy(c_name, "IsTable"); break;
 		case ISOBJECT : strcpy(c_name, "IsObject"); break;
 		case RECYCLEUSER : strcpy(c_name, "RecycleUser"); break;
 		case RANDOM : strcpy(c_name, "Random"); break;

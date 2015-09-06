@@ -97,6 +97,7 @@ function_type Functions[] = {
 {"GetTableEntry",       GETTABLEENTRY,   AEXPRESSION,   AEXPRESSION,  ANONE},
 {"DeleteTableEntry",    DELETETABLEENTRY,AEXPRESSION,   AEXPRESSION,  ANONE},
 {"DeleteTable",         DELETETABLE,     AEXPRESSION,   ANONE},
+{"IsTable",             ISTABLE,         AEXPRESSION,   ANONE},
 {"Bound",               BOUND,           AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"GetTimeRemaining",    GETTIMEREMAINING,AEXPRESSION,   ANONE},
 {"SetString",           SETSTRING,       AEXPRESSION,   AEXPRESSION,  ANONE},

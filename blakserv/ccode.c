@@ -1940,7 +1940,7 @@ int C_IsTimer(int object_id,local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 	
-	if (var_check.v.tag == TAG_TIMER || var_check.v.tag == TAG_NIL)
+	if (var_check.v.tag == TAG_TIMER)
 		ret_val.v.data = True;
 	else
 		ret_val.v.data = False;
@@ -3499,7 +3499,6 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 {
 	val_type table_val;
 	
-	
 	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
 	if (table_val.v.tag != TAG_TABLE)
@@ -3512,6 +3511,24 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
+int C_IsTable(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   val_type check_val, ret_val;
+
+   ret_val.v.tag = TAG_INT;
+
+   check_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   if (check_val.v.tag == TAG_TABLE && GetTableByID(check_val.v.data))
+      ret_val.v.data = True;
+   else
+      ret_val.v.data = False;
+
+   return ret_val.int_val;
+}
 
 int C_RecycleUser(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],

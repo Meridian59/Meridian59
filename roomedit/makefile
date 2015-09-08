@@ -3,24 +3,32 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-SOURCEDIR = $(ROOMEDITDIR)\source
-RESDIR = $(ROOMEDITDIR)\res
-OWLSOURCEDIR = $(ROOMEDITDIR)\owl-6.34\source
+SOURCEDIR     = $(ROOMEDITDIR)\source
+RESDIR        = $(ROOMEDITDIR)\res
+OWLSOURCEDIR  = $(ROOMEDITDIR)\owl-6.34\source
 OWLINCLUDEDIR = $(ROOMEDITDIR)\owl-6.34\include
-OWLOUTDIR = $(ROOMEDITDIR)\owl-6.34\$(OUTDIR)
+OWLOUTDIR     = $(ROOMEDITDIR)\owl-6.34\$(OUTDIR)
 
-# /GR: Needs RTTI
-# /wd4244: conversion, possible loss of data
-# /wd4018: signed/unsigned mismatch
+# ----------------------------------------------------------------------
+# Additional compiler flags (see common.mak)
+# /TP           Compile as C++ code
+# /arch:SSE     Use SSE instructions (VS2013+ default to SSE2)
+# /DOWL5_COMPAT Use OWL in compatibility mode
+# /D_OWLPCH     For OWL
+# /GR           Needs RTTI (creates warning due to common.mak)
+# /wd4244       Ignore conversion, possible loss of data
+# /wd4018       Ignore signed/unsigned mismatch
+CFLAGS = $(CFLAGS) /arch:SSE /TP /DOWL5_COMPAT /D_OWLPCH /D__WIN32__ \
+    -I$(ROOMEDITDIR)\include -I$(OWLINCLUDEDIR) -I$(RESDIR) \
+    /GR /wd4244 /wd4018
 
-CFLAGS = $(CFLAGS) -DOWL5_COMPAT -D__WIN32__ -D_OWLPCH -I$(ROOMEDITDIR)\include -I$(OWLINCLUDEDIR) -I$(RESDIR) \
-	/GR /wd4244 /wd4018 /MP
+# ----------------------------------------------------------------------
+# Additional linker flags (see common.mak)
+# /SUBSYSTEM:WINDOWS",5.01" UI Windows XP (5.01)
+LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:WINDOWS",5.01"
 
-#
-# Dependency List
-#
 
-all: makedirs $(OUTDIR)\windeu32.exe
+all: makedirs $(OUTDIR)\roomedit.exe
 
 OBJS = \
    $(OUTDIR)\save.obj\
@@ -73,7 +81,6 @@ OBJS = \
 
 LIBS = \
 	$(OWLOUTDIR)\owl.lib \
-	zdll.lib \
  	user32.lib gdi32.lib shell32.lib advapi32.lib oleaut32.lib
 
 OWLOBJS = \
@@ -309,9 +316,10 @@ $(OWLOUTDIR)\owl.lib: $(OWLOBJS)
 makeowldir:
 		-@mkdir $(OWLOUTDIR)
 
-$(OUTDIR)\windeu32.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\owl.lib
-	$(LINK) $(LINKFLAGS) $(LINKWINDOWSFLAGS) -subsystem:windows,5.01 @<<
-	$(OBJS) $(LIBS) -OUT:$@
+$(OUTDIR)\roomedit.exe : makedirs makeowldir $(OBJS) $(OWLOUTDIR)\owl.lib
+	$(LINK) $(LINKFLAGS) @<< 
+	$(OBJS) $(LIBS) -OUT:$@ 
 <<
+    $(CP) $@ $(OUTDIR)\..\
 
 !include $(TOPDIR)\rules.mak

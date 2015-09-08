@@ -55,6 +55,7 @@
    MOVEON_NOTIFY     = 3
 
    % Object flags for client.
+   OF_AUTOLOOT       = 0x00000001
    OF_GROUPING       = 0x00000002
    OF_PLAYER         = 0x00000004
    OF_ATTACKABLE     = 0x00000008
@@ -70,11 +71,13 @@
    OF_APPLYABLE      = 0x00001000
    OF_SAFETY         = 0x00002000
    OF_TEMPSAFE       = 0x00004000
-
+   OF_REAGENTBAG     = 0x00008000
    OF_BOUNCING       = 0x00010000
    OF_FLICKERING     = 0x00020000
    OF_FLASHING       = 0x00040000
    OF_PHASING        = 0x00080000
+   OF_AUTOCOMBINE    = 0x00100000
+   OF_SPELLPOWER     = 0x00200000
 
    % Drawing effects flags, separate from the boolean object flags.
    DRAWFX_NONE           = 0
@@ -2252,7 +2255,7 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x1C63D7E
+   PFLAG_MASK              = 0x7C63D7E
 
    PFLAG_INVISIBLE         = 0x0000001
    PFLAG_MURDERER          = 0x0000002
@@ -2282,10 +2285,13 @@
    PFLAG_MOVED_SINCE_ENTRY = 0x0400000
    PFLAG_GROUPING          = 0x0800000
    PFLAG_KILLED_BY_PLAYER  = 0x1000000
+   PFLAG_REAGENTBAG        = 0x2000000
+   PFLAG_AUTOLOOT          = 0x4000000
+   % This PFLAG is full.
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG2_MASK             = 0x003E80
+   PFLAG2_MASK             = 0x00FE80
 
    PFLAG2_HASTED           = 0x000001
    PFLAG2_DANCING          = 0x000002
@@ -2305,6 +2311,14 @@
    % Sum of the other squelched flags.
    PFLAG2_SQUELCHED_ALL    = 0x001E00
    PFLAG2_TEMPSAFE         = 0x002000
+   PFLAG2_AUTOCOMBINE      = 0x004000
+   PFLAG2_SPELLPOWER       = 0x008000
+
+   % Third set of player flags (in piFlags3)
+   % piFlags3 can now be used as a proper bitfield, and no longer
+   % modifies player advancement.
+   % A mask of flags that are unaffected by ResetPlayerFlagList
+   PFLAG3_MASK             = 0x0000000
 
    % Set of flags just for DM's
    % DM is completely invisible

@@ -248,15 +248,11 @@ user_news_toobig = de \
 user_guild_rsc = de "Gilde"
 user_guildofficer_rsc = de "guildofficer"
 user_default_url = de "http://www.openmeridian.de/"
-autocombine_off_msg = de \
+user_autocombine_off = de \
    "Du entscheidest dich, die Gegenstände nicht mehr zu kombinieren."
-autocombine_on_msg = de "Du entscheidest dich, die Gegenstände zu kombinieren."
-user_say_autoloot_on = de "autoloot an"
-user_say_autoloot_off = de "autoloot aus"
-autoloot_on_msg = de "Autoloot ist an."
-autoloot_off_msg = de "Autoloot ist aus."
-user_say_reagentbag_on = de "reagentbag an"
-user_say_reagentbag_off = de "reagentbag aus"
+user_autocombine_on = de "Du entscheidest dich, die Gegenstände zu kombinieren."
+user_autoloot_on = de "Autoloot ist an."
+user_autoloot_off = de "Autoloot ist aus."
 guild_survival_too_late = de \
    "Deine Gilde hat bereits eine Arena gestartet. Du musst warten."
 public_survival_too_late = de \
@@ -276,8 +272,13 @@ survival_err_cant_join = de \
    "Die Survival Arena hat bereits begonnen. Du kannst nicht mehr beitreten"
 phased_out_cant_drop = de \
    "Du kannst keine Gegenstände wegwerfen, während du ausgestiegen bist."
-reagentbag_auto_on = de "Reagenzien Beutel AN"
-reagentbag_auto_off = de "Reagenzien Beutel AUS"
+user_reagentbag_on = de "Reagenzien Beutel AN"
+user_reagentbag_off = de "Reagenzien Beutel AUS"
+user_spellpower_on = de \
+   "Du siehst ab jetzt mit welcher Macht deine Zaubersprüche gewirkt werden."
+user_spellpower_off = de \
+   "Du siehst nicht länger mit welcher Macht deine Zaubersprüche "
+   "gewirkt werden."
 user_logon_delay = de "Du brauchst einen Moment um dich wieder zu fassen"
 inventory_sort_cleared = de "Deine Sortierliste wurde gelöscht."
 inventory_class_added = de "Du fügst %s zu Deiner Sortierliste hinzu."

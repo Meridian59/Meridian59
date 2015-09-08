@@ -70,6 +70,10 @@ typedef struct {
    Bool aggressive;              /* Allowed to attack other players? */
    Bool tempsafe;                /* Do we get a temporary angel when we die? */
    Bool grouping;                /* Do we join building groups? */
+   Bool autoloot;                /* Automatically loot stackable items? */
+   Bool autocombine;             /* Autocombine spell items? */
+   Bool reagentbag;              /* Automatically stash items into reagent bag? */
+   Bool spellpower;              /* Display spellpower for spells we cast? */
    Bool bounce;                  /* Display player "bouncing" animation? */
    Bool toolbar;                 /* Display toolbar? */
 

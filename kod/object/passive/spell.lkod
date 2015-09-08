@@ -97,7 +97,7 @@ spell_trance_break = de \
 spell_disabled = de \
    "~g~BEine unbekannte Kraft raubt Dir die Zauberworte aus der Kehle bevor "
    "Du sie ganz aussprechen kannst."
-spell_display_spellpower = de "Zauberkraft für ~k~B%s~n ist ~k~B%i~n."
+spell_display_spellpower = de "Zauberkraft für %s ist ~b%i~n."
 no_line_of_sight = de "Deine schlechte Sicht macht es noch schwerer zu Zaubern"
 spell_meditate_ratio_rsc = de \
    "\n\nEs kostet dich %i Trainings Punkte um diesen Zauber zu verbessern."

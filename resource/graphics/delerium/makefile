@@ -21,7 +21,7 @@ all:
          @$(CP) %j $(OUTDIR) >nul 2>&1
 
 clean:
-   @-for %i in (*.bgf) do @del $(OUTDIR)\%i >nul
+   @-for %i in (*.bgf) do @if EXIST $(OUTDIR)\%i @del $(OUTDIR)\%i >nul
    @-for %i in ($(DIRS)) do @if EXIST %i \
       @echo Making clean in %i & cd %i & (@for %j in (*.bgf) do \
          @if EXIST $(OUTDIRSUB)\%j @del $(OUTDIRSUB)\%j >nul ) & cd..

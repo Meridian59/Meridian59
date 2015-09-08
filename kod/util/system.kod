@@ -548,8 +548,6 @@ messages:
       poHolder1 = Create(&Holder);
       poHolder2 = Create(&Holder);
 
-      Send(self,@RecalcLightAndWeather);
-
       poMoney = Create(&Money,#number=1);
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);

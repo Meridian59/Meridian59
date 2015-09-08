@@ -1,12 +1,5 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
-// All rights reserved.
-//
-// This software is distributed under a license that is described in
-// the LICENSE file that accompanies it.
-//
-// Meridian is a registered trademark.
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by admin.rc
 //
 #define IDD_ADMIN                       101
@@ -60,6 +53,7 @@
 #define IDC_FINEROWEDIT                 1045
 #define IDC_FINECOLEDIT                 1046
 #define IDC_TELEPORT                    1047
+#define IDC_TABLE                       1048
 #define IDC_INVALIDATE                  1058
 #define IDC_STATIC                      -1
 

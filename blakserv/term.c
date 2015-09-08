@@ -84,7 +84,7 @@ const char * GetTagName(val_type val)
    case TAG_CLASS : return "CLASS";
    case TAG_MESSAGE : return "MESSAGE";
    case TAG_DEBUGSTR : return "DEBUGSTR";
-   case TAG_TABLE : return "TABLE";
+   case TAG_TABLE : return "HASHTABLE";
    case TAG_OVERRIDE : return "OVERRIDE";
    case TAG_INVALID : return "INVALID";
    default :

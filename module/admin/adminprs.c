@@ -60,6 +60,7 @@ static AdminType type_table[] = {
 { "STRING",      TAG_STRING,    IDC_STRING,   },
 { "CLASS",       TAG_CLASS,     IDC_CLASS,    },
 { "MESSAGE",     TAG_MESSAGE,   0,            },
+{ "HASHTABLE",   TAG_TABLE,     IDC_TABLE,    },
 { NULL,          0,             0,            },
 };
 
@@ -371,6 +372,11 @@ void AdminShowProperty(int index)
    case TAG_STRING:
       sprintf(command, "show string %s", value);
       SendMessage(hAdminDlg, BK_SENDCMD, 0, (LPARAM) command);
+      break;
+
+   case TAG_TABLE:
+      sprintf(command, "show table %s", value);
+      SendMessage(hAdminDlg, BK_SENDCMD, 0, (LPARAM)command);
       break;
    }
 }

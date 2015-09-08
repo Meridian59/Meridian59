@@ -9,10 +9,10 @@
  * table.c
  *
 
- This module supports hash tables in kod.
-
- It is currently quite primitive--doesn't work over garbage collects,
- and is not saved.
+ This module supports hash tables in kod. It keeps a dynamically sized
+ array of tables, which is GC'ed with the other kod data structures.
+ Hash nodes are allocated as needed, and key/data vals are saved/loaded.
+ Tables will resize when they become 50% full to avoid collisions.
  
  */
 

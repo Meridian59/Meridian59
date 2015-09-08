@@ -13,6 +13,8 @@
 #ifndef _NAMEID_H
 #define _NAMEID_H
 
+#define INIT_NAMEID_NODES 32768
+
 typedef struct nameid_struct
 {
    char *name;
@@ -23,7 +25,10 @@ typedef struct nameid_struct
 void InitNameID(void);
 void ResetNameID(void);
 void CreateNameID(char *parm_name,int parm_id);
+nameid_node * GetNameIDNode(int id);
 int GetIDByName(const char *name);
 char * GetNameByID(int id);
+int GetMaxNameID(void);
+void ForEachNameID(void(*callback_func)(nameid_node *n));
 
 #endif

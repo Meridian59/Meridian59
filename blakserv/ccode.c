@@ -3442,6 +3442,17 @@ int C_AddTableEntry(int object_id,local_var_type *local_vars,
 	key_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
 	
+   // Can't use key value that might change. Strings are okay,
+   // because the string itself is hashed.
+   if (key_val.v.tag == TAG_OBJECT || key_val.v.tag == TAG_LIST
+      || key_val.v.tag == TAG_TIMER || key_val.v.tag == TAG_TABLE
+      || key_val.v.tag == TAG_CLASS)
+   {
+      bprintf("C_AddTableEntry can't use key id %i,%i\n",
+         key_val.v.tag, key_val.v.data);
+      return NIL;
+   }
+
 	data_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
 		normal_parm_array[2].value);
 	
@@ -3506,7 +3517,7 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 		bprintf("C_DeleteTable can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
-	//bprintf("C_DeleteTable is deprecated, tables are deleted at GC.\n");
+	bprintf("C_DeleteTable is deprecated, tables are deleted at GC.\n");
 	//DeleteTable(table_val.v.data);
 	return NIL;
 }

@@ -63,9 +63,6 @@ typedef struct admin_table_struct
 } admin_table_type;
 
 void AdminSendBufferList(void);
-
-void aprintf(const char *fmt,...);
-void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
 void DoAdminCommand(char *admin_command);
@@ -162,6 +159,9 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
                     int num_blak_parm,parm_node blak_parm[]);
 void AdminShowName(int session_id,admin_parm_type parms[],
                    int num_blak_parm,parm_node blak_parm[]);
+void AdminShowNameIDs(int session_id, admin_parm_type parms[],
+                      int num_blak_parm, parm_node blak_parm[]);
+void AdminPrintNameID(nameid_node *n);
 void AdminShowReferences(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[]);
 void AdminShowReferencesEachObject(object_node *o);
@@ -325,6 +325,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",       
 	"Show info about class & message" },
 	{ AdminShowName,          {R,N}, F, A|M, NULL, 0, "name",          "Show object of user name" },
+   { AdminShowNameIDs,       {N},   F, A|M, NULL, 0, "nameids",       "Show all name ids (message/parms)" },
 	{ AdminShowObject,        {I,N}, F, A|M, NULL, 0, "object",        "Show one object by id" },
 	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",       "Show all packages loaded" },
 	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
@@ -553,20 +554,6 @@ admin_table_type admin_main_table[] =
 
 int admin_session_id; /* set by TryAdminCommand each time */
 static buffer_node *blist; /* same */
-
-void aprintf(const char *fmt,...)
-{
-	char s[BUFFER_SIZE];
-	va_list marker;
-	
-	va_start(marker,fmt);
-	vsnprintf(s,sizeof(s),fmt,marker);
-	va_end(marker);
-	
-	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
-	
-	AdminBufferSend(s,strlen(s));
-}
 
 char *to_lowercase(char *s)
 {
@@ -2571,6 +2558,24 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
 	   
 }
 
+int nameid_count;
+void AdminShowNameIDs(int session_id, admin_parm_type parms[],
+                      int num_blak_parm, parm_node blak_parm[])
+{
+   nameid_count = 0;
+   ForEachNameID(AdminPrintNameID);
+   aprintf("Number of name IDs is %i.\n", nameid_count);
+}
+
+void AdminPrintNameID(nameid_node *n)
+{
+   if (n)
+   {
+      aprintf("ID: %-5i Name: %s\n", n->id, n->name);
+      ++nameid_count;
+   }
+}
+
 void AdminShowName(int session_id,admin_parm_type parms[],
                    int num_blak_parm,parm_node blak_parm[])                   
 {
@@ -4550,35 +4555,15 @@ void AdminReloadSystem(int session_id,admin_parm_type parms[],
 	
 	aprintf("Unloading game, kodbase, and .bof ... ");
 	AdminSendBufferList();
-	ResetAdminConstants();
-	ResetUser();
-	ResetString();
-	ResetRoomData();
-	ResetLoadMotd();
-	ResetLoadBof();
-	ResetDLlist();
-	ResetNameID();
-	ResetResource();
-	ResetTimer();
-	ResetList();
-	ResetTables();
-	ResetObject();
-	ResetMessage();
-	ResetClass();
+
 	aprintf("done.\n");
 	
 	aprintf("Loading game, kodbase, and .bof ... ");
 	AdminSendBufferList();
-	
-	LoadMotd();
-	LoadBof();
-	LoadRsc();
-	
-	LoadKodbase();
-	
-	UpdateSecurityRedbook();
-	
-	LoadAdminConstants();
+
+   // Reload game data.
+   MainReloadGameData();
+
 	/* can't reload accounts because sessions have pointers to accounts */
 	if (!LoadAllButAccount()) 
 		eprintf("AdminReload couldn't load game.  You are dead.\n");

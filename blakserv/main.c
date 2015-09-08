@@ -172,6 +172,39 @@ void MainExitServer()
 	DeleteAllBlocks();
 }
 
+// This function keeps the necessary calls to reset and reinit game data
+// in one place, to reduce the chance of errors if modifying it. Used by
+// the interface and admin reload commands.
+void MainReloadGameData()
+{
+   // Reset data.
+   ResetAdminConstants();
+   ResetUser();
+   ResetString();
+   ResetRoomData();
+   ResetLoadMotd();
+   ResetLoadBof();
+   ResetDLlist();
+   ResetNameID();
+   ResetResource();
+   ResetTimer();
+   ResetList();
+   ResetTables();
+   ResetObject();
+   ResetMessage();
+   ResetClass();
+
+   // Reload data.
+   InitNameID();
+   LoadMotd();
+   LoadBof();
+   LoadRsc();
+   LoadKodbase();
+
+   UpdateSecurityRedbook();
+   LoadAdminConstants();
+}
+
 char * GetLastErrorStr()
 {
 #ifdef BLAK_PLATFORM_WINDOWS

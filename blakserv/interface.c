@@ -944,6 +944,9 @@ void InterfaceCheckChannels()
 		case CHANNEL_E :
 			hwndList = GetDlgItem(HWND_CHANNEL,IDC_ERROR_LIST);
 			break;
+      case CHANNEL_A:
+         hwndList = NULL;
+         break;
 		default:
 			hwndList = GetDlgItem(HWND_CHANNEL,IDC_DEBUG_LIST);
 			break;
@@ -1006,31 +1009,9 @@ void InterfaceReloadSystem()
 	GarbageCollect();
 	SaveAll();
 	
-	ResetAdminConstants();
-	ResetUser();
-	ResetString();
-	ResetRoomData();
-	ResetLoadMotd();
-	ResetLoadBof();
-	ResetDLlist();
-	ResetNameID();
-	ResetResource();
-	ResetTimer();
-	ResetList();
-	ResetTables();
-	ResetObject();
-	ResetMessage();
-	ResetClass();
+	// Reload game data.
+	MainReloadGameData();
 	
-	LoadMotd();
-	LoadBof();
-	LoadRsc();
-	
-	LoadKodbase();
-	
-	UpdateSecurityRedbook();
-	
-	LoadAdminConstants();
 	/* can't reload accounts because sessions have pointers to accounts */
 	if (!LoadAllButAccount()) 
 		eprintf("InterfaceReloadSystem couldn't load game.  You are dead.\n");

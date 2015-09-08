@@ -16,6 +16,7 @@
 void SendSessionAdminText(int session_id,const char *fmt,...);
 void TryAdminCommand(int session_id,char *admin_command);
 
+void AdminBufferSend(char *buf,int len_buf);
 
 void AdminDeleteEachUserObject(user_node *u);
 

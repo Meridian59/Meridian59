@@ -127,6 +127,7 @@ enum
 #define ERROR_FILE "error.txt"
 #define LOG_FILE "log.txt"
 #define GOD_FILE "god.txt"
+#define ADMIN_FILE "admin.txt"
 
 #define KODBASE_FILE "kodbase.txt"
 
@@ -223,6 +224,7 @@ typedef struct
 
 /* in main.c */
 extern DWORD main_thread_id;
+void MainReloadGameData();
 char * GetLastErrorStr();
 #define WM_BLAK_MAIN_READ           (WM_APP + 4000)
 #define WM_BLAK_MAIN_RECALIBRATE    (WM_APP + 4001)

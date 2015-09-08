@@ -11,7 +11,7 @@ OBJS = \
 SOURCEDIR = $(MAKEBGFDIR)
 LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 
-LIBS = gdi32.lib zdll.lib setargv
+LIBS = gdi32.lib zlib.lib setargv
 
 all: makedirs $(OUTDIR)\makebgf.exe
 

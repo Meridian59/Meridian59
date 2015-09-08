@@ -72,8 +72,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>../include/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../include/libarchive</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION;LIBARCHIVE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ShowIncludes>false</ShowIncludes>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
@@ -83,7 +83,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>comctl32.lib;wininet.lib;advapi32.lib;archive.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;wininet.lib;advapi32.lib;libarchive.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <IgnoreSpecificDefaultLibraries>libc</IgnoreSpecificDefaultLibraries>
@@ -101,8 +101,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>../include/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../include/libarchive</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NO_WARN_MBCS_MFC_DEPRECATION;LIBARCHIVE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <ExceptionHandling>SyncCThrow</ExceptionHandling>
@@ -118,7 +118,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>comctl32.lib;wininet.lib;advapi32.lib;archive.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;wininet.lib;advapi32.lib;libarchive.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../lib;</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <IgnoreSpecificDefaultLibraries>libc</IgnoreSpecificDefaultLibraries>

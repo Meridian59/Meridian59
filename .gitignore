@@ -13,6 +13,9 @@ rscmerge.exe
 rscprint.exe
 meridian.lib
 rscload.lib
+libpng.lib
+libarchive.lib
+zlib.lib
 bc.exe
 blakdeco.exe
 blakdiff.exe
@@ -200,4 +203,3 @@ pip-log.txt
 /roomedit/windeu32.log
 /roomedit/owl-6.34/lib
 *.roo~
-/lib/libpng.lib

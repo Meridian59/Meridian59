@@ -3,7 +3,7 @@ TOPDIR=..
 
 SOURCEDIR = $(TOPDIR)\club
 
-CLUBLIBS = user32.lib gdi32.lib archive.lib comctl32.lib wininet.lib
+CLUBLIBS = user32.lib gdi32.lib advapi32.lib libarchive.lib zlib.lib comctl32.lib wininet.lib
 
 all: makedirs $(OUTDIR)\club.exe
 

@@ -24,8 +24,6 @@ OBJS = \
 
 SOURCEDIR = $(LIBPNGDIR)
 
-LIBS = zdll.lib
-
 all: makedirs $(BLAKLIBDIR)\libpng.lib
 
 $(BLAKLIBDIR)\libpng.lib: $(OBJS)

@@ -13,6 +13,11 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 
+#define INIT_TABLE_NODES (18000)
+#define MIN_TABLE_SIZE (23)
+#define MAX_TABLE_SIZE (19463)
+#define DEFAULT_TABLE_SIZE (73)
+
 typedef struct hash_struct
 {
    val_type key_val;
@@ -22,14 +27,15 @@ typedef struct hash_struct
 
 typedef struct table_struct
 {
-   int table_id;
    int size;
+   int num_entries;
    hash_node **table;
-   struct table_struct *next;
+   int garbage_ref;
 } table_node;
 
-void InitTable(void);
-void ResetTable(void);
+void InitTables(void);
+int GetTablesUsed(void);
+void ResetTables(void);
 int CreateTable(int size);
 table_node * GetTableByID(int table_id);
 void DeleteTable(int table_id);
@@ -38,6 +44,8 @@ int GetTableEntry(int table_id,val_type key_val);
 void DeleteTableEntry(int table_id,val_type key_val);
 
 unsigned int GetBufferHash(const char *buf,unsigned int len_buf);
+void ForEachTable(void (*callback_func)(table_node *t, int table_id));
+void MoveTable(int dest_id,int source_id);
+void SetNumTables(int new_num_tables);
 
 #endif
-

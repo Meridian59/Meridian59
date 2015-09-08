@@ -83,6 +83,8 @@ const char * GetTagName(val_type val)
    case TAG_STRING : return "STRING";
    case TAG_CLASS : return "CLASS";
    case TAG_MESSAGE : return "MESSAGE";
+   case TAG_DEBUGSTR : return "DEBUGSTR";
+   case TAG_TABLE : return "HASHTABLE";
    case TAG_OVERRIDE : return "OVERRIDE";
    case TAG_INVALID : return "INVALID";
    default :
@@ -164,7 +166,8 @@ int GetTagNum(const char *tag_str)
       return TAG_TIMER;
    if (ch == 'Q')
       return TAG_TEMP_STRING;
-
+   if (ch == 'H')
+      return TAG_TABLE;
    if (0 == stricmp(tag_str,"INVALID"))
       return TAG_INVALID;
    if (ch == 'I')

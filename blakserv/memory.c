@@ -160,6 +160,59 @@ static void FreeCHK(void*ptr)
 	
 }
 
+#ifndef NDEBUG
+static void *CallocCHK(size_t count, size_t size, const char*filename, int linenumber)
+#else
+static void *CallocCHK(size_t count, size_t size)
+#endif
+{
+   unsigned long *p;
+   unsigned char *tmp;
+
+#if defined BLAK_PLATFORM_WINDOWS && !defined NDEBUG
+   tmp = (unsigned char*)_calloc_dbg(count, (sizeof(unsigned long) * 3), _NORMAL_BLOCK, filename, linenumber);
+#else
+   tmp = (unsigned char *)calloc(count, size);
+#endif
+
+
+   if (tmp == NULL) {
+      return NULL;
+   }
+
+   p = (unsigned long *)tmp;
+
+#ifdef MDEBUG
+   printf("Size Req: %d   Size Got: %d\n", count * size, count * (size + (sizeof(unsigned long) * 3)));
+   printf("Block at: 0x%lx\n", p);
+#endif
+
+   /* store actual size of allocated block */
+   p[0] = size;
+
+   /* store our check token */
+   p[1] = MCHK_START;
+
+   p = (unsigned long*)(tmp + (count * (size + (sizeof(unsigned long) * 2))));
+
+   p[0] = MCHK_END;
+
+   tmp += 8;
+
+#ifdef MDEBUG
+   printf("End:      0x%lx \n", p);
+   printf("Actual:   0x%lx \n", tmp);
+#endif
+
+   /*
+   Charlie:
+   Boundschecker 6.604 will complain about memory being leaked from this scope,
+   its half right, if theres two messages about it, then it really is
+   being leaked
+   */
+   return tmp;
+}
+
 void *ReallocCHK(int malloc_id, void *p,size_t size, size_t old_size )
 {
 
@@ -196,7 +249,7 @@ const char *memory_stat_names[] =
 		"List", "Object properties",
 		"Configuration", "Rooms",
 		"Admin constants", "Buffers", "Game loading",
-		"Tables", "Socket blocks",
+		"Tables", "Socket blocks", "Game saving",
 		
 		NULL
 };
@@ -252,7 +305,7 @@ void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linen
 {
 	void *ptr;
 	
-	if (size==0)
+	if (size == 0)
 	{
 		eprintf("AllocateMemoryDebug zero byte memory block from %s at %d\n",filename,linenumber);
 	}
@@ -283,19 +336,62 @@ void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linen
 		eprintf("AllocateMemory couldn't allocate %i bytes (id %i)\n",size,malloc_id);
 		FatalError("Memory allocation failure");
 	}
-	if (InMainLoop())
+	/*if (InMainLoop())
 	{
-		/* dprintf("M0x%08x %i %i\n",ptr,malloc_id,size); */
-	}
+		dprintf("M0x%08x %i %i\n",ptr,malloc_id,size);
+	}*/
 	return ptr;
+}
+
+// Same as AllocateMemoryDebug, except calls calloc() for use in arrays. Faster than calling
+// malloc and setting the array to NULL.
+void * AllocateMemoryCallocDebug(int malloc_id, int count, int size, const char *filename, int linenumber)
+{
+   void *ptr;
+
+   if (size == 0 || count == 0)
+   {
+      eprintf("AllocateMemoryCallocDebug zero byte memory block from %s at %d\n",
+         filename, linenumber);
+   }
+
+   if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
+      eprintf("AllocateMemoryCallocDebug allocating memory of unknown type %i\n", malloc_id);
+   else
+      memory_stat.allocated[malloc_id] += (count * size);
+#ifndef NMEMDEBUG
+
+
+#ifndef NDEBUG
+   ptr = CallocCHK(count * size, filename, linenumber);
+#else
+   ptr = CallocCHK(count * size);
+#endif
+
+#else // NMEMDEUG
+
+   ptr = calloc(count, size);
+
+#endif
+
+   if (ptr == NULL)
+   {
+      /* assume channels started up if allocation error, which might not be true,
+      but if so, then there are more serious problems! */
+      eprintf("AllocateMemoryCallocDebug couldn't allocate %i bytes (id %i)\n",
+         size, malloc_id);
+      FatalError("Memory allocation failure");
+   }
+
+   return ptr;
 }
 
 void FreeMemoryX(int malloc_id,void **ptr,int size)
 {
-	if (InMainLoop())
+	/*if (InMainLoop())
 	{
-		/* dprintf("F0x%08x %i %i\n",ptr,malloc_id,size); */
-	}
+		dprintf("F0x%08x %i %i\n",ptr,malloc_id,size);
+	}*/
 
 	if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
 		eprintf("FreeMemory freeing memory of unknown type %i\n",malloc_id);
@@ -317,10 +413,10 @@ void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 {
 	void* new_mem;
 
-	if (InMainLoop())
+	/*if (InMainLoop())
 	{
-		/*dprintf("R0x%08x %i %i %i\n",ptr,malloc_id,old_size,new_size); */
-	}
+		dprintf("R0x%08x %i %i %i\n",ptr,malloc_id,old_size,new_size);
+	}*/
 	if (malloc_id < 0 || malloc_id >= MALLOC_ID_NUM)
 		eprintf("ResizeMemory resizing memory of unknown type %i\n",malloc_id);
 	else
@@ -340,4 +436,3 @@ void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 
 	return new_mem;
 }
-

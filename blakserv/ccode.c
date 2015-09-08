@@ -1940,7 +1940,7 @@ int C_IsTimer(int object_id,local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 	
-	if (var_check.v.tag == TAG_TIMER || var_check.v.tag == TAG_NIL)
+	if (var_check.v.tag == TAG_TIMER)
 		ret_val.v.data = True;
 	else
 		ret_val.v.data = False;
@@ -3399,40 +3399,64 @@ int C_Bound(int object_id,local_var_type *local_vars,
 }
 
 int C_CreateTable(int object_id,local_var_type *local_vars,
-				  int num_normal_parms,parm_node normal_parm_array[],
-				  int num_name_parms,parm_node name_parm_array[])
+                  int num_normal_parms,parm_node normal_parm_array[],
+                  int num_name_parms,parm_node name_parm_array[])
 {
-	val_type ret_val;
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = CreateTable(2999);
-	
-	return ret_val.int_val;
-	
+   val_type ret_val, size_val;
+
+   if (num_normal_parms == 0)
+      size_val.v.data = 73;
+   else
+   {
+      size_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+         normal_parm_array[0].value);
+      if (size_val.v.tag != TAG_INT)
+      {
+         bprintf("C_CreateTable can't use non-int %i,%i for size\n",
+            size_val.v.tag, size_val.v.data);
+         size_val.v.data = 73;
+      }
+   }
+
+   ret_val.v.tag = TAG_TABLE;
+   ret_val.v.data = CreateTable(size_val.v.data);
+
+   return ret_val.int_val;
 }
 
 int C_AddTableEntry(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val,key_val,data_val;
+	val_type table_val,key_val,data_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_AddTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_AddTableEntry can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
 	key_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
 	
+   // Can't use key value that might change. Strings are okay,
+   // because the string itself is hashed.
+   if (key_val.v.tag == TAG_OBJECT || key_val.v.tag == TAG_LIST
+      || key_val.v.tag == TAG_TIMER || key_val.v.tag == TAG_TABLE
+      || key_val.v.tag == TAG_CLASS)
+   {
+      bprintf("C_AddTableEntry can't use key id %i,%i\n",
+         key_val.v.tag, key_val.v.data);
+      return NIL;
+   }
+
 	data_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
 		normal_parm_array[2].value);
 	
-	InsertTable(int_val.v.data,key_val,data_val);
+	InsertTable(table_val.v.data,key_val,data_val);
 	return NIL;
 }
 
@@ -3440,21 +3464,21 @@ int C_GetTableEntry(int object_id,local_var_type *local_vars,
 					int num_normal_parms,parm_node normal_parm_array[],
 					int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val,key_val,ret_val;
+	val_type table_val,key_val,ret_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_GetTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_GetTableEntry can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
 	key_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
 	
-	ret_val.int_val = GetTableEntry(int_val.v.data,key_val);
+	ret_val.int_val = GetTableEntry(table_val.v.data,key_val);
 	return ret_val.int_val;
 }
 
@@ -3462,21 +3486,21 @@ int C_DeleteTableEntry(int object_id,local_var_type *local_vars,
 					   int num_normal_parms,parm_node normal_parm_array[],
 					   int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val,key_val;
+	val_type table_val,key_val;
 	
 	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_DeleteTableEntry can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_DeleteTableEntry can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
 	
 	key_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
 	
-	DeleteTableEntry(int_val.v.data,key_val);
+	DeleteTableEntry(table_val.v.data,key_val);
 	return NIL;
 }
 
@@ -3484,21 +3508,38 @@ int C_DeleteTable(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],
 				  int num_name_parms,parm_node name_parm_array[])
 {
-	val_type int_val;
+	val_type table_val;
 	
-	
-	int_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+	table_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
-	if (int_val.v.tag != TAG_INT)
+	if (table_val.v.tag != TAG_TABLE)
 	{
-		bprintf("C_DeleteTable can't use table id %i,%i\n",int_val.v.tag,int_val.v.data);
+		bprintf("C_DeleteTable can't use table id %i,%i\n",table_val.v.tag,table_val.v.data);
 		return NIL;
 	}
-	
-	DeleteTable(int_val.v.data);
+	bprintf("C_DeleteTable is deprecated, tables are deleted at GC.\n");
+	//DeleteTable(table_val.v.data);
 	return NIL;
 }
 
+int C_IsTable(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   val_type check_val, ret_val;
+
+   ret_val.v.tag = TAG_INT;
+
+   check_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+
+   if (check_val.v.tag == TAG_TABLE && GetTableByID(check_val.v.data))
+      ret_val.v.data = True;
+   else
+      ret_val.v.data = False;
+
+   return ret_val.int_val;
+}
 
 int C_RecycleUser(int object_id,local_var_type *local_vars,
 				  int num_normal_parms,parm_node normal_parm_array[],

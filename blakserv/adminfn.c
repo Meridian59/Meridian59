@@ -63,9 +63,6 @@ typedef struct admin_table_struct
 } admin_table_type;
 
 void AdminSendBufferList(void);
-
-void aprintf(const char *fmt,...);
-void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
 void DoAdminCommand(char *admin_command);
@@ -162,10 +159,14 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
                     int num_blak_parm,parm_node blak_parm[]);
 void AdminShowName(int session_id,admin_parm_type parms[],
                    int num_blak_parm,parm_node blak_parm[]);
+void AdminShowNameIDs(int session_id, admin_parm_type parms[],
+                      int num_blak_parm, parm_node blak_parm[]);
+void AdminPrintNameID(nameid_node *n);
 void AdminShowReferences(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[]);
 void AdminShowReferencesEachObject(object_node *o);
-void AdminShowReferencesEachList(int list_id);
+void AdminShowReferencesEachList(int list_id, int parent_id);
+void AdminShowReferencesEachTable(int table_id, int parent_id);
 void AdminShowInstances(int session_id,admin_parm_type parms[],
                         int num_blak_parm,parm_node blak_parm[]);
 void AdminShowMatches(int session_id,admin_parm_type parms[],
@@ -324,6 +325,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",       
 	"Show info about class & message" },
 	{ AdminShowName,          {R,N}, F, A|M, NULL, 0, "name",          "Show object of user name" },
+   { AdminShowNameIDs,       {N},   F, A|M, NULL, 0, "nameids",       "Show all name ids (message/parms)" },
 	{ AdminShowObject,        {I,N}, F, A|M, NULL, 0, "object",        "Show one object by id" },
 	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",       "Show all packages loaded" },
 	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
@@ -334,6 +336,7 @@ admin_table_type admin_show_table[] =
 	{ AdminShowStatus,        {N},   F, A|M, NULL, 0, "status",        "Show system status" },
 	{ AdminShowString,        {I,N}, F, A|M, NULL, 0, "string",        "Show one string by string id" },
 	{ AdminShowSysTimers,     {N},   F, A|M, NULL, 0, "systimers",     "Show system timers" },
+   { AdminShowTable,         {I,N}, F, A|M, NULL, 0, "hashtable",     "Show a hash table" },
 	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "table",         "Show a hash table" },
 	{ AdminShowTimer,         {I},   F, A|M, NULL, 0, "timer",        "Show one timer by id" },
 	{ AdminShowTimers,        {N},   F, A|M, NULL, 0, "timers",        "Show all timers" },
@@ -552,20 +555,6 @@ admin_table_type admin_main_table[] =
 
 int admin_session_id; /* set by TryAdminCommand each time */
 static buffer_node *blist; /* same */
-
-void aprintf(const char *fmt,...)
-{
-	char s[BUFFER_SIZE];
-	va_list marker;
-	
-	va_start(marker,fmt);
-	vsnprintf(s,sizeof(s),fmt,marker);
-	va_end(marker);
-	
-	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
-	
-	AdminBufferSend(s,strlen(s));
-}
 
 char *to_lowercase(char *s)
 {
@@ -1382,6 +1371,7 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	
 	aprintf("----\n");
 	aprintf("Used %i list nodes\n",GetListNodesUsed());
+	aprintf("Used %i tables\n",GetTablesUsed());
 	aprintf("Used %i object nodes\n",GetObjectsUsed());
 	aprintf("Used %i string nodes\n",GetStringsUsed());
 	aprintf("Watching %i active timers\n",GetNumActiveTimers());
@@ -2159,6 +2149,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETTABLEENTRY : strcpy(c_name, "GetTableEntry"); break;
 		case DELETETABLEENTRY : strcpy(c_name, "DeleteTableEntry"); break;
 		case DELETETABLE : strcpy(c_name, "DeleteTable"); break;
+		case ISTABLE : strcpy(c_name, "IsTable"); break;
 		case ISOBJECT : strcpy(c_name, "IsObject"); break;
 		case RECYCLEUSER : strcpy(c_name, "RecycleUser"); break;
 		case RANDOM : strcpy(c_name, "Random"); break;
@@ -2543,8 +2534,12 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
 		aprintf("Cannot find table %i.\n",table_id);
 		return;
 	}
-	
-	aprintf("Table %i (size %i)\n",tn->table_id,tn->size);
+   if (tn->table == NULL)
+   {
+      aprintf("Table %i is empty.\n", table_id);
+      return;
+   }
+	aprintf("Table %i (size %i)\n",table_id,tn->size);
 	aprintf("----------------------------------------------------------------------\n");
 	for (i=0;i<tn->size;i++)
 	{
@@ -2562,6 +2557,24 @@ void AdminShowTable(int session_id,admin_parm_type parms[],
 		}
 	}
 	   
+}
+
+int nameid_count;
+void AdminShowNameIDs(int session_id, admin_parm_type parms[],
+                      int num_blak_parm, parm_node blak_parm[])
+{
+   nameid_count = 0;
+   ForEachNameID(AdminPrintNameID);
+   aprintf("Number of name IDs is %i.\n", nameid_count);
+}
+
+void AdminPrintNameID(nameid_node *n)
+{
+   if (n)
+   {
+      aprintf("ID: %-5i Name: %s\n", n->id, n->name);
+      ++nameid_count;
+   }
 }
 
 void AdminShowName(int session_id,admin_parm_type parms[],
@@ -2672,15 +2685,26 @@ void AdminShowReferencesEachObject(object_node *o)
 		}
 		else if (o->p[i].val.v.tag == TAG_LIST)
 		{
-			AdminShowReferencesEachList(o->p[i].val.v.data);
+			AdminShowReferencesEachList(o->p[i].val.v.data, -1);
 		}
+      else if (o->p[i].val.v.tag == TAG_TABLE)
+      {
+         AdminShowReferencesEachTable(o->p[i].val.v.data, -1);
+      }
 	}
 }
 
-void AdminShowReferencesEachList(int list_id)
+void AdminShowReferencesEachList(int list_id, int parent_id)
 {
 	list_node *l;
-	
+
+   if (list_id == parent_id)
+   {
+      eprintf("AdminShowReferencesEachList found self-referencing list %i inside container %i!\n",
+         list_id, parent_id);
+      return;
+   }
+
 	for(;;)
 	{
 		l = GetListNodeByID(list_id);
@@ -2699,13 +2723,53 @@ void AdminShowReferencesEachList(int list_id)
 			admin_show_references_data_str);
 		
 		if (l->first.v.tag == TAG_LIST)
-			AdminShowReferencesEachList(l->first.v.data);
-		
+			AdminShowReferencesEachList(l->first.v.data, list_id);
+      else if (l->first.v.tag == TAG_TABLE && l->first.v.data != parent_id)
+         AdminShowReferencesEachTable(l->first.v.data, list_id);
 		if (l->rest.v.tag != TAG_LIST)
 			break;
 		
 		list_id = l->rest.v.data;
 	}
+}
+
+void AdminShowReferencesEachTable(int table_id, int parent_id)
+{
+   table_node *t;
+   hash_node *hn;
+
+   if (table_id == parent_id)
+   {
+      eprintf("AdminShowReferencesEachTable found self-referencing table %i inside container %i!\n",
+         table_id, parent_id);
+      return;
+   }
+
+   t = GetTableByID(table_id);
+   if (t == NULL)
+   {
+      eprintf("AdminShowReferencesEachTable can't get TABLE %i\n", table_id);
+      return;
+   }
+   for (int i = 0; i < t->size; ++i)
+   {
+      hn = t->table[i];
+      while (hn != NULL)
+      {
+         if (hn->data_val.int_val == admin_show_references_value.int_val)
+            aprintf(": OBJECT %i CLASS %s %s = TABLE containing %s %s\n",
+            admin_show_references_current_object,
+            admin_show_references_current_class->class_name,
+            admin_show_references_current_prop,
+            admin_show_references_tag_str,
+            admin_show_references_data_str);
+         if (hn->data_val.v.tag == TAG_LIST && hn->data_val.v.data != parent_id)
+            AdminShowReferencesEachList(hn->data_val.v.data, table_id);
+         else if (hn->data_val.v.tag == TAG_TABLE)
+            AdminShowReferencesEachTable(hn->data_val.v.data, table_id);
+         hn = hn->next;
+      }
+   }
 }
 
 /* in parsecli.c */
@@ -4492,34 +4556,15 @@ void AdminReloadSystem(int session_id,admin_parm_type parms[],
 	
 	aprintf("Unloading game, kodbase, and .bof ... ");
 	AdminSendBufferList();
-	ResetAdminConstants();
-	ResetUser();
-	ResetString();
-	ResetRoomData();
-	ResetLoadMotd();
-	ResetLoadBof();
-	ResetDLlist();
-	ResetNameID();
-	ResetResource();
-	ResetTimer();
-	ResetList();
-	ResetObject();
-	ResetMessage();
-	ResetClass();
+
 	aprintf("done.\n");
 	
 	aprintf("Loading game, kodbase, and .bof ... ");
 	AdminSendBufferList();
-	
-	LoadMotd();
-	LoadBof();
-	LoadRsc();
-	
-	LoadKodbase();
-	
-	UpdateSecurityRedbook();
-	
-	LoadAdminConstants();
+
+   // Reload game data.
+   MainReloadGameData();
+
 	/* can't reload accounts because sessions have pointers to accounts */
 	if (!LoadAllButAccount()) 
 		eprintf("AdminReload couldn't load game.  You are dead.\n");
@@ -4562,6 +4607,7 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	ResetString();
 	ResetTimer();
 	ResetList();
+	ResetTables();
 	ResetObject();
 	aprintf("done.\n");
 	AdminSendBufferList();

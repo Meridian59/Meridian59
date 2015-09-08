@@ -9,121 +9,107 @@
  * table.c
  *
 
- This module supports hash tables in kod.
-
- It is currently quite primitive--doesn't work over garbage collects,
- and is not saved.
+ This module supports hash tables in kod. It keeps a dynamically sized
+ array of tables, which is GC'ed with the other kod data structures.
+ Hash nodes are allocated as needed, and key/data vals are saved/loaded.
+ Tables will resize when they become 50% full to avoid collisions.
  
  */
 
 #include "blakserv.h"
 
 table_node *tables;
-int next_table_id;
-
+int num_tables, max_num_tables;
 static char buf0[LEN_MAX_CLIENT_MSG+1];
 
 /* local function prototypes */
 
-void FreeTable(table_node *tn);
+int AllocateTable(void);
 hash_node * AllocateTableEntry(val_type key_val,val_type data_val);
-
+void ResizeTable(int table_id);
 Bool EqualTableEntry(val_type s1_val,val_type s2_val);
 unsigned int GetTableHash(val_type val);
 
 
-void InitTable()
+void InitTables()
 {
-   tables = NULL;
-   next_table_id = 1;
-
-/*   
-   {
-      int t;
-      val_type k,d;
-
-      t = CreateTable(3299);
-
-      k.v.tag = TAG_RESOURCE;
-      d.v.tag = TAG_OBJECT;
-
-
-      k.v.data = 1000003;
-      d.v.data = 23;
-      InsertTable(t,k,d);
-      
-      k.v.data = 1000005;
-      d.v.data = 25;
-      InsertTable(t,k,d);
-      
-      k.v.data = 1000008;
-      d.v.data = 28;
-      InsertTable(t,k,d);
-
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000007;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000003;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000002;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      k.v.data = 1000005;
-      d.int_val = GetTableEntry(t,k);
-      dprintf("Key %i, %i yields %i, %i\n",k.v.tag,k.v.data,d.v.tag,d.v.data);
-
-      ResetTable();
-   }
-   */
+   num_tables = 0;
+   max_num_tables = INIT_TABLE_NODES;
+   tables = (table_node *)AllocateMemory(MALLOC_ID_TABLE,
+                              max_num_tables * sizeof(table_node));
 }
 
-void ResetTable()
+int GetTablesUsed(void)
 {
-   table_node *tn,*temp;
+   return num_tables;
+}
 
-   tn = tables;
-   while (tn != NULL)
+int AllocateTable(void)
+{
+   int old_nodes;
+   int hash_size = 0;
+
+   if (num_tables == max_num_tables)
    {
-      temp = tn->next;
-      FreeTable(tn);
-      tn = temp;
+      old_nodes = max_num_tables;
+      max_num_tables = max_num_tables + (INIT_TABLE_NODES / 2);
+
+      // Now have to get size of all table contents.
+      for (int i = 0; i < num_tables; ++i)
+         hash_size += (tables[i].size * sizeof(hash_node *));
+
+      tables = (table_node *)ResizeMemory(MALLOC_ID_TABLE, tables,
+         (old_nodes * sizeof(table_node)) + hash_size,
+         (max_num_tables * sizeof(table_node)) + hash_size);
+      lprintf("AllocateTable resized to %i tables\n",max_num_tables);
    }
-   tables = NULL;
-   /* next_table_id = 1; */
+
+   return num_tables++;
+}
+
+void ResetTables()
+{
+   int old_nodes;
+
+   for (int i = 0; i < num_tables; ++i)
+      DeleteTable(i);
+
+   num_tables = 0;
+   old_nodes = max_num_tables;
+   max_num_tables = INIT_TABLE_NODES;
+   tables = (table_node *)ResizeMemory(MALLOC_ID_TABLE, tables,
+      old_nodes * sizeof(table_node), max_num_tables * sizeof(table_node));
 }
 
 int CreateTable(int size)
 {
    table_node *tn;
-   int i;
-   
-   tn = (table_node *)AllocateMemory(MALLOC_ID_TABLE,sizeof(table_node));
-   tn->table_id = next_table_id++;
-   tn->size = size;
-   tn->table = (hash_node **)AllocateMemory(MALLOC_ID_TABLE,tn->size*sizeof(hash_node *));
+   int table_id;
 
-   for (i=0;i<tn->size;i++)
-      tn->table[i] = NULL;
-   
-   tn->next = tables;
-   tables = tn;
-   
-   return tn->table_id;
+   table_id = AllocateTable();
+   tn = GetTableByID(table_id);
+   if (size < MIN_TABLE_SIZE || size > MAX_TABLE_SIZE)
+   {
+      bprintf("CreateTable got out of bounds table size %i, resizing to %i\n",
+         size, DEFAULT_TABLE_SIZE);
+      size = DEFAULT_TABLE_SIZE;
+   }
+   tn->size = size;
+   tn->num_entries = 0;
+   tn->table = (hash_node **)AllocateMemoryCalloc(MALLOC_ID_TABLE, size,
+                                 sizeof(hash_node *));
+
+   return table_id;
 }
 
-void FreeTable(table_node *tn)
+void DeleteTable(int table_id)
 {
    hash_node *hn,*temp;
-   int i;
-   
-   for (i=0;i<tn->size;i++)
+   table_node *tn;
+
+   tn = GetTableByID(table_id);
+
+   for (int i = 0; i < tn->size; ++i)
    {
       hn = tn->table[i];
       while (hn != NULL)
@@ -132,58 +118,30 @@ void FreeTable(table_node *tn)
          FreeMemory(MALLOC_ID_TABLE,hn,sizeof(hash_node));
          hn = temp;
       }
+      tn->table[i] = NULL;
    }
-   
+
    FreeMemory(MALLOC_ID_TABLE,tn->table,tn->size*sizeof(hash_node *));
-   FreeMemory(MALLOC_ID_TABLE,tn,sizeof(table_node));
-}   
-
-void DeleteTable(int table_id)
-{
-   table_node *tn,*temp;
-
-   tn = tables;
-   if (tn->table_id == table_id)
-   {
-      tables = tables->next;
-      FreeTable(tn);
-      return;
-   }
-
-   while (tn->next != NULL && tn->next->table_id != table_id)
-   {
-      tn = tn->next;
-   }
-
-   if (tn->next == NULL)
-   {
-      bprintf("DeleteTable can't find table %i\n",table_id);
-      return;
-   }
-   temp = tn->next;
-   tn->next = tn->next->next;
-   FreeTable(temp);
+   tn->size = 0;
+   tn->num_entries = 0;
 }
 
 table_node * GetTableByID(int table_id)
 {
-   table_node *tn;
-
-   tn = tables;
-
-   while (tn != NULL)
+   if (table_id < 0 || table_id >= num_tables)
    {
-      if (tn->table_id == table_id)
-         return tn;
-      tn = tn->next;
+      eprintf("GetTableByID can't retrieve invalid table %i\n",table_id);
+
+      return NULL;
    }
-   return NULL;
+
+   return &tables[table_id];
 }
 
 hash_node * AllocateTableEntry(val_type key_val,val_type data_val)
 {
    hash_node *hn;
-   
+
    hn = (hash_node *)AllocateMemory(MALLOC_ID_TABLE,sizeof(hash_node));
 
    hn->key_val = key_val;
@@ -192,6 +150,54 @@ hash_node * AllocateTableEntry(val_type key_val,val_type data_val)
    hn->next = NULL;
 
    return hn;
+}
+
+void ResizeTable(int table_id)
+{
+   int new_size, index;
+   table_node *tn;
+   hash_node *hn, *hn_t, **hn_new, *temp;
+
+   tn = GetTableByID(table_id);
+   if (tn == NULL)
+      return;
+
+   // Double table size + 1.
+   new_size = tn->size * 2 + 1;
+   if (new_size > MAX_TABLE_SIZE)
+      new_size = MAX_TABLE_SIZE;
+   // Allocate memory for the new hashes.
+   hn_new = (hash_node **)AllocateMemoryCalloc(MALLOC_ID_TABLE, new_size,
+      sizeof(hash_node *));
+
+   // Look at each hash in the table and allocate it in the new one.
+   // We also free memory as we go, to avoid doing the same work in
+   // DeleteTable.
+   for (int i = 0; i < tn->size; ++i)
+   {
+      hn = tn->table[i];
+      while (hn != NULL)
+      {
+         // Save pointer to next hash node, if present.
+         temp = hn->next;
+         // Get the new hash.
+         index = GetTableHash(hn->key_val) % new_size;
+         // Allocate new hash node.
+         hn_t = AllocateTableEntry(hn->key_val, hn->data_val);
+         // Pointers to next node in hash.
+         hn_t->next = hn_new[index];
+         hn_new[index] = hn_t;
+         // Free old hash.
+         FreeMemory(MALLOC_ID_TABLE,hn,sizeof(hash_node));
+         // Replace pointer to next, if present.
+         hn = temp;
+      }
+   }
+
+   // Free the old hash node pointer memory, since we're replacing it.
+   FreeMemory(MALLOC_ID_TABLE,tn->table,tn->size*sizeof(hash_node *));
+   tn->size = new_size;
+   tn->table = hn_new;
 }
 
 void InsertTable(int table_id,val_type key_val,val_type data_val)
@@ -207,6 +213,18 @@ void InsertTable(int table_id,val_type key_val,val_type data_val)
       return;
    }
 
+   if (tn->size < 1)
+   {
+      bprintf("InsertTable can't insert into zero sized table %i\n", table_id);
+      return;
+   }
+
+   // Dynamically resize table if it starts getting too many entries
+   // to avoid collisions.
+   if (tn->size < MAX_TABLE_SIZE && tn->num_entries * 2 > tn->size)
+      ResizeTable(table_id);
+
+   tn->num_entries++;
    index = GetTableHash(key_val) % tn->size;
 
    if (ConfigBool(DEBUG_HASH) == True)
@@ -270,6 +288,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
       hn = tn->table[index]->next;
       FreeMemory(MALLOC_ID_TABLE,tn->table[index],sizeof(hash_node));
       tn->table[index] = hn;
+      tn->num_entries--;
       return;
    }
 
@@ -282,6 +301,7 @@ void DeleteTableEntry(int table_id,val_type key_val)
          temp = hn->next;
          hn->next = hn->next->next;
          FreeMemory(MALLOC_ID_TABLE,temp,sizeof(hash_node));
+         tn->num_entries--;
          return;
       }
       hn = hn->next;
@@ -457,4 +477,48 @@ unsigned int GetBufferHash(const char *buf,unsigned int len_buf)
    }
 
    return h;
+}
+
+void ForEachTable(void (*callback_func)(table_node *t,int table_id))
+{
+   int i;
+
+   for (i=0;i<num_tables;i++)
+      callback_func(&tables[i],i);
+}
+
+// These functions are for garbage collecting.
+
+void MoveTable(int dest_id,int source_id)
+{
+   table_node *source,*dest;
+
+   source = GetTableByID(source_id);
+   if (source == NULL)
+   {
+      eprintf("MoveTable can't find source %i, total death end game\n",
+         source_id);
+      FlushDefaultChannels();
+      return;
+   }
+
+   dest = GetTableByID(dest_id);
+   if (dest == NULL)
+   {
+      eprintf("MoveTable can't find dest %i, total death end game\n",
+         dest_id);
+      FlushDefaultChannels();
+      return;
+   }
+
+   // Don't change the dest id here--it is set to array index, correctly.
+   dest->size = source->size;
+   dest->num_entries = source->num_entries;
+   dest->garbage_ref = source->garbage_ref;
+   dest->table = source->table;
+}
+
+void SetNumTables(int new_num_tables)
+{
+   num_tables = new_num_tables;
 }

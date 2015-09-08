@@ -196,6 +196,7 @@ enum
    GETTABLEENTRY = 143,
    DELETETABLEENTRY = 144,
    DELETETABLE = 145,
+   ISTABLE = 146,
 
    RECYCLEUSER = 151,
 
@@ -224,8 +225,8 @@ enum
    TAG_CLASS = 10,
    TAG_MESSAGE = 11,
    TAG_DEBUGSTR = 12,
-   TAG_OVERRIDE = 13,     // For overriding a class variable with a property
-   TAG_RESERVED = 14,     // Reserved for future expansion
+   TAG_TABLE = 13,
+   TAG_OVERRIDE = 14,     // For overriding a class variable with a property
    TAG_INVALID = 15,
 };
 

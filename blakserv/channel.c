@@ -30,6 +30,7 @@ channel_table_type channel_table[] =
 { CHANNEL_E, CHANNEL_ERROR_DISK, ERROR_FILE, },
 { CHANNEL_L, CHANNEL_LOG_DISK,   LOG_FILE,   },
 { CHANNEL_G, CHANNEL_GOD_DISK,   GOD_FILE,   },
+{ CHANNEL_A, CHANNEL_ADMIN_DISK, ADMIN_FILE, },
 };
 
 channel_node channel[NUM_CHANNELS];
@@ -153,8 +154,6 @@ void gprintf(const char *fmt,...)
    char s[1000];
    va_list marker;
 
-   
-
    sprintf(s,"%s | ",TimeStr(GetTime()));
 
    va_start(marker,fmt);
@@ -174,6 +173,20 @@ void gprintf(const char *fmt,...)
       strcat(s,"\r\n");
 
    WriteStrChannel(CHANNEL_G,s);
+}
+
+void aprintf(const char *fmt, ...)
+{
+   char s[BUFFER_SIZE];
+   va_list marker;
+
+   va_start(marker, fmt);
+   vsnprintf(s, sizeof(s), fmt, marker);
+   va_end(marker);
+
+   TermConvertBuffer(s, sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
+   WriteStrChannel(CHANNEL_A, s);
+   AdminBufferSend(s, strlen(s));
 }
 
 void WriteStrChannel(int channel_id,char *s)

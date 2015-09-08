@@ -90,7 +90,8 @@ enum
    SETTINGS_OBJECT = 1,
    REALTIME_OBJECT = 2,
    EVENTENGINE_OBJECT = 3,
-   MAX_BUILTIN_OBJECT = 3
+   MAX_BUILTIN_OBJECT = 3,
+   NUM_BUILTIN_OBJECTS = 4
 };
 
 #define MAX_PROC_TIME 5000
@@ -126,6 +127,7 @@ enum
 #define ERROR_FILE "error.txt"
 #define LOG_FILE "log.txt"
 #define GOD_FILE "god.txt"
+#define ADMIN_FILE "admin.txt"
 
 #define KODBASE_FILE "kodbase.txt"
 
@@ -222,6 +224,7 @@ typedef struct
 
 /* in main.c */
 extern DWORD main_thread_id;
+void MainReloadGameData();
 char * GetLastErrorStr();
 #define WM_BLAK_MAIN_READ           (WM_APP + 4000)
 #define WM_BLAK_MAIN_RECALIBRATE    (WM_APP + 4001)

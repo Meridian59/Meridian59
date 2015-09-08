@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\pants.bof
-BOFS = pantsA.bof pantsB.bof pantsC.bof pantsD.bof shrtskrt.bof skirt.bof
+BOFS = pantsa.bof pantsb.bof pantsc.bof pantsd.bof shrtskrt.bof skirt.bof
 
 !include $(KODDIR)\kod.mak

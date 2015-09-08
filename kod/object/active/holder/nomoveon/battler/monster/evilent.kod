@@ -76,6 +76,8 @@ properties:
    piSpellPower = 90
    piMax_mana = 20
 
+   viReputationGroup = REP_FAROL
+   
 messages:
 
    Constructor(iTrunkColor=$, iLeavesColor=$)
@@ -111,6 +113,8 @@ messages:
                         [-ATCK_SPELL_FIRE, -10 ] ];
 
       plSpellBook = [ [SID_LIGHTNING, 5, 100] ];
+
+      vlReputationEnemies = [REP_UNDEAD];
 
       propagate;
    }

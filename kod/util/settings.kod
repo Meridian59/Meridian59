@@ -51,6 +51,8 @@ properties:
    piKillKarmaSwingMonster = 6
    piKillKarmaSwingPlayer = 10
 
+   pbMonsterFactionEnabled = TRUE
+
    pbAtrophyOn = FALSE
    
    % Stat reset options
@@ -397,6 +399,11 @@ messages:
    GetKillKarmaSwingPlayer()
    {
       return piKillKarmaSwingPlayer;
+   }
+
+   GetMonsterFactionEnabled()
+   {
+      return pbMonsterFactionEnabled;
    }
 
    IsAtrophyOn()

@@ -75,13 +75,15 @@ classvars:
    vrSound_miss = OrcPitBoss_sound_miss
    vrSound_aware = OrcPitBoss_sound_aware
    vrSound_death = OrcPitBoss_sound_death
-
+   
 properties:
 
    piAnimation = ANIM_NONE
    pbFirstAttack = TRUE
    ptSecondAttack = $
 
+   viReputationGroup = REP_ORC
+   
 messages:
 
    Constructed()
@@ -92,6 +94,9 @@ messages:
                         [ATCK_WEAP_SLASH, 20 ],
                         [ATCK_WEAP_MAGIC, -25 ],
                         [-ATCK_SPELL_HOLY, -50 ] ];
+
+      vlReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
+
       propagate;
    }
 

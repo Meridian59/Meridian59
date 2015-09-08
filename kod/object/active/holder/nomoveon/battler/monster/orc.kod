@@ -65,10 +65,14 @@ classvars:
    vrSound_aware = orc_sound_aware
    vrSound_death = orc_sound_death
 
+   
 properties:
 
    piAnimation = ANIM_NONE
 
+   viReputationGroup = REP_ORC
+   vlReputationEnemies = $
+   
 messages:
 
    Constructed()
@@ -77,6 +81,9 @@ messages:
                         [ATCK_WEAP_PIERCE, 40 ],
                         [ATCK_WEAP_SLASH, 20 ],
                         [-ATCK_SPELL_HOLY, -25 ] ];
+
+      vlReputationEnemies = [REP_TROLL];
+
       propagate;
    }
 

@@ -236,6 +236,27 @@ resources:
    autoloot_got_only_shillings_because_full = "You can't carry any more, so you "
       "loot nothing from your fallen enemy, but you do find %d shillings."
 
+   monster_faction_negative_msg = \
+      "Your standing with The %s has decreased"
+
+   monster_faction_positive_msg = \
+      "Your standing with The %s has increased"
+
+   monster_faction_unspecified = "UNSPECIFIED MONSTER FACTION!"
+   monster_faction_farol = "Minions of Life"
+   monster_faction_orc = "Orcs"
+   monster_faction_troll = "Trolls"
+   monster_faction_farnohl = "House of Lord Far'Nohl"
+   monster_faction_lich = "Subjects of Queen Venya'cyr"
+   monster_faction_psavar = "Peet-Seeeep Avar Clan"
+   monster_faction_kkavar = "Kyip-Kyip-Kreeet Avar Clan"
+   monster_faction_ctavar = "Chyup-Tewee Avar Clan"
+   monster_faction_fey_good = "Fey Elhai"
+   monster_faction_fey_evil = "Fey Dirhai"
+   monster_faction_frogmen = "Frogmen"
+   monster_faction_heretic = "Cult of the Three"
+   monster_faction_undead = "Minions of Death"
+
 classvars:
 
    vrKocName = monster_koc_name
@@ -464,6 +485,11 @@ properties:
    piLastTimeAttacked = 0
    poLastAttacker = $
 
+   % some monsters are created on the fly (ex: avar) we may need to set this at
+   % runtime
+   viReputationGroup = REP_NEUTRAL
+   vlReputationEnemies = $
+   
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0)
@@ -3849,7 +3875,7 @@ messages:
    Killed(what=$)
    "The mob was just killed."
    {
-      local oBody;
+      local i,val,oBody,hReputation;
 
       % If the monster was just killed, assume it did itself in.
       if what = $
@@ -3898,6 +3924,70 @@ messages:
             Send(EVENTENGINE_OBJECT,@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
 
+            if (viReputationGroup <> REP_NEUTRAL
+               AND Send(SETTINGS_OBJECT,@GetMonsterFactionEnabled))
+            {
+               hReputation = Send(what,@GetReputationHash);
+               
+               % attempt to create a players rep hash if it does not exist
+               if (hReputation=$)
+               {
+                  hReputation = Send(what,@CreateReputationHash);
+
+                  if (hReputation = $)
+                  {
+                     Debug("Unable to get player reputation hash, not changing reputation");
+                  }
+               }
+               
+               % now actually do the rep chenge unless there is no hash
+               if (hReputation <> $)
+               {
+                  val=GetTableEntry(hReputation,viReputationGroup);
+                  if (val <> $)
+                  {
+                     --val;
+                     if (val >= -20000)
+                     {
+                        DeleteTableEntry(hReputation,viReputationGroup);
+                        AddTableEntry(hReputation,viReputationGroup,val);
+                     }
+                  }
+                  else
+                  {
+                     AddTableEntry(hReputation,viReputationGroup,-1);
+                  }
+
+                  Send(what,@MsgSendUser,
+                     #message_rsc=monster_faction_negative_msg,
+                     #parm1=Send(self,@GetMonsterFactionRSC,
+                              #faction=viReputationGroup));
+
+                  % Adjust reputation with enemies of this monster
+                  foreach i in vlReputationEnemies
+                  {
+                     val=GetTableEntry(hReputation,i);
+                     if (val <> $)
+                     {
+                        ++val;
+                        if (val <= 20000)
+                        {
+                           DeleteTableEntry(hReputation,i);
+                           AddTableEntry(hReputation,i,val);
+                        }
+                     }
+                     else
+                     {
+                        AddTableEntry(hReputation,i,1);
+                     }
+
+                     Send(what,@MsgSendUser,
+                     #message_rsc=monster_faction_positive_msg,
+                     #parm1=Send(self,@GetMonsterFactionRSC,#faction=i));
+                  }
+               }
+            }
+                  
             Send(self,@CreateTreasure,#who=what,#corpse=oBody);
          }
 
@@ -3907,6 +3997,71 @@ messages:
       }
 
       return;
+   }
+
+   GetMonsterFactionRSC(faction = $)
+   {
+      local factionRSC;
+
+      switch(faction)
+      {
+         case REP_FAROL:
+            factionRSC = monster_faction_farol;
+            break;
+
+         case REP_ORC:
+            factionRSC = monster_faction_orc;
+            break;
+
+         case REP_TROLL:
+            factionRSC = monster_faction_troll;
+            break;
+
+         case REP_FARNOHL:
+            factionRSC = monster_faction_farnohl;
+            break;
+
+         case REP_LICH:
+            factionRSC = monster_faction_lich;
+            break;
+
+         case REP_PSAVAR:
+            factionRSC = monster_faction_psavar;
+            break;
+
+         case REP_KKAVAR:
+            factionRSC = monster_faction_kkavar;
+            break;
+
+         case REP_CTAVAR:
+            factionRSC = monster_faction_ctavar;
+            break;
+
+         case REP_FEY_GOOD:
+            factionRSC = monster_faction_fey_good;
+            break;
+
+         case REP_FEY_EVIL:
+            factionRSC = monster_faction_fey_evil;
+            break;
+
+         case REP_FROGMEN:
+            factionRSC = monster_faction_frogmen;
+            break;
+
+         case REP_HERETIC:
+            factionRSC = monster_faction_heretic;
+            break;
+
+         case REP_UNDEAD:
+            factionRSC = monster_faction_undead;
+            break;
+
+         default:
+            factionRSC = monster_faction_unspecified;
+            break;
+      }
+      return factionRSC;
    }
 
    %%% SERVICE MESSAGES

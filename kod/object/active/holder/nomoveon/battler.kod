@@ -189,7 +189,10 @@ properties:
 
    % Mana regen timer.
    ptMana = $
-
+   
+   % Reputation hashtable for monster territory/influence system
+   phReputation = $
+   
 messages:
 
    % The first lump of code here deals with resistances and immunities/etc.
@@ -1721,5 +1724,37 @@ messages:
       return 0;
    }
 
+   CreateReputationHash()
+   {
+      phReputation = CreateTable();
+      
+      return phReputation;
+   }
+   
+   GetReputationHash()
+   {
+      return phReputation;
+   }
+   
+   GetReputation(faction=$)
+   {
+      if (faction <> $)
+      {
+         return GetTableEntry(phReputation,faction);
+      }
+      
+      return;
+   }
+   
+   SetReputation(faction=$,value=$)
+   {
+      if (faction <> $ AND value <> $)
+      {
+         AddTableEntry(phReputation,faction,value);
+      }
+      
+      return;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

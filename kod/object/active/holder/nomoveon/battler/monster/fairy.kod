@@ -73,6 +73,8 @@ properties:
    viKarma = 50
    piAnimation = ANIM_NONE
 
+   viReputationGroup = REP_FEY_GOOD
+   
 messages:
 
    Constructor()
@@ -82,6 +84,8 @@ messages:
                         [ATCK_WEAP_MAGIC, 30 ],
                         [-ATCK_SPELL_UNHOLY, -30 ]
                       ];
+
+      vlReputationEnemies = [REP_FEY_EVIL];
 
       propagate;
    }

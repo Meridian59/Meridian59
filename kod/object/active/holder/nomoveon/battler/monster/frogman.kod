@@ -66,6 +66,8 @@ properties:
 
    piAnimation = ANIM_NONE
 
+   viReputationGroup = REP_FROGMEN
+   
 messages:
 
    Constructed()
@@ -73,6 +75,8 @@ messages:
       plResistances = [ [ 65, ATCK_WEAP_NONMAGIC],
                         [-30, -ATCK_SPELL_UNHOLY ],
                         [-10, -ATCK_SPELL_COLD ] ];
+
+      vlReputationEnemies = [REP_UNDEAD];
 
       propagate;
    }

@@ -2534,6 +2534,37 @@
    COUNCILOR_FOUR  = 4
    COUNCILOR_FIVE  = 5
 
+   %%% Reputation
+   
+   REP_MONSTER_MIN = 0
+   REP_MONSTER_MAX = 13
+   % monster factions
+   REP_NEUTRAL    = 0
+   REP_FAROL      = 1
+   REP_ORC        = 2
+   REP_TROLL      = 3
+   REP_FARNOHL    = 4
+   REP_LICH       = 5
+   REP_PSAVAR     = 6
+   REP_KKAVAR     = 7
+   REP_CTAVAR     = 8
+   REP_FEY_GOOD   = 9
+   REP_FEY_EVIL   = 10
+   REP_FROGMEN    = 11
+   REP_HERETIC    = 12
+   REP_UNDEAD     = 13
+   
+   REP_TOWN_MIN   = 10001
+   REP_TOWN_MAX   = 10007
+   % Town Reputation
+   REP_TOS        = 10001
+   REP_BARLOQUE   = 10002
+   REP_CORNOTH    = 10003
+   REP_JASPER     = 10004
+   REP_MARION     = 10005
+   REP_KOCATAN    = 10006
+   REP_KO_OUTPOST = 10007
+   
    %%% Animation types
 
    ANIMATE_NONE         = 1

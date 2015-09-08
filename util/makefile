@@ -3,22 +3,30 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-OBJS3 = $(OUTDIR)\scrshot.obj $(OUTDIR)\dibutil.obj $(OUTDIR)\copy.obj $(OUTDIR)\file.obj
+# ----------------------------------------------------------------------
+# Additional compiler flags (see common.mak)
+# /TP           Compile as C++ code
+# /arch:SSE     Use SSE instructions (VS2013+ default to SSE2)
+CFLAGS = $(CFLAGS) /arch:SSE /TP
+
+# ----------------------------------------------------------------------
+# Additional linker flags (see common.mak)
+# /SUBSYSTEM:CONSOLE",5.01" NO-UI Windows XP (5.01)
 LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 
+OBJS3     = $(OUTDIR)\scrshot.obj $(OUTDIR)\dibutil.obj $(OUTDIR)\copy.obj $(OUTDIR)\file.obj
 SOURCEDIR = $(TOPDIR)\util
-
-NTLIBS = user32.lib gdi32.lib
+NTLIBS    = user32.lib gdi32.lib
 
 all: \
-       makedirs \
-       $(OUTDIR)\rscload.lib \
-       $(OUTDIR)\rscprint.exe \
-       $(OUTDIR)\bmpdump.exe \
-       $(OUTDIR)\rscmerge.exe \
-       $(OUTDIR)\paldump.exe \
-       $(OUTDIR)\palcomp.exe \
-       $(OUTDIR)\porttest.exe 
+    makedirs \
+    $(OUTDIR)\rscload.lib \
+    $(OUTDIR)\rscprint.exe \
+    $(OUTDIR)\bmpdump.exe \
+    $(OUTDIR)\rscmerge.exe \
+    $(OUTDIR)\paldump.exe \
+    $(OUTDIR)\palcomp.exe \
+    $(OUTDIR)\porttest.exe 
 
 $(OUTDIR)\remot.exe: $(OUTDIR)\remot.obj
 	$(LINK) $(LINKFLAGS) $** $(NTLIBS) -out:$@

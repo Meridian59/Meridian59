@@ -65,7 +65,7 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /WX                     Treat warnings as errors
 # /W3                     Warnings level
 # /wdXXXX                 Disable specific warnings
-CCOMMONFLAGS = /nologo /GR- /EHsc- /TP /MP /fp:fast \
+CCOMMONFLAGS = /nologo /GR- /EHsc- /MP /fp:fast \
     /DBLAK_PLATFORM_WINDOWS /DWIN32 \
     /D_CRT_SECURE_NO_WARNINGS \
     /D_CRT_NONSTDC_NO_DEPRECATE \

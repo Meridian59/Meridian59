@@ -3,8 +3,16 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-# Must compile libarchive as C code (-TC) not as C++ (-TP)
-CCOMMONFLAGS = $(CCOMMONFLAGS) -TC
+# ----------------------------------------------------------------------
+# Additional compiler flags (see common.mak)
+# /TC           Compile as C code
+# /arch:SSE     Use SSE instructions (VS2013+ default to SSE2)
+CFLAGS = $(CFLAGS) /arch:SSE /TC 
+
+# ----------------------------------------------------------------------
+# Additional static linker flags (see common.mak)
+# /SUBSYSTEM:CONSOLE",5.01" NO-UI Windows XP (5.01)
+LINKSTFLAGS = $(LINKSTFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 
 OBJS = \
 	$(OUTDIR)\archive_acl.obj \
@@ -111,13 +119,10 @@ OBJS = \
     $(OUTDIR)\archive_windows.obj \
     $(OUTDIR)\archive_write_disk_windows.obj \
     $(OUTDIR)\filter_fork_windows.obj
-		
-SOURCEDIR = $(LIBARCHIVEDIR)
 
 all: makedirs $(BLAKLIBDIR)\libarchive.lib
 
 $(BLAKLIBDIR)\libarchive.lib: $(OBJS)
-	$(LINKST) $(LINKSTFLAGS) /SUBSYSTEM:CONSOLE",5.01" $** $(LIBS) -out:$@
-	
+	$(LINKST) $(LINKSTFLAGS) $** $(LIBS) -out:$@
 	
 !include $(TOPDIR)\rules.mak

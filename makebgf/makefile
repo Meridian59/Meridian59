@@ -3,20 +3,28 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-OBJS = \
-        $(OUTDIR)\makebgf.obj \
-        $(OUTDIR)\dibutil.obj \
-        $(OUTDIR)\writebgf.obj
+# ----------------------------------------------------------------------
+# Additional compiler flags (see common.mak)
+# /TP           Compile as C++ code
+# /arch:SSE     Use SSE instructions (VS2013+ default to SSE2)
+CFLAGS = $(CFLAGS) /arch:SSE /TP
 
-SOURCEDIR = $(MAKEBGFDIR)
+# ----------------------------------------------------------------------
+# Additional linker flags (see common.mak)
+# /SUBSYSTEM:CONSOLE",5.01" NO-UI Windows XP (5.01)
 LINKFLAGS = $(LINKFLAGS) /SUBSYSTEM:CONSOLE",5.01"
 
-LIBS = gdi32.lib zlib.lib setargv
+OBJS = \
+    $(OUTDIR)\makebgf.obj \
+    $(OUTDIR)\dibutil.obj \
+    $(OUTDIR)\writebgf.obj
+
+LIBS = zlib.lib
 
 all: makedirs $(OUTDIR)\makebgf.exe
 
 $(OUTDIR)\makebgf.exe: $(OBJS)
-	$(LINK) $(LINKFLAGS) $** $(LIBS) -out:$@
-	$(CP) $@ $(BLAKBINDIR)
+    $(LINK) $(LINKFLAGS) $** $(LIBS) -out:$@
+    $(CP) $@ $(BLAKBINDIR)
 
 !include $(TOPDIR)\rules.mak

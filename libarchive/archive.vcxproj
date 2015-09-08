@@ -153,6 +153,7 @@
     <ClInclude Include="..\include\libarchive\archive_string_composition.h" />
     <ClInclude Include="..\include\libarchive\archive_write_disk_private.h" />
     <ClInclude Include="..\include\libarchive\archive_write_private.h" />
+    <ClInclude Include="..\include\libarchive\config.h" />
     <ClInclude Include="..\include\libarchive\filter_fork.h" />
     <ClInclude Include="..\include\libarchive\archive_windows.h" />
     <ClInclude Include="..\include\libarchive\archive.h" />

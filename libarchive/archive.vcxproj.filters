@@ -130,6 +130,7 @@
     <ClInclude Include="..\include\libarchive\filter_fork.h" />
     <ClInclude Include="..\include\libarchive\archive_windows.h" />
     <ClInclude Include="..\include\libarchive\archive.h" />
+    <ClInclude Include="..\include\libarchive\config.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

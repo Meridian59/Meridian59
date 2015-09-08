@@ -65,11 +65,12 @@ void ResetResource(void)
          {
             if (r->resource_val[j])
             {
-               FreeMemory(MALLOC_ID_KODBASE,r->resource_val[j],
+               FreeMemory(MALLOC_ID_RESOURCE, r->resource_val[j],
                   strlen(r->resource_val[j])+1);
             }
          }
-
+         if (r->resource_name)
+            FreeMemory(MALLOC_ID_KODBASE, r->resource_name, strlen(r->resource_name) + 1);
          FreeMemory(MALLOC_ID_RESOURCE,r,sizeof(resource_node));
 
          r = temp;

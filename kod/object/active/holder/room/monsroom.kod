@@ -368,8 +368,8 @@ messages:
                               #new_row=iRow,#new_col=iCol);
          bReqSomethingMoved = Send(self,@ReqSomethingMoved,#what=oMonster,
                                     #new_row=iRow,#new_col=iCol);
-         
-         if bReqNewHold and bReqSomethingMoved
+
+         if bReqNewHold AND bReqSomethingMoved
          {
             Send(self,@NewHold,#what=oMonster,#new_row=iRow,#new_col=iCol,
                   #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
@@ -380,29 +380,30 @@ messages:
 
       return iCount - 1;
    }
-   
+
    GetGenerators()
    {
       return plGenerators;
    }
-   
+
    SetGenerators(generators = $)
    {
       if (generators = $)
       {
          return;
       }
-      
+
       plGenerators = generators;
+
       return;
    
    }
-   
+
    GetPatrolPaths()
    {
       return plPatrolPaths;
    }
-   
+
    SetPatrolPaths(patrolPaths = $)
    {
       if (patrolPaths = $)
@@ -411,29 +412,31 @@ messages:
       }
       
       plPatrolPaths = patrolPaths;
+
       return;
-   
    }
-   
+
    GetGenTime()
    {
       return piGen_Time;
    }
-   
+
    SetGenTIme(time = DEFAULT_GEN_TIME)
    {
       piGen_Time = time;
+
       return;
    }
-   
+
    GetGenPercent()
    {
       return piGen_Percent;
    }
-   
+
    SetGenPercent(percent = DEFAULT_GEN_PERCENT)
    {
       piGen_Percent = percent;
+
       return;
    }
 

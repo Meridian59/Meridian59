@@ -375,7 +375,6 @@ properties:
    piTargetLocationFineCol = 0
    piPatrolAttempts = 0
    plPatrolPath = $
-   pbLoopingPatrol = True
    piPatrolNode = 0
    % chance to move to next patrol node (1 to 10000)
    piChanceToPatrol = 125
@@ -390,7 +389,8 @@ properties:
    % Either chasing, moving, or attacking
    ptBehavior = $
    % Behavior flags = have prefix of AI_
-   piBehavior = 0
+   % All mobs will loop through a patrol path, if one is available.
+   piBehavior = AI_LOOPING_PATROL
    % Who is our master, if we have one.
    poMaster = $
    % Flag used for minion moves around master
@@ -559,16 +559,15 @@ messages:
 
    SetPatrolPath(lPath = $)
    {
-      if(lPath <> $)
+      if (lPath <> $)
       {
          plPatrolPath = lPath;
-         Send(self,@SetBehaviorFlag,
-            #flag=AI_CAN_PATROL,#value=TRUE);
+         Send(self,@SetBehaviorFlag,#flag=AI_CAN_PATROL,#value=TRUE);
       }
-      
+
       return;
    }
-   
+
    GetKocName()
    {
       return vrKocName;
@@ -578,7 +577,7 @@ messages:
    {
       return vbNamedMob;
    }
-   
+
    % Overridden for specific NPCs,
    % common point for mood changes, except word triggers
    AffectMood( why = $, what = $ )
@@ -600,12 +599,13 @@ messages:
    {
       if node = $
       {
-         Debug( "AddQuestNode: nil questnode." );
+         Debug("AddQuestNode: nil questnode.");
+
          return;
       }
-      
-      plActiveQuestNodes = Cons( node, plActiveQuestNodes );
-      
+
+      plActiveQuestNodes = Cons(node, plActiveQuestNodes);
+
       return;
    }
  
@@ -620,7 +620,7 @@ messages:
 
          return;
       }
-   
+
       % Save original Length for validation
       iLength = Length( plActiveQuestNodes );
 
@@ -642,7 +642,7 @@ messages:
 
       return;
    }
-   
+
    TryAddToQuestEngine()
    "Some NPCs should have chatter and random triggers, but should not be "
    "part of the game's quest engine.  This procedure should be overwritten "
@@ -1287,96 +1287,90 @@ messages:
    {
       return poCustomer;
    }
-   
+
    CanPatrol()
    {
       if (plPatrolPath <> $)
       {
-         return True;
+         return TRUE;
       }
-      
-      return False;
+
+      return FALSE;
    }
 
    GetChanceToPatrol()
    {
       return piChanceToPatrol;
    }
-   
+
    SetChanceToPatrol(chance=125)
    {
       piChanceToPatrol = chance;
-      
+
       return;
    }
-   
-   SetLoopingPatrol(looping=True)
-   {
-      pbLoopingPatrol = looping;
-      return;
-   }
-   
+
    GetNextPatrolNode()
    {
       if (plPatrolPath = $)
       {
          return;
       }
-   
+
       piPatrolNode = piPatrolNode + 1;
-      
+
       if (piPatrolNode > Length(plPatrolPath))
       {
-         if (pbLoopingPatrol)
+         if (piBehavior & AI_LOOPING_PATROL)
          {
             piPatrolNode = 1;
          }
-         else 
+         else
          {
             piPatrolNode = Length(plPatrolPath);
          }
       }
-   
+
       return Nth(plPatrolPath, piPatrolNode);
    }
-   
+
    SetPatrolNode(node=1)
    {
       piPatrolNode = node;
+
       return;
    }
-   
+
    IncrementPatrolAttempts()
    {
       piPatrolAttempts = piPatrolAttempts + 1;
-      
+
       return;
    }
-   
+
    GetPatrolAttempts()
    {
       return piPatrolAttempts;
    }
-   
+
    ClearPatrolAttempts()
    {
       piPatrolAttempts = 0;
-      
+
       return;
    }
-   
+
    ClearPatrolLocation()
    {
-      Send(self,@SetBehaviorFlag,
-         #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
+      Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
       piTargetLocationRow  = 0;
       piTargetLocationCol  = 0;
       piTargetLocationFineRow = 0;
       piTargetLocationFineCol = 0;
-      
+
       return;
    }
-   
+
    %%%  Action Routines
 
    AttackTimer(timer = $)
@@ -1562,25 +1556,43 @@ messages:
    "Note that this can be called both at the start and the end "
    "of an enchantment or behavior change."
    {
-      local i, bSing;
-      bSing = FALSE;
+      local i, lBehavior;
+
+      lBehavior = $;
 
       % Assume if the monster is being singleminded about something,
       %  he's got a good reason.  Example: pissed off charms.
       if piBehavior & AI_FIGHT_SINGLEMINDED
       {
-         bSing = TRUE;
+         lBehavior = Cons(AI_FIGHT_SINGLEMINDED,lBehavior);
+      }
+      if piBehavior & AI_MOVE_WHEN_ALONE
+      {
+         lBehavior = Cons(AI_MOVE_WHEN_ALONE,lBehavior);
+      }
+      if piBehavior & AI_CAN_PATROL
+      {
+         lBehavior = Cons(AI_CAN_PATROL,lBehavior);
+      }
+      if piBehavior & AI_HAS_TARGET_LOCATION
+      {
+         lBehavior = Cons(AI_HAS_TARGET_LOCATION,lBehavior);
+      }
+      if piBehavior & AI_LOOPING_PATROL
+      {
+         lBehavior = Cons(AI_LOOPING_PATROL,lBehavior);
       }
 
-      piBehavior = viDefault_behavior;      
-      if bSing
+      piBehavior = viDefault_behavior;
+
+      foreach i in lBehavior
       {
-         Send(self,@SetBehaviorFlag,#flag=AI_FIGHT_SINGLEMINDED);
+         Send(self,@SetBehaviorFlag,#flag=i);
       }
-            
+
       foreach i in plEnchantments
       {
-         Send(nth(i,2),@ModifyMonsterBehavior,#mob=self);
+         Send(Nth(i,2),@ModifyMonsterBehavior,#mob=self);
       }
 
       % This is for monster specific things, such as the dragonfly queen
@@ -1813,25 +1825,19 @@ messages:
       {
         Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
       }
-      else
+      else if piKeepWalkingSteps < 8
       {
          % If we're close, we start a move around the master based on a probability.
          % To do so we just need to try to step closer, he will block us.
          % We will do 8 seamless steps, before we again decide
          % to stop or to go on.
-         if piKeepWalkingSteps < 8
-         {
             Send(self,@MoveTowards,#oTarget=poMaster,#face_target=TRUE);
             piKeepWalkingSteps = piKeepWalkingSteps + 1;
-         }
-         else
-         {
-            % roll a dice to see if we want to start a new movement
-            if Random(1,100) < 5
-            {
-               piKeepWalkingSteps = 0;
-            }
-         }
+      }
+      else if Random(1,100) < 5
+      {
+         % roll a dice to see if we want to start a new movement
+         piKeepWalkingSteps = 0;
       }
 
       return;
@@ -1839,49 +1845,47 @@ messages:
 
    DoGoTowardsLocation()
    {
-         piPatrolAttempts = piPatrolAttempts + 1;
-      
-         Send(self,@MoveTowardsCoords,
+      piPatrolAttempts = piPatrolAttempts + 1;
+
+      Send(self,@MoveTowardsCoords,
             #iRow=piTargetLocationRow,
             #iCol=piTargetLocationCol,
             #iFineRow=piTargetLocationFineRow,
             #iFineCol=piTargetLocationFineCol);
-            
-         % for now just reaching the row and col is good enough
-         % fineness is ignored
-         if ((piRow = piTargetLocationRow)
-            AND (piCol = piTargetLocationCol))
-         {
-            Send(self,@SetBehaviorFlag,
-               #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
-            piPatrolAttempts = 0;
-         }
-         
-         % after a while just give up
-         if (piPatrolAttempts >= 500)
-         {
-            Send(self,@SetBehaviorFlag,
-               #flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
-            piPatrolAttempts = 0;
-         }
-   
+
+      % for now just reaching the row and col is good enough
+      % fineness is ignored
+      if ((piRow = piTargetLocationRow)
+         AND (piCol = piTargetLocationCol))
+      {
+         Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
+         piPatrolAttempts = 0;
+      }
+
+      % after a while just give up
+      if (piPatrolAttempts >= 500)
+      {
+         Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=FALSE);
+         piPatrolAttempts = 0;
+      }
+
       return;
    }
-   
+
    StartNextPatrolLeg()
    {
       local lPatrolNode;
-   
+
       lPatrolNode = Send(self,@GetNextPatrolNode);
-            
+
       if (lPatrolNode <> $)
       {
-         Send(self,@GotoCoords,#iRow=Nth(lPatrolNode,1),#iCol=Nth(lPatrolNode,2));
+         Send(self,@GotoCoords,#iRow=First(lPatrolNode),#iCol=Nth(lPatrolNode,2));
       }
-   
+
       return;
    }
-   
+
    %%% Combat messages
 
    TryAttack(what=$,stroke_obj=$)
@@ -2864,16 +2868,16 @@ messages:
       return;
    }
 
-   MoveTowardsCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0,
-      face_target=FALSE, face_away=FALSE, to_master=FALSE)
+   MoveTowardsCoords(iRow=$, iCol=$, iFineRow=0, iFineCol=0, face_target=FALSE,
+                     face_away=FALSE, to_master=FALSE)
    {
       local drow, dcol;
-      
+
       if (iRow = $ or iCol = $)
       {
          return;
       }
-      
+
       % calculate square delta in highres-grid
       drow = ((iRow * FINENESS) + iFineRow) / 16;
       dcol = ((iCol * FINENESS) + iFineCol) / 16;
@@ -2884,7 +2888,7 @@ messages:
                   #face_target=face_target,#face_away=face_away,
                   #to_master=to_master);
    }
-   
+
    GotoCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0)
    "Move to a specific row and column. warning! fineness really"
    "isn't accurate as the monster will stop when it reaches the destination"
@@ -2894,37 +2898,36 @@ messages:
       {
          return;
       }
-   
+
       piTargetLocationRow = iRow;
       piTargetLocationCol = iCol;
       piTargetLocationFineRow = iFineRow;
       piTargetLocationFineCol = iFineCol;
-      Send(self,@SetBehaviorFlag,
-         #flag=AI_HAS_TARGET_LOCATION,#value=TRUE);
-   
+      Send(self,@SetBehaviorFlag,#flag=AI_HAS_TARGET_LOCATION,#value=TRUE);
+
       return;
    }
-   
+
    GetTargetLocationRow()
    {
       return piTargetLocationRow;
    }
-   
+
    GetTargetLocationCol()
    {
       return piTargetLocationCol;
    }
-   
+
    GetTargetLocationFineRow()
    {
       return piTargetLocationFineRow;
    }
-   
+
    GetTargetLocationFineCol()
    {
       return piTargetLocationFineCol;
    }
-   
+
    %%% Spasming messages
 
    SpasmMonsterTimer()

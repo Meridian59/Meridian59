@@ -2130,6 +2130,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case LENGTH : strcpy(c_name, "Length"); break;
 		case LAST : strcpy(c_name, "Last"); break;
 		case NTH : strcpy(c_name, "Nth"); break;
+		case ISLISTMATCH : strcpy(c_name, "IsListMatch"); break;
 		case MLIST : strcpy(c_name, "List"); break;
 		case ISLIST : strcpy(c_name, "IsList"); break;
 		case SETFIRST : strcpy(c_name, "SetFirst"); break;

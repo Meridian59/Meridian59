@@ -4548,7 +4548,7 @@ messages:
       iMCol = iCol;
 
       lPatrolPath = $;
-      
+
       if oMonster = $
       {
          return FALSE;
@@ -4600,18 +4600,14 @@ messages:
             iMCol = Nth(lPos,2);
             
             if (plPatrolPaths <> $)
+               AND (Length(plPatrolPaths) >= iRoll)
+               AND (Nth(plPatrolPaths,iRoll) <> $)
             {
-               if (Length(plPatrolPaths) >= iRoll)
-               {
-                  if (Nth(plPatrolPaths,iRoll) <> $)
-                  {
-                     lPatrolPath = Nth(plPatrolPaths,iRoll);
-                  }
-               }
+               lPatrolPath = Nth(plPatrolPaths,iRoll);
             }
          }
       }
-      
+
       if Send(self,@ReqNewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol)
          AND (Send(self,@ReqSomethingMoved,#what=oMonster,
                      #new_row=iMRow,#new_col=iMCol)
@@ -4619,7 +4615,7 @@ messages:
       {
          Send(self,@NewHold,#what=oMonster,#new_row=iMRow,#new_col=iMCol,
                #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
-               
+
          if (lPatrolPath <> $)
          {
             Send(oMonster,@SetPatrolPath,#lPath=lPatrolPath);

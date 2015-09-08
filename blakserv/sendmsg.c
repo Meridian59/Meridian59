@@ -199,6 +199,7 @@ void InitBkodInterpret(void)
 	ccall_table[INSERTLISTELEM] = C_InsertListElem;
 	ccall_table[DELLISTELEM] = C_DelListElem;
 	ccall_table[FINDLISTELEM] = C_FindListElem;
+	ccall_table[ISLISTMATCH] = C_IsListMatch;
 
 	ccall_table[GETTIMEZONEOFFSET] = C_GetTimeZoneOffset;
 	ccall_table[GETTIME] = C_GetTime;

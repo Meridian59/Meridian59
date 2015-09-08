@@ -1091,20 +1091,24 @@ void BSPRoomFreeServer(room_type *room)
    // free bsp nodes 'submem'
    for (i = 0; i < room->TreeNodesCount; i++)
    {
-	   if (room->TreeNodes[i].Type == BspLeafType)
-	   {
-		   free(room->TreeNodes[i].u.leaf.PointsFloor);
-		   free(room->TreeNodes[i].u.leaf.PointsCeiling);
-	   }
+      if (room->TreeNodes[i].Type == BspLeafType)
+      {
+         FreeMemory(MALLOC_ID_ROOM, room->TreeNodes[i].u.leaf.PointsFloor,
+            room->TreeNodes[i].u.leaf.PointsCount * sizeof(V3));
+         FreeMemory(MALLOC_ID_ROOM, room->TreeNodes[i].u.leaf.PointsCeiling,
+            room->TreeNodes[i].u.leaf.PointsCount * sizeof(V3));
+      }
    }
 
    // free sectors submem
    for (i = 0; i < room->SectorsCount; i++)
    {
-	   free(room->Sectors[i].SlopeInfoFloor);
-	   free(room->Sectors[i].SlopeInfoCeiling);
+      if ((room->Sectors[i].Flags & SF_SLOPED_FLOOR) == SF_SLOPED_FLOOR)
+         FreeMemory(MALLOC_ID_ROOM, room->Sectors[i].SlopeInfoFloor, sizeof(SlopeInfo));
+      if ((room->Sectors[i].Flags & SF_SLOPED_CEILING) == SF_SLOPED_CEILING)
+         FreeMemory(MALLOC_ID_ROOM, room->Sectors[i].SlopeInfoCeiling, sizeof(SlopeInfo));
    }
-   
+
    FreeMemory(MALLOC_ID_ROOM, room->TreeNodes, room->TreeNodesCount * sizeof(BspNode));
    FreeMemory(MALLOC_ID_ROOM, room->Walls, room->WallsCount * sizeof(Wall));
    FreeMemory(MALLOC_ID_ROOM, room->Sides, room->SidesCount * sizeof(Side));

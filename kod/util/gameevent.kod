@@ -35,7 +35,7 @@ properties:
    poActiveRoom = $
    plEventRooms = $
    plRoomSaveState = $
-   pbClearRooms = False
+   pbClearRooms = FALSE
 
 messages:
 
@@ -45,7 +45,7 @@ messages:
       {
          poGameEventEngine = engine;
       }
-      
+
       return;
    }
 
@@ -55,16 +55,15 @@ messages:
       poActiveRoom = $;
       plEventRooms = $;
       plRoomSaveState = $;
-   
+
       return;
    }
 
-   
    IsUnique()
    {
       return vbUnique;
    }
-   
+
    Update()
    {
       return;
@@ -89,7 +88,7 @@ messages:
    {
       return;
    }
-   
+
    NewMinute()
    {
       return;
@@ -132,7 +131,8 @@ messages:
       return;
    }
 
-   EndEvent(parm1=$,parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,parm14=$,parm15=$)
+   EndEvent(parm1=$,parm2=$,parm3=$,parm4=$,parm5=$,parm6=$,parm7=$,parm8=$,
+            parm9=$,parm10=$,parm11=$,parm12=$,parm13=$,parm14=$,parm15=$)
    {
       if vbAnnounce
       {
@@ -146,49 +146,45 @@ messages:
    {
       return;
    }
-   
+
    PrepareRooms()
    {
       if pbClearRooms
       {
          Send(self,@ClearRooms);
       }
-      
+
       return;
    }
-   
+
    ClearRooms()
    {
-      local i, j, lActive;
-      
+      local i, j, lActive, oMob;
+
       lActive = $;
-      
+
       if (pbClearRooms)
+         AND(plEventRooms <> $)
       {
-         if (plEventRooms <> $)
+         foreach i in plEventRooms
          {
-            foreach i in plEventRooms
+            lActive = Send(i,@GetPlActive);
+            foreach j in lActive
             {
-               lActive = Send(i,@GetPlActive);
-               if (lActive <> $)
+               oMob = First(j);
+               if ((IsClass(oMob,&Monster))
+                  AND NOT (Send(oMob,@IsOwnedByPlayer))
+                  AND NOT (Send(oMob,@GetBehavior) & AI_NPC))
                {
-                  foreach j in lActive
-                  {
-                     if ((IsClass(Nth(j,1),&Monster)) 
-                        AND NOT (Send(Nth(j,1),@IsOwnedByPlayer))
-                        AND NOT (Send(Nth(j,1),@GetBehavior) & AI_NPC))
-                     {
-                        Send(Nth(j,1),@Delete);
-                     }
-                  }
+                  Send(oMob,@Delete);
                }
             }
          }
       }
-   
+
       return;
    }
-   
+
    SaveRoomStates()
    {
       local i, lRoomProps;
@@ -196,34 +192,32 @@ messages:
       foreach i in plEventRooms
       {
          lRoomProps = $;
-         
+
          if IsClass(i,&MonsterRoom)
          {
-            lRoomProps = AppendListElem(i,lRoomProps);
-            lRoomProps = AppendListElem(Send(i,@CanMonsterGenerate),lRoomProps);
-            lRoomProps = AppendListElem(Send(i,@GetGenerators),lRoomProps);
-            lRoomProps = AppendListElem(Send(i,@GetGenTime),lRoomProps);
-            lRoomProps = AppendListElem(Send(i,@GetGenPercent),lRoomProps);
-            lRoomProps = AppendListElem(Send(i,@GetPatrolPaths),lRoomProps);
+            lRoomProps = [i, Send(i,@CanMonsterGenerate), Send(i,@GetGenerators),
+                          Send(i,@GetGenTime), Send(i,@GetGenPercent),
+                          Send(i,@GetPatrolPaths) ];
          }
          else
          {
             lRoomProps = [i,$,$,$,$];
          }
+
          plRoomSaveState = AppendListElem(lRoomProps,plRoomSaveState);
       }
 
       return;
    }
-   
+
    RestoreRoomStates()
    {
       local i, oRoom;
-      
+
       foreach i in plRoomSaveState
       {
-         oRoom = Nth(i,1);
-         
+         oRoom = First(i);
+
          if (IsClass(oRoom, &MonsterRoom))
          {
             Send(oRoom,@SetMonsterGeneration,#bValue=Nth(i,2));
@@ -233,9 +227,9 @@ messages:
             Send(oRoom,@SetPatrolPaths,#patrolPaths=Nth(i,6));
          }
       }
-   
+
       return;
-   }   
+   }
 
    MakeSpawnPoint()
    "Returns a spawn point inside a given rectangle."
@@ -244,8 +238,8 @@ messages:
 
       spawnRect = Nth(plSpawnRects,Random(1,Length(plSpawnRects)));
 
-      lCoords = [ Random(Nth(Nth(spawnRect,1),1),Nth(Nth(spawnRect,2),1)),
-                  Random(Nth(Nth(spawnRect,1),2),Nth(Nth(spawnRect,2),2)) ];
+      lCoords = [ Random(First(First(spawnRect)),First(Nth(spawnRect,2))),
+                  Random(Nth(First(spawnRect),2),Nth(Nth(spawnRect,2),2)) ];
 
       return lCoords;
    }

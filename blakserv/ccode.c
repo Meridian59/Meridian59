@@ -2953,6 +2953,44 @@ int C_Nth(int object_id,local_var_type *local_vars,
 	return Nth(n_val.v.data,list_val.v.data);
 }
 
+/*
+ * C_IsListMatch:  takes two lists, checks the values of each element
+ *    in the lists and returns TRUE if the elements are identical, FALSE
+ *    otherwise. Elements are identical if they have the same int_val
+ *    (tag AND data type) except in the case of TAG_LIST, in which case
+ *    the list contents must be identical but the list node number does not
+ *    need to be.
+ */
+int C_IsListMatch(int object_id,local_var_type *local_vars,
+            int num_normal_parms,parm_node normal_parm_array[],
+            int num_name_parms,parm_node name_parm_array[])
+{
+   val_type ret_val, list_one, list_two;
+   ret_val.v.tag = TAG_INT;
+   ret_val.v.data = False;
+
+   list_one = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+      normal_parm_array[0].value);
+   if (list_one.v.tag != TAG_LIST)
+   {
+      bprintf("C_IsListMatch object %i can't check non-list one %i,%i\n",
+         object_id, list_one.v.tag, list_one.v.data);
+      return ret_val.int_val;
+   }
+
+   list_two = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+      normal_parm_array[1].value);
+   if (list_two.v.tag != TAG_LIST)
+   {
+      bprintf("C_IsListMatch object %i can't check non-list two %i,%i\n",
+         object_id, list_two.v.tag, list_two.v.data);
+      return ret_val.int_val;
+   }
+
+   ret_val.v.data = IsListMatch(list_one.v.data, list_two.v.data);
+   return ret_val.int_val;
+}
+
 int C_List(int object_id,local_var_type *local_vars,
 		   int num_normal_parms,parm_node normal_parm_array[],
 		   int num_name_parms,parm_node name_parm_array[])

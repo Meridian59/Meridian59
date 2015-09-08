@@ -13,10 +13,7 @@
 #ifndef _SAVESTR_H
 #define _SAVESTR_H
 
-#define LEN_STR_VERSION 4
-#define LEN_NUM_STRS 4
-#define LEN_STR_ID 4
-#define LEN_STR_LEN 4
+#define SAVE_STR_VERSION 1
 
 Bool SaveStrings(char*filename);
 

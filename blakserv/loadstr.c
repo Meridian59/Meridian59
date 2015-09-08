@@ -31,8 +31,8 @@ Bool LoadBlakodStrings(char *filename)
       return False;
    }
    
-   if (fread(&version, 1, LEN_STR_VERSION, f) != LEN_STR_VERSION ||
-       fread(&num_strs, 1, LEN_NUM_STRS, f) != LEN_NUM_STRS)
+   if (fread(&version, 1, 4, f) != 4 ||
+       fread(&num_strs, 1, 4, f) != 4)
    {
       fclose(f);
       return False;
@@ -40,8 +40,8 @@ Bool LoadBlakodStrings(char *filename)
    
    for (i=0;i<num_strs;i++)
    {
-      if (fread(&str_id, 1, LEN_STR_ID, f) != LEN_STR_ID ||
-          fread(&len_str, 1, LEN_STR_LEN, f) != LEN_STR_LEN)
+      if (fread(&str_id, 1, 4, f) != 4 ||
+          fread(&len_str, 1, 4, f) != 4)
       {
          fclose(f);
          return False;

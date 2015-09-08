@@ -89,20 +89,18 @@ void SaveGameFlushBuffer();
 
 // buffer is used for buffering data to write at one time, vs writing multiple
 // times with small amount of data.
-char *buffer;
+static char *buffer;
 
 // buffer_position is the current position of buffer we're writing to, and the
 // length that will be written to file if flushed.
-int buffer_position;
+static int buffer_position;
 
 // buffer_size is the size of the currently allocated memory for buffer.
-// Used to check if we need to resize (e.g. writing a table with more than
-// 131,000 entries).
-int buffer_size;
+static int buffer_size;
 
-// buffer_warning_size is used to check if we need to resize the buffer. Equal
+// buffer_warning_size is used to check if we need to flush the buffer. Equal
 // to 90% buffer_size.
-int buffer_warning_size;
+static int buffer_warning_size;
 
 Bool SaveGame(char *filename)
 {
@@ -118,7 +116,7 @@ Bool SaveGame(char *filename)
    buffer_position = 0;
    buffer = (char *) AllocateMemory(MALLOC_ID_SAVE_GAME, SAVEGAME_BUFFER);
    buffer_size = SAVEGAME_BUFFER;
-   buffer_warning_size = SAVEGAME_BUFFER_WARNING;
+   buffer_warning_size = (SAVEGAME_BUFFER / 10) * 9;
 
    SaveGameVersion();
    SaveClasses();
@@ -131,10 +129,7 @@ Bool SaveGame(char *filename)
    SaveUsers();
 
    if (buffer_position > 0)
-   {
-      eprintf("Warning! Save game buffer contains data after game saved! Flushing buffer.\n");
       SaveGameFlushBuffer();
-   }
 
    fclose(savefile);
 
@@ -149,13 +144,10 @@ void SaveGameCopyIntBuffer(int int_buffer)
 {
    memcpy(&(buffer[buffer_position]), &int_buffer, 4);
    buffer_position += 4;
+
+   // Flush buffer at 90%.
    if (buffer_position > buffer_warning_size)
-   {
-      lprintf("Resizing save game buffer from %i to %i.\n", buffer_size, buffer_size * 2);
-      buffer = (char *)ResizeMemory(MALLOC_ID_SAVE_GAME, buffer, buffer_size, buffer_size * 2);
-      buffer_size *= 2;
-      buffer_warning_size = buffer_size / 10 * 9;
-   }
+      SaveGameFlushBuffer();
 }
 
 // Write 1 byte to buffer.
@@ -163,13 +155,10 @@ void SaveGameCopyByteBuffer(char byte_buffer)
 {
    memcpy(&(buffer[buffer_position]), &byte_buffer, 1);
    buffer_position++;
+
+   // Flush buffer at 90%.
    if (buffer_position > buffer_warning_size)
-   {
-      lprintf("Resizing save game buffer from %i to %i.\n", buffer_size, buffer_size * 2);
-      buffer = (char *)ResizeMemory(MALLOC_ID_SAVE_GAME, buffer, buffer_size, buffer_size * 2);
-      buffer_size *= 2;
-      buffer_warning_size = buffer_size / 10 * 9;
-   }
+      SaveGameFlushBuffer();
 }
 
 // Write a string to buffer.
@@ -193,13 +182,10 @@ void SaveGameCopyStringBuffer(const char *string_buffer)
       memcpy(&(buffer[buffer_position]), string_buffer, len_s);
       buffer_position += len_s;
    }
+
+   // Flush buffer at 90%.
    if (buffer_position > buffer_warning_size)
-   {
-      lprintf("Resizing save game buffer from %i to %i.\n", buffer_size, buffer_size * 2);
-      buffer = (char *)ResizeMemory(MALLOC_ID_SAVE_GAME, buffer, buffer_size, buffer_size * 2);
-      buffer_size *= 2;
-      buffer_warning_size = buffer_size / 10 * 9;
-   }
+      SaveGameFlushBuffer();
 }
 
 // Write buffer to save game file, reset buffer position.
@@ -214,8 +200,6 @@ void SaveGameVersion(void)
 {
    SaveGameCopyByteBuffer(SAVE_GAME_VERSION);
    SaveGameCopyIntBuffer(SAVEGAME_VERS);
-   // Flush buffer after version added.
-   SaveGameFlushBuffer();
 }
 
 void SaveClasses(void)
@@ -250,15 +234,11 @@ void SaveEachClass(class_node *c)
       }
       SaveGameCopyStringBuffer(s);
    }
-   // Flush buffer after each class.
-   SaveGameFlushBuffer();
 }
 
 void SaveResources(void)
 {
    ForEachResource(SaveEachResource);
-   // Flush here, the buffer can hold all the resource names and IDs.
-   SaveGameFlushBuffer();
 }
 
 void SaveEachResource(resource_node *r)
@@ -288,8 +268,6 @@ void SaveBuiltInObjects(void)
    SaveGameCopyIntBuffer(GetRealTimeObjectID());
    SaveGameCopyIntBuffer(EVENTENGINE_OBJECT);
    SaveGameCopyIntBuffer(GetEventEngineObjectID());
-   // Flush buffer after built-ins added.
-   SaveGameFlushBuffer();
 }
 
 void SaveObjects(void)
@@ -320,8 +298,6 @@ void SaveEachObject(object_node *o)
    /* equal to num_properties is ok, because self = prop 0 */
    for (i = 1; i <= c->num_properties; ++i)
       SaveGameCopyIntBuffer(o->p[i].val.int_val);
-   // Flush buffer after each object.
-   SaveGameFlushBuffer();
 }
 
 void SaveListNodes(void)
@@ -335,8 +311,6 @@ void SaveEachListNode(list_node *l,int list_id)
 {
    SaveGameCopyIntBuffer(l->first.int_val);
    SaveGameCopyIntBuffer(l->rest.int_val);
-   // Flush buffer after each list node.
-   SaveGameFlushBuffer();
 }
 
 void SaveTables(void)
@@ -363,15 +337,11 @@ void SaveEachTable(table_node *t,int table_id)
          hn = hn->next;
       }
    }
-   // Flush buffer after each table.
-   SaveGameFlushBuffer();
 }
 
 void SaveTimers(void)
 {
    ForEachTimer(SaveEachTimer);
-   // Flush here, the buffer can hold all the timers.
-   SaveGameFlushBuffer();
 }
 
 void SaveEachTimer(timer_node *t)
@@ -408,8 +378,6 @@ void SaveEachTimer(timer_node *t)
 void SaveUsers(void)
 {
    ForEachUser(SaveEachUser);
-   // Flush here, the buffer can hold all the users.
-   SaveGameFlushBuffer();
 }
 
 void SaveEachUser(user_node *u)

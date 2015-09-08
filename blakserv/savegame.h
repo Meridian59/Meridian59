@@ -21,11 +21,6 @@
 // Buffer used to store info for writing save game in blocks.
 #define SAVEGAME_BUFFER 1048576
 
-// This constant is 90% the size of SAVEGAME_BUFFER, and if this is reached
-// then the memory allocated to the save game buffer is resized to avoid
-// overrun.
-#define SAVEGAME_BUFFER_WARNING (SAVEGAME_BUFFER / 10 * 9)
-
 enum
 {
    SAVE_GAME_CLASS = 1,

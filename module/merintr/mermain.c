@@ -86,6 +86,7 @@ void InterfaceInit(void)
    autoloot_flipped = False;
    autocombine_flipped = False;
    reagentbag_flipped = False;
+   spellpower_flipped = False;
 
    if (pinfo.resting)
       RequestRest();

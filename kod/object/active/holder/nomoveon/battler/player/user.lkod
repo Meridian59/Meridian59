@@ -274,6 +274,11 @@ phased_out_cant_drop = de \
    "Du kannst keine Gegenstände wegwerfen, während du ausgestiegen bist."
 user_reagentbag_on = de "Reagenzien Beutel AN"
 user_reagentbag_off = de "Reagenzien Beutel AUS"
+user_spellpower_on = de \
+   "Du siehst ab jetzt mit welcher Macht deine Zaubersprüche gewirkt werden."
+user_spellpower_off = de \
+   "Du siehst nicht länger mit welcher Macht deine Zaubersprüche "
+   "gewirkt werden."
 user_logon_delay = de "Du brauchst einen Moment um dich wieder zu fassen"
 inventory_sort_cleared = de "Deine Sortierliste wurde gelöscht."
 inventory_class_added = de "Du fügst %s zu Deiner Sortierliste hinzu."

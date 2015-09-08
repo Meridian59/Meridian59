@@ -369,7 +369,7 @@ BEGIN
     CONTROL         "Verstaue Reagenzien automatisch in den Reagenzienbeutel",1214,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,132,237,9
     CONTROL         "An Gruppenbildung teilnehmen",1210,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,157,96,109,9
-    CONTROL         "Display spellpower for spells cast",1215,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,144,237,9
+    CONTROL         "Zeige Zaubermacht beim zaubern",1215,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,13,144,237,9
     GROUPBOX        "Audio Effekte",IDC_STATIC,6,164,263,63,WS_GROUP
     CONTROL         "Musik",1150,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,177,35,9
     CONTROL         "Sounds",1151,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,61,177,44,9

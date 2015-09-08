@@ -154,32 +154,26 @@ messages:
       {
          iBulk_can_hold = INFINITE_COUNT;
       }
+      else if viBulk > 0
+      {
+         iBulk_can_hold = bulk / viBulk;
+      }
       else
       {
-         if viBulk > 0
-         {
-            iBulk_can_hold = bulk / viBulk;
-         }
-         else
-         {
-            iBulk_can_hold = bulk * 100 / (-viBulk);
-         }
+         iBulk_can_hold = bulk * 100 / (-viBulk);
       }
 
       if viWeight = 0
       {
          iWeight_can_hold = INFINITE_COUNT;
       }
+      else if viWeight > 0
+      {
+         iWeight_can_hold = weight / viWeight;
+      }
       else
       {
-         if viWeight > 0
-         {
-            iWeight_can_hold = weight / viWeight;
-         }
-         else
-         {
-            iWeight_can_hold = weight * 100 / (-viWeight);
-         }
+         iWeight_can_hold = weight * 100 / (-viWeight);
       }
 
       if iBulk_can_hold = INFINITE_COUNT

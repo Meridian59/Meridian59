@@ -9222,6 +9222,10 @@ messages:
       {
          iFlags = iFlags | OF_REAGENTBAG;
       }
+      if (piFlags2 & PFLAG2_SPELLPOWER)
+      {
+         iFlags = iFlags | OF_SPELLPOWER;
+      }
 
       oIllusion = Send(self,@GetIllusionForm);
 

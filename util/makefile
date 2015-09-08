@@ -50,7 +50,7 @@ $(OUTDIR)\ftptest.exe: ftptest.obj
 	$(LINK) $(LINKFLAGS) $** $(NTLIBS) wininet.lib -out:$@
 
 $(OUTDIR)\rscload.lib: $(OUTDIR)\rscload.obj $(OUTDIR)\memmap.obj
-	$(LIBPRG) $** -out:$@
+	$(LINKST) $(LINKSTFLAGS) $** -out:$@
 	$(CP) $@ $(BLAKLIBDIR)
 
 $(OUTDIR)\rscprint.exe: $(OUTDIR)\rscprint.obj

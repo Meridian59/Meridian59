@@ -121,7 +121,6 @@ LINKSTFLAGS = $(LINKSTNORMALFLAGS)
 # programs
 CC        = cl
 MAKE      = nmake -nologo
-LIBPRG    = lib
 LINK      = link
 LINKST    = lib
 RC        = rc

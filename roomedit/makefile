@@ -301,7 +301,7 @@ OWLOBJS = \
    $(RC) /i$(OWLINCLUDEDIR) /fo $@ $**
 
 $(OWLOUTDIR)\owl.lib: $(OWLOBJS)
-	$(LIBPRG) $** -OUT:$@
+	$(LINKST) $** -OUT:$@
 
 {$(RESDIR)}.rc{$(OUTDIR)}.res:
    $(RC) /fo $@ $**

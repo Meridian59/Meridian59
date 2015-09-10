@@ -5344,77 +5344,54 @@ messages:
       return;
    }
 
-   % The IsObject... functions should call IsItemType with the ITEMTYPE_
-   %  constants.
-   
    IsObjectWeapon(what=$)
    {
-      if isClass(what,&Weapon)
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return Send(what,@IsItemType,#type=ITEMTYPE_WEAPON);
    }
 
    IsObjectSundry(what=$)
    {
+      % perhaps here so certain merchants will buy them?
       if IsClass(what,&Torch)
-         OR IsClass(what,&Flask)
-         OR IsClass(what,&Mug)
-         OR IsClass(what,&Food)
       {
          return TRUE;
       }
 
-      return FALSE;
+      return Send(what,@IsItemType,#type=ITEMTYPE_SUNDRY);
+   }
+
+   IsObjectPotion(what=$)
+   {
+      return Send(what,@IsItemType,#type=ITEMTYPE_POTION);
    }
 
    IsObjectMisc(what=$)
    {
-      if IsClass(what,&Chalice)
-         OR IsClass(what,&Scepter)
-         OR IsClass(what,&SpellItem)
-         OR IsClass(what,&Book)
+      % not sure why these were in misc but keeping them here for now
+      if IsClass(what,&SpellItem)
          OR IsClass(what,&Arsenic)
-         OR IsClass(what,&SpiderEgg)
-         OR IsClass(what,&SpiderEggShell)
-         OR IsClass(what,&Key) 
       {
          return TRUE;
       }
 
-      return FALSE;
+      return Send(what,@IsItemType,#type=ITEMTYPE_MISC);
    }
 
    IsObjectWearable(what=$)
    {
-      if IsClass(what,&Armor)
-         OR IsClass(what,&Helmet)
-         OR IsClass(what,&Gauntlet)
-         OR IsClass(what,&necklace)
-         OR IsClass(what,&Shield)
-         OR IsClass(what,&Pants)
-      {
-         return TRUE;
-      }
-
-      return FALSE;
+      return Send(what,@IsItemType,#type=ITEMTYPE_RING) |
+               Send(what,@IsItemType,#type=ITEMTYPE_NECKLACE) |
+               Send(what,@IsItemType,#type=ITEMTYPE_ARMOR);
    }
 
    IsObjectGem(what=$)
    {
       if IsClass(what,&JewelofFroz)
-         OR IsClass(what,&Emerald)
-         OR IsClass(what,&Ruby)
-         OR IsClass(what,&Sapphire)
-         OR IsClass(what,&Diamond)
-         OR IsClass(what,&Ring)
       {
          return TRUE;
       }
 
-      return FALSE;
+      return Send(what,@IsItemType,#type=ITEMTYPE_GEM);
    }
 
    IsObjectReagent(what=$)

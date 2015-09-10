@@ -551,8 +551,7 @@ void CommandActivate(char *args)
  */
 void CommandSafetyOn(char *args)
 {
-   cinfo->config->aggressive = False;
-   SendSafety(1);
+   SendPreferences(cinfo->config->preferences &= ~CF_SAFETY_OFF);
 }
 /************************************************************************/
 /*
@@ -560,8 +559,7 @@ void CommandSafetyOn(char *args)
  */
 void CommandSafetyOff(char *args)
 {
-   cinfo->config->aggressive = True;
-   SendSafety(0);
+   SendPreferences(cinfo->config->preferences |= CF_SAFETY_OFF);
 }
 /************************************************************************/
 /*
@@ -569,8 +567,7 @@ void CommandSafetyOff(char *args)
  */
 void CommandTempSafeOn(char *args)
 {
-   cinfo->config->tempsafe = True;
-   SendTempSafe(1);
+   SendPreferences(cinfo->config->preferences |= CF_TEMPSAFE);
 }
 /************************************************************************/
 /*
@@ -578,8 +575,7 @@ void CommandTempSafeOn(char *args)
  */
 void CommandTempSafeOff(char *args)
 {
-   cinfo->config->tempsafe = False;
-   SendTempSafe(0);
+   SendPreferences(cinfo->config->preferences &= ~CF_TEMPSAFE);
 }
 /************************************************************************/
 /*
@@ -587,8 +583,7 @@ void CommandTempSafeOff(char *args)
  */
 void CommandGroupingOn(char *args)
 {
-   cinfo->config->grouping = True;
-   SendGrouping(1);
+   SendPreferences(cinfo->config->preferences |= CF_GROUPING);
 }
 /************************************************************************/
 /*
@@ -596,8 +591,7 @@ void CommandGroupingOn(char *args)
  */
 void CommandGroupingOff(char *args)
 {
-   cinfo->config->grouping = False;
-   SendGrouping(0);
+   SendPreferences(cinfo->config->preferences &= ~CF_GROUPING);
 }
 /************************************************************************/
 /*
@@ -605,8 +599,7 @@ void CommandGroupingOff(char *args)
  */
 void CommandAutoLootOn(char *args)
 {
-   cinfo->config->autoloot = True;
-   SendAutoLoot(1);
+   SendPreferences(cinfo->config->preferences |= CF_AUTOLOOT);
 }
 /************************************************************************/
 /*
@@ -614,8 +607,7 @@ void CommandAutoLootOn(char *args)
  */
 void CommandAutoLootOff(char *args)
 {
-   cinfo->config->autoloot = False;
-   SendAutoLoot(0);
+   SendPreferences(cinfo->config->preferences &= ~CF_AUTOLOOT);
 }
 /************************************************************************/
 /*
@@ -623,8 +615,7 @@ void CommandAutoLootOff(char *args)
  */
 void CommandAutoCombineOn(char *args)
 {
-   cinfo->config->autocombine = True;
-   SendAutoCombine(1);
+   SendPreferences(cinfo->config->preferences |= CF_AUTOCOMBINE);
 }
 /************************************************************************/
 /*
@@ -632,8 +623,7 @@ void CommandAutoCombineOn(char *args)
  */
 void CommandAutoCombineOff(char *args)
 {
-   cinfo->config->autocombine = False;
-   SendAutoCombine(0);
+   SendPreferences(cinfo->config->preferences &= ~CF_AUTOCOMBINE);
 }
 /************************************************************************/
 /*
@@ -641,8 +631,7 @@ void CommandAutoCombineOff(char *args)
  */
 void CommandReagentBagOn(char *args)
 {
-   cinfo->config->reagentbag = True;
-   SendReagentBag(1);
+   SendPreferences(cinfo->config->preferences |= CF_REAGENTBAG);
 }
 /************************************************************************/
 /*
@@ -650,8 +639,7 @@ void CommandReagentBagOn(char *args)
  */
 void CommandReagentBagOff(char *args)
 {
-   cinfo->config->reagentbag = False;
-   SendReagentBag(0);
+   SendPreferences(cinfo->config->preferences &= ~CF_REAGENTBAG);
 }
 /************************************************************************/
 /*
@@ -659,8 +647,7 @@ void CommandReagentBagOff(char *args)
  */
 void CommandSpellPowerOn(char *args)
 {
-   cinfo->config->spellpower = True;
-   SendSpellPower(1);
+   SendPreferences(cinfo->config->preferences |= CF_SPELLPOWER);
 }
 /************************************************************************/
 /*
@@ -668,8 +655,7 @@ void CommandSpellPowerOn(char *args)
  */
 void CommandSpellPowerOff(char *args)
 {
-   cinfo->config->spellpower = False;
-   SendSpellPower(0);
+   SendPreferences(cinfo->config->preferences &= ~CF_SPELLPOWER);
 }
 /************************************************************************/
 /*

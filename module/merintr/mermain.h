@@ -16,13 +16,7 @@
 typedef struct {
    Bool   resting;        // True when player is resting (idle)
    int    vigor;          // Current value of player's vigor stat
-   Bool   aggressive;     // True when people allowed to kill others (safety off)
-   Bool   tempsafe;       // True when player gets a temporary angel on death
-   Bool   grouping;       // True when player will join building groups
-   Bool   autoloot;       // True when player autoloots items
-   Bool   autocombine;    // True when player autocombines spellitems
-   Bool   reagentbag;     // True when player auto-stashes items in reagent bag
-   Bool   spellpower;     // True when player has enabled spellpower display
+   int    preferences;
 } PInfo;
 
 typedef struct {
@@ -47,6 +41,7 @@ Bool CheckForAlwaysActiveSpells(spelltemp *sp);
 void InterfaceNewRoom(void);
 void InterfaceConfigChanged(void);
 void InterfaceUserChanged(void);
+void SetPlayerPreferences(int preferences);
 
 char *GetPlayerName(char *str, char **next);
 ID FindPlayerByName(char *name);

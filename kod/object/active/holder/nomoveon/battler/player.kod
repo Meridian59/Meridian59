@@ -854,6 +854,9 @@ properties:
    piFlags2 = 0
    piFlags3 = 0
 
+   % Set of flags with player preferences.
+   piPreferences = CF_DEFAULT_PREF
+
    % player starts unguilded--doesn't do much yet
    poGuild = $
    piGuildRejoinTimestamp = 0
@@ -1219,7 +1222,7 @@ messages:
          else
          {
             ccond = player_safety_off_mail;
-            if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
+            if NOT Send(self,@CheckPlayerPreference,#flag=CF_SAFETY_OFF)
             {
                ccond = player_safety_on_mail;
             }
@@ -1300,14 +1303,7 @@ messages:
    {
       if flagset = 1
       {
-         if (flag = PFLAG_SAFETY) AND NOT Send(SYS,@IsPKAllowed)
-         {
-            return TRUE;
-         }
-         else
-         {
-            return (piFlags & flag);
-         }
+         return (piFlags & flag);
       }
 
       if flagset = 2
@@ -1321,6 +1317,31 @@ messages:
       }
 
       return FALSE;
+   }
+
+   % Player preference flags (e.g. safety, tempsafe etc.)
+   SetPlayerPreference(flag = 0, value = 0)
+   {
+      if value
+      {
+         piPreferences = piPreferences | flag;
+      }
+      else
+      {
+         piPreferences = piPreferences & ~flag;
+      }
+
+      return;
+   }
+
+   CheckPlayerPreference(flag = 0)
+   {
+      if (flag = CF_SAFETY_OFF) AND NOT Send(SYS,@IsPKAllowed)
+      {
+         return FALSE;
+      }
+
+      return (piPreferences & flag);
    }
 
    % Added a nodraw paramater to this function to deal with buggy Jala
@@ -2651,7 +2672,7 @@ messages:
       }
       else
       {
-         if not IsClass(self,&Guest)
+         if NOT IsClass(self,&Guest)
          {
             foreach i in lSpells
             {
@@ -4469,7 +4490,7 @@ messages:
    }
 
    CheckStatusAndSafety(victim=$,report=TRUE,actual=TRUE,minion=FALSE)
-   "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
+   "CF_SAFETY_OFF prevents accidental attacks. You can always successfully "
    "hit a murderer or outlaw, though."
    {
       local oEnemyGuild, oSoldierShield;
@@ -4534,7 +4555,7 @@ messages:
       if NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          AND NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
+         if NOT Send(self,@CheckPlayerPreference,#flag=CF_SAFETY_OFF)
          {
             % If your opponent is not a murderer or outlaw, you must
             % have your 'safety' off to attack anyone.
@@ -4661,7 +4682,7 @@ messages:
       if bBooted
       {
          % Check for safety before booting.
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
+         if NOT Send(self,@CheckPlayerPreference,#flag=CF_SAFETY_OFF)
          {
             if report
             {
@@ -5838,7 +5859,7 @@ messages:
                   OR Send(what,@IsIllusion)))
             AND (use_weapon = $
                OR NOT IsClass(use_weapon,&ActiveWallElement))
-            AND (piFlags & PFLAG_GROUPING)
+            AND (piPreferences & CF_GROUPING)
          {
             Send(self,@JoinBuilderGroup);
          }
@@ -8887,7 +8908,7 @@ messages:
             if (lBuilderGroup = $
                   OR Length(lBuilderGroup) = 1
                   OR (FindListElem(lBuilderGroup,self) = 0
-                     AND (piFlags & ~PFLAG_GROUPING)))
+                     AND (piPreferences & ~CF_GROUPING)))
                AND NOT group_member_kill
                AND killing_blow
                AND (monster_level + 5) > piBase_Max_health
@@ -9641,7 +9662,7 @@ messages:
                AND piBase_max_health <= 99
                AND NOT ((piFlags & PFLAG_MURDERER)
                   OR (piFlags & PFLAG_OUTLAW))
-               AND (piFlags & PFLAG_TEMP_SAFETY)
+               AND (piPreferences & CF_TEMPSAFE)
                AND Send(self,@FindUsing,#class=&SoldierShield) = $
                AND ptTempSafe = $
             {

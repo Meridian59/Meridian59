@@ -92,7 +92,7 @@ messages:
       local oPrism;
 
       if IsClass(who,&Player)
-         AND (Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
+         AND (NOT Send(who,@CheckPlayerPreference,#flag=CF_SAFETY_OFF)
               OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
          Send(who,@MsgSendUser,#message_rsc=Shatterlock_safety);

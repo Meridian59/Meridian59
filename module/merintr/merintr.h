@@ -52,13 +52,7 @@
 #define RequestRest()              ToServer(BP_USERCOMMAND, user_msg_table, UC_REST)
 #define RequestStand()             ToServer(BP_USERCOMMAND, user_msg_table, UC_STAND)
 #define RequestSuicide()           ToServer(BP_USERCOMMAND, user_msg_table, UC_SUICIDE)
-#define SendSafety(val)            ToServer(BP_USERCOMMAND, user_msg_table, UC_SAFETY, val)
-#define SendTempSafe(val)          ToServer(BP_USERCOMMAND, user_msg_table, UC_TEMPSAFE, val)
-#define SendGrouping(val)          ToServer(BP_USERCOMMAND, user_msg_table, UC_GROUPING, val)
-#define SendAutoLoot(val)          ToServer(BP_USERCOMMAND, user_msg_table, UC_AUTOLOOT, val)
-#define SendAutoCombine(val)       ToServer(BP_USERCOMMAND, user_msg_table, UC_AUTOCOMBINE, val)
-#define SendReagentBag(val)        ToServer(BP_USERCOMMAND, user_msg_table, UC_REAGENTBAG, val)
-#define SendSpellPower(val)        ToServer(BP_USERCOMMAND, user_msg_table, UC_SPELLPOWER, val)
+#define SendPreferences(val)       ToServer(BP_USERCOMMAND, user_msg_table, UC_SEND_PREFERENCES, val)
 #define RequestGuildInfo()         ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_GUILDINFO)
 #define RequestInvite(obj)         ToServer(BP_USERCOMMAND, user_msg_table, UC_INVITE, obj)
 #define RequestRenounce()          ToServer(BP_USERCOMMAND, user_msg_table, UC_RENOUNCE)
@@ -96,6 +90,7 @@
 #define RequestDepositMoney(amount)     ToServer(BP_USERCOMMAND, user_msg_table, UC_DEPOSIT, amount)
 #define RequestBalance()           ToServer(BP_USERCOMMAND, user_msg_table, UC_BALANCE)
 #define RequestAppeal(s)           ToServer(BP_USERCOMMAND, user_msg_table, UC_APPEAL, s)
+#define RequestPreferences()       ToServer(BP_USERCOMMAND, user_msg_table, UC_REQ_PREFERENCES)
 
 extern client_message msg_table[];
 extern client_message user_msg_table[];

@@ -228,12 +228,15 @@ enum {
    UC_LOOK_PLAYER = 2,
    UC_CHANGE_URL = 3,
    UC_SPELL_SCHOOLS = 4,
-
    UC_REST = 5,
    UC_STAND = 6,
-   UC_SAFETY = 7,
+
+   UC_REQ_PREFERENCES = 7,
+
    UC_SUICIDE = 8,
-   UC_TEMPSAFE = 9,
+
+   UC_SEND_PREFERENCES = 9,
+
    UC_REQ_GUILDINFO = 10,
    UC_GUILDINFO = 11,
    UC_INVITE = 12,
@@ -258,16 +261,15 @@ enum {
    UC_GUILD_SHIELD = 31,
    UC_GUILD_SHIELDS = 32,
    UC_CLAIM_SHIELD = 33,
-   UC_GROUPING = 34,
+
+   UC_RECEIVE_PREFERENCES = 34,
+
    UC_DEPOSIT = 35,
    UC_WITHDRAW = 36,
    UC_BALANCE = 37,
-   UC_REAGENTBAG = 38,
-   UC_AUTOLOOT = 39,
+
    UC_APPEAL = 40,
    UC_REQ_RESCUE = 41,
-   UC_AUTOCOMBINE = 42,
-   UC_SPELLPOWER = 43,
 
    UC_MINIGAME_START        = 45,
    UC_MINIGAME_STATE        = 46,
@@ -360,8 +362,6 @@ enum {
 
 
 /* Object flag values and masks */
-#define OF_AUTOLOOT      0x00000001    // Set if player has autolooting on (self only)
-#define OF_GROUPING      0x00000002    // Set if player is grouping (self only)
 #define OF_PLAYER        0x00000004    // Set if object is a player
 #define OF_ATTACKABLE    0x00000008    // Set if object is legal target for an attack
 #define OF_GETTABLE      0x00000010    // Set if player can try to pick up object
@@ -373,18 +373,12 @@ enum {
 #define OF_BUYABLE       0x00000400    // Set if object can be bought from
 #define OF_ACTIVATABLE   0x00000800    // Set if object can be activated
 #define OF_APPLYABLE     0x00001000    // Set if object can be applied to another object
-#define OF_SAFETY        0x00002000    // Set if player has safety on (self only)
-#define OF_TEMPSAFE      0x00004000    // Set if player has temp safety on death activated
-#define OF_REAGENTBAG    0x00008000    // Set if player automatically puts items
-                                       // into reagent bag (self only)
 
 #define OF_BOUNCING      0x00010000    // If both flags on then object is bouncing
 #define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
 #define OF_FLASHING      0x00040000    // For players or objects if flashing with light.
 #define OF_PHASING       0x00080000    // For players or objects if phasing translucent/solid.
 
-#define OF_AUTOCOMBINE   0x00100000    // Set if player automatically combines spell items (self only)
-#define OF_SPELLPOWER    0x00200000    // Set if player gets spellpower readout from cast spells (self only)
 #define GetItemFlags(flags)   ((flags))
 
 // Drawing effects. Separate from object flags.
@@ -453,6 +447,15 @@ typedef enum {
    MOVEON_TELEPORTER = 2,   // Can move on object, but then kod will move you elsewhere
    MOVEON_NOTIFY     = 3,
 } moveon_type;
+
+// Client preferences defines. Set if:
+#define CF_SAFETY_OFF    0x0001  // Player has safety off
+#define CF_TEMPSAFE      0x0002  // Player has temp safety on death activated
+#define CF_GROUPING      0x0004  // Player is grouping
+#define CF_AUTOLOOT      0x0008  // Player is automatically picking up loot
+#define CF_AUTOCOMBINE   0x0010  // Player automatically combines spell items
+#define CF_REAGENTBAG    0x0020  // Player automatically puts items into reagent bag
+#define CF_SPELLPOWER    0x0040  // Player gets spellpower readout from cast spells
 
 /* Effect codes */
 enum {

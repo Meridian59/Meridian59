@@ -6376,7 +6376,7 @@ messages:
                AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
                AND Send(oTreasure,@GetPos) <> $
                AND IsClass(who,&User)
-               AND Send(who,@CheckPlayerFlag,#flag=PFLAG_AUTOLOOT)
+               AND Send(who,@CheckPlayerPreference,#flag=CF_AUTOLOOT)
                AND (IsClass(oTreasure,&Money)
                        OR (NOT bRangeFailure
                            AND NOT bCapacityFailure))
@@ -6409,7 +6409,7 @@ messages:
       % Handle autoloot resources displayed to user.
       if iNumberOfItemsDropped <> 0
          AND IsClass(who,&User)
-         AND Send(who,@CheckPlayerFlag,#flag=PFLAG_AUTOLOOT)
+         AND Send(who,@CheckPlayerPreference,#flag=CF_AUTOLOOT)
       {
          if bRangeFailure
          {

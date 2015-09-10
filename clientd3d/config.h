@@ -67,13 +67,7 @@ typedef struct {
    Bool scroll_lock;             /* Don't scroll main edit box if scrolled back */
    Bool tooltips;                /* Display tooltips? */
    Bool inventory_num;           /* Display amounts for number items in inventory? */
-   Bool aggressive;              /* Allowed to attack other players? */
-   Bool tempsafe;                /* Do we get a temporary angel when we die? */
-   Bool grouping;                /* Do we join building groups? */
-   Bool autoloot;                /* Automatically loot stackable items? */
-   Bool autocombine;             /* Autocombine spell items? */
-   Bool reagentbag;              /* Automatically stash items into reagent bag? */
-   Bool spellpower;              /* Display spellpower for spells we cast? */
+   Bool preferences;             /* Client gameplay preferences. */
    Bool bounce;                  /* Display player "bouncing" animation? */
    Bool toolbar;                 /* Display toolbar? */
 

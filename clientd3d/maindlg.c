@@ -178,13 +178,13 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       CheckDlgButton(hDlg, IDC_TOOLTIPS, config.tooltips);
       CheckDlgButton(hDlg, IDC_PAIN, config.pain);
       CheckDlgButton(hDlg, IDC_INVNUM, config.inventory_num);
-      CheckDlgButton(hDlg, IDC_SAFETY, config.aggressive);
-      CheckDlgButton(hDlg, IDC_TEMPSAFE, config.tempsafe);
-      CheckDlgButton(hDlg, IDC_GROUPING, config.grouping);
-      CheckDlgButton(hDlg, IDC_AUTOLOOT, config.autoloot);
-      CheckDlgButton(hDlg, IDC_AUTOCOMBINE, config.autocombine);
-      CheckDlgButton(hDlg, IDC_REAGENTBAG, config.reagentbag);
-      CheckDlgButton(hDlg, IDC_SPELLPOWER, config.spellpower);
+      CheckDlgButton(hDlg, IDC_SAFETY, config.preferences & CF_SAFETY_OFF);
+      CheckDlgButton(hDlg, IDC_TEMPSAFE, config.preferences & CF_TEMPSAFE);
+      CheckDlgButton(hDlg, IDC_GROUPING, config.preferences & CF_GROUPING);
+      CheckDlgButton(hDlg, IDC_AUTOLOOT, config.preferences & CF_AUTOLOOT);
+      CheckDlgButton(hDlg, IDC_AUTOCOMBINE, config.preferences & CF_AUTOCOMBINE);
+      CheckDlgButton(hDlg, IDC_REAGENTBAG, config.preferences & CF_REAGENTBAG);
+      CheckDlgButton(hDlg, IDC_SPELLPOWER, config.preferences & CF_SPELLPOWER);
       CheckDlgButton(hDlg, IDC_SHOWFPS, config.showFPS);
       CheckDlgButton(hDlg, IDC_BOUNCE, config.bounce);
       CheckDlgButton(hDlg, IDC_WEATHER, config.weather);
@@ -268,13 +268,42 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          config.tooltips      = IsDlgButtonChecked(hDlg, IDC_TOOLTIPS);
          config.pain          = IsDlgButtonChecked(hDlg, IDC_PAIN);
          config.inventory_num = IsDlgButtonChecked(hDlg, IDC_INVNUM);
-         config.aggressive    = IsDlgButtonChecked(hDlg, IDC_SAFETY);
-         config.tempsafe      = IsDlgButtonChecked(hDlg, IDC_TEMPSAFE);
-         config.grouping      = IsDlgButtonChecked(hDlg, IDC_GROUPING);
-         config.autoloot      = IsDlgButtonChecked(hDlg, IDC_AUTOLOOT);
-         config.autocombine   = IsDlgButtonChecked(hDlg, IDC_AUTOCOMBINE);
-         config.reagentbag    = IsDlgButtonChecked(hDlg, IDC_REAGENTBAG);
-         config.spellpower    = IsDlgButtonChecked(hDlg, IDC_SPELLPOWER);
+
+         if (IsDlgButtonChecked(hDlg, IDC_SAFETY))
+            config.preferences |= CF_SAFETY_OFF;
+         else
+            config.preferences &= ~CF_SAFETY_OFF;
+
+         if (IsDlgButtonChecked(hDlg, IDC_TEMPSAFE))
+            config.preferences |= CF_TEMPSAFE;
+         else
+            config.preferences &= ~CF_TEMPSAFE;
+
+         if (IsDlgButtonChecked(hDlg, IDC_GROUPING))
+            config.preferences |= CF_GROUPING;
+         else
+            config.preferences &= ~CF_GROUPING;
+
+         if (IsDlgButtonChecked(hDlg, IDC_AUTOLOOT))
+            config.preferences |= CF_AUTOLOOT;
+         else
+            config.preferences &= ~CF_AUTOLOOT;
+
+         if (IsDlgButtonChecked(hDlg, IDC_AUTOCOMBINE))
+            config.preferences |= CF_AUTOCOMBINE;
+         else
+            config.preferences &= ~CF_AUTOCOMBINE;
+
+         if (IsDlgButtonChecked(hDlg, IDC_REAGENTBAG))
+            config.preferences |= CF_REAGENTBAG;
+         else
+            config.preferences &= ~CF_REAGENTBAG;
+
+         if (IsDlgButtonChecked(hDlg, IDC_SPELLPOWER))
+            config.preferences |= CF_SPELLPOWER;
+         else
+            config.preferences &= ~CF_SPELLPOWER;
+
          config.showFPS       = IsDlgButtonChecked(hDlg, IDC_SHOWFPS);
          config.bounce        = IsDlgButtonChecked(hDlg, IDC_BOUNCE);
          config.weather       = IsDlgButtonChecked(hDlg, IDC_WEATHER);

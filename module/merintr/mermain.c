@@ -27,22 +27,6 @@ static int num_default_buttons = (sizeof(default_buttons) / sizeof(AddButton));
 // Player/game data that's known only in module
 PInfo pinfo;
 
-// These booleans prevent multiple requests to change data being sent to server.
-// True when we've told server to change safety flag
-static Bool safety_flipped;
-// True when we've told server to change temp safe flag
-static Bool temp_safe_flipped;
-// True when we've told server to change player's grouping flag
-static Bool grouping_flipped;
-// True when we've told server to change player's reagent bag setting
-static Bool reagentbag_flipped;
-// True when we've told server to change player's autoloot setting
-static Bool autoloot_flipped;
-// True when we've told server to change player's autocombine setting
-static Bool autocombine_flipped;
-// True when we've told server to change player's spellpower display setting
-static Bool spellpower_flipped;
-
 /****************************************************************************/
 /*
  * InterfaceInit:  Called on startup.  Initialize interface.
@@ -79,47 +63,8 @@ void InterfaceInit(void)
    CopyCurrentView(&area);
    InterfaceResizeModule(r.right, r.bottom, &area);
 
-   pinfo.resting = False;
-   safety_flipped = False;
-   temp_safe_flipped = False;
-   grouping_flipped = False;
-   autoloot_flipped = False;
-   autocombine_flipped = False;
-   reagentbag_flipped = False;
-   spellpower_flipped = False;
-
-   if (pinfo.resting)
-      RequestRest();
-   else
-      RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
-   if (cinfo->config->tempsafe)
-      SendTempSafe(1);
-   else
-      SendTempSafe(0);
-   if (cinfo->config->grouping)
-      SendGrouping(1);
-   else
-      SendGrouping(0);
-   if (cinfo->config->autoloot)
-      SendAutoLoot(1);
-   else
-      SendAutoLoot(0);
-   if (cinfo->config->autocombine)
-      SendAutoCombine(1);
-   else
-      SendAutoCombine(0);
-   if (cinfo->config->reagentbag)
-      SendReagentBag(1);
-   else
-      SendReagentBag(0);
-   if (cinfo->config->spellpower)
-      SendSpellPower(1);
-   else
-      SendSpellPower(0);
+   // Request player preferences from the server.
+   RequestPreferences();
 }
 /****************************************************************************/
 /*
@@ -209,19 +154,7 @@ Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
 /****************************************************************************/
 void InterfaceResetData(void)
 {
-   if (pinfo.resting)
-      RequestRest();
-   else
-      RequestStand();
-   if (cinfo->config->aggressive)
-      SendSafety(0);
-   else
-      SendSafety(1);
-   if (cinfo->config->tempsafe)
-      SendTempSafe(1);
-   else
-      SendTempSafe(0);
-
+   RequestPreferences();
    RequestStatGroups();
    RequestSpells();
    RequestSkills();
@@ -461,315 +394,28 @@ Bool CheckForAlwaysActiveSpells(spelltemp *sp)
  */
 void InterfaceUserChanged(void)
 {
-   room_contents_node *r;
-
    UserAreaRedraw();
    AliasInit();
-
-   r = GetRoomObjectById(cinfo->player->id);
-
-   if (r == NULL)
-      return;
-
-   if (r->obj.flags & OF_SAFETY)
-   {
-      if (cinfo->config->aggressive)
-      {
-         if (!safety_flipped)
-            SendSafety(0);
-         safety_flipped = True;
-      }
-      else
-      {
-         pinfo.aggressive = cinfo->config->aggressive = False;
-         safety_flipped = False;
-      }
-   }
-   else 
-   {
-      if (!cinfo->config->aggressive)
-      {
-         if (!safety_flipped)
-            SendSafety(1);
-         safety_flipped = True;
-      }
-      else
-      {
-         pinfo.aggressive = cinfo->config->aggressive = True;
-         safety_flipped = False;
-      }
-
-   }
-
-   if (r->obj.flags & OF_TEMPSAFE)
-   {
-      if (cinfo->config->tempsafe)
-      {
-         // Flag on, setting on, don't change.
-         pinfo.tempsafe = cinfo->config->tempsafe = True;
-         temp_safe_flipped = False;
-      }
-      else
-      {
-         // Flag on, setting off, turn flag off.
-         if (!temp_safe_flipped)
-            SendTempSafe(0);
-         temp_safe_flipped = True;
-      }
-   }
-   else
-   {
-      if (!cinfo->config->tempsafe)
-      {
-         // Flag off, setting off, don't change.
-         pinfo.tempsafe = cinfo->config->tempsafe = False;
-         temp_safe_flipped = False;
-      }
-      else
-      {
-         // Flag off, setting on, turn flag on.
-         if (!temp_safe_flipped)
-            SendTempSafe(1);
-         temp_safe_flipped = True;
-      }
-   }
-
-   if (r->obj.flags & OF_GROUPING)
-   {
-      if (cinfo->config->grouping)
-      {
-         // Flag on, setting on, don't change.
-         pinfo.grouping = cinfo->config->grouping = True;
-         grouping_flipped = False;
-      }
-      else
-      {
-         // Flag on, setting off, turn flag off.
-         if (!grouping_flipped)
-            SendGrouping(0);
-         grouping_flipped = True;
-      }
-   }
-   else
-   {
-      if (!cinfo->config->grouping)
-      {
-         // Flag off, setting off, don't change.
-         pinfo.grouping = cinfo->config->grouping = False;
-         grouping_flipped = False;
-      }
-      else
-      {
-         // Flag off, setting on, turn flag on.
-         if (!grouping_flipped)
-            SendGrouping(1);
-         grouping_flipped = True;
-      }
-   }
-
-   if (r->obj.flags & OF_AUTOLOOT)
-   {
-      if (cinfo->config->autoloot)
-      {
-         // Flag on, setting on, don't change.
-         pinfo.autoloot = cinfo->config->autoloot = True;
-         autoloot_flipped = False;
-      }
-      else
-      {
-         // Flag on, setting off, turn flag off.
-         if (!autoloot_flipped)
-            SendAutoLoot(0);
-         autoloot_flipped = True;
-      }
-   }
-   else
-   {
-      if (!cinfo->config->autoloot)
-      {
-         // Flag off, setting off, don't change.
-         pinfo.autoloot = cinfo->config->autoloot = False;
-         autoloot_flipped = False;
-      }
-      else
-      {
-         // Flag off, setting on, turn flag on.
-         if (!autoloot_flipped)
-            SendAutoLoot(1);
-         autoloot_flipped = True;
-      }
-   }
-
-   if (r->obj.flags & OF_AUTOCOMBINE)
-   {
-      if (cinfo->config->autocombine)
-      {
-         // Flag on, setting on, don't change.
-         pinfo.autocombine = cinfo->config->autocombine = True;
-         autocombine_flipped = False;
-      }
-      else
-      {
-         // Flag on, setting off, turn flag off.
-         if (!autocombine_flipped)
-            SendAutoCombine(0);
-         autocombine_flipped = True;
-      }
-   }
-   else
-   {
-      if (!cinfo->config->autocombine)
-      {
-         // Flag off, setting off, don't change.
-         pinfo.autocombine = cinfo->config->autocombine = False;
-         autocombine_flipped = False;
-      }
-      else
-      {
-         // Flag off, setting on, turn flag on.
-         if (!autocombine_flipped)
-            SendAutoCombine(1);
-         autocombine_flipped = True;
-      }
-   }
-
-   if (r->obj.flags & OF_REAGENTBAG)
-   {
-      if (cinfo->config->reagentbag)
-      {
-         // Flag on, setting on, don't change.
-         pinfo.reagentbag = cinfo->config->reagentbag = True;
-         reagentbag_flipped = False;
-      }
-      else
-      {
-         // Flag on, setting off, turn flag off.
-         if (!reagentbag_flipped)
-            SendReagentBag(0);
-         reagentbag_flipped = True;
-      }
-   }
-   else
-   {
-      if (!cinfo->config->reagentbag)
-      {
-         // Flag off, setting off, don't change.
-         pinfo.reagentbag = cinfo->config->reagentbag = False;
-         reagentbag_flipped = False;
-      }
-      else
-      {
-         // Flag off, setting on, turn flag on.
-         if (!reagentbag_flipped)
-            SendReagentBag(1);
-         reagentbag_flipped = True;
-      }
-   }
-
-   if (r->obj.flags & OF_SPELLPOWER)
-   {
-      if (cinfo->config->spellpower)
-      {
-         // Flag on, setting on, don't change.
-         pinfo.spellpower = cinfo->config->spellpower = True;
-         spellpower_flipped = False;
-      }
-      else
-      {
-         // Flag on, setting off, turn flag off.
-         if (!spellpower_flipped)
-            SendSpellPower(0);
-         spellpower_flipped = True;
-      }
-   }
-   else
-   {
-      if (!cinfo->config->spellpower)
-      {
-         // Flag off, setting off, don't change.
-         pinfo.spellpower = cinfo->config->spellpower = False;
-         spellpower_flipped = False;
-      }
-      else
-      {
-         // Flag off, setting on, turn flag on.
-         if (!spellpower_flipped)
-            SendSpellPower(1);
-         spellpower_flipped = True;
-      }
-   }
+   RequestPreferences();
 }
 /****************************************************************************/
 void InterfaceConfigChanged(void)
 {
-   // See if user changed safety flag
-   if (pinfo.aggressive != cinfo->config->aggressive)
-   {
-      pinfo.aggressive = cinfo->config->aggressive;
-      if (pinfo.aggressive)
-         SendSafety(0);
-      else SendSafety(1);
-   }
-
-   // See if user changed temp safe flag
-   if (pinfo.tempsafe != cinfo->config->tempsafe)
-   {
-      pinfo.tempsafe = cinfo->config->tempsafe;
-      if (pinfo.tempsafe)
-         SendTempSafe(1);
-      else SendTempSafe(0);
-   }
-
-   // See if user changed grouping flag
-   if (pinfo.grouping != cinfo->config->grouping)
-   {
-      pinfo.grouping = cinfo->config->grouping;
-      if (pinfo.grouping)
-         SendGrouping(1);
-      else SendGrouping(0);
-   }
-
-   // See if user changed autoloot flag
-   if (pinfo.autoloot != cinfo->config->autoloot)
-   {
-      pinfo.autoloot = cinfo->config->autoloot;
-      if (pinfo.autoloot)
-         SendAutoLoot(1);
-      else SendAutoLoot(0);
-   }
-
-   // See if user changed autocombine flag
-   if (pinfo.autocombine != cinfo->config->autocombine)
-   {
-      pinfo.autocombine = cinfo->config->autocombine;
-      if (pinfo.autocombine)
-         SendAutoCombine(1);
-      else SendAutoCombine(0);
-   }
-
-   // See if user changed reagentbag flag
-   if (pinfo.reagentbag != cinfo->config->reagentbag)
-   {
-      pinfo.reagentbag = cinfo->config->reagentbag;
-      if (pinfo.reagentbag)
-         SendReagentBag(1);
-      else SendReagentBag(0);
-   }
-
-   // See if user changed spellpower display flag
-   if (pinfo.spellpower != cinfo->config->spellpower)
-   {
-      pinfo.spellpower = cinfo->config->spellpower;
-      if (pinfo.spellpower)
-         SendSpellPower(1);
-      else SendSpellPower(0);
-   }
+   // Send preferences to server.
+   SendPreferences(cinfo->config->preferences);
 }
 
 /* Utility functions */
 /****************************************************************************/
 
-
+/****************************************************************************/
+/*
+ * SetPlayerPreferences:  Sets the player's config preferences.
+ */
+void SetPlayerPreferences(int preferences)
+{
+   cinfo->config->preferences = preferences;
+}
 /************************************************************************/
 /*
  * GetPlayerName:  Parse str, and return a pointer to the start of the first

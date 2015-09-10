@@ -36,10 +36,12 @@ messages:
       return;
    }
 
-   CheckPlayerFlag(flag=0)
+   CheckPlayerPreference(flag=0)
    {
-      if flag = PFLAG_SAFETY
-      {  return True; }
+      if flag = CF_SAFETY_OFF
+      {
+         return FALSE;
+      }
 
       propagate;
    }

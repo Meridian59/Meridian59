@@ -1730,17 +1730,8 @@ messages:
 
    UserCommandSetSafety(value = 0)
    {
-      Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=value);
+      Send(self,@SetPlayerPreference,#flag=CF_SAFETY_OFF,#value=value);
       if value
-      {
-         if Send(SYS,@IsPKAllowed)
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_safety_on);
-            Send(self,@WaveSendUser,#what=self,
-                  #wave_rsc=user_safety_on_wav_rsc);
-         }
-      }
-      else
       {
          if Send(SYS,@IsPKAllowed)
          {
@@ -1749,19 +1740,35 @@ messages:
                   #wave_rsc=user_safety_off_wav_rsc);
          }
       }
+      else
+      {
+         if Send(SYS,@IsPKAllowed)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+            Send(self,@WaveSendUser,#what=self,
+                  #wave_rsc=user_safety_on_wav_rsc);
+         }
+
+      }
 
       return;
    }
 
    UserCommandSetTempSafe(value = 0)
    {
-      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMP_SAFETY,#value=value);
-
       if piBase_max_health > 99
          OR (piFlags & PFLAG_MURDERER)
          OR (piFlags & PFLAG_OUTLAW)
          OR Send(self,@FindUsing,#class=&SoldierShield) <> $
       {
+         if value
+         {
+            piPreferences = piPreferences | CF_TEMPSAFE;
+         }
+         else
+         {
+            piPreferences = piPreferences & ~CF_TEMPSAFE;
+         }
          Send(self,@MsgSendUser,#message_rsc=user_temp_safe_invalid);
 
          return;
@@ -1769,10 +1776,12 @@ messages:
 
       if value
       {
+         piPreferences = piPreferences | CF_TEMPSAFE;
          Send(self,@MsgSendUser,#message_rsc=user_temp_safe_on);
       }
       else
       {
+         piPreferences = piPreferences & ~CF_TEMPSAFE;
          Send(self,@MsgSendUser,#message_rsc=user_temp_safe_off);
       }
 
@@ -1783,20 +1792,12 @@ messages:
    {
       if value
       {
-         if (piFlags & PFLAG_GROUPING)
-         {
-            return;
-         }
-         piFlags = piFlags | PFLAG_GROUPING;
+         piPreferences = piPreferences | CF_GROUPING;
          Send(self,@MsgSendUser,#message_rsc=user_grouping_on);
       }
       else
       {
-         if NOT (piFlags & PFLAG_GROUPING)
-         {
-            return;
-         }
-         piFlags = piFlags & ~PFLAG_GROUPING;
+         piPreferences = piPreferences & ~CF_GROUPING;
          Send(self,@MsgSendUser,#message_rsc=user_grouping_off);
       }
 
@@ -1807,20 +1808,12 @@ messages:
    {
       if value
       {
-         if (piFlags & PFLAG_AUTOLOOT)
-         {
-            return;
-         }
-         piFlags = piFlags | PFLAG_AUTOLOOT;
+         piPreferences = piPreferences | CF_AUTOLOOT;
          Send(self,@MsgSendUser,#message_rsc=user_autoloot_on);
       }
       else
       {
-         if NOT (piFlags & PFLAG_AUTOLOOT)
-         {
-            return;
-         }
-         piFlags = piFlags & ~PFLAG_AUTOLOOT;
+         piPreferences = piPreferences & ~CF_AUTOLOOT;
          Send(self,@MsgSendUser,#message_rsc=user_autoloot_off);
       }
 
@@ -1831,20 +1824,12 @@ messages:
    {
       if value
       {
-         if (piFlags2 & PFLAG2_AUTOCOMBINE)
-         {
-            return;
-         }
-         piFlags2 = piFlags2 | PFLAG2_AUTOCOMBINE;
+         piPreferences = piPreferences | CF_AUTOCOMBINE;
          Send(self,@MsgSendUser,#message_rsc=user_autocombine_on);
       }
       else
       {
-         if NOT (piFlags2 & PFLAG2_AUTOCOMBINE)
-         {
-            return;
-         }
-         piFlags2 = piFlags2 & ~PFLAG2_AUTOCOMBINE;
+         piPreferences = piPreferences & ~CF_AUTOCOMBINE;
          Send(self,@MsgSendUser,#message_rsc=user_autocombine_off);
       }
 
@@ -1855,20 +1840,12 @@ messages:
    {
       if value
       {
-         if (piFlags & PFLAG_REAGENTBAG)
-         {
-            return;
-         }
-         piFlags = piFlags | PFLAG_REAGENTBAG;
+         piPreferences = piPreferences | CF_REAGENTBAG;
          Send(self,@MsgSendUser,#message_rsc=user_reagentbag_on);
       }
       else
       {
-         if NOT (piFlags & PFLAG_REAGENTBAG)
-         {
-            return;
-         }
-         piFlags = piFlags & ~PFLAG_REAGENTBAG;
+         piPreferences = piPreferences & ~CF_REAGENTBAG;
          Send(self,@MsgSendUser,#message_rsc=user_reagentbag_off);
       }
 
@@ -1879,22 +1856,66 @@ messages:
    {
       if value
       {
-         if (piFlags2 & PFLAG2_SPELLPOWER)
-         {
-            return;
-         }
-         piFlags2 = piFlags2 | PFLAG2_SPELLPOWER;
+         piPreferences = piPreferences | CF_SPELLPOWER;
          Send(self,@MsgSendUser,#message_rsc=user_spellpower_on);
       }
       else
       {
-         if NOT (piFlags2 & PFLAG2_SPELLPOWER)
-         {
-            return;
-         }
-         piFlags2 = piFlags2 & ~PFLAG2_SPELLPOWER;
+         piPreferences = piPreferences & ~CF_SPELLPOWER;
          Send(self,@MsgSendUser,#message_rsc=user_spellpower_off);
       }
+
+      return;
+   }
+
+   UserCommandSetPreferences(value = 0)
+   {
+      % Check each possible preference, improvement over sending 7 messages
+      % from client to server with each preference.
+      if (value & CF_SAFETY_OFF) <> (piPreferences & CF_SAFETY_OFF)
+      {
+         Send(self,@UserCommandSetSafety,#value=value & CF_SAFETY_OFF);
+      }
+
+      if (value & CF_TEMPSAFE) <> (piPreferences & CF_TEMPSAFE)
+      {
+         Send(self,@UserCommandSetTempSafe,#value=value & CF_TEMPSAFE);
+      }
+
+      if (value & CF_GROUPING) <> (piPreferences & CF_GROUPING)
+      {
+         Send(self,@UserCommandSetGrouping,#value=value & CF_GROUPING);
+      }
+
+      if (value & CF_AUTOLOOT) <> (piPreferences & CF_AUTOLOOT)
+      {
+         Send(self,@UserCommandSetAutoLoot,#value=value & CF_AUTOLOOT);
+      }
+
+      if (value & CF_REAGENTBAG) <> (piPreferences & CF_REAGENTBAG)
+      {
+         Send(self,@UserCommandSetReagentBag,#value=value & CF_REAGENTBAG);
+      }
+
+      if (value & CF_AUTOCOMBINE) <> (piPreferences & CF_AUTOCOMBINE)
+      {
+         Send(self,@UserCommandSetAutoCombine,#value=value & CF_AUTOCOMBINE);
+      }
+
+      if (value & CF_SPELLPOWER) <> (piPreferences & CF_SPELLPOWER)
+      {
+         Send(self,@UserCommandSetSpellpowerDisplay,#value=value & CF_SPELLPOWER);
+      }
+
+      return;
+   }
+
+   UserSendPreferences()
+   "Sends the player's stored preferences to the client."
+   {
+      AddPacket(1,BP_USERCOMMAND, 1,UC_RECEIVE_PREFERENCES);
+      AddPacket(4,piPreferences);
+      SendPacket(poSession);
 
       return;
    }
@@ -1914,27 +1935,11 @@ messages:
          case UC_STAND:
             Send(self,@StopResting);
             return;
-         case UC_SAFETY:
-            Send(self,@UserCommandSetSafety,#value=Nth(client_msg,2) <> 0);
+         case UC_SEND_PREFERENCES:
+            Send(self,@UserCommandSetPreferences,#value=Nth(client_msg,2));
             return;
-         case UC_TEMPSAFE:
-            Send(self,@UserCommandSetTempSafe,#value=Nth(client_msg,2) <> 0);
-            return;
-         case UC_GROUPING:
-            Send(self,@UserCommandSetGrouping,#value=Nth(client_msg,2) <> 0);
-            return;
-         case UC_AUTOLOOT:
-            Send(self,@UserCommandSetAutoLoot,#value=Nth(client_msg,2) <> 0);
-            return;
-         case UC_AUTOCOMBINE:
-            Send(self,@UserCommandSetAutoCombine,#value=Nth(client_msg,2) <> 0);
-            return;
-         case UC_REAGENTBAG:
-            Send(self,@UserCommandSetReagentBag,#value=Nth(client_msg,2) <> 0);
-            return;
-         case UC_SPELLPOWER:
-            Send(self,@UserCommandSetSpellpowerDisplay,
-                  #value=Nth(client_msg,2) <> 0);
+         case UC_REQ_PREFERENCES:
+            Send(self,@UserSendPreferences);
             return;
          case UC_REQ_GUILDINFO:
             Send(self,@UserGuildSendInfo);
@@ -7229,7 +7234,7 @@ messages:
          AND NOT IsClass(what,&Money)
          AND NOT bFromReagentBag
          AND Send(self,@GetReagentBag) <> $
-         AND (piFlags & PFLAG_REAGENTBAG)
+         AND (piPreferences & CF_REAGENTBAG)
       {
          Post(Send(self,@GetReagentBag),@NewHold,#what=what,
                #where=Send(self,@GetReagentBag));
@@ -7238,7 +7243,7 @@ messages:
       }
 
       if IsClass(what,&SpellItem)
-         AND (piFlags2 & PFLAG2_AUTOCOMBINE)
+         AND (piPreferences & CF_AUTOCOMBINE)
          AND check_combine
       {
          oLastSpellItem = $;
@@ -9197,36 +9202,6 @@ messages:
 
       iFlags = OF_ATTACKABLE | OF_PLAYER | OF_OFFERABLE;
 
-
-      if (piFlags & PFLAG_SAFETY)
-      {
-         iFlags = iFlags | OF_SAFETY;
-      }
-      if (piFlags & PFLAG_TEMP_SAFETY)
-      {
-         iFlags = iFlags | OF_TEMPSAFE;
-      }
-      if (piFlags & PFLAG_GROUPING)
-      {
-         iFlags = iFlags | OF_GROUPING;
-      }
-      if (piFlags & PFLAG_AUTOLOOT)
-      {
-         iFlags = iFlags | OF_AUTOLOOT;
-      }
-      if (piFlags2 & PFLAG2_AUTOCOMBINE)
-      {
-         iFlags = iFlags | OF_AUTOCOMBINE;
-      }
-      if (piFlags & PFLAG_REAGENTBAG)
-      {
-         iFlags = iFlags | OF_REAGENTBAG;
-      }
-      if (piFlags2 & PFLAG2_SPELLPOWER)
-      {
-         iFlags = iFlags | OF_SPELLPOWER;
-      }
-
       oIllusion = Send(self,@GetIllusionForm);
 
       % If we're morphed, get rid of any "player" flags
@@ -9336,7 +9311,7 @@ messages:
 
    SetSafety()
    {
-      Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=TRUE);
+      Send(self,@SetPlayerPreference,#flag=CF_SAFETY_OFF,#value=FALSE);
       
       return;
    }

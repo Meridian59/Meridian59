@@ -80,14 +80,7 @@ extern Bool is_foreground;   // True when program is in the foreground
 /* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-#define VOLUME_CUTOFF_DISTANCE 16
-
-#ifdef __cplusplus
-};
-
+extern "C" { };
 #define M59EXPORT extern "C"
 #else
 #define M59EXPORT /* nothing */

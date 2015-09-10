@@ -302,7 +302,7 @@ void AboutTimer(HWND hwnd, UINT id)
 	       case ABOUT_RSC3: index = 5; break;
 	       default: index = rand() % num_sounds; break;
 	       }
-		   SoundPlayFile(sounds[index], CONFIG_MAX_VOLUME, SF_RANDOM_PITCH);
+		   SoundPlayFile(sounds[index], SF_RANDOM_PITCH);
 	    }
 	 }
 		

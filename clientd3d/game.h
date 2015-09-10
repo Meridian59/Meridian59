@@ -97,7 +97,7 @@ void GameQuit(void);
 M59EXPORT void GameMessage(char *message);
 M59EXPORT void _cdecl GameMessagePrintf(char *fmt, ...);
 void GameDisplayResync(void);
-void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD radius, WORD max_vol);
+void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, int y, int x, int radius, int max_vol);
 
 int  ComputeObjectDistance(room_contents_node *r1, room_contents_node *r2);
 

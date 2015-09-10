@@ -170,13 +170,6 @@ long CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
 
-	case MM_MCINOTIFY:  /* WAV file has finished playing */
-		if (wParam != MCI_NOTIFY_SUCCESSFUL)
-			break;
-
-		SoundStop(LOWORD(lParam));
-		break;
-
 	case BK_NORESOURCE:
 		MissingResource();
 		break;
@@ -310,6 +303,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	D3DRenderInit(hMain);
 
+	AudioInit();
+
 	ModulesInit();   // Set up data structures for modules
 
 
@@ -347,6 +342,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	/* Unregister our custom classes--not good to leave them around */
 	UnregisterWindowClasses();
+
+	AudioShutdown();
 
 	return msg.wParam;  // Return value of PostQuitMessage
 }

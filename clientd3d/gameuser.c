@@ -404,8 +404,8 @@ void UserToggleMusic(Bool music_on)
 {
    if (!music_on)
       MusicStop();
-
-   // must receive music message from server to restart
+   else
+      MusicRestart();
 }
 /************************************************************************/
 /*

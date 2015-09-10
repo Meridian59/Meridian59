@@ -284,7 +284,7 @@ void ConfigLoad(void)
    config.maxFPS = FALSE;
    config.clearCache = FALSE;
 #else
-   config.debug				= GetConfigInt(special_section, INIDebug, False, ini_file);
+   config.debug				= GetConfigInt(special_section, INIDebug, True, ini_file);
    config.security			= GetConfigInt(special_section, INISecurity, True, ini_file);
    config.showMapBlocking	= GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
    config.showUnseenWalls	= GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);

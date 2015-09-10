@@ -296,13 +296,13 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          config.play_loop_sounds = IsDlgButtonChecked(hDlg, IDC_LOOPSOUNDS);
          config.play_random_sounds = IsDlgButtonChecked(hDlg, IDC_RANDSOUNDS);
          if (!config.play_sound)
-            SoundAbort();
+            SoundStopAll();
 
          new_val = Trackbar_GetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME));
          if (new_val != config.music_volume)
          {
             config.music_volume = new_val;
-            ResetMusicVolume();
+            MusicSetVolume();
          }
 
          // Don't need to dynamically update sound volume, because

@@ -313,7 +313,7 @@ void EnterNewRoom(void)
 
    DrawGridBorder();   
 
-   SoundAbort();  // Turn off looping sounds
+   SoundStopAll(SF_LOOP);  // Turn off looping sounds
 
    //	Clear any user selected target.
 	SetUserTargetID( INVALID_ID );
@@ -591,10 +591,10 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
    int src_row = y;
    int src_col = x;
    int cutoff = (radius ? radius : VOLUME_CUTOFF_DISTANCE);
-   int volume = MAX_VOLUME;
-   int maxvolume = (max_vol ? max_vol : MAX_VOLUME);
-   if( maxvolume > MAX_VOLUME )
-      maxvolume = MAX_VOLUME;
+   int volume = CONFIG_MAX_VOLUME;
+   int maxvolume = (max_vol ? max_vol : CONFIG_MAX_VOLUME);
+   if (maxvolume > CONFIG_MAX_VOLUME)
+      maxvolume = CONFIG_MAX_VOLUME;
 
    // debug(("Play sound at (%i,%i)\n",x,y));
 
@@ -649,7 +649,7 @@ void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD
    
    // debug(("PlayWaveRSC rsc=%i volume=%i row=%i col=%i cutoff=%i maxvolume=%i\n",sound_rsc, volume, src_row, src_col, cutoff, maxvolume));
    
-   PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
+   SoundPlayResource(sound_rsc, volume, flags);//, src_row, src_col, cutoff, maxvolume);
 }
 /************************************************************************/
 void GameQuit(void)

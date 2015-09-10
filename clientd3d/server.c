@@ -1358,7 +1358,7 @@ Bool HandlePlayMidi(char *ptr,long len)
 
    Extract(&ptr, &rsc, SIZE_ID);
    
-   PlayMidiRsc(rsc);
+   MusicPlayResource(rsc);
    return True;
 }
 /********************************************************************/
@@ -1371,7 +1371,7 @@ Bool HandlePlayMusic(char *ptr,long len)
 
    Extract(&ptr, &rsc, SIZE_ID);
    
-   PlayMusicRsc(rsc);
+   MusicPlayResource(rsc);
    return True;
 }
 /********************************************************************/

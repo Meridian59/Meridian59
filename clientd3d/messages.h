@@ -21,7 +21,7 @@
 #define BK_REMOVEUSER     (WM_USER + 112)
 #define BK_COUNTEROFFERED (WM_USER + 113)
 #define BK_ALIGNDLGS      (WM_USER + 114)
-#define BK_NEWSOUND       (WM_USER + 115)
+//#define BK_NEWSOUND       (WM_USER + 115)
 #define BK_DIALOGDONE     (WM_USER + 116)
 #define BK_TRANSFERDONE   (WM_USER + 117)
 #define BK_TRANSFERSTART  (WM_USER + 118)

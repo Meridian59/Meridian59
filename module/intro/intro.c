@@ -36,7 +36,7 @@ static POINT button_origin;      /* Upper left corner of button */
 
 static char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
 static char *logo_filename   = "resource\\logo.bgf";    // Logo bgf file
-static char *splash_music    = "resource\\main.mp3";    // Music file to play
+static char *splash_music    = "main.mp3";              // Music file to play
 
 static BYTE light_level;         // Light level for logo fade
 
@@ -98,7 +98,7 @@ void WINAPI ModuleExit(void)
 {
    HBITMAP hCurrentBitmap;
 
-   MusicAbort();
+   MusicStop();
 
    if (timer_id != 0)
    {
@@ -377,7 +377,7 @@ void CALLBACK PlayMusicProc(HWND hwnd, UINT msg, UINT timer, DWORD dwTime)
 
    // Play music
    if (cinfo->config->play_music)
-      PlayMusicFile(cinfo->hMain, splash_music);
+      MusicPlayFile(splash_music);
 }
 
 /****************************************************************************/

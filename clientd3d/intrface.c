@@ -66,8 +66,8 @@ void InterfaceClose(void)
    AbortPreferencesDialog();
    AbortAboutDialog();
 
-   MusicAbort();
-   SoundAbort();
+   MusicStop();
+   SoundStopAll();
 
    GraphicsAreaDestroy();
    TextInputDestroy();

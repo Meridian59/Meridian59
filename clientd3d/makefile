@@ -25,7 +25,7 @@ LIBS = \
     user32.lib gdi32.lib comdlg32.lib shell32.lib \
     ws2_32.lib comctl32.lib advapi32.lib \
     winmm.lib wininet.lib ole32.lib \
-    d3d9.lib dxerr.lib waveplay.lib \
+    d3d9.lib dxerr.lib \
     rscload.lib libpng.lib zlib.lib libarchive.lib 
 
 DEFFILE  = $(SOURCEDIR)\client.def
@@ -107,8 +107,7 @@ OBJS = \
     $(OUTDIR)\lookdlg.obj \
     $(OUTDIR)\color.obj \
     $(OUTDIR)\say.obj \
-    $(OUTDIR)\sound.obj \
-    $(OUTDIR)\music.obj \
+    $(OUTDIR)\audio.obj \
     $(OUTDIR)\key.obj \
     $(OUTDIR)\buy.obj \
     $(OUTDIR)\statstrt.obj \

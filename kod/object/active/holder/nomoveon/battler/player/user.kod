@@ -780,6 +780,16 @@ messages:
 
       Send(SYS,@SystemUserLogon,#what=self);
 
+      % Let the user know whether safety is on or off.
+      if piPreferences & CF_SAFETY_OFF
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_safety_off);
+      }
+      else
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+      }
+
       if NOT (IsClass(self,&DM) AND Send(self,@IsHidden))
       {
          % Advertise as normally.
@@ -1907,14 +1917,16 @@ messages:
          Send(self,@UserCommandSetSpellpowerDisplay,#value=value & CF_SPELLPOWER);
       }
 
+      % Send the preferences back to client, in case a flag couldn't be set.
+      Send(self,@UserSendPreferences);
+
       return;
    }
 
    UserSendPreferences()
    "Sends the player's stored preferences to the client."
    {
-      AddPacket(1,BP_USERCOMMAND, 1,UC_RECEIVE_PREFERENCES);
-      AddPacket(4,piPreferences);
+      AddPacket(1,BP_USERCOMMAND, 1,UC_RECEIVE_PREFERENCES, 4,piPreferences);
       SendPacket(poSession);
 
       return;
@@ -2462,6 +2474,16 @@ messages:
       Send(self,@InvalidateData);
 
       Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done);
+
+      % Let the user know whether safety is on or off.
+      if piPreferences & CF_SAFETY_OFF
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_safety_off);
+      }
+      else
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+      }
 
       AddPacket(1,BP_UNWAIT);
       SendPacket(poSession);

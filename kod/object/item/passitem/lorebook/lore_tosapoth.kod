@@ -14,8 +14,6 @@ constants:
 
    include blakston.khd
 
-   TOTAL_BOOKS = 7
-
 resources:
 
    lore_tosapoth_icon_rsc = book1.bgf

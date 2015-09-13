@@ -240,7 +240,7 @@ messages:
                     #playername=Send(killer,@GetTrueName),#mob=TRUE,
                     #BodyTranslation=piColor_Translation,
                     #LegsTranslation=piColor_Translation,                    
-                    #monstername=EvilEnt_dead_name_rsc,
+                    #monstername=vrName,
                     #PlayerBodyOverlay=vrDead_leaves);
    }
 

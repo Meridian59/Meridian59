@@ -21,7 +21,7 @@ RadiusEnchantment is Spell
 % For example, a spell may have a Power range 1-20, or a Power range not based on spellpower at all.
 %
 % EnterRadius and LeaveRadius add or remove from an object's plRadiusEnchantments list.
-% Each element is of the form [spell object, spellpower, caster].
+% Each element is of the form [spell object, spellpower, caster, origin room].
 % These states should be used when effects are actually being performed,
 % and should be called by the objects themselves. For example, a player swinging a mace will
 % check his plRadiusEnchantments list for spells that affect mace swings, and call them appropriately.
@@ -155,7 +155,8 @@ messages:
             {
                if IsClass(who,&User)
                {
-                  Send(who,@MsgSendUser,#message_rsc=radius_ench_old_style_aleady_cast);
+                  Send(who,@MsgSendUser,
+                        #message_rsc=radius_ench_old_style_aleady_cast);
                }
 
                return FALSE;
@@ -215,7 +216,9 @@ messages:
             }
             else
             {
-               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_starts,#parm1=Send(who,@GetName));
+               Send(oUser,@MsgSendUser,
+                     #message_rsc=radius_ench_starts,
+                     #parm1=Send(who,@GetName));
             }
          }
       }
@@ -254,7 +257,9 @@ messages:
          return 0;
       }
 
-      plCurrentEnchantments = Cons([source,0,0,$,iPower,iRange,iDuration,oRoom],plCurrentEnchantments);
+      plCurrentEnchantments = Cons([source,0,0,$,
+                                    iPower,iRange,iDuration,oRoom],
+                                    plCurrentEnchantments);
 
       Send(self,@RecalculateActiveEnchantments);
 
@@ -306,6 +311,25 @@ messages:
             Debug("Radius check went off without a proper room!",self);
          }
 
+         % Check for objects that have left the radius of effect
+         % We must leave first so that similar spells can reapply later
+         foreach oObject in lEnchanted
+         {
+            iDistance = Send(source,@SquaredDistanceTo,#what=oObject);
+            if ((iDistance = $
+               OR iDistance > (iRange * iRange))
+                  AND NOT piOldAreaEnchStyle)
+               OR NOT Send(self,@TargetIsValid,#target=oObject,#source=source)
+               OR (piOldAreaEnchStyle
+                   AND (Send(oObject,@GetOwner) = $
+                        OR Send(oObject,@GetOwner) <> oRoom))
+            {
+               Send(self,@LeaveRadius,#what=oObject,#iPower=iPower,
+                     #source=source,#oRoom=oRoom);
+               lEnchanted = DelListElem(lEnchanted,oObject);
+            }
+         }
+
          % Check for active objects that have entered the radius of effect
          foreach oActive in Send(oRoom,@GetPlActive)
          {
@@ -319,7 +343,8 @@ messages:
             {
                if Send(self,@TargetIsValid,#target=oObject,#source=source)
                {
-                  Send(self,@EnterRadius,#what=oObject,#iPower=iPower,#source=source);
+                  Send(self,@EnterRadius,#what=oObject,#iPower=iPower,
+                        #source=source,#oRoom=oRoom);
                   lEnchanted = Cons(oObject,lEnchanted);
                }
             }
@@ -340,27 +365,11 @@ messages:
                {
                   if Send(self,@TargetIsValid,#target=oObject,#source=source)
                   {
-                     Send(self,@EnterRadius,#what=oObject,#iPower=iPower,#source=source);
+                     Send(self,@EnterRadius,#what=oObject,#iPower=iPower,
+                           #source=source,#oRoom=oRoom);
                      lEnchanted = Cons(oObject,lEnchanted);
                   }
                }
-            }
-         }
-
-         % Check for objects that have left the radius of effect
-         foreach oObject in lEnchanted
-         {
-            iDistance = Send(source,@SquaredDistanceTo,#what=oObject);
-            if ((iDistance = $
-               OR iDistance > (iRange * iRange))
-                  AND NOT piOldAreaEnchStyle)
-               OR NOT Send(self,@TargetIsValid,#target=oObject,#source=source)
-               OR (piOldAreaEnchStyle
-                   AND (Send(oObject,@GetOwner) = $
-                        OR Send(oObject,@GetOwner) <> oRoom))
-            {
-               Send(self,@LeaveRadius,#what=oObject,#iPower=iPower,#source=source);
-               lEnchanted = DelListElem(lEnchanted,oObject);
             }
          }
 
@@ -571,9 +580,10 @@ messages:
       return FALSE;
    }
 
-   EnterRadius(what=$,iPower=0,source=$)
+   EnterRadius(what=$,iPower=0,source=$,oRoom=$)
    {
-      Send(what,@AddRadiusEnchantment,#what=self,#iPower=iPower,#source=source);
+      Send(what,@AddRadiusEnchantment,#what=self,#iPower=iPower,#source=source,
+            #oRoom=oRoom);
 
       if IsClass(what,&User)
       {
@@ -583,7 +593,8 @@ messages:
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=radius_ench_enter,#parm1=Send(source,@GetName));
+            Send(what,@MsgSendUser,#message_rsc=radius_ench_enter,
+                  #parm1=Send(source,@GetName));
          }
       }
 
@@ -592,9 +603,10 @@ messages:
       return;
    }
 
-   LeaveRadius(what=$,iPower=0,source=$)
+   LeaveRadius(what=$,iPower=0,source=$,oRoom=$)
    {
-      Send(what,@RemoveRadiusEnchantment,#what=self,#iPower=iPower,#source=source);
+      Send(what,@RemoveRadiusEnchantment,#what=self,#iPower=iPower,
+            #source=source,#oRoom=oRoom);
       
       if IsClass(what,&User)
       {
@@ -604,7 +616,8 @@ messages:
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=radius_ench_leave,#parm1=Send(source,@GetName));
+            Send(what,@MsgSendUser,#message_rsc=radius_ench_leave,
+                  #parm1=Send(source,@GetName));
          }
       }
 
@@ -691,11 +704,6 @@ messages:
             iPower = Nth(i,5);
             iRange = Nth(i,6);
 
-            foreach oObj in lEnchanted
-            {
-               Send(self,@LeaveRadius,#what=oObj,#iPower=iPower,#source=source);
-            }
-
             if piOldAreaEnchStyle
             {
                oRoom = Nth(i,8);
@@ -703,6 +711,12 @@ messages:
             else
             {
                oRoom = Send(source,@GetOwner);
+            }
+
+            foreach oObj in lEnchanted
+            {
+               Send(self,@LeaveRadius,#what=oObj,#iPower=iPower,#source=source,
+                     #oRoom=oRoom);
             }
 
             if oRoom <> $
@@ -723,7 +737,8 @@ messages:
                      }
                      else
                      {
-                        Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,#parm1=Send(source,@GetName));
+                        Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,
+                              #parm1=Send(source,@GetName));
                      }
                   
                   }

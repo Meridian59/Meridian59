@@ -14,8 +14,6 @@ constants:
 
    include blakston.khd
 
-   TOTAL_BOOKS = 7
-
 resources:
 
    lore_tosapoth_icon_rsc = book1.bgf
@@ -1052,56 +1050,55 @@ messages:
 
    SetBookContents()
    {
-      if (piBookNum <> 0)
+      switch (piBookNum)
       {
-         if (piBookNum = 1)
-         {
+         case 1:
             vrName = lore_tosapoth_name_1_rsc;
             vrDesc = lore_tosapoth_desc_1_rsc;
             prText = lore_tosapoth_text_1_rsc;
-         }
-         if (piBookNum = 2)
-         {
+            break;
+
+         case 2:
             vrName = lore_tosapoth_name_2_rsc;
             vrDesc = lore_tosapoth_desc_2_rsc;
             prText = lore_tosapoth_text_2_rsc;
-         }
-         if (piBookNum = 3)
-         {
+            break;
+
+         case 3:
             vrName = lore_tosapoth_name_3_rsc;
             vrDesc = lore_tosapoth_desc_3_rsc;
             prText = lore_tosapoth_text_3_rsc;
-         }
-         if (piBookNum = 4)
-         {
+            break;
+
+         case 4:
             vrName = lore_tosapoth_name_4_rsc;
             vrDesc = lore_tosapoth_desc_4_rsc;
             prText = lore_tosapoth_text_4_rsc;
-         }
-         if (piBookNum = 5)
-         {
+            break;
+
+         case 5:
             vrName = lore_tosapoth_name_5_rsc;
             vrDesc = lore_tosapoth_desc_5_rsc;
             prText = lore_tosapoth_text_5_rsc;
-         }
-         if (piBookNum = 6)
-         {
+            break;
+
+         case 6:
             vrName = lore_tosapoth_name_6_rsc;
             vrDesc = lore_tosapoth_desc_6_rsc;
             prText = lore_tosapoth_text_6_rsc;
-         }
-         if (piBookNum = 7)
-         {
+            break;
+
+         case 7:
             vrName = lore_tosapoth_name_7_rsc;
             vrDesc = lore_tosapoth_desc_7_rsc;
             prText = lore_tosapoth_text_7_rsc;
-         }
-      }
-      else
-      {
-         vrName = lore_tosapoth_name_rsc;
-         vrDesc = lore_tosapoth_desc_rsc;
-         prText = lore_tosapoth_text_rsc;
+            break;
+
+         default:
+            vrName = lore_tosapoth_name_rsc;
+            vrDesc = lore_tosapoth_desc_rsc;
+            prText = lore_tosapoth_text_rsc;
+            break;
       }
       return;
    }

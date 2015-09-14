@@ -318,7 +318,16 @@ messages:
       % Lore Books
       if (Random(1,Send(SETTINGS_OBJECT,@GetLoreBookDropFactor)) = 1)
       {
-         oObj = Create(&LoreTosApoth,#random_book=true);
+         switch(Random(1,2))
+         {
+            case 1:
+               oObj = Create(&LoreTosApoth,#random_book=true);
+               break;
+
+            case 2:
+               oObj = Create(&LoreHist1,#random_book=true);
+               break;
+         }
          return oObj;
       }
 

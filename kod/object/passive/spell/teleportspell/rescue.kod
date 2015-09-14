@@ -132,7 +132,7 @@ messages:
          % Are they guilded with a guild hall?
          oGuild = Send(who,@GetGuild);
          if oGuild <> $
-            AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+            AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)
          {
             oTargetRoom = Send(oGuild,@GetGuildHall);
 

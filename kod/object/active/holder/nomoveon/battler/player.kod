@@ -2300,7 +2300,7 @@ messages:
 
       if ptTempSafe <> $
       {
-         Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=TRUE);
+         piFlags = piFlags | PFLAG_TEMPSAFE;
          Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
       }
 
@@ -2825,7 +2825,7 @@ messages:
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_LOCK,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_INTRIGUING,#value=FALSE);
-      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=FALSE);
 
       Send(SYS,@SystemRemoveFromChampionLists,#oldchamp=self);
 
@@ -4270,8 +4270,8 @@ messages:
 
       % Check for temporary safety flag.
       if IsClass(victim,&Player)
-         AND ((piFlags2 & PFLAG2_TEMPSAFE)
-            OR Send(victim,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2))
+         AND ((piFlags & PFLAG_TEMPSAFE)
+            OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE))
       {
          if report
          {
@@ -12620,7 +12620,7 @@ messages:
          DeleteTimer(ptTempSafe);
       }
       ptTempSafe = CreateTimer(self,@EndTempSafe,iTime);
-      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=TRUE);
+      piFlags = piFlags | PFLAG_TEMPSAFE;
       Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
 
       return;
@@ -12628,7 +12628,7 @@ messages:
 
    EndTempSafe()
    {
-      Send(self,@SetPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2,#value=FALSE);
+      piFlags = piFlags & ~PFLAG_TEMPSAFE;
       if poOwner <> $
       {
          Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
@@ -13324,7 +13324,7 @@ messages:
 
       if IsClass(oRoom,&GuildHall)
          AND (NOT (piFlags & PFLAG_PKILL_ENABLE)
-            OR (piFlags2 & PFLAG2_TEMPSAFE))
+            OR (piFlags & PFLAG_TEMPSAFE))
       {
          Send(self,@MsgSendUser,#message_rsc=player_no_enter);
 

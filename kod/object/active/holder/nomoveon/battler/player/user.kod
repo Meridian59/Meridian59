@@ -2783,7 +2783,7 @@ messages:
             }
 
             % Standard player blue dot.
-            if Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+            if Send(what,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)
             {
                iFlags = iFlags | MM_TEMPSAFE;
             }

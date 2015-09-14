@@ -239,7 +239,7 @@ messages:
          return FALSE;
       }
 
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)
       {
          % Message: temp safe angel prevents flagpole interference.
          Send(who,@MsgSendUser,#message_rsc=flag_failed_temp_safe);

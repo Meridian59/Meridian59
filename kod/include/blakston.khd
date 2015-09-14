@@ -2259,11 +2259,11 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x1423D7A
+   PFLAG_MASK              = 0x1423D7E
 
    PFLAG_INVISIBLE         = 0x0000001
    PFLAG_MURDERER          = 0x0000002
-
+   PFLAG_TEMPSAFE          = 0x0000004
    PFLAG_OUTLAW            = 0x0000008
    PFLAG_DID_DAMAGE        = 0x0000010
    PFLAG_TOOK_DAMAGE       = 0x0000020
@@ -2291,7 +2291,7 @@
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG2_MASK             = 0x003E80
+   PFLAG2_MASK             = 0x001E80
 
    PFLAG2_HASTED           = 0x000001
    PFLAG2_DANCING          = 0x000002
@@ -2310,8 +2310,6 @@
    PFLAG2_SQUELCHED_POSTS  = 0x001000
    % Sum of the other squelched flags.
    PFLAG2_SQUELCHED_ALL    = 0x001E00
-   
-   PFLAG2_TEMPSAFE         = 0x002000
 
    % Third set of player flags (in piFlags3)
    % piFlags3 can now be used as a proper bitfield, and no longer

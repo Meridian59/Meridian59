@@ -198,7 +198,7 @@ messages:
       Send(what,@TryUseItem,#what=self);
 
       if Send(what,@PlayerIsIntriguing)
-         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG2_TEMPSAFE,#flagset=2)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)
       {
          foreach i in Send(what,@GetPlayerUsing)
          {

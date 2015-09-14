@@ -114,8 +114,8 @@ messages:
          Send(who,@RemoveEnchantment,#what=oHoldSpell,#report=FALSE);
       }
 
-      % Lasts 1/6 the time of the bonus.
-      iDuration = (Send(self,@GetDuration,#iSpellPower=state)) / 6;
+      % Hold effect lasts 8 sec at low spellpower, 2 sec at high sp.
+      iDuration = Bound(((100-state) * 100 + 2000),2000,8000);
       Send(oHoldSpell,@DoSpell,#what=self,#oTarget=who,#iDuration=iDuration,
             #report=TRUE,#bAllowFreeAction=FALSE);
 
@@ -146,7 +146,7 @@ messages:
 
       AddPacket(4,karahol_enchantment_rsc, 4,Send(self,@GetName),
                 4,100 + iState * 2, 4,1 + iState / 20,
-                4,(40 + (iState / 2)) / 6);
+                4,Bound((120 - iState) / 10,2,8));
 
       return;
    }

@@ -453,7 +453,7 @@ void UserMovePlayer(int action)
        player_obj->motion.z <= z &&
        ((last_splash == 0xFFFFFFFF) || ((now - last_splash) > (DWORD)(500*depth))))
    {
-       PlayWaveRsc(effects.wadingsound, MAX_VOLUME, 0, 0, 0, 0, 0);
+       SoundPlayResource(effects.wadingsound, 0);
        last_splash = now;
    }
    if (depth == SF_DEPTH0)
@@ -463,7 +463,7 @@ void UserMovePlayer(int action)
 
    // Update looping sounds to reflect the player's new position
 //   debug(("Player now at: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS));
-   UpdateLoopingSounds( player.x >> LOG_FINENESS, player.y  >> LOG_FINENESS );
+   SoundSetListenerPosition(player.x, player.y, player.angle);
 
    RedrawAll();
 }
@@ -798,7 +798,7 @@ void ServerMovedPlayer(void)
 
    // Update looping sounds to reflect the player's new position
 //   debug(("Player now at: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS));
-   UpdateLoopingSounds( player.x >> LOG_FINENESS, player.y  >> LOG_FINENESS);
+   SoundSetListenerPosition(player.x, player.y, player.angle);
 }
 /************************************************************************/
 /*
@@ -964,6 +964,9 @@ void UserTurnPlayer(int action)
 
    // Inform server of turn if necessary
    MoveUpdateServer();
+
+   // update sound listener orientation
+   SoundSetListenerPosition(player.x, player.y, player.angle);
 
    RedrawAll();
 }

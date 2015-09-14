@@ -313,7 +313,7 @@ void EnterNewRoom(void)
 
    DrawGridBorder();   
 
-   SoundAbort();  // Turn off looping sounds
+   SoundStopAll(SF_LOOP);  // Turn off looping sounds
 
    //	Clear any user selected target.
 	SetUserTargetID( INVALID_ID );
@@ -380,6 +380,9 @@ void SetRoomInfo(ID room_id, list_type new_room_contents)
       player.y = r->motion.y;
       r->motion.z = GetFloorBase(player.x,player.y);
       player.angle = r->angle;
+
+      // set initial 3d sound listener position
+      SoundSetListenerPosition(player.x, player.y, player.angle);
    }
 
    // Set z coordinates of all objects
@@ -586,70 +589,34 @@ void GameUnwait(void)
  *	 For looping sounds, radius and max_vol are used to attenuate sound with distance
  *		default radius is VOLUME_CUTOFF_DISTANCE, default max_vol is MAX_VOLUME
  */
-void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, WORD y, WORD x, WORD radius, WORD max_vol)
+void GamePlaySound(ID sound_rsc, ID source_obj, BYTE flags, int y, int x, int radius, int max_vol)
 {
-   int src_row = y;
-   int src_col = x;
-   int cutoff = (radius ? radius : VOLUME_CUTOFF_DISTANCE);
-   int volume = MAX_VOLUME;
-   int maxvolume = (max_vol ? max_vol : MAX_VOLUME);
-   if( maxvolume > MAX_VOLUME )
-      maxvolume = MAX_VOLUME;
-
-   // debug(("Play sound at (%i,%i)\n",x,y));
-
+   // source coordinates from object
    if (source_obj != 0)
    {
-      // Find distance to object
-      room_contents_node *p = GetRoomObjectById(player.id);
       room_contents_node *obj = GetRoomObjectById(source_obj);
 
-      if (p != NULL && obj != NULL)
+      if (obj)
       {
-         int distance = ComputeObjectDistance(p, obj) >> LOG_FINENESS;
-         if (distance > 2)
-            //volume = MAX_VOLUME * 2 / distance;
-            volume = maxvolume * 2 / distance;
-            src_row = obj->motion.y;
-            src_col = obj->motion.x;
+         // values are in needed scale
+         x = obj->motion.x;
+         y = obj->motion.y;       
       }
    }
+   // source coordinates from server (in big row/col)
    else if((x > 0) || (y > 0))	
    {
-      room_contents_node *p = GetRoomObjectById(player.id);
-      int dx,dy,distance;
-
-      // looping sound volume falls off linearly w/ distance
-      volume = 0;
-      if( p == NULL )	// this case is hit after a savegame
-      {
-         debug(( "player: (%i,%i)\n",player.x >> LOG_FINENESS,player.y >> LOG_FINENESS ));
-         dx = ( player.x >> LOG_FINENESS ) - x;
-         dy = ( player.y >> LOG_FINENESS ) - y;
-      }
-      else	// this case is hit when moving from room to room
-      {
-         // debug(( "motion: (%i,%i)\n",p->motion.x >> LOG_FINENESS,p->motion.y >> LOG_FINENESS ));
-         dx = ( p->motion.x >> LOG_FINENESS ) - x;
-         dy = ( p->motion.y >> LOG_FINENESS ) - y;
-      }
-      distance = GetLongSqrt(dx * dx + dy * dy);
-      distance = Distance(dx, dy);
-      if (distance < cutoff)
-      {
-         volume = maxvolume - (distance * maxvolume / cutoff) ;
-      }
-      // debug(("Distance = %i\n",distance));
-      // debug(("Setting volume to %i.\n",volume));
+      x = ((x - 1) * FINENESS) + (FINENESS/2);
+      y = ((y - 1) * FINENESS) + (FINENESS/2);
    }
+   // 2d playback (= at avatar)
    else
    {
-      volume = maxvolume;
+      x = 0;
+      y = 0;
    }
-   
-   // debug(("PlayWaveRSC rsc=%i volume=%i row=%i col=%i cutoff=%i maxvolume=%i\n",sound_rsc, volume, src_row, src_col, cutoff, maxvolume));
-   
-   PlayWaveRsc(sound_rsc, volume, flags, src_row, src_col, cutoff, maxvolume);
+
+   SoundPlayResource(sound_rsc, flags, x, y);
 }
 /************************************************************************/
 void GameQuit(void)

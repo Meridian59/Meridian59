@@ -58,7 +58,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\dx9;$(SolutionDir)include\libpng;$(SolutionDir)include\zlib;$(SolutionDir)include\libarchive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)include\dx9;$(SolutionDir)include\libpng;$(SolutionDir)include\zlib;$(SolutionDir)include\libarchive;$(SolutionDir)include\irrklang;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;LIBARCHIVE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996; 4390</DisableSpecificWarnings>
       <ShowIncludes>false</ShowIncludes>
@@ -71,7 +71,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;comctl32.lib;winmm.lib;wininet.lib;waveplay.lib;d3d9.lib;DxErr.lib;libpng.lib;libarchive.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;comctl32.lib;winmm.lib;wininet.lib;d3d9.lib;DxErr.lib;libpng.lib;libarchive.lib;zlib.lib;irrklang.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>client.def</ModuleDefinitionFile>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
@@ -98,7 +98,7 @@ $(SolutionDir)postbuild.bat
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\dx9;$(SolutionDir)include\libpng;$(SolutionDir)include\zlib;$(SolutionDir)include\libarchive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\include\dx9;$(SolutionDir)include\libpng;$(SolutionDir)include\zlib;$(SolutionDir)include\libarchive;$(SolutionDir)include\irrklang;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>BLAK_PLATFORM_WINDOWS;BLAKCLIENT;WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_WINSOCK_DEPRECATED_NO_WARNINGS;NODPRINTFS;LIBARCHIVE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996; 4390</DisableSpecificWarnings>
       <ExceptionHandling>SyncCThrow</ExceptionHandling>
@@ -118,7 +118,7 @@ $(SolutionDir)postbuild.bat
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;comctl32.lib;winmm.lib;wininet.lib;waveplay.lib;d3d9.lib;DxErr.lib;libpng.lib;libarchive.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;comctl32.lib;winmm.lib;wininet.lib;d3d9.lib;DxErr.lib;libpng.lib;libarchive.lib;zlib.lib;irrklang.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib;</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>client.def</ModuleDefinitionFile>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -141,6 +141,7 @@ $(SolutionDir)postbuild.bat
     <ClInclude Include="about.h" />
     <ClInclude Include="animate.h" />
     <ClInclude Include="annotate.h" />
+    <ClInclude Include="audio.h" />
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="boverlay.h" />
     <ClInclude Include="bsp.h" />
@@ -195,7 +196,6 @@ $(SolutionDir)postbuild.bat
     <ClInclude Include="moveobj.h" />
     <ClInclude Include="msgbox.h" />
     <ClInclude Include="msgfiltr.h" />
-    <ClInclude Include="music.h" />
     <ClInclude Include="objdraw.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="object3d.h" />
@@ -216,7 +216,6 @@ $(SolutionDir)postbuild.bat
     <ClInclude Include="say.h" />
     <ClInclude Include="select.h" />
     <ClInclude Include="server.h" />
-    <ClInclude Include="sound.h" />
     <ClInclude Include="srvrstr.h" />
     <ClInclude Include="startup.h" />
     <ClInclude Include="statconn.h" />
@@ -245,6 +244,7 @@ $(SolutionDir)postbuild.bat
     <ClCompile Include="about.c" />
     <ClCompile Include="animate.c" />
     <ClCompile Include="annotate.c" />
+    <ClCompile Include="audio.c" />
     <ClCompile Include="bitmap.c" />
     <ClCompile Include="boverlay.c" />
     <ClCompile Include="bspload.c" />
@@ -297,7 +297,6 @@ $(SolutionDir)postbuild.bat
     <ClCompile Include="moveobj.c" />
     <ClCompile Include="msgbox.c" />
     <ClCompile Include="msgfiltr.c" />
-    <ClCompile Include="music.c" />
     <ClCompile Include="objdraw.c" />
     <ClCompile Include="object.c" />
     <ClCompile Include="object3d.c" />
@@ -317,7 +316,6 @@ $(SolutionDir)postbuild.bat
     <ClCompile Include="say.c" />
     <ClCompile Include="select.c" />
     <ClCompile Include="server.c" />
-    <ClCompile Include="sound.c" />
     <ClCompile Include="srvrstr.c" />
     <ClCompile Include="startup.c" />
     <ClCompile Include="statconn.c" />

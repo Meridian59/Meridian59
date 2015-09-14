@@ -80,28 +80,7 @@ extern Bool is_foreground;   // True when program is in the foreground
 /* The __cplusplus block and M59EXPORT symbol enable mixed C and C++ modules and client */
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-// Use this #define to enable Miles Sound System version.  If not defined,
-// music is played through the default MIDI player, and sound goes through the
-// ancient wavemix DLL.
-//#define M59_MSS
-
-
-#ifdef M59_MSS
-#define HANDLE_MM_WOM_DONE(hwnd, wParam, lParam, fn) \
-((fn)((hwnd), (int)(wParam), (lParam)), 0L)
-#define MAX_VOLUME 50
-#else
-#include "wavemix.h"
-#endif
-   
-#define VOLUME_CUTOFF_DISTANCE 16
-
-#ifdef __cplusplus
-};
-
+extern "C" { };
 #define M59EXPORT extern "C"
 #else
 #define M59EXPORT /* nothing */
@@ -179,10 +158,9 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "uselist.h"
 #include "move.h"
 #include "startup.h"
-#include "music.h"
+#include "audio.h"
 #include "config.h"
 #include "palette.h"
-#include "sound.h"
 #include "module.h"     // header common to client and module files
 #include "modules.h"
 #include "textin.h"

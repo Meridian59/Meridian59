@@ -131,7 +131,6 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hRichEditLib = LoadLibrary("riched32.dll");
 	InitCommonControls();
 	
-	MusicInitialize();
 	
 	SetMainCursor(LoadCursor(NULL, IDC_ARROW));
 	
@@ -154,7 +153,7 @@ void MainQuit(HWND hwnd)
 	
 	FontsDestroy();
 	ColorsDestroy();
-	MusicClose();
+	MusicStop();
 	PaletteDeactivate();
 	
 	DeleteObject(hPal);

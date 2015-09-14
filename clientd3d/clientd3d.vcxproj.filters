@@ -198,9 +198,6 @@
     <ClInclude Include="msgfiltr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="music.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="objdraw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -261,9 +258,6 @@
     <ClInclude Include="server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sound.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="srvrstr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -316,6 +310,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="trig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -485,9 +482,6 @@
     <ClCompile Include="msgfiltr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="music.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="objdraw.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -540,9 +534,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="server.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sound.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="srvrstr.c">
@@ -612,6 +603,9 @@
       <Filter>util</Filter>
     </ClCompile>
     <ClCompile Include="pal.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

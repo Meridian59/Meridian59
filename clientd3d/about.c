@@ -39,12 +39,12 @@ static int timer_id;
 static int scroll_width, scroll_height;  // Size of scrolling window
 static int scroll_y;       // Current y position in scrolling bitmap
 
-static char *sounds[] = { "resource\\swrdmtl1.wav", 
-			  "resource\\swrdmtl2.wav", 
-			  "resource\\swrdmtl3.wav",
-			  "resource\\patk.wav",
-			  "resource\\orc_awr.wav",
-			  "resource\\fquake.wav",                          
+static char *sounds[] = { "swrdmtl1.wav", 
+			  "swrdmtl2.wav", 
+			  "swrdmtl3.wav",
+			  "patk.wav",
+			  "orc_awr.wav",
+			  "fquake.wav",                          
 };
 #define num_sounds 3   // # of sounds for default dude
 
@@ -302,7 +302,7 @@ void AboutTimer(HWND hwnd, UINT id)
 	       case ABOUT_RSC3: index = 5; break;
 	       default: index = rand() % num_sounds; break;
 	       }
-	       PlayWaveFile(hMain, sounds[index], MAX_VOLUME, SF_RANDOM_PITCH, 0, 0, 0, 0);
+		   SoundPlayFile(sounds[index], SF_RANDOM_PITCH);
 	    }
 	 }
 		

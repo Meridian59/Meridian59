@@ -43,6 +43,7 @@ DX9INCLUDEDIR        = $(TOPDIR)\include\dx9
 LIBPNGINCLUDEDIR     = $(TOPDIR)\include\libpng
 LIBARCHIVEINCLUDEDIR = $(TOPDIR)\include\libarchive
 ZLIBINCLUDEDIR       = $(TOPDIR)\include\zlib
+IRRKLANGINCLUDEDIR   = $(TOPDIR)\include\irrklang
 
 # KOD and KOD include directories
 KODDIR        = $(TOPDIR)\kod
@@ -141,4 +142,4 @@ MAKEBGF   = $(BLAKBINDIR)\makebgf
 # -----------------------------------------------------------------
 # LIB and INCLUDE directories for compiler and linker
 LIB     = $(LIB);$(BLAKLIBDIR)
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(MYSQLINCLUDEDIR);$(DX9INCLUDEDIR);$(LIBPNGINCLUDEDIR);$(ZLIBINCLUDEDIR);$(LIBARCHIVEINCLUDEDIR)
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(MYSQLINCLUDEDIR);$(DX9INCLUDEDIR);$(LIBPNGINCLUDEDIR);$(ZLIBINCLUDEDIR);$(LIBARCHIVEINCLUDEDIR);$(IRRKLANGINCLUDEDIR)

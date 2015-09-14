@@ -320,23 +320,27 @@ BOOL CALLBACK PreferencesDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
          if (IsDlgButtonChecked(hDlg, IDC_MUSIC) != config.play_music)
             UserToggleMusic(config.play_music);
          config.play_music = IsDlgButtonChecked(hDlg, IDC_MUSIC);
-         
          config.play_sound = IsDlgButtonChecked(hDlg, IDC_SOUNDFX);
          config.play_loop_sounds = IsDlgButtonChecked(hDlg, IDC_LOOPSOUNDS);
          config.play_random_sounds = IsDlgButtonChecked(hDlg, IDC_RANDSOUNDS);
          if (!config.play_sound)
-            SoundAbort();
+            SoundStopAll();
+
+         UserToggleMusic(config.play_music);
 
          new_val = Trackbar_GetPos(GetDlgItem(hDlg, IDC_MUSIC_VOLUME));
          if (new_val != config.music_volume)
          {
             config.music_volume = new_val;
-            ResetMusicVolume();
+            MusicSetVolume();
          }
 
-         // Don't need to dynamically update sound volume, because
-         // looping sounds are updated as player moves around.
-         config.sound_volume = Trackbar_GetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME));
+         new_val = Trackbar_GetPos(GetDlgItem(hDlg, IDC_SOUND_VOLUME));
+         if (new_val != config.sound_volume)
+         {
+            config.sound_volume = new_val;
+            SoundSetVolume();
+         }
 
          if( IsDlgButtonChecked( hDlg, IDC_TARGETHALO1 ) == BST_CHECKED )
             config.halocolor = 0;

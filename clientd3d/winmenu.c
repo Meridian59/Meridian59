@@ -142,7 +142,7 @@ void MenuCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       config.play_sound = !config.play_sound;
       CheckMenuItem(menu, ID_OPTIONS_SOUND, config.play_sound ? MF_CHECKED : MF_UNCHECKED);
       if (!config.play_sound)
-	 SoundAbort();
+	 SoundStopAll();
       break;
    case ID_OPTIONS_SAVENOW:
       SaveSettings();

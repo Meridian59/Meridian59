@@ -166,25 +166,9 @@ long CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HANDLE_MSG(hwnd, WM_CTLCOLORSTATIC, MainCtlColor);
 		HANDLE_MSG(hwnd, WM_CTLCOLORSCROLLBAR, MainCtlColor);
 
-		/* Wave mixer has finished playing file */
-		HANDLE_MSG(hwnd, MM_WOM_DONE, SoundDone);
-
 	case BK_SOCKETEVENT:
 		MainReadSocket(hwnd, WSAGETSELECTEVENT(lParam), (SOCKET) wParam, WSAGETSELECTERROR(lParam));
 		return 0;
-
-#ifndef M59_MSS
-	case MM_MCINOTIFY:  /* MIDI file has finished playing */
-		if (wParam != MCI_NOTIFY_SUCCESSFUL)
-			break;
-
-		MusicDone(LOWORD(lParam));
-		break;
-#endif
-
-	case BK_NEWSOUND:
-		NewMusic(wParam, lParam);
-		break;
 
 	case BK_NORESOURCE:
 		MissingResource();
@@ -319,6 +303,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	D3DRenderInit(hMain);
 
+	AudioInit();
+
 	ModulesInit();   // Set up data structures for modules
 
 
@@ -356,6 +342,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	/* Unregister our custom classes--not good to leave them around */
 	UnregisterWindowClasses();
+
+	AudioShutdown();
 
 	return msg.wParam;  // Return value of PostQuitMessage
 }

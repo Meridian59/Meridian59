@@ -431,6 +431,124 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
+// Works like FindListElem, but compares the class of the object.
+int GetListElemByClass(val_type list_id, int class_id)
+{
+   list_node *l;
+   object_node *o;
+   class_node *c;
+
+   l = GetListNodeByID(list_id.v.data);
+   if (!l)
+   {
+      bprintf("FindListElemByClass got invalid list.\n");
+      return NIL;
+   }
+
+   if (l->first.v.tag == TAG_OBJECT)
+   {
+      o = GetObjectByID(l->first.v.data);
+      if (o == NULL)
+      {
+         bprintf("FindListElemByClass can't find object %i\n",l->first.v.data);
+         return NIL;
+      }
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("FindListElemByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return NIL;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+            return l->first.int_val;
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   while (l && l->rest.v.data != NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (l->first.v.tag == TAG_OBJECT)
+      {
+         o = GetObjectByID(l->first.v.data);
+         if (o == NULL)
+         {
+            bprintf("FindListElemByClass can't find object %i\n",l->first.v.data);
+
+            return NIL;
+         }
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("FindListElemByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return NIL;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+               return l->first.int_val;
+            c = c->super_ptr;
+         } while (c != NULL);
+      }
+   }
+
+   return NIL;
+}
+
+// Returns the list node that contains list_elem in the position given.
+int GetListNode(val_type list_id, int position, val_type list_elem)
+{
+   list_node *l;
+
+   l = GetListNodeByID(list_id.v.data);
+   if (!l)
+   {
+      bprintf("GetListNode got invalid list.\n");
+      return NIL;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("GetListNode called on invalid list.\n");
+      return NIL;
+   }
+
+   if (position == 1)
+   {
+      if (First(l->first.v.data) == list_elem.int_val)
+         return l->first.int_val;
+   }
+   else if (Nth(position, l->first.v.data) == list_elem.int_val)
+      return l->first.int_val;
+
+   while (l && l->rest.v.data != NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("GetListNode has invalid list.\n");
+         return NIL;
+      }
+      if (position == 1)
+      {
+         if (First(l->first.v.data) == list_elem.int_val)
+            return l->first.int_val;
+      }
+      else if (Nth(position, l->first.v.data) == list_elem.int_val)
+         return l->first.int_val;
+   }
+
+   // Not found, return NIL.
+   return NIL;
+}
+
 int InsertListElem(int n,int list_id,val_type new_val)
 {
    int new_list_id;

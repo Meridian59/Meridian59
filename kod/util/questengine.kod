@@ -242,12 +242,10 @@ messages:
    {
       local lQT;
 
-      foreach lQT in plQuestTemplates
+      lQT = GetListNode(plQuestTemplates, QT_QST_ID, index);
+      if lQT <> $
       {
-         if Nth(lQT,QT_QST_ID) = index
-         {
-            return Nth(lQT,QT_QUEST_OBJECT);
-         }
+         return Nth(lQT,QT_QUEST_OBJECT);
       }
 
       return $;
@@ -706,23 +704,20 @@ messages:
       }
 
       % Don't add duplicate quest nodes.
-      foreach lQNT in plQuestNodeTemplates
+      if GetListNode(plQuestNodeTemplates, QT_QST_ID, quest_node_index)
       {
-         if Nth(lQNT,QNT_QNT_ID) = quest_node_index
+         % Some quest nodes are used by more than one quest, so allow
+         % those and don't log the error in the quest template.
+         if bDuplicate
          {
-            % Some quest nodes are used by more than one quest, so allow
-            % those and don't log the error in the quest template.
-            if bDuplicate
-            {
-               return quest_node_index;
-            }
-            else
-            {
-               Debug("AddQuestNodeTemplate trying to add duplicate quest node ",
-                     quest_node_index);
+            return quest_node_index;
+         }
+         else
+         {
+            Debug("AddQuestNodeTemplate trying to add duplicate quest node ",
+                  quest_node_index);
 
-               return 0;
-            }
+            return 0;
          }
       }
 
@@ -781,38 +776,27 @@ messages:
          return $;
       }
 
-      foreach lQNT in plQuestNodeTemplates
+      lQNT = GetListNode(plQuestNodeTemplates, QNT_QNT_ID, index);
+
+      if lQNT = $
       {
-         if Nth(lQNT,QNT_QNT_ID) = index
-         {
-            return lQNT;
-         }
+         Debug("QuestEngine couldn't find quest node template ",index);
+
+         return $;
       }
 
-      Debug("QuestEngine couldn't find quest node template ",index);
-
-      return $;
+      return lQNT;
    }
 
    IsValidQuestNodeTemplate(index = 0)
    "Returns 1 if index refers to a valid quest node template, 0 otherwise"
    {
-      local lQNT;
-
       if index < 1
       {
          return FALSE;
       }
 
-      foreach lQNT in plQuestNodeTemplates
-      {
-         if Nth(lQNT,QNT_QNT_ID) = index
-         {
-            return TRUE;
-         }
-      }
-
-      return FALSE;
+      return GetListNode(plQuestNodeTemplates, QNT_QNT_ID, index) <> $;
    }
 
    GetRandomNPCFromQuestNodeTemplate(index = 0, not_NPC = $)
@@ -1314,15 +1298,12 @@ messages:
       }
 
       % Don't add duplicate quests.
-      foreach lQT in plQuestTemplates
+      if GetListNode(plQuestTemplates, QT_QST_ID, quest_index)
       {
-         if Nth(lQT,QT_QST_ID) = quest_index
-         {
-            Debug("AddQuestTemplate trying to add duplicate quest ID ",
-                  quest_index);
+         Debug("AddQuestTemplate trying to add duplicate quest ID ",
+               quest_index);
 
-            return 0;
-         }
+         return 0;
       }
 
       lQTemplate = [ quest_index, quest_object, num_players, quest_type, \
@@ -1338,22 +1319,12 @@ messages:
    IsValidQuestTemplate(index = 0)
    "Returns 1 if index refers to a valid quest template, 0 otherwise"
    {
-      local lQT;
-
       if index < 1
       {
          return FALSE;
       }
 
-      foreach lQT in plQuestTemplates
-      {
-         if Nth(lQT,QT_QST_ID) = index
-         {
-            return TRUE;
-         }
-      }
-
-      return FALSE;
+      return GetListNode(plQuestTemplates, QT_QST_ID, index) <> $;
    }
 
    GetQuestTemplate(index = 0)
@@ -1372,17 +1343,16 @@ messages:
          return $;
       }
 
-      foreach lQT in plQuestTemplates
+      lQT = GetListNode(plQuestTemplates, QT_QST_ID, index);
+
+      if lQT = $
       {
-         if Nth(lQT,QT_QST_ID) = index
-         {
-            return lQT;
-         }
+         Debug("QuestEngine couldn't find quest template ",index);
+
+         return $;
       }
 
-      Debug("QuestEngine couldn't find quest template ",index);
-
-      return $;
+      return lQT;
    }
 
    SetQuestNumPlayers(index = 0, new_num = $)

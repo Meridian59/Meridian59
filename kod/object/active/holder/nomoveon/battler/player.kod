@@ -6588,12 +6588,9 @@ messages:
          return FALSE;
       }
 
-      foreach i in plUsing
+      if GetListElemByClass(plUsing, class)
       {
-         if IsClass(i,class)
-         {
-            return TRUE;
-         }
+         return TRUE;
       }
 
       return FALSE;
@@ -6610,15 +6607,7 @@ messages:
          return $;
       }
 
-      foreach i in plUsing
-      {
-         if IsClass(i,class)
-         {
-            return i;
-         }
-      }
-
-      return $;
+      return GetListElemByClass(plUsing, class);
    }
 
    ChooseArmorPosition()
@@ -9396,17 +9385,13 @@ messages:
       Send(Send(SYS,@GetStatistics),@PlayerDiedCounter);
 
       % Token death?
-      foreach i in plUsing
+      i = GetListElemByClass(plUsing,&Token);
+      if i <> $
       {
-         if IsClass(i,&Token)
-         {
-            bNo_drop_death = TRUE;
-            piDeathCost = FALSE;
-            Send(self,@MsgSendUser,#message_rsc=player_token_death);
-            Send(i,@NewUnused,#what=self,#where=oRoom);
-
-            break;
-         }
+         bNo_drop_death = TRUE;
+         piDeathCost = FALSE;
+         Send(self,@MsgSendUser,#message_rsc=player_token_death);
+         Send(i,@NewUnused,#what=self,#where=oRoom);
       }
 
       % Create the corpse.
@@ -12709,19 +12694,13 @@ messages:
       {
          piFactionServiceUpdate = 0;
       }
-      else
+      else if middle
       {
-         if middle
-         {
-            piFactionServiceUpdate = piFactionServiceUpdate / 2;
-         }
-         else
-         {
-            if front
-            {
-               piFactionServiceUpdate = 3* piFactionServiceUpdate / 4;
-            }
-         }
+         piFactionServiceUpdate = piFactionServiceUpdate / 2;
+      }
+      else if front
+      {
+         piFactionServiceUpdate = 3* piFactionServiceUpdate / 4;
       }
 
       return;
@@ -14198,9 +14177,8 @@ messages:
                   {
                       iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
                       iColor = Send(Nth(oLightObject,1),@GetLightColor);
-                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-                      AddPacket(1,iIntensity);
-                      AddPacket(2,iColor);
+                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),
+                                1,iIntensity, 2,iColor);
 
                       return;
                   }
@@ -14210,11 +14188,9 @@ messages:
 
          if (piDrawEffectFlag & OF_FLICKERING)
          {
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
             % 75 out of 255 intensity of light
-            AddPacket(1,60);
-            % Color
-            AddPacket(2,LIGHT_FIRE);
+            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),
+                      1,60, 2,LIGHT_FIRE);
 
             return;
          }
@@ -14632,29 +14608,17 @@ messages:
 
    GetReagentBag()
    {
-      local i;
-
-      foreach i in plPassive
-      {
-         if IsClass(i,&ReagentBag)
-         {
-            return i;
-         }
-      }
-
-      return $;
+      return GetListElemByClass(plPassive,&ReagentBag);
    }
 
    GetReagentBagContents()
    {
-      local i;
+      local oBag;
 
-      foreach i in plPassive
+      oBag = GetListElemByClass(plPassive,&ReagentBag);
+      if oBag <> $
       {
-         if IsClass(i,&ReagentBag)
-         {
-            return Send(i,@GetReagentBagContents);
-         }
+         return Send(oBag,@GetReagentBagContents);
       }
 
       return $;

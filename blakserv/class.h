@@ -30,7 +30,7 @@ typedef struct class_struct
    int class_id;
    int super_id;
 
-   message_node *messages;
+   message_node **messages;
    char *fname;
    char *class_name;
 

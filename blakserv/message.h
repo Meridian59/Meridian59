@@ -13,6 +13,13 @@
 #ifndef _MESSAGE_H
 #define _MESSAGE_H
 
+// This causes 5347 message nodes to be allocated for every class (max num
+// of messages in an actual class is 464). This is a little excessive but
+// allows no collisions between hashes.
+
+#define MESSAGE_TABLE_SIZE 5347
+#define GetMessageHashNum(a) (((a + 6000)) % MESSAGE_TABLE_SIZE)
+
 typedef struct message_struct
 {
    int message_id;
@@ -24,6 +31,7 @@ typedef struct message_struct
    struct message_struct *propagate_message;
    struct class_struct *propagate_class;
    double total_call_time;
+   struct message_struct *next; /* for open hash table linked list */
 } message_node;
 
 void InitMessage(void);
@@ -31,6 +39,8 @@ void ResetMessage(void);
 void SetClassNumMessages(int class_id,int num_messages);
 void AddMessage(int class_id,int count,int message_id,char *offset,int dstr_id);
 void SetMessagesPropagate(void);
+int GetHighestMessageCount(void);
+int GetNumMessageHashCollisions(void);
 
 /* two more header functions in class.h */
 

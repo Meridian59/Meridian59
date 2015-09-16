@@ -260,7 +260,7 @@ BOOL MusicRestart()
 	if (!lastmusicname)
 		return FALSE;
 
-	MusicPlayFile(lastmusicname);
+	return MusicPlayFile(lastmusicname);
 }
 
 BOOL MusicPlayFile(char* file)

@@ -67,7 +67,7 @@ properties:
 
    piAnimation = ANIM_NONE
 
-   viReputationGroup = REP_UNDEAD
+   piReputationGroup = REP_UNDEAD
 
 messages:
 
@@ -75,7 +75,7 @@ messages:
    {
       Send(self,@SetResistances);
 
-      vlReputationEnemies = [REP_FAROL];
+      plReputationEnemies = [REP_FAROL];
 
       propagate;
    }

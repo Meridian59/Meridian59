@@ -97,7 +97,7 @@ properties:
    % piSpellRange in FINENESS units. 10 row/cols.
    piSpellRange = 640
 
-   viReputationGroup = REP_HERETIC
+   piReputationGroup = REP_HERETIC
 
 messages:
 

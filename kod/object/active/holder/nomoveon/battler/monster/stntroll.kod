@@ -76,7 +76,7 @@ properties:
    piAnimation = ANIM_NONE
    piDrawFX = DRAWFX_SECONDTRANS
 
-   viReputationGroup = REP_TROLL
+   piReputationGroup = REP_TROLL
 
 messages:
 
@@ -88,7 +88,7 @@ messages:
                         [ATCK_WEAP_NONMAGIC, 80 ]
                       ];
 
-      vlReputationEnemies = [REP_ORC];
+      plReputationEnemies = [REP_ORC];
 
       propagate;
    }

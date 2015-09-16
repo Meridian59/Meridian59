@@ -487,9 +487,9 @@ properties:
 
    % some monsters are created on the fly (ex: avar) we may need to set this at
    % runtime
-   viReputationGroup = REP_NEUTRAL
-   vlReputationEnemies = $
-   
+   piReputationGroup = REP_NEUTRAL
+   plReputationEnemies = $
+
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0)
@@ -3924,7 +3924,7 @@ messages:
             Send(EVENTENGINE_OBJECT,@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
 
-            if (viReputationGroup <> REP_NEUTRAL
+            if (piReputationGroup <> REP_NEUTRAL
                AND Send(SETTINGS_OBJECT,@GetMonsterFactionEnabled))
             {
                hReputation = Send(what,@GetReputationHash);
@@ -3943,28 +3943,28 @@ messages:
                % now actually do the rep chenge unless there is no hash
                if (hReputation <> $)
                {
-                  val=GetTableEntry(hReputation,viReputationGroup);
+                  val=GetTableEntry(hReputation,piReputationGroup);
                   if (val <> $)
                   {
                      --val;
                      if (val >= -20000)
                      {
-                        DeleteTableEntry(hReputation,viReputationGroup);
-                        AddTableEntry(hReputation,viReputationGroup,val);
+                        DeleteTableEntry(hReputation,piReputationGroup);
+                        AddTableEntry(hReputation,piReputationGroup,val);
                      }
                   }
                   else
                   {
-                     AddTableEntry(hReputation,viReputationGroup,-1);
+                     AddTableEntry(hReputation,piReputationGroup,-1);
                   }
 
                   Send(what,@MsgSendUser,
                      #message_rsc=monster_faction_negative_msg,
                      #parm1=Send(self,@GetMonsterFactionRSC,
-                              #faction=viReputationGroup));
+                              #faction=piReputationGroup));
 
                   % Adjust reputation with enemies of this monster
-                  foreach i in vlReputationEnemies
+                  foreach i in plReputationEnemies
                   {
                      val=GetTableEntry(hReputation,i);
                      if (val <> $)

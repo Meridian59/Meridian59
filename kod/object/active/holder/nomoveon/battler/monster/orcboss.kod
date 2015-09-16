@@ -82,7 +82,7 @@ properties:
    pbFirstAttack = TRUE
    ptSecondAttack = $
 
-   viReputationGroup = REP_ORC
+   piReputationGroup = REP_ORC
    
 messages:
 
@@ -95,7 +95,7 @@ messages:
                         [ATCK_WEAP_MAGIC, -25 ],
                         [-ATCK_SPELL_HOLY, -50 ] ];
 
-      vlReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
+      plReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
 
       propagate;
    }

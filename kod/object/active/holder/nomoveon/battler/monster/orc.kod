@@ -70,8 +70,8 @@ properties:
 
    piAnimation = ANIM_NONE
 
-   viReputationGroup = REP_ORC
-   vlReputationEnemies = $
+   piReputationGroup = REP_ORC
+   plReputationEnemies = $
    
 messages:
 
@@ -82,7 +82,7 @@ messages:
                         [ATCK_WEAP_SLASH, 20 ],
                         [-ATCK_SPELL_HOLY, -25 ] ];
 
-      vlReputationEnemies = [REP_TROLL];
+      plReputationEnemies = [REP_TROLL];
 
       propagate;
    }

@@ -223,7 +223,7 @@ messages:
       if IsClass(who,&Player)
       {
          % Don't override phasing hold.
-         if NOT Send(who,@IsPhasedOut)
+         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
          {
             Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
          }

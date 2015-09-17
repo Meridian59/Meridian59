@@ -9203,13 +9203,13 @@ messages:
          iFlags = iFlags | DRAWFX_INVISIBLE;
       }
 
-      if Send(self,@IsPhasedOut)
+      if (piFlags & PFLAG_PHASED)
       {
          iFlags = iFlags & ~DRAWFX_MASK;
          iFlags = iFlags | DRAWFX_DITHERINVIS;
       }
 
-      if pbSpectatorMode
+      if (piFlags & PFLAG_SPECTATOR)
       {
          iFlags = iFlags & ~DRAWFX_MASK;
          iFlags = iFlags | DRAWFX_DITHERGREY;

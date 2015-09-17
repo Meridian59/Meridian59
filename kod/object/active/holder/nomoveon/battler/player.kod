@@ -1098,9 +1098,6 @@ properties:
    piRemainingPhaseTime = 60000 * 8
    ptCanPhaseTimer = $
 
-   % Spectator mode?
-   pbSpectatorMode = FALSE
-
 messages:
 
    Constructor()
@@ -3393,7 +3390,7 @@ messages:
    {
       local i, iTime;
 
-      if Send(self,@IsPhasedOut)
+      if (piFlags & PFLAG_PHASED)
       {
          % Rare case where a user can log off while phased, e.g. system restart
          % Phase already froze the enchantments, so we don't need to do it again
@@ -14624,11 +14621,6 @@ messages:
       return $;
    }
 
-   IsPhasedOut()
-   {
-      return Send(self,@IsEnchanted,#byClass=&Phase);
-   }
-
    StartPhaseTimer()
    {
       local i;
@@ -14694,7 +14686,7 @@ messages:
             @AdjustVisualEffectBasedOnTimeRemaining,#who=self);
 
       if ptPhaseVisualEffectTimer = $
-         AND Send(self,@IsPhasedOut)
+         AND (piFlags & PFLAG_PHASED)
       {
          ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
       }
@@ -14851,23 +14843,23 @@ messages:
    % Use this for when either phase or spectator do the same thing
    IsInCannotInteractMode()
    {
-      if Send(self,@IsPhasedOut)
-         OR pbSpectatorMode
+      if (piFlags & PFLAG_PHASED)
+         OR (piFlags & PFLAG_SPECTATOR)
       {
          return TRUE;
       }
 
       return FALSE;
    }
-   
+
    IsInSpectatorMode()
    {
-      return pbSpectatorMode;
+      return (piFlags & PFLAG_SPECTATOR);
    }
-   
+
    DeactivateSpectatorMode()
    {
-      pbSpectatorMode = FALSE;
+      piFlags = (piFlags & ~PFLAG_SPECTATOR);
 
       if poOwner <> $
       {
@@ -14876,12 +14868,12 @@ messages:
 
       return;
    }
-   
+
    ActivateSpectatorMode()
    {
       local i,j,m;
-      
-      if pbSpectatorMode
+
+      if (piFlags & PFLAG_SPECTATOR)
       {
          return;
       }
@@ -14899,7 +14891,7 @@ messages:
          Send(poOwner,@WentSpectatorMode,#who=self);
       }
 
-      if Send(self,@IsPhasedOut)
+      if (piFlags & PFLAG_PHASED)
       {
          % Check for phase when going from normal to spectator
          foreach j in plEnchantments
@@ -14914,7 +14906,7 @@ messages:
          }
       }
 
-      pbSpectatorMode = TRUE;
+      piFlags = piFlags | PFLAG_SPECTATOR;
 
       if poOwner <> $
       {
@@ -14924,7 +14916,7 @@ messages:
 
       return;
    }
-   
+
    IsLikelyVictim()
    {
       if Send(self,@IsInCannotInteractMode)

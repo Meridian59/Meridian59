@@ -4441,6 +4441,22 @@ messages:
       return plEnchantments;
    }
 
+   IsHolding(what = $)
+   "Optimised for Room."
+   {
+      if GetListNode(plActive, 1, what) <> $
+      {
+         return TRUE;
+      }
+      
+      if GetListNode(plPassive, 1, what) <> $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    GetplPassive()
    {
       return plPassive;

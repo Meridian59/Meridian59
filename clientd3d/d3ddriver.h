@@ -28,8 +28,8 @@ enum texture_modes
 
 typedef struct d3d_driver_profile
 {
-	D3DCAPS8				d3dCaps;
-	D3DADAPTER_IDENTIFIER8	adapterID;
+	D3DCAPS9				d3dCaps;
+	D3DADAPTER_IDENTIFIER9	adapterID;
 	unsigned int	texMemTotal;
 	unsigned int  texMemWorldStatic;
   unsigned int  texMemWorldDynamic;
@@ -39,7 +39,7 @@ typedef struct d3d_driver_profile
 	DWORD					minFilter;
 	DWORD					magFilter;
 	DWORD					vertexProcessFlag;
-	float					maxAnisotropy;
+	DWORD					maxAnisotropy;
 	DWORD					vertexProcessingMode;
 	DWORD					lmapMode;
 	Bool					bZBias;

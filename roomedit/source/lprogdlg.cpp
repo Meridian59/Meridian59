@@ -311,7 +311,7 @@ void TLevelProgressDialog::ShowBlockmapProgress (int value)
 // TLevelProgressDialog
 // --------------------
 //
-void TLevelProgressDialog::EvSize (UINT sizeType, TSize& size)
+void TLevelProgressDialog::EvSize (UINT sizeType, const TSize& size)
 {
 	if ( sizeType == SIZE_MINIMIZED )
 	{

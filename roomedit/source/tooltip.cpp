@@ -82,7 +82,7 @@ TTipControlBar::TTipControlBar (TToolTip& tip, TWindow* parent, TTileDirection d
 	SetHintMode(TGadgetWindow::EnterHints);
 }
 
-void TTipControlBar::EvMouseMove (UINT modKeys, TPoint& point)
+void TTipControlBar::EvMouseMove (UINT modKeys, const TPoint& point)
 {
 	if (!Capture && !GadgetFromPoint (point))
 	{
@@ -97,7 +97,7 @@ void TTipControlBar::EvMouseMove (UINT modKeys, TPoint& point)
 	bEnableHints = FALSE;
 }
 
-void TTipControlBar::EvLButtonDown (UINT modKeys, TPoint& point)
+void TTipControlBar::EvLButtonDown (UINT modKeys, const TPoint& point)
 {
 	// hide the tip window if mouse-button pressed
 	tooltip.HideTip ();
@@ -106,7 +106,7 @@ void TTipControlBar::EvLButtonDown (UINT modKeys, TPoint& point)
 }
 
 
-void TTipControlBar::EvLButtonUp (UINT modKeys, TPoint& point)
+void TTipControlBar::EvLButtonUp (UINT modKeys, const TPoint& point)
 {
 	// Hide hint text
 	ptStatusBar->SetHintText(NULL);
@@ -165,11 +165,12 @@ void TTipStatusBar::SetHintText (const char *lpszText)
 	if (lpszText != NULL)
 	{
 		static char	buf[128];
+      int n;
 
 		lstrcpy (buf, lpszText);
 
 		// locate the tooltip text
-		for (int n = 0; buf[n] && buf[n] != '\n'; n++) ;
+		for (n = 0; buf[n] && buf[n] != '\n'; n++) ;
 
 		if (buf[n])
 		{
@@ -268,7 +269,7 @@ void TTipStatusBar::DrawHintText (const char *lpszText)
 }
 
 
-void TTipStatusBar::EvMouseMove (UINT modKeys, TPoint& point)
+void TTipStatusBar::EvMouseMove (UINT modKeys, const TPoint& point)
 {
 	if (bShowTips)
 	{
@@ -290,7 +291,7 @@ void TTipStatusBar::EvMouseMove (UINT modKeys, TPoint& point)
 	}
 }
 
-void TTipStatusBar::EvLButtonDown (UINT modKeys, TPoint& point)
+void TTipStatusBar::EvLButtonDown (UINT modKeys, const TPoint& point)
 {
 	if (bShowTips)
 	{
@@ -445,7 +446,7 @@ void TToolTip::SetCaption (const char far* title)
 	{
 		KillTipTimer ();
 
-		Show (SW_HIDE);
+		ShowWindow (SW_HIDE);
 
 		dwTickCount = GetTickCount ();
 	}
@@ -455,7 +456,7 @@ void TToolTip::SetCaption (const char far* title)
 
 		// work out the extent of the text
 		{
-			TClientDC	dc (HWindow);
+			TClientDC	dc (Handle);
 
 			dc.SelectObject (*font);
 			sizeText = dc.GetTextExtent (title, lstrlen (title));
@@ -463,7 +464,7 @@ void TToolTip::SetCaption (const char far* title)
 			sizeText.cx	+= 5;
 			sizeText.cy	+= 4;
 
-			Show (SW_HIDE);
+			ShowWindow (SW_HIDE);
 		}
 
 		// create the timer - this will send a WM_TIMER message
@@ -545,7 +546,7 @@ void TToolTip::ShowNow ()
 	PositionTip ();
 
 	// show the tip window
-	Show (SW_SHOWNA);
+	ShowWindow (SW_SHOWNA);
 	UpdateWindow ();
 }
 

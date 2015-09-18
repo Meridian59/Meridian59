@@ -1,0 +1,73 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+//
+//
+// resource for MDI
+//----------------------------------------------------------------------------
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#include <owl/window.rh>
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDS_MDI) && !defined(__IDS_MDI)
+#define __IDS_MDI
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDW_FIRSTMDICHILD+0,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+1,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+2,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+3,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+4,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+5,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+6,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+7,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+8,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+9,  "Activate the selected window."
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDW_FIRSTMDICHILD+0,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+1,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+2,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+3,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+4,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+5,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+6,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+7,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+8,  "Activate the selected window."
+  IDW_FIRSTMDICHILD+9,  "Activate the selected window."
+}
+#endif // defined(BI_MSG_LANGUAGE_JAPAN
+
+#endif // __IDS_MDI
+
+#undef NO_IDS_MDI
+
+#endif  // defined(RC_INVOKED)
+

@@ -37,7 +37,7 @@ classvars:
    viMove_delay_max = 10000
       
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_WEAP_BITE
+   viAttack_type = ATCK_WEAP_BITE
    
    viLevel = 100
    viDifficulty = 5

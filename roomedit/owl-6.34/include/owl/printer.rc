@@ -1,0 +1,134 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TPrinter and TPrintout.
+//----------------------------------------------------------------------------
+
+// SIR June 19th 2007: prefix with owl/ so MVC6 6 C++ can find these when
+// including in own .RC
+#include <owl/printer.rh>
+#include <owl/window.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDD_ABORTDIALOG) && !defined(__IDD_ABORTDIALOG)
+#define __IDD_ABORTDIALOG
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDD_ABORTDIALOG DIALOG 84, 51, 138, 60
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | DS_3DLOOK
+CAPTION "Printing"
+{
+ PUSHBUTTON "Cancel", IDCANCEL, 49, 40, 40, 14, WS_TABSTOP
+ CTEXT "Now printing", -1, 33, 8, 72, 8
+ LTEXT "Now printing Page %d", ID_PAGE, 14, 8, 84, 8
+ RTEXT "to %d of", ID_TOPAGE, 96, 8, 27, 8
+ CTEXT "'%s' on the", ID_TITLE, 4, 16, 130, 8
+ CTEXT "", ID_PORT, 0, 24, 130, 8, SS_CENTER | NOT WS_VISIBLE | WS_GROUP
+ CTEXT "%s on %s", ID_DEVICE, 0, 24, 130, 8
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDD_ABORTDIALOG DIALOG 84, 51, 168, 64
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | DS_3DLOOK
+CAPTION "印刷中"
+{
+ PUSHBUTTON "ｷｬﾝｾﾙ", IDCANCEL, 64, 44, 40, 14, WS_TABSTOP
+ CTEXT "'%s'", ID_TITLE, 0, 4, 168, 9
+ CTEXT "の %d ﾍﾟｰｼﾞ目を", ID_PAGE, 0, 13, 168, 9, SS_CENTER | NOT WS_VISIBLE | WS_GROUP
+ CTEXT "を", -1, 0, 13, 168, 9
+ CTEXT "", ID_PORT, 0, 22, 168, 9, SS_CENTER | NOT WS_VISIBLE | WS_GROUP
+ CTEXT "%s (%s)", ID_DEVICE, 0, 22, 168, 9
+ CTEXT "で印刷中", -1, 0, 31, 168, 9
+}
+#endif
+
+
+#endif
+#undef NO_DR_ABORTDIALOG
+
+#if !defined(NO_IDS_PRINTER) && !defined(__IDS_PRINTER)
+#define __IDS_PRINTER
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_PRNNODEFAULT,     "Cannot print without a default printer."
+  IDS_PRNON,            " on "
+  IDS_PRNERRORTEMPLATE, "'%s' not printed. %s."
+  IDS_PRNOUTOFMEMORY,   "Out of memory"
+  IDS_PRNOUTOFDISK,     "Out of disk space"
+  IDS_PRNCANCEL,        "Printing canceled"
+  IDS_PRNMGRABORT,      "Printing aborted in Print Manager"
+  IDS_PRNGENERROR,      "Error encountered during print"
+  IDS_PRNERRORCAPTION,  "Print Error"
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_PRNNODEFAULT,     "通常使うﾌﾟﾘﾝﾀがないので、印刷できません。"
+  IDS_PRNON,            " on "
+  IDS_PRNERRORTEMPLATE, "'%s' は印刷されません。\n%s"
+  IDS_PRNOUTOFMEMORY,   "ﾒﾓﾘ不足です。"
+  IDS_PRNOUTOFDISK,     "ﾃﾞｨｽｸ容量が不足しています。"
+  IDS_PRNCANCEL,        "印刷はｷｬﾝｾﾙされました。"
+  IDS_PRNMGRABORT,      "印刷はﾌﾟﾘﾝﾄﾏﾈｰｼﾞｬで中断されました。"
+  IDS_PRNGENERROR,      "印刷中にｴﾗｰが発生しました。"
+  IDS_PRNERRORCAPTION,  "印刷ｴﾗｰ"
+}
+#endif
+
+#endif
+#undef NO_IDS_PRINTER
+
+
+//
+// Print Preview speed bar bitmaps
+//
+#if !defined(NO_BMP_PRINTER) && !defined(__BMP_PRINTER)
+#define __BMP_PRINTER
+//CM_FILEPRINTPREVIEW  BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/preview.bmp"
+//CM_FILEPRINT BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/print.bmp"
+//APX_PPR_PREVIOUS BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/previous.bmp"
+//APX_PPR_NEXT BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/next.bmp"
+//APX_PPR_ONEUP BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/preview1.bmp"
+//APX_PPR_TWOUP BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/preview2.bmp"
+//APX_PPR_DONE BITMAP PRELOAD MOVEABLE DISCARDABLE "owl/res/prexit.bmp"
+
+#endif
+#undef NO_BMP_PRINTER
+
+#endif  // defined(RC_INVOKED)

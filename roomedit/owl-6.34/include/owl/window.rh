@@ -1,0 +1,112 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Command IDs to use with window.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_WINDOW_RH)
+#define OWL_WINDOW_RH
+
+//
+// Win95 Dialog styles, if not defined. Can be used in resources & source
+//
+#if !defined(DS_3DLOOK)
+# define DS_3DLOOK            0x0004L
+#endif
+#if !defined(DS_FIXEDSYS)
+# define DS_FIXEDSYS          0x0008L
+#endif
+#if !defined(DS_NOFAILCREATE)
+# define DS_NOFAILCREATE      0x0010L
+#endif
+#if !defined(DS_CONTROL)
+# define DS_CONTROL           0x0400L
+#endif
+#if !defined(DS_CENTER)
+# define DS_CENTER            0x0800L
+#endif
+#if !defined(DS_CENTERMOUSE)
+# define DS_CENTERMOUSE       0x1000L
+#endif
+#if !defined(DS_CONTEXTHELP)
+# define DS_CONTEXTHELP       0x2000L
+#endif
+
+//
+// Commands
+//
+//#define CM_EXIT             24310
+//
+// CM_EXIT as used by OWL clashes with CM_EXIT in VCL.  To avoid
+// silently failing at runtime because we got the wrong value:
+//
+// 1) define _OWL_CM_EXIT.  this macro will always be used, and can
+// be used anywhere that CM_EXIT was used in previous versions of OWL
+//
+// 2) if CM_EXIT is already defined, and neither _USE_VCL_CM_EXIT nor
+// _USE_OWL_CM_EXIT is defined, issue an error
+//
+// 3) if _USE_OWL_CM_EXIT is defined, define CM_EXIT to _OWL_CM_EXIT
+//
+// 4) if CM_EXIT is not defined, and neither _USE_VCL_CM_EXIT nor
+// _USE_OWL_CM_EXIT is defined, ddefine CM_EXIT to _OWL_CM_EXIT, and
+// issue a warning that this may clash with a (future) include of
+// <controls.hpp> from VCL
+//
+#if !defined(BI_COMP_BORLANDC) 
+#  define CM_EXIT             24310
+#else
+#  define _OWL_CM_EXIT        24310
+
+#  if defined(CM_EXIT)
+#   if defined(_USE_OWL_CM_EXIT)
+#     undef CM_EXIT
+#     define CM_EXIT _OWL_CM_EXIT
+#   elif !defined(_USE_VCL_CM_EXIT)
+#     error CM_EXIT clash: define either _USE_OWL_CM_EXIT or _USE_VCL_CM_EXIT
+#   endif
+#  elif !defined(_USE_VCL_CM_EXIT)
+#   if !defined(_USE_OWL_CM_EXIT)
+#     pragma message("CM_EXIT definition may clash with <controls.hpp>")
+#   endif
+#   define CM_EXIT        _OWL_CM_EXIT
+#  endif
+#endif
+
+#define CM_EDITUNDO         24321       // Common edit menu commands
+#define CM_EDITCUT          24322
+#define CM_EDITCOPY         24323
+#define CM_EDITPASTE        24324
+#define CM_EDITDELETE       24325
+#define CM_EDITCLEAR        24326
+#define CM_EDITADD          24327
+#define CM_EDITEDIT         24328
+#define CM_EDITREDO         24329
+
+//
+// Default ObjectWindows app icon ID
+//
+#define IDI_OWLAPP          32000
+#define IDI_OWLAPPSM        32001
+
+#if defined(RC_INVOKED)
+//
+// The following ObjectWindows constants are C++ constants. The macros 
+// duplicated below allow the constants to be used when compiling resources.
+//
+
+//
+// Decoration IDs
+//
+#define IDW_STATUSBAR       32040
+#define IDW_TOOLBAR         32041
+
+//
+// MDI IDs
+//
+#define IDW_MDICLIENT       32000
+#define IDW_FIRSTMDICHILD   32001
+
+#endif  // RC_INVOKED
+#endif  // OWL_WINDOW_RH
+

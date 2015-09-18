@@ -1,0 +1,49 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Resource and command IDs to use with TDocManager
+//----------------------------------------------------------------------------
+#if !defined(OWL_DOCVIEW_RH)
+#define OWL_DOCVIEW_RH
+
+//
+// Commands
+//
+#define CM_FILENEW          24331
+#define CM_FILEOPEN         24332
+#define CM_FILESAVE         24333
+#define CM_FILESAVEAS       24334
+#define CM_FILEREVERT       24335
+
+#define CM_FILEPAGESETUP    24336
+#define CM_FILEPRINT        24337
+#define CM_FILEPRINTERSETUP 24338
+
+#define CM_FILECLOSE        24339
+
+#define CM_VIEWCREATE       24341
+
+//
+// String IDs
+//
+#define IDS_DOCMANAGERFILE  32500
+#define IDS_DOCLIST         32501
+#define IDS_VIEWLIST        32502
+#define IDS_UNTITLED        32503
+#define IDS_UNABLEOPEN      32504
+#define IDS_UNABLECLOSE     32505
+#define IDS_READERROR       32506
+#define IDS_WRITEERROR      32507
+#define IDS_DOCCHANGED      32508
+#define IDS_NOTCHANGED      32509
+#define IDS_NODOCMANAGER    32510
+#define IDS_NOMEMORYFORVIEW 32511
+#define IDS_DUPLICATEDOC    32512
+
+//
+// Menu ID
+//
+#define IDM_DOCMANAGERFILE  32401
+
+#endif  // OWL_DOCVIEW_RH

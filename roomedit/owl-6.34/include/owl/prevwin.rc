@@ -1,0 +1,68 @@
+//-----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1991, 1996 by Borland International, All Rights Reserved
+//
+//-----------------------------------------------------------------------------
+
+#include <owl/prevwin.rh>
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+//
+// Print Preview speed bar bitmaps
+//
+#if !defined(NO_IDB_PREVIEWPREVIOUS) && !defined(__IDB_PREVIEWPREVIOUS)
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+
+#define __IDB_PREVIEWPREVIOUS
+IDB_PREVIOUS BITMAP "owl/res/previous.bmp"
+#endif
+
+
+#if !defined(NO_IDB_PREVIEWNEXT) && !defined(__IDB_PREVIEWNEXT)
+#define __IDB_PREVIEWNEXT
+IDB_NEXT BITMAP "owl/res/next.bmp"
+#endif
+
+#if !defined(NO_IDB_PREVIEWONEUP) && !defined(__IDB_PREVIEWONEUP)
+#define __IDB_PREVIEWONEUP
+IDB_ONEUP BITMAP "owl/res/preview1.bmp"
+#endif
+
+#if !defined(NO_IDB_PREVIEWTWOUP) && !defined(__IDB_PREVIEWTWOUP)
+#define __IDB_PREVIEWTWOUP
+IDB_TWOUP BITMAP "owl/res/preview2.bmp"
+#endif
+
+#if !defined(NO_IDB_PREVIEWDONE) && !defined(__IDB_PREVIEWDONE)
+#define __IDB_PREVIEWDONE
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDB_DONE BITMAP "owl/res/prexit.bmp"
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDB_DONE BITMAP "owl/res/prexitj.bmp"
+#endif
+
+#endif

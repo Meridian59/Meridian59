@@ -33,19 +33,19 @@
 #include "thingdlg.h"
 //#include "Entrance.h"
 
-#ifndef __OWL_LISTBOX_H
+#ifndef OWL_LISTBOX_H
 	#include <owl\listbox.h>
 #endif
 
-#ifndef __OWL_COMBOBOX_H
+#ifndef OWL_COMBOBOX_H
 	#include <owl\combobox.h>
 #endif
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	#include <owl\checkbox.h>
 #endif
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	#include <owl\radiobut.h>
 #endif
 
@@ -469,7 +469,7 @@ void TThingEditDialog::CmOk ()
 			// Copy the selected attributes of CurThing to the selection list
 			for (SelPtr cur = SelThings->next ; cur != NULL ; cur = cur->next )
 			{
-				Thing HUGE *pThing = &Things[cur->objnum];
+				Thing *pThing = &Things[cur->objnum];
 				Thing ThingBefore = *pThing;	// Copy before changes
 
 				if ( ConfirmData.pXPosCheck )	pThing->xpos  = CurThing.xpos;

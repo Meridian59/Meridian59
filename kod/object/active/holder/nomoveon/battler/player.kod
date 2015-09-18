@@ -145,6 +145,7 @@ resources:
       "Feel free to take the %s%s by your feet as payment for returning the "
       "token."
    player_improve_maxhealth = "~I~BYou suddenly feel a little tougher."
+   player_improve_health_invigorate = "~I~BYou are invigorated by your success."
    player_spits = "You spit on the corpse of your unworthy foe."
    player_regain_angel = \
       "Due to your weakness, your protective guardian angel returns."
@@ -7702,6 +7703,10 @@ messages:
 
                Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
                Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);
+               Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+               piHealth = piMax_Health;
+               Send(self,@DrawHealth);
+               Send(self,@EatSomething,#nutrition=200);
 
                piGain_chance = -(piBase_Max_health/2);
                
@@ -12291,6 +12296,7 @@ messages:
       piGuildRejoinTimestamp = time;
       piLast_restart_time = time;
       piTimeLastStomachUpdate = time;
+      piTimeAttackedPlayer = time;
 
       return;
    }

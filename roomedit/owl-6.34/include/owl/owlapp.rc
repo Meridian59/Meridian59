@@ -1,0 +1,28 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Default ObjectWindows application icon
+//----------------------------------------------------------------------------
+
+#include <owl/window.rh>
+#if defined(WIN32)    
+//#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+//#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+
+//IDI_OWLAPP ICON "owl/res/owlapp.ico"
+//IDI_OWLAPPSM ICON "owl/res/owlappsm.ico"

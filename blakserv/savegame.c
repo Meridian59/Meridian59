@@ -48,7 +48,7 @@ FILE *savefile;
 
 #define SaveGameWriteString(s) \
 { \
-	unsigned short len_s; \
+	size_t len_s; \
 	if (s == NULL) \
 { \
 	eprintf("SaveGameWriteString line %i can't save NULL string, invalid saved game\n", \

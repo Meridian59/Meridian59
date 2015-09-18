@@ -10,45 +10,132 @@
  */
 
 #include "club.h"
+#define LIBARCHIVE_STATIC
+#include "archive.h"
+#include "archive_entry.h"
 
 static int extraction_error;         // Nonzero if extraction had an error
 
-void Dearchive(char *dest_path, char *filename)
+/*****************************************************************************/
+static int CopyArchiveData(struct archive *ar, struct archive *aw)
+{
+  const void *buff;
+  size_t size;
+  __int64 offset;
+
+  while (true)
+  {
+     int r = archive_read_data_block(ar, &buff, &size, &offset);
+     if (r == ARCHIVE_EOF)
+        return ARCHIVE_OK;
+     if (r != ARCHIVE_OK)
+        return r;
+     r = archive_write_data_block(aw, buff, size, offset);
+     if (r != ARCHIVE_OK)
+        return r;
+  }
+}
+/*****************************************************************************/
+static bool ExtractArchive(const char *zip_file, const char *out_dir)
+{
+   struct archive *input = archive_read_new();
+   archive_read_support_format_all(input);
+   archive_read_support_compression_all(input);
+   struct archive *output = archive_write_disk_new();
+   archive_write_disk_set_options(output, ARCHIVE_EXTRACT_TIME);
+   archive_write_disk_set_standard_lookup(output);
+   const int BLOCK_SIZE = 65536;
+   int r = archive_read_open_filename(input, zip_file, BLOCK_SIZE);
+
+   if (r != ARCHIVE_OK)
+   {
+      extraction_error = IDS_BADARCHIVE;
+      return false;
+   }
+
+   // libarchive can only extract into the current directory, so we
+   // need to set it and restore it.
+   char original_dir[MAX_PATH];
+   getcwd(original_dir, sizeof(original_dir));
+   chdir(out_dir);
+   
+   bool retval = true;
+   while (true)
+   {
+      struct archive_entry *entry;
+      r = archive_read_next_header(input, &entry);
+      if (r == ARCHIVE_EOF)
+         break;
+      
+      if (r != ARCHIVE_OK)
+      {
+         extraction_error = IDS_BADARCHIVE;
+         retval = false;
+         break;
+      }
+      r = archive_write_header(output, entry);
+      if (r != ARCHIVE_OK)
+      {
+		 const char *msg = archive_error_string(output);
+         extraction_error = IDS_UNKNOWNERROR;
+         retval = false;
+         break;
+      }
+
+      if (archive_entry_size(entry) > 0)
+      {
+         r = CopyArchiveData(input, output);
+         if (r != ARCHIVE_OK)
+         {
+            const char *msg = archive_error_string(output);
+            extraction_error = IDS_UNKNOWNERROR;
+            retval = false;
+            break;
+         }
+      }
+      r = archive_write_finish_entry(output);
+      if (r != ARCHIVE_OK)
+      {
+         extraction_error = IDS_UNKNOWNERROR;
+         retval = false;
+         break;
+      }
+
+      // Extraction went OK; process Windows messages
+      ClearMessageQueue();
+   }
+   archive_read_close(input);
+   archive_read_free(input);
+   archive_write_close(output);
+   archive_write_free(output);
+
+   // Go back to original working directory
+   chdir(original_dir);
+
+   return retval;
+}
+/*****************************************************************************/
+void Dearchive(const char *dest_path, const char *zip_name)
 {
    char msg[500];
    
    SetDlgItemText(hwndMain,IDC_STATUS,GetString(hInst, IDS_UNARCHIVING));
 
    // Make sure archive is legal
-   WrapInit();
 
    // Does file exist?
    struct stat s;
-   if (stat(filename, &s) != 0)
+   if (stat(zip_name, &s) != 0)
    {
       SetDlgItemText(hwndMain,IDC_STATUS, GetString(hInst, IDS_MISSINGFILE));   
-      WrapShutdown();
       return;
    }
-
-   if (!WrapIsArchive(filename))
-   {
-      SetDlgItemText(hwndMain, IDC_STATUS, GetString(hInst, IDS_FILECORRUPT));
-      WrapShutdown();
-      return;
-   }
-
-   WrapSetExtractionCallback(UnarchiveProgressCallback);
 
    while (1)
    {
-      char temp_path[MAX_PATH];
       extraction_error = 0;
-      
-      // Crusher's default temp directory doesn't work well in Vista or later;
-      // can't extract if installed in Program Files.
-      GetTempPath(sizeof(temp_path), temp_path);
-      WrapExtractArchive(filename, dest_path, temp_path);
+
+      ExtractArchive(zip_name, dest_path);
       
       if (extraction_error == 0)
       {
@@ -65,9 +152,7 @@ void Dearchive(char *dest_path, char *filename)
       }
    }
    
-   unlink(filename);
-   WrapSetExtractionCallback(NULL);
-   WrapShutdown();
+   unlink(zip_name);
 
    if (success)
    {
@@ -75,45 +160,4 @@ void Dearchive(char *dest_path, char *filename)
       
       PostMessage(hwndMain,WM_CLOSE,0,0);
    }
-}
-/*****************************************************************************/
-/*
- * UnarchiveProgressCallback:  Callback function for each file in an archive.
- */
-bool UnarchiveProgressCallback(const char *filename, ExtractionStatus status)
-{
-   switch (status)
-   {
-   case EXTRACT_DONE:
-      ClearMessageQueue();  // Check for user hitting abort button
-      break;
-
-   case EXTRACT_CANT_RENAME:
-      extraction_error = IDS_CANTRENAME;
-      break;
-
-   case EXTRACT_BAD_PERMISSIONS:
-      extraction_error = IDS_BADPERMISSION;
-      break;
-
-   case EXTRACT_OUT_OF_MEMORY:
-      extraction_error = IDS_BADMEM;
-      break;
-
-   case EXTRACT_BAD_CRC:
-   case EXTRACT_UNKNOWN:
-      extraction_error = IDS_BADARCHIVE;
-      break;
-
-   case EXTRACT_DISK_FULL:
-      extraction_error = IDS_DISKFULL;
-      break;
-   }
-
-   // Other errors
-   if (status != EXTRACT_OK && status != EXTRACT_DONE &&
-       extraction_error == 0)
-      extraction_error = IDS_UNKNOWNERROR;
-
-   return true;
 }

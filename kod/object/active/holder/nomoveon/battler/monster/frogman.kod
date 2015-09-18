@@ -45,7 +45,7 @@ classvars:
    viTreasure_type = TID_MEDIUM_HUMAN
 
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_PIERCE
+   viAttack_type = ATCK_WEAP_PIERCE
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
    viLevel = 70
    viDifficulty = 5

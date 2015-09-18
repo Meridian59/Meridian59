@@ -1,0 +1,13 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resource and command IDs to use with TStatusBar.
+//----------------------------------------------------------------------------
+#if !defined(OWL_STATUSBA_RH)
+#define OWL_STATUSBA_RH
+
+#define IDS_MODES    32530    // String resource to define mode On indicators
+#define IDS_MODESOFF 32531    // String resource to define mode Off indicators
+
+#endif  // OWL_STATUSBA_RH

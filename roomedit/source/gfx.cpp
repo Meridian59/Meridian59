@@ -39,7 +39,7 @@
 	#include "objects.h"	// InsertObject()
 #endif
 
-#ifndef __OWL_COLOR_H
+#ifndef OWL_COLOR_H
 	#include <owl\color.h>
 #endif
 

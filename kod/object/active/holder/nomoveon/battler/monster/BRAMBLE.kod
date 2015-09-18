@@ -54,7 +54,7 @@ classvars:
    vrDead_name = brambles_dead_name_rsc
 
    viTreasure_type = TID_NONE
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOVEON_NOTIFY | MOB_NOQUEST
    viLevel = 25
    viDifficulty = 4 

@@ -38,14 +38,10 @@ void database_error(const char *fmt, ...)
 {
    va_list marker;
 
-   printf("%s(%d): ", basefile, kodbase_line);
+   fprintf(stderr, "%s(%d): ", basefile, kodbase_line);
    va_start(marker, fmt);
    simple_error(fmt, marker);
    va_end(marker);
-/*
-   vprintf(fmt, marker);
-   printf("\n");
-*/
 }
 
 void set_kodbase_filename(char *filename)

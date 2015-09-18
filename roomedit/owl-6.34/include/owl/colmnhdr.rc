@@ -1,0 +1,40 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1996, 1996 by Borland International, All Rights Reserved
+//
+// Resources for 16-bit emulation in TColumnHeader
+//----------------------------------------------------------------------------
+#if !defined(OWL_COLMNHDR_RH)
+# include <owl/colmnhdr.rh>
+#endif
+
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+
+// the cursor images for the column heading
+
+IDC_SIZEBARV CURSOR "owl/res/sizebarv.cur"
+
+IDC_SIZEBARH CURSOR "owl/res/sizebarh.cur"
+
+IDC_SPLITV CURSOR "owl/res/splitv.cur"
+
+IDC_SPLITH CURSOR "owl/res/splith.cur"
+
+
+

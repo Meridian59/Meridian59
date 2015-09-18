@@ -38,34 +38,34 @@
 	#include "episdlg.h"
 #endif
 
-#ifndef __OWL_RADIOBUT_H
+#ifndef OWL_RADIOBUT_H
 	#include <owl\radiobut.h>
 #endif
 
-#ifndef __OWL_GROUPBOX_H
+#ifndef OWL_GROUPBOX_H
 	#include <owl\groupbox.h>
 #endif
 
-#ifndef __OWL_CHECKBOX_H
+#ifndef OWL_CHECKBOX_H
 	#include <owl\checkbox.h>
 #endif
 
-#ifndef __OWL_STATIC_H
+#ifndef OWL_STATIC_H
 	#include <owl\static.h>
 #endif
 
-#ifndef __OWL_VALIDATE_H
+#ifndef OWL_VALIDATE_H
 	#include <owl\validate.h>
 #endif
 
 
 // Last DOOM2 check button state
-static LastDoom2Check = -1;
+static int LastDoom2Check = -1;
 // Last episode/mission selected
-static LastEpisode = 1;
-static LastMission = 1;
+static int LastEpisode = 1;
+static int LastMission = 1;
 // Last map selected
-static LastMap     = 1;
+static int LastMap     = 1;
 
 //
 // Build a response table for all messages/commands handled
@@ -90,6 +90,7 @@ TEpisodeMissionDialog::TEpisodeMissionDialog (TWindow* parent, char *levelName, 
 											  int resId, TModule* module):
 	TDialog(parent, resId, module)
 {
+   int i;
 	pLevelName = levelName;
 	MustExist = mustExist;
 
@@ -135,6 +136,7 @@ TEpisodeMissionDialog::~TEpisodeMissionDialog ()
 //
 void TEpisodeMissionDialog::SetupWindow ()
 {
+   int i;
 	TDialog::SetupWindow();
 	::CenterWindow (this);
 
@@ -144,7 +146,7 @@ void TEpisodeMissionDialog::SetupWindow ()
 
 	if ( MustExist )
 	{
-		for (SHORT i = 0 ; i < 3 * 9 ; i++ )
+		for (i = 0 ; i < 3 * 9 ; i++ )
 		{
 			char name[9];
 
@@ -237,11 +239,12 @@ void TEpisodeMissionDialog::CmOk ()
 //
 void TEpisodeMissionDialog::Doom2CheckClicked ()
 {
+   int i;
 	// Enable DOOM2 map number
 	if ( pDoom2Check->GetCheck() == BF_CHECKED )
 	{
 		pDoom1Group->ShowWindow(SW_HIDE);
-		for (SHORT i = 0 ; i < 2 ; i++)
+		for (i = 0 ; i < 2 ; i++)
 			pSeparatorStatic[i]->ShowWindow(SW_HIDE);
 
 		for (i = 0 ; i < 3 ; i++)
@@ -258,7 +261,7 @@ void TEpisodeMissionDialog::Doom2CheckClicked ()
 	else
 	{
 		pDoom2Group->ShowWindow(SW_HIDE);
-		for (SHORT i = 0 ; i < 32 ; i++)
+		for (i = 0 ; i < 32 ; i++)
 			pDoom2Radio[i]->ShowWindow(SW_HIDE);
 
 		pDoom1Group->ShowWindow(SW_SHOW);

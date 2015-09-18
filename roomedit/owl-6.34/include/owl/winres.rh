@@ -1,0 +1,54 @@
+//
+/// \file winres.h
+/// Definitions of common symbols for resource files
+//
+// Part of OWLNext - the next generation Object Windows Library
+//
+// For more information, including license details, see 
+// http://owlnext.sourceforge.net
+//
+
+#ifndef OWL_WINRES_H
+#define OWL_WINRES_H
+
+#ifndef _WINUSER_
+#include <winresrc.h>
+#endif
+
+// Custom resource types
+
+#ifndef RT_DLGINIT
+#define RT_DLGINIT MAKEINTRESOURCE(240)
+#endif
+#ifndef RT_TOOLBAR
+#define RT_TOOLBAR MAKEINTRESOURCE(241)
+#endif
+
+// Legacy MFC messages stored in DLGINIT resources
+// Note that these messages are not true messages and will never be sent to a window and appear in
+// a message queue. They are old Windows 16 messages interpreted by TDialog::PerformDlgInit for
+// compatibility with old resources and resource editors, such as the Visual Studio resource editor, 
+// which use these messages to initialise controls (currently only CB_ADDSTRING is used by the 
+// Visual Studio editor to initialise the string list of a combo box).
+
+#ifndef LB_ADDSTRING
+#define LB_ADDSTRING (WM_USER + 1) // 0x0401
+#endif
+#ifndef CB_ADDSTRING
+#define CB_ADDSTRING (WM_USER + 3) // 0x0403
+#endif
+
+// OWL message stored in DLGINIT resources
+// This message is interpreted specially by TDialog::PerformDlgInit; it indicates that the given
+// control contains an initialisation command; e.g. "{LoadString 128}" will load string 128 from 
+// the string table and place it in the control.
+
+#define OWL_DLGINIT_COMMAND (WM_USER + 31677) // 0x7FBD; arbitrary value at high end
+
+// Static control ID
+
+#ifndef IDC_STATIC
+#define IDC_STATIC (-1)
+#endif
+
+#endif

@@ -43,7 +43,7 @@ classvars:
 
    viTreasure_type = TID_SKELETON3
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 100
    viDifficulty = 6

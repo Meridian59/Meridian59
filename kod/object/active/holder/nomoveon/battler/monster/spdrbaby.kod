@@ -43,7 +43,7 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
 
    viSpeed = SPEED_SLOW
-   viAttack_types = ATCK_WEAP_BITE
+   viAttack_type = ATCK_WEAP_BITE
    viAttributes = MOB_SPASM
    viLevel = 25
    viDifficulty = 4

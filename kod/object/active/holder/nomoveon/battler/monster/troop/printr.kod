@@ -31,7 +31,7 @@ classvars:
    vrDead_name = PrincessTroop_dead_name_rsc
 
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
 

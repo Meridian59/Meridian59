@@ -11,22 +11,21 @@
 AvarChieftainTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_AVAR_CHIEF
 
 properties:
-   
-   piTreasure_num = TID_AVAR_CHIEF
 
    piItem_att_chance = 4
    piDiff_seed = 8
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Longbow, 5 ],
                      [ &BattleBow, 15 ],

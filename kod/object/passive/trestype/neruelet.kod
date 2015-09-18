@@ -11,22 +11,21 @@
 NeruditeElementalTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_NERU_ELE
 
 properties:
-   
-   piTreasure_num = TID_NERU_ELE
 
    piItem_att_chance = 70
    piDIff_seed = 9
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &NeruditeArmor, 50 ],
                      [ &NeruditeSword, 50 ]

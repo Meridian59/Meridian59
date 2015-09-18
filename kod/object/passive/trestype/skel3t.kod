@@ -11,21 +11,20 @@
 Skeleton3Treasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_SKELETON3
 
 properties:
-   
-   piTreasure_num = TID_SKELETON3
 
    piItem_att_chance = 3
    piDIff_seed = 6
 
 messages:
-   
+
    Constructed()
    {
       plTreasure = [ [ &NeruditeArrow, 25 ],

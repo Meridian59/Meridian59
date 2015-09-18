@@ -11,16 +11,15 @@
 GhostTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_GHOST
 
 properties:
-   
-   piTreasure_num = TID_GHOST
-   
+
    %% overall, your best value.  Of course, you have to kill a 
    %% ghost =)
 
@@ -28,15 +27,15 @@ properties:
    piItem_att_chance = 7
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &MysticSword, 18 ],
                      [ &RingInvisibility, 4],
                      [ &Gauntlet, 3 ],
                      [ &PlateArmor, 6 ],
                      [ &KnightShield, 13 ],
-                     [ &Scimitar, 17],                     
+                     [ &Scimitar, 17],
                      [ &VampireWand, 4],
                      [ &DiscipleRobe, 4],
                      [ &FineLute, 5],

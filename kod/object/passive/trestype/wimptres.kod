@@ -11,19 +11,18 @@
 WimpyTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_WIMPY
 
 properties:
-   
-   piTreasure_num = TID_WIMPY
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Herbs, 30 ],
                      [ &Elderberry, 20 ],

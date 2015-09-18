@@ -11,35 +11,34 @@
 LichTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_LICH
 
 properties:
-   
-   piTreasure_num = TID_LICH
+
    piItem_att_chance = 10
    piDiff_seed = 10
 
-
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &IvyCirclet, 20 ],
-		              [ &Scimitar, 15 ],
-		              [ &PlateArmor, 10 ],	
-		              [ &LongSword, 10 ],
-		              [ &OrcShield, 10 ],
-		              [ &KnightShield, 10 ],
-		              [ &MysticSword, 5 ],
-		              [ &RingInvisibility, 5 ],
-		              [ &FireRing, 5 ],
-		              [ &SeduceWand, 5 ],
-		              [ &BlindWand, 5 ]
-			         ];
+                     [ &Scimitar, 15 ],
+                     [ &PlateArmor, 10 ],
+                     [ &LongSword, 10 ],
+                     [ &OrcShield, 10 ],
+                     [ &KnightShield, 10 ],
+                     [ &MysticSword, 5 ],
+                     [ &RingInvisibility, 5 ],
+                     [ &FireRing, 5 ],
+                     [ &SeduceWand, 5 ],
+                     [ &BlindWand, 5 ]
+                   ];
 
       propagate;
    }

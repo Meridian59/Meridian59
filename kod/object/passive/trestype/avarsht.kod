@@ -11,21 +11,21 @@
 AvarShamanTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_AVAR_SHAMAN
 
 properties:
-   
-   piTreasure_num = TID_AVAR_SHAMAN
+
    piItem_att_chance = 8
    piDiff_seed = 8
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &ShamanBlood, 20 ],
                      [ &Yrxlsap, 29],

@@ -11,21 +11,21 @@
 MediumTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_MEDIUM
 
 properties:
-   
-   piTreasure_num = TID_MEDIUM
+
    piDiff_seed = 1
    piItem_att_chance = 1
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Elderberry, 30],
                      [ &RedMushroom,17],

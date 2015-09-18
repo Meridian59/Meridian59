@@ -11,28 +11,28 @@
 DragonflyTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_DRAGONFLY
 
 properties:
-   
-   piTreasure_num = TID_DRAGONFLY
+
    piItem_att_chance = 3
    piDiff_seed = 3
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &DragonflyEye, 40 ],
                      [ &WebMoss, 24 ],
                      [ &Snack, 1 ],
                      [ &KriipaClaw, 34 ],
                      [ &Yrxlsap, 1 ]
-		             ];
+                   ];
 
       propagate;
    }

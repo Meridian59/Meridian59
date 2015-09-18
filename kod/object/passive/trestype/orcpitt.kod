@@ -11,22 +11,21 @@
 OrcPitBossTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_ORC_CHIEF
 
 properties:
-   
-   piTreasure_num = TID_ORC_CHIEF
+
    piItem_att_chance = 6
    piDiff_seed = 6
 
-
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &OrcTooth, 42 ],
                      [ &Scimitar, 12 ],
@@ -34,7 +33,7 @@ messages:
                      [ &NeruditeArmor, 9],
                      [ &NeruditeSword, 9],
                      [ &OreChunk, 4],
-		             [ &UncutSeraphym, 3],
+                     [ &UncutSeraphym, 3],
                      [ &Flask, 2],
                      [ &OrcShield, 2],
                      [ &PlateArmor, 2],

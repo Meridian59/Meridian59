@@ -11,15 +11,14 @@
 DarkAngelTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_DARK_ANGEL
 
 properties:
-   
-   piTreasure_num = TID_DARK_ANGEL
 
    %% Reagents, both rare and Qor-related.
 
@@ -27,10 +26,10 @@ properties:
    piItem_att_chance = 2
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
-    plTreasure = [ [ &DarkAngelFeather, 45 ],
+      plTreasure = [ [ &DarkAngelFeather, 45 ],
                    [ &BlueDragonScale, 10],
                    [ &EntrootBerry, 20],
                    [ &FairyWing, 15],

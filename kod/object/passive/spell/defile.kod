@@ -20,18 +20,14 @@ resources:
    defile_name_rsc = "defile"
    defile_icon_rsc = idefile.bgf
    defile_desc_rsc = \
-      "In this darkest of rituals, the very spirit of Qor is "
-      "summoned to defile a corpse, "
-      "transforming flesh and blood into magical energy for "
-      "the caster.  "
-      "Requires a fairy wing and the slain."
-
+      "In this darkest of rituals, the very spirit of Qor is summoned to "
+      "defile the corpse of a monster or player, transforming flesh and blood "
+      "into magical energy for the caster.  Requires a fairy wing "
+      "and the slain."
    defile_cast_rsc = "Your nausea betokens the imminence of Qor."
-
    defile_corpse_gone = \
       "Your defile spell fails because the corpse has already "
       "returned to the earth."
-
    defile_max = \
       "If you were to invite more eldritch energy inside of you, there is no "
       "telling what would happen!"

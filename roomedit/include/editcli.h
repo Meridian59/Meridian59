@@ -38,15 +38,15 @@
 	#include "objects.h"	// SelPtr
 #endif
 
-#ifndef __OWL_LAYOUTWI_H
+#ifndef OWL_LAYOUTWI_H
 	#include <owl\layoutwi.h>
 #endif
 
-#ifndef __OWL_STATUSBA_H
-	class _OWLCLASS TStatusBar;
+#ifndef OWL_STATUSBA_H
+   #include <owl\statusba.h>
 #endif
 
-#ifndef __OWL_OPENSAVE_H
+#ifndef OWL_OPENSAVE_H
 	#include <owl\opensave.h>
 #endif
 
@@ -151,7 +151,7 @@ public:
 //{{TEditorClientVIRTUAL_BEGIN}}
 public:
 	virtual void SetupWindow ();
-	virtual void Paint (TDC& dc, BOOL erase, TRect& rect);
+	virtual void Paint (TDC& dc, bool erase, TRect& rect);
 	virtual char far* GetClassName ();
 	virtual void GetWindowClass (WNDCLASS& wndClass);
 	virtual void CloseWindow (int retVal = 0);
@@ -160,14 +160,14 @@ public:
 
 //{{TEditorClientRSP_TBL_BEGIN}}
 protected:
-	void EvSize (UINT sizeType, TSize& size);
+	void EvSize (UINT sizeType, const TSize& size);
 	void EvChar (UINT key, UINT repeatCount, UINT flags);
 	void EvKeyDown (UINT key, UINT repeatCount, UINT flags);
-	void EvMouseMove (UINT modKeys, TPoint& point);
-	void EvLButtonDown (UINT modKeys, TPoint& point);
-	void EvLButtonUp (UINT modKeys, TPoint& point);
-	void EvLButtonDblClk (UINT modKeys, TPoint& point);
-	void EvRButtonDown (UINT modKeys, TPoint& point);
+	void EvMouseMove (UINT modKeys, const TPoint& point);
+	void EvLButtonDown (UINT modKeys, const TPoint& point);
+	void EvLButtonUp (UINT modKeys, const TPoint& point);
+	void EvLButtonDblClk (UINT modKeys, const TPoint& point);
+	void EvRButtonDown (UINT modKeys, const TPoint& point);
 	void CmFileQuit ();
 	void CmSearchPrev ();
 	void CmSearchNext ();

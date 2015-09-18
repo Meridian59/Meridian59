@@ -12,7 +12,7 @@
 #ifndef _GROUPS_H
 #define _GROUPS_H
 
-#define MAX_GROUPSIZE 30  // Maximum number of players in a user-defined group
+#define MAX_GROUPSIZE 100  // Maximum number of players in a user-defined group
 
 #define MAX_NUMGROUPS 30  // Maximum number of user-defined groups
 #define MAX_GROUPNAME 10  // Maximum length of group name

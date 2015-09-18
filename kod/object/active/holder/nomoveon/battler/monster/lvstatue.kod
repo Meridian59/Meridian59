@@ -130,9 +130,9 @@ resources:
    LivingStatue_leftarm_gauntlet_male = ble.bgf
    LivingStatue_leftarm_gauntlet_female = blf.bgf
 
-   LivingStatue_sound_attack = stat_atk.wav
-   LivingStatue_sound_aware = stat_awr.wav
-   LivingStatue_sound_death = stat_die.wav
+   LivingStatue_sound_attack = trpsatk.wav
+   LivingStatue_sound_aware = xeodie.wav
+   LivingStatue_sound_death = xeo1awr.wav
 
 classvars:
 
@@ -141,7 +141,7 @@ classvars:
 
    viTreasure_type = TID_MEDIUM_TOUGH
 
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
 
    vrSound_hit = LivingStatue_sound_attack
    vrSound_miss = LivingStatue_sound_attack

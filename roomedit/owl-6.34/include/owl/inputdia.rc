@@ -1,0 +1,64 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources for class TInputDialog.
+//----------------------------------------------------------------------------
+
+#include <owl/inputdia.rh>
+#include <owl/window.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDD_INPUTDIALOG) && !defined(__IDD_INPUTDIALOG)
+#define __IDD_INPUTDIALOG
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+#include <winnt.h>    
+#endif                
+#endif                
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+IDD_INPUTDIALOG DIALOG 20, 24, 180, 64
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | DS_3DLOOK
+FONT 8, "MS Sans Serif"
+{
+  LTEXT "", ID_PROMPT, 10, 8, 160, 10
+  EDITTEXT ID_INPUT, 10, 20, 160, 12, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL
+  DEFPUSHBUTTON "OK", IDOK, 47, 42, 40, 14
+  PUSHBUTTON "Cancel", IDCANCEL, 93, 42, 40, 14
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+IDD_INPUTDIALOG DIALOG 20, 24, 180, 64
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | DS_3DLOOK
+{
+  LTEXT "", ID_PROMPT, 10, 8, 160, 10
+  EDITTEXT ID_INPUT, 10, 20, 160, 12, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP | ES_AUTOHSCROLL
+  DEFPUSHBUTTON "OK", IDOK, 47, 42, 40, 14
+  PUSHBUTTON "·¬Ý¾Ù", IDCANCEL, 93, 42, 40, 14
+}
+#endif
+
+#endif
+
+#endif  // defined(RC_INVOKED)
+

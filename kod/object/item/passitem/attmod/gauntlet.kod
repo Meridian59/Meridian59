@@ -49,6 +49,8 @@ classvars:
    vrDesc = gauntlet_desc_rsc
    vrPoss_article = object_article_cap_these_rsc
    
+   vrItem_broken = gauntlet_broken
+   
    viUse_type = ITEM_USE_GAUNTLET
    viItem_type = ITEMTYPE_ARMOR
    viUse_amount = 1
@@ -245,20 +247,6 @@ messages:
    % No alterations when we hit the target....
    WeaponHitTarget()
    {
-      return;
-   }
-
-   % We took a hit, take some damage off....
-   DefendingHit()
-   {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=gauntlet_broken,
-              #parm1=Send(self,@GetCapDef),#parm2=vrName);
-         Send(poOwner,@TryUnuseItem,#what=self);
-      }
-      
       return;
    }
 

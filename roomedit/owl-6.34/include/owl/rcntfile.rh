@@ -1,0 +1,15 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resource & command IDs to use with mdi.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_RCNTFILE_RH)
+#define OWL_RCNTFILE_RH
+
+//
+// Commands
+//
+#define CM_MRU_FIRST 31990
+
+#endif  //  OWL_MDI_RH

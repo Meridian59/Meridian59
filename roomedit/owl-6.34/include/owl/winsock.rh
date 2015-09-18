@@ -1,0 +1,17 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1995, 1996 by Borland International, All Rights Reserved
+//
+// Resource IDs to use with WinSock classes
+//----------------------------------------------------------------------------
+#if !defined(OWL_WINSOCK_RH)
+#define OWL_WINSOCK_RH
+
+//
+// The index from which the error strings start in resource file
+//
+#define IDS_WINSOCK_BASE        32300
+#define IDS_WINSOCK_BASE_1      32301
+#define IDS_WINSOCK_BASE_2      32302
+
+#endif  //  OWL_WINSOCK_RH

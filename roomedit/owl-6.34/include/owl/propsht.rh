@@ -1,0 +1,40 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1993, 1996 by Borland International, All Rights Reserved
+//
+// Command IDs used by TPropertySheet/TPropertyPage
+//----------------------------------------------------------------------------
+#if !defined(OWL_PROPSHT_RH)
+#define OWL_PROPSHT_RH
+
+#if !defined(ID_APPLY)
+//# define  ID_APPLY              0xAEA0
+# define  ID_APPLY              12321
+#endif
+#if !defined(ID_BACK)
+//# define  ID_BACK               0xAEA1
+# define  ID_BACK               12324
+#endif
+#if !defined(ID_NEXT)
+//# define  ID_NEXT               0xAEA2
+# define  ID_NEXT               12323
+#endif
+#if !defined(ID_FINISH)
+//# define  ID_FINISH             0xAEA3
+# define  ID_FINISH             12325
+#endif
+#if !defined(IDHELP)
+# define  IDHELP                9
+#endif
+
+#define IDS_APPLY               32440
+#define IDS_BACK                32441
+#define IDS_CANCEL              32442
+#define IDS_CLOSE               32443
+#define IDS_FINISH              32444
+#define IDS_HELP                32445
+#define IDS_NEXT                32446
+#define IDS_OK                  32447
+
+#endif  // OWL_PROPSHT_RH
+

@@ -1,0 +1,50 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resource & command IDs to use with editfile.rc and editfile.h
+//----------------------------------------------------------------------------
+#if !defined(OWL_EDITFILE_RH)
+#define OWL_EDITFILE_RH
+
+#if !defined(OWL_EDITSEAR_RH)
+# include <owl/editsear.rh>
+#endif
+
+//
+// Commands
+//
+#define CM_FILENEW          24331
+#define CM_FILEOPEN         24332
+#define CM_FILESAVE         24333
+#define CM_FILESAVEAS       24334
+#define CM_FILEREVERT       24335
+
+#define CM_FILEPAGESETUP    24336
+#define CM_FILEPRINT        24337
+#define CM_FILEPRINTERSETUP 24338
+
+#define CM_FILECLOSE        24339
+#define CM_FILEPRINTPREVIEW 24340
+
+//
+// String IDs
+//
+#define IDS_UNTITLEDFILE    32550
+#define IDS_UNABLEREAD      32551
+#define IDS_UNABLEWRITE     32552
+#define IDS_FILECHANGED     32553
+#define IDS_FILEFILTER      32554
+#define IDS_RICHEDITFILTER  32555
+
+//
+// Menu IDs
+//
+#define IDM_EDITFILE        32550
+
+//
+// Accelerator IDs
+//
+#define IDA_EDITFILE        32550
+
+#endif  // OWL_EDITFILE_RH

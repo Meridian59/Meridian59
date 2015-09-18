@@ -1,7 +1,7 @@
-Meridian 59 v1.0, September 2012.
+Meridian 59 v1.1, January, 2015
 Andrew Kirmse and Chris Kirmse
 
-Copyright 1994-2012 Andrew Kirmse and Chris Kirmse
+Copyright 1994-2015 Andrew Kirmse and Chris Kirmse
 All rights reserved.  Meridian is a registered trademark.
 
 
@@ -24,13 +24,14 @@ WHAT'S INCLUDED AND NOT INCLUDED
 
 The source to the client, server, game code, Blakod compiler, room
 editor, and all associated tools are included.  The source code to the
-compression library and audio library are not included.
+Miles Sound System audio library and the fallback waveplay.dll are not
+included.
 
 
 BUILD INSTRUCTIONS
 
-The code has been built successfully with Microsoft Visual Studio
-2008.  It hasn't been tested with any other compilers.
+The code has been built successfully with Microsoft Visual Studio 2013
+Express, which you can download for free at http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
 
 1. Make sure Visual Studio's binaries are in your path, e.g. by using
 the vcvars32.bat script that comes with Visual Studio.
@@ -39,11 +40,6 @@ the vcvars32.bat script that comes with Visual Studio.
 
 3. Type "nmake" to build debug versions, or "nmake RELEASE=1" to build
 release versions.
-
-The room editor requires Borland C++ 4.5 to build.  We've gotten it
-compiling, but unfortunately it doesn't yet link, probably because of
-an incompatibility with Visual Studio's lib format.  We've included a
-prebuilt version of the room editor.
 
 RUN INSTRUCTIONS
 
@@ -86,7 +82,7 @@ libarchive was built from source, with the following cmake environment
 variables set to use zlib:
 
 ZLIB_INCLUDE_DIR points to the include directory
-ZLIB_LIBRARY points to lib/zdll.lib
+ZLIB_LIBRARY points to lib/zlib.lib
 
 
 CONTACT INFORMATION

@@ -43,7 +43,7 @@ classvars:
 
    viTreasure_type = TID_WIMPY_MEDIUM
    viSpeed = SPEED_SLOW
-   viAttack_spells = ATCK_SPELL_ACID
+   viAttack_spell = ATCK_SPELL_ACID
    viAttributes = 0
    viLevel = 35
    viDifficulty = 4

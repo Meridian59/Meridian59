@@ -1,0 +1,225 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Exception string resources to use to enable exception messages
+//----------------------------------------------------------------------------
+
+#include <owl/except.rh>
+
+#if defined(RC_INVOKED)
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+//
+// Exception string resources
+//
+#if !defined(NO_IDS_EXCEPT) && !defined(__IDS_EXCEPT)
+#define __IDS_EXCEPT
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_OWLEXCEPTION        "ObjectWindows Exception"
+  IDS_UNHANDLEDXMSG       "Unhandled Exception"
+  IDS_OKTORESUME          "OK to resume?"
+  IDS_UNKNOWNEXCEPTION    "Unknown exception"
+
+  IDS_UNKNOWNERROR        "Unknown error"
+  IDS_NOAPP               "No application object"
+  IDS_OUTOFMEMORY         "Out of memory"
+  IDS_INVALIDMODULE       "Unable to load module %s"
+  IDS_INVALIDMAINWINDOW   "Invalid MainWindow"
+  IDS_VBXLIBRARYFAIL      "VBX Library init failure"
+
+  IDS_INVALIDMODULEFCN    "Function %s not found in module "
+  IDS_INVALIDMODULEORD    "Ordinal %d not found in module "
+
+  IDS_COMMCTRL            "Failure in Common Control DLL"
+
+  IDS_VERSIONINFOFAIL     "Module version info failure"
+
+  IDS_NOTSUPPORTEDCALL    "Not supported function call"
+  IDS_BADFILEFORMAT       "Bad file format"
+
+  IDS_CLASSREGISTERFAIL   "Class registration fail for window %s"
+  IDS_CHILDREGISTERFAIL   "Child class registration fail for window %s"
+  IDS_WINDOWCREATEFAIL    "Create fail for window %s"
+  IDS_WINDOWEXECUTEFAIL   "Execute fail for window %s"
+  IDS_CHILDCREATEFAIL     "Child create fail for window %s"
+
+  IDS_MENUFAILURE         "Menu creation failure"
+  IDS_VALIDATORSYNTAX     "Validator syntax error"
+  IDS_PRINTERERROR        "Printer error"
+
+  IDS_LAYOUTINCOMPLETE    "Incomplete layout constraints specified in window %s"
+  IDS_LAYOUTBADRELWIN     "Invalid relative window specified in layout constraint in window %s"
+
+  IDS_GDIFAILURE          "GDI failure"
+  IDS_GDIALLOCFAIL        "GDI allocate failure"
+  IDS_GDICREATEFAIL       "GDI creation failure"
+  IDS_GDIRESLOADFAIL      "GDI resource load failure"
+  IDS_GDIFILEREADFAIL     "GDI file read failure"
+  IDS_GDIDELETEFAIL       "GDI object %X delete failure"
+  IDS_GDIDESTROYFAIL      "GDI object %X destroy failure"
+  IDS_INVALIDDIBHANDLE    "Invalid DIB handle %X"
+
+  IDS_TRANSFERBUFFERSIZEMISMATCH "Transfer buffer size mismatch for window %s"
+  IDS_TRANSFERCONTROLMISSING "Missing transfer control object in window %s"
+  IDS_DLGINITFAIL "Dialog initialization failed due to malformed DLGINIT resource in window %s"
+  IDS_SYSTEMTIMEPARSEFAIL "A date and time string failed parsing"
+
+  IDS_SHELLFAILURE        "Shell failure"
+  IDS_SHELLALLOCFAIL      "TShellMalloc::Alloc failed."
+  IDS_INVALIDPATH         "Invalid Path"
+  IDS_BINDTOOBJECTFAIL    "IShellFolder::BindToObject failed."
+  IDS_SHGETDESKTOPFAIL    "::SHGetDesktopFolder failed."
+  IDS_SHGETSPECIALFAIL    "::SHGetSpecialFolderLocation failed."
+  IDS_GETATTRIBUTESOFFAIL "IShellFolder::GetAttributesOf failed."
+  IDS_GETFILEINFOFAIL     "::SHGetFileInfo failed."
+  IDS_GETDISPLAYNAMEFAIL  "IShellFolder::GetDisplayNameOf failed."
+  IDS_GETPATHFROMPIDLFAIL "::SHGetPathFromIDList failed."
+  IDS_SETNAMEOFFAIL       "IShellFolder::SetNameOf failed."
+  IDS_GETUIOBJECTOFFAIL   "IShellFolder::GetUIObjectOf failed."
+  IDS_COMPAREIDSFAIL      "IShellFolder::CompareIDs failed."
+  IDS_TSHELLITEMINVALID   "TShellItem is invalid."
+  IDS_ENUMOBJECTSFAIL     "IShellFolder::EnumObjects failed."
+  IDS_CLONEFAIL           "IEnumIDList::Clone failed."
+  IDS_SHELLITERATORATEND  "Attempt to read past end of TShellItemIterator list."
+  IDS_IDLISTNEXTFAIL      "IEnumIDList::Next failed."
+  IDS_IDLISTSKIPFAIL      "IEnumIDList::Skip failed."
+  IDS_IDLISTRESETFAIL     "IEnumIDList::Reset failed."
+  IDS_IDLISTZEROPOINTER   "IEnumIDList pointer is zero."
+  IDS_SHGETMALLOCFAIL     "::SHGetMalloc failed."
+  IDS_GETICONLOCFAIL      "IExtractIcon::GetIconLocation failed."
+  IDS_EXTRICONEXTRACTFAIL "IExtractIcon::Extract failed."
+  IDS_SHELLRENAMEFAIL     "TShellItem::Rename attempted on item that cannot be renamed."
+  IDS_SHELLCOPYFAIL       "TShellItem::Copy attempted on item that cannot be copied."
+  IDS_SHELLMOVEFAIL       "TShellItem::Move attempted on item that cannot be moved."
+  IDS_SHELLDELETEFAIL     "TShellItem::Delete attempted on item that cannot be deleted."
+  IDS_CREATESHELLLINKFAIL "CoCreateInstance(IShellLink) failed."
+  IDS_LINKQUERYINTRFCFAIL "IShellLink::QueryInterface(IPersistFile) failed."
+  IDS_PERSISTFILELOADFAIL "IPersistFile::Load failed."
+  IDS_LINKGETIDLISTFAIL   "IShellLink::GetIDList failed."
+  IDS_SHLLINKSETPATHFAIL  "IShellLink::SetPath failed."
+  IDS_SHLLINKSETDESCFAIL  "IShellLink::SetDescription failed."
+
+  IDS_CLIPBOARDBUSY       "Attempt to open busy clipboard"
+
+  IDS_INVALIDWINDOW       "Invalid window %s"
+  IDS_INVALIDCHILDWINDOW  "Invalid child window %s"
+  IDS_INVALIDCLIENTWINDOW "Invalid client window %s"
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_OWLEXCEPTION        "ObjectWindows ó·äO"
+  IDS_UNHANDLEDXMSG       "ñ¢èàóùÇÃó·äO"
+  IDS_OKTORESUME          "çƒäJÇµÇ‹Ç∑Ç©?"
+  IDS_UNKNOWNEXCEPTION    "ñ¢ímÇÃó·äO"
+
+  IDS_UNKNOWNERROR        "ñ¢ímÇÃ¥◊∞"
+  IDS_NOAPP               "±Ãﬂÿπ∞ºÆ›µÃﬁºﬁ™∏ƒÇ™Ç»Ç¢"
+  IDS_OUTOFMEMORY         "“”ÿïsë´"
+  IDS_INVALIDMODULE       "”ºﬁ≠∞Ÿ %s ÇÃ€∞ƒﬁÇ™Ç≈Ç´Ç‹ÇπÇÒ"
+  IDS_INVALIDMAINWINDOW   "ïsê≥Ç» MainWindow"
+  IDS_VBXLIBRARYFAIL      "VBX ◊≤Ãﬁ◊ÿÇÃèâä˙âªÇ…é∏îs"
+
+  IDS_INVALIDMODULEFCN    "ä÷êî %s Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒ : ”ºﬁ≠∞Ÿ "
+  IDS_INVALIDMODULEORD    "èòêîíl %d Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒ : ”ºﬁ≠∞Ÿ "
+
+  IDS_COMMCTRL            "∫”›∫›ƒ€∞Ÿ DLL Ç≈é∏îs"
+  IDS_BADFILEFORMAT       "Bad file format"
+
+  IDS_CLASSREGISTERFAIL   "≥®›ƒﬁ≥ %s ÇÃ∏◊ΩÇÃìoò^Ç…é∏îs"
+  IDS_CHILDREGISTERFAIL   "≥®›ƒﬁ≥ %s ÇÃéq≥®›ƒﬁ≥ÇÃ∏◊ΩÇÃìoò^Ç…é∏îs"
+  IDS_WINDOWCREATEFAIL    "≥®›ƒﬁ≥ %s ÇÃçÏê¨Ç…é∏îs"
+  IDS_WINDOWEXECUTEFAIL   "≥®›ƒﬁ≥ %s ÇÃé¿çsÇ…é∏îs"
+  IDS_CHILDCREATEFAIL     "≥®›ƒﬁ≥ %s ÇÃéq≥®›ƒﬁ≥ÇÃçÏê¨Ç…é∏îs"
+
+  IDS_MENUFAILURE         "“∆≠∞ÇÃçÏê¨Ç…é∏îs"
+  IDS_VALIDATORSYNTAX     "√ﬁ∞¿åüèÿÇÃèëéÆÇÃï∂ñ@¥◊∞"
+  IDS_PRINTERERROR        "Ãﬂÿ›¿¥◊∞"
+
+  IDS_LAYOUTINCOMPLETE    "≥®›ƒﬁ≥ %s Ç…éwíËÇ≥ÇÍÇΩ⁄≤±≥ƒéwíËÇ™ïsäÆëS"
+  IDS_LAYOUTBADRELWIN     "≥®›ƒﬁ≥ %s ÇÃ⁄≤±≥ƒéwíËÇ≈éwíËÇ≥ÇÍÇΩëäëŒ≥®›ƒﬁ≥Ç™ïsê≥"
+
+  IDS_GDIFAILURE          "GDI é∏îs"
+  IDS_GDIALLOCFAIL        "GDI ämï€Ç…é∏îs"
+  IDS_GDICREATEFAIL       "GDI çÏê¨Ç…é∏îs"
+  IDS_GDIRESLOADFAIL      "GDI ÿø∞ΩÇÃ€∞ƒﬁÇ…é∏îs"
+  IDS_GDIFILEREADFAIL     "GDI Ãß≤ŸÇÃì«Ç›çûÇ›Ç…é∏îs"
+  IDS_GDIDELETEFAIL       "GDI µÃﬁºﬁ™∏ƒ %X ÇÃçÌèúÇ…é∏îs"
+  IDS_GDIDESTROYFAIL      "GDI µÃﬁºﬁ™∏ƒ %X ÇÃîjâÛÇ…é∏îs"
+  IDS_INVALIDDIBHANDLE    "ïsê≥Ç» DIB  ›ƒﬁŸ %X"
+
+  IDS_TRANSFERBUFFERSIZEMISMATCH "Transfer buffer size mismatch for window %s"
+  IDS_TRANSFERCONTROLMISSING "Missing transfer control object"
+  IDS_DLGINITFAIL "Dialog initialization failed due to malformed DLGINIT resource"
+  IDS_SYSTEMTIMEPARSEFAIL "A date and time string failed parsing"
+
+  IDS_SHELLFAILURE        "Shell é∏îs"
+  IDS_SHELLALLOCFAIL      "TShellMalloc::Alloc Ç…é∏îs"
+  IDS_INVALIDPATH         "ïsê≥Ç» ﬂΩ"
+  IDS_BINDTOOBJECTFAIL    "IShellFolder::BindToObject Ç…é∏îs"
+  IDS_SHGETDESKTOPFAIL    "::SHGetDesktopFolder Ç…é∏îs"
+  IDS_SHGETSPECIALFAIL    "::SHGetSpecialFolderLocation Ç…é∏îs"
+  IDS_GETATTRIBUTESOFFAIL "IShellFolder::GetAttributesOf Ç…é∏îs"
+  IDS_GETFILEINFOFAIL     "::SHGetFileInfo Ç…é∏îs"
+  IDS_GETDISPLAYNAMEFAIL  "IShellFolder::GetDisplayNameOf Ç…é∏îs"
+  IDS_GETPATHFROMPIDLFAIL "::SHGetPathFromIDList Ç…é∏îs"
+  IDS_SETNAMEOFFAIL       "IShellFolder::SetNameOf Ç…é∏îs"
+  IDS_GETUIOBJECTOFFAIL   "IShellFolder::GetUIObjectOf Ç…é∏îs"
+  IDS_COMPAREIDSFAIL      "IShellFolder::CompareIDs Ç…é∏îs"
+  IDS_TSHELLITEMINVALID   "TShellItem Ç™ïsê≥"
+  IDS_ENUMOBJECTSFAIL     "IShellFolder::EnumObjects Ç…é∏îs"
+  IDS_CLONEFAIL           "IEnumIDList::Clone Ç…é∏îs"
+  IDS_SHELLITERATORATEND  "TShellItemIterator ÇÃÿΩƒÇÃèIí[Çí¥Ç¶Çƒì«Ç›çûÇ‡Ç§Ç∆ÇµÇΩ"
+  IDS_IDLISTNEXTFAIL      "IEnumIDList::Next Ç…é∏îs"
+  IDS_IDLISTSKIPFAIL      "IEnumIDList::Skip Ç…é∏îs"
+  IDS_IDLISTRESETFAIL     "IEnumIDList::Reset Ç…é∏îs"
+  IDS_IDLISTZEROPOINTER   "IEnumIDList Œﬂ≤›¿Ç™æﬁ€"
+  IDS_SHGETMALLOCFAIL     "::SHGetMalloc Ç…é∏îs"
+  IDS_GETICONLOCFAIL      "IExtractIcon::GetIconLocation Ç…é∏îs"
+  IDS_EXTRICONEXTRACTFAIL "IExtractIcon::Extract Ç…é∏îs"
+  IDS_SHELLRENAMEFAIL     "TShellItem::Rename Ç™ÅAñºëOÇÃïœçXÇ™Ç≈Ç´Ç»Ç¢çÄñ⁄ÇïœçXÇµÇÊÇ§Ç∆ÇµÇΩ"
+  IDS_SHELLCOPYFAIL       "TShellItem::Copy Ç™ÅA∫Àﬂ∞Ç≈Ç´Ç»Ç¢çÄñ⁄Ç∫Àﬂ∞ÇµÇÊÇ§Ç∆ÇµÇΩ"
+  IDS_SHELLMOVEFAIL       "TShellItem::Move Ç™ÅAà⁄ìÆÇ≈Ç´Ç»Ç¢çÄñ⁄Çà⁄ìÆÇµÇÊÇ§Ç∆ÇµÇΩ"
+  IDS_SHELLDELETEFAIL     "TShellItem::Delete Ç™ÅAçÌèúÇ≈Ç´Ç»Ç¢çÄñ⁄ÇçÌèúÇµÇÊÇ§Ç∆ÇµÇΩ"
+  IDS_CREATESHELLLINKFAIL "CoCreateInstance(IShellLink) Ç…é∏îs"
+  IDS_LINKQUERYINTRFCFAIL "IShellLink::QueryInterface(IPersistFile) Ç…é∏îs"
+  IDS_PERSISTFILELOADFAIL "IPersistFile::Load Ç…é∏îs"
+  IDS_LINKGETIDLISTFAIL   "IShellLink::GetIDList Ç…é∏îs"
+  IDS_SHLLINKSETPATHFAIL  "IShellLink::SetPath Ç…é∏îs"
+  IDS_SHLLINKSETDESCFAIL  "IShellLink::SetDescription Ç…é∏îs"
+
+  IDS_CLIPBOARDBUSY       "égópíÜÇÃ∏ÿØÃﬂŒﬁ∞ƒﬁÇäJÇ±Ç§Ç∆ÇµÇΩ"
+
+  IDS_INVALIDWINDOW       "ïsê≥Ç»≥®›ƒﬁ≥ %s"
+  IDS_INVALIDCHILDWINDOW  "ïsê≥Ç»éq≥®›ƒﬁ≥ %s"
+  IDS_INVALIDCLIENTWINDOW "ïsê≥Ç»∏◊≤±›ƒ≥®›ƒﬁ≥ %s"
+}
+#endif
+
+#endif
+
+#endif  //  defined(RC_INVOKED)

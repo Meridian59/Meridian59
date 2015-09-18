@@ -55,7 +55,7 @@ classvars:
    viTreasure_type = TID_ORC_CHIEF
 
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 115
    viDifficulty = 7

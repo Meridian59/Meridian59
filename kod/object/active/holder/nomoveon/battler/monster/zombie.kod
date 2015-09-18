@@ -44,7 +44,7 @@ classvars:
    vrDead_name = zombie_dead_name_rsc
 
    viSpeed = SPEED_VERY_SLOW
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
    viDifficulty = 4

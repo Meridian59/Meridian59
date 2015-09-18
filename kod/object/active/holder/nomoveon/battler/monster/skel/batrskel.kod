@@ -47,7 +47,7 @@ classvars:
 
    viTreasure_type = TID_SKELETON2
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_THRUST
+   viAttack_type = ATCK_WEAP_THRUST
    viAttributes = 0
    viLevel = 60
    viDifficulty = 4

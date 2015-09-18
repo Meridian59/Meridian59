@@ -1,0 +1,11 @@
+//----------------------------------------------------------------------------
+// OWLNext
+//
+// Resource IDs to use with TTabbedBase classes
+//----------------------------------------------------------------------------
+#if !defined(OWL_TABBED_RH)
+#define OWL_TABBED_RH
+
+#define IDC_TABCONTROL   1015
+
+#endif  //  OWL_TABBED_RH

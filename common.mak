@@ -65,9 +65,13 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /WX treats warnings as errors
 # /GR- turns off RTTI
 # /EHsc- turns off exceptions
+# /wd4996  disables warning (GetVersionExA has been deprecated)
+# -arch:IA32 disables SSE instructions (not supported on ancient Athlon CPUs)
 
-CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
-				 -TP -WX -GR- -EHsc-
+CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 \
+             -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
+             -D_WINSOCK_DEPRECATED_NO_WARNINGS /wd4996 \
+				 -TP -WX -GR- -EHsc- -arch:IA32
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -W3 -DBLAKDEBUG
@@ -75,6 +79,8 @@ CNODEBUGFLAGS = $(CCOMMONFLAGS) -W2 -DBLAKDEBUG
 LINKNORMALFLAGS =/release
 LINKDEBUGFLAGS = /debug
 LINKNODEBUGFLAGS =
+LINKCONSOLEFLAGS = -subsystem:console,5.01
+LINKWINDOWSFLAGS = -subsystem:windows,5.01
 
 !ifdef DEBUG
 
@@ -112,7 +118,7 @@ CC     = cl
 MAKE   = nmake -nologo
 LIBPRG = lib -nologo
 LINK   = link -nologo
-RC     = rc
+RC     = rc -nologo
 
 LEX = $(TOPDIR)\bin\flex -I -i
 YACC = $(TOPDIR)\bin\bison -d -t

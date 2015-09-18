@@ -1,0 +1,82 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TStatusBar.
+//----------------------------------------------------------------------------
+
+#include <owl/statusba.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDS_STATUSBAR) && !defined(__IDS_STATUSBAR)
+#define __IDS_STATUSBAR
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE
+{
+  IDS_MODES      "EXT|CAPS|NUM|SCRL|OVR|REC"
+  IDS_MODESOFF   "   |    |   |    |   |   "
+}
+STRINGTABLE
+{
+  SC_SIZE-1,     "Commands for manipulating this and other windows"
+  SC_SIZE,       "Resize this window"
+  SC_MOVE,       "Move the window to a different screen location"
+  SC_MINIMIZE,   "Collapse this window to an icon"
+  SC_MAXIMIZE,   "Expand this window to full screen size"
+  SC_NEXTWINDOW, "Switch to next window"
+  SC_PREVWINDOW, "Switch to previous window"
+  SC_CLOSE,      "Close this window"
+  SC_RESTORE,    "Restore this window to normal size"
+  SC_TASKLIST,   "Switch to another task"
+}
+#endif
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE
+{
+  IDS_MODES      "拡張|CAPS|NUM|SCRL|上書|記録"
+  IDS_MODESOFF   "    |    |   |    |    |    "
+}
+STRINGTABLE
+{
+  SC_SIZE-1,     "ｳｨﾝﾄﾞｳに関するｺﾏﾝﾄﾞ"
+  SC_SIZE,       "ｳｨﾝﾄﾞｳのｻｲｽﾞの変更"
+  SC_MOVE,       "ｳｨﾝﾄﾞｳを別の位置に移動"
+  SC_MINIMIZE,   "ｳｨﾝﾄﾞｳをｱｲｺﾝ化する"
+  SC_MAXIMIZE,   "ｳｨﾝﾄﾞｳを最大のｻｲｽﾞに拡大"
+  SC_NEXTWINDOW, "次のｳｨﾝﾄﾞｳに切り替える"
+  SC_PREVWINDOW, "前のｳｨﾝﾄﾞｳに切り替える"
+  SC_CLOSE,      "ｳｨﾝﾄﾞｳを閉じる"
+  SC_RESTORE,    "ｳｨﾝﾄﾞｳを変更前のｻｲｽﾞに拡大"
+  SC_TASKLIST,   "ﾀｽｸﾘｽﾄを開く"
+}
+#endif
+
+#endif // __IDS_STATUSBAR
+
+#endif  // defined(RC_INVOKED)

@@ -3909,8 +3909,10 @@ messages:
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&ActiveWallElement)
-            or IsClass(each_obj,&Brambles)
+         if (IsClass(each_obj,&ActiveWallElement)
+            or IsClass(each_obj,&Brambles))
+            AND NOT IsClass(each_obj,&ActiveSporeCloud)
+            AND NOT IsClass(each_obj,&Web)
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
             {
@@ -3924,7 +3926,6 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&PassiveWallofFire)
-            OR IsClass(each_obj,&SporeCloud)
             OR IsClass(each_obj,&PassiveWallofLightning)
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)

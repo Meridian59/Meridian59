@@ -1,0 +1,142 @@
+//-----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1991, 1996 by Borland International, All Rights Reserved
+//
+//-----------------------------------------------------------------------------
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+
+#include "owl/editsear.rh"
+#include "owl/richedv.rh"
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDM_RICHEDITVIEW) && !defined(__IDM_RICHEDITVIEW)
+#define __IDM_RICHEDITVIEW
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+
+IDM_RICHEDITVIEW MENU
+{
+ MENUITEM SEPARATOR
+ POPUP "&Edit"
+ {
+  MENUITEM "&Undo\tCtrl+Z", CM_EDITUNDO, GRAYED
+  MENUITEM SEPARATOR
+  MENUITEM "Cu&t\tCtrl+X", CM_EDITCUT, GRAYED
+  MENUITEM "&Copy\tCtrl+C", CM_EDITCOPY, GRAYED
+  MENUITEM "&Paste\tCtrl+V", CM_EDITPASTE, GRAYED
+  MENUITEM SEPARATOR
+  MENUITEM "Clear &All\tCtrl+Del", CM_EDITCLEAR, GRAYED
+  MENUITEM "&Delete", CM_EDITDELETE, GRAYED
+ }
+
+ POPUP "&Search"
+ {
+  MENUITEM "&Find...", CM_EDITFIND, GRAYED
+  MENUITEM "&Replace...", CM_EDITREPLACE, GRAYED
+  MENUITEM "&Next\aF3", CM_EDITFINDNEXT, GRAYED
+ }
+
+ MENUITEM SEPARATOR
+ MENUITEM SEPARATOR
+ POPUP "&Character"
+ {
+  MENUITEM "F&ont...",  CM_FORMATFONT
+  MENUITEM "&Color...", CM_FORMATCOLOR
+  POPUP "&Format"
+  {
+   MENUITEM "&Bold", CM_FORMATBOLD
+   MENUITEM "&Italic", CM_FORMATITALIC
+   MENUITEM "&Underline", CM_FORMATUNDERLINE
+   MENUITEM "&Strikeout", CM_FORMATSTRIKEOUT
+  }
+ }
+
+ POPUP "&Paragraph"
+ {
+  MENUITEM "&Left", CM_PARAGRAPHLEFT
+  MENUITEM "&Center", CM_PARAGRAPHCENTER
+  MENUITEM "&Right", CM_PARAGRAPHRIGHT
+  MENUITEM SEPARATOR
+  MENUITEM "&Bulletted", CM_PARAGRAPHBULLET
+ }
+
+ MENUITEM SEPARATOR
+ MENUITEM SEPARATOR
+}
+#endif
+#undef NO_IDM_RICHEDITVIEW
+
+#if !defined(NO_IDA_RICHEDITVIEW) && !defined(__IDA_RICHEDITVIEW)
+#define __IDA_RICHEDITVIEW
+IDA_RICHEDITVIEW ACCELERATORS
+{
+  "Z",        CM_EDITUNDO,     VIRTKEY, CONTROL
+  "X",          CM_EDITCUT,       VIRTKEY, CONTROL
+  "C",        CM_EDITCOPY,         VIRTKEY, CONTROL
+  "V",        CM_EDITPASTE,     VIRTKEY, CONTROL
+  VK_DELETE,   CM_EDITDELETE,     VIRTKEY
+  VK_DELETE,   CM_EDITCLEAR,     VIRTKEY, CONTROL
+  VK_F3,       CM_EDITFINDNEXT,  VIRTKEY
+}
+#endif
+#undef NO_IDA_RICHEDITVIEW
+
+
+#if !defined(NO_BMP_RICHEDITVIEW) && !defined(__BMP_RICHEDITVIEW)
+#define __BMP_RICHEDITVIEW
+CM_FORMATFONT BITMAP "owl/res/font.bmp"
+CM_FORMATBOLD BITMAP "owl/res/fontbld.bmp"
+CM_FORMATITALIC BITMAP "owl/res/fontitl.bmp"
+CM_FORMATUNDERLINE BITMAP "owl/res/fontund.bmp"
+CM_FORMATCOLOR BITMAP "owl/res/fontclr.bmp"
+CM_PARAGRAPHLEFT BITMAP "owl/res/parleft.bmp"
+CM_PARAGRAPHCENTER BITMAP "owl/res/parcentr.bmp"
+CM_PARAGRAPHRIGHT BITMAP "owl/res/parright.bmp"
+CM_PARAGRAPHBULLET BITMAP "owl/res/parbullt.bmp"
+#endif
+#undef NO_BMP_RICHEDITVIEW
+
+#if !defined(NO_IDS_RICHEDITVIEW) && !defined(__IDS_RICHEDITVIEW)
+#define __IDS_RICHEDITVIEW
+
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+BEGIN
+  CM_FORMATFONT-1,    "Font attributes"
+  CM_FORMATFONT,      "Select font for current selection\nFont"
+  CM_FORMATCOLOR,     "Formats the selection with color\nColor"
+  CM_FORMATBOLD,      "Makes the selection bold(togle)\nBold"
+  CM_FORMATITALIC,    "Makes the selection italic(togle)\nItalic"
+  CM_FORMATUNDERLINE, "Makes the selection with a continuous underline(togle)\nUnderline"
+  CM_FORMATSTRIKEOUT, "Makes the selection with a continuous strikeout(togle)\nStrikeout"
+  CM_PARAGRAPHLEFT-1, "Paragraph attributes"
+  CM_PARAGRAPHLEFT,   "Left-justifies paragraph\nAlign Left"
+  CM_PARAGRAPHCENTER, "Center-justifies paragraph\nCenter"
+  CM_PARAGRAPHRIGHT,  "Right-justifies paragraph\nAlign Right"
+  CM_PARAGRAPHBULLET, "Inserts a bullet on this line\nBullets"
+END
+#endif
+#undef NO_IDS_RICHEDITVIEW
+
+#endif  // defined(RC_INVOKED)
+

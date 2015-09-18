@@ -17,7 +17,7 @@ void *SafeMalloc(long bytes)
    void *temp = (void *) malloc(bytes);
    if (temp == NULL)
    {
-      printf("Out of memory!\n");
+      fprintf(stderr, "Out of memory!\n");
       exit(1);
    }
 
@@ -28,7 +28,7 @@ void SafeFree(void *ptr)
 {
    if (ptr == NULL)
    {
-      printf("Attempt to free null pointer!\n");
+      fprintf(stderr, "Attempt to free null pointer!\n");
       return;
    }
    free(ptr);

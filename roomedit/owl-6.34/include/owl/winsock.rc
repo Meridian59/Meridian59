@@ -1,0 +1,159 @@
+//----------------------------------------------------------------------------
+// ObjectWindows
+// Copyright (c) 1992, 1996 by Borland International, All Rights Reserved
+//
+// Resources to use with TSocketError
+//----------------------------------------------------------------------------
+
+#include <owl/winsock.rh>
+
+#if defined(RC_INVOKED)
+#ifndef WORKSHOP_INVOKED
+# include <winresrc.h>
+#endif
+#if defined(WIN32)    
+#ifndef LANG_NEUTRAL  
+# include <winresrc.h>
+#endif                
+#endif                
+
+
+#ifdef APSTUDIO_INVOKED
+// This will prevent the VC++ Resource Editor user from saving this file
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+"< Cannot change standard OWL resources! >\0"
+END
+#endif    // APSTUDIO_INVOKED
+
+#if !defined(NO_IDS_WINSOCK_BASE) && !defined(__IDS_WINSOCK_BASE)
+#define __IDS_WINSOCK_BASE
+
+#if defined(WIN32) || !defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_WINSOCK_BASE,   "Untitled"
+  IDS_WINSOCK_BASE+1, "(WSAEINTR): Interrupted system call"
+  IDS_WINSOCK_BASE+2, "(WSAEBADF): Bad file number"
+  IDS_WINSOCK_BASE+3, "(WSAEACCES): Permission denied"
+  IDS_WINSOCK_BASE+4, "(WSAEFAULT): Bad address passed"
+  IDS_WINSOCK_BASE+5, "(WSAEINVAL): Invalid parameter passed"
+  IDS_WINSOCK_BASE+6, "(WSAEMFILE): Too many open files"
+  IDS_WINSOCK_BASE+7, "(WSAEWOULDBLOCK): Operation would block"
+  IDS_WINSOCK_BASE+8, "(WSAEINPROGRESS): Operation is now in progress"
+  IDS_WINSOCK_BASE+9, "(WSAEALREADY): Operation is already in progress"
+  IDS_WINSOCK_BASE+10, "(WSAENOTSOCK): Socket operation on non-socket"
+  IDS_WINSOCK_BASE+11, "(WSAEDESTADDRREQ): Destination address required"
+  IDS_WINSOCK_BASE+12, "(WSAEMSGSIZE): Message is too long"
+  IDS_WINSOCK_BASE+13, "(WSAEPROTOTYPE): The protocol is of the wrong type for the socket"
+  IDS_WINSOCK_BASE+14, "(WSAENOPROTOOPT): The requested protocol is not available"
+  IDS_WINSOCK_BASE+15, "(WSAEPROTONOSUPPORT): The requested protocol is not supported"
+  IDS_WINSOCK_BASE+16, "(WSAESOCKTNOSUPPORT): The specified socket type is not supported"
+  IDS_WINSOCK_BASE+17, "(WSAEOPNOTSUPP): The specified operation is not supported"
+  IDS_WINSOCK_BASE+18, "(WSAEPFNOSUPPORT): The specified protocol family is not supported"
+  IDS_WINSOCK_BASE+19, "(WSAEAFNOSUPPORT): The specified address family is not supported"
+  IDS_WINSOCK_BASE+20, "(WSAEADDRINUSE): The specified address is already in use"
+  IDS_WINSOCK_BASE+21, "(WSAEADDRNOTAVAIL): The requested address is unassignable"
+  IDS_WINSOCK_BASE+22, "(WSAENETDOWN): The network appears to be down"
+  IDS_WINSOCK_BASE+23, "(WSAENETUNREACH): The network is unreachable"
+  IDS_WINSOCK_BASE+24, "(WSAENETRESET): The network dropped the connection on reset"
+  IDS_WINSOCK_BASE+25, "(WSAECONNABORTED): Software caused a connection abort"
+  IDS_WINSOCK_BASE+26, "(WSAECONNRESET): Connection was reset by peer"
+  IDS_WINSOCK_BASE+27, "(WSAENOBUFS): Out of buffer space"
+  IDS_WINSOCK_BASE+28, "(WSAEISCONN): Socket is already connected"
+  IDS_WINSOCK_BASE+29, "(WSAENOTCONN): Socket is not presently connected"
+  IDS_WINSOCK_BASE+30, "(WSAESHUTDOWN): Can't send data because socket is shut down"
+  IDS_WINSOCK_BASE+31, "(WSAETOOMANYREFS): Too many references, unable to splice"
+  IDS_WINSOCK_BASE+32, "(WSAETIMEDOUT): The connection timed out"
+  IDS_WINSOCK_BASE+33, "(WSAECONNREFUSED): The connection was refused"
+  IDS_WINSOCK_BASE+34, "(WSAELOOP): Too many symbolic link levels"
+  IDS_WINSOCK_BASE+35, "(WSAENAMETOOLONG): File name is too long"
+  IDS_WINSOCK_BASE+36, "(WSAEHOSTDOWN): The host appears to be down"
+  IDS_WINSOCK_BASE+37, "(WSAEHOSTUNREACH): The host is unreachable"
+  IDS_WINSOCK_BASE+38, "(WSAENOTEMPTY): The directory is not empty"
+  IDS_WINSOCK_BASE+39, "(WSAEPROCLIM): There are too many processes"
+  IDS_WINSOCK_BASE+40, "(WSAEUSERS): There are too many users"
+  IDS_WINSOCK_BASE+41, "(WSAEDQUOT): The disk quota is exceeded"
+  IDS_WINSOCK_BASE+42, "(WSAESTALE): Bad NFS file handle"
+  IDS_WINSOCK_BASE+43, "(WSAEREMOTE): There are too many levels of remote in the path"
+  IDS_WINSOCK_BASE+44, "(WSAEDISCO): Disconnect"
+  IDS_WINSOCK_BASE+45, "(WSASYSNOTREADY): Network sub-system is not ready or unusable"
+  IDS_WINSOCK_BASE+46, "(WSAVERNOTSUPPORTED): The requested version is not supported"
+  IDS_WINSOCK_BASE+47, "(WSANOTINITIALISED): Socket system is not initialized"
+  IDS_WINSOCK_BASE+48, "(WSAHOST_NOT_FOUND): The host was not found"
+  IDS_WINSOCK_BASE+49, "(WSATRY_AGAIN): Non-authoritative host not found"
+  IDS_WINSOCK_BASE+50, "(WSANO_RECOVERY): Non-recoverable error"
+  IDS_WINSOCK_BASE+51, "(WSANO_DATA): No information of the requested type was available"
+  IDS_WINSOCK_BASE+52, "(???): Unknown error"
+}
+#endif //  !BI_MSG_LANGUAGE_JAPAN
+
+#if defined(BI_MSG_LANGUAGE_JAPAN)
+#if defined(WIN32)
+LANGUAGE LANG_JAPANESE, SUBLANG_NEUTRAL
+#endif
+STRINGTABLE LOADONCALL MOVEABLE DISCARDABLE
+{
+  IDS_WINSOCK_BASE, "‚È‚µ"
+  IDS_WINSOCK_BASE+1, "(WSAEINTR): ¼½ÃÑº°Ù‚ªŠ„‚èž‚Ü‚ê‚½",
+  IDS_WINSOCK_BASE+2, "(WSAEBADF): •s³‚ÈÌ§²Ù”Ô†",
+  IDS_WINSOCK_BASE+3, "(WSAEACCES): ±¸¾½‚Í‹–‰Â‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+4, "(WSAEFAULT): •s³‚È±ÄÞÚ½‚ª“n‚³‚ê‚½",
+  IDS_WINSOCK_BASE+5, "(WSAEINVAL): –³Œø‚Èˆø”‚ª“n‚³‚ê‚½",
+  IDS_WINSOCK_BASE+6, "(WSAEMFILE): µ°ÌßÝÌ§²Ù‚ª‘½‚·‚¬‚é",
+  IDS_WINSOCK_BASE+7, "(WSAEWOULDBLOCK): ˆ—‚Í–WŠQ‚³‚ê‚½",
+  IDS_WINSOCK_BASE+8, "(WSAEINPROGRESS): ˆ—‚ÍŒ»ÝŽÀs’†",
+  IDS_WINSOCK_BASE+9, "(WSAEALREADY): ˆ—‚Í‚·‚Å‚ÉŽÀs’†",
+  IDS_WINSOCK_BASE+10, "(WSAENOTSOCK): ”ñ¿¹¯Ä‚É‘Î‚·‚é¿¹¯Äˆ—",
+  IDS_WINSOCK_BASE+11, "(WSAEDESTADDRREQ): ‘—Mæ±ÄÞÚ½‚ª•K—v",
+  IDS_WINSOCK_BASE+12, "(WSAEMSGSIZE): Ò¯¾°¼Þ‚ª’·‚·‚¬‚é",
+  IDS_WINSOCK_BASE+13, "(WSAEPROTOTYPE): ÌßÛÄºÙ‚Í¿¹¯Ä‚É‘Î‚µ‚Ä–³Œø‚ÈÀ²Ìß",
+  IDS_WINSOCK_BASE+14, "(WSAENOPROTOOPT): —v‹‚³‚ê‚½ÌßÛÄºÙ‚ÍŽg—p•s‰Â”",
+  IDS_WINSOCK_BASE+15, "(WSAEPROTONOSUPPORT): —v‹‚³‚ê‚½ÌßÛÄºÙ‚Í»Îß°Ä‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+16, "(WSAESOCKTNOSUPPORT): Žw’è‚³‚ê‚½¿¹¯ÄÀ²Ìß‚Í»Îß°Ä‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+17, "(WSAEOPNOTSUPP): Žw’è‚³‚ê‚½ˆ—‚Í»Îß°Ä‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+18, "(WSAEPFNOSUPPORT): Žw’è‚³‚ê‚½ÌßÛÄºÙÌ§ÐØ‚Í»Îß°Ä‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+19, "(WSAEAFNOSUPPORT): Žw’è‚³‚ê‚½±ÄÞÚ½Ì§ÐØ‚Í»Îß°Ä‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+20, "(WSAEADDRINUSE): Žw’è‚³‚ê‚½±ÄÞÚ½‚Í‚·‚Å‚ÉŽg—p’†",
+  IDS_WINSOCK_BASE+21, "(WSAEADDRNOTAVAIL): —v‹‚³‚ê‚½±ÄÞÚ½‚ÍŠ„‚è“–‚Ä‚ç‚ê‚È‚¢",
+  IDS_WINSOCK_BASE+22, "(WSAENETDOWN): È¯ÄÜ°¸‚ÍÀÞ³Ý‚µ‚Ä‚¢‚é‚©‚à‚µ‚ê‚È‚¢",
+  IDS_WINSOCK_BASE+23, "(WSAENETUNREACH): È¯ÄÜ°¸‚É“ž’B‚Å‚«‚È‚¢",
+  IDS_WINSOCK_BASE+24, "(WSAENETRESET): Ø¾¯Ä‚É‚æ‚èÈ¯ÄÜ°¸‚ÌÚ‘±‚ªØ’f‚³‚ê‚½",
+  IDS_WINSOCK_BASE+25, "(WSAECONNABORTED): ¿ÌÄ³ª±‚ÍÚ‘±‚ðŽ¸”s‚³‚¹‚½",
+  IDS_WINSOCK_BASE+26, "(WSAECONNRESET): Ú‘±‚ÍØ¾¯Ä‚³‚ê‚½",
+  IDS_WINSOCK_BASE+27, "(WSAENOBUFS): ÊÞ¯Ì§½Íß°½‚ª‘«‚è‚È‚¢",
+  IDS_WINSOCK_BASE+28, "(WSAEISCONN): ¿¹¯Ä‚Í‚·‚Å‚ÉÚ‘±‚³‚ê‚Ä‚¢‚é",
+  IDS_WINSOCK_BASE+29, "(WSAENOTCONN): ¿¹¯Ä‚ÍŒ»ÝÚ‘±‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+30, "(WSAESHUTDOWN): ¿¹¯Ä‚ªÀÞ³Ý‚µ‚Ä‚¢‚é‚Ì‚ÅÃÞ°À‚ª‘—‚ê‚È‚¢",
+  IDS_WINSOCK_BASE+31, "(WSAETOOMANYREFS): ŽQÆ‚ª‘½‚·‚¬‚é‚Ì‚ÅŒ‹‡‚Å‚«‚Ü‚¹‚ñ",
+  IDS_WINSOCK_BASE+32, "(WSAETIMEDOUT): Ú‘±‚ÍÀ²Ñ±³Ä‚µ‚½",
+  IDS_WINSOCK_BASE+33, "(WSAECONNREFUSED): Ú‘±‚Í‹‘”Û‚³‚ê‚½",
+  IDS_WINSOCK_BASE+34, "(WSAELOOP): ¼ÝÎÞØ¯¸ØÝ¸‚ÌÚÍÞÙ‚ª‘½‚·‚¬‚é",
+  IDS_WINSOCK_BASE+35, "(WSAENAMETOOLONG): Ì§²Ù–¼‚ª’·‚·‚¬‚é",
+  IDS_WINSOCK_BASE+36, "(WSAEHOSTDOWN): Î½Ä‚ÍÀÞ³Ý‚µ‚Ä‚¢‚é‚©‚à‚µ‚ê‚È‚¢",
+  IDS_WINSOCK_BASE+37, "(WSAEHOSTUNREACH): Î½Ä‚É“ž’B‚Å‚«‚È‚¢",
+  IDS_WINSOCK_BASE+38, "(WSAENOTEMPTY): ÃÞ¨Ú¸ÄØ‚ª‹ó‚Å‚Í‚È‚¢",
+  IDS_WINSOCK_BASE+39, "(WSAEPROCLIM): ÌßÛ¾½‚ª‘½‚·‚¬‚é",
+  IDS_WINSOCK_BASE+40, "(WSAEUSERS): Õ°»Þ°‚ª‘½‚·‚¬‚é",
+  IDS_WINSOCK_BASE+41, "(WSAEDQUOT): ÃÞ¨½¸‚ÌŠ„‚è“–‚Ä—e—Ê‚ð’´‚¦‚Ä‚¢‚é",
+  IDS_WINSOCK_BASE+42, "(WSAESTALE): –³Œø‚È NFS Ì§²ÙÊÝÄÞÙ",
+  IDS_WINSOCK_BASE+43, "(WSAEREMOTE): Êß½ã‚ÌØÓ°Ä‚ÌÚÍÞÙ‚ª‘½‚·‚¬‚é",
+  IDS_WINSOCK_BASE+44, "(WSAEDISCO): Ø’f",
+  IDS_WINSOCK_BASE+45, "(WSASYSNOTREADY): È¯ÄÜ°¸»ÌÞ¼½ÃÑ‚Ì€”õ‚ª‚Å‚«‚Ä‚¢‚È‚¢‚©Žg—p‚Å‚«‚È‚¢",
+  IDS_WINSOCK_BASE+46, "(WSAVERNOTSUPPORTED): —v‹‚³‚ê‚½ÊÞ°¼Þ®Ý‚Í»Îß°Ä‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+47, "(WSANOTINITIALISED): ¿¹¯Ä¼½ÃÑ‚ª‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¢",
+  IDS_WINSOCK_BASE+48, "(WSAHOST_NOT_FOUND): Î½Ä‚ªŒ©‚Â‚©‚ç‚È‚¢",
+  IDS_WINSOCK_BASE+49, "(WSATRY_AGAIN): ”ñ³Ž®‚ÌÎ½Ä‚ªŒ©‚Â‚©‚ç‚È‚¢",
+  IDS_WINSOCK_BASE+50, "(WSANO_RECOVERY): C•œ•s‰Â”\‚È´×°",
+  IDS_WINSOCK_BASE+51, "(WSANO_DATA): —v‹‚³‚ê‚½À²Ìß‚Ìî•ñ‚ªŽg—p‚Å‚«‚È‚¢",
+  IDS_WINSOCK_BASE+52, "(???): •s–¾´×°"
+}
+#endif   // BI_MSG_LANGUAGE_JAPAN
+
+#endif   // __IDS_WINSOCK_BASE
+#undef NO_IDS_WINSOCK_BASE
+
+#endif  // defined(RC_INVOKED)

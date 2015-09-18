@@ -20,7 +20,7 @@ OBJS = \
 
 
 $(OUTDIR)\bbgun.exe: $(OBJS) $(OUTDIR)\bbgun.res
-	$(LINK) $** $(LIBS) -OUT:$@ $(LINKFLAGS) /subsystem:windows
+	$(LINK) $** $(LIBS) -OUT:$@ $(LINKFLAGS) $(LINKWINDOWSFLAGS)
 
 $(OUTDIR)\bbgun.res : $(SOURCEDIR)\bbgun.rc
         $(RC) /fo $@ /i$(SOURCEDIR) $**

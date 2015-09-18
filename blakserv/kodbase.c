@@ -161,7 +161,8 @@ void LoadKodbaseProperty(char *prop_name,int property_id)
 {
    if (current_class == NULL)
    {
-      eprintf("LoadKodbaseProperty has no current class\n");
+      eprintf("LoadKodbaseProperty has no current class (%s:%d)\n",
+              prop_name, property_id);
       return;
    }
 
@@ -180,7 +181,8 @@ void LoadKodbaseClassVariable(char *classvar_name,int classvar_id)
 
    if (current_class == NULL)
    {
-      eprintf("LoadKodbaseClassVariable has no current class\n");
+      eprintf("LoadKodbaseClassVariable has no current class (%s:%d)\n",
+              classvar_name, classvar_id);
       return;
    }
 

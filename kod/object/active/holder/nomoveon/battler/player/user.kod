@@ -5089,7 +5089,8 @@ messages:
             return TRUE;
          }
 
-         Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,#who=self);
+         Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
+               #who=self,#sString=string);
 
          return TRUE;
       }
@@ -5160,14 +5161,6 @@ messages:
          {
             Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
                   #who=self,#iPublic=TRUE,#sString=string,
-                  #lSurvivalOptions=lSurvivalOptions,
-                  #oForceBaseRoom=oForceBaseRoom);
-         }
-         
-         if Send(Send(SYS,@GetSurvivalRoomMaintenance),@FindPublicRoom) = $
-         {
-            Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                  #who=self,#iPublic=TRUE,
                   #lSurvivalOptions=lSurvivalOptions,
                   #oForceBaseRoom=oForceBaseRoom);
          }
@@ -5242,7 +5235,7 @@ messages:
                   #oGuild=poGuild) = $
          {
             Send(Send(SYS,@GetSurvivalRoomMaintenance),@CreateRoom,
-                  #who=self,#guild_survival=TRUE);
+                  #who=self,#sString=string,#guild_survival=TRUE);
          }
          else
          {

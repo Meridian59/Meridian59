@@ -36,6 +36,9 @@ resources:
 
    mananode_already_melded = "You have already bonded with this mana node."
    mananode_not_in_range = "The mana node is not close enough to meld with."
+   mananode_yeti_alive = \
+      "You must slay the beast before you can meld with this" 
+      " node."
 
    mananode_meld = \
       "Closing your eyes, you put yourself in a trancelike state and reach "
@@ -182,6 +185,15 @@ messages:
          if abs(Send(who,@GetRow)-Send(self,@GetRow)) < MANANODE_RANGE
             AND abs(Send(who,@GetCol)-Send(self,@GetCol)) < MANANODE_RANGE
          {
+            
+            % if this is the yeti node, the wall must be open
+            if (IsClass(poOwner,&IceCave1))
+               AND NOT Send(poOwner,@NodeIsAvailable)
+            {
+               Send(who,@MsgSendUser,#message_rsc=mananode_yeti_alive);
+               return false;
+            }
+
             if piNode_num = 0
             {
                debug("this mana node was not assigned an ID!  Invalid!");

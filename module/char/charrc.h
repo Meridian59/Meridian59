@@ -1,10 +1,3 @@
-// Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
-// All rights reserved.
-//
-// This software is distributed under a license that is described in
-// the LICENSE file that accompanies it.
-//
-// Meridian is a registered trademark.
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by char.rc
@@ -32,6 +25,7 @@
 #define IDI_SWORDS                      143
 #define IDD_CHARAPPEARANCE              143
 #define IDD_CHARSTATS                   144
+#define IDS_FAVORITES                   255
 #define IDC_DESCRIPTION                 1000
 #define IDC_FACE                        1001
 #define IDC_PLACEHOLDER                 1002
@@ -65,7 +59,7 @@
 #define IDC_CHAR_GRAPH5                 1025
 #define IDC_MOUTH2                      1026
 #define IDC_CHAR_GRAPH6                 1026
-#define IDC_RIIJA                       1027
+#define IDC_FAVORITES                   1027
 #define IDC_POINTSLEFT                  1028
 #define IDC_SPELLIST1                   1029
 #define IDC_SPELLIST2                   1030

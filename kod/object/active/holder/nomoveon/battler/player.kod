@@ -9438,21 +9438,26 @@ messages:
          {
             foreach i in lItems
             {
-               if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
-                  AND Send(i,@DropOnDeath)
-               {
-                  if oItemAtt <> $
-                  {
-                     % We know this was a pk.  Only let PKillables pick up the loot.
-                     % Put the appropriate item attribute on it.
-                     Send(oItemAtt,@AddToItem,#oItem=i,
-                           #timer_duration=PKPOINTER_TIME,
-                           #state1=self);
-                  }
+               % Let the item know we died, in case it does something special.
+               Send(i,@OwnerKilled);
 
-                  Send(oRoom,@NewHold,#what=i,#merge=FALSE,
-                        #new_row=iRow,#new_col=iCol,
-                        #fine_row=iFine_row,#fine_col=iFine_col);
+               if Send(i,@DropOnDeath)
+               {
+                  if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
+                  {
+                     if oItemAtt <> $
+                     {
+                        % We know this was a pk.  Only let PKillables pick up the loot.
+                        % Put the appropriate item attribute on it.
+                        Send(oItemAtt,@AddToItem,#oItem=i,
+                              #timer_duration=PKPOINTER_TIME,
+                              #state1=self);
+                     }
+
+                     Send(oRoom,@NewHold,#what=i,#merge=FALSE,
+                           #new_row=iRow,#new_col=iCol,
+                           #fine_row=iFine_row,#fine_col=iFine_col);
+                  }
                }
             }
          }

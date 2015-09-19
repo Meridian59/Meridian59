@@ -1239,6 +1239,12 @@ messages:
       return object_lord;
    }
 
+   OwnerKilled()
+   "Called when the object's owner is killed."
+   {
+      return;
+   }
+
    ObjectCorpseFading()
    "Only really matters for items."
    {

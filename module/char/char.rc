@@ -51,8 +51,8 @@ BEGIN
     LTEXT           "Konzentriere dich auf Waffenfertigkeiten und Kraanan.",-1,98,164,190,8
     PUSHBUTTON      "&Hybrid",1012,43,178,50,11
     LTEXT           "Lerne Magie und Waffenfertigkeiten.",-1,98,178,190,8
-    PUSHBUTTON      "Hybrid &2",1027,43,192,50,11
-    LTEXT           "Lerne Waffenfertigkeiten, Riija und eine andere Zauberschule.",-1,98,192,190,8
+    PUSHBUTTON      "&Favoriten",1027,43,192,50,11
+    LTEXT           "Von Spielern eingereichte und empfohlene Werte.",-1,98,192,190,8
     LTEXT           "Eigenschaftspunkte übrig:",-1,8,215,83,8
     CONTROL         "",1028,"BlakGraph",0x8,95,214,98,11
     PUSHBUTTON      "&<< Zurück",1008,219,214,41,12

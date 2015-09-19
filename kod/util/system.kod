@@ -353,6 +353,9 @@ properties:
    % A list of naughty words.
    plNaughtyWords = $
 
+   % A list of names that are retired and can only be set by an admin
+   plRetiredNames = $
+
    poHolder1 = $ % Temporary holders used in offers
    poHolder2 = $
 
@@ -509,6 +512,8 @@ messages:
 
       % Reset the list of naughty words
       Send(self,@ResetNaughtyWords);
+
+      Send(self,@ResetRetiredNames);
 
       Send(self,@RecreateNecromancerBalance);
       Send(self,@CreateUserTable);
@@ -790,6 +795,8 @@ messages:
       Send(self,@RecalcLightAndWeather);
       Send(self,@ReturnShrineAllegiance);
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
+
+      Send(self,@ResetRetiredNames);
 
       piRecreate_state = RECREATE_NOT;
       Debug("Successful recreate!");
@@ -4279,6 +4286,15 @@ messages:
 
       % Name should be valid.
 
+      % pay homage to those who came before us
+      foreach i in plRetiredNames
+      {
+         if StringEqual(sName, i)
+         {
+            return FALSE;
+         }
+      }
+
       return TRUE;
    }
 
@@ -6302,6 +6318,62 @@ messages:
       plNaughtyWords = ["fuck", "shit", "asshole", "cocksuck", "cunt", "penis",
                         "vagina", "faggot", "nigger"
                        ];
+
+      return;
+   }
+
+   ResetRetiredNames()
+   {
+      plRetiredNames = [ "Zaphod", "Zandramas" ]; 
+
+      plRetiredNames = cons("Zjiria",plRetiredNames);
+      plRetiredNames = cons("Q",plRetiredNames);
+      plRetiredNames = cons("Lady Jane",plRetiredNames);
+      plRetiredNames = cons("Regifan Du Bukise",plRetiredNames);
+      plRetiredNames = cons("Rhinosharkus",plRetiredNames);
+      plRetiredNames = cons("Tonto",plRetiredNames);
+      plRetiredNames = cons("Zangus Dixon",plRetiredNames);
+      plRetiredNames = cons("Mosiah",plRetiredNames);
+      plRetiredNames = cons("Mocker",plRetiredNames);
+      plRetiredNames = cons("Satin",plRetiredNames);
+      plRetiredNames = cons("Greenwich",plRetiredNames);
+      plRetiredNames = cons("Xian",plRetiredNames);
+      plRetiredNames = cons("Gort",plRetiredNames);
+      plRetiredNames = cons("Aphasia",plRetiredNames);
+      plRetiredNames = cons("Tendar",plRetiredNames);
+      plRetiredNames = cons("Vertigo",plRetiredNames);
+      plRetiredNames = cons("Omar",plRetiredNames);
+      plRetiredNames = cons("Bromm",plRetiredNames);
+      plRetiredNames = cons("Cat",plRetiredNames);
+      plRetiredNames = cons("Henry V",plRetiredNames);
+      plRetiredNames = cons("King Richard",plRetiredNames);
+      plRetiredNames = cons("Altir",plRetiredNames);
+      plRetiredNames = cons("Zardos",plRetiredNames);
+      plRetiredNames = cons("Zendar",plRetiredNames);
+      plRetiredNames = cons("Zwei",plRetiredNames);
+      plRetiredNames = cons("Zarea",plRetiredNames);
+      plRetiredNames = cons("Gandalf",plRetiredNames);
+      plRetiredNames = cons("Zathras",plRetiredNames);
+      plRetiredNames = cons("Detson",plRetiredNames);
+      plRetiredNames = cons("Geist",plRetiredNames);
+      plRetiredNames = cons("Gemini",plRetiredNames);
+      plRetiredNames = cons("Kyrra",plRetiredNames);
+      plRetiredNames = cons("Kana",plRetiredNames);
+      plRetiredNames = cons("ReQuiem",plRetiredNames);
+      plRetiredNames = cons("Izual",plRetiredNames);
+      plRetiredNames = cons("Prego",plRetiredNames);
+      plRetiredNames = cons("Thumper",plRetiredNames);
+      plRetiredNames = cons("Da Man",plRetiredNames);
+      plRetiredNames = cons("Alix",plRetiredNames);
+      plRetiredNames = cons("Psychochild",plRetiredNames);
+      plRetiredNames = cons("Aythya",plRetiredNames);
+      plRetiredNames = cons("Sif",plRetiredNames);
+      plRetiredNames = cons("Jinx",plRetiredNames);
+      plRetiredNames = cons("Sher Kahn",plRetiredNames);
+      plRetiredNames = cons("Bael",plRetiredNames);
+      plRetiredNames = cons("Kimo",plRetiredNames);
+      plRetiredNames = cons("Sol",plRetiredNames);
+      plRetiredNames = cons("Corliss",plRetiredNames);
 
       return;
    }

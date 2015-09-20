@@ -94,13 +94,7 @@ messages:
       iLightStr = Nth(Send(oItem,@GetAttributeData,#ItemAtt=WA_GLOWING),3);
       Send(oPlayer,@LoseLight,#amount=iLightStr);
 
-      if Send(oPlayer,@FindUsing,#class=&Torch) <> $
-      {
-         % Keep the flicker flag.
-         return;
-      }
-
-      Send(oPlayer,@ClearFlickerFlag);
+      Send(oPlayer,@RecalcFlickerFlag);
 
       return;
    }

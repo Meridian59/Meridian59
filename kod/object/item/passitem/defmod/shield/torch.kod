@@ -99,33 +99,25 @@ messages:
          ptBurn = $;
       }
 
-      Send(poOwner,@ClearFlickerFlag);
       if pbIn_use
       {
          Send(poOwner,@LoseLight,#amount=TORCH_LIGHT);
       }
 
       pbIn_use = FALSE;
+
+      Send(poOwner,@RecalcFlickerFlag);
       Send(poOwner,@SomethingChanged,#what=self);
-      
-      if piHits > 0     % avoid the case where we got here by being deleted in BurnTimer(), in which case piHits=0.
+
+      % Avoid the case where we got here by being deleted in BurnTimer(),
+      % in which case piHits = 0.
+      if piHits > 0
       {
          piHits = piHits - 1;
          if piHits = 0
          {
             Send(poOwner,@MsgSendUser,#message_rsc=torch_dead_rsc);
             Post(self,@Delete);
-         }
-      }
-      
-      oUsing = Send(poOwner,@GetPlayerUsing);
-      foreach i in oUsing
-      {
-         if IsClass(i,&weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
-         {
-            Send(poOwner,@SetFlickerFlag);
-
-            propagate;
          }
       }
 

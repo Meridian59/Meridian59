@@ -11614,23 +11614,33 @@ messages:
       return;
    }
 
-   ClearFlickerFlag()
-   {
-      piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
-
-      return;
-   }
-
    RecalcFlickerFlag()
+   "Called by anything that sets the flag when it wants to unset it. "
+   "Checks if we still have anything that still requires the flag."
    {
       local i;
 
+      % Unset flag.
       piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
+
+      % Check torches and glow enchantment.
       foreach i in plUsing
       {
          if IsClass(i,&Torch)
-            OR (IsClass(i,&Weapon) 
+            OR (IsClass(i,&Weapon)
                AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
+         {
+            piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
+
+            return;
+         }
+      }
+
+      % Check radius enchantments.
+      foreach i in plRadiusEnchantments
+      {
+         if Nth(i,3) = self
+            AND NOT Send(First(i),@GetOldAreaEnchStyle)
          {
             piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
 
@@ -14176,7 +14186,7 @@ messages:
 
    SendLightingInformation()
    {
-      local oLightObject, iColor, iIntensity;
+      local i, oLightObject, iColor, iIntensity;
 
       if poIllusion_set <> $
       {
@@ -14188,38 +14198,58 @@ messages:
 
          return;
       }
-      else
-      {
-         % A bit of a kludge.  Ideally, we should query the objects we are using
-         %  to find out if any want to add lighting information to us.
-         if plRadiusEnchantments <> $
-         {
-            foreach oLightObject in plRadiusEnchantments
-            {
-               if Nth(oLightObject,3) = self
-                  AND NOT Send(Nth(oLightObject,1),@GetOldAreaEnchStyle)
-               {
-                  if (piDrawEffectFlag & OF_FLICKERING)
-                  {
-                      iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
-                      iColor = Send(Nth(oLightObject,1),@GetLightColor);
-                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),
-                                1,iIntensity, 2,iColor);
 
-                      return;
-                  }
-               }
+      % Bitflag check, don't need to check anything if not set.
+      if NOT (piDrawEffectFlag & OF_FLICKERING)
+      {
+         propagate;
+      }
+
+      iIntensity = 0;
+      iColor = 0;
+      % Check each lighting effect, strongest one wins.
+      % TODO: these should be additive, and the client should produce
+      % a combined lighting effect. Also, if more lighting effects are added
+      % this should probably query everything, just in case.
+
+      % Check torches and glow enchantment only here, hardcoded color/intensity.
+      foreach i in plUsing
+      {
+         if IsClass(i,&Torch)
+            OR (IsClass(i,&Weapon)
+               AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
+         {
+            iIntensity = 60;
+            iColor = LIGHT_FIRE;
+
+            break;
+         }
+      }
+
+      foreach i in plRadiusEnchantments
+      {
+         if Nth(i,3) = self
+         {
+            oLightObject = First(i);
+            if Send(oLightObject,@GetOldAreaEnchStyle)
+            {
+               continue;
+            }
+
+            if Send(oLightObject,@GetLightIntensity) >= iIntensity
+            {
+                iIntensity = Send(oLightObject,@GetLightIntensity);
+                iColor = Send(oLightObject,@GetLightColor);
             }
          }
+      }
 
-         if (piDrawEffectFlag & OF_FLICKERING)
-         {
-            % 75 out of 255 intensity of light
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),
-                      1,60, 2,LIGHT_FIRE);
+      if iIntensity > 0
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),
+                   1,iIntensity, 2,iColor);
 
-            return;
-         }
+         return;
       }
 
       propagate;

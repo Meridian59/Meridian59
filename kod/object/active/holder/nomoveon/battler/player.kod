@@ -6962,14 +6962,26 @@ messages:
 
    GainBaseMaxHealth(amount = 0)
    {
-      local iPrev_max;
+      local iPrev_max, iApparentStamina;
 
       iPrev_max = piBase_max_health;
 
-      piBase_max_health = Bound(piBase_max_health+amount,20,
-                              (100 + Send(self,@GetStamina)));
+      % To deal with potential valid HP being stripped if the player has
+      % a temporary negative stamina modifier, we need to check if
+      % piStaminaMod is negative and if so, use just the raw stamina itself.
+      if piStaminaMod >= 0
+      {
+         iApparentStamina = Send(self,@GetStamina);
+      }
+      else
+      {
+         iApparentStamina = Send(self,@GetRawStamina);
+      }
+
+      piBase_max_health = Bound(piBase_max_health + amount, 20,
+                              (100 + iApparentStamina));
       % Bound ourselves at the top end to 150.
-      piBase_max_health = bound(piBase_max_health,$,150);
+      piBase_max_health = Bound(piBase_max_health,$,150);
       amount = piBase_max_health - iPrev_max;
 
       % Give them the "further info" gmail if they've advanced to 25.

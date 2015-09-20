@@ -10288,28 +10288,24 @@ messages:
                      * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
             }
          }
-         else
+         else if (iPrimaryStat = STAT_ID_INTELLECT)
          {
-            if (iPrimaryStat = STAT_ID_INTELLECT)
+            if (iSpellAbility > (intellect * 2)) AND (intellect < piIntellect)
+               OR (iSpellAbility = 99 AND piIntellect = 50 AND intellect < 50)
             {
-               if (iSpellAbility > (intellect * 2)) AND (intellect < piIntellect)
-                  OR (iSpellAbility = 99 AND piIntellect = 50 AND intellect < 50)
-               {
-                  Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
-                        #amount=((piIntellect - intellect)
-                        * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
-               }
+               Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
+                     #amount=((piIntellect - intellect)
+                     * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
             }
-            % must be STAT_ID_MYSTICISM
-            else
+         }
+         else if (iPrimaryStat = STAT_ID_MYSTICISM)
+         {
+            if (iSpellAbility > (piMysticism * 2)) AND (mysticism < piMysticism)
+               OR (iSpellAbility = 99 AND piMysticism = 50 AND mysticism < 50)
             {
-               if (iSpellAbility > (piMysticism * 2)) AND (mysticism < piMysticism)
-                  OR (iSpellAbility = 99 AND piMysticism = 50 AND mysticism < 50)
-               {
-                  Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
-                        #amount=((piMysticism - mysticism)
-                        * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
-               }
+               Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
+                     #amount=((piMysticism - mysticism)
+                     * Send(SETTINGS_OBJECT,@GetStatsResetPenalty)));
             }
          }
       }
@@ -10331,53 +10327,36 @@ messages:
                      #amount=((piAgility - agility) * -2));
             }
          }
-         else
+         else if (iPrimaryStat = STAT_ID_AIM)
          {
-            if (iPrimaryStat = STAT_ID_AIM)
+            if (iSkillAbility > (aim * 2)) AND (aim < piAim)
+               OR (iSkillAbility = 99 AND piAim = 50 AND aim < 50)
             {
-               if (iSkillAbility > (aim * 2)) AND (aim < piAim)
-                  OR (iSkillAbility = 99 AND piAim = 50 AND aim < 50)
-               {
-                  Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
-                        #amount=((piAim - aim) * -2));
-               }
+               Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                     #amount=((piAim - aim) * -2));
             }
-            else
+         }
+         else if (iPrimaryStat = STAT_ID_MIGHT)
+         {
+            if (iSkillAbility > (might * 2)) AND (might < piMight)
+               OR (iSkillAbility = 99 AND piMight = 50 AND might < 50)
             {
-               if (iPrimaryStat = STAT_ID_MIGHT)
-               {
-                  if (iSkillAbility > (might * 2)) AND (might < piMight)
-                     OR (iSkillAbility = 99 AND piMight = 50 AND might < 50)
-                  {
-                     Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
-                           #amount=((piMight - might) * -2));
-                  }
-               }
-               else
-               {
-                  if (iPrimaryStat = STAT_ID_STAMINA)
-                  {
-                     if (iSkillAbility > (stamina * 2)) AND (stamina < piStamina)
-                        OR (iSkillAbility = 99 AND piStamina = 50 AND stamina < 50)
-                     {
-                        Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
-                              #amount=((piStamina - stamina) * -2));
-                     }
-                  }
-               }
+               Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                     #amount=((piMight - might) * -2));
+            }
+         }
+         else if (iPrimaryStat = STAT_ID_STAMINA)
+         {
+            if (iSkillAbility > (stamina * 2)) AND (stamina < piStamina)
+               OR (iSkillAbility = 99 AND piStamina = 50 AND stamina < 50)
+            {
+               Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
+                     #amount=((piStamina - stamina) * -2));
             }
          }
       }
       Debug("Skill % Recalculated");
-      
-      % A change in stamina results in a reduction in hitpoints if the
-      %   player's hitpoints will be > 100 + new Stamina
-      if (piBase_Max_Health > 100 + stamina)
-      {
-         Send(self,@GainBaseMaxHealth,#amount=((100 + stamina) - piBase_Max_health));
-         Debug("HitPoints Adjusted");   
-      }
-      
+
       Debug(Send(self,@GetTrueName), " changed stats from ",
          piMight, piIntellect, piStamina, piAgility, piMysticism, piAim,
          " to ", might, intellect, stamina, agility, mysticism, aim);
@@ -10388,7 +10367,16 @@ messages:
       piAgility = agility;
       piMysticism = mysticism;
       piAim = aim;
-      
+
+      % A change in stamina results in a reduction in hitpoints if the
+      % player's hitpoints will be > 100 + new Stamina
+      if (piBase_Max_Health > 100 + Send(self,@GetStamina))
+      {
+         % If called with no amount, will verify current max HP is valid.
+         Send(self,@GainBaseMaxHealth);
+         Debug("HitPoints Adjusted");
+      }
+
       % recalculate mana pool based on nodes and mysticism
       Send(self,@ComputeMaxMana);
       Debug("Mana Recalculated");

@@ -232,7 +232,7 @@ messages:
 
    SomethingMoved()
    {
-      Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
+      Send(poOwner,@DeleteWallsAroundBattler,#who=self);
 
       propagate;
    }
@@ -312,7 +312,7 @@ messages:
          Post(self,@Delete);  % MUST post this
       }
 
-      return ;
+      return;
    }
 
 
@@ -381,21 +381,24 @@ messages:
 
    EnterStateMove( actnow=FALSE )
    {
-      % Note: All monsters "move" even the ones who physically can't.
-      Send(self,@SetState,#bit=STATE_MOVE);
+      % We don't just hang around, go straight back into state chase.
+      Send(self,@SetState,#bit=STATE_CHASE);
 
-      poTarget = $;
-      piHatred = 0;
+      if poTarget <> poHauntee
+      {
+         poTarget = poHauntee;
+         piHatred = 100;
+      }
 
       Send(self,@ClearBehavior);
 
       if actnow
       {
-         Send(self,@MoveTimer);
+         Send(self,@ChaseTimer);
       }
       else
       {
-         ptBehavior = CreateTimer(self,@MoveTimer,Send(self,@GetMoveTime));
+         ptBehavior = CreateTimer(self,@ChaseTimer,Send(self,@GetMoveTime));
       }
 
       return;

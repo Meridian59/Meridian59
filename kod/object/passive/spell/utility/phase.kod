@@ -225,11 +225,11 @@ messages:
       }
       else
       {
-         Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
          Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
          Send(who,@BreakTrance,#event=EVENT_STEER);
          Send(SYS,@DeletePlayerReflections,#who=who);
          Send(who,@FreezeAllEnchantments);
+         Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
 
          % Post this because FreezeAllEnchantments checks for phase applied
          Post(who,@StartEnchantment,#what=self);

@@ -128,22 +128,22 @@ messages:
          case AVARCLAN_ANTIMAGIC:
             vrName = avar_nomagic_name;
             vrDesc = avar_nomagic_desc;
-            viReputationGroup = REP_KKAVAR;
-            vlReputationEnemies = [REP_PSAVAR, REP_CTAVAR];
+            piReputationGroup = REP_KKAVAR;
+            plReputationEnemies = [REP_PSAVAR, REP_CTAVAR];
             break;
 
          case AVARCLAN_BONE_FACTION:
             vrName = avar_bone_name;
             vrDesc = avar_bone_desc;
-            viReputationGroup = REP_CTAVAR;
-            vlReputationEnemies = [REP_PSAVAR, REP_KKAVAR];
+            piReputationGroup = REP_CTAVAR;
+            plReputationEnemies = [REP_PSAVAR, REP_KKAVAR];
             break;
 
          default:
             vrName = avar_name_rsc;
             vrDesc = avar_desc_rsc;
-            viReputationGroup = REP_PSAVAR;
-            vlReputationEnemies = [REP_KKAVAR, REP_CTAVAR];
+            piReputationGroup = REP_PSAVAR;
+            plReputationEnemies = [REP_KKAVAR, REP_CTAVAR];
             break;
       }
 

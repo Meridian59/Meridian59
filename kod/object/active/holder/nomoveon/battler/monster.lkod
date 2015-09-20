@@ -122,6 +122,12 @@ Lm_bnkr_did_deposit = de \
 Lm_bnkr_no_account = de \
    "Tja, Du hast Deine Ersparnisse leider verschleudert - Kredit bekommst "
    "Du von mir nicht!"
+Lm_bnkr_acct_full = de \
+   "Du hast so viele Schillinge hier gelagert, so dass ich keinen "
+   "Platz für mehr habe."
+Lm_bnkr_acct_almost_full = de \
+   "Du hast so viele Schillinge hier gelagert, so dass ich nur noch "
+   "Platz für %i habe."
 Lm_bnkr_not_enough_withdraw = de \
    "Aber Du hast doch nur ~b~B%i~n Schillinge auf Deinem Konto!"
 Lm_bnkr_not_enough_deposit = de \

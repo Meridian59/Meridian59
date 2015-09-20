@@ -69,7 +69,7 @@ properties:
 
    piAnimation = ANIM_NONE
 
-   viReputationGroup = REP_ORC
+   piReputationGroup = REP_ORC
    
 messages:
 
@@ -80,7 +80,7 @@ messages:
                         [ATCK_WEAP_SLASH, 25 ],
                         [-ATCK_SPELL_HOLY, -20 ] ];
 
-      vlReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
+      plReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
 
       propagate;
    }

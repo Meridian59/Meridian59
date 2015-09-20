@@ -151,7 +151,7 @@ messages:
    "Sets revenant down near (but not too near) his target"
    {
       local oRoom, bValid_location, iTries, iRow, iCol, iRow_sign, iCol_sign,
-            iTarg_row, iTarg_col ;
+            iTarg_row, iTarg_col, i, each_obj;
 
       ptPlace = $;
       oRoom = Send(poHauntee,@GetOwner);
@@ -162,6 +162,20 @@ messages:
          Send(self,@Delete);
 
          return;
+      }
+
+      % If they already have a revenant on this screen, delete
+      % to prevent multiple revs.
+      foreach i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&Revenant)
+            AND poHauntee = Send(each_obj,@GetHauntee)
+         {
+            Send(self,@Delete);
+
+            return;
+         }
       }
 
       iTarg_row = Send(poHauntee,@GetRow);

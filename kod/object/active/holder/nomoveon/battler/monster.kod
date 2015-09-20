@@ -164,6 +164,12 @@ resources:
    Lm_bnkr_did_deposit = \
       "Thank you for your deposit.  You now have %i shillings in your account."
    Lm_bnkr_no_account = "You have no money to withdraw!"
+   Lm_bnkr_acct_full = \
+      "You have so many shillings stored here, that I'm afraid I have no "
+      "space to store any more!"
+   Lm_bnkr_acct_almost_full = \
+      "You have so many shillings stored here, that I'm afraid I can only "
+      "store %i more."
    Lm_bnkr_not_enough_withdraw = \
       "But you only have %i shillings in your account!"
    Lm_bnkr_not_enough_deposit = \
@@ -487,9 +493,9 @@ properties:
 
    % some monsters are created on the fly (ex: avar) we may need to set this at
    % runtime
-   viReputationGroup = REP_NEUTRAL
-   vlReputationEnemies = $
-   
+   piReputationGroup = REP_NEUTRAL
+   plReputationEnemies = $
+
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0)
@@ -3940,7 +3946,7 @@ messages:
             Send(EVENTENGINE_OBJECT,@MonsterKilled,#dead_monster=self,
                   #killing_player=what,#corpse=oBody);
 
-            if (viReputationGroup <> REP_NEUTRAL
+            if (piReputationGroup <> REP_NEUTRAL
                AND Send(SETTINGS_OBJECT,@GetMonsterFactionEnabled))
             {
                hReputation = Send(what,@GetReputationHash);
@@ -3959,28 +3965,28 @@ messages:
                % now actually do the rep chenge unless there is no hash
                if (hReputation <> $)
                {
-                  val=GetTableEntry(hReputation,viReputationGroup);
+                  val=GetTableEntry(hReputation,piReputationGroup);
                   if (val <> $)
                   {
                      --val;
                      if (val >= -20000)
                      {
-                        DeleteTableEntry(hReputation,viReputationGroup);
-                        AddTableEntry(hReputation,viReputationGroup,val);
+                        DeleteTableEntry(hReputation,piReputationGroup);
+                        AddTableEntry(hReputation,piReputationGroup,val);
                      }
                   }
                   else
                   {
-                     AddTableEntry(hReputation,viReputationGroup,-1);
+                     AddTableEntry(hReputation,piReputationGroup,-1);
                   }
 
                   Send(what,@MsgSendUser,
                      #message_rsc=monster_faction_negative_msg,
                      #parm1=Send(self,@GetMonsterFactionRSC,
-                              #faction=viReputationGroup));
+                              #faction=piReputationGroup));
 
                   % Adjust reputation with enemies of this monster
-                  foreach i in vlReputationEnemies
+                  foreach i in plReputationEnemies
                   {
                      val=GetTableEntry(hReputation,i);
                      if (val <> $)
@@ -4530,7 +4536,7 @@ messages:
 
    BankDeposit(who=$, amount = 0)
    {
-      local oMoney, oBank;
+      local oMoney, oBank, iBankAmt;
 
       if NOT Send(self,@MobIsBanker)
       {
@@ -4549,10 +4555,8 @@ messages:
          return;
       }
 
-      oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
-
       oMoney = Send(who,@GetMoneyObject);
-      if oMoney = $ 
+      if oMoney = $
       {
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
               #string=Lm_bnkr_not_enough_deposit,#parm1=0);
@@ -4568,11 +4572,38 @@ messages:
 
          return;
       }
-      
+
+      oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
+      iBankAmt = Send(oBank,@GetAccount,#what=who);
+
+      % Check for integer overflow.
+      if (iBankAmt = MAX_KOD_INT)
+      {
+         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=Lm_bnkr_acct_full);
+
+         return;
+      }
+      else if (iBankAmt + amount < 0)
+      {
+         amount = MAX_KOD_INT - iBankAmt;
+         % Re-check amount, just to be sure.
+         if Send(oMoney,@GetValue) < amount
+         {
+            Debug("Error modifying bank deposit amount for ",
+                  Send(who,@GetTrueName),"amt: ",amount," bank amt: ",iBankAmt);
+
+            return;
+         }
+
+         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+               #string=Lm_bnkr_acct_almost_full,#parm1=amount);
+      }
+
       Send(oMoney,@SubtractNumber,#number=amount);
       Send(oBank,@DepositAccount,#what=who,#amount=amount);
 
-      Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
            #string=Lm_bnkr_did_deposit,
            #parm1=Send(oBank,@GetAccount,#what=who));
 
@@ -4588,9 +4619,9 @@ messages:
 
    BankWithdraw(who = $, amount = 0)
    {
-      local i, iFlag, iAmount, oMoney, oBank, iCan_hold;
+      local iPlayerAmt, iBankAmt, oMoney, oBank;
 
-      if not Send(self,@MobIsBanker)
+      if NOT Send(self,@MobIsBanker)
       {
          return;
       }
@@ -4607,10 +4638,10 @@ messages:
          return;
       }
 
-      oBank=Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
-      iAmount = Send(oBank,@WithdrawAccount,#what=who);
+      oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
+      iBankAmt = Send(oBank,@WithdrawAccount,#what=who);
 
-      if iAmount = 0
+      if iBankAmt = 0
       {
          Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_no_account,
               #type=SAY_RESOURCE);
@@ -4618,41 +4649,13 @@ messages:
          return;
       }
 
-      if amount > iAmount
+      if amount > iBankAmt
       {
-         Send(oBank,@DepositAccount,#what=who,#amount=iAmount);
+         Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
          Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_withdraw,#parm1=iAmount);
+              #string=Lm_bnkr_not_enough_withdraw,#parm1=iBankAmt);
 
          return;
-      }
-
-      oMoney = Send(SYS,@GetSystemMoneyObject);
-      if oMoney = $
-      {
-         oMoney = Create(&Money,#number=amount);
-      }
-
-      iCan_hold = Send(who,@GetNumberCanHold,#what=oMoney);
-
-      if iCan_hold = INFINITE_COUNT
-      {
-         iCan_hold = amount;
-      }
-
-      if iCan_hold = 0
-      {
-         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_all_full,
-              #type=SAY_RESOURCE);
-
-         return;
-      }
-
-      if iCan_hold < amount
-      {
-         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
-              #type=SAY_RESOURCE,#parm1=iCan_hold);
-         amount = iCan_hold;
       }
 
       oMoney = Send(who,@GetMoneyObject);
@@ -4661,14 +4664,41 @@ messages:
          oMoney = Create(&Money,#number=amount);
          Send(who,@NewHold,#what=oMoney);
       }
-      else
+      else if (Send(oMoney,@GetNumber) + amount) <= 0
       {
-         Send(oMoney,@AddNumber,#number=amount);
+         iPlayerAmt = Send(oMoney,@GetNumber);
+         if iPlayerAmt = MAX_KOD_INT
+         {
+            Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_all_full,
+                  #type=SAY_RESOURCE);
+
+            return;
+         }
+         else if (iPlayerAmt + amount) <= 0
+         {
+            amount = MAX_KOD_INT - iPlayerAmt;
+            Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
+                  #type=SAY_RESOURCE,#parm1=amount);
+
+            if amount > iBankAmt
+            {
+               Debug("Error giving player ",Send(who,@GetTrueName),amount,
+                  " shillings from total ",iBankAmt,"!. Player has ",iPlayerAmt);
+               Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt);
+
+               return;
+            }
+         }
       }
 
-      Send(oBank,@DepositAccount,#what=who,#amount=iAmount-amount);
-      Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_did_withdraw,#parm1=amount);
+      Send(oMoney,@AddNumber,#number=amount);
+      Send(oBank,@DepositAccount,#what=who,#amount=iBankAmt-amount);
+
+      % Send this message even if we gave the almost full one - players are
+      % used to seeing this message on a successful transaction.
+      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            #string=Lm_bnkr_did_withdraw,#parm1=amount);
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_WITHDRAWAL);
 

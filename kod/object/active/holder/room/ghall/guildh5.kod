@@ -97,6 +97,35 @@ messages:
       propagate;
    }
 
+   InFoyer(who=$,iRow=$,iCol=$,iFineRow=$,iFineCol=$)
+   {
+      if who <> $
+      {
+         if Send(who,@GetOwner) <> self
+         {
+            return FALSE;
+         }
+
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+         iFineCol = Send(who,@GetFineCol);
+
+         if iRow >= viFoyer_north AND iRow <= viFoyer_South
+            AND iCol <= viFoyer_east AND iCol >= viFoyer_west
+         {
+            if (iCol = viFoyer_east
+               AND iFineCol > 32)
+            {
+               return FALSE;
+            }
+
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
    CreateStandardExits()
    {
       plExits = $;

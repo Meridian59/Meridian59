@@ -13,7 +13,7 @@
 #ifndef _LIST_H
 #define _LIST_H
 
-#define INIT_LIST_NODES (10000000)
+#define INIT_LIST_NODES (4000000)
 
 typedef struct
 {

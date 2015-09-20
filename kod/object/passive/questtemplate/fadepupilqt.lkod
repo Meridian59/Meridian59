@@ -8,13 +8,15 @@ fadepupilquest_nodetwo_rsc = de \
    "Joguer has asked you to retrieve his formula from %s.  In return, "
    "he will teach you the fade spell.  Ask %s about the formula, obtain "
    "it and bring it back to Joguer."
-fadepupilquest_nodethree_rsc = de \
+fadepupilquest_nodethree1_rsc = de \
    "%s will give you the formula, but first you must slay %s%s. Do that "
    "and return to %s."
-fadepupilquest_return_rsc = de \
+fadepupilquest_nodethree2_rsc = de \
+   "You have killed the monster, now return to %s and ask about the formula."
+fadepupilquest_nodefour_rsc = de \
    "Return to Joguer with the formula."
 
-fadepupilquest_completed = de \
+fadepupilquest_completed_rsc = de \
    "You have completed the fade pupil quest.  Joguer will now "
    "teach you the fade spell."
 

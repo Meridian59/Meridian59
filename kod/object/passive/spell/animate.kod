@@ -23,8 +23,8 @@ resources:
    Animate_name_rsc = "animate"
    Animate_icon_rsc = ianimate.bgf
    Animate_desc_rsc = \
-      "Animates a corpse, that it may do your bidding.  "
-      "Requires the blood of a shaman to cast."
+      "Animates the corpse of a monster or player, that it may do your "
+      "bidding.  Requires the blood of a shaman to cast."
 
    Animate_bad_target = "You can't cast animate on %s%s!"
    Animate_human_cast_rsc ="%s's corpse pulls itself up off the ground."

@@ -72,7 +72,7 @@ properties:
 
    ptRevertControl = $
 
-   viReputationGroup = REP_UNDEAD
+   piReputationGroup = REP_UNDEAD
 
 messages:
 
@@ -81,7 +81,7 @@ messages:
       plResistances = [ [-ATCK_SPELL_UNHOLY, 50 ],
                         [-ATCK_SPELL_HOLY, -25 ] ];
 
-      vlReputationEnemies = [REP_FAROL];
+      plReputationEnemies = [REP_FAROL];
 
       propagate;
    }

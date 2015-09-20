@@ -5058,13 +5058,6 @@ messages:
       return send(EVENTENGINE_OBJECT,@IsChaosNightActive);
    }
 
-   % HACK in case EVENTENGINE_OBJECT hasn't been created yet,
-   % don't call this, ever.  It is'nt useful for anything else.
-   IsChaosNightActive()
-   {
-      return false;
-   }
-
    ScheduleChaosNight(iMonth=$,iDay=$,iYear=$,
                       iHour=21,iMinute=0,
                       duration=60,

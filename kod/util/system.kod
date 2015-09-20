@@ -331,7 +331,6 @@ properties:
    plRooms = $
    plUsers = $
    plUsers_logged_on = $
-   plTreasure_types = $
    plSpells = $
    plSkills = $
    plItem_Attributes = $
@@ -398,6 +397,8 @@ properties:
    phSkills
    % Hash table for item attributes.
    phItemAtts
+   % Hash table for treasure types.
+   phTresTypes
 
    poMoney = $
 
@@ -1487,24 +1488,28 @@ messages:
       return;
    }
 
-   SystemNewTreasureType(what = $)
-   "Called by a treasure type to register itself on our list."
+   SystemNewTreasureType(what = $, iNum = 0)
+   "Called by a treasure type to register itself in our table."
    {
-      local i,tid;
+      local i, tid;
 
-      tid = Send(what,@GetTreasureTypeNum);
-
-      foreach i in plTreasure_types
+      if what = $
+         OR iNum < TID_NONE
       {
-         if Send(i,@GetTreasureTypeNum) = tid
-         {
-            % Should Send i delete here, but treasure types don't reference
-            % anything so should be ok for now.
-            plTreasure_types = DelListElem(plTreasure_types,i);
-         }
+         return;
       }
 
-      plTreasure_types = Cons(what,plTreasure_types);
+      if phTresTypes = $
+      {
+         phTresTypes = CreateTable(191);
+      }
+
+      if GetTableEntry(phTresTypes,iNum) = what
+      {
+         DeleteTableEntry(phTresTypes,iNum);
+      }
+
+      AddTableEntry(phTresTypes,iNum,what);
 
       return;
    }
@@ -1641,17 +1646,7 @@ messages:
 
    FindTreasureByNum(num = 0)
    {
-      local i;
-
-      foreach i in plTreasure_types
-      {
-         if Send(i,@GetTreasureTypeNum) = num
-         {
-            return i;
-         }
-      }
-
-      return $;
+      return GetTableEntry(phTresTypes, num);
    }
 
    GetSystemHolder1()
@@ -3182,6 +3177,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_NIGHT_VISION,#class=&NightVision);
       Send(self,@CreateOneSpellIfNew,#num=SID_FIREBALL,#class=&Fireball);
       Send(self,@CreateOneSpellIfNew,#num=SID_DMRESCUE,#class=&DMRescue);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SPECTATE,#class=&Spectate);
       Send(self,@CreateOneSpellIfNew,#num=SID_RESCUE,#class=&Rescue);
       Send(self,@CreateOneSpellIfNew,#num=SID_SMITE,#class=&Smite);
       Send(self,@CreateOneSpellIfNew,#num=SID_DAMN,#class=&Damn);
@@ -3812,6 +3808,9 @@ messages:
    "If the type already exists, it is deleted and a new one "
    "made.  This makes changing treasure types easy--just call us."
    {
+      % Recreate the table.
+      phTresTypes = CreateTable(191);
+
       Create(&NoTreasure);
       Create(&NewbieAreaTreasure);
 
@@ -3898,16 +3897,7 @@ messages:
 
    GetSun()
    {
-      local i;
-
-      foreach i in plBackground_objects
-      {
-         if IsClass(i,&Sun)
-         {
-            return i;
-         }
-      }
-      return $;
+      return GetListElemByClass(plBackground_objects,&Sun);
    }
 
    GetWeather()
@@ -6938,9 +6928,9 @@ messages:
 
          % Give debug message for each player, describing what levels they have.
          Debug("Player ",i,Send(i,@GetTrueName)," has extra levels! Has ",
-               Nth(lSkills,1)," WC ",Nth(lSpells,1)," Shal'ille ",Nth(lSpells,2),
-               " Qor ",Nth(lSpells,3)," Kraanan ",Nth(lSpells,4)," Faren ",
-               Nth(lSpells,5)," Riija and ",Nth(lSpells,6), " Jala. Player has ",
+               First(lSkills),"WC ",First(lSpells),"Shal'ille ",Nth(lSpells,2),
+               "Qor ",Nth(lSpells,3),"Kraanan ",Nth(lSpells,4),"Faren ",
+               Nth(lSpells,5),"Riija and ",Nth(lSpells,6), "Jala. Player has ",
                Send(i,@GetRawIntellect)," intellect.");
       }
 

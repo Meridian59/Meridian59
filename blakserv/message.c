@@ -12,8 +12,7 @@
  This module has functions to take care of a table of messages in a
  class.  The messages are read in by loadkod.c, which sets up the
  messages for a class based on the message table in the .bof file.
- The table is in the same order as the table in the .bof file.  Linear
- searches are performed to find messages.
+ Messages are stored and accessed by hashed message ID for speed.
 
  */
 
@@ -23,30 +22,50 @@
 void ResetMessageClass(class_node *c);
 void SetEachClassMessagesPropagate(class_node *c);
 
+static int max_messages;
+static int hash_collisions;
+
 void InitMessage()
 {
-
+   // Keep track of some stats.
+   max_messages = 0;
+   hash_collisions = 0;
 }
 
 void ResetMessage()
 {
    ForEachClass(ResetMessageClass);
+   max_messages = 0;
+   hash_collisions = 0;
 }
 
 void ResetMessageClass(class_node *c)
 {
-   if (c->num_messages == 0)
+   message_node *m, *temp;
+
+   if (!c->num_messages)
       return;
 
-   FreeMemory(MALLOC_ID_MESSAGE,c->messages,c->num_messages*sizeof(message_node));
+   for (int i = 0; i < MESSAGE_TABLE_SIZE; ++i)
+   {
+      m = c->messages[i];
+      while (m != NULL)
+      {
+         temp = m->next;
+         FreeMemory(MALLOC_ID_MESSAGE, m, sizeof(message_node));
+         m = temp;
+      }
+      c->messages[i] = NULL;
+   }
+
+   FreeMemory(MALLOC_ID_MESSAGE, c->messages, MESSAGE_TABLE_SIZE * sizeof(message_node*));
    c->messages = NULL;
    c->num_messages = 0;
 }
 
-void SetClassNumMessages(int class_id,int num_messages)
+void SetClassNumMessages(int class_id, int num_messages)
 {
    class_node *c;
-   int i;
 
    c = GetClassByID(class_id);
    if (c == NULL)
@@ -55,31 +74,26 @@ void SetClassNumMessages(int class_id,int num_messages)
       return;
    }
 
-   if (num_messages == 0)
+   if (!num_messages)
       return;
 
-   c->messages = (message_node *)AllocateMemory(MALLOC_ID_MESSAGE,
-						num_messages*sizeof(message_node));
+   // Track highest number of messages in a class.
+   if (num_messages > max_messages)
+      max_messages = num_messages;
+
    c->num_messages = num_messages;
 
-   for (i=0;i<c->num_messages;i++)
-   {
-      c->messages[i].message_id = 0;
-      c->messages[i].handler = 0;
-      c->messages[i].dstr_id = INVALID_DSTR;
-      c->messages[i].trace_session_id = INVALID_ID;
-      c->messages[i].timed_call_count = 0;
-      c->messages[i].untimed_call_count = 0;
-      c->messages[i].total_call_time = 0.0;
-      c->messages[i].propagate_message = NULL;
-      c->messages[i].propagate_class = NULL;
-   }  
+   c->messages = (message_node **)AllocateMemoryCalloc(MALLOC_ID_MESSAGE,
+      MESSAGE_TABLE_SIZE, sizeof(message_node*));
+
+   // Zero allocated memory so we don't need to set any defaults.
 }
 
 void AddMessage(int class_id,int count,int message_id,char *offset,int dstr_id)
 {
    class_node *c;
-
+   message_node *m;
+   int hash_num;
    /* count which message in the table we are setting */
 
    c = GetClassByID(class_id);
@@ -89,13 +103,26 @@ void AddMessage(int class_id,int count,int message_id,char *offset,int dstr_id)
       return;
    }
 
-   c->messages[count].message_id = message_id;
-   c->messages[count].handler = offset;
-   c->messages[count].dstr_id = dstr_id;
-   c->messages[count].trace_session_id = INVALID_ID;
-   c->messages[count].timed_call_count = 0;
-   c->messages[count].untimed_call_count = 0;
-   c->messages[count].total_call_time = 0.0;
+   m = (message_node *)AllocateMemory(MALLOC_ID_MESSAGE, sizeof(message_node));
+
+   m->message_id = message_id;
+   m->handler = offset;
+   m->dstr_id = dstr_id;
+   m->trace_session_id = INVALID_ID;
+   m->timed_call_count = 0;
+   m->untimed_call_count = 0;
+   m->total_call_time = 0.0;
+
+   m->next = NULL;
+
+   hash_num = GetMessageHashNum(m->message_id);
+   m->next = c->messages[hash_num];
+
+   // Keep track of collisions.
+   if (m->next != NULL)
+      hash_collisions++;
+
+   c->messages[hash_num] = m;
 }
 
 /* SetMessagesPropagate
@@ -109,54 +136,56 @@ void SetMessagesPropagate()
 
 void SetEachClassMessagesPropagate(class_node *c)
 {
-   int i;
+   message_node *m;
 
    /* if no superclass, then there is no propagate message */
    if (c->super_ptr == NULL)
       return;
-
+   if (!c->num_messages)
+      return;
    /* there is a parent, so look for a propagate message */
-   for (i=0;i<c->num_messages;i++)
+   for (int i = 0; i < MESSAGE_TABLE_SIZE; ++i)
    {
-      c->messages[i].propagate_message = 
-	 GetMessageByID(c->super_ptr->class_id,c->messages[i].message_id,
-			&c->messages[i].propagate_class);
-      /*
-      if (c->messages[i].propagate_message != NULL)
+      m = c->messages[i];
+      while (m != NULL)
       {
-	 dprintf("%i %i 0x%x\n",c->class_id,c->messages[i].message_id,&c->messages[i].propagate_class);
+         m->propagate_message =
+            GetMessageByID(c->super_ptr->class_id, m->message_id,
+            &m->propagate_class);
+         m = m->next;
       }
-      */
    }
-
 }
 
-message_node *GetMessageByID(int class_id,int message_id,class_node **found_class)
+message_node *GetMessageByID(int class_id, int message_id, class_node **found_class)
 {
    class_node *c;
    message_node *m;
-   int i;
 
    c = GetClassByID(class_id);
 
    if (c == NULL)
    {
-      eprintf("GetMessageByID can't find class %i\n",class_id);
+      eprintf("GetMessageByID can't find class %i\n", class_id);
       return NULL;
    }
-   
+
    do
    {
-      m = c->messages;
-
-      for (i=0;i<c->num_messages;i++)
+      if (c->num_messages)
       {
-	 if (m[i].message_id == message_id)
-	 {
-	    if (found_class != NULL)
-	       *found_class = c;
-	    return &m[i];
-	 }
+         m = c->messages[GetMessageHashNum(message_id)];
+
+         while (m != NULL)
+         {
+            if (m->message_id == message_id)
+            {
+               if (found_class != NULL)
+                  *found_class = c;
+               return m;
+            }
+            m = m->next;
+         }
       }
       c = c->super_ptr;
    } while (c != NULL);
@@ -175,4 +204,16 @@ message_node *GetMessageByName(int class_id,char *message_name,class_node **foun
       return NULL;
    }
    return GetMessageByID(class_id,message_id,found_class);
+}
+
+// Returns the largest number of messages in a class.
+int GetHighestMessageCount()
+{
+   return max_messages;
+}
+
+// Returns the number of message hash collisions when loading game data.
+int GetNumMessageHashCollisions()
+{
+   return hash_collisions;
 }

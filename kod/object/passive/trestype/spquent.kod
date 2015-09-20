@@ -11,15 +11,14 @@
 SpiderQueenTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_SPIDER_QUEEN
 
 properties:
-   
-   piTreasure_num = TID_SPIDER_QUEEN
 
    %% good stuff, appears relatively rarely compared to other
    %% supermonsters.
@@ -27,8 +26,8 @@ properties:
    piItem_att_chance = 5
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &SpiderEgg, 40 ],
                      [ &BerserkerRing, 11 ],

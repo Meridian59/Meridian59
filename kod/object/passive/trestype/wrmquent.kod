@@ -11,19 +11,18 @@
 WormQueenTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_WORM_QUEEN
 
 properties:
-   
-   piTreasure_num = TID_WORM_QUEEN
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       % metal armor/weapons that could be eaten and underground stones.
       plTreasure = [ [ &BlueMushroom, 13],

@@ -42,6 +42,3 @@ your_lives_remain = de "Du hast %i ausstehende Leben."
 spectator_only_msg = de \
    "Der Kampf hat bereits begonnen. Du kannst Zuschauen bis alle Teilnehmer "
    "gestorben sind."
-player_was_spectated = de "%s hat den physischen Zustand der Realität verloren."
-you_were_spectated = de \
-   "Du hast deine physische Verbindung zu diesem Ort verlassen!"

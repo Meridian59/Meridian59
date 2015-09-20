@@ -1417,11 +1417,19 @@ messages:
       {
          Debug("Unreachable. Null poTarget","monster",self);
          poTarget = $;
-         Send(self,@EnterStateWait); 
+         Send(self,@EnterStateWait);
 
-         return; 
+         return;
       }
-      
+
+      % Victim phased out or is now in spectator mode, break aggro.
+      if Send(poTarget,@IsInCannotInteractMode)
+      {
+         Send(self,@EnterStateMove);
+
+         return;
+      }
+
       Send(poBrain,@GetAttackBehavior,#mob=self,#target=poTarget,
            #behavior=piBehavior);
       
@@ -1486,6 +1494,14 @@ messages:
       {
          %Debug("Unreachable. Null victim.");
          Send(self,@EnterStateWait);
+
+         return;
+      }
+
+      % Victim phased out or is now in spectator mode, break aggro.
+      if Send(oVictim,@IsInCannotInteractMode)
+      {
+         Send(self,@EnterStateMove);
 
          return;
       }
@@ -2196,8 +2212,8 @@ messages:
       {
          foreach i in Send(poOwner,@GetHolderActive)
          {
-            each_obj=Send(poOwner,@HolderExtractObject,#data=i);
-            if isClass(each_obj,&User)
+            each_obj = First(i);
+            if IsClass(each_obj,&User)
                AND each_obj <> what
                AND Send(each_obj,@GetKillTarget)=self
             {
@@ -3679,13 +3695,13 @@ messages:
          % we found an applicable random trigger, find a random user.
          iNum = 0;
          oTarget = $;
-         foreach i in Send(Send(self,@GetOwner),@GetHolderActive)
+         foreach i in Send(poOwner,@GetHolderActive)
          {
-            if isClass(Send(poOwner,@HolderExtractObject,#data=i),&User)
+            if IsClass(First(i),&User)
             {
                if Random(0,iNum) = 0
                {
-                  oTarget=Nth(i,1);
+                  oTarget = First(i);
                }
 
                iNum = iNum + 1;
@@ -5116,8 +5132,8 @@ messages:
 
       foreach i in Send(poOwner,@GetHolderActive)
       {
-         each_obj=Send(poOwner,@HolderExtractObject,#data=i);
-         if isClass(each_obj,&User)
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
             AND Send(each_obj,@GetKillTarget) = self
          {
             Post(each_obj,@MsgSendUser,#what=self,#message_rsc=rDamage_report,
@@ -5151,7 +5167,7 @@ messages:
 
          foreach i in Send(poOwner,@GetHolderActive)
          {
-            each_obj=Send(poOwner,@HolderExtractObject,#data=i);
+            each_obj = First(i);
             if IsClass(each_obj,&User)
                AND Send(each_obj,@GetKillTarget) = self
             {
@@ -6834,7 +6850,7 @@ messages:
       lActive = Send(poOwner,@GetHolderActive);
       foreach i in lActive
       {
-         oObject = Send(poOwner,@HolderExtractObject,#data=i);
+         oObject = First(i);
 
          % Pass if we're looking at ourself here.
          if oObject = self
@@ -6907,7 +6923,7 @@ messages:
       lActive = Send(poOwner,@GetHolderActive);
       foreach i in lActive
       {
-         oObject = Send(poOwner,@HolderExtractObject,#data=i);
+         oObject = First(i);
 
          % Pass if we're looking at ourself here.
          if oObject = self

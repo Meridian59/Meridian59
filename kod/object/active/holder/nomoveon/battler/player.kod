@@ -1098,9 +1098,6 @@ properties:
    piRemainingPhaseTime = 60000 * 8
    ptCanPhaseTimer = $
 
-   % Spectator mode?
-   pbSpectatorMode = FALSE
-
 messages:
 
    Constructor()
@@ -3393,7 +3390,7 @@ messages:
    {
       local i, iTime;
 
-      if Send(self,@IsPhasedOut)
+      if (piFlags & PFLAG_PHASED)
       {
          % Rare case where a user can log off while phased, e.g. system restart
          % Phase already froze the enchantments, so we don't need to do it again
@@ -3403,11 +3400,22 @@ messages:
 
       foreach i in plEnchantments
       {
+         % If we have the spectate enchantment, remove it.
+         if IsClass(Nth(i,2),&Spectate)
+         {
+            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#report=FALSE);
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
+                  #type=ENCHANTMENT_PLAYER);
+            plEnchantments = DelListElem(plEnchantments,i);
+            Send(self,@ResetPlayerFlagList,#who=self);
+
+            continue;
+         }
+
          if First(i) <> $
          {
-            if IsClass(Nth(i,2),&Boon) = FALSE
+            if NOT IsClass(Nth(i,2),&Boon)
             {
-
                % Convert timer to integer if we have a timer,
                % otherwise log for debugging.
                if IsTimer(First(i))
@@ -3452,6 +3460,7 @@ messages:
       {
          % Phase reactivates enchantments while it is still in plEnchantments
          if IsClass(Nth(i,2),&Phase)
+            OR IsClass(Nth(i,2),&Spectate)
          {
             continue;
          }
@@ -6588,12 +6597,9 @@ messages:
          return FALSE;
       }
 
-      foreach i in plUsing
+      if GetListElemByClass(plUsing, class)
       {
-         if IsClass(i,class)
-         {
-            return TRUE;
-         }
+         return TRUE;
       }
 
       return FALSE;
@@ -6610,15 +6616,7 @@ messages:
          return $;
       }
 
-      foreach i in plUsing
-      {
-         if IsClass(i,class)
-         {
-            return i;
-         }
-      }
-
-      return $;
+      return GetListElemByClass(plUsing, class);
    }
 
    ChooseArmorPosition()
@@ -6964,14 +6962,26 @@ messages:
 
    GainBaseMaxHealth(amount = 0)
    {
-      local iPrev_max;
+      local iPrev_max, iApparentStamina;
 
       iPrev_max = piBase_max_health;
 
-      piBase_max_health = Bound(piBase_max_health+amount,20,
-                              (100 + Send(self,@GetStamina)));
+      % To deal with potential valid HP being stripped if the player has
+      % a temporary negative stamina modifier, we need to check if
+      % piStaminaMod is negative and if so, use just the raw stamina itself.
+      if piStaminaMod >= 0
+      {
+         iApparentStamina = Send(self,@GetStamina);
+      }
+      else
+      {
+         iApparentStamina = Send(self,@GetRawStamina);
+      }
+
+      piBase_max_health = Bound(piBase_max_health + amount, 20,
+                              (100 + iApparentStamina));
       % Bound ourselves at the top end to 150.
-      piBase_max_health = bound(piBase_max_health,$,150);
+      piBase_max_health = Bound(piBase_max_health,$,150);
       amount = piBase_max_health - iPrev_max;
 
       % Give them the "further info" gmail if they've advanced to 25.
@@ -9396,17 +9406,13 @@ messages:
       Send(Send(SYS,@GetStatistics),@PlayerDiedCounter);
 
       % Token death?
-      foreach i in plUsing
+      i = GetListElemByClass(plUsing,&Token);
+      if i <> $
       {
-         if IsClass(i,&Token)
-         {
-            bNo_drop_death = TRUE;
-            piDeathCost = FALSE;
-            Send(self,@MsgSendUser,#message_rsc=player_token_death);
-            Send(i,@NewUnused,#what=self,#where=oRoom);
-
-            break;
-         }
+         bNo_drop_death = TRUE;
+         piDeathCost = FALSE;
+         Send(self,@MsgSendUser,#message_rsc=player_token_death);
+         Send(i,@NewUnused,#what=self,#where=oRoom);
       }
 
       % Create the corpse.
@@ -9456,21 +9462,26 @@ messages:
          {
             foreach i in lItems
             {
-               if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
-                  AND Send(i,@DropOnDeath)
-               {
-                  if oItemAtt <> $
-                  {
-                     % We know this was a pk.  Only let PKillables pick up the loot.
-                     % Put the appropriate item attribute on it.
-                     Send(oItemAtt,@AddToItem,#oItem=i,
-                           #timer_duration=PKPOINTER_TIME,
-                           #state1=self);
-                  }
+               % Let the item know we died, in case it does something special.
+               Send(i,@OwnerKilled);
 
-                  Send(oRoom,@NewHold,#what=i,#merge=FALSE,
-                        #new_row=iRow,#new_col=iCol,
-                        #fine_row=iFine_row,#fine_col=iFine_col);
+               if Send(i,@DropOnDeath)
+               {
+                  if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
+                  {
+                     if oItemAtt <> $
+                     {
+                        % We know this was a pk.  Only let PKillables pick up the loot.
+                        % Put the appropriate item attribute on it.
+                        Send(oItemAtt,@AddToItem,#oItem=i,
+                              #timer_duration=PKPOINTER_TIME,
+                              #state1=self);
+                     }
+
+                     Send(oRoom,@NewHold,#what=i,#merge=FALSE,
+                           #new_row=iRow,#new_col=iCol,
+                           #fine_row=iFine_row,#fine_col=iFine_col);
+                  }
                }
             }
          }
@@ -11603,23 +11614,33 @@ messages:
       return;
    }
 
-   ClearFlickerFlag()
-   {
-      piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
-
-      return;
-   }
-
    RecalcFlickerFlag()
+   "Called by anything that sets the flag when it wants to unset it. "
+   "Checks if we still have anything that still requires the flag."
    {
       local i;
 
+      % Unset flag.
       piDrawEffectFlag = piDrawEffectFlag & (~OF_FLICKERING);
+
+      % Check torches and glow enchantment.
       foreach i in plUsing
       {
          if IsClass(i,&Torch)
-            OR (IsClass(i,&Weapon) 
+            OR (IsClass(i,&Weapon)
                AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
+         {
+            piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
+
+            return;
+         }
+      }
+
+      % Check radius enchantments.
+      foreach i in plRadiusEnchantments
+      {
+         if Nth(i,3) = self
+            AND NOT Send(First(i),@GetOldAreaEnchStyle)
          {
             piDrawEffectFlag = piDrawEffectFlag | OF_FLICKERING;
 
@@ -12709,19 +12730,13 @@ messages:
       {
          piFactionServiceUpdate = 0;
       }
-      else
+      else if middle
       {
-         if middle
-         {
-            piFactionServiceUpdate = piFactionServiceUpdate / 2;
-         }
-         else
-         {
-            if front
-            {
-               piFactionServiceUpdate = 3* piFactionServiceUpdate / 4;
-            }
-         }
+         piFactionServiceUpdate = piFactionServiceUpdate / 2;
+      }
+      else if front
+      {
+         piFactionServiceUpdate = 3* piFactionServiceUpdate / 4;
       }
 
       return;
@@ -14171,7 +14186,7 @@ messages:
 
    SendLightingInformation()
    {
-      local oLightObject, iColor, iIntensity;
+      local i, oLightObject, iColor, iIntensity;
 
       if poIllusion_set <> $
       {
@@ -14183,41 +14198,58 @@ messages:
 
          return;
       }
-      else
-      {
-         % A bit of a kludge.  Ideally, we should query the objects we are using
-         %  to find out if any want to add lighting information to us.
-         if plRadiusEnchantments <> $
-         {
-            foreach oLightObject in plRadiusEnchantments
-            {
-               if Nth(oLightObject,3) = self
-                  AND NOT Send(Nth(oLightObject,1),@GetOldAreaEnchStyle)
-               {
-                  if (piDrawEffectFlag & OF_FLICKERING)
-                  {
-                      iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
-                      iColor = Send(Nth(oLightObject,1),@GetLightColor);
-                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-                      AddPacket(1,iIntensity);
-                      AddPacket(2,iColor);
 
-                      return;
-                  }
-               }
+      % Bitflag check, don't need to check anything if not set.
+      if NOT (piDrawEffectFlag & OF_FLICKERING)
+      {
+         propagate;
+      }
+
+      iIntensity = 0;
+      iColor = 0;
+      % Check each lighting effect, strongest one wins.
+      % TODO: these should be additive, and the client should produce
+      % a combined lighting effect. Also, if more lighting effects are added
+      % this should probably query everything, just in case.
+
+      % Check torches and glow enchantment only here, hardcoded color/intensity.
+      foreach i in plUsing
+      {
+         if IsClass(i,&Torch)
+            OR (IsClass(i,&Weapon)
+               AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING))
+         {
+            iIntensity = 60;
+            iColor = LIGHT_FIRE;
+
+            break;
+         }
+      }
+
+      foreach i in plRadiusEnchantments
+      {
+         if Nth(i,3) = self
+         {
+            oLightObject = First(i);
+            if Send(oLightObject,@GetOldAreaEnchStyle)
+            {
+               continue;
+            }
+
+            if Send(oLightObject,@GetLightIntensity) >= iIntensity
+            {
+                iIntensity = Send(oLightObject,@GetLightIntensity);
+                iColor = Send(oLightObject,@GetLightColor);
             }
          }
+      }
 
-         if (piDrawEffectFlag & OF_FLICKERING)
-         {
-            AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % 75 out of 255 intensity of light
-            AddPacket(1,60);
-            % Color
-            AddPacket(2,LIGHT_FIRE);
+      if iIntensity > 0
+      {
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC),
+                   1,iIntensity, 2,iColor);
 
-            return;
-         }
+         return;
       }
 
       propagate;
@@ -14632,37 +14664,20 @@ messages:
 
    GetReagentBag()
    {
-      local i;
-
-      foreach i in plPassive
-      {
-         if IsClass(i,&ReagentBag)
-         {
-            return i;
-         }
-      }
-
-      return $;
+      return GetListElemByClass(plPassive,&ReagentBag);
    }
 
    GetReagentBagContents()
    {
-      local i;
+      local oBag;
 
-      foreach i in plPassive
+      oBag = GetListElemByClass(plPassive,&ReagentBag);
+      if oBag <> $
       {
-         if IsClass(i,&ReagentBag)
-         {
-            return Send(i,@GetReagentBagContents);
-         }
+         return Send(oBag,@GetReagentBagContents);
       }
 
       return $;
-   }
-
-   IsPhasedOut()
-   {
-      return Send(self,@IsEnchanted,#byClass=&Phase);
    }
 
    StartPhaseTimer()
@@ -14730,7 +14745,7 @@ messages:
             @AdjustVisualEffectBasedOnTimeRemaining,#who=self);
 
       if ptPhaseVisualEffectTimer = $
-         AND Send(self,@IsPhasedOut)
+         AND (piFlags & PFLAG_PHASED)
       {
          ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
       }
@@ -14887,80 +14902,15 @@ messages:
    % Use this for when either phase or spectator do the same thing
    IsInCannotInteractMode()
    {
-      if Send(self,@IsPhasedOut)
-         OR pbSpectatorMode
+      if (piFlags & PFLAG_PHASED)
+         OR (piFlags & PFLAG_SPECTATOR)
       {
          return TRUE;
       }
 
       return FALSE;
    }
-   
-   IsInSpectatorMode()
-   {
-      return pbSpectatorMode;
-   }
-   
-   DeactivateSpectatorMode()
-   {
-      pbSpectatorMode = FALSE;
 
-      if poOwner <> $
-      {
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
-
-      return;
-   }
-   
-   ActivateSpectatorMode()
-   {
-      local i,j,m;
-      
-      if pbSpectatorMode
-      {
-         return;
-      }
-      
-      foreach m in plControlledMinions
-      {
-         if IsClass(m,&Monster)
-         {
-            Send(m,@Delete);
-         }
-      }
-
-      if poOwner <> $
-      {
-         Send(poOwner,@WentSpectatorMode,#who=self);
-      }
-
-      if Send(self,@IsPhasedOut)
-      {
-         % Check for phase when going from normal to spectator
-         foreach j in plEnchantments
-         {
-            if IsClass(Nth(j,2),&Phase)
-            {
-               Send(self,@FreezePhaseTimer);
-               Send(self,@RemoveEnchantment,#what=Nth(j,2),#report=FALSE);
-
-               break;
-            }
-         }
-      }
-
-      pbSpectatorMode = TRUE;
-
-      if poOwner <> $
-      {
-         Send(self,@LeaveBuilderGroup);
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
-
-      return;
-   }
-   
    IsLikelyVictim()
    {
       if Send(self,@IsInCannotInteractMode)

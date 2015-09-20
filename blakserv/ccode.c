@@ -3234,6 +3234,92 @@ int C_FindListElem(int object_id,local_var_type *local_vars,
 }
 
 /*
+ * C_GetListNode: takes a list, a position and a list element. Checks each
+ *                sublist in the parent list and returns the list node
+ *                containing the element at that position. Returns NIL
+ *                if the element wasn't found.
+ */
+int C_GetListNode(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, list_elem, pos_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+
+   if (list_val.v.tag == TAG_NIL)
+   {
+      return NIL;
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_GetListNode object %i can't find elem in non-list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   pos_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+               normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 1)
+   {
+      bprintf("C_GetListNode object %i can't use non-int position %i,%i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return NIL;
+   }
+
+   list_elem = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+                  normal_parm_array[2].value);
+
+   if (list_elem.v.tag == TAG_NIL)
+   {
+      bprintf("C_GetListNode object %i can't find $ in list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   return GetListNode(list_val, pos_val.v.data, list_elem);
+}
+
+/*
+ * C_GetListElemByClass: takes a list and a class, returns the element of the
+ *                        list with that class if found, NIL otherwise.
+ */
+int C_GetListElemByClass(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, class_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+
+   if (list_val.v.tag == TAG_NIL)
+   {
+      return NIL;
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_GetListElemByClass object %i can't get elem in non-list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   class_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+                  normal_parm_array[1].value);
+   if (class_val.v.tag != TAG_CLASS)
+   {
+      bprintf("C_GetListElemByClass object %i can't get non-class %i,%i\n",
+         object_id, class_val.v.tag, class_val.v.data);
+      return NIL;
+   }
+
+   return GetListElemByClass(list_val, class_val.v.data);
+}
+
+/*
  * C_GetTimeZoneOffset: returns the amount of seconds that must be added
  *                      to local time to equal UTC. Conversely, subtracting
  *                      this number from UTC (GetTime()) equals local time.

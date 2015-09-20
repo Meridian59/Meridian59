@@ -11,24 +11,23 @@
 MolluskTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_MOLLUSK
 
 properties:
-   
-   piTreasure_num = TID_MOLLUSK
 
    piDiff_seed = 5
    piItem_att_chance = 2
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
-    plTreasure = [ [ &GreenMushroom, 1 ],
+      plTreasure = [ [ &GreenMushroom, 1 ],
                    [ &BlueDragonScale, 37],
                    [ &Ruby, 28],
                    [ &InkyCap, 34]

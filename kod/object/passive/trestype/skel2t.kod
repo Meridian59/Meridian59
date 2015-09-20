@@ -11,21 +11,20 @@
 Skeleton2Treasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_SKELETON2
 
 properties:
-   
-   piTreasure_num = TID_SKELETON2
 
    piItem_att_chance = 6
    piDIff_seed = 2
 
 messages:
-   
+
    Constructed()
    {
       plTreasure = [ [ &MetalShield, 9 ],
@@ -38,7 +37,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

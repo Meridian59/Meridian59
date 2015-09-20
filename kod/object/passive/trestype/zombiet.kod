@@ -11,23 +11,22 @@
 ZombieTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_ZOMBIE
 
 properties:
-   
-   piTreasure_num = TID_ZOMBIE
 
    %% zombies rarely generate anything good.
    piDiff_seed = 2
    piItem_Att_chance = 2
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &PurpleMushroom, 36],
                      [ &Sapphire, 28],
@@ -40,6 +39,7 @@ messages:
                      [ &Hammer, 1],
                      [ &Key, 1]
                    ];
+
       propagate;
    }
 

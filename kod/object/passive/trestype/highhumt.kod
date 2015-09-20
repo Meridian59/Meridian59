@@ -11,22 +11,21 @@
 HighHumanTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_HIGH_HUMAN
 
 properties:
-   
-   piTreasure_num = TID_HIGH_HUMAN
 
    piDiff_seed = 3
    piItem_att_chance = 2
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &MeatPie, 1],
                      [ &GoldShield, 8 ],

@@ -11,22 +11,21 @@
 LupoggKingTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_LUPOGG_KING
 
 properties:
-   
-   piTreasure_num = TID_LUPOGG_KING
+
    piItem_att_chance = 10
    piDiff_seed = 10
 
-
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &BlueDragonScale, 25 ],
                      [ &InkyCap, 20 ],
@@ -41,7 +40,7 @@ messages:
                      [ &IvyCirclet, 2 ],
                      [ &JalaNecklace, 10 ],
                      [ &DiscordScroll, 1 ]
-			 ];
+                   ];
 
       propagate;
    }

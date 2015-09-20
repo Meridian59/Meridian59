@@ -11,15 +11,14 @@
 EasterBunnyTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_EASTER_BUNNY
 
 properties:
-   
-   piTreasure_num = TID_EASTER_BUNNY
 
    % Event mobs - high chance of nice things.
    piItem_att_chance = 10

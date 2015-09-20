@@ -11,19 +11,18 @@
 RatTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_RAT
 
 properties:
-   
-   piTreasure_num = TID_RAT
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Herbs, 30 ],
                      [ &Mushroom, 25],

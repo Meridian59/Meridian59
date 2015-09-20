@@ -3170,6 +3170,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_NIGHT_VISION,#class=&NightVision);
       Send(self,@CreateOneSpellIfNew,#num=SID_FIREBALL,#class=&Fireball);
       Send(self,@CreateOneSpellIfNew,#num=SID_DMRESCUE,#class=&DMRescue);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SPECTATE,#class=&Spectate);
       Send(self,@CreateOneSpellIfNew,#num=SID_RESCUE,#class=&Rescue);
       Send(self,@CreateOneSpellIfNew,#num=SID_SMITE,#class=&Smite);
       Send(self,@CreateOneSpellIfNew,#num=SID_DAMN,#class=&Damn);

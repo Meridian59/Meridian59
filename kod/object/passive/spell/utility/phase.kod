@@ -165,7 +165,7 @@ messages:
          return FALSE;
       }
 
-      if Send(who,@IsInSpectatorMode)
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_SPECTATOR)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_while_specator_msg);
 
@@ -351,6 +351,7 @@ messages:
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
 
       Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_DITHERINVIS);
 

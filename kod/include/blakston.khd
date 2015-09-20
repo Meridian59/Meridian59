@@ -1953,6 +1953,7 @@
    SID_POISON = 15
    SID_FIRE_STORM = 16
    SID_SUPER_STRENGTH = 17
+   SID_SPECTATE = 18
 
    SID_TOUCH_OF_FLAME = 20
    SID_HOLY_TOUCH = 21
@@ -2259,7 +2260,7 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x1C63D7E
+   PFLAG_MASK              = 0x1423D7E
 
    PFLAG_INVISIBLE         = 0x0000001
    PFLAG_MURDERER          = 0x0000002

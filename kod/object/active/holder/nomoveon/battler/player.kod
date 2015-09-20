@@ -3400,11 +3400,22 @@ messages:
 
       foreach i in plEnchantments
       {
+         % If we have the spectate enchantment, remove it.
+         if IsClass(Nth(i,2),&Spectate)
+         {
+            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#report=FALSE);
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
+                  #type=ENCHANTMENT_PLAYER);
+            plEnchantments = DelListElem(plEnchantments,i);
+            Send(self,@ResetPlayerFlagList,#who=self);
+
+            continue;
+         }
+
          if First(i) <> $
          {
-            if IsClass(Nth(i,2),&Boon) = FALSE
+            if NOT IsClass(Nth(i,2),&Boon)
             {
-
                % Convert timer to integer if we have a timer,
                % otherwise log for debugging.
                if IsTimer(First(i))
@@ -3449,6 +3460,7 @@ messages:
       {
          % Phase reactivates enchantments while it is still in plEnchantments
          if IsClass(Nth(i,2),&Phase)
+            OR IsClass(Nth(i,2),&Spectate)
          {
             continue;
          }
@@ -14855,71 +14867,6 @@ messages:
       }
 
       return FALSE;
-   }
-
-   IsInSpectatorMode()
-   {
-      return (piFlags & PFLAG_SPECTATOR);
-   }
-
-   DeactivateSpectatorMode()
-   {
-      piFlags = (piFlags & ~PFLAG_SPECTATOR);
-
-      if poOwner <> $
-      {
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
-
-      return;
-   }
-
-   ActivateSpectatorMode()
-   {
-      local i,j,m;
-
-      if (piFlags & PFLAG_SPECTATOR)
-      {
-         return;
-      }
-      
-      foreach m in plControlledMinions
-      {
-         if IsClass(m,&Monster)
-         {
-            Send(m,@Delete);
-         }
-      }
-
-      if poOwner <> $
-      {
-         Send(poOwner,@WentSpectatorMode,#who=self);
-      }
-
-      if (piFlags & PFLAG_PHASED)
-      {
-         % Check for phase when going from normal to spectator
-         foreach j in plEnchantments
-         {
-            if IsClass(Nth(j,2),&Phase)
-            {
-               Send(self,@FreezePhaseTimer);
-               Send(self,@RemoveEnchantment,#what=Nth(j,2),#report=FALSE);
-
-               break;
-            }
-         }
-      }
-
-      piFlags = piFlags | PFLAG_SPECTATOR;
-
-      if poOwner <> $
-      {
-         Send(self,@LeaveBuilderGroup);
-         Send(poOwner,@SomethingChanged,#what=self);
-      }
-
-      return;
    }
 
    IsLikelyVictim()

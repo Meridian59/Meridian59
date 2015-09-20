@@ -1,0 +1,187 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Spectate is DMSpell
+% Part personal enchantment, part DM spell. Not available to players.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include spectate.lkod
+
+   spectate_name_rsc = "spectate"
+   spectate_icon_rsc = ispectate.bgf
+   spectate_desc_rsc = \
+      "Puts the recipient of the spell out-of-phase with the rest of the "
+      "world, leaving them unable to interact."
+   spectate_on_third = \
+      "%s has lost physical touch with this reality."
+   spectate_on_first = \
+      "You have lost your physical connection to this place!"
+   spectate_off_third = \
+      "%s has regained physical touch with this reality."
+   spectate_off_first = \
+      "You have regained your physical connection to this place."
+
+classvars:
+
+   vrName = spectate_name_rsc
+   vrIcon = spectate_icon_rsc
+   vrDesc = spectate_desc_rsc
+
+   viSpell_num = SID_SPECTATE
+
+properties:
+
+messages:
+
+   ShowDesc()
+   {
+      AddPacket(4,vrDesc);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $)
+   {
+      % Can always cast this.
+      return TRUE;
+   }
+
+   CastSpell(who=$,lTargets=$)
+   {
+      local each_obj, i, oRoom, oTarget;
+
+      if lTargets = $
+      {
+         return;
+      }
+
+      oTarget = First(lTargets);
+
+      if oTarget = $
+         OR NOT IsClass(oTarget,&Player)
+      {
+         return;
+      }
+
+      if Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_SPECTATOR)
+      {
+         Send(oTarget,@RemoveEnchantment,#what=self);
+
+         return;
+      }
+
+      if Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_PHASED)
+      {
+         Send(oTarget,@RemoveEnchantmentClass,#class=&Phase,#report=FALSE);
+      }
+      else
+      {
+         Send(oTarget,@RemoveAllMinions);
+         Send(oTarget,@LeaveBuilderGroup);
+      }
+
+      oRoom = Send(oTarget,@GetOwner);
+      if oRoom <> $
+      {
+         foreach i in Send(oRoom,@GetHolderActive)
+         {
+            each_obj = First(i);
+            if each_obj = oTarget
+            {
+               Send(oTarget,@MsgSendUser,#message_rsc=spectate_on_first);
+
+               continue;
+            }
+            if IsClass(each_obj,&User)
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=spectate_on_third,
+                     #parm1=Send(oTarget,@GetTrueName));
+            }
+         }
+      }
+
+      Send(oTarget,@StartEnchantment,#what=self);
+
+      propagate;
+   }
+
+   RestartEnchantmentEffect(who = $, state = $)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_SPECTATOR,#value=TRUE);
+
+      return;
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_SPECTATOR,#value=TRUE);
+
+      Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_DITHERGREY);
+
+      return;
+   }
+
+   EndEnchantment(who = $,report = TRUE,state = $)
+   {
+      local each_obj, i, oRoom;
+
+      if who = $
+      {
+         return;
+      }
+
+      Send(who,@EffectSendUserXlat,#xlat=0);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_SPECTATOR,#value=FALSE);
+
+      oRoom = Send(who,@GetOwner);
+      if oRoom <> $
+      {
+         foreach i in Send(oRoom,@GetHolderActive)
+         {
+            each_obj = First(i);
+            if each_obj = who
+            {
+               Send(who,@MsgSendUser,#message_rsc=spectate_off_first);
+
+               continue;
+            }
+            if IsClass(each_obj,&User)
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=spectate_off_third,
+                     #parm1=Send(who,@GetTrueName));
+            }
+         }
+      }
+
+      return;
+   }
+
+   CanBeRemovedByPlayer()
+   {
+      return FALSE;
+   }
+
+   GetStateValue()
+   {
+      return $;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -408,7 +408,7 @@ messages:
 
    %%% Spell enchantment functions.
 
-   RemoveEnchantmentClass(class = &Object)
+   RemoveEnchantmentClass(class = &Object, report=TRUE)
    "If have a current enchantment set by anything in class, end it."
    {
       local i, state, removedSomething;
@@ -431,7 +431,8 @@ messages:
                state = Nth(i,3);
             }
 
-            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#state=state);
+            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#state=state,
+                  #report=report);
 
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
                   #type=ENCHANTMENT_PLAYER);
@@ -1554,6 +1555,23 @@ messages:
             plControlledMinions = DelListElem(plControlledMinions,what);
          }
       }
+
+      return;
+   }
+
+   RemoveAllMinions()
+   {
+      local i;
+
+      foreach i in plControlledMinions
+      {
+         if IsClass(i,&Monster)
+         {
+            Send(i,&Delete);
+         }
+      }
+
+      plControlledMinions = $;
 
       return;
    }

@@ -1417,11 +1417,19 @@ messages:
       {
          Debug("Unreachable. Null poTarget","monster",self);
          poTarget = $;
-         Send(self,@EnterStateWait); 
+         Send(self,@EnterStateWait);
 
-         return; 
+         return;
       }
-      
+
+      % Victim phased out or is now in spectator mode, break aggro.
+      if Send(poTarget,@IsInCannotInteractMode)
+      {
+         Send(self,@EnterStateMove);
+
+         return;
+      }
+
       Send(poBrain,@GetAttackBehavior,#mob=self,#target=poTarget,
            #behavior=piBehavior);
       
@@ -1486,6 +1494,14 @@ messages:
       {
          %Debug("Unreachable. Null victim.");
          Send(self,@EnterStateWait);
+
+         return;
+      }
+
+      % Victim phased out or is now in spectator mode, break aggro.
+      if Send(oVictim,@IsInCannotInteractMode)
+      {
+         Send(self,@EnterStateMove);
 
          return;
       }

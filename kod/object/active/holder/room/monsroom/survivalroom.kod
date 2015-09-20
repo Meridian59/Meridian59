@@ -107,10 +107,6 @@ resources:
    spectator_only_msg = \
       "Combat has already begun. You may spectate until all participants "
       "have died."
-   player_was_spectated = \
-      "%s has lost physical touch with this reality."
-   you_were_spectated = \
-      "You have lost your physical connection to this place!"
    round_begin_wav = gong.wav
 
 classvars:
@@ -1245,20 +1241,21 @@ messages:
    LeaveHold(what=$)
    {
       if IsClass(what,&User)
-         AND Send(what,@IsInSpectatorMode)
       {
-         Send(what,@DeactivateSpectatorMode);
-         Post(self,@BootUser,#who=what);
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_SPECTATOR)
+         {
+            Send(what,@RemoveEnchantmentClass,#class=&Spectate);
+            Post(self,@BootUser,#who=what);
 
-         propagate;
-      }
+            propagate;
+         }
 
-      if IsClass(what,&User)
-         AND plParticipants <> $
-         AND FindListElem(plParticipants,what) <> 0
-      {
-         Post(self,@CountdownToBoot,#who=what);
-         %Post(self,@BootUser,#who=what);
+         if plParticipants <> $
+            AND FindListElem(plParticipants,what) <> 0
+         {
+            Post(self,@CountdownToBoot,#who=what);
+            %Post(self,@BootUser,#who=what);
+         }
       }
 
       propagate;
@@ -1473,43 +1470,32 @@ messages:
       return;
    }
    
-   SpectateUser(who=$,inform=TRUE)
+   SpectateUser(who=$)
    {
-      local i, p;
+      local p, oSpell;
 
       if plParticipants <> $
          AND FindListElem(plParticipants,who) <> 0
       {
          plParticipants = DelListElem(plParticipants,who);
       }
-      
+
       if piPublic
       {
          foreach p in plLivesPerPlayer
          {
-            if Nth(p,1) = who
+            if First(p) = who
             {
                plLivesPerPlayer = DelListElem(plLivesPerPlayer,p);
             }
          }
       }
 
-      Send(who,@MsgSendUser,#message_rsc=you_were_spectated);
       Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
-      Send(who,@ActivateSpectatorMode);
 
-      if inform
-      {
-         foreach i in plActive
-         {
-            if IsClass(First(i),&User)
-            {
-               Send(First(i),@MsgSendUser,#message_rsc=player_was_spectated,
-                                #parm1=Send(who,@GetTrueName));
-            }
-         }
-      }
-      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SPECTATE);
+      Send(oSpell,@CastSpell,#who=self,#lTargets=[who]);
+
       if plParticipants = $
       {
          Send(self,@BootAllUsers);
@@ -1517,7 +1503,7 @@ messages:
 
       return;
    }
-   
+
    CountdownToBoot(who=$)
    {
       plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
@@ -1589,14 +1575,14 @@ messages:
       % They logged off.
       if Send(who,@GetOwner) = $
       {
-         Send(who,@DeactivateSpectatorMode);
+         Send(who,@RemoveEnchantmentClass,#class=&Spectate);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
       
       % They're still here.
       if Send(who,@GetOwner) = self
       {
-         Send(who,@DeactivateSpectatorMode);
+         Send(who,@RemoveEnchantmentClass,#class=&Spectate);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
 

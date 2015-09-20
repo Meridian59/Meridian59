@@ -1,0 +1,11 @@
+spectate_name_rsc = de "zuschauen"
+spectate_desc_rsc = de \
+   "Trennt den Empfänger des Zaubers mit dem Rest der Welt, und hinterlässt "
+   "ihn unfähig zu interagieren."
+spectate_on_third = de "%s hat den physischen Zustand der Realität verloren."
+spectate_on_first = de \
+   "Du hast deine physische Verbindung zu diesem Ort verlassen!"
+spectate_off_third = de \
+   "%s hat den physischen Kontakt zur Realität wieder erhalten."
+spectate_off_first = de \
+   "Du hast die physische Verbindung zu diesem Platz wieder erhalten."

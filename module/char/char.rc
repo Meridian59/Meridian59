@@ -16,13 +16,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Neutral) resources
+// German resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
-#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -53,8 +51,8 @@ BEGIN
     LTEXT           "Konzentriere dich auf Waffenfertigkeiten und Kraanan.",-1,98,164,190,8
     PUSHBUTTON      "&Hybrid",1012,43,178,50,11
     LTEXT           "Lerne Magie und Waffenfertigkeiten.",-1,98,178,190,8
-    PUSHBUTTON      "Hybrid &2",1027,43,192,50,11
-    LTEXT           "Lerne Waffenfertigkeiten, Riija und eine andere Zauberschule.",-1,98,192,190,8
+    PUSHBUTTON      "&Favoriten",1027,43,192,50,11
+    LTEXT           "Von Spielern eingereichte und empfohlene Werte.",-1,98,192,190,8
     LTEXT           "Eigenschaftspunkte übrig:",-1,8,215,83,8
     CONTROL         "",1028,"BlakGraph",0x8,95,214,98,11
     PUSHBUTTON      "&<< Zurück",1008,219,214,41,12
@@ -67,7 +65,7 @@ BEGIN
     LTEXT           "Beeinflußt die Trefferwarscheinlichkeit von Zaubersprüchen und Waffen.",-1,175,119,134,18
 END
 
-143 DIALOG  0, 0, 316, 161
+143 DIALOG 0, 0, 316, 161
 STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -141,12 +139,12 @@ BEGIN
     PUSHBUTTON      "Weiter &>>",1009,263,214,41,12
 END
 
-129 DIALOG  0, 0, 215, 254
+129 DIALOG 0, 0, 215, 254
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Wähle Deinen Charakter"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LISTBOX         1107,9,9,118,42, LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         1107,9,9,118,42,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "Bestätigen",1,167,9,39,14,WS_GROUP
     PUSHBUTTON      "Ausloggen",2,167,27,39,14,WS_GROUP
     EDITTEXT        1041,10,74,195,101,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
@@ -174,7 +172,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     1                       "Willst Du %s wirklich löschen?"
     3                       "Der Name Deines Charakters muß mindestens %d Zeichen lang sein und nur reguläre Zeichen enthalten."
@@ -183,7 +181,7 @@ BEGIN
     6                       "Du hast noch einige Fertigkeitspunkte übrig. Willst Du diese wirklich verfallen lassen?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     16                      "Name"
     17                      "Zaubersprüche"
@@ -194,61 +192,28 @@ BEGIN
     22                      "<unbekannt>"
 END
 
-#endif    // German (Neutral) resources
+#endif    // German resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "charrc.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "#include ""windows.h""\r\n"
-    "#include ""commctrl.h""\r\n"
-    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_CHARPICK DIALOG  0, 0, 215, 254
+IDD_CHARPICK DIALOG 0, 0, 215, 254
 STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Select character"
 FONT 8, "MS Sans Serif"
-// si : 12-01-2013, removed LBS_SORT as characters sorted alphabeticall and free character slots now appear last using bubblesort.
-// limitation: Using bubblesort here because it's simpler and there won't be more than 10 entries
 BEGIN
-    LISTBOX         IDC_CHARLIST,9,9,118,51, LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_CHARLIST,9,9,118,51,LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | WS_VSCROLL | WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,167,9,39,14,WS_GROUP
     PUSHBUTTON      "Log off",IDCANCEL,167,27,39,14,WS_GROUP
     EDITTEXT        IDC_MOTD,10,74,195,101,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
@@ -311,7 +276,7 @@ BEGIN
     PUSHBUTTON      "Next &>>",IDC_NEXT_PAGE,270,214,34,12,WS_DISABLED
 END
 
-IDD_CHARAPPEARANCE DIALOG  0, 0, 316, 161
+IDD_CHARAPPEARANCE DIALOG 0, 0, 316, 161
 STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -366,10 +331,10 @@ BEGIN
     LTEXT           "Learn spells from many schools -- with sufficent study",IDC_STATIC,98,150,168,8
     PUSHBUTTON      "&Warrior",IDC_WARRIOR,43,164,50,11
     LTEXT           "Master weaponcraft and ranged combat",IDC_STATIC,98,164,167,8
-    PUSHBUTTON      "Hybrid &1",IDC_HYBRID,43,178,50,11
+    PUSHBUTTON      "&Hybrid",IDC_HYBRID,43,178,50,11
     LTEXT           "Learn weaponcraft and two schools of magic",IDC_STATIC,98,178,161,8
-    PUSHBUTTON      "Hybrid &2",IDC_RIIJA,43,192,50,11
-    LTEXT           "Learn weaponcraft, Riija and another magic school",IDC_STATIC,98,192,161,8
+    PUSHBUTTON      "&Favorites",IDC_FAVORITES,43,192,50,11
+    LTEXT           "Player submitted and recommended builds",IDC_STATIC,98,192,133,8
     LTEXT           "Stat points left",IDC_STATIC,24,215,46,8
     CONTROL         "",IDC_POINTSLEFT,"BlakGraph",0x8,87,214,98,11
     PUSHBUTTON      "&<< Prev",IDC_PREVIOUS_PAGE,231,214,34,12
@@ -389,13 +354,42 @@ BEGIN
 END
 
 
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "charrc.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#include ""commctrl.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_CHARPICK, DIALOG
     BEGIN
@@ -451,7 +445,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_DELETECHAR          "Are you sure you want to delete %s?"
     IDS_BADCHARNAME         "Your name must be at least %d characters long,\nand must consist of legal characters."
@@ -460,7 +454,7 @@ BEGIN
     IDS_SPELLPOINTSLEFT     "You have some points remaining to allocate to spells and skills; are you sure you want to discard these points?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CHAR_NAME           "Name"
     IDS_CHARSPELLS          "Spells"
@@ -471,7 +465,12 @@ BEGIN
     IDS_NEWCHARACTER        "<New character>"
 END
 
-#endif    // English (U.S.) resources
+STRINGTABLE
+BEGIN
+    IDS_FAVORITES           "http://wiki.openmeridian.org/index.php/Character_Builds_Document"
+END
+
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

@@ -269,6 +269,15 @@ messages:
       return;
    }
 
+   NodeIsAvailable()
+   {
+      if (ptManaDoor_Timer <> $)
+      {
+         return TRUE;
+      }
+      return FALSE;
+   }
+
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
    "This takes a spell/skill that who is trying to advance and modifies "
    "the improve_chance. This supercedes the ROOM_HARD_LEARN flag."

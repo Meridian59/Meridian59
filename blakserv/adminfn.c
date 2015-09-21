@@ -2153,6 +2153,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
 		case GETLISTELEMBYCLASS : strcpy(c_name, "GetListElemByClass"); break;
 		case GETLISTNODE : strcpy(c_name, "GetListNode"); break;
+		case LISTCOPY : strcpy(c_name, "ListCopy"); break;
 		case GETTIMEZONEOFFSET : strcpy(c_name, "GetTimeZoneOffset"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
 		case GETTICKCOUNT : strcpy(c_name, "GetTickCount"); break;

@@ -3372,10 +3372,10 @@ int C_FindListElem(int object_id,local_var_type *local_vars,
 }
 
 /*
- * C_GetListNode: takes a list, a position and a list element. Checks each
- *                sublist in the parent list and returns the list node
- *                containing the element at that position. Returns NIL
- *                if the element wasn't found.
+ * C_GetListNode: takes a list, a position and an object. Checks each
+ *                sub-list in the parent list and returns the first list node
+ *                containing the object at that position. Returns NIL if the
+ *                object wasn't found in any sub-lists.
  */
 int C_GetListNode(int object_id,local_var_type *local_vars,
          int num_normal_parms,parm_node normal_parm_array[],
@@ -3455,6 +3455,36 @@ int C_GetListElemByClass(int object_id,local_var_type *local_vars,
    }
 
    return GetListElemByClass(list_val, class_val.v.data);
+}
+
+/*
+ * C_ListCopy: takes a list, makes a copy and returns the copy.
+ */
+int C_ListCopy(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, ret_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+
+   if (list_val.v.tag == TAG_NIL)
+   {
+      return NIL;
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_ListCopy object %i can't copy non-list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   ret_val.v.data = ListCopy(list_val.v.data);
+   ret_val.v.tag = TAG_LIST;
+
+   return ret_val.int_val;
 }
 
 /*

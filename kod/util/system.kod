@@ -260,7 +260,7 @@ resources:
 
    system_success_rsc = "Success."
    system_failure_rsc = "Failure."
-   system_please_wait_rsc = "Please wait about 30 seconds for processing."
+   system_please_wait_rsc = "Please wait about 5 seconds for processing."
 
    % A resource for use when a hidden admin tells something to a non-admin.
    %  Placed here so we can filter out user names to avoid confusion.
@@ -591,7 +591,7 @@ messages:
 
    RecreateAll()
    {
-      local i, plSavedFlagStates, plSavedSenate;
+      local i, lSavedFlagStates, lSavedSenate;
 
       % Reset our level points.
       vlLevelPoints = [1,2,4,6,8,10];
@@ -618,8 +618,8 @@ messages:
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
 
-      plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
-      plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
+      lSavedFlagStates = ListCopy(Send(poTerritoryGame,@SaveFlagStates));
+      lSavedSenate = ListCopy(Send(poTokenGame,@GetSenate));
 
       % Don't leave any active spellcasting objects
       Send(self,@DeleteAllSpellTotems);
@@ -652,20 +652,20 @@ messages:
       %Send(self,@CreateAllSpellsIfNew);
       %Send(self,@CreateAllRoomsIfNew);
 
-      if plSavedFlagStates <> $
+      if lSavedFlagStates <> $
       {
-         Send(Send(self,@GetTerritoryGame),@SetFlagStates,#lFlagStates=plSavedFlagStates);
-         plSavedFlagStates = $;
+         Send(poTerritoryGame,@SetFlagStates,#lFlagStates=lSavedFlagStates);
+         lSavedFlagStates = $;
       }
-      
-      if plSavedSenate <> $
+
+      if lSavedSenate <> $
       {
-         Send(Send(self,@GetTokenGame),@SetSenate,#lSenate=plSavedSenate);
-         plSavedSenate = $;
+         Send(poTokenGame,@SetSenate,#lSenate=lSavedSenate);
+         lSavedSenate = $;
       }
-      
+
       piRecreate_state = RECREATE_WAITING;
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,3000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,500);
 
       Send(self,@RecreateVisibleCargoTypes);
 
@@ -691,7 +691,7 @@ messages:
       Send(self,@RecreateAllTreasureTypes);
       Send(self,@RecreateAllBackgroundObjects);
 
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseThree,2000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseThree,500);
       piRecreate_state = RECREATE_WAITING;
 
       return;
@@ -716,7 +716,7 @@ messages:
 
       Send(self,@RecreateAllSpells,#figure_totals=FALSE);
 
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFour,2000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFour,500);
       piRecreate_state = RECREATE_WAITING;
 
       return;
@@ -737,7 +737,7 @@ messages:
 
       Send(self,@RecreateAllSkills,#figure_totals=FALSE);
 
-      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFive,2000);
+      ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseFive,500);
       piRecreate_state = RECREATE_WAITING;
 
       return;
@@ -7736,7 +7736,7 @@ messages:
          lTempClassOrder = lClassOrder;
       }
       
-      lBaseList = Send(self,@ListCopy,#source=lItems);
+      lBaseList = ListCopy(lItems);
       
       lSortedItems = $;
       foreach cClass in lTempClassOrder

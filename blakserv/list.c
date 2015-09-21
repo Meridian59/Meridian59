@@ -124,15 +124,27 @@ int Rest(int list_id)
 	return (l? l->rest.int_val : NIL);
 }
 
-int AppendListElem(val_type source,val_type list_val)
+int AppendListElem(val_type source, val_type list_val)
 {
-   int list_id, new_list_id, n = 0;
+   int list_id, new_list_id, n = 0, temp_list_id = -1;
    list_node *l, *new_node;
-
-   list_id = list_val.v.data;
 
    if (list_val.v.tag == TAG_NIL)
       return Cons(source,list_val);
+   list_id = list_val.v.data;
+
+   // If we're appending a list, get the ID now in case memory is reallocated.
+   if (source.v.tag == TAG_LIST)
+      temp_list_id = source.v.data;
+
+   // Allocate first, so a resize doesn't clobber list references.
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+   if (!new_node)
+   {
+      bprintf("AppendListElem couldn't create list node, returning list %i", list_id);
+      return list_id;
+   }
 
    l = GetListNodeByID(list_id);
    if (!l)
@@ -150,16 +162,16 @@ int AppendListElem(val_type source,val_type list_val)
    if (n > 500)
       bprintf("Warning, AppendListElem adding to large list, length %i",n);
 
-   new_list_id = AllocateListNode();
-   new_node = GetListNodeByID(new_list_id);
-   if (!new_node)
-   {
-      bprintf("AppendListElem couldn't create list node, returning list %i",list_id);
-      return list_id;
-   }
-
    new_node->rest.int_val = NIL;
-   new_node->first.int_val = source.int_val;
+
+   if (temp_list_id >= 0)
+   {
+      new_node->first.v.tag = TAG_LIST;
+      new_node->first.v.data = temp_list_id;
+   }
+   else
+      new_node->first.int_val = source.int_val;
+
    l->rest.v.data = new_list_id;
    l->rest.v.tag = TAG_LIST;
 
@@ -168,10 +180,13 @@ int AppendListElem(val_type source,val_type list_val)
 
 int Cons(val_type source,val_type dest)
 {
-   int list_id;
+   int list_id, source_id = -1, dest_id = -1;
    list_node *new_node;
 
-   /*   bprintf("Allocing list node #%i\n",num_nodes); */
+   if (source.v.tag == TAG_LIST)
+      source_id = source.v.data;
+   if (dest.v.tag == TAG_LIST)
+      dest_id = dest.v.data;
 
    list_id = AllocateListNode();
    new_node = GetListNodeByID(list_id);
@@ -181,8 +196,21 @@ int Cons(val_type source,val_type dest)
       return NIL;
    }
 
-   new_node->first.int_val = source.int_val;
-   new_node->rest.int_val = dest.int_val;
+   if (source_id >= 0)
+   {
+      new_node->first.v.tag = TAG_LIST;
+      new_node->first.v.data = source_id;
+   }
+   else
+      new_node->first.int_val = source.int_val;
+   if (dest_id >= 0)
+   {
+      new_node->rest.v.tag = TAG_LIST;
+      new_node->rest.v.data = dest_id;
+   }
+   else
+      new_node->rest.int_val = dest.int_val;
+
    return list_id;
 }
 
@@ -441,7 +469,7 @@ int GetListElemByClass(val_type list_id, int class_id)
    l = GetListNodeByID(list_id.v.data);
    if (!l)
    {
-      bprintf("FindListElemByClass got invalid list.\n");
+      bprintf("GetListElemByClass got invalid list.\n");
       return NIL;
    }
 
@@ -450,13 +478,13 @@ int GetListElemByClass(val_type list_id, int class_id)
       o = GetObjectByID(l->first.v.data);
       if (o == NULL)
       {
-         bprintf("FindListElemByClass can't find object %i\n",l->first.v.data);
+         bprintf("GetListElemByClass can't find object %i\n",l->first.v.data);
          return NIL;
       }
       c = GetClassByID(o->class_id);
       if (c == NULL)
       {
-         bprintf("FindListElemByClass can't find class %i, DIE totally\n",
+         bprintf("GetListElemByClass can't find class %i, DIE totally\n",
             o->class_id);
          FlushDefaultChannels();
          return NIL;
@@ -477,14 +505,14 @@ int GetListElemByClass(val_type list_id, int class_id)
          o = GetObjectByID(l->first.v.data);
          if (o == NULL)
          {
-            bprintf("FindListElemByClass can't find object %i\n",l->first.v.data);
+            bprintf("GetListElemByClass can't find object %i\n",l->first.v.data);
 
             return NIL;
          }
          c = GetClassByID(o->class_id);
          if (c == NULL)
          {
-            bprintf("FindListElemByClass can't find class %i, DIE totally\n",
+            bprintf("GetListElemByClass can't find class %i, DIE totally\n",
                o->class_id);
             FlushDefaultChannels();
             return NIL;
@@ -549,15 +577,148 @@ int GetListNode(val_type list_id, int position, val_type list_elem)
    return NIL;
 }
 
+// ListCopy makes a lot of list allocations, and if a list allocation causes
+// the list_nodes memory to be resized, all existing list_node references
+// here are invalidated. As a result, this function is structured so that
+// no old list_nodes are accessed after an allocation or recursive ListCopy
+// call. This adds overhead, but is still the fastest safe way to copy a list.
+int ListCopy(int list_id)
+{
+   list_node *l, *new_node, *new_next;
+   int new_list_id, first_list_id, rest_list_id, l_list_id;
+   int temp;
+
+   // Allocate first so a resize doesn't clobber references.
+   new_list_id = first_list_id = AllocateListNode();
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("ListCopy got invalid list %i.\n",list_id);
+      return NIL;
+   }
+
+   if (l->first.v.tag == TAG_LIST)
+   {
+      // Copy to temp, in case ListCopy resizes memory.
+      temp = ListCopy(l->first.v.data);
+
+      // After a ListCopy call, any existing list reference may be invalid.
+      // Access list_nodes directly, list node already confirmed to exist.
+      l = &list_nodes[list_id];
+
+      new_node = GetListNodeByID(new_list_id);
+      if (!new_node)
+      {
+         bprintf("ListCopy couldn't allocate new node! %i\n",new_list_id);
+         return NIL;
+      }
+      new_node->first.v.data = temp;
+      new_node->first.v.tag = TAG_LIST;
+   }
+   else
+   {
+      new_node = GetListNodeByID(new_list_id);
+      if (!new_node)
+      {
+         bprintf("ListCopy couldn't allocate new node! %i\n",new_list_id);
+         return NIL;
+      }
+      new_node->first.int_val = l->first.int_val;
+   }
+
+   // Get next list id for accessing after allocation.
+   l_list_id = l->rest.v.data;
+
+   while (l && l->rest.v.data != NIL)
+   {
+      // Allocate first so a resize doesn't clobber references.
+      rest_list_id = AllocateListNode();
+
+      l = GetListNodeByID(l_list_id);
+      if (!l)
+      {
+         bprintf("ListCopy got invalid list node %i %i\n",
+            l->rest.v.tag, l->rest.v.data);
+         return NIL;
+      }
+
+      if (l->first.v.tag == TAG_LIST)
+      {
+         // Copy to temp, in case ListCopy resizes memory.
+         temp = ListCopy(l->first.v.data);
+         // After a ListCopy call, any existing list reference may be invalid.
+         // Access list_nodes directly, list node already confirmed to exist.
+         l = &list_nodes[l_list_id];
+
+         // Get new list node.
+         new_next = GetListNodeByID(rest_list_id);
+         if (!new_next)
+         {
+            bprintf("ListCopy couldn't allocate new node! %i\n",
+               new_list_id);
+            return NIL;
+         }
+         // Access list_nodes directly, list node already confirmed to exist.
+         new_node = &list_nodes[first_list_id];
+         new_node->rest.v.tag = TAG_LIST;
+         new_node->rest.v.data = rest_list_id;
+         new_node = new_next;
+
+         new_node->first.v.data = temp;
+         new_node->first.v.tag = TAG_LIST;
+      }
+      else
+      {
+         // Get new list node.
+         new_next = GetListNodeByID(rest_list_id);
+         if (!new_next)
+         {
+            bprintf("ListCopy couldn't allocate new node! %i\n",
+               new_list_id);
+            return NIL;
+         }
+         // Access list_nodes directly, list node already confirmed to exist.
+         new_node = &list_nodes[first_list_id];
+         new_node->rest.v.tag = TAG_LIST;
+         new_node->rest.v.data = rest_list_id;
+         new_node = new_next;
+
+         new_node->first.int_val = l->first.int_val;
+      }
+
+      // Save list node refs, so we can get them next iteration after the allocation.
+      first_list_id = rest_list_id;
+      l_list_id = l->rest.v.data;
+   }
+   new_node->rest.int_val = NIL;
+
+   return new_list_id;
+}
+
 int InsertListElem(int n,int list_id,val_type new_val)
 {
-   int new_list_id;
+   int new_list_id, temp_list_id = -1;
    list_node *l, *prev = NULL, *new_node;
 
-   if (n  == 0)
+   if (n == 0)
    {
       bprintf("InsertListElem given invalid list element %i, returning old list\n",
          n);
+      return list_id;
+   }
+
+   // If the element we're adding is a list, get the list node now before
+   // allocating another node, in case memory is resized.
+   if (new_val.v.tag == TAG_LIST)
+      temp_list_id = new_val.v.data;
+   // Allocate first, so a resize doesn't clobber list references.
+   new_list_id = AllocateListNode();
+   new_node = GetListNodeByID(new_list_id);
+   if (!new_node)
+   {
+      bprintf("InsertListElem couldn't allocate new node! %i\n",
+         new_list_id);
       return list_id;
    }
 
@@ -575,16 +736,18 @@ int InsertListElem(int n,int list_id,val_type new_val)
       if (l->rest.v.tag != TAG_LIST)
       {
          // Add the new value to the end of the list.
-         new_list_id = AllocateListNode();
-         new_node = GetListNodeByID(new_list_id);
-         if (!new_node)
-         {
-            bprintf("InsertListElem couldn't allocate new node! %i\n",
-               new_list_id);
-            return list_id;
-         }
          new_node->rest.int_val = NIL;
-         new_node->first.int_val = new_val.int_val;
+
+         // Use temp id if element we're adding is a list, in case allocate
+         // resized memory.
+         if (temp_list_id >= 0)
+         {
+            new_node->first.v.tag = TAG_LIST;
+            new_node->first.v.data = temp_list_id;
+         }
+         else
+            new_node->first.int_val = new_val.int_val;
+
          // Previous node points to this one.
          l->rest.v.tag = TAG_LIST;
          l->rest.v.data = new_list_id;
@@ -601,21 +764,21 @@ int InsertListElem(int n,int list_id,val_type new_val)
       return list_id;
    }
 
-   new_list_id = AllocateListNode();
-   new_node = GetListNodeByID(new_list_id);
-
-   if (!new_node)
-   {
-      bprintf("InsertListElem couldn't allocate new node! %i\n",
-         new_list_id);
-      return list_id;
-   }
-
    // This node is inserted in position of the existing one, so use its rest data.
    // Points to the old node.
    new_node->rest.v.data = prev->rest.v.data;
    new_node->rest.v.tag = TAG_LIST;
-   new_node->first.int_val = new_val.int_val;
+
+   // Use temp id if element we're adding is a list, in case allocate
+   // resized memory.
+   if (temp_list_id >= 0)
+   {
+      new_node->first.v.tag = TAG_LIST;
+      new_node->first.v.data = temp_list_id;
+   }
+   else
+      new_node->first.int_val = new_val.int_val;
+
    // Previous node points to this one.
    prev->rest.v.data = new_list_id;
 

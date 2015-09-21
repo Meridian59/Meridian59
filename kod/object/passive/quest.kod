@@ -51,25 +51,25 @@ messages:
    Init(template_index=0,report=FALSE)
    "Returns template_index if successful, 0 if unsuccessful."
    {
-      local iFirstNodeTemplateIndex, bSuccess;
+      local iFirstNodeTemplateIndex, bSuccess, oQE;
 
-      if (Send(Send(SYS,@GetQuestEngine),@IsValidQuestTemplate,
-               #index=template_index) <> 1)
+      oQE = Send(SYS,@GetQuestEngine);
+
+      if (Send(oQE,@IsValidQuestTemplate,#index=template_index) <> 1)
       {
          return 0;
       }
 
       piQuestTemplateIndex = template_index;
 
-      plPlayerRestrict2 = Send(SYS,@ListCopy,
-                              #source=Send(Send(SYS,@GetQuestEngine),
-                              @GetQuestPlayerRestrictions2,
-                              #index=piQuestTemplateIndex));
+      plPlayerRestrict2 = ListCopy(Send(oQE,@GetQuestPlayerRestrictions2,
+                                       #index=piQuestTemplateIndex));
 
       % Create and initialize first node
       piQuestNodeCounter = 1;
-      iFirstNodeTemplateIndex = Send(Send(SYS,@GetQuestEngine),
-                     @GetNextQuestNode,#quest_template=piQuestTemplateIndex);
+      iFirstNodeTemplateIndex = Send(oQE,@GetNextQuestNode,
+                                    #quest_template=piQuestTemplateIndex);
+
       poQuestNode = Create(&QuestNode);
       bSuccess = Send(poQuestNode,@Init,#index=iFirstNodeTemplateIndex,
                      #owning_quest=self,#waiting_for_players=TRUE);
@@ -79,14 +79,11 @@ messages:
          Debug("Trouble creating questnode of type ",
                iFirstNodeTemplateIndex,"!");
       }
-      else
+      else if report
       {
-         if report
-         {
-            Debug("Quest created. Begin at room #",Send(Send(Send(poQuestNode,
-                  @GetDestNPC),@GetOwner),@GetRoomNum));
-            Debug( "First node is",iFirstNodeTemplateIndex );
-         }
+         Debug("Quest created. Begin at room #",Send(Send(Send(poQuestNode,
+               @GetDestNPC),@GetOwner),@GetRoomNum));
+         Debug( "First node is",iFirstNodeTemplateIndex );
       }
 
       return template_index;

@@ -10,53 +10,74 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 RadiusEnchantment is Spell
 
-% Radius Enchantments are spells that apply an effect to players within a certain distance of the caster.
-% Caster must typically maintain a trance, but requirements to keep the trance are variable.
+% Radius Enchantments are spells that apply an effect to players within a 
+% certain distance of the caster.
+% Caster must typically maintain a trance, but requirements to keep the trance 
+% are variable.
 %
 % Internally, the spell maintains an instanced state of 7 entries, of the form:
-% [source, mana drain time, periodic effect time, enchanted object list, power, range, original room].
-% This should not be altered. It is used to track the radius, who should be affected, who the caster was,
+% [source, mana drain time, periodic effect time, enchanted object list, 
+%  power, range, duration, original room].
+% This should not be altered. It is used to track the radius, who should be 
+% affected, who the caster was,
 % when to drain mana, and when to employ periodic effects.
-% Power and Range have their own Calculate functions if they need to be modified.
-% For example, a spell may have a Power range 1-20, or a Power range not based on spellpower at all.
+% Power and Range have their own Calculate functions if they need to be 
+% modified.
+% For example, a spell may have a Power range 1-20, or a Power range not 
+% based on spellpower at all.
 %
-% EnterRadius and LeaveRadius add or remove from an object's plRadiusEnchantments list.
+% EnterRadius and LeaveRadius add or remove from an object's 
+% plRadiusEnchantments list.
 % Each element is of the form [spell object, spellpower, caster, origin room].
 % These states should be used when effects are actually being performed,
-% and should be called by the objects themselves. For example, a player swinging a mace will
-% check his plRadiusEnchantments list for spells that affect mace swings, and call them appropriately.
+% and should be called by the objects themselves. For example, a player 
+% swinging a mace will
+% check his plRadiusEnchantments list for spells that affect mace swings, 
+% and call them appropriately.
 %
 % Useful Radius enchantment functions to call (these are in Object.kod):
-% IsAffectedByRadiusEnchantment(what=$,byClass=&RadiusEnchantment)  -- returns TRUE or FALSE
-% GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment) -- returns [spell object, power, caster] with highest power
-% GetRadiusEnchantments()                                           -- returns object's list of [spell object, power, caster]
+% IsAffectedByRadiusEnchantment(what=$,byClass=&RadiusEnchantment)
+%    -- returns TRUE or FALSE
+% GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+%    -- returns [spell object, power, caster] with highest power
+% GetRadiusEnchantments()
+%    -- returns object's list of [spell object, power, caster]
 
 constants:
 
    include blakston.khd
    
-   RADIUS_CHECK_TIME = 250   % Time between checks for who is affected, no worse than an active object lag-wise
+   RADIUS_CHECK_TIME = 250   % Time between checks for who is affected
 
 resources:
 
    include radiusench.lkod
 
-   radius_ench_default_cast = "A circle of magic expands outward from you."
-   radius_ench_default_starts = "A circle of magic expands outward from %s."
-   radius_ench_default_ends = "The circle of magic maintained by %s collapses."
-   radius_ench_default_caster_ends = "Your circle of magic collapses."
-   radius_ench_default_caster_enter = "You feel your circle of magic having an effect."
-   radius_ench_default_enter = "You enter a circle of magical effect maintained by %s."
-   radius_ench_default_leave = "You leave a circle of magical effect maintained by %s."
+   radius_ench_default_cast = \
+      "A circle of magic expands outward from you."
+   radius_ench_default_starts = \
+      "A circle of magic expands outward from %s."
+   radius_ench_default_ends = \
+      "The circle of magic maintained by %s collapses."
+   radius_ench_default_caster_ends = \
+      "Your circle of magic collapses."
+   radius_ench_default_caster_enter = \
+      "You feel your circle of magic having an effect."
+   radius_ench_default_enter = \
+      "You enter a circle of magical effect maintained by %s."
+   radius_ench_default_leave = \
+      "You leave a circle of magical effect maintained by %s."
    radius_ench_no_newbie = \
       "Your guardian angel tells you, \"You are not ready to cast spells "
       "which may hinder other players.\""
       
-   radius_ench_default_already_cast = "You are already maintaining that radius enchantment."
+   radius_ench_default_already_cast = \
+      "You are already maintaining that radius enchantment."
 
    radius_ench_need_instrument = "You need an instrument!"
 
-   radius_ench_old_style_aleady_cast = "You are already under the effects of that magic."
+   radius_ench_old_style_aleady_cast = \
+      "You are already under the effects of that magic."
 
    radius_ench_cant_fight_here = "You can't fight here."
 
@@ -689,7 +710,7 @@ messages:
       propagate;
    }
 
-   CancelRadiusEnchantment(source=$, event=$)
+   CancelRadiusEnchantment(source=$, event=$, target_room=$)
    {
       local i, n, oUser, oObj, iDrain, iPeriodic, lEnchanted, iPower, iRange, oRoom;
 
@@ -707,6 +728,12 @@ messages:
             if piOldAreaEnchStyle
             {
                oRoom = Nth(i,8);
+               
+               if target_room <> $
+                  AND oRoom <> target_room
+               {
+                  continue;
+               }
             }
             else
             {

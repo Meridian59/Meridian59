@@ -4,20 +4,9 @@
 
 TOPDIR=..
 
-#!include $(TOPDIR)/common.mak
-CP = cp
-RM = rm
-MKDIR = mkdir
-RMDIR = rmdir
-CC     = gcc
-OUTDIR=debug
-BLAKINCLUDEDIR = $(TOPDIR)/include
+include $(TOPDIR)/common.mak.linux
 
-CFLAGS = -I $(BLAKINCLUDEDIR) -x c++ -DBLAK_PLATFORM_LINUX
-
-
-
-BLAKSERVLINKFLAGS =
+CFLAGS += -I $(BLAKINCLUDEDIR)
 
 SOURCEDIR = .
 
@@ -106,17 +95,8 @@ $(OUTDIR)/md5.obj : $(TOPDIR)/util/md5.c
 
 $(OUTDIR)/blakserv: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ -c $(SOURCEDIR)/version.c
-	$(LINK)	$@ $(LIBS) $(BLAKSERVLINKFLAGS) $(LINKFLAGS)
+	$(LINK)	$@ $(LIBS) $(LINKFLAGS)
 	$(CP) $@ $(BLAKSERVRUNDIR)
 
 
-#!include $(TOPDIR)/rules.mak
-makedirs:
-	-$(MKDIR) $(OUTDIR)
-
-$(OUTDIR)/%.obj : %.c
-	$(CC) $(CFLAGS) -o $@ -c $< 
-
-clean:
-	-$(RM) $(OUTDIR)/*
-	-$(RMDIR) $(OUTDIR)
+include $(TOPDIR)/rules.mak.linux

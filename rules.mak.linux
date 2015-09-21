@@ -1,0 +1,17 @@
+# common rules
+#
+# to be included at the end of each makefile
+
+
+$(OUTDIR)/%.obj : %.c
+	$(CC) $(CFLAGS) -o $@ -c $< 
+
+$(OUTDIR)/%.obj : $(OUTDIR)/%.c
+	$(CC) $(CFLAGS) -I $(SOURCEDIR) -o $@ -c $< 
+
+makedirs:
+	-@mkdir $(OUTDIR)
+
+clean:
+	@$(RM) $(OUTDIR)/*
+	@$(RMDIR) $(OUTDIR)

@@ -1,24 +1,11 @@
-# Makefile for Blakod compiler
+# Makefile for utilities
 
 TOPDIR=..
-#!include $(TOPDIR)/common.mak
-CP = cp
-RM = rm
-MKDIR = mkdir
-RMDIR = rmdir
-CC     = gcc
-LINK = gcc
-LEX  = flex -I -i
-YACC = bison -d -t
-OUTDIR=debug
-BLAKINCLUDEDIR = $(TOPDIR)/include
-BLAKBINDIR = $(TOPDIR)/bin
+include $(TOPDIR)/common.mak.linux
 
-CFLAGS = -I $(BLAKINCLUDEDIR) -x c++ -DBLAK_PLATFORM_LINUX
+CFLAGS += -I $(BLAKINCLUDEDIR)
 
 SOURCEDIR = .
-
-LIBS =
 
 OBJS = \
         $(OUTDIR)/lexyy.obj \
@@ -37,7 +24,7 @@ OBJS = \
 all: makedirs $(OUTDIR)/bc
 
 $(OUTDIR)/bc: $(OBJS)
-	$(LINK) $(LIBS) $(OBJS) -o$@ $(LINKFLAGS)
+	$(LINK) $(LIBS) $^ -o$@ $(LINKFLAGS)
 	$(CP) $@ $(BLAKBINDIR)
 
 $(OUTDIR)/lexyy.obj: $(OUTDIR)/lexyy.c $(OUTDIR)/blakcomp.tab.h
@@ -48,16 +35,4 @@ $(OUTDIR)/lexyy.c: $(SOURCEDIR)/blakcomp.l $(SOURCEDIR)/blakcomp.h
 $(OUTDIR)/blakcomp.tab.c $(OUTDIR)/blakcomp.tab.h: $(SOURCEDIR)/blakcomp.y $(SOURCEDIR)/blakcomp.h
 	$(YACC) $(SOURCEDIR)/blakcomp.y -o $(OUTDIR)/blakcomp.tab.c
 
-#!include $(TOPDIR)/rules.mak
-makedirs:
-	-$(MKDIR) $(OUTDIR)
-
-$(OUTDIR)/%.obj : %.c
-	$(CC) $(CFLAGS) -o $@ -c $< 
-
-$(OUTDIR)/%.obj : $(OUTDIR)/%.c
-	$(CC) $(CFLAGS) -I $(SOURCEDIR) -o $@ -c $< 
-
-clean:
-	-@$(RM) $(OUTDIR)/*
-	-@$(RMDIR) $(OUTDIR)
+include $(TOPDIR)/rules.mak.linux

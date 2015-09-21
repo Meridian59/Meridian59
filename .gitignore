@@ -1,4 +1,12 @@
 #################
+## Meridian Intermediate files
+#################
+*.bof
+*.rsc
+kodbase.txt
+run/*
+
+#################
 ## Eclipse
 #################
 

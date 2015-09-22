@@ -204,6 +204,7 @@ void InitBkodInterpret(void)
 	ccall_table[ISLISTMATCH] = C_IsListMatch;
 	ccall_table[GETLISTELEMBYCLASS] = C_GetListElemByClass;
 	ccall_table[GETLISTNODE] = C_GetListNode;
+	ccall_table[GETALLLISTNODESBYCLASS] = C_GetAllListNodesByClass;
 	ccall_table[LISTCOPY] = C_ListCopy;
 
 	ccall_table[GETTIMEZONEOFFSET] = C_GetTimeZoneOffset;

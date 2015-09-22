@@ -641,6 +641,7 @@ char * name_function(int fnum)
    case LAST : return "Last";
    case GETLISTELEMBYCLASS : return "GetListElemByClass";
    case GETLISTNODE : return "GetListNode";
+   case GETALLLISTNODESBYCLASS : return "C_GetAllListNodesByClass";
    case LISTCOPY : return "ListCopy";
 
    case GETTIMEZONEOFFSET : return "GetTimeZoneOffset";

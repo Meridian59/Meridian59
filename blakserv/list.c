@@ -459,6 +459,134 @@ int FindListElem(val_type list_id,val_type list_elem)
 	return NIL;
 }
 
+int GetAllListNodesByClass(int list_id, int position, int class_id)
+{
+   list_node *l;
+   object_node *o;
+   class_node *c;
+   int new_list_id = -1, l_list_id;
+   val_type nil_val, obj_val, first_val, rest_val;
+   nil_val.int_val = NIL;
+   first_val.v.tag = TAG_LIST;
+   rest_val.v.tag = TAG_LIST;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("GetAllListNodesByClass got invalid list %i.\n", list_id);
+      return NIL;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("GetAllListNodesByClass got invalid sub-list %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   }
+   else
+   {
+      if (position == 1)
+         obj_val.int_val = First(l->first.v.data);
+      else
+         obj_val.int_val = Nth(position, l->first.v.data);
+
+      if (obj_val.v.tag == TAG_OBJECT)
+      {
+         o = GetObjectByID(obj_val.v.data);
+         if (o == NULL)
+         {
+            bprintf("GetAllListNodesByClass can't find object %i\n",
+               obj_val.v.data);
+            return NIL;
+         }
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("GetAllListNodesByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return NIL;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+            {
+               first_val.v.data = ListCopy(l->first.v.data);
+               new_list_id = Cons(first_val, nil_val);
+               break;
+            }
+            c = c->super_ptr;
+         } while (c != NULL);
+
+         // Just made an allocation, get list_node again.
+         l = &list_nodes[list_id];
+      }
+   }
+
+   while (l && l->rest.v.data != NIL)
+   {
+      // This may allocate a node, so save list id.
+      l_list_id = l->rest.v.data;
+      l = GetListNodeByID(l->rest.v.data);
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("GetAllListNodesByClass got invalid sub-list %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+      }
+      else
+      {
+         if (position == 1)
+            obj_val.int_val = First(l->first.v.data);
+         else
+            obj_val.int_val = Nth(position, l->first.v.data);
+
+         if (obj_val.v.tag == TAG_OBJECT)
+         {
+            o = GetObjectByID(obj_val.v.data);
+            if (o == NULL)
+            {
+               bprintf("GetAllListNodesByClass can't find object %i\n",
+                  obj_val.v.data);
+               return NIL;
+            }
+            c = GetClassByID(o->class_id);
+            if (c == NULL)
+            {
+               bprintf("GetAllListNodesByClass can't find class %i, DIE totally\n",
+                  o->class_id);
+               FlushDefaultChannels();
+               return NIL;
+            }
+
+            do
+            {
+               if (c->class_id == class_id)
+               {
+                  if (new_list_id < 0)
+                  {
+                     first_val.v.data = ListCopy(l->first.v.data);
+                     new_list_id = Cons(first_val, nil_val);
+                  }
+                  else
+                  {
+                     first_val.v.data = ListCopy(l->first.v.data);
+                     rest_val.v.data = new_list_id;
+                     new_list_id = Cons(first_val, rest_val);
+                  }
+                  break;
+               }
+               c = c->super_ptr;
+            } while (c != NULL);
+            // Just made an allocation, get list_node again.
+            l = &list_nodes[l_list_id];
+         }
+      }
+   }
+
+   first_val.v.data = new_list_id;
+   return new_list_id >= 0 ? first_val.int_val : nil_val.int_val;
+}
+
 // Works like FindListElem, but compares the class of the object.
 int GetListElemByClass(val_type list_id, int class_id)
 {

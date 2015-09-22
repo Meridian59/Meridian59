@@ -3372,6 +3372,55 @@ int C_FindListElem(int object_id,local_var_type *local_vars,
 }
 
 /*
+ * C_GetAllListNodesByClass: takes a list, a position and a class. Checks each
+ *                sub-list in the parent list and if the class is present at
+ *                the position, adds it to a new list. Returns the new list or
+ *                NIL.
+ */
+int C_GetAllListNodesByClass(int object_id,local_var_type *local_vars,
+         int num_normal_parms,parm_node normal_parm_array[],
+         int num_name_parms,parm_node name_parm_array[])
+{
+   val_type list_val, class_val, pos_val;
+
+   list_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+                  normal_parm_array[0].value);
+
+   if (list_val.v.tag == TAG_NIL)
+   {
+      return NIL;
+   }
+
+   if (list_val.v.tag != TAG_LIST)
+   {
+      bprintf("C_GetAllListNodesByClass object %i can't find elem in non-list %i,%i\n",
+         object_id, list_val.v.tag, list_val.v.data);
+      return NIL;
+   }
+
+   pos_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+               normal_parm_array[1].value);
+   if (pos_val.v.tag != TAG_INT || pos_val.v.data < 1)
+   {
+      bprintf("C_GetAllListNodesByClass object %i can't use non-int position %i,%i\n",
+         object_id, pos_val.v.tag, pos_val.v.data);
+      return NIL;
+   }
+
+   class_val = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
+                  normal_parm_array[2].value);
+
+   if (class_val.v.tag != TAG_CLASS)
+   {
+      bprintf("C_GetAllListNodesByClass object %i can't use non-class %i,%i\n",
+         object_id, class_val.v.tag, class_val.v.data);
+      return NIL;
+   }
+
+   return GetAllListNodesByClass(list_val.v.data, pos_val.v.data, class_val.v.data);
+}
+
+/*
  * C_GetListNode: takes a list, a position and an object. Checks each
  *                sub-list in the parent list and returns the first list node
  *                containing the object at that position. Returns NIL if the

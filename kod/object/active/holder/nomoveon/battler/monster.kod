@@ -1800,36 +1800,35 @@ messages:
          }
       }
 
-	  % moved down at least a full row 
-	  if iNew_finerow >= FINENESS
-	  {
-		iNew_row = piRow + (iNew_finerow / FINENESS);
-		iNew_finerow = iNew_finerow MOD FINENESS;
-	  }
-	  
-	  % moved up at least a full row
-	  if iNew_finerow < 0
-	  {
-	    iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
-		iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
-	  }
-	  
-	  % moved right at least a full col 
-	  if iNew_finecol >= FINENESS
-	  {
-		iNew_col = piCol + (iNew_finecol / FINENESS);
-		iNew_finecol = iNew_finecol MOD FINENESS;
-	  }
-	  
-	  % moved left at least a full row
-	  if iNew_finecol < 0
-	  {
-	    iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
-		iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
-	  }
-	  
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
-	          #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+      % moved down at least a full row 
+      if iNew_finerow >= FINENESS
+      {
+         iNew_row = piRow + (iNew_finerow / FINENESS);
+         iNew_finerow = iNew_finerow MOD FINENESS;
+      }
+      else if iNew_finerow < 0
+      {
+         % moved up at least a full row
+         iNew_row = piRow - bound((-iNew_finerow / FINENESS), 1, 100);
+         iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
+      }
+     
+      % moved right at least a full col 
+      if iNew_finecol >= FINENESS
+      {
+         iNew_col = piCol + (iNew_finecol / FINENESS);
+         iNew_finecol = iNew_finecol MOD FINENESS;
+      }
+      else if iNew_finecol < 0
+      {
+         % moved left at least a full row
+         iNew_col = piCol - bound((-iNew_finecol / FINENESS), 1, 100);
+         iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
+      }
+
+      if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
+         OR Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol);
@@ -2604,8 +2603,9 @@ messages:
          piState = piState & ESTATE_LSTEP_MASK;
       }
 
-      if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
-               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
+      if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
+         OR Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
+                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
                #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,

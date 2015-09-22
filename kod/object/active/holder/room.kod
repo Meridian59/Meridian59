@@ -1286,9 +1286,10 @@ messages:
       return n;
    }
 
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $,report = TRUE)
+   ReqSomethingAttack(what = $,victim = $, use_weapon = $, stroke_obj = $,
+                      report = TRUE)
    {
-      local oWatcher;
+      local oWatcher, i, each_obj;
 
       if what <> $
          AND IsClass(what,&Player)
@@ -1390,7 +1391,22 @@ messages:
          }
       }
 
-      propagate;
+      if use_weapon = $
+      {
+         use_weapon = stroke_obj;
+      }
+
+      foreach i in plActive
+      {
+         each_obj = First(i);
+         if NOT Send(each_obj,@ReqSomethingAttack,#what=what,#victim=victim,
+                     #use_weapon=use_weapon)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
    }
 
    AllowGuildAttack(what = $, victim = $,report = TRUE)
@@ -2373,7 +2389,24 @@ messages:
          %    OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))
       }
 
-      propagate;
+      % Do this here, instead of Holder.
+      foreach i in plActive
+      {
+         each_obj = First(i);
+
+         if each_obj = what
+         {
+            continue;
+         }
+         if NOT Send(each_obj,@ReqSomethingMoved,#what=what,
+                     #new_row=new_row,#new_col=new_col,
+                     #new_finerow=new_finerow,#new_finecol=new_finecol)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
    }
 
    LineOfSight(obj1 = $, obj2 = $)
@@ -2522,8 +2555,11 @@ messages:
                OR NOT non_monsters_only
                OR NOT IsClass(each_obj,&Monster)
             {
-               ClearPacket();
-               packet_built = FALSE;
+               if packet_built
+               {
+                  ClearPacket();
+                  packet_built = FALSE;
+               }
                Send(each_obj,@SomethingMoved,#what=what,
                     #new_row=new_row,#new_col=new_col,
                     #fine_row=fine_row,#fine_col=fine_col,
@@ -2586,7 +2622,7 @@ messages:
             if NOT packet_built
             {
                Send(each_obj,@BuildPacketSomethingTurned,#what=what,
-                     #new_angle=new_angle,#cause=cause);
+                    #new_angle=new_angle,#cause=cause);
                packet_built = TRUE;
             }
 
@@ -3224,7 +3260,7 @@ messages:
    SomethingWaveRoom(what = 0,wave_rsc = $)
    "Don't send <what> if not from any particular object"
    {
-      local i,each_obj;
+      local each_obj, i;
 
       foreach i in plActive
       {

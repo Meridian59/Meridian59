@@ -45,9 +45,17 @@ messages:
       plExits = $;
 
       %% TO TOWN
-      plExits = Cons([ 6, 2, RID_JASWEST, 52, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 2, RID_JASWEST, 58, 21, ROTATE_NONE ],plExits);
 
       propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&JasperVaultMan),
+           #new_row=8,#new_col=9,#fine_row=42,#fine_col=5);
+
+      return;
    }
 
    GetRegion()

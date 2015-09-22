@@ -742,7 +742,7 @@ properties:
    piGroup = 1
 
    piType = 0
-   
+
 messages:
 
    Constructor(type=0, rName=$, rIcon=$, rDesc=$)
@@ -1302,6 +1302,7 @@ messages:
          vrName = oo_smcrate_name;
          vrIcon = oo_smcrate_icon;
          vrDesc = oo_smcrate_desc;
+         pbNoMoveOn = TRUE;
       }
 
 

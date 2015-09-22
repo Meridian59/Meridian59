@@ -81,7 +81,7 @@ messages:
       plExits = Cons([ 52, 20, RID_JAS_BANK, 7, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 53, 20, RID_JAS_BANK, 7, 7, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 58, 21, RID_JAS_AB11, 6, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 58, 21, RID_JAS_VAULT, 6, 2, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 35, 29, RID_JAS_SEWER1, 30, 5, ROTATE_NONE ],plExits);
 
@@ -109,6 +109,11 @@ messages:
       plEdge_Exits = Cons([ LEAVE_WEST, RID_D7, 40, 48, ANGLE_WEST ], plEdge_exits); 
       plEdge_Exits = Cons([ LEAVE_NORTH, RID_E7, 48, 32, ANGLE_NORTH ], plEdge_exits); 
 
+      propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
       propagate;
    }
 

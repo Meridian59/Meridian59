@@ -21,10 +21,10 @@ resources:
    jaspervaultman_name_rsc = "Rolan De'nair"
    jaspervaultman_icon_rsc = cngrocer.bgf
    jaspervaultman_desc_rsc =  \
-      "Rolan is a relatively handsome gentleman who takes almost as much "
-      "pride in his vaults as he does in his family. His professional manner "
-      "shows that he realizes his customers are often in a hurry to retrieve "
-      "their goods."
+      "The cousin of Obert Cair'bre, Ronal has taken the family business "
+      "south.  Though as he diligently serves the people of Jasper, his big "
+      "city demeanor is often at odds with the townsfolk's more rebellious "
+      "attitude."
 
    jaspervaultman_entry_welcome = "Well met!"
 

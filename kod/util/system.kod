@@ -2370,6 +2370,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_JAS_SEWER1,#class=&JasSewer1);
       Send(self,@CreateOneRoomIfNew,#num=RID_JAS_SEWER2,#class=&JasSewer2);
       Send(self,@CreateOneRoomIfNew,#num=RID_JAS_SEWER3,#class=&JasSewer3);
+      Send(self,@CreateOneRoomIfNew,#num=RID_JAS_VAULT,#class=&JasperVault);
 
       % Barloque
       Send(self,@CreateOneRoomIfNew,#num=RID_BAR_NORTH,#class=&BarloqueNorth);

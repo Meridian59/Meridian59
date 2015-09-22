@@ -519,6 +519,7 @@
    RID_SEWER_KING = 380
    RID_JASWEST = 382
    RID_JAS_WEST = 382
+   RID_JAS_VAULT = 384
    
    % New areas as extensions of old areas
    RID_THRONE2 = 383

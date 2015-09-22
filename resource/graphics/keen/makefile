@@ -10,7 +10,8 @@ BGFS = rmcombat.bgf \
        rmgcombat.bgf \
        frogman.bgf \
        frogmanX.bgf \
-       srtoken.bgf
+       srtoken.bgf \
+       crate.bgf
 
 DIRS = \
    snowman \

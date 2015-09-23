@@ -17,8 +17,8 @@
 
 #include "blakserv.h"
 
-#define NUMBER_OBJECT 5		/* writes 4 bytes, but diff "tag" */
-#define STRING_RESOURCE 6	/* writes actual string, even though it's a resource */
+#define NUMBER_OBJECT 5      /* writes 4 bytes, but diff "tag" */
+#define STRING_RESOURCE 6   /* writes actual string, even though it's a resource */
 
 static buffer_node *blist;
 
@@ -34,13 +34,13 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
    short byte2;
    int byte4;
    string_node *snod;
-   resource_node *r;
+   const char *pStrConst;
    val_type temp_val;
 
    if (obj_size.v.tag != TAG_INT)
    {
       bprintf("AddBlakodToPacket looking for int, # of bytes, got %i,%i\n",
-	      obj_size.v.tag,obj_size.v.data);
+         obj_size.v.tag,obj_size.v.data);
       return;
    }
 
@@ -56,8 +56,8 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
       snod = GetStringByID(obj_data.v.data);
       if (snod == NULL)
       {
-			bprintf("AddBlakodToPacket can't find string id %i\n",obj_data.v.data);
-			break;
+         bprintf("AddBlakodToPacket can't find string id %i\n",obj_data.v.data);
+         break;
       }
       AddStringToPacket(snod->len_data,snod->data);
       break;
@@ -71,42 +71,42 @@ void AddBlakodToPacket(val_type obj_size,val_type obj_data)
       switch (num_bytes)
       {
       case 1 :
-			byte1 = (char) obj_data.v.data;
-			AddByteToPacket(byte1);
-			break;
-      case 2 : 
-			byte2 = (short) obj_data.v.data;
-			AddShortToPacket(byte2);
-			break;
-      case 4 : 
-			byte4 = (int) obj_data.v.data;
-			AddIntToPacket(byte4);
-			break;
+         byte1 = (char) obj_data.v.data;
+         AddByteToPacket(byte1);
+         break;
+      case 2 :
+         byte2 = (short) obj_data.v.data;
+         AddShortToPacket(byte2);
+         break;
+      case 4 :
+         byte4 = (int) obj_data.v.data;
+         AddIntToPacket(byte4);
+         break;
       case NUMBER_OBJECT :
-			temp_val.int_val = obj_data.int_val;
-			temp_val.v.tag = CLIENT_TAG_NUMBER;
-			byte4 = temp_val.int_val;
-			AddIntToPacket(byte4);
-			break;
+         temp_val.int_val = obj_data.int_val;
+         temp_val.v.tag = CLIENT_TAG_NUMBER;
+         byte4 = temp_val.int_val;
+         AddIntToPacket(byte4);
+         break;
       case STRING_RESOURCE :
-			if (obj_data.v.tag != TAG_RESOURCE)
-			{
-				bprintf("AddBlakodToPacket can't send %i,%i as a resource/string\n",
-						  obj_data.v.tag,obj_data.v.data);
-				return;
-			}
-			r = GetResourceByID(obj_data.v.data);
-			if (r == NULL)
-			{
-				bprintf("AddBlakodToPacket can't find resource %i as a resource/string\n",
-						  obj_data.v.data);
-				return;
-			}
-			AddStringToPacket(strlen(r->resource_val[0]),r->resource_val[0]);
-			break;
+         if (obj_data.v.tag != TAG_RESOURCE)
+         {
+            bprintf("AddBlakodToPacket can't send %i,%i as a resource/string\n",
+               obj_data.v.tag,obj_data.v.data);
+            return;
+         }
+         pStrConst = GetResourceStrByLanguageID(obj_data.v.data, ConfigInt(RESOURCE_LANGUAGE));
+         if (pStrConst == NULL)
+         {
+            bprintf("AddBlakodToPacket can't find resource %i as a resource/string\n",
+               obj_data.v.data);
+            return;
+         }
+         AddStringToPacket(strlen(pStrConst),pStrConst);
+         break;
       default :
-			bprintf("AddBlakodToPacket can't send %i bytes\n",num_bytes);
-			break;
+         bprintf("AddBlakodToPacket can't send %i bytes\n",num_bytes);
+         break;
       }
    }
 }
@@ -165,11 +165,11 @@ void SecurePacketBufferList(int session_id, buffer_node *bl)
    if (s->sliding_token && pRedbook)
    {
       if (s->sliding_token < pRedbook ||
-	  s->sliding_token > pRedbook+strlen(pRedbook))
+         s->sliding_token > pRedbook+strlen(pRedbook))
       {
-	 lprintf("SecurePacketBufferList lost redbook on session %i account %i (%s), may break session\n",
-	    session_id, s->account->account_id, s->account->name);
-	 s->sliding_token = pRedbook;
+         lprintf("SecurePacketBufferList lost redbook on session %i account %i (%s), may break session\n",
+         session_id, s->account->account_id, s->account->name);
+         s->sliding_token = pRedbook;
       }
 
       s->secure_token += ((*s->sliding_token) & 0x7F);
@@ -208,6 +208,7 @@ void ClearPacket()
    DeleteBufferList(blist);
    blist = NULL;
 }
+
 void ClientHangupToBlakod(session_node *session)
 {
    val_type command,parm_list;
@@ -226,7 +227,6 @@ void ClientHangupToBlakod(session_node *session)
 
    SendTopLevelBlakodMessage(session->game->object_id,RECEIVE_CLIENT_MSG,1,parms);
 }
-
 
 void SendBlakodBeginSystemEvent(int type)
 {
@@ -256,7 +256,4 @@ void SendBlakodEndSystemEvent(int type)
    p[0].name_id = TYPE_PARM;
 
    SendTopLevelBlakodMessage(GetSystemObjectID(),GARBAGE_DONE_MSG,1,p);
-
 }
-
-

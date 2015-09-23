@@ -11,22 +11,21 @@
 ThrasherTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_THRASHER
 
 properties:
-   
-   piTreasure_num = TID_THRASHER
+
    piItem_att_chance = 6
    piDiff_seed = 6
 
-
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &BlueDragonScale, 18],
                      [ &DarkAngelFeather, 18],

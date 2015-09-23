@@ -44,13 +44,15 @@ resources:
       "Joguer has asked you to retrieve his formula from %s.  In return, "
       "he will teach you the fade spell.  Ask %s about the formula, obtain "
       "it and bring it back to Joguer."
-   fadepupilquest_nodethree_rsc = \
+   fadepupilquest_nodethree1_rsc = \
       "%s will give you the formula, but first you must slay %s%s. Do that "
       "and return to %s."
-   fadepupilquest_return_rsc = \
+   fadepupilquest_nodethree2_rsc = \
+      "You have killed the monster, now return to %s and ask about the formula."
+   fadepupilquest_nodefour_rsc = \
       "Return to Joguer with the formula."
 
-   fadepupilquest_completed = \
+   fadepupilquest_completed_rsc = \
       "You have completed the fade pupil quest.  Joguer will now "
       "teach you the fade spell."
 
@@ -106,9 +108,10 @@ classvars:
    vrDesc = fadepupilquest_desc_rsc
 
    vrNodeTwo = fadepupilquest_nodetwo_rsc
-   vrNodeThree = fadepupilquest_nodethree_rsc
-   vrNodeFour = fadepupilquest_return_rsc
-   vrCompleted = fadepupilquest_completed
+   vrKill = fadepupilquest_nodethree1_rsc
+   vrReturn = fadepupilquest_nodethree2_rsc
+   vrNodeFour = fadepupilquest_nodefour_rsc
+   vrCompleted = fadepupilquest_completed_rsc
 
    % The QST_ID constant for this quest.
    viQuestID = QST_ID_FADE_SPELL
@@ -131,7 +134,6 @@ messages:
 
       % Quest nodes with matching descriptions for the player.
       plQuestNodeDesc = [ [QNT_ID_FADE_PUPIL_TWO, vrNodeTwo],
-                          [QNT_ID_FADE_PUPIL_THREE, vrNodeThree],
                           [QNT_ID_FADE_PUPIL_FOUR, vrNodeFour] ];
 
       propagate;
@@ -236,9 +238,33 @@ messages:
       return;
    }
 
+   MainDesc(who=$,index=$,oQuestNode=$)
+   {
+      local oMob, oNPC;
+
+      if index = QNT_ID_FADE_PUPIL_THREE
+      {
+         oMob = Send(oQuestNode,@GetQuestMonster);
+         oNPC = Send(oQuestNode,@GetDestNPC);
+         if oMob = $
+         {
+            AddPacket(4,vrReturn, 4,Send(oNPC,@GetName));
+         }
+         else
+         {
+            AddPacket(4, vrKill, 4,Send(oNPC,@GetName), 4,Send(oMob,@GetIndef),
+                      4,Send(oMob,@GetName), 4,Send(oNPC,@GetName));
+         }
+
+         return;
+      }
+
+      propagate;
+   }
+
    ExtraDesc(index=$,oQuestNode=$)
    {
-      local oNPC, oMob;
+      local oNPC;
 
       if oQuestNode = $
          OR index = $
@@ -251,15 +277,6 @@ messages:
       if index = QNT_ID_FADE_PUPIL_TWO
       {
          AddPacket(4,Send(oNPC,@GetName), 4,Send(oNPC,@GetName));
-
-         return;
-      }
-
-      if index = QNT_ID_FADE_PUPIL_THREE
-      {
-         oMob = Send(oQuestNode,@GetQuestMonster);
-         AddPacket(4,Send(oNPC,@GetName), 4,Send(oMob,@GetIndef),
-                   4,Send(oMob,@GetName), 4,Send(oNPC,@GetName));
 
          return;
       }

@@ -11,22 +11,21 @@
 FireElementalTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_FIRE_ELE
 
 properties:
-   
-   piTreasure_num = TID_FIRE_ELE
 
    piItem_att_chance = 80
    piDIff_seed = 9
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &LightningWand, 10 ],
                      [ &HospiceWand, 30 ],

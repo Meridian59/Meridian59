@@ -16,10 +16,9 @@ constants:
 
 classvars:
 
+   viTreasure_num = TID_KILLER_BUNNY
 
 properties:
-
-   piTreasure_num = TID_KILLER_BUNNY
 
    piItem_att_chance = 4
    piDiff_seed = 3

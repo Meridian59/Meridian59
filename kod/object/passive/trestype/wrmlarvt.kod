@@ -11,19 +11,18 @@
 WormLarvaTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_WORM_LARVA
 
 properties:
-   
-   piTreasure_num = TID_WORM_LARVA
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Mushroom, 30 ],
                      [ &Herbs, 30 ],

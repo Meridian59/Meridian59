@@ -11,21 +11,21 @@
 OrcWizardTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_ORC_WIZARD
 
 properties:
-   
-   piTreasure_num = TID_ORC_WIZARD
+
    piItem_att_chance = 8
    piDiff_seed = 4
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &OrcTooth, 35 ],
                      [ &UncutSeraphym, 10],

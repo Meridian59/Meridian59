@@ -11,23 +11,22 @@
 EntTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_ENT
 
 properties:
-   
-   piTreasure_num = TID_ENT
 
    %% really pitiful chance to get reasonably good stuff
    piItem_att_chance = 1
    piDiff_seed = 4
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Entrootberry, 55],
                      [ &Snack, 5 ],

@@ -408,7 +408,7 @@ messages:
 
    %%% Spell enchantment functions.
 
-   RemoveEnchantmentClass(class = &Object)
+   RemoveEnchantmentClass(class = &Object, report=TRUE)
    "If have a current enchantment set by anything in class, end it."
    {
       local i, state, removedSomething;
@@ -431,7 +431,8 @@ messages:
                state = Nth(i,3);
             }
 
-            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#state=state);
+            Send(Nth(i,2),@RemoveEnchantmentEffects,#who=self,#state=state,
+                  #report=report);
 
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
                   #type=ENCHANTMENT_PLAYER);
@@ -472,13 +473,7 @@ messages:
       }
       else
       {
-         foreach i in plEnchantments
-         {
-            if Nth(i,2) = what
-            {
-               return TRUE;
-            }
-         }
+         return GetListNode(plEnchantments, 2, what) <> $;
       }
 
       return FALSE;
@@ -551,24 +546,31 @@ messages:
    "cast at. Put in Battler instead of Player as we may use this for monster "
    "buffs one day."
    {
-      local i, iCastPower;
+      local lEnch;
 
-      foreach i in plEnchantments
+      if what = $
       {
-         if Nth(i,2) = what
+         Debug("GetCastPower called with $ spell!");
+
+         return 0;
+      }
+
+      lEnch = GetListNode(plEnchantments, 2, what);
+      if lEnch <> $
+      {
+         if Length(lEnch) > ENCHANTMENT_LIST_NO_STATE
          {
-            if Length(i) > ENCHANTMENT_LIST_NO_STATE
-            {
-               iCastPower = Nth(i,4);
-            }
-            else
-            {
-               iCastPower = Nth(i,3);
-            }
+            return Nth(lEnch,4);
+         }
+         else
+         {
+            return Nth(lEnch,3);
          }
       }
 
-      return iCastPower;
+      Debug("GetCastPower couldn't find enchantment ",what);
+
+      return 0;
    }
 
    %%% Mana related stuff common to players and mobs.
@@ -1508,24 +1510,22 @@ messages:
    {
       return;
    }
-   
+
    GetResistances()
    {
       return Send(self,@GetCurrentResistances);
    }
-   
+
    GetResistanceValueByType(type=$)
    {
-      local oResist;
-      
-      foreach oResist in Send(self,@GetCurrentResistances)
+      local lResist;
+
+      lResist = GetListNode(Send(self,@GetCurrentResistances), 1, type);
+      if lResist <> $
       {
-         if Nth(oResist,1) = type
-         {
-            return Nth(oResist,2);
-         }
+         return Nth(lResist,2);
       }
-      
+
       return 0;
    }
 
@@ -1555,6 +1555,23 @@ messages:
             plControlledMinions = DelListElem(plControlledMinions,what);
          }
       }
+
+      return;
+   }
+
+   RemoveAllMinions()
+   {
+      local i;
+
+      foreach i in plControlledMinions
+      {
+         if IsClass(i,&Monster)
+         {
+            Send(i,&Delete);
+         }
+      }
+
+      plControlledMinions = $;
 
       return;
    }

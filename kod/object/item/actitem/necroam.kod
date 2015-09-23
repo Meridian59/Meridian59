@@ -799,14 +799,6 @@ messages:
          Send(self,@SatisfyHunger,#amount=iGain);
       }
 
-      if pbIn_Use
-         AND victim = poOwner
-      {
-         % Post this so that we get through Player::killed(), activating
-         % a cheap death if necessary, before handling it here.
-         Post(self,@OwnerKilled,#what=what,#necro=poOwner);
-      }
-
       return;
    }
 
@@ -817,9 +809,17 @@ messages:
       return;
    }
 
-   OwnerKilled(what=$,necro=$)
+   OwnerKilled(what=$)
    {
       local oGuild;
+
+      if poOwner = $
+      {
+         Debug("OwnerKilled called on ",self," with $ owner!");
+         Post(Send(SYS,@GetNecromancerBalance),@PlaceAmulet,#what=self);
+
+         return;
+      }
 
       % If the Order disbanded (or any other cheap death),
       % let them keep their amulet.
@@ -829,11 +829,17 @@ messages:
       }
       else
       {
-         oGuild = Send(necro,@GetGuild);
+         % If they are just holding the item, do nothing.
+         if NOT pbIn_Use
+         {
+            return;
+         }
+
+         oGuild = Send(poOwner,@GetGuild);
          if oGuild <> $
             AND IsClass(oGuild,&NecromancerGuild)
          {
-            Send(oGuild,@MemberKilled,#victim=necro,#killer=what);
+            Send(oGuild,@MemberKilled,#victim=poOwner,#killer=what);
          }
 
          % Instead of deleting the amulet, we put it back in circulation.

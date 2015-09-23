@@ -91,7 +91,7 @@ properties:
    piSpellPower = 99
    piMax_mana = 20
 
-   viReputationGroup = REP_FARNOHL
+   piReputationGroup = REP_FARNOHL
    
 messages:
 
@@ -108,7 +108,7 @@ messages:
 
       plSpellBook = [ [ SID_FIREBALL, 3, 100 ] ];
 
-      vlReputationEnemies = [REP_FAROL];
+      plReputationEnemies = [REP_FAROL];
 
       propagate;
    }

@@ -68,7 +68,7 @@ properties:
    piDrawfx = DRAWFX_TRANSLUCENT_50
    piDrawEffectFlag = OF_FLICKERING
 
-   viReputationGroup = REP_UNDEAD
+   piReputationGroup = REP_UNDEAD
 
 messages:
 
@@ -81,7 +81,7 @@ messages:
                         [ATCK_WEAP_BLUDGEON, -15 ]
                       ];
 
-      vlReputationEnemies = [REP_FAROL];
+      plReputationEnemies = [REP_FAROL];
 
       propagate;
    }

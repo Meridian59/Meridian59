@@ -42,6 +42,8 @@ function_type Functions[] = {
 {"DelListElem",         DELLISTELEM,     AEXPRESSION,   AEXPRESSION,  ANONE},
 {"FindListElem",        FINDLISTELEM,    AEXPRESSION,   AEXPRESSION,  ANONE},
 {"AppendListElem",      APPENDLISTELEM,  AEXPRESSION,   AEXPRESSION,  ANONE},
+{"GetListElemByClass",  GETLISTELEMBYCLASS,AEXPRESSION, AEXPRESSION,  ANONE},
+{"GetListNode",         GETLISTNODE,     AEXPRESSION,   AEXPRESSION,  AEXPRESSION, ANONE},
 {"Last",                LAST,            AEXPRESSION,   ANONE},
 {"Random",              RANDOM,          AEXPRESSION,   AEXPRESSION,  ANONE},
 {"SaveGame",            SAVEGAME,        ANONE},

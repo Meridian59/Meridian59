@@ -11,23 +11,22 @@
 OrcTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_ORC
 
 properties:
-   
-   piTreasure_num = TID_ORC
 
    %% high chance of getting crappy stuff
    piItem_att_chance = 5
    piDiff_seed = 1
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &OrcTooth, 40 ],
                      [ &PurpleMushroom, 20],

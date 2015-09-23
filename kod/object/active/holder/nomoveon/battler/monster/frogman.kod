@@ -66,7 +66,7 @@ properties:
 
    piAnimation = ANIM_NONE
 
-   viReputationGroup = REP_FROGMEN
+   piReputationGroup = REP_FROGMEN
    
 messages:
 
@@ -76,7 +76,7 @@ messages:
                         [-30, -ATCK_SPELL_UNHOLY ],
                         [-10, -ATCK_SPELL_COLD ] ];
 
-      vlReputationEnemies = [REP_UNDEAD];
+      plReputationEnemies = [REP_UNDEAD];
 
       propagate;
    }

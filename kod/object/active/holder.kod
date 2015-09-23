@@ -131,8 +131,9 @@ messages:
    }
 
    IsHolding(what = $)
+   "Room has a faster override for this message."
    {
-      local i,each_obj;
+      local i, each_obj;
 
       foreach i in plActive
       {

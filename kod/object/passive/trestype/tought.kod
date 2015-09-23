@@ -11,15 +11,14 @@
 ToughTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_TOUGH
 
 properties:
-   
-   piTreasure_num = TID_TOUGH
 
    %% some great stuff, but generates rarely.
 
@@ -27,8 +26,8 @@ properties:
    piItem_att_chance = 2
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
     plTreasure = [ [ &Sapphire, 25 ],
                    [ &Emerald, 25 ],

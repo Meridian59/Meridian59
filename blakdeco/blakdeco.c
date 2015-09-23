@@ -638,6 +638,8 @@ char * name_function(int fnum)
    case SWAPLISTELEM : return "SwapListElem";
    case INSERTLISTELEM : return "InsertListElem";
    case LAST : return "Last";
+   case GETLISTELEMBYCLASS : return "GetListElemByClass";
+   case GETLISTNODE : return "GetListNode";
 
    case GETTIMEZONEOFFSET : return "GetTimeZoneOffset";
    case GETTIME : return "GetTime";

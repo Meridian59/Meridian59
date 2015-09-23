@@ -25,10 +25,11 @@ resources:
    VampiricDrain_icon_rsc = ivamptou.bgf
    VampiricDrain_desc_rsc = \
       "Draws out the very life force of the target and converts the energy into "
-      "life for the caster.  Reagents unknown."
+      "life for the caster.  Requires one vial of shaman blood to cast."
 
    VampiricDrain_death = "You drain the last bit of %s%s's life force."
-   VampiricDrain_health_gain = "You siphon your victim's life force, gaining ~g~B%i~B~n health."
+   VampiricDrain_health_gain = \
+      "You siphon your victim's life force, gaining ~g~B%i~B~n health."
 
    VampiricDrain_sound = qvtouch.wav
 

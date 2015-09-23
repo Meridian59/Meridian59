@@ -718,12 +718,6 @@ messages:
                      #HuntSw=self,#killer=what,#victim=victim);
          Send(self,@SatisfyHunger,#amount=iGain);
       }
-      if (poOwner <> $
-            AND IsClass(poOwner,&User))
-         AND victim = poOwner
-      {
-         Post(self,@OwnerKilled,#what=what);
-      }
 
       return;
    }

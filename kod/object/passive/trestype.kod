@@ -24,10 +24,10 @@ resources:
 
 classvars:
 
+   viTreasure_num = $
 
 properties:
 
-   piTreasure_num      % treasure type id
    plTreasure = $      % list of treasures
 
    piDiff_seed = 0
@@ -39,7 +39,7 @@ messages:
    {
       local iAdjust, iValue, iTotal, lItem;
 
-      if piTreasure_num = $
+      if viTreasure_num = $
       {
          Debug("Treasure type created with no treasure type id.");
 
@@ -78,7 +78,7 @@ messages:
          }
       }
 
-      Send(SYS,@SystemNewTreasureType,#what=self);
+      Send(SYS,@SystemNewTreasureType,#what=self,#iNum=viTreasure_num);
 
       propagate;
    }
@@ -226,7 +226,7 @@ messages:
 
    GetTreasureTypeNum()
    {
-      return piTreasure_num;
+      return viTreasure_num;
    }
 
    GenerateTreasure(level=1,who=$,mob=$,tokengen=TRUE,corpse=$)

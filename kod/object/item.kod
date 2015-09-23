@@ -1570,6 +1570,23 @@ messages:
       return FALSE;
    }
 
+   OwnerKilled(what = $)
+   "Called when our owner dies. Killer is passed as 'what' parameter."
+   {
+      local i, iNum, oItemAtt;
+
+      % Check itematts.
+      foreach i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+
+         Send(oItemAtt,@OwnerKilled);
+      }
+
+      return;
+   }
+
    DropOnDeath()
    "Most items are dropped on death.  But, assassin's blades and a few other "
    "things are not."

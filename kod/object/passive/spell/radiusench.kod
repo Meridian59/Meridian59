@@ -718,8 +718,7 @@ messages:
                      {
                         if NOT piOldAreaEnchStyle
                         {
-                           Post(oUser,@ClearFlickerFlag);
-                           Post(oUser,@RecalcFlickerFlag);
+                           Send(oUser,@RecalcFlickerFlag);
                         }
                      }
                      else

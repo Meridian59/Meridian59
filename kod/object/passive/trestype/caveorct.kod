@@ -11,21 +11,21 @@
 CaveOrcTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_CAVE_ORC
 
 properties:
-   
-   piTreasure_num = TID_CAVE_ORC
+
    piItem_att_chance = 3
    piDiff_seed = 3
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &OrcTooth, 39 ],
                      [ &OreChunk, 5 ],

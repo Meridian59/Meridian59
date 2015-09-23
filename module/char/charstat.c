@@ -227,8 +227,8 @@ void CharStatsCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
       SetStatSliders(hwnd, suggested_stats[1]);
       break;
       
-   case IDC_RIIJA:
-      SetStatSliders(hwnd, suggested_stats[2]);
+   case IDC_FAVORITES:
+	   WebLaunchBrowser(GetString(hInst, IDS_FAVORITES));
       break; 
 	  
    case IDC_MAGE:

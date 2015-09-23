@@ -1375,6 +1375,8 @@ void AdminShowStatus(int session_id,admin_parm_type parms[],
 	aprintf("Used %i object nodes\n",GetObjectsUsed());
 	aprintf("Used %i string nodes\n",GetStringsUsed());
 	aprintf("Watching %i active timers\n",GetNumActiveTimers());
+	aprintf("Max number of messages in a class is %i\n", GetHighestMessageCount());
+	aprintf("Number of message hash collisions is %i\n", GetNumMessageHashCollisions());
 	
 	if (IsGameLocked())
 		aprintf("The game is LOCKED (%s)\n",GetGameLockedReason());
@@ -1446,34 +1448,42 @@ void AdminShowCalled(int session_id,admin_parm_type parms[],
 
 void AdminShowCalledClass(class_node *c)
 {
-   int i, num_calls;
+   int num_calls;
+   message_node *m;
 
-   for (i = 0; i<c->num_messages; i++)
+   if (!c->num_messages)
+      return;
+   for (int i = 0; i < MESSAGE_TABLE_SIZE; ++i)
    {
-      num_calls = c->messages[i].timed_call_count + c->messages[i].untimed_call_count;
-      if ((show_messages_ignore_count == -1 ||
-         (num_calls < show_messages_ignore_count ||
-         (num_calls == show_messages_ignore_count &&
-         c->messages[i].message_id > show_messages_ignore_id))))
+      m = c->messages[i];
+      while (m != NULL)
       {
-         if (num_calls > show_messages_total_count ||
-            (num_calls == show_messages_total_count &&
-            c->messages[i].message_id < show_messages_message_id))
+         num_calls = m->timed_call_count + m->untimed_call_count;
+         if ((show_messages_ignore_count == -1 ||
+            (num_calls < show_messages_ignore_count ||
+            (num_calls == show_messages_ignore_count &&
+            m->message_id > show_messages_ignore_id))))
          {
-            show_messages_timed_count = c->messages[i].timed_call_count;
-            show_messages_untimed_count = c->messages[i].untimed_call_count;
-            show_messages_total_count = num_calls;
-            if (show_messages_timed_count)
+            if (num_calls > show_messages_total_count ||
+               (num_calls == show_messages_total_count &&
+               m->message_id < show_messages_message_id))
             {
-               show_messages_time = c->messages[i].total_call_time / (double)show_messages_timed_count;
+               show_messages_timed_count = m->timed_call_count;
+               show_messages_untimed_count = m->untimed_call_count;
+               show_messages_total_count = num_calls;
+               if (show_messages_timed_count)
+               {
+                  show_messages_time = m->total_call_time / (double)show_messages_timed_count;
+               }
+               else
+               {
+                  show_messages_time = 0.0;
+               }
+               show_messages_message_id = m->message_id;
+               show_messages_class = c;
             }
-            else
-            {
-               show_messages_time = 0.0;
-            }
-            show_messages_message_id = c->messages[i].message_id;
-            show_messages_class = c;
          }
+         m = m->next;
       }
    }
 }
@@ -2140,6 +2150,8 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case INSERTLISTELEM : strcpy(c_name, "InsertListElem"); break;
 		case DELLISTELEM : strcpy(c_name, "DelListElem"); break;
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
+		case GETLISTELEMBYCLASS : strcpy(c_name, "GetListElemByClass"); break;
+		case GETLISTNODE : strcpy(c_name, "GetListNode"); break;
 		case GETTIMEZONEOFFSET : strcpy(c_name, "GetTimeZoneOffset"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
 		case GETTICKCOUNT : strcpy(c_name, "GetTickCount"); break;
@@ -2254,6 +2266,7 @@ void AdminShowClass(int session_id,admin_parm_type parms[],
 {
 	int i;
 	class_node *c;
+	message_node *m;
 	char *classvar_name;
 	char buf[200];
 	
@@ -2286,11 +2299,20 @@ void AdminShowClass(int session_id,admin_parm_type parms[],
 				  GetDataName(c->vars[i].val));
 	}
 
-   for (i=0;i<c->num_messages;i++)
-      aprintf(": MSG %s\n",GetNameByID(c->messages[i].message_id));
+   if (c->num_messages)
+   {
+      for (i = 0; i < MESSAGE_TABLE_SIZE; i++)
+      {
+         m = c->messages[i];
+         while (m != NULL)
+         {
+            aprintf(": MSG %s\n", GetNameByID(m->message_id));
+            m = m->next;
+         }
+      }
+   }
 
-	aprintf(":>\n");
-	
+   aprintf(":>\n");
 }
 
 void AdminShowInstances(int session_id,admin_parm_type parms[],

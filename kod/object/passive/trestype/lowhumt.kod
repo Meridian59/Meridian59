@@ -11,19 +11,18 @@
 LowHumanTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_LOW_HUMAN
 
 properties:
-   
-   piTreasure_num = TID_LOW_HUMAN
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Herbs, 17 ],
                      [ &Mushroom, 13 ],
@@ -35,7 +34,7 @@ messages:
                      [ &MetalShield, 10 ],
                      [ &LeatherArmor, 10],
                      [ &Emerald, 11]
-					  ];
+                   ];
       propagate;
    }
 

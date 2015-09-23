@@ -11,25 +11,25 @@
 KriipaTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_KRIIPA
 
 properties:
-   
-   piTreasure_num = TID_KRIIPA
+
    piItem_att_chance = 6
    piDiff_seed = 6
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &KriipaClaw, 60 ],
                      [ &Yrxlsap, 40 ]
-		             ];
+                   ];
 
       propagate;
    }

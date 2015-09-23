@@ -2196,24 +2196,18 @@ messages:
 
    GetRoomPos(what = $)
    {
-      local i;
+      local lNode;
 
-      foreach i in plActive
+      lNode = GetListNode(plActive,1,what);
+      if lNode = $
       {
-         if First(i) = what
-         {
-            % This is [ row, col, fine_row, fine_col ].
-            return Rest(Rest(i));
-         }
+         lNode = GetListNode(plPassive,1,what);
       }
 
-      foreach i in plPassive
+      if lNode <> $
       {
-         if First(i) = what
-         {
-            % This is [ row, col, fine_row, fine_col ].
-            return Rest(Rest(i));
-         }
+         % This is [ row, col, fine_row, fine_col ].
+         return Rest(Rest(lNode));
       }
 
       return $;
@@ -2221,25 +2215,20 @@ messages:
 
    GetRoomAngle(what = $)
    {
-      local i;
+      local lNode;
 
-      foreach i in plActive
+      lNode = GetListNode(plActive,1,what);
+      if lNode = $
       {
-         if First(i) = what
-         {
-            return Nth(i,2);
-         }
+         lNode = GetListNode(plPassive,1,what);
       }
 
-      foreach i in plPassive
+      if lNode <> $
       {
-         if First(i) = what
-         {
-            return Nth(i,2);
-         }
+         return Nth(lNode,2);
       }
 
-      return;
+      return $;
    }
 
    ReqSomethingUse(what = $, use_item = $)
@@ -2377,7 +2366,7 @@ messages:
                   fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
                   non_monsters_only = FALSE)
    {
-      local i,temp,bFound,each_obj,packet_built;
+      local i, temp, each_obj, packet_built, lNode;
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
@@ -2416,42 +2405,22 @@ messages:
          return;
       }
 
-      bFound = FALSE;
-
-      foreach i in plActive
+      % Gets the list node containing what as first element.
+      lNode = GetListNode(plActive,1,what);
+      if lNode = $
       {
-         if First(i) = what
-         {
-            SetNth(i,3,new_row);
-            SetNth(i,4,new_col);
-            SetNth(i,5,fine_row);
-            SetNth(i,6,fine_col);
-            bFound = TRUE;
-
-            break;
-         }
+         lNode = GetListNode(plPassive,1,what);
       }
 
-      if NOT bFound
+      if lNode <> $
       {
-         foreach i in plPassive
-         {
-            if First(i) = what
-            {
-               SetNth(i,3,new_row);
-               SetNth(i,4,new_col);
-               SetNth(i,5,fine_row);
-               SetNth(i,6,fine_col);
-               bFound = TRUE;
-
-               break;
-            }
-         }
+         SetNth(lNode,3,new_row);
+         SetNth(lNode,4,new_col);
+         SetNth(lNode,5,fine_row);
+         SetNth(lNode,6,fine_col);
       }
-
-      if NOT bFound
+      else
       {
-         % Couldn't find the thing to move.
          return;
       }
 
@@ -2526,36 +2495,20 @@ messages:
 
    SomethingTurned(what = $,new_angle = $,cause = CAUSE_UNKNOWN)
    {
-      local i, bFound, each_obj, packet_built, temp;
+      local i, lNode, each_obj, packet_built, temp;
 
-      bFound = FALSE;
-
-      foreach i in plActive
+      % Gets the list node containing what as first element.
+      lNode = GetListNode(plActive,1,what);
+      if lNode = $
       {
-         if First(i) = what
-         {
-            SetNth(i,2,new_angle);
-            bFound = TRUE;
-
-            break;
-         }
+         lNode = GetListNode(plPassive,1,what);
       }
 
-      if NOT bFound
+      if lNode <> $
       {
-         foreach i in plPassive
-         {
-            if First(i) = what
-            {
-               SetNth(i,2,new_angle);
-               bFound = TRUE;
-
-               break;
-            }
-         }
+         SetNth(lNode,2,new_angle);
       }
-
-      if NOT bFound
+      else
       {
          return;
       }
@@ -2700,7 +2653,7 @@ messages:
       }
 
       % Cycle through each battler in plActive and send them
-      % to RemoveUserFromArea if they are inside the given area.
+      % add them to the found list if they're in the area.
       foreach i in plActive
       {
          each_obj = First(i);
@@ -2798,16 +2751,13 @@ messages:
       }
 
       % And store so that new people in room will get the change
-
-      foreach i in plSector_flag_changes
+      i = GetListNode(plSector_flag_changes, 1, sector);
+      if i <> $
       {
-         if First(i) = sector
-         {
-            SetNth(i,2,depth);
-            SetNth(i,3,scrollSpeed);
+         SetNth(i,2,depth);
+         SetNth(i,3,scrollSpeed);
 
-            return;
-         }
+         return;
       }
 
       % Not already in list, so add
@@ -2874,13 +2824,12 @@ messages:
       }
 
       % store so that new people in room will get the change
-      foreach i in plSector_light_changes
+      i = GetListNode(plSector_light_changes, 1, sector);
+      if i <> $
       {
-         if First(i) = sector
-         {
-            SetNth(i,2,light_effect);
-            return;
-         }
+         SetNth(i,2,light_effect);
+
+         return;
       }
 
       % not already in list, so add
@@ -2914,18 +2863,16 @@ messages:
          first_group = end_group;
       }
 
-      foreach i in plWall_changes
+      i = GetListNode(plWall_changes, 1, wall);
+      if i <> $
       {
-         if First(i) = wall
-         {
-            SetNth(i,2,animation);
-            SetNth(i,3,first_group);
-            SetNth(i,4,second_group);
-            SetNth(i,5,speed);
-            SetNth(i,6,passable);
+         SetNth(i,2,animation);
+         SetNth(i,3,first_group);
+         SetNth(i,4,second_group);
+         SetNth(i,5,speed);
+         SetNth(i,6,passable);
 
-            return;
-         }
+         return;
       }
 
       % not already in list, so add
@@ -3412,28 +3359,23 @@ messages:
          }
       }
 
-      foreach i in plEnchantments
-      {
-         if Nth(i,2) = what
-         {
-            return TRUE;
-         }
-      }
-
-      return FALSE;
+      return GetListNode(plEnchantments, 2, what) <> $;
    }
 
    GetEnchantmentState(what = $)
    "If enchanted by <what>, return enchantment state."
    {
-      local i;
+      local lEnchantment;
 
-      foreach i in plEnchantments
+      if what = $
       {
-         if Nth(i,2) = what
-         {
-            return Nth(i,3);
-         }
+         return $;
+      }
+
+      lEnchantment = GetListNode(plEnchantments, 2, what);
+      if lEnchantment <> $
+      {
+         return Nth(lEnchantment,3);
       }
 
       return $;
@@ -3462,26 +3404,22 @@ messages:
    RemoveEnchantment(what = $, report = TRUE)
    "If have a current enchantment set by <what>, end it."
    {
-      local i;
+      local lEnch;
 
-      foreach i in plEnchantments
+      lEnch = GetListNode(plEnchantments, 2, what);
+      if lEnch <> $
       {
-         if Nth(i,2) = what
+         % Make sure timer isn't $, as in a perma-enchantment set by a room
+         %  or an admin.
+         if First(lEnch) <> $
          {
-            % Make sure timer isn't $, as in a perma-enchantment set by a room
-            %  or an admin.
-            if First(i) <> $
-            {
-               DeleteTimer(First(i));
-            }
-
-            Send(Nth(i,2),@EndSpell,#who=self,#state=Nth(i,3),#where=self,
-                 #report=report);
-            Send(self,@ShowUsersRemoveEnchantment,#what=what);
-            plEnchantments = DelListElem(plEnchantments,i);
-
-            return;
+            DeleteTimer(First(lEnch));
          }
+
+         Send(Nth(lEnch,2),@EndSpell,#who=self,#state=Nth(lEnch,3),
+               #where=self,#report=report);
+         Send(self,@ShowUsersRemoveEnchantment,#what=what);
+         plEnchantments = DelListElem(plEnchantments,lEnch);
       }
 
       return;
@@ -4503,6 +4441,22 @@ messages:
       return plEnchantments;
    }
 
+   IsHolding(what = $)
+   "Optimised for Room."
+   {
+      if GetListNode(plActive, 1, what) <> $
+      {
+         return TRUE;
+      }
+      
+      if GetListNode(plPassive, 1, what) <> $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    GetplPassive()
    {
       return plPassive;
@@ -4812,25 +4766,6 @@ messages:
          if IsClass(victim,&Thrasher)
          {
             piGroupTime = piGroupTime + Bound((60 * 1000 * 2),0,$);
-         }
-      }
-
-      return;
-   }
-
-   WentSpectatorMode(who=$)
-   {
-      local i;
-
-      % Ditch aggros on fresh spectators
-      if IsClass(who,&Player)
-      {
-         foreach i in plActive
-         {
-            if IsClass(First(i),&Monster)
-            {
-               Send(First(i),@SomethingLeft,#what=who);
-            }
          }
       }
 

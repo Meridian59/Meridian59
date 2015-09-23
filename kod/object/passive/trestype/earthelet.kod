@@ -11,22 +11,21 @@
 EarthElementalTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_EARTH_ELE
 
 properties:
-   
-   piTreasure_num = TID_EARTH_ELE
 
    piItem_att_chance = 3
    piDIff_seed = 9
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Emerald, 10 ],
                      [ &Ruby, 30 ],

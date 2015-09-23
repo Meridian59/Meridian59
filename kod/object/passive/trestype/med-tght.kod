@@ -11,23 +11,22 @@
 MediumToughTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_MEDIUM_TOUGH
 
 properties:
-   
-   piTreasure_num = TID_MEDIUM_TOUGH
-   
+
    %% monsters (like spiders) generate reasonably good stuff, but rarely
    piDiff_seed = 4
    piItem_att_chance = 1
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &RedMushroom, 30 ],
                      [ &Snack, 16],

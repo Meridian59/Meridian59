@@ -14,19 +14,18 @@ NewbieAreaTreasure is TreasureType
 %% therefore must follow a reasonably tight script
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_NEWBIE_AREA
 
 properties:
-   
-   piTreasure_num = TID_NEWBIE_AREA
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Snack, 7 ],
                      [ &InkyCap, 1 ],

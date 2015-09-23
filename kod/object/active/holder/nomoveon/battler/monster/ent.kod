@@ -78,7 +78,7 @@ properties:
    piSpellPower = 50
    piMax_mana = 12
 
-   viReputationGroup = REP_FAROL
+   piReputationGroup = REP_FAROL
    
 messages:
 
@@ -118,7 +118,7 @@ messages:
                         
       plSpellBook = [ [SID_LIGHTNING, 5, 100] ];
 
-      vlReputationEnemies = [REP_UNDEAD];
+      plReputationEnemies = [REP_UNDEAD];
 
       propagate;
    }

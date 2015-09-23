@@ -11,21 +11,21 @@
 AvarTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_AVAR
 
 properties:
-   
-   piTreasure_num = TID_AVAR
+
    piItem_att_chance = 4
    piDiff_seed = 6
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &RainbowFern, 30],
                      [ &KriipaClaw, 30],
@@ -35,7 +35,7 @@ messages:
                      [ &NeruditeArmor, 1],
                      [ &IvyCirclet, 1],
                      [ &Yrxlsap, 6]
-		             ];
+                   ];
 
       propagate;
    }

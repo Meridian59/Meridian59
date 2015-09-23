@@ -11,23 +11,22 @@
 VeryToughTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_VERY_TOUGH
 
 properties:
-   
-   piTreasure_num = TID_VERY_TOUGH
-   
+
    %% low chance of getting an outstanding item
    piItem_att_chance = 2
    piDIff_seed = 8
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &InkyCap, 19],
                      [ &PurpleMushroom, 14 ],

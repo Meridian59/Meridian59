@@ -14,22 +14,21 @@ Skeleton4Treasure is TreasureType
 %%%AGM 7-26-99%%%
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_SKELETON4
 
 properties:
-   
-   piTreasure_num = TID_SKELETON4
 
    piItem_att_chance = 3
    piDIff_seed = 9
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &Scimitar, 4 ],
                      [ &BlueDragonScale, 35 ],

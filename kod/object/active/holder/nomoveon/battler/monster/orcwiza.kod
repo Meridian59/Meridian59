@@ -87,7 +87,7 @@ properties:
 
    piSpellPower = 75
 
-   viReputationGroup = REP_ORC
+   piReputationGroup = REP_ORC
    
 messages:
 
@@ -102,7 +102,7 @@ messages:
                       [SID_PURGE,4,85], [SID_MANA_BOMB,6,90],
                       [SID_FORGET,4,100] ];
 
-      vlReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
+      plReputationEnemies = [REP_PSAVAR, REP_KKAVAR, REP_CTAVAR];
 
       propagate;
    }

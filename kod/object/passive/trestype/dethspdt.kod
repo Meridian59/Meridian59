@@ -11,22 +11,21 @@
 DeathSpiderTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_BLACK_SPIDER
 
 properties:
-   
-   piTreasure_num = TID_BLACK_SPIDER
 
    piItem_att_chance = 2
    piDIff_seed = 4
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &NeruditeArrow, 10 ],
                      [ &Spideye, 3 ],

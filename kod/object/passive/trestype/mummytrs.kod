@@ -11,23 +11,22 @@
 MummyTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_MUMMY
 
 properties:
-   
-   piTreasure_num = TID_MUMMY
 
    %% mummies will generally generate crap.
    piDiff_seed = 1
    piItem_Att_chance = 4
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &RedMushroom, 15 ],
                      [ &BlueMushroom, 15 ],

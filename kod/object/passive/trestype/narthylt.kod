@@ -11,22 +11,21 @@
 NarthylWormTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_NARTHYL_WORM
 
 properties:
-   
-   piTreasure_num = TID_NARTHYL_WORM
 
    piItem_att_chance = 4
    piDIff_seed = 7
 
 messages:
-   
-   constructed()
+
+   Constructed()
    {
       plTreasure = [ [ &BlueDragonScale, 48 ],
                      [ &DarkAngelFeather, 48 ],

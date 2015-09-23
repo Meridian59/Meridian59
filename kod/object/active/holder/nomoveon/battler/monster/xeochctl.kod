@@ -106,7 +106,7 @@ properties:
    % What do we drop on death?  Silly default item here.
    pcTreasureItem = &CheapOreChunk
 
-   viReputationGroup = REP_HERETIC
+   piReputationGroup = REP_HERETIC
 
 messages:
 

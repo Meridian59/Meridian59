@@ -11,26 +11,27 @@
 MediumHumanTreasure is TreasureType
 
 constants:
-   
+
    include blakston.khd
-   
+
 classvars:
 
+   viTreasure_num = TID_MEDIUM_HUMAN
 
 properties:
-   
-   piTreasure_num = TID_MEDIUM_HUMAN
+
    piDiff_seed = 2
    piItem_att_chance = 2
 
-messages:  
-   
-   constructed()
+messages:
+
+   Constructed()
    {
       plTreasure = [ [ &Solagh, 40],
                      [ &DragonflyEye, 30],
                      [ &UncutSeraphym, 30] ];
-		propagate;
+
+      propagate;
    }
 
 end

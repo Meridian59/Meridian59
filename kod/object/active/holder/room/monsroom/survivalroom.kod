@@ -107,10 +107,6 @@ resources:
    spectator_only_msg = \
       "Combat has already begun. You may spectate until all participants "
       "have died."
-   player_was_spectated = \
-      "%s has lost physical touch with this reality."
-   you_were_spectated = \
-      "You have lost your physical connection to this place!"
    round_begin_wav = gong.wav
 
 classvars:
@@ -385,15 +381,14 @@ messages:
                     [&NarthylWorm, 3],
                     [&DaemonSkeleton, 3],
                     [&AvarChieftain, 3],
-                    [&Kriipa, 3],
+                    [&GiantRatSoldier, 3],
                     [&StoneTroll, 3]];
 
-      plBosses = [&LupoggKing,
-                  &EarthElementalChampion,
+      plBosses = [&EarthElementalChampion,
                   &FireElementalChampion,
                   &IceElementalChampion,
                   &NeruElementalChampion,
-                  &GiantRatKing,
+                  &Yeti,
                   &DarkAngel,
                   &Thrasher,
                   &Ghost];
@@ -403,7 +398,7 @@ messages:
                       &DragonFlyQueen,
                       &Shadowbeast,
                       &SpiderQueen,
-                      &Yeti,
+                      &GiantRatKing,
                       &EarthElemental,
                       &FireElemental,
                       &IceElemental,
@@ -831,50 +826,30 @@ messages:
                   }
                }
             }
-            else if iGoal = GOAL_BOSS
+            else if (iGoal = GOAL_BOSS
+                  AND FindListElem(plBosses,cDeadClass))
             {
-               foreach n in plBosses
-               {
-                  if n = cDeadClass
-                  {
-                     SetNth(i,2,Nth(i,2)-1);
-                  }
-               }
+               SetNth(i,2,Nth(i,2)-1);
             }
-            else if iGoal = GOAL_MINIBOSSES
+            else if (iGoal = GOAL_MINIBOSSES
+                     AND FindListElem(plMinibosses,cDeadClass))
             {
-               foreach n in plMinibosses
-               {
-                  if n = cDeadClass
-                  {
-                     SetNth(i,2,Nth(i,2)-1);
-                  }
-               }
+               SetNth(i,2,Nth(i,2)-1);
             }
          }
 
          foreach i in plExtraLifeGoals
          {
             iGoal = First(i);
-            if iGoal = GOAL_BOSS
+            if (iGoal = GOAL_BOSS
+                  AND FindListElem(plBosses,cDeadClass))
             {
-               foreach n in plBosses
-               {
-                  if n = cDeadClass
-                  {
-                     SetNth(i,2,Nth(i,2)-1);
-                  }
-               }
+               SetNth(i,2,Nth(i,2)-1);
             }
-            else if iGoal = GOAL_MINIBOSSES
+            else if (iGoal = GOAL_MINIBOSSES
+                     AND FindListElem(plMinibosses,cDeadClass))
             {
-               foreach n in plMinibosses
-               {
-                  if n = cDeadClass
-                  {
-                     SetNth(i,2,Nth(i,2)-1);
-                  }
-               }
+               SetNth(i,2,Nth(i,2)-1);
             }
          }
       }
@@ -1245,20 +1220,21 @@ messages:
    LeaveHold(what=$)
    {
       if IsClass(what,&User)
-         AND Send(what,@IsInSpectatorMode)
       {
-         Send(what,@DeactivateSpectatorMode);
-         Post(self,@BootUser,#who=what);
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_SPECTATOR)
+         {
+            Send(what,@RemoveEnchantmentClass,#class=&Spectate);
+            Post(self,@BootUser,#who=what);
 
-         propagate;
-      }
+            propagate;
+         }
 
-      if IsClass(what,&User)
-         AND plParticipants <> $
-         AND FindListElem(plParticipants,what) <> 0
-      {
-         Post(self,@CountdownToBoot,#who=what);
-         %Post(self,@BootUser,#who=what);
+         if plParticipants <> $
+            AND FindListElem(plParticipants,what) <> 0
+         {
+            Post(self,@CountdownToBoot,#who=what);
+            %Post(self,@BootUser,#who=what);
+         }
       }
 
       propagate;
@@ -1383,7 +1359,7 @@ messages:
             if IsClass(First(i),&User)
             {
                Send(First(i),@MsgSendUser,#message_rsc=you_died_to_monster,
-                                   #parm1=Send(what,@GetTrueName));
+                     #parm1=Send(what,@GetTrueName));
             }
          }
          else
@@ -1391,9 +1367,8 @@ messages:
             if IsClass(First(i),&User)
             {
                Send(First(i),@MsgSendUser,#message_rsc=player_died_to_monster,
-                                   #parm1=Send(who,@GetTrueName),
-                                   #parm2=Send(what,@GetIndef),
-                                   #parm3=Send(what,@GetTrueName));
+                     #parm1=Send(who,@GetTrueName),#parm2=Send(what,@GetIndef),
+                     #parm3=Send(what,@GetTrueName));
             }
          }
       }
@@ -1415,12 +1390,12 @@ messages:
                      Send(Nth(p,1),@MsgSendUser,#message_rsc=your_lives_remain,
                                              #parm1=Nth(p,2));
                   }
-                  if Nth(p,2) = 1
+                  else if Nth(p,2) = 1
                   {
                      Send(Nth(p,1),@MsgSendUser,#message_rsc=one_life_remains,
                                              #parm1=Nth(p,2));
                   }
-                  if Nth(p,2) = 0
+                  else if Nth(p,2) = 0
                   {
                      Send(Nth(p,1),@MsgSendUser,#message_rsc=no_lives_remain,
                                              #parm1=Nth(p,2));
@@ -1452,64 +1427,50 @@ messages:
                Send(First(i),@MsgSendUser,#message_rsc=lives_remain_update,
                                    #parm1=piLives);
             }
-            else
+            else if piLives = 1
             {
-               if piLives = 1
-               {
-                  Send(First(i),@MsgSendUser,#message_rsc=one_life_remains);
-               }
-               
-               if piLives = 0
-               {
-                  Send(First(i),@MsgSendUser,#message_rsc=no_lives_remain);
-               }
+               Send(First(i),@MsgSendUser,#message_rsc=one_life_remains);
+            }
+            else if piLives = 0
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=no_lives_remain);
             }
          }
-         
+
          return;
       }
 
       Send(self,@SpectateUser,#who=who);
+
       return;
    }
    
-   SpectateUser(who=$,inform=TRUE)
+   SpectateUser(who=$)
    {
-      local i, p;
+      local p, oSpell;
 
       if plParticipants <> $
          AND FindListElem(plParticipants,who) <> 0
       {
          plParticipants = DelListElem(plParticipants,who);
       }
-      
+
       if piPublic
       {
          foreach p in plLivesPerPlayer
          {
-            if Nth(p,1) = who
+            if First(p) = who
             {
                plLivesPerPlayer = DelListElem(plLivesPerPlayer,p);
             }
          }
       }
 
-      Send(who,@MsgSendUser,#message_rsc=you_were_spectated);
       Send(who,@SetHealth,#amount=Send(who,@GetMaxHealth));
-      Send(who,@ActivateSpectatorMode);
 
-      if inform
-      {
-         foreach i in plActive
-         {
-            if IsClass(First(i),&User)
-            {
-               Send(First(i),@MsgSendUser,#message_rsc=player_was_spectated,
-                                #parm1=Send(who,@GetTrueName));
-            }
-         }
-      }
-      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SPECTATE);
+      Send(oSpell,@CastSpell,#who=self,#lTargets=[who]);
+
       if plParticipants = $
       {
          Send(self,@BootAllUsers);
@@ -1517,7 +1478,7 @@ messages:
 
       return;
    }
-   
+
    CountdownToBoot(who=$)
    {
       plCrashProtection = Cons([who,CreateTimer(self,@CountdownBootUser,300000)],
@@ -1589,14 +1550,14 @@ messages:
       % They logged off.
       if Send(who,@GetOwner) = $
       {
-         Send(who,@DeactivateSpectatorMode);
+         Send(who,@RemoveEnchantmentClass,#class=&Spectate);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
       
       % They're still here.
       if Send(who,@GetOwner) = self
       {
-         Send(who,@DeactivateSpectatorMode);
+         Send(who,@RemoveEnchantmentClass,#class=&Spectate);
          Send(who,@AdminGoToLastSafeRoom,#from_special=TRUE);
       }
 

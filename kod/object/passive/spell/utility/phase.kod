@@ -165,7 +165,7 @@ messages:
          return FALSE;
       }
 
-      if Send(who,@IsInSpectatorMode)
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_SPECTATOR)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_while_specator_msg);
 
@@ -192,34 +192,22 @@ messages:
          iBrightnessLevel = 5;
          Send(who,@MsgSendUser,#message_rsc=phase_time_gone);
       }
-      else
+      else if iTimeLeft < 25
       {
-         if iTimeLeft < 25
-         {
-            iBrightnessLevel = 4;
-            Send(who,@MsgSendUser,#message_rsc=phase_time_low);
-         }
-         else
-         {
-            if iTimeLeft < 35
-            {
-               iBrightnessLevel = 3;
-            }
-            else
-            {
-               if iTimeLeft < 45
-               {
-                  iBrightnessLevel = 2;
-               }
-               else
-               {
-                  if iTimeLeft < 60
-                  {
-                     iBrightnessLevel = 1;
-                  }
-               }
-            }
-         }
+         iBrightnessLevel = 4;
+         Send(who,@MsgSendUser,#message_rsc=phase_time_low);
+      }
+      else if iTimeLeft < 35
+      {
+         iBrightnessLevel = 3;
+      }
+      else if iTimeLeft < 45
+      {
+         iBrightnessLevel = 2;
+      }
+      else if iTimeLeft < 60
+      {
+         iBrightnessLevel = 1;
       }
 
       Send(who,@EffectSendUserXlat,#xlat=(PHASE_OUT_XLAT + iBrightnessLevel));
@@ -229,7 +217,7 @@ messages:
 
    CastSpell(who=$,lTargets=$)
    {
-      if Send(who,@IsPhasedOut)
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
       {
          Send(self,@NotifyRoomPhaseIn,#who=who);
          Send(who,@RemoveEnchantment,#what=self);
@@ -241,6 +229,7 @@ messages:
          Send(who,@BreakTrance,#event=EVENT_STEER);
          Send(SYS,@DeletePlayerReflections,#who=who);
          Send(who,@FreezeAllEnchantments);
+         Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
 
          % Post this because FreezeAllEnchantments checks for phase applied
          Post(who,@StartEnchantment,#what=self);
@@ -352,6 +341,7 @@ messages:
    RestartEnchantmentEffect(who = $, state = $)
    {
       Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
 
       return;
    }
@@ -361,6 +351,7 @@ messages:
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=TRUE);
 
       Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_DITHERINVIS);
 
@@ -370,6 +361,7 @@ messages:
    EndEnchantment(who = $,report = TRUE,state = $)
    {
       Send(who,@EffectSendUserXlat,#xlat=0);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_PHASED,#value=FALSE);
       Send(who,@FreezePhaseTimer);
 
       % Don't override Hold.

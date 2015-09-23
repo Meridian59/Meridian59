@@ -1963,7 +1963,7 @@ int C_LoadRoom(int object_id,local_var_type *local_vars,
 		return NIL;
 	}
 	
-	return LoadRoomData(room_val.v.data);
+	return LoadRoom(room_val.v.data);
 }
 
 /*
@@ -1976,7 +1976,7 @@ int C_FreeRoom(int object_id,local_var_type *local_vars,
             int num_name_parms,parm_node name_parm_array[])
 {
    val_type room_val;
-   roomdata_node *room;
+   room_node *room;
 
    room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
       normal_parm_array[0].value);
@@ -1994,7 +1994,7 @@ int C_FreeRoom(int object_id,local_var_type *local_vars,
       return NIL;
    }
 
-   UnloadRoomData(room);
+   UnloadRoom(room);
 
    return NIL;
 }
@@ -2004,7 +2004,7 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 			   int num_name_parms,parm_node name_parm_array[])
 {
 	val_type room_val,ret_val,rows,cols,security,rowshighres,colshighres;
-	roomdata_node *room;
+	room_node *room;
 	
 	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
@@ -2023,15 +2023,15 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 	}
 	
 	rows.v.tag = TAG_INT;
-	rows.v.data = room->file_info.rows;
+	rows.v.data = room->data.rows;
 	cols.v.tag = TAG_INT;
-	cols.v.data = room->file_info.cols;
+	cols.v.data = room->data.cols;
 	security.v.tag = TAG_INT;
-	security.v.data = room->file_info.security;
+	security.v.data = room->data.security;
 	rowshighres.v.tag = TAG_INT;
-	rowshighres.v.data = room->file_info.rowshighres;
+	rowshighres.v.data = room->data.rowshighres;
 	colshighres.v.tag = TAG_INT;
-	colshighres.v.data = room->file_info.colshighres;
+	colshighres.v.data = room->data.colshighres;
 
 	ret_val.int_val = NIL;
 	
@@ -2053,272 +2053,13 @@ int C_RoomData(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
-					int num_normal_parms,parm_node normal_parm_array[],
-					int num_name_parms,parm_node name_parm_array[])
-{
-	val_type ret_val,room_val,row_source,col_source,row_dest,col_dest;
-	roomdata_node *r;
-	
-	/* determine whether there's a wall between the row,col to row,col
-    * in the given room.
-    */
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = false;
-	
-	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	row_source = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	col_source = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-		normal_parm_array[2].value);
-	row_dest = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
-		normal_parm_array[3].value);
-	col_dest = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
-		normal_parm_array[4].value);
-	
-	if (room_val.v.tag != TAG_ROOM_DATA)
-	{
-		bprintf("C_CanMoveInRoom can't use non room %i,%i\n",
-			room_val.v.tag,room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (row_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoom row source can't use non int %i,%i\n",
-			row_source.v.tag,row_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoom col source can't use non int %i,%i\n",
-			col_source.v.tag,col_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (row_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoom col dest can't use non int %i,%i\n",
-			row_dest.v.tag,row_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoom col dest can't use non int %i,%i\n",
-			col_dest.v.tag,col_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	r = GetRoomDataByID(room_val.v.data);
-	if (r == NULL)
-	{
-		bprintf("C_CanMoveInRoom can't find room %i\n",room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoom(r,row_source.v.data-1,col_source.v.data-1,
-		row_dest.v.data-1,col_dest.v.data-1);
-	
-	return ret_val.int_val;
-}
-
-int C_CanMoveInRoomHighRes(int object_id,local_var_type *local_vars,
-					int num_normal_parms,parm_node normal_parm_array[],
-					int num_name_parms,parm_node name_parm_array[])
-{
-	val_type ret_val,room_val;
-	val_type row_source,col_source,finerow_source,finecol_source;
-	val_type row_dest,col_dest,finerow_dest,finecol_dest;
-	roomdata_node *r;
-	
-	/* determine whether there's a wall between the row,col to row,col
-    * in the given room.
-    */
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = false;
-	
-	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	row_source = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	col_source = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-		normal_parm_array[2].value);
-	finerow_source = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
-		normal_parm_array[3].value);
-	finecol_source = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
-		normal_parm_array[4].value);
-	
-	row_dest = RetrieveValue(object_id,local_vars,normal_parm_array[5].type,
-		normal_parm_array[5].value);
-	col_dest = RetrieveValue(object_id,local_vars,normal_parm_array[6].type,
-		normal_parm_array[6].value);
-	finerow_dest = RetrieveValue(object_id,local_vars,normal_parm_array[7].type,
-		normal_parm_array[7].value);
-	finecol_dest = RetrieveValue(object_id,local_vars,normal_parm_array[8].type,
-		normal_parm_array[8].value);
-	
-	if (room_val.v.tag != TAG_ROOM_DATA)
-	{
-		bprintf("C_CanMoveInRoomHighRes can't use non room %i,%i\n",
-			room_val.v.tag,room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (row_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes row source can't use non int %i,%i\n",
-			row_source.v.tag,row_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes col source can't use non int %i,%i\n",
-			col_source.v.tag,col_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (finerow_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes finerow source can't use non int %i,%i\n",
-			finerow_source.v.tag,finerow_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (finecol_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes finecol source can't use non int %i,%i\n",
-			finecol_source.v.tag,finecol_source.v.data);
-		return ret_val.int_val;
-	}
-
-	if (row_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes row dest can't use non int %i,%i\n",
-			row_dest.v.tag,row_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes col dest can't use non int %i,%i\n",
-			col_dest.v.tag,col_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (finerow_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes finerow dest can't use non int %i,%i\n",
-			finerow_dest.v.tag,finerow_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (finecol_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomHighRes finecol dest can't use non int %i,%i\n",
-			finecol_dest.v.tag,finecol_dest.v.data);
-		return ret_val.int_val;
-	}
-
-	r = GetRoomDataByID(room_val.v.data);
-	if (r == NULL)
-	{
-		bprintf("C_CanMoveInRoomHighRes can't find room %i\n",room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoomHighRes(r,
-		row_source.v.data-1,col_source.v.data-1,finerow_source.v.data,finecol_source.v.data,
-		row_dest.v.data-1,col_dest.v.data-1,finerow_dest.v.data,finecol_dest.v.data);
-	
-	return ret_val.int_val;
-}
-
-int C_GetHeight(int object_id,local_var_type *local_vars,
-					int num_normal_parms,parm_node normal_parm_array[],
-					int num_name_parms,parm_node name_parm_array[])
-{
-	val_type ret_val,room_val;
-	val_type row,col,finerow,finecol;
-	roomdata_node *r;
-
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = false;
-	
-	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	row = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	col = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-		normal_parm_array[2].value);
-	finerow = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
-		normal_parm_array[3].value);
-	finecol = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
-		normal_parm_array[4].value);
-		
-	if (room_val.v.tag != TAG_ROOM_DATA)
-	{
-		bprintf("C_GetHeight can't use non room %i,%i\n",
-			room_val.v.tag,room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (row.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeight row can't use non int %i,%i\n",
-			row.v.tag,row.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeight col can't use non int %i,%i\n",
-			col.v.tag,col.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (finerow.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeight finerow can't use non int %i,%i\n",
-			finerow.v.tag,finerow.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (finecol.v.tag != TAG_INT)
-	{
-		bprintf("C_GetHeight finecol can't use non int %i,%i\n",
-			finecol.v.tag,finecol.v.data);
-		return ret_val.int_val;
-	}
-	
-	r = GetRoomDataByID(room_val.v.data);
-	if (r == NULL)
-	{
-		bprintf("C_GetHeight can't find room %i\n",room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = GetHeight(r,
-		row.v.data-1,col.v.data-1,finerow.v.data,finecol.v.data);
-	
-	return ret_val.int_val;
-}
-
 int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
 	int num_normal_parms, parm_node normal_parm_array[],
 	int num_name_parms, parm_node name_parm_array[])
 {
 	val_type ret_val, room_val;
 	val_type row, col, finerow, finecol;
-	roomdata_node *r;
+	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = false;
@@ -2376,13 +2117,23 @@ int C_GetHeightFloorBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = GetHeightFloorBSP(r,
-		row.v.data - 1, col.v.data - 1, finerow.v.data, finecol.v.data);
+	V2 p;
+	p.X = GRIDCOORDTOROO(col.v.data, finecol.v.data);
+	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
+
+	// get floor height (1:1024) with depth modifier
+	// (=height of 'object's feet' in water - BELOW water texture)
+	float height = BSPGetHeight(&r->data, &p, true, true);
+
+	// height of -MIN_KOD_INT indicates a location outside of the map
+	// leave this value untouched, otherwise scale from ROO FINENESS to KOD
+	// and box value into min/max kod integer
+
+	ret_val.v.data = 
+		(height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 
 	return ret_val.int_val;
 }
-
 
 int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
 	int num_normal_parms, parm_node normal_parm_array[],
@@ -2390,7 +2141,7 @@ int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
 {
 	val_type ret_val, room_val;
 	val_type row, col, finerow, finecol;
-	roomdata_node *r;
+	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = false;
@@ -2448,9 +2199,19 @@ int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = GetHeightCeilingBSP(r,
-		row.v.data - 1, col.v.data - 1, finerow.v.data, finecol.v.data);
+	V2 p;
+	p.X = GRIDCOORDTOROO(col.v.data, finecol.v.data);
+	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
+
+	// get ceiling height (1:1024)
+	float height = BSPGetHeight(&r->data, &p, false, false);
+
+	// height of -MIN_KOD_INT indicates a location outside of the map
+	// leave this value untouched, otherwise scale from ROO FINENESS to KOD
+	// and box value into min/max kod integer
+
+	ret_val.v.data =
+		(height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 
 	return ret_val.int_val;
 }
@@ -2462,7 +2223,7 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	val_type ret_val, room_val;
 	val_type row_source, col_source, finerow_source, finecol_source;
 	val_type row_dest, col_dest, finerow_dest, finecol_dest;
-	roomdata_node *r;
+	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = false;
@@ -2557,10 +2318,19 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoomBSP(r,
-		row_source.v.data - 1, col_source.v.data - 1, finerow_source.v.data, finecol_source.v.data,
-		row_dest.v.data - 1, col_dest.v.data - 1, finerow_dest.v.data, finecol_dest.v.data);
+	V2 s;
+	s.X = GRIDCOORDTOROO(col_source.v.data, finecol_source.v.data);
+	s.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
+
+	V2 e;
+	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
+	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
+
+	ret_val.v.data = BSPCanMoveInRoom(&r->data, &s, &e);
+
+#if DEBUGMOVE
+	dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", ret_val.v.data, r->file_info.resource_id, s.X, s.Y, e.X, e.Y);
+#endif
 
 	return ret_val.int_val;
 }
@@ -2572,7 +2342,7 @@ int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
 	val_type ret_val, room_val;
 	val_type row_source, col_source, finerow_source, finecol_source;
 	val_type row_dest, col_dest, finerow_dest, finecol_dest;
-	roomdata_node *r;
+	room_node *r;
  
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = false;
@@ -2667,85 +2437,28 @@ int C_LineOfSightBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = LineOfSightBSP(r,
-		row_source.v.data - 1, col_source.v.data - 1, finerow_source.v.data, finecol_source.v.data,
-		row_dest.v.data - 1, col_dest.v.data - 1, finerow_dest.v.data, finecol_dest.v.data);
+	V3 s;
+	s.X = GRIDCOORDTOROO(col_source.v.data, finecol_source.v.data);
+	s.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
 
-	return ret_val.int_val;
-}
+	// get floor height with depth modifier
+	V2 s2d = { s.X, s.Y };
+	s.Z = BSPGetHeight(&r->data, &s2d, true, true) + OBJECTHEIGHTROO;
 
-int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
-						   int num_normal_parms,parm_node normal_parm_array[],
-						   int num_name_parms,parm_node name_parm_array[])
-{
-	val_type ret_val,room_val,row_source,col_source,row_dest,col_dest;
-	roomdata_node *r;
-	
-	/* determine whether there's a wall between the row,col to row,col
-    * in the given room.
-    */
-	
-	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = false;
-	
-	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
-		normal_parm_array[0].value);
-	row_source = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-		normal_parm_array[1].value);
-	col_source = RetrieveValue(object_id,local_vars,normal_parm_array[2].type,
-		normal_parm_array[2].value);
-	row_dest = RetrieveValue(object_id,local_vars,normal_parm_array[3].type,
-		normal_parm_array[3].value);
-	col_dest = RetrieveValue(object_id,local_vars,normal_parm_array[4].type,
-		normal_parm_array[4].value);
-	
-	if (room_val.v.tag != TAG_ROOM_DATA)
-	{
-		bprintf("C_CanMoveInRoomFine can't use non room %i,%i\n",
-			room_val.v.tag,room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (row_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomFine row source can't use non int %i,%i\n",
-			row_source.v.tag,row_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col_source.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomFine col source can't use non int %i,%i\n",
-			col_source.v.tag,col_source.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (row_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomFine col dest can't use non int %i,%i\n",
-			row_dest.v.tag,row_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	if (col_dest.v.tag != TAG_INT)
-	{
-		bprintf("C_CanMoveInRoomFine col dest can't use non int %i,%i\n",
-			col_dest.v.tag,col_dest.v.data);
-		return ret_val.int_val;
-	}
-	
-	r = GetRoomDataByID(room_val.v.data);
-	if (r == NULL)
-	{
-		bprintf("C_CanMoveInRoomFine can't find room %i\n",room_val.v.data);
-		return ret_val.int_val;
-	}
-	
-	/* remember that kod uses 1-based arrays, and of course we don't */
-	ret_val.v.data = CanMoveInRoomFine(r,row_source.v.data-1,col_source.v.data-1,
-		row_dest.v.data-1,col_dest.v.data-1);
-	
+	V3 e;
+	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
+	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
+
+	// get floor height with depth modifier
+	V2 e2d = { e.X, e.Y };
+	e.Z = BSPGetHeight(&r->data, &e2d, true, true) + OBJECTHEIGHTROO;
+
+	ret_val.v.data = BSPLineOfSight(&r->data, &s, &e);
+
+#if DEBUGLOS
+	dprintf("LOS:%i S:(%1.2f/%1.2f/%1.2f) E:(%1.2f/%1.2f/%1.2f)", ret_val.v.data, s.X, s.Y, s.Z, e.X, e.Y, e.Z);
+#endif
+
 	return ret_val.int_val;
 }
 
@@ -2754,7 +2467,7 @@ int C_ChangeTextureBSP(int object_id, local_var_type *local_vars,
     int num_name_parms, parm_node name_parm_array[])
 {
 	val_type ret_val, room_val, server_id, new_texnum, flags;
-	roomdata_node *r;
+	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = false;
@@ -2803,7 +2516,7 @@ int C_ChangeTextureBSP(int object_id, local_var_type *local_vars,
 		return ret_val.int_val;
 	}
 
-	BSPChangeTexture(&r->file_info, (unsigned short)server_id.v.data, 
+	BSPChangeTexture(&r->data, (unsigned short)server_id.v.data, 
 		(unsigned short)new_texnum.v.data, flags.v.data);
 
 	return ret_val.int_val;
@@ -2814,7 +2527,7 @@ int C_MoveSectorBSP(int object_id, local_var_type *local_vars,
 	int num_name_parms, parm_node name_parm_array[])
 {
 	val_type ret_val, room_val, server_id, animation, height, speed;
-	roomdata_node *r;
+	room_node *r;
 
 	ret_val.v.tag = TAG_INT;
 	ret_val.v.data = false;
@@ -2876,7 +2589,7 @@ int C_MoveSectorBSP(int object_id, local_var_type *local_vars,
 	float fheight = FINENESSKODTOROO((float)height.v.data);
 	float fspeed = 0.0f; // todo, but always instant anyways atm
 
-	BSPMoveSector(&r->file_info, (unsigned int)server_id.v.data, is_floor, fheight, fspeed);
+	BSPMoveSector(&r->data, (unsigned int)server_id.v.data, is_floor, fheight, fspeed);
 
 	return ret_val.int_val;
 }

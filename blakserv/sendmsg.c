@@ -174,10 +174,6 @@ void InitBkodInterpret(void)
 	ccall_table[CREATEROOMDATA] = C_LoadRoom;
 	ccall_table[FREEROOM] = C_FreeRoom;
 	ccall_table[ROOMDATA] = C_RoomData;
-	ccall_table[CANMOVEINROOM] = C_CanMoveInRoom;
-	ccall_table[CANMOVEINROOMFINE] = C_CanMoveInRoomFine;
-	ccall_table[CANMOVEINROOMHIGHRES] = C_CanMoveInRoomHighRes;
-	ccall_table[GETHEIGHT] = C_GetHeight;
 	ccall_table[GETHEIGHTFLOORBSP] = C_GetHeightFloorBSP;
 	ccall_table[GETHEIGHTCEILINGBSP] = C_GetHeightCeilingBSP;
 	ccall_table[LINEOFSIGHTBSP] = C_LineOfSightBSP;

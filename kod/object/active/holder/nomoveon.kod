@@ -71,7 +71,7 @@ messages:
    {
       if poOwner <> $
       {
-         return GetHeight(Send(poOwner,@GetRoomData),piRow,piCol,
+         return GetHeightFloorBSP(Send(poOwner,@GetRoomData),piRow,piCol,
                      piFine_row,piFine_col);
       }
 

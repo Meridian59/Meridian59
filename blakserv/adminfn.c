@@ -2124,10 +2124,6 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CREATEROOMDATA : strcpy(c_name, "CreateRoomData"); break;
 		case FREEROOM : strcpy(c_name, "FreeRoom"); break;
 		case ROOMDATA : strcpy(c_name, "RoomData"); break;
-		case CANMOVEINROOM : strcpy(c_name, "CanMoveInRoom"); break;
-		case CANMOVEINROOMFINE : strcpy(c_name, "CanMoveInRoomFine"); break;
-		case CANMOVEINROOMHIGHRES : strcpy(c_name, "CanMoveInRoomHighRes"); break;
-		case GETHEIGHT : strcpy(c_name, "GetHeight"); break;
 		case GETHEIGHTFLOORBSP: strcpy(c_name, "GetHeightFloorBSP"); break;
 		case GETHEIGHTCEILINGBSP: strcpy(c_name, "GetHeightCeilingBSP"); break;
 		case CANMOVEINROOMBSP: strcpy(c_name, "CanMoveInRoomBSP"); break;
@@ -4626,7 +4622,7 @@ void AdminReloadGame(int session_id,admin_parm_type parms[],
 	
 	aprintf("Unloading game... ");
 	AdminSendBufferList();
-	ResetRoomData();
+	ResetRooms();
 	ResetUser();
 	ResetString();
 	ResetTimer();

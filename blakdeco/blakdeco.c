@@ -609,10 +609,6 @@ char * name_function(int fnum)
    case CREATEROOMDATA : return "LoadRoom";
    case FREEROOM : return "FreeRoom";
    case ROOMDATA : return "RoomData";
-   case CANMOVEINROOM : return "CanMoveInRoom";
-   case CANMOVEINROOMFINE : return "CanMoveInRoomFine";
-   case CANMOVEINROOMHIGHRES : return "CanMoveInRoomHighRes";
-   case GETHEIGHT : return "GetHeight";
    case GETHEIGHTFLOORBSP : return "GetHeightFloorBSP";
    case GETHEIGHTCEILINGBSP : return "GetHeightCeilingBSP";
    case LINEOFSIGHTBSP : return "LineOfSightBSP";

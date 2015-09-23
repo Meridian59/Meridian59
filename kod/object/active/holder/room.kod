@@ -2288,7 +2288,11 @@ messages:
          }
       }
       else
-      {
+      {	  
+         % these are no valid moves inside the room
+         % don't validate them later
+         server_validate = FALSE;
+
          if entering_room AND dir <> $
          {
             % If doing a normal room to room movement (not teleport across

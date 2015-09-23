@@ -560,13 +560,13 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
             return false;
          }
 
-         // or a wall with an unset side (also room boundary)
+         // allow moves with start outside (and end inside, see above)
          if (!sectorS || !sideS)
          {
 #if DEBUGMOVE
-            dprintf("MOVEBLOCK (START OUTSIDE): W:%i", wall->Num);
+            dprintf("MOVEALLOW (START OUT, END IN): W:%i", wall->Num);
 #endif
-            return false;
+            return true;
          }
 
          // sides which have no passable flag set always block
@@ -633,11 +633,14 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E)
    if (!Room || Room->TreeNodesCount == 0 || !S || !E)
       return false;
 
+   // allow move to same location
+   if (ISZERO(S->X - E->X) && ISZERO(S->Y - E->Y))
+   {
 #if DEBUGMOVE
-   // can filter out any logs except for specific room
-   //if (Room->resource_id != 22040)
-   //	return true;
+      dprintf("MOVEALLOW (START=END)");
 #endif
+      return true;
+   }
 
    return BSPCanMoveInRoomTree(&Room->TreeNodes[0], S, E);
 }

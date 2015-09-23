@@ -46,6 +46,8 @@ int GetHeight(roomdata_node *r,int row,int col,int finerow,int finecol);
 
 int GetHeightFloorBSP(roomdata_node *r, int row, int col, int finerow, int finecol);
 int GetHeightCeilingBSP(roomdata_node *r, int row, int col, int finerow, int finecol);
+Bool CanMoveInRoomBSP(roomdata_node *r, int from_row, int from_col, int from_finerow, int from_finecol,
+                                        int to_row, int to_col, int to_finerow, int to_finecol);
 Bool LineOfSightBSP(roomdata_node *r, int from_row, int from_col, int from_finerow, int from_finecol,
                                       int to_row, int to_col, int to_finerow, int to_finecol);
 #endif

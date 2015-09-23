@@ -166,6 +166,8 @@ enum
 
    MINIGAMENUMBERTOSTRING = 71,
    MINIGAMESTRINGTONUMBER = 72,
+   
+   CANMOVEINROOMBSP = 73,
 
    APPENDLISTELEM = 100,
    CONS = 101,
@@ -237,6 +239,7 @@ enum
 #define MAX_KOD_INT ((1<<27)-1)  // 28th bit is sign. 0x07ffffff == kod +134217727
 #define MASK_KOD_INT ((1<<28)-1) // 28th bit is sign. 0x0fffffff == kod -1
 #define MIN_KOD_INT (1<<27)      // 28th bit is sign. 0x08000000 == kod -134217728
+#define KODFINENESS 64           // how many fine rows give a full row
 
 typedef struct
 {

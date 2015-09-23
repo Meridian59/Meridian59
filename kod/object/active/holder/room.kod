@@ -2288,7 +2288,11 @@ messages:
          }
       }
       else
-      {
+      {	  
+         % these are no valid moves inside the room
+         % don't validate them later
+         server_validate = FALSE;
+
          if entering_room AND dir <> $
          {
             % If doing a normal room to room movement (not teleport across
@@ -2324,7 +2328,7 @@ messages:
 
       if server_validate
       {
-         if NOT CanMoveInRoomHighRes(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,
+         if NOT CanMoveInRoomBSP(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,
                      new_col,new_finerow,new_finecol)
          {
             return FALSE;

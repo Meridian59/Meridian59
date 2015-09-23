@@ -18,8 +18,11 @@
 
 #include "blakserv.h"
 
-roomdata_node *roomdata;
+roomdata_node **roomdata;
+roomdata_rsc_node **roomdata_rsc;
+
 int num_roomdata;
+int roomdata_size;
 
 /* local function prototypes */
 Bool LoadRoomFile(char *fname,room_type *file_info);
@@ -41,23 +44,46 @@ enum
 
 void InitRoomData()
 {
-   roomdata = NULL;
+   roomdata_size = 400;
+   roomdata = (roomdata_node **)AllocateMemoryCalloc(MALLOC_ID_ROOM, roomdata_size, sizeof(roomdata_node*));
+   roomdata_rsc = (roomdata_rsc_node **)AllocateMemoryCalloc(MALLOC_ID_ROOM, roomdata_size, sizeof(roomdata_rsc_node*));
    num_roomdata = 0;
 }
 
 void ResetRoomData()
 {
-   roomdata_node *room,*temp;
+   roomdata_node *room, *temp;
+   roomdata_rsc_node *rrsc, *rrscTemp;
 
-   room = roomdata;
-   while (room != NULL)
+   for (int i = 0; i < roomdata_size; ++i)
    {
-      temp = room->next;
-      BSPRoomFreeServer(&(room->file_info));
-      FreeMemory(MALLOC_ID_ROOM,room,sizeof(roomdata_node));
-      room = temp;
+      room = roomdata[i % roomdata_size];
+      if (room)
+      {
+         rrsc = roomdata_rsc[room->file_info.resource_id % roomdata_size];
+         while (rrsc != NULL)
+         {
+            rrscTemp = rrsc->next;
+            FreeMemory(MALLOC_ID_ROOM, rrsc, sizeof(roomdata_rsc_node));
+            rrsc = rrscTemp;
+         }
+         roomdata_rsc[room->file_info.resource_id % roomdata_size] = NULL;
+
+         while (room)
+         {
+            temp = room->next;
+            BSPRoomFreeServer(&room->file_info);
+            FreeMemory(MALLOC_ID_ROOM, room, sizeof(roomdata_node));
+            room = temp;
+         }
+         roomdata[i % roomdata_size] = NULL;
+      }
    }
-   roomdata = NULL;
+   
+   //FreeMemory(MALLOC_ID_ROOM, roomdata_rsc, sizeof(roomdata_rsc_node*) * roomdata_size);
+   //FreeMemory(MALLOC_ID_ROOM, roomdata, sizeof(roomdata_node*) * roomdata_size);
+
+  //roomdata = NULL;
    num_roomdata = 0;
 }
 
@@ -66,6 +92,7 @@ int LoadRoomData(int resource_id)
    val_type ret_val;
    resource_node *r;
    roomdata_node *room;
+   roomdata_rsc_node *rrsc;
    room_type file_info;
 
    r = GetResourceByID(resource_id);
@@ -76,19 +103,18 @@ int LoadRoomData(int resource_id)
    }
 
    ret_val.v.tag = TAG_ROOM_DATA;
-   room = roomdata;
 
    // Check if we have already allocated this room and are looking to make
    // a duplicate of it. Save memory/cycles by using the identical room data.
-   while (room != NULL)
+   rrsc = roomdata_rsc[resource_id % roomdata_size];
+   while (rrsc)
    {
-      if (room->file_info.resource_id == resource_id)
+      if (rrsc->resource_id == resource_id)
       {
-         ret_val.v.data = room->roomdata_id;
-
+         ret_val.v.data = rrsc->roomdata_id;
          return ret_val.int_val;
       }
-      room = room->next;
+      rrsc = rrsc->next;
    }
 
    if (!LoadRoomFile(r->resource_val[0],&file_info))
@@ -97,13 +123,20 @@ int LoadRoomData(int resource_id)
       return NIL;
    }
 
-   room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM,sizeof(roomdata_node));
+   room = (roomdata_node *)AllocateMemory(MALLOC_ID_ROOM, sizeof(roomdata_node));
+   rrsc = (roomdata_rsc_node *)AllocateMemory(MALLOC_ID_ROOM, sizeof(roomdata_rsc_node));
+
    room->roomdata_id = num_roomdata++;
    room->file_info = file_info;
    room->file_info.resource_id = resource_id;
+   rrsc->resource_id = resource_id;
+   rrsc->roomdata_id = room->roomdata_id;
 
-   room->next = roomdata;
-   roomdata = room;
+   rrsc->next = roomdata_rsc[resource_id % roomdata_size];
+   roomdata_rsc[resource_id % roomdata_size] = rrsc;
+
+   room->next = roomdata[room->roomdata_id % roomdata_size];
+   roomdata[room->roomdata_id % roomdata_size] = room;
 
 /*
    dprintf("LoadRoomData read room %i [%i,%i]\n",
@@ -120,7 +153,8 @@ int LoadRoomData(int resource_id)
  */
 void UnloadRoomData(roomdata_node *r)
 {
-   roomdata_node *room, *prev;
+   roomdata_node *room, *temp;
+   roomdata_rsc_node *rrsc, *rrscTemp;
 
    if (r == NULL)
    {
@@ -129,31 +163,31 @@ void UnloadRoomData(roomdata_node *r)
       return;
    }
 
-   room = roomdata;
-
-   // Check if we're unloading the first room in list.
-   if (room->roomdata_id == r->roomdata_id)
+   rrsc = roomdata_rsc[r->file_info.resource_id % roomdata_size];
+   while (rrsc)
    {
-      roomdata = roomdata->next;
-      FreeRoom(r);
-
-      return;
+      rrscTemp = rrsc->next;
+      if (rrsc->roomdata_id == r->roomdata_id)
+      {
+         FreeMemory(MALLOC_ID_ROOM, rrsc, sizeof(roomdata_rsc_node));
+         rrsc = rrscTemp;
+         roomdata_rsc[r->file_info.resource_id % roomdata_size] = rrscTemp;
+         break;
+      }
+      rrsc = rrsc->next;
    }
 
-   prev = roomdata;
-   room = roomdata->next;
-
-   while (room != NULL)
+   room = roomdata[r->roomdata_id % roomdata_size];
+   while (room)
    {
+      temp = room->next;
       if (room->roomdata_id == r->roomdata_id)
       {
-         prev->next = room->next;
-         // This function makes the calls to free the memory.
          FreeRoom(r);
-
+         room = temp;
+         roomdata[r->roomdata_id % roomdata_size] = temp;
          return;
       }
-      prev = room;
       room = room->next;
    }
 
@@ -170,7 +204,7 @@ void UnloadRoomData(roomdata_node *r)
 void FreeRoom(roomdata_node *r)
 {
    BSPRoomFreeServer(&(r->file_info));
-   FreeMemory(MALLOC_ID_ROOM,r,sizeof(roomdata_node));
+   FreeMemory(MALLOC_ID_ROOM, r, sizeof(roomdata_node));
 
    return;
 }
@@ -179,11 +213,11 @@ roomdata_node * GetRoomDataByID(int id)
 {
    roomdata_node *room;
 
-   room = roomdata;
-   while (room != NULL)
+   room = roomdata[id % roomdata_size];
+   while (room)
    {
       if (room->roomdata_id == id)
-	 return room;
+         return room;
       room = room->next;
    }
    return NULL;

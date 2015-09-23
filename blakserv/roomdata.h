@@ -21,6 +21,13 @@ typedef struct roomdata_struct
    struct roomdata_struct *next;
 } roomdata_node;
 
+typedef struct roomdata_rsc_struct
+{
+   int resource_id;
+   int roomdata_id;
+   struct roomdata_rsc_struct *next;
+} roomdata_rsc_node;
+
 enum
 {
    ROOM_FLAG_WALKABLE = 0x01

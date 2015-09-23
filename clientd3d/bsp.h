@@ -185,7 +185,7 @@ typedef struct {
    RoomAnimate *animate;       /* Animation structure for wall */
 } Sidedef;
 
-#define MAX_NPTS 20
+#define MAX_NPTS 100
 
 typedef struct WallData
 {
@@ -326,7 +326,7 @@ typedef struct
 
 typedef struct {
    int npts;                   /* # of points in polygon */
-   Pnt p[MAX_NPTS+1];          /* points of polygon (clockwise ordered, looking down on floor) */
+   Pnt p[MAX_NPTS + 1];          /* points of polygon (clockwise ordered, looking down on floor) */
    /*    invariant: p[npts] == p[0] */
 } Poly;
 

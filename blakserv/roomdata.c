@@ -721,7 +721,6 @@ Bool CanMoveInRoomBSP(roomdata_node *r, int from_row, int from_col, int from_fin
 	bool moveok = BSPCanMoveInRoom(&r->file_info, &s, &e);
 
 #if DEBUGMOVE
-	if (r->file_info.resource_id == 22040)
 	dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", moveok, r->file_info.resource_id, s.X, s.Y, e.X, e.Y);
 #endif
 

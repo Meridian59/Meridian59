@@ -570,8 +570,8 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
          }
 
          // sides which have no passable flag set always block
-         //if (!((sideS->Flags & WF_PASSABLE) == WF_PASSABLE))
-         //   return false;
+         if (!((sideS->Flags & WF_PASSABLE) == WF_PASSABLE))
+            return false;
 
          // get heights
          float hFloorS = GetSectorHeightFloorWithDepth(sectorS, &q);

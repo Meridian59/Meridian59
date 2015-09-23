@@ -38,6 +38,22 @@ typedef struct V2
 #define V3LEN2(a)  (a)->X*(a)->X + (a)->Y*(a)->Y + (a)->Z*(a)->Z
 #define V3LEN(a)   sqrtf(V3LEN2)
 
+#define V2ADD(a,b,c) \
+   (a)->X = (b)->X + (c)->X; \
+   (a)->Y = (b)->Y + (c)->Y;
+
+#define V2SUB(a,b,c) \
+   (a)->X = (b)->X - (c)->X; \
+   (a)->Y = (b)->Y - (c)->Y;;
+
+#define V2SCALE(a,b) \
+   (a)->X *= b; \
+   (a)->Y *= b;
+
+#define V2DOT(a,b) ((a)->X * (b)->X + (a)->Y * (b)->Y)
+#define V2LEN2(a)  (a)->X*(a)->X + (a)->Y*(a)->Y
+#define V2LEN(a)   sqrtf(V2LEN2)
+
 // true if point (c) lies inside boundingbox defined by min/max of (a) and (b)
 #define ISINBOX(a, b, c) \
    (fmin((a)->X, (b)->X) - EPSILON <= (c)->X && (c)->X <= fmax((a)->X, (b)->X) + EPSILON && \
@@ -100,4 +116,53 @@ __inline bool IntersectLineTriangle(V3* P1, V3* P2, V3* P3, V3* S, V3* E)
       return true;
 
    return false;
+}
+
+// Returns the minimum squared distance between
+// point P and finite line segment given by P1 and P2
+__inline float MinSquaredDistanceToLineSegment(V2* P, V2* Q1, V2* Q2)
+{
+   // finite line vector from start (Q1) to end (Q2)
+   V2 d;
+   V2SUB(&d, Q2, Q1);
+
+   // squared length of Q1Q2 (squared distance betweem them)
+   float len2 = V2LEN2(&d);
+
+   // Q1 is on Q2 (no line)
+   if (ISZERO(len2))
+   {
+      V2SUB(&d, Q1, P);
+      return V2LEN2(&d);
+   }
+	
+   V2 v1, v2, v3;
+   V2SUB(&v1, P, Q1);
+   V2SUB(&v2, Q2, Q1);
+
+   float t = V2DOT(&v1, &v2) / len2;
+
+   // Q1 is closest
+   if (t < 0.0f)
+   {
+      V2SUB(&d, Q1, P);
+      return V2LEN2(&d);
+   }
+
+   // Q2 is closest
+   else if (t > 1.0f)
+   {
+      V2SUB(&d, Q2, P);
+      return V2LEN2(&d);
+   }
+
+   // point on line is closest
+   else
+   {
+      V2SCALE(&d, t);
+      V2ADD(&v3, Q1, &d);
+      V2SUB(&d, &v3, P);
+
+      return V2LEN2(&d);
+   }
 }

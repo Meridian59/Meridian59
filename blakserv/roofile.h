@@ -13,8 +13,9 @@
 #ifndef _ROOFILE_H
 #define _ROOFILE_H
 
-// switch to 1 to enable debug output for BSP LOS
-#define DEBUGLOS 0
+// switch to 1 to enable debug output for BSP LOS or MOVE
+#define DEBUGLOS  0
+#define DEBUGMOVE 0
 
 #define ROO_VERSION     14
 #define ROO_SIGNATURE   0xB14F4F52
@@ -28,6 +29,7 @@
    (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)-MIN_KOD_INT) ? -MIN_KOD_INT : (int)x))
 
 float BSPGetHeight(room_type* Room, V2* P, bool Floor, bool WithDepth);
+bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E);
 bool BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);

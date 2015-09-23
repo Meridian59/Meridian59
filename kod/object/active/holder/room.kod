@@ -2335,7 +2335,7 @@ messages:
 
       if server_validate
       {
-         if NOT CanMoveInRoomHighRes(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,
+         if NOT CanMoveInRoomBSP(prmRoom,iRow,iCol,iFineRow,iFineCol,new_row,
                      new_col,new_finerow,new_finecol)
          {
             return FALSE;

@@ -704,6 +704,30 @@ int GetHeightCeilingBSP(roomdata_node *r, int row, int col, int finerow, int fin
    return (height == (float)-MIN_KOD_INT ? -MIN_KOD_INT : FLOATTOKODINT(FINENESSROOTOKOD(height)));
 }
 
+Bool CanMoveInRoomBSP(roomdata_node *r, int from_row, int from_col, int from_finerow, int from_finecol,
+	                  int to_row, int to_col, int to_finerow, int to_finecol)
+{
+	if (!r || r->file_info.TreeNodesCount == 0)
+		return false;
+
+	V2 s;
+	s.X = FINENESSKODTOROO((float)from_col * 64.0f + (float)from_finecol);
+	s.Y = FINENESSKODTOROO((float)from_row * 64.0f + (float)from_finerow);
+
+	V2 e;
+	e.X = FINENESSKODTOROO((float)to_col * 64.0f + (float)to_finecol);
+	e.Y = FINENESSKODTOROO((float)to_row * 64.0f + (float)to_finerow);
+
+	bool moveok = BSPCanMoveInRoom(&r->file_info, &s, &e);
+
+#if DEBUGMOVE
+	if (r->file_info.resource_id == 22040)
+	dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", moveok, r->file_info.resource_id, s.X, s.Y, e.X, e.Y);
+#endif
+
+	return moveok;
+}
+
 Bool LineOfSightBSP(roomdata_node *r, int from_row, int from_col, int from_finerow, int from_finecol,
                     int to_row, int to_col, int to_finerow, int to_finecol)
 {

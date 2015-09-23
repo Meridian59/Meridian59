@@ -54,7 +54,21 @@
 #define SF_SLOPED_FLOOR    0x00000400      // Sector has sloped floor
 #define SF_SLOPED_CEILING  0x00000800      // Sector has sloped ceiling
 #define WF_TRANSPARENT     0x00000002      // normal wall has some transparency
+#define WF_PASSABLE        0x00000004      // wall can be walked through
 #define WF_NOLOOKTHROUGH   0x00000020      // bitmap can't be seen through even though it's transparent
+
+/*****************************************************************************************
+********* from clientd3d/game.c **********************************************************
+*****************************************************************************************/
+#define PLAYERWIDTH        (31.0f * (float)KODFINENESS * 0.25f)
+#define WALLMINDISTANCE    (PLAYERWIDTH / 2.0f)
+#define WALLMINDISTANCE2   (WALLMINDISTANCE * WALLMINDISTANCE)
+
+/*****************************************************************************************
+********* from clientd3d/move.c **********************************************************
+*****************************************************************************************/
+#define MAXSTEPHEIGHT      ((float)(24 << 4))
+
 
 // returns floorheight additionally modified by depth sector flags
 __inline float GetSectorHeightFloorWithDepth(Sector* Sector, V2* P)
@@ -383,6 +397,249 @@ bool BSPLineOfSight(room_type* Room, V3* S, V3* E)
       return false;
 
    return BSPLineOfSightTree(&Room->TreeNodes[0], S, E);
+}
+
+/*********************************************************************************************/
+/*
+* BSPCanMoveInRoomTree:  Checks if you can walk a straight line from (S)tart to (E)nd 
+*/
+bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
+{
+   // reached a leaf or nullchild, movements not blocked by leafs
+   if (!Node || Node->Type != BspInternalType)
+      return true;
+
+   /****************************************************************/
+
+   // get signed distances from splitter to both endpoints of move
+   float distS = DISTANCETOSPLITTERSIGNED(&Node->u.internal, S);
+   float distE = DISTANCETOSPLITTERSIGNED(&Node->u.internal, E);
+
+   /****************************************************************/
+
+   // both endpoints far away enough on positive (right) side
+   // --> climb down only right subtree
+   if (distS > WALLMINDISTANCE && distE > WALLMINDISTANCE)
+      return BSPCanMoveInRoomTree(Node->u.internal.RightChild, S, E);
+
+   // both endpoints far away enough on negative (left) side
+   // --> climb down only left subtree
+   else if (distS < -WALLMINDISTANCE && distE < -WALLMINDISTANCE)
+      return BSPCanMoveInRoomTree(Node->u.internal.LeftChild, S, E);
+
+   // endpoints are on different sides, one/both on infinite line or potentially too close
+   // --> check walls of splitter first and then possibly climb down both subtrees
+   else
+   {
+      // loop through walls in this splitter
+      Wall* wall = Node->u.internal.FirstWall;
+      while (wall)
+      {
+         // these will be filled by two cases below
+         V2 q;
+         Side* sideS;
+         Sector* sectorS;
+         Side* sideE;
+         Sector* sectorE;
+
+         // CASE 1) The move line actually crosses this infinite splitter.
+         // This case handles long movelines where S and E can be far away from each other and
+         // just checking the distance of E to the line would fail.
+         // q contains the intersection point
+         if ((distS > 0.0f && distE < 0.0f) ||
+             (distS < 0.0f && distE > 0.0f))
+         {
+            // get 2d line equation coefficients for infinite line through S and E
+            float a1, b1, c1;
+            a1 = E->Y - S->Y;
+            b1 = S->X - E->X;
+            c1 = a1 * S->X + b1 * S->Y;
+
+            // get 2d line equation coefficients for infinite line through P1 and P2
+            // NOTE: This should be using BspInternal A,B,C coefficients
+            float a2, b2, c2;
+            a2 = wall->P2.Y - wall->P1.Y;
+            b2 = wall->P1.X - wall->P2.X;
+            c2 = a2 * wall->P1.X + b2 * wall->P1.Y;
+
+            float det = a1*b2 - a2*b1;
+
+            // parallel (or identical) lines
+            // should not happen here but is important for div by 0
+            if (ISZERO(det))
+            {
+               wall = wall->NextWallInPlane;
+               continue;
+            }
+
+            // intersection point of infinite lines				
+            q.X = (b2*c1 - b1*c2) / det;
+            q.Y = (a1*c2 - a2*c1) / det;
+
+            //dprintf("intersect: %f %f \t p1.x:%f p1.y:%f p2.x:%f p2.y:%f \n", q.X, q.Y, wall->P1.X, wall->P1.Y, wall->P2.X, wall->P2.Y);
+
+            // infinite intersection point must be in BOTH
+            // finite segments boundingboxes, otherwise no intersect
+            if (!ISINBOX(S, E, &q) || !ISINBOX(&wall->P1, &wall->P2, &q))
+            {
+               wall = wall->NextWallInPlane;
+               continue;
+            }
+
+            // set from and to sector / side
+            if (distS > 0.0f)
+            {
+               sideS = wall->RightSide;
+               sectorS = wall->RightSector;
+            }
+            else
+            {
+               sideS = wall->LeftSide;
+               sectorS = wall->LeftSector;
+            }
+
+            if (distE > 0.0f)
+            {
+               sideE = wall->RightSide;
+               sectorE = wall->RightSector;
+            }
+            else
+            {
+               sideE = wall->LeftSide;
+               sectorE = wall->LeftSector;
+            }
+         }
+
+         // CASE 2) The move line does not cross the infinite splitter, both move endpoints are on the same side.
+         // This handles short moves where walls are not intersected, but the endpoint may be too close
+         // q will store the too-close endpoint
+         else
+         {
+            // get min. squared distance from move endpoint to line segment
+            float dist2 = MinSquaredDistanceToLineSegment(E, &wall->P1, &wall->P2);
+
+            // skip if far enough away
+            if (dist2 > WALLMINDISTANCE2)
+            {
+               wall = wall->NextWallInPlane;
+               continue;
+            }
+
+            q.X = E->X;
+            q.Y = E->Y;
+
+            // set from and to sector / side
+            // for case 2 (too close) these are based on (S),
+            // and (E) is assumed to be on the other side.
+            if (distS >= 0.0f)
+            {
+               sideS = wall->RightSide;
+               sectorS = wall->RightSector;
+               sideE = wall->LeftSide;
+               sectorE = wall->LeftSector;
+            }
+            else
+            {
+               sideS = wall->LeftSide;
+               sectorS = wall->LeftSector;
+               sideE = wall->RightSide;
+               sectorE = wall->RightSector;
+            }
+         }
+
+         /****************************************/
+         /*   From here on both cases together   */
+         /****************************************/
+
+         // block moves with end outside
+         if (!sectorE || !sideE)
+         {
+#if DEBUGMOVE
+            dprintf("MOVEBLOCK (END OUTSIDE): W:%i", wall->Num);
+#endif
+            return false;
+         }
+
+         // or a wall with an unset side (also room boundary)
+         if (!sectorS || !sideS)
+         {
+#if DEBUGMOVE
+            dprintf("MOVEBLOCK (START OUTSIDE): W:%i", wall->Num);
+#endif
+            return false;
+         }
+
+         // sides which have no passable flag set always block
+         //if (!((sideS->Flags & WF_PASSABLE) == WF_PASSABLE))
+         //   return false;
+
+         // get heights
+         float hFloorS = GetSectorHeightFloorWithDepth(sectorS, &q);
+         float hFloorE = GetSectorHeightFloorWithDepth(sectorE, &q);
+         float hCeilingS = SECTORHEIGHTCEILING(sectorS, &q);
+         float hCeilingE = SECTORHEIGHTCEILING(sectorE, &q);
+			
+         // check stepheight (this also requires a lower texture set)
+         if (sideS->TextureLower > 0 && (hFloorE - hFloorS > MAXSTEPHEIGHT))
+         {
+#if DEBUGMOVE
+            dprintf("MOVEBLOCK (STEPHEIGHT): W:%i HFS:%1.2f HFE:%1.2f", wall->Num, hFloorS, hFloorE);
+#endif
+            return false;
+         }
+
+         // check ceilingheight (this also requires an upper texture set)
+         if (sideS->TextureUpper > 0 && (hCeilingE - hFloorS < OBJECTHEIGHTROO))
+         {
+#if DEBUGMOVE
+            dprintf("MOVEBLOCK (UPWALL): W:%i HFS:%1.2f HCE:%1.2f", wall->Num, hFloorS, hCeilingE);
+#endif
+            return false;
+         }
+
+         // check endsector height
+         if (hCeilingE - hFloorE < OBJECTHEIGHTROO)
+         {
+#if DEBUGMOVE
+            dprintf("MOVEBLOCK (SECTHEIGHT): W:%i HFE:%1.2f HCE:%1.2f", wall->Num, hFloorE, hCeilingE);
+#endif
+            return false;
+         }
+
+         // next wall for next loop
+         wall = wall->NextWallInPlane;
+      }
+
+      /****************************************************************/
+
+      // try right subtree first
+      bool retval = BSPCanMoveInRoomTree(Node->u.internal.RightChild, S, E);
+
+      // found a collision there? return it
+      if (!retval)
+         return retval;
+
+      // otherwise try left subtree
+      return BSPCanMoveInRoomTree(Node->u.internal.LeftChild, S, E);
+   }
+}
+
+/*********************************************************************************************/
+/*
+* BSPCanMoveInRoom:  Checks if you can walk a straight line from (S)tart to (E)nd 
+*/
+bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E)
+{
+   if (!Room || Room->TreeNodesCount == 0 || !S || !E)
+      return false;
+
+#if DEBUGMOVE
+   // can filter out any logs except for specific room
+   //if (Room->resource_id != 22040)
+   //	return true;
+#endif
+
+   return BSPCanMoveInRoomTree(&Room->TreeNodes[0], S, E);
 }
 
 /*********************************************************************************************/

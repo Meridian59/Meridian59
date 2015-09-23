@@ -620,6 +620,8 @@ char * name_function(int fnum)
    case MINIGAMENUMBERTOSTRING : return "MiniGameNumberToString";
    case MINIGAMESTRINGTONUMBER : return "MiniGameStringToNumber";
 
+   case CANMOVEINROOMBSP: return "CanMoveInRoomBSP";
+
    case APPENDLISTELEM : return "AppendListElem";
    case CONS  : return "Cons";
    case FIRST  : return "First";

@@ -27,6 +27,8 @@ resources:
    jasper_hard_times_rsc = "Hard times have left his home abandoned."
    jasper_tenement = "The tenement is deserted."
    jasper_schoolmarm_rsc = "The schoolmarm's house has fallen into disrepair."
+   jasper_vault_closed = "The Jasper vault is closed."
+   jasper_vault_enter = "You open the door and walk through."
 	
 classvars:
 
@@ -81,7 +83,7 @@ messages:
       plExits = Cons([ 52, 20, RID_JAS_BANK, 7, 7, ROTATE_NONE ],plExits);
       plExits = Cons([ 53, 20, RID_JAS_BANK, 7, 7, ROTATE_NONE ],plExits);
 
-      plExits = Cons([ 58, 21, RID_JAS_VAULT, 6, 2, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 58, 21, RID_JAS_VAULT, 6, 2, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 35, 29, RID_JAS_SEWER1, 30, 5, ROTATE_NONE ],plExits);
 
@@ -114,6 +116,19 @@ messages:
 
    SomethingTryGo(what = $,row = $,col = $)
    {
+      if (row = 58 AND col = 21 AND Send(SETTINGS_OBJECT,@JasperVaultOpen))
+      {
+         send(what,@MsgSendUser,#message_rsc=jasper_vault_enter);
+         Send(Send(SYS,@FindRoomByNum,#num=RID_JAS_VAULT),@NewHold,#what=what,
+               #new_row=6,#new_col=2);
+         return TRUE;
+      }
+      else if (row = 58 AND col = 21 AND NOT Send(SETTINGS_OBJECT,@JasperVaultOpen))
+      {
+         send(what,@MsgSendUser,#message_rsc=jasper_vault_closed);
+         return TRUE;
+      }
+
       propagate;
    }
 

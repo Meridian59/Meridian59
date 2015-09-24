@@ -54,15 +54,11 @@ messages:
 
    CreateStandardObjects()
    {
-      %local lObjCoords1;
-
-      %lObjCoords1 = [ [8,3,59,29,OO_SMCRATE]
-      %              ];
-
-      %Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
-
       Send(self,@NewHold,#what=Create(&JasperVaultMan),
            #new_row=8,#new_col=9,#fine_row=42,#fine_col=5);
+
+      Send(self,@NewHold,#what=Create(&QuillPen),
+           #new_row=10,#new_col=8,#fine_row=17,#fine_col=10);
 
       Send(self,@NewHold,#what=Create(&Brazier),
            #new_row=7,#new_col=5,#fine_row=32, #fine_col=31);
@@ -75,6 +71,9 @@ messages:
 
       Send(self,@NewHold,#what=Create(&Brazier),
            #new_row=5,#new_col=5,#fine_row=30, #fine_col=30);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_VJOURNAL),
+           #new_row=10,#new_col=7,#fine_row=10,#fine_col=51);
 
       propagate;
    }

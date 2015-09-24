@@ -726,6 +726,10 @@ resources:
    oo_smcrate_name = "small crate"
    oo_smcrate_icon = crate.bgf
    oo_smcrate_desc = "A Small Crate"
+
+   oo_vjournal_name = "dusty journal"
+   oo_vjournal_icon = book1.bgf
+   oo_vjournal_desc = "A dusty journal containing the inventory of the vault."
    
 classvars:
 
@@ -1303,6 +1307,13 @@ messages:
          vrIcon = oo_smcrate_icon;
          vrDesc = oo_smcrate_desc;
          pbNoMoveOn = TRUE;
+      }
+
+      if type = OO_VJOURNAL
+      {
+         vrName = oo_vjournal_name;
+         vrIcon = oo_vjournal_icon;
+         vrDesc = oo_vjournal_desc;
       }
 
 

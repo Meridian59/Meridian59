@@ -540,13 +540,14 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 				return false;
 			}
 
-			// allow moves with start outside (and end inside, see above)
+			// don't block moves with start outside (and end inside, see above)
 			if (!sectorS || !sideS)
 			{
 #if DEBUGMOVE
 				dprintf("MOVEALLOW (START OUT, END IN): W:%i", wall->Num);
 #endif
-				return true;
+				wall = wall->NextWallInPlane;
+				continue;
 			}
 
 			// sides which have no passable flag set always block

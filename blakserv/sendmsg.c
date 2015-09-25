@@ -180,6 +180,7 @@ void InitBkodInterpret(void)
 	ccall_table[CANMOVEINROOMBSP] = C_CanMoveInRoomBSP;
 	ccall_table[CHANGETEXTUREBSP] = C_ChangeTextureBSP;
 	ccall_table[MOVESECTORBSP] = C_MoveSectorBSP;
+	ccall_table[ISINTHINGSBOXBSP] = C_IsInThingsBoxBSP;
 
 	ccall_table[APPENDLISTELEM] = C_AppendListElem;
 	ccall_table[CONS] = C_Cons;

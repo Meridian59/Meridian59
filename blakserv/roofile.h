@@ -43,6 +43,18 @@
 #define FLOATTOKODINT(x) \
    (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)-MIN_KOD_INT) ? -MIN_KOD_INT : (int)x))
 
+// flags used as return of isinbox queries
+#define IBF_INVALID 0x00FFFFFF
+#define IBF_INSIDE  0x00000000
+#define IBF_OUT_N   0x00000001
+#define IBF_OUT_E   0x00000002
+#define IBF_OUT_S   0x00000004
+#define IBF_OUT_W   0x00000008
+#define IBF_OUT_NE  0x00000003 //N+E
+#define IBF_OUT_SE  0x00000006 //S+E
+#define IBF_OUT_NW  0x00000009 //N+W
+#define IBF_OUT_SW  0x0000000C //S+W
+
 #pragma endregion
 
 #pragma region Structs
@@ -181,6 +193,7 @@ bool  BSPCanMoveInRoom(room_type* Room, V2* S, V2* E);
 bool  BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void  BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void  BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);
+int   BSPIsInThingsBox(room_type* Room, V2* P);
 bool  BSPLoadRoom(char *fname, room_type *room);
 void  BSPFreeRoom(room_type *room);
 #pragma endregion

@@ -748,6 +748,36 @@ void BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Hei
 }
 
 /*********************************************************************************************/
+/* BSPIsInThingsBox:  Checks if given point lies inside the 'red' boundingbox
+/*                    described by the 'Thing' vertices in RoomEdit.
+/*********************************************************************************************/
+int BSPIsInThingsBox(room_type* Room, V2* P)
+{
+   if (!Room || !P)
+      return IBF_INVALID;
+
+   int flags = IBF_INSIDE;
+
+   // out west
+   if (P->X < Room->ThingsBox.Min.X)
+      flags |= IBF_OUT_W;
+
+   // out east
+   else if (P->X > Room->ThingsBox.Max.X)
+      flags |= IBF_OUT_E;
+
+   // out north
+   if (P->Y < Room->ThingsBox.Min.Y)
+      flags |= IBF_OUT_N;
+
+   // out south
+   else if (P->Y > Room->ThingsBox.Max.Y)
+      flags |= IBF_OUT_S;
+
+   return flags;
+}
+
+/*********************************************************************************************/
 /* BSPRooFileLoadServer:  Fill "room" with server-relevant data from given roo file.         */
 /*********************************************************************************************/
 bool BSPLoadRoom(char *fname, room_type *room)

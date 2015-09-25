@@ -2216,6 +2216,80 @@ int C_GetHeightCeilingBSP(int object_id, local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_IsInThingsBoxBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val;
+	val_type row, col, finerow, finecol;
+	room_node *r;
+
+	ret_val.v.tag = TAG_INT;
+	ret_val.v.data = false;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_IsInThingsBoxBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row.v.tag != TAG_INT)
+	{
+		bprintf("C_IsInThingsBoxBSP row can't use non int %i,%i\n",
+			row.v.tag, row.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col.v.tag != TAG_INT)
+	{
+		bprintf("C_IsInThingsBoxBSP col can't use non int %i,%i\n",
+			col.v.tag, col.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow.v.tag != TAG_INT)
+	{
+		bprintf("C_IsInThingsBoxBSP finerow can't use non int %i,%i\n",
+			finerow.v.tag, finerow.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol.v.tag != TAG_INT)
+	{
+		bprintf("C_IsInThingsBoxBSP finecol can't use non int %i,%i\n",
+			finecol.v.tag, finecol.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_IsInThingsBoxBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	V2 p;
+	p.X = GRIDCOORDTOROO(col.v.data, finecol.v.data);
+	p.Y = GRIDCOORDTOROO(row.v.data, finerow.v.data);
+
+	// query
+	ret_val.v.data = BSPIsInThingsBox(&r->data, &p);
+
+	return ret_val.int_val;
+}
+
 int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	int num_normal_parms, parm_node normal_parm_array[],
 	int num_name_parms, parm_node name_parm_array[])

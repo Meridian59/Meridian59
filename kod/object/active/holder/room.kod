@@ -2370,7 +2370,7 @@ messages:
                   fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
                   non_monsters_only = FALSE)
    {
-      local i, temp, each_obj, packet_built, lNode;
+      local i, temp, each_obj, packet_built, lNode, flags;
 
       if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
       {
@@ -2381,28 +2381,30 @@ messages:
          fine_col = 32;
       }
 
-      if new_row > piRows
+      flags = IsInThingsBoxBSP(prmRoom, new_row, new_col, fine_row, fine_col);
+
+      if (flags & IBF_OUT_S)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_SOUTH,#pos=new_col);
 
          return;
       }
 
-      if new_row < 1
+      if (flags & IBF_OUT_N)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_NORTH,#pos=new_col);
 
          return;
       }
 
-      if new_col > piCols
+      if (flags & IBF_OUT_E)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_EAST,#pos=new_row);
 
          return;
       }
 
-      if new_col < 1
+      if (flags & IBF_OUT_W)
       {
          Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_WEST,#pos=new_row);
 

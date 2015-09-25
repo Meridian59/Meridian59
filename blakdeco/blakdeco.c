@@ -612,6 +612,7 @@ char * name_function(int fnum)
    case GETHEIGHTFLOORBSP : return "GetHeightFloorBSP";
    case GETHEIGHTCEILINGBSP : return "GetHeightCeilingBSP";
    case LINEOFSIGHTBSP : return "LineOfSightBSP";
+   case ISINTHINGSBOXBSP: return "IsInThingsBoxBSP";
 
    case MINIGAMENUMBERTOSTRING : return "MiniGameNumberToString";
    case MINIGAMESTRINGTONUMBER : return "MiniGameStringToNumber";

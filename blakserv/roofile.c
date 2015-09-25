@@ -755,7 +755,7 @@ bool BSPLoadRoom(char *fname, room_type *room)
    int i, j, temp;
    unsigned char byte;
    unsigned short unsigshort;
-   int offset_client, offset_tree, offset_walls, offset_sides, offset_sectors;
+   int offset_client, offset_tree, offset_walls, offset_sides, offset_sectors, offset_things;
    int offset_server;
    char tmpbuf[128];
 
@@ -818,6 +818,10 @@ bool BSPLoadRoom(char *fname, room_type *room)
 
    // read pointer to sectors
    if (fread(&offset_sectors, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
+
+   // read pointer to things
+   if (fread(&offset_things, 1, 4, infile) != 4)
    { fclose(infile); return False; }
 
    /************************ BSP-TREE ****************************************/
@@ -1122,6 +1126,55 @@ bool BSPLoadRoom(char *fname, room_type *room)
       else
          sector->SlopeInfoCeiling = NULL;
    }
+
+   /***************************** THINGS ****************************************/
+   
+   fseek(infile, offset_things, SEEK_SET);
+
+   // count of things
+   if (fread(&unsigshort, 1, 2, infile) != 2)
+   { fclose(infile); return False; }
+
+   // must have exactly two things describing bbox (each thing a vertex)
+   if (unsigshort != 2)
+   { fclose(infile); return False; }
+
+   // note: Things vertices are stored as INT in (1:64) fineness, based on the
+   // coordinate-system origin AS SHOWN IN ROOMEDIT (Y-UP).
+   // Also these can be ANY variant of the 2 possible sets describing
+   // a diagonal in a rectangle, so not guaranteed to be ordered like min/or max first.
+   float x0, x1, y0, y1;
+
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
+   x0 = (float)temp;
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
+   y0 = (float)temp;
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
+   x1 = (float)temp;
+   if (fread(&temp, 1, 4, infile) != 4)
+   { fclose(infile); return False; }
+   y1 = (float)temp;
+   
+   // from the 4 bbox points shown in roomedit (defined by 2 vertices)
+   // 1) Pick the left-bottom one as minimum (and scale to ROO fineness)
+   // 2) Pick the right-up one as maximum (and scale to ROO fineness)
+   room->ThingsBox.Min.X = FINENESSKODTOROO(fmin(x0, x1));
+   room->ThingsBox.Min.Y = FINENESSKODTOROO(fmin(y0, y1));
+   room->ThingsBox.Max.X = FINENESSKODTOROO(fmax(x0, x1));
+   room->ThingsBox.Max.Y = FINENESSKODTOROO(fmax(y0, y1));
+
+   // when roomedit saves the ROO, it translates the origin (0/0)
+   // into one boundingbox point, so that origin in ROO (0/0)
+   // later is roughly equal to (row=1 col=1)
+   
+   // translate box so minimum is at (0/0)
+   room->ThingsBox.Max.X = room->ThingsBox.Max.X - room->ThingsBox.Min.X;
+   room->ThingsBox.Max.Y = room->ThingsBox.Max.Y - room->ThingsBox.Min.Y;
+   room->ThingsBox.Min.X = 0.0f;
+   room->ThingsBox.Min.Y = 0.0f;
 
    /*************************************************************************/
    /*                      RESOLVE NUMS TO POINTERS                         */

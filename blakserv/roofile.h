@@ -159,6 +159,8 @@ typedef struct room_type
 
    int security;         /* Security number, to ensure that client loads the correct roo file */
    
+   BoundingBox2D  ThingsBox;
+
    BspNode*       TreeNodes;
    unsigned short TreeNodesCount;
    Wall*          Walls;
@@ -166,7 +168,7 @@ typedef struct room_type
    Side*          Sides;
    unsigned short SidesCount;
    Sector*        Sectors;
-   unsigned short SectorsCount;
+   unsigned short SectorsCount; 
 } room_type;
 #pragma endregion
 

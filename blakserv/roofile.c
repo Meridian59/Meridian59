@@ -495,6 +495,14 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 			// q will store the too-close endpoint
 			else
 			{
+				// allow getting "away" from wall
+				// even in case both endpoints would be too close
+				if (distE > distS)
+				{
+					wall = wall->NextWallInPlane;
+					continue;
+				}
+
 				// get min. squared distance from move endpoint to line segment
 				float dist2 = MinSquaredDistanceToLineSegment(E, &wall->P1, &wall->P2);
 

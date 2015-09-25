@@ -119,7 +119,7 @@ __inline bool IntersectLineTriangle(V3* P1, V3* P2, V3* P3, V3* S, V3* E)
 }
 
 // Returns the minimum squared distance between
-// point P and finite line segment given by P1 and P2
+// point P and finite line segment given by Q1 and Q2
 __inline float MinSquaredDistanceToLineSegment(V2* P, V2* Q1, V2* Q2)
 {
    // finite line vector from start (Q1) to end (Q2)
@@ -165,4 +165,25 @@ __inline float MinSquaredDistanceToLineSegment(V2* P, V2* Q1, V2* Q2)
 
       return V2LEN2(&d);
    }
+}
+
+// Generates random coordinates on point P which are guaranteed
+// to be inside the triangle defined by A, B, C
+__inline void RandomPointInTriangle(V2* P, V2* A, V2* B, V2* C)
+{
+   // create two randoms in [0.0f , 1.0f]
+   float rnd1 = (float)rand() * (1.0f / (float)RAND_MAX);
+   float rnd2 = (float)rand() * (1.0f / (float)RAND_MAX);
+
+   // get rootsqrt
+   float sqrt_rnd1 = sqrtf(rnd1);
+
+   // coefficients
+   float coeff1 = 1.0f - sqrt_rnd1;
+   float coeff2 = sqrt_rnd1 * (1.0f - rnd2);
+   float coeff3 = rnd2 * sqrt_rnd1;
+
+   // generate random coordinates on P
+   P->X = coeff1 * A->X + coeff2 * B->X + coeff3 * C->X;
+   P->Y = coeff1 * A->Y + coeff2 * B->Y + coeff3 * C->Y;
 }

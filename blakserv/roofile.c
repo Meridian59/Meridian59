@@ -786,7 +786,6 @@ bool BSPLoadRoom(char *fname, room_type *room)
    unsigned char byte;
    unsigned short unsigshort;
    int offset_client, offset_tree, offset_walls, offset_sides, offset_sectors, offset_things;
-   int offset_server;
    char tmpbuf[128];
 
    FILE *infile = fopen(fname, "rb");
@@ -813,8 +812,8 @@ bool BSPLoadRoom(char *fname, room_type *room)
    if (fread(&offset_client, 1, 4, infile) != 4)
    { fclose(infile); return False; }
 
-   // read pointer to server info
-   if (fread(&offset_server, 1, 4, infile) != 4)
+   // skip pointer to server info
+   if (fread(&temp, 1, 4, infile) != 4)
    { fclose(infile); return False; }
 
    /****************************************************************************/
@@ -1206,6 +1205,16 @@ bool BSPLoadRoom(char *fname, room_type *room)
    room->ThingsBox.Min.X = 0.0f;
    room->ThingsBox.Min.Y = 0.0f;
 
+   // calculate the old cols/rows values rather than loading them
+   room->cols = (int)(room->ThingsBox.Max.X / 1024.0f);
+   room->rows = (int)(room->ThingsBox.Max.Y / 1024.0f);
+   room->colshighres = (int)(room->ThingsBox.Max.X / 256.0f);
+   room->rowshighres = (int)(room->ThingsBox.Max.Y / 256.0f);
+
+   /************************** DONE READNG **********************************/
+
+   fclose(infile);
+
    /*************************************************************************/
    /*                      RESOLVE NUMS TO POINTERS                         */
    /*************************************************************************/
@@ -1320,28 +1329,7 @@ bool BSPLoadRoom(char *fname, room_type *room)
    }
 
    /****************************************************************************/
-   /*                               SERVER GRIDS                               */
    /****************************************************************************/
-   
-   fseek(infile, offset_server, SEEK_SET);
-
-   // read size of room in big units
-   if (fread(&room->rows, 1, 4, infile) != 4)
-   { fclose(infile); return False; }
-   if (fread(&room->cols, 1, 4, infile) != 4)
-   { fclose(infile); return False; }
-
-   // skip movement, flags and monster grid (1 byte per square, 3 grids)
-   fseek(infile, room->rows * room->cols * 3, SEEK_CUR);
-   
-   // read size of room in highres units
-   if (fread(&room->rowshighres, 1, 4, infile) != 4)
-   { fclose(infile); return False; }
-   if (fread(&room->colshighres, 1, 4, infile) != 4)
-   { fclose(infile); return False; }
-
-
-   fclose(infile);
 
    return True;
 }

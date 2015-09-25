@@ -79,7 +79,7 @@ messages:
    }
 
    ReqSomethingMoved(what = $,new_row = $,new_col = $,new_finerow = $,
-   new_finecol = $)
+                     new_finecol = $)
    {
       propagate;
    }
@@ -92,7 +92,7 @@ messages:
          %% the pre-coords, and piRow is going to be the post.  This was crucial
          %% to making the spam protection on the walls work.
 
-         post(self,@ChangeCoords,#new_row=new_row,#new_col=new_col,
+         Post(self,@ChangeCoords,#new_row=new_row,#new_col=new_col,
                #fine_row=fine_row,#fine_col = fine_col);
       }
 

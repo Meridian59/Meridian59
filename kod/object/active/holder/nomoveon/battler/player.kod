@@ -2249,15 +2249,8 @@ messages:
    {
       local i, oGame, oParl, iBonus, iDefaultBonus, iTimespan;
 
-      foreach i in plPassive
-      {
-         Send(i,@UserLogon);
-      }
-
-      foreach i in plActive
-      {
-         Send(i,@UserLogon);
-      }
+      SendList(plPassive, 0, @UserLogon);
+      SendList(plActive, 0, @UserLogon);
 
       % Restart Health and Mana timers
       Send(self,@NewHealth);
@@ -2375,15 +2368,8 @@ messages:
    {
       local i;
 
-      foreach i in plPassive
-      {
-         Send(i,@UserLogoff);
-      }
-
-      foreach i in plActive
-      {
-         Send(i,@UserLogoff);
-      }
+      SendList(plPassive,0,@UserLogoff);
+      SendList(plActive,0,@UserLogoff);
 
       % If this player has created any evil twins, delete them.
       if plEvilTwins <> $

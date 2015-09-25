@@ -48,6 +48,20 @@ int ListCopy(int list_id);
 int InsertListElem(int n,int list_id,val_type new_val);
 int DelListElem(val_type list_id,val_type list_elem);
 
+// List sending messages.
+int SendListMessage(int list_id, bool ret_false, int message_id,
+   int num_parms, parm_node parms[]);
+int SendFirstListMessage(int list_id, bool ret_false, int message_id,
+   int num_parms, parm_node parms[]);
+int SendNthListMessage(int list_id, int position, bool ret_false,
+   int message_id, int num_parms, parm_node parms[]);
+int SendListMessageByClass(int list_id, int class_id, bool ret_false,
+   int message_id, int num_parms, parm_node parms[]);
+int SendFirstListMessageByClass(int list_id, int class_id, bool ret_false,
+   int message_id, int num_parms, parm_node parms[]);
+int SendNthListMessageByClass(int list_id, int position, int class_id,
+   bool ret_false, int message_id, int num_parms, parm_node parms[]);
+
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id));
 void MoveListNode(int dest_id,int source_id);
 void SetNumListNodes(int new_num_nodes);

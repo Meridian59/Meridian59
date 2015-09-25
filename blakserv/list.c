@@ -944,6 +944,669 @@ int DelListElem(val_type list_id,val_type list_elem)
 	return list_id.int_val;
 }
 
+// Next 6 functions deal with sending a message to objects in a list.
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendListMessage(int list_id, bool ret_false, int message_id,
+                    int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendListMessage can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag == TAG_OBJECT)
+   {
+      ret_val.int_val = SendBlakodMessage(l->first.v.data, message_id, num_parms, parms);
+      if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+      {
+         if (ret_false)
+            return False;
+         return_int = False;
+      }
+   }
+   /* Sending to built-in objects in a list disabled for now.
+   else if (l->first.v.tag == TAG_INT)
+   {
+      // Can send to built-in objects using constants.
+      obj_id = GetBuiltInObjectID(l->first.v.data);
+      if (obj_id > INVALID_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+   }*/
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendListMessage got invalid list node somewhere in list %i.\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(l->first.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (l->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(l->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendFirstListMessage(int list_id, bool ret_false, int message_id,
+                         int num_parms, parm_node parms[])
+{
+   list_node *l, *first;
+   int return_int = True, obj_id = INVALID_OBJECT;
+   val_type ret_val;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendFirstListMessage can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+      bprintf("SendFirstListMessage called on invalid sublist %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   else
+   {
+      first = GetListNodeByID(l->first.v.data);
+      if (!first)
+         bprintf("SendFirstListMessage can't find sub-list node %i %i\n",
+            l->first.v.tag, l->first.v.data);
+      else if (first->first.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(first->first.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (first->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(first->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendFirstListMessage got invalid node somewhere in list %i.\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag != TAG_LIST)
+         bprintf("SendFirstListMessage called on invalid sublist %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+      else
+      {
+         first = GetListNodeByID(l->first.v.data);
+         if (!first)
+         {
+            bprintf("SendFirstListMessage can't find sub-list node %i %i\n",
+               l->first.v.tag, l->first.v.data);
+            continue;
+         }
+
+         if (first->first.v.tag == TAG_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(first->first.v.data, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+         /* Sending to built-in objects in a list disabled for now.
+         else if (first->first.v.tag == TAG_INT)
+         {
+            // Can send to built-in objects using constants.
+            obj_id = GetBuiltInObjectID(first->first.v.data);
+            if (obj_id > INVALID_OBJECT)
+            {
+               ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+               if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+               {
+                  if (ret_false)
+                     return False;
+                  return_int = False;
+               }
+            }
+         }*/
+      }
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendNthListMessage(int list_id, int position, bool ret_false,
+                       int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type obj_val, ret_val;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendNthListMessage can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+      bprintf("SendNthListMessage called on invalid sublist %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   else
+   {
+      obj_val.int_val = Nth(position, l->first.v.data);
+      if (obj_val.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(obj_val.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendNthListMessage got invalid list node somewhere in list %i\n",
+            list_id);
+         return return_int;
+      }
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("SendNthListMessage called on invalid sub-list %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+         continue;
+      }
+
+      obj_val.int_val = Nth(position, l->first.v.data);
+      if (obj_val.v.tag == TAG_OBJECT)
+      {
+         ret_val.int_val = SendBlakodMessage(obj_val.v.data, message_id, num_parms, parms);
+         if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+         {
+            if (ret_false)
+               return False;
+            return_int = False;
+         }
+      }
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+         {
+            ret_val.int_val = SendBlakodMessage(obj_id, message_id, num_parms, parms);
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+         }
+      }*/
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendListMessageByClass(int list_id, int class_id, bool ret_false,
+                           int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val;
+   object_node *o = NULL;
+   class_node *c;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendListMessageByClass can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag == TAG_OBJECT)
+      o = GetObjectByID(l->first.v.data);
+   /* Sending to built-in objects in a list disabled for now.
+   else if (l->first.v.tag == TAG_INT)
+   {
+      // Can send to built-in objects using constants.
+      obj_id = GetBuiltInObjectID(l->first.v.data);
+      if (obj_id > INVALID_OBJECT)
+         o = GetObjectByID(obj_id);
+   }*/
+
+   if (o != NULL)
+   {
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendListMessageByClass got invalid list node in list %i\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag == TAG_OBJECT)
+         o = GetObjectByID(l->first.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (l->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(l->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o == NULL)
+         continue;
+
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendFirstListMessageByClass(int list_id, int class_id, bool ret_false,
+                                int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l, *first;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val;
+   object_node *o = NULL;
+   class_node *c;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendFirstListMessageByClass can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("SendFirstListMessageByClass called on invalid sub-list %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   }
+   else
+   {
+      first = GetListNodeByID(l->first.v.data);
+      if (!first)
+      {
+         bprintf("SendFirstListMessageByClass can't find list node %i\n",
+            l->first.v.tag, l->first.v.data);
+      }
+      else if (first->first.v.tag == TAG_OBJECT)
+         o = GetObjectByID(first->first.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (first->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(first->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o != NULL)
+      {
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("SendFirstListMessageByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return return_int;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+            {
+               ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+               o = NULL;
+               if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+               {
+                  if (ret_false)
+                     return False;
+                  return_int = False;
+               }
+               break;
+            }
+            c = c->super_ptr;
+         } while (c != NULL);
+      }
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendFirstListMessageByClass got invalid list node in list %i\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("SendFirstListMessageByClass called on invalid sub-list %i %i.\n",
+            l->first.v.tag, l->first.v.data);
+         continue;
+      }
+
+      first = GetListNodeByID(l->first.v.data);
+      if (!first)
+      {
+         bprintf("SendFirstListMessageByClass can't find list node %i %i\n",
+            l->first.v.tag, l->first.v.data);
+         continue;
+      }
+
+      if (first->first.v.tag == TAG_OBJECT)
+         o = GetObjectByID(first->first.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (first->first.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(first->first.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o == NULL)
+         continue;
+
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendFirstListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   return return_int;
+}
+
+// ret_false is True if we return on a single false return from SendBlakodMessage.
+int SendNthListMessageByClass(int list_id, int position, int class_id, bool ret_false,
+                              int message_id, int num_parms, parm_node parms[])
+{
+   list_node *l;
+   int obj_id = INVALID_OBJECT, return_int = True;
+   val_type ret_val, obj_val;
+   object_node *o = NULL;
+   class_node *c;
+
+   l = GetListNodeByID(list_id);
+   if (!l)
+   {
+      bprintf("SendNthListMessageByClass can't find list node %i\n", list_id);
+      return return_int;
+   }
+
+   if (l->first.v.tag != TAG_LIST)
+   {
+      bprintf("SendNthListMessageByClass called on invalid list %i %i.\n",
+         l->first.v.tag, l->first.v.data);
+   }
+   else
+   {
+      obj_val.int_val = Nth(position, l->first.v.data);
+
+      if (obj_val.v.tag == TAG_OBJECT)
+         o = GetObjectByID(obj_val.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o != NULL)
+      {
+         c = GetClassByID(o->class_id);
+         if (c == NULL)
+         {
+            bprintf("SendNthListMessageByClass can't find class %i, DIE totally\n",
+               o->class_id);
+            FlushDefaultChannels();
+            return return_int;
+         }
+         do
+         {
+            if (c->class_id == class_id)
+            {
+               ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+               o = NULL;
+               if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+               {
+                  if (ret_false)
+                     return False;
+                  return_int = False;
+               }
+               break;
+            }
+            c = c->super_ptr;
+         } while (c != NULL);
+      }
+   }
+
+   while (l && l->rest.v.tag != TAG_NIL)
+   {
+      l = GetListNodeByID(l->rest.v.data);
+      if (!l)
+      {
+         bprintf("SendNthListMessageByClass got invalid list node in list %i\n",
+            list_id);
+         return return_int;
+      }
+
+      if (l->first.v.tag != TAG_LIST)
+      {
+         bprintf("SendNthListMessageByClass called on invalid list.\n");
+         continue;
+      }
+
+      obj_val.int_val = Nth(position, l->first.v.data);
+
+      if (obj_val.v.tag == TAG_OBJECT)
+         o = GetObjectByID(obj_val.v.data);
+      /* Sending to built-in objects in a list disabled for now.
+      else if (obj_val.v.tag == TAG_INT)
+      {
+         // Can send to built-in objects using constants.
+         obj_id = GetBuiltInObjectID(obj_val.v.data);
+         if (obj_id > INVALID_OBJECT)
+            o = GetObjectByID(obj_id);
+      }*/
+
+      if (o == NULL)
+         continue;
+
+      c = GetClassByID(o->class_id);
+      if (c == NULL)
+      {
+         bprintf("SendNthListMessageByClass can't find class %i, DIE totally\n",
+            o->class_id);
+         FlushDefaultChannels();
+         return return_int;
+      }
+      do
+      {
+         if (c->class_id == class_id)
+         {
+            ret_val.int_val = SendBlakodMessage(o->object_id, message_id, num_parms, parms);
+            o = NULL;
+            if (ret_val.v.tag == TAG_INT && ret_val.v.data == False)
+            {
+               if (ret_false)
+                  return False;
+               return_int = False;
+            }
+            break;
+         }
+         c = c->super_ptr;
+      } while (c != NULL);
+   }
+
+   return return_int;
+}
+
 void ForEachListNode(void (*callback_func)(list_node *l,int list_id))
 {
 	int i;

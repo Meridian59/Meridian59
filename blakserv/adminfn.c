@@ -2093,6 +2093,10 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETCLASS : strcpy(c_name, "GetClass"); break;
 		case SENDMESSAGE : strcpy(c_name, "Send"); break;
 		case POSTMESSAGE : strcpy(c_name, "Post"); break;
+		case SENDLISTMSG : strcpy(c_name, "SendList"); break;
+		case SENDLISTMSGBREAK : strcpy(c_name, "SendListBreak"); break;
+		case SENDLISTMSGBYCLASS : strcpy(c_name, "SendListByClass"); break;
+		case SENDLISTMSGBYCLASSBREAK : strcpy(c_name, "SendListByClassBreak"); break;
 		case GODLOG : strcpy(c_name, "GodLog"); break;
 		case DEBUG : strcpy(c_name, "Debug"); break;
 		case SAVEGAME : strcpy(c_name, "SaveGame"); break;

@@ -570,6 +570,10 @@ char * name_function(int fnum)
 
    case SENDMESSAGE : return "Send";
    case POSTMESSAGE : return "Post";
+   case SENDLISTMSG : return "SendList";
+   case SENDLISTMSGBREAK : return "SendListBreak";
+   case SENDLISTMSGBYCLASS : return "SendListByClass";
+   case SENDLISTMSGBYCLASSBREAK : return "SendListByClassBreak";
 
    case SAVEGAME : return "SaveGame";
    case LOADGAME : return "LoadGame";

@@ -1396,16 +1396,12 @@ messages:
          use_weapon = stroke_obj;
       }
 
-      foreach i in plActive
+      if NOT SendListBreak(plActive,1,@ReqSomethingAttack,#what=what,
+                  #victim=victim,#use_weapon=use_weapon)
       {
-         each_obj = First(i);
-         if NOT Send(each_obj,@ReqSomethingAttack,#what=what,#victim=victim,
-                     #use_weapon=use_weapon)
-         {
-            return FALSE;
-         }
+         return FALSE;
       }
-      
+
       return TRUE;
    }
 
@@ -2317,7 +2313,7 @@ messages:
          iFineCol = FINENESS_HALF;
       }
 
-      if Send(what,@GetOwner) = self AND Send(self,@IsHolding,#what=what)
+      if Send(what,@GetOwner) = self
       {
          % get position of object to move
          iRow = Send(what,@GetRow);
@@ -2390,20 +2386,11 @@ messages:
       }
 
       % Do this here, instead of Holder.
-      foreach i in plActive
-      {
-         each_obj = First(i);
-
-         if each_obj = what
-         {
-            continue;
-         }
-         if NOT Send(each_obj,@ReqSomethingMoved,#what=what,
+      if NOT SendListBreak(plActive,1,@ReqSomethingMoved,#what=what,
                      #new_row=new_row,#new_col=new_col,
                      #new_finerow=new_finerow,#new_finecol=new_finecol)
-         {
-            return FALSE;
-         }
+      {
+         return FALSE;
       }
 
       return TRUE;
@@ -3260,12 +3247,8 @@ messages:
    SomethingWaveRoom(what = 0,wave_rsc = $)
    "Don't send <what> if not from any particular object"
    {
-      local each_obj, i;
-
-      foreach i in plActive
-      {
-         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what);
-      }
+      SendListByClass(plActive,1,&User,@WaveSendUser,
+            #wave_rsc=wave_rsc,#source_obj=what);
 
       return;
    }
@@ -3561,21 +3544,11 @@ messages:
 
    AmbientLightChanged()
    {
-      local i,each_obj;
-
-      foreach i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         Send(each_obj,@AmbientLightChanged);
-      }
+      SendList(plActive,1,@AmbientLightChanged);
 
       if piRoom_flags & ROOM_LAMPS
       {
-         foreach i in plPassive
-         {
-            each_obj = Send(self,@HolderExtractObject,#data=i);
-            Send(each_obj,@AmbientLightChanged);
-         }
+         SendList(plPassive,1,@AmbientLightChanged);
       }
 
       return;
@@ -3599,21 +3572,11 @@ messages:
 
    BackgroundChanged()
    {
-      local i,each_obj;
-
-      foreach i in plActive
-      {
-         each_obj = Send(self,@HolderExtractObject,#data=i);
-         Send(each_obj,@BackgroundChanged);
-      }
+      SendList(plActive,1,@BackgroundChanged);
 
       if piRoom_flags & ROOM_LAMPS
       {
-         foreach i in plPassive
-         {
-            each_obj = Send(self,@HolderExtractObject,#data=i);
-            Send(each_obj,@BackgroundChanged);
-         }
+         SendList(plPassive,1,@BackgroundChanged);
       }
 
       return;

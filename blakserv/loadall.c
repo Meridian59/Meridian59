@@ -131,7 +131,7 @@ Bool LoadFromKod(int save_time)
    // Boot everyone from game.
    ForEachSession(HangupSessionNow);
 
-   ResetRoomData();
+   ResetRooms();
    ResetUser();
    ResetString();
    ResetTimer();

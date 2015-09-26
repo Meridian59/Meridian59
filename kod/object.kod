@@ -438,7 +438,7 @@ messages:
       {
          if IsClass(poOwner,&Room)
          {
-            return GetHeight(Send(poOwner,@GetRoomData),
+            return GetHeightFloorBSP(Send(poOwner,@GetRoomData),
                         Send(self,@GetRow),Send(self,@GetCol),
                         Send(self,@GetFineRow),Send(self,@GetFineCol));
          }

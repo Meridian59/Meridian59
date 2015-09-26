@@ -196,7 +196,6 @@ typedef unsigned long long UINT64;
 
 #include "bool.h"
 #include "rscload.h"
-#include "roomtype.h"
 #include "bkod.h"
 #include "crc.h"
 #include "md5.h"
@@ -255,8 +254,8 @@ char * GetLastErrorStr();
 #include "system.h"
 #include "loadrsc.h"
 #include "loadgame.h"
-#include "roomdata.h"
 #include "roofile.h"
+#include "roomdata.h"
 #include "files.h"
 
 #include "bufpool.h"

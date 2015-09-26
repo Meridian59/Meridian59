@@ -187,3 +187,35 @@ __inline void RandomPointInTriangle(V2* P, V2* A, V2* B, V2* C)
    P->X = coeff1 * A->X + coeff2 * B->X + coeff3 * C->X;
    P->Y = coeff1 * A->Y + coeff2 * B->Y + coeff3 * C->Y;
 }
+
+// Checks for intersection of a finite line segment (S, E) and a circle (M=center)
+// http://stackoverflow.com/questions/1073336/circle-line-collision-detection
+// Returns true if there is an intersection
+__inline bool IntersectLineCircle(V2* M, float Radius, V2* S, V2* E)
+{
+	V2 d, f;
+	
+	V2SUB(&d, E, S);
+	V2SUB(&f, S, M);
+
+	float a = V2DOT(&d, &d);
+	float b = 2.0f * V2DOT(&f, &d);
+	float c = V2DOT(&f, &f) - (Radius * Radius);
+	float discriminant = b * b - 4.0f * a * c;
+
+	if (discriminant >= 0.0f)
+	{
+		discriminant = sqrtf(discriminant);
+
+		float t1 = (-b - discriminant) / (2.0f * a);
+		float t2 = (-b + discriminant) / (2.0f * a);
+
+		if ((t1 >= 0.0f && t1 <= 1.0f) ||
+			(t2 >= 0.0f && t2 <= 1.0f))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}

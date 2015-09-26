@@ -193,29 +193,34 @@ __inline void RandomPointInTriangle(V2* P, V2* A, V2* B, V2* C)
 // Returns true if there is an intersection
 __inline bool IntersectLineCircle(V2* M, float Radius, V2* S, V2* E)
 {
-	V2 d, f;
-	
-	V2SUB(&d, E, S);
-	V2SUB(&f, S, M);
+   V2 d, f;
 
-	float a = V2DOT(&d, &d);
-	float b = 2.0f * V2DOT(&f, &d);
-	float c = V2DOT(&f, &f) - (Radius * Radius);
-	float discriminant = b * b - 4.0f * a * c;
+   V2SUB(&d, E, S);
+   V2SUB(&f, S, M);
 
-	if (discriminant >= 0.0f)
-	{
-		discriminant = sqrtf(discriminant);
+   float a = V2DOT(&d, &d);
+   float b = 2.0f * V2DOT(&f, &d);
+   float c = V2DOT(&f, &f) - (Radius * Radius);
+   float discriminant = b * b - 4.0f * a * c;
 
-		float t1 = (-b - discriminant) / (2.0f * a);
-		float t2 = (-b + discriminant) / (2.0f * a);
+   if (discriminant >= 0.0f)
+   {
+      discriminant = sqrtf(discriminant);
 
-		if ((t1 >= 0.0f && t1 <= 1.0f) ||
-			(t2 >= 0.0f && t2 <= 1.0f))
-		{
-			return true;
-		}
-	}
+      float div = (2.0f * a);
 
-	return false;
+      if (ISZERO(div))
+         return false;
+
+	  float t1 = (-b - discriminant) / div;
+	  float t2 = (-b + discriminant) / div;
+
+      if ((t1 >= 0.0f && t1 <= 1.0f) ||
+          (t2 >= 0.0f && t2 <= 1.0f))
+      {
+         return true;
+      }
+   }
+
+   return false;
 }

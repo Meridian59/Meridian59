@@ -1099,7 +1099,7 @@ messages:
 
    LoadRoomData()
    {
-      local lRoom_data;
+      local i, lList, each_obj, lRoom_data;
 
       if prRoom = $
       {
@@ -1113,6 +1113,24 @@ messages:
       piSecurity = Nth(lRoom_data,3);
       piRowsHighRes = Nth(lRoom_data,4);
       piColsHighRes = Nth(lRoom_data,5);
+
+      foreach lList in [plActive, plPassive]
+      {
+         foreach i in lList
+         {
+            each_obj = First(i);
+
+            if (Send(each_obj,@GetMoveOnType) = MOVEON_NO)
+            {
+               if NOT BlockerAddBSP(prmRoom,each_obj,
+                           Nth(i,2),Nth(i,3),
+                           Nth(i,4),Nth(i,5))
+               {
+                  Debug("Failed to add BSP blocker ",each_obj, " to ",prmRoom);
+               }
+            }
+         }
+      }
 
       return;
    }

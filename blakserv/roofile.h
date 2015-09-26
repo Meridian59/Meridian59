@@ -159,6 +159,13 @@ typedef struct BspNode
 
 } BspNode;
 
+typedef struct Blocker
+{
+   int ObjectID;
+   V2 Position;
+   Blocker* Next;
+} Blocker;
+
 typedef struct room_type
 {
    int roomdata_id; 
@@ -172,6 +179,7 @@ typedef struct room_type
    int security;         /* Security number, to ensure that client loads the correct roo file */
    
    BoundingBox2D  ThingsBox;
+   Blocker*       Blocker;
 
    BspNode*       TreeNodes;
    unsigned short TreeNodesCount;
@@ -194,6 +202,10 @@ bool  BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void  BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void  BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);
 int   BSPIsInThingsBox(room_type* Room, V2* P);
+bool  BSPBlockerAdd(room_type* Room, int ObjectID, V2* P);
+bool  BSPBlockerMove(room_type* Room, int ObjectID, V2* P);
+bool  BSPBlockerRemove(room_type* Room, int ObjectID);
+void  BSPBlockerClear(room_type* Room);
 bool  BSPLoadRoom(char *fname, room_type *room);
 void  BSPFreeRoom(room_type *room);
 #pragma endregion

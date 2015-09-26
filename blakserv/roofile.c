@@ -778,6 +778,111 @@ int BSPIsInThingsBox(room_type* Room, V2* P)
 }
 
 /*********************************************************************************************/
+/* BSPBlockerClear:   Clears all registered blocked locations.                               */
+/*********************************************************************************************/
+void BSPBlockerClear(room_type* Room)
+{
+   Blocker* blocker = Room->Blocker;
+   while (blocker)
+   {
+      Blocker* tmp = blocker->Next;
+      FreeMemory(MALLOC_ID_ROOM, blocker, sizeof(Blocker));
+      blocker = tmp;
+   }
+   Room->Blocker = NULL;
+}
+
+/*********************************************************************************************/
+/* BSPBlockerRemove:  Removes a blocked location.                                            */
+/*********************************************************************************************/
+bool BSPBlockerRemove(room_type* Room, int ObjectID)
+{
+   if (!Room)
+      return false;
+
+   Blocker* blocker = Room->Blocker;
+   Blocker* previous = NULL;
+
+   while (blocker)
+   {
+      if (blocker->ObjectID == ObjectID)
+      {
+         // removing first element
+         if (!previous)
+            Room->Blocker = blocker->Next;
+
+         // removing not first element
+         else
+            previous->Next = blocker->Next;
+
+         // now cleanup node
+         FreeMemory(MALLOC_ID_ROOM, blocker, sizeof(Blocker));
+
+         return true;
+      }
+
+      previous = blocker;
+      blocker = blocker->Next;
+   }
+
+   return false;
+}
+
+/*********************************************************************************************/
+/* BSPBlockerAdd:     Adds a blocked location in the room.                                   */
+/*********************************************************************************************/
+bool BSPBlockerAdd(room_type* Room, int ObjectID, V2* P)
+{
+   if (!Room || !P)
+      return false;
+
+   // alloc
+   Blocker* newblocker = (Blocker*)AllocateMemory(MALLOC_ID_ROOM, sizeof(Blocker));
+
+   // set values on new blocker
+   newblocker->ObjectID = ObjectID;
+   newblocker->Position = *P;
+   newblocker->Next = NULL;
+
+   // first blocker
+   if (!Room->Blocker)
+      Room->Blocker = newblocker;
+
+   else
+   {
+      // we insert at the beginning because it's
+      // (a) faster
+      // (b) it makes sure 'static' objects are at the end (unlikely to be touched again)
+      newblocker->Next = Room->Blocker;
+      Room->Blocker = newblocker;
+   }
+
+   return true;
+}
+
+/*********************************************************************************************/
+/* BSPBlockerMove:    Moves an existing blocked location to somewhere else.                  */
+/*********************************************************************************************/
+bool BSPBlockerMove(room_type* Room, int ObjectID, V2* P)
+{
+   if (!Room || !P)
+      return false;
+
+   Blocker* blocker = Room->Blocker;
+   while (blocker)
+   {
+      if (blocker->ObjectID == ObjectID)
+      {
+         blocker->Position = *P;
+         return true;
+      }
+      blocker = blocker->Next;
+   }
+
+   return false;
+}
+
+/*********************************************************************************************/
 /* BSPRooFileLoadServer:  Fill "room" with server-relevant data from given roo file.         */
 /*********************************************************************************************/
 bool BSPLoadRoom(char *fname, room_type *room)
@@ -1331,6 +1436,9 @@ bool BSPLoadRoom(char *fname, room_type *room)
    /****************************************************************************/
    /****************************************************************************/
 
+   // no initial blockers
+   room->Blocker = NULL;
+
    return True;
 }
 
@@ -1375,6 +1483,8 @@ void BSPFreeRoom(room_type *room)
    room->WallsCount = 0;
    room->SidesCount = 0;
    room->SectorsCount = 0;
+
+   BSPBlockerClear(room);
 
    /****************************************************************************/
    /*                               SERVER PARTS                               */

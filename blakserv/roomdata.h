@@ -24,5 +24,6 @@ int         LoadRoom(int resource_id);
 void        UnloadRoom(room_node *r);
 room_node*  GetRoomDataByID(int id);
 room_node*  GetRoomDataByResourceID(int id);
+void ForEachRoom(void(*callback_func)(room_node *r));
 
 #endif

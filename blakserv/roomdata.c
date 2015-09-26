@@ -171,3 +171,15 @@ room_node* GetRoomDataByResourceID(int id)
    }
    return NULL;
 }
+
+void ForEachRoom(void(*callback_func)(room_node *r))
+{
+   room_node *node;
+
+   node = first;
+   while (node)
+   {
+      callback_func(node);
+      node = node->next;
+   }
+}

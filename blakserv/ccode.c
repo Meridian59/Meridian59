@@ -2403,7 +2403,7 @@ int C_CanMoveInRoomBSP(int object_id, local_var_type *local_vars,
 	ret_val.v.data = BSPCanMoveInRoom(&r->data, &s, &e);
 
 #if DEBUGMOVE
-	dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", ret_val.v.data, r->file_info.resource_id, s.X, s.Y, e.X, e.Y);
+	//dprintf("MOVE:%i R:%i S:(%1.2f/%1.2f) E:(%1.2f/%1.2f)", ret_val.v.data, r->data.roomdata_id, s.X, s.Y, e.X, e.Y);
 #endif
 
 	return ret_val.int_val;

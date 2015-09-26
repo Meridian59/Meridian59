@@ -660,7 +660,41 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E)
       return true;
    }
 
-   return BSPCanMoveInRoomTree(&Room->TreeNodes[0], S, E);
+   // first check against room geometry
+   bool roomok = BSPCanMoveInRoomTree(&Room->TreeNodes[0], S, E);
+
+   // already found a collision in room
+   if (!roomok)
+      return false;
+
+   // otherwise also check against blockers
+   Blocker* blocker = Room->Blocker;
+   while (blocker)
+   {
+      V2 ms, me;
+      V2SUB(&ms, S, &blocker->Position);
+      V2SUB(&me, E, &blocker->Position);
+
+      float ds2 = V2LEN2(&ms);
+      float de2 = V2LEN2(&me);
+
+      // unfortunately we're inside the blocking radius already,
+      // but since we want to get farer way, don't block
+	  // this allows already blocked objects to get away from each other
+	  // and also makes sure we don't block ourself!
+      if (ds2 <= WALLMINDISTANCE2 && (ds2 <= de2))
+      {
+         blocker = blocker->Next;
+         continue;
+      }
+
+      if (IntersectLineCircle(&blocker->Position, WALLMINDISTANCE, S, E))
+         return false;
+
+      blocker = blocker->Next;
+   }
+
+   return true;
 }
 
 /*********************************************************************************************/

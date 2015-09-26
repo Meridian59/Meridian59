@@ -495,9 +495,9 @@ bool BSPCanMoveInRoomTree(BspNode* Node, V2* S, V2* E)
 			// q will store the too-close endpoint
 			else
 			{
-				// allow getting "away" from wall
+				// allow getting "away" from wall (distS, distE are signed)
 				// even in case both endpoints would be too close
-				if (distE > distS)
+				if (fabs(distE) > fabs(distS))
 				{
 					wall = wall->NextWallInPlane;
 					continue;

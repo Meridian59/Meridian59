@@ -181,6 +181,10 @@ void InitBkodInterpret(void)
 	ccall_table[CHANGETEXTUREBSP] = C_ChangeTextureBSP;
 	ccall_table[MOVESECTORBSP] = C_MoveSectorBSP;
 	ccall_table[ISINTHINGSBOXBSP] = C_IsInThingsBoxBSP;
+	ccall_table[BLOCKERADDBSP] = C_BlockerAddBSP;
+	ccall_table[BLOCKERMOVEBSP] = C_BlockerMoveBSP;
+	ccall_table[BLOCKERREMOVEBSP] = C_BlockerRemoveBSP;
+	ccall_table[BLOCKERCLEARBSP] = C_BlockerClearBSP;
 
 	ccall_table[APPENDLISTELEM] = C_AppendListElem;
 	ccall_table[CONS] = C_Cons;

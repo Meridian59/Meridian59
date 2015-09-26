@@ -613,6 +613,10 @@ char * name_function(int fnum)
    case GETHEIGHTCEILINGBSP : return "GetHeightCeilingBSP";
    case LINEOFSIGHTBSP : return "LineOfSightBSP";
    case ISINTHINGSBOXBSP: return "IsInThingsBoxBSP";
+   case BLOCKERADDBSP: return "BlockerAddBSP";
+   case BLOCKERMOVEBSP: return "BlockerMoveBSP";
+   case BLOCKERREMOVEBSP: return "BlockerRemoveBSP";
+   case BLOCKERCLEARBSP: return "BlockerClearBSP";
 
    case MINIGAMENUMBERTOSTRING : return "MiniGameNumberToString";
    case MINIGAMESTRINGTONUMBER : return "MiniGameStringToNumber";

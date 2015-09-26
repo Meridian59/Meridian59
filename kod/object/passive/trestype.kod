@@ -26,6 +26,15 @@ classvars:
 
    viTreasure_num = $
 
+   % Classvars for dropping special items. Default true. May need this
+   % in the future to control which mobs drop special items, while keeping
+   % the item dropping code itself generalised.
+   vbDropToken = TRUE
+   vbDropSignet = TRUE
+   vbDropItematt = TRUE
+   vbDropTrinket = TRUE
+   vbDropBook = TRUE
+
 properties:
 
    plTreasure = $      % list of treasures
@@ -229,20 +238,101 @@ messages:
       return viTreasure_num;
    }
 
-   GenerateTreasure(level=1,who=$,mob=$,tokengen=TRUE,corpse=$)
+   CreateMobTreasure(mob = $, who = $, level = 1, corpse = $, attributes = 0,
+                     boostedlevel = 0, difficulty = 0)
    {
-      local i, lItem_info, iRnd, iCount, oObj, iNumber, iStatTokenChance;
+      local i, iNumberItems, tokengen, iSurvivalLoot, oTreasure, iSafetyCntr,
+            lTreasureItems;
+
+      lTreasureItems = $;
+
+      % MOB_ONE_TREASURE guarantees one and only one item from loot table.
+      % Also has a chance to drop special items, provided the trestype
+      % allows it.
+      if (attributes & MOB_ONE_TREASURE)
+      {
+         oTreasure = Send(self,@GenerateLootTableTreasure,#who=who,
+                           #corpse=corpse);
+         if oTreasure <> $
+         {
+            lTreasureItems = Cons(oTreasure,lTreasureItems);
+         }
+         else
+         {
+            Debug("Mob with attribute MOB_ONE_TREASURE not dropping item!");
+         }
+      }
+
+      % Random number of treasure items are dropped based on viLevel
+      % and viDifficulty.  The higher these values are, the more items
+      % that may be dropped.
+      iSurvivalLoot = boostedlevel
+        / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalLoot);
+
+      iNumberItems = 1 + (level/55) + Random(0,difficulty/3)
+                        + iSurvivalLoot;
+      iNumberItems = Bound(iNumberItems,$,6 + iSurvivalLoot);
+      iNumberItems = (Send(SETTINGS_OBJECT,@GetItemFactor)*iNumberItems)/100;
+      iNumberItems = Bound(iNumberItems,1,$);
+
+      tokengen = TRUE;
+      i = 1;
+
+      while i++ <= iNumberItems
+      {
+         oTreasure = Send(self,@GenerateTreasure,#level=level,#who=who,
+                           #mob=mob,#tokengen=tokengen,#corpse=corpse,
+                           #attributes=attributes);
+         if oTreasure <> $
+         {
+            if IsClass(oTreasure,&SpellItem)
+            {
+               iSafetyCntr = 0;
+
+               while (NOT Send(oTreasure,@SpellItemIsAccessible))
+                     AND iSafetyCntr++ < 5
+               {
+                  oTreasure = Send(self,@GenerateTreasure,#level=level,
+                                    #who=who,#mob=mob,#tokengen=tokengen,
+                                    #corpse=corpse,#attributes=attributes);
+               }
+            }
+
+            if IsClass(oTreasure,&Token)
+            {
+               tokengen = FALSE;
+            }
+
+            lTreasureItems = Cons(oTreasure,lTreasureItems);
+         }
+      }
+
+      return lTreasureItems;
+   }
+
+   GenerateTreasure(level = 1, who = $, mob = $, tokengen = TRUE, corpse = $,
+                    attributes = 0)
+   {
+      local oObj, iStatTokenChance, oLib;
+
+      if who = $
+      {
+         return $;
+      }
+
+      oObj = $;
 
       % Check for a token generation here.
-      if who <> $
+      if vbDropToken
+         AND IsClass(who,&User)
          AND Send(SYS,@GetTokenGame) <> $ AND tokengen
          AND Random(1,100) <= TOKEN_GENERATION_CHANCE 
       {
          % Find open token looks for one in the given room.
-         oObj=Send(Send(SYS,@GetTokenGame),@FindOpenToken,
-                   #location=Send(who,@GetOwner));
-                   
-         if oObj <> $ AND IsClass(who,&User) AND Send(who,@PlayerIsIntriguing)
+         oObj = Send(Send(SYS,@GetTokenGame),@FindOpenToken,
+                     #location=Send(who,@GetOwner));
+
+         if oObj <> $ AND Send(who,@PlayerIsIntriguing)
          {
             Send(oObj,@TokenRealized,#who=who,#mob=mob);
             
@@ -251,21 +341,26 @@ messages:
       }
 
       % Check for the newbie signet ring, do we have an eligible newbie?
-      if who <> $ AND IsClass(who,&User)
-         AND Send(SYS,@GetLibrary) <> $
-         AND Random(1,100) <= Send(Send(SYS,@GetLibrary),@GetSignetChance)
-         AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-         AND Send(Send(SYS,@GetLibrary),@IsNewbieSignetEligible,#who=who)
+      if vbDropSignet
+         AND IsClass(who,&User)
       {
-         %%% one more check.  only the default region makes these
-         if RID_DEFAULT = Send(Send(who,@GetOwner),@GetRegion)
+         oLib = Send(SYS,@GetLibrary);
+
+         if oLib <> $
+            AND Random(1,100) <= Send(oLib,@GetSignetChance)
+            AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            AND Send(oLib,@IsNewbieSignetEligible,#who=who)
          {
-            % Ok, things are good, lets generate that signet ring.
-            oObj=Send(Send(SYS,@GetLibrary),@CreateSignetRing,#who=who);
-            
-            if oObj <> $
+            % One more check, only the default region makes these.
+            if RID_DEFAULT = Send(Send(who,@GetOwner),@GetRegion)
             {
-               return oObj;
+               % Ok, things are good, lets generate that signet ring.
+               oObj = Send(oLib,@CreateSignetRing,#who=who);
+               
+               if oObj <> $
+               {
+                  return oObj;
+               }
             }
          }
       }
@@ -274,10 +369,11 @@ messages:
       %%% a Difficulty Seed which determines the level of itematt
       %%% applied to a weapon, and a chance out of 400 
       %%% that a weapatt will appear.
-      if piDiff_seed > 0
+      if vbDropItematt
+         AND piDiff_seed > 0
+         AND IsClass(who,&User)
       {
-         if who <> $ and IsClass(who,&User)
-            AND Random(1,400) <= (Send(SETTINGS_OBJECT,@GetMagicItemModifier) *
+         if Random(1,400) <= (Send(SETTINGS_OBJECT,@GetMagicItemModifier) *
                                     piItem_Att_chance) / 100 
          {
             oObj = Send(self,@GenerateItemAtt,#who=who,#diff_seed=piDiff_seed);
@@ -289,25 +385,22 @@ messages:
       }
 
       % Stats reset token generation. System has to be turned on to drop tokens.
-      if Send(SETTINGS_OBJECT,@GetStatsResetEnabled)
-         AND who <> $
+      if vbDropTrinket
          AND IsClass(who,&User)
+         AND Send(SETTINGS_OBJECT,@GetStatsResetEnabled)
       {
          iStatTokenChance = Send(SETTINGS_OBJECT,@GetStatResetTokenDropFactor)
-                                 / Bound(Send(mob,@GetLevel),50,150);
+                                 / Bound(level,50,150);
          if Random(1,iStatTokenChance) = 1
-            AND Send(mob,@GetLevel) > Send(who,@GetBaseMaxHealth)
+            AND level > Send(who,@GetBaseMaxHealth)
          {
             oObj = Create(&StatsResetToken,#tradeable=TRUE,#corpse=corpse);
             if oObj <> $
             {
-               if IsClass(who,&User)
-               {
-                  Send(who,@MsgSendUser,#message_rsc=trinket_found_rsc,
-                        #parm1=Send(mob,@GetDef),#parm2=Send(mob,@GetName));
-               }
+               Send(who,@MsgSendUser,#message_rsc=trinket_found_rsc,
+                     #parm1=Send(mob,@GetDef),#parm2=Send(mob,@GetName));
                Debug(Send(who,@GetTrueName)," found an ancient trinket on a ",
-                  Send(mob,@GetName));
+                     Send(mob,@GetName));
                Send(Send(SYS,@GetStatistics),@TrinketFound);
 
                return oObj;
@@ -316,7 +409,9 @@ messages:
       }
 
       % Lore Books
-      if (Random(1,Send(SETTINGS_OBJECT,@GetLoreBookDropFactor)) = 1)
+      if vbDropBook
+         AND IsClass(who,&User)
+         AND (Random(1,Send(SETTINGS_OBJECT,@GetLoreBookDropFactor)) = 1)
       {
          switch(Random(1,2))
          {
@@ -331,14 +426,36 @@ messages:
          return oObj;
       }
 
-      iCount=0;
+      if NOT (attributes & MOB_ONE_TREASURE)
+      {
+         % No rare item dropped, check loot table.
+         oObj = Send(self,@GenerateLootTableTreasure,#who=who,#corpse=corpse);
+
+         if oObj = $
+         {
+            Debug("Create treasure didn't get an object");
+
+            return $;
+         }
+      }
+
+      return oObj;
+   }
+
+   GenerateLootTableTreasure(who=$,corpse=$)
+   {
+      local iCount, iRnd, lItem_info, oObj, iNumber;
+
+      iCount = 0;
       iRnd = Random(0,100);
+
       foreach lItem_info in plTreasure
       {
-         iCount = iCount+Nth(lItem_info,2);
-         if iRnd <=iCount
+         iCount = iCount + Nth(lItem_info,2);
+         if iRnd <= iCount
          {
-            if IsClass(who,&Monster) OR IsClass(corpse,&OrcPitBossBody)
+            if IsClass(who,&Monster)
+               OR IsClass(corpse,&OrcPitBossBody)
             {
                oObj = Create(First(lItem_info));
             }
@@ -358,8 +475,6 @@ messages:
             return oObj;
          }
       }
-
-      Debug("Create treasure didn't get an object");
 
       return $;
    }

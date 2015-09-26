@@ -682,14 +682,19 @@ bool BSPCanMoveInRoom(room_type* Room, V2* S, V2* E)
       // but since we want to get farer way, don't block
 	  // this allows already blocked objects to get away from each other
 	  // and also makes sure we don't block ourself!
-      if (ds2 <= WALLMINDISTANCE2 && (ds2 <= de2))
+	  if (ds2 <= OBJMINDISTANCE2 && (ds2 <= de2))
       {
          blocker = blocker->Next;
          continue;
       }
 
-      if (IntersectLineCircle(&blocker->Position, WALLMINDISTANCE, S, E))
+	  if (IntersectLineCircle(&blocker->Position, OBJMINDISTANCE, S, E))
+	  {
+#if DEBUGMOVE
+         dprintf("MOVEBLOCK BY OBJ %i",blocker->ObjectID);
+#endif
          return false;
+      }
 
       blocker = blocker->Next;
    }

@@ -41,6 +41,9 @@
 #define GRIDCOORDTOROO(big, fine) \
    (FINENESSKODTOROO((float)(big - 1) * (float)KODFINENESS + (float)fine))
 
+#define ROOCOORDTOGRIDBIG(x)  ((int)FINENESSROOTOKOD(x) / KODFINENESS)
+#define ROOCOORDTOGRIDFINE(x) ((int)FINENESSROOTOKOD(x) % KODFINENESS)
+
 // converts a floatingpoint-value into KOD integer (boxes into MAX/MIN KOD INT)
 #define FLOATTOKODINT(x) \
    (((x) > (float)MAX_KOD_INT) ? MAX_KOD_INT : (((x) < (float)-MIN_KOD_INT) ? -MIN_KOD_INT : (int)x))
@@ -204,6 +207,7 @@ bool  BSPLineOfSight(room_type* Room, V3* S, V3* E);
 void  BSPChangeTexture(room_type* Room, unsigned int ServerID, unsigned short NewTexture, unsigned int Flags);
 void  BSPMoveSector(room_type* Room, unsigned int ServerID, bool Floor, float Height, float Speed);
 int   BSPIsInThingsBox(room_type* Room, V2* P);
+bool  BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P);
 bool  BSPBlockerAdd(room_type* Room, int ObjectID, V2* P);
 bool  BSPBlockerMove(room_type* Room, int ObjectID, V2* P);
 bool  BSPBlockerRemove(room_type* Room, int ObjectID);

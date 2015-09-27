@@ -74,7 +74,7 @@ classvars:
    viDifficulty = 8
    viVisionDistance = 60
    % Attack range of 192, or 3 row/col.
-   viAttackRange = 192
+   viAttackRange = 3 * FINENESS
    viSpeed = SPEED_AVERAGE
    viKarma = 0
 
@@ -88,6 +88,8 @@ classvars:
 
    % 1 in x chance to cast a spell.
    viSpellChance = 4
+
+   viAttributes = MOB_ONE_TREASURE
 
 properties:
 
@@ -103,8 +105,6 @@ properties:
 
    % percent of victim's max mana it will try to drain.
    piDrainAmount = 5
-   % What do we drop on death?  Silly default item here.
-   pcTreasureItem = &CheapOreChunk
 
    piReputationGroup = REP_HERETIC
 
@@ -215,9 +215,6 @@ messages:
       {
          Post(Send(SYS,@GetNodeAttack),@XeoKilled);
       }
-
-      % Create heartstone for it to drop when it dies.
-      Send(self,@NewHold,#what=create(pcTreasureItem));
 
       propagate;
    }

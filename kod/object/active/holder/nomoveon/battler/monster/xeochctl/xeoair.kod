@@ -45,13 +45,12 @@ resources:
    viSpeed = SPEED_VERY_FAST
    vrSound_aware = XeoAir_sound_aware
 
+   viTreasure_type = TID_XEO_AIR
+
 properties:
 
    piAnimation = ANIM_NONE
    piMax_Mana = 30
-
-   % What do we drop on death?
-   pcTreasureItem = &SkyHeartStone
 
 messages:
 

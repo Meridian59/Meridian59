@@ -1691,6 +1691,11 @@
    TID_EASTER_BUNNY  = 63
    TID_KILLER_BUNNY  = 64
 
+   TID_XEO_AIR       = 65
+   TID_XEO_EARTH     = 66
+   TID_XEO_FIRE      = 67
+   TID_XEO_WATER     = 68
+
    %%% English articles
 
    ARTICLE_NONE = 0

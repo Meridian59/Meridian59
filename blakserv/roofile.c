@@ -817,6 +817,216 @@ int BSPIsInThingsBox(room_type* Room, V2* P)
 }
 
 /*********************************************************************************************/
+/* BSPGetRandomPoint: Tries up to 'MaxAttempts' times to create a randompoint in 'Room'.
+/*                    If return is true, P's coordinates are guaranteed to be:
+/*                    (a) inside a sector (b) inside thingsbox (c) outside any obj blockradius
+/*********************************************************************************************/
+bool BSPGetRandomPoint(room_type* Room, int MaxAttempts, V2* P)
+{
+	if (!Room || !P)
+		return false;
+
+	for (int i = 0; i < MaxAttempts; i++)
+	{
+		// generate random coordinates inside the things box
+		// we first map the random value to [0.0f , 1.0f] and then to [0.0f , BBOXMAX]
+		// note: the minimum of thingsbox is always at 0/0
+		P->X = ((float)rand() / (float)RAND_MAX) * Room->ThingsBox.Max.X;
+		P->Y = ((float)rand() / (float)RAND_MAX) * Room->ThingsBox.Max.Y;
+
+		// 1. check for inside valid sector, otherwise roll again
+		// note: locations quite close to a wall pass this check!
+		if ((float)-MIN_KOD_INT == BSPGetHeight(Room, P, true, false))
+			continue;
+		
+		// 2. check for being too close to a blocker
+		Blocker* blocker = Room->Blocker;
+		bool collision = false;
+		while (blocker)
+		{
+			V2 b;
+			V2SUB(&b, P, &blocker->Position);
+
+			// too close
+			if (V2LEN2(&b) < OBJMINDISTANCE2)
+			{
+				collision = true;
+				break;
+			}
+
+			blocker = blocker->Next;
+		}
+
+		// too close to a blocker, roll again
+		if (collision)
+			continue;
+
+		// all good with P
+		return true;
+	}
+
+	// max attempts reached without success
+	return false;
+}
+
+/*********************************************************************************************/
+/* BSPGetStepTowards:  Returns a location in P param, in a distant of 16 kod fineness units
+/*                     away from S on the way towards E.
+/*********************************************************************************************/
+bool BSPGetStepTowards(room_type* Room, V2* S, V2* E, V2* P, unsigned int* Flags)
+{
+   if (!Room || !S || !E || !P || !Flags)
+      return false;
+
+   V2 se, stepend;
+   V2SUB(&se, E, S);
+
+   // get length from start to end
+   float len = V2LEN(&se);
+
+   // trying to step to old location?
+   if (ISZERO(len))
+   {
+      // set step destination to end
+      *P = *E;
+      *Flags &= ~ESTATE_AVOIDING;
+      *Flags &= ~ESTATE_CLOCKWISE;
+      return true;
+   }
+
+   // this first normalizes the se vector,
+   // then scales to a length of 16 kod-fineunits
+   float scale = (1.0f / len) * FINENESSKODTOROO(16.0f);
+
+   // apply the scale on se
+   V2SCALE(&se, scale);
+
+   /****************************************************/
+   // 1) try direct step towards destination first
+   /****************************************************/
+
+   V2ADD(&stepend, S, &se);
+   if (BSPCanMoveInRoom(Room, S, &stepend))
+   {
+      *P = stepend;
+      *Flags &= ~ESTATE_AVOIDING;
+      *Flags &= ~ESTATE_CLOCKWISE;
+      return true;
+   }
+
+   /****************************************************/
+   // 2) can't do direct step
+   /****************************************************/
+
+   bool isAvoiding = ((*Flags & ESTATE_AVOIDING) == ESTATE_AVOIDING);
+   bool isRight = ((*Flags & ESTATE_CLOCKWISE) == ESTATE_CLOCKWISE);
+
+   // not yet in clockwise or cclockwise mode
+   // randomly pick one of them
+   if (!isAvoiding)
+      isRight = (rand() % 2 == 1);
+
+   // must run this possibly twice
+   // e.g. left after right failed or right after left failed
+   for (int i = 0; i < 2; i++)
+   {
+      if (isRight)
+      {
+         V2 v = se;
+
+         // try 45° right
+         V2ROTATE(&v, (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 90° right
+         V2ROTATE(&v, (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 135° right
+         V2ROTATE(&v, (float)-M_PI_4);
+         V2ADD(&stepend, S, &v);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags |= ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // failed to circumvent by going right, switch to left
+         isRight = false;
+         *Flags |= ESTATE_AVOIDING;
+         *Flags &= ~ESTATE_CLOCKWISE;
+      }
+      else
+      {
+         V2 v = se;
+
+         // try 45° left
+         V2ROTATE(&v, (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 90° left
+         V2ROTATE(&v, (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // try 135° left
+         V2ROTATE(&v, (float)M_PI_4);
+         V2ADD(&stepend, S, &v);
+         if (BSPCanMoveInRoom(Room, S, &stepend))
+         {
+            *P = stepend;
+            *Flags |= ESTATE_AVOIDING;
+            *Flags &= ~ESTATE_CLOCKWISE;
+            return true;
+         }
+
+         // failed to circumvent by going left, switch to right
+         isRight = true;
+         *Flags |= ESTATE_AVOIDING;
+         *Flags |= ESTATE_CLOCKWISE;
+      }
+   }
+
+   /****************************************************/
+   // 3) fully stuck
+   /****************************************************/
+
+   *P = *S;
+   *Flags &= ~ESTATE_AVOIDING;
+   *Flags &= ~ESTATE_CLOCKWISE;
+   return false;
+}
+
+/*********************************************************************************************/
 /* BSPBlockerClear:   Clears all registered blocked locations.                               */
 /*********************************************************************************************/
 void BSPBlockerClear(room_type* Room)

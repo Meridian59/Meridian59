@@ -621,6 +621,8 @@ char * name_function(int fnum)
    case BLOCKERMOVEBSP: return "BlockerMoveBSP";
    case BLOCKERREMOVEBSP: return "BlockerRemoveBSP";
    case BLOCKERCLEARBSP: return "BlockerClearBSP";
+   case GETRANDOMPOINTBSP: return "GetRandomPointBSP";
+   case GETSTEPTOWARDSBSP: return "GetStepTowardsBSP";
 
    case MINIGAMENUMBERTOSTRING : return "MiniGameNumberToString";
    case MINIGAMESTRINGTONUMBER : return "MiniGameStringToNumber";

@@ -2510,154 +2510,23 @@ messages:
 
    %%% Movement messages
 
-   TryDirection(dir = $, face_target= FALSE, face_away=FALSE, to_master=FALSE)
-   "Try to take a single step in direction 'dir' where"
-   "e=0, ne=1, n=2, nw=3, w=4, sw=5, s=6, se=7"
-   {
-      local iNew_row, iNew_col, iNew_finerow, iNew_finecol, iLong_step;
-
-      iNew_row = piRow;
-      iNew_col = piCol;
-
-      if dir = 0
-      {
-         iNew_finerow = piFine_row + 16;
-         iNew_finecol = piFine_col;
-         iLong_step = FALSE;
-      }
-      else if dir = 1
-      {
-         iNew_finerow = piFine_row + 16;
-         iNew_finecol = piFine_col + 16;
-         iLong_step = TRUE;
-      }
-      else if dir = 2
-      {
-         iNew_finerow = piFine_row;
-         iNew_finecol = piFine_col + 16;
-         iLong_step = FALSE;
-      }
-      else if dir = 3
-      {
-         iNew_finerow = piFine_row - 16;
-         iNew_finecol = piFine_col + 16;
-         iLong_step = TRUE;
-      }
-      else if dir = 4
-      {
-         iNew_finerow = piFine_row - 16;
-         iNew_finecol = piFine_col;
-         iLong_step = FALSE;
-      }
-      else if dir = 5
-      {
-         iNew_finerow = piFine_row - 16;
-         iNew_finecol = piFine_col - 16;
-         iLong_step = TRUE;
-      }
-      else if dir = 6
-      {
-         iNew_finerow = piFine_row;
-         iNew_finecol = piFine_col - 16;
-         iLong_step = FALSE;
-      }
-      else if dir = 7
-      {
-         iNew_finerow = piFine_row + 16;
-         iNew_finecol = piFine_col - 16;
-         iLong_step = TRUE;
-      }
-
-      if iNew_finerow >= FINENESS
-      {
-         % moved down at least a full row
-         iNew_row = piRow + (iNew_finerow / FINENESS);
-         iNew_finerow = iNew_finerow MOD FINENESS;
-      }
-      else if iNew_finerow < 0
-      {
-         % moved up at least a full row
-         iNew_row = piRow - Bound((-iNew_finerow / FINENESS), 1, 100);
-         iNew_finerow = FINENESS - (-iNew_finerow MOD FINENESS);
-      }
-
-      if iNew_finecol >= FINENESS
-      {
-         % moved right at least a full col 
-         iNew_col = piCol + (iNew_finecol / FINENESS);
-         iNew_finecol = iNew_finecol MOD FINENESS;
-      }
-      else if iNew_finecol < 0
-      {
-         % moved left at least a full row
-         iNew_col = piCol - Bound((-iNew_finecol / FINENESS), 1, 100);
-         iNew_finecol = FINENESS - (-iNew_finecol MOD FINENESS);
-      }
-
-      if iLong_step
-      {
-         piState = piState | ESTATE_LONG_STEP;
-      }
-      else
-      {
-         piState = piState & ESTATE_LSTEP_MASK;
-      }
-
-      if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
-         OR Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col,
-                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
-      {
-         Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
-               #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
-               #face_target=face_target,#face_away=face_away);
-
-         if Send(poOwner,@ReqSomethingMoved,#what=self,
-                  #new_row=iNew_row,#new_col=iNew_col,
-                  #server_validate=(NOT(piBehavior&AI_MOVE_WALKTHROUGH_WALLS)),
-                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol)
-         {
-            Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
-                  #new_row=iNew_row,#new_col=iNew_col,
-                  #fine_row=iNew_finerow,#fine_col=iNew_finecol,
-                  #non_monsters_only=TRUE);
-
-            % Turn to face target
-            Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col,
-                  #new_finerow=iNew_finerow,#new_finecol=iNew_finecol,
-                  #face_target=face_target,#face_away=face_away);
-
-            return TRUE;
-         }
-      }
-
-      return FALSE;
-   }
-
    MoveTowards(oTarget = $, face_target=FALSE, face_away=FALSE,
                to_master=FALSE)
    {
-      local drow, dcol;
-
       if oTarget = $ 
       { 
          Debug("Bad info passed to MoveTowards!");
          return FALSE; 
       }
 
-      if poOwner <> Send(oTarget,@GetOwner)
-      { 
-         return FALSE; 
-      }
-
-      % calculate square delta in highres-grid
-      drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
-      dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
-      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
-      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
-
-      return Send(self,@MoveInDirection,#row_diff=drow,#col_diff=dcol,
-                  #face_target=face_target,#face_away=face_away,
-                  #to_master=to_master);
+      return Send(self, @MoveTowardsCoords,
+                   #iRow=Send(oTarget,@GetRow),
+                   #iCol=Send(oTarget,@GetCol),
+                   #iFineRow=Send(oTarget,@GetFineRow),
+                   #iFineCol=Send(oTarget,@GetFineCol),
+                   #face_target=face_target,
+                   #face_away=face_away,
+                   #to_master=to_master);
    }
 
    MoveAway(oTarget = $, face_target=FALSE, face_away=FALSE)
@@ -2672,182 +2541,24 @@ messages:
 
       if poOwner <> Send(oTarget,@GetOwner)
       {
-            return FALSE;
-      }
-
-	  % calculate square delta in highres-grid
-      drow = ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow)) / 16;
-      dcol = ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol)) / 16;
-      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
-      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
-	  
-      return Send(self,@MoveInDirection,#row_diff=-drow,#col_diff=-dcol,
-                  #face_target=face_target,#face_away=face_away);
-   }
-
-   MoveInDirection(row_diff = $,col_diff = $, face_target = FALSE,
-                   face_away=FALSE, to_master=FALSE)
-   "As I said afore, Id really like this to move the monster on 16finerow"
-   "increments instead of the way it is now. If this happened, then the"
-   "movement timer/chase timer's would need to be increased to make up for"
-   "the lack of distance travelled. This is called from the ChaseTimer."
-   "It should probably be combined with DoRandomWalk."
-   {
-      local i, iAtan, iDir, iTry_dir, iRand,   iIter;
-      
-      if poOwner=$ OR row_diff=$ OR col_diff=$
-      {
          return FALSE;
       }
 
-      % Figure out which direction we need to move.
-      % Directions: e=0, ne=1, n=2, nw=3, w=4, sw=5, s=6, se=7
+      % calculate square delta in fineness
+      % vector from oTarget to self
+      drow = (piRow * FINENESS) + piFine_row;
+      dcol = (piCol * FINENESS) + piFine_col;
+      drow = drow - ((Send(oTarget,@GetRow) * FINENESS) + Send(oTarget,@GetFineRow));
+      dcol = dcol - ((Send(oTarget,@GetCol) * FINENESS) + Send(oTarget,@GetFineCol));
 
-      % Due north or due south are special cases.
-      if row_diff = 0
-      {
-         if col_diff > 0
-         {
-            iDir = 2;
-         }
-         else
-         {
-            iDir = 6;
-         }
-      }
-      else
-      {
-         iAtan = 1000 * col_diff / row_diff;
-      }
-
-      if row_diff > 0
-      {
-         % right half-plane
-         if iAtan >= 2414
-         {
-            iDir = 2;
-         }
-         else if iAtan >= 414
-         {
-            iDir = 1;
-         }
-         else if iAtan >= -414
-         {
-            iDir = 0;
-         }
-         else if iAtan >= -2414
-         {
-            iDir = 7;
-         }
-         else
-         {
-            iDir = 6;
-         }
-      }
-      else if row_diff < 0
-      {
-         % left half-plane
-         if iAtan >= 2414
-         {
-            iDir = 6;
-         }
-         else if iAtan >= 414
-         {
-            iDir = 5;
-         }
-         else if iAtan >= -414
-         {
-            iDir = 4;
-         }
-         else if iAtan >= -2414
-         {
-            iDir = 3;
-         }
-         else
-         {
-            iDir = 2;
-         }
-      }
-
-      iTry_dir = iDir;
-      if Send(self,@TryDirection,#dir=iTry_dir,
-               #face_target=face_target,#face_away=face_away)
-      {
-         % we successfully moved in our direction of choice
-         piState = piState & ESTATE_ZERO_MASK;
-
-         return TRUE;
-      }
-      else
-      {
-         % Try each available direction in a particular order
-         % (however, we do *not* allow motion 180 degrees from target)
-         if piState & ESTATE_AVOIDING
-         {
-            if piState & ESTATE_CLOCKWISE
-            {
-               % continue to try only clockwise directions
-               iIter = 321;
-            }
-            else
-            {
-               % counter-clockwise
-               iIter = 567;
-            }
-         }
-         else
-         {
-            % Use a "random" bit to decide search pattern
-            % Either way, both clockwise and counter-clock directions
-            % will be tried as necessary
-            if row_diff mod 2
-            {
-               iIter = 536271;
-            }
-            else
-            {
-               iIter = 352617;
-            }
-         }
-
-         % Implementor's notes:  Xian Darken originally used list nodes here
-         %  temporarily.  For example, the above list was [7,1,6,2,5,3].  Note
-         %  how  they are listed in reverse order from the start.  However,
-         %  this seemed to be eating up gobs and gobs of memory, so I decided
-         %  to use an integer instead, taking the ones digit and dividing by
-         %  ten until the number is below 0.
-
-         while iIter > 0
-         {
-            i = iIter mod 10;
-            iTry_dir = ( iDir + i ) mod 8;
-            if Send(self,@TryDirection,#dir=iTry_dir,#face_target=face_target,
-                    #face_away=face_away,#to_master=to_master) 
-            {
-               piState = piState | ESTATE_AVOIDING;
-               if i < 4
-               {
-                  piState = piState | ESTATE_CLOCKWISE;
-               }
-               else
-               {
-                  piState = piState & ESTATE_CCLK_MASK;
-               }
-
-               return TRUE;
-            }
-
-            iIter = iIter/10;
-         }
-
-         % we couldn't find an acceptable move
-         piState = piState & ESTATE_AVOID_MASK;
-
-         return FALSE;
-      }
-
-      % Never reached
-      return TRUE;
+      % add vector from oTarget to self on our position and try move there
+      return Send(self, @MoveTowardsCoords,
+                   #iRow=(piRow + (drow / FINENESS)),
+                   #iCol=(piCol + (dcol / FINENESS)),
+                   #iFineRow=(piFine_row + (drow MOD FINENESS)),
+                   #iFineCol=(piFine_col + (dcol MOD FINENESS)),
+                   #face_target=face_target,
+                   #face_away=face_away);
    }
 
    ReqMonsterMove(new_row = $,new_col = $,new_finerow = FINENESS_HALF,
@@ -2918,25 +2629,58 @@ messages:
       return;
    }
 
-   MoveTowardsCoords(iRow=$, iCol=$, iFineRow=0, iFineCol=0, face_target=FALSE,
+   MoveTowardsCoords(iRow=$, iCol=$, iFineRow=FINENESS_HALF, iFineCol=FINENESS_HALF, face_target=FALSE,
                      face_away=FALSE, to_master=FALSE)
    {
-      local drow, dcol;
+      local lPos, iRowDest, iColDest, iFineRowDest, iFineColDest;
 
       if (iRow = $ or iCol = $)
       {
          return;
       }
 
-      % calculate square delta in highres-grid
-      drow = ((iRow * FINENESS) + iFineRow) / 16;
-      dcol = ((iCol * FINENESS) + iFineCol) / 16;
-      drow = drow - (((piRow * FINENESS) + piFine_row) / 16);
-      dcol = dcol - (((piCol * FINENESS) + piFine_col) / 16);
+      % query where to step next
+      % note: these need some persistent info across
+      % calls which are stored in piState (flags from old KOD code)
+      lPos = GetStepTowardsBSP(
+                Send(poOwner, @GetRoomData),
+                piRow, piCol, piFine_row, piFine_col,
+                iRow, iCol, iFineRow, iFineCol,
+                piState);
 
-      return Send(self,@MoveInDirection,#row_diff=drow,#col_diff=dcol,
-                  #face_target=face_target,#face_away=face_away,
-                  #to_master=to_master);
+      if lPos <> $
+      {
+         iRowDest = Nth(lPos,1);
+         iColDest = Nth(lPos,2);
+         iFineRowDest = Nth(lPos,3);
+         iFineColDest = Nth(lPos,4);
+         piState = Nth(lPos,5);
+
+         % debug("step",iRowDest,iColDest,iFineRowDest,iFineColDest);
+	  
+         if (NOT (piBehavior & AI_MOVE_WALKTHROUGH_WALLS))
+             OR Send(self,@ReqMonsterMove,#new_row=iRowDest,#new_col=iColDest,
+                     #new_finerow=iFineRowDest,#new_finecol=iFineColDest)
+         {
+            Send(self,@MonsterOrient,#new_row=iRowDest,#new_col=iColDest,
+                 #new_finerow=iFineRowDest,#new_finecol=iFineColDest,
+                 #face_target=face_target,#face_away=face_away);
+		
+            Send(poOwner,@SomethingMoved,#what=self,#speed=viSpeed,
+                 #new_row=iRowDest,#new_col=iColDest,
+                 #fine_row=iFineRowDest,#fine_col=iFineColDest,
+                 #non_monsters_only=TRUE);
+
+            % Turn to face target
+            Send(self,@MonsterOrient,#new_row=iRowDest,#new_col=iColDest,
+                 #new_finerow=iFineRowDest,#new_finecol=iFineColDest,
+                 #face_target=face_target,#face_away=face_away);
+
+         return TRUE;		
+         }
+      }
+
+      return FALSE;
    }
 
    GotoCoords(iRow=$,iCol=$,iFineRow=0,iFineCol=0)

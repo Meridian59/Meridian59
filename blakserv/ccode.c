@@ -3247,6 +3247,249 @@ int C_BlockerClearBSP(int object_id, local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_GetRandomPointBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val;
+	val_type maxattempts_val;
+	room_node *r;
+
+	// in case it fails
+	ret_val.int_val = NIL;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	maxattempts_val = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_GetRandomPointBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (maxattempts_val.v.tag != TAG_INT)
+	{
+		bprintf("C_GetRandomPointBSP maxattempts can't use non int %i,%i\n",
+			maxattempts_val.v.tag, maxattempts_val.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_GetRandomPointBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	V2 p;
+	bool ok = BSPGetRandomPoint(&r->data, maxattempts_val.v.data, &p);
+
+	if (ok)
+	{
+		int coordinate_list;
+		val_type first_val, rest_val;
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDFINE(p.X);
+		rest_val.v.tag = TAG_NIL;
+		rest_val.v.data = NIL;
+		coordinate_list = Cons(first_val, rest_val); // [ finecol ]
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDFINE(p.Y);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ finerow, finecol ]
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDBIG(p.X);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ col, finerow, finecol ]
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDBIG(p.Y);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ row, col, finerow, finecol ]
+		
+		ret_val.v.tag = TAG_LIST;
+		ret_val.v.data = coordinate_list;	
+	}
+
+	return ret_val.int_val;
+}
+
+int C_GetStepTowardsBSP(int object_id, local_var_type *local_vars,
+	int num_normal_parms, parm_node normal_parm_array[],
+	int num_name_parms, parm_node name_parm_array[])
+{
+	val_type ret_val, room_val;
+	val_type row_source, col_source, finerow_source, finecol_source;
+	val_type row_dest, col_dest, finerow_dest, finecol_dest;
+	val_type state_flags;
+	room_node *r;
+
+	// in case it fails
+	ret_val.int_val = NIL;
+
+	room_val = RetrieveValue(object_id, local_vars, normal_parm_array[0].type,
+		normal_parm_array[0].value);
+	row_source = RetrieveValue(object_id, local_vars, normal_parm_array[1].type,
+		normal_parm_array[1].value);
+	col_source = RetrieveValue(object_id, local_vars, normal_parm_array[2].type,
+		normal_parm_array[2].value);
+	finerow_source = RetrieveValue(object_id, local_vars, normal_parm_array[3].type,
+		normal_parm_array[3].value);
+	finecol_source = RetrieveValue(object_id, local_vars, normal_parm_array[4].type,
+		normal_parm_array[4].value);
+
+	row_dest = RetrieveValue(object_id, local_vars, normal_parm_array[5].type,
+		normal_parm_array[5].value);
+	col_dest = RetrieveValue(object_id, local_vars, normal_parm_array[6].type,
+		normal_parm_array[6].value);
+	finerow_dest = RetrieveValue(object_id, local_vars, normal_parm_array[7].type,
+		normal_parm_array[7].value);
+	finecol_dest = RetrieveValue(object_id, local_vars, normal_parm_array[8].type,
+		normal_parm_array[8].value);
+
+	state_flags = RetrieveValue(object_id, local_vars, normal_parm_array[9].type,
+		normal_parm_array[9].value);
+
+	if (room_val.v.tag != TAG_ROOM_DATA)
+	{
+		bprintf("C_GetStepTowardsBSP can't use non room %i,%i\n",
+			room_val.v.tag, room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row_source.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP row source can't use non int %i,%i\n",
+			row_source.v.tag, row_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col_source.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP col source can't use non int %i,%i\n",
+			col_source.v.tag, col_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow_source.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP finerow source can't use non int %i,%i\n",
+			finerow_source.v.tag, finerow_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol_source.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP finecol source can't use non int %i,%i\n",
+			finecol_source.v.tag, finecol_source.v.data);
+		return ret_val.int_val;
+	}
+
+	if (row_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP row dest can't use non int %i,%i\n",
+			row_dest.v.tag, row_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (col_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP col dest can't use non int %i,%i\n",
+			col_dest.v.tag, col_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finerow_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP finerow dest can't use non int %i,%i\n",
+			finerow_dest.v.tag, finerow_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (finecol_dest.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP finecol dest can't use non int %i,%i\n",
+			finecol_dest.v.tag, finecol_dest.v.data);
+		return ret_val.int_val;
+	}
+
+	if (state_flags.v.tag != TAG_INT)
+	{
+		bprintf("C_GetStepTowardsBSP state_flags can't use non int %i,%i\n",
+			state_flags.v.tag, state_flags.v.data);
+		return ret_val.int_val;
+	}
+
+	r = GetRoomDataByID(room_val.v.data);
+	if (r == NULL)
+	{
+		bprintf("C_GetStepTowardsBSP can't find room %i\n", room_val.v.data);
+		return ret_val.int_val;
+	}
+
+	V2 s;
+	s.X = GRIDCOORDTOROO(col_source.v.data, finecol_source.v.data);
+	s.Y = GRIDCOORDTOROO(row_source.v.data, finerow_source.v.data);
+
+	V2 e;
+	e.X = GRIDCOORDTOROO(col_dest.v.data, finecol_dest.v.data);
+	e.Y = GRIDCOORDTOROO(row_dest.v.data, finerow_dest.v.data);
+
+	V2 p;
+	unsigned int flags = (unsigned int)state_flags.v.data;
+	bool ok = BSPGetStepTowards(&r->data, &s, &e, &p, &flags);
+
+	if (ok)
+	{
+		int coordinate_list;
+		val_type first_val, rest_val;
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = flags;
+		rest_val.v.tag = TAG_NIL;
+		rest_val.v.data = NIL;
+		coordinate_list = Cons(first_val, rest_val); // [ stateflags ]
+		
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDFINE(p.X);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ finecol, stateflags ]
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDFINE(p.Y);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ finerow, finecol, stateflags ]
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDBIG(p.X);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ col, finerow, finecol, stateflags ]
+
+		first_val.v.tag = TAG_INT;
+		first_val.v.data = ROOCOORDTOGRIDBIG(p.Y);
+		rest_val.v.tag = TAG_LIST;
+		rest_val.v.data = coordinate_list;
+		coordinate_list = Cons(first_val, rest_val); // [ row, col, finerow, finecol, stateflags ]
+
+		ret_val.v.tag = TAG_LIST;
+		ret_val.v.data = coordinate_list;
+	}
+
+	return ret_val.int_val;
+}
+
 /*
  * C_AppendListElem: takes a list and an item to be appended to the list,
  *    appends the item to the end of the list. Returns the original list

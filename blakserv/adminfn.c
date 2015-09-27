@@ -2136,6 +2136,8 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case CANMOVEINROOMBSP: strcpy(c_name, "CanMoveInRoomBSP"); break;
 		case LINEOFSIGHTBSP: strcpy(c_name, "LineOfSightBSP"); break;
 		case ISINTHINGSBOXBSP: strcpy(c_name, "IsInThingsBoxBSP"); break;
+		case GETRANDOMPOINTBSP: strcpy(c_name, "GetRandomPointBSP"); break;
+		case GETSTEPTOWARDSBSP: strcpy(c_name, "GetStepTowardsBSP"); break;
 		case BLOCKERADDBSP: strcpy(c_name, "BlockerAddBSP"); break;
 		case BLOCKERMOVEBSP: strcpy(c_name, "BlockerMoveBSP"); break;
 		case BLOCKERREMOVEBSP: strcpy(c_name, "BlockerRemoveBSP"); break;

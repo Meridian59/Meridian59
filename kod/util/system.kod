@@ -573,6 +573,8 @@ messages:
 
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
+      ptRecreateTimer = CreateTimer(self,@CreateLightAndWeather,3000);
+
       return;
    }
 
@@ -3935,6 +3937,15 @@ messages:
    GetWeather()
    {
       return piWeather;
+   }
+
+   CreateLightAndWeather()
+   "Called by timer when System is first created, to add a delay."
+   {
+      ptRecreateTimer = $;
+      Send(self,@RecalcLightAndWeather);
+
+      return;
    }
 
    RecalcLightAndWeather()

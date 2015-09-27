@@ -336,10 +336,6 @@ messages:
       ptPeriodic_sounds = $;
       Send(self,@CreatePeriodicSounds);
 
-      % Have to delay this a bit so all objects are created by the time
-      % it gets called.
-      CreateTimer(self,@RecalcLightAndWeather,5000);
-
       propagate;
    }
 

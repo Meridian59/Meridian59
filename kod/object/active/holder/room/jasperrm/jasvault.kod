@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperVault is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include jasvault.lkod
+
+   room_jaspervault = jasvault.roo
+   room_name_Jaspervault = "The Vault of Jasper"
+
+classvars:
+
+   vrName = room_name_jaspervault
+
+   viTeleport_row = 5
+   viTeleport_col = 4
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_jaspervault
+   piRoom_num = RID_JAS_VAULT
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 6, 2, RID_JASWEST, 58, 21, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&JasperVaultMan),
+           #new_row=8,#new_col=9,#fine_row=42,#fine_col=5);
+
+      Send(self,@NewHold,#what=Create(&QuillPen),
+           #new_row=10,#new_col=8,#fine_row=17,#fine_col=10);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=7,#new_col=5,#fine_row=32, #fine_col=31);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=7,#fine_row=33, #fine_col=26);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=7,#new_col=7,#fine_row=32, #fine_col=36);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=5,#fine_row=30, #fine_col=30);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_VJOURNAL),
+           #new_row=10,#new_col=7,#fine_row=10,#fine_col=51);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,154 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperVaultman is jasperTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   include jasvaultm.lkod
+
+   jaspervaultman_name_rsc = "Rolan De'nair"
+   jaspervaultman_icon_rsc = cngrocer.bgf
+   jaspervaultman_desc_rsc =  \
+      "The cousin of Obert Cair'bre, Ronal has taken the family business "
+      "south.  Though as he diligently serves the people of Jasper, his big "
+      "city demeanor is often at odds with the townsfolk's more rebellious "
+      "attitude."
+
+   jaspervaultman_entry_welcome = "Well met!"
+
+   jaspervaultman_nogold = "Thou may not use my services to store %s%s."
+   jaspervaultman_nocursed = "I cannot take %s%s from thee."
+   jaspervaultman_fullvault = \
+      "Thy vault cannot hold all that!  Mayhaps thou should try offering "
+      "items in smaller quantities."
+   jaspervaultman_thanks_amount = \
+      "That will cost %i shillings.  I thank thee for trusting me to "
+      "quartermaster thy gear."
+   jaspervaultman_dont_have = \
+      "Hmmm, I can't seem to find %s%s in thy vault."
+   jaspervaultman_no_room = \
+      "Thou can not carry all of that!  Mayhaps thou should try withdrawing "
+      "the items one at a time."
+   jaspervaultman_deposit_thanks = \
+      "I thank thee for trusting me to quartermaster thy gear."
+   jaspervaultman_thanks = \
+      "Have is thy gear.  I thank thee for thy patronage."
+   jaspervaultman_nowithdraw_cash = \
+      "Thou currently cannot pay the exit fee to get thy items out."
+   jaspervaultman_nodeposit_cash = \
+      "Storing these items would cost %i shillings - which I see thou "
+      "doth not possess."
+   jaspervaultman_cant_part = \
+      "Zounds... I wish to not feel responsible if thy %s were to "
+      "disappear - I cannot store it."
+   jaspervaultman_noaccount = \
+      "I do not seem to be storing any of thy gear."
+   jaspervaultman_not_enough = \
+      "Thou have not that many %s stored in thy name!"
+
+classvars:
+
+   vrName = jaspervaultman_name_rsc
+   vrIcon = jaspervaultman_icon_rsc
+   vrDesc = jaspervaultman_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = \
+      MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN \
+      | MOB_NOMOVE | MOB_RECEIVE | MOB_VAULTMAN | MOB_NOQUEST
+   viOccupation = MOB_ROLE_VAULTMAN
+
+   viVault = VID_BARLOQUE
+
+   vrvaultman_nogold = jaspervaultman_nogold
+   vrvaultman_nocursed = jaspervaultman_nocursed
+   vrvaultman_fullvault = jaspervaultman_fullvault
+   vrvaultman_thanks_amount = jaspervaultman_thanks_amount
+   vrvaultman_dont_have = jaspervaultman_dont_have
+   vrvaultman_no_room = jaspervaultman_no_room
+   vrvaultman_deposit_thanks = jaspervaultman_deposit_thanks
+   vrvaultman_thanks = jaspervaultman_thanks
+   vrvaultman_nowithdraw_cash = jaspervaultman_nowithdraw_cash
+   vrvaultman_nodeposit_cash = jaspervaultman_nodeposit_cash
+   vrvaultman_cant_part = jaspervaultman_cant_part
+   vrvaultman_noaccount = jaspervaultman_noaccount
+   vrvaultman_not_enough = jaspervaultman_not_enough
+
+properties:
+
+messages:
+
+   AffectMood(why=$,what=$)
+   {
+
+      if why = MOODMOD_DAWN
+      {
+         Send(self,@SetMood,#new_mood=piMood+3);
+
+         return;
+      }
+
+      if why = MOODMOD_DUSK
+      {
+         Send(self,@SetMood,#new_mood=piMood-3);
+
+         return;
+      }
+
+      return;
+   }
+
+   UserEntered(who=$)
+   {
+      if Send(who,@GetAction) = UA_HAPPY
+      {
+         Send(self,@SetMood,#new_mood=piMood+1);
+      }
+
+      if Send(who,@GetAction) = UA_SAD
+      {
+         Send(self,@SetMood,#new_mood=piMood-1);
+      }
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         Send(self,@SetMood,#new_mood=piMood-2);
+
+         % Don't welcome these guys.
+         propagate;
+      }
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      {
+         Send(self,@SetMood,#new_mood=piMood-1);
+
+         % Don't welcome these guys.
+         propagate;
+      }
+
+      Send(who,@SomeoneSaid,#what=self,
+            #string=jaspervaultman_entry_welcome,
+            #type=SAY_RESOURCE);
+
+      propagate;
+   }
+
+   GetVaultNum()
+   {
+      return viVault;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -531,6 +531,7 @@
    RID_SEWER_KING = 380
    RID_JASWEST = 382
    RID_JAS_WEST = 382
+   RID_JAS_VAULT = 384
    
    % New areas as extensions of old areas
    RID_THRONE2 = 383
@@ -2870,13 +2871,13 @@
    OO_RR_PLANT2 = 153
    OO_RR_TABLE = 154
    OO_RR_BASIN = 155
-
    OO_QORMAS_SNOWMAN = 156
    OO_QORMAS_TREE = 157
    OO_QORMAS_WREATH = 158
    OO_QORMAS_TREE_BIG = 159
-
    OO_JASPERLAMP1 = 160
+   OO_SMCRATE = 161
+   OO_VJOURNAL = 162
 
    %%% Shrines
 

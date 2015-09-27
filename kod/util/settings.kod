@@ -244,6 +244,9 @@ properties:
    % Percent of mana required/used for broadcasting. Default 0 (no cost).
    piBroadcastManaPercent = 0
 
+   % Jasper vault access
+   pbJasperVault = FALSE
+
 messages:
 
    Constructor()
@@ -637,6 +640,11 @@ messages:
    GetBroadcastManaCost()
    {
       return piBroadcastManaPercent;
+   }
+
+   JasperVaultOpen()
+   {
+      return pbJasperVault;
    }
 
 end

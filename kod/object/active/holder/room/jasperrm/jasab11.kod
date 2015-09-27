@@ -45,7 +45,7 @@ messages:
       plExits = $;
 
       %% TO TOWN
-      plExits = Cons([ 6, 2, RID_JASWEST, 52, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 2, RID_JASWEST, 58, 21, ROTATE_NONE ],plExits);
 
       propagate;
    }

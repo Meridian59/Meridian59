@@ -83,6 +83,7 @@ void MainServer()
 	InitTimer();
 	InitSession();
 	InitResource();
+	InitRooms();
 	InitString();
 	InitUser();
 	InitAccount();
@@ -155,7 +156,8 @@ void MainExitServer()
 	ResetAccount();
 	ResetUser();
 	ResetString();
-	ResetRooms();
+	// ExitRooms calls ResetRooms in addition to clearing the array memory.
+	ExitRooms();
 	ResetResource();
 	ResetTimer();
 	ResetList();

@@ -8,33 +8,79 @@
 /*
  * roomdata.c
  *
-
- This module maintains a linked list of loaded .roo files which are
- loaded by the Blakod (using the C function LoadRoom() in ccode.c).
+ This module maintains an array of pointers to room_node (all the room data)
+ and also an array of pointers to room_rsc_node (used for fast room ID lookup
+ by resource id). The arrays have a hardcoded size of 400, and each element
+ is a linked list of pointers indexed by room_id % 400 for room_nodes, and
+ resource_id % 400 for room_rsc_nodes. This allows a much smaller size to be
+ set for the array, but can still handle an unforseen case where more than
+ 400 rooms get created. The hardcoded size (INIT_ROOMTABLE_SIZE in roomdata.h)
+ should be increased if the 'normal' number of rooms on the server is ever over
+ 400 (currently ~270). .roo files loaded by the C function LoadRoom(), called
+ from blakod.
 
  */
 
 #include "blakserv.h"
 
-room_node* first = NULL;
-int        idcounter = 0;
+// Next available room ID.
+int           idcounter = 0;
+// Array of pointers for room data storage.
+room_node     **rooms;
+// Array of pointers for room id lookup by resource.
+room_rsc_node **room_rscs;
+
+void InitRooms()
+{
+   rooms = (room_node **)AllocateMemoryCalloc(MALLOC_ID_ROOM,
+      INIT_ROOMTABLE_SIZE, sizeof(room_node*));
+   room_rscs = (room_rsc_node **)AllocateMemoryCalloc(MALLOC_ID_ROOM, 
+      INIT_ROOMTABLE_SIZE, sizeof(room_rsc_node*));
+   idcounter = 0;
+}
+
+void ExitRooms()
+{
+   ResetRooms();
+   FreeMemory(MALLOC_ID_ROOM, rooms, INIT_ROOMTABLE_SIZE * sizeof(room_node*));
+   FreeMemory(MALLOC_ID_ROOM, room_rscs, INIT_ROOMTABLE_SIZE * sizeof(room_rsc_node*));
+}
 
 void ResetRooms()
 {
-   room_node *node, *temp;
+   room_node *room, *temp;
+   room_rsc_node *rrsc, *rrscTemp;
 
-   node = first;
-   while (node)
+   for (int i = 0; i < INIT_ROOMTABLE_SIZE; ++i)
    {
-      temp = node->next;
+      if (room_rscs)
+      {
+         // Free memory from room_rscs first.
+         rrsc = room_rscs[i];
+         while (rrsc != NULL)
+         {
+            rrscTemp = rrsc->next;
+            FreeMemory(MALLOC_ID_ROOM, rrsc, sizeof(room_rsc_node));
+            rrsc = rrscTemp;
+         }
+         room_rscs[i % INIT_ROOMTABLE_SIZE] = NULL;
+      }
 
-      BSPFreeRoom(&node->data);
-      FreeMemory(MALLOC_ID_ROOM, node, sizeof(room_node));
-
-      node = temp;
+      if (rooms)
+      {
+         // Free memory from rooms.
+         room = rooms[i % INIT_ROOMTABLE_SIZE];
+         while (room)
+         {
+            temp = room->next;
+            BSPFreeRoom(&room->data);
+            FreeMemory(MALLOC_ID_ROOM, room, sizeof(room_node));
+            room = temp;
+         }
+         rooms[i % INIT_ROOMTABLE_SIZE] = NULL;
+      }
    }
 
-   first = NULL;
    idcounter = 0;
 }
 
@@ -42,12 +88,13 @@ int LoadRoom(int resource_id)
 {
    val_type ret_val;
    resource_node* r;
+   room_rsc_node *rrsc;
    char s[MAX_PATH + FILENAME_MAX];
 
    /****************************************************************/
 
    r = GetResourceByID(resource_id);
-   if (r == NULL)
+   if (!r)
    {
       bprintf("LoadRoomData can't find resource %i\n",resource_id);
       return NIL;
@@ -58,11 +105,18 @@ int LoadRoom(int resource_id)
    /****************************************************************/
 
    // CASE 1: Reuse already loaded ROO
-   room_node* node = GetRoomDataByResourceID(resource_id);
-   if (node)
+   if (room_rscs)
    {
-      ret_val.v.data = node->data.roomdata_id;
-      return ret_val.int_val;
+      rrsc = room_rscs[resource_id % INIT_ROOMTABLE_SIZE];
+      while (rrsc)
+      {
+         if (rrsc->resource_id == resource_id)
+         {
+            ret_val.v.data = rrsc->roomdata_id;
+            return ret_val.int_val;
+         }
+         rrsc = rrsc->next;
+      }
    }
 
    /****************************************************************/
@@ -81,23 +135,19 @@ int LoadRoom(int resource_id)
       return NIL;
    }
 
+   // Add this room_node to the rooms table.
    newnode->data.roomdata_id = idcounter++;
    newnode->data.resource_id = resource_id;
-   newnode->next = NULL;
+   newnode->next = rooms[newnode->data.roomdata_id % INIT_ROOMTABLE_SIZE];
+   rooms[newnode->data.roomdata_id % INIT_ROOMTABLE_SIZE] = newnode;
 
-   if (!first)
-	   first = newnode;
+   // Add room_rsc_node for this resource.
+   rrsc = (room_rsc_node *)AllocateMemory(MALLOC_ID_ROOM, sizeof(room_rsc_node));
 
-   else
-   {
-      node = first;
-	  
-	  // goto last element
-      while (node->next)	  
-         node = node->next;
-
-	  node->next = newnode;
-   }
+   rrsc->resource_id = resource_id;
+   rrsc->roomdata_id = newnode->data.roomdata_id;
+   rrsc->next = room_rscs[resource_id % INIT_ROOMTABLE_SIZE];
+   room_rscs[resource_id % INIT_ROOMTABLE_SIZE] = rrsc;
 
    ret_val.v.data = newnode->data.roomdata_id;
    return ret_val.int_val;
@@ -105,70 +155,91 @@ int LoadRoom(int resource_id)
 
 void UnloadRoom(room_node *r)
 {
-   room_node* node     = NULL;
-   room_node* previous = NULL;
-   
-   if (r == NULL)
+   room_node *room, *temp;
+   room_rsc_node *rrsc, *rrscTemp;
+
+   if (!r)
    {
       bprintf("UnloadRoomData called with NULL room!");
+
       return;
    }
 
-   node = first;
-   while (node)
+   if (room_rscs)
    {
-      if (node->data.roomdata_id == r->data.roomdata_id)
+      // Free the room_rsc_node data for this room.
+      rrsc = room_rscs[r->data.resource_id % INIT_ROOMTABLE_SIZE];
+      while (rrsc)
       {
-         // removing first element
-         if (!previous)		  
-            first = node->next;
-
-         // removing not first element
-         else		  
-            previous->next = node->next;
-		  
-         // now cleanup node
-         BSPFreeRoom(&node->data);
-		 FreeMemory(MALLOC_ID_ROOM, node, sizeof(room_node));
-
-         return;
+         rrscTemp = rrsc->next;
+         if (rrsc->roomdata_id == r->data.roomdata_id)
+         {
+            FreeMemory(MALLOC_ID_ROOM, rrsc, sizeof(room_rsc_node));
+            rrsc = rrscTemp;
+            room_rscs[r->data.resource_id % INIT_ROOMTABLE_SIZE] = rrscTemp;
+            break;
+         }
+         rrsc = rrsc->next;
       }
+   }
 
-      previous = node;
-      node = node->next;
+   if (rooms)
+   {
+      // Free the room.
+      room = rooms[r->data.roomdata_id % INIT_ROOMTABLE_SIZE];
+      while (room)
+      {
+         temp = room->next;
+         if (room->data.roomdata_id == r->data.roomdata_id)
+         {
+            BSPFreeRoom(&room->data);
+            room = temp;
+            rooms[r->data.roomdata_id % INIT_ROOMTABLE_SIZE] = temp;
+            return;
+         }
+         room = room->next;
+      }
    }
 
    // If we get to this point, we didn't find the room we wanted to unload.
-   bprintf("Room %i not freed in UnloadRoomData!",r->data.roomdata_id);
+   bprintf("Room %i not freed in UnloadRoomData!", r->data.roomdata_id);
 
    return;
 }
 
-room_node* GetRoomDataByID(int id)
+room_node * GetRoomDataByID(int id)
 {
-   room_node *node;
+   room_node *room;
 
-   node = first;
-   while (node)
+   if (!rooms)
+      return NULL;
+
+   room = rooms[id % INIT_ROOMTABLE_SIZE];
+   while (room)
    {
-      if (node->data.roomdata_id == id)
-         return node;
-      node = node->next;
+      if (room->data.roomdata_id == id)
+         return room;
+      room = room->next;
    }
+
    return NULL;
 }
 
 room_node* GetRoomDataByResourceID(int id)
 {
-   room_node *node;
+   room_rsc_node *rsc_node;
 
-   node = first;
-   while (node)
+   if (!room_rscs)
+      return NULL;
+
+   rsc_node = room_rscs[id % INIT_ROOMTABLE_SIZE];
+   while (rsc_node)
    {
-      if (node->data.resource_id == id)
-         return node;
-      node = node->next;
+      if (rsc_node->resource_id == id)
+         return GetRoomDataByID(rsc_node->roomdata_id);
+      rsc_node = rsc_node->next;
    }
+
    return NULL;
 }
 
@@ -176,10 +247,13 @@ void ForEachRoom(void(*callback_func)(room_node *r))
 {
    room_node *node;
 
-   node = first;
-   while (node)
+   for (int i = 0; i < INIT_ROOMTABLE_SIZE; i++)
    {
-      callback_func(node);
-      node = node->next;
+      node = rooms[i];
+      while (node)
+      {
+         callback_func(node);
+         node = node->next;
+      }
    }
 }

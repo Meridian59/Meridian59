@@ -623,7 +623,9 @@ messages:
 
       % Don't leave any active spellcasting objects
       Send(self,@DeleteAllSpellTotems);
- 
+
+      Send(self,@CreateUserTable);
+
       Send(self,@RecreateNecromancerBalance);
       Send(self,@ClearAllQuests);
       Send(self,@CreateAllBanksIfNew);
@@ -1043,13 +1045,15 @@ messages:
       local i;
 
       % Room maintenance.
-
       foreach i in plRooms
       {
          Send(i,@LoadRoomData);
       }
 
       Send(&BossRoom,@ResetBoss);
+
+      % Check tables.
+      Send(self,@VerifyAllTables);
 
       % Player maintenance.
 
@@ -1072,6 +1076,36 @@ messages:
       poHolder2 = Create(&Holder);
 
       Send(self,@RecalcLightAndWeather);
+
+      return;
+   }
+
+   VerifyAllTables()
+   {
+      if phUsers = $ OR NOT IsTable(phUsers)
+      {
+         Send(self,@CreateUserTable);
+      }
+      if phRooms = $ OR NOT IsTable(phRooms)
+      {
+         Send(self,@CreateRoomTable);
+      }
+      if phSpells = $ OR NOT IsTable(phSpells)
+      {
+         Send(self,@CreateSpellTable);
+      }
+      if phSkills = $ OR NOT IsTable(phSkills)
+      {
+         Send(self,@CreateSkillTable);
+      }
+      if phItemAtts = $ OR NOT IsTable(phItemAtts)
+      {
+         Send(self,@CreateItemAttTable);
+      }
+      if phTresTypes = $ OR NOT IsTable(phTresTypes)
+      {
+         Send(self,@RecreateAllTreasureTypes);
+      }
 
       return;
    }

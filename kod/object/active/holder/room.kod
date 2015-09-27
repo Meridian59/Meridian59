@@ -2014,7 +2014,7 @@ messages:
       }
 
       Send(self,@HolderAddNode,#node=Cons(what,new_pos));
-	  
+
       % possibly mark object's location blocked in BSP room
       if new_pos <> $ AND what <> $ AND (Send(what,@GetMoveOnType) = MOVEON_NO)
       {
@@ -2025,7 +2025,7 @@ messages:
             debug("Failed to add BSP blocker ", what, " to ", prmRoom);
          }
       }
-	
+
       if IsClass(what,&User)
       {
          % NPCs might need to do or say something.
@@ -2433,14 +2433,14 @@ messages:
          fine_col = 32;
       }
 
-	  if (Send(what,@GetMoveOnType) = MOVEON_NO)
-	  {
-	    if NOT BlockerMoveBSP(prmRoom, what, new_row, new_col, fine_row, fine_col)
-		{
-		% debug("Failed to move blocker ", what);
-		}
-	  }
-	  
+      if (Send(what,@GetMoveOnType) = MOVEON_NO)
+      {
+         if NOT BlockerMoveBSP(prmRoom, what, new_row, new_col, fine_row, fine_col)
+         {
+            % debug("Failed to move blocker ", what);
+         }
+      }
+
       flags = IsInThingsBoxBSP(prmRoom, new_row, new_col, fine_row, fine_col);
 
       if (flags & IBF_OUT_S)

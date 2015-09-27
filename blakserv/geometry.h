@@ -59,6 +59,17 @@ typedef struct V2
    (fmin((a)->X, (b)->X) - EPSILON <= (c)->X && (c)->X <= fmax((a)->X, (b)->X) + EPSILON && \
     fmin((a)->Y, (b)->Y) - EPSILON <= (c)->Y && (c)->Y <= fmax((a)->Y, (b)->Y) + EPSILON)
 
+// Rotates V2 instance by radian
+__inline void V2ROTATE(V2* V, float Radian)
+{
+   float cs = cosf(Radian);
+   float sn = sinf(Radian);
+   float px = V->X;
+   float py = V->Y;
+   V->X = px * cs - py * sn;
+   V->Y = px * sn + py * cs;
+}
+
 // Möller–Trumbore intersection algorithm
 // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 // Returns true if there is an intersection

@@ -1185,7 +1185,7 @@ void AdminWhoEachSession(session_node *s)
 	aprintf("%-18.18s ",str);
 	
 	if (s->account != NULL)
-		aprintf("%4i",s->account->account_id);
+		aprintf("%4i ",s->account->account_id);
 	else
 		aprintf("    ");
 	
@@ -1194,7 +1194,7 @@ void AdminWhoEachSession(session_node *s)
 	else
 		aprintf(" %-3s","No");
 	
-	aprintf(" %4i ",s->session_id);
+	aprintf("%4i ",s->session_id);
 	aprintf("%-22.22s ",s->conn.name);
 	
 	aprintf("%s",GetStateName(s));
@@ -1889,6 +1889,9 @@ void AdminPrintResource(resource_node *r)
 	{
 		aprintf("%-7i %s = %s\n",r->resource_id,
 			r->resource_name == NULL ? "(dynamic)" : r->resource_name,r->resource_val[0]);
+		aprintf("WARNING: do not change player names with created resources.\n");
+		aprintf("Use send o 0 AdminChangeUserName oUser o obj_num sName q name instead.\n");
+		aprintf("Failure to do so will result in player's new name not being added to user table.\n");
 	}
 }
 

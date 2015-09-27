@@ -4215,6 +4215,19 @@ messages:
       return;
    }
 
+   AdminChangeUserName(oUser=$,sName=$)
+   "Can be called by admin to both validate and change a user name."
+   {
+      if (Send(self,@ValidateUserName,#oUser=oUser,#sName=sName))
+      {
+         Send(self,@ChangeUserName,#oUser=oUser,#sName=sName);
+
+         return system_success_rsc;
+      }
+
+      return system_failure_rsc;
+   }
+
    ValidateUserName(oUser=$,sName=$)
    {
       local i, lBadNameContain, lBadNameIs, oLookup;
